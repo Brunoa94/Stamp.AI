@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "lib": ["deno.window"],
+    "strict": true
+  },
+  "lint": {
+    "rules": {
+      "tags": ["recommended"],
+      "include": [
+        "ban-untagged-todo",
+        "camelcase",
+        "explicit-function-return-type",
+        "no-implicit-declare-namespace",
+        "no-unused-vars"
+      ],
+      "exclude": [
+        "no-explicit-any"
+      ]
+    },
+    "include": ["functions/**/*.ts"],
+    "exclude": ["functions/**/*.test.ts"]
+  },
+  "fmt": {
+    "useTabs": false,
+    "lineWidth": 100,
+    "indentWidth": 2,
+    "semiColons": false,
+    "singleQuote": true,
+    "proseWrap": "preserve",
+    "include": ["functions/**/*.ts"],
+    "exclude": ["functions/**/*.test.ts"]
+  },
+  "imports": {
+    "supabase": "https://esm.sh/@supabase/supabase-js@2.39.0",
+    "stripe": "https://esm.sh/stripe@14.11.0?target=deno"
+  }
+}

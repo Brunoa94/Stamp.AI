@@ -4,10 +4,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
+### **Frontend Commands**
 - `npm run dev` - Start development server (http://localhost:3000)
 - `npm run build` - Build production version
 - `npm run start` - Start production server
-- `npm run lint` - Run ESLint
+- `npm run lint` - Run ESLint on frontend code
+- `npm run lint:fix` - Run ESLint with auto-fix on frontend code
+
+### **Supabase Functions Commands**
+- `npm run supabase:lint` - Run Deno lint on Supabase functions
+- `npm run supabase:format` - Format Supabase functions with Deno fmt
+- `npm run supabase:check` - Type check Supabase functions
+- `npm run supabase:setup` - Link and setup Supabase project
 
 ## Architecture Pattern: Feature-Based with Layer Separation
 
@@ -360,16 +368,73 @@ const GlobalProviders: FC<PropsWithChildren> = async ({ children }) => {
 
 ## TypeScript Guidelines
 
-- Use interfaces to define props of components. If just for a certain component should be `Props`
-- Interfaces end with `I` and types with `T`
+### **Naming Conventions**
+- **Component Props**: Use interfaces ending with `I`. For single-component props use `PropsI`
+- **API Interfaces**: End with `I` (e.g., `UserI`, `PaymentTransactionI`)
+- **Type Aliases**: End with `T` (e.g., `ErrorCodeT`, `StatusT`)
+- **Enum Types**: End with `T` (e.g., `PaymentStatusT`)
+
+### **Interface vs Type Usage**
+- **Use Interfaces for**:
+  - Component props
+  - API request/response objects
+  - Database entity shapes
+  - Extensible object structures
+- **Use Types for**:
+  - Union types (e.g., `'loading' | 'success' | 'error'`)
+  - Computed types
+  - Utility types (Pick, Omit, etc.)
+
+### **File Organization**
+- **Shared Types**: `/types/index.ts` for cross-platform types (frontend + backend)
+- **Frontend Types**: `/src/types/` for frontend-specific types
+- **Component Types**: Co-located with components when component-specific
+
+### **Database Integration**
 - Object types that exist on the database are derived from the schemas
+- Use Zod schemas for runtime validation and type inference
+- Prefix database types with `DB` (e.g., `DBUserI`)
+
+### **Configuration**
 - Strict mode enabled in tsconfig.json
-- Path mapping configured: `@/*` → `./src/*`
+- Path mapping configured: `@/*` → `./src/*`, `@/types/*` → `./types/*`
+
+### **Best Practices**
+- Always prefer interfaces over types for object shapes
+- Use `readonly` for immutable data
+- Leverage utility types: `Partial<T>`, `Pick<T, K>`, `Omit<T, K>`
+- Use generic constraints for reusable types
 
 ## Zod Integration
 
+### **Schema Naming Convention**
+- Zod schemas should match their corresponding interface names with `Schema` suffix
+- Example: `UserI` → `UserSchema`, `RegisterRequestI` → `RegisterRequestSchema`
+
+### **Usage Patterns**
 - Every new type coming from the API should have a corresponding Zod schema
 - Use Zod schemas for runtime validation and type inference
+- Place schemas in `/src/schemas/` for frontend, `/supabase/functions/_shared/schemas.ts` for backend
+- Use `z.infer<typeof Schema>` to derive TypeScript types from Zod schemas
+
+### **Example**
+```typescript
+// Define Zod schema
+const UserSchema = z.object({
+  id: z.string(),
+  email: z.string().email(),
+  created_at: z.string(),
+  user_metadata: z.record(z.any()).optional()
+})
+
+// Infer TypeScript type
+export type UserI = z.infer<typeof UserSchema>
+
+// Runtime validation
+const validateUser = (data: unknown): UserI => {
+  return UserSchema.parse(data)
+}
+```
 
 ## Environment Configuration
 

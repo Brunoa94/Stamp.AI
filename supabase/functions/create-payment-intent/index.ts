@@ -3,6 +3,7 @@ import Stripe from 'https://esm.sh/stripe@14.11.0?target=deno'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
+import type { CreatePaymentIntentRequestI, PaymentIntentResponseI } from "../../../types/index.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -72,11 +73,14 @@ serve(async (req) => {
       throw ErrorCodes.STRIPE_API_ERROR(stripeError.message || JSON.stringify(stripeError))
     }
 
+    const response: PaymentIntentResponseI = {
+      success: true,
+      clientSecret: paymentIntent.client_secret!,
+      paymentIntentId: paymentIntent.id
+    }
+
     return new Response(
-      JSON.stringify({ 
-        clientSecret: paymentIntent.client_secret,
-        paymentIntentId: paymentIntent.id 
-      }),
+      JSON.stringify(response),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,

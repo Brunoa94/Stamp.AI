@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/types/*": ["./types/*"],
+      "@/shared-types": ["./types/index"]
     }
   },
   "include": [

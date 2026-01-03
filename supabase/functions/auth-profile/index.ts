@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { extractBearerToken } from "../_shared/validators.ts"
 import { createUserClient, createServiceClient } from "../_shared/supabase.ts"
+import type { UserI, UpdateProfileRequestI, ApiResponseI } from "../../../types/index.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -9,12 +10,7 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'GET, PUT, DELETE, OPTIONS',
 }
 
-interface UpdateProfileRequest {
-  first_name?: string
-  last_name?: string
-  avatar_url?: string
-  metadata?: Record<string, any>
-}
+// Types are imported from shared types
 
 serve(async (req) => {
   // Handle CORS preflight
@@ -46,27 +42,31 @@ serve(async (req) => {
 
     if (req.method === 'GET') {
       // Get user profile
+      const userProfile: UserI = {
+        id: user.id,
+        email: user.email!,
+        email_confirmed_at: user.email_confirmed_at,
+        last_sign_in_at: user.last_sign_in_at,
+        created_at: user.created_at,
+        updated_at: user.updated_at,
+        user_metadata: user.user_metadata,
+        app_metadata: user.app_metadata
+      }
+
+      const response: ApiResponseI<UserI> = {
+        success: true,
+        data: userProfile
+      }
+
       return new Response(
-        JSON.stringify({
-          success: true,
-          user: {
-            id: user.id,
-            email: user.email,
-            email_confirmed_at: user.email_confirmed_at,
-            last_sign_in_at: user.last_sign_in_at,
-            created_at: user.created_at,
-            updated_at: user.updated_at,
-            user_metadata: user.user_metadata,
-            app_metadata: user.app_metadata
-          }
-        }),
+        JSON.stringify(response),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
     else if (req.method === 'PUT') {
       // Update user profile
-      const updates: UpdateProfileRequest = await req.json()
+      const updates: UpdateProfileRequestI = await req.json()
 
       console.log('Profile updates:', JSON.stringify(updates, null, 2))
 

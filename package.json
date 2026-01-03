@@ -7,7 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "supabase:setup": "supabase link --project-ref timbqoxngnhoetbofdiq && supabase db push"
+    "lint:fix": "eslint --fix",
+    "supabase:setup": "supabase link --project-ref timbqoxngnhoetbofdiq && supabase db push",
+    "supabase:lint": "cd supabase && deno lint",
+    "supabase:format": "cd supabase && deno fmt",
+    "supabase:check": "cd supabase && deno check functions/**/*.ts"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^5.4.1",

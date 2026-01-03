@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateRequest } from "../_shared/validators.ts"
 import { createAnonClient } from "../_shared/supabase.ts"
+import type { PasswordResetRequestI } from "../../../types/index.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -9,12 +10,7 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
-interface PasswordResetRequest {
-  email?: string
-  new_password?: string
-  access_token?: string
-  action: 'request' | 'confirm'
-}
+// Types are imported from shared types
 
 serve(async (req) => {
   // Handle CORS preflight
@@ -23,7 +19,7 @@ serve(async (req) => {
   }
 
   try {
-    const { email, new_password, access_token, action }: PasswordResetRequest = await req.json()
+    const { email, new_password, access_token, action }: PasswordResetRequestI = await req.json()
 
     console.log('=== AUTH PASSWORD RESET ===')
     console.log('Action:', action)

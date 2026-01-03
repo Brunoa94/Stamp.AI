@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateRequest } from "../_shared/validators.ts"
 import { createAnonClient } from "../_shared/supabase.ts"
+import type { LoginRequestI, AuthResponseI, UserI, SessionI } from "../../../types/index.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -9,10 +10,7 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
-interface LoginRequest {
-  email: string
-  password: string
-}
+// Types are imported from shared types
 
 serve(async (req) => {
   // Handle CORS preflight
@@ -21,7 +19,7 @@ serve(async (req) => {
   }
 
   try {
-    const { email, password }: LoginRequest = await req.json()
+    const { email, password }: LoginRequestI = await req.json()
 
     console.log('=== AUTH LOGIN ===')
     console.log('Email:', email)
@@ -61,24 +59,31 @@ serve(async (req) => {
 
     console.log('✅ User logged in successfully:', authData.user.id)
 
+    const userProfile: UserI = {
+      id: authData.user.id,
+      email: authData.user.email!,
+      email_confirmed_at: authData.user.email_confirmed_at,
+      last_sign_in_at: authData.user.last_sign_in_at,
+      created_at: authData.user.created_at,
+      user_metadata: authData.user.user_metadata
+    }
+
+    const session: SessionI = {
+      access_token: authData.session.access_token,
+      refresh_token: authData.session.refresh_token,
+      expires_at: authData.session.expires_at!,
+      expires_in: authData.session.expires_in,
+      token_type: authData.session.token_type
+    }
+
+    const response: AuthResponseI = {
+      success: true,
+      user: userProfile,
+      session
+    }
+
     return new Response(
-      JSON.stringify({
-        success: true,
-        user: {
-          id: authData.user.id,
-          email: authData.user.email,
-          email_confirmed_at: authData.user.email_confirmed_at,
-          last_sign_in_at: authData.user.last_sign_in_at,
-          user_metadata: authData.user.user_metadata
-        },
-        session: {
-          access_token: authData.session.access_token,
-          refresh_token: authData.session.refresh_token,
-          expires_at: authData.session.expires_at,
-          expires_in: authData.session.expires_in,
-          token_type: authData.session.token_type
-        }
-      }),
+      JSON.stringify(response),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {

@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateRequest } from "../_shared/validators.ts"
 import { createServiceClient } from "../_shared/supabase.ts"
+import type { RegisterRequestI, AuthResponseI, UserI } from "../../../types/index.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -9,13 +10,7 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
-interface RegisterRequest {
-  email: string
-  password: string
-  first_name?: string
-  last_name?: string
-  metadata?: Record<string, any>
-}
+// Types are imported from shared types
 
 serve(async (req) => {
   // Handle CORS preflight
@@ -24,7 +19,7 @@ serve(async (req) => {
   }
 
   try {
-    const { email, password, first_name, last_name, metadata }: RegisterRequest = await req.json()
+    const { email, password, first_name, last_name, metadata }: RegisterRequestI = await req.json()
 
     console.log('=== AUTH REGISTER ===')
     console.log('Email:', email)
@@ -62,17 +57,22 @@ serve(async (req) => {
 
     console.log('✅ User registered successfully:', authData.user?.id)
 
+    const userProfile: UserI = {
+      id: authData.user!.id,
+      email: authData.user!.email!,
+      email_confirmed_at: authData.user!.email_confirmed_at,
+      created_at: authData.user!.created_at,
+      user_metadata: authData.user!.user_metadata
+    }
+
+    const response: AuthResponseI = {
+      success: true,
+      user: userProfile,
+      message: 'Registration successful. Please check your email to verify your account.'
+    }
+
     return new Response(
-      JSON.stringify({
-        success: true,
-        user: {
-          id: authData.user!.id,
-          email: authData.user!.email,
-          email_confirmed_at: authData.user!.email_confirmed_at,
-          created_at: authData.user!.created_at
-        },
-        message: 'Registration successful. Please check your email to verify your account.'
-      }),
+      JSON.stringify(response),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
