@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
+import type { ApiResponseI, SuccessMessages, SuccessResponseI } from "../../../types/index.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -69,11 +70,14 @@ serve(async (req) => {
 
       console.log('✅ Verification email resent to:', email)
 
+      const response: SuccessResponseI = {
+        success: true,
+        message: SuccessMessages.EMAIL_VERIFICATION_SENT,
+        code: 'EMAIL_VERIFICATION_SENT'
+      }
+
       return new Response(
-        JSON.stringify({
-          success: true,
-          message: 'Verification email sent. Please check your email and click the verification link.'
-        }),
+        JSON.stringify(response),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }

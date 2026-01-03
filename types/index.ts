@@ -1,5 +1,8 @@
 // Shared types for both Supabase functions and frontend
 
+// Export success types
+export * from './success'
+
 // =============================================================================
 // API Response Types
 // =============================================================================
