@@ -1,6 +1,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import Stripe from 'https://esm.sh/stripe@14.11.0?target=deno'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
+import { ErrorCodes, handleError } from "../_shared/errors.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -17,28 +18,52 @@ serve(async (req) => {
   const signature = req.headers.get('stripe-signature')
   const body = await req.text()
 
-  const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
+  if (!signature) {
+    throw ErrorCodes.WEBHOOK_SIGNATURE_MISSING()
+  }
+
+  const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY')
+  if (!stripeSecretKey) {
+    throw ErrorCodes.STRIPE_SECRET_KEY_MISSING()
+  }
+
+  const supabaseUrl = Deno.env.get('SUPABASE_URL')
+  if (!supabaseUrl) {
+    throw ErrorCodes.SUPABASE_URL_MISSING()
+  }
+
+  const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+  if (!supabaseServiceKey) {
+    throw ErrorCodes.SUPABASE_SERVICE_ROLE_KEY_MISSING()
+  }
+
+  const stripe = new Stripe(stripeSecretKey, {
     apiVersion: '2023-10-16',
     httpClient: Stripe.createFetchHttpClient(),
   })
 
   const cryptoProvider = Stripe.createSubtleCryptoProvider()
-  
-  const supabase = createClient(
-    Deno.env.get('SUPABASE_URL') || '',
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
-  )
+
+  const supabase = createClient(supabaseUrl, supabaseServiceKey)
   
   try {
     const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET')
-    
-    const event = await stripe.webhooks.constructEventAsync(
-      body,
-      signature!,
-      webhookSecret!,
-      undefined,
-      cryptoProvider
-    )
+    if (!webhookSecret) {
+      throw ErrorCodes.STRIPE_WEBHOOK_SECRET_MISSING()
+    }
+
+    let event
+    try {
+      event = await stripe.webhooks.constructEventAsync(
+        body,
+        signature,
+        webhookSecret,
+        undefined,
+        cryptoProvider
+      )
+    } catch (stripeError: any) {
+      throw ErrorCodes.WEBHOOK_SIGNATURE_INVALID(stripeError.message)
+    }
 
     console.log('Webhook event type:', event.type)
 
@@ -75,6 +100,17 @@ serve(async (req) => {
 
         // Call Printify to create order (only if payment saved successfully)
         console.log('Calling Printify order creation')
+
+        // Parse line items and shipping from metadata
+        const lineItems = paymentIntent.metadata?.line_items 
+          ? JSON.parse(paymentIntent.metadata.line_items)
+          : []
+        const shippingAddress = paymentIntent.metadata?.shipping_address
+          ? JSON.parse(paymentIntent.metadata.shipping_address)
+          : {}
+
+        // If no line items (e.g., from stripe trigger test), use sample order
+        const useSampleOrder = lineItems.length === 0
         
         const printifyResponse = await fetch(
           `${Deno.env.get('SUPABASE_URL')}/functions/v1/create-printify-order`,
@@ -82,18 +118,16 @@ serve(async (req) => {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              'apikey': Deno.env.get('SUPABASE_ANON_KEY') || '',
               'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
             },
             body: JSON.stringify({
-              is_test: isTestMode, // Pass test mode to Printify
-              line_items: paymentIntent.metadata?.line_items 
-                ? JSON.parse(paymentIntent.metadata.line_items)
-                : [],
-              shipping_address: paymentIntent.metadata?.shipping_address
-                ? JSON.parse(paymentIntent.metadata.shipping_address)
-                : {},
+              is_test: true,
+              use_sample_order: useSampleOrder, // Create sample order when testing
+              line_items: lineItems,
+              shipping_address: shippingAddress,
               metadata: {
-                order_id: paymentIntent.metadata?.order_id,
+                order_id: paymentIntent.metadata?.order_id || `stripe-test-${Date.now()}`,
                 payment_intent_id: paymentIntent.id,
               },
             }),
@@ -185,11 +219,7 @@ serve(async (req) => {
       status: 200,
     })
   } catch (err) {
-    console.error('Webhook error:', err.message)
-    console.error('Full error:', err)
-    return new Response(JSON.stringify({ error: err.message }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 400,
-    })
+    console.error('Webhook error:', err)
+    return handleError(err, corsHeaders)
   }
 })

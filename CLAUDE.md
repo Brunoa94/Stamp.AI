@@ -108,6 +108,7 @@ class ProjectsService {
 ```
 
 **Benefits:**
+
 - Single responsibility per service
 - Easy to test and mock
 - Centralized API communication
@@ -130,19 +131,19 @@ Use TanStack React Query for server state management, calling service methods:
 
 ```typescript
 // hooks/useProjects.ts
-import { useQuery } from '@tanstack/react-query';
-import { ProjectsService } from '@/services/projects';
+import { useQuery } from "@tanstack/react-query";
+import { ProjectsService } from "@/services/projects";
 
 export function useProjects() {
   return useQuery({
-    queryKey: ['projects'],
+    queryKey: ["projects"],
     queryFn: ProjectsService.getProjects,
   });
 }
 
 export function useProject(id: number) {
   return useQuery({
-    queryKey: ['projects', id],
+    queryKey: ["projects", id],
     queryFn: () => ProjectsService.getProject(id),
     enabled: !!id,
   });
@@ -157,8 +158,8 @@ Components using fetched data must include loading and error states:
 
 ```typescript
 // components/projects/projectList/ProjectList.tsx
-import { ProjectListSkeleton } from './ProjectListSkeleton';
-import { ProjectListError } from './ProjectListError';
+import { ProjectListSkeleton } from "./ProjectListSkeleton";
+import { ProjectListError } from "./ProjectListError";
 
 const ProjectList = () => {
   const { data: projects, isLoading, error } = useProjects();
@@ -168,7 +169,7 @@ const ProjectList = () => {
 
   return (
     <div>
-      {projects?.map(project => (
+      {projects?.map((project) => (
         <ProjectBox key={project.id} project={project} />
       ))}
     </div>
@@ -177,11 +178,13 @@ const ProjectList = () => {
 ```
 
 **Required components in same folder:**
+
 - Main component (`ProjectList.tsx`)
 - Loading skeleton (`ProjectListSkeleton.tsx`) - with shimmer effect
 - Error component (`ProjectListError.tsx`)
 
 **Shimmer Effect Implementation:**
+
 ```typescript
 // components/common/shimmer/Shimmer.tsx
 export const Shimmer = ({ className }: { className?: string }) => (
@@ -189,7 +192,7 @@ export const Shimmer = ({ className }: { className?: string }) => (
 );
 
 // components/projects/projectList/ProjectListSkeleton.tsx
-import { Shimmer } from '@/components/common/shimmer/Shimmer';
+import { Shimmer } from "@/components/common/shimmer/Shimmer";
 
 export const ProjectListSkeleton = () => (
   <div className="space-y-4">
@@ -249,8 +252,8 @@ Use TanStack React Query mutations for form submissions:
 
 ```typescript
 // hooks/useCreateProject.ts
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ProjectsService } from '@/services/projects';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ProjectsService } from "@/services/projects";
 
 export function useCreateProject() {
   const queryClient = useQueryClient();
@@ -258,7 +261,7 @@ export function useCreateProject() {
   return useMutation({
     mutationFn: ProjectsService.createProject,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
 }
@@ -313,6 +316,13 @@ const GlobalProviders: FC<PropsWithChildren> = async ({ children }) => {
 
 **Pattern:** Nested provider composition in root layout
 
+## Components creation patterns
+
+- Each file should just contain one component
+- Each component follows the Single Responsability principle
+- Each component, styling and test files related to a component should be created in the same folder
+- Follow the DRY principle: if something is sharable between components just be stored on a `common` folder
+
 ## State Management Strategy
 
 - **Zustand** for global state (projects, admins, alerts)
@@ -354,12 +364,14 @@ const GlobalProviders: FC<PropsWithChildren> = async ({ children }) => {
 ## Environment Configuration
 
 Required environment variables:
+
 - `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anonymous key
 
 ## Supabase Edge Functions
 
 Located in `supabase/functions/`:
+
 - `connect-supabase/` - Supabase connection handling
 - `stripe-webhook/` - Stripe webhook processing
 - `create-printify-order/` - Printify order creation
