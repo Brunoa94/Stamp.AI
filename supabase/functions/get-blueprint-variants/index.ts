@@ -1,7 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
+import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 
-const PRINTIFY_API_TOKEN = Deno.env.get('PRINTIFY_API_TOKEN')
+// Environment variables will be validated when needed
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -33,19 +34,15 @@ serve(async (req) => {
     console.log('=== GET BLUEPRINT VARIANTS ===')
     console.log('Blueprint ID:', blueprint_id)
 
-    if (!PRINTIFY_API_TOKEN) {
-      throw ErrorCodes.PRINTIFY_TOKEN_MISSING()
-    }
-
-    if (!blueprint_id) {
-      throw ErrorCodes.BLUEPRINT_ID_REQUIRED()
-    }
+    // Validate environment variables and request data
+    const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken()
+    const validBlueprintId = validateRequest.blueprintId(blueprint_id)
 
     const providerId = print_provider_id || DEFAULT_PRINT_PROVIDER_ID
 
     // Fetch variants for the blueprint
     const variantsResponse = await fetch(
-      `https://api.printify.com/v1/catalog/blueprints/${blueprint_id}/print_providers/${providerId}/variants.json`,
+      `https://api.printify.com/v1/catalog/blueprints/${validBlueprintId}/print_providers/${providerId}/variants.json`,
       {
         headers: { 'Authorization': `Bearer ${PRINTIFY_API_TOKEN}` },
       }

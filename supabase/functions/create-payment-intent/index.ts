@@ -2,6 +2,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import Stripe from 'https://esm.sh/stripe@14.11.0?target=deno'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
+import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -29,18 +30,9 @@ serve(async (req) => {
       confirm = false // Optional: auto-confirm payment (for testing)
     } = await req.json()
 
-    const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY')
-    if (!stripeSecretKey) {
-      throw ErrorCodes.STRIPE_SECRET_KEY_MISSING()
-    }
-
-    if (!amount) {
-      throw ErrorCodes.AMOUNT_REQUIRED()
-    }
-
-    if (typeof amount !== 'number' || amount <= 0) {
-      throw ErrorCodes.INVALID_AMOUNT()
-    }
+    // Validate environment variables and request data
+    const stripeSecretKey = validateEnvVars.stripeSecretKey()
+    const validAmount = validateRequest.amount(amount)
 
     const stripe = new Stripe(stripeSecretKey, {
       apiVersion: '2023-10-16',
@@ -49,7 +41,7 @@ serve(async (req) => {
 
     // Build payment intent options
     const paymentIntentOptions: any = {
-      amount: Math.round(amount * 100), // Convert to cents
+      amount: Math.round(validAmount * 100), // Convert to cents
       currency: currency,
       metadata: {
         ...metadata,

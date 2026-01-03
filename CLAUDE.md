@@ -322,6 +322,16 @@ const GlobalProviders: FC<PropsWithChildren> = async ({ children }) => {
 - Each component follows the Single Responsability principle
 - Each component, styling and test files related to a component should be created in the same folder
 - Follow the DRY principle: if something is sharable between components just be stored on a `common` folder
+- Components that fetch data should contain a react query method for the request handling.
+- If data is being fetched a loading and error state should be created.
+- The loading state should be a shimmer created on a separate component.
+- The error should be related to the action being made
+
+## Error handling
+
+- A error handler hook should be created and called on each function with fetch methods.
+- This hook should receive the error body and show a toast with the error.
+- The ERROR_CODE should be displayed on the message with an error header
 
 ## State Management Strategy
 

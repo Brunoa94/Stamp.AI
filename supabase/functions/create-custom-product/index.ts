@@ -1,8 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
+import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 
-const PRINTIFY_API_TOKEN = Deno.env.get('PRINTIFY_API_TOKEN')
-const PRINTIFY_SHOP_ID = Deno.env.get('PRINTIFY_SHOP_ID')
+// Environment variables will be validated when needed
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -33,32 +33,24 @@ serve(async (req) => {
     console.log('Image ID (legacy):', image_id)
     console.log('Print Areas:', JSON.stringify(print_areas))
 
-    if (!PRINTIFY_API_TOKEN) {
-      throw ErrorCodes.PRINTIFY_TOKEN_MISSING()
-    }
-
-    if (!PRINTIFY_SHOP_ID) {
-      throw ErrorCodes.PRINTIFY_SHOP_ID_MISSING()
-    }
+    // Validate environment variables
+    const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken()
+    const PRINTIFY_SHOP_ID = validateEnvVars.printifyShopId()
 
     // Support both legacy image_id and new print_areas format
     const frontImageId = print_areas?.front || image_id
     const backImageId = print_areas?.back
 
-    if (!blueprint_id) {
-      throw ErrorCodes.BLUEPRINT_ID_REQUIRED()
-    }
-
-    if (!print_provider_id) {
-      throw ErrorCodes.PRINT_PROVIDER_ID_REQUIRED()
-    }
+    // Validate required fields
+    const validBlueprintId = validateRequest.blueprintId(blueprint_id)
+    const validPrintProviderId = validateRequest.printProviderId(print_provider_id)
 
     if (!frontImageId && !backImageId) {
       throw ErrorCodes.IMAGE_REQUIRED()
     }
 
-    const finalBlueprintId = blueprint_id
-    const finalPrintProviderId = print_provider_id
+    const finalBlueprintId = validBlueprintId
+    const finalPrintProviderId = validPrintProviderId
 
     console.log('Using Blueprint:', finalBlueprintId)
     console.log('Using Print Provider:', finalPrintProviderId)

@@ -1,8 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
+import { validateEnvVars } from "../_shared/validators.ts"
 
-const PRINTIFY_API_TOKEN = Deno.env.get('PRINTIFY_API_TOKEN')
-const PRINTIFY_SHOP_ID = Deno.env.get('PRINTIFY_SHOP_ID')
+// Environment variables will be validated when needed
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -52,13 +52,8 @@ serve(async (req) => {
     console.log('Metadata:', JSON.stringify(metadata, null, 2))
 
     // Validate Printify configuration
-    if (!PRINTIFY_API_TOKEN) {
-      throw ErrorCodes.PRINTIFY_TOKEN_MISSING()
-    }
-
-    if (!PRINTIFY_SHOP_ID) {
-      throw ErrorCodes.PRINTIFY_SHOP_ID_MISSING()
-    }
+    const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken()
+    const PRINTIFY_SHOP_ID = validateEnvVars.printifyShopId()
 
     // If no line items and not requesting a sample order, skip
     if ((!line_items || line_items.length === 0) && !use_sample_order) {

@@ -1,7 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
+import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 
-const PRINTIFY_API_TOKEN = Deno.env.get('PRINTIFY_API_TOKEN')
+// Environment variables will be validated when needed
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -27,13 +28,9 @@ serve(async (req) => {
     console.log('Has base64:', !!image_base64)
     console.log('File name:', file_name)
 
-    if (!PRINTIFY_API_TOKEN) {
-      throw ErrorCodes.PRINTIFY_TOKEN_MISSING()
-    }
-
-    if (!image_url && !image_base64) {
-      throw ErrorCodes.IMAGE_URL_OR_BASE64_REQUIRED()
-    }
+    // Validate environment variables and request data
+    const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken()
+    validateRequest.imageUpload(image_url, image_base64)
 
     let uploadPayload: any = {
       file_name: file_name,

@@ -76,6 +76,21 @@ export const ErrorCodes = {
   SUPABASE_URL_MISSING: () => new FunctionError(500, 'SUPABASE_URL_MISSING', 'Missing SUPABASE_URL'),
   SUPABASE_SERVICE_ROLE_KEY_MISSING: () => new FunctionError(500, 'SUPABASE_SERVICE_ROLE_KEY_MISSING', 'Missing SUPABASE_SERVICE_ROLE_KEY'),
 
+  // Authentication errors
+  EMAIL_REQUIRED: () => new FunctionError(400, 'EMAIL_REQUIRED', 'email is required'),
+  PASSWORD_REQUIRED: () => new FunctionError(400, 'PASSWORD_REQUIRED', 'password is required'),
+  INVALID_EMAIL_FORMAT: () => new FunctionError(400, 'INVALID_EMAIL_FORMAT', 'Invalid email format'),
+  PASSWORD_TOO_SHORT: () => new FunctionError(400, 'PASSWORD_TOO_SHORT', 'Password must be at least 8 characters long'),
+  EMAIL_ALREADY_REGISTERED: () => new FunctionError(409, 'EMAIL_ALREADY_REGISTERED', 'Email is already registered'),
+  AUTH_REGISTRATION_FAILED: (details: string) => new FunctionError(400, 'AUTH_REGISTRATION_FAILED', `Registration failed: ${details}`),
+  INVALID_CREDENTIALS: () => new FunctionError(401, 'INVALID_CREDENTIALS', 'Invalid email or password'),
+  AUTH_LOGIN_FAILED: (details: string) => new FunctionError(401, 'AUTH_LOGIN_FAILED', `Login failed: ${details}`),
+  EMAIL_NOT_CONFIRMED: () => new FunctionError(401, 'EMAIL_NOT_CONFIRMED', 'Email not confirmed. Please check your email and verify your account.'),
+  INVALID_TOKEN: () => new FunctionError(401, 'INVALID_TOKEN', 'Invalid or expired token'),
+  USER_NOT_FOUND: () => new FunctionError(404, 'USER_NOT_FOUND', 'User not found'),
+  PASSWORD_RESET_FAILED: (details: string) => new FunctionError(400, 'PASSWORD_RESET_FAILED', `Password reset failed: ${details}`),
+  INVALID_REQUEST_BODY: () => new FunctionError(400, 'INVALID_REQUEST_BODY', 'Invalid request body or missing required action'),
+
   // Generic errors
   INTERNAL_ERROR: () => new FunctionError(500, 'INTERNAL_ERROR', 'Internal server error'),
   UNKNOWN_ERROR: () => new FunctionError(500, 'UNKNOWN_ERROR', 'Unknown error occurred'),

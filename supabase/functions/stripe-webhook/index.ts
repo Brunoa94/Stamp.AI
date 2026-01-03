@@ -1,7 +1,8 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import Stripe from 'https://esm.sh/stripe@14.11.0?target=deno'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
+import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
+import { createServiceClient } from "../_shared/supabase.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -18,24 +19,9 @@ serve(async (req) => {
   const signature = req.headers.get('stripe-signature')
   const body = await req.text()
 
-  if (!signature) {
-    throw ErrorCodes.WEBHOOK_SIGNATURE_MISSING()
-  }
-
-  const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY')
-  if (!stripeSecretKey) {
-    throw ErrorCodes.STRIPE_SECRET_KEY_MISSING()
-  }
-
-  const supabaseUrl = Deno.env.get('SUPABASE_URL')
-  if (!supabaseUrl) {
-    throw ErrorCodes.SUPABASE_URL_MISSING()
-  }
-
-  const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
-  if (!supabaseServiceKey) {
-    throw ErrorCodes.SUPABASE_SERVICE_ROLE_KEY_MISSING()
-  }
+  // Validate webhook signature and environment variables
+  const validSignature = validateRequest.webhookSignature(signature)
+  const stripeSecretKey = validateEnvVars.stripeSecretKey()
 
   const stripe = new Stripe(stripeSecretKey, {
     apiVersion: '2023-10-16',
@@ -43,20 +29,16 @@ serve(async (req) => {
   })
 
   const cryptoProvider = Stripe.createSubtleCryptoProvider()
-
-  const supabase = createClient(supabaseUrl, supabaseServiceKey)
+  const supabase = createServiceClient()
   
   try {
-    const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET')
-    if (!webhookSecret) {
-      throw ErrorCodes.STRIPE_WEBHOOK_SECRET_MISSING()
-    }
+    const webhookSecret = validateEnvVars.stripeWebhookSecret()
 
     let event
     try {
       event = await stripe.webhooks.constructEventAsync(
         body,
-        signature,
+        validSignature,
         webhookSecret,
         undefined,
         cryptoProvider
