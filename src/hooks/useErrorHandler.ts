@@ -1,6 +1,6 @@
+import { ErrorCodeT } from '@/types/index'
 import { useCallback } from 'react'
-import { toast } from 'react-hot-toast' // Assuming you're using react-hot-toast
-import type { ErrorCodeT, ApiErrorI } from '@/types/api'
+import { toast } from 'sonner'
 
 // Error messages mapping for better UX
 const ERROR_MESSAGES: Record<ErrorCodeT, string> = {
@@ -70,33 +70,28 @@ export const useErrorHandler = (options: UseErrorHandlerOptionsI = {}) => {
 
     // Extract error code from different error formats
     if (error?.error) {
-      errorCode = error.error as ErrorCode
+      errorCode = error.error as ErrorCodeT
     } else if (error?.response?.data?.error) {
-      errorCode = error.response.data.error as ErrorCode
+      errorCode = error.response.data.error as ErrorCodeT
     } else if (error?.message) {
       errorMessage = error.message
     }
 
     // Get user-friendly message
-    if (errorCode && ERROR_MESSAGES[errorCode as ErrorCodeT]) {
-      errorMessage = customMessages[errorCode as ErrorCodeT] || ERROR_MESSAGES[errorCode as ErrorCodeT]
+    if (errorCode && ERROR_MESSAGES[errorCode]) {
+      errorMessage = customMessages[errorCode] || ERROR_MESSAGES[errorCode]
     }
 
     // Show toast notification
     if (showToast) {
-      toast.error(
-        <div>
-          <div className="font-semibold">Error</div>
-          <div className="text-sm opacity-90">{errorMessage}</div>
-          {errorCode && errorCode !== 'UNKNOWN_ERROR' && (
-            <div className="text-xs opacity-70 mt-1">Code: {errorCode}</div>
-          )}
-        </div>,
-        {
-          duration: 5000,
-          position: 'top-right'
-        }
-      )
+      const toastMessage = errorCode && errorCode !== 'UNKNOWN_ERROR'
+        ? `${errorMessage} (Code: ${errorCode})`
+        : errorMessage;
+
+      toast.error(toastMessage, {
+        duration: 5000,
+        position: 'top-right'
+      })
     }
 
     console.error('API Error:', { errorCode, errorMessage, originalError: error })

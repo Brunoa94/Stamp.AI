@@ -335,6 +335,27 @@ const GlobalProviders: FC<PropsWithChildren> = async ({ children }) => {
 - The loading state should be a shimmer created on a separate component.
 - The error should be related to the action being made
 
+## Navigation Patterns
+
+- **Always use Next.js Link component for navigation** instead of programmatic routing (`useRouter().push()`)
+- Use the `asChild` prop when combining Link with Button components
+- Pattern for button navigation:
+
+```typescript
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
+// Correct usage
+<Button asChild>
+  <Link href="/path">Button Text</Link>
+</Button>
+
+// Avoid this
+<Button onClick={() => router.push("/path")}>
+  Button Text
+</Button>
+```
+
 ## Error handling
 
 - A error handler hook should be created and called on each function with fetch methods.

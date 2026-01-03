@@ -1,3 +1,5 @@
+import { ApiErrorI } from '../../types/index'
+
 // Frontend API types - re-exports from shared types for convenience
 export type {
   // API Response Types

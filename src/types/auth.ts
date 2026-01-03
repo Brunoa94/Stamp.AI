@@ -1,5 +1,11 @@
-import type { AuthenticateUserSchema, UserSessionSchema } from "@/schemas/auth";
-import type z from "zod";
-
-export type AuthenticateUserI = z.infer<typeof AuthenticateUserSchema>;
-export type UserSessionI = z.infer<typeof UserSessionSchema>;
+// Re-export auth types from global types
+export type {
+  UserI,
+  SessionI,
+  AuthResponseI,
+  LoginRequestI,
+  RegisterRequestI,
+  PasswordResetRequestI,
+  UpdateProfileRequestI,
+  UserMetadataI
+} from "../../types";
