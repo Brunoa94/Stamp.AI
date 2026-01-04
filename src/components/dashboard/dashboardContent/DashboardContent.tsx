@@ -7,9 +7,17 @@ import DashboardHeader from "../dashboardHeader/DashboardHeader";
 import { theme } from "@/theme";
 import { Sparkles, Wand2 } from "lucide-react";
 
+interface IGeneratedImageResult {
+  imageUrl: string;
+  enhancedPrompt: string;
+  originalPrompt: string;
+}
+
 const DashboardContent = () => {
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [generatedResult, setGeneratedResult] = useState<IGeneratedImageResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleImageUpload = (file: File) => {
     setUploadedImage(file);
@@ -17,23 +25,43 @@ const DashboardContent = () => {
 
   const handleRemoveImage = () => {
     setUploadedImage(null);
+    setGeneratedResult(null);
+    setError(null);
   };
 
   const handlePromptSubmit = async (prompt: string) => {
     if (!uploadedImage) return;
 
     setIsProcessing(true);
+    setError(null);
+    setGeneratedResult(null);
 
-    // Placeholder for API call
     try {
-      console.log("Processing prompt:", prompt);
-      console.log("With image:", uploadedImage.name);
+      const formData = new FormData();
+      formData.append("prompt", prompt);
+      formData.append("image", uploadedImage);
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const response = await fetch("/api/generate-image", {
+        method: "POST",
+        body: formData,
+      });
 
-    } catch (error) {
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to generate image");
+      }
+
+      if (data.success) {
+        setGeneratedResult({
+          imageUrl: data.imageUrl,
+          enhancedPrompt: data.enhancedPrompt,
+          originalPrompt: data.originalPrompt,
+        });
+      }
+    } catch (error: any) {
       console.error("Error processing request:", error);
+      setError(error.message || "Failed to generate image");
     } finally {
       setIsProcessing(false);
     }
@@ -114,6 +142,73 @@ const DashboardContent = () => {
                 style={{ animationDelay: `${i * 0.2}s` }}
               ></div>
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* Error Display */}
+      {error && (
+        <section className="text-center py-8 animate-[fadeIn_0.6s_ease-out]" aria-live="polite">
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-6 max-w-2xl mx-auto">
+            <p className="text-red-700 font-medium">❌ {error}</p>
+          </div>
+        </section>
+      )}
+
+      {/* Generated Image Result */}
+      {generatedResult && (
+        <section className="space-y-8 animate-[fadeIn_0.8s_ease-out]" aria-label="Generated image result">
+          <div className="text-center">
+            <h3 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-2">
+              🎨 Magic Created!
+            </h3>
+            <p className="text-gray-600">
+              Your AI-generated masterpiece is ready
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Original prompt */}
+            <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6 border border-blue-200">
+              <h4 className="font-semibold text-blue-700 mb-3 flex items-center">
+                <Sparkles className="w-4 h-4 mr-2" />
+                Your Request
+              </h4>
+              <p className="text-gray-700 text-sm leading-relaxed">
+                {generatedResult.originalPrompt}
+              </p>
+            </div>
+
+            {/* Enhanced prompt */}
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-200">
+              <h4 className="font-semibold text-purple-700 mb-3 flex items-center">
+                <Wand2 className="w-4 h-4 mr-2" />
+                AI Enhanced Description
+              </h4>
+              <p className="text-gray-700 text-sm leading-relaxed">
+                {generatedResult.enhancedPrompt}
+              </p>
+            </div>
+          </div>
+
+          {/* Generated Image */}
+          <div className="bg-gradient-to-br from-white via-gray-50/50 to-purple-50/30 rounded-2xl p-8 border border-gray-200 shadow-xl">
+            <div className="relative rounded-xl overflow-hidden shadow-2xl">
+              <img
+                src={generatedResult.imageUrl}
+                alt="AI Generated Image"
+                className="w-full h-auto max-w-2xl mx-auto block rounded-xl"
+              />
+            </div>
+            <div className="mt-6 flex justify-center">
+              <a
+                href={generatedResult.imageUrl}
+                download="ai-generated-image.png"
+                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium hover:from-purple-600 hover:to-pink-600 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+              >
+                Download Image 📥
+              </a>
+            </div>
           </div>
         </section>
       )}
