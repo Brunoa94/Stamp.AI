@@ -33,8 +33,12 @@ export default function RootLayout({
       >
         <SupabaseAuthProvider>
           <QueryProvider>
-            <Navbar />
-            {children}
+            <header>
+              <Navbar />
+            </header>
+            <main>
+              {children}
+            </main>
             <Toaster />
           </QueryProvider>
         </SupabaseAuthProvider>
