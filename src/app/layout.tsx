@@ -5,6 +5,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import { SupabaseAuthProvider } from "@/features/providers/SupabaseAuthProvider";
 import { QueryProvider } from "@/features/providers/QueryProvider";
+import { ThemeProvider } from "@/features/providers/ThemeProvider";
 import Navbar from "@/features/layout/navbar";
 
 const geistSans = Geist({
@@ -29,18 +30,34 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const theme = localStorage.getItem('theme') || 'system';
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const isDark = theme === 'dark' || (theme === 'system' && systemPrefersDark);
+                document.documentElement.classList.toggle('dark', isDark);
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SupabaseAuthProvider>
-          <QueryProvider>
-            <header>
-              <Navbar />
-            </header>
-            <main className="pt-20">{children}</main>
-            <Toaster />
-          </QueryProvider>
-        </SupabaseAuthProvider>
+        <ThemeProvider>
+          <SupabaseAuthProvider>
+            <QueryProvider>
+              <header>
+                <Navbar />
+              </header>
+              <main className="pt-20">{children}</main>
+              <Toaster />
+            </QueryProvider>
+          </SupabaseAuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

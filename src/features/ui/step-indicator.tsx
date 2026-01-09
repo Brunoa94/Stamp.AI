@@ -41,9 +41,8 @@ const StepIndicator = ({
       </div>
       <h2
         className={clsx(
-          "text-xl font-semibold transition-all duration-700 ease-out group-hover:scale-105",
+          "text-xl font-semibold transition-all duration-700 ease-out group-hover:scale-105 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 dark:from-purple-400 dark:via-pink-400 dark:to-blue-400 bg-clip-text text-transparent",
           {
-            "text-gray-800": !isDisabled,
             "opacity-50 transform translate-y-2": isDisabled,
             "opacity-100 transform translate-y-0": !isDisabled,
           },

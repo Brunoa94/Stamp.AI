@@ -41,6 +41,357 @@ const CustomButton = ({ children }) => (
 );
 ```
 
+## Accessibility Guidelines
+
+### **WCAG 2.1 AA Compliance**
+
+All components MUST follow WCAG 2.1 AA accessibility standards:
+
+- **Minimum color contrast**: 4.5:1 for normal text, 3:1 for large text
+- **Keyboard navigation**: All interactive elements must be keyboard accessible
+- **Screen reader support**: Proper ARIA labels and semantic HTML
+- **Focus management**: Visible focus indicators and logical tab order
+
+### **Mandatory Accessibility Features**
+
+```typescript
+// ✅ Good: Accessible component with proper attributes
+const AccessibleButton = ({
+  children,
+  onClick,
+  disabled = false,
+  ariaLabel,
+  variant = "primary"
+}) => {
+  return (
+    <Button
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={ariaLabel}
+      aria-disabled={disabled}
+      className={clsx(
+        componentThemes.button[variant],
+        "focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
+        "focus:outline-none",
+        disabled && "opacity-50 cursor-not-allowed"
+      )}
+    >
+      {children}
+    </Button>
+  );
+};
+
+// ✅ Good: Form input with proper labeling
+const AccessibleInput = ({ label, id, error, ...props }) => {
+  const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+  const errorId = error ? `${inputId}-error` : undefined;
+
+  return (
+    <div className="space-y-1">
+      <label
+        htmlFor={inputId}
+        className="block text-sm font-medium text-gray-700"
+      >
+        {label} {props.required && <span aria-label="required">*</span>}
+      </label>
+      <Input
+        id={inputId}
+        aria-invalid={!!error}
+        aria-describedby={errorId}
+        className="focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        {...props}
+      />
+      {error && (
+        <p
+          id={errorId}
+          role="alert"
+          className="text-sm text-red-600"
+        >
+          {error}
+        </p>
+      )}
+    </div>
+  );
+};
+```
+
+### **Required Accessibility Attributes**
+
+**Interactive Elements:**
+- `aria-label` or `aria-labelledby` for elements without visible text
+- `aria-disabled` for disabled state
+- `role` attribute when semantic HTML isn't sufficient
+- `tabindex="0"` for custom interactive elements
+
+**Form Elements:**
+- `htmlFor` attribute linking labels to inputs
+- `aria-invalid` for validation state
+- `aria-describedby` for error messages and help text
+- `required` attribute for mandatory fields
+
+**Dynamic Content:**
+- `aria-live` for content that updates
+- `aria-expanded` for collapsible content
+- `aria-hidden` for decorative elements
+- `role="alert"` for error messages
+
+### **Keyboard Navigation Requirements**
+
+```typescript
+// ✅ Good: Custom dropdown with keyboard support
+const AccessibleDropdown = ({ options, onSelect }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        if (focusedIndex >= 0) {
+          onSelect(options[focusedIndex]);
+          setIsOpen(false);
+        } else {
+          setIsOpen(!isOpen);
+        }
+        break;
+      case 'Escape':
+        setIsOpen(false);
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        setFocusedIndex(prev =>
+          prev < options.length - 1 ? prev + 1 : 0
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setFocusedIndex(prev =>
+          prev > 0 ? prev - 1 : options.length - 1
+        );
+        break;
+    }
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        onKeyDown={handleKeyDown}
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
+        className="focus:ring-2 focus:ring-blue-500 focus:outline-none"
+      >
+        Select option
+      </button>
+      {isOpen && (
+        <ul
+          role="listbox"
+          className="absolute z-10 w-full bg-white border shadow-lg"
+        >
+          {options.map((option, index) => (
+            <li
+              key={option.id}
+              role="option"
+              aria-selected={focusedIndex === index}
+              className={clsx(
+                "px-3 py-2 cursor-pointer",
+                focusedIndex === index && "bg-blue-100"
+              )}
+              onClick={() => {
+                onSelect(option);
+                setIsOpen(false);
+              }}
+            >
+              {option.label}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+```
+
+### **Color and Contrast Guidelines**
+
+```typescript
+// Color contrast validation utility
+export const validateContrast = (foreground: string, background: string) => {
+  // Implementation to check WCAG contrast ratios
+  // Return true if contrast ratio meets AA standards (4.5:1)
+};
+
+// ✅ Good: High contrast color combinations
+const accessibleColors = {
+  text: {
+    primary: "text-gray-900",      // High contrast on white
+    secondary: "text-gray-700",    // Good contrast on white
+    error: "text-red-700",         // High contrast error text
+    success: "text-green-700"      // High contrast success text
+  },
+  background: {
+    error: "bg-red-50",            // Light background for error states
+    success: "bg-green-50",        // Light background for success states
+    warning: "bg-yellow-50"        // Light background for warnings
+  }
+};
+
+// ❌ Avoid: Low contrast combinations
+const poorColors = {
+  "text-gray-400 bg-gray-200",     // Poor contrast
+  "text-yellow-300 bg-white",      // Insufficient contrast
+  "text-blue-300 bg-blue-100"      // Low contrast
+};
+```
+
+### **Screen Reader Optimization**
+
+```typescript
+// ✅ Good: Image with proper alt text and descriptions
+const AccessibleImage = ({ src, alt, description }) => {
+  return (
+    <figure>
+      <img
+        src={src}
+        alt={alt}
+        className="rounded-lg"
+      />
+      {description && (
+        <figcaption className="sr-only">
+          {description}
+        </figcaption>
+      )}
+    </figure>
+  );
+};
+
+// ✅ Good: Loading state with screen reader announcement
+const LoadingSpinner = ({ message = "Loading..." }) => {
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className="flex items-center justify-center"
+    >
+      <div
+        className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"
+        aria-hidden="true"
+      />
+      <span className="sr-only">{message}</span>
+    </div>
+  );
+};
+
+// ✅ Good: Skip link for keyboard users
+const SkipLink = () => {
+  return (
+    <a
+      href="#main-content"
+      className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 bg-blue-600 text-white px-4 py-2 z-50"
+    >
+      Skip to main content
+    </a>
+  );
+};
+```
+
+### **Focus Management**
+
+```typescript
+// ✅ Good: Modal with proper focus management
+const AccessibleModal = ({ isOpen, onClose, children }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocus = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      previousFocus.current = document.activeElement as HTMLElement;
+      modalRef.current?.focus();
+    } else {
+      previousFocus.current?.focus();
+    }
+  }, [isOpen]);
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onClose();
+    }
+
+    // Trap focus within modal
+    if (e.key === 'Tab') {
+      const focusableElements = modalRef.current?.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+
+      if (focusableElements) {
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+        if (e.shiftKey && document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        } else if (!e.shiftKey && document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        tabIndex={-1}
+        className="bg-white rounded-lg p-6 max-w-md w-full mx-4 focus:outline-none"
+        onClick={e => e.stopPropagation()}
+        onKeyDown={handleKeyDown}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
+```
+
+### **Accessibility Testing Requirements**
+
+**Manual Testing Checklist:**
+- [ ] All interactive elements are keyboard accessible
+- [ ] Focus indicators are clearly visible
+- [ ] Screen reader announces content correctly
+- [ ] Color contrast meets WCAG AA standards
+- [ ] Content is readable at 200% zoom
+- [ ] Form validation errors are announced
+
+**Automated Testing:**
+```typescript
+// Add to component test files
+import { axe } from '@axe-core/react';
+
+describe('Component Accessibility', () => {
+  test('should not have accessibility violations', async () => {
+    const { container } = render(<YourComponent />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+});
+```
+
+**Required Tools:**
+- **axe-core**: Automated accessibility testing
+- **Screen readers**: Test with NVDA, JAWS, or VoiceOver
+- **Keyboard navigation**: Test with Tab, Enter, Space, Arrow keys
+- **Color contrast analyzers**: Verify WCAG compliance
+
 ## Components Creation Patterns
 
 - Each file should just contain one component
@@ -103,21 +454,36 @@ src/components/
    - Main component, sub-components, hooks, and types in same folder
    - Only separate when components are used across multiple features
 
-3. **Barrel Exports**: Use index.ts files to clean up imports
+3. **Barrel Exports**: Use index.ts files to clean up imports **only when files are related to each other**
+
+   **When to create index.ts files:**
+   - Multiple related components in the same folder (e.g., theme toggle component + its hook)
+   - Components that work together as a cohesive feature unit
+   - Folders with 2+ related files that are commonly imported together
+
+   **When NOT to create index.ts files:**
+   - Single standalone components
+   - Unrelated components that happen to be in the same directory
+   - Files that are rarely imported together
+
    ```typescript
-   // ✅ Good: Direct named exports in barrel files
-   // src/components/dashboard/createPromptInput/index.ts
-   export { PromptInput } from './PromptInput';
-   export { PromptInputSection } from './PromptInputSection';
-   export type { PromptInputProps } from './PromptInput';
+   // ✅ Good: Related files that work together
+   // src/features/ui/theme-toggle/index.ts
+   export { ThemeToggle } from './ThemeToggle';
+   export { useThemeCycle } from './useThemeCycle';
 
-   // Component files can still use default exports
-   // src/components/dashboard/createPromptInput/PromptInput.tsx
-   const PromptInput = () => { /* component */ };
-   export default PromptInput;
+   // ✅ Good: Feature components that work together
+   // src/features/auth/passwordReset/passwordResetConfirm/index.ts
+   export { PasswordResetConfirmForm } from './PasswordResetConfirmForm';
+   export { PasswordResetError } from './PasswordResetError';
+   export { PasswordResetSuccess } from './PasswordResetSuccess';
+   export { usePasswordResetConfirmForm } from './usePasswordResetConfirmForm';
 
-   // ❌ Bad: Re-exporting default as named
-   export { default as PromptInput } from './PromptInput';
+   // ❌ Bad: Unrelated components in same folder
+   // src/features/ui/index.ts - Don't barrel export all UI components
+   export { Button } from './button';
+   export { Input } from './input';
+   export { ThemeToggle } from './theme-toggle'; // These aren't related
    ```
 
 4. **Shared vs Feature-Specific**:

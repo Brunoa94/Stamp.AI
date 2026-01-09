@@ -37,7 +37,7 @@ export const colors = {
   uploadSuccess: "border-green-400 bg-linear-to-br from-green-50 to-emerald-50",
 
   // Upload zone background gradients
-  uploadZoneBase: "bg-linear-to-br from-white via-purple-50/30 to-pink-50/30 backdrop-blur-sm",
+  uploadZoneBase: "bg-linear-to-br from-purple-50/50 via-purple-100/40 to-pink-50/50 dark:from-gray-800/80 dark:via-purple-800/30 dark:to-pink-800/30 backdrop-blur-sm",
   uploadZoneActive: "bg-linear-to-br from-purple-50 via-pink-50 to-blue-50",
   uploadZoneHover: "hover:bg-linear-to-br hover:from-purple-50 hover:to-pink-50",
 
