@@ -1,8 +1,6 @@
-"use client";
-
 import { Suspense } from "react";
-import { PasswordResetConfirmForm } from "@/components/auth/passwordReset/passwordResetConfirm/PasswordResetConfirmForm";
-import { PasswordResetConfirmSkeleton } from "@/components/auth/passwordReset/passwordResetConfirm/PasswordResetConfirmSkeleton";
+import { PasswordResetConfirmForm } from "@/features/auth/passwordReset/passwordResetConfirm/PasswordResetConfirmForm";
+import { PasswordResetConfirmSkeleton } from "@/features/auth/passwordReset/passwordResetConfirm/PasswordResetConfirmSkeleton";
 
 export default function ResetPasswordPage() {
   return (

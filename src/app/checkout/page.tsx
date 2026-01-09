@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import StripeCheckout from "@/components/StripeCheckout";
+import StripeCheckout from "@/features/succesfulImplementation/StripeCheckout";
 import ProductCustomizer, {
   ProductCustomization,
-} from "@/components/ProductCustomizer";
+} from "@/features/succesfulImplementation/ProductCustomizer";
 import { createClient } from "@/lib/supabase/client";
 
 type CheckoutStep = "customize" | "creating-product" | "shipping" | "payment";

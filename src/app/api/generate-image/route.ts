@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+// import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// const openai = new OpenAI({
+//   apiKey: process.env.OPENAI_API_KEY,
+// });
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,6 +25,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // MOCK RESPONSE FOR TESTING - Disable OpenAI calls
+    console.log("Testing mode - using mock response");
+    console.log("Original prompt:", prompt);
+    console.log("Image file:", image.name);
+
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
+    // Mock enhanced prompt based on user input
+    const enhancedPrompt = `A stunning anime-style transformation inspired by ${prompt}. The image features vibrant colors, dynamic lighting, and detailed character design reminiscent of popular anime series like Naruto. The composition includes dramatic poses, flowing hair and clothing, with a mystical background featuring cherry blossoms or energy auras. The art style emphasizes bold outlines, cel-shading techniques, and expressive facial features typical of Japanese animation.`;
+
+    // Mock image URL (placeholder image)
+    const mockImageUrl = "https://picsum.photos/1024/1024?random=" + Date.now();
+
+    return NextResponse.json({
+      success: true,
+      imageUrl: mockImageUrl,
+      enhancedPrompt,
+      originalPrompt: prompt
+    });
+
+    // ORIGINAL OPENAI CODE (COMMENTED OUT FOR TESTING)
+    /*
     // Convert image to base64
     const imageBuffer = await image.arrayBuffer();
     const imageBase64 = Buffer.from(imageBuffer).toString("base64");
@@ -86,6 +109,7 @@ export async function POST(request: NextRequest) {
       enhancedPrompt,
       originalPrompt: prompt
     });
+    */
 
   } catch (error: any) {
     console.error("Image generation error:", error);

@@ -89,7 +89,6 @@ export const ErrorCodes = {
   INVALID_TOKEN: () => new FunctionError(401, 'INVALID_TOKEN', 'Invalid or expired token'),
   USER_NOT_FOUND: () => new FunctionError(404, 'USER_NOT_FOUND', 'User not found'),
   PASSWORD_RESET_FAILED: (details: string) => new FunctionError(400, 'PASSWORD_RESET_FAILED', `Password reset failed: ${details}`),
-  INVALID_REQUEST_BODY: () => new FunctionError(400, 'INVALID_REQUEST_BODY', 'Invalid request body or missing required action'),
 
   // Generic errors
   INTERNAL_ERROR: () => new FunctionError(500, 'INTERNAL_ERROR', 'Internal server error'),

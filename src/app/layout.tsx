@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/layout/navbar";
-import { QueryProvider } from "@/components/providers/QueryProvider";
-import { SupabaseAuthProvider } from "@/components/providers/SupabaseAuthProvider";
+
 import { Toaster } from "sonner";
+import { SupabaseAuthProvider } from "@/features/providers/SupabaseAuthProvider";
+import { QueryProvider } from "@/features/providers/QueryProvider";
+import Navbar from "@/features/layout/navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,9 +37,7 @@ export default function RootLayout({
             <header>
               <Navbar />
             </header>
-            <main>
-              {children}
-            </main>
+            <main className="pt-20">{children}</main>
             <Toaster />
           </QueryProvider>
         </SupabaseAuthProvider>

@@ -28,24 +28,6 @@ export const componentThemes = {
     success: `border-green-400 focus:border-green-500 focus:ring-green-500/20`,
   },
 
-  // Upload zone variants
-  uploadZone: {
-    base: `border-3 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 transform hover:scale-105 ${colors.uploadZoneBase}`,
-    idle: `border-purple-300 hover:border-purple-400 ${colors.uploadZoneHover} hover:shadow-lg hover:shadow-purple-500/20`,
-    active: `border-pink-400 ${colors.uploadZoneActive} shadow-xl shadow-pink-500/25 ${animations.pulse}`,
-    icon: `p-4 rounded-full ${colors.iconGradientPrimary}`,
-  },
-
-  // Image preview variants
-  imagePreview: {
-    container: "space-y-6 animate-[fadeInScale_0.5s_ease-out]",
-    wrapper: "relative group",
-    border: `${colors.previewBorder} p-1 rounded-2xl`,
-    image: "w-full max-w-md mx-auto rounded-xl shadow-2xl transition-transform duration-300 group-hover:scale-[1.02]",
-    successBadge: `absolute -top-3 -right-3 w-8 h-8 ${colors.previewSuccess} rounded-full flex items-center justify-center shadow-lg animate-[bounceIn_0.6s_ease-out]`,
-    removeButton: "absolute top-3 right-3 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-110 active:scale-95",
-    info: `text-center p-4 rounded-xl ${colors.previewInfo} border border-green-200`,
-  },
 
   // Text variants
   text: {
@@ -74,8 +56,8 @@ export const componentThemes = {
   // Loading states
   loading: {
     spinner: `animate-spin rounded-full h-12 w-12 border-4 border-purple-200 border-t-purple-600`,
-    shimmer: `${animationClasses.shimmer} bg-gradient-to-r from-purple-100 via-pink-100 to-purple-100 rounded-lg`,
-    pulse: `${animations.pulse} bg-gradient-to-r from-purple-200 to-pink-200 rounded-lg`,
+    shimmer: `${animationClasses.shimmer} bg-linear-to-r from-purple-100 via-pink-100 to-purple-100 rounded-lg`,
+    pulse: `${animations.pulse} bg-linear-to-r from-purple-200 to-pink-200 rounded-lg`,
   },
 } as const;
 

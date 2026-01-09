@@ -31,7 +31,7 @@ export const animations = {
 
   // Rainbow animations
   rainbow: "animate-[rainbow_3s_linear_infinite]",
-  rainbowText: "bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent animate-[rainbow_3s_linear_infinite]",
+  rainbowText: "bg-linear-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent animate-[rainbow_3s_linear_infinite]",
 } as const;
 
 export const animationClasses = {
@@ -40,13 +40,13 @@ export const animationClasses = {
   buttonHover: "transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-95",
 
   // Loading states
-  shimmer: "relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent",
+  shimmer: "relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-linear-to-r before:from-transparent before:via-white/60 before:to-transparent",
 
   // Interactive elements
   clickable: "cursor-pointer transition-transform duration-150 hover:scale-105 active:scale-95",
 
   // Borders and outlines
-  glowBorder: "border border-transparent bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 bg-clip-border",
+  glowBorder: "border border-transparent bg-linear-to-r from-purple-500 via-pink-500 to-blue-500 bg-clip-border",
 
 } as const;
 

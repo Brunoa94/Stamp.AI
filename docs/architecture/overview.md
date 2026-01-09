@@ -41,7 +41,6 @@ imaginary-builderai/
 ### **2. Server/Client Component Strategy**
 
 - Server components for data fetching (`app/*/page.tsx`)
-- Client components with `"use client"` directive for interactivity
 - Middleware for authentication handling at `/middleware.ts`
 
 ### **3. Supabase Integration**
