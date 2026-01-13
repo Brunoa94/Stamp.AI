@@ -65,7 +65,7 @@ const useScrollToSection = () => {
     options: IScrollOptions = {}
   ) => {
     const {
-      block = 'center',
+      block = 'start',
       delay = 0,
       offset = 0
     } = options;
@@ -75,10 +75,18 @@ const useScrollToSection = () => {
         const element = ref.current;
         const elementRect = element.getBoundingClientRect();
         const absoluteElementTop = elementRect.top + window.pageYOffset;
-        const middle = absoluteElementTop - (window.innerHeight / 2) + (elementRect.height / 2) + offset;
+
+        let scrollPosition;
+        if (block === 'start') {
+          // Position at top with offset (navbar height + desired spacing)
+          scrollPosition = absoluteElementTop + offset;
+        } else {
+          // Center positioning
+          scrollPosition = absoluteElementTop - (window.innerHeight / 2) + (elementRect.height / 2) + offset;
+        }
 
         window.scrollTo({
-          top: middle,
+          top: scrollPosition,
           behavior: 'smooth'
         });
       }

@@ -1,13 +1,24 @@
 "use client";
 
-import { useState, useEffect, useMemo, useImperativeHandle, forwardRef } from "react";
-import MaterialFilter from "./MaterialFilter";
-import FitFilter from "./FitFilter";
-import SortFilter from "./SortFilter";
+import {
+  useState,
+  useEffect,
+  useMemo,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
+import { FilterSelect } from "@/features/ui/filter-select";
 import FilterHeader from "./FilterHeader";
 import ClearFiltersButton from "./ClearFiltersButton";
 import { SortOption } from "../types";
 import { TshirtType } from "@/services/tshirtProductService";
+import {
+  SORT_OPTIONS,
+  mapToFilterOptions,
+  FILTER_LABELS,
+  FILTER_PLACEHOLDERS,
+} from "./utils/filterConfig";
+import { filterAndSortTshirts } from "./utils/filterUtils";
 
 export interface FilterValues {
   material: string;
@@ -53,29 +64,12 @@ const TshirtSelectionFilters = forwardRef<FilterHandle, Props>(
 
     // Filter and sort logic
     const filteredTshirts = useMemo(() => {
-      let filtered = tshirtProducts;
-
-      if (filterMaterial !== "all") {
-        filtered = filtered.filter((t) =>
-          t.material.toLowerCase().includes(filterMaterial.toLowerCase())
-        );
-      }
-
-      if (filterFit !== "all") {
-        filtered = filtered.filter(
-          (t) => t.fit.toLowerCase() === filterFit.toLowerCase()
-        );
-      }
-
-      // Sort
-      const sorted = [...filtered].sort((a, b) => {
-        if (sortBy === "price") {
-          return a.price - b.price;
-        }
-        return a.name.localeCompare(b.name);
+      return filterAndSortTshirts({
+        products: tshirtProducts,
+        material: filterMaterial,
+        fit: filterFit,
+        sortBy,
       });
-
-      return sorted;
     }, [tshirtProducts, filterMaterial, filterFit, sortBy]);
 
     // Notify parent of filtered results
@@ -92,19 +86,29 @@ const TshirtSelectionFilters = forwardRef<FilterHandle, Props>(
         <FilterHeader filteredCount={filteredCount} totalTypes={totalTypes} />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <MaterialFilter
+          <FilterSelect
+            label={FILTER_LABELS.material}
             value={filterMaterial}
             onChange={setFilterMaterial}
-            availableMaterials={availableMaterials}
+            options={mapToFilterOptions(availableMaterials)}
+            placeholder={FILTER_PLACEHOLDERS.material}
           />
 
-          <FitFilter
+          <FilterSelect
+            label={FILTER_LABELS.fit}
             value={filterFit}
             onChange={setFilterFit}
-            availableFits={availableFits}
+            options={mapToFilterOptions(availableFits)}
+            placeholder={FILTER_PLACEHOLDERS.fit}
           />
 
-          <SortFilter value={sortBy} onChange={setSortBy} />
+          <FilterSelect
+            label={FILTER_LABELS.sortBy}
+            value={sortBy}
+            onChange={setSortBy}
+            options={SORT_OPTIONS}
+            placeholder={FILTER_PLACEHOLDERS.sortBy}
+          />
         </div>
 
         <ClearFiltersButton

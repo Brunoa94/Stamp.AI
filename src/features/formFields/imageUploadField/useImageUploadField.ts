@@ -11,22 +11,10 @@ interface UseImageUploadFieldProps {
 export function useImageUploadField({ form, error }: UseImageUploadFieldProps) {
   const { setValue, watch } = form;
   const uploadedImage = watch("image");
-  const { handleError } = useErrorHandler();
-
+  
   const handleImageUpload = (file: File) => {
     setValue("image", file, { shouldValidate: true });
   };
-
-  useEffect(() => {
-    if (error?.message) {
-      handleError({
-        message: error.message,
-        error: "IMAGE_REQUIRED",
-      });
-
-      return
-    }
-  }, [error, handleError]);
 
   return {
     uploadedImage,

@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
       n: 1,
     });
 
-    const generatedImageUrl = imageResponse.data[0]?.url;
+    const generatedImageUrl = imageResponse.data?.[0]?.url;
 
     if (!generatedImageUrl) {
       return NextResponse.json(

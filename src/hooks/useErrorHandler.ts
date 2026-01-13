@@ -1,4 +1,4 @@
-import { ErrorCodeT } from '@/types/index'
+import { ErrorCodeT } from '@/shared-types'
 import { useCallback } from 'react'
 import { toast } from 'sonner'
 
@@ -50,6 +50,8 @@ const ERROR_MESSAGES: Record<ErrorCodeT, string> = {
   'AUTH_REGISTRATION_FAILED': 'Registration failed. Please try again',
   'AUTH_LOGIN_FAILED': 'Login failed. Please try again',
   'PASSWORD_RESET_FAILED': 'Password reset failed. Please try again',
+  'CUSTOM_PRODUCT_CREATION_FAILED': 'Failed to create custom product. Please try again',
+  'TSHIRT_PRODUCTS_FETCH_FAILED': 'Failed to load t-shirt products. Please try again',
 
   // Generic errors
   'INTERNAL_ERROR': 'An internal error occurred. Please try again',

@@ -55,6 +55,7 @@ export default function TshirtTypeCard({
           <TshirtPrice price={tshirt.price} />
 
           <Button
+            type="button"
             onClick={handleShowDetails}
             variant="outline"
             className="w-full mt-2 border-purple-300 text-purple-700 hover:bg-purple-50 dark:border-purple-600 dark:text-purple-300 dark:hover:bg-purple-900/20"

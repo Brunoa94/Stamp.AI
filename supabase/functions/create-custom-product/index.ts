@@ -163,14 +163,22 @@ serve(async (req) => {
     }
 
     console.log('✅ Product created:', productData.id)
+    console.log('Product images:', productData.images?.length || 0)
 
     // Return the created product details
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         product: {
           id: productData.id,
           title: productData.title,
+          description: productData.description,
+          images: productData.images?.map((img: any) => ({
+            src: img.src,
+            variant_ids: img.variant_ids,
+            position: img.position,
+            is_default: img.is_default,
+          })) || [],
           variants: productData.variants?.map((v: any) => ({
             id: v.id,
             title: v.title,
