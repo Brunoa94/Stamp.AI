@@ -3,6 +3,7 @@
 export * from "./animations";
 export * from "./colors";
 export * from "./components";
+export * from "./icons";
 
 // Pre-built theme combinations with dark mode support
 export const theme = {
@@ -26,7 +27,7 @@ export const theme = {
 
   prompt: {
     section: "space-y-6",
-    card: "bg-gradient-to-br from-white via-blue-50/30 to-purple-50/30 dark:from-gray-800 dark:via-blue-900/10 dark:to-purple-900/10 backdrop-blur-sm border border-blue-100 dark:border-blue-800/30 rounded-2xl p-8 shadow-xl shadow-blue-500/20 dark:shadow-blue-500/10 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/30 dark:hover:shadow-blue-500/20",
+    card: "relative bg-transparent backdrop-blur-md rounded-2xl p-8 shadow-xl shadow-blue-500/20 dark:shadow-blue-500/10 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/30 dark:hover:shadow-purple-500/20 before:content-[''] before:absolute before:inset-0 before:rounded-2xl before:p-[2px] before:bg-gradient-to-r before:from-blue-400 before:via-purple-400 before:to-pink-400 dark:before:from-blue-500 dark:before:via-purple-500 dark:before:to-pink-500 before:-z-10 after:content-[''] after:absolute after:inset-[2px] after:rounded-2xl after:bg-white/5 dark:after:bg-gray-900/80 after:-z-10",
     title: "text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent",
   },
 

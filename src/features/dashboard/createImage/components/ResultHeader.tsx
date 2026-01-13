@@ -1,6 +1,6 @@
 const ResultHeader = () => {
   return (
-    <div className="text-center">
+    <div className="text-center bg-transparent">
       <div className="flex items-center justify-center mb-4">
         <div className="w-12 h-12 rounded-full bg-linear-to-r from-green-500 to-emerald-500 flex items-center justify-center text-white font-bold mr-4 animate-[bounceIn_0.8s_ease-out] shadow-lg">
           3

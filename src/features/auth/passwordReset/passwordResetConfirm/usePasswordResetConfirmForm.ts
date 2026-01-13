@@ -3,10 +3,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { PasswordResetConfirmSchema, type PasswordResetConfirmI } from "@/schemas/auth";
 import { createClient } from "@/lib/supabase/client";
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 export function usePasswordResetConfirmForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, setIsPending] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -32,6 +33,17 @@ export function usePasswordResetConfirmForm() {
       setIsError(true);
     }
   }, [searchParams]);
+
+  // Handle redirect after successful password reset
+  useEffect(() => {
+    if (isSuccess) {
+      const timeoutId = setTimeout(() => {
+        router.push("/");
+      }, 3000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isSuccess, router]);
 
   const onSubmit = async (data: PasswordResetConfirmI) => {
     setIsPending(true);

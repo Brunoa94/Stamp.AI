@@ -3,23 +3,12 @@
 import { usePasswordResetConfirmForm } from "./usePasswordResetConfirmForm";
 import { PasswordResetSuccess } from "./PasswordResetSuccess";
 import { PasswordResetError } from "./PasswordResetError";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { Form } from "@/features/global/input/form";
 import { Button } from "@/features/ui/button";
 
 export function PasswordResetConfirmForm() {
-  const router = useRouter();
   const { register, handleSubmit, onSubmit, isPending, isSuccess, isError } =
     usePasswordResetConfirmForm();
-
-  useEffect(() => {
-    if (isSuccess) {
-      setTimeout(() => {
-        router.push("/");
-      }, 3000);
-    }
-  }, [isSuccess, router]);
 
   if (isSuccess) {
     return <PasswordResetSuccess />;

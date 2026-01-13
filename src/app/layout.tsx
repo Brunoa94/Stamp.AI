@@ -30,22 +30,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                const theme = localStorage.getItem('theme') || 'system';
-                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                const isDark = theme === 'dark' || (theme === 'system' && systemPrefersDark);
-                document.documentElement.classList.toggle('dark', isDark);
-              } catch (e) {}
-            `,
-          }}
-        />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
         <ThemeProvider>
           <SupabaseAuthProvider>

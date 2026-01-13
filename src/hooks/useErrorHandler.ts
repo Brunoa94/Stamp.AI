@@ -94,8 +94,6 @@ export const useErrorHandler = (options: UseErrorHandlerOptionsI = {}) => {
       })
     }
 
-    console.error('API Error:', { errorCode, errorMessage, originalError: error })
-
     return {
       code: errorCode,
       message: errorMessage,

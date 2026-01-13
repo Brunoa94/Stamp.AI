@@ -1,27 +1,21 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
-import { ThemeContext, useThemeState } from "@/hooks/useTheme";
+import { ReactNode } from "react";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 interface ThemeProviderProps {
   children: ReactNode;
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const themeState = useThemeState();
-
-  // Prevent flash of wrong theme on initial load
-  useEffect(() => {
-    // Remove any SSR classes that might conflict
-    document.documentElement.classList.remove("light", "dark");
-
-    // Apply the resolved theme immediately
-    document.documentElement.classList.add(themeState.resolvedTheme);
-  }, [themeState.resolvedTheme]);
-
   return (
-    <ThemeContext.Provider value={themeState}>
+    <NextThemesProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange={false}
+    >
       {children}
-    </ThemeContext.Provider>
+    </NextThemesProvider>
   );
 }

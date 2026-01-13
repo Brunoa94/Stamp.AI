@@ -10,6 +10,7 @@ export function useThemeCycle() {
     { value: "system", label: "System", icon: Monitor },
   ] as const;
 
+  // Handle undefined theme during SSR or initial load
   const currentTheme = themes.find(t => t.value === theme) || themes[2];
   const Icon = currentTheme.icon;
 
@@ -24,7 +25,7 @@ export function useThemeCycle() {
     currentTheme,
     Icon,
     cycleTheme,
-    theme,
+    theme: theme || "system",
     setTheme
   };
 }

@@ -7,6 +7,7 @@ interface Props {
   id?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onBlur?: () => void;
   placeholder?: string;
   maxLength?: number;
   disabled?: boolean;
@@ -17,6 +18,7 @@ const PromptTextArea = ({
   id = "prompt",
   value,
   onChange,
+  onBlur,
   placeholder = "Transform this image into a magical fantasy scene with dragons flying over crystal mountains...",
   maxLength = 1000,
   disabled = false,
@@ -25,7 +27,7 @@ const PromptTextArea = ({
   if (disabled) return <PromptTextAreaDisabled value={value} />;
 
   if (isOverLimit)
-    return <PromptTextAreaOverLimit value={value} onChange={onChange} />;
+    return <PromptTextAreaOverLimit value={value} onChange={onChange} onBlur={onBlur} />;
 
   return (
     <div className="relative">
@@ -33,8 +35,9 @@ const PromptTextArea = ({
         id={id}
         value={value}
         onChange={onChange}
+        onBlur={onBlur}
         placeholder={placeholder}
-        className="px-5 py-4 rounded-2xl resize-none transition-all duration-300 text-gray-700 min-h-30 focus:outline-none shadow-lg hover:shadow-xl hover:shadow-blue-500/20 border-2 border-blue-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 bg-linear-to-br from-white via-blue-50/30 to-purple-50/30 backdrop-blur-sm"
+        className="px-5 py-4 rounded-2xl resize-none transition-all duration-300 text-white min-h-30 focus:outline-none shadow-lg hover:shadow-xl hover:shadow-blue-500/20 border-2 border-blue-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20"
         maxLength={maxLength}
       />
 

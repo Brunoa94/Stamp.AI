@@ -23,6 +23,8 @@ export function useImageUploadField({ form, error }: UseImageUploadFieldProps) {
         message: error.message,
         error: "IMAGE_REQUIRED",
       });
+
+      return
     }
   }, [error, handleError]);
 

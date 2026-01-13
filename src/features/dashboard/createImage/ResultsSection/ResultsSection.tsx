@@ -12,16 +12,22 @@ interface IResultsSectionProps {
   generatedResult: IGeneratedImageResult | null;
   error: string | undefined;
   ref?: React.Ref<HTMLElement>;
+  onUseImage?: () => void;
 }
 
-const ResultsSection = ({ generatedResult, error, ref }: IResultsSectionProps) => {
+const ResultsSection = ({
+  generatedResult,
+  error,
+  ref,
+  onUseImage,
+}: IResultsSectionProps) => {
   const hasError = !!error;
   const hasResult = !!generatedResult;
 
+  if (hasError) return <ErrorDisplay error={error} />;
+
   return (
     <>
-      {hasError && <ErrorDisplay error={error} />}
-
       {hasResult && (
         <section
           ref={ref}
@@ -29,7 +35,10 @@ const ResultsSection = ({ generatedResult, error, ref }: IResultsSectionProps) =
           aria-label="Generated image result"
         >
           <ResultHeader />
-          <GeneratedImageDisplay imageUrl={generatedResult.imageUrl} />
+          <GeneratedImageDisplay
+            imageUrl={generatedResult.imageUrl}
+            onUseImage={onUseImage}
+          />
         </section>
       )}
     </>

@@ -1,49 +1,76 @@
 "use client";
 
 import { Button } from "@/features/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useThemeCycle } from "./useThemeCycle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/features/ui/dropdown-menu";
+import clsx from "clsx";
 
 export function ThemeToggle() {
-  const { currentTheme, Icon, cycleTheme, themes, theme, setTheme } = useThemeCycle();
-  const [isOpen, setIsOpen] = useState(false);
+  const { currentTheme, Icon, themes, theme, setTheme } = useThemeCycle();
+  const [mounted, setMounted] = useState(false);
 
-  return (
-    <div className="relative">
+  // Prevent hydration mismatch by only rendering theme-dependent content after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
       <Button
         variant="ghost"
         size="sm"
-        onClick={cycleTheme}
-        className="relative h-9 w-9 px-0 hover:bg-purple-100 dark:hover:bg-purple-900/20 transition-all duration-200"
-        title={`Current: ${currentTheme.label}. Click to switch theme.`}
+        className="relative h-9 w-9 px-0"
+        disabled
+        aria-label="Loading theme"
       >
-        <Icon className="h-4 w-4 text-purple-600 dark:text-purple-400 transition-all duration-200" />
-        <span className="sr-only">Toggle theme</span>
+        <span className="sr-only">Loading theme</span>
       </Button>
+    );
+  }
 
-      {/* Optional: Theme selection tooltip */}
-      {isOpen && (
-        <div className="absolute right-0 top-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-1 z-50">
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="relative h-9 w-9 px-0 hover:bg-purple-100 dark:hover:bg-purple-900/20 transition-all duration-200"
+          aria-label={`Current theme: ${currentTheme.label}. Click to change theme.`}
+        >
+          <Icon className="h-4 w-4 text-purple-600 dark:text-purple-400 transition-all duration-200" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent align="end" className="min-w-[160px]">
+        <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
           {themes.map((themeOption) => {
             const ThemeIcon = themeOption.icon;
             return (
-              <button
+              <DropdownMenuRadioItem
                 key={themeOption.value}
-                onClick={() => {
-                  setTheme(themeOption.value);
-                  setIsOpen(false);
-                }}
-                className={`flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                  theme === themeOption.value ? "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400" : ""
-                }`}
+                value={themeOption.value}
+                className={clsx(
+                  "flex items-center gap-2 cursor-pointer",
+                  {
+                    "text-purple-600 dark:text-purple-400": theme === themeOption.value,
+                  }
+                )}
               >
                 <ThemeIcon className="h-4 w-4" />
                 {themeOption.label}
-              </button>
+              </DropdownMenuRadioItem>
             );
           })}
-        </div>
-      )}
-    </div>
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

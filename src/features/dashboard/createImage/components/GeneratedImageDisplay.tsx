@@ -1,11 +1,16 @@
+import { Button } from "@/features/ui/button";
+import { componentThemes } from "@/theme/components";
+
 interface Props {
   imageUrl: string;
   altText?: string;
+  onUseImage?: () => void;
 }
 
 const GeneratedImageDisplay = ({
   imageUrl,
   altText = "AI Generated Image",
+  onUseImage,
 }: Props) => {
   return (
     <div className="bg-linear-to-br from-white via-gray-50/50 to-purple-50/30 rounded-2xl p-8 border border-gray-200 shadow-xl">
@@ -16,13 +21,12 @@ const GeneratedImageDisplay = ({
       />
 
       <div className="mt-6 flex justify-center">
-        <a
-          href={imageUrl}
-          download="ai-generated-image.png"
-          className="px-6 py-3 bg-linear-to-r from-purple-500 to-pink-500 text-white rounded-xl font-medium hover:from-purple-600 hover:to-pink-600 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+        <Button
+          onClick={onUseImage}
+          className={componentThemes.button.primary}
         >
-          Download Image 📥
-        </a>
+          Use this image
+        </Button>
       </div>
     </div>
   );

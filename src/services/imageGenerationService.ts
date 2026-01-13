@@ -1,7 +1,10 @@
 import { IImageGenerationForm, IImageGenerationResult } from "@/schemas/imageGenerationSchema";
 
 export class ImageGenerationService {
-  static async generateImage(data: IImageGenerationForm): Promise<IImageGenerationResult> {
+  static async generateImage(
+    data: IImageGenerationForm,
+    signal?: AbortSignal
+  ): Promise<IImageGenerationResult> {
     try {
       const formData = new FormData();
       formData.append("prompt", data.prompt);
@@ -10,6 +13,7 @@ export class ImageGenerationService {
       const response = await fetch("/api/generate-image", {
         method: "POST",
         body: formData,
+        signal, // Pass abort signal to fetch
       });
 
       // Handle non-2xx responses
@@ -39,6 +43,11 @@ export class ImageGenerationService {
         originalPrompt: result.originalPrompt,
       };
     } catch (error) {
+      // Handle abort errors (user cancelled the request)
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new Error("Image generation was cancelled");
+      }
+
       // Handle network errors, parsing errors, and other exceptions
       if (error instanceof Error) {
         // Re-throw known errors with context

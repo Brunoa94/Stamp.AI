@@ -598,6 +598,79 @@ export const ProjectListSkeleton = () => (
 
 ## **Component Patterns**
 
+### Client Components ("use client")
+
+**Only use "use client" when necessary:**
+
+- Components that use browser-only features (useState, useEffect, event handlers)
+- Components that need to interact with the DOM directly
+- Interactive components with user events (onClick, onChange, etc.)
+- Components using browser APIs (localStorage, window, etc.)
+
+**Do NOT use "use client" for:**
+- Pure presentational components without state or events
+- Components that only display data passed via props
+- Server components that can render on the server
+- Static components without user interaction
+
+```typescript
+// ❌ Bad: Unnecessary "use client" for static component
+"use client";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+export default function StaticCard({ title, description }: Props) {
+  return (
+    <div className="p-4 border rounded">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+  );
+}
+
+// ✅ Good: No "use client" needed for static component
+interface Props {
+  title: string;
+  description: string;
+}
+
+export default function StaticCard({ title, description }: Props) {
+  return (
+    <div className="p-4 border rounded">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+  );
+}
+
+// ✅ Good: "use client" needed for interactive component
+"use client";
+
+import { useState } from "react";
+
+interface Props {
+  onSelect: (value: string) => void;
+}
+
+export default function InteractiveSelect({ onSelect }: Props) {
+  const [selected, setSelected] = useState("");
+
+  const handleChange = (value: string) => {
+    setSelected(value);
+    onSelect(value);
+  };
+
+  return (
+    <select value={selected} onChange={(e) => handleChange(e.target.value)}>
+      <option value="">Select option</option>
+    </select>
+  );
+}
+```
+
 ### Functional Components with TypeScript
 
 ```typescript
@@ -967,6 +1040,291 @@ try {
 - **Validation Errors**: Missing or invalid response data
 - **Timeout Errors**: Request takes too long
 - **Unknown Errors**: Unexpected exceptions
+
+## Icon Guidelines
+
+### Use Theme Icons Instead of Inline SVGs
+
+**Rule: Always use icon components from `@/theme/icons` instead of inline SVG elements**
+
+- **Centralized icons**: All icons should be stored in `src/theme/icons/` folder
+- **Reusable components**: Each icon should be a separate component with customizable className prop
+- **Consistent styling**: Icons inherit color from parent using `currentColor` in stroke/fill
+- **Type safety**: Icon components use TypeScript interfaces for props
+
+### Icon Component Structure
+
+```typescript
+// ✅ Good: Icon component in src/theme/icons/CheckCircleIcon.tsx
+interface CheckCircleIconProps {
+  className?: string;
+}
+
+export const CheckCircleIcon = ({ className = "w-6 h-6" }: CheckCircleIconProps) => {
+  return (
+    <svg
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+  );
+};
+
+// src/theme/icons/index.ts
+export { CheckCircleIcon } from "./CheckCircleIcon";
+export { CreditCardIcon } from "./CreditCardIcon";
+export { ArrowRightIcon } from "./ArrowRightIcon";
+```
+
+### Using Icon Components
+
+```typescript
+// ✅ Good: Import and use icon components
+import { CheckCircleIcon, CreditCardIcon } from "@/theme";
+
+const SuccessMessage = () => (
+  <div className="flex items-center gap-2">
+    <CheckCircleIcon className="w-6 h-6 text-green-600" />
+    <span>Success!</span>
+  </div>
+);
+
+const PaymentButton = () => (
+  <Button>
+    <CreditCardIcon className="w-5 h-5 text-yellow-300" />
+    Go to Payment
+  </Button>
+);
+
+// ❌ Bad: Inline SVG elements
+const BadExample = () => (
+  <div>
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  </div>
+);
+```
+
+### Icon Best Practices
+
+1. **Default Size**: Provide sensible default sizes (e.g., `w-6 h-6`) but allow customization via className
+2. **Color Inheritance**: Use `currentColor` for stroke/fill to inherit text color from parent
+3. **Accessibility**: Add `aria-hidden="true"` for decorative icons, or proper aria-labels for functional icons
+4. **Naming**: Use descriptive names ending with "Icon" (e.g., `CheckCircleIcon`, `AlertTriangleIcon`)
+5. **Export**: Always export icons from `src/theme/icons/index.ts` for clean imports
+
+### Adding New Icons
+
+When you need a new icon:
+
+1. Create a new file in `src/theme/icons/` (e.g., `NewIcon.tsx`)
+2. Follow the interface pattern with optional `className` prop
+3. Use `currentColor` for colors that should inherit from parent
+4. Export the icon from `src/theme/icons/index.ts`
+5. Import from `@/theme` in components
+
+```typescript
+// Step 1: Create src/theme/icons/NewIcon.tsx
+interface NewIconProps {
+  className?: string;
+}
+
+export const NewIcon = ({ className = "w-6 h-6" }: NewIconProps) => {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      {/* SVG path */}
+    </svg>
+  );
+};
+
+// Step 2: Export from src/theme/icons/index.ts
+export { NewIcon } from "./NewIcon";
+
+// Step 3: Use in components
+import { NewIcon } from "@/theme";
+
+<NewIcon className="w-8 h-8 text-blue-500" />
+```
+
+## Image Handling Guidelines
+
+### Use Next.js Image Component
+
+**Rule: Always use Next.js `Image` component instead of HTML `<img>` tags**
+
+- **Automatic optimization**: Images are automatically optimized for performance
+- **Responsive images**: Serves correctly sized images for different screen sizes
+- **Lazy loading**: Images load as they enter the viewport
+- **Priority loading**: Control loading priority for above-the-fold images
+- **External image support**: Configure domains in `next.config.js` for external images
+
+### Image Component Usage
+
+```typescript
+import Image from "next/image";
+
+// ✅ Good: Using Next.js Image component
+const ProductImage = ({ src, alt }: Props) => {
+  return (
+    <div className="relative w-full h-96">
+      <Image
+        src={src}
+        alt={alt}
+        width={800}
+        height={800}
+        className="w-full h-auto object-contain"
+        priority={false} // Set to true for above-the-fold images
+      />
+    </div>
+  );
+};
+
+// ✅ Good: Responsive image with fill
+const HeroImage = () => (
+  <div className="relative w-full h-[500px]">
+    <Image
+      src="/hero.jpg"
+      alt="Hero banner"
+      fill
+      className="object-cover"
+      priority // Load immediately for hero images
+    />
+  </div>
+);
+
+// ❌ Bad: Using HTML img tag
+const BadExample = ({ src, alt }: Props) => (
+  <img src={src} alt={alt} className="w-full" />
+);
+```
+
+### Image Best Practices
+
+1. **Always Specify Dimensions**: Provide `width` and `height` props to prevent layout shift
+2. **Use Fill for Unknown Dimensions**: Use the `fill` prop with a relative parent container
+3. **Object Fit**: Use `object-contain` or `object-cover` via className for sizing behavior
+4. **Alt Text**: Always provide meaningful alt text for accessibility
+5. **Priority**: Set `priority={true}` for above-the-fold images (hero images, logos)
+6. **External Domains**: Configure `remotePatterns` in `next.config.js` for external images
+
+### Next.js Image Configuration
+
+```javascript
+// next.config.js
+module.exports = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'example.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.printify.com',
+      },
+    ],
+  },
+};
+```
+
+### Image Sizing Patterns
+
+```typescript
+// Fixed size image
+<Image
+  src="/logo.png"
+  alt="Company logo"
+  width={200}
+  height={50}
+  className="w-auto h-12"
+/>
+
+// Responsive image maintaining aspect ratio
+<Image
+  src="/product.jpg"
+  alt="Product"
+  width={800}
+  height={600}
+  className="w-full h-auto"
+/>
+
+// Fill container (requires relative parent)
+<div className="relative w-full h-96">
+  <Image
+    src="/banner.jpg"
+    alt="Banner"
+    fill
+    className="object-cover"
+  />
+</div>
+
+// Circular avatar
+<div className="relative w-20 h-20 rounded-full overflow-hidden">
+  <Image
+    src="/avatar.jpg"
+    alt="User avatar"
+    fill
+    className="object-cover"
+  />
+</div>
+```
+
+### Image Loading States
+
+```typescript
+// ✅ Good: Image with loading states
+const OptimizedImage = ({ src, alt }: Props) => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  return (
+    <div className="relative">
+      {isLoading && (
+        <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+      )}
+      <Image
+        src={src}
+        alt={alt}
+        width={800}
+        height={600}
+        className="w-full h-auto"
+        onLoadingComplete={() => setIsLoading(false)}
+      />
+    </div>
+  );
+};
+```
+
+### When to Use Standard img Tag
+
+There are rare cases where HTML `<img>` is appropriate:
+
+- **SVG images** that don't need optimization
+- **Base64 encoded** data URLs
+- **Dynamic blob URLs** from file uploads (before upload to server)
+
+```typescript
+// Acceptable: Preview of file upload before sending to server
+const ImagePreview = ({ file }: { file: File }) => {
+  const [preview, setPreview] = useState<string>("");
+
+  useEffect(() => {
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+
+  return <img src={preview} alt="Preview" className="w-full" />;
+};
+```
 
 ## End-to-End Testing Requirements
 

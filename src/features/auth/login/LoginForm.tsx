@@ -45,10 +45,6 @@ export function LoginForm() {
           <InlinePasswordReset />
         </div>
 
-        {errors.root && (
-          <p className="text-sm text-red-500">{errors.root.message}</p>
-        )}
-
         <DialogFooter className="flex flex-col gap-2">
           <Button
             aria-label="Login"

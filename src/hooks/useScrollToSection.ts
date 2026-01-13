@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 
 interface IScrollOptions {
   behavior?: ScrollBehavior;
@@ -13,6 +13,17 @@ interface IScrollOptions {
  * Can be used throughout the application for consistent scroll behavior
  */
 const useScrollToSection = () => {
+  // Store active timeout IDs for cleanup
+  const timeoutsRef = useRef<Set<NodeJS.Timeout>>(new Set());
+
+  // Cleanup all timeouts on unmount
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach(timeoutId => clearTimeout(timeoutId));
+      timeoutsRef.current.clear();
+    };
+  }, []);
+
   const scrollToSection = useCallback((
     ref: React.RefObject<HTMLElement | null>,
     options: IScrollOptions = {}
@@ -38,7 +49,11 @@ const useScrollToSection = () => {
     };
 
     if (delay > 0) {
-      setTimeout(performScroll, delay);
+      const timeoutId = setTimeout(() => {
+        performScroll();
+        timeoutsRef.current.delete(timeoutId);
+      }, delay);
+      timeoutsRef.current.add(timeoutId);
     } else {
       performScroll();
     }
@@ -70,7 +85,11 @@ const useScrollToSection = () => {
     };
 
     if (delay > 0) {
-      setTimeout(performSmoothScroll, delay);
+      const timeoutId = setTimeout(() => {
+        performSmoothScroll();
+        timeoutsRef.current.delete(timeoutId);
+      }, delay);
+      timeoutsRef.current.add(timeoutId);
     } else {
       requestAnimationFrame(performSmoothScroll);
     }
@@ -101,7 +120,11 @@ const useScrollToSection = () => {
       };
 
       if (delay > 0) {
-        setTimeout(performScroll, delay);
+        const timeoutId = setTimeout(() => {
+          performScroll();
+          timeoutsRef.current.delete(timeoutId);
+        }, delay);
+        timeoutsRef.current.add(timeoutId);
       } else {
         performScroll();
       }
@@ -120,7 +143,11 @@ const useScrollToSection = () => {
     };
 
     if (delay > 0) {
-      setTimeout(performScroll, delay);
+      const timeoutId = setTimeout(() => {
+        performScroll();
+        timeoutsRef.current.delete(timeoutId);
+      }, delay);
+      timeoutsRef.current.add(timeoutId);
     } else {
       performScroll();
     }
