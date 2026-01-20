@@ -165,6 +165,8 @@ export interface CreateCustomProductRequestI {
   title?: string
   description?: string
   variants?: number[]
+  user_id: string
+  customer_email: string
 }
 
 export interface ProductVariantI {

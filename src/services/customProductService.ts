@@ -6,6 +6,8 @@ export interface CreateProductPayload {
   image_url: string;
   title?: string;
   description?: string;
+  user_id: string,
+  customer_email: string;
 }
 
 export interface CreatedProduct {
@@ -100,6 +102,8 @@ export class CustomProductService {
         },
         title: payload.title || `Custom Design ${Date.now()}`,
         description: payload.description || "Custom designed product",
+        user_id: payload.user_id,
+        customer_email: payload.customer_email
       };
 
       const response = await fetch(

@@ -4,13 +4,15 @@ import { theme, CreditCardIcon, ArrowRightIcon } from "@/theme";
 import { StatusHeader } from "@/features/ui/status-header";
 import clsx from "clsx";
 import Image from "next/image";
+import Link from "next/link";
 
 interface Props {
   product: CreatedProduct;
   generatedImageUrl?: string;
+  orderId?: string;
 }
 
-const CreatedProductDisplay = ({ product, generatedImageUrl }: Props) => {
+const CreatedProductDisplay = ({ product, generatedImageUrl, orderId }: Props) => {
   const displayImage = product.images?.[0]?.src || generatedImageUrl;
 
   return (
@@ -36,13 +38,14 @@ const CreatedProductDisplay = ({ product, generatedImageUrl }: Props) => {
       {/* Go to Payment Button */}
       <div className="flex justify-center mt-6">
         <Button
-          type="button"
-          onClick={() => (window.location.href = "/checkout")}
+          asChild
           className={clsx(theme.button.submit.base, theme.button.submit.enabled, "px-8")}
         >
-          <CreditCardIcon className="w-5 h-5 text-yellow-300" />
-          Go to Payment
-          <ArrowRightIcon className="w-5 h-5 text-green-300" />
+          <Link href={orderId ? `/checkout?orderId=${orderId}` : "/checkout"}>
+            <CreditCardIcon className="w-5 h-5 text-yellow-300" />
+            Go to Payment
+            <ArrowRightIcon className="w-5 h-5 text-green-300" />
+          </Link>
         </Button>
       </div>
     </div>
