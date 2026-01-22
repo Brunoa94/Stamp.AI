@@ -697,18 +697,105 @@ export type { ProjectBoxProps };
 
 ### Ref Handling Guidelines
 
-- **Avoid unnecessary `forwardRef`**: Only use `forwardRef` when the ref actually needs to be forwarded to a child component or DOM element
-- **Direct ref usage**: When a component only uses the ref internally, use it directly without `forwardRef`
+**IMPORTANT: Avoid using `forwardRef` and `useImperativeHandle`. Prefer callback patterns instead.**
+
+#### Why Avoid forwardRef?
+
+- **Poor composition**: Breaks component encapsulation
+- **Imperative API**: Goes against React's declarative nature
+- **Hard to track**: Makes data flow harder to follow
+- **Memory leaks**: Can cause issues if refs aren't cleaned up properly
+- **Testing complexity**: Makes components harder to test
+
+#### Prefer Callback Patterns
 
 ```typescript
-// ❌ Bad: Unnecessary forwardRef when ref is only used internally
-const ProcessingSection = forwardRef<HTMLElement, Props>(
-  ({ isProcessing }, ref) => {
-    return <section ref={ref}>Content</section>;
-  }
-);
+// ❌ Bad: Using forwardRef and useImperativeHandle
+export interface PaymentFormRef {
+  submitPayment: () => void;
+}
 
-// ✅ Good: Direct ref usage when not forwarding to children
+const PaymentForm = forwardRef<PaymentFormRef, Props>((props, ref) => {
+  const handlePayment = async () => {
+    // Payment logic
+  };
+
+  useImperativeHandle(ref, () => ({
+    submitPayment: handlePayment,
+  }));
+
+  return <form>...</form>;
+});
+
+// Usage
+const ref = useRef<PaymentFormRef>(null);
+ref.current?.submitPayment(); // Imperative call
+
+// ✅ Good: Using callback pattern with trigger prop
+interface Props {
+  triggerSubmit?: boolean;
+  onSubmitComplete?: () => void;
+  onSuccess?: (data: any) => void;
+}
+
+const PaymentForm = ({ triggerSubmit, onSubmitComplete, onSuccess }: Props) => {
+  const handlePayment = async () => {
+    // Payment logic
+    const result = await processPayment();
+    onSuccess?.(result);
+  };
+
+  useEffect(() => {
+    if (triggerSubmit) {
+      handlePayment().finally(() => {
+        onSubmitComplete?.();
+      });
+    }
+  }, [triggerSubmit]);
+
+  return <form>...</form>;
+};
+
+// Usage
+const [triggerPayment, setTriggerPayment] = useState(false);
+
+const handleCompleteOrder = () => {
+  setTriggerPayment(true); // Declarative trigger
+};
+
+const handlePaymentComplete = () => {
+  setTriggerPayment(false); // Reset trigger
+};
+
+<PaymentForm
+  triggerSubmit={triggerPayment}
+  onSubmitComplete={handlePaymentComplete}
+  onSuccess={handleSuccess}
+/>
+```
+
+#### When forwardRef Is Acceptable
+
+Only use `forwardRef` when building low-level UI components that need to expose native DOM elements:
+
+```typescript
+// ✅ Acceptable: Forwarding ref to native DOM element
+const CustomInput = forwardRef<HTMLInputElement, Props>((props, ref) => {
+  return <input ref={ref} {...props} />; // Direct DOM access needed
+});
+
+// ✅ Acceptable: UI library component exposing DOM element
+const Button = forwardRef<HTMLButtonElement, Props>((props, ref) => {
+  return <button ref={ref} className="custom-button" {...props} />;
+});
+```
+
+#### Direct Ref Usage
+
+When a component needs a ref internally (not exposing it), pass it as a prop:
+
+```typescript
+// ✅ Good: Direct ref usage as prop
 interface Props {
   isProcessing: boolean;
   sectionRef?: React.RefObject<HTMLElement>;
@@ -717,11 +804,6 @@ interface Props {
 const ProcessingSection = ({ isProcessing, sectionRef }: Props) => {
   return <section ref={sectionRef}>Content</section>;
 };
-
-// ✅ Good: forwardRef only when actually forwarding to children
-const CustomInput = forwardRef<HTMLInputElement, Props>((props, ref) => {
-  return <input ref={ref} {...props} />; // Ref forwarded to actual input
-});
 ```
 
 ### Custom Hooks Pattern
@@ -1481,3 +1563,391 @@ describe('Image Generation Form', () => {
 - [ ] **Accessibility**: Screen readers and keyboard navigation work
 - [ ] **Responsive**: Feature works across different screen sizes
 - [ ] **File Location**: Test file is co-located with the component being tested
+
+---
+
+## State Management with React Context
+
+### When to Use Context
+
+Use React Context for **feature-specific state** that needs to be shared across multiple components within a feature:
+
+✅ **Good use cases:**
+- Checkout flow (payment, shipping, order state)
+- Multi-step forms with shared state
+- Theme/settings within a feature
+- Complex component trees with prop drilling
+
+❌ **Don't use Context for:**
+- Truly global app state (consider Zustand/Redux instead)
+- Simple parent-child prop passing
+- Single-component state
+- Frequently changing values that cause many re-renders
+
+### The Re-render Problem with React Context
+
+**IMPORTANT:** React Context has a critical limitation - when you use `useContext()`, your component subscribes to ALL changes in the context value, regardless of which properties you use.
+
+```typescript
+// ❌ Problem: Both components re-render on ANY context change
+const UserContext = createContext({ name: '', theme: '' });
+
+function UserGreeting() {
+  const { name } = useContext(UserContext);
+  // Re-renders even when only theme changes!
+  return <h1>Hello, {name}!</h1>;
+}
+
+function ThemeToggle() {
+  const { theme } = useContext(UserContext);
+  // Re-renders even when only name changes!
+  return <button>Theme: {theme}</button>;
+}
+```
+
+### Solution: use-context-selector Library
+
+To prevent unnecessary re-renders, use the `use-context-selector` library which provides true selector functionality:
+
+```bash
+npm install use-context-selector
+```
+
+### Context Pattern Structure
+
+```typescript
+// src/features/[feature]/context/[Feature]Context.tsx
+"use client";
+
+import React, { ReactNode } from "react";
+import { createContext, useContextSelector } from "use-context-selector";
+import { useFeatureData } from "../hooks/useFeatureData";
+import { useFeatureHandlers } from "../hooks/useFeatureHandlers";
+
+interface FeatureContextValue {
+  // Data state
+  data: SomeType | null;
+  isLoading: boolean;
+  error: string | null;
+
+  // Handlers
+  handleAction: () => void;
+
+  // Computed values
+  computedValue: number;
+}
+
+const FeatureContext = createContext<FeatureContextValue | undefined>(undefined);
+
+interface FeatureProviderProps {
+  children: ReactNode;
+  // Any required initialization props
+  id: string | null;
+}
+
+export function FeatureProvider({ children, id }: FeatureProviderProps) {
+  // Combine existing hooks
+  const { data, isLoading, error } = useFeatureData(id);
+  const handlers = useFeatureHandlers();
+
+  // Compute derived values once at provider level
+  const computedValue = data?.value || 0;
+
+  const value: FeatureContextValue = {
+    data,
+    isLoading,
+    error,
+    ...handlers,
+    computedValue,
+  };
+
+  return (
+    <FeatureContext.Provider value={value}>
+      {children}
+    </FeatureContext.Provider>
+  );
+}
+
+// Optimized selector hooks using use-context-selector
+// Components using these hooks ONLY re-render when their selected data changes
+
+/**
+ * Select data state
+ * Component only re-renders when data, isLoading, or error changes
+ */
+export function useFeatureData() {
+  const data = useContextSelector(FeatureContext, (v) => v?.data);
+  const isLoading = useContextSelector(FeatureContext, (v) => v?.isLoading);
+  const error = useContextSelector(FeatureContext, (v) => v?.error);
+
+  return { data, isLoading, error };
+}
+
+/**
+ * Select action handlers
+ * Component only re-renders when handlers change (usually never)
+ */
+export function useFeatureActions() {
+  const handleAction = useContextSelector(FeatureContext, (v) => v?.handleAction);
+
+  return { handleAction };
+}
+
+/**
+ * Select computed value
+ * Component only re-renders when computedValue changes
+ */
+export function useFeatureComputed() {
+  return useContextSelector(FeatureContext, (v) => v?.computedValue);
+}
+```
+
+### Using the Context in Components
+
+```typescript
+// src/app/feature/page.tsx
+"use client";
+
+import { useSearchParams } from "next/navigation";
+import { FeatureProvider, useFeature } from "@/features/feature/context";
+
+function FeatureContent() {
+  const { data, isLoading, handleAction } = useFeature();
+
+  if (isLoading) return <Loading />;
+
+  return (
+    <div>
+      <FeatureComponent />
+      <button onClick={handleAction}>Do Action</button>
+    </div>
+  );
+}
+
+export default function FeaturePage() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+
+  return (
+    <FeatureProvider id={id}>
+      <FeatureContent />
+    </FeatureProvider>
+  );
+}
+```
+
+### Context Best Practices
+
+#### 1. **Separate Provider from Page Component**
+
+```typescript
+// ✅ Good: Provider wraps content component
+export default function Page() {
+  const params = useParams();
+
+  return (
+    <FeatureProvider id={params.id}>
+      <FeatureContent />
+    </FeatureProvider>
+  );
+}
+
+// ❌ Bad: Mixing provider logic with page logic
+export default function Page() {
+  const data = useFeatureData(); // Can't use hook before provider!
+  return <div>{data}</div>;
+}
+```
+
+#### 2. **Use Selector Hooks for Performance**
+
+Selector hooks prevent unnecessary re-renders by subscribing only to specific parts of the context:
+
+```typescript
+// ✅ Good: Component only re-renders when shipping data changes
+// (Not affected by payment, cart, or other unrelated changes)
+function ShippingForm() {
+  const { address, handleSubmit } = useCheckoutShipping();
+  return <form onSubmit={handleSubmit}>...</form>;
+}
+
+// ❌ Bad: Component re-renders on ANY context change
+// (Re-renders when payment updates, cart changes, etc.)
+function ShippingForm() {
+  const { address, handleSubmit, paymentStatus, cart, ... } = useCheckout();
+  return <form onSubmit={handleSubmit}>...</form>;
+}
+```
+
+**How it works:**
+```typescript
+// With use-context-selector, each field is individually tracked
+export function useCheckoutShipping() {
+  const address = useContextSelector(CheckoutContext, (v) => v?.address);
+  const handleSubmit = useContextSelector(CheckoutContext, (v) => v?.handleSubmit);
+
+  // Component only re-renders if address or handleSubmit changes
+  return { address, handleSubmit };
+}
+```
+
+#### 3. **Compute Values at Provider Level**
+
+```typescript
+// ✅ Good: Computed once at provider level
+export function CheckoutProvider({ children, orderId }: Props) {
+  const { order } = useCheckoutData(orderId);
+  const subtotal = order?.subtotal || 0; // Computed once
+
+  return (
+    <CheckoutContext.Provider value={{ order, subtotal }}>
+      {children}
+    </CheckoutContext.Provider>
+  );
+}
+
+// ❌ Bad: Every component recomputes the same value
+function Component1() {
+  const { order } = useCheckout();
+  const subtotal = order?.subtotal || 0; // Computed in every component
+}
+
+function Component2() {
+  const { order } = useCheckout();
+  const subtotal = order?.subtotal || 0; // Duplicate computation
+}
+```
+
+#### 4. **Throw Errors for Missing Provider**
+
+```typescript
+// ✅ Good: Clear error message
+export function useFeature() {
+  const context = useContext(FeatureContext);
+  if (context === undefined) {
+    throw new Error("useFeature must be used within a FeatureProvider");
+  }
+  return context;
+}
+
+// ❌ Bad: Silent failure or unclear error
+export function useFeature() {
+  const context = useContext(FeatureContext);
+  return context || {}; // Runtime errors later
+}
+```
+
+#### 5. **Export Hooks from Index File**
+
+```typescript
+// src/features/checkout/context/index.ts
+export {
+  CheckoutProvider,
+  useCheckout,
+  useCheckoutState,
+  useCheckoutPayment,
+  useCheckoutShipping,
+  useCheckoutActions,
+  useCheckoutAmounts,
+} from "./CheckoutContext";
+```
+
+This allows clean imports:
+```typescript
+import { CheckoutProvider, useCheckoutPayment } from "@/features/checkout/context";
+```
+
+### Real-World Example: Checkout Context
+
+```typescript
+// src/features/checkout/context/CheckoutContext.tsx
+"use client";
+
+import { createContext, useContextSelector } from "use-context-selector";
+
+export function CheckoutProvider({ children, orderId }: CheckoutProviderProps) {
+  // Combine three separate hooks into one context
+  const { order, orderItems, customProduct, isLoading, error } = useCheckoutData(orderId);
+  const customization = useCustomization({ order, orderItems, customProduct, isLoading });
+  const handlers = useCheckoutHandlers();
+
+  // Compute derived values once
+  const subtotal = order?.subtotal || customization.price * customization.quantity;
+  const shippingCost = order?.shipping_cost || 5.99;
+  const orderAmount = subtotal + shippingCost;
+
+  const value = {
+    order, orderItems, customProduct, isLoading, error,
+    customization, ...handlers,
+    subtotal, shippingCost, orderAmount,
+  };
+
+  return <CheckoutContext.Provider value={value}>{children}</CheckoutContext.Provider>;
+}
+
+// Selector hooks using use-context-selector for optimized performance
+export function useCheckoutPayment() {
+  const paymentStatus = useContextSelector(CheckoutContext, (v) => v?.paymentStatus);
+  const testMode = useContextSelector(CheckoutContext, (v) => v?.testMode);
+  const triggerPayment = useContextSelector(CheckoutContext, (v) => v?.triggerPayment);
+  const handlePaymentSuccess = useContextSelector(CheckoutContext, (v) => v?.handlePaymentSuccess);
+  const handlePaymentError = useContextSelector(CheckoutContext, (v) => v?.handlePaymentError);
+
+  // This component only re-renders when these specific values change
+  return { paymentStatus, testMode, triggerPayment, handlePaymentSuccess, handlePaymentError };
+}
+
+export function useCheckoutAmounts() {
+  const subtotal = useContextSelector(CheckoutContext, (v) => v?.subtotal);
+  const shippingCost = useContextSelector(CheckoutContext, (v) => v?.shippingCost);
+  const orderAmount = useContextSelector(CheckoutContext, (v) => v?.orderAmount);
+
+  // This component only re-renders when amounts change
+  // Not affected by payment status changes, shipping updates, etc.
+  return { subtotal, shippingCost, orderAmount };
+}
+```
+
+### Migration from Hooks to Context
+
+If you find yourself with multiple related hooks creating prop drilling issues:
+
+**Before (Multiple hooks in component):**
+```typescript
+function Page() {
+  const { data } = useFeatureData(id);
+  const { handlers } = useFeatureHandlers();
+  const computed = computeValue(data);
+
+  return (
+    <>
+      <ComponentA data={data} computed={computed} />
+      <ComponentB handlers={handlers} computed={computed} />
+      <ComponentC data={data} handlers={handlers} />
+    </>
+  );
+}
+```
+
+**After (Context eliminates prop drilling):**
+```typescript
+function Page() {
+  return (
+    <FeatureProvider id={id}>
+      <ComponentA /> {/* Uses useFeatureData() internally */}
+      <ComponentB /> {/* Uses useFeatureActions() internally */}
+      <ComponentC /> {/* Uses useFeature() internally */}
+    </FeatureProvider>
+  );
+}
+```
+
+### When to Move Beyond Context
+
+Consider **Zustand** or **Redux Toolkit** if you need:
+- State shared across completely different features/pages
+- DevTools for debugging state changes
+- Middleware for logging, persistence, etc.
+- Very fine-grained performance optimizations
+
+Context is perfect for feature-scoped state. For app-wide state, use a proper state management library.

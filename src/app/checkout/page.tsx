@@ -1,12 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { ShippingAddressT } from "@/schemas/checkout";
 import ShippingAddressForm from "@/features/checkout/shippingForm/ShippingAddressForm";
-import PaymentForm, {
-  PaymentFormRef,
-} from "@/features/checkout/paymentForm/PaymentForm";
+import PaymentForm from "@/features/checkout/paymentForm/PaymentForm";
 import OrderSummary from "@/features/checkout/paymentForm/OrderSummary";
 import {
   PaymentSuccess,
@@ -16,98 +12,38 @@ import {
   CheckoutError,
   TrustBanner,
 } from "@/features/checkout/components";
-import { useCheckoutData, useCustomization } from "@/features/checkout/hooks";
+import {
+  CheckoutProvider,
+  useCheckout,
+} from "@/features/checkout/context";
 import { componentThemes } from "@/theme/components";
 import clsx from "clsx";
 
-type PaymentStatus = "idle" | "success" | "error";
-
-export default function CheckoutPage() {
-  const searchParams = useSearchParams();
-  const orderId = searchParams.get("orderId");
-
-  // Fetch all checkout data using custom hook
-  const { order, orderItems, customProduct, isLoading, error } =
-    useCheckoutData(orderId);
-
-  // Build customization from fetched data
-  const customization = useCustomization({
-    order,
-    orderItems,
-    customProduct,
+function CheckoutContent() {
+  const {
     isLoading,
-  });
-
-  // Local state for checkout flow
-  const [shippingAddress, setShippingAddress] =
-    useState<ShippingAddressT | null>(null);
-  const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>("idle");
-  const [message, setMessage] = useState("");
-  const [testMode, setTestMode] = useState(true);
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const paymentFormRef = useRef<PaymentFormRef>(null);
-
-  // Event handlers
-  const handleShippingSubmit = (data: ShippingAddressT) => {
-    setShippingAddress(data);
-  };
-
-  const handlePaymentSuccess = (paymentIntent: any) => {
-    setIsProcessingPayment(false);
-    setPaymentStatus("success");
-    setMessage(`Payment successful! Payment ID: ${paymentIntent.id}`);
-  };
-
-  const handlePaymentError = (errorMsg: string) => {
-    setIsProcessingPayment(false);
-    setPaymentStatus("error");
-    setMessage(errorMsg);
-  };
-
-  const handleCompleteOrder = () => {
-    if (!shippingAddress) {
-      return;
-    }
-    setIsProcessingPayment(true);
-    paymentFormRef.current?.submitPayment();
-  };
-
-  const handleCreateAnother = () => {
-    setPaymentStatus("idle");
-    setShippingAddress(null);
-    setMessage("");
-    setIsProcessingPayment(false);
-  };
-
-  const handleTryAgain = () => {
-    setPaymentStatus("idle");
-    setMessage("");
-    setIsProcessingPayment(false);
-  };
-
-  // Calculate order amounts with fallbacks
-  const subtotal = order?.subtotal || customization.price * customization.quantity;
-  const shippingCost = order?.shipping_cost || 5.99;
-  const discount = order?.discount_amount || 0;
-  const orderAmount = subtotal + shippingCost - discount;
-
-  // Build line items for payment
-  const printAreasArray = Object.entries(customization.print_areas)
-    .filter(([_, imageId]) => imageId)
-    .map(([position, imageId]) => ({
-      position,
-      image_id: imageId,
-    }));
-
-  const lineItems = [
-    {
-      product_id: customization.product_id || "",
-      variant_id: customization.variant_id,
-      quantity: customization.quantity,
-      print_areas: printAreasArray,
-      print_provider_id: customization.print_provider_id || 99,
-    },
-  ];
+    error,
+    customization,
+    shippingAddress,
+    paymentStatus,
+    message,
+    testMode,
+    isProcessingPayment,
+    triggerPayment,
+    setTestMode,
+    handleShippingSubmit,
+    handlePaymentSuccess,
+    handlePaymentError,
+    handleCompleteOrder,
+    handlePaymentSubmitComplete,
+    handleCreateAnother,
+    handleTryAgain,
+    subtotal,
+    shippingCost,
+    discount,
+    orderAmount,
+    lineItems,
+  } = useCheckout();
 
   // Loading state
   if (isLoading) {
@@ -191,7 +127,6 @@ export default function CheckoutPage() {
 
                 {shippingAddress ? (
                   <PaymentForm
-                    ref={paymentFormRef}
                     amount={orderAmount}
                     lineItems={lineItems}
                     shippingAddress={shippingAddress}
@@ -200,6 +135,8 @@ export default function CheckoutPage() {
                     onSuccess={handlePaymentSuccess}
                     onError={handlePaymentError}
                     hideButton={true}
+                    triggerSubmit={triggerPayment}
+                    onSubmitComplete={handlePaymentSubmitComplete}
                   />
                 ) : (
                   <div className="text-center py-8 text-gray-500">
@@ -245,5 +182,16 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get("orderId");
+
+  return (
+    <CheckoutProvider orderId={orderId}>
+      <CheckoutContent />
+    </CheckoutProvider>
   );
 }

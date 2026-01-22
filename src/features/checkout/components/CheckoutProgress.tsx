@@ -31,7 +31,7 @@ export const CheckoutProgress = ({
 }: Props) => {
   const getProgressWidth = () => {
     if (paymentStatus === "success") return "100%";
-    if (shippingAddress && !isProcessingPayment && paymentStatus !== "success") return "50%";
+    if (shippingAddress && !isProcessingPayment) return "50%";
     if (shippingAddress) return "25%";
     return "0%";
   };
