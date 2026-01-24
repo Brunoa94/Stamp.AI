@@ -1,14 +1,18 @@
+"use client";
+
 import {
   createContext,
   ReactNode,
-  useEffect,
+  useCallback,
+  useContext,
   useState,
   useSyncExternalStore,
 } from "react";
 import { CheckoutSubscriberContextState } from "./types";
 import { MOCK_STATE } from "./mockState";
-import { useContext } from "use-context-selector";
 import { useCheckoutData } from "../../hooks/useCheckoutData";
+import { useSyncExternalStoreWithSelector } from "use-sync-external-store/with-selector";
+import { shallow } from "zustand/shallow";
 
 function createCheckoutSubscriberStore(
   initialState: CheckoutSubscriberContextState,
@@ -24,7 +28,9 @@ function createCheckoutSubscriberStore(
     },
     subscribe: (listener: () => void) => {
       listeners.add(listener);
-      return () => listeners.delete(listener);
+      return () => {
+        listeners.delete(listener);
+      };
     },
   };
 }
@@ -46,8 +52,13 @@ export function useCheckoutSubscriberSelector<T>(
     throw new Error(
       "CheckoutSubscriberContext must be within CheckoutProvider",
     );
-  return useSyncExternalStore(store.subscribe, () =>
-    selector(store.getState()),
+
+  return useSyncExternalStoreWithSelector(
+    store.subscribe,
+    store.getState,
+    store.getState,
+    selector,
+    shallow, // prevents re-renders for equivalent objects
   );
 }
 
@@ -56,54 +67,7 @@ export function CheckoutSubscriberProvider({
   orderId,
 }: CheckoutProviderProps) {
   const [store] = useState(() => createCheckoutSubscriberStore(MOCK_STATE));
-  const { isLoading, error } = useCheckoutData(orderId, store);
-
-  useEffect(() => {
-    const state = store.getState();
-    const { order, customization } = state;
-
-    // Calculate order amounts with fallbacks
-    const subtotal =
-      order?.subtotal || customization.price * customization.quantity;
-    const shippingCost = order?.shipping_cost || 5.99;
-    const discount = order?.discount_amount || 0;
-    const orderAmount = subtotal + shippingCost - discount;
-
-    // Build line items for payment
-    const printAreasArray = Object.entries(customization.print_areas)
-      .filter(([_position, imageId]) => imageId)
-      .map(([position, imageId]) => ({
-        position,
-        image_id: imageId,
-      }));
-
-    const lineItems = [
-      {
-        product_id: customization.product_id || "",
-        variant_id: customization.variant_id,
-        quantity: customization.quantity,
-        print_areas: printAreasArray,
-        print_provider_id: customization.print_provider_id || 99,
-      },
-    ];
-
-    store.setState({
-      ...state,
-      isLoading,
-      error,
-      subtotal,
-      shippingCost,
-      discount,
-      orderAmount,
-      lineItems,
-    });
-  }, [
-    store.getState().order?.id,
-    store.getState().customization,
-    isLoading,
-    error,
-    store,
-  ]);
+  useCheckoutData(orderId, store);
 
   return (
     <CheckoutSubscriberContext.Provider value={store}>

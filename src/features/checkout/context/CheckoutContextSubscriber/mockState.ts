@@ -24,25 +24,13 @@ export const MOCK_STATE: CheckoutSubscriberContextState = {
     price: 0,
   },
 
-  // Checkout handlers state
+  // Checkout flow state
   shippingAddress: null,
   paymentStatus: "idle",
   message: "",
   testMode: false,
   isProcessingPayment: false,
   triggerPayment: false,
-
-  // State setters
-  setTestMode: () => {},
-
-  // Event handlers
-  handleShippingSubmit: () => {},
-  handlePaymentSuccess: () => {},
-  handlePaymentError: () => {},
-  handleCompleteOrder: () => {},
-  handlePaymentSubmitComplete: () => {},
-  handleCreateAnother: () => {},
-  handleTryAgain: () => {},
 
   // Computed values
   subtotal: 0,

@@ -16,25 +16,13 @@ export interface CheckoutSubscriberContextState {
   // Customization
   customization: ProductCustomizationT;
 
-  // Checkout handlers state
+  // Checkout flow state
   shippingAddress: ShippingAddressT | null;
   paymentStatus: "idle" | "success" | "error";
   message: string;
   testMode: boolean;
   isProcessingPayment: boolean;
   triggerPayment: boolean;
-
-  // State setters
-  setTestMode: (value: boolean) => void;
-
-  // Event handlers
-  handleShippingSubmit: (data: ShippingAddressT) => void;
-  handlePaymentSuccess: (paymentIntent: any) => void;
-  handlePaymentError: (error: string) => void;
-  handleCompleteOrder: () => void;
-  handlePaymentSubmitComplete: () => void;
-  handleCreateAnother: () => void;
-  handleTryAgain: () => void;
 
   // Computed values
   subtotal: number;
@@ -45,7 +33,10 @@ export interface CheckoutSubscriberContextState {
     product_id: string;
     variant_id: number;
     quantity: number;
-    print_areas: any[];
+    print_areas: Array<{
+      position: string;
+      image_id: string | undefined;
+    }>;
     print_provider_id: number;
   }>;
 }

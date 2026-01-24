@@ -11,9 +11,8 @@ export type {
   OrderItem,
 } from "./types";
 
-// Selector hooks
-export { useCheckoutState } from "./useCheckoutState";
-export { useCheckoutPayment } from "./useCheckoutPayment";
+// Granular selectors (recommended)
+export { CheckoutSelectors } from "./selectors";
 
 // Action hooks
-export { useCheckoutSubscriberActions } from "./useCheckoutSubscriberActions";
+export { useCheckoutSubscriberActions } from "./actions";

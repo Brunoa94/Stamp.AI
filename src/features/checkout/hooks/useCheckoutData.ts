@@ -15,9 +15,6 @@ interface UseCheckoutDataResult {
   error: Error | null;
 }
 
-// Stable empty array reference to prevent re-renders
-const EMPTY_ARRAY: any[] = [];
-
 /**
  * Custom hook to fetch all checkout-related data
  * Handles loading states and error aggregation
@@ -30,14 +27,20 @@ export function useCheckoutData(orderId: string | null, store: CheckoutStore): U
   } = useOrder(orderId)
 
   useEffect(() => {
-    if(order) store.setState({...store.getState(), order})
+    if(order) {
+      const currentState = store.getState();
+      store.setState({...currentState, order});
+    }
   }, [order?.id, store]);
 
   const { data: orderItems, isLoading: isLoadingItems } =
     useOrderItems(orderId);
 
   useEffect(() => {
-    if(orderItems) store.setState({...store.getState(), orderItems})
+    if(orderItems) {
+      const currentState = store.getState();
+      store.setState({...currentState, orderItems});
+    }
   }, [orderItems?.length, store]);
 
   const {
@@ -47,13 +50,14 @@ export function useCheckoutData(orderId: string | null, store: CheckoutStore): U
   } = useCustomProduct(order?.product_id)
 
   useEffect(() => {
-    if(customProduct) store.setState({...store.getState(), customProduct})
+    if(customProduct) {
+      const currentState = store.getState();
+      store.setState({...currentState, customProduct});
+    }
   }, [customProduct?.id, store]);
 
   const isLoading = isLoadingOrder || isLoadingItems || isLoadingProduct;
   const error = orderError || productError || null;
-
-  const stableOrderItems = orderItems || EMPTY_ARRAY;
 
   return {
     isLoading,

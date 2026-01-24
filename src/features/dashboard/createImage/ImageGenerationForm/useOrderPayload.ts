@@ -57,7 +57,7 @@ export function useOrderPayload() {
       customer_name: customerName,
       user_id: user.id,
 
-      // Store Printify product ID
+      // Store Printify product ID (orders.product_id is TEXT type)
       product_id: productId || null,
 
       // Store minimal metadata in internal_notes
@@ -75,8 +75,9 @@ export function useOrderPayload() {
     };
 
     const orderItem: Omit<CreateOrderItemT, 'order_id'> = {
-      // Product information - store Printify product ID
-      product_id: productId || null,
+      // Product information - Printify product ID is stored in design_config
+      // product_id references internal products table (UUID), so set to null for Printify products
+      product_id: null,
       product_name: `${selectedTshirt.name} - Custom Design`,
       variant_name: selectedTshirt.name,
       variant_id: null, // Will be set during checkout when variant is selected

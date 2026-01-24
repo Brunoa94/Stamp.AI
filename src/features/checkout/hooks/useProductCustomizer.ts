@@ -61,6 +61,8 @@ export function useProductCustomizer() {
     if (!selectedBlueprint) return;
 
     async function fetchVariants() {
+      if (!selectedBlueprint) return; // Additional check for TypeScript
+
       setLoadingVariants(true);
       setSelectedColor(null);
       setSelectedSize(null);

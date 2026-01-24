@@ -2,6 +2,11 @@ import { useContext } from "react";
 import { CheckoutSubscriberContext } from "./CheckoutContextSubscriber";
 import { ShippingAddressT } from "@/schemas/checkout";
 
+interface PaymentIntentI {
+  id: string;
+  [key: string]: unknown;
+}
+
 /**
  * Hook for checkout action handlers using store pattern
  * Components using this hook re-render when actions are called
@@ -31,7 +36,7 @@ export function useCheckoutSubscriberActions() {
     /**
      * Handle successful payment processing
      */
-    handlePaymentSuccess: (paymentIntent: any) => {
+    handlePaymentSuccess: (paymentIntent: PaymentIntentI) => {
       const state = store.getState();
       store.setState({
         ...state,
