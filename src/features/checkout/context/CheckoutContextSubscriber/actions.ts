@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { CheckoutSubscriberContext } from "./CheckoutContextSubscriber";
 import { ShippingAddressT } from "@/schemas/checkout";
+import { Order } from "./types";
 
 interface PaymentIntentI {
   id: string;
@@ -22,6 +23,29 @@ export function useCheckoutSubscriberActions() {
     );
 
   return {
+/**
+     * Handle shipping address form submission
+     */
+    handleUpdateShippingDetails: (data: Order) => {
+      const state = store.getState();
+      const {subtotal, shipping_cost, discount_amount} = data;
+      let orderAmount = 0;
+
+      if(subtotal && shipping_cost && discount_amount){
+        orderAmount = subtotal + shipping_cost - discount_amount;
+
+        store.setState({
+          ...state,
+          subtotal,
+          shippingCost: data.shipping_cost ?? 0,
+          discount: data.discount_amount ?? 0,
+          orderAmount
+        });
+
+        return
+      }
+    },
+
     /**
      * Handle shipping address form submission
      */

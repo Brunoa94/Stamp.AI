@@ -10,6 +10,55 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
+/**
+ * Verify authentication - accepts both user JWT tokens and service role key
+ * Returns user info if available, or service identifier if using service role
+ */
+async function verifyAuth(authHeader: string | null): Promise<{ userId: string; userEmail: string }> {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    throw ErrorCodes.INVALID_TOKEN()
+  }
+
+  const token = authHeader.replace('Bearer ', '')
+  const supabaseUrl = validateEnvVars.supabaseUrl()
+  const supabaseAnonKey = validateEnvVars.supabaseAnonKey()
+  const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+
+  // Check if it's the service role key (server-to-server calls)
+  if (serviceRoleKey && token === serviceRoleKey) {
+    console.log('Authenticated with service role key')
+    return {
+      userId: 'service-role',
+      userEmail: 'service@system.internal',
+    }
+  }
+
+  // Otherwise, validate as user JWT token
+  const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'apikey': supabaseAnonKey,
+    },
+  })
+
+  if (!response.ok) {
+    console.error('Auth verification failed:', response.status, response.statusText)
+    throw ErrorCodes.INVALID_TOKEN()
+  }
+
+  const user = await response.json()
+
+  if (!user || !user.id) {
+    throw ErrorCodes.INVALID_TOKEN()
+  }
+
+  console.log('Authenticated user:', user.id)
+  return {
+    userId: user.id,
+    userEmail: user.email || '',
+  }
+}
+
 // Test data for when stripe trigger sends empty data
 const TEST_SHIPPING_ADDRESS = {
   first_name: 'Test',
@@ -31,14 +80,21 @@ serve(async (req) => {
   }
 
   try {
-    const { 
-      line_items, 
+    // Verify authentication (accepts user JWT or service role key)
+    const authHeader = req.headers.get('authorization')
+    const { userId, userEmail } = await verifyAuth(authHeader)
+
+    console.log('Authenticated as:', userId)
+
+    const {
+      line_items,
       shipping_method,
       shipping_address,
       address_to,
       is_test = true,
       metadata,
       use_sample_order = false, // Flag to create a sample order for testing
+      auto_cancel = false, // Flag to automatically cancel order after creation (for testing)
     } = await req.json()
 
     // Use shipping_address if address_to is not provided
@@ -49,6 +105,7 @@ serve(async (req) => {
     console.log('Shipping address:', JSON.stringify(finalAddressTo, null, 2))
     console.log('Is test:', is_test)
     console.log('Use sample order:', use_sample_order)
+    console.log('Auto cancel:', auto_cancel)
     console.log('Metadata:', JSON.stringify(metadata, null, 2))
 
     // Validate Printify configuration
@@ -222,8 +279,43 @@ serve(async (req) => {
 
     console.log(`✅ ${is_test ? 'TEST' : 'PRODUCTION'} order created:`, data.id)
 
+    // Auto-cancel order if requested (useful for testing)
+    let cancelResult = null
+    if (auto_cancel) {
+      console.log('🔄 Auto-canceling order:', data.id)
+      try {
+        const cancelResponse = await fetch(
+          `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/orders/${data.id}/cancel.json`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${PRINTIFY_API_TOKEN}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        )
+
+        const cancelData = await cancelResponse.json()
+
+        if (cancelResponse.ok) {
+          console.log('✅ Order auto-canceled successfully')
+          cancelResult = { success: true, canceled: true, status: cancelData.status }
+        } else {
+          console.warn('⚠️ Failed to auto-cancel order:', cancelData)
+          cancelResult = { success: false, error: cancelData.errors?.reason || 'Unknown error' }
+        }
+      } catch (cancelError) {
+        console.error('❌ Error auto-canceling order:', cancelError)
+        cancelResult = { success: false, error: cancelError.message }
+      }
+    }
+
     return new Response(
-      JSON.stringify({ success: true, order: data }),
+      JSON.stringify({
+        success: true,
+        order: data,
+        ...(cancelResult && { cancel_result: cancelResult })
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {

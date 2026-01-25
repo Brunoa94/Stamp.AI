@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
 import {
   PaymentSuccess,
   PaymentError,
@@ -77,8 +78,10 @@ export default function CheckoutPage() {
   const orderId = searchParams.get("orderId");
 
   return (
-    <CheckoutSubscriberProvider orderId={orderId}>
-      <CheckoutContent />
-    </CheckoutSubscriberProvider>
+    <ProtectedRoute fallback={<CheckoutLoading />}>
+      <CheckoutSubscriberProvider orderId={orderId}>
+        <CheckoutContent />
+      </CheckoutSubscriberProvider>
+    </ProtectedRoute>
   );
 }

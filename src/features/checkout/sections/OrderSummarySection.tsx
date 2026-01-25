@@ -8,14 +8,29 @@ import {
 } from "@/features/checkout/context";
 
 export function OrderSummarySection() {
-  const customization = CheckoutSelectors.customization();
   const shippingAddress = CheckoutSelectors.shippingAddress();
   const subtotal = CheckoutSelectors.subtotal();
   const shippingCost = CheckoutSelectors.shippingCost();
   const discount = CheckoutSelectors.discount();
   const isProcessingPayment = CheckoutSelectors.isProcessingPayment();
+  const customization = CheckoutSelectors.customization();
 
   const { handleCompleteOrder } = useCheckoutSubscriberActions();
+
+  console.log('🔍 OrderSummarySection render:', {
+    has_customization: !!customization,
+    subtotal,
+    shippingCost,
+    discount,
+  });
+
+  // Don't render if we don't have the required data
+  if (!customization) {
+    console.log('⚠️ OrderSummarySection: No customization, returning empty');
+    return <></>;
+  }
+
+  console.log('✅ OrderSummarySection: Rendering order summary');
 
   return (
     <aside>

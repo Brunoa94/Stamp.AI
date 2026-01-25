@@ -1,23 +1,39 @@
 "use client";
 
 import PaymentForm from "@/features/checkout/paymentForm/PaymentForm";
-import { CheckoutSelectors, useCheckoutSubscriberActions } from "@/features/checkout/context";
+import {
+  CheckoutSelectors,
+  useCheckoutSubscriberActions,
+} from "@/features/checkout/context";
 import { componentThemes } from "@/theme/components";
 
 export function PaymentSection() {
   const shippingAddress = CheckoutSelectors.shippingAddress();
   const testMode = CheckoutSelectors.testMode();
   const triggerPayment = CheckoutSelectors.triggerPayment();
-  const customization = CheckoutSelectors.customization();
   const orderAmount = CheckoutSelectors.orderAmount();
+  const customization = CheckoutSelectors.customization();
   const lineItems = CheckoutSelectors.lineItems();
-
   const {
     setTestMode,
     handlePaymentSuccess,
     handlePaymentError,
     handlePaymentSubmitComplete,
   } = useCheckoutSubscriberActions();
+
+  console.log('🔍 PaymentSection render:', {
+    has_customization: !!customization,
+    has_lineItems: !!lineItems,
+    orderAmount,
+  });
+
+  // Don't render if we don't have the required data
+  if (!customization || !lineItems) {
+    console.log('⚠️ PaymentSection: Missing customization or lineItems, returning empty');
+    return <></>;
+  }
+
+  console.log('✅ PaymentSection: Rendering payment form');
 
   return (
     <section className={componentThemes.card.base}>

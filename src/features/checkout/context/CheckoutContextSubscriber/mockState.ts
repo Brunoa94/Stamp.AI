@@ -37,5 +37,5 @@ export const MOCK_STATE: CheckoutSubscriberContextState = {
   shippingCost: 0,
   discount: 0,
   orderAmount: 0,
-  lineItems: [],
+  lineItems: null,
 };

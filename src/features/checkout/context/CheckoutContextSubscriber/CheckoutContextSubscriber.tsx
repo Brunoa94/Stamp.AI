@@ -24,10 +24,12 @@ function createCheckoutSubscriberStore(
     getState: () => state,
     setState: (newState: CheckoutSubscriberContextState) => {
       state = newState;
+
       listeners.forEach((listener) => listener());
     },
     subscribe: (listener: () => void) => {
       listeners.add(listener);
+
       return () => {
         listeners.delete(listener);
       };
@@ -48,6 +50,7 @@ export function useCheckoutSubscriberSelector<T>(
   selector: (state: CheckoutSubscriberContextState) => T,
 ): T {
   const store = useContext(CheckoutSubscriberContext);
+
   if (!store)
     throw new Error(
       "CheckoutSubscriberContext must be within CheckoutProvider",

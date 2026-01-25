@@ -2,11 +2,49 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import Stripe from 'https://esm.sh/stripe@14.11.0?target=deno'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
-import { createServiceClient } from "../_shared/supabase.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, stripe-signature',
+}
+
+/**
+ * Helper to call Supabase REST API directly without the client library
+ */
+async function supabaseRest(
+  endpoint: string,
+  method: string,
+  body?: any,
+  options?: { prefer?: string }
+) {
+  const supabaseUrl = validateEnvVars.supabaseUrl()
+  const serviceKey = validateEnvVars.supabaseServiceKey()
+
+  const headers: Record<string, string> = {
+    'apikey': serviceKey,
+    'Authorization': `Bearer ${serviceKey}`,
+    'Content-Type': 'application/json',
+  }
+
+  if (options?.prefer) {
+    headers['Prefer'] = options.prefer
+  }
+
+  const response = await fetch(`${supabaseUrl}/rest/v1/${endpoint}`, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined,
+  })
+
+  // Handle empty responses (204 No Content, or empty body)
+  const text = await response.text()
+  const data = text ? JSON.parse(text) : null
+
+  return {
+    data,
+    error: response.ok ? null : data,
+    status: response.status
+  }
 }
 
 serve(async (req) => {
@@ -29,8 +67,7 @@ serve(async (req) => {
   })
 
   const cryptoProvider = Stripe.createSubtleCryptoProvider()
-  const supabase = createServiceClient()
-  
+
   try {
     const webhookSecret = validateEnvVars.stripeWebhookSecret()
 
@@ -54,10 +91,11 @@ serve(async (req) => {
         console.log('Handling payment_intent.succeeded')
         const paymentIntent = event.data.object
         
-        // Save payment to database
-        const result = await supabase
-          .from('payment_transactions')
-          .upsert({
+        // Save payment to database using REST API
+        const result = await supabaseRest(
+          'payment_transactions',
+          'POST',
+          {
             stripe_payment_intent_id: paymentIntent.id,
             stripe_customer_id: paymentIntent.customer,
             amount: paymentIntent.amount / 100,
@@ -66,10 +104,10 @@ serve(async (req) => {
             payment_method_type: paymentIntent.payment_method_types?.[0],
             metadata: paymentIntent.metadata,
             updated_at: new Date().toISOString()
-          }, {
-            onConflict: 'stripe_payment_intent_id'
-          })
-        
+          },
+          { prefer: 'resolution=merge-duplicates' }
+        )
+
         console.log('Upsert result:', result)
         if (result.error) {
           console.error('Upsert error:', result.error)
@@ -105,6 +143,7 @@ serve(async (req) => {
             },
             body: JSON.stringify({
               is_test: true,
+              auto_cancel: true, // Automatically cancel test orders to avoid accumulation
               use_sample_order: useSampleOrder, // Create sample order when testing
               line_items: lineItems,
               shipping_address: shippingAddress,
@@ -129,10 +168,11 @@ serve(async (req) => {
       case 'payment_intent.payment_failed': {
         console.log('Handling payment_intent.payment_failed')
         const paymentIntent = event.data.object
-        
-        const result = await supabase
-          .from('payment_transactions')
-          .upsert({
+
+        const result = await supabaseRest(
+          'payment_transactions',
+          'POST',
+          {
             stripe_payment_intent_id: paymentIntent.id,
             stripe_customer_id: paymentIntent.customer,
             amount: paymentIntent.amount / 100,
@@ -142,10 +182,10 @@ serve(async (req) => {
             error_message: paymentIntent.last_payment_error?.message,
             metadata: paymentIntent.metadata,
             updated_at: new Date().toISOString()
-          }, {
-            onConflict: 'stripe_payment_intent_id'
-          })
-        
+          },
+          { prefer: 'resolution=merge-duplicates' }
+        )
+
         console.log('Upsert result:', result)
         if (result.error) console.error('Upsert error:', result.error)
         break
@@ -154,16 +194,17 @@ serve(async (req) => {
       case 'charge.succeeded': {
         console.log('Handling charge.succeeded')
         const charge = event.data.object
-        
-        const result = await supabase
-          .from('payment_transactions')
-          .update({
+
+        const result = await supabaseRest(
+          `payment_transactions?stripe_payment_intent_id=eq.${charge.payment_intent}`,
+          'PATCH',
+          {
             stripe_charge_id: charge.id,
             payment_method_details: charge.payment_method_details,
             updated_at: new Date().toISOString()
-          })
-          .eq('stripe_payment_intent_id', charge.payment_intent)
-        
+          }
+        )
+
         console.log('Update result:', result)
         if (result.error) console.error('Update error:', result.error)
         break
@@ -172,10 +213,11 @@ serve(async (req) => {
       case 'checkout.session.completed': {
         console.log('Handling checkout.session.completed')
         const session = event.data.object
-        
-        const result = await supabase
-          .from('payment_transactions')
-          .insert({
+
+        const result = await supabaseRest(
+          'payment_transactions',
+          'POST',
+          {
             user_id: session.metadata?.user_id,
             order_id: session.metadata?.order_id,
             stripe_payment_intent_id: session.payment_intent,
@@ -184,8 +226,9 @@ serve(async (req) => {
             currency: session.currency,
             status: 'processing',
             metadata: session.metadata,
-          })
-        
+          }
+        )
+
         console.log('Insert result:', result)
         if (result.error) console.error('Insert error:', result.error)
         break

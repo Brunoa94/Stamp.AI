@@ -1,5 +1,4 @@
 import { useCheckoutSubscriberSelector } from "./CheckoutContextSubscriber";
-import { computeCheckoutState } from "./computeState";
 
 export const CheckoutSelectors = {
   // Data state
@@ -10,16 +9,8 @@ export const CheckoutSelectors = {
   isLoading: () => useCheckoutSubscriberSelector((state) => state.isLoading),
   error: () => useCheckoutSubscriberSelector((state) => state.error),
 
-  // Customization - computed on-the-fly
-  customization: () =>
-    useCheckoutSubscriberSelector((state) => {
-      const computed = computeCheckoutState(
-        state,
-        state.isLoading,
-        state.error,
-      );
-      return computed.customization || state.customization;
-    }),
+  // Customization
+  customization: () => useCheckoutSubscriberSelector((state) => state.customization),
 
   // Checkout flow state
   shippingAddress: () =>
@@ -32,51 +23,12 @@ export const CheckoutSelectors = {
     useCheckoutSubscriberSelector((state) => state.isProcessingPayment),
   triggerPayment: () =>
     useCheckoutSubscriberSelector((state) => state.triggerPayment),
-
-  // Computed values - computed on-the-fly
   subtotal: () =>
-    useCheckoutSubscriberSelector((state) => {
-      const computed = computeCheckoutState(
-        state,
-        state.isLoading,
-        state.error,
-      );
-      return computed.subtotal || 0;
-    }),
+    useCheckoutSubscriberSelector((state) => state.subtotal),
   shippingCost: () =>
-    useCheckoutSubscriberSelector((state) => {
-      const computed = computeCheckoutState(
-        state,
-        state.isLoading,
-        state.error,
-      );
-      return computed.shippingCost || 0;
-    }),
+    useCheckoutSubscriberSelector((state) => state.shippingCost),
   discount: () =>
-    useCheckoutSubscriberSelector((state) => {
-      const computed = computeCheckoutState(
-        state,
-        state.isLoading,
-        state.error,
-      );
-      return computed.discount || 0;
-    }),
-  orderAmount: () =>
-    useCheckoutSubscriberSelector((state) => {
-      const computed = computeCheckoutState(
-        state,
-        state.isLoading,
-        state.error,
-      );
-      return computed.orderAmount || 0;
-    }),
-  lineItems: () =>
-    useCheckoutSubscriberSelector((state) => {
-      const computed = computeCheckoutState(
-        state,
-        state.isLoading,
-        state.error,
-      );
-      return computed.lineItems || [];
-    }),
+    useCheckoutSubscriberSelector((state) => state.discount),
+  orderAmount: () => useCheckoutSubscriberSelector((state) => state.orderAmount),
+  lineItems: () => useCheckoutSubscriberSelector((state) => state.lineItems)
 } as const;

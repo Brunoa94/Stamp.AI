@@ -33,10 +33,7 @@ export interface CheckoutSubscriberContextState {
     product_id: string;
     variant_id: number;
     quantity: number;
-    print_areas: Array<{
-      position: string;
-      image_id: string | undefined;
-    }>;
+    print_areas: Record<string, any[]>;
     print_provider_id: number;
-  }>;
+  }> | null;
 }

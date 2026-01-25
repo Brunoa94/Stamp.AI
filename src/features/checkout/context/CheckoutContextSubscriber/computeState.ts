@@ -1,60 +1,15 @@
-import { CheckoutSubscriberContextState } from "./types";
+import { CheckoutSubscriberContextState, Order, OrderItem } from "./types";
 import { ProductCustomizationT } from "@/schemas/checkout";
-
-/**
- * Computes derived state for checkout
- * Builds customization from fetched data and calculates order amounts
- */
-export function computeCheckoutState(
-  currentState: CheckoutSubscriberContextState,
-  isLoading: boolean,
-  error: Error | null
-): Partial<CheckoutSubscriberContextState> {
-  const { order, orderItems, customProduct } = currentState;
-  let customization = currentState.customization;
-
-  // Only rebuild customization if we have real data
-  if (!isLoading && (order || orderItems.length > 0 || customProduct)) {
-    customization = buildCustomization(
-      order,
-      orderItems,
-      customProduct,
-      currentState.customization
-    );
-  }
-
-  // Calculate order amounts with fallbacks
-  const subtotal =
-    order?.subtotal || customization.price * customization.quantity;
-  const shippingCost = order?.shipping_cost || 5.99;
-  const discount = order?.discount_amount || 0;
-  const orderAmount = subtotal + shippingCost - discount;
-
-  // Build line items for payment
-  const lineItems = buildLineItems(customization);
-
-  return {
-    customization,
-    isLoading,
-    error,
-    subtotal,
-    shippingCost,
-    discount,
-    orderAmount,
-    lineItems,
-  };
-}
-
+import { CustomProductT } from "@/types/printify";
 /**
  * Builds product customization from order data
  * Priority: orderItems + customProduct > order + customProduct > existing customization
  */
-function buildCustomization(
-  order: any,
-  orderItems: any[],
-  customProduct: any,
-  fallbackCustomization: ProductCustomizationT
-): ProductCustomizationT {
+export function buildCustomization(
+  order: Order | null,
+  orderItems: OrderItem[] | null,
+  customProduct: CustomProductT | null,
+): ProductCustomizationT | null {
   // Priority 1: Build from order items + Printify data
   if (orderItems && orderItems.length > 0) {
     return buildCustomizationFromOrderItem(orderItems[0], customProduct);
@@ -66,7 +21,7 @@ function buildCustomization(
   }
 
   // Priority 3: Return existing customization (unchanged)
-  return fallbackCustomization;
+  return null;
 }
 
 /**
@@ -78,9 +33,24 @@ function buildCustomizationFromOrderItem(
 ): ProductCustomizationT {
   const designConfig = orderItem.design_config as any;
 
-  const variantId = orderItem.variant_id
-    ? parseInt(orderItem.variant_id)
-    : 0;
+  // Get product_id from design_config.printify_product_id if orderItem.product_id is null
+  const productId = orderItem.product_id || designConfig?.printify_product_id || "";
+
+  // Get variant_id - if null, try to get the first enabled variant from customProduct
+  let variantId = orderItem.variant_id ? parseInt(orderItem.variant_id) : 0;
+
+  // If variantId is still 0, try to get it from customProduct
+  if (variantId === 0 && customProduct?.variants?.length > 0) {
+    const firstEnabledVariant = customProduct.variants.find((v: any) => v.is_enabled);
+    variantId = firstEnabledVariant?.id || customProduct.variants[0]?.id || 0;
+
+    if (variantId > 0) {
+      console.log("✅ Auto-selected variant_id from customProduct:", {
+        variant_id: variantId,
+        is_enabled: !!firstEnabledVariant,
+      });
+    }
+  }
 
   const matchingVariant = customProduct?.variants.find(
     (v: any) => v.id === variantId
@@ -88,19 +58,21 @@ function buildCustomizationFromOrderItem(
 
   const variantPriceInDollars = matchingVariant
     ? matchingVariant.price / 100
-    : orderItem.unit_price;
+    : orderItem.unit_price || 25.0;
 
   const previewUrl =
-    customProduct?.images?.[0]?.src || orderItem.custom_image_url;
+    customProduct?.images?.[0]?.src ||
+    designConfig?.product_image_url ||
+    orderItem.custom_image_url;
 
   return {
-    product_id: orderItem.product_id || "",
+    product_id: productId,
     variant_id: variantId,
-    quantity: orderItem.quantity,
+    quantity: orderItem.quantity || 1,
     print_areas: {
       front: designConfig?.generated_image_url || "",
     },
-    product_title: customProduct?.title || orderItem.product_name,
+    product_title: customProduct?.title || orderItem.product_name || "Custom Product",
     variant_title:
       matchingVariant?.title || orderItem.variant_name || "Custom Design",
     price: variantPriceInDollars,
@@ -161,21 +133,67 @@ function buildCustomizationFromOrder(
 
 /**
  * Builds line items for payment from customization
+ *
+ * Two scenarios:
+ * 1. Ordering existing product: use product_id, variant_id, quantity only
+ * 2. Creating product on-the-fly: use blueprint_id, print_provider_id, variant_id, quantity, and print_areas
+ *
+ * For orders with on-the-fly product creation, print_areas uses the advanced format:
+ * {
+ *   "front": [{ "src": "url", "scale": 1, "x": 0.5, "y": 0.5, "angle": 0 }]
+ * }
  */
-function buildLineItems(customization: ProductCustomizationT) {
-  const printAreasArray = Object.entries(customization.print_areas)
-    .filter(([, imageId]) => imageId)
-    .map(([position, imageId]) => ({
-      position,
-      image_id: imageId,
-    }));
+export function buildLineItems(customization: ProductCustomizationT | null) {
+  if(!customization) return null;
+
+  // If variant_id is 0 but we have a product_id, we're still loading the product data
+  // Return null for now - this will be recomputed once customProduct is loaded
+  if (customization.variant_id === 0) {
+    return null;
+  }
+
+  // Scenario 1: Ordering existing product
+  // We have a valid product_id AND variant_id
+  // DON'T include print_areas, print_provider_id, or blueprint_id
+  if (
+    customization.product_id &&
+    customization.product_id.trim() !== ""
+  ) {
+    return [
+      {
+        product_id: customization.product_id,
+        variant_id: customization.variant_id,
+        quantity: customization.quantity,
+        print_areas: {},
+        print_provider_id: 0 // Not used for existing products, but required by type
+      },
+    ];
+  }
+
+  // Scenario 2: Creating product on-the-fly
+  // Build print_areas in Printify's order format
+  const printAreas: Record<string, any[]> = {};
+
+  Object.entries(customization.print_areas).forEach(([position, imageId]) => {
+    if (imageId) {
+      printAreas[position] = [
+        {
+          src: imageId,
+          scale: 1,
+          x: 0.5,
+          y: 0.5,
+          angle: 0,
+        },
+      ];
+    }
+  });
 
   return [
     {
-      product_id: customization.product_id || "",
+      product_id: "", // Not used for on-the-fly products
       variant_id: customization.variant_id,
       quantity: customization.quantity,
-      print_areas: printAreasArray,
+      print_areas: printAreas,
       print_provider_id: customization.print_provider_id || 99,
     },
   ];
