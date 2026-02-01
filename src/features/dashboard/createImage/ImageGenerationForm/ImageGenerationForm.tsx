@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useImageGeneration } from "./useImageGeneration";
 import useImageFormNavigation from "./useImageFormNavigation";
 import { useImageGenerationForm } from "./useImageGenerationForm";
-import { useCreateCustomProduct } from "./useCreateCustomProduct";
+import { useCreateProductAndAddToCart } from "./useCreateCustomProduct";
 import { IImageGenerationForm } from "@/schemas/imageGenerationSchema";
 import { componentThemes } from "@/theme/components";
 import ProcessingSection from "../ProcessingSection/ProcessingSection";
@@ -15,9 +15,7 @@ import ImageUploadField from "@/features/formFields/imageUploadField/ImageUpload
 import { TshirtType } from "@/features/dashboard/selectTshirt";
 import CreatedProductDisplay from "../components/CreatedProductDisplay";
 import ProductCustomizerSection from "../components/ProductCustomizerSection";
-import useCreateOrder from "./useCreateOrder";
 import { useUser } from "@/hooks/useAuth";
-import { useOrderPayload } from "./useOrderPayload";
 
 interface ImageGenerationFormProps {}
 
@@ -25,18 +23,16 @@ const ImageGenerationForm = ({}: ImageGenerationFormProps) => {
   const [selectedTshirt, setSelectedTshirt] = useState<TshirtType | null>(null);
   const [showCustomizerSection, setShowCustomizerSection] = useState(false);
   const { data: user } = useUser();
+
   const {
     mutate: generateImage,
     isPending: isProcessing,
     data: generatedResult,
     error,
   } = useImageGeneration();
-  const {
-    mutate: createProduct,
-    isPending: isCreatingProduct,
-    isSuccess: isProductCreated,
-    data: createdProduct,
-  } = useCreateCustomProduct();
+
+  const { createAndAddToCart, isCreatingProduct, createdProduct } =
+    useCreateProductAndAddToCart();
 
   const {
     processingRef,
@@ -50,12 +46,7 @@ const ImageGenerationForm = ({}: ImageGenerationFormProps) => {
     generatedResult,
     createdProduct,
   });
-  const {
-    mutateAsync: createOrder,
-    isSuccess: isOrderCreated,
-    data: createdOrder,
-  } = useCreateOrder();
-  const orderPayload = useOrderPayload();
+
   const { form, handleRemoveImage } = useImageGenerationForm();
   const {
     handleSubmit,
@@ -86,38 +77,15 @@ const ImageGenerationForm = ({}: ImageGenerationFormProps) => {
       return;
     }
 
-    // Step 1: Create product in Printify
-    createProduct({
-      blueprint_id: selectedTshirt.blueprint_id,
-      print_provider_id: selectedTshirt.print_provider_id,
-      image_url: generatedResult.imageUrl,
-      title: `${selectedTshirt.name} - Custom Design`,
-      description: `Custom designed ${selectedTshirt.name} with your unique artwork`,
-      user_id: user.id,
-      customer_email: user.email,
+    createAndAddToCart({
+      blueprintId: selectedTshirt.blueprint_id,
+      printProviderId: selectedTshirt.print_provider_id,
+      imageUrl: generatedResult.imageUrl,
+      tshirtName: selectedTshirt.name,
+      userId: user.id,
+      userEmail: user.email,
     });
   };
-
-  // Step 2: Create order after product is successfully created
-  useEffect(() => {
-    if (
-      isProductCreated &&
-      createdProduct &&
-      selectedTshirt &&
-      user &&
-      generatedResult
-    ) {
-      const payload = orderPayload.create({
-        user,
-        selectedTshirt,
-        generatedImageUrl: generatedResult.imageUrl,
-        productImageUrl: createdProduct.images?.[0]?.src,
-        productId: createdProduct.id,
-      });
-
-      createOrder(payload);
-    }
-  }, [isProductCreated]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-12">
@@ -177,7 +145,7 @@ const ImageGenerationForm = ({}: ImageGenerationFormProps) => {
             <CreatedProductDisplay
               product={createdProduct}
               generatedImageUrl={generatedResult?.imageUrl}
-              orderId={createdOrder?.id}
+              cartMode={true}
             />
           </div>
         </section>

@@ -1,6 +1,7 @@
 import { CreatedProduct } from "@/services/customProductService";
 import { Button } from "@/features/ui/button";
 import { theme, CreditCardIcon, ArrowRightIcon } from "@/theme";
+import { ShoppingCartIcon } from "lucide-react";
 import { StatusHeader } from "@/features/ui/status-header";
 import clsx from "clsx";
 import Image from "next/image";
@@ -10,6 +11,7 @@ interface Props {
   product: CreatedProduct;
   generatedImageUrl?: string;
   orderId?: string;
+  cartMode?: boolean;
 }
 
 const CreatedProductDisplay = ({ product, generatedImageUrl, orderId }: Props) => {
@@ -35,15 +37,24 @@ const CreatedProductDisplay = ({ product, generatedImageUrl, orderId }: Props) =
         </div>
       )}
 
-      {/* Go to Payment Button */}
-      <div className="flex justify-center mt-6">
+      {/* Go to Cart Button */}
+      <div className="flex justify-center mt-6 gap-4">
+        <Button
+          asChild
+          variant="secondary"
+          className="px-8"
+        >
+          <Link href="/products">
+            Continue Shopping
+          </Link>
+        </Button>
         <Button
           asChild
           className={clsx(theme.button.submit.base, theme.button.submit.enabled, "px-8")}
         >
-          <Link href={orderId ? `/checkout?orderId=${orderId}` : "/checkout"}>
-            <CreditCardIcon className="w-5 h-5 text-yellow-300" />
-            Go to Payment
+          <Link href="/cart">
+            <ShoppingCartIcon className="w-5 h-5 text-white" />
+            Go to Cart
             <ArrowRightIcon className="w-5 h-5 text-green-300" />
           </Link>
         </Button>
