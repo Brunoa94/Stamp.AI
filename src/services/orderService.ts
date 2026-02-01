@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
-import { CreateOrderT, OrderT, UpdateOrderT } from "../types/order";
+import { CreateOrderT, OrderT, UpdateOrderT, OrderWithItemsT } from "../types/order";
+import { OrderWithItemsSchema, OrderSchema } from "@/schemas/order";
+import { z } from "zod";
 
 export class OrderService {
   private static getSupabase() {
@@ -9,13 +11,16 @@ export class OrderService {
   /**
    * Get all orders for a specific user
    */
-  static async getOrders(userId?: string): Promise<OrderT[]> {
+  static async getOrders(userId?: string): Promise<OrderWithItemsT[]> {
     try {
       const supabase = this.getSupabase();
 
       let query = supabase
         .from('orders')
-        .select('*')
+        .select(`
+          *,
+          order_items (*)
+        `)
         .order('created_at', { ascending: false });
 
       // Filter by user if userId is provided
@@ -34,8 +39,14 @@ export class OrderService {
         throw new Error('No data returned from query');
       }
 
-      return data;
+      // Validate response with Zod schema
+      const validatedData = z.array(OrderWithItemsSchema).parse(data);
+
+      return validatedData as OrderWithItemsT[];
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new Error(`Order validation failed: ${error.message}`);
+      }
       if (error instanceof Error) {
         throw new Error(`Orders fetch failed: ${error.message}`);
       }
@@ -46,13 +57,16 @@ export class OrderService {
   /**
    * Get a single order by ID
    */
-  static async getOrder(orderId: string): Promise<OrderT> {
+  static async getOrder(orderId: string): Promise<OrderWithItemsT> {
     try {
       const supabase = this.getSupabase();
 
       const { data, error } = await supabase
         .from('orders')
-        .select('*')
+        .select(`
+          *,
+          order_items (*)
+        `)
         .eq('id', orderId)
         .single();
 
@@ -65,8 +79,14 @@ export class OrderService {
         throw new Error(`Order not found with id: ${orderId}`);
       }
 
-      return data;
+      // Validate response with Zod schema
+      const validatedData = OrderWithItemsSchema.parse(data);
+
+      return validatedData as OrderWithItemsT;
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new Error(`Order validation failed: ${error.message}`);
+      }
       if (error instanceof Error) {
         throw new Error(`Order fetch failed: ${error.message}`);
       }
@@ -77,13 +97,16 @@ export class OrderService {
   /**
    * Get orders by order number
    */
-  static async getOrderByNumber(orderNumber: string): Promise<OrderT> {
+  static async getOrderByNumber(orderNumber: string): Promise<OrderWithItemsT> {
     try {
       const supabase = this.getSupabase();
 
       const { data, error } = await supabase
         .from('orders')
-        .select('*')
+        .select(`
+          *,
+          order_items (*)
+        `)
         .eq('order_number', orderNumber)
         .single();
 
@@ -96,8 +119,14 @@ export class OrderService {
         throw new Error(`Order not found with number: ${orderNumber}`);
       }
 
-      return data;
+      // Validate response with Zod schema
+      const validatedData = OrderWithItemsSchema.parse(data);
+
+      return validatedData as OrderWithItemsT;
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new Error(`Order validation failed: ${error.message}`);
+      }
       if (error instanceof Error) {
         throw new Error(`Order fetch failed: ${error.message}`);
       }
