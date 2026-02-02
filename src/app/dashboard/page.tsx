@@ -12,6 +12,7 @@ import { SettingsPopup } from "@/features/dashboard/SettingsPopup";
 import { Settings } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/features/ui/button";
+import { PageHeader } from "@/features/ui/page-header";
 
 export default function DashboardPage() {
   const { data: user } = useUser();
@@ -23,15 +24,10 @@ export default function DashboardPage() {
         <div className={theme.page.container}>
           <div className="space-y-8">
             {/* Header */}
-            <div className="text-left space-y-2">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 dark:from-purple-400 dark:via-pink-400 dark:to-blue-400 bg-clip-text text-transparent">
-                Welcome Back, {user?.user_metadata?.first_name || "Creator"}!
-              </h1>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                Your creative dashboard
-              </p>
-            </div>
-
+            <PageHeader
+              title={`Welcome Back, ${user?.user_metadata?.first_name || "Creator"}!`}
+              subtitle={"Your creative dashboard"}
+            />
             {/* Highlighted Create Design Card */}
             <div className="transform scale-105">
               <CreateDesignCard />

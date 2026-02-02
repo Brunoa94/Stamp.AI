@@ -2,9 +2,11 @@
 
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
 import { theme } from "@/theme";
+import { PageHeader } from "@/features/ui/page-header";
 import { UserInformationSection } from "@/features/profile/sections/UserInformationSection";
 import { PasswordResetSection } from "@/features/profile/sections/PasswordResetSection";
 import { AddressSection } from "@/features/profile/sections/AddressSection";
+import { User } from "lucide-react";
 
 export default function ProfilePage() {
   return (
@@ -12,15 +14,14 @@ export default function ProfilePage() {
       <div className={theme.page.background}>
         <div className={theme.page.container}>
           <div className="space-y-8">
-            {/* Header */}
-            <div className="text-center space-y-4">
-              <h1 className={theme.dashboard.title}>My Profile</h1>
-              <p className={theme.dashboard.subtitle}>
-                Manage your account settings and preferences
-              </p>
-            </div>
+            <PageHeader
+              title="My Profile"
+              subtitle="Manage your account settings and preferences"
+              icon={User}
+              align="center"
+              variant="gradient"
+            />
 
-            {/* Profile Sections */}
             <div className="space-y-6">
               <UserInformationSection />
               <PasswordResetSection />

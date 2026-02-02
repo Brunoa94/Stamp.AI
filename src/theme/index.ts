@@ -14,7 +14,7 @@ export const theme = {
 
   dashboard: {
     header: "text-center mb-12",
-    title: "text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 dark:from-purple-400 dark:via-pink-400 dark:to-blue-400 bg-clip-text text-transparent my-8 animate-[fadeInUp_0.8s_ease-out]",
+    title: "h-14 text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 dark:from-purple-400 dark:via-pink-400 dark:to-blue-400 bg-clip-text text-transparent animate-[fadeInUp_0.8s_ease-out]",
     subtitle: "text-xl text-gray-600 dark:text-gray-300 animate-[fadeInUp_0.8s_ease-out_0.2s_both]",
     grid: "grid md:grid-cols-2 gap-12",
   },

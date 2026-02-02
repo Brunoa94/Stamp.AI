@@ -9,13 +9,13 @@ import { useCreateProductAndAddToCart } from "./hooks/useCreateCustomProduct";
 import { IImageGenerationForm } from "@/schemas/imageGenerationSchema";
 import { componentThemes } from "@/theme/components";
 import ProcessingSection from "../ProcessingSection/ProcessingSection";
-import ResultsSection from "../ResultsSection/ResultsSection";
 import PromptInputFieldAdapter from "@/features/formFields/promptInputField/PromptInputFieldAdapter";
 import ImageUploadField from "@/features/formFields/imageUploadField/ImageUploadField";
 import { TshirtType } from "@/features/dashboard/selectTshirt";
 import CreatedProductDisplay from "../components/CreatedProductDisplay";
 import ProductCustomizerSection from "../ProductCustomizer/ProductCustomizerSection";
 import { useUser } from "@/hooks/useAuth";
+import ResultsSection from "../ProductCustomizer/ResultsSection";
 
 interface ImageGenerationFormProps {}
 
