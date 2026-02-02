@@ -1,5 +1,23 @@
 import { z } from "zod";
 
+// Variant info from blueprint variants endpoint
+export const VariantInfoSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  options: z.object({
+    color: z.string().optional(),
+    size: z.string().optional(),
+  }),
+});
+
+export const BlueprintVariantsResponseSchema = z.object({
+  success: z.boolean(),
+  variants: z.array(VariantInfoSchema),
+  colors: z.array(z.string()),
+  sizes: z.array(z.string()),
+  printProviderId: z.number(),
+});
+
 // Mockup image returned by Printify API
 const MockupImageSchema = z.object({
   src: z.string(),

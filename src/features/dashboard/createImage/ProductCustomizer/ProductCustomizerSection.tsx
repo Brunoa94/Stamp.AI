@@ -1,9 +1,12 @@
-import { RefObject } from "react";
+import { RefObject, useState, useEffect } from "react";
 import { TshirtSelection, TshirtType } from "@/features/dashboard/selectTshirt";
 import ProductCustomizerHeader from "./ProductCustomizerHeader";
-import StampItButton from "./StampItButton";
+import StampItButton from "../components/StampItButton";
 import { Button } from "@/features/ui/button";
 import { ArrowRightIcon } from "@/theme";
+import { ProductCustomization } from "./ProductCustomization";
+import { useBlueprintVariants } from "../hooks/useBlueprintVariants";
+import useProductCustomizerSection from "./hooks/useProductCustomizerSection";
 
 interface ProductCustomizerSectionProps {
   sectionRef: RefObject<HTMLElement | null>;
@@ -22,6 +25,17 @@ export default function ProductCustomizerSection({
   onBack,
   isCreatingProduct,
 }: ProductCustomizerSectionProps) {
+  const {
+    colorOptions,
+    sizeOptions,
+    canStampIt,
+    selectedColor,
+    selectedSize,
+    isLoadingVariants,
+    setSelectedColor,
+    setSelectedSize,
+  } = useProductCustomizerSection({ selectedTshirt });
+
   return (
     <section
       ref={sectionRef}
@@ -53,10 +67,19 @@ export default function ProductCustomizerSection({
       </div>
 
       {selectedTshirt && (
-        <StampItButton
-          onClick={onStampIt}
-          isLoading={isCreatingProduct}
+        <ProductCustomization
+          isLoading={isLoadingVariants}
+          colorOptions={colorOptions}
+          sizeOptions={sizeOptions}
+          selectedColor={selectedColor}
+          selectedSize={selectedSize}
+          onColorSelect={setSelectedColor}
+          onSizeSelect={setSelectedSize}
         />
+      )}
+
+      {canStampIt && (
+        <StampItButton onClick={onStampIt} isLoading={isCreatingProduct} />
       )}
     </section>
   );

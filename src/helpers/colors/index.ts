@@ -1,0 +1,1 @@
+export { getColorClass } from "./colorMapping";

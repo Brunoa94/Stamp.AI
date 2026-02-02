@@ -1,9 +1,7 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
-import TshirtSelectionFilters, {
-  FilterHandle,
-} from "./tshirtFilters/TshirtSelectionFilters";
+import { useState, useCallback, useRef } from "react";
+import TshirtSelectionFilters from "./tshirtFilters/TshirtSelectionFilters";
 import useTshirtSelection, { TshirtType } from "./useTshirtSelection";
 import {
   TshirtSelectionHeader,
@@ -33,14 +31,18 @@ export default function TshirtSelection({
     initialSelection: selectedTshirt,
   });
   const [filteredTshirts, setFilteredTshirts] = useState<TshirtType[]>([]);
-  const filterRef = useRef<FilterHandle>(null);
+  const clearFiltersRef = useRef<(() => void) | null>(null);
 
   const handleFilteredChange = useCallback((filtered: TshirtType[]) => {
     setFilteredTshirts(filtered);
   }, []);
 
+  const handleClearFiltersReady = useCallback((clearFn: () => void) => {
+    clearFiltersRef.current = clearFn;
+  }, []);
+
   const handleClearFilters = () => {
-    filterRef.current?.clearFilters();
+    clearFiltersRef.current?.();
   };
 
   if (isLoading) return <TshirtSelectionSkeleton />;
@@ -52,9 +54,9 @@ export default function TshirtSelection({
       <TshirtSelectionHeader />
 
       <TshirtSelectionFilters
-        ref={filterRef}
         tshirtProducts={tshirtProducts}
         onFilteredChange={handleFilteredChange}
+        onClearFiltersReady={handleClearFiltersReady}
       />
 
       {filteredTshirts.length === 0 ? (

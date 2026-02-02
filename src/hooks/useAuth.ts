@@ -70,8 +70,8 @@ export function useLogin() {
         duration: 3000,
       });
 
-      // Redirect to dashboard
-      router.push("/dashboard");
+      // Redirect to stamp
+      router.push("/stamp");
     },
     onError: (error: Error) => {
       toast.error("Login failed", {

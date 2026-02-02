@@ -11,7 +11,7 @@ interface Props {
  */
 export const CheckoutError = ({ error }: Props) => {
   const handleReturnToDashboard = () => {
-    window.location.href = "/dashboard";
+    window.location.href = "/stamp";
   };
 
   return (

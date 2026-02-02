@@ -2,10 +2,10 @@
 
 import clsx from "clsx";
 import { useState, useEffect } from "react";
-import { useImageGeneration } from "./useImageGeneration";
-import useImageFormNavigation from "./useImageFormNavigation";
-import { useImageGenerationForm } from "./useImageGenerationForm";
-import { useCreateProductAndAddToCart } from "./useCreateCustomProduct";
+import { useImageGeneration } from "./hooks/useImageGeneration";
+import useImageFormNavigation from "./hooks/useImageFormNavigation";
+import { useImageGenerationForm } from "./hooks/useImageGenerationForm";
+import { useCreateProductAndAddToCart } from "./hooks/useCreateCustomProduct";
 import { IImageGenerationForm } from "@/schemas/imageGenerationSchema";
 import { componentThemes } from "@/theme/components";
 import ProcessingSection from "../ProcessingSection/ProcessingSection";
@@ -14,7 +14,7 @@ import PromptInputFieldAdapter from "@/features/formFields/promptInputField/Prom
 import ImageUploadField from "@/features/formFields/imageUploadField/ImageUploadField";
 import { TshirtType } from "@/features/dashboard/selectTshirt";
 import CreatedProductDisplay from "../components/CreatedProductDisplay";
-import ProductCustomizerSection from "../components/ProductCustomizerSection";
+import ProductCustomizerSection from "../ProductCustomizer/ProductCustomizerSection";
 import { useUser } from "@/hooks/useAuth";
 
 interface ImageGenerationFormProps {}
