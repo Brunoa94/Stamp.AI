@@ -15,7 +15,7 @@ export function OrderCardFooter({
         <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
           Total Amount
         </span>
-        <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+        <span className="text-xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
           ${totalAmount?.toFixed(2) || "0.00"}
         </span>
       </div>

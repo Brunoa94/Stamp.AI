@@ -141,15 +141,15 @@ export type PaymentStatusT = 'processing' | 'succeeded' | 'failed' | 'canceled'
 
 export interface ShippingAddressI {
   first_name: string
-  last_name: string
+  last_name?: string
   email: string
   phone?: string
   country: string
-  region: string
-  address1: string
+  region?: string
+  address1?: string
   address2?: string
-  city: string
-  zip: string
+  city?: string
+  zip?: string
 }
 
 export interface PrintAreaI {

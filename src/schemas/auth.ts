@@ -34,9 +34,19 @@ export const PasswordResetConfirmSchema = z.object({
 
 // Update profile schema
 export const UpdateProfileSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  avatarUrl: z.string().url().optional(),
+  firstName: z.string().min(1, "First name cannot be empty").optional(),
+  lastName: z.string().min(1, "Last name cannot be empty").optional(),
+  avatarUrl: z.string().url("Invalid URL format").or(z.literal("")).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+});
+
+// Update password schema
+export const UpdatePasswordSchema = z.object({
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
 });
 
 // Export inferred types
@@ -45,3 +55,4 @@ export type RegisterI = z.infer<typeof RegisterSchema>;
 export type PasswordResetRequestI = z.infer<typeof PasswordResetRequestSchema>;
 export type PasswordResetConfirmI = z.infer<typeof PasswordResetConfirmSchema>;
 export type UpdateProfileI = z.infer<typeof UpdateProfileSchema>;
+export type UpdatePasswordI = z.infer<typeof UpdatePasswordSchema>;

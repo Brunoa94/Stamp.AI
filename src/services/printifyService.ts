@@ -30,7 +30,6 @@ export class PrintifyService {
                 print_provider_id: printProviderId,
             });
 
-            // Validate response with Zod
             const validatedResponse = BlueprintVariantsResponseSchema.parse(response);
             
             return validatedResponse;

@@ -1,12 +1,8 @@
-"use client";
-
 import { Button } from "@/features/ui/button";
 import { Package } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export function ViewOrdersCard() {
-  const router = useRouter();
-
   return (
     <div className="bg-linear-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 border-2 border-blue-200 dark:border-blue-700 rounded-2xl p-8">
       <div className="flex items-center gap-4 mb-4">
@@ -19,11 +15,13 @@ export function ViewOrdersCard() {
         View and track all your orders
       </p>
       <Button
-        onClick={() => router.push("/orders")}
+        asChild
         className="w-full bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold py-4 text-lg rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
       >
-        <Package className="w-5 h-5 mr-2" />
-        View Orders
+        <Link href="/orders">
+          <Package className="w-5 h-5 mr-2" />
+          View Orders
+        </Link>
       </Button>
     </div>
   );

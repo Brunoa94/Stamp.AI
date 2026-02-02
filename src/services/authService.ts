@@ -168,12 +168,23 @@ class AuthService {
    * Update user profile
    */
   static async updateProfile(data: UpdateProfileI): Promise<UserI> {
+    const updateData: Record<string, any> = {};
+
+    if (data.firstName !== undefined) {
+      updateData.first_name = data.firstName;
+    }
+    if (data.lastName !== undefined) {
+      updateData.last_name = data.lastName;
+    }
+    if (data.avatarUrl !== undefined) {
+      updateData.avatar_url = data.avatarUrl;
+    }
+    if (data.metadata !== undefined) {
+      Object.assign(updateData, data.metadata);
+    }
+
     const { data: userData, error } = await AuthService.getSupabase().auth.updateUser({
-      data: {
-        first_name: data.firstName,
-        last_name: data.lastName,
-        avatar_url: data.avatarUrl,
-      },
+      data: updateData,
     });
 
     if (error) {
@@ -207,6 +218,41 @@ class AuthService {
 
     if (error) {
       throw new Error(error.message);
+    }
+  }
+
+  /**
+   * Update user password
+   */
+  static async updatePassword(password: string): Promise<UserI> {
+    try {
+      const { data, error } = await AuthService.getSupabase().auth.updateUser({
+        password,
+      });
+
+      if (error) {
+        throw new Error(`Password update failed: ${error.message}`);
+      }
+
+      if (!data.user) {
+        throw new Error("Password update failed: User data not returned");
+      }
+
+      return {
+        id: data.user.id,
+        email: data.user.email!,
+        email_confirmed_at: data.user.email_confirmed_at,
+        last_sign_in_at: data.user.last_sign_in_at,
+        created_at: data.user.created_at,
+        updated_at: data.user.updated_at,
+        user_metadata: data.user.user_metadata,
+        app_metadata: data.user.app_metadata,
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Password update failed: ${error.message}`);
+      }
+      throw new Error("Password update failed: Unknown error occurred");
     }
   }
 }
