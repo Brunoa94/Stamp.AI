@@ -10,14 +10,14 @@ interface IUseImageUploadProps {
 export const useImageUpload = ({ onImageUpload, onRemoveImage }: IUseImageUploadProps) => {
   const { preview, createPreview, clearPreview } = useImagePreview();
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
 
     if (file) {
       onImageUpload(file);
       createPreview(file);
     }
-  }, [onImageUpload, createPreview]);
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzoneConfig({
     onDrop,

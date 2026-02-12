@@ -1,13 +1,14 @@
 "use client";
 
-import ImagePreview from "./ImagePreview";
+import dynamic from "next/dynamic";
 import clsx from "clsx";
 import { colors } from "@/theme";
 import { useImageUpload } from "./hooks";
 import UploadIcon from "./uploadBox/UploadIcon";
 import UploadText from "./uploadBox/UploadText";
 import UploadButton from "./uploadBox/UploadButton";
-import { Ref } from "react";
+
+const ImagePreview = dynamic(() => import("./ImagePreview"), { ssr: false });
 
 const uploadZoneStyles = {
   base: `border-3 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 transform hover:scale-105 ${colors.uploadZoneBase}`,

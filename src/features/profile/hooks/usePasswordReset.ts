@@ -78,9 +78,11 @@ export function usePasswordReset() {
     try {
       await updatePasswordMutation.mutateAsync(state.newPassword);
       dispatch({ type: "RESET" });
+      
       toast.success("Password updated successfully!");
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to update password";
+
       toast.error(errorMessage);
     }
   };

@@ -2,23 +2,23 @@ import { X } from "lucide-react";
 import { colors } from "@/theme";
 import { Button } from "@/features/ui/button";
 
-interface PropsI {
+interface Props {
   preview: string;
   fileName: string;
   fileSize: number;
   onRemove: () => void;
 }
 
-const ImagePreview = ({ preview, onRemove }: PropsI) => {
+const ImagePreview = ({ preview, onRemove }: Props) => {
   return (
     <div className="animate-[fadeInScale_0.5s_ease-out]">
       <div className="relative group">
         {/* Colorful border wrapper */}
-        <div className={`${colors.previewBorder} p-1 rounded-2xl`}>
+        <div className={`${colors.previewBorder} py-6 rounded-2xl`}>
           <img
             src={preview}
             alt="Uploaded preview"
-            className="w-full max-w-md mx-auto rounded-xl shadow-2xl transition-transform duration-300 group-hover:scale-[1.02]"
+            className="w-full max-w-md mx-auto max-h-full rounded-xl shadow-2xl transition-transform duration-300 group-hover:scale-[1.02]"
           />
         </div>
 
