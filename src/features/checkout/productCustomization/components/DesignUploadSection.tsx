@@ -1,4 +1,3 @@
-import { RefObject } from "react";
 import clsx from "clsx";
 import ImageUploader from "@/features/dashboard/uploadImage/ImageUploader";
 import { PrintifyImageT } from "@/schemas/checkout";
@@ -12,8 +11,6 @@ interface Props {
   onRemoveFrontImage: () => void;
   onRemoveBackImage: () => void;
   onSideChange: (side: "front" | "back") => void;
-  isFirstTryFront: RefObject<boolean>;
-  isFirstTryBack: RefObject<boolean>;
 }
 
 const DesignUploadSection = ({
@@ -25,8 +22,6 @@ const DesignUploadSection = ({
   onRemoveFrontImage,
   onRemoveBackImage,
   onSideChange,
-  isFirstTryFront,
-  isFirstTryBack,
 }: Props) => {
   return (
     <section className="bg-white border border-gray-200 rounded-lg p-6">
@@ -92,7 +87,6 @@ const DesignUploadSection = ({
             onImageUpload={onFrontImageUpload}
             uploadedImage={null}
             onRemoveImage={onRemoveFrontImage}
-            isFirstTry={isFirstTryFront}
           />
           {uploadedFrontImage && (
             <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">
@@ -138,7 +132,6 @@ const DesignUploadSection = ({
             onImageUpload={onBackImageUpload}
             uploadedImage={null}
             onRemoveImage={onRemoveBackImage}
-            isFirstTry={isFirstTryBack}
           />
           {uploadedBackImage && (
             <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">

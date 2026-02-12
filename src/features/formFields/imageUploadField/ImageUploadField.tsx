@@ -7,29 +7,27 @@ import clsx from "clsx";
 import ImageUploader from "../../dashboard/uploadImage/ImageUploader";
 import StepIndicator from "../../ui/step-indicator";
 import { useImageUploadField } from "./useImageUploadField";
+import { useCreateProductSubscriberActions } from "@/features/dashboard/createImage/context/CreateProductContextSubscriber/actions";
 
 interface IImageUploadFieldProps {
   form: UseFormReturn<IImageGenerationForm>;
-  onRemoveImage: () => void;
   error?: FieldError;
 }
 
-const ImageUploadField = ({
-  form,
-  onRemoveImage,
-  error,
-}: IImageUploadFieldProps) => {
+const ImageUploadField = ({ form, error }: IImageUploadFieldProps) => {
   const { uploadedImage, handleImageUpload } = useImageUploadField({
     form,
     error,
   });
+  const { handleRemoveImage: onRemoveImage } =
+    useCreateProductSubscriberActions();
 
   return (
     <article
       className={clsx(
         theme.upload.section,
         theme.animations.slideInLeft,
-        "transition-all duration-500"
+        "transition-all duration-500",
       )}
     >
       <div

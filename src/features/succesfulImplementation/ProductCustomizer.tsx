@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import ImageUploader from "@/features/dashboard/uploadImage/ImageUploader";
-import { TshirtSelection, TshirtType } from "@/features/productCustomizer/tshirtSelection";
+import { TshirtSelection, TshirtType } from "@/features/dashboard/selectTshirt";
 
 interface PrintifyImage {
   id: string;
@@ -402,7 +402,6 @@ export default function ProductCustomizer({
                 }
                 setUploadedFrontImage(null);
               }}
-              isFirstTry={isFirstTryFront}
             />
             {uploadedFrontImage && (
               <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">
@@ -441,7 +440,6 @@ export default function ProductCustomizer({
                 }
                 setUploadedBackImage(null);
               }}
-              isFirstTry={isFirstTryBack}
             />
             {uploadedBackImage && (
               <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center justify-between">

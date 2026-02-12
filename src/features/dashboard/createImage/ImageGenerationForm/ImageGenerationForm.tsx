@@ -1,18 +1,18 @@
 "use client";
 
 import clsx from "clsx";
-import { useState, useEffect } from "react";
-import { useImageGeneration } from "./hooks/useImageGeneration";
-import useImageFormNavigation from "./hooks/useImageFormNavigation";
-import { useImageGenerationForm } from "./hooks/useImageGenerationForm";
-import { useCreateProductAndAddToCart } from "./hooks/useCreateCustomProduct";
-import { IImageGenerationForm } from "@/schemas/imageGenerationSchema";
+import { useEffect } from "react";
 import { componentThemes } from "@/theme/components";
 import PromptInputFieldAdapter from "@/features/formFields/promptInputField/PromptInputFieldAdapter";
 import ImageUploadField from "@/features/formFields/imageUploadField/ImageUploadField";
-import { TshirtType } from "@/features/dashboard/selectTshirt";
-import { useUser } from "@/hooks/useAuth";
 import dynamic from "next/dynamic";
+import {
+  CreateProductSelectors,
+  useCreateProductSubscriberActions,
+} from "../context/CreateProductContextSubscriber";
+import { useImageGeneration } from "./hooks/useImageGeneration";
+import { useCreateProductNavigation } from "../hooks/useCreateProductNavigation";
+import { IImageGenerationForm } from "@/schemas/imageGenerationSchema";
 
 const ProcessingSection = dynamic(
   () => import("../ProcessingSection/ProcessingSection"),
@@ -37,72 +37,78 @@ const CreatedProductDisplay = dynamic(
 interface ImageGenerationFormProps {}
 
 const ImageGenerationForm = ({}: ImageGenerationFormProps) => {
-  const [selectedTshirt, setSelectedTshirt] = useState<TshirtType | null>(null);
-  const [showCustomizerSection, setShowCustomizerSection] = useState(false);
-  const { data: user } = useUser();
+  // Selectors - subscribe to specific state slices
+  const currentStep = CreateProductSelectors.currentStep();
+  const form = CreateProductSelectors.form();
+  const uploadedImage = CreateProductSelectors.uploadedImage();
+  const isGenerating = CreateProductSelectors.isGenerating();
+  const generatedResult = CreateProductSelectors.generatedResult();
+  const generationError = CreateProductSelectors.generationError();
+  const selectedTshirt = CreateProductSelectors.selectedTshirt();
+  const isCreatingProduct = CreateProductSelectors.isCreatingProduct();
+  const createdProduct = CreateProductSelectors.createdProduct();
 
+  // Actions - get action handlers
   const {
-    mutate: generateImage,
-    isPending: isProcessing,
-    data: generatedResult,
-    error,
-  } = useImageGeneration();
+    handleFormSubmit,
+    handleGenerationStart,
+    handleGenerationSuccess,
+    handleGenerationError,
+    handleUseImage,
+    handleBackToResults,
+  } = useCreateProductSubscriberActions();
 
-  const { createAndAddToCart, isCreatingProduct, createdProduct } =
-    useCreateProductAndAddToCart();
-
+  // Navigation and scrolling
   const {
     processingRef,
     resultsRef,
     productCustomizerRef,
     createdProductRef,
-    handleFormSubmit,
-    handleUseImage,
-  } = useImageFormNavigation({
-    isProcessing,
-    generatedResult,
-    createdProduct,
-  });
+    scrollToProcessing,
+    scrollToCustomizer,
+  } = useCreateProductNavigation();
 
-  const { form, handleRemoveImage } = useImageGenerationForm();
+  // Image generation mutation
+  const { mutate: generateImage, isPending: isGeneratingMutation } =
+    useImageGeneration();
+
+  // Sync mutation states with context
+  useEffect(() => {
+    if (isGeneratingMutation && !isGenerating) {
+      handleGenerationStart();
+    }
+  }, [isGeneratingMutation, isGenerating, handleGenerationStart]);
+
+  // Early return if form is not initialized yet - AFTER all hooks
+  if (!form) {
+    return null;
+  }
+
   const {
     handleSubmit,
-    watch,
     formState: { errors },
   } = form;
-  const watchedImage = watch("image");
-
-  const handleUseImageClick = () => {
-    setShowCustomizerSection(true);
-    handleUseImage();
-  };
-
-  const handleBackToResults = () => {
-    setShowCustomizerSection(false);
-    // Keep selectedTshirt state when going back
-  };
 
   const onSubmit = (data: IImageGenerationForm) => {
-    setShowCustomizerSection(false);
-    setSelectedTshirt(null);
     handleFormSubmit();
-    generateImage(data);
-  };
+    scrollToProcessing();
 
-  const handleStampIt = async () => {
-    if (!generatedResult?.imageUrl || !selectedTshirt || !user) {
-      return;
-    }
-
-    createAndAddToCart({
-      blueprintId: selectedTshirt.blueprint_id,
-      printProviderId: selectedTshirt.print_provider_id,
-      imageUrl: generatedResult.imageUrl,
-      tshirtName: selectedTshirt.name,
-      userId: user.id,
-      userEmail: user.email,
+    generateImage(data, {
+      onSuccess: (result) => {
+        handleGenerationSuccess(result);
+      },
+      onError: (error) => {
+        handleGenerationError(error);
+      },
     });
   };
+
+  const onUseImageClick = () => {
+    handleUseImage();
+    scrollToCustomizer();
+  };
+
+  const showCustomizerSection = currentStep === "customizing";
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-12">
@@ -113,18 +119,14 @@ const ImageGenerationForm = ({}: ImageGenerationFormProps) => {
             aria-label="Image generation form"
           >
             <div className="upload-section">
-              <ImageUploadField
-                form={form}
-                onRemoveImage={handleRemoveImage}
-                error={errors.image}
-              />
+              <ImageUploadField form={form} error={errors.image} />
             </div>
 
             <div className="prompt-section">
               <PromptInputFieldAdapter
                 form={form}
-                uploadedImage={watchedImage}
-                isProcessing={isProcessing}
+                uploadedImage={uploadedImage || undefined}
+                isProcessing={isGenerating}
                 generatedResult={generatedResult || null}
                 error={errors.prompt}
               />
@@ -133,14 +135,14 @@ const ImageGenerationForm = ({}: ImageGenerationFormProps) => {
 
           <ProcessingSection
             sectionRef={processingRef}
-            isProcessing={isProcessing}
+            isProcessing={isGenerating}
           />
 
           <ResultsSection
             ref={resultsRef}
             generatedResult={generatedResult || null}
-            error={error?.message}
-            onUseImage={handleUseImageClick}
+            error={generationError?.message}
+            onUseImage={onUseImageClick}
           />
         </>
       )}
@@ -149,8 +151,6 @@ const ImageGenerationForm = ({}: ImageGenerationFormProps) => {
         <ProductCustomizerSection
           sectionRef={productCustomizerRef}
           selectedTshirt={selectedTshirt}
-          onTshirtSelect={setSelectedTshirt}
-          onStampIt={handleStampIt}
           onBack={handleBackToResults}
           isCreatingProduct={isCreatingProduct}
         />

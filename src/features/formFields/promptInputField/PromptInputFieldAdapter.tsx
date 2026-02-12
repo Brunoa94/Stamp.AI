@@ -37,6 +37,8 @@ const PromptInputFieldAdapter = ({
   const shouldHighlightCard =
     hasUploadedImage && !isProcessing && !generatedResult;
 
+  console.log("RE.render");
+
   return (
     <article
       className={clsx(
@@ -46,7 +48,7 @@ const PromptInputFieldAdapter = ({
         {
           "opacity-60 scale-95": !hasUploadedImage,
           "opacity-100 scale-100": hasUploadedImage,
-        }
+        },
       )}
     >
       <div
@@ -56,7 +58,7 @@ const PromptInputFieldAdapter = ({
           {
             "ring-2 ring-blue-300 shadow-xl shadow-blue-500/20 transform scale-102":
               shouldHighlightCard,
-          }
+          },
         )}
       >
         <StepIndicator
@@ -89,9 +91,7 @@ const PromptInputFieldAdapter = ({
         {/* Error Message */}
         {error && (
           <div className="mt-4 p-3 rounded-xl bg-red-50 border border-red-200">
-            <p className="text-sm text-red-700 text-center">
-              {error.message}
-            </p>
+            <p className="text-sm text-red-700 text-center">{error.message}</p>
           </div>
         )}
       </div>

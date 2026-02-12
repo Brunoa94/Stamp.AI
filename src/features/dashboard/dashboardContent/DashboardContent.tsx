@@ -1,5 +1,6 @@
 import { PageHeader } from "@/features/ui/page-header";
 import ImageGenerationForm from "../createImage/ImageGenerationForm/ImageGenerationForm";
+import { CreateProductSubscriberProvider } from "../createImage/context/CreateProductContextSubscriber";
 import { Sparkles } from "lucide-react";
 
 const DashboardContent = () => {
@@ -13,7 +14,9 @@ const DashboardContent = () => {
         subtitle="Now it's time to personalize your favourite picture. Start by uploading it and then write on the input label what your creativity tells on. I hope to create memorable items!"
         icon={Sparkles}
       />
-      <ImageGenerationForm />
+      <CreateProductSubscriberProvider>
+        <ImageGenerationForm />
+      </CreateProductSubscriberProvider>
     </section>
   );
 };

@@ -133,8 +133,6 @@ const ProductCustomization = ({ onCustomizationComplete, onError }: Props) => {
         onRemoveFrontImage={removeFrontImage}
         onRemoveBackImage={removeBackImage}
         onSideChange={setActivePrintSide}
-        isFirstTryFront={isFirstTryFront}
-        isFirstTryBack={isFirstTryBack}
       />
 
       <ProductSelectionSection

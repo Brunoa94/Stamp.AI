@@ -7,12 +7,14 @@ import { ArrowRightIcon } from "@/theme";
 import { ProductCustomization } from "./ProductCustomization";
 import { useBlueprintVariants } from "../hooks/useBlueprintVariants";
 import useProductCustomizerSection from "./hooks/useProductCustomizerSection";
+import { useUser } from "@/hooks/useAuth";
+import { useCreateProductAndAddToCart } from "../ImageGenerationForm/hooks/useCreateCustomProduct";
+import { CreateProductSelectors } from "../context/CreateProductContextSubscriber/selectors";
+import { useCreateProductSubscriberActions } from "../context/CreateProductContextSubscriber/actions";
 
 interface ProductCustomizerSectionProps {
   sectionRef: RefObject<HTMLElement | null>;
   selectedTshirt: TshirtType | null;
-  onTshirtSelect: (tshirt: TshirtType) => void;
-  onStampIt: () => void;
   onBack: () => void;
   isCreatingProduct: boolean;
 }
@@ -20,8 +22,6 @@ interface ProductCustomizerSectionProps {
 export default function ProductCustomizerSection({
   sectionRef,
   selectedTshirt,
-  onTshirtSelect,
-  onStampIt,
   onBack,
   isCreatingProduct,
 }: ProductCustomizerSectionProps) {
@@ -35,6 +35,29 @@ export default function ProductCustomizerSection({
     setSelectedColor,
     setSelectedSize,
   } = useProductCustomizerSection({ selectedTshirt });
+  const { data: user } = useUser();
+  // Product creation mutation
+  const { createAndAddToCart } = useCreateProductAndAddToCart();
+  const generatedResult = CreateProductSelectors.generatedResult();
+  const { handleProductCreationStart, handleTshirtSelect: onTshirtSelect } =
+    useCreateProductSubscriberActions();
+
+  const onStampIt = async () => {
+    if (!generatedResult?.imageUrl || !selectedTshirt || !user) {
+      return;
+    }
+
+    handleProductCreationStart();
+
+    createAndAddToCart({
+      blueprintId: selectedTshirt.blueprint_id,
+      printProviderId: selectedTshirt.print_provider_id,
+      imageUrl: generatedResult.imageUrl,
+      tshirtName: selectedTshirt.name,
+      userId: user.id,
+      userEmail: user.email,
+    });
+  };
 
   return (
     <section

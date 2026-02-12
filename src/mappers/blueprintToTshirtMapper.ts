@@ -1,4 +1,4 @@
-import { BlueprintI } from "@/types/index";
+import { BlueprintI } from "@/shared-types";
 import { TshirtType } from "@/services/tshirtProductService";
 
 export const mapBlueprintsToTshirtProducts = (

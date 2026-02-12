@@ -1,0 +1,26 @@
+import { UseFormReturn } from "react-hook-form";
+import { IImageGenerationForm, IImageGenerationResult } from "@/schemas/imageGenerationSchema";
+import { TshirtType } from "@/features/dashboard/selectTshirt";
+import { CreatedProduct } from "@/services/customProductService";
+
+export type WorkflowStep = "form" | "generating" | "results" | "customizing" | "created";
+
+export interface CreateProductContextState {
+  // Workflow state
+  currentStep: WorkflowStep;
+
+  // Form state
+  form: UseFormReturn<IImageGenerationForm> | null;
+  uploadedImage: File | null;
+  prompt: string;
+
+  // Image generation state
+  isGenerating: boolean;
+  generatedResult: IImageGenerationResult | null;
+  generationError: Error | null;
+
+  // Product creation state
+  selectedTshirt: TshirtType | null;
+  isCreatingProduct: boolean;
+  createdProduct: CreatedProduct | null;
+}

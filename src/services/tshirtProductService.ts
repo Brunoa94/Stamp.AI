@@ -1,4 +1,4 @@
-import { BlueprintI } from "@/types/index";
+import { BlueprintI } from "@/shared-types";
 import { mapBlueprintsToTshirtProducts } from "@/mappers/blueprintToTshirtMapper";
 
 export interface TshirtType {
