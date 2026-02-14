@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 interface UsePaginationProps<T> {
   items: T[];
   itemsPerPage?: number;
+  scrollToTop?: boolean;
 }
 
 interface UsePaginationReturn<T> {
@@ -22,10 +23,18 @@ interface UsePaginationReturn<T> {
 export function usePagination<T>({
   items,
   itemsPerPage = 10,
+  scrollToTop = true,
 }: UsePaginationProps<T>): UsePaginationReturn<T> {
   const [currentPage, setCurrentPage] = useState(1);
 
   const totalPages = Math.ceil(items.length / itemsPerPage);
+
+  // Scroll to top when page changes
+  useEffect(() => {
+    if (scrollToTop && currentPage > 1) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [currentPage, scrollToTop]);
 
   const paginatedItems = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;

@@ -7,6 +7,7 @@ import { SupabaseAuthProvider } from "@/features/providers/SupabaseAuthProvider"
 import { QueryProvider } from "@/features/providers/QueryProvider";
 import { ThemeProvider } from "@/features/providers/ThemeProvider";
 import Navbar from "@/features/layout/navbar";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,6 +44,7 @@ export default function RootLayout({
         <ThemeProvider>
           <SupabaseAuthProvider>
             <QueryProvider>
+              <ScrollToTop />
               <header>
                 <Navbar />
               </header>

@@ -53,6 +53,7 @@ export function OrderCard({ order, onViewDetails }: Props) {
       {/* Footer / Actions */}
       <OrderCardFooter
         totalAmount={order.total_amount}
+        orderNumber={order.order_number}
         onViewDetails={(e) => {
           e.stopPropagation();
           onViewDetails(order);
