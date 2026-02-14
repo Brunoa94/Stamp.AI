@@ -7,6 +7,6 @@ export type { TshirtType } from "./useTshirtSelection";
 export type { SortOption, FitOption, MaterialOption } from "./types";
 
 // Sub-features
-export * from "./tshirtCard";
-export * from "./tshirtFilters";
+export * from "./TshirtCard";
+export * from "./TshirtFilters";
 export * from "./components";

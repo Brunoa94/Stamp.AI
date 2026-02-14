@@ -1,4 +1,4 @@
-import { IImageGenerationForm, IImageGenerationResult } from "@/schemas/imageGenerationSchema";
+import { IImageGenerationForm, IImageGenerationResult } from "@/schemas/productCreateSchema";
 
 export class ImageGenerationService {
   static async generateImage(

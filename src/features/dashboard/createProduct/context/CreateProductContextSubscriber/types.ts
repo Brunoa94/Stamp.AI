@@ -1,5 +1,5 @@
 import { UseFormReturn } from "react-hook-form";
-import { IImageGenerationForm, IImageGenerationResult } from "@/schemas/imageGenerationSchema";
+import { IImageGenerationForm, IImageGenerationResult } from "@/schemas/productCreateSchema";
 import { TshirtType } from "@/features/dashboard/selectTshirt";
 import { CreatedProduct } from "@/services/customProductService";
 

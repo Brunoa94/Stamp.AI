@@ -4,7 +4,7 @@ import { Controller, UseFormReturn, FieldError } from "react-hook-form";
 import {
   IImageGenerationForm,
   IImageGenerationResult,
-} from "@/schemas/imageGenerationSchema";
+} from "@/schemas/productCreateSchema";
 import { theme } from "@/theme";
 import clsx from "clsx";
 import StepIndicator from "../../ui/step-indicator";

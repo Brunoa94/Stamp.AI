@@ -22,13 +22,13 @@ export const useWordCount = ({
   isProcessing = false,
   disabled = false,
 }: IUseWordCountProps) => {
-  const wordCount = useMemo(() => getWordCount(text), [text]);
+  const wordCount = getWordCount(text);
 
-  const isOverLimit = useMemo(() => isWordCountOverLimit(wordCount, limit), [wordCount, limit]);
+  const isOverLimit = isWordCountOverLimit(wordCount, limit);
 
-  const colorClass = useMemo(() => getWordCountColor(wordCount, limit), [wordCount, limit]);
+  const colorClass = getWordCountColor(wordCount, limit);
 
-  const progressWidth = useMemo(() => getProgressBarWidth(wordCount, limit), [wordCount, limit]);
+  const progressWidth = getProgressBarWidth(wordCount, limit);
 
   const canSubmit = useMemo(() => {
     if (disabled || isProcessing) return false;

@@ -1,6 +1,6 @@
-import ErrorDisplay from "@/features/dashboard/createImage/components/ErrorDisplay";
-import ResultHeader from "@/features/dashboard/createImage/components/ResultHeader";
-import GeneratedImageDisplay from "@/features/dashboard/createImage/components/GeneratedImageDisplay";
+import ErrorDisplay from "@/features/dashboard/createProduct/components/ErrorDisplay";
+import ResultHeader from "@/features/dashboard/createProduct/components/ResultHeader";
+import GeneratedImageDisplay from "@/features/dashboard/createProduct/components/GeneratedImageDisplay";
 
 interface IGeneratedImageResult {
   imageUrl: string;

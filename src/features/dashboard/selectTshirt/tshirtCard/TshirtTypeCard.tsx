@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { TshirtType } from "../useTshirtSelection";
+import ProductDetailsModal from "../ProductDetailsModal";
+import { Button } from "@/features/ui/button";
 import TshirtImage from "./TshirtImage";
 import TshirtInfo from "./TshirtInfo";
 import TshirtFeatures from "./TshirtFeatures";
 import TshirtPrice from "./TshirtPrice";
-import { TshirtType } from "../useTshirtSelection";
-import ProductDetailsModal from "../ProductDetailsModal";
-import { Button } from "@/features/ui/button";
 
 interface Props {
   tshirt: TshirtType;

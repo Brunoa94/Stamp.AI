@@ -12,7 +12,7 @@ import {
 } from "../context/CreateProductContextSubscriber";
 import { useImageGeneration } from "./hooks/useImageGeneration";
 import { useCreateProductNavigation } from "../hooks/useCreateProductNavigation";
-import { IImageGenerationForm } from "@/schemas/imageGenerationSchema";
+import { IProductCreateForm } from "@/schemas/productCreateSchema";
 
 const ProcessingSection = dynamic(
   () => import("../ProcessingSection/ProcessingSection"),
@@ -34,9 +34,7 @@ const CreatedProductDisplay = dynamic(
   { ssr: false },
 );
 
-interface ImageGenerationFormProps {}
-
-const ImageGenerationForm = ({}: ImageGenerationFormProps) => {
+const ProductCreateForm = () => {
   // Selectors - subscribe to specific state slices
   const currentStep = CreateProductSelectors.currentStep();
   const form = CreateProductSelectors.form();
@@ -89,7 +87,7 @@ const ImageGenerationForm = ({}: ImageGenerationFormProps) => {
     formState: { errors },
   } = form;
 
-  const onSubmit = (data: IImageGenerationForm) => {
+  const onSubmit = (data: IProductCreateForm) => {
     handleFormSubmit();
     scrollToProcessing();
 
@@ -171,4 +169,4 @@ const ImageGenerationForm = ({}: ImageGenerationFormProps) => {
   );
 };
 
-export default ImageGenerationForm;
+export default ProductCreateForm;

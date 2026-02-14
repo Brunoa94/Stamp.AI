@@ -1,4 +1,4 @@
-import TshirtTypeCard from "../tshirtCard/TshirtTypeCard";
+import TshirtTypeCard from "../TshirtCard/TshirtTypeCard";
 import { TshirtType } from "../useTshirtSelection";
 
 interface Props {
@@ -7,7 +7,11 @@ interface Props {
   onTshirtSelect: (tshirt: TshirtType) => void;
 }
 
-export default function TshirtGrid({ tshirts, selectedTshirt, onTshirtSelect }: Props) {
+export default function TshirtGrid({
+  tshirts,
+  selectedTshirt,
+  onTshirtSelect,
+}: Props) {
   return (
     <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 list-none">
       {tshirts.map((tshirt) => (

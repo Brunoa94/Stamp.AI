@@ -2,7 +2,7 @@ import { UseFormReturn, FieldError } from "react-hook-form";
 import {
   IImageGenerationForm,
   IImageGenerationResult,
-} from "@/schemas/imageGenerationSchema";
+} from "@/schemas/productCreateSchema";
 import {
   getWordCount,
   isWordCountOverLimit,

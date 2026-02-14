@@ -3,16 +3,17 @@
 import { useEffect } from "react";
 import { FilterSelect } from "@/features/ui/filter-select";
 import { FilterHeader } from "@/features/ui/filters/FilterHeader";
-import ClearFiltersButton from "./ClearFiltersButton";
 import { SortOption } from "../types";
 import { TshirtType } from "@/services/tshirtProductService";
+
+import { useTshirtFilters } from "../hooks/useTshirtFilters";
 import {
-  SORT_OPTIONS,
-  mapToFilterOptions,
   FILTER_LABELS,
   FILTER_PLACEHOLDERS,
+  mapToFilterOptions,
+  SORT_OPTIONS,
 } from "./utils/filterConfig";
-import { useTshirtFilters } from "../hooks/useTshirtFilters";
+import ClearFiltersButton from "./ClearFiltersButton";
 
 export interface FilterValues {
   material: string;

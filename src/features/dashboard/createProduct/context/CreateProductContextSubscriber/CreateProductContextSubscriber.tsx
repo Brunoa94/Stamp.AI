@@ -11,7 +11,7 @@ import { CreateProductContextState } from "./types";
 import { MOCK_STATE } from "./mockState";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/with-selector";
 import { shallow } from "zustand/shallow";
-import { useImageGenerationForm } from "../../ImageGenerationForm/hooks/useImageGenerationForm";
+import { useImageGenerationForm } from "../../ProductCreateForm/hooks/useImageGenerationForm";
 
 function createCreateProductSubscriberStore(
   initialState: CreateProductContextState,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import TshirtSelectionFilters from "./tshirtFilters/TshirtSelectionFilters";
+import TshirtSelectionFilters from "./TshirtFilters/TshirtSelectionFilters";
 import useTshirtSelection, { TshirtType } from "./useTshirtSelection";
 import {
   TshirtSelectionHeader,

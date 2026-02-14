@@ -1,6 +1,5 @@
 "use client";
 
-import { memo } from "react";
 import PromptTextarea from "../promptTextArea/PromptTextarea";
 import { Wand2 } from "lucide-react";
 import WordCountIndicator from "@/features/ui/WordCountIndicator";
@@ -30,12 +29,14 @@ const PromptInputFields = ({
   isProcessing = false,
   hasUploadedFile = true,
 }: PromptInputFieldsProps) => {
-  const { wordCount, isOverLimit, colorClass, canSubmit, limit } = useWordCount({
-    text: value,
-    disabled,
-    isProcessing,
-    hasUploadedFile,
-  });
+  const { wordCount, isOverLimit, colorClass, canSubmit, limit } = useWordCount(
+    {
+      text: value,
+      disabled,
+      isProcessing,
+      hasUploadedFile,
+    },
+  );
 
   return (
     <div className="space-y-6">
@@ -69,4 +70,4 @@ const PromptInputFields = ({
   );
 };
 
-export default memo(PromptInputFields);
+export default PromptInputFields;

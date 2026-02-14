@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const imageGenerationSchema = z.object({
+export const productCreateSchema = z.object({
   image: z
     .instanceof(File, { message: "Please upload an image" })
     .refine(
@@ -21,7 +21,7 @@ export const imageGenerationSchema = z.object({
     ),
 });
 
-export type IImageGenerationForm = z.infer<typeof imageGenerationSchema>;
+export type IProductCreateForm = z.infer<typeof productCreateSchema>;
 
 export interface IImageGenerationResult {
   imageUrl: string;

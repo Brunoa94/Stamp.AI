@@ -4,7 +4,7 @@ import { UseFormReturn, FieldError } from "react-hook-form";
 import {
   IImageGenerationForm,
   IImageGenerationResult,
-} from "@/schemas/imageGenerationSchema";
+} from "@/schemas/productCreateSchema";
 import { theme } from "@/theme";
 import { Sparkles, Wand2 } from "lucide-react";
 import clsx from "clsx";
@@ -30,19 +30,14 @@ const PromptInputField = ({
   generatedResult,
   error,
 }: IPromptInputFieldProps) => {
-  const {
-    register,
-    prompt,
-    wordCount,
-    isOverLimit,
-    canSubmit,
-  } = usePromptInputField({
-    form,
-    uploadedImage,
-    isProcessing,
-    generatedResult,
-    error,
-  });
+  const { register, prompt, wordCount, isOverLimit, canSubmit } =
+    usePromptInputField({
+      form,
+      uploadedImage,
+      isProcessing,
+      generatedResult,
+      error,
+    });
 
   return (
     <article
@@ -53,7 +48,7 @@ const PromptInputField = ({
         {
           "opacity-60 scale-95": !uploadedImage,
           "opacity-100 scale-100": uploadedImage,
-        }
+        },
       )}
     >
       <div
@@ -63,7 +58,7 @@ const PromptInputField = ({
           {
             "ring-2 ring-blue-300 shadow-xl shadow-blue-500/20 transform scale-102":
               uploadedImage && !isProcessing && !generatedResult,
-          }
+          },
         )}
       >
         <StepIndicator
@@ -104,7 +99,7 @@ const PromptInputField = ({
                       uploadedImage && (isOverLimit || error),
                     "border-blue-200 focus:border-blue-500 focus:ring-blue-500/20 bg-linear-to-br from-white via-blue-50/30 to-purple-50/30 backdrop-blur-sm":
                       uploadedImage && !isOverLimit && !error,
-                  }
+                  },
                 )}
                 rows={5}
                 maxLength={1000}

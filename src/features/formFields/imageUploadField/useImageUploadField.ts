@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { UseFormReturn, FieldError } from "react-hook-form";
-import { IImageGenerationForm } from "@/schemas/imageGenerationSchema";
+import { IImageGenerationForm } from "@/schemas/productCreateSchema";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 interface UseImageUploadFieldProps {

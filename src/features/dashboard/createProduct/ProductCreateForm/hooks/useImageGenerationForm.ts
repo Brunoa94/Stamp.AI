@@ -1,13 +1,13 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  imageGenerationSchema,
-  IImageGenerationForm,
-} from "@/schemas/imageGenerationSchema";
+  productCreateSchema,
+  IProductCreateForm,
+} from "@/schemas/productCreateSchema";
 
 export const useImageGenerationForm = () => {
-  const form = useForm<IImageGenerationForm>({
-    resolver: zodResolver(imageGenerationSchema),
+  const form = useForm<IProductCreateForm>({
+    resolver: zodResolver(productCreateSchema),
     mode: "onChange",
     defaultValues: {
       image: undefined,

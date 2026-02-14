@@ -18,19 +18,22 @@ export default function useProductCustomizerSection({selectedTshirt}: Props){
 
     // Reset color and size when tshirt changes
     useEffect(() => {
-    setSelectedColor(null);
-    setSelectedSize(null);
+        setSelectedColor(null);
+        setSelectedSize(null);
     }, [selectedTshirt?.blueprint_id]);
 
     // Auto-select first color and size when variants load
     useEffect(() => {
-    if (variantsData && !selectedColor && variantsData.colors.length > 0) {
-        setSelectedColor(variantsData.colors[0]);
-    }
-    if (variantsData && !selectedSize && variantsData.sizes.length > 0) {
-        setSelectedSize(variantsData.sizes[0]);
-    }
-    }, [variantsData, selectedColor, selectedSize]);
+        if (variantsData) {
+        // Auto-select first color and size when variants load or tshirt changes
+        setSelectedColor(variantsData.colors[0] || null);
+        setSelectedSize(variantsData.sizes[0] || null);
+        } else {
+        // Reset when no data (e.g., tshirt changed and new data is loading)
+        setSelectedColor(null);
+        setSelectedSize(null);
+        }
+    }, [selectedTshirt?.blueprint_id, variantsData]);
 
     const colorOptions =
     variantsData?.colors.map((color) => ({

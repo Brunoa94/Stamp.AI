@@ -1,16 +1,16 @@
 "use client";
 
 import { UseFormReturn, FieldError } from "react-hook-form";
-import { IImageGenerationForm } from "@/schemas/imageGenerationSchema";
 import { theme } from "@/theme";
 import clsx from "clsx";
 import ImageUploader from "../../dashboard/uploadImage/ImageUploader";
 import StepIndicator from "../../ui/step-indicator";
 import { useImageUploadField } from "./useImageUploadField";
-import { useCreateProductSubscriberActions } from "@/features/dashboard/createImage/context/CreateProductContextSubscriber/actions";
+import { useCreateProductSubscriberActions } from "@/features/dashboard/createProduct/context/CreateProductContextSubscriber/actions";
+import { IProductCreateForm } from "@/schemas/productCreateSchema";
 
 interface IImageUploadFieldProps {
-  form: UseFormReturn<IImageGenerationForm>;
+  form: UseFormReturn<IProductCreateForm>;
   error?: FieldError;
 }
 

@@ -8,7 +8,7 @@ import { ProductCustomization } from "./ProductCustomization";
 import { useBlueprintVariants } from "../hooks/useBlueprintVariants";
 import useProductCustomizerSection from "./hooks/useProductCustomizerSection";
 import { useUser } from "@/hooks/useAuth";
-import { useCreateProductAndAddToCart } from "../ImageGenerationForm/hooks/useCreateCustomProduct";
+import { useCreateProductAndAddToCart } from "../ProductCreateForm/hooks/useCreateCustomProduct";
 import { CreateProductSelectors } from "../context/CreateProductContextSubscriber/selectors";
 import { useCreateProductSubscriberActions } from "../context/CreateProductContextSubscriber/actions";
 

@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { TshirtType } from "@/services/tshirtProductService";
 import { SortOption } from "../types";
-import { filterAndSortTshirts } from "../tshirtFilters/utils/filterUtils";
+import { filterAndSortTshirts } from "../TshirtFilters/utils/filterUtils";
 
 interface UseTshirtFiltersProps {
   tshirtProducts: TshirtType[];

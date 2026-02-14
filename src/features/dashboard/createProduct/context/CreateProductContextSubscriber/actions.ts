@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { CreateProductSubscriberContext } from "./CreateProductContextSubscriber";
 import { TshirtType } from "@/features/dashboard/selectTshirt";
-import { IImageGenerationForm, IImageGenerationResult } from "@/schemas/imageGenerationSchema";
+import { IImageGenerationForm, IImageGenerationResult } from "@/schemas/productCreateSchema";
 import { CreatedProduct } from "@/services/customProductService";
 
 /**
