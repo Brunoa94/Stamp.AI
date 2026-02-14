@@ -6,8 +6,10 @@ export const ORDER_STATUS_OPTIONS = [
 ];
 
 export const PAYMENT_STATUS_OPTIONS = [
+  { label: "Pending", value: "pending" },
   { label: "Paid", value: "paid" },
   { label: "Unpaid", value: "unpaid" },
+  { label: "Refunded", value: "refunded" },
 ];
 
 export const SORT_BY_OPTIONS = [

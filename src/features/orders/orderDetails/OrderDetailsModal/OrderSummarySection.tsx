@@ -1,7 +1,7 @@
 import { OrderWithItemsT } from "@/types/order";
-import { OrderStatusBadge } from "../../orderCard/OrderStatusBadge";
 import { Package } from "lucide-react";
 import { componentThemes } from "@/theme";
+import { OrderStatusBadge } from "../../orderCard/OrderStatusBadge";
 
 interface Props {
   order: OrderWithItemsT;
@@ -34,7 +34,9 @@ export function OrderSummarySection({ order, formattedDate }: Props) {
         </div>
         <div>
           <p className="text-sm text-gray-600">Customer Email</p>
-          <p className="font-medium text-gray-800 break-words">{order.customer_email}</p>
+          <p className="font-medium text-gray-800 break-words">
+            {order.customer_email}
+          </p>
         </div>
       </div>
 
@@ -42,7 +44,9 @@ export function OrderSummarySection({ order, formattedDate }: Props) {
       <div className="bg-white border border-purple-100 rounded-lg p-4 space-y-2">
         <div className="flex justify-between">
           <span className="text-gray-600">Subtotal</span>
-          <span className="font-medium">${order.subtotal?.toFixed(2) || "0.00"}</span>
+          <span className="font-medium">
+            ${order.subtotal?.toFixed(2) || "0.00"}
+          </span>
         </div>
         <div className="flex justify-between">
           <span className="text-gray-600">Shipping</span>
@@ -59,7 +63,9 @@ export function OrderSummarySection({ order, formattedDate }: Props) {
         {order.discount_amount && order.discount_amount > 0 && (
           <div className="flex justify-between text-green-600">
             <span>Discount</span>
-            <span className="font-medium">-${order.discount_amount.toFixed(2)}</span>
+            <span className="font-medium">
+              -${order.discount_amount.toFixed(2)}
+            </span>
           </div>
         )}
         <div className="border-t border-purple-100 pt-2 flex justify-between">

@@ -3,26 +3,45 @@
 import { useState } from "react";
 import { useUser } from "@/hooks/useAuth";
 import { useOrders } from "@/hooks/useOrder";
+import { usePagination } from "@/hooks/usePagination";
 import { OrderWithItemsT } from "@/types/order";
 import { OrdersHeader } from "../sections/OrdersHeader";
-import { OrdersLoadingSkeleton, OrdersErrorState, OrdersEmptyState, OrderList } from "../components/orderList";
-import { OrderFilters } from "../components/orderFilters/OrderFilters";
-import { OrderDetailsModal } from "../components/orderDetails";
+import {
+  OrdersLoadingSkeleton,
+  OrdersErrorState,
+  OrdersEmptyState,
+  OrderList,
+} from "../orderList";
+import { OrderFilters } from "../orderFilters/OrderFilters";
 import { useOrderFilters } from "../hooks/useOrderFilters";
+import { OrderDetailsModal } from "../orderDetails/OrderDetailsModal";
+import { Paginator } from "@/features/ui/paginator";
 
 export function OrdersContent() {
   const { data: user } = useUser();
   const { data: orders, isLoading, error, refetch } = useOrders(user?.id);
-  const [selectedOrder, setSelectedOrder] = useState<OrderWithItemsT | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<OrderWithItemsT | null>(
+    null,
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { filteredOrders, filters, setFilter, clearFilters, hasActiveFilters } =
+    useOrderFilters(orders);
+
   const {
-    filteredOrders,
-    filters,
-    setFilter,
-    clearFilters,
-    hasActiveFilters,
-  } = useOrderFilters(orders);
+    currentPage,
+    totalPages,
+    paginatedItems,
+    goToPage,
+    canGoNext,
+    canGoPrevious,
+    startIndex,
+    endIndex,
+    totalItems,
+  } = usePagination({
+    items: filteredOrders,
+    itemsPerPage: 5,
+  });
 
   const handleOrderSelect = (order: OrderWithItemsT) => {
     setSelectedOrder(order);
@@ -68,24 +87,35 @@ export function OrdersContent() {
         />
       </div>
 
-      {/* Results count */}
-      <div className="mb-4">
-        <p className="text-sm text-gray-600">
-          Showing {filteredOrders.length} of {orders.length} order
-          {orders.length !== 1 ? "s" : ""}
-        </p>
-      </div>
-
       {/* Orders List */}
       {filteredOrders.length > 0 ? (
-        <OrderList orders={filteredOrders} onOrderSelect={handleOrderSelect} />
+        <>
+          <OrderList
+            orders={paginatedItems}
+            onOrderSelect={handleOrderSelect}
+          />
+
+          {/* Pagination */}
+          <Paginator
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={goToPage}
+            canGoPrevious={canGoPrevious}
+            canGoNext={canGoNext}
+            startIndex={startIndex}
+            endIndex={endIndex}
+            totalItems={totalItems}
+          />
+        </>
       ) : (
         <div className="flex items-center justify-center min-h-[300px]">
           <div className="text-center space-y-2">
             <p className="text-xl font-semibold text-gray-700">
               No orders match your filters
             </p>
-            <p className="text-gray-600">Try adjusting or clearing your filters</p>
+            <p className="text-gray-600">
+              Try adjusting or clearing your filters
+            </p>
           </div>
         </div>
       )}

@@ -2,7 +2,7 @@
 
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
 import { OrdersContent } from "@/features/orders/ordersContent/OrdersContent";
-import { OrdersLoadingSkeleton } from "@/features/orders/components/orderList";
+import { OrdersLoadingSkeleton } from "@/features/orders/orderList";
 import { theme } from "@/theme";
 
 export default function OrdersPage() {

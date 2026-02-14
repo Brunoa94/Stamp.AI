@@ -1,8 +1,16 @@
-import { IImageGenerationForm, IImageGenerationResult } from "@/schemas/productCreateSchema";
+import { IProductCreateForm, IImageGenerationResult } from "@/schemas/productCreateSchema";
+import { POST } from "./apiClient";
+
+interface ImageGenerationResponse {
+  success: boolean;
+  imageUrl: string;
+  enhancedPrompt: string;
+  originalPrompt: string;
+}
 
 export class ImageGenerationService {
   static async generateImage(
-    data: IImageGenerationForm,
+    data: IProductCreateForm,
     signal?: AbortSignal
   ): Promise<IImageGenerationResult> {
     try {
@@ -10,28 +18,11 @@ export class ImageGenerationService {
       formData.append("prompt", data.prompt);
       formData.append("image", data.image);
 
-      const response = await fetch("/api/generate-image", {
-        method: "POST",
-        body: formData,
-        signal, // Pass abort signal to fetch
-      });
-
-      // Handle non-2xx responses
-      if (!response.ok) {
-        let errorMessage = "Failed to generate image";
-
-        try {
-          const errorResult = await response.json();
-          errorMessage = errorResult.error || errorMessage;
-        } catch (parseError) {
-          // If response is not JSON, use status text
-          errorMessage = response.statusText || errorMessage;
-        }
-
-        throw new Error(`HTTP ${response.status}: ${errorMessage}`);
-      }
-
-      const result = await response.json();
+      const result = await POST<ImageGenerationResponse>(
+        "/api/generate-image",
+        formData,
+        { signal }
+      );
 
       if (!result.success) {
         throw new Error("Image generation was not successful");

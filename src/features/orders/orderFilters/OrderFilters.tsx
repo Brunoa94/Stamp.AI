@@ -2,12 +2,16 @@
 
 import { FilterHeader } from "@/features/ui/filters/FilterHeader";
 import { FilterSelect } from "@/features/ui/filter-select";
-import { Button } from "@/features/ui/button";
 import {
   ORDER_STATUS_OPTIONS,
   PAYMENT_STATUS_OPTIONS,
   SORT_BY_OPTIONS,
 } from "./orderFilterOptions";
+import dynamic from "next/dynamic";
+
+const ClearAllFilters = dynamic(() => import("./ClearAllFilters"), {
+  ssr: true,
+});
 
 interface Filters {
   status: string | null;
@@ -28,6 +32,11 @@ export function OrderFilters({
   onClearFilters,
   hasActiveFilters,
 }: Props) {
+  const handleFilterChange = (key: keyof Filters, value: string) => {
+    // Convert "all" to null to show all items
+    onFilterChange(key, value === "all" ? null : value);
+  };
+
   return (
     <div className="bg-linear-to-br from-purple-100/70 via-purple-200/60 to-pink-100/70 dark:from-gray-800/80 dark:via-purple-800/30 dark:to-pink-800/30 backdrop-blur-sm border-2 border-purple-200 dark:border-purple-700/50 rounded-2xl p-6 mb-6">
       <FilterHeader title="Filter & Sort" />
@@ -36,8 +45,8 @@ export function OrderFilters({
         {/* Status Filter */}
         <FilterSelect
           label="Order Status"
-          value={filters.status || ""}
-          onChange={(value) => onFilterChange("status", value || null)}
+          value={filters.status || "all"}
+          onChange={(value) => handleFilterChange("status", value)}
           options={ORDER_STATUS_OPTIONS}
           placeholder="All Orders"
         />
@@ -45,8 +54,8 @@ export function OrderFilters({
         {/* Payment Status Filter */}
         <FilterSelect
           label="Payment Status"
-          value={filters.paymentStatus || ""}
-          onChange={(value) => onFilterChange("paymentStatus", value || null)}
+          value={filters.paymentStatus || "all"}
+          onChange={(value) => handleFilterChange("paymentStatus", value)}
           options={PAYMENT_STATUS_OPTIONS}
           placeholder="All Payments"
         />
@@ -55,24 +64,13 @@ export function OrderFilters({
         <FilterSelect
           label="Sort By"
           value={filters.sortBy}
-          onChange={(value) => onFilterChange("sortBy", value)}
+          onChange={(value) => handleFilterChange("sortBy", value)}
           options={SORT_BY_OPTIONS}
           placeholder="Select sorting"
         />
       </div>
 
-      {hasActiveFilters && (
-        <div className="mt-4 pt-4 border-t border-purple-200 dark:border-purple-700">
-          <Button
-            onClick={onClearFilters}
-            variant="ghost"
-            size="sm"
-            className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300"
-          >
-            Clear all filters
-          </Button>
-        </div>
-      )}
+      {hasActiveFilters && <ClearAllFilters onClearFilters={onClearFilters} />}
     </div>
   );
 }
