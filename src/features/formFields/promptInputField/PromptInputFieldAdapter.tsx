@@ -5,9 +5,9 @@ import { theme } from "@/theme";
 import clsx from "clsx";
 import StepIndicator from "../../ui/step-indicator";
 import TipBanner from "../../common/TipBanner";
-import PromptInputFields from "@/features/dashboard/createPrompt/promptInput/PromptInputFields";
 import { IProductCreateForm } from "@/schemas/productCreateSchema";
 import { CreateProductSelectors } from "@/features/dashboard/createProduct/context/CreateProductContextSubscriber/selectors";
+import PromptInputFields from "@/features/dashboard/createPrompt/PromptInput/PromptInputFields";
 
 interface IPromptInputFieldAdapterProps {
   form: UseFormReturn<IProductCreateForm>;

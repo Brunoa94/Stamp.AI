@@ -10,9 +10,15 @@ interface Props {
   isUpdating?: boolean;
 }
 
-export function CartList({ items, onUpdateQuantity, onRemove, isUpdating = false }: Props) {
+export function CartList({
+  items,
+  onUpdateQuantity,
+  onRemove,
+  isUpdating = false,
+}: Props) {
   return (
     <div className="space-y-4">
+      {/* Items List */}
       {items.map((item) => (
         <CartItem
           key={item.id}

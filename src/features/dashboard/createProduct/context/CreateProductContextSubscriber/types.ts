@@ -1,5 +1,5 @@
 import { UseFormReturn } from "react-hook-form";
-import { IImageGenerationForm, IImageGenerationResult } from "@/schemas/productCreateSchema";
+import { IProductCreateForm, IImageGenerationResult } from "@/schemas/productCreateSchema";
 import { TshirtType } from "@/features/dashboard/selectTshirt";
 import { CreatedProduct } from "@/services/customProductService";
 
@@ -10,7 +10,7 @@ export interface CreateProductContextState {
   currentStep: WorkflowStep;
 
   // Form state
-  form: UseFormReturn<IImageGenerationForm> | null;
+  form: UseFormReturn<IProductCreateForm> | null;
   uploadedImage: File | null;
   prompt: string;
 

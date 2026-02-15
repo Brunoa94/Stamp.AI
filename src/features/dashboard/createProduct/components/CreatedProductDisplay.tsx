@@ -1,14 +1,11 @@
-import { CreatedProduct } from "@/services/customProductService";
 import { Button } from "@/features/ui/button";
-import { theme, CreditCardIcon, ArrowRightIcon } from "@/theme";
+import { theme, ArrowRightIcon } from "@/theme";
 import { ShoppingCartIcon } from "lucide-react";
 import { StatusHeader } from "@/features/ui/status-header";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import { CreateProductSelectors } from "../context/CreateProductContextSubscriber/selectors";
-
-interface Props {}
 
 const CreatedProductDisplay = () => {
   const product = CreateProductSelectors.createdProduct();

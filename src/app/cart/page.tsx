@@ -2,17 +2,21 @@
 
 import { useRouter } from "next/navigation";
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { useCartSummary, useUpdateCartItem, useRemoveCartItem } from "@/queries/cartQueries";
+import {
+  useCartSummary,
+  useUpdateCartItem,
+  useRemoveCartItem,
+} from "@/queries/cartQueries";
 import { CartHeader } from "@/features/cart/sections";
 import { CartList, EmptyCart, CartSummary } from "@/features/cart/components";
 import { componentThemes } from "@/theme";
 import clsx from "clsx";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { useUser } from "@/hooks/useAuth";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 function CartContent() {
   const router = useRouter();
-  const { data: user } = useUser();
   const updateCartItem = useUpdateCartItem();
   const removeCartItem = useRemoveCartItem();
   const { subtotal, itemCount, cart, isLoading, error } = useCartSummary();
@@ -65,6 +69,17 @@ function CartContent() {
       <div className="max-w-6xl mx-auto px-4">
         <CartHeader />
 
+        {/* Continue Shopping Link */}
+        <div className="mb-6">
+          <Link
+            href="/products"
+            className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium transition-colors group"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            Continue Shopping
+          </Link>
+        </div>
+
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Cart Items - Left Column (2/3) */}
           <div className="lg:col-span-2">
@@ -80,6 +95,7 @@ function CartContent() {
           <div className="lg:col-span-1">
             <CartSummary
               itemCount={itemCount}
+              subtotal={subtotal}
               onCheckout={handleCheckout}
               isProcessing={false}
             />
