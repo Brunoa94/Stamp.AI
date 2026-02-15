@@ -14,8 +14,9 @@ imaginary-builderai/
 │   ├── app/                    # Next.js App Router (Routes & API)
 │   ├── components/             # React Components (Feature-based)
 │   ├── store/                  # Zustand State Management
+│   ├── queries/                # React Query Hooks (Centralized)
 │   ├── services/               # API Client Services
-│   ├── hooks/                  # Custom React Hooks
+│   ├── hooks/                  # Custom React Hooks (Non-query)
 │   ├── lib/                    # Core Libraries & Utilities
 │   │   └── supabase/           # Supabase client configurations
 │   ├── types/                  # TypeScript Definitions
@@ -35,8 +36,14 @@ imaginary-builderai/
 ### **1. Separation of Concerns**
 
 - **Presentation**: Components handle UI rendering
-- **Business Logic**: Services handle API communication
+- **Server State**: Queries layer handles React Query hooks and mutations
+- **Business Logic**: Services handle API communication and data fetching
 - **Authentication**: Middleware handles session management
+
+**Data Flow:**
+```
+Components → Queries (React Query) → Services (Business Logic) → API/Database
+```
 
 ### **2. Server/Client Component Strategy**
 

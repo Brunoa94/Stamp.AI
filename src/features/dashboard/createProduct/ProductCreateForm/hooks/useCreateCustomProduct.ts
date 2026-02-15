@@ -1,29 +1,13 @@
-import { useMutation } from "@tanstack/react-query";
-import { CustomProductService, CreateProductPayload, CreatedProduct } from "@/services/customProductService";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { useCartMutations } from "@/hooks/useCart";
+import { useCreateCustomProduct, useAddToCart } from "@/queries";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { CreateProductPayload } from "@/services/customProductService";
 
-export function useCreateCustomProduct() {
-  const { handleError } = useErrorHandler();
-
-  return useMutation({
-    mutationFn: (payload: CreateProductPayload): Promise<CreatedProduct> => {
-      return CustomProductService.createCustomProduct(payload);
-    },
-    onError: (error: Error) => {
-      handleError({
-        message: error.message,
-        error: "CUSTOM_PRODUCT_CREATION_FAILED",
-      });
-    },
-  });
-}
+export { useCreateCustomProduct } from "@/queries";
 
 export function useCreateProductAndAddToCart() {
   const { mutate: createProduct, ...createProductResult } = useCreateCustomProduct();
-  const { addToCart } = useCartMutations();
+  const addToCart = useAddToCart();
   const router = useRouter();
 
   const createAndAddToCart = ({

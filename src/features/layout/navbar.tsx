@@ -7,7 +7,7 @@ import { Button } from "@/features/ui/button";
 import { Package, Home, ShoppingCart, LogOut, User } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { ThemeToggle } from "@/features/ui/theme-toggle";
-import { useCartSummary } from "@/hooks/useCart";
+import { useCartSummary } from "@/queries/cartQueries";
 import { useLogout, useIsAuthenticated } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 

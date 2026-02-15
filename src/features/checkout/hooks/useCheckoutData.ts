@@ -1,8 +1,7 @@
 import { CheckoutSubscriberContextState } from "../context/CheckoutContextSubscriber/types";
 import { useEffect } from "react";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { useQuery } from "@tanstack/react-query";
-import { CartService } from "@/services/cartService";
+import { useCartById } from "@/queries/cartQueries";
 import { useSearchParams } from "next/navigation";
 
 export interface CheckoutStore {
@@ -26,11 +25,7 @@ export function useCheckoutData(store: CheckoutStore): UseCheckoutDataResult {
     data: cart,
     isLoading,
     error,
-  } = useQuery({
-    queryKey: ["cart", cartId],
-    queryFn: () => CartService.getCart(cartId!),
-    enabled: !!cartId,
-  });
+  } = useCartById(cartId);
 
   if (error) handleError(error as Error);
 

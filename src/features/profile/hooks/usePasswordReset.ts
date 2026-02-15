@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 import { toast } from "sonner";
-import { useUpdatePassword } from "./useUpdatePassword";
+import { useUpdatePassword } from "@/queries/authQueries";
 import { UpdatePasswordSchema } from "@/schemas/auth";
 
 interface PasswordResetState {

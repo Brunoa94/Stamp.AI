@@ -517,11 +517,13 @@ src/components/dashboard/
 
 ## **React Query Integration**
 
+**IMPORTANT:** All React Query hooks must be centralized in the `queries/` folder, not in component files or the `hooks/` folder.
+
 Use TanStack React Query for server state management, calling service methods:
 
 ```typescript
-// hooks/useProjects.ts
-import { useQuery } from "@tanstack/react-query";
+// queries/projectQueries.ts
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ProjectsService } from "@/services/projects";
 
 export function useProjects() {
@@ -538,9 +540,29 @@ export function useProject(id: number) {
     enabled: !!id,
   });
 }
+
+export function useCreateProject() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreateProjectT) => ProjectsService.createProject(payload),
+    onSuccess: (data) => {
+      queryClient.setQueryData(["projects", data.id], data);
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    },
+  });
+}
 ```
 
-**Pattern:** React Query hooks wrap service methods for data fetching
+**Pattern:** React Query hooks centralized in `queries/` folder, organized by domain
+
+**Benefits:**
+- Single source of truth for all queries/mutations
+- Consistent query keys across the application
+- Reusable across multiple components
+- Easy cache invalidation management
+
+See [Queries Layer Documentation](../architecture/queries-layer.md) for detailed patterns and best practices.
 
 ## **Component State Patterns**
 
@@ -548,6 +570,7 @@ Components using fetched data must include loading and error states:
 
 ```typescript
 // components/projects/projectList/ProjectList.tsx
+import { useProjects } from "@/queries/projectQueries";
 import { ProjectListSkeleton } from "./ProjectListSkeleton";
 import { ProjectListError } from "./ProjectListError";
 
@@ -870,29 +893,36 @@ const MyComponent = () => {
 
 ### Hook Organization Rules
 
-- **Component-specific hooks**: Hooks that are only used by one component should be placed in the same folder as that component
-- **Shared hooks**: Hooks used by multiple components should be placed in the global `hooks/` folder
+- **React Query hooks**: ALL queries and mutations MUST be in the `queries/` folder, organized by domain
+- **Component-specific hooks**: Non-query hooks that are only used by one component should be placed in the same folder as that component
+- **Shared utility hooks**: Non-query hooks used by multiple components should be placed in the global `hooks/` folder
 - **Co-location principle**: Keep related files together for better maintainability
 
 ```
 src/
+├── queries/
+│   ├── orderQueries.ts              # ✅ ALL order queries & mutations
+│   ├── productQueries.ts            # ✅ ALL product queries & mutations
+│   └── cartQueries.ts               # ✅ ALL cart queries & mutations
 ├── components/
 │   └── dashboard/
 │       └── UserProfile/
-│           ├── UserProfile.tsx          # ✅ Component
-│           └── useUserProfile.ts        # ✅ Component-specific hook
+│           ├── UserProfile.tsx      # ✅ Component
+│           └── useUserProfile.ts    # ✅ Component-specific NON-query hook
 └── hooks/
-    ├── useAuth.ts                       # ✅ Shared across app
-    ├── useApi.ts                        # ✅ Shared utility hook
-    └── useLocalStorage.ts               # ✅ Shared utility hook
+    ├── useTheme.ts                  # ✅ Shared utility hook
+    ├── useErrorHandler.ts           # ✅ Shared utility hook
+    └── useLocalStorage.ts           # ✅ Shared utility hook
 ```
+
+**Important:** The `hooks/` folder should NEVER contain React Query hooks (useQuery, useMutation). Those belong in `queries/`.
 
 ## **Form Handling Patterns**
 
-Use TanStack React Query mutations for form submissions:
+Use TanStack React Query mutations for form submissions. **All mutations must be defined in the `queries/` folder:**
 
 ```typescript
-// hooks/useCreateProject.ts
+// queries/projectQueries.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ProjectsService } from "@/services/projects";
 
@@ -900,11 +930,34 @@ export function useCreateProject() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ProjectsService.createProject,
-    onSuccess: () => {
+    mutationFn: (payload: CreateProjectT) => ProjectsService.createProject(payload),
+    onSuccess: (data) => {
+      queryClient.setQueryData(["projects", data.id], data);
       queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
+}
+```
+
+**Usage in components:**
+
+```typescript
+// components/projects/CreateProjectForm.tsx
+import { useCreateProject } from "@/queries/projectQueries";
+
+function CreateProjectForm() {
+  const createProject = useCreateProject();
+
+  const handleSubmit = async (data: CreateProjectT) => {
+    try {
+      await createProject.mutateAsync(data);
+      toast.success("Project created!");
+    } catch (error) {
+      toast.error("Failed to create project");
+    }
+  };
+
+  return <form onSubmit={handleSubmit}>...</form>;
 }
 ```
 

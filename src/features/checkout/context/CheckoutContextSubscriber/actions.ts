@@ -1,10 +1,7 @@
 import { useContext } from "react";
 import { CheckoutSubscriberContext } from "./CheckoutContextSubscriber";
 import { ShippingAddressT } from "@/schemas/checkout";
-import { useMutation } from "@tanstack/react-query";
-import { UserI } from "@/shared-types";
-import { CartWithItems } from "@/types/cart";
-import { OrderService } from "@/services/orderService";
+import { useCreateOrderFromCart } from "@/queries/orderQueries";
 import { OrderT } from "@/types/order";
 
 interface PaymentIntentI {
@@ -153,14 +150,6 @@ export function useCheckoutSubscriberActions() {
       });
     },
 
-    proceedToCheckout: useMutation({
-      mutationFn: async ({user, cart}: {user: UserI, cart: CartWithItems}) => {
-        if (!user) {
-          throw new Error("User not authenticated");
-        }
-        return await OrderService.createOrderFromCart({cart, user});
-      },
-      onSuccess: () => {}
-    })
+    proceedToCheckout: useCreateOrderFromCart()
   };
 }

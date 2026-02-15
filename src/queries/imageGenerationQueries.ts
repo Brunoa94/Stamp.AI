@@ -3,6 +3,9 @@ import { IImageGenerationResult, IProductCreateForm } from "@/schemas/productCre
 import { ImageGenerationService } from "@/services/imageGenerationService";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 
+/**
+ * Generate AI image from form data
+ */
 export function useImageGeneration() {
   const { handleError, handleSuccess } = useErrorHandler();
 

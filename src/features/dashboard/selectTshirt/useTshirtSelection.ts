@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { TshirtProductService, TshirtType } from "@/services/tshirtProductService";
+import { useTshirtProducts, type TshirtType } from "@/queries/productQueries";
 
 interface Props {
   onTshirtSelect?: (tshirt: TshirtType) => void;
@@ -10,12 +9,7 @@ interface Props {
 export type { TshirtType };
 
 export default function useTshirtSelection({ onTshirtSelect, initialSelection }: Props = {}) {
-  const { data: tshirtProducts = [], isLoading, error } = useQuery({
-    queryKey: ["tshirt-products"],
-    queryFn: TshirtProductService.fetchTshirtProducts,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    retry: 2,
-  });
+  const { data: tshirtProducts = [], isLoading, error } = useTshirtProducts();
 
   const [selectedTshirt, setSelectedTshirt] = useState<TshirtType | null>(initialSelection ?? tshirtProducts?.[0] ?? null);
 

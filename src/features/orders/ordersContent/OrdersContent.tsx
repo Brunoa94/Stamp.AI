@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useUser } from "@/hooks/useAuth";
-import { useOrders } from "@/hooks/useOrder";
+import { useOrders } from "@/queries/orderQueries";
 import { usePagination } from "@/hooks/usePagination";
 import { OrderWithItemsT } from "@/types/order";
 import { OrdersHeader } from "../sections/OrdersHeader";

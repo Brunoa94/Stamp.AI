@@ -1,7 +1,7 @@
 import { useReducer, useEffect } from "react";
 import { toast } from "sonner";
 import { useUser } from "@/hooks/useAuth";
-import { useUpdateProfile } from "./useUpdateProfile";
+import { useUpdateProfile } from "@/queries/authQueries";
 
 interface UserInformationState {
   isEditing: boolean;

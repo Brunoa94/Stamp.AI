@@ -1,14 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { AuthService } from "@/services/authService";
-import type { UpdateProfileI } from "@/schemas/auth";
+/**
+ * @deprecated This file has been moved to @/queries/authQueries
+ * Please update your imports:
+ * - import { useUpdateProfile } from "@/queries/authQueries"
+ * - Or import from "@/queries" for all queries
+ */
 
-export function useUpdateProfile() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: UpdateProfileI) => AuthService.updateProfile(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
-    },
-  });
-}
+export { useUpdateProfile } from "@/queries/authQueries";

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { useCart, useCartMutations, useCartSummary } from "@/hooks/useCart";
+import { useCartSummary, useUpdateCartItem, useRemoveCartItem } from "@/queries/cartQueries";
 import { CartHeader } from "@/features/cart/sections";
 import { CartList, EmptyCart, CartSummary } from "@/features/cart/components";
 import { componentThemes } from "@/theme";
@@ -13,7 +13,8 @@ import { useUser } from "@/hooks/useAuth";
 function CartContent() {
   const router = useRouter();
   const { data: user } = useUser();
-  const { updateCartItem, removeCartItem } = useCartMutations();
+  const updateCartItem = useUpdateCartItem();
+  const removeCartItem = useRemoveCartItem();
   const { subtotal, itemCount, cart, isLoading, error } = useCartSummary();
   const { handleError } = useErrorHandler();
 

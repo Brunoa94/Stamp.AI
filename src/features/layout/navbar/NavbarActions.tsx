@@ -4,7 +4,7 @@ import { useIsAuthenticated, useUser } from "@/hooks/useAuth";
 import { AuthenticatedUserSection } from "./AuthenticatedUserSection";
 import { UnauthenticatedUserSection } from "./UnauthenticatedUserSection";
 import { ThemeToggle } from "@/features/ui/theme-toggle";
-import { useCartSummary } from "@/hooks/useCart";
+import { useCartSummary } from "@/queries/cartQueries";
 
 import { Button } from "@/features/ui/button";
 import { ShoppingBag, ShoppingCart } from "lucide-react";

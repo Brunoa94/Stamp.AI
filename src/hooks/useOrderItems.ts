@@ -1,18 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { OrderItemService } from "@/services/orderItemService";
-
 /**
- * Hook to fetch order items for a specific order
+ * @deprecated This file has been moved to @/queries/orderQueries
+ * Please update your imports:
+ * - import { useOrderItems } from "@/queries/orderQueries"
+ * - Or import from "@/queries" for all queries
  */
-export function useOrderItems(orderId: string | null) {
-  return useQuery({
-    queryKey: ["order-items", orderId],
-    queryFn: () => {
-      if (!orderId) {
-        throw new Error("Order ID is required");
-      }
-      return OrderItemService.getOrderItems(orderId);
-    },
-    enabled: !!orderId,
-  });
-}
+
+export { useOrderItems } from "@/queries/orderQueries";

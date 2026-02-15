@@ -1,44 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
-import { OrderService } from "@/services/orderService";
-
 /**
- * Hook to fetch a single order by ID
+ * @deprecated This file has been moved to @/queries/orderQueries
+ * Please update your imports:
+ * - import { useOrder, useOrders, etc } from "@/queries/orderQueries"
+ * - Or import from "@/queries" for all queries
  */
-export function useOrder(orderId: string | null) {
-  return useQuery({
-    queryKey: ["orders", orderId],
-    queryFn: () => {
-      if (!orderId) {
-        throw new Error("Order ID is required");
-      }
-      return OrderService.getOrder(orderId);
-    },
-    enabled: !!orderId,
-  });
-}
 
-/**
- * Hook to fetch orders for a specific user
- */
-export function useOrders(userId?: string) {
-  return useQuery({
-    queryKey: ["orders", { userId }],
-    queryFn: () => OrderService.getOrders(userId),
-  });
-}
-
-/**
- * Hook to fetch order by order number
- */
-export function useOrderByNumber(orderNumber: string | null) {
-  return useQuery({
-    queryKey: ["orders", "number", orderNumber],
-    queryFn: () => {
-      if (!orderNumber) {
-        throw new Error("Order number is required");
-      }
-      return OrderService.getOrderByNumber(orderNumber);
-    },
-    enabled: !!orderNumber,
-  });
-}
+export {
+  useOrder,
+  useOrders,
+  useOrderByNumber,
+  useOrderItems,
+  useCreateOrder,
+  useUpdateOrder,
+  useUpdateOrderStatus,
+  useUpdatePaymentStatus,
+  useUpdateFulfillmentStatus,
+  useDeleteOrder,
+} from "@/queries/orderQueries";
