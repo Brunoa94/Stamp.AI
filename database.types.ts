@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       ai_generations: {
@@ -152,6 +177,7 @@ export type Database = {
           id: string
           session_id: string | null
           updated_at: string | null
+          user_email: string | null
           user_id: string | null
         }
         Insert: {
@@ -159,6 +185,7 @@ export type Database = {
           id?: string
           session_id?: string | null
           updated_at?: string | null
+          user_email?: string | null
           user_id?: string | null
         }
         Update: {
@@ -166,6 +193,7 @@ export type Database = {
           id?: string
           session_id?: string | null
           updated_at?: string | null
+          user_email?: string | null
           user_id?: string | null
         }
         Relationships: []
@@ -870,6 +898,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       PAYMENT_STATUS: ["PENDING", "FAILED", "COMPLETED"],

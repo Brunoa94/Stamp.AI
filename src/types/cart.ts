@@ -26,11 +26,11 @@ export interface CartWithItems extends CartT {
 }
 
 export interface AddToCartInput {
-  product_id?: string | null;
+  product_id: string | null;
   variant_id?: string | null;
   quantity: number;
   unit_price: number;
-  custom_image_url?: string;
+  custom_image_url: string;
   design_id?: string;
 }
 

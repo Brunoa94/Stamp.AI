@@ -21,7 +21,6 @@ interface CheckoutFormProps {
     print_provider_id: number;
   }>;
   shippingAddress: ShippingAddressT;
-  customization: ProductCustomizationT;
   testMode?: boolean;
   onSuccess?: (paymentIntent: any) => void;
   onError?: (error: string) => void;

@@ -8,9 +8,11 @@ import { CartList, EmptyCart, CartSummary } from "@/features/cart/components";
 import { componentThemes } from "@/theme";
 import clsx from "clsx";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { useUser } from "@/hooks/useAuth";
 
 function CartContent() {
   const router = useRouter();
+  const { data: user } = useUser();
   const { updateCartItem, removeCartItem } = useCartMutations();
   const { subtotal, itemCount, cart, isLoading, error } = useCartSummary();
   const { handleError } = useErrorHandler();
@@ -26,9 +28,8 @@ function CartContent() {
   };
 
   const handleCheckout = () => {
-    if (cart) {
-      router.push(`/checkout?cartId=${cart.id}`);
-    }
+    if (!cart) return;
+    router.push(`/checkout?cartId=${cart.id}`);
   };
 
   // Loading state
@@ -77,7 +78,6 @@ function CartContent() {
           {/* Cart Summary - Right Column (1/3) */}
           <div className="lg:col-span-1">
             <CartSummary
-              subtotal={subtotal}
               itemCount={itemCount}
               onCheckout={handleCheckout}
               isProcessing={false}

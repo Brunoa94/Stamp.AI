@@ -2,27 +2,10 @@ import { CheckoutSubscriberContextState } from "./types";
 
 export const MOCK_STATE: CheckoutSubscriberContextState = {
   // Data state
-  order: null,
-  orderItems: [],
-  customProduct: null,
+  cart: null,
+  cartItems: [],
   isLoading: false,
   error: null,
-
-  // Customization
-  customization: {
-    variant_id: 0,
-    quantity: 1,
-    print_areas: {
-      front: undefined,
-      back: undefined,
-      left_sleeve: undefined,
-      right_sleeve: undefined,
-      neck: undefined,
-    },
-    product_title: "",
-    variant_title: "",
-    price: 0,
-  },
 
   // Checkout flow state
   shippingAddress: null,
@@ -37,5 +20,4 @@ export const MOCK_STATE: CheckoutSubscriberContextState = {
   shippingCost: 0,
   discount: 0,
   orderAmount: 0,
-  lineItems: null,
 };

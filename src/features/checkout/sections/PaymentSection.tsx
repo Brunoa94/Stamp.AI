@@ -12,8 +12,7 @@ export function PaymentSection() {
   const testMode = CheckoutSelectors.testMode();
   const triggerPayment = CheckoutSelectors.triggerPayment();
   const orderAmount = CheckoutSelectors.orderAmount();
-  const customization = CheckoutSelectors.customization();
-  const lineItems = CheckoutSelectors.lineItems();
+
   const {
     setTestMode,
     handlePaymentSuccess,
@@ -21,19 +20,7 @@ export function PaymentSection() {
     handlePaymentSubmitComplete,
   } = useCheckoutSubscriberActions();
 
-  console.log('🔍 PaymentSection render:', {
-    has_customization: !!customization,
-    has_lineItems: !!lineItems,
-    orderAmount,
-  });
-
-  // Don't render if we don't have the required data
-  if (!customization || !lineItems) {
-    console.log('⚠️ PaymentSection: Missing customization or lineItems, returning empty');
-    return <></>;
-  }
-
-  console.log('✅ PaymentSection: Rendering payment form');
+  console.log("✅ PaymentSection: Rendering payment form");
 
   return (
     <section className={componentThemes.card.base}>
@@ -61,10 +48,9 @@ export function PaymentSection() {
 
         {shippingAddress ? (
           <PaymentForm
+            lineItems={[]}
             amount={orderAmount}
-            lineItems={lineItems}
             shippingAddress={shippingAddress}
-            customization={customization}
             testMode={testMode}
             onSuccess={handlePaymentSuccess}
             onError={handlePaymentError}

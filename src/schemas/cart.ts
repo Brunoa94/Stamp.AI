@@ -19,6 +19,7 @@ export const CartSchema = z.object({
   id: z.string(),
   user_id: z.string().nullable(),
   session_id: z.string().nullable(),
+  user_email: z.string().email().nullable().optional(),
   created_at: z.string().nullable().optional(),
   updated_at: z.string().nullable().optional(),
 }).passthrough(); // Allow additional fields from database

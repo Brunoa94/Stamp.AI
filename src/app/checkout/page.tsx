@@ -28,7 +28,8 @@ function CheckoutContent() {
   const paymentStatus = CheckoutSelectors.paymentStatus();
   const message = CheckoutSelectors.message();
 
-  const { handleCreateAnother, handleTryAgain } = useCheckoutSubscriberActions();
+  const { handleCreateAnother, handleTryAgain } =
+    useCheckoutSubscriberActions();
 
   // Loading state
   if (isLoading) {
@@ -74,13 +75,9 @@ function CheckoutContent() {
 }
 
 export default function CheckoutPage() {
-  const searchParams = useSearchParams();
-  const orderId = searchParams.get("orderId");
-  const cartId = searchParams.get("cartId");
-
   return (
     <ProtectedRoute fallback={<CheckoutLoading />}>
-      <CheckoutSubscriberProvider orderId={orderId} cartId={cartId}>
+      <CheckoutSubscriberProvider>
         <CheckoutContent />
       </CheckoutSubscriberProvider>
     </ProtectedRoute>

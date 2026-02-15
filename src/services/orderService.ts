@@ -2,6 +2,10 @@ import { createClient } from "@/lib/supabase/client";
 import { CreateOrderT, OrderT, UpdateOrderT, OrderWithItemsT } from "../types/order";
 import { OrderWithItemsSchema, OrderSchema } from "@/schemas/order";
 import { z } from "zod";
+import { CartItemWithProduct, CartT, CartWithItems } from "@/types/cart";
+import { CartService } from "./cartService";
+import { UserI } from "@/shared-types";
+import { OrderItemService } from "./orderItemService";
 
 export class OrderService {
   private static getSupabase() {
@@ -300,4 +304,55 @@ export class OrderService {
       throw new Error('Order deletion failed: Unknown error occurred');
     }
   }
+
+  static async createOrderFromCart({user, cart}: {user: UserI, cart: CartWithItems}){
+          try {
+            const cartSummary = CartService.calculateCartSummary(cart);
+  
+            // Generate a unique order number
+            const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`;
+  
+            // Create order from cart
+            const newOrder = await this.createOrder({
+              user_id: user.id,
+              customer_email: user.email || "",
+              order_number: orderNumber,
+              status: "pending",
+              payment_status: "pending",
+              subtotal: cartSummary.subtotal,
+              shipping_cost: 5.99,
+              discount_amount: 0,
+              total_amount: cartSummary.subtotal + 5.99,
+            });
+  
+            console.log("✅ Order created from cart:", newOrder.id);
+  
+            // Create order items from cart items
+            if (cart.cart_items && cart.cart_items.length > 0) {
+              const orderItems = cart.cart_items.map((cartItem) => {
+                const totalPrice = cartItem.unit_price * cartItem.quantity;
+                return {
+                  order_id: newOrder.id,
+                  product_id: cartItem.product_id || null,
+                  variant_id: cartItem.variant_id || null,
+                  quantity: cartItem.quantity,
+                  unit_price: cartItem.unit_price,
+                  total_price: totalPrice,
+                  custom_image_url: cartItem.custom_image_url || "",
+                  product_name: cartItem.product?.name || "Custom Product",
+                  variant_name: cartItem.variant?.name || null,
+                  design_config: cartItem.custom_image_url ? { custom_image_url: cartItem.custom_image_url } : null,
+                };
+              });
+  
+              await OrderItemService.createOrderItems(orderItems);
+              console.log("✅ Order items created:", orderItems.length);
+            }
+  
+            return newOrder.id;
+          } catch (error) {
+            console.error("❌ Failed to create order from cart:", error);
+            throw new Error("Error creating order")
+          }
+        };
 }

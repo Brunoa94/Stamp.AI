@@ -2,15 +2,10 @@ import { useCheckoutSubscriberSelector } from "./CheckoutContextSubscriber";
 
 export const CheckoutSelectors = {
   // Data state
-  order: () => useCheckoutSubscriberSelector((state) => state.order),
-  orderItems: () => useCheckoutSubscriberSelector((state) => state.orderItems),
-  customProduct: () =>
-    useCheckoutSubscriberSelector((state) => state.customProduct),
+  cart: () => useCheckoutSubscriberSelector((state) => state.cart),
+  cartItems: () => useCheckoutSubscriberSelector((state) => state.cartItems),
   isLoading: () => useCheckoutSubscriberSelector((state) => state.isLoading),
   error: () => useCheckoutSubscriberSelector((state) => state.error),
-
-  // Customization
-  customization: () => useCheckoutSubscriberSelector((state) => state.customization),
 
   // Checkout flow state
   shippingAddress: () =>
@@ -23,6 +18,8 @@ export const CheckoutSelectors = {
     useCheckoutSubscriberSelector((state) => state.isProcessingPayment),
   triggerPayment: () =>
     useCheckoutSubscriberSelector((state) => state.triggerPayment),
+
+  // Computed values
   subtotal: () =>
     useCheckoutSubscriberSelector((state) => state.subtotal),
   shippingCost: () =>
@@ -30,5 +27,4 @@ export const CheckoutSelectors = {
   discount: () =>
     useCheckoutSubscriberSelector((state) => state.discount),
   orderAmount: () => useCheckoutSubscriberSelector((state) => state.orderAmount),
-  lineItems: () => useCheckoutSubscriberSelector((state) => state.lineItems)
 } as const;

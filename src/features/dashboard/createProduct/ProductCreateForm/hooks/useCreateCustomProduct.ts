@@ -3,10 +3,10 @@ import { CustomProductService, CreateProductPayload, CreatedProduct } from "@/se
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useCartMutations } from "@/hooks/useCart";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export function useCreateCustomProduct() {
   const { handleError } = useErrorHandler();
-  const { addToCart } = useCartMutations();
 
   return useMutation({
     mutationFn: (payload: CreateProductPayload): Promise<CreatedProduct> => {
@@ -24,6 +24,7 @@ export function useCreateCustomProduct() {
 export function useCreateProductAndAddToCart() {
   const { mutate: createProduct, ...createProductResult } = useCreateCustomProduct();
   const { addToCart } = useCartMutations();
+  const router = useRouter();
 
   const createAndAddToCart = ({
     blueprintId,
@@ -51,6 +52,7 @@ export function useCreateProductAndAddToCart() {
       description: `Custom designed ${tshirtName} with your unique artwork`,
       user_id: userId,
       customer_email: userEmail,
+      
     };
 
     createProduct(productPayload, {
@@ -68,6 +70,10 @@ export function useCreateProductAndAddToCart() {
               toast.success("Added to cart", {
                 description: "Your custom design has been added to your cart.",
               });
+
+              setTimeout(() => {
+                router.push("/cart")
+              }, 2000)
             },
             onError: (error) => {
               toast.error("Failed to add to cart", {

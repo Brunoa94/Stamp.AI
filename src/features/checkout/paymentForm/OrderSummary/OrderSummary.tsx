@@ -5,35 +5,39 @@ import { PromoCodeSection } from "./PromoCodeSection";
 import { PriceBreakdown } from "./PriceBreakdown";
 import { ShippingAddress } from "./ShippingAddress";
 import { CompleteOrderButton } from "./CompleteOrderButton";
+import { CheckoutSelectors } from "../../context/CheckoutContextSubscriber/selectors";
+import { useCheckoutSubscriberActions } from "../../context/CheckoutContextSubscriber/actions";
+import { useUser } from "@/hooks/useAuth";
+import { CartItemWithProduct, CartWithItems } from "@/types/cart";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
-interface Props {
-  customization: ProductCustomizationT;
-  shippingAddress: ShippingAddressT;
-  orderAmount: number;
-  shippingCost?: number;
-  discount?: number;
-  onEditShipping: () => void;
-  onCompleteOrder?: () => void;
-  isProcessingPayment?: boolean;
-  onPromoCodeApply?: (code: string) => void;
-}
+const OrderSummary = () => {
+  const shippingAddress = CheckoutSelectors.shippingAddress();
+  const hasShippingAddress = shippingAddress?.address1 && shippingAddress?.city;
+  const orderAmount = CheckoutSelectors.subtotal();
+  const shippingCost = CheckoutSelectors.shippingCost();
+  const discount = CheckoutSelectors.discount();
+  const isProcessingPayment = CheckoutSelectors.isProcessingPayment();
+  const cart = CheckoutSelectors.cart();
+  const cartItems = CheckoutSelectors.cartItems();
+  const { data: user } = useUser();
+  const { handleError } = useErrorHandler();
 
-const OrderSummary = ({
-  customization,
-  shippingAddress,
-  orderAmount,
-  shippingCost = 5.99,
-  discount = 0,
-  onEditShipping,
-  onCompleteOrder,
-  isProcessingPayment = false,
-  onPromoCodeApply,
-}: Props) => {
-  const hasShippingAddress = shippingAddress.address1 && shippingAddress.city;
+  const { handleCompleteOrder: onCompleteOrder, proceedToCheckout } =
+    useCheckoutSubscriberActions();
 
-  // Calculate totals
-  const subtotal = orderAmount;
-  const total = subtotal + shippingCost - discount;
+  const onEditShipping = () => {};
+
+  const total = orderAmount + shippingCost - discount;
+
+  const handleSubmit = async () => {
+    if (!user || !cart) return;
+    try {
+      await proceedToCheckout.mutateAsync({ user, cart });
+    } catch (e) {
+      handleError(e);
+    }
+  };
 
   return (
     <aside className={componentThemes.card.base}>
@@ -42,19 +46,33 @@ const OrderSummary = ({
           <h2 className={componentThemes.text.subheading}>Order Summary</h2>
         </header>
 
-        <ProductDetails customization={customization} subtotal={subtotal} />
-
-        <PromoCodeSection onPromoCodeApply={onPromoCodeApply} />
+        {cartItems.map((cartItem: CartItemWithProduct) => (
+          <ProductDetails product={cartItem} />
+        ))}
+        {/* <PromoCodeSection onPromoCodeApply={onPromoCodeApply} /> */}
 
         <PriceBreakdown
-          subtotal={subtotal}
+          subtotal={orderAmount}
           shippingCost={shippingCost}
           discount={discount}
           total={total}
         />
 
         <ShippingAddress
-          shippingAddress={shippingAddress}
+          shippingAddress={
+            shippingAddress || {
+              first_name: "",
+              last_name: "",
+              email: "",
+              phone: "",
+              country: "US",
+              region: "",
+              address1: "",
+              address2: "",
+              city: "",
+              zip: "",
+            }
+          }
           onEditShipping={onEditShipping}
         />
 

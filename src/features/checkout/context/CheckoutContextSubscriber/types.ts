@@ -1,20 +1,12 @@
-import { ShippingAddressT, ProductCustomizationT } from "@/schemas/checkout";
-import { CustomProductT } from "@/types/printify";
-import type { Database } from "../../../../../database.types";
-
-export type Order = Database["public"]["Tables"]["orders"]["Row"];
-export type OrderItem = Database["public"]["Tables"]["order_items"]["Row"];
+import { ShippingAddressT } from "@/schemas/checkout";
+import { CartItemWithProduct, CartWithItems } from "@/types/cart";
 
 export interface CheckoutSubscriberContextState {
   // Data state
-  order: Order | null;
-  orderItems: OrderItem[];
-  customProduct: CustomProductT | null;
+  cart: CartWithItems | null;
+  cartItems: CartItemWithProduct[];
   isLoading: boolean;
   error: Error | null;
-
-  // Customization
-  customization: ProductCustomizationT;
 
   // Checkout flow state
   shippingAddress: ShippingAddressT | null;
@@ -29,11 +21,4 @@ export interface CheckoutSubscriberContextState {
   shippingCost: number;
   discount: number;
   orderAmount: number;
-  lineItems: Array<{
-    product_id: string;
-    variant_id: number;
-    quantity: number;
-    print_areas: Record<string, any[]>;
-    print_provider_id: number;
-  }> | null;
 }

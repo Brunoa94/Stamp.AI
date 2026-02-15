@@ -1,7 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { CartService } from "@/services/cartService";
-import { AddToCartInput, UpdateCartItemInput } from "@/types/cart";
+import { AddToCartInput, CartWithItems, UpdateCartItemInput } from "@/types/cart";
 import { useUser } from "./useAuth";
+import { OrderService } from "@/services/orderService";
+import { UserI } from "@/shared-types";
 
 /**
  * Hook to get or create cart for current user/session
@@ -9,6 +11,7 @@ import { useUser } from "./useAuth";
 export function useCart() {
   const { data: user } = useUser();
   const userId = user?.id;
+  const userEmail = user?.email;
 
   return useQuery({
     queryKey: ["cart", { userId }],
@@ -17,7 +20,7 @@ export function useCart() {
         throw new Error("User not authenticated");
       }
       // Get or create cart
-      const cart = await CartService.getOrCreateCart(userId, undefined);
+      const cart = await CartService.getOrCreateCart(userId, undefined, userEmail);
       // Get cart with items
       return CartService.getCart(cart.id);
     },
@@ -33,13 +36,15 @@ export function useCartMutations() {
   const queryClient = useQueryClient();
   const { data: user } = useUser();
   const userId = user?.id;
+  const userEmail = user?.email;
 
   const addToCart = useMutation({
     mutationFn: async (item: AddToCartInput) => {
       if (!userId) {
         throw new Error("User not authenticated");
       }
-      const cart = await CartService.getOrCreateCart(userId, undefined);
+      const cart = await CartService.getOrCreateCart(userId, undefined, userEmail);
+
       return await CartService.addToCart(cart.id, item);
     },
     onSuccess: () => {
@@ -76,7 +81,7 @@ export function useCartMutations() {
       if (!userId) {
         throw new Error("User not authenticated");
       }
-      const cart = await CartService.getOrCreateCart(userId, undefined);
+      const cart = await CartService.getOrCreateCart(userId, undefined, userEmail);
       return await CartService.clearCart(cart.id);
     },
     onSuccess: () => {

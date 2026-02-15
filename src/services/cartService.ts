@@ -22,7 +22,7 @@ export class CartService {
   /**
    * Get or create cart for user/session
    */
-  static async getOrCreateCart(userId?: string, sessionId?: string): Promise<CartT> {
+  static async getOrCreateCart(userId?: string, sessionId?: string, userEmail?: string): Promise<CartT> {
     try {
       const supabase = this.getSupabase();
 
@@ -55,6 +55,7 @@ export class CartService {
         .insert({
           user_id: userId || null,
           session_id: sessionId || null,
+          user_email: userEmail || null,
         })
         .select()
         .single();

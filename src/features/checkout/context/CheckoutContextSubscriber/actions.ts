@@ -1,7 +1,11 @@
 import { useContext } from "react";
 import { CheckoutSubscriberContext } from "./CheckoutContextSubscriber";
 import { ShippingAddressT } from "@/schemas/checkout";
-import { Order } from "./types";
+import { useMutation } from "@tanstack/react-query";
+import { UserI } from "@/shared-types";
+import { CartWithItems } from "@/types/cart";
+import { OrderService } from "@/services/orderService";
+import { OrderT } from "@/types/order";
 
 interface PaymentIntentI {
   id: string;
@@ -26,7 +30,7 @@ export function useCheckoutSubscriberActions() {
 /**
      * Handle shipping address form submission
      */
-    handleUpdateShippingDetails: (data: Order) => {
+    handleUpdateShippingDetails: (data: OrderT) => {
       const state = store.getState();
       const {subtotal, shipping_cost, discount_amount} = data;
       let orderAmount = 0;
@@ -148,5 +152,15 @@ export function useCheckoutSubscriberActions() {
         testMode: value,
       });
     },
+
+    proceedToCheckout: useMutation({
+      mutationFn: async ({user, cart}: {user: UserI, cart: CartWithItems}) => {
+        if (!user) {
+          throw new Error("User not authenticated");
+        }
+        return await OrderService.createOrderFromCart({cart, user});
+      },
+      onSuccess: () => {}
+    })
   };
 }
