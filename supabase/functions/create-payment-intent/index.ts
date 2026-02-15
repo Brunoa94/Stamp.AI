@@ -2,7 +2,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import Stripe from 'https://esm.sh/stripe@14.11.0?target=deno'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
-import type { CreatePaymentIntentRequestI, PaymentIntentResponseI } from "../../../types/index.ts"
+import type { CreatePaymentIntentRequestI, PaymentIntentResponseI } from "../../types/index.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

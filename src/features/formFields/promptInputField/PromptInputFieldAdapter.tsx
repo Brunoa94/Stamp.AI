@@ -1,21 +1,18 @@
 "use client";
 
 import { Controller, UseFormReturn, FieldError } from "react-hook-form";
-import {
-  IImageGenerationForm,
-  IImageGenerationResult,
-} from "@/schemas/productCreateSchema";
 import { theme } from "@/theme";
 import clsx from "clsx";
 import StepIndicator from "../../ui/step-indicator";
 import TipBanner from "../../common/TipBanner";
 import PromptInputFields from "@/features/dashboard/createPrompt/promptInput/PromptInputFields";
+import { IProductCreateForm } from "@/schemas/productCreateSchema";
+import { CreateProductSelectors } from "@/features/dashboard/createProduct/context/CreateProductContextSubscriber/selectors";
 
 interface IPromptInputFieldAdapterProps {
-  form: UseFormReturn<IImageGenerationForm>;
+  form: UseFormReturn<IProductCreateForm>;
   uploadedImage: File | undefined;
   isProcessing: boolean;
-  generatedResult: IImageGenerationResult | null;
   error?: FieldError;
 }
 
@@ -28,16 +25,14 @@ const PromptInputFieldAdapter = ({
   form,
   uploadedImage,
   isProcessing,
-  generatedResult,
   error,
 }: IPromptInputFieldAdapterProps) => {
+  const generatedResult = CreateProductSelectors.generatedResult();
   const { control } = form;
   const hasUploadedImage = !!uploadedImage;
   const shouldShowTip = hasUploadedImage;
   const shouldHighlightCard =
     hasUploadedImage && !isProcessing && !generatedResult;
-
-  console.log("RE.render");
 
   return (
     <article

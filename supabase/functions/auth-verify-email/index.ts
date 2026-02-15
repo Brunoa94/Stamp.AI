@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "jsr:@supabase/supabase-js@2"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
-import type { ApiResponseI, SuccessMessages, SuccessResponseI } from "../../../types/index.ts"
+import type { ApiResponseI, SuccessMessages, SuccessResponseI } from "../../types/index.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

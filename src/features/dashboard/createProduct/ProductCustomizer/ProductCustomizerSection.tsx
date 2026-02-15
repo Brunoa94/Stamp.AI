@@ -14,17 +14,16 @@ import { useCreateProductSubscriberActions } from "../context/CreateProductConte
 
 interface ProductCustomizerSectionProps {
   sectionRef: RefObject<HTMLElement | null>;
-  selectedTshirt: TshirtType | null;
-  onBack: () => void;
-  isCreatingProduct: boolean;
 }
 
 export default function ProductCustomizerSection({
   sectionRef,
-  selectedTshirt,
-  onBack,
-  isCreatingProduct,
 }: ProductCustomizerSectionProps) {
+  const selectedTshirt = CreateProductSelectors.selectedTshirt();
+  const isCreatingProduct = CreateProductSelectors.isCreatingProduct();
+  const { handleBackToResults } = useCreateProductSubscriberActions();
+
+  const onBack = handleBackToResults;
   const {
     colorOptions,
     sizeOptions,

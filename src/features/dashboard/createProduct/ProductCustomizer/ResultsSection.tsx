@@ -2,25 +2,26 @@ import ErrorDisplay from "@/features/dashboard/createProduct/components/ErrorDis
 import ResultHeader from "@/features/dashboard/createProduct/components/ResultHeader";
 import GeneratedImageDisplay from "@/features/dashboard/createProduct/components/GeneratedImageDisplay";
 
-interface IGeneratedImageResult {
-  imageUrl: string;
-  enhancedPrompt: string;
-  originalPrompt: string;
-}
+import { useCreateProductNavigation } from "../hooks/useCreateProductNavigation";
+import { CreateProductSelectors } from "../context/CreateProductContextSubscriber/selectors";
+import { useCreateProductSubscriberActions } from "../context/CreateProductContextSubscriber/actions";
 
 interface IResultsSectionProps {
-  generatedResult: IGeneratedImageResult | null;
-  error: string | undefined;
   ref?: React.Ref<HTMLElement>;
-  onUseImage?: () => void;
 }
 
-const ResultsSection = ({
-  generatedResult,
-  error,
-  ref,
-  onUseImage,
-}: IResultsSectionProps) => {
+const ResultsSection = ({ ref }: IResultsSectionProps) => {
+  const generatedResult = CreateProductSelectors.generatedResult();
+  const generationError = CreateProductSelectors.generationError();
+  const { handleUseImage } = useCreateProductSubscriberActions();
+  const { scrollToCustomizer } = useCreateProductNavigation();
+
+  const onUseImage = () => {
+    handleUseImage();
+    scrollToCustomizer();
+  };
+
+  const error = generationError?.message;
   const hasError = !!error;
   const hasResult = !!generatedResult;
 

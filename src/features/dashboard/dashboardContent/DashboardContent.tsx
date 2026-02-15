@@ -1,7 +1,7 @@
 import { PageHeader } from "@/features/ui/page-header";
 import ImageGenerationForm from "../createProduct/ProductCreateForm/ProductCreateForm";
-import { CreateProductSubscriberProvider } from "../createProduct/context/CreateProductContextSubscriber";
 import { Sparkles } from "lucide-react";
+import { CreateProductSubscriberProvider } from "../createProduct/context/CreateProductContextSubscriber/CreateProductContextSubscriber";
 
 const DashboardContent = () => {
   return (

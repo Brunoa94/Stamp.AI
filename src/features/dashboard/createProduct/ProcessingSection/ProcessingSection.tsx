@@ -1,14 +1,12 @@
 import { Wand2 } from "lucide-react";
+import { CreateProductSelectors } from "../context/CreateProductContextSubscriber/selectors";
 
 interface IProcessingSectionProps {
-  isProcessing: boolean;
   sectionRef?: React.RefObject<HTMLElement | null>;
 }
 
-const ProcessingSection = ({
-  isProcessing,
-  sectionRef,
-}: IProcessingSectionProps) => {
+const ProcessingSection = ({ sectionRef }: IProcessingSectionProps) => {
+  const isProcessing = CreateProductSelectors.isGenerating();
   if (!isProcessing) return null;
 
   return (

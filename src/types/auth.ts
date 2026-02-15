@@ -8,4 +8,4 @@ export type {
   PasswordResetRequestI,
   UpdateProfileRequestI,
   UserMetadataI
-} from "../../types";
+} from "../../supabase/types";

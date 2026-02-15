@@ -1,4 +1,4 @@
-import { ApiErrorI } from '../../types/index'
+import { ApiErrorI } from '../../supabase/types/index'
 
 // Frontend API types - re-exports from shared types for convenience
 export type {
@@ -40,7 +40,7 @@ export type {
 
   // Utility Types
   WithTimestamps
-} from '../../types/index'
+} from '../../supabase/types/index'
 
 // Frontend-specific types
 export interface FetchOptionsI {

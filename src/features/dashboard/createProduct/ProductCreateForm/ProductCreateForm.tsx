@@ -6,13 +6,12 @@ import { componentThemes } from "@/theme/components";
 import PromptInputFieldAdapter from "@/features/formFields/promptInputField/PromptInputFieldAdapter";
 import ImageUploadField from "@/features/formFields/imageUploadField/ImageUploadField";
 import dynamic from "next/dynamic";
-import {
-  CreateProductSelectors,
-  useCreateProductSubscriberActions,
-} from "../context/CreateProductContextSubscriber";
-import { useImageGeneration } from "./hooks/useImageGeneration";
+
 import { useCreateProductNavigation } from "../hooks/useCreateProductNavigation";
 import { IProductCreateForm } from "@/schemas/productCreateSchema";
+import { useImageGeneration } from "@/queries";
+import { CreateProductSelectors } from "../context/CreateProductContextSubscriber/selectors";
+import { useCreateProductSubscriberActions } from "../context/CreateProductContextSubscriber/actions";
 
 const ProcessingSection = dynamic(
   () => import("../ProcessingSection/ProcessingSection"),
@@ -35,25 +34,19 @@ const CreatedProductDisplay = dynamic(
 );
 
 const ProductCreateForm = () => {
-  // Selectors - subscribe to specific state slices
+  // Selectors - only what's needed at this level
   const currentStep = CreateProductSelectors.currentStep();
   const form = CreateProductSelectors.form();
   const uploadedImage = CreateProductSelectors.uploadedImage();
   const isGenerating = CreateProductSelectors.isGenerating();
-  const generatedResult = CreateProductSelectors.generatedResult();
-  const generationError = CreateProductSelectors.generationError();
-  const selectedTshirt = CreateProductSelectors.selectedTshirt();
-  const isCreatingProduct = CreateProductSelectors.isCreatingProduct();
   const createdProduct = CreateProductSelectors.createdProduct();
 
-  // Actions - get action handlers
+  // Actions - only what's needed at this level
   const {
     handleFormSubmit,
     handleGenerationStart,
     handleGenerationSuccess,
     handleGenerationError,
-    handleUseImage,
-    handleBackToResults,
   } = useCreateProductSubscriberActions();
 
   // Navigation and scrolling
@@ -63,7 +56,6 @@ const ProductCreateForm = () => {
     productCustomizerRef,
     createdProductRef,
     scrollToProcessing,
-    scrollToCustomizer,
   } = useCreateProductNavigation();
 
   // Image generation mutation
@@ -101,11 +93,6 @@ const ProductCreateForm = () => {
     });
   };
 
-  const onUseImageClick = () => {
-    handleUseImage();
-    scrollToCustomizer();
-  };
-
   const showCustomizerSection = currentStep === "customizing";
 
   return (
@@ -125,44 +112,24 @@ const ProductCreateForm = () => {
                 form={form}
                 uploadedImage={uploadedImage || undefined}
                 isProcessing={isGenerating}
-                generatedResult={generatedResult || null}
                 error={errors.prompt}
               />
             </div>
           </section>
 
-          <ProcessingSection
-            sectionRef={processingRef}
-            isProcessing={isGenerating}
-          />
+          <ProcessingSection sectionRef={processingRef} />
 
-          <ResultsSection
-            ref={resultsRef}
-            generatedResult={generatedResult || null}
-            error={generationError?.message}
-            onUseImage={onUseImageClick}
-          />
+          <ResultsSection ref={resultsRef} />
         </>
       )}
 
-      {showCustomizerSection && generatedResult && !createdProduct && (
-        <ProductCustomizerSection
-          sectionRef={productCustomizerRef}
-          selectedTshirt={selectedTshirt}
-          onBack={handleBackToResults}
-          isCreatingProduct={isCreatingProduct}
-        />
+      {showCustomizerSection && !createdProduct && (
+        <ProductCustomizerSection sectionRef={productCustomizerRef} />
       )}
 
       {createdProduct && (
         <section className="mt-8">
-          <div ref={createdProductRef}>
-            <CreatedProductDisplay
-              product={createdProduct}
-              generatedImageUrl={generatedResult?.imageUrl}
-              cartMode={true}
-            />
-          </div>
+          <CreatedProductDisplay />
         </section>
       )}
     </form>
