@@ -44,6 +44,7 @@ export const CheckoutSubscriberContext = createContext<ReturnType<
 interface CheckoutProviderProps {
   children: ReactNode;
   orderId: string | null;
+  cartId?: string | null;
 }
 
 export function useCheckoutSubscriberSelector<T>(
@@ -68,9 +69,10 @@ export function useCheckoutSubscriberSelector<T>(
 export function CheckoutSubscriberProvider({
   children,
   orderId,
+  cartId,
 }: CheckoutProviderProps) {
   const [store] = useState(() => createCheckoutSubscriberStore(MOCK_STATE));
-  useCheckoutData(orderId, store);
+  useCheckoutData(orderId, cartId, store);
 
   return (
     <CheckoutSubscriberContext.Provider value={store}>

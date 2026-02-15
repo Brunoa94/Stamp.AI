@@ -32,6 +32,7 @@ const ShippingAddressForm = ({
     register,
     handleSubmit,
     watch,
+    control,
     formState: { errors, isSubmitting, isValid },
   } = useForm<ShippingAddressT>({
     resolver: zodResolver(ShippingAddressSchema),
@@ -78,6 +79,7 @@ const ShippingAddressForm = ({
                   type={field.type}
                   required={field.required}
                   register={register}
+                  control={control}
                   error={errors[field.id]}
                   options={field.options}
                 />

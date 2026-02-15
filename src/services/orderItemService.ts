@@ -10,14 +10,15 @@ export class OrderItemService {
    * Get all order items for a specific order
    */
   static async getOrderItems(orderId: string): Promise<OrderItemT[]> {
+    console.log("ENTERIII")
     try {
       const supabase = this.getSupabase();
-
       const { data, error } = await supabase
         .from('order_items')
         .select('*')
         .eq('order_id', orderId)
         .order('created_at', { ascending: false });
+
 
       if (error) {
         throw new Error(`Supabase error: ${error.message}`);
@@ -26,7 +27,7 @@ export class OrderItemService {
       if (!data) {
         throw new Error('No data returned from query');
       }
-
+      console.log("DATA ", data)
       return data;
     } catch (error) {
       if (error instanceof Error) {

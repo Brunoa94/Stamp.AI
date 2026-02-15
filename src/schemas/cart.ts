@@ -16,45 +16,45 @@ export const updateCartItemSchema = z.object({
 
 // Response validation schemas
 export const CartSchema = z.object({
-  id: z.string().uuid(),
-  user_id: z.string().uuid().nullable(),
+  id: z.string(),
+  user_id: z.string().nullable(),
   session_id: z.string().nullable(),
-  created_at: z.string(),
-  updated_at: z.string(),
-});
+  created_at: z.string().nullable().optional(),
+  updated_at: z.string().nullable().optional(),
+}).passthrough(); // Allow additional fields from database
 
 export const CartItemSchema = z.object({
-  id: z.string().uuid(),
-  cart_id: z.string().uuid(),
-  product_id: z.string().uuid().nullable(),
-  variant_id: z.string().uuid().nullable(),
-  quantity: z.number().int(),
+  id: z.string(),
+  cart_id: z.string(),
+  product_id: z.string().nullable(),
+  variant_id: z.string().nullable(),
+  quantity: z.number(),
   unit_price: z.number(),
   custom_image_url: z.string().nullable(),
-  design_id: z.string().uuid().nullable(),
-  created_at: z.string(),
-  updated_at: z.string(),
-});
+  design_id: z.string().nullable(),
+  created_at: z.string().nullable().optional(),
+  updated_at: z.string().nullable().optional(),
+}).passthrough(); // Allow additional fields from database
 
 const ProductSchema = z.object({
   id: z.string(),
   name: z.string(),
   slug: z.string(),
   base_price: z.number(),
-});
+}).passthrough();
 
 const VariantSchema = z.object({
   id: z.string(),
   name: z.string(),
-});
+}).passthrough();
 
 export const CartItemWithProductSchema = CartItemSchema.extend({
-  product: ProductSchema.optional(),
-  variant: VariantSchema.optional(),
+  product: ProductSchema.nullable().optional(),
+  variant: VariantSchema.nullable().optional(),
 });
 
 export const CartWithItemsSchema = CartSchema.extend({
-  cart_items: z.array(CartItemWithProductSchema),
+  cart_items: z.array(CartItemWithProductSchema).default([]),
 });
 
 export type AddToCartInput = z.infer<typeof addToCartSchema>;

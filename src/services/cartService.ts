@@ -6,7 +6,6 @@ import {
   AddToCartInput,
   UpdateCartItemInput,
   CartSummary,
-  CartItemWithProduct,
 } from "@/types/cart";
 import {
   CartSchema,
@@ -69,6 +68,7 @@ export class CartService {
       }
 
       const validatedCart = CartSchema.parse(newCart);
+
       return validatedCart as CartT;
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -268,7 +268,15 @@ export class CartService {
   /**
    * Get cart summary (totals, item count)
    */
-  static calculateCartSummary(cart: CartWithItems): CartSummary {
+  static calculateCartSummary(cart?: CartWithItems): CartSummary {
+    if(!cart){
+      return{
+        subtotal: 0,
+        itemCount: 0,
+        items: []
+      }
+    }
+
     const items = cart.cart_items || [];
     const subtotal = items.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
     const itemCount = items.reduce((count, item) => count + item.quantity, 0);

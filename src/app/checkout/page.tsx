@@ -76,10 +76,11 @@ function CheckoutContent() {
 export default function CheckoutPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
+  const cartId = searchParams.get("cartId");
 
   return (
     <ProtectedRoute fallback={<CheckoutLoading />}>
-      <CheckoutSubscriberProvider orderId={orderId}>
+      <CheckoutSubscriberProvider orderId={orderId} cartId={cartId}>
         <CheckoutContent />
       </CheckoutSubscriberProvider>
     </ProtectedRoute>

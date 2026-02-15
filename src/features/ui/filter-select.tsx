@@ -35,7 +35,7 @@ export function FilterSelect<T extends string = string>({
         {label}
       </Label>
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-full border-2 border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-800/60 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>

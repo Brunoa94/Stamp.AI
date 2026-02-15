@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { ShoppingCart } from "lucide-react";
 import { componentThemes } from "@/theme";
+import { SummaryRow } from "@/features/ui/summary-row";
 import clsx from "clsx";
 
 interface Props {
@@ -22,22 +23,20 @@ export function CartSummary({ subtotal, itemCount, onCheckout, isProcessing = fa
       <h2 className={componentThemes.text.subheading}>Order Summary</h2>
 
       <div className="mt-6 space-y-3">
-        <div className="flex justify-between text-gray-600">
-          <span>Subtotal ({itemCount} {itemCount === 1 ? 'item' : 'items'})</span>
-          <span className="font-medium">${subtotal.toFixed(2)}</span>
-        </div>
+        <SummaryRow
+          label={`Subtotal (${itemCount} ${itemCount === 1 ? 'item' : 'items'})`}
+          value={`$${subtotal.toFixed(2)}`}
+        />
 
-        <div className="flex justify-between text-gray-600">
-          <span>Shipping</span>
-          <span className="font-medium">
-            {shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
-          </span>
-        </div>
+        <SummaryRow
+          label="Shipping"
+          value={shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`}
+        />
 
-        <div className="flex justify-between text-gray-600">
-          <span>Estimated Tax</span>
-          <span className="font-medium">${tax.toFixed(2)}</span>
-        </div>
+        <SummaryRow
+          label="Estimated Tax"
+          value={`$${tax.toFixed(2)}`}
+        />
 
         <div className="border-t border-gray-200 pt-3 flex justify-between">
           <span className="font-semibold text-gray-900 text-lg">Total</span>

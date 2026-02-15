@@ -1,6 +1,6 @@
 "use client";
 
-import OrderSummary from "@/features/checkout/paymentForm/OrderSummary";
+import { OrderSummary } from "@/features/checkout/paymentForm/OrderSummary";
 import { TrustBanner } from "@/features/checkout/components";
 import {
   CheckoutSelectors,
@@ -14,23 +14,14 @@ export function OrderSummarySection() {
   const discount = CheckoutSelectors.discount();
   const isProcessingPayment = CheckoutSelectors.isProcessingPayment();
   const customization = CheckoutSelectors.customization();
+  const orderItems = CheckoutSelectors.orderItems();
 
   const { handleCompleteOrder } = useCheckoutSubscriberActions();
-
-  console.log('🔍 OrderSummarySection render:', {
-    has_customization: !!customization,
-    subtotal,
-    shippingCost,
-    discount,
-  });
-
   // Don't render if we don't have the required data
   if (!customization) {
-    console.log('⚠️ OrderSummarySection: No customization, returning empty');
+    console.log("⚠️ OrderSummarySection: No customization, returning empty");
     return <></>;
   }
-
-  console.log('✅ OrderSummarySection: Rendering order summary');
 
   return (
     <aside>
@@ -56,7 +47,7 @@ export function OrderSummarySection() {
         onEditShipping={() => {}}
         onCompleteOrder={handleCompleteOrder}
         isProcessingPayment={isProcessingPayment}
-        onPromoCodeApply={(code) => {
+        onPromoCodeApply={(code: string) => {
           /** For Future implementation */
           console.log("Promo code applied:", code);
         }}

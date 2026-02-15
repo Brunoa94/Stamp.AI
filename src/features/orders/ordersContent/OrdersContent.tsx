@@ -108,7 +108,7 @@ export function OrdersContent() {
           />
         </>
       ) : (
-        <div className="flex items-center justify-center min-h-[300px]">
+        <div className="flex items-center justify-center min-h-75">
           <div className="text-center space-y-2">
             <p className="text-xl font-semibold text-gray-700">
               No orders match your filters

@@ -13,12 +13,16 @@ export function useCart() {
   return useQuery({
     queryKey: ["cart", { userId }],
     queryFn: async () => {
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
       // Get or create cart
       const cart = await CartService.getOrCreateCart(userId, undefined);
       // Get cart with items
-      return await CartService.getCart(cart.id);
+      return CartService.getCart(cart.id);
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled: !!userId, // Only run query when userId exists
+    retry: 1,
   });
 }
 
@@ -32,6 +36,9 @@ export function useCartMutations() {
 
   const addToCart = useMutation({
     mutationFn: async (item: AddToCartInput) => {
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
       const cart = await CartService.getOrCreateCart(userId, undefined);
       return await CartService.addToCart(cart.id, item);
     },
@@ -66,6 +73,9 @@ export function useCartMutations() {
 
   const clearCart = useMutation({
     mutationFn: async () => {
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
       const cart = await CartService.getOrCreateCart(userId, undefined);
       return await CartService.clearCart(cart.id);
     },
@@ -86,15 +96,12 @@ export function useCartMutations() {
  * Hook to get cart summary (totals, item count)
  */
 export function useCartSummary() {
-  const { data: cart } = useCart();
-
-  if (!cart) {
-    return {
-      subtotal: 0,
-      itemCount: 0,
-      items: [],
-    };
+  const { data: cart, isLoading, error } = useCart();
+  
+  return{
+    cart,
+    isLoading,
+    ...CartService.calculateCartSummary(cart),
+    error
   }
-
-  return CartService.calculateCartSummary(cart);
 }

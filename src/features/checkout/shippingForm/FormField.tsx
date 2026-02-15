@@ -1,7 +1,15 @@
 import { Input } from "@/features/ui/input";
+import { Label } from "@/features/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/features/ui/select";
 import { componentThemes } from "@/theme/components";
 import clsx from "clsx";
-import { FieldError, UseFormRegister } from "react-hook-form";
+import { FieldError, UseFormRegister, Control, Controller } from "react-hook-form";
 import { ShippingAddressT } from "@/schemas/checkout";
 
 interface FormFieldProps {
@@ -10,6 +18,7 @@ interface FormFieldProps {
   type?: string;
   required?: boolean;
   register: UseFormRegister<ShippingAddressT>;
+  control: Control<ShippingAddressT>;
   error?: FieldError;
   options?: { value: string; label: string }[];
 }
@@ -23,40 +32,48 @@ export const FormField = ({
   type = "text",
   required = false,
   register,
+  control,
   error,
   options,
 }: FormFieldProps) => {
   const errorId = error ? `${id}-error` : undefined;
 
-  // Render select dropdown
+  // Render select dropdown with shadcn Select
   if (options) {
     return (
       <div>
-        <label htmlFor={id} className={componentThemes.text.label}>
+        <Label htmlFor={id} className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
           {label}
           {required && (
             <span className="text-red-600" aria-label="required">
-              *
+              {" "}*
             </span>
           )}
-        </label>
-        <select
-          id={id}
-          {...register(id)}
-          aria-invalid={!!error}
-          aria-describedby={errorId}
-          className={clsx(componentThemes.input.base, {
-            [componentThemes.input.error]: error,
-          })}
-        >
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        </Label>
+        <Controller
+          name={id}
+          control={control}
+          render={({ field }) => (
+            <Select onValueChange={field.onChange} value={field.value as string}>
+              <SelectTrigger
+                id={id}
+                aria-invalid={!!error}
+                aria-describedby={errorId}
+              >
+                <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
+              </SelectTrigger>
+              <SelectContent>
+                {options.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
         {error && (
-          <p id={errorId} role="alert" className="text-red-600 text-sm mt-1">
+          <p id={errorId} role="alert" className="text-red-600 dark:text-red-400 text-sm mt-1">
             {error.message}
           </p>
         )}
@@ -67,26 +84,23 @@ export const FormField = ({
   // Render input field
   return (
     <div>
-      <label htmlFor={id} className={componentThemes.text.label}>
+      <Label htmlFor={id} className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
         {label}
         {required && (
           <span className="text-red-600" aria-label="required">
-            *
+            {" "}*
           </span>
         )}
-      </label>
+      </Label>
       <Input
         id={id}
         type={type}
         {...register(id)}
         aria-invalid={!!error}
         aria-describedby={errorId}
-        className={clsx(componentThemes.input.base, {
-          [componentThemes.input.error]: error,
-        })}
       />
       {error && (
-        <p id={errorId} role="alert" className="text-red-600 text-sm mt-1">
+        <p id={errorId} role="alert" className="text-red-600 dark:text-red-400 text-sm mt-1">
           {error.message}
         </p>
       )}
