@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import useScrollToSection from "@/hooks/useScrollToSection";
-import { CreateProductSelectors } from "../context/CreateProductContextSubscriber";
+import { CreateProductSelectors } from "../context/CreateProductContextSubscriber/selectors";
 
 /**
  * Hook to manage navigation and scrolling between workflow steps

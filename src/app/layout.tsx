@@ -7,6 +7,7 @@ import { SupabaseAuthProvider } from "@/features/providers/SupabaseAuthProvider"
 import { QueryProvider } from "@/features/providers/QueryProvider";
 import { ThemeProvider } from "@/features/providers/ThemeProvider";
 import Navbar from "@/features/layout/navbar";
+import Footer from "@/features/layout/footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
 
 const geistSans = Geist({
@@ -48,7 +49,8 @@ export default function RootLayout({
               <header>
                 <Navbar />
               </header>
-              <main className="pt-20">{children}</main>
+              <main className="pt-20 min-h-screen">{children}</main>
+              <Footer />
               <Toaster />
             </QueryProvider>
           </SupabaseAuthProvider>
