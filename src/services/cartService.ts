@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import {
   CartT,
-  CartItemT,
+  CartItem,
   CartWithItems,
   AddToCartInput,
   UpdateCartItemInput,
@@ -131,19 +131,44 @@ export class CartService {
 
   /**
    * Add item to cart
+   * Returns CartItem with full product and variant information
    */
-  static async addToCart(cartId: string, item: AddToCartInput): Promise<CartItemT> {
+  static async addToCart(cartId: string, item: AddToCartInput): Promise<CartItem> {
     try {
       const supabase = this.getSupabase();
 
       // Check if item already exists in cart
-      const { data: existingItem } = await supabase
+      // Build query to handle null values properly
+      let query = supabase
         .from("cart_items")
         .select("*")
-        .eq("cart_id", cartId)
-        .eq("product_id", item.product_id)
-        .eq("variant_id", item.variant_id || "")
-        .maybeSingle();
+        .eq("cart_id", cartId);
+
+      // Handle product_id (can be null for custom products)
+      if (item.product_id === null || item.product_id === undefined) {
+        query = query.is("product_id", null);
+      } else {
+        query = query.eq("product_id", item.product_id);
+      }
+
+      // Handle variant_id (can be null)
+      if (item.variant_id === null || item.variant_id === undefined) {
+        query = query.is("variant_id", null);
+      } else {
+        query = query.eq("variant_id", item.variant_id);
+      }
+
+      // For custom products (product_id is null), also check custom_image_url or design_id
+      // to ensure we're matching the exact same custom product
+      if (item.product_id === null || item.product_id === undefined) {
+        if (item.design_id) {
+          query = query.eq("design_id", item.design_id);
+        } else if (item.custom_image_url) {
+          query = query.eq("custom_image_url", item.custom_image_url);
+        }
+      }
+
+      const { data: existingItem } = await query.maybeSingle();
 
       // If item exists, update quantity
       if (existingItem) {
@@ -158,13 +183,24 @@ export class CartService {
         .insert({
           cart_id: cartId,
           product_id: item.product_id,
+          product_name: item.product_name,
           variant_id: item.variant_id || null,
           quantity: item.quantity,
           unit_price: item.unit_price,
           custom_image_url: item.custom_image_url || null,
           design_id: item.design_id || null,
         })
-        .select()
+        .select(
+          `
+          *,
+          product:products (
+            id,
+            name,
+            slug,
+            base_price
+          )
+        `
+        )
         .single();
 
       if (error) {
@@ -176,7 +212,7 @@ export class CartService {
       }
 
       const validatedItem = CartItemSchema.parse(data);
-      return validatedItem as CartItemT;
+      return validatedItem as CartItem;
     } catch (error) {
       if (error instanceof z.ZodError) {
         throw new Error(`Cart item validation failed: ${error.message}`);
@@ -190,11 +226,12 @@ export class CartService {
 
   /**
    * Update cart item quantity
+   * Returns CartItem with full product and variant information
    */
   static async updateCartItem(
     itemId: string,
     update: UpdateCartItemInput
-  ): Promise<CartItemT> {
+  ): Promise<CartItem> {
     try {
       const supabase = this.getSupabase();
 
@@ -202,7 +239,17 @@ export class CartService {
         .from("cart_items")
         .update({ quantity: update.quantity })
         .eq("id", itemId)
-        .select()
+        .select(
+          `
+          *,
+          product:products (
+            id,
+            name,
+            slug,
+            base_price
+          )
+        `
+        )
         .single();
 
       if (error) {
@@ -214,7 +261,7 @@ export class CartService {
       }
 
       const validatedItem = CartItemSchema.parse(data);
-      return validatedItem as CartItemT;
+      return validatedItem as CartItem;
     } catch (error) {
       if (error instanceof z.ZodError) {
         throw new Error(`Cart item validation failed: ${error.message}`);
@@ -314,6 +361,7 @@ export class CartService {
       for (const item of guestItems) {
         await this.addToCart(userCartId, {
           product_id: item.product_id!,
+          product_name: item.product_name,
           variant_id: item.variant_id || undefined,
           quantity: item.quantity,
           unit_price: item.unit_price,

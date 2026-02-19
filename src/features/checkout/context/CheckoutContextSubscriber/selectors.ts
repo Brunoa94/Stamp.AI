@@ -26,5 +26,7 @@ export const CheckoutSelectors = {
     useCheckoutSubscriberSelector((state) => state.shippingCost),
   discount: () =>
     useCheckoutSubscriberSelector((state) => state.discount),
+  total: () =>
+    useCheckoutSubscriberSelector((state) => state.total),
   orderAmount: () => useCheckoutSubscriberSelector((state) => state.orderAmount),
 } as const;

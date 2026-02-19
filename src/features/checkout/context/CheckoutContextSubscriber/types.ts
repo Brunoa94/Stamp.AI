@@ -1,10 +1,10 @@
 import { ShippingAddressT } from "@/schemas/checkout";
-import { CartItemWithProduct, CartWithItems } from "@/types/cart";
+import { CartItem, CartWithItems } from "@/types/cart";
 
 export interface CheckoutSubscriberContextState {
   // Data state
   cart: CartWithItems | null;
-  cartItems: CartItemWithProduct[];
+  cartItems: CartItem[];
   isLoading: boolean;
   error: Error | null;
 
@@ -20,5 +20,6 @@ export interface CheckoutSubscriberContextState {
   subtotal: number;
   shippingCost: number;
   discount: number;
+  total: number;
   orderAmount: number;
 }

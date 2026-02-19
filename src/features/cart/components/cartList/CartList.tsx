@@ -1,10 +1,10 @@
 "use client";
 
-import { CartItemWithProduct } from "@/types/cart";
+import { CartItem as CartItemT } from "@/types/cart";
 import { CartItem } from "../cartItem";
 
 interface Props {
-  items: CartItemWithProduct[];
+  items: CartItemT[];
   onUpdateQuantity: (itemId: string, quantity: number) => void;
   onRemove: (itemId: string) => void;
   isUpdating?: boolean;

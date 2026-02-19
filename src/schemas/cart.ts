@@ -3,6 +3,7 @@ import { z } from "zod";
 // Input validation schemas
 export const addToCartSchema = z.object({
   product_id: z.string().uuid().optional().nullable(),
+  product_name: z.string().min(1, "Product name is required"),
   variant_id: z.string().uuid().optional().nullable(),
   quantity: z.number().int().min(1).max(99),
   unit_price: z.number().positive(),
@@ -24,10 +25,12 @@ export const CartSchema = z.object({
   updated_at: z.string().nullable().optional(),
 }).passthrough(); // Allow additional fields from database
 
-export const CartItemSchema = z.object({
+// Base cart item schema (without relations)
+const CartItemRowSchema = z.object({
   id: z.string(),
   cart_id: z.string(),
   product_id: z.string().nullable(),
+  product_name: z.string(),
   variant_id: z.string().nullable(),
   quantity: z.number(),
   unit_price: z.number(),
@@ -49,13 +52,14 @@ const VariantSchema = z.object({
   name: z.string(),
 }).passthrough();
 
-export const CartItemWithProductSchema = CartItemSchema.extend({
+// Primary cart item schema with relations (use this for validation)
+export const CartItemSchema = CartItemRowSchema.extend({
   product: ProductSchema.nullable().optional(),
   variant: VariantSchema.nullable().optional(),
 });
 
 export const CartWithItemsSchema = CartSchema.extend({
-  cart_items: z.array(CartItemWithProductSchema).default([]),
+  cart_items: z.array(CartItemSchema).default([]),
 });
 
 export type AddToCartInput = z.infer<typeof addToCartSchema>;

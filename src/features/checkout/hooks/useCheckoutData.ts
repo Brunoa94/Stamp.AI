@@ -40,7 +40,8 @@ export function useCheckoutData(store: CheckoutStore): UseCheckoutDataResult {
       const subtotal = cartItems.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
       const shippingCost = 5.99;
       const discount = 0;
-      const orderAmount = subtotal + shippingCost - discount;
+      const total = subtotal + shippingCost - discount;
+      const orderAmount = total; // Keep orderAmount for backward compatibility
 
       store.setState({
         ...currentState,
@@ -49,6 +50,7 @@ export function useCheckoutData(store: CheckoutStore): UseCheckoutDataResult {
         subtotal,
         shippingCost,
         discount,
+        total,
         orderAmount,
         isLoading: false,
         error: null,

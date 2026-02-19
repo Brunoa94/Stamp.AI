@@ -2,8 +2,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { OrderService } from "@/services/orderService";
 import { OrderItemService } from "@/services/orderItemService";
 import { CreateOrderT, UpdateOrderT } from "@/types/order";
-import { UserI } from "@/shared-types";
 import { CartWithItems } from "@/types/cart";
+import { UserI } from "@/types/auth";
 
 /**
  * Fetch a single order by ID

@@ -1,13 +1,14 @@
-import { ProductCustomizationT } from "@/schemas/checkout";
 import { componentThemes } from "@/theme/components";
-import { CartItemWithProduct } from "@/types/cart";
+import { CartItem } from "@/types/cart";
+import { formatDateShort } from "@/utils/dateUtils";
 import Image from "next/image";
 
 interface Props {
-  product: CartItemWithProduct;
+  product: CartItem;
 }
 
 export const ProductDetails = ({ product }: Props) => {
+  console.log("PRODUCT: ", product);
   return (
     <article className="flex items-start gap-4 mb-6 pb-6 border-b border-purple-100">
       {product.custom_image_url && (
@@ -21,11 +22,19 @@ export const ProductDetails = ({ product }: Props) => {
         </figure>
       )}
       <div className="flex-1">
-        <p className="font-semibold text-gray-900">{product.product?.name}</p>
-        <p className={componentThemes.text.caption}>{product.created_at}</p>
-        <p className={componentThemes.text.caption}>Qty: {product.quantity}</p>
+        <p className="font-semibold text-gray-900">{product.product_name || product.product?.name}</p>
+        {product.created_at && (
+          <p className={componentThemes.text.caption}>
+            Added {formatDateShort(product.created_at)}
+          </p>
+        )}
+        <p className={componentThemes.text.caption}>
+          Quantity: {product.quantity}
+        </p>
       </div>
-      <p className="font-semibold text-gray-900">${product.quantity}</p>
+      <p className="font-semibold text-gray-900">
+        ${product.unit_price * product.quantity}
+      </p>
     </article>
   );
 };

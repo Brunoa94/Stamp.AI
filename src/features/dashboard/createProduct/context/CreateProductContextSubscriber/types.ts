@@ -1,7 +1,7 @@
 import { UseFormReturn } from "react-hook-form";
 import { IProductCreateForm, IImageGenerationResult } from "@/schemas/productCreateSchema";
 import { TshirtType } from "@/features/dashboard/selectTshirt";
-import { CreatedProduct } from "@/services/customProductService";
+import { CreatedProductT } from "@/types/customProduct";
 
 export type WorkflowStep = "form" | "generating" | "results" | "customizing" | "created";
 
@@ -22,5 +22,5 @@ export interface CreateProductContextState {
   // Product creation state
   selectedTshirt: TshirtType | null;
   isCreatingProduct: boolean;
-  createdProduct: CreatedProduct | null;
+  createdProduct: CreatedProductT | null;
 }

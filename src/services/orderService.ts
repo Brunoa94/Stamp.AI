@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/client";
 import { CreateOrderT, OrderT, UpdateOrderT, OrderWithItemsT } from "../types/order";
 import { OrderWithItemsSchema, OrderSchema } from "@/schemas/order";
 import { z } from "zod";
-import { CartItemWithProduct, CartT, CartWithItems } from "@/types/cart";
+import { CartItem, CartT, CartWithItems } from "@/types/cart";
 import { CartService } from "./cartService";
 import { UserI } from "@/shared-types";
 import { OrderItemService } from "./orderItemService";

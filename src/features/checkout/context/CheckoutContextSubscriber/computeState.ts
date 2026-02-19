@@ -1,7 +1,7 @@
 import { CheckoutSubscriberContextState } from "./types";
 import { ProductCustomizationT } from "@/schemas/checkout";
 import { CustomProductT } from "@/types/printify";
-import { CartItemWithProduct } from "@/types/cart";
+import { CartItem } from "@/types/cart";
 import {
   adaptOrderItemToCustomization,
   adaptExistingProductToLineItem,
@@ -13,7 +13,7 @@ import {
  */
 export function buildCustomization(
   _unused: null,
-  cartItems: CartItemWithProduct[] | null,
+  cartItems: CartItem[] | null,
   customProduct: CustomProductT | null,
 ): ProductCustomizationT | null {
   // Build from cart items + Printify data
@@ -28,7 +28,7 @@ export function buildCustomization(
  * Builds customization from cart item and custom product
  */
 function buildCustomizationFromCartItem(
-  cartItem: CartItemWithProduct,
+  cartItem: CartItem,
   customProduct: any
 ): ProductCustomizationT {
   return adaptOrderItemToCustomization(cartItem, customProduct);

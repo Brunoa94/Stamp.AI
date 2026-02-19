@@ -1,18 +1,12 @@
 import { componentThemes } from "@/theme/components";
+import { CheckoutSelectors } from "../../context/CheckoutContextSubscriber/selectors";
 
-interface PriceBreakdownProps {
-  subtotal: number;
-  shippingCost: number;
-  discount: number;
-  total: number;
-}
+export const PriceBreakdown = () => {
+  const subtotal = CheckoutSelectors.subtotal();
+  const shippingCost = CheckoutSelectors.shippingCost();
+  const discount = CheckoutSelectors.discount();
+  const total = subtotal + shippingCost - discount;
 
-export const PriceBreakdown = ({
-  subtotal,
-  shippingCost,
-  discount,
-  total,
-}: PriceBreakdownProps) => {
   return (
     <div className="space-y-3 mb-6 pb-6 border-b border-purple-100">
       <div className="flex justify-between items-center text-gray-600">

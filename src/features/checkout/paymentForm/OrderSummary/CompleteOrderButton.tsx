@@ -1,20 +1,20 @@
 import { Button } from "@/features/ui/button";
 import { componentThemes } from "@/theme/components";
 import clsx from "clsx";
+import { CheckoutSelectors } from "../../context/CheckoutContextSubscriber/selectors";
 
 interface CompleteOrderButtonProps {
-  total: number;
-  hasShippingAddress: boolean;
-  isProcessingPayment: boolean;
   onCompleteOrder: () => void;
 }
 
 export const CompleteOrderButton = ({
-  total,
-  hasShippingAddress,
-  isProcessingPayment,
   onCompleteOrder,
 }: CompleteOrderButtonProps) => {
+  const total = CheckoutSelectors.total();
+  const shippingAddress = CheckoutSelectors.shippingAddress();
+  const isProcessingPayment = CheckoutSelectors.isProcessingPayment();
+  const hasShippingAddress = !!shippingAddress;
+
   return (
     <div className="pt-6">
       <Button
@@ -24,8 +24,9 @@ export const CompleteOrderButton = ({
           componentThemes.button.primary,
           "w-full py-4 text-lg font-semibold",
           {
-            "opacity-50 cursor-not-allowed": !hasShippingAddress || isProcessingPayment,
-          }
+            "opacity-50 cursor-not-allowed":
+              !hasShippingAddress || isProcessingPayment,
+          },
         )}
       >
         {isProcessingPayment ? (

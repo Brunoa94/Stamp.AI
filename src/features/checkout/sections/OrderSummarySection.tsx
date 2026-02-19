@@ -11,7 +11,6 @@ export function OrderSummarySection() {
   return (
     <aside>
       <OrderSummary />
-
       {/* Trust Banner */}
       <TrustBanner />
     </aside>

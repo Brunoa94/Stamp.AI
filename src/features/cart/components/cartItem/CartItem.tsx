@@ -2,13 +2,13 @@
 
 import Image from "next/image";
 import { Trash2 } from "lucide-react";
-import { CartItemWithProduct } from "@/types/cart";
+import { CartItem as CartItemT } from "@/types/cart";
 import { QuantitySelector } from "./QuantitySelector";
 import { componentThemes } from "@/theme";
 import clsx from "clsx";
 
 interface Props {
-  item: CartItemWithProduct;
+  item: CartItemT;
   onUpdateQuantity: (itemId: string, quantity: number) => void;
   onRemove: (itemId: string) => void;
   isUpdating?: boolean;
@@ -38,7 +38,7 @@ export function CartItem({ item, onUpdateQuantity, onRemove, isUpdating = false 
       )}
     >
       {/* Product Image */}
-      <div className="relative w-28 h-28 flex-shrink-0 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg overflow-hidden border border-purple-100">
+      <div className="relative w-28 h-28 shrink-0 bg-linear-to-br from-purple-50 to-pink-50 rounded-lg overflow-hidden border border-purple-100">
         {item.custom_image_url ? (
           <>
             <Image
@@ -49,7 +49,7 @@ export function CartItem({ item, onUpdateQuantity, onRemove, isUpdating = false 
             />
             {isCustomProduct && (
               <div className="absolute top-1 right-1">
-                <span className="px-2 py-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-semibold rounded-md shadow-lg">
+                <span className="px-2 py-1 bg-linear-to-r from-purple-600 to-pink-600 text-white text-xs font-semibold rounded-md shadow-lg">
                   Custom
                 </span>
               </div>
@@ -65,7 +65,7 @@ export function CartItem({ item, onUpdateQuantity, onRemove, isUpdating = false 
       {/* Product Details */}
       <div className="flex-1 min-w-0">
         <h3 className={clsx(componentThemes.text.subheading, "text-gray-900 font-semibold")}>
-          {item.product?.name || "Custom Design"}
+          {item.product_name || item.product?.name || "Custom Design"}
         </h3>
 
         {item.variant && (

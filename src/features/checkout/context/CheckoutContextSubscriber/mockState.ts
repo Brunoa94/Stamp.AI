@@ -19,5 +19,6 @@ export const MOCK_STATE: CheckoutSubscriberContextState = {
   subtotal: 0,
   shippingCost: 0,
   discount: 0,
+  total: 0,
   orderAmount: 0,
 };

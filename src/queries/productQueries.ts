@@ -1,9 +1,10 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { PrintifyService } from "@/services/printifyService";
 import { CustomProductT } from "@/types/printify";
-import { BlueprintI } from "@/shared-types";
-import { CustomProductService, CreateProductPayload, CreatedProduct } from "@/services/customProductService";
+import { CustomProductService } from "@/services/customProductService";
+import { CreateProductPayloadT, CreatedProductT } from "@/types/customProduct";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { BlueprintI } from "@/types/api";
 
 export interface TshirtType {
   id: string;
@@ -143,7 +144,7 @@ export function useCreateCustomProduct() {
   const { handleError } = useErrorHandler();
 
   return useMutation({
-    mutationFn: (payload: CreateProductPayload): Promise<CreatedProduct> => {
+    mutationFn: (payload: CreateProductPayloadT): Promise<CreatedProductT> => {
       return CustomProductService.createCustomProduct(payload);
     },
     onError: (error: Error) => {

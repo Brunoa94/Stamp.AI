@@ -1,7 +1,7 @@
 import { useCreateCustomProduct, useAddToCart } from "@/queries";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { CreateProductPayload } from "@/services/customProductService";
+import { CreateProductPayloadT } from "@/types/customProduct";
 
 export { useCreateCustomProduct } from "@/queries";
 
@@ -28,7 +28,7 @@ export function useCreateProductAndAddToCart() {
     // Default price for custom t-shirt
     const defaultPrice = 25.0;
 
-    const productPayload: CreateProductPayload = {
+    const productPayload: CreateProductPayloadT = {
       blueprint_id: blueprintId,
       print_provider_id: printProviderId,
       image_url: imageUrl,
@@ -36,14 +36,14 @@ export function useCreateProductAndAddToCart() {
       description: `Custom designed ${tshirtName} with your unique artwork`,
       user_id: userId,
       customer_email: userEmail,
-      
     };
 
     createProduct(productPayload, {
-      onSuccess: () => {
+      onSuccess: (product) => {
         addToCart.mutate(
           {
             product_id: null, // Custom product (Printify), so no internal product ID yet
+            product_name: product.title || `${tshirtName} - Custom Design`,
             quantity: 1,
             unit_price: defaultPrice,
             custom_image_url: imageUrl,

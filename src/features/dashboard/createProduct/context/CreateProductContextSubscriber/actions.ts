@@ -1,8 +1,8 @@
 import { useContext } from "react";
 import { CreateProductSubscriberContext } from "./CreateProductContextSubscriber";
 import { TshirtType } from "@/features/dashboard/selectTshirt";
-import { IImageGenerationForm, IImageGenerationResult } from "@/schemas/productCreateSchema";
-import { CreatedProduct } from "@/services/customProductService";
+import { IImageGenerationResult } from "@/schemas/productCreateSchema";
+import { CreatedProductT } from "@/types/customProduct";
 
 /**
  * Hook for create product action handlers using store pattern
@@ -119,7 +119,7 @@ export function useCreateProductSubscriberActions() {
     /**
      * Handle successful product creation
      */
-    handleProductCreationSuccess: (product: CreatedProduct) => {
+    handleProductCreationSuccess: (product: CreatedProductT) => {
       const state = store.getState();
       store.setState({
         ...state,

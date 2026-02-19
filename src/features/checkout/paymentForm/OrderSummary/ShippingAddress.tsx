@@ -1,15 +1,25 @@
-import { ShippingAddressT } from "@/schemas/checkout";
+import { CheckoutSelectors } from "../../context/CheckoutContextSubscriber/selectors";
 
+const MOCK_SHIPPING_ADDRESS = {
+  first_name: "",
+  last_name: "",
+  email: "",
+  phone: "",
+  country: "US",
+  region: "",
+  address1: "",
+  address2: "",
+  city: "",
+  zip: "",
+};
 interface ShippingAddressProps {
-  shippingAddress: ShippingAddressT;
   onEditShipping: () => void;
 }
 
-export const ShippingAddress = ({
-  shippingAddress,
-  onEditShipping,
-}: ShippingAddressProps) => {
-  const hasShippingAddress = shippingAddress.address1 && shippingAddress.city;
+export const ShippingAddress = ({ onEditShipping }: ShippingAddressProps) => {
+  const shippingAddress =
+    CheckoutSelectors.shippingAddress() || MOCK_SHIPPING_ADDRESS;
+  const hasShippingAddress = shippingAddress?.address1 && shippingAddress.city;
 
   if (!hasShippingAddress) {
     return null;
