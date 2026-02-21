@@ -135,9 +135,11 @@ serve(async (req) => {
     const productImageUrl = productData.images?.[0]?.src || null
 
     // 🧾 Create order in database
+    const orderNumber = `ORD-${Date.now()}`
     const orderPayload = {
       user_id,
       product_id: productData.id,
+      order_number: orderNumber,
       customer_email: customer_email,
       status: "created",
     }

@@ -297,6 +297,13 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
         ]
       }
       orders: {
@@ -316,6 +323,7 @@ export type Database = {
           order_number: string
           payment_method: string | null
           payment_status: string | null
+          printify_order_id: string | null
           product_id: string | null
           shipped_at: string | null
           shipping_address: Json | null
@@ -348,6 +356,7 @@ export type Database = {
           order_number: string
           payment_method?: string | null
           payment_status?: string | null
+          printify_order_id?: string | null
           product_id?: string | null
           shipped_at?: string | null
           shipping_address?: Json | null
@@ -380,6 +389,7 @@ export type Database = {
           order_number?: string
           payment_method?: string | null
           payment_status?: string | null
+          printify_order_id?: string | null
           product_id?: string | null
           shipped_at?: string | null
           shipping_address?: Json | null

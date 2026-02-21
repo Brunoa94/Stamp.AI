@@ -342,65 +342,97 @@ ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
 
 -- Profiles Policies
+DROP POLICY IF EXISTS "Users can view their own profile" ON profiles;
 CREATE POLICY "Users can view their own profile" ON profiles FOR SELECT USING (auth.uid() = id);
+DROP POLICY IF EXISTS "Users can update their own profile" ON profiles;
 CREATE POLICY "Users can update their own profile" ON profiles FOR UPDATE USING (auth.uid() = id);
+DROP POLICY IF EXISTS "Service role can access all profiles" ON profiles;
 CREATE POLICY "Service role can access all profiles" ON profiles FOR ALL USING (auth.role() = 'service_role');
 
 -- User Credits Policies
+DROP POLICY IF EXISTS "Users can view their own credits" ON user_credits;
 CREATE POLICY "Users can view their own credits" ON user_credits FOR SELECT USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Service role can manage all credits" ON user_credits;
 CREATE POLICY "Service role can manage all credits" ON user_credits FOR ALL USING (auth.role() = 'service_role');
 
 -- Credit Transactions Policies
+DROP POLICY IF EXISTS "Users can view their own transactions" ON credit_transactions;
 CREATE POLICY "Users can view their own transactions" ON credit_transactions FOR SELECT USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Service role can manage all transactions" ON credit_transactions;
 CREATE POLICY "Service role can manage all transactions" ON credit_transactions FOR ALL USING (auth.role() = 'service_role');
 
 -- User Uploads Policies
+DROP POLICY IF EXISTS "Users can view their own uploads" ON user_uploads;
 CREATE POLICY "Users can view their own uploads" ON user_uploads FOR SELECT USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users can insert their own uploads" ON user_uploads;
 CREATE POLICY "Users can insert their own uploads" ON user_uploads FOR INSERT WITH CHECK (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users can delete their own uploads" ON user_uploads;
 CREATE POLICY "Users can delete their own uploads" ON user_uploads FOR DELETE USING (auth.uid() = user_id);
 
 -- AI Generations Policies
+DROP POLICY IF EXISTS "Users can view their own generations" ON ai_generations;
 CREATE POLICY "Users can view their own generations" ON ai_generations FOR SELECT USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users can insert their own generations" ON ai_generations;
 CREATE POLICY "Users can insert their own generations" ON ai_generations FOR INSERT WITH CHECK (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users can update their own generations" ON ai_generations;
 CREATE POLICY "Users can update their own generations" ON ai_generations FOR UPDATE USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Service role can access all generations" ON ai_generations;
 CREATE POLICY "Service role can access all generations" ON ai_generations FOR ALL USING (auth.role() = 'service_role');
 
 -- Product Categories Policies (Public Read)
+DROP POLICY IF EXISTS "Anyone can view active categories" ON product_categories;
 CREATE POLICY "Anyone can view active categories" ON product_categories FOR SELECT USING (is_active = true);
+DROP POLICY IF EXISTS "Service role can manage categories" ON product_categories;
 CREATE POLICY "Service role can manage categories" ON product_categories FOR ALL USING (auth.role() = 'service_role');
 
 -- Products Policies (Public Read)
+DROP POLICY IF EXISTS "Anyone can view active products" ON products;
 CREATE POLICY "Anyone can view active products" ON products FOR SELECT USING (is_active = true);
+DROP POLICY IF EXISTS "Service role can manage products" ON products;
 CREATE POLICY "Service role can manage products" ON products FOR ALL USING (auth.role() = 'service_role');
 
 -- Product Images Policies (Public Read)
+DROP POLICY IF EXISTS "Anyone can view product images" ON product_images;
 CREATE POLICY "Anyone can view product images" ON product_images FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Service role can manage product images" ON product_images;
 CREATE POLICY "Service role can manage product images" ON product_images FOR ALL USING (auth.role() = 'service_role');
 
 -- User Designs Policies
+DROP POLICY IF EXISTS "Users can view their own designs" ON user_designs;
 CREATE POLICY "Users can view their own designs" ON user_designs FOR SELECT USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users can insert their own designs" ON user_designs;
 CREATE POLICY "Users can insert their own designs" ON user_designs FOR INSERT WITH CHECK (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users can update their own designs" ON user_designs;
 CREATE POLICY "Users can update their own designs" ON user_designs FOR UPDATE USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users can delete their own designs" ON user_designs;
 CREATE POLICY "Users can delete their own designs" ON user_designs FOR DELETE USING (auth.uid() = user_id);
 
 -- Carts Policies
+DROP POLICY IF EXISTS "Users can view their own cart" ON carts;
 CREATE POLICY "Users can view their own cart" ON carts FOR SELECT USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users can manage their own cart" ON carts;
 CREATE POLICY "Users can manage their own cart" ON carts FOR ALL USING (auth.uid() = user_id);
 
 -- Cart Items Policies
+DROP POLICY IF EXISTS "Users can manage their cart items" ON cart_items;
 CREATE POLICY "Users can manage their cart items" ON cart_items FOR ALL USING (
     EXISTS (SELECT 1 FROM carts WHERE carts.id = cart_items.cart_id AND carts.user_id = auth.uid())
 );
 
 -- Orders Policies
+DROP POLICY IF EXISTS "Users can view their own orders" ON orders;
 CREATE POLICY "Users can view their own orders" ON orders FOR SELECT USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users can insert their own orders" ON orders;
 CREATE POLICY "Users can insert their own orders" ON orders FOR INSERT WITH CHECK (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Service role can manage all orders" ON orders;
 CREATE POLICY "Service role can manage all orders" ON orders FOR ALL USING (auth.role() = 'service_role');
 
 -- Order Items Policies
+DROP POLICY IF EXISTS "Users can view their order items" ON order_items;
 CREATE POLICY "Users can view their order items" ON order_items FOR SELECT USING (
     EXISTS (SELECT 1 FROM orders WHERE orders.id = order_items.order_id AND orders.user_id = auth.uid())
 );
+DROP POLICY IF EXISTS "Service role can manage all order items" ON order_items;
 CREATE POLICY "Service role can manage all order items" ON order_items FOR ALL USING (auth.role() = 'service_role');
 
 -- =====================================================
