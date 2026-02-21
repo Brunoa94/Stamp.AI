@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/features/ui/dialog";
-import { Form } from "@/features/global/input/form";
+import { FormField } from "@/features/ui/form-field";
 import { Button } from "@/features/ui/button";
 
 export function PasswordResetRequestForm() {
@@ -31,12 +31,14 @@ export function PasswordResetRequestForm() {
             password.
           </p>
 
-          <Form.InputText name="email" title="Email" register={register} />
+          <FormField
+            id="email"
+            label="Email"
+            type="email"
+            error={errors.email?.message}
+            register={register("email")}
+          />
         </div>
-
-        {errors.email && (
-          <p className="text-sm text-red-500">{errors.email.message}</p>
-        )}
 
         <DialogFooter className="flex flex-col gap-2">
           <Button

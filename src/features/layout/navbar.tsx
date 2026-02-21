@@ -10,6 +10,7 @@ import { ThemeToggle } from "@/features/ui/theme-toggle";
 import { useCartSummary } from "@/queries/cartQueries";
 import { useLogout, useIsAuthenticated } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
+import { UnauthenticatedUserSection } from "./navbar/UnauthenticatedUserSection";
 
 function Navbar() {
   const router = useRouter();
@@ -94,7 +95,12 @@ function Navbar() {
               </Button>
             </>
           )}
-          {!isAuthenticated && <ThemeToggle />}
+          {!isAuthenticated && (
+            <>
+              <ThemeToggle />
+              <UnauthenticatedUserSection />
+            </>
+          )}
         </div>
       </div>
     </nav>

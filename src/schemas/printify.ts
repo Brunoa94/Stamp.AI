@@ -16,6 +16,7 @@ export const BlueprintVariantsResponseSchema = z.object({
   colors: z.array(z.string()),
   sizes: z.array(z.string()),
   printProviderId: z.number(),
+  error: z.string().optional(),
 });
 
 // Mockup image returned by Printify API

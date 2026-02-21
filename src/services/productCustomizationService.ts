@@ -1,4 +1,6 @@
-import { createClient } from "@/lib/supabase/client";
+import { CatalogBlueprintsResponseSchema } from "@/schemas/services";
+import { BlueprintVariantsResponseSchema } from "@/schemas/printify";
+import { z } from "zod";
 
 export interface CatalogBlueprint {
   id: number;
@@ -34,29 +36,40 @@ export interface BlueprintVariantsResponse {
 export class ProductCustomizationService {
   static async fetchCatalogBlueprints(): Promise<CatalogBlueprintsResponse> {
     try {
-      const supabase = createClient();
-      const { data, error } = await supabase.functions.invoke(
-        "get-catalog-blueprints",
-        { body: {} }
-      );
+      const response = await fetch('/api/get-catalog-blueprints', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      });
 
-      if (error) {
-        throw new Error(`HTTP error: ${error.message}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP error: ${response.status}`);
       }
 
-      if (!data.success) {
-        throw new Error(data.error || "Failed to fetch catalog blueprints");
+      const data = await response.json();
+
+      // Validate response
+      const validatedData = CatalogBlueprintsResponseSchema.parse(data);
+
+      if (!validatedData.success) {
+        throw new Error(validatedData.error || "Failed to fetch catalog blueprints");
       }
 
-      if (!Array.isArray(data.blueprints)) {
+      if (!Array.isArray(validatedData.blueprints)) {
         throw new Error("Invalid response format: blueprints array missing");
       }
 
       return {
-        blueprints: data.blueprints,
-        printProviderId: data.printProviderId || 99,
+        blueprints: validatedData.blueprints,
+        printProviderId: validatedData.printProviderId || 99,
       };
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new Error(`Catalog response validation failed: ${error.message}`);
+      }
       if (error instanceof Error) {
         throw new Error(`Catalog fetch failed: ${error.message}`);
       }
@@ -69,31 +82,40 @@ export class ProductCustomizationService {
     printProviderId: number
   ): Promise<BlueprintVariantsResponse> {
     try {
-      const supabase = createClient();
-      const { data, error } = await supabase.functions.invoke(
-        "get-blueprint-variants",
-        {
-          body: {
-            blueprint_id: blueprintId,
-            print_provider_id: printProviderId,
-          },
-        }
-      );
+      const response = await fetch('/api/get-blueprint-variants', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          blueprint_id: blueprintId,
+          print_provider_id: printProviderId,
+        }),
+      });
 
-      if (error) {
-        throw new Error(`HTTP error: ${error.message}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP error: ${response.status}`);
       }
 
-      if (!data.success) {
-        throw new Error(data.error || "Failed to fetch variants");
+      const data = await response.json();
+
+      // Validate response
+      const validatedData = BlueprintVariantsResponseSchema.parse(data);
+      console.log("VALIDATES ", validatedData)
+      if (!validatedData.success) {
+        throw new Error(validatedData.error || "Failed to fetch variants");
       }
 
       return {
-        variants: data.variants || [],
-        colors: data.colors || [],
-        sizes: data.sizes || [],
+        variants: validatedData.variants || [],
+        colors: validatedData.colors || [],
+        sizes: validatedData.sizes || [],
       };
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new Error(`Variants response validation failed: ${error.message}`);
+      }
       if (error instanceof Error) {
         throw new Error(`Variants fetch failed: ${error.message}`);
       }

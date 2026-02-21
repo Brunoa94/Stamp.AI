@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthService } from "@/services/authService";
 import type { LoginI, RegisterI, PasswordResetRequestI, UpdateProfileI } from "@/schemas/auth";
-import type { UserI, AuthResponseI } from "@/shared-types";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { AuthResponseI, UserI } from "@/types/api";
 
 // Query keys
 export const authKeys = {
@@ -121,12 +121,12 @@ export function useLogout() {
   return useMutation({
     mutationFn: AuthService.logout,
     onSuccess: () => {
-      // Set auth data to null before clearing cache to prevent undefined errors
-      queryClient.setQueryData(authKeys.user(), null);
-      queryClient.setQueryData(authKeys.session(), null);
+      // Clear auth cache immediately to update UI
+      queryClient.clear();
 
-      // Then clear all auth-related cache
-      queryClient.removeQueries({ queryKey: authKeys.all });
+      // Refetch user query to ensure UI shows logged out state
+      queryClient.invalidateQueries({ queryKey: authKeys.user() });
+      queryClient.invalidateQueries({ queryKey: authKeys.session() });
 
       toast.success("Logged out successfully", {
         duration: 3000,

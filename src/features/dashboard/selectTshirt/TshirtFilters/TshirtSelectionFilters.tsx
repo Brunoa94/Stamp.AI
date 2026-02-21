@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { FilterSelect } from "@/features/ui/filter-select";
 import { FilterHeader } from "@/features/ui/filters/FilterHeader";
 import { SortOption } from "../types";
-import { TshirtType } from "@/services/tshirtProductService";
+import { TshirtType } from "@/queries/productQueries";
 
 import { useTshirtFilters } from "../hooks/useTshirtFilters";
 import {

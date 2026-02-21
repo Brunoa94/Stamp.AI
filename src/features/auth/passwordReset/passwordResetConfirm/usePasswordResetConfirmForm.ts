@@ -18,6 +18,7 @@ export function usePasswordResetConfirmForm() {
   const {
     register,
     handleSubmit,
+    formState: { errors },
   } = useForm<PasswordResetConfirmI>({
     resolver: zodResolver(PasswordResetConfirmSchema),
   });
@@ -83,5 +84,6 @@ export function usePasswordResetConfirmForm() {
     isPending,
     isSuccess,
     isError,
+    errors,
   };
 }

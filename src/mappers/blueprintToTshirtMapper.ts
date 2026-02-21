@@ -1,5 +1,5 @@
 import { BlueprintI } from "@/shared-types";
-import { TshirtType } from "@/services/tshirtProductService";
+import { TshirtType } from "@/queries/productQueries";
 
 export const mapBlueprintsToTshirtProducts = (
   blueprints: BlueprintI[],

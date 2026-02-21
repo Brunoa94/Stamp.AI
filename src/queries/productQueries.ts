@@ -114,6 +114,7 @@ export function useTshirtProducts() {
 
 /**
  * Fetch blueprint variants for a specific blueprint and print provider
+ * Uses ProductCustomizationService to fetch variants directly from Supabase Edge Function
  */
 export function useBlueprintVariants(
   blueprintId: number | undefined,
@@ -125,6 +126,7 @@ export function useBlueprintVariants(
       if (!blueprintId) {
         throw new Error("Blueprint ID is required");
       }
+      // Call ProductCustomizationService directly (client-side Supabase Edge Function call)
       return PrintifyService.getBlueprintVariants(blueprintId, printProviderId);
     },
     enabled: !!blueprintId,

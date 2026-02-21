@@ -3,12 +3,19 @@
 import { usePasswordResetConfirmForm } from "./usePasswordResetConfirmForm";
 import { PasswordResetSuccess } from "./PasswordResetSuccess";
 import { PasswordResetError } from "./PasswordResetError";
-import { Form } from "@/features/global/input/form";
+import { FormField } from "@/features/ui/form-field";
 import { Button } from "@/features/ui/button";
 
 export function PasswordResetConfirmForm() {
-  const { register, handleSubmit, onSubmit, isPending, isSuccess, isError } =
-    usePasswordResetConfirmForm();
+  const {
+    register,
+    handleSubmit,
+    onSubmit,
+    isPending,
+    isSuccess,
+    isError,
+    errors,
+  } = usePasswordResetConfirmForm();
 
   if (isSuccess) {
     return <PasswordResetSuccess />;
@@ -21,16 +28,20 @@ export function PasswordResetConfirmForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-4">
-        <Form.InputPassword
-          name="password"
-          title="New Password"
-          register={register}
+        <FormField
+          id="password"
+          label="New Password"
+          type="password"
+          error={errors.password?.message}
+          register={register("password")}
         />
 
-        <Form.InputPassword
-          name="confirmPassword"
-          title="Confirm New Password"
-          register={register}
+        <FormField
+          id="confirmPassword"
+          label="Confirm New Password"
+          type="password"
+          error={errors.confirmPassword?.message}
+          register={register("confirmPassword")}
         />
       </div>
 

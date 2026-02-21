@@ -9,8 +9,9 @@ import {
 } from "@/features/ui/dialog";
 import { useLoginForm } from "./useLoginForm";
 import dynamic from "next/dynamic";
-import { Form } from "@/features/global/input/form";
 import { Button } from "@/features/ui/button";
+import { Form } from "@/features/ui/form";
+import { FormField } from "@/features/ui/form-field";
 
 const InlinePasswordReset = dynamic(
   () =>
@@ -19,7 +20,7 @@ const InlinePasswordReset = dynamic(
     })),
   {
     ssr: false,
-  }
+  },
 );
 
 export function LoginForm() {
@@ -34,11 +35,20 @@ export function LoginForm() {
         </DialogHeader>
 
         <div className="grid gap-4">
-          <Form.InputText name="email" title="Email" register={register} />
-          <Form.InputPassword
-            name="password"
-            title="Password"
-            register={register}
+          <FormField
+            id="email"
+            label="Email"
+            type="email"
+            required
+            error={errors.email?.message}
+            register={register("email")}
+          />
+          <FormField
+            id="password"
+            label="Password"
+            type="password"
+            register={register("password")}
+            error={errors?.password?.message}
           />
 
           {/* Inline password reset component */}

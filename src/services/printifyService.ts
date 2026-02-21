@@ -1,24 +1,33 @@
 import { CustomProductT } from "@/types/printify";
-import { GET, POST } from "./apiClient";
-import { BlueprintVariantsResponseSchema } from "@/schemas/printify";
+import { GET } from "./apiClient";
+import {
+  CustomProductResponseSchema,
+  CreatePrintifyOrderRequestSchema,
+  PrintifyOrderResponseSchema
+} from "@/schemas/services";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/client";
 import type {
     CreatePrintifyOrderRequest,
     PrintifyOrderResponse
 } from "@/types/printifyOrder";
-
-export type BlueprintVariantsResponse = z.infer<typeof BlueprintVariantsResponseSchema>;
+import { ProductCustomizationService, BlueprintVariantsResponse } from "./productCustomizationService";
 
 export class PrintifyService {
     static async getCustomProduct(productId: string): Promise<CustomProductT> {
         try{
             const url = `/api/fetch-custom-product?product_id=${productId}`;
 
-            const response = await GET<CustomProductT>(url)
+            const response = await GET<CustomProductT>(url);
 
-            return response
-        }catch(e){
+            // Validate API response
+            const validatedResponse = CustomProductResponseSchema.parse(response);
+
+            return validatedResponse as CustomProductT;
+        }catch(error){
+            if (error instanceof z.ZodError) {
+                throw new Error(`Custom product response validation failed: ${error.message}`);
+            }
             throw new Error('Error getting the custom product');
         }
     }
@@ -27,23 +36,11 @@ export class PrintifyService {
         blueprintId: number,
         printProviderId?: number
     ): Promise<BlueprintVariantsResponse> {
-        try {
-            const url = `/api/get-blueprint-variants`;
-
-            const response = await POST<BlueprintVariantsResponse>(url, {
-                blueprint_id: blueprintId,
-                print_provider_id: printProviderId,
-            });
-
-            const validatedResponse = BlueprintVariantsResponseSchema.parse(response);
-
-            return validatedResponse;
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                throw new Error(`Blueprint variants validation failed: ${error.message}`);
-            }
-            throw new Error('Error getting blueprint variants');
-        }
+        // Delegate to ProductCustomizationService
+        return ProductCustomizationService.fetchBlueprintVariants(
+            blueprintId,
+            printProviderId || 99
+        );
     }
 
     /**
@@ -55,6 +52,9 @@ export class PrintifyService {
         try {
             const supabase = createClient();
 
+            // Validate request payload
+            const validatedPayload = CreatePrintifyOrderRequestSchema.parse(payload);
+
             // Get the current session for authentication
             const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
@@ -64,7 +64,7 @@ export class PrintifyService {
 
             // Call the Supabase Edge Function
             const { data, error } = await supabase.functions.invoke('create-printify-order', {
-                body: payload,
+                body: validatedPayload,
             });
 
             if (error) {
@@ -76,8 +76,14 @@ export class PrintifyService {
                 throw new Error('No response data from Printify order creation');
             }
 
-            return data as PrintifyOrderResponse;
+            // Validate response
+            const validatedResponse = PrintifyOrderResponseSchema.parse(data);
+
+            return validatedResponse as PrintifyOrderResponse;
         } catch (error) {
+            if (error instanceof z.ZodError) {
+                throw new Error(`Printify order validation failed: ${error.message}`);
+            }
             if (error instanceof Error) {
                 throw new Error(`Printify order creation failed: ${error.message}`);
             }

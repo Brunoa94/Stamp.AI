@@ -1,6 +1,8 @@
 import { IProductCreateForm, IImageGenerationResult } from "@/schemas/productCreateSchema";
+import { ImageGenerationResponseSchema } from "@/schemas/services";
 import { ImageGenerationServiceMapper } from "@/mappers/services";
 import { POST } from "./apiClient";
+import { z } from "zod";
 
 interface ImageGenerationResponse {
   success: boolean;
@@ -12,7 +14,6 @@ interface ImageGenerationResponse {
 export class ImageGenerationService {
   static async generateImage(
     data: IProductCreateForm,
-    signal?: AbortSignal
   ): Promise<IImageGenerationResult> {
     try {
       // Use mapper to create FormData
@@ -21,19 +22,21 @@ export class ImageGenerationService {
       const result = await POST<ImageGenerationResponse>(
         "/api/generate-image",
         formData,
-        { signal }
       );
 
-      if (!result.success) {
+      // Validate API response
+      const validatedResponse = ImageGenerationResponseSchema.parse(result);
+
+      if (!validatedResponse.success) {
         throw new Error("Image generation was not successful");
       }
 
       // Use mapper to convert response to result
-      return ImageGenerationServiceMapper.mapResponseToResult(result);
+      return ImageGenerationServiceMapper.mapResponseToResult(validatedResponse);
     } catch (error) {
-      // Handle abort errors (user cancelled the request)
-      if (error instanceof Error && error.name === "AbortError") {
-        throw new Error("Image generation was cancelled");
+      // Handle validation errors
+      if (error instanceof z.ZodError) {
+        throw new Error(`Image generation response validation failed: ${error.message}`);
       }
 
       // Handle network errors, parsing errors, and other exceptions

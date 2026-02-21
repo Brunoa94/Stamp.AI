@@ -51,9 +51,10 @@ export interface SessionI {
 
 export interface AuthResponseI {
   success: boolean
-  user: UserI
+  user?: UserI
   session?: SessionI
   message?: string
+  error?: string
 }
 
 // Auth Request Types
@@ -206,11 +207,6 @@ export interface BlueprintI {
   brand: string
   model: string
   images: string[]
-  printAreas: {
-    position: string
-    width: number
-    height: number
-  }[]
 }
 
 export interface OrderLineItemI {

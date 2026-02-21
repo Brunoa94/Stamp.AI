@@ -9,8 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/features/ui/dialog";
-import { Form } from "@/features/global/input/form";
+
 import { Button } from "@/features/ui/button";
+import { FormField } from "@/features/ui/form-field";
 
 export function RegisterForm() {
   const { register, handleSubmit, onSubmit, isPending, errors, isSuccess } =
@@ -29,30 +30,44 @@ export function RegisterForm() {
 
         <div className="grid gap-4">
           <div className="grid grid-cols-2 gap-4">
-            <Form.InputText
-              name="firstName"
-              title="First Name"
-              register={register}
+            <FormField
+              id="firstName"
+              label="First Name"
+              type="text"
+              error={errors.firstName?.message}
+              register={register("firstName")}
             />
-            <Form.InputText
-              name="lastName"
-              title="Last Name"
-              register={register}
+            <FormField
+              id="lastName"
+              label="Last Name"
+              type="text"
+              error={errors.lastName?.message}
+              register={register("lastName")}
             />
           </div>
 
-          <Form.InputText name="email" title="Email" register={register} />
-
-          <Form.InputPassword
-            name="password"
-            title="Password"
-            register={register}
+          <FormField
+            id="email"
+            label="Email"
+            type="email"
+            error={errors.email?.message}
+            register={register("email")}
           />
 
-          <Form.InputPassword
-            name="confirmPassword"
-            title="Confirm Password"
-            register={register}
+          <FormField
+            id="password"
+            label="Password"
+            type="password"
+            error={errors.password?.message}
+            register={register("password")}
+          />
+
+          <FormField
+            id="confirmPassword"
+            label="Confirm Password"
+            type="password"
+            error={errors.confirmPassword?.message}
+            register={register("confirmPassword")}
           />
         </div>
 

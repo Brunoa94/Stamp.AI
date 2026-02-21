@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { CreateOrderItemT, OrderItemT, UpdateOrderItemT } from "@/types/orderItem";
+import { OrderItemSchema } from "@/schemas/order";
+import { z } from "zod";
 
 export class OrderItemService {
   private static getSupabase() {
@@ -27,8 +29,14 @@ export class OrderItemService {
         throw new Error('No data returned from query');
       }
 
-      return data;
+      // Validate response
+      const validatedData = z.array(OrderItemSchema).parse(data);
+
+      return validatedData as OrderItemT[];
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new Error(`Order items validation failed: ${error.message}`);
+      }
       if (error instanceof Error) {
         throw new Error(`Order items fetch failed: ${error.message}`);
       }
@@ -57,8 +65,14 @@ export class OrderItemService {
         throw new Error(`Order item not found with id: ${orderItemId}`);
       }
 
-      return data;
+      // Validate response
+      const validatedData = OrderItemSchema.parse(data);
+
+      return validatedData as OrderItemT;
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new Error(`Order item validation failed: ${error.message}`);
+      }
       if (error instanceof Error) {
         throw new Error(`Order item fetch failed: ${error.message}`);
       }
@@ -87,8 +101,14 @@ export class OrderItemService {
         throw new Error('No data returned after order item creation');
       }
 
-      return data;
+      // Validate response
+      const validatedData = OrderItemSchema.parse(data);
+
+      return validatedData as OrderItemT;
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new Error(`Order item validation failed: ${error.message}`);
+      }
       if (error instanceof Error) {
         throw new Error(`Order item creation failed: ${error.message}`);
       }
@@ -116,8 +136,14 @@ export class OrderItemService {
         throw new Error('No data returned after order items creation');
       }
 
-      return data;
+      // Validate response
+      const validatedData = z.array(OrderItemSchema).parse(data);
+
+      return validatedData as OrderItemT[];
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new Error(`Order items validation failed: ${error.message}`);
+      }
       if (error instanceof Error) {
         throw new Error(`Order items creation failed: ${error.message}`);
       }
@@ -150,8 +176,14 @@ export class OrderItemService {
         throw new Error(`Order item not found or update failed for id: ${orderItemId}`);
       }
 
-      return data;
+      // Validate response
+      const validatedData = OrderItemSchema.parse(data);
+
+      return validatedData as OrderItemT;
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        throw new Error(`Order item validation failed: ${error.message}`);
+      }
       if (error instanceof Error) {
         throw new Error(`Order item update failed: ${error.message}`);
       }

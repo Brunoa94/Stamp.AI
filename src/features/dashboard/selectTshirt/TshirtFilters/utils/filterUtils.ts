@@ -1,4 +1,4 @@
-import { TshirtType } from "@/services/tshirtProductService";
+import { TshirtType } from "@/queries/productQueries";
 import { SortOption } from "../../types";
 
 interface FilterParams {

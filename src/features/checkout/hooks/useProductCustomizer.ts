@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { CatalogBlueprintT, VariantInfoT, PrintifyImageT } from "@/schemas/checkout";
 
 export function useProductCustomizer() {
@@ -26,17 +25,25 @@ export function useProductCustomizer() {
 
   const isFirstTryFront = useRef(true);
   const isFirstTryBack = useRef(true);
-  const supabase = createClient();
 
   // Fetch catalog blueprints on mount
   useEffect(() => {
     async function fetchCatalogBlueprints() {
       try {
-        const { data, error } = await supabase.functions.invoke("get-catalog-blueprints", {
-          body: {},
+        const response = await fetch('/api/get-catalog-blueprints', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({}),
         });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || `HTTP error: ${response.status}`);
+        }
 
-        if (error) throw new Error(error.message);
+        const data = await response.json();
         if (!data.success) throw new Error(data.error || "Failed to fetch catalog blueprints");
 
         setCatalogBlueprints(data.blueprints);
@@ -54,7 +61,7 @@ export function useProductCustomizer() {
     }
 
     fetchCatalogBlueprints();
-  }, [supabase]);
+  }, []);
 
   // Fetch variants when blueprint changes
   useEffect(() => {
@@ -69,14 +76,24 @@ export function useProductCustomizer() {
       setSelectedVariantId(null);
 
       try {
-        const { data, error } = await supabase.functions.invoke("get-blueprint-variants", {
-          body: {
+        const response = await fetch('/api/get-blueprint-variants', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
             blueprint_id: selectedBlueprint.id,
             print_provider_id: printProviderId,
-          },
+          }),
         });
 
-        if (error) throw new Error(error.message);
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || `HTTP error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("DATA ", data)
         if (!data.success) throw new Error(data.error || "Failed to fetch variants");
 
         setBlueprintVariants(data.variants);
@@ -93,7 +110,7 @@ export function useProductCustomizer() {
     }
 
     fetchVariants();
-  }, [selectedBlueprint, printProviderId, supabase]);
+  }, [selectedBlueprint, printProviderId]);
 
   // Find variant ID when color and size are selected
   useEffect(() => {
