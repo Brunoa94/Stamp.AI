@@ -1,11 +1,12 @@
 import { createClient } from "@/lib/supabase/client";
 import { CreateOrderT, OrderT, UpdateOrderT, OrderWithItemsT } from "../types/order";
 import { OrderWithItemsSchema, OrderSchema } from "@/schemas/order";
+import { OrderServiceMapper } from "@/mappers/services";
 import { z } from "zod";
 import { CartItem, CartT, CartWithItems } from "@/types/cart";
 import { CartService } from "./cartService";
-import { UserI } from "@/shared-types";
 import { OrderItemService } from "./orderItemService";
+import { UserI } from "@/types/auth";
 
 export class OrderService {
   private static getSupabase() {
@@ -206,13 +207,15 @@ export class OrderService {
 
   /**
    * Update order status
+   * Uses OrderServiceMapper to create update payload
    */
   static async updateOrderStatus(
     orderId: string,
     status: string
   ): Promise<OrderT> {
     try {
-      return await this.updateOrder(orderId, { status });
+      const updatePayload = OrderServiceMapper.mapStatusToUpdate(status);
+      return await this.updateOrder(orderId, updatePayload);
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Order status update failed: ${error.message}`);
@@ -223,15 +226,15 @@ export class OrderService {
 
   /**
    * Update order fulfillment status
+   * Uses OrderServiceMapper to create update payload
    */
   static async updateFulfillmentStatus(
     orderId: string,
     fulfillmentStatus: string
   ): Promise<OrderT> {
     try {
-      return await this.updateOrder(orderId, {
-        fulfillment_status: fulfillmentStatus
-      });
+      const updatePayload = OrderServiceMapper.mapFulfillmentStatusToUpdate(fulfillmentStatus);
+      return await this.updateOrder(orderId, updatePayload);
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Fulfillment status update failed: ${error.message}`);
@@ -242,15 +245,15 @@ export class OrderService {
 
   /**
    * Update order payment status
+   * Uses OrderServiceMapper to create update payload
    */
   static async updatePaymentStatus(
     orderId: string,
     paymentStatus: string
   ): Promise<OrderT> {
     try {
-      return await this.updateOrder(orderId, {
-        payment_status: paymentStatus
-      });
+      const updatePayload = OrderServiceMapper.mapPaymentStatusToUpdate(paymentStatus);
+      return await this.updateOrder(orderId, updatePayload);
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Payment status update failed: ${error.message}`);
@@ -261,6 +264,7 @@ export class OrderService {
 
   /**
    * Add tracking information to an order
+   * Uses OrderServiceMapper to create update payload
    */
   static async updateTracking(
     orderId: string,
@@ -268,11 +272,8 @@ export class OrderService {
     trackingUrl?: string
   ): Promise<OrderT> {
     try {
-      return await this.updateOrder(orderId, {
-        tracking_number: trackingNumber,
-        tracking_url: trackingUrl,
-        shipped_at: new Date().toISOString(),
-      });
+      const updatePayload = OrderServiceMapper.mapTrackingToUpdate(trackingNumber, trackingUrl);
+      return await this.updateOrder(orderId, updatePayload);
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Tracking update failed: ${error.message}`);
@@ -308,47 +309,36 @@ export class OrderService {
   static async createOrderFromCart({user, cart}: {user: UserI, cart: CartWithItems}){
           try {
             const cartSummary = CartService.calculateCartSummary(cart);
-  
-            // Generate a unique order number
-            const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`;
-  
+
+            // Use mapper to generate unique order number
+            const orderNumber = OrderServiceMapper.generateOrderNumber();
+
+            // Use mapper to calculate order totals
+            const totals = OrderServiceMapper.calculateOrderTotals(cart.cart_items);
+
+            // Use mapper to create order payload
+            const orderPayload = OrderServiceMapper.mapUserAndTotalsToCreateOrder(
+              user,
+              orderNumber,
+              totals,
+              0 // discount amount
+            );
+
             // Create order from cart
-            const newOrder = await this.createOrder({
-              user_id: user.id,
-              customer_email: user.email || "",
-              order_number: orderNumber,
-              status: "pending",
-              payment_status: "pending",
-              subtotal: cartSummary.subtotal,
-              shipping_cost: 5.99,
-              discount_amount: 0,
-              total_amount: cartSummary.subtotal + 5.99,
-            });
-  
+            const newOrder = await this.createOrder(orderPayload);
+
             console.log("✅ Order created from cart:", newOrder.id);
-  
-            // Create order items from cart items
+
+            // Create order items from cart items using mapper
             if (cart.cart_items && cart.cart_items.length > 0) {
-              const orderItems = cart.cart_items.map((cartItem) => {
-                const totalPrice = cartItem.unit_price * cartItem.quantity;
-                return {
-                  order_id: newOrder.id,
-                  product_id: cartItem.product_id || null,
-                  variant_id: cartItem.variant_id || null,
-                  quantity: cartItem.quantity,
-                  unit_price: cartItem.unit_price,
-                  total_price: totalPrice,
-                  custom_image_url: cartItem.custom_image_url || "",
-                  product_name: cartItem.product?.name || "Custom Product",
-                  variant_name: cartItem.variant?.name || null,
-                  design_config: cartItem.custom_image_url ? { custom_image_url: cartItem.custom_image_url } : null,
-                };
-              });
-  
+              const orderItems = cart.cart_items.map((cartItem) =>
+                OrderServiceMapper.mapCartItemToOrderItem(cartItem, newOrder.id)
+              );
+
               await OrderItemService.createOrderItems(orderItems);
               console.log("✅ Order items created:", orderItems.length);
             }
-  
+
             return newOrder.id;
           } catch (error) {
             console.error("❌ Failed to create order from cart:", error);

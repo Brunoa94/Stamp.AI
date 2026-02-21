@@ -14,6 +14,7 @@ import {
   addToCartSchema,
   updateCartItemSchema,
 } from "@/schemas/cart";
+import { CartServiceMapper } from "@/mappers/services";
 import { z } from "zod";
 
 export class CartService {
@@ -169,19 +170,12 @@ export class CartService {
         });
       }
 
-      // Add new item
+      // Add new item using mapper
+      const insertData = CartServiceMapper.mapAddToCartInputToInsert(cartId, validatedInput);
+
       const { data, error } = await supabase
         .from("cart_items")
-        .insert({
-          cart_id: cartId,
-          product_id: validatedInput.product_id ?? null,
-          product_name: validatedInput.product_name,
-          variant_id: validatedInput.variant_id ?? null,
-          quantity: validatedInput.quantity,
-          unit_price: validatedInput.unit_price,
-          custom_image_url: validatedInput.custom_image_url ?? null,
-          design_id: validatedInput.design_id ?? null,
-        })
+        .insert(insertData)
         .select("*")
         .single();
 
@@ -220,9 +214,12 @@ export class CartService {
 
       const supabase = this.getSupabase();
 
+      // Use mapper to create update object
+      const updateData = CartServiceMapper.mapQuantityUpdate(validatedUpdate.quantity);
+
       const { data, error } = await supabase
         .from("cart_items")
-        .update({ quantity: validatedUpdate.quantity })
+        .update(updateData)
         .eq("id", itemId)
         .select("*")
         .single();
@@ -290,10 +287,11 @@ export class CartService {
 
   /**
    * Get cart summary (totals, item count)
+   * Delegates to CartServiceMapper for calculation logic
    */
   static calculateCartSummary(cart?: CartWithItems): CartSummary {
-    if(!cart){
-      return{
+    if (!cart) {
+      return {
         subtotal: 0,
         itemCount: 0,
         items: []
@@ -301,14 +299,7 @@ export class CartService {
     }
 
     const items = cart.cart_items || [];
-    const subtotal = items.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
-    const itemCount = items.reduce((count, item) => count + item.quantity, 0);
-
-    return {
-      subtotal,
-      itemCount,
-      items,
-    };
+    return CartServiceMapper.mapItemsToCartSummary(items);
   }
 
   /**
@@ -332,17 +323,10 @@ export class CartService {
         return; // Nothing to merge
       }
 
-      // Move items to user cart
+      // Move items to user cart using mapper
       for (const item of guestItems) {
-        await this.addToCart(userCartId, {
-          product_id: item.product_id!,
-          product_name: item.product_name,
-          variant_id: item.variant_id || undefined,
-          quantity: item.quantity,
-          unit_price: item.unit_price,
-          custom_image_url: item.custom_image_url || undefined,
-          design_id: item.design_id || undefined,
-        });
+        const addToCartInput = CartServiceMapper.mapCartItemRowToAddToCartInput(item);
+        await this.addToCart(userCartId, addToCartInput);
       }
 
       // Delete guest cart

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import type { LoginI, RegisterI, PasswordResetRequestI, UpdateProfileI } from "@/schemas/auth";
 import type { UserI, SessionI, AuthResponseI } from "../../types";
+import { AuthServiceMapper } from "@/mappers/services";
 
 class AuthService {
   private static getSupabase() {
@@ -9,6 +10,7 @@ class AuthService {
 
   /**
    * Login user with email and password
+   * Uses AuthServiceMapper to transform Supabase response
    */
   static async login(credentials: LoginI): Promise<AuthResponseI> {
     const { data, error } = await AuthService.getSupabase().auth.signInWithPassword({
@@ -20,34 +22,12 @@ class AuthService {
       throw new Error(error.message);
     }
 
-    if (!data.user) {
-      throw new Error("Login failed");
-    }
-
-    return {
-      success: true,
-      user: {
-        id: data.user.id,
-        email: data.user.email!,
-        email_confirmed_at: data.user.email_confirmed_at,
-        last_sign_in_at: data.user.last_sign_in_at,
-        created_at: data.user.created_at,
-        updated_at: data.user.updated_at,
-        user_metadata: data.user.user_metadata,
-        app_metadata: data.user.app_metadata,
-      },
-      session: data.session ? {
-        access_token: data.session.access_token,
-        refresh_token: data.session.refresh_token,
-        expires_at: data.session.expires_at!,
-        expires_in: data.session.expires_in,
-        token_type: data.session.token_type,
-      } : undefined,
-    };
+    return AuthServiceMapper.mapSupabaseAuthToAuthResponse(data.user, data.session);
   }
 
   /**
    * Register new user
+   * Uses AuthServiceMapper to transform Supabase response
    */
   static async register(userData: RegisterI): Promise<AuthResponseI> {
     const { data, error } = await AuthService.getSupabase().auth.signUp({
@@ -65,31 +45,11 @@ class AuthService {
       throw new Error(error.message);
     }
 
-    if (!data.user) {
-      throw new Error("Registration failed");
-    }
-
-    return {
-      success: true,
-      user: {
-        id: data.user.id,
-        email: data.user.email!,
-        email_confirmed_at: data.user.email_confirmed_at,
-        last_sign_in_at: data.user.last_sign_in_at,
-        created_at: data.user.created_at,
-        updated_at: data.user.updated_at,
-        user_metadata: data.user.user_metadata,
-        app_metadata: data.user.app_metadata,
-      },
-      session: data.session ? {
-        access_token: data.session.access_token,
-        refresh_token: data.session.refresh_token,
-        expires_at: data.session.expires_at!,
-        expires_in: data.session.expires_in,
-        token_type: data.session.token_type,
-      } : undefined,
-      message: "Registration successful. Please check your email to verify your account.",
-    };
+    return AuthServiceMapper.mapSupabaseAuthToAuthResponse(
+      data.user,
+      data.session,
+      "Registration successful. Please check your email to verify your account."
+    );
   }
 
   /**
@@ -104,6 +64,7 @@ class AuthService {
 
   /**
    * Get current session
+   * Uses AuthServiceMapper to transform Supabase session
    */
   static async getSession(): Promise<SessionI | null> {
     const { data, error } = await AuthService.getSupabase().auth.getSession();
@@ -112,21 +73,12 @@ class AuthService {
       throw new Error(error.message);
     }
 
-    if (!data.session) {
-      return null;
-    }
-
-    return {
-      access_token: data.session.access_token,
-      refresh_token: data.session.refresh_token,
-      expires_at: data.session.expires_at!,
-      expires_in: data.session.expires_in,
-      token_type: data.session.token_type,
-    };
+    return AuthServiceMapper.mapSupabaseSessionToSession(data.session) || null;
   }
 
   /**
    * Get current user
+   * Uses AuthServiceMapper to transform Supabase user
    */
   static async getUser(): Promise<UserI | null> {
     const { data, error } = await AuthService.getSupabase().auth.getUser();
@@ -139,16 +91,7 @@ class AuthService {
       return null;
     }
 
-    return {
-      id: data.user.id,
-      email: data.user.email!,
-      email_confirmed_at: data.user.email_confirmed_at,
-      last_sign_in_at: data.user.last_sign_in_at,
-      created_at: data.user.created_at,
-      updated_at: data.user.updated_at,
-      user_metadata: data.user.user_metadata,
-      app_metadata: data.user.app_metadata,
-    };
+    return AuthServiceMapper.mapSupabaseUserToUser(data.user);
   }
 
   /**
@@ -166,6 +109,7 @@ class AuthService {
 
   /**
    * Update user profile
+   * Uses AuthServiceMapper to transform Supabase user
    */
   static async updateProfile(data: UpdateProfileI): Promise<UserI> {
     const updateData: Record<string, any> = {};
@@ -195,16 +139,7 @@ class AuthService {
       throw new Error("Profile update failed");
     }
 
-    return {
-      id: userData.user.id,
-      email: userData.user.email!,
-      email_confirmed_at: userData.user.email_confirmed_at,
-      last_sign_in_at: userData.user.last_sign_in_at,
-      created_at: userData.user.created_at,
-      updated_at: userData.user.updated_at,
-      user_metadata: userData.user.user_metadata,
-      app_metadata: userData.user.app_metadata,
-    };
+    return AuthServiceMapper.mapSupabaseUserToUser(userData.user);
   }
 
   /**
@@ -223,6 +158,7 @@ class AuthService {
 
   /**
    * Update user password
+   * Uses AuthServiceMapper to transform Supabase user
    */
   static async updatePassword(password: string): Promise<UserI> {
     try {
@@ -238,16 +174,7 @@ class AuthService {
         throw new Error("Password update failed: User data not returned");
       }
 
-      return {
-        id: data.user.id,
-        email: data.user.email!,
-        email_confirmed_at: data.user.email_confirmed_at,
-        last_sign_in_at: data.user.last_sign_in_at,
-        created_at: data.user.created_at,
-        updated_at: data.user.updated_at,
-        user_metadata: data.user.user_metadata,
-        app_metadata: data.user.app_metadata,
-      };
+      return AuthServiceMapper.mapSupabaseUserToUser(data.user);
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(`Password update failed: ${error.message}`);

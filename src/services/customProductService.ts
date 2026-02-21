@@ -11,6 +11,7 @@ import {
   CreateCustomProductRequestSchema,
   CreateCustomProductResponseSchema,
 } from "@/schemas/customProduct";
+import { CustomProductServiceMapper } from "@/mappers/services";
 import { z } from "zod";
 import { ProductService } from "./productService";
 
@@ -28,15 +29,14 @@ export class CustomProductService {
 
   /**
    * Upload image to Printify
+   * Uses CustomProductServiceMapper to create upload request
    */
   static async uploadImage(imageUrl: string): Promise<string> {
     try {
       const { supabaseUrl, supabaseAnonKey } = this.getSupabaseConfig();
 
-      const payload: UploadImageRequestI = {
-        image_url: imageUrl,
-        file_name: `design-${Date.now()}.png`,
-      };
+      // Use mapper to create upload request payload
+      const payload = CustomProductServiceMapper.mapImageUrlToUploadRequest(imageUrl);
 
       // Validate request payload
       const validatedPayload = UploadImageRequestSchema.parse(payload);

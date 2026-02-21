@@ -1,5 +1,5 @@
-import { BlueprintI } from "@/shared-types";
 import { mapBlueprintsToTshirtProducts } from "@/mappers/blueprintToTshirtMapper";
+import { BlueprintI } from "../../supabase/types";
 
 export interface TshirtType {
   id: string;

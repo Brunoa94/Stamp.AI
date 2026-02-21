@@ -1,26 +1,10 @@
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/database.types";
 import type { CreatedProductT } from "@/types/customProduct";
+import { ProductServiceMapper, type SavePrintifyProductInput } from "@/mappers/services";
 
 type ProductInsert = Database['public']['Tables']['products']['Insert'];
 type ProductRow = Database['public']['Tables']['products']['Row'];
-
-export interface SavePrintifyProductInput {
-  printifyProductId: string;
-  title: string;
-  description?: string;
-  blueprintId: number;
-  printProviderId: number;
-  printAreas: Record<string, any>;
-  basePrice: number;
-  userId: string;
-  variants?: Array<{
-    id: number;
-    title: string;
-    price: number;
-    is_enabled: boolean;
-  }>;
-}
 
 export class ProductService {
   private static getSupabase() {
@@ -35,12 +19,6 @@ export class ProductService {
     try {
       const supabase = this.getSupabase();
 
-      // Generate a slug from userId and printifyProductId
-      const slug = `${input.userId}-${input.printifyProductId}`
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-|-$/g, '');
-
       // Check if product already exists with this Printify ID
       const { data: existingProduct } = await supabase
         .from('products')
@@ -53,20 +31,8 @@ export class ProductService {
         return existingProduct;
       }
 
-      // Create the product record
-      const productData: ProductInsert = {
-        printify_product_id: input.printifyProductId, // Store Printify product ID
-        name: input.title,
-        slug: slug,
-        description: input.description || null,
-        base_price: input.basePrice,
-        blueprint_id: input.blueprintId,
-        print_provider_id: input.printProviderId,
-        print_areas: input.printAreas as any, // JSON type
-        is_active: true,
-        is_featured: false,
-        currency: 'USD',
-      };
+      // Use mapper to convert input to database insert format
+      const productData = ProductServiceMapper.mapInputToProductInsert(input);
 
       const { data, error } = await supabase
         .from('products')
@@ -120,6 +86,7 @@ export class ProductService {
 
   /**
    * Helper to convert Printify product response to SavePrintifyProductInput
+   * Delegates to ProductServiceMapper for the actual mapping logic
    */
   static mapPrintifyProductToInput(
     printifyProduct: CreatedProductT,
@@ -128,20 +95,12 @@ export class ProductService {
     printAreas: Record<string, any>,
     userId: string
   ): SavePrintifyProductInput {
-    // Calculate base price from the first enabled variant
-    const firstEnabledVariant = printifyProduct.variants?.find(v => v.is_enabled);
-    const basePrice = firstEnabledVariant?.price || 25.0;
-
-    return {
-      printifyProductId: printifyProduct.id,
-      title: printifyProduct.title,
-      description: `Custom designed product with unique artwork`,
+    return ProductServiceMapper.mapPrintifyProductToInput(
+      printifyProduct,
       blueprintId,
       printProviderId,
       printAreas,
-      basePrice,
-      userId,
-      variants: printifyProduct.variants,
-    };
+      userId
+    );
   }
 }

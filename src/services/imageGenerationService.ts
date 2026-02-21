@@ -1,4 +1,5 @@
 import { IProductCreateForm, IImageGenerationResult } from "@/schemas/productCreateSchema";
+import { ImageGenerationServiceMapper } from "@/mappers/services";
 import { POST } from "./apiClient";
 
 interface ImageGenerationResponse {
@@ -14,9 +15,8 @@ export class ImageGenerationService {
     signal?: AbortSignal
   ): Promise<IImageGenerationResult> {
     try {
-      const formData = new FormData();
-      formData.append("prompt", data.prompt);
-      formData.append("image", data.image);
+      // Use mapper to create FormData
+      const formData = ImageGenerationServiceMapper.mapFormDataToRequest(data);
 
       const result = await POST<ImageGenerationResponse>(
         "/api/generate-image",
@@ -28,11 +28,8 @@ export class ImageGenerationService {
         throw new Error("Image generation was not successful");
       }
 
-      return {
-        imageUrl: result.imageUrl,
-        enhancedPrompt: result.enhancedPrompt,
-        originalPrompt: result.originalPrompt,
-      };
+      // Use mapper to convert response to result
+      return ImageGenerationServiceMapper.mapResponseToResult(result);
     } catch (error) {
       // Handle abort errors (user cancelled the request)
       if (error instanceof Error && error.name === "AbortError") {

@@ -10,7 +10,6 @@ export class OrderItemService {
    * Get all order items for a specific order
    */
   static async getOrderItems(orderId: string): Promise<OrderItemT[]> {
-    console.log("ENTERIII")
     try {
       const supabase = this.getSupabase();
       const { data, error } = await supabase
@@ -27,7 +26,7 @@ export class OrderItemService {
       if (!data) {
         throw new Error('No data returned from query');
       }
-      console.log("DATA ", data)
+
       return data;
     } catch (error) {
       if (error instanceof Error) {
