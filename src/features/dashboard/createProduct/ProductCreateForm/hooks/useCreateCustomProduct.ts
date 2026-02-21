@@ -39,15 +39,27 @@ export function useCreateProductAndAddToCart() {
     };
 
     createProduct(productPayload, {
-      onSuccess: (product) => {
+      onSuccess: async (product) => {
+        console.log("✅ Printify product created and saved to database:", {
+          id: product.id,
+          title: product.title,
+          blueprint_id: blueprintId,
+          print_provider_id: printProviderId,
+          variants: product.variants?.length || 0
+        });
+
+        // Get the first enabled variant (or first variant) for the cart
+        const firstEnabledVariant = product.variants?.find(v => v.is_enabled) || product.variants?.[0];
+        const variantPrice = firstEnabledVariant?.price || defaultPrice;
+
         addToCart.mutate(
           {
-            product_id: null, // Custom product (Printify), so no internal product ID yet
+            product_id: product.id, // Printify product ID (now saved to database)
             product_name: product.title || `${tshirtName} - Custom Design`,
             quantity: 1,
-            unit_price: defaultPrice,
+            unit_price: variantPrice,
             custom_image_url: imageUrl,
-            // We can't set variant_id yet as we don't have internal variants
+            variant_id: firstEnabledVariant?.id?.toString() || null,
           },
           {
             onSuccess: () => {

@@ -1,28 +1,25 @@
 "use client";
 
+"use client";
+
 import React from "react";
 import { Elements, CardElement } from "@stripe/react-stripe-js";
 import { stripePromise } from "@/lib/stripe";
-import { ShippingAddressT, ProductCustomizationT } from "@/schemas/checkout";
+import { ShippingAddressT } from "@/schemas/checkout";
 import { Button } from "@/features/ui/button";
 import { CheckoutErrorDisplay } from "../components";
 import { componentThemes } from "@/theme/components";
 import clsx from "clsx";
 import { usePaymentForm } from "./usePaymentForm";
 import { TestCardSelector } from "./TestCardSelector";
+import type { PrintifyLineItem } from "@/types/printifyOrder";
 
 interface CheckoutFormProps {
   amount: number;
-  lineItems: Array<{
-    product_id: string;
-    variant_id: number;
-    quantity: number;
-    print_areas: Record<string, any[]>;
-    print_provider_id: number;
-  }>;
+  lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
   testMode?: boolean;
-  onSuccess?: (paymentIntent: any) => void;
+  onSuccess?: (paymentIntent: any, lineItems: PrintifyLineItem[]) => void;
   onError?: (error: string) => void;
   hideButton?: boolean;
   triggerSubmit?: boolean;

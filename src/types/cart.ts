@@ -16,6 +16,9 @@ export interface CartItem extends CartItemRow {
     name: string;
     slug: string;
     base_price: number;
+    blueprint_id?: number | null;
+    print_provider_id?: number | null;
+    print_areas?: any | null;
   };
   variant?: {
     id: string;
@@ -27,18 +30,17 @@ export interface CartWithItems extends CartT {
   cart_items: CartItem[];
 }
 
-export interface AddToCartInput {
-  product_id: string | null;
-  product_name: string;
-  variant_id?: string | null;
-  quantity: number;
-  unit_price: number;
-  custom_image_url: string;
-  design_id?: string;
+// AddToCartInput based on database Insert type, excluding auto-managed fields
+export type AddToCartInput = Omit<
+  CreateCartItemT,
+  'id' | 'cart_id' | 'created_at' | 'updated_at'
+> & {
+  quantity: number; // Make quantity required for cart operations
 }
 
-export interface UpdateCartItemInput {
-  quantity: number;
+// UpdateCartItemInput for updating cart item quantities
+export type UpdateCartItemInput = Pick<UpdateCartItemT, 'quantity'> & {
+  quantity: number; // Make quantity required for update operations
 }
 
 export interface CartSummary {

@@ -165,13 +165,6 @@ export type Database = {
             referencedRelation: "user_designs"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "cart_items_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
         ]
       }
       carts: {
@@ -302,13 +295,6 @@ export type Database = {
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "order_items_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
@@ -559,6 +545,7 @@ export type Database = {
           name: string
           print_areas: Json | null
           print_provider_id: number | null
+          printify_product_id: string | null
           slug: string
           updated_at: string | null
         }
@@ -575,6 +562,7 @@ export type Database = {
           name: string
           print_areas?: Json | null
           print_provider_id?: number | null
+          printify_product_id?: string | null
           slug: string
           updated_at?: string | null
         }
@@ -591,6 +579,7 @@ export type Database = {
           name?: string
           print_areas?: Json | null
           print_provider_id?: number | null
+          printify_product_id?: string | null
           slug?: string
           updated_at?: string | null
         }

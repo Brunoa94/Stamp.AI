@@ -2,7 +2,10 @@ import { useContext } from "react";
 import { CheckoutSubscriberContext } from "./CheckoutContextSubscriber";
 import { ShippingAddressT } from "@/schemas/checkout";
 import { useCreateOrderFromCart } from "@/queries/orderQueries";
+import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
 import { OrderT } from "@/types/order";
+import type { CreatePrintifyOrderRequest, PrintifyLineItem } from "@/types/printifyOrder";
+import { validatePrintifyLineItem } from "@/types/printifyOrder";
 
 interface PaymentIntentI {
   id: string;
@@ -22,6 +25,8 @@ export function useCheckoutSubscriberActions() {
     throw new Error(
       "useCheckoutSubscriberActions must be used within CheckoutSubscriberProvider",
     );
+
+  const createPrintifyOrder = useCreatePrintifyOrder();
 
   return {
 /**
@@ -60,15 +65,68 @@ export function useCheckoutSubscriberActions() {
 
     /**
      * Handle successful payment processing
+     * Creates the Printify order after payment succeeds
      */
-    handlePaymentSuccess: (paymentIntent: PaymentIntentI) => {
+    handlePaymentSuccess: async (paymentIntent: PaymentIntentI, lineItems: PrintifyLineItem[]) => {
       const state = store.getState();
+
+      // First, update payment status to success
       store.setState({
         ...state,
         isProcessingPayment: false,
         paymentStatus: "success",
         message: `Payment successful! Payment ID: ${paymentIntent.id}`,
       });
+
+      // Then, create the Printify order with the line items
+      if (lineItems && lineItems.length > 0 && state.shippingAddress) {
+        try {
+          console.log("🚀 Creating Printify order after successful payment...");
+          console.log("📦 Line items received:", JSON.stringify(lineItems, null, 2));
+
+          // CRITICAL VALIDATION: Ensure Printify API requirements are met
+          const validatedLineItems = lineItems.map((item, index) => {
+            try {
+              return validatePrintifyLineItem(item, index);
+            } catch (error) {
+              console.error(`❌ Line item ${index} validation failed:`, error);
+              throw error;
+            }
+          });
+
+          console.log("✅ Validated line items:", JSON.stringify(validatedLineItems, null, 2));
+
+          const orderPayload: CreatePrintifyOrderRequest = {
+            line_items: validatedLineItems,
+            shipping_address: {
+              first_name: state.shippingAddress.first_name,
+              last_name: state.shippingAddress.last_name || "",
+              email: state.shippingAddress.email,
+              phone: state.shippingAddress.phone || "",
+              country: state.shippingAddress.country,
+              region: state.shippingAddress.region || "",
+              address1: state.shippingAddress.address1,
+              address2: state.shippingAddress.address2 || "",
+              city: state.shippingAddress.city,
+              zip: state.shippingAddress.zip || "",
+            },
+            is_test: state.testMode,
+            metadata: {
+              payment_intent_id: paymentIntent.id,
+              order_id: `order_${Date.now()}`,
+            },
+          };
+
+          console.log("📤 Sending to Printify:", JSON.stringify(orderPayload, null, 2));
+
+          await createPrintifyOrder.mutateAsync(orderPayload);
+          console.log("✅ Printify order created successfully");
+        } catch (error) {
+          console.error("❌ Failed to create Printify order:", error);
+          // Don't fail the entire checkout - payment already succeeded
+          // Just log the error for now
+        }
+      }
     },
 
     /**

@@ -1,14 +1,15 @@
 import { z } from "zod";
 
 // Input validation schemas
+// Based on CreateCartItemT from database, excluding auto-managed fields
 export const addToCartSchema = z.object({
-  product_id: z.string().uuid().optional().nullable(),
+  product_id: z.string().nullable().optional(), // Printify product ID (hex string, not UUID)
   product_name: z.string().min(1, "Product name is required"),
-  variant_id: z.string().uuid().optional().nullable(),
-  quantity: z.number().int().min(1).max(99),
-  unit_price: z.number().positive(),
-  custom_image_url: z.string().url().optional(),
-  design_id: z.string().uuid().optional(),
+  variant_id: z.string().nullable().optional(), // Printify variant ID (number as string)
+  quantity: z.number().int().min(1, "Quantity must be at least 1").max(99, "Quantity cannot exceed 99"),
+  unit_price: z.number().positive("Unit price must be positive"),
+  custom_image_url: z.string().nullable().optional(), // Any string URL from user uploads
+  design_id: z.string().uuid().nullable().optional(), // UUID reference to user_designs table
 });
 
 export const updateCartItemSchema = z.object({
@@ -45,6 +46,10 @@ const ProductSchema = z.object({
   name: z.string(),
   slug: z.string(),
   base_price: z.number(),
+  // Printify-related fields for order fulfillment
+  blueprint_id: z.number().nullable().optional(),
+  print_provider_id: z.number().nullable().optional(),
+  print_areas: z.any().nullable().optional(), // JSON field
 }).passthrough();
 
 const VariantSchema = z.object({
@@ -62,5 +67,6 @@ export const CartWithItemsSchema = CartSchema.extend({
   cart_items: z.array(CartItemSchema).default([]),
 });
 
-export type AddToCartInput = z.infer<typeof addToCartSchema>;
-export type UpdateCartItemInput = z.infer<typeof updateCartItemSchema>;
+// Export inferred types from schemas for validation
+export type AddToCartInputSchema = z.infer<typeof addToCartSchema>;
+export type UpdateCartItemInputSchema = z.infer<typeof updateCartItemSchema>;

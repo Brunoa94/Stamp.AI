@@ -12,6 +12,7 @@ import {
   CreateCustomProductResponseSchema,
 } from "@/schemas/customProduct";
 import { z } from "zod";
+import { ProductService } from "./productService";
 
 export class CustomProductService {
   private static getSupabaseConfig() {
@@ -135,7 +136,28 @@ export class CustomProductService {
         throw new Error(validatedResponse.error || "Failed to create custom product");
       }
 
-      return validatedResponse.product;
+      const printifyProduct = validatedResponse.product;
+
+      // Step 3: Save the Printify product to our database
+      console.log('💾 Saving Printify product to database...');
+      try {
+        const productInput = ProductService.mapPrintifyProductToInput(
+          printifyProduct,
+          validatedInput.blueprint_id,
+          validatedInput.print_provider_id,
+          { front: imageId }, // Store the print areas
+          validatedInput.user_id
+        );
+
+        await ProductService.savePrintifyProduct(productInput);
+        console.log('✅ Printify product saved to database');
+      } catch (saveError) {
+        console.error('⚠️ Failed to save product to database:', saveError);
+        // Don't fail the entire operation - Printify product was created successfully
+        // This is a non-critical error that can be retried later
+      }
+
+      return printifyProduct;
     } catch (error) {
       if (error instanceof z.ZodError) {
         throw new Error(`Product creation validation failed: ${error.message}`);

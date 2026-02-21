@@ -3,20 +3,15 @@ import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { createClient } from "@/lib/supabase/client";
 import { ShippingAddressT } from "@/schemas/checkout";
 import { mapShippingAddressToBillingDetails } from "./mappers";
+import type { PrintifyLineItem } from "@/types/printifyOrder";
 
 interface UsePaymentFormProps {
   amount: number;
-  lineItems: Array<{
-    product_id: string;
-    variant_id: number;
-    quantity: number;
-    print_areas: Record<string, any[]>;
-    print_provider_id: number;
-  }>;
+  lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
   testMode?: boolean;
   triggerSubmit?: boolean;
-  onSuccess?: (paymentIntent: any) => void;
+  onSuccess?: (paymentIntent: any, lineItems: PrintifyLineItem[]) => void;
   onError?: (error: string) => void;
   onSubmitComplete?: () => void;
 }
@@ -108,7 +103,7 @@ export function usePaymentForm({
       const { clientSecret, paymentIntentId } = paymentData;
 
       if (testMode && requestBody.confirm) {
-        onSuccess?.({ id: paymentIntentId, status: "succeeded" });
+        onSuccess?.({ id: paymentIntentId, status: "succeeded" }, lineItems);
         return;
       }
 
@@ -130,7 +125,7 @@ export function usePaymentForm({
       }
 
       if (paymentIntent?.status === "succeeded") {
-        onSuccess?.(paymentIntent);
+        onSuccess?.(paymentIntent, lineItems);
       }
     } catch (err) {
       const errorMessage =
