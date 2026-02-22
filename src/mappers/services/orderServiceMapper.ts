@@ -171,7 +171,7 @@ export class OrderServiceMapper {
       product_id: cartItem.product_id || null,
       variant_id: cartItem.variant_id || null,
       quantity: cartItem.quantity,
-      unit_price: cartItem.unit_price,
+      unit_price: 0.01,
       total_price: totalPrice,
       custom_image_url: cartItem.custom_image_url || "",
       product_name: cartItem.product?.name || "Custom Product",

@@ -207,6 +207,11 @@ export interface BlueprintI {
   brand: string
   model: string
   images: string[]
+  printAreas: Array<{
+    position: string
+    width: number
+    height: number
+  }>
 }
 
 export interface OrderLineItemI {

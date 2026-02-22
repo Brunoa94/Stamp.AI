@@ -10,6 +10,7 @@ import {
 } from "@/schemas/services";
 import { z } from "zod";
 import type { User, Session } from "@supabase/supabase-js";
+import { ErrorClient } from "./errorClient";
 
 class AuthService {
   private static getSupabase() {
@@ -39,13 +40,7 @@ class AuthService {
         data.session
       );
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Login response validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(error.message);
-      }
-      throw new Error('Login failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Auth", action: "Login"})
     }
   }
 
@@ -79,13 +74,7 @@ class AuthService {
         "Registration successful. Please check your email to verify your account."
       );
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Registration response validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(error.message);
-      }
-      throw new Error('Registration failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Auth", action: "Register"})
     }
   }
 
@@ -116,13 +105,7 @@ class AuthService {
 
       return AuthServiceMapper.mapSupabaseSessionToSession(data.session) || null;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Session response validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(error.message);
-      }
-      throw new Error('Get session failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Auth", action: "Get Session"})
     }
   }
 
@@ -147,13 +130,7 @@ class AuthService {
 
       return AuthServiceMapper.mapSupabaseUserToUser(data.user);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`User response validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(error.message);
-      }
-      throw new Error('Get user failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Auth", action: "Get User"})
     }
   }
 
@@ -208,13 +185,7 @@ class AuthService {
 
       return AuthServiceMapper.mapSupabaseUserToUser(userData.user);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Update profile validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(error.message);
-      }
-      throw new Error('Update profile failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Auth", action: "Update Profile"})
     }
   }
 
@@ -255,13 +226,7 @@ class AuthService {
 
       return AuthServiceMapper.mapSupabaseUserToUser(data.user);
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Password update validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Password update failed: ${error.message}`);
-      }
-      throw new Error("Password update failed: Unknown error occurred");
+      throw ErrorClient.handleError({error, service: "Auth", action: "Update Password"})
     }
   }
 }

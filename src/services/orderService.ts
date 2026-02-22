@@ -7,6 +7,7 @@ import { CartItem, CartT, CartWithItems } from "@/types/cart";
 import { CartService } from "./cartService";
 import { OrderItemService } from "./orderItemService";
 import { UserI } from "@/types/auth";
+import { ErrorClient } from "./errorClient";
 
 export class OrderService {
   private static getSupabase() {
@@ -49,13 +50,7 @@ export class OrderService {
 
       return validatedData as OrderWithItemsT[];
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Order validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Orders fetch failed: ${error.message}`);
-      }
-      throw new Error('Orders fetch failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Order", action: "Get Orders"})
     }
   }
 
@@ -89,13 +84,7 @@ export class OrderService {
 
       return validatedData as OrderWithItemsT;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Order validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Order fetch failed: ${error.message}`);
-      }
-      throw new Error('Order fetch failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Order", action: "Get Order"})
     }
   }
 
@@ -129,13 +118,7 @@ export class OrderService {
 
       return validatedData as OrderWithItemsT;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Order validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Order fetch failed: ${error.message}`);
-      }
-      throw new Error('Order fetch failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Order", action: "Get Order By Number"})
     }
   }
 
@@ -163,10 +146,7 @@ export class OrderService {
 
       return data;
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Order creation failed: ${error.message}`);
-      }
-      throw new Error('Order creation failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Order", action: "Create Order"})
     }
   }
 
@@ -198,10 +178,7 @@ export class OrderService {
 
       return data;
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Order update failed: ${error.message}`);
-      }
-      throw new Error('Order update failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Order", action: "Update Order"})
     }
   }
 
@@ -217,10 +194,7 @@ export class OrderService {
       const updatePayload = OrderServiceMapper.mapStatusToUpdate(status);
       return await this.updateOrder(orderId, updatePayload);
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Order status update failed: ${error.message}`);
-      }
-      throw new Error('Order status update failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Order", action: "Update Order Status"})
     }
   }
 
@@ -236,10 +210,7 @@ export class OrderService {
       const updatePayload = OrderServiceMapper.mapFulfillmentStatusToUpdate(fulfillmentStatus);
       return await this.updateOrder(orderId, updatePayload);
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Fulfillment status update failed: ${error.message}`);
-      }
-      throw new Error('Fulfillment status update failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Order", action: "Update Fulfillment Status"})
     }
   }
 
@@ -255,10 +226,7 @@ export class OrderService {
       const updatePayload = OrderServiceMapper.mapPaymentStatusToUpdate(paymentStatus);
       return await this.updateOrder(orderId, updatePayload);
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Payment status update failed: ${error.message}`);
-      }
-      throw new Error('Payment status update failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Order", action: "Update Payment Status"})
     }
   }
 
@@ -275,10 +243,7 @@ export class OrderService {
       const updatePayload = OrderServiceMapper.mapTrackingToUpdate(trackingNumber, trackingUrl);
       return await this.updateOrder(orderId, updatePayload);
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Tracking update failed: ${error.message}`);
-      }
-      throw new Error('Tracking update failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Order", action: "Update Tracking"})
     }
   }
 
@@ -299,17 +264,12 @@ export class OrderService {
         throw new Error(`Supabase error: ${error.message}`);
       }
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Order deletion failed: ${error.message}`);
-      }
-      throw new Error('Order deletion failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Order", action: "Delete Order"})
     }
   }
 
   static async createOrderFromCart({user, cart}: {user: UserI, cart: CartWithItems}){
           try {
-            const cartSummary = CartService.calculateCartSummary(cart);
-
             // Use mapper to generate unique order number
             const orderNumber = OrderServiceMapper.generateOrderNumber();
 
@@ -341,8 +301,7 @@ export class OrderService {
 
             return newOrder.id;
           } catch (error) {
-            console.error("❌ Failed to create order from cart:", error);
-            throw new Error("Error creating order")
+            throw ErrorClient.handleError({error, service: "Order", action: "Create Order From Cart"})
           }
         };
 }

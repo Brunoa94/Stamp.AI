@@ -78,19 +78,26 @@ export const CreatePrintifyOrderRequestSchema = z.object({
 
 /**
  * Schema for Printify order response
+ * Note: Fields are optional to handle various response states from Printify API
  */
 export const PrintifyOrderResponseSchema = z.object({
   success: z.boolean(),
   order: z.object({
     id: z.string(),
     external_id: z.string().optional(),
-    status: z.string(),
-    line_items: z.array(z.any()),
+    status: z.string().optional(),
+    line_items: z.array(z.any()).optional(),
     shipping_method: z.number().optional(),
     address_to: z.record(z.string(), z.any()).optional(),
     created_at: z.string().optional(),
-  }).optional(),
+  }).passthrough().optional(), // Use passthrough to allow additional Printify API fields
   error: z.string().optional(),
   skipped: z.boolean().optional(),
   message: z.string().optional(),
-});
+  cancel_result: z.object({
+    success: z.boolean(),
+    canceled: z.boolean().optional(),
+    status: z.string().optional(),
+    error: z.string().optional(),
+  }).optional(), // Add cancel_result field that can be returned by Edge Function
+}).passthrough(); // Allow additional fields from Printify API

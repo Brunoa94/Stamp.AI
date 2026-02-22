@@ -73,14 +73,16 @@ export interface PrintifyOrderResponse {
   success: boolean;
   order?: {
     id: string;
-    status: string;
-    external_id: string;
-    label: string;
-    line_items: any[];
-    address_to: PrintifyShippingAddress;
-    shipping_method: number;
-    [key: string]: any;
+    status?: string;
+    external_id?: string;
+    label?: string;
+    line_items?: any[];
+    address_to?: PrintifyShippingAddress;
+    shipping_method?: number;
+    created_at?: string;
+    [key: string]: any; // Allow additional Printify API fields
   };
+  error?: string;
   message?: string;
   skipped?: boolean;
   cancel_result?: {

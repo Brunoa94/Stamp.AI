@@ -3,6 +3,7 @@ import { ImageGenerationResponseSchema } from "@/schemas/services";
 import { ImageGenerationServiceMapper } from "@/mappers/services";
 import { POST } from "./apiClient";
 import { z } from "zod";
+import { ErrorClient } from "./errorClient";
 
 interface ImageGenerationResponse {
   success: boolean;
@@ -34,19 +35,7 @@ export class ImageGenerationService {
       // Use mapper to convert response to result
       return ImageGenerationServiceMapper.mapResponseToResult(validatedResponse);
     } catch (error) {
-      // Handle validation errors
-      if (error instanceof z.ZodError) {
-        throw new Error(`Image generation response validation failed: ${error.message}`);
-      }
-
-      // Handle network errors, parsing errors, and other exceptions
-      if (error instanceof Error) {
-        // Re-throw known errors with context
-        throw new Error(`Image generation failed: ${error.message}`);
-      }
-
-      // Handle unknown errors
-      throw new Error("Image generation failed: Unknown error occurred");
+      throw ErrorClient.handleError({error, service: "Image Generation", action: "Generate Image"})
     }
   }
 }

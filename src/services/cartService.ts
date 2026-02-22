@@ -16,6 +16,7 @@ import {
 } from "@/schemas/cart";
 import { CartServiceMapper } from "@/mappers/services";
 import { z } from "zod";
+import { ErrorClient } from "./errorClient";
 
 export class CartService {
   private static getSupabase() {
@@ -75,13 +76,7 @@ export class CartService {
 
       return validatedCart as CartT;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Cart validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Get or create cart failed: ${error.message}`);
-      }
-      throw new Error("Get or create cart failed: Unknown error");
+      throw ErrorClient.handleError({error, service: "Cart", action: "Get Or Create Cart"})
     }
   }
 
@@ -116,13 +111,7 @@ export class CartService {
       const validatedCart = CartWithItemsSchema.parse(data);
       return validatedCart as CartWithItems;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Cart validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Get cart failed: ${error.message}`);
-      }
-      throw new Error("Get cart failed: Unknown error");
+      throw ErrorClient.handleError({error, service: "Cart", action: "Get Cart"})
     }
   }
 
@@ -190,13 +179,7 @@ export class CartService {
       const validatedItem = CartItemSchema.parse(data);
       return validatedItem as CartItem;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Cart item validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Add to cart failed: ${error.message}`);
-      }
-      throw new Error("Add to cart failed: Unknown error");
+      throw ErrorClient.handleError({error, service: "Cart", action: "Add To Cart"})
     }
   }
 
@@ -235,13 +218,7 @@ export class CartService {
       const validatedItem = CartItemSchema.parse(data);
       return validatedItem as CartItem;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Cart item validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Update cart item failed: ${error.message}`);
-      }
-      throw new Error("Update cart item failed: Unknown error");
+      throw ErrorClient.handleError({error, service: "Cart", action: "Update Cart Item"})
     }
   }
 
@@ -258,10 +235,7 @@ export class CartService {
         throw new Error(`Supabase error: ${error.message}`);
       }
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Remove cart item failed: ${error.message}`);
-      }
-      throw new Error("Remove cart item failed: Unknown error");
+      throw ErrorClient.handleError({error, service: "Cart", action: "Remove Cart Item"})
     }
   }
 
@@ -278,10 +252,7 @@ export class CartService {
         throw new Error(`Supabase error: ${error.message}`);
       }
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Clear cart failed: ${error.message}`);
-      }
-      throw new Error("Clear cart failed: Unknown error");
+      throw ErrorClient.handleError({error, service: "Cart", action: "Clear Cart"})
     }
   }
 
@@ -332,10 +303,7 @@ export class CartService {
       // Delete guest cart
       await supabase.from("carts").delete().eq("id", guestCartId);
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Merge cart failed: ${error.message}`);
-      }
-      throw new Error("Merge cart failed: Unknown error");
+      throw ErrorClient.handleError({error, service: "Cart", action: "Merge Cart"})
     }
   }
 }

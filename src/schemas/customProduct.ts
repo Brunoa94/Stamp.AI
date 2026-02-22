@@ -15,11 +15,12 @@ export const CreateProductPayloadSchema = z.object({
 
 /**
  * Schema for product variant
+ * Note: price must be an integer representing cents (e.g., 2999 = $29.99)
  */
 const ProductVariantSchema = z.object({
   id: z.number(),
   title: z.string(),
-  price: z.number(),
+  price: z.number().int(), // Price in cents (must be integer)
   is_enabled: z.boolean(),
 });
 

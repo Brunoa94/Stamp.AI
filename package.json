@@ -12,7 +12,9 @@
     "supabase:types": "supabase gen types typescript --linked > src/types/database.types.ts",
     "supabase:lint": "cd supabase && deno lint",
     "supabase:format": "cd supabase && deno fmt",
-    "supabase:check": "cd supabase && deno check functions/**/*.ts"
+    "supabase:check": "cd supabase && deno check functions/**/*.ts",
+    "supabase:deploy": "supabase functions deploy --no-verify-jwt",
+    "supabase:deploy:function": "supabase functions deploy"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

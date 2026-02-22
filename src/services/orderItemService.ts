@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/client";
 import { CreateOrderItemT, OrderItemT, UpdateOrderItemT } from "@/types/orderItem";
 import { OrderItemSchema } from "@/schemas/order";
 import { z } from "zod";
+import { ErrorClient } from "./errorClient";
 
 export class OrderItemService {
   private static getSupabase() {
@@ -34,13 +35,7 @@ export class OrderItemService {
 
       return validatedData as OrderItemT[];
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Order items validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Order items fetch failed: ${error.message}`);
-      }
-      throw new Error('Order items fetch failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Order Items", action: "Get Order Items"})
     }
   }
 
@@ -70,13 +65,7 @@ export class OrderItemService {
 
       return validatedData as OrderItemT;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Order item validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Order item fetch failed: ${error.message}`);
-      }
-      throw new Error('Order item fetch failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Order Items", action: "Get Order Item"})
     }
   }
 
@@ -106,13 +95,7 @@ export class OrderItemService {
 
       return validatedData as OrderItemT;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Order item validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Order item creation failed: ${error.message}`);
-      }
-      throw new Error('Order item creation failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Order Items", action: "Create Order Item"})
     }
   }
 
@@ -141,13 +124,7 @@ export class OrderItemService {
 
       return validatedData as OrderItemT[];
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Order items validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Order items creation failed: ${error.message}`);
-      }
-      throw new Error('Order items creation failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Order Items", action: "Create Order Items"})
     }
   }
 
@@ -181,13 +158,7 @@ export class OrderItemService {
 
       return validatedData as OrderItemT;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Order item validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Order item update failed: ${error.message}`);
-      }
-      throw new Error('Order item update failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Order Items", action: "Update Order Item"})
     }
   }
 
@@ -207,10 +178,7 @@ export class OrderItemService {
         throw new Error(`Supabase error: ${error.message}`);
       }
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Order item deletion failed: ${error.message}`);
-      }
-      throw new Error('Order item deletion failed: Unknown error occurred');
+      throw ErrorClient.handleError({error, service: "Order Items", action: "Delete Order Item"})
     }
   }
 }

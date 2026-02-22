@@ -92,6 +92,8 @@ serve(async (req) => {
       })
     }
 
+    // IMPORTANT: Printify API requires all prices to be integers (in cents)
+    // Example: $29.99 should be sent as 2999 (not 29.99)
     const productPayload = {
       title: title || `Custom Design ${Date.now()}`,
       description: description || 'Custom designed product',
@@ -99,7 +101,7 @@ serve(async (req) => {
       print_provider_id: finalPrintProviderId,
       variants: selectedVariants.map((variantId: number) => ({
         id: variantId,
-        price: 2500,
+        price: 1, // Price in cents (1 cent = $0.01) - MUST be an integer
         is_enabled: true,
       })),
       print_areas: [

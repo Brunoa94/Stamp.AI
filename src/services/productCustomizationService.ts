@@ -1,6 +1,7 @@
 import { CatalogBlueprintsResponseSchema } from "@/schemas/services";
 import { BlueprintVariantsResponseSchema } from "@/schemas/printify";
 import { z } from "zod";
+import { ErrorClient } from "./errorClient";
 
 export interface CatalogBlueprint {
   id: number;
@@ -67,13 +68,7 @@ export class ProductCustomizationService {
         printProviderId: validatedData.printProviderId || 99,
       };
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Catalog response validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Catalog fetch failed: ${error.message}`);
-      }
-      throw new Error("Catalog fetch failed: Unknown error occurred");
+      throw ErrorClient.handleError({error, service: "Product Customization", action: "Fetch Catalog Blueprints"})
     }
   }
 
@@ -113,13 +108,7 @@ export class ProductCustomizationService {
         sizes: validatedData.sizes || [],
       };
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Variants response validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Variants fetch failed: ${error.message}`);
-      }
-      throw new Error("Variants fetch failed: Unknown error occurred");
+      throw ErrorClient.handleError({error, service: "Product Customization", action: "Fetch Blueprint Variants"})
     }
   }
 }

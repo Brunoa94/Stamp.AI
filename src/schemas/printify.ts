@@ -33,8 +33,8 @@ const MockupImageSchema = z.object({
 const VariantSchema = z.object({
   id: z.number(),
   sku: z.string(),
-  cost: z.number(), // Price in cents
-  price: z.number(), // Selling price in cents
+  cost: z.number().int(), // Price in cents (must be integer)
+  price: z.number().int(), // Selling price in cents (must be integer)
   title: z.string(),
   grams: z.number().optional(),
   is_enabled: z.boolean(),

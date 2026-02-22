@@ -14,6 +14,7 @@ import {
 import { CustomProductServiceMapper } from "@/mappers/services";
 import { z } from "zod";
 import { ProductService } from "./productService";
+import { ErrorClient } from "./errorClient";
 
 export class CustomProductService {
   private static getSupabaseConfig() {
@@ -69,13 +70,7 @@ export class CustomProductService {
 
       return validatedData.image.id;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Image upload validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Image upload failed: ${error.message}`);
-      }
-      throw new Error("Image upload failed: Unknown error occurred");
+      throw ErrorClient.handleError({error, service: "Custom Product", action: "Upload Image"})
     }
   }
 
@@ -159,13 +154,7 @@ export class CustomProductService {
 
       return printifyProduct;
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        throw new Error(`Product creation validation failed: ${error.message}`);
-      }
-      if (error instanceof Error) {
-        throw new Error(`Product creation failed: ${error.message}`);
-      }
-      throw new Error("Product creation failed: Unknown error occurred");
+      throw ErrorClient.handleError({error, service: "Custom Product", action: "Create Custom Product"})
     }
   }
 }

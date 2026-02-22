@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/database.types";
 import type { CreatedProductT } from "@/types/customProduct";
 import { ProductServiceMapper, type SavePrintifyProductInput } from "@/mappers/services";
+import { ErrorClient } from "./errorClient";
 
 type ProductInsert = Database['public']['Tables']['products']['Insert'];
 type ProductRow = Database['public']['Tables']['products']['Row'];
@@ -51,10 +52,7 @@ export class ProductService {
       console.log('✅ Saved Printify product to database:', data.id);
       return data;
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Failed to save Printify product: ${error.message}`);
-      }
-      throw new Error('Failed to save Printify product: Unknown error');
+      throw ErrorClient.handleError({error, service: "Product", action: "Save Printify Product"})
     }
   }
 
@@ -77,10 +75,7 @@ export class ProductService {
 
       return data;
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Failed to get product: ${error.message}`);
-      }
-      throw new Error('Failed to get product: Unknown error');
+      throw ErrorClient.handleError({error, service: "Product", action: "Get Product"})
     }
   }
 

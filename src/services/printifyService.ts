@@ -12,6 +12,9 @@ import type {
     PrintifyOrderResponse
 } from "@/types/printifyOrder";
 import { ProductCustomizationService, BlueprintVariantsResponse } from "./productCustomizationService";
+import { ErrorClient } from "./errorClient";
+import { TshirtType } from "@/types/product";
+import { BlueprintI } from "@/types/api";
 
 export class PrintifyService {
     static async getCustomProduct(productId: string): Promise<CustomProductT> {
@@ -25,10 +28,7 @@ export class PrintifyService {
 
             return validatedResponse as CustomProductT;
         }catch(error){
-            if (error instanceof z.ZodError) {
-                throw new Error(`Custom product response validation failed: ${error.message}`);
-            }
-            throw new Error('Error getting the custom product');
+            throw ErrorClient.handleError({error, service: "Printify", action: "Get Custom Product"})
         }
     }
 
@@ -81,13 +81,72 @@ export class PrintifyService {
 
             return validatedResponse as PrintifyOrderResponse;
         } catch (error) {
-            if (error instanceof z.ZodError) {
-                throw new Error(`Printify order validation failed: ${error.message}`);
+            throw ErrorClient.handleError({error, service: "Printify", action: "Create Printify Order"})
+        }
+    }
+
+    /**
+     * Fetch all t-shirt products from Printify catalog
+     * Retrieves blueprints via Supabase Edge Function and transforms them to TshirtType
+     */
+    static async getTshirtProducts(): Promise<TshirtType[]> {
+        try {
+            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+            const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+            if (!supabaseUrl || !supabaseAnonKey) {
+                throw new Error("Supabase configuration missing");
             }
-            if (error instanceof Error) {
-                throw new Error(`Printify order creation failed: ${error.message}`);
+
+            const response = await fetch(
+                `${supabaseUrl}/functions/v1/get-catalog-blueprints`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${supabaseAnonKey}`,
+                    },
+                    body: JSON.stringify({}),
+                }
+            );
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`HTTP ${response.status}: ${errorText}`);
             }
-            throw new Error('Printify order creation failed: Unknown error occurred');
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.error || "Failed to fetch catalog blueprints");
+            }
+
+            // Transform BlueprintI to TshirtType
+            const blueprints: BlueprintI[] = data.blueprints;
+
+            // Map blueprints to TshirtType format
+            const tshirtProducts: TshirtType[] = blueprints.map((blueprint) => ({
+                id: `blueprint-${blueprint.id}`,
+                name: blueprint.title,
+                description: blueprint.description || `${blueprint.brand} ${blueprint.model}`,
+                image: blueprint.images[0] || "/api/placeholder/200/200",
+                features: blueprint.printAreas.map((area: { position: string; width: number; height: number }) => area.position),
+                price: 0, // Base price, will be determined by variant selection
+                material: blueprint.brand || "Cotton",
+                fit: "Classic",
+                blueprint_id: blueprint.id,
+                print_provider_id: data.printProviderId || 99,
+                brand: blueprint.brand,
+                model: blueprint.model,
+            }));
+
+            return tshirtProducts;
+        } catch (error) {
+            throw ErrorClient.handleError({
+                error,
+                service: "Printify",
+                action: "Get Tshirt Products"
+            });
         }
     }
 }
