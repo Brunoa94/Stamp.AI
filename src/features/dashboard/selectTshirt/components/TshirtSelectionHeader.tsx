@@ -12,7 +12,7 @@ export default function TshirtSelectionHeader() {
       />
 
       {/* Description */}
-      <div className="bg-linear-to-br from-blue-50/50 via-blue-100/40 to-purple-50/50 dark:from-gray-800/80 dark:via-blue-800/30 dark:to-purple-800/30 backdrop-blur-sm border border-blue-100 dark:border-blue-800/30 rounded-2xl p-6">
+      <div className="bg-linear-to-br from-slate-50/50 via-gray-100/40 to-slate-50/50 dark:from-gray-800/80 dark:via-slate-800/30 dark:to-gray-800/30 backdrop-blur-sm border border-slate-100 dark:border-slate-800/30 rounded-2xl p-6">
         <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
           Select the perfect t-shirt type for your design. Each option offers
           different materials, fits, and price points to match your needs and

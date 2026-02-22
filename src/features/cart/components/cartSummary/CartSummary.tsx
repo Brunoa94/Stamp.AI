@@ -12,7 +12,12 @@ interface Props {
   isProcessing?: boolean;
 }
 
-export function CartSummary({ itemCount, subtotal, onCheckout, isProcessing = false }: Props) {
+export function CartSummary({
+  itemCount,
+  subtotal,
+  onCheckout,
+  isProcessing = false,
+}: Props) {
   const [promoCode, setPromoCode] = useState("");
 
   // Calculate estimates
@@ -55,7 +60,7 @@ export function CartSummary({ itemCount, subtotal, onCheckout, isProcessing = fa
 
         {/* Free shipping threshold */}
         {shipping > 0 && (
-          <div className="text-xs text-purple-600 bg-purple-50 px-3 py-2 rounded-md">
+          <div className="text-xs text-slate-700 bg-slate-50 px-3 py-2 rounded-md">
             Add ${(50 - subtotal).toFixed(2)} more for FREE shipping!
           </div>
         )}
@@ -76,7 +81,7 @@ export function CartSummary({ itemCount, subtotal, onCheckout, isProcessing = fa
                 placeholder="Promo code"
                 value={promoCode}
                 onChange={(e) => setPromoCode(e.target.value)}
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
               />
             </div>
             <Button
@@ -93,7 +98,9 @@ export function CartSummary({ itemCount, subtotal, onCheckout, isProcessing = fa
         {/* Total */}
         <div className="flex justify-between pt-4 border-t border-gray-200">
           <span className="text-lg font-semibold text-gray-900">Total</span>
-          <span className="text-lg font-bold text-purple-600">${total.toFixed(2)}</span>
+          <span className="text-lg font-bold text-slate-700">
+            ${total.toFixed(2)}
+          </span>
         </div>
       </div>
 
@@ -106,7 +113,7 @@ export function CartSummary({ itemCount, subtotal, onCheckout, isProcessing = fa
           className={clsx(
             "w-full",
             !(itemCount === 0 || isProcessing) &&
-              "bg-linear-to-r from-purple-600 via-pink-600 to-red-600 text-white hover:opacity-90 shadow-lg shadow-purple-500/30"
+              "bg-linear-to-r from-slate-600 via-gray-600 to-slate-700 text-white hover:opacity-90 shadow-lg shadow-slate-500/30",
           )}
         >
           <Lock className="w-5 h-5" />

@@ -14,7 +14,7 @@ export function OrderCardInfo({
   return (
     <div className="space-y-1">
       <div className="flex items-center gap-3">
-        <h3 className="text-lg font-bold text-gray-900 group-hover:text-purple-600 transition-colors">
+        <h3 className="text-lg font-bold text-gray-900 group-hover:text-slate-700 transition-colors">
           Order #{orderNumber}
         </h3>
         <span className="text-sm text-gray-400">•</span>

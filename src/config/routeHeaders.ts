@@ -13,8 +13,8 @@ export const ROUTE_HEADER_CONFIGS: Record<string, IRouteHeaderConfig> = {
   dashboard: {
     leftIcon: Sparkles,
     rightIcon: Wand2,
-    leftIconColor: "text-purple-500",
-    rightIconColor: "text-pink-500",
+    leftIconColor: "text-slate-600",
+    rightIconColor: "text-gray-600",
     title: "AI Magic Studio",
     subtitle: "Transform your images with the power of AI creativity ✨"
   },

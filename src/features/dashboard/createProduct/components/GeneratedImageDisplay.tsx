@@ -43,14 +43,14 @@ const GeneratedImageDisplay = ({
           onClick={onUseImage}
           className={clsx(
             "px-8 py-3 text-lg font-semibold rounded-xl transition-all duration-300",
-            "bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500",
-            "hover:from-purple-600 hover:via-pink-600 hover:to-purple-600",
-            "dark:from-purple-600 dark:via-pink-600 dark:to-purple-600",
-            "dark:hover:from-purple-700 dark:hover:via-pink-700 dark:hover:to-purple-700",
+            "bg-gradient-to-r from-slate-600 via-gray-600 to-slate-700",
+            "hover:from-slate-700 hover:via-gray-700 hover:to-slate-800",
+            "dark:from-slate-600 dark:via-gray-600 dark:to-slate-700",
+            "dark:hover:from-slate-700 dark:hover:via-gray-700 dark:hover:to-slate-800",
             "text-white shadow-lg hover:shadow-xl",
             "hover:shadow-purple-500/50 dark:hover:shadow-purple-500/40",
             "hover:scale-105 active:scale-95",
-            "flex items-center gap-2"
+            "flex items-center gap-2",
           )}
         >
           <CheckCircleIcon className="w-5 h-5" />

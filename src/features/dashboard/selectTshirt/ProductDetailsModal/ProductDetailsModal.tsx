@@ -36,7 +36,7 @@ export default function ProductDetailsModal({
       onClose={onClose}
       title={tshirt.name}
       description={`Product details for ${tshirt.name}`}
-      className="max-w-7xl max-h-[85vh] overflow-y-auto bg-linear-to-br from-purple-100 via-pink-100 to-blue-100 dark:from-gray-800 dark:via-purple-900 dark:to-pink-900 p-8 border-2 border-purple-300 dark:border-purple-600"
+      className="max-w-7xl max-h-[85vh] overflow-y-auto bg-linear-to-br from-gray-100 via-slate-100 to-gray-200 dark:from-gray-800 dark:via-slate-900 dark:to-gray-900 p-8 border-2 border-gray-300 dark:border-gray-600"
     >
       <div className="space-y-8">
         <ProductImage src={tshirt.image} alt={tshirt.name} />

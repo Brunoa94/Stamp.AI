@@ -41,10 +41,10 @@ export function ThemeToggle() {
         <Button
           variant="ghost"
           size="sm"
-          className="relative h-9 w-9 px-0 hover:bg-purple-100 dark:hover:bg-purple-900/20 transition-all duration-200"
+          className="relative h-9 w-9 px-0 hover:bg-slate-100 dark:hover:bg-slate-900/20 transition-all duration-200"
           aria-label={`Current theme: ${currentTheme.label}. Click to change theme.`}
         >
-          <Icon className="h-4 w-4 text-purple-600 dark:text-purple-400 transition-all duration-200" />
+          <Icon className="h-4 w-4 text-slate-600 dark:text-slate-400 transition-all duration-200" />
           <span className="sr-only">Toggle theme</span>
         </Button>
       </DropdownMenuTrigger>
@@ -57,12 +57,10 @@ export function ThemeToggle() {
               <DropdownMenuRadioItem
                 key={themeOption.value}
                 value={themeOption.value}
-                className={clsx(
-                  "flex items-center gap-2 cursor-pointer",
-                  {
-                    "text-purple-600 dark:text-purple-400": theme === themeOption.value,
-                  }
-                )}
+                className={clsx("flex items-center gap-2 cursor-pointer", {
+                  "text-slate-600 dark:text-slate-400":
+                    theme === themeOption.value,
+                })}
               >
                 <ThemeIcon className="h-4 w-4" />
                 {themeOption.label}

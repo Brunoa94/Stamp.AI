@@ -21,12 +21,12 @@ export const CheckoutHeader = ({
       <div className="text-center mb-12">
         {/* Main Title with Gradient */}
         <div className="relative inline-block">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold bg-linear-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent mb-3 bg-size-[200%_auto] animate-[checkout-gradient-shift_3s_ease_infinite]">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold bg-linear-to-r from-slate-700 via-gray-700 to-slate-800 bg-clip-text text-transparent mb-3 bg-size-[200%_auto] animate-[checkout-gradient-shift_3s_ease_infinite]">
             Secure Checkout
           </h1>
 
           {/* Decorative underline */}
-          <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-linear-to-r from-purple-500 to-pink-500 rounded-full opacity-50" />
+          <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-linear-to-r from-slate-600 to-gray-700 rounded-full opacity-50" />
         </div>
       </div>
 

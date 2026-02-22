@@ -14,7 +14,7 @@ export function Features({ features }: FeaturesProps) {
         {features.map((feature, index) => (
           <span
             key={index}
-            className="px-3 py-1.5 bg-linear-to-r from-purple-200 to-pink-200 dark:from-purple-700 dark:to-pink-700 text-purple-800 dark:text-purple-100 rounded-lg text-sm font-medium border border-purple-300 dark:border-purple-600"
+            className="px-3 py-1.5 bg-linear-to-r from-gray-200 to-slate-200 dark:from-slate-700 dark:to-gray-700 text-slate-800 dark:text-slate-100 rounded-lg text-sm font-medium border border-gray-300 dark:border-gray-600"
           >
             {mapFeatureToDescription(feature)}
           </span>

@@ -21,16 +21,16 @@ export function PasswordResetSection() {
 
   return (
     <section
-      className="bg-white dark:bg-gray-800 border-2 border-purple-200 dark:border-purple-700 rounded-2xl p-6 space-y-6"
+      className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-6 space-y-6"
       aria-labelledby="password-security-heading"
     >
       <header className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div
-            className="p-3 bg-purple-100 dark:bg-purple-900 rounded-lg"
+            className="p-3 bg-gray-100 dark:bg-gray-900 rounded-lg"
             aria-hidden="true"
           >
-            <Lock className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+            <Lock className="w-6 h-6 text-slate-600 dark:text-slate-400" />
           </div>
           <div>
             <h2
@@ -48,7 +48,7 @@ export function PasswordResetSection() {
           <Button
             onClick={handleStartEditing}
             variant="outline"
-            className="border-purple-300 text-purple-700 hover:bg-purple-50 dark:border-purple-600 dark:text-purple-300 dark:hover:bg-purple-900/20"
+            className="border-gray-300 text-slate-700 hover:bg-gray-50 dark:border-gray-600 dark:text-slate-300 dark:hover:bg-gray-900/20"
             aria-label="Change password"
           >
             Change Password
@@ -92,7 +92,7 @@ export function PasswordResetSection() {
             <Button
               type="submit"
               disabled={!canSubmit || isLoading}
-              className="bg-linear-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+              className="bg-linear-to-r from-slate-600 to-gray-700 hover:from-slate-700 hover:to-gray-800 text-white"
             >
               <Save className="w-4 h-4 mr-2" aria-hidden="true" />
               {isLoading ? "Updating..." : "Update Password"}
@@ -110,7 +110,8 @@ export function PasswordResetSection() {
         </form>
       ) : (
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Your password is hidden for security. Click "Change Password" to update it.
+          Your password is hidden for security. Click "Change Password" to
+          update it.
         </p>
       )}
     </section>

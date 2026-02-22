@@ -16,7 +16,7 @@ const UploadButton = ({ isDragActive }: Props) => {
     >
       <Button
         variant="outline"
-        className="bg-linear-to-r from-purple-50 to-pink-50 border-purple-200 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300 hover:scale-105"
+        className="bg-linear-to-r from-gray-50 to-slate-50 border-gray-200 hover:border-gray-400 hover:shadow-lg hover:shadow-slate-500/25 transition-all duration-300 hover:scale-105"
       >
         <ImageIcon className="mr-2 h-5 w-5 text-purple-500" />
         <span className={colors.textGradient + " font-semibold"}>

@@ -12,7 +12,7 @@ export function OrderSummarySection({ order, formattedDate }: Props) {
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-2">
-        <Package className="w-5 h-5 text-purple-600" />
+        <Package className="w-5 h-5 text-slate-600" />
         <h3 className={componentThemes.text.subheading}>Order Summary</h3>
       </div>
 
@@ -27,7 +27,7 @@ export function OrderSummarySection({ order, formattedDate }: Props) {
       </div>
 
       {/* Order Info */}
-      <div className="grid md:grid-cols-2 gap-4 bg-purple-50/50 rounded-lg p-4">
+      <div className="grid md:grid-cols-2 gap-4 bg-gray-50/50 rounded-lg p-4">
         <div>
           <p className="text-sm text-gray-600">Order Date</p>
           <p className="font-medium text-gray-800">{formattedDate}</p>
@@ -41,7 +41,7 @@ export function OrderSummarySection({ order, formattedDate }: Props) {
       </div>
 
       {/* Price Breakdown */}
-      <div className="bg-white border border-purple-100 rounded-lg p-4 space-y-2">
+      <div className="bg-white border border-gray-200 rounded-lg p-4 space-y-2">
         <div className="flex justify-between">
           <span className="text-gray-600">Subtotal</span>
           <span className="font-medium">
@@ -68,9 +68,9 @@ export function OrderSummarySection({ order, formattedDate }: Props) {
             </span>
           </div>
         )}
-        <div className="border-t border-purple-100 pt-2 flex justify-between">
+        <div className="border-t border-gray-100 pt-2 flex justify-between">
           <span className="font-semibold text-gray-800">Total</span>
-          <span className="font-bold text-xl bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 bg-clip-text text-transparent">
+          <span className="font-bold text-xl bg-gradient-to-r from-slate-600 via-gray-600 to-slate-700 bg-clip-text text-transparent">
             ${order.total_amount?.toFixed(2) || "0.00"}
           </span>
         </div>

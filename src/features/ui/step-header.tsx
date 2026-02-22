@@ -1,6 +1,6 @@
 import clsx from "clsx";
 
-type ColorVariant = "green" | "purple" | "blue" | "pink";
+type ColorVariant = "green" | "slate" | "gray" | "neutral";
 
 interface StepHeaderProps {
   stepNumber?: number;
@@ -15,17 +15,17 @@ const variantStyles = {
     badge: "bg-linear-to-r from-green-500 to-emerald-500",
     text: "bg-linear-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400",
   },
-  purple: {
-    badge: "bg-linear-to-r from-purple-500 to-pink-500",
-    text: "bg-linear-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400",
+  slate: {
+    badge: "bg-linear-to-r from-slate-500 to-gray-600",
+    text: "bg-linear-to-r from-slate-600 to-gray-700 dark:from-slate-400 dark:to-gray-400",
   },
-  blue: {
-    badge: "bg-linear-to-r from-blue-500 to-purple-500",
-    text: "bg-linear-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400",
+  gray: {
+    badge: "bg-linear-to-r from-gray-500 to-slate-600",
+    text: "bg-linear-to-r from-gray-600 to-slate-700 dark:from-gray-400 dark:to-slate-400",
   },
-  pink: {
-    badge: "bg-linear-to-r from-pink-500 to-purple-500",
-    text: "bg-linear-to-r from-pink-600 to-purple-600 dark:from-pink-400 dark:to-purple-400",
+  neutral: {
+    badge: "bg-linear-to-r from-slate-500 to-gray-600",
+    text: "bg-linear-to-r from-slate-600 to-gray-700 dark:from-slate-400 dark:to-gray-400",
   },
 };
 
@@ -33,7 +33,7 @@ export function StepHeader({
   stepNumber,
   title,
   description,
-  variant = "purple",
+  variant = "slate",
   emoji,
 }: StepHeaderProps) {
   const styles = variantStyles[variant];
@@ -45,7 +45,7 @@ export function StepHeader({
           <div
             className={clsx(
               "w-12 h-12 rounded-full flex items-center justify-center text-white font-bold mr-4 animate-[bounceIn_0.8s_ease-out] shadow-lg",
-              styles.badge
+              styles.badge,
             )}
           >
             {stepNumber}
@@ -55,7 +55,7 @@ export function StepHeader({
           <h3
             className={clsx(
               "text-3xl font-bold bg-clip-text text-transparent",
-              styles.text
+              styles.text,
             )}
           >
             {emoji && `${emoji} `}

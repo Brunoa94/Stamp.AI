@@ -79,7 +79,7 @@ export default function ProductCustomizerSection({
 
       <ProductCustomizerHeader />
 
-      <div className="bg-transparent border-2 border-transparent bg-linear-to-r from-purple-500 via-pink-500 to-purple-500 rounded-lg p-0.5 shadow-lg">
+      <div className="bg-transparent border-2 border-transparent bg-linear-to-r from-slate-500 via-gray-500 to-slate-600 rounded-lg p-0.5 shadow-lg">
         <div className="bg-white dark:bg-gray-900 rounded-lg p-6">
           <TshirtSelection
             onTshirtSelect={onTshirtSelect}

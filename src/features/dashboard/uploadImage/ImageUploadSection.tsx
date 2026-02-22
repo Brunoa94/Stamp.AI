@@ -18,7 +18,7 @@ const ImageUploadSection = ({
       className={clsx(
         theme.upload.section,
         theme.animations.slideInLeft,
-        "transition-all duration-500"
+        "transition-all duration-500",
       )}
     >
       <div
@@ -34,8 +34,8 @@ const ImageUploadSection = ({
               {
                 "bg-linear-to-r from-green-500 to-emerald-500 scale-110 animate-pulse":
                   uploadedImage,
-                "bg-linear-to-r from-purple-500 to-pink-500": !uploadedImage,
-              }
+                "bg-linear-to-r from-slate-600 to-gray-700": !uploadedImage,
+              },
             )}
           >
             {uploadedImage ? "✓" : "1"}

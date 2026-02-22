@@ -38,7 +38,7 @@ export function OrderFilters({
   };
 
   return (
-    <div className="bg-linear-to-br from-purple-100/70 via-purple-200/60 to-pink-100/70 dark:from-gray-800/80 dark:via-purple-800/30 dark:to-pink-800/30 backdrop-blur-sm border-2 border-purple-200 dark:border-purple-700/50 rounded-2xl p-6 mb-6">
+    <div className="bg-linear-to-br from-gray-100/70 via-slate-200/60 to-gray-100/70 dark:from-gray-800/80 dark:via-slate-800/30 dark:to-gray-800/30 backdrop-blur-sm border-2 border-gray-200 dark:border-gray-700/50 rounded-2xl p-6 mb-6">
       <FilterHeader title="Filter & Sort" />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

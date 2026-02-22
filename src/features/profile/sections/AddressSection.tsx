@@ -23,7 +23,7 @@ export function AddressSection() {
   const onSubmit = form.handleSubmit(handleSave);
 
   return (
-    <section className="bg-white dark:bg-gray-800 border-2 border-purple-200 dark:border-purple-700 rounded-2xl p-6 space-y-6">
+    <section className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-6 space-y-6">
       <AddressSectionHeader
         hasAddress={hasAddress}
         isEditing={isEditing}

@@ -31,7 +31,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
         <div className="flex items-center justify-between mb-6">
           <h2
             id="settings-title"
-            className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent"
+            className="text-2xl font-bold bg-gradient-to-r from-slate-700 to-gray-700 dark:from-slate-400 dark:to-gray-400 bg-clip-text text-transparent"
           >
             Settings
           </h2>
@@ -87,7 +87,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
         </div>
 
         {/* Save Button */}
-        <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:scale-105">
+        <Button className="w-full bg-gradient-to-r from-slate-600 to-gray-700 hover:from-slate-700 hover:to-gray-800 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:scale-105">
           Save Settings
         </Button>
       </div>

@@ -18,7 +18,7 @@ export function AddressFormActions({
         type="submit"
         onClick={onSave}
         disabled={isSaving}
-        className="bg-linear-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+        className="bg-linear-to-r from-slate-600 to-gray-700 hover:from-slate-700 hover:to-gray-800 text-white"
       >
         <Save className="w-4 h-4 mr-2" />
         {isSaving ? "Saving..." : "Save Address"}

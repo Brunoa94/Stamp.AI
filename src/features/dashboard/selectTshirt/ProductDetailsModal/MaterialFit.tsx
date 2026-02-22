@@ -8,8 +8,8 @@ interface MaterialFitProps {
 export function MaterialFit({ material, fit }: MaterialFitProps) {
   return (
     <div className="flex gap-4">
-      <PropertyCard label="Material" value={material} variant="purple" />
-      <PropertyCard label="Fit" value={fit} variant="pink" />
+      <PropertyCard label="Material" value={material} variant="slate" />
+      <PropertyCard label="Fit" value={fit} variant="gray" />
     </div>
   );
 }

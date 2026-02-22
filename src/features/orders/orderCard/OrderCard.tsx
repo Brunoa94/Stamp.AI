@@ -21,8 +21,8 @@ export function OrderCard({ order, onViewDetails }: Props) {
   return (
     <article
       className={cn(
-        "bg-white dark:bg-gray-800 backdrop-blur-sm border-2 border-purple-200 dark:border-purple-700 rounded-2xl",
-        "p-0 group transition-all duration-300 hover:border-purple-300 dark:hover:border-purple-600 cursor-pointer overflow-hidden"
+        "bg-white dark:bg-gray-800 backdrop-blur-sm border-2 border-gray-200 dark:border-gray-700 rounded-2xl",
+        "p-0 group transition-all duration-300 hover:border-gray-300 dark:hover:border-gray-600 cursor-pointer overflow-hidden",
       )}
       onClick={() => onViewDetails(order)}
     >

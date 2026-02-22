@@ -18,13 +18,13 @@ const ProcessingSection = ({ sectionRef }: IProcessingSectionProps) => {
     >
       <div className="relative transform transition-transform duration-1000 hover:scale-105">
         {/* Outer spinning ring */}
-        <div className="absolute inset-0 animate-spin rounded-full h-24 w-24 border-4 border-transparent bg-linear-to-r from-purple-500 via-pink-500 to-blue-500 bg-clip-border mx-auto"></div>
+        <div className="absolute inset-0 animate-spin rounded-full h-24 w-24 border-4 border-transparent bg-linear-to-r from-slate-500 via-gray-500 to-slate-600 bg-clip-border mx-auto"></div>
         {/* Inner spinning circle */}
-        <div className="relative animate-pulse rounded-full h-24 w-24 bg-linear-to-br from-purple-100 to-pink-100 mx-auto flex items-center justify-center transition-all duration-500">
+        <div className="relative animate-pulse rounded-full h-24 w-24 bg-linear-to-br from-gray-100 to-slate-100 mx-auto flex items-center justify-center transition-all duration-500">
           <Wand2 className="w-8 h-8 text-purple-600 animate-[wiggle_0.8s_ease-in-out_infinite]" />
         </div>
       </div>
-      <p className="mt-6 text-xl font-semibold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent animate-pulse transition-all duration-500">
+      <p className="mt-6 text-xl font-semibold bg-linear-to-r from-slate-700 to-gray-700 bg-clip-text text-transparent animate-pulse transition-all duration-500">
         Creating magic... ✨
       </p>
       <div className="mt-4 flex items-center justify-center space-x-1">

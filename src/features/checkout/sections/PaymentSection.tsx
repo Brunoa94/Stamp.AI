@@ -28,8 +28,12 @@ function buildPrintifyLineItems(cartItems: any[]): PrintifyLineItem[] {
 
     if (!product && item.product_id) {
       // Product ID exists but wasn't loaded - it might be a Printify product not in our database
-      console.warn(`⚠️ Cart item ${index}: Has product_id "${item.product_id}" but product data wasn't loaded`);
-      console.log("This is likely a Printify product that hasn't been saved to the database yet");
+      console.warn(
+        `⚠️ Cart item ${index}: Has product_id "${item.product_id}" but product data wasn't loaded`,
+      );
+      console.log(
+        "This is likely a Printify product that hasn't been saved to the database yet",
+      );
       console.log("Cart item:", item);
 
       // Use the Printify product_id directly for existing Printify products
@@ -42,7 +46,9 @@ function buildPrintifyLineItems(cartItems: any[]): PrintifyLineItem[] {
     }
 
     if (!product) {
-      console.warn(`⚠️ Cart item ${index} has no product reference - custom product without database record`);
+      console.warn(
+        `⚠️ Cart item ${index} has no product reference - custom product without database record`,
+      );
       console.log("Cart item data:", {
         product_id: item.product_id,
         product_name: item.product_name,
@@ -51,8 +57,12 @@ function buildPrintifyLineItems(cartItems: any[]): PrintifyLineItem[] {
       });
 
       // Cannot create Printify order without blueprint_id, print_provider_id, print_areas
-      console.error(`❌ Cart item ${index}: Cannot create Printify order - missing Printify product data`);
-      console.error(`To fix: Save Printify products to the database when they're created`);
+      console.error(
+        `❌ Cart item ${index}: Cannot create Printify order - missing Printify product data`,
+      );
+      console.error(
+        `To fix: Save Printify products to the database when they're created`,
+      );
       return null;
     }
 
@@ -191,7 +201,7 @@ export function PaymentSection() {
             id="testMode"
             checked={testMode}
             onChange={(e) => setTestMode(e.target.checked)}
-            className="w-4 h-4 text-purple-600 focus:ring-2 focus:ring-purple-500 rounded"
+            className="w-4 h-4 text-slate-600 focus:ring-2 focus:ring-slate-500 rounded"
           />
           <label htmlFor="testMode" className="text-sm text-gray-700">
             Test Mode (use predefined payment methods)

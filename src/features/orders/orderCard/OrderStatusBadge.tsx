@@ -23,7 +23,7 @@ const statusColors: Record<string, string> = {
   fulfilled: "bg-green-50 text-green-700 border-green-200",
   unfulfilled: "bg-orange-50 text-orange-700 border-orange-200",
   shipped: "bg-blue-50 text-blue-700 border-blue-200",
-  delivered: "bg-purple-50 text-purple-700 border-purple-200",
+  delivered: "bg-slate-50 text-slate-700 border-slate-200",
 };
 
 const variantLabels: Record<BadgeVariant, string> = {
@@ -33,14 +33,16 @@ const variantLabels: Record<BadgeVariant, string> = {
 };
 
 export function OrderStatusBadge({ status, variant }: Props) {
-  const colorClass = statusColors[status?.toLowerCase()] || "bg-gray-100 text-gray-800 border-gray-300";
+  const colorClass =
+    statusColors[status?.toLowerCase()] ||
+    "bg-gray-100 text-gray-800 border-gray-300";
   const label = variantLabels[variant];
 
   return (
     <span
       className={cn(
         "inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border",
-        colorClass
+        colorClass,
       )}
       role="status"
       aria-label={`${label} status: ${status}`}

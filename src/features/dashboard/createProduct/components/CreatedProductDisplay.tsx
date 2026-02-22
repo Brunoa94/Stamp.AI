@@ -22,7 +22,7 @@ const CreatedProductDisplay = () => {
 
         {/* Product Image */}
         {displayImage && (
-          <div className="bg-linear-to-br from-purple-50/50 via-pink-50/50 to-blue-50/50 dark:from-gray-800/80 dark:via-purple-800/30 dark:to-pink-800/30 backdrop-blur-sm border border-purple-100 dark:border-purple-800/30 rounded-2xl overflow-hidden shadow-lg shadow-purple-500/20 dark:shadow-purple-500/10">
+          <div className="bg-linear-to-br from-gray-50/50 via-slate-50/50 to-gray-100/50 dark:from-gray-800/80 dark:via-slate-800/30 dark:to-gray-800/30 backdrop-blur-sm border border-gray-200 dark:border-gray-800/30 rounded-2xl overflow-hidden shadow-lg shadow-slate-500/20 dark:shadow-slate-500/10">
             <Image
               src={displayImage}
               alt={product.title}

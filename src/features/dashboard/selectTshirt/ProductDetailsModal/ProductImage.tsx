@@ -7,7 +7,7 @@ interface ProductImageProps {
 
 export function ProductImage({ src, alt }: ProductImageProps) {
   return (
-    <div className="w-full aspect-square bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg border-2 border-purple-200 dark:border-purple-700 p-4">
+    <div className="w-full aspect-square bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg border-2 border-gray-200 dark:border-gray-700 p-4">
       <Image
         src={src}
         alt={alt}

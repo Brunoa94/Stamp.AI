@@ -37,8 +37,8 @@ export default function TshirtTypeCard({
         onClick={handleCardClick}
         className={`cursor-pointer border-2 rounded-2xl p-6 transition-all duration-300 transform hover:scale-105 ${
           isSelected
-            ? "border-purple-500 ring-2 ring-purple-200 bg-linear-to-br from-purple-50/50 via-purple-100/40 to-pink-50/50 dark:from-purple-900/20 dark:via-purple-800/30 dark:to-pink-800/30 shadow-lg shadow-purple-500/20"
-            : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-purple-300 dark:hover:border-purple-600 hover:shadow-lg hover:shadow-purple-500/10"
+            ? "border-slate-600 ring-2 ring-slate-200 bg-linear-to-br from-gray-50/50 via-slate-100/40 to-gray-100/50 dark:from-gray-900/20 dark:via-slate-800/30 dark:to-gray-800/30 shadow-lg shadow-slate-500/20"
+            : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-lg hover:shadow-slate-500/10"
         }`}
       >
         <TshirtImage
@@ -58,7 +58,7 @@ export default function TshirtTypeCard({
             type="button"
             onClick={handleShowDetails}
             variant="outline"
-            className="w-full mt-2 border-purple-300 text-purple-700 hover:bg-purple-50 dark:border-purple-600 dark:text-purple-300 dark:hover:bg-purple-900/20"
+            className="w-full mt-2 border-gray-300 text-slate-700 hover:bg-gray-50 dark:border-gray-600 dark:text-slate-300 dark:hover:bg-gray-900/20"
           >
             Show Details
           </Button>

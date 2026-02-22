@@ -8,23 +8,36 @@ interface Props {
   deliveredDate: string | null;
 }
 
-export function TrackingInfoSection({ order, shippedDate, deliveredDate }: Props) {
-  if (!order.tracking_number && !order.tracking_url && !shippedDate && !deliveredDate) {
+export function TrackingInfoSection({
+  order,
+  shippedDate,
+  deliveredDate,
+}: Props) {
+  if (
+    !order.tracking_number &&
+    !order.tracking_url &&
+    !shippedDate &&
+    !deliveredDate
+  ) {
     return null;
   }
 
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-2">
-        <Package className="w-5 h-5 text-purple-600" />
-        <h3 className={componentThemes.text.subheading}>Tracking Information</h3>
+        <Package className="w-5 h-5 text-slate-600" />
+        <h3 className={componentThemes.text.subheading}>
+          Tracking Information
+        </h3>
       </div>
 
       <div className="bg-blue-50/50 rounded-lg p-4 space-y-3">
         {order.tracking_number && (
           <div>
             <p className="text-sm text-gray-600">Tracking Number</p>
-            <p className="font-medium text-gray-800 break-all">{order.tracking_number}</p>
+            <p className="font-medium text-gray-800 break-all">
+              {order.tracking_number}
+            </p>
           </div>
         )}
 

@@ -74,7 +74,7 @@ export function Paginator({
   return (
     <div
       className={cn(
-        "flex flex-col sm:flex-row items-center justify-between gap-4 py-6 border-t border-purple-200 dark:border-purple-700/50 mt-6 w-full",
+        "flex flex-col sm:flex-row items-center justify-between gap-4 py-6 border-t border-gray-200 dark:border-gray-700/50 mt-6 w-full",
         className,
       )}
     >
@@ -103,7 +103,7 @@ export function Paginator({
             <PaginationPrevious
               onClick={() => canGoPrevious && onPageChange(currentPage - 1)}
               className={cn(
-                "border-purple-200 dark:border-purple-700 hover:bg-purple-50 dark:hover:bg-purple-900/20",
+                "border-gray-200 dark:border-gray-700 hover:bg-slate-50 dark:hover:bg-slate-900/20",
                 !canGoPrevious && "opacity-50 pointer-events-none",
               )}
             />
@@ -128,8 +128,8 @@ export function Paginator({
                   isActive={isActive}
                   className={cn(
                     isActive
-                      ? "bg-linear-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 shadow-md border-transparent"
-                      : "border-purple-200 dark:border-purple-700 hover:bg-purple-50 dark:hover:bg-purple-900/20 text-gray-700 dark:text-gray-300",
+                      ? "bg-linear-to-r from-slate-600 to-gray-700 text-white hover:from-slate-700 hover:to-gray-800 shadow-md border-transparent"
+                      : "border-gray-200 dark:border-gray-700 hover:bg-slate-50 dark:hover:bg-slate-900/20 text-gray-700 dark:text-gray-300",
                   )}
                 >
                   {page}
@@ -143,7 +143,7 @@ export function Paginator({
             <PaginationNext
               onClick={() => canGoNext && onPageChange(currentPage + 1)}
               className={cn(
-                "border-purple-200 dark:border-purple-700 hover:bg-purple-50 dark:hover:bg-purple-900/20",
+                "border-gray-200 dark:border-gray-700 hover:bg-slate-50 dark:hover:bg-slate-900/20",
                 !canGoNext && "opacity-50 pointer-events-none",
               )}
             />

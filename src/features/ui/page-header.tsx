@@ -22,7 +22,7 @@ export function PageHeader({
   return (
     <header className={cn("mb-12 mt-4 space-y-4", className)}>
       <div className="flex items-start gap-4">
-        {Icon && <Icon className="w-12 h-12 text-purple-600" />}
+        {Icon && <Icon className="w-12 h-12 text-slate-600" />}
         <h1 className={theme.dashboard.title}>{title}</h1>
       </div>
       <p className={theme.dashboard.subtitle}>{subtitle}</p>

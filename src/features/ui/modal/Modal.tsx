@@ -28,7 +28,7 @@ export const Modal = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className={className}>
         <DialogHeader className="mb-6">
-          <DialogTitle className="text-3xl bg-linear-to-r from-purple-600 via-pink-600 to-blue-600 dark:from-purple-400 dark:via-pink-400 dark:to-blue-400 bg-clip-text text-transparent">
+          <DialogTitle className="text-3xl bg-linear-to-r from-slate-600 via-gray-600 to-slate-700 dark:from-slate-400 dark:via-gray-400 dark:to-slate-400 bg-clip-text text-transparent">
             {title}
           </DialogTitle>
           {description && (

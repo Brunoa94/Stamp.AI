@@ -32,7 +32,7 @@ const ImageUploadField = ({ form, error }: IImageUploadFieldProps) => {
     >
       <div
         className={clsx(theme.upload.card, "transition-all duration-700", {
-          "ring-2 ring-green-200 bg-linear-to-br from-green-50/20 via-white to-purple-50/30":
+          "ring-2 ring-green-200 bg-linear-to-br from-green-50/20 via-white to-slate-50/30":
             uploadedImage,
         })}
       >

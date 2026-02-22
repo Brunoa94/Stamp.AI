@@ -32,14 +32,16 @@ export function QuantitySelector({
           "border border-gray-300",
           disabled || !canDecrement
             ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-            : "bg-white text-gray-700 hover:bg-gray-50 hover:border-purple-300"
+            : "bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300",
         )}
         aria-label="Decrease quantity"
       >
         <Minus className="w-4 h-4" />
       </button>
 
-      <span className="w-12 text-center font-medium text-gray-900">{quantity}</span>
+      <span className="w-12 text-center font-medium text-gray-900">
+        {quantity}
+      </span>
 
       <button
         onClick={onIncrement}
@@ -49,7 +51,7 @@ export function QuantitySelector({
           "border border-gray-300",
           disabled || !canIncrement
             ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-            : "bg-white text-gray-700 hover:bg-gray-50 hover:border-purple-300"
+            : "bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300",
         )}
         aria-label="Increase quantity"
       >

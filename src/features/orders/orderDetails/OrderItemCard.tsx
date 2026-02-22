@@ -7,7 +7,7 @@ interface Props {
 
 export function OrderItemCard({ item }: Props) {
   return (
-    <div className="flex gap-4 p-4 border border-purple-100 rounded-lg bg-white/50 hover:bg-white/80 transition-colors">
+    <div className="flex gap-4 p-4 border border-gray-200 rounded-lg bg-white/50 hover:bg-white/80 transition-colors">
       {/* Product Image */}
       <div className="flex-shrink-0">
         <Image
@@ -15,7 +15,7 @@ export function OrderItemCard({ item }: Props) {
           alt={item.product_name || "Product"}
           width={80}
           height={80}
-          className="rounded-lg object-cover border border-purple-100"
+          className="rounded-lg object-cover border border-gray-200"
         />
       </div>
 
@@ -29,9 +29,7 @@ export function OrderItemCard({ item }: Props) {
             Variant: {item.variant_name}
           </p>
         )}
-        <p className="text-sm text-gray-600 mt-1">
-          Quantity: {item.quantity}
-        </p>
+        <p className="text-sm text-gray-600 mt-1">Quantity: {item.quantity}</p>
       </div>
 
       {/* Pricing */}
