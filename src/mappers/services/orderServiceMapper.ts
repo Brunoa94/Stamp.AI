@@ -22,7 +22,8 @@ export class OrderServiceMapper {
       variant_id: item.variant_id,
       quantity: item.quantity,
       unit_price: item.unit_price,
-      custom_image_url: item.custom_image_url,
+      total_price: item.unit_price * item.quantity,
+      custom_image_url: item.custom_image_url || '',
       design_id: item.design_id,
     }));
   }
