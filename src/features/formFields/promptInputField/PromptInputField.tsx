@@ -2,7 +2,7 @@
 
 import { UseFormReturn, FieldError } from "react-hook-form";
 import {
-  IImageGenerationForm,
+  IProductCreateForm,
   IImageGenerationResult,
 } from "@/schemas/productCreateSchema";
 import { theme } from "@/theme";
@@ -16,7 +16,7 @@ import TipBanner from "../../common/TipBanner";
 import { usePromptInputField } from "./usePromptInputField";
 
 interface IPromptInputFieldProps {
-  form: UseFormReturn<IImageGenerationForm>;
+  form: UseFormReturn<IProductCreateForm>;
   uploadedImage: File | undefined;
   isProcessing: boolean;
   generatedResult: IImageGenerationResult | null;

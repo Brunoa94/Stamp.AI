@@ -14,6 +14,10 @@ interface LineItem {
 export function adaptExistingProductToLineItem(
   customization: ProductCustomizationT
 ): LineItem {
+  if (!customization.product_id) {
+    throw new Error("product_id is required for existing product orders");
+  }
+
   return {
     product_id: customization.product_id,
     variant_id: customization.variant_id,

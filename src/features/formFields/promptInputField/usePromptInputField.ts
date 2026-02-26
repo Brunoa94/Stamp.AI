@@ -1,6 +1,6 @@
 import { UseFormReturn, FieldError } from "react-hook-form";
 import {
-  IImageGenerationForm,
+  IProductCreateForm,
   IImageGenerationResult,
 } from "@/schemas/productCreateSchema";
 import {
@@ -10,7 +10,7 @@ import {
 } from "@/utils/formUtils";
 
 interface UsePromptInputFieldProps {
-  form: UseFormReturn<IImageGenerationForm>;
+  form: UseFormReturn<IProductCreateForm>;
   uploadedImage: File | undefined;
   isProcessing: boolean;
   generatedResult: IImageGenerationResult | null;

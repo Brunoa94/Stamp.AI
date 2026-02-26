@@ -7,8 +7,6 @@ export {
 // Types
 export type {
   CheckoutSubscriberContextState,
-  Order,
-  OrderItem,
 } from "./types";
 
 // Granular selectors (recommended)

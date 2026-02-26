@@ -8,6 +8,4 @@ export {
 
 export type {
   CheckoutSubscriberContextState,
-  Order,
-  OrderItem,
 } from "./CheckoutContextSubscriber";

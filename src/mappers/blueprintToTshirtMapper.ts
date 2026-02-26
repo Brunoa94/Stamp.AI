@@ -1,8 +1,8 @@
-import { BlueprintI } from "@/shared-types";
+import { CatalogBlueprintT } from "@/schemas/checkout";
 import { TshirtType } from "@/queries/productQueries";
 
 export const mapBlueprintsToTshirtProducts = (
-  blueprints: BlueprintI[],
+  blueprints: CatalogBlueprintT[],
   printProviderId?: number
 ): TshirtType[] => {
   return blueprints.map((blueprint) => ({

@@ -1,6 +1,14 @@
 // Color palette and gradient definitions
 
 export const colors = {
+  // Purple gradients (new wizard theme)
+  purplePrimary: "bg-gradient-to-r from-purple-600 via-violet-600 to-purple-700",
+  purpleLight: "bg-gradient-to-br from-purple-50 via-violet-50 to-white",
+  purpleAccent: "bg-gradient-to-r from-purple-500 to-indigo-600",
+  purpleBorder: "border-purple-500",
+  purpleText: "text-purple-600",
+  purpleBg: "bg-purple-50",
+
   // Primary gradients
   primaryGradient: "bg-linear-to-r from-slate-500 via-gray-500 to-slate-600",
   secondaryGradient: "bg-linear-to-r from-slate-500 via-gray-500 to-slate-600",
