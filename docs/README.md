@@ -128,6 +128,11 @@ src/
    - ❌ Bad: Some queries in hooks/, some in components
    - ✅ Good: ALL queries in queries/ folder
 
+6. **Don't Create Barrel Exports (index.ts)**
+   - ❌ Bad: Creating index.ts files in component folders
+   - ✅ Good: Import directly from file paths
+   - Reason: Adds complexity, harder to maintain, causes circular dependencies
+
 ## Recently Added
 
 ### ⭐ Queries Layer Pattern (NEW)

@@ -1,5 +1,5 @@
 import { CatalogBlueprintT, PrintifyImageT } from "@/schemas/checkout";
-import { TshirtType } from "@/features/dashboard/selectTshirt";
+import type { TshirtType } from "@/queries/productQueries";
 import { Button } from "@/features/ui/button";
 import clsx from "clsx";
 
@@ -60,7 +60,8 @@ const CustomizationSummary = ({
             {selectedColor} / {selectedSize}
           </p>
           <p className="text-gray-600 text-sm">
-            T-shirt: {selectedTshirtType.name} (+${selectedTshirtType.price.toFixed(2)})
+            T-shirt: {selectedTshirtType.name} (+$
+            {selectedTshirtType.price.toFixed(2)})
           </p>
           <p className="text-gray-600 text-sm">Quantity: {quantity}</p>
           <p className="text-gray-500 text-xs mt-1">
@@ -83,7 +84,7 @@ const CustomizationSummary = ({
           {
             "bg-blue-600 text-white hover:bg-blue-700": !isSubmitting,
             "bg-gray-400 text-gray-200 cursor-not-allowed": isSubmitting,
-          }
+          },
         )}
       >
         {isSubmitting ? "Processing..." : "Continue to Checkout"}

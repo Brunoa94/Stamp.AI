@@ -1,14 +1,20 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Bungee } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Bungee,
+  Bebas_Neue,
+  Poppins,
+} from "next/font/google";
 import "./globals.css";
 
 import { Toaster } from "sonner";
-import { SupabaseAuthProvider } from "@/features/providers/SupabaseAuthProvider";
-import { QueryProvider } from "@/features/providers/QueryProvider";
-import { ThemeProvider } from "@/features/providers/ThemeProvider";
+import { SupabaseAuthProvider } from "@/providers/SupabaseAuthProvider";
+import { QueryProvider } from "@/providers/QueryProvider";
 import Navbar from "@/features/layout/navbar";
 import Footer from "@/features/layout/footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { ThemeProvider } from "@/providers/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,6 +32,22 @@ const bungee = Bungee({
   subsets: ["latin"],
 });
 
+// Body font (Poppins for clean, modern body text)
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+// Retro heading font (Bebas Neue for retro display text)
+const bebasNeue = Bebas_Neue({
+  weight: "400",
+  variable: "--font-heading",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Imaginary Builder AI",
   description: "AI-powered design and building platform",
@@ -38,9 +60,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link
+          href="https://api.fontshare.com/v2/css?f[]=zodiak@400,500,700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} antialiased`}
-        suppressHydrationWarning
+        className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} ${poppins.variable} ${bebasNeue.variable} antialiased`}
       >
         <ThemeProvider>
           <SupabaseAuthProvider>

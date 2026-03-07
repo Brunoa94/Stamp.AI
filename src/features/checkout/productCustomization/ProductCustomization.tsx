@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useProductCustomizer } from "../hooks/useProductCustomizer";
-import { TshirtSelection, TshirtType } from "@/features/dashboard/selectTshirt";
+
 import { CheckoutErrorDisplay } from "../components";
 import {
   DesignUploadSection,
@@ -12,6 +12,7 @@ import {
   CustomizationSummary,
 } from "./components";
 import { ProductCustomizationT } from "@/schemas/checkout";
+import { TshirtType } from "@/queries";
 
 interface Props {
   onCustomizationComplete: (customization: ProductCustomizationT) => void;
@@ -122,7 +123,9 @@ const ProductCustomization = ({ onCustomizationComplete, onError }: Props) => {
 
   return (
     <div className="space-y-6">
-      {error && <CheckoutErrorDisplay error={error} onDismiss={() => setError(null)} />}
+      {error && (
+        <CheckoutErrorDisplay error={error} onDismiss={() => setError(null)} />
+      )}
 
       <DesignUploadSection
         uploadedFrontImage={uploadedFrontImage}
@@ -163,15 +166,6 @@ const ProductCustomization = ({ onCustomizationComplete, onError }: Props) => {
             quantity={quantity}
             onIncrement={incrementQuantity}
             onDecrement={decrementQuantity}
-          />
-        </div>
-      )}
-
-      {showQuantityAndTshirt && (
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <TshirtSelection
-            onTshirtSelect={setSelectedTshirtType}
-            selectedTshirt={selectedTshirtType ?? undefined}
           />
         </div>
       )}

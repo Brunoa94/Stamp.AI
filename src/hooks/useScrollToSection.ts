@@ -139,6 +139,48 @@ const useScrollToSection = () => {
     }
   }, []);
 
+  // Enhanced scroll to element by ID with offset support
+  const smoothScrollToElementById = useCallback((
+    elementId: string,
+    options: IScrollOptions = {}
+  ) => {
+    const element = document.getElementById(elementId);
+    if (element) {
+      const {
+        block = 'start',
+        delay = 0,
+        offset = 0
+      } = options;
+
+      const performSmoothScroll = () => {
+        const elementRect = element.getBoundingClientRect();
+        const absoluteElementTop = elementRect.top + window.pageYOffset;
+
+        let scrollPosition;
+        if (block === 'start') {
+          scrollPosition = absoluteElementTop + offset;
+        } else {
+          scrollPosition = absoluteElementTop - (window.innerHeight / 2) + (elementRect.height / 2) + offset;
+        }
+
+        window.scrollTo({
+          top: scrollPosition,
+          behavior: 'smooth'
+        });
+      };
+
+      if (delay > 0) {
+        const timeoutId = setTimeout(() => {
+          performSmoothScroll();
+          timeoutsRef.current.delete(timeoutId);
+        }, delay);
+        timeoutsRef.current.add(timeoutId);
+      } else {
+        requestAnimationFrame(performSmoothScroll);
+      }
+    }
+  }, []);
+
   // Scroll to top of page
   const scrollToTop = useCallback((options: Pick<IScrollOptions, 'behavior' | 'delay'> = {}) => {
     const { behavior = 'smooth', delay = 0 } = options;
@@ -165,6 +207,7 @@ const useScrollToSection = () => {
     scrollToSection,
     smoothScrollToSection,
     scrollToElementById,
+    smoothScrollToElementById,
     scrollToTop
   };
 };

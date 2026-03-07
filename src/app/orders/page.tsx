@@ -8,10 +8,8 @@ import { theme } from "@/theme";
 export default function OrdersPage() {
   return (
     <ProtectedRoute fallback={<OrdersLoadingSkeleton />}>
-      <div className={theme.page.background}>
-        <div className={theme.page.container}>
-          <OrdersContent />
-        </div>
+      <div className={theme.page.container}>
+        <OrdersContent />
       </div>
     </ProtectedRoute>
   );

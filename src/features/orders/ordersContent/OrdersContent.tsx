@@ -5,7 +5,6 @@ import { useUser } from "@/hooks/useAuth";
 import { useOrders } from "@/queries/orderQueries";
 import { usePagination } from "@/hooks/usePagination";
 import { OrderWithItemsT } from "@/types/order";
-import { OrdersHeader } from "../sections/OrdersHeader";
 import {
   OrdersLoadingSkeleton,
   OrdersErrorState,
@@ -16,6 +15,7 @@ import { OrderFilters } from "../orderFilters/OrderFilters";
 import { useOrderFilters } from "../hooks/useOrderFilters";
 import { OrderDetailsModal } from "../orderDetails/OrderDetailsModal";
 import { Paginator } from "@/features/ui/paginator";
+import { PageHeader } from "@/features/ui/page-header";
 
 export function OrdersContent() {
   const { data: user } = useUser();
@@ -63,61 +63,52 @@ export function OrdersContent() {
     return <OrdersErrorState error={error} onRetry={refetch} />;
   }
 
-  // Empty state
-  if (!orders || orders.length === 0) {
-    return (
-      <>
-        <OrdersHeader />
-        <OrdersEmptyState />
-      </>
-    );
-  }
-
   return (
     <>
-      <OrdersHeader />
+      <PageHeader
+        title="My Orders"
+        description="View and manage your order history. Track deliveries, review past purchases, and download invoices."
+      />
 
-      {/* Filters */}
-      <div className="mb-6">
-        <OrderFilters
-          filters={filters}
-          onFilterChange={setFilter}
-          onClearFilters={clearFilters}
-          hasActiveFilters={hasActiveFilters}
-        />
-      </div>
-
-      {/* Orders List */}
-      {filteredOrders.length > 0 ? (
-        <>
-          <OrderList
-            orders={paginatedItems}
-            onOrderSelect={handleOrderSelect}
-          />
-
-          {/* Pagination */}
-          <Paginator
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={goToPage}
-            canGoPrevious={canGoPrevious}
-            canGoNext={canGoNext}
-            startIndex={startIndex}
-            endIndex={endIndex}
-            totalItems={totalItems}
-          />
-        </>
+      {/* Empty state - no orders at all */}
+      {!orders || orders.length === 0 ? (
+        <OrdersEmptyState />
       ) : (
-        <div className="flex items-center justify-center min-h-75">
-          <div className="text-center space-y-2">
-            <p className="text-xl font-semibold text-gray-700">
-              No orders match your filters
-            </p>
-            <p className="text-gray-600">
-              Try adjusting or clearing your filters
-            </p>
+        <>
+          {/* Filters */}
+          <div className="mb-6">
+            <OrderFilters
+              filters={filters}
+              onFilterChange={setFilter}
+              onClearFilters={clearFilters}
+              hasActiveFilters={hasActiveFilters}
+            />
           </div>
-        </div>
+
+          {/* Orders List or No Match Empty State */}
+          {filteredOrders.length > 0 ? (
+            <>
+              <OrderList
+                orders={paginatedItems}
+                onOrderSelect={handleOrderSelect}
+              />
+
+              {/* Pagination */}
+              <Paginator
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={goToPage}
+                canGoPrevious={canGoPrevious}
+                canGoNext={canGoNext}
+                startIndex={startIndex}
+                endIndex={endIndex}
+                totalItems={totalItems}
+              />
+            </>
+          ) : (
+            <OrdersEmptyState variant="no-match" onClearFilters={clearFilters} />
+          )}
+        </>
       )}
 
       {/* Order Details Modal */}

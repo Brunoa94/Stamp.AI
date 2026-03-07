@@ -67,8 +67,7 @@ src/
 │   ├── cartQueries.ts          # Cart-related queries & mutations
 │   ├── productQueries.ts       # Product-related queries & mutations
 │   ├── authQueries.ts          # Auth-related queries & mutations
-│   ├── customProductQueries.ts # Custom product queries & mutations
-│   └── index.ts                # Barrel export (optional)
+│   └── customProductQueries.ts # Custom product queries & mutations
 ├── services/
 │   ├── orderService.ts         # Order service methods
 │   ├── cartService.ts          # Cart service methods

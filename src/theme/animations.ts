@@ -32,6 +32,9 @@ export const animations = {
   // Rainbow animations
   rainbow: "animate-[rainbow_3s_linear_infinite]",
   rainbowText: "bg-linear-to-r from-slate-400 via-gray-500 to-slate-600 bg-clip-text text-transparent animate-[rainbow_3s_linear_infinite]",
+
+  // Progress animations
+  progressBar: "animate-[progressBar_4s_ease-in-out_infinite]",
 } as const;
 
 export const animationClasses = {
@@ -124,5 +127,11 @@ export const keyframes = `
 
   @keyframes shimmer {
     100% { transform: translateX(100%); }
+  }
+
+  @keyframes progressBar {
+    0% { width: 0%; }
+    50% { width: 70%; }
+    100% { width: 100%; }
   }
 `;

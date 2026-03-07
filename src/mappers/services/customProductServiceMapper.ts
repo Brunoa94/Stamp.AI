@@ -18,9 +18,6 @@ export class CustomProductServiceMapper {
     return {
       id: product.id,
       title: product.title,
-      description: product.description,
-      blueprintId: product.blueprint_id,
-      printProviderId: product.print_provider_id,
       variants: product.variants?.map(v => ({
         id: v.id,
         title: v.title,
@@ -29,7 +26,6 @@ export class CustomProductServiceMapper {
       })),
       images: product.images?.map(img => ({
         src: img.src,
-        variantIds: img.variant_ids,
         position: img.position,
         isDefault: img.is_default,
       })),

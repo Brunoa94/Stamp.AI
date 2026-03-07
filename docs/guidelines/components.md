@@ -454,36 +454,54 @@ src/components/
    - Main component, sub-components, hooks, and types in same folder
    - Only separate when components are used across multiple features
 
-3. **Barrel Exports**: Use index.ts files to clean up imports **only when files are related to each other**
+3. **Barrel Exports (index.ts)**: **DO NOT create index.ts files**
 
-   **When to create index.ts files:**
-   - Multiple related components in the same folder (e.g., theme toggle component + its hook)
-   - Components that work together as a cohesive feature unit
-   - Folders with 2+ related files that are commonly imported together
+   **IMPORTANT: Avoid creating barrel exports (index.ts files) in component folders.**
 
-   **When NOT to create index.ts files:**
-   - Single standalone components
-   - Unrelated components that happen to be in the same directory
-   - Files that are rarely imported together
+   **Why avoid index.ts files:**
+   - Adds unnecessary complexity and indirection
+   - Makes it harder to track where imports come from
+   - Can cause circular dependency issues
+   - Harder to maintain and refactor
+   - IDE auto-imports work better with direct file imports
+   - Explicit imports are more clear and maintainable
+
+   **Default approach:**
+   - Import components directly from their file paths
+   - Use explicit imports: `import { Button } from '@/features/ui/button'`
+   - Avoid barrel exports: `import { Button } from '@/features/ui'`
 
    ```typescript
-   // ✅ Good: Related files that work together
-   // src/features/ui/theme-toggle/index.ts
-   export { ThemeToggle } from './ThemeToggle';
-   export { useThemeCycle } from './useThemeCycle';
+   // ✅ Good: Direct imports from files
+   import { Button } from '@/features/ui/button';
+   import { Input } from '@/features/ui/input';
+   import { PageHeader } from '@/features/ui/page-header';
 
-   // ✅ Good: Feature components that work together
-   // src/features/auth/passwordReset/passwordResetConfirm/index.ts
-   export { PasswordResetConfirmForm } from './PasswordResetConfirmForm';
-   export { PasswordResetError } from './PasswordResetError';
-   export { PasswordResetSuccess } from './PasswordResetSuccess';
-   export { usePasswordResetConfirmForm } from './usePasswordResetConfirmForm';
-
-   // ❌ Bad: Unrelated components in same folder
-   // src/features/ui/index.ts - Don't barrel export all UI components
+   // ❌ Bad: Barrel exports with index.ts
+   // src/features/ui/index.ts
    export { Button } from './button';
    export { Input } from './input';
-   export { ThemeToggle } from './theme-toggle'; // These aren't related
+   export { PageHeader } from './page-header';
+
+   // Then importing from the barrel (DON'T DO THIS)
+   import { Button, Input, PageHeader } from '@/features/ui';
+   ```
+
+   **Extremely rare exceptions (use sparingly):**
+   Only create index.ts if ALL of these conditions are met:
+   - Multiple files (2+) are ALWAYS imported together
+   - They form a single, cohesive API
+   - They are tightly coupled and interdependent
+   - The folder represents a single logical unit
+
+   ```typescript
+   // Acceptable (but still discouraged): Tightly coupled feature unit
+   // src/features/wizard/steps/upload/index.ts
+   export { UploadStep } from './UploadStep';
+   export { UploadForm } from './UploadForm';
+   export { UploadPreview } from './UploadPreview';
+   export { useUploadStep } from './useUploadStep';
+   // These 4 files are ALWAYS used together as one feature
    ```
 
 4. **Shared vs Feature-Specific**:

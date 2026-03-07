@@ -1,15 +1,18 @@
-"use client";
-
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import WizardDashboardContent from "@/features/dashboard/dashboardContent/WizardDashboardContent";
+import { CreateProductWizard } from "@/features/stamp/createProduct/components/CreateProductWizard";
+import { PageHeader } from "@/features/ui/page-header";
+import { theme } from "@/theme";
 
-export default function Dashboard() {
+export default function StampPage() {
   return (
     <ProtectedRoute>
-      <div className="bg-slate-50 min-h-screen">
-        <div className="container mx-auto px-4 py-12">
-          <WizardDashboardContent />
-        </div>
+      <div className={theme.page.container}>
+        <PageHeader
+          title="Design Your Custom Tee"
+          description="Customize every detail of your perfect t-shirt in just a few simple steps with our advanced AI tools."
+        />
+
+        <CreateProductWizard />
       </div>
     </ProtectedRoute>
   );

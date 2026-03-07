@@ -4,12 +4,13 @@ export * from "./animations";
 export * from "./colors";
 export * from "./components";
 export * from "./icons";
+export * from "./shadows";
 
 // Pre-built theme combinations with dark mode support
 export const theme = {
   page: {
     background: "bg-gradient-to-br from-gray-50 via-slate-50 to-gray-100 dark:from-gray-900 dark:via-slate-900/20 dark:to-gray-900/20 min-h-screen transition-colors duration-300",
-    container: "container mx-auto px-4 py-8",
+    container: "grow flex flex-col pb-24 px-6 relative max-w-7xl mx-auto w-full pt-4 md:pt-8",
   },
 
   dashboard: {
