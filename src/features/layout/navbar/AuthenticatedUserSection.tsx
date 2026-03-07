@@ -1,52 +1,61 @@
+"use client";
+
 import { Button } from "@/features/ui/button";
 import { useLogout } from "@/hooks/useAuth";
-import Link from "next/link";
-import { User, LogOut, Sparkles } from "lucide-react";
-import { colors } from "@/theme";
-import { UserI } from "@/types/auth";
+import { useRouter } from "next/navigation";
+import { Moon, User } from "lucide-react";
+import { useTheme } from "next-themes";
+import clsx from "clsx";
+import { navbarTheme } from "@/theme/components";
 
-interface PropsI {
-  user: UserI;
-}
-
-export function AuthenticatedUserSection({ user }: PropsI) {
+export function AuthenticatedUserSection() {
   const logoutMutation = useLogout();
+  const router = useRouter();
+  const { setTheme, theme } = useTheme();
 
   const handleSignOut = () => {
     logoutMutation.mutate();
   };
 
-  return (
-    <div className="flex items-center gap-4">
-      {/* Welcome message */}
-      <div className="hidden sm:flex items-center gap-2">
-        <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
-        <span className={`text-sm font-medium ${colors.textGradient}`}>
-          Welcome, {user.user_metadata?.first_name || user.email?.split("@")[0]}
-        </span>
-      </div>
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
+  };
 
-      {/* Dashboard button */}
+  return (
+    <div className={navbarTheme.actions.container}>
       <Button
-        asChild
-        size="sm"
-        className="bg-linear-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-md hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105"
+        onClick={toggleTheme}
+        variant="ghost"
+        size="icon"
+        className={navbarTheme.actions.themeButton}
+        aria-label="Toggle theme"
       >
-        <Link href="/dashboard">
-          <User className="mr-2 h-4 w-4" />
-          Dashboard
-        </Link>
+        <Moon className="w-5 h-5" />
       </Button>
 
-      {/* Logout button */}
+      <div className={navbarTheme.actions.divider} />
+
       <Button
-        variant="outline"
-        size="sm"
+        onClick={() => router.push("/profile")}
+        variant="ghost"
+        size="icon"
+        className={navbarTheme.actions.profileButton}
+        aria-label="View profile"
+      >
+        <div className={navbarTheme.actions.profileIcon}>
+          <User className="w-5 h-5" />
+        </div>
+      </Button>
+
+      <Button
         onClick={handleSignOut}
         disabled={logoutMutation.isPending}
-        className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 hover:text-red-700 transition-all duration-300 hover:scale-105"
+        variant="destructive"
+        className={clsx(
+          navbarTheme.actions.signOutButton,
+          logoutMutation.isPending && "opacity-50 cursor-not-allowed",
+        )}
       >
-        <LogOut className="mr-2 h-4 w-4" />
         {logoutMutation.isPending ? "Signing out..." : "Sign Out"}
       </Button>
     </div>

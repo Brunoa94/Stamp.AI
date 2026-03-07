@@ -104,7 +104,69 @@ export const componentThemes = {
     progressBarContainer: `w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden`,
     progressBarFill: `h-full`,
   },
+
+  // Navbar styles
+  navbar: {
+    container: `bg-white border-b border-[#E8E0F0] sticky top-0 z-50`,
+    inner: `max-w-[1440px] mx-auto px-6`,
+    content: `flex justify-between h-20 items-center`,
+    
+    brand: {
+      link: `flex items-center gap-3 group cursor-pointer`,
+      text: `text-2xl font-retro-heading tracking-widest uppercase`,
+      dot: `inline-block mx-0.5 w-2 h-2 rounded-full [background:linear-gradient(45deg,#7C3AED,#06B6D4,#FF8C42)] [background-size:200%_200%] animate-[gradientPulse_3s_ease-in-out_infinite]`,
+    },
+
+    navigation: {
+      container: `hidden md:flex items-center gap-4`,
+      link: {
+        base: `px-5 py-2 text-sm font-retro-heading tracking-widest rounded transition-soft`,
+        active: `text-slate-900 bg-slate-50`,
+        inactive: `text-slate-500 hover:text-slate-900 hover:bg-slate-50`,
+      },
+      stampButton: `px-6 py-2.5 text-base font-retro-heading tracking-widest text-white bg-[#7C3AED] rounded shadow-[0_4px_14px_rgba(124,58,237,0.3)] transition-soft hover:bg-[#6D28D9] hover:shadow-[0_6px_20px_rgba(124,58,237,0.4)] hover:-translate-y-0.5`,
+    },
+
+    actions: {
+      container: `flex items-center gap-3`,
+      themeButton: `w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#7C3AED] hover:bg-[#F3ECFF] rounded-md transition-soft`,
+      divider: `h-6 w-px bg-slate-200`,
+      profileButton: `flex items-center gap-2 pl-2 group`,
+      profileIcon: `w-10 h-10 rounded-md bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-[#F3ECFF] group-hover:text-[#7C3AED] transition-soft`,
+      signOutButton: `ml-2 px-5 py-2 text-sm font-retro-heading tracking-widest text-white bg-[#FF4444] rounded transition-soft hover:bg-[#E03333] hover:shadow-[0_4px_14px_rgba(255,68,68,0.3)] hover:-translate-y-0.5`,
+    },
+  },
+
+  // Footer styles
+  footer: {
+    container: `bg-white border-t border-slate-100 pt-16 pb-16 mt-16`,
+    inner: `max-w-[1440px] mx-auto px-10`,
+    brandWrap: `flex flex-col items-center justify-center mb-16`,
+    brandText: `text-3xl font-normal font-heading tracking-widest text-slate-900 uppercase`,
+    grid: `grid grid-cols-1 md:grid-cols-4 gap-16 mb-20`,
+    missionTitle: `font-normal font-heading text-2xl text-slate-900 mb-8 tracking-wide`,
+    missionText: `text-slate-500 text-sm leading-loose max-w-xs font-accent italic`,
+    sectionTitle: `font-normal font-heading text-2xl text-slate-900 mb-8 tracking-wide`,
+    linkList: `space-y-4 text-sm font-accent`,
+    link: `text-slate-500 hover:text-[#7C3AED] transition-soft`,
+    bottom: `pt-10 border-t border-slate-50 flex flex-col md:flex-row justify-between items-center gap-8`,
+    copyright: `text-slate-400 text-sm font-accent`,
+    socialRow: `flex gap-2`,
+    socialButton: `text-slate-400 hover:text-[#7C3AED] transition-soft`,
+  },
 } as const;
+
+// Individual theme exports for better tree-shaking
+export const cardTheme = componentThemes.card;
+export const buttonTheme = componentThemes.button;
+export const inputTheme = componentThemes.input;
+export const textTheme = componentThemes.text;
+export const containerTheme = componentThemes.container;
+export const wizardUploadAreaTheme = componentThemes.wizardUploadArea;
+export const statusTheme = componentThemes.status;
+export const loadingTheme = componentThemes.loading;
+export const navbarTheme = componentThemes.navbar;
+export const footerTheme = componentThemes.footer;
 
 // Utility functions
 export const getButtonVariant = (variant: keyof typeof componentThemes.button) =>

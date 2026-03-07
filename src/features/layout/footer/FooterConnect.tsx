@@ -1,23 +1,56 @@
-import { Sparkles, Mail } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/features/ui/button";
+import { Instagram, Linkedin, Twitter } from "lucide-react";
+import { footerTheme } from "@/theme/components";
 
 export function FooterConnect() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <div>
-      <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
-        <Sparkles className="w-4 h-4 text-purple-500" />
-        Connect
-      </h3>
-      <p className="text-xs text-gray-600 dark:text-gray-400 mb-3 leading-relaxed">
-        Get in touch with us
+    <div className={footerTheme.bottom}>
+      <p className={footerTheme.copyright}>
+        © {currentYear} Stamp.AI Design Inc. Crafted for the Dreamers.
       </p>
-      <div className="flex gap-2">
-        <a
-          href="mailto:hello@aimagicstudio.com"
-          className="p-2 rounded-lg bg-linear-to-br from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 hover:from-purple-100 hover:to-pink-100 dark:hover:from-purple-800/40 dark:hover:to-pink-800/40 border border-purple-200 dark:border-purple-700 transition-all duration-200 hover:scale-110 hover:shadow-md hover:shadow-purple-500/20"
-          aria-label="Email us"
+
+      <div className={footerTheme.socialRow}>
+        <Button
+          asChild
+          id="social-tw"
+          variant="ghost"
+          size="icon"
+          className={footerTheme.socialButton}
+          aria-label="Twitter"
         >
-          <Mail className="w-4 h-4 text-gray-700 dark:text-gray-300" />
-        </a>
+          <Link href="https://twitter.com" target="_blank" rel="noreferrer">
+            <Twitter className="h-5 w-5" />
+          </Link>
+        </Button>
+
+        <Button
+          asChild
+          id="social-ig"
+          variant="ghost"
+          size="icon"
+          className={footerTheme.socialButton}
+          aria-label="Instagram"
+        >
+          <Link href="https://instagram.com" target="_blank" rel="noreferrer">
+            <Instagram className="h-5 w-5" />
+          </Link>
+        </Button>
+
+        <Button
+          asChild
+          id="social-li"
+          variant="ghost"
+          size="icon"
+          className={footerTheme.socialButton}
+          aria-label="LinkedIn"
+        >
+          <Link href="https://linkedin.com" target="_blank" rel="noreferrer">
+            <Linkedin className="h-5 w-5" />
+          </Link>
+        </Button>
       </div>
     </div>
   );

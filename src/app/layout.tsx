@@ -73,10 +73,10 @@ export default function RootLayout({
           <SupabaseAuthProvider>
             <QueryProvider>
               <ScrollToTop />
-              <header>
+              <header className="sticky top-0 z-50">
                 <Navbar />
               </header>
-              <main className="pt-20 min-h-screen">{children}</main>
+              <main className="pt-10 min-h-screen">{children}</main>
               <Footer />
               <Toaster />
             </QueryProvider>

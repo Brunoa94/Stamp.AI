@@ -272,6 +272,21 @@
   }
 }
 
+@keyframes gradientPulse {
+  0% {
+    background: linear-gradient(45deg, #7c3aed, #06b6d4, #ff8c42);
+    background-position: 0% 50%;
+  }
+  50% {
+    background: linear-gradient(45deg, #06b6d4, #ff8c42, #7c3aed);
+    background-position: 100% 50%;
+  }
+  100% {
+    background: linear-gradient(45deg, #7c3aed, #06b6d4, #ff8c42);
+    background-position: 0% 50%;
+  }
+}
+
 @keyframes scaleIn {
   from {
     transform: scale(0) rotate(180deg);

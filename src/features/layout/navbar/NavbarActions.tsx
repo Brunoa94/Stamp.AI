@@ -1,6 +1,6 @@
 "use client";
 
-import { useIsAuthenticated, useUser } from "@/hooks/useAuth";
+import { useIsAuthenticated } from "@/hooks/useAuth";
 import { AuthenticatedUserSection } from "./AuthenticatedUserSection";
 import { UnauthenticatedUserSection } from "./UnauthenticatedUserSection";
 import { ThemeToggle } from "@/features/ui/theme-toggle";
@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 
 export function NavbarActions() {
   const { isAuthenticated, isLoading } = useIsAuthenticated();
-  const { data: user } = useUser();
   const router = useRouter();
   const { itemCount } = useCartSummary();
 
@@ -28,7 +27,7 @@ export function NavbarActions() {
   return (
     <div className="flex items-center gap-4">
       <ThemeToggle />
-      {isAuthenticated && user ? (
+      {isAuthenticated ? (
         <>
           <Button
             variant="ghost"
@@ -51,7 +50,7 @@ export function NavbarActions() {
             <ShoppingBag className="w-4 h-4" />
             My Orders
           </Button>
-          <AuthenticatedUserSection user={user} />
+          <AuthenticatedUserSection />
         </>
       ) : (
         <UnauthenticatedUserSection />
