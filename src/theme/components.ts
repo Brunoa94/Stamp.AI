@@ -107,7 +107,7 @@ export const componentThemes = {
 
   // Navbar styles
   navbar: {
-    container: `bg-white border-b border-[#E8E0F0] sticky top-0 z-50`,
+    container: `sticky top-0 z-50`,
     inner: `max-w-[1440px] mx-auto px-6`,
     content: `flex justify-between h-20 items-center`,
     
@@ -158,7 +158,7 @@ export const componentThemes = {
   // Cart page styles
   cart: {
     page: {
-      container: `min-h-screen bg-[#F8F8FA]`,
+      container: `min-h-screen`,
       main: `flex-grow w-full max-w-[1440px] mx-auto px-6 md:px-16 xl:px-24 py-12`,
       grid: `grid grid-cols-1 lg:grid-cols-12 gap-8`,
       itemsColumn: `lg:col-span-8 flex flex-col gap-4`,

@@ -15,6 +15,7 @@ import Navbar from "@/features/layout/navbar";
 import Footer from "@/features/layout/footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import { FluidInkDriftBackground } from "@/features/ui/fluid-ink-drift-background";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -69,6 +70,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} ${poppins.variable} ${bebasNeue.variable} antialiased`}
       >
+        <FluidInkDriftBackground />
         <ThemeProvider>
           <SupabaseAuthProvider>
             <QueryProvider>
