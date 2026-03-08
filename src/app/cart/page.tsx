@@ -9,9 +9,9 @@ import {
 } from "@/queries/cartQueries";
 import { CartHeader } from "@/features/cart/sections";
 import { CartList, EmptyCart, CartSummary } from "@/features/cart/components";
-import { componentThemes } from "@/theme";
-import clsx from "clsx";
+import { cartTheme } from "@/theme/components";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { Button } from "@/features/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
@@ -40,13 +40,23 @@ function CartContent() {
   // Loading state
   if (isLoading) {
     return (
-      <div className={clsx(componentThemes.container.page, "py-8")}>
-        <div className="max-w-6xl mx-auto px-4">
-          <CartHeader />
+      <div className={cartTheme.page.container}>
+        <div
+          className={
+            cartTheme.page.sideDivider + " " + cartTheme.page.sideDividerLeft
+          }
+        />
+        <div
+          className={
+            cartTheme.page.sideDivider + " " + cartTheme.page.sideDividerRight
+          }
+        />
+        <main className={cartTheme.page.main}>
+          <CartHeader itemCount={itemCount} />
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
           </div>
-        </div>
+        </main>
       </div>
     );
   }
@@ -54,35 +64,56 @@ function CartContent() {
   // Empty cart
   if (!cart || cart.cart_items.length === 0) {
     return (
-      <div className={clsx(componentThemes.container.page, "py-8")}>
-        <div className="max-w-6xl mx-auto px-4">
-          <CartHeader />
+      <div className={cartTheme.page.container}>
+        <div
+          className={
+            cartTheme.page.sideDivider + " " + cartTheme.page.sideDividerLeft
+          }
+        />
+        <div
+          className={
+            cartTheme.page.sideDivider + " " + cartTheme.page.sideDividerRight
+          }
+        />
+        <main className={cartTheme.page.main}>
+          <CartHeader itemCount={0} />
           <EmptyCart />
-        </div>
+        </main>
       </div>
     );
   }
 
   // Cart with items
   return (
-    <div className={clsx(componentThemes.container.page, "py-8")}>
-      <div className="max-w-6xl mx-auto px-4">
-        <CartHeader />
+    <div className={cartTheme.page.container}>
+      <div
+        className={
+          cartTheme.page.sideDivider + " " + cartTheme.page.sideDividerLeft
+        }
+      />
+      <div
+        className={
+          cartTheme.page.sideDivider + " " + cartTheme.page.sideDividerRight
+        }
+      />
+      <main className={cartTheme.page.main}>
+        <CartHeader itemCount={itemCount} />
 
-        {/* Continue Shopping Link */}
-        <div className="mb-6">
-          <Link
-            href="/products"
-            className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium transition-colors group"
+        <div className={cartTheme.actions.row}>
+          <Button
+            asChild
+            variant="outline"
+            className={cartTheme.actions.continueLink}
           >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            Continue Shopping
-          </Link>
+            <Link href="/stamp">
+              <ArrowLeft className="w-4 h-4" />
+              Keep Designing
+            </Link>
+          </Button>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Cart Items - Left Column (2/3) */}
-          <div className="lg:col-span-2">
+        <div className={cartTheme.page.grid}>
+          <div className={cartTheme.page.itemsColumn}>
             <CartList
               items={cart.cart_items}
               onUpdateQuantity={handleUpdateQuantity}
@@ -91,8 +122,7 @@ function CartContent() {
             />
           </div>
 
-          {/* Cart Summary - Right Column (1/3) */}
-          <div className="lg:col-span-1">
+          <div className={cartTheme.page.summaryColumn}>
             <CartSummary
               itemCount={itemCount}
               subtotal={subtotal}
@@ -101,7 +131,7 @@ function CartContent() {
             />
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

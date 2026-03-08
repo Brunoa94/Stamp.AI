@@ -3,7 +3,7 @@
 import { Button } from "@/features/ui/button";
 import { useLogout } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { Moon, User } from "lucide-react";
+import { Moon, User, ShoppingCart } from "lucide-react";
 import { useTheme } from "next-themes";
 import clsx from "clsx";
 import { navbarTheme } from "@/theme/components";
@@ -31,6 +31,16 @@ export function AuthenticatedUserSection() {
         aria-label="Toggle theme"
       >
         <Moon className="w-5 h-5" />
+      </Button>
+
+      <Button
+        onClick={() => router.push("/cart")}
+        variant="ghost"
+        size="icon"
+        className={navbarTheme.actions.themeButton}
+        aria-label="View cart"
+      >
+        <ShoppingCart className="w-5 h-5" />
       </Button>
 
       <div className={navbarTheme.actions.divider} />

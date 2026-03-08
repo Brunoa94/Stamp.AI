@@ -155,6 +155,70 @@ export const componentThemes = {
     socialButton: `text-slate-400 hover:text-[#7C3AED] transition-soft`,
   },
 
+  // Cart page styles
+  cart: {
+    page: {
+      container: `min-h-screen bg-[#F8F8FA]`,
+      main: `flex-grow w-full max-w-[1440px] mx-auto px-6 md:px-16 xl:px-24 py-12`,
+      grid: `grid grid-cols-1 lg:grid-cols-12 gap-8`,
+      itemsColumn: `lg:col-span-8 flex flex-col gap-4`,
+      summaryColumn: `lg:col-span-4`,
+      sideDivider: `fixed top-0 bottom-0 w-px bg-[#E8E0F0] z-40 hidden xl:block pointer-events-none`,
+      sideDividerLeft: `left-12`,
+      sideDividerRight: `right-12`,
+    },
+    header: {
+      container: `mb-10`,
+      title: `text-5xl md:text-6xl font-retro-heading font-extrabold uppercase tracking-tight text-slate-900`,
+      subtitle: `text-sm font-bold uppercase tracking-widest text-slate-400 mt-2`,
+    },
+    item: {
+      card: `glass-card p-6 rounded-lg flex flex-col sm:flex-row items-center gap-6`,
+      imageWrap: `w-32 h-32 bg-white rounded-md shrink-0 flex items-center justify-center border border-gray-100 p-2`,
+      image: `w-full h-full object-contain`,
+      details: `flex-grow text-center sm:text-left`,
+      title: `font-retro-heading font-bold text-xl uppercase tracking-tight text-slate-900`,
+      subtitle: `text-sm text-slate-500 font-bold uppercase tracking-wider mb-4`,
+      chipsRow: `flex flex-wrap justify-center sm:justify-start gap-4 text-sm font-bold`,
+      chip: `px-2 py-1 bg-gray-100 rounded text-slate-700`,
+      qtyPriceWrap: `flex flex-col items-center sm:items-end gap-3 min-w-[120px]`,
+      qtyControl: `flex items-center gap-3`,
+      qtyValue: `text-base font-bold w-4 text-center`,
+      price: `text-xl font-retro-heading font-bold text-slate-900`,
+      remove: `text-xs uppercase font-bold text-red-500 hover:underline tracking-widest`,
+      quantityButton: `h-8 w-8 border border-[#E8E0F0] bg-white rounded-md hover:border-[#7C3AED] hover:text-[#7C3AED]`,
+    },
+    actions: {
+      row: `flex flex-col sm:flex-row items-center gap-4 mt-6`,
+      continueLink: `w-full sm:w-auto px-8 py-4 border-2 border-gray-200 hover:border-[#7C3AED] hover:text-[#7C3AED] font-bold uppercase tracking-widest text-sm rounded-lg transition-soft inline-flex items-center justify-center gap-2`,
+    },
+    summary: {
+      card: `glass-card p-8 rounded-lg sticky top-32`,
+      title: `text-2xl font-retro-heading font-bold uppercase tracking-tight mb-8`,
+      rows: `space-y-4 mb-8`,
+      row: `flex justify-between text-base`,
+      rowLabel: `font-bold text-slate-500 uppercase tracking-wider`,
+      rowValue: `font-bold text-slate-900`,
+      freeValue: `font-bold text-green-600 uppercase`,
+      totalRow: `border-t border-gray-100 pt-4 mt-4 flex justify-between items-end`,
+      totalLabel: `font-retro-heading font-extrabold text-xl uppercase tracking-tight`,
+      totalValue: `font-retro-heading font-extrabold text-3xl text-[#7C3AED]`,
+      checkoutButton: `w-full py-5 bg-linear-to-br from-[#7C3AED] to-[#06B6D4] text-white font-retro-heading font-extrabold uppercase tracking-widest rounded-lg shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all inline-flex items-center justify-center gap-3`,
+      secureText: `text-xs text-center text-slate-400 font-bold uppercase tracking-widest leading-relaxed mt-3`,
+      arrivalWrap: `mt-10 p-4 bg-white/50 rounded-lg border border-dashed border-gray-200`,
+      arrivalHeader: `flex items-center gap-3 mb-2`,
+      arrivalLabel: `text-xs font-bold uppercase tracking-widest`,
+      arrivalValue: `text-sm font-medium text-slate-600`,
+    },
+    empty: {
+      container: `flex flex-col items-center justify-center min-h-[400px] text-center px-4`,
+      iconWrap: `w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6`,
+      title: `text-5xl font-retro-heading text-slate-900`,
+      description: `text-lg text-slate-600 mt-2 mb-8 max-w-md`,
+      action: `px-6 py-3 bg-linear-to-r from-[#7C3AED] to-[#06B6D4] text-white font-semibold rounded-lg hover:opacity-90 transition-opacity`,
+    },
+  },
+
   // Orders page styles
   orders: {
     header: {
@@ -224,6 +288,7 @@ export const statusTheme = componentThemes.status;
 export const loadingTheme = componentThemes.loading;
 export const navbarTheme = componentThemes.navbar;
 export const footerTheme = componentThemes.footer;
+export const cartTheme = componentThemes.cart;
 export const ordersTheme = componentThemes.orders;
 
 // Utility functions

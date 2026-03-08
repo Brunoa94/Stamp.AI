@@ -2,11 +2,18 @@
 
 import { PageHeader } from "@/features/ui/page-header";
 
-export function CartHeader() {
+interface CartHeaderPropsI {
+  itemCount: number;
+}
+
+export function CartHeader({ itemCount }: CartHeaderPropsI) {
   return (
     <PageHeader
       title="Shopping Cart"
-      description="Review your items and proceed to checkout when ready"
+      description={`${itemCount} ${itemCount === 1 ? "item" : "items"} ready for production`}
+      align="left"
+      showGradient={false}
+      className="mb-10"
     />
   );
 }
