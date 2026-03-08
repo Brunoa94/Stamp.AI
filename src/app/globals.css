@@ -153,6 +153,16 @@
       inset 0 0 0 1px rgba(255, 255, 255, 0.25);
   }
 
+  /* Purple gradient text with glow effect */
+  .text-purple-gradient-glow {
+    background: linear-gradient(to right, rgb(88, 28, 135), rgb(126, 34, 206), rgb(88, 28, 135));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.3)) drop-shadow(0 0 12px rgba(139, 92, 246, 0.2));
+    -webkit-text-stroke: 0.3px rgba(88, 28, 135, 0.1);
+  }
+
   /* Flowing border container with decorative side borders */
   .flowing-border-container {
     position: relative;

@@ -12,7 +12,7 @@ export function WizardLayout({
   className,
 }: WizardLayoutProps) {
   return (
-    <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row min-h-[700px] shadow-lg rounded-2xl overflow-hidden">
+    <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row min-h-175 shadow-lg rounded-2xl overflow-hidden">
       {/* Left Sidebar */}
       {sidebar}
 

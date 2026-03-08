@@ -1,17 +1,12 @@
 "use client";
 
-import { OrderSummary } from "@/features/checkout/paymentForm/OrderSummary";
+import { OrderSummary } from "@/features/checkout/OrderSummary";
 import { TrustBanner } from "@/features/checkout/components";
-import {
-  CheckoutSelectors,
-  useCheckoutSubscriberActions,
-} from "@/features/checkout/context";
 
 export function OrderSummarySection() {
   return (
-    <aside>
+    <aside className="sticky top-24 h-fit space-y-6">
       <OrderSummary />
-      {/* Trust Banner */}
       <TrustBanner />
     </aside>
   );

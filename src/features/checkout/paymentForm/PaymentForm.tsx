@@ -8,11 +8,10 @@ import { stripePromise } from "@/lib/stripe";
 import { ShippingAddressT } from "@/schemas/checkout";
 import { Button } from "@/features/ui/button";
 import { CheckoutErrorDisplay } from "../components";
-import { componentThemes } from "@/theme/components";
 import clsx from "clsx";
-import { usePaymentForm } from "./usePaymentForm";
 import { TestCardSelector } from "./TestCardSelector";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
+import { usePaymentForm } from "./usePaymentForm";
 
 interface CheckoutFormProps {
   amount: number;
@@ -64,7 +63,7 @@ const CheckoutForm = ({
           onChange={setSelectedTestMethod}
         />
       ) : (
-        <div className="border-2 border-purple-200 rounded-xl p-4 bg-white/50 backdrop-blur-sm">
+        <div className="border border-slate-200 rounded-none p-4 bg-white/90">
           <CardElement
             options={{
               style: {
@@ -92,7 +91,9 @@ const CheckoutForm = ({
         <Button
           type="submit"
           disabled={!stripe || loading}
-          className={clsx(componentThemes.button.primary, "w-full")}
+          className={clsx(
+            "w-full rounded-none bg-linear-to-br from-[#7C3AED] to-[#06B6D4] text-white font-heading font-bold uppercase tracking-widest",
+          )}
         >
           {loading ? "Processing..." : `Pay $${amount.toFixed(2)}`}
         </Button>
@@ -100,8 +101,6 @@ const CheckoutForm = ({
     </form>
   );
 };
-
-CheckoutForm.displayName = "CheckoutForm";
 
 const PaymentForm = (props: CheckoutFormProps) => {
   return (

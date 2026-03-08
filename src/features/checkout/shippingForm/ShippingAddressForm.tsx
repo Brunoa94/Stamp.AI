@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ShippingAddressSchema, ShippingAddressT } from "@/schemas/checkout";
 import { Button } from "@/features/ui/button";
-import { componentThemes } from "@/theme/components";
 import clsx from "clsx";
 import { CheckoutErrorDisplay } from "../components";
 import { useEffect } from "react";
@@ -60,7 +59,7 @@ const ShippingAddressForm = ({
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
         {shippingFormConfig.map((row, rowIndex) => {
           const isMultiColumn = row.fields.length > 1;
 
@@ -68,7 +67,7 @@ const ShippingAddressForm = ({
             <div
               key={rowIndex}
               className={clsx({
-                "grid grid-cols-2 gap-4": isMultiColumn,
+                "grid grid-cols-1 md:grid-cols-2 gap-6": isMultiColumn,
               })}
             >
               {row.fields.map((field) => (
@@ -93,7 +92,7 @@ const ShippingAddressForm = ({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className={clsx(componentThemes.button.primary, "w-full")}
+              className="w-full rounded-none bg-linear-to-br from-[#7C3AED] to-[#06B6D4] text-white font-heading font-bold uppercase tracking-widest"
             >
               {isSubmitting ? "Saving..." : "Continue to Payment"}
             </Button>

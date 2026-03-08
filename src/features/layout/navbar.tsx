@@ -9,6 +9,14 @@ import { AuthenticatedUserSection } from "./navbar/AuthenticatedUserSection";
 import { UnauthenticatedUserSection } from "./navbar/UnauthenticatedUserSection";
 import { cn } from "@/lib/utils";
 
+// Static style constants defined outside component
+const navbarStyles = {
+  base: "sticky top-0 z-50 w-full transition-[background-color,backdrop-filter,border-color,box-shadow,transform] duration-500 ease-out",
+  scrolled:
+    "bg-white/70 dark:bg-gray-900/70 backdrop-blur-md border-b border-white/30 dark:border-gray-700/30 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)]",
+  transparent: "bg-transparent",
+};
+
 function Navbar() {
   const { isAuthenticated } = useIsAuthenticated();
   const isScrolled = useScrolled(50);
@@ -18,10 +26,8 @@ function Navbar() {
       id="global-nav"
       className={cn(
         navbarTheme.container,
-        "sticky top-0 z-50 w-full transition-all duration-400 ease-in-out",
-        isScrolled
-          ? "bg-white/70 dark:bg-gray-900/70 backdrop-blur-md border-b border-white/30 dark:border-gray-700/30 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)]"
-          : "bg-transparent",
+        navbarStyles.base,
+        isScrolled ? navbarStyles.scrolled : navbarStyles.transparent,
       )}
       style={{ viewTransitionName: "main-nav" }}
     >

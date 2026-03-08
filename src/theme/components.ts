@@ -275,6 +275,31 @@ export const componentThemes = {
       right: `side-border-right hidden xl:block`,
     },
   },
+
+  // Checkout page styles
+  checkout: {
+    paymentSection: {
+      container: "glass-card p-8 rounded-none",
+      testModeContainer:
+        "mb-6 flex items-center gap-3 border border-yellow-200 bg-yellow-50/80 px-4 py-3 rounded-lg",
+      testModeLabel:
+        "text-xs font-bold uppercase tracking-widest text-slate-600 cursor-pointer",
+      emptyState: "text-center py-8",
+      emptyStateText: "text-sm text-gray-600",
+    },
+    orderSummary: {
+      shippingAddress: {
+        container: "pt-6 pb-6 border-b border-slate-100",
+        header: "flex justify-between items-start mb-3",
+        heading: "text-sm font-bold uppercase tracking-widest text-slate-600",
+        editButton:
+          "h-auto p-0 text-xs font-bold uppercase tracking-widest text-purple-600",
+        address: "text-sm text-slate-600 not-italic space-y-1",
+        recipientName: "font-medium text-slate-900",
+        addressLine: "text-sm text-gray-600",
+      },
+    },
+  },
 } as const;
 
 // Individual theme exports for better tree-shaking
@@ -290,6 +315,7 @@ export const navbarTheme = componentThemes.navbar;
 export const footerTheme = componentThemes.footer;
 export const cartTheme = componentThemes.cart;
 export const ordersTheme = componentThemes.orders;
+export const checkoutTheme = componentThemes.checkout;
 
 // Utility functions
 export const getButtonVariant = (variant: keyof typeof componentThemes.button) =>
