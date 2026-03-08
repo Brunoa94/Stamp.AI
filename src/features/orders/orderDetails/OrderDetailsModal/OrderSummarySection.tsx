@@ -1,7 +1,7 @@
 import { OrderWithItemsT } from "@/types/order";
 import { Package } from "lucide-react";
 import { componentThemes } from "@/theme";
-import { OrderStatusBadge } from "../../orderCard/OrderStatusBadge";
+import { OrderStatusBadge } from "./OrderStatusBadge";
 
 interface Props {
   order: OrderWithItemsT;
@@ -70,7 +70,7 @@ export function OrderSummarySection({ order, formattedDate }: Props) {
         )}
         <div className="border-t border-gray-100 pt-2 flex justify-between">
           <span className="font-semibold text-gray-800">Total</span>
-          <span className="font-bold text-xl bg-gradient-to-r from-slate-600 via-gray-600 to-slate-700 bg-clip-text text-transparent">
+          <span className="font-bold text-xl bg-linear-to-r from-slate-600 via-gray-600 to-slate-700 bg-clip-text text-transparent">
             ${order.total_amount?.toFixed(2) || "0.00"}
           </span>
         </div>

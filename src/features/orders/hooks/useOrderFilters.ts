@@ -1,87 +1,93 @@
-import { useState, useMemo } from "react";
-import { OrderWithItemsT } from "@/types/order";
+import { useMemo, useReducer } from "react";
+import {
+  OrderWithItemsT,
+  OrderStatusFilterT,
+  OrderTimeframeFilterT,
+} from "@/types/order";
 
-type SortBy = "date-desc" | "date-asc" | "amount-desc" | "amount-asc";
+interface OrderFiltersStateI {
+  isModalOpen: boolean;
+  selectedOrder: OrderWithItemsT | null;
+  selectedStatus: OrderStatusFilterT;
+  selectedTimeframe: OrderTimeframeFilterT;
+}
 
-interface Filters {
-  status: string | null;
-  paymentStatus: string | null;
-  sortBy: SortBy;
+type OrderFiltersActionT =
+  | { type: "OPEN_ORDER_MODAL"; payload: OrderWithItemsT }
+  | { type: "CLOSE_ORDER_MODAL" }
+  | { type: "SET_STATUS"; payload: OrderStatusFilterT }
+  | { type: "SET_TIMEFRAME"; payload: OrderTimeframeFilterT };
+
+const INITIAL_STATE: OrderFiltersStateI = {
+  isModalOpen: false,
+  selectedOrder: null,
+  selectedStatus: "all",
+  selectedTimeframe: "last-30",
+};
+
+function orderFiltersReducer(
+  state: OrderFiltersStateI,
+  action: OrderFiltersActionT,
+): OrderFiltersStateI {
+  switch (action.type) {
+    case "OPEN_ORDER_MODAL":
+      return {
+        ...state,
+        isModalOpen: true,
+        selectedOrder: action.payload,
+      };
+    case "CLOSE_ORDER_MODAL":
+      return {
+        ...state,
+        isModalOpen: false,
+        selectedOrder: null,
+      };
+    case "SET_STATUS":
+      return {
+        ...state,
+        selectedStatus: action.payload,
+      };
+    case "SET_TIMEFRAME":
+      return {
+        ...state,
+        selectedTimeframe: action.payload,
+      };
+    default:
+      return state;
+  }
 }
 
 export function useOrderFilters(orders: OrderWithItemsT[] | undefined) {
-  const [filters, setFilters] = useState<Filters>({
-    status: null,
-    paymentStatus: null,
-    sortBy: "date-desc",
-  });
+  const [state, dispatch] = useReducer(orderFiltersReducer, INITIAL_STATE);
 
-  const filteredOrders = useMemo(() => {
-    if (!orders) return [];
+  const filteredOrders = 
+      orders?.filter((order) => {
+        if (state.selectedStatus === "all") return true;
+        return order.status?.toLowerCase() === state.selectedStatus;
+      }) || [];
 
-    let result = [...orders];
-
-    // Filter by order status
-    if (filters.status) {
-      result = result.filter(
-        (order) => order.status?.toLowerCase() === filters.status?.toLowerCase()
-      );
-    }
-
-    // Filter by payment status
-    if (filters.paymentStatus) {
-      result = result.filter(
-        (order) =>
-          order.payment_status?.toLowerCase() === filters.paymentStatus?.toLowerCase()
-      );
-    }
-
-    // Sort
-    result.sort((a, b) => {
-      switch (filters.sortBy) {
-        case "date-desc":
-          return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
-        case "date-asc":
-          return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
-        case "amount-desc":
-          return (b.total_amount || 0) - (a.total_amount || 0);
-        case "amount-asc":
-          return (a.total_amount || 0) - (b.total_amount || 0);
-        default:
-          return 0;
-      }
-    });
-
-    return result;
-  }, [orders, filters]);
-
-  const setFilter = (key: keyof Filters, value: string | null) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+  const openOrderModal = (order: OrderWithItemsT) => {
+    dispatch({ type: "OPEN_ORDER_MODAL", payload: order });
   };
 
-  const setSortBy = (sortBy: SortBy) => {
-    setFilters((prev) => ({ ...prev, sortBy }));
+  const closeOrderModal = () => {
+    dispatch({ type: "CLOSE_ORDER_MODAL" });
   };
 
-  const clearFilters = () => {
-    setFilters({
-      status: null,
-      paymentStatus: null,
-      sortBy: "date-desc",
-    });
+  const setStatusFilter = (status: OrderStatusFilterT) => {
+    dispatch({ type: "SET_STATUS", payload: status });
   };
 
-  const hasActiveFilters =
-    filters.status !== null ||
-    filters.paymentStatus !== null ||
-    filters.sortBy !== "date-desc";
+  const setTimeframeFilter = (timeframe: OrderTimeframeFilterT) => {
+    dispatch({ type: "SET_TIMEFRAME", payload: timeframe });
+  };
 
   return {
     filteredOrders,
-    filters,
-    setFilter,
-    setSortBy,
-    clearFilters,
-    hasActiveFilters,
+    state,
+    openOrderModal,
+    closeOrderModal,
+    setStatusFilter,
+    setTimeframeFilter,
   };
 }

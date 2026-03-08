@@ -154,6 +154,63 @@ export const componentThemes = {
     socialRow: `flex gap-2`,
     socialButton: `text-slate-400 hover:text-[#7C3AED] transition-soft`,
   },
+
+  // Orders page styles
+  orders: {
+    header: {
+      container: `mb-10`,
+      title: `text-6xl md:text-8xl font-retro-heading text-slate-900 leading-none mb-4`,
+      decorativeRow: `flex items-center gap-4`,
+      decorativeLine: `h-1.5 w-24 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] rounded-full`,
+      subtitle: `text-slate-400 font-light italic font-accent`,
+    },
+    filters: {
+      container: `glass-card rounded-xl px-8 py-5 mb-8 border border-white/60 flex flex-wrap lg:flex-nowrap items-center gap-x-12 gap-y-4`,
+      timeframeLabel: `text-xs md:text-sm font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap`,
+      selectWrapper: `relative min-w-[160px]`,
+      select: `w-full px-4 py-2.5 bg-white/50 border border-slate-200 rounded text-sm font-bold text-slate-700 focus:ring-2 focus:ring-[#7C3AED]/20 outline-none appearance-none cursor-pointer`,
+      statusLabel: `text-xs md:text-sm font-bold text-slate-400 uppercase tracking-widest mr-2`,
+      chipBase: `px-4 py-2 rounded-full text-sm font-bold border border-slate-200 hover:border-[#7C3AED] transition-all`,
+      chipActive: `px-4 py-2 rounded-full text-sm font-bold border border-[#7C3AED] bg-[#7C3AED] text-white`,
+    },
+    table: {
+      container: `glass-card rounded-xl overflow-hidden border border-white/60`,
+      table: `w-full`,
+      thead: `bg-slate-50/50 border-b border-slate-200`,
+      th: `px-8 py-5 text-left text-xs font-bold text-slate-500 uppercase tracking-widest`,
+      thRight: `px-8 py-5 text-right text-xs font-bold text-slate-500 uppercase tracking-widest`,
+      tbody: `divide-y divide-slate-100`,
+      row: `order-row transition-colors hover:bg-[#7C3AED]/[0.03]`,
+      cell: `px-8 py-8`,
+      orderNumber: `text-base font-bold text-slate-900`,
+      orderDate: `text-sm text-slate-400 mt-1`,
+      itemsStack: `flex -space-x-3 overflow-hidden`,
+      itemImage: `inline-block h-10 w-10 rounded-lg ring-2 ring-white object-cover bg-slate-100`,
+      itemBadge: `inline-flex items-center justify-center h-10 w-10 rounded-lg bg-slate-800 text-white text-xs font-bold ring-2 ring-white`,
+      statusBadge: `badge-status px-2.5 py-1 rounded text-xs font-bold tracking-wide uppercase`,
+      statusProcessing: `bg-blue-100 text-blue-600`,
+      statusDelivered: `bg-green-100 text-green-600`,
+      statusShipped: `bg-orange-100 text-orange-600`,
+      statusCancelled: `bg-red-100 text-red-600`,
+      total: `text-base font-bold text-slate-900`,
+      actions: `flex items-center justify-end gap-3`,
+      viewButton: `px-5 py-2.5 bg-[#7C3AED] text-white text-sm font-bold rounded hover:bg-[#6D28D9] transition-all`,
+      reorderButton: `px-5 py-2.5 bg-white border border-slate-200 text-slate-600 text-sm font-bold rounded hover:bg-slate-50 transition-all`,
+    },
+    pagination: {
+      container: `px-8 py-6 bg-slate-50/50 border-t border-slate-200 flex items-center justify-between`,
+      info: `text-xs text-slate-400 font-medium font-accent italic`,
+      controls: `flex items-center gap-2`,
+      button: `w-8 h-8 flex items-center justify-center rounded border border-slate-200 text-slate-400 hover:text-slate-900 transition-colors disabled:opacity-50`,
+      pageButton: `w-8 h-8 flex items-center justify-center rounded border border-slate-200 text-xs text-slate-600 hover:border-[#7C3AED] transition-all`,
+      pageButtonActive: `w-8 h-8 flex items-center justify-center rounded bg-[#7C3AED] text-white text-xs font-bold`,
+    },
+    sideBorders: {
+      container: `flowing-border-container`,
+      left: `side-border-left hidden xl:block`,
+      right: `side-border-right hidden xl:block`,
+    },
+  },
 } as const;
 
 // Individual theme exports for better tree-shaking
@@ -167,6 +224,7 @@ export const statusTheme = componentThemes.status;
 export const loadingTheme = componentThemes.loading;
 export const navbarTheme = componentThemes.navbar;
 export const footerTheme = componentThemes.footer;
+export const ordersTheme = componentThemes.orders;
 
 // Utility functions
 export const getButtonVariant = (variant: keyof typeof componentThemes.button) =>

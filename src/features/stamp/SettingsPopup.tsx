@@ -31,7 +31,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
         <div className="flex items-center justify-between mb-6">
           <h2
             id="settings-title"
-            className="text-2xl font-bold bg-gradient-to-r from-slate-700 to-gray-700 dark:from-slate-400 dark:to-gray-400 bg-clip-text text-transparent"
+            className="text-2xl font-bold bg-linear-to-r from-slate-700 to-gray-700 dark:from-slate-400 dark:to-gray-400 bg-clip-text text-transparent"
           >
             Settings
           </h2>

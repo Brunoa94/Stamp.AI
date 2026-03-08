@@ -12,10 +12,13 @@ interface Props {
   onClose: () => void;
 }
 
-export function OrderDetailsModal({ order, isOpen, onClose }: Props) {
+export default function OrderDetailsModal({ order, isOpen, onClose }: Props) {
   if (!order) return null;
 
-  const formattedDate = format(new Date(order.created_at || 0), "MMMM dd, yyyy 'at' h:mm a");
+  const formattedDate = format(
+    new Date(order.created_at || 0),
+    "MMMM dd, yyyy 'at' h:mm a",
+  );
   const shippedDate = order.shipped_at
     ? format(new Date(order.shipped_at), "MMMM dd, yyyy")
     : null;
@@ -33,17 +36,17 @@ export function OrderDetailsModal({ order, isOpen, onClose }: Props) {
     >
       <div className="space-y-6">
         <OrderSummarySection order={order} formattedDate={formattedDate} />
-        
+
         <CustomerInfoSection order={order} />
 
         <section>
           <OrderItemsList items={order.order_items || []} isLoading={false} />
         </section>
 
-        <TrackingInfoSection 
-          order={order} 
-          shippedDate={shippedDate} 
-          deliveredDate={deliveredDate} 
+        <TrackingInfoSection
+          order={order}
+          shippedDate={shippedDate}
+          deliveredDate={deliveredDate}
         />
       </div>
     </Modal>

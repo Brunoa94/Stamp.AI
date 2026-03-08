@@ -11,11 +11,16 @@ interface WizardStepProps {
 }
 
 const stepStyles = {
-  container: "flex items-center gap-4 p-5 rounded transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group cursor-pointer",
-  active: "bg-gradient-to-r from-[#F3ECFF] to-transparent border-r-[3px] border-[#7C3AED]",
-  iconBox: "w-12 h-12 rounded-sm flex items-center justify-center shrink-0 border transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
-  iconActive: "bg-gradient-to-br from-[#7C3AED] to-[#4F46E5] text-white shadow-[0_4px_12px_rgba(124,58,237,0.25)]",
-  iconInactive: "border-white/30 text-slate-400 group-hover:border-[#7C3AED]/30 group-hover:text-[#7C3AED] bg-white/30",
+  container:
+    "flex items-center gap-4 p-5 rounded transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group cursor-pointer",
+  active:
+    "bg-gradient-to-r from-[#F3ECFF] to-transparent border-r-[3px] border-[#7C3AED]",
+  iconBox:
+    "w-12 h-12 rounded-sm flex items-center justify-center shrink-0 border transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
+  iconActive:
+    "bg-gradient-to-br from-[#7C3AED] to-[#4F46E5] text-white shadow-[0_4px_12px_rgba(124,58,237,0.25)]",
+  iconInactive:
+    "border-white/30 text-slate-400 group-hover:border-[#7C3AED]/30 group-hover:text-[#7C3AED] bg-white/30",
 } as const;
 
 export function WizardStep({
@@ -23,7 +28,6 @@ export function WizardStep({
   title,
   description,
   isActive = false,
-  isCompleted = false,
   onClick,
 }: WizardStepProps) {
   return (
@@ -57,7 +61,7 @@ export function WizardStep({
             {
               "text-slate-900": isActive,
               "text-slate-400 group-hover:text-slate-900": !isActive,
-            }
+            },
           )}
         >
           {title}

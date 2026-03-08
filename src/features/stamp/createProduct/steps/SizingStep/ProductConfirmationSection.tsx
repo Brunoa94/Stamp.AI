@@ -87,7 +87,7 @@ export function ProductConfirmationSection({
       {/* Product Preview */}
       <div className="max-w-2xl mx-auto">
         {displayImage && (
-          <div className="bg-gradient-to-br from-gray-50/50 via-slate-50/50 to-gray-100/50 dark:from-gray-800/80 dark:via-slate-800/30 dark:to-gray-800/30 backdrop-blur-sm border border-gray-200 dark:border-gray-800/30 rounded-2xl overflow-hidden shadow-2xl shadow-slate-500/20 dark:shadow-slate-500/10">
+          <div className="bg-linear-to-br from-gray-50/50 via-slate-50/50 to-gray-100/50 dark:from-gray-800/80 dark:via-slate-800/30 dark:to-gray-800/30 backdrop-blur-sm border border-gray-200 dark:border-gray-800/30 rounded-2xl overflow-hidden shadow-2xl shadow-slate-500/20 dark:shadow-slate-500/10">
             <Image
               src={displayImage}
               alt={product.title}
