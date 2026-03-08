@@ -120,7 +120,7 @@ export const componentThemes = {
     navigation: {
       container: `hidden md:flex items-center gap-4`,
       link: {
-        base: `px-5 py-2 text-sm font-retro-heading tracking-widest rounded transition-soft`,
+        base: `px-5 py-2 text-base font-retro-heading tracking-widest rounded transition-soft`,
         active: `text-slate-900 bg-slate-50`,
         inactive: `text-slate-500 hover:text-slate-900 hover:bg-slate-50`,
       },
@@ -133,7 +133,82 @@ export const componentThemes = {
       divider: `h-6 w-px bg-slate-200`,
       profileButton: `flex items-center gap-2 pl-2 group`,
       profileIcon: `w-10 h-10 rounded-md bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-[#F3ECFF] group-hover:text-[#7C3AED] transition-soft`,
-      signOutButton: `ml-2 px-5 py-2 text-sm font-retro-heading tracking-widest text-white bg-[#FF4444] rounded transition-soft hover:bg-[#E03333] hover:shadow-[0_4px_14px_rgba(255,68,68,0.3)] hover:-translate-y-0.5`,
+      signOutButton: `ml-2 px-5 py-2 text-base font-retro-heading tracking-widest text-white bg-[#FF4444] rounded transition-soft hover:bg-[#E03333] hover:shadow-[0_4px_14px_rgba(255,68,68,0.3)] hover:-translate-y-0.5`,
+    },
+  },
+
+  // Dashboard styles
+  dashboard: {
+    page: {
+      wrapper: `min-h-screen flex flex-col relative`,
+      container: `flex-grow w-full max-w-[1440px] mx-auto px-6 md:px-16 xl:px-24 relative z-1 p-8`,
+      grid: `grid grid-cols-1 lg:grid-cols-12 gap-8`,
+      leftColumn: `lg:col-span-4 flex flex-col gap-8`,
+      rightColumn: `lg:col-span-8 flex flex-col gap-8`,
+      sideDivider: `fixed top-0 bottom-0 w-px bg-[#E8E0F0]/60 z-40 hidden xl:block pointer-events-none`,
+      sideDividerLeft: `left-12`,
+      sideDividerRight: `right-12`,
+    },
+    header: {
+      container: `mb-12`,
+      title: `text-4xl md:text-5xl font-retro-heading font-extrabold uppercase tracking-tighter text-gray-900 mb-2`,
+      metaRow: `flex flex-wrap items-center gap-4 text-gray-500 uppercase tracking-widest text-xs font-bold`,
+      metaDot: `w-1 h-1 bg-gray-300 rounded-full`,
+    },
+    card: {
+      base: `glass-card p-6 rounded-lg`,
+      title: `text-xs font-bold uppercase tracking-widest text-gray-400`,
+      sectionTitle: `text-xl font-retro-heading font-bold uppercase tracking-tight`,
+    },
+    profile: {
+      avatarWrap: `w-16 h-16 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] p-1 shadow-lg`,
+      avatar: `w-full h-full rounded-md bg-white object-cover`,
+      name: `text-xl font-retro-heading font-bold uppercase tracking-tight text-gray-900`,
+      email: `text-sm text-gray-500`,
+      editButton: `w-full py-3 bg-white/50 hover:bg-white text-gray-800 font-bold uppercase tracking-widest text-xs rounded-lg flex items-center justify-center gap-2 border border-gray-100 transition-all`,
+    },
+    performance: {
+      rowLabel: `text-sm font-bold uppercase text-gray-600`,
+      rowValue: `text-xl font-retro-heading font-bold text-gray-900`,
+      progressTrack: `w-full bg-gray-200/50 h-1.5 rounded-full overflow-hidden`,
+    },
+    credits: {
+      iconWrap: `w-12 h-12 rounded-lg bg-gradient-to-br from-[#7C3AED]/10 to-[#06B6D4]/10 flex items-center justify-center border border-white/50 shadow-inner`,
+      balanceLabel: `text-[10px] font-bold uppercase tracking-widest text-gray-400 block mb-0.5`,
+      balanceValue: `text-3xl font-retro-heading font-extrabold text-gray-900 tracking-tighter`,
+      balanceUnit: `text-xs font-bold text-gray-400 uppercase tracking-widest`,
+      usageRow: `flex justify-between items-center text-[10px] font-bold uppercase tracking-widest`,
+      usageTrack: `w-full bg-gray-200/50 h-1.5 rounded-full overflow-hidden`,
+      actionPrimary: `py-3 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] text-white font-bold uppercase tracking-widest text-[9px] rounded-lg shadow-lg shadow-purple-500/20 transition-all`,
+      actionSecondary: `py-3 border border-gray-200 text-gray-600 font-bold uppercase tracking-widest text-[9px] rounded-lg hover:bg-white transition-colors`,
+    },
+    quickAccess: {
+      item: `flex flex-col items-center justify-center p-4 bg-white/40 hover:bg-white border border-white/50 rounded-lg transition-all group`,
+      itemIcon: `text-2xl mb-2 text-gray-400 group-hover:text-[#7C3AED]`,
+      itemLabel: `text-[10px] font-bold uppercase tracking-wider text-gray-600`,
+    },
+    cta: {
+      card: `bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] p-8 md:p-12 rounded-lg text-white flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl`,
+      title: `text-3xl md:text-4xl font-retro-heading font-extrabold uppercase tracking-tight mb-4`,
+      description: `text-white/80 font-medium`,
+      button: `whitespace-nowrap px-10 py-5 bg-white text-[#7C3AED] font-retro-heading font-extrabold uppercase tracking-widest rounded-lg shadow-xl hover:scale-105 active:scale-95 transition-all`,
+    },
+    orders: {
+      card: `glass-card p-8 rounded-lg flex-grow`,
+      header: `flex justify-between items-center mb-8`,
+      viewAll: `text-xs font-bold uppercase tracking-widest text-[#7C3AED] hover:underline`,
+      item: `flex items-center gap-6 p-4 bg-white/40 rounded-lg border border-white/50 hover:border-[#7C3AED]/30 transition-all group`,
+      itemImageWrap: `w-20 h-20 bg-white/60 rounded-lg flex-shrink-0 flex items-center justify-center relative`,
+      itemImage: `w-14 h-14 object-contain group-hover:scale-110 transition-transform`,
+      itemTitle: `font-retro-heading font-bold text-sm uppercase tracking-tight text-gray-900`,
+      itemMeta: `text-xs text-gray-500 font-medium mb-3`,
+      itemPrice: `text-sm font-bold text-gray-900`,
+      statusBadge: `px-2 py-1 text-[10px] font-bold uppercase rounded`,
+      statusProcessing: `bg-yellow-100 text-yellow-700`,
+      statusShipped: `bg-blue-100 text-blue-700`,
+      statusDelivered: `bg-green-100 text-green-700`,
+      statusCancelled: `bg-red-100 text-red-700`,
+      emptyState: `text-sm text-gray-500`,
     },
   },
 
@@ -159,7 +234,7 @@ export const componentThemes = {
   cart: {
     page: {
       container: `min-h-screen`,
-      main: `flex-grow w-full max-w-[1440px] mx-auto px-6 md:px-16 xl:px-24 py-12`,
+      main: `flex-grow w-full max-w-[1440px] mx-auto px-6 md:px-16 xl:px-24 py-12 pt-4`,
       grid: `grid grid-cols-1 lg:grid-cols-12 gap-8`,
       itemsColumn: `lg:col-span-8 flex flex-col gap-4`,
       summaryColumn: `lg:col-span-4`,
@@ -314,6 +389,7 @@ export const loadingTheme = componentThemes.loading;
 export const navbarTheme = componentThemes.navbar;
 export const footerTheme = componentThemes.footer;
 export const cartTheme = componentThemes.cart;
+export const dashboardTheme = componentThemes.dashboard;
 export const ordersTheme = componentThemes.orders;
 export const checkoutTheme = componentThemes.checkout;
 

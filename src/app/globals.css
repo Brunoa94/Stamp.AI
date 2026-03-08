@@ -153,13 +153,74 @@
       inset 0 0 0 1px rgba(255, 255, 255, 0.25);
   }
 
+  /* Dashboard fluid background */
+  .bg-fluid-cluster {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .dashboard-blob {
+    position: absolute;
+    filter: blur(120px);
+    opacity: 0.6;
+    border-radius: 9999px;
+    mix-blend-mode: multiply;
+    animation: dashboard-drift 20s infinite alternate ease-in-out;
+  }
+
+  .dashboard-blob-purple {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, #7c3aed 0%, transparent 70%);
+    top: -10%;
+    left: -10%;
+  }
+
+  .dashboard-blob-pink {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, #d946ef 0%, transparent 70%);
+    top: 20%;
+    right: -5%;
+    animation-delay: -5s;
+  }
+
+  .dashboard-blob-cyan {
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, #06b6d4 0%, transparent 70%);
+    bottom: -10%;
+    left: 10%;
+    animation-delay: -10s;
+  }
+
+  .dashboard-blob-indigo {
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, #4f46e5 0%, transparent 70%);
+    bottom: 20%;
+    right: 15%;
+    animation-delay: -15s;
+  }
+
   /* Purple gradient text with glow effect */
   .text-purple-gradient-glow {
-    background: linear-gradient(to right, rgb(88, 28, 135), rgb(126, 34, 206), rgb(88, 28, 135));
+    background: linear-gradient(
+      to right,
+      rgb(88, 28, 135),
+      rgb(126, 34, 206),
+      rgb(88, 28, 135)
+    );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.3)) drop-shadow(0 0 12px rgba(139, 92, 246, 0.2));
+    filter: drop-shadow(0 0 8px rgba(124, 58, 237, 0.3))
+      drop-shadow(0 0 12px rgba(139, 92, 246, 0.2));
     -webkit-text-stroke: 0.3px rgba(88, 28, 135, 0.1);
   }
 
@@ -239,6 +300,15 @@
   }
 }
 
+@keyframes dashboard-drift {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(60px, 40px) scale(1.1);
+  }
+}
+
 @keyframes shake {
   0%,
   100% {
@@ -299,11 +369,12 @@
 
 /* Glass card effect for orders page */
 .glass-card {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.4);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  border-radius: 16px;
 }
 
 /* Status badge styles for orders */

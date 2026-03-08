@@ -7,7 +7,7 @@ import {
   useUpdateCartItem,
   useRemoveCartItem,
 } from "@/queries/cartQueries";
-import { CartHeader } from "@/features/cart/sections";
+import { PageHeader } from "@/features/ui/page-header";
 import { CartList, EmptyCart, CartSummary } from "@/features/cart/components";
 import { cartTheme } from "@/theme/components";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
@@ -52,7 +52,10 @@ function CartContent() {
           }
         />
         <main className={cartTheme.page.main}>
-          <CartHeader itemCount={itemCount} />
+          <PageHeader
+            title="Shopping Cart"
+            description={`${itemCount} ${itemCount === 1 ? "item" : "items"} ready for production`}
+          />
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
           </div>
@@ -76,7 +79,10 @@ function CartContent() {
           }
         />
         <main className={cartTheme.page.main}>
-          <CartHeader itemCount={0} />
+          <PageHeader
+            title="Shopping Cart"
+            description="Your cart is empty"
+          />
           <EmptyCart />
         </main>
       </div>
@@ -97,7 +103,10 @@ function CartContent() {
         }
       />
       <main className={cartTheme.page.main}>
-        <CartHeader itemCount={itemCount} />
+        <PageHeader
+          title="Shopping Cart"
+          description={`${itemCount} ${itemCount === 1 ? "item" : "items"} ready for production`}
+        />
 
         <div className={cartTheme.actions.row}>
           <Button

@@ -1,56 +1,47 @@
 "use client";
 
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { theme } from "@/theme";
 import { useUser } from "@/hooks/useAuth";
-import { CreateDesignCard } from "@/features/stamp/createProduct/components/CreateDesignCard";
-import { ViewOrdersCard, ProfileCard } from "@/features/stamp/quickActions";
-import { SettingsPopup } from "@/features/stamp/SettingsPopup";
-import { Settings } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/features/ui/button";
-import { PageHeader } from "@/features/ui/page-header";
+import { useOrders } from "@/queries/orderQueries";
+import { dashboardTheme } from "@/theme/components";
+import { DashboardBackground } from "@/features/dashboard/DashboardBackground";
+import { DashboardHeader } from "@/features/dashboard/DashboardHeader";
+import { ProfileSummaryCard } from "@/features/dashboard/ProfileSummaryCard";
+import { QuickPerformanceCard } from "@/features/dashboard/QuickPerformanceCard";
+import { CreditsCoinsCard } from "@/features/dashboard/CreditsCoinsCard";
+import { QuickAccessCard } from "@/features/dashboard/QuickAccessCard";
+import { StampCtaCard } from "@/features/dashboard/StampCtaCard";
+import { RecentOrdersCard } from "@/features/dashboard/RecentOrdersCard";
 
 export default function DashboardPage() {
   const { data: user } = useUser();
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { data: orders = [] } = useOrders(user?.id);
+  const ordersPlaced = orders.length;
 
   return (
     <ProtectedRoute>
-      <div className={theme.page.container}>
-        <div className="space-y-8">
-          {/* Header */}
-          <PageHeader
-            title={`Welcome Back, ${user?.user_metadata?.first_name || "Creator"}!`}
-            description="Your creative dashboard for designing custom apparel"
-          />
-          {/* Highlighted Create Design Card */}
-          <div className="transform scale-105">
-            <CreateDesignCard />
+      <div className={dashboardTheme.page.wrapper}>
+        <DashboardBackground />
+        <main className={dashboardTheme.page.container}>
+          <DashboardHeader user={user} />
+
+          <div className={dashboardTheme.page.grid}>
+            <div className={dashboardTheme.page.leftColumn}>
+              <ProfileSummaryCard user={user} />
+              <QuickPerformanceCard
+                ordersPlaced={ordersPlaced}
+                designsCreated={42}
+              />
+              <CreditsCoinsCard totalCredits={2450} usedCredits={1592} />
+              <QuickAccessCard />
+            </div>
+
+            <div className={dashboardTheme.page.rightColumn}>
+              <StampCtaCard />
+              <RecentOrdersCard orders={orders} />
+            </div>
           </div>
-
-          {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <ViewOrdersCard />
-            <ProfileCard />
-          </div>
-        </div>
-
-        {/* Settings Button - Bottom Right */}
-        <Button
-          onClick={() => setIsSettingsOpen(true)}
-          className="fixed bottom-8 right-8 bg-linear-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white p-4 rounded-full shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 hover:scale-110 z-40"
-          aria-label="Open settings"
-          size="icon"
-        >
-          <Settings className="w-6 h-6 animate-spin-slow" />
-        </Button>
-
-        {/* Settings Popup */}
-        <SettingsPopup
-          isOpen={isSettingsOpen}
-          onClose={() => setIsSettingsOpen(false)}
-        />
+        </main>
       </div>
     </ProtectedRoute>
   );

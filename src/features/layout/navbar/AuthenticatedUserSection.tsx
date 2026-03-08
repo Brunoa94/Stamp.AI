@@ -7,11 +7,13 @@ import { Moon, User, ShoppingCart } from "lucide-react";
 import { useTheme } from "next-themes";
 import clsx from "clsx";
 import { navbarTheme } from "@/theme/components";
+import { useCartSummary } from "@/queries/cartQueries";
 
 export function AuthenticatedUserSection() {
   const logoutMutation = useLogout();
   const router = useRouter();
   const { setTheme, theme } = useTheme();
+  const { itemCount } = useCartSummary();
 
   const handleSignOut = () => {
     logoutMutation.mutate();
@@ -37,10 +39,15 @@ export function AuthenticatedUserSection() {
         onClick={() => router.push("/cart")}
         variant="ghost"
         size="icon"
-        className={navbarTheme.actions.themeButton}
+        className={clsx(navbarTheme.actions.themeButton, "relative")}
         aria-label="View cart"
       >
         <ShoppingCart className="w-5 h-5" />
+        {itemCount > 0 && (
+          <span className="absolute -top-1 -right-1 bg-linear-to-r from-purple-600 via-pink-600 to-red-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center">
+            {itemCount > 99 ? "99+" : itemCount}
+          </span>
+        )}
       </Button>
 
       <div className={navbarTheme.actions.divider} />

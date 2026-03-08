@@ -45,7 +45,7 @@ export function NavbarActions() {
           <Button
             variant="ghost"
             onClick={() => router.push("/orders")}
-            className="flex items-center gap-2 text-slate-600 hover:text-indigo-600 font-medium"
+            className="flex items-center gap-2 text-base text-slate-600 hover:text-indigo-600 font-medium"
           >
             <ShoppingBag className="w-4 h-4" />
             My Orders
