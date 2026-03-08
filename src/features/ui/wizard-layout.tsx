@@ -6,9 +6,13 @@ interface WizardLayoutProps {
   className?: string;
 }
 
-export function WizardLayout({ sidebar, children, className }: WizardLayoutProps) {
+export function WizardLayout({
+  sidebar,
+  children,
+  className,
+}: WizardLayoutProps) {
   return (
-    <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row min-h-[700px] bg-white shadow-lg rounded-2xl overflow-hidden">
+    <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row min-h-[700px] shadow-lg rounded-2xl overflow-hidden">
       {/* Left Sidebar */}
       {sidebar}
 

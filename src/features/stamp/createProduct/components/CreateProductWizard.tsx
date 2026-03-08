@@ -15,7 +15,7 @@ function CreateProductWizardContent() {
   return (
     <div
       id="design-pipeline"
-      className="max-w-7xl w-full mx-auto bg-white/15 backdrop-blur-xl rounded-lg flex overflow-hidden min-h-187.5 border border-white/30 relative z-10 shadow-2xl"
+      className="max-w-7xl w-full mx-auto bg-white/60 backdrop-blur-sm rounded-lg flex overflow-hidden min-h-187.5 border border-white/40 relative z-10 shadow-2xl"
       style={{ boxShadow: shadows.glass }}
     >
       {/* Sidebar */}
