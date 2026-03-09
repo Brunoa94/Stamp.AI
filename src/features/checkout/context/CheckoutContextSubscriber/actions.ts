@@ -3,6 +3,7 @@ import { CheckoutSubscriberContext } from "./CheckoutContextSubscriber";
 import { ShippingAddressT } from "@/schemas/checkout";
 import { useCreateOrderFromCart } from "@/queries/orderQueries";
 import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
+import { useClearCart } from "@/queries/cartQueries";
 import { OrderT } from "@/types/order";
 import type { CreatePrintifyOrderRequest, PrintifyLineItem } from "@/types/printifyOrder";
 import { validatePrintifyLineItem } from "@/types/printifyOrder";
@@ -27,6 +28,7 @@ export function useCheckoutSubscriberActions() {
     );
 
   const createPrintifyOrder = useCreatePrintifyOrder();
+  const clearCart = useClearCart();
 
   return {
 /**
@@ -65,7 +67,7 @@ export function useCheckoutSubscriberActions() {
 
     /**
      * Handle successful payment processing
-     * Creates the Printify order after payment succeeds
+     * Creates the Printify order after payment succeeds and clears the cart
      */
     handlePaymentSuccess: async (paymentIntent: PaymentIntentI, lineItems: PrintifyLineItem[]) => {
       const state = store.getState();
@@ -126,6 +128,16 @@ export function useCheckoutSubscriberActions() {
           // Don't fail the entire checkout - payment already succeeded
           // Just log the error for now
         }
+      }
+
+      // Finally, clear the cart after successful payment
+      try {
+        console.log("🧹 Clearing cart after successful payment...");
+        await clearCart.mutateAsync();
+        console.log("✅ Cart cleared successfully");
+      } catch (error) {
+        console.error("❌ Failed to clear cart:", error);
+        // Don't fail checkout if cart clearing fails - payment already succeeded
       }
     },
 
