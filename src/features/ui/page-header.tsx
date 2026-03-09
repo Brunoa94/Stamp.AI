@@ -13,10 +13,10 @@ const headerStyles = {
   container: "w-full max-w-7xl mx-auto mb-12 relative z-10",
   glassCard: "glass-card rounded-xl p-6 md:p-8",
   content: "flex flex-col gap-3",
-  title: "text-3xl md:text-5xl font-normal font-heading text-slate-900 tracking-wide",
+  title: "text-4xl md:text-6xl font-normal font-heading text-slate-900 tracking-wide",
   descriptionWrapper: "flex flex-col md:flex-row md:items-center gap-4",
   gradientBar: "h-1.5 w-24 bg-linear-to-r from-[#7C3AED] via-[#4F46E5] to-[#06B6D4] rounded-sm shadow-sm shrink-0",
-  description: "text-xs md:text-base leading-relaxed font-light max-w-2xl font-accent italic text-purple-gradient-glow",
+  description: "text-sm md:text-lg leading-relaxed font-light max-w-2xl font-accent italic text-purple-950",
 };
 
 export function PageHeader({

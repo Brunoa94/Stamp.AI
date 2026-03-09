@@ -26,7 +26,7 @@ export function WizardSidebar({
   helpDescription = "High-resolution PNGs with transparent backgrounds work best for our AI generator.",
 }: WizardSidebarProps) {
   return (
-    <aside className="w-80 border-r border-white/20 flex flex-col bg-white/5 backdrop-blur-md min-h-[750px]">
+    <aside className="w-80 border-r border-white/20 flex flex-col min-h-[750px]">
       <div className="p-8 pb-4">
         <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.25em] mb-10 border-b border-slate-200 pb-2 font-accent">
           Design Pipeline

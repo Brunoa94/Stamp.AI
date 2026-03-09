@@ -15,8 +15,8 @@ export const theme = {
 
   dashboard: {
     header: "text-center mb-12",
-    title: "h-14 text-5xl font-bold bg-gradient-to-r from-slate-700 via-gray-700 to-slate-800 dark:from-slate-400 dark:via-gray-400 dark:to-slate-400 bg-clip-text text-transparent animate-[fadeInUp_0.8s_ease-out]",
-    subtitle: "text-xl text-gray-600 dark:text-gray-300 animate-[fadeInUp_0.8s_ease-out_0.2s_both]",
+    title: "h-16 text-6xl font-bold bg-gradient-to-r from-slate-700 via-gray-700 to-slate-800 dark:from-slate-400 dark:via-gray-400 dark:to-slate-400 bg-clip-text text-transparent animate-[fadeInUp_0.8s_ease-out]",
+    subtitle: "text-2xl text-gray-600 dark:text-gray-300 animate-[fadeInUp_0.8s_ease-out_0.2s_both]",
     grid: "grid md:grid-cols-2 gap-12",
   },
 
