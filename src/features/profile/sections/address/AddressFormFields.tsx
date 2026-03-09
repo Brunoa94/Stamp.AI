@@ -13,85 +13,104 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
   } = form;
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="space-y-8">
+      {/* Name Fields */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <FormField
           id="first_name"
           label="First Name"
+          type="text"
           required
-          error={errors.first_name?.message}
           register={register("first_name")}
+          error={errors.first_name?.message}
         />
         <FormField
           id="last_name"
           label="Last Name"
-          error={errors.last_name?.message}
+          type="text"
+          required
           register={register("last_name")}
+          error={errors.last_name?.message}
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Email and Phone */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <FormField
           id="email"
           label="Email"
           type="email"
           required
-          error={errors.email?.message}
           register={register("email")}
+          error={errors.email?.message}
         />
         <FormField
           id="phone"
           label="Phone"
           type="tel"
-          error={errors.phone?.message}
+          required
           register={register("phone")}
+          error={errors.phone?.message}
         />
       </div>
 
+      {/* Address Line 1 */}
       <FormField
         id="address1"
         label="Address Line 1"
+        type="text"
         placeholder="Street address"
         required
-        error={errors.address1?.message}
         register={register("address1")}
+        error={errors.address1?.message}
       />
 
+      {/* Address Line 2 */}
       <FormField
         id="address2"
         label="Address Line 2 (Optional)"
+        type="text"
         placeholder="Apartment, suite, unit, etc."
         register={register("address2")}
+        error={errors.address2?.message}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* City, State, ZIP */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <FormField
           id="city"
           label="City"
+          type="text"
           required
-          error={errors.city?.message}
           register={register("city")}
+          error={errors.city?.message}
         />
         <FormField
           id="region"
           label="State/Region"
-          error={errors.region?.message}
+          type="text"
+          required
           register={register("region")}
+          error={errors.region?.message}
         />
         <FormField
           id="zip"
           label="ZIP/Postal Code"
-          error={errors.zip?.message}
+          type="text"
+          required
           register={register("zip")}
+          error={errors.zip?.message}
         />
       </div>
 
+      {/* Country */}
       <FormField
         id="country"
         label="Country"
+        type="text"
         required
-        error={errors.country?.message}
         register={register("country")}
+        error={errors.country?.message}
       />
     </div>
   );

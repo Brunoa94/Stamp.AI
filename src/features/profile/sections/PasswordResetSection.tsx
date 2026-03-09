@@ -1,9 +1,30 @@
 "use client";
 
 import { Button } from "@/features/ui/button";
-import { PasswordInput } from "@/features/ui/password-input";
-import { Lock, Save, X } from "lucide-react";
+import { Input } from "@/features/ui/input";
+import { Label } from "@/features/ui/label";
+import { Lock } from "lucide-react";
 import { usePasswordReset } from "../hooks/usePasswordReset";
+import { profileTheme } from "@/theme";
+import { ProfileSectionHeader } from "../components/ProfileSectionHeader";
+
+// Static field configuration outside component for performance
+const passwordFields = [
+  {
+    id: "new_password",
+    label: "New Password",
+    placeholder: "Enter new password",
+    hint: "Password must be at least 6 characters",
+    key: "newPassword" as const,
+  },
+  {
+    id: "confirm_password",
+    label: "Confirm New Password",
+    placeholder: "Confirm new password",
+    hint: "Re-enter your new password",
+    key: "confirmPassword" as const,
+  },
+] as const;
 
 export function PasswordResetSection() {
   const {
@@ -19,44 +40,34 @@ export function PasswordResetSection() {
     setConfirmPassword,
   } = usePasswordReset();
 
-  return (
-    <section
-      className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-6 space-y-6"
-      aria-labelledby="password-security-heading"
-    >
-      <header className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div
-            className="p-3 bg-gray-100 dark:bg-gray-900 rounded-lg"
-            aria-hidden="true"
-          >
-            <Lock className="w-6 h-6 text-slate-600 dark:text-slate-400" />
-          </div>
-          <div>
-            <h2
-              id="password-security-heading"
-              className="text-xl font-bold text-gray-900 dark:text-gray-100"
-            >
-              Password & Security
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Update your password to keep your account secure
-            </p>
-          </div>
-        </div>
-        {!isEditing && (
-          <Button
-            onClick={handleStartEditing}
-            variant="outline"
-            className="border-gray-300 text-slate-700 hover:bg-gray-50 dark:border-gray-600 dark:text-slate-300 dark:hover:bg-gray-900/20"
-            aria-label="Change password"
-          >
-            Change Password
-          </Button>
-        )}
-      </header>
+  const fieldSetters = {
+    newPassword: setNewPassword,
+    confirmPassword: setConfirmPassword,
+  } as const;
 
-      {isEditing ? (
+  const fieldValues = {
+    newPassword,
+    confirmPassword,
+  } as const;
+
+  return (
+    <section className={profileTheme.section.card}>
+      <ProfileSectionHeader
+        icon={Lock}
+        title="Password & Security"
+        subtitle="Update your password to keep your account secure"
+        buttonText="Change Password"
+        isEditing={isEditing}
+        onEdit={handleStartEditing}
+      />
+
+      {/* Content */}
+      {!isEditing ? (
+        <p className={profileTheme.password.description}>
+          Your password is hidden for security. Click "Change Password" to
+          update it.
+        </p>
+      ) : (
         <form
           className="space-y-4"
           onSubmit={(e) => {
@@ -64,55 +75,46 @@ export function PasswordResetSection() {
             handleSave();
           }}
         >
-          <PasswordInput
-            id="new_password"
-            label="New Password"
-            value={newPassword}
-            onChange={setNewPassword}
-            placeholder="Enter new password"
-            required
-            disabled={isLoading}
-            hint="Password must be at least 6 characters"
-            autoComplete="new-password"
-          />
+          {passwordFields.map(({ id, label, placeholder, hint, key }) => (
+            <div key={id} className={profileTheme.personalInfo.fieldWrap}>
+              <Label
+                htmlFor={id}
+                className={profileTheme.personalInfo.label}
+              >
+                {label}
+              </Label>
+              <Input
+                type="password"
+                id={id}
+                value={fieldValues[key]}
+                onChange={(e) => fieldSetters[key](e.target.value)}
+                placeholder={placeholder}
+                className={profileTheme.personalInfo.input}
+                autoComplete="new-password"
+              />
+              <p className={profileTheme.personalInfo.hint}>{hint}</p>
+            </div>
+          ))}
 
-          <PasswordInput
-            id="confirm_password"
-            label="Confirm New Password"
-            value={confirmPassword}
-            onChange={setConfirmPassword}
-            placeholder="Confirm new password"
-            required
-            disabled={isLoading}
-            hint="Re-enter your new password"
-            autoComplete="new-password"
-          />
-
-          <div className="flex items-center gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-3 pt-4">
             <Button
               type="submit"
               disabled={!canSubmit || isLoading}
-              className="bg-linear-to-r from-slate-600 to-gray-700 hover:from-slate-700 hover:to-gray-800 text-white"
+              className="bg-linear-to-r from-[#7C3AED] to-[#06B6D4] text-white font-bold uppercase tracking-widest text-xs px-6 py-2"
             >
-              <Save className="w-4 h-4 mr-2" aria-hidden="true" />
               {isLoading ? "Updating..." : "Update Password"}
             </Button>
             <Button
               type="button"
               onClick={handleCancel}
-              variant="outline"
+              variant="ghost"
               disabled={isLoading}
+              className="border border-slate-200 text-slate-600 font-bold uppercase tracking-widest text-xs px-6 py-2"
             >
-              <X className="w-4 h-4 mr-2" aria-hidden="true" />
               Cancel
             </Button>
           </div>
         </form>
-      ) : (
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          Your password is hidden for security. Click "Change Password" to
-          update it.
-        </p>
       )}
     </section>
   );

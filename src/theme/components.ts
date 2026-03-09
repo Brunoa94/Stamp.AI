@@ -214,20 +214,21 @@ export const componentThemes = {
 
   // Footer styles
   footer: {
-    container: `bg-white border-t border-slate-100 pt-16 pb-16 mt-16`,
-    inner: `max-w-[1440px] mx-auto px-10`,
-    brandWrap: `flex flex-col items-center justify-center mb-16`,
-    brandText: `text-3xl font-normal font-heading tracking-widest text-slate-900 uppercase`,
-    grid: `grid grid-cols-1 md:grid-cols-4 gap-16 mb-20`,
-    missionTitle: `font-normal font-heading text-2xl text-slate-900 mb-8 tracking-wide`,
-    missionText: `text-slate-500 text-sm leading-loose max-w-xs font-accent italic`,
-    sectionTitle: `font-normal font-heading text-2xl text-slate-900 mb-8 tracking-wide`,
-    linkList: `space-y-4 text-sm font-accent`,
-    link: `text-slate-500 hover:text-[#7C3AED] transition-soft`,
-    bottom: `pt-10 border-t border-slate-50 flex flex-col md:flex-row justify-between items-center gap-8`,
-    copyright: `text-slate-400 text-sm font-accent`,
-    socialRow: `flex gap-2`,
-    socialButton: `text-slate-400 hover:text-[#7C3AED] transition-soft`,
+    container: `relative bg-white/30 dark:bg-gray-900/30 backdrop-blur-xl border-t border-white/50 dark:border-white/10 pt-20 pb-12 mt-24 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.5)] overflow-hidden`,
+    inner: `max-w-[1440px] mx-auto px-10 md:px-16 xl:px-24 relative z-10`,
+    brandWrap: `flex flex-col items-center justify-center mb-8`,
+    brandText: `text-4xl md:text-5xl font-retro-heading font-bold uppercase tracking-tighter bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent drop-shadow-sm`,
+    brandDot: `inline-block mx-1.5 w-2.5 h-2.5 rounded-full bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] shadow-lg shadow-purple-500/30`,
+    grid: `grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-16 mb-16`,
+    missionTitle: `text-base font-retro-heading font-bold uppercase tracking-tight text-gray-900 dark:text-white mb-6`,
+    missionText: `text-gray-600 dark:text-gray-400 text-sm leading-relaxed max-w-xs`,
+    sectionTitle: `text-base font-retro-heading font-bold uppercase tracking-tight text-gray-900 dark:text-white mb-6`,
+    linkList: `space-y-3 text-sm`,
+    link: `block text-gray-600 dark:text-gray-400 hover:text-[#7C3AED] dark:hover:text-[#A78BFA] hover:translate-x-1 transition-all font-medium`,
+    bottom: `pt-8 border-t border-gray-200/50 dark:border-white/10 flex flex-col md:flex-row justify-between items-center gap-6`,
+    copyright: `text-gray-500 dark:text-gray-500 text-xs font-bold uppercase tracking-widest`,
+    socialRow: `flex gap-3`,
+    socialButton: `w-10 h-10 flex items-center justify-center rounded-md bg-white/50 dark:bg-gray-800/50 border border-gray-200/50 dark:border-gray-700/50 text-gray-500 dark:text-gray-400 hover:bg-gradient-to-r hover:from-[#7C3AED] hover:to-[#06B6D4] hover:text-white hover:border-transparent hover:scale-110 dark:hover:bg-gradient-to-r transition-all shadow-sm hover:shadow-lg hover:shadow-purple-500/20`,
   },
 
   // Cart page styles
@@ -337,7 +338,7 @@ export const componentThemes = {
       reorderButton: `px-5 py-2.5 bg-white border border-slate-200 text-slate-600 text-sm font-bold rounded hover:bg-slate-50 transition-all`,
     },
     pagination: {
-      container: `px-8 py-6 bg-slate-50/50 border-t border-slate-200 flex items-center justify-between`,
+      container: `px-8 py-6 bg-slate-50/50 border-t border-slate-200 flex items-center justify-between -mt-4 pt-8 -z-1 rounded-lg`,
       info: `text-xs text-slate-400 font-medium font-accent italic`,
       controls: `flex items-center gap-2`,
       button: `w-8 h-8 flex items-center justify-center rounded border border-slate-200 text-slate-400 hover:text-slate-900 transition-colors disabled:opacity-50`,
@@ -353,6 +354,13 @@ export const componentThemes = {
 
   // Checkout page styles
   checkout: {
+    page: {
+      container: "min-h-screen relative rounded-2xl pb-8",
+      mainContent: "max-w-360 mx-auto px-6 md:px-16 xl:px-24 pb-16",
+      grid: "flex flex-col lg:flex-row gap-10",
+      formsColumn: "flex-1 space-y-8 lg:w-7/12",
+      summaryColumn: "lg:w-5/12",
+    },
     paymentSection: {
       container: "glass-card p-8 rounded-none",
       testModeContainer:
@@ -375,6 +383,45 @@ export const componentThemes = {
       },
     },
   },
+
+  // Profile page styles
+  profile: {
+    page: {
+      container: `flex-grow w-full max-w-7xl mx-auto pt-32 pb-24 px-12 md:px-24`,
+    },
+    header: {
+      card: `glass-card p-10 mb-10 rounded-3xl`,
+      title: `text-5xl font-retro-heading text-slate-900 mb-4 leading-none tracking-tight`,
+      decorativeWrap: `flex items-center gap-4`,
+      accentBar: `h-1 w-16 bg-linear-to-r from-[#7C3AED] via-[#4F46E5] to-[#06B6D4] rounded-sm`,
+      description: `italic text-slate-500 font-medium`,
+    },
+    section: {
+      card: `glass-card p-8 rounded-3xl`,
+      header: `flex justify-between items-start mb-10`,
+      iconTitleWrap: `flex gap-5`,
+      iconBox: `w-14 h-14 bg-white shadow-sm border border-slate-100 rounded-2xl flex items-center justify-center text-slate-500`,
+      titleWrap: `flex flex-col`,
+      title: `text-xl font-bold text-slate-900 leading-tight uppercase tracking-tight`,
+      subtitle: `text-slate-500 text-sm`,
+      editButton: `px-6 py-2 border border-slate-200 text-slate-600 font-bold uppercase tracking-widest text-[10px] rounded-lg hover:bg-white hover:border-slate-300 transition-all`,
+    },
+    personalInfo: {
+      grid: `grid grid-cols-1 md:grid-cols-2 gap-8`,
+      fieldWrap: `space-y-2`,
+      fullWidth: `md:col-span-2 space-y-2`,
+      label: `text-[10px] font-bold uppercase tracking-widest text-slate-400`,
+      input: `w-full px-4 py-3 bg-white border border-gray-200 rounded-lg text-sm focus:border-[#7C3AED] focus:outline-none focus:ring-4 focus:ring-[#7C3AED]/10 transition-all`,
+      inputReadonly: `bg-slate-50/50`,
+      hint: `text-[11px] text-slate-400 font-medium italic`,
+    },
+    password: {
+      description: `text-sm text-slate-500 italic`,
+    },
+    address: {
+      emptyText: `text-sm text-slate-500 italic`,
+    },
+  },
 } as const;
 
 // Individual theme exports for better tree-shaking
@@ -392,6 +439,7 @@ export const cartTheme = componentThemes.cart;
 export const dashboardTheme = componentThemes.dashboard;
 export const ordersTheme = componentThemes.orders;
 export const checkoutTheme = componentThemes.checkout;
+export const profileTheme = componentThemes.profile;
 
 // Utility functions
 export const getButtonVariant = (variant: keyof typeof componentThemes.button) =>

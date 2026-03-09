@@ -1,6 +1,7 @@
 "use client";
 
 import { useAddressForm } from "../hooks/useAddressForm";
+import { profileTheme } from "@/theme";
 import {
   AddressSectionHeader,
   AddressFormFields,
@@ -23,7 +24,7 @@ export function AddressSection() {
   const onSubmit = form.handleSubmit(handleSave);
 
   return (
-    <section className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-6 space-y-6">
+    <section className={profileTheme.section.card}>
       <AddressSectionHeader
         hasAddress={hasAddress}
         isEditing={isEditing}
@@ -42,7 +43,7 @@ export function AddressSection() {
       ) : hasAddress && savedAddress ? (
         <AddressDisplay address={savedAddress} />
       ) : (
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className={profileTheme.address.emptyText}>
           No shipping address saved. Click "Add Address" to add one.
         </p>
       )}

@@ -2,28 +2,14 @@
 
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
 import { theme } from "@/theme";
-import { PageHeader } from "@/features/ui/page-header";
-import { UserInformationSection } from "@/features/profile/sections/UserInformationSection";
-import { PasswordResetSection } from "@/features/profile/sections/PasswordResetSection";
-import { AddressSection } from "@/features/profile/sections/AddressSection";
+import { ProfileContent } from "@/features/profile/ProfileContent";
 
 export default function ProfilePage() {
   return (
     <ProtectedRoute>
-      <div className={theme.page.container}>
-        <div className="space-y-8">
-          <PageHeader
-            title="My Profile"
-            description="Manage your account settings and preferences"
-          />
-
-          <div className="space-y-6">
-            <UserInformationSection />
-            <PasswordResetSection />
-            <AddressSection />
-          </div>
-        </div>
-      </div>
+      <main className={theme.page.container}>
+        <ProfileContent />
+      </main>
     </ProtectedRoute>
   );
 }

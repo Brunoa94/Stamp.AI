@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUser } from "@/hooks/useAuth";
@@ -23,15 +23,15 @@ function createEmptyAddress(email?: string): ShippingAddressT {
 
 export function useAddressForm() {
   const { data: user } = useUser();
-  const [isEditing, setIsEditing] = useState(false);
   const updateProfileMutation = useUpdateProfile();
-
+  
   const savedAddress = user?.user_metadata?.shipping_address as ShippingAddressT | undefined;
-
   const form = useForm<ShippingAddressT>({
     resolver: zodResolver(ShippingAddressSchema),
     defaultValues: savedAddress || createEmptyAddress(user?.email),
   });
+
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     if (savedAddress) {
@@ -39,32 +39,35 @@ export function useAddressForm() {
     }
   }, [savedAddress, form]);
 
-  const handleSave = async (data: ShippingAddressT) => {
-    try {
-      await updateProfileMutation.mutateAsync({
-        firstName: data.first_name,
-        lastName: data.last_name || "",
-        metadata: {
-          shipping_address: data,
-        },
-      });
-      setIsEditing(false);
-      toast.success("Address updated successfully!");
-    } catch (error) {
-      toast.error("Failed to update address");
-    }
-  };
+  const handleSave = useCallback(
+    async (data: ShippingAddressT) => {
+      try {
+        await updateProfileMutation.mutateAsync({
+          firstName: data.first_name,
+          lastName: data.last_name || "",
+          metadata: {
+            shipping_address: data,
+          },
+        });
+        setIsEditing(false);
+        toast.success("Address updated successfully!");
+      } catch (error) {
+        toast.error("Failed to update address");
+      }
+    },
+    [updateProfileMutation]
+  );
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     if (savedAddress) {
       form.reset(savedAddress);
     }
     setIsEditing(false);
-  };
+  }, [savedAddress, form]);
 
-  const handleEdit = () => {
+  const handleEdit = useCallback(() => {
     setIsEditing(true);
-  };
+  }, []);
 
   const hasAddress = Boolean(savedAddress?.address1);
 

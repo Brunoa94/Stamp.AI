@@ -3,8 +3,24 @@
 import { Button } from "@/features/ui/button";
 import { Input } from "@/features/ui/input";
 import { Label } from "@/features/ui/label";
-import { User, Save, X } from "lucide-react";
+import { User } from "lucide-react";
 import { useUserInformation } from "../hooks/useUserInformation";
+import { profileTheme } from "@/theme";
+import { ProfileSectionHeader } from "../components/ProfileSectionHeader";
+
+// Static field configuration outside component for performance
+const formFields = [
+  {
+    id: "first_name",
+    label: "First Name",
+    key: "firstName" as const,
+  },
+  {
+    id: "last_name",
+    label: "Last Name",
+    key: "lastName" as const,
+  },
+] as const;
 
 export function UserInformationSection() {
   const {
@@ -20,118 +36,90 @@ export function UserInformationSection() {
     setLastName,
   } = useUserInformation();
 
+  const fieldSetters = {
+    firstName: setFirstName,
+    lastName: setLastName,
+  } as const;
+
+  const fieldValues = {
+    firstName,
+    lastName,
+  } as const;
+
   return (
-    <section
-      className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-6 space-y-6"
-      aria-labelledby="personal-info-heading"
-    >
-      <header className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div
-            className="p-3 bg-gray-100 dark:bg-gray-900 rounded-lg"
-            aria-hidden="true"
-          >
-            <User className="w-6 h-6 text-slate-600 dark:text-slate-400" />
-          </div>
-          <div>
-            <h2
-              id="personal-info-heading"
-              className="text-xl font-bold text-gray-900 dark:text-gray-100"
+    <section className={profileTheme.section.card}>
+      <ProfileSectionHeader
+        icon={User}
+        title="Personal Information"
+        subtitle="Update your personal details"
+        buttonText="Edit"
+        isEditing={isEditing}
+        onEdit={handleStartEditing}
+      />
+
+      {/* Form Fields */}
+      <div className={profileTheme.personalInfo.grid}>
+        {formFields.map(({ id, label, key }) => (
+          <div key={id} className={profileTheme.personalInfo.fieldWrap}>
+            <Label
+              htmlFor={id}
+              className={profileTheme.personalInfo.label}
             >
-              Personal Information
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Update your personal details
-            </p>
+              {label}
+            </Label>
+            <Input
+              type="text"
+              id={id}
+              value={fieldValues[key]}
+              onChange={(e) => fieldSetters[key](e.target.value)}
+              readOnly={!isEditing}
+              className={profileTheme.personalInfo.input}
+            />
           </div>
-        </div>
-        {!isEditing && (
-          <Button
-            onClick={handleStartEditing}
-            variant="outline"
-            className="border-gray-300 text-slate-700 hover:bg-gray-50 dark:border-gray-600 dark:text-slate-300 dark:hover:bg-gray-900/20"
-            aria-label="Edit personal information"
+        ))}
+
+        <div className={profileTheme.personalInfo.fullWidth}>
+          <Label
+            htmlFor="email"
+            className={profileTheme.personalInfo.label}
           >
-            Edit
-          </Button>
-        )}
-      </header>
-
-      <form
-        className="space-y-4"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (isEditing) {
-            handleSave();
-          }
-        }}
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="first_name">First Name</Label>
-            <Input
-              id="first_name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              disabled={!isEditing || isLoading}
-              className="disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-readonly={!isEditing}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="last_name">Last Name</Label>
-            <Input
-              id="last_name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              disabled={!isEditing || isLoading}
-              className="disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-readonly={!isEditing}
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+            Email
+          </Label>
           <Input
-            id="email"
             type="email"
+            id="email"
             value={email}
-            disabled
-            className="disabled:opacity-50 disabled:cursor-not-allowed bg-gray-50 dark:bg-gray-900"
-            aria-describedby="email_hint"
-            aria-readonly="true"
+            readOnly
+            className={`${profileTheme.personalInfo.input} ${profileTheme.personalInfo.inputReadonly}`}
           />
-          <p
-            id="email_hint"
-            className="text-xs text-gray-500 dark:text-gray-400"
-          >
+          <p className={profileTheme.personalInfo.hint}>
             Email cannot be changed for security reasons
           </p>
         </div>
+      </div>
 
-        {isEditing && (
-          <div className="flex items-center gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="bg-linear-to-r from-slate-600 to-gray-700 hover:from-slate-700 hover:to-gray-800 text-white"
-            >
-              <Save className="w-4 h-4 mr-2" aria-hidden="true" />
-              {isLoading ? "Saving..." : "Save Changes"}
-            </Button>
-            <Button
-              type="button"
-              onClick={handleCancel}
-              variant="outline"
-              disabled={isLoading}
-            >
-              <X className="w-4 h-4 mr-2" aria-hidden="true" />
-              Cancel
-            </Button>
-          </div>
-        )}
-      </form>
+      {/* Action Buttons */}
+      {isEditing && (
+        <div className="flex items-center gap-3 pt-6">
+          <Button
+            type="button"
+            onClick={handleSave}
+            disabled={isLoading}
+            className="bg-linear-to-r from-[#7C3AED] to-[#06B6D4] text-white font-bold uppercase tracking-widest text-xs px-6 py-2"
+          >
+            {isLoading ? "Saving..." : "Save Changes"}
+          </Button>
+          <Button
+            type="button"
+            onClick={handleCancel}
+            variant="ghost"
+            disabled={isLoading}
+            className="border border-slate-200 text-slate-600 font-bold uppercase tracking-widest text-xs px-6 py-2"
+          >
+            Cancel
+          </Button>
+        </div>
+      )}
     </section>
   );
 }

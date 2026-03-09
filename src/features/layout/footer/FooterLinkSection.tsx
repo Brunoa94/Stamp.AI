@@ -15,7 +15,7 @@ interface FooterLinkSectionPropsI {
 export function FooterLinkSection({ title, links }: FooterLinkSectionPropsI) {
   return (
     <div>
-      <h4 className={footerTheme.sectionTitle}>{title}</h4>
+      <h3 className={footerTheme.sectionTitle}>{title}</h3>
       <ul className={footerTheme.linkList}>
         {links.map((link) => (
           <li key={link.id}>

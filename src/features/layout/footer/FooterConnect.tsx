@@ -9,7 +9,7 @@ export function FooterConnect() {
   return (
     <div className={footerTheme.bottom}>
       <p className={footerTheme.copyright}>
-        © {currentYear} Stamp.AI Design Inc. Crafted for the Dreamers.
+        © {currentYear} Stamp.AI · Crafted for the Dreamers
       </p>
 
       <div className={footerTheme.socialRow}>

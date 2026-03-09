@@ -14,6 +14,7 @@ import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { Button } from "@/features/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import clsx from "clsx";
 
 function CartContent() {
   const router = useRouter();
@@ -42,14 +43,16 @@ function CartContent() {
     return (
       <div className={cartTheme.page.container}>
         <div
-          className={
-            cartTheme.page.sideDivider + " " + cartTheme.page.sideDividerLeft
-          }
+          className={clsx(
+            cartTheme.page.sideDivider,
+            cartTheme.page.sideDividerLeft
+          )}
         />
         <div
-          className={
-            cartTheme.page.sideDivider + " " + cartTheme.page.sideDividerRight
-          }
+          className={clsx(
+            cartTheme.page.sideDivider,
+            cartTheme.page.sideDividerRight
+          )}
         />
         <main className={cartTheme.page.main}>
           <PageHeader
@@ -69,14 +72,16 @@ function CartContent() {
     return (
       <div className={cartTheme.page.container}>
         <div
-          className={
-            cartTheme.page.sideDivider + " " + cartTheme.page.sideDividerLeft
-          }
+          className={clsx(
+            cartTheme.page.sideDivider,
+            cartTheme.page.sideDividerLeft
+          )}
         />
         <div
-          className={
-            cartTheme.page.sideDivider + " " + cartTheme.page.sideDividerRight
-          }
+          className={clsx(
+            cartTheme.page.sideDivider,
+            cartTheme.page.sideDividerRight
+          )}
         />
         <main className={cartTheme.page.main}>
           <PageHeader
@@ -93,14 +98,16 @@ function CartContent() {
   return (
     <div className={cartTheme.page.container}>
       <div
-        className={
-          cartTheme.page.sideDivider + " " + cartTheme.page.sideDividerLeft
-        }
+        className={clsx(
+          cartTheme.page.sideDivider,
+          cartTheme.page.sideDividerLeft
+        )}
       />
       <div
-        className={
-          cartTheme.page.sideDivider + " " + cartTheme.page.sideDividerRight
-        }
+        className={clsx(
+          cartTheme.page.sideDivider,
+          cartTheme.page.sideDividerRight
+        )}
       />
       <main className={cartTheme.page.main}>
         <PageHeader

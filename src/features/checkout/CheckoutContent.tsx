@@ -14,15 +14,7 @@ import { CheckoutHeaderSection } from "./sections/CheckoutHeaderSection";
 import { ShippingSection } from "./sections/ShippingSection";
 import { PaymentSection } from "./sections/PaymentSection";
 import { OrderSummarySection } from "./sections/OrderSummarySection";
-
-// Static style constants defined outside component
-const checkoutStyles = {
-  container: "min-h-screen relative shadow-lg rounded-2xl pb-8",
-  mainContent: "max-w-360 mx-auto px-6 md:px-16 xl:px-24 pb-16 ",
-  grid: "flex flex-col lg:flex-row gap-10",
-  formsColumn: "flex-1 space-y-8 lg:w-7/12",
-  summaryColumn: "lg:w-5/12",
-};
+import { checkoutTheme } from "@/theme";
 
 export function CheckoutContent() {
   const isLoading = CheckoutSelectors.isLoading();
@@ -57,25 +49,25 @@ export function CheckoutContent() {
 
   // Main checkout form
   return (
-    <div className={checkoutStyles.container}>
+    <div className={checkoutTheme.page.container}>
       {/* Background decoration */}
       <FluidInkDriftBackground />
 
       {/* Side dividers */}
       <PageDividers />
 
-      <main className={checkoutStyles.mainContent}>
+      <main className={checkoutTheme.page.mainContent}>
         <CheckoutHeaderSection />
 
-        <div className={checkoutStyles.grid}>
+        <div className={checkoutTheme.page.grid}>
           {/* Left Column: Forms */}
-          <section className={checkoutStyles.formsColumn}>
+          <section className={checkoutTheme.page.formsColumn}>
             <ShippingSection />
             <PaymentSection />
           </section>
 
           {/* Right Column: Order Summary */}
-          <aside className={checkoutStyles.summaryColumn}>
+          <aside className={checkoutTheme.page.summaryColumn}>
             <OrderSummarySection />
           </aside>
         </div>
