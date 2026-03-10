@@ -1,9 +1,9 @@
 "use client";
 
 import { RefObject } from "react";
-import { FabricCardSelector } from "./FabricCardSelector";
+import { FabricCardSelector } from "./FabricCardSelector/FabricCardSelector";
 import { ColorSwatchSelector } from "./ColorSwatchSelector";
-import { SizeTileSelector } from "./SizeTileSelector";
+import { SizeTileSelector } from "./SizeTileSelector/SizeTileSelector";
 import { Label } from "@/features/ui/label";
 import { CreateProductSelectors } from "../../context/selectors";
 import { useCreateProductSubscriberActions } from "../../context/actions";
@@ -36,7 +36,7 @@ export function FabricSelectionSection({
         <div className="space-y-8 animate-[slideInUp_0.5s_ease-out]">
           {/* Color Selection */}
           <div className="space-y-4">
-            <Label className="text-4xl font-heading uppercase tracking-wide text-purple-700 dark:text-purple-300">
+            <Label className="text-2xl sm:text-4xl font-heading uppercase tracking-wide text-purple-700 dark:text-purple-300">
               Pick Your Color
             </Label>
             <ColorSwatchSelector />
@@ -44,7 +44,7 @@ export function FabricSelectionSection({
 
           {/* Size Selection */}
           <div className="space-y-4">
-            <Label className="text-4xl font-heading uppercase tracking-wide text-purple-700 dark:text-purple-300">
+            <Label className="text-2xl sm:text-4xl font-heading uppercase tracking-wide text-purple-700 dark:text-purple-300">
               Select Your Size
             </Label>
             <SizeTileSelector />

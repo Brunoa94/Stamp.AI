@@ -48,11 +48,11 @@ const ResultsSection = ({ ref }: IResultsSectionProps) => {
       />
 
       {/* 3D Preview Area */}
-      <div className="flex-1 px-12 pb-10 flex justify-center">
+      <div className="flex-1 px-4 sm:px-12 pb-6 sm:pb-10 flex justify-center">
         {/* Main Stage */}
         <div className="flex-1 relative bg-white/40 rounded-xl overflow-hidden shadow-inner border border-white/50">
           {/* Viewer Placeholder (Simulated 3D) */}
-          <div className="absolute inset-0 flex items-center justify-center p-12">
+          <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-12">
             <div className="relative w-full max-w-lg">
               {/* T-Shirt Mockup */}
               {!mockupError ? (

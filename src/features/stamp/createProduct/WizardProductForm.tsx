@@ -189,7 +189,7 @@ export function WizardProductForm() {
       {!sections.isResultsStep && (
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex-1 px-12 pb-10 relative overflow-hidden"
+          className="flex-1 px-4 sm:px-12 pb-32 sm:pb-10 relative overflow-hidden"
           data-wizard-content
         >
           <div className="h-full">
