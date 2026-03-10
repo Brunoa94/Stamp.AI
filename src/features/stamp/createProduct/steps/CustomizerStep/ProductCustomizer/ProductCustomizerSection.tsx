@@ -1,7 +1,7 @@
 import { RefObject } from "react";
 import ProductCustomizerHeader from "./ProductCustomizerHeader";
 import StampItButton from "../../../components/StampItButton";
-import { FabricCardSelector } from "../../FabricStep/FabricCardSelector";
+import { FabricCardSelector } from "../../FabricStep/FabricCardSelector/FabricCardSelector";
 import { Button } from "@/features/ui/button";
 import { ArrowRightIcon } from "@/theme";
 import { ProductCustomization } from "./ProductCustomization";
