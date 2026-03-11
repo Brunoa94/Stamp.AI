@@ -1,4 +1,5 @@
 import { Button } from "@/features/ui/button";
+import { XCircle } from "lucide-react";
 
 interface Props {
   message: string;
@@ -7,38 +8,22 @@ interface Props {
 
 const PaymentError = ({ message, onTryAgain }: Props) => {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <article className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
-        <div className="text-center">
-          <div className="mb-4">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
-              <svg
-                className="h-6 w-6 text-red-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </div>
-          </div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">
-            Payment Failed
-          </h2>
-          <p className="text-gray-600 mb-4">{message}</p>
-          <Button
-            onClick={onTryAgain}
-            className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            Try Again
-          </Button>
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <article className="w-full max-w-md glass-card rounded-3xl p-10 text-center">
+        <div className="mx-auto mb-6 w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
+          <XCircle className="w-8 h-8 text-red-600" />
         </div>
+        <h2 className="text-2xl font-heading font-bold uppercase tracking-tight text-slate-900 mb-3">
+          Payment Failed
+        </h2>
+        <p className="text-slate-600 mb-8">{message}</p>
+        <Button
+          variant="destructive"
+          onClick={onTryAgain}
+          className="w-full py-4 font-heading uppercase tracking-widest"
+        >
+          Try Again
+        </Button>
       </article>
     </div>
   );

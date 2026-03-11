@@ -1,5 +1,5 @@
-import clsx from "clsx";
 import { componentThemes } from "@/theme/components";
+import { Shimmer } from "@/features/common/Shimmer";
 
 /**
  * Loading skeleton for checkout page
@@ -7,17 +7,17 @@ import { componentThemes } from "@/theme/components";
  */
 export const CheckoutLoading = () => {
   return (
-    <div className={clsx(componentThemes.container.page, "py-8")}>
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-          <div className="grid lg:grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <div className="h-96 bg-gray-200 rounded"></div>
-              <div className="h-96 bg-gray-200 rounded"></div>
-            </div>
-            <div className="h-96 bg-gray-200 rounded"></div>
+    <div className={`${componentThemes.container.page} py-8`}>
+      <div className="max-w-6xl mx-auto px-4 space-y-6">
+        <Shimmer className="h-10 w-1/4 rounded-lg" />
+        <Shimmer className="h-5 w-1/3 rounded-lg" />
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex-1 space-y-6">
+            <Shimmer className="h-80 rounded-2xl" />
+            <Shimmer className="h-80 rounded-2xl" />
+          </div>
+          <div className="lg:w-5/12">
+            <Shimmer className="h-96 rounded-2xl" />
           </div>
         </div>
       </div>

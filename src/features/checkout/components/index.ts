@@ -4,6 +4,7 @@ export { CheckoutProgress } from "./CheckoutProgress";
 export { CheckoutLoading } from "./CheckoutLoading";
 export { CheckoutError } from "./CheckoutError";
 export { TrustBanner } from "./TrustBanner";
+export { CheckoutMobileAccordion } from "./CheckoutMobileAccordion";
 
 // Legacy components (to be deprecated)
 export { default as StepIndicator } from "./StepIndicator";

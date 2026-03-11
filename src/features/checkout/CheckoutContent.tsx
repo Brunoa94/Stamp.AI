@@ -6,6 +6,7 @@ import {
   CheckoutLoading,
   CheckoutError,
 } from "./components";
+import { CheckoutMobileAccordion } from "./components/CheckoutMobileAccordion";
 import { CheckoutSelectors, useCheckoutSubscriberActions } from "./context";
 
 import { FluidInkDriftBackground } from "@/features/ui/fluid-ink-drift-background";
@@ -25,48 +26,38 @@ export function CheckoutContent() {
   const { handleCreateAnother, handleTryAgain } =
     useCheckoutSubscriberActions();
 
-  // Loading state
-  if (isLoading) {
-    return <CheckoutLoading />;
-  }
+  if (isLoading) return <CheckoutLoading />;
+  if (error) return <CheckoutError error={error} />;
 
-  // Error state
-  if (error) {
-    return <CheckoutError error={error} />;
-  }
-
-  // Payment success state
   if (paymentStatus === "success") {
     return (
       <PaymentSuccess message={message} onCreateAnother={handleCreateAnother} />
     );
   }
 
-  // Payment error state
   if (paymentStatus === "error") {
     return <PaymentError message={message} onTryAgain={handleTryAgain} />;
   }
 
-  // Main checkout form
   return (
     <div className={checkoutTheme.page.container}>
-      {/* Background decoration */}
       <FluidInkDriftBackground />
-
-      {/* Side dividers */}
       <PageDividers />
 
       <main className={checkoutTheme.page.mainContent}>
         <CheckoutHeaderSection />
 
-        <div className={checkoutTheme.page.grid}>
-          {/* Left Column: Forms */}
+        {/* Mobile: Dynamic Accordion Flow */}
+        <div className="lg:hidden">
+          <CheckoutMobileAccordion />
+        </div>
+
+        {/* Desktop: Two-column grid */}
+        <div className={`hidden lg:flex ${checkoutTheme.page.grid}`}>
           <section className={checkoutTheme.page.formsColumn}>
             <ShippingSection />
             <PaymentSection />
           </section>
-
-          {/* Right Column: Order Summary */}
           <aside className={checkoutTheme.page.summaryColumn}>
             <OrderSummarySection />
           </aside>

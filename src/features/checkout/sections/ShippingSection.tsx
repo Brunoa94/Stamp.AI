@@ -1,25 +1,29 @@
 "use client";
 
 import { useState } from "react";
-import ShippingAddressForm from "@/features/checkout/ShippingForm/ShippingAddressForm";
 import {
   CheckoutSelectors,
   useCheckoutSubscriberActions,
 } from "@/features/checkout/context";
 import { SectionHeader } from "@/features/ui/section-header";
-import clsx from "clsx";
+import { Checkbox } from "@/features/ui/checkbox";
+import { Label } from "@/features/ui/label";
+import { Button } from "@/features/ui/button";
+import { SHIPPING_METHODS, type ShippingMethodId } from "@/constants/checkout";
+import { cn } from "@/lib/utils";
+import ShippingAddressForm from "../shippingForm/ShippingAddressForm";
 
 export function ShippingSection() {
   const shippingAddress = CheckoutSelectors.shippingAddress();
   const { handleShippingSubmit } = useCheckoutSubscriberActions();
-  const [shippingMethod, setShippingMethod] = useState("standard");
+  const [shippingMethod, setShippingMethod] =
+    useState<ShippingMethodId>("standard");
 
   return (
-    <section className="space-y-8">
+    <section className="space-y-6">
       {/* Billing Address */}
-      <div className="glass-card p-8 rounded-none">
+      <div className="glass-card p-8 rounded-2xl">
         <SectionHeader title="Billing Address" />
-
         <ShippingAddressForm
           initialData={shippingAddress || undefined}
           onSubmit={handleShippingSubmit}
@@ -29,79 +33,69 @@ export function ShippingSection() {
       </div>
 
       {/* Shipping Address */}
-      <div className="glass-card p-8 rounded-none">
+      <div className="glass-card p-8 rounded-2xl">
         <SectionHeader title="Shipping Address" className="mb-4" />
-        <label className="flex items-center gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked
-            readOnly
-            className="h-5 w-5 rounded-none accent-purple-600"
-          />
-          <span className="text-sm font-medium text-slate-700">
+        <div className="flex items-center gap-3">
+          <Checkbox id="same-as-billing" checked />
+          <Label
+            htmlFor="same-as-billing"
+            className="text-sm font-medium text-slate-700 cursor-pointer"
+          >
             Same as billing address
-          </span>
-        </label>
+          </Label>
+        </div>
       </div>
 
       {/* Shipping Method */}
-      <div className="glass-card p-8 rounded-none">
+      <div className="glass-card p-8 rounded-2xl">
         <SectionHeader title="Shipping Method" className="mb-4" />
-
-        <div className="space-y-4">
-          <label
-            className={clsx(
-              "flex items-center justify-between p-4 border border-slate-200 cursor-pointer transition-colors",
-              shippingMethod === "standard" && "border-purple-300",
-            )}
-          >
-            <div className="flex items-center gap-4">
-              <input
-                type="radio"
-                name="shipping-method"
-                checked={shippingMethod === "standard"}
-                onChange={() => setShippingMethod("standard")}
-                className="h-4 w-4 accent-purple-600"
-              />
-              <div className="flex flex-col">
-                <span className="text-sm font-bold uppercase tracking-tight">
-                  Standard Shipping
+        <div
+          className="space-y-3"
+          role="radiogroup"
+          aria-label="Shipping method"
+        >
+          {SHIPPING_METHODS.map((method) => {
+            const isSelected = shippingMethod === method.id;
+            return (
+              <Button
+                key={method.id}
+                type="button"
+                variant="outline"
+                aria-label={`${method.label} - ${method.price}`}
+                onClick={() => setShippingMethod(method.id)}
+                className={cn(
+                  "w-full h-auto py-4 px-5 flex items-center justify-between rounded-xl transition-all",
+                  isSelected
+                    ? "border-purple-400 ring-2 ring-purple-200 bg-purple-50/50"
+                    : "border-slate-200 hover:border-purple-300",
+                )}
+              >
+                <div className="flex items-center gap-3 text-left">
+                  <div
+                    className={cn(
+                      "w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors",
+                      isSelected ? "border-purple-600" : "border-slate-300",
+                    )}
+                  >
+                    {isSelected && (
+                      <div className="w-2 h-2 rounded-full bg-purple-600" />
+                    )}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold uppercase tracking-tight text-slate-900">
+                      {method.label}
+                    </span>
+                    <span className="text-xs text-slate-500 font-normal">
+                      {method.description}
+                    </span>
+                  </div>
+                </div>
+                <span className={cn("text-sm font-bold", method.priceClass)}>
+                  {method.price}
                 </span>
-                <span className="text-xs text-slate-500">
-                  3-5 Business Days
-                </span>
-              </div>
-            </div>
-            <span className="text-sm font-bold text-green-600 uppercase">
-              Free
-            </span>
-          </label>
-
-          <label
-            className={clsx(
-              "flex items-center justify-between p-4 border border-slate-200 cursor-pointer transition-colors",
-              shippingMethod === "express" && "border-purple-300",
-            )}
-          >
-            <div className="flex items-center gap-4">
-              <input
-                type="radio"
-                name="shipping-method"
-                checked={shippingMethod === "express"}
-                onChange={() => setShippingMethod("express")}
-                className="h-4 w-4 accent-purple-600"
-              />
-              <div className="flex flex-col">
-                <span className="text-sm font-bold uppercase tracking-tight">
-                  Express Delivery
-                </span>
-                <span className="text-xs text-slate-500">
-                  1-2 Business Days
-                </span>
-              </div>
-            </div>
-            <span className="text-sm font-bold">$10.00</span>
-          </label>
+              </Button>
+            );
+          })}
         </div>
       </div>
     </section>

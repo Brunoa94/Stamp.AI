@@ -2,7 +2,7 @@
 
 import { ImagePlus, Instagram, X } from "lucide-react";
 import clsx from "clsx";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 import { Button } from "@/features/ui/button";
@@ -23,8 +23,8 @@ export function WizardUploadArea({
   const previewStyles = componentThemes.wizardUploadArea.preview;
   const [preview, setPreview] = useState<string | null>(null);
 
-  const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
       if (file) {
         onImageUpload(file);
@@ -35,11 +35,6 @@ export function WizardUploadArea({
         reader.readAsDataURL(file);
       }
     },
-    [onImageUpload],
-  );
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".heic"],
     },
@@ -66,7 +61,7 @@ export function WizardUploadArea({
               alt="Uploaded preview"
               width={400}
               height={400}
-              className="w-full h-auto object-contain max-h-[300px]"
+              className="w-full h-auto object-contain max-h-75"
             />
           </div>
           <Button

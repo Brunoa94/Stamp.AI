@@ -1,5 +1,6 @@
-import clsx from "clsx";
 import { componentThemes } from "@/theme/components";
+import { Button } from "@/features/ui/button";
+import Link from "next/link";
 
 interface Props {
   error: Error;
@@ -10,24 +11,17 @@ interface Props {
  * Shows user-friendly error message with action to return to dashboard
  */
 export const CheckoutError = ({ error }: Props) => {
-  const handleReturnToDashboard = () => {
-    window.location.href = "/stamp";
-  };
-
   return (
-    <div className={clsx(componentThemes.container.page, "py-8")}>
+    <div className={`${componentThemes.container.page} py-8`}>
       <div className="max-w-2xl mx-auto px-4">
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-          <h2 className="text-xl font-semibold text-red-800 mb-2">
+        <div className="glass-card border border-red-200 rounded-2xl p-8 text-center">
+          <h2 className="text-xl font-heading font-bold uppercase tracking-tight text-red-800 mb-2">
             Failed to Load Order
           </h2>
-          <p className="text-red-600 mb-4">{error.message}</p>
-          <button
-            onClick={handleReturnToDashboard}
-            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-          >
-            Return to Dashboard
-          </button>
+          <p className="text-slate-600 mb-6">{error.message}</p>
+          <Button variant="destructive" asChild>
+            <Link href="/stamp">Return to Dashboard</Link>
+          </Button>
         </div>
       </div>
     </div>

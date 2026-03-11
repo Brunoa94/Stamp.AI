@@ -5,32 +5,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/features/ui/button";
 import { CreateProductSelectors } from "../context/selectors";
 import { useCreateProductSubscriberActions } from "../context/actions";
-
-const MOBILE_STEPS = [
-  { id: "upload", label: "Upload", Icon: UploadCloud },
-  { id: "synthesis", label: "Synthesis", Icon: Sparkles },
-  { id: "review", label: "Review", Icon: Eye },
-  { id: "fabric", label: "Fabric", Icon: Shirt },
-  { id: "sizing", label: "Sizing", Icon: Maximize },
-] as const;
-
-/** Maps detailed internal steps to sidebar step IDs */
-function mapToSidebarStep(step: string): string {
-  const map: Record<string, string> = {
-    upload: "upload",
-    form: "upload",
-    synthesis: "synthesis",
-    generating: "synthesis",
-    review: "review",
-    results: "review",
-    fabric: "fabric",
-    customizing: "fabric",
-    creating: "fabric",
-    sizing: "sizing",
-    created: "sizing",
-  };
-  return map[step] ?? step;
-}
+import { MOBILE_STEPS } from "../constants/mobileSteps";
+import { mapToSidebarStep } from "../mappers/mapToSidebarStep";
 
 export function MobileStepNav() {
   const currentStep = CreateProductSelectors.currentStep();
