@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/features/ui/select";
 
-interface OrdersFiltersBarPropsI {
+interface OrdersFiltersBarProps {
   selectedStatus: OrderStatusFilterT;
   onStatusChange: (status: OrderStatusFilterT) => void;
   selectedTimeframe: OrderTimeframeFilterT;
@@ -24,14 +24,16 @@ export function OrdersFiltersBar({
   onStatusChange,
   selectedTimeframe,
   onTimeframeChange,
-}: OrdersFiltersBarPropsI) {
+}: OrdersFiltersBarProps) {
   return (
     <div className={ordersTheme.filters.container}>
       <div className="flex items-center gap-4">
         <label className={ordersTheme.filters.timeframeLabel}>Timeframe:</label>
         <Select
           value={selectedTimeframe}
-          onValueChange={(value) => onTimeframeChange(value as OrderTimeframeFilterT)}
+          onValueChange={(value) =>
+            onTimeframeChange(value as OrderTimeframeFilterT)
+          }
         >
           <SelectTrigger className="w-48">
             <SelectValue />

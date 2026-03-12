@@ -32,7 +32,7 @@ export function AuthenticatedUserSection() {
         className={navbarTheme.actions.themeButton}
         aria-label="Toggle theme"
       >
-        <Moon className="w-5 h-5" />
+        <Moon className="w-7 h-7" />
       </Button>
 
       <Button
@@ -42,7 +42,7 @@ export function AuthenticatedUserSection() {
         className={clsx(navbarTheme.actions.themeButton, "relative")}
         aria-label="View cart"
       >
-        <ShoppingCart className="w-5 h-5" />
+        <ShoppingCart className="w-7 h-7" />
         {itemCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-linear-to-r from-purple-600 via-pink-600 to-red-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center">
             {itemCount > 99 ? "99+" : itemCount}
@@ -60,7 +60,7 @@ export function AuthenticatedUserSection() {
         aria-label="View profile"
       >
         <div className={navbarTheme.actions.profileIcon}>
-          <User className="w-5 h-5" />
+          <User className="w-7 h-7" />
         </div>
       </Button>
 

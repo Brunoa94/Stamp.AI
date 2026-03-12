@@ -10,7 +10,7 @@ import {
   getVisibleSections,
 } from "../utils/stepHelpers";
 
-interface CreateProductActionFooterPropsI {
+interface CreateProductActionFooterProps {
   onCancel: () => void;
   onContinue: () => void;
 }
@@ -18,7 +18,7 @@ interface CreateProductActionFooterPropsI {
 export function CreateProductActionFooter({
   onCancel,
   onContinue,
-}: CreateProductActionFooterPropsI) {
+}: CreateProductActionFooterProps) {
   const currentStep = CreateProductSelectors.currentStep();
   const uploadedImage = CreateProductSelectors.uploadedImage();
   const promptValue = CreateProductSelectors.prompt();

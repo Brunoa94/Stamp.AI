@@ -7,6 +7,7 @@ import { useClearCart } from "@/queries/cartQueries";
 import { OrderT } from "@/types/order";
 import type { CreatePrintifyOrderRequest, PrintifyLineItem } from "@/types/printifyOrder";
 import { validatePrintifyLineItem } from "@/types/printifyOrder";
+import { useUser } from "@/hooks/useAuth";
 
 interface PaymentIntentI {
   id: string;
@@ -27,6 +28,8 @@ export function useCheckoutSubscriberActions() {
       "useCheckoutSubscriberActions must be used within CheckoutSubscriberProvider",
     );
 
+  const { data: user } = useUser();
+  const createOrderFromCart = useCreateOrderFromCart();
   const createPrintifyOrder = useCreatePrintifyOrder();
   const clearCart = useClearCart();
 
@@ -67,12 +70,24 @@ export function useCheckoutSubscriberActions() {
 
     /**
      * Handle successful payment processing
-     * Creates the Printify order after payment succeeds and clears the cart
+     * Creates order, order items, and Printify order after payment succeeds, then clears the cart
      */
     handlePaymentSuccess: async (paymentIntent: PaymentIntentI, lineItems: PrintifyLineItem[]) => {
       const state = store.getState();
 
-      // First, update payment status to success
+      // First, create order and order_items in database
+      if (user && state.cart) {
+        try {
+          console.log("📝 Creating order from cart after successful payment...");
+          await createOrderFromCart.mutateAsync({ user, cart: state.cart });
+          console.log("✅ Order and order items created in database");
+        } catch (error) {
+          console.error("❌ Failed to create order from cart:", error);
+          // Don't fail checkout - payment already succeeded
+        }
+      }
+
+      // Then, update payment status to success
       store.setState({
         ...state,
         isProcessingPayment: false,
@@ -80,7 +95,7 @@ export function useCheckoutSubscriberActions() {
         message: `Payment successful! Payment ID: ${paymentIntent.id}`,
       });
 
-      // Then, create the Printify order with the line items
+      // Next, create the Printify order with the line items
       if (lineItems && lineItems.length > 0 && state.shippingAddress) {
         try {
           console.log("🚀 Creating Printify order after successful payment...");
@@ -219,7 +234,5 @@ export function useCheckoutSubscriberActions() {
         testMode: value,
       });
     },
-
-    proceedToCheckout: useCreateOrderFromCart()
   };
 }

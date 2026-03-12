@@ -8,13 +8,13 @@ import { Label } from "@/features/ui/label";
 import { CreateProductSelectors } from "../../context/selectors";
 import { useCreateProductSubscriberActions } from "../../context/actions";
 
-interface FabricSelectionSectionPropsI {
+interface FabricSelectionSectionProps {
   sectionRef: RefObject<HTMLElement | null>;
 }
 
 export function FabricSelectionSection({
   sectionRef,
-}: FabricSelectionSectionPropsI) {
+}: FabricSelectionSectionProps) {
   const selectedTshirt = CreateProductSelectors.selectedTshirt();
 
   const { handleTshirtSelect: onTshirtSelect } =

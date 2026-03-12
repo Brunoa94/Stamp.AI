@@ -8,7 +8,7 @@ import clsx from "clsx";
 import { CheckoutErrorDisplay } from "../components";
 import { useEffect } from "react";
 import { FormField } from "./FormField";
-import { shippingFormConfig } from "./shippingFormConfig";
+import { shippingFormConfig } from "@/constants/shippingFormConfig";
 
 interface Props {
   initialData?: Partial<ShippingAddressT>;

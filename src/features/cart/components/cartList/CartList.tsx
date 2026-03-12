@@ -2,6 +2,7 @@
 
 import { CartItem as CartItemT } from "@/types/cart";
 import { CartItem } from "../cartItem";
+import { cartTheme } from "@/theme/components";
 
 interface Props {
   items: CartItemT[];
@@ -17,8 +18,7 @@ export function CartList({
   isUpdating = false,
 }: Props) {
   return (
-    <div className="space-y-4">
-      {/* Items List */}
+    <div className="flex flex-col gap-4">
       {items.map((item) => (
         <CartItem
           key={item.id}

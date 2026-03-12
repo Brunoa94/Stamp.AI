@@ -7,14 +7,19 @@ import {
   useUpdateCartItem,
   useRemoveCartItem,
 } from "@/queries/cartQueries";
-import { PageHeader } from "@/features/ui/page-header";
-import { CartList, EmptyCart, CartSummary } from "@/features/cart/components";
+import {
+  CartList,
+  EmptyCart,
+  CartSummary,
+  PromoCodeInput,
+} from "@/features/cart/components";
+import { CartHeader } from "@/features/cart/sections/CartHeader";
+import { CartPageLayout } from "@/features/cart/sections/CartPageLayout";
+import { CartLoadingSkeleton } from "@/features/cart/sections/CartLoadingSkeleton";
+import { CartMobileCta } from "@/features/cart/sections/CartMobileCta";
 import { cartTheme } from "@/theme/components";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { Button } from "@/features/ui/button";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import clsx from "clsx";
 
 function CartContent() {
   const router = useRouter();
@@ -41,114 +46,78 @@ function CartContent() {
   // Loading state
   if (isLoading) {
     return (
-      <div className={cartTheme.page.container}>
-        <div
-          className={clsx(
-            cartTheme.page.sideDivider,
-            cartTheme.page.sideDividerLeft
-          )}
-        />
-        <div
-          className={clsx(
-            cartTheme.page.sideDivider,
-            cartTheme.page.sideDividerRight
-          )}
-        />
-        <main className={cartTheme.page.main}>
-          <PageHeader
-            title="Shopping Cart"
-            description={`${itemCount} ${itemCount === 1 ? "item" : "items"} ready for production`}
-          />
-          <div className="flex items-center justify-center min-h-[400px]">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-          </div>
-        </main>
-      </div>
+      <CartPageLayout>
+        <CartHeader itemCount={0} />
+        <CartLoadingSkeleton />
+      </CartPageLayout>
     );
   }
 
   // Empty cart
   if (!cart || cart.cart_items.length === 0) {
     return (
-      <div className={cartTheme.page.container}>
-        <div
-          className={clsx(
-            cartTheme.page.sideDivider,
-            cartTheme.page.sideDividerLeft
-          )}
-        />
-        <div
-          className={clsx(
-            cartTheme.page.sideDivider,
-            cartTheme.page.sideDividerRight
-          )}
-        />
-        <main className={cartTheme.page.main}>
-          <PageHeader
-            title="Shopping Cart"
-            description="Your cart is empty"
-          />
-          <EmptyCart />
-        </main>
-      </div>
+      <CartPageLayout>
+        <CartHeader itemCount={0} />
+        <EmptyCart />
+      </CartPageLayout>
     );
   }
 
   // Cart with items
   return (
-    <div className={cartTheme.page.container}>
-      <div
-        className={clsx(
-          cartTheme.page.sideDivider,
-          cartTheme.page.sideDividerLeft
-        )}
-      />
-      <div
-        className={clsx(
-          cartTheme.page.sideDivider,
-          cartTheme.page.sideDividerRight
-        )}
-      />
-      <main className={cartTheme.page.main}>
-        <PageHeader
-          title="Shopping Cart"
-          description={`${itemCount} ${itemCount === 1 ? "item" : "items"} ready for production`}
+    <CartPageLayout>
+      <CartHeader itemCount={itemCount} />
+
+      {/* Mobile: Single column layout */}
+      <div className="lg:hidden">
+        <CartList
+          items={cart.cart_items}
+          onUpdateQuantity={handleUpdateQuantity}
+          onRemove={handleRemove}
+          isUpdating={updateCartItem.isPending || removeCartItem.isPending}
         />
 
-        <div className={cartTheme.actions.row}>
-          <Button
-            asChild
-            variant="outline"
-            className={cartTheme.actions.continueLink}
-          >
-            <Link href="/stamp">
-              <ArrowLeft className="w-4 h-4" />
-              Keep Designing
-            </Link>
-          </Button>
+        <PromoCodeInput />
+
+        <CartSummary
+          itemCount={itemCount}
+          subtotal={subtotal}
+          onCheckout={handleCheckout}
+        />
+
+        <Link href="/stamp" className={cartTheme.continueLink}>
+          ← Continue Browsing
+        </Link>
+      </div>
+
+      {/* Desktop: 2-column grid layout */}
+      <div className={cartTheme.page.grid}>
+        {/* Left column: Cart items */}
+        <div className={cartTheme.page.itemsColumn}>
+          <CartList
+            items={cart.cart_items}
+            onUpdateQuantity={handleUpdateQuantity}
+            onRemove={handleRemove}
+            isUpdating={updateCartItem.isPending || removeCartItem.isPending}
+          />
+
+          <Link href="/stamp" className={cartTheme.continueLink}>
+            ← Continue Browsing
+          </Link>
         </div>
 
-        <div className={cartTheme.page.grid}>
-          <div className={cartTheme.page.itemsColumn}>
-            <CartList
-              items={cart.cart_items}
-              onUpdateQuantity={handleUpdateQuantity}
-              onRemove={handleRemove}
-              isUpdating={updateCartItem.isPending || removeCartItem.isPending}
-            />
-          </div>
+        {/* Right column: Summary */}
+        <aside className={cartTheme.page.summaryColumn}>
+          <CartSummary
+            itemCount={itemCount}
+            subtotal={subtotal}
+            onCheckout={handleCheckout}
+          />
+        </aside>
+      </div>
 
-          <div className={cartTheme.page.summaryColumn}>
-            <CartSummary
-              itemCount={itemCount}
-              subtotal={subtotal}
-              onCheckout={handleCheckout}
-              isProcessing={false}
-            />
-          </div>
-        </div>
-      </main>
-    </div>
+      <CartMobileCta onCheckout={handleCheckout} />
+    </CartPageLayout>
   );
 }
 

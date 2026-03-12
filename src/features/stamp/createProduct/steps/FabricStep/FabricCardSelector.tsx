@@ -6,7 +6,7 @@ import Image from "next/image";
 import clsx from "clsx";
 import { Button } from "@/features/ui/button";
 
-interface FabricCardSelectorPropsI {
+interface FabricCardSelectorProps {
   onTshirtSelect: (tshirt: TshirtType) => void;
   selectedTshirt?: TshirtType;
 }
@@ -14,7 +14,7 @@ interface FabricCardSelectorPropsI {
 export function FabricCardSelector({
   onTshirtSelect,
   selectedTshirt,
-}: FabricCardSelectorPropsI) {
+}: FabricCardSelectorProps) {
   const { data: tshirtProducts = [], isLoading } = useTshirtProducts();
 
   if (isLoading) {

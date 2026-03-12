@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { createClient } from "@/lib/supabase/client";
 import { ShippingAddressT } from "@/schemas/checkout";
-import { mapShippingAddressToBillingDetails } from "./mappers";
+import { mapShippingAddressToBillingDetails } from "@/mappers/mapShippingAddressToBillingDetails";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 
 interface UsePaymentFormProps {

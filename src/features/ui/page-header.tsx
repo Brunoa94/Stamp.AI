@@ -10,13 +10,17 @@ interface PageHeaderProps {
 
 // Static style constants defined outside component
 const headerStyles = {
-  container: "w-full max-w-7xl mx-auto mb-12 relative z-10",
-  glassCard: "glass-card rounded-xl p-6 md:p-8",
+  container: "w-full max-w-7xl mx-auto mb-12 relative z-20",
+  glassCard:
+    "bg-white/95 backdrop-blur-none lg:glass-card rounded-xl p-6 md:p-8 border border-slate-200/80 lg:border-white/30 shadow-sm lg:shadow-md lg:bg-white/75 lg:backdrop-blur-md relative z-20",
   content: "flex flex-col gap-3",
-  title: "text-4xl md:text-6xl font-normal font-heading text-slate-900 tracking-wide",
+  title:
+    "text-4xl md:text-6xl font-normal font-heading text-slate-900 tracking-wide",
   descriptionWrapper: "flex flex-col md:flex-row md:items-center gap-4",
-  gradientBar: "h-1.5 w-24 bg-linear-to-r from-[#7C3AED] via-[#4F46E5] to-[#06B6D4] rounded-sm shadow-sm shrink-0",
-  description: "text-sm md:text-lg leading-relaxed font-light max-w-2xl font-accent italic text-purple-950",
+  gradientBar:
+    "h-1.5 w-24 bg-linear-to-r from-[#7C3AED] via-[#4F46E5] to-[#06B6D4] rounded-sm shadow-sm shrink-0",
+  description:
+    "text-sm md:text-lg leading-relaxed font-light max-w-2xl font-accent italic text-purple-950",
 };
 
 export function PageHeader({
@@ -34,28 +38,21 @@ export function PageHeader({
           "text-center": align === "center",
           "text-left": align === "left",
         },
-        className
+        className,
       )}
     >
       <div className={headerStyles.glassCard}>
         <div className={headerStyles.content}>
-          <h1 className={headerStyles.title}>
-            {title}
-          </h1>
+          <h1 className={headerStyles.title}>{title}</h1>
 
           {(description || showGradient) && (
             <div className={headerStyles.descriptionWrapper}>
               {showGradient && (
-                <div
-                  className={headerStyles.gradientBar}
-                  aria-hidden="true"
-                />
+                <div className={headerStyles.gradientBar} aria-hidden="true" />
               )}
 
               {description && (
-                <p className={headerStyles.description}>
-                  {description}
-                </p>
+                <p className={headerStyles.description}>{description}</p>
               )}
             </div>
           )}

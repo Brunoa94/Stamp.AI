@@ -377,11 +377,11 @@ import { User, LogOut, Sparkles } from "lucide-react";
 import { colors } from "@/theme";
 import { UserI } from "@/types/auth";
 
-interface PropsI {
+interface Props {
   user: UserI;
 }
 
-export function AuthenticatedUserSection({ user }: PropsI) {
+export function AuthenticatedUserSection({ user }: Props) {
   const logoutMutation = useLogout();
 
   const handleSignOut = () => {

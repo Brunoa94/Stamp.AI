@@ -1,4 +1,4 @@
-interface ProductDetailsSummaryPropsI {
+interface ProductDetailsSummaryProps {
   productTitle: string;
   priceLabel: string;
   variantTitle?: string;
@@ -8,7 +8,7 @@ export function ProductDetailsSummary({
   productTitle,
   priceLabel,
   variantTitle,
-}: ProductDetailsSummaryPropsI) {
+}: ProductDetailsSummaryProps) {
   return (
     <div className="max-w-2xl mx-auto bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-xl p-6">
       <div className="space-y-3">

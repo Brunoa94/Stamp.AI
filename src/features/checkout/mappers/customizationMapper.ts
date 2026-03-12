@@ -64,7 +64,7 @@ export function mapOrderItemToCustomization(
     print_areas: {
       front: designConfig?.generated_image_url || "",
     },
-    product_title: customProduct?.title || orderItem.product_name,
+    product_title: customProduct?.title || orderItem.product_name || "Custom Product",
     variant_title:
       matchingVariant?.title || orderItem.variant_name || "Custom Design",
     price: variantPriceInDollars,

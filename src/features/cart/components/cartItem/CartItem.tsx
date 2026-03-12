@@ -1,9 +1,10 @@
 "use client";
 
-import Image from "next/image";
-import { Button } from "@/features/ui/button";
 import { CartItem as CartItemT } from "@/types/cart";
-import { QuantitySelector } from "./QuantitySelector";
+import { CartItemImage } from "./CartItemImage";
+import { CartItemDetails } from "./CartItemDetails";
+import { CartItemDesktopControls } from "./CartItemDesktopControls";
+import { CartItemExpandableDetails } from "./CartItemExpandableDetails";
 import { cartTheme } from "@/theme/components";
 import clsx from "clsx";
 
@@ -32,66 +33,46 @@ export function CartItem({
     }
   };
 
+  const handleRemove = () => {
+    onRemove(item.id);
+  };
+
   return (
     <div
       className={clsx(
         cartTheme.item.card,
-        isUpdating && "opacity-50 pointer-events-none",
+        isUpdating && cartTheme.item.cardRemoving,
       )}
     >
-      <div className={cartTheme.item.imageWrap}>
-        {item.custom_image_url ? (
-          <Image
-            src={item.custom_image_url}
-            alt={item.product?.name || "Product"}
-            width={128}
-            height={128}
-            className={cartTheme.item.image}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400">
-            <span className="text-xs">No image</span>
-          </div>
-        )}
-      </div>
-
-      <div className={cartTheme.item.details}>
-        <h3 className={cartTheme.item.title}>
-          {item.product_name || item.product?.name || "Custom Design"}
-        </h3>
-
-        <p className={cartTheme.item.subtitle}>
-          {item.product?.name ? "Premium Cotton" : "Custom Product"}
-          {item.variant?.name ? ` • ${item.variant.name}` : ""}
-        </p>
-
-        <div className={cartTheme.item.chipsRow}>
-          <span className={cartTheme.item.chip}>QTY: {item.quantity}</span>
-          {item.variant?.name && (
-            <span className={cartTheme.item.chip}>{item.variant.name}</span>
-          )}
-        </div>
-      </div>
-
-      <div className={cartTheme.item.qtyPriceWrap}>
-        <QuantitySelector
-          quantity={item.quantity}
+      <div className={cartTheme.item.body}>
+        <CartItemImage
+          imageUrl={item.custom_image_url}
+          productName={item.product?.name}
+        />
+        <CartItemDetails
+          item={item}
+          itemTotal={itemTotal}
+          onRemove={handleRemove}
           onIncrement={handleIncrement}
           onDecrement={handleDecrement}
-          disabled={isUpdating}
+          isUpdating={isUpdating}
         />
-        <span className={cartTheme.item.price}>${itemTotal.toFixed(2)}</span>
-        <Button
-          onClick={() => onRemove(item.id)}
-          disabled={isUpdating}
-          variant="ghost"
-          size="sm"
-          className={cartTheme.item.remove}
-          aria-label="Remove item"
-        >
-          Remove
-        </Button>
       </div>
+
+      <CartItemDesktopControls
+        itemTotal={itemTotal}
+        quantity={item.quantity}
+        onIncrement={handleIncrement}
+        onDecrement={handleDecrement}
+        onRemove={handleRemove}
+        isUpdating={isUpdating}
+      />
+
+      <CartItemExpandableDetails
+        unitPrice={item.unit_price}
+        variantName={item.variant?.name}
+        productName={item.product?.name}
+      />
     </div>
   );
 }

@@ -1,9 +1,11 @@
+"use client";
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthService } from "@/services/authService";
 import type { LoginI, RegisterI, PasswordResetRequestI, UpdateProfileI } from "@/schemas/auth";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { AuthResponseI, UserI } from "@/types/api";
+import { useRouter } from "next/navigation";
 
 // Query keys
 export const authKeys = {

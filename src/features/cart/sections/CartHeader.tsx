@@ -2,11 +2,11 @@
 
 import { PageHeader } from "@/features/ui/page-header";
 
-interface CartHeaderPropsI {
+interface CartHeaderProps {
   itemCount: number;
 }
 
-export function CartHeader({ itemCount }: CartHeaderPropsI) {
+export function CartHeader({ itemCount }: CartHeaderProps) {
   return (
     <PageHeader
       title="Shopping Cart"

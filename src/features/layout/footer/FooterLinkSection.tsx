@@ -7,12 +7,12 @@ interface FooterLink {
   label: string;
 }
 
-interface FooterLinkSectionPropsI {
+interface FooterLinkSectionProps {
   title: string;
   links: FooterLink[];
 }
 
-export function FooterLinkSection({ title, links }: FooterLinkSectionPropsI) {
+export function FooterLinkSection({ title, links }: FooterLinkSectionProps) {
   return (
     <div>
       <h3 className={footerTheme.sectionTitle}>{title}</h3>

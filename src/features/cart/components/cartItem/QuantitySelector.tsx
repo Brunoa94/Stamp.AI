@@ -25,27 +25,27 @@ export function QuantitySelector({
   return (
     <div className={cartTheme.item.qtyControl}>
       <Button
+        variant="ghost"
+        size="icon-sm"
         onClick={onDecrement}
         disabled={disabled || !canDecrement}
-        variant="outline"
-        size="icon-sm"
-        className={cartTheme.item.quantityButton}
+        className={cartTheme.item.qtyButton}
         aria-label="Decrease quantity"
       >
-        <Minus className="w-4 h-4" />
+        <Minus className="w-3 h-3" aria-hidden="true" />
       </Button>
 
       <span className={cartTheme.item.qtyValue}>{quantity}</span>
 
       <Button
+        variant="ghost"
+        size="icon-sm"
         onClick={onIncrement}
         disabled={disabled || !canIncrement}
-        variant="outline"
-        size="icon-sm"
-        className={cartTheme.item.quantityButton}
+        className={cartTheme.item.qtyButton}
         aria-label="Increase quantity"
       >
-        <Plus className="w-4 h-4" />
+        <Plus className="w-3 h-3" aria-hidden="true" />
       </Button>
     </div>
   );
