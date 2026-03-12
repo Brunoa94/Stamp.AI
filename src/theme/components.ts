@@ -464,6 +464,19 @@ export const componentThemes = {
       emptyText: `text-sm text-slate-500 italic`,
     },
   },
+
+  // Product confirmation styles
+  productConfirmation: {
+    section: `space-y-4 sm:space-y-8 animate-[slideInUp_1s_ease-out]`,
+    imageContainer: `max-w-lg sm:max-w-2xl mx-auto`,
+    imageWrapper: `bg-linear-to-br from-gray-50/50 via-slate-50/50 to-gray-100/50 dark:from-gray-800/80 dark:via-slate-800/30 dark:to-gray-800/30 backdrop-blur-sm border border-gray-200 dark:border-gray-800/30 rounded-2xl overflow-hidden shadow-2xl shadow-slate-500/20 dark:shadow-slate-500/10`,
+    image: `w-full h-auto object-contain max-h-[300px] sm:max-h-none`,
+    buttonsContainer: `max-w-4xl mx-auto`,
+    buttonsGrid: `grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6`,
+    button: `w-full h-12 sm:h-14 text-base sm:text-lg font-semibold`,
+    checkoutButton: `w-full h-12 sm:h-14 text-base sm:text-lg font-semibold shadow-xl shadow-purple-500/40 hover:-translate-y-0.5 hover:shadow-2xl transition-all duration-300`,
+    icon: `w-5 h-5`,
+  },
 } as const;
 
 // Individual theme exports for better tree-shaking
@@ -482,6 +495,7 @@ export const dashboardTheme = componentThemes.dashboard;
 export const ordersTheme = componentThemes.orders;
 export const checkoutTheme = componentThemes.checkout;
 export const profileTheme = componentThemes.profile;
+export const productConfirmationTheme = componentThemes.productConfirmation;
 
 // Utility functions
 export const getButtonVariant = (variant: keyof typeof componentThemes.button) =>

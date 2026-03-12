@@ -66,8 +66,7 @@ export function WizardUploadArea({
               alt="Uploaded preview"
               width={400}
               height={400}
-              className="w-full h-auto object-contain"
-              style={{ maxHeight: "400px" }}
+              className="w-full h-auto object-contain max-h-[300px]"
             />
           </div>
           <Button
@@ -102,25 +101,30 @@ export function WizardUploadArea({
 
       {/* Icon */}
       <div
-        className={clsx(uploadAreaStyles.iconContainer, colors.purpleText)}
+        className={clsx(
+          "w-16 h-16 sm:w-28 sm:h-28 bg-white rounded-lg flex items-center justify-center mb-4 sm:mb-8 transition-soft group-hover:scale-110 group-hover:-rotate-3",
+          colors.purpleText,
+        )}
         style={{ boxShadow: shadows.float }}
       >
-        <ImagePlus className="text-5xl w-12 h-12" />
+        <ImagePlus className="w-8 h-8 sm:w-12 sm:h-12" />
       </div>
 
       {/* Text */}
-      <h3 className={uploadAreaStyles.heading}>Select Image to Upload</h3>
-      <p className={uploadAreaStyles.subtitle}>
+      <h3 className="text-2xl sm:text-4xl font-normal font-heading text-slate-900 mb-2 tracking-wide">
+        Select Image to Upload
+      </h3>
+      <p className="text-slate-500 mb-5 sm:mb-10 text-sm sm:text-lg font-accent italic">
         Or drag and drop your file here
       </p>
 
       {/* Buttons */}
-      <div className="flex gap-5">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 w-full sm:w-auto">
         <Button
           type="button"
           variant="outline"
           size="lg"
-          className="px-10 py-4 bg-white border border-slate-200 text-slate-700 font-normal font-heading text-xl tracking-widest rounded-sm shadow-sm hover:border-purple-600 hover:text-purple-600 transition-soft"
+          className="w-full sm:w-auto px-8 sm:px-10 py-4 bg-white border border-slate-200 text-slate-700 font-normal font-heading text-lg sm:text-xl tracking-widest rounded-sm shadow-sm hover:border-purple-600 hover:text-purple-600 transition-soft"
         >
           Choose File
         </Button>
@@ -128,7 +132,7 @@ export function WizardUploadArea({
           type="button"
           variant="ghost"
           size="icon-lg"
-          className="text-slate-400 hover:text-purple-600 transition-soft"
+          className="hidden sm:flex text-slate-400 hover:text-purple-600 transition-soft"
           aria-label="Upload from Instagram"
         >
           <Instagram className="text-3xl w-8 h-8" />
