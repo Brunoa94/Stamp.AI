@@ -1,37 +1,24 @@
-"use client";
-
+import { Button } from "@/features/ui/button";
 import { ordersTheme } from "@/theme/components";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/features/ui/button";
+import { OrdersPaginationViewProps } from "./types";
 
-interface OrdersPaginationProps {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-  startIndex: number;
-  endIndex: number;
-  totalItems: number;
-}
-
-export function OrdersPagination({
+export function OrdersPaginationDesktop({
   currentPage,
   totalPages,
   onPageChange,
   startIndex,
   endIndex,
   totalItems,
-}: OrdersPaginationProps) {
-  const visiblePages = Array.from(
-    { length: Math.min(3, totalPages) },
-    (_, i) => i + 1,
-  );
-
+  visiblePages,
+}: OrdersPaginationViewProps) {
   return (
-    <div className={ordersTheme.pagination.container}>
+    <div className={`${ordersTheme.pagination.container} hidden md:flex`}>
       <div className={ordersTheme.pagination.info}>
         Showing {startIndex + 1}-{Math.min(endIndex, totalItems)} of{" "}
         {totalItems} orders
       </div>
+
       <div className={ordersTheme.pagination.controls}>
         <Button
           onClick={() => onPageChange(currentPage - 1)}
@@ -43,6 +30,7 @@ export function OrdersPagination({
         >
           <ChevronLeft className="w-4 h-4" />
         </Button>
+
         {visiblePages.map((page) => (
           <Button
             key={page}
@@ -58,6 +46,7 @@ export function OrdersPagination({
             {page}
           </Button>
         ))}
+
         <Button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
