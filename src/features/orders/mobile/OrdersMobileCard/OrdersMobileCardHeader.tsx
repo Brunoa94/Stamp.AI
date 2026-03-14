@@ -1,7 +1,7 @@
 import { ordersTheme } from "@/theme/components";
-import { OrderWithItemsT } from "@/types/order";
-import { formatOrderDate, formatOrderId } from "../utils/orderFormatters";
-import { getStatusBadgeClass } from "../utils/statusBadge";
+import type { OrderWithItemsT } from "@/types/order";
+import { formatOrderDate, formatOrderId } from "../../utils/orderFormatters";
+import { getStatusBadgeClass } from "../../utils/statusBadge";
 
 interface OrdersMobileCardHeaderProps {
   order: OrderWithItemsT;

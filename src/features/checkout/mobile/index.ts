@@ -7,4 +7,3 @@ export { CheckoutMobileShippingMethodStep } from "./CheckoutMobileShippingMethod
 export { CheckoutMobileBillingStep } from "./CheckoutMobileBillingStep";
 export { CheckoutMobilePaymentStep } from "./CheckoutMobilePaymentStep";
 export { CheckoutMobileFooter } from "./CheckoutMobileFooter";
-export type { StepState, AccordionStepDef } from "./types";

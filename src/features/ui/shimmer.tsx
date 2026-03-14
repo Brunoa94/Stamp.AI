@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
 import type { CSSProperties } from "react";
+import { cn } from "@/lib/utils";
 
 interface ShimmerProps {
   className?: string;

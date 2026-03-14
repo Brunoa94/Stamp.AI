@@ -1,4 +1,4 @@
-import { Shimmer } from "@/features/common/Shimmer";
+import { Shimmer } from "@/features/ui/shimmer";
 
 export function SizeTileSelectorSkeleton() {
   return (

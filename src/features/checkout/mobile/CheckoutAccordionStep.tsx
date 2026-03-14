@@ -5,7 +5,9 @@ import { ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { checkoutTheme } from "@/theme";
 import { Button } from "@/features/ui/button";
-import type { StepState } from "./types";
+import type { StepStateT } from "@/hooks/useMultiStepWizard";
+
+type StepState = StepStateT;
 
 interface CheckoutAccordionStepProps {
   stepNumber: string;
@@ -36,7 +38,12 @@ export function CheckoutAccordionStep({
       )}
     >
       {/* Step header – clickable */}
-      <Button type="button" variant="ghost" onClick={onToggle} className={m.stepHeader.wrapper}>
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={onToggle}
+        className={m.stepHeader.wrapper}
+      >
         {/* Circle */}
         {state === "complete" ? (
           <div className={m.stepHeader.circleComplete}>

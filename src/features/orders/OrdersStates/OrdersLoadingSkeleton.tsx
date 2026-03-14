@@ -1,6 +1,4 @@
-const Shimmer = ({ className }: { className?: string }) => (
-  <div className={`animate-pulse bg-gray-200 rounded ${className}`} />
-);
+import { Shimmer } from "@/features/ui/shimmer";
 
 export function OrdersLoadingSkeleton() {
   return (

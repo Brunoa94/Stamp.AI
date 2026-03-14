@@ -1,7 +1,7 @@
 import { ordersTheme } from "@/theme/components";
-import { OrderWithItemsT } from "@/types/order";
-import { OrderItemsPreview } from "../OrderItemsPreview";
-import { formatDeliveryInfo, formatPrice } from "../utils/orderFormatters";
+import type { OrderWithItemsT } from "@/types/order";
+import { formatDeliveryInfo, formatPrice } from "../../utils/orderFormatters";
+import { OrderItemsPreview } from "../../OrderItemsPreview";
 
 interface OrdersMobileCardSummaryProps {
   order: OrderWithItemsT;
