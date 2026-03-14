@@ -35,7 +35,7 @@ export function MobileNavbarHeader({
       >
         <Link href="/stamp" aria-label="Create a new stamp design">
           <Wand2 className="w-3.5 h-3.5" />
-          <span>Stamp It!</span>
+          <span className="text-lg">Stamp It!</span>
         </Link>
       </Button>
       <div className="flex items-center">

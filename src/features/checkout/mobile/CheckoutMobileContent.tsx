@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { checkoutTheme } from "@/theme";
 import { useMultiStepWizard } from "@/hooks/useMultiStepWizard";
 import { CheckoutMobileProgressBar } from "./CheckoutMobileProgressBar";
@@ -12,9 +11,9 @@ import { CheckoutMobileBillingStep } from "./CheckoutMobileBillingStep";
 import { CheckoutMobilePaymentStep } from "./CheckoutMobilePaymentStep";
 import { CheckoutMobileFooter } from "./CheckoutMobileFooter";
 import { STEPS, TOTAL_STEPS } from "./const/mobile-steps";
+import { MobilePageHeader } from "@/features/ui/mobile-page-header";
 
 export function CheckoutMobileContent() {
-  const router = useRouter();
   const m = checkoutTheme.mobile;
 
   const {
@@ -27,11 +26,15 @@ export function CheckoutMobileContent() {
 
   return (
     <div className={m.layout}>
-      {/* Sticky progress header */}
+      <MobilePageHeader
+        title="Checkout"
+        description="Complete your custom order."
+      />
+
+      {/* Progress header */}
       <CheckoutMobileProgressBar
         currentStep={progressStep}
         totalSteps={TOTAL_STEPS}
-        onBack={() => router.back()}
       />
 
       {/* Scrollable body */}

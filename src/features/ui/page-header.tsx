@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { MobilePageHeader } from "./mobile-page-header";
 
 interface PageHeaderProps {
   title: string;
@@ -31,33 +32,43 @@ export function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <header
-      className={cn(
-        headerStyles.container,
-        {
-          "text-center": align === "center",
-          "text-left": align === "left",
-        },
-        className,
-      )}
-    >
-      <div className={headerStyles.glassCard}>
-        <div className={headerStyles.content}>
-          <h1 className={headerStyles.title}>{title}</h1>
+    <>
+      {/* Mobile header */}
+      <MobilePageHeader title={title} description={description} />
 
-          {(description || showGradient) && (
-            <div className={headerStyles.descriptionWrapper}>
-              {showGradient && (
-                <div className={headerStyles.gradientBar} aria-hidden="true" />
-              )}
+      {/* Desktop header */}
+      <header
+        className={cn(
+          headerStyles.container,
+          "hidden md:block",
+          {
+            "text-center": align === "center",
+            "text-left": align === "left",
+          },
+          className,
+        )}
+      >
+        <div className={headerStyles.glassCard}>
+          <div className={headerStyles.content}>
+            <h1 className={headerStyles.title}>{title}</h1>
 
-              {description && (
-                <p className={headerStyles.description}>{description}</p>
-              )}
-            </div>
-          )}
+            {(description || showGradient) && (
+              <div className={headerStyles.descriptionWrapper}>
+                {showGradient && (
+                  <div
+                    className={headerStyles.gradientBar}
+                    aria-hidden="true"
+                  />
+                )}
+
+                {description && (
+                  <p className={headerStyles.description}>{description}</p>
+                )}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+    </>
   );
 }

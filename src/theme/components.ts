@@ -144,7 +144,7 @@ export const componentThemes = {
 
     mobileHeader: {
       row: `h-16 px-4 flex items-center gap-3 max-w-screen`,
-      stampCta: `h-9 flex items-center justify-center gap-1.5 text-[10px]`,
+      stampCta: `h-9 flex items-center justify-center gap-1.5 text-lg sm:mx-4`,
       cartButton: `relative w-11 h-11 flex items-center justify-center text-slate-700 dark:text-slate-300`,
       badge: `absolute -top-0.5 -right-0.5 bg-linear-to-r from-purple-600 via-pink-600 to-red-600 text-white text-[10px] font-bold rounded-full min-w-4.25 h-4.25 px-0.5 flex items-center justify-center`,
       menuButton: `w-11 h-11 rounded-lg active:scale-95 transition-transform shrink-0`,
@@ -170,7 +170,7 @@ export const componentThemes = {
   dashboard: {
     page: {
       wrapper: `min-h-screen flex flex-col relative`,
-      container: `flex-grow w-full max-w-[1440px] mx-auto px-6 md:px-16 xl:px-24 relative z-1 p-8`,
+      container: `flex-grow w-full max-w-[1440px] mx-auto xl:px-24 relative z-1`,
       grid: `grid grid-cols-1 lg:grid-cols-12 gap-8`,
       leftColumn: `lg:col-span-4 flex flex-col gap-8`,
       rightColumn: `lg:col-span-8 flex flex-col gap-8`,
@@ -266,7 +266,7 @@ export const componentThemes = {
       // Mobile: flex column with overflow, Desktop: normal min-h-screen
       container: `min-h-screen w-full flex flex-col lg:block relative overflow-hidden lg:overflow-visible`,
       // Mobile: scrollable with fixed CTA space, Desktop: normal flow
-      main: `flex-1 overflow-y-auto lg:overflow-visible px-6 md:px-12 lg:px-16 xl:px-24 pt-28 lg:pt-12 pb-[160px] lg:pb-12 max-w-[1440px] mx-auto w-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:[scrollbar-width:auto] lg:[&::-webkit-scrollbar]:block`,
+      main: `flex-1 overflow-y-auto lg:overflow-visible lg:px-16 xl:px-24 lg:pt-12 pb-[160px] lg:pb-12 max-w-[1440px] mx-auto w-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:[scrollbar-width:auto] lg:[&::-webkit-scrollbar]:block`,
       // Desktop: 2-column grid
       grid: `hidden lg:grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8`,
       itemsColumn: `lg:col-span-8 flex flex-col gap-4`,
@@ -486,21 +486,22 @@ export const componentThemes = {
       },
     },
     mobile: {
-      layout: "flex flex-col min-h-screen relative overflow-hidden",
+      layout: "flex flex-col min-h-screen relative overflow-hidden px-4",
       header: {
         wrapper: "shrink-0 pt-12 px-5 pb-4 bg-white/20 backdrop-blur-sm",
         inner: "flex items-center justify-between mb-4",
         backButton:
           "glass-card w-10 h-10 rounded-full flex items-center justify-center shadow-sm",
         logo: "text-xl font-heading tracking-[0.15em] text-slate-900",
-        progressWrapper: "w-full",
+        progressWrapper:
+          "sticky top-16 z-40 w-full bg-white/70 backdrop-blur-md rounded-lg px-2 py-2",
         progressLabel:
           "flex justify-between text-xs font-heading tracking-widest text-slate-400 uppercase mb-1.5",
         progressBar: "h-[3px] bg-black/5 w-full rounded-full overflow-hidden",
         progressFill:
           "h-full bg-[#7C3AED] transition-[width] duration-500 ease-in-out",
       },
-      body: "flex-1 overflow-y-auto px-5 py-4 space-y-3 pb-32",
+      body: "flex-1 overflow-y-auto py-4 space-y-3 pb-32",
       summaryAccordion: {
         container: "glass-card rounded-2xl overflow-hidden",
         header: "w-full flex items-center justify-between px-5 py-4 h-auto",
@@ -596,6 +597,18 @@ export const componentThemes = {
     checkoutButton: `w-full h-12 sm:h-14 text-base sm:text-lg font-semibold shadow-xl shadow-purple-500/40 hover:-translate-y-0.5 hover:shadow-2xl transition-all duration-300`,
     icon: `w-5 h-5`,
   },
+
+  // Mobile page header (back button + title + description)
+  mobilePageHeader: {
+    root: `md:hidden mb-6 bg-white/75 backdrop-blur-md border border-white/30 shadow-md rounded-xl`,
+    inner: `mt-6 px-6 pb-6 flex flex-col gap-3`,
+    row: `flex items-center gap-4`,
+    backButton: `flex items-center justify-center w-10 h-10 rounded-lg bg-slate-200 text-slate-600 hover:bg-slate-300 transition-colors shrink-0 bg-transparent`,
+    title: `text-4xl font-normal font-heading text-slate-900 tracking-wide`,
+    descriptionRow: `flex items-center gap-4`,
+    gradientBar: `h-1.5 w-24 bg-linear-to-r from-[#7C3AED] via-[#4F46E5] to-[#06B6D4] rounded-sm shadow-sm shrink-0`,
+    description: `text-md leading-relaxed max-w-2xl font-accent text-purple-950`,
+  },
 } as const;
 
 // Individual theme exports for better tree-shaking
@@ -609,6 +622,7 @@ export const statusTheme = componentThemes.status;
 export const loadingTheme = componentThemes.loading;
 export const navbarTheme = componentThemes.navbar;
 export const footerTheme = componentThemes.footer;
+export const mobilePageHeaderTheme = componentThemes.mobilePageHeader;
 export const cartTheme = componentThemes.cart;
 export const dashboardTheme = componentThemes.dashboard;
 export const ordersTheme = componentThemes.orders;
