@@ -456,6 +456,64 @@ export const componentThemes = {
         addressLine: "text-sm text-gray-600",
       },
     },
+    mobile: {
+      layout: "flex flex-col min-h-screen relative overflow-hidden",
+      header: {
+        wrapper: "shrink-0 pt-12 px-5 pb-4 z-50 bg-white/20 backdrop-blur-sm",
+        inner: "flex items-center justify-between mb-4",
+        backButton:
+          "glass-card w-10 h-10 rounded-full flex items-center justify-center shadow-sm",
+        logo: "text-xl font-heading tracking-[0.15em] text-slate-900",
+        progressWrapper: "w-full",
+        progressLabel:
+          "flex justify-between text-xs font-heading tracking-widest text-slate-400 uppercase mb-1.5",
+        progressBar: "h-[3px] bg-black/5 w-full rounded-full overflow-hidden",
+        progressFill:
+          "h-full bg-[#7C3AED] transition-[width] duration-500 ease-in-out",
+      },
+      body: "flex-1 overflow-y-auto px-5 py-4 space-y-3 pb-32",
+      summaryAccordion: {
+        container: "glass-card rounded-2xl overflow-hidden",
+        header: "w-full flex items-center justify-between px-5 py-4 h-auto",
+        title: "text-sm font-heading tracking-[0.15em] text-slate-500 uppercase",
+        total: "text-lg font-heading text-slate-900",
+        chevron: "w-4 h-4 text-slate-400 transition-transform duration-300",
+        body: "px-5 pb-4 border-t border-slate-100",
+      },
+      stepCard: {
+        base: "glass-card rounded-2xl overflow-hidden transition-all duration-300 border",
+        active: "border-[#7C3AED] shadow-[0_0_0_1px_#7C3AED]",
+        complete: "border-emerald-400",
+        incomplete: "border-slate-200",
+      },
+      stepHeader: {
+        wrapper: "w-full flex items-center justify-start gap-3 px-5 py-4 h-auto",
+        circleActive:
+          "w-8 h-8 shrink-0 rounded-full border-2 border-[#7C3AED] flex items-center justify-center text-xs font-heading text-[#7C3AED]",
+        circleComplete:
+          "w-8 h-8 shrink-0 rounded-full border-2 border-emerald-500 bg-emerald-50 flex items-center justify-center",
+        circleIncomplete:
+          "w-8 h-8 shrink-0 rounded-full border-2 border-slate-200 flex items-center justify-center text-xs font-heading text-slate-400",
+        info: "flex flex-col flex-1 text-left",
+        title: "text-base font-heading tracking-[0.1em] text-slate-900",
+        statusActive:
+          "text-[11px] font-heading text-[#7C3AED] tracking-widest uppercase",
+        statusComplete:
+          "text-[11px] font-heading text-emerald-500 tracking-widest uppercase",
+        statusIncomplete:
+          "text-[11px] font-heading text-slate-400 tracking-widest uppercase",
+        chevron: "w-4 h-4 text-slate-400 transition-transform duration-300",
+      },
+      stepContent: "px-5 pb-5 pt-1",
+      stepCta:
+        "w-full mt-5 h-12 rounded-xl font-heading tracking-[0.15em] text-base bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] text-white",
+      footer: {
+        wrapper:
+          "fixed bottom-0 left-0 right-0 px-5 pb-10 pt-4 bg-white/80 backdrop-blur-2xl border-t border-slate-100 z-50",
+        button:
+          "w-full h-14 rounded-2xl font-heading tracking-[0.2em] text-base bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] text-white shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2",
+      },
+    },
   },
 
   // Profile page styles

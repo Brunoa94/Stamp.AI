@@ -1,6 +1,6 @@
 import { OrderWithItemsT } from "@/types/order";
 import { OrdersTableDesktop } from "./OrdersTableDesktop";
-import { OrdersTableMobile } from "./OrdersTableMobile";
+import { OrdersTableMobile } from "../mobile/OrdersTableMobile";
 
 interface OrdersTableProps {
   orders: OrderWithItemsT[];

@@ -1,7 +1,7 @@
 import { WizardProductForm } from "../WizardProductForm";
 import { CreateProductSubscriberProvider } from "../context/CreateProductContextSubscriber";
 import { CreateProductSidebar } from "./CreateProductSidebar";
-import { MobileStepNav } from "./MobileStepNav";
+import { MobileStepNav } from "../mobile/MobileStepNav";
 import { FluidInkDriftBackground } from "@/features/ui/fluid-ink-drift-background";
 
 export function CreateProductWizard() {

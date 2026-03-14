@@ -1,7 +1,7 @@
 "use client";
 
 import { OrdersPaginationDesktop } from "./OrdersPaginationDesktop";
-import { OrdersPaginationMobile } from "./OrdersPaginationMobile";
+import { OrdersPaginationMobile } from "../../mobile/OrdersPaginationMobile";
 import { OrdersPaginationProps } from "./types";
 
 export function OrdersPagination(props: OrdersPaginationProps) {

@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/features/ui/select";
-import { OrdersFiltersBarProps } from "./types";
+import { OrdersFiltersBarProps } from "../OrdersFiltersBar/types";
 
 export function OrdersFiltersMobile({
   selectedStatus,

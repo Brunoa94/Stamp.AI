@@ -1,7 +1,7 @@
 "use client";
 
 import { OrderWithItemsT } from "@/types/order";
-import { OrdersMobileCard } from "../OrdersMobileCard/OrdersMobileCard";
+import { OrdersMobileCard } from "./OrdersMobileCard/OrdersMobileCard";
 
 interface OrdersTableMobileProps {
   orders: OrderWithItemsT[];

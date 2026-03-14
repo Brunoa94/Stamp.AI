@@ -1,7 +1,7 @@
 import { Button } from "@/features/ui/button";
 import { ordersTheme } from "@/theme/components";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { OrdersPaginationViewProps } from "./types";
+import { OrdersPaginationViewProps } from "../OrdersTable/OrdersPagination/types";
 
 export function OrdersPaginationMobile({
   currentPage,

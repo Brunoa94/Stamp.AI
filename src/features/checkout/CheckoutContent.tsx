@@ -14,6 +14,7 @@ import { CheckoutHeaderSection } from "./sections/CheckoutHeaderSection";
 import { ShippingSection } from "./sections/ShippingSection";
 import { PaymentSection } from "./sections/PaymentSection";
 import { OrderSummarySection } from "./sections/OrderSummarySection";
+import { CheckoutMobileContent } from "./mobile";
 import { checkoutTheme } from "@/theme";
 
 export function CheckoutContent() {
@@ -47,31 +48,37 @@ export function CheckoutContent() {
     return <PaymentError message={message} onTryAgain={handleTryAgain} />;
   }
 
-  // Main checkout form
+  // Background decoration (fixed, shared by both layouts)
   return (
-    <div className={checkoutTheme.page.container}>
-      {/* Background decoration */}
+    <>
       <FluidInkDriftBackground />
-
-      {/* Side dividers */}
       <PageDividers />
 
-      <main className={checkoutTheme.page.mainContent}>
-        <CheckoutHeaderSection />
+      {/* ── Mobile layout (below md) ── */}
+      <div className="md:hidden">
+        <CheckoutMobileContent />
+      </div>
 
-        <div className={checkoutTheme.page.grid}>
-          {/* Left Column: Forms */}
-          <section className={checkoutTheme.page.formsColumn}>
-            <ShippingSection />
-            <PaymentSection />
-          </section>
+      {/* ── Desktop layout (md and above) ── */}
+      <div className={`hidden md:block ${checkoutTheme.page.container}`}>
+        <main className={checkoutTheme.page.mainContent}>
+          <CheckoutHeaderSection />
 
-          {/* Right Column: Order Summary */}
-          <aside className={checkoutTheme.page.summaryColumn}>
-            <OrderSummarySection />
-          </aside>
-        </div>
-      </main>
-    </div>
+          <div className={checkoutTheme.page.grid}>
+            {/* Left Column: Forms */}
+            <section className={checkoutTheme.page.formsColumn}>
+              <ShippingSection />
+              <PaymentSection />
+            </section>
+
+            {/* Right Column: Order Summary */}
+            <aside className={checkoutTheme.page.summaryColumn}>
+              <OrderSummarySection />
+            </aside>
+          </div>
+        </main>
+      </div>
+    </>
   );
 }
+
