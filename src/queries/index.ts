@@ -52,3 +52,9 @@ export {
 export {
   useImageGeneration,
 } from "./imageGenerationQueries";
+
+// Coins queries
+export {
+  coinsKeys,
+  useCoins,
+} from "./coinsQueries";

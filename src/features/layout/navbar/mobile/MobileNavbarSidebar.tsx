@@ -12,6 +12,7 @@ import { MobileNavbarSidebarProfile } from "./MobileNavbarSidebarProfile";
 import { MobileNavbarSidebarThemeToggle } from "./MobileNavbarSidebarThemeToggle";
 import { MobileNavbarSidebarNavigation } from "./MobileNavbarSidebarNavigation";
 import { MobileNavbarSidebarSignOut } from "./MobileNavbarSidebarSignOut";
+import { CoinsBadge } from "../CoinsBadge";
 
 interface Props {
   isOpen: boolean;
@@ -76,6 +77,8 @@ export function MobileNavbarSidebar({ isOpen, onClose }: Props) {
             user={user}
             onOpenProfile={() => handleNav("/profile")}
           />
+
+          <CoinsBadge className="mb-3" />
 
           <MobileNavbarSidebarThemeToggle
             isDark={isDark}
