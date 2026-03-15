@@ -78,7 +78,9 @@ export default function RootLayout({
               <header className="sticky top-0 z-50">
                 <Navbar />
               </header>
-              <main className="pt-10 min-h-screen">{children}</main>
+              <main className="w-full max-w-360 mx-auto px-6 md:px-16 xl:px-24 pt-8 lg:pt-10 min-h-screen">
+                {children}
+              </main>
               <Footer />
               <Toaster />
             </QueryProvider>

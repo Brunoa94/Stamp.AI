@@ -110,7 +110,13 @@ export const componentThemes = {
     container: `sticky top-0 z-50`,
     inner: `max-w-[1440px] mx-auto px-6`,
     content: `flex justify-between h-20 items-center`,
-    
+
+    desktop: {
+      base: `hidden md:block sticky top-0 z-50 w-full transition-[background-color,backdrop-filter,border-color,box-shadow,transform] duration-500 ease-out`,
+      scrolled: `bg-white/70 dark:bg-gray-900/70 backdrop-blur-md border-b border-white/30 dark:border-gray-700/30 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)]`,
+      transparent: `bg-transparent`,
+    },
+
     brand: {
       link: `flex items-center gap-3 group cursor-pointer`,
       text: `text-2xl font-heading tracking-widest uppercase`,
@@ -124,7 +130,7 @@ export const componentThemes = {
         active: `text-slate-900 bg-slate-50`,
         inactive: `text-slate-500 hover:text-slate-900 hover:bg-slate-50`,
       },
-      stampButton: `px-6 py-2.5 text-base font-heading tracking-widest text-white bg-[#7C3AED] rounded shadow-[0_4px_14px_rgba(124,58,237,0.3)] transition-soft hover:bg-[#6D28D9] hover:shadow-[0_6px_20px_rgba(124,58,237,0.4)] hover:-translate-y-0.5`,
+      stampButton: `w-full px-6 py-2.5 text-base font-heading tracking-widest text-white bg-[#7C3AED] rounded shadow-[0_4px_14px_rgba(124,58,237,0.3)] transition-soft hover:bg-[#6D28D9] hover:shadow-[0_6px_20px_rgba(124,58,237,0.4)] hover:-translate-y-0.5 flex-1`,
     },
 
     actions: {
@@ -135,13 +141,36 @@ export const componentThemes = {
       profileIcon: `w-10 h-10 rounded-md bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-[#F3ECFF] group-hover:text-[#7C3AED] transition-soft`,
       signOutButton: `ml-2 px-5 py-2 text-base font-heading tracking-widest text-white bg-[#FF4444] rounded transition-soft hover:bg-[#E03333] hover:shadow-[0_4px_14px_rgba(255,68,68,0.3)] hover:-translate-y-0.5`,
     },
+
+    mobileHeader: {
+      row: `h-16 px-4 flex items-center gap-3 max-w-screen`,
+      stampCta: `h-9 flex items-center justify-center gap-1.5 text-lg sm:mx-4`,
+      cartButton: `relative w-11 h-11 flex items-center justify-center text-slate-700 dark:text-slate-300`,
+      badge: `absolute -top-0.5 -right-0.5 bg-linear-to-r from-purple-600 via-pink-600 to-red-600 text-white text-[10px] font-bold rounded-full min-w-4.25 h-4.25 px-0.5 flex items-center justify-center`,
+      menuButton: `w-11 h-11 rounded-lg active:scale-95 transition-transform shrink-0`,
+    },
+
+    mobileSidebar: {
+      root: `fixed inset-0 z-[100]`,
+      backdrop: `absolute inset-0 bg-slate-900/40 backdrop-blur-sm`,
+      panel: `absolute right-0 top-0 bottom-0 w-[85%] max-w-sm bg-white dark:bg-gray-900 shadow-2xl flex flex-col animate-[slideInRight_0.3s_cubic-bezier(0.4,0,0.2,1)]`,
+      panelHeader: `flex justify-between items-center p-6 border-b border-slate-100 dark:border-gray-800`,
+      closeButton: `w-10 h-10 rounded-full text-slate-400 bg-slate-50 dark:bg-gray-800 hover:bg-slate-100`,
+      nav: `flex-1 overflow-y-auto px-6 py-8 space-y-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`,
+      footer: `p-6 border-t border-slate-100 dark:border-gray-800`,
+      themeToggle: {
+        button: `w-full flex items-center justify-between py-4 px-4 text-slate-600 dark:text-slate-300 active:bg-slate-50 rounded-xl transition-colors`,
+        switchTrack: `w-10 h-5 rounded-full relative transition-colors duration-300`,
+        switchThumb: `absolute top-1 w-3 h-3 bg-white rounded-full shadow-sm transition-all duration-300`,
+      },
+    },
   },
 
   // Dashboard styles
   dashboard: {
     page: {
       wrapper: `min-h-screen flex flex-col relative`,
-      container: `flex-grow w-full max-w-[1440px] mx-auto px-6 md:px-16 xl:px-24 relative z-1 p-8`,
+      container: `flex-grow w-full max-w-[1440px] mx-auto xl:px-24 relative z-1`,
       grid: `grid grid-cols-1 lg:grid-cols-12 gap-8`,
       leftColumn: `lg:col-span-4 flex flex-col gap-8`,
       rightColumn: `lg:col-span-8 flex flex-col gap-8`,
@@ -237,7 +266,7 @@ export const componentThemes = {
       // Mobile: flex column with overflow, Desktop: normal min-h-screen
       container: `min-h-screen w-full flex flex-col lg:block relative overflow-hidden lg:overflow-visible`,
       // Mobile: scrollable with fixed CTA space, Desktop: normal flow
-      main: `flex-1 overflow-y-auto lg:overflow-visible px-6 md:px-12 lg:px-16 xl:px-24 pt-28 lg:pt-12 pb-[160px] lg:pb-12 max-w-[1440px] mx-auto w-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:[scrollbar-width:auto] lg:[&::-webkit-scrollbar]:block`,
+      main: `flex-1 overflow-y-auto lg:overflow-visible lg:px-16 xl:px-24 lg:pt-12 pb-[160px] lg:pb-12 max-w-[1440px] mx-auto w-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:[scrollbar-width:auto] lg:[&::-webkit-scrollbar]:block`,
       // Desktop: 2-column grid
       grid: `hidden lg:grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8`,
       itemsColumn: `lg:col-span-8 flex flex-col gap-4`,
@@ -387,6 +416,38 @@ export const componentThemes = {
       pageButton: `w-8 h-8 flex items-center justify-center rounded border border-slate-200 text-xs text-slate-600 hover:border-[#7C3AED] transition-all`,
       pageButtonActive: `w-8 h-8 flex items-center justify-center rounded bg-[#7C3AED] text-white text-xs font-bold`,
     },
+    mobileCard: {
+      container: `glass-card rounded-xl overflow-hidden p-5 border border-white/60`,
+      header: `flex justify-between items-start mb-2`,
+      orderNumber: `font-bold text-slate-900 text-sm`,
+      orderDate: `text-[10px] text-slate-400 mt-0.5`,
+      infoRow: `flex items-center justify-between py-2 border-y border-slate-100/50`,
+      itemsStack: `flex -space-x-4 overflow-hidden`,
+      priceText: `font-bold text-slate-900 text-base leading-none mb-1`,
+      itemCount: `text-xs font-bold text-slate-400 uppercase tracking-tight`,
+      deliveryWrap: `flex items-center gap-1.5 mt-0.5`,
+      deliveryText: `text-xs text-slate-500 font-medium italic`,
+      actions: `grid grid-cols-2 gap-1 mt-3`,
+      viewButton: `h-11 bg-[#7C3AED] text-white text-[10px] font-bold rounded-lg active:scale-95 transition-all uppercase tracking-widest`,
+      reorderButton: `h-11 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold rounded-lg active:scale-95 transition-all uppercase tracking-widest`,
+    },
+    mobileFilters: {
+      container: `glass-card rounded-xl p-5 mb-6 space-y-4 border border-white/60 md:hidden`,
+      sectionLabel: `text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2`,
+      selectWrapper: `relative`,
+      select: `w-full px-4 py-2 bg-white/50 border border-slate-200 rounded text-xs font-bold text-slate-700 focus:ring-2 focus:ring-[#7C3AED]/20 outline-none appearance-none cursor-pointer`,
+      chipsRow: `flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x`,
+      chipBase: `shrink-0 snap-start px-4 py-1.5 rounded-full text-[10px] font-bold border border-slate-200 bg-white/50`,
+      chipActive: `shrink-0 snap-start px-4 py-1.5 rounded-full text-[10px] font-bold border bg-[#7C3AED] text-white border-[#7C3AED]`,
+    },
+    mobilePagination: {
+      container: `mt-4 flex items-center justify-between glass-card rounded-xl p-2.5 md:hidden`,
+      info: `text-[10px] text-slate-400 font-medium italic`,
+      controls: `flex items-center gap-2`,
+      navButton: `w-8 h-8 flex items-center justify-center rounded border border-slate-200 text-slate-400 disabled:opacity-50`,
+      pageButtonActive: `w-8 h-8 flex items-center justify-center rounded bg-[#7C3AED] text-white text-[10px] font-bold`,
+      pageButton: `w-8 h-8 flex items-center justify-center rounded border border-slate-200 text-[10px] text-slate-600`,
+    },
     sideBorders: {
       container: `flowing-border-container`,
       left: `side-border-left hidden xl:block`,
@@ -422,6 +483,65 @@ export const componentThemes = {
         address: "text-sm text-slate-600 not-italic space-y-1",
         recipientName: "font-medium text-slate-900",
         addressLine: "text-sm text-gray-600",
+      },
+    },
+    mobile: {
+      layout: "flex flex-col min-h-screen relative overflow-hidden px-4",
+      header: {
+        wrapper: "shrink-0 pt-12 px-5 pb-4 bg-white/20 backdrop-blur-sm",
+        inner: "flex items-center justify-between mb-4",
+        backButton:
+          "glass-card w-10 h-10 rounded-full flex items-center justify-center shadow-sm",
+        logo: "text-xl font-heading tracking-[0.15em] text-slate-900",
+        progressWrapper:
+          "sticky top-16 z-40 w-full bg-white/70 backdrop-blur-md rounded-lg px-2 py-2",
+        progressLabel:
+          "flex justify-between text-xs font-heading tracking-widest text-slate-400 uppercase mb-1.5",
+        progressBar: "h-[3px] bg-black/5 w-full rounded-full overflow-hidden",
+        progressFill:
+          "h-full bg-[#7C3AED] transition-[width] duration-500 ease-in-out",
+      },
+      body: "flex-1 overflow-y-auto py-4 space-y-3 pb-32",
+      summaryAccordion: {
+        container: "glass-card rounded-2xl overflow-hidden",
+        header: "w-full flex items-center justify-between px-5 py-4 h-auto",
+        title: "text-sm font-heading tracking-[0.15em] text-slate-500 uppercase",
+        total: "text-lg font-heading text-slate-900",
+        chevron: "w-4 h-4 text-slate-400 transition-transform duration-300",
+        body: "px-5 pb-4 border-t border-slate-100",
+      },
+      stepCard: {
+        base: "glass-card rounded-2xl overflow-hidden transition-all duration-300 border",
+        active: "border-[#7C3AED] shadow-[0_0_0_1px_#7C3AED]",
+        complete: "border-emerald-400",
+        incomplete: "border-slate-200",
+      },
+      stepHeader: {
+        wrapper: "w-full flex items-center justify-start gap-3 px-5 py-4 h-auto",
+        circleActive:
+          "w-8 h-8 shrink-0 rounded-full border-2 border-[#7C3AED] flex items-center justify-center text-xs font-heading text-[#7C3AED]",
+        circleComplete:
+          "w-8 h-8 shrink-0 rounded-full border-2 border-emerald-500 bg-emerald-50 flex items-center justify-center",
+        circleIncomplete:
+          "w-8 h-8 shrink-0 rounded-full border-2 border-slate-200 flex items-center justify-center text-xs font-heading text-slate-400",
+        info: "flex flex-col flex-1 text-left",
+        title: "text-base font-heading tracking-[0.1em] text-slate-900",
+        statusActive:
+          "text-[11px] font-heading text-[#7C3AED] tracking-widest uppercase",
+        statusComplete:
+          "text-[11px] font-heading text-emerald-500 tracking-widest uppercase",
+        statusIncomplete:
+          "text-[11px] font-heading text-slate-400 tracking-widest uppercase",
+        chevron: "w-4 h-4 text-slate-400 transition-transform duration-300",
+      },
+      stepContent: "px-5 pb-5 pt-1",
+      stepCta:
+        "w-full mt-5 h-12 rounded-xl font-heading tracking-[0.15em] text-base bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] text-white",
+      footer: {
+        wrapper:
+          "fixed bottom-0 left-0 right-0 px-5 pb-10 pt-4 bg-white/80 backdrop-blur-2xl border-t border-slate-100",
+        button:
+          "w-full h-14 rounded-2xl font-heading tracking-[0.2em] text-base bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] text-white shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2",
       },
     },
   },
@@ -477,6 +597,18 @@ export const componentThemes = {
     checkoutButton: `w-full h-12 sm:h-14 text-base sm:text-lg font-semibold shadow-xl shadow-purple-500/40 hover:-translate-y-0.5 hover:shadow-2xl transition-all duration-300`,
     icon: `w-5 h-5`,
   },
+
+  // Mobile page header (back button + title + description)
+  mobilePageHeader: {
+    root: `md:hidden mb-6 bg-white/75 backdrop-blur-md border border-white/30 shadow-md rounded-xl`,
+    inner: `mt-6 px-6 pb-6 flex flex-col gap-3`,
+    row: `flex items-center gap-4`,
+    backButton: `flex items-center justify-center w-10 h-10 rounded-lg bg-slate-200 text-slate-600 hover:bg-slate-300 transition-colors shrink-0 bg-transparent`,
+    title: `text-4xl font-normal font-heading text-slate-900 tracking-wide`,
+    descriptionRow: `flex items-center gap-4`,
+    gradientBar: `h-1.5 w-24 bg-linear-to-r from-[#7C3AED] via-[#4F46E5] to-[#06B6D4] rounded-sm shadow-sm shrink-0`,
+    description: `text-md leading-relaxed max-w-2xl font-accent text-purple-950`,
+  },
 } as const;
 
 // Individual theme exports for better tree-shaking
@@ -490,6 +622,7 @@ export const statusTheme = componentThemes.status;
 export const loadingTheme = componentThemes.loading;
 export const navbarTheme = componentThemes.navbar;
 export const footerTheme = componentThemes.footer;
+export const mobilePageHeaderTheme = componentThemes.mobilePageHeader;
 export const cartTheme = componentThemes.cart;
 export const dashboardTheme = componentThemes.dashboard;
 export const ordersTheme = componentThemes.orders;

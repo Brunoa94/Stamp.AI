@@ -15,6 +15,7 @@ interface Props {
   onSubmit: (data: ShippingAddressT) => void;
   showSubmitButton?: boolean;
   autoSubmitOnChange?: boolean;
+  submitLabel?: string;
 }
 
 /**
@@ -26,6 +27,7 @@ const ShippingAddressForm = ({
   onSubmit,
   showSubmitButton = true,
   autoSubmitOnChange = false,
+  submitLabel,
 }: Props) => {
   const {
     register,
@@ -94,7 +96,7 @@ const ShippingAddressForm = ({
               disabled={isSubmitting}
               className="w-full rounded-none bg-linear-to-br from-[#7C3AED] to-[#06B6D4] text-white font-heading font-bold uppercase tracking-widest"
             >
-              {isSubmitting ? "Saving..." : "Continue to Payment"}
+              {isSubmitting ? "Saving..." : (submitLabel ?? "Continue to Payment")}
             </Button>
           </div>
         )}

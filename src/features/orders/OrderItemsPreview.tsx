@@ -1,22 +1,25 @@
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 import { ordersTheme } from "@/theme/components";
 import type { OrderItemT } from "@/types/order";
 
 interface OrderItemsPreviewProps {
   items: OrderItemT[];
   maxDisplay?: number;
+  className?: string;
 }
 
 export function OrderItemsPreview({
   items,
   maxDisplay = 1,
+  className,
 }: OrderItemsPreviewProps) {
   const itemCount = items?.length || 0;
   const displayItems = items?.slice(0, maxDisplay) || [];
   const remainingCount = itemCount - maxDisplay;
 
   return (
-    <div className={ordersTheme.table.itemsStack}>
+    <div className={cn(ordersTheme.table.itemsStack, className)}>
       {displayItems.map((item) => (
         <Image
           key={item.id}

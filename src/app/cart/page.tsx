@@ -16,7 +16,7 @@ import {
 import { CartHeader } from "@/features/cart/sections/CartHeader";
 import { CartPageLayout } from "@/features/cart/sections/CartPageLayout";
 import { CartLoadingSkeleton } from "@/features/cart/sections/CartLoadingSkeleton";
-import { CartMobileCta } from "@/features/cart/sections/CartMobileCta";
+import { CartMobileCta } from "@/features/cart/mobile/CartMobileCta";
 import { cartTheme } from "@/theme/components";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import Link from "next/link";

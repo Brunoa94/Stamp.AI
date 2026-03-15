@@ -91,7 +91,7 @@ export const CheckoutProgress = ({
                     "transform hover:scale-110 cursor-pointer",
                     {
                       // Completed state
-                      "bg-gradient-to-br from-slate-600 via-gray-600 to-slate-700 text-white border-slate-400 shadow-2xl shadow-slate-400/50 scale-110 animate-[checkout-step-complete_0.6s_ease-out]":
+                      "bg-linear-to-br from-slate-600 via-gray-600 to-slate-700 text-white border-slate-400 shadow-2xl shadow-slate-400/50 scale-110 animate-[checkout-step-complete_0.6s_ease-out]":
                         isComplete,
                       // Active state
                       "bg-transparent text-purple-700 border-purple-400 border-4 shadow-xl shadow-purple-300/50 scale-105 animate-[checkout-step-active_2s_ease-in-out_infinite]":

@@ -1,4 +1,4 @@
-import { Shimmer } from "@/features/common/Shimmer";
+import { Shimmer } from "@/features/ui/shimmer";
 
 export function FabricCardSelectorSkeleton() {
   return (
@@ -6,7 +6,10 @@ export function FabricCardSelectorSkeleton() {
       {[1, 2].map((i) => (
         <div key={i} className="glass-card rounded-xl p-6 space-y-4">
           {/* Image placeholder */}
-          <Shimmer className="w-full rounded-lg" style={{ aspectRatio: "4/3" }} />
+          <Shimmer
+            className="w-full rounded-lg"
+            style={{ aspectRatio: "4/3" }}
+          />
 
           {/* Title placeholder */}
           <Shimmer className="h-8 w-3/4" />

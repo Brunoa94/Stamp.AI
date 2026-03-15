@@ -14,19 +14,17 @@ import { useProductConfirmation } from "./useProductConfirmation";
 
 interface PropsI {
   sectionRef: RefObject<HTMLElement | null>;
+  isAddedToCart: boolean;
+  isPending: boolean;
 }
 
-export function ProductConfirmationSection({ sectionRef }: PropsI) {
-  const {
-    product,
-    displayImage,
-    variantPrice,
-    firstEnabledVariant,
-    isAddedToCart,
-    isPending,
-    handleAddToCart,
-    handleProceedToCheckout,
-  } = useProductConfirmation();
+export function ProductConfirmationSection({
+  sectionRef,
+  isAddedToCart,
+  isPending,
+}: PropsI) {
+  const { product, displayImage, variantPrice, firstEnabledVariant } =
+    useProductConfirmation();
 
   if (!product) return null;
 
@@ -64,7 +62,8 @@ export function ProductConfirmationSection({ sectionRef }: PropsI) {
         <div className={productConfirmationTheme.buttonsGrid}>
           {/* Add to Cart Button */}
           <Button
-            onClick={handleAddToCart}
+            type="submit"
+            value="add_to_cart"
             disabled={isPending || isAddedToCart}
             size="lg"
             variant={isAddedToCart ? "secondary" : "outline"}
@@ -80,7 +79,8 @@ export function ProductConfirmationSection({ sectionRef }: PropsI) {
 
           {/* Proceed to Checkout Button */}
           <Button
-            onClick={handleProceedToCheckout}
+            type="submit"
+            value="proceed_to_checkout"
             disabled={isPending}
             size="lg"
             variant="default"

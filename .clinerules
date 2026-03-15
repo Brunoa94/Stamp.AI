@@ -1,0 +1,189 @@
+# Claude Code Project Rules - Imaginary Builder AI
+
+## Documentation Reference
+Always follow the patterns and guidelines documented in the `/docs` folder.
+Full documentation index: `/docs/README.md`
+
+## Architecture Patterns
+
+### Queries Layer (CRITICAL)
+- **ALL React Query hooks MUST be in `src/queries/`** - organized by domain
+- Never define useQuery/useMutation in components or hooks/ folder
+- One file per domain matching service organization (e.g., orderQueries.ts, productQueries.ts)
+- Use consistent query keys: `["domain", id]` or `["domain", { filters }]`
+- Always invalidate caches in mutations
+
+### Component Organization
+- **Feature-based organization** - group by feature/domain, NOT by type
+- ❌ Bad: `components/buttons/`, `components/inputs/`
+- ✅ Good: `components/checkout/`, `components/dashboard/`
+- Co-locate related files (component, styles, tests) in same folder
+- Place truly shared components in `components/common/`
+
+### File Organization
+- **NO barrel exports (index.ts)** - use direct imports from file paths
+- ❌ Bad: `import { Button } from '@/features/ui'`
+- ✅ Good: `import { Button } from '@/features/ui/button'`
+- Exception: Only if 2+ files are ALWAYS imported together
+
+### Layer Separation
+```
+Components → Queries (React Query) → Services (Business Logic) → API/Database
+```
+
+## Design System & Styling
+
+### Component Priority
+1. **First**: Use shadcn/ui components from `@/features/ui/`
+2. **Second**: Extend shadcn with className prop
+3. **Last resort**: Create custom components only when shadcn doesn't provide functionality
+
+### Styling Standards
+- **Always use `clsx`** for conditional styling (never template literals)
+- Use theme components from `@/theme/components` for reusable styles
+- Only add to theme if used in 2+ components
+- Define static style constants OUTSIDE components
+- Use Next.js `Image` component instead of `<img>` tags
+- Use icon components from `@/theme/icons` instead of inline SVGs
+
+### Semantic HTML
+- Always use semantic elements: `<header>`, `<main>`, `<nav>`, `<section>`, `<article>`, `<aside>`, `<footer>`
+- Never use generic `<div>` where semantic elements apply
+- One `<main>` per page
+
+## Accessibility (MANDATORY)
+
+### WCAG 2.1 AA Compliance Required
+- Minimum color contrast: 4.5:1 for text, 3:1 for large text
+- All interactive elements keyboard accessible
+- Proper ARIA attributes (aria-label, aria-describedby, aria-invalid)
+- Visible focus indicators (focus:ring-2 patterns)
+- Touch targets minimum 44px on mobile
+- Screen reader support with semantic HTML
+
+### Required Attributes
+- `htmlFor` linking labels to inputs
+- `aria-label` for elements without visible text
+- `role="alert"` for error messages
+- `aria-live` for dynamic content
+
+## TypeScript Standards
+
+### Naming Conventions
+- **Interfaces**: End with `I` (e.g., `UserI`, `OrderI`)
+- **Types**: End with `T` (e.g., `StatusT`, `ErrorCodeT`)
+- **Component Props**: Use `Props` for single-component, descriptive name if shared
+- **Hooks**: Prefix with `use` (e.g., `useOrderFilters`)
+
+### Usage
+- Interfaces for object shapes, props, API entities
+- Types for unions, computed types, utility types
+- Zod schemas for runtime validation with `z.infer<typeof Schema>`
+
+## React Patterns
+
+### Client Components
+- Only use `"use client"` when necessary (state, effects, events, browser APIs)
+- Don't use for static/presentational components
+
+### Hooks Organization
+- React Query hooks → `src/queries/` (ALL queries/mutations)
+- Component-specific non-query hooks → same folder as component
+- Shared utility hooks → `src/hooks/`
+
+### Ref Handling
+- **Avoid forwardRef and useImperativeHandle** - prefer callback patterns
+- Use trigger props instead of imperative APIs
+- Only acceptable for low-level DOM element exposure
+
+### State Management
+- React Query for server state
+- Zustand for global client state
+- React Context with `use-context-selector` for feature-scoped state
+- Use selector hooks to prevent unnecessary re-renders
+
+## Error Handling (MANDATORY)
+
+### Service Layer
+- **ALL service methods MUST wrap fetch in try-catch**
+- Handle network errors, HTTP errors, parsing errors
+- Provide contextual error messages
+- Re-throw with additional context
+
+### Component Layer
+- Use `useErrorHandler` hook for consistent error handling
+- Show user-friendly messages with error codes
+- Always handle loading and error states for data fetching
+- Create shimmer loading components (separate file)
+
+## Testing Requirements (MANDATORY)
+
+### End-to-End Tests
+- **Every new user action MUST have E2E tests**
+- Co-locate test files with components (`Component.e2e.spec.ts`)
+- Test success paths AND failure scenarios
+- Test edge cases, validation, API failures, error recovery
+
+### Checklist for New Features
+- [ ] Success path works
+- [ ] Form validation with errors
+- [ ] API failure handling
+- [ ] Loading states display
+- [ ] Edge cases tested
+- [ ] Error recovery works
+- [ ] Accessibility verified
+- [ ] Responsive design works
+
+## Code Quality
+
+### Best Practices
+- Remove unused imports immediately
+- No "use client" unless necessary
+- Use Next.js Link component for navigation (not router.push)
+- Comprehensive error handling in all async operations
+- Extract complex logic into custom hooks
+- Form validation with React Hook Form + Zod
+
+### Navigation
+- Use `<Button asChild><Link href="/path">Text</Link></Button>`
+- Never `<Button onClick={() => router.push("/path")}>`
+
+## Development Workflow
+
+### Commands
+- `npm run dev` - Development server
+- `npm run build` - Production build
+- `npm run supabase:types` - Generate DB types after schema changes
+- `npm run lint` - ESLint check
+
+### When Adding Features
+1. Check if queries layer hooks exist, create in `src/queries/` if needed
+2. Use shadcn/ui components first
+3. Follow feature-based organization
+4. Add E2E tests in same folder
+5. Ensure WCAG 2.1 AA compliance
+6. Handle loading/error states
+7. Use semantic HTML
+8. Remove unused imports
+
+## Critical Rules Summary
+✅ DO:
+- All queries in src/queries/
+- Feature-based organization
+- shadcn/ui components first
+- clsx for conditional styles
+- Semantic HTML
+- WCAG 2.1 AA compliance
+- E2E tests for new features
+- Comprehensive error handling
+- Direct imports (no index.ts)
+
+❌ DON'T:
+- useQuery/useMutation in components
+- Type-based organization
+- Barrel exports (index.ts)
+- Template literals for conditional styles
+- Generic <div> where semantic elements apply
+- Skip accessibility requirements
+- Skip error handling
+- Create custom components when shadcn exists

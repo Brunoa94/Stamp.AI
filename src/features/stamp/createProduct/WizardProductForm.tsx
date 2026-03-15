@@ -3,15 +3,9 @@
 import dynamic from "next/dynamic";
 import { Activity } from "react";
 import { CreateProductSelectors } from "./context/selectors";
-import { useCreateProductSubscriberActions } from "./context/actions";
-import { useImageGeneration } from "@/queries";
-import { IProductCreateForm } from "@/schemas/productCreateSchema";
-import { STEP_CONFIG } from "./constants/stepConfig";
-import { useProductCreation } from "./hooks/useProductCreation";
-import useScrollToSection from "@/hooks/useScrollToSection";
 import { WizardStepHeader } from "@/features/ui/wizard-step-header";
 import { CreateProductActionFooter } from "./components/CreateProductActionFooter";
-import { getVisibleSections } from "./utils/stepHelpers";
+import { useWizardProductFormHandlers } from "./hooks/useWizardProductFormHandlers";
 
 // Dynamic imports for step components
 const UploadStep = dynamic(
@@ -95,77 +89,19 @@ const SizingStep = dynamic(
 );
 
 export function WizardProductForm() {
-  // Selectors
-  const currentStep = CreateProductSelectors.currentStep();
   const form = CreateProductSelectors.form();
-  const selectedTshirt = CreateProductSelectors.selectedTshirt();
-  const generatedResult = CreateProductSelectors.generatedResult();
-
-  // Actions
   const {
-    handleFormSubmit,
-    handleGenerationSuccess,
-    handleGenerationError,
-    handleMoveToSynthesis,
-  } = useCreateProductSubscriberActions();
-
-  // Mutations
-  const { mutate: generateImage } = useImageGeneration();
-
-  // Custom hooks
-  const { handleCreateProduct } = useProductCreation();
-  const { smoothScrollToElementById } = useScrollToSection();
+    stepConfig,
+    sections,
+    handleContinue,
+    formSubmitHandler,
+    isAddedToCart,
+    isAddToCartPending,
+  } = useWizardProductFormHandlers({ form });
 
   if (!form) {
     return null;
   }
-
-  const { handleSubmit } = form;
-
-  // Form submission handler
-  const onSubmit = (data: IProductCreateForm) => {
-    handleFormSubmit();
-
-    generateImage(data, {
-      onSuccess: (result) => {
-        handleGenerationSuccess(result);
-      },
-      onError: (error) => {
-        handleGenerationError(error);
-      },
-    });
-  };
-
-  // Step configuration and visibility
-  const stepConfig =
-    STEP_CONFIG[currentStep as keyof typeof STEP_CONFIG] || STEP_CONFIG.upload;
-  const sections = getVisibleSections(currentStep);
-
-  // Continue handler
-  const handleContinue = () => {
-    if (sections.isUploadStep) {
-      handleMoveToSynthesis();
-      smoothScrollToElementById("design-pipeline", {
-        block: "start",
-        delay: 150,
-        offset: -48,
-      });
-    } else if (sections.isSynthesisStep) {
-      handleSubmit(onSubmit)();
-      smoothScrollToElementById("design-pipeline", {
-        block: "start",
-        delay: 150,
-        offset: -48,
-      });
-    } else if (currentStep === "fabric") {
-      handleCreateProduct(generatedResult, selectedTshirt);
-      smoothScrollToElementById("design-pipeline", {
-        block: "start",
-        delay: 150,
-        offset: -48,
-      });
-    }
-  };
 
   return (
     <>
@@ -188,7 +124,7 @@ export function WizardProductForm() {
       {/* Content Area - Hidden on results step */}
       {!sections.isResultsStep && (
         <form
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={formSubmitHandler}
           className="flex-1 px-4 sm:px-12 pb-32 sm:pb-10 relative overflow-hidden"
           data-wizard-content
         >
@@ -237,7 +173,11 @@ export function WizardProductForm() {
 
             {/* Sizing Step (Product Confirmation) */}
             <Activity mode={sections.showSizingSection ? "visible" : "hidden"}>
-              <SizingStep sectionRef={{ current: null }} />
+              <SizingStep
+                sectionRef={{ current: null }}
+                isAddedToCart={isAddedToCart}
+                isPending={isAddToCartPending}
+              />
             </Activity>
           </div>
         </form>

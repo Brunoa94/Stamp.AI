@@ -1,5 +1,6 @@
 import { Calendar } from "lucide-react";
 import { dashboardTheme } from "@/theme/components";
+import { MobilePageHeader } from "@/features/ui/mobile-page-header";
 import type { UserI } from "@/types/auth";
 
 interface DashboardHeaderProps {
@@ -30,7 +31,7 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
   const lastLogin = formatLastLogin(user?.last_sign_in_at);
 
   return (
-    <header className={dashboardTheme.header.container}>
+    <header className={`${dashboardTheme.header.container} md:block`}>
       <h1 className={dashboardTheme.header.title}>
         Welcome back, {displayName}
       </h1>
