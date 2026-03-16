@@ -164,11 +164,11 @@ export function useCreateOrderFromCart() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ user, cart }: { user: UserI; cart: CartWithItems }) => {
+    mutationFn: async ({ user, cart, paymentStatus = "paid" }: { user: UserI; cart: CartWithItems; paymentStatus?: string }) => {
       if (!user) {
         throw new Error("User not authenticated");
       }
-      return await OrderService.createOrderFromCart({ cart, user });
+      return await OrderService.createOrderFromCart({ cart, user, paymentStatus });
     },
     onSuccess: (orderId) => {
       // Invalidate orders list

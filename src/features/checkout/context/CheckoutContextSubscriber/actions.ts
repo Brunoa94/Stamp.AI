@@ -80,7 +80,7 @@ export function useCheckoutSubscriberActions() {
       if (user && state.cart) {
         try {
           console.log("📝 Creating order from cart after successful payment...");
-          await createOrderFromCart.mutateAsync({ user, cart: state.cart });
+          await createOrderFromCart.mutateAsync({ user, cart: state.cart, paymentStatus: "paid" });
           console.log("✅ Order and order items created in database");
         } catch (error) {
           console.error("❌ Failed to create order from cart:", error);

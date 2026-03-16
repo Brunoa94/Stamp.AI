@@ -268,7 +268,7 @@ export class OrderService {
     }
   }
 
-  static async createOrderFromCart({user, cart}: {user: UserI, cart: CartWithItems}){
+  static async createOrderFromCart({user, cart, paymentStatus = "paid"}: {user: UserI, cart: CartWithItems, paymentStatus?: string}){
           try {
             // Use mapper to generate unique order number
             const orderNumber = OrderServiceMapper.generateOrderNumber();
@@ -281,7 +281,8 @@ export class OrderService {
               user,
               orderNumber,
               totals,
-              0 // discount amount
+              0, // discount amount
+              paymentStatus
             );
 
             // Create order from cart
