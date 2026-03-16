@@ -52,3 +52,9 @@ export {
 export {
   useImageGeneration,
 } from "./imageGenerationQueries";
+
+// PayPal queries
+export {
+  useCreatePayPalOrder,
+  useCapturePayPalOrder,
+} from "./paypalQueries";

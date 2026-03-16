@@ -170,7 +170,7 @@ export const componentThemes = {
   dashboard: {
     page: {
       wrapper: `min-h-screen flex flex-col relative`,
-      container: `flex-grow w-full max-w-[1440px] mx-auto xl:px-24 relative z-1`,
+      container: `flex-grow w-full max-w-[1440px] mx-auto relative z-1`,
       grid: `grid grid-cols-1 lg:grid-cols-12 gap-8`,
       leftColumn: `lg:col-span-4 flex flex-col gap-8`,
       rightColumn: `lg:col-span-8 flex flex-col gap-8`,
@@ -264,11 +264,11 @@ export const componentThemes = {
   cart: {
     page: {
       // Mobile: flex column with overflow, Desktop: normal min-h-screen
-      container: `min-h-screen w-full flex flex-col lg:block relative overflow-hidden lg:overflow-visible`,
+      container: `min-h-screen w-full  flex flex-col lg:block relative z-1 overflow-hidden lg:overflow-visible`,
       // Mobile: scrollable with fixed CTA space, Desktop: normal flow
-      main: `flex-1 overflow-y-auto lg:overflow-visible lg:px-16 xl:px-24 lg:pt-12 pb-[160px] lg:pb-12 max-w-[1440px] mx-auto w-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:[scrollbar-width:auto] lg:[&::-webkit-scrollbar]:block`,
+      main: `flex-1 overflow-y-auto lg:overflow-visible lg:pt-12 pb-[160px] lg:pb-12 max-w-[1440px] mx-auto w-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:[scrollbar-width:auto] lg:[&::-webkit-scrollbar]:block`,
       // Desktop: 2-column grid
-      grid: `hidden lg:grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8`,
+      grid: `hidden w-full lg:grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8`,
       itemsColumn: `lg:col-span-8 flex flex-col gap-4`,
       summaryColumn: `lg:col-span-4`,
       // Side dividers - mobile: edge of screen, desktop: inset
@@ -459,7 +459,7 @@ export const componentThemes = {
   checkout: {
     page: {
       container: "min-h-screen relative rounded-2xl pb-8",
-      mainContent: "max-w-360 mx-auto px-6 md:px-16 xl:px-24 pb-16",
+      mainContent: "max-w-360 mx-auto pb-16",
       grid: "flex flex-col lg:flex-row gap-10",
       formsColumn: "flex-1 space-y-8 lg:w-7/12",
       summaryColumn: "lg:w-5/12",
@@ -543,6 +543,28 @@ export const componentThemes = {
         button:
           "w-full h-14 rounded-2xl font-heading tracking-[0.2em] text-base bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] text-white shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2",
       },
+    },
+    // Payment method selector styles
+    paymentMethodSelector: {
+      container: "flex gap-3 mb-6",
+      button:
+        "flex-1 flex items-center gap-3 py-4 px-4 rounded-xl border-2 transition-all duration-200",
+      buttonActive: "border-[#7C3AED] bg-[#7C3AED]/5 shadow-sm",
+      buttonInactive:
+        "border-slate-200 hover:border-slate-300 hover:bg-slate-50",
+      icon: "w-6 h-6 shrink-0",
+      labelWrap: "flex flex-col text-left",
+      label: "font-heading text-sm tracking-wider text-slate-900",
+      description: "text-xs text-slate-500",
+      checkmark:
+        "ml-auto w-5 h-5 rounded-full bg-[#7C3AED] text-white text-xs flex items-center justify-center",
+    },
+    // PayPal button container styles
+    paypalButton: {
+      container: "min-h-[52px]",
+      loading: "flex items-center justify-center py-4",
+      error:
+        "p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700",
     },
   },
 

@@ -8,6 +8,7 @@ import { OrderT } from "@/types/order";
 import type { CreatePrintifyOrderRequest, PrintifyLineItem } from "@/types/printifyOrder";
 import { validatePrintifyLineItem } from "@/types/printifyOrder";
 import { useUser } from "@/hooks/useAuth";
+import type { PaymentMethodT } from "@/types/payment";
 
 interface PaymentIntentI {
   id: string;
@@ -232,6 +233,17 @@ export function useCheckoutSubscriberActions() {
       store.setState({
         ...state,
         testMode: value,
+      });
+    },
+
+    /**
+     * Set the selected payment method (stripe or paypal)
+     */
+    setPaymentMethod: (method: PaymentMethodT) => {
+      const state = store.getState();
+      store.setState({
+        ...state,
+        selectedPaymentMethod: method,
       });
     },
   };

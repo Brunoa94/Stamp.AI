@@ -31,14 +31,13 @@ export function useCheckoutData(store: CheckoutStore): UseCheckoutDataResult {
 
   // Update cart items and calculate costs
   useEffect(() => {
-    console.log("HOOK CART ", cart)
     if (cart?.cart_items) {
       const currentState = store.getState();
       const cartItems = cart.cart_items;
 
       // Calculate costs
       const subtotal = cartItems.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
-      const shippingCost = 5.99;
+      const shippingCost = 0.01;
       const discount = 0;
       const total = subtotal + shippingCost - discount;
       const orderAmount = total; // Keep orderAmount for backward compatibility

@@ -42,6 +42,30 @@ export const validateEnvVars = {
     const secret = Deno.env.get('STRIPE_WEBHOOK_SECRET')
     if (!secret) throw ErrorCodes.STRIPE_WEBHOOK_SECRET_MISSING()
     return secret
+  },
+
+  // PayPal environment validators
+  paypalClientId: (): string => {
+    const clientId = Deno.env.get('PAYPAL_CLIENT_ID')
+    if (!clientId) throw ErrorCodes.PAYPAL_CLIENT_ID_MISSING()
+    return clientId
+  },
+
+  paypalClientSecret: (): string => {
+    const secret = Deno.env.get('PAYPAL_CLIENT_SECRET')
+    if (!secret) throw ErrorCodes.PAYPAL_CLIENT_SECRET_MISSING()
+    return secret
+  },
+
+  paypalWebhookId: (): string => {
+    const webhookId = Deno.env.get('PAYPAL_WEBHOOK_ID')
+    if (!webhookId) throw ErrorCodes.PAYPAL_WEBHOOK_ID_MISSING()
+    return webhookId
+  },
+
+  paypalMode: (): 'sandbox' | 'live' => {
+    const mode = Deno.env.get('PAYPAL_MODE') || 'sandbox'
+    return mode === 'live' ? 'live' : 'sandbox'
   }
 }
 

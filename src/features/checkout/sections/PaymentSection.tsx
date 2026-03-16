@@ -18,9 +18,11 @@ export function PaymentSection() {
   const triggerPayment = CheckoutSelectors.triggerPayment();
   const orderAmount = CheckoutSelectors.orderAmount();
   const cartItems = CheckoutSelectors.cartItems();
+  const selectedPaymentMethod = CheckoutSelectors.selectedPaymentMethod();
 
   const {
     setTestMode,
+    setPaymentMethod,
     handlePaymentSuccess,
     handlePaymentError,
     handlePaymentSubmitComplete,
@@ -67,6 +69,8 @@ export function PaymentSection() {
           hideButton={true}
           triggerSubmit={triggerPayment}
           onSubmitComplete={handlePaymentSubmitComplete}
+          initialPaymentMethod={selectedPaymentMethod}
+          onPaymentMethodChange={setPaymentMethod}
         />
       ) : (
         <div className={componentThemes.checkout.paymentSection.emptyState}>

@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { Check } from "lucide-react";
 
 type PaymentStatus = "idle" | "success" | "error";
 
@@ -57,19 +58,19 @@ export const CheckoutProgress = ({
       <div className="relative">
         <div className="flex items-center justify-between relative">
           {/* Background Progress Line */}
-          <div className="absolute top-8 left-0 right-0 h-2 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded-full -z-10 mx-12 md:mx-16" />
+          <div className="absolute top-8 left-0 right-0 h-2 bg-linear-to-r from-gray-200 via-gray-100 to-gray-200 rounded-full -z-10 mx-12 md:mx-16" />
 
           {/* Animated Progress Line with glow */}
           <div className="absolute top-8 left-0 right-0 h-2 -z-10 mx-12 md:mx-16">
             <div
-              className="h-full bg-gradient-to-r from-slate-600 via-gray-600 to-slate-700 rounded-full shadow-lg relative overflow-hidden transition-all duration-1000 ease-in-out"
+              className="h-full bg-linear-to-r from-slate-600 via-gray-600 to-slate-700 rounded-full shadow-lg relative overflow-hidden transition-all duration-1000 ease-in-out"
               style={{ width: getProgressWidth() }}
             >
               {/* Shimmer effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-[checkout-shimmer_2s_infinite]" />
+              <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/40 to-transparent animate-[checkout-shimmer_2s_infinite]" />
 
               {/* Glow effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-400 to-gray-400 blur-sm opacity-60" />
+              <div className="absolute inset-0 bg-linear-to-r from-slate-400 to-gray-400 blur-sm opacity-60" />
             </div>
           </div>
 
@@ -103,19 +104,10 @@ export const CheckoutProgress = ({
                   )}
                 >
                   {isComplete ? (
-                    <svg
+                    <Check
                       className="w-7 h-7 md:w-8 md:h-8 animate-[checkout-checkmark_0.6s_ease-out]"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={3}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
+                      strokeWidth={3}
+                    />
                   ) : isProcessing ? (
                     <div className="w-6 h-6 border-3 border-purple-600 border-t-transparent rounded-full animate-[checkout-spinner_1s_linear_infinite]" />
                   ) : (

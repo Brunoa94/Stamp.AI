@@ -99,13 +99,27 @@ export interface RefreshRequestI {
 // Payment Types
 // =============================================================================
 
+// Payment provider discriminator
+export type PaymentProviderT = 'stripe' | 'paypal'
+
+// Payment status (includes refunded for PayPal)
+export type PaymentStatusT = 'processing' | 'succeeded' | 'failed' | 'canceled' | 'refunded'
+
 export interface PaymentTransactionI {
   id: string
   user_id?: string
   order_id?: string
-  stripe_payment_intent_id: string
+  payment_provider: PaymentProviderT
+  // Stripe fields (optional when using PayPal)
+  stripe_payment_intent_id?: string
   stripe_charge_id?: string
   stripe_customer_id?: string
+  // PayPal fields (optional when using Stripe)
+  paypal_order_id?: string
+  paypal_capture_id?: string
+  paypal_payer_id?: string
+  paypal_payer_email?: string
+  // Common fields
   amount: number
   currency: string
   status: PaymentStatusT
@@ -117,6 +131,7 @@ export interface PaymentTransactionI {
   updated_at: string
 }
 
+// Stripe Types
 export interface CreatePaymentIntentRequestI {
   amount: number
   currency?: string
@@ -133,8 +148,32 @@ export interface PaymentIntentResponseI {
   paymentIntentId: string
 }
 
-// Payment Types
-export type PaymentStatusT = 'processing' | 'succeeded' | 'failed' | 'canceled'
+// PayPal Types
+export interface PayPalOrderRequestI {
+  amount: number
+  currency?: string
+  line_items?: any[]
+  shipping_address?: ShippingAddressI
+  metadata?: Record<string, any>
+}
+
+export interface PayPalOrderResponseI {
+  success: boolean
+  orderId: string
+  approvalUrl?: string
+}
+
+export interface PayPalCaptureRequestI {
+  orderId: string
+  payerId?: string
+}
+
+export interface PayPalCaptureResponseI {
+  success: boolean
+  captureId: string
+  status: string
+  payerEmail?: string
+}
 
 // =============================================================================
 // Printify Types
@@ -274,6 +313,9 @@ export type ErrorCodeT =
   | 'NO_LINE_ITEMS'
   | 'MISSING_SHIPPING_ADDRESS'
   | 'WEBHOOK_SIGNATURE_MISSING'
+  | 'PAYPAL_ORDER_ID_REQUIRED'
+  | 'PAYPAL_CAPTURE_FAILED'
+  | 'PAYPAL_WEBHOOK_SIGNATURE_INVALID'
 
   // Authentication errors (401)
   | 'INVALID_CREDENTIALS'
@@ -283,6 +325,7 @@ export type ErrorCodeT =
 
   // Not found errors (404)
   | 'USER_NOT_FOUND'
+  | 'PAYPAL_ORDER_NOT_FOUND'
 
   // Conflict errors (409)
   | 'EMAIL_ALREADY_REGISTERED'
@@ -294,6 +337,9 @@ export type ErrorCodeT =
   | 'STRIPE_WEBHOOK_SECRET_MISSING'
   | 'SUPABASE_URL_MISSING'
   | 'SUPABASE_SERVICE_ROLE_KEY_MISSING'
+  | 'PAYPAL_CLIENT_ID_MISSING'
+  | 'PAYPAL_CLIENT_SECRET_MISSING'
+  | 'PAYPAL_WEBHOOK_ID_MISSING'
 
   // External API errors (502)
   | 'NO_VARIANTS_AVAILABLE'
@@ -302,6 +348,7 @@ export type ErrorCodeT =
   | 'PRINTIFY_ORDER_API_ERROR'
   | 'IMAGE_UPLOAD_API_ERROR'
   | 'STRIPE_API_ERROR'
+  | 'PAYPAL_API_ERROR'
   | 'AUTH_REGISTRATION_FAILED'
   | 'AUTH_LOGIN_FAILED'
   | 'PASSWORD_RESET_FAILED'

@@ -66,8 +66,6 @@ export function usePaymentForm({
         throw new Error("You must be logged in to complete checkout");
       }
 
-      const accessToken = session.access_token;
-
       const requestBody: any = {
         amount: amount,
         currency: "usd",
@@ -151,6 +149,22 @@ export function usePaymentForm({
     await processPayment();
   };
 
+  // Handle PayPal success - convert to same format as Stripe
+  const handlePayPalSuccess = (
+    details: { id: string; captureId: string; status: string; payerEmail?: string },
+    items: PrintifyLineItem[]
+  ) => {
+    onSuccess?.(
+      {
+        id: details.id,
+        status: details.status,
+        paypal_capture_id: details.captureId,
+        paypal_payer_email: details.payerEmail,
+      },
+      items
+    );
+  };
+
   return {
     loading,
     error,
@@ -158,6 +172,7 @@ export function usePaymentForm({
     selectedTestMethod,
     setSelectedTestMethod,
     handleSubmit,
+    handlePayPalSuccess,
     stripe,
     testPaymentMethods: TEST_PAYMENT_METHODS,
   };

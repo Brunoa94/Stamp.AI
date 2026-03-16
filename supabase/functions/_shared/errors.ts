@@ -90,6 +90,16 @@ export const ErrorCodes = {
   USER_NOT_FOUND: () => new FunctionError(404, 'USER_NOT_FOUND', 'User not found'),
   PASSWORD_RESET_FAILED: (details: string) => new FunctionError(400, 'PASSWORD_RESET_FAILED', `Password reset failed: ${details}`),
 
+  // PayPal errors
+  PAYPAL_CLIENT_ID_MISSING: () => new FunctionError(500, 'PAYPAL_CLIENT_ID_MISSING', 'Missing PAYPAL_CLIENT_ID'),
+  PAYPAL_CLIENT_SECRET_MISSING: () => new FunctionError(500, 'PAYPAL_CLIENT_SECRET_MISSING', 'Missing PAYPAL_CLIENT_SECRET'),
+  PAYPAL_WEBHOOK_ID_MISSING: () => new FunctionError(500, 'PAYPAL_WEBHOOK_ID_MISSING', 'Missing PAYPAL_WEBHOOK_ID'),
+  PAYPAL_API_ERROR: (details: string) => new FunctionError(502, 'PAYPAL_API_ERROR', `PayPal API error: ${details}`),
+  PAYPAL_ORDER_NOT_FOUND: () => new FunctionError(404, 'PAYPAL_ORDER_NOT_FOUND', 'PayPal order not found'),
+  PAYPAL_CAPTURE_FAILED: (details: string) => new FunctionError(400, 'PAYPAL_CAPTURE_FAILED', `PayPal capture failed: ${details}`),
+  PAYPAL_WEBHOOK_SIGNATURE_INVALID: (details: string) => new FunctionError(400, 'PAYPAL_WEBHOOK_SIGNATURE_INVALID', `Invalid PayPal webhook signature: ${details}`),
+  PAYPAL_ORDER_ID_REQUIRED: () => new FunctionError(400, 'PAYPAL_ORDER_ID_REQUIRED', 'PayPal order ID is required'),
+
   // Generic errors
   INTERNAL_ERROR: () => new FunctionError(500, 'INTERNAL_ERROR', 'Internal server error'),
   UNKNOWN_ERROR: () => new FunctionError(500, 'UNKNOWN_ERROR', 'Unknown error occurred'),

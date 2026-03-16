@@ -18,6 +18,8 @@ export const CheckoutSelectors = {
     useCheckoutSubscriberSelector((state) => state.isProcessingPayment),
   triggerPayment: () =>
     useCheckoutSubscriberSelector((state) => state.triggerPayment),
+  selectedPaymentMethod: () =>
+    useCheckoutSubscriberSelector((state) => state.selectedPaymentMethod),
 
   // Computed values
   subtotal: () =>

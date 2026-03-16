@@ -17,9 +17,11 @@ export function CheckoutMobilePaymentStep() {
   const triggerPayment = CheckoutSelectors.triggerPayment();
   const orderAmount = CheckoutSelectors.orderAmount();
   const cartItems = CheckoutSelectors.cartItems();
+  const selectedPaymentMethod = CheckoutSelectors.selectedPaymentMethod();
 
   const {
     setTestMode,
+    setPaymentMethod,
     handlePaymentSuccess,
     handlePaymentError,
     handlePaymentSubmitComplete,
@@ -60,6 +62,8 @@ export function CheckoutMobilePaymentStep() {
           hideButton={true}
           triggerSubmit={triggerPayment}
           onSubmitComplete={handlePaymentSubmitComplete}
+          initialPaymentMethod={selectedPaymentMethod}
+          onPaymentMethodChange={setPaymentMethod}
         />
       ) : (
         <p className="text-base text-slate-500 italic text-center py-4">
