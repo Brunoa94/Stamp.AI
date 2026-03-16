@@ -4,3 +4,4 @@ export { AuthenticatedUserSection } from "./AuthenticatedUserSection";
 export { UnauthenticatedUserSection } from "./UnauthenticatedUserSection";
 export { NavItem } from "./NavItem";
 export { StampItButton } from "./StampItButton";
+export { CoinsBadge } from "./CoinsBadge";

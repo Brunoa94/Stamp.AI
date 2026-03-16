@@ -8,6 +8,7 @@ import { useTheme } from "next-themes";
 import clsx from "clsx";
 import { navbarTheme } from "@/theme/components";
 import { useCartSummary } from "@/queries/cartQueries";
+import { CoinsBadge } from "./CoinsBadge";
 
 export function AuthenticatedUserSection() {
   const logoutMutation = useLogout();
@@ -25,6 +26,8 @@ export function AuthenticatedUserSection() {
 
   return (
     <div className={navbarTheme.actions.container}>
+      <CoinsBadge />
+
       <Button
         onClick={toggleTheme}
         variant="ghost"
