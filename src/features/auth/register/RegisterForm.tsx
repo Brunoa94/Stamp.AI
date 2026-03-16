@@ -2,16 +2,11 @@
 
 import { useRegisterForm } from "./useRegisterForm";
 import { RegistrationSuccessMessage } from "./RegistrationSuccessMessage";
-import {
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/features/ui/dialog";
-
-import { Button } from "@/features/ui/button";
-import { FormField } from "@/features/ui/form-field";
+import { DialogContent } from "@/features/ui/dialog";
+import { RegisterDialogHeader } from "./components/RegisterDialogHeader";
+import { RegisterCredentialsFields } from "./components/RegisterCredentialsFields";
+import { RegisterFormActions } from "./components/RegisterFormActions";
+import { RegisterLoginFooter } from "./components/RegisterLoginFooter";
 
 export function RegisterForm() {
   const { register, handleSubmit, onSubmit, isPending, errors, isSuccess } =
@@ -22,75 +17,27 @@ export function RegisterForm() {
   }
 
   return (
-    <DialogContent className="max-w-96">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <DialogHeader>
-          <DialogTitle className="text-center">Create Account</DialogTitle>
-        </DialogHeader>
+    <DialogContent
+      showCloseButton={false}
+      className="max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none sm:max-w-xl"
+    >
+      <div className="relative overflow-hidden rounded-3xl border border-white bg-white/92 p-8 shadow-[0_25px_50px_-12px_rgba(15,23,42,0.25)] backdrop-blur-2xl md:p-10">
+        <RegisterDialogHeader />
 
-        <div className="grid gap-4">
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              id="firstName"
-              label="First Name"
-              type="text"
-              error={errors.firstName?.message}
-              register={register("firstName")}
-            />
-            <FormField
-              id="lastName"
-              label="Last Name"
-              type="text"
-              error={errors.lastName?.message}
-              register={register("lastName")}
-            />
-          </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <RegisterCredentialsFields register={register} errors={errors} />
 
-          <FormField
-            id="email"
-            label="Email"
-            type="email"
-            error={errors.email?.message}
-            register={register("email")}
-          />
+          {errors.root?.message && (
+            <p role="alert" className="text-sm text-red-600">
+              {errors.root.message}
+            </p>
+          )}
 
-          <FormField
-            id="password"
-            label="Password"
-            type="password"
-            error={errors.password?.message}
-            register={register("password")}
-          />
+          <RegisterFormActions isPending={isPending} />
+        </form>
 
-          <FormField
-            id="confirmPassword"
-            label="Confirm Password"
-            type="password"
-            error={errors.confirmPassword?.message}
-            register={register("confirmPassword")}
-          />
-        </div>
-
-        {errors.root && (
-          <p className="text-sm text-red-500">{errors.root.message}</p>
-        )}
-
-        <DialogFooter className="flex flex-col gap-2">
-          <Button
-            aria-label="Create Account"
-            variant="default"
-            type="submit"
-            disabled={isPending}
-          >
-            {isPending ? "Creating Account..." : "Create Account"}
-          </Button>
-          <DialogClose asChild>
-            <Button aria-label="Cancel" variant="outline">
-              Cancel
-            </Button>
-          </DialogClose>
-        </DialogFooter>
-      </form>
+        <RegisterLoginFooter />
+      </div>
     </DialogContent>
   );
 }
