@@ -4,7 +4,15 @@ import { useState } from "react";
 import { PasswordResetForm } from "./passwordResetForm/PasswordResetForm";
 import { Button } from "@/features/ui/button";
 
-export function InlinePasswordReset() {
+interface InlinePasswordResetProps {
+  className?: string;
+  buttonClassName?: string;
+}
+
+export function InlinePasswordReset({
+  className,
+  buttonClassName,
+}: InlinePasswordResetProps) {
   const [showPasswordReset, setShowPasswordReset] = useState(false);
 
   const handleClose = () => {
@@ -12,14 +20,14 @@ export function InlinePasswordReset() {
   };
 
   return (
-    <div>
+    <div className={className}>
       {/* Forgot password button */}
       <div className="flex justify-end">
         <Button
           type="button"
           variant="ghost"
           size="sm"
-          className="text-sm p-2 h-auto"
+          className={buttonClassName ?? "text-sm p-2 h-auto"}
           onClick={() => setShowPasswordReset(!showPasswordReset)}
         >
           Forgot password?
