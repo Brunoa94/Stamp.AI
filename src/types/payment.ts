@@ -35,7 +35,8 @@ export interface PayPalOnApproveDataI {
 }
 
 /**
- * Payment success details for both Stripe and PayPal
+ * Payment success details for both Stripe and PayPal.
+ * Includes display-ready fields consumed by the PaymentSuccess UI.
  */
 export interface PaymentSuccessDetailsI {
   id: string;
@@ -43,6 +44,11 @@ export interface PaymentSuccessDetailsI {
   status: string;
   captureId?: string;
   payerEmail?: string;
+  // Display fields for the success screen
+  orderNumber: string;
+  totalPaid: string;
+  estimatedDelivery: string;
+  confirmationEmail: string;
 }
 
 /**

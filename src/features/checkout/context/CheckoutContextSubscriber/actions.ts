@@ -8,7 +8,7 @@ import { OrderT } from "@/types/order";
 import type { CreatePrintifyOrderRequest, PrintifyLineItem } from "@/types/printifyOrder";
 import { validatePrintifyLineItem } from "@/types/printifyOrder";
 import { useUser } from "@/hooks/useAuth";
-import type { PaymentMethodT } from "@/types/payment";
+import type { PaymentMethodT, PaymentSuccessDetailsI } from "@/types/payment";
 
 interface PaymentIntentI {
   id: string;
@@ -88,12 +88,24 @@ export function useCheckoutSubscriberActions() {
         }
       }
 
+      // Build structured success details for the redesigned success screen
+      const successDetails: PaymentSuccessDetailsI = {
+        id: paymentIntent.id,
+        provider: state.selectedPaymentMethod,
+        status: "paid",
+        orderNumber: `#SD-${paymentIntent.id.slice(-6).toUpperCase()}`,
+        totalPaid: `$${state.orderAmount.toFixed(2)}`,
+        estimatedDelivery: "7–10 business days",
+        confirmationEmail: state.shippingAddress?.email ?? "",
+      };
+
       // Then, update payment status to success
       store.setState({
         ...state,
         isProcessingPayment: false,
         paymentStatus: "success",
         message: `Payment successful! Payment ID: ${paymentIntent.id}`,
+        paymentSuccessDetails: successDetails,
       });
 
       // Next, create the Printify order with the line items
@@ -208,6 +220,7 @@ export function useCheckoutSubscriberActions() {
         message: "",
         isProcessingPayment: false,
         triggerPayment: false,
+        paymentSuccessDetails: null,
       });
     },
 
@@ -222,6 +235,7 @@ export function useCheckoutSubscriberActions() {
         message: "",
         isProcessingPayment: false,
         triggerPayment: false,
+        paymentSuccessDetails: null,
       });
     },
 

@@ -11,5 +11,5 @@ export { default as CheckoutLoadingState } from "./CheckoutLoadingState";
 export { default as CheckoutErrorDisplay } from "./CheckoutErrorDisplay";
 
 // Payment result components
-export { default as PaymentSuccess } from "./PaymentSuccess";
+export { default as PaymentSuccess } from "../PaymentSuccess/PaymentSuccess";
 export { default as PaymentError } from "./PaymentError";

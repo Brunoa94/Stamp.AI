@@ -631,6 +631,28 @@ export const componentThemes = {
     gradientBar: `h-1.5 w-24 bg-linear-to-r from-[#7C3AED] via-[#4F46E5] to-[#06B6D4] rounded-sm shadow-sm shrink-0`,
     description: `text-md leading-relaxed max-w-2xl font-accent text-purple-950`,
   },
+
+  // Payment success page styles
+  paymentSuccess: {
+    page: "min-h-screen relative flex justify-center",
+    wrapper: "w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700",
+    card: "glass-card p-12 md:p-16 rounded-none text-center relative overflow-hidden",
+    topAccent: "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-emerald-500",
+    iconWrapper: "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-10 shadow-lg shadow-green-500/20 text-white success-icon-animate bg-gradient-to-br from-green-400 to-emerald-500",
+    title: "text-4xl md:text-5xl font-heading text-slate-900 mb-4 tracking-tighter",
+    subtitle: "text-slate-500 max-w-sm mx-auto mb-12 leading-relaxed",
+    grid: "grid grid-cols-2 gap-8 text-left border-y border-slate-100 py-8 mb-12",
+    gridItem: "flex flex-col gap-1",
+    gridLabel: "text-[10px] font-bold uppercase tracking-widest text-slate-400",
+    gridValue: "text-base font-heading text-slate-900",
+    statusBadge: "flex items-center gap-1.5",
+    statusDot: "w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse",
+    statusText: "text-xs font-bold uppercase tracking-widest text-green-600",
+    ctaStack: "flex flex-col gap-4",
+    primaryBtn: "w-full py-5 h-auto font-heading text-xs tracking-widest rounded-none uppercase bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] text-white hover:shadow-lg hover:shadow-purple-500/20 transition-shadow",
+    secondaryBtn: "w-full py-5 h-auto font-heading text-xs tracking-widest rounded-none uppercase border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-900 transition-colors",
+    emailNote: "mt-12 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400",
+  },
 } as const;
 
 // Individual theme exports for better tree-shaking
@@ -651,6 +673,7 @@ export const ordersTheme = componentThemes.orders;
 export const checkoutTheme = componentThemes.checkout;
 export const profileTheme = componentThemes.profile;
 export const productConfirmationTheme = componentThemes.productConfirmation;
+export const paymentSuccessTheme = componentThemes.paymentSuccess;
 
 // Utility functions
 export const getButtonVariant = (variant: keyof typeof componentThemes.button) =>

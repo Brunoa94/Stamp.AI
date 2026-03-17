@@ -22,6 +22,7 @@ export function CheckoutContent() {
   const error = CheckoutSelectors.error();
   const paymentStatus = CheckoutSelectors.paymentStatus();
   const message = CheckoutSelectors.message();
+  const paymentSuccessDetails = CheckoutSelectors.paymentSuccessDetails();
 
   const { handleCreateAnother, handleTryAgain } =
     useCheckoutSubscriberActions();
@@ -39,7 +40,10 @@ export function CheckoutContent() {
   // Payment success state
   if (paymentStatus === "success") {
     return (
-      <PaymentSuccess message={message} onCreateAnother={handleCreateAnother} />
+      <PaymentSuccess
+        details={paymentSuccessDetails}
+        onCreateAnother={handleCreateAnother}
+      />
     );
   }
 
