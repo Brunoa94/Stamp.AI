@@ -678,6 +678,19 @@ export const componentThemes = {
     altMethodBtn: "alt-payment-pill flex items-center justify-center gap-1 py-3 bg-white/50 text-xs font-heading tracking-wide uppercase",
     supportLink: "block mt-8 text-slate-400 hover:text-slate-600 text-[10px] font-bold uppercase tracking-widest transition-colors",
   },
+
+  // 404 page styles
+  notFound: {
+    page: "pt-32 relative flex items-center justify-center px-12 md:px-24",
+    wrapper: "w-full max-w-4xl text-center space-y-0 animate-in fade-in slide-in-from-bottom-12 duration-1000",
+    titleRow: "mb-12",
+    titleIconWrap: "lost-icon-404 text-[#7C3AED] mb-6 inline-block",
+    titleIcon: "w-16 h-16 md:w-20 md:h-20",
+    title: "text-4xl md:text-6xl font-heading tracking-[0.25em] uppercase bg-linear-to-r from-[#7C3AED] via-[#4F46E5] to-[#06B6D4] bg-clip-text text-transparent",
+    numberWrap: "relative inline-block mb-0",
+    numberGlow: "text-[180px] md:text-[240px] font-heading text-slate-900 leading-none tracking-tighter block opacity-10 blur-xl absolute inset-0 select-none",
+    numberMain: "text-[180px] md:text-[240px] font-heading text-slate-900 leading-none tracking-tighter block glitch-text-404 relative z-10",
+  },
 } as const;
 
 // Individual theme exports for better tree-shaking
@@ -700,6 +713,7 @@ export const profileTheme = componentThemes.profile;
 export const productConfirmationTheme = componentThemes.productConfirmation;
 export const paymentSuccessTheme = componentThemes.paymentSuccess;
 export const paymentErrorTheme = componentThemes.paymentError;
+export const notFoundTheme = componentThemes.notFound;
 
 // Utility functions
 export const getButtonVariant = (variant: keyof typeof componentThemes.button) =>

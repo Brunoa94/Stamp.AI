@@ -737,6 +737,27 @@
   }
 }
 
+@keyframes not-found-glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
+}
+
 .error-icon-animate {
   animation: error-bounce-in 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -756,13 +777,24 @@
   transform: translateY(-1px);
 }
 
+.glitch-text-404 {
+  animation: not-found-glitch 3s infinite;
+  position: relative;
+}
+
+.lost-icon-404 {
+  animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .success-icon-animate {
     animation: none;
   }
 
   .error-icon-animate,
-  .error-icon-pulse {
+  .error-icon-pulse,
+  .glitch-text-404,
+  .lost-icon-404 {
     animation: none;
   }
 }
