@@ -1,45 +1,97 @@
+import { AlertCircle, Info, RefreshCw } from "lucide-react";
+import Link from "next/link";
+
+import { AlternativePaymentMethods } from "@/features/checkout/components/AlternativePaymentMethods";
+import { PaymentResultDetailsGrid } from "@/features/checkout/components/PaymentResultDetailsGrid";
 import { Button } from "@/features/ui/button";
+import { FluidInkDriftBackground } from "@/features/ui/fluid-ink-drift-background";
+import { PageDividers } from "@/features/ui/page-dividers";
+import { paymentErrorTheme } from "@/theme/components";
+import type {
+  PaymentAlternativeMethodT,
+  PaymentErrorDetailsI,
+} from "@/types/payment";
 
 interface Props {
-  message: string;
+  details: PaymentErrorDetailsI | null;
   onTryAgain: () => void;
+  onSelectMethod: (method: PaymentAlternativeMethodT) => void;
 }
 
-const PaymentError = ({ message, onTryAgain }: Props) => {
+const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
+  const reasonMessage =
+    details?.reasonMessage ||
+    "Your transaction couldn't be completed. Please retry or choose an alternative method.";
+
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <article className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
-        <div className="text-center">
-          <div className="mb-4">
-            <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
-              <svg
-                className="h-6 w-6 text-red-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+    <div className={paymentErrorTheme.page}>
+      <FluidInkDriftBackground />
+      <PageDividers />
+
+      <div className={paymentErrorTheme.wrapper}>
+        <section className={paymentErrorTheme.card} aria-label="Payment failed">
+          <div className={paymentErrorTheme.topAccent} aria-hidden="true" />
+
+          <div className={paymentErrorTheme.iconWrapper} aria-hidden="true">
+            <AlertCircle className={paymentErrorTheme.icon} />
+          </div>
+
+          <h1 className={paymentErrorTheme.title}>Payment Failed</h1>
+          <p className={paymentErrorTheme.subtitle}>
+            Your transaction couldn&apos;t be completed. Don&apos;t worry, your
+            design has been saved and is ready for retry.
+          </p>
+
+          <div className={paymentErrorTheme.reasonCard}>
+            <div className={paymentErrorTheme.reasonRow}>
+              <Info className={paymentErrorTheme.reasonIcon} />
+              <div>
+                <span className={paymentErrorTheme.reasonLabel}>
+                  {details?.reasonTitle ?? "Reason"}
+                </span>
+                <p className={paymentErrorTheme.reasonText}>{reasonMessage}</p>
+              </div>
             </div>
           </div>
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">
-            Payment Failed
-          </h2>
-          <p className="text-gray-600 mb-4">{message}</p>
-          <Button
-            onClick={onTryAgain}
-            className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            Try Again
-          </Button>
-        </div>
-      </article>
+
+          <PaymentResultDetailsGrid
+            items={[
+              { label: "Order Number", value: details?.orderNumber ?? "—" },
+              { label: "Amount Due", value: details?.amountDue ?? "—" },
+              {
+                label: "Attempted On",
+                value: details?.attemptedOn ?? "—",
+                valueMuted: true,
+              },
+            ]}
+            statusLabel="Status"
+            statusValue={details?.status ?? "Failed"}
+            statusVariant="error"
+          />
+
+          <div className={paymentErrorTheme.ctaStack}>
+            <Button
+              onClick={onTryAgain}
+              className={paymentErrorTheme.primaryBtn}
+            >
+              Retry Payment <RefreshCw className="w-4 h-4" />
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className={paymentErrorTheme.secondaryBtn}
+            >
+              <Link href="/dashboard">Cancel &amp; Go to Dashboard</Link>
+            </Button>
+
+            <AlternativePaymentMethods onSelectMethod={onSelectMethod} />
+
+            <Link href="/profile" className={paymentErrorTheme.supportLink}>
+              Need help? Contact Support
+            </Link>
+          </div>
+        </section>
+      </div>
     </div>
   );
 };

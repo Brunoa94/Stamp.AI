@@ -16,6 +16,7 @@ export const MOCK_STATE: CheckoutSubscriberContextState = {
   triggerPayment: false,
   selectedPaymentMethod: "stripe",
   paymentSuccessDetails: null,
+  paymentErrorDetails: null,
 
   // Computed values
   subtotal: 0,

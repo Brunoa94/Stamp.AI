@@ -22,6 +22,8 @@ export const CheckoutSelectors = {
     useCheckoutSubscriberSelector((state) => state.selectedPaymentMethod),
   paymentSuccessDetails: () =>
     useCheckoutSubscriberSelector((state) => state.paymentSuccessDetails),
+  paymentErrorDetails: () =>
+    useCheckoutSubscriberSelector((state) => state.paymentErrorDetails),
 
   // Computed values
   subtotal: () =>

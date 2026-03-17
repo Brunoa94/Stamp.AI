@@ -21,10 +21,10 @@ export function CheckoutContent() {
   const isLoading = CheckoutSelectors.isLoading();
   const error = CheckoutSelectors.error();
   const paymentStatus = CheckoutSelectors.paymentStatus();
-  const message = CheckoutSelectors.message();
   const paymentSuccessDetails = CheckoutSelectors.paymentSuccessDetails();
+  const paymentErrorDetails = CheckoutSelectors.paymentErrorDetails();
 
-  const { handleCreateAnother, handleTryAgain } =
+  const { handleCreateAnother, handleTryAgain, setPaymentMethod } =
     useCheckoutSubscriberActions();
 
   // Loading state
@@ -49,7 +49,17 @@ export function CheckoutContent() {
 
   // Payment error state
   if (paymentStatus === "error") {
-    return <PaymentError message={message} onTryAgain={handleTryAgain} />;
+    return (
+      <PaymentError
+        details={paymentErrorDetails}
+        onTryAgain={handleTryAgain}
+        onSelectMethod={(method) => {
+          if (method === "applepay") return;
+          setPaymentMethod(method);
+          handleTryAgain();
+        }}
+      />
+    );
   }
 
   // Background decoration (fixed, shared by both layouts)

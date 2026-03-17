@@ -8,7 +8,12 @@ import { OrderT } from "@/types/order";
 import type { CreatePrintifyOrderRequest, PrintifyLineItem } from "@/types/printifyOrder";
 import { validatePrintifyLineItem } from "@/types/printifyOrder";
 import { useUser } from "@/hooks/useAuth";
-import type { PaymentMethodT, PaymentSuccessDetailsI } from "@/types/payment";
+import type {
+  PaymentAlternativeMethodT,
+  PaymentErrorDetailsI,
+  PaymentMethodT,
+  PaymentSuccessDetailsI,
+} from "@/types/payment";
 
 interface PaymentIntentI {
   id: string;
@@ -106,6 +111,7 @@ export function useCheckoutSubscriberActions() {
         paymentStatus: "success",
         message: `Payment successful! Payment ID: ${paymentIntent.id}`,
         paymentSuccessDetails: successDetails,
+        paymentErrorDetails: null,
       });
 
       // Next, create the Printify order with the line items
@@ -174,11 +180,31 @@ export function useCheckoutSubscriberActions() {
      */
     handlePaymentError: (errorMsg: string) => {
       const state = store.getState();
+      const attemptedOn = new Date().toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+      const fallbackMessage =
+        "The issuing bank declined the transaction. This could be due to insufficient funds, an expired card, or a temporary security block.";
+      const errorDetails: PaymentErrorDetailsI = {
+        paymentId: `failed_${Date.now()}`,
+        orderNumber: `#SD-${Date.now().toString().slice(-6)}`,
+        amountDue: `$${state.orderAmount.toFixed(2)}`,
+        attemptedOn,
+        status: "Failed",
+        reasonTitle: "Reason",
+        reasonMessage: errorMsg?.trim() || fallbackMessage,
+        availableMethods: ["paypal", "applepay", "stripe"] satisfies PaymentAlternativeMethodT[],
+      };
+
       store.setState({
         ...state,
         isProcessingPayment: false,
         paymentStatus: "error",
         message: errorMsg,
+        paymentSuccessDetails: null,
+        paymentErrorDetails: errorDetails,
       });
     },
 
@@ -221,6 +247,7 @@ export function useCheckoutSubscriberActions() {
         isProcessingPayment: false,
         triggerPayment: false,
         paymentSuccessDetails: null,
+        paymentErrorDetails: null,
       });
     },
 
@@ -236,6 +263,7 @@ export function useCheckoutSubscriberActions() {
         isProcessingPayment: false,
         triggerPayment: false,
         paymentSuccessDetails: null,
+        paymentErrorDetails: null,
       });
     },
 

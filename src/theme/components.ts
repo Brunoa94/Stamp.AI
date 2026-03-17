@@ -653,6 +653,31 @@ export const componentThemes = {
     secondaryBtn: "w-full py-5 h-auto font-heading text-xs tracking-widest rounded-none uppercase border-slate-200 text-slate-600 hover:border-slate-400 hover:text-slate-900 transition-colors",
     emailNote: "mt-12 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400",
   },
+
+  // Payment error page styles
+  paymentError: {
+    page: "min-h-screen relative flex justify-center",
+    wrapper: "w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700",
+    card: "glass-card p-12 md:p-16 rounded-none text-center relative overflow-hidden",
+    topAccent: "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-orange-500",
+    iconWrapper: "error-icon-animate w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-10 shadow-lg shadow-red-500/10 text-red-500",
+    icon: "w-12 h-12 error-icon-pulse",
+    title: "text-4xl md:text-5xl font-heading text-slate-900 mb-4 tracking-tighter",
+    subtitle: "text-slate-500 max-w-sm mx-auto mb-12 leading-relaxed",
+    reasonCard: "text-left bg-white/40 p-6 mb-12 border border-red-100 rounded-sm",
+    reasonRow: "flex items-start gap-3",
+    reasonIcon: "text-red-400 mt-1 w-4 h-4 shrink-0",
+    reasonLabel: "text-xs font-bold uppercase tracking-wider text-red-500",
+    reasonText: "text-sm text-slate-700 font-medium leading-relaxed",
+    ctaStack: "space-y-4",
+    primaryBtn: "w-full py-5 h-auto text-white font-heading text-xs tracking-widest rounded-none uppercase bg-gradient-to-br from-red-500 to-orange-500 hover:shadow-lg hover:shadow-red-500/20 transition-all",
+    secondaryBtn: "w-full py-5 h-auto rounded-none uppercase font-heading text-xs tracking-widest border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all",
+    altMethodsBlock: "pt-4",
+    altMethodsLabel: "text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4",
+    altMethodsGrid: "grid grid-cols-3 gap-3",
+    altMethodBtn: "alt-payment-pill flex items-center justify-center gap-1 py-3 bg-white/50 text-xs font-heading tracking-wide uppercase",
+    supportLink: "block mt-8 text-slate-400 hover:text-slate-600 text-[10px] font-bold uppercase tracking-widest transition-colors",
+  },
 } as const;
 
 // Individual theme exports for better tree-shaking
@@ -674,6 +699,7 @@ export const checkoutTheme = componentThemes.checkout;
 export const profileTheme = componentThemes.profile;
 export const productConfirmationTheme = componentThemes.productConfirmation;
 export const paymentSuccessTheme = componentThemes.paymentSuccess;
+export const paymentErrorTheme = componentThemes.paymentError;
 
 // Utility functions
 export const getButtonVariant = (variant: keyof typeof componentThemes.button) =>

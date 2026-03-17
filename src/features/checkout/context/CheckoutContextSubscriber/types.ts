@@ -1,6 +1,10 @@
 import { ShippingAddressT } from "@/schemas/checkout";
 import { CartItem, CartWithItems } from "@/types/cart";
-import type { PaymentMethodT, PaymentSuccessDetailsI } from "@/types/payment";
+import type {
+  PaymentErrorDetailsI,
+  PaymentMethodT,
+  PaymentSuccessDetailsI,
+} from "@/types/payment";
 
 export interface CheckoutSubscriberContextState {
   // Data state
@@ -18,6 +22,7 @@ export interface CheckoutSubscriberContextState {
   triggerPayment: boolean;
   selectedPaymentMethod: PaymentMethodT;
   paymentSuccessDetails: PaymentSuccessDetailsI | null;
+  paymentErrorDetails: PaymentErrorDetailsI | null;
 
   // Computed values
   subtotal: number;

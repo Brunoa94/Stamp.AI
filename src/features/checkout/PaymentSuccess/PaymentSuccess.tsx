@@ -1,10 +1,8 @@
-"use client";
-
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/features/ui/button";
-import { PaymentSuccessDetailsGrid } from "@/features/checkout/PaymentSuccess/PaymentSuccessDetailsGrid";
+import { PaymentResultDetailsGrid } from "@/features/checkout/components/PaymentResultDetailsGrid";
 import { FluidInkDriftBackground } from "@/features/ui/fluid-ink-drift-background";
 import { PageDividers } from "@/features/ui/page-dividers";
 import { paymentSuccessTheme } from "@/theme/components";
@@ -47,11 +45,15 @@ const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
           </p>
 
           {/* Order details grid */}
-          <PaymentSuccessDetailsGrid
-            orderNumber={orderNumber}
-            estimatedDelivery={estimatedDelivery}
-            totalPaid={totalPaid}
-            status="Processing"
+          <PaymentResultDetailsGrid
+            items={[
+              { label: "Order Number", value: orderNumber },
+              { label: "Estimated Delivery", value: estimatedDelivery },
+              { label: "Total Paid", value: totalPaid },
+            ]}
+            statusLabel="Status"
+            statusValue="Processing"
+            statusVariant="success"
           />
 
           {/* CTAs */}

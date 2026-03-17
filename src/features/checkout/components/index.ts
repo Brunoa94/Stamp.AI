@@ -13,3 +13,4 @@ export { default as CheckoutErrorDisplay } from "./CheckoutErrorDisplay";
 // Payment result components
 export { default as PaymentSuccess } from "../PaymentSuccess/PaymentSuccess";
 export { default as PaymentError } from "./PaymentError";
+export { PaymentResultDetailsGrid } from "./PaymentResultDetailsGrid";

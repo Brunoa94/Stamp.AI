@@ -51,6 +51,22 @@ export interface PaymentSuccessDetailsI {
   confirmationEmail: string;
 }
 
+export type PaymentAlternativeMethodT = PaymentMethodT | "applepay";
+
+/**
+ * Payment error details for display-ready failed payment UI.
+ */
+export interface PaymentErrorDetailsI {
+  paymentId: string;
+  orderNumber: string;
+  amountDue: string;
+  attemptedOn: string;
+  status: string;
+  reasonTitle: string;
+  reasonMessage: string;
+  availableMethods: PaymentAlternativeMethodT[];
+}
+
 /**
  * Available payment method options
  */
