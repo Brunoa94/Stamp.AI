@@ -1,7 +1,7 @@
 "use client";
 
 import { CartItem as CartItemT } from "@/types/cart";
-import { CartItem } from "../cartItem";
+import { CartItem } from "../CartItem";
 import { cartTheme } from "@/theme/components";
 
 interface Props {

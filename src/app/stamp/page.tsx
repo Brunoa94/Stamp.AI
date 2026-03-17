@@ -1,5 +1,5 @@
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { CreateProductWizard } from "@/features/stamp/createProduct/components/CreateProductWizard";
+import { CreateProductWizard } from "@/features/stamp/CreateProduct/components/CreateProductWizard";
 import { PageHeader } from "@/features/ui/page-header";
 import { theme } from "@/theme";
 

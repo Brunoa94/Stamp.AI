@@ -1,4 +1,3 @@
-export * from "./cartItem";
-export * from "./cartList";
-export * from "./cartSummary";
+export { CartList, EmptyCart } from "../CartList";
+export { CartSummary } from "../CartSummary";
 export { PromoCodeInput } from "./PromoCodeInput";

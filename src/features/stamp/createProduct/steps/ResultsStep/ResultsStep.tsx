@@ -1,14 +1,7 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { RefObject } from "react";
-
-const ResultsSection = dynamic(
-  () => import("../CustomizerStep/ProductCustomizer/ResultsSection"),
-  {
-    ssr: false,
-  },
-);
+import ResultsSection from "../CustomizerStep/ProductCustomizer/ResultsSection";
 
 interface ResultsStepProps {
   sectionRef: RefObject<HTMLElement | null>;

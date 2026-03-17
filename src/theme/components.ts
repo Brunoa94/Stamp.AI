@@ -486,7 +486,7 @@ export const componentThemes = {
       },
     },
     mobile: {
-      layout: "flex flex-col min-h-screen relative overflow-hidden px-4",
+      layout: "flex flex-col min-h-screen relative px-4",
       header: {
         wrapper: "shrink-0 pt-12 px-5 pb-4 bg-white/20 backdrop-blur-sm",
         inner: "flex items-center justify-between mb-4",

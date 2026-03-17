@@ -1,6 +1,6 @@
 "use client";
 
-import ErrorDisplay from "@/features/stamp/createProduct/components/ErrorDisplay";
+import ErrorDisplay from "@/features/stamp/CreateProduct/components/ErrorDisplay";
 import { CreateProductSelectors } from "../../../context/selectors";
 import { useCreateProductSubscriberActions } from "../../../context/actions";
 import { WizardActionFooter } from "@/features/ui/wizard-action-footer";

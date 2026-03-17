@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { WizardUploadArea } from "@/features/stamp/createProduct/components/WizardUploadArea";
+import { WizardUploadArea } from "@/features/stamp/CreateProduct/components/WizardUploadArea";
 import { PrintifyImageT } from "@/schemas/checkout";
 
 interface Props {

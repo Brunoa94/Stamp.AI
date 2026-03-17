@@ -19,26 +19,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ── Coin deduction ──────────────────────────────────────────────────────────
-    const { data: hasCoin, error: rpcError } = await supabase.rpc(
-      "deduct_coin",
-      { user_id: user.id },
-    );
+    // // ── Coin deduction ──────────────────────────────────────────────────────────
+    // const { data: hasCoin, error: rpcError } = await supabase.rpc(
+    //   "deduct_coin",
+    //   { user_id: user.id },
+    // );
 
-    if (rpcError) {
-      console.error("deduct_coin RPC error:", rpcError.message);
-      return NextResponse.json(
-        { error: "Failed to process coin deduction" },
-        { status: 500 },
-      );
-    }
+    // if (rpcError) {
+    //   console.error("deduct_coin RPC error:", rpcError.message);
+    //   return NextResponse.json(
+    //     { error: "Failed to process coin deduction" },
+    //     { status: 500 },
+    //   );
+    // }
 
-    if (!hasCoin) {
-      return NextResponse.json(
-        { error: "Not enough coins" },
-        { status: 402 },
-      );
-    }
+    // if (!hasCoin) {
+    //   return NextResponse.json(
+    //     { error: "Not enough coins" },
+    //     { status: 402 },
+    //   );
+    // }
 
     const formData = await request.formData();
     const prompt = formData.get("prompt") as string;
