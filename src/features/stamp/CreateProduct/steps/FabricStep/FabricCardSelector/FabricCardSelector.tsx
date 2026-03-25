@@ -45,10 +45,10 @@ export function FabricCardSelector({
             variant="ghost"
             onClick={() => onTshirtSelect(fabric)}
             className={clsx(
-              "glass-card rounded-xl p-4 sm:p-6 space-y-3 sm:space-y-4 text-left transition-all duration-300 h-auto sm:h-40",
+              "glass-card rounded-xl p-4 sm:p-6 space-y-3 sm:space-y-4 text-left transition-all duration-300 flex flex-col h-[600px]",
               "hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1",
               {
-                "border-[#7C3AED] bg-[rgba(124,58,237,0.1)] shadow-xl ring-2 ring-[#7C3AED]":
+                "border-2 border-[#5B21B6] bg-[rgba(124,58,237,0.1)] shadow-xl":
                   isSelected,
                 "border-white/40 hover:border-purple-300": !isSelected,
               },
@@ -57,18 +57,11 @@ export function FabricCardSelector({
           >
             {/* Fabric Image */}
             {fabric.image && (
-              <div
-                className="relative w-full rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800"
-                style={{ aspectRatio: "4/3" }}
-              >
-                <Image
-                  src={fabric.image}
-                  alt={fabric.fabricType}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-              </div>
+              <img
+                src={fabric.image}
+                alt={fabric.fabricType}
+                className="rounded-lg"
+              />
             )}
 
             {/* Fabric Title & Selected Indicator */}
@@ -89,9 +82,9 @@ export function FabricCardSelector({
             </div>
 
             {/* Description */}
-            <p className="text-sm font-accent italic text-gray-600 dark:text-gray-400 leading-relaxed">
+            {/* <p className="text-sm font-accent italic text-gray-600 dark:text-gray-400 leading-relaxed">
               {fabric.fabricDescription}
-            </p>
+            </p> */}
           </Button>
         );
       })}

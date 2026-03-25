@@ -10,7 +10,7 @@ export * from "./shadows";
 export const theme = {
   page: {
     background: "bg-gradient-to-br from-gray-50 via-slate-50 to-gray-100 dark:from-gray-900 dark:via-slate-900/20 dark:to-gray-900/20 min-h-screen transition-colors duration-300",
-    container: "grow flex flex-col pb-24 relative max-w-7xl mx-auto w-full",
+    container: "grow flex flex-col pb-24 relative max-w-7xl mx-auto w-full z-0",
   },
 
   dashboard: {
