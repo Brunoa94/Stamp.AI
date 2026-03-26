@@ -13,7 +13,7 @@ export const componentThemes = {
 
   // Button variants
   button: {
-    primary: `${colors.buttonPrimary} text-white font-semibold py-3 px-6 rounded-xl ${animationClasses.buttonHover} ${colors.slateShadow}`,
+    primary: `${colors.buttonPrimary} text-white font-semibold py-3 px-6 rounded-xl ${colors.purpleShadow} hover:-translate-y-1.5 hover:shadow-3xl transition-all duration-300 active:scale-95`,
     secondary: `${colors.buttonSecondary} text-white font-semibold py-3 px-6 rounded-xl ${animationClasses.buttonHover} ${colors.grayShadow}`,
     success: `${colors.buttonSuccess} text-white font-semibold py-3 px-6 rounded-xl ${animationClasses.buttonHover}`,
     outline: `border-2 border-gray-300 text-slate-700 hover:bg-gray-50 font-semibold py-3 px-6 rounded-xl ${animationClasses.buttonHover}`,

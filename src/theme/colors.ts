@@ -34,6 +34,7 @@ export const colors = {
   grayShadow: "shadow-lg shadow-gray-500/25",
   neutralShadow: "shadow-lg shadow-slate-500/25",
   subtleShadow: "shadow-xl shadow-slate-500/20",
+  purpleShadow: "shadow-2xl shadow-purple-500/50",
 
   // Border gradients
   borderGradient: "border border-transparent bg-linear-to-r from-slate-500 via-gray-500 to-slate-600 bg-clip-border",
@@ -78,4 +79,5 @@ export const hoverGlow = {
   gray: "hover:shadow-lg hover:shadow-gray-500/50 transition-shadow duration-300",
   neutral: "hover:shadow-lg hover:shadow-slate-500/50 transition-shadow duration-300",
   subtle: "hover:shadow-xl hover:shadow-gray-500/30 transition-all duration-300",
+  purple: "hover:shadow-3xl hover:shadow-purple-500/60 transition-all duration-300",
 } as const;
