@@ -16,23 +16,32 @@ export type WorkflowStep =
   | "sizing"
   | "created";
 
-export interface CreateProductContextState {
-  // Workflow state
+/**
+ * Navigation-only state — changes exclusively on step transitions.
+ * Components that only need routing info (sidebar, mobile nav) should
+ * subscribe to this slice so they are NOT re-rendered by form keystrokes.
+ */
+export interface NavigationState {
   currentStep: WorkflowStep;
   completedSteps: WorkflowStep[];
+}
 
-  // Form state
+/**
+ * Form + async operation state — can change on every keystroke or async event.
+ * Keep heavy subscribers (action footer, form body) isolated here so that
+ * navigation-only components stay silent during typing.
+ */
+export interface FormState {
   form: UseFormReturn<IProductCreateForm> | null;
   uploadedImage: File | null;
   prompt: string;
-
-  // Image generation state
   isGenerating: boolean;
   generatedResult: IImageGenerationResult | null;
   generationError: Error | null;
-
-  // Product creation state
   selectedTshirt: TshirtType | null;
   isCreatingProduct: boolean;
   createdProduct: CreatedProductT | null;
 }
+
+/** Full combined type — used by actions that span both stores. */
+export type CreateProductContextState = NavigationState & FormState;

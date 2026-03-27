@@ -21,24 +21,25 @@ export function CreateProductActionFooter({
   onContinue,
 }: CreateProductActionFooterProps) {
   const currentStep = CreateProductSelectors.currentStep();
-  const uploadedImage = CreateProductSelectors.uploadedImage();
-  const promptValue = CreateProductSelectors.prompt();
+
+  // Use derived boolean selectors instead of subscribing to raw string/File
+  // values — this component only re-renders when these booleans actually flip,
+  // not on every single keystroke.
+  const hasUploadedImage = CreateProductSelectors.hasUploadedImage();
+  const hasEnoughPrompt = CreateProductSelectors.hasEnoughPrompt();
   const isGenerating = CreateProductSelectors.isGenerating();
   const selectedTshirt = CreateProductSelectors.selectedTshirt();
 
   const { canStampIt } = useProductCustomizerSection({ selectedTshirt });
   const { coins, isLoading: isCoinsLoading } = useCoins();
 
-  const hasUploadedImage = !!uploadedImage;
-  const canContinueFromUpload = hasUploadedImage;
-  const promptLength = promptValue?.trim().length || 0;
   const hasEnoughCoins = coins === null ? true : coins > 0; // optimistic until loaded
   const canGenerate =
-    hasUploadedImage && promptLength >= 10 && !isGenerating && hasEnoughCoins;
+    hasUploadedImage && hasEnoughPrompt && !isGenerating && hasEnoughCoins;
 
   const continueEnabled = getContinueEnabled(
     currentStep,
-    canContinueFromUpload,
+    hasUploadedImage,
     canGenerate,
     canStampIt,
   );

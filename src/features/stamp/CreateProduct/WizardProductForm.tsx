@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Activity } from "react";
+import { Activity, useCallback } from "react";
 import { CreateProductSelectors } from "./context/selectors";
 import { WizardStepHeader } from "@/features/ui/wizard-step-header";
 import { CreateProductActionFooter } from "./components/CreateProductActionFooter";
@@ -99,6 +99,10 @@ export function WizardProductForm() {
     isAddToCartPending,
   } = useWizardProductFormHandlers({ form });
 
+  // Stable reference — prevents CreateProductActionFooter from re-rendering
+  // every time WizardProductForm itself renders due to form state changes.
+  const handleCancel = useCallback(() => window.history.back(), []);
+
   if (!form) {
     return null;
   }
@@ -188,7 +192,7 @@ export function WizardProductForm() {
         !sections.showCreatingSection &&
         !sections.showSizingSection && (
           <CreateProductActionFooter
-            onCancel={() => window.history.back()}
+            onCancel={handleCancel}
             onContinue={handleContinue}
           />
         )}

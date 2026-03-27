@@ -15,7 +15,8 @@ const navStyles = {
   link: "px-5 py-2 text-sm font-heading tracking-widest rounded transition-all duration-300",
   active: "text-slate-900 bg-slate-50",
   inactive: "text-slate-500 hover:text-slate-900 hover:bg-slate-50",
-  iconButton: "w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#7C3AED] hover:bg-[#F3ECFF] rounded-md transition-all duration-300",
+  iconButton:
+    "w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#7C3AED] hover:bg-[#F3ECFF] rounded-md transition-all duration-300",
 } as const;
 
 export function Navbar({
@@ -29,7 +30,10 @@ export function Navbar({
       <div className="max-w-[1440px] mx-auto px-6">
         <div className="flex justify-between h-20 items-center">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group cursor-pointer">
+          <Link
+            href="/"
+            className="flex items-center gap-3 group cursor-pointer"
+          >
             <span className="text-2xl font-normal font-heading tracking-widest text-slate-900 uppercase">
               Stamp.AI
             </span>
@@ -41,7 +45,7 @@ export function Navbar({
               href="/orders"
               className={clsx(
                 navStyles.link,
-                activeItem === "orders" ? navStyles.active : navStyles.inactive
+                activeItem === "orders" ? navStyles.active : navStyles.inactive,
               )}
             >
               My Orders
@@ -58,7 +62,9 @@ export function Navbar({
               href="/dashboard"
               className={clsx(
                 navStyles.link,
-                activeItem === "dashboard" ? navStyles.active : navStyles.inactive
+                activeItem === "dashboard"
+                  ? navStyles.active
+                  : navStyles.inactive,
               )}
             >
               Dashboard

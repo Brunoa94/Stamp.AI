@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useCallback } from "react";
 import { UploadCloud, Sparkles, Eye, Shirt, Maximize } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/features/ui/button";
@@ -33,6 +34,14 @@ function mapToSidebarStep(step: string): string {
 }
 
 export function MobileStepNav() {
+  return <MobileStepNavInner />;
+}
+
+/**
+ * Inner component wrapped in React.memo — only re-renders when step
+ * navigation state changes, not on every form keystroke.
+ */
+const MobileStepNavInner = memo(function MobileStepNavInner() {
   const currentStep = CreateProductSelectors.currentStep();
   const completedSteps = CreateProductSelectors.completedSteps();
   const activeId = mapToSidebarStep(currentStep);
@@ -41,17 +50,18 @@ export function MobileStepNav() {
   const mappedCompletedSteps = completedSteps.map(mapToSidebarStep);
   const activeIndex = MOBILE_STEPS.findIndex((step) => step.id === activeId);
 
-  const handleStepClick = (stepId: (typeof MOBILE_STEPS)[number]["id"]) => {
-    const stepIndex = MOBILE_STEPS.findIndex((step) => step.id === stepId);
-    const isAllowed =
-      stepIndex <= activeIndex || mappedCompletedSteps.includes(stepId);
+  const handleStepClick = useCallback(
+    (stepId: (typeof MOBILE_STEPS)[number]["id"]) => {
+      const stepIndex = MOBILE_STEPS.findIndex((step) => step.id === stepId);
+      const isAllowed =
+        stepIndex <= activeIndex || mappedCompletedSteps.includes(stepId);
 
-    if (!isAllowed) {
-      return;
-    }
+      if (!isAllowed) return;
 
-    handleSetStep(stepId);
-  };
+      handleSetStep(stepId);
+    },
+    [handleSetStep, activeIndex, mappedCompletedSteps],
+  );
 
   return (
     <nav
@@ -110,4 +120,4 @@ export function MobileStepNav() {
       </div>
     </nav>
   );
-}
+});

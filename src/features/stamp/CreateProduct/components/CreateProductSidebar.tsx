@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useCallback } from "react";
 import { WizardSidebar } from "@/features/ui/wizard-sidebar";
 import { WIZARD_STEPS } from "../constants/wizardSteps";
 import type { WizardStepT } from "@/types/wizard";
@@ -26,7 +27,13 @@ function mapStepToSidebarStep(step: WizardStepT): string {
   return stepMapping[step] || step;
 }
 
-export function CreateProductSidebar() {
+/**
+ * Inner component wrapped in React.memo so it only re-renders when
+ * currentStep or completedSteps actually change.
+ * Both selectors subscribe to the NavigationStore — they are NOT triggered
+ * by form keystrokes, which only update the FormStore.
+ */
+const CreateProductSidebarInner = memo(function CreateProductSidebarInner() {
   const currentStep = CreateProductSelectors.currentStep();
   const completedSteps = CreateProductSelectors.completedSteps();
   const { handleSetStep } = useCreateProductSubscriberActions();
@@ -34,20 +41,22 @@ export function CreateProductSidebar() {
   const sidebarStep = mapStepToSidebarStep(currentStep);
   const sidebarCompletedSteps = completedSteps.map(mapStepToSidebarStep);
 
-  const handleStepClick = (stepId: string) => {
-    // Only allow navigation to completed steps or the current step
-    const stepIndex = WIZARD_STEPS.findIndex((s) => s.id === stepId);
-    const currentIndex = WIZARD_STEPS.findIndex((s) => s.id === currentStep);
+  const handleStepClick = useCallback(
+    (stepId: string) => {
+      const stepIndex = WIZARD_STEPS.findIndex((s) => s.id === stepId);
+      const currentIndex = WIZARD_STEPS.findIndex((s) => s.id === currentStep);
 
-    if (
-      stepIndex <= currentIndex ||
-      completedSteps.includes(stepId as WizardStepT)
-    ) {
-      handleSetStep(
-        stepId as "upload" | "synthesis" | "review" | "fabric" | "sizing",
-      );
-    }
-  };
+      if (
+        stepIndex <= currentIndex ||
+        completedSteps.includes(stepId as WizardStepT)
+      ) {
+        handleSetStep(
+          stepId as "upload" | "synthesis" | "review" | "fabric" | "sizing",
+        );
+      }
+    },
+    [handleSetStep, currentStep, completedSteps],
+  );
 
   return (
     <WizardSidebar
@@ -59,4 +68,8 @@ export function CreateProductSidebar() {
       helpDescription="High-resolution PNGs with transparent backgrounds work best for our AI generator."
     />
   );
+});
+
+export function CreateProductSidebar() {
+  return <CreateProductSidebarInner />;
 }
