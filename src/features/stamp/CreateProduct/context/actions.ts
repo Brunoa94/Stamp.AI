@@ -49,6 +49,7 @@ export function useCreateProductSubscriberActions() {
         navStore.setState({ ...navStore.getState(), currentStep: "generating" });
         formStore.setState({
           ...formStore.getState(),
+          isGenerating: true,
           selectedTshirt: null,
           generatedResult: null,
           generationError: null,

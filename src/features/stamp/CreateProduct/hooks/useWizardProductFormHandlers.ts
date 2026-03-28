@@ -44,7 +44,7 @@ export function useWizardProductFormHandlers({
 
   // Custom hooks
   const { handleCreateProduct } = useProductCreation();
-  const { smoothScrollToElementById } = useScrollToSection();
+  const { scrollToElementById } = useScrollToSection();
 
   const firstEnabledVariant =
     createdProduct?.variants?.find((v) => v.is_enabled) ||
@@ -137,55 +137,43 @@ export function useWizardProductFormHandlers({
 
   const formSubmitHandler = form?.handleSubmit(onSubmit);
 
+  const scrollToWizard = () => {
+    scrollToElementById("design-pipeline", {
+      block: "nearest",
+      behavior: "smooth",
+      delay: 150,
+    });
+  };
+
   const handleContinue = () => {
     if (sections.isUploadStep) {
       handleMoveToSynthesis();
-      smoothScrollToElementById("design-pipeline", {
-        block: "start",
-        delay: 150,
-        offset: -48,
-      });
+      scrollToWizard();
       return;
     }
 
     if (sections.isSynthesisStep) {
       formSubmitHandler?.();
-      smoothScrollToElementById("design-pipeline", {
-        block: "start",
-        delay: 150,
-        offset: -48,
-      });
+      scrollToWizard();
       return;
     }
 
     if (currentStep === "fabric") {
       handleCreateProduct(generatedResult, selectedTshirt);
-      smoothScrollToElementById("design-pipeline", {
-        block: "start",
-        delay: 150,
-        offset: -48,
-      });
+      scrollToWizard();
     }
   };
 
   const handleBack = () => {
     if (sections.isSynthesisStep || sections.isGeneratingStep) {
       handleSetCurrentStep("upload");
-      smoothScrollToElementById("design-pipeline", {
-        block: "start",
-        delay: 150,
-        offset: -48,
-      });
+      scrollToWizard();
       return;
     }
 
     if (sections.showFabricSection || sections.showCustomizerSection) {
       handleBackToResults();
-      smoothScrollToElementById("design-pipeline", {
-        block: "start",
-        delay: 150,
-        offset: -48,
-      });
+      scrollToWizard();
     }
   };
 
