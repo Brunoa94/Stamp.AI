@@ -49,7 +49,10 @@ export function useCreateProductSubscriberActions() {
         navStore.setState({ ...navStore.getState(), currentStep: "generating" });
         formStore.setState({
           ...formStore.getState(),
+          isGenerating: true,
           selectedTshirt: null,
+          selectedColor: null,
+          selectedSize: null,
           generatedResult: null,
           generationError: null,
           createdProduct: null,
@@ -88,6 +91,12 @@ export function useCreateProductSubscriberActions() {
       /** Handle "Use this image" click — transition to fabric selection */
       handleUseImage: () => {
         navStore.setState({ ...navStore.getState(), currentStep: "fabric" });
+        formStore.setState({
+          ...formStore.getState(),
+          selectedTshirt: null,
+          selectedColor: null,
+          selectedSize: null,
+        });
       },
 
       /** Handle back to results from customizer */
@@ -97,7 +106,22 @@ export function useCreateProductSubscriberActions() {
 
       /** Handle t-shirt selection — stay on fabric step */
       handleTshirtSelect: (tshirt: TshirtType | null) => {
-        formStore.setState({ ...formStore.getState(), selectedTshirt: tshirt });
+        formStore.setState({
+          ...formStore.getState(),
+          selectedTshirt: tshirt,
+          selectedColor: null,
+          selectedSize: null,
+        });
+      },
+
+      /** Handle color selection */
+      handleColorSelect: (color: string | null) => {
+        formStore.setState({ ...formStore.getState(), selectedColor: color });
+      },
+
+      /** Handle size selection */
+      handleSizeSelect: (size: string | null) => {
+        formStore.setState({ ...formStore.getState(), selectedSize: size });
       },
 
       /** Handle product creation start */
@@ -160,6 +184,8 @@ export function useCreateProductSubscriberActions() {
           generatedResult: null,
           generationError: null,
           selectedTshirt: null,
+          selectedColor: null,
+          selectedSize: null,
           isCreatingProduct: false,
           createdProduct: null,
           uploadedImage: null,
@@ -183,6 +209,15 @@ export function useCreateProductSubscriberActions() {
           ...navStore.getState(),
           currentStep: stepMap[step],
         });
+
+        if (step === "fabric") {
+          formStore.setState({
+            ...formState,
+            selectedTshirt: null,
+            selectedColor: null,
+            selectedSize: null,
+          });
+        }
       },
     }),
     [navStore, formStore],

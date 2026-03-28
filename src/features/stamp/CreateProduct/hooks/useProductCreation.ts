@@ -3,6 +3,7 @@ import { useCreateCustomProduct } from "@/queries";
 import type { TshirtType } from "@/queries/productQueries";
 import { useCreateProductSubscriberActions } from "../context/actions";
 import { IImageGenerationResult } from "@/schemas/productCreateSchema";
+import { CreateProductSelectors } from "../context/selectors";
 
 /**
  * Hook to handle product creation logic
@@ -15,6 +16,9 @@ export function useProductCreation() {
     handleProductCreationSuccess,
     handleProductCreationError,
   } = useCreateProductSubscriberActions();
+
+  const selectedColor = CreateProductSelectors.selectedColor();
+  const selectedSize = CreateProductSelectors.selectedSize();
 
   const handleCreateProduct = (
     generatedResult: IImageGenerationResult | null,
@@ -34,6 +38,8 @@ export function useProductCreation() {
       description: `Custom designed ${selectedTshirt.name} with your unique artwork`,
       user_id: user.id,
       customer_email: user.email,
+      selected_color: selectedColor,
+      selected_size: selectedSize,
     };
 
     createProduct(productPayload, {

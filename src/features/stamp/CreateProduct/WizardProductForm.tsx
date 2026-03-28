@@ -1,7 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { Activity, useCallback } from "react";
+import { Activity } from "react";
+import clsx from "clsx";
 import { CreateProductSelectors } from "./context/selectors";
 import { WizardStepHeader } from "@/features/ui/wizard-step-header";
 import { CreateProductActionFooter } from "./components/CreateProductActionFooter";
@@ -93,15 +94,12 @@ export function WizardProductForm() {
   const {
     stepConfig,
     sections,
+    handleBack,
     handleContinue,
     formSubmitHandler,
     isAddedToCart,
     isAddToCartPending,
   } = useWizardProductFormHandlers({ form });
-
-  // Stable reference — prevents CreateProductActionFooter from re-rendering
-  // every time WizardProductForm itself renders due to form state changes.
-  const handleCancel = useCallback(() => window.history.back(), []);
 
   if (!form) {
     return null;
@@ -129,10 +127,15 @@ export function WizardProductForm() {
       {!sections.isResultsStep && (
         <form
           onSubmit={formSubmitHandler}
-          className="flex-1 px-4 sm:px-12 pb-32 sm:pb-10 relative overflow-hidden"
+          className={clsx(
+            "flex-1 px-4 sm:px-12 relative",
+            sections.showSizingSection
+              ? "pb-10 overflow-hidden"
+              : "pb-32 sm:pb-10 overflow-hidden",
+          )}
           data-wizard-content
         >
-          <div className="h-full">
+          <div className={sections.showSizingSection ? "h-auto" : "h-full"}>
             {sections.showFormSection && (
               <>
                 {/* Upload Step */}
@@ -181,6 +184,7 @@ export function WizardProductForm() {
                 sectionRef={{ current: null }}
                 isAddedToCart={isAddedToCart}
                 isPending={isAddToCartPending}
+                isActive={sections.showSizingSection}
               />
             </Activity>
           </div>
@@ -189,10 +193,11 @@ export function WizardProductForm() {
 
       {/* Action Footer - Hidden on results, creating, and sizing steps */}
       {!sections.isResultsStep &&
+        !sections.isGeneratingStep &&
         !sections.showCreatingSection &&
         !sections.showSizingSection && (
           <CreateProductActionFooter
-            onCancel={handleCancel}
+            onBack={handleBack}
             onContinue={handleContinue}
           />
         )}

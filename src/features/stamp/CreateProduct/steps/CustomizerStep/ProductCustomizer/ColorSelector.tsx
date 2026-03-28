@@ -1,15 +1,9 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { cn } from "@/lib/utils";
-import {
-  getAvailableColors,
-  MAX_VISIBLE_COLORS,
-} from "./utils/prioritizeAvailableColors";
+import { getAvailableColors } from "./utils/prioritizeAvailableColors";
 import { getColorClass } from "@/helpers/colors/colorMapping";
-import dynamic from "next/dynamic";
-
-const MoreColors = dynamic(() => import("./MoreColors"), { ssr: false });
+import MoreColors from "./MoreColors";
 
 interface ColorOption {
   name: string;

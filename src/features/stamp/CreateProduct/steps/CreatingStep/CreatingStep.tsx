@@ -1,7 +1,7 @@
 "use client";
 
 import { RefObject } from "react";
-import { ProductCreatingSection } from "./ProductCreatingSection";
+import { ProductCreatingSection } from "../../sections/ProductCreatingSection";
 
 interface CreatingStepProps {
   sectionRef: RefObject<HTMLElement | null>;

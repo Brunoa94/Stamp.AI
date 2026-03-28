@@ -10,7 +10,7 @@ import {
 } from "@/theme/icons";
 import { productConfirmationTheme } from "@/theme/components";
 import { ProductDetailsSummary } from "./ProductDetailsSummary";
-import { useProductConfirmation } from "./useProductConfirmation";
+import { useProductConfirmation } from "../steps/SizingStep/useProductConfirmation";
 
 interface PropsI {
   sectionRef: RefObject<HTMLElement | null>;
@@ -79,6 +79,7 @@ export function ProductConfirmationSection({
 
           {/* Proceed to Checkout Button */}
           <Button
+            id="proceed-to-checkout-button"
             type="submit"
             value="proceed_to_checkout"
             disabled={isPending}

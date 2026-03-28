@@ -39,6 +39,8 @@ export interface FormState {
   generatedResult: IImageGenerationResult | null;
   generationError: Error | null;
   selectedTshirt: TshirtType | null;
+  selectedColor: string | null;
+  selectedSize: string | null;
   isCreatingProduct: boolean;
   createdProduct: CreatedProductT | null;
 }

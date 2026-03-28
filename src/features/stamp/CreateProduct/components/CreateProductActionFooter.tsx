@@ -12,12 +12,12 @@ import {
 import { useCoins } from "@/queries/coinsQueries";
 
 interface CreateProductActionFooterProps {
-  onCancel: () => void;
+  onBack: () => void;
   onContinue: () => void;
 }
 
 export function CreateProductActionFooter({
-  onCancel,
+  onBack,
   onContinue,
 }: CreateProductActionFooterProps) {
   const currentStep = CreateProductSelectors.currentStep();
@@ -45,6 +45,7 @@ export function CreateProductActionFooter({
   );
   const continueText = getContinueText(currentStep);
   const sections = getVisibleSections(currentStep);
+  const showBack = !sections.isUploadStep;
 
   const showNoCoinsMessage =
     sections.isSynthesisStep && !isCoinsLoading && coins === 0;
@@ -58,9 +59,10 @@ export function CreateProductActionFooter({
         </div>
       )}
       <WizardActionFooter
-        onCancel={onCancel}
-        onBack={undefined}
+        onBack={onBack}
+        showBack={showBack}
         onContinue={onContinue}
+        showCancel={false}
         canContinue={continueEnabled}
         continueText={continueText}
         continueIcon={
