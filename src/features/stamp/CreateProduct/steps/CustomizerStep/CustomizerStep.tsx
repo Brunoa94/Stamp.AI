@@ -1,12 +1,7 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { RefObject } from "react";
-
-const ProductCustomizerSection = dynamic(
-  () => import("./ProductCustomizer/ProductCustomizerSection"),
-  { ssr: false },
-);
+import ProductCustomizerSection from "./ProductCustomizer/ProductCustomizerSection";
 
 interface CustomizerStepProps {
   sectionRef: RefObject<HTMLElement | null>;
