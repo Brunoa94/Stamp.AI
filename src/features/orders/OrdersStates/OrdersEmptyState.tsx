@@ -1,6 +1,6 @@
 import { ShoppingBag, Filter } from "lucide-react";
 import { Button } from "@/features/ui/button";
-import { useRouter } from "next/navigation";
+import { useViewTransitionNavigate } from "@/features/ui/view-transition-link";
 
 interface OrdersEmptyStateProps {
   variant?: "no-orders" | "no-match";
@@ -11,7 +11,7 @@ export function OrdersEmptyState({
   variant = "no-orders",
   onClearFilters,
 }: OrdersEmptyStateProps) {
-  const router = useRouter();
+  const navigate = useViewTransitionNavigate();
   const isNoMatch = variant === "no-match";
 
   return (
@@ -45,7 +45,7 @@ export function OrdersEmptyState({
           </Button>
         ) : (
           <Button
-            onClick={() => router.push("/stamp")}
+            onClick={() => navigate("/stamp")}
             className="bg-linear-to-r from-slate-600 to-gray-700 hover:from-slate-700 hover:to-gray-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
           >
             Start Creating
