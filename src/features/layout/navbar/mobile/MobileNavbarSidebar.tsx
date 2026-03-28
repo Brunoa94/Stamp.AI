@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { useLogout } from "@/hooks/useAuth";
 import { useUser } from "@/queries/authQueries";
@@ -13,6 +13,7 @@ import { MobileNavbarSidebarThemeToggle } from "./MobileNavbarSidebarThemeToggle
 import { MobileNavbarSidebarNavigation } from "./MobileNavbarSidebarNavigation";
 import { MobileNavbarSidebarSignOut } from "./MobileNavbarSidebarSignOut";
 import { CoinsBadge } from "../CoinsBadge";
+import { useViewTransitionNavigate } from "@/features/ui/view-transition-link";
 
 interface Props {
   isOpen: boolean;
@@ -21,7 +22,7 @@ interface Props {
 
 export function MobileNavbarSidebar({ isOpen, onClose }: Props) {
   const pathname = usePathname();
-  const router = useRouter();
+  const navigate = useViewTransitionNavigate();
   const logoutMutation = useLogout();
   const { data: user } = useUser();
   const { setTheme, theme } = useTheme();
@@ -33,7 +34,7 @@ export function MobileNavbarSidebar({ isOpen, onClose }: Props) {
   };
 
   const handleNav = (href: string) => {
-    router.push(href);
+    navigate(href);
     onClose();
   };
 

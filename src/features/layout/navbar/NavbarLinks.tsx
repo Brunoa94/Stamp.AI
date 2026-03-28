@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { navbarTheme } from "@/theme/components";
+import { ViewTransitionLink } from "@/features/ui/view-transition-link";
 
 export function NavbarLinks() {
   const pathname = usePathname();
@@ -12,7 +12,7 @@ export function NavbarLinks() {
 
   return (
     <div className={navbarTheme.navigation.container}>
-      <Link
+      <ViewTransitionLink
         href="/orders"
         className={clsx(
           navbarTheme.navigation.link.base,
@@ -22,13 +22,13 @@ export function NavbarLinks() {
         )}
       >
         My Orders
-      </Link>
+      </ViewTransitionLink>
 
-      <Link href="/stamp" className={navbarTheme.navigation.stampButton}>
+      <ViewTransitionLink href="/stamp" className={navbarTheme.navigation.stampButton}>
         Stamp It!
-      </Link>
+      </ViewTransitionLink>
 
-      <Link
+      <ViewTransitionLink
         href="/dashboard"
         className={clsx(
           navbarTheme.navigation.link.base,
@@ -38,7 +38,7 @@ export function NavbarLinks() {
         )}
       >
         Dashboard
-      </Link>
+      </ViewTransitionLink>
     </div>
   );
 }

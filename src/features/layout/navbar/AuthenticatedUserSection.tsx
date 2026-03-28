@@ -2,17 +2,17 @@
 
 import { Button } from "@/features/ui/button";
 import { useLogout } from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
 import { Moon, User, ShoppingCart } from "lucide-react";
 import { useTheme } from "next-themes";
 import clsx from "clsx";
 import { navbarTheme } from "@/theme/components";
 import { useCartSummary } from "@/queries/cartQueries";
 import { CoinsBadge } from "./CoinsBadge";
+import { useViewTransitionNavigate } from "@/features/ui/view-transition-link";
 
 export function AuthenticatedUserSection() {
   const logoutMutation = useLogout();
-  const router = useRouter();
+  const navigate = useViewTransitionNavigate();
   const { setTheme, theme } = useTheme();
   const { itemCount } = useCartSummary();
 
@@ -39,7 +39,7 @@ export function AuthenticatedUserSection() {
       </Button>
 
       <Button
-        onClick={() => router.push("/cart")}
+        onClick={() => navigate("/cart")}
         variant="ghost"
         size="icon"
         className={clsx(navbarTheme.actions.themeButton, "relative")}
@@ -56,7 +56,7 @@ export function AuthenticatedUserSection() {
       <div className={navbarTheme.actions.divider} />
 
       <Button
-        onClick={() => router.push("/profile")}
+        onClick={() => navigate("/profile")}
         variant="ghost"
         size="icon"
         className={navbarTheme.actions.profileButton}

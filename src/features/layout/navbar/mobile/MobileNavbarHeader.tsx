@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { Menu, ShoppingCart, Wand2 } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { cn } from "@/lib/utils";
 import { navbarTheme } from "@/theme/components";
 import { NavbarBrand } from "../NavbarBrand";
+import { ViewTransitionLink } from "@/features/ui/view-transition-link";
 
 interface Props {
   itemCount: number;
@@ -33,21 +33,21 @@ export function MobileNavbarHeader({
           mobileHeader.stampCta,
         )}
       >
-        <Link href="/stamp" aria-label="Create a new stamp design">
+        <ViewTransitionLink href="/stamp" aria-label="Create a new stamp design">
           <Wand2 className="w-3.5 h-3.5" />
           <span className="text-lg">Stamp It!</span>
-        </Link>
+        </ViewTransitionLink>
       </Button>
       <div className="flex items-center">
         <Button asChild variant="ghost" className={mobileHeader.cartButton}>
-          <Link href="/cart" aria-label="View cart">
+          <ViewTransitionLink href="/cart" aria-label="View cart">
             <ShoppingCart className="w-6 h-6" />
             {itemCount > 0 && (
               <span className={mobileHeader.badge}>
                 {itemCount > 99 ? "99+" : itemCount}
               </span>
             )}
-          </Link>
+          </ViewTransitionLink>
         </Button>
 
         <Button
