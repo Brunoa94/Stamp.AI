@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { PrintifyService } from "@/services/printifyService";
 import { CustomProductT } from "@/types/printify";
 import { CustomProductService } from "@/services/customProductService";
@@ -37,6 +37,20 @@ export function useTshirtProducts() {
     queryFn: () => PrintifyService.getTshirtProducts(),
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 2,
+  });
+}
+
+/**
+ * Prefetch t-shirt products into the React Query cache.
+ * Call this on the step before the fabric selector so data is
+ * already in cache when the user arrives.
+ */
+export function usePrefetchTshirtProducts() {
+  const queryClient = useQueryClient();
+  queryClient.prefetchQuery({
+    queryKey: ["products", "tshirts"],
+    queryFn: () => PrintifyService.getTshirtProducts(),
+    staleTime: 1000 * 60 * 5,
   });
 }
 

@@ -9,6 +9,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { Check } from "lucide-react";
 import useScrollToSection from "@/hooks/useScrollToSection";
+import { usePrefetchTshirtProducts } from "@/queries/productQueries";
 
 interface IResultsSectionProps {
   ref?: React.Ref<HTMLElement>;
@@ -22,6 +23,11 @@ const ResultsSection = ({ ref }: IResultsSectionProps) => {
   const { smoothScrollToElementById } = useScrollToSection();
   const [imageLoaded, setImageLoaded] = useState(false);
   const [mockupError, setMockupError] = useState(false);
+
+  // Prefetch canvas/tshirt data while the user reviews their design
+  // so it's already in cache when they reach the Choose your Canvas step
+  usePrefetchTshirtProducts();
+
   const handleContinue = () => {
     handleUseImage();
     smoothScrollToElementById("design-pipeline", {

@@ -45,7 +45,7 @@ export function FabricCardSelector({
             variant="ghost"
             onClick={() => onTshirtSelect(fabric)}
             className={clsx(
-              "glass-card rounded-xl p-4 sm:p-6 space-y-3 sm:space-y-4 text-left transition-all duration-300 flex flex-col h-[600px]",
+              "glass-card rounded-xl p-3 sm:p-4 space-y-2 sm:space-y-3 text-left transition-all duration-300 flex flex-col h-105",
               "hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1",
               {
                 "border-2 border-[#5B21B6] bg-[rgba(124,58,237,0.1)] shadow-xl":
@@ -60,13 +60,13 @@ export function FabricCardSelector({
               <img
                 src={fabric.image}
                 alt={fabric.fabricType}
-                className="rounded-lg"
+                className="rounded-lg object-cover flex-1 min-h-0"
               />
             )}
 
             {/* Fabric Title & Selected Indicator */}
             <div className="flex items-start justify-between gap-2">
-              <h3 className="text-2xl sm:text-3xl font-heading uppercase tracking-wide text-gray-900 dark:text-white">
+              <h3 className="text-xl sm:text-2xl font-heading uppercase tracking-wide text-gray-900 dark:text-white">
                 {fabric.fabricType}
               </h3>
               {isSelected && (
@@ -76,7 +76,7 @@ export function FabricCardSelector({
 
             {/* Price Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-linear-to-r from-[#7C3AED] to-[#6D28D9] text-white">
-              <span className="text-lg sm:text-2xl font-accent font-semibold">
+              <span className="text-base sm:text-lg font-accent font-semibold">
                 ${fabric.price.toFixed(2)}
               </span>
             </div>
