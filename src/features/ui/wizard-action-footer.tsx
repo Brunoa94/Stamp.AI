@@ -15,7 +15,7 @@ interface WizardActionFooterProps {
 }
 
 const defaultContinueClassName =
-  "px-8 sm:px-20 py-5 sm:py-6 font-normal font-heading text-xl sm:text-2xl tracking-widest shadow-2xl shadow-purple-500/50 hover:-translate-y-1.5 hover:shadow-3xl transition-all duration-300 w-full sm:w-auto";
+  "px-10 sm:px-28 py-6 sm:py-8 font-normal font-heading text-2xl sm:text-3xl tracking-widest shadow-2xl shadow-purple-500/50 hover:-translate-y-1.5 hover:shadow-3xl transition-all duration-300 w-full sm:w-auto";
 
 export function WizardActionFooter({
   onCancel,
@@ -40,7 +40,7 @@ export function WizardActionFooter({
         disabled={isDisabled}
         variant="default"
         size="lg"
-        className={continueClassName || defaultContinueClassName}
+        className={`${continueClassName || defaultContinueClassName} sm:order-last sm:ml-auto`}
       >
         {continueText}
         {continueIcon || <ArrowRight />}
@@ -67,7 +67,7 @@ export function WizardActionFooter({
           disabled={!onBack}
           variant="ghost"
           size="lg"
-          className="hidden sm:flex font-normal font-heading text-xl tracking-widest"
+          className="font-normal font-heading text-lg sm:text-xl tracking-widest"
         >
           Back
         </Button>

@@ -39,7 +39,7 @@
  *   • Wizard region has an aria-label
  *   • Mobile step nav has role="navigation" with aria-label
  *   • Active step in mobile nav has aria-current="step"
- *   • Cancel / Continue buttons are keyboard accessible
+ *   • Back / Continue buttons are keyboard accessible
  */
 
 import { test, expect, Page } from "@playwright/test";
@@ -323,9 +323,21 @@ test.describe("Action Footer", () => {
     await gotoStamp(page);
   });
 
-  test("Cancel button is visible on the Upload step", async ({ page }) => {
-    const cancelBtn = page.getByRole("button", { name: /cancel/i });
-    await expect(cancelBtn).toBeVisible();
+  test("footer is not visible on the Upload step", async ({ page }) => {
+    await expect(page.getByRole("button", { name: /back/i })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /continue/i })).toHaveCount(
+      0,
+    );
+  });
+
+  test("footer shows Back + Generate on Synthesis", async ({ page }) => {
+    await uploadImage(page);
+    const continueBtn = page.getByRole("button", { name: /continue/i });
+    await expect(continueBtn).toBeEnabled({ timeout: 5_000 });
+    await continueBtn.click();
+
+    await expect(page.getByRole("button", { name: /back/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /generate/i })).toBeVisible();
   });
 
   test("footer is hidden on the Results step (no footer shown)", async ({ page }) => {

@@ -34,6 +34,8 @@ export function useWizardProductFormHandlers({
     handleGenerationSuccess,
     handleGenerationError,
     handleMoveToSynthesis,
+    handleSetCurrentStep,
+    handleBackToResults,
   } = useCreateProductSubscriberActions();
 
   // Mutations
@@ -166,9 +168,31 @@ export function useWizardProductFormHandlers({
     }
   };
 
+  const handleBack = () => {
+    if (sections.isSynthesisStep || sections.isGeneratingStep) {
+      handleSetCurrentStep("upload");
+      smoothScrollToElementById("design-pipeline", {
+        block: "start",
+        delay: 150,
+        offset: -48,
+      });
+      return;
+    }
+
+    if (sections.showFabricSection || sections.showCustomizerSection) {
+      handleBackToResults();
+      smoothScrollToElementById("design-pipeline", {
+        block: "start",
+        delay: 150,
+        offset: -48,
+      });
+    }
+  };
+
   return {
     stepConfig,
     sections,
+    handleBack,
     handleContinue,
     formSubmitHandler,
     isAddedToCart,
