@@ -66,6 +66,19 @@ export const validateEnvVars = {
   paypalMode: (): 'sandbox' | 'live' => {
     const mode = Deno.env.get('PAYPAL_MODE') || 'sandbox'
     return mode === 'live' ? 'live' : 'sandbox'
+  },
+
+  // Mollie environment validators
+  mollieApiKey: (): string => {
+    const apiKey = Deno.env.get('MOLLIE_API_KEY')
+    if (!apiKey) throw ErrorCodes.MOLLIE_API_KEY_MISSING()
+    return apiKey
+  },
+
+  mollieMode: (): 'test' | 'live' => {
+    const apiKey = Deno.env.get('MOLLIE_API_KEY') || ''
+    // Mollie API keys start with 'test_' or 'live_'
+    return apiKey.startsWith('live_') ? 'live' : 'test'
   }
 }
 

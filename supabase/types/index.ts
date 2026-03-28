@@ -100,7 +100,7 @@ export interface RefreshRequestI {
 // =============================================================================
 
 // Payment provider discriminator
-export type PaymentProviderT = 'stripe' | 'paypal'
+export type PaymentProviderT = 'stripe' | 'paypal' | 'mollie'
 
 // Payment status (includes refunded for PayPal)
 export type PaymentStatusT = 'processing' | 'succeeded' | 'failed' | 'canceled' | 'refunded'
@@ -110,15 +110,18 @@ export interface PaymentTransactionI {
   user_id?: string
   order_id?: string
   payment_provider: PaymentProviderT
-  // Stripe fields (optional when using PayPal)
+  // Stripe fields (optional when using PayPal/Mollie)
   stripe_payment_intent_id?: string
   stripe_charge_id?: string
   stripe_customer_id?: string
-  // PayPal fields (optional when using Stripe)
+  // PayPal fields (optional when using Stripe/Mollie)
   paypal_order_id?: string
   paypal_capture_id?: string
   paypal_payer_id?: string
   paypal_payer_email?: string
+  // Mollie fields (optional when using Stripe/PayPal)
+  mollie_payment_id?: string
+  mollie_status?: string
   // Common fields
   amount: number
   currency: string
@@ -173,6 +176,34 @@ export interface PayPalCaptureResponseI {
   captureId: string
   status: string
   payerEmail?: string
+}
+
+// Mollie Types
+export interface MolliePaymentRequestI {
+  amount: number
+  currency?: string
+  description?: string
+  line_items?: any[]
+  shipping_address?: ShippingAddressI
+  metadata?: Record<string, any>
+}
+
+export interface MolliePaymentResponseI {
+  success: boolean
+  paymentId: string
+  checkoutUrl: string
+}
+
+export interface MollieVerifyRequestI {
+  paymentId: string
+}
+
+export interface MollieVerifyResponseI {
+  success: boolean
+  paymentId: string
+  status: 'open' | 'canceled' | 'pending' | 'authorized' | 'expired' | 'failed' | 'paid'
+  isPaid: boolean
+  metadata?: Record<string, any>
 }
 
 // =============================================================================
@@ -340,6 +371,7 @@ export type ErrorCodeT =
   | 'PAYPAL_CLIENT_ID_MISSING'
   | 'PAYPAL_CLIENT_SECRET_MISSING'
   | 'PAYPAL_WEBHOOK_ID_MISSING'
+  | 'MOLLIE_API_KEY_MISSING'
 
   // External API errors (502)
   | 'NO_VARIANTS_AVAILABLE'
@@ -349,6 +381,10 @@ export type ErrorCodeT =
   | 'IMAGE_UPLOAD_API_ERROR'
   | 'STRIPE_API_ERROR'
   | 'PAYPAL_API_ERROR'
+  | 'MOLLIE_API_ERROR'
+  | 'MOLLIE_PAYMENT_NOT_FOUND'
+  | 'MOLLIE_PAYMENT_FAILED'
+  | 'MOLLIE_PAYMENT_ID_REQUIRED'
   | 'AUTH_REGISTRATION_FAILED'
   | 'AUTH_LOGIN_FAILED'
   | 'PASSWORD_RESET_FAILED'

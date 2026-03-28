@@ -1,11 +1,12 @@
 "use client";
 
-import { CreditCard, Check } from "lucide-react";
-import { FaPaypal } from "react-icons/fa";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PaymentMethodT } from "@/types/payment";
+import { PAYMENT_METHODS } from "@/constants/payment";
 import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
+import { isMollieConfigured } from "@/lib/mollie";
 
 interface Props {
   selectedMethod: PaymentMethodT;
@@ -13,31 +14,28 @@ interface Props {
   disabled?: boolean;
 }
 
-const paymentMethods = [
-  {
-    id: "stripe" as const,
-    label: "Credit Card",
-    description: "Visa, Mastercard, Amex",
-    Icon: CreditCard,
-  },
-  {
-    id: "paypal" as const,
-    label: "PayPal",
-    description: "PayPal, Venmo, Pay Later",
-    Icon: FaPaypal,
-  },
-];
+// Filter payment methods based on configuration
+const getAvailablePaymentMethods = () => {
+  return PAYMENT_METHODS.filter((method) => {
+    if (method.id === "mollie") {
+      return isMollieConfigured();
+    }
+    return true;
+  });
+};
 
 export function PaymentMethodSelector({
   selectedMethod,
   onMethodChange,
   disabled = false,
 }: Props) {
+  const paymentMethods = getAvailablePaymentMethods();
+
   return (
     <div
       role="radiogroup"
       aria-label="Select payment method"
-      className="flex gap-3 mb-6"
+      className="flex flex-wrap gap-3 mb-6"
       data-disabled={disabled || undefined}
     >
       {paymentMethods.map((method) => {

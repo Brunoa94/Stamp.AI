@@ -9,7 +9,7 @@ export function OrderTableHeader() {
         <TableHead className={ordersTheme.table.th}>Items</TableHead>
         <TableHead className={ordersTheme.table.th}>Status</TableHead>
         <TableHead className={ordersTheme.table.thRight}>Total</TableHead>
-        <TableHead className={ordersTheme.table.thRight}>Actions</TableHead>
+        <TableHead className={ordersTheme.table.thRight}></TableHead>
       </TableRow>
     </TableHeader>
   );

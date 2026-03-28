@@ -100,6 +100,13 @@ export const ErrorCodes = {
   PAYPAL_WEBHOOK_SIGNATURE_INVALID: (details: string) => new FunctionError(400, 'PAYPAL_WEBHOOK_SIGNATURE_INVALID', `Invalid PayPal webhook signature: ${details}`),
   PAYPAL_ORDER_ID_REQUIRED: () => new FunctionError(400, 'PAYPAL_ORDER_ID_REQUIRED', 'PayPal order ID is required'),
 
+  // Mollie errors
+  MOLLIE_API_KEY_MISSING: () => new FunctionError(500, 'MOLLIE_API_KEY_MISSING', 'Missing MOLLIE_API_KEY'),
+  MOLLIE_API_ERROR: (details: string) => new FunctionError(502, 'MOLLIE_API_ERROR', `Mollie API error: ${details}`),
+  MOLLIE_PAYMENT_NOT_FOUND: () => new FunctionError(404, 'MOLLIE_PAYMENT_NOT_FOUND', 'Mollie payment not found'),
+  MOLLIE_PAYMENT_FAILED: (details: string) => new FunctionError(400, 'MOLLIE_PAYMENT_FAILED', `Mollie payment failed: ${details}`),
+  MOLLIE_PAYMENT_ID_REQUIRED: () => new FunctionError(400, 'MOLLIE_PAYMENT_ID_REQUIRED', 'Mollie payment ID is required'),
+
   // Generic errors
   INTERNAL_ERROR: () => new FunctionError(500, 'INTERNAL_ERROR', 'Internal server error'),
   UNKNOWN_ERROR: () => new FunctionError(500, 'UNKNOWN_ERROR', 'Unknown error occurred'),

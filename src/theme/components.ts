@@ -232,11 +232,16 @@ export const componentThemes = {
       itemTitle: `font-heading font-bold text-sm uppercase tracking-tight text-gray-900`,
       itemMeta: `text-xs text-gray-500 font-medium mb-3`,
       itemPrice: `text-sm font-bold text-gray-900`,
-      statusBadge: `px-2 py-1 text-[10px] font-bold uppercase rounded`,
-      statusProcessing: `bg-yellow-100 text-yellow-700`,
-      statusShipped: `bg-blue-100 text-blue-700`,
-      statusDelivered: `bg-green-100 text-green-700`,
-      statusCancelled: `bg-red-100 text-red-700`,
+      statusBadge: `inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase`,
+      statusPending: `bg-slate-100 text-slate-600 ring-1 ring-slate-200`,
+      statusProcessing: `bg-amber-50 text-amber-700 ring-1 ring-amber-200`,
+      statusShipped: `bg-sky-50 text-sky-700 ring-1 ring-sky-200`,
+      statusInTransit: `bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200`,
+      statusDelivered: `bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200`,
+      statusCancelled: `bg-red-50 text-red-600 ring-1 ring-red-200`,
+      statusRefunded: `bg-purple-50 text-purple-700 ring-1 ring-purple-200`,
+      statusFailed: `bg-rose-50 text-rose-700 ring-1 ring-rose-200`,
+      statusOnHold: `bg-orange-50 text-orange-700 ring-1 ring-orange-200`,
       emptyState: `text-sm text-gray-500`,
     },
   },
@@ -398,11 +403,16 @@ export const componentThemes = {
       itemsStack: `flex -space-x-3 overflow-hidden`,
       itemImage: `inline-block h-10 w-10 rounded-lg ring-2 ring-white object-cover bg-slate-100`,
       itemBadge: `inline-flex items-center justify-center h-10 w-10 rounded-lg bg-slate-800 text-white text-xs font-bold ring-2 ring-white`,
-      statusBadge: `badge-status px-2.5 py-1 rounded text-xs font-bold tracking-wide uppercase`,
-      statusProcessing: `bg-blue-100 text-blue-600`,
-      statusDelivered: `bg-green-100 text-green-600`,
-      statusShipped: `bg-orange-100 text-orange-600`,
-      statusCancelled: `bg-red-100 text-red-600`,
+      statusBadge: `inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold tracking-wide uppercase`,
+      statusPending: `bg-slate-100 text-slate-600 ring-1 ring-slate-200`,
+      statusProcessing: `bg-amber-50 text-amber-700 ring-1 ring-amber-200`,
+      statusShipped: `bg-sky-50 text-sky-700 ring-1 ring-sky-200`,
+      statusInTransit: `bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200`,
+      statusDelivered: `bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200`,
+      statusCancelled: `bg-red-50 text-red-600 ring-1 ring-red-200`,
+      statusRefunded: `bg-purple-50 text-purple-700 ring-1 ring-purple-200`,
+      statusFailed: `bg-rose-50 text-rose-700 ring-1 ring-rose-200`,
+      statusOnHold: `bg-orange-50 text-orange-700 ring-1 ring-orange-200`,
       total: `text-base font-bold text-slate-900`,
       actions: `flex items-center justify-end gap-3`,
       viewButton: `px-5 py-2.5 bg-[#7C3AED] text-white text-sm font-bold rounded hover:bg-[#6D28D9] transition-all`,
@@ -679,6 +689,62 @@ export const componentThemes = {
     supportLink: "block mt-8 text-slate-400 hover:text-slate-600 text-[10px] font-bold uppercase tracking-widest transition-colors",
   },
 
+  // Buy Credits Dialog styles
+  buyCredits: {
+    // Package card
+    packageCard: {
+      base: `relative flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-200`,
+      selected: `border-[#7C3AED] bg-[#7C3AED]/5 shadow-md`,
+      unselected: `border-slate-200 hover:border-slate-300 hover:bg-slate-50`,
+      creditsRow: `flex items-center gap-1.5 mb-1`,
+      creditsIcon: `w-5 h-5`,
+      creditsIconSelected: `text-[#FF8C42]`,
+      creditsIconUnselected: `text-slate-400`,
+      creditsValue: `text-2xl font-heading font-bold`,
+      creditsValueSelected: `text-slate-900`,
+      creditsValueUnselected: `text-slate-700`,
+      price: `text-sm font-medium text-slate-500`,
+    },
+    popularBadge: `absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-linear-to-r from-[#7C3AED] to-[#06B6D4] text-white text-[10px] font-bold uppercase tracking-wider rounded-full flex items-center gap-1`,
+    selectedCheckmark: `absolute top-2 right-2 w-5 h-5 rounded-full bg-[#7C3AED] text-white flex items-center justify-center`,
+    // Package selector
+    packageSelector: {
+      grid: `grid grid-cols-2 gap-3`,
+    },
+    // Custom input
+    customInput: {
+      container: `w-full p-4 rounded-xl border-2 transition-all duration-200 text-left`,
+      containerSelected: `border-[#7C3AED] bg-[#7C3AED]/5`,
+      containerUnselected: `border-slate-200 hover:border-slate-300`,
+      row: `flex items-center gap-3`,
+      iconBox: `w-10 h-10 rounded-lg flex items-center justify-center`,
+      iconBoxSelected: `bg-[#7C3AED]/10`,
+      iconBoxUnselected: `bg-slate-100`,
+      price: `text-sm font-medium text-slate-600`,
+      error: `text-xs text-red-500 mt-2`,
+    },
+    // Summary
+    summary: {
+      container: `p-4 rounded-xl bg-slate-50 border border-slate-200`,
+      row: `flex justify-between items-center`,
+      creditsWrap: `flex items-center gap-2`,
+      creditsIcon: `w-5 h-5 text-[#FF8C42]`,
+      creditsLabel: `font-heading font-bold text-slate-900`,
+      priceValue: `text-xl font-heading font-bold text-slate-900`,
+    },
+    // Payment step
+    paymentStep: {
+      backButton: `text-sm text-slate-500 hover:text-slate-700 flex items-center gap-1`,
+    },
+    // Selection step
+    selectionStep: {
+      container: `space-y-6`,
+      submitButton: `w-full h-12 bg-linear-to-r from-[#7C3AED] to-[#06B6D4] text-white font-heading font-bold uppercase tracking-widest rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50`,
+    },
+    // Section label
+    sectionLabel: `text-xs font-bold uppercase tracking-widest text-slate-500 mb-3 block`,
+  },
+
   // 404 page styles
   notFound: {
     page: "pt-32 relative flex items-center justify-center px-12 md:px-24",
@@ -714,6 +780,7 @@ export const productConfirmationTheme = componentThemes.productConfirmation;
 export const paymentSuccessTheme = componentThemes.paymentSuccess;
 export const paymentErrorTheme = componentThemes.paymentError;
 export const notFoundTheme = componentThemes.notFound;
+export const buyCreditsTheme = componentThemes.buyCredits;
 
 // Utility functions
 export const getButtonVariant = (variant: keyof typeof componentThemes.button) =>
