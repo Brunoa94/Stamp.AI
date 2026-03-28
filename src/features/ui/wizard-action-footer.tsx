@@ -31,12 +31,38 @@ export function WizardActionFooter({
 }: WizardActionFooterProps) {
   const isDisabled = !canContinue || !onContinue;
 
+  const scrollContainerToTop = () => {
+    if (typeof window === "undefined") return;
+
+    const container = document.getElementById("design-pipeline");
+    if (!container) return;
+
+    container.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      inline: "nearest",
+    });
+  };
+
+  const handleContinueClick = () => {
+    if (!onContinue || isDisabled) return;
+
+    onContinue();
+
+    // Scroll now and once again after the next paint so step transitions
+    // that change layout still end at the top of the wizard container.
+    scrollContainerToTop();
+    requestAnimationFrame(() => {
+      scrollContainerToTop();
+    });
+  };
+
   return (
     <div className="sticky sm:static bottom-0 left-0 right-0 z-20 sm:z-auto px-4 sm:px-12 py-5 sm:py-10 bg-white/85 sm:bg-white/30 backdrop-blur-lg border-t border-white/20 rounded-t-3xl sm:rounded-none shadow-xl sm:shadow-none flex flex-col-reverse sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
       {/* Mobile: full-width CTA first (bottom), then cancel small; Desktop: cancel left, CTA right */}
       <Button
         type="button"
-        onClick={onContinue}
+        onClick={handleContinueClick}
         disabled={isDisabled}
         variant="default"
         size="lg"
