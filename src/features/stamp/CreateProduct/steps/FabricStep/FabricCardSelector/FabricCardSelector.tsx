@@ -1,7 +1,6 @@
 "use client";
 
 import { useTshirtProducts, type TshirtType } from "@/queries/productQueries";
-import Image from "next/image";
 import clsx from "clsx";
 import { Button } from "@/features/ui/button";
 import { CheckCircleIcon } from "@/theme/icons";

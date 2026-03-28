@@ -25,6 +25,8 @@ const selectGenerationError = (s: FormState) => s.generationError;
 const selectSelectedTshirt = (s: FormState) => s.selectedTshirt;
 const selectIsCreatingProduct = (s: FormState) => s.isCreatingProduct;
 const selectCreatedProduct = (s: FormState) => s.createdProduct;
+const selectSelectedColor = (s: FormState) => s.selectedColor;
+const selectSelectedSize = (s: FormState) => s.selectedSize;
 
 // ---------------------------------------------------------------------------
 // Derived boolean selectors
@@ -59,6 +61,8 @@ export const CreateProductSelectors = {
   selectedTshirt: () => useFormSelector(selectSelectedTshirt),
   isCreatingProduct: () => useFormSelector(selectIsCreatingProduct),
   createdProduct: () => useFormSelector(selectCreatedProduct),
+  selectedColor: () => useFormSelector(selectSelectedColor),
+  selectedSize: () => useFormSelector(selectSelectedSize),
 
   // Derived — flip only when the boolean outcome changes
   hasUploadedImage: () => useFormSelector(selectHasUploadedImage),

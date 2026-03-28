@@ -61,6 +61,7 @@ export function WizardActionFooter({
     <div className="sticky sm:static bottom-0 left-0 right-0 z-20 sm:z-auto px-4 sm:px-12 py-5 sm:py-10 bg-white/85 sm:bg-white/30 backdrop-blur-lg border-t border-white/20 rounded-t-3xl sm:rounded-none shadow-xl sm:shadow-none flex flex-col-reverse sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
       {/* Mobile: full-width CTA first (bottom), then cancel small; Desktop: cancel left, CTA right */}
       <Button
+        id="wizard-continue-button"
         type="button"
         onClick={handleContinueClick}
         disabled={isDisabled}

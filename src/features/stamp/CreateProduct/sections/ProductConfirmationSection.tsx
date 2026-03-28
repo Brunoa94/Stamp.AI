@@ -79,6 +79,7 @@ export function ProductConfirmationSection({
 
           {/* Proceed to Checkout Button */}
           <Button
+            id="proceed-to-checkout-button"
             type="submit"
             value="proceed_to_checkout"
             disabled={isPending}
