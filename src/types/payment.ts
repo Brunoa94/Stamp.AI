@@ -1,8 +1,8 @@
 /**
  * Payment method selection type
- * Used to toggle between Stripe (credit card) and PayPal payment methods
+ * Used to toggle between Stripe (credit card), PayPal, and Mollie payment methods
  */
-export type PaymentMethodT = "stripe" | "paypal";
+export type PaymentMethodT = "stripe" | "paypal" | "mollie";
 
 /**
  * Payment method option for UI display
@@ -82,5 +82,11 @@ export const PAYMENT_METHOD_OPTIONS: PaymentMethodOptionI[] = [
     label: "PayPal",
     icon: "paypal",
     description: "Pay with PayPal, Venmo, or Pay Later",
+  },
+  {
+    id: "mollie",
+    label: "Mollie",
+    icon: "bank",
+    description: "iDEAL, Bancontact, SOFORT, Cards",
   },
 ];

@@ -1,0 +1,145 @@
+import { createClient } from "@/lib/supabase/client";
+import { ErrorClient } from "./errorClient";
+import type { ShippingAddressT } from "@/schemas/checkout";
+import type { PrintifyLineItem } from "@/types/printifyOrder";
+import type { MolliePaymentStatus } from "@/lib/mollie";
+
+export interface CreateMolliePaymentPayloadI {
+  amount: number;
+  currency?: string;
+  description?: string;
+  lineItems: PrintifyLineItem[];
+  shippingAddress: ShippingAddressT;
+  testMode?: boolean;
+}
+
+export interface CreateMolliePaymentResponseI {
+  paymentId: string;
+  checkoutUrl: string;
+}
+
+export interface VerifyMolliePaymentPayloadI {
+  paymentId: string;
+}
+
+export interface VerifyMolliePaymentResponseI {
+  paymentId: string;
+  status: MolliePaymentStatus;
+  isPaid: boolean;
+  metadata?: Record<string, unknown>;
+}
+
+export class MollieService {
+  private static getSupabase() {
+    return createClient();
+  }
+
+  private static async validateAuthenticatedSession(): Promise<void> {
+    const {
+      data: { session },
+      error,
+    } = await this.getSupabase().auth.getSession();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    if (!session) {
+      throw new Error("You must be logged in to complete checkout");
+    }
+  }
+
+  /**
+   * Create a Mollie payment and get the checkout URL
+   */
+  static async createPayment({
+    amount,
+    currency = "EUR",
+    description,
+    lineItems,
+    shippingAddress,
+    testMode = false,
+  }: CreateMolliePaymentPayloadI): Promise<CreateMolliePaymentResponseI> {
+    try {
+      await this.validateAuthenticatedSession();
+
+      const { data, error } = await this.getSupabase().functions.invoke(
+        "create-mollie-payment",
+        {
+          body: {
+            amount,
+            currency,
+            description,
+            line_items: lineItems,
+            shipping_address: shippingAddress,
+            metadata: {
+              order_id: `order_${Date.now()}`,
+              test_mode: testMode,
+            },
+          },
+        }
+      );
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (!data?.paymentId || !data?.checkoutUrl) {
+        throw new Error("Failed to create Mollie payment");
+      }
+
+      return {
+        paymentId: data.paymentId,
+        checkoutUrl: data.checkoutUrl,
+      };
+    } catch (error) {
+      throw ErrorClient.handleError({
+        error,
+        service: "Mollie",
+        action: "Create Payment",
+      });
+    }
+  }
+
+  /**
+   * Verify a Mollie payment status
+   * Called after redirect back from Mollie
+   */
+  static async verifyPayment({
+    paymentId,
+  }: VerifyMolliePaymentPayloadI): Promise<VerifyMolliePaymentResponseI> {
+    try {
+      await this.validateAuthenticatedSession();
+
+      const { data, error } = await this.getSupabase().functions.invoke(
+        "verify-mollie-payment",
+        {
+          body: {
+            paymentId,
+          },
+        }
+      );
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (!data?.paymentId) {
+        throw new Error("Failed to verify Mollie payment");
+      }
+
+      return {
+        paymentId: data.paymentId,
+        status: data.status,
+        isPaid: data.isPaid,
+        metadata: data.metadata,
+      };
+    } catch (error) {
+      throw ErrorClient.handleError({
+        error,
+        service: "Mollie",
+        action: "Verify Payment",
+      });
+    }
+  }
+}

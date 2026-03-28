@@ -63,3 +63,8 @@ export {
   useCreatePayPalOrder,
   useCapturePayPalOrder,
 } from "./paypalQueries";
+
+export {
+  useCreateMolliePayment,
+  useVerifyMolliePayment,
+} from "./mollieQueries";

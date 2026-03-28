@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Elements, CardElement } from "@stripe/react-stripe-js";
 import { stripePromise } from "@/lib/stripe";
 import { ShippingAddressT } from "@/schemas/checkout";
 import { Button } from "@/features/ui/button";
 import { CheckoutErrorDisplay } from "../components";
 import clsx from "clsx";
-import { TestCardSelector } from "./TestCardSelector";
 import { PaymentMethodSelector } from "../PaymentMethodSelector/PaymentMethodSelector";
 import { PayPalButton } from "../PayPalButton/PayPalButton";
+import { MollieButton } from "../MollieButton";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 import type { PaymentMethodT } from "@/types/payment";
 import { usePaymentForm } from "./usePaymentForm";
-
+import { TestCardSelector } from "./TestCardSelector";
 interface CheckoutFormProps {
   amount: number;
   lineItems: PrintifyLineItem[];
@@ -110,7 +110,10 @@ const CheckoutForm = ({
           )}
 
           {error && (
-            <CheckoutErrorDisplay error={error} onDismiss={() => setError(null)} />
+            <CheckoutErrorDisplay
+              error={error}
+              onDismiss={() => setError(null)}
+            />
           )}
 
           {!hideButton && (
@@ -118,7 +121,7 @@ const CheckoutForm = ({
               type="submit"
               disabled={!stripe || loading}
               className={clsx(
-                "w-full rounded-lg bg-linear-to-br from-[#7C3AED] to-[#06B6D4] text-white font-heading font-bold uppercase tracking-widest"
+                "w-full rounded-lg bg-linear-to-br from-[#7C3AED] to-[#06B6D4] text-white font-heading font-bold uppercase tracking-widest",
               )}
             >
               {loading ? "Processing..." : `Pay $${amount.toFixed(2)}`}
@@ -135,6 +138,18 @@ const CheckoutForm = ({
           shippingAddress={shippingAddress}
           testMode={testMode}
           onSuccess={handlePayPalSuccess}
+          onError={onError}
+          disabled={loading}
+        />
+      )}
+
+      {/* Mollie Button */}
+      {paymentMethod === "mollie" && (
+        <MollieButton
+          amount={amount}
+          lineItems={lineItems}
+          shippingAddress={shippingAddress}
+          testMode={testMode}
           onError={onError}
           disabled={loading}
         />
