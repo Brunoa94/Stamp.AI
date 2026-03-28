@@ -47,6 +47,121 @@ async function supabaseRest(
   }
 }
 
+/**
+ * Handle credit purchase - update user credits and create transaction record
+ */
+async function handleCreditPurchase(paymentIntent: any) {
+  const userId = paymentIntent.metadata?.user_id
+  const creditsToAdd = parseInt(paymentIntent.metadata?.credits || '0', 10)
+  const amountPaid = paymentIntent.amount / 100
+
+  if (!userId || userId === 'service-role') {
+    console.error('Invalid user_id for credit purchase:', userId)
+    return
+  }
+
+  if (creditsToAdd <= 0) {
+    console.error('Invalid credits amount:', creditsToAdd)
+    return
+  }
+
+  console.log(`Adding ${creditsToAdd} credits to user ${userId}`)
+
+  // Get current user credits
+  const currentCreditsResult = await supabaseRest(
+    `user_credits?user_id=eq.${userId}&select=credits`,
+    'GET'
+  )
+
+  let currentCredits = 0
+  let userExists = false
+
+  if (currentCreditsResult.data && currentCreditsResult.data.length > 0) {
+    currentCredits = currentCreditsResult.data[0].credits || 0
+    userExists = true
+  }
+
+  const newBalance = currentCredits + creditsToAdd
+
+  // Update or insert user credits
+  if (userExists) {
+    const updateResult = await supabaseRest(
+      `user_credits?user_id=eq.${userId}`,
+      'PATCH',
+      {
+        credits: newBalance,
+        updated_at: new Date().toISOString()
+      }
+    )
+
+    if (updateResult.error) {
+      console.error('Failed to update user credits:', updateResult.error)
+      return
+    }
+  } else {
+    const insertResult = await supabaseRest(
+      'user_credits',
+      'POST',
+      {
+        user_id: userId,
+        credits: newBalance,
+        updated_at: new Date().toISOString()
+      }
+    )
+
+    if (insertResult.error) {
+      console.error('Failed to insert user credits:', insertResult.error)
+      return
+    }
+  }
+
+  console.log(`Updated user ${userId} credits: ${currentCredits} -> ${newBalance}`)
+
+  // Create credit transaction record
+  const transactionResult = await supabaseRest(
+    'credit_transactions',
+    'POST',
+    {
+      user_id: userId,
+      amount: creditsToAdd,
+      balance_after: newBalance,
+      transaction_type: 'purchase',
+      description: `Purchased ${creditsToAdd} credits for $${amountPaid.toFixed(2)}`,
+      reference_id: paymentIntent.id,
+      created_at: new Date().toISOString()
+    }
+  )
+
+  if (transactionResult.error) {
+    console.error('Failed to create credit transaction:', transactionResult.error)
+  } else {
+    console.log('Credit transaction recorded:', transactionResult.data)
+  }
+
+  // Also record in payment_transactions for consistency
+  await supabaseRest(
+    'payment_transactions',
+    'POST',
+    {
+      user_id: userId,
+      stripe_payment_intent_id: paymentIntent.id,
+      stripe_customer_id: paymentIntent.customer,
+      amount: amountPaid,
+      currency: paymentIntent.currency,
+      status: 'succeeded',
+      payment_method_type: paymentIntent.payment_method_types?.[0],
+      metadata: {
+        ...paymentIntent.metadata,
+        type: 'credit_purchase'
+      },
+      updated_at: new Date().toISOString()
+    },
+    { prefer: 'resolution=merge-duplicates' }
+  )
+
+  console.log('Credit purchase completed successfully')
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -90,7 +205,16 @@ serve(async (req) => {
       case 'payment_intent.succeeded': {
         console.log('Handling payment_intent.succeeded')
         const paymentIntent = event.data.object
-        
+
+        // Check if this is a credit purchase
+        const isCreditPurchase = paymentIntent.metadata?.type === 'credit_purchase'
+
+        if (isCreditPurchase) {
+          console.log('Processing credit purchase')
+          await handleCreditPurchase(paymentIntent)
+          break
+        }
+
         // Save payment to database using REST API
         const result = await supabaseRest(
           'payment_transactions',
@@ -122,7 +246,7 @@ serve(async (req) => {
         console.log('Calling Printify order creation')
 
         // Parse line items and shipping from metadata
-        const lineItems = paymentIntent.metadata?.line_items 
+        const lineItems = paymentIntent.metadata?.line_items
           ? JSON.parse(paymentIntent.metadata.line_items)
           : []
         const shippingAddress = paymentIntent.metadata?.shipping_address
@@ -131,7 +255,7 @@ serve(async (req) => {
 
         // If no line items (e.g., from stripe trigger test), use sample order
         const useSampleOrder = lineItems.length === 0
-        
+
         const printifyResponse = await fetch(
           `${Deno.env.get('SUPABASE_URL')}/functions/v1/create-printify-order`,
           {

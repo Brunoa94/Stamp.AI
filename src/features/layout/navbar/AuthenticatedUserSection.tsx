@@ -47,7 +47,7 @@ export function AuthenticatedUserSection() {
       >
         <ShoppingCart className="w-7 h-7" />
         {itemCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-linear-to-r from-purple-600 via-pink-600 to-red-600 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 bg-linear-to-r from-purple-600 via-pink-600 to-red-600 text-white text-[10px] font-bold rounded-full min-w-4.5 h-4.5 px-1 flex items-center justify-center">
             {itemCount > 99 ? "99+" : itemCount}
           </span>
         )}

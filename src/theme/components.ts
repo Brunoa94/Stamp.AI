@@ -689,6 +689,62 @@ export const componentThemes = {
     supportLink: "block mt-8 text-slate-400 hover:text-slate-600 text-[10px] font-bold uppercase tracking-widest transition-colors",
   },
 
+  // Buy Credits Dialog styles
+  buyCredits: {
+    // Package card
+    packageCard: {
+      base: `relative flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-200`,
+      selected: `border-[#7C3AED] bg-[#7C3AED]/5 shadow-md`,
+      unselected: `border-slate-200 hover:border-slate-300 hover:bg-slate-50`,
+      creditsRow: `flex items-center gap-1.5 mb-1`,
+      creditsIcon: `w-5 h-5`,
+      creditsIconSelected: `text-[#FF8C42]`,
+      creditsIconUnselected: `text-slate-400`,
+      creditsValue: `text-2xl font-heading font-bold`,
+      creditsValueSelected: `text-slate-900`,
+      creditsValueUnselected: `text-slate-700`,
+      price: `text-sm font-medium text-slate-500`,
+    },
+    popularBadge: `absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-linear-to-r from-[#7C3AED] to-[#06B6D4] text-white text-[10px] font-bold uppercase tracking-wider rounded-full flex items-center gap-1`,
+    selectedCheckmark: `absolute top-2 right-2 w-5 h-5 rounded-full bg-[#7C3AED] text-white flex items-center justify-center`,
+    // Package selector
+    packageSelector: {
+      grid: `grid grid-cols-2 gap-3`,
+    },
+    // Custom input
+    customInput: {
+      container: `w-full p-4 rounded-xl border-2 transition-all duration-200 text-left`,
+      containerSelected: `border-[#7C3AED] bg-[#7C3AED]/5`,
+      containerUnselected: `border-slate-200 hover:border-slate-300`,
+      row: `flex items-center gap-3`,
+      iconBox: `w-10 h-10 rounded-lg flex items-center justify-center`,
+      iconBoxSelected: `bg-[#7C3AED]/10`,
+      iconBoxUnselected: `bg-slate-100`,
+      price: `text-sm font-medium text-slate-600`,
+      error: `text-xs text-red-500 mt-2`,
+    },
+    // Summary
+    summary: {
+      container: `p-4 rounded-xl bg-slate-50 border border-slate-200`,
+      row: `flex justify-between items-center`,
+      creditsWrap: `flex items-center gap-2`,
+      creditsIcon: `w-5 h-5 text-[#FF8C42]`,
+      creditsLabel: `font-heading font-bold text-slate-900`,
+      priceValue: `text-xl font-heading font-bold text-slate-900`,
+    },
+    // Payment step
+    paymentStep: {
+      backButton: `text-sm text-slate-500 hover:text-slate-700 flex items-center gap-1`,
+    },
+    // Selection step
+    selectionStep: {
+      container: `space-y-6`,
+      submitButton: `w-full h-12 bg-linear-to-r from-[#7C3AED] to-[#06B6D4] text-white font-heading font-bold uppercase tracking-widest rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50`,
+    },
+    // Section label
+    sectionLabel: `text-xs font-bold uppercase tracking-widest text-slate-500 mb-3 block`,
+  },
+
   // 404 page styles
   notFound: {
     page: "pt-32 relative flex items-center justify-center px-12 md:px-24",
@@ -724,6 +780,7 @@ export const productConfirmationTheme = componentThemes.productConfirmation;
 export const paymentSuccessTheme = componentThemes.paymentSuccess;
 export const paymentErrorTheme = componentThemes.paymentError;
 export const notFoundTheme = componentThemes.notFound;
+export const buyCreditsTheme = componentThemes.buyCredits;
 
 // Utility functions
 export const getButtonVariant = (variant: keyof typeof componentThemes.button) =>
