@@ -17,6 +17,8 @@ export const MOCK_STATE: CreateProductContextState = {
 
   // Product creation state
   selectedTshirt: null,
+  selectedColor: null,
+  selectedSize: null,
   isCreatingProduct: false,
   createdProduct: null,
 };

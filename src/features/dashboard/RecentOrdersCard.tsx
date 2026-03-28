@@ -30,16 +30,16 @@ function getStatusClass(status?: string | null) {
   return dashboardTheme.orders.statusProcessing;
 }
 
+const RECENT_ORDERS_LIMIT = 5;
+
 export function RecentOrdersCard({ orders }: RecentOrdersCardProps) {
-  const recentOrders = orders.slice(0, 3);
+  const recentOrders = orders.slice(0, RECENT_ORDERS_LIMIT);
+  const hasMore = orders.length > RECENT_ORDERS_LIMIT;
 
   return (
     <section className={dashboardTheme.orders.card}>
       <div className={dashboardTheme.orders.header}>
         <h4 className={dashboardTheme.card.sectionTitle}>Recent Orders</h4>
-        <Link href="/orders" className={dashboardTheme.orders.viewAll}>
-          View All
-        </Link>
       </div>
 
       {recentOrders.length === 0 ? (
@@ -90,6 +90,16 @@ export function RecentOrdersCard({ orders }: RecentOrdersCardProps) {
               </div>
             );
           })}
+
+          {hasMore && (
+            <Link
+              href="/orders"
+              className="flex items-center justify-center gap-1.5 w-full pt-2 text-sm font-medium text-[#7C3AED] hover:text-[#6D28D9] transition-colors"
+            >
+              View all {orders.length} order{orders.length !== 1 ? "s" : ""}
+              <ChevronRight className="w-4 h-4" />
+            </Link>
+          )}
         </div>
       )}
     </section>

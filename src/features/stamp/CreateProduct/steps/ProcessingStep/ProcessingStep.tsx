@@ -1,14 +1,7 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { RefObject } from "react";
-
-const ProcessingSection = dynamic(
-  () => import("../../components/ProcessingSection"),
-  {
-    ssr: false,
-  },
-);
+import ProcessingSection from "../../sections/ProcessingSection";
 
 interface ProcessingStepProps {
   sectionRef: RefObject<HTMLElement | null>;

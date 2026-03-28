@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useBlueprintVariants, type TshirtType } from "@/queries/productQueries";
+import { CreateProductSelectors } from "../../../../context/selectors";
+import { useCreateProductSubscriberActions } from "../../../../context/actions";
 
 interface Props{
     selectedTshirt?:TshirtType | null;
 }
 
 export default function useProductCustomizerSection({selectedTshirt}: Props){
-    const [selectedColor, setSelectedColor] = useState<string | null>(null);
-    const [selectedSize, setSelectedSize] = useState<string | null>(null);
+    const selectedColor = CreateProductSelectors.selectedColor();
+    const selectedSize = CreateProductSelectors.selectedSize();
+    const { handleColorSelect, handleSizeSelect } = useCreateProductSubscriberActions();
 
     const { data: variantsData, isLoading: isLoadingVariants } =
     useBlueprintVariants(
@@ -17,20 +20,20 @@ export default function useProductCustomizerSection({selectedTshirt}: Props){
 
     // Reset color and size when tshirt changes
     useEffect(() => {
-        setSelectedColor(null);
-        setSelectedSize(null);
+        handleColorSelect(null);
+        handleSizeSelect(null);
     }, [selectedTshirt?.blueprint_id]);
 
     // Auto-select first color and size when variants load
     useEffect(() => {
         if (variantsData) {
         // Auto-select first color and size when variants load or tshirt changes
-        setSelectedColor(variantsData.colors[0] || null);
-        setSelectedSize(variantsData.sizes[0] || null);
+        handleColorSelect(variantsData.colors[0] || null);
+        handleSizeSelect(variantsData.sizes[0] || null);
         } else {
         // Reset when no data (e.g., tshirt changed and new data is loading)
-        setSelectedColor(null);
-        setSelectedSize(null);
+        handleColorSelect(null);
+        handleSizeSelect(null);
         }
     }, [selectedTshirt?.blueprint_id, variantsData]);
 
@@ -55,7 +58,7 @@ export default function useProductCustomizerSection({selectedTshirt}: Props){
     selectedColor,
     selectedSize,
     isLoadingVariants,
-    setSelectedColor,
-    setSelectedSize
+    setSelectedColor: handleColorSelect,
+    setSelectedSize: handleSizeSelect
     }
 }

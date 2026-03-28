@@ -52,6 +52,8 @@ const INITIAL_FORM: FormState = {
   generatedResult: null,
   generationError: null,
   selectedTshirt: null,
+  selectedColor: null,
+  selectedSize: null,
   isCreatingProduct: false,
   createdProduct: null,
 };
