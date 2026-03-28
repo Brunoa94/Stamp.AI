@@ -10,7 +10,7 @@ import {
 } from "@/theme/icons";
 import { productConfirmationTheme } from "@/theme/components";
 import { ProductDetailsSummary } from "./ProductDetailsSummary";
-import { useProductConfirmation } from "./useProductConfirmation";
+import { useProductConfirmation } from "../steps/SizingStep/useProductConfirmation";
 
 interface PropsI {
   sectionRef: RefObject<HTMLElement | null>;

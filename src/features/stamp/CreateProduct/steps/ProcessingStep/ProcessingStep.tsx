@@ -1,7 +1,7 @@
 "use client";
 
 import { RefObject } from "react";
-import ProcessingSection from "./ProcessingSection";
+import ProcessingSection from "../../sections/ProcessingSection";
 
 interface ProcessingStepProps {
   sectionRef: RefObject<HTMLElement | null>;

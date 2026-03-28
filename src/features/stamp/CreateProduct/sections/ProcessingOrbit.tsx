@@ -1,5 +1,5 @@
 import { Wand2 } from "lucide-react";
-import { ORBIT_ICONS } from "../../constants/processingIcons";
+import { ORBIT_ICONS } from "../constants/processingIcons";
 
 export function ProcessingOrbit() {
   return (

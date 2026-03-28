@@ -1,6 +1,6 @@
-import { ProcessingOrbit } from "../steps/ProcessingStep/ProcessingOrbit";
-import { ProcessingText } from "../steps/ProcessingStep/ProcessingText";
-import { ProcessingDots } from "../steps/ProcessingStep/ProcessingDots";
+import { ProcessingOrbit } from "./ProcessingOrbit";
+import { ProcessingText } from "./ProcessingText";
+import { ProcessingDots } from "./ProcessingDots";
 
 interface IProcessingSectionProps {
   sectionRef?: React.RefObject<HTMLElement | null>;

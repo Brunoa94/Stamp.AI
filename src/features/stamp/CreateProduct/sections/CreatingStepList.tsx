@@ -1,4 +1,4 @@
-import { CREATION_STEPS } from "../../constants/creationSteps";
+import { CREATION_STEPS } from "../constants/creationSteps";
 
 export function CreatingStepList() {
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { RefObject } from "react";
-import { FabricSelectionSection } from "./FabricSelectionSection";
+import { FabricSelectionSection } from "../../sections/FabricSelectionSection";
 
 interface FabricStepProps {
   sectionRef: RefObject<HTMLElement | null>;

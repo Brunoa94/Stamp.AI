@@ -1,12 +1,12 @@
 "use client";
 
 import { RefObject } from "react";
-import { FabricCardSelector } from "./FabricCardSelector/FabricCardSelector";
-import { ColorSwatchSelector } from "./ColorSwatchSelector";
-import { SizeTileSelector } from "./SizeTileSelector/SizeTileSelector";
+import { FabricCardSelector } from "../steps/FabricStep/FabricCardSelector/FabricCardSelector";
+import { ColorSwatchSelector } from "../steps/FabricStep/ColorSwatchSelector";
+import { SizeTileSelector } from "../steps/FabricStep/SizeTileSelector/SizeTileSelector";
 import { Label } from "@/features/ui/label";
-import { CreateProductSelectors } from "../../context/selectors";
-import { useCreateProductSubscriberActions } from "../../context/actions";
+import { CreateProductSelectors } from "../context/selectors";
+import { useCreateProductSubscriberActions } from "../context/actions";
 
 interface FabricSelectionSectionProps {
   sectionRef: RefObject<HTMLElement | null>;
