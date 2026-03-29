@@ -25,24 +25,30 @@ function Navbar() {
         className={cn(
           navbarTheme.container,
           navbarTheme.desktop.base,
-          isScrolled ? navbarTheme.desktop.scrolled : navbarTheme.desktop.transparent,
+          isScrolled
+            ? navbarTheme.desktop.scrolled
+            : navbarTheme.desktop.transparent,
         )}
         style={{ viewTransitionName: "main-nav" }}
       >
+        <div className={navbarTheme.desktop.topAccent} />
         <div className={navbarTheme.inner}>
           <div className={navbarTheme.content}>
-            {/* Logo */}
-            <NavbarBrand />
+            <div className={navbarTheme.desktop.brandSlot}>
+              <NavbarBrand />
+            </div>
 
-            {/* Navigation Links (only when authenticated) */}
-            {isAuthenticated && <NavbarLinks />}
+            <div className={navbarTheme.desktop.centerSlot}>
+              {isAuthenticated && <NavbarLinks />}
+            </div>
 
-            {/* User Actions */}
-            {isAuthenticated ? (
-              <AuthenticatedUserSection />
-            ) : (
-              <UnauthenticatedUserSection />
-            )}
+            <div className={navbarTheme.desktop.actionsSlot}>
+              {isAuthenticated ? (
+                <AuthenticatedUserSection />
+              ) : (
+                <UnauthenticatedUserSection />
+              )}
+            </div>
           </div>
         </div>
       </nav>

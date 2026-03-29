@@ -2,6 +2,7 @@
 
 import { colors } from "./colors";
 import { animations, animationClasses } from "./animations";
+import { navbarDesignSystem } from "./navbarDesignSystem";
 
 export const componentThemes = {
   // Card variants
@@ -106,65 +107,7 @@ export const componentThemes = {
   },
 
   // Navbar styles
-  navbar: {
-    container: `sticky top-0 z-50`,
-    inner: `max-w-[1440px] mx-auto px-6`,
-    content: `flex justify-between h-20 items-center`,
-
-    desktop: {
-      base: `hidden md:block sticky top-0 z-50 w-full transition-[background-color,backdrop-filter,border-color,box-shadow,transform] duration-500 ease-out`,
-      scrolled: `bg-white/70 dark:bg-gray-900/70 backdrop-blur-md border-b border-white/30 dark:border-gray-700/30 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05)]`,
-      transparent: `bg-transparent`,
-    },
-
-    brand: {
-      link: `flex items-center gap-3 group cursor-pointer`,
-      text: `text-2xl font-heading tracking-widest uppercase`,
-      dot: `inline-block mx-0.5 w-2 h-2 rounded-full [background:linear-gradient(45deg,#7C3AED,#06B6D4,#FF8C42)] [background-size:200%_200%] animate-[gradientPulse_3s_ease-in-out_infinite]`,
-    },
-
-    navigation: {
-      container: `hidden md:flex items-center gap-4`,
-      link: {
-        base: `px-5 py-2 text-base font-heading tracking-widest rounded transition-soft`,
-        active: `text-slate-900 bg-slate-50`,
-        inactive: `text-slate-500 hover:text-slate-900 hover:bg-slate-50`,
-      },
-      stampButton: `w-full px-6 py-2.5 text-base font-heading tracking-widest text-white bg-[#7C3AED] rounded shadow-[0_4px_14px_rgba(124,58,237,0.3)] transition-soft hover:bg-[#6D28D9] hover:shadow-[0_6px_20px_rgba(124,58,237,0.4)] hover:-translate-y-0.5 flex-1`,
-    },
-
-    actions: {
-      container: `flex items-center gap-3`,
-      themeButton: `w-10 h-10 flex items-center justify-center text-slate-400 hover:text-[#7C3AED] hover:bg-[#F3ECFF] rounded-md transition-soft`,
-      divider: `h-6 w-px bg-slate-200`,
-      profileButton: `flex items-center gap-2 pl-2 group`,
-      profileIcon: `w-10 h-10 rounded-md bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-[#F3ECFF] group-hover:text-[#7C3AED] transition-soft`,
-      signOutButton: `ml-2 px-5 py-2 text-base font-heading tracking-widest text-white bg-[#FF4444] rounded transition-soft hover:bg-[#E03333] hover:shadow-[0_4px_14px_rgba(255,68,68,0.3)] hover:-translate-y-0.5`,
-    },
-
-    mobileHeader: {
-      row: `h-16 px-4 flex items-center gap-3 max-w-screen`,
-      stampCta: `h-9 flex items-center justify-center gap-1.5 text-lg sm:mx-4`,
-      cartButton: `relative w-11 h-11 flex items-center justify-center text-slate-700 dark:text-slate-300`,
-      badge: `absolute -top-0.5 -right-0.5 bg-linear-to-r from-purple-600 via-pink-600 to-red-600 text-white text-[10px] font-bold rounded-full min-w-4.25 h-4.25 px-0.5 flex items-center justify-center`,
-      menuButton: `w-11 h-11 rounded-lg active:scale-95 transition-transform shrink-0`,
-    },
-
-    mobileSidebar: {
-      root: `fixed inset-0 z-[100]`,
-      backdrop: `absolute inset-0 bg-slate-900/40 backdrop-blur-sm`,
-      panel: `absolute right-0 top-0 bottom-0 w-[85%] max-w-sm bg-white dark:bg-gray-900 shadow-2xl flex flex-col animate-[slideInRight_0.3s_cubic-bezier(0.4,0,0.2,1)]`,
-      panelHeader: `flex justify-between items-center p-6 border-b border-slate-100 dark:border-gray-800`,
-      closeButton: `w-10 h-10 rounded-full text-slate-400 bg-slate-50 dark:bg-gray-800 hover:bg-slate-100`,
-      nav: `flex-1 overflow-y-auto px-6 py-8 space-y-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden`,
-      footer: `p-6 border-t border-slate-100 dark:border-gray-800`,
-      themeToggle: {
-        button: `w-full flex items-center justify-between py-4 px-4 text-slate-600 dark:text-slate-300 active:bg-slate-50 rounded-xl transition-colors`,
-        switchTrack: `w-10 h-5 rounded-full relative transition-colors duration-300`,
-        switchThumb: `absolute top-1 w-3 h-3 bg-white rounded-full shadow-sm transition-all duration-300`,
-      },
-    },
-  },
+  navbar: navbarDesignSystem,
 
   // Dashboard styles
   dashboard: {
@@ -248,7 +191,7 @@ export const componentThemes = {
 
   // Footer styles
   footer: {
-    container: `relative bg-white/30 dark:bg-gray-900/30 backdrop-blur-xl border-t border-white/50 dark:border-white/10 pt-20 pb-12 mt-24 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.5)] overflow-hidden`,
+    container: `relative bg-transparent border-t border-[#7C3AED]/35 dark:border-[#A78BFA]/35 pt-20 pb-12 mt-24 overflow-hidden`,
     inner: `max-w-[1440px] mx-auto px-10 md:px-16 xl:px-24 relative z-10`,
     brandWrap: `flex flex-col items-center justify-center mb-8`,
     brandText: `text-4xl md:text-5xl font-heading font-bold uppercase tracking-tighter bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent drop-shadow-sm`,

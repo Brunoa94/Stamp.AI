@@ -8,6 +8,7 @@ import { ViewTransitionLink } from "@/features/ui/view-transition-link";
 export function NavbarLinks() {
   const pathname = usePathname();
   const isOrdersActive = pathname === "/orders";
+  const isStampActive = pathname === "/stamp";
   const isDashboardActive = pathname === "/dashboard";
 
   return (
@@ -24,8 +25,17 @@ export function NavbarLinks() {
         My Orders
       </ViewTransitionLink>
 
-      <ViewTransitionLink href="/stamp" className={navbarTheme.navigation.stampButton}>
-        Stamp It!
+      <ViewTransitionLink
+        href="/stamp"
+        className={navbarTheme.navigation.stampButton}
+      >
+        <span
+          className={clsx(
+            isStampActive && navbarTheme.navigation.stampButtonActive,
+          )}
+        >
+          Stamp It!
+        </span>
       </ViewTransitionLink>
 
       <ViewTransitionLink
