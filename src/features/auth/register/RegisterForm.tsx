@@ -2,7 +2,7 @@
 
 import { useRegisterForm } from "./useRegisterForm";
 import { RegistrationSuccessMessage } from "./RegistrationSuccessMessage";
-import { DialogContent } from "@/features/ui/dialog";
+import { DialogContent, DialogTitle } from "@/features/ui/dialog";
 import { RegisterDialogHeader } from "./components/RegisterDialogHeader";
 import { RegisterCredentialsFields } from "./components/RegisterCredentialsFields";
 import { RegisterFormActions } from "./components/RegisterFormActions";
@@ -21,6 +21,7 @@ export function RegisterForm() {
       showCloseButton={false}
       className="max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none sm:max-w-xl"
     >
+      <DialogTitle className="sr-only">Create Account</DialogTitle>
       <div className="relative overflow-hidden rounded-3xl border border-white bg-white/92 p-8 shadow-[0_25px_50px_-12px_rgba(15,23,42,0.25)] backdrop-blur-2xl md:p-10">
         <RegisterDialogHeader />
 

@@ -123,7 +123,7 @@ export const componentThemes = {
     },
     header: {
       container: `mb-12`,
-      title: `text-4xl md:text-5xl font-heading font-extrabold uppercase tracking-tighter text-gray-900 mb-2`,
+      title: `font-['Cabinet_Grotesk'] text-[clamp(2.25rem,4vw,3.25rem)] leading-[0.9] tracking-[-0.05em] font-extrabold uppercase text-[#1A2340] mb-2`,
       metaRow: `flex flex-wrap items-center gap-4 text-gray-500 uppercase tracking-widest text-xs font-bold`,
       metaDot: `w-1 h-1 bg-gray-300 rounded-full`,
     },
@@ -579,10 +579,10 @@ export const componentThemes = {
     inner: `mt-6 px-6 pb-6 flex flex-col gap-3`,
     row: `flex items-center gap-4`,
     backButton: `flex items-center justify-center w-10 h-10 rounded-lg bg-slate-200 text-slate-600 hover:bg-slate-300 transition-colors shrink-0 bg-transparent`,
-    title: `text-4xl font-normal font-heading text-slate-900 tracking-wide`,
+    title: `font-['Cabinet_Grotesk'] text-[2.5rem] leading-[0.9] tracking-[-0.05em] font-extrabold uppercase text-[#1A2340]`,
     descriptionRow: `flex items-center gap-4`,
     gradientBar: `h-1.5 w-24 bg-linear-to-r from-[#7C3AED] via-[#4F46E5] to-[#06B6D4] rounded-sm shadow-sm shrink-0`,
-    description: `text-md leading-relaxed max-w-2xl font-accent text-purple-950`,
+    description: `font-['Satoshi'] text-sm leading-relaxed max-w-2xl font-normal text-slate-500`,
   },
 
   // Payment success page styles

@@ -1,6 +1,6 @@
 "use client";
 
-import { DialogContent } from "@/features/ui/dialog";
+import { DialogContent, DialogTitle } from "@/features/ui/dialog";
 import { useLoginForm } from "./useLoginForm";
 import { LoginDialogHeader } from "./components/LoginDialogHeader";
 import { LoginCredentialsFields } from "./components/LoginCredentialsFields";
@@ -16,6 +16,7 @@ export function LoginForm() {
       showCloseButton={false}
       className="max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none sm:max-w-135"
     >
+      <DialogTitle className="sr-only">Login</DialogTitle>
       <div className="relative overflow-hidden rounded-[2.25rem] border border-white/50 bg-white/85 p-8 shadow-[0_40px_100px_-20px_rgba(15,23,42,0.2)] backdrop-blur-2xl md:p-10">
         <LoginDialogHeader />
 
