@@ -192,7 +192,7 @@ export const componentThemes = {
   // Footer styles
   footer: {
     container: `relative bg-transparent border-t border-[#7C3AED]/35 dark:border-[#A78BFA]/35 pt-20 pb-12 mt-24 overflow-hidden`,
-    inner: `max-w-[1440px] mx-auto px-10 md:px-16 xl:px-24 relative z-10`,
+    inner: `max-w-[1440px] mx-auto px-10 md:px-16 xl:px-24 relative z-10 pb-12`,
     brandWrap: `flex flex-col items-center justify-center mb-8`,
     brandText: `text-4xl md:text-5xl font-heading font-bold uppercase tracking-tighter bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent drop-shadow-sm`,
     brandDot: `inline-block mx-1.5 w-2.5 h-2.5 rounded-full bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] shadow-lg shadow-purple-500/30`,

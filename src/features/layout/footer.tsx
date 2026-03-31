@@ -1,64 +1,63 @@
 "use client";
 
-import { FooterBrand } from "./footer/FooterBrand";
-import { FooterMission } from "./footer/FooterMission";
+import { footerTheme } from "@/theme/components";
 import { FooterLinkSection } from "./footer/FooterLinkSection";
 import { FooterConnect } from "./footer/FooterConnect";
-import { footerTheme } from "@/theme/components";
-
-const platformLinks = [
-  { id: "footer-link-how", href: "/stamp", label: "How it Works" },
-  { id: "footer-link-showcase", href: "/dashboard", label: "Showcase" },
-  { id: "footer-link-pricing", href: "/orders", label: "Bulk Pricing" },
-];
 
 const companyLinks = [
-  { id: "footer-link-about", href: "/profile", label: "About Us" },
-  { id: "footer-link-blog", href: "/dashboard", label: "Blog" },
-  { id: "footer-link-careers", href: "/dashboard", label: "Careers" },
+  { id: "footer-about", href: "/about", label: "About Us" },
+  { id: "footer-contact", href: "/contact", label: "Contact" },
+  { id: "footer-careers", href: "/careers", label: "Careers" },
 ];
 
 const supportLinks = [
-  { id: "footer-link-help", href: "/help", label: "Help Center" },
-  { id: "footer-link-terms", href: "/terms", label: "Terms of Service" },
-  { id: "footer-link-privacy", href: "/privacy", label: "Privacy Policy" },
+  { id: "footer-help", href: "/help", label: "Help Center" },
+  { id: "footer-faq", href: "/faq", label: "FAQ" },
+  { id: "footer-shipping", href: "/shipping", label: "Shipping Info" },
+];
+
+const legalLinks = [
+  { id: "footer-privacy", href: "/privacy", label: "Privacy Policy" },
+  { id: "footer-terms", href: "/terms", label: "Terms of Service" },
+  { id: "footer-refunds", href: "/refunds", label: "Refund Policy" },
 ];
 
 export function Footer() {
   return (
-    <footer
-      id="global-footer"
-      className={footerTheme.container}
-      style={{ viewTransitionName: "footer" }}
-    >
-      {/* Top glow line */}
-      <div
-        className="absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r from-transparent via-purple-500/50 to-transparent dark:via-purple-500/70 pointer-events-none"
-        aria-hidden="true"
-      />
+    <footer className="relative mt-24 w-full pb-8">
+      <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border-t border-white/40 dark:border-slate-700/40 rounded-t-2xl shadow-lg shadow-purple-500/5">
+        <div className={footerTheme.inner}>
+          {/* Top row: Brand on left, Links on right */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pt-12 pb-8">
+            {/* Brand & Mission - Left side */}
+            <div className="lg:col-span-4 flex flex-col gap-6">
+              <div className="flex items-start">
+                <span className="text-2xl font-heading tracking-widest uppercase text-slate-900 dark:text-white">
+                  Stamp
+                  <span
+                    className="inline-block mx-0.5 w-2 h-2 rounded-full [background:linear-gradient(45deg,#7C3AED,#06B6D4,#FF8C42)] bg-size-[200%_200%] animate-[gradientPulse_3s_ease-in-out_infinite]"
+                    aria-hidden="true"
+                  />
+                  AI
+                </span>
+              </div>
+              <p className={footerTheme.missionText}>
+                Empowering creators with AI-driven apparel design. High quality prints,
+                delivered to your door.
+              </p>
+            </div>
 
-      {/* Secondary accent line */}
-      <div
-        className="absolute top-0.5 left-0 right-0 h-px bg-linear-to-r from-transparent via-cyan-400/30 to-transparent dark:via-cyan-500/40 pointer-events-none"
-        aria-hidden="true"
-      />
+            {/* Links - Right side */}
+            <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-8">
+              <FooterLinkSection title="Company" links={companyLinks} />
+              <FooterLinkSection title="Support" links={supportLinks} />
+              <FooterLinkSection title="Legal" links={legalLinks} />
+            </div>
+          </div>
 
-      <div className={footerTheme.inner}>
-        <FooterBrand />
-
-        {/* Decorative gradient bar */}
-        <div className="flex justify-center mb-12" aria-hidden="true">
-          <div className="h-1.5 w-24 bg-linear-to-r from-[#7C3AED] via-[#4F46E5] to-[#06B6D4] rounded-sm shadow-lg shadow-purple-500/20" />
+          {/* Bottom with Copyright and Social */}
+          <FooterConnect />
         </div>
-
-        <div className={footerTheme.grid}>
-          <FooterMission />
-          <FooterLinkSection title="Platform" links={platformLinks} />
-          <FooterLinkSection title="Company" links={companyLinks} />
-          <FooterLinkSection title="Support" links={supportLinks} />
-        </div>
-
-        <FooterConnect />
       </div>
     </footer>
   );
