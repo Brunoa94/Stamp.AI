@@ -2,6 +2,7 @@ import { Button } from "@/features/ui/button";
 import clsx from "clsx";
 import { CheckoutSelectors } from "../context/CheckoutContextSubscriber/selectors";
 import Link from "next/link";
+import { PAYMENT_CONFIRM_METHOD_UI } from "@/constants/payment";
 
 interface CompleteOrderButtonProps {
   onCompleteOrder: () => void;
@@ -12,7 +13,9 @@ export const CompleteOrderButton = ({
 }: CompleteOrderButtonProps) => {
   const shippingAddress = CheckoutSelectors.shippingAddress();
   const isProcessingPayment = CheckoutSelectors.isProcessingPayment();
+  const selectedPaymentMethod = CheckoutSelectors.selectedPaymentMethod();
   const hasShippingAddress = !!shippingAddress;
+  const selectedUi = PAYMENT_CONFIRM_METHOD_UI[selectedPaymentMethod];
 
   return (
     <div className="pt-4">
@@ -21,14 +24,16 @@ export const CompleteOrderButton = ({
           onClick={onCompleteOrder}
           disabled={!hasShippingAddress || isProcessingPayment}
           className={clsx(
-            "w-full rounded-none bg-linear-to-br from-[#7C3AED] to-[#06B6D4] text-white font-heading font-extrabold uppercase tracking-widest py-4 shadow-lg",
+            "w-full rounded-none text-white font-heading font-extrabold uppercase tracking-widest py-4 shadow-lg",
+            selectedUi.className,
             {
               "opacity-50 cursor-not-allowed":
                 !hasShippingAddress || isProcessingPayment,
             },
           )}
         >
-          {isProcessingPayment ? "Processing..." : `Complete Order`}
+          <selectedUi.Icon className="w-4 h-4" />
+          {isProcessingPayment ? "Processing..." : selectedUi.labelDesktop}
         </Button>
 
         <Button

@@ -12,8 +12,9 @@ import { PayPalButton } from "../PayPalButton/PayPalButton";
 import { MollieButton } from "../MollieButton";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 import type { PaymentMethodT } from "@/types/payment";
-import { usePaymentForm } from "./usePaymentForm";
 import { TestCardSelector } from "./TestCardSelector";
+import { usePaymentForm } from "./usePaymentForm";
+
 interface CheckoutFormProps {
   amount: number;
   lineItems: PrintifyLineItem[];
@@ -130,8 +131,8 @@ const CheckoutForm = ({
         </form>
       )}
 
-      {/* PayPal Buttons */}
-      {paymentMethod === "paypal" && (
+      {/* PayPal Buttons (hidden in checkout step; final action is in summary CTA) */}
+      {!hideButton && paymentMethod === "paypal" && (
         <PayPalButton
           amount={amount}
           lineItems={lineItems}
@@ -143,8 +144,8 @@ const CheckoutForm = ({
         />
       )}
 
-      {/* Mollie Button */}
-      {paymentMethod === "mollie" && (
+      {/* Mollie Button (hidden in checkout step; final action is in summary CTA) */}
+      {!hideButton && paymentMethod === "mollie" && (
         <MollieButton
           amount={amount}
           lineItems={lineItems}
