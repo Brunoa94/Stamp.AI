@@ -87,7 +87,7 @@ export function SettingsPopup({ isOpen, onClose }: SettingsPopupProps) {
         </div>
 
         {/* Save Button */}
-        <Button className="w-full bg-gradient-to-r from-slate-600 to-gray-700 hover:from-slate-700 hover:to-gray-800 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:scale-105">
+        <Button className="w-full bg-linear-to-r from-slate-600 to-gray-700 hover:from-slate-700 hover:to-gray-800 text-white font-semibold py-3 rounded-xl transition-all duration-300 hover:scale-105">
           Save Settings
         </Button>
       </div>

@@ -10,6 +10,7 @@
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-heading);
   --font-accent: "Zodiak", serif;
+  --font-display: "Cabinet Grotesk", sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -123,6 +124,7 @@
   }
   html {
     font-size: 17px;
+    scroll-behavior: smooth;
   }
   body {
     @apply text-foreground font-sans;
@@ -136,6 +138,12 @@
     );
     background-size: 400% 400%;
     animation: subtle-gradient-shift 10s ease-in-out infinite;
+  }
+
+  /* Homepage scroll lock during section navigation */
+  html:has(.homepage-scroll-snap) {
+    overflow-x: hidden;
+    scroll-behavior: auto;
   }
 
   .dark body {
@@ -177,6 +185,21 @@
     box-shadow:
       0 25px 50px -12px rgba(0, 0, 0, 0.05),
       inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+  }
+
+  /* Homepage section arrival animation (triggered when scroll settles) */
+  .section-arrival {
+    will-change: transform, opacity, filter;
+  }
+
+  .section-arrival-idle {
+    opacity: 0.95;
+    transform: translateY(8px) scale(0.995);
+    filter: saturate(0.96);
+  }
+
+  .section-arrival-active {
+    animation: section-arrival-in 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   /* Dashboard fluid background */
@@ -262,6 +285,35 @@
   .flowing-border-container::after {
     right: 0;
     transform: scaleX(-1);
+  }
+}
+
+@keyframes section-arrival-in {
+  0% {
+    opacity: 0.55;
+    transform: translateY(14px) scale(0.985);
+    filter: blur(2px) saturate(0.9);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.002);
+    filter: blur(0) saturate(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0) saturate(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-arrival,
+  .section-arrival-idle,
+  .section-arrival-active {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    filter: none !important;
   }
 }
 

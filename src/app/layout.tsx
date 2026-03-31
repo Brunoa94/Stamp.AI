@@ -14,6 +14,7 @@ import { QueryProvider } from "@/providers/QueryProvider";
 import Navbar from "@/features/layout/navbar";
 import Footer from "@/features/layout/footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { MainContent } from "@/components/MainContent";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { FluidInkDriftBackground } from "@/features/ui/fluid-ink-drift-background";
 
@@ -66,6 +67,10 @@ export default function RootLayout({
           href="https://api.fontshare.com/v2/css?f[]=zodiak@400,500,700&display=swap"
           rel="stylesheet"
         />
+        <link
+          href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500&f[]=satoshi@700,500,400&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} ${poppins.variable} ${bebasNeue.variable} antialiased`}
@@ -78,9 +83,7 @@ export default function RootLayout({
               <header className="sticky top-0 z-50">
                 <Navbar />
               </header>
-              <main className="w-full max-w-360 mx-auto px-6 md:px-16 xl:px-24 pt-8 lg:pt-10 min-h-screen">
-                {children}
-              </main>
+              <MainContent>{children}</MainContent>
               <Footer />
               <Toaster />
             </QueryProvider>
