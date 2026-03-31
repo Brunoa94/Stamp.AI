@@ -823,6 +823,7 @@
 ::view-transition-old(main-nav),
 ::view-transition-new(main-nav) {
   animation: none;
+}
 
 /* Processing / Creating step animations */
 @keyframes processing-orbit {

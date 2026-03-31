@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { handleError } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
+import { supabaseRest } from "../_shared/supabase.ts";
 import { verifyPayPalWebhook } from "../_shared/paypal.ts";
 
 const corsHeaders = {
@@ -8,44 +9,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type, paypal-transmission-id, paypal-transmission-time, paypal-transmission-sig, paypal-cert-url, paypal-auth-algo",
 };
-
-/**
- * Helper to call Supabase REST API directly
- */
-async function supabaseRest(
-  endpoint: string,
-  method: string,
-  body?: Record<string, unknown>,
-  options?: { prefer?: string }
-) {
-  const supabaseUrl = validateEnvVars.supabaseUrl();
-  const serviceKey = validateEnvVars.supabaseServiceKey();
-
-  const headers: Record<string, string> = {
-    apikey: serviceKey,
-    Authorization: `Bearer ${serviceKey}`,
-    "Content-Type": "application/json",
-  };
-
-  if (options?.prefer) {
-    headers["Prefer"] = options.prefer;
-  }
-
-  const response = await fetch(`${supabaseUrl}/rest/v1/${endpoint}`, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  });
-
-  const text = await response.text();
-  const data = text ? JSON.parse(text) : null;
-
-  return {
-    data,
-    error: response.ok ? null : data,
-    status: response.status,
-  };
-}
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -103,6 +66,32 @@ serve(async (req) => {
             console.error("Update error:", result.error);
           } else {
             console.log("Payment transaction updated");
+
+            // Update order payment_status to "paid"
+            // First get the order_id from the payment transaction metadata
+            const txResult = await supabaseRest(
+              `payment_transactions?paypal_order_id=eq.${orderId}&select=metadata`,
+              "GET"
+            );
+
+            const dbOrderId = txResult.data?.[0]?.metadata?.order_id;
+            if (dbOrderId) {
+              const orderResult = await supabaseRest(
+                `orders?id=eq.${dbOrderId}`,
+                "PATCH",
+                {
+                  payment_status: "paid",
+                  payment_method: "paypal",
+                  updated_at: new Date().toISOString(),
+                }
+              );
+
+              if (orderResult.error) {
+                console.error("Failed to update order payment_status:", orderResult.error);
+              } else {
+                console.log(`Order ${dbOrderId} payment_status updated to: paid`);
+              }
+            }
           }
         }
         break;

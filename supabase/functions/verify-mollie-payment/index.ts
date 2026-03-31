@@ -1,7 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { ErrorCodes, handleError } from "../_shared/errors.ts";
-import { validateEnvVars } from "../_shared/validators.ts";
-import { getMolliePayment, isMolliePaymentPaid } from "../_shared/mollie.ts";
+import { validateEnvVars, verifyAuth } from "../_shared/validators.ts";
+import { supabaseRest } from "../_shared/supabase.ts";
+import { getMolliePayment, isMolliePaymentPaid, mapMollieStatusToInternal } from "../_shared/mollie.ts";
 import type { MollieVerifyRequestI, MollieVerifyResponseI } from "../../types/index.ts";
 
 const corsHeaders = {
@@ -9,51 +10,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
-
-/**
- * Verify authentication - accepts both user JWT tokens and service role key
- */
-async function verifyAuth(authHeader: string | null): Promise<{ userId: string; userEmail: string }> {
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    throw ErrorCodes.INVALID_TOKEN();
-  }
-
-  const token = authHeader.replace("Bearer ", "");
-  const supabaseUrl = validateEnvVars.supabaseUrl();
-  const supabaseAnonKey = validateEnvVars.supabaseAnonKey();
-  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-
-  // Check if it's the service role key (server-to-server calls)
-  if (serviceRoleKey && token === serviceRoleKey) {
-    return {
-      userId: "service-role",
-      userEmail: "service@system.internal",
-    };
-  }
-
-  // Otherwise, validate as user JWT token
-  const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      apikey: supabaseAnonKey,
-    },
-  });
-
-  if (!response.ok) {
-    throw ErrorCodes.INVALID_TOKEN();
-  }
-
-  const user = await response.json();
-
-  if (!user || !user.id) {
-    throw ErrorCodes.INVALID_TOKEN();
-  }
-
-  return {
-    userId: user.id,
-    userEmail: user.email || "",
-  };
-}
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -79,6 +35,71 @@ serve(async (req) => {
 
     // Fetch payment from Mollie
     const payment = await getMolliePayment(paymentId);
+    const internalStatus = mapMollieStatusToInternal(payment.status);
+
+    // Parse metadata for DB synchronization
+    const metadata = (payment.metadata as Record<string, unknown> | null) || {};
+    const userId = typeof metadata.user_id === "string" ? metadata.user_id : undefined;
+    const orderId =
+      typeof metadata.order_id === "string"
+        ? metadata.order_id
+        : typeof metadata.orderId === "string"
+          ? (metadata.orderId as string)
+          : undefined;
+
+    // Fallback sync: upsert payment transaction from verification endpoint
+    // This ensures order/payment statuses are updated even when webhook is delayed/unavailable.
+    const txResult = await supabaseRest(
+      "payment_transactions?on_conflict=mollie_payment_id",
+      "POST",
+      {
+        user_id: userId,
+        order_id: orderId,
+        payment_provider: "mollie",
+        mollie_payment_id: payment.id,
+        mollie_status: payment.status,
+        amount: parseFloat(payment.amount.value),
+        currency: payment.amount.currency.toLowerCase(),
+        status: internalStatus,
+        payment_method_type: payment.method || "unknown",
+        metadata,
+        updated_at: new Date().toISOString(),
+      },
+      { prefer: "resolution=merge-duplicates" }
+    );
+
+    if (txResult.error) {
+      console.error("Failed to sync payment_transactions from verify endpoint:", txResult.error);
+    }
+
+    if (orderId) {
+      if (payment.status === "paid") {
+        const orderResult = await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
+          status: "processing",
+          payment_status: "paid",
+          payment_method: "mollie",
+          updated_at: new Date().toISOString(),
+        });
+
+        if (orderResult.error) {
+          console.error(`Failed to update order ${orderId} from verify endpoint:`, orderResult.error);
+        }
+      } else if (
+        payment.status === "failed" ||
+        payment.status === "canceled" ||
+        payment.status === "expired"
+      ) {
+        const orderResult = await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
+          status: "cancelled",
+          payment_status: internalStatus,
+          updated_at: new Date().toISOString(),
+        });
+
+        if (orderResult.error) {
+          console.error(`Failed to update order ${orderId} from verify endpoint:`, orderResult.error);
+        }
+      }
+    }
 
     const response: MollieVerifyResponseI = {
       success: true,

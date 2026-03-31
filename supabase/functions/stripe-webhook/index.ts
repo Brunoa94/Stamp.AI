@@ -2,6 +2,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import Stripe from 'https://esm.sh/stripe@14.11.0?target=deno'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
+import { supabaseRest } from "../_shared/supabase.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -9,48 +10,25 @@ const corsHeaders = {
 }
 
 /**
- * Helper to call Supabase REST API directly without the client library
+ * Stripe Payment Intent interface for webhook handling
  */
-async function supabaseRest(
-  endpoint: string,
-  method: string,
-  body?: any,
-  options?: { prefer?: string }
-) {
-  const supabaseUrl = validateEnvVars.supabaseUrl()
-  const serviceKey = validateEnvVars.supabaseServiceKey()
-
-  const headers: Record<string, string> = {
-    'apikey': serviceKey,
-    'Authorization': `Bearer ${serviceKey}`,
-    'Content-Type': 'application/json',
-  }
-
-  if (options?.prefer) {
-    headers['Prefer'] = options.prefer
-  }
-
-  const response = await fetch(`${supabaseUrl}/rest/v1/${endpoint}`, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  })
-
-  // Handle empty responses (204 No Content, or empty body)
-  const text = await response.text()
-  const data = text ? JSON.parse(text) : null
-
-  return {
-    data,
-    error: response.ok ? null : data,
-    status: response.status
-  }
+interface StripePaymentIntentI {
+  id: string;
+  customer: string | null;
+  amount: number;
+  currency: string;
+  livemode: boolean;
+  payment_method_types?: string[];
+  last_payment_error?: {
+    message?: string;
+  };
+  metadata?: Record<string, string>;
 }
 
 /**
  * Handle credit purchase - update user credits and create transaction record
  */
-async function handleCreditPurchase(paymentIntent: any) {
+async function handleCreditPurchase(paymentIntent: StripePaymentIntentI) {
   const userId = paymentIntent.metadata?.user_id
   const creditsToAdd = parseInt(paymentIntent.metadata?.credits || '0', 10)
   const amountPaid = paymentIntent.amount / 100
@@ -238,6 +216,28 @@ serve(async (req) => {
           break
         }
 
+        // Update order payment_status to "paid" if we have an order_id
+        const dbOrderId = paymentIntent.metadata?.order_id
+        if (dbOrderId) {
+          const orderResult = await supabaseRest(
+            `orders?id=eq.${dbOrderId}`,
+            'PATCH',
+            {
+              payment_status: 'paid',
+              payment_method: 'stripe',
+              stripe_payment_intent_id: paymentIntent.id,
+              stripe_customer_id: paymentIntent.customer,
+              updated_at: new Date().toISOString(),
+            }
+          )
+
+          if (orderResult.error) {
+            console.error('Failed to update order payment_status:', orderResult.error)
+          } else {
+            console.log(`Order ${dbOrderId} payment_status updated to: paid`)
+          }
+        }
+
         // Check if this is a test payment
         const isTestMode = !paymentIntent.livemode
         console.log('Payment mode - Test:', isTestMode)
@@ -311,7 +311,28 @@ serve(async (req) => {
         )
 
         console.log('Upsert result:', result)
-        if (result.error) console.error('Upsert error:', result.error)
+        if (result.error) {
+          console.error('Upsert error:', result.error)
+        } else {
+          // Update order payment_status to "failed" if we have an order_id
+          const dbOrderId = paymentIntent.metadata?.order_id
+          if (dbOrderId) {
+            const orderResult = await supabaseRest(
+              `orders?id=eq.${dbOrderId}`,
+              'PATCH',
+              {
+                payment_status: 'failed',
+                updated_at: new Date().toISOString(),
+              }
+            )
+
+            if (orderResult.error) {
+              console.error('Failed to update order payment_status:', orderResult.error)
+            } else {
+              console.log(`Order ${dbOrderId} payment_status updated to: failed`)
+            }
+          }
+        }
         break
       }
 
