@@ -61,6 +61,12 @@ async function gotoStamp(page: Page) {
   await page.goto(STAMP_URL);
   // Wait for the wizard container to be visible
   await expect(page.locator("#design-pipeline")).toBeVisible({ timeout: 15_000 });
+
+  // Open collapsed wizard state via CTA when present
+  const expandCta = page.getByRole("button", { name: /upload your photo/i }).first();
+  if (await expandCta.isVisible()) {
+    await expandCta.click();
+  }
 }
 
 async function uploadImage(page: Page) {

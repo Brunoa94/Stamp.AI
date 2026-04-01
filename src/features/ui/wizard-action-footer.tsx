@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "./button";
+import { useWizardProductFormHandlers } from "../stamp/CreateProduct/hooks/useWizardProductFormHandlers";
 
 interface WizardActionFooterProps {
   onCancel?: () => void;
@@ -30,19 +31,7 @@ export function WizardActionFooter({
   continueClassName,
 }: WizardActionFooterProps) {
   const isDisabled = !canContinue || !onContinue;
-
-  const scrollContainerToTop = () => {
-    if (typeof window === "undefined") return;
-
-    const container = document.getElementById("design-pipeline");
-    if (!container) return;
-
-    container.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-      inline: "nearest",
-    });
-  };
+  const { scrollToWizard } = useWizardProductFormHandlers({ form: null });
 
   const handleContinueClick = () => {
     if (!onContinue || isDisabled) return;
@@ -51,10 +40,7 @@ export function WizardActionFooter({
 
     // Scroll now and once again after the next paint so step transitions
     // that change layout still end at the top of the wizard container.
-    scrollContainerToTop();
-    requestAnimationFrame(() => {
-      scrollContainerToTop();
-    });
+    scrollToWizard();
   };
 
   return (

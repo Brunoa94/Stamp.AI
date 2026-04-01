@@ -10,7 +10,6 @@ import { useProductCreation } from "./useProductCreation";
 import { getVisibleSections } from "../utils/stepHelpers";
 import { useCreateProductSubscriberActions } from "../context/actions";
 import { CreateProductSelectors } from "../context/selectors";
-import useScrollToSection from "@/hooks/useScrollToSection";
 
 interface UseWizardProductFormHandlersParams {
   form: UseFormReturn<IProductCreateForm> | null;
@@ -44,7 +43,6 @@ export function useWizardProductFormHandlers({
 
   // Custom hooks
   const { handleCreateProduct } = useProductCreation();
-  const { scrollToElementById } = useScrollToSection();
 
   const firstEnabledVariant =
     createdProduct?.variants?.find((v) => v.is_enabled) ||
@@ -137,12 +135,26 @@ export function useWizardProductFormHandlers({
 
   const formSubmitHandler = form?.handleSubmit(onSubmit);
 
-  const scrollToWizard = () => {
-    scrollToElementById("design-pipeline", {
-      block: "nearest",
-      behavior: "smooth",
-      delay: 150,
-    });
+  const scrollToWizard = (delay = 0) => {
+    const run = () => {
+      const pipeline = document.getElementById("design-pipeline");
+      if (!pipeline) return;
+
+      const targetTop =
+        pipeline.getBoundingClientRect().top + window.scrollY - 120;
+
+      window.scrollTo({
+        top: Math.max(0, targetTop),
+        behavior: "smooth",
+      });
+    };
+
+    if (delay > 0) {
+      window.setTimeout(run, delay);
+      return;
+    }
+
+    run();
   };
 
   const handleContinue = () => {
@@ -185,5 +197,6 @@ export function useWizardProductFormHandlers({
     formSubmitHandler,
     isAddedToCart,
     isAddToCartPending: addToCart.isPending,
+    scrollToWizard
   };
 }
