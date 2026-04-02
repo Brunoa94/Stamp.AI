@@ -42,6 +42,8 @@ export const OrderSchema = z.object({
   discount_amount: z.number().nullable(),
   currency: z.string().nullable(),
   payment_method: z.string().nullable(),
+  promo_code: z.string().nullable(),
+  promo_value: z.number().nullable(),
   stripe_payment_intent_id: z.string().nullable(),
   stripe_customer_id: z.string().nullable(),
   shipping_address: z.any().nullable(),

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Elements, CardElement } from "@stripe/react-stripe-js";
 import { stripePromise } from "@/lib/stripe";
 import { ShippingAddressT } from "@/schemas/checkout";
@@ -45,6 +45,10 @@ const CheckoutForm = ({
   const [paymentMethod, setPaymentMethod] =
     useState<PaymentMethodT>(initialPaymentMethod);
 
+  useEffect(() => {
+    setPaymentMethod(initialPaymentMethod);
+  }, [initialPaymentMethod]);
+
   const {
     loading,
     error,
@@ -71,6 +75,12 @@ const CheckoutForm = ({
     setError(null);
     onPaymentMethodChange?.(method);
   };
+
+  useEffect(() => {
+    if (triggerSubmit && paymentMethod !== "stripe") {
+      onSubmitComplete?.();
+    }
+  }, [triggerSubmit, paymentMethod, onSubmitComplete]);
 
   return (
     <div className="space-y-4">
