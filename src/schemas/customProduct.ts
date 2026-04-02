@@ -11,6 +11,8 @@ export const CreateProductPayloadSchema = z.object({
   description: z.string().optional(),
   user_id: z.string().uuid("User ID must be a valid UUID"),
   customer_email: z.string().email("Customer email must be a valid email"),
+  selected_color: z.string().nullable().optional(),
+  selected_size: z.string().nullable().optional(),
 });
 
 /**
@@ -81,6 +83,8 @@ export const CreateCustomProductRequestSchema = z.object({
   description: z.string(),
   user_id: z.string(),
   customer_email: z.string(),
+  selected_color: z.string().nullable().optional(),
+  selected_size: z.string().nullable().optional(),
 });
 
 /**

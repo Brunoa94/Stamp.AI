@@ -23,7 +23,7 @@ serve(async (req) => {
   }
 
   try {
-    const { 
+    const {
       blueprint_id,
       print_provider_id,
       image_id,
@@ -31,6 +31,8 @@ serve(async (req) => {
       title,
       description,
       variants,
+      selected_color,
+      selected_size,
 
       // ➕ Order-related fields from client
       user_id,
@@ -38,6 +40,8 @@ serve(async (req) => {
     } = await req.json()
 
     console.log('=== CREATE CUSTOM PRODUCT ===')
+    console.log('🎨 Selected color:', selected_color)
+    console.log('📏 Selected size:', selected_size)
 
     // Validate environment variables
     const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken()
@@ -71,9 +75,41 @@ serve(async (req) => {
       throw ErrorCodes.NO_VARIANTS_AVAILABLE()
     }
 
-    const selectedVariants = variants && variants.length > 0
-      ? variants
-      : availableVariants.slice(0, 100).map((v: any) => v.id)
+    // Filter variants by selected color and size if provided
+    let selectedVariants: number[] = []
+
+    if (variants && variants.length > 0) {
+      // Use explicitly provided variant IDs
+      selectedVariants = variants
+    } else if (selected_color || selected_size) {
+      // Filter variants by selected color and/or size
+      console.log(`🎨 Filtering variants by color: "${selected_color}", size: "${selected_size}"`)
+
+      const matchingVariants = availableVariants.filter((v: any) => {
+        // Extract color and size from variant options or title
+        const variantColor = v.options?.color || v.title?.split(' / ')[0]?.trim()
+        const variantSize = v.options?.size || v.title?.split(' / ')[1]?.trim()
+
+        const colorMatches = !selected_color ||
+          variantColor?.toLowerCase() === selected_color.toLowerCase()
+        const sizeMatches = !selected_size ||
+          variantSize?.toLowerCase() === selected_size.toLowerCase()
+
+        return colorMatches && sizeMatches
+      })
+
+      if (matchingVariants.length > 0) {
+        selectedVariants = matchingVariants.map((v: any) => v.id)
+        console.log(`✅ Found ${selectedVariants.length} matching variant(s): ${selectedVariants.join(', ')}`)
+      } else {
+        // Fallback to first 100 if no match found
+        console.warn(`⚠️ No variants match color: "${selected_color}", size: "${selected_size}". Using defaults.`)
+        selectedVariants = availableVariants.slice(0, 100).map((v: any) => v.id)
+      }
+    } else {
+      // No filter specified, use first 100 variants
+      selectedVariants = availableVariants.slice(0, 100).map((v: any) => v.id)
+    }
 
     // Build placeholders
     const placeholders = []

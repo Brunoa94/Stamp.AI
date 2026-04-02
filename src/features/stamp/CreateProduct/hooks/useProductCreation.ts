@@ -1,9 +1,10 @@
+import { useContext } from "react";
 import { useUser } from "@/hooks/useAuth";
 import { useCreateCustomProduct } from "@/queries";
 import type { TshirtType } from "@/queries/productQueries";
 import { useCreateProductSubscriberActions } from "../context/actions";
 import { IImageGenerationResult } from "@/schemas/productCreateSchema";
-import { CreateProductSelectors } from "../context/selectors";
+import { FormSubscriberContext } from "../context/CreateProductContextSubscriber";
 
 /**
  * Hook to handle product creation logic
@@ -17,8 +18,8 @@ export function useProductCreation() {
     handleProductCreationError,
   } = useCreateProductSubscriberActions();
 
-  const selectedColor = CreateProductSelectors.selectedColor();
-  const selectedSize = CreateProductSelectors.selectedSize();
+  // Access the store directly to avoid stale closure issues
+  const formStore = useContext(FormSubscriberContext);
 
   const handleCreateProduct = (
     generatedResult: IImageGenerationResult | null,
@@ -27,6 +28,14 @@ export function useProductCreation() {
     if (!generatedResult?.imageUrl || !selectedTshirt || !user) {
       return;
     }
+
+    // Get the latest color and size from the store at call time
+    // This avoids stale closure issues where the values were captured at render time
+    const formState = formStore?.getState();
+    const selectedColor = formState?.selectedColor ?? null;
+    const selectedSize = formState?.selectedSize ?? null;
+
+    console.log("🎨 Creating product with color:", selectedColor, "size:", selectedSize);
 
     handleProductCreationStart();
 

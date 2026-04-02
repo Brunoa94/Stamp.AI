@@ -99,7 +99,9 @@ export class CustomProductService {
         title: validatedInput.title || `Custom Design ${Date.now()}`,
         description: validatedInput.description || "Custom designed product",
         user_id: validatedInput.user_id,
-        customer_email: validatedInput.customer_email
+        customer_email: validatedInput.customer_email,
+        selected_color: validatedInput.selected_color,
+        selected_size: validatedInput.selected_size,
       };
 
       // Validate product payload
@@ -132,6 +134,11 @@ export class CustomProductService {
       }
 
       const printifyProduct = validatedResponse.product;
+
+      // Debug: Log product data to verify images are included
+      console.log("🎨 Created product:", JSON.stringify(printifyProduct, null, 2));
+      console.log("🖼️ Product images count:", printifyProduct.images?.length);
+      console.log("🖼️ First image:", printifyProduct.images?.[0]);
 
       // Step 3: Save the Printify product to our database
       console.log('💾 Saving Printify product to database...');

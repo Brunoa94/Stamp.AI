@@ -51,12 +51,15 @@ export function useWizardProductFormHandlers({
     createdProduct?.variants?.[0];
   const variantPrice = firstEnabledVariant?.price || 25.0;
 
+  // Use Printify mockup image (with correct t-shirt color) instead of just the design
+  const mockupImageUrl = createdProduct?.images?.[0]?.src || generatedResult?.imageUrl;
+
   const addToCartPayload = createdProduct
     ? mapCreateProductToCartInput({
         productId: createdProduct.id,
         productTitle: createdProduct.title,
         variantPrice,
-        imageUrl: generatedResult?.imageUrl,
+        imageUrl: mockupImageUrl,
         variantId: firstEnabledVariant?.id,
       })
     : null;

@@ -238,6 +238,8 @@ export interface CreateCustomProductRequestI {
   variants?: number[]
   user_id: string
   customer_email: string
+  selected_color?: string | null
+  selected_size?: string | null
 }
 
 export interface ProductVariantI {
