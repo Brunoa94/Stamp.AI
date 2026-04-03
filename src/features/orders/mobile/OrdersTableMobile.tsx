@@ -1,7 +1,8 @@
 "use client";
 
+import { memo } from "react";
 import { OrderWithItemsT } from "@/types/order";
-import { OrdersMobileCard } from "./OrdersMobileCard/OrdersMobileCard";
+import { MemoizedOrdersMobileCard } from "./OrdersMobileCard/OrdersMobileCard";
 
 interface OrdersTableMobileProps {
   orders: OrderWithItemsT[];
@@ -17,7 +18,7 @@ export function OrdersTableMobile({
   return (
     <div className="space-y-4 md:hidden">
       {orders.map((order) => (
-        <OrdersMobileCard
+        <MemoizedOrdersMobileCard
           key={order.id}
           order={order}
           onViewOrder={onViewOrder}
@@ -27,3 +28,5 @@ export function OrdersTableMobile({
     </div>
   );
 }
+
+export const MemoizedOrdersTableMobile = memo(OrdersTableMobile);

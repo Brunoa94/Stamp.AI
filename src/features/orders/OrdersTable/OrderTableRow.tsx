@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { ordersTheme } from "@/theme/components";
 import { OrderWithItemsT } from "@/types/order";
 import { TableCell, TableRow } from "@/features/ui/table";
@@ -59,3 +60,5 @@ export function OrderTableRow({
     </TableRow>
   );
 }
+
+export const MemoizedOrderTableRow = memo(OrderTableRow);

@@ -1,6 +1,7 @@
+import { memo } from "react";
 import { OrderWithItemsT } from "@/types/order";
-import { OrdersTableDesktop } from "./OrdersTableDesktop";
-import { OrdersTableMobile } from "../mobile/OrdersTableMobile";
+import { MemoizedOrdersTableDesktop } from "./OrdersTableDesktop";
+import { MemoizedOrdersTableMobile } from "../mobile/OrdersTableMobile";
 
 interface OrdersTableProps {
   orders: OrderWithItemsT[];
@@ -15,13 +16,13 @@ export function OrdersTable({
 }: OrdersTableProps) {
   return (
     <>
-      <OrdersTableMobile
+      <MemoizedOrdersTableMobile
         orders={orders}
         onViewOrder={onViewOrder}
         onReorder={onReorder}
       />
 
-      <OrdersTableDesktop
+      <MemoizedOrdersTableDesktop
         orders={orders}
         onViewOrder={onViewOrder}
         onReorder={onReorder}
@@ -29,3 +30,5 @@ export function OrdersTable({
     </>
   );
 }
+
+export const MemoizedOrdersTable = memo(OrdersTable);

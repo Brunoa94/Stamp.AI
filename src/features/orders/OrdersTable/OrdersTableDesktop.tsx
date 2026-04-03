@@ -1,10 +1,11 @@
 "use client";
 
+import { memo } from "react";
 import { ordersTheme } from "@/theme/components";
 import { OrderWithItemsT } from "@/types/order";
 import { Table, TableBody } from "@/features/ui/table";
 import { OrderTableHeader } from "./OrderTableHeader";
-import { OrderTableRow } from "./OrderTableRow";
+import { MemoizedOrderTableRow } from "./OrderTableRow";
 import { getStatusBadgeClass } from "../utils/statusBadge";
 
 interface OrdersTableDesktopProps {
@@ -24,7 +25,7 @@ export function OrdersTableDesktop({
         <OrderTableHeader />
         <TableBody className={ordersTheme.table.tbody}>
           {orders.map((order) => (
-            <OrderTableRow
+            <MemoizedOrderTableRow
               key={order.id}
               order={order}
               onViewOrder={onViewOrder}
@@ -37,3 +38,5 @@ export function OrdersTableDesktop({
     </div>
   );
 }
+
+export const MemoizedOrdersTableDesktop = memo(OrdersTableDesktop);

@@ -2,7 +2,7 @@
 
 import { ImagePlus, Instagram, X } from "lucide-react";
 import clsx from "clsx";
-import { useCallback, useState } from "react";
+import { memo, useCallback, useEffect, useMemo } from "react";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 import { Button } from "@/features/ui/button";
@@ -21,18 +21,28 @@ export function WizardUploadArea({
 }: WizardUploadAreaProps) {
   const uploadAreaStyles = componentThemes.wizardUploadArea.uploadArea;
   const previewStyles = componentThemes.wizardUploadArea.preview;
-  const [preview, setPreview] = useState<string | null>(null);
+
+  const previewUrl = useMemo(() => {
+    if (!uploadedImage) {
+      return null;
+    }
+
+    return URL.createObjectURL(uploadedImage);
+  }, [uploadedImage]);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
       if (file) {
         onImageUpload(file);
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setPreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
       }
     },
     [onImageUpload],
@@ -48,12 +58,11 @@ export function WizardUploadArea({
   });
 
   const handleRemoveImage = () => {
-    setPreview(null);
     onRemoveImage();
   };
 
   // If image is uploaded, show preview
-  if (uploadedImage && preview) {
+  if (uploadedImage && previewUrl) {
     return (
       <div className={clsx(previewStyles.container, animations.fadeInScale)}>
         <div
@@ -62,11 +71,11 @@ export function WizardUploadArea({
         >
           <div className={previewStyles.imageContainer}>
             <Image
-              src={preview}
+              src={previewUrl}
               alt="Uploaded preview"
               width={400}
               height={400}
-              className="w-full h-auto object-contain max-h-[300px]"
+              className="w-full h-auto object-contain max-h-75"
             />
           </div>
           <Button
@@ -146,3 +155,5 @@ export function WizardUploadArea({
     </div>
   );
 }
+
+export const MemoizedWizardUploadArea = memo(WizardUploadArea);

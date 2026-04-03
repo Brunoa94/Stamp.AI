@@ -27,7 +27,9 @@ export function PromoCodeCard({ promo }: PromoCodeCardProps) {
       tabIndex={0}
       aria-label={`Copy promo code ${promo.code}`}
       onClick={handleCopy}
-      onKeyDown={(e) => e.key === "Enter" || e.key === " " ? handleCopy() : undefined}
+      onKeyDown={(e) =>
+        e.key === "Enter" || e.key === " " ? handleCopy() : undefined
+      }
       className="shrink-0 cursor-pointer rounded-2xl bg-linear-to-r from-[#7C3AED] via-[#D946EF] to-[#06B6D4] p-0.5 transition-transform duration-150 hover:scale-[1.02] active:scale-[0.98]"
     >
       <div className="flex h-30 w-72 items-center justify-between rounded-[15px] border border-white bg-white px-5">

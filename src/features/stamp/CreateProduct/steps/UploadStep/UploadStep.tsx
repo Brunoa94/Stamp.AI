@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { Controller } from "react-hook-form";
 import { scrollToIdWithOffset } from "@/utils/scrollToElementWithOffset";
-import { WizardUploadArea } from "../../components/WizardUploadArea";
+import { MemoizedWizardUploadArea } from "../../components/WizardUploadArea";
 import { CreateProductSelectors } from "../../context/selectors";
 import { useCreateProductSubscriberActions } from "../../context/actions";
 
@@ -44,7 +44,7 @@ export function UploadStep() {
         name="image"
         control={control}
         render={({ field: { onChange, value } }) => (
-          <WizardUploadArea
+          <MemoizedWizardUploadArea
             onImageUpload={onChange}
             uploadedImage={value}
             onRemoveImage={handleRemoveImage}

@@ -2,11 +2,15 @@
 
 import dynamic from "next/dynamic";
 import { Activity } from "react";
-import clsx from "clsx";
+import { memo } from "react";
 import { CreateProductSelectors } from "./context/selectors";
 import { WizardStepHeader } from "@/features/ui/wizard-step-header";
 import { CreateProductActionFooter } from "./components/CreateProductActionFooter";
 import { useWizardProductFormHandlers } from "./hooks/useWizardProductFormHandlers";
+import {
+  getWizardFormClassName,
+  shouldShowWizardFooter,
+} from "./helpers/wizardLayoutClassNames";
 
 // Dynamic imports for step components
 const UploadStep = dynamic(
@@ -89,6 +93,8 @@ const SizingStep = dynamic(
   },
 );
 
+const EMPTY_SECTION_REF = { current: null };
+
 export function WizardProductForm() {
   const form = CreateProductSelectors.form();
   const {
@@ -100,6 +106,10 @@ export function WizardProductForm() {
     isAddedToCart,
     isAddToCartPending,
   } = useWizardProductFormHandlers({ form });
+
+  const formClassName = getWizardFormClassName(sections.showSizingSection);
+
+  const showFooter = shouldShowWizardFooter(sections);
 
   if (!form) {
     return null;
@@ -120,19 +130,14 @@ export function WizardProductForm() {
 
       {/* Results Step - Takes full area */}
       <Activity mode={sections.isResultsStep ? "visible" : "hidden"}>
-        <ResultsStep sectionRef={{ current: null }} />
+        <ResultsStep sectionRef={EMPTY_SECTION_REF} />
       </Activity>
 
       {/* Content Area - Hidden on results step */}
       {!sections.isResultsStep && (
         <form
           onSubmit={formSubmitHandler}
-          className={clsx(
-            "flex-1 px-4 sm:px-12 relative",
-            sections.showSizingSection
-              ? "pb-10 overflow-hidden"
-              : "pb-32 sm:pb-10 overflow-hidden",
-          )}
+          className={formClassName}
           data-wizard-content
         >
           <div className={sections.showSizingSection ? "h-auto" : "h-full"}>
@@ -154,7 +159,7 @@ export function WizardProductForm() {
                 <Activity
                   mode={sections.isGeneratingStep ? "visible" : "hidden"}
                 >
-                  <ProcessingStep sectionRef={{ current: null }} />
+                  <ProcessingStep sectionRef={EMPTY_SECTION_REF} />
                 </Activity>
               </>
             )}
@@ -163,25 +168,25 @@ export function WizardProductForm() {
             <Activity
               mode={sections.showCustomizerSection ? "visible" : "hidden"}
             >
-              <CustomizerStep sectionRef={{ current: null }} />
+              <CustomizerStep sectionRef={EMPTY_SECTION_REF} />
             </Activity>
 
             {/* Fabric Step */}
             <Activity mode={sections.showFabricSection ? "visible" : "hidden"}>
-              <FabricStep sectionRef={{ current: null }} />
+              <FabricStep sectionRef={EMPTY_SECTION_REF} />
             </Activity>
 
             {/* Creating Step (Loading) */}
             <Activity
               mode={sections.showCreatingSection ? "visible" : "hidden"}
             >
-              <CreatingStep sectionRef={{ current: null }} />
+              <CreatingStep sectionRef={EMPTY_SECTION_REF} />
             </Activity>
 
             {/* Sizing Step (Product Confirmation) */}
             <Activity mode={sections.showSizingSection ? "visible" : "hidden"}>
               <SizingStep
-                sectionRef={{ current: null }}
+                sectionRef={EMPTY_SECTION_REF}
                 isAddedToCart={isAddedToCart}
                 isPending={isAddToCartPending}
                 isActive={sections.showSizingSection}
@@ -192,15 +197,14 @@ export function WizardProductForm() {
       )}
 
       {/* Action Footer - Hidden on results, creating, and sizing steps */}
-      {!sections.isResultsStep &&
-        !sections.isGeneratingStep &&
-        !sections.showCreatingSection &&
-        !sections.showSizingSection && (
-          <CreateProductActionFooter
-            onBack={handleBack}
-            onContinue={handleContinue}
-          />
-        )}
+      {showFooter && (
+        <CreateProductActionFooter
+          onBack={handleBack}
+          onContinue={handleContinue}
+        />
+      )}
     </>
   );
 }
+
+export const MemoizedWizardProductForm = memo(WizardProductForm);
