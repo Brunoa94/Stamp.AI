@@ -21,6 +21,7 @@ import { ProcessSection } from "@/features/homepage/sections/ProcessSection";
 import { ProductsSection } from "@/features/homepage/sections/ProductsSection";
 import { ReviewsSection } from "@/features/homepage/sections/ReviewsSection";
 import { SecuritySection } from "@/features/homepage/sections/SecuritySection";
+import { PromoCodesCarouselSection } from "@/features/homepage/sections/PromoCodesCarouselSection";
 
 export default function Home() {
   const { data: tshirtProducts = [], isLoading: isProductsLoading } =
@@ -70,6 +71,7 @@ export default function Home() {
       <CtaHomeSection />
       <ProcessSection activeProcessStep={activeProcessStep} />
       <BrandStorySection />
+      <PromoCodesCarouselSection />
       <ProductsSection
         isProductsLoading={isProductsLoading}
         tshirtProducts={tshirtProducts}

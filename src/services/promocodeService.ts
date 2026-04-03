@@ -4,10 +4,29 @@ import {
   ValidatePromoCodePayload,
   PromoCodeT,
 } from "@/types/promocode";
+import { PromoCodeSchema } from "@/schemas/promocode";
 
 export class PromoCodeService {
   private static getSupabase() {
     return createClient();
+  }
+
+  static async getAvailablePromoCodes(): Promise<PromoCodeT[]> {
+    const supabase = this.getSupabase();
+
+    const { data, error } = await supabase
+      .from("promocodes")
+      .select("promocode_id, code, type, value, created_at")
+      .order("created_at", { ascending: false });
+
+    if (error || !data) {
+      return [];
+    }
+
+    return data
+      .map((item) => PromoCodeSchema.safeParse(item))
+      .filter((result) => result.success)
+      .map((result) => result.data);
   }
 
   static async validatePromoCode({

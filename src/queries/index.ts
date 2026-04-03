@@ -70,5 +70,6 @@ export {
 } from "./mollieQueries";
 
 export {
+  useAvailablePromoCodes,
   useValidatePromoCode,
 } from "./promocodeQueries";
