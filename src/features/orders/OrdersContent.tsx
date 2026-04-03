@@ -12,10 +12,12 @@ import {
 import { OrdersFiltersBar } from "./OrdersFiltersBar";
 import { PageHeader } from "@/features/ui/page-header";
 import { useOrderFilters } from "./hooks/useOrderFilters";
+import { useCancelOrder } from "./hooks/useCancelOrder";
 import { Alert, AlertDescription } from "@/features/ui/alert";
 import dynamic from "next/dynamic";
 import { OrdersTable } from "./OrdersTable/OrdersTable";
 import { OrdersPagination } from "./OrdersTable/OrdersPagination";
+import { CancelOrderModal } from "./CancelOrderModal";
 
 const OrderDetailsModal = dynamic(
   () => import("./OrderDetails/OrderDetailsModal/OrderDetailsModal"),
@@ -35,6 +37,15 @@ export default function OrdersContent() {
     setStatusFilter,
     setTimeframeFilter,
   } = useOrderFilters(orders);
+
+  const {
+    cancelModalOpen,
+    orderToCancel,
+    isCancelling,
+    handleCancelOrder,
+    handleCloseCancelModal,
+    handleConfirmCancel,
+  } = useCancelOrder();
 
   const {
     currentPage,
@@ -96,6 +107,7 @@ export default function OrdersContent() {
             orders={paginatedItems}
             onViewOrder={handleOrderSelect}
             onReorder={handleReorder}
+            onCancelOrder={handleCancelOrder}
           />
 
           <OrdersPagination
@@ -119,6 +131,14 @@ export default function OrdersContent() {
         order={state.selectedOrder}
         isOpen={state.isModalOpen}
         onClose={handleCloseModal}
+      />
+
+      <CancelOrderModal
+        order={orderToCancel}
+        isOpen={cancelModalOpen}
+        onClose={handleCloseCancelModal}
+        onConfirm={handleConfirmCancel}
+        isLoading={isCancelling}
       />
     </>
   );

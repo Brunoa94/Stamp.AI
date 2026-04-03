@@ -13,6 +13,7 @@ interface OrderTableRowProps {
   order: OrderWithItemsT;
   onViewOrder: (order: OrderWithItemsT) => void;
   onReorder: (order: OrderWithItemsT) => void;
+  onCancelOrder?: (order: OrderWithItemsT) => void;
   getStatusBadgeClass: (status: string | null) => string;
 }
 
@@ -20,6 +21,7 @@ export function OrderTableRow({
   order,
   onViewOrder,
   onReorder,
+  onCancelOrder,
   getStatusBadgeClass,
 }: OrderTableRowProps) {
   return (
@@ -54,6 +56,7 @@ export function OrderTableRow({
           order={order}
           onViewOrder={onViewOrder}
           onReorder={onReorder}
+          onCancelOrder={onCancelOrder}
         />
       </TableCell>
     </TableRow>

@@ -11,12 +11,14 @@ interface OrdersTableDesktopProps {
   orders: OrderWithItemsT[];
   onViewOrder: (order: OrderWithItemsT) => void;
   onReorder: (order: OrderWithItemsT) => void;
+  onCancelOrder?: (order: OrderWithItemsT) => void;
 }
 
 export function OrdersTableDesktop({
   orders,
   onViewOrder,
   onReorder,
+  onCancelOrder,
 }: OrdersTableDesktopProps) {
   return (
     <div className={`${ordersTheme.table.container} hidden md:block`}>
@@ -29,6 +31,7 @@ export function OrdersTableDesktop({
               order={order}
               onViewOrder={onViewOrder}
               onReorder={onReorder}
+              onCancelOrder={onCancelOrder}
               getStatusBadgeClass={getStatusBadgeClass}
             />
           ))}
