@@ -204,6 +204,23 @@ class AuthService {
   }
 
   /**
+   * Sign in with Google OAuth
+   * Redirects to Google for authentication
+   */
+  static async signInWithGoogle(): Promise<void> {
+    const { error } = await AuthService.getSupabase().auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=/stamp`,
+      },
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  /**
    * Update user password
    * Uses AuthServiceMapper to transform Supabase user
    */

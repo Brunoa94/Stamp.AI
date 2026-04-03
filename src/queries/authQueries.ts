@@ -227,3 +227,20 @@ export function useResendEmailVerification() {
     },
   });
 }
+
+/**
+ * Sign in with Google OAuth
+ */
+export function useGoogleSignIn() {
+  return useMutation({
+    mutationFn: (): Promise<void> => {
+      return AuthService.signInWithGoogle();
+    },
+    onError: (error: Error) => {
+      toast.error("Google sign-in failed", {
+        description: error.message,
+        duration: 5000,
+      });
+    },
+  });
+}
