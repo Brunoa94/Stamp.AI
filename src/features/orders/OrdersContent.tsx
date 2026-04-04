@@ -21,7 +21,7 @@ import { OrdersPagination } from "./OrdersTable/OrdersPagination";
 import { CancelOrderModal } from "./CancelOrderModal";
 
 const OrderDetailsModal = dynamic(
-  () => import("./OrderDetails/OrderDetailsModal/OrderDetailsModal"),
+  () => import("./orderDetails/OrderDetailsModal/OrderDetailsModal"),
   {
     ssr: false,
   },

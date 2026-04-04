@@ -7,7 +7,8 @@ import { Button } from "@/features/ui/button";
 import clsx from "clsx";
 import { CheckoutErrorDisplay } from "../components";
 import { useEffect } from "react";
-import { FormField } from "./FormField";
+import { FormField } from "@/features/ui/form-field";
+import { SelectFormField } from "@/features/ui/select-form-field";
 import { shippingFormConfig } from "@/constants/shippingFormConfig";
 
 interface Props {
@@ -72,19 +73,31 @@ const ShippingAddressForm = ({
                 "grid grid-cols-1 md:grid-cols-2 gap-6": isMultiColumn,
               })}
             >
-              {row.fields.map((field) => (
-                <FormField
-                  key={field.id}
-                  id={field.id}
-                  label={field.label}
-                  type={field.type}
-                  required={field.required}
-                  register={register}
-                  control={control}
-                  error={errors[field.id]}
-                  options={field.options}
-                />
-              ))}
+              {row.fields.map((field) =>
+                field.options ? (
+                  <SelectFormField<ShippingAddressT>
+                    key={field.id}
+                    id={field.id}
+                    label={field.label}
+                    required={field.required}
+                    control={control}
+                    error={errors[field.id]?.message}
+                    options={field.options}
+                    variant="shipping"
+                  />
+                ) : (
+                  <FormField
+                    key={field.id}
+                    id={field.id}
+                    label={field.label}
+                    type={field.type}
+                    required={field.required}
+                    register={register(field.id)}
+                    error={errors[field.id]?.message}
+                    variant="shipping"
+                  />
+                )
+              )}
             </div>
           );
         })}

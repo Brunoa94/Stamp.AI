@@ -1,6 +1,6 @@
 "use client";
 
-import ShippingAddressForm from "@/features/checkout/ShippingForm/ShippingAddressForm";
+import ShippingAddressForm from "@/features/checkout/shippingForm/ShippingAddressForm";
 import {
   CheckoutSelectors,
   useCheckoutSubscriberActions,
