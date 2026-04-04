@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 // import OpenAI from "openai";
 
 // const openai = new OpenAI({
@@ -7,6 +8,38 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
+    // ── Authentication ──────────────────────────────────────────────────────────
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
+
+    // // ── Coin deduction ──────────────────────────────────────────────────────────
+    // const { data: hasCoin, error: rpcError } = await supabase.rpc(
+    //   "deduct_coin",
+    //   { user_id: user.id },
+    // );
+
+    // if (rpcError) {
+    //   console.error("deduct_coin RPC error:", rpcError.message);
+    //   return NextResponse.json(
+    //     { error: "Failed to process coin deduction" },
+    //     { status: 500 },
+    //   );
+    // }
+
+    // if (!hasCoin) {
+    //   return NextResponse.json(
+    //     { error: "Not enough coins" },
+    //     { status: 402 },
+    //   );
+    // }
+
     const formData = await request.formData();
     const prompt = formData.get("prompt") as string;
     const image = formData.get("image") as File;
@@ -94,7 +127,7 @@ export async function POST(request: NextRequest) {
       n: 1,
     });
 
-    const generatedImageUrl = imageResponse.data[0]?.url;
+    const generatedImageUrl = imageResponse.data?.[0]?.url;
 
     if (!generatedImageUrl) {
       return NextResponse.json(

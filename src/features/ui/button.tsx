@@ -5,26 +5,26 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
-          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive dark:focus-visible:ring-destructive/80 dark:bg-destructive/60",
         outline:
           "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
+        link: "text-primary underline-offset-4 hover:underline focus-visible:ring-offset-0",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
+        default: "h-10 px-4 py-2 has-[>svg]:px-3",
         sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        icon: "size-9",
+        icon: "size-10",
         "icon-sm": "size-8",
         "icon-lg": "size-10",
       },
@@ -36,17 +36,49 @@ const buttonVariants = cva(
   }
 )
 
+type IconButtonSize = "icon" | "icon-sm" | "icon-lg"
+
+// Base button props without size
+type BaseButtonProps = Omit<React.ComponentProps<"button">, "size"> &
+  Omit<VariantProps<typeof buttonVariants>, "size"> & {
+    asChild?: boolean
+  }
+
+// Icon button props - aria-label is required
+type IconButtonProps = BaseButtonProps & {
+  size: IconButtonSize
+  "aria-label": string
+}
+
+// Regular button props - aria-label is optional
+type RegularButtonProps = BaseButtonProps & {
+  size?: Exclude<VariantProps<typeof buttonVariants>["size"], IconButtonSize>
+  "aria-label"?: string
+}
+
+// Union type: if size is icon variant, aria-label is required
+export type ButtonProps = IconButtonProps | RegularButtonProps
+
 function Button({
   className,
   variant = "default",
   size = "default",
   asChild = false,
+  disabled,
+  "aria-label": ariaLabel,
   ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
+}: ButtonProps) {
   const Comp = asChild ? Slot : "button"
+
+  // Development warning for icon buttons without aria-label
+  if (process.env.NODE_ENV === "development") {
+    const isIconButton = size === "icon" || size === "icon-sm" || size === "icon-lg"
+    if (isIconButton && !ariaLabel && !props.children) {
+      console.warn(
+        `[Button Accessibility Warning]: Icon buttons (size="${size}") require an aria-label for screen reader support. Please add aria-label prop.`
+      )
+    }
+  }
 
   return (
     <Comp
@@ -54,6 +86,9 @@ function Button({
       data-variant={variant}
       data-size={size}
       className={cn(buttonVariants({ variant, size, className }))}
+      disabled={disabled}
+      aria-disabled={disabled}
+      aria-label={ariaLabel}
       {...props}
     />
   )

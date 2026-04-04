@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 
 interface IScrollOptions {
   behavior?: ScrollBehavior;
@@ -13,6 +13,17 @@ interface IScrollOptions {
  * Can be used throughout the application for consistent scroll behavior
  */
 const useScrollToSection = () => {
+  // Store active timeout IDs for cleanup
+  const timeoutsRef = useRef<Set<NodeJS.Timeout>>(new Set());
+
+  // Cleanup all timeouts on unmount
+  useEffect(() => {
+    return () => {
+      timeoutsRef.current.forEach(timeoutId => clearTimeout(timeoutId));
+      timeoutsRef.current.clear();
+    };
+  }, []);
+
   const scrollToSection = useCallback((
     ref: React.RefObject<HTMLElement | null>,
     options: IScrollOptions = {}
@@ -38,7 +49,11 @@ const useScrollToSection = () => {
     };
 
     if (delay > 0) {
-      setTimeout(performScroll, delay);
+      const timeoutId = setTimeout(() => {
+        performScroll();
+        timeoutsRef.current.delete(timeoutId);
+      }, delay);
+      timeoutsRef.current.add(timeoutId);
     } else {
       performScroll();
     }
@@ -50,7 +65,7 @@ const useScrollToSection = () => {
     options: IScrollOptions = {}
   ) => {
     const {
-      block = 'center',
+      block = 'start',
       delay = 0,
       offset = 0
     } = options;
@@ -60,17 +75,29 @@ const useScrollToSection = () => {
         const element = ref.current;
         const elementRect = element.getBoundingClientRect();
         const absoluteElementTop = elementRect.top + window.pageYOffset;
-        const middle = absoluteElementTop - (window.innerHeight / 2) + (elementRect.height / 2) + offset;
+
+        let scrollPosition;
+        if (block === 'start') {
+          // Position at top with offset (navbar height + desired spacing)
+          scrollPosition = absoluteElementTop + offset;
+        } else {
+          // Center positioning
+          scrollPosition = absoluteElementTop - (window.innerHeight / 2) + (elementRect.height / 2) + offset;
+        }
 
         window.scrollTo({
-          top: middle,
+          top: scrollPosition,
           behavior: 'smooth'
         });
       }
     };
 
     if (delay > 0) {
-      setTimeout(performSmoothScroll, delay);
+      const timeoutId = setTimeout(() => {
+        performSmoothScroll();
+        timeoutsRef.current.delete(timeoutId);
+      }, delay);
+      timeoutsRef.current.add(timeoutId);
     } else {
       requestAnimationFrame(performSmoothScroll);
     }
@@ -101,9 +128,55 @@ const useScrollToSection = () => {
       };
 
       if (delay > 0) {
-        setTimeout(performScroll, delay);
+        const timeoutId = setTimeout(() => {
+          performScroll();
+          timeoutsRef.current.delete(timeoutId);
+        }, delay);
+        timeoutsRef.current.add(timeoutId);
       } else {
         performScroll();
+      }
+    }
+  }, []);
+
+  // Enhanced scroll to element by ID with offset support
+  const smoothScrollToElementById = useCallback((
+    elementId: string,
+    options: IScrollOptions = {}
+  ) => {
+    const element = document.getElementById(elementId);
+    if (element) {
+      const {
+        block = 'start',
+        delay = 0,
+        offset = 0
+      } = options;
+
+      const performSmoothScroll = () => {
+        const elementRect = element.getBoundingClientRect();
+        const absoluteElementTop = elementRect.top + window.pageYOffset;
+
+        let scrollPosition;
+        if (block === 'start') {
+          scrollPosition = absoluteElementTop + offset;
+        } else {
+          scrollPosition = absoluteElementTop - (window.innerHeight / 2) + (elementRect.height / 2) + offset;
+        }
+
+        window.scrollTo({
+          top: scrollPosition,
+          behavior: 'smooth'
+        });
+      };
+
+      if (delay > 0) {
+        const timeoutId = setTimeout(() => {
+          performSmoothScroll();
+          timeoutsRef.current.delete(timeoutId);
+        }, delay);
+        timeoutsRef.current.add(timeoutId);
+      } else {
+        requestAnimationFrame(performSmoothScroll);
       }
     }
   }, []);
@@ -120,7 +193,11 @@ const useScrollToSection = () => {
     };
 
     if (delay > 0) {
-      setTimeout(performScroll, delay);
+      const timeoutId = setTimeout(() => {
+        performScroll();
+        timeoutsRef.current.delete(timeoutId);
+      }, delay);
+      timeoutsRef.current.add(timeoutId);
     } else {
       performScroll();
     }
@@ -130,6 +207,7 @@ const useScrollToSection = () => {
     scrollToSection,
     smoothScrollToSection,
     scrollToElementById,
+    smoothScrollToElementById,
     scrollToTop
   };
 };

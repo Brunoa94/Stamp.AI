@@ -1,70 +1,39 @@
 "use client";
 
-import {
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/features/ui/dialog";
+import { DialogContent, DialogTitle } from "@/features/ui/dialog";
 import { useLoginForm } from "./useLoginForm";
-import dynamic from "next/dynamic";
-import { Form } from "@/features/global/input/form";
-import { Button } from "@/features/ui/button";
-
-const InlinePasswordReset = dynamic(
-  () =>
-    import("../passwordReset/InlinePasswordReset").then((mod) => ({
-      default: mod.InlinePasswordReset,
-    })),
-  {
-    ssr: false,
-  }
-);
+import { LoginDialogHeader } from "./components/LoginDialogHeader";
+import { LoginCredentialsFields } from "./components/LoginCredentialsFields";
+import { LoginFormActions } from "./components/LoginFormActions";
+import { LoginSignupFooter } from "./components/LoginSignupFooter";
 
 export function LoginForm() {
   const { register, handleSubmit, onSubmit, isPending, errors } =
     useLoginForm();
 
   return (
-    <DialogContent className="max-w-96">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <DialogHeader>
-          <DialogTitle className="text-center">Login</DialogTitle>
-        </DialogHeader>
+    <DialogContent
+      showCloseButton={false}
+      className="max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none sm:max-w-135"
+    >
+      <DialogTitle className="sr-only">Login</DialogTitle>
+      <div className="relative overflow-hidden rounded-[2.25rem] border border-white/50 bg-white/85 p-8 shadow-[0_40px_100px_-20px_rgba(15,23,42,0.2)] backdrop-blur-2xl md:p-10">
+        <LoginDialogHeader />
 
-        <div className="grid gap-4">
-          <Form.InputText name="email" title="Email" register={register} />
-          <Form.InputPassword
-            name="password"
-            title="Password"
-            register={register}
-          />
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <LoginCredentialsFields register={register} errors={errors} />
 
-          {/* Inline password reset component */}
-          <InlinePasswordReset />
-        </div>
+          {errors.root?.message && (
+            <p role="alert" className="text-sm font-medium text-red-600">
+              {errors.root.message}
+            </p>
+          )}
 
-        {errors.root && (
-          <p className="text-sm text-red-500">{errors.root.message}</p>
-        )}
+          <LoginFormActions isPending={isPending} />
+        </form>
 
-        <DialogFooter className="flex flex-col gap-2">
-          <Button
-            aria-label="Login"
-            variant="default"
-            type="submit"
-            disabled={isPending}
-          >
-            {isPending ? "Logging in..." : "Login"}
-          </Button>
-          <DialogClose asChild>
-            <Button aria-label="Cancel" variant="outline">
-              Cancel
-            </Button>
-          </DialogClose>
-        </DialogFooter>
-      </form>
+        <LoginSignupFooter />
+      </div>
     </DialogContent>
   );
 }

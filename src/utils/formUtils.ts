@@ -24,7 +24,7 @@ export const getWordCountColor = (wordCount: number, limit: number = 150): strin
   if (wordCount > limit) return "text-red-500";
   if (percentage > 93) return "text-yellow-500"; // 140/150 words
   if (percentage > 67) return "text-blue-500";   // 100/150 words
-  return "text-purple-500";
+  return "text-slate-600";
 };
 
 /**

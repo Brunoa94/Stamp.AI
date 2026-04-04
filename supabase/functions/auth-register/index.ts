@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateRequest } from "../_shared/validators.ts"
 import { createServiceClient } from "../_shared/supabase.ts"
-import type { RegisterRequestI, AuthResponseI, UserI } from "../../../types/index.ts"
+import type { RegisterRequestI, AuthResponseI, UserI } from "../../types/index.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',

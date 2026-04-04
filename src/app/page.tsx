@@ -1,14 +1,84 @@
+"use client";
+
+import { useTshirtProducts } from "@/queries/productQueries";
+import { BottomSectionNav } from "@/features/homepage/BottomSectionNav";
+import {
+  NAVBAR_HEIGHT,
+  processSteps,
+  SCROLL_COOLDOWN,
+  SCROLL_DURATION,
+  SECTION_IDS,
+  SECTION_LABELS,
+} from "@/features/homepage/constants/homepageContent";
+import { useHomepageSectionScroll } from "@/features/homepage/hooks/useHomepageSectionScroll";
+import { ScrollProgressIndicator } from "@/features/homepage/navigation/ScrollProgressIndicator";
+import { SectionDotsNav } from "@/features/homepage/navigation/SectionDotsNav";
+import { BrandStorySection } from "@/features/homepage/sections/BrandStorySection";
+import { CtaHomeSection } from "@/features/homepage/sections/CtaHomeSection";
+import { FaqSection } from "@/features/homepage/sections/FaqSection";
+import { HeroSection } from "@/features/homepage/sections/HeroSection";
+import { ProcessSection } from "@/features/homepage/sections/ProcessSection";
+import { ProductsSection } from "@/features/homepage/sections/ProductsSection";
+import { ReviewsSection } from "@/features/homepage/sections/ReviewsSection";
+import { SecuritySection } from "@/features/homepage/sections/SecuritySection";
+import { PromoCodesCarouselSection } from "@/features/homepage/sections/PromoCodesCarouselSection";
+
 export default function Home() {
+  const { data: tshirtProducts = [], isLoading: isProductsLoading } =
+    useTshirtProducts();
+  const {
+    activeProcessStep,
+    currentSectionIndex,
+    heroScale,
+    isAtFooter,
+    scrollProgress,
+    scrollToFooter,
+    scrollToSection,
+  } = useHomepageSectionScroll({
+    sectionIds: SECTION_IDS,
+    navbarHeight: NAVBAR_HEIGHT,
+    scrollCooldown: SCROLL_COOLDOWN,
+    scrollDuration: SCROLL_DURATION,
+    processSectionId: "process",
+    processStepsCount: processSteps.length,
+  });
+
   return (
-    <section className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <div className="text-center space-y-6 max-w-4xl mx-auto px-6">
-        <h1 className="text-4xl md:text-6xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-          Imaginary Builder AI
-        </h1>
-        <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300">
-          AI-powered design and building platform
-        </p>
-      </div>
-    </section>
+    <div className="homepage-scroll-snap relative -mt-20 min-h-screen w-screen bg-white text-slate-900">
+      <div className="pointer-events-none fixed inset-0 z-40 bg-[radial-gradient(circle_at_1px_1px,#1e293b_1px,transparent_0)]/6 bg-size-[6px_6px]" />
+
+      <SectionDotsNav
+        sectionIds={SECTION_IDS}
+        currentSectionIndex={currentSectionIndex}
+        onScrollToSection={scrollToSection}
+      />
+
+      <BottomSectionNav
+        sectionIds={SECTION_IDS}
+        sectionLabels={SECTION_LABELS}
+        currentSectionIndex={currentSectionIndex}
+        isAtFooter={isAtFooter}
+        onScrollToSection={scrollToSection}
+        onScrollToFooter={scrollToFooter}
+      />
+
+      <ScrollProgressIndicator
+        scrollProgress={scrollProgress}
+        currentSectionIndex={currentSectionIndex}
+      />
+
+      <HeroSection heroScale={heroScale} />
+      <CtaHomeSection />
+      <ProcessSection activeProcessStep={activeProcessStep} />
+      <BrandStorySection />
+      <PromoCodesCarouselSection />
+      <ProductsSection
+        isProductsLoading={isProductsLoading}
+        tshirtProducts={tshirtProducts}
+      />
+      <FaqSection />
+      <SecuritySection />
+      <ReviewsSection />
+    </div>
   );
 }

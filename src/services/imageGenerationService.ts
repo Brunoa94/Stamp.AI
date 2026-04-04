@@ -1,52 +1,41 @@
-import { IImageGenerationForm, IImageGenerationResult } from "@/schemas/imageGenerationSchema";
+import { IProductCreateForm, IImageGenerationResult } from "@/schemas/productCreateSchema";
+import { ImageGenerationResponseSchema } from "@/schemas/services";
+import { ImageGenerationServiceMapper } from "@/mappers/services";
+import { POST } from "./apiClient";
+import { z } from "zod";
+import { ErrorClient } from "./errorClient";
+
+interface ImageGenerationResponse {
+  success: boolean;
+  imageUrl: string;
+  enhancedPrompt: string;
+  originalPrompt: string;
+}
 
 export class ImageGenerationService {
-  static async generateImage(data: IImageGenerationForm): Promise<IImageGenerationResult> {
+  static async generateImage(
+    data: IProductCreateForm,
+  ): Promise<IImageGenerationResult> {
     try {
-      const formData = new FormData();
-      formData.append("prompt", data.prompt);
-      formData.append("image", data.image);
+      // Use mapper to create FormData
+      const formData = ImageGenerationServiceMapper.mapFormDataToRequest(data);
 
-      const response = await fetch("/api/generate-image", {
-        method: "POST",
-        body: formData,
-      });
+      const result = await POST<ImageGenerationResponse>(
+        "/api/generate-image",
+        formData,
+      );
 
-      // Handle non-2xx responses
-      if (!response.ok) {
-        let errorMessage = "Failed to generate image";
+      // Validate API response
+      const validatedResponse = ImageGenerationResponseSchema.parse(result);
 
-        try {
-          const errorResult = await response.json();
-          errorMessage = errorResult.error || errorMessage;
-        } catch (parseError) {
-          // If response is not JSON, use status text
-          errorMessage = response.statusText || errorMessage;
-        }
-
-        throw new Error(`HTTP ${response.status}: ${errorMessage}`);
-      }
-
-      const result = await response.json();
-
-      if (!result.success) {
+      if (!validatedResponse.success) {
         throw new Error("Image generation was not successful");
       }
 
-      return {
-        imageUrl: result.imageUrl,
-        enhancedPrompt: result.enhancedPrompt,
-        originalPrompt: result.originalPrompt,
-      };
+      // Use mapper to convert response to result
+      return ImageGenerationServiceMapper.mapResponseToResult(validatedResponse);
     } catch (error) {
-      // Handle network errors, parsing errors, and other exceptions
-      if (error instanceof Error) {
-        // Re-throw known errors with context
-        throw new Error(`Image generation failed: ${error.message}`);
-      }
-
-      // Handle unknown errors
-      throw new Error("Image generation failed: Unknown error occurred");
+      throw ErrorClient.handleError({error, service: "Image Generation", action: "Generate Image"})
     }
   }
 }

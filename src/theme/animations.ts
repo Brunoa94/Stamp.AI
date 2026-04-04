@@ -31,12 +31,15 @@ export const animations = {
 
   // Rainbow animations
   rainbow: "animate-[rainbow_3s_linear_infinite]",
-  rainbowText: "bg-linear-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent animate-[rainbow_3s_linear_infinite]",
+  rainbowText: "bg-linear-to-r from-slate-400 via-gray-500 to-slate-600 bg-clip-text text-transparent animate-[rainbow_3s_linear_infinite]",
+
+  // Progress animations
+  progressBar: "animate-[progressBar_4s_ease-in-out_infinite]",
 } as const;
 
 export const animationClasses = {
   // Container animations
-  cardHover: "transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-purple-500/25",
+  cardHover: "transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-slate-500/25",
   buttonHover: "transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-95",
 
   // Loading states
@@ -46,7 +49,7 @@ export const animationClasses = {
   clickable: "cursor-pointer transition-transform duration-150 hover:scale-105 active:scale-95",
 
   // Borders and outlines
-  glowBorder: "border border-transparent bg-linear-to-r from-purple-500 via-pink-500 to-blue-500 bg-clip-border",
+  glowBorder: "border border-transparent bg-linear-to-r from-slate-500 via-gray-500 to-slate-600 bg-clip-border",
 
 } as const;
 
@@ -75,8 +78,8 @@ export const keyframes = `
   }
 
   @keyframes glow {
-    from { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
-    to { box-shadow: 0 0 40px rgba(168, 85, 247, 0.8), 0 0 60px rgba(236, 72, 153, 0.3); }
+    from { box-shadow: 0 0 20px rgba(100, 116, 139, 0.4); }
+    to { box-shadow: 0 0 40px rgba(100, 116, 139, 0.8), 0 0 60px rgba(148, 163, 184, 0.3); }
   }
 
   @keyframes shake {
@@ -124,5 +127,11 @@ export const keyframes = `
 
   @keyframes shimmer {
     100% { transform: translateX(100%); }
+  }
+
+  @keyframes progressBar {
+    0% { width: 0%; }
+    50% { width: 70%; }
+    100% { width: 100%; }
   }
 `;

@@ -53,7 +53,74 @@ export interface ErrorI {
 
 **Consistent error interface** across API and client
 
-## 3. **Testing Patterns**
+## 3. **Queries Layer Pattern**
+
+React Query hooks are centralized in the `queries/` folder, organized by domain:
+
+```typescript
+// queries/orderQueries.ts
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { OrderService } from "@/services/orderService";
+
+/**
+ * Fetch a single order by ID
+ */
+export function useOrder(orderId: string | null) {
+  return useQuery({
+    queryKey: ["orders", orderId],
+    queryFn: () => {
+      if (!orderId) throw new Error("Order ID is required");
+      return OrderService.getOrder(orderId);
+    },
+    enabled: !!orderId,
+  });
+}
+
+/**
+ * Create a new order
+ */
+export function useCreateOrder() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreateOrderT) => OrderService.createOrder(payload),
+    onSuccess: (data) => {
+      queryClient.setQueryData(["orders", data.id], data);
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+    },
+  });
+}
+```
+
+**Benefits:**
+
+- Centralized server state management
+- Consistent query keys across the app
+- Reusable queries and mutations
+- Easy cache invalidation
+- Single source of truth for React Query logic
+
+**Organization:**
+
+```
+queries/
+├── orderQueries.ts         # All order-related queries & mutations
+├── cartQueries.ts          # All cart-related queries & mutations
+├── productQueries.ts       # All product-related queries & mutations
+└── authQueries.ts          # All auth-related queries & mutations
+```
+
+**Key Principles:**
+
+- One file per domain (matching service organization)
+- Export query hooks with `use[Domain]` naming
+- Export mutation hooks with `use[Action][Domain]` naming
+- Always include proper query key patterns
+- Handle cache invalidation in mutations
+
+See [Queries Layer Documentation](./queries-layer.md) for detailed patterns.
+
+## 4. **Testing Patterns**
 
 ```typescript
 // Co-located test files
@@ -70,7 +137,7 @@ services/
 
 **Pattern:** Tests co-located with implementation files
 
-## 4. **Naming Conventions**
+## 5. **Naming Conventions**
 
 | Type               | Convention                  | Example                          |
 | ------------------ | --------------------------- | -------------------------------- |
@@ -83,7 +150,7 @@ services/
 | API Routes         | lowercase                   | `route.ts`, `[id]/route.ts`      |
 | Folders            | camelCase or kebab-case     | `aboutMe`, `admin-dashboard`     |
 
-## 5. **Provider Pattern**
+## 6. **Provider Pattern**
 
 ```typescript
 // providers/globalProviders.tsx

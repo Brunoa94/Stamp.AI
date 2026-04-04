@@ -1,6 +1,6 @@
 import { AlertCircle } from "lucide-react";
 import { clsx } from "clsx";
-import ProgressBar from "@/features/formFields/components/ProgressBar";
+import ProgressBar from "@/features/ui/progress-bar";
 import { getWordCountColor } from "@/utils/formUtils";
 
 interface Props {
@@ -23,7 +23,12 @@ const WordCountIndicator = ({
   return (
     <div className={clsx("space-y-3", { "space-y-0": !showProgressBar })}>
       <div className="flex justify-between items-center">
-        <div className={clsx("text-sm font-medium flex items-center", computedColorClass)}>
+        <div
+          className={clsx(
+            "text-sm font-medium flex items-center",
+            computedColorClass,
+          )}
+        >
           <div
             className={clsx("w-2 h-2 rounded-full mr-2", {
               "bg-red-400 animate-pulse": isOverLimit,

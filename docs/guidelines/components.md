@@ -454,36 +454,54 @@ src/components/
    - Main component, sub-components, hooks, and types in same folder
    - Only separate when components are used across multiple features
 
-3. **Barrel Exports**: Use index.ts files to clean up imports **only when files are related to each other**
+3. **Barrel Exports (index.ts)**: **DO NOT create index.ts files**
 
-   **When to create index.ts files:**
-   - Multiple related components in the same folder (e.g., theme toggle component + its hook)
-   - Components that work together as a cohesive feature unit
-   - Folders with 2+ related files that are commonly imported together
+   **IMPORTANT: Avoid creating barrel exports (index.ts files) in component folders.**
 
-   **When NOT to create index.ts files:**
-   - Single standalone components
-   - Unrelated components that happen to be in the same directory
-   - Files that are rarely imported together
+   **Why avoid index.ts files:**
+   - Adds unnecessary complexity and indirection
+   - Makes it harder to track where imports come from
+   - Can cause circular dependency issues
+   - Harder to maintain and refactor
+   - IDE auto-imports work better with direct file imports
+   - Explicit imports are more clear and maintainable
+
+   **Default approach:**
+   - Import components directly from their file paths
+   - Use explicit imports: `import { Button } from '@/features/ui/button'`
+   - Avoid barrel exports: `import { Button } from '@/features/ui'`
 
    ```typescript
-   // ✅ Good: Related files that work together
-   // src/features/ui/theme-toggle/index.ts
-   export { ThemeToggle } from './ThemeToggle';
-   export { useThemeCycle } from './useThemeCycle';
+   // ✅ Good: Direct imports from files
+   import { Button } from '@/features/ui/button';
+   import { Input } from '@/features/ui/input';
+   import { PageHeader } from '@/features/ui/page-header';
 
-   // ✅ Good: Feature components that work together
-   // src/features/auth/passwordReset/passwordResetConfirm/index.ts
-   export { PasswordResetConfirmForm } from './PasswordResetConfirmForm';
-   export { PasswordResetError } from './PasswordResetError';
-   export { PasswordResetSuccess } from './PasswordResetSuccess';
-   export { usePasswordResetConfirmForm } from './usePasswordResetConfirmForm';
-
-   // ❌ Bad: Unrelated components in same folder
-   // src/features/ui/index.ts - Don't barrel export all UI components
+   // ❌ Bad: Barrel exports with index.ts
+   // src/features/ui/index.ts
    export { Button } from './button';
    export { Input } from './input';
-   export { ThemeToggle } from './theme-toggle'; // These aren't related
+   export { PageHeader } from './page-header';
+
+   // Then importing from the barrel (DON'T DO THIS)
+   import { Button, Input, PageHeader } from '@/features/ui';
+   ```
+
+   **Extremely rare exceptions (use sparingly):**
+   Only create index.ts if ALL of these conditions are met:
+   - Multiple files (2+) are ALWAYS imported together
+   - They form a single, cohesive API
+   - They are tightly coupled and interdependent
+   - The folder represents a single logical unit
+
+   ```typescript
+   // Acceptable (but still discouraged): Tightly coupled feature unit
+   // src/features/wizard/steps/upload/index.ts
+   export { UploadStep } from './UploadStep';
+   export { UploadForm } from './UploadForm';
+   export { UploadPreview } from './UploadPreview';
+   export { useUploadStep } from './useUploadStep';
+   // These 4 files are ALWAYS used together as one feature
    ```
 
 4. **Shared vs Feature-Specific**:
@@ -517,11 +535,13 @@ src/components/dashboard/
 
 ## **React Query Integration**
 
+**IMPORTANT:** All React Query hooks must be centralized in the `queries/` folder, not in component files or the `hooks/` folder.
+
 Use TanStack React Query for server state management, calling service methods:
 
 ```typescript
-// hooks/useProjects.ts
-import { useQuery } from "@tanstack/react-query";
+// queries/projectQueries.ts
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ProjectsService } from "@/services/projects";
 
 export function useProjects() {
@@ -538,9 +558,29 @@ export function useProject(id: number) {
     enabled: !!id,
   });
 }
+
+export function useCreateProject() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: CreateProjectT) => ProjectsService.createProject(payload),
+    onSuccess: (data) => {
+      queryClient.setQueryData(["projects", data.id], data);
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    },
+  });
+}
 ```
 
-**Pattern:** React Query hooks wrap service methods for data fetching
+**Pattern:** React Query hooks centralized in `queries/` folder, organized by domain
+
+**Benefits:**
+- Single source of truth for all queries/mutations
+- Consistent query keys across the application
+- Reusable across multiple components
+- Easy cache invalidation management
+
+See [Queries Layer Documentation](../architecture/queries-layer.md) for detailed patterns and best practices.
 
 ## **Component State Patterns**
 
@@ -548,6 +588,7 @@ Components using fetched data must include loading and error states:
 
 ```typescript
 // components/projects/projectList/ProjectList.tsx
+import { useProjects } from "@/queries/projectQueries";
 import { ProjectListSkeleton } from "./ProjectListSkeleton";
 import { ProjectListError } from "./ProjectListError";
 
@@ -598,6 +639,79 @@ export const ProjectListSkeleton = () => (
 
 ## **Component Patterns**
 
+### Client Components ("use client")
+
+**Only use "use client" when necessary:**
+
+- Components that use browser-only features (useState, useEffect, event handlers)
+- Components that need to interact with the DOM directly
+- Interactive components with user events (onClick, onChange, etc.)
+- Components using browser APIs (localStorage, window, etc.)
+
+**Do NOT use "use client" for:**
+- Pure presentational components without state or events
+- Components that only display data passed via props
+- Server components that can render on the server
+- Static components without user interaction
+
+```typescript
+// ❌ Bad: Unnecessary "use client" for static component
+"use client";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+export default function StaticCard({ title, description }: Props) {
+  return (
+    <div className="p-4 border rounded">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+  );
+}
+
+// ✅ Good: No "use client" needed for static component
+interface Props {
+  title: string;
+  description: string;
+}
+
+export default function StaticCard({ title, description }: Props) {
+  return (
+    <div className="p-4 border rounded">
+      <h2>{title}</h2>
+      <p>{description}</p>
+    </div>
+  );
+}
+
+// ✅ Good: "use client" needed for interactive component
+"use client";
+
+import { useState } from "react";
+
+interface Props {
+  onSelect: (value: string) => void;
+}
+
+export default function InteractiveSelect({ onSelect }: Props) {
+  const [selected, setSelected] = useState("");
+
+  const handleChange = (value: string) => {
+    setSelected(value);
+    onSelect(value);
+  };
+
+  return (
+    <select value={selected} onChange={(e) => handleChange(e.target.value)}>
+      <option value="">Select option</option>
+    </select>
+  );
+}
+```
+
 ### Functional Components with TypeScript
 
 ```typescript
@@ -624,18 +738,105 @@ export type { ProjectBoxProps };
 
 ### Ref Handling Guidelines
 
-- **Avoid unnecessary `forwardRef`**: Only use `forwardRef` when the ref actually needs to be forwarded to a child component or DOM element
-- **Direct ref usage**: When a component only uses the ref internally, use it directly without `forwardRef`
+**IMPORTANT: Avoid using `forwardRef` and `useImperativeHandle`. Prefer callback patterns instead.**
+
+#### Why Avoid forwardRef?
+
+- **Poor composition**: Breaks component encapsulation
+- **Imperative API**: Goes against React's declarative nature
+- **Hard to track**: Makes data flow harder to follow
+- **Memory leaks**: Can cause issues if refs aren't cleaned up properly
+- **Testing complexity**: Makes components harder to test
+
+#### Prefer Callback Patterns
 
 ```typescript
-// ❌ Bad: Unnecessary forwardRef when ref is only used internally
-const ProcessingSection = forwardRef<HTMLElement, Props>(
-  ({ isProcessing }, ref) => {
-    return <section ref={ref}>Content</section>;
-  }
-);
+// ❌ Bad: Using forwardRef and useImperativeHandle
+export interface PaymentFormRef {
+  submitPayment: () => void;
+}
 
-// ✅ Good: Direct ref usage when not forwarding to children
+const PaymentForm = forwardRef<PaymentFormRef, Props>((props, ref) => {
+  const handlePayment = async () => {
+    // Payment logic
+  };
+
+  useImperativeHandle(ref, () => ({
+    submitPayment: handlePayment,
+  }));
+
+  return <form>...</form>;
+});
+
+// Usage
+const ref = useRef<PaymentFormRef>(null);
+ref.current?.submitPayment(); // Imperative call
+
+// ✅ Good: Using callback pattern with trigger prop
+interface Props {
+  triggerSubmit?: boolean;
+  onSubmitComplete?: () => void;
+  onSuccess?: (data: any) => void;
+}
+
+const PaymentForm = ({ triggerSubmit, onSubmitComplete, onSuccess }: Props) => {
+  const handlePayment = async () => {
+    // Payment logic
+    const result = await processPayment();
+    onSuccess?.(result);
+  };
+
+  useEffect(() => {
+    if (triggerSubmit) {
+      handlePayment().finally(() => {
+        onSubmitComplete?.();
+      });
+    }
+  }, [triggerSubmit]);
+
+  return <form>...</form>;
+};
+
+// Usage
+const [triggerPayment, setTriggerPayment] = useState(false);
+
+const handleCompleteOrder = () => {
+  setTriggerPayment(true); // Declarative trigger
+};
+
+const handlePaymentComplete = () => {
+  setTriggerPayment(false); // Reset trigger
+};
+
+<PaymentForm
+  triggerSubmit={triggerPayment}
+  onSubmitComplete={handlePaymentComplete}
+  onSuccess={handleSuccess}
+/>
+```
+
+#### When forwardRef Is Acceptable
+
+Only use `forwardRef` when building low-level UI components that need to expose native DOM elements:
+
+```typescript
+// ✅ Acceptable: Forwarding ref to native DOM element
+const CustomInput = forwardRef<HTMLInputElement, Props>((props, ref) => {
+  return <input ref={ref} {...props} />; // Direct DOM access needed
+});
+
+// ✅ Acceptable: UI library component exposing DOM element
+const Button = forwardRef<HTMLButtonElement, Props>((props, ref) => {
+  return <button ref={ref} className="custom-button" {...props} />;
+});
+```
+
+#### Direct Ref Usage
+
+When a component needs a ref internally (not exposing it), pass it as a prop:
+
+```typescript
+// ✅ Good: Direct ref usage as prop
 interface Props {
   isProcessing: boolean;
   sectionRef?: React.RefObject<HTMLElement>;
@@ -644,11 +845,6 @@ interface Props {
 const ProcessingSection = ({ isProcessing, sectionRef }: Props) => {
   return <section ref={sectionRef}>Content</section>;
 };
-
-// ✅ Good: forwardRef only when actually forwarding to children
-const CustomInput = forwardRef<HTMLInputElement, Props>((props, ref) => {
-  return <input ref={ref} {...props} />; // Ref forwarded to actual input
-});
 ```
 
 ### Custom Hooks Pattern
@@ -715,29 +911,36 @@ const MyComponent = () => {
 
 ### Hook Organization Rules
 
-- **Component-specific hooks**: Hooks that are only used by one component should be placed in the same folder as that component
-- **Shared hooks**: Hooks used by multiple components should be placed in the global `hooks/` folder
+- **React Query hooks**: ALL queries and mutations MUST be in the `queries/` folder, organized by domain
+- **Component-specific hooks**: Non-query hooks that are only used by one component should be placed in the same folder as that component
+- **Shared utility hooks**: Non-query hooks used by multiple components should be placed in the global `hooks/` folder
 - **Co-location principle**: Keep related files together for better maintainability
 
 ```
 src/
+├── queries/
+│   ├── orderQueries.ts              # ✅ ALL order queries & mutations
+│   ├── productQueries.ts            # ✅ ALL product queries & mutations
+│   └── cartQueries.ts               # ✅ ALL cart queries & mutations
 ├── components/
 │   └── dashboard/
 │       └── UserProfile/
-│           ├── UserProfile.tsx          # ✅ Component
-│           └── useUserProfile.ts        # ✅ Component-specific hook
+│           ├── UserProfile.tsx      # ✅ Component
+│           └── useUserProfile.ts    # ✅ Component-specific NON-query hook
 └── hooks/
-    ├── useAuth.ts                       # ✅ Shared across app
-    ├── useApi.ts                        # ✅ Shared utility hook
-    └── useLocalStorage.ts               # ✅ Shared utility hook
+    ├── useTheme.ts                  # ✅ Shared utility hook
+    ├── useErrorHandler.ts           # ✅ Shared utility hook
+    └── useLocalStorage.ts           # ✅ Shared utility hook
 ```
+
+**Important:** The `hooks/` folder should NEVER contain React Query hooks (useQuery, useMutation). Those belong in `queries/`.
 
 ## **Form Handling Patterns**
 
-Use TanStack React Query mutations for form submissions:
+Use TanStack React Query mutations for form submissions. **All mutations must be defined in the `queries/` folder:**
 
 ```typescript
-// hooks/useCreateProject.ts
+// queries/projectQueries.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ProjectsService } from "@/services/projects";
 
@@ -745,11 +948,34 @@ export function useCreateProject() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ProjectsService.createProject,
-    onSuccess: () => {
+    mutationFn: (payload: CreateProjectT) => ProjectsService.createProject(payload),
+    onSuccess: (data) => {
+      queryClient.setQueryData(["projects", data.id], data);
       queryClient.invalidateQueries({ queryKey: ["projects"] });
     },
   });
+}
+```
+
+**Usage in components:**
+
+```typescript
+// components/projects/CreateProjectForm.tsx
+import { useCreateProject } from "@/queries/projectQueries";
+
+function CreateProjectForm() {
+  const createProject = useCreateProject();
+
+  const handleSubmit = async (data: CreateProjectT) => {
+    try {
+      await createProject.mutateAsync(data);
+      toast.success("Project created!");
+    } catch (error) {
+      toast.error("Failed to create project");
+    }
+  };
+
+  return <form onSubmit={handleSubmit}>...</form>;
 }
 ```
 
@@ -968,6 +1194,291 @@ try {
 - **Timeout Errors**: Request takes too long
 - **Unknown Errors**: Unexpected exceptions
 
+## Icon Guidelines
+
+### Use Theme Icons Instead of Inline SVGs
+
+**Rule: Always use icon components from `@/theme/icons` instead of inline SVG elements**
+
+- **Centralized icons**: All icons should be stored in `src/theme/icons/` folder
+- **Reusable components**: Each icon should be a separate component with customizable className prop
+- **Consistent styling**: Icons inherit color from parent using `currentColor` in stroke/fill
+- **Type safety**: Icon components use TypeScript interfaces for props
+
+### Icon Component Structure
+
+```typescript
+// ✅ Good: Icon component in src/theme/icons/CheckCircleIcon.tsx
+interface CheckCircleIconProps {
+  className?: string;
+}
+
+export const CheckCircleIcon = ({ className = "w-6 h-6" }: CheckCircleIconProps) => {
+  return (
+    <svg
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+  );
+};
+
+// src/theme/icons/index.ts
+export { CheckCircleIcon } from "./CheckCircleIcon";
+export { CreditCardIcon } from "./CreditCardIcon";
+export { ArrowRightIcon } from "./ArrowRightIcon";
+```
+
+### Using Icon Components
+
+```typescript
+// ✅ Good: Import and use icon components
+import { CheckCircleIcon, CreditCardIcon } from "@/theme";
+
+const SuccessMessage = () => (
+  <div className="flex items-center gap-2">
+    <CheckCircleIcon className="w-6 h-6 text-green-600" />
+    <span>Success!</span>
+  </div>
+);
+
+const PaymentButton = () => (
+  <Button>
+    <CreditCardIcon className="w-5 h-5 text-yellow-300" />
+    Go to Payment
+  </Button>
+);
+
+// ❌ Bad: Inline SVG elements
+const BadExample = () => (
+  <div>
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  </div>
+);
+```
+
+### Icon Best Practices
+
+1. **Default Size**: Provide sensible default sizes (e.g., `w-6 h-6`) but allow customization via className
+2. **Color Inheritance**: Use `currentColor` for stroke/fill to inherit text color from parent
+3. **Accessibility**: Add `aria-hidden="true"` for decorative icons, or proper aria-labels for functional icons
+4. **Naming**: Use descriptive names ending with "Icon" (e.g., `CheckCircleIcon`, `AlertTriangleIcon`)
+5. **Export**: Always export icons from `src/theme/icons/index.ts` for clean imports
+
+### Adding New Icons
+
+When you need a new icon:
+
+1. Create a new file in `src/theme/icons/` (e.g., `NewIcon.tsx`)
+2. Follow the interface pattern with optional `className` prop
+3. Use `currentColor` for colors that should inherit from parent
+4. Export the icon from `src/theme/icons/index.ts`
+5. Import from `@/theme` in components
+
+```typescript
+// Step 1: Create src/theme/icons/NewIcon.tsx
+interface NewIconProps {
+  className?: string;
+}
+
+export const NewIcon = ({ className = "w-6 h-6" }: NewIconProps) => {
+  return (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      {/* SVG path */}
+    </svg>
+  );
+};
+
+// Step 2: Export from src/theme/icons/index.ts
+export { NewIcon } from "./NewIcon";
+
+// Step 3: Use in components
+import { NewIcon } from "@/theme";
+
+<NewIcon className="w-8 h-8 text-blue-500" />
+```
+
+## Image Handling Guidelines
+
+### Use Next.js Image Component
+
+**Rule: Always use Next.js `Image` component instead of HTML `<img>` tags**
+
+- **Automatic optimization**: Images are automatically optimized for performance
+- **Responsive images**: Serves correctly sized images for different screen sizes
+- **Lazy loading**: Images load as they enter the viewport
+- **Priority loading**: Control loading priority for above-the-fold images
+- **External image support**: Configure domains in `next.config.js` for external images
+
+### Image Component Usage
+
+```typescript
+import Image from "next/image";
+
+// ✅ Good: Using Next.js Image component
+const ProductImage = ({ src, alt }: Props) => {
+  return (
+    <div className="relative w-full h-96">
+      <Image
+        src={src}
+        alt={alt}
+        width={800}
+        height={800}
+        className="w-full h-auto object-contain"
+        priority={false} // Set to true for above-the-fold images
+      />
+    </div>
+  );
+};
+
+// ✅ Good: Responsive image with fill
+const HeroImage = () => (
+  <div className="relative w-full h-[500px]">
+    <Image
+      src="/hero.jpg"
+      alt="Hero banner"
+      fill
+      className="object-cover"
+      priority // Load immediately for hero images
+    />
+  </div>
+);
+
+// ❌ Bad: Using HTML img tag
+const BadExample = ({ src, alt }: Props) => (
+  <img src={src} alt={alt} className="w-full" />
+);
+```
+
+### Image Best Practices
+
+1. **Always Specify Dimensions**: Provide `width` and `height` props to prevent layout shift
+2. **Use Fill for Unknown Dimensions**: Use the `fill` prop with a relative parent container
+3. **Object Fit**: Use `object-contain` or `object-cover` via className for sizing behavior
+4. **Alt Text**: Always provide meaningful alt text for accessibility
+5. **Priority**: Set `priority={true}` for above-the-fold images (hero images, logos)
+6. **External Domains**: Configure `remotePatterns` in `next.config.js` for external images
+
+### Next.js Image Configuration
+
+```javascript
+// next.config.js
+module.exports = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'example.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.printify.com',
+      },
+    ],
+  },
+};
+```
+
+### Image Sizing Patterns
+
+```typescript
+// Fixed size image
+<Image
+  src="/logo.png"
+  alt="Company logo"
+  width={200}
+  height={50}
+  className="w-auto h-12"
+/>
+
+// Responsive image maintaining aspect ratio
+<Image
+  src="/product.jpg"
+  alt="Product"
+  width={800}
+  height={600}
+  className="w-full h-auto"
+/>
+
+// Fill container (requires relative parent)
+<div className="relative w-full h-96">
+  <Image
+    src="/banner.jpg"
+    alt="Banner"
+    fill
+    className="object-cover"
+  />
+</div>
+
+// Circular avatar
+<div className="relative w-20 h-20 rounded-full overflow-hidden">
+  <Image
+    src="/avatar.jpg"
+    alt="User avatar"
+    fill
+    className="object-cover"
+  />
+</div>
+```
+
+### Image Loading States
+
+```typescript
+// ✅ Good: Image with loading states
+const OptimizedImage = ({ src, alt }: Props) => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  return (
+    <div className="relative">
+      {isLoading && (
+        <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+      )}
+      <Image
+        src={src}
+        alt={alt}
+        width={800}
+        height={600}
+        className="w-full h-auto"
+        onLoadingComplete={() => setIsLoading(false)}
+      />
+    </div>
+  );
+};
+```
+
+### When to Use Standard img Tag
+
+There are rare cases where HTML `<img>` is appropriate:
+
+- **SVG images** that don't need optimization
+- **Base64 encoded** data URLs
+- **Dynamic blob URLs** from file uploads (before upload to server)
+
+```typescript
+// Acceptable: Preview of file upload before sending to server
+const ImagePreview = ({ file }: { file: File }) => {
+  const [preview, setPreview] = useState<string>("");
+
+  useEffect(() => {
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+
+  return <img src={preview} alt="Preview" className="w-full" />;
+};
+```
+
 ## End-to-End Testing Requirements
 
 - **Mandatory E2E Tests**: Every new user action or functionality added to the application MUST have corresponding end-to-end tests
@@ -1123,3 +1634,391 @@ describe('Image Generation Form', () => {
 - [ ] **Accessibility**: Screen readers and keyboard navigation work
 - [ ] **Responsive**: Feature works across different screen sizes
 - [ ] **File Location**: Test file is co-located with the component being tested
+
+---
+
+## State Management with React Context
+
+### When to Use Context
+
+Use React Context for **feature-specific state** that needs to be shared across multiple components within a feature:
+
+✅ **Good use cases:**
+- Checkout flow (payment, shipping, order state)
+- Multi-step forms with shared state
+- Theme/settings within a feature
+- Complex component trees with prop drilling
+
+❌ **Don't use Context for:**
+- Truly global app state (consider Zustand/Redux instead)
+- Simple parent-child prop passing
+- Single-component state
+- Frequently changing values that cause many re-renders
+
+### The Re-render Problem with React Context
+
+**IMPORTANT:** React Context has a critical limitation - when you use `useContext()`, your component subscribes to ALL changes in the context value, regardless of which properties you use.
+
+```typescript
+// ❌ Problem: Both components re-render on ANY context change
+const UserContext = createContext({ name: '', theme: '' });
+
+function UserGreeting() {
+  const { name } = useContext(UserContext);
+  // Re-renders even when only theme changes!
+  return <h1>Hello, {name}!</h1>;
+}
+
+function ThemeToggle() {
+  const { theme } = useContext(UserContext);
+  // Re-renders even when only name changes!
+  return <button>Theme: {theme}</button>;
+}
+```
+
+### Solution: use-context-selector Library
+
+To prevent unnecessary re-renders, use the `use-context-selector` library which provides true selector functionality:
+
+```bash
+npm install use-context-selector
+```
+
+### Context Pattern Structure
+
+```typescript
+// src/features/[feature]/context/[Feature]Context.tsx
+"use client";
+
+import React, { ReactNode } from "react";
+import { createContext, useContextSelector } from "use-context-selector";
+import { useFeatureData } from "../hooks/useFeatureData";
+import { useFeatureHandlers } from "../hooks/useFeatureHandlers";
+
+interface FeatureContextValue {
+  // Data state
+  data: SomeType | null;
+  isLoading: boolean;
+  error: string | null;
+
+  // Handlers
+  handleAction: () => void;
+
+  // Computed values
+  computedValue: number;
+}
+
+const FeatureContext = createContext<FeatureContextValue | undefined>(undefined);
+
+interface FeatureProviderProps {
+  children: ReactNode;
+  // Any required initialization props
+  id: string | null;
+}
+
+export function FeatureProvider({ children, id }: FeatureProviderProps) {
+  // Combine existing hooks
+  const { data, isLoading, error } = useFeatureData(id);
+  const handlers = useFeatureHandlers();
+
+  // Compute derived values once at provider level
+  const computedValue = data?.value || 0;
+
+  const value: FeatureContextValue = {
+    data,
+    isLoading,
+    error,
+    ...handlers,
+    computedValue,
+  };
+
+  return (
+    <FeatureContext.Provider value={value}>
+      {children}
+    </FeatureContext.Provider>
+  );
+}
+
+// Optimized selector hooks using use-context-selector
+// Components using these hooks ONLY re-render when their selected data changes
+
+/**
+ * Select data state
+ * Component only re-renders when data, isLoading, or error changes
+ */
+export function useFeatureData() {
+  const data = useContextSelector(FeatureContext, (v) => v?.data);
+  const isLoading = useContextSelector(FeatureContext, (v) => v?.isLoading);
+  const error = useContextSelector(FeatureContext, (v) => v?.error);
+
+  return { data, isLoading, error };
+}
+
+/**
+ * Select action handlers
+ * Component only re-renders when handlers change (usually never)
+ */
+export function useFeatureActions() {
+  const handleAction = useContextSelector(FeatureContext, (v) => v?.handleAction);
+
+  return { handleAction };
+}
+
+/**
+ * Select computed value
+ * Component only re-renders when computedValue changes
+ */
+export function useFeatureComputed() {
+  return useContextSelector(FeatureContext, (v) => v?.computedValue);
+}
+```
+
+### Using the Context in Components
+
+```typescript
+// src/app/feature/page.tsx
+"use client";
+
+import { useSearchParams } from "next/navigation";
+import { FeatureProvider, useFeature } from "@/features/feature/context";
+
+function FeatureContent() {
+  const { data, isLoading, handleAction } = useFeature();
+
+  if (isLoading) return <Loading />;
+
+  return (
+    <div>
+      <FeatureComponent />
+      <button onClick={handleAction}>Do Action</button>
+    </div>
+  );
+}
+
+export default function FeaturePage() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
+
+  return (
+    <FeatureProvider id={id}>
+      <FeatureContent />
+    </FeatureProvider>
+  );
+}
+```
+
+### Context Best Practices
+
+#### 1. **Separate Provider from Page Component**
+
+```typescript
+// ✅ Good: Provider wraps content component
+export default function Page() {
+  const params = useParams();
+
+  return (
+    <FeatureProvider id={params.id}>
+      <FeatureContent />
+    </FeatureProvider>
+  );
+}
+
+// ❌ Bad: Mixing provider logic with page logic
+export default function Page() {
+  const data = useFeatureData(); // Can't use hook before provider!
+  return <div>{data}</div>;
+}
+```
+
+#### 2. **Use Selector Hooks for Performance**
+
+Selector hooks prevent unnecessary re-renders by subscribing only to specific parts of the context:
+
+```typescript
+// ✅ Good: Component only re-renders when shipping data changes
+// (Not affected by payment, cart, or other unrelated changes)
+function ShippingForm() {
+  const { address, handleSubmit } = useCheckoutShipping();
+  return <form onSubmit={handleSubmit}>...</form>;
+}
+
+// ❌ Bad: Component re-renders on ANY context change
+// (Re-renders when payment updates, cart changes, etc.)
+function ShippingForm() {
+  const { address, handleSubmit, paymentStatus, cart, ... } = useCheckout();
+  return <form onSubmit={handleSubmit}>...</form>;
+}
+```
+
+**How it works:**
+```typescript
+// With use-context-selector, each field is individually tracked
+export function useCheckoutShipping() {
+  const address = useContextSelector(CheckoutContext, (v) => v?.address);
+  const handleSubmit = useContextSelector(CheckoutContext, (v) => v?.handleSubmit);
+
+  // Component only re-renders if address or handleSubmit changes
+  return { address, handleSubmit };
+}
+```
+
+#### 3. **Compute Values at Provider Level**
+
+```typescript
+// ✅ Good: Computed once at provider level
+export function CheckoutProvider({ children, orderId }: Props) {
+  const { order } = useCheckoutData(orderId);
+  const subtotal = order?.subtotal || 0; // Computed once
+
+  return (
+    <CheckoutContext.Provider value={{ order, subtotal }}>
+      {children}
+    </CheckoutContext.Provider>
+  );
+}
+
+// ❌ Bad: Every component recomputes the same value
+function Component1() {
+  const { order } = useCheckout();
+  const subtotal = order?.subtotal || 0; // Computed in every component
+}
+
+function Component2() {
+  const { order } = useCheckout();
+  const subtotal = order?.subtotal || 0; // Duplicate computation
+}
+```
+
+#### 4. **Throw Errors for Missing Provider**
+
+```typescript
+// ✅ Good: Clear error message
+export function useFeature() {
+  const context = useContext(FeatureContext);
+  if (context === undefined) {
+    throw new Error("useFeature must be used within a FeatureProvider");
+  }
+  return context;
+}
+
+// ❌ Bad: Silent failure or unclear error
+export function useFeature() {
+  const context = useContext(FeatureContext);
+  return context || {}; // Runtime errors later
+}
+```
+
+#### 5. **Export Hooks from Index File**
+
+```typescript
+// src/features/checkout/context/index.ts
+export {
+  CheckoutProvider,
+  useCheckout,
+  useCheckoutState,
+  useCheckoutPayment,
+  useCheckoutShipping,
+  useCheckoutActions,
+  useCheckoutAmounts,
+} from "./CheckoutContext";
+```
+
+This allows clean imports:
+```typescript
+import { CheckoutProvider, useCheckoutPayment } from "@/features/checkout/context";
+```
+
+### Real-World Example: Checkout Context
+
+```typescript
+// src/features/checkout/context/CheckoutContext.tsx
+"use client";
+
+import { createContext, useContextSelector } from "use-context-selector";
+
+export function CheckoutProvider({ children, orderId }: CheckoutProviderProps) {
+  // Combine three separate hooks into one context
+  const { order, orderItems, customProduct, isLoading, error } = useCheckoutData(orderId);
+  const customization = useCustomization({ order, orderItems, customProduct, isLoading });
+  const handlers = useCheckoutHandlers();
+
+  // Compute derived values once
+  const subtotal = order?.subtotal || customization.price * customization.quantity;
+  const shippingCost = order?.shipping_cost || 5.99;
+  const orderAmount = subtotal + shippingCost;
+
+  const value = {
+    order, orderItems, customProduct, isLoading, error,
+    customization, ...handlers,
+    subtotal, shippingCost, orderAmount,
+  };
+
+  return <CheckoutContext.Provider value={value}>{children}</CheckoutContext.Provider>;
+}
+
+// Selector hooks using use-context-selector for optimized performance
+export function useCheckoutPayment() {
+  const paymentStatus = useContextSelector(CheckoutContext, (v) => v?.paymentStatus);
+  const testMode = useContextSelector(CheckoutContext, (v) => v?.testMode);
+  const triggerPayment = useContextSelector(CheckoutContext, (v) => v?.triggerPayment);
+  const handlePaymentSuccess = useContextSelector(CheckoutContext, (v) => v?.handlePaymentSuccess);
+  const handlePaymentError = useContextSelector(CheckoutContext, (v) => v?.handlePaymentError);
+
+  // This component only re-renders when these specific values change
+  return { paymentStatus, testMode, triggerPayment, handlePaymentSuccess, handlePaymentError };
+}
+
+export function useCheckoutAmounts() {
+  const subtotal = useContextSelector(CheckoutContext, (v) => v?.subtotal);
+  const shippingCost = useContextSelector(CheckoutContext, (v) => v?.shippingCost);
+  const orderAmount = useContextSelector(CheckoutContext, (v) => v?.orderAmount);
+
+  // This component only re-renders when amounts change
+  // Not affected by payment status changes, shipping updates, etc.
+  return { subtotal, shippingCost, orderAmount };
+}
+```
+
+### Migration from Hooks to Context
+
+If you find yourself with multiple related hooks creating prop drilling issues:
+
+**Before (Multiple hooks in component):**
+```typescript
+function Page() {
+  const { data } = useFeatureData(id);
+  const { handlers } = useFeatureHandlers();
+  const computed = computeValue(data);
+
+  return (
+    <>
+      <ComponentA data={data} computed={computed} />
+      <ComponentB handlers={handlers} computed={computed} />
+      <ComponentC data={data} handlers={handlers} />
+    </>
+  );
+}
+```
+
+**After (Context eliminates prop drilling):**
+```typescript
+function Page() {
+  return (
+    <FeatureProvider id={id}>
+      <ComponentA /> {/* Uses useFeatureData() internally */}
+      <ComponentB /> {/* Uses useFeatureActions() internally */}
+      <ComponentC /> {/* Uses useFeature() internally */}
+    </FeatureProvider>
+  );
+}
+```
+
+### When to Move Beyond Context
+
+Consider **Zustand** or **Redux Toolkit** if you need:
+- State shared across completely different features/pages
+- DevTools for debugging state changes
+- Middleware for logging, persistence, etc.
+- Very fine-grained performance optimizations
+
+Context is perfect for feature-scoped state. For app-wide state, use a proper state management library.

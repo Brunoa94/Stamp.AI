@@ -2,11 +2,142 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import Stripe from 'https://esm.sh/stripe@14.11.0?target=deno'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
-import { createServiceClient } from "../_shared/supabase.ts"
+import { supabaseRest } from "../_shared/supabase.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, stripe-signature',
+}
+
+/**
+ * Stripe Payment Intent interface for webhook handling
+ */
+interface StripePaymentIntentI {
+  id: string;
+  customer: string | null;
+  amount: number;
+  currency: string;
+  livemode: boolean;
+  payment_method_types?: string[];
+  last_payment_error?: {
+    message?: string;
+  };
+  metadata?: Record<string, string>;
+}
+
+/**
+ * Handle credit purchase - update user credits and create transaction record
+ */
+async function handleCreditPurchase(paymentIntent: StripePaymentIntentI) {
+  const userId = paymentIntent.metadata?.user_id
+  const creditsToAdd = parseInt(paymentIntent.metadata?.credits || '0', 10)
+  const amountPaid = paymentIntent.amount / 100
+
+  if (!userId || userId === 'service-role') {
+    console.error('Invalid user_id for credit purchase:', userId)
+    return
+  }
+
+  if (creditsToAdd <= 0) {
+    console.error('Invalid credits amount:', creditsToAdd)
+    return
+  }
+
+  console.log(`Adding ${creditsToAdd} credits to user ${userId}`)
+
+  // Get current user credits
+  const currentCreditsResult = await supabaseRest(
+    `user_credits?user_id=eq.${userId}&select=credits`,
+    'GET'
+  )
+
+  let currentCredits = 0
+  let userExists = false
+
+  if (currentCreditsResult.data && currentCreditsResult.data.length > 0) {
+    currentCredits = currentCreditsResult.data[0].credits || 0
+    userExists = true
+  }
+
+  const newBalance = currentCredits + creditsToAdd
+
+  // Update or insert user credits
+  if (userExists) {
+    const updateResult = await supabaseRest(
+      `user_credits?user_id=eq.${userId}`,
+      'PATCH',
+      {
+        credits: newBalance,
+        updated_at: new Date().toISOString()
+      }
+    )
+
+    if (updateResult.error) {
+      console.error('Failed to update user credits:', updateResult.error)
+      return
+    }
+  } else {
+    const insertResult = await supabaseRest(
+      'user_credits',
+      'POST',
+      {
+        user_id: userId,
+        credits: newBalance,
+        updated_at: new Date().toISOString()
+      }
+    )
+
+    if (insertResult.error) {
+      console.error('Failed to insert user credits:', insertResult.error)
+      return
+    }
+  }
+
+  console.log(`Updated user ${userId} credits: ${currentCredits} -> ${newBalance}`)
+
+  // Create credit transaction record
+  const transactionResult = await supabaseRest(
+    'credit_transactions',
+    'POST',
+    {
+      user_id: userId,
+      amount: creditsToAdd,
+      balance_after: newBalance,
+      transaction_type: 'purchase',
+      description: `Purchased ${creditsToAdd} credits for $${amountPaid.toFixed(2)}`,
+      reference_id: paymentIntent.id,
+      created_at: new Date().toISOString()
+    }
+  )
+
+  if (transactionResult.error) {
+    console.error('Failed to create credit transaction:', transactionResult.error)
+  } else {
+    console.log('Credit transaction recorded:', transactionResult.data)
+  }
+
+  // Also record in payment_transactions for consistency
+  await supabaseRest(
+    'payment_transactions',
+    'POST',
+    {
+      user_id: userId,
+      stripe_payment_intent_id: paymentIntent.id,
+      stripe_customer_id: paymentIntent.customer,
+      amount: amountPaid,
+      currency: paymentIntent.currency,
+      status: 'succeeded',
+      payment_method_type: paymentIntent.payment_method_types?.[0],
+      metadata: {
+        ...paymentIntent.metadata,
+        type: 'credit_purchase'
+      },
+      updated_at: new Date().toISOString()
+    },
+    { prefer: 'resolution=merge-duplicates' }
+  )
+
+  console.log('Credit purchase completed successfully')
 }
 
 serve(async (req) => {
@@ -29,8 +160,7 @@ serve(async (req) => {
   })
 
   const cryptoProvider = Stripe.createSubtleCryptoProvider()
-  const supabase = createServiceClient()
-  
+
   try {
     const webhookSecret = validateEnvVars.stripeWebhookSecret()
 
@@ -53,11 +183,21 @@ serve(async (req) => {
       case 'payment_intent.succeeded': {
         console.log('Handling payment_intent.succeeded')
         const paymentIntent = event.data.object
-        
-        // Save payment to database
-        const result = await supabase
-          .from('payment_transactions')
-          .upsert({
+
+        // Check if this is a credit purchase
+        const isCreditPurchase = paymentIntent.metadata?.type === 'credit_purchase'
+
+        if (isCreditPurchase) {
+          console.log('Processing credit purchase')
+          await handleCreditPurchase(paymentIntent)
+          break
+        }
+
+        // Save payment to database using REST API
+        const result = await supabaseRest(
+          'payment_transactions',
+          'POST',
+          {
             stripe_payment_intent_id: paymentIntent.id,
             stripe_customer_id: paymentIntent.customer,
             amount: paymentIntent.amount / 100,
@@ -66,14 +206,36 @@ serve(async (req) => {
             payment_method_type: paymentIntent.payment_method_types?.[0],
             metadata: paymentIntent.metadata,
             updated_at: new Date().toISOString()
-          }, {
-            onConflict: 'stripe_payment_intent_id'
-          })
-        
+          },
+          { prefer: 'resolution=merge-duplicates' }
+        )
+
         console.log('Upsert result:', result)
         if (result.error) {
           console.error('Upsert error:', result.error)
           break
+        }
+
+        // Update order payment_status to "paid" if we have an order_id
+        const dbOrderId = paymentIntent.metadata?.order_id
+        if (dbOrderId) {
+          const orderResult = await supabaseRest(
+            `orders?id=eq.${dbOrderId}`,
+            'PATCH',
+            {
+              payment_status: 'paid',
+              payment_method: 'stripe',
+              stripe_payment_intent_id: paymentIntent.id,
+              stripe_customer_id: paymentIntent.customer,
+              updated_at: new Date().toISOString(),
+            }
+          )
+
+          if (orderResult.error) {
+            console.error('Failed to update order payment_status:', orderResult.error)
+          } else {
+            console.log(`Order ${dbOrderId} payment_status updated to: paid`)
+          }
         }
 
         // Check if this is a test payment
@@ -84,7 +246,7 @@ serve(async (req) => {
         console.log('Calling Printify order creation')
 
         // Parse line items and shipping from metadata
-        const lineItems = paymentIntent.metadata?.line_items 
+        const lineItems = paymentIntent.metadata?.line_items
           ? JSON.parse(paymentIntent.metadata.line_items)
           : []
         const shippingAddress = paymentIntent.metadata?.shipping_address
@@ -93,7 +255,7 @@ serve(async (req) => {
 
         // If no line items (e.g., from stripe trigger test), use sample order
         const useSampleOrder = lineItems.length === 0
-        
+
         const printifyResponse = await fetch(
           `${Deno.env.get('SUPABASE_URL')}/functions/v1/create-printify-order`,
           {
@@ -105,6 +267,7 @@ serve(async (req) => {
             },
             body: JSON.stringify({
               is_test: true,
+              auto_cancel: true, // Automatically cancel test orders to avoid accumulation
               use_sample_order: useSampleOrder, // Create sample order when testing
               line_items: lineItems,
               shipping_address: shippingAddress,
@@ -129,10 +292,11 @@ serve(async (req) => {
       case 'payment_intent.payment_failed': {
         console.log('Handling payment_intent.payment_failed')
         const paymentIntent = event.data.object
-        
-        const result = await supabase
-          .from('payment_transactions')
-          .upsert({
+
+        const result = await supabaseRest(
+          'payment_transactions',
+          'POST',
+          {
             stripe_payment_intent_id: paymentIntent.id,
             stripe_customer_id: paymentIntent.customer,
             amount: paymentIntent.amount / 100,
@@ -142,28 +306,50 @@ serve(async (req) => {
             error_message: paymentIntent.last_payment_error?.message,
             metadata: paymentIntent.metadata,
             updated_at: new Date().toISOString()
-          }, {
-            onConflict: 'stripe_payment_intent_id'
-          })
-        
+          },
+          { prefer: 'resolution=merge-duplicates' }
+        )
+
         console.log('Upsert result:', result)
-        if (result.error) console.error('Upsert error:', result.error)
+        if (result.error) {
+          console.error('Upsert error:', result.error)
+        } else {
+          // Update order payment_status to "failed" if we have an order_id
+          const dbOrderId = paymentIntent.metadata?.order_id
+          if (dbOrderId) {
+            const orderResult = await supabaseRest(
+              `orders?id=eq.${dbOrderId}`,
+              'PATCH',
+              {
+                payment_status: 'failed',
+                updated_at: new Date().toISOString(),
+              }
+            )
+
+            if (orderResult.error) {
+              console.error('Failed to update order payment_status:', orderResult.error)
+            } else {
+              console.log(`Order ${dbOrderId} payment_status updated to: failed`)
+            }
+          }
+        }
         break
       }
 
       case 'charge.succeeded': {
         console.log('Handling charge.succeeded')
         const charge = event.data.object
-        
-        const result = await supabase
-          .from('payment_transactions')
-          .update({
+
+        const result = await supabaseRest(
+          `payment_transactions?stripe_payment_intent_id=eq.${charge.payment_intent}`,
+          'PATCH',
+          {
             stripe_charge_id: charge.id,
             payment_method_details: charge.payment_method_details,
             updated_at: new Date().toISOString()
-          })
-          .eq('stripe_payment_intent_id', charge.payment_intent)
-        
+          }
+        )
+
         console.log('Update result:', result)
         if (result.error) console.error('Update error:', result.error)
         break
@@ -172,10 +358,11 @@ serve(async (req) => {
       case 'checkout.session.completed': {
         console.log('Handling checkout.session.completed')
         const session = event.data.object
-        
-        const result = await supabase
-          .from('payment_transactions')
-          .insert({
+
+        const result = await supabaseRest(
+          'payment_transactions',
+          'POST',
+          {
             user_id: session.metadata?.user_id,
             order_id: session.metadata?.order_id,
             stripe_payment_intent_id: session.payment_intent,
@@ -184,8 +371,9 @@ serve(async (req) => {
             currency: session.currency,
             status: 'processing',
             metadata: session.metadata,
-          })
-        
+          }
+        )
+
         console.log('Insert result:', result)
         if (result.error) console.error('Insert error:', result.error)
         break

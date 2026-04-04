@@ -42,6 +42,43 @@ export const validateEnvVars = {
     const secret = Deno.env.get('STRIPE_WEBHOOK_SECRET')
     if (!secret) throw ErrorCodes.STRIPE_WEBHOOK_SECRET_MISSING()
     return secret
+  },
+
+  // PayPal environment validators
+  paypalClientId: (): string => {
+    const clientId = Deno.env.get('PAYPAL_CLIENT_ID')
+    if (!clientId) throw ErrorCodes.PAYPAL_CLIENT_ID_MISSING()
+    return clientId
+  },
+
+  paypalClientSecret: (): string => {
+    const secret = Deno.env.get('PAYPAL_CLIENT_SECRET')
+    if (!secret) throw ErrorCodes.PAYPAL_CLIENT_SECRET_MISSING()
+    return secret
+  },
+
+  paypalWebhookId: (): string => {
+    const webhookId = Deno.env.get('PAYPAL_WEBHOOK_ID')
+    if (!webhookId) throw ErrorCodes.PAYPAL_WEBHOOK_ID_MISSING()
+    return webhookId
+  },
+
+  paypalMode: (): 'sandbox' | 'live' => {
+    const mode = Deno.env.get('PAYPAL_MODE') || 'sandbox'
+    return mode === 'live' ? 'live' : 'sandbox'
+  },
+
+  // Mollie environment validators
+  mollieApiKey: (): string => {
+    const apiKey = Deno.env.get('MOLLIE_API_KEY')
+    if (!apiKey) throw ErrorCodes.MOLLIE_API_KEY_MISSING()
+    return apiKey
+  },
+
+  mollieMode: (): 'test' | 'live' => {
+    const apiKey = Deno.env.get('MOLLIE_API_KEY') || ''
+    // Mollie API keys start with 'test_' or 'live_'
+    return apiKey.startsWith('live_') ? 'live' : 'test'
   }
 }
 
@@ -111,4 +148,61 @@ export const extractBearerToken = (authHeader?: string | null): string => {
     throw ErrorCodes.INVALID_TOKEN()
   }
   return authHeader.replace('Bearer ', '')
+}
+
+/**
+ * Verified auth result interface
+ */
+export interface VerifiedAuthResultI {
+  userId: string;
+  userEmail: string;
+}
+
+/**
+ * Verify authentication - accepts both user JWT tokens and service role key.
+ * Returns user info if available, or service identifier if using service role.
+ */
+export async function verifyAuth(authHeader: string | null): Promise<VerifiedAuthResultI> {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    throw ErrorCodes.INVALID_TOKEN();
+  }
+
+  const token = authHeader.replace("Bearer ", "");
+  const supabaseUrl = validateEnvVars.supabaseUrl();
+  const supabaseAnonKey = validateEnvVars.supabaseAnonKey();
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+  // Check if it's the service role key (server-to-server calls)
+  if (serviceRoleKey && token === serviceRoleKey) {
+    console.log("Authenticated with service role key");
+    return {
+      userId: "service-role",
+      userEmail: "service@system.internal",
+    };
+  }
+
+  // Otherwise, validate as user JWT token
+  const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      apikey: supabaseAnonKey,
+    },
+  });
+
+  if (!response.ok) {
+    console.error("Auth verification failed:", response.status, response.statusText);
+    throw ErrorCodes.INVALID_TOKEN();
+  }
+
+  const user = await response.json();
+
+  if (!user || !user.id) {
+    throw ErrorCodes.INVALID_TOKEN();
+  }
+
+  console.log("Authenticated user:", user.id);
+  return {
+    userId: user.id,
+    userEmail: user.email || "",
+  };
 }
