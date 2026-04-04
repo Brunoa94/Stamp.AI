@@ -122,13 +122,14 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: AuthService.logout,
+    onMutate: () => {
+      // Optimistic auth update so UI switches immediately
+      queryClient.setQueryData(authKeys.user(), null);
+      queryClient.setQueryData(authKeys.session(), null);
+    },
     onSuccess: () => {
-      // Clear auth cache immediately to update UI
-      queryClient.clear();
-
-      // Refetch user query to ensure UI shows logged out state
-      queryClient.invalidateQueries({ queryKey: authKeys.user() });
-      queryClient.invalidateQueries({ queryKey: authKeys.session() });
+      // Remove stale auth cache entries
+      queryClient.removeQueries({ queryKey: authKeys.all });
 
       toast.success("Logged out successfully", {
         duration: 3000,
@@ -138,6 +139,10 @@ export function useLogout() {
       router.push("/");
     },
     onError: (error: Error) => {
+      // Restore canonical state if sign-out failed
+      queryClient.invalidateQueries({ queryKey: authKeys.user() });
+      queryClient.invalidateQueries({ queryKey: authKeys.session() });
+
       toast.error("Logout failed", {
         description: error.message,
         duration: 5000,

@@ -55,9 +55,9 @@ export function BuyCreditsDialog({
       onClose={handleClose}
       title={title}
       description="Purchase credits to create more AI-powered designs"
-      className="max-w-xl max-h-[90vh] overflow-y-auto"
+      className="sm:max-w-xl max-h-[90vh] overflow-y-auto"
     >
-      <div className="min-h-120">
+      <div>
         {step === "select" ? (
           <CreditSelectionStep
             selectedPackage={selectedPackage}

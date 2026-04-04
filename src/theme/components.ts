@@ -636,7 +636,7 @@ export const componentThemes = {
   buyCredits: {
     // Package card
     packageCard: {
-      base: `relative flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-200`,
+      base: `relative w-full h-auto min-h-26 flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200`,
       selected: `border-[#7C3AED] bg-[#7C3AED]/5 shadow-md`,
       unselected: `border-slate-200 hover:border-slate-300 hover:bg-slate-50`,
       creditsRow: `flex items-center gap-1.5 mb-1`,
@@ -656,7 +656,7 @@ export const componentThemes = {
     },
     // Custom input
     customInput: {
-      container: `w-full p-4 rounded-xl border-2 transition-all duration-200 text-left`,
+      container: `w-full h-auto min-h-18 p-4 rounded-xl border-2 transition-all duration-200 text-left`,
       containerSelected: `border-[#7C3AED] bg-[#7C3AED]/5`,
       containerUnselected: `border-slate-200 hover:border-slate-300`,
       row: `flex items-center gap-3`,
