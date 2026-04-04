@@ -4,25 +4,28 @@ import {
   type CapturePayPalOrderPayloadI,
   type CreatePayPalOrderPayloadI,
 } from "@/services/paypalService";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
-/**
- * Create a PayPal order via edge function
- */
 export function useCreatePayPalOrder() {
+  const { handleError } = useErrorHandler();
   return useMutation({
     mutationKey: ["paypal", "create-order"],
     mutationFn: (payload: CreatePayPalOrderPayloadI) =>
       PayPalService.createOrder(payload),
+    onError: (error: Error) => {
+      handleError(error);
+    },
   });
 }
 
-/**
- * Capture a PayPal order via edge function
- */
 export function useCapturePayPalOrder() {
+  const { handleError } = useErrorHandler();
   return useMutation({
     mutationKey: ["paypal", "capture-order"],
     mutationFn: (payload: CapturePayPalOrderPayloadI) =>
       PayPalService.captureOrder(payload),
+    onError: (error: Error) => {
+      handleError(error);
+    },
   });
 }

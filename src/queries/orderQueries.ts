@@ -4,6 +4,7 @@ import { OrderItemService } from "@/services/orderItemService";
 import { CreateOrderT, UpdateOrderT } from "@/types/order";
 import { CartWithItems } from "@/types/cart";
 import { UserI } from "@/types/auth";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 /**
  * Fetch a single order by ID
@@ -68,12 +69,16 @@ export function useOrderItems(orderId: string | null) {
  */
 export function useCreateOrder() {
   const queryClient = useQueryClient();
+  const { handleError } = useErrorHandler();
 
   return useMutation({
     mutationFn: (payload: CreateOrderT) => OrderService.createOrder(payload),
     onSuccess: (data) => {
       queryClient.setQueryData(["orders", data.id], data);
       queryClient.invalidateQueries({ queryKey: ["orders"] });
+    },
+    onError: (error: Error) => {
+      handleError(error);
     },
   });
 }
@@ -83,6 +88,7 @@ export function useCreateOrder() {
  */
 export function useUpdateOrder() {
   const queryClient = useQueryClient();
+  const { handleError } = useErrorHandler();
 
   return useMutation({
     mutationFn: ({ orderId, payload }: { orderId: string; payload: UpdateOrderT }) =>
@@ -90,6 +96,9 @@ export function useUpdateOrder() {
     onSuccess: (data, variables) => {
       queryClient.setQueryData(["orders", variables.orderId], data);
       queryClient.invalidateQueries({ queryKey: ["orders"] });
+    },
+    onError: (error: Error) => {
+      handleError(error);
     },
   });
 }
@@ -99,6 +108,7 @@ export function useUpdateOrder() {
  */
 export function useUpdateOrderStatus() {
   const queryClient = useQueryClient();
+  const { handleError } = useErrorHandler();
 
   return useMutation({
     mutationFn: ({ orderId, status }: { orderId: string; status: string }) =>
@@ -106,6 +116,9 @@ export function useUpdateOrderStatus() {
     onSuccess: (data, variables) => {
       queryClient.setQueryData(["orders", variables.orderId], data);
       queryClient.invalidateQueries({ queryKey: ["orders"] });
+    },
+    onError: (error: Error) => {
+      handleError(error);
     },
   });
 }
@@ -115,6 +128,7 @@ export function useUpdateOrderStatus() {
  */
 export function useUpdatePaymentStatus() {
   const queryClient = useQueryClient();
+  const { handleError } = useErrorHandler();
 
   return useMutation({
     mutationFn: ({ orderId, paymentStatus }: { orderId: string; paymentStatus: string }) =>
@@ -122,6 +136,9 @@ export function useUpdatePaymentStatus() {
     onSuccess: (data, variables) => {
       queryClient.setQueryData(["orders", variables.orderId], data);
       queryClient.invalidateQueries({ queryKey: ["orders"] });
+    },
+    onError: (error: Error) => {
+      handleError(error);
     },
   });
 }
@@ -131,6 +148,7 @@ export function useUpdatePaymentStatus() {
  */
 export function useUpdateFulfillmentStatus() {
   const queryClient = useQueryClient();
+  const { handleError } = useErrorHandler();
 
   return useMutation({
     mutationFn: ({ orderId, fulfillmentStatus }: { orderId: string; fulfillmentStatus: string }) =>
@@ -138,6 +156,9 @@ export function useUpdateFulfillmentStatus() {
     onSuccess: (data, variables) => {
       queryClient.setQueryData(["orders", variables.orderId], data);
       queryClient.invalidateQueries({ queryKey: ["orders"] });
+    },
+    onError: (error: Error) => {
+      handleError(error);
     },
   });
 }
@@ -147,12 +168,16 @@ export function useUpdateFulfillmentStatus() {
  */
 export function useDeleteOrder() {
   const queryClient = useQueryClient();
+  const { handleError } = useErrorHandler();
 
   return useMutation({
     mutationFn: (orderId: string) => OrderService.deleteOrder(orderId),
     onSuccess: (_, orderId) => {
       queryClient.removeQueries({ queryKey: ["orders", orderId] });
       queryClient.invalidateQueries({ queryKey: ["orders"] });
+    },
+    onError: (error: Error) => {
+      handleError(error);
     },
   });
 }
@@ -162,6 +187,7 @@ export function useDeleteOrder() {
  */
 export function useCreateOrderFromCart() {
   const queryClient = useQueryClient();
+  const { handleError } = useErrorHandler();
 
   return useMutation({
     mutationFn: async ({ user, cart, paymentStatus = "paid" }: { user: UserI; cart: CartWithItems; paymentStatus?: string }) => {
@@ -171,15 +197,15 @@ export function useCreateOrderFromCart() {
       return await OrderService.createOrderFromCart({ cart, user, paymentStatus });
     },
     onSuccess: (orderId) => {
-      // Invalidate orders list
       queryClient.invalidateQueries({ queryKey: ["orders"] });
-      // Invalidate cart
       queryClient.invalidateQueries({ queryKey: ["cart"] });
 
-      // Set the new order in cache if we have the ID
       if (orderId) {
         queryClient.invalidateQueries({ queryKey: ["orders", orderId] });
       }
+    },
+    onError: (error: Error) => {
+      handleError(error);
     },
   });
 }

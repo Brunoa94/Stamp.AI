@@ -3,9 +3,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthService } from "@/services/authService";
 import type { LoginI, RegisterI, PasswordResetRequestI, UpdateProfileI } from "@/schemas/auth";
-import { toast } from "sonner";
 import { AuthResponseI, UserI } from "@/types/api";
 import { useRouter } from "next/navigation";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 // Query keys
 export const authKeys = {
@@ -63,29 +63,22 @@ export function useIsAuthenticated() {
 export function useLogin() {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const { handleError, handleSuccess } = useErrorHandler();
 
   return useMutation({
     mutationFn: (credentials: LoginI): Promise<AuthResponseI> => {
       return AuthService.login(credentials);
     },
     onSuccess: (data) => {
-      // Update cache
       queryClient.setQueryData(authKeys.user(), data.user);
       queryClient.setQueryData(authKeys.session(), data.session);
 
-      toast.success("Login successful", {
-        description: "Welcome back!",
-        duration: 3000,
-      });
+      handleSuccess("Login successful - Welcome back!");
 
-      // Redirect to stamp
       router.push("/stamp");
     },
     onError: (error: Error) => {
-      toast.error("Login failed", {
-        description: error.message,
-        duration: 5000,
-      });
+      handleError(error);
     },
   });
 }
@@ -94,21 +87,17 @@ export function useLogin() {
  * User registration
  */
 export function useRegister() {
+  const { handleError, handleSuccess } = useErrorHandler();
+
   return useMutation({
     mutationFn: (userData: RegisterI): Promise<AuthResponseI> => {
       return AuthService.register(userData);
     },
     onSuccess: (data) => {
-      toast.success("Registration successful", {
-        description: data.message || "Please check your email to verify your account.",
-        duration: 5000,
-      });
+      handleSuccess(`Registration successful - ${data.message || "Please check your email to verify your account."}`);
     },
     onError: (error: Error) => {
-      toast.error("Registration failed", {
-        description: error.message,
-        duration: 5000,
-      });
+      handleError(error);
     },
   });
 }
@@ -119,29 +108,21 @@ export function useRegister() {
 export function useLogout() {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const { handleError, handleSuccess } = useErrorHandler();
 
   return useMutation({
     mutationFn: AuthService.logout,
     onSuccess: () => {
-      // Clear auth cache immediately to update UI
       queryClient.clear();
-
-      // Refetch user query to ensure UI shows logged out state
       queryClient.invalidateQueries({ queryKey: authKeys.user() });
       queryClient.invalidateQueries({ queryKey: authKeys.session() });
 
-      toast.success("Logged out successfully", {
-        duration: 3000,
-      });
+      handleSuccess("Logged out successfully");
 
-      // Redirect to home
       router.push("/");
     },
     onError: (error: Error) => {
-      toast.error("Logout failed", {
-        description: error.message,
-        duration: 5000,
-      });
+      handleError(error);
     },
   });
 }
@@ -150,21 +131,17 @@ export function useLogout() {
  * Password reset request
  */
 export function usePasswordResetRequest() {
+  const { handleError, handleSuccess } = useErrorHandler();
+
   return useMutation({
     mutationFn: (data: PasswordResetRequestI): Promise<void> => {
       return AuthService.requestPasswordReset(data);
     },
     onSuccess: () => {
-      toast.success("Password reset email sent", {
-        description: "Please check your email for reset instructions.",
-        duration: 5000,
-      });
+      handleSuccess("Password reset email sent - Please check your email for reset instructions.");
     },
     onError: (error: Error) => {
-      toast.error("Password reset failed", {
-        description: error.message,
-        duration: 5000,
-      });
+      handleError(error);
     },
   });
 }
@@ -174,24 +151,19 @@ export function usePasswordResetRequest() {
  */
 export function useUpdateProfile() {
   const queryClient = useQueryClient();
+  const { handleError, handleSuccess } = useErrorHandler();
 
   return useMutation({
     mutationFn: (data: UpdateProfileI): Promise<UserI> => {
       return AuthService.updateProfile(data);
     },
     onSuccess: (user) => {
-      // Update user cache
       queryClient.setQueryData(authKeys.user(), user);
 
-      toast.success("Profile updated successfully", {
-        duration: 3000,
-      });
+      handleSuccess("Profile updated successfully");
     },
     onError: (error: Error) => {
-      toast.error("Profile update failed", {
-        description: error.message,
-        duration: 5000,
-      });
+      handleError(error);
     },
   });
 }
@@ -200,8 +172,16 @@ export function useUpdateProfile() {
  * Update user password
  */
 export function useUpdatePassword() {
+  const { handleError, handleSuccess } = useErrorHandler();
+
   return useMutation({
     mutationFn: (newPassword: string) => AuthService.updatePassword(newPassword),
+    onSuccess: () => {
+      handleSuccess("Password updated successfully");
+    },
+    onError: (error: Error) => {
+      handleError(error);
+    },
   });
 }
 
@@ -209,21 +189,17 @@ export function useUpdatePassword() {
  * Resend email verification
  */
 export function useResendEmailVerification() {
+  const { handleError, handleSuccess } = useErrorHandler();
+
   return useMutation({
     mutationFn: (email: string): Promise<void> => {
       return AuthService.resendEmailVerification(email);
     },
     onSuccess: () => {
-      toast.success("Verification email sent", {
-        description: "Please check your email.",
-        duration: 5000,
-      });
+      handleSuccess("Verification email sent - Please check your email.");
     },
     onError: (error: Error) => {
-      toast.error("Failed to send verification email", {
-        description: error.message,
-        duration: 5000,
-      });
+      handleError(error);
     },
   });
 }
@@ -232,15 +208,14 @@ export function useResendEmailVerification() {
  * Sign in with Google OAuth
  */
 export function useGoogleSignIn() {
+  const { handleError } = useErrorHandler();
+
   return useMutation({
     mutationFn: (): Promise<void> => {
       return AuthService.signInWithGoogle();
     },
     onError: (error: Error) => {
-      toast.error("Google sign-in failed", {
-        description: error.message,
-        duration: 5000,
-      });
+      handleError(error);
     },
   });
 }

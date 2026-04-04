@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { CartService } from "@/services/cartService";
 import { AddToCartInput, UpdateCartItemInput } from "@/types/cart";
 import { useUser } from "@/hooks/useAuth";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 /**
  * Hook to get or create cart for current user/session
@@ -60,6 +61,7 @@ export function useAddToCart() {
   const { data: user } = useUser();
   const userId = user?.id;
   const userEmail = user?.email;
+  const { handleError } = useErrorHandler();
 
   return useMutation({
     mutationFn: async (item: AddToCartInput) => {
@@ -72,6 +74,9 @@ export function useAddToCart() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
+    onError: (error: Error) => {
+      handleError(error);
+    },
   });
 }
 
@@ -80,6 +85,7 @@ export function useAddToCart() {
  */
 export function useUpdateCartItem() {
   const queryClient = useQueryClient();
+  const { handleError } = useErrorHandler();
 
   return useMutation({
     mutationFn: ({
@@ -94,6 +100,9 @@ export function useUpdateCartItem() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
+    onError: (error: Error) => {
+      handleError(error);
+    },
   });
 }
 
@@ -102,6 +111,7 @@ export function useUpdateCartItem() {
  */
 export function useRemoveCartItem() {
   const queryClient = useQueryClient();
+  const { handleError } = useErrorHandler();
 
   return useMutation({
     mutationFn: (itemId: string) => {
@@ -109,6 +119,9 @@ export function useRemoveCartItem() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+    onError: (error: Error) => {
+      handleError(error);
     },
   });
 }
@@ -121,6 +134,7 @@ export function useClearCart() {
   const { data: user } = useUser();
   const userId = user?.id;
   const userEmail = user?.email;
+  const { handleError } = useErrorHandler();
 
   return useMutation({
     mutationFn: async () => {
@@ -132,6 +146,9 @@ export function useClearCart() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+    onError: (error: Error) => {
+      handleError(error);
     },
   });
 }

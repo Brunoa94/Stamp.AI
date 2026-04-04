@@ -110,4 +110,8 @@ export const ErrorCodes = {
   // Generic errors
   INTERNAL_ERROR: () => new FunctionError(500, 'INTERNAL_ERROR', 'Internal server error'),
   UNKNOWN_ERROR: () => new FunctionError(500, 'UNKNOWN_ERROR', 'Unknown error occurred'),
+
+    // Utility errors
+    MISSING_REQUIRED_FIELDS: (details: string) => new FunctionError(400, 'MISSING_REQUIRED_FIELDS', `Missing required fields: ${details}`),
+    DATABASE_ERROR: (details: string) => new FunctionError(500, 'DATABASE_ERROR', `Database error: ${details}`),
 } as const;

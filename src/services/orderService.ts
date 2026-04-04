@@ -38,11 +38,11 @@ export class OrderService {
 
       // Handle Supabase errors
       if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
+        throw ErrorClient.handleError({ error, service: "Order", action: "Get Orders" });
       }
 
       if (!data) {
-        throw new Error('No data returned from query');
+        throw ErrorClient.handleError({ error: new Error("No data returned from query"), service: "Order", action: "Get Orders" });
       }
 
       // Validate response with Zod schema
@@ -72,11 +72,11 @@ export class OrderService {
 
       // Handle Supabase errors
       if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
+        throw ErrorClient.handleError({ error, service: "Order", action: "Get Order" });
       }
 
       if (!data) {
-        throw new Error(`Order not found with id: ${orderId}`);
+        throw ErrorClient.handleError({ error: new Error(`Order not found with id: ${orderId}`), service: "Order", action: "Get Order" });
       }
 
       // Validate response with Zod schema
@@ -106,11 +106,11 @@ export class OrderService {
 
       // Handle Supabase errors
       if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
+        throw ErrorClient.handleError({ error, service: "Order", action: "Get Order By Number" });
       }
 
       if (!data) {
-        throw new Error(`Order not found with number: ${orderNumber}`);
+        throw ErrorClient.handleError({ error: new Error(`Order not found with number: ${orderNumber}`), service: "Order", action: "Get Order By Number" });
       }
 
       // Validate response with Zod schema
@@ -137,11 +137,11 @@ export class OrderService {
 
       // Handle Supabase errors
       if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
+        throw ErrorClient.handleError({ error, service: "Order", action: "Create Order" });
       }
 
       if (!data) {
-        throw new Error('No data returned after order creation');
+        throw ErrorClient.handleError({ error: new Error("No data returned after order creation"), service: "Order", action: "Create Order" });
       }
 
       return data;
@@ -169,11 +169,11 @@ export class OrderService {
 
       // Handle Supabase errors
       if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
+        throw ErrorClient.handleError({ error, service: "Order", action: "Update Order" });
       }
 
       if (!data) {
-        throw new Error(`Order not found or update failed for id: ${orderId}`);
+        throw ErrorClient.handleError({ error: new Error(`Order not found or update failed for id: ${orderId}`), service: "Order", action: "Update Order" });
       }
 
       return data;
@@ -261,7 +261,7 @@ export class OrderService {
 
       // Handle Supabase errors
       if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
+        throw ErrorClient.handleError({ error, service: "Order", action: "Delete Order" });
       }
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Order", action: "Delete Order"})

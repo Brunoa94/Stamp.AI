@@ -5,12 +5,14 @@ import type { TshirtType } from "@/queries/productQueries";
 import { useCreateProductSubscriberActions } from "../context/actions";
 import { IImageGenerationResult } from "@/schemas/productCreateSchema";
 import { FormSubscriberContext } from "../context/CreateProductContextSubscriber";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 /**
  * Hook to handle product creation logic
  */
 export function useProductCreation() {
   const { data: user } = useUser();
+  const { handleError } = useErrorHandler();
   const { mutate: createProduct } = useCreateCustomProduct();
   const {
     handleProductCreationStart,
@@ -57,7 +59,7 @@ export function useProductCreation() {
       },
       onError: (error) => {
         handleProductCreationError();
-        console.error("Failed to create product:", error);
+        handleError(error);
       },
     });
   };

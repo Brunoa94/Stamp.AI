@@ -41,11 +41,11 @@ export class MollieService {
     } = await this.getSupabase().auth.getSession();
 
     if (error) {
-      throw new Error(error.message);
+      throw ErrorClient.handleError({ error, service: "Mollie", action: "Validate Session" });
     }
 
     if (!session) {
-      throw new Error("You must be logged in to complete checkout");
+      throw ErrorClient.handleError({ error: new Error("You must be logged in to complete checkout"), service: "Mollie", action: "Validate Session" });
     }
   }
 
@@ -81,11 +81,11 @@ export class MollieService {
       );
 
       if (error) {
-        throw new Error(error.message);
+        throw ErrorClient.handleError({ error, service: "Mollie", action: "Create Payment" });
       }
 
       if (!data?.paymentId || !data?.checkoutUrl) {
-        throw new Error("Failed to create Mollie payment");
+        throw ErrorClient.handleError({ error: new Error("Failed to create Mollie payment"), service: "Mollie", action: "Create Payment" });
       }
 
       return {
@@ -121,11 +121,11 @@ export class MollieService {
       );
 
       if (error) {
-        throw new Error(error.message);
+        throw ErrorClient.handleError({ error, service: "Mollie", action: "Verify Payment" });
       }
 
       if (!data?.paymentId) {
-        throw new Error("Failed to verify Mollie payment");
+        throw ErrorClient.handleError({ error: new Error("Failed to verify Mollie payment"), service: "Mollie", action: "Verify Payment" });
       }
 
       return {

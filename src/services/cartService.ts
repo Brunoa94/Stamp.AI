@@ -38,13 +38,13 @@ export class CartService {
       } else if (sessionId) {
         query = query.eq("session_id", sessionId);
       } else {
-        throw new Error("Either userId or sessionId must be provided");
+        throw ErrorClient.handleError({ error: new Error("Either userId or sessionId must be provided"), service: "Cart", action: "Get Or Create Cart" });
       }
 
       const { data: existingCart, error: fetchError } = await query.maybeSingle();
 
       if (fetchError) {
-        throw new Error(`Supabase error: ${fetchError.message}`);
+        throw ErrorClient.handleError({ error: fetchError, service: "Cart", action: "Get Or Create Cart" });
       }
 
       // Return existing cart if found
@@ -65,11 +65,11 @@ export class CartService {
         .single();
 
       if (createError) {
-        throw new Error(`Supabase error: ${createError.message}`);
+        throw ErrorClient.handleError({ error: createError, service: "Cart", action: "Get Or Create Cart" });
       }
 
       if (!newCart) {
-        throw new Error("Failed to create cart");
+        throw ErrorClient.handleError({ error: new Error("Failed to create cart"), service: "Cart", action: "Get Or Create Cart" });
       }
 
       const validatedCart = CartSchema.parse(newCart);
@@ -101,15 +101,14 @@ export class CartService {
         .single();
 
       if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
+        throw ErrorClient.handleError({ error, service: "Cart", action: "Get Cart" });
       }
 
       if (!data) {
-        throw new Error(`Cart not found with id: ${cartId}`);
+        throw ErrorClient.handleError({ error: new Error(`Cart not found with id: ${cartId}`), service: "Cart", action: "Get Cart" });
       }
 
-      const validatedCart = CartWithItemsSchema.parse(data);
-      return validatedCart as CartWithItems;
+      return data as CartWithItems;
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Cart", action: "Get Cart"})
     }
@@ -169,15 +168,14 @@ export class CartService {
         .single();
 
       if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
+        throw ErrorClient.handleError({ error, service: "Cart", action: "Add To Cart" });
       }
 
       if (!data) {
-        throw new Error("Failed to add item to cart");
+        throw ErrorClient.handleError({ error: new Error("Failed to add item to cart"), service: "Cart", action: "Add To Cart" });
       }
 
-      const validatedItem = CartItemSchema.parse(data);
-      return validatedItem as CartItem;
+      return data as CartItem;
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Cart", action: "Add To Cart"})
     }
@@ -208,15 +206,14 @@ export class CartService {
         .single();
 
       if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
+        throw ErrorClient.handleError({ error, service: "Cart", action: "Update Cart Item" });
       }
 
       if (!data) {
-        throw new Error(`Cart item not found with id: ${itemId}`);
+        throw ErrorClient.handleError({ error: new Error(`Cart item not found with id: ${itemId}`), service: "Cart", action: "Update Cart Item" });
       }
 
-      const validatedItem = CartItemSchema.parse(data);
-      return validatedItem as CartItem;
+      return data as CartItem;
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Cart", action: "Update Cart Item"})
     }
@@ -232,7 +229,7 @@ export class CartService {
       const { error } = await supabase.from("cart_items").delete().eq("id", itemId);
 
       if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
+        throw ErrorClient.handleError({ error, service: "Cart", action: "Remove Cart Item" });
       }
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Cart", action: "Remove Cart Item"})
@@ -249,7 +246,7 @@ export class CartService {
       const { error } = await supabase.from("cart_items").delete().eq("cart_id", cartId);
 
       if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
+        throw ErrorClient.handleError({ error, service: "Cart", action: "Clear Cart" });
       }
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Cart", action: "Clear Cart"})
@@ -287,7 +284,7 @@ export class CartService {
         .eq("cart_id", guestCartId);
 
       if (fetchError) {
-        throw new Error(`Supabase error: ${fetchError.message}`);
+        throw ErrorClient.handleError({ error: fetchError, service: "Cart", action: "Merge Cart" });
       }
 
       if (!guestItems || guestItems.length === 0) {
