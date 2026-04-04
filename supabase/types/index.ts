@@ -183,6 +183,7 @@ export interface MolliePaymentRequestI {
   amount: number
   currency?: string
   description?: string
+  order_id?: string
   line_items?: any[]
   shipping_address?: ShippingAddressI
   metadata?: Record<string, any>

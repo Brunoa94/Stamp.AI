@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Elements, CardElement } from "@stripe/react-stripe-js";
 import { stripePromise } from "@/lib/stripe";
 import { ShippingAddressT } from "@/schemas/checkout";
@@ -12,8 +12,9 @@ import { PayPalButton } from "../PayPalButton/PayPalButton";
 import { MollieButton } from "../MollieButton";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 import type { PaymentMethodT } from "@/types/payment";
-import { usePaymentForm } from "./usePaymentForm";
 import { TestCardSelector } from "./TestCardSelector";
+import { usePaymentForm } from "./usePaymentForm";
+
 interface CheckoutFormProps {
   amount: number;
   lineItems: PrintifyLineItem[];
@@ -44,6 +45,10 @@ const CheckoutForm = ({
   const [paymentMethod, setPaymentMethod] =
     useState<PaymentMethodT>(initialPaymentMethod);
 
+  useEffect(() => {
+    setPaymentMethod(initialPaymentMethod);
+  }, [initialPaymentMethod]);
+
   const {
     loading,
     error,
@@ -70,6 +75,12 @@ const CheckoutForm = ({
     setError(null);
     onPaymentMethodChange?.(method);
   };
+
+  useEffect(() => {
+    if (triggerSubmit && paymentMethod !== "stripe") {
+      onSubmitComplete?.();
+    }
+  }, [triggerSubmit, paymentMethod, onSubmitComplete]);
 
   return (
     <div className="space-y-4">
@@ -130,8 +141,8 @@ const CheckoutForm = ({
         </form>
       )}
 
-      {/* PayPal Buttons */}
-      {paymentMethod === "paypal" && (
+      {/* PayPal Buttons (hidden in checkout step; final action is in summary CTA) */}
+      {!hideButton && paymentMethod === "paypal" && (
         <PayPalButton
           amount={amount}
           lineItems={lineItems}
@@ -143,8 +154,8 @@ const CheckoutForm = ({
         />
       )}
 
-      {/* Mollie Button */}
-      {paymentMethod === "mollie" && (
+      {/* Mollie Button (hidden in checkout step; final action is in summary CTA) */}
+      {!hideButton && paymentMethod === "mollie" && (
         <MollieButton
           amount={amount}
           lineItems={lineItems}

@@ -5,7 +5,7 @@ import { WizardSidebar } from "@/features/ui/wizard-sidebar";
 import { WizardSectionHeader } from "@/features/ui/wizard-section-header";
 import { WizardContent } from "@/features/ui/wizard-content";
 import { PageHeader } from "@/features/ui/page-header";
-import { WizardProductForm } from "./WizardProductForm";
+import { MemoizedWizardProductForm } from "./WizardProductForm";
 import { CreateProductSubscriberProvider } from "./context/CreateProductContextSubscriber";
 import { CreateProductSelectors } from "./context/selectors";
 import { WIZARD_STEPS } from "./constants/wizardSteps";
@@ -51,7 +51,7 @@ function WizardDashboardWrapper() {
           currentStep={stepNumber}
         />
         <WizardContent description={config.description} showActions={false}>
-          <WizardProductForm />
+          <MemoizedWizardProductForm />
         </WizardContent>
       </WizardLayout>
     </div>

@@ -1,5 +1,6 @@
 import { ProductDetails } from "./ProductDetails";
 import { PriceBreakdown } from "./PriceBreakdown";
+import { PromoCodeSection } from "./PromoCodeSection";
 import { ShippingAddress } from "./ShippingAddress";
 import { CompleteOrderButton } from "./CompleteOrderButton";
 import { CheckoutSelectors } from "../context/CheckoutContextSubscriber/selectors";
@@ -28,7 +29,7 @@ const OrderSummary = () => {
           product={cartItem}
         />
       ))}
-      {/* <PromoCodeSection onPromoCodeApply={onPromoCodeApply} /> */}
+      <PromoCodeSection />
 
       <PriceBreakdown />
 

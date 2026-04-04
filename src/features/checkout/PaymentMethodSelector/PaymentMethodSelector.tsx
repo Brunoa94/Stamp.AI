@@ -3,7 +3,7 @@
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { PaymentMethodT } from "@/types/payment";
-import { PAYMENT_METHODS } from "@/constants/payment";
+import { PAYMENT_BRAND_STYLES, PAYMENT_METHODS } from "@/constants/payment";
 import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
 import { isMollieConfigured } from "@/lib/mollie";
@@ -40,6 +40,7 @@ export function PaymentMethodSelector({
     >
       {paymentMethods.map((method) => {
         const isSelected = selectedMethod === method.id;
+        const brand = PAYMENT_BRAND_STYLES[method.id];
         return (
           <Button
             key={method.id}
@@ -52,14 +53,14 @@ export function PaymentMethodSelector({
             className={cn(
               "flex-1 h-auto py-4 px-4 justify-start gap-3 transition-all duration-200",
               isSelected
-                ? "border-[#7C3AED] bg-[#7C3AED]/5 shadow-sm hover:bg-[#7C3AED]/5"
+                ? cn(brand.border, brand.bg, "shadow-sm")
                 : "border-slate-200 hover:border-slate-300 hover:bg-slate-50",
             )}
           >
             <method.Icon
               className={cn(
                 "w-6 h-6 shrink-0",
-                isSelected ? "text-[#7C3AED]" : "text-slate-400",
+                isSelected ? brand.icon : "text-slate-400",
               )}
             />
             <div className="flex flex-col text-left">
@@ -75,7 +76,10 @@ export function PaymentMethodSelector({
             </div>
             {isSelected && (
               <span
-                className="ml-auto w-5 h-5 rounded-full bg-[#7C3AED] text-white flex items-center justify-center"
+                className={cn(
+                  "ml-auto w-5 h-5 rounded-full text-white flex items-center justify-center",
+                  brand.check,
+                )}
                 aria-hidden="true"
               >
                 <Check className="w-3 h-3" />

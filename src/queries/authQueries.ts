@@ -112,10 +112,16 @@ export function useLogout() {
 
   return useMutation({
     mutationFn: AuthService.logout,
+    onMutate: () => {
+      // Optimistic auth update so UI switches immediately
+      queryClient.setQueryData(authKeys.user(), null);
+      queryClient.setQueryData(authKeys.session(), null);
+    },
     onSuccess: () => {
       queryClient.clear();
       queryClient.invalidateQueries({ queryKey: authKeys.user() });
       queryClient.invalidateQueries({ queryKey: authKeys.session() });
+      queryClient.removeQueries({ queryKey: authKeys.all });
 
       handleSuccess("Logged out successfully");
 
@@ -123,6 +129,9 @@ export function useLogout() {
     },
     onError: (error: Error) => {
       handleError(error);
+      // Restore canonical state if sign-out failed
+      queryClient.invalidateQueries({ queryKey: authKeys.user() });
+      queryClient.invalidateQueries({ queryKey: authKeys.session() });
     },
   });
 }

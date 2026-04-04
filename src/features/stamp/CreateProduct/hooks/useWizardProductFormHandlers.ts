@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useState } from "react";
+import { BaseSyntheticEvent, useCallback, useMemo, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -10,7 +10,6 @@ import { useProductCreation } from "./useProductCreation";
 import { getVisibleSections } from "../utils/stepHelpers";
 import { useCreateProductSubscriberActions } from "../context/actions";
 import { CreateProductSelectors } from "../context/selectors";
-import useScrollToSection from "@/hooks/useScrollToSection";
 
 interface UseWizardProductFormHandlersParams {
   form: UseFormReturn<IProductCreateForm> | null;
@@ -44,27 +43,37 @@ export function useWizardProductFormHandlers({
 
   // Custom hooks
   const { handleCreateProduct } = useProductCreation();
-  const { scrollToElementById } = useScrollToSection();
 
-  const firstEnabledVariant =
-    createdProduct?.variants?.find((v) => v.is_enabled) ||
-    createdProduct?.variants?.[0];
+  const firstEnabledVariant = useMemo(
+    () =>
+      createdProduct?.variants?.find((variant) => variant.is_enabled) ||
+      createdProduct?.variants?.[0],
+    [createdProduct?.variants],
+  );
+
   const variantPrice = firstEnabledVariant?.price || 25.0;
-
-  // Use Printify mockup image (with correct t-shirt color) instead of just the design
   const mockupImageUrl = createdProduct?.images?.[0]?.src || generatedResult?.imageUrl;
 
-  const addToCartPayload = createdProduct
-    ? mapCreateProductToCartInput({
-        productId: createdProduct.id,
-        productTitle: createdProduct.title,
-        variantPrice,
-        imageUrl: mockupImageUrl,
-        variantId: firstEnabledVariant?.id,
-      })
-    : null;
+  const addToCartPayload = useMemo(
+    () =>
+      createdProduct
+        ? mapCreateProductToCartInput({
+            productId: createdProduct.id,
+            productTitle: createdProduct.title,
+            variantPrice,
+            imageUrl: generatedResult?.imageUrl,
+            variantId: firstEnabledVariant?.id,
+          })
+        : null,
+    [
+      createdProduct,
+      firstEnabledVariant?.id,
+      generatedResult?.imageUrl,
+      variantPrice,
+    ],
+  );
 
-  const addToCartMutation = (redirectAfterAdd: boolean) => {
+  const addToCartMutation = useCallback((redirectAfterAdd: boolean) => {
     if (!addToCartPayload) return;
 
     addToCart.mutate(addToCartPayload, {
@@ -91,9 +100,9 @@ export function useWizardProductFormHandlers({
         });
       },
     });
-  };
+  }, [addToCart, addToCartPayload, router]);
 
-  const onSubmit = (data: IProductCreateForm, event?: BaseSyntheticEvent) => {
+  const onSubmit = useCallback((data: IProductCreateForm, event?: BaseSyntheticEvent) => {
     if (currentStep === "sizing") {
       const submitter = (event?.nativeEvent as SubmitEvent | undefined)
         ?.submitter as HTMLButtonElement | undefined;
@@ -132,23 +141,50 @@ export function useWizardProductFormHandlers({
         handleGenerationError(error);
       },
     });
-  };
+  }, [
+    addToCartMutation,
+    currentStep,
+    form,
+    generateImage,
+    handleFormSubmit,
+    handleGenerationError,
+    handleGenerationSuccess,
+    isAddedToCart,
+    router,
+  ]);
 
   const stepConfig =
     STEP_CONFIG[currentStep as keyof typeof STEP_CONFIG] || STEP_CONFIG.upload;
   const sections = getVisibleSections(currentStep);
 
-  const formSubmitHandler = form?.handleSubmit(onSubmit);
+  const formSubmitHandler = useMemo(
+    () => form?.handleSubmit(onSubmit),
+    [form, onSubmit],
+  );
 
-  const scrollToWizard = () => {
-    scrollToElementById("design-pipeline", {
-      block: "nearest",
-      behavior: "smooth",
-      delay: 150,
-    });
-  };
+  const scrollToWizard = useCallback((delay = 0) => {
+    const run = () => {
+      const pipeline = document.getElementById("design-pipeline");
+      if (!pipeline) return;
 
-  const handleContinue = () => {
+      const targetTop =
+        pipeline.getBoundingClientRect().top + window.scrollY - 120;
+
+      window.scrollTo({
+        top: Math.max(0, targetTop),
+        behavior: "smooth",
+      });
+    };
+
+    if (delay > 0) {
+      window.setTimeout(run, delay);
+      return;
+    }
+
+    run();
+  }, []);
+
+  const handleContinue = useCallback(() => {
     if (sections.isUploadStep) {
       handleMoveToSynthesis();
       scrollToWizard();
@@ -165,9 +201,19 @@ export function useWizardProductFormHandlers({
       handleCreateProduct(generatedResult, selectedTshirt);
       scrollToWizard();
     }
-  };
+  }, [
+    currentStep,
+    formSubmitHandler,
+    generatedResult,
+    handleCreateProduct,
+    handleMoveToSynthesis,
+    scrollToWizard,
+    sections.isSynthesisStep,
+    sections.isUploadStep,
+    selectedTshirt,
+  ]);
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     if (sections.isSynthesisStep || sections.isGeneratingStep) {
       handleSetCurrentStep("upload");
       scrollToWizard();
@@ -178,7 +224,15 @@ export function useWizardProductFormHandlers({
       handleBackToResults();
       scrollToWizard();
     }
-  };
+  }, [
+    handleBackToResults,
+    handleSetCurrentStep,
+    scrollToWizard,
+    sections.isGeneratingStep,
+    sections.isSynthesisStep,
+    sections.showCustomizerSection,
+    sections.showFabricSection,
+  ]);
 
   return {
     stepConfig,
@@ -188,5 +242,6 @@ export function useWizardProductFormHandlers({
     formSubmitHandler,
     isAddedToCart,
     isAddToCartPending: addToCart.isPending,
+    scrollToWizard
   };
 }

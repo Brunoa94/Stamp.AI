@@ -39,7 +39,7 @@ export async function mollieRequest<T = unknown>(
 /**
  * Mollie Payment Status
  */
-export type MolliePaymentStatus =
+export type MolliePaymentStatusT =
   | "open"
   | "canceled"
   | "pending"
@@ -51,7 +51,7 @@ export type MolliePaymentStatus =
 /**
  * Mollie Payment Response
  */
-export interface MolliePaymentResponse {
+export interface MolliePaymentResponseI {
   resource: "payment";
   id: string;
   mode: "test" | "live";
@@ -63,7 +63,7 @@ export interface MolliePaymentResponse {
   description: string;
   method: string | null;
   metadata: Record<string, unknown> | null;
-  status: MolliePaymentStatus;
+  status: MolliePaymentStatusT;
   isCancelable: boolean;
   expiresAt: string;
   profileId: string;
@@ -81,7 +81,7 @@ export interface MolliePaymentResponse {
 /**
  * Create Mollie Payment Parameters
  */
-export interface CreateMolliePaymentParams {
+export interface CreateMolliePaymentParamsI {
   amount: number;
   currency?: string;
   description: string;
@@ -96,8 +96,8 @@ export interface CreateMolliePaymentParams {
  * Returns the payment object with checkout URL
  */
 export async function createMolliePayment(
-  params: CreateMolliePaymentParams
-): Promise<MolliePaymentResponse> {
+  params: CreateMolliePaymentParamsI
+): Promise<MolliePaymentResponseI> {
   const {
     amount,
     currency = "EUR",
@@ -127,7 +127,7 @@ export async function createMolliePayment(
 /**
  * Get a Mollie payment by ID
  */
-export async function getMolliePayment(paymentId: string): Promise<MolliePaymentResponse> {
+export async function getMolliePayment(paymentId: string): Promise<MolliePaymentResponseI> {
   if (!paymentId) {
     throw ErrorCodes.MOLLIE_PAYMENT_ID_REQUIRED();
   }
@@ -138,14 +138,14 @@ export async function getMolliePayment(paymentId: string): Promise<MolliePayment
 /**
  * Check if a Mollie payment is successful
  */
-export function isMolliePaymentPaid(status: MolliePaymentStatus): boolean {
+export function isMolliePaymentPaid(status: MolliePaymentStatusT): boolean {
   return status === "paid";
 }
 
 /**
  * Check if a Mollie payment has failed
  */
-export function isMolliePaymentFailed(status: MolliePaymentStatus): boolean {
+export function isMolliePaymentFailed(status: MolliePaymentStatusT): boolean {
   return status === "failed" || status === "canceled" || status === "expired";
 }
 
@@ -153,7 +153,7 @@ export function isMolliePaymentFailed(status: MolliePaymentStatus): boolean {
  * Map Mollie status to our internal payment status
  */
 export function mapMollieStatusToInternal(
-  mollieStatus: MolliePaymentStatus
+  mollieStatus: MolliePaymentStatusT
 ): "processing" | "succeeded" | "failed" | "canceled" {
   switch (mollieStatus) {
     case "paid":

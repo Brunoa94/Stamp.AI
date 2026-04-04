@@ -24,6 +24,14 @@ export const CheckoutSelectors = {
     useCheckoutSubscriberSelector((state) => state.paymentSuccessDetails),
   paymentErrorDetails: () =>
     useCheckoutSubscriberSelector((state) => state.paymentErrorDetails),
+  promoCode: () =>
+    useCheckoutSubscriberSelector((state) => state.promoCode),
+  promoValue: () =>
+    useCheckoutSubscriberSelector((state) => state.promoValue),
+  promoType: () =>
+    useCheckoutSubscriberSelector((state) => state.promoType),
+  promoError: () =>
+    useCheckoutSubscriberSelector((state) => state.promoError),
 
   // Computed values
   subtotal: () =>

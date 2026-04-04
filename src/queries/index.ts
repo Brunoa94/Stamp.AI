@@ -68,3 +68,8 @@ export {
   useCreateMolliePayment,
   useVerifyMolliePayment,
 } from "./mollieQueries";
+
+export {
+  useAvailablePromoCodes,
+  useValidatePromoCode,
+} from "./promocodeQueries";

@@ -3,7 +3,7 @@
 import { RefObject } from "react";
 import clsx from "clsx";
 import { FabricCardSelector } from "../steps/FabricStep/FabricCardSelector/FabricCardSelector";
-import { ColorSwatchSelector } from "../steps/FabricStep/ColorSwatchSelector";
+import { MemoizedColorSwatchSelector } from "../steps/FabricStep/ColorSwatchSelector";
 import { SizeTileSelector } from "../steps/FabricStep/SizeTileSelector/SizeTileSelector";
 import { Label } from "@/features/ui/label";
 import { CreateProductSelectors } from "../context/selectors";
@@ -51,7 +51,7 @@ export function FabricSelectionSection({
               <Label className="text-2xl sm:text-4xl font-heading uppercase tracking-wide text-purple-700 dark:text-purple-300">
                 Pick Your Color
               </Label>
-              <ColorSwatchSelector />
+              <MemoizedColorSwatchSelector />
             </div>
 
             {/* Size Selection */}

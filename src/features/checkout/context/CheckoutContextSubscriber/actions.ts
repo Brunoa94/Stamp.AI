@@ -4,6 +4,7 @@ import { ShippingAddressT } from "@/schemas/checkout";
 import { useCreateOrderFromCart } from "@/queries/orderQueries";
 import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
 import { useClearCart } from "@/queries/cartQueries";
+import { useValidatePromoCode } from "@/queries/promocodeQueries";
 import { OrderT } from "@/types/order";
 import type { CreatePrintifyOrderRequest, PrintifyLineItem } from "@/types/printifyOrder";
 import { validatePrintifyLineItem } from "@/types/printifyOrder";
@@ -38,6 +39,7 @@ export function useCheckoutSubscriberActions() {
   const createOrderFromCart = useCreateOrderFromCart();
   const createPrintifyOrder = useCreatePrintifyOrder();
   const clearCart = useClearCart();
+  const validatePromoCode = useValidatePromoCode();
 
   return {
 /**
@@ -61,6 +63,66 @@ export function useCheckoutSubscriberActions() {
 
         return
       }
+    },
+
+    /**
+     * Validate and apply promo code to checkout state
+     */
+    handleApplyPromoCode: async (code: string) => {
+      const state = store.getState();
+
+      const result = await validatePromoCode.mutateAsync({
+        code,
+        subtotal: state.subtotal,
+      });
+
+      if (!result.isValid || !result.appliedPromo) {
+        const total = state.subtotal + state.shippingCost;
+        store.setState({
+          ...state,
+          discount: 0,
+          total,
+          orderAmount: total,
+          promoCode: null,
+          promoValue: 0,
+          promoType: null,
+          promoError: result.message,
+        });
+        return result;
+      }
+
+      const discount = result.appliedPromo.discountValue;
+      const total = state.subtotal + state.shippingCost - discount;
+      store.setState({
+        ...state,
+        discount,
+        total,
+        orderAmount: total,
+        promoCode: result.appliedPromo.code,
+        promoValue: result.appliedPromo.value,
+        promoType: result.appliedPromo.type,
+        promoError: null,
+      });
+
+      return result;
+    },
+
+    /**
+     * Clear currently applied promo code
+     */
+    handleClearPromoCode: () => {
+      const state = store.getState();
+      const total = state.subtotal + state.shippingCost;
+      store.setState({
+        ...state,
+        discount: 0,
+        total,
+        orderAmount: total,
+        promoCode: null,
+        promoValue: 0,
+        promoType: null,
+        promoError: null,
+      });
     },
 
     /**
@@ -230,6 +292,7 @@ export function useCheckoutSubscriberActions() {
       const state = store.getState();
       store.setState({
         ...state,
+        isProcessingPayment: false,
         triggerPayment: false,
       });
     },

@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import { useUser } from "@/hooks/useAuth";
 import { useOrders } from "@/queries/orderQueries";
 import { usePagination } from "@/hooks/usePagination";
@@ -15,7 +16,7 @@ import { useOrderFilters } from "./hooks/useOrderFilters";
 import { useCancelOrder } from "./hooks/useCancelOrder";
 import { Alert, AlertDescription } from "@/features/ui/alert";
 import dynamic from "next/dynamic";
-import { OrdersTable } from "./OrdersTable/OrdersTable";
+import { MemoizedOrdersTable } from "./OrdersTable/OrdersTable";
 import { OrdersPagination } from "./OrdersTable/OrdersPagination";
 import { CancelOrderModal } from "./CancelOrderModal";
 
@@ -60,18 +61,21 @@ export default function OrdersContent() {
     itemsPerPage: 10,
   });
 
-  const handleOrderSelect = (order: OrderWithItemsT) => {
-    openOrderModal(order);
-  };
+  const handleOrderSelect = useCallback(
+    (order: OrderWithItemsT) => {
+      openOrderModal(order);
+    },
+    [openOrderModal],
+  );
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     closeOrderModal();
-  };
+  }, [closeOrderModal]);
 
-  const handleReorder = (order: OrderWithItemsT) => {
+  const handleReorder = useCallback((order: OrderWithItemsT) => {
     // TODO: Implement reorder flow
     console.log("Reorder:", order.id);
-  };
+  }, []);
 
   if (isLoading) {
     return <OrdersLoadingSkeleton />;
@@ -103,7 +107,7 @@ export default function OrdersContent() {
 
       {filteredOrders.length > 0 ? (
         <>
-          <OrdersTable
+          <MemoizedOrdersTable
             orders={paginatedItems}
             onViewOrder={handleOrderSelect}
             onReorder={handleReorder}

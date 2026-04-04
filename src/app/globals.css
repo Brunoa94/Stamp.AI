@@ -202,6 +202,19 @@
     animation: section-arrival-in 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
+  .promo-carousel-track {
+    will-change: transform;
+  }
+
+  .promo-carousel-track--animated {
+    animation: promo-marquee var(--promo-carousel-duration, 34000ms) linear
+      infinite;
+  }
+
+  .promo-carousel-group:hover .promo-carousel-track {
+    animation-play-state: paused;
+  }
+
   /* Dashboard fluid background */
   .bg-fluid-cluster {
     position: fixed;
@@ -306,6 +319,15 @@
   }
 }
 
+@keyframes promo-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .section-arrival,
   .section-arrival-idle,
@@ -314,6 +336,12 @@
     transform: none !important;
     opacity: 1 !important;
     filter: none !important;
+  }
+
+  .promo-carousel-track,
+  .promo-carousel-track--animated {
+    animation: none !important;
+    transform: none !important;
   }
 }
 

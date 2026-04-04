@@ -2,11 +2,10 @@
 
 import { Button } from "@/features/ui/button";
 import { useLogout } from "@/hooks/useAuth";
-import { LogOut, User, ShoppingCart } from "lucide-react";
+import { LogOut, ShoppingCart } from "lucide-react";
 import clsx from "clsx";
 import { navbarTheme } from "@/theme/components";
 import { useCartSummary } from "@/queries/cartQueries";
-import { CoinsBadge } from "./CoinsBadge";
 import { useViewTransitionNavigate } from "@/features/ui/view-transition-link";
 
 export function AuthenticatedUserSection() {
@@ -20,35 +19,19 @@ export function AuthenticatedUserSection() {
 
   return (
     <div className={navbarTheme.actions.container}>
-      <CoinsBadge className={navbarTheme.actions.coinsBadge} />
-
       <Button
         onClick={() => navigate("/cart")}
         variant="ghost"
         size="icon"
-        className={navbarTheme.actions.themeButton}
+        className={navbarTheme.actions.cartButton}
         aria-label="View cart"
       >
-        <ShoppingCart className="w-5 h-5" />
+        <ShoppingCart className={navbarTheme.actions.cartIcon} />
         {itemCount > 0 && (
           <span className={navbarTheme.actions.cartBadge}>
             {itemCount > 99 ? "99+" : itemCount}
           </span>
         )}
-      </Button>
-
-      <Button
-        onClick={() => navigate("/profile")}
-        variant="ghost"
-        className={navbarTheme.actions.profileButton}
-        aria-label="View profile"
-      >
-        <div className={navbarTheme.actions.profileIcon}>
-          <User className="w-4 h-4" />
-        </div>
-        <div className={navbarTheme.actions.profileMeta}>
-          <span className={navbarTheme.actions.profileAmount}>$ 3</span>
-        </div>
       </Button>
 
       <div className={navbarTheme.actions.divider} />

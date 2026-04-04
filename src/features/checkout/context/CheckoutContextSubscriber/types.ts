@@ -5,6 +5,7 @@ import type {
   PaymentMethodT,
   PaymentSuccessDetailsI,
 } from "@/types/payment";
+import type { PromoCodeTypeT } from "@/types/promocode";
 
 export interface CheckoutSubscriberContextState {
   // Data state
@@ -23,6 +24,10 @@ export interface CheckoutSubscriberContextState {
   selectedPaymentMethod: PaymentMethodT;
   paymentSuccessDetails: PaymentSuccessDetailsI | null;
   paymentErrorDetails: PaymentErrorDetailsI | null;
+  promoCode: string | null;
+  promoValue: number;
+  promoType: PromoCodeTypeT | null;
+  promoError: string | null;
 
   // Computed values
   subtotal: number;

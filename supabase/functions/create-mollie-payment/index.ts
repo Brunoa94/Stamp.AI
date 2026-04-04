@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { ErrorCodes, handleError } from "../_shared/errors.ts";
-import { validateEnvVars, validateRequest } from "../_shared/validators.ts";
+import { validateEnvVars, validateRequest, verifyAuth } from "../_shared/validators.ts";
 import { createMolliePayment } from "../_shared/mollie.ts";
 import type { MolliePaymentRequestI, MolliePaymentResponseI } from "../../types/index.ts";
 
@@ -9,55 +9,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
-
-/**
- * Verify authentication - accepts both user JWT tokens and service role key
- * Returns user info if available, or service identifier if using service role
- */
-async function verifyAuth(authHeader: string | null): Promise<{ userId: string; userEmail: string }> {
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    throw ErrorCodes.INVALID_TOKEN();
-  }
-
-  const token = authHeader.replace("Bearer ", "");
-  const supabaseUrl = validateEnvVars.supabaseUrl();
-  const supabaseAnonKey = validateEnvVars.supabaseAnonKey();
-  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-
-  // Check if it's the service role key (server-to-server calls)
-  if (serviceRoleKey && token === serviceRoleKey) {
-    console.log("Authenticated with service role key");
-    return {
-      userId: "service-role",
-      userEmail: "service@system.internal",
-    };
-  }
-
-  // Otherwise, validate as user JWT token
-  const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      apikey: supabaseAnonKey,
-    },
-  });
-
-  if (!response.ok) {
-    console.error("Auth verification failed:", response.status, response.statusText);
-    throw ErrorCodes.INVALID_TOKEN();
-  }
-
-  const user = await response.json();
-
-  if (!user || !user.id) {
-    throw ErrorCodes.INVALID_TOKEN();
-  }
-
-  console.log("Authenticated user:", user.id);
-  return {
-    userId: user.id,
-    userEmail: user.email || "",
-  };
-}
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -79,6 +30,7 @@ serve(async (req) => {
       amount,
       currency = "EUR",
       description,
+      order_id,
       line_items,
       shipping_address,
       metadata,
@@ -91,14 +43,21 @@ serve(async (req) => {
     const siteUrl = Deno.env.get("SITE_URL") || "http://localhost:3000";
     const supabaseUrl = validateEnvVars.supabaseUrl();
 
+    const metadataOrderId =
+      metadata && typeof metadata.order_id === "string" ? metadata.order_id : undefined;
+    const resolvedOrderId = order_id ?? metadataOrderId;
+
     // Build metadata to store with payment
     const paymentMetadata = {
       ...metadata,
+      ...(resolvedOrderId ? { order_id: resolvedOrderId } : {}),
       user_id: userId,
       user_email: userEmail,
       line_items: line_items,
       shipping_address: shipping_address,
     };
+
+    console.log("Creating Mollie payment with order_id:", resolvedOrderId ?? "none");
 
     // Create Mollie payment
     const molliePayment = await createMolliePayment({

@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { handleError } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
+import { supabaseRest } from "../_shared/supabase.ts";
 import { getMolliePayment, mapMollieStatusToInternal, isMolliePaymentPaid } from "../_shared/mollie.ts";
 
 const corsHeaders = {
@@ -8,53 +9,40 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-/**
- * Helper to call Supabase REST API directly
- */
-async function supabaseRest(
-  endpoint: string,
-  method: string,
-  body?: Record<string, unknown>,
-  options?: { prefer?: string }
-) {
-  const supabaseUrl = validateEnvVars.supabaseUrl();
-  const serviceKey = validateEnvVars.supabaseServiceKey();
-
-  const headers: Record<string, string> = {
-    apikey: serviceKey,
-    Authorization: `Bearer ${serviceKey}`,
-    "Content-Type": "application/json",
-  };
-
-  if (options?.prefer) {
-    headers["Prefer"] = options.prefer;
-  }
-
-  const response = await fetch(`${supabaseUrl}/rest/v1/${endpoint}`, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  });
-
-  const text = await response.text();
-  const data = text ? JSON.parse(text) : null;
-
-  return {
-    data,
-    error: response.ok ? null : data,
-    status: response.status,
-  };
-}
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   try {
-    // Mollie sends webhook as form data with just the payment ID
-    const formData = await req.formData();
-    const paymentId = formData.get("id") as string;
+    // Mollie sends webhook with payment ID - can be form data or JSON
+    let paymentId: string | null = null;
+    const contentType = req.headers.get("content-type") || "";
+
+    if (contentType.includes("application/x-www-form-urlencoded")) {
+      const formData = await req.formData();
+      paymentId = formData.get("id") as string;
+    } else if (contentType.includes("application/json")) {
+      const json = await req.json();
+      paymentId = json.id;
+    } else {
+      // Fallback: try to parse as text (Mollie sometimes sends just the ID)
+      const text = await req.text();
+      // Check if it looks like form data
+      if (text.includes("id=")) {
+        const params = new URLSearchParams(text);
+        paymentId = params.get("id");
+      } else {
+        // Try parsing as JSON
+        try {
+          const json = JSON.parse(text);
+          paymentId = json.id;
+        } catch {
+          // Assume the text itself is the payment ID
+          paymentId = text.trim() || null;
+        }
+      }
+    }
 
     if (!paymentId) {
       console.error("No payment ID in webhook");
@@ -78,21 +66,31 @@ serve(async (req) => {
     let metadata: Record<string, unknown> = {};
     let lineItems: unknown[] = [];
     let userId: string | undefined;
+    let orderId: string | undefined;
     let shippingAddress: Record<string, unknown> | undefined;
 
     if (payment.metadata) {
       metadata = payment.metadata as Record<string, unknown>;
       lineItems = (metadata.line_items as unknown[]) || [];
       userId = metadata.user_id as string | undefined;
+      orderId =
+        typeof metadata.order_id === "string"
+          ? metadata.order_id
+          : typeof metadata.orderId === "string"
+            ? (metadata.orderId as string)
+            : undefined;
       shippingAddress = metadata.shipping_address as Record<string, unknown> | undefined;
     }
 
+    console.log("Parsed metadata - order_id:", orderId, "user_id:", userId);
+
     // Save/update payment transaction in database
     const result = await supabaseRest(
-      "payment_transactions",
+      "payment_transactions?on_conflict=mollie_payment_id",
       "POST",
       {
         user_id: userId,
+        order_id: orderId,
         payment_provider: "mollie",
         mollie_payment_id: payment.id,
         mollie_status: payment.status,
@@ -116,15 +114,20 @@ serve(async (req) => {
     if (isPaid) {
       console.log("Payment is paid, processing order...");
 
-      // Update order payment_status if we have an order_id
-      const dbOrderId = metadata.order_id;
-      if (dbOrderId) {
-        await supabaseRest(`orders?id=eq.${dbOrderId}`, "PATCH", {
+      // Update order payment_status and status if we have an order_id
+      if (orderId) {
+        const orderUpdateResult = await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
+          status: "processing",
           payment_status: "paid",
           payment_method: "mollie",
           updated_at: new Date().toISOString(),
         });
-        console.log(`Order ${dbOrderId} payment_status updated to: paid`);
+
+        if (orderUpdateResult.error) {
+          console.error(`Failed to update order ${orderId}:`, orderUpdateResult.error);
+        } else {
+          console.log(`Order ${orderId} updated: status=processing, payment_status=paid`);
+        }
       }
 
       // Create Printify order if we have line items
@@ -162,13 +165,18 @@ serve(async (req) => {
       }
     } else if (payment.status === "failed" || payment.status === "canceled" || payment.status === "expired") {
       // Update order status if payment failed
-      const dbOrderId = metadata.order_id;
-      if (dbOrderId) {
-        await supabaseRest(`orders?id=eq.${dbOrderId}`, "PATCH", {
+      if (orderId) {
+        const orderUpdateResult = await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
+          status: "cancelled",
           payment_status: internalStatus,
           updated_at: new Date().toISOString(),
         });
-        console.log(`Order ${dbOrderId} payment_status updated to: ${internalStatus}`);
+
+        if (orderUpdateResult.error) {
+          console.error(`Failed to update order ${orderId}:`, orderUpdateResult.error);
+        } else {
+          console.log(`Order ${orderId} updated: status=cancelled, payment_status=${internalStatus}`);
+        }
       }
     }
 

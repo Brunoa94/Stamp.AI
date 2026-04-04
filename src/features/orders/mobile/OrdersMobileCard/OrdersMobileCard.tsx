@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { ordersTheme } from "@/theme/components";
 import { OrderWithItemsT } from "@/types/order";
 import { OrdersMobileCardActions } from "./OrdersMobileCardActions";
@@ -32,3 +33,5 @@ export function OrdersMobileCard({
     </div>
   );
 }
+
+export const MemoizedOrdersMobileCard = memo(OrdersMobileCard);
