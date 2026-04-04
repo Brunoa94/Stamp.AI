@@ -9,6 +9,7 @@ import type {
   CreatePrintifyOrderRequest,
   PrintifyOrderResponse,
 } from "@/types/printifyOrder";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 /**
  * Create a Printify order
@@ -28,6 +29,7 @@ import type {
  */
 export function useCreatePrintifyOrder() {
   const queryClient = useQueryClient();
+  const { handleError } = useErrorHandler();
 
   return useMutation<PrintifyOrderResponse, Error, CreatePrintifyOrderRequest>({
     mutationFn: (payload: CreatePrintifyOrderRequest) =>
@@ -35,13 +37,11 @@ export function useCreatePrintifyOrder() {
 
     onSuccess: (data) => {
       console.log("✅ Printify order created successfully:", data);
-
-      // Invalidate orders cache if you have order queries
       queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
 
-    onError: (error) => {
-      console.error("❌ Failed to create Printify order:", error);
+    onError: (error: Error) => {
+      handleError(error);
     },
   });
 }

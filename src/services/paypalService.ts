@@ -37,11 +37,11 @@ export class PayPalService {
     } = await this.getSupabase().auth.getSession();
 
     if (error) {
-      throw new Error(error.message);
+      throw ErrorClient.handleError({ error, service: "PayPal", action: "Validate Session" });
     }
 
     if (!session) {
-      throw new Error("You must be logged in to complete checkout");
+      throw ErrorClient.handleError({ error: new Error("You must be logged in to complete checkout"), service: "PayPal", action: "Validate Session" });
     }
   }
 
@@ -71,11 +71,11 @@ export class PayPalService {
       );
 
       if (error) {
-        throw new Error(error.message);
+        throw ErrorClient.handleError({ error, service: "PayPal", action: "Create Order" });
       }
 
       if (!data?.orderId) {
-        throw new Error("Failed to create PayPal order");
+        throw ErrorClient.handleError({ error: new Error("Failed to create PayPal order"), service: "PayPal", action: "Create Order" });
       }
 
       return { orderId: data.orderId };
@@ -104,11 +104,11 @@ export class PayPalService {
       );
 
       if (error) {
-        throw new Error(error.message);
+        throw ErrorClient.handleError({ error, service: "PayPal", action: "Capture Order" });
       }
 
       if (!data?.success || !data?.captureId) {
-        throw new Error("Failed to capture PayPal payment");
+        throw ErrorClient.handleError({ error: new Error("Failed to capture PayPal payment"), service: "PayPal", action: "Capture Order" });
       }
 
       return {

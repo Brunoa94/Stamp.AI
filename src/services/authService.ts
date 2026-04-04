@@ -29,7 +29,7 @@ class AuthService {
       });
 
       if (error) {
-        throw new Error(error.message);
+        throw ErrorClient.handleError({ error, service: "Auth", action: "Login" });
       }
 
       // Validate Supabase response
@@ -40,7 +40,7 @@ class AuthService {
         data.session
       );
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Auth", action: "Login"})
+      throw ErrorClient.handleError({error, service: "Auth", action: "Login"});
     }
   }
 
@@ -62,7 +62,7 @@ class AuthService {
       });
 
       if (error) {
-        throw new Error(error.message);
+        throw ErrorClient.handleError({ error, service: "Auth", action: "Register" });
       }
 
       // Validate Supabase response
@@ -74,7 +74,7 @@ class AuthService {
         "Registration successful. Please check your email to verify your account."
       );
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Auth", action: "Register"})
+      throw ErrorClient.handleError({error, service: "Auth", action: "Register"});
     }
   }
 
@@ -82,9 +82,13 @@ class AuthService {
    * Logout current user
    */
   static async logout(): Promise<void> {
-    const { error } = await AuthService.getSupabase().auth.signOut();
-    if (error) {
-      throw new Error(error.message);
+    try {
+      const { error } = await AuthService.getSupabase().auth.signOut();
+      if (error) {
+        throw ErrorClient.handleError({ error, service: "Auth", action: "Logout" });
+      }
+    } catch (error) {
+      throw ErrorClient.handleError({ error, service: "Auth", action: "Logout" });
     }
   }
 
@@ -97,7 +101,7 @@ class AuthService {
       const { data, error } = await AuthService.getSupabase().auth.getSession();
 
       if (error) {
-        throw new Error(error.message);
+        throw ErrorClient.handleError({ error, service: "Auth", action: "Get Session" });
       }
 
       // Validate Supabase response
@@ -105,7 +109,7 @@ class AuthService {
 
       return AuthServiceMapper.mapSupabaseSessionToSession(data.session) || null;
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Auth", action: "Get Session"})
+      throw ErrorClient.handleError({error, service: "Auth", action: "Get Session"});
     }
   }
 
@@ -118,7 +122,7 @@ class AuthService {
       const { data, error } = await AuthService.getSupabase().auth.getUser();
 
       if (error) {
-        throw new Error(error.message);
+        throw ErrorClient.handleError({ error, service: "Auth", action: "Get User" });
       }
 
       // Validate Supabase response
@@ -130,7 +134,7 @@ class AuthService {
 
       return AuthServiceMapper.mapSupabaseUserToUser(data.user);
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Auth", action: "Get User"})
+      throw ErrorClient.handleError({error, service: "Auth", action: "Get User"});
     }
   }
 
@@ -138,12 +142,16 @@ class AuthService {
    * Request password reset
    */
   static async requestPasswordReset(data: PasswordResetRequestI): Promise<void> {
-    const { error } = await AuthService.getSupabase().auth.resetPasswordForEmail(data.email, {
-      redirectTo: `${window.location.origin}/auth/callback?next=/reset-password&type=recovery`,
-    });
+    try {
+      const { error } = await AuthService.getSupabase().auth.resetPasswordForEmail(data.email, {
+        redirectTo: `${window.location.origin}/auth/callback?next=/reset-password&type=recovery`,
+      });
 
-    if (error) {
-      throw new Error(error.message);
+      if (error) {
+        throw ErrorClient.handleError({ error, service: "Auth", action: "Request Password Reset" });
+      }
+    } catch (error) {
+      throw ErrorClient.handleError({ error, service: "Auth", action: "Request Password Reset" });
     }
   }
 
@@ -173,14 +181,14 @@ class AuthService {
       });
 
       if (error) {
-        throw new Error(error.message);
+        throw ErrorClient.handleError({ error, service: "Auth", action: "Update Profile" });
       }
 
       // Validate Supabase response
       UpdateUserResponseSchema.parse(userData);
 
       if (!userData.user) {
-        throw new Error("Profile update failed");
+        throw ErrorClient.handleError({ error: new Error("Profile update failed"), service: "Auth", action: "Update Profile" });
       }
 
       return AuthServiceMapper.mapSupabaseUserToUser(userData.user);
@@ -193,13 +201,38 @@ class AuthService {
    * Resend email verification
    */
   static async resendEmailVerification(email: string): Promise<void> {
-    const { error } = await AuthService.getSupabase().auth.resend({
-      type: 'signup',
-      email: email,
-    });
+    try {
+      const { error } = await AuthService.getSupabase().auth.resend({
+        type: 'signup',
+        email: email,
+      });
 
-    if (error) {
-      throw new Error(error.message);
+      if (error) {
+        throw ErrorClient.handleError({ error, service: "Auth", action: "Resend Email Verification" });
+      }
+    } catch (error) {
+      throw ErrorClient.handleError({ error, service: "Auth", action: "Resend Email Verification" });
+    }
+  }
+
+  /**
+   * Sign in with Google OAuth
+   * Redirects to Google for authentication
+   */
+  static async signInWithGoogle(): Promise<void> {
+    try {
+      const { error } = await AuthService.getSupabase().auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=/stamp`,
+        },
+      });
+
+      if (error) {
+        throw ErrorClient.handleError({ error, service: "Auth", action: "Sign In With Google" });
+      }
+    } catch (error) {
+      throw ErrorClient.handleError({ error, service: "Auth", action: "Sign In With Google" });
     }
   }
 
@@ -214,14 +247,14 @@ class AuthService {
       });
 
       if (error) {
-        throw new Error(`Password update failed: ${error.message}`);
+        throw ErrorClient.handleError({ error, service: "Auth", action: "Update Password" });
       }
 
       // Validate Supabase response
       UpdateUserResponseSchema.parse(data);
 
       if (!data.user) {
-        throw new Error("Password update failed: User data not returned");
+        throw ErrorClient.handleError({ error: new Error("User data not returned"), service: "Auth", action: "Update Password" });
       }
 
       return AuthServiceMapper.mapSupabaseUserToUser(data.user);

@@ -21,7 +21,6 @@ export function useImageGeneration() {
     },
     onError: (error) => {
       handleError(error);
-      throw error;
     },
   });
 }

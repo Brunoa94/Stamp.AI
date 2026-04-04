@@ -9,7 +9,7 @@ export function OrderItemCard({ item }: Props) {
   return (
     <div className="flex gap-4 p-4 border border-gray-200 rounded-lg bg-white/50 hover:bg-white/80 transition-colors">
       {/* Product Image */}
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         <Image
           src={item.custom_image_url || "/placeholder.png"}
           alt={item.product_name || "Product"}
@@ -33,7 +33,7 @@ export function OrderItemCard({ item }: Props) {
       </div>
 
       {/* Pricing */}
-      <div className="text-right flex-shrink-0">
+      <div className="text-right shrink-0">
         <p className="font-semibold text-gray-800">
           ${item.total_price?.toFixed(2) || "0.00"}
         </p>

@@ -1,3 +1,6 @@
+import { ErrorCodeT } from "@/shared-types";
+import { AppError } from "./errorClient";
+
 const DEFAULT_HEADERS = {
   "Accept": "*/*",
   "Content-Type": "application/json",
@@ -16,8 +19,8 @@ export async function GET<T>(url: string, options?: RequestOptions): Promise<T> 
   });
 
   if (!response.ok) {
-    const errorMessage = await extractErrorMessage(response);
-    throw new Error(`HTTP ${response.status}: ${errorMessage}`);
+    const { message, code } = await extractErrorDetails(response);
+    throw new AppError(`HTTP ${response.status}: ${message}`, code);
   }
 
   const data: T = await response.json();
@@ -44,19 +47,33 @@ export async function POST<T>(
   });
 
   if (!response.ok) {
-    const errorMessage = await extractErrorMessage(response);
-    throw new Error(`HTTP ${response.status}: ${errorMessage}`);
+    const { message, code } = await extractErrorDetails(response);
+    throw new AppError(`HTTP ${response.status}: ${message}`, code);
   }
 
   const data: T = await response.json();
   return data;
 }
 
-async function extractErrorMessage(response: Response): Promise<string> {
+async function extractErrorDetails(response: Response): Promise<{ message: string; code?: ErrorCodeT }> {
   try {
-    const errorResult = await response.json();
-    return errorResult.error || errorResult.message || response.statusText;
+    const errorResult = await response.json() as { error?: unknown; message?: unknown };
+
+    if (typeof errorResult.error === "string") {
+      return {
+        message: errorResult.error,
+        code: errorResult.error as ErrorCodeT,
+      };
+    }
+
+    if (typeof errorResult.message === "string") {
+      return {
+        message: errorResult.message,
+      };
+    }
+
+    return { message: response.statusText || "Unknown error" };
   } catch {
-    return response.statusText || "Unknown error";
+    return { message: response.statusText || "Unknown error" };
   }
 }

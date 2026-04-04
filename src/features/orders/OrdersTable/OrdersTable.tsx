@@ -7,12 +7,14 @@ interface OrdersTableProps {
   orders: OrderWithItemsT[];
   onViewOrder: (order: OrderWithItemsT) => void;
   onReorder: (order: OrderWithItemsT) => void;
+  onCancelOrder?: (order: OrderWithItemsT) => void;
 }
 
 export function OrdersTable({
   orders,
   onViewOrder,
   onReorder,
+  onCancelOrder,
 }: OrdersTableProps) {
   return (
     <>
@@ -20,12 +22,14 @@ export function OrdersTable({
         orders={orders}
         onViewOrder={onViewOrder}
         onReorder={onReorder}
+        onCancelOrder={onCancelOrder}
       />
 
       <MemoizedOrdersTableDesktop
         orders={orders}
         onViewOrder={onViewOrder}
         onReorder={onReorder}
+        onCancelOrder={onCancelOrder}
       />
     </>
   );

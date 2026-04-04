@@ -52,6 +52,7 @@ export function useWizardProductFormHandlers({
   );
 
   const variantPrice = firstEnabledVariant?.price || 25.0;
+  const mockupImageUrl = createdProduct?.images?.[0]?.src || generatedResult?.imageUrl;
 
   const addToCartPayload = useMemo(
     () =>

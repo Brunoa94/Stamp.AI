@@ -5,6 +5,7 @@ import { Modal } from "@/features/ui/modal/Modal";
 import { useBuyCredits } from "./useBuyCredits";
 import { CreditSelectionStep } from "./selection";
 import { CreditPaymentStep } from "./payment";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 interface BuyCreditsDialogProps {
   isOpen: boolean;
@@ -17,6 +18,8 @@ export function BuyCreditsDialog({
   onClose,
   onSuccess,
 }: BuyCreditsDialogProps) {
+  const { handleError } = useErrorHandler();
+
   const {
     selectedPackage,
     customCredits,
@@ -43,9 +46,12 @@ export function BuyCreditsDialog({
     handleClose();
   }, [finalCredits, onSuccess, handleClose]);
 
-  const handlePaymentError = useCallback((error: string) => {
-    console.error("Payment error:", error);
-  }, []);
+  const handlePaymentError = useCallback(
+    (error: string) => {
+      handleError(new Error(error));
+    },
+    [handleError],
+  );
 
   const title = step === "select" ? "Buy Credits" : "Complete Payment";
 

@@ -42,11 +42,11 @@ export class ProductService {
         .single();
 
       if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
+        throw ErrorClient.handleError({ error, service: "Product", action: "Save Printify Product" });
       }
 
       if (!data) {
-        throw new Error('No data returned after product creation');
+        throw ErrorClient.handleError({ error: new Error("No data returned after product creation"), service: "Product", action: "Save Printify Product" });
       }
 
       console.log('✅ Saved Printify product to database:', data.id);
@@ -70,12 +70,12 @@ export class ProductService {
         .maybeSingle();
 
       if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
+        throw ErrorClient.handleError({ error, service: "Product", action: "Get Product" });
       }
 
       return data;
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Product", action: "Get Product"})
+      throw ErrorClient.handleError({ error, service: "Product", action: "Get Product" });
     }
   }
 
