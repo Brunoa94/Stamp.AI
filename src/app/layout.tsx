@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   Geist,
   Geist_Mono,
@@ -53,6 +53,11 @@ const bebasNeue = Bebas_Neue({
 export const metadata: Metadata = {
   title: "Imaginary Builder AI",
   description: "AI-powered design and building platform",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
