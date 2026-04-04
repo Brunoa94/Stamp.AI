@@ -66,7 +66,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      className="light"
+      style={{ colorScheme: "light" }}
+      suppressHydrationWarning
+    >
       <head>
         <link
           href="https://api.fontshare.com/v2/css?f[]=zodiak@400,500,700&display=swap"
