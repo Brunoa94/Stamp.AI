@@ -20,19 +20,19 @@ export function BrandStorySection() {
         aria-hidden="true"
       />
 
-      <div className="relative mx-auto w-full max-w-360 px-6 md:px-16 xl:px-24">
-        <div className="mb-16">
+      <div className="relative mx-auto w-full max-w-6xl px-6 ">
+        <div className="mb-12">
           <span className="mb-4 block text-[12px] font-bold uppercase tracking-[0.2em] text-slate-400">
             02 / About Stamp.AI
           </span>
-          <h2 className="font-heading text-4xl uppercase text-slate-900 md:text-5xl">
+          <h2 className="font-heading text-3xl uppercase text-slate-900 md:text-4xl">
             Democratizing Design Precision.
           </h2>
           <div className="mt-6 h-1.5 w-24 rounded-full bg-linear-to-r from-[#D946EF] via-[#7C3AED] to-[#06B6D4]" />
         </div>
 
-        <div className="flex flex-col items-center gap-16 lg:flex-row">
-          <div className="glass-card relative min-h-100 w-full overflow-hidden rounded-xl lg:w-1/2">
+        <div className="flex flex-col items-center gap-12 lg:flex-row">
+          <div className="glass-card relative min-h-80 w-full overflow-hidden rounded-xl lg:w-1/2">
             <img
               src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1964&auto=format&fit=crop"
               alt="Studio"
@@ -42,7 +42,7 @@ export function BrandStorySection() {
           </div>
 
           <div className="w-full lg:w-1/2">
-            <p className="mb-12 text-lg font-medium italic leading-relaxed text-slate-600">
+            <p className="mb-10 text-base font-medium italic leading-relaxed text-slate-600">
               "Every garment holds a memory. Stamp.AI exists to make sure the
               designs that carry your stories are produced with the precision
               they deserve — beautifully, effortlessly, every time."
@@ -56,14 +56,14 @@ export function BrandStorySection() {
                 return (
                   <article
                     key={item.title}
-                    className={`glass-card relative overflow-hidden rounded-xl border bg-linear-to-br p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${theme.gradient} ${theme.border}`}
+                    className={`glass-card relative overflow-hidden rounded-xl border bg-linear-to-br p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${theme.gradient} ${theme.border}`}
                   >
                     <div
                       className={`pointer-events-none absolute inset-x-0 top-0 h-1 rounded-t-xl bg-linear-to-r ${theme.bar}`}
                       aria-hidden="true"
                     />
                     <CardIcon className={`mb-3 h-5 w-5 ${theme.iconColor}`} />
-                    <h4 className="font-heading text-2xl uppercase text-slate-900">
+                    <h4 className="font-heading text-xl uppercase text-slate-900">
                       {item.title}
                     </h4>
                     <p className="mt-2 text-[11px] leading-relaxed text-slate-500">

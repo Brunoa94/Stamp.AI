@@ -13,7 +13,7 @@ export function ProcessSection({ activeProcessStep }: ProcessSectionProps) {
   return (
     <section
       id="process"
-      className="relative overflow-hidden border-b border-slate-200 bg-linear-to-br from-[#7C3AED]/10 via-slate-50 to-[#06B6D4]/10 py-32"
+      className="relative overflow-hidden border-b border-slate-200 bg-linear-to-br from-[#7C3AED]/10 via-slate-50 to-[#06B6D4]/10 py-12"
     >
       <div
         className="pointer-events-none absolute inset-0 bg-linear-to-br from-[#7C3AED]/16 via-transparent to-[#06B6D4]/14"
@@ -40,8 +40,7 @@ export function ProcessSection({ activeProcessStep }: ProcessSectionProps) {
             </h2>
           </div>
           <p className="text-lg font-medium leading-relaxed text-slate-500">
-            Four distinct phases defining the evolution of your apparel
-            identity.
+            Six distinct phases defining the evolution of your apparel identity.
           </p>
         </div>
 
@@ -68,10 +67,10 @@ export function ProcessSection({ activeProcessStep }: ProcessSectionProps) {
             return (
               <div
                 key={step.id}
-                className={`absolute z-10 w-45 ${journeyDesktopPositions[idx]}`}
+                className={`absolute z-10 w-40 ${journeyDesktopPositions[idx]}`}
               >
                 <article
-                  className={`glass-card relative rounded-lg border p-6 transition-all duration-300 ${cardStateClass}`}
+                  className={`glass-card relative rounded-lg border p-5 transition-all duration-300 ${cardStateClass}`}
                 >
                   <div
                     className={`pointer-events-none absolute inset-x-0 top-0 h-1 rounded-t-lg bg-linear-to-r ${stepAccent}`}
@@ -116,7 +115,7 @@ export function ProcessSection({ activeProcessStep }: ProcessSectionProps) {
             return (
               <article
                 key={step.id}
-                className={`glass-card relative rounded-lg border p-6 transition-all duration-300 ${cardStateClass}`}
+                className={`glass-card relative rounded-lg border p-5 transition-all duration-300 ${cardStateClass}`}
               >
                 <div
                   className={`pointer-events-none absolute inset-x-0 top-0 h-1 rounded-t-lg bg-linear-to-r ${stepAccent}`}

@@ -46,15 +46,15 @@ export function HeroSection({ heroScale }: HeroSectionProps) {
           </h1>
         </div>
 
-        <p className="mt-8 text-xs font-bold uppercase tracking-[0.35em] text-slate-500 md:text-sm">
+        <p className="mt-6 text-xs font-bold uppercase tracking-[0.35em] text-slate-500 md:text-sm">
           Create Your Stamp
         </p>
 
-        <div className="mt-12 flex animate-bounce flex-col items-center">
-          <span className="mb-4 text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400">
+        <div className="mt-9 flex animate-bounce flex-col items-center">
+          <span className="mb-3 text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400">
             Scroll to Build
           </span>
-          <div className="h-12 w-px bg-slate-900/25" />
+          <div className="h-10 w-px bg-slate-900/25" />
         </div>
       </div>
     </section>

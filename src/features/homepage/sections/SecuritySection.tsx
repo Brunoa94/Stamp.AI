@@ -21,18 +21,18 @@ export function SecuritySection() {
         aria-hidden="true"
       />
 
-      <div className="relative mx-auto w-full max-w-360 px-6 md:px-16 xl:px-24">
-        <div className="mb-16 text-center">
+      <div className="relative mx-auto w-full max-w-6xl px-6 ">
+        <div className="mb-12 text-center">
           <span className="mb-4 block text-[12px] font-bold uppercase tracking-[0.2em] text-slate-400">
             05 / Trust & Verification
           </span>
-          <h2 className="font-heading text-3xl uppercase tracking-tight text-slate-900 md:text-5xl">
+          <h2 className="font-heading text-3xl uppercase tracking-tight text-slate-900 md:text-4xl">
             Secure payments & buyer protection
           </h2>
           <div className="mt-6 mx-auto h-1.5 w-24 rounded-full bg-linear-to-r from-[#7C3AED] via-[#FF8C42] to-[#06B6D4]" />
         </div>
 
-        <div className="mb-16 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mb-12 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {paymentMethods.map((method, idx) => {
             const Icon = method.icon;
             const { cardTheme, methodIcons } =
@@ -41,22 +41,22 @@ export function SecuritySection() {
             return (
               <article
                 key={method.name}
-                className={`glass-card relative flex min-h-70 flex-col items-center overflow-hidden rounded-xl border bg-linear-to-br p-10 text-center transition-all duration-300 hover:-translate-y-2 hover:shadow-xl ${cardTheme.gradient} ${cardTheme.border}`}
+                className={`glass-card relative flex min-h-56 flex-col items-center overflow-hidden rounded-xl border bg-linear-to-br p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:shadow-xl ${cardTheme.gradient} ${cardTheme.border}`}
               >
                 <div
                   className={`pointer-events-none absolute inset-x-0 top-0 h-1 rounded-t-xl bg-linear-to-r ${cardTheme.bar}`}
                   aria-hidden="true"
                 />
-                <div className="mb-8 flex h-16 items-center justify-center">
+                <div className="mb-6 flex h-14 items-center justify-center">
                   <Icon className={`h-10 w-10 ${cardTheme.iconColor}`} />
                 </div>
                 <h3 className="font-heading text-lg uppercase text-slate-900">
                   {method.name}
                 </h3>
-                <p className="mb-6 mt-3 text-[11px] italic leading-relaxed text-slate-500">
+                <p className="mb-5 mt-2 text-[11px] italic leading-relaxed text-slate-500">
                   {method.description}
                 </p>
-                <div className="mb-6 flex flex-wrap items-center justify-center gap-2">
+                <div className="mb-5 flex flex-wrap items-center justify-center gap-2">
                   {methodIcons.map((item) => {
                     const MethodIcon = item.icon;
 
@@ -86,7 +86,7 @@ export function SecuritySection() {
           })}
         </div>
 
-        <div className="glass-card flex flex-wrap items-center justify-center gap-6 rounded-2xl border border-white/60 bg-linear-to-r from-[#7C3AED]/12 via-white/90 to-[#06B6D4]/12 px-8 py-5 text-center">
+        <div className="glass-card flex flex-wrap items-center justify-center gap-5 rounded-2xl border border-white/60 bg-linear-to-r from-[#7C3AED]/12 via-white/90 to-[#06B6D4]/12 px-7 py-4 text-center">
           {[
             { color: "text-[#635BFF]", label: "256-bit SSL Encryption" },
             { color: "text-[#009CDE]", label: "3-D Secure Authentication" },

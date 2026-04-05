@@ -1,11 +1,11 @@
 "use client";
 
-import ShippingAddressForm from "@/features/checkout/ShippingForm/ShippingAddressForm";
 import {
   CheckoutSelectors,
   useCheckoutSubscriberActions,
 } from "@/features/checkout/context";
 import type { ShippingAddressT } from "@/schemas/checkout";
+import { ShippingAddressForm } from "../shippingForm";
 
 interface CheckoutMobileShippingStepProps {
   onComplete: () => void;

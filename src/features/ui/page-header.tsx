@@ -11,7 +11,7 @@ interface PageHeaderProps {
 
 // Static style constants defined outside component
 const headerStyles = {
-  container: "w-full max-w-7xl mx-auto mb-12 relative z-20",
+  container: "w-full mx-auto mb-12 relative z-20",
   glassCard:
     "bg-white/95 backdrop-blur-none lg:glass-card rounded-xl p-6 md:p-8 border border-slate-200/80 lg:border-white/30 shadow-sm lg:shadow-md lg:bg-white/75 lg:backdrop-blur-md relative z-20",
   content: "flex flex-col gap-3",

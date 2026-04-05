@@ -1,7 +1,7 @@
 export const navbarDesignSystem = {
   container: `relative z-50 w-full`,
-  inner: `max-w-[1720px] mx-auto px-2 md:px-5 lg:px-8 pt-4 md:pt-6`,
-  content: `h-[88px] rounded-full px-5 md:px-8 lg:px-10 flex items-center gap-3 lg:gap-6 bg-white/55 dark:bg-slate-900/55 backdrop-blur-2xl border border-white/55 dark:border-white/15 shadow-[0_8px_32px_0_rgba(31,38,135,0.08)]`,
+  inner: `max-w-[1376px] mx-auto px-2 md:px-5 lg:px-8 pt-4 md:pt-6`,
+  content: `h-[70px] rounded-full px-5 md:px-8 lg:px-10 flex items-center gap-3 lg:gap-6 bg-white/55 dark:bg-slate-900/55 backdrop-blur-2xl border border-white/55 dark:border-white/15 shadow-[0_8px_32px_0_rgba(31,38,135,0.08)]`,
 
   desktop: {
     base: `hidden md:block sticky top-0 w-full transition-all duration-500 ease-out`,
@@ -49,7 +49,7 @@ export const navbarDesignSystem = {
   },
 
   mobileHeader: {
-    row: `h-16 px-4 flex items-center gap-3 max-w-screen`,
+    row: `h-[52px] px-4 flex items-center gap-3 max-w-screen`,
     stampCta: `h-9 flex items-center justify-center gap-1.5 text-lg sm:mx-4`,
     cartButton: `relative w-11 h-11 flex items-center justify-center text-slate-700 dark:text-slate-300`,
     badge: `absolute -top-0.5 -right-0.5 bg-linear-to-r from-purple-600 via-pink-600 to-red-600 text-white text-[10px] font-bold rounded-full min-w-4.25 h-4.25 px-0.5 flex items-center justify-center`,

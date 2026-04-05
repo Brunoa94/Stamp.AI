@@ -11,16 +11,16 @@ const PROCESS_STEP_DESKTOP_STATE_CLASSES = {
   active:
     "z-20 scale-[1.06] border-[#7C3AED] bg-linear-to-br from-[#7C3AED]/26 via-white to-[#06B6D4]/24 ring-2 ring-[#7C3AED]/50 shadow-2xl shadow-purple-500/50",
   passed:
-    "opacity-70 border-[#7C3AED]/25 bg-linear-to-br from-[#7C3AED]/10 via-white/85 to-[#FF8C42]/8",
-  idle: "opacity-40 border-slate-200/80 bg-linear-to-br from-white/85 via-slate-50/80 to-[#06B6D4]/8",
+    "opacity-85 border-[#7C3AED]/30 bg-linear-to-br from-[#7C3AED]/12 via-white/90 to-[#FF8C42]/10",
+  idle: "opacity-70 border-slate-200/85 bg-linear-to-br from-white/90 via-slate-50/85 to-[#06B6D4]/10",
 } as const;
 
 const PROCESS_STEP_MOBILE_STATE_CLASSES = {
   active:
     "scale-[1.05] border-[#7C3AED] bg-linear-to-br from-[#7C3AED]/26 via-white to-[#06B6D4]/24 ring-2 ring-[#7C3AED]/50 shadow-xl shadow-purple-500/40",
   passed:
-    "opacity-70 border-[#7C3AED]/25 bg-linear-to-br from-[#7C3AED]/10 via-white/85 to-[#FF8C42]/8",
-  idle: "opacity-40 border-slate-200/80 bg-linear-to-br from-white/85 via-slate-50/80 to-[#06B6D4]/8",
+    "opacity-85 border-[#7C3AED]/30 bg-linear-to-br from-[#7C3AED]/12 via-white/90 to-[#FF8C42]/10",
+  idle: "opacity-70 border-slate-200/85 bg-linear-to-br from-white/90 via-slate-50/85 to-[#06B6D4]/10",
 } as const;
 
 interface ProcessStepProgressState {

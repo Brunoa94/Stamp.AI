@@ -113,7 +113,7 @@ export const componentThemes = {
   dashboard: {
     page: {
       wrapper: `min-h-screen flex flex-col relative`,
-      container: `flex-grow w-full max-w-[1440px] mx-auto relative z-1`,
+      container: `flex-grow w-full mx-auto relative z-1`,
       grid: `grid grid-cols-1 lg:grid-cols-12 gap-8`,
       leftColumn: `lg:col-span-4 flex flex-col gap-8`,
       rightColumn: `lg:col-span-8 flex flex-col gap-8`,
@@ -192,7 +192,7 @@ export const componentThemes = {
   // Footer styles
   footer: {
     container: `relative bg-transparent border-t border-[#7C3AED]/35 dark:border-[#A78BFA]/35 pt-20 pb-12 mt-24 overflow-hidden`,
-    inner: `max-w-[1440px] mx-auto px-10 md:px-16 xl:px-24 relative z-10 pb-12`,
+    inner: `max-w-6xl mx-auto px-10 md:px-16 xl:px-24 relative z-10 pb-12`,
     brandWrap: `flex flex-col items-center justify-center mb-8`,
     brandText: `text-4xl md:text-5xl font-heading font-bold uppercase tracking-tighter bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent drop-shadow-sm`,
     brandDot: `inline-block mx-1.5 w-2.5 h-2.5 rounded-full bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] shadow-lg shadow-purple-500/30`,
@@ -214,7 +214,7 @@ export const componentThemes = {
       // Mobile: flex column with overflow, Desktop: normal min-h-screen
       container: `min-h-screen w-full  flex flex-col lg:block relative z-1 overflow-hidden lg:overflow-visible`,
       // Mobile: scrollable with fixed CTA space, Desktop: normal flow
-      main: `flex-1 overflow-y-auto lg:overflow-visible lg:pt-12 pb-[160px] lg:pb-12 max-w-[1440px] mx-auto w-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:[scrollbar-width:auto] lg:[&::-webkit-scrollbar]:block`,
+      main: `flex-1 overflow-y-auto lg:overflow-visible pb-[160px] lg:pb-12 mx-auto w-full [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:[scrollbar-width:auto] lg:[&::-webkit-scrollbar]:block`,
       // Desktop: 2-column grid
       grid: `hidden w-full lg:grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8`,
       itemsColumn: `lg:col-span-8 flex flex-col gap-4`,
@@ -412,7 +412,7 @@ export const componentThemes = {
   checkout: {
     page: {
       container: "min-h-screen relative rounded-2xl pb-8",
-      mainContent: "max-w-360 mx-auto pb-16",
+      mainContent: "max-w-6xl mx-auto pb-16",
       grid: "flex flex-col lg:flex-row gap-10",
       formsColumn: "flex-1 space-y-8 lg:w-7/12",
       summaryColumn: "lg:w-5/12",
@@ -524,7 +524,7 @@ export const componentThemes = {
   // Profile page styles
   profile: {
     page: {
-      container: `flex-grow w-full max-w-7xl mx-auto pt-32 pb-24 px-12 md:px-24`,
+      container: `flex-grow w-full max-w-5xl mx-auto pt-32 pb-24 px-12 md:px-24`,
     },
     header: {
       card: `glass-card p-10 mb-10 rounded-3xl`,
