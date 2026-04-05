@@ -41,6 +41,12 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const prompt = formData.get("prompt") as string;
     const image = formData.get("image") as File;
+    const selectedStyle = (formData.get("selectedStyle") as string | null) ?? "N/A";
+    const preservationRaw = formData.get("preservation") as string | null;
+    const parsedPreservation = Number(preservationRaw ?? "80");
+    const preservation = Number.isFinite(parsedPreservation)
+      ? Math.min(100, Math.max(0, parsedPreservation))
+      : 80;
 
     if (!prompt) {
       return NextResponse.json(
@@ -66,7 +72,11 @@ export async function POST(request: NextRequest) {
     const result = await GeminiImageService.generateImage(
       imageBuffer,
       image.type,
-      prompt
+      prompt,
+      {
+        selectedStyle,
+        preservation,
+      },
     );
 
     return NextResponse.json({

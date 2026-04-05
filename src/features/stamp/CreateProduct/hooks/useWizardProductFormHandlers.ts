@@ -24,6 +24,8 @@ export function useWizardProductFormHandlers({
   // Selectors
   const currentStep = CreateProductSelectors.currentStep();
   const selectedTshirt = CreateProductSelectors.selectedTshirt();
+  const selectedStyle = CreateProductSelectors.selectedStyle();
+  const preservation = CreateProductSelectors.preservation();
   const generatedResult = CreateProductSelectors.generatedResult();
   const createdProduct = CreateProductSelectors.createdProduct();
 
@@ -126,7 +128,13 @@ export function useWizardProductFormHandlers({
 
     handleFormSubmit();
 
-    generateImage(data, {
+    const payload = {
+      ...data,
+      selectedStyle,
+      preservation,
+    };
+
+    generateImage(payload, {
       onSuccess: (result) => {
         handleGenerationSuccess(result);
       },
@@ -150,7 +158,9 @@ export function useWizardProductFormHandlers({
     handleGenerationError,
     handleGenerationSuccess,
     isAddedToCart,
+    preservation,
     router,
+    selectedStyle,
   ]);
 
   const stepConfig =

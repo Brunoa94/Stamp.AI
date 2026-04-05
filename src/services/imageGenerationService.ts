@@ -1,6 +1,9 @@
-import { IProductCreateForm, IImageGenerationResult } from "@/schemas/productCreateSchema";
+import { IImageGenerationResult } from "@/schemas/productCreateSchema";
 import { ImageGenerationResponseSchema } from "@/schemas/services";
-import { ImageGenerationServiceMapper } from "@/mappers/services";
+import {
+  ImageGenerationServiceMapper,
+  type ImageGenerationRequestPayload,
+} from "@/mappers/services";
 import { POST } from "./apiClient";
 import { z } from "zod";
 import { ErrorClient } from "./errorClient";
@@ -14,7 +17,7 @@ interface ImageGenerationResponse {
 
 export class ImageGenerationService {
   static async generateImage(
-    data: IProductCreateForm,
+    data: ImageGenerationRequestPayload,
   ): Promise<IImageGenerationResult> {
     try {
       // Use mapper to create FormData

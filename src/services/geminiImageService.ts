@@ -84,10 +84,27 @@ export class GeminiImageService {
   static async generateImage(
     imageBuffer: ArrayBuffer,
     mimeType: string,
-    prompt: string
+    prompt: string,
+    customizationInput?: {
+      selectedStyle?: string;
+      preservation?: number;
+    },
   ): Promise<GeminiImageGenerationResult> {
     const genAI = this.getClient();
     const imageBase64 = Buffer.from(imageBuffer).toString("base64");
+    const styleLabel = (customizationInput?.selectedStyle ?? "N/A").trim();
+    const parsedPreservation = Number(customizationInput?.preservation ?? 80);
+    const preservation = Number.isFinite(parsedPreservation)
+      ? Math.min(100, Math.max(0, parsedPreservation))
+      : 80;
+    const preservationScaleRaw = preservation / 10;
+    const preservationScale = Number.isInteger(preservationScaleRaw)
+      ? `${preservationScaleRaw}`
+      : preservationScaleRaw.toFixed(1);
+    const selectedStyleContext =
+      styleLabel !== "N/A"
+        ? `Selected style: "${styleLabel}"\n`
+        : "";
 
     // Step 1: Use Gemini 2.5 Flash to analyze image and generate enhanced prompt
     console.log("Analyzing image with Gemini 2.5 Flash...");
@@ -102,14 +119,18 @@ export class GeminiImageService {
         },
       },
       {
-        text: `Analyze this image and create a detailed image generation prompt based on this description: "${prompt}".
+        text: `Analyze this image and create a detailed image generation prompt using the user's request and customization settings.
+
+      User request: "${prompt.trim()}"
+      ${selectedStyleContext}      Preservation rule: "the original image must be preserved on a scale of ${preservationScale} to 10"
 
 Your task:
 1. Identify key visual elements in the uploaded image (subject, colors, composition, style)
-2. Transform these elements according to the user's requested style/theme: "${prompt}"
+      2. Transform these elements according to the user's requested style/theme.
 3. Create a detailed, vivid prompt that will generate a new image combining the original subject with the requested transformation
 
-Adapt the image to be well printable on a t-shirt. Keep the subject scale at around 80% of the original image and use the uploaded image as the base reference.
+      Adapt the image to be well printable on a t-shirt. The original image must be preserved on a scale of ${preservationScale} to 10 and use the uploaded image as the base reference.
+      ${styleLabel !== "N/A" ? `Ensure the visual language strongly matches this style: ${styleLabel}.` : "Do not force any extra predefined style; follow only the user request."}
 
 Critical background rules (must be explicit in the prompt you output):
 - Background must be fully transparent (alpha), not white and not gray.
@@ -136,7 +157,7 @@ Output ONLY the image generation prompt, nothing else. Make it descriptive, spec
       model: "gemini-2.5-flash-image",
     });
 
-    const generationPrompt = `${enhancedPrompt}\n\nNon-negotiable output constraints:\n- Return a PNG-style image with transparent alpha background.\n- No checkerboard/grid/pattern in the background.\n- No backdrop or environment; isolated subject only.\n- Keep clean cutout edges suitable for t-shirt printing.`;
+    const generationPrompt = `${enhancedPrompt}\n\nNon-negotiable output constraints:\n- Return a PNG-style image with transparent alpha background.\n- No checkerboard/grid/pattern in the background.\n- No backdrop or environment; isolated subject only.\n- Keep clean cutout edges suitable for t-shirt printing.\n- The original image must be preserved on a scale of ${preservationScale} to 10.\n${styleLabel !== "N/A" ? `- Match the ${styleLabel} style direction.` : "- Keep style neutral unless requested by user prompt."}`;
 
     const imageResult = await imageModel.generateContent({
       contents: [

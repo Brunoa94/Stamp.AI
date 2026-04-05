@@ -22,3 +22,4 @@ export { ProductServiceMapper } from './productServiceMapper';
 // Re-export types that are commonly used
 export type { SavePrintifyProductInput } from './productServiceMapper';
 export type { PrintifyProduct, PrintifyOrder } from './printifyServiceMapper';
+export type { ImageGenerationRequestPayload } from './imageGenerationServiceMapper';
