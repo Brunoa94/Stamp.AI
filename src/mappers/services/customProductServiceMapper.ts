@@ -1,10 +1,21 @@
 import type { CreateProductPayloadT, CreatedProductT, UploadImageRequestI } from "@/types/customProduct";
 
 export class CustomProductServiceMapper {
+  private static isDataUrl(value: string): boolean {
+    return value.startsWith("data:image/");
+  }
+
   /**
    * Map image URL to upload request
    */
   static mapImageUrlToUploadRequest(imageUrl: string): UploadImageRequestI {
+    if (this.isDataUrl(imageUrl)) {
+      return {
+        image_base64: imageUrl,
+        file_name: `design-${Date.now()}.png`,
+      };
+    }
+
     return {
       image_url: imageUrl,
       file_name: `design-${Date.now()}.png`,

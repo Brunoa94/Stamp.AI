@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import ShippingAddressForm from "@/features/checkout/ShippingForm/ShippingAddressForm";
 import {
   CheckoutSelectors,
   useCheckoutSubscriberActions,
 } from "@/features/checkout/context";
 import { SectionHeader } from "@/features/ui/section-header";
 import clsx from "clsx";
+import { ShippingAddressForm } from "../shippingForm";
 
 export function ShippingSection() {
   const shippingAddress = CheckoutSelectors.shippingAddress();

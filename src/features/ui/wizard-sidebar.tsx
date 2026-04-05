@@ -1,9 +1,9 @@
-import { LucideIcon, Info } from "lucide-react";
+import { Info } from "lucide-react";
 import { WizardStep } from "./wizard-step";
 
 export interface WizardStepConfig {
   id: string;
-  icon: LucideIcon;
+  icon: React.ComponentType<{ className?: string }>;
   title: string;
   description: string;
 }
@@ -26,7 +26,7 @@ export function WizardSidebar({
   helpDescription = "High-resolution PNGs with transparent backgrounds work best for our AI generator.",
 }: WizardSidebarProps) {
   return (
-    <aside className="w-80 border-r border-white/20 flex flex-col min-h-[750px]">
+    <aside className="w-80 border-r border-white/20 flex flex-col min-h-187.5">
       <div className="p-8 pb-4">
         <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.25em] mb-10 border-b border-slate-200 pb-2 font-accent">
           Design Pipeline

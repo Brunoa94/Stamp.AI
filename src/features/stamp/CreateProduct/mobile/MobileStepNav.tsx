@@ -1,18 +1,24 @@
 "use client";
 
 import { memo, useCallback } from "react";
-import { UploadCloud, Sparkles, Eye, Shirt, Maximize } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/features/ui/button";
 import { CreateProductSelectors } from "../context/selectors";
 import { useCreateProductSubscriberActions } from "../context/actions";
+import {
+  UploadArtworkIcon,
+  AISynthesisIcon,
+  FinalReviewIcon,
+  FabricStyleIcon,
+  SizingFitIcon,
+} from "../components/WizardStepIcons";
 
 const MOBILE_STEPS = [
-  { id: "upload", label: "Upload", Icon: UploadCloud },
-  { id: "synthesis", label: "Synthesis", Icon: Sparkles },
-  { id: "review", label: "Review", Icon: Eye },
-  { id: "fabric", label: "Fabric", Icon: Shirt },
-  { id: "sizing", label: "Sizing", Icon: Maximize },
+  { id: "upload", label: "Upload", Icon: UploadArtworkIcon },
+  { id: "synthesis", label: "Synthesis", Icon: AISynthesisIcon },
+  { id: "review", label: "Review", Icon: FinalReviewIcon },
+  { id: "fabric", label: "Fabric", Icon: FabricStyleIcon },
+  { id: "sizing", label: "Sizing", Icon: SizingFitIcon },
 ] as const;
 
 /** Maps detailed internal steps to sidebar step IDs */

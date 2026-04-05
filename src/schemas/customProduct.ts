@@ -6,7 +6,7 @@ import { z } from "zod";
 export const CreateProductPayloadSchema = z.object({
   blueprint_id: z.number().int().positive("Blueprint ID must be a positive integer"),
   print_provider_id: z.number().int().positive("Print provider ID must be a positive integer"),
-  image_url: z.string().url("Image URL must be a valid URL"),
+  image_url: z.string().min(1, "Image URL is required"),
   title: z.string().optional(),
   description: z.string().optional(),
   user_id: z.string().uuid("User ID must be a valid UUID"),
@@ -49,9 +49,16 @@ export const CreatedProductSchema = z.object({
  * Schema for upload image request
  */
 export const UploadImageRequestSchema = z.object({
-  image_url: z.string().url("Image URL must be a valid URL"),
+  image_url: z.string().url("Image URL must be a valid URL").optional(),
+  image_base64: z.string().min(1, "Image base64 is required").optional(),
   file_name: z.string().min(1, "File name is required"),
-});
+}).refine(
+  (data) => Boolean(data.image_url || data.image_base64),
+  {
+    message: "Either image_url or image_base64 is required",
+    path: ["image_url"],
+  },
+);
 
 /**
  * Schema for upload image response

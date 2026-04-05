@@ -1,8 +1,7 @@
 import clsx from "clsx";
-import { LucideIcon } from "lucide-react";
 
 interface WizardStepProps {
-  icon: LucideIcon;
+  icon: React.ComponentType<{ className?: string }>;
   title: string;
   description: string;
   isActive?: boolean;
