@@ -12,17 +12,17 @@ export function CtaHomeSection() {
       </div>
 
       <div className="relative w-full text-center">
-        <h2 className="font-heading text-4xl uppercase tracking-tight md:text-6xl">
+        <h2 className="font-heading text-3xl uppercase tracking-tight md:text-5xl">
           Ready to create your stamp?
         </h2>
-        <p className="mt-6 text-base font-medium opacity-90 md:text-xl">
+        <p className="mt-4 text-sm font-medium opacity-90 md:text-lg">
           Join thousands of creators designing custom apparel with AI-powered
           precision.
         </p>
-        <div className="mt-10 flex flex-col items-center justify-center gap-6 sm:flex-row">
+        <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Link
             href="/stamp"
-            className="glass-card w-full rounded-full border border-white/30 bg-white/90 px-12 py-4 font-heading text-xl uppercase tracking-[0.15em] text-[#7C3AED] transition-all duration-300 hover:bg-slate-900 hover:text-white sm:w-auto"
+            className="glass-card w-full rounded-full border border-white/30 bg-white/90 px-12 py-3 font-heading text-lg uppercase tracking-[0.15em] text-[#7C3AED] transition-all duration-300 hover:bg-slate-900 hover:text-white sm:w-auto"
           >
             Start Designing Now
           </Link>

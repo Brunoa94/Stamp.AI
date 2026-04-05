@@ -21,9 +21,9 @@ export function ReviewsSection() {
         className="pointer-events-none absolute -right-20 bottom-4 h-80 w-80 rounded-full bg-[#06B6D4]/15 blur-3xl"
         aria-hidden="true"
       />
-      <div className="mx-auto w-full max-w-360 space-y-16 px-6 md:px-16 xl:px-24">
-        <header className="space-y-6 text-center">
-          <h2 className="font-heading text-5xl uppercase leading-none text-slate-900 md:text-6xl">
+      <div className="mx-auto w-full max-w-6xl space-y-12 px-6 md:px-16 xl:px-24">
+        <header className="space-y-4 text-center">
+          <h2 className="font-heading text-4xl uppercase leading-none text-slate-900 md:text-5xl">
             Trusted by creators
           </h2>
 
@@ -37,7 +37,7 @@ export function ReviewsSection() {
                   href={summary.href}
                   target="_blank"
                   rel="noreferrer"
-                  className={`glass-card group inline-flex items-center gap-4 rounded-2xl border px-5 py-3.5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${visual.summaryCardClass}`}
+                  className={`glass-card group inline-flex items-center gap-3 rounded-2xl border px-4 py-3 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg ${visual.summaryCardClass}`}
                 >
                   {visual.icon === "google" ? (
                     <FaGoogle className="h-6 w-6 shrink-0 text-[#4285F4]" />
@@ -67,13 +67,13 @@ export function ReviewsSection() {
         </header>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {reviews.map((review) => {
+          {reviews.slice(0, 3).map((review) => {
             const visual = mapReviewSourceToVisual(review.source);
 
             return (
               <article
                 key={`${review.name}-${review.source}`}
-                className={`glass-card relative flex h-full flex-col gap-5 overflow-hidden rounded-2xl border p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${visual.cardClass}`}
+                className={`glass-card relative flex h-full flex-col gap-4 overflow-hidden rounded-2xl border p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${visual.cardClass}`}
               >
                 <div
                   className={`absolute left-0 right-0 top-0 h-1 ${visual.topBarClass}`}

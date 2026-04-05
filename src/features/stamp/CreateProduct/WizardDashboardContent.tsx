@@ -61,7 +61,7 @@ function WizardDashboardWrapper() {
 const WizardDashboardContent = () => {
   return (
     <section
-      className="max-w-7xl mx-auto space-y-12"
+      className="max-w-5xl mx-auto space-y-12"
       aria-label="AI Magic Studio"
     >
       <PageHeader

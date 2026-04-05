@@ -3,9 +3,11 @@
 import Link from "next/link";
 
 const footerStyles = {
-  heading: "font-normal font-heading text-2xl text-slate-900 mb-8 tracking-wide",
+  heading:
+    "font-normal font-heading text-2xl text-slate-900 mb-8 tracking-wide",
   link: "text-slate-500 hover:text-[#7C3AED] transition-all duration-300",
-  socialIcon: "text-slate-400 hover:text-[#7C3AED] transition-all duration-300 text-2xl",
+  socialIcon:
+    "text-slate-400 hover:text-[#7C3AED] transition-all duration-300 text-2xl",
 } as const;
 
 export function Footer() {
@@ -13,7 +15,7 @@ export function Footer() {
 
   return (
     <footer className="bg-white border-t border-slate-100 pt-16 pb-16">
-      <div className="max-w-[1440px] mx-auto px-10">
+      <div className="max-w-6xl mx-auto px-10">
         {/* Logo */}
         <div className="flex flex-col items-center justify-center mb-16">
           <span className="text-3xl font-normal font-heading tracking-widest text-slate-900 uppercase">
@@ -27,7 +29,8 @@ export function Footer() {
           <div className="col-span-1">
             <h4 className={footerStyles.heading}>Our Mission</h4>
             <p className="text-slate-500 text-sm leading-loose max-w-xs font-accent italic">
-              Empowering creators with AI-driven apparel design. High quality prints, delivered to your door with a nostalgic touch.
+              Empowering creators with AI-driven apparel design. High quality
+              prints, delivered to your door with a nostalgic touch.
             </p>
           </div>
 

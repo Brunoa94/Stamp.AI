@@ -19,12 +19,12 @@ export function ProductsSection({
       id="pricing"
       className="border-y border-slate-200 bg-linear-to-br from-[#06B6D4]/8 via-white to-[#7C3AED]/8 py-24"
     >
-      <div className="mx-auto w-full max-w-360 px-6 md:px-16 xl:px-24">
-        <div className="mb-20 text-center">
+      <div className="mx-auto w-full max-w-6xl px-6 ">
+        <div className="mb-16 text-center">
           <span className="mb-4 block text-[12px] font-bold uppercase tracking-[0.2em] text-slate-400">
             03 / Products Available
           </span>
-          <h2 className="font-heading text-4xl uppercase text-slate-900 md:text-5xl">
+          <h2 className="font-heading text-3xl uppercase text-slate-900 md:text-4xl">
             Custom products ready to order.
           </h2>
           <p className="mt-4 text-sm text-slate-500">
@@ -33,15 +33,15 @@ export function ProductsSection({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {isProductsLoading
-            ? Array.from({ length: 6 }).map((_, idx) => (
+            ? Array.from({ length: 3 }).map((_, idx) => (
                 <article
                   key={`product-skeleton-${idx}`}
                   className="glass-card overflow-hidden rounded-xl border border-white/60 bg-white/70"
                 >
-                  <div className="h-52 animate-pulse bg-slate-200/80" />
-                  <div className="space-y-3 p-6">
+                  <div className="h-36 animate-pulse bg-slate-200/80" />
+                  <div className="space-y-3 p-5">
                     <div className="h-6 w-2/3 animate-pulse rounded bg-slate-200/80" />
                     <div className="h-3 w-4/5 animate-pulse rounded bg-slate-200/70" />
                     <div className="h-3 w-3/5 animate-pulse rounded bg-slate-200/70" />
@@ -49,7 +49,7 @@ export function ProductsSection({
                   </div>
                 </article>
               ))
-            : tshirtProducts.slice(0, 6).map((product, idx) => {
+            : tshirtProducts.slice(0, 3).map((product, idx) => {
                 const cardGradient = mapProductIndexToCardGradient(idx);
                 const priceFrom = mapProductToPriceFrom(product);
 
@@ -58,7 +58,7 @@ export function ProductsSection({
                     key={product.id}
                     className={`glass-card relative overflow-hidden rounded-xl border border-slate-200 bg-linear-to-br ${cardGradient} transition-all duration-300 hover:-translate-y-2 hover:shadow-xl`}
                   >
-                    <div className="relative h-52 w-full overflow-hidden">
+                    <div className="relative h-36 w-full overflow-hidden">
                       <img
                         src={product.image}
                         alt={product.name}
@@ -70,8 +70,8 @@ export function ProductsSection({
                       </span>
                     </div>
 
-                    <div className="space-y-4 p-6">
-                      <h3 className="font-heading text-2xl uppercase text-slate-900">
+                    <div className="space-y-3 p-5">
+                      <h3 className="font-heading text-xl uppercase text-slate-900">
                         {product.name}
                       </h3>
 
@@ -91,7 +91,7 @@ export function ProductsSection({
                       </div>
 
                       <div className="flex items-center justify-between gap-4 pt-2">
-                        <span className="font-heading text-3xl uppercase text-slate-900">
+                        <span className="font-heading text-2xl uppercase text-slate-900">
                           From €{Math.round(priceFrom)}
                         </span>
                         <Link

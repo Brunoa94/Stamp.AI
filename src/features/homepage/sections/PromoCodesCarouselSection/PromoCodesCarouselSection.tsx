@@ -54,12 +54,12 @@ export function PromoCodesCarouselSection() {
         aria-hidden="true"
       />
 
-      <div className="mx-auto w-full max-w-360 px-6 md:px-16 xl:px-24">
+      <div className="mx-auto w-full max-w-6xl px-6 ">
         <PromoCodesSectionHeader />
       </div>
 
       <div
-        className="promo-carousel-group relative overflow-hidden border-y border-none py-5 backdrop-blur-xl md:px-3"
+        className="promo-carousel-group relative overflow-hidden border-y border-none py-4 backdrop-blur-xl md:px-3"
         style={promoCarouselStyle}
       >
         <div ref={viewportRef} className="w-full overflow-hidden">

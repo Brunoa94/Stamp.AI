@@ -1,7 +1,7 @@
 export const stampWizardDesignSystem = {
   shell: {
     container:
-      "max-w-7xl w-full md:mx-auto rounded-3xl md:rounded-2xl flex flex-col md:flex-row overflow-hidden border border-white/50 relative z-10 bg-linear-to-br from-[#7C3AED]/8 via-white/90 to-[#06B6D4]/10 backdrop-blur-xl shadow-[0_24px_48px_-18px_rgba(15,23,42,0.35),inset_0_1px_0_rgba(255,255,255,0.5)]",
+      "max-w-5xl w-full md:mx-auto rounded-3xl md:rounded-2xl flex flex-col md:flex-row overflow-hidden border border-white/50 relative z-10 bg-linear-to-br from-[#7C3AED]/8 via-white/90 to-[#06B6D4]/10 backdrop-blur-xl shadow-[0_24px_48px_-18px_rgba(15,23,42,0.35),inset_0_1px_0_rgba(255,255,255,0.5)]",
     normalHeight: "md:h-240",
     sizingHeight: "md:h-320",
     mainPanel:
