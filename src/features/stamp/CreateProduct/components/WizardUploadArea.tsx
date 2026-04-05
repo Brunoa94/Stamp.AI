@@ -64,35 +64,36 @@ export function WizardUploadArea({
   // If image is uploaded, show preview
   if (uploadedImage && previewUrl) {
     return (
-      <div className={clsx(previewStyles.container, animations.fadeInScale)}>
-        <div
-          className={clsx(previewStyles.imageWrapper, colors.purpleBorder)}
-          style={{ boxShadow: shadows.elevated }}
-        >
-          <div className={previewStyles.imageContainer}>
-            <Image
-              src={previewUrl}
-              alt="Uploaded preview"
-              width={400}
-              height={400}
-              className="w-full h-auto object-contain max-h-75"
-            />
+      <div
+        className={clsx(
+          previewStyles.container,
+          animations.fadeInScale,
+          "px-2 sm:px-4",
+        )}
+      >
+        <div className="relative mx-auto w-fit max-w-full rounded-4xl bg-linear-to-r from-[#AF8CFF]/70 via-[#C9B8FF]/45 to-[#57D8DE]/70 p-0.5">
+          <div className="relative w-fit max-w-full rounded-[1.9rem] border border-white/70 bg-white/92 p-3 backdrop-blur-sm sm:p-4">
+            <div className="flex h-96 w-64 items-center justify-center overflow-hidden rounded-3xl bg-[#F7F7F5] sm:h-112 sm:w-80">
+              <Image
+                src={previewUrl}
+                alt="Uploaded preview"
+                width={400}
+                height={600}
+                className="block h-auto max-h-full w-auto max-w-full object-contain"
+              />
+            </div>
+
+            <Button
+              onClick={handleRemoveImage}
+              type="button"
+              variant="outline"
+              size="icon-sm"
+              className="absolute -right-2 -top-2 h-9 w-9 rounded-full border border-rose-200/80 bg-white/90 text-rose-700 shadow-md backdrop-blur-md transition-all hover:scale-105 hover:bg-rose-50 hover:text-rose-800 sm:-right-3 sm:-top-3 sm:h-10 sm:w-10"
+              aria-label="Remove image"
+            >
+              <X className="h-4 w-4 sm:h-5 sm:w-5" />
+            </Button>
           </div>
-          <Button
-            onClick={handleRemoveImage}
-            variant="destructive"
-            size="icon"
-            className="absolute top-3 right-3 rounded-full shadow-lg transition-all hover:scale-110"
-            aria-label="Remove image"
-          >
-            <X className="w-5 h-5" />
-          </Button>
-        </div>
-        <div className={previewStyles.fileInfo}>
-          <p className={previewStyles.fileName}>{uploadedImage.name}</p>
-          <p className={previewStyles.fileSize}>
-            {(uploadedImage.size / 1024 / 1024).toFixed(2)} MB
-          </p>
         </div>
       </div>
     );

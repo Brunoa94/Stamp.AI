@@ -19,6 +19,10 @@ const selectCompletedSteps = (s: NavigationState) => s.completedSteps;
 const selectForm = (s: FormState) => s.form;
 const selectUploadedImage = (s: FormState) => s.uploadedImage;
 const selectPrompt = (s: FormState) => s.prompt;
+const selectShowPromptCustomization = (s: FormState) =>
+  s.showPromptCustomization;
+const selectPreservation = (s: FormState) => s.preservation;
+const selectSelectedStyle = (s: FormState) => s.selectedStyle;
 const selectIsGenerating = (s: FormState) => s.isGenerating;
 const selectGeneratedResult = (s: FormState) => s.generatedResult;
 const selectGenerationError = (s: FormState) => s.generationError;
@@ -55,6 +59,9 @@ export const CreateProductSelectors = {
   form: () => useFormSelector(selectForm),
   uploadedImage: () => useFormSelector(selectUploadedImage),
   prompt: () => useFormSelector(selectPrompt),
+  showPromptCustomization: () => useFormSelector(selectShowPromptCustomization),
+  preservation: () => useFormSelector(selectPreservation),
+  selectedStyle: () => useFormSelector(selectSelectedStyle),
   isGenerating: () => useFormSelector(selectIsGenerating),
   generatedResult: () => useFormSelector(selectGeneratedResult),
   generationError: () => useFormSelector(selectGenerationError),

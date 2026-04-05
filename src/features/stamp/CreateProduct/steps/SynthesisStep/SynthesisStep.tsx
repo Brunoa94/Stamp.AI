@@ -1,7 +1,7 @@
 "use client";
 
 import { Controller } from "react-hook-form";
-import { WizardPromptInput } from "../../components/WizardPromptInput";
+import { WizardPromptInput } from "./components/WizardPromptInput";
 import { CreateProductSelectors } from "../../context/selectors";
 
 export function SynthesisStep() {

@@ -49,12 +49,12 @@ export const componentThemes = {
   // Wizard upload area styles
   wizardUploadArea: {
     uploadArea: {
-      base: "h-full w-full border-2 border-dashed border-white/40 bg-white/20 rounded-xl flex flex-col items-center justify-center p-12 transition-soft hover:bg-white/30 hover:border-white/60 group cursor-pointer relative shadow-inner",
+      base: "h-full w-full rounded-xl flex flex-col items-center justify-center p-12 transition-soft hover:bg-white/30 hover:border-white/60 group cursor-pointer relative",
       active: "border-white/60 bg-white/30",
       iconContainer: "w-28 h-28 bg-white rounded-lg flex items-center justify-center mb-8 transition-soft group-hover:scale-110 group-hover:-rotate-3",
       heading: "text-4xl font-normal font-heading text-slate-900 mb-2 tracking-wide",
       subtitle: "text-slate-500 mb-10 text-lg font-accent italic",
-      infoText: "mt-12 text-xs font-accent text-slate-400 tracking-wide",
+      infoText: "mt-12 text-xs font-sans text-slate-400 tracking-wide",
     },
     preview: {
       container: "flex flex-col items-center justify-center h-full",
