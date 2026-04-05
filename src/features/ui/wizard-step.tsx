@@ -56,7 +56,7 @@ export function WizardStep({
       <div>
         <h3
           className={clsx(
-            "font-normal text-xl tracking-wide transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] font-heading",
+            "font-['Cabinet_Grotesk'] text-xl font-bold tracking-wide transition-all duration-300 ease-in-out",
             {
               "text-slate-900": isActive,
               "text-slate-400 group-hover:text-slate-900": !isActive,

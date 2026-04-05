@@ -2,38 +2,35 @@ interface IconProps {
   className?: string;
 }
 
-interface WizardStepAssetIconProps extends IconProps {
-  assetPath: string;
+interface AssetIconProps extends IconProps {
+  src: string;
 }
 
-function WizardStepAssetIcon({
-  className,
-  assetPath,
-}: WizardStepAssetIconProps) {
+function AssetIcon({ className, src }: AssetIconProps) {
   return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
+    <span
       aria-hidden="true"
-    >
-      <use href={`${assetPath}#icon`} />
-    </svg>
+      className={`inline-block h-6 w-6 shrink-0 bg-current ${className ?? ""}`}
+      style={{
+        WebkitMaskImage: `url(${src})`,
+        maskImage: `url(${src})`,
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+        WebkitMaskPosition: "center",
+        maskPosition: "center",
+        WebkitMaskSize: "contain",
+        maskSize: "contain",
+      }}
+    />
   );
 }
 
 /** Step 1 – Upload Artwork (Cloud with Up Arrow) */
 export function UploadArtworkIcon({ className }: IconProps) {
   return (
-    <WizardStepAssetIcon
+    <AssetIcon
       className={className}
-      assetPath="/assets/wizard-icons/upload-artwork.svg"
+      src="/assets/wizard-icons/upload-artwork.svg"
     />
   );
 }
@@ -41,9 +38,9 @@ export function UploadArtworkIcon({ className }: IconProps) {
 /** Step 2 – AI Synthesis (Magic Wand / Sparkles) */
 export function AISynthesisIcon({ className }: IconProps) {
   return (
-    <WizardStepAssetIcon
+    <AssetIcon
       className={className}
-      assetPath="/assets/wizard-icons/ai-synthesis.svg"
+      src="/assets/wizard-icons/ai-synthesis.svg"
     />
   );
 }
@@ -51,9 +48,9 @@ export function AISynthesisIcon({ className }: IconProps) {
 /** Step 3 – Final Review (Eye with search detail) */
 export function FinalReviewIcon({ className }: IconProps) {
   return (
-    <WizardStepAssetIcon
+    <AssetIcon
       className={className}
-      assetPath="/assets/wizard-icons/final-review.svg"
+      src="/assets/wizard-icons/final-review.svg"
     />
   );
 }
@@ -61,9 +58,9 @@ export function FinalReviewIcon({ className }: IconProps) {
 /** Step 4 – Fabric Style (T-shirt / Textile Outline) */
 export function FabricStyleIcon({ className }: IconProps) {
   return (
-    <WizardStepAssetIcon
+    <AssetIcon
       className={className}
-      assetPath="/assets/wizard-icons/fabric-style.svg"
+      src="/assets/wizard-icons/fabric-style.svg"
     />
   );
 }
@@ -71,9 +68,9 @@ export function FabricStyleIcon({ className }: IconProps) {
 /** Step 5 – Sizing & Fit (Focus Frame with center dot) */
 export function SizingFitIcon({ className }: IconProps) {
   return (
-    <WizardStepAssetIcon
+    <AssetIcon
       className={className}
-      assetPath="/assets/wizard-icons/sizing-fit.svg"
+      src="/assets/wizard-icons/sizing-fit.svg"
     />
   );
 }

@@ -123,7 +123,7 @@ export function WizardUploadArea({
       <h3 className="text-2xl sm:text-4xl font-normal font-heading text-slate-900 mb-2 tracking-wide">
         Select Image to Upload
       </h3>
-      <p className="text-slate-500 mb-5 sm:mb-10 text-sm sm:text-lg font-accent italic">
+      <p className="text-slate-500 mb-5 sm:mb-10 text-sm sm:text-lg font-sans">
         Or drag and drop your file here
       </p>
 

@@ -6,6 +6,7 @@ import { memo } from "react";
 import { CreateProductSelectors } from "./context/selectors";
 import { WizardStepHeader } from "@/features/ui/wizard-step-header";
 import { CreateProductActionFooter } from "./components/CreateProductActionFooter";
+import { WizardStepLoadingState } from "./components/WizardStepLoadingState";
 import { useWizardProductFormHandlers } from "./hooks/useWizardProductFormHandlers";
 import {
   getWizardFormClassName,
@@ -19,7 +20,7 @@ const UploadStep = dynamic(
       default: mod.UploadStep,
     })),
   {
-    loading: () => <div>Loading...</div>,
+    loading: () => <WizardStepLoadingState />,
   },
 );
 
@@ -29,7 +30,7 @@ const SynthesisStep = dynamic(
       default: mod.SynthesisStep,
     })),
   {
-    loading: () => <div>Loading...</div>,
+    loading: () => <WizardStepLoadingState />,
   },
 );
 
@@ -39,7 +40,7 @@ const ProcessingStep = dynamic(
       default: mod.ProcessingStep,
     })),
   {
-    loading: () => <div>Loading...</div>,
+    loading: () => <WizardStepLoadingState />,
   },
 );
 
@@ -49,7 +50,7 @@ const ResultsStep = dynamic(
       default: mod.ResultsStep,
     })),
   {
-    loading: () => <div>Loading...</div>,
+    loading: () => <WizardStepLoadingState />,
   },
 );
 
@@ -59,7 +60,7 @@ const CustomizerStep = dynamic(
       default: mod.CustomizerStep,
     })),
   {
-    loading: () => <div>Loading...</div>,
+    loading: () => <WizardStepLoadingState />,
   },
 );
 
@@ -69,7 +70,7 @@ const FabricStep = dynamic(
       default: mod.FabricStep,
     })),
   {
-    loading: () => <div>Loading...</div>,
+    loading: () => <WizardStepLoadingState />,
   },
 );
 
@@ -79,7 +80,7 @@ const CreatingStep = dynamic(
       default: mod.CreatingStep,
     })),
   {
-    loading: () => <div>Loading...</div>,
+    loading: () => <WizardStepLoadingState />,
   },
 );
 
@@ -89,7 +90,7 @@ const SizingStep = dynamic(
       default: mod.SizingStep,
     })),
   {
-    loading: () => <div>Loading...</div>,
+    loading: () => <WizardStepLoadingState />,
   },
 );
 

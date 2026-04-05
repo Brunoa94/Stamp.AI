@@ -243,7 +243,7 @@ export const componentThemes = {
       header: `flex justify-between items-start`,
       title: `text-sm lg:text-xl font-heading text-slate-900 lg:uppercase lg:tracking-tight`,
       removeButton: `text-slate-300 hover:text-red-500 transition-colors lg:hidden`,
-      meta: `text-xs lg:text-sm text-slate-500 mt-1 mb-3 lg:font-bold lg:uppercase lg:tracking-wider`,
+      meta: `text-xs lg:text-sm text-slate-500 mt-1 mb-3 lg:font-bold lg:uppercase lg:tracking-wider font-sans`,
       priceRow: `flex justify-between items-center lg:hidden`,
       price: `text-lg lg:text-xl font-heading text-purple-600 lg:text-slate-900`,
       // Mobile: pill style, Desktop: separate buttons

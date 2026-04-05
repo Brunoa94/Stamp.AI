@@ -23,7 +23,9 @@ export function UploadStep() {
       return;
     }
 
-    const cleanup = scrollToIdWithOffset("wizard-continue-button", 100);
+    const cleanup = scrollToIdWithOffset("wizard-continue-button", 100, {
+      enableCorrectionPass: false,
+    });
     wasUploadedRef.current = hasUploadedImage;
 
     return () => {

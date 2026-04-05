@@ -62,7 +62,11 @@ export function scrollToElementWithOffset(
 export function scrollToIdWithOffset(
   elementId: string,
   offsetFromBottom: number,
+  options?: {
+    enableCorrectionPass?: boolean;
+  },
 ): () => void {
+  const enableCorrectionPass = options?.enableCorrectionPass ?? true;
   let attempts = 0;
   const maxAttempts = 30;
 
@@ -78,7 +82,7 @@ export function scrollToIdWithOffset(
 
     const didScroll = scrollToElementWithOffset(element, offsetFromBottom);
 
-    if (didScroll) {
+    if (didScroll && enableCorrectionPass) {
       window.setTimeout(() => {
         const el = document.getElementById(elementId);
         if (el) scrollToElementWithOffset(el, offsetFromBottom);

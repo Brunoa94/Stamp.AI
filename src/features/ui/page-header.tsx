@@ -21,7 +21,7 @@ const headerStyles = {
   gradientBar:
     "h-1.5 w-24 bg-linear-to-r from-[#7C3AED] via-[#4F46E5] to-[#06B6D4] rounded-sm shadow-sm shrink-0",
   description:
-    "font-['Satoshi'] text-sm md:text-base leading-relaxed font-normal max-w-2xl text-slate-500",
+    "font-sans text-sm md:text-base leading-relaxed max-w-2xl text-slate-500",
 };
 
 export function PageHeader({

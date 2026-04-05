@@ -28,10 +28,10 @@ export function WizardStepHeader({
           </span>
           <div className="h-px w-12 bg-slate-200" />
         </div>
-        <h2 className="text-3xl sm:text-5xl font-normal font-heading text-slate-900 tracking-wide leading-tight">
+        <h2 className="text-3xl sm:text-5xl font-heading text-slate-900 tracking-wide leading-tight">
           {title}
         </h2>
-        <p className="text-slate-500 mt-2 sm:mt-4 text-sm sm:text-lg font-light">
+        <p className="text-black-500 mt-2 sm:mt-4 text-sm sm:text-lg font-light font-sans">
           {description}
         </p>
       </div>
