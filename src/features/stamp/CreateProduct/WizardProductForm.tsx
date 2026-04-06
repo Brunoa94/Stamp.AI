@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { Activity } from "react";
 import { memo } from "react";
+import { useEffect } from "react";
 import { CreateProductSelectors } from "./context/selectors";
 import { WizardStepHeader } from "@/features/ui/wizard-step-header";
 import { CreateProductActionFooter } from "./components/CreateProductActionFooter";
@@ -95,8 +96,18 @@ const SizingStep = dynamic(
 );
 
 const EMPTY_SECTION_REF = { current: null };
+const STAMP_GENERATED_HISTORY_STORAGE_KEY =
+  "stamp:create-product:generated-history";
 
 export function WizardProductForm() {
+  useEffect(() => {
+    return () => {
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem(STAMP_GENERATED_HISTORY_STORAGE_KEY);
+      }
+    };
+  }, []);
+
   const form = CreateProductSelectors.form();
   const {
     stepConfig,

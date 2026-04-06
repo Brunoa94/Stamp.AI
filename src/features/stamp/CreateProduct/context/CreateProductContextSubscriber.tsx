@@ -7,7 +7,7 @@ import {
   useState,
   useEffect,
 } from "react";
-import { NavigationState, FormState } from "./types";
+import { GeneratedHistoryItem, NavigationState, FormState } from "./types";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/with-selector";
 import { shallow } from "zustand/shallow";
 import { useImageGenerationForm } from "../hooks/useImageGenerationForm";
@@ -53,6 +53,7 @@ const INITIAL_FORM: FormState = {
   selectedStyle: "na",
   isGenerating: false,
   generatedResult: null,
+  generatedHistory: [],
   generationError: null,
   selectedTshirt: null,
   selectedColor: null,
@@ -60,6 +61,41 @@ const INITIAL_FORM: FormState = {
   isCreatingProduct: false,
   createdProduct: null,
 };
+
+const STAMP_GENERATED_HISTORY_STORAGE_KEY =
+  "stamp:create-product:generated-history";
+
+function readGeneratedHistoryFromStorage(): GeneratedHistoryItem[] {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const raw = window.localStorage.getItem(
+      STAMP_GENERATED_HISTORY_STORAGE_KEY,
+    );
+    if (!raw) return [];
+
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed
+      .filter((item): item is GeneratedHistoryItem => {
+        if (!item || typeof item !== "object") return false;
+        const candidate = item as Partial<GeneratedHistoryItem>;
+
+        return (
+          typeof candidate.id === "string" &&
+          typeof candidate.createdAt === "number" &&
+          typeof candidate.imageUrl === "string" &&
+          typeof candidate.enhancedPrompt === "string" &&
+          typeof candidate.originalPrompt === "string"
+        );
+      })
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, 20);
+  } catch {
+    return [];
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Contexts
@@ -152,6 +188,25 @@ export function CreateProductSubscriberProvider({
       formStore.setState({ ...current, form });
     }
   }, [form, formStore]);
+
+  useEffect(() => {
+    const current = formStore.getState();
+    const generatedHistory = readGeneratedHistoryFromStorage();
+
+    if (generatedHistory.length > 0) {
+      formStore.setState({
+        ...current,
+        generatedHistory,
+        generatedResult: current.generatedResult ?? generatedHistory[0],
+      });
+    }
+
+    return () => {
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem(STAMP_GENERATED_HISTORY_STORAGE_KEY);
+      }
+    };
+  }, [formStore]);
 
   // Keep uploadedImage and prompt in sync with RHF field values.
   // Only the FormStore is updated here — NavigationStore subscribers are silent.

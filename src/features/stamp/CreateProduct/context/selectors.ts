@@ -25,6 +25,7 @@ const selectPreservation = (s: FormState) => s.preservation;
 const selectSelectedStyle = (s: FormState) => s.selectedStyle;
 const selectIsGenerating = (s: FormState) => s.isGenerating;
 const selectGeneratedResult = (s: FormState) => s.generatedResult;
+const selectGeneratedHistory = (s: FormState) => s.generatedHistory;
 const selectGenerationError = (s: FormState) => s.generationError;
 const selectSelectedTshirt = (s: FormState) => s.selectedTshirt;
 const selectIsCreatingProduct = (s: FormState) => s.isCreatingProduct;
@@ -64,6 +65,7 @@ export const CreateProductSelectors = {
   selectedStyle: () => useFormSelector(selectSelectedStyle),
   isGenerating: () => useFormSelector(selectIsGenerating),
   generatedResult: () => useFormSelector(selectGeneratedResult),
+  generatedHistory: () => useFormSelector(selectGeneratedHistory),
   generationError: () => useFormSelector(selectGenerationError),
   selectedTshirt: () => useFormSelector(selectSelectedTshirt),
   isCreatingProduct: () => useFormSelector(selectIsCreatingProduct),
