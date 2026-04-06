@@ -956,16 +956,22 @@
 }
 
 @keyframes ai-synthesis-central-pulse {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), 0 12px 32px rgba(139, 92, 246, 0.2);
+  0%,
+  100% {
+    box-shadow:
+      0 0 20px rgba(139, 92, 246, 0.3),
+      0 12px 32px rgba(139, 92, 246, 0.2);
   }
   50% {
-    box-shadow: 0 0 44px rgba(139, 92, 246, 0.65), 0 12px 40px rgba(139, 92, 246, 0.35);
+    box-shadow:
+      0 0 44px rgba(139, 92, 246, 0.65),
+      0 12px 40px rgba(139, 92, 246, 0.35);
   }
 }
 
 @keyframes ai-synthesis-dot-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.3;
     transform: scale(0.8);
   }
