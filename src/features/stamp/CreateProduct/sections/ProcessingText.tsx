@@ -1,11 +1,14 @@
 export function ProcessingText() {
   return (
-    <div className="text-center space-y-2">
-      <h2 className="text-2xl font-heading font-semibold bg-linear-to-r from-violet-700 via-purple-600 to-indigo-600 dark:from-violet-400 dark:via-purple-400 dark:to-indigo-400 bg-clip-text text-transparent">
-        Creating your design
-      </h2>
-      <p className="text-sm font-accent text-slate-500 dark:text-slate-400 italic">
-        Our AI is weaving your image into something special…
+    <div className="flex flex-col gap-3">
+      <span className="text-[11px] font-semibold tracking-[0.2em] text-violet-500 dark:text-violet-400 uppercase">
+        Step 02
+      </span>
+      <h1 className="font-display text-4xl sm:text-5xl font-bold text-[#1A2340] dark:text-white tracking-tight leading-none uppercase">
+        AI Synthesis
+      </h1>
+      <p className="text-base text-foreground/70 max-w-[440px] leading-relaxed">
+        Our AI is analyzing your image and generating unique designs.
       </p>
     </div>
   );

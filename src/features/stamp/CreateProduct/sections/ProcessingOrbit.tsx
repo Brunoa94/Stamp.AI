@@ -3,36 +3,33 @@ import { ORBIT_ICONS } from "../constants/processingIcons";
 
 export function ProcessingOrbit() {
   return (
-    <div className="relative flex items-center justify-center w-36 h-36">
-      {/* Glow backdrop */}
-      <div className="absolute inset-0 rounded-full bg-linear-to-br from-violet-500/20 via-purple-500/10 to-indigo-500/20 blur-xl animate-pulse" />
+    <div
+      className="relative flex items-center justify-center w-[260px] h-[260px]"
+      aria-hidden="true"
+    >
+      {/* Soft glow backdrop */}
+      <div className="absolute inset-0 rounded-full bg-linear-to-br from-violet-500/15 via-purple-500/8 to-indigo-500/15 blur-2xl" />
 
-      {/* Orbit ring */}
-      <div className="absolute inset-0 rounded-full border border-purple-300/30 dark:border-purple-500/20" />
-
-      {/* Orbiting icons */}
-      {ORBIT_ICONS.map(({ Icon, label, color, delay, angle }) => (
+      {/* Orbiting icon chips */}
+      {ORBIT_ICONS.map(({ Icon, label, delay }) => (
         <span
           key={label}
-          className="absolute inset-0 flex items-center justify-center"
+          className="ai-synthesis-orbit-icon absolute flex items-center justify-center w-12 h-12 rounded-full bg-white/70 dark:bg-slate-800/70 backdrop-blur-md border border-white/40 dark:border-white/15 shadow-[0_4px_16px_rgba(26,35,64,0.1),inset_0_1px_0_rgba(255,255,255,0.5)] text-violet-500 dark:text-violet-400"
           style={{
-            transform: `rotate(${angle}deg)`,
-            animation: `processing-orbit 4.5s linear infinite`,
+            animation: "ai-synthesis-orbit 8s linear infinite",
             animationDelay: delay,
           }}
         >
-          <span
-            className={`absolute -top-2 flex items-center justify-center w-8 h-8 rounded-full bg-white/80 dark:bg-slate-800/80 shadow-md border border-purple-100 dark:border-purple-900 ${color}`}
-            style={{ transform: `rotate(-${angle}deg)` }}
-          >
-            <Icon className="w-4 h-4" />
-          </span>
+          <Icon className="w-5 h-5" />
         </span>
       ))}
 
-      {/* Centre wand */}
-      <div className="relative z-10 w-16 h-16 rounded-2xl bg-linear-to-br from-violet-600 to-purple-700 shadow-[0_0_30px_rgba(139,92,246,0.5)] flex items-center justify-center animate-[wiggle_2s_ease-in-out_infinite]">
-        <Wand2 className="w-7 h-7 text-white" />
+      {/* Central wand box */}
+      <div
+        className="ai-synthesis-central-box relative z-10 w-24 h-24 rounded-2xl bg-linear-to-br from-violet-600 to-purple-700 flex items-center justify-center"
+        style={{ animation: "ai-synthesis-central-pulse 3s ease-in-out infinite" }}
+      >
+        <Wand2 className="w-10 h-10 text-white" />
       </div>
     </div>
   );
