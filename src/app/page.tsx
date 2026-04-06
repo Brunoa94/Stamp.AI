@@ -24,6 +24,7 @@ import { SecuritySection } from "@/features/homepage/sections/SecuritySection";
 import { PromoCodesCarouselSection } from "@/features/homepage/sections/PromoCodesCarouselSection";
 
 export default function Home() {
+  const processSectionIndex = SECTION_IDS.indexOf("process");
   const { data: tshirtProducts = [], isLoading: isProductsLoading } =
     useTshirtProducts();
   const {
@@ -58,6 +59,7 @@ export default function Home() {
         sectionLabels={SECTION_LABELS}
         currentSectionIndex={currentSectionIndex}
         isAtFooter={isAtFooter}
+        isHidden={currentSectionIndex === processSectionIndex}
         onScrollToSection={scrollToSection}
         onScrollToFooter={scrollToFooter}
       />

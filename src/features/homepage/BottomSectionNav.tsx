@@ -9,6 +9,7 @@ interface BottomSectionNavProps {
   sectionLabels: Record<string, string>;
   currentSectionIndex: number;
   isAtFooter: boolean;
+  isHidden: boolean;
   onScrollToSection: (index: number) => void;
   onScrollToFooter: () => void;
 }
@@ -18,11 +19,19 @@ export function BottomSectionNav({
   sectionLabels,
   currentSectionIndex,
   isAtFooter,
+  isHidden,
   onScrollToSection,
   onScrollToFooter,
 }: BottomSectionNavProps) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] md:px-4">
+    <div
+      className={clsx(
+        "fixed inset-x-0 bottom-0 z-50 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] transition-all duration-500 ease-out md:px-4",
+        isHidden
+          ? "translate-y-[115%] opacity-0 pointer-events-none"
+          : "translate-y-0 opacity-100",
+      )}
+    >
       <nav
         aria-label="Bottom section navigation"
         className="glass-card w-full overflow-x-auto rounded-t-2xl border border-white/60 bg-white/55 px-2 py-2 shadow-2xl"
