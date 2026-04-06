@@ -27,7 +27,7 @@ export function NavbarLinks() {
 
       <ViewTransitionLink
         href="/stamp"
-        className={navbarTheme.navigation.stampButton}
+        className={`${navbarTheme.navigation.stampButton} text-xl`}
       >
         <span
           className={clsx(

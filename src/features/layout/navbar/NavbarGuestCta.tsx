@@ -7,7 +7,7 @@ export function NavbarGuestCta() {
   return (
     <ViewTransitionLink
       href="/stamp"
-      className={navbarTheme.navigation.stampButton}
+      className={`${navbarTheme.navigation.stampButton} text-xl`}
     >
       Stamp It!
     </ViewTransitionLink>
