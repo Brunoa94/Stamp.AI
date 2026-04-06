@@ -84,7 +84,7 @@ const ResultsSection = ({ ref }: IResultsSectionProps) => {
               )}
 
               {/* Overlay User Artwork */}
-              <div className="absolute top-[30%] left-[25%] w-[50%] h-[40%] flex items-center justify-center opacity-90">
+              <div className="absolute top-[10%] left-[8%] w-[84%] h-[75%] flex items-center justify-center opacity-95 will-change-transform motion-safe:animate-[inspectionFloat_6s_cubic-bezier(0.37,0,0.63,1)_infinite] motion-reduce:animate-none">
                 {!imageLoaded && (
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="animate-pulse text-slate-400 text-sm font-accent">
@@ -92,12 +92,24 @@ const ResultsSection = ({ ref }: IResultsSectionProps) => {
                     </div>
                   </div>
                 )}
-                <div className="relative w-full h-full">
+                <div
+                  className={`relative isolate h-full w-full overflow-hidden rounded-2xl bg-white p-2 transition-all duration-700 ease-out will-change-transform motion-safe:animate-[inspectionGlow_4.8s_cubic-bezier(0.37,0,0.63,1)_infinite] motion-reduce:animate-none ${
+                    imageLoaded ? "opacity-100" : "opacity-80"
+                  }`}
+                >
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-2 rounded-xl bg-white"
+                  />
                   <Image
                     src={generatedResult.imageUrl}
                     alt="Your design"
                     fill
-                    className="object-contain drop-shadow-lg"
+                    className={`z-10 rounded-2xl object-contain drop-shadow-lg transition-all duration-700 ease-out ${
+                      imageLoaded
+                        ? "scale-100 opacity-100"
+                        : "scale-95 opacity-85"
+                    }`}
                     onLoad={() => setImageLoaded(true)}
                     sizes="(max-width: 768px) 300px, 500px"
                     priority

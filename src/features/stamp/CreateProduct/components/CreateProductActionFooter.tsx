@@ -10,6 +10,7 @@ import {
   getVisibleSections,
 } from "../utils/stepHelpers";
 import { useCoins } from "@/queries/coinsQueries";
+import { useCreateProductSubscriberActions } from "../context/actions";
 
 interface CreateProductActionFooterProps {
   onBack: () => void;
@@ -21,6 +22,10 @@ export function CreateProductActionFooter({
   onContinue,
 }: CreateProductActionFooterProps) {
   const currentStep = CreateProductSelectors.currentStep();
+  const showPromptCustomization =
+    CreateProductSelectors.showPromptCustomization();
+  const { handleTogglePromptCustomization } =
+    useCreateProductSubscriberActions();
 
   // Use derived boolean selectors instead of subscribing to raw string/File
   // values — this component only re-renders when these booleans actually flip,
@@ -62,8 +67,14 @@ export function CreateProductActionFooter({
         onBack={onBack}
         showBack={showBack}
         onContinue={onContinue}
+        showSecondaryAction={sections.isSynthesisStep}
+        onSecondaryAction={handleTogglePromptCustomization}
+        secondaryActionText={
+          showPromptCustomization ? "Hide" : "Customize Prompt"
+        }
         showCancel={false}
         canContinue={continueEnabled}
+        canSecondaryAction={hasUploadedImage && !isGenerating}
         continueText={continueText}
         continueIcon={
           sections.isSynthesisStep ? (

@@ -1,8 +1,8 @@
-import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
+import * as React from "react";
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
@@ -33,31 +33,31 @@ const buttonVariants = cva(
       variant: "default",
       size: "default",
     },
-  }
-)
+  },
+);
 
-type IconButtonSize = "icon" | "icon-sm" | "icon-lg"
+type IconButtonSize = "icon" | "icon-sm" | "icon-lg";
 
 // Base button props without size
 type BaseButtonProps = Omit<React.ComponentProps<"button">, "size"> &
   Omit<VariantProps<typeof buttonVariants>, "size"> & {
-    asChild?: boolean
-  }
+    asChild?: boolean;
+  };
 
 // Icon button props - aria-label is required
 type IconButtonProps = BaseButtonProps & {
-  size: IconButtonSize
-  "aria-label": string
-}
+  size: IconButtonSize;
+  "aria-label": string;
+};
 
 // Regular button props - aria-label is optional
 type RegularButtonProps = BaseButtonProps & {
-  size?: Exclude<VariantProps<typeof buttonVariants>["size"], IconButtonSize>
-  "aria-label"?: string
-}
+  size?: Exclude<VariantProps<typeof buttonVariants>["size"], IconButtonSize>;
+  "aria-label"?: string;
+};
 
 // Union type: if size is icon variant, aria-label is required
-export type ButtonProps = IconButtonProps | RegularButtonProps
+export type ButtonProps = IconButtonProps | RegularButtonProps;
 
 function Button({
   className,
@@ -68,15 +68,16 @@ function Button({
   "aria-label": ariaLabel,
   ...props
 }: ButtonProps) {
-  const Comp = asChild ? Slot : "button"
+  const Comp = asChild ? Slot : "button";
 
   // Development warning for icon buttons without aria-label
   if (process.env.NODE_ENV === "development") {
-    const isIconButton = size === "icon" || size === "icon-sm" || size === "icon-lg"
+    const isIconButton =
+      size === "icon" || size === "icon-sm" || size === "icon-lg";
     if (isIconButton && !ariaLabel && !props.children) {
       console.warn(
-        `[Button Accessibility Warning]: Icon buttons (size="${size}") require an aria-label for screen reader support. Please add aria-label prop.`
-      )
+        `[Button Accessibility Warning]: Icon buttons (size="${size}") require an aria-label for screen reader support. Please add aria-label prop.`,
+      );
     }
   }
 
@@ -91,7 +92,7 @@ function Button({
       aria-label={ariaLabel}
       {...props}
     />
-  )
+  );
 }
 
-export { Button, buttonVariants }
+export { Button, buttonVariants };

@@ -1,25 +1,24 @@
-import { Sparkles, ImageIcon, Cpu } from "lucide-react";
+import { Sparkles, SlidersHorizontal, Layers, Palette } from "lucide-react";
 
 export const ORBIT_ICONS = [
   {
     Icon: Sparkles,
     label: "sparkles",
-    color: "text-violet-400",
     delay: "0s",
-    angle: 0,
   },
   {
-    Icon: ImageIcon,
-    label: "image",
-    color: "text-indigo-400",
-    delay: "-1.5s",
-    angle: 120,
+    Icon: SlidersHorizontal,
+    label: "sliders",
+    delay: "-2s",
   },
   {
-    Icon: Cpu,
-    label: "cpu",
-    color: "text-purple-400",
-    delay: "-3s",
-    angle: 240,
+    Icon: Layers,
+    label: "layers",
+    delay: "-4s",
+  },
+  {
+    Icon: Palette,
+    label: "palette",
+    delay: "-6s",
   },
 ] as const;

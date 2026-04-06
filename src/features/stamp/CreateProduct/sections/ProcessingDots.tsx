@@ -1,11 +1,14 @@
 export function ProcessingDots() {
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-3" aria-hidden="true">
       {[0, 1, 2, 3].map((i) => (
         <span
           key={i}
-          className="w-2 h-2 rounded-full bg-linear-to-br from-violet-500 to-purple-600 animate-bounce"
-          style={{ animationDelay: `${i * 0.15}s` }}
+          className="ai-synthesis-pulse-dot w-3 h-3 rounded-full bg-violet-500"
+          style={{
+            animation: "ai-synthesis-dot-pulse 1.2s ease-in-out infinite",
+            animationDelay: `${i * 0.2}s`,
+          }}
         />
       ))}
     </div>

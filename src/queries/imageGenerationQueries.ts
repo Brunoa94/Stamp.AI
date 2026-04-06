@@ -1,7 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { IImageGenerationResult, IProductCreateForm } from "@/schemas/productCreateSchema";
+import { IImageGenerationResult } from "@/schemas/productCreateSchema";
 import { ImageGenerationService } from "@/services/imageGenerationService";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import type { ImageGenerationRequestPayload } from "@/mappers/services/imageGenerationServiceMapper";
 
 /**
  * Generate AI image from form data
@@ -9,7 +10,7 @@ import { useErrorHandler } from "@/hooks/useErrorHandler";
 export function useImageGeneration() {
   const { handleError, handleSuccess } = useErrorHandler();
 
-  return useMutation<IImageGenerationResult, Error, IProductCreateForm>({
+  return useMutation<IImageGenerationResult, Error, ImageGenerationRequestPayload>({
     mutationFn: async (data) => {
       // In React Query v5, automatic cancellation is handled internally
       // No need to manually pass the signal

@@ -7,14 +7,28 @@ interface ImageGenerationResponse {
   originalPrompt: string;
 }
 
+export interface ImageGenerationRequestPayload extends IProductCreateForm {
+  selectedStyle?: string;
+  preservation?: number;
+}
+
 export class ImageGenerationServiceMapper {
   /**
    * Map product create form to FormData for API request
    */
-  static mapFormDataToRequest(data: IProductCreateForm): FormData {
+  static mapFormDataToRequest(data: ImageGenerationRequestPayload): FormData {
     const formData = new FormData();
     formData.append("prompt", data.prompt);
     formData.append("image", data.image);
+
+    if (data.selectedStyle) {
+      formData.append("selectedStyle", data.selectedStyle);
+    }
+
+    if (typeof data.preservation === "number") {
+      formData.append("preservation", String(data.preservation));
+    }
+
     return formData;
   }
 

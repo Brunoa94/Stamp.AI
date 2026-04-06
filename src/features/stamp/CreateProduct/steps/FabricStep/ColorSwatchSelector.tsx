@@ -6,6 +6,7 @@ import { getColorClass } from "@/helpers/colors/colorMapping";
 import { Button } from "@/features/ui/button";
 import { CreateProductSelectors } from "../../context/selectors";
 import useProductCustomizerSection from "../CustomizerStep/ProductCustomizer/hooks/useProductCustomizerSection";
+import { getAvailableColors } from "../CustomizerStep/ProductCustomizer/utils/prioritizeAvailableColors";
 
 interface ColorOptionI {
   name: string;
@@ -52,8 +53,9 @@ export function ColorSwatchSelector() {
   const { colorOptions, selectedColor, setSelectedColor, isLoadingVariants } =
     useProductCustomizerSection({ selectedTshirt });
 
-  const availableColorOptions = useMemo(
-    () => colorOptions.filter((color) => !!getColorClass(color.name)),
+  // Get top 10 prioritized colors using the shared utility
+  const { visibleColors } = useMemo(
+    () => getAvailableColors({ colors: colorOptions, isExpanded: false }),
     [colorOptions],
   );
 
@@ -87,7 +89,7 @@ export function ColorSwatchSelector() {
       role="radiogroup"
       aria-label="Color selection"
     >
-      {availableColorOptions.map((color) => (
+      {visibleColors.map((color) => (
         <ColorSwatchButton
           key={color.name}
           color={color}

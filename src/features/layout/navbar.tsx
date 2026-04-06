@@ -9,6 +9,7 @@ import { AuthenticatedUserSection } from "./navbar/AuthenticatedUserSection";
 import { UnauthenticatedUserSection } from "./navbar/UnauthenticatedUserSection";
 import { cn } from "@/lib/utils";
 import { MobileNavbar } from "./navbar/mobile";
+import { useUser } from "@/queries/authQueries";
 
 function Navbar() {
   const { isAuthenticated } = useIsAuthenticated();
@@ -32,6 +33,7 @@ function Navbar() {
         style={{ viewTransitionName: "main-nav" }}
       >
         <div className={navbarTheme.desktop.topAccent} />
+
         <div className={navbarTheme.inner}>
           <div className={navbarTheme.content}>
             <div className={navbarTheme.desktop.brandSlot}>

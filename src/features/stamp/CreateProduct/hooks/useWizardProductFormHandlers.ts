@@ -24,6 +24,8 @@ export function useWizardProductFormHandlers({
   // Selectors
   const currentStep = CreateProductSelectors.currentStep();
   const selectedTshirt = CreateProductSelectors.selectedTshirt();
+  const selectedStyle = CreateProductSelectors.selectedStyle();
+  const preservation = CreateProductSelectors.preservation();
   const generatedResult = CreateProductSelectors.generatedResult();
   const createdProduct = CreateProductSelectors.createdProduct();
 
@@ -126,7 +128,13 @@ export function useWizardProductFormHandlers({
 
     handleFormSubmit();
 
-    generateImage(data, {
+    const payload = {
+      ...data,
+      selectedStyle,
+      preservation,
+    };
+
+    generateImage(payload, {
       onSuccess: (result) => {
         handleGenerationSuccess(result);
       },
@@ -150,7 +158,9 @@ export function useWizardProductFormHandlers({
     handleGenerationError,
     handleGenerationSuccess,
     isAddedToCart,
+    preservation,
     router,
+    selectedStyle,
   ]);
 
   const stepConfig =
@@ -164,15 +174,29 @@ export function useWizardProductFormHandlers({
 
   const scrollToWizard = useCallback((delay = 0) => {
     const run = () => {
-      const pipeline = document.getElementById("design-pipeline");
-      if (!pipeline) return;
+      // Reset the internal scroll container immediately (instant) so the new
+      // step content always starts at the top, regardless of where the previous
+      // step had scrolled it (e.g. the "scroll to continue button" on upload).
+      const scrollContainer = document.querySelector(
+        "[data-wizard-scroll-container='true']",
+      ) as HTMLElement | null;
+      if (scrollContainer) {
+        scrollContainer.scrollTo({ top: 0, behavior: "instant" });
+      }
 
-      const targetTop =
-        pipeline.getBoundingClientRect().top + window.scrollY - 120;
+      // Scroll the window after the next paint so React has had a chance to
+      // commit the new step's layout before we calculate the target position.
+      window.requestAnimationFrame(() => {
+        const pipeline = document.getElementById("design-pipeline");
+        if (!pipeline) return;
 
-      window.scrollTo({
-        top: Math.max(0, targetTop),
-        behavior: "smooth",
+        const targetTop =
+          pipeline.getBoundingClientRect().top + window.scrollY - 120;
+
+        window.scrollTo({
+          top: Math.max(0, targetTop),
+          behavior: "smooth",
+        });
       });
     };
 

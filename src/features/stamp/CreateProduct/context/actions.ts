@@ -7,6 +7,7 @@ import {
   FormSubscriberContext,
 } from "./CreateProductContextSubscriber";
 import { WorkflowStep } from "./types";
+import type { ArtStyleId } from "../utils/promptCustomization";
 
 /**
  * Hook for create product action handlers.
@@ -44,11 +45,47 @@ export function useCreateProductSubscriberActions() {
         navStore.setState({ ...navStore.getState(), currentStep: step });
       },
 
+      /** Show/hide advanced prompt customization section */
+      handleSetPromptCustomization: (showPromptCustomization: boolean) => {
+        formStore.setState({
+          ...formStore.getState(),
+          showPromptCustomization,
+        });
+      },
+
+      /** Toggle advanced prompt customization section */
+      handleTogglePromptCustomization: () => {
+        const current = formStore.getState();
+        formStore.setState({
+          ...current,
+          showPromptCustomization: !current.showPromptCustomization,
+        });
+      },
+
+      /** Set preservation slider value for prompt customization */
+      handleSetPreservation: (preservation: number) => {
+        formStore.setState({
+          ...formStore.getState(),
+          preservation,
+        });
+      },
+
+      /** Set selected art style for prompt customization */
+      handleSetSelectedStyle: (selectedStyle: ArtStyleId) => {
+        formStore.setState({
+          ...formStore.getState(),
+          selectedStyle,
+        });
+      },
+
       /** Handle form submission — start generation process */
       handleFormSubmit: () => {
         navStore.setState({ ...navStore.getState(), currentStep: "generating" });
         formStore.setState({
           ...formStore.getState(),
+          showPromptCustomization: false,
+          preservation: 80,
+          selectedStyle: "na",
           isGenerating: true,
           selectedTshirt: null,
           selectedColor: null,
@@ -148,6 +185,12 @@ export function useCreateProductSubscriberActions() {
       /** Handle moving to synthesis step (after upload) */
       handleMoveToSynthesis: () => {
         navStore.setState({ ...navStore.getState(), currentStep: "synthesis" });
+        formStore.setState({
+          ...formStore.getState(),
+          showPromptCustomization: false,
+          preservation: 80,
+          selectedStyle: "na",
+        });
       },
 
       /** Handle moving to review step (from results) */
@@ -158,7 +201,13 @@ export function useCreateProductSubscriberActions() {
       /** Handle going back to synthesis (from review to revise artwork) */
       handleBackToSynthesis: () => {
         navStore.setState({ ...navStore.getState(), currentStep: "synthesis" });
-        formStore.setState({ ...formStore.getState(), generatedResult: null });
+        formStore.setState({
+          ...formStore.getState(),
+          generatedResult: null,
+          showPromptCustomization: false,
+          preservation: 80,
+          selectedStyle: "na",
+        });
       },
 
       /** Handle image removal from form */
@@ -183,6 +232,9 @@ export function useCreateProductSubscriberActions() {
           isGenerating: false,
           generatedResult: null,
           generationError: null,
+          showPromptCustomization: false,
+          preservation: 80,
+          selectedStyle: "na",
           selectedTshirt: null,
           selectedColor: null,
           selectedSize: null,

@@ -2,6 +2,7 @@ import { UseFormReturn } from "react-hook-form";
 import { IProductCreateForm, IImageGenerationResult } from "@/schemas/productCreateSchema";
 import type { TshirtType } from "@/queries/productQueries";
 import { CreatedProductT } from "@/types/customProduct";
+import type { ArtStyleId } from "../utils/promptCustomization";
 
 export type WorkflowStep =
   | "upload"
@@ -35,6 +36,9 @@ export interface FormState {
   form: UseFormReturn<IProductCreateForm> | null;
   uploadedImage: File | null;
   prompt: string;
+  showPromptCustomization: boolean;
+  preservation: number;
+  selectedStyle: ArtStyleId;
   isGenerating: boolean;
   generatedResult: IImageGenerationResult | null;
   generationError: Error | null;

@@ -23,15 +23,15 @@ export function WizardStepHeader({
     <div className="px-4 sm:px-12 pt-6 sm:pt-14 pb-5 sm:pb-10 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3 sm:gap-0">
       <div className="max-w-xl">
         <div className="flex items-center gap-3 mb-3 sm:mb-6">
-          <span className="px-3 py-1 bg-[#F3ECFF] text-[#7C3AED] text-xs font-bold font-accent rounded-sm uppercase tracking-widest">
+          <span className="px-3 py-1 bg-[#F3ECFF] text-[#7C3AED] text-xs font-bold font-sans rounded-sm uppercase tracking-widest">
             {stepNumber}
           </span>
           <div className="h-px w-12 bg-slate-200" />
         </div>
-        <h2 className="text-3xl sm:text-5xl font-normal font-heading text-slate-900 tracking-wide leading-tight">
+        <h2 className="text-3xl sm:text-5xl font-heading text-slate-900 tracking-wide leading-tight">
           {title}
         </h2>
-        <p className="text-slate-500 mt-2 sm:mt-4 text-sm sm:text-lg font-light">
+        <p className="text-black-500 mt-2 sm:mt-4 text-sm sm:text-lg font-light font-sans">
           {description}
         </p>
       </div>

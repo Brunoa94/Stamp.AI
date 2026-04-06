@@ -29,10 +29,9 @@ const sizeTileStyles = {
   ].join(" "),
 
   selected: [
-    "border-[#7C3AED]",
+    "!border-2 !border-[#7C3AED]",
     "bg-white dark:bg-gray-800",
     "shadow-xl",
-    "ring-2 ring-[#7C3AED]",
     "text-[#7C3AED]",
   ].join(" "),
 

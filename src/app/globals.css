@@ -460,6 +460,30 @@
   }
 }
 
+@keyframes inspectionFloat {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0) scale(1.005);
+  }
+}
+
+@keyframes inspectionGlow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 16px rgba(99, 102, 241, 0.2),
+      0 0 28px rgba(168, 85, 247, 0.08);
+  }
+  50% {
+    box-shadow:
+      0 0 28px rgba(99, 102, 241, 0.28),
+      0 0 44px rgba(168, 85, 247, 0.14);
+  }
+}
+
 @keyframes gradientPulse {
   0% {
     background: linear-gradient(45deg, #7c3aed, #06b6d4, #ff8c42);
@@ -880,22 +904,28 @@
 }
 
 @keyframes page-slide-out {
-  from {
+  0% {
     opacity: 1;
     transform: translateX(0);
   }
-  to {
-    opacity: 0;
+  45% {
+    opacity: 0.72;
+  }
+  100% {
+    opacity: 0.2;
     transform: translateX(-100%);
   }
 }
 
 @keyframes page-slide-in {
-  from {
-    opacity: 0;
+  0% {
+    opacity: 0.2;
     transform: translateX(100%);
   }
-  to {
+  55% {
+    opacity: 0.78;
+  }
+  100% {
     opacity: 1;
     transform: translateX(0);
   }
@@ -917,6 +947,42 @@
   }
 }
 
+/* AI Synthesis loading state animations */
+@keyframes ai-synthesis-orbit {
+  from {
+    transform: rotate(0deg) translateX(100px) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(100px) rotate(-360deg);
+  }
+}
+
+@keyframes ai-synthesis-central-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 20px rgba(139, 92, 246, 0.3),
+      0 12px 32px rgba(139, 92, 246, 0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 44px rgba(139, 92, 246, 0.65),
+      0 12px 40px rgba(139, 92, 246, 0.35);
+  }
+}
+
+@keyframes ai-synthesis-dot-pulse {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
 @keyframes creating-progress {
   0% {
     width: 0%;
@@ -929,6 +995,18 @@
   100% {
     width: 0%;
     margin-left: 100%;
+  }
+}
+
+@keyframes creating-progress-fill {
+  0% {
+    width: 35%;
+  }
+  50% {
+    width: 65%;
+  }
+  100% {
+    width: 85%;
   }
 }
 
@@ -949,5 +1027,11 @@
   .glitch-text-404,
   .lost-icon-404 {
     animation: none;
+  }
+
+  .ai-synthesis-orbit-icon,
+  .ai-synthesis-central-box,
+  .ai-synthesis-pulse-dot {
+    animation: none !important;
   }
 }

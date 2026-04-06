@@ -3,7 +3,6 @@
 import { RefObject } from "react";
 import { CreatingSpinner } from "./CreatingSpinner";
 import { CreatingTitle } from "./CreatingTitle";
-import { CreatingStepList } from "./CreatingStepList";
 import { CreatingProgressBar } from "./CreatingProgressBar";
 
 interface ProductCreatingSectionProps {
@@ -16,14 +15,15 @@ export function ProductCreatingSection({
   return (
     <section
       ref={sectionRef}
-      className="flex flex-col items-center justify-center gap-8 py-12 animate-[fadeIn_0.6s_ease-out]"
+      className="flex w-full max-w-120 flex-col gap-12 items-center animate-[fadeIn_0.6s_ease-out]"
       aria-label="Creating product"
       role="status"
       aria-live="polite"
     >
       <CreatingSpinner />
+
       <CreatingTitle />
-      <CreatingStepList />
+
       <CreatingProgressBar />
     </section>
   );

@@ -9,6 +9,9 @@ export const MOCK_STATE: CreateProductContextState = {
   form: null,
   uploadedImage: null,
   prompt: "",
+  showPromptCustomization: false,
+  preservation: 80,
+  selectedStyle: "na",
 
   // Image generation state
   isGenerating: false,
