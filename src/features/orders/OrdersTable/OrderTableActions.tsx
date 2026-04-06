@@ -5,7 +5,6 @@ import { OrderWithItemsT } from "@/types/order";
 interface OrderTableActionsProps {
   order: OrderWithItemsT;
   onViewOrder: (order: OrderWithItemsT) => void;
-  onReorder: (order: OrderWithItemsT) => void;
   onCancelOrder?: (order: OrderWithItemsT) => void;
 }
 
@@ -15,7 +14,6 @@ const CANCELLABLE_STATUSES = ["created", "pending", null];
 export function OrderTableActions({
   order,
   onViewOrder,
-  onReorder,
   onCancelOrder,
 }: OrderTableActionsProps) {
   const isCancelled = order.status === "cancelled";
@@ -30,14 +28,6 @@ export function OrderTableActions({
         className={ordersTheme.table.viewButton}
       >
         VIEW
-      </Button>
-      <Button
-        onClick={() => onReorder(order)}
-        variant="outline"
-        size="default"
-        className={ordersTheme.table.reorderButton}
-      >
-        REORDER
       </Button>
       {isCancelled ? (
         <span className="inline-flex items-center justify-center h-10 px-4 text-sm font-medium text-muted-foreground max-w-23.25">
