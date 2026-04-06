@@ -1,26 +1,31 @@
 import { getColorClass } from "@/helpers/colors/colorMapping";
 
-export const MAX_VISIBLE_COLORS = 11;
+export const MAX_VISIBLE_COLORS = 10;
+
+// Top 10 distinct popular colors - basics always included
 const colorPriority: Record<string, number> = {
+    // Basic essentials (1-4)
     black: 1,
     white: 2,
-    navy: 3,
-    "navy blue": 3,
-    gray: 4,
-    grey: 4,
-    "heather gray": 5,
-    "heather grey": 5,
-    red: 6,
-    blue: 7,
-    "royal blue": 8,
-    green: 9,
-    purple: 10,
-    pink: 11,
-    yellow: 12,
-    orange: 13,
-    brown: 14,
-    maroon: 15,
-    burgundy: 16,
+    gray: 3,
+    grey: 3,
+    navy: 4,
+    "navy blue": 4,
+    // Popular distinct colors (5-10)
+    red: 5,
+    blue: 6,
+    green: 7,
+    purple: 8,
+    pink: 9,
+    yellow: 10,
+    // Additional colors (shown when expanded)
+    orange: 11,
+    brown: 12,
+    "heather gray": 13,
+    "heather grey": 13,
+    maroon: 14,
+    burgundy: 15,
+    "royal blue": 16,
 };
 
 interface ColorOption {
