@@ -902,22 +902,28 @@
 }
 
 @keyframes page-slide-out {
-  from {
+  0% {
     opacity: 1;
     transform: translateX(0);
   }
-  to {
-    opacity: 0;
+  45% {
+    opacity: 0.72;
+  }
+  100% {
+    opacity: 0.2;
     transform: translateX(-100%);
   }
 }
 
 @keyframes page-slide-in {
-  from {
-    opacity: 0;
+  0% {
+    opacity: 0.2;
     transform: translateX(100%);
   }
-  to {
+  55% {
+    opacity: 0.78;
+  }
+  100% {
     opacity: 1;
     transform: translateX(0);
   }
