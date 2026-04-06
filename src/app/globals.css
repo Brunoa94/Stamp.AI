@@ -148,6 +148,15 @@
     scroll-behavior: auto;
   }
 
+  .homepage-scroll-snap > section {
+    min-height: 100dvh;
+    font-family: var(--font-display);
+  }
+
+  .homepage-scroll-snap > section#cta-home {
+    min-height: initial;
+  }
+
   .dark body {
     background: linear-gradient(
       135deg,
@@ -302,6 +311,28 @@
     transform: scaleX(-1);
   }
 
+  .section-header-enter {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+    filter: blur(1.5px);
+    will-change: transform, opacity, filter;
+  }
+
+  .section-header-enter.section-header-enter--active {
+    animation: section-header-enter-in 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .section-header-title-enter {
+    opacity: 0;
+    transform: translateY(12px) scale(0.99);
+  }
+
+  .section-header-enter.section-header-enter--active
+    .section-header-title-enter {
+    animation: section-header-title-enter-in 980ms
+      cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
+  }
+
   .process-orbit-grain {
     position: absolute;
     inset: 0;
@@ -431,6 +462,35 @@
   }
 }
 
+@keyframes section-header-enter-in {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+    filter: blur(1.5px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.002);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes section-header-title-enter-in {
+  0% {
+    opacity: 0;
+    transform: translateY(12px) scale(0.99);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @keyframes promo-marquee {
   from {
     transform: translateX(0);
@@ -454,6 +514,22 @@
   .promo-carousel-track--animated {
     animation: none !important;
     transform: none !important;
+  }
+
+  .section-header-enter,
+  .section-header-enter.section-header-enter--active {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+  }
+
+  .section-header-title-enter,
+  .section-header-enter.section-header-enter--active
+    .section-header-title-enter {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
   }
 
   .process-orbit-card,

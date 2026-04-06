@@ -2,6 +2,7 @@ import { BadgeCheck, Star } from "lucide-react";
 import { FaGoogle } from "react-icons/fa";
 import { SiTrustpilot } from "react-icons/si";
 import { reviews } from "@/features/homepage/constants/homepageContent";
+import { SectionHeader } from "@/features/homepage/components/SectionHeader";
 import {
   mapReviewSourceToVisual,
   REVIEW_SUMMARY_CARDS,
@@ -22,10 +23,14 @@ export function ReviewsSection() {
         aria-hidden="true"
       />
       <div className="mx-auto w-full max-w-6xl space-y-12 px-6 md:px-16 xl:px-24">
-        <header className="space-y-4 text-center">
-          <h2 className="font-heading text-4xl uppercase leading-none text-slate-900 md:text-5xl">
-            Trusted by creators
-          </h2>
+        <header>
+          <SectionHeader
+            eyebrow="06 / Reviews"
+            title="Trusted by creators"
+            description="Verified ratings and feedback from real Stamp.AI customers."
+            titleSize="xl"
+            descriptionClassName="mt-5 max-w-3xl text-lg font-medium leading-relaxed text-slate-500"
+          />
 
           <div className="flex flex-wrap items-stretch justify-center gap-4">
             {REVIEW_SUMMARY_CARDS.map((summary) => {

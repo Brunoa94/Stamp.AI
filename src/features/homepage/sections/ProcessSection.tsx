@@ -1,4 +1,5 @@
 import { processSteps } from "@/features/homepage/constants/homepageContent";
+import { SectionHeader } from "@/features/homepage/components/SectionHeader";
 import { mapProcessStepVisualState } from "@/features/homepage/mappers/processStepMapper";
 import { ProcessOrbitalCard } from "@/features/homepage/sections/ProcessOrbitalCard";
 
@@ -25,21 +26,21 @@ export function ProcessSection({ activeProcessStep }: ProcessSectionProps) {
         aria-hidden="true"
       />
       <div className="mx-auto w-full max-w-360 px-6 md:px-16 xl:px-24">
-        <div className="mb-24 flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-end">
-          <div>
-            <span className="mb-4 block text-[12px] font-bold uppercase tracking-[0.2em] text-slate-400">
-              01 / The Journey
-            </span>
-            <h2 className="font-heading text-6xl uppercase leading-[0.85] tracking-tight text-slate-900 md:text-7xl">
+        <SectionHeader
+          className="mb-8"
+          eyebrow="01 / The Journey"
+          title={
+            <>
               PRECISION IN EVERY
               <br />
               <span className="text-[#7C3AED]">CHOICE</span>.
-            </h2>
-          </div>
-          <p className="max-w-3xl text-lg font-medium leading-relaxed text-slate-500">
-            Six distinct phases defining the evolution of your apparel identity.
-          </p>
-        </div>
+            </>
+          }
+          description="Six distinct phases defining the evolution of your apparel identity."
+          layout="stack"
+          titleSize="xl"
+          descriptionClassName="mt-5 max-w-3xl text-lg font-medium leading-relaxed text-slate-500"
+        />
 
         <div className="relative hidden h-190 w-full overflow-visible lg:block">
           <div className="process-orbit-grain" aria-hidden="true" />

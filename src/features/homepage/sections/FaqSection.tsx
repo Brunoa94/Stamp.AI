@@ -1,4 +1,5 @@
 import { ChevronDown } from "lucide-react";
+import { SectionHeader } from "@/features/homepage/components/SectionHeader";
 import { faqs } from "@/features/homepage/constants/homepageContent";
 import { mapFaqIndexToGradient } from "@/features/homepage/mappers/faqCardMapper";
 
@@ -9,17 +10,14 @@ export function FaqSection() {
       className="bg-linear-to-br from-[#FF8C42]/8 via-white to-[#7C3AED]/8 py-24"
     >
       <div className="mx-auto w-full max-w-6xl px-6 ">
-        <div className="mb-12 text-center">
-          <span className="mb-4 block text-[12px] font-bold uppercase tracking-[0.2em] text-slate-400">
-            04 / Frequently Asked Questions
-          </span>
-          <h2 className="font-heading text-3xl uppercase text-slate-900 md:text-4xl">
-            Curated Knowledge.
-          </h2>
-          <p className="mt-4 text-sm text-slate-500">
-            Everything you need to know about the Stamp.AI engine.
-          </p>
-        </div>
+        <SectionHeader
+          className="mb-8"
+          eyebrow="04 / Frequently Asked Questions"
+          title="Curated Knowledge."
+          description="Everything you need to know about the Stamp.AI engine."
+          titleSize="xl"
+          descriptionClassName="mt-5 max-w-3xl text-lg font-medium leading-relaxed text-slate-500"
+        />
 
         <div className="space-y-4">
           {faqs.slice(0, 4).map((faq, idx) => {
