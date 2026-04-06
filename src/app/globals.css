@@ -123,6 +123,8 @@
     @apply border-border outline-ring/50;
   }
   html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
     font-size: 13.6px;
     scroll-behavior: smooth;
   }

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 import type { UseFormRegisterReturn } from "react-hook-form";
 
-type FormFieldVariant = "default" | "auth-login" | "auth-register";
+type FormFieldVariant = "default" | "auth-login" | "auth-register" | "shipping";
 
 interface FormFieldProps {
   id: string;
@@ -41,6 +41,12 @@ const variantStyles: Record<
     input:
       "h-12 rounded-xl border-slate-200 bg-white px-4 text-sm text-slate-900 placeholder:text-slate-400",
   },
+  shipping: {
+    container: "",
+    label: "mb-2 block text-xs font-bold uppercase tracking-widest text-slate-500",
+    input:
+      "rounded-none border border-slate-200 bg-white/90 px-4 py-3 text-sm text-slate-900 shadow-none focus-visible:ring-0 focus-visible:border-purple-500",
+  },
 };
 
 export function FormField({
@@ -62,7 +68,13 @@ export function FormField({
   return (
     <div className={styles.container}>
       <Label htmlFor={id} className={styles.label}>
-        {label} {required && <span className="text-red-500">*</span>}
+        {label}
+        {required && (
+          <span className="text-red-500" aria-label="required">
+            {" "}
+            *
+          </span>
+        )}
       </Label>
 
       {hasIcons ? (
@@ -82,7 +94,8 @@ export function FormField({
             className={cn(
               styles.input,
               leadingIcon && "pl-12",
-              trailingAction && "pr-12"
+              trailingAction && "pr-12",
+              error && "border-red-400"
             )}
             {...register}
           />
@@ -100,7 +113,7 @@ export function FormField({
           placeholder={placeholder}
           aria-invalid={!!error}
           aria-describedby={errorId}
-          className={styles.input}
+          className={cn(styles.input, error && "border-red-400")}
           {...register}
         />
       )}
@@ -111,7 +124,7 @@ export function FormField({
           role="alert"
           className={cn(
             "text-sm text-red-600 dark:text-red-400",
-            variant === "auth-register" && "mt-1"
+            (variant === "auth-register" || variant === "shipping") && "mt-1"
           )}
         >
           {error}
