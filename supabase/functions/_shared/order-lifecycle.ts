@@ -429,14 +429,23 @@ async function retryWithBackoff<T>(fn: () => Promise<T>, attempts = 3): Promise<
 }
 
 async function refundStripePaymentIntent(paymentIntentId: string): Promise<void> {
-  const { default: Stripe } = await import('https://esm.sh/stripe@14.11.0?target=deno')
+  const secretKey = validateEnvVars.stripeSecretKey()
 
-  const stripe = new Stripe(validateEnvVars.stripeSecretKey(), {
-    apiVersion: '2023-10-16',
-    httpClient: Stripe.createFetchHttpClient(),
+  const body = new URLSearchParams({ payment_intent: paymentIntentId })
+
+  const response = await fetch('https://api.stripe.com/v1/refunds', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${secretKey}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: body.toString(),
   })
 
-  await stripe.refunds.create({ payment_intent: paymentIntentId })
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}))
+    throw new Error(`Stripe refund failed: ${data?.error?.message ?? response.statusText}`)
+  }
 }
 
 async function refundPayPalCapture(captureId: string): Promise<void> {

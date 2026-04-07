@@ -1,5 +1,4 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import Stripe from 'https://esm.sh/stripe@14.11.0?target=deno'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
@@ -156,25 +155,41 @@ serve(async (req) => {
   const validSignature = validateRequest.webhookSignature(signature)
   const stripeSecretKey = validateEnvVars.stripeSecretKey()
 
-  const stripe = new Stripe(stripeSecretKey, {
-    apiVersion: '2023-10-16',
-    httpClient: Stripe.createFetchHttpClient(),
-  })
-
-  const cryptoProvider = Stripe.createSubtleCryptoProvider()
-
   try {
     const webhookSecret = validateEnvVars.stripeWebhookSecret()
 
-    let event
+    // Verify Stripe webhook signature using native WebCrypto (no SDK needed)
+    let event: any
     try {
-      event = await stripe.webhooks.constructEventAsync(
-        body,
-        validSignature,
-        webhookSecret,
-        undefined,
-        cryptoProvider
+      const parts = validSignature.split(',')
+      const timestamp = parts.find((p: string) => p.startsWith('t='))?.slice(2)
+      const sigHex = parts.find((p: string) => p.startsWith('v1='))?.slice(3)
+
+      if (!timestamp || !sigHex) {
+        throw new Error('Malformed Stripe-Signature header')
+      }
+
+      const signedPayload = `${timestamp}.${body}`
+      const encoder = new TextEncoder()
+
+      const cryptoKey = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(webhookSecret),
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign'],
       )
+
+      const signatureBuffer = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(signedPayload))
+      const expectedHex = Array.from(new Uint8Array(signatureBuffer))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('')
+
+      if (expectedHex !== sigHex) {
+        throw new Error('Signature mismatch')
+      }
+
+      event = JSON.parse(body)
     } catch (stripeError: any) {
       throw ErrorCodes.WEBHOOK_SIGNATURE_INVALID(stripeError.message)
     }
