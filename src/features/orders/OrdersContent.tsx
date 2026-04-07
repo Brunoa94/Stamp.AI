@@ -22,7 +22,7 @@ import { CancelOrderModal } from "./CancelOrderModal";
 import { useRouter } from "next/navigation";
 
 const OrderDetailsModal = dynamic(
-  () => import("./OrderDetails/OrderDetailsModal/OrderDetailsModal"),
+  () => import("./orderDetails/OrderDetailsModal/OrderDetailsModal"),
   {
     ssr: false,
   },

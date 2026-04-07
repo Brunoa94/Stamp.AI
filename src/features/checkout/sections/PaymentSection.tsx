@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import PaymentForm from "@/features/checkout/PaymentForm/PaymentForm";
+import PaymentForm from "@/features/checkout/paymentForm/PaymentForm";
 import {
   CheckoutSelectors,
   useCheckoutSubscriberActions,
