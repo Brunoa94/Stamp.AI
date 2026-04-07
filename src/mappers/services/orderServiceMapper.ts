@@ -209,13 +209,14 @@ export class OrderServiceMapper {
       total_amount: number;
     },
     discountAmount: number = 0,
-    paymentStatus: string = "pending"
+    paymentStatus: string = "pending",
+    orderStatus: string = "pending"
   ): CreateOrderT {
     return {
       user_id: user.id,
       customer_email: user.email || "",
       order_number: orderNumber,
-      status: "pending",
+      status: orderStatus,
       payment_status: paymentStatus,
       subtotal: totals.subtotal,
       shipping_cost: totals.shipping_cost,

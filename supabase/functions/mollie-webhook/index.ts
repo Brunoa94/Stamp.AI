@@ -3,6 +3,7 @@ import { handleError } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { getMolliePayment, mapMollieStatusToInternal, isMolliePaymentPaid } from "../_shared/mollie.ts";
+import { processPaidOrder } from "../_shared/order-lifecycle.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -110,72 +111,45 @@ serve(async (req) => {
       console.log("Payment transaction saved/updated");
     }
 
-    // If payment is successful, update order and create Printify order
+    // If payment is successful, process full lifecycle idempotently
     if (isPaid) {
       console.log("Payment is paid, processing order...");
 
-      // Update order payment_status and status if we have an order_id
       if (orderId) {
-        const orderUpdateResult = await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
-          status: "processing",
-          payment_status: "paid",
-          payment_method: "mollie",
-          updated_at: new Date().toISOString(),
+        await processPaidOrder({
+          provider: "mollie",
+          eventId: `mollie-${payment.id}-${payment.status}`,
+          orderId,
+          amount: parseFloat(payment.amount.value),
+          currency: payment.amount.currency.toLowerCase(),
+          userId,
+          metadata,
+          refs: {
+            mollie_payment_id: payment.id,
+          },
+          lineItems,
+          shippingAddress: shippingAddress || {},
         });
-
-        if (orderUpdateResult.error) {
-          console.error(`Failed to update order ${orderId}:`, orderUpdateResult.error);
-        } else {
-          console.log(`Order ${orderId} updated: status=processing, payment_status=paid`);
-        }
-      }
-
-      // Create Printify order if we have line items
-      if (lineItems.length > 0 && shippingAddress) {
-        console.log("Creating Printify order...");
-        const printifyResponse = await fetch(
-          `${Deno.env.get("SUPABASE_URL")}/functions/v1/create-printify-order`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              apikey: Deno.env.get("SUPABASE_ANON_KEY") || "",
-              Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
-            },
-            body: JSON.stringify({
-              is_test: true,
-              auto_cancel: true,
-              line_items: lineItems,
-              shipping_address: shippingAddress,
-              metadata: {
-                order_id: metadata.order_id || `mollie-${Date.now()}`,
-                mollie_payment_id: payment.id,
-              },
-            }),
-          }
-        );
-
-        if (printifyResponse.ok) {
-          const printifyResult = await printifyResponse.json();
-          console.log("Printify order created:", printifyResult);
-        } else {
-          const errorText = await printifyResponse.text();
-          console.error("Printify order creation failed:", errorText);
-        }
       }
     } else if (payment.status === "failed" || payment.status === "canceled" || payment.status === "expired") {
       // Update order status if payment failed
       if (orderId) {
         const orderUpdateResult = await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
-          status: "cancelled",
+          status: "waiting_payment",
           payment_status: internalStatus,
+          payment_failure_reason:
+            payment.status === "canceled"
+              ? "mollie_user_cancelled"
+              : payment.status === "expired"
+                ? "mollie_expired"
+                : "mollie_technical_failure",
           updated_at: new Date().toISOString(),
         });
 
         if (orderUpdateResult.error) {
           console.error(`Failed to update order ${orderId}:`, orderUpdateResult.error);
         } else {
-          console.log(`Order ${orderId} updated: status=cancelled, payment_status=${internalStatus}`);
+          console.log(`Order ${orderId} updated: status=waiting_payment, payment_status=${internalStatus}`);
         }
       }
     }

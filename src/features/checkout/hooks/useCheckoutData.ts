@@ -19,6 +19,8 @@ export function useCheckoutData(store: CheckoutStore): UseCheckoutDataResult {
   const { handleError } = useErrorHandler();
   const searchParams = useSearchParams();
   const cartId = searchParams.get("cartId");
+  const orderId = searchParams.get("orderId");
+  const paymentMethod = searchParams.get("paymentMethod");
 
   // Fetch cart with items
   const {
@@ -69,6 +71,24 @@ export function useCheckoutData(store: CheckoutStore): UseCheckoutDataResult {
       });
     }
   }, [isLoading, error, store]);
+
+  useEffect(() => {
+    if (!orderId) return;
+    const currentState = store.getState();
+    const shouldUpdateOrder = currentState.checkoutOrderId !== orderId;
+    const shouldUpdateMethod =
+      !!paymentMethod && currentState.selectedPaymentMethod !== paymentMethod;
+
+    if (!shouldUpdateOrder && !shouldUpdateMethod) return;
+
+    store.setState({
+      ...currentState,
+      checkoutOrderId: shouldUpdateOrder ? orderId : currentState.checkoutOrderId,
+      selectedPaymentMethod: shouldUpdateMethod
+        ? (paymentMethod as any)
+        : currentState.selectedPaymentMethod,
+    });
+  }, [orderId, paymentMethod, store]);
 
   return {
     isLoading,

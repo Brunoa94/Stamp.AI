@@ -23,6 +23,7 @@ export const CompleteOrderButton = ({
   const cartItems = CheckoutSelectors.cartItems();
   const testMode = CheckoutSelectors.testMode();
   const orderAmount = CheckoutSelectors.orderAmount();
+  const checkoutOrderId = CheckoutSelectors.checkoutOrderId();
 
   const { handlePaymentSuccess, handlePaymentError } =
     useCheckoutSubscriberActions();
@@ -61,6 +62,7 @@ export const CompleteOrderButton = ({
             amount={orderAmount}
             lineItems={lineItems}
             shippingAddress={shippingAddress}
+            orderId={checkoutOrderId || undefined}
             testMode={testMode}
             onSuccess={(details: PayPalSuccessDetailsI, items) => {
               handlePaymentSuccess(
@@ -83,6 +85,7 @@ export const CompleteOrderButton = ({
             amount={orderAmount}
             lineItems={lineItems}
             shippingAddress={shippingAddress}
+            orderId={checkoutOrderId || undefined}
             testMode={testMode}
             onError={handlePaymentError}
             disabled={isProcessingPayment}

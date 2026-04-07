@@ -1,25 +1,29 @@
 import { Button } from "@/features/ui/button";
 import { ordersTheme } from "@/theme/components";
 import { OrderWithItemsT } from "@/types/order";
+import {
+  canCancelOrder,
+  canProceedToPayment,
+} from "../../utils/lifecycleRules";
 
 interface OrdersMobileCardActionsProps {
   order: OrderWithItemsT;
   onViewOrder: (order: OrderWithItemsT) => void;
   onReorder: (order: OrderWithItemsT) => void;
   onCancelOrder?: (order: OrderWithItemsT) => void;
+  onProceedToPayment?: (order: OrderWithItemsT) => void;
 }
-
-// Orders can only be cancelled if they haven't started processing yet
-const CANCELLABLE_STATUSES = ["created", "pending", null];
 
 export function OrdersMobileCardActions({
   order,
   onViewOrder,
   onReorder,
   onCancelOrder,
+  onProceedToPayment,
 }: OrdersMobileCardActionsProps) {
   const isCancelled = order.status === "cancelled";
-  const canCancel = CANCELLABLE_STATUSES.includes(order.status);
+  const canCancel = canCancelOrder(order);
+  const canProceed = canProceedToPayment(order);
 
   return (
     <div className={ordersTheme.mobileCard.actions}>
@@ -39,6 +43,15 @@ export function OrdersMobileCardActions({
       >
         Reorder
       </Button>
+      {canProceed ? (
+        <Button
+          onClick={() => onProceedToPayment?.(order)}
+          variant="outline"
+          size="default"
+        >
+          Pay now
+        </Button>
+      ) : null}
       {isCancelled ? (
         <span className="inline-flex items-center justify-center h-10 px-4 text-sm font-medium text-muted-foreground max-w-23.25">
           Canceled

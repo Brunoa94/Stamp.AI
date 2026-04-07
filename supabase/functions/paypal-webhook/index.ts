@@ -3,6 +3,7 @@ import { handleError } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { verifyPayPalWebhook } from "../_shared/paypal.ts";
+import { processPaidOrder } from "../_shared/order-lifecycle.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -43,55 +44,33 @@ serve(async (req) => {
         console.log("Payment capture completed:", event.resource.id);
         const capture = event.resource;
         console.log("Order Id: ", capture.supplementary_data?.related_ids?.order_id);
-        // Find and update the payment transaction
         const orderId = capture.supplementary_data?.related_ids?.order_id;
 
         if (orderId) {
-          const result = await supabaseRest(
-            `payment_transactions?paypal_order_id=eq.${orderId}`,
-            "PATCH",
-            {
-              paypal_capture_id: capture.id,
-              status: "succeeded",
-              payment_method_details: {
-                capture_id: capture.id,
-                final_capture: capture.final_capture,
-                seller_protection: capture.seller_protection,
-              },
-              updated_at: new Date().toISOString(),
-            }
+          const txResult = await supabaseRest<any[]>(
+            `payment_transactions?paypal_order_id=eq.${orderId}&select=metadata,user_id`,
+            "GET"
           );
 
-          if (result.error) {
-            console.error("Update error:", result.error);
-          } else {
-            console.log("Payment transaction updated");
+          const metadata = txResult.data?.[0]?.metadata || {};
+          const dbOrderId = metadata.order_id as string | undefined;
 
-            // Update order payment_status to "paid"
-            // First get the order_id from the payment transaction metadata
-            const txResult = await supabaseRest(
-              `payment_transactions?paypal_order_id=eq.${orderId}&select=metadata`,
-              "GET"
-            );
-
-            const dbOrderId = txResult.data?.[0]?.metadata?.order_id;
-            if (dbOrderId) {
-              const orderResult = await supabaseRest(
-                `orders?id=eq.${dbOrderId}`,
-                "PATCH",
-                {
-                  payment_status: "paid",
-                  payment_method: "paypal",
-                  updated_at: new Date().toISOString(),
-                }
-              );
-
-              if (orderResult.error) {
-                console.error("Failed to update order payment_status:", orderResult.error);
-              } else {
-                console.log(`Order ${dbOrderId} payment_status updated to: paid`);
-              }
-            }
+          if (dbOrderId) {
+            await processPaidOrder({
+              provider: "paypal",
+              eventId: event.id,
+              orderId: dbOrderId,
+              amount: parseFloat(capture.amount?.value || "0"),
+              currency: (capture.amount?.currency_code || "USD").toLowerCase(),
+              userId: txResult.data?.[0]?.user_id,
+              metadata,
+              refs: {
+                paypal_order_id: orderId,
+                paypal_capture_id: capture.id,
+              },
+              lineItems: (metadata.line_items as unknown[]) || [],
+              shippingAddress: (metadata.shipping_address as Record<string, unknown>) || {},
+            });
           }
         }
         break;
@@ -156,7 +135,7 @@ serve(async (req) => {
         const orderId = capture.supplementary_data?.related_ids?.order_id;
 
         if (orderId) {
-          const result = await supabaseRest(
+          await supabaseRest(
             `payment_transactions?paypal_order_id=eq.${orderId}`,
             "PATCH",
             {
@@ -166,8 +145,19 @@ serve(async (req) => {
             }
           );
 
-          if (result.error) {
-            console.error("Update error:", result.error);
+          const txResult = await supabaseRest<any[]>(
+            `payment_transactions?paypal_order_id=eq.${orderId}&select=metadata`,
+            "GET",
+          );
+
+          const dbOrderId = txResult.data?.[0]?.metadata?.order_id;
+          if (dbOrderId) {
+            await supabaseRest(`orders?id=eq.${dbOrderId}`, "PATCH", {
+              status: "waiting_payment",
+              payment_status: "failed",
+              payment_failure_reason: "paypal_capture_denied",
+              updated_at: new Date().toISOString(),
+            });
           }
         }
         break;

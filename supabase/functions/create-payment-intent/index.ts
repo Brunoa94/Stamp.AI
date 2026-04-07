@@ -2,6 +2,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import Stripe from 'https://esm.sh/stripe@14.11.0?target=deno'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
+import { revalidateOrderForPayment } from '../_shared/order-lifecycle.ts'
 import type { CreatePaymentIntentRequestI, PaymentIntentResponseI } from "../../types/index.ts"
 
 const corsHeaders = {
@@ -84,6 +85,18 @@ serve(async (req) => {
       payment_method, // Optional: for testing with pm_card_visa, etc.
       confirm = false // Optional: auto-confirm payment (for testing)
     } = await req.json()
+
+    const candidateOrderId =
+      metadata && typeof metadata.order_id === 'string' ? metadata.order_id : undefined
+
+    if (candidateOrderId && validateRequest.isUuid(candidateOrderId)) {
+      const revalidation = await revalidateOrderForPayment(candidateOrderId, userId)
+      if (!revalidation.ok) {
+        throw ErrorCodes.INVALID_REQUEST_BODY()
+      }
+    } else if (candidateOrderId) {
+      console.warn('Skipping order revalidation because order_id is not a UUID:', candidateOrderId)
+    }
 
     // Validate environment variables and request data
     const stripeSecretKey = validateEnvVars.stripeSecretKey()

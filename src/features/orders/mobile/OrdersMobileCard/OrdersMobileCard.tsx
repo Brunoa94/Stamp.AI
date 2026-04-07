@@ -12,6 +12,7 @@ interface OrdersMobileCardProps {
   onViewOrder: (order: OrderWithItemsT) => void;
   onReorder: (order: OrderWithItemsT) => void;
   onCancelOrder?: (order: OrderWithItemsT) => void;
+  onProceedToPayment?: (order: OrderWithItemsT) => void;
 }
 
 export function OrdersMobileCard({
@@ -19,6 +20,7 @@ export function OrdersMobileCard({
   onViewOrder,
   onReorder,
   onCancelOrder,
+  onProceedToPayment,
 }: OrdersMobileCardProps) {
   return (
     <div className={ordersTheme.mobileCard.container}>
@@ -29,6 +31,7 @@ export function OrdersMobileCard({
         onViewOrder={onViewOrder}
         onReorder={onReorder}
         onCancelOrder={onCancelOrder}
+        onProceedToPayment={onProceedToPayment}
       />
     </div>
   );

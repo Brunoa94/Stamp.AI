@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import PaymentForm from "@/features/checkout/paymentForm/PaymentForm";
+import PaymentForm from "@/features/checkout/PaymentForm/PaymentForm";
 import {
   CheckoutSelectors,
   useCheckoutSubscriberActions,
@@ -18,6 +18,7 @@ export function CheckoutMobilePaymentStep() {
   const orderAmount = CheckoutSelectors.orderAmount();
   const cartItems = CheckoutSelectors.cartItems();
   const selectedPaymentMethod = CheckoutSelectors.selectedPaymentMethod();
+  const checkoutOrderId = CheckoutSelectors.checkoutOrderId();
 
   const {
     setTestMode,
@@ -56,6 +57,7 @@ export function CheckoutMobilePaymentStep() {
           lineItems={lineItems}
           amount={orderAmount}
           shippingAddress={shippingAddress}
+          orderId={checkoutOrderId || undefined}
           testMode={testMode}
           onSuccess={handlePaymentSuccess}
           onError={handlePaymentError}

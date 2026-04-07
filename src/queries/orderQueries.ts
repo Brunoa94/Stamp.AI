@@ -9,7 +9,10 @@ import { useErrorHandler } from "@/hooks/useErrorHandler";
 /**
  * Fetch a single order by ID
  */
-export function useOrder(orderId: string | null) {
+export function useOrder(
+  orderId: string | null,
+  refetchInterval: number | false = false,
+) {
   return useQuery({
     queryKey: ["orders", orderId],
     queryFn: () => {
@@ -19,6 +22,8 @@ export function useOrder(orderId: string | null) {
       return OrderService.getOrder(orderId);
     },
     enabled: !!orderId,
+    refetchInterval,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -190,11 +195,32 @@ export function useCreateOrderFromCart() {
   const { handleError } = useErrorHandler();
 
   return useMutation({
-    mutationFn: async ({ user, cart, paymentStatus = "paid" }: { user: UserI; cart: CartWithItems; paymentStatus?: string }) => {
+    mutationFn: async ({
+      user,
+      cart,
+      paymentStatus = "paid",
+      orderStatus = "pending",
+      paymentMethod,
+      shippingAddress,
+    }: {
+      user: UserI;
+      cart: CartWithItems;
+      paymentStatus?: string;
+      orderStatus?: string;
+      paymentMethod?: string;
+      shippingAddress?: Record<string, unknown>;
+    }) => {
       if (!user) {
         throw new Error("User not authenticated");
       }
-      return await OrderService.createOrderFromCart({ cart, user, paymentStatus });
+      return await OrderService.createOrderFromCart({
+        cart,
+        user,
+        paymentStatus,
+        orderStatus,
+        paymentMethod,
+        shippingAddress,
+      });
     },
     onSuccess: (orderId) => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });

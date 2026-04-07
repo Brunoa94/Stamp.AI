@@ -10,6 +10,7 @@ export interface CreateMolliePaymentPayloadI {
   description?: string;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
+  orderId?: string;
   testMode?: boolean;
 }
 
@@ -58,10 +59,19 @@ export class MollieService {
     description,
     lineItems,
     shippingAddress,
+    orderId,
     testMode = false,
   }: CreateMolliePaymentPayloadI): Promise<CreateMolliePaymentResponseI> {
     try {
       await this.validateAuthenticatedSession();
+
+      if (!orderId) {
+        throw ErrorClient.handleError({
+          error: new Error("Order ID is required before creating Mollie payment"),
+          service: "Mollie",
+          action: "Create Payment",
+        });
+      }
 
       const { data, error } = await this.getSupabase().functions.invoke(
         "create-mollie-payment",
@@ -73,7 +83,7 @@ export class MollieService {
             line_items: lineItems,
             shipping_address: shippingAddress,
             metadata: {
-              order_id: `order_${Date.now()}`,
+              order_id: orderId,
               test_mode: testMode,
             },
           },

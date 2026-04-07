@@ -15,6 +15,7 @@ interface OrderTableRowProps {
   onViewOrder: (order: OrderWithItemsT) => void;
   onReorder: (order: OrderWithItemsT) => void;
   onCancelOrder?: (order: OrderWithItemsT) => void;
+  onProceedToPayment?: (order: OrderWithItemsT) => void;
   getStatusBadgeClass: (status: string | null) => string;
 }
 
@@ -23,8 +24,13 @@ export function OrderTableRow({
   onViewOrder,
   onReorder,
   onCancelOrder,
+  onProceedToPayment,
   getStatusBadgeClass,
 }: OrderTableRowProps) {
+  const statusLabel = (order as any).refund_failed
+    ? "refund_failed"
+    : order.status || "processing";
+
   return (
     <TableRow className={ordersTheme.table.row}>
       <TableCell className={ordersTheme.table.cell}>
@@ -41,9 +47,7 @@ export function OrderTableRow({
       </TableCell>
 
       <TableCell className={ordersTheme.table.cell}>
-        <span className={getStatusBadgeClass(order.status)}>
-          {order.status || "Processing"}
-        </span>
+        <span className={getStatusBadgeClass(statusLabel)}>{statusLabel}</span>
       </TableCell>
 
       <TableCell className={`${ordersTheme.table.cell} text-right`}>
@@ -58,6 +62,7 @@ export function OrderTableRow({
           onViewOrder={onViewOrder}
           onReorder={onReorder}
           onCancelOrder={onCancelOrder}
+          onProceedToPayment={onProceedToPayment}
         />
       </TableCell>
     </TableRow>

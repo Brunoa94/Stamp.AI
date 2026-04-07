@@ -75,7 +75,21 @@ export async function paypalRequest<T = unknown>(
   const data = await response.json();
 
   if (!response.ok) {
+    const issue = Array.isArray(data?.details) && data.details.length > 0
+      ? data.details[0]?.issue
+      : undefined;
+
     const errorMessage = data.message || data.error_description || JSON.stringify(data);
+
+    // Treat declined funding sources as a user-facing capture failure (not a generic API outage).
+    if (
+      endpoint.includes("/capture") &&
+      typeof issue === "string" &&
+      issue.toUpperCase() === "INSTRUMENT_DECLINED"
+    ) {
+      throw ErrorCodes.PAYPAL_CAPTURE_FAILED("INSTRUMENT_DECLINED");
+    }
+
     console.error("PayPal API error:", data);
     throw ErrorCodes.PAYPAL_API_ERROR(errorMessage);
   }

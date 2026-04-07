@@ -7,6 +7,7 @@ export interface CreatePayPalOrderPayloadI {
   amount: number;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
+  orderId?: string;
   testMode?: boolean;
 }
 
@@ -21,8 +22,11 @@ export interface CapturePayPalOrderPayloadI {
 
 export interface CapturePayPalOrderResponseI {
   success: boolean;
-  captureId: string;
+  captureId?: string;
+  status?: string;
   payerEmail?: string;
+  error?: string;
+  restartable?: boolean;
 }
 
 export class PayPalService {
@@ -49,10 +53,19 @@ export class PayPalService {
     amount,
     lineItems,
     shippingAddress,
+    orderId,
     testMode = false,
   }: CreatePayPalOrderPayloadI): Promise<CreatePayPalOrderResponseI> {
     try {
       await this.validateAuthenticatedSession();
+
+      if (!orderId) {
+        throw ErrorClient.handleError({
+          error: new Error("Order ID is required before creating PayPal order"),
+          service: "PayPal",
+          action: "Create Order",
+        });
+      }
 
       const { data, error } = await this.getSupabase().functions.invoke(
         "create-paypal-order",
@@ -63,7 +76,7 @@ export class PayPalService {
             line_items: lineItems,
             shipping_address: shippingAddress,
             metadata: {
-              order_id: `order_${Date.now()}`,
+              order_id: orderId,
               test_mode: testMode,
             },
           },
@@ -105,6 +118,17 @@ export class PayPalService {
 
       if (error) {
         throw ErrorClient.handleError({ error, service: "PayPal", action: "Capture Order" });
+      }
+
+      if (data?.success === false) {
+        return {
+          success: false,
+          captureId: data.captureId,
+          status: data.status,
+          payerEmail: data.payerEmail,
+          error: data.error,
+          restartable: data.restartable,
+        };
       }
 
       if (!data?.success || !data?.captureId) {
