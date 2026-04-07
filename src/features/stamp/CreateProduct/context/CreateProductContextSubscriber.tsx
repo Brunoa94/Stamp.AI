@@ -7,10 +7,12 @@ import {
   useState,
   useEffect,
 } from "react";
+import { useSearchParams } from "next/navigation";
 import { GeneratedHistoryItem, NavigationState, FormState } from "./types";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/with-selector";
 import { shallow } from "zustand/shallow";
 import { useImageGenerationForm } from "../hooks/useImageGenerationForm";
+import { useHydrateFromOrderReuse } from "../hooks/useHydrateFromOrderReuse";
 
 // ---------------------------------------------------------------------------
 // Generic external store factory
@@ -175,6 +177,8 @@ interface CreateProductProviderProps {
 export function CreateProductSubscriberProvider({
   children,
 }: CreateProductProviderProps) {
+  const searchParams = useSearchParams();
+
   // Each store is created once and its reference never changes — stable context values.
   const [navigationStore] = useState(() => createStore(INITIAL_NAVIGATION));
   const [formStore] = useState(() => createStore(INITIAL_FORM));
@@ -207,6 +211,28 @@ export function CreateProductSubscriberProvider({
       }
     };
   }, [formStore]);
+
+  useHydrateFromOrderReuse({
+    searchParams,
+    formStore,
+    navigationStore,
+    storageKey: STAMP_GENERATED_HISTORY_STORAGE_KEY,
+  });
+
+  useEffect(() => {
+    const current = formStore.getState();
+    if (!form || !current.uploadedImage) return;
+
+    const formImage = form.getValues("image");
+    if (formImage instanceof File && formImage === current.uploadedImage)
+      return;
+
+    form.setValue("image", current.uploadedImage, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
+  }, [form, formStore]);
 
   // Keep uploadedImage and prompt in sync with RHF field values.
   // Only the FormStore is updated here — NavigationStore subscribers are silent.

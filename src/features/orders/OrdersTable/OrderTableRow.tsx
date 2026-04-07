@@ -40,6 +40,14 @@ export function OrderTableRow({
     return `mailto:?subject=${subject}&body=${body}`;
   }, [order.id, order.status]);
 
+  const preferredReusableOrderItemId = useMemo(() => {
+    return (
+      order.order_items?.find((item) => Boolean(item.custom_image_url))?.id ??
+      order.order_items?.[0]?.id ??
+      ""
+    );
+  }, [order.order_items]);
+
   return (
     <>
       <TableRow className={ordersTheme.table.row}>
@@ -111,7 +119,13 @@ export function OrderTableRow({
                 size="sm"
                 className={ordersTheme.table.moreActionsButton}
               >
-                <Link href={`/stamp?sourceOrder=${order.id}`}>
+                <Link
+                  href={
+                    preferredReusableOrderItemId
+                      ? `/stamp?sourceOrder=${order.id}&sourceOrderItem=${preferredReusableOrderItemId}`
+                      : `/stamp?sourceOrder=${order.id}`
+                  }
+                >
                   <Sparkles className="h-3.5 w-3.5" />
                   Use same image
                 </Link>

@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { MemoizedWizardProductForm } from "../WizardProductForm";
 import { CreateProductSubscriberProvider } from "../context/CreateProductContextSubscriber";
 import { CreateProductSelectors } from "../context/selectors";
@@ -25,9 +26,18 @@ export function CreateProductWizard() {
 }
 
 function CreateProductWizardContent() {
+  const searchParams = useSearchParams();
   const currentStep = CreateProductSelectors.currentStep();
   const [isExpanded, setIsExpanded] = useState(false);
   const { scrollToWizard } = useWizardProductFormHandlers({ form: null });
+
+  useEffect(() => {
+    const sourceOrderId = searchParams.get("sourceOrder");
+    if (!sourceOrderId) return;
+
+    setIsExpanded(true);
+    scrollToWizard();
+  }, [searchParams, scrollToWizard]);
 
   const handleExpand = useCallback(() => {
     if (isExpanded) return;

@@ -36,6 +36,9 @@ export class OrderServiceMapper {
       total_price: item.unit_price * item.quantity,
       custom_image_url: item.custom_image_url || '',
       design_id: item.design_id,
+      design_config: item.custom_image_url
+        ? { reusable_image_url: item.custom_image_url }
+        : null,
     }));
   }
 
@@ -192,7 +195,12 @@ export class OrderServiceMapper {
       custom_image_url: cartItem.custom_image_url || "",
       product_name: cartItem.product?.name || "Custom Product",
       variant_name: cartItem.variant?.name || null,
-      design_config: cartItem.custom_image_url ? { custom_image_url: cartItem.custom_image_url } : null,
+      design_config: cartItem.custom_image_url
+        ? {
+            custom_image_url: cartItem.custom_image_url,
+            reusable_image_url: cartItem.custom_image_url,
+          }
+        : null,
     };
   }
 
