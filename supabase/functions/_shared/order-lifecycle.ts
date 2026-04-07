@@ -18,6 +18,8 @@ interface OrderRow {
   printify_order_id: string | null
   stripe_payment_intent_id: string | null
   refund_failed?: boolean | null
+  refund_attempts?: number | null
+  created_at?: string | null
 }
 
 interface PaymentReferencePayload {
@@ -530,7 +532,7 @@ export async function cancelOrderLifecycle(input: CancelOrderInput): Promise<{ s
     } catch (error) {
       await supabaseRest(`orders?id=eq.${input.orderId}`, 'PATCH', {
         refund_failed: true,
-        refund_attempts: (order as any).refund_attempts ? (order as any).refund_attempts + 1 : 1,
+        refund_attempts: (order.refund_attempts ?? 0) + 1,
         last_refund_error: parseError(error),
         manual_review_required: true,
         updated_at: new Date().toISOString(),
@@ -607,7 +609,7 @@ export async function revalidateOrderForPayment(
   }
 
   const now = Date.now()
-  const createdAt = new Date((order as any).created_at ?? 0).getTime()
+  const createdAt = new Date(order.created_at ?? 0).getTime()
   if (Number.isFinite(createdAt) && now - createdAt > 24 * 60 * 60 * 1000) {
     return { ok: false, reason: 'Order expired' }
   }

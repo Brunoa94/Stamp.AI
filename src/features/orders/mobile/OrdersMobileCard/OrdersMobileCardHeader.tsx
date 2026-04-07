@@ -8,7 +8,7 @@ interface OrdersMobileCardHeaderProps {
 }
 
 export function OrdersMobileCardHeader({ order }: OrdersMobileCardHeaderProps) {
-  const statusLabel = (order as any).refund_failed
+  const statusLabel = order.refund_failed
     ? "refund_failed"
     : order.status || "processing";
 
