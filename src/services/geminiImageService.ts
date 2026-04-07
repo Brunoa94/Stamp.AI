@@ -209,31 +209,34 @@ Output ONLY the image generation prompt, nothing else. Make it descriptive, spec
 
     const imageUrl = `data:${generatedMimeType};base64,${generatedImageBase64}`;
 
-    let transparentImageUrl = imageUrl;
-
-    if (!this.isBackgroundRemovalEnabled()) {
-      console.warn(
-        "Skipping background removal (set ENABLE_BACKGROUND_REMOVAL=true to enable).",
-      );
-
-      return {
-        imageUrl: transparentImageUrl,
-        enhancedPrompt,
-      };
-    }
-
-    try {
-      console.log("Removing generated image background with IMG.LY...");
-      transparentImageUrl = await this.removeBackgroundFromDataUrl(imageUrl);
-    } catch (backgroundRemovalError) {
-      console.error("Background removal failed:", backgroundRemovalError);
-      console.warn(
-        "Continuing with original generated image because background removal is unavailable in this runtime.",
-      );
-    }
+    // Background removal disabled for now.
+    // Re-enable this block when runtime has native onnxruntime dependencies available.
+    //
+    // let transparentImageUrl = imageUrl;
+    //
+    // if (!this.isBackgroundRemovalEnabled()) {
+    //   console.warn(
+    //     "Skipping background removal (set ENABLE_BACKGROUND_REMOVAL=true to enable).",
+    //   );
+    //
+    //   return {
+    //     imageUrl: transparentImageUrl,
+    //     enhancedPrompt,
+    //   };
+    // }
+    //
+    // try {
+    //   console.log("Removing generated image background with IMG.LY...");
+    //   transparentImageUrl = await this.removeBackgroundFromDataUrl(imageUrl);
+    // } catch (backgroundRemovalError) {
+    //   console.error("Background removal failed:", backgroundRemovalError);
+    //   console.warn(
+    //     "Continuing with original generated image because background removal is unavailable in this runtime.",
+    //   );
+    // }
 
     return {
-      imageUrl: transparentImageUrl,
+      imageUrl,
       enhancedPrompt,
     };
   }

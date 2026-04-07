@@ -11,6 +11,7 @@ export function useImageGeneration() {
   const { handleError, handleSuccess } = useErrorHandler();
 
   return useMutation<IImageGenerationResult, Error, ImageGenerationRequestPayload>({
+    retry: 0,
     mutationFn: async (data) => {
       // In React Query v5, automatic cancellation is handled internally
       // No need to manually pass the signal
