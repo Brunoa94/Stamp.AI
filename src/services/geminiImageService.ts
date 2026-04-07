@@ -212,8 +212,8 @@ Output ONLY the image generation prompt, nothing else. Make it descriptive, spec
       transparentImageUrl = await this.removeBackgroundFromDataUrl(imageUrl);
     } catch (backgroundRemovalError) {
       console.error("Background removal failed:", backgroundRemovalError);
-      throw new Error(
-        "Background removal failed. Please try generating again.",
+      console.warn(
+        "Continuing with original generated image because background removal is unavailable in this runtime.",
       );
     }
 
