@@ -13,6 +13,10 @@ interface GeminiImageGenerationResult {
  * - gemini-2.5-flash-image for image generation
  */
 export class GeminiImageService {
+  private static isBackgroundRemovalEnabled(): boolean {
+    return process.env.ENABLE_BACKGROUND_REMOVAL === "true";
+  }
+
   private static parseDataUrl(imageUrl: string): {
     mimeType: string;
     base64Data: string;
@@ -206,6 +210,17 @@ Output ONLY the image generation prompt, nothing else. Make it descriptive, spec
     const imageUrl = `data:${generatedMimeType};base64,${generatedImageBase64}`;
 
     let transparentImageUrl = imageUrl;
+
+    if (!this.isBackgroundRemovalEnabled()) {
+      console.warn(
+        "Skipping background removal (set ENABLE_BACKGROUND_REMOVAL=true to enable).",
+      );
+
+      return {
+        imageUrl: transparentImageUrl,
+        enhancedPrompt,
+      };
+    }
 
     try {
       console.log("Removing generated image background with IMG.LY...");
