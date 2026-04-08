@@ -37,6 +37,10 @@ serve(async (req) => {
     // Validate request data
     const validAmount = validateRequest.amount(amount);
 
+    if (shipping_address && !shipping_address.zip?.trim()) {
+      throw ErrorCodes.MISSING_REQUIRED_FIELDS("shipping_address.zip");
+    }
+
     // Build custom_id with metadata for webhook processing
     const customId = JSON.stringify({
       ...metadata,
@@ -62,7 +66,7 @@ serve(async (req) => {
             address2: shipping_address.address2,
             city: shipping_address.city,
             region: shipping_address.region,
-            zip: shipping_address.zip,
+            zip: shipping_address.zip.trim(),
             country: shipping_address.country,
           }
         : undefined,

@@ -16,6 +16,12 @@ interface ProcessOrbitalPalette {
   bar: string;
 }
 
+function roundTo(value: number, decimals = 4): number {
+  const factor = 10 ** decimals;
+
+  return Math.round(value * factor) / factor;
+}
+
 const ORBITAL_PALETTES: readonly ProcessOrbitalPalette[] = [
   {
     accent: "from-[#7C3AED]/50 via-[#D946EF]/25 to-transparent",
@@ -73,12 +79,12 @@ export function mapProcessStepIndexToOrbitalTransform(
 
   const horizontalSpacing = 420;
   const translateX = delta * horizontalSpacing;
-  const translateY = Math.sin(delta * 0.5) * 62;
+  const translateY = roundTo(Math.sin(delta * 0.5) * 62);
   const translateZ = 320 - clampedDelta * 220;
   const rotateY = delta * -14;
-  const scale = Math.max(0.7, 1 - clampedDelta * 0.1);
-  const opacity = Math.max(0.3, 1 - clampedDelta * 0.2);
-  const blur = Math.max(0, clampedDelta * 1.8);
+  const scale = roundTo(Math.max(0.7, 1 - clampedDelta * 0.1));
+  const opacity = roundTo(Math.max(0.3, 1 - clampedDelta * 0.2));
+  const blur = roundTo(Math.max(0, clampedDelta * 1.8));
   const zIndex = Math.max(1, 80 - clampedDelta * 10);
 
   return {

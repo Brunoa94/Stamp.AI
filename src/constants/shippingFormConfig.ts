@@ -107,6 +107,7 @@ export const shippingFormConfig: FieldRow[] = [
         id: "zip",
         label: "ZIP/Postal Code",
         type: "text",
+        required: true,
         gridColumn: "half",
       },
       {

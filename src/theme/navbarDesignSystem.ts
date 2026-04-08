@@ -22,7 +22,7 @@ export const navbarDesignSystem = {
   navigation: {
     container: `hidden lg:flex items-center justify-center gap-6 xl:gap-10`,
     link: {
-      base: `relative font-sans text-[13px] font-bold uppercase tracking-[0.15em] transition-colors after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full`,
+      base: `relative whitespace-nowrap font-sans text-[13px] font-bold uppercase tracking-[0.15em] transition-colors after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-current after:transition-all after:duration-300 hover:after:w-full`,
       active: `text-black dark:text-white`,
       inactive: `text-black/65 hover:text-black dark:text-white/70 dark:hover:text-white`,
     },

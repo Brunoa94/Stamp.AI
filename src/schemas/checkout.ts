@@ -11,7 +11,7 @@ export const ShippingAddressSchema = z.object({
   address1: z.string().min(1, "Address is required"),
   address2: z.string().optional(),
   city: z.string().min(1, "City is required"),
-  zip: z.string().optional(),
+  zip: z.string().min(1, "ZIP/Postal code is required"),
 });
 
 export type ShippingAddressT = z.infer<typeof ShippingAddressSchema>;
