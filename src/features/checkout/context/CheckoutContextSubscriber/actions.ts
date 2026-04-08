@@ -8,6 +8,7 @@ import { useValidatePromoCode } from "@/queries/promocodeQueries";
 import { OrderT } from "@/types/order";
 import type { CreatePrintifyOrderRequest, PrintifyLineItem } from "@/types/printifyOrder";
 import { validatePrintifyLineItem } from "@/types/printifyOrder";
+import { mapShippingAddressToPrintifyAddress } from "@/mappers/mapShippingAddressToPrintifyAddress";
 import { useUser } from "@/hooks/useAuth";
 import type {
   PaymentAlternativeMethodT,
@@ -141,99 +142,125 @@ export function useCheckoutSubscriberActions() {
      * Creates order, order items, and Printify order after payment succeeds, then clears the cart
      */
     handlePaymentSuccess: async (paymentIntent: PaymentIntentI, lineItems: PrintifyLineItem[]) => {
-      const state = store.getState();
+      const initialState = store.getState();
 
-      // First, create order and order_items in database
-      if (user && state.cart) {
-        try {
-          console.log("📝 Creating order from cart after successful payment...");
-          await createOrderFromCart.mutateAsync({ user, cart: state.cart, paymentStatus: "paid" });
-          console.log("✅ Order and order items created in database");
-        } catch (error) {
-          console.error("❌ Failed to create order from cart:", error);
-          // Don't fail checkout - payment already succeeded
-        }
-      }
-
-      // Build structured success details for the redesigned success screen
-      const successDetails: PaymentSuccessDetailsI = {
-        id: paymentIntent.id,
-        provider: state.selectedPaymentMethod,
-        status: "paid",
-        orderNumber: `#SD-${paymentIntent.id.slice(-6).toUpperCase()}`,
-        totalPaid: `$${state.orderAmount.toFixed(2)}`,
-        estimatedDelivery: "7–10 business days",
-        confirmationEmail: state.shippingAddress?.email ?? "",
-      };
-
-      // Then, update payment status to success
       store.setState({
-        ...state,
-        isProcessingPayment: false,
-        paymentStatus: "success",
-        message: `Payment successful! Payment ID: ${paymentIntent.id}`,
-        paymentSuccessDetails: successDetails,
-        paymentErrorDetails: null,
+        ...initialState,
+        isProcessingPayment: true,
+        message: "Payment confirmed. Finalizing your order...",
       });
 
-      // Next, create the Printify order with the line items
-      if (lineItems && lineItems.length > 0 && state.shippingAddress) {
-        try {
-          console.log("🚀 Creating Printify order after successful payment...");
-          console.log("📦 Line items received:", JSON.stringify(lineItems, null, 2));
-
-          // CRITICAL VALIDATION: Ensure Printify API requirements are met
-          const validatedLineItems = lineItems.map((item, index) => {
-            try {
-              return validatePrintifyLineItem(item, index);
-            } catch (error) {
-              console.error(`❌ Line item ${index} validation failed:`, error);
-              throw error;
-            }
-          });
-
-          console.log("✅ Validated line items:", JSON.stringify(validatedLineItems, null, 2));
-
-          const orderPayload: CreatePrintifyOrderRequest = {
-            line_items: validatedLineItems,
-            shipping_address: {
-              first_name: state.shippingAddress.first_name,
-              last_name: state.shippingAddress.last_name || "",
-              email: state.shippingAddress.email,
-              phone: state.shippingAddress.phone || "",
-              country: state.shippingAddress.country,
-              region: state.shippingAddress.region || "",
-              address1: state.shippingAddress.address1,
-              address2: state.shippingAddress.address2 || "",
-              city: state.shippingAddress.city,
-              zip: state.shippingAddress.zip || "",
-            },
-            is_test: state.testMode,
-            metadata: {
-              payment_intent_id: paymentIntent.id,
-              order_id: `order_${Date.now()}`,
-            },
-          };
-
-          console.log("📤 Sending to Printify:", JSON.stringify(orderPayload, null, 2));
-
-          await createPrintifyOrder.mutateAsync(orderPayload);
-          console.log("✅ Printify order created successfully");
-        } catch (error) {
-          console.error("❌ Failed to create Printify order:", error);
-          // Don't fail the entire checkout - payment already succeeded
-          // Just log the error for now
-        }
-      }
-
-      // Finally, clear the cart after successful payment
       try {
-        console.log("🧹 Clearing cart after successful payment...");
-        await clearCart.mutateAsync();
-        console.log("✅ Cart cleared successfully");
+        const state = store.getState();
+
+        if (!state.shippingAddress) {
+          throw new Error("Shipping address missing. Unable to finalize order.");
+        }
+
+        if (!lineItems || lineItems.length === 0) {
+          throw new Error("No order items found for Printify order creation.");
+        }
+
+        // First, create order and order_items in database
+        if (user && state.cart) {
+          console.log("📝 Creating order from cart after successful payment...");
+          await createOrderFromCart.mutateAsync({
+            user,
+            cart: state.cart,
+            paymentStatus: "paid",
+          });
+          console.log("✅ Order and order items created in database");
+        }
+
+        // Next, create the Printify order with validated line items
+        console.log("🚀 Creating Printify order after successful payment...");
+        console.log("📦 Line items received:", JSON.stringify(lineItems, null, 2));
+
+        const validatedLineItems = lineItems.map((item, index) => {
+          try {
+            return validatePrintifyLineItem(item, index);
+          } catch (error) {
+            console.error(`❌ Line item ${index} validation failed:`, error);
+            throw error;
+          }
+        });
+
+        console.log("✅ Validated line items:", JSON.stringify(validatedLineItems, null, 2));
+
+        const orderPayload: CreatePrintifyOrderRequest = {
+          line_items: validatedLineItems,
+          shipping_address: mapShippingAddressToPrintifyAddress(state.shippingAddress),
+          is_test: state.testMode,
+          metadata: {
+            payment_intent_id: paymentIntent.id,
+            order_id: `order_${Date.now()}`,
+          },
+        };
+
+        console.log("📤 Sending to Printify:", JSON.stringify(orderPayload, null, 2));
+
+        await createPrintifyOrder.mutateAsync(orderPayload);
+        console.log("✅ Printify order created successfully");
+
+        // Non-blocking cleanup
+        try {
+          console.log("🧹 Clearing cart after successful payment...");
+          await clearCart.mutateAsync();
+          console.log("✅ Cart cleared successfully");
+        } catch (error) {
+          console.error("❌ Failed to clear cart:", error);
+        }
+
+        const successState = store.getState();
+        const successDetails: PaymentSuccessDetailsI = {
+          id: paymentIntent.id,
+          provider: successState.selectedPaymentMethod,
+          status: "paid",
+          orderNumber: `#SD-${paymentIntent.id.slice(-6).toUpperCase()}`,
+          totalPaid: `$${successState.orderAmount.toFixed(2)}`,
+          estimatedDelivery: "7–10 business days",
+          confirmationEmail: successState.shippingAddress?.email ?? "",
+        };
+
+        store.setState({
+          ...successState,
+          isProcessingPayment: false,
+          paymentStatus: "success",
+          message: `Payment successful! Payment ID: ${paymentIntent.id}`,
+          paymentSuccessDetails: successDetails,
+          paymentErrorDetails: null,
+        });
       } catch (error) {
-        console.error("❌ Failed to clear cart:", error);
-        // Don't fail checkout if cart clearing fails - payment already succeeded
+        const errorState = store.getState();
+        const attemptedOn = new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+        const reasonMessage =
+          error instanceof Error
+            ? error.message
+            : "Payment was captured but order finalization failed.";
+
+        const errorDetails: PaymentErrorDetailsI = {
+          paymentId: `failed_${Date.now()}`,
+          orderNumber: `#SD-${Date.now().toString().slice(-6)}`,
+          amountDue: `$${errorState.orderAmount.toFixed(2)}`,
+          attemptedOn,
+          status: "Failed",
+          reasonTitle: "Reason",
+          reasonMessage,
+          availableMethods: ["paypal", "applepay", "stripe"] satisfies PaymentAlternativeMethodT[],
+        };
+
+        store.setState({
+          ...errorState,
+          isProcessingPayment: false,
+          paymentStatus: "error",
+          message: reasonMessage,
+          paymentSuccessDetails: null,
+          paymentErrorDetails: errorDetails,
+        });
       }
     },
 

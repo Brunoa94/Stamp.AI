@@ -21,7 +21,7 @@ interface UsePayPalButtonParamsI {
   onSuccess?: (
     details: PayPalSuccessDetailsI,
     lineItems: PrintifyLineItem[],
-  ) => void;
+  ) => void | Promise<void>;
   onError?: (error: string) => void;
 }
 
@@ -85,7 +85,7 @@ export function usePayPalButton({
           payerId: data.payerID,
         });
 
-        onSuccess?.(
+        await onSuccess?.(
           {
             id: data.orderID,
             captureId: captureData.captureId,

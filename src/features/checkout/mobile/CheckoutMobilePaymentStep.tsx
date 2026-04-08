@@ -41,7 +41,7 @@ export function CheckoutMobilePaymentStep() {
         <Checkbox
           id="mobile-testMode"
           checked={testMode}
-          onCheckedChange={(checked: boolean) => setTestMode(checked)}
+          onCheckedChange={(checked) => setTestMode(checked === true)}
         />
         <Label
           htmlFor="mobile-testMode"

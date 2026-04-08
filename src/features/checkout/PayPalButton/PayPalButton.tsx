@@ -20,7 +20,7 @@ interface Props {
   onSuccess?: (
     details: PayPalSuccessDetailsI,
     lineItems: PrintifyLineItem[],
-  ) => void;
+  ) => void | Promise<void>;
   onError?: (error: string) => void;
   disabled?: boolean;
 }

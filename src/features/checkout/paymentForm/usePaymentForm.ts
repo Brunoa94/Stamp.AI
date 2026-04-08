@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
-import { createClient } from "@/lib/supabase/client";
 import { ShippingAddressT } from "@/schemas/checkout";
 import { mapShippingAddressToBillingDetails } from "@/mappers/mapShippingAddressToBillingDetails";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
+import { useCreatePaymentIntent } from "@/queries";
 
 interface UsePaymentFormProps {
   amount: number;
@@ -44,11 +44,21 @@ export function usePaymentForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedTestMethod, setSelectedTestMethod] = useState<string>("visa");
-
-  const supabase = createClient();
+  const isTestMode = testMode === true;
+  const createPaymentIntent = useCreatePaymentIntent();
 
   const processPayment = async () => {
-    if (!stripe || (!elements && !testMode)) {
+    if (!stripe) {
+      const notReadyMessage = "Stripe is not ready yet. Please wait a moment and try again.";
+      setError(notReadyMessage);
+      onError?.(notReadyMessage);
+      return;
+    }
+
+    if (!elements && !isTestMode) {
+      const missingElementMessage = "Payment form is not ready. Please refresh the page and try again.";
+      setError(missingElementMessage);
+      onError?.(missingElementMessage);
       return;
     }
 
@@ -56,16 +66,6 @@ export function usePaymentForm({
     setError(null);
 
     try {
-      // Check if user is authenticated
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-
-      if (!session) {
-        throw new Error("You must be logged in to complete checkout");
-      }
-
       const requestBody: any = {
         amount: amount,
         currency: "usd",
@@ -76,7 +76,7 @@ export function usePaymentForm({
         },
       };
 
-      if (testMode) {
+      if (isTestMode) {
         const testPaymentMethod =
           TEST_PAYMENT_METHODS[
             selectedTestMethod as keyof typeof TEST_PAYMENT_METHODS
@@ -85,22 +85,11 @@ export function usePaymentForm({
         requestBody.confirm = true;
       }
 
-      const { data: paymentData, error: paymentError } =
-        await supabase.functions.invoke("create-payment-intent", {
-          body: requestBody,
-        });
-
-      if (paymentError) {
-        throw new Error(paymentError.message);
-      }
-
-      if (!paymentData) {
-        throw new Error("No payment data received");
-      }
+      const paymentData = await createPaymentIntent.mutateAsync(requestBody);
 
       const { clientSecret, paymentIntentId } = paymentData;
 
-      if (testMode && requestBody.confirm) {
+      if (isTestMode && requestBody.confirm) {
         onSuccess?.({ id: paymentIntentId, status: "succeeded" }, lineItems);
         return;
       }
@@ -150,7 +139,7 @@ export function usePaymentForm({
   };
 
   // Handle PayPal success - convert to same format as Stripe
-  const handlePayPalSuccess = (
+  const handlePayPalSuccess = async (
     details: { id: string; captureId: string; status: string; payerEmail?: string },
     items: PrintifyLineItem[]
   ) => {
