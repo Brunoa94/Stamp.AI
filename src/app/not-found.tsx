@@ -1,4 +1,3 @@
-import { FluidInkDriftBackground } from "@/features/ui/fluid-ink-drift-background";
 import { PageDividers } from "@/features/ui/page-dividers";
 import { notFoundTheme } from "@/theme/components";
 import { HelpCircle } from "lucide-react";
@@ -6,7 +5,6 @@ import { HelpCircle } from "lucide-react";
 export default function NotFound() {
   return (
     <section className={notFoundTheme.page} aria-label="Page not found">
-      <FluidInkDriftBackground />
       <PageDividers />
 
       <div className={notFoundTheme.wrapper}>

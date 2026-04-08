@@ -8,7 +8,6 @@ import {
 } from "./components";
 import { CheckoutSelectors, useCheckoutSubscriberActions } from "./context";
 
-import { FluidInkDriftBackground } from "@/features/ui/fluid-ink-drift-background";
 import { PageDividers } from "@/features/ui/page-dividers";
 import { CheckoutHeaderSection } from "./sections/CheckoutHeaderSection";
 import { ShippingSection } from "./sections/ShippingSection";
@@ -65,7 +64,6 @@ export function CheckoutContent() {
   // Background decoration (fixed, shared by both layouts)
   return (
     <>
-      <FluidInkDriftBackground />
       <PageDividers />
 
       {/* ── Mobile layout (below md) ── */}

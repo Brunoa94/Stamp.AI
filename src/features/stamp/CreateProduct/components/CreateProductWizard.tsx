@@ -7,7 +7,6 @@ import { CreateProductSubscriberProvider } from "../context/CreateProductContext
 import { CreateProductSelectors } from "../context/selectors";
 import { CreateProductSidebar } from "./CreateProductSidebar";
 import { MobileStepNav } from "../mobile/MobileStepNav";
-import { FluidInkDriftBackground } from "@/features/ui/fluid-ink-drift-background";
 import { useWizardProductFormHandlers } from "../hooks/useWizardProductFormHandlers";
 import { WizardCollapsedOverlay } from "./WizardCollapsedOverlay";
 import {
@@ -54,11 +53,6 @@ function CreateProductWizardContent() {
 
   return (
     <>
-      {/* Fluid ink background – mobile only; desktop already has page-level bg */}
-      <div className="md:hidden">
-        <FluidInkDriftBackground />
-      </div>
-
       <div
         id="design-pipeline"
         data-state={isExpanded ? "expanded" : "collapsed"}

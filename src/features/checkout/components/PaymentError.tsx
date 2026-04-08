@@ -4,7 +4,6 @@ import Link from "next/link";
 import { AlternativePaymentMethods } from "@/features/checkout/components/AlternativePaymentMethods";
 import { PaymentResultDetailsGrid } from "@/features/checkout/components/PaymentResultDetailsGrid";
 import { Button } from "@/features/ui/button";
-import { FluidInkDriftBackground } from "@/features/ui/fluid-ink-drift-background";
 import { PageDividers } from "@/features/ui/page-dividers";
 import { paymentErrorTheme } from "@/theme/components";
 import type {
@@ -25,7 +24,6 @@ const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
 
   return (
     <div className={paymentErrorTheme.page}>
-      <FluidInkDriftBackground />
       <PageDividers />
 
       <div className={paymentErrorTheme.wrapper}>

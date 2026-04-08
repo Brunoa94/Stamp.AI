@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import { Button } from "@/features/ui/button";
 import { PaymentResultDetailsGrid } from "@/features/checkout/components/PaymentResultDetailsGrid";
-import { FluidInkDriftBackground } from "@/features/ui/fluid-ink-drift-background";
 import { PageDividers } from "@/features/ui/page-dividers";
 import { paymentSuccessTheme } from "@/theme/components";
 import type { PaymentSuccessDetailsI } from "@/types/payment";
@@ -21,7 +20,6 @@ const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
 
   return (
     <div className={paymentSuccessTheme.page}>
-      <FluidInkDriftBackground />
       <PageDividers />
 
       <div className={paymentSuccessTheme.wrapper}>
