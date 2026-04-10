@@ -65,9 +65,13 @@ export function useMollieButton({
 
       // Store payment ID in sessionStorage for return page
       if (typeof window !== "undefined") {
+        const cartIdFromUrl = new URLSearchParams(window.location.search).get("cartId");
         sessionStorage.setItem("mollie_payment_id", response.paymentId);
         sessionStorage.setItem("mollie_line_items", JSON.stringify(lineItems));
         sessionStorage.setItem("mollie_shipping_address", JSON.stringify(shippingAddress));
+        if (cartIdFromUrl) {
+          sessionStorage.setItem("mollie_cart_id", cartIdFromUrl);
+        }
       }
 
       // Notify parent and redirect

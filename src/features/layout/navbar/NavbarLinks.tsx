@@ -4,12 +4,17 @@ import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { navbarTheme } from "@/theme/components";
 import { ViewTransitionLink } from "@/features/ui/view-transition-link";
+import { useUser } from "@/queries/authQueries";
 
 export function NavbarLinks() {
   const pathname = usePathname();
   const isOrdersActive = pathname === "/orders";
   const isStampActive = pathname === "/stamp";
   const isDashboardActive = pathname === "/dashboard";
+  const { data: user } = useUser();
+  const displayName =
+    user?.user_metadata?.first_name || user?.email?.split("@")[0] || null;
+  const stampLabel = displayName ? `Stamp It, ${displayName}!` : "Stamp It!";
 
   return (
     <div className={navbarTheme.navigation.container}>
@@ -34,7 +39,7 @@ export function NavbarLinks() {
             isStampActive && navbarTheme.navigation.stampButtonActive,
           )}
         >
-          Stamp It!
+          {stampLabel}
         </span>
       </ViewTransitionLink>
 

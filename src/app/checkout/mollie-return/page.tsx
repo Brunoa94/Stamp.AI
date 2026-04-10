@@ -5,10 +5,19 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/features/ui/button";
-import { FluidInkDriftBackground } from "@/features/ui/fluid-ink-drift-background";
 import { PageDividers } from "@/features/ui/page-dividers";
 import { PaymentSuccess, PaymentError } from "@/features/checkout/components";
 import { MollieService } from "@/services/mollieService";
+import { OrderService } from "@/services/orderService";
+import { PrintifyService } from "@/services/printifyService";
+import { CartService } from "@/services/cartService";
+import { createClient } from "@/lib/supabase/client";
+import type {
+  CreatePrintifyOrderRequest,
+  PrintifyLineItem,
+  PrintifyShippingAddress,
+} from "@/types/printifyOrder";
+import { validatePrintifyLineItem } from "@/types/printifyOrder";
 import {
   isMolliePaymentPaid,
   isMolliePaymentFailed,
@@ -16,6 +25,8 @@ import {
 } from "@/lib/mollie";
 import type { MolliePaymentStatus } from "@/lib/mollie";
 import { paymentSuccessTheme, paymentErrorTheme } from "@/theme/components";
+import type { ShippingAddressT } from "@/schemas/checkout";
+import { UserI } from "@/types/auth";
 
 type PageStatus = "loading" | "success" | "failed" | "pending" | "error";
 
@@ -37,6 +48,11 @@ export default function MollieReturnPage() {
       try {
         // Get payment ID from sessionStorage (saved before redirect)
         const storedPaymentId = sessionStorage.getItem("mollie_payment_id");
+        const storedLineItems = sessionStorage.getItem("mollie_line_items");
+        const storedShippingAddress = sessionStorage.getItem(
+          "mollie_shipping_address",
+        );
+        const storedCartId = sessionStorage.getItem("mollie_cart_id");
 
         if (!storedPaymentId) {
           setStatus("error");
@@ -54,14 +70,104 @@ export default function MollieReturnPage() {
         setPaymentStatus(result.status);
 
         if (isMolliePaymentPaid(result.status)) {
+          if (!storedLineItems || !storedShippingAddress) {
+            throw new Error(
+              "Missing checkout context to finalize order after payment.",
+            );
+          }
+
+          const parsedLineItems = JSON.parse(
+            storedLineItems,
+          ) as PrintifyLineItem[];
+          const parsedShippingAddress = JSON.parse(
+            storedShippingAddress,
+          ) as ShippingAddressT;
+
+          if (!Array.isArray(parsedLineItems) || parsedLineItems.length === 0) {
+            throw new Error(
+              "No order items found to finalize Mollie checkout.",
+            );
+          }
+
+          const validatedLineItems = parsedLineItems.map((item, index) =>
+            validatePrintifyLineItem(item, index),
+          );
+
+          const shippingAddress: PrintifyShippingAddress = {
+            first_name: parsedShippingAddress.first_name,
+            last_name: parsedShippingAddress.last_name || "",
+            email: parsedShippingAddress.email,
+            phone: parsedShippingAddress.phone || "",
+            country: parsedShippingAddress.country,
+            region: parsedShippingAddress.region || "",
+            address1: parsedShippingAddress.address1,
+            address2: parsedShippingAddress.address2 || "",
+            city: parsedShippingAddress.city,
+            zip: parsedShippingAddress.zip || "",
+          };
+
+          // Keep behavior aligned with Stripe finalization: create local order when cart context is available.
+          if (storedCartId) {
+            try {
+              const supabase = createClient();
+              const {
+                data: { user },
+              } = await supabase.auth.getUser();
+
+              if (user) {
+                const cart = await CartService.getCart(storedCartId);
+                await OrderService.createOrderFromCart({
+                  user: user as UserI,
+                  cart,
+                  paymentStatus: "paid",
+                });
+              }
+            } catch (orderError) {
+              console.error(
+                "Failed to create local order from cart after Mollie payment:",
+                orderError,
+              );
+              throw new Error(
+                "Payment confirmed, but order creation failed. Please contact support.",
+              );
+            }
+          }
+
+          const printifyPayload: CreatePrintifyOrderRequest = {
+            line_items: validatedLineItems,
+            shipping_address: shippingAddress,
+            is_test: false,
+            metadata: {
+              payment_intent_id: storedPaymentId,
+              order_id: `order_${Date.now()}`,
+              provider: "mollie",
+            },
+          };
+
+          await PrintifyService.createPrintifyOrder(printifyPayload);
+
+          if (storedCartId) {
+            try {
+              await CartService.clearCart(storedCartId);
+            } catch (cartError) {
+              console.error(
+                "Failed to clear cart after Mollie payment:",
+                cartError,
+              );
+            }
+          }
+
           setStatus("success");
+
           // Clear sessionStorage
           sessionStorage.removeItem("mollie_payment_id");
           sessionStorage.removeItem("mollie_line_items");
           sessionStorage.removeItem("mollie_shipping_address");
+          sessionStorage.removeItem("mollie_cart_id");
         } else if (isMolliePaymentFailed(result.status)) {
           setStatus("failed");
           sessionStorage.removeItem("mollie_payment_id");
+          sessionStorage.removeItem("mollie_cart_id");
         } else if (isMolliePaymentPending(result.status)) {
           setStatus("pending");
         }
@@ -95,7 +201,6 @@ export default function MollieReturnPage() {
   if (status === "loading") {
     return (
       <div className={paymentSuccessTheme.page}>
-        <FluidInkDriftBackground />
         <PageDividers />
         <div className={paymentSuccessTheme.wrapper}>
           <section
@@ -169,7 +274,6 @@ export default function MollieReturnPage() {
   if (status === "pending") {
     return (
       <div className={paymentSuccessTheme.page}>
-        <FluidInkDriftBackground />
         <PageDividers />
         <div className={paymentSuccessTheme.wrapper}>
           <section
@@ -212,7 +316,6 @@ export default function MollieReturnPage() {
   // Error state
   return (
     <div className={paymentErrorTheme.page}>
-      <FluidInkDriftBackground />
       <PageDividers />
       <div className={paymentErrorTheme.wrapper}>
         <section className={paymentErrorTheme.card} aria-label="Error">

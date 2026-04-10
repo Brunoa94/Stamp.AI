@@ -16,6 +16,7 @@ export const MOCK_STATE: CreateProductContextState = {
   // Image generation state
   isGenerating: false,
   generatedResult: null,
+  generatedHistory: [],
   generationError: null,
 
   // Product creation state

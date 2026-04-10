@@ -1,4 +1,5 @@
 import { ShieldCheck } from "lucide-react";
+import { SectionHeader } from "@/features/homepage/components/SectionHeader";
 import { paymentMethods } from "@/features/homepage/constants/homepageContent";
 import { mapPaymentMethodIndexToVisual } from "@/features/homepage/mappers/securityCardMapper";
 
@@ -22,15 +23,13 @@ export function SecuritySection() {
       />
 
       <div className="relative mx-auto w-full max-w-6xl px-6 ">
-        <div className="mb-12 text-center">
-          <span className="mb-4 block text-[12px] font-bold uppercase tracking-[0.2em] text-slate-400">
-            05 / Trust & Verification
-          </span>
-          <h2 className="font-heading text-3xl uppercase tracking-tight text-slate-900 md:text-4xl">
-            Secure payments & buyer protection
-          </h2>
-          <div className="mt-6 mx-auto h-1.5 w-24 rounded-full bg-linear-to-r from-[#7C3AED] via-[#FF8C42] to-[#06B6D4]" />
-        </div>
+        <SectionHeader
+          className="mb-8"
+          eyebrow="05 / Trust & Verification"
+          title="Secure payments & buyer protection"
+          titleSize="xl"
+          descriptionClassName="mt-5 max-w-3xl text-lg font-medium leading-relaxed text-slate-500"
+        />
 
         <div className="mb-12 grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {paymentMethods.map((method, idx) => {

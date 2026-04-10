@@ -49,7 +49,7 @@ export function PaymentSection() {
         <Checkbox
           id="testMode"
           checked={testMode}
-          onCheckedChange={(checked: boolean) => setTestMode(checked)}
+          onCheckedChange={(checked) => setTestMode(checked === true)}
         />
         <Label
           htmlFor="testMode"

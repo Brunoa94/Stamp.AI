@@ -25,6 +25,7 @@ import { TestimonialsSection } from "@/features/homepage/sections/TestimonialsSe
 import { useSmoothScroll } from "@/features/homepage/hooks/useSmoothScroll";
 
 export default function Home() {
+  const processSectionIndex = SECTION_IDS.indexOf("process");
   const { data: tshirtProducts = [], isLoading: isProductsLoading } =
     useTshirtProducts();
   const {
@@ -66,6 +67,7 @@ export default function Home() {
         sectionLabels={SECTION_LABELS}
         currentSectionIndex={currentSectionIndex}
         isAtFooter={isAtFooter}
+        isHidden={currentSectionIndex === processSectionIndex}
         onScrollToSection={scrollToSection}
         onScrollToFooter={scrollToFooter}
       />

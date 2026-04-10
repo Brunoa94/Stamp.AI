@@ -5,7 +5,7 @@ import Link from "next/link";
 import { PAYMENT_CONFIRM_METHOD_UI } from "@/constants/payment";
 import { PayPalButton } from "../PayPalButton/PayPalButton";
 import { MollieButton } from "../MollieButton";
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { buildPrintifyLineItems } from "../mappers/printifyLineItemsMapper";
 import { useCheckoutSubscriberActions } from "../context";
 import type { PayPalSuccessDetailsI } from "../PayPalButton/usePayPalButton";
@@ -36,6 +36,21 @@ export const CompleteOrderButton = ({
   const hasShippingAddress = !!shippingAddress;
   const selectedUi = PAYMENT_CONFIRM_METHOD_UI[selectedPaymentMethod];
 
+  const handlePayPalSuccessCallback = useCallback(
+    async (details: PayPalSuccessDetailsI, items: typeof lineItems) => {
+      await handlePaymentSuccess(
+        {
+          id: details.id,
+          status: details.status,
+          paypal_capture_id: details.captureId,
+          paypal_payer_email: details.payerEmail,
+        },
+        items,
+      );
+    },
+    [handlePaymentSuccess],
+  );
+
   return (
     <div className="pt-4">
       <div className="flex flex-col gap-3">
@@ -64,17 +79,7 @@ export const CompleteOrderButton = ({
             shippingAddress={shippingAddress}
             orderId={checkoutOrderId || undefined}
             testMode={testMode}
-            onSuccess={(details: PayPalSuccessDetailsI, items) => {
-              handlePaymentSuccess(
-                {
-                  id: details.id,
-                  status: details.status,
-                  paypal_capture_id: details.captureId,
-                  paypal_payer_email: details.payerEmail,
-                },
-                items,
-              );
-            }}
+            onSuccess={handlePayPalSuccessCallback}
             onError={handlePaymentError}
             disabled={isProcessingPayment}
           />

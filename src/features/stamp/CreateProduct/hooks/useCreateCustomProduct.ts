@@ -50,7 +50,7 @@ export function useCreateProductAndAddToCart() {
             product_name: product.title || `${tshirtName} - Custom Design`,
             quantity: 1,
             unit_price: variantPrice,
-            custom_image_url: imageUrl,
+            custom_image_url: product.uploaded_image_preview_url || imageUrl,
             variant_id: firstEnabledVariant?.id?.toString() || null,
           },
           {

@@ -6,7 +6,6 @@ import { canCancelOrder, canProceedToPayment } from "../utils/lifecycleRules";
 interface OrderTableActionsProps {
   order: OrderWithItemsT;
   onViewOrder: (order: OrderWithItemsT) => void;
-  onReorder: (order: OrderWithItemsT) => void;
   onCancelOrder?: (order: OrderWithItemsT) => void;
   onProceedToPayment?: (order: OrderWithItemsT) => void;
 }
@@ -14,7 +13,6 @@ interface OrderTableActionsProps {
 export function OrderTableActions({
   order,
   onViewOrder,
-  onReorder,
   onCancelOrder,
   onProceedToPayment,
 }: OrderTableActionsProps) {
@@ -32,23 +30,6 @@ export function OrderTableActions({
       >
         VIEW
       </Button>
-      <Button
-        onClick={() => onReorder(order)}
-        variant="outline"
-        size="default"
-        className={ordersTheme.table.reorderButton}
-      >
-        REORDER
-      </Button>
-      {canProceed ? (
-        <Button
-          onClick={() => onProceedToPayment?.(order)}
-          variant="outline"
-          size="default"
-        >
-          PAY NOW
-        </Button>
-      ) : null}
       {isCancelled ? (
         <span className="inline-flex items-center justify-center h-10 px-4 text-sm font-medium text-muted-foreground max-w-23.25">
           CANCELED

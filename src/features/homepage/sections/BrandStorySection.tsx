@@ -1,4 +1,5 @@
 import { trustHighlights } from "@/features/homepage/constants/homepageContent";
+import { SectionHeader } from "@/features/homepage/components/SectionHeader";
 import { mapTrustHighlightIndexToCardVisual } from "@/features/homepage/mappers/brandStoryCardMapper";
 
 export function BrandStorySection() {
@@ -21,15 +22,13 @@ export function BrandStorySection() {
       />
 
       <div className="relative mx-auto w-full max-w-6xl px-6 ">
-        <div className="mb-12">
-          <span className="mb-4 block text-[12px] font-bold uppercase tracking-[0.2em] text-slate-400">
-            02 / About Stamp.AI
-          </span>
-          <h2 className="font-heading text-3xl uppercase text-slate-900 md:text-4xl">
-            Democratizing Design Precision.
-          </h2>
-          <div className="mt-6 h-1.5 w-24 rounded-full bg-linear-to-r from-[#D946EF] via-[#7C3AED] to-[#06B6D4]" />
-        </div>
+        <SectionHeader
+          className="mb-8"
+          eyebrow="02 / About Stamp.AI"
+          title="Democratizing Design Precision."
+          titleSize="xl"
+          descriptionClassName="mt-5 max-w-3xl text-lg font-medium leading-relaxed text-slate-500"
+        />
 
         <div className="flex flex-col items-center gap-12 lg:flex-row">
           <div className="glass-card relative min-h-80 w-full overflow-hidden rounded-xl lg:w-1/2">

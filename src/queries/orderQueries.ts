@@ -5,6 +5,7 @@ import { CreateOrderT, UpdateOrderT } from "@/types/order";
 import { CartWithItems } from "@/types/cart";
 import { UserI } from "@/types/auth";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { ShippingAddressT } from "@/schemas/checkout";
 
 /**
  * Fetch a single order by ID
@@ -208,7 +209,7 @@ export function useCreateOrderFromCart() {
       paymentStatus?: string;
       orderStatus?: string;
       paymentMethod?: string;
-      shippingAddress?: Record<string, unknown>;
+      shippingAddress?: ShippingAddressT;
     }) => {
       if (!user) {
         throw new Error("User not authenticated");

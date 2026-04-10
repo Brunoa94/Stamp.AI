@@ -121,6 +121,9 @@ serve(async (req) => {
     } else if (candidateOrderId) {
       console.warn("Skipping order revalidation because order_id is not a UUID:", candidateOrderId);
     }
+    if (shipping_address && !shipping_address.zip?.trim()) {
+      throw ErrorCodes.MISSING_REQUIRED_FIELDS("shipping_address.zip");
+    }
 
     // Build custom_id with metadata for webhook processing
     const customId = JSON.stringify({
@@ -147,8 +150,8 @@ serve(async (req) => {
             address2: shipping_address.address2,
             city: shipping_address.city,
             region: shipping_address.region,
-            zip: normalizedZip,
-            country: normalizedCountryCode,
+            zip: shipping_address.zip.trim(),
+            country: shipping_address.country,
           }
         : undefined,
       returnUrl: `${siteUrl}/checkout/success`,

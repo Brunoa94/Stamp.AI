@@ -6,8 +6,24 @@ import {
   NavigationSubscriberContext,
   FormSubscriberContext,
 } from "./CreateProductContextSubscriber";
-import { WorkflowStep } from "./types";
+import { GeneratedHistoryItem, WorkflowStep } from "./types";
 import type { ArtStyleId } from "../utils/promptCustomization";
+
+const STAMP_GENERATED_HISTORY_STORAGE_KEY =
+  "stamp:create-product:generated-history";
+
+function persistGeneratedHistory(history: GeneratedHistoryItem[]) {
+  if (typeof window === "undefined") return;
+
+  try {
+    window.localStorage.setItem(
+      STAMP_GENERATED_HISTORY_STORAGE_KEY,
+      JSON.stringify(history),
+    );
+  } catch {
+    // Ignore storage failures (private mode/quota).
+  }
+}
 
 /**
  * Hook for create product action handlers.
@@ -107,12 +123,56 @@ export function useCreateProductSubscriberActions() {
 
       /** Handle successful image generation */
       handleGenerationSuccess: (result: IImageGenerationResult) => {
+        const current = formStore.getState();
+        const historyEntry: GeneratedHistoryItem = {
+          ...result,
+          id:
+            typeof crypto !== "undefined" && "randomUUID" in crypto
+              ? crypto.randomUUID()
+              : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          createdAt: Date.now(),
+        };
+
+        const dedupedHistory = [
+          historyEntry,
+          ...current.generatedHistory.filter(
+            (item) => item.imageUrl !== result.imageUrl,
+          ),
+        ].slice(0, 20);
+
         navStore.setState({ ...navStore.getState(), currentStep: "results" });
         formStore.setState({
-          ...formStore.getState(),
+          ...current,
           isGenerating: false,
           generatedResult: result,
+          generatedHistory: dedupedHistory,
         });
+        persistGeneratedHistory(dedupedHistory);
+      },
+
+      /** Re-select a previously generated image from local history */
+      handleSelectGeneratedResult: (item: GeneratedHistoryItem) => {
+        const navState = navStore.getState();
+        const formState = formStore.getState();
+
+        formStore.setState({
+          ...formState,
+          generatedResult: {
+            imageUrl: item.imageUrl,
+            enhancedPrompt: item.enhancedPrompt,
+            originalPrompt: item.originalPrompt,
+          },
+          generationError: null,
+        });
+
+        if (
+          navState.currentStep === "upload" ||
+          navState.currentStep === "form" ||
+          navState.currentStep === "synthesis" ||
+          navState.currentStep === "review"
+        ) {
+          navStore.setState({ ...navState, currentStep: "results" });
+        }
       },
 
       /** Handle image generation error */
@@ -231,6 +291,7 @@ export function useCreateProductSubscriberActions() {
           ...formState,
           isGenerating: false,
           generatedResult: null,
+          generatedHistory: [],
           generationError: null,
           showPromptCustomization: false,
           preservation: 80,
@@ -243,6 +304,9 @@ export function useCreateProductSubscriberActions() {
           uploadedImage: null,
           prompt: "",
         });
+        if (typeof window !== "undefined") {
+          window.localStorage.removeItem(STAMP_GENERATED_HISTORY_STORAGE_KEY);
+        }
       },
 
       /** Handle direct step navigation (from sidebar / mobile nav) */

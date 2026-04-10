@@ -10,7 +10,7 @@ import { useState } from "react";
 import { Check } from "lucide-react";
 import useScrollToSection from "@/hooks/useScrollToSection";
 import { usePrefetchTshirtProducts } from "@/queries/productQueries";
-
+import { GeneratedHistoryRail } from "./GeneratedHistoryRail";
 interface IResultsSectionProps {
   ref?: React.Ref<HTMLElement>;
 }
@@ -52,6 +52,10 @@ const ResultsSection = ({ ref }: IResultsSectionProps) => {
         currentDot={2}
         totalDots={5}
       />
+
+      <div className="px-4 pt-2 sm:px-12 sm:pt-4">
+        <GeneratedHistoryRail />
+      </div>
 
       {/* 3D Preview Area */}
       <div className="flex-1 px-4 sm:px-12 pb-6 sm:pb-10 flex justify-center">

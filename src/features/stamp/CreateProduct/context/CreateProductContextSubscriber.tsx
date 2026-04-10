@@ -7,10 +7,12 @@ import {
   useState,
   useEffect,
 } from "react";
-import { NavigationState, FormState } from "./types";
+import { useSearchParams } from "next/navigation";
+import { GeneratedHistoryItem, NavigationState, FormState } from "./types";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/with-selector";
 import { shallow } from "zustand/shallow";
 import { useImageGenerationForm } from "../hooks/useImageGenerationForm";
+import { useHydrateFromOrderReuse } from "../hooks/useHydrateFromOrderReuse";
 
 // ---------------------------------------------------------------------------
 // Generic external store factory
@@ -53,6 +55,7 @@ const INITIAL_FORM: FormState = {
   selectedStyle: "na",
   isGenerating: false,
   generatedResult: null,
+  generatedHistory: [],
   generationError: null,
   selectedTshirt: null,
   selectedColor: null,
@@ -60,6 +63,41 @@ const INITIAL_FORM: FormState = {
   isCreatingProduct: false,
   createdProduct: null,
 };
+
+const STAMP_GENERATED_HISTORY_STORAGE_KEY =
+  "stamp:create-product:generated-history";
+
+function readGeneratedHistoryFromStorage(): GeneratedHistoryItem[] {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const raw = window.localStorage.getItem(
+      STAMP_GENERATED_HISTORY_STORAGE_KEY,
+    );
+    if (!raw) return [];
+
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed
+      .filter((item): item is GeneratedHistoryItem => {
+        if (!item || typeof item !== "object") return false;
+        const candidate = item as Partial<GeneratedHistoryItem>;
+
+        return (
+          typeof candidate.id === "string" &&
+          typeof candidate.createdAt === "number" &&
+          typeof candidate.imageUrl === "string" &&
+          typeof candidate.enhancedPrompt === "string" &&
+          typeof candidate.originalPrompt === "string"
+        );
+      })
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, 20);
+  } catch {
+    return [];
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Contexts
@@ -139,6 +177,8 @@ interface CreateProductProviderProps {
 export function CreateProductSubscriberProvider({
   children,
 }: CreateProductProviderProps) {
+  const searchParams = useSearchParams();
+
   // Each store is created once and its reference never changes — stable context values.
   const [navigationStore] = useState(() => createStore(INITIAL_NAVIGATION));
   const [formStore] = useState(() => createStore(INITIAL_FORM));
@@ -151,6 +191,47 @@ export function CreateProductSubscriberProvider({
     if (!current.form) {
       formStore.setState({ ...current, form });
     }
+  }, [form, formStore]);
+
+  useEffect(() => {
+    const current = formStore.getState();
+    const generatedHistory = readGeneratedHistoryFromStorage();
+
+    if (generatedHistory.length > 0) {
+      formStore.setState({
+        ...current,
+        generatedHistory,
+        generatedResult: current.generatedResult ?? generatedHistory[0],
+      });
+    }
+
+    return () => {
+      if (typeof window !== "undefined") {
+        window.localStorage.removeItem(STAMP_GENERATED_HISTORY_STORAGE_KEY);
+      }
+    };
+  }, [formStore]);
+
+  useHydrateFromOrderReuse({
+    searchParams,
+    formStore,
+    navigationStore,
+    storageKey: STAMP_GENERATED_HISTORY_STORAGE_KEY,
+  });
+
+  useEffect(() => {
+    const current = formStore.getState();
+    if (!form || !current.uploadedImage) return;
+
+    const formImage = form.getValues("image");
+    if (formImage instanceof File && formImage === current.uploadedImage)
+      return;
+
+    form.setValue("image", current.uploadedImage, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    });
   }, [form, formStore]);
 
   // Keep uploadedImage and prompt in sync with RHF field values.

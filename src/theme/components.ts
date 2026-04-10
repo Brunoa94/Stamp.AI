@@ -329,8 +329,8 @@ export const componentThemes = {
       selectWrapper: `relative min-w-[160px]`,
       select: `w-full px-4 py-2.5 bg-white/50 border border-slate-200 rounded text-sm font-bold text-slate-700 focus:ring-2 focus:ring-[#7C3AED]/20 outline-none appearance-none cursor-pointer`,
       statusLabel: `text-xs md:text-sm font-bold text-slate-400 uppercase tracking-widest mr-2`,
-      chipBase: `px-4 py-2 rounded-full text-sm font-bold border border-slate-200 hover:border-[#7C3AED] transition-all`,
-      chipActive: `px-4 py-2 rounded-full text-sm font-bold border border-[#7C3AED] bg-[#7C3AED] text-white`,
+      chipBase: `px-4 py-2 rounded-lg text-sm font-bold border border-slate-200 hover:border-[#7C3AED] transition-all`,
+      chipActive: `px-4 py-2 rounded-lg text-sm font-bold border border-[#7C3AED] bg-[#7C3AED] text-white`,
     },
     table: {
       container: `glass-card rounded-xl overflow-hidden border border-white/60`,
@@ -360,6 +360,11 @@ export const componentThemes = {
       actions: `flex items-center justify-end gap-3`,
       viewButton: `px-5 py-2.5 bg-[#7C3AED] text-white text-sm font-bold rounded hover:bg-[#6D28D9] transition-all`,
       reorderButton: `px-5 py-2.5 bg-white border border-slate-200 text-slate-600 text-sm font-bold rounded hover:bg-slate-50 transition-all`,
+      moreActionsTrigger: `h-8 px-2.5 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500 hover:text-[#7C3AED] hover:bg-[#7C3AED]/10 rounded-md`,
+      moreActionsRow: `bg-slate-50/70`,
+      moreActionsCell: `whitespace-normal! px-8 pt-0 pb-6`,
+      moreActionsPanel: `mt-2 flex flex-wrap items-center gap-2 rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-[0_8px_18px_-12px_rgba(15,23,42,0.4)]`,
+      moreActionsButton: `h-9 rounded-md border border-slate-200 bg-white px-3 text-[11px] font-bold uppercase tracking-[0.08em] text-slate-700 hover:border-[#7C3AED]/40 hover:text-[#7C3AED]`,
     },
     pagination: {
       container: `px-8 py-6 bg-slate-50/50 border-t border-slate-200 flex items-center justify-between -mt-4 pt-8 -z-1 rounded-lg`,
@@ -390,8 +395,8 @@ export const componentThemes = {
       selectWrapper: `relative`,
       select: `w-full px-4 py-2 bg-white/50 border border-slate-200 rounded text-xs font-bold text-slate-700 focus:ring-2 focus:ring-[#7C3AED]/20 outline-none appearance-none cursor-pointer`,
       chipsRow: `flex gap-2 overflow-x-auto pb-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x`,
-      chipBase: `shrink-0 snap-start px-4 py-1.5 rounded-full text-[10px] font-bold border border-slate-200 bg-white/50`,
-      chipActive: `shrink-0 snap-start px-4 py-1.5 rounded-full text-[10px] font-bold border bg-[#7C3AED] text-white border-[#7C3AED]`,
+      chipBase: `shrink-0 snap-start px-4 py-1.5 rounded-lg text-[10px] font-bold border border-slate-200 bg-white/50`,
+      chipActive: `shrink-0 snap-start px-4 py-1.5 rounded-lg text-[10px] font-bold border bg-[#7C3AED] text-white border-[#7C3AED]`,
     },
     mobilePagination: {
       container: `mt-4 flex items-center justify-between glass-card rounded-xl p-2.5 md:hidden`,

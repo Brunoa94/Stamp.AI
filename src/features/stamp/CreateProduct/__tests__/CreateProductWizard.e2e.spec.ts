@@ -397,3 +397,130 @@ test.describe("Accessibility", () => {
     await expect(description).toBeVisible();
   });
 });
+
+// ---------------------------------------------------------------------------
+// Suite: Reuse image flow from Orders -> Stamp
+// ---------------------------------------------------------------------------
+
+test.describe("Reuse image from orders", () => {
+  test("clicking 'Use same image' opens /stamp with upload step hydrated", async ({
+    page,
+  }) => {
+    const reusableImageUrl = "https://cdn.example.com/reuse-order-image.png";
+
+    const orderItem = {
+      id: "item-e2e-1",
+      order_id: "order-e2e-1",
+      product_id: null,
+      variant_id: "123",
+      design_id: null,
+      product_name: "Custom Tee",
+      variant_name: "M / White",
+      quantity: 1,
+      unit_price: 25,
+      total_price: 25,
+      custom_image_url: reusableImageUrl,
+      design_config: null,
+      fulfillment_status: null,
+      external_order_id: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    const order = {
+      id: "order-e2e-1",
+      order_number: "ORD-E2E-1",
+      user_id: null,
+      customer_email: "e2e@example.com",
+      customer_name: null,
+      customer_phone: null,
+      status: "processing",
+      payment_status: "paid",
+      fulfillment_status: null,
+      total_amount: 25,
+      subtotal: 25,
+      tax_amount: 0,
+      shipping_cost: 0,
+      discount_amount: 0,
+      currency: "USD",
+      payment_method: null,
+      printify_order_id: null,
+      stripe_payment_intent_id: null,
+      stripe_customer_id: null,
+      shipping_address: null,
+      billing_address: null,
+      shipping_method: null,
+      tracking_number: null,
+      tracking_url: null,
+      customer_notes: null,
+      internal_notes: null,
+      product_id: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      shipped_at: null,
+      delivered_at: null,
+      order_items: [orderItem],
+    };
+
+    await page.route("**/rest/v1/orders*", async (route) => {
+      const url = new URL(route.request().url());
+      const idFilter = url.searchParams.get("id");
+      const isSingle = idFilter?.includes("order-e2e-1");
+
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(isSingle ? order : [order]),
+      });
+    });
+
+    await page.route(reusableImageUrl, async (route) => {
+      await route.fulfill({
+        status: 200,
+        headers: {
+          "content-type": "image/png",
+          "access-control-allow-origin": "*",
+        },
+        body: TRANSPARENT_PNG,
+      });
+    });
+
+    await page.goto("/orders");
+
+    const moreActionsBtn = page
+      .getByRole("button", { name: /more actions/i })
+      .first();
+    await expect(moreActionsBtn).toBeVisible({ timeout: 10_000 });
+    await moreActionsBtn.click();
+
+    const useSameImageLink = page
+      .getByRole("link", { name: /use (same|this) image/i })
+      .first();
+    await expect(useSameImageLink).toBeVisible({ timeout: 5_000 });
+    await useSameImageLink.click();
+
+    await expect(page).toHaveURL(/\/stamp\?sourceOrder=order-e2e-1/);
+    await expect(page.locator("#design-pipeline")).toBeVisible({
+      timeout: 15_000,
+    });
+
+    const expandCta = page
+      .getByRole("button", { name: /upload your photo/i })
+      .first();
+    if (await expandCta.isVisible()) {
+      await expandCta.click();
+    }
+
+    await expect(page.getByText(/upload your artwork/i)).toBeVisible({
+      timeout: 10_000,
+    });
+
+    await expect(
+      page.getByRole("button", { name: /remove image/i }).first(),
+    ).toBeVisible({ timeout: 10_000 });
+
+    await expect(page.getByRole("button", { name: /continue/i })).toBeEnabled({
+      timeout: 10_000,
+    });
+  });
+});

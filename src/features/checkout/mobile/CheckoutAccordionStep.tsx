@@ -88,7 +88,7 @@ export function CheckoutAccordionStep({
       </Button>
 
       {/* Content */}
-      {isOpen && <div className={m.stepContent}>{children}</div>}
+      <div className={cn(m.stepContent, !isOpen && "hidden")}>{children}</div>
     </div>
   );
 }

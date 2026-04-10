@@ -32,7 +32,9 @@ export class CustomProductService {
    * Upload image to Printify
    * Uses CustomProductServiceMapper to create upload request
    */
-  static async uploadImage(imageUrl: string): Promise<string> {
+  static async uploadImage(
+    imageUrl: string,
+  ): Promise<{ id: string; previewUrl: string }> {
     try {
       const { supabaseUrl, supabaseAnonKey } = this.getSupabaseConfig();
 
@@ -64,11 +66,18 @@ export class CustomProductService {
       // Validate response data
       const validatedData = UploadImageResponseSchema.parse(data);
 
-      if (!validatedData.success || !validatedData.image?.id) {
+      if (
+        !validatedData.success ||
+        !validatedData.image?.id ||
+        !validatedData.image?.preview_url
+      ) {
         throw new Error("Failed to upload image to Printify");
       }
 
-      return validatedData.image.id;
+      return {
+        id: validatedData.image.id,
+        previewUrl: validatedData.image.preview_url,
+      };
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Custom Product", action: "Upload Image"})
     }
@@ -87,14 +96,14 @@ export class CustomProductService {
       const validatedInput = CreateProductPayloadSchema.parse(payload);
 
       // Step 1: Upload image to Printify
-      const imageId = await this.uploadImage(validatedInput.image_url);
+      const uploadedImage = await this.uploadImage(validatedInput.image_url);
 
       // Step 2: Create custom product
       const productPayload: CreateCustomProductRequestI = {
         blueprint_id: validatedInput.blueprint_id,
         print_provider_id: validatedInput.print_provider_id,
         print_areas: {
-          front: imageId,
+          front: uploadedImage.id,
         },
         title: validatedInput.title || `Custom Design ${Date.now()}`,
         description: validatedInput.description || "Custom designed product",
@@ -147,7 +156,7 @@ export class CustomProductService {
           printifyProduct,
           validatedInput.blueprint_id,
           validatedInput.print_provider_id,
-          { front: imageId }, // Store the print areas
+          { front: uploadedImage.id }, // Store the print areas
           validatedInput.user_id
         );
 
@@ -159,7 +168,10 @@ export class CustomProductService {
         // This is a non-critical error that can be retried later
       }
 
-      return printifyProduct;
+      return {
+        ...printifyProduct,
+        uploaded_image_preview_url: uploadedImage.previewUrl,
+      };
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Custom Product", action: "Create Custom Product"})
     }

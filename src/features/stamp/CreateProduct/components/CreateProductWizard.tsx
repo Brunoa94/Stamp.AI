@@ -1,12 +1,12 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { MemoizedWizardProductForm } from "../WizardProductForm";
 import { CreateProductSubscriberProvider } from "../context/CreateProductContextSubscriber";
 import { CreateProductSelectors } from "../context/selectors";
 import { CreateProductSidebar } from "./CreateProductSidebar";
 import { MobileStepNav } from "../mobile/MobileStepNav";
-import { FluidInkDriftBackground } from "@/features/ui/fluid-ink-drift-background";
 import { useWizardProductFormHandlers } from "../hooks/useWizardProductFormHandlers";
 import { WizardCollapsedOverlay } from "./WizardCollapsedOverlay";
 import {
@@ -25,9 +25,18 @@ export function CreateProductWizard() {
 }
 
 function CreateProductWizardContent() {
+  const searchParams = useSearchParams();
   const currentStep = CreateProductSelectors.currentStep();
   const [isExpanded, setIsExpanded] = useState(false);
   const { scrollToWizard } = useWizardProductFormHandlers({ form: null });
+
+  useEffect(() => {
+    const sourceOrderId = searchParams.get("sourceOrder");
+    if (!sourceOrderId) return;
+
+    setIsExpanded(true);
+    scrollToWizard();
+  }, [searchParams, scrollToWizard]);
 
   const handleExpand = useCallback(() => {
     if (isExpanded) return;
@@ -44,11 +53,6 @@ function CreateProductWizardContent() {
 
   return (
     <>
-      {/* Fluid ink background – mobile only; desktop already has page-level bg */}
-      <div className="md:hidden">
-        <FluidInkDriftBackground />
-      </div>
-
       <div
         id="design-pipeline"
         data-state={isExpanded ? "expanded" : "collapsed"}

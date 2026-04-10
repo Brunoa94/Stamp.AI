@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { GeminiImageService } from "@/services/geminiImageService";
 
 export const runtime = "nodejs";
 
@@ -62,28 +61,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ── Generate image using Gemini (1.5 Flash + Imagen 3) ─────────────────────
-    console.log("Generating image with Gemini (1.5 Flash + Imagen 3)");
+    // ── [MOCK] Return a static mockup image instead of calling Gemini ──────────
+    console.log("[MOCK] Skipping Gemini image generation, returning mockup image");
     console.log("Original prompt:", prompt);
-    console.log("Image file:", image.name);
-
-    const imageBuffer = await image.arrayBuffer();
-
-    const result = await GeminiImageService.generateImage(
-      imageBuffer,
-      image.type,
-      prompt,
-      {
-        selectedStyle,
-        preservation,
-      },
-    );
 
     return NextResponse.json({
       success: true,
-      imageUrl: result.imageUrl,
-      enhancedPrompt: result.enhancedPrompt,
-      originalPrompt: prompt
+      imageUrl: "https://placehold.co/1024x1024/png",
+      enhancedPrompt: `[MOCK] ${prompt}`,
+      originalPrompt: prompt,
     });
 
   } catch (error: any) {

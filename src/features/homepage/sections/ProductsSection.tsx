@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SectionHeader } from "@/features/homepage/components/SectionHeader";
 import type { TshirtType } from "@/types/product";
 import {
   mapProductIndexToCardGradient,
@@ -20,18 +21,14 @@ export function ProductsSection({
       className="border-y border-slate-200 bg-linear-to-br from-[#06B6D4]/8 via-white to-[#7C3AED]/8 py-24"
     >
       <div className="mx-auto w-full max-w-6xl px-6 ">
-        <div className="mb-16 text-center">
-          <span className="mb-4 block text-[12px] font-bold uppercase tracking-[0.2em] text-slate-400">
-            03 / Products Available
-          </span>
-          <h2 className="font-heading text-3xl uppercase text-slate-900 md:text-4xl">
-            Custom products ready to order.
-          </h2>
-          <p className="mt-4 text-sm text-slate-500">
-            Pick your base product, customize the design, and place your order
-            in minutes.
-          </p>
-        </div>
+        <SectionHeader
+          className="mb-8"
+          eyebrow="03 / Products Available"
+          title="Custom products ready to order."
+          description="Pick your base product, customize the design, and place your order in minutes."
+          titleSize="xl"
+          descriptionClassName="mt-5 max-w-3xl text-lg font-medium leading-relaxed text-slate-500"
+        />
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {isProductsLoading

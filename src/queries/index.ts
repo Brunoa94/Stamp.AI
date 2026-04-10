@@ -73,3 +73,7 @@ export {
   useAvailablePromoCodes,
   useValidatePromoCode,
 } from "./promocodeQueries";
+
+export {
+  useCreatePaymentIntent,
+} from "./stripeQueries";

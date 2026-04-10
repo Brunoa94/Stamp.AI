@@ -22,7 +22,7 @@ interface UsePayPalButtonParamsI {
   onSuccess?: (
     details: PayPalSuccessDetailsI,
     lineItems: PrintifyLineItem[],
-  ) => void;
+  ) => void | Promise<void>;
   onError?: (error: string) => void;
 }
 
@@ -106,7 +106,7 @@ export function usePayPalButton({
           throw new Error("PAYPAL_CAPTURE_FAILED");
         }
 
-        onSuccess?.(
+        await onSuccess?.(
           {
             id: data.orderID,
             captureId: captureData.captureId,

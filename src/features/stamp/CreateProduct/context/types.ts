@@ -41,12 +41,18 @@ export interface FormState {
   selectedStyle: ArtStyleId;
   isGenerating: boolean;
   generatedResult: IImageGenerationResult | null;
+  generatedHistory: GeneratedHistoryItem[];
   generationError: Error | null;
   selectedTshirt: TshirtType | null;
   selectedColor: string | null;
   selectedSize: string | null;
   isCreatingProduct: boolean;
   createdProduct: CreatedProductT | null;
+}
+
+export interface GeneratedHistoryItem extends IImageGenerationResult {
+  id: string;
+  createdAt: number;
 }
 
 /** Full combined type — used by actions that span both stores. */
