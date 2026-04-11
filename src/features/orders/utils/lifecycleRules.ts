@@ -1,6 +1,6 @@
 import type { OrderWithItemsT } from '@/types/order'
 
-const CANCELLABLE_STATUSES = new Set(['waiting_payment', 'confirmed'])
+const CANCELLABLE_STATUSES = new Set(['waiting_payment', 'confirmed', 'pending'])
 
 export function canCancelOrder(order: Pick<OrderWithItemsT, 'status'>): boolean {
   return CANCELLABLE_STATUSES.has(String(order.status || '').toLowerCase())

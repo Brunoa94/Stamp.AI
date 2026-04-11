@@ -12,6 +12,7 @@ import {
   formatOrderId,
   formatOrderDate,
   formatPrice,
+  formatStatusLabel,
 } from "../utils/orderFormatters";
 
 interface OrderTableRowProps {
@@ -72,7 +73,7 @@ export function OrderTableRow({
 
         <TableCell className={ordersTheme.table.cell}>
           <span className={getStatusBadgeClass(order.status)}>
-            {order.status || "Processing"}
+            {formatStatusLabel(order.status)}
           </span>
         </TableCell>
 

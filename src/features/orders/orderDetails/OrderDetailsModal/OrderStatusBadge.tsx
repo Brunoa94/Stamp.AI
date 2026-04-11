@@ -9,6 +9,7 @@ interface Props {
 
 const statusColors: Record<string, string> = {
   // Order status
+  waiting_payment: "bg-yellow-50 text-yellow-700 border-yellow-200",
   pending: "bg-yellow-50 text-yellow-700 border-yellow-200",
   processing: "bg-blue-50 text-blue-700 border-blue-200",
   completed: "bg-green-50 text-green-700 border-green-200",
@@ -33,10 +34,15 @@ const variantLabels: Record<BadgeVariant, string> = {
 };
 
 export function OrderStatusBadge({ status, variant }: Props) {
+  const normalizedStatus = String(status || "").toLowerCase();
   const colorClass =
-    statusColors[status?.toLowerCase()] ||
+    statusColors[normalizedStatus] ||
     "bg-gray-100 text-gray-800 border-gray-300";
   const label = variantLabels[variant];
+  const displayStatus = String(status || "unknown")
+    .toLowerCase()
+    .replace(/[_-]+/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 
   return (
     <span
@@ -45,9 +51,9 @@ export function OrderStatusBadge({ status, variant }: Props) {
         colorClass,
       )}
       role="status"
-      aria-label={`${label} status: ${status}`}
+      aria-label={`${label} status: ${displayStatus}`}
     >
-      {status?.toUpperCase() || "UNKNOWN"}
+      {displayStatus}
     </span>
   );
 }

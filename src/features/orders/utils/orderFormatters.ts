@@ -28,6 +28,19 @@ export function formatPrice(amount: number | null | undefined): string {
 }
 
 /**
+ * Format status value to readable label
+ * e.g. waiting_payment -> Waiting Payment
+ */
+export function formatStatusLabel(status: string | null | undefined): string {
+  if (!status) return "Processing";
+
+  return status
+    .toLowerCase()
+    .replace(/[_-]+/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+/**
  * Returns delivery status info for mobile card display.
  * dot class + label text based on order status.
  */
