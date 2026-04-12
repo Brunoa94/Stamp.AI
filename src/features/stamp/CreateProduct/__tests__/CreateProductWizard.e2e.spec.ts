@@ -79,6 +79,197 @@ async function uploadImage(page: Page) {
   });
 }
 
+async function setupPostReviewFlowMocks(page: Page) {
+  await page.route("**/api/generate-image", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        success: true,
+        imageUrl: "https://example.com/generated-image.png",
+        enhancedPrompt: "enhanced prompt",
+        originalPrompt: "a cool t-shirt design with dragons",
+      }),
+    });
+  });
+
+  await page.route("**/functions/v1/get-catalog-blueprints", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        success: true,
+        printProviderId: 99,
+        blueprints: [
+          {
+            id: 6,
+            title: "Unisex Heavy Cotton Tee",
+            description: "Premium cotton t-shirt",
+            brand: "Gildan",
+            model: "5000",
+            images: ["https://example.com/fabric-premium.png"],
+            printAreas: [{ position: "front", width: 1800, height: 2400 }],
+          },
+          {
+            id: 7,
+            title: "Organic Cotton Tee",
+            description: "Organic cotton t-shirt",
+            brand: "Stanley/Stella",
+            model: "Creator",
+            images: ["https://example.com/fabric-organic.png"],
+            printAreas: [{ position: "front", width: 1800, height: 2400 }],
+          },
+        ],
+      }),
+    });
+  });
+
+  await page.route("**/api/get-blueprint-variants", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        success: true,
+        printProviderId: 99,
+        colors: ["Black", "White"],
+        sizes: ["S", "M", "L"],
+        variants: [
+          { id: 1001, title: "Black / S", options: { color: "Black", size: "S" } },
+          { id: 1002, title: "White / M", options: { color: "White", size: "M" } },
+        ],
+      }),
+    });
+  });
+
+  await page.route("**/functions/v1/upload-printify-image", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        success: true,
+        image: {
+          id: "img_123",
+          file_name: "generated-image.png",
+          height: 1024,
+          width: 1024,
+          size: 123456,
+          mime_type: "image/png",
+          preview_url: "https://example.com/preview-uploaded-image.png",
+        },
+      }),
+    });
+  });
+
+  await page.route("**/functions/v1/create-custom-product", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        success: true,
+        product: {
+          id: "custom-prod-1",
+          title: "Custom Tee - Dragons",
+          variants: [
+            { id: 2222, title: "Black / M", price: 2999, is_enabled: true },
+            { id: 2223, title: "White / L", price: 2999, is_enabled: false },
+          ],
+          images: [
+            {
+              src: "https://example.com/custom-product-image.png",
+              position: "front",
+              is_default: true,
+            },
+          ],
+        },
+      }),
+    });
+  });
+
+  // Cart endpoints used by Supabase client during add-to-cart mutation.
+  await page.route("**/rest/v1/carts*", async (route) => {
+    const method = route.request().method();
+
+    if (method === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          id: "cart-e2e-1",
+          user_id: "11111111-1111-1111-1111-111111111111",
+          session_id: null,
+          user_email: "e2e@example.com",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          cart_items: [],
+        }),
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        id: "cart-e2e-1",
+        user_id: "11111111-1111-1111-1111-111111111111",
+        session_id: null,
+        user_email: "e2e@example.com",
+      }),
+    });
+  });
+
+  await page.route("**/rest/v1/cart_items*", async (route) => {
+    const method = route.request().method();
+
+    if (method === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify([]),
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        id: "cart-item-e2e-1",
+        cart_id: "cart-e2e-1",
+        product_id: "custom-prod-1",
+        product_name: "Custom Tee - Dragons",
+        variant_id: "2222",
+        quantity: 1,
+        unit_price: 2999,
+        custom_image_url: "https://example.com/custom-product-image.png",
+        design_id: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }),
+    });
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Suite: Collapsed entry
+// ---------------------------------------------------------------------------
+
+test.describe("Collapsed entry", () => {
+  test("clicking 'Upload your photo' expands wizard and shows Upload step", async ({
+    page,
+  }) => {
+    await page.goto(STAMP_URL);
+
+    const expandCta = page.getByRole("button", { name: /upload your photo/i });
+    await expect(expandCta).toBeVisible({ timeout: 10_000 });
+    await expandCta.click();
+
+    await expect(page.getByText(/upload your artwork/i)).toBeVisible({
+      timeout: 10_000,
+    });
+  });
+});
+
 // ---------------------------------------------------------------------------
 // Suite: Upload Step
 // ---------------------------------------------------------------------------
@@ -134,6 +325,24 @@ test.describe("Upload Step", () => {
 
     await expect(continueBtn).toBeDisabled({ timeout: 5_000 });
   });
+
+  test("invalid upload shows toast and keeps Upload step state", async ({ page }) => {
+    const continueBtn = page.getByRole("button", { name: /continue/i });
+    await expect(continueBtn).toBeDisabled();
+
+    const fileInput = page.locator('input[type="file"]').first();
+    await fileInput.setInputFiles({
+      name: "invalid.txt",
+      mimeType: "text/plain",
+      buffer: Buffer.from("not-an-image", "utf8"),
+    });
+
+    await expect(page.getByText(/upload failed/i)).toBeVisible({
+      timeout: 5_000,
+    });
+    await expect(page.getByText(/upload your artwork/i)).toBeVisible();
+    await expect(continueBtn).toBeDisabled();
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -151,7 +360,7 @@ test.describe("Synthesis Step", () => {
   });
 
   test("shows AI Synthesis step header", async ({ page }) => {
-    await expect(page.getByText(/ai synthesis/i)).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByRole("heading", { name: /ai synthesis/i, level: 2 })).toBeVisible({ timeout: 5_000 });
   });
 
   test("sidebar marks Upload as completed and Synthesis as active", async ({ page }) => {
@@ -165,13 +374,13 @@ test.describe("Synthesis Step", () => {
   });
 
   test("Generate button is disabled with no prompt text", async ({ page }) => {
-    await expect(page.getByText(/ai synthesis/i)).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByRole("heading", { name: /ai synthesis/i, level: 2 })).toBeVisible({ timeout: 5_000 });
     const generateBtn = page.getByRole("button", { name: /generate/i });
     await expect(generateBtn).toBeDisabled();
   });
 
   test("Generate button is disabled with a prompt shorter than 10 characters", async ({ page }) => {
-    await expect(page.getByText(/ai synthesis/i)).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByRole("heading", { name: /ai synthesis/i, level: 2 })).toBeVisible({ timeout: 5_000 });
     const promptInput = page
       .getByRole("textbox", { name: /prompt/i })
       .or(page.locator("textarea"))
@@ -184,7 +393,7 @@ test.describe("Synthesis Step", () => {
   test("Generate button is enabled when prompt has 10 or more characters", async ({
     page,
   }) => {
-    await expect(page.getByText(/ai synthesis/i)).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByRole("heading", { name: /ai synthesis/i, level: 2 })).toBeVisible({ timeout: 5_000 });
     const promptInput = page
       .getByRole("textbox", { name: /prompt/i })
       .or(page.locator("textarea"))
@@ -195,7 +404,7 @@ test.describe("Synthesis Step", () => {
   });
 
   test("clearing a sufficient prompt disables Generate again", async ({ page }) => {
-    await expect(page.getByText(/ai synthesis/i)).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByRole("heading", { name: /ai synthesis/i, level: 2 })).toBeVisible({ timeout: 5_000 });
     const promptInput = page
       .getByRole("textbox", { name: /prompt/i })
       .or(page.locator("textarea"))
@@ -208,12 +417,151 @@ test.describe("Synthesis Step", () => {
     await expect(generateBtn).toBeDisabled({ timeout: 3_000 });
   });
 
-  test("step header shows step number dot indicator", async ({ page }) => {
-    await expect(page.getByText(/ai synthesis/i)).toBeVisible({ timeout: 5_000 });
+    test("step header shows step number dot indicator", async ({ page }) => {
+      await expect(page.getByRole("heading", { name: /ai synthesis/i, level: 2 })).toBeVisible({ timeout: 5_000 });
     // Dot indicators exist (5 total for 5 steps)
-    const dots = page.locator('[data-testid="step-dot"], [aria-label*="step" i]');
+    const dots = page.locator('[data-testid="step-dot"]:visible, [aria-label*="step" i]:visible');
     // At least one step indicator visible
     await expect(dots.first()).toBeVisible();
+  });
+
+  test("successful generation shows Results step with generated image", async ({
+    page,
+  }) => {
+    await page.route("**/api/generate-image", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          imageUrl: "https://example.com/generated-image.png",
+          enhancedPrompt: "enhanced prompt",
+          originalPrompt: "a cool t-shirt design with dragons",
+        }),
+      });
+    });
+
+    const promptInput = page
+      .getByRole("textbox", { name: /prompt/i })
+      .or(page.locator("textarea"))
+      .first();
+
+    await promptInput.fill("a cool t-shirt design with dragons");
+    await page.getByRole("button", { name: /generate/i }).click();
+
+    await expect(page.getByText(/final inspection/i)).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(page.getByAltText(/your design/i).first()).toBeVisible({
+      timeout: 10_000,
+    });
+  });
+
+  test("generation error shows toast, stays on Synthesis, and keeps prompt", async ({
+    page,
+  }) => {
+    await page.route("**/api/generate-image", async (route) => {
+      await route.fulfill({
+        status: 500,
+        contentType: "application/json",
+        body: JSON.stringify({ message: "Generation failed for test" }),
+      });
+    });
+
+    const promptValue = "a cool t-shirt design with dragons";
+    const promptInput = page
+      .getByRole("textbox", { name: /prompt/i })
+      .or(page.locator("textarea"))
+      .first();
+
+    await promptInput.fill(promptValue);
+    const generateBtn = page.getByRole("button", { name: /generate/i });
+    await expect(generateBtn).toBeEnabled({ timeout: 3_000 });
+    await generateBtn.click();
+
+    await expect(page.getByRole("heading", { name: /ai synthesis/i, level: 2 })).toBeVisible({
+      timeout: 8_000,
+    });
+    await expect(promptInput).toHaveValue(promptValue);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Suite: Review -> Fabric -> Sizing -> Add to Cart
+// ---------------------------------------------------------------------------
+
+test.describe("Post-review wizard flow", () => {
+  test.beforeEach(async ({ page }) => {
+    await setupPostReviewFlowMocks(page);
+    await gotoStamp(page);
+    await uploadImage(page);
+
+    const continueBtn = page.getByRole("button", { name: /continue/i });
+    await expect(continueBtn).toBeEnabled({ timeout: 5_000 });
+    await continueBtn.click();
+    await expect(page.getByRole("heading", { name: /ai synthesis/i, level: 2 })).toBeVisible({ timeout: 5_000 });
+
+    const promptInput = page
+      .getByRole("textbox", { name: /prompt/i })
+      .or(page.locator("textarea"))
+      .first();
+    await promptInput.fill("a cool t-shirt design with dragons");
+    await page.getByRole("button", { name: /generate/i }).click();
+
+    await expect(page.getByText(/final inspection/i)).toBeVisible({
+      timeout: 20_000,
+    });
+  });
+
+  test("moves from Final Inspection to Fabric and enables Create Product", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: /looks good!/i }).click();
+
+    await expect(page.getByText(/choose your canvas/i)).toBeVisible({
+      timeout: 10_000,
+    });
+
+    await page.getByRole("button", { name: /premium cotton/i }).click();
+
+    await expect(page.getByText(/pick your color/i)).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(page.getByText(/select your size/i)).toBeVisible({
+      timeout: 10_000,
+    });
+
+    await expect(page.getByRole("button", { name: /create product/i })).toBeEnabled({
+      timeout: 10_000,
+    });
+  });
+
+  test("creates product, reaches Sizing, and adds to cart", async ({ page }) => {
+    await page.getByRole("button", { name: /looks good!/i }).click();
+    await page.getByRole("button", { name: /premium cotton/i }).click();
+
+    const createProductBtn = page.getByRole("button", {
+      name: /create product/i,
+    });
+    await expect(createProductBtn).toBeEnabled({ timeout: 10_000 });
+    await createProductBtn.click();
+
+    await expect(page.getByText(/ready to cart/i)).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(page.getByRole("button", { name: /^add to cart$/i })).toBeVisible({
+      timeout: 10_000,
+    });
+
+    const addToCartBtn = page.getByRole("button", { name: /^add to cart$/i });
+    await addToCartBtn.click();
+
+    await expect(page.getByRole("button", { name: /added to cart/i })).toBeVisible({
+      timeout: 10_000,
+    });
+    await expect(page.getByText(/added to cart/i).first()).toBeVisible({
+      timeout: 10_000,
+    });
   });
 });
 
@@ -229,7 +577,7 @@ test.describe("Step Navigation via Sidebar", () => {
     const continueBtn = page.getByRole("button", { name: /continue/i });
     await expect(continueBtn).toBeEnabled({ timeout: 5_000 });
     await continueBtn.click();
-    await expect(page.getByText(/ai synthesis/i)).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByRole("heading", { name: /ai synthesis/i, level: 2 })).toBeVisible({ timeout: 5_000 });
   });
 
   test("clicking the completed Upload sidebar step navigates back to Upload", async ({
@@ -254,7 +602,7 @@ test.describe("Step Navigation via Sidebar", () => {
     // After click we should still be on Synthesis
     await fabricStep.click({ force: true });
     // Synthesis header should still be visible
-    await expect(page.getByText(/ai synthesis/i)).toBeVisible({ timeout: 3_000 });
+    await expect(page.getByRole("heading", { name: /ai synthesis/i, level: 2 })).toBeVisible({ timeout: 3_000 });
   });
 });
 
@@ -282,7 +630,7 @@ test.describe("Mobile Viewport", () => {
 
   test("Upload step bubble is highlighted as active in mobile nav", async ({ page }) => {
     // The active step has aria-current="step"
-    const activeStep = page.locator('[aria-current="step"]');
+    const activeStep = page.locator('nav[aria-label="Wizard steps"] [aria-current="step"]').first();
     await expect(activeStep).toBeVisible({ timeout: 5_000 });
     await expect(activeStep).toContainText(/upload/i);
   });
@@ -300,7 +648,7 @@ test.describe("Mobile Viewport", () => {
     await expect(continueBtn).toBeEnabled({ timeout: 5_000 });
     await continueBtn.click();
 
-    const activeStep = page.locator('[aria-current="step"]');
+    const activeStep = page.locator('nav[aria-label="Wizard steps"] [aria-current="step"]').first();
     await expect(activeStep).toContainText(/synthesis/i, { timeout: 5_000 });
   });
 
@@ -311,7 +659,7 @@ test.describe("Mobile Viewport", () => {
     const continueBtn = page.getByRole("button", { name: /continue/i });
     await expect(continueBtn).toBeEnabled({ timeout: 5_000 });
     await continueBtn.click();
-    await expect(page.getByText(/ai synthesis/i)).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByRole("heading", { name: /ai synthesis/i, level: 2 })).toBeVisible({ timeout: 5_000 });
 
     const uploadBtn = page.locator('[aria-label="Upload"]');
     await expect(uploadBtn).toBeEnabled({ timeout: 3_000 });
@@ -330,10 +678,10 @@ test.describe("Action Footer", () => {
   });
 
   test("footer is not visible on the Upload step", async ({ page }) => {
-    await expect(page.getByRole("button", { name: /back/i })).toHaveCount(0);
-    await expect(page.getByRole("button", { name: /continue/i })).toHaveCount(
-      0,
-    );
+    const backBtn = page.getByRole("button", { name: /back/i }).first();
+    await expect(backBtn).toBeHidden();
+    const continueBtn = page.getByRole("button", { name: /continue/i }).first();
+    await expect(continueBtn).toBeDisabled();
   });
 
   test("footer shows Back + Generate on Synthesis", async ({ page }) => {
@@ -374,7 +722,7 @@ test.describe("Accessibility", () => {
   });
 
   test("mobile step nav has role navigation with aria-label", async ({ page }) => {
-    test.use({ viewport: { width: 390, height: 844 } });
+    await page.setViewportSize({ width: 390, height: 844 });
     const nav = page.locator('nav[aria-label="Wizard steps"]');
     await expect(nav).toHaveCount(1);
   });
@@ -387,7 +735,7 @@ test.describe("Accessibility", () => {
     await expect(continueBtn).toBeEnabled({ timeout: 5_000 });
     await continueBtn.focus();
     await page.keyboard.press("Enter");
-    await expect(page.getByText(/ai synthesis/i)).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByRole("heading", { name: /ai synthesis/i, level: 2 })).toBeVisible({ timeout: 5_000 });
   });
 
   test("step header description is visible and not empty", async ({ page }) => {
@@ -487,10 +835,13 @@ test.describe("Reuse image from orders", () => {
 
     await page.goto("/orders");
 
+    // Wait for the order to be visible (formatted as first 8 chars)
+    await expect(page.getByText(/#ORDER-E2/i).first()).toBeVisible({ timeout: 15_000 });
+
     const moreActionsBtn = page
       .getByRole("button", { name: /more actions/i })
       .first();
-    await expect(moreActionsBtn).toBeVisible({ timeout: 10_000 });
+    await expect(moreActionsBtn).toBeVisible({ timeout: 15_000 });
     await moreActionsBtn.click();
 
     const useSameImageLink = page

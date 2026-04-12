@@ -1,0 +1,205 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e5]:
+        - link "Stamp AI" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]:
+            - text: Stamp
+            - text: AI
+        - generic [ref=e11]:
+          - link "My Orders" [ref=e12] [cursor=pointer]:
+            - /url: /orders
+          - link "Stamp It, Bruno!" [ref=e13] [cursor=pointer]:
+            - /url: /stamp
+            - generic [ref=e14]: Stamp It, Bruno!
+          - link "Dashboard" [ref=e15] [cursor=pointer]:
+            - /url: /dashboard
+        - generic [ref=e17]:
+          - button "View cart" [ref=e18]:
+            - img
+          - button "Sign Out" [ref=e20]:
+            - img
+            - generic [ref=e21]: Sign Out
+  - main [ref=e22]:
+    - generic [ref=e24]:
+      - heading "Checkout" [level=1] [ref=e26]
+      - generic [ref=e27]:
+        - generic [ref=e28]:
+          - generic [ref=e29]:
+            - generic [ref=e30]:
+              - heading "Billing Address" [level=2] [ref=e32]
+              - generic [ref=e33]:
+                - generic [ref=e34]:
+                  - generic [ref=e35]:
+                    - generic [ref=e36]:
+                      - text: First Name
+                      - generic "required" [ref=e37]: "*"
+                    - textbox [ref=e38]
+                  - generic [ref=e39]:
+                    - generic [ref=e40]: Last Name
+                    - textbox [ref=e41]
+                - generic [ref=e43]:
+                  - generic [ref=e44]:
+                    - text: Email
+                    - generic "required" [ref=e45]: "*"
+                  - textbox [ref=e46]
+                - generic [ref=e48]:
+                  - generic [ref=e49]: Phone
+                  - textbox [ref=e50]
+                - generic [ref=e52]:
+                  - generic [ref=e53]:
+                    - text: Address Line 1
+                    - generic "required" [ref=e54]: "*"
+                  - textbox [ref=e55]
+                - generic [ref=e57]:
+                  - generic [ref=e58]: Address Line 2
+                  - textbox [ref=e59]
+                - generic [ref=e60]:
+                  - generic [ref=e61]:
+                    - generic [ref=e62]:
+                      - text: City
+                      - generic "required" [ref=e63]: "*"
+                    - textbox [ref=e64]
+                  - generic [ref=e65]:
+                    - generic [ref=e66]: State/Region
+                    - textbox [ref=e67]
+                - generic [ref=e68]:
+                  - generic [ref=e69]:
+                    - generic [ref=e70]:
+                      - text: ZIP/Postal Code
+                      - generic "required" [ref=e71]: "*"
+                    - textbox [ref=e72]
+                  - generic [ref=e73]:
+                    - generic [ref=e74]: Country
+                    - combobox [ref=e75]:
+                      - generic: United States
+                      - img [ref=e76]
+                    - combobox [ref=e78]
+            - generic [ref=e79]:
+              - heading "Shipping Address" [level=2] [ref=e81]
+              - generic [ref=e82] [cursor=pointer]:
+                - checkbox "Same as billing address" [checked] [ref=e83]
+                - generic [ref=e84]: Same as billing address
+            - generic [ref=e85]:
+              - heading "Shipping Method" [level=2] [ref=e87]
+              - generic [ref=e88]:
+                - generic [ref=e89] [cursor=pointer]:
+                  - generic [ref=e90]:
+                    - radio "Standard Shipping 3-5 Business Days Free" [checked] [ref=e91]
+                    - generic [ref=e92]:
+                      - generic [ref=e93]: Standard Shipping
+                      - generic [ref=e94]: 3-5 Business Days
+                  - generic [ref=e95]: Free
+                - generic [ref=e96] [cursor=pointer]:
+                  - generic [ref=e97]:
+                    - radio "Express Delivery 1-2 Business Days $10.00" [ref=e98]
+                    - generic [ref=e99]:
+                      - generic [ref=e100]: Express Delivery
+                      - generic [ref=e101]: 1-2 Business Days
+                  - generic [ref=e102]: $10.00
+          - generic [ref=e103]:
+            - heading "Payment Details" [level=2] [ref=e105]
+            - generic [ref=e106]:
+              - checkbox "Test Mode (use predefined payment methods)" [ref=e107]
+              - generic [ref=e108] [cursor=pointer]: Test Mode (use predefined payment methods)
+            - paragraph [ref=e110]: Please fill in your billing address first
+        - complementary [ref=e111]:
+          - complementary [ref=e112]:
+            - complementary [ref=e113]:
+              - heading "Order Summary" [level=2] [ref=e115]
+              - generic [ref=e116]:
+                - generic [ref=e117]: Promo Code
+                - generic [ref=e118]:
+                  - textbox "Promo Code" [ref=e119]:
+                    - /placeholder: Enter code
+                  - button "Apply" [disabled]
+              - generic [ref=e120]:
+                - generic [ref=e121]:
+                  - generic [ref=e122]: Subtotal
+                  - generic [ref=e123]: $0.00
+                - generic [ref=e124]:
+                  - generic [ref=e125]: Shipping
+                  - generic [ref=e126]: Free
+                - generic [ref=e128]:
+                  - generic [ref=e129]: Total Amount
+                  - generic [ref=e130]: $0.00
+              - generic [ref=e131]:
+                - generic [ref=e132]:
+                  - button "Confirm Order • Pay with Card" [disabled]:
+                    - img
+                    - text: Confirm Order • Pay with Card
+                  - link "Back to Cart" [ref=e133] [cursor=pointer]:
+                    - /url: /cart
+                - link "Edit Selection" [ref=e134] [cursor=pointer]:
+                  - /url: /cart
+                - paragraph [ref=e135]: Please complete billing address first
+  - contentinfo [ref=e136]:
+    - generic [ref=e138]:
+      - generic [ref=e139]:
+        - generic [ref=e140]:
+          - generic [ref=e142]:
+            - text: Stamp
+            - text: AI
+          - paragraph [ref=e144]: Empowering creators with AI-driven apparel design. High quality prints, delivered to your door.
+        - generic [ref=e145]:
+          - generic [ref=e146]:
+            - heading "Company" [level=3] [ref=e147]
+            - list [ref=e148]:
+              - listitem [ref=e149]:
+                - link "About Us" [ref=e150] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e151]:
+                - link "Contact" [ref=e152] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=e153]:
+                - link "Careers" [ref=e154] [cursor=pointer]:
+                  - /url: /careers
+          - generic [ref=e155]:
+            - heading "Support" [level=3] [ref=e156]
+            - list [ref=e157]:
+              - listitem [ref=e158]:
+                - link "Help Center" [ref=e159] [cursor=pointer]:
+                  - /url: /help
+              - listitem [ref=e160]:
+                - link "FAQ" [ref=e161] [cursor=pointer]:
+                  - /url: /faq
+              - listitem [ref=e162]:
+                - link "Shipping Info" [ref=e163] [cursor=pointer]:
+                  - /url: /shipping
+          - generic [ref=e164]:
+            - heading "Legal" [level=3] [ref=e165]
+            - list [ref=e166]:
+              - listitem [ref=e167]:
+                - link "Privacy Policy" [ref=e168] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e169]:
+                - link "Terms of Service" [ref=e170] [cursor=pointer]:
+                  - /url: /terms
+              - listitem [ref=e171]:
+                - link "Refund Policy" [ref=e172] [cursor=pointer]:
+                  - /url: /refunds
+      - generic [ref=e173]:
+        - paragraph [ref=e174]: © 2026 Stamp.AI · Crafted for the Dreamers
+        - generic [ref=e175]:
+          - link "Twitter" [ref=e176] [cursor=pointer]:
+            - /url: https://twitter.com
+            - img
+          - link "Instagram" [ref=e177] [cursor=pointer]:
+            - /url: https://instagram.com
+            - img
+          - link "LinkedIn" [ref=e178] [cursor=pointer]:
+            - /url: https://linkedin.com
+            - img
+  - region "Notifications alt+T"
+  - generic [ref=e179]:
+    - img [ref=e181]
+    - button "Open Tanstack query devtools" [ref=e229] [cursor=pointer]:
+      - img [ref=e230]
+  - button "Open Next.js Dev Tools" [ref=e283] [cursor=pointer]:
+    - img [ref=e284]
+  - alert [ref=e287]
+```

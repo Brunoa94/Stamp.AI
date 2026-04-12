@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { memo, useMemo, useState } from "react";
+import { memo, useState } from "react";
 import { ChevronDown, Mail, Repeat, Sparkles } from "lucide-react";
 import { ordersTheme } from "@/theme/components";
 import { OrderWithItemsT } from "@/types/order";
@@ -8,6 +8,7 @@ import { Button } from "@/features/ui/button";
 import { cn } from "@/lib/utils";
 import { OrderItemsPreview } from "../OrderItemsPreview";
 import { OrderTableActions } from "./OrderTableActions";
+import { useOrderMoreActions } from "../hooks/useOrderMoreActions";
 import {
   formatOrderId,
   formatOrderDate,
@@ -30,23 +31,7 @@ export function OrderTableRow({
   getStatusBadgeClass,
 }: OrderTableRowProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const supportEmailHref = useMemo(() => {
-    const subject = encodeURIComponent(`Support request for order ${order.id}`);
-    const body = encodeURIComponent(
-      `Hi support,%0D%0A%0D%0AI need help with order ${order.id}.%0D%0AStatus: ${order.status ?? "processing"}.%0D%0A%0D%0AThanks.`,
-    );
-
-    return `mailto:?subject=${subject}&body=${body}`;
-  }, [order.id, order.status]);
-
-  const preferredReusableOrderItemId = useMemo(() => {
-    return (
-      order.order_items?.find((item) => Boolean(item.custom_image_url))?.id ??
-      order.order_items?.[0]?.id ??
-      ""
-    );
-  }, [order.order_items]);
+  const { supportEmailHref, reuseImageUrl } = useOrderMoreActions(order);
 
   return (
     <>
@@ -119,13 +104,7 @@ export function OrderTableRow({
                 size="sm"
                 className={ordersTheme.table.moreActionsButton}
               >
-                <Link
-                  href={
-                    preferredReusableOrderItemId
-                      ? `/stamp?sourceOrder=${order.id}&sourceOrderItem=${preferredReusableOrderItemId}`
-                      : `/stamp?sourceOrder=${order.id}`
-                  }
-                >
+                <Link href={reuseImageUrl}>
                   <Sparkles className="h-3.5 w-3.5" />
                   Use same image
                 </Link>

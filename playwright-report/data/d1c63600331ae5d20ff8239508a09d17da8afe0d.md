@@ -1,0 +1,146 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e5]:
+        - link "Stamp AI" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]:
+            - text: Stamp
+            - text: AI
+        - generic [ref=e11]:
+          - link "My Orders" [ref=e12] [cursor=pointer]:
+            - /url: /orders
+          - link "Stamp It, Bruno!" [ref=e13] [cursor=pointer]:
+            - /url: /stamp
+            - generic [ref=e14]: Stamp It, Bruno!
+          - link "Dashboard" [ref=e15] [cursor=pointer]:
+            - /url: /dashboard
+        - generic [ref=e17]:
+          - button "View cart" [ref=e18]:
+            - img
+          - button "Sign Out" [ref=e20]:
+            - img
+            - generic [ref=e21]: Sign Out
+  - main [ref=e22]:
+    - main [ref=e23]:
+      - generic [ref=e26]:
+        - heading "My Orders" [level=1] [ref=e27]
+        - paragraph [ref=e30]: View and manage your order history. Track deliveries, review past purchases, and download invoices.
+      - generic [ref=e31]:
+        - generic [ref=e32]:
+          - generic [ref=e33]: "Timeframe:"
+          - combobox [ref=e34]:
+            - generic: Last 30 Days
+            - img [ref=e35]
+        - generic [ref=e37]:
+          - generic [ref=e38]: "Status:"
+          - button "All" [ref=e39]
+          - button "Processing" [ref=e40]
+          - button "Shipped" [ref=e41]
+          - button "Delivered" [ref=e42]
+          - button "Cancelled" [ref=e43]
+      - table [ref=e46]:
+        - rowgroup [ref=e47]:
+          - row "Order Details Items Status Total" [ref=e48]:
+            - columnheader "Order Details" [ref=e49]
+            - columnheader "Items" [ref=e50]
+            - columnheader "Status" [ref=e51]
+            - columnheader "Total" [ref=e52]
+            - columnheader [ref=e53]
+        - rowgroup [ref=e54]:
+          - row "#ORDER-E2 Ordered Apr 12, 2026 Open item image zoom processing $25.00 VIEW CANCEL More actions" [ref=e55]:
+            - cell "#ORDER-E2 Ordered Apr 12, 2026" [ref=e56]:
+              - generic [ref=e57]: "#ORDER-E2"
+              - generic [ref=e58]: Ordered Apr 12, 2026
+            - cell "Open item image zoom" [ref=e59]:
+              - button "Open item image zoom" [ref=e61]:
+                - img "Order item" [ref=e62]
+            - cell "processing" [ref=e63]:
+              - generic [ref=e64]: processing
+            - cell "$25.00" [ref=e65]:
+              - generic [ref=e66]: $25.00
+            - cell "VIEW CANCEL More actions" [ref=e67]:
+              - generic [ref=e68]:
+                - generic [ref=e69]:
+                  - button "VIEW" [ref=e70]
+                  - button "CANCEL" [disabled]
+                - button "More actions" [ref=e71]:
+                  - text: More actions
+                  - img
+      - generic [ref=e72]:
+        - generic [ref=e73]: Showing 2-1 of 1 orders
+        - generic [ref=e74]:
+          - button "Previous page" [disabled]:
+            - img
+          - button "1" [ref=e75]
+          - button "Next page" [disabled]:
+            - img
+  - contentinfo [ref=e76]:
+    - generic [ref=e78]:
+      - generic [ref=e79]:
+        - generic [ref=e80]:
+          - generic [ref=e82]:
+            - text: Stamp
+            - text: AI
+          - paragraph [ref=e84]: Empowering creators with AI-driven apparel design. High quality prints, delivered to your door.
+        - generic [ref=e85]:
+          - generic [ref=e86]:
+            - heading "Company" [level=3] [ref=e87]
+            - list [ref=e88]:
+              - listitem [ref=e89]:
+                - link "About Us" [ref=e90] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e91]:
+                - link "Contact" [ref=e92] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=e93]:
+                - link "Careers" [ref=e94] [cursor=pointer]:
+                  - /url: /careers
+          - generic [ref=e95]:
+            - heading "Support" [level=3] [ref=e96]
+            - list [ref=e97]:
+              - listitem [ref=e98]:
+                - link "Help Center" [ref=e99] [cursor=pointer]:
+                  - /url: /help
+              - listitem [ref=e100]:
+                - link "FAQ" [ref=e101] [cursor=pointer]:
+                  - /url: /faq
+              - listitem [ref=e102]:
+                - link "Shipping Info" [ref=e103] [cursor=pointer]:
+                  - /url: /shipping
+          - generic [ref=e104]:
+            - heading "Legal" [level=3] [ref=e105]
+            - list [ref=e106]:
+              - listitem [ref=e107]:
+                - link "Privacy Policy" [ref=e108] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e109]:
+                - link "Terms of Service" [ref=e110] [cursor=pointer]:
+                  - /url: /terms
+              - listitem [ref=e111]:
+                - link "Refund Policy" [ref=e112] [cursor=pointer]:
+                  - /url: /refunds
+      - generic [ref=e113]:
+        - paragraph [ref=e114]: © 2026 Stamp.AI · Crafted for the Dreamers
+        - generic [ref=e115]:
+          - link "Twitter" [ref=e116] [cursor=pointer]:
+            - /url: https://twitter.com
+            - img
+          - link "Instagram" [ref=e117] [cursor=pointer]:
+            - /url: https://instagram.com
+            - img
+          - link "LinkedIn" [ref=e118] [cursor=pointer]:
+            - /url: https://linkedin.com
+            - img
+  - region "Notifications alt+T"
+  - generic [ref=e119]:
+    - img [ref=e121]
+    - button "Open Tanstack query devtools" [ref=e169] [cursor=pointer]:
+      - img [ref=e170]
+  - button "Open Next.js Dev Tools" [ref=e223] [cursor=pointer]:
+    - img [ref=e224]
+  - alert [ref=e227]
+```

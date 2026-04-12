@@ -1,0 +1,120 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "Stamp AI" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e7]:
+            - text: Stamp
+            - text: AI
+        - link "Create a new stamp design" [ref=e9] [cursor=pointer]:
+          - /url: /stamp
+          - img
+          - generic [ref=e10]: Stamp It!
+        - generic [ref=e11]:
+          - link "View cart" [ref=e12] [cursor=pointer]:
+            - /url: /cart
+            - img
+          - button "Open navigation menu" [ref=e13]:
+            - img
+  - main [ref=e14]:
+    - generic [ref=e16]:
+      - navigation "Wizard steps" [ref=e18]:
+        - generic [ref=e19]:
+          - button "Upload" [ref=e20]:
+            - generic [ref=e23]: Upload
+          - button "Synthesis" [disabled]:
+            - generic: Synthesis
+          - button "Review" [disabled]:
+            - generic: Review
+          - button "Fabric" [disabled]:
+            - generic: Fabric
+          - button "Sizing" [disabled]:
+            - generic: Sizing
+      - generic [ref=e25]:
+        - generic [ref=e27]:
+          - generic [ref=e29]: Step 01
+          - heading "Upload Your Artwork" [level=2] [ref=e31]
+          - paragraph [ref=e32]: Drag and drop your design or inspiration image to get started.
+        - generic [ref=e38]:
+          - img "Uploaded preview" [ref=e40]
+          - button "Remove image" [ref=e41]:
+            - img
+        - button "Continue" [ref=e45]:
+          - text: Continue
+          - img
+      - generic:
+        - generic:
+          - generic: Studio v2.0
+          - heading [level=3]: Ready to stamp your signature?
+        - generic:
+          - button [active]: Upload your photo
+  - contentinfo [ref=e46]:
+    - generic [ref=e48]:
+      - generic [ref=e49]:
+        - generic [ref=e50]:
+          - generic [ref=e52]:
+            - text: Stamp
+            - text: AI
+          - paragraph [ref=e54]: Empowering creators with AI-driven apparel design. High quality prints, delivered to your door.
+        - generic [ref=e55]:
+          - generic [ref=e56]:
+            - heading "Company" [level=3] [ref=e57]
+            - list [ref=e58]:
+              - listitem [ref=e59]:
+                - link "About Us" [ref=e60] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e61]:
+                - link "Contact" [ref=e62] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=e63]:
+                - link "Careers" [ref=e64] [cursor=pointer]:
+                  - /url: /careers
+          - generic [ref=e65]:
+            - heading "Support" [level=3] [ref=e66]
+            - list [ref=e67]:
+              - listitem [ref=e68]:
+                - link "Help Center" [ref=e69] [cursor=pointer]:
+                  - /url: /help
+              - listitem [ref=e70]:
+                - link "FAQ" [ref=e71] [cursor=pointer]:
+                  - /url: /faq
+              - listitem [ref=e72]:
+                - link "Shipping Info" [ref=e73] [cursor=pointer]:
+                  - /url: /shipping
+          - generic [ref=e74]:
+            - heading "Legal" [level=3] [ref=e75]
+            - list [ref=e76]:
+              - listitem [ref=e77]:
+                - link "Privacy Policy" [ref=e78] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e79]:
+                - link "Terms of Service" [ref=e80] [cursor=pointer]:
+                  - /url: /terms
+              - listitem [ref=e81]:
+                - link "Refund Policy" [ref=e82] [cursor=pointer]:
+                  - /url: /refunds
+      - generic [ref=e83]:
+        - paragraph [ref=e84]: © 2026 Stamp.AI · Crafted for the Dreamers
+        - generic [ref=e85]:
+          - link "Twitter" [ref=e86] [cursor=pointer]:
+            - /url: https://twitter.com
+            - img
+          - link "Instagram" [ref=e87] [cursor=pointer]:
+            - /url: https://instagram.com
+            - img
+          - link "LinkedIn" [ref=e88] [cursor=pointer]:
+            - /url: https://linkedin.com
+            - img
+  - region "Notifications alt+T"
+  - generic [ref=e89]:
+    - img [ref=e91]
+    - button "Open Tanstack query devtools" [ref=e139] [cursor=pointer]:
+      - img [ref=e140]
+  - button "Open Next.js Dev Tools" [ref=e193] [cursor=pointer]:
+    - img [ref=e194]
+  - alert [ref=e197]
+```

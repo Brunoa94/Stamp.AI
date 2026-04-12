@@ -285,6 +285,11 @@ export interface BlueprintI {
     width: number
     height: number
   }>
+  min_price?: number
+  print_provider_id?: number
+  provider_name?: string
+  shipping_cost?: number
+  total_cost?: number
 }
 
 export interface OrderLineItemI {

@@ -263,8 +263,12 @@ describe("usePaymentForm", () => {
         await result.current.handleSubmit({ preventDefault: vi.fn() } as any);
       });
 
-      expect(result.current.error).toBe("Your card was declined");
-      expect(onError).toHaveBeenCalledWith("Your card was declined");
+      expect(result.current.error).toBe(
+        "Card payment failed: Your card was declined",
+      );
+      expect(onError).toHaveBeenCalledWith(
+        "Card payment failed: Your card was declined",
+      );
     });
 
     it("should set error to generic message for non-Error exceptions", async () => {
