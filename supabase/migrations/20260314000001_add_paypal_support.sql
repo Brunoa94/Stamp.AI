@@ -29,10 +29,8 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_payment_transactions_paypal_order
   ON payment_transactions(paypal_order_id)
   WHERE paypal_order_id IS NOT NULL;
 
--- Step 6: Add constraint to ensure at least one payment ID exists
-ALTER TABLE payment_transactions
-  ADD CONSTRAINT chk_payment_id_exists
-  CHECK (stripe_payment_intent_id IS NOT NULL OR paypal_order_id IS NOT NULL);
+-- Step 6: (Constraint chk_payment_id_exists added in 20260328000000_add_mollie_support.sql)
+-- to include all three providers at once.
 
 -- Step 7: Create index for payment provider queries
 CREATE INDEX IF NOT EXISTS idx_payment_transactions_provider

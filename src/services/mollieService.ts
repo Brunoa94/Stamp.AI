@@ -1,5 +1,8 @@
 import { createClient } from "@/lib/supabase/client";
 import { ErrorClient } from "./errorClient";
+import type { ShippingAddressT } from "@/schemas/checkout";
+import type { PrintifyLineItem } from "@/types/printifyOrder";
+import type { MolliePaymentStatus } from "@/lib/mollie";
 import { getAuthenticatedHeaders } from "./authHelpers";
 import type {
   CreateMolliePaymentPayloadI,
@@ -22,10 +25,19 @@ export class MollieService {
     description,
     lineItems,
     shippingAddress,
+    orderId,
     testMode = false,
   }: CreateMolliePaymentPayloadI): Promise<CreateMolliePaymentResponseI> {
     try {
       const headers = await getAuthenticatedHeaders("Mollie");
+
+      if (!orderId) {
+        throw ErrorClient.handleError({
+          error: new Error("Order ID is required before creating Mollie payment"),
+          service: "Mollie",
+          action: "Create Payment",
+        });
+      }
 
       const { data, error } = await this.getSupabase().functions.invoke(
         "create-mollie-payment",
@@ -37,7 +49,7 @@ export class MollieService {
             line_items: lineItems,
             shipping_address: shippingAddress,
             metadata: {
-              order_id: `order_${Date.now()}`,
+              order_id: orderId,
               test_mode: testMode,
             },
           },

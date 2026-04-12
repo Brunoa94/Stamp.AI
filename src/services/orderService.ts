@@ -8,7 +8,7 @@ import { CartService } from "./cartService";
 import { OrderItemService } from "./orderItemService";
 import { UserI } from "@/types/auth";
 import { ErrorClient } from "./errorClient";
-import type { ShippingAddressT } from "@/schemas/checkout";
+import { ShippingAddressT } from "@/schemas/checkout";
 
 export class OrderService {
   private static getSupabase() {
@@ -307,13 +307,16 @@ export class OrderService {
     user,
     cart,
     paymentStatus = "paid",
+    orderStatus = "pending",
+    paymentMethod,
     shippingAddress,
-    idempotencyKey,
   }: {
-    user: UserI;
-    cart: CartWithItems;
-    paymentStatus?: string;
-    shippingAddress?: ShippingAddressT;
+    user: UserI
+    cart: CartWithItems
+    paymentStatus?: string
+    orderStatus?: string
+    paymentMethod?: string
+    shippingAddress?: ShippingAddressT
     idempotencyKey?: string;
   }){
           try {
@@ -337,6 +340,32 @@ export class OrderService {
               orderStatus,
               idempotencyKey
             );
+
+            if (paymentMethod) {
+              orderPayload.payment_method = paymentMethod;
+            }
+
+            if (shippingAddress) {
+              orderPayload.shipping_address = shippingAddress as any;
+              orderPayload.billing_address = shippingAddress as any;
+
+              const fullName = [shippingAddress.first_name, shippingAddress.last_name]
+                .filter(Boolean)
+                .join(" ")
+                .trim();
+
+              if (fullName) {
+                orderPayload.customer_name = fullName;
+              }
+
+              if (shippingAddress.phone) {
+                orderPayload.customer_phone = shippingAddress.phone;
+              }
+
+              if (shippingAddress.email) {
+                orderPayload.customer_email = shippingAddress.email;
+              }
+            }
 
             // Create order from cart
             const newOrder = await this.createOrder(orderPayload);

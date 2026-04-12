@@ -10,9 +10,18 @@ import type { PaymentSuccessDetailsI } from "@/types/payment";
 interface Props {
   details: PaymentSuccessDetailsI | null;
   onCreateAnother: () => void;
+  title?: string;
+  subtitle?: string;
+  statusValue?: string;
 }
 
-const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
+const PaymentSuccess = ({
+  details,
+  onCreateAnother,
+  title = "Order Confirmed",
+  subtitle = "Your custom masterpiece is officially in the queue. We're warming up the ink jets right now.",
+  statusValue = "Processing",
+}: Props) => {
   const orderNumber = details?.orderNumber ?? "—";
   const totalPaid = details?.totalPaid ?? "—";
   const estimatedDelivery = details?.estimatedDelivery ?? "7–10 business days";
@@ -36,11 +45,8 @@ const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
           </div>
 
           {/* Heading */}
-          <h1 className={paymentSuccessTheme.title}>Order Confirmed</h1>
-          <p className={paymentSuccessTheme.subtitle}>
-            Your custom masterpiece is officially in the queue. We&apos;re
-            warming up the ink jets right now.
-          </p>
+          <h1 className={paymentSuccessTheme.title}>{title}</h1>
+          <p className={paymentSuccessTheme.subtitle}>{subtitle}</p>
 
           {/* Order details grid */}
           <PaymentResultDetailsGrid
@@ -50,7 +56,7 @@ const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
               { label: "Total Paid", value: totalPaid },
             ]}
             statusLabel="Status"
-            statusValue="Processing"
+            statusValue={statusValue}
             statusVariant="success"
           />
 

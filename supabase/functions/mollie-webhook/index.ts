@@ -3,6 +3,7 @@ import { handleError } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { getMolliePayment, mapMollieStatusToInternal, isMolliePaymentPaid } from "../_shared/mollie.ts";
+import { processPaidOrder } from "../_shared/order-lifecycle.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -141,12 +142,27 @@ serve(async (req) => {
       console.log("Payment transaction saved/updated");
     }
 
-    // If payment is successful, update order and create Printify order
+    // If payment is successful, process full lifecycle idempotently
     if (isPaid) {
       console.log("Payment is paid, processing order...");
 
-      // Update order payment_status and status if we have an order_id
       if (orderId) {
+<<<<<<< HEAD
+        await processPaidOrder({
+          provider: "mollie",
+          eventId: `mollie-${payment.id}-${payment.status}`,
+          orderId,
+          amount: parseFloat(payment.amount.value),
+          currency: payment.amount.currency.toLowerCase(),
+          userId,
+          metadata,
+          refs: {
+            mollie_payment_id: payment.id,
+          },
+          lineItems,
+          shippingAddress: shippingAddress || {},
+        });
+=======
         // ✅ Use atomic operation to update both payment_status and status
         const orderUpdateResult = await supabaseRest(
           "rpc/update_order_payment_status_atomic",
@@ -250,20 +266,27 @@ serve(async (req) => {
             }
           }
         }
+>>>>>>> dev
       }
     } else if (payment.status === "failed" || payment.status === "canceled" || payment.status === "expired") {
       // Update order status if payment failed
       if (orderId) {
         const orderUpdateResult = await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
-          status: "cancelled",
+          status: "waiting_payment",
           payment_status: internalStatus,
+          payment_failure_reason:
+            payment.status === "canceled"
+              ? "mollie_user_cancelled"
+              : payment.status === "expired"
+                ? "mollie_expired"
+                : "mollie_technical_failure",
           updated_at: new Date().toISOString(),
         });
 
         if (orderUpdateResult.error) {
           console.error(`Failed to update order ${orderId}:`, orderUpdateResult.error);
         } else {
-          console.log(`Order ${orderId} updated: status=cancelled, payment_status=${internalStatus}`);
+          console.log(`Order ${orderId} updated: status=waiting_payment, payment_status=${internalStatus}`);
         }
       }
     }

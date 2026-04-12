@@ -177,7 +177,7 @@ export function useCreateProductSubscriberActions() {
 
       /** Handle image generation error */
       handleGenerationError: (error: Error) => {
-        navStore.setState({ ...navStore.getState(), currentStep: "upload" });
+        navStore.setState({ ...navStore.getState(), currentStep: "synthesis" });
         formStore.setState({
           ...formStore.getState(),
           isGenerating: false,

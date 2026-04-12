@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, validateRequest, verifyAuth } from "../_shared/validators.ts";
 import { createMolliePayment } from "../_shared/mollie.ts";
+import { revalidateOrderForPayment } from "../_shared/order-lifecycle.ts";
 import type { MolliePaymentRequestI, MolliePaymentResponseI } from "../../types/index.ts";
 
 const corsHeaders = {
@@ -74,6 +75,22 @@ serve(async (req) => {
 
     // Validate request data
     const validAmount = validateRequest.amount(amount);
+
+    const candidateOrderId =
+      typeof order_id === "string"
+        ? order_id
+        : metadata && typeof metadata.order_id === "string"
+          ? metadata.order_id
+          : undefined;
+
+    if (candidateOrderId && validateRequest.isUuid(candidateOrderId)) {
+      const revalidation = await revalidateOrderForPayment(candidateOrderId, userId);
+      if (!revalidation.ok) {
+        throw ErrorCodes.INVALID_REQUEST_BODY();
+      }
+    } else if (candidateOrderId) {
+      console.warn("Skipping order revalidation because order_id is not a UUID:", candidateOrderId);
+    }
 
     // Get site URL for redirect URLs
     const siteUrl = Deno.env.get("SITE_URL") || "http://localhost:3000";

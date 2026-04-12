@@ -27,6 +27,7 @@ interface BlueprintInfo {
     width: number
     height: number
   }[]
+  min_price: number
 }
 
 serve(async (req) => {
@@ -71,11 +72,27 @@ serve(async (req) => {
         )
 
         let printAreas: { position: string; width: number; height: number }[] = []
-        
+        let minPrice = 0
+
         if (variantsResponse.ok) {
           const variantsData = await variantsResponse.json()
           const firstVariant = variantsData.variants?.[0]
-          
+
+          // Calculate minimum price across all variants
+          let tempMinPrice = Infinity
+          if (variantsData.variants && Array.isArray(variantsData.variants)) {
+            variantsData.variants.forEach((variant: any) => {
+              if (variant.price && typeof variant.price === 'number') {
+                tempMinPrice = Math.min(tempMinPrice, variant.price)
+              }
+            })
+          }
+
+          // If no valid price found, set to 0
+          if (tempMinPrice !== Infinity) {
+            minPrice = tempMinPrice
+          }
+
           if (firstVariant?.placeholders) {
             printAreas = firstVariant.placeholders
               .filter((p: any) => p.position === 'front' || p.position === 'back')
@@ -95,6 +112,7 @@ serve(async (req) => {
           model: blueprintData.model,
           images: blueprintData.images || [],
           printAreas,
+          min_price: minPrice,
         })
 
         console.log(`Fetched blueprint ${blueprintId}: ${blueprintData.title}`)
@@ -105,10 +123,21 @@ serve(async (req) => {
 
     console.log(`Found ${blueprints.length} blueprints with front/back support`)
 
+    // Sort blueprints by minimum price (ascending) and take top 4
+    const sortedBlueprints = blueprints
+      .filter(bp => bp.min_price > 0) // Exclude blueprints without valid pricing
+      .sort((a, b) => a.min_price - b.min_price)
+      .slice(0, 4)
+
+    console.log(`Returning ${sortedBlueprints.length} cheapest blueprints`)
+    sortedBlueprints.forEach(bp => {
+      console.log(`  - ${bp.title}: $${(bp.min_price / 100).toFixed(2)}`)
+    })
+
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        blueprints,
+      JSON.stringify({
+        success: true,
+        blueprints: sortedBlueprints,
         printProviderId: DEFAULT_PRINT_PROVIDER_ID,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

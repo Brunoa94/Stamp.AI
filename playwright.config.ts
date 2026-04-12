@@ -1,4 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
+import { loadEnvConfig } from "@next/env";
+
+// Load Next.js environment files (.env.local, etc.)
+loadEnvConfig(process.cwd());
 
 /**
  * Playwright configuration for the Stamp.AI E2E test suite.

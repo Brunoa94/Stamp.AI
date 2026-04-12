@@ -16,6 +16,7 @@ interface Props {
   amount: number;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
+  orderId?: string;
   testMode?: boolean;
   onSuccess?: (
     details: PayPalSuccessDetailsI,
@@ -29,6 +30,7 @@ export function PayPalButton({
   amount,
   lineItems,
   shippingAddress,
+  orderId,
   testMode = false,
   onSuccess,
   onError,
@@ -39,7 +41,6 @@ export function PayPalButton({
     error,
     loading,
     createOrder,
-    onApprove,
     onButtonError,
     onCancel,
     forceReRenderDeps,
@@ -48,6 +49,7 @@ export function PayPalButton({
     amount,
     lineItems,
     shippingAddress,
+    orderId,
     testMode,
     onSuccess,
     onError,
@@ -72,7 +74,6 @@ export function PayPalButton({
           style={paypalButtonStyles}
           disabled={disabled || loading}
           createOrder={createOrder}
-          onApprove={onApprove}
           onError={onButtonError}
           onCancel={onCancel}
           forceReRender={forceReRenderDeps}

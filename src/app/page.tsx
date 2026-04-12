@@ -13,7 +13,6 @@ import {
 import { useHomepageSectionScroll } from "@/features/homepage/hooks/useHomepageSectionScroll";
 import { ScrollProgressIndicator } from "@/features/homepage/navigation/ScrollProgressIndicator";
 import { SectionDotsNav } from "@/features/homepage/navigation/SectionDotsNav";
-import { BrandStorySection } from "@/features/homepage/sections/BrandStorySection";
 import { CtaHomeSection } from "@/features/homepage/sections/CtaHomeSection";
 import { FaqSection } from "@/features/homepage/sections/FaqSection";
 import { HeroSection } from "@/features/homepage/sections/HeroSection";
@@ -22,6 +21,8 @@ import { ProductsSection } from "@/features/homepage/sections/ProductsSection";
 import { ReviewsSection } from "@/features/homepage/sections/ReviewsSection";
 import { SecuritySection } from "@/features/homepage/sections/SecuritySection";
 import { PromoCodesCarouselSection } from "@/features/homepage/sections/PromoCodesCarouselSection";
+import { TestimonialsSection } from "@/features/homepage/sections/TestimonialsSection";
+import { useSmoothScroll } from "@/features/homepage/hooks/useSmoothScroll";
 
 export default function Home() {
   const processSectionIndex = SECTION_IDS.indexOf("process");
@@ -42,10 +43,17 @@ export default function Home() {
     scrollDuration: SCROLL_DURATION,
     processSectionId: "process",
     processStepsCount: processSteps.length,
+    enableScrollSnap: false,
+  });
+
+  // Enable smooth scroll effect
+  useSmoothScroll({
+    smoothness: 0.08, // Adjust between 0.05 (very smooth/slow) and 0.2 (faster)
+    enabled: true,
   });
 
   return (
-    <div className="homepage-scroll-snap relative -mt-20 min-h-screen w-screen bg-white text-slate-900">
+    <div className="relative -mt-20 min-h-screen w-screen bg-white text-slate-900">
       <div className="pointer-events-none fixed inset-0 z-40 bg-[radial-gradient(circle_at_1px_1px,#1e293b_1px,transparent_0)]/6 bg-size-[6px_6px]" />
 
       <SectionDotsNav
@@ -72,7 +80,7 @@ export default function Home() {
       <HeroSection heroScale={heroScale} />
       <CtaHomeSection />
       <ProcessSection activeProcessStep={activeProcessStep} />
-      <BrandStorySection />
+      <TestimonialsSection />
       <PromoCodesCarouselSection />
       <ProductsSection
         isProductsLoading={isProductsLoading}

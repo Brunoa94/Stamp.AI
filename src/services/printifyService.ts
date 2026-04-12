@@ -5,7 +5,6 @@ import {
   CreatePrintifyOrderRequestSchema,
   PrintifyOrderResponseSchema
 } from "@/schemas/services";
-import { z } from "zod";
 import { createClient } from "@/lib/supabase/client";
 import type {
     CreatePrintifyOrderRequest,
@@ -17,6 +16,15 @@ import { TshirtType } from "@/types/product";
 import { BlueprintI } from "@/types/api";
 
 export class PrintifyService {
+    private static getSupabaseConfig() {
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+        // Do not throw here; caller will fall back to relative functions URLs when
+        // environment variables are not present (e.g. during Playwright tests).
+        return { supabaseUrl, supabaseAnonKey };
+    }
+
     static async getCustomProduct(productId: string): Promise<CustomProductT> {
         try{
             const url = `/api/fetch-custom-product?product_id=${productId}`;
@@ -123,27 +131,50 @@ export class PrintifyService {
     /**
      * Fetch all t-shirt products from Printify catalog
      * Retrieves blueprints via Supabase Edge Function and transforms them to TshirtType
+     * Returns the 4 cheapest options for shipping to Netherlands
      */
     static async getTshirtProducts(): Promise<TshirtType[]> {
         try {
-            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-            const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+            // Only attempt server-side cached blueprint lookup when running on the server.
+            // On the client (browser/tests) we skip the DB cache to avoid invoking
+            // server-only Supabase clients which require environment configuration.
+            if (typeof window === "undefined") {
+                const { BlueprintCacheService } = await import("./blueprintCacheService");
+                const cachedBlueprints = await BlueprintCacheService.getCachedBlueprints("NL");
 
-            if (!supabaseUrl || !supabaseAnonKey) {
-                throw new Error("Supabase configuration missing");
+                if (cachedBlueprints && cachedBlueprints.length > 0) {
+                    console.log("✅ Using cached blueprints from database");
+                    return cachedBlueprints;
+                }
+
+                // Cache miss - fetch from edge function
+                console.log("❌ Cache miss - fetching from edge function");
+            } else {
+                // Client-side: skip server cache lookup
+                console.log("Client-side environment - skipping server-side cache lookup");
             }
 
-            const response = await fetch(
-                `${supabaseUrl}/functions/v1/get-catalog-blueprints`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${supabaseAnonKey}`,
-                    },
-                    body: JSON.stringify({}),
-                }
-            );
+            const { supabaseUrl, supabaseAnonKey } = this.getSupabaseConfig();
+
+            // If NEXT_PUBLIC_SUPABASE_URL is not provided (e.g. local test runs),
+            // fall back to a relative functions URL so Playwright route handlers
+            // (which use the pattern **/functions/v1/...) can intercept requests.
+            const fetchUrl = supabaseUrl
+                ? `${supabaseUrl}/functions/v1/get-cheapest-blueprints`
+                : `/functions/v1/get-cheapest-blueprints`;
+
+            const headers: Record<string, string> = {
+                "Content-Type": "application/json",
+            };
+            if (supabaseAnonKey) {
+                headers["Authorization"] = `Bearer ${supabaseAnonKey}`;
+            }
+
+            const response = await fetch(fetchUrl, {
+                method: "POST",
+                headers,
+                body: JSON.stringify({}),
+            });
 
             if (!response.ok) {
                 const errorText = await response.text();
@@ -166,11 +197,11 @@ export class PrintifyService {
                 description: blueprint.description || `${blueprint.brand} ${blueprint.model}`,
                 image: blueprint.images[0] || "/api/placeholder/200/200",
                 features: blueprint.printAreas.map((area: { position: string; width: number; height: number }) => area.position),
-                price: 0, // Base price, will be determined by variant selection
+                price: blueprint.min_price ? blueprint.min_price / 100 : 0,
                 material: blueprint.brand || "Cotton",
                 fit: "Classic",
                 blueprint_id: blueprint.id,
-                print_provider_id: data.printProviderId || 99,
+                print_provider_id: blueprint.print_provider_id || 99,
                 brand: blueprint.brand,
                 model: blueprint.model,
             }));

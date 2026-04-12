@@ -8,6 +8,10 @@ interface OrdersMobileCardHeaderProps {
 }
 
 export function OrdersMobileCardHeader({ order }: OrdersMobileCardHeaderProps) {
+  const statusLabel = order.refund_failed
+    ? "refund_failed"
+    : order.status || "processing";
+
   return (
     <div className={ordersTheme.mobileCard.header}>
       <div>
@@ -18,9 +22,7 @@ export function OrdersMobileCardHeader({ order }: OrdersMobileCardHeaderProps) {
           Ordered {formatOrderDate(order.created_at)}
         </div>
       </div>
-      <span className={getStatusBadgeClass(order.status)}>
-        {order.status || "Processing"}
-      </span>
+      <span className={getStatusBadgeClass(statusLabel)}>{statusLabel}</span>
     </div>
   );
 }

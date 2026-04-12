@@ -17,6 +17,7 @@ interface UsePayPalButtonParamsI {
   amount: number;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
+  orderId?: string;
   testMode?: boolean;
   onSuccess?: (
     details: PayPalSuccessDetailsI,
@@ -25,10 +26,15 @@ interface UsePayPalButtonParamsI {
   onError?: (error: string) => void;
 }
 
+interface PayPalOnApproveActionsI {
+  restart?: () => Promise<void>;
+}
+
 export function usePayPalButton({
   amount,
   lineItems,
   shippingAddress,
+  orderId,
   testMode = false,
   onSuccess,
   onError,
@@ -58,6 +64,7 @@ export function usePayPalButton({
         amount,
         lineItems,
         shippingAddress,
+        orderId,
         testMode,
       });
 
@@ -70,13 +77,14 @@ export function usePayPalButton({
     amount,
     lineItems,
     shippingAddress,
+    orderId,
     testMode,
     createPayPalOrder,
     handleOperationError,
   ]);
 
   const onApprove = useCallback(
-    async (data: PayPalOnApproveDataI) => {
+    async (data: PayPalOnApproveDataI, actions?: PayPalOnApproveActionsI) => {
       setError(null);
 
       try {
@@ -84,6 +92,19 @@ export function usePayPalButton({
           orderId: data.orderID,
           payerId: data.payerID,
         });
+
+        if (!captureData.success) {
+          if (captureData.restartable && actions?.restart) {
+            await actions.restart();
+            return;
+          }
+
+          throw new Error(captureData.error || "PAYPAL_CAPTURE_FAILED");
+        }
+
+        if (!captureData.captureId) {
+          throw new Error("PAYPAL_CAPTURE_FAILED");
+        }
 
         await onSuccess?.(
           {

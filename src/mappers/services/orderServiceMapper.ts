@@ -221,7 +221,7 @@ export class OrderServiceMapper {
     discountAmount: number = 0,
     paymentStatus: string = "pending",
     orderStatus: string = "pending",
-    idempotencyKey?: string
+    idempotencyKey?: string,
   ): CreateOrderT & { idempotency_key?: string | null } {
     const fullName = [shippingAddress?.first_name, shippingAddress?.last_name]
       .filter(Boolean)

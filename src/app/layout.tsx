@@ -78,7 +78,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
         <link
-          href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500&f[]=satoshi@700,500,400&display=swap"
+          href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,500&f[]=satoshi@700,500,400&f[]=clash-display@700,600,500,400&display=swap"
           rel="stylesheet"
         />
       </head>

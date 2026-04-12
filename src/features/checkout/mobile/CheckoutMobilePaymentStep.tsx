@@ -16,6 +16,7 @@ export function CheckoutMobilePaymentStep() {
   const orderAmount = CheckoutSelectors.orderAmount();
   const lineItems = CheckoutSelectors.lineItems();
   const selectedPaymentMethod = CheckoutSelectors.selectedPaymentMethod();
+  const checkoutOrderId = CheckoutSelectors.checkoutOrderId();
 
   const {
     setTestMode,
@@ -49,6 +50,7 @@ export function CheckoutMobilePaymentStep() {
           lineItems={lineItems}
           amount={orderAmount}
           shippingAddress={shippingAddress}
+          orderId={checkoutOrderId || undefined}
           testMode={testMode}
           onSuccess={handlePaymentSuccess}
           onError={handlePaymentError}

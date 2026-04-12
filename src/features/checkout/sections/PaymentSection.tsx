@@ -17,6 +17,7 @@ export function PaymentSection() {
   const orderAmount = CheckoutSelectors.orderAmount();
   const lineItems = CheckoutSelectors.lineItems();
   const selectedPaymentMethod = CheckoutSelectors.selectedPaymentMethod();
+  const checkoutOrderId = CheckoutSelectors.checkoutOrderId();
 
   const {
     setTestMode,
@@ -57,6 +58,7 @@ export function PaymentSection() {
           lineItems={lineItems}
           amount={orderAmount}
           shippingAddress={shippingAddress}
+          orderId={checkoutOrderId || undefined}
           testMode={testMode}
           onSuccess={handlePaymentSuccess}
           onError={handlePaymentError}

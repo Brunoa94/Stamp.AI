@@ -21,10 +21,8 @@ export class CustomProductService {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-    if (!supabaseUrl || !supabaseAnonKey) {
-      throw new Error("Supabase configuration missing");
-    }
-
+    // Do not throw here; caller will fall back to relative functions URLs when
+    // environment variables are not present (e.g. during Playwright tests).
     return { supabaseUrl, supabaseAnonKey };
   }
 
@@ -44,17 +42,18 @@ export class CustomProductService {
       // Validate request payload
       const validatedPayload = UploadImageRequestSchema.parse(payload);
 
-      const response = await fetch(
-        `${supabaseUrl}/functions/v1/upload-printify-image`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${supabaseAnonKey}`,
-          },
-          body: JSON.stringify(validatedPayload),
-        }
-      );
+      const fetchUrl = supabaseUrl
+        ? `${supabaseUrl}/functions/v1/upload-printify-image`
+        : `/functions/v1/upload-printify-image`;
+
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (supabaseAnonKey) headers["Authorization"] = `Bearer ${supabaseAnonKey}`;
+
+      const response = await fetch(fetchUrl, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(validatedPayload),
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -116,17 +115,18 @@ export class CustomProductService {
       // Validate product payload
       const validatedProductPayload = CreateCustomProductRequestSchema.parse(productPayload);
 
-      const response = await fetch(
-        `${supabaseUrl}/functions/v1/create-custom-product`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${supabaseAnonKey}`,
-          },
-          body: JSON.stringify(validatedProductPayload),
-        }
-      );
+      const fetchUrl = supabaseUrl
+        ? `${supabaseUrl}/functions/v1/create-custom-product`
+        : `/functions/v1/create-custom-product`;
+
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (supabaseAnonKey) headers["Authorization"] = `Bearer ${supabaseAnonKey}`;
+
+      const response = await fetch(fetchUrl, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(validatedProductPayload),
+      });
 
       if (!response.ok) {
         const errorText = await response.text();

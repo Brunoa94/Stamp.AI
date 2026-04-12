@@ -9,6 +9,7 @@ interface OrderTableActionsProps {
   order: OrderWithItemsT;
   onViewOrder: (order: OrderWithItemsT) => void;
   onCancelOrder?: (order: OrderWithItemsT) => void;
+  onProceedToPayment?: (order: OrderWithItemsT) => void;
 }
 
 // Payment statuses that allow the user to retry payment
@@ -18,6 +19,7 @@ export function OrderTableActions({
   order,
   onViewOrder,
   onCancelOrder,
+  onProceedToPayment,
 }: OrderTableActionsProps) {
   const isCancelled = order.status === "cancelled";
   const canCancel = canCancelOrder(order);

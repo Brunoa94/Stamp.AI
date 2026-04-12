@@ -18,6 +18,7 @@ export const MOCK_STATE: CheckoutSubscriberContextState = {
   selectedPaymentMethod: "stripe",
   paymentSuccessDetails: null,
   paymentErrorDetails: null,
+  checkoutOrderId: null,
   promoCode: null,
   promoValue: 0,
   promoType: null,

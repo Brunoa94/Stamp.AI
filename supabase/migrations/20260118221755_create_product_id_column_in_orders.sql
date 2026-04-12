@@ -1,2 +1,2 @@
 ALTER TABLE orders
-ADD COLUMN product_id TEXT;
+ADD COLUMN IF NOT EXISTS product_id TEXT;
