@@ -30,6 +30,37 @@ serve(async (req) => {
     console.log("PayPal webhook event:", event.event_type);
     console.log("Resource ID:", event.resource?.id);
 
+    // ✅ CRITICAL FIX: Idempotency check
+    // Prevent duplicate webhook processing
+    const eventId = event.id || `${event.event_type}_${event.resource?.id}`;
+
+    // Check if this webhook was already processed
+    const isProcessed = await supabaseRest(
+      "rpc/is_webhook_processed",
+      "POST",
+      { p_provider: "paypal", p_event_id: eventId }
+    );
+
+    if (isProcessed.data === true) {
+      console.log(`✅ PayPal webhook ${eventId} already processed, skipping`);
+      return new Response(
+        JSON.stringify({ received: true, skipped: true, reason: "already_processed" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      );
+    }
+
+    // Record this webhook as being processed
+    await supabaseRest(
+      "rpc/record_webhook_event",
+      "POST",
+      {
+        p_provider: "paypal",
+        p_event_id: eventId,
+        p_event_type: event.event_type,
+        p_payload: event,
+      }
+    );
+
     switch (event.event_type) {
       // Order approved by customer (before capture)
       case "CHECKOUT.ORDER.APPROVED": {
@@ -55,6 +86,7 @@ serve(async (req) => {
           const metadata = txResult.data?.[0]?.metadata || {};
           const dbOrderId = metadata.order_id as string | undefined;
 
+<<<<<<< HEAD
           if (dbOrderId) {
             await processPaidOrder({
               provider: "paypal",
@@ -71,6 +103,35 @@ serve(async (req) => {
               lineItems: (metadata.line_items as unknown[]) || [],
               shippingAddress: (metadata.shipping_address as Record<string, unknown>) || {},
             });
+=======
+            // Update order payment_status to "paid"
+            // First get the order_id from the payment transaction metadata
+            const txResult = await supabaseRest(
+              `payment_transactions?paypal_order_id=eq.${orderId}&select=metadata`,
+              "GET"
+            );
+
+            const dbOrderId = txResult.data?.[0]?.metadata?.order_id;
+            if (dbOrderId) {
+              // ✅ Use atomic operation to update both payment_status and status
+              const orderResult = await supabaseRest(
+                "rpc/update_order_payment_status_atomic",
+                "POST",
+                {
+                  p_order_id: dbOrderId,
+                  p_payment_status: "paid",
+                  p_order_status: "confirmed",
+                  p_payment_method: "paypal",
+                }
+              );
+
+              if (orderResult.error) {
+                console.error("Failed to update order atomically:", orderResult.error);
+              } else {
+                console.log(`✅ Order ${dbOrderId} atomically updated to paid/confirmed`);
+              }
+            }
+>>>>>>> dev
           }
         }
         break;
@@ -145,6 +206,7 @@ serve(async (req) => {
             }
           );
 
+<<<<<<< HEAD
           const txResult = await supabaseRest<any[]>(
             `payment_transactions?paypal_order_id=eq.${orderId}&select=metadata`,
             "GET",
@@ -158,6 +220,34 @@ serve(async (req) => {
               payment_failure_reason: "paypal_capture_denied",
               updated_at: new Date().toISOString(),
             });
+=======
+          if (result.error) {
+            console.error("Update error:", result.error);
+          } else {
+            // Also update the linked order's payment_status to "failed"
+            const txResult = await supabaseRest(
+              `payment_transactions?paypal_order_id=eq.${orderId}&select=metadata`,
+              "GET"
+            );
+
+            const dbOrderId = txResult.data?.[0]?.metadata?.order_id;
+            if (dbOrderId) {
+              const orderResult = await supabaseRest(
+                `orders?id=eq.${dbOrderId}`,
+                "PATCH",
+                {
+                  payment_status: "failed",
+                  updated_at: new Date().toISOString(),
+                }
+              );
+
+              if (orderResult.error) {
+                console.error("Failed to update order payment_status on denial:", orderResult.error);
+              } else {
+                console.log(`Order ${dbOrderId} payment_status updated to: failed`);
+              }
+            }
+>>>>>>> dev
           }
         }
         break;

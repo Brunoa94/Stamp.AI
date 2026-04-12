@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useState } from "react";
-import { ChevronDown, Mail, Repeat, Sparkles } from "lucide-react";
+import { ChevronDown, Mail, Repeat, Sparkles, RefreshCw } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { ordersTheme } from "@/theme/components";
 import { OrderWithItemsT } from "@/types/order";
@@ -19,6 +19,9 @@ interface OrdersMobileCardActionsProps {
   onProceedToPayment?: (order: OrderWithItemsT) => void;
 }
 
+// Payment statuses that allow the user to retry payment
+const RETRYABLE_PAYMENT_STATUSES = ["failed", "pending"];
+
 export function OrdersMobileCardActions({
   order,
   onViewOrder,
@@ -30,6 +33,9 @@ export function OrdersMobileCardActions({
   const isCancelled = order.status === "cancelled";
   const canCancel = canCancelOrder(order);
   const canProceed = canProceedToPayment(order);
+  const canRetryPayment =
+    !isCancelled &&
+    RETRYABLE_PAYMENT_STATUSES.includes(order.payment_status ?? "");
   const { supportEmailHref, reuseImageUrl } = useOrderMoreActions(order);
 
   return (
@@ -51,7 +57,14 @@ export function OrdersMobileCardActions({
         >
           Reorder
         </Button>
-        {canProceed ? (
+        {canRetryPayment ? (
+          <Button asChild variant="outline" size="default">
+            <Link href={`/checkout?retry_order_id=${order.id}`}>
+              <RefreshCw className="h-3.5 w-3.5 mr-1" />
+              Retry Payment
+            </Link>
+          </Button>
+        ) : canProceed ? (
           <Button
             onClick={() => onProceedToPayment?.(order)}
             variant="outline"
@@ -59,8 +72,7 @@ export function OrdersMobileCardActions({
           >
             Pay now
           </Button>
-        ) : null}
-        {isCancelled ? (
+        ) : isCancelled ? (
           <span className="inline-flex items-center justify-center h-10 px-4 text-sm font-medium text-muted-foreground max-w-23.25">
             Canceled
           </span>

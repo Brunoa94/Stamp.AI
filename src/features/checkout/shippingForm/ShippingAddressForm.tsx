@@ -35,6 +35,7 @@ const ShippingAddressForm = ({
     handleSubmit,
     watch,
     control,
+    reset,
     formState: { errors, isSubmitting, isValid },
   } = useForm<ShippingAddressT>({
     resolver: zodResolver(ShippingAddressSchema),
@@ -46,6 +47,16 @@ const ShippingAddressForm = ({
 
   const hasErrors = Object.keys(errors).length > 0;
   const formValues = watch();
+
+  // Keep form fields in sync when initial data arrives asynchronously (e.g. retry flow)
+  useEffect(() => {
+    if (initialData) {
+      reset({
+        country: "US",
+        ...initialData,
+      });
+    }
+  }, [initialData, reset]);
 
   // Auto-submit when form is valid and autoSubmitOnChange is enabled
   useEffect(() => {
@@ -96,7 +107,7 @@ const ShippingAddressForm = ({
                     error={errors[field.id]?.message}
                     variant="shipping"
                   />
-                )
+                ),
               )}
             </div>
           );
@@ -109,7 +120,9 @@ const ShippingAddressForm = ({
               disabled={isSubmitting}
               className="w-full rounded-none bg-linear-to-br from-[#7C3AED] to-[#06B6D4] text-white font-heading font-bold uppercase tracking-widest"
             >
-              {isSubmitting ? "Saving..." : (submitLabel ?? "Continue to Payment")}
+              {isSubmitting
+                ? "Saving..."
+                : (submitLabel ?? "Continue to Payment")}
             </Button>
           </div>
         )}

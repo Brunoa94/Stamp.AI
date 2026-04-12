@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import {
-  MollieService,
-  type CreateMolliePaymentPayloadI,
-  type VerifyMolliePaymentPayloadI,
-} from "@/services/mollieService";
+import { MollieService } from "@/services/mollieService";
+import type {
+  CreateMolliePaymentPayloadI,
+  VerifyMolliePaymentPayloadI,
+} from "@/types/payment";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 export function useCreateMolliePayment() {

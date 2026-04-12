@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/client";
 import { ErrorClient } from "./errorClient";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
+import { getAuthenticatedHeaders } from "./authHelpers";
 
 export interface CreatePayPalOrderPayloadI {
   amount: number;
@@ -34,21 +35,6 @@ export class PayPalService {
     return createClient();
   }
 
-  private static async validateAuthenticatedSession(): Promise<void> {
-    const {
-      data: { session },
-      error,
-    } = await this.getSupabase().auth.getSession();
-
-    if (error) {
-      throw ErrorClient.handleError({ error, service: "PayPal", action: "Validate Session" });
-    }
-
-    if (!session) {
-      throw ErrorClient.handleError({ error: new Error("You must be logged in to complete checkout"), service: "PayPal", action: "Validate Session" });
-    }
-  }
-
   static async createOrder({
     amount,
     lineItems,
@@ -57,7 +43,7 @@ export class PayPalService {
     testMode = false,
   }: CreatePayPalOrderPayloadI): Promise<CreatePayPalOrderResponseI> {
     try {
-      await this.validateAuthenticatedSession();
+      const headers = await getAuthenticatedHeaders("PayPal");
 
       if (!orderId) {
         throw ErrorClient.handleError({
@@ -80,6 +66,7 @@ export class PayPalService {
               test_mode: testMode,
             },
           },
+          headers,
         }
       );
 
@@ -106,6 +93,8 @@ export class PayPalService {
     payerId,
   }: CapturePayPalOrderPayloadI): Promise<CapturePayPalOrderResponseI> {
     try {
+      const headers = await getAuthenticatedHeaders("PayPal");
+
       const { data, error } = await this.getSupabase().functions.invoke(
         "capture-paypal-order",
         {
@@ -113,6 +102,7 @@ export class PayPalService {
             orderId,
             payerId,
           },
+          headers,
         }
       );
 

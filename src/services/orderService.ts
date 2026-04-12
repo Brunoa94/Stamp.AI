@@ -124,6 +124,40 @@ export class OrderService {
   }
 
   /**
+   * Get order by idempotency key
+   * Used to prevent duplicate order creation for the same payment
+   *
+   * CRITICAL FIX: Implements idempotency check to prevent race conditions
+   * where the same payment_intent_id triggers multiple order creations.
+   *
+   * Example idempotency key format: "stripe_pi_1234567890"
+   */
+  static async getOrderByIdempotencyKey(idempotencyKey: string): Promise<OrderT | null> {
+    try {
+      const supabase = this.getSupabase();
+
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('idempotency_key', idempotencyKey)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error checking idempotency:", error);
+        // Don't throw - return null so order creation can proceed
+        // This prevents idempotency check failures from blocking orders
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Idempotency check failed:", error);
+      // Don't throw - fail open to allow order creation
+      return null;
+    }
+  }
+
+  /**
    * Create a new order
    */
   static async createOrder(payload: CreateOrderT): Promise<OrderT> {
@@ -283,6 +317,7 @@ export class OrderService {
     orderStatus?: string
     paymentMethod?: string
     shippingAddress?: ShippingAddressT
+    idempotencyKey?: string;
   }){
           try {
             // Use mapper to generate unique order number
@@ -291,14 +326,19 @@ export class OrderService {
             // Use mapper to calculate order totals
             const totals = OrderServiceMapper.calculateOrderTotals(cart.cart_items);
 
+            // Derive order status: a paid order is immediately "confirmed"
+            const orderStatus = paymentStatus === "paid" ? "confirmed" : "pending";
+
             // Use mapper to create order payload
             const orderPayload = OrderServiceMapper.mapUserAndTotalsToCreateOrder(
               user,
               orderNumber,
               totals,
+              shippingAddress,
               0, // discount amount
               paymentStatus,
               orderStatus,
+              idempotencyKey
             );
 
             if (paymentMethod) {

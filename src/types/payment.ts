@@ -1,3 +1,7 @@
+import type { ShippingAddressT } from "@/schemas/checkout";
+import type { PrintifyLineItem } from "./printifyOrder";
+import type { MolliePaymentStatus } from "@/lib/mollie";
+
 /**
  * Payment method selection type
  * Used to toggle between Stripe (credit card), PayPal, and Mollie payment methods
@@ -65,7 +69,152 @@ export interface PaymentErrorDetailsI {
   reasonTitle: string;
   reasonMessage: string;
   availableMethods: PaymentAlternativeMethodT[];
+  /**
+   * Indicates whether this error occurred after payment was successfully captured.
+   * When true, the payment went through but order fulfillment failed (e.g., database error, Printify error).
+   * This prevents showing retry/alternative payment options since the customer was already charged.
+   */
+  isPostPaymentError?: boolean;
 }
+
+/**
+ * Result returned by a payment execution flow (Stripe/PayPal/Mollie)
+ */
+export interface PaymentExecutionResult {
+  provider: PaymentMethodT;
+  // Primary payment identifier (payment intent id / mollie id / charge id)
+  paymentId: string;
+  // Optional capture id for PayPal
+  captureId?: string;
+  // Optional raw provider payload
+  raw?: Record<string, unknown>;
+}
+
+// ============================================
+// Stripe Payment Types
+// ============================================
+
+/**
+ * Payload for creating a Stripe payment for credit purchase
+ */
+export interface CreateCreditPaymentPayloadI {
+  amount: number;
+  credits: number;
+  currency?: string;
+}
+
+/**
+ * Response from creating a Stripe credit payment
+ */
+export interface CreateCreditPaymentResponseI {
+  clientSecret: string;
+  paymentIntentId: string;
+}
+
+/**
+ * Payload for creating a Stripe Payment Intent for checkout
+ */
+export interface CreatePaymentIntentPayloadI {
+  amount: number;
+  currency?: string;
+  line_items: PrintifyLineItem[];
+  shipping_address: ShippingAddressT;
+  metadata?: Record<string, unknown>;
+  payment_method?: string;
+  confirm?: boolean;
+}
+
+/**
+ * Response from creating a Stripe Payment Intent
+ */
+export interface CreatePaymentIntentResponseI {
+  success: boolean;
+  clientSecret: string;
+  paymentIntentId: string;
+}
+
+// ============================================
+// PayPal Payment Types
+// ============================================
+
+/**
+ * Payload for creating a PayPal order
+ */
+export interface CreatePayPalOrderPayloadI {
+  amount: number;
+  lineItems: PrintifyLineItem[];
+  shippingAddress: ShippingAddressT;
+  testMode?: boolean;
+}
+
+/**
+ * Response from creating a PayPal order
+ */
+export interface CreatePayPalOrderResponseI {
+  orderId: string;
+}
+
+/**
+ * Payload for capturing a PayPal order
+ */
+export interface CapturePayPalOrderPayloadI {
+  orderId: string;
+  payerId?: string | null;
+}
+
+/**
+ * Response from capturing a PayPal order
+ */
+export interface CapturePayPalOrderResponseI {
+  success: boolean;
+  captureId: string;
+  payerEmail?: string;
+}
+
+// ============================================
+// Mollie Payment Types
+// ============================================
+
+/**
+ * Payload for creating a Mollie payment
+ */
+export interface CreateMolliePaymentPayloadI {
+  amount: number;
+  currency?: string;
+  description?: string;
+  lineItems: PrintifyLineItem[];
+  shippingAddress: ShippingAddressT;
+  testMode?: boolean;
+}
+
+/**
+ * Response from creating a Mollie payment
+ */
+export interface CreateMolliePaymentResponseI {
+  paymentId: string;
+  checkoutUrl: string;
+}
+
+/**
+ * Payload for verifying a Mollie payment
+ */
+export interface VerifyMolliePaymentPayloadI {
+  paymentId: string;
+}
+
+/**
+ * Response from verifying a Mollie payment
+ */
+export interface VerifyMolliePaymentResponseI {
+  paymentId: string;
+  status: MolliePaymentStatus;
+  isPaid: boolean;
+  metadata?: Record<string, unknown>;
+}
+
+// ============================================
+// Payment Method Options
+// ============================================
 
 /**
  * Available payment method options

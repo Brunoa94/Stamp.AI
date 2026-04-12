@@ -203,6 +203,7 @@ export function useCreateOrderFromCart() {
       orderStatus = "pending",
       paymentMethod,
       shippingAddress,
+      idempotencyKey,
     }: {
       user: UserI;
       cart: CartWithItems;
@@ -210,6 +211,7 @@ export function useCreateOrderFromCart() {
       orderStatus?: string;
       paymentMethod?: string;
       shippingAddress?: ShippingAddressT;
+      idempotencyKey?: string;
     }) => {
       if (!user) {
         throw new Error("User not authenticated");
@@ -221,6 +223,7 @@ export function useCreateOrderFromCart() {
         orderStatus,
         paymentMethod,
         shippingAddress,
+        idempotencyKey,
       });
     },
     onSuccess: (orderId) => {
@@ -234,5 +237,7 @@ export function useCreateOrderFromCart() {
     onError: (error: Error) => {
       handleError(error);
     },
+    // 3 total attempts: initial try + 2 retries
+    retry: 2,
   });
 }

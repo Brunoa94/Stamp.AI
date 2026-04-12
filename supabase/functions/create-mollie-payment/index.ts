@@ -21,8 +21,44 @@ serve(async (req) => {
   }
 
   try {
-    // Verify authentication
+    // Read and log incoming request headers/body (masked) for debugging
     const authHeader = req.headers.get("authorization");
+    const apikeyHeader = req.headers.get("apikey");
+
+    let rawBody: string | null = null;
+    try {
+      rawBody = await req.text();
+    } catch (e) {
+      rawBody = null;
+    }
+
+    let parsedBody: any = null;
+    try {
+      parsedBody = rawBody ? JSON.parse(rawBody) : {};
+    } catch (e) {
+      parsedBody = null;
+    }
+
+    // Mask tokens for logs
+    const mask = (s?: string | null) => {
+      if (!s) return null;
+      if (s.length <= 16) return '*****';
+      return `${s.slice(0,8)}...${s.slice(-8)}`;
+    };
+
+    console.log('Incoming function request - header previews:', {
+      authorization: mask(authHeader?.replace('Bearer ', '')),
+      apikey: mask(apikeyHeader),
+    });
+
+    console.log('Incoming function request - body preview:', {
+      amount: parsedBody?.amount,
+      currency: parsedBody?.currency,
+      order_id: parsedBody?.metadata?.order_id ?? parsedBody?.order_id,
+      line_items_count: Array.isArray(parsedBody?.line_items) ? parsedBody.line_items.length : undefined,
+    });
+
+    // Verify authentication
     const { userId, userEmail } = await verifyAuth(authHeader);
 
     console.log("Authenticated user:", userId);
@@ -35,7 +71,7 @@ serve(async (req) => {
       line_items,
       shipping_address,
       metadata,
-    }: MolliePaymentRequestI = await req.json();
+    }: MolliePaymentRequestI = parsedBody ?? {};
 
     // Validate request data
     const validAmount = validateRequest.amount(amount);

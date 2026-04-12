@@ -5,8 +5,7 @@ import Link from "next/link";
 import { PAYMENT_CONFIRM_METHOD_UI } from "@/constants/payment";
 import { PayPalButton } from "../PayPalButton/PayPalButton";
 import { MollieButton } from "../MollieButton";
-import { useMemo, useCallback } from "react";
-import { buildPrintifyLineItems } from "../mappers/printifyLineItemsMapper";
+import { useCallback } from "react";
 import { useCheckoutSubscriberActions } from "../context";
 import type { PayPalSuccessDetailsI } from "../PayPalButton/usePayPalButton";
 
@@ -20,20 +19,15 @@ export const CompleteOrderButton = ({
   const shippingAddress = CheckoutSelectors.shippingAddress();
   const isProcessingPayment = CheckoutSelectors.isProcessingPayment();
   const selectedPaymentMethod = CheckoutSelectors.selectedPaymentMethod();
-  const cartItems = CheckoutSelectors.cartItems();
+  const lineItems = CheckoutSelectors.lineItems();
   const testMode = CheckoutSelectors.testMode();
   const orderAmount = CheckoutSelectors.orderAmount();
   const checkoutOrderId = CheckoutSelectors.checkoutOrderId();
+  const hasShippingAddress = !!shippingAddress;
 
   const { handlePaymentSuccess, handlePaymentError } =
     useCheckoutSubscriberActions();
 
-  const lineItems = useMemo(
-    () => buildPrintifyLineItems(cartItems),
-    [cartItems],
-  );
-
-  const hasShippingAddress = !!shippingAddress;
   const selectedUi = PAYMENT_CONFIRM_METHOD_UI[selectedPaymentMethod];
 
   const handlePayPalSuccessCallback = useCallback(

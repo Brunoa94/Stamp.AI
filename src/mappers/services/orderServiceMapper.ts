@@ -1,7 +1,8 @@
 import type { Database } from "@/types/database.types";
-import type { OrderT, OrderWithItemsT, CreateOrderT } from "@/types/order";
+import type { OrderWithItemsT, CreateOrderT } from "@/types/order";
 import type { CartItem } from "@/types/cart";
 import type { UserI } from "@/types/auth";
+import type { ShippingAddressT } from "@/schemas/checkout";
 
 type OrderRow = Database['public']['Tables']['orders']['Row'];
 type OrderInsert = Database['public']['Tables']['orders']['Insert'];
@@ -216,13 +217,24 @@ export class OrderServiceMapper {
       shipping_cost: number;
       total_amount: number;
     },
+    shippingAddress?: ShippingAddressT,
     discountAmount: number = 0,
     paymentStatus: string = "pending",
-    orderStatus: string = "pending"
-  ): CreateOrderT {
+    orderStatus: string = "pending",
+    idempotencyKey?: string,
+  ): CreateOrderT & { idempotency_key?: string | null } {
+    const fullName = [shippingAddress?.first_name, shippingAddress?.last_name]
+      .filter(Boolean)
+      .join(" ")
+      .trim();
+
     return {
       user_id: user.id,
-      customer_email: user.email || "",
+      customer_email: shippingAddress?.email || user.email || "",
+      customer_name: fullName || null,
+      customer_phone: shippingAddress?.phone || null,
+      shipping_address: shippingAddress || null,
+      billing_address: shippingAddress || null,
       order_number: orderNumber,
       status: orderStatus,
       payment_status: paymentStatus,
@@ -231,6 +243,7 @@ export class OrderServiceMapper {
       tax_amount: totals.tax_amount,
       discount_amount: discountAmount,
       total_amount: totals.total_amount,
+      idempotency_key: idempotencyKey || null,
     };
   }
 }

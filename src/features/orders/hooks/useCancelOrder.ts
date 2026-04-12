@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { OrderWithItemsT } from "@/types/order";
 import { toast } from "sonner";
 import { OrderLifecycleService } from "@/services/orderLifecycleService";
+import { canCancelOrder } from "../utils/orderCancellation";
 
 export function useCancelOrder() {
   const queryClient = useQueryClient();
@@ -13,6 +14,13 @@ export function useCancelOrder() {
   });
 
   const handleCancelOrder = (order: OrderWithItemsT) => {
+    if (!canCancelOrder(order)) {
+      toast.error("Order can no longer be cancelled", {
+        description: "Orders can only be cancelled before entering In Production.",
+      });
+      return;
+    }
+
     setOrderToCancel(order);
     setCancelModalOpen(true);
   };
@@ -24,6 +32,13 @@ export function useCancelOrder() {
 
   const handleConfirmCancel = () => {
     if (!orderToCancel) return;
+    if (!canCancelOrder(orderToCancel)) {
+      toast.error("Order can no longer be cancelled", {
+        description: "Orders can only be cancelled before entering In Production.",
+      });
+      handleCloseCancelModal();
+      return;
+    }
 
     cancelOrder(
       orderToCancel.id,

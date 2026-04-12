@@ -55,9 +55,40 @@ serve(async (req) => {
 
     console.log("Mollie webhook received for payment:", paymentId);
 
+    // ✅ CRITICAL FIX: Idempotency check
+    // Prevent duplicate webhook processing
+    const eventId = `mollie_${paymentId}_${Date.now()}`;
+
+    // Check if this webhook was already processed
+    const isProcessed = await supabaseRest(
+      "rpc/is_webhook_processed",
+      "POST",
+      { p_provider: "mollie", p_event_id: paymentId }
+    );
+
+    if (isProcessed.data === true) {
+      console.log(`✅ Mollie webhook ${paymentId} already processed, skipping`);
+      return new Response(
+        JSON.stringify({ received: true, skipped: true, reason: "already_processed" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      );
+    }
+
     // Fetch payment details from Mollie
     const payment = await getMolliePayment(paymentId);
     console.log("Payment status:", payment.status);
+
+    // Record this webhook as being processed
+    await supabaseRest(
+      "rpc/record_webhook_event",
+      "POST",
+      {
+        p_provider: "mollie",
+        p_event_id: paymentId,
+        p_event_type: `payment.${payment.status}`,
+        p_payload: payment,
+      }
+    );
 
     // Map status
     const internalStatus = mapMollieStatusToInternal(payment.status);
@@ -116,6 +147,7 @@ serve(async (req) => {
       console.log("Payment is paid, processing order...");
 
       if (orderId) {
+<<<<<<< HEAD
         await processPaidOrder({
           provider: "mollie",
           eventId: `mollie-${payment.id}-${payment.status}`,
@@ -130,6 +162,111 @@ serve(async (req) => {
           lineItems,
           shippingAddress: shippingAddress || {},
         });
+=======
+        // ✅ Use atomic operation to update both payment_status and status
+        const orderUpdateResult = await supabaseRest(
+          "rpc/update_order_payment_status_atomic",
+          "POST",
+          {
+            p_order_id: orderId,
+            p_payment_status: "paid",
+            p_order_status: "confirmed",
+            p_payment_method: "mollie",
+          }
+        );
+
+        if (orderUpdateResult.error) {
+          console.error(`Failed to update order ${orderId} atomically:`, orderUpdateResult.error);
+        } else {
+          console.log(`✅ Order ${orderId} atomically updated to paid/confirmed`);
+        }
+      }
+
+      // Create Printify order if we have line items
+      if (lineItems.length > 0 && shippingAddress) {
+        console.log("Creating Printify order...");
+        const printifyResponse = await fetch(
+          `${Deno.env.get("SUPABASE_URL")}/functions/v1/create-printify-order`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              apikey: Deno.env.get("SUPABASE_ANON_KEY") || "",
+              Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+            },
+            body: JSON.stringify({
+              // ✅ REMOVED: Don't send is_test - let edge function determine from environment
+              // is_test will be enforced server-side based on DENO_ENV/NODE_ENV
+              auto_cancel: true,
+              line_items: lineItems,
+              shipping_address: shippingAddress,
+              metadata: {
+                order_id: metadata.order_id || `mollie-${Date.now()}`,
+                mollie_payment_id: payment.id,
+              },
+            }),
+          }
+        );
+
+        if (printifyResponse.ok) {
+          const printifyResult = await printifyResponse.json();
+          console.log("Printify order created:", printifyResult);
+        } else {
+          const errorText = await printifyResponse.text();
+          console.error("Printify order creation failed:", errorText);
+
+          // ✅ CRITICAL FIX: Check if order exists, if not, trigger refund
+          if (!orderId) {
+            console.error("❌ No order_id - customer charged with no order. Initiating refund...");
+
+            try {
+              // Call process-refund edge function
+              const refundResponse = await fetch(
+                `${Deno.env.get("SUPABASE_URL")}/functions/v1/process-refund`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+                  },
+                  body: JSON.stringify({
+                    order_id: `temp_mollie_${payment.id}`,
+                    payment_provider: "mollie",
+                    amount: parseFloat(payment.amount.value),
+                    reason: "Printify order creation failed for Mollie payment",
+                    mollie_payment_id: payment.id,
+                  }),
+                }
+              );
+
+              if (!refundResponse.ok) {
+                const refundError = await refundResponse.text();
+                console.error("❌ Refund initiation failed:", refundError);
+                // refund_failures alert will be created by process-refund function
+              } else {
+                console.log("✅ Refund initiated for failed Mollie Printify order");
+              }
+            } catch (refundError) {
+              console.error("❌ Exception during refund initiation:", refundError);
+            }
+          } else {
+            // Order exists in DB, create reconciliation alert
+            console.log("⚠️ Creating reconciliation alert - order exists but Printify failed");
+            try {
+              await supabaseRest("order_status_reconciliation", "POST", {
+                order_id: orderId,
+                expected_status: "confirmed",
+                actual_status: "pending",
+                error_message: errorText.substring(0, 500),
+                reconciliation_status: "pending",
+              });
+              console.log("✅ Reconciliation alert created");
+            } catch (reconcileError) {
+              console.error("Failed to create reconciliation alert:", reconcileError);
+            }
+          }
+        }
+>>>>>>> dev
       }
     } else if (payment.status === "failed" || payment.status === "canceled" || payment.status === "expired") {
       // Update order status if payment failed

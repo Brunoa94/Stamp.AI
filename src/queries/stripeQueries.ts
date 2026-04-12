@@ -1,65 +1,21 @@
 import { useMutation } from "@tanstack/react-query";
-import { createClient } from "@/lib/supabase/client";
-import type { ShippingAddressT } from "@/schemas/checkout";
-import type { PrintifyLineItem } from "@/types/printifyOrder";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { StripeService } from "@/services/stripeService";
+import type {
+  CreatePaymentIntentPayloadI,
+  CreatePaymentIntentResponseI
+} from "@/types/payment";
 
-export interface CreatePaymentIntentPayloadI {
-  amount: number;
-  currency?: string;
-  line_items: PrintifyLineItem[];
-  shipping_address: ShippingAddressT;
-  metadata?: Record<string, unknown>;
-  payment_method?: string;
-  confirm?: boolean;
-}
-
-export interface CreatePaymentIntentResponseI {
-  success: boolean;
-  clientSecret: string;
-  paymentIntentId: string;
-}
+// Re-export types for backward compatibility
+export type { CreatePaymentIntentPayloadI, CreatePaymentIntentResponseI };
 
 export function useCreatePaymentIntent() {
   const { handleError } = useErrorHandler();
 
   return useMutation({
     mutationKey: ["stripe", "create-payment-intent"],
-    mutationFn: async (
-      payload: CreatePaymentIntentPayloadI,
-    ): Promise<CreatePaymentIntentResponseI> => {
-      const supabase = createClient();
-
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-
-      if (sessionError) {
-        throw new Error(sessionError.message);
-      }
-
-      if (!session) {
-        throw new Error("You must be logged in to complete checkout");
-      }
-
-      const { data, error } = await supabase.functions.invoke(
-        "create-payment-intent",
-        {
-          body: payload,
-        },
-      );
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      if (!data?.clientSecret || !data?.paymentIntentId) {
-        throw new Error("No payment data received");
-      }
-
-      return data as CreatePaymentIntentResponseI;
-    },
+    mutationFn: (payload: CreatePaymentIntentPayloadI) =>
+      StripeService.createPaymentIntent(payload),
     onError: (error: Error) => {
       handleError(error);
     },

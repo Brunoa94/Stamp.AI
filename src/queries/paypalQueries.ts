@@ -1,9 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import {
-  PayPalService,
-  type CapturePayPalOrderPayloadI,
-  type CreatePayPalOrderPayloadI,
-} from "@/services/paypalService";
+import { PayPalService } from "@/services/paypalService";
+import type {
+  CapturePayPalOrderPayloadI,
+  CreatePayPalOrderPayloadI,
+} from "@/types/payment";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 export function useCreatePayPalOrder() {

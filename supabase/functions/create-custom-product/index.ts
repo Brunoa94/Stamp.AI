@@ -179,7 +179,8 @@ serve(async (req) => {
       product_id: productData.id,
       order_number: orderNumber,
       customer_email: customer_email,
-      status: "created",
+      // Use a status allowed by the DB constraint
+      status: "pending",
     }
 
     console.log('✅ Creating the order with the product:', productData.id)
