@@ -179,7 +179,9 @@ export function useCheckoutSubscriberActions() {
 
           // Check if capture ID is missing (required for successful PayPal payments)
           if (!paypalIntent.captureId) {
-            console.warn("⚠️ PayPal payment missing capture_id - payment may not be captured");
+            throw new Error(
+              "PayPal payment missing capture ID. The payment may not have been captured. Please try again or contact support."
+            );
           }
         }
 

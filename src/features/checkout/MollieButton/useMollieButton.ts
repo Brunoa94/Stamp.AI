@@ -4,6 +4,8 @@ import { useCallback, useState } from "react";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 import { useCreateMolliePayment } from "@/queries/mollieQueries";
+import { PaymentRecoveryService } from "@/services/paymentRecoveryService";
+import { useCart } from "@/hooks/useCart";
 
 export interface MollieRedirectDetailsI {
   paymentId: string;
@@ -34,6 +36,7 @@ export function useMollieButton({
   const [error, setError] = useState<string | null>(null);
 
   const createMolliePayment = useCreateMolliePayment();
+  const { data: cart } = useCart();
 
   const loading = createMolliePayment.isPending;
 
@@ -60,7 +63,32 @@ export function useMollieButton({
         testMode,
       });
 
-      // Store payment ID in sessionStorage for return page
+      // ✅ CRITICAL FIX: Record payment in database for recovery (sessionStorage backup)
+      // This ensures payment can be recovered even if sessionStorage is lost
+      if (cart) {
+        try {
+          await PaymentRecoveryService.recordPaymentForRecovery({
+            paymentProvider: "mollie",
+            paymentIntentId: response.paymentId,
+            paymentStatus: "pending",
+            amount,
+            currency,
+            cartSnapshot: cart,
+            shippingAddress,
+            lineItems,
+            metadata: {
+              mollie_payment_id: response.paymentId,
+              checkout_url: response.checkoutUrl,
+            },
+          });
+          console.log("✅ Mollie payment recorded for recovery in database");
+        } catch (recoveryError) {
+          console.error("⚠️ Failed to record Mollie payment for recovery:", recoveryError);
+          // Continue with payment - sessionStorage will still work as fallback
+        }
+      }
+
+      // Store payment ID in sessionStorage for return page (legacy fallback)
       if (typeof window !== "undefined") {
         const cartIdFromUrl = new URLSearchParams(window.location.search).get("cartId");
         sessionStorage.setItem("mollie_payment_id", response.paymentId);
@@ -90,6 +118,7 @@ export function useMollieButton({
     lineItems,
     shippingAddress,
     testMode,
+    cart,
     createMolliePayment,
     onRedirect,
     handleOperationError,

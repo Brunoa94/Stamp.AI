@@ -12,6 +12,7 @@ import { OrderService } from "@/services/orderService";
 import { PrintifyService } from "@/services/printifyService";
 import { CartService } from "@/services/cartService";
 import { RefundService } from "@/services/refundService";
+import { PaymentRecoveryService } from "@/services/paymentRecoveryService";
 import { createClient } from "@/lib/supabase/client";
 import type {
   CreatePrintifyOrderRequest,
@@ -47,18 +48,48 @@ export default function MollieReturnPage() {
 
     const verifyPayment = async () => {
       try {
-        // Get payment ID from sessionStorage (saved before redirect)
-        const storedPaymentId = sessionStorage.getItem("mollie_payment_id");
-        const storedLineItems = sessionStorage.getItem("mollie_line_items");
-        const storedShippingAddress = sessionStorage.getItem(
-          "mollie_shipping_address",
-        );
-        const storedCartId = sessionStorage.getItem("mollie_cart_id");
-        const storedOrderAmount = sessionStorage.getItem("mollie_order_amount");
+        // ✅ CRITICAL FIX: Try to get payment ID from URL first, then sessionStorage, then database
+        const urlParams = new URLSearchParams(window.location.search);
+        const paymentIdFromUrl = urlParams.get("payment_id");
+
+        let storedPaymentId = paymentIdFromUrl || sessionStorage.getItem("mollie_payment_id");
+        let storedLineItems = sessionStorage.getItem("mollie_line_items");
+        let storedShippingAddress = sessionStorage.getItem("mollie_shipping_address");
+        let storedCartId = sessionStorage.getItem("mollie_cart_id");
+        let storedOrderAmount = sessionStorage.getItem("mollie_order_amount");
+
+        // ✅ CRITICAL FIX: If sessionStorage is empty, try to recover from database
+        if (!storedPaymentId || !storedLineItems || !storedShippingAddress) {
+          console.log("⚠️ SessionStorage empty, attempting database recovery...");
+
+          try {
+            const pendingRecoveries = await PaymentRecoveryService.getPendingRecoveries();
+            const mollieRecovery = pendingRecoveries.find(
+              (r) => r.payment_provider === "mollie" &&
+              (!storedPaymentId || r.payment_intent_id === storedPaymentId)
+            );
+
+            if (mollieRecovery) {
+              console.log("✅ Found payment recovery in database:", mollieRecovery.payment_intent_id);
+              storedPaymentId = mollieRecovery.payment_intent_id;
+              storedLineItems = JSON.stringify(mollieRecovery.line_items);
+              storedShippingAddress = JSON.stringify(mollieRecovery.shipping_address);
+              storedOrderAmount = String(mollieRecovery.amount);
+
+              if (mollieRecovery.cart_snapshot?.id) {
+                storedCartId = mollieRecovery.cart_snapshot.id;
+              }
+            }
+          } catch (recoveryError) {
+            console.error("Failed to recover payment from database:", recoveryError);
+          }
+        }
 
         if (!storedPaymentId) {
           setStatus("error");
-          setErrorMessage("No payment information found. Please try again.");
+          setErrorMessage(
+            "No payment information found. If you completed a payment, please contact support with your payment details."
+          );
           return;
         }
 
@@ -207,6 +238,14 @@ export default function MollieReturnPage() {
 
             if (createdOrderId) {
               await OrderService.updateOrderStatus(createdOrderId, "confirmed");
+
+              // ✅ Mark payment as recovered (no longer needs recovery)
+              await PaymentRecoveryService.markPaymentRecovered(
+                storedPaymentId,
+                "mollie",
+                createdOrderId
+              );
+              console.log("✅ Mollie payment marked as recovered");
             }
           } catch (printifyError) {
             console.error("❌ Printify order creation failed:", printifyError);

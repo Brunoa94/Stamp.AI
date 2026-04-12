@@ -123,8 +123,49 @@ serve(async (req) => {
     // Capture the PayPal order
     const captureResult = await capturePayPalOrder(orderId);
 
-    if (captureResult.status !== "COMPLETED") {
-      throw ErrorCodes.PAYPAL_CAPTURE_FAILED(captureResult.status);
+    // ✅ CRITICAL FIX: Comprehensive status validation for all PayPal states
+    switch (captureResult.status) {
+      case "COMPLETED":
+        // Payment was successful, continue processing
+        console.log("PayPal payment completed successfully");
+        break;
+
+      case "PENDING":
+        // Payment is pending (e.g., eCheck, manual review)
+        console.warn("PayPal payment is pending:", captureResult.status);
+        throw ErrorCodes.PAYPAL_CAPTURE_FAILED(
+          "PENDING - Payment is being processed. You will receive confirmation when it completes."
+        );
+
+      case "DECLINED":
+        // Payment was declined by PayPal
+        console.error("PayPal payment was declined");
+        throw ErrorCodes.PAYPAL_CAPTURE_FAILED(
+          "DECLINED - The payment was declined. Please try a different payment method."
+        );
+
+      case "REFUNDED":
+      case "PARTIALLY_REFUNDED":
+        // Payment was refunded (unexpected state during capture)
+        console.error("PayPal payment was refunded:", captureResult.status);
+        throw ErrorCodes.PAYPAL_CAPTURE_FAILED(
+          `${captureResult.status} - This payment has been refunded. Please create a new order.`
+        );
+
+      case "FAILED":
+      case "DENIED":
+        // Payment failed or was denied
+        console.error("PayPal payment failed:", captureResult.status);
+        throw ErrorCodes.PAYPAL_CAPTURE_FAILED(
+          `${captureResult.status} - The payment could not be processed. Please try again.`
+        );
+
+      default:
+        // Unknown or unexpected status
+        console.error("Unknown PayPal status:", captureResult.status);
+        throw ErrorCodes.PAYPAL_CAPTURE_FAILED(
+          `Unknown status: ${captureResult.status}. Please contact support.`
+        );
     }
 
     // Extract capture and payer info
@@ -190,42 +231,13 @@ serve(async (req) => {
       }
     }
 
-    // Create Printify order if we have line items
-    if (lineItems.length > 0) {
-      console.log("Creating Printify order with", lineItems.length, "items");
-
-      const shippingAddress = metadata.shipping_address || {};
-
-      const printifyResponse = await fetch(
-        `${Deno.env.get("SUPABASE_URL")}/functions/v1/create-printify-order`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            apikey: Deno.env.get("SUPABASE_ANON_KEY") || "",
-            Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
-          },
-          body: JSON.stringify({
-            is_test: true,
-            auto_cancel: true,
-            line_items: lineItems,
-            shipping_address: shippingAddress,
-            metadata: {
-              order_id: metadata.order_id || `paypal-${Date.now()}`,
-              paypal_order_id: orderId,
-              paypal_capture_id: capture?.id,
-            },
-          }),
-        }
-      );
-
-      const printifyResult = await printifyResponse.json();
-      console.log("Printify order result:", printifyResult);
-
-      if (!printifyResponse.ok) {
-        console.error("Failed to create Printify order:", printifyResult);
-      }
-    }
+    // ✅ CRITICAL FIX: Removed automatic Printify order creation
+    // The main checkout flow (actions.ts) now handles Printify order creation consistently
+    // This prevents:
+    // - Bypassing main flow error handling
+    // - Hardcoded is_test: true in production
+    // - Duplicate logic with main flow
+    // - No automatic refund on Printify failure
 
     const response: PayPalCaptureResponseI = {
       success: true,
