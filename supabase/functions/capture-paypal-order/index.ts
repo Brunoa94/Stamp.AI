@@ -1,8 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
+import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
 import { capturePayPalOrder } from "../_shared/paypal.ts";
-import { processPaidOrder } from "../_shared/order-lifecycle.ts";
 import type { PayPalCaptureRequestI, PayPalCaptureResponseI } from "../../types/index.ts";
 
 const corsHeaders = {
@@ -122,42 +121,10 @@ serve(async (req) => {
     console.log("Capturing PayPal order:", orderId);
 
     // Capture the PayPal order
-    let captureResult;
-    try {
-      captureResult = await capturePayPalOrder(orderId);
-    } catch (error) {
-      // Avoid noisy edge-function error logs for recoverable funding-source declines.
-      if (error instanceof FunctionError && error.errorId === "PAYPAL_CAPTURE_FAILED") {
-        const declineResponse: PayPalCaptureResponseI = {
-          success: false,
-          captureId: orderId,
-          status: "DECLINED",
-          error: "PAYPAL_CAPTURE_FAILED",
-          restartable: true,
-        };
-
-        return new Response(JSON.stringify(declineResponse), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 200,
-        });
-      }
-
-      throw error;
-    }
+    const captureResult = await capturePayPalOrder(orderId);
 
     if (captureResult.status !== "COMPLETED") {
-      const pendingResponse: PayPalCaptureResponseI = {
-        success: false,
-        captureId: orderId,
-        status: captureResult.status,
-        error: "PAYPAL_CAPTURE_FAILED",
-        restartable: true,
-      };
-
-      return new Response(JSON.stringify(pendingResponse), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
+      throw ErrorCodes.PAYPAL_CAPTURE_FAILED(captureResult.status);
     }
 
     // Extract capture and payer info
@@ -180,23 +147,84 @@ serve(async (req) => {
       console.warn("Could not parse custom_id:", e);
     }
 
-    const dbOrderId = metadata.order_id as string | undefined;
-    if (dbOrderId) {
-      await processPaidOrder({
-        provider: "paypal",
-        eventId: `paypal-capture-${capture?.id || orderId}`,
-        orderId: dbOrderId,
+    // Save payment to database
+    const result = await supabaseRest(
+      "payment_transactions",
+      "POST",
+      {
+        user_id: userId,
+        payment_provider: "paypal",
+        paypal_order_id: orderId,
+        paypal_capture_id: capture?.id,
+        paypal_payer_id: payer?.payer_id || payerId,
+        paypal_payer_email: payer?.email_address,
         amount: parseFloat(capture?.amount?.value || "0"),
-        currency: (capture?.amount?.currency_code || "USD").toLowerCase(),
-        userId,
-        metadata,
-        refs: {
-          paypal_order_id: orderId,
-          paypal_capture_id: capture?.id,
-        },
-        lineItems,
-        shippingAddress: (metadata.shipping_address as Record<string, unknown>) || {},
+        currency: capture?.amount?.currency_code?.toLowerCase() || "usd",
+        status: "succeeded",
+        payment_method_type: "paypal",
+        metadata: metadata,
+        updated_at: new Date().toISOString(),
+      },
+      { prefer: "resolution=merge-duplicates" }
+    );
+
+    if (result.error) {
+      console.error("Database insert error:", result.error);
+    } else {
+      console.log("Payment saved to database");
+    }
+
+    // Update order payment_status to "paid"
+    const dbOrderId = metadata.order_id;
+    if (dbOrderId) {
+      const orderResult = await supabaseRest(`orders?id=eq.${dbOrderId}`, "PATCH", {
+        payment_status: "paid",
+        payment_method: "paypal",
+        updated_at: new Date().toISOString(),
       });
+
+      if (orderResult.error) {
+        console.error("Failed to update order payment_status:", orderResult.error);
+      } else {
+        console.log(`Order ${dbOrderId} payment_status updated to: paid`);
+      }
+    }
+
+    // Create Printify order if we have line items
+    if (lineItems.length > 0) {
+      console.log("Creating Printify order with", lineItems.length, "items");
+
+      const shippingAddress = metadata.shipping_address || {};
+
+      const printifyResponse = await fetch(
+        `${Deno.env.get("SUPABASE_URL")}/functions/v1/create-printify-order`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: Deno.env.get("SUPABASE_ANON_KEY") || "",
+            Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+          },
+          body: JSON.stringify({
+            is_test: true,
+            auto_cancel: true,
+            line_items: lineItems,
+            shipping_address: shippingAddress,
+            metadata: {
+              order_id: metadata.order_id || `paypal-${Date.now()}`,
+              paypal_order_id: orderId,
+              paypal_capture_id: capture?.id,
+            },
+          }),
+        }
+      );
+
+      const printifyResult = await printifyResponse.json();
+      console.log("Printify order result:", printifyResult);
+
+      if (!printifyResponse.ok) {
+        console.error("Failed to create Printify order:", printifyResult);
+      }
     }
 
     const response: PayPalCaptureResponseI = {

@@ -9,7 +9,6 @@ interface OrdersTableMobileProps {
   onViewOrder: (order: OrderWithItemsT) => void;
   onReorder: (order: OrderWithItemsT) => void;
   onCancelOrder?: (order: OrderWithItemsT) => void;
-  onProceedToPayment?: (order: OrderWithItemsT) => void;
 }
 
 export function OrdersTableMobile({
@@ -17,7 +16,6 @@ export function OrdersTableMobile({
   onViewOrder,
   onReorder,
   onCancelOrder,
-  onProceedToPayment,
 }: OrdersTableMobileProps) {
   return (
     <div className="space-y-4 md:hidden">
@@ -28,7 +26,6 @@ export function OrdersTableMobile({
           onViewOrder={onViewOrder}
           onReorder={onReorder}
           onCancelOrder={onCancelOrder}
-          onProceedToPayment={onProceedToPayment}
         />
       ))}
     </div>

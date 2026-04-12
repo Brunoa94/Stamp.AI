@@ -1,34 +1,12 @@
 import { createClient } from "@/lib/supabase/client";
 import { ErrorClient } from "./errorClient";
-import type { ShippingAddressT } from "@/schemas/checkout";
-import type { PrintifyLineItem } from "@/types/printifyOrder";
 import { getAuthenticatedHeaders } from "./authHelpers";
-
-export interface CreatePayPalOrderPayloadI {
-  amount: number;
-  lineItems: PrintifyLineItem[];
-  shippingAddress: ShippingAddressT;
-  orderId?: string;
-  testMode?: boolean;
-}
-
-export interface CreatePayPalOrderResponseI {
-  orderId: string;
-}
-
-export interface CapturePayPalOrderPayloadI {
-  orderId: string;
-  payerId?: string | null;
-}
-
-export interface CapturePayPalOrderResponseI {
-  success: boolean;
-  captureId?: string;
-  status?: string;
-  payerEmail?: string;
-  error?: string;
-  restartable?: boolean;
-}
+import type {
+  CreatePayPalOrderPayloadI,
+  CreatePayPalOrderResponseI,
+  CapturePayPalOrderPayloadI,
+  CapturePayPalOrderResponseI,
+} from "@/types/payment";
 
 export class PayPalService {
   private static getSupabase() {
@@ -39,19 +17,10 @@ export class PayPalService {
     amount,
     lineItems,
     shippingAddress,
-    orderId,
     testMode = false,
   }: CreatePayPalOrderPayloadI): Promise<CreatePayPalOrderResponseI> {
     try {
       const headers = await getAuthenticatedHeaders("PayPal");
-
-      if (!orderId) {
-        throw ErrorClient.handleError({
-          error: new Error("Order ID is required before creating PayPal order"),
-          service: "PayPal",
-          action: "Create Order",
-        });
-      }
 
       const { data, error } = await this.getSupabase().functions.invoke(
         "create-paypal-order",
@@ -62,7 +31,7 @@ export class PayPalService {
             line_items: lineItems,
             shipping_address: shippingAddress,
             metadata: {
-              order_id: orderId,
+              order_id: `order_${Date.now()}`,
               test_mode: testMode,
             },
           },
@@ -108,17 +77,6 @@ export class PayPalService {
 
       if (error) {
         throw ErrorClient.handleError({ error, service: "PayPal", action: "Capture Order" });
-      }
-
-      if (data?.success === false) {
-        return {
-          success: false,
-          captureId: data.captureId,
-          status: data.status,
-          payerEmail: data.payerEmail,
-          error: data.error,
-          restartable: data.restartable,
-        };
       }
 
       if (!data?.success || !data?.captureId) {

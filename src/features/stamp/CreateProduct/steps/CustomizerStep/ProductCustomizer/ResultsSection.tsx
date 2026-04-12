@@ -105,35 +105,19 @@ const ResultsSection = ({ ref }: IResultsSectionProps) => {
                     aria-hidden="true"
                     className="absolute inset-2 rounded-xl bg-white"
                   />
-                  {/* Use a plain <img> for external URLs to avoid Next.js image host configuration errors during tests */}
-                  {typeof generatedResult.imageUrl === "string" &&
-                  (generatedResult.imageUrl.startsWith("http://") ||
-                    generatedResult.imageUrl.startsWith("https://")) ? (
-                    <img
-                      src={generatedResult.imageUrl}
-                      alt="Your design"
-                      className={`z-10 rounded-2xl object-contain drop-shadow-lg transition-all duration-700 ease-out ${
-                        imageLoaded
-                          ? "scale-100 opacity-100"
-                          : "scale-95 opacity-85"
-                      }`}
-                      onLoad={() => setImageLoaded(true)}
-                    />
-                  ) : (
-                    <Image
-                      src={generatedResult.imageUrl}
-                      alt="Your design"
-                      fill
-                      className={`z-10 rounded-2xl object-contain drop-shadow-lg transition-all duration-700 ease-out ${
-                        imageLoaded
-                          ? "scale-100 opacity-100"
-                          : "scale-95 opacity-85"
-                      }`}
-                      onLoad={() => setImageLoaded(true)}
-                      sizes="(max-width: 768px) 300px, 500px"
-                      priority
-                    />
-                  )}
+                  <Image
+                    src={generatedResult.imageUrl}
+                    alt="Your design"
+                    fill
+                    className={`z-10 rounded-2xl object-contain drop-shadow-lg transition-all duration-700 ease-out ${
+                      imageLoaded
+                        ? "scale-100 opacity-100"
+                        : "scale-95 opacity-85"
+                    }`}
+                    onLoad={() => setImageLoaded(true)}
+                    sizes="(max-width: 768px) 300px, 500px"
+                    priority
+                  />
                 </div>
               </div>
             </div>

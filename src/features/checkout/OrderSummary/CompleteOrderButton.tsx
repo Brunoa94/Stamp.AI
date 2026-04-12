@@ -22,7 +22,6 @@ export const CompleteOrderButton = ({
   const lineItems = CheckoutSelectors.lineItems();
   const testMode = CheckoutSelectors.testMode();
   const orderAmount = CheckoutSelectors.orderAmount();
-  const checkoutOrderId = CheckoutSelectors.checkoutOrderId();
   const hasShippingAddress = !!shippingAddress;
 
   const { handlePaymentSuccess, handlePaymentError } =
@@ -71,7 +70,6 @@ export const CompleteOrderButton = ({
             amount={orderAmount}
             lineItems={lineItems}
             shippingAddress={shippingAddress}
-            orderId={checkoutOrderId || undefined}
             testMode={testMode}
             onSuccess={handlePayPalSuccessCallback}
             onError={handlePaymentError}
@@ -79,37 +77,16 @@ export const CompleteOrderButton = ({
           />
         )}
 
-        {selectedPaymentMethod === "mollie" &&
-          shippingAddress &&
-          (checkoutOrderId ? (
-            <MollieButton
-              amount={orderAmount}
-              lineItems={lineItems}
-              shippingAddress={shippingAddress}
-              orderId={checkoutOrderId}
-              testMode={testMode}
-              onError={handlePaymentError}
-              disabled={isProcessingPayment}
-            />
-          ) : (
-            <Button
-              onClick={onCompleteOrder}
-              disabled={!hasShippingAddress || isProcessingPayment}
-              className={clsx(
-                "w-full rounded-none text-white font-heading font-extrabold uppercase tracking-widest py-4 shadow-lg",
-                selectedUi.className,
-                {
-                  "opacity-50 cursor-not-allowed":
-                    !hasShippingAddress || isProcessingPayment,
-                },
-              )}
-            >
-              <selectedUi.Icon className="w-4 h-4" />
-              {isProcessingPayment
-                ? "Preparing order..."
-                : "Continue to Mollie"}
-            </Button>
-          ))}
+        {selectedPaymentMethod === "mollie" && shippingAddress && (
+          <MollieButton
+            amount={orderAmount}
+            lineItems={lineItems}
+            shippingAddress={shippingAddress}
+            testMode={testMode}
+            onError={handlePaymentError}
+            disabled={isProcessingPayment}
+          />
+        )}
 
         <Button
           asChild

@@ -5,15 +5,12 @@ import { CreateOrderT, UpdateOrderT } from "@/types/order";
 import { CartWithItems } from "@/types/cart";
 import { UserI } from "@/types/auth";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { ShippingAddressT } from "@/schemas/checkout";
+import type { ShippingAddressT } from "@/schemas/checkout";
 
 /**
  * Fetch a single order by ID
  */
-export function useOrder(
-  orderId: string | null,
-  refetchInterval: number | false = false,
-) {
+export function useOrder(orderId: string | null) {
   return useQuery({
     queryKey: ["orders", orderId],
     queryFn: () => {
@@ -23,8 +20,6 @@ export function useOrder(
       return OrderService.getOrder(orderId);
     },
     enabled: !!orderId,
-    refetchInterval,
-    refetchOnWindowFocus: false,
   });
 }
 
@@ -200,16 +195,12 @@ export function useCreateOrderFromCart() {
       user,
       cart,
       paymentStatus = "paid",
-      orderStatus = "pending",
-      paymentMethod,
       shippingAddress,
       idempotencyKey,
     }: {
       user: UserI;
       cart: CartWithItems;
       paymentStatus?: string;
-      orderStatus?: string;
-      paymentMethod?: string;
       shippingAddress?: ShippingAddressT;
       idempotencyKey?: string;
     }) => {
@@ -220,8 +211,6 @@ export function useCreateOrderFromCart() {
         cart,
         user,
         paymentStatus,
-        orderStatus,
-        paymentMethod,
         shippingAddress,
         idempotencyKey,
       });

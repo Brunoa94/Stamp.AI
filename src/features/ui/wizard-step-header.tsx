@@ -41,7 +41,6 @@ export function WizardStepHeader({
         {Array.from({ length: totalDots }).map((_, index) => (
           <div
             key={index}
-            data-testid="step-dot"
             className={
               index === currentDot ? dotStyles.active : dotStyles.inactive
             }

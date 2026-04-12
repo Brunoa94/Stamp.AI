@@ -2,7 +2,6 @@ import { BaseSyntheticEvent, useCallback, useMemo, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { IProductCreateForm } from "@/schemas/productCreateSchema";
 import { useAddToCart, useImageGeneration } from "@/queries";
 import { mapCreateProductToCartInput } from "@/mappers/createProductToCartMapper";
@@ -43,8 +42,6 @@ export function useWizardProductFormHandlers({
   // Mutations
   const { mutate: generateImage } = useImageGeneration();
   const addToCart = useAddToCart();
-
-  const { handleError } = useErrorHandler();
 
   // Custom hooks
   const { handleCreateProduct } = useProductCreation();
@@ -143,7 +140,13 @@ export function useWizardProductFormHandlers({
         handleGenerationSuccess(result);
       },
       onError: (error) => {
-        handleError(error);
+        if (error.message.includes("402")) {
+          toast.error("No coins left", {
+            description: "You have no coins left. Resets tomorrow.",
+            duration: 5000,
+            position: "top-right",
+          });
+        }
         handleGenerationError(error);
       },
     });

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { memo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { ChevronDown, Mail, Repeat, Sparkles } from "lucide-react";
 import { ordersTheme } from "@/theme/components";
 import { OrderWithItemsT } from "@/types/order";
@@ -8,12 +8,10 @@ import { Button } from "@/features/ui/button";
 import { cn } from "@/lib/utils";
 import { OrderItemsPreview } from "../OrderItemsPreview";
 import { OrderTableActions } from "./OrderTableActions";
-import { useOrderMoreActions } from "../hooks/useOrderMoreActions";
 import {
   formatOrderId,
   formatOrderDate,
   formatPrice,
-  formatStatusLabel,
 } from "../utils/orderFormatters";
 
 interface OrderTableRowProps {
@@ -21,7 +19,6 @@ interface OrderTableRowProps {
   onViewOrder: (order: OrderWithItemsT) => void;
   onReorder: (order: OrderWithItemsT) => void;
   onCancelOrder?: (order: OrderWithItemsT) => void;
-  onProceedToPayment?: (order: OrderWithItemsT) => void;
   getStatusBadgeClass: (status: string | null) => string;
 }
 
@@ -30,11 +27,26 @@ export function OrderTableRow({
   onViewOrder,
   onReorder,
   onCancelOrder,
-  onProceedToPayment,
   getStatusBadgeClass,
 }: OrderTableRowProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { supportEmailHref, reuseImageUrl } = useOrderMoreActions(order);
+
+  const supportEmailHref = useMemo(() => {
+    const subject = encodeURIComponent(`Support request for order ${order.id}`);
+    const body = encodeURIComponent(
+      `Hi support,%0D%0A%0D%0AI need help with order ${order.id}.%0D%0AStatus: ${order.status ?? "processing"}.%0D%0A%0D%0AThanks.`,
+    );
+
+    return `mailto:?subject=${subject}&body=${body}`;
+  }, [order.id, order.status]);
+
+  const preferredReusableOrderItemId = useMemo(() => {
+    return (
+      order.order_items?.find((item) => Boolean(item.custom_image_url))?.id ??
+      order.order_items?.[0]?.id ??
+      ""
+    );
+  }, [order.order_items]);
 
   return (
     <>
@@ -58,7 +70,7 @@ export function OrderTableRow({
 
         <TableCell className={ordersTheme.table.cell}>
           <span className={getStatusBadgeClass(order.status)}>
-            {formatStatusLabel(order.status)}
+            {order.status || "Processing"}
           </span>
         </TableCell>
 
@@ -107,7 +119,13 @@ export function OrderTableRow({
                 size="sm"
                 className={ordersTheme.table.moreActionsButton}
               >
-                <Link href={reuseImageUrl}>
+                <Link
+                  href={
+                    preferredReusableOrderItemId
+                      ? `/stamp?sourceOrder=${order.id}&sourceOrderItem=${preferredReusableOrderItemId}`
+                      : `/stamp?sourceOrder=${order.id}`
+                  }
+                >
                   <Sparkles className="h-3.5 w-3.5" />
                   Use same image
                 </Link>

@@ -15,7 +15,6 @@ export interface CatalogBlueprint {
     width: number;
     height: number;
   }>;
-  min_price?: number;
 }
 
 export interface VariantInfo {

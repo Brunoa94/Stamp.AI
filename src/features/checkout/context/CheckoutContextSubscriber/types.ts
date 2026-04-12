@@ -26,7 +26,6 @@ export interface CheckoutSubscriberContextState {
   selectedPaymentMethod: PaymentMethodT;
   paymentSuccessDetails: PaymentSuccessDetailsI | null;
   paymentErrorDetails: PaymentErrorDetailsI | null;
-  checkoutOrderId: string | null;
   promoCode: string | null;
   promoValue: number;
   promoType: PromoCodeTypeT | null;

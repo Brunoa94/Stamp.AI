@@ -1,7 +1,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import Stripe from 'https://esm.sh/stripe@14.11.0?target=deno'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
-import { revalidateOrderForPayment } from '../_shared/order-lifecycle.ts'
 import type { CreatePaymentIntentRequestI, PaymentIntentResponseI } from "../../types/index.ts"
 
 const corsHeaders = {
@@ -85,72 +85,46 @@ serve(async (req) => {
       confirm = false // Optional: auto-confirm payment (for testing)
     } = await req.json()
 
-    const candidateOrderId =
-      metadata && typeof metadata.order_id === 'string' ? metadata.order_id : undefined
-
-    if (candidateOrderId && validateRequest.isUuid(candidateOrderId)) {
-      const revalidation = await revalidateOrderForPayment(candidateOrderId, userId)
-      if (!revalidation.ok) {
-        throw ErrorCodes.INVALID_REQUEST_BODY()
-      }
-    } else if (candidateOrderId) {
-      console.warn('Skipping order revalidation because order_id is not a UUID:', candidateOrderId)
-    }
-
     // Validate environment variables and request data
     const stripeSecretKey = validateEnvVars.stripeSecretKey()
     const validAmount = validateRequest.amount(amount)
 
-    // Build payment intent body
-    const paymentIntentBody: Record<string, string> = {
-      amount: String(Math.round(validAmount * 100)),
-      currency: currency,
-    }
+    const stripe = new Stripe(stripeSecretKey, {
+      apiVersion: '2023-10-16',
+      httpClient: Stripe.createFetchHttpClient(),
+    })
 
-    // Flatten metadata as Stripe expects metadata[key]=value
-    const fullMetadata = {
-      ...metadata,
-      user_id: userId,
-      user_email: userEmail,
-      line_items: JSON.stringify(line_items),
-      shipping_address: JSON.stringify(shipping_address),
-    }
-    for (const [key, value] of Object.entries(fullMetadata)) {
-      if (value !== undefined && value !== null) {
-        paymentIntentBody[`metadata[${key}]`] = String(value)
-      }
+    // Build payment intent options
+    const paymentIntentOptions: any = {
+      amount: Math.round(validAmount * 100), // Convert to cents
+      currency: currency,
+      metadata: {
+        ...metadata,
+        user_id: userId,
+        user_email: userEmail,
+        line_items: JSON.stringify(line_items),
+        shipping_address: JSON.stringify(shipping_address),
+      },
     }
 
     // If a test payment method is provided (e.g., pm_card_visa), attach it
     if (payment_method) {
-      paymentIntentBody['payment_method'] = payment_method
-      paymentIntentBody['payment_method_types[]'] = 'card'
+      paymentIntentOptions.payment_method = payment_method
+      paymentIntentOptions.payment_method_types = ['card']
       if (confirm) {
-        paymentIntentBody['confirm'] = 'true'
+        paymentIntentOptions.confirm = true
       }
     } else {
-      paymentIntentBody['automatic_payment_methods[enabled]'] = 'true'
+      // For regular checkout flow with card element
+      paymentIntentOptions.automatic_payment_methods = {
+        enabled: true,
+      }
     }
 
-    // Create payment intent via Stripe REST API
-    let paymentIntent: any
+    // Create payment intent
+    let paymentIntent
     try {
-      const stripeResponse = await fetch('https://api.stripe.com/v1/payment_intents', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${stripeSecretKey}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams(paymentIntentBody).toString(),
-      })
-
-      const stripeData = await stripeResponse.json()
-
-      if (!stripeResponse.ok) {
-        throw ErrorCodes.STRIPE_API_ERROR(stripeData?.error?.message ?? stripeResponse.statusText)
-      }
-
-      paymentIntent = stripeData
+      paymentIntent = await stripe.paymentIntents.create(paymentIntentOptions)
     } catch (stripeError: any) {
       throw ErrorCodes.STRIPE_API_ERROR(stripeError.message || JSON.stringify(stripeError))
     }

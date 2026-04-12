@@ -12,7 +12,6 @@ interface UseHomepageSectionScrollProps {
   scrollDuration: number;
   processSectionId: string;
   processStepsCount: number;
-  enableScrollSnap?: boolean;
 }
 
 export function useHomepageSectionScroll({
@@ -22,7 +21,6 @@ export function useHomepageSectionScroll({
   scrollDuration,
   processSectionId,
   processStepsCount,
-  enableScrollSnap = true,
 }: UseHomepageSectionScrollProps) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [heroScale, setHeroScale] = useState(1);
@@ -69,7 +67,6 @@ export function useHomepageSectionScroll({
     setIsAtFooter,
     isScrollingRef,
     lastScrollTimeRef,
-    enableScrollSnap,
   });
 
   return {

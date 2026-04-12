@@ -13,7 +13,6 @@ interface OrdersTableDesktopProps {
   onViewOrder: (order: OrderWithItemsT) => void;
   onReorder: (order: OrderWithItemsT) => void;
   onCancelOrder?: (order: OrderWithItemsT) => void;
-  onProceedToPayment?: (order: OrderWithItemsT) => void;
 }
 
 export function OrdersTableDesktop({
@@ -21,7 +20,6 @@ export function OrdersTableDesktop({
   onViewOrder,
   onReorder,
   onCancelOrder,
-  onProceedToPayment,
 }: OrdersTableDesktopProps) {
   return (
     <div className={`${ordersTheme.table.container} hidden md:block`}>
@@ -35,7 +33,6 @@ export function OrdersTableDesktop({
               onViewOrder={onViewOrder}
               onReorder={onReorder}
               onCancelOrder={onCancelOrder}
-              onProceedToPayment={onProceedToPayment}
               getStatusBadgeClass={getStatusBadgeClass}
             />
           ))}

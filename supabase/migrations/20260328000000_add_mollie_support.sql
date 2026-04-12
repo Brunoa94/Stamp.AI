@@ -21,8 +21,7 @@ ALTER TABLE payment_transactions
   ADD CONSTRAINT chk_payment_id_exists
   CHECK (stripe_payment_intent_id IS NOT NULL
          OR paypal_order_id IS NOT NULL
-         OR mollie_payment_id IS NOT NULL)
-  NOT VALID;
+         OR mollie_payment_id IS NOT NULL);
 
 -- Step 4: Create partial unique index for Mollie payment IDs
 CREATE UNIQUE INDEX IF NOT EXISTS idx_payment_transactions_mollie_payment

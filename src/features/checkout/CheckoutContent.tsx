@@ -16,26 +16,13 @@ import { PaymentSection } from "./sections/PaymentSection";
 import { OrderSummarySection } from "./sections/OrderSummarySection";
 import { CheckoutMobileContent } from "./mobile";
 import { checkoutTheme } from "@/theme";
-import { useCheckoutOrderConfirmation } from "./hooks";
 
 export function CheckoutContent() {
   const isLoading = CheckoutSelectors.isLoading();
   const error = CheckoutSelectors.error();
   const paymentStatus = CheckoutSelectors.paymentStatus();
-  const selectedPaymentMethod = CheckoutSelectors.selectedPaymentMethod();
   const paymentSuccessDetails = CheckoutSelectors.paymentSuccessDetails();
   const paymentErrorDetails = CheckoutSelectors.paymentErrorDetails();
-  const checkoutOrderId = CheckoutSelectors.checkoutOrderId();
-  const {
-    shouldShowStripeVerificationLoading,
-    successTitle,
-    successSubtitle,
-    successStatusValue,
-  } = useCheckoutOrderConfirmation({
-    paymentStatus,
-    selectedPaymentMethod,
-    checkoutOrderId,
-  });
   const isProcessingPayment = CheckoutSelectors.isProcessingPayment();
   const message = CheckoutSelectors.message();
 
@@ -58,18 +45,11 @@ export function CheckoutContent() {
   }
 
   // Payment success state
-  if (shouldShowStripeVerificationLoading) {
-    return <CheckoutLoading />;
-  }
-
   if (paymentStatus === "success") {
     return (
       <PaymentSuccess
         details={paymentSuccessDetails}
         onCreateAnother={handleCreateAnother}
-        title={successTitle}
-        subtitle={successSubtitle}
-        statusValue={successStatusValue}
       />
     );
   }

@@ -1,17 +1,13 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useUpdateOrderStatus } from "@/queries/orderQueries";
 import { OrderWithItemsT } from "@/types/order";
 import { toast } from "sonner";
-import { OrderLifecycleService } from "@/services/orderLifecycleService";
 import { canCancelOrder } from "../utils/orderCancellation";
 
 export function useCancelOrder() {
-  const queryClient = useQueryClient();
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState<OrderWithItemsT | null>(null);
-  const { mutate: cancelOrder, isPending: isCancelling } = useMutation({
-    mutationFn: (orderId: string) => OrderLifecycleService.cancelOrder(orderId),
-  });
+  const { mutate: updateOrderStatus, isPending: isCancelling } = useUpdateOrderStatus();
 
   const handleCancelOrder = (order: OrderWithItemsT) => {
     if (!canCancelOrder(order)) {
@@ -40,25 +36,13 @@ export function useCancelOrder() {
       return;
     }
 
-    cancelOrder(
-      orderToCancel.id,
+    updateOrderStatus(
+      { orderId: orderToCancel.id, status: "cancelled" },
       {
-        onSuccess: (result) => {
-          if (result.status === "refund_failed") {
-            toast.error("Refund failed", {
-              description: "The order could not be cancelled because the refund failed. The owner has been alerted.",
-            });
-            return;
-          }
-
+        onSuccess: () => {
           toast.success("Order cancelled", {
-            description:
-              orderToCancel.status === "confirmed"
-                ? `Order #${orderToCancel.order_number || orderToCancel.id.slice(0, 8)} was cancelled and fully refunded.`
-                : `Order #${orderToCancel.order_number || orderToCancel.id.slice(0, 8)} has been cancelled.`,
+            description: `Order #${orderToCancel.order_number || orderToCancel.id.slice(0, 8)} has been cancelled.`,
           });
-
-          queryClient.invalidateQueries({ queryKey: ["orders"] });
           handleCloseCancelModal();
         },
         onError: (error) => {

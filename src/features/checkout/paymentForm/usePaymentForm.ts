@@ -9,7 +9,6 @@ interface UsePaymentFormProps {
   amount: number;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
-  orderId?: string;
   testMode?: boolean;
   triggerSubmit?: boolean;
   onSuccess?: (paymentIntent: any, lineItems: PrintifyLineItem[]) => void;
@@ -34,7 +33,6 @@ export function usePaymentForm({
   amount,
   lineItems,
   shippingAddress,
-  orderId,
   testMode = false,
   triggerSubmit = false,
   onSuccess,
@@ -74,7 +72,7 @@ export function usePaymentForm({
         line_items: lineItems,
         shipping_address: shippingAddress,
         metadata: {
-          order_id: orderId || `order_${Date.now()}`,
+          order_id: `order_${Date.now()}`,
         },
       };
 
@@ -110,17 +108,7 @@ export function usePaymentForm({
         });
 
       if (confirmError) {
-        const is3DSFailure =
-          confirmError.code === "payment_intent_authentication_failure" ||
-          confirmError.type === "card_error" &&
-            typeof confirmError.message === "string" &&
-            confirmError.message.toLowerCase().includes("authentication");
-
-        const mappedMessage = is3DSFailure
-          ? "3D Secure authentication failed. Please try again or use another card."
-          : `Card payment failed: ${confirmError.message}`;
-
-        throw new Error(mappedMessage);
+        throw new Error(confirmError.message);
       }
 
       if (paymentIntent?.status === "succeeded") {

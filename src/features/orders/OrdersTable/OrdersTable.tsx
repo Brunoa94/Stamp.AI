@@ -8,7 +8,6 @@ interface OrdersTableProps {
   onViewOrder: (order: OrderWithItemsT) => void;
   onReorder: (order: OrderWithItemsT) => void;
   onCancelOrder?: (order: OrderWithItemsT) => void;
-  onProceedToPayment?: (order: OrderWithItemsT) => void;
 }
 
 export function OrdersTable({
@@ -16,7 +15,6 @@ export function OrdersTable({
   onViewOrder,
   onReorder,
   onCancelOrder,
-  onProceedToPayment,
 }: OrdersTableProps) {
   return (
     <>
@@ -25,7 +23,6 @@ export function OrdersTable({
         onViewOrder={onViewOrder}
         onReorder={onReorder}
         onCancelOrder={onCancelOrder}
-        onProceedToPayment={onProceedToPayment}
       />
 
       <MemoizedOrdersTableDesktop
@@ -33,7 +30,6 @@ export function OrdersTable({
         onViewOrder={onViewOrder}
         onReorder={onReorder}
         onCancelOrder={onCancelOrder}
-        onProceedToPayment={onProceedToPayment}
       />
     </>
   );

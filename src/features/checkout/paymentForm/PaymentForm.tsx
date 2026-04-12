@@ -14,11 +14,11 @@ import type { PrintifyLineItem } from "@/types/printifyOrder";
 import type { PaymentMethodT } from "@/types/payment";
 import { TestCardSelector } from "./TestCardSelector";
 import { usePaymentForm } from "./usePaymentForm";
+
 interface CheckoutFormProps {
   amount: number;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
-  orderId?: string;
   testMode?: boolean;
   onSuccess?: (paymentIntent: any, lineItems: PrintifyLineItem[]) => void;
   onError?: (error: string) => void;
@@ -33,7 +33,6 @@ const CheckoutForm = ({
   amount,
   lineItems,
   shippingAddress,
-  orderId,
   testMode = false,
   onSuccess,
   onError,
@@ -63,7 +62,6 @@ const CheckoutForm = ({
     amount,
     lineItems,
     shippingAddress,
-    orderId,
     testMode,
     // Only trigger Stripe submit when stripe is selected
     triggerSubmit: triggerSubmit && paymentMethod === "stripe",
@@ -149,7 +147,6 @@ const CheckoutForm = ({
           amount={amount}
           lineItems={lineItems}
           shippingAddress={shippingAddress}
-          orderId={orderId}
           testMode={testMode}
           onSuccess={handlePayPalSuccess}
           onError={onError}
@@ -163,7 +160,6 @@ const CheckoutForm = ({
           amount={amount}
           lineItems={lineItems}
           shippingAddress={shippingAddress}
-          orderId={orderId}
           testMode={testMode}
           onError={onError}
           disabled={loading}

@@ -17,7 +17,6 @@ interface UseHomepageScrollInteractionsProps {
   setIsAtFooter: Dispatch<SetStateAction<boolean>>;
   isScrollingRef: MutableRefObject<boolean>;
   lastScrollTimeRef: MutableRefObject<number>;
-  enableScrollSnap?: boolean;
 }
 
 export function useHomepageScrollInteractions({
@@ -34,7 +33,6 @@ export function useHomepageScrollInteractions({
   setIsAtFooter,
   isScrollingRef,
   lastScrollTimeRef,
-  enableScrollSnap = true,
 }: UseHomepageScrollInteractionsProps) {
   const MIN_WHEEL_INTENT_DELTA = 14;
   const MIN_HORIZONTAL_STEP_DELTA = 20;
@@ -205,16 +203,12 @@ export function useHomepageScrollInteractions({
   );
 
   useEffect(() => {
-    if (enableScrollSnap) {
-      window.addEventListener("wheel", handleWheel, { passive: false });
-    }
+    window.addEventListener("wheel", handleWheel, { passive: false });
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      if (enableScrollSnap) {
-        window.removeEventListener("wheel", handleWheel);
-      }
+      window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleKeyDown, handleWheel, enableScrollSnap]);
+  }, [handleKeyDown, handleWheel]);
 }

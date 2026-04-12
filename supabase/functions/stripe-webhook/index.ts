@@ -1,8 +1,8 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import Stripe from 'https://esm.sh/stripe@14.11.0?target=deno'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
-import { processPaidOrder } from '../_shared/order-lifecycle.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,7 +20,6 @@ interface StripePaymentIntentI {
   livemode: boolean;
   payment_method_types?: string[];
   last_payment_error?: {
-    code?: string;
     message?: string;
   };
   metadata?: Record<string, string>;
@@ -155,41 +154,25 @@ serve(async (req) => {
   const validSignature = validateRequest.webhookSignature(signature)
   const stripeSecretKey = validateEnvVars.stripeSecretKey()
 
+  const stripe = new Stripe(stripeSecretKey, {
+    apiVersion: '2023-10-16',
+    httpClient: Stripe.createFetchHttpClient(),
+  })
+
+  const cryptoProvider = Stripe.createSubtleCryptoProvider()
+
   try {
     const webhookSecret = validateEnvVars.stripeWebhookSecret()
 
-    // Verify Stripe webhook signature using native WebCrypto (no SDK needed)
-    let event: any
+    let event
     try {
-      const parts = validSignature.split(',')
-      const timestamp = parts.find((p: string) => p.startsWith('t='))?.slice(2)
-      const sigHex = parts.find((p: string) => p.startsWith('v1='))?.slice(3)
-
-      if (!timestamp || !sigHex) {
-        throw new Error('Malformed Stripe-Signature header')
-      }
-
-      const signedPayload = `${timestamp}.${body}`
-      const encoder = new TextEncoder()
-
-      const cryptoKey = await crypto.subtle.importKey(
-        'raw',
-        encoder.encode(webhookSecret),
-        { name: 'HMAC', hash: 'SHA-256' },
-        false,
-        ['sign'],
+      event = await stripe.webhooks.constructEventAsync(
+        body,
+        validSignature,
+        webhookSecret,
+        undefined,
+        cryptoProvider
       )
-
-      const signatureBuffer = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(signedPayload))
-      const expectedHex = Array.from(new Uint8Array(signatureBuffer))
-        .map((b) => b.toString(16).padStart(2, '0'))
-        .join('')
-
-      if (expectedHex !== sigHex) {
-        throw new Error('Signature mismatch')
-      }
-
-      event = JSON.parse(body)
     } catch (stripeError: any) {
       throw ErrorCodes.WEBHOOK_SIGNATURE_INVALID(stripeError.message)
     }
@@ -210,12 +193,59 @@ serve(async (req) => {
           break
         }
 
-        const dbOrderId = paymentIntent.metadata?.order_id
-        if (!dbOrderId) {
-          console.warn('payment_intent.succeeded without order_id metadata')
+        // Save payment to database using REST API
+        const result = await supabaseRest(
+          'payment_transactions',
+          'POST',
+          {
+            stripe_payment_intent_id: paymentIntent.id,
+            stripe_customer_id: paymentIntent.customer,
+            amount: paymentIntent.amount / 100,
+            currency: paymentIntent.currency,
+            status: 'succeeded',
+            payment_method_type: paymentIntent.payment_method_types?.[0],
+            metadata: paymentIntent.metadata,
+            updated_at: new Date().toISOString()
+          },
+          { prefer: 'resolution=merge-duplicates' }
+        )
+
+        console.log('Upsert result:', result)
+        if (result.error) {
+          console.error('Upsert error:', result.error)
           break
         }
 
+        // Update order payment_status to "paid" if we have an order_id
+        const dbOrderId = paymentIntent.metadata?.order_id
+        if (dbOrderId) {
+          const orderResult = await supabaseRest(
+            `orders?id=eq.${dbOrderId}`,
+            'PATCH',
+            {
+              payment_status: 'paid',
+              payment_method: 'stripe',
+              stripe_payment_intent_id: paymentIntent.id,
+              stripe_customer_id: paymentIntent.customer,
+              updated_at: new Date().toISOString(),
+            }
+          )
+
+          if (orderResult.error) {
+            console.error('Failed to update order payment_status:', orderResult.error)
+          } else {
+            console.log(`Order ${dbOrderId} payment_status updated to: paid`)
+          }
+        }
+
+        // Check if this is a test payment
+        const isTestMode = !paymentIntent.livemode
+        console.log('Payment mode - Test:', isTestMode)
+
+        // Call Printify to create order (only if payment saved successfully)
+        console.log('Calling Printify order creation')
+
+        // Parse line items and shipping from metadata
         const lineItems = paymentIntent.metadata?.line_items
           ? JSON.parse(paymentIntent.metadata.line_items)
           : []
@@ -223,21 +253,38 @@ serve(async (req) => {
           ? JSON.parse(paymentIntent.metadata.shipping_address)
           : {}
 
-        await processPaidOrder({
-          provider: 'stripe',
-          eventId: event.id,
-          orderId: dbOrderId,
-          amount: paymentIntent.amount / 100,
-          currency: paymentIntent.currency,
-          userId: paymentIntent.metadata?.user_id,
-          metadata: paymentIntent.metadata,
-          refs: {
-            stripe_payment_intent_id: paymentIntent.id,
-            stripe_customer_id: paymentIntent.customer,
-          },
-          lineItems,
-          shippingAddress,
-        })
+        // If no line items (e.g., from stripe trigger test), use sample order
+        const useSampleOrder = lineItems.length === 0
+
+        const printifyResponse = await fetch(
+          `${Deno.env.get('SUPABASE_URL')}/functions/v1/create-printify-order`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': Deno.env.get('SUPABASE_ANON_KEY') || '',
+              'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+            },
+            body: JSON.stringify({
+              is_test: true,
+              auto_cancel: true, // Automatically cancel test orders to avoid accumulation
+              use_sample_order: useSampleOrder, // Create sample order when testing
+              line_items: lineItems,
+              shipping_address: shippingAddress,
+              metadata: {
+                order_id: paymentIntent.metadata?.order_id || `stripe-test-${Date.now()}`,
+                payment_intent_id: paymentIntent.id,
+              },
+            }),
+          }
+        )
+
+        const printifyResult = await printifyResponse.json()
+        console.log('Printify order result:', printifyResult)
+
+        if (!printifyResponse.ok) {
+          console.error('Failed to create Printify order:', printifyResult)
+        }
 
         break
       }
@@ -246,37 +293,45 @@ serve(async (req) => {
         console.log('Handling payment_intent.payment_failed')
         const paymentIntent = event.data.object
 
-        await supabaseRest(
-          'payment_transactions?on_conflict=stripe_payment_intent_id',
+        const result = await supabaseRest(
+          'payment_transactions',
           'POST',
           {
             stripe_payment_intent_id: paymentIntent.id,
             stripe_customer_id: paymentIntent.customer,
-            payment_provider: 'stripe',
             amount: paymentIntent.amount / 100,
             currency: paymentIntent.currency,
             status: 'failed',
             payment_method_type: paymentIntent.payment_method_types?.[0],
             error_message: paymentIntent.last_payment_error?.message,
             metadata: paymentIntent.metadata,
-            updated_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
           },
-          { prefer: 'resolution=merge-duplicates' },
+          { prefer: 'resolution=merge-duplicates' }
         )
 
-        const dbOrderId = paymentIntent.metadata?.order_id
-        if (dbOrderId) {
-          const reasonCode = paymentIntent.last_payment_error?.code || ''
-          const failureReason = reasonCode === 'authentication_required'
-            ? 'stripe_3ds_failure'
-            : 'stripe_card_declined'
+        console.log('Upsert result:', result)
+        if (result.error) {
+          console.error('Upsert error:', result.error)
+        } else {
+          // Update order payment_status to "failed" if we have an order_id
+          const dbOrderId = paymentIntent.metadata?.order_id
+          if (dbOrderId) {
+            const orderResult = await supabaseRest(
+              `orders?id=eq.${dbOrderId}`,
+              'PATCH',
+              {
+                payment_status: 'failed',
+                updated_at: new Date().toISOString(),
+              }
+            )
 
-          await supabaseRest(`orders?id=eq.${dbOrderId}`, 'PATCH', {
-            status: 'waiting_payment',
-            payment_status: 'failed',
-            payment_failure_reason: failureReason,
-            updated_at: new Date().toISOString(),
-          })
+            if (orderResult.error) {
+              console.error('Failed to update order payment_status:', orderResult.error)
+            } else {
+              console.log(`Order ${dbOrderId} payment_status updated to: failed`)
+            }
+          }
         }
         break
       }

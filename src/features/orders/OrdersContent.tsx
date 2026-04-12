@@ -19,7 +19,6 @@ import dynamic from "next/dynamic";
 import { MemoizedOrdersTable } from "./OrdersTable/OrdersTable";
 import { OrdersPagination } from "./OrdersTable/OrdersPagination";
 import { CancelOrderModal } from "./CancelOrderModal";
-import { useRouter } from "next/navigation";
 
 const OrderDetailsModal = dynamic(
   () => import("./orderDetails/OrderDetailsModal/OrderDetailsModal"),
@@ -29,7 +28,6 @@ const OrderDetailsModal = dynamic(
 );
 
 export default function OrdersContent() {
-  const router = useRouter();
   const { data: user } = useUser();
   const { data: orders, isLoading, error, refetch } = useOrders(user?.id);
   const {
@@ -79,15 +77,6 @@ export default function OrdersContent() {
     console.log("Reorder:", order.id);
   }, []);
 
-  const handleProceedToPayment = useCallback(
-    (order: OrderWithItemsT) => {
-      router.push(
-        `/checkout?orderId=${encodeURIComponent(order.id)}&paymentMethod=${encodeURIComponent(order.payment_method || "stripe")}`,
-      );
-    },
-    [router],
-  );
-
   if (isLoading) {
     return <OrdersLoadingSkeleton />;
   }
@@ -123,7 +112,6 @@ export default function OrdersContent() {
             onViewOrder={handleOrderSelect}
             onReorder={handleReorder}
             onCancelOrder={handleCancelOrder}
-            onProceedToPayment={handleProceedToPayment}
           />
 
           <OrdersPagination

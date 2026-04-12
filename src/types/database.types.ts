@@ -227,57 +227,6 @@ export type Database = {
         }
         Relationships: []
       }
-      email_jobs: {
-        Row: {
-          attempts: number
-          created_at: string
-          dedupe_key: string
-          id: string
-          last_error: string | null
-          max_attempts: number
-          next_attempt_at: string
-          payload: Json
-          recipient_email: string
-          sent_at: string | null
-          status: string
-          subject: string
-          template: string
-          updated_at: string
-        }
-        Insert: {
-          attempts?: number
-          created_at?: string
-          dedupe_key: string
-          id?: string
-          last_error?: string | null
-          max_attempts?: number
-          next_attempt_at?: string
-          payload?: Json
-          recipient_email: string
-          sent_at?: string | null
-          status?: string
-          subject: string
-          template: string
-          updated_at?: string
-        }
-        Update: {
-          attempts?: number
-          created_at?: string
-          dedupe_key?: string
-          id?: string
-          last_error?: string | null
-          max_attempts?: number
-          next_attempt_at?: string
-          payload?: Json
-          recipient_email?: string
-          sent_at?: string | null
-          status?: string
-          subject?: string
-          template?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       order_items: {
         Row: {
           created_at: string | null
@@ -348,14 +297,18 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
         ]
       }
       orders: {
         Row: {
           billing_address: Json | null
-          cancellation_reason: string | null
-          cancelled_at: string | null
-          confirmed_at: string | null
           created_at: string | null
           currency: string | null
           customer_email: string
@@ -364,24 +317,14 @@ export type Database = {
           customer_phone: string | null
           delivered_at: string | null
           discount_amount: number | null
-          expired_at: string | null
-          expires_at: string | null
           fulfillment_status: string | null
           id: string
           internal_notes: string | null
-          last_refund_error: string | null
-          manual_review_required: boolean
           order_number: string
-          paid_at: string | null
-          payment_failure_reason: string | null
           payment_method: string | null
           payment_status: string | null
           printify_order_id: string | null
           product_id: string | null
-          promo_code: string | null
-          promo_value: number | null
-          refund_attempts: number
-          refund_failed: boolean
           shipped_at: string | null
           shipping_address: Json | null
           shipping_cost: number | null
@@ -399,9 +342,6 @@ export type Database = {
         }
         Insert: {
           billing_address?: Json | null
-          cancellation_reason?: string | null
-          cancelled_at?: string | null
-          confirmed_at?: string | null
           created_at?: string | null
           currency?: string | null
           customer_email: string
@@ -410,24 +350,14 @@ export type Database = {
           customer_phone?: string | null
           delivered_at?: string | null
           discount_amount?: number | null
-          expired_at?: string | null
-          expires_at?: string | null
           fulfillment_status?: string | null
           id?: string
           internal_notes?: string | null
-          last_refund_error?: string | null
-          manual_review_required?: boolean
           order_number: string
-          paid_at?: string | null
-          payment_failure_reason?: string | null
           payment_method?: string | null
           payment_status?: string | null
           printify_order_id?: string | null
           product_id?: string | null
-          promo_code?: string | null
-          promo_value?: number | null
-          refund_attempts?: number
-          refund_failed?: boolean
           shipped_at?: string | null
           shipping_address?: Json | null
           shipping_cost?: number | null
@@ -445,9 +375,6 @@ export type Database = {
         }
         Update: {
           billing_address?: Json | null
-          cancellation_reason?: string | null
-          cancelled_at?: string | null
-          confirmed_at?: string | null
           created_at?: string | null
           currency?: string | null
           customer_email?: string
@@ -456,24 +383,14 @@ export type Database = {
           customer_phone?: string | null
           delivered_at?: string | null
           discount_amount?: number | null
-          expired_at?: string | null
-          expires_at?: string | null
           fulfillment_status?: string | null
           id?: string
           internal_notes?: string | null
-          last_refund_error?: string | null
-          manual_review_required?: boolean
           order_number?: string
-          paid_at?: string | null
-          payment_failure_reason?: string | null
           payment_method?: string | null
           payment_status?: string | null
           printify_order_id?: string | null
           product_id?: string | null
-          promo_code?: string | null
-          promo_value?: number | null
-          refund_attempts?: number
-          refund_failed?: boolean
           shipped_at?: string | null
           shipping_address?: Json | null
           shipping_cost?: number | null
@@ -499,16 +416,9 @@ export type Database = {
           error_message: string | null
           id: string
           metadata: Json | null
-          mollie_payment_id: string | null
-          mollie_status: string | null
           order_id: string | null
           payment_method_details: Json | null
           payment_method_type: string | null
-          payment_provider: string
-          paypal_capture_id: string | null
-          paypal_order_id: string | null
-          paypal_payer_email: string | null
-          paypal_payer_id: string | null
           status: string
           stripe_charge_id: string | null
           stripe_customer_id: string | null
@@ -523,16 +433,9 @@ export type Database = {
           error_message?: string | null
           id?: string
           metadata?: Json | null
-          mollie_payment_id?: string | null
-          mollie_status?: string | null
           order_id?: string | null
           payment_method_details?: Json | null
           payment_method_type?: string | null
-          payment_provider?: string
-          paypal_capture_id?: string | null
-          paypal_order_id?: string | null
-          paypal_payer_email?: string | null
-          paypal_payer_id?: string | null
           status: string
           stripe_charge_id?: string | null
           stripe_customer_id?: string | null
@@ -547,16 +450,9 @@ export type Database = {
           error_message?: string | null
           id?: string
           metadata?: Json | null
-          mollie_payment_id?: string | null
-          mollie_status?: string | null
           order_id?: string | null
           payment_method_details?: Json | null
           payment_method_type?: string | null
-          payment_provider?: string
-          paypal_capture_id?: string | null
-          paypal_order_id?: string | null
-          paypal_payer_email?: string | null
-          paypal_payer_id?: string | null
           status?: string
           stripe_charge_id?: string | null
           stripe_customer_id?: string | null
@@ -567,41 +463,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "payment_transactions_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      payment_webhook_events: {
-        Row: {
-          created_at: string
-          event_id: string
-          id: string
-          order_id: string | null
-          payload: Json | null
-          provider: string
-        }
-        Insert: {
-          created_at?: string
-          event_id: string
-          id?: string
-          order_id?: string | null
-          payload?: Json | null
-          provider: string
-        }
-        Update: {
-          created_at?: string
-          event_id?: string
-          id?: string
-          order_id?: string | null
-          payload?: Json | null
-          provider?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "payment_webhook_events_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
@@ -745,8 +606,6 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
-          coins: number
-          coins_reset_at: string
           created_at: string | null
           email: string
           full_name: string | null
@@ -757,8 +616,6 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
-          coins?: number
-          coins_reset_at?: string
           created_at?: string | null
           email: string
           full_name?: string | null
@@ -769,8 +626,6 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
-          coins?: number
-          coins_reset_at?: string
           created_at?: string | null
           email?: string
           full_name?: string | null
@@ -778,30 +633,6 @@ export type Database = {
           phone?: string | null
           stripe_customer_id?: string | null
           updated_at?: string | null
-        }
-        Relationships: []
-      }
-      promocodes: {
-        Row: {
-          code: string
-          created_at: string | null
-          promocode_id: string
-          type: string
-          value: number
-        }
-        Insert: {
-          code: string
-          created_at?: string | null
-          promocode_id?: string
-          type: string
-          value: number
-        }
-        Update: {
-          code?: string
-          created_at?: string | null
-          promocode_id?: string
-          type?: string
-          value?: number
         }
         Relationships: []
       }
@@ -940,10 +771,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      deduct_coin: { Args: { user_id: string }; Returns: boolean }
-      expire_waiting_payment_orders: { Args: never; Returns: number }
       generate_order_number: { Args: never; Returns: string }
-      refill_min_3_coins_daily: { Args: never; Returns: undefined }
     }
     Enums: {
       PAYMENT_STATUS: "PENDING" | "FAILED" | "COMPLETED"
@@ -1080,4 +908,4 @@ export const Constants = {
       PAYMENT_STATUS: ["PENDING", "FAILED", "COMPLETED"],
     },
   },
-}
+} as const

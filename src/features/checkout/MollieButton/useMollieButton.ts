@@ -16,7 +16,6 @@ interface UseMollieButtonParamsI {
   description?: string;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
-  orderId?: string;
   testMode?: boolean;
   onRedirect?: (details: MollieRedirectDetailsI) => void;
   onError?: (error: string) => void;
@@ -28,7 +27,6 @@ export function useMollieButton({
   description,
   lineItems,
   shippingAddress,
-  orderId,
   testMode = false,
   onRedirect,
   onError,
@@ -59,7 +57,6 @@ export function useMollieButton({
         description,
         lineItems,
         shippingAddress,
-        orderId,
         testMode,
       });
 
@@ -92,7 +89,6 @@ export function useMollieButton({
     description,
     lineItems,
     shippingAddress,
-    orderId,
     testMode,
     createMolliePayment,
     onRedirect,

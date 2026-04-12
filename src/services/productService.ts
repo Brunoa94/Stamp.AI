@@ -8,45 +8,8 @@ type ProductInsert = Database['public']['Tables']['products']['Insert'];
 type ProductRow = Database['public']['Tables']['products']['Row'];
 
 export class ProductService {
-  /**
-   * Creates a mock product row for testing purposes
-   * @private
-   */
-  private static createMockProductRow(
-    input: Pick<SavePrintifyProductInput, 'printifyProductId'>,
-    productData: ProductInsert
-  ): ProductRow {
-    const fakeId = `mock-${input.printifyProductId}-${Date.now()}`;
-    return {
-      id: fakeId,
-      printify_product_id: input.printifyProductId,
-      name: productData.name,
-      slug: productData.slug,
-      description: productData.description,
-      base_price: productData.base_price,
-      blueprint_id: productData.blueprint_id,
-      print_provider_id: productData.print_provider_id,
-      print_areas: productData.print_areas,
-      is_active: productData.is_active,
-      is_featured: productData.is_featured,
-      currency: productData.currency,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    } as ProductRow;
-  }
-
   private static getSupabase() {
-    try {
-      return createClient();
-    } catch (error) {
-      // Only return null in test environments
-      // In production, we want to fail fast if DB is unavailable
-      if (process.env.NODE_ENV === 'test') {
-        console.warn("Supabase client not available in test environment:", error);
-        return null;
-      }
-      throw error;
-    }
+    return createClient();
   }
 
   /**
@@ -56,17 +19,6 @@ export class ProductService {
   static async savePrintifyProduct(input: SavePrintifyProductInput): Promise<ProductRow> {
     try {
       const supabase = this.getSupabase();
-
-      // Use mapper to convert input to database insert format
-      const productData = ProductServiceMapper.mapInputToProductInsert(input);
-
-      // If supabase client is not available (test environment only),
-      // return a mock product row so tests can continue
-      if (!supabase) {
-        const mockRow = this.createMockProductRow(input, productData);
-        console.log('✅ (mock) Saved Printify product to database:', mockRow.id);
-        return mockRow;
-      }
 
       // Check if product already exists with this Printify ID
       const { data: existingProduct } = await supabase
@@ -80,6 +32,9 @@ export class ProductService {
         return existingProduct;
       }
 
+      // Use mapper to convert input to database insert format
+      const productData = ProductServiceMapper.mapInputToProductInsert(input);
+
       const { data, error } = await supabase
         .from('products')
         .insert(productData)
@@ -91,11 +46,7 @@ export class ProductService {
       }
 
       if (!data) {
-        throw ErrorClient.handleError({
-          error: new Error("No data returned after product creation"),
-          service: "Product",
-          action: "Save Printify Product"
-        });
+        throw ErrorClient.handleError({ error: new Error("No data returned after product creation"), service: "Product", action: "Save Printify Product" });
       }
 
       console.log('✅ Saved Printify product to database:', data.id);
@@ -111,12 +62,6 @@ export class ProductService {
   static async getProduct(productId: string): Promise<ProductRow | null> {
     try {
       const supabase = this.getSupabase();
-
-      // In test environment without supabase, return null
-      if (!supabase) {
-        console.warn("Skipping product fetch (no supabase client in test environment)");
-        return null;
-      }
 
       const { data, error } = await supabase
         .from('products')

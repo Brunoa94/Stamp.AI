@@ -8,11 +8,6 @@ export function getStatusBadgeClass(status: string | null): string {
   const normalizedStatus = status?.toLowerCase().replace(/[_-]/g, "") || "";
 
   switch (normalizedStatus) {
-    case "waitingpayment":
-      return `${base} ${ordersTheme.table.statusPending}`;
-    case "paid":
-    case "confirmed":
-      return `${base} ${ordersTheme.table.statusProcessing}`;
     case "pending":
     case "awaiting":
       return `${base} ${ordersTheme.table.statusPending}`;
@@ -34,7 +29,6 @@ export function getStatusBadgeClass(status: string | null): string {
     case "refunded":
       return `${base} ${ordersTheme.table.statusRefunded}`;
     case "failed":
-    case "refundfailed":
       return `${base} ${ordersTheme.table.statusFailed}`;
     case "onhold":
     case "hold":

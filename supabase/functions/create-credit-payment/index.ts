@@ -1,4 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import Stripe from 'https://esm.sh/stripe@14.11.0?target=deno'
 import { ErrorCodes, handleError, FunctionError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 
@@ -112,37 +113,31 @@ serve(async (req) => {
     const validAmount = validateRequest.amount(amount)
     const validCredits = validateCredits(credits)
 
-    // Build payment intent body for credit purchase
-    const paymentIntentBody = new URLSearchParams({
-      amount: String(Math.round(validAmount * 100)),
-      currency: currency,
-      'automatic_payment_methods[enabled]': 'true',
-      'metadata[type]': 'credit_purchase',
-      'metadata[user_id]': userId,
-      'metadata[user_email]': userEmail,
-      'metadata[credits]': validCredits.toString(),
-      'metadata[amount_usd]': validAmount.toString(),
+    const stripe = new Stripe(stripeSecretKey, {
+      apiVersion: '2023-10-16',
+      httpClient: Stripe.createFetchHttpClient(),
     })
 
-    // Create payment intent via Stripe REST API
-    let paymentIntent: any
+    // Build payment intent options for credit purchase
+    const paymentIntentOptions: Stripe.PaymentIntentCreateParams = {
+      amount: Math.round(validAmount * 100), // Convert to cents
+      currency: currency,
+      automatic_payment_methods: {
+        enabled: true,
+      },
+      metadata: {
+        type: 'credit_purchase',
+        user_id: userId,
+        user_email: userEmail,
+        credits: validCredits.toString(),
+        amount_usd: validAmount.toString(),
+      },
+    }
+
+    // Create payment intent
+    let paymentIntent
     try {
-      const stripeResponse = await fetch('https://api.stripe.com/v1/payment_intents', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${stripeSecretKey}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: paymentIntentBody.toString(),
-      })
-
-      const stripeData = await stripeResponse.json()
-
-      if (!stripeResponse.ok) {
-        throw ErrorCodes.STRIPE_API_ERROR(stripeData?.error?.message ?? stripeResponse.statusText)
-      }
-
-      paymentIntent = stripeData
+      paymentIntent = await stripe.paymentIntents.create(paymentIntentOptions)
       console.log('Created payment intent for credit purchase:', paymentIntent.id)
     } catch (stripeError: unknown) {
       const errorMessage = stripeError instanceof Error ? stripeError.message : JSON.stringify(stripeError)

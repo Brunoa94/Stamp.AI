@@ -7,7 +7,6 @@ import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 import { Button } from "@/features/ui/button";
 import { shadows, colors, animations, componentThemes } from "@/theme";
-import { toast } from "sonner";
 
 interface WizardUploadAreaProps {
   onImageUpload: (file: File) => void;
@@ -49,15 +48,8 @@ export function WizardUploadArea({
     [onImageUpload],
   );
 
-  const onDropRejected = useCallback(() => {
-    toast.error("Upload failed", {
-      description: "Please upload a JPG, PNG, or HEIC image up to 25MB.",
-    });
-  }, []);
-
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    onDropRejected,
     accept: {
       "image/*": [".png", ".jpg", ".jpeg", ".heic"],
     },

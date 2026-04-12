@@ -6,10 +6,7 @@ import { isMollieConfigured } from "@/lib/mollie";
 import { CheckoutErrorDisplay } from "../components";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
-import {
-  useMollieButton,
-  type MollieRedirectDetailsI,
-} from "./useMollieButton";
+import { useMollieButton, type MollieRedirectDetailsI } from "./useMollieButton";
 
 interface Props {
   amount: number;
@@ -17,7 +14,6 @@ interface Props {
   description?: string;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
-  orderId?: string;
   testMode?: boolean;
   onRedirect?: (details: MollieRedirectDetailsI) => void;
   onError?: (error: string) => void;
@@ -30,7 +26,6 @@ export function MollieButton({
   description,
   lineItems,
   shippingAddress,
-  orderId,
   testMode = false,
   onRedirect,
   onError,
@@ -42,7 +37,6 @@ export function MollieButton({
     description,
     lineItems,
     shippingAddress,
-    orderId,
     testMode,
     onRedirect,
     onError,

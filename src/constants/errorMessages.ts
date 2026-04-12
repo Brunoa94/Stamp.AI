@@ -63,7 +63,7 @@ export const ERROR_MESSAGES: Record<ErrorCodeT, string> = {
   'CUSTOM_PRODUCT_CREATION_FAILED': 'Failed to create custom product. Please try again',
   'TSHIRT_PRODUCTS_FETCH_FAILED': 'Failed to load t-shirt products. Please try again',
   'PAYPAL_API_ERROR': 'PayPal service error. Please try again',
-  'PAYPAL_CAPTURE_FAILED': 'PayPal could not capture this payment. Please choose another funding source and try again',
+  'PAYPAL_CAPTURE_FAILED': 'PayPal payment capture failed. Please try again',
   'MOLLIE_API_ERROR': 'Mollie service error. Please try again',
   'MOLLIE_PAYMENT_FAILED': 'Mollie payment failed. Please try again',
 

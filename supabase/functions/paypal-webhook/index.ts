@@ -3,7 +3,6 @@ import { handleError } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { verifyPayPalWebhook } from "../_shared/paypal.ts";
-import { processPaidOrder } from "../_shared/order-lifecycle.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -75,35 +74,30 @@ serve(async (req) => {
         console.log("Payment capture completed:", event.resource.id);
         const capture = event.resource;
         console.log("Order Id: ", capture.supplementary_data?.related_ids?.order_id);
+        // Find and update the payment transaction
         const orderId = capture.supplementary_data?.related_ids?.order_id;
 
         if (orderId) {
-          const txResult = await supabaseRest<any[]>(
-            `payment_transactions?paypal_order_id=eq.${orderId}&select=metadata,user_id`,
-            "GET"
+          const result = await supabaseRest(
+            `payment_transactions?paypal_order_id=eq.${orderId}`,
+            "PATCH",
+            {
+              paypal_capture_id: capture.id,
+              status: "succeeded",
+              payment_method_details: {
+                capture_id: capture.id,
+                final_capture: capture.final_capture,
+                seller_protection: capture.seller_protection,
+              },
+              updated_at: new Date().toISOString(),
+            }
           );
 
-          const metadata = txResult.data?.[0]?.metadata || {};
-          const dbOrderId = metadata.order_id as string | undefined;
+          if (result.error) {
+            console.error("Update error:", result.error);
+          } else {
+            console.log("Payment transaction updated");
 
-<<<<<<< HEAD
-          if (dbOrderId) {
-            await processPaidOrder({
-              provider: "paypal",
-              eventId: event.id,
-              orderId: dbOrderId,
-              amount: parseFloat(capture.amount?.value || "0"),
-              currency: (capture.amount?.currency_code || "USD").toLowerCase(),
-              userId: txResult.data?.[0]?.user_id,
-              metadata,
-              refs: {
-                paypal_order_id: orderId,
-                paypal_capture_id: capture.id,
-              },
-              lineItems: (metadata.line_items as unknown[]) || [],
-              shippingAddress: (metadata.shipping_address as Record<string, unknown>) || {},
-            });
-=======
             // Update order payment_status to "paid"
             // First get the order_id from the payment transaction metadata
             const txResult = await supabaseRest(
@@ -131,7 +125,6 @@ serve(async (req) => {
                 console.log(`✅ Order ${dbOrderId} atomically updated to paid/confirmed`);
               }
             }
->>>>>>> dev
           }
         }
         break;
@@ -196,7 +189,7 @@ serve(async (req) => {
         const orderId = capture.supplementary_data?.related_ids?.order_id;
 
         if (orderId) {
-          await supabaseRest(
+          const result = await supabaseRest(
             `payment_transactions?paypal_order_id=eq.${orderId}`,
             "PATCH",
             {
@@ -206,21 +199,6 @@ serve(async (req) => {
             }
           );
 
-<<<<<<< HEAD
-          const txResult = await supabaseRest<any[]>(
-            `payment_transactions?paypal_order_id=eq.${orderId}&select=metadata`,
-            "GET",
-          );
-
-          const dbOrderId = txResult.data?.[0]?.metadata?.order_id;
-          if (dbOrderId) {
-            await supabaseRest(`orders?id=eq.${dbOrderId}`, "PATCH", {
-              status: "waiting_payment",
-              payment_status: "failed",
-              payment_failure_reason: "paypal_capture_denied",
-              updated_at: new Date().toISOString(),
-            });
-=======
           if (result.error) {
             console.error("Update error:", result.error);
           } else {
@@ -247,7 +225,6 @@ serve(async (req) => {
                 console.log(`Order ${dbOrderId} payment_status updated to: failed`);
               }
             }
->>>>>>> dev
           }
         }
         break;

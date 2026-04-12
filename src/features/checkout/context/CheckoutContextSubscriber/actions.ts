@@ -157,8 +157,6 @@ export function useCheckoutSubscriberActions() {
     handlePaymentSuccess: async (paymentIntent: PaymentIntentI, lineItems: PrintifyLineItem[]) => {
       const initialState = store.getState();
 
-      // Then, update payment status to success
-
       store.setState({
         ...initialState,
         isProcessingPayment: true,
@@ -458,78 +456,14 @@ export function useCheckoutSubscriberActions() {
      * Trigger payment processing after shipping confirmation
      */
     handleCompleteOrder: () => {
-      const run = async () => {
-        const state = store.getState();
-        if (!state.shippingAddress) {
-          return;
-        }
-
-        store.setState({
-          ...state,
-          isProcessingPayment: true,
-        });
-
-        let checkoutOrderId = state.checkoutOrderId;
-
-        if (!checkoutOrderId && user && state.cart) {
-          try {
-            checkoutOrderId = await createOrderFromCart.mutateAsync({
-              user,
-              cart: state.cart,
-              paymentStatus: "pending",
-              orderStatus: "waiting_payment",
-              paymentMethod: state.selectedPaymentMethod,
-              shippingAddress: state.shippingAddress,
-            });
-          } catch (error) {
-            const errorMessage =
-              error instanceof Error ? error.message : "Failed to create order before payment";
-            const attemptedOn = new Date().toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            });
-            const errorDetails: PaymentErrorDetailsI = {
-              paymentId: `failed_${Date.now()}`,
-              orderNumber: `#SD-${Date.now().toString().slice(-6)}`,
-              amountDue: `$${state.orderAmount.toFixed(2)}`,
-              attemptedOn,
-              status: "Failed",
-              reasonTitle: "Reason",
-              reasonMessage: errorMessage,
-              availableMethods: ["paypal", "applepay", "stripe"] satisfies PaymentAlternativeMethodT[],
-            };
-            store.setState({
-              ...state,
-              isProcessingPayment: false,
-              triggerPayment: false,
-              paymentStatus: "error",
-              message: errorMessage,
-              paymentSuccessDetails: null,
-              paymentErrorDetails: errorDetails,
-            });
-            return;
-          }
-        }
-
-        const latest = store.getState();
-        store.setState({
-          ...latest,
-          checkoutOrderId: checkoutOrderId || latest.checkoutOrderId,
-          isProcessingPayment: true,
-          triggerPayment: true,
-        });
-
-        if (!state.shippingAddress) {
-          return;
-        }
-          store.setState({
-            ...state,
-            triggerPayment: true,
-          });
-        };
-
-      void run();
+      const state = store.getState();
+      if (!state.shippingAddress) {
+        return;
+      }
+      store.setState({
+        ...state,
+        triggerPayment: true,
+      });
     },
 
     /**
@@ -554,7 +488,6 @@ export function useCheckoutSubscriberActions() {
         ...state,
         paymentStatus: "idle",
         shippingAddress: null,
-        checkoutOrderId: null,
         message: "",
         isProcessingPayment: false,
         triggerPayment: false,

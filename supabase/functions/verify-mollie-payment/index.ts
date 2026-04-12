@@ -3,7 +3,6 @@ import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { getMolliePayment, isMolliePaymentPaid, mapMollieStatusToInternal } from "../_shared/mollie.ts";
-import { processPaidOrder } from "../_shared/order-lifecycle.ts";
 import type { MollieVerifyRequestI, MollieVerifyResponseI } from "../../types/index.ts";
 
 const corsHeaders = {
@@ -75,34 +74,24 @@ serve(async (req) => {
 
     if (orderId) {
       if (payment.status === "paid") {
-        await processPaidOrder({
-          provider: "mollie",
-          eventId: `mollie-verify-${payment.id}-${payment.status}`,
-          orderId,
-          amount: parseFloat(payment.amount.value),
-          currency: payment.amount.currency.toLowerCase(),
-          userId,
-          metadata,
-          refs: {
-            mollie_payment_id: payment.id,
-          },
-          lineItems: (metadata.line_items as unknown[]) || [],
-          shippingAddress: (metadata.shipping_address as Record<string, unknown>) || {},
+        const orderResult = await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
+          status: "processing",
+          payment_status: "paid",
+          payment_method: "mollie",
+          updated_at: new Date().toISOString(),
         });
+
+        if (orderResult.error) {
+          console.error(`Failed to update order ${orderId} from verify endpoint:`, orderResult.error);
+        }
       } else if (
         payment.status === "failed" ||
         payment.status === "canceled" ||
         payment.status === "expired"
       ) {
         const orderResult = await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
-          status: "waiting_payment",
+          status: "cancelled",
           payment_status: internalStatus,
-          payment_failure_reason:
-            payment.status === "canceled"
-              ? "mollie_user_cancelled"
-              : payment.status === "expired"
-                ? "mollie_expired"
-                : "mollie_technical_failure",
           updated_at: new Date().toISOString(),
         });
 
