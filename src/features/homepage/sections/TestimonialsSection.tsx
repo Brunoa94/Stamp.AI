@@ -132,7 +132,7 @@ export function TestimonialsSection() {
                 ref={(el) => {
                   cardRefs.current[index] = el;
                 }}
-                className="group relative min-h-[450px] overflow-hidden rounded-3xl transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl md:min-h-[500px]"
+                className="group relative min-h-112.5 overflow-hidden rounded-3xl transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl md:min-h-125"
                 style={{
                   opacity: isVisible ? 1 : 0,
                   transform: isVisible ? "translateY(0)" : "translateY(40px)",
@@ -162,7 +162,7 @@ export function TestimonialsSection() {
 
                   {/* Image Section - Right on Desktop, Bottom on Mobile - 50% width on desktop */}
                   <div className="flex items-center justify-center p-4 md:w-[50%] md:p-6 lg:p-8">
-                    <div className="relative h-80 w-full overflow-hidden rounded-2xl md:h-full md:min-h-[400px] lg:min-h-[450px]">
+                    <div className="relative h-80 w-full overflow-hidden rounded-2xl md:h-full md:min-h-100 lg:min-h-112.5">
                       {/* Subtle gradient overlay */}
                       <div
                         className="pointer-events-none absolute inset-0 z-10 bg-linear-to-br from-[#7C3AED]/20 via-transparent to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-40"

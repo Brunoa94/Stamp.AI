@@ -20,6 +20,47 @@ interface OrderItemsPreviewProps {
   imageClassName?: string;
 }
 
+interface OrderImageProps {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  className?: string;
+  sizes?: string;
+}
+
+function OrderImage({ src, alt, width, height, className, sizes }: OrderImageProps) {
+  const isExternalUrl = src.startsWith("http://") || src.startsWith("https://");
+  const handleError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    e.currentTarget.style.display = "none";
+  };
+
+  if (isExternalUrl) {
+    return (
+      <img
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        className={className}
+        onError={handleError}
+      />
+    );
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      width={width ?? 88}
+      height={height ?? 88}
+      className={className}
+      sizes={sizes}
+      onError={handleError}
+    />
+  );
+}
+
 export function OrderItemsPreview({
   items,
   maxDisplay = 1,
@@ -64,16 +105,12 @@ export function OrderItemsPreview({
               )}
               aria-label="Open item image zoom"
             >
-              <Image
+              <OrderImage
                 src={item.custom_image_url}
                 alt="Order item"
                 width={88}
                 height={88}
                 className="h-full w-full object-cover transition-transform duration-300 ease-out group-hover:scale-110"
-                onError={(e) => {
-                  // Hide broken images gracefully
-                  (e.currentTarget as HTMLImageElement).style.display = "none";
-                }}
               />
             </button>
           ) : (
@@ -108,7 +145,7 @@ export function OrderItemsPreview({
 
           {zoomedImageUrl && (
             <div className="relative overflow-hidden rounded-lg bg-black/40">
-              <Image
+              <OrderImage
                 src={zoomedImageUrl}
                 alt="Zoomed order item"
                 width={1200}
