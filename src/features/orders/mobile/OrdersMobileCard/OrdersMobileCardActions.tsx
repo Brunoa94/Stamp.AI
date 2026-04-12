@@ -1,6 +1,9 @@
 import { Button } from "@/features/ui/button";
 import { ordersTheme } from "@/theme/components";
 import { OrderWithItemsT } from "@/types/order";
+import Link from "next/link";
+import { RefreshCw } from "lucide-react";
+import { canCancelOrder } from "../../utils/orderCancellation";
 
 interface OrdersMobileCardActionsProps {
   order: OrderWithItemsT;
@@ -9,8 +12,8 @@ interface OrdersMobileCardActionsProps {
   onCancelOrder?: (order: OrderWithItemsT) => void;
 }
 
-// Orders can only be cancelled if they haven't started processing yet
-const CANCELLABLE_STATUSES = ["created", "pending", null];
+// Payment statuses that allow the user to retry payment
+const RETRYABLE_PAYMENT_STATUSES = ["failed", "pending"];
 
 export function OrdersMobileCardActions({
   order,
@@ -19,7 +22,10 @@ export function OrdersMobileCardActions({
   onCancelOrder,
 }: OrdersMobileCardActionsProps) {
   const isCancelled = order.status === "cancelled";
-  const canCancel = CANCELLABLE_STATUSES.includes(order.status);
+  const canCancel = canCancelOrder(order);
+  const canRetryPayment =
+    !isCancelled &&
+    RETRYABLE_PAYMENT_STATUSES.includes(order.payment_status ?? "");
 
   return (
     <div className={ordersTheme.mobileCard.actions}>
@@ -39,7 +45,14 @@ export function OrdersMobileCardActions({
       >
         Reorder
       </Button>
-      {isCancelled ? (
+      {canRetryPayment ? (
+        <Button asChild variant="outline" size="default">
+          <Link href={`/checkout?retry_order_id=${order.id}`}>
+            <RefreshCw className="h-3.5 w-3.5 mr-1" />
+            Retry Payment
+          </Link>
+        </Button>
+      ) : isCancelled ? (
         <span className="inline-flex items-center justify-center h-10 px-4 text-sm font-medium text-muted-foreground max-w-23.25">
           Canceled
         </span>

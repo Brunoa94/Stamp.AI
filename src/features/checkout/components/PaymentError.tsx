@@ -18,9 +18,19 @@ interface Props {
 }
 
 const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
+  const isPostPaymentError = details?.isPostPaymentError ?? false;
+
   const reasonMessage =
     details?.reasonMessage ||
     "Your transaction couldn't be completed. Please retry or choose an alternative method.";
+
+  const title = isPostPaymentError
+    ? "Order Processing Issue"
+    : "Payment Failed";
+
+  const subtitle = isPostPaymentError
+    ? "Your payment was successful, but we encountered an issue processing your order. Our team has been notified and will assist you shortly."
+    : "Your transaction couldn't be completed. Don't worry, your design has been saved and is ready for retry.";
 
   return (
     <div className={paymentErrorTheme.page}>
@@ -34,10 +44,9 @@ const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
             <AlertCircle className={paymentErrorTheme.icon} />
           </div>
 
-          <h1 className={paymentErrorTheme.title}>Payment Failed</h1>
+          <h1 className={paymentErrorTheme.title}>{title}</h1>
           <p className={paymentErrorTheme.subtitle}>
-            Your transaction couldn&apos;t be completed. Don&apos;t worry, your
-            design has been saved and is ready for retry.
+            {subtitle}
           </p>
 
           <div className={paymentErrorTheme.reasonCard}>
@@ -68,12 +77,14 @@ const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
           />
 
           <div className={paymentErrorTheme.ctaStack}>
-            <Button
-              onClick={onTryAgain}
-              className={paymentErrorTheme.primaryBtn}
-            >
-              Retry Payment <RefreshCw className="w-4 h-4" />
-            </Button>
+            {!isPostPaymentError && (
+              <Button
+                onClick={onTryAgain}
+                className={paymentErrorTheme.primaryBtn}
+              >
+                Retry Payment <RefreshCw className="w-4 h-4" />
+              </Button>
+            )}
             <Button
               asChild
               variant="outline"
@@ -82,7 +93,9 @@ const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
               <Link href="/dashboard">Cancel &amp; Go to Dashboard</Link>
             </Button>
 
-            <AlternativePaymentMethods onSelectMethod={onSelectMethod} />
+            {!isPostPaymentError && (
+              <AlternativePaymentMethods onSelectMethod={onSelectMethod} />
+            )}
 
             <Link href="/profile" className={paymentErrorTheme.supportLink}>
               Need help? Contact Support

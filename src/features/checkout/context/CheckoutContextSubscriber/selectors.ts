@@ -4,6 +4,7 @@ export const CheckoutSelectors = {
   // Data state
   cart: () => useCheckoutSubscriberSelector((state) => state.cart),
   cartItems: () => useCheckoutSubscriberSelector((state) => state.cartItems),
+  lineItems: () => useCheckoutSubscriberSelector((state) => state.lineItems),
   isLoading: () => useCheckoutSubscriberSelector((state) => state.isLoading),
   error: () => useCheckoutSubscriberSelector((state) => state.error),
 

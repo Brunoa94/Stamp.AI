@@ -6,11 +6,13 @@ import type {
   PaymentSuccessDetailsI,
 } from "@/types/payment";
 import type { PromoCodeTypeT } from "@/types/promocode";
+import type { PrintifyLineItem } from "@/types/printifyOrder";
 
 export interface CheckoutSubscriberContextState {
   // Data state
   cart: CartWithItems | null;
   cartItems: CartItem[];
+  lineItems: PrintifyLineItem[];
   isLoading: boolean;
   error: Error | null;
 

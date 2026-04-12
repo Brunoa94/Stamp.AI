@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
-import { createClient } from "@/lib/supabase/client";
+import { StripeService } from "@/services/stripeService";
 
 interface UseStripePaymentProps {
   amount: number;
@@ -29,8 +29,6 @@ export function useStripePayment({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const supabase = createClient();
-
   const handleSubmit = useCallback(
     async (event: React.FormEvent) => {
       event.preventDefault();
@@ -43,38 +41,22 @@ export function useStripePayment({
       setError(null);
 
       try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+        // Create payment intent via service
+        const { clientSecret } = await StripeService.createCreditPayment({
+          amount,
+          credits,
+          currency: "usd",
+        });
 
-        if (!session) {
-          throw new Error("You must be logged in to purchase credits");
-        }
-
-        const { data: paymentData, error: paymentError } =
-          await supabase.functions.invoke("create-credit-payment", {
-            body: {
-              amount: amount,
-              credits: credits,
-              currency: "usd",
-            },
-          });
-
-        if (paymentError) {
-          throw new Error(paymentError.message);
-        }
-
-        if (!paymentData?.clientSecret) {
-          throw new Error("No payment data received");
-        }
-
+        // Get card element for confirmation
         const cardElement = elements.getElement(CardElement);
         if (!cardElement) {
           throw new Error("Card element not found");
         }
 
+        // Confirm payment with Stripe
         const { error: confirmError, paymentIntent } =
-          await stripe.confirmCardPayment(paymentData.clientSecret, {
+          await stripe.confirmCardPayment(clientSecret, {
             payment_method: {
               card: cardElement,
             },
@@ -96,7 +78,7 @@ export function useStripePayment({
         setLoading(false);
       }
     },
-    [stripe, elements, supabase, amount, credits, onSuccess, onError]
+    [stripe, elements, amount, credits, onSuccess, onError]
   );
 
   return {

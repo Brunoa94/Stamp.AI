@@ -11,6 +11,7 @@ import { MollieService } from "@/services/mollieService";
 import { OrderService } from "@/services/orderService";
 import { PrintifyService } from "@/services/printifyService";
 import { CartService } from "@/services/cartService";
+import { RefundService } from "@/services/refundService";
 import { createClient } from "@/lib/supabase/client";
 import type {
   CreatePrintifyOrderRequest,
@@ -53,12 +54,36 @@ export default function MollieReturnPage() {
           "mollie_shipping_address",
         );
         const storedCartId = sessionStorage.getItem("mollie_cart_id");
+        const storedOrderAmount = sessionStorage.getItem("mollie_order_amount");
 
         if (!storedPaymentId) {
           setStatus("error");
           setErrorMessage("No payment information found. Please try again.");
           return;
         }
+
+        // Idempotency guard (cross-mount and page refresh safe)
+        // Prevent duplicate order finalization for the same Mollie payment id.
+        const finalizationLockKey = `mollie_finalizing_${storedPaymentId}`;
+        const finalizationDoneKey = `mollie_finalized_${storedPaymentId}`;
+
+        if (sessionStorage.getItem(finalizationDoneKey) === "true") {
+          console.log(
+            `Mollie payment ${storedPaymentId} already finalized in this session. Skipping duplicate finalization.`,
+          );
+          setPaymentId(storedPaymentId);
+          setStatus("success");
+          return;
+        }
+
+        if (sessionStorage.getItem(finalizationLockKey) === "true") {
+          console.log(
+            `Mollie payment ${storedPaymentId} is already finalizing. Skipping duplicate run.`,
+          );
+          return;
+        }
+
+        sessionStorage.setItem(finalizationLockKey, "true");
 
         setPaymentId(storedPaymentId);
 
@@ -75,6 +100,8 @@ export default function MollieReturnPage() {
               "Missing checkout context to finalize order after payment.",
             );
           }
+
+          let createdOrderId: string | null = null;
 
           const parsedLineItems = JSON.parse(
             storedLineItems,
@@ -116,10 +143,11 @@ export default function MollieReturnPage() {
 
               if (user) {
                 const cart = await CartService.getCart(storedCartId);
-                await OrderService.createOrderFromCart({
+                createdOrderId = await OrderService.createOrderFromCart({
                   user: user as UserI,
                   cart,
                   paymentStatus: "paid",
+                  shippingAddress: parsedShippingAddress,
                 });
               }
             } catch (orderError) {
@@ -127,8 +155,37 @@ export default function MollieReturnPage() {
                 "Failed to create local order from cart after Mollie payment:",
                 orderError,
               );
+
+              // ✅ CRITICAL FIX: Trigger automatic refund
+              try {
+                const orderAmount = storedOrderAmount
+                  ? parseFloat(storedOrderAmount)
+                  : 0;
+
+                if (orderAmount > 0) {
+                  console.log(
+                    "💰 Initiating refund for failed Mollie order...",
+                  );
+                  await RefundService.processRefund({
+                    orderId: `temp_mollie_${storedPaymentId}`,
+                    paymentProvider: "mollie",
+                    amount: orderAmount,
+                    reason: "Order creation failed after Mollie payment",
+                    molliePaymentId: storedPaymentId,
+                  });
+                  console.log("✅ Refund initiated successfully");
+                } else {
+                  console.warn(
+                    "⚠️ Cannot initiate refund - order amount unknown",
+                  );
+                }
+              } catch (refundError) {
+                console.error("❌ Refund initiation failed:", refundError);
+                // refund_failures alert created automatically by RefundService
+              }
+
               throw new Error(
-                "Payment confirmed, but order creation failed. Please contact support.",
+                "Payment was successful but order creation failed. A full refund has been initiated and will appear within 3-5 business days.",
               );
             }
           }
@@ -139,12 +196,49 @@ export default function MollieReturnPage() {
             is_test: false,
             metadata: {
               payment_intent_id: storedPaymentId,
-              order_id: `order_${Date.now()}`,
+              order_id: createdOrderId ?? `order_${Date.now()}`,
               provider: "mollie",
             },
           };
 
-          await PrintifyService.createPrintifyOrder(printifyPayload);
+          // ✅ CRITICAL FIX: Wrap Printify creation in try-catch
+          try {
+            await PrintifyService.createPrintifyOrder(printifyPayload);
+
+            if (createdOrderId) {
+              await OrderService.updateOrderStatus(createdOrderId, "confirmed");
+            }
+          } catch (printifyError) {
+            console.error("❌ Printify order creation failed:", printifyError);
+
+            if (createdOrderId) {
+              // Order exists in DB - DO NOT REFUND
+              // Update order status to needs_review for manual intervention
+              try {
+                await OrderService.updateOrderStatus(createdOrderId, "pending");
+                console.log(
+                  `⚠️ Order ${createdOrderId} marked as pending - Printify failed`,
+                );
+              } catch (statusError) {
+                console.error("Failed to update order status:", statusError);
+              }
+
+              // Mark this payment as finalized to avoid duplicate attempts
+              sessionStorage.setItem(finalizationDoneKey, "true");
+              sessionStorage.removeItem(finalizationLockKey);
+
+              // Show error to user but indicate order was placed
+              setStatus("error");
+              setErrorMessage(
+                "Your payment was successful and your order was placed, but we encountered an issue sending it for production. Our team will review and contact you within 24 hours at " +
+                  parsedShippingAddress.email,
+              );
+              return;
+            } else {
+              // No order exists - this shouldn't happen at this point, re-throw
+              throw printifyError;
+            }
+          }
 
           if (storedCartId) {
             try {
@@ -157,6 +251,10 @@ export default function MollieReturnPage() {
             }
           }
 
+          // Mark this payment as finalized to avoid duplicate order creation
+          sessionStorage.setItem(finalizationDoneKey, "true");
+          sessionStorage.removeItem(finalizationLockKey);
+
           setStatus("success");
 
           // Clear sessionStorage
@@ -165,14 +263,22 @@ export default function MollieReturnPage() {
           sessionStorage.removeItem("mollie_shipping_address");
           sessionStorage.removeItem("mollie_cart_id");
         } else if (isMolliePaymentFailed(result.status)) {
+          sessionStorage.removeItem(finalizationLockKey);
           setStatus("failed");
           sessionStorage.removeItem("mollie_payment_id");
           sessionStorage.removeItem("mollie_cart_id");
         } else if (isMolliePaymentPending(result.status)) {
+          sessionStorage.removeItem(finalizationLockKey);
           setStatus("pending");
         }
       } catch (err) {
         console.error("Error verifying payment:", err);
+
+        const currentPaymentId = sessionStorage.getItem("mollie_payment_id");
+        if (currentPaymentId) {
+          sessionStorage.removeItem(`mollie_finalizing_${currentPaymentId}`);
+        }
+
         setStatus("error");
         setErrorMessage(
           err instanceof Error

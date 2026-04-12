@@ -5,6 +5,7 @@ import { CreateOrderT, UpdateOrderT } from "@/types/order";
 import { CartWithItems } from "@/types/cart";
 import { UserI } from "@/types/auth";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import type { ShippingAddressT } from "@/schemas/checkout";
 
 /**
  * Fetch a single order by ID
@@ -190,11 +191,29 @@ export function useCreateOrderFromCart() {
   const { handleError } = useErrorHandler();
 
   return useMutation({
-    mutationFn: async ({ user, cart, paymentStatus = "paid" }: { user: UserI; cart: CartWithItems; paymentStatus?: string }) => {
+    mutationFn: async ({
+      user,
+      cart,
+      paymentStatus = "paid",
+      shippingAddress,
+      idempotencyKey,
+    }: {
+      user: UserI;
+      cart: CartWithItems;
+      paymentStatus?: string;
+      shippingAddress?: ShippingAddressT;
+      idempotencyKey?: string;
+    }) => {
       if (!user) {
         throw new Error("User not authenticated");
       }
-      return await OrderService.createOrderFromCart({ cart, user, paymentStatus });
+      return await OrderService.createOrderFromCart({
+        cart,
+        user,
+        paymentStatus,
+        shippingAddress,
+        idempotencyKey,
+      });
     },
     onSuccess: (orderId) => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
@@ -207,5 +226,7 @@ export function useCreateOrderFromCart() {
     onError: (error: Error) => {
       handleError(error);
     },
+    // 3 total attempts: initial try + 2 retries
+    retry: 2,
   });
 }

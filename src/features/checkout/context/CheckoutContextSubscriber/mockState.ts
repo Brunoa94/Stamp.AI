@@ -4,6 +4,7 @@ export const MOCK_STATE: CheckoutSubscriberContextState = {
   // Data state
   cart: null,
   cartItems: [],
+  lineItems: [],
   isLoading: false,
   error: null,
 

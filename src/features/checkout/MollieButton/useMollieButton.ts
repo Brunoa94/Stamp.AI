@@ -66,6 +66,7 @@ export function useMollieButton({
         sessionStorage.setItem("mollie_payment_id", response.paymentId);
         sessionStorage.setItem("mollie_line_items", JSON.stringify(lineItems));
         sessionStorage.setItem("mollie_shipping_address", JSON.stringify(shippingAddress));
+        sessionStorage.setItem("mollie_order_amount", String(amount));
         if (cartIdFromUrl) {
           sessionStorage.setItem("mollie_cart_id", cartIdFromUrl);
         }

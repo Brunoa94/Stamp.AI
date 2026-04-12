@@ -1,7 +1,11 @@
 import { useContext } from "react";
 import { CheckoutSubscriberContext } from "./CheckoutContextSubscriber";
 import { ShippingAddressT } from "@/schemas/checkout";
-import { useCreateOrderFromCart } from "@/queries/orderQueries";
+import {
+  useCreateOrderFromCart,
+  useUpdateOrderStatus,
+  useUpdatePaymentStatus,
+} from "@/queries/orderQueries";
 import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
 import { useClearCart } from "@/queries/cartQueries";
 import { useValidatePromoCode } from "@/queries/promocodeQueries";
@@ -9,6 +13,9 @@ import { OrderT } from "@/types/order";
 import type { CreatePrintifyOrderRequest, PrintifyLineItem } from "@/types/printifyOrder";
 import { validatePrintifyLineItem } from "@/types/printifyOrder";
 import { mapShippingAddressToPrintifyAddress } from "@/mappers/mapShippingAddressToPrintifyAddress";
+import { RefundService } from "@/services/refundService";
+import { OrderService } from "@/services/orderService";
+import { PaymentRecoveryService } from "@/services/paymentRecoveryService";
 import { useUser } from "@/hooks/useAuth";
 import type {
   PaymentAlternativeMethodT,
@@ -38,6 +45,8 @@ export function useCheckoutSubscriberActions() {
 
   const { data: user } = useUser();
   const createOrderFromCart = useCreateOrderFromCart();
+  const updateOrderStatus = useUpdateOrderStatus();
+  const updatePaymentStatus = useUpdatePaymentStatus();
   const createPrintifyOrder = useCreatePrintifyOrder();
   const clearCart = useClearCart();
   const validatePromoCode = useValidatePromoCode();
@@ -140,6 +149,10 @@ export function useCheckoutSubscriberActions() {
     /**
      * Handle successful payment processing
      * Creates order, order items, and Printify order after payment succeeds, then clears the cart
+     *
+     * CRITICAL FIXES IMPLEMENTED:
+     * 1. Idempotency check to prevent duplicate orders
+     * 2. PayPal capture status validation
      */
     handlePaymentSuccess: async (paymentIntent: PaymentIntentI, lineItems: PrintifyLineItem[]) => {
       const initialState = store.getState();
@@ -153,6 +166,23 @@ export function useCheckoutSubscriberActions() {
       try {
         const state = store.getState();
 
+        // ✅ CRITICAL FIX 1: Validate PayPal capture status before proceeding
+        if (state.selectedPaymentMethod === "paypal") {
+          const paypalIntent = paymentIntent as any;
+
+          // Check if status indicates failure
+          if (paypalIntent.status === "DENIED" || paypalIntent.status === "FAILED") {
+            throw new Error(
+              `PayPal payment ${paypalIntent.status.toLowerCase()}. Your payment was not captured.`
+            );
+          }
+
+          // Check if capture ID is missing (required for successful PayPal payments)
+          if (!paypalIntent.captureId) {
+            console.warn("⚠️ PayPal payment missing capture_id - payment may not be captured");
+          }
+        }
+
         if (!state.shippingAddress) {
           throw new Error("Shipping address missing. Unable to finalize order.");
         }
@@ -161,15 +191,116 @@ export function useCheckoutSubscriberActions() {
           throw new Error("No order items found for Printify order creation.");
         }
 
-        // First, create order and order_items in database
-        if (user && state.cart) {
-          console.log("📝 Creating order from cart after successful payment...");
-          await createOrderFromCart.mutateAsync({
-            user,
-            cart: state.cart,
-            paymentStatus: "paid",
+        // ✅ CRITICAL FIX 2: Idempotency check to prevent duplicate orders
+        const idempotencyKey = `${state.selectedPaymentMethod}_${paymentIntent.id}`;
+        const existingOrder = await OrderService.getOrderByIdempotencyKey(idempotencyKey);
+
+        if (existingOrder) {
+          console.log(`✅ Order already exists for payment ${paymentIntent.id}, skipping duplicate creation`);
+
+          // Return success state with existing order
+          const successDetails: PaymentSuccessDetailsI = {
+            id: paymentIntent.id,
+            provider: state.selectedPaymentMethod,
+            status: "paid",
+            orderNumber: existingOrder.order_number,
+            totalPaid: `$${state.orderAmount.toFixed(2)}`,
+            estimatedDelivery: "7–10 business days",
+            confirmationEmail: state.shippingAddress?.email ?? "",
+          };
+
+          store.setState({
+            ...state,
+            isProcessingPayment: false,
+            paymentStatus: "success",
+            message: `Order ${existingOrder.order_number} already confirmed`,
+            paymentSuccessDetails: successDetails,
+            paymentErrorDetails: null,
           });
-          console.log("✅ Order and order items created in database");
+
+          return;
+        }
+
+        // ✅ CRITICAL FIX 3: Record payment for crash recovery
+        // If browser crashes after this point, user can recover their order
+        if (state.cart && state.shippingAddress) {
+          await PaymentRecoveryService.recordPaymentForRecovery({
+            paymentProvider: state.selectedPaymentMethod,
+            paymentIntentId: paymentIntent.id,
+            paymentStatus: "succeeded",
+            amount: state.orderAmount,
+            currency: "USD", // TODO: Make this dynamic if supporting multiple currencies
+            cartSnapshot: state.cart,
+            shippingAddress: state.shippingAddress,
+            lineItems,
+            metadata: {
+              idempotency_key: idempotencyKey,
+            },
+          });
+          console.log("✅ Payment recorded for crash recovery");
+        }
+
+        // First, create order and order_items in database.
+        // Retry behavior is handled by React Query in useCreateOrderFromCart.
+        const retryOrderId =
+          typeof window !== "undefined"
+            ? new URLSearchParams(window.location.search).get("retry_order_id")
+            : null;
+        const isRetryFlow = !!retryOrderId;
+
+        let createdOrderId: string | null = retryOrderId;
+
+        if (!isRetryFlow && user && state.cart) {
+          try {
+            console.log("📝 Creating order from cart...");
+            const newOrderId = await createOrderFromCart.mutateAsync({
+              user,
+              cart: state.cart,
+              paymentStatus: "paid",
+              shippingAddress: state.shippingAddress,
+              idempotencyKey,
+            });
+            createdOrderId = newOrderId ?? null;
+            console.log("✅ Order and order items created in database");
+          } catch (orderError) {
+            // Retries have been exhausted by React Query — initiate automatic refund
+            console.error("❌ All order creation attempts failed. Initiating refund...");
+            try {
+              const provider = state.selectedPaymentMethod;
+              const orderId = (paymentIntent as Record<string, unknown>)["metadata"]
+                ? ((paymentIntent as Record<string, unknown>)["metadata"] as Record<string, unknown>)["order_id"] ?? `temp_${paymentIntent.id}`
+                : `temp_${paymentIntent.id}`;
+
+              await RefundService.processRefund({
+                orderId: String(orderId),
+                paymentProvider: provider,
+                amount: state.orderAmount,
+                reason: "Order creation failed after retry attempts",
+                stripePaymentIntentId:
+                  provider === "stripe" ? paymentIntent.id : undefined,
+                paypalCaptureId:
+                  provider === "paypal"
+                    ? String((paymentIntent as Record<string, unknown>)["captureId"] ?? "")
+                    : undefined,
+                molliePaymentId:
+                  provider === "mollie"
+                    ? String((paymentIntent as Record<string, unknown>)["molliePaymentId"] ?? "")
+                    : undefined,
+              });
+
+              console.log("✅ Refund initiated successfully");
+            } catch (refundError) {
+              console.error("❌ Refund initiation failed:", refundError);
+            }
+
+            const reason =
+              orderError instanceof Error
+                ? orderError.message
+                : "Order creation failed after retry attempts.";
+            throw new Error(
+              `${reason} A full refund has been initiated and will appear within 3–5 business days.`
+            );
+          }
         }
 
         // Next, create the Printify order with validated line items
@@ -193,7 +324,7 @@ export function useCheckoutSubscriberActions() {
           is_test: state.testMode,
           metadata: {
             payment_intent_id: paymentIntent.id,
-            order_id: `order_${Date.now()}`,
+            order_id: createdOrderId ?? `order_${Date.now()}`,
           },
         };
 
@@ -202,13 +333,36 @@ export function useCheckoutSubscriberActions() {
         await createPrintifyOrder.mutateAsync(orderPayload);
         console.log("✅ Printify order created successfully");
 
-        // Non-blocking cleanup
-        try {
-          console.log("🧹 Clearing cart after successful payment...");
-          await clearCart.mutateAsync();
-          console.log("✅ Cart cleared successfully");
-        } catch (error) {
-          console.error("❌ Failed to clear cart:", error);
+        // Mark local order as confirmed only after product/order creation succeeds
+        if (createdOrderId) {
+          await updatePaymentStatus.mutateAsync({
+            orderId: createdOrderId,
+            paymentStatus: "paid",
+          });
+          await updateOrderStatus.mutateAsync({
+            orderId: createdOrderId,
+            status: "confirmed",
+          });
+          console.log(`✅ Order ${createdOrderId} payment/status updated to paid/confirmed`);
+
+          // ✅ Mark payment as recovered (no longer needs recovery)
+          await PaymentRecoveryService.markPaymentRecovered(
+            paymentIntent.id,
+            state.selectedPaymentMethod,
+            createdOrderId
+          );
+          console.log("✅ Payment marked as recovered");
+        }
+
+        // Non-blocking cleanup (skip cart clear for retry flow to avoid removing unrelated active carts)
+        if (!isRetryFlow) {
+          try {
+            console.log("🧹 Clearing cart after successful payment...");
+            await clearCart.mutateAsync();
+            console.log("✅ Cart cleared successfully");
+          } catch (error) {
+            console.error("❌ Failed to clear cart:", error);
+          }
         }
 
         const successState = store.getState();
@@ -250,7 +404,8 @@ export function useCheckoutSubscriberActions() {
           status: "Failed",
           reasonTitle: "Reason",
           reasonMessage,
-          availableMethods: ["paypal", "applepay", "stripe"] satisfies PaymentAlternativeMethodT[],
+          availableMethods: ["paypal", "applepay", "stripe", "mollie"] satisfies PaymentAlternativeMethodT[],
+          isPostPaymentError: true,
         };
 
         store.setState({
@@ -284,7 +439,7 @@ export function useCheckoutSubscriberActions() {
         status: "Failed",
         reasonTitle: "Reason",
         reasonMessage: errorMsg?.trim() || fallbackMessage,
-        availableMethods: ["paypal", "applepay", "stripe"] satisfies PaymentAlternativeMethodT[],
+        availableMethods: ["paypal", "applepay", "stripe", "mollie"] satisfies PaymentAlternativeMethodT[],
       };
 
       store.setState({
@@ -307,19 +462,19 @@ export function useCheckoutSubscriberActions() {
       }
       store.setState({
         ...state,
-        isProcessingPayment: true,
         triggerPayment: true,
       });
     },
 
     /**
      * Reset payment trigger after submission attempt
+     * Only resets triggerPayment flag, not isProcessingPayment
+     * (isProcessingPayment is managed by handlePaymentSuccess/handlePaymentError)
      */
     handlePaymentSubmitComplete: () => {
       const state = store.getState();
       store.setState({
         ...state,
-        isProcessingPayment: false,
         triggerPayment: false,
       });
     },

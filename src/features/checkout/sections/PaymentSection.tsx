@@ -1,12 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
 import PaymentForm from "@/features/checkout/paymentForm/PaymentForm";
 import {
   CheckoutSelectors,
   useCheckoutSubscriberActions,
 } from "@/features/checkout/context";
-import { buildPrintifyLineItems } from "../mappers/printifyLineItemsMapper";
 import { Checkbox } from "@/features/ui/checkbox";
 import { Label } from "@/features/ui/label";
 import { SectionHeader } from "@/features/ui/section-header";
@@ -17,7 +15,7 @@ export function PaymentSection() {
   const testMode = CheckoutSelectors.testMode();
   const triggerPayment = CheckoutSelectors.triggerPayment();
   const orderAmount = CheckoutSelectors.orderAmount();
-  const cartItems = CheckoutSelectors.cartItems();
+  const lineItems = CheckoutSelectors.lineItems();
   const selectedPaymentMethod = CheckoutSelectors.selectedPaymentMethod();
 
   const {
@@ -28,12 +26,8 @@ export function PaymentSection() {
     handlePaymentSubmitComplete,
   } = useCheckoutSubscriberActions();
 
-  // Build Printify line items from cart items
-  const lineItems = useMemo(() => {
-    const items = buildPrintifyLineItems(cartItems);
-
-    return items;
-  }, [cartItems]);
+  // Viewport handling is now done via Tailwind responsive styles in the
+  // payment form UI — no JS-based media query required here.
 
   console.log("✅ PaymentSection: Rendering payment form");
 

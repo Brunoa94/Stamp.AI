@@ -1,52 +1,16 @@
 import { createClient } from "@/lib/supabase/client";
 import { ErrorClient } from "./errorClient";
-import type { ShippingAddressT } from "@/schemas/checkout";
-import type { PrintifyLineItem } from "@/types/printifyOrder";
-import type { MolliePaymentStatus } from "@/lib/mollie";
-
-export interface CreateMolliePaymentPayloadI {
-  amount: number;
-  currency?: string;
-  description?: string;
-  lineItems: PrintifyLineItem[];
-  shippingAddress: ShippingAddressT;
-  testMode?: boolean;
-}
-
-export interface CreateMolliePaymentResponseI {
-  paymentId: string;
-  checkoutUrl: string;
-}
-
-export interface VerifyMolliePaymentPayloadI {
-  paymentId: string;
-}
-
-export interface VerifyMolliePaymentResponseI {
-  paymentId: string;
-  status: MolliePaymentStatus;
-  isPaid: boolean;
-  metadata?: Record<string, unknown>;
-}
+import { getAuthenticatedHeaders } from "./authHelpers";
+import type {
+  CreateMolliePaymentPayloadI,
+  CreateMolliePaymentResponseI,
+  VerifyMolliePaymentPayloadI,
+  VerifyMolliePaymentResponseI,
+} from "@/types/payment";
 
 export class MollieService {
   private static getSupabase() {
     return createClient();
-  }
-
-  private static async validateAuthenticatedSession(): Promise<void> {
-    const {
-      data: { session },
-      error,
-    } = await this.getSupabase().auth.getSession();
-
-    if (error) {
-      throw ErrorClient.handleError({ error, service: "Mollie", action: "Validate Session" });
-    }
-
-    if (!session) {
-      throw ErrorClient.handleError({ error: new Error("You must be logged in to complete checkout"), service: "Mollie", action: "Validate Session" });
-    }
   }
 
   /**
@@ -61,7 +25,7 @@ export class MollieService {
     testMode = false,
   }: CreateMolliePaymentPayloadI): Promise<CreateMolliePaymentResponseI> {
     try {
-      await this.validateAuthenticatedSession();
+      const headers = await getAuthenticatedHeaders("Mollie");
 
       const { data, error } = await this.getSupabase().functions.invoke(
         "create-mollie-payment",
@@ -77,6 +41,7 @@ export class MollieService {
               test_mode: testMode,
             },
           },
+          headers,
         }
       );
 
@@ -109,7 +74,7 @@ export class MollieService {
     paymentId,
   }: VerifyMolliePaymentPayloadI): Promise<VerifyMolliePaymentResponseI> {
     try {
-      await this.validateAuthenticatedSession();
+      const headers = await getAuthenticatedHeaders("Mollie");
 
       const { data, error } = await this.getSupabase().functions.invoke(
         "verify-mollie-payment",
@@ -117,6 +82,7 @@ export class MollieService {
           body: {
             paymentId,
           },
+          headers,
         }
       );
 

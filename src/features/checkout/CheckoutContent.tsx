@@ -4,6 +4,7 @@ import {
   PaymentSuccess,
   PaymentError,
   CheckoutLoading,
+  CheckoutLoadingState,
   CheckoutError,
 } from "./components";
 import { CheckoutSelectors, useCheckoutSubscriberActions } from "./context";
@@ -22,6 +23,8 @@ export function CheckoutContent() {
   const paymentStatus = CheckoutSelectors.paymentStatus();
   const paymentSuccessDetails = CheckoutSelectors.paymentSuccessDetails();
   const paymentErrorDetails = CheckoutSelectors.paymentErrorDetails();
+  const isProcessingPayment = CheckoutSelectors.isProcessingPayment();
+  const message = CheckoutSelectors.message();
 
   const { handleCreateAnother, handleTryAgain, setPaymentMethod } =
     useCheckoutSubscriberActions();
@@ -29,6 +32,11 @@ export function CheckoutContent() {
   // Loading state
   if (isLoading) {
     return <CheckoutLoading />;
+  }
+
+  // Payment processing state (for all payment methods)
+  if (isProcessingPayment) {
+    return <CheckoutLoadingState message={message} />;
   }
 
   // Error state
@@ -73,22 +81,22 @@ export function CheckoutContent() {
 
       {/* ── Desktop layout (md and above) ── */}
       <div className={`hidden md:block ${checkoutTheme.page.container}`}>
-        <main className={checkoutTheme.page.mainContent}>
+        <div className={checkoutTheme.page.mainContent}>
           <CheckoutHeaderSection />
 
           <div className={checkoutTheme.page.grid}>
             {/* Left Column: Forms */}
-            <section className={checkoutTheme.page.formsColumn}>
+            <div className={checkoutTheme.page.formsColumn}>
               <ShippingSection />
               <PaymentSection />
-            </section>
+            </div>
 
             {/* Right Column: Order Summary */}
             <aside className={checkoutTheme.page.summaryColumn}>
               <OrderSummarySection />
             </aside>
           </div>
-        </main>
+        </div>
       </div>
     </>
   );

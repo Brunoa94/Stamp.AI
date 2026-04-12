@@ -1,12 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
 import PaymentForm from "@/features/checkout/paymentForm/PaymentForm";
 import {
   CheckoutSelectors,
   useCheckoutSubscriberActions,
 } from "@/features/checkout/context";
-import { buildPrintifyLineItems } from "@/features/checkout/mappers/printifyLineItemsMapper";
 import { Checkbox } from "@/features/ui/checkbox";
 import { Label } from "@/features/ui/label";
 import { componentThemes } from "@/theme/components";
@@ -16,7 +14,7 @@ export function CheckoutMobilePaymentStep() {
   const testMode = CheckoutSelectors.testMode();
   const triggerPayment = CheckoutSelectors.triggerPayment();
   const orderAmount = CheckoutSelectors.orderAmount();
-  const cartItems = CheckoutSelectors.cartItems();
+  const lineItems = CheckoutSelectors.lineItems();
   const selectedPaymentMethod = CheckoutSelectors.selectedPaymentMethod();
 
   const {
@@ -26,11 +24,6 @@ export function CheckoutMobilePaymentStep() {
     handlePaymentError,
     handlePaymentSubmitComplete,
   } = useCheckoutSubscriberActions();
-
-  const lineItems = useMemo(
-    () => buildPrintifyLineItems(cartItems),
-    [cartItems],
-  );
 
   const ct = componentThemes.checkout;
 

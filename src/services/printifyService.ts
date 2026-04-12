@@ -45,6 +45,8 @@ export class PrintifyService {
 
     /**
      * Create a Printify order via Supabase Edge Function
+     *
+     * CRITICAL: Validates test mode to prevent test orders in production
      */
     static async createPrintifyOrder(
         payload: CreatePrintifyOrderRequest
@@ -55,6 +57,32 @@ export class PrintifyService {
             // Validate request payload
             const validatedPayload = CreatePrintifyOrderRequestSchema.parse(payload);
 
+            // ✅ CRITICAL FIX: Test mode validation
+            const isProduction = process.env.NODE_ENV === 'production';
+            const isTestOrder = validatedPayload.is_test === true;
+
+            if (isProduction && isTestOrder) {
+                // PREVENT test orders in production environment
+                console.error('❌ CRITICAL: Attempted to create test order in production');
+                throw new Error(
+                    'Test mode orders are not allowed in production. Please set is_test to false.'
+                );
+            }
+
+            if (!isProduction && !isTestOrder) {
+                // WARN when creating production orders in non-production environment
+                console.warn(
+                    '⚠️ WARNING: Creating production order in non-production environment. ' +
+                    'Consider setting is_test to true for development/staging.'
+                );
+            }
+
+            if (isTestOrder) {
+                console.log('🧪 Creating TEST Printify order (will not be sent to production)');
+            } else {
+                console.log('🚀 Creating PRODUCTION Printify order (will be manufactured and shipped)');
+            }
+
             // Get the current session for authentication
             const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
@@ -63,8 +91,15 @@ export class PrintifyService {
             }
 
             // Call the Supabase Edge Function
+            const accessToken = session.access_token;
+            const headers: Record<string, string> = {
+                apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            };
+            if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
+
             const { data, error } = await supabase.functions.invoke('create-printify-order', {
                 body: validatedPayload,
+                headers,
             });
 
             if (error) {
