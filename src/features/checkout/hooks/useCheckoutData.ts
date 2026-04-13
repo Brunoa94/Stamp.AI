@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useCartById } from "@/queries/cartQueries";
 import { useOrder } from "@/queries/orderQueries";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, notFound } from "next/navigation";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import type { CartItem } from "@/types/cart";
 import { buildPrintifyLineItems } from "../mappers/printifyLineItemsMapper";
@@ -25,6 +25,11 @@ export function useCheckoutData(store: CheckoutStore): UseCheckoutDataResult {
   const cartId = searchParams.get("cartId");
   const retryOrderId = searchParams.get("retry_order_id");
   const isRetryFlow = !!retryOrderId;
+
+  // Redirect to not-found when no cartId and no retry_order_id
+  if (!cartId && !retryOrderId) {
+    notFound();
+  }
 
   // Fetch cart with items
   const {

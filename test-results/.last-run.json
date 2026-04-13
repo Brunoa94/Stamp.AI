@@ -1,29 +1,4 @@
 {
-  "status": "interrupted",
-  "failedTests": [
-    "a10bfdfb719efa4e286c-9c5b54ddec5a559a5e5f",
-    "a10bfdfb719efa4e286c-adc19d4f985ea681e1c7",
-    "a10bfdfb719efa4e286c-a8a2171ee2cbb3f9c3d6",
-    "a10bfdfb719efa4e286c-50793b9c100e5634b308",
-    "a10bfdfb719efa4e286c-dd29d643a5f274c66c66",
-    "a10bfdfb719efa4e286c-aa4d3d98b6591548758f",
-    "a10bfdfb719efa4e286c-cb62c64ba06f5779c1fb",
-    "a10bfdfb719efa4e286c-4783e1b4d6378012e788",
-    "a10bfdfb719efa4e286c-b4e3091981c4bf9a3434",
-    "edfa97209f49c48558da-d90ae13a8b72871a1d33",
-    "edfa97209f49c48558da-bdb740485935a9e4392c",
-    "a10bfdfb719efa4e286c-27631c79705fb62d562e",
-    "a10bfdfb719efa4e286c-84c719d0f46b3ba4c20b",
-    "a10bfdfb719efa4e286c-18839c93ec073d9cee09",
-    "a10bfdfb719efa4e286c-b0a70c5e96716811f43b",
-    "a10bfdfb719efa4e286c-7cc96636f8e6989fbeb6",
-    "a10bfdfb719efa4e286c-6a1013823a2409a69e92",
-    "a10bfdfb719efa4e286c-9aac25e301a6df83a92b",
-    "a10bfdfb719efa4e286c-c68e2dab1cdd38c77a20",
-    "a10bfdfb719efa4e286c-9eafa70421010e401c9f",
-    "edfa97209f49c48558da-702df57ee952e7dc778b",
-    "edfa97209f49c48558da-f237504131e661a35e64",
-    "edfa97209f49c48558da-b17fdedbc6794ede5511",
-    "edfa97209f49c48558da-a6bc0ebe0190ac5b059d"
-  ]
+  "status": "passed",
+  "failedTests": []
 }
