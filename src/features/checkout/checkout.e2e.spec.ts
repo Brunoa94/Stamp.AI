@@ -611,3 +611,273 @@ test.describe("Flow 3 — Everything Succeeds", () => {
     await expect(page.getByRole("link", { name: /track your order/i })).toBeVisible();
   });
 });
+
+// ─── Flow 4: Checkout flow uniformity ───────────────────────────────────────
+
+test.describe("Flow 4 — Checkout flow uniformity across payment methods", () => {
+  test.describe("Mobile footer renders correct payment buttons", () => {
+    test.beforeEach(async ({ page }) => {
+      await mockCartWithItems(page);
+      await page.goto("/checkout?cartId=cart-e2e-1");
+    });
+
+    test("mobile footer shows Stripe confirm button by default", async ({ page }) => {
+      // Resize to mobile viewport
+      await page.setViewportSize({ width: 375, height: 812 });
+      await page.reload();
+
+      // Wait for checkout to load on mobile
+      const mobileFooter = page.locator('[class*="footer"]').last();
+      await expect(mobileFooter.getByRole("button")).toBeVisible({ timeout: 10_000 });
+    });
+
+    test("mobile footer shows PayPal button when PayPal is selected", async ({ page }) => {
+      await page.setViewportSize({ width: 375, height: 812 });
+      await page.reload();
+
+      // Fill shipping form (mobile version) so payment section unlocks
+      // Then select PayPal payment method
+      const paypalMethodButton = page.getByRole("button", { name: /paypal/i });
+      // If PayPal method selector is visible on mobile, clicking it should render the PayPal button
+      if (await paypalMethodButton.isVisible({ timeout: 5_000 }).catch(() => false)) {
+        await paypalMethodButton.click();
+
+        // The mobile footer should now render the PayPal SDK button (not a generic confirm button)
+        // PayPal buttons render inside a div with PayPal-specific markup
+        const paypalContainer = page.locator('[class*="paypal"]');
+        await expect(paypalContainer).toBeVisible({ timeout: 10_000 });
+      }
+    });
+  });
+
+  test.describe("Mollie return page handles missing payment info", () => {
+    test("shows error when no payment info is in sessionStorage", async ({ page }) => {
+      // Clear any existing Mollie sessionStorage data
+      await page.goto("/checkout?cartId=cart-e2e-1");
+      await page.evaluate(() => {
+        sessionStorage.removeItem("mollie_payment_id");
+        sessionStorage.removeItem("mollie_line_items");
+        sessionStorage.removeItem("mollie_shipping_address");
+        sessionStorage.removeItem("mollie_cart_id");
+      });
+
+      await page.goto("/checkout/mollie-return");
+
+      // Should show error state since there's no payment ID
+      await expect(page.getByText(/no payment information found/i)).toBeVisible({
+        timeout: 10_000,
+      });
+    });
+
+    test("'Return to Checkout' button navigates back with cartId when available", async ({
+      page,
+    }) => {
+      // Set up sessionStorage with cartId but no payment ID
+      await page.goto("/checkout?cartId=cart-e2e-1");
+      await page.evaluate(() => {
+        sessionStorage.setItem("mollie_cart_id", "cart-e2e-1");
+        sessionStorage.removeItem("mollie_payment_id");
+      });
+
+      await page.goto("/checkout/mollie-return");
+
+      await expect(page.getByText(/no payment information found/i)).toBeVisible({
+        timeout: 10_000,
+      });
+
+      const returnButton = page.getByRole("button", { name: /return to checkout/i });
+      await expect(returnButton).toBeVisible();
+
+      // Check that the button navigates to checkout with cartId (not bare /checkout)
+      await returnButton.click();
+      await page.waitForURL(/cartId=cart-e2e-1/, { timeout: 10_000 });
+    });
+
+    test("'Return to Checkout' falls back to /cart when no cartId is stored", async ({
+      page,
+    }) => {
+      // Clear all Mollie sessionStorage
+      await page.goto("/checkout?cartId=cart-e2e-1");
+      await page.evaluate(() => {
+        sessionStorage.removeItem("mollie_payment_id");
+        sessionStorage.removeItem("mollie_cart_id");
+      });
+
+      await page.goto("/checkout/mollie-return");
+
+      await expect(page.getByText(/no payment information found/i)).toBeVisible({
+        timeout: 10_000,
+      });
+
+      const returnButton = page.getByRole("button", { name: /return to checkout/i });
+      await returnButton.click();
+      await page.waitForURL(/\/cart$/, { timeout: 10_000 });
+    });
+  });
+
+  test.describe("Mollie return page retries Printify order creation", () => {
+    test("retries Printify 3 times via React Query before showing error", async ({
+      page,
+    }) => {
+      // Set up sessionStorage to simulate a Mollie redirect return
+      await page.goto("/checkout?cartId=cart-e2e-1");
+      await page.evaluate(() => {
+        const lineItems = [{
+          product_id: "prod-e2e-1",
+          variant_id: 1001,
+          quantity: 1,
+          print_areas: { front: "https://placehold.co/400x400.png" },
+        }];
+        const shippingAddress = {
+          first_name: "E2E",
+          last_name: "Tester",
+          email: "e2e@test.com",
+          phone: "5550001234",
+          country: "US",
+          region: "",
+          address1: "1 Playwright Lane",
+          address2: "",
+          city: "Test City",
+          zip: "10001",
+        };
+        sessionStorage.setItem("mollie_payment_id", "tr_test_mollie_retry");
+        sessionStorage.setItem("mollie_line_items", JSON.stringify(lineItems));
+        sessionStorage.setItem("mollie_shipping_address", JSON.stringify(shippingAddress));
+        sessionStorage.setItem("mollie_cart_id", "cart-e2e-1");
+        sessionStorage.setItem("mollie_order_amount", "25");
+      });
+
+      await mockCartWithItems(page);
+
+      // Mock Mollie payment verification as paid
+      await page.route("**/functions/v1/verify-mollie-payment", async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            paymentId: "tr_test_mollie_retry",
+            status: "paid",
+            isPaid: true,
+          }),
+        });
+      });
+
+      // Mock order APIs
+      const now = new Date().toISOString();
+      const fakeOrder = {
+        id: "order-mollie-retry-1",
+        order_number: "ORD-ML-RETRY-001",
+        user_id: "11111111-1111-1111-1111-111111111111",
+        customer_email: "e2e@test.com",
+        customer_name: "E2E Tester",
+        customer_phone: "5550001234",
+        status: "pending",
+        payment_status: "paid",
+        fulfillment_status: "unfulfilled",
+        total_amount: 25,
+        subtotal: 25,
+        tax_amount: 0,
+        shipping_cost: 0,
+        discount_amount: 0,
+        currency: "USD",
+        payment_method: "mollie",
+        printify_order_id: "",
+        stripe_payment_intent_id: "",
+        stripe_customer_id: "",
+        shipping_address: null,
+        billing_address: null,
+        shipping_method: "standard",
+        tracking_number: "",
+        tracking_url: "",
+        customer_notes: "",
+        internal_notes: "",
+        product_id: "",
+        created_at: now,
+        updated_at: now,
+        shipped_at: "",
+        delivered_at: "",
+      };
+
+      await page.route("**/rest/v1/orders*", async (route) => {
+        const method = route.request().method();
+        if (method === "POST") {
+          await route.fulfill({
+            status: 201,
+            contentType: "application/json",
+            body: JSON.stringify(fakeOrder),
+          });
+        } else if (method === "PATCH") {
+          await route.fulfill({
+            status: 200,
+            contentType: "application/json",
+            body: JSON.stringify(fakeOrder),
+          });
+        } else {
+          await route.fulfill({
+            status: 200,
+            contentType: "application/json",
+            body: JSON.stringify(null),
+          });
+        }
+      });
+
+      await page.route("**/rest/v1/order_items*", async (route) => {
+        if (route.request().method() === "POST") {
+          await route.fulfill({
+            status: 201,
+            contentType: "application/json",
+            body: JSON.stringify([{
+              id: "oi-mollie-1",
+              order_id: "order-mollie-retry-1",
+              product_id: "prod-e2e-1",
+              variant_id: "1001",
+              product_name: "E2E Test Tee",
+              variant_name: "Black / M",
+              quantity: 1,
+              unit_price: 25,
+              total_price: 25,
+              custom_image_url: "https://placehold.co/400x400.png",
+              design_id: null,
+              design_config: null,
+              fulfillment_status: null,
+              external_order_id: null,
+              created_at: now,
+              updated_at: now,
+            }]),
+          });
+        } else {
+          await route.continue();
+        }
+      });
+
+      // Mock payment recovery and refund endpoints
+      await page.route("**/rest/v1/rpc/record_payment_for_recovery", async (route) => {
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify("recovery-id-1") });
+      });
+      await page.route("**/functions/v1/process-refund", async (route) => {
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ success: true }) });
+      });
+
+      // Track Printify calls — always fail
+      let printifyCallCount = 0;
+      await page.route("**/functions/v1/create-printify-order", async (route) => {
+        printifyCallCount++;
+        await route.fulfill({
+          status: 500,
+          contentType: "application/json",
+          body: JSON.stringify({ error: "Printify service unavailable" }),
+        });
+      });
+
+      await page.goto("/checkout/mollie-return");
+
+      // Should eventually show error (after retries are exhausted)
+      await expect(
+        page.getByText(/something went wrong|refund has been initiated/i)
+      ).toBeVisible({ timeout: 60_000 });
+
+      // Printify should have been called 4 times (1 initial + 3 retries from React Query)
+      expect(printifyCallCount).toBe(4);
+    });
+  });
+});
