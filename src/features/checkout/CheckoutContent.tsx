@@ -17,6 +17,7 @@ import { OrderSummarySection } from "./sections/OrderSummarySection";
 import { CheckoutMobileContent } from "./mobile";
 import { checkoutTheme } from "@/theme";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import VerifyPayment from "./components/VerifyPayment";
 
 export function CheckoutContent() {
   const isLoading = CheckoutSelectors.isLoading();
@@ -25,7 +26,7 @@ export function CheckoutContent() {
   const paymentSuccessDetails = CheckoutSelectors.paymentSuccessDetails();
   const paymentErrorDetails = CheckoutSelectors.paymentErrorDetails();
   const isProcessingPayment = CheckoutSelectors.isProcessingPayment();
-  const message = CheckoutSelectors.message();
+  const selectedPaymentMethod = CheckoutSelectors.selectedPaymentMethod();
 
   // md breakpoint matches Tailwind's default (768px).
   // Using JS here (not CSS) ensures only ONE layout is ever mounted,
@@ -42,7 +43,7 @@ export function CheckoutContent() {
 
   // Payment processing state (for all payment methods)
   if (isProcessingPayment) {
-    return <CheckoutLoadingState message={message} />;
+    return <VerifyPayment paymentMethod={selectedPaymentMethod} />;
   }
 
   // Error state

@@ -310,7 +310,7 @@ export function useCheckoutSubscriberActions() {
             paymentIntentId: paymentIntent.id,
             paymentStatus: "succeeded",
             amount: state.orderAmount,
-            currency: "EUR",
+            currency: "USD",
             cartSnapshot: state.cart,
             shippingAddress: state.shippingAddress,
             lineItems,
@@ -404,23 +404,9 @@ export function useCheckoutSubscriberActions() {
           };
 
           try {
-            const printifyResult = await createPrintifyOrder.mutateAsync(orderPayload);
+            await createPrintifyOrder.mutateAsync(orderPayload);
             console.log("✅ Printify order created successfully");
             console.log("✅ Order status updated to 'confirmed' by create-printify-order function");
-
-            // Persist the Printify order ID back to the DB order row
-            const printifyOrderId = printifyResult?.order?.id;
-            if (printifyOrderId && createdOrderId) {
-              try {
-                await OrderService.updateOrder(createdOrderId, {
-                  printify_order_id: printifyOrderId,
-                });
-                console.log(`✅ Saved printify_order_id ${printifyOrderId} to order ${createdOrderId}`);
-              } catch (updateErr) {
-                // Non-critical — order is confirmed in Printify; log and continue
-                console.error("❌ Failed to save printify_order_id:", updateErr);
-              }
-            }
           } catch (printifyError) {
             // ✅ Printify failure → mark order as failed + trigger refund
             console.error("❌ Printify order creation failed. Initiating refund...");

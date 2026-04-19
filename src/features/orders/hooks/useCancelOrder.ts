@@ -1,13 +1,56 @@
 import { useState } from "react";
-import { useUpdateOrderStatus } from "@/queries/orderQueries";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { OrderWithItemsT } from "@/types/order";
 import { toast } from "sonner";
 import { canCancelOrder } from "../utils/orderCancellation";
 
+import type { CancelOrderResponseI } from "@/services/orderService";
+import { OrderService } from "@/services/orderService";
+
 export function useCancelOrder() {
   const [cancelModalOpen, setCancelModalOpen] = useState(false);
   const [orderToCancel, setOrderToCancel] = useState<OrderWithItemsT | null>(null);
-  const { mutate: updateOrderStatus, isPending: isCancelling } = useUpdateOrderStatus();
+  const queryClient = useQueryClient();
+
+  const { mutate: executeCancelOrder, isPending: isCancelling } = useMutation({
+    mutationFn: (orderId: string) => OrderService.cancelOrder(orderId),
+    onSuccess: (data, orderId) => {
+      // Invalidate orders queries to refresh the list
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      queryClient.invalidateQueries({ queryKey: ["orders", orderId] });
+
+      // Show detailed success message
+      const { results } = data;
+      let description = "Your order has been cancelled.";
+
+      if (results) {
+        const details: string[] = [];
+        if (results.cancelled_at_printify) {
+          details.push("Order cancelled at Printify");
+        }
+        if (results.refund_processed) {
+          details.push("Refund processed successfully");
+        } else if (results.refund_error) {
+          details.push("Note: Refund could not be processed automatically");
+        }
+
+        if (details.length > 0) {
+          description = details.join(". ") + ".";
+        }
+      }
+
+      toast.success("Order cancelled", {
+        description,
+      });
+
+      handleCloseCancelModal();
+    },
+    onError: (error: Error) => {
+      toast.error("Failed to cancel order", {
+        description: error.message,
+      });
+    },
+  });
 
   const handleCancelOrder = (order: OrderWithItemsT) => {
     if (!canCancelOrder(order)) {
@@ -36,22 +79,7 @@ export function useCancelOrder() {
       return;
     }
 
-    updateOrderStatus(
-      { orderId: orderToCancel.id, status: "cancelled" },
-      {
-        onSuccess: () => {
-          toast.success("Order cancelled", {
-            description: `Order #${orderToCancel.order_number || orderToCancel.id.slice(0, 8)} has been cancelled.`,
-          });
-          handleCloseCancelModal();
-        },
-        onError: (error) => {
-          toast.error("Failed to cancel order", {
-            description: error.message,
-          });
-        },
-      }
-    );
+    executeCancelOrder(orderToCancel.id);
   };
 
   return {

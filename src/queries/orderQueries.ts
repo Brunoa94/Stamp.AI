@@ -177,12 +177,14 @@ export function useCreateOrderFromCart() {
       paymentStatus = "paid",
       shippingAddress,
       idempotencyKey,
+      orderStatus,
     }: {
       user: UserI;
       cart: CartWithItems;
       paymentStatus?: string;
       shippingAddress?: ShippingAddressT;
       idempotencyKey?: string;
+      orderStatus?: string;
     }) => {
       if (!user) {
         throw new Error("User not authenticated");
@@ -193,6 +195,7 @@ export function useCreateOrderFromCart() {
         paymentStatus,
         shippingAddress,
         idempotencyKey,
+        orderStatus,
       });
     },
     onSuccess: (orderId) => {

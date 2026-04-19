@@ -123,6 +123,7 @@ const defaultState: CheckoutSubscriberContextState = {
   discount: 0,
   total: 110,
   orderAmount: 110,
+  lineItems: []
 };
 
 const mockShippingAddress = {
@@ -295,6 +296,12 @@ describe("useCheckoutSubscriberActions", () => {
       const store = createMockStore({
         ...defaultState,
         shippingAddress: mockShippingAddress,
+        cart: {
+          id: "cart_123",
+          user_id: "user_123",
+          created_at: new Date().toISOString(),
+          items: [],
+        },
       });
 
       const { result } = renderHook(() => useCheckoutSubscriberActions(), {
@@ -658,9 +665,9 @@ describe("useCheckoutSubscriberActions", () => {
       });
 
       // EXPECTED: createOrder should only be called once due to idempotency check
-      // CURRENT BEHAVIOR: Called twice, creates duplicate orders
-      // This test documents the bug and will pass showing the problem
-      expect(mockCreateOrderMutate).toHaveBeenCalledTimes(2); // TODO: Should be 1 after implementing idempotency
+      // CURRENT BEHAVIOR: In-flight guard prevents duplicate calls within the same session
+      // However, duplicate calls from different tabs/browser instances can still create duplicate orders
+      expect(mockCreateOrderMutate).toHaveBeenCalledTimes(1);
     });
 
     /**
@@ -858,10 +865,9 @@ describe("useCheckoutSubscriberActions", () => {
       });
 
       const state = store.getState();
-      // CURRENT BEHAVIOR: Fails because status update throws
-      expect(state.paymentStatus).toBe("error");
-      // EXPECTED: Should succeed because Printify order was created successfully
-      // TODO: Implement non-critical error handling for status updates
+      // Status update failures don't fail the entire checkout anymore
+      // The Printify order was created successfully, which is what matters
+      expect(state.paymentStatus).toBe("success");
     });
 
     /**
@@ -944,9 +950,7 @@ describe("useCheckoutSubscriberActions", () => {
      */
     it("should handle missing user gracefully", async () => {
       // Override the user mock to return null
-      vi.mocked(useUser).mockReturnValue({
-        data: null,
-      } as any);
+      mockUserData = null;
 
       const store = createMockStore({
         ...defaultState,

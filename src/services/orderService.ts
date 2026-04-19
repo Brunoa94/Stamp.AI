@@ -1,3 +1,20 @@
+
+export interface CancelOrderResponseI {
+  success: boolean;
+  message: string;
+  results?: {
+    order_id: string;
+    cancelled_at_printify: boolean;
+    database_updated: boolean;
+    refund_processed: boolean;
+    refund_id?: string;
+    refund_error?: string;
+    printify_error?: string;
+  };
+  reason?: string;
+}
+
+
 import { createClient } from "@/lib/supabase/client";
 import { CreateOrderT, OrderT, UpdateOrderT, OrderWithItemsT } from "../types/order";
 import { OrderWithItemsSchema, OrderSchema } from "@/schemas/order";
@@ -10,8 +27,7 @@ import { UserI } from "@/types/auth";
 import { ErrorClient } from "./errorClient";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import { RefundService } from "./refundService";
-import type { PaymentProviderT } from "@/types/payment";
-
+import { PaymentProviderT } from "../../supabase/types";
 export class OrderService {
   private static getSupabase() {
     return createClient();
@@ -339,61 +355,64 @@ export class OrderService {
     }
   }
 
+
   static async createOrderFromCart({
     user,
     cart,
     paymentStatus = "paid",
     shippingAddress,
     idempotencyKey,
+    orderStatus,
   }: {
     user: UserI;
     cart: CartWithItems;
     paymentStatus?: string;
     shippingAddress?: ShippingAddressT;
     idempotencyKey?: string;
-  }){
-          try {
-            // Use mapper to generate unique order number
-            const orderNumber = OrderServiceMapper.generateOrderNumber();
+    orderStatus?: string;
+  }) {
+    try {
+      // Use mapper to generate unique order number
+      const orderNumber = OrderServiceMapper.generateOrderNumber();
 
-            // Use mapper to calculate order totals
-            const totals = OrderServiceMapper.calculateOrderTotals(cart.cart_items);
+      // Use mapper to calculate order totals
+      const totals = OrderServiceMapper.calculateOrderTotals(cart.cart_items);
 
-            // Derive order status: a paid order is immediately "confirmed"
-            const orderStatus = paymentStatus === "paid" ? "confirmed" : "pending";
+      // Derive order status: use provided or default logic
+      const finalOrderStatus = orderStatus ?? (paymentStatus === "paid" ? "confirmed" : "pending");
 
-            // Use mapper to create order payload
-            const orderPayload = OrderServiceMapper.mapUserAndTotalsToCreateOrder(
-              user,
-              orderNumber,
-              totals,
-              shippingAddress,
-              0, // discount amount
-              paymentStatus,
-              orderStatus,
-              idempotencyKey
-            );
+      // Use mapper to create order payload
+      const orderPayload = OrderServiceMapper.mapUserAndTotalsToCreateOrder(
+        user,
+        orderNumber,
+        totals,
+        shippingAddress,
+        0, // discount amount
+        paymentStatus,
+        finalOrderStatus,
+        idempotencyKey
+      );
 
-            // Create order from cart
-            const newOrder = await this.createOrder(orderPayload);
+      // Create order from cart
+      const newOrder = await this.createOrder(orderPayload);
 
-            console.log("✅ Order created from cart:", newOrder.id);
+      console.log("✅ Order created from cart:", newOrder.id);
 
-            // Create order items from cart items using mapper
-            if (cart.cart_items && cart.cart_items.length > 0) {
-              const orderItems = cart.cart_items.map((cartItem) =>
-                OrderServiceMapper.mapCartItemToOrderItem(cartItem, newOrder.id)
-              );
+      // Create order items from cart items using mapper
+      if (cart.cart_items && cart.cart_items.length > 0) {
+        const orderItems = cart.cart_items.map((cartItem) =>
+          OrderServiceMapper.mapCartItemToOrderItem(cartItem, newOrder.id)
+        );
 
-              await OrderItemService.createOrderItems(orderItems);
-              console.log("✅ Order items created:", orderItems.length);
-            }
+        await OrderItemService.createOrderItems(orderItems);
+        console.log("✅ Order items created:", orderItems.length);
+      }
 
-            return newOrder.id;
-          } catch (error) {
-            throw ErrorClient.handleError({error, service: "Order", action: "Create Order From Cart"})
-          }
-        };
+      return newOrder.id;
+    } catch (error) {
+      throw ErrorClient.handleError({ error, service: "Order", action: "Create Order From Cart" });
+    }
+  }
 
   /**
    * Handle Printify order creation failure
@@ -460,5 +479,42 @@ export class OrderService {
         action: "Handle Printify Failure"
       });
     }
+  }
+
+  /**
+   * Cancel an order (calls Supabase Edge Function)
+   */
+  static async cancelOrder(orderId: string): Promise<CancelOrderResponseI> {
+    const supabase = this.getSupabase();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      throw new Error("Not authenticated");
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/cancel-order`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          order_id: orderId,
+          cancellation_reason: "Cancelled by customer",
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to cancel order");
+    }
+
+    return data;
   }
 }
