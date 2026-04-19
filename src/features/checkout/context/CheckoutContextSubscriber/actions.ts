@@ -310,7 +310,7 @@ export function useCheckoutSubscriberActions() {
             paymentIntentId: paymentIntent.id,
             paymentStatus: "succeeded",
             amount: state.orderAmount,
-            currency: "USD",
+            currency: "EUR",
             cartSnapshot: state.cart,
             shippingAddress: state.shippingAddress,
             lineItems,
@@ -336,6 +336,7 @@ export function useCheckoutSubscriberActions() {
               user,
               cart: state.cart,
               paymentStatus: "paid",
+              orderStatus: "waiting_confirmation",
               shippingAddress: state.shippingAddress,
               idempotencyKey,
             });

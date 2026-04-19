@@ -1,4 +1,8 @@
 import { z } from "zod";
+import { COUNTRIES } from "@/constants/countries";
+
+// Valid country codes from our countries list
+const validCountryCodes = COUNTRIES.map(c => c.code);
 
 // Shipping Address Schema
 export const ShippingAddressSchema = z.object({
@@ -6,7 +10,11 @@ export const ShippingAddressSchema = z.object({
   last_name: z.string().optional(),
   email: z.string().email("Invalid email address"),
   phone: z.string().optional(),
-  country: z.string().min(2, "Country is required"),
+  country: z.string()
+    .min(2, "Country is required")
+    .refine((code) => validCountryCodes.includes(code), {
+      message: "Please select a valid country",
+    }),
   region: z.string().optional(),
   address1: z.string().min(1, "Address is required"),
   address2: z.string().optional(),

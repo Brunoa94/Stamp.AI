@@ -1,0 +1,126 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e5]:
+        - link "Stamp AI" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]:
+            - text: Stamp
+            - text: AI
+        - generic [ref=e11]:
+          - link "My Orders" [ref=e12] [cursor=pointer]:
+            - /url: /orders
+          - link "Stamp It, Bruno!" [ref=e13] [cursor=pointer]:
+            - /url: /stamp
+            - generic [ref=e14]: Stamp It, Bruno!
+          - link "Dashboard" [ref=e15] [cursor=pointer]:
+            - /url: /dashboard
+        - generic [ref=e17]:
+          - button "View cart" [ref=e18]:
+            - img
+            - generic [ref=e19]: "1"
+          - button "Sign Out" [ref=e21]:
+            - img
+            - generic [ref=e22]: Sign Out
+  - main [ref=e23]:
+    - region "Payment confirmation" [ref=e26]:
+      - img [ref=e29]
+      - heading "Order Confirmed" [level=1] [ref=e32]
+      - paragraph [ref=e33]: Your custom masterpiece is officially in the queue. We're warming up the ink jets right now.
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - generic [ref=e36]: Order Number
+          - generic [ref=e37]: "#ML-UCCESS"
+        - generic [ref=e38]:
+          - generic [ref=e39]: Estimated Delivery
+          - generic [ref=e40]: 7–10 business days
+        - generic [ref=e41]:
+          - generic [ref=e42]: Total Paid
+          - generic [ref=e43]: Paid via Mollie
+        - generic [ref=e44]:
+          - generic [ref=e45]: Status
+          - generic [ref=e48]: Processing
+      - generic [ref=e49]:
+        - link "Track Your Order" [ref=e50] [cursor=pointer]:
+          - /url: /orders
+        - button "Create Another Order" [ref=e51]
+  - contentinfo [ref=e52]:
+    - generic [ref=e54]:
+      - generic [ref=e55]:
+        - generic [ref=e56]:
+          - generic [ref=e58]:
+            - text: Stamp
+            - text: AI
+          - paragraph [ref=e60]: Empowering creators with AI-driven apparel design. High quality prints, delivered to your door.
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - heading "Company" [level=3] [ref=e63]
+            - list [ref=e64]:
+              - listitem [ref=e65]:
+                - link "About Us" [ref=e66] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e67]:
+                - link "Contact" [ref=e68] [cursor=pointer]:
+                  - /url: /contact
+              - listitem [ref=e69]:
+                - link "Careers" [ref=e70] [cursor=pointer]:
+                  - /url: /careers
+          - generic [ref=e71]:
+            - heading "Support" [level=3] [ref=e72]
+            - list [ref=e73]:
+              - listitem [ref=e74]:
+                - link "Help Center" [ref=e75] [cursor=pointer]:
+                  - /url: /help
+              - listitem [ref=e76]:
+                - link "FAQ" [ref=e77] [cursor=pointer]:
+                  - /url: /faq
+              - listitem [ref=e78]:
+                - link "Shipping Info" [ref=e79] [cursor=pointer]:
+                  - /url: /shipping
+          - generic [ref=e80]:
+            - heading "Legal" [level=3] [ref=e81]
+            - list [ref=e82]:
+              - listitem [ref=e83]:
+                - link "Privacy Policy" [ref=e84] [cursor=pointer]:
+                  - /url: /privacy
+              - listitem [ref=e85]:
+                - link "Terms of Service" [ref=e86] [cursor=pointer]:
+                  - /url: /terms
+              - listitem [ref=e87]:
+                - link "Refund Policy" [ref=e88] [cursor=pointer]:
+                  - /url: /refunds
+      - generic [ref=e89]:
+        - paragraph [ref=e90]: © 2026 Stamp.AI · Crafted for the Dreamers
+        - generic [ref=e91]:
+          - link "Twitter" [ref=e92] [cursor=pointer]:
+            - /url: https://twitter.com
+            - img
+          - link "Instagram" [ref=e93] [cursor=pointer]:
+            - /url: https://instagram.com
+            - img
+          - link "LinkedIn" [ref=e94] [cursor=pointer]:
+            - /url: https://linkedin.com
+            - img
+  - region "Notifications alt+T"
+  - generic [ref=e95]:
+    - img [ref=e97]
+    - button "Open Tanstack query devtools" [ref=e145] [cursor=pointer]:
+      - img [ref=e146]
+  - generic [ref=e198] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e199]:
+      - img [ref=e200]
+    - generic [ref=e203]:
+      - button "Open issues overlay" [ref=e204]:
+        - generic [ref=e205]:
+          - generic [ref=e206]: "1"
+          - generic [ref=e207]: "2"
+        - generic [ref=e208]:
+          - text: Issue
+          - generic [ref=e209]: s
+      - button "Collapse issues badge" [ref=e210]:
+        - img [ref=e211]
+  - alert [ref=e213]
+```

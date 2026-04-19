@@ -1,4 +1,5 @@
 import { ShippingAddressT } from "@/schemas/checkout";
+import { getCountrySelectOptions } from "./countries";
 
 export interface FieldConfig {
   id: keyof ShippingAddressT;
@@ -114,14 +115,7 @@ export const shippingFormConfig: FieldRow[] = [
         id: "country",
         label: "Country",
         gridColumn: "half",
-        options: [
-          { value: "US", label: "United States" },
-          { value: "CA", label: "Canada" },
-          { value: "GB", label: "United Kingdom" },
-          { value: "AU", label: "Australia" },
-          { value: "DE", label: "Germany" },
-          { value: "FR", label: "France" },
-        ],
+        options: getCountrySelectOptions(),
       },
     ],
   },
