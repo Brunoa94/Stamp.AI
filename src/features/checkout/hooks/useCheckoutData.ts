@@ -52,7 +52,6 @@ export function useCheckoutData(store: CheckoutStore): UseCheckoutDataResult {
       id: item.id,
       cart_id: orderId,
       product_id: item.product_id,
-      design_id: item.design_id,
       variant_id: item.variant_id,
       quantity: item.quantity ?? 1,
       unit_price: item.unit_price ?? 0,

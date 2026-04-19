@@ -34,7 +34,6 @@ export {
   useUpdateOrder,
   useUpdateOrderStatus,
   useUpdatePaymentStatus,
-  useUpdateFulfillmentStatus,
   useDeleteOrder,
   useCreateOrderFromCart,
 } from "./orderQueries";

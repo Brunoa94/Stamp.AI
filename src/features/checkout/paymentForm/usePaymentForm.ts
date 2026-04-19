@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { ShippingAddressT } from "@/schemas/checkout";
 import { mapShippingAddressToBillingDetails } from "@/mappers/mapShippingAddressToBillingDetails";
@@ -10,10 +10,8 @@ interface UsePaymentFormProps {
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
   testMode?: boolean;
-  triggerSubmit?: boolean;
   onSuccess?: (paymentIntent: any, lineItems: PrintifyLineItem[]) => void;
   onError?: (error: string) => void;
-  onSubmitComplete?: () => void;
 }
 
 const TEST_PAYMENT_METHODS = {
@@ -34,10 +32,8 @@ export function usePaymentForm({
   lineItems,
   shippingAddress,
   testMode = false,
-  triggerSubmit = false,
   onSuccess,
   onError,
-  onSubmitComplete,
 }: UsePaymentFormProps) {
   const stripe = useStripe();
   const elements = useElements();
@@ -123,15 +119,6 @@ export function usePaymentForm({
       setLoading(false);
     }
   };
-
-  // Trigger payment when triggerSubmit prop changes
-  useEffect(() => {
-    if (triggerSubmit) {
-      processPayment().finally(() => {
-        onSubmitComplete?.();
-      });
-    }
-  }, [triggerSubmit]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();

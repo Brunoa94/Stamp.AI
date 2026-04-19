@@ -9,6 +9,8 @@ import { OrderItemService } from "./orderItemService";
 import { UserI } from "@/types/auth";
 import { ErrorClient } from "./errorClient";
 import type { ShippingAddressT } from "@/schemas/checkout";
+import { RefundService } from "./refundService";
+import type { PaymentProviderT } from "@/types/payment";
 
 export class OrderService {
   private static getSupabase() {
@@ -234,22 +236,6 @@ export class OrderService {
   }
 
   /**
-   * Update order fulfillment status
-   * Uses OrderServiceMapper to create update payload
-   */
-  static async updateFulfillmentStatus(
-    orderId: string,
-    fulfillmentStatus: string
-  ): Promise<OrderT> {
-    try {
-      const updatePayload = OrderServiceMapper.mapFulfillmentStatusToUpdate(fulfillmentStatus);
-      return await this.updateOrder(orderId, updatePayload);
-    } catch (error) {
-      throw ErrorClient.handleError({error, service: "Order", action: "Update Fulfillment Status"})
-    }
-  }
-
-  /**
    * Update order payment status
    * Uses OrderServiceMapper to create update payload
    */
@@ -300,6 +286,56 @@ export class OrderService {
       }
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Order", action: "Delete Order"})
+    }
+  }
+
+  /**
+   * Link a payment transaction to an order
+   * Updates payment_transactions.order_id after order creation
+   */
+  static async linkPaymentTransactionToOrder({
+    paymentProvider,
+    paymentIntentId,
+    orderId,
+  }: {
+    paymentProvider: PaymentProviderT;
+    paymentIntentId: string;
+    orderId: string;
+  }): Promise<void> {
+    try {
+      const supabase = this.getSupabase();
+
+      // Build the query based on payment provider
+      let query = supabase
+        .from('payment_transactions')
+        .update({ order_id: orderId, updated_at: new Date().toISOString() });
+
+      // Add provider-specific filter
+      switch (paymentProvider) {
+        case 'stripe':
+          query = query.eq('stripe_payment_intent_id', paymentIntentId);
+          break;
+        case 'paypal':
+          query = query.eq('paypal_order_id', paymentIntentId);
+          break;
+        case 'mollie':
+          query = query.eq('mollie_payment_id', paymentIntentId);
+          break;
+        default:
+          throw new Error(`Unsupported payment provider: ${paymentProvider}`);
+      }
+
+      const { error } = await query;
+
+      if (error) {
+        console.error(`Failed to link payment transaction to order:`, error);
+        // Don't throw - this is non-critical, webhook can still use metadata fallback
+      } else {
+        console.log(`✅ Linked payment transaction (${paymentProvider}:${paymentIntentId}) to order ${orderId}`);
+      }
+    } catch (error) {
+      console.error('Exception linking payment transaction to order:', error);
+      // Non-blocking error - webhook has fallback
     }
   }
 
@@ -358,4 +394,71 @@ export class OrderService {
             throw ErrorClient.handleError({error, service: "Order", action: "Create Order From Cart"})
           }
         };
+
+  /**
+   * Handle Printify order creation failure
+   *
+   * When Printify order creation fails:
+   * 1. Mark order as "unsuccessful_confirmation"
+   * 2. Process immediate refund
+   *
+   * @param orderId - The order ID
+   * @param paymentProvider - Payment provider (stripe, paypal, mollie)
+   * @param amount - Amount to refund
+   * @param paymentId - Payment intent/capture/payment ID
+   * @param printifyError - The Printify error that occurred
+   */
+  static async handlePrintifyFailure({
+    orderId,
+    paymentProvider,
+    amount,
+    stripePaymentIntentId,
+    paypalCaptureId,
+    molliePaymentId,
+    printifyError,
+  }: {
+    orderId: string;
+    paymentProvider: PaymentProviderT;
+    amount: number;
+    stripePaymentIntentId?: string;
+    paypalCaptureId?: string;
+    molliePaymentId?: string;
+    printifyError: unknown;
+  }): Promise<void> {
+    try {
+      console.error(`❌ Printify order creation failed for order ${orderId}:`, printifyError);
+
+      // Step 1: Mark order as unsuccessful_confirmation
+      try {
+        await this.updateOrderStatus(orderId, "unsuccessful_confirmation");
+        console.log(`✅ Order ${orderId} marked as unsuccessful_confirmation`);
+      } catch (statusError) {
+        console.error(`Failed to update order status to unsuccessful_confirmation:`, statusError);
+        // Continue with refund even if status update fails
+      }
+
+      // Step 2: Process refund
+      try {
+        await RefundService.processRefund({
+          orderId,
+          paymentProvider,
+          amount,
+          reason: "Printify order creation failed",
+          stripePaymentIntentId,
+          paypalCaptureId,
+          molliePaymentId,
+        });
+        console.log(`✅ Refund initiated for order ${orderId}`);
+      } catch (refundError) {
+        console.error(`❌ Refund initiation failed for order ${orderId}:`, refundError);
+        // Don't throw - log error but don't block
+      }
+    } catch (error) {
+      throw ErrorClient.handleError({
+        error,
+        service: "Order",
+        action: "Handle Printify Failure"
+      });
+    }
+  }
 }

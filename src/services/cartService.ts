@@ -139,12 +139,10 @@ export class CartService {
         query = query.eq("product_id", validatedInput.product_id);
       }
 
-      // For custom products (product_id is null), also check custom_image_url or design_id
+      // For custom products (product_id is null), also check custom_image_url
       // to ensure we're matching the exact same custom product
       if (validatedInput.product_id === null || validatedInput.product_id === undefined) {
-        if (validatedInput.design_id) {
-          query = query.eq("design_id", validatedInput.design_id);
-        } else if (validatedInput.custom_image_url) {
+        if (validatedInput.custom_image_url) {
           query = query.eq("custom_image_url", validatedInput.custom_image_url);
         }
       }

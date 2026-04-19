@@ -14,6 +14,5 @@ export {
   useUpdateOrder,
   useUpdateOrderStatus,
   useUpdatePaymentStatus,
-  useUpdateFulfillmentStatus,
   useDeleteOrder,
 } from "@/queries/orderQueries";

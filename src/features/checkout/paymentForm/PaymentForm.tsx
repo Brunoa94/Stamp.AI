@@ -23,10 +23,9 @@ interface CheckoutFormProps {
   onSuccess?: (paymentIntent: any, lineItems: PrintifyLineItem[]) => void;
   onError?: (error: string) => void;
   hideButton?: boolean;
-  triggerSubmit?: boolean;
-  onSubmitComplete?: () => void;
   initialPaymentMethod?: PaymentMethodT;
   onPaymentMethodChange?: (method: PaymentMethodT) => void;
+  stripeFormId?: string;
 }
 
 const CheckoutForm = ({
@@ -37,10 +36,9 @@ const CheckoutForm = ({
   onSuccess,
   onError,
   hideButton = false,
-  triggerSubmit = false,
-  onSubmitComplete,
   initialPaymentMethod = "stripe",
   onPaymentMethodChange,
+  stripeFormId = "stripe-payment-form",
 }: CheckoutFormProps) => {
   const [paymentMethod, setPaymentMethod] =
     useState<PaymentMethodT>(initialPaymentMethod);
@@ -63,11 +61,8 @@ const CheckoutForm = ({
     lineItems,
     shippingAddress,
     testMode,
-    // Only trigger Stripe submit when stripe is selected
-    triggerSubmit: triggerSubmit && paymentMethod === "stripe",
     onSuccess,
     onError,
-    onSubmitComplete,
   });
 
   const handlePaymentMethodChange = (method: PaymentMethodT) => {
@@ -75,12 +70,6 @@ const CheckoutForm = ({
     setError(null);
     onPaymentMethodChange?.(method);
   };
-
-  useEffect(() => {
-    if (triggerSubmit && paymentMethod !== "stripe") {
-      onSubmitComplete?.();
-    }
-  }, [triggerSubmit, paymentMethod, onSubmitComplete]);
 
   return (
     <div className="space-y-4">
@@ -93,7 +82,7 @@ const CheckoutForm = ({
 
       {/* Stripe Card Form */}
       {paymentMethod === "stripe" && (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form id={stripeFormId} onSubmit={handleSubmit} className="space-y-4">
           {testMode ? (
             <TestCardSelector
               value={selectedTestMethod}

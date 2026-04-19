@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, validateRequest, verifyAuth } from "../_shared/validators.ts";
 import { createMolliePayment } from "../_shared/mollie.ts";
+import { supabaseRest } from "../_shared/supabase.ts";
 import type { MolliePaymentRequestI, MolliePaymentResponseI } from "../../types/index.ts";
 
 const corsHeaders = {
@@ -101,7 +102,6 @@ serve(async (req) => {
       currency: currency.toUpperCase(),
       description: description || `Order for ${userEmail}`,
       redirectUrl: `${siteUrl}/checkout/mollie-return`,
-      webhookUrl: `${supabaseUrl}/functions/v1/mollie-webhook`,
       metadata: paymentMetadata,
     });
 
@@ -110,6 +110,32 @@ serve(async (req) => {
 
     if (!checkoutUrl) {
       throw ErrorCodes.MOLLIE_PAYMENT_FAILED("No checkout URL returned from Mollie");
+    }
+
+    // Create payment_transactions record immediately with user_id
+    // Webhook will later update this record to 'succeeded' or 'failed'
+    try {
+      await supabaseRest(
+        'payment_transactions',
+        'POST',
+        {
+          payment_provider: 'mollie',
+          mollie_payment_id: molliePayment.id,
+          mollie_status: molliePayment.status,
+          amount: validAmount,
+          currency: currency.toLowerCase(),
+          status: 'pending',
+          payment_method_type: molliePayment.method || null,
+          metadata: paymentMetadata,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+        { prefer: 'resolution=merge-duplicates' }
+      )
+      console.log('✅ Payment transaction record created:', molliePayment.id)
+    } catch (dbError) {
+      // Log error but don't fail the request - webhook can still process it
+      console.error('Failed to create payment_transactions record:', dbError)
     }
 
     const response: MolliePaymentResponseI = {

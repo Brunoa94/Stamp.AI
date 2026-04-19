@@ -110,12 +110,68 @@ export type Database = {
           },
         ]
       }
+      amount_validation_failures: {
+        Row: {
+          action_taken: string | null
+          created_at: string | null
+          difference: number
+          error_message: string | null
+          expected_amount: number
+          id: string
+          ip_address: string | null
+          payment_amount: number
+          payment_currency: string
+          payment_intent_id: string
+          payment_provider: string
+          refund_id: string | null
+          user_agent: string | null
+          user_email: string | null
+          user_id: string | null
+          validation_context: Json | null
+        }
+        Insert: {
+          action_taken?: string | null
+          created_at?: string | null
+          difference: number
+          error_message?: string | null
+          expected_amount: number
+          id?: string
+          ip_address?: string | null
+          payment_amount: number
+          payment_currency: string
+          payment_intent_id: string
+          payment_provider: string
+          refund_id?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string | null
+          validation_context?: Json | null
+        }
+        Update: {
+          action_taken?: string | null
+          created_at?: string | null
+          difference?: number
+          error_message?: string | null
+          expected_amount?: number
+          id?: string
+          ip_address?: string | null
+          payment_amount?: number
+          payment_currency?: string
+          payment_intent_id?: string
+          payment_provider?: string
+          refund_id?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string | null
+          validation_context?: Json | null
+        }
+        Relationships: []
+      }
       cart_items: {
         Row: {
           cart_id: string | null
           created_at: string | null
           custom_image_url: string | null
-          design_id: string | null
           id: string
           product_id: string | null
           product_name: string
@@ -128,7 +184,6 @@ export type Database = {
           cart_id?: string | null
           created_at?: string | null
           custom_image_url?: string | null
-          design_id?: string | null
           id?: string
           product_id?: string | null
           product_name: string
@@ -141,7 +196,6 @@ export type Database = {
           cart_id?: string | null
           created_at?: string | null
           custom_image_url?: string | null
-          design_id?: string | null
           id?: string
           product_id?: string | null
           product_name?: string
@@ -156,13 +210,6 @@ export type Database = {
             columns: ["cart_id"]
             isOneToOne: false
             referencedRelation: "carts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "cart_items_design_id_fkey"
-            columns: ["design_id"]
-            isOneToOne: false
-            referencedRelation: "user_designs"
             referencedColumns: ["id"]
           },
         ]
@@ -227,13 +274,62 @@ export type Database = {
         }
         Relationships: []
       }
+      email_jobs: {
+        Row: {
+          attempts: number
+          created_at: string
+          dedupe_key: string
+          id: string
+          last_error: string | null
+          max_attempts: number
+          next_attempt_at: string
+          payload: Json
+          recipient_email: string
+          sent_at: string | null
+          status: string
+          subject: string
+          template: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          dedupe_key: string
+          id?: string
+          last_error?: string | null
+          max_attempts?: number
+          next_attempt_at?: string
+          payload?: Json
+          recipient_email: string
+          sent_at?: string | null
+          status?: string
+          subject: string
+          template: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          dedupe_key?: string
+          id?: string
+          last_error?: string | null
+          max_attempts?: number
+          next_attempt_at?: string
+          payload?: Json
+          recipient_email?: string
+          sent_at?: string | null
+          status?: string
+          subject?: string
+          template?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           created_at: string | null
           custom_image_url: string
           design_config: Json | null
-          design_id: string | null
-          external_order_id: string | null
           fulfillment_status: string | null
           id: string
           order_id: string | null
@@ -250,8 +346,6 @@ export type Database = {
           created_at?: string | null
           custom_image_url: string
           design_config?: Json | null
-          design_id?: string | null
-          external_order_id?: string | null
           fulfillment_status?: string | null
           id?: string
           order_id?: string | null
@@ -268,8 +362,6 @@ export type Database = {
           created_at?: string | null
           custom_image_url?: string
           design_config?: Json | null
-          design_id?: string | null
-          external_order_id?: string | null
           fulfillment_status?: string | null
           id?: string
           order_id?: string | null
@@ -284,24 +376,69 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "order_items_design_id_fkey"
-            columns: ["design_id"]
-            isOneToOne: false
-            referencedRelation: "user_designs"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "order_items_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      order_status_reconciliation: {
+        Row: {
+          actual_status: string | null
+          created_at: string | null
+          error_message: string | null
+          expected_status: string
+          id: string
+          notes: string | null
+          order_id: string | null
+          printify_order_id: string | null
+          printify_status: string | null
+          reconciled_at: string | null
+          reconciled_by: string | null
+          reconciliation_status: string | null
+          retry_count: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          actual_status?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          expected_status: string
+          id?: string
+          notes?: string | null
+          order_id?: string | null
+          printify_order_id?: string | null
+          printify_status?: string | null
+          reconciled_at?: string | null
+          reconciled_by?: string | null
+          reconciliation_status?: string | null
+          retry_count?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          actual_status?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          expected_status?: string
+          id?: string
+          notes?: string | null
+          order_id?: string | null
+          printify_order_id?: string | null
+          printify_status?: string | null
+          reconciled_at?: string | null
+          reconciled_by?: string | null
+          reconciliation_status?: string | null
+          retry_count?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
           {
-            foreignKeyName: "order_items_product_id_fkey"
-            columns: ["product_id"]
+            foreignKeyName: "order_status_reconciliation_order_id_fkey"
+            columns: ["order_id"]
             isOneToOne: false
-            referencedRelation: "products"
+            referencedRelation: "orders"
             referencedColumns: ["id"]
           },
         ]
@@ -309,6 +446,9 @@ export type Database = {
       orders: {
         Row: {
           billing_address: Json | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          confirmed_at: string | null
           created_at: string | null
           currency: string | null
           customer_email: string
@@ -317,21 +457,28 @@ export type Database = {
           customer_phone: string | null
           delivered_at: string | null
           discount_amount: number | null
-          fulfillment_status: string | null
+          expired_at: string | null
+          expires_at: string | null
           id: string
+          idempotency_key: string | null
           internal_notes: string | null
+          last_refund_error: string | null
+          manual_review_required: boolean
           order_number: string
+          paid_at: string | null
+          payment_failure_reason: string | null
           payment_method: string | null
           payment_status: string | null
           printify_order_id: string | null
-          product_id: string | null
+          promo_code: string | null
+          promo_value: number | null
+          refund_attempts: number
+          refund_failed: boolean
           shipped_at: string | null
           shipping_address: Json | null
           shipping_cost: number | null
           shipping_method: string | null
           status: string | null
-          stripe_customer_id: string | null
-          stripe_payment_intent_id: string | null
           subtotal: number | null
           tax_amount: number | null
           total_amount: number | null
@@ -342,6 +489,9 @@ export type Database = {
         }
         Insert: {
           billing_address?: Json | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          confirmed_at?: string | null
           created_at?: string | null
           currency?: string | null
           customer_email: string
@@ -350,21 +500,28 @@ export type Database = {
           customer_phone?: string | null
           delivered_at?: string | null
           discount_amount?: number | null
-          fulfillment_status?: string | null
+          expired_at?: string | null
+          expires_at?: string | null
           id?: string
+          idempotency_key?: string | null
           internal_notes?: string | null
+          last_refund_error?: string | null
+          manual_review_required?: boolean
           order_number: string
+          paid_at?: string | null
+          payment_failure_reason?: string | null
           payment_method?: string | null
           payment_status?: string | null
           printify_order_id?: string | null
-          product_id?: string | null
+          promo_code?: string | null
+          promo_value?: number | null
+          refund_attempts?: number
+          refund_failed?: boolean
           shipped_at?: string | null
           shipping_address?: Json | null
           shipping_cost?: number | null
           shipping_method?: string | null
           status?: string | null
-          stripe_customer_id?: string | null
-          stripe_payment_intent_id?: string | null
           subtotal?: number | null
           tax_amount?: number | null
           total_amount?: number | null
@@ -375,6 +532,9 @@ export type Database = {
         }
         Update: {
           billing_address?: Json | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          confirmed_at?: string | null
           created_at?: string | null
           currency?: string | null
           customer_email?: string
@@ -383,21 +543,28 @@ export type Database = {
           customer_phone?: string | null
           delivered_at?: string | null
           discount_amount?: number | null
-          fulfillment_status?: string | null
+          expired_at?: string | null
+          expires_at?: string | null
           id?: string
+          idempotency_key?: string | null
           internal_notes?: string | null
+          last_refund_error?: string | null
+          manual_review_required?: boolean
           order_number?: string
+          paid_at?: string | null
+          payment_failure_reason?: string | null
           payment_method?: string | null
           payment_status?: string | null
           printify_order_id?: string | null
-          product_id?: string | null
+          promo_code?: string | null
+          promo_value?: number | null
+          refund_attempts?: number
+          refund_failed?: boolean
           shipped_at?: string | null
           shipping_address?: Json | null
           shipping_cost?: number | null
           shipping_method?: string | null
           status?: string | null
-          stripe_customer_id?: string | null
-          stripe_payment_intent_id?: string | null
           subtotal?: number | null
           tax_amount?: number | null
           total_amount?: number | null
@@ -408,6 +575,86 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_recovery: {
+        Row: {
+          amount: number
+          cart_snapshot: Json | null
+          created_at: string | null
+          currency: string
+          id: string
+          last_recovery_attempt: string | null
+          line_items: Json | null
+          metadata: Json | null
+          order_id: string | null
+          payment_intent_id: string
+          payment_provider: string
+          payment_status: string
+          recovered_at: string | null
+          recovery_attempts: number | null
+          recovery_error: string | null
+          recovery_status: string | null
+          session_id: string | null
+          shipping_address: Json | null
+          updated_at: string | null
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          cart_snapshot?: Json | null
+          created_at?: string | null
+          currency?: string
+          id?: string
+          last_recovery_attempt?: string | null
+          line_items?: Json | null
+          metadata?: Json | null
+          order_id?: string | null
+          payment_intent_id: string
+          payment_provider: string
+          payment_status: string
+          recovered_at?: string | null
+          recovery_attempts?: number | null
+          recovery_error?: string | null
+          recovery_status?: string | null
+          session_id?: string | null
+          shipping_address?: Json | null
+          updated_at?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          cart_snapshot?: Json | null
+          created_at?: string | null
+          currency?: string
+          id?: string
+          last_recovery_attempt?: string | null
+          line_items?: Json | null
+          metadata?: Json | null
+          order_id?: string | null
+          payment_intent_id?: string
+          payment_provider?: string
+          payment_status?: string
+          recovered_at?: string | null
+          recovery_attempts?: number | null
+          recovery_error?: string | null
+          recovery_status?: string | null
+          session_id?: string | null
+          shipping_address?: Json | null
+          updated_at?: string | null
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_recovery_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payment_transactions: {
         Row: {
           amount: number
@@ -416,9 +663,16 @@ export type Database = {
           error_message: string | null
           id: string
           metadata: Json | null
+          mollie_payment_id: string | null
+          mollie_status: string | null
           order_id: string | null
           payment_method_details: Json | null
           payment_method_type: string | null
+          payment_provider: string
+          paypal_capture_id: string | null
+          paypal_order_id: string | null
+          paypal_payer_email: string | null
+          paypal_payer_id: string | null
           status: string
           stripe_charge_id: string | null
           stripe_customer_id: string | null
@@ -433,9 +687,16 @@ export type Database = {
           error_message?: string | null
           id?: string
           metadata?: Json | null
+          mollie_payment_id?: string | null
+          mollie_status?: string | null
           order_id?: string | null
           payment_method_details?: Json | null
           payment_method_type?: string | null
+          payment_provider?: string
+          paypal_capture_id?: string | null
+          paypal_order_id?: string | null
+          paypal_payer_email?: string | null
+          paypal_payer_id?: string | null
           status: string
           stripe_charge_id?: string | null
           stripe_customer_id?: string | null
@@ -450,9 +711,16 @@ export type Database = {
           error_message?: string | null
           id?: string
           metadata?: Json | null
+          mollie_payment_id?: string | null
+          mollie_status?: string | null
           order_id?: string | null
           payment_method_details?: Json | null
           payment_method_type?: string | null
+          payment_provider?: string
+          paypal_capture_id?: string | null
+          paypal_order_id?: string | null
+          paypal_payer_email?: string | null
+          paypal_payer_id?: string | null
           status?: string
           stripe_charge_id?: string | null
           stripe_customer_id?: string | null
@@ -462,6 +730,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_payment_transactions_order"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "payment_transactions_order_id_fkey"
             columns: ["order_id"]
             isOneToOne: false
@@ -470,82 +745,10 @@ export type Database = {
           },
         ]
       }
-      product_categories: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          id: string
-          image_url: string | null
-          is_active: boolean | null
-          name: string
-          slug: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          is_active?: boolean | null
-          name: string
-          slug: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          is_active?: boolean | null
-          name?: string
-          slug?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      product_images: {
-        Row: {
-          created_at: string | null
-          id: string
-          image_url: string
-          is_primary: boolean | null
-          position: number | null
-          product_id: string | null
-          variant_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          image_url: string
-          is_primary?: boolean | null
-          position?: number | null
-          product_id?: string | null
-          variant_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          image_url?: string
-          is_primary?: boolean | null
-          position?: number | null
-          product_id?: string | null
-          variant_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "product_images_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       products: {
         Row: {
           base_price: number
           blueprint_id: number | null
-          category_id: string | null
           created_at: string | null
           currency: string | null
           description: string | null
@@ -558,11 +761,11 @@ export type Database = {
           printify_product_id: string | null
           slug: string
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           base_price: number
           blueprint_id?: number | null
-          category_id?: string | null
           created_at?: string | null
           currency?: string | null
           description?: string | null
@@ -575,11 +778,11 @@ export type Database = {
           printify_product_id?: string | null
           slug: string
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           base_price?: number
           blueprint_id?: number | null
-          category_id?: string | null
           created_at?: string | null
           currency?: string | null
           description?: string | null
@@ -592,20 +795,78 @@ export type Database = {
           printify_product_id?: string | null
           slug?: string
           updated_at?: string | null
+          user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "products_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "product_categories"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
+      }
+      products_provider: {
+        Row: {
+          blueprint_id: number
+          brand: string | null
+          country_code: string
+          created_at: string | null
+          description: string | null
+          expires_at: string
+          id: string
+          images: Json | null
+          min_price: number
+          model: string | null
+          print_areas: Json | null
+          print_provider_id: number
+          provider_name: string | null
+          rank: number
+          shipping_cost: number
+          title: string
+          total_cost: number
+          updated_at: string | null
+        }
+        Insert: {
+          blueprint_id: number
+          brand?: string | null
+          country_code: string
+          created_at?: string | null
+          description?: string | null
+          expires_at: string
+          id?: string
+          images?: Json | null
+          min_price: number
+          model?: string | null
+          print_areas?: Json | null
+          print_provider_id: number
+          provider_name?: string | null
+          rank: number
+          shipping_cost: number
+          title: string
+          total_cost: number
+          updated_at?: string | null
+        }
+        Update: {
+          blueprint_id?: number
+          brand?: string | null
+          country_code?: string
+          created_at?: string | null
+          description?: string | null
+          expires_at?: string
+          id?: string
+          images?: Json | null
+          min_price?: number
+          model?: string | null
+          print_areas?: Json | null
+          print_provider_id?: number
+          provider_name?: string | null
+          rank?: number
+          shipping_cost?: number
+          title?: string
+          total_cost?: number
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
           avatar_url: string | null
+          coins: number
+          coins_reset_at: string
           created_at: string | null
           email: string
           full_name: string | null
@@ -616,6 +877,8 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          coins?: number
+          coins_reset_at?: string
           created_at?: string | null
           email: string
           full_name?: string | null
@@ -626,12 +889,101 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          coins?: number
+          coins_reset_at?: string
           created_at?: string | null
           email?: string
           full_name?: string | null
           id?: string
           phone?: string | null
           stripe_customer_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      promocodes: {
+        Row: {
+          code: string
+          created_at: string | null
+          promocode_id: string
+          type: string
+          value: number
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          promocode_id?: string
+          type: string
+          value: number
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          promocode_id?: string
+          type?: string
+          value?: number
+        }
+        Relationships: []
+      }
+      refund_failures: {
+        Row: {
+          amount: number
+          created_at: string | null
+          currency: string | null
+          error_code: string | null
+          error_message: string | null
+          id: string
+          manual_refund_id: string | null
+          next_retry_at: string | null
+          order_id: string | null
+          payment_id: string
+          payment_provider: string
+          reason: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          retry_count: number | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          currency?: string | null
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          manual_refund_id?: string | null
+          next_retry_at?: string | null
+          order_id?: string | null
+          payment_id: string
+          payment_provider: string
+          reason?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          retry_count?: number | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          currency?: string | null
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          manual_refund_id?: string | null
+          next_retry_at?: string | null
+          order_id?: string | null
+          payment_id?: string
+          payment_provider?: string
+          reason?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          retry_count?: number | null
+          status?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -766,12 +1118,152 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_events: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          event_id: string
+          event_type: string
+          id: string
+          payload: Json | null
+          processed_at: string | null
+          processing_status: string | null
+          provider: string
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          event_id: string
+          event_type: string
+          id?: string
+          payload?: Json | null
+          processed_at?: string | null
+          processing_status?: string | null
+          provider: string
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          event_id?: string
+          event_type?: string
+          id?: string
+          payload?: Json | null
+          processed_at?: string | null
+          processing_status?: string | null
+          provider?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      generate_order_number: { Args: never; Returns: string }
+      create_refund_failure_alert: {
+        Args: {
+          p_amount: number
+          p_error_message: string
+          p_order_id: string
+          p_payment_id: string
+          p_payment_provider: string
+          p_retry_count?: number
+        }
+        Returns: string
+      }
+      deduct_coin: { Args: { user_id: string }; Returns: boolean }
+      expire_waiting_payment_orders: { Args: never; Returns: number }
+      get_order_by_idempotency_key: { Args: { key: string }; Returns: string }
+      get_pending_payment_recoveries: {
+        Args: { p_hours_ago?: number; p_user_id: string }
+        Returns: {
+          amount: number
+          cart_snapshot: Json
+          created_at: string
+          currency: string
+          id: string
+          line_items: Json
+          payment_intent_id: string
+          payment_provider: string
+          shipping_address: Json
+        }[]
+      }
+      increment_recovery_attempt: {
+        Args: {
+          p_error?: string
+          p_payment_intent_id: string
+          p_payment_provider: string
+        }
+        Returns: number
+      }
+      is_webhook_processed: {
+        Args: { p_event_id: string; p_provider: string }
+        Returns: boolean
+      }
+      mark_payment_recovered: {
+        Args: {
+          p_order_id: string
+          p_payment_intent_id: string
+          p_payment_provider: string
+        }
+        Returns: boolean
+      }
+      process_refund_atomic: {
+        Args: {
+          p_order_id: string
+          p_payment_provider: string
+          p_reason: string
+          p_refund_id: string
+        }
+        Returns: Json
+      }
+      record_amount_validation_failure: {
+        Args: {
+          p_error_message: string
+          p_expected_amount: number
+          p_payment_amount: number
+          p_payment_currency: string
+          p_payment_intent_id: string
+          p_payment_provider: string
+          p_user_id: string
+          p_validation_context: Json
+        }
+        Returns: string
+      }
+      record_payment_for_recovery: {
+        Args: {
+          p_amount: number
+          p_cart_snapshot: Json
+          p_currency: string
+          p_line_items: Json
+          p_metadata?: Json
+          p_payment_intent_id: string
+          p_payment_provider: string
+          p_payment_status: string
+          p_shipping_address: Json
+          p_user_email: string
+          p_user_id: string
+        }
+        Returns: string
+      }
+      record_webhook_event: {
+        Args: {
+          p_event_id: string
+          p_event_type: string
+          p_payload?: Json
+          p_provider: string
+        }
+        Returns: string
+      }
+      refill_min_3_coins_daily: { Args: never; Returns: undefined }
+      update_order_payment_status_atomic: {
+        Args: {
+          p_order_id: string
+          p_order_status?: string
+          p_payment_method?: string
+          p_payment_status: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       PAYMENT_STATUS: "PENDING" | "FAILED" | "COMPLETED"

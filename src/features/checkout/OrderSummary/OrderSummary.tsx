@@ -4,14 +4,10 @@ import { PromoCodeSection } from "./PromoCodeSection";
 import { ShippingAddress } from "./ShippingAddress";
 import { CompleteOrderButton } from "./CompleteOrderButton";
 import { CheckoutSelectors } from "../context/CheckoutContextSubscriber/selectors";
-import { useCheckoutSubscriberActions } from "../context/CheckoutContextSubscriber/actions";
 import { CartItem } from "@/types/cart";
 
 const OrderSummary = () => {
   const cartItems = CheckoutSelectors.cartItems();
-
-  const { handleCompleteOrder: onCompleteOrder } =
-    useCheckoutSubscriberActions();
 
   const onEditShipping = () => {};
 
@@ -35,9 +31,7 @@ const OrderSummary = () => {
 
       <ShippingAddress onEditShipping={onEditShipping} />
 
-      {onCompleteOrder && (
-        <CompleteOrderButton onCompleteOrder={onCompleteOrder} />
-      )}
+      <CompleteOrderButton />
     </aside>
   );
 };

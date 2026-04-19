@@ -20,16 +20,12 @@ test.skip(({ isMobile }) => isMobile, "Checkout e2e tests target the desktop lay
 
 /** Fill the Stripe CardElement iframe hosted in the payment section */
 async function fillStripeCard(page: Page, cardNumber: string) {
-  // The page renders both mobile + desktop layouts with separate Stripe iframes.
-  // Scope to the desktop layout container (hidden md:block).
-  const desktopLayout = page.locator('.hidden.md\\:block');
-
-  // Scroll the Stripe iframe into view inside the desktop layout
-  const stripeIframe = desktopLayout.locator('iframe[name*="__privateStripeFrame"]').first();
+  // Scroll the Stripe iframe into view
+  const stripeIframe = page.locator('iframe[name*="__privateStripeFrame"]').first();
   await stripeIframe.waitFor({ state: "attached", timeout: 15_000 });
   await stripeIframe.scrollIntoViewIfNeeded();
 
-  const stripeFrame = desktopLayout.frameLocator('iframe[name*="__privateStripeFrame"]').first();
+  const stripeFrame = page.frameLocator('iframe[name*="__privateStripeFrame"]').first();
 
   const cardInput = stripeFrame.locator('[placeholder="Card number"]');
   await cardInput.fill(cardNumber);
@@ -40,16 +36,10 @@ async function fillStripeCard(page: Page, cardNumber: string) {
 /**
  * Navigate to checkout and fill in a shipping address.
  *
- * The checkout page renders both mobile and desktop layouts simultaneously,
- * producing duplicate form field IDs. We scope to the desktop "Billing Address"
- * section so locators always resolve to the visible form.
- *
  * The form uses autoSubmitOnChange so the payment section appears automatically.
  */
 async function fillShippingForm(page: Page) {
-  // Scope to the visible desktop billing form.
-  // Structure: div.glass-card > header > h2 "Billing Address"  +  form (sibling of header)
-  // Go up two levels from h2 to reach the container that holds both heading and form.
+  // Structure: container with h2 "Billing Address" + sibling form.
   const billingSection = page.getByRole("heading", { name: /billing address/i }).locator("../..");
   const form = billingSection.locator("form");
 
@@ -70,11 +60,9 @@ async function fillShippingForm(page: Page) {
 /**
  * Click the "Confirm Order" button in the order summary sidebar.
  * The button text varies by payment method, e.g. "Confirm Order · Pay with Card".
- * Scoped to the desktop layout to avoid hitting the hidden mobile button.
  */
 async function clickConfirmOrder(page: Page) {
-  const desktopLayout = page.locator('.hidden.md\\:block');
-  await desktopLayout.getByRole("button", { name: /confirm order/i }).click();
+  await page.getByRole("button", { name: /confirm order/i }).click();
 }
 
 // ─── Flow 0: No cartId redirects to not-found ────────────────────────────────
@@ -157,7 +145,6 @@ function mockOrder(overrides: Record<string, unknown> = {}) {
     customer_phone: "5550001234",
     status: "pending",
     payment_status: "failed",
-    fulfillment_status: "unfulfilled",
     total_amount: 55,
     subtotal: 55,
     tax_amount: 0,
@@ -166,8 +153,6 @@ function mockOrder(overrides: Record<string, unknown> = {}) {
     currency: "USD",
     payment_method: "stripe",
     printify_order_id: "",
-    stripe_payment_intent_id: "",
-    stripe_customer_id: "",
     shipping_address: null,
     billing_address: null,
     shipping_method: "standard",
@@ -288,15 +273,13 @@ async function mockCartWithItems(page: Page) {
 
 /** Enable Test Mode and select a test card */
 async function enableTestMode(page: Page, card: "visa" | "declined" = "visa") {
-  const desktopLayout = page.locator('.hidden.md\\:block');
-
   // Scroll to payment section and enable test mode
-  const testModeCheckbox = desktopLayout.getByRole("checkbox", { name: /test mode/i });
+  const testModeCheckbox = page.getByRole("checkbox", { name: /test mode/i });
   await testModeCheckbox.scrollIntoViewIfNeeded();
   await testModeCheckbox.check();
 
   // Select the test card from the dropdown
-  const testCardSelect = desktopLayout.locator("#test-card-select");
+  const testCardSelect = page.locator("#test-card-select");
   await testCardSelect.selectOption(card);
 }
 
@@ -362,7 +345,6 @@ test.describe("Flow 2b — Printify edge function retries 3 times", () => {
       customer_phone: "5550001234",
       status: "pending",
       payment_status: "paid",
-      fulfillment_status: "unfulfilled",
       total_amount: 25,
       subtotal: 25,
       tax_amount: 0,
@@ -371,8 +353,6 @@ test.describe("Flow 2b — Printify edge function retries 3 times", () => {
       currency: "USD",
       payment_method: "stripe",
       printify_order_id: "",
-      stripe_payment_intent_id: "",
-      stripe_customer_id: "",
       shipping_address: null,
       billing_address: null,
       shipping_method: "standard",
@@ -426,10 +406,8 @@ test.describe("Flow 2b — Printify edge function retries 3 times", () => {
             unit_price: 25,
             total_price: 25,
             custom_image_url: "https://placehold.co/400x400.png",
-            design_id: null,
             design_config: null,
             fulfillment_status: null,
-            external_order_id: null,
             created_at: now,
             updated_at: now,
           }]),
@@ -476,7 +454,6 @@ test.describe("Flow 3 — Everything Succeeds", () => {
       customer_phone: "5550001234",
       status: "confirmed",
       payment_status: "paid",
-      fulfillment_status: "unfulfilled",
       total_amount: 25,
       subtotal: 25,
       tax_amount: 0,
@@ -485,8 +462,6 @@ test.describe("Flow 3 — Everything Succeeds", () => {
       currency: "USD",
       payment_method: "stripe",
       printify_order_id: "printify-e2e-1",
-      stripe_payment_intent_id: "",
-      stripe_customer_id: "",
       shipping_address: null,
       billing_address: null,
       shipping_method: "standard",
@@ -554,10 +529,8 @@ test.describe("Flow 3 — Everything Succeeds", () => {
             unit_price: 25,
             total_price: 25,
             custom_image_url: "https://placehold.co/400x400.png",
-            design_id: null,
             design_config: null,
             fulfillment_status: null,
-            external_order_id: null,
             created_at: now,
             updated_at: now,
           }]),
@@ -773,7 +746,6 @@ test.describe("Flow 4 — Checkout flow uniformity across payment methods", () =
         customer_phone: "5550001234",
         status: "pending",
         payment_status: "paid",
-        fulfillment_status: "unfulfilled",
         total_amount: 25,
         subtotal: 25,
         tax_amount: 0,
@@ -782,8 +754,6 @@ test.describe("Flow 4 — Checkout flow uniformity across payment methods", () =
         currency: "USD",
         payment_method: "mollie",
         printify_order_id: "",
-        stripe_payment_intent_id: "",
-        stripe_customer_id: "",
         shipping_address: null,
         billing_address: null,
         shipping_method: "standard",
@@ -879,5 +849,450 @@ test.describe("Flow 4 — Checkout flow uniformity across payment methods", () =
       // Printify should have been called 4 times (1 initial + 3 retries from React Query)
       expect(printifyCallCount).toBe(4);
     });
+  });
+});
+
+// ─── Flow 2b (rewrite): Printify retry count — desktop layout only ──────────
+//
+// The previous assertion multiplied the expected call count by 2 to account for
+// both mobile + desktop layouts processing the same request — that was testing a
+// rendering side-effect, not retry behaviour.
+//
+// This rewrite disables the mobile layout via viewport so only one layout is
+// mounted, then asserts the canonical retry count: 1 initial + 3 retries = 4.
+
+test.describe("Flow 2b (fixed) — Printify retries exactly 3 times (desktop)", () => {
+  test("calls create-printify-order exactly 4 times (1 + 3 retries) before showing error", async ({
+    page,
+  }) => {
+    // Force desktop-only viewport so only one layout is mounted
+    await page.setViewportSize({ width: 1280, height: 900 });
+
+    await mockPaymentIntentEdgeFunction(page);
+    await mockCartWithItems(page);
+
+    const now = new Date().toISOString();
+    const fakeOrder = mockOrder({
+      id: "order-e2e-retry-fixed-1",
+      order_number: "ORD-RETRY-FIXED-001",
+      payment_status: "paid",
+      payment_method: "stripe",
+    });
+
+    await page.route("**/rest/v1/orders*", async (route) => {
+      const method = route.request().method();
+      if (method === "POST") {
+        await route.fulfill({
+          status: 201,
+          contentType: "application/json",
+          body: JSON.stringify(fakeOrder),
+        });
+      } else if (method === "PATCH") {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(fakeOrder),
+        });
+      } else {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(null),
+        });
+      }
+    });
+
+    await page.route("**/rest/v1/order_items*", async (route) => {
+      if (route.request().method() === "POST") {
+        await route.fulfill({
+          status: 201,
+          contentType: "application/json",
+          body: JSON.stringify([{
+            id: "oi-retry-fixed-1",
+            order_id: "order-e2e-retry-fixed-1",
+            product_id: "prod-e2e-1",
+            variant_id: "1001",
+            product_name: "E2E Test Tee",
+            variant_name: "Black / M",
+            quantity: 1,
+            unit_price: 25,
+            total_price: 25,
+            custom_image_url: "https://placehold.co/400x400.png",
+            design_config: null,
+            fulfillment_status: null,
+            created_at: now,
+            updated_at: now,
+          }]),
+        });
+      } else {
+        await route.continue();
+      }
+    });
+
+    let printifyCallCount = 0;
+    await page.route("**/functions/v1/create-printify-order", async (route) => {
+      printifyCallCount++;
+      await route.fulfill({
+        status: 500,
+        contentType: "application/json",
+        body: JSON.stringify({ error: "Printify service unavailable" }),
+      });
+    });
+
+    await page.goto("/checkout?cartId=cart-e2e-1");
+    await fillShippingForm(page);
+    await enableTestMode(page, "visa");
+    await clickConfirmOrder(page);
+
+    // Wait for the error screen (all retries exhausted)
+    const errorRegion = page.locator('[aria-label="Payment failed"]');
+    await expect(errorRegion).toBeVisible({ timeout: 60_000 });
+
+    // Exactly 1 initial attempt + 3 retries = 4 calls from the single desktop layout
+    expect(printifyCallCount).toBe(4);
+  });
+});
+
+// ─── Flow 5: Mobile happy path ───────────────────────────────────────────────
+//
+// The core checkout flows skip mobile via test.skip at the top of this file.
+// These tests explicitly set a mobile viewport and drive the accordion-step
+// mobile UI to ensure the full payment flow works on small screens.
+
+test.describe("Flow 5 — Mobile checkout happy path", () => {
+  const MOBILE_VIEWPORT = { width: 375, height: 812 };
+
+  /** Fill the multi-step mobile checkout form through all accordion steps */
+  async function fillMobileCheckoutSteps(page: Page) {
+    // Step 1 – Shipping Address
+    const shippingStep = page.getByRole("button", { name: /shipping address/i });
+    await expect(shippingStep).toBeVisible({ timeout: 10_000 });
+
+    // The first step should be open by default; fill the visible form
+    await page.locator('[name="first_name"]').first().fill("E2E");
+    await page.locator('[name="last_name"]').first().fill("Tester");
+    await page.locator('[name="email"]').first().fill("e2e@test.com");
+    await page.locator('[name="phone"]').first().fill("5550001234");
+    await page.locator('[name="address1"]').first().fill("1 Playwright Lane");
+    await page.locator('[name="city"]').first().fill("Test City");
+    await page.locator('[name="zip"]').first().fill("10001");
+
+    // Submit step 1
+    await page.getByRole("button", { name: /continue to shipping/i }).click();
+
+    // Step 2 – Shipping Method (may auto-advance or require an explicit continue)
+    const continueToPayment = page.getByRole("button", { name: /continue to payment|continue to billing/i });
+    if (await continueToPayment.isVisible({ timeout: 5_000 }).catch(() => false)) {
+      await continueToPayment.click();
+    }
+
+    // Step 3 – Billing (if separate from shipping)
+    const continueToBilling = page.getByRole("button", { name: /continue to billing/i });
+    if (await continueToBilling.isVisible({ timeout: 3_000 }).catch(() => false)) {
+      await continueToBilling.click();
+    }
+
+    // Step 4 – Payment: enable test mode
+    const testModeCheckbox = page.getByRole("checkbox", { name: /test mode/i });
+    await testModeCheckbox.scrollIntoViewIfNeeded();
+    await testModeCheckbox.check();
+
+    const testCardSelect = page.locator("#test-card-select").last();
+    await testCardSelect.selectOption("visa");
+  }
+
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize(MOBILE_VIEWPORT);
+
+    await mockPaymentIntentEdgeFunction(page);
+    await mockCartWithItems(page);
+
+    const now = new Date().toISOString();
+    const fakeOrder = mockOrder({
+      id: "order-mobile-success-1",
+      order_number: "ORD-MOBILE-001",
+      status: "confirmed",
+      payment_status: "paid",
+      payment_method: "stripe",
+    });
+
+    await page.route("**/rest/v1/orders*", async (route) => {
+      const method = route.request().method();
+      if (method === "POST") {
+        await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify(fakeOrder) });
+      } else if (method === "PATCH") {
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(fakeOrder) });
+      } else {
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(null) });
+      }
+    });
+
+    await page.route("**/functions/v1/create-printify-order", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ success: true, orderId: "printify-mobile-1" }),
+      });
+    });
+
+    await page.route("**/rest/v1/order_items*", async (route) => {
+      if (route.request().method() === "POST") {
+        await route.fulfill({
+          status: 201,
+          contentType: "application/json",
+          body: JSON.stringify([{
+            id: "oi-mobile-1",
+            order_id: "order-mobile-success-1",
+            product_id: "prod-e2e-1",
+            variant_id: "1001",
+            product_name: "E2E Test Tee",
+            variant_name: "Black / M",
+            quantity: 1,
+            unit_price: 25,
+            total_price: 25,
+            custom_image_url: "https://placehold.co/400x400.png",
+            design_config: null,
+            fulfillment_status: null,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          }]),
+        });
+      } else {
+        await route.continue();
+      }
+    });
+  });
+
+  test("shows 'Order Confirmed' after completing all accordion steps on mobile", async ({
+    page,
+  }) => {
+    await page.goto("/checkout?cartId=cart-e2e-1");
+    await fillMobileCheckoutSteps(page);
+
+    // Tap the sticky footer Stripe confirm button
+    const mobileFooter = page.locator('[data-testid="mobile-footer"], [class*="footer"]').last();
+    await mobileFooter.getByRole("button", { name: /confirm|pay/i }).click();
+
+    await expect(page.getByRole("heading", { name: /order confirmed/i })).toBeVisible({
+      timeout: 30_000,
+    });
+  });
+
+  test("mobile footer Stripe confirm button is disabled until shipping step is complete", async ({
+    page,
+  }) => {
+    await page.goto("/checkout?cartId=cart-e2e-1");
+
+    // Before filling shipping — button should be disabled or absent
+    const mobileFooter = page.locator('[class*="footer"]').last();
+    const confirmBtn = mobileFooter.getByRole("button", { name: /confirm|pay/i });
+
+    // Either the button is disabled or it isn't rendered yet
+    const isDisabled = await confirmBtn.getAttribute("disabled").catch(() => null);
+    const isVisible = await confirmBtn.isVisible().catch(() => false);
+
+    if (isVisible) {
+      expect(isDisabled).not.toBeNull();
+    }
+    // If not visible at all, the test also passes — the button is correctly withheld
+  });
+
+  test("shows payment failed screen when Stripe test card is declined on mobile", async ({
+    page,
+  }) => {
+    // Override: force Printify to never be reached — the card itself should decline
+    await page.route("**/functions/v1/create-printify-order", async (route) => {
+      await route.fulfill({
+        status: 500,
+        contentType: "application/json",
+        body: JSON.stringify({ error: "Should not be reached" }),
+      });
+    });
+
+    await page.goto("/checkout?cartId=cart-e2e-1");
+
+    // Fill steps and select the declined test card
+    await fillMobileCheckoutSteps(page);
+    const testCardSelect = page.locator("#test-card-select").last();
+    await testCardSelect.selectOption("declined");
+
+    const mobileFooter = page.locator('[class*="footer"]').last();
+    await mobileFooter.getByRole("button", { name: /confirm|pay/i }).click();
+
+    await expect(page.getByRole("heading", { name: /payment failed/i })).toBeVisible({
+      timeout: 20_000,
+    });
+  });
+});
+
+// ─── Flow 6: Mollie happy path ────────────────────────────────────────────────
+//
+// A user completes the Mollie redirect flow:
+//   1. Checkout page stores payment context in sessionStorage and redirects to Mollie
+//   2. Mollie redirects back to /checkout/mollie-return
+//   3. The return page verifies payment, creates the order, and shows the confirmation screen.
+
+test.describe("Flow 6 — Mollie happy path", () => {
+  /** Seed sessionStorage as if the Mollie redirect just returned */
+  async function seedMollieReturnSession(page: Page, paymentId = "tr_test_mollie_success") {
+    await page.goto("/checkout?cartId=cart-e2e-1");
+    await page.evaluate((pid) => {
+      const lineItems = [{
+        product_id: "prod-e2e-1",
+        variant_id: 1001,
+        quantity: 1,
+        print_areas: { front: "https://placehold.co/400x400.png" },
+      }];
+      const shippingAddress = {
+        first_name: "E2E",
+        last_name: "Tester",
+        email: "e2e@test.com",
+        phone: "5550001234",
+        country: "US",
+        region: "",
+        address1: "1 Playwright Lane",
+        address2: "",
+        city: "Test City",
+        zip: "10001",
+      };
+      sessionStorage.setItem("mollie_payment_id", pid);
+      sessionStorage.setItem("mollie_line_items", JSON.stringify(lineItems));
+      sessionStorage.setItem("mollie_shipping_address", JSON.stringify(shippingAddress));
+      sessionStorage.setItem("mollie_cart_id", "cart-e2e-1");
+      sessionStorage.setItem("mollie_order_amount", "25");
+    }, paymentId);
+  }
+
+  test.beforeEach(async ({ page }) => {
+    await mockCartWithItems(page);
+
+    // Mollie payment is verified as paid
+    await page.route("**/functions/v1/verify-mollie-payment", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          paymentId: "tr_test_mollie_success",
+          status: "paid",
+          isPaid: true,
+        }),
+      });
+    });
+
+    const now = new Date().toISOString();
+    const fakeOrder = mockOrder({
+      id: "order-mollie-success-1",
+      order_number: "ORD-MOLLIE-001",
+      status: "confirmed",
+      payment_status: "paid",
+      payment_method: "mollie",
+    });
+
+    await page.route("**/rest/v1/orders*", async (route) => {
+      const method = route.request().method();
+      if (method === "POST") {
+        await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify(fakeOrder) });
+      } else if (method === "PATCH") {
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(fakeOrder) });
+      } else {
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(null) });
+      }
+    });
+
+    await page.route("**/functions/v1/create-printify-order", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ success: true, orderId: "printify-mollie-1" }),
+      });
+    });
+
+    await page.route("**/rest/v1/order_items*", async (route) => {
+      if (route.request().method() === "POST") {
+        await route.fulfill({
+          status: 201,
+          contentType: "application/json",
+          body: JSON.stringify([{
+            id: "oi-mollie-success-1",
+            order_id: "order-mollie-success-1",
+            product_id: "prod-e2e-1",
+            variant_id: "1001",
+            product_name: "E2E Test Tee",
+            variant_name: "Black / M",
+            quantity: 1,
+            unit_price: 25,
+            total_price: 25,
+            custom_image_url: "https://placehold.co/400x400.png",
+            design_config: null,
+            fulfillment_status: null,
+            created_at: now,
+            updated_at: now,
+          }]),
+        });
+      } else {
+        await route.continue();
+      }
+    });
+  });
+
+  test("shows 'Order Confirmed' screen after a successful Mollie redirect return", async ({
+    page,
+  }) => {
+    await seedMollieReturnSession(page);
+    await page.goto("/checkout/mollie-return");
+
+    await expect(page.getByRole("heading", { name: /order confirmed/i })).toBeVisible({
+      timeout: 30_000,
+    });
+  });
+
+  test("displays the order number on the Mollie confirmation screen", async ({
+    page,
+  }) => {
+    await seedMollieReturnSession(page);
+    await page.goto("/checkout/mollie-return");
+
+    await expect(page.getByRole("heading", { name: /order confirmed/i })).toBeVisible({
+      timeout: 30_000,
+    });
+
+    await expect(page.getByText(/ORD-MOLLIE-001/i)).toBeVisible();
+  });
+
+  test("'Track Your Order' link is visible after Mollie confirmation", async ({
+    page,
+  }) => {
+    await seedMollieReturnSession(page);
+    await page.goto("/checkout/mollie-return");
+
+    await expect(page.getByRole("heading", { name: /order confirmed/i })).toBeVisible({
+      timeout: 30_000,
+    });
+
+    await expect(page.getByRole("link", { name: /track your order/i })).toBeVisible();
+  });
+
+  test("Mollie return page shows error when payment verification returns not-paid", async ({
+    page,
+  }) => {
+    // Override: payment is open (not yet paid)
+    await page.route("**/functions/v1/verify-mollie-payment", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          paymentId: "tr_test_mollie_open",
+          status: "open",
+          isPaid: false,
+        }),
+      });
+    });
+
+    await seedMollieReturnSession(page, "tr_test_mollie_open");
+    await page.goto("/checkout/mollie-return");
+
+    await expect(
+      page.getByText(/payment (not completed|failed|pending)|something went wrong/i)
+    ).toBeVisible({ timeout: 15_000 });
   });
 });

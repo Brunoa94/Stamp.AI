@@ -78,6 +78,7 @@ serve(async (req) => {
         const orderId = capture.supplementary_data?.related_ids?.order_id;
 
         if (orderId) {
+          // Update existing payment_transactions record (created by create-paypal-order)
           const result = await supabaseRest(
             `payment_transactions?paypal_order_id=eq.${orderId}`,
             "PATCH",
@@ -95,34 +96,62 @@ serve(async (req) => {
 
           if (result.error) {
             console.error("Update error:", result.error);
+          }
+
+          // If no record was updated (race condition - webhook arrived before create-paypal-order), create it
+          // This should be very rare since PayPal webhooks usually come after the order is captured
+          if (!result.data || (Array.isArray(result.data) && result.data.length === 0)) {
+            console.log("No existing record found, creating new one (race condition)");
+            // Extract metadata from capture if available
+            const customId = capture.custom_id ? JSON.parse(capture.custom_id) : {};
+            const userId = customId.user_id;
+
+            await supabaseRest("payment_transactions", "POST", {
+              user_id: userId || null,
+              payment_provider: "paypal",
+              paypal_order_id: orderId,
+              paypal_capture_id: capture.id,
+              amount: parseFloat(capture.amount.value),
+              currency: capture.amount.currency_code.toLowerCase(),
+              status: "succeeded",
+              payment_method_details: {
+                capture_id: capture.id,
+                final_capture: capture.final_capture,
+                seller_protection: capture.seller_protection,
+              },
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            });
           } else {
-            console.log("Payment transaction updated");
+            console.log("✅ Payment transaction updated:", orderId);
 
             // Update order payment_status to "paid"
-            // First get the order_id from the payment transaction metadata
+            // Get the order_id from the payment transaction (now linked via order_id column)
             const txResult = await supabaseRest(
-              `payment_transactions?paypal_order_id=eq.${orderId}&select=metadata`,
+              `payment_transactions?paypal_order_id=eq.${orderId}&select=order_id,metadata`,
               "GET"
             );
 
-            const dbOrderId = txResult.data?.[0]?.metadata?.order_id;
+            // Try order_id column first (new approach), fallback to metadata (old approach)
+            const dbOrderId = txResult.data?.[0]?.order_id || txResult.data?.[0]?.metadata?.order_id;
             if (dbOrderId) {
-              // ✅ Use atomic operation to update both payment_status and status
+              // ✅ Update payment_status to "paid"
+              // NOTE: Webhooks should ONLY update payment_status, NEVER order status
+              // Order status is managed by the fulfillment service to prevent race conditions
               const orderResult = await supabaseRest(
-                "rpc/update_order_payment_status_atomic",
-                "POST",
+                `orders?id=eq.${dbOrderId}`,
+                "PATCH",
                 {
-                  p_order_id: dbOrderId,
-                  p_payment_status: "paid",
-                  p_order_status: "confirmed",
-                  p_payment_method: "paypal",
+                  payment_status: "paid",
+                  payment_method: "paypal",
+                  updated_at: new Date().toISOString(),
                 }
               );
 
               if (orderResult.error) {
-                console.error("Failed to update order atomically:", orderResult.error);
+                console.error("Failed to update order payment_status:", orderResult.error);
               } else {
-                console.log(`✅ Order ${dbOrderId} atomically updated to paid/confirmed`);
+                console.log(`✅ Order ${dbOrderId} payment_status updated to: paid`);
               }
             }
           }
@@ -204,11 +233,12 @@ serve(async (req) => {
           } else {
             // Also update the linked order's payment_status to "failed"
             const txResult = await supabaseRest(
-              `payment_transactions?paypal_order_id=eq.${orderId}&select=metadata`,
+              `payment_transactions?paypal_order_id=eq.${orderId}&select=order_id,metadata`,
               "GET"
             );
 
-            const dbOrderId = txResult.data?.[0]?.metadata?.order_id;
+            // Try order_id column first (new approach), fallback to metadata (old approach)
+            const dbOrderId = txResult.data?.[0]?.order_id || txResult.data?.[0]?.metadata?.order_id;
             if (dbOrderId) {
               const orderResult = await supabaseRest(
                 `orders?id=eq.${dbOrderId}`,

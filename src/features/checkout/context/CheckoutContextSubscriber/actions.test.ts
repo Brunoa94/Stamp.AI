@@ -73,7 +73,6 @@ const defaultState: CheckoutSubscriberContextState = {
   message: "",
   testMode: false,
   isProcessingPayment: false,
-  triggerPayment: false,
   selectedPaymentMethod: "stripe",
   paymentSuccessDetails: null,
   paymentErrorDetails: null,
@@ -431,44 +430,6 @@ describe("useCheckoutSubscriberActions", () => {
       });
 
       expect(store.getState().shippingAddress).toEqual(mockShippingAddress);
-    });
-  });
-
-  describe("handleCompleteOrder", () => {
-    it("should not trigger payment when shipping address is missing", () => {
-      const store = createMockStore({
-        ...defaultState,
-        shippingAddress: null,
-      });
-
-      const { result } = renderHook(() => useCheckoutSubscriberActions(), {
-        wrapper: createWrapper(store),
-      });
-
-      act(() => {
-        result.current.handleCompleteOrder();
-      });
-
-      expect(store.getState().triggerPayment).toBe(false);
-      expect(store.getState().isProcessingPayment).toBe(false);
-    });
-
-    it("should trigger payment when shipping address is present", () => {
-      const store = createMockStore({
-        ...defaultState,
-        shippingAddress: mockShippingAddress,
-      });
-
-      const { result } = renderHook(() => useCheckoutSubscriberActions(), {
-        wrapper: createWrapper(store),
-      });
-
-      act(() => {
-        result.current.handleCompleteOrder();
-      });
-
-      expect(store.getState().triggerPayment).toBe(true);
-      expect(store.getState().isProcessingPayment).toBe(true);
     });
   });
 

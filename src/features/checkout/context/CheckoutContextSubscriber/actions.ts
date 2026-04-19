@@ -184,6 +184,15 @@ export function useCheckoutSubscriberActions() {
      * 2. PayPal capture status validation
      */
     handlePaymentSuccess: async (paymentIntent: PaymentIntentI, lineItems: PrintifyLineItem[]) => {
+      // ── In-flight guard ───────────────────────────────────────────────────
+      // Synchronous check+set before any await: if this handler is already
+      // running (e.g. a stale dual-layout mount fires a second call) the second
+      // invocation returns immediately without touching the pipeline.
+      if (store.getState().isProcessingPayment) {
+        console.warn("⚠️ handlePaymentSuccess: duplicate invocation ignored");
+        return;
+      }
+
       const initialState = store.getState();
 
       store.setState({
@@ -332,6 +341,15 @@ export function useCheckoutSubscriberActions() {
             });
             createdOrderId = newOrderId ?? null;
             console.log("✅ Order and order items created in database");
+
+            // ✅ Link payment transaction to order
+            if (createdOrderId) {
+              await OrderService.linkPaymentTransactionToOrder({
+                paymentProvider: state.selectedPaymentMethod,
+                paymentIntentId: paymentIntent.id,
+                orderId: createdOrderId,
+              });
+            }
           } catch (orderError) {
             console.error("❌ All order creation attempts failed. Initiating refund...");
             await triggerRefund("Order creation failed after retry attempts");
@@ -351,6 +369,20 @@ export function useCheckoutSubscriberActions() {
         const runFulfillmentPipeline = async () => {
           console.log("🚀 Creating Printify order after successful payment...");
 
+          if (!state.shippingAddress) {
+            throw new Error("Shipping address is required for order fulfillment");
+          }
+
+          // Validate that we have a valid order ID before proceeding
+          if (!createdOrderId) {
+            await triggerRefund("Order ID not available for Printify creation");
+            throw new Error(
+              "Cannot create Printify order: Order ID not available. A full refund has been initiated and will appear within 3–5 business days."
+            );
+          }
+
+          console.log(`✅ Using order ID: ${createdOrderId}`);
+
           const validatedLineItems = lineItems.map((item, index) => {
             try {
               return validatePrintifyLineItem(item, index);
@@ -366,19 +398,34 @@ export function useCheckoutSubscriberActions() {
             is_test: state.testMode,
             metadata: {
               payment_intent_id: paymentIntent.id,
-              order_id: createdOrderId ?? `order_${Date.now()}`,
+              order_id: createdOrderId, // Now guaranteed to be a valid UUID
             },
           };
 
           try {
-            await createPrintifyOrder.mutateAsync(orderPayload);
+            const printifyResult = await createPrintifyOrder.mutateAsync(orderPayload);
             console.log("✅ Printify order created successfully");
+            console.log("✅ Order status updated to 'confirmed' by create-printify-order function");
+
+            // Persist the Printify order ID back to the DB order row
+            const printifyOrderId = printifyResult?.order?.id;
+            if (printifyOrderId && createdOrderId) {
+              try {
+                await OrderService.updateOrder(createdOrderId, {
+                  printify_order_id: printifyOrderId,
+                });
+                console.log(`✅ Saved printify_order_id ${printifyOrderId} to order ${createdOrderId}`);
+              } catch (updateErr) {
+                // Non-critical — order is confirmed in Printify; log and continue
+                console.error("❌ Failed to save printify_order_id:", updateErr);
+              }
+            }
           } catch (printifyError) {
             // ✅ Printify failure → mark order as failed + trigger refund
             console.error("❌ Printify order creation failed. Initiating refund...");
 
             if (createdOrderId) {
-              await markOrderFailed(createdOrderId, "fulfillment_failed");
+              await markOrderFailed(createdOrderId, "unsuccessful_confirmation");
             }
             await triggerRefund("Printify fulfillment failed after successful payment");
 
@@ -390,18 +437,9 @@ export function useCheckoutSubscriberActions() {
             );
           }
 
-          // ─── Stage 3: Finalize order status ────────────────────────────
+          // ─── Stage 3: Mark payment recovered ────────────────────────────
+          // Note: payment_status is already "paid" from order creation, no need to update
           if (createdOrderId) {
-            await updatePaymentStatus.mutateAsync({
-              orderId: createdOrderId,
-              paymentStatus: "paid",
-            });
-            await updateOrderStatus.mutateAsync({
-              orderId: createdOrderId,
-              status: "confirmed",
-            });
-            console.log(`✅ Order ${createdOrderId} payment/status updated to paid/confirmed`);
-
             await PaymentRecoveryService.markPaymentRecovered(
               paymentIntent.id,
               state.selectedPaymentMethod,
@@ -448,7 +486,7 @@ export function useCheckoutSubscriberActions() {
         // ✅ Timeout → mark order as failed + trigger refund
         if (error instanceof CheckoutTimeoutError) {
           if (createdOrderId) {
-            await markOrderFailed(createdOrderId, "fulfillment_failed");
+            await markOrderFailed(createdOrderId, "unsuccessful_confirmation");
           }
           await triggerRefund("Checkout pipeline timed out");
         }
@@ -521,33 +559,6 @@ export function useCheckoutSubscriberActions() {
     },
 
     /**
-     * Trigger payment processing after shipping confirmation
-     */
-    handleCompleteOrder: () => {
-      const state = store.getState();
-      if (!state.shippingAddress) {
-        return;
-      }
-      store.setState({
-        ...state,
-        triggerPayment: true,
-      });
-    },
-
-    /**
-     * Reset payment trigger after submission attempt
-     * Only resets triggerPayment flag, not isProcessingPayment
-     * (isProcessingPayment is managed by handlePaymentSuccess/handlePaymentError)
-     */
-    handlePaymentSubmitComplete: () => {
-      const state = store.getState();
-      store.setState({
-        ...state,
-        triggerPayment: false,
-      });
-    },
-
-    /**
      * Reset checkout state to create another order
      */
     handleCreateAnother: () => {
@@ -558,7 +569,6 @@ export function useCheckoutSubscriberActions() {
         shippingAddress: null,
         message: "",
         isProcessingPayment: false,
-        triggerPayment: false,
         paymentSuccessDetails: null,
         paymentErrorDetails: null,
       });
@@ -574,7 +584,6 @@ export function useCheckoutSubscriberActions() {
         paymentStatus: "idle",
         message: "",
         isProcessingPayment: false,
-        triggerPayment: false,
         paymentSuccessDetails: null,
         paymentErrorDetails: null,
       });

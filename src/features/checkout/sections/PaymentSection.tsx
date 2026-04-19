@@ -13,7 +13,6 @@ import { componentThemes } from "@/theme/components";
 export function PaymentSection() {
   const shippingAddress = CheckoutSelectors.shippingAddress();
   const testMode = CheckoutSelectors.testMode();
-  const triggerPayment = CheckoutSelectors.triggerPayment();
   const orderAmount = CheckoutSelectors.orderAmount();
   const lineItems = CheckoutSelectors.lineItems();
   const selectedPaymentMethod = CheckoutSelectors.selectedPaymentMethod();
@@ -23,7 +22,6 @@ export function PaymentSection() {
     setPaymentMethod,
     handlePaymentSuccess,
     handlePaymentError,
-    handlePaymentSubmitComplete,
   } = useCheckoutSubscriberActions();
 
   // Viewport handling is now done via Tailwind responsive styles in the
@@ -61,8 +59,7 @@ export function PaymentSection() {
           onSuccess={handlePaymentSuccess}
           onError={handlePaymentError}
           hideButton={true}
-          triggerSubmit={triggerPayment}
-          onSubmitComplete={handlePaymentSubmitComplete}
+          stripeFormId="stripe-payment-form"
           initialPaymentMethod={selectedPaymentMethod}
           onPaymentMethodChange={setPaymentMethod}
         />

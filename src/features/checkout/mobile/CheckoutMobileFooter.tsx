@@ -15,7 +15,7 @@ import type { PayPalSuccessDetailsI } from "../PayPalButton/usePayPalButton";
 
 export function CheckoutMobileFooter() {
   const m = checkoutTheme.mobile;
-  const { handleCompleteOrder, handlePaymentSuccess, handlePaymentError } =
+  const { handlePaymentSuccess, handlePaymentError } =
     useCheckoutSubscriberActions();
   const selectedPaymentMethod = CheckoutSelectors.selectedPaymentMethod();
   const shippingAddress = CheckoutSelectors.shippingAddress();
@@ -44,7 +44,8 @@ export function CheckoutMobileFooter() {
     <div className={m.footer.wrapper}>
       {selectedPaymentMethod === "stripe" && (
         <Button
-          onClick={handleCompleteOrder}
+          type="submit"
+          form="stripe-payment-form"
           disabled={!shippingAddress || isProcessingPayment}
           className={`${m.footer.button} ${selectedUi.className}`}
         >

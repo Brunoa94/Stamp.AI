@@ -9,13 +9,7 @@ import { useCallback } from "react";
 import { useCheckoutSubscriberActions } from "../context";
 import type { PayPalSuccessDetailsI } from "../PayPalButton/usePayPalButton";
 
-interface CompleteOrderButtonProps {
-  onCompleteOrder: () => void;
-}
-
-export const CompleteOrderButton = ({
-  onCompleteOrder,
-}: CompleteOrderButtonProps) => {
+export const CompleteOrderButton = () => {
   const shippingAddress = CheckoutSelectors.shippingAddress();
   const isProcessingPayment = CheckoutSelectors.isProcessingPayment();
   const selectedPaymentMethod = CheckoutSelectors.selectedPaymentMethod();
@@ -49,7 +43,8 @@ export const CompleteOrderButton = ({
       <div className="flex flex-col gap-3">
         {selectedPaymentMethod === "stripe" && (
           <Button
-            onClick={onCompleteOrder}
+            type="submit"
+            form="stripe-payment-form"
             disabled={!hasShippingAddress || isProcessingPayment}
             className={clsx(
               "w-full rounded-none text-white font-heading font-extrabold uppercase tracking-widest py-4 shadow-lg",

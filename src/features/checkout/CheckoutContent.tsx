@@ -16,6 +16,7 @@ import { PaymentSection } from "./sections/PaymentSection";
 import { OrderSummarySection } from "./sections/OrderSummarySection";
 import { CheckoutMobileContent } from "./mobile";
 import { checkoutTheme } from "@/theme";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 export function CheckoutContent() {
   const isLoading = CheckoutSelectors.isLoading();
@@ -25,6 +26,11 @@ export function CheckoutContent() {
   const paymentErrorDetails = CheckoutSelectors.paymentErrorDetails();
   const isProcessingPayment = CheckoutSelectors.isProcessingPayment();
   const message = CheckoutSelectors.message();
+
+  // md breakpoint matches Tailwind's default (768px).
+  // Using JS here (not CSS) ensures only ONE layout is ever mounted,
+  // preventing duplicate PaymentForm instances from racing to call onSuccess.
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const { handleCreateAnother, handleTryAgain, setPaymentMethod } =
     useCheckoutSubscriberActions();
@@ -74,30 +80,30 @@ export function CheckoutContent() {
     <>
       <PageDividers />
 
-      {/* ── Mobile layout (below md) ── */}
-      <div className="md:hidden">
-        <CheckoutMobileContent />
-      </div>
+      {isDesktop ? (
+        /* ── Desktop layout (md and above) ── */
+        <div className={checkoutTheme.page.container}>
+          <div className={checkoutTheme.page.mainContent}>
+            <CheckoutHeaderSection />
 
-      {/* ── Desktop layout (md and above) ── */}
-      <div className={`hidden md:block ${checkoutTheme.page.container}`}>
-        <div className={checkoutTheme.page.mainContent}>
-          <CheckoutHeaderSection />
+            <div className={checkoutTheme.page.grid}>
+              {/* Left Column: Forms */}
+              <div className={checkoutTheme.page.formsColumn}>
+                <ShippingSection />
+                <PaymentSection />
+              </div>
 
-          <div className={checkoutTheme.page.grid}>
-            {/* Left Column: Forms */}
-            <div className={checkoutTheme.page.formsColumn}>
-              <ShippingSection />
-              <PaymentSection />
+              {/* Right Column: Order Summary */}
+              <aside className={checkoutTheme.page.summaryColumn}>
+                <OrderSummarySection />
+              </aside>
             </div>
-
-            {/* Right Column: Order Summary */}
-            <aside className={checkoutTheme.page.summaryColumn}>
-              <OrderSummarySection />
-            </aside>
           </div>
         </div>
-      </div>
+      ) : (
+        /* ── Mobile layout (below md) ── */
+        <CheckoutMobileContent />
+      )}
     </>
   );
 }

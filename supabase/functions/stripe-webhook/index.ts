@@ -193,12 +193,16 @@ serve(async (req) => {
           break
         }
 
-        // Save payment to database using REST API
-        const result = await supabaseRest(
-          'payment_transactions',
-          'POST',
+        // Update payment_transactions record (created by create-payment-intent)
+        // Extract user_id from metadata
+        const userId = paymentIntent.metadata?.user_id
+
+        // Try to update existing record first
+        const updateResult = await supabaseRest(
+          `payment_transactions?stripe_payment_intent_id=eq.${paymentIntent.id}`,
+          'PATCH',
           {
-            stripe_payment_intent_id: paymentIntent.id,
+            user_id: userId || null,
             stripe_customer_id: paymentIntent.customer,
             amount: paymentIntent.amount / 100,
             currency: paymentIntent.currency,
@@ -206,9 +210,38 @@ serve(async (req) => {
             payment_method_type: paymentIntent.payment_method_types?.[0],
             metadata: paymentIntent.metadata,
             updated_at: new Date().toISOString()
-          },
-          { prefer: 'resolution=merge-duplicates' }
+          }
         )
+
+        // If no record was updated (race condition - webhook arrived before create-payment-intent), create it
+        if (!updateResult.data || (Array.isArray(updateResult.data) && updateResult.data.length === 0)) {
+          console.log('No existing record found, creating new one (race condition)')
+          const insertResult = await supabaseRest(
+            'payment_transactions',
+            'POST',
+            {
+              user_id: userId || null,
+              payment_provider: 'stripe',
+              stripe_payment_intent_id: paymentIntent.id,
+              stripe_customer_id: paymentIntent.customer,
+              amount: paymentIntent.amount / 100,
+              currency: paymentIntent.currency,
+              status: 'succeeded',
+              payment_method_type: paymentIntent.payment_method_types?.[0],
+              metadata: paymentIntent.metadata,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }
+          )
+
+          if (insertResult.error) {
+            console.error('Insert error:', insertResult.error)
+          }
+        } else {
+          console.log('✅ Payment transaction updated:', paymentIntent.id)
+        }
+
+        const result = updateResult
 
         console.log('Upsert result:', result)
         if (result.error) {
@@ -216,8 +249,24 @@ serve(async (req) => {
           break
         }
 
-        // Update order payment_status to "paid" if we have an order_id
-        const dbOrderId = paymentIntent.metadata?.order_id
+        // Update order payment_status to "paid"
+        // NOTE: Webhooks should ONLY update payment_status, NEVER order status
+        // Order status is managed by the fulfillment service to prevent race conditions
+        let dbOrderId = paymentIntent.metadata?.order_id
+
+        // If orderId not in metadata, try to get it from payment_transactions.order_id column
+        // (set by client-side after order creation)
+        if (!dbOrderId) {
+          const txResult = await supabaseRest(
+            `payment_transactions?stripe_payment_intent_id=eq.${paymentIntent.id}&select=order_id`,
+            'GET'
+          )
+          dbOrderId = txResult.data?.[0]?.order_id
+          if (dbOrderId) {
+            console.log(`✅ Found order_id in payment_transactions: ${dbOrderId}`)
+          }
+        }
+
         if (dbOrderId) {
           const orderResult = await supabaseRest(
             `orders?id=eq.${dbOrderId}`,
@@ -225,8 +274,6 @@ serve(async (req) => {
             {
               payment_status: 'paid',
               payment_method: 'stripe',
-              stripe_payment_intent_id: paymentIntent.id,
-              stripe_customer_id: paymentIntent.customer,
               updated_at: new Date().toISOString(),
             }
           )
@@ -234,58 +281,13 @@ serve(async (req) => {
           if (orderResult.error) {
             console.error('Failed to update order payment_status:', orderResult.error)
           } else {
-            console.log(`Order ${dbOrderId} payment_status updated to: paid`)
+            console.log(`✅ Order ${dbOrderId} payment_status updated to: paid`)
           }
         }
 
         // Check if this is a test payment
         const isTestMode = !paymentIntent.livemode
         console.log('Payment mode - Test:', isTestMode)
-
-        // Call Printify to create order (only if payment saved successfully)
-        console.log('Calling Printify order creation')
-
-        // Parse line items and shipping from metadata
-        const lineItems = paymentIntent.metadata?.line_items
-          ? JSON.parse(paymentIntent.metadata.line_items)
-          : []
-        const shippingAddress = paymentIntent.metadata?.shipping_address
-          ? JSON.parse(paymentIntent.metadata.shipping_address)
-          : {}
-
-        // If no line items (e.g., from stripe trigger test), use sample order
-        const useSampleOrder = lineItems.length === 0
-
-        const printifyResponse = await fetch(
-          `${Deno.env.get('SUPABASE_URL')}/functions/v1/create-printify-order`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'apikey': Deno.env.get('SUPABASE_ANON_KEY') || '',
-              'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
-            },
-            body: JSON.stringify({
-              is_test: true,
-              auto_cancel: true, // Automatically cancel test orders to avoid accumulation
-              use_sample_order: useSampleOrder, // Create sample order when testing
-              line_items: lineItems,
-              shipping_address: shippingAddress,
-              metadata: {
-                order_id: paymentIntent.metadata?.order_id || `stripe-test-${Date.now()}`,
-                payment_intent_id: paymentIntent.id,
-              },
-            }),
-          }
-        )
-
-        const printifyResult = await printifyResponse.json()
-        console.log('Printify order result:', printifyResult)
-
-        if (!printifyResponse.ok) {
-          console.error('Failed to create Printify order:', printifyResult)
-        }
-
         break
       }
 
@@ -315,7 +317,20 @@ serve(async (req) => {
           console.error('Upsert error:', result.error)
         } else {
           // Update order payment_status to "failed" if we have an order_id
-          const dbOrderId = paymentIntent.metadata?.order_id
+          let dbOrderId = paymentIntent.metadata?.order_id
+
+          // If orderId not in metadata, try to get it from payment_transactions.order_id column
+          if (!dbOrderId) {
+            const txResult = await supabaseRest(
+              `payment_transactions?stripe_payment_intent_id=eq.${paymentIntent.id}&select=order_id`,
+              'GET'
+            )
+            dbOrderId = txResult.data?.[0]?.order_id
+            if (dbOrderId) {
+              console.log(`✅ Found order_id in payment_transactions: ${dbOrderId}`)
+            }
+          }
+
           if (dbOrderId) {
             const orderResult = await supabaseRest(
               `orders?id=eq.${dbOrderId}`,

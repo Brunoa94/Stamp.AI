@@ -56,8 +56,6 @@ serve(async (req) => {
 
     // ✅ CRITICAL FIX: Idempotency check
     // Prevent duplicate webhook processing
-    const eventId = `mollie_${paymentId}_${Date.now()}`;
-
     // Check if this webhook was already processed
     const isProcessed = await supabaseRest(
       "rpc/is_webhook_processed",
@@ -115,15 +113,14 @@ serve(async (req) => {
 
     console.log("Parsed metadata - order_id:", orderId, "user_id:", userId);
 
-    // Save/update payment transaction in database
-    const result = await supabaseRest(
-      "payment_transactions?on_conflict=mollie_payment_id",
-      "POST",
+    // Update payment transaction in database (created by create-mollie-payment)
+    // Try to update existing record first
+    const updateResult = await supabaseRest(
+      `payment_transactions?mollie_payment_id=eq.${payment.id}`,
+      "PATCH",
       {
-        user_id: userId,
-        order_id: orderId,
-        payment_provider: "mollie",
-        mollie_payment_id: payment.id,
+        user_id: userId || null,
+        order_id: orderId || null,
         mollie_status: payment.status,
         amount: parseFloat(payment.amount.value),
         currency: payment.amount.currency.toLowerCase(),
@@ -131,131 +128,110 @@ serve(async (req) => {
         payment_method_type: payment.method || "unknown",
         metadata: metadata,
         updated_at: new Date().toISOString(),
-      },
-      { prefer: "resolution=merge-duplicates" }
+      }
     );
 
-    if (result.error) {
-      console.error("Database error:", result.error);
+    // If no record was updated (race condition - webhook arrived before create-mollie-payment), create it
+    if (!updateResult.data || (Array.isArray(updateResult.data) && updateResult.data.length === 0)) {
+      // Insert payment_transactions record if missing, but only with valid UUID order_id
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      const safeOrderId = orderId && uuidRegex.test(orderId) ? orderId : null;
+      if (orderId && !safeOrderId) {
+        console.warn(`⚠️ Skipping payment_transactions insert: invalid order_id: ${orderId}`);
+      } else {
+        const insertResult = await supabaseRest("payment_transactions", "POST", {
+          user_id: userId || null,
+          order_id: safeOrderId,
+          payment_provider: "mollie",
+          mollie_payment_id: payment.id,
+          mollie_status: payment.status,
+          amount: parseFloat(payment.amount.value),
+          currency: payment.amount.currency.toLowerCase(),
+          status: internalStatus,
+          payment_method_type: payment.method || "unknown",
+          metadata: metadata,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+        if (insertResult.error) {
+          console.error("Database error (full result):", JSON.stringify(insertResult, null, 2));
+        } else {
+          console.log("Payment transaction created");
+        }
+      }
+      // Always update payment_status if order_id is valid
+      if (safeOrderId) {
+        const orderUpdateResult = await supabaseRest(
+          `orders?id=eq.${safeOrderId}`,
+          "PATCH",
+          {
+            payment_status: "paid",
+            payment_method: "mollie",
+            updated_at: new Date().toISOString(),
+          }
+        );
+        if (orderUpdateResult.error) {
+          console.error(`Failed to update order ${safeOrderId} payment_status:`, orderUpdateResult.error);
+        } else {
+          console.log(`✅ Order ${safeOrderId} payment_status updated to: paid`);
+        }
+      } else {
+        console.warn("⚠️ No valid order_id found, skipping payment_status update.");
+      }
     } else {
-      console.log("Payment transaction saved/updated");
+      console.log("✅ Payment transaction updated:", payment.id);
+    }
+
+    const result = updateResult;
+
+    // If orderId not in metadata, try to get it from payment_transactions.order_id column
+    // (set by client-side after order creation)
+    if (!orderId) {
+      const txResult = await supabaseRest(
+        `payment_transactions?mollie_payment_id=eq.${payment.id}&select=order_id`,
+        "GET"
+      );
+      orderId = txResult.data?.[0]?.order_id;
+      if (orderId) {
+        console.log(`✅ Found order_id in payment_transactions: ${orderId}`);
+      }
     }
 
     // If payment is successful, update order and create Printify order
     if (isPaid) {
       console.log("Payment is paid, processing order...");
 
-      // Update order payment_status and status if we have an order_id
+      // Update order payment_status if we have an order_id
       if (orderId) {
-        // ✅ Use atomic operation to update both payment_status and status
+        // ✅ Update payment_status to "paid"
+        // NOTE: Webhooks should ONLY update payment_status, NEVER order status
+        // Order status is managed by the fulfillment service to prevent race conditions
         const orderUpdateResult = await supabaseRest(
-          "rpc/update_order_payment_status_atomic",
-          "POST",
+          `orders?id=eq.${orderId}`,
+          "PATCH",
           {
-            p_order_id: orderId,
-            p_payment_status: "paid",
-            p_order_status: "confirmed",
-            p_payment_method: "mollie",
+            payment_status: "paid",
+            payment_method: "mollie",
+            updated_at: new Date().toISOString(),
           }
         );
 
         if (orderUpdateResult.error) {
-          console.error(`Failed to update order ${orderId} atomically:`, orderUpdateResult.error);
+          console.error(`Failed to update order ${orderId} payment_status:`, orderUpdateResult.error);
         } else {
-          console.log(`✅ Order ${orderId} atomically updated to paid/confirmed`);
+          console.log(`✅ Order ${orderId} payment_status updated to: paid`);
         }
       }
 
-      // Create Printify order if we have line items
-      if (lineItems.length > 0 && shippingAddress) {
-        console.log("Creating Printify order...");
-        const printifyResponse = await fetch(
-          `${Deno.env.get("SUPABASE_URL")}/functions/v1/create-printify-order`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              apikey: Deno.env.get("SUPABASE_ANON_KEY") || "",
-              Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
-            },
-            body: JSON.stringify({
-              // ✅ REMOVED: Don't send is_test - let edge function determine from environment
-              // is_test will be enforced server-side based on DENO_ENV/NODE_ENV
-              auto_cancel: true,
-              line_items: lineItems,
-              shipping_address: shippingAddress,
-              metadata: {
-                order_id: metadata.order_id || `mollie-${Date.now()}`,
-                mollie_payment_id: payment.id,
-              },
-            }),
-          }
-        );
-
-        if (printifyResponse.ok) {
-          const printifyResult = await printifyResponse.json();
-          console.log("Printify order created:", printifyResult);
-        } else {
-          const errorText = await printifyResponse.text();
-          console.error("Printify order creation failed:", errorText);
-
-          // ✅ CRITICAL FIX: Check if order exists, if not, trigger refund
-          if (!orderId) {
-            console.error("❌ No order_id - customer charged with no order. Initiating refund...");
-
-            try {
-              // Call process-refund edge function
-              const refundResponse = await fetch(
-                `${Deno.env.get("SUPABASE_URL")}/functions/v1/process-refund`,
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
-                  },
-                  body: JSON.stringify({
-                    order_id: `temp_mollie_${payment.id}`,
-                    payment_provider: "mollie",
-                    amount: parseFloat(payment.amount.value),
-                    reason: "Printify order creation failed for Mollie payment",
-                    mollie_payment_id: payment.id,
-                  }),
-                }
-              );
-
-              if (!refundResponse.ok) {
-                const refundError = await refundResponse.text();
-                console.error("❌ Refund initiation failed:", refundError);
-                // refund_failures alert will be created by process-refund function
-              } else {
-                console.log("✅ Refund initiated for failed Mollie Printify order");
-              }
-            } catch (refundError) {
-              console.error("❌ Exception during refund initiation:", refundError);
-            }
-          } else {
-            // Order exists in DB, create reconciliation alert
-            console.log("⚠️ Creating reconciliation alert - order exists but Printify failed");
-            try {
-              await supabaseRest("order_status_reconciliation", "POST", {
-                order_id: orderId,
-                expected_status: "confirmed",
-                actual_status: "pending",
-                error_message: errorText.substring(0, 500),
-                reconciliation_status: "pending",
-              });
-              console.log("✅ Reconciliation alert created");
-            } catch (reconcileError) {
-              console.error("Failed to create reconciliation alert:", reconcileError);
-            }
-          }
-        }
-      }
+      // ⚠️ NOTE: For Mollie (redirect-based flow), Printify order creation is handled client-side
+      // in mollie-return page. The webhook only updates payment status.
+      // This prevents duplicate order creation since both webhook and client would try to create it.
+      console.log("✅ Mollie webhook completed. Client-side will handle Printify order creation.");
     } else if (payment.status === "failed" || payment.status === "canceled" || payment.status === "expired") {
-      // Update order status if payment failed
+      // Update payment_status if payment failed
+      // NOTE: Webhooks should ONLY update payment_status, NEVER order status
       if (orderId) {
         const orderUpdateResult = await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
-          status: "cancelled",
           payment_status: internalStatus,
           updated_at: new Date().toISOString(),
         });
@@ -263,7 +239,7 @@ serve(async (req) => {
         if (orderUpdateResult.error) {
           console.error(`Failed to update order ${orderId}:`, orderUpdateResult.error);
         } else {
-          console.log(`Order ${orderId} updated: status=cancelled, payment_status=${internalStatus}`);
+          console.log(`Order ${orderId} payment_status updated to: ${internalStatus}`);
         }
       }
     }

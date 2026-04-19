@@ -45,7 +45,7 @@ class MolliePipelineTimeoutError extends Error {
   constructor(timeoutMs: number) {
     super(
       `Order processing timed out after ${Math.round(timeoutMs / 1000)} seconds. ` +
-      `A full refund has been initiated and will appear within 3–5 business days.`
+        `A full refund has been initiated and will appear within 3–5 business days.`,
     );
     this.name = "MolliePipelineTimeoutError";
   }
@@ -55,10 +55,15 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   let timeoutId: ReturnType<typeof setTimeout>;
 
   const timeout = new Promise<never>((_, reject) => {
-    timeoutId = setTimeout(() => reject(new MolliePipelineTimeoutError(ms)), ms);
+    timeoutId = setTimeout(
+      () => reject(new MolliePipelineTimeoutError(ms)),
+      ms,
+    );
   });
 
-  return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
+  return Promise.race([promise, timeout]).finally(() =>
+    clearTimeout(timeoutId),
+  );
 }
 
 export default function MollieReturnPage() {
@@ -76,12 +81,23 @@ export default function MollieReturnPage() {
   const updateOrderStatus = useUpdateOrderStatus();
   const updatePaymentStatus = useUpdatePaymentStatus();
   const clearCart = useClearCart();
-  const { data: user } = useUser();
+  const { data: user, isLoading: isUserLoading } = useUser();
 
   useEffect(() => {
+    // Wait for user data to load before verifying payment
+    if (isUserLoading) {
+      console.log("⏳ Waiting for user data to load...");
+      return;
+    }
+
     // Prevent multiple verification attempts
     if (hasVerified.current) return;
     hasVerified.current = true;
+
+    console.log(
+      "👤 User loaded:",
+      user ? "authenticated" : "not authenticated",
+    );
 
     const verifyPayment = async () => {
       try {
@@ -99,6 +115,32 @@ export default function MollieReturnPage() {
           setErrorMessage("No payment information found. Please try again.");
           return;
         }
+
+        // Check if user is authenticated
+        if (!user) {
+          console.error("❌ User not authenticated during payment return");
+          setStatus("error");
+          setErrorMessage(
+            "You must be logged in to complete your order. Please log in and contact support with payment ID: " +
+              storedPaymentId,
+          );
+          return;
+        }
+
+        console.log("✅ User authenticated:", user.email);
+
+        // Check if cart ID is present
+        if (!storedCartId) {
+          console.error("❌ Cart ID not found in session storage");
+          setStatus("error");
+          setErrorMessage(
+            "Cart information not found. Please contact support with payment ID: " +
+              storedPaymentId,
+          );
+          return;
+        }
+
+        console.log("✅ Cart ID found:", storedCartId);
 
         // Idempotency guard (cross-mount and page refresh safe)
         const finalizationLockKey = `mollie_finalizing_${storedPaymentId}`;
@@ -174,30 +216,49 @@ export default function MollieReturnPage() {
                 });
                 console.log("✅ Refund initiated successfully");
               } else {
-                console.warn("⚠️ Cannot initiate refund — order amount unknown");
+                console.warn(
+                  "⚠️ Cannot initiate refund — order amount unknown",
+                );
               }
             } catch (refundError) {
               console.error("❌ Refund initiation failed:", refundError);
             }
           };
 
-          const markOrderFailed = async (orderId: string, failureStatus: string) => {
+          const markOrderFailed = async (
+            orderId: string,
+            failureStatus: string,
+          ) => {
             try {
-              await updateOrderStatus.mutateAsync({ orderId, status: failureStatus });
-              await updatePaymentStatus.mutateAsync({ orderId, paymentStatus: "refund_pending" });
-              console.log(`✅ Order ${orderId} marked as ${failureStatus} / refund_pending`);
+              await updateOrderStatus.mutateAsync({
+                orderId,
+                status: failureStatus,
+              });
+              await updatePaymentStatus.mutateAsync({
+                orderId,
+                paymentStatus: "refund_pending",
+              });
+              console.log(
+                `✅ Order ${orderId} marked as ${failureStatus} / refund_pending`,
+              );
             } catch (updateError) {
-              console.error(`❌ Failed to mark order ${orderId} as ${failureStatus}:`, updateError);
+              console.error(
+                `❌ Failed to mark order ${orderId} as ${failureStatus}:`,
+                updateError,
+              );
             }
           };
 
           // ── Idempotency check (same as handlePaymentSuccess) ──
 
           const idempotencyKey = `mollie_${storedPaymentId}`;
-          const existingOrder = await OrderService.getOrderByIdempotencyKey(idempotencyKey);
+          const existingOrder =
+            await OrderService.getOrderByIdempotencyKey(idempotencyKey);
 
           if (existingOrder) {
-            console.log(`✅ Order already exists for Mollie payment ${storedPaymentId}, skipping duplicate creation`);
+            console.log(
+              `✅ Order already exists for Mollie payment ${storedPaymentId}, skipping duplicate creation`,
+            );
             sessionStorage.setItem(finalizationDoneKey, "true");
             sessionStorage.removeItem(finalizationLockKey);
             setStatus("success");
@@ -222,7 +283,10 @@ export default function MollieReturnPage() {
               });
               console.log("✅ Payment recorded for crash recovery");
             } catch (recoveryError) {
-              console.error("❌ Payment recovery recording failed:", recoveryError);
+              console.error(
+                "❌ Payment recovery recording failed:",
+                recoveryError,
+              );
               // Non-blocking
             }
           }
@@ -233,74 +297,143 @@ export default function MollieReturnPage() {
 
           const runFulfillmentPipeline = async () => {
             // ── Stage 1: Create DB order ──
-            if (storedCartId && user) {
-              try {
-                const cart = await CartService.getCart(storedCartId);
-                console.log("📝 Creating order from cart...");
-                createdOrderId = await createOrderFromCart.mutateAsync({
+            console.log("🔍 Checking prerequisites for order creation...");
+            console.log(
+              "  - Cart ID:",
+              storedCartId ? "✓ Present" : "✗ Missing",
+            );
+            console.log(
+              "  - User:",
+              user ? `✓ Authenticated (${user.email})` : "✗ Not authenticated",
+            );
+
+            if (!storedCartId) {
+              await triggerRefund("Missing cart ID in session storage");
+              throw new Error(
+                "Cannot create order: cart information not found. A full refund has been initiated and will appear within 3–5 business days.",
+              );
+            }
+
+            if (!user) {
+              await triggerRefund("User not authenticated");
+              throw new Error(
+                "Cannot create order: you must be logged in to complete checkout. A full refund has been initiated and will appear within 3–5 business days.",
+              );
+            }
+
+            try {
+              const cart = await CartService.getCart(storedCartId);
+              console.log("📝 Creating order from cart...");
+              createdOrderId =
+                (await createOrderFromCart.mutateAsync({
                   user: user as UserI,
                   cart,
                   paymentStatus: "paid",
                   shippingAddress: parsedShippingAddress,
                   idempotencyKey,
-                }) ?? null;
-                console.log("✅ Order and order items created in database");
-              } catch (orderError) {
-                console.error("❌ All order creation attempts failed. Initiating refund...");
-                await triggerRefund("Order creation failed after retry attempts");
-                const reason =
-                  orderError instanceof Error
-                    ? orderError.message
-                    : "Order creation failed after retry attempts.";
-                throw new Error(
-                  `${reason} A full refund has been initiated and will appear within 3–5 business days.`
-                );
+                })) ?? null;
+              console.log("✅ Order and order items created in database");
+
+              // ✅ Link payment transaction to order
+              if (createdOrderId) {
+                await OrderService.linkPaymentTransactionToOrder({
+                  paymentProvider: "mollie",
+                  paymentIntentId: storedPaymentId,
+                  orderId: createdOrderId,
+                });
               }
+            } catch (orderError) {
+              console.error(
+                "❌ All order creation attempts failed. Initiating refund...",
+              );
+              await triggerRefund("Order creation failed after retry attempts");
+              const reason =
+                orderError instanceof Error
+                  ? orderError.message
+                  : "Order creation failed after retry attempts.";
+              throw new Error(
+                `${reason} A full refund has been initiated and will appear within 3–5 business days.`,
+              );
             }
 
+            // Validate that we have a valid order ID before proceeding
+            if (!createdOrderId) {
+              await triggerRefund("Order ID not returned from order creation");
+              throw new Error(
+                "Order creation failed to return order ID. A full refund has been initiated and will appear within 3–5 business days.",
+              );
+            }
+
+            console.log(`✅ Order created with ID: ${createdOrderId}`);
+
             // ── Stage 2: Create Printify order (uses React Query mutation with retry: 3) ──
-            console.log("🚀 Creating Printify order after successful payment...");
+            console.log(
+              "🚀 Creating Printify order after successful payment...",
+            );
 
             const printifyPayload: CreatePrintifyOrderRequest = {
               line_items: validatedLineItems,
-              shipping_address: mapShippingAddressToPrintifyAddress(parsedShippingAddress),
+              shipping_address: mapShippingAddressToPrintifyAddress(
+                parsedShippingAddress,
+              ),
               is_test: false,
               metadata: {
                 payment_intent_id: storedPaymentId,
-                order_id: createdOrderId ?? `order_${Date.now()}`,
+                order_id: createdOrderId, // Now guaranteed to be a valid UUID
                 provider: "mollie",
               },
             };
 
             try {
-              await createPrintifyOrder.mutateAsync(printifyPayload);
+              const printifyResult =
+                await createPrintifyOrder.mutateAsync(printifyPayload);
               console.log("✅ Printify order created successfully");
-            } catch (printifyError) {
-              console.error("❌ Printify order creation failed. Initiating refund...");
-              if (createdOrderId) {
-                await markOrderFailed(createdOrderId, "fulfillment_failed");
+              console.log(
+                "✅ Order status updated to 'confirmed' by create-printify-order function",
+              );
+
+              // Persist the Printify order ID back to the DB order row
+              const printifyOrderId = printifyResult?.order?.id;
+              if (printifyOrderId && createdOrderId) {
+                try {
+                  await OrderService.updateOrder(createdOrderId, {
+                    printify_order_id: printifyOrderId,
+                  });
+                  console.log(
+                    `✅ Saved printify_order_id ${printifyOrderId} to order ${createdOrderId}`,
+                  );
+                } catch (updateErr) {
+                  console.error(
+                    "❌ Failed to save printify_order_id:",
+                    updateErr,
+                  );
+                }
               }
-              await triggerRefund("Printify fulfillment failed after successful payment");
-              const reason = printifyError instanceof Error
-                ? printifyError.message
-                : "Order fulfillment failed.";
+            } catch (printifyError) {
+              console.error(
+                "❌ Printify order creation failed. Initiating refund...",
+              );
+              if (createdOrderId) {
+                await markOrderFailed(
+                  createdOrderId,
+                  "unsuccessful_confirmation",
+                );
+              }
+              await triggerRefund(
+                "Printify fulfillment failed after successful payment",
+              );
+              const reason =
+                printifyError instanceof Error
+                  ? printifyError.message
+                  : "Order fulfillment failed.";
               throw new Error(
-                `${reason} A full refund has been initiated and will appear within 3–5 business days.`
+                `${reason} A full refund has been initiated and will appear within 3–5 business days.`,
               );
             }
 
-            // ── Stage 3: Finalize order status ──
+            // ── Stage 3: Mark payment recovered ──
+            // Note: payment_status is already "paid" from order creation, no need to update
             if (createdOrderId) {
-              await updatePaymentStatus.mutateAsync({
-                orderId: createdOrderId,
-                paymentStatus: "paid",
-              });
-              await updateOrderStatus.mutateAsync({
-                orderId: createdOrderId,
-                status: "confirmed",
-              });
-              console.log(`✅ Order ${createdOrderId} payment/status updated to paid/confirmed`);
-
               await PaymentRecoveryService.markPaymentRecovered(
                 storedPaymentId,
                 "mollie",
@@ -315,14 +448,20 @@ export default function MollieReturnPage() {
                 await clearCart.mutateAsync();
                 console.log("✅ Cart cleared successfully");
               } catch (cartError) {
-                console.error("Failed to clear cart after Mollie payment:", cartError);
+                console.error(
+                  "Failed to clear cart after Mollie payment:",
+                  cartError,
+                );
               }
             }
           };
 
           // Timeout protection — matches handlePaymentSuccess
           try {
-            await withTimeout(runFulfillmentPipeline(), MOLLIE_PIPELINE_TIMEOUT_MS);
+            await withTimeout(
+              runFulfillmentPipeline(),
+              MOLLIE_PIPELINE_TIMEOUT_MS,
+            );
           } catch (pipelineError) {
             if (pipelineError instanceof MolliePipelineTimeoutError) {
               if (createdOrderId) {
@@ -371,7 +510,7 @@ export default function MollieReturnPage() {
     };
 
     verifyPayment();
-  }, []);
+  }, [isUserLoading, user]); // Re-run when user loading state changes
 
   const storedCartId =
     typeof window !== "undefined"
