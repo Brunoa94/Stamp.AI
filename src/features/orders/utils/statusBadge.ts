@@ -11,6 +11,10 @@ export function getStatusBadgeClass(status: string | null): string {
     case "pending":
     case "awaiting":
       return `${base} ${ordersTheme.table.statusPending}`;
+    case "waitingconfirmation":
+      return `${base} ${ordersTheme.table.statusPending}`;
+    case "confirmed":
+      return `${base} ${ordersTheme.table.statusProcessing}`;
     case "processing":
     case "inproduction":
       return `${base} ${ordersTheme.table.statusProcessing}`;
@@ -29,6 +33,7 @@ export function getStatusBadgeClass(status: string | null): string {
     case "refunded":
       return `${base} ${ordersTheme.table.statusRefunded}`;
     case "failed":
+    case "unsuccessfulconfirmation":
       return `${base} ${ordersTheme.table.statusFailed}`;
     case "onhold":
     case "hold":

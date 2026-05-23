@@ -638,8 +638,8 @@ describe("PrintifyService Edge Cases", () => {
      */
     it("should prevent test orders in production environment", async () => {
       // Mock production environment
-      const originalEnv = process.env.NEXT_PUBLIC_ENVIRONMENT;
-      process.env.NEXT_PUBLIC_ENVIRONMENT = "production";
+      const originalEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = "production";
 
       mockSupabase.auth.getSession.mockResolvedValueOnce({
         data: { session: { access_token: "token" } },
@@ -674,7 +674,7 @@ describe("PrintifyService Edge Cases", () => {
       ).rejects.toThrow(/test.*production/i);
 
       // Restore environment
-      process.env.NEXT_PUBLIC_ENVIRONMENT = originalEnv;
+      process.env.NODE_ENV = originalEnv;
     });
   });
 

@@ -11,10 +11,13 @@ const corsHeaders = {
 }
 
 // Blueprint IDs that support front/back printing
-const FRONT_BACK_BLUEPRINT_IDS = [5, 6, 9, 12, 36, 41]
+const FRONT_BACK_BLUEPRINT_IDS = [49, 145, 157, 553]
 
-// Prioritized providers to test (most common/reliable ones)
-const PRIORITY_PROVIDER_IDS = [99, 30, 27, 29, 6, 39, 41]
+// Preferred provider (will fallback to cheapest if not available)
+const PREFERRED_PROVIDER_ID = 402
+
+// Country code for shipping calculations
+const COUNTRY_CODE = 'NL'
 
 // Estimated base costs (in cents) - updated periodically from actual products
 // These are approximate costs for basic tees, will vary by variant
@@ -47,19 +50,94 @@ interface BlueprintProviderCombination {
   images: string[]
 }
 
-async function testBlueprintProvider(
-  blueprintId: number,
-  providerId: number
-): Promise<BlueprintProviderCombination | null> {
+async function getAvailableProviders(blueprintId: number): Promise<any[]> {
   try {
-    // 1. Get blueprint info
-    const blueprintResponse = await fetch(
-      `https://api.printify.com/v1/catalog/blueprints/${blueprintId}.json`,
+    const response = await fetch(
+      `https://api.printify.com/v1/catalog/blueprints/${blueprintId}/print_providers.json`,
       { headers: { 'Authorization': `Bearer ${PRINTIFY_API_TOKEN}` } }
     )
 
-    if (!blueprintResponse.ok) return null
-    const blueprintData = await blueprintResponse.json()
+    if (!response.ok) return []
+    return await response.json()
+  } catch (error) {
+    console.error(`Error fetching providers for blueprint ${blueprintId}:`, error)
+    return []
+  }
+}
+
+async function getShippingCost(
+  blueprintId: number,
+  providerId: number,
+  countryCode: string
+): Promise<number> {
+  try {
+    const response = await fetch(
+      `https://api.printify.com/v1/catalog/blueprints/${blueprintId}/print_providers/${providerId}/shipping.json`,
+      { headers: { 'Authorization': `Bearer ${PRINTIFY_API_TOKEN}` } }
+    )
+
+    if (!response.ok) return 600 // Default fallback
+
+    const data = await response.json()
+    if (data.profiles && data.profiles.length > 0) {
+      const profile = data.profiles[0]
+      if (profile.countries) {
+        const shipping = profile.countries.find((c: any) => c.code === countryCode)
+        if (shipping) {
+          return shipping.first_item?.cost || 0
+        }
+      }
+    }
+    return 600 // Default fallback
+  } catch (e) {
+    return 600 // Default fallback
+  }
+}
+
+async function findCheapestProvider(
+  blueprintId: number,
+  providers: any[]
+): Promise<number | null> {
+  console.log(`  Finding cheapest provider for blueprint ${blueprintId}...`)
+
+  const providerCosts: { id: number; name: string; cost: number }[] = []
+
+  for (const provider of providers) {
+    const shippingCost = await getShippingCost(blueprintId, provider.id, COUNTRY_CODE)
+    providerCosts.push({
+      id: provider.id,
+      name: provider.title,
+      cost: shippingCost,
+    })
+    await new Promise(resolve => setTimeout(resolve, 100)) // Rate limiting
+  }
+
+  if (providerCosts.length === 0) return null
+
+  // Sort by shipping cost and pick the cheapest
+  providerCosts.sort((a, b) => a.cost - b.cost)
+  console.log(`  Cheapest provider: ${providerCosts[0].name} (ID: ${providerCosts[0].id}) - $${(providerCosts[0].cost / 100).toFixed(2)} shipping`)
+
+  return providerCosts[0].id
+}
+
+async function testBlueprintProvider(
+  blueprintId: number,
+  providerId: number,
+  blueprintData?: any
+): Promise<BlueprintProviderCombination | null> {
+  try {
+    // 1. Get blueprint info (if not already provided)
+    let blueprint = blueprintData
+    if (!blueprint) {
+      const blueprintResponse = await fetch(
+        `https://api.printify.com/v1/catalog/blueprints/${blueprintId}.json`,
+        { headers: { 'Authorization': `Bearer ${PRINTIFY_API_TOKEN}` } }
+      )
+
+      if (!blueprintResponse.ok) return null
+      blueprint = await blueprintResponse.json()
+    }
 
     // 2. Get variants for this provider
     const variantsResponse = await fetch(
@@ -74,13 +152,8 @@ async function testBlueprintProvider(
       return null
     }
 
-    // 3. Get provider name
-    const providersResponse = await fetch(
-      `https://api.printify.com/v1/catalog/blueprints/${blueprintId}/print_providers.json`,
-      { headers: { 'Authorization': `Bearer ${PRINTIFY_API_TOKEN}` } }
-    )
-
-    const providers = providersResponse.ok ? await providersResponse.json() : []
+    // 3. Get provider info
+    const providers = await getAvailableProviders(blueprintId)
     const providerInfo = providers.find((p: any) => p.id === providerId)
 
     // 4. Check for front/back print areas
@@ -99,51 +172,30 @@ async function testBlueprintProvider(
     const hasBack = printAreas.some((p: any) => p.position === 'back')
     if (!hasFront || !hasBack) return null
 
-    // 5. Get estimated cost
-    const costKey = `${blueprintId}-${providerId}`
-    let estimatedCost = ESTIMATED_COSTS[costKey] || 950 // Default fallback
+    // 5. Get estimated cost (use first variant price)
+    let estimatedCost = 950 // Default fallback
+    if (firstVariant.price && typeof firstVariant.price === 'number') {
+      estimatedCost = firstVariant.price
+    } else {
+      const costKey = `${blueprintId}-${providerId}`
+      estimatedCost = ESTIMATED_COSTS[costKey] || 950
+    }
 
     // 6. Get shipping cost to Netherlands
-    let shippingCost = 0
-    try {
-      const shippingResponse = await fetch(
-        `https://api.printify.com/v1/catalog/blueprints/${blueprintId}/print_providers/${providerId}/shipping.json`,
-        { headers: { 'Authorization': `Bearer ${PRINTIFY_API_TOKEN}` } }
-      )
-
-      if (shippingResponse.ok) {
-        const shippingData = await shippingResponse.json()
-
-        // Find Netherlands shipping cost
-        if (shippingData.profiles && shippingData.profiles.length > 0) {
-          const profile = shippingData.profiles[0]
-
-          if (profile.countries) {
-            const nlShipping = profile.countries.find((c: any) => c.code === 'NL')
-            if (nlShipping) {
-              shippingCost = nlShipping.first_item?.cost || 0
-            }
-          }
-        }
-      }
-    } catch (e) {
-      console.log(`Shipping info not available for blueprint ${blueprintId}, provider ${providerId}`)
-      // Default shipping estimate for NL
-      shippingCost = 600 // $6.00 fallback
-    }
+    const shippingCost = await getShippingCost(blueprintId, providerId, COUNTRY_CODE)
 
     return {
       blueprintId,
       providerId,
-      title: blueprintData.title,
-      brand: blueprintData.brand,
-      model: blueprintData.model,
+      title: blueprint.title,
+      brand: blueprint.brand,
+      model: blueprint.model,
       providerName: providerInfo?.title || `Provider ${providerId}`,
       estimatedCost,
       shippingCost,
       totalCost: estimatedCost + shippingCost,
       printAreas,
-      images: blueprintData.images || [],
+      images: blueprint.images || [],
     }
 
   } catch (error) {
@@ -166,40 +218,99 @@ serve(async (req) => {
 
     const allCombinations: BlueprintProviderCombination[] = []
 
-    // Test all blueprint/provider combinations
+    // Test each blueprint and find the best provider
     for (const blueprintId of FRONT_BACK_BLUEPRINT_IDS) {
       console.log(`\nTesting blueprint ${blueprintId}...`)
 
-      for (const providerId of PRIORITY_PROVIDER_IDS) {
-        const result = await testBlueprintProvider(blueprintId, providerId)
+      try {
+        // 1. Fetch blueprint data
+        const blueprintResponse = await fetch(
+          `https://api.printify.com/v1/catalog/blueprints/${blueprintId}.json`,
+          { headers: { 'Authorization': `Bearer ${PRINTIFY_API_TOKEN}` } }
+        )
+
+        if (!blueprintResponse.ok) {
+          console.log(`  ✗ Blueprint ${blueprintId} not found`)
+          continue
+        }
+
+        const blueprintData = await blueprintResponse.json()
+        console.log(`  Blueprint: ${blueprintData.title}`)
+
+        // 2. Get available providers
+        const providers = await getAvailableProviders(blueprintId)
+        if (providers.length === 0) {
+          console.log(`  ✗ No providers available for blueprint ${blueprintId}`)
+          continue
+        }
+
+        console.log(`  Available providers: ${providers.map((p: any) => `${p.title} (${p.id})`).join(', ')}`)
+
+        // 3. Check if preferred provider is available
+        const preferredProvider = providers.find((p: any) => p.id === PREFERRED_PROVIDER_ID)
+        let selectedProviderId: number
+
+        if (preferredProvider) {
+          console.log(`  ✓ Preferred provider ${PREFERRED_PROVIDER_ID} (${preferredProvider.title}) is available`)
+          selectedProviderId = PREFERRED_PROVIDER_ID
+        } else {
+          console.log(`  ✗ Preferred provider ${PREFERRED_PROVIDER_ID} not available`)
+          const cheapestProviderId = await findCheapestProvider(blueprintId, providers)
+          if (!cheapestProviderId) {
+            console.log(`  ✗ Could not find a suitable provider`)
+            continue
+          }
+          selectedProviderId = cheapestProviderId
+        }
+
+        // 4. Test the selected provider
+        const result = await testBlueprintProvider(blueprintId, selectedProviderId, blueprintData)
 
         if (result) {
           allCombinations.push(result)
-          console.log(`  ✓ Provider ${providerId} (${result.providerName}): $${(result.totalCost / 100).toFixed(2)} (product: $${(result.estimatedCost / 100).toFixed(2)} + shipping: $${(result.shippingCost / 100).toFixed(2)})`)
+          console.log(`  ✓ Success! ${result.providerName}: $${(result.totalCost / 100).toFixed(2)} (product: $${(result.estimatedCost / 100).toFixed(2)} + shipping: $${(result.shippingCost / 100).toFixed(2)})`)
+        } else {
+          console.log(`  ✗ Blueprint ${blueprintId} with provider ${selectedProviderId} failed validation (missing front/back print areas)`)
         }
 
         // Rate limiting - be nice to the API
-        await new Promise(resolve => setTimeout(resolve, 200))
+        await new Promise(resolve => setTimeout(resolve, 300))
+      } catch (error) {
+        console.error(`  ✗ Error processing blueprint ${blueprintId}:`, error)
       }
     }
 
     console.log(`\nFound ${allCombinations.length} valid blueprint/provider combinations`)
 
-    // Sort by total cost and get top 4
-    const cheapest4 = allCombinations
+    if (allCombinations.length === 0) {
+      console.error('❌ No valid blueprints found!')
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'No valid blueprints with front/back printing found',
+          blueprints: [],
+          country: COUNTRY_CODE,
+          total_tested: 0,
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
+      )
+    }
+
+    // Sort by total cost and get up to 4
+    const cheapest = allCombinations
       .filter(c => c.totalCost > 0)
       .sort((a, b) => a.totalCost - b.totalCost)
       .slice(0, 4)
 
-    console.log('\n🏆 Top 4 Cheapest Options for Netherlands:')
-    cheapest4.forEach((c, idx) => {
+    console.log(`\n🏆 Top ${cheapest.length} Cheapest Options for Netherlands:`)
+    cheapest.forEach((c, idx) => {
       console.log(
         `${idx + 1}. ${c.title} via ${c.providerName}: $${(c.totalCost / 100).toFixed(2)}`
       )
     })
 
     // Transform to the expected format
-    const blueprints = cheapest4.map(c => ({
+    const blueprints = cheapest.map(c => ({
       id: c.blueprintId,
       title: c.title,
       description: `${c.brand} ${c.model}`,
@@ -232,7 +343,7 @@ serve(async (req) => {
       // Insert new cache entries with 24-hour expiration
       const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
 
-      const cacheEntries = cheapest4.map((c, index) => ({
+      const cacheEntries = cheapest.map((c, index) => ({
         country_code: countryCode,
         blueprint_id: c.blueprintId,
         print_provider_id: c.providerId,

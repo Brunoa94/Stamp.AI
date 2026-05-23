@@ -34,6 +34,7 @@ import {
 } from "@/queries/orderQueries";
 import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
 import { useClearCart } from "@/queries/cartQueries";
+import { useVerifyMolliePayment } from "@/queries/mollieQueries";
 import { useUser } from "@/hooks/useAuth";
 
 type PageStatus = "loading" | "success" | "failed" | "pending" | "error";
@@ -73,6 +74,7 @@ export default function MollieReturnPage() {
   const [paymentStatus, setPaymentStatus] =
     useState<MolliePaymentStatus | null>(null);
   const [paymentId, setPaymentId] = useState<string | null>(null);
+  const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const hasVerified = useRef(false);
 
   // React Query mutations — same hooks used by handlePaymentSuccess in actions.ts
@@ -81,6 +83,7 @@ export default function MollieReturnPage() {
   const updateOrderStatus = useUpdateOrderStatus();
   const updatePaymentStatus = useUpdatePaymentStatus();
   const clearCart = useClearCart();
+  const verifyMolliePayment = useVerifyMolliePayment();
   const { data: user, isLoading: isUserLoading } = useUser();
 
   useEffect(() => {
@@ -166,40 +169,72 @@ export default function MollieReturnPage() {
 
         setPaymentId(storedPaymentId);
 
+        // ── CRITICAL: Record payment for recovery BEFORE verification ──
+        // This ensures payment is captured even if verification fails
+        if (!storedLineItems || !storedShippingAddress) {
+          throw new Error(
+            "Missing checkout context to finalize order after payment.",
+          );
+        }
+
+        const parsedLineItems = JSON.parse(
+          storedLineItems,
+        ) as PrintifyLineItem[];
+        const parsedShippingAddress = JSON.parse(
+          storedShippingAddress,
+        ) as ShippingAddressT;
+
+        if (!Array.isArray(parsedLineItems) || parsedLineItems.length === 0) {
+          throw new Error(
+            "No order items found to finalize Mollie checkout.",
+          );
+        }
+
+        const validatedLineItems = parsedLineItems.map((item, index) =>
+          validatePrintifyLineItem(item, index),
+        );
+
+        const orderAmount = storedOrderAmount
+          ? parseFloat(storedOrderAmount)
+          : 0;
+
+        const idempotencyKey = `mollie_${storedPaymentId}`;
+
+        // Record payment for recovery BEFORE verification
+        // If verification fails, this allows payment to be recovered later
+        if (storedCartId && user) {
+          try {
+            const cart = await CartService.getCart(storedCartId);
+            await PaymentRecoveryService.recordPaymentForRecovery({
+              paymentProvider: "mollie",
+              paymentIntentId: storedPaymentId,
+              paymentStatus: "pending", // Will be updated by webhook
+              amount: orderAmount,
+              currency: "USD",
+              cartSnapshot: cart,
+              shippingAddress: parsedShippingAddress,
+              lineItems: validatedLineItems,
+              metadata: { idempotency_key: idempotencyKey },
+            });
+            console.log("✅ Payment recorded for crash recovery (pre-verification)");
+          } catch (recoveryError) {
+            console.error(
+              "❌ Payment recovery recording failed:",
+              recoveryError,
+            );
+            // Non-blocking - continue with verification
+          }
+        }
+
         // Verify payment status with edge function
-        const result = await MollieService.verifyPayment({
+        // React Query will automatically retry 3 times with exponential backoff
+        const result = await verifyMolliePayment.mutateAsync({
           paymentId: storedPaymentId,
         });
 
         setPaymentStatus(result.status);
 
         if (isMolliePaymentPaid(result.status)) {
-          if (!storedLineItems || !storedShippingAddress) {
-            throw new Error(
-              "Missing checkout context to finalize order after payment.",
-            );
-          }
-
-          const parsedLineItems = JSON.parse(
-            storedLineItems,
-          ) as PrintifyLineItem[];
-          const parsedShippingAddress = JSON.parse(
-            storedShippingAddress,
-          ) as ShippingAddressT;
-
-          if (!Array.isArray(parsedLineItems) || parsedLineItems.length === 0) {
-            throw new Error(
-              "No order items found to finalize Mollie checkout.",
-            );
-          }
-
-          const validatedLineItems = parsedLineItems.map((item, index) =>
-            validatePrintifyLineItem(item, index),
-          );
-
-          const orderAmount = storedOrderAmount
-            ? parseFloat(storedOrderAmount)
-            : 0;
 
           // ── Shared helpers (match handlePaymentSuccess in actions.ts) ──
 
@@ -251,7 +286,6 @@ export default function MollieReturnPage() {
 
           // ── Idempotency check (same as handlePaymentSuccess) ──
 
-          const idempotencyKey = `mollie_${storedPaymentId}`;
           const existingOrder =
             await OrderService.getOrderByIdempotencyKey(idempotencyKey);
 
@@ -265,8 +299,8 @@ export default function MollieReturnPage() {
             return;
           }
 
-          // ── Payment recovery recording (same as handlePaymentSuccess) ──
-
+          // ── Payment recovery already recorded above (before verification) ──
+          // Update status to "succeeded" now that we confirmed payment
           if (storedCartId && user) {
             try {
               const cart = await CartService.getCart(storedCartId);
@@ -281,10 +315,10 @@ export default function MollieReturnPage() {
                 lineItems: validatedLineItems,
                 metadata: { idempotency_key: idempotencyKey },
               });
-              console.log("✅ Payment recorded for crash recovery");
+              console.log("✅ Payment recovery status updated to succeeded");
             } catch (recoveryError) {
               console.error(
-                "❌ Payment recovery recording failed:",
+                "❌ Payment recovery update failed:",
                 recoveryError,
               );
               // Non-blocking
@@ -365,6 +399,18 @@ export default function MollieReturnPage() {
             }
 
             console.log(`✅ Order created with ID: ${createdOrderId}`);
+
+            // Fetch the created order to get the order_number
+            try {
+              const fullOrder = await OrderService.getOrder(createdOrderId);
+              if (fullOrder?.order_number) {
+                setOrderNumber(fullOrder.order_number);
+                console.log(`✅ Order number: ${fullOrder.order_number}`);
+              }
+            } catch (fetchError) {
+              console.error("❌ Failed to fetch order details:", fetchError);
+              // Non-blocking - continue with order processing
+            }
 
             // ── Stage 2: Create Printify order (uses React Query mutation with retry: 3) ──
             console.log(
@@ -501,10 +547,13 @@ export default function MollieReturnPage() {
         }
 
         setStatus("error");
+
+        // Provide helpful error message since payment was already recorded for recovery
+        const errorMessage = err instanceof Error ? err.message : "Failed to verify payment status";
         setErrorMessage(
-          err instanceof Error
-            ? err.message
-            : "Failed to verify payment status",
+          `${errorMessage}. Your payment has been recorded (ID: ${storedPaymentId}). ` +
+          `Our team will process your order automatically. You will receive an email confirmation within 24 hours. ` +
+          `If you need immediate assistance, please contact support with your payment ID.`
         );
       }
     };
@@ -565,9 +614,9 @@ export default function MollieReturnPage() {
           id: paymentId ?? "",
           provider: "mollie",
           status: paymentStatus ?? "paid",
-          orderNumber: paymentId
+          orderNumber: orderNumber || (paymentId
             ? `#ML-${paymentId.slice(-6).toUpperCase()}`
-            : "—",
+            : "—"),
           totalPaid: "Paid via Mollie",
           estimatedDelivery: "7–10 business days",
           confirmationEmail: "",

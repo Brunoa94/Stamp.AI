@@ -3,13 +3,16 @@ import { renderHook, act } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useCancelOrder } from "./useCancelOrder";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { canCancelOrder } from "../utils/orderCancellation";
+
+const mockGetSession = vi.fn().mockResolvedValue({
+  data: { session: { access_token: "token" } }
+});
 
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
     auth: {
-      getSession: vi
-        .fn()
-        .mockResolvedValue({ data: { session: { access_token: "token" } } }),
+      getSession: mockGetSession,
     },
   }),
 }));
@@ -18,6 +21,8 @@ vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 vi.mock("../utils/orderCancellation", () => ({
   canCancelOrder: vi.fn(() => true),
 }));
+
+const mockCanCancelOrder = vi.mocked(canCancelOrder);
 
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
@@ -32,6 +37,11 @@ const createWrapper = () => {
 describe("useCancelOrder", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset mocks to their default values after clearAllMocks
+    mockGetSession.mockResolvedValue({
+      data: { session: { access_token: "token" } }
+    });
+    mockCanCancelOrder.mockReturnValue(true);
   });
 
   it("opens cancel modal when handleCancelOrder is called and canCancelOrder returns true", () => {
@@ -47,8 +57,7 @@ describe("useCancelOrder", () => {
   });
 
   it("does not open modal if canCancelOrder returns false", () => {
-    const { canCancelOrder } = require("../utils/orderCancellation");
-    canCancelOrder.mockReturnValue(false);
+    mockCanCancelOrder.mockReturnValue(false);
     const { result } = renderHook(() => useCancelOrder(), {
       wrapper: createWrapper(),
     });
@@ -97,8 +106,7 @@ describe("useCancelOrder", () => {
   });
 
   it("shows error and closes modal if canCancelOrder returns false on confirm", async () => {
-    const { canCancelOrder } = require("../utils/orderCancellation");
-    canCancelOrder.mockReturnValue(false);
+    mockCanCancelOrder.mockReturnValue(false);
     const { result } = renderHook(() => useCancelOrder(), {
       wrapper: createWrapper(),
     });
@@ -116,8 +124,7 @@ describe("useCancelOrder", () => {
   });
 
   it("shows error if not authenticated", async () => {
-    const { createClient } = require("@/lib/supabase/client");
-    createClient().auth.getSession.mockResolvedValueOnce({
+    mockGetSession.mockResolvedValueOnce({
       data: { session: null },
     });
     mockFetch.mockResolvedValueOnce({

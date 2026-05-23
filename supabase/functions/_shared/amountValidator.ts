@@ -80,7 +80,8 @@ export function validatePaymentAmount(
   // Round to 2 decimal places to avoid floating point issues
   calculatedTotal = Math.round(calculatedTotal * 100) / 100;
   const roundedPaymentAmount = Math.round(paymentAmount * 100) / 100;
-  const difference = Math.abs(roundedPaymentAmount - calculatedTotal);
+  // Round difference to 2 decimal places as well to avoid floating point comparison issues
+  const difference = Math.round(Math.abs(roundedPaymentAmount - calculatedTotal) * 100) / 100;
 
   // Allow 1 cent tolerance for rounding differences
   const TOLERANCE = 0.01;

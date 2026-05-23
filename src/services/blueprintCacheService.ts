@@ -61,6 +61,7 @@ export class BlueprintCacheService {
         name: row.title,
         description: row.description || `${row.brand} ${row.model}`,
         image: (Array.isArray(row.images) && row.images.length > 0) ? row.images[0] : "/api/placeholder/200/200",
+        images: Array.isArray(row.images) ? row.images : [],
         features: Array.isArray(row.print_areas)
           ? row.print_areas.map((area: { position: string; width: number; height: number }) => area.position)
           : [],

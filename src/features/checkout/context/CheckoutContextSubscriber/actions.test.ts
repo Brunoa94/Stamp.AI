@@ -259,7 +259,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
       });
 
@@ -300,7 +303,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
       });
 
@@ -402,7 +408,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
         orderAmount: 150.0,
       });
@@ -645,7 +654,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
       });
 
@@ -686,7 +698,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
       });
 
@@ -764,7 +779,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
       });
 
@@ -810,7 +828,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
       });
 
@@ -849,7 +870,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
       });
 
@@ -892,7 +916,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
       });
 
@@ -959,7 +986,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
       });
 

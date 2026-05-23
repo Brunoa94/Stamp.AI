@@ -11,6 +11,7 @@ export const mapBlueprintsToTshirtProducts = (
     description:
       blueprint.description || `${blueprint.brand} ${blueprint.model}`,
     image: blueprint.images[0] || "/api/placeholder/200/200",
+    images: blueprint.images,
     features: blueprint.printAreas.map((area) => area.position),
     price: 0, // Base price, will be determined by variant selection
     material: blueprint.brand || "Cotton",

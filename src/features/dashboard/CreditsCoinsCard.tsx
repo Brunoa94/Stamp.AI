@@ -3,7 +3,7 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { Coins } from "lucide-react";
-import { dashboardTheme } from "@/theme/components";
+import { dashboardTheme, buttonTheme } from "@/theme/components";
 import { Button } from "@/features/ui/button";
 import { SummaryRow } from "@/features/ui/summary-row";
 
@@ -76,8 +76,10 @@ export function CreditsCoinsCard({
 
         <Button
           type="button"
+          variant="default"
+          size="lg"
           onClick={() => setIsDialogOpen(true)}
-          className="w-full h-12 bg-linear-to-r from-[#7C3AED] to-[#06B6D4] text-white font-heading font-bold uppercase tracking-widest rounded-xl hover:opacity-90 transition-opacity"
+          className={`w-full ${buttonTheme.actionPrimary}`}
         >
           Buy More Credits
         </Button>

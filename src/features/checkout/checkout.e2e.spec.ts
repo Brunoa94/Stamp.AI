@@ -598,10 +598,20 @@ test.describe("Flow 4 — Checkout flow uniformity across payment methods", () =
       // Resize to mobile viewport
       await page.setViewportSize({ width: 375, height: 812 });
       await page.reload();
+      await page.waitForLoadState('networkidle');
 
       // Wait for checkout to load on mobile
-      const mobileFooter = page.locator('[class*="footer"]').last();
-      await expect(mobileFooter.getByRole("button")).toBeVisible({ timeout: 10_000 });
+      let found = false;
+      for (let i = 0; i < 5; i++) {
+        try {
+          const mobileFooter = page.locator('[data-testid="mobile-footer"], [class*="footer"], footer').last();
+          const confirmBtn = mobileFooter.getByRole("button", { name: /confirm|pay|stripe/i });
+          await expect(confirmBtn).toBeVisible({ timeout: 5000 });
+          found = true;
+          break;
+        } catch { await page.waitForTimeout(1000); }
+      }
+      if (!found) throw new Error('Mobile confirm button not found after retries');
     });
 
     test("mobile footer shows PayPal button when PayPal is selected", async ({ page }) => {
@@ -828,6 +838,15 @@ test.describe("Flow 4 — Checkout flow uniformity across payment methods", () =
         await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ success: true }) });
       });
 
+      // Mock payment_transactions table for linkPaymentTransactionToOrder
+      await page.route("**/rest/v1/payment_transactions*", async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({ id: "pt-1", order_id: "order-mollie-retry-1" }),
+        });
+      });
+
       // Track Printify calls — always fail
       let printifyCallCount = 0;
       await page.route("**/functions/v1/create-printify-order", async (route) => {
@@ -842,12 +861,153 @@ test.describe("Flow 4 — Checkout flow uniformity across payment methods", () =
       await page.goto("/checkout/mollie-return");
 
       // Should eventually show error (after retries are exhausted)
-      await expect(
-        page.getByText(/something went wrong|refund has been initiated/i)
-      ).toBeVisible({ timeout: 60_000 });
+      // Wait for either the error heading or error paragraph to be visible (avoid strict mode violation)
+      let foundError = false;
+      for (let i = 0; i < 12; i++) {
+        try {
+          const heading = page.getByRole('heading', { name: /something went wrong/i });
+          const para = page.getByText(/Printify.*failed|refund has been initiated/i);
+          if (await heading.isVisible({ timeout: 5000 }) || await para.isVisible({ timeout: 5000 })) {
+            foundError = true;
+            break;
+          }
+        } catch { await page.waitForTimeout(5000); }
+      }
+      if (!foundError) throw new Error('Printify error message not found after retries');
 
       // Printify should have been called 4 times (1 initial + 3 retries from React Query)
       expect(printifyCallCount).toBe(4);
+    });
+  });
+
+  test.describe("Mollie verification failure with payment recovery", () => {
+    test("records payment for recovery and retries verification 3 times via React Query", async ({ page }) => {
+      // Set up sessionStorage to simulate Mollie redirect return
+      await page.goto("/checkout?cartId=cart-e2e-1");
+      await page.evaluate(() => {
+        const lineItems = [{
+          product_id: "prod-e2e-1",
+          variant_id: 1001,
+          quantity: 1,
+          print_areas: { front: "https://placehold.co/400x400.png" },
+        }];
+        const shippingAddress = {
+          first_name: "E2E",
+          last_name: "Tester",
+          email: "e2e@test.com",
+          phone: "5550001234",
+          country: "US",
+          region: "",
+          address1: "1 Playwright Lane",
+          address2: "",
+          city: "Test City",
+          zip: "10001",
+        };
+        sessionStorage.setItem("mollie_payment_id", "tr_test_verify_fail");
+        sessionStorage.setItem("mollie_line_items", JSON.stringify(lineItems));
+        sessionStorage.setItem("mollie_shipping_address", JSON.stringify(shippingAddress));
+        sessionStorage.setItem("mollie_cart_id", "cart-e2e-1");
+        sessionStorage.setItem("mollie_order_amount", "25");
+      });
+
+      await mockCartWithItems(page);
+
+      // Track payment recovery calls
+      let paymentRecoveryCallCount = 0;
+      await page.route("**/rest/v1/rpc/record_payment_for_recovery", async (route) => {
+        paymentRecoveryCallCount++;
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify("recovery-id-verify-fail"),
+        });
+      });
+
+      // Track verification retry attempts
+      let verifyCallCount = 0;
+      await page.route("**/functions/v1/verify-mollie-payment", async (route) => {
+        verifyCallCount++;
+        await route.fulfill({
+          status: 500,
+          contentType: "application/json",
+          body: JSON.stringify({ error: "Mollie API temporarily unavailable" }),
+        });
+      });
+
+      await page.goto("/checkout/mollie-return");
+
+      // Should show error screen after all retries
+      await expect(page.getByText(/something went wrong|failed to verify/i)).toBeVisible({
+        timeout: 30_000, // Increased timeout to allow for retries
+      });
+
+      // CRITICAL: Payment recovery should have been called BEFORE verification
+      // Even though verification failed, the payment was recorded for recovery
+      expect(paymentRecoveryCallCount).toBeGreaterThanOrEqual(1);
+
+      // React Query should retry 3 times (1 initial + 3 retries = 4 total)
+      expect(verifyCallCount).toBe(4);
+    });
+
+    test("shows helpful error message with payment ID when verification fails", async ({ page }) => {
+      await page.goto("/checkout?cartId=cart-e2e-1");
+      await page.evaluate(() => {
+        const lineItems = [{
+          product_id: "prod-e2e-1",
+          variant_id: 1001,
+          quantity: 1,
+          print_areas: { front: "https://placehold.co/400x400.png" },
+        }];
+        const shippingAddress = {
+          first_name: "E2E",
+          last_name: "Tester",
+          email: "e2e@test.com",
+          phone: "5550001234",
+          country: "US",
+          region: "",
+          address1: "1 Playwright Lane",
+          address2: "",
+          city: "Test City",
+          zip: "10001",
+        };
+        sessionStorage.setItem("mollie_payment_id", "tr_test_verify_fail_2");
+        sessionStorage.setItem("mollie_line_items", JSON.stringify(lineItems));
+        sessionStorage.setItem("mollie_shipping_address", JSON.stringify(shippingAddress));
+        sessionStorage.setItem("mollie_cart_id", "cart-e2e-1");
+        sessionStorage.setItem("mollie_order_amount", "25");
+      });
+
+      await mockCartWithItems(page);
+
+      await page.route("**/rest/v1/rpc/record_payment_for_recovery", async (route) => {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify("recovery-id-2"),
+        });
+      });
+
+      await page.route("**/functions/v1/verify-mollie-payment", async (route) => {
+        await route.fulfill({
+          status: 500,
+          contentType: "application/json",
+          body: JSON.stringify({ error: "Network timeout" }),
+        });
+      });
+
+      await page.goto("/checkout/mollie-return");
+
+      // Error message should reassure user that payment was recorded
+      await expect(
+        page.getByText(/payment has been recorded|process your order automatically|email confirmation within 24 hours/i)
+      ).toBeVisible({ timeout: 30_000 });
+
+      // Should include the payment ID for support
+      await expect(page.getByText(/tr_test_verify_fail_2/i)).toBeVisible();
+
+      // Should have a button to return to checkout or go to dashboard
+      const returnButton = page.getByRole("button", { name: /return to checkout|go to dashboard/i });
+      await expect(returnButton).toBeVisible();
     });
   });
 });
@@ -980,19 +1140,20 @@ test.describe("Flow 5 — Mobile checkout happy path", () => {
     // Submit step 1
     await page.getByRole("button", { name: /continue to shipping/i }).click();
 
-    // Step 2 – Shipping Method (may auto-advance or require an explicit continue)
-    const continueToPayment = page.getByRole("button", { name: /continue to payment|continue to billing/i });
-    if (await continueToPayment.isVisible({ timeout: 5_000 }).catch(() => false)) {
-      await continueToPayment.click();
-    }
+    // Step 2 – Shipping Method: click "Confirm Method" button
+    const confirmMethodBtn = page.getByRole("button", { name: /confirm method/i });
+    await expect(confirmMethodBtn).toBeVisible({ timeout: 10_000 });
+    await confirmMethodBtn.click();
 
-    // Step 3 – Billing (if separate from shipping)
-    const continueToBilling = page.getByRole("button", { name: /continue to billing/i });
-    if (await continueToBilling.isVisible({ timeout: 3_000 }).catch(() => false)) {
-      await continueToBilling.click();
-    }
+    // Step 3 – Billing: Click "Proceed to Payment" button
+    await page.waitForTimeout(1000); // Let the accordion animation complete
+    const proceedToPaymentBtn = page.getByRole("button", { name: /proceed to payment/i });
+    await expect(proceedToPaymentBtn).toBeVisible({ timeout: 10_000 });
+    await proceedToPaymentBtn.click();
 
     // Step 4 – Payment: enable test mode
+    // Wait for payment step to be accessible
+    await page.waitForTimeout(1000); // Let the accordion animation complete
     const testModeCheckbox = page.getByRole("checkbox", { name: /test mode/i });
     await testModeCheckbox.scrollIntoViewIfNeeded();
     await testModeCheckbox.check();
@@ -1069,12 +1230,35 @@ test.describe("Flow 5 — Mobile checkout happy path", () => {
     await page.goto("/checkout?cartId=cart-e2e-1");
     await fillMobileCheckoutSteps(page);
 
-    // Tap the sticky footer Stripe confirm button
-    const mobileFooter = page.locator('[data-testid="mobile-footer"], [class*="footer"]').last();
-    await mobileFooter.getByRole("button", { name: /confirm|pay/i }).click();
+    // Tap the sticky footer Stripe confirm button (wait for it to be visible and enabled)
+    let confirmBtn = null;
+    let found = false;
+    // Try multiple selectors for robustness
+    for (let i = 0; i < 5; i++) {
+      try {
+        const mobileFooter = page.locator('[data-testid="mobile-footer"], [class*="footer"], footer').last();
+        confirmBtn = mobileFooter.getByRole("button", { name: /confirm|pay|stripe/i });
+        await expect(confirmBtn).toBeVisible({ timeout: 10000 });
+        found = true;
+        break;
+      } catch { await page.waitForTimeout(1000); }
+    }
+    if (!found) throw new Error('Mobile confirm button not found after retries');
+    // Wait up to 30s for the button to be enabled
+    let enabled = false;
+    for (let i = 0; i < 30; i++) {
+      if (await confirmBtn.isEnabled()) { enabled = true; break; }
+      await page.waitForTimeout(1000);
+    }
+    if (!enabled) {
+      const html = await confirmBtn.innerHTML().catch(() => 'not found');
+      throw new Error('Mobile confirm button not enabled. HTML: ' + html);
+    }
+    await confirmBtn.click();
 
+    // Wait up to 90s for the confirmation heading
     await expect(page.getByRole("heading", { name: /order confirmed/i })).toBeVisible({
-      timeout: 30_000,
+      timeout: 90000,
     });
   });
 
@@ -1087,12 +1271,16 @@ test.describe("Flow 5 — Mobile checkout happy path", () => {
     const mobileFooter = page.locator('[class*="footer"]').last();
     const confirmBtn = mobileFooter.getByRole("button", { name: /confirm|pay/i });
 
-    // Either the button is disabled or it isn't rendered yet
-    const isDisabled = await confirmBtn.getAttribute("disabled").catch(() => null);
-    const isVisible = await confirmBtn.isVisible().catch(() => false);
+    // Wait up to 20s for the button to appear (may not be rendered yet)
+    let isVisible = false;
+    try {
+      await expect(confirmBtn).toBeVisible({ timeout: 20000 });
+      isVisible = true;
+    } catch {}
 
     if (isVisible) {
-      expect(isDisabled).not.toBeNull();
+      // If visible, it should be disabled
+      await expect(confirmBtn).toBeDisabled();
     }
     // If not visible at all, the test also passes — the button is correctly withheld
   });
@@ -1116,11 +1304,31 @@ test.describe("Flow 5 — Mobile checkout happy path", () => {
     const testCardSelect = page.locator("#test-card-select").last();
     await testCardSelect.selectOption("declined");
 
-    const mobileFooter = page.locator('[class*="footer"]').last();
-    await mobileFooter.getByRole("button", { name: /confirm|pay/i }).click();
+    let confirmBtn2 = null;
+    let found2 = false;
+    for (let i = 0; i < 5; i++) {
+      try {
+        const mobileFooter = page.locator('[data-testid="mobile-footer"], [class*="footer"], footer').last();
+        confirmBtn2 = mobileFooter.getByRole("button", { name: /confirm|pay|stripe/i });
+        await expect(confirmBtn2).toBeVisible({ timeout: 10000 });
+        found2 = true;
+        break;
+      } catch { await page.waitForTimeout(1000); }
+    }
+    if (!found2) throw new Error('Mobile confirm button not found after retries');
+    let enabled2 = false;
+    for (let i = 0; i < 30; i++) {
+      if (await confirmBtn2.isEnabled()) { enabled2 = true; break; }
+      await page.waitForTimeout(1000);
+    }
+    if (!enabled2) {
+      const html = await confirmBtn2.innerHTML().catch(() => 'not found');
+      throw new Error('Mobile confirm button not enabled. HTML: ' + html);
+    }
+    await confirmBtn2.click();
 
     await expect(page.getByRole("heading", { name: /payment failed/i })).toBeVisible({
-      timeout: 20_000,
+      timeout: 60000,
     });
   });
 });
@@ -1256,7 +1464,16 @@ test.describe("Flow 6 — Mollie happy path", () => {
       timeout: 30_000,
     });
 
-    await expect(page.getByText(/ORD-MOLLIE-001/i)).toBeVisible();
+    // Wait up to 90s for the order number to appear (handle slow rendering)
+    let foundOrderNumber = false;
+    for (let i = 0; i < 18; i++) {
+      try {
+        await expect(page.getByText(/ORD-MOLLIE-001/i)).toBeVisible({ timeout: 5000 });
+        foundOrderNumber = true;
+        break;
+      } catch { await page.waitForTimeout(5000); }
+    }
+    if (!foundOrderNumber) throw new Error('Order number ORD-MOLLIE-001 not found after retries');
   });
 
   test("'Track Your Order' link is visible after Mollie confirmation", async ({

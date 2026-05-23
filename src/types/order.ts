@@ -12,7 +12,7 @@ export interface OrderWithItemsT extends OrderT {
   order_items: OrderItemT[]
 }
 
-export type OrderStatusFilterT = "all" | "processing" | "shipped" | "delivered" | "cancelled"
+export type OrderStatusFilterT = "all" | "pending" | "waiting_confirmation" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled" | "unsuccessful_confirmation"
 export type OrderTimeframeFilterT = "last-30" | "last-90" | "2023" | "all-time"
 
 export interface Address {

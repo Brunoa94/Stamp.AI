@@ -19,6 +19,8 @@ export const componentThemes = {
     success: `${colors.buttonSuccess} text-white font-semibold py-3 px-6 rounded-xl ${animationClasses.buttonHover}`,
     outline: `border-2 border-gray-300 text-slate-700 hover:bg-gray-50 font-semibold py-3 px-6 rounded-xl ${animationClasses.buttonHover}`,
     ghost: `text-slate-700 hover:bg-gray-50 font-semibold py-2 px-4 rounded-lg ${animationClasses.buttonHover}`,
+    // Primary action button - use with Button component variant="default" size="lg"
+    actionPrimary: `font-heading tracking-widest shadow-2xl shadow-purple-500/50 hover:-translate-y-1.5 hover:shadow-3xl transition-all duration-300`,
   },
 
   // Input variants
@@ -130,12 +132,12 @@ export const componentThemes = {
     card: {
       base: `glass-card p-6 rounded-lg`,
       title: `text-xs font-bold uppercase tracking-widest text-gray-400`,
-      sectionTitle: `text-xl font-heading font-bold uppercase tracking-tight`,
+      sectionTitle: `text-3xl font-heading font-bold uppercase`,
     },
     profile: {
       avatarWrap: `w-16 h-16 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] p-1 shadow-lg`,
       avatar: `w-full h-full rounded-md bg-white object-cover`,
-      name: `text-xl font-heading font-bold uppercase tracking-tight text-gray-900`,
+      name: `text-xl font-heading font-bold uppercase text-gray-900`,
       email: `text-sm text-gray-500`,
       editButton: `w-full py-3 bg-white/50 hover:bg-white text-gray-800 font-bold uppercase tracking-widest text-xs rounded-lg flex items-center justify-center gap-2 border border-gray-100 transition-all`,
     },
@@ -147,7 +149,7 @@ export const componentThemes = {
     credits: {
       iconWrap: `w-12 h-12 rounded-lg bg-gradient-to-br from-[#7C3AED]/10 to-[#06B6D4]/10 flex items-center justify-center border border-white/50 shadow-inner`,
       balanceLabel: `text-[10px] font-bold uppercase tracking-widest text-gray-400 block mb-0.5`,
-      balanceValue: `text-3xl font-heading font-extrabold text-gray-900 tracking-tighter`,
+      balanceValue: `text-3xl font-heading font-extrabold text-gray-900`,
       balanceUnit: `text-xs font-bold text-gray-400 uppercase tracking-widest`,
       usageRow: `flex justify-between items-center text-[10px] font-bold uppercase tracking-widest`,
       usageTrack: `w-full bg-gray-200/50 h-1.5 rounded-full overflow-hidden`,
@@ -161,7 +163,7 @@ export const componentThemes = {
     },
     cta: {
       card: `bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] p-8 md:p-12 rounded-lg text-white flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl`,
-      title: `text-3xl md:text-4xl font-heading font-extrabold uppercase tracking-tight mb-4`,
+      title: `text-3xl md:text-4xl font-heading font-extrabold uppercase mb-4`,
       description: `text-white/80 font-medium`,
       button: `whitespace-nowrap px-10 py-5 bg-white text-[#7C3AED] font-heading font-extrabold uppercase tracking-widest rounded-lg shadow-xl hover:scale-105 active:scale-95 transition-all`,
     },
@@ -172,7 +174,7 @@ export const componentThemes = {
       item: `flex items-center gap-6 p-4 bg-white/40 rounded-lg border border-white/50 hover:border-[#7C3AED]/30 transition-all group`,
       itemImageWrap: `w-20 h-20 bg-white/60 rounded-lg flex-shrink-0 flex items-center justify-center relative`,
       itemImage: `w-14 h-14 object-contain group-hover:scale-110 transition-transform`,
-      itemTitle: `font-heading font-bold text-sm uppercase tracking-tight text-gray-900`,
+      itemTitle: `font-heading font-bold text-sm md:text-lg uppercase text-gray-900`,
       itemMeta: `text-xs text-gray-500 font-medium mb-3`,
       itemPrice: `text-sm font-bold text-gray-900`,
       statusBadge: `inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide uppercase`,
@@ -194,12 +196,12 @@ export const componentThemes = {
     container: `relative bg-transparent border-t border-[#7C3AED]/35 dark:border-[#A78BFA]/35 pt-20 pb-12 mt-24 overflow-hidden`,
     inner: `max-w-[1376px] mx-auto px-4 md:px-8 lg:px-10 relative z-10 pb-12`,
     brandWrap: `flex flex-col items-center justify-center mb-8`,
-    brandText: `text-4xl md:text-5xl font-heading font-bold uppercase tracking-tighter bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent drop-shadow-sm`,
+    brandText: `text-4xl md:text-5xl font-heading font-bold uppercase bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent drop-shadow-sm`,
     brandDot: `inline-block mx-1.5 w-2.5 h-2.5 rounded-full bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] shadow-lg shadow-purple-500/30`,
     grid: `grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-16 mb-16`,
-    missionTitle: `text-lg font-heading font-bold uppercase tracking-tight text-gray-900 dark:text-white mb-6`,
+    missionTitle: `text-lg font-heading font-bold uppercase text-gray-900 dark:text-white mb-6`,
     missionText: `text-gray-600 dark:text-gray-400 text-base leading-relaxed max-w-xs font-sans`,
-    sectionTitle: `text-lg font-heading font-bold uppercase tracking-tight text-gray-900 dark:text-white mb-6`,
+    sectionTitle: `text-lg font-heading font-bold uppercase text-gray-900 dark:text-white mb-6`,
     linkList: `space-y-3 text-base font-sans`,
     link: `block text-gray-600 dark:text-gray-400 hover:text-[#7C3AED] dark:hover:text-[#A78BFA] hover:translate-x-1 transition-all font-medium font-sans`,
     bottom: `pt-8 border-t border-gray-200/50 dark:border-white/10 flex flex-col md:flex-row justify-between items-center gap-6`,
@@ -275,7 +277,7 @@ export const componentThemes = {
     summary: {
       // Mobile: solid white card, Desktop: glass effect sticky sidebar
       container: `mt-8 lg:mt-0 bg-white/95 backdrop-blur-none rounded-2xl lg:rounded-lg p-6 lg:p-8 border border-slate-200/80 shadow-sm lg:sticky lg:top-32 lg:bg-white/75 lg:backdrop-blur-md lg:border-white/30 lg:shadow-md relative z-10`,
-      title: `hidden lg:block lg:text-2xl lg:font-heading lg:font-bold lg:uppercase lg:tracking-tight lg:mb-8`,
+      title: `hidden lg:block lg:text-3xl lg:font-heading lg:uppercase lg:mb-8`,
       rows: `flex flex-col gap-3 lg:space-y-4 lg:mb-8`,
       row: `flex justify-between items-center lg:text-base`,
       rowLabel: `text-xs lg:text-base font-heading lg:font-bold text-slate-400 lg:text-slate-500 lg:uppercase lg:tracking-wider`,
@@ -288,7 +290,7 @@ export const componentThemes = {
       totalLabel: `text-lg lg:text-xl font-heading lg:font-extrabold text-slate-900 lg:uppercase lg:tracking-tight`,
       totalValue: `text-2xl lg:text-3xl font-heading lg:font-extrabold text-purple-600 lg:text-[#7C3AED]`,
       // Desktop checkout button (in summary card)
-      checkoutButton: `hidden lg:flex lg:w-full lg:py-5 lg:bg-gradient-to-br lg:from-[#7C3AED] lg:to-[#06B6D4] lg:text-white lg:font-heading lg:font-extrabold lg:uppercase lg:tracking-widest lg:rounded-lg lg:shadow-xl lg:hover:scale-[1.02] lg:active:scale-[0.98] lg:transition-all lg:items-center lg:justify-center lg:gap-3 lg:mt-6`,
+      checkoutButton: `hidden lg:flex lg:w-full lg:py-5 lg:bg-primary lg:text-primary-foreground lg:font-heading lg:tracking-widest lg:rounded-md lg:shadow-2xl lg:shadow-purple-500/50 lg:hover:-translate-y-1.5 lg:hover:shadow-3xl lg:transition-all lg:duration-300 lg:items-center lg:justify-center lg:gap-3 lg:mt-6`,
       secureText: `hidden lg:block lg:text-xs lg:text-center lg:text-slate-400 lg:font-bold lg:uppercase lg:tracking-widest lg:leading-relaxed lg:mt-3`,
       arrivalWrap: `hidden lg:block lg:mt-10 lg:p-4 lg:bg-white/50 lg:rounded-lg lg:border lg:border-dashed lg:border-gray-200`,
       arrivalHeader: `lg:flex lg:items-center lg:gap-3 lg:mb-2`,
@@ -597,7 +599,7 @@ export const componentThemes = {
     card: "glass-card p-12 md:p-16 rounded-none text-center relative overflow-hidden",
     topAccent: "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-emerald-500",
     iconWrapper: "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-10 shadow-lg shadow-green-500/20 text-white success-icon-animate bg-gradient-to-br from-green-400 to-emerald-500",
-    title: "text-4xl md:text-5xl font-heading text-slate-900 mb-4 tracking-tighter",
+    title: "text-4xl md:text-5xl font-heading text-slate-900 mb-4",
     subtitle: "text-slate-500 max-w-sm mx-auto mb-12 leading-relaxed",
     grid: "grid grid-cols-2 gap-8 text-left border-y border-slate-100 py-8 mb-12",
     gridItem: "flex flex-col gap-1",
@@ -620,7 +622,7 @@ export const componentThemes = {
     topAccent: "absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-orange-500",
     iconWrapper: "error-icon-animate w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-10 shadow-lg shadow-red-500/10 text-red-500",
     icon: "w-12 h-12 error-icon-pulse",
-    title: "text-4xl md:text-5xl font-heading text-slate-900 mb-4 tracking-tighter",
+    title: "text-4xl md:text-5xl font-heading text-slate-900 mb-4",
     subtitle: "text-slate-500 max-w-sm mx-auto mb-12 leading-relaxed",
     reasonCard: "text-left bg-white/40 p-6 mb-12 border border-red-100 rounded-sm",
     reasonRow: "flex items-start gap-3",
@@ -702,8 +704,8 @@ export const componentThemes = {
     titleIcon: "w-16 h-16 md:w-20 md:h-20",
     title: "text-4xl md:text-6xl font-heading tracking-[0.25em] uppercase bg-linear-to-r from-[#7C3AED] via-[#4F46E5] to-[#06B6D4] bg-clip-text text-transparent",
     numberWrap: "relative inline-block mb-0",
-    numberGlow: "text-[180px] md:text-[240px] font-heading text-slate-900 leading-none tracking-tighter block opacity-10 blur-xl absolute inset-0 select-none",
-    numberMain: "text-[180px] md:text-[240px] font-heading text-slate-900 leading-none tracking-tighter block glitch-text-404 relative z-10",
+    numberGlow: "text-[180px] md:text-[240px] font-heading text-slate-900 leading-none block opacity-10 blur-xl absolute inset-0 select-none",
+    numberMain: "text-[180px] md:text-[240px] font-heading text-slate-900 leading-none block glitch-text-404 relative z-10",
   },
 } as const;
 
