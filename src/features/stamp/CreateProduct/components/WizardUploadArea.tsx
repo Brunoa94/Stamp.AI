@@ -6,7 +6,7 @@ import { memo, useCallback, useEffect, useMemo } from "react";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
 import { Button } from "@/features/ui/button";
-import { shadows, colors, animations, componentThemes } from "@/theme";
+import { animations, componentThemes } from "@/theme";
 import { toast } from "sonner";
 
 interface WizardUploadAreaProps {
@@ -118,14 +118,26 @@ export function WizardUploadArea({
       <input {...getInputProps()} />
 
       {/* Icon */}
-      <div
-        className={clsx(
-          "w-16 h-16 sm:w-28 sm:h-28 bg-white rounded-lg flex items-center justify-center mb-4 sm:mb-8 transition-soft group-hover:scale-110 group-hover:-rotate-3",
-          colors.purpleText,
-        )}
-        style={{ boxShadow: shadows.float }}
-      >
-        <ImagePlus className="w-8 h-8 sm:w-12 sm:h-12" />
+      <div className="w-14 h-14 sm:w-24 sm:h-24 rounded-xl flex items-center justify-center mb-4 sm:mb-8 transition-soft group-hover:scale-110 group-hover:-rotate-3 bg-white/5 backdrop-blur-3xl border border-white/40 shadow-[0_8px_32px_0_rgba(124,58,237,0.15),0_4px_12px_0_rgba(6,182,212,0.1),inset_0_1px_1px_0_rgba(255,255,255,0.4)]">
+        <svg width="0" height="0" className="absolute">
+          <defs>
+            <linearGradient
+              id="icon-gradient"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="100%"
+            >
+              <stop offset="0%" stopColor="#7C3AED" />
+              <stop offset="50%" stopColor="#a855f7" />
+              <stop offset="100%" stopColor="#06B6D4" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <ImagePlus
+          className="w-7 h-7 sm:w-11 sm:h-11"
+          style={{ stroke: "url(#icon-gradient)" }}
+        />
       </div>
 
       {/* Text */}

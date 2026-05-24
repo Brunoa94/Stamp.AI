@@ -26,7 +26,7 @@ export const navbarDesignSystem = {
       active: `text-black dark:text-white`,
       inactive: `text-black/65 hover:text-black dark:text-white/70 dark:hover:text-white`,
     },
-    stampButton: `flex items-center justify-center text-center whitespace-nowrap h-[48px] md:h-[58px] lg:h-[58px] px-8! md:px-6 lg:px-10 rounded-full bg-linear-to-r from-[#a855f7] to-[#06b6d4] text-white font-heading text-sm md:text-base lg:text-lg uppercase tracking-wider shadow-[0_10px_15px_-3px_rgba(168,85,247,0.25),0_4px_6px_-4px_rgba(6,182,212,0.2)] transition-all duration-300 hover:scale-[1.03] hover:brightness-110 hover:shadow-[0_20px_25px_-5px_rgba(168,85,247,0.3),0_8px_10px_-6px_rgba(6,182,212,0.3)]`,
+    stampButton: `flex items-center justify-center text-center whitespace-nowrap h-[48px] lg:h-[52px] px-8! md:px-6 lg:px-10 rounded-full bg-linear-to-r from-[#a855f7] to-[#06b6d4] text-white font-heading text-sm md:text-base lg:text-lg uppercase tracking-wider shadow-[0_10px_15px_-3px_rgba(168,85,247,0.25),0_4px_6px_-4px_rgba(6,182,212,0.2)] transition-all duration-300 hover:scale-[1.03] hover:brightness-110 hover:shadow-[0_20px_25px_-5px_rgba(168,85,247,0.3),0_8px_10px_-6px_rgba(6,182,212,0.3)]`,
     stampButtonActive: `drop-shadow-[0_0_14px_rgba(255,255,255,0.55)]`,
   },
 

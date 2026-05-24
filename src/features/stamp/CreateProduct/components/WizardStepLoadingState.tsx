@@ -15,7 +15,7 @@ export function WizardStepLoadingState() {
         <Shimmer className="h-3 w-2/3" />
       </div>
 
-      <div className="space-y-4 rounded-2xl border border-white/30 bg-white/35 p-5 sm:p-6">
+      <div className="space-y-4 rounded-2xl border border-white/40 bg-white/20 backdrop-blur-2xl p-5 sm:p-6 shadow-[0_8px_32px_0_rgba(124,58,237,0.08),inset_0_1px_1px_0_rgba(255,255,255,0.4)]">
         <Shimmer className="h-12 w-full rounded-xl" />
         <div className="grid grid-cols-2 gap-3">
           <Shimmer className="h-10 w-full rounded-lg" />
