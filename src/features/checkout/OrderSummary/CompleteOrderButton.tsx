@@ -4,7 +4,6 @@ import { CheckoutSelectors } from "../context/CheckoutContextSubscriber/selector
 import Link from "next/link";
 import { PAYMENT_CONFIRM_METHOD_UI } from "@/constants/payment";
 import { PayPalButton } from "../PayPalButton/PayPalButton";
-import { MollieButton } from "../MollieButton";
 import { useCallback } from "react";
 import { useCheckoutSubscriberActions } from "../context";
 import type { PayPalSuccessDetailsI } from "../PayPalButton/usePayPalButton";
@@ -67,17 +66,6 @@ export const CompleteOrderButton = () => {
             shippingAddress={shippingAddress}
             testMode={testMode}
             onSuccess={handlePayPalSuccessCallback}
-            onError={handlePaymentError}
-            disabled={isProcessingPayment}
-          />
-        )}
-
-        {selectedPaymentMethod === "mollie" && shippingAddress && (
-          <MollieButton
-            amount={orderAmount}
-            lineItems={lineItems}
-            shippingAddress={shippingAddress}
-            testMode={testMode}
             onError={handlePaymentError}
             disabled={isProcessingPayment}
           />

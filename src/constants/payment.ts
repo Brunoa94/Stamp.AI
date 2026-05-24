@@ -1,10 +1,10 @@
-import { CreditCard, Building2 } from "lucide-react";
+import { CreditCard } from "lucide-react";
 import { FaPaypal } from "react-icons/fa";
 import type { StripeCardElementOptions } from "@stripe/stripe-js";
 import type { LucideIcon } from "lucide-react";
 import type { IconType } from "react-icons";
 
-export type PaymentMethodId = "stripe" | "paypal" | "mollie";
+export type PaymentMethodId = "stripe" | "paypal";
 
 export interface PaymentMethodOption {
   id: PaymentMethodId;
@@ -25,12 +25,6 @@ export const PAYMENT_METHODS: PaymentMethodOption[] = [
     label: "PayPal",
     description: "PayPal, Venmo, Pay Later",
     Icon: FaPaypal,
-  },
-  {
-    id: "mollie",
-    label: "Mollie",
-    description: "iDEAL, Bancontact, SOFORT, Cards",
-    Icon: Building2,
   },
 ];
 
@@ -64,12 +58,6 @@ export const PAYMENT_BRAND_STYLES: Record<
     icon: "text-[#0070BA]",
     check: "bg-[#0070BA]",
   },
-  mollie: {
-    border: "border-black",
-    bg: "bg-black/5 hover:bg-black/10",
-    icon: "text-black",
-    check: "bg-black",
-  },
 };
 
 export const PAYMENT_CONFIRM_METHOD_UI: Record<
@@ -87,12 +75,6 @@ export const PAYMENT_CONFIRM_METHOD_UI: Record<
     labelMobile: "Confirm Order • PayPal",
     className: "bg-[#0070BA] hover:bg-[#005EA6]",
     Icon: FaPaypal,
-  },
-  mollie: {
-    labelDesktop: "Confirm Order • Pay with Mollie",
-    labelMobile: "Confirm Order • Mollie",
-    className: "bg-black hover:bg-slate-900",
-    Icon: Building2,
   },
 };
 

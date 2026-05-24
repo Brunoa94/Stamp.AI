@@ -1,8 +1,7 @@
 import { ordersTheme } from "@/theme/components";
-import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
 import { STATUS_FILTERS, TIMEFRAME_OPTIONS } from "@/constants/orders";
-import { OrderTimeframeFilterT } from "@/types/order";
+import { OrderStatusFilterT, OrderTimeframeFilterT } from "@/types/order";
 import {
   Select,
   SelectContent,
@@ -28,7 +27,7 @@ export function OrdersFiltersDesktop({
             onTimeframeChange(value as OrderTimeframeFilterT)
           }
         >
-          <SelectTrigger className="w-48">
+          <SelectTrigger className="w-48 border-slate-400">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -41,23 +40,23 @@ export function OrdersFiltersDesktop({
         </Select>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex items-center gap-4">
         <Label className={ordersTheme.filters.statusLabel}>Status:</Label>
-        {STATUS_FILTERS.map((filter) => (
-          <Button
-            key={filter.value}
-            onClick={() => onStatusChange(filter.value)}
-            variant="outline"
-            size="sm"
-            className={
-              selectedStatus === filter.value
-                ? ordersTheme.filters.chipActive
-                : ordersTheme.filters.chipBase
-            }
-          >
-            {filter.label}
-          </Button>
-        ))}
+        <Select
+          value={selectedStatus}
+          onValueChange={(value) => onStatusChange(value as OrderStatusFilterT)}
+        >
+          <SelectTrigger className="w-56 border-slate-400">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {STATUS_FILTERS.map((filter) => (
+              <SelectItem key={filter.value} value={filter.value}>
+                {filter.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

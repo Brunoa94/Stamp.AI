@@ -9,7 +9,6 @@ import {
 import { Button } from "@/features/ui/button";
 import { PAYMENT_CONFIRM_METHOD_UI } from "@/constants/payment";
 import { PayPalButton } from "../PayPalButton/PayPalButton";
-import { MollieButton } from "../MollieButton";
 import { useCallback } from "react";
 import type { PayPalSuccessDetailsI } from "../PayPalButton/usePayPalButton";
 
@@ -62,17 +61,6 @@ export function CheckoutMobileFooter() {
           shippingAddress={shippingAddress}
           testMode={testMode}
           onSuccess={handlePayPalSuccessCallback}
-          onError={handlePaymentError}
-          disabled={isProcessingPayment}
-        />
-      )}
-
-      {selectedPaymentMethod === "mollie" && shippingAddress && (
-        <MollieButton
-          amount={orderAmount}
-          lineItems={lineItems}
-          shippingAddress={shippingAddress}
-          testMode={testMode}
           onError={handlePaymentError}
           disabled={isProcessingPayment}
         />

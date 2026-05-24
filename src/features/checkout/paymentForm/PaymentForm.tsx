@@ -9,7 +9,6 @@ import { CheckoutErrorDisplay } from "../components";
 import clsx from "clsx";
 import { PaymentMethodSelector } from "../PaymentMethodSelector/PaymentMethodSelector";
 import { PayPalButton } from "../PayPalButton/PayPalButton";
-import { MollieButton } from "../MollieButton";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 import type { PaymentMethodT } from "@/types/payment";
 import { TestCardSelector } from "./TestCardSelector";
@@ -143,17 +142,6 @@ const CheckoutForm = ({
         />
       )}
 
-      {/* Mollie Button (hidden in checkout step; final action is in summary CTA) */}
-      {!hideButton && paymentMethod === "mollie" && (
-        <MollieButton
-          amount={amount}
-          lineItems={lineItems}
-          shippingAddress={shippingAddress}
-          testMode={testMode}
-          onError={onError}
-          disabled={loading}
-        />
-      )}
     </div>
   );
 };

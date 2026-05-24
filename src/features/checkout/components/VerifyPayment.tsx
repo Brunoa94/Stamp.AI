@@ -11,7 +11,6 @@ interface VerifyPaymentProps {
 const paymentMethodNames: Record<PaymentMethodT, string> = {
   stripe: "Stripe",
   paypal: "PayPal",
-  mollie: "Mollie",
 };
 
 const VerifyPayment = ({ paymentMethod }: VerifyPaymentProps) => {

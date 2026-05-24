@@ -6,7 +6,6 @@ import type { PaymentMethodT } from "@/types/payment";
 import { PAYMENT_BRAND_STYLES, PAYMENT_METHODS } from "@/constants/payment";
 import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
-import { isMollieConfigured } from "@/lib/mollie";
 
 interface Props {
   selectedMethod: PaymentMethodT;
@@ -14,22 +13,12 @@ interface Props {
   disabled?: boolean;
 }
 
-// Filter payment methods based on configuration
-const getAvailablePaymentMethods = () => {
-  return PAYMENT_METHODS.filter((method) => {
-    if (method.id === "mollie") {
-      return isMollieConfigured();
-    }
-    return true;
-  });
-};
-
 export function PaymentMethodSelector({
   selectedMethod,
   onMethodChange,
   disabled = false,
 }: Props) {
-  const paymentMethods = getAvailablePaymentMethods();
+  const paymentMethods = PAYMENT_METHODS;
 
   return (
     <div

@@ -551,7 +551,7 @@ export default function MollieReturnPage() {
         // Provide helpful error message since payment was already recorded for recovery
         const errorMessage = err instanceof Error ? err.message : "Failed to verify payment status";
         setErrorMessage(
-          `${errorMessage}. Your payment has been recorded (ID: ${storedPaymentId}). ` +
+          `${errorMessage}. Your payment has been recorded (ID: ${currentPaymentId ?? "unknown"}). ` +
           `Our team will process your order automatically. You will receive an email confirmation within 24 hours. ` +
           `If you need immediate assistance, please contact support with your payment ID.`
         );
@@ -612,7 +612,7 @@ export default function MollieReturnPage() {
       <PaymentSuccess
         details={{
           id: paymentId ?? "",
-          provider: "mollie",
+          provider: "mollie" as "stripe", // Legacy Mollie payment - type assertion for backward compatibility
           status: paymentStatus ?? "paid",
           orderNumber: orderNumber || (paymentId
             ? `#ML-${paymentId.slice(-6).toUpperCase()}`
@@ -647,7 +647,7 @@ export default function MollieReturnPage() {
           status: paymentStatus === "canceled" ? "Canceled" : "Failed",
           reasonTitle: "Payment status",
           reasonMessage,
-          availableMethods: ["stripe", "paypal", "mollie"],
+          availableMethods: ["stripe", "paypal"],
         }}
         onTryAgain={handleRetryPayment}
         onSelectMethod={handleRetryPayment}

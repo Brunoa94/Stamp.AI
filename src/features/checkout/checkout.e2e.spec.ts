@@ -633,381 +633,38 @@ test.describe("Flow 4 — Checkout flow uniformity across payment methods", () =
     });
   });
 
-  test.describe("Mollie return page handles missing payment info", () => {
-    test("shows error when no payment info is in sessionStorage", async ({ page }) => {
-      // Clear any existing Mollie sessionStorage data
-      await page.goto("/checkout?cartId=cart-e2e-1");
-      await page.evaluate(() => {
-        sessionStorage.removeItem("mollie_payment_id");
-        sessionStorage.removeItem("mollie_line_items");
-        sessionStorage.removeItem("mollie_shipping_address");
-        sessionStorage.removeItem("mollie_cart_id");
-      });
-
-      await page.goto("/checkout/mollie-return");
-
-      // Should show error state since there's no payment ID
-      await expect(page.getByText(/no payment information found/i)).toBeVisible({
-        timeout: 10_000,
-      });
-    });
-
-    test("'Return to Checkout' button navigates back with cartId when available", async ({
-      page,
-    }) => {
-      // Set up sessionStorage with cartId but no payment ID
-      await page.goto("/checkout?cartId=cart-e2e-1");
-      await page.evaluate(() => {
-        sessionStorage.setItem("mollie_cart_id", "cart-e2e-1");
-        sessionStorage.removeItem("mollie_payment_id");
-      });
-
-      await page.goto("/checkout/mollie-return");
-
-      await expect(page.getByText(/no payment information found/i)).toBeVisible({
-        timeout: 10_000,
-      });
-
-      const returnButton = page.getByRole("button", { name: /return to checkout/i });
-      await expect(returnButton).toBeVisible();
-
-      // Check that the button navigates to checkout with cartId (not bare /checkout)
-      await returnButton.click();
-      await page.waitForURL(/cartId=cart-e2e-1/, { timeout: 10_000 });
-    });
-
-    test("'Return to Checkout' falls back to /cart when no cartId is stored", async ({
-      page,
-    }) => {
-      // Clear all Mollie sessionStorage
-      await page.goto("/checkout?cartId=cart-e2e-1");
-      await page.evaluate(() => {
-        sessionStorage.removeItem("mollie_payment_id");
-        sessionStorage.removeItem("mollie_cart_id");
-      });
-
-      await page.goto("/checkout/mollie-return");
-
-      await expect(page.getByText(/no payment information found/i)).toBeVisible({
-        timeout: 10_000,
-      });
-
-      const returnButton = page.getByRole("button", { name: /return to checkout/i });
-      await returnButton.click();
-      await page.waitForURL(/\/cart$/, { timeout: 10_000 });
-    });
-  });
-
-  test.describe("Mollie return page retries Printify order creation", () => {
-    test("retries Printify 3 times via React Query before showing error", async ({
-      page,
-    }) => {
-      // Set up sessionStorage to simulate a Mollie redirect return
-      await page.goto("/checkout?cartId=cart-e2e-1");
-      await page.evaluate(() => {
-        const lineItems = [{
-          product_id: "prod-e2e-1",
-          variant_id: 1001,
-          quantity: 1,
-          print_areas: { front: "https://placehold.co/400x400.png" },
-        }];
-        const shippingAddress = {
-          first_name: "E2E",
-          last_name: "Tester",
-          email: "e2e@test.com",
-          phone: "5550001234",
-          country: "US",
-          region: "",
-          address1: "1 Playwright Lane",
-          address2: "",
-          city: "Test City",
-          zip: "10001",
-        };
-        sessionStorage.setItem("mollie_payment_id", "tr_test_mollie_retry");
-        sessionStorage.setItem("mollie_line_items", JSON.stringify(lineItems));
-        sessionStorage.setItem("mollie_shipping_address", JSON.stringify(shippingAddress));
-        sessionStorage.setItem("mollie_cart_id", "cart-e2e-1");
-        sessionStorage.setItem("mollie_order_amount", "25");
-      });
-
+  test.describe("Desktop payment method switching", () => {
+    test.beforeEach(async ({ page }) => {
       await mockCartWithItems(page);
+      await page.goto("/checkout?cartId=cart-e2e-1");
+      await fillShippingForm(page);
+    });
 
-      // Mock Mollie payment verification as paid
-      await page.route("**/functions/v1/verify-mollie-payment", async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({
-            paymentId: "tr_test_mollie_retry",
-            status: "paid",
-            isPaid: true,
-          }),
-        });
-      });
-
-      // Mock order APIs
-      const now = new Date().toISOString();
-      const fakeOrder = {
-        id: "order-mollie-retry-1",
-        order_number: "ORD-ML-RETRY-001",
-        user_id: "11111111-1111-1111-1111-111111111111",
-        customer_email: "e2e@test.com",
-        customer_name: "E2E Tester",
-        customer_phone: "5550001234",
-        status: "pending",
-        payment_status: "paid",
-        total_amount: 25,
-        subtotal: 25,
-        tax_amount: 0,
-        shipping_cost: 0,
-        discount_amount: 0,
-        currency: "USD",
-        payment_method: "mollie",
-        printify_order_id: "",
-        shipping_address: null,
-        billing_address: null,
-        shipping_method: "standard",
-        tracking_number: "",
-        tracking_url: "",
-        customer_notes: "",
-        internal_notes: "",
-        product_id: "",
-        created_at: now,
-        updated_at: now,
-        shipped_at: "",
-        delivered_at: "",
-      };
-
-      await page.route("**/rest/v1/orders*", async (route) => {
-        const method = route.request().method();
-        if (method === "POST") {
-          await route.fulfill({
-            status: 201,
-            contentType: "application/json",
-            body: JSON.stringify(fakeOrder),
-          });
-        } else if (method === "PATCH") {
-          await route.fulfill({
-            status: 200,
-            contentType: "application/json",
-            body: JSON.stringify(fakeOrder),
-          });
-        } else {
-          await route.fulfill({
-            status: 200,
-            contentType: "application/json",
-            body: JSON.stringify(null),
-          });
-        }
-      });
-
-      await page.route("**/rest/v1/order_items*", async (route) => {
-        if (route.request().method() === "POST") {
-          await route.fulfill({
-            status: 201,
-            contentType: "application/json",
-            body: JSON.stringify([{
-              id: "oi-mollie-1",
-              order_id: "order-mollie-retry-1",
-              product_id: "prod-e2e-1",
-              variant_id: "1001",
-              product_name: "E2E Test Tee",
-              variant_name: "Black / M",
-              quantity: 1,
-              unit_price: 25,
-              total_price: 25,
-              custom_image_url: "https://placehold.co/400x400.png",
-              design_id: null,
-              design_config: null,
-              fulfillment_status: null,
-              external_order_id: null,
-              created_at: now,
-              updated_at: now,
-            }]),
-          });
-        } else {
-          await route.continue();
-        }
-      });
-
-      // Mock payment recovery and refund endpoints
-      await page.route("**/rest/v1/rpc/record_payment_for_recovery", async (route) => {
-        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify("recovery-id-1") });
-      });
-      await page.route("**/functions/v1/process-refund", async (route) => {
-        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ success: true }) });
-      });
-
-      // Mock payment_transactions table for linkPaymentTransactionToOrder
-      await page.route("**/rest/v1/payment_transactions*", async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({ id: "pt-1", order_id: "order-mollie-retry-1" }),
-        });
-      });
-
-      // Track Printify calls — always fail
-      let printifyCallCount = 0;
-      await page.route("**/functions/v1/create-printify-order", async (route) => {
-        printifyCallCount++;
-        await route.fulfill({
-          status: 500,
-          contentType: "application/json",
-          body: JSON.stringify({ error: "Printify service unavailable" }),
-        });
-      });
-
-      await page.goto("/checkout/mollie-return");
-
-      // Should eventually show error (after retries are exhausted)
-      // Wait for either the error heading or error paragraph to be visible (avoid strict mode violation)
-      let foundError = false;
-      for (let i = 0; i < 12; i++) {
-        try {
-          const heading = page.getByRole('heading', { name: /something went wrong/i });
-          const para = page.getByText(/Printify.*failed|refund has been initiated/i);
-          if (await heading.isVisible({ timeout: 5000 }) || await para.isVisible({ timeout: 5000 })) {
-            foundError = true;
-            break;
-          }
-        } catch { await page.waitForTimeout(5000); }
+    test("switching to PayPal hides the Stripe card iframe", async ({ page }) => {
+      const paypalMethodButton = page.getByRole("button", { name: /paypal/i });
+      if (await paypalMethodButton.isVisible({ timeout: 5_000 }).catch(() => false)) {
+        await paypalMethodButton.click();
       }
-      if (!foundError) throw new Error('Printify error message not found after retries');
 
-      // Printify should have been called 4 times (1 initial + 3 retries from React Query)
-      expect(printifyCallCount).toBe(4);
-    });
-  });
-
-  test.describe("Mollie verification failure with payment recovery", () => {
-    test("records payment for recovery and retries verification 3 times via React Query", async ({ page }) => {
-      // Set up sessionStorage to simulate Mollie redirect return
-      await page.goto("/checkout?cartId=cart-e2e-1");
-      await page.evaluate(() => {
-        const lineItems = [{
-          product_id: "prod-e2e-1",
-          variant_id: 1001,
-          quantity: 1,
-          print_areas: { front: "https://placehold.co/400x400.png" },
-        }];
-        const shippingAddress = {
-          first_name: "E2E",
-          last_name: "Tester",
-          email: "e2e@test.com",
-          phone: "5550001234",
-          country: "US",
-          region: "",
-          address1: "1 Playwright Lane",
-          address2: "",
-          city: "Test City",
-          zip: "10001",
-        };
-        sessionStorage.setItem("mollie_payment_id", "tr_test_verify_fail");
-        sessionStorage.setItem("mollie_line_items", JSON.stringify(lineItems));
-        sessionStorage.setItem("mollie_shipping_address", JSON.stringify(shippingAddress));
-        sessionStorage.setItem("mollie_cart_id", "cart-e2e-1");
-        sessionStorage.setItem("mollie_order_amount", "25");
+      await expect(page.locator('iframe[name*="__privateStripeFrame"]').first()).toBeHidden({
+        timeout: 10_000,
       });
-
-      await mockCartWithItems(page);
-
-      // Track payment recovery calls
-      let paymentRecoveryCallCount = 0;
-      await page.route("**/rest/v1/rpc/record_payment_for_recovery", async (route) => {
-        paymentRecoveryCallCount++;
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify("recovery-id-verify-fail"),
-        });
-      });
-
-      // Track verification retry attempts
-      let verifyCallCount = 0;
-      await page.route("**/functions/v1/verify-mollie-payment", async (route) => {
-        verifyCallCount++;
-        await route.fulfill({
-          status: 500,
-          contentType: "application/json",
-          body: JSON.stringify({ error: "Mollie API temporarily unavailable" }),
-        });
-      });
-
-      await page.goto("/checkout/mollie-return");
-
-      // Should show error screen after all retries
-      await expect(page.getByText(/something went wrong|failed to verify/i)).toBeVisible({
-        timeout: 30_000, // Increased timeout to allow for retries
-      });
-
-      // CRITICAL: Payment recovery should have been called BEFORE verification
-      // Even though verification failed, the payment was recorded for recovery
-      expect(paymentRecoveryCallCount).toBeGreaterThanOrEqual(1);
-
-      // React Query should retry 3 times (1 initial + 3 retries = 4 total)
-      expect(verifyCallCount).toBe(4);
     });
 
-    test("shows helpful error message with payment ID when verification fails", async ({ page }) => {
-      await page.goto("/checkout?cartId=cart-e2e-1");
-      await page.evaluate(() => {
-        const lineItems = [{
-          product_id: "prod-e2e-1",
-          variant_id: 1001,
-          quantity: 1,
-          print_areas: { front: "https://placehold.co/400x400.png" },
-        }];
-        const shippingAddress = {
-          first_name: "E2E",
-          last_name: "Tester",
-          email: "e2e@test.com",
-          phone: "5550001234",
-          country: "US",
-          region: "",
-          address1: "1 Playwright Lane",
-          address2: "",
-          city: "Test City",
-          zip: "10001",
-        };
-        sessionStorage.setItem("mollie_payment_id", "tr_test_verify_fail_2");
-        sessionStorage.setItem("mollie_line_items", JSON.stringify(lineItems));
-        sessionStorage.setItem("mollie_shipping_address", JSON.stringify(shippingAddress));
-        sessionStorage.setItem("mollie_cart_id", "cart-e2e-1");
-        sessionStorage.setItem("mollie_order_amount", "25");
+    test("switching back to Stripe shows the card iframe", async ({ page }) => {
+      const paypalMethodButton = page.getByRole("button", { name: /paypal/i });
+      if (await paypalMethodButton.isVisible({ timeout: 5_000 }).catch(() => false)) {
+        await paypalMethodButton.click();
+      }
+
+      const stripeMethodButton = page.getByRole("button", { name: /card|stripe/i }).first();
+      if (await stripeMethodButton.isVisible({ timeout: 5_000 }).catch(() => false)) {
+        await stripeMethodButton.click();
+      }
+
+      await expect(page.locator('iframe[name*="__privateStripeFrame"]').first()).toBeVisible({
+        timeout: 15_000,
       });
-
-      await mockCartWithItems(page);
-
-      await page.route("**/rest/v1/rpc/record_payment_for_recovery", async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify("recovery-id-2"),
-        });
-      });
-
-      await page.route("**/functions/v1/verify-mollie-payment", async (route) => {
-        await route.fulfill({
-          status: 500,
-          contentType: "application/json",
-          body: JSON.stringify({ error: "Network timeout" }),
-        });
-      });
-
-      await page.goto("/checkout/mollie-return");
-
-      // Error message should reassure user that payment was recorded
-      await expect(
-        page.getByText(/payment has been recorded|process your order automatically|email confirmation within 24 hours/i)
-      ).toBeVisible({ timeout: 30_000 });
-
-      // Should include the payment ID for support
-      await expect(page.getByText(/tr_test_verify_fail_2/i)).toBeVisible();
-
-      // Should have a button to return to checkout or go to dashboard
-      const returnButton = page.getByRole("button", { name: /return to checkout|go to dashboard/i });
-      await expect(returnButton).toBeVisible();
     });
   });
 });
@@ -1333,183 +990,47 @@ test.describe("Flow 5 — Mobile checkout happy path", () => {
   });
 });
 
-// ─── Flow 6: Mollie happy path ────────────────────────────────────────────────
-//
-// A user completes the Mollie redirect flow:
-//   1. Checkout page stores payment context in sessionStorage and redirects to Mollie
-//   2. Mollie redirects back to /checkout/mollie-return
-//   3. The return page verifies payment, creates the order, and shows the confirmation screen.
+// ─── Flow 6: Stripe order-creation failure safety ───────────────────────────
 
-test.describe("Flow 6 — Mollie happy path", () => {
-  /** Seed sessionStorage as if the Mollie redirect just returned */
-  async function seedMollieReturnSession(page: Page, paymentId = "tr_test_mollie_success") {
-    await page.goto("/checkout?cartId=cart-e2e-1");
-    await page.evaluate((pid) => {
-      const lineItems = [{
-        product_id: "prod-e2e-1",
-        variant_id: 1001,
-        quantity: 1,
-        print_areas: { front: "https://placehold.co/400x400.png" },
-      }];
-      const shippingAddress = {
-        first_name: "E2E",
-        last_name: "Tester",
-        email: "e2e@test.com",
-        phone: "5550001234",
-        country: "US",
-        region: "",
-        address1: "1 Playwright Lane",
-        address2: "",
-        city: "Test City",
-        zip: "10001",
-      };
-      sessionStorage.setItem("mollie_payment_id", pid);
-      sessionStorage.setItem("mollie_line_items", JSON.stringify(lineItems));
-      sessionStorage.setItem("mollie_shipping_address", JSON.stringify(shippingAddress));
-      sessionStorage.setItem("mollie_cart_id", "cart-e2e-1");
-      sessionStorage.setItem("mollie_order_amount", "25");
-    }, paymentId);
-  }
-
-  test.beforeEach(async ({ page }) => {
+test.describe("Flow 6 — Stripe payment succeeds but order creation fails", () => {
+  test("shows refund notice when order creation fails after payment", async ({ page }) => {
+    await mockPaymentIntentEdgeFunction(page);
     await mockCartWithItems(page);
 
-    // Mollie payment is verified as paid
-    await page.route("**/functions/v1/verify-mollie-payment", async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({
-          paymentId: "tr_test_mollie_success",
-          status: "paid",
-          isPaid: true,
-        }),
-      });
-    });
-
-    const now = new Date().toISOString();
-    const fakeOrder = mockOrder({
-      id: "order-mollie-success-1",
-      order_number: "ORD-MOLLIE-001",
-      status: "confirmed",
-      payment_status: "paid",
-      payment_method: "mollie",
-    });
-
+    // Fail order creation path consistently so checkout reaches refund branch.
     await page.route("**/rest/v1/orders*", async (route) => {
-      const method = route.request().method();
-      if (method === "POST") {
-        await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify(fakeOrder) });
-      } else if (method === "PATCH") {
-        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(fakeOrder) });
-      } else {
-        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(null) });
-      }
-    });
-
-    await page.route("**/functions/v1/create-printify-order", async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ success: true, orderId: "printify-mollie-1" }),
-      });
-    });
-
-    await page.route("**/rest/v1/order_items*", async (route) => {
       if (route.request().method() === "POST") {
         await route.fulfill({
-          status: 201,
+          status: 500,
           contentType: "application/json",
-          body: JSON.stringify([{
-            id: "oi-mollie-success-1",
-            order_id: "order-mollie-success-1",
-            product_id: "prod-e2e-1",
-            variant_id: "1001",
-            product_name: "E2E Test Tee",
-            variant_name: "Black / M",
-            quantity: 1,
-            unit_price: 25,
-            total_price: 25,
-            custom_image_url: "https://placehold.co/400x400.png",
-            design_config: null,
-            fulfillment_status: null,
-            created_at: now,
-            updated_at: now,
-          }]),
+          body: JSON.stringify({ message: "Order insert failed" }),
         });
-      } else {
-        await route.continue();
+        return;
       }
-    });
-  });
 
-  test("shows 'Order Confirmed' screen after a successful Mollie redirect return", async ({
-    page,
-  }) => {
-    await seedMollieReturnSession(page);
-    await page.goto("/checkout/mollie-return");
-
-    await expect(page.getByRole("heading", { name: /order confirmed/i })).toBeVisible({
-      timeout: 30_000,
-    });
-  });
-
-  test("displays the order number on the Mollie confirmation screen", async ({
-    page,
-  }) => {
-    await seedMollieReturnSession(page);
-    await page.goto("/checkout/mollie-return");
-
-    await expect(page.getByRole("heading", { name: /order confirmed/i })).toBeVisible({
-      timeout: 30_000,
-    });
-
-    // Wait up to 90s for the order number to appear (handle slow rendering)
-    let foundOrderNumber = false;
-    for (let i = 0; i < 18; i++) {
-      try {
-        await expect(page.getByText(/ORD-MOLLIE-001/i)).toBeVisible({ timeout: 5000 });
-        foundOrderNumber = true;
-        break;
-      } catch { await page.waitForTimeout(5000); }
-    }
-    if (!foundOrderNumber) throw new Error('Order number ORD-MOLLIE-001 not found after retries');
-  });
-
-  test("'Track Your Order' link is visible after Mollie confirmation", async ({
-    page,
-  }) => {
-    await seedMollieReturnSession(page);
-    await page.goto("/checkout/mollie-return");
-
-    await expect(page.getByRole("heading", { name: /order confirmed/i })).toBeVisible({
-      timeout: 30_000,
-    });
-
-    await expect(page.getByRole("link", { name: /track your order/i })).toBeVisible();
-  });
-
-  test("Mollie return page shows error when payment verification returns not-paid", async ({
-    page,
-  }) => {
-    // Override: payment is open (not yet paid)
-    await page.route("**/functions/v1/verify-mollie-payment", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify({
-          paymentId: "tr_test_mollie_open",
-          status: "open",
-          isPaid: false,
-        }),
+        body: JSON.stringify(null),
       });
     });
 
-    await seedMollieReturnSession(page, "tr_test_mollie_open");
-    await page.goto("/checkout/mollie-return");
+    await page.route("**/functions/v1/process-refund", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ success: true }),
+      });
+    });
 
-    await expect(
-      page.getByText(/payment (not completed|failed|pending)|something went wrong/i)
-    ).toBeVisible({ timeout: 15_000 });
+    await page.goto("/checkout?cartId=cart-e2e-1");
+    await fillShippingForm(page);
+    await enableTestMode(page, "visa");
+    await clickConfirmOrder(page);
+
+    await expect(page.getByRole("heading", { name: /payment failed|order processing issue/i })).toBeVisible({
+      timeout: 30_000,
+    });
+    await expect(page.getByText(/refund has been initiated/i)).toBeVisible({ timeout: 30_000 });
   });
 });

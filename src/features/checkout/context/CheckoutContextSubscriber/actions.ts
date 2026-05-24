@@ -226,10 +226,6 @@ export function useCheckoutSubscriberActions() {
               provider === "paypal"
                 ? String((paymentIntent as Record<string, unknown>)["captureId"] ?? "")
                 : undefined,
-            molliePaymentId:
-              provider === "mollie"
-                ? String((paymentIntent as Record<string, unknown>)["molliePaymentId"] ?? "")
-                : undefined,
           });
           console.log("✅ Refund initiated successfully");
         } catch (refundError) {
@@ -497,7 +493,7 @@ export function useCheckoutSubscriberActions() {
           status: "Failed",
           reasonTitle: "Reason",
           reasonMessage,
-          availableMethods: ["paypal", "applepay", "stripe", "mollie"] satisfies PaymentAlternativeMethodT[],
+          availableMethods: ["paypal", "applepay", "stripe"] satisfies PaymentAlternativeMethodT[],
           isPostPaymentError: true,
         };
 
@@ -532,7 +528,7 @@ export function useCheckoutSubscriberActions() {
         status: "Failed",
         reasonTitle: "Reason",
         reasonMessage: errorMsg?.trim() || fallbackMessage,
-        availableMethods: ["paypal", "applepay", "stripe", "mollie"] satisfies PaymentAlternativeMethodT[],
+        availableMethods: ["paypal", "applepay", "stripe"] satisfies PaymentAlternativeMethodT[],
       };
 
       store.setState({

@@ -185,7 +185,6 @@ describe("Flow 1 — Payment Fails", () => {
     expect(details?.reasonMessage).toBe("Insufficient funds");
     expect(details?.availableMethods).toContain("stripe");
     expect(details?.availableMethods).toContain("paypal");
-    expect(details?.availableMethods).toContain("mollie");
   });
 
   it("handleTryAgain resets payment state to idle so the user can retry", () => {
@@ -338,32 +337,6 @@ describe("Flow 2 — Payment Succeeds, Order Creation Fails", () => {
       expect.objectContaining({
         paymentProvider: "paypal",
         paypalCaptureId: "capture_xyz",
-      })
-    );
-  });
-
-  it("sends the correct Mollie payment ID in the refund request", async () => {
-    createOrderFromCartMock.mockRejectedValue(new Error("fail"));
-
-    const molliePaymentIntent = {
-      id: "tr_mollie_abc",
-      molliePaymentId: "tr_mollie_abc",
-      metadata: { order_id: "ord_mollie1" },
-    };
-
-    const store = createMockStore({ selectedPaymentMethod: "mollie" });
-    const { result } = renderHook(() => useCheckoutSubscriberActions(), {
-      wrapper: createWrapper(store),
-    });
-
-    await act(async () => {
-      await result.current.handlePaymentSuccess(molliePaymentIntent, VALID_LINE_ITEMS);
-    });
-
-    expect(processRefundMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        paymentProvider: "mollie",
-        molliePaymentId: "tr_mollie_abc",
       })
     );
   });

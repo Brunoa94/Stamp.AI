@@ -349,7 +349,7 @@ describe("useCheckoutSubscriberActions", () => {
         amountDue: "$50.00",
         status: "Failed",
         reasonTitle: "Reason",
-        availableMethods: ["paypal", "applepay", "stripe", "mollie"],
+        availableMethods: ["paypal", "applepay", "stripe"],
       });
     });
 
