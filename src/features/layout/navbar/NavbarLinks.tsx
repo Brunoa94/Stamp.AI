@@ -14,7 +14,6 @@ export function NavbarLinks() {
   const { data: user } = useUser();
   const displayName =
     user?.user_metadata?.first_name || user?.email?.split("@")[0] || null;
-  const stampLabel = displayName ? `Stamp It, ${displayName}!` : "Stamp It!";
 
   return (
     <div className={navbarTheme.navigation.container}>
@@ -27,19 +26,24 @@ export function NavbarLinks() {
             : navbarTheme.navigation.link.inactive,
         )}
       >
-        My Orders
+        <span className="hidden lg:inline">My Orders</span>
+        <span className="lg:hidden">Orders</span>
       </ViewTransitionLink>
 
       <ViewTransitionLink
         href="/stamp"
-        className={`${navbarTheme.navigation.stampButton} text-xl`}
+        className={navbarTheme.navigation.stampButton}
       >
         <span
           className={clsx(
             isStampActive && navbarTheme.navigation.stampButtonActive,
           )}
         >
-          {stampLabel}
+          {/* Show personalized label only on larger screens */}
+          <span className="hidden lg:inline">
+            {displayName ? `Stamp It, ${displayName}!` : "Stamp It!"}
+          </span>
+          <span className="lg:hidden">Stamp It!</span>
         </span>
       </ViewTransitionLink>
 

@@ -9,10 +9,9 @@ import { cn } from "@/lib/utils";
 
 const navbarStyles = {
   header:
-    "md:hidden sticky top-0 z-50 w-full pt-safe transition-[background-color,backdrop-filter,border-color,box-shadow] duration-500",
-  scrolled:
-    "bg-white dark:bg-gray-900 backdrop-blur-md border-b border-[#E8E0F0] dark:border-gray-700/30 shadow-sm",
-  top: "bg-transparent border-b border-transparent shadow-none",
+    "md:hidden sticky top-0 z-50 w-full pt-safe pb-2 transition-all duration-500",
+  scrolled: "",
+  top: "",
 };
 
 export function MobileNavbar() {

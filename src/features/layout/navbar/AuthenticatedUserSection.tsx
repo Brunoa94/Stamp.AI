@@ -43,9 +43,12 @@ export function AuthenticatedUserSection() {
           navbarTheme.actions.signOutButton,
           logoutMutation.isPending && "opacity-50 cursor-not-allowed",
         )}
+        aria-label="Sign out"
       >
-        <LogOut className="w-4 h-4" />
-        <span>{logoutMutation.isPending ? "Signing out..." : "Sign Out"}</span>
+        <LogOut className="w-3.5 h-3.5 md:w-4 md:h-4" />
+        <span className="hidden lg:inline">
+          {logoutMutation.isPending ? "Signing out..." : "Sign Out"}
+        </span>
       </Button>
     </div>
   );
