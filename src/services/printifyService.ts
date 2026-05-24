@@ -196,6 +196,7 @@ export class PrintifyService {
                 name: blueprint.title,
                 description: blueprint.description || `${blueprint.brand} ${blueprint.model}`,
                 image: blueprint.images[0] || "/api/placeholder/200/200",
+                images: blueprint.images || [],
                 features: blueprint.printAreas.map((area: { position: string; width: number; height: number }) => area.position),
                 price: blueprint.min_price ? blueprint.min_price / 100 : 0,
                 material: blueprint.brand || "Cotton",

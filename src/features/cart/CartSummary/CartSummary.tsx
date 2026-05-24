@@ -1,7 +1,8 @@
 "use client";
 
-import { cartTheme } from "@/theme/components";
-import { ArrowRight, Lock, Package } from "lucide-react";
+import { cartTheme, buttonTheme } from "@/theme/components";
+import { ArrowRight, Package } from "lucide-react";
+import { Button } from "@/features/ui/button";
 
 interface Props {
   itemCount: number;
@@ -60,20 +61,16 @@ export function CartSummary({
 
       {/* Desktop checkout button */}
       {onCheckout && (
-        <button
-          className={cartTheme.summary.checkoutButton}
+        <Button
+          variant="default"
+          size="lg"
+          className={`hidden lg:flex w-full py-5 mt-6 ${buttonTheme.actionPrimary}`}
           onClick={onCheckout}
         >
           <span>PROCEED TO CHECKOUT</span>
           <ArrowRight className="w-5 h-5" />
-        </button>
+        </Button>
       )}
-
-      {/* Desktop secure checkout text */}
-      <p className={cartTheme.summary.secureText}>
-        <Lock className="inline w-3 h-3 mr-1" aria-hidden="true" />
-        Secure Checkout • SSL Encrypted
-      </p>
 
       {/* Desktop estimated arrival */}
       <div className={cartTheme.summary.arrivalWrap}>

@@ -22,7 +22,6 @@ export interface CheckoutSubscriberContextState {
   message: string;
   testMode: boolean;
   isProcessingPayment: boolean;
-  triggerPayment: boolean;
   selectedPaymentMethod: PaymentMethodT;
   paymentSuccessDetails: PaymentSuccessDetailsI | null;
   paymentErrorDetails: PaymentErrorDetailsI | null;

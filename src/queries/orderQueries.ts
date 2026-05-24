@@ -145,26 +145,6 @@ export function useUpdatePaymentStatus() {
 }
 
 /**
- * Update order fulfillment status
- */
-export function useUpdateFulfillmentStatus() {
-  const queryClient = useQueryClient();
-  const { handleError } = useErrorHandler();
-
-  return useMutation({
-    mutationFn: ({ orderId, fulfillmentStatus }: { orderId: string; fulfillmentStatus: string }) =>
-      OrderService.updateFulfillmentStatus(orderId, fulfillmentStatus),
-    onSuccess: (data, variables) => {
-      queryClient.setQueryData(["orders", variables.orderId], data);
-      queryClient.invalidateQueries({ queryKey: ["orders"] });
-    },
-    onError: (error: Error) => {
-      handleError(error);
-    },
-  });
-}
-
-/**
  * Delete an order
  */
 export function useDeleteOrder() {
@@ -197,12 +177,14 @@ export function useCreateOrderFromCart() {
       paymentStatus = "paid",
       shippingAddress,
       idempotencyKey,
+      orderStatus,
     }: {
       user: UserI;
       cart: CartWithItems;
       paymentStatus?: string;
       shippingAddress?: ShippingAddressT;
       idempotencyKey?: string;
+      orderStatus?: string;
     }) => {
       if (!user) {
         throw new Error("User not authenticated");
@@ -213,6 +195,7 @@ export function useCreateOrderFromCart() {
         paymentStatus,
         shippingAddress,
         idempotencyKey,
+        orderStatus,
       });
     },
     onSuccess: (orderId) => {
@@ -226,7 +209,8 @@ export function useCreateOrderFromCart() {
     onError: (error: Error) => {
       handleError(error);
     },
-    // 3 total attempts: initial try + 2 retries
-    retry: 2,
+    // CRITICAL: Do NOT retry order creation - duplicates can be created
+    // Idempotency is handled at the database level via idempotency_key
+    retry: false,
   });
 }

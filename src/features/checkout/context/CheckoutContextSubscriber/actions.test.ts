@@ -5,45 +5,83 @@ import { useCheckoutSubscriberActions } from "./actions";
 import { CheckoutSubscriberContext } from "./CheckoutContextSubscriber";
 import { CheckoutSubscriberContextState } from "./types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useCreateOrderFromCart, useUpdateOrderStatus, useUpdatePaymentStatus } from "@/queries/orderQueries";
+import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
+import { useClearCart } from "@/queries/cartQueries";
+import { useUser } from "@/hooks/useAuth";
+import { OrderService } from "@/services/orderService";
+import { RefundService } from "@/services/refundService";
+import { PaymentRecoveryService } from "@/services/paymentRecoveryService";
+
+// Create mock functions that can be spied on
+const mockCreateOrderMutate = vi.fn().mockResolvedValue("order_123");
+const mockUpdateOrderStatusMutate = vi.fn().mockResolvedValue({});
+const mockUpdatePaymentStatusMutate = vi.fn().mockResolvedValue({});
+const mockCreatePrintifyOrderMutate = vi.fn().mockResolvedValue({ order: { id: "printify_123" } });
+const mockClearCartMutate = vi.fn().mockResolvedValue({});
+const mockValidatePromoCodeMutate = vi.fn().mockResolvedValue({
+  isValid: true,
+  appliedPromo: { code: "TEST10", value: 10, type: "percentage", discountValue: 5 },
+});
+
+let mockUserData: any = { id: "user-123", email: "test@example.com" };
 
 // Mock dependencies
 vi.mock("@/queries/orderQueries", () => ({
   useCreateOrderFromCart: () => ({
-    mutateAsync: vi.fn().mockResolvedValue({}),
+    mutateAsync: mockCreateOrderMutate,
   }),
   useUpdateOrderStatus: () => ({
-    mutateAsync: vi.fn().mockResolvedValue({}),
+    mutateAsync: mockUpdateOrderStatusMutate,
   }),
   useUpdatePaymentStatus: () => ({
-    mutateAsync: vi.fn().mockResolvedValue({}),
+    mutateAsync: mockUpdatePaymentStatusMutate,
   }),
 }));
 
 vi.mock("@/queries/printifyOrderQueries", () => ({
   useCreatePrintifyOrder: () => ({
-    mutateAsync: vi.fn().mockResolvedValue({}),
+    mutateAsync: mockCreatePrintifyOrderMutate,
   }),
 }));
 
 vi.mock("@/queries/cartQueries", () => ({
   useClearCart: () => ({
-    mutateAsync: vi.fn().mockResolvedValue({}),
+    mutateAsync: mockClearCartMutate,
   }),
 }));
 
 vi.mock("@/queries/promocodeQueries", () => ({
   useValidatePromoCode: () => ({
-    mutateAsync: vi.fn().mockResolvedValue({
-      isValid: true,
-      appliedPromo: { code: "TEST10", value: 10, type: "percentage", discountValue: 5 },
-    }),
+    mutateAsync: mockValidatePromoCodeMutate,
   }),
 }));
 
 vi.mock("@/hooks/useAuth", () => ({
   useUser: () => ({
-    data: { id: "user-123", email: "test@example.com" },
+    data: mockUserData,
   }),
+}));
+
+vi.mock("@/services/orderService", () => ({
+  OrderService: {
+    getOrderByIdempotencyKey: vi.fn().mockResolvedValue(null),
+    linkPaymentTransactionToOrder: vi.fn().mockResolvedValue(undefined),
+    updateOrder: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
+vi.mock("@/services/refundService", () => ({
+  RefundService: {
+    processRefund: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
+vi.mock("@/services/paymentRecoveryService", () => ({
+  PaymentRecoveryService: {
+    recordPaymentForRecovery: vi.fn().mockResolvedValue("recovery_123"),
+    markPaymentRecovered: vi.fn().mockResolvedValue(undefined),
+  },
 }));
 
 function createMockStore(initialState: CheckoutSubscriberContextState) {
@@ -73,7 +111,6 @@ const defaultState: CheckoutSubscriberContextState = {
   message: "",
   testMode: false,
   isProcessingPayment: false,
-  triggerPayment: false,
   selectedPaymentMethod: "stripe",
   paymentSuccessDetails: null,
   paymentErrorDetails: null,
@@ -86,6 +123,7 @@ const defaultState: CheckoutSubscriberContextState = {
   discount: 0,
   total: 110,
   orderAmount: 110,
+  lineItems: []
 };
 
 const mockShippingAddress = {
@@ -125,6 +163,17 @@ function createWrapper(store: ReturnType<typeof createMockStore>) {
 describe("useCheckoutSubscriberActions", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset mock implementations to defaults
+    mockCreateOrderMutate.mockResolvedValue("order_123");
+    mockUpdateOrderStatusMutate.mockResolvedValue({});
+    mockUpdatePaymentStatusMutate.mockResolvedValue({});
+    mockCreatePrintifyOrderMutate.mockResolvedValue({ order: { id: "printify_123" } });
+    mockClearCartMutate.mockResolvedValue({});
+    mockValidatePromoCodeMutate.mockResolvedValue({
+      isValid: true,
+      appliedPromo: { code: "TEST10", value: 10, type: "percentage", discountValue: 5 },
+    });
+    mockUserData = { id: "user-123", email: "test@example.com" };
   });
 
   afterEach(() => {
@@ -201,11 +250,20 @@ describe("useCheckoutSubscriberActions", () => {
       });
     });
 
-    it("should set success state when payment succeeds", async () => {
+    it("should set success state when payment succeeds and create order with waiting_confirmation status", async () => {
       const store = createMockStore({
         ...defaultState,
         shippingAddress: mockShippingAddress,
         orderAmount: 99.99,
+        cart: {
+          id: "cart_123",
+          user_id: "user_123",
+          created_at: new Date().toISOString(),
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
+        },
       });
 
       const { result } = renderHook(() => useCheckoutSubscriberActions(), {
@@ -228,12 +286,28 @@ describe("useCheckoutSubscriberActions", () => {
         orderNumber: "#SD-123456",
         estimatedDelivery: "7–10 business days",
       });
+
+      // Verify order was created with waiting_confirmation status
+      expect(mockCreateOrderMutate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderStatus: "waiting_confirmation",
+        })
+      );
     });
 
     it("should generate correct order number from payment intent id", async () => {
       const store = createMockStore({
         ...defaultState,
         shippingAddress: mockShippingAddress,
+        cart: {
+          id: "cart_123",
+          user_id: "user_123",
+          created_at: new Date().toISOString(),
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
+        },
       });
 
       const { result } = renderHook(() => useCheckoutSubscriberActions(), {
@@ -275,7 +349,7 @@ describe("useCheckoutSubscriberActions", () => {
         amountDue: "$50.00",
         status: "Failed",
         reasonTitle: "Reason",
-        availableMethods: ["paypal", "applepay", "stripe", "mollie"],
+        availableMethods: ["paypal", "applepay", "stripe"],
       });
     });
 
@@ -334,7 +408,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
         orderAmount: 150.0,
       });
@@ -431,44 +508,6 @@ describe("useCheckoutSubscriberActions", () => {
       });
 
       expect(store.getState().shippingAddress).toEqual(mockShippingAddress);
-    });
-  });
-
-  describe("handleCompleteOrder", () => {
-    it("should not trigger payment when shipping address is missing", () => {
-      const store = createMockStore({
-        ...defaultState,
-        shippingAddress: null,
-      });
-
-      const { result } = renderHook(() => useCheckoutSubscriberActions(), {
-        wrapper: createWrapper(store),
-      });
-
-      act(() => {
-        result.current.handleCompleteOrder();
-      });
-
-      expect(store.getState().triggerPayment).toBe(false);
-      expect(store.getState().isProcessingPayment).toBe(false);
-    });
-
-    it("should trigger payment when shipping address is present", () => {
-      const store = createMockStore({
-        ...defaultState,
-        shippingAddress: mockShippingAddress,
-      });
-
-      const { result } = renderHook(() => useCheckoutSubscriberActions(), {
-        wrapper: createWrapper(store),
-      });
-
-      act(() => {
-        result.current.handleCompleteOrder();
-      });
-
-      expect(store.getState().triggerPayment).toBe(true);
-      expect(store.getState().isProcessingPayment).toBe(true);
     });
   });
 
@@ -604,13 +643,9 @@ describe("useCheckoutSubscriberActions", () => {
      * causing inventory issues, shipping costs, and customer confusion.
      */
     it("should prevent duplicate order creation when handlePaymentSuccess called twice with same payment intent", async () => {
-      const mockCreateOrder = vi.fn()
+      mockCreateOrderMutate
         .mockResolvedValueOnce("order_123") // First call succeeds
         .mockResolvedValueOnce("order_456"); // Second call also succeeds (BUG!)
-
-      vi.mocked(useCreateOrderFromCart).mockReturnValue({
-        mutateAsync: mockCreateOrder,
-      } as any);
 
       const store = createMockStore({
         ...defaultState,
@@ -619,7 +654,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
       });
 
@@ -639,9 +677,9 @@ describe("useCheckoutSubscriberActions", () => {
       });
 
       // EXPECTED: createOrder should only be called once due to idempotency check
-      // CURRENT BEHAVIOR: Called twice, creates duplicate orders
-      // This test documents the bug and will pass showing the problem
-      expect(mockCreateOrder).toHaveBeenCalledTimes(2); // TODO: Should be 1 after implementing idempotency
+      // CURRENT BEHAVIOR: In-flight guard prevents duplicate calls within the same session
+      // However, duplicate calls from different tabs/browser instances can still create duplicate orders
+      expect(mockCreateOrderMutate).toHaveBeenCalledTimes(1);
     });
 
     /**
@@ -651,12 +689,7 @@ describe("useCheckoutSubscriberActions", () => {
      * to detect concurrent modifications and fail gracefully.
      */
     it("should handle cart being cleared by another session during checkout", async () => {
-      const mockClearCart = vi.fn()
-        .mockRejectedValueOnce(new Error("Cart already cleared"));
-
-      vi.mocked(useClearCart).mockReturnValue({
-        mutateAsync: mockClearCart,
-      } as any);
+      mockClearCartMutate.mockRejectedValueOnce(new Error("Cart already cleared"));
 
       const store = createMockStore({
         ...defaultState,
@@ -665,7 +698,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
       });
 
@@ -683,7 +719,7 @@ describe("useCheckoutSubscriberActions", () => {
       const state = store.getState();
       // EXPECTED: Order should still be created successfully even if cart clear fails
       expect(state.paymentStatus).toBe("success");
-      expect(mockClearCart).toHaveBeenCalled();
+      expect(mockClearCartMutate).toHaveBeenCalled();
     });
   });
 
@@ -739,6 +775,15 @@ describe("useCheckoutSubscriberActions", () => {
         ...defaultState,
         shippingAddress: mockShippingAddress,
         selectedPaymentMethod: "paypal",
+        cart: {
+          id: "cart_123",
+          user_id: "user_123",
+          created_at: new Date().toISOString(),
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
+        },
       });
 
       const { result } = renderHook(() => useCheckoutSubscriberActions(), {
@@ -774,12 +819,7 @@ describe("useCheckoutSubscriberActions", () => {
      * but nothing sent to production.
      */
     it("should set error state when Printify order creation fails after DB order created", async () => {
-      const mockCreatePrintifyOrder = vi.fn()
-        .mockRejectedValueOnce(new Error("Printify API timeout"));
-
-      vi.mocked(useCreatePrintifyOrder).mockReturnValue({
-        mutateAsync: mockCreatePrintifyOrder,
-      } as any);
+      mockCreatePrintifyOrderMutate.mockRejectedValueOnce(new Error("Printify API timeout"));
 
       const store = createMockStore({
         ...defaultState,
@@ -788,7 +828,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
       });
 
@@ -818,12 +861,7 @@ describe("useCheckoutSubscriberActions", () => {
      * IMPACT: Order shows "pending" in dashboard but is actually being fulfilled.
      */
     it("should succeed even if order status update fails after Printify order created", async () => {
-      const mockUpdateOrderStatus = vi.fn()
-        .mockRejectedValueOnce(new Error("Database connection lost"));
-
-      vi.mocked(useUpdateOrderStatus).mockReturnValue({
-        mutateAsync: mockUpdateOrderStatus,
-      } as any);
+      mockUpdateOrderStatusMutate.mockRejectedValueOnce(new Error("Database connection lost"));
 
       const store = createMockStore({
         ...defaultState,
@@ -832,7 +870,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
       });
 
@@ -848,10 +889,9 @@ describe("useCheckoutSubscriberActions", () => {
       });
 
       const state = store.getState();
-      // CURRENT BEHAVIOR: Fails because status update throws
-      expect(state.paymentStatus).toBe("error");
-      // EXPECTED: Should succeed because Printify order was created successfully
-      // TODO: Implement non-critical error handling for status updates
+      // Status update failures don't fail the entire checkout anymore
+      // The Printify order was created successfully, which is what matters
+      expect(state.paymentStatus).toBe("success");
     });
 
     /**
@@ -869,12 +909,6 @@ describe("useCheckoutSubscriberActions", () => {
         writable: true,
       });
 
-      const mockCreateOrder = vi.fn();
-
-      vi.mocked(useCreateOrderFromCart).mockReturnValue({
-        mutateAsync: mockCreateOrder,
-      } as any);
-
       const store = createMockStore({
         ...defaultState,
         shippingAddress: mockShippingAddress,
@@ -882,7 +916,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
       });
 
@@ -898,7 +935,7 @@ describe("useCheckoutSubscriberActions", () => {
       });
 
       // EXPECTED: Should not create new order, should use existing order_id
-      expect(mockCreateOrder).not.toHaveBeenCalled();
+      expect(mockCreateOrderMutate).not.toHaveBeenCalled();
 
       const state = store.getState();
       expect(state.paymentStatus).toBe("success");
@@ -940,9 +977,7 @@ describe("useCheckoutSubscriberActions", () => {
      */
     it("should handle missing user gracefully", async () => {
       // Override the user mock to return null
-      vi.mocked(useUser).mockReturnValue({
-        data: null,
-      } as any);
+      mockUserData = null;
 
       const store = createMockStore({
         ...defaultState,
@@ -951,7 +986,10 @@ describe("useCheckoutSubscriberActions", () => {
           id: "cart_123",
           user_id: "user_123",
           created_at: new Date().toISOString(),
-          items: [],
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
         },
       });
 

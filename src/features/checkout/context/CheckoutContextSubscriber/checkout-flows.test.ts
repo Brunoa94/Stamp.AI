@@ -75,6 +75,7 @@ function createMockStore(overrides: Partial<CheckoutSubscriberContextState> = {}
       cart_items: [],
     },
     cartItems: [],
+    lineItems: [],
     isLoading: false,
     error: null,
     shippingAddress: {
@@ -93,7 +94,6 @@ function createMockStore(overrides: Partial<CheckoutSubscriberContextState> = {}
     message: "",
     testMode: true,
     isProcessingPayment: false,
-    triggerPayment: false,
     selectedPaymentMethod: "stripe",
     paymentSuccessDetails: null,
     paymentErrorDetails: null,
@@ -185,7 +185,6 @@ describe("Flow 1 — Payment Fails", () => {
     expect(details?.reasonMessage).toBe("Insufficient funds");
     expect(details?.availableMethods).toContain("stripe");
     expect(details?.availableMethods).toContain("paypal");
-    expect(details?.availableMethods).toContain("mollie");
   });
 
   it("handleTryAgain resets payment state to idle so the user can retry", () => {
@@ -342,32 +341,6 @@ describe("Flow 2 — Payment Succeeds, Order Creation Fails", () => {
     );
   });
 
-  it("sends the correct Mollie payment ID in the refund request", async () => {
-    createOrderFromCartMock.mockRejectedValue(new Error("fail"));
-
-    const molliePaymentIntent = {
-      id: "tr_mollie_abc",
-      molliePaymentId: "tr_mollie_abc",
-      metadata: { order_id: "ord_mollie1" },
-    };
-
-    const store = createMockStore({ selectedPaymentMethod: "mollie" });
-    const { result } = renderHook(() => useCheckoutSubscriberActions(), {
-      wrapper: createWrapper(store),
-    });
-
-    await act(async () => {
-      await result.current.handlePaymentSuccess(molliePaymentIntent, VALID_LINE_ITEMS);
-    });
-
-    expect(processRefundMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        paymentProvider: "mollie",
-        molliePaymentId: "tr_mollie_abc",
-      })
-    );
-  });
-
   it("sets error state with a refund-notice message after retry failures", async () => {
     createOrderFromCartMock.mockRejectedValue(new Error("Persistent DB failure"));
 
@@ -427,7 +400,7 @@ describe("Flow 3 — Everything Succeeds", () => {
     );
   });
 
-  it("updates order status to confirmed after Printify order succeeds", async () => {
+  it("does not call updateOrderStatus for confirmed on success path", async () => {
     const store = createMockStore();
     const { result } = renderHook(() => useCheckoutSubscriberActions(), {
       wrapper: createWrapper(store),
@@ -437,10 +410,9 @@ describe("Flow 3 — Everything Succeeds", () => {
       await result.current.handlePaymentSuccess(STRIPE_PAYMENT_INTENT, VALID_LINE_ITEMS);
     });
 
-    expect(updateOrderStatusMock).toHaveBeenCalledWith({
-      orderId: "ord_confirmed_1",
-      status: "confirmed",
-    });
+    expect(updateOrderStatusMock).not.toHaveBeenCalledWith(
+      expect.objectContaining({ status: "confirmed" })
+    );
   });
 
   it("populates paymentSuccessDetails with status 'paid'", async () => {
@@ -514,5 +486,256 @@ describe("Flow 3 — Everything Succeeds", () => {
     });
 
     expect(processRefundMock).not.toHaveBeenCalled();
+  });
+});
+
+// ─── FLOW 4: Printify Fulfillment Fails ──────────────────────────────────────
+
+describe("Flow 4 — Printify Order Creation Fails", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    createOrderFromCartMock.mockResolvedValue("ord_before_printify");
+    updateOrderStatusMock.mockResolvedValue({});
+    updatePaymentStatusMock.mockResolvedValue({});
+    clearCartMock.mockResolvedValue({});
+    processRefundMock.mockResolvedValue(undefined);
+  });
+
+  it("triggers a refund when Printify order creation fails", async () => {
+    createPrintifyOrderMock.mockRejectedValue(new Error("Printify API unavailable"));
+
+    const store = createMockStore({ selectedPaymentMethod: "stripe" });
+    const { result } = renderHook(() => useCheckoutSubscriberActions(), {
+      wrapper: createWrapper(store),
+    });
+
+    await act(async () => {
+      await result.current.handlePaymentSuccess(STRIPE_PAYMENT_INTENT, VALID_LINE_ITEMS);
+    });
+
+    expect(processRefundMock).toHaveBeenCalledTimes(1);
+    expect(processRefundMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        reason: "Printify fulfillment failed after successful payment",
+      })
+    );
+  });
+
+  it("marks the DB order as unsuccessful_confirmation and refund_pending", async () => {
+    createPrintifyOrderMock.mockRejectedValue(new Error("Printify timeout"));
+
+    const store = createMockStore();
+    const { result } = renderHook(() => useCheckoutSubscriberActions(), {
+      wrapper: createWrapper(store),
+    });
+
+    await act(async () => {
+      await result.current.handlePaymentSuccess(STRIPE_PAYMENT_INTENT, VALID_LINE_ITEMS);
+    });
+
+    expect(updateOrderStatusMock).toHaveBeenCalledWith({
+      orderId: "ord_before_printify",
+      status: "unsuccessful_confirmation",
+    });
+    expect(updatePaymentStatusMock).toHaveBeenCalledWith({
+      orderId: "ord_before_printify",
+      paymentStatus: "refund_pending",
+    });
+  });
+
+  it("sets error state with refund notice in the message", async () => {
+    createPrintifyOrderMock.mockRejectedValue(new Error("Printify 500"));
+
+    const store = createMockStore({ orderAmount: 42 });
+    const { result } = renderHook(() => useCheckoutSubscriberActions(), {
+      wrapper: createWrapper(store),
+    });
+
+    await act(async () => {
+      await result.current.handlePaymentSuccess(STRIPE_PAYMENT_INTENT, VALID_LINE_ITEMS);
+    });
+
+    const state = store.getState();
+    expect(state.paymentStatus).toBe("error");
+    expect(state.message).toContain("refund");
+    expect(state.paymentErrorDetails?.isPostPaymentError).toBe(true);
+  });
+
+  it("still succeeds if Printify works (no refund, status updated by create-printify-order)", async () => {
+    createPrintifyOrderMock.mockResolvedValue({ id: "printify_ok" });
+
+    const store = createMockStore();
+    const { result } = renderHook(() => useCheckoutSubscriberActions(), {
+      wrapper: createWrapper(store),
+    });
+
+    await act(async () => {
+      await result.current.handlePaymentSuccess(STRIPE_PAYMENT_INTENT, VALID_LINE_ITEMS);
+    });
+
+    expect(processRefundMock).not.toHaveBeenCalled();
+    expect(store.getState().paymentStatus).toBe("success");
+    // Note: Order status is now updated to "confirmed" by create-printify-order function,
+    // not by client code, so we don't check for that call here
+  });
+});
+
+// ─── FLOW 5: Timeout Protection ──────────────────────────────────────────────
+
+describe("Flow 5 — Checkout Pipeline Timeout", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    createOrderFromCartMock.mockResolvedValue("ord_will_timeout");
+    updateOrderStatusMock.mockResolvedValue({});
+    updatePaymentStatusMock.mockResolvedValue({});
+    clearCartMock.mockResolvedValue({});
+    processRefundMock.mockResolvedValue(undefined);
+  });
+
+  it("sets error state when the fulfillment pipeline exceeds the timeout", async () => {
+    // Printify hangs forever (never resolves) — only the timeout will fire
+    createPrintifyOrderMock.mockImplementation(
+      () => new Promise(() => { /* never resolves */ })
+    );
+
+    vi.useFakeTimers();
+
+    const store = createMockStore();
+    const { result } = renderHook(() => useCheckoutSubscriberActions(), {
+      wrapper: createWrapper(store),
+    });
+
+    const promise = act(async () => {
+      await result.current.handlePaymentSuccess(STRIPE_PAYMENT_INTENT, VALID_LINE_ITEMS);
+    });
+
+    // Advance past the 120s timeout
+    await vi.advanceTimersByTimeAsync(130_000);
+    await promise;
+
+    vi.useRealTimers();
+
+    const state = store.getState();
+    expect(state.paymentStatus).toBe("error");
+    expect(state.message).toContain("timed out");
+  });
+
+  it("triggers refund and marks order as unsuccessful_confirmation on timeout", async () => {
+    createPrintifyOrderMock.mockImplementation(
+      () => new Promise(() => { /* never resolves */ })
+    );
+
+    vi.useFakeTimers();
+
+    const store = createMockStore();
+    const { result } = renderHook(() => useCheckoutSubscriberActions(), {
+      wrapper: createWrapper(store),
+    });
+
+    const promise = act(async () => {
+      await result.current.handlePaymentSuccess(STRIPE_PAYMENT_INTENT, VALID_LINE_ITEMS);
+    });
+
+    await vi.advanceTimersByTimeAsync(130_000);
+    await promise;
+
+    vi.useRealTimers();
+
+    expect(processRefundMock).toHaveBeenCalledTimes(1);
+    expect(processRefundMock).toHaveBeenCalledWith(
+      expect.objectContaining({ reason: "Checkout pipeline timed out" })
+    );
+    expect(updateOrderStatusMock).toHaveBeenCalledWith({
+      orderId: "ord_will_timeout",
+      status: "unsuccessful_confirmation",
+    });
+  });
+});
+
+// ─── FLOW 6: Order ID Validation ──────────────────────────────────────────────
+
+describe("Flow 6 — Order ID Validation", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    updateOrderStatusMock.mockResolvedValue({});
+    updatePaymentStatusMock.mockResolvedValue({});
+    clearCartMock.mockResolvedValue({});
+    processRefundMock.mockResolvedValue(undefined);
+  });
+
+  it("should fail and refund if order creation returns null", async () => {
+    // Order creation returns null instead of UUID
+    createOrderFromCartMock.mockResolvedValue(null);
+
+    const store = createMockStore();
+    const { result } = renderHook(() => useCheckoutSubscriberActions(), {
+      wrapper: createWrapper(store),
+    });
+
+    await act(async () => {
+      await result.current.handlePaymentSuccess(STRIPE_PAYMENT_INTENT, VALID_LINE_ITEMS);
+    });
+
+    // Should trigger refund
+    expect(processRefundMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        reason: "Order ID not available for Printify creation",
+      })
+    );
+
+    // Should set error state
+    const state = store.getState();
+    expect(state.paymentStatus).toBe("error");
+    expect(state.message).toContain("Order ID not available");
+    expect(state.message).toContain("refund");
+  });
+
+  it("should NOT use fallback order_${Date.now()} format", async () => {
+    createOrderFromCartMock.mockResolvedValue(null);
+
+    const store = createMockStore();
+    const { result } = renderHook(() => useCheckoutSubscriberActions(), {
+      wrapper: createWrapper(store),
+    });
+
+    await act(async () => {
+      await result.current.handlePaymentSuccess(STRIPE_PAYMENT_INTENT, VALID_LINE_ITEMS);
+    });
+
+    // Printify order should NOT be called with invalid order_id
+    expect(createPrintifyOrderMock).not.toHaveBeenCalled();
+
+    // Should refund instead
+    expect(processRefundMock).toHaveBeenCalled();
+  });
+
+  it("should proceed normally with valid UUID order ID", async () => {
+    const validUUID = "123e4567-e89b-12d3-a456-426614174000";
+    createOrderFromCartMock.mockResolvedValue(validUUID);
+    createPrintifyOrderMock.mockResolvedValue({ id: "printify_123" });
+
+    const store = createMockStore();
+    const { result } = renderHook(() => useCheckoutSubscriberActions(), {
+      wrapper: createWrapper(store),
+    });
+
+    await act(async () => {
+      await result.current.handlePaymentSuccess(STRIPE_PAYMENT_INTENT, VALID_LINE_ITEMS);
+    });
+
+    // Printify should be called with valid UUID
+    expect(createPrintifyOrderMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        metadata: expect.objectContaining({
+          order_id: validUUID,
+        }),
+      })
+    );
+
+    // Should NOT refund
+    expect(processRefundMock).not.toHaveBeenCalled();
+
+    // Should succeed
+    expect(store.getState().paymentStatus).toBe("success");
   });
 });

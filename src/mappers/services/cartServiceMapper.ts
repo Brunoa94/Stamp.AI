@@ -101,7 +101,6 @@ export class CartServiceMapper {
       quantity: input.quantity,
       unit_price: input.unit_price,
       custom_image_url: input.custom_image_url ?? null,
-      design_id: input.design_id ?? null,
     };
   }
 
@@ -116,7 +115,6 @@ export class CartServiceMapper {
       quantity: item.quantity,
       unit_price: item.unit_price,
       custom_image_url: item.custom_image_url ?? undefined,
-      design_id: item.design_id ?? undefined,
     };
   }
 

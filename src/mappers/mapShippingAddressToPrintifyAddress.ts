@@ -10,7 +10,7 @@ export function mapShippingAddressToPrintifyAddress(
   shippingAddress: ShippingAddressT
 ): PrintifyShippingAddress {
   return {
-    first_name: shippingAddress.first_name,
+    first_name: shippingAddress.first_name || "",
     last_name: shippingAddress.last_name || "",
     email: shippingAddress.email,
     phone: shippingAddress.phone || "",

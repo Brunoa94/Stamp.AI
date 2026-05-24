@@ -29,6 +29,35 @@ interface PaymentIntentI {
   [key: string]: unknown;
 }
 
+// ─── Timeout protection ──────────────────────────────────────────────────────
+
+/** Maximum time (ms) the post-payment pipeline is allowed to run before aborting. */
+const CHECKOUT_PIPELINE_TIMEOUT_MS = 120_000; // 2 minutes
+
+class CheckoutTimeoutError extends Error {
+  constructor(timeoutMs: number) {
+    super(
+      `Order processing timed out after ${Math.round(timeoutMs / 1000)} seconds. ` +
+      `A full refund has been initiated and will appear within 3–5 business days.`
+    );
+    this.name = "CheckoutTimeoutError";
+  }
+}
+
+/**
+ * Race a promise against a timeout. Rejects with CheckoutTimeoutError if the
+ * timeout fires first.
+ */
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout>;
+
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new CheckoutTimeoutError(ms)), ms);
+  });
+
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
+}
+
 /**
  * Hook for checkout action handlers using store pattern
  * Components using this hook re-render when actions are called
@@ -155,6 +184,15 @@ export function useCheckoutSubscriberActions() {
      * 2. PayPal capture status validation
      */
     handlePaymentSuccess: async (paymentIntent: PaymentIntentI, lineItems: PrintifyLineItem[]) => {
+      // ── In-flight guard ───────────────────────────────────────────────────
+      // Synchronous check+set before any await: if this handler is already
+      // running (e.g. a stale dual-layout mount fires a second call) the second
+      // invocation returns immediately without touching the pipeline.
+      if (store.getState().isProcessingPayment) {
+        console.warn("⚠️ handlePaymentSuccess: duplicate invocation ignored");
+        return;
+      }
+
       const initialState = store.getState();
 
       store.setState({
@@ -163,6 +201,49 @@ export function useCheckoutSubscriberActions() {
         message: "Payment confirmed. Finalizing your order...",
       });
 
+      // Track the DB order ID across the pipeline so cleanup can reference it.
+      let createdOrderId: string | null = null;
+
+      // ─── Shared helpers (accessible from both try and catch) ──────────
+
+      /** Trigger a refund for any post-payment failure */
+      const triggerRefund = async (reason: string) => {
+        try {
+          const s = store.getState();
+          const provider = s.selectedPaymentMethod;
+          const tempOrderId = (paymentIntent as Record<string, unknown>)["metadata"]
+            ? ((paymentIntent as Record<string, unknown>)["metadata"] as Record<string, unknown>)["order_id"] ?? `temp_${paymentIntent.id}`
+            : `temp_${paymentIntent.id}`;
+
+          await RefundService.processRefund({
+            orderId: String(tempOrderId),
+            paymentProvider: provider,
+            amount: s.orderAmount,
+            reason,
+            stripePaymentIntentId:
+              provider === "stripe" ? paymentIntent.id : undefined,
+            paypalCaptureId:
+              provider === "paypal"
+                ? String((paymentIntent as Record<string, unknown>)["captureId"] ?? "")
+                : undefined,
+          });
+          console.log("✅ Refund initiated successfully");
+        } catch (refundError) {
+          console.error("❌ Refund initiation failed:", refundError);
+        }
+      };
+
+      /** Mark an existing DB order as failed + refund pending */
+      const markOrderFailed = async (orderId: string, failureStatus: string) => {
+        try {
+          await updateOrderStatus.mutateAsync({ orderId, status: failureStatus });
+          await updatePaymentStatus.mutateAsync({ orderId, paymentStatus: "refund_pending" });
+          console.log(`✅ Order ${orderId} marked as ${failureStatus} / refund_pending`);
+        } catch (updateError) {
+          console.error(`❌ Failed to mark order ${orderId} as ${failureStatus}:`, updateError);
+        }
+      };
+
       try {
         const state = store.getState();
 
@@ -170,14 +251,12 @@ export function useCheckoutSubscriberActions() {
         if (state.selectedPaymentMethod === "paypal") {
           const paypalIntent = paymentIntent as any;
 
-          // Check if status indicates failure
           if (paypalIntent.status === "DENIED" || paypalIntent.status === "FAILED") {
             throw new Error(
               `PayPal payment ${paypalIntent.status.toLowerCase()}. Your payment was not captured.`
             );
           }
 
-          // Check if capture ID is missing (required for successful PayPal payments)
           if (!paypalIntent.captureId) {
             throw new Error(
               "PayPal payment missing capture ID. The payment may not have been captured. Please try again or contact support."
@@ -200,7 +279,6 @@ export function useCheckoutSubscriberActions() {
         if (existingOrder) {
           console.log(`✅ Order already exists for payment ${paymentIntent.id}, skipping duplicate creation`);
 
-          // Return success state with existing order
           const successDetails: PaymentSuccessDetailsI = {
             id: paymentIntent.id,
             provider: state.selectedPaymentMethod,
@@ -224,14 +302,13 @@ export function useCheckoutSubscriberActions() {
         }
 
         // ✅ CRITICAL FIX 3: Record payment for crash recovery
-        // If browser crashes after this point, user can recover their order
         if (state.cart && state.shippingAddress) {
           await PaymentRecoveryService.recordPaymentForRecovery({
             paymentProvider: state.selectedPaymentMethod,
             paymentIntentId: paymentIntent.id,
             paymentStatus: "succeeded",
             amount: state.orderAmount,
-            currency: "USD", // TODO: Make this dynamic if supporting multiple currencies
+            currency: "USD",
             cartSnapshot: state.cart,
             shippingAddress: state.shippingAddress,
             lineItems,
@@ -242,15 +319,13 @@ export function useCheckoutSubscriberActions() {
           console.log("✅ Payment recorded for crash recovery");
         }
 
-        // First, create order and order_items in database.
-        // Retry behavior is handled by React Query in useCreateOrderFromCart.
+        // ─── Stage 1: Create DB order ──────────────────────────────────────
         const retryOrderId =
           typeof window !== "undefined"
             ? new URLSearchParams(window.location.search).get("retry_order_id")
             : null;
         const isRetryFlow = !!retryOrderId;
-
-        let createdOrderId: string | null = retryOrderId;
+        createdOrderId = retryOrderId;
 
         if (!isRetryFlow && user && state.cart) {
           try {
@@ -259,41 +334,24 @@ export function useCheckoutSubscriberActions() {
               user,
               cart: state.cart,
               paymentStatus: "paid",
+              orderStatus: "waiting_confirmation",
               shippingAddress: state.shippingAddress,
               idempotencyKey,
             });
             createdOrderId = newOrderId ?? null;
             console.log("✅ Order and order items created in database");
-          } catch (orderError) {
-            // Retries have been exhausted by React Query — initiate automatic refund
-            console.error("❌ All order creation attempts failed. Initiating refund...");
-            try {
-              const provider = state.selectedPaymentMethod;
-              const orderId = (paymentIntent as Record<string, unknown>)["metadata"]
-                ? ((paymentIntent as Record<string, unknown>)["metadata"] as Record<string, unknown>)["order_id"] ?? `temp_${paymentIntent.id}`
-                : `temp_${paymentIntent.id}`;
 
-              await RefundService.processRefund({
-                orderId: String(orderId),
-                paymentProvider: provider,
-                amount: state.orderAmount,
-                reason: "Order creation failed after retry attempts",
-                stripePaymentIntentId:
-                  provider === "stripe" ? paymentIntent.id : undefined,
-                paypalCaptureId:
-                  provider === "paypal"
-                    ? String((paymentIntent as Record<string, unknown>)["captureId"] ?? "")
-                    : undefined,
-                molliePaymentId:
-                  provider === "mollie"
-                    ? String((paymentIntent as Record<string, unknown>)["molliePaymentId"] ?? "")
-                    : undefined,
+            // ✅ Link payment transaction to order
+            if (createdOrderId) {
+              await OrderService.linkPaymentTransactionToOrder({
+                paymentProvider: state.selectedPaymentMethod,
+                paymentIntentId: paymentIntent.id,
+                orderId: createdOrderId,
               });
-
-              console.log("✅ Refund initiated successfully");
-            } catch (refundError) {
-              console.error("❌ Refund initiation failed:", refundError);
             }
+          } catch (orderError) {
+            console.error("❌ All order creation attempts failed. Initiating refund...");
+            await triggerRefund("Order creation failed after retry attempts");
 
             const reason =
               orderError instanceof Error
@@ -305,68 +363,91 @@ export function useCheckoutSubscriberActions() {
           }
         }
 
-        // Next, create the Printify order with validated line items
-        console.log("🚀 Creating Printify order after successful payment...");
-        console.log("📦 Line items received:", JSON.stringify(lineItems, null, 2));
+        // ─── Stage 2: Printify fulfillment (timeout-protected) ─────────────
 
-        const validatedLineItems = lineItems.map((item, index) => {
-          try {
-            return validatePrintifyLineItem(item, index);
-          } catch (error) {
-            console.error(`❌ Line item ${index} validation failed:`, error);
-            throw error;
+        const runFulfillmentPipeline = async () => {
+          console.log("🚀 Creating Printify order after successful payment...");
+
+          if (!state.shippingAddress) {
+            throw new Error("Shipping address is required for order fulfillment");
           }
-        });
 
-        console.log("✅ Validated line items:", JSON.stringify(validatedLineItems, null, 2));
+          // Validate that we have a valid order ID before proceeding
+          if (!createdOrderId) {
+            await triggerRefund("Order ID not available for Printify creation");
+            throw new Error(
+              "Cannot create Printify order: Order ID not available. A full refund has been initiated and will appear within 3–5 business days."
+            );
+          }
 
-        const orderPayload: CreatePrintifyOrderRequest = {
-          line_items: validatedLineItems,
-          shipping_address: mapShippingAddressToPrintifyAddress(state.shippingAddress),
-          is_test: state.testMode,
-          metadata: {
-            payment_intent_id: paymentIntent.id,
-            order_id: createdOrderId ?? `order_${Date.now()}`,
-          },
+          console.log(`✅ Using order ID: ${createdOrderId}`);
+
+          const validatedLineItems = lineItems.map((item, index) => {
+            try {
+              return validatePrintifyLineItem(item, index);
+            } catch (error) {
+              console.error(`❌ Line item ${index} validation failed:`, error);
+              throw error;
+            }
+          });
+
+          const orderPayload: CreatePrintifyOrderRequest = {
+            line_items: validatedLineItems,
+            shipping_address: mapShippingAddressToPrintifyAddress(state.shippingAddress),
+            is_test: state.testMode,
+            metadata: {
+              payment_intent_id: paymentIntent.id,
+              order_id: createdOrderId, // Now guaranteed to be a valid UUID
+            },
+          };
+
+          try {
+            await createPrintifyOrder.mutateAsync(orderPayload);
+            console.log("✅ Printify order created successfully");
+            console.log("✅ Order status updated to 'confirmed' by create-printify-order function");
+          } catch (printifyError) {
+            // ✅ Printify failure → mark order as failed + trigger refund
+            console.error("❌ Printify order creation failed. Initiating refund...");
+
+            if (createdOrderId) {
+              await markOrderFailed(createdOrderId, "unsuccessful_confirmation");
+            }
+            await triggerRefund("Printify fulfillment failed after successful payment");
+
+            const reason = printifyError instanceof Error
+              ? printifyError.message
+              : "Order fulfillment failed.";
+            throw new Error(
+              `${reason} A full refund has been initiated and will appear within 3–5 business days.`
+            );
+          }
+
+          // ─── Stage 3: Mark payment recovered ────────────────────────────
+          // Note: payment_status is already "paid" from order creation, no need to update
+          if (createdOrderId) {
+            await PaymentRecoveryService.markPaymentRecovered(
+              paymentIntent.id,
+              state.selectedPaymentMethod,
+              createdOrderId
+            );
+            console.log("✅ Payment marked as recovered");
+          }
+
+          // Non-blocking cart cleanup
+          if (!isRetryFlow) {
+            try {
+              await clearCart.mutateAsync();
+              console.log("✅ Cart cleared successfully");
+            } catch (error) {
+              console.error("❌ Failed to clear cart:", error);
+            }
+          }
         };
 
-        console.log("📤 Sending to Printify:", JSON.stringify(orderPayload, null, 2));
+        // ✅ Timeout protection: abort if pipeline exceeds CHECKOUT_PIPELINE_TIMEOUT_MS
+        await withTimeout(runFulfillmentPipeline(), CHECKOUT_PIPELINE_TIMEOUT_MS);
 
-        await createPrintifyOrder.mutateAsync(orderPayload);
-        console.log("✅ Printify order created successfully");
-
-        // Mark local order as confirmed only after product/order creation succeeds
-        if (createdOrderId) {
-          await updatePaymentStatus.mutateAsync({
-            orderId: createdOrderId,
-            paymentStatus: "paid",
-          });
-          await updateOrderStatus.mutateAsync({
-            orderId: createdOrderId,
-            status: "confirmed",
-          });
-          console.log(`✅ Order ${createdOrderId} payment/status updated to paid/confirmed`);
-
-          // ✅ Mark payment as recovered (no longer needs recovery)
-          await PaymentRecoveryService.markPaymentRecovered(
-            paymentIntent.id,
-            state.selectedPaymentMethod,
-            createdOrderId
-          );
-          console.log("✅ Payment marked as recovered");
-        }
-
-        // Non-blocking cleanup (skip cart clear for retry flow to avoid removing unrelated active carts)
-        if (!isRetryFlow) {
-          try {
-            console.log("🧹 Clearing cart after successful payment...");
-            await clearCart.mutateAsync();
-            console.log("✅ Cart cleared successfully");
-          } catch (error) {
-            console.error("❌ Failed to clear cart:", error);
-          }
-        }
-
+        // ─── Success ─────────────────────────────────────────────────────
         const successState = store.getState();
         const successDetails: PaymentSuccessDetailsI = {
           id: paymentIntent.id,
@@ -387,6 +468,14 @@ export function useCheckoutSubscriberActions() {
           paymentErrorDetails: null,
         });
       } catch (error) {
+        // ✅ Timeout → mark order as failed + trigger refund
+        if (error instanceof CheckoutTimeoutError) {
+          if (createdOrderId) {
+            await markOrderFailed(createdOrderId, "unsuccessful_confirmation");
+          }
+          await triggerRefund("Checkout pipeline timed out");
+        }
+
         const errorState = store.getState();
         const attemptedOn = new Date().toLocaleDateString("en-US", {
           month: "short",
@@ -406,7 +495,7 @@ export function useCheckoutSubscriberActions() {
           status: "Failed",
           reasonTitle: "Reason",
           reasonMessage,
-          availableMethods: ["paypal", "applepay", "stripe", "mollie"] satisfies PaymentAlternativeMethodT[],
+          availableMethods: ["paypal", "applepay", "stripe"] satisfies PaymentAlternativeMethodT[],
           isPostPaymentError: true,
         };
 
@@ -441,7 +530,7 @@ export function useCheckoutSubscriberActions() {
         status: "Failed",
         reasonTitle: "Reason",
         reasonMessage: errorMsg?.trim() || fallbackMessage,
-        availableMethods: ["paypal", "applepay", "stripe", "mollie"] satisfies PaymentAlternativeMethodT[],
+        availableMethods: ["paypal", "applepay", "stripe"] satisfies PaymentAlternativeMethodT[],
       };
 
       store.setState({
@@ -451,33 +540,6 @@ export function useCheckoutSubscriberActions() {
         message: errorMsg,
         paymentSuccessDetails: null,
         paymentErrorDetails: errorDetails,
-      });
-    },
-
-    /**
-     * Trigger payment processing after shipping confirmation
-     */
-    handleCompleteOrder: () => {
-      const state = store.getState();
-      if (!state.shippingAddress) {
-        return;
-      }
-      store.setState({
-        ...state,
-        triggerPayment: true,
-      });
-    },
-
-    /**
-     * Reset payment trigger after submission attempt
-     * Only resets triggerPayment flag, not isProcessingPayment
-     * (isProcessingPayment is managed by handlePaymentSuccess/handlePaymentError)
-     */
-    handlePaymentSubmitComplete: () => {
-      const state = store.getState();
-      store.setState({
-        ...state,
-        triggerPayment: false,
       });
     },
 
@@ -492,7 +554,6 @@ export function useCheckoutSubscriberActions() {
         shippingAddress: null,
         message: "",
         isProcessingPayment: false,
-        triggerPayment: false,
         paymentSuccessDetails: null,
         paymentErrorDetails: null,
       });
@@ -508,7 +569,6 @@ export function useCheckoutSubscriberActions() {
         paymentStatus: "idle",
         message: "",
         isProcessingPayment: false,
-        triggerPayment: false,
         paymentSuccessDetails: null,
         paymentErrorDetails: null,
       });

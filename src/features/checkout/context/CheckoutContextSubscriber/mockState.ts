@@ -14,7 +14,6 @@ export const MOCK_STATE: CheckoutSubscriberContextState = {
   message: "",
   testMode: false,
   isProcessingPayment: false,
-  triggerPayment: false,
   selectedPaymentMethod: "stripe",
   paymentSuccessDetails: null,
   paymentErrorDetails: null,

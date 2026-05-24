@@ -86,7 +86,7 @@ async function setupPostReviewFlowMocks(page: Page) {
       contentType: "application/json",
       body: JSON.stringify({
         success: true,
-        imageUrl: "https://example.com/generated-image.png",
+        imageUrl: "https://placehold.co/1024x1024.png",
         enhancedPrompt: "enhanced prompt",
         originalPrompt: "a cool t-shirt design with dragons",
       }),
@@ -107,7 +107,7 @@ async function setupPostReviewFlowMocks(page: Page) {
             description: "Premium cotton t-shirt",
             brand: "Gildan",
             model: "5000",
-            images: ["https://example.com/fabric-premium.png"],
+            images: ["https://placehold.co/400x400.png"],
             printAreas: [{ position: "front", width: 1800, height: 2400 }],
           },
           {
@@ -116,7 +116,7 @@ async function setupPostReviewFlowMocks(page: Page) {
             description: "Organic cotton t-shirt",
             brand: "Stanley/Stella",
             model: "Creator",
-            images: ["https://example.com/fabric-organic.png"],
+            images: ["https://placehold.co/400x400.png"],
             printAreas: [{ position: "front", width: 1800, height: 2400 }],
           },
         ],
@@ -154,7 +154,7 @@ async function setupPostReviewFlowMocks(page: Page) {
           width: 1024,
           size: 123456,
           mime_type: "image/png",
-          preview_url: "https://example.com/preview-uploaded-image.png",
+          preview_url: "https://placehold.co/512x512.png",
         },
       }),
     });
@@ -175,12 +175,50 @@ async function setupPostReviewFlowMocks(page: Page) {
           ],
           images: [
             {
-              src: "https://example.com/custom-product-image.png",
+              src: "https://placehold.co/800x800.png",
               position: "front",
               is_default: true,
             },
           ],
         },
+      }),
+    });
+  });
+
+  // Products table – savePrintifyProduct checks for existing product then inserts.
+  await page.route("**/rest/v1/products*", async (route) => {
+    const method = route.request().method();
+    const now = new Date().toISOString();
+
+    if (method === "GET") {
+      // maybeSingle() expects a single row or empty
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(null),
+      });
+      return;
+    }
+
+    // POST (insert)
+    await route.fulfill({
+      status: 201,
+      contentType: "application/json",
+      body: JSON.stringify({
+        id: "prod-e2e-1",
+        printify_product_id: "custom-prod-1",
+        name: "Custom Tee - Dragons",
+        slug: "custom-tee-dragons",
+        description: "",
+        base_price: 2999,
+        blueprint_id: 6,
+        print_provider_id: 99,
+        print_areas: { front: "img_123" },
+        is_active: true,
+        is_featured: false,
+        currency: "USD",
+        created_at: now,
+        updated_at: now,
       }),
     });
   });
@@ -241,8 +279,7 @@ async function setupPostReviewFlowMocks(page: Page) {
         variant_id: "2222",
         quantity: 1,
         unit_price: 2999,
-        custom_image_url: "https://example.com/custom-product-image.png",
-        design_id: null,
+        custom_image_url: "https://placehold.co/800x800.png",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       }),
@@ -434,7 +471,7 @@ test.describe("Synthesis Step", () => {
         contentType: "application/json",
         body: JSON.stringify({
           success: true,
-          imageUrl: "https://example.com/generated-image.png",
+          imageUrl: "https://placehold.co/1024x1024.png",
           enhancedPrompt: "enhanced prompt",
           originalPrompt: "a cool t-shirt design with dragons",
         }),
@@ -761,7 +798,6 @@ test.describe("Reuse image from orders", () => {
       order_id: "order-e2e-1",
       product_id: null,
       variant_id: "123",
-      design_id: null,
       product_name: "Custom Tee",
       variant_name: "M / White",
       quantity: 1,
@@ -770,7 +806,6 @@ test.describe("Reuse image from orders", () => {
       custom_image_url: reusableImageUrl,
       design_config: null,
       fulfillment_status: null,
-      external_order_id: null,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -784,7 +819,6 @@ test.describe("Reuse image from orders", () => {
       customer_phone: null,
       status: "processing",
       payment_status: "paid",
-      fulfillment_status: null,
       total_amount: 25,
       subtotal: 25,
       tax_amount: 0,
@@ -793,8 +827,6 @@ test.describe("Reuse image from orders", () => {
       currency: "USD",
       payment_method: null,
       printify_order_id: null,
-      stripe_payment_intent_id: null,
-      stripe_customer_id: null,
       shipping_address: null,
       billing_address: null,
       shipping_method: null,
@@ -835,9 +867,12 @@ test.describe("Reuse image from orders", () => {
 
     await page.goto("/orders");
 
-    // Wait for the order to be visible (formatted as first 8 chars)
-    await expect(page.getByText(/#ORDER-E2/i).first()).toBeVisible({ timeout: 15_000 });
+    // Both mobile and desktop layouts render the order ID. Use locator
+    // filter to find the visible one (avoids fragile nth() index).
+    const visibleOrderId = page.getByText(/#ORDER-E2/i).locator("visible=true").first();
+    await expect(visibleOrderId).toBeVisible({ timeout: 15_000 });
 
+    // "More actions" button lives in the desktop table row
     const moreActionsBtn = page
       .getByRole("button", { name: /more actions/i })
       .first();

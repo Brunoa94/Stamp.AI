@@ -1,8 +1,7 @@
 import { ordersTheme } from "@/theme/components";
-import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
 import { STATUS_FILTERS, TIMEFRAME_OPTIONS } from "@/constants/orders";
-import { OrderTimeframeFilterT } from "@/types/order";
+import { OrderStatusFilterT, OrderTimeframeFilterT } from "@/types/order";
 import {
   Select,
   SelectContent,
@@ -31,7 +30,7 @@ export function OrdersFiltersMobile({
               onTimeframeChange(value as OrderTimeframeFilterT)
             }
           >
-            <SelectTrigger className={ordersTheme.mobileFilters.select}>
+            <SelectTrigger className={`${ordersTheme.mobileFilters.select} border-slate-400`}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -47,24 +46,26 @@ export function OrdersFiltersMobile({
 
       <div>
         <Label className={ordersTheme.mobileFilters.sectionLabel}>
-          Filter Status
+          Status
         </Label>
-        <div className={ordersTheme.mobileFilters.chipsRow}>
-          {STATUS_FILTERS.map((filter) => (
-            <Button
-              key={filter.value}
-              onClick={() => onStatusChange(filter.value)}
-              variant="outline"
-              size="sm"
-              className={
-                selectedStatus === filter.value
-                  ? ordersTheme.mobileFilters.chipActive
-                  : ordersTheme.mobileFilters.chipBase
-              }
-            >
-              {filter.label}
-            </Button>
-          ))}
+        <div className={ordersTheme.mobileFilters.selectWrapper}>
+          <Select
+            value={selectedStatus}
+            onValueChange={(value) =>
+              onStatusChange(value as OrderStatusFilterT)
+            }
+          >
+            <SelectTrigger className={`${ordersTheme.mobileFilters.select} border-slate-400`}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {STATUS_FILTERS.map((filter) => (
+                <SelectItem key={filter.value} value={filter.value}>
+                  {filter.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>

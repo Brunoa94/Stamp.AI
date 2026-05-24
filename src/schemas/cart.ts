@@ -9,7 +9,6 @@ export const addToCartSchema = z.object({
   quantity: z.number().int().min(1, "Quantity must be at least 1").max(99, "Quantity cannot exceed 99"),
   unit_price: z.number().positive("Unit price must be positive"),
   custom_image_url: z.string().nullable().optional(), // Any string URL from user uploads
-  design_id: z.string().uuid().nullable().optional(), // UUID reference to user_designs table
 });
 
 export const updateCartItemSchema = z.object({

@@ -3,6 +3,7 @@ import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars } from "../_shared/validators.ts"
 import { validateAndEnforceTestMode } from "../_shared/testModeSafeguard.ts"
 import { validatePaymentAmount } from "../_shared/amountValidator.ts"
+import { supabaseRest } from "../_shared/supabase.ts"
 
 // Environment variables will be validated when needed
 
@@ -320,10 +321,75 @@ serve(async (req) => {
 
     if (!response.ok) {
       console.error('Printify API error:', data)
+
+      // Update order status to "unsuccessful_confirmation" if we have an order_id
+      const orderId = metadata?.order_id
+      console.log('📋 Metadata:', JSON.stringify(metadata, null, 2))
+      console.log('🔍 Order ID from metadata:', orderId)
+
+      if (orderId) {
+        try {
+          console.log(`🔄 Updating order ${orderId} status to unsuccessful_confirmation...`)
+          const statusUpdateResult = await supabaseRest(
+            'rpc/update_order_payment_status_atomic',
+            'POST',
+            {
+              p_order_id: orderId,
+              p_payment_status: 'paid',
+              p_order_status: 'unsuccessful_confirmation',
+            }
+          )
+
+          console.log('📊 Status update result:', JSON.stringify(statusUpdateResult, null, 2))
+
+          if (statusUpdateResult.error) {
+            console.error(`❌ Failed to update order ${orderId} status to unsuccessful_confirmation:`, statusUpdateResult.error)
+          } else {
+            console.log(`✅ Order ${orderId} status updated to unsuccessful_confirmation`)
+          }
+        } catch (updateError) {
+          console.error('❌ Exception updating order status:', updateError)
+        }
+      } else {
+        console.warn('⚠️ No order_id in metadata, cannot update order status to unsuccessful_confirmation')
+      }
+
       throw ErrorCodes.PRINTIFY_ORDER_API_ERROR(JSON.stringify(data))
     }
 
     console.log(`✅ ${enforcedTestMode ? 'TEST' : 'PRODUCTION'} order created:`, data.id)
+
+    // Update order status to "confirmed" if we have an order_id
+    const orderId = metadata?.order_id
+    console.log('📋 Metadata:', JSON.stringify(metadata, null, 2))
+    console.log('🔍 Order ID from metadata:', orderId)
+
+    if (orderId) {
+      try {
+        console.log(`🔄 Updating order ${orderId} status to confirmed...`)
+        const statusUpdateResult = await supabaseRest(
+          'rpc/update_order_payment_status_atomic',
+          'POST',
+          {
+            p_order_id: orderId,
+            p_payment_status: 'paid',
+            p_order_status: 'confirmed',
+          }
+        )
+
+        console.log('📊 Status update result:', JSON.stringify(statusUpdateResult, null, 2))
+
+        if (statusUpdateResult.error) {
+          console.error(`❌ Failed to update order ${orderId} status to confirmed:`, statusUpdateResult.error)
+        } else {
+          console.log(`✅ Order ${orderId} status updated to confirmed`)
+        }
+      } catch (updateError) {
+        console.error('❌ Exception updating order status:', updateError)
+      }
+    } else {
+      console.warn('⚠️ No order_id in metadata, cannot update order status')
+    }
 
     // Auto-cancel order if requested (useful for testing)
     let cancelResult = null

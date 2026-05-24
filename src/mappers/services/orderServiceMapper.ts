@@ -10,16 +10,6 @@ type OrderItemRow = Database['public']['Tables']['order_items']['Row'];
 
 export class OrderServiceMapper {
   /**
-   * Helper to check if a string is a valid UUID
-   * External products (Printify) use MongoDB ObjectIds which are not UUIDs
-   */
-  private static isValidUUID(str: string | null | undefined): boolean {
-    if (!str) return false;
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    return uuidRegex.test(str);
-  }
-
-  /**
    * Map cart items to order items
    */
   static mapCartItemsToOrderItems(
@@ -28,15 +18,13 @@ export class OrderServiceMapper {
   ): Array<Omit<Database['public']['Tables']['order_items']['Insert'], 'id' | 'created_at' | 'updated_at'>> {
     return cartItems.map(item => ({
       order_id: orderId,
-      // Only use product_id if it's a valid UUID, otherwise use null
-      product_id: this.isValidUUID(item.product_id) ? item.product_id : null,
+      product_id: item.product_id || null,
       product_name: item.product_name,
       variant_id: item.variant_id,
       quantity: item.quantity,
       unit_price: item.unit_price,
       total_price: item.unit_price * item.quantity,
       custom_image_url: item.custom_image_url || '',
-      design_id: item.design_id,
       design_config: item.custom_image_url
         ? { reusable_image_url: item.custom_image_url }
         : null,
@@ -126,7 +114,6 @@ export class OrderServiceMapper {
       customerPhone: order.customer_phone,
       status: order.status,
       paymentStatus: order.payment_status,
-      fulfillmentStatus: order.fulfillment_status,
       subtotal: order.subtotal,
       taxAmount: order.tax_amount,
       shippingCost: order.shipping_cost,
@@ -164,13 +151,6 @@ export class OrderServiceMapper {
   }
 
   /**
-   * Map fulfillment status to update payload
-   */
-  static mapFulfillmentStatusToUpdate(fulfillmentStatus: string) {
-    return { fulfillment_status: fulfillmentStatus };
-  }
-
-  /**
    * Map payment status to update payload
    */
   static mapPaymentStatusToUpdate(paymentStatus: string) {
@@ -183,12 +163,9 @@ export class OrderServiceMapper {
   static mapCartItemToOrderItem(cartItem: CartItem, orderId: string) {
     const totalPrice = cartItem.unit_price * cartItem.quantity;
 
-    // Only use product_id if it's a valid UUID, otherwise use null
-    const productId = this.isValidUUID(cartItem.product_id) ? cartItem.product_id : null;
-
     return {
       order_id: orderId,
-      product_id: productId,
+      product_id: cartItem.product_id || null,
       variant_id: cartItem.variant_id || null,
       quantity: cartItem.quantity,
       unit_price: cartItem.unit_price,

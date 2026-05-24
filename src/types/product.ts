@@ -7,6 +7,7 @@ export interface TshirtType {
   name: string;
   description: string;
   image: string;
+  images?: string[]; // Full array of blueprint images
   features: string[];
   price: number;
   material: string;

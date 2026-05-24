@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
-import { validatePaymentAmount, validateCurrency } from "../../supabase/functions/_shared/amountValidator";
-import { enforceTestMode, isProductionEnvironment } from "../../supabase/functions/_shared/testModeSafeguard";
+import { validatePaymentAmount, validateCurrency } from "../../../supabase/functions/_shared/amountValidator";
+import { enforceTestMode, isProductionEnvironment } from "../../../supabase/functions/_shared/testModeSafeguard";
 
 /**
  * Edge Case Coverage Tests
@@ -112,7 +112,7 @@ describe("CRITICAL EDGE CASE #1: Server-Side Amount Validation", () => {
 
       expect(result.isValid).toBe(false);
       expect(result.difference).toBe(109.0); // Huge difference
-      expect(result.errorMessage).toContain("tampering");
+      expect(result.errorMessage).toContain("mismatch"); // Indicates potential tampering
     });
 
     it("should skip validation when no pricing data available", () => {

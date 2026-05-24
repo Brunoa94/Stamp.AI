@@ -17,8 +17,6 @@ export const CheckoutSelectors = {
   testMode: () => useCheckoutSubscriberSelector((state) => state.testMode),
   isProcessingPayment: () =>
     useCheckoutSubscriberSelector((state) => state.isProcessingPayment),
-  triggerPayment: () =>
-    useCheckoutSubscriberSelector((state) => state.triggerPayment),
   selectedPaymentMethod: () =>
     useCheckoutSubscriberSelector((state) => state.selectedPaymentMethod),
   paymentSuccessDetails: () =>

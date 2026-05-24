@@ -417,6 +417,7 @@ describe("OrderService Edge Cases", () => {
         ],
       };
 
+      // Mock order creation: insert().select().single() returns order
       mockSupabase.single.mockResolvedValueOnce({
         data: {
           id: "order_123",
@@ -425,10 +426,18 @@ describe("OrderService Edge Cases", () => {
         error: null,
       });
 
-      // Mock order items creation
-      mockSupabase.insert.mockResolvedValueOnce({
-        data: [],
-        error: null,
+      // Mock order items creation: insert().select() returns items
+      // Use select mock for the second call (order items don't use single())
+      const originalSelect = mockSupabase.select;
+      let selectCallCount = 0;
+      mockSupabase.select.mockImplementation(() => {
+        selectCallCount++;
+        if (selectCallCount === 1) {
+          // First select (order creation) - continue chain to single()
+          return mockSupabase;
+        }
+        // Second select (order items) - return final result directly
+        return Promise.resolve({ data: [], error: null });
       });
 
       const orderId = await OrderService.createOrderFromCart({
@@ -438,6 +447,9 @@ describe("OrderService Edge Cases", () => {
       });
 
       expect(orderId).toBe("order_123");
+
+      // Restore original select mock
+      mockSupabase.select = originalSelect;
     });
 
     /**

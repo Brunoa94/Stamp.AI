@@ -2,6 +2,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import Stripe from 'https://esm.sh/stripe@14.11.0?target=deno'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
+import { supabaseRest } from "../_shared/supabase.ts"
 import type { CreatePaymentIntentRequestI, PaymentIntentResponseI } from "../../types/index.ts"
 
 const corsHeaders = {
@@ -127,6 +128,39 @@ serve(async (req) => {
       paymentIntent = await stripe.paymentIntents.create(paymentIntentOptions)
     } catch (stripeError: any) {
       throw ErrorCodes.STRIPE_API_ERROR(stripeError.message || JSON.stringify(stripeError))
+    }
+
+    // Create payment_transactions record immediately with user_id
+    // Webhook will later update this record to 'succeeded' or 'failed'
+    try {
+      await supabaseRest(
+        'payment_transactions',
+        'POST',
+        {
+          user_id: userId,
+          payment_provider: 'stripe',
+          stripe_payment_intent_id: paymentIntent.id,
+          stripe_customer_id: paymentIntent.customer,
+          amount: validAmount,
+          currency: currency.toLowerCase(),
+          status: 'pending',
+          payment_method_type: payment_method ? 'card' : null,
+          metadata: {
+            ...metadata,
+            user_id: userId,
+            user_email: userEmail,
+            line_items: line_items,
+            shipping_address: shipping_address,
+          },
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+        { prefer: 'resolution=merge-duplicates' }
+      )
+      console.log('✅ Payment transaction record created:', paymentIntent.id)
+    } catch (dbError) {
+      // Log error but don't fail the request - webhook can still process it
+      console.error('Failed to create payment_transactions record:', dbError)
     }
 
     const response: PaymentIntentResponseI = {
