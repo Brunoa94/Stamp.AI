@@ -125,7 +125,7 @@ export const componentThemes = {
     },
     header: {
       container: `mb-12`,
-      title: `font-heading text-[clamp(2.25rem,4vw,3.25rem)] leading-[0.9] tracking-widest font-extrabold uppercase bg-linear-to-r from-[#1A2340] via-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent mb-2`,
+      title: `font-heading text-[clamp(2.25rem,4vw,3.25rem)] leading-[0.9] font-medium uppercase bg-linear-to-r from-[#1A2340] via-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent mb-2`,
       metaRow: `flex flex-wrap items-center gap-4 text-gray-500 uppercase tracking-widest text-xs font-bold`,
       metaDot: `w-1 h-1 bg-gray-300 rounded-full`,
     },

@@ -67,7 +67,7 @@ export function FabricCardSelector({
 
   return (
     <>
-      <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6 overflow-y-scroll">
+      <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
         {fabricOptions.map((fabric) => {
           const isSelected = selectedTshirt?.id === fabric.id;
           return (

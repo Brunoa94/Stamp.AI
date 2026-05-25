@@ -45,7 +45,7 @@ export function FabricSelectionSection({
         aria-hidden={!selectedTshirt}
       >
         {selectedTshirt && (
-          <div className="space-y-8 pt-2 px-2 sm:px-4 animate-[slideInUp_0.45s_ease-out]">
+          <div className="space-y-8 pt-2 px-2 sm:px-4 animate-[slideInUp_0.45s_ease-out] pb-8">
             {/* Color Selection */}
             <div className="space-y-4">
               <Label className="text-2xl sm:text-4xl font-heading uppercase tracking-wide text-purple-700 dark:text-purple-300">
