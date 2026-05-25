@@ -49,7 +49,7 @@ export function WizardArtStyleSelector({
               >
                 {getArtStyleIcon(style.id)}
               </div>
-              <div className="flex h-2/5 items-center justify-center border-t border-white/40 px-2 text-center font-['Cabinet_Grotesk'] text-[11px] font-semibold tracking-[0.05em] text-[#1A2340] sm:text-[12px]">
+              <div className="flex h-2/5 items-center justify-center border-t border-white/40 px-2 text-center font-heading text-[11px] font-semibold tracking-widest text-[#1A2340] sm:text-[12px]">
                 {style.label}
               </div>
             </Button>

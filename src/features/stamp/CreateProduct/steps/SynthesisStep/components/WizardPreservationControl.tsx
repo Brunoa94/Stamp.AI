@@ -45,7 +45,7 @@ export function WizardPreservationControl({
         }}
       >
         <div className="flex h-full w-full flex-col items-center justify-center">
-          <span className="font-['Cabinet_Grotesk'] text-[16px] font-bold text-white">
+          <span className="font-heading text-[16px] font-bold text-white tracking-wider">
             {preservation}
           </span>
           <span className="text-[10px] font-bold uppercase tracking-widest text-white/80">

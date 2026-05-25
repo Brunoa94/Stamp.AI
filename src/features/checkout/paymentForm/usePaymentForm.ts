@@ -134,6 +134,9 @@ export function usePaymentForm({
       {
         id: details.id,
         status: details.status,
+        captureId: details.captureId,
+        payerEmail: details.payerEmail,
+        // Backward compatibility with older payload readers
         paypal_capture_id: details.captureId,
         paypal_payer_email: details.payerEmail,
       },

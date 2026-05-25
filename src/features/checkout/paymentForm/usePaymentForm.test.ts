@@ -198,6 +198,8 @@ describe("usePaymentForm", () => {
         {
           id: "paypal_order_123",
           status: "COMPLETED",
+          captureId: "capture_456",
+          payerEmail: "payer@example.com",
           paypal_capture_id: "capture_456",
           paypal_payer_email: "payer@example.com",
         },

@@ -30,6 +30,9 @@ export function CheckoutMobileFooter() {
         {
           id: details.id,
           status: details.status,
+          captureId: details.captureId,
+          payerEmail: details.payerEmail,
+          // Backward compatibility for any consumers still reading snake_case fields
           paypal_capture_id: details.captureId,
           paypal_payer_email: details.payerEmail,
         },

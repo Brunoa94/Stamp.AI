@@ -141,7 +141,7 @@ export function WizardUploadArea({
       </div>
 
       {/* Text */}
-      <h3 className="text-2xl sm:text-4xl font-normal font-heading text-slate-900 mb-2 tracking-wide">
+      <h3 className="text-2xl sm:text-4xl font-heading mb-2 tracking-widest uppercase bg-linear-to-r from-[#1A2340] via-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent">
         Select Image to Upload
       </h3>
       <p className="text-slate-500 mb-5 sm:mb-10 text-sm sm:text-lg font-sans">

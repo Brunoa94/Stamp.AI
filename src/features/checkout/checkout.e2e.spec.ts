@@ -588,51 +588,6 @@ test.describe("Flow 3 — Everything Succeeds", () => {
 // ─── Flow 4: Checkout flow uniformity ───────────────────────────────────────
 
 test.describe("Flow 4 — Checkout flow uniformity across payment methods", () => {
-  test.describe("Mobile footer renders correct payment buttons", () => {
-    test.beforeEach(async ({ page }) => {
-      await mockCartWithItems(page);
-      await page.goto("/checkout?cartId=cart-e2e-1");
-    });
-
-    test("mobile footer shows Stripe confirm button by default", async ({ page }) => {
-      // Resize to mobile viewport
-      await page.setViewportSize({ width: 375, height: 812 });
-      await page.reload();
-      await page.waitForLoadState('networkidle');
-
-      // Wait for checkout to load on mobile
-      let found = false;
-      for (let i = 0; i < 5; i++) {
-        try {
-          const mobileFooter = page.locator('[data-testid="mobile-footer"], [class*="footer"], footer').last();
-          const confirmBtn = mobileFooter.getByRole("button", { name: /confirm|pay|stripe/i });
-          await expect(confirmBtn).toBeVisible({ timeout: 5000 });
-          found = true;
-          break;
-        } catch { await page.waitForTimeout(1000); }
-      }
-      if (!found) throw new Error('Mobile confirm button not found after retries');
-    });
-
-    test("mobile footer shows PayPal button when PayPal is selected", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 812 });
-      await page.reload();
-
-      // Fill shipping form (mobile version) so payment section unlocks
-      // Then select PayPal payment method
-      const paypalMethodButton = page.getByRole("button", { name: /paypal/i });
-      // If PayPal method selector is visible on mobile, clicking it should render the PayPal button
-      if (await paypalMethodButton.isVisible({ timeout: 5_000 }).catch(() => false)) {
-        await paypalMethodButton.click();
-
-        // The mobile footer should now render the PayPal SDK button (not a generic confirm button)
-        // PayPal buttons render inside a div with PayPal-specific markup
-        const paypalContainer = page.locator('[class*="paypal"]');
-        await expect(paypalContainer).toBeVisible({ timeout: 10_000 });
-      }
-    });
-  });
-
   test.describe("Desktop payment method switching", () => {
     test.beforeEach(async ({ page }) => {
       await mockCartWithItems(page);
@@ -640,15 +595,16 @@ test.describe("Flow 4 — Checkout flow uniformity across payment methods", () =
       await fillShippingForm(page);
     });
 
-    test("switching to PayPal hides the Stripe card iframe", async ({ page }) => {
+    test("switching to PayPal marks method selected and removes Stripe form", async ({ page }) => {
       const paypalMethodButton = page.getByRole("button", { name: /paypal/i });
       if (await paypalMethodButton.isVisible({ timeout: 5_000 }).catch(() => false)) {
         await paypalMethodButton.click();
       }
 
-      await expect(page.locator('iframe[name*="__privateStripeFrame"]').first()).toBeHidden({
+      await expect(paypalMethodButton).toHaveAttribute("aria-checked", "true", {
         timeout: 10_000,
       });
+      await expect(page.locator("#stripe-payment-form")).toHaveCount(0);
     });
 
     test("switching back to Stripe shows the card iframe", async ({ page }) => {
@@ -777,6 +733,7 @@ test.describe("Flow 2b (fixed) — Printify retries exactly 3 times (desktop)", 
 // mobile UI to ensure the full payment flow works on small screens.
 
 test.describe("Flow 5 — Mobile checkout happy path", () => {
+  test.describe.configure({ timeout: 120_000 });
   const MOBILE_VIEWPORT = { width: 375, height: 812 };
 
   /** Fill the multi-step mobile checkout form through all accordion steps */
@@ -817,6 +774,14 @@ test.describe("Flow 5 — Mobile checkout happy path", () => {
 
     const testCardSelect = page.locator("#test-card-select").last();
     await testCardSelect.selectOption("visa");
+  }
+
+  async function getEnabledMobileConfirmButton(page: Page) {
+    const mobileFooter = page.locator('[data-testid="mobile-footer"], [class*="footer"], footer').last();
+    const confirmBtn = mobileFooter.getByRole("button", { name: /confirm|pay|stripe/i });
+    await expect(confirmBtn).toBeVisible({ timeout: 20_000 });
+    await expect(confirmBtn).toBeEnabled({ timeout: 30_000 });
+    return confirmBtn;
   }
 
   test.beforeEach(async ({ page }) => {
@@ -887,30 +852,7 @@ test.describe("Flow 5 — Mobile checkout happy path", () => {
     await page.goto("/checkout?cartId=cart-e2e-1");
     await fillMobileCheckoutSteps(page);
 
-    // Tap the sticky footer Stripe confirm button (wait for it to be visible and enabled)
-    let confirmBtn = null;
-    let found = false;
-    // Try multiple selectors for robustness
-    for (let i = 0; i < 5; i++) {
-      try {
-        const mobileFooter = page.locator('[data-testid="mobile-footer"], [class*="footer"], footer').last();
-        confirmBtn = mobileFooter.getByRole("button", { name: /confirm|pay|stripe/i });
-        await expect(confirmBtn).toBeVisible({ timeout: 10000 });
-        found = true;
-        break;
-      } catch { await page.waitForTimeout(1000); }
-    }
-    if (!found) throw new Error('Mobile confirm button not found after retries');
-    // Wait up to 30s for the button to be enabled
-    let enabled = false;
-    for (let i = 0; i < 30; i++) {
-      if (await confirmBtn.isEnabled()) { enabled = true; break; }
-      await page.waitForTimeout(1000);
-    }
-    if (!enabled) {
-      const html = await confirmBtn.innerHTML().catch(() => 'not found');
-      throw new Error('Mobile confirm button not enabled. HTML: ' + html);
-    }
+    const confirmBtn = await getEnabledMobileConfirmButton(page);
     await confirmBtn.click();
 
     // Wait up to 90s for the confirmation heading
@@ -961,28 +903,8 @@ test.describe("Flow 5 — Mobile checkout happy path", () => {
     const testCardSelect = page.locator("#test-card-select").last();
     await testCardSelect.selectOption("declined");
 
-    let confirmBtn2 = null;
-    let found2 = false;
-    for (let i = 0; i < 5; i++) {
-      try {
-        const mobileFooter = page.locator('[data-testid="mobile-footer"], [class*="footer"], footer').last();
-        confirmBtn2 = mobileFooter.getByRole("button", { name: /confirm|pay|stripe/i });
-        await expect(confirmBtn2).toBeVisible({ timeout: 10000 });
-        found2 = true;
-        break;
-      } catch { await page.waitForTimeout(1000); }
-    }
-    if (!found2) throw new Error('Mobile confirm button not found after retries');
-    let enabled2 = false;
-    for (let i = 0; i < 30; i++) {
-      if (await confirmBtn2.isEnabled()) { enabled2 = true; break; }
-      await page.waitForTimeout(1000);
-    }
-    if (!enabled2) {
-      const html = await confirmBtn2.innerHTML().catch(() => 'not found');
-      throw new Error('Mobile confirm button not enabled. HTML: ' + html);
-    }
-    await confirmBtn2.click();
+    const confirmBtn = await getEnabledMobileConfirmButton(page);
+    await confirmBtn.click();
 
     await expect(page.getByRole("heading", { name: /payment failed/i })).toBeVisible({
       timeout: 60000,

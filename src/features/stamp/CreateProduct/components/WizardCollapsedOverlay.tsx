@@ -26,9 +26,6 @@ export function WizardCollapsedOverlay({
       <div className="absolute inset-y-0 right-0 w-2/5 bg-linear-to-br from-[#7C3AED]/8 to-[#06B6D4]/10" />
 
       <div className="absolute left-6 md:left-12 top-1/2 -translate-y-1/2 max-w-sm">
-        <span className="text-[10px] font-bold text-[#7C3AED] uppercase tracking-[0.25em] block mb-2">
-          Studio v2.0
-        </span>
         <h3 className="text-2xl md:text-3xl font-heading font-extrabold text-slate-900 uppercase leading-tight">
           Ready to stamp your signature?
         </h3>

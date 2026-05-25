@@ -56,9 +56,7 @@ export function getWizardMainContentClassName(isExpanded: boolean) {
 export function getWizardFormClassName(showSizingSection: boolean) {
   return clsx(
     "flex-1 px-4 sm:px-12 relative",
-    showSizingSection
-      ? "pb-10 overflow-hidden"
-      : "pb-32 sm:pb-10 overflow-hidden",
+    "overflow-hidden",
   );
 }
 

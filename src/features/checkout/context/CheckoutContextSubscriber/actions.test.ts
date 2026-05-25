@@ -802,9 +802,10 @@ describe("useCheckoutSubscriberActions", () => {
       });
 
       const state = store.getState();
-      // EXPECTED: Should succeed or handle gracefully
-      // PayPal payments without capture_id should be validated
-      expect(state.paymentStatus).toBe("success");
+      // EXPECTED: Missing capture_id should be treated as a post-payment validation error
+      expect(state.paymentStatus).toBe("error");
+      expect(state.message).toContain("capture ID");
+      expect(state.paymentErrorDetails?.isPostPaymentError).toBe(true);
     });
   });
 
@@ -1023,6 +1024,15 @@ describe("useCheckoutSubscriberActions", () => {
         ...defaultState,
         shippingAddress: mockShippingAddress,
         selectedPaymentMethod: "paypal", // User selected PayPal
+        cart: {
+          id: "cart_123",
+          user_id: "user_123",
+          created_at: new Date().toISOString(),
+          session_id: "session_123",
+          updated_at: new Date().toISOString(),
+          user_email: "test@example.com",
+          cart_items: [],
+        },
       });
 
       const { result } = renderHook(() => useCheckoutSubscriberActions(), {
@@ -1030,7 +1040,11 @@ describe("useCheckoutSubscriberActions", () => {
       });
 
       // Payment intent could be from Stripe or PayPal
-      const paymentIntent = { id: "pi_12345" }; // Looks like Stripe ID
+      const paymentIntent = {
+        id: "pi_12345", // Looks like Stripe ID, but state provider should win
+        status: "COMPLETED",
+        captureId: "capture_test_12345",
+      };
       const lineItems = [{ product_id: "prod_123", variant_id: 1, quantity: 1 }];
 
       await act(async () => {

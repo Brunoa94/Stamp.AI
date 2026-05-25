@@ -152,7 +152,7 @@ export function WizardProductForm() {
           className={formClassName}
           data-wizard-content
         >
-          <div className={sections.showSizingSection ? "h-auto" : "h-full"}>
+          <div className={sections.showSizingSection ? "h-full" : "h-full"}>
             {sections.showFormSection && (
               <>
                 {/* Upload Step */}
