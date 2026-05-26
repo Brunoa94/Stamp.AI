@@ -125,25 +125,6 @@ export function usePaymentForm({
     await processPayment();
   };
 
-  // Handle PayPal success - convert to same format as Stripe
-  const handlePayPalSuccess = async (
-    details: { id: string; captureId: string; status: string; payerEmail?: string },
-    items: PrintifyLineItem[]
-  ) => {
-    onSuccess?.(
-      {
-        id: details.id,
-        status: details.status,
-        captureId: details.captureId,
-        payerEmail: details.payerEmail,
-        // Backward compatibility with older payload readers
-        paypal_capture_id: details.captureId,
-        paypal_payer_email: details.payerEmail,
-      },
-      items
-    );
-  };
-
   return {
     loading,
     error,
@@ -151,7 +132,6 @@ export function usePaymentForm({
     selectedTestMethod,
     setSelectedTestMethod,
     handleSubmit,
-    handlePayPalSuccess,
     stripe,
     testPaymentMethods: TEST_PAYMENT_METHODS,
   };

@@ -8,39 +8,17 @@ import {
 } from "@/features/checkout/context";
 import { Button } from "@/features/ui/button";
 import { PAYMENT_CONFIRM_METHOD_UI } from "@/constants/payment";
-import { PayPalButton } from "../PayPalButton/PayPalButton";
-import { useCallback } from "react";
-import type { PayPalSuccessDetailsI } from "../PayPalButton/usePayPalButton";
+import { CustomPayPalButton } from "../PayPalButton/CustomPayPalButton";
 
 export function CheckoutMobileFooter() {
   const m = checkoutTheme.mobile;
-  const { handlePaymentSuccess, handlePaymentError } =
-    useCheckoutSubscriberActions();
+  const { handlePaymentError } = useCheckoutSubscriberActions();
   const selectedPaymentMethod = CheckoutSelectors.selectedPaymentMethod();
   const shippingAddress = CheckoutSelectors.shippingAddress();
   const isProcessingPayment = CheckoutSelectors.isProcessingPayment();
   const lineItems = CheckoutSelectors.lineItems();
-  const testMode = CheckoutSelectors.testMode();
   const orderAmount = CheckoutSelectors.orderAmount();
   const selectedUi = PAYMENT_CONFIRM_METHOD_UI[selectedPaymentMethod];
-
-  const handlePayPalSuccessCallback = useCallback(
-    async (details: PayPalSuccessDetailsI, items: typeof lineItems) => {
-      await handlePaymentSuccess(
-        {
-          id: details.id,
-          status: details.status,
-          captureId: details.captureId,
-          payerEmail: details.payerEmail,
-          // Backward compatibility for any consumers still reading snake_case fields
-          paypal_capture_id: details.captureId,
-          paypal_payer_email: details.payerEmail,
-        },
-        items,
-      );
-    },
-    [handlePaymentSuccess],
-  );
 
   return (
     <div className={m.footer.wrapper}>
@@ -58,14 +36,13 @@ export function CheckoutMobileFooter() {
       )}
 
       {selectedPaymentMethod === "paypal" && shippingAddress && (
-        <PayPalButton
+        <CustomPayPalButton
           amount={orderAmount}
           lineItems={lineItems}
           shippingAddress={shippingAddress}
-          testMode={testMode}
-          onSuccess={handlePayPalSuccessCallback}
           onError={handlePaymentError}
           disabled={isProcessingPayment}
+          variant="mobile"
         />
       )}
 

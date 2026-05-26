@@ -288,7 +288,7 @@ export const componentThemes = {
       divider: `h-px bg-slate-100 lg:bg-gray-100 my-2 lg:my-0`,
       totalRow: `flex justify-between items-baseline lg:border-t lg:border-gray-100 lg:pt-4 lg:mt-4`,
       totalLabel: `text-lg lg:text-xl font-heading lg:font-extrabold text-slate-900 lg:uppercase lg:tracking-tight`,
-      totalValue: `text-2xl lg:text-3xl font-heading lg:font-extrabold text-purple-600 lg:text-[#7C3AED]`,
+      totalValue: `text-2xl lg:text-3xl font-heading lg:font-extrabold text-purple-900 lg:text-purple-900`,
       // Desktop checkout button (in summary card)
       checkoutButton: `hidden lg:flex lg:w-full lg:py-5 lg:bg-primary lg:text-primary-foreground lg:font-heading lg:tracking-widest lg:rounded-md lg:shadow-2xl lg:shadow-purple-500/50 lg:hover:-translate-y-1.5 lg:hover:shadow-3xl lg:transition-all lg:duration-300 lg:items-center lg:justify-center lg:gap-3 lg:mt-6`,
       secureText: `hidden lg:block lg:text-xs lg:text-center lg:text-slate-400 lg:font-bold lg:uppercase lg:tracking-widest lg:leading-relaxed lg:mt-3`,
@@ -419,7 +419,7 @@ export const componentThemes = {
   checkout: {
     page: {
       container: "min-h-screen relative rounded-2xl pb-8",
-      mainContent: "max-w-6xl mx-auto pb-16",
+      mainContent: "max-w-11/12 mx-auto pb-16",
       grid: "flex flex-col lg:flex-row gap-10",
       formsColumn: "flex-1 space-y-8 lg:w-7/12",
       summaryColumn: "lg:w-5/12",

@@ -3,42 +3,20 @@ import clsx from "clsx";
 import { CheckoutSelectors } from "../context/CheckoutContextSubscriber/selectors";
 import Link from "next/link";
 import { PAYMENT_CONFIRM_METHOD_UI } from "@/constants/payment";
-import { PayPalButton } from "../PayPalButton/PayPalButton";
-import { useCallback } from "react";
+import { CustomPayPalButton } from "../PayPalButton/CustomPayPalButton";
 import { useCheckoutSubscriberActions } from "../context";
-import type { PayPalSuccessDetailsI } from "../PayPalButton/usePayPalButton";
 
 export const CompleteOrderButton = () => {
   const shippingAddress = CheckoutSelectors.shippingAddress();
   const isProcessingPayment = CheckoutSelectors.isProcessingPayment();
   const selectedPaymentMethod = CheckoutSelectors.selectedPaymentMethod();
   const lineItems = CheckoutSelectors.lineItems();
-  const testMode = CheckoutSelectors.testMode();
   const orderAmount = CheckoutSelectors.orderAmount();
   const hasShippingAddress = !!shippingAddress;
 
-  const { handlePaymentSuccess, handlePaymentError } =
-    useCheckoutSubscriberActions();
+  const { handlePaymentError } = useCheckoutSubscriberActions();
 
   const selectedUi = PAYMENT_CONFIRM_METHOD_UI[selectedPaymentMethod];
-
-  const handlePayPalSuccessCallback = useCallback(
-    async (details: PayPalSuccessDetailsI, items: typeof lineItems) => {
-      await handlePaymentSuccess(
-        {
-          id: details.id,
-          status: details.status,
-          captureId: details.captureId,
-          payerEmail: details.payerEmail,
-          // Backward compatibility for legacy payload readers
-          paypal_capture_id: details.captureId,
-          paypal_payer_email: details.payerEmail,
-        },
-        items,
-      );
-    },
-    [handlePaymentSuccess],
-  );
 
   return (
     <div className="pt-4">
@@ -63,12 +41,10 @@ export const CompleteOrderButton = () => {
         )}
 
         {selectedPaymentMethod === "paypal" && shippingAddress && (
-          <PayPalButton
+          <CustomPayPalButton
             amount={orderAmount}
             lineItems={lineItems}
             shippingAddress={shippingAddress}
-            testMode={testMode}
-            onSuccess={handlePayPalSuccessCallback}
             onError={handlePaymentError}
             disabled={isProcessingPayment}
           />

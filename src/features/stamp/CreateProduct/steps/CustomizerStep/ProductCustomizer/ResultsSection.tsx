@@ -53,89 +53,71 @@ const ResultsSection = ({ ref }: IResultsSectionProps) => {
         totalDots={5}
       />
 
-      <div className="px-4 pt-2 sm:px-12 sm:pt-4">
+      <div className="px-4 sm:px-12">
         <GeneratedHistoryRail />
       </div>
 
       {/* 3D Preview Area */}
       <div className="flex-1 px-4 sm:px-12 pb-6 sm:pb-10 flex justify-center">
         {/* Main Stage */}
-        <div className="flex-1 relative bg-white/40 rounded-xl overflow-hidden shadow-inner border border-white/50">
-          {/* Viewer Placeholder (Simulated 3D) */}
-          <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-12">
-            <div className="relative w-full max-w-lg">
-              {/* T-Shirt Mockup */}
-              {!mockupError ? (
-                <Image
-                  src="/mockup-tee-front.png"
-                  alt="T-Shirt Mockup"
-                  width={600}
-                  height={600}
-                  className="w-full drop-shadow-2xl"
-                  onError={() => setMockupError(true)}
-                  priority
-                />
-              ) : (
-                <div className="w-full aspect-square bg-linear-to-br from-slate-100 to-slate-200 rounded-lg flex items-center justify-center">
-                  <svg
-                    viewBox="0 0 200 200"
-                    className="w-3/4 h-3/4 text-slate-300"
-                    fill="currentColor"
-                  >
-                    <path d="M60 40 L50 60 L50 140 L70 140 L70 180 L130 180 L130 140 L150 140 L150 60 L140 40 L125 50 L100 45 L75 50 Z" />
-                  </svg>
-                </div>
-              )}
+        {/* Viewer Placeholder (Simulated 3D) */}
+        <div className="relative w-full max-w-lg">
+          {/* T-Shirt Mockup */}
+          {!mockupError && (
+            <Image
+              src="/mockup-tee-front.png"
+              alt="T-Shirt Mockup"
+              width={600}
+              height={600}
+              className="w-full drop-shadow-2xl"
+              onError={() => setMockupError(true)}
+              priority
+            />
+          )}
 
-              {/* Overlay User Artwork */}
-              <div className="absolute top-[10%] left-[8%] w-[84%] h-[75%] flex items-center justify-center opacity-95 will-change-transform motion-safe:animate-[inspectionFloat_6s_cubic-bezier(0.37,0,0.63,1)_infinite] motion-reduce:animate-none">
-                {!imageLoaded && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="animate-pulse text-slate-400 text-sm font-accent">
-                      Loading design...
-                    </div>
-                  </div>
-                )}
-                <div
-                  className={`relative isolate h-full w-full overflow-hidden rounded-2xl bg-white p-2 transition-all duration-700 ease-out will-change-transform motion-safe:animate-[inspectionGlow_4.8s_cubic-bezier(0.37,0,0.63,1)_infinite] motion-reduce:animate-none ${
-                    imageLoaded ? "opacity-100" : "opacity-80"
-                  }`}
-                >
-                  <div
-                    aria-hidden="true"
-                    className="absolute inset-2 rounded-xl bg-white"
-                  />
-                  {/* Use a plain <img> for external URLs to avoid Next.js image host configuration errors during tests */}
-                  {typeof generatedResult.imageUrl === "string" &&
-                  (generatedResult.imageUrl.startsWith("http://") ||
-                    generatedResult.imageUrl.startsWith("https://")) ? (
-                    <img
-                      src={generatedResult.imageUrl}
-                      alt="Your design"
-                      className={`z-10 rounded-2xl object-contain drop-shadow-lg transition-all duration-700 ease-out ${
-                        imageLoaded
-                          ? "scale-100 opacity-100"
-                          : "scale-95 opacity-85"
-                      }`}
-                      onLoad={() => setImageLoaded(true)}
-                    />
-                  ) : (
-                    <Image
-                      src={generatedResult.imageUrl}
-                      alt="Your design"
-                      fill
-                      className={`z-10 rounded-2xl object-contain drop-shadow-lg transition-all duration-700 ease-out ${
-                        imageLoaded
-                          ? "scale-100 opacity-100"
-                          : "scale-95 opacity-85"
-                      }`}
-                      onLoad={() => setImageLoaded(true)}
-                      sizes="(max-width: 768px) 300px, 500px"
-                      priority
-                    />
-                  )}
+          {/* Overlay User Artwork */}
+          <div className="absolute top-[10%] left-[8%] w-[84%] h-[75%] flex items-center justify-center opacity-95 will-change-transform motion-safe:animate-[inspectionFloat_6s_cubic-bezier(0.37,0,0.63,1)_infinite] motion-reduce:animate-none">
+            {!imageLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="animate-pulse text-slate-400 text-sm font-accent">
+                  Loading design...
                 </div>
               </div>
+            )}
+            <div
+              className={`relative mt-8 rounded-2xl p-2 transition-all duration-700 ease-out will-change-transform motion-safe:animate-[inspectionGlow_4.8s_cubic-bezier(0.37,0,0.63,1)_infinite] motion-reduce:animate-none ${
+                imageLoaded ? "opacity-100" : "opacity-80"
+              }`}
+            >
+              {/* Use a plain <img> for external URLs to avoid Next.js image host configuration errors during tests */}
+              {typeof generatedResult.imageUrl === "string" &&
+              (generatedResult.imageUrl.startsWith("http://") ||
+                generatedResult.imageUrl.startsWith("https://")) ? (
+                <img
+                  src={generatedResult.imageUrl}
+                  alt="Your design"
+                  className={`z-10 rounded-2xl object-contain drop-shadow-lg transition-all duration-700 ease-out ${
+                    imageLoaded
+                      ? "scale-100 opacity-100"
+                      : "scale-95 opacity-85"
+                  }`}
+                  onLoad={() => setImageLoaded(true)}
+                />
+              ) : (
+                <Image
+                  src={generatedResult.imageUrl}
+                  alt="Your design"
+                  fill
+                  className={`z-10 rounded-2xl object-contain drop-shadow-lg transition-all duration-700 ease-out ${
+                    imageLoaded
+                      ? "scale-100 opacity-100"
+                      : "scale-95 opacity-85"
+                  }`}
+                  onLoad={() => setImageLoaded(true)}
+                  sizes="(max-width: 768px) 300px, 500px"
+                  priority
+                />
+              )}
             </div>
           </div>
         </div>

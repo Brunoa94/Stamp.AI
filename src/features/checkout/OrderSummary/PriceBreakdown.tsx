@@ -32,7 +32,7 @@ export const PriceBreakdown = () => {
       )}
       <div className="flex justify-between items-end pt-4 border-t border-slate-100">
         <div className="flex flex-col">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+          <span className="text-xs font-bold text-slate-600 uppercase tracking-widest">
             Total Amount
           </span>
           <span className="text-3xl font-heading font-extrabold text-slate-900 leading-none">

@@ -168,46 +168,6 @@ describe("usePaymentForm", () => {
     });
   });
 
-  describe("handlePayPalSuccess", () => {
-    it("should call onSuccess with formatted PayPal details", async () => {
-      const onSuccess = vi.fn();
-
-      const { result } = renderHook(
-        () =>
-          usePaymentForm({
-            amount: 100,
-            lineItems: mockLineItems,
-            shippingAddress: mockShippingAddress,
-            onSuccess,
-          }),
-        { wrapper: createWrapper() }
-      );
-
-      const paypalDetails = {
-        id: "paypal_order_123",
-        captureId: "capture_456",
-        status: "COMPLETED",
-        payerEmail: "payer@example.com",
-      };
-
-      await act(async () => {
-        await result.current.handlePayPalSuccess(paypalDetails, mockLineItems);
-      });
-
-      expect(onSuccess).toHaveBeenCalledWith(
-        {
-          id: "paypal_order_123",
-          status: "COMPLETED",
-          captureId: "capture_456",
-          payerEmail: "payer@example.com",
-          paypal_capture_id: "capture_456",
-          paypal_payer_email: "payer@example.com",
-        },
-        mockLineItems
-      );
-    });
-  });
-
   describe("error handling", () => {
     it("should handle payment API error", async () => {
       mockMutateAsync.mockRejectedValue(new Error("Payment service unavailable"));

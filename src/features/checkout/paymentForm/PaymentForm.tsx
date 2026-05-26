@@ -8,7 +8,6 @@ import { Button } from "@/features/ui/button";
 import { CheckoutErrorDisplay } from "../components";
 import clsx from "clsx";
 import { PaymentMethodSelector } from "../PaymentMethodSelector/PaymentMethodSelector";
-import { PayPalButton } from "../PayPalButton/PayPalButton";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 import type { PaymentMethodT } from "@/types/payment";
 import { TestCardSelector } from "./TestCardSelector";
@@ -53,7 +52,6 @@ const CheckoutForm = ({
     selectedTestMethod,
     setSelectedTestMethod,
     handleSubmit,
-    handlePayPalSuccess,
     stripe,
   } = usePaymentForm({
     amount,
@@ -127,19 +125,6 @@ const CheckoutForm = ({
             </Button>
           )}
         </form>
-      )}
-
-      {/* PayPal Buttons (hidden in checkout step; final action is in summary CTA) */}
-      {!hideButton && paymentMethod === "paypal" && (
-        <PayPalButton
-          amount={amount}
-          lineItems={lineItems}
-          shippingAddress={shippingAddress}
-          testMode={testMode}
-          onSuccess={handlePayPalSuccess}
-          onError={onError}
-          disabled={loading}
-        />
       )}
 
     </div>
