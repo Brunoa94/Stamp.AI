@@ -7,16 +7,14 @@ import {
   useUpdateCartItem,
   useRemoveCartItem,
 } from "@/queries/cartQueries";
-import {
-  CartList,
-  EmptyCart,
-  CartSummary,
-  PromoCodeInput,
-} from "@/features/cart/components";
-import { CartHeader } from "@/features/cart/sections/CartHeader";
-import { CartPageLayout } from "@/features/cart/sections/CartPageLayout";
-import { CartLoadingSkeleton } from "@/features/cart/sections/CartLoadingSkeleton";
-import { CartMobileCta } from "@/features/cart/mobile/CartMobileCta";
+import { CartList } from "./CartList/CartList";
+import { EmptyCart } from "./CartList/EmptyCart";
+import { CartSummary } from "./CartSummary/CartSummary";
+import { PromoCodeInput } from "./components/PromoCodeInput";
+import { CartHeader } from "./sections/CartHeader";
+import { CartPageLayout } from "./sections/CartPageLayout";
+import { CartLoadingSkeleton } from "./sections/CartLoadingSkeleton";
+import { CartMobileCta } from "./mobile/CartMobileCta";
 import { cartTheme } from "@/theme/components";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 
