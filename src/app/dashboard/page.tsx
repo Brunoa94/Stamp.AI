@@ -12,7 +12,7 @@ import { CreditsCoinsCard } from "@/features/dashboard/CreditsCoinsCard";
 import { QuickAccessCard } from "@/features/dashboard/QuickAccessCard";
 import { StampCtaCard } from "@/features/dashboard/StampCtaCard";
 import { RecentOrdersCard } from "@/features/dashboard/RecentOrdersCard";
-import { PaymentRecoveryBanner } from "@/features/checkout/components";
+import { PaymentRecoveryBanner } from "@/features/checkout/ui/components/PaymentRecoveryBanner";
 import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {

@@ -25,20 +25,19 @@ import {
 import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
 import { useClearCart } from "@/queries/cartQueries";
 import { useUser } from "@/hooks/useAuth";
-import { CheckoutStorageService } from "@/features/checkout/lib/services/checkoutStorageService";
-import type { CheckoutData } from "@/features/checkout/lib/services/checkoutStorageService";
 
-type PageStatus = "loading" | "capturing" | "success" | "failed" | "cancelled" | "error";
+type PageStatus = "loading" | "processing" | "success" | "failed" | "error";
 
-const PAYPAL_PIPELINE_TIMEOUT_MS = 120_000; // 2 minutes
+const STRIPE_PIPELINE_TIMEOUT_MS = 120_000; // 2 minutes
+const STRIPE_CHECKOUT_DATA_KEY = "stripe_checkout_data";
 
-class PayPalPipelineTimeoutError extends Error {
+class StripePipelineTimeoutError extends Error {
   constructor(timeoutMs: number) {
     super(
       `Order processing timed out after ${Math.round(timeoutMs / 1000)} seconds. ` +
         `A full refund has been initiated and will appear within 3–5 business days.`
     );
-    this.name = "PayPalPipelineTimeoutError";
+    this.name = "StripePipelineTimeoutError";
   }
 }
 
@@ -46,19 +45,54 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   let timeoutId: ReturnType<typeof setTimeout>;
 
   const timeout = new Promise<never>((_, reject) => {
-    timeoutId = setTimeout(() => reject(new PayPalPipelineTimeoutError(ms)), ms);
+    timeoutId = setTimeout(() => reject(new StripePipelineTimeoutError(ms)), ms);
   });
 
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
 }
 
-export default function PayPalReturnPage() {
+export interface StripeCheckoutData {
+  paymentIntentId: string;
+  amount: number;
+  lineItems: any[];
+  shippingAddress: any;
+  cartId: string | null;
+  timestamp: number;
+}
+
+export function getStoredStripeCheckoutData(): StripeCheckoutData | null {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const stored = localStorage.getItem(STRIPE_CHECKOUT_DATA_KEY);
+    if (!stored) return null;
+
+    const data: StripeCheckoutData = JSON.parse(stored);
+
+    // Check if data is not expired (30 minutes max)
+    const maxAge = 30 * 60 * 1000; // 30 minutes
+    if (Date.now() - data.timestamp > maxAge) {
+      localStorage.removeItem(STRIPE_CHECKOUT_DATA_KEY);
+      return null;
+    }
+
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+export function clearStoredStripeCheckoutData(): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(STRIPE_CHECKOUT_DATA_KEY);
+}
+
+export default function StripeReturnPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<PageStatus>("loading");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [paymentId, setPaymentId] = useState<string | null>(null);
-  const [captureId, setCaptureId] = useState<string | null>(null);
+  const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const hasProcessed = useRef(false);
 
@@ -75,24 +109,21 @@ export default function PayPalReturnPage() {
     if (hasProcessed.current) return;
     hasProcessed.current = true;
 
-    const processPayPalReturn = async () => {
+    const processStripeReturn = async () => {
       try {
-        // Get PayPal params from URL
-        const token = searchParams.get("token"); // This is the PayPal order ID
-        const payerId = searchParams.get("PayerID");
+        // Get payment intent ID from URL
+        const paymentIntent = searchParams.get("payment_intent");
 
-        // Check for cancellation
-        if (!token || !payerId) {
-          // User likely cancelled
-          setStatus("cancelled");
-          CheckoutStorageService.clearPayPalCheckoutData();
+        if (!paymentIntent) {
+          setStatus("error");
+          setErrorMessage("Payment information not found. Please try again from the checkout page.");
           return;
         }
 
-        setPaymentId(token);
+        setPaymentIntentId(paymentIntent);
 
         // Get stored checkout data
-        const checkoutData = CheckoutStorageService.getPayPalCheckoutData();
+        const checkoutData = getStoredStripeCheckoutData();
         if (!checkoutData) {
           setStatus("error");
           setErrorMessage(
@@ -111,8 +142,8 @@ export default function PayPalReturnPage() {
         }
 
         // Idempotency check
-        const finalizationDoneKey = `paypal_finalized_${token}`;
-        const finalizationLockKey = `paypal_finalizing_${token}`;
+        const finalizationDoneKey = `stripe_finalized_${paymentIntent}`;
+        const finalizationLockKey = `stripe_finalizing_${paymentIntent}`;
 
         if (sessionStorage.getItem(finalizationDoneKey) === "true") {
           setStatus("success");
@@ -124,47 +155,22 @@ export default function PayPalReturnPage() {
         }
 
         sessionStorage.setItem(finalizationLockKey, "true");
-        setStatus("capturing");
+        setStatus("processing");
 
-        // Capture the PayPal payment
-        const captureResponse = await fetch("/api/paypal/capture-order", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orderId: token, payerId }),
-        });
-
-        const captureData = await captureResponse.json();
-
-        if (!captureResponse.ok) {
-          sessionStorage.removeItem(finalizationLockKey);
-          CheckoutStorageService.clearPayPalCheckoutData();
-
-          // Handle declined payment - show failed status with retry option
-          if (captureData.code === "INSTRUMENT_DECLINED" || captureData.isRetryable) {
-            setStatus("failed");
-            setErrorMessage(captureData.error || "Your payment method was declined. Please try again with a different payment method.");
-            return;
-          }
-
-          throw new Error(captureData.error || "Failed to capture PayPal payment");
-        }
-
-        setCaptureId(captureData.captureId);
-
-        // Payment captured successfully - now create the order
+        // Extract checkout data
         const { lineItems, shippingAddress, amount, cartId } = checkoutData;
         const validatedLineItems = lineItems.map((item, index) =>
           validatePrintifyLineItem(item, index)
         );
 
-        const idempotencyKey = `paypal_${token}`;
+        const idempotencyKey = `stripe_${paymentIntent}`;
 
         // Validate cart ID
         if (!cartId) {
-          CheckoutStorageService.clearPayPalCheckoutData();
+          clearStoredStripeCheckoutData();
           setStatus("error");
           setErrorMessage(
-            "Cart information not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: " + token
+            "Cart information not found. Your payment was processed but we couldn't create your order. Please contact support with payment ID: " + paymentIntent
           );
           return;
         }
@@ -173,8 +179,8 @@ export default function PayPalReturnPage() {
         try {
           const cart = await CartService.getCart(cartId);
           await PaymentRecoveryService.recordPaymentForRecovery({
-            paymentProvider: "paypal",
-            paymentIntentId: token,
+            paymentProvider: "stripe",
+            paymentIntentId: paymentIntent,
             paymentStatus: "succeeded",
             amount,
             currency: "USD",
@@ -183,8 +189,6 @@ export default function PayPalReturnPage() {
             lineItems: validatedLineItems,
             metadata: {
               idempotency_key: idempotencyKey,
-              capture_id: captureData.captureId,
-              payer_email: captureData.payerEmail,
             },
           });
         } catch (recoveryError) {
@@ -196,7 +200,7 @@ export default function PayPalReturnPage() {
         if (existingOrder) {
           sessionStorage.setItem(finalizationDoneKey, "true");
           sessionStorage.removeItem(finalizationLockKey);
-          CheckoutStorageService.clearPayPalCheckoutData();
+          clearStoredStripeCheckoutData();
           setStatus("success");
           return;
         }
@@ -204,13 +208,13 @@ export default function PayPalReturnPage() {
         // Helpers
         const triggerRefund = async (reason: string) => {
           try {
-            if (amount > 0 && captureData.captureId) {
+            if (amount > 0) {
               await RefundService.processRefund({
-                orderId: `temp_paypal_${token}`,
-                paymentProvider: "paypal",
+                orderId: `temp_stripe_${paymentIntent}`,
+                paymentProvider: "stripe",
                 amount,
                 reason,
-                paypalCaptureId: captureData.captureId,
+                stripePaymentIntentId: paymentIntent,
               });
             }
           } catch (refundError) {
@@ -232,8 +236,6 @@ export default function PayPalReturnPage() {
         // Run fulfillment pipeline with timeout
         const runFulfillmentPipeline = async () => {
           // Stage 1: Create DB order
-          // cartId is already validated above and available from checkoutData
-
           try {
             const cart = await CartService.getCart(cartId);
             createdOrderId =
@@ -247,8 +249,8 @@ export default function PayPalReturnPage() {
 
             if (createdOrderId) {
               await OrderService.linkPaymentTransactionToOrder({
-                paymentProvider: "paypal",
-                paymentIntentId: token,
+                paymentProvider: "stripe",
+                paymentIntentId: paymentIntent,
                 orderId: createdOrderId,
               });
             }
@@ -282,10 +284,9 @@ export default function PayPalReturnPage() {
             shipping_address: mapShippingAddressToPrintifyAddress(shippingAddress),
             is_test: false,
             metadata: {
-              payment_intent_id: token,
+              payment_intent_id: paymentIntent,
               order_id: createdOrderId,
-              provider: "paypal",
-              capture_id: captureData.captureId,
+              provider: "stripe",
             },
           };
 
@@ -310,7 +311,7 @@ export default function PayPalReturnPage() {
 
           // Stage 3: Mark payment recovered
           if (createdOrderId) {
-            await PaymentRecoveryService.markPaymentRecovered(token, "paypal", createdOrderId);
+            await PaymentRecoveryService.markPaymentRecovered(paymentIntent, "stripe", createdOrderId);
           }
 
           // Stage 4: Clear cart
@@ -322,13 +323,13 @@ export default function PayPalReturnPage() {
         };
 
         try {
-          await withTimeout(runFulfillmentPipeline(), PAYPAL_PIPELINE_TIMEOUT_MS);
+          await withTimeout(runFulfillmentPipeline(), STRIPE_PIPELINE_TIMEOUT_MS);
         } catch (pipelineError) {
-          if (pipelineError instanceof PayPalPipelineTimeoutError) {
+          if (pipelineError instanceof StripePipelineTimeoutError) {
             if (createdOrderId) {
               await markOrderFailed(createdOrderId, "fulfillment_failed");
             }
-            await triggerRefund("PayPal checkout pipeline timed out");
+            await triggerRefund("Stripe checkout pipeline timed out");
           }
           throw pipelineError;
         }
@@ -336,24 +337,24 @@ export default function PayPalReturnPage() {
         // Success!
         sessionStorage.setItem(finalizationDoneKey, "true");
         sessionStorage.removeItem(finalizationLockKey);
-        CheckoutStorageService.clearPayPalCheckoutData();
+        clearStoredStripeCheckoutData();
         setStatus("success");
       } catch (err) {
-        console.error("PayPal return error:", err);
+        console.error("Stripe return error:", err);
 
-        const currentToken = searchParams.get("token");
-        if (currentToken) {
-          sessionStorage.removeItem(`paypal_finalizing_${currentToken}`);
+        const currentPaymentIntent = searchParams.get("payment_intent");
+        if (currentPaymentIntent) {
+          sessionStorage.removeItem(`stripe_finalizing_${currentPaymentIntent}`);
         }
 
         setStatus("error");
         setErrorMessage(
-          err instanceof Error ? err.message : "Failed to process PayPal payment"
+          err instanceof Error ? err.message : "Failed to process Stripe payment"
         );
       }
     };
 
-    processPayPalReturn();
+    processStripeReturn();
   }, [isUserLoading, user, searchParams]);
 
   const handleRetryPayment = () => {
@@ -365,7 +366,7 @@ export default function PayPalReturnPage() {
   };
 
   // Loading state
-  if (status === "loading" || status === "capturing") {
+  if (status === "loading" || status === "processing") {
     return (
       <div className={paymentSuccessTheme.page}>
         <PageDividers />
@@ -376,12 +377,12 @@ export default function PayPalReturnPage() {
               <Loader2 className="w-12 h-12 animate-spin" />
             </div>
             <h1 className={paymentSuccessTheme.title}>
-              {status === "capturing" ? "Completing Your Payment" : "Processing Payment"}
+              {status === "processing" ? "Completing Your Payment" : "Processing Payment"}
             </h1>
             <p className={paymentSuccessTheme.subtitle}>
-              {status === "capturing"
-                ? "Please wait while we finalize your PayPal payment..."
-                : "Please wait while we verify your payment with PayPal..."}
+              {status === "processing"
+                ? "Please wait while we finalize your Stripe payment..."
+                : "Please wait while we verify your payment with Stripe..."}
             </p>
           </section>
         </div>
@@ -394,36 +395,15 @@ export default function PayPalReturnPage() {
     return (
       <PaymentSuccess
         details={{
-          id: captureId || paymentId || "",
-          provider: "paypal",
+          id: paymentIntentId || "",
+          provider: "stripe",
           status: "succeeded",
-          orderNumber: orderNumber || (paymentId ? `#PP-${paymentId.slice(-6).toUpperCase()}` : "—"),
-          totalPaid: "Paid via PayPal",
+          orderNumber: orderNumber || (paymentIntentId ? `#ST-${paymentIntentId.slice(-6).toUpperCase()}` : "—"),
+          totalPaid: "Paid via Stripe",
           estimatedDelivery: "7–10 business days",
           confirmationEmail: "",
         }}
         onCreateAnother={handleCreateAnother}
-      />
-    );
-  }
-
-  // Cancelled state
-  if (status === "cancelled") {
-    return (
-      <PaymentError
-        details={{
-          paymentId: paymentId || "",
-          orderNumber: "—",
-          amountDue: "—",
-          attemptedOn: new Date().toLocaleString(),
-          status: "Cancelled",
-          reasonTitle: "Payment cancelled",
-          reasonMessage:
-            "You cancelled the PayPal payment. No charges have been made to your account.",
-          availableMethods: ["stripe", "paypal"],
-        }}
-        onTryAgain={handleRetryPayment}
-        onSelectMethod={handleRetryPayment}
       />
     );
   }
@@ -433,15 +413,15 @@ export default function PayPalReturnPage() {
     return (
       <PaymentError
         details={{
-          paymentId: paymentId || "",
-          orderNumber: paymentId ? `#PP-${paymentId.slice(-6).toUpperCase()}` : "—",
+          paymentId: paymentIntentId || "",
+          orderNumber: paymentIntentId ? `#ST-${paymentIntentId.slice(-6).toUpperCase()}` : "—",
           amountDue: "—",
           attemptedOn: new Date().toLocaleString(),
           status: "Declined",
           reasonTitle: "Payment declined",
           reasonMessage:
             errorMessage ||
-            "Your PayPal payment could not be processed. Please try again or use a different payment method.",
+            "Your Stripe payment could not be processed. Please try again or use a different payment method.",
           availableMethods: ["stripe", "paypal"],
         }}
         onTryAgain={handleRetryPayment}
@@ -463,7 +443,7 @@ export default function PayPalReturnPage() {
           <h1 className={paymentErrorTheme.title}>Something Went Wrong</h1>
           <p className={paymentErrorTheme.subtitle}>
             {errorMessage ||
-              "We couldn't process your PayPal payment. Please try again or contact support."}
+              "We couldn't process your Stripe payment. Please try again or contact support."}
           </p>
           <div className={paymentErrorTheme.ctaStack}>
             <Button onClick={handleRetryPayment} className={paymentErrorTheme.primaryBtn}>

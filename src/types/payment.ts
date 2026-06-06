@@ -159,6 +159,7 @@ export interface CreatePayPalOrderPayloadI {
  */
 export interface CreatePayPalOrderResponseI {
   orderId: string;
+  approvalUrl?: string;
 }
 
 /**

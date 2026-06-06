@@ -43,11 +43,11 @@ export class PayPalService {
         throw ErrorClient.handleError({ error, service: "PayPal", action: "Create Order" });
       }
 
-      if (!data?.orderId) {
+      if (!data?.orderId || !data?.approvalUrl) {
         throw ErrorClient.handleError({ error: new Error("Failed to create PayPal order"), service: "PayPal", action: "Create Order" });
       }
 
-      return { orderId: data.orderId };
+      return { orderId: data.orderId, approvalUrl: data.approvalUrl };
     } catch (error) {
       throw ErrorClient.handleError({
         error,

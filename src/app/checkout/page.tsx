@@ -1,14 +1,11 @@
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { CheckoutSubscriberProvider } from "@/features/checkout/context";
-import { CheckoutContent } from "@/features/checkout/CheckoutContent";
-import { CheckoutLoading } from "@/features/checkout/components";
+import { CheckoutPageContent } from "@/features/checkout/ui/CheckoutPageContent";
+import { CheckoutLoading } from "@/features/checkout/ui/Checkout/CheckoutLoading";
 
 export default function CheckoutPage() {
   return (
     <ProtectedRoute fallback={<CheckoutLoading />}>
-      <CheckoutSubscriberProvider>
-        <CheckoutContent />
-      </CheckoutSubscriberProvider>
+      <CheckoutPageContent />
     </ProtectedRoute>
   );
 }
