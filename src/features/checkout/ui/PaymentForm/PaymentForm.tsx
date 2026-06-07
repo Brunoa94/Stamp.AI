@@ -5,7 +5,7 @@ import { Elements, CardElement } from "@stripe/react-stripe-js";
 import { stripePromise } from "@/lib/stripe";
 import { ShippingAddressT } from "@/schemas/checkout";
 import { Button } from "@/features/ui/button";
-import { CheckoutErrorDisplay } from "../Checkout/CheckoutErrorDisplay";
+import CheckoutErrorDisplay from "../Checkout/CheckoutErrorDisplay";
 import clsx from "clsx";
 import { PaymentMethodSelector } from "../PaymentMethodSelector/PaymentMethodSelector";
 import type { PrintifyLineItem } from "@/types/printifyOrder";

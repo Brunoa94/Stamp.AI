@@ -11,6 +11,8 @@
   --font-heading: var(--font-heading);
   --font-accent: "Zodiak", serif;
   --font-display: "Cabinet Grotesk", sans-serif;
+  --font-anton: var(--font-anton);
+  --font-space: var(--font-space-grotesk);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -450,6 +452,177 @@
 
   .process-orbit-card:hover .process-orbit-accent-bar {
     width: 100%;
+  }
+
+  /* ====================================
+     BRUTALIST DESIGN SYSTEM UTILITIES
+     ==================================== */
+
+  /* Font family utilities */
+  .font-anton {
+    font-family: var(--font-anton), sans-serif;
+  }
+
+  .font-space {
+    font-family: var(--font-space-grotesk), sans-serif;
+  }
+
+  /* Grain overlay - fixed noise texture */
+  .grain-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    opacity: 0.04;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  /* Grayscale hover effect */
+  .grayscale-hover {
+    filter: grayscale(100%);
+    transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .grayscale-hover:hover {
+    filter: grayscale(0%);
+    transform: scale(1.05);
+  }
+
+  /* Navigation link line-through effect */
+  .nav-link {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .nav-link:hover {
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+    text-decoration-color: currentColor;
+  }
+
+  /* Layered text shadow for hero */
+  .layered-shadow {
+    text-shadow:
+      4px 4px 0px rgba(147, 51, 234, 0.3),
+      8px 8px 0px rgba(6, 182, 212, 0.2),
+      12px 12px 0px rgba(251, 146, 60, 0.1);
+  }
+
+  /* Animated logo dot */
+  .animated-dot {
+    display: inline-block;
+    width: 0.32em;
+    height: 0.32em;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, #9333ea, #06b6d4, #fb923c, #9333ea);
+    animation: gradientRotate 4s linear infinite, dotPulse 2s ease-in-out infinite;
+    box-shadow:
+      0 0 20px rgba(147, 51, 234, 0.6),
+      0 0 40px rgba(147, 51, 234, 0.3),
+      inset 0 2px 4px rgba(255, 255, 255, 0.4);
+    vertical-align: baseline;
+    margin: 0 0.05em;
+    position: relative;
+    top: 0.12em;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* CTA gradient border */
+  .cta-gradient-border {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cta-gradient-border::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    z-index: -1;
+    background: conic-gradient(from 0deg, #9333ea, #06b6d4, #fb923c, #9333ea);
+    animation: gradientRotate 4s linear infinite;
+  }
+
+  /* Brutalist color utilities */
+  .bg-concrete {
+    background-color: #f2f2f2;
+  }
+
+  .bg-ink {
+    background-color: #0a0a0a;
+  }
+
+  .text-concrete {
+    color: #f2f2f2;
+  }
+
+  .text-ink {
+    color: #0a0a0a;
+  }
+
+  .text-brandRed {
+    color: #dc2626;
+  }
+
+  .text-brandPurple {
+    color: #9333ea;
+  }
+
+  .text-brandCyan {
+    color: #06b6d4;
+  }
+
+  .text-brandOrange {
+    color: #fb923c;
+  }
+
+  .border-ink {
+    border-color: #0a0a0a;
+  }
+
+  .hover\:bg-brandPurple:hover {
+    background-color: #9333ea;
+  }
+
+  .hover\:bg-brandCyan:hover {
+    background-color: #06b6d4;
+  }
+
+  .hover\:bg-brandOrange:hover {
+    background-color: #fb923c;
+  }
+
+  .hover\:bg-brandRed:hover {
+    background-color: #dc2626;
+  }
+
+  .hover\:text-brandPurple:hover {
+    color: #9333ea;
+  }
+
+  .hover\:text-brandCyan:hover {
+    color: #06b6d4;
+  }
+
+  .hover\:text-brandOrange:hover {
+    color: #fb923c;
+  }
+
+  .hover\:text-brandRed:hover {
+    color: #dc2626;
+  }
+
+  .hover\:border-brandCyan:hover {
+    border-color: #06b6d4;
+  }
+
+  .hover\:border-brandPurple:hover {
+    border-color: #9333ea;
   }
 }
 
@@ -1207,6 +1380,73 @@
   }
 }
 
+/* ====================================
+   BRUTALIST KEYFRAME ANIMATIONS
+   ==================================== */
+
+@keyframes gradientRotate {
+  0% {
+    background: conic-gradient(from 0deg, #9333ea, #06b6d4, #fb923c, #9333ea);
+  }
+  33% {
+    background: conic-gradient(from 120deg, #06b6d4, #fb923c, #9333ea, #06b6d4);
+  }
+  66% {
+    background: conic-gradient(from 240deg, #fb923c, #9333ea, #06b6d4, #fb923c);
+  }
+  100% {
+    background: conic-gradient(from 360deg, #9333ea, #06b6d4, #fb923c, #9333ea);
+  }
+}
+
+@keyframes dotPulse {
+  0%,
+  100% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(5vw, -5vh) scale(1.05);
+  }
+  66% {
+    transform: translate(-3vw, 3vh) scale(0.95);
+  }
+}
+
+@keyframes floatReverse {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-4vw, 4vh) scale(0.98);
+  }
+  66% {
+    transform: translate(6vw, -3vh) scale(1.02);
+  }
+}
+
+@keyframes pulseSlow {
+  0%,
+  100% {
+    opacity: 0.05;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.15;
+    transform: scale(1.1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),
   ::view-transition-new(root),
@@ -1229,6 +1469,13 @@
   .ai-synthesis-orbit-icon,
   .ai-synthesis-central-box,
   .ai-synthesis-pulse-dot {
+    animation: none !important;
+  }
+
+  /* Disable brutalist animations */
+  .animated-dot,
+  .cta-gradient-border::before,
+  .grayscale-hover {
     animation: none !important;
   }
 }

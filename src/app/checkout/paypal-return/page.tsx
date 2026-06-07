@@ -159,12 +159,21 @@ export default function PayPalReturnPage() {
 
         const idempotencyKey = `paypal_${token}`;
 
-        // Validate cart ID
+        // Validate cart ID and amount
         if (!cartId) {
           CheckoutStorageService.clearPayPalCheckoutData();
           setStatus("error");
           setErrorMessage(
             "Cart information not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: " + token
+          );
+          return;
+        }
+
+        if (!amount) {
+          CheckoutStorageService.clearPayPalCheckoutData();
+          setStatus("error");
+          setErrorMessage(
+            "Order amount not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: " + token
           );
           return;
         }

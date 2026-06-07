@@ -6,6 +6,7 @@
  */
 
 import { ProviderCatalogService } from "../src/services/providerCatalogService";
+import { createClient } from "@supabase/supabase-js";
 
 const blueprints = [
   { id: 12, name: "Bella+Canvas 3001 T-Shirt" },
@@ -16,11 +17,23 @@ const blueprints = [
 ];
 
 async function main() {
+  // Create Supabase client for server-side use
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error("❌ Missing Supabase credentials. Check your .env.local file.");
+    return;
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
   console.log("=== Cheapest Providers for Netherlands (NL) ===\n");
 
   for (const blueprint of blueprints) {
     try {
       const best = await ProviderCatalogService.getBestProviderForCountry(
+        supabase,
         blueprint.id,
         "NL",
       );
@@ -55,6 +68,7 @@ async function main() {
   for (const blueprint of blueprints) {
     try {
       const comparison = await ProviderCatalogService.getProviderComparison(
+        supabase,
         blueprint.id,
         "NL",
       );

@@ -8,8 +8,8 @@ import { PageHeader } from "@/features/ui/page-header";
 import { MemoizedWizardProductForm } from "./WizardProductForm";
 import { CreateProductSubscriberProvider } from "@/features/stamp/CreateProduct/lib/context/CreateProductContextSubscriber";
 import { CreateProductSelectors } from "@/features/stamp/CreateProduct/lib/context/selectors";
-import { WIZARD_STEPS } from "./constants/wizardSteps";
-import { STEP_CONFIG, TOTAL_STEPS } from "./constants/stepConfig";
+import { WIZARD_STEPS } from "../lib/constants/wizardSteps";
+import { STEP_CONFIG, TOTAL_STEPS } from "../lib/constants/stepConfig";
 
 // Map step IDs to numeric values for WizardSectionHeader
 const stepNumberMap: Record<string, number> = {
