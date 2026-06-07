@@ -4,6 +4,9 @@ import Link from "next/link";
 import { ArrowDown } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { TrustIndicators } from "../components/TrustIndicators";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
 
 /**
  * Hero Section Component
@@ -51,17 +54,17 @@ export function HeroSection() {
         {/* Left: Hero text */}
         <div className="lg:col-span-7 flex flex-col items-start">
           {/* Massive title with layered shadow */}
-          <h1 className="font-anton text-[12vw] md:text-[10vw] lg:text-[8vw] leading-[0.85] tracking-tighter uppercase layered-shadow mb-8">
+          <Heading as="h1" variant="display" className="layered-shadow mb-8">
             STAMP
-            <span className="text-brandPurple">.</span>AI
-          </h1>
+            <Span className="text-brandPurple">.</Span>AI
+          </Heading>
 
           {/* Subtitle */}
-          <p className="font-space text-sm md:text-base lg:text-lg font-light tracking-wide uppercase max-w-2xl mb-12 opacity-70 leading-relaxed">
+          <Paragraph variant="lead" className="max-w-2xl mb-12 opacity-70">
             AI-powered design synthesis for premium apparel. Create
             archive-quality graphics in seconds. Engineered for the creative
             elite who demand precision.
-          </p>
+          </Paragraph>
 
           {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row gap-6 w-full sm:w-auto">
@@ -100,9 +103,9 @@ export function HeroSection() {
 
               {/* Product label overlay */}
               <div className="absolute bottom-6 left-6 bg-concrete px-4 py-2 border-2 border-ink shadow-[4px_4px_0px_rgba(10,10,10,0.3)]">
-                <span className="text-[9px] font-bold tracking-[0.4em] uppercase font-space">
+                <Span variant="micro" className="tracking-[0.4em]">
                   ESSENTIAL_WHT / 320GSM
-                </span>
+                </Span>
               </div>
             </div>
           </div>
@@ -111,9 +114,9 @@ export function HeroSection() {
 
       {/* Scroll indicator */}
       <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-40 hover:opacity-100 transition-opacity cursor-pointer group">
-        <span className="text-[9px] font-bold tracking-[0.4em] uppercase font-space">
+        <Span variant="micro" className="tracking-[0.4em]">
           Scroll to Build
-        </span>
+        </Span>
         <ArrowDown className="w-6 h-6 animate-bounce group-hover:text-brandPurple transition-colors" />
       </div>
     </section>

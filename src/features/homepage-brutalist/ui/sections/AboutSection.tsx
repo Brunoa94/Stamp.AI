@@ -1,6 +1,9 @@
 "use client";
 
 import { brutalistAboutCards } from "@/features/homepage-brutalist/lib/constants/brutalistContent";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
 
 /**
  * About Section Component
@@ -24,28 +27,28 @@ export function AboutSection() {
       <div className="max-w-screen-2xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 relative z-10">
         {/* Left: Heading + Blockquote */}
         <div className="lg:col-span-5 flex flex-col justify-center">
-          <h2 className="font-anton text-6xl md:text-7xl lg:text-8xl uppercase tracking-tighter leading-none mb-12">
+          <Heading as="h2" variant="title" className="mb-12">
             Democratizing
             <br />
             Design
-          </h2>
+          </Heading>
 
           <blockquote className="border-l-4 border-brandPurple pl-8 mb-8">
-            <p className="text-sm md:text-base leading-relaxed uppercase tracking-wide font-space font-light mb-6">
+            <Paragraph variant="body" className="md:text-base font-light mb-6">
               "We believe exceptional design should be accessible to everyone.
               Our AI synthesis engine transforms creative vision into
               archival-quality apparel in seconds—no design experience
               required."
-            </p>
-            <footer className="text-[10px] font-bold tracking-[0.4em] uppercase opacity-50 font-space">
+            </Paragraph>
+            <Span as="footer" variant="default" className="opacity-50">
               — STAMP.AI MANIFESTO
-            </footer>
+            </Span>
           </blockquote>
 
-          <div className="text-xs leading-loose uppercase tracking-wide font-space font-light opacity-60 max-w-md">
+          <Paragraph variant="loose" className="font-light opacity-60 max-w-md">
             Founded in 2024, STAMP.AI merges machine learning with textile
             engineering to create a new paradigm for custom apparel production.
-          </div>
+          </Paragraph>
         </div>
 
         {/* Right: Value Cards Grid */}
@@ -60,19 +63,19 @@ export function AboutSection() {
             >
               {/* Icon/Number placeholder */}
               <div className="mb-6">
-                <span className="font-anton text-5xl opacity-10 group-hover:opacity-20 transition-opacity">
+                <Span className="font-anton text-5xl opacity-10 group-hover:opacity-20 transition-opacity">
                   {String(index + 1).padStart(2, "0")}
-                </span>
+                </Span>
               </div>
 
               {/* Content */}
               <div>
-                <h3 className="font-anton text-2xl md:text-3xl uppercase tracking-tight mb-4">
+                <Heading as="h3" variant="card" className="mb-4">
                   {card.title}
-                </h3>
-                <p className="text-xs leading-relaxed uppercase tracking-wide font-space opacity-70">
+                </Heading>
+                <Paragraph variant="sm" className="opacity-70">
                   {card.description}
-                </p>
+                </Paragraph>
               </div>
             </div>
           ))}

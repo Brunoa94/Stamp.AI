@@ -4,6 +4,9 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { TrustIndicators } from "../components/TrustIndicators";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
 
 /**
  * CTA Section Component
@@ -44,20 +47,23 @@ export function CtaSection() {
       {/* Content */}
       <div className="max-w-5xl mx-auto text-center relative z-10">
         {/* Massive heading */}
-        <h2 className="font-anton text-[10vw] md:text-[8vw] lg:text-[6vw] leading-[0.9] tracking-tighter uppercase mb-8 layered-shadow">
+        <Heading as="h2" variant="cta" className="mb-8 layered-shadow">
           Ready to
           <br />
           Stamp Your
           <br />
           Vision?
-        </h2>
+        </Heading>
 
         {/* Subtitle */}
-        <p className="text-sm md:text-base lg:text-lg font-light tracking-wide uppercase max-w-2xl mx-auto mb-16 opacity-80 leading-relaxed font-space">
+        <Paragraph
+          variant="lead"
+          className="max-w-2xl mx-auto mb-16 opacity-80"
+        >
           Join thousands of creators using AI-powered design synthesis to bring
           their ideas to life. Start creating archival-quality apparel in
           seconds.
-        </p>
+        </Paragraph>
 
         {/* CTA buttons */}
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
@@ -67,7 +73,7 @@ export function CtaSection() {
             className="cta-gradient-border h-auto rounded-none bg-ink px-12 py-5 font-anton text-xl md:text-2xl tracking-widest uppercase hover:scale-105 transition-all duration-300 shadow-[8px_8px_0px_rgba(255,255,255,0.1)] text-white flex items-center gap-3 group"
           >
             <Link href="/create">
-              <span>Start Creating</span>
+              <Span>Start Creating</Span>
               <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
             </Link>
           </Button>

@@ -1,5 +1,7 @@
 import { Separator } from "@/features/ui/separator";
 import { cn } from "@/lib/utils";
+import { Heading } from "@/features/ui/heading";
+import { Span } from "@/features/ui/span";
 
 interface BrutalistSectionHeaderProps {
   title: string;
@@ -17,17 +19,15 @@ export function BrutalistSectionHeader({
   return (
     <div className={cn("max-w-screen-2xl mx-auto mb-20", className)}>
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-4">
-        <h2 className="font-anton text-6xl md:text-7xl lg:text-9xl uppercase tracking-tighter leading-none">
+        <Heading as="h2" variant="section">
           {title}
-        </h2>
-        <span
-          className={cn(
-            "text-[11px] font-bold tracking-[0.4em] uppercase font-space",
-            inverted ? "opacity-20" : "opacity-30",
-          )}
+        </Heading>
+        <Span
+          variant="sm"
+          className={inverted ? "opacity-20" : "opacity-30"}
         >
           {label}
-        </span>
+        </Span>
       </div>
       <Separator
         className={cn(

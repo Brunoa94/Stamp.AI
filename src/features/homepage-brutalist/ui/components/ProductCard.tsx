@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Heading } from "@/features/ui/heading";
+import { Span } from "@/features/ui/span";
 
 /**
  * Product Card Component
@@ -31,13 +33,9 @@ export function ProductCard({
   href,
 }: ProductCardProps) {
   return (
-    <Link
-      href={href}
-      id={id}
-      className="group cursor-pointer block"
-    >
+    <Link href={href} id={id} className="group cursor-pointer block">
       {/* Image container */}
-      <div className="aspect-[3/4] bg-white border-2 border-ink overflow-hidden relative mb-4 shadow-[8px_8px_0px_rgba(10,10,10,0.05)]">
+      <div className="aspect-3/4 bg-white border-2 border-ink overflow-hidden relative mb-4 shadow-[8px_8px_0px_rgba(10,10,10,0.05)]">
         <img
           src={imageUrl}
           alt={name}
@@ -52,18 +50,26 @@ export function ProductCard({
 
       {/* Product info */}
       <div className="flex justify-between items-start mb-2">
-        <h5 className="font-anton text-lg md:text-xl uppercase tracking-tight group-hover:text-brandPurple transition-colors">
+        <Heading
+          as="h5"
+          variant="item"
+          className="group-hover:text-brandPurple transition-colors"
+        >
           {name}
-        </h5>
-        <span className="font-mono font-bold text-sm md:text-base">
+        </Heading>
+        <Span className="font-mono font-bold text-sm md:text-base">
           ${price.toFixed(2)}
-        </span>
+        </Span>
       </div>
 
       {/* Product specs */}
-      <p className="text-[10px] opacity-50 font-bold tracking-widest uppercase mt-1 font-space">
+      <Span
+        as="p"
+        variant="default"
+        className="opacity-50 mt-1 tracking-widest"
+      >
         {specs}
-      </p>
+      </Span>
     </Link>
   );
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ProductCard } from "../components/ProductCard";
 import { BrutalistSectionHeader } from "../components/BrutalistSectionHeader";
 import { Button } from "@/features/ui/button";
+import { Span } from "@/features/ui/span";
 import { useTshirtProducts } from "@/queries/productQueries";
 
 /**
@@ -65,10 +66,10 @@ export function ProductsSection() {
           className="group h-auto rounded-none p-0 font-anton text-2xl uppercase tracking-wider hover:text-brandPurple hover:bg-transparent"
         >
           <Link href="/create">
-            <span>View Full Catalog</span>
-            <span className="inline-block group-hover:translate-x-2 transition-transform">
+            <Span>View Full Catalog</Span>
+            <Span className="inline-block group-hover:translate-x-2 transition-transform">
               -
-            </span>
+            </Span>
           </Link>
         </Button>
       </div>

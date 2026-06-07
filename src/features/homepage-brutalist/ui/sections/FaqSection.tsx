@@ -5,7 +5,8 @@ import { ChevronRight } from "lucide-react";
 import { BrutalistSectionHeader } from "../components/BrutalistSectionHeader";
 import { Button } from "@/features/ui/button";
 import { brutalistFaqs } from "@/features/homepage-brutalist/lib/constants/brutalistContent";
-
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
 /**
  * FAQ Section Component
  *
@@ -29,22 +30,31 @@ export function FaqSection() {
             id={faq.id}
             className={`group border-2 ${faq.borderColor} p-6 md:p-8 transition-all duration-300 bg-white/50 backdrop-blur-sm`}
           >
-            <summary className="flex justify-between items-start cursor-pointer list-none font-anton text-xl md:text-2xl uppercase tracking-tight leading-tight">
-              <span className="pr-8">{faq.question}</span>
+            <summary className="flex justify-between items-start cursor-pointer list-none">
+              <Heading as="span" variant="question" className="pr-8">
+                {faq.question}
+              </Heading>
               <ChevronRight className="w-6 h-6 md:w-7 md:h-7 shrink-0 group-open:rotate-90 transition-transform duration-300 text-brandPurple mt-1" />
             </summary>
-            <div className="mt-6 text-xs md:text-sm leading-loose uppercase tracking-wide border-t-2 border-ink/10 pt-6 font-space opacity-70">
+            <Paragraph
+              as="div"
+              variant="faq"
+              className="mt-6 border-t-2 border-ink/10 pt-6 opacity-70"
+            >
               {faq.answer}
-            </div>
+            </Paragraph>
           </details>
         ))}
       </div>
 
       {/* Contact CTA */}
       <div className="max-w-4xl mx-auto mt-16 text-center">
-        <p className="text-xs uppercase tracking-widest mb-6 opacity-60 font-space font-bold">
+        <Paragraph
+          variant="sm"
+          className="font-bold mb-6 opacity-60 tracking-widest"
+        >
           Still have questions?
-        </p>
+        </Paragraph>
         <Button
           asChild
           variant="outline"

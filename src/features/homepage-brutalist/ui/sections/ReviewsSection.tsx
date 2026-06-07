@@ -6,6 +6,9 @@ import {
   brutalistRatingSummary,
   brutalistTestimonials,
 } from "@/features/homepage-brutalist/lib/constants/brutalistContent";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
 
 /**
  * Reviews Section Component
@@ -54,32 +57,35 @@ export function ReviewsSection() {
                   />
                 ))}
               </div>
-              <p className="text-xs uppercase tracking-widest opacity-60 font-space font-bold">
+              <Paragraph
+                variant="sm"
+                className="tracking-widest opacity-60 font-bold"
+              >
                 {brutalistRatingSummary.totalReviews.toLocaleString()} Verified
                 Reviews
-              </p>
+              </Paragraph>
             </div>
 
             {/* Platform breakdown */}
             <div className="space-y-6">
-              <div className="text-[10px] font-bold tracking-[0.4em] uppercase opacity-40 font-space mb-4">
+              <Span as="div" variant="default" className="opacity-40 mb-4">
                 Platform Breakdown
-              </div>
+              </Span>
               {brutalistRatingSummary.platforms.map((platform) => (
                 <div
                   key={platform.name}
                   className="flex justify-between items-center pb-4 border-b border-white/10 last:border-0"
                 >
-                  <span className="text-sm uppercase tracking-wide font-space">
+                  <Paragraph as="span" variant="body">
                     {platform.name}
-                  </span>
+                  </Paragraph>
                   <div className="flex items-center gap-3">
-                    <span className="font-mono font-bold">
+                    <Span className="font-mono font-bold">
                       {platform.rating}
-                    </span>
-                    <span className="text-xs opacity-50">
+                    </Span>
+                    <Paragraph as="span" variant="sm" className="opacity-50">
                       ({platform.reviews})
-                    </span>
+                    </Paragraph>
                   </div>
                 </div>
               ))}
@@ -107,31 +113,33 @@ export function ReviewsSection() {
                         />
                       ))}
                     </div>
-                    <span className="text-[9px] font-bold tracking-[0.3em] uppercase opacity-40 font-space">
+                    <Span variant="micro" className="opacity-40">
                       {testimonial.platform}
-                    </span>
+                    </Span>
                   </div>
 
                   {/* Review text */}
-                  <p className="text-sm leading-relaxed mb-6 font-space">
+                  <Paragraph variant="quote" className="mb-6">
                     "{testimonial.text}"
-                  </p>
+                  </Paragraph>
                 </div>
 
                 {/* Footer: Author + Helpful count */}
                 <div>
                   <div className="flex justify-between items-end">
                     <div>
-                      <div className="font-anton text-lg uppercase tracking-tight mb-1">
+                      <Heading as="div" variant="item" className="mb-1">
                         {testimonial.author}
-                      </div>
-                      <div className="text-[10px] uppercase tracking-widest opacity-60 font-space font-bold">
+                      </Heading>
+                      <Span as="div" variant="default" className="opacity-60">
                         {testimonial.role}
-                      </div>
+                      </Span>
                     </div>
                     <div className="flex items-center gap-2 text-xs opacity-60">
                       <ThumbsUp className="w-3 h-3" />
-                      <span>{testimonial.helpful}</span>
+                      <Paragraph as="span" variant="sm">
+                        {testimonial.helpful}
+                      </Paragraph>
                     </div>
                   </div>
                 </div>

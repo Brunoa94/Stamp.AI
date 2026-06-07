@@ -4,6 +4,8 @@ import Link from "next/link";
 import { ShoppingBag } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { AnimatedLogoDot } from "./AnimatedLogoDot";
+import { Span } from "@/features/ui/span";
+import { List } from "@/features/ui/list";
 
 /**
  * Brutalist Navbar Component
@@ -47,13 +49,13 @@ export function BrutalistNavbar() {
             id="header-logo-redesign"
             className="flex items-center font-anton text-4xl md:text-6xl leading-none tracking-tighter uppercase hover:opacity-80 transition-opacity"
           >
-            <span>STAMP</span>
+            <Span unstyled>STAMP</Span>
             <AnimatedLogoDot size="md" className="mx-1.5" />
-            <span>AI</span>
+            <Span unstyled>AI</Span>
           </Link>
-          <span className="text-[9px] tracking-[0.3em] font-bold mt-1 uppercase opacity-60 font-space">
+          <Span variant="micro" className="mt-1 opacity-60">
             Est. 2024 / NYC
-          </span>
+          </Span>
         </div>
       </div>
 
@@ -74,7 +76,7 @@ export function BrutalistNavbar() {
       <div className="flex-1 flex justify-end items-center mr-0 md:mr-16 relative">
         {/* Navigation menu (desktop only, positioned below header) */}
         <nav className="hidden lg:block absolute top-full right-0 mt-10">
-          <ul className="flex flex-col items-end gap-2">
+          <List className="flex flex-col items-end gap-2">
             {NAV_LINKS.map((link) => (
               <li key={link.id} className="overflow-hidden">
                 <Link
@@ -86,7 +88,7 @@ export function BrutalistNavbar() {
                 </Link>
               </li>
             ))}
-          </ul>
+          </List>
         </nav>
 
         <div className="flex items-center gap-3 md:gap-6">
@@ -97,9 +99,9 @@ export function BrutalistNavbar() {
               className="h-auto rounded-none border border-ink/10 px-4 py-2 hover:border-brandCyan hover:bg-transparent transition-colors"
             >
               <ShoppingBag className="w-4 h-4 text-ink" />
-              <span className="text-[10px] font-bold tracking-widest uppercase font-space">
+              <Span variant="default" className="tracking-widest">
                 Cart ({CART_ITEMS.length})
-              </span>
+              </Span>
             </Button>
 
             {/* Cart preview dropdown */}
@@ -110,24 +112,30 @@ export function BrutalistNavbar() {
                     key={index}
                     className="flex flex-col gap-1 hover:bg-concrete/30 p-2 -m-2 rounded transition-colors"
                   >
-                    <span className="font-anton text-sm uppercase tracking-tight text-ink">
+                    <Span className="font-anton text-sm uppercase tracking-tight text-ink">
                       {item.name}
-                    </span>
-                    <span className="text-[9px] opacity-60 tracking-widest uppercase font-space text-ink">
+                    </Span>
+                    <Span
+                      variant="micro"
+                      className="opacity-60 tracking-widest text-ink"
+                    >
                       {item.details}
-                    </span>
+                    </Span>
                   </div>
                 ))}
               </div>
 
               <div className="border-t border-ink/10 pt-4 mt-4">
                 <div className="flex justify-between items-center mb-4">
-                  <span className="text-[10px] font-bold uppercase tracking-widest opacity-40 font-space">
+                  <Span
+                    variant="default"
+                    className="opacity-40 tracking-widest"
+                  >
                     Subtotal
-                  </span>
-                  <span className="text-[10px] font-anton text-ink">
+                  </Span>
+                  <Span className="text-[10px] font-anton text-ink tracking-normal">
                     $237.00 TOTAL
-                  </span>
+                  </Span>
                 </div>
                 <Button
                   asChild

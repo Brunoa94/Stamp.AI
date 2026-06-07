@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Span } from "@/features/ui/span";
 
 interface TrustIndicatorItem {
   label: string;
@@ -19,15 +20,15 @@ export function TrustIndicators({ items, className }: TrustIndicatorsProps) {
       )}
     >
       {items.map((item) => (
-        <span key={item.label} className="flex items-center gap-2">
-          <span
+        <Span key={item.label} className="flex items-center gap-2">
+          <Span
             className={cn(
               "w-2 h-2 rounded-full animate-[pulseSlow_3s_ease-in-out_infinite]",
               item.dotClassName,
             )}
           />
           {item.label}
-        </span>
+        </Span>
       ))}
     </div>
   );

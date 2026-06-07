@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { Separator } from "@/features/ui/separator";
 import { AnimatedLogoDot } from "./AnimatedLogoDot";
+import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
+import { List } from "@/features/ui/list";
 
 /**
  * Brutalist Footer Component
@@ -50,23 +53,26 @@ export function BrutalistFooter() {
             href="/"
             className="font-anton text-4xl md:text-6xl leading-none uppercase tracking-tighter mb-8 flex items-center hover:opacity-80 transition-opacity"
           >
-            <span>STAMP</span>
+            <Span>STAMP</Span>
             <AnimatedLogoDot size="md" className="mx-1.5 md:mx-2" />
-            <span>AI</span>
+            <Span>AI</Span>
           </Link>
-          <p className="text-[10px] opacity-40 uppercase max-w-xs leading-loose font-bold tracking-widest font-space">
+          <Paragraph
+            variant="sm"
+            className="opacity-40 max-w-xs leading-loose font-bold tracking-widest"
+          >
             Democratizing design precision through AI synthesis. Engineered for
             the creative elite who demand archival textile quality.
-          </p>
+          </Paragraph>
         </div>
 
         {/* Product Links */}
         <div className="flex flex-col gap-8">
           <div>
-            <h6 className="text-[11px] font-bold tracking-[0.4em] uppercase opacity-20 mb-8 font-space">
+            <Span as="h6" variant="sm" className="opacity-20 mb-8">
               Product
-            </h6>
-            <ul className="space-y-4">
+            </Span>
+            <List className="space-y-4">
               {FOOTER_LINKS.product.map((link) => (
                 <li key={link.id}>
                   <Link
@@ -78,17 +84,17 @@ export function BrutalistFooter() {
                   </Link>
                 </li>
               ))}
-            </ul>
+            </List>
           </div>
         </div>
 
         {/* Protocol Links */}
         <div className="flex flex-col gap-8">
           <div>
-            <h6 className="text-[11px] font-bold tracking-[0.4em] uppercase opacity-20 mb-8 font-space">
+            <Span as="h6" variant="sm" className="opacity-20 mb-8">
               Protocol
-            </h6>
-            <ul className="space-y-4">
+            </Span>
+            <List className="space-y-4">
               {FOOTER_LINKS.protocol.map((link) => (
                 <li key={link.id}>
                   <Link
@@ -100,17 +106,17 @@ export function BrutalistFooter() {
                   </Link>
                 </li>
               ))}
-            </ul>
+            </List>
           </div>
         </div>
 
         {/* Support Links */}
         <div className="flex flex-col gap-8">
           <div>
-            <h6 className="text-[11px] font-bold tracking-[0.4em] uppercase opacity-20 mb-8 font-space">
+            <Span as="h6" variant="sm" className="opacity-20 mb-8">
               Support
-            </h6>
-            <ul className="space-y-4">
+            </Span>
+            <List className="space-y-4">
               {FOOTER_LINKS.support.map((link) => (
                 <li key={link.id}>
                   <Link
@@ -122,17 +128,17 @@ export function BrutalistFooter() {
                   </Link>
                 </li>
               ))}
-            </ul>
+            </List>
           </div>
         </div>
 
         {/* Network Links */}
         <div className="flex flex-col gap-8">
           <div>
-            <h6 className="text-[11px] font-bold tracking-[0.4em] uppercase opacity-20 mb-8 font-space">
+            <Span as="h6" variant="sm" className="opacity-20 mb-8">
               Network
-            </h6>
-            <ul className="space-y-4">
+            </Span>
+            <List className="space-y-4">
               {FOOTER_LINKS.network.map((link) => (
                 <li key={link.id}>
                   <Link
@@ -144,7 +150,7 @@ export function BrutalistFooter() {
                   </Link>
                 </li>
               ))}
-            </ul>
+            </List>
           </div>
         </div>
       </div>
@@ -160,12 +166,16 @@ export function BrutalistFooter() {
         </h2>
 
         {/* Copyright overlay */}
-        <div className="absolute bottom-0 w-full flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] font-bold tracking-[0.4em] opacity-30 uppercase font-space">
-          <span>STAMP.AI © 2024 / ARCHIVE</span>
-          <span className="hidden md:inline">
+        <div className="absolute bottom-0 w-full flex flex-col md:flex-row justify-between items-center gap-4 opacity-30">
+          <Span variant="micro" className="tracking-[0.4em]">
+            STAMP.AI © 2024 / ARCHIVE
+          </Span>
+          <Span variant="micro" className="hidden md:inline tracking-[0.4em]">
             Privacy Protocols / Terms of Service
-          </span>
-          <span>EST. NYC TERMINAL</span>
+          </Span>
+          <Span variant="micro" className="tracking-[0.4em]">
+            EST. NYC TERMINAL
+          </Span>
         </div>
       </div>
     </footer>

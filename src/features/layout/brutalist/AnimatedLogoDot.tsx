@@ -4,6 +4,8 @@
  * Rotating conic gradient dot for the STAMP.AI logo
  */
 
+import { Span } from "@/features/ui/span";
+
 interface AnimatedLogoDotProps {
   size?: "sm" | "md" | "lg";
   className?: string;
@@ -20,7 +22,8 @@ export function AnimatedLogoDot({
   };
 
   return (
-    <span
+    <Span
+      unstyled
       className={`animated-dot ${sizeClasses[size]} ${className}`}
       aria-hidden="true"
     />
