@@ -2,7 +2,7 @@
 
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
 import { theme } from "@/theme";
-import { ProfileContent } from "@/features/profile/ProfileContent";
+import { ProfileContent } from "@/features/profile/ui/ProfileContent";
 
 export default function ProfilePage() {
   return (

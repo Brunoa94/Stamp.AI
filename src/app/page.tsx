@@ -1,7 +1,7 @@
 "use client";
 
 import { useTshirtProducts } from "@/queries/productQueries";
-import { BottomSectionNav } from "@/features/homepage/BottomSectionNav";
+import { BottomSectionNav } from "@/features/homepage/ui/BottomSectionNav";
 import {
   NAVBAR_HEIGHT,
   processSteps,
@@ -9,19 +9,19 @@ import {
   SCROLL_DURATION,
   SECTION_IDS,
   SECTION_LABELS,
-} from "@/features/homepage/constants/homepageContent";
-import { useHomepageSectionScroll } from "@/features/homepage/hooks/useHomepageSectionScroll";
-import { ScrollProgressIndicator } from "@/features/homepage/navigation/ScrollProgressIndicator";
-import { SectionDotsNav } from "@/features/homepage/navigation/SectionDotsNav";
-import { BrandStorySection } from "@/features/homepage/sections/BrandStorySection";
-import { CtaHomeSection } from "@/features/homepage/sections/CtaHomeSection";
-import { FaqSection } from "@/features/homepage/sections/FaqSection";
-import { HeroSection } from "@/features/homepage/sections/HeroSection";
-import { ProcessSection } from "@/features/homepage/sections/ProcessSection";
-import { ProductsSection } from "@/features/homepage/sections/ProductsSection";
-import { ReviewsSection } from "@/features/homepage/sections/ReviewsSection";
-import { SecuritySection } from "@/features/homepage/sections/SecuritySection";
-import { PromoCodesCarouselSection } from "@/features/homepage/sections/PromoCodesCarouselSection";
+} from "@/features/homepage/lib/constants/homepageContent";
+import { useHomepageSectionScroll } from "@/features/homepage/lib/hooks/useHomepageSectionScroll";
+import { ScrollProgressIndicator } from "@/features/homepage/ui/navigation/ScrollProgressIndicator";
+import { SectionDotsNav } from "@/features/homepage/ui/navigation/SectionDotsNav";
+import { BrandStorySection } from "@/features/homepage/ui/sections/BrandStorySection";
+import { CtaHomeSection } from "@/features/homepage/ui/sections/CtaHomeSection";
+import { FaqSection } from "@/features/homepage/ui/sections/FaqSection";
+import { HeroSection } from "@/features/homepage/ui/sections/HeroSection";
+import { ProcessSection } from "@/features/homepage/ui/sections/ProcessSection";
+import { ProductsSection } from "@/features/homepage/ui/sections/ProductsSection";
+import { ReviewsSection } from "@/features/homepage/ui/sections/ReviewsSection";
+import { SecuritySection } from "@/features/homepage/ui/sections/SecuritySection";
+import { PromoCodesCarouselSection } from "@/features/homepage/ui/sections/PromoCodesCarouselSection/PromoCodesCarouselSection";
 
 export default function Home() {
   const processSectionIndex = SECTION_IDS.indexOf("process");

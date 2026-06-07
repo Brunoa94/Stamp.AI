@@ -1,6 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "./button";
-import { useWizardProductFormHandlers } from "../stamp/CreateProduct/hooks/useWizardProductFormHandlers";
+import { useWizardProductFormHandlers } from "@/features/stamp/CreateProduct/lib/hooks/useWizardProductFormHandlers";
 
 interface WizardActionFooterProps {
   onCancel?: () => void;

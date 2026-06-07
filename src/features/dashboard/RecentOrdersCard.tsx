@@ -6,10 +6,10 @@ import dynamic from "next/dynamic";
 import { ChevronRight } from "lucide-react";
 import { dashboardTheme } from "@/theme/components";
 import type { OrderWithItemsT } from "@/types/order";
-import { MemoizedOrderCard } from "@/features/orders/OrderCard";
+import { MemoizedOrderCard } from "@/features/orders/ui/OrderCard/OrderCard";
 
 const OrderDetailsModal = dynamic(
-  () => import("@/features/orders/orderDetails/OrderDetailsModal/OrderDetailsModal"),
+  () => import("@/features/orders/ui/orderDetails/OrderDetailsModal/OrderDetailsModal"),
   { ssr: false }
 );
 
