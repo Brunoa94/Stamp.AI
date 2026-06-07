@@ -31,6 +31,7 @@ export function FabricSelectionSection({
         <FabricCardSelector
           onTshirtSelect={onTshirtSelect}
           selectedTshirt={selectedTshirt ?? undefined}
+          countryCode="NL" // TODO: Get from user preferences or geolocation
         />
       )}
 

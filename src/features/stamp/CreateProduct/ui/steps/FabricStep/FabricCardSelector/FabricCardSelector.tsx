@@ -1,39 +1,50 @@
 "use client";
 
 import { useTshirtProducts, type TshirtType } from "@/queries/productQueries";
+import { useBestProvidersForBlueprints } from "@/queries/providerCatalogQueries";
 import clsx from "clsx";
 import { Button } from "@/features/ui/button";
 import { CheckCircleIcon } from "@/theme/icons";
 import { FabricCardSelectorSkeleton } from "./FabricCardSelectorSkeleton";
 import { BlueprintImagesDialog } from "./BlueprintImagesDialog";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ImageIcon } from "lucide-react";
 
 interface FabricCardSelectorProps {
   onTshirtSelect: (tshirt: TshirtType) => void;
   selectedTshirt?: TshirtType;
+  countryCode?: string; // User's country for pricing
 }
 
 export function FabricCardSelector({
   onTshirtSelect,
   selectedTshirt,
+  countryCode = "NL", // Default to Netherlands
 }: FabricCardSelectorProps) {
   const { data: tshirtProducts = [], isLoading } = useTshirtProducts();
   const [imagesDialogOpen, setImagesDialogOpen] = useState(false);
   const [selectedFabricForImages, setSelectedFabricForImages] =
     useState<TshirtType | null>(null);
 
+  // Extract blueprint IDs
+  const blueprintIds = useMemo(
+    () => tshirtProducts.map((p) => p.blueprint_id),
+    [tshirtProducts]
+  );
+
+  // Fetch cheapest prices for all blueprints
+  const { data: bestProviders, isLoading: isLoadingPrices } =
+    useBestProvidersForBlueprints(blueprintIds, countryCode);
+
   // Debug logging
   console.log(
     "📦 FabricCardSelector - Loaded products:",
     tshirtProducts.length,
   );
-  console.log(
-    "📦 Blueprint IDs:",
-    tshirtProducts.map((p) => p.blueprint_id),
-  );
+  console.log("📦 Blueprint IDs:", blueprintIds);
+  console.log("💰 Best providers loaded:", bestProviders?.size || 0);
 
-  if (isLoading) {
+  if (isLoading || isLoadingPrices) {
     return <FabricCardSelectorSkeleton />;
   }
 
@@ -56,14 +67,23 @@ export function FabricCardSelector({
     "Sustainable blend for ultimate comfort. Perfect balance of softness and durability.",
     "Lightweight and soft. Ideal for everyday wear with exceptional breathability.",
   ];
-  const fabricPrices = [29.99, 34.99, 32.99, 31.99];
 
-  const fabricOptions = tshirtProducts.map((tshirt, index) => ({
-    ...tshirt,
-    fabricType: fabricTypeNames[index] || tshirt.name,
-    fabricDescription: fabricDescriptions[index] || tshirt.description,
-    price: fabricPrices[index] || tshirt.price,
-  }));
+  const fabricOptions = tshirtProducts.map((tshirt, index) => {
+    // Get the cheapest price from provider catalog
+    const bestProvider = bestProviders?.get(tshirt.blueprint_id);
+    const priceInCents = bestProvider?.total_cost || 0;
+    const priceInDollars = priceInCents / 100;
+
+    return {
+      ...tshirt,
+      fabricType: fabricTypeNames[index] || tshirt.name,
+      fabricDescription: fabricDescriptions[index] || tshirt.description,
+      price: priceInDollars,
+      // Store provider info for debugging/display
+      providerName: bestProvider?.provider_name,
+      providerId: bestProvider?.provider_id,
+    };
+  });
 
   return (
     <>
@@ -111,7 +131,7 @@ export function FabricCardSelector({
               {/* Price Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-linear-to-r from-[#7C3AED] to-[#6D28D9] text-white">
                 <span className="text-base sm:text-lg font-accent font-semibold">
-                  ${fabric.price.toFixed(2)}
+                  {fabric.price > 0 ? `$${fabric.price.toFixed(2)}` : "Loading..."}
                 </span>
               </div>
 

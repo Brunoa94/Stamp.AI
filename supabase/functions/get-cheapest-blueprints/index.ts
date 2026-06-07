@@ -11,7 +11,8 @@ const corsHeaders = {
 }
 
 // Blueprint IDs that support front/back printing
-const FRONT_BACK_BLUEPRINT_IDS = [49, 145, 157, 553]
+// Updated to match provider catalog curated list
+const FRONT_BACK_BLUEPRINT_IDS = [12, 6, 145, 157, 553]
 
 // Preferred provider (will fallback to cheapest if not available)
 const PREFERRED_PROVIDER_ID = 402
@@ -21,15 +22,15 @@ const COUNTRY_CODE = 'NL'
 
 // Estimated base costs (in cents) - updated periodically from actual products
 // These are approximate costs for basic tees, will vary by variant
+// Now matching provider catalog curated list: [12, 6, 145, 157, 553]
 const ESTIMATED_COSTS: { [key: string]: number } = {
-  '5-99': 850,   // Next Level 3600 via Printify Choice
-  '6-99': 900,   // Gildan 5000 via Printify Choice
-  '6-30': 880,   // Gildan 5000 via OPT OnDemand
-  '9-99': 870,   // Bella+Canvas 6004 via Printify Choice
   '12-99': 920,  // Bella+Canvas 3001 via Printify Choice
   '12-30': 900,  // Bella+Canvas 3001 via OPT OnDemand
-  '36-99': 880,  // Gildan 2000 via Printify Choice
-  '41-99': 980,  // Bella+Canvas 3501 via Printify Choice
+  '6-99': 900,   // Gildan 5000 via Printify Choice
+  '6-30': 880,   // Gildan 5000 via OPT OnDemand
+  '145-99': 2200, // Heavy Blend Hoodie via Printify Choice
+  '157-99': 800,  // Tote Bag via Printify Choice
+  '553-19': 550,  // White Glossy Mug via PRIM
 }
 
 interface BlueprintProviderCombination {
