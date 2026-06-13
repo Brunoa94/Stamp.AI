@@ -73,6 +73,17 @@ async function fetchWithRateLimit<T>(url: string): Promise<T | null> {
 }
 
 /**
+ * Fetch blueprint metadata (title, brand, model, images, print areas)
+ */
+async function fetchBlueprintMetadata(
+  blueprintId: number
+): Promise<any | null> {
+  const url =
+    `https://api.printify.com/v1/catalog/blueprints/${blueprintId}.json`;
+  return await fetchWithRateLimit(url);
+}
+
+/**
  * Fetch providers for a specific blueprint
  */
 async function fetchProvidersForBlueprint(
@@ -180,9 +191,19 @@ serve(async (req) => {
     const catalogEntries = [];
     let totalProviders = 0;
 
+    // Cache blueprint metadata to avoid fetching multiple times per blueprint
+    const blueprintMetadataCache = new Map<number, any>();
+
     // Process each curated blueprint
     for (const blueprintId of CURATED_BLUEPRINT_IDS) {
       console.log(`\nProcessing blueprint ${blueprintId}...`);
+
+      // Fetch blueprint metadata once per blueprint
+      const blueprintMetadata = await fetchBlueprintMetadata(blueprintId);
+      if (blueprintMetadata) {
+        blueprintMetadataCache.set(blueprintId, blueprintMetadata);
+        console.log(`  ✓ Fetched blueprint metadata: ${blueprintMetadata.title || blueprintId}`);
+      }
 
       // Fetch providers for this blueprint
       const providers = await fetchProvidersForBlueprint(blueprintId);
@@ -228,6 +249,9 @@ serve(async (req) => {
           Date.now() + CACHE_TTL_HOURS * 60 * 60 * 1000
         ).toISOString();
 
+        // Get cached blueprint metadata
+        const bpMetadata = blueprintMetadataCache.get(blueprintId);
+
         catalogEntries.push({
           blueprint_id: blueprintId,
           provider_id: provider.id,
@@ -238,6 +262,12 @@ serve(async (req) => {
           cache_metadata: metadata,
           fetched_at: new Date().toISOString(),
           expires_at: expiresAt,
+          // Add blueprint metadata columns
+          blueprint_title: bpMetadata?.title || null,
+          blueprint_brand: bpMetadata?.brand || null,
+          blueprint_model: bpMetadata?.model || null,
+          blueprint_images: bpMetadata?.images || [],
+          blueprint_print_areas: bpMetadata?.print_areas || [],
         });
 
         console.log(`      ✓ Cached ${metadata.variants_count} variants`);

@@ -13,7 +13,6 @@ import type {
 import { ProductCustomizationService, BlueprintVariantsResponse } from "./productCustomizationService";
 import { ErrorClient } from "./errorClient";
 import { TshirtType } from "@/types/product";
-import { BlueprintI } from "@/types/api";
 
 export class PrintifyService {
     private static getSupabaseConfig() {
@@ -26,7 +25,7 @@ export class PrintifyService {
     }
 
     static async getCustomProduct(productId: string): Promise<CustomProductT> {
-        try{
+        try {
             const url = `/api/fetch-custom-product?product_id=${productId}`;
 
             const response = await GET<CustomProductT>(url);
@@ -35,8 +34,8 @@ export class PrintifyService {
             const validatedResponse = CustomProductResponseSchema.parse(response);
 
             return validatedResponse as CustomProductT;
-        }catch(error){
-            throw ErrorClient.handleError({error, service: "Printify", action: "Get Custom Product"})
+        } catch (error) {
+            throw ErrorClient.handleError({ error, service: "Printify", action: "Get Custom Product" });
         }
     }
 
@@ -124,96 +123,33 @@ export class PrintifyService {
 
             return validatedResponse as PrintifyOrderResponse;
         } catch (error) {
-            throw ErrorClient.handleError({error, service: "Printify", action: "Create Printify Order"})
+            throw ErrorClient.handleError({ error, service: "Printify", action: "Create Printify Order" });
         }
     }
 
     /**
-     * Fetch all t-shirt products from Printify catalog
-     * Retrieves blueprints via Supabase Edge Function and transforms them to TshirtType
-     * Returns the 4 cheapest options for shipping to Netherlands
+     * Fetch all t-shirt products from Printify catalog using provider_catalog system
+     * Returns the 4 cheapest options for the specified country
+     *
+     * @param countryCode - ISO country code (e.g., 'NL', 'US', 'GB'). Defaults to 'NL'
      */
-    static async getTshirtProducts(): Promise<TshirtType[]> {
+    static async getTshirtProducts(countryCode: string = "NL"): Promise<TshirtType[]> {
         try {
-            // Only attempt server-side cached blueprint lookup when running on the server.
-            // On the client (browser/tests) we skip the DB cache to avoid invoking
-            // server-only Supabase clients which require environment configuration.
-            if (typeof window === "undefined") {
-                const { BlueprintCacheService } = await import("./blueprintCacheService");
-                const cachedBlueprints = await BlueprintCacheService.getCachedBlueprints("NL");
+            const { ProviderCatalogService } = await import("./providerCatalogService");
+            const catalogProducts = await ProviderCatalogService.getCachedCatalog(countryCode);
 
-                if (cachedBlueprints && cachedBlueprints.length > 0) {
-                    console.log("✅ Using cached blueprints from database");
-                    return cachedBlueprints;
-                }
-
-                // Cache miss - fetch from edge function
-                console.log("❌ Cache miss - fetching from edge function");
-            } else {
-                // Client-side: skip server cache lookup
-                console.log("Client-side environment - skipping server-side cache lookup");
+            if (catalogProducts && catalogProducts.length > 0) {
+                console.log(`✅ Using provider_catalog for country: ${countryCode}`);
+                return catalogProducts;
             }
 
-            const { supabaseUrl, supabaseAnonKey } = this.getSupabaseConfig();
-
-            // If NEXT_PUBLIC_SUPABASE_URL is not provided (e.g. local test runs),
-            // fall back to a relative functions URL so Playwright route handlers
-            // (which use the pattern **/functions/v1/...) can intercept requests.
-            const fetchUrl = supabaseUrl
-                ? `${supabaseUrl}/functions/v1/get-cheapest-blueprints`
-                : `/functions/v1/get-cheapest-blueprints`;
-
-            const headers: Record<string, string> = {
-                "Content-Type": "application/json",
-            };
-            if (supabaseAnonKey) {
-                headers["Authorization"] = `Bearer ${supabaseAnonKey}`;
-            }
-
-            const response = await fetch(fetchUrl, {
-                method: "POST",
-                headers,
-                body: JSON.stringify({}),
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`HTTP ${response.status}: ${errorText}`);
-            }
-
-            const data = await response.json();
-
-            if (!data.success) {
-                throw new Error(data.error || "Failed to fetch catalog blueprints");
-            }
-
-            // Transform BlueprintI to TshirtType
-            const blueprints: BlueprintI[] = data.blueprints;
-
-            // Map blueprints to TshirtType format
-            const tshirtProducts: TshirtType[] = blueprints.map((blueprint) => ({
-                id: `blueprint-${blueprint.id}`,
-                name: blueprint.title,
-                description: blueprint.description || `${blueprint.brand} ${blueprint.model}`,
-                image: blueprint.images[0] || "/api/placeholder/200/200",
-                images: blueprint.images || [],
-                features: blueprint.printAreas.map((area: { position: string; width: number; height: number }) => area.position),
-                price: blueprint.min_price ? blueprint.min_price / 100 : 0,
-                material: blueprint.brand || "Cotton",
-                fit: "Classic",
-                blueprint_id: blueprint.id,
-                print_provider_id: blueprint.print_provider_id || 99,
-                brand: blueprint.brand,
-                model: blueprint.model,
-            }));
-
-            return tshirtProducts;
+            // If catalog is empty, throw error with helpful message
+            throw new Error(
+                `No products available in catalog for country: ${countryCode}. ` +
+                `Please ensure the provider_catalog table is populated.`
+            );
         } catch (error) {
-            throw ErrorClient.handleError({
-                error,
-                service: "Printify",
-                action: "Get Tshirt Products"
-            });
+            throw ErrorClient.handleError({ error, service: "Printify", action: "Get Tshirt Products" });
         }
     }
 }
