@@ -23,8 +23,8 @@ export function useCustomProduct(productId: string | null | undefined) {
       }
       return await PrintifyService.getCustomProduct(productId);
     },
-    enabled: !!productId, // Only run query if productId exists
-    retry: 2, // Retry failed requests twice
+    enabled: !!productId,
+    retry: 2,
   });
 }
 
@@ -82,6 +82,27 @@ export function useBlueprintVariants(
 // ============================================
 // MUTATIONS (Write Operations)
 // ============================================
+
+/**
+ * Fetch all custom products for a user
+ * @param userId - The user ID to fetch products for
+ * @returns React Query result with user's custom products
+ */
+export function useUserCustomProducts(userId: string | null | undefined) {
+  return useQuery({
+    queryKey: ["products", "user", userId],
+    queryFn: async () => {
+      if (!userId) {
+        throw new Error("User ID is required");
+      }
+      const { ProductService } = await import("@/services/productService");
+      return await ProductService.getUserProducts(userId);
+    },
+    enabled: !!userId,
+    staleTime: 1000 * 60 * 2, // 2 minutes
+    retry: 2,
+  });
+}
 
 /**
  * Create a custom product

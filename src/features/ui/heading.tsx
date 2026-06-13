@@ -22,7 +22,7 @@ const headingVariants = {
     "font-anton text-[12vw] md:text-[10vw] lg:text-[8vw] leading-[0.85] tracking-tighter uppercase",
   cta: "font-anton text-[10vw] md:text-[8vw] lg:text-[6vw] leading-[0.9] tracking-tighter uppercase",
   section:
-    "font-anton text-6xl md:text-7xl lg:text-9xl tracking-tighter leading-none uppercase",
+    "font-anton text-5xl md:text-6xl lg:text-7xl tracking-tighter leading-none uppercase",
   title:
     "font-anton text-6xl md:text-7xl lg:text-8xl tracking-tighter leading-none uppercase",
   card: "font-anton text-2xl md:text-3xl tracking-tight leading-tight uppercase",

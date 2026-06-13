@@ -7,7 +7,7 @@ interface Step {
   description: string;
 }
 
-interface ProgressStepProps {
+interface PropsI {
   step: Step;
   isComplete: boolean;
   isActive: boolean;
@@ -25,7 +25,7 @@ export function ProgressStep({
   isActive,
   isProcessing,
   showConnector,
-}: ProgressStepProps) {
+}: PropsI) {
   return (
     <div className="flex flex-col items-center relative px-2 md:px-4 z-10 flex-1">
       <StepCircle

@@ -3,11 +3,11 @@ import { SectionHeader } from "@/features/homepage/ui/components/SectionHeader";
 import { mapProcessStepVisualState } from "@/features/homepage/lib/mappers/processStepMapper";
 import { ProcessOrbitalCard } from "@/features/homepage/ui/sections/ProcessOrbitalCard";
 
-interface ProcessSectionProps {
+interface PropsI {
   activeProcessStep: number;
 }
 
-export function ProcessSection({ activeProcessStep }: ProcessSectionProps) {
+export function ProcessSection({ activeProcessStep }: PropsI) {
   return (
     <section
       id="process"

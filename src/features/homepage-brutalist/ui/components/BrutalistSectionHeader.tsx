@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 
-interface BrutalistSectionHeaderProps {
+interface PropsI {
   title: string;
   label: string;
   inverted?: boolean;
@@ -15,7 +15,7 @@ export function BrutalistSectionHeader({
   label,
   inverted = false,
   className,
-}: BrutalistSectionHeaderProps) {
+}: PropsI) {
   return (
     <div className={cn("max-w-screen-2xl mx-auto mb-20", className)}>
       <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-4">

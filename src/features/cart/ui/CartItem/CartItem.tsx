@@ -8,7 +8,7 @@ import { CartItemExpandableDetails } from "./CartItemExpandableDetails";
 import { cartTheme } from "@/theme/components";
 import clsx from "clsx";
 
-interface Props {
+interface PropsI {
   item: CartItemT;
   onUpdateQuantity: (itemId: string, quantity: number) => void;
   onRemove: (itemId: string) => void;
@@ -20,7 +20,7 @@ export function CartItem({
   onUpdateQuantity,
   onRemove,
   isUpdating = false,
-}: Props) {
+}: PropsI) {
   const itemTotal = item.unit_price * item.quantity;
 
   const handleIncrement = () => {

@@ -1,7 +1,7 @@
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface StepCircleProps {
+interface PropsI {
   stepNumber: number;
   isComplete: boolean;
   isActive: boolean;
@@ -17,7 +17,7 @@ export function StepCircle({
   isComplete,
   isActive,
   isProcessing,
-}: StepCircleProps) {
+}: PropsI) {
   return (
     <div
       className={cn(

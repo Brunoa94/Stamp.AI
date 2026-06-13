@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-interface StepLabelProps {
+interface PropsI {
   label: string;
   description: string;
   isActive: boolean;
@@ -16,7 +16,7 @@ export function StepLabel({
   description,
   isActive,
   isComplete,
-}: StepLabelProps) {
+}: PropsI) {
   return (
     <div className="mt-4 text-center">
       <p

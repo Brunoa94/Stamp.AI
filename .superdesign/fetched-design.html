@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STAMP IT | Minimalist Icon Studio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --concrete: #f2f2f2;
+      --ink: #0a0a0a;
+      --purple: #9333ea;
+      --cyan: #06b6d4;
+      --orange: #fb923c;
+    }
+
+    .font-anton { font-family: 'Anton', sans-serif; }
+    .font-space { font-family: 'Space Grotesk', sans-serif; }
+
+    .grain-overlay {
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 99;
+    }
+
+    .sidebar-progress-line {
+      width: 2px;
+      background: rgba(10, 10, 10, 0.05);
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 0;
+      bottom: 0;
+    }
+
+    .sidebar-progress-fill {
+      width: 100%;
+      height: 25%; /* Controlled by current step */
+      background: linear-gradient(to bottom, var(--purple), var(--cyan), var(--orange));
+      transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+    }
+
+    .icon-step {
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      z-index: 10;
+    }
+
+    .icon-step.active {
+      transform: scale(1.15);
+      border-color: var(--cyan);
+      box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+      background: white;
+    }
+
+    .icon-step:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 15px rgba(10, 10, 10, 0.1);
+    }
+
+    .snap-container {
+      scroll-snap-type: y mandatory;
+      height: 100vh;
+      overflow-y: scroll;
+      scroll-behavior: smooth;
+    }
+
+    .scroll-section {
+      scroll-snap-align: start;
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+
+    /* Tooltip display on hover */
+    .icon-step .tooltip {
+      position: absolute;
+      left: 100%;
+      margin-left: 20px;
+      background: var(--ink);
+      color: white;
+      padding: 6px 12px;
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .icon-step:hover .tooltip {
+      opacity: 1;
+      visibility: visible;
+      margin-left: 15px;
+    }
+
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .animate-spin-slow { animation: spin-slow 8s linear infinite; }
+  </style>
+</head>
+<body class="bg-concrete text-ink font-space antialiased">
+  <div class="grain-overlay"></div>
+
+  <!-- FIXED HEADER (Simplified) -->
+  <header class="fixed top-0 left-0 right-0 h-20 bg-concrete border-b border-ink/5 z-50 px-8 flex items-center justify-between">
+    <div class="flex-1">
+      <a href="/" id="nav-logo-link" class="flex items-center gap-1 group">
+        <span class="font-anton text-4xl leading-none uppercase tracking-tighter">STAMP<span class="text-brandCyan">.</span>AI</span>
+      </a>
+    </div>
+    <div class="flex-1 flex justify-end">
+      <a href="#" id="nav-profile-link" class="text-[10px] font-bold tracking-widest uppercase opacity-40 hover:opacity-100 transition-opacity">Account Terminal</a>
+    </div>
+  </header>
+
+  <!-- ICON-BASED SIDENAV VARIANT -->
+  <aside class="fixed top-20 left-0 w-20 h-[calc(100vh-80px)] bg-white/2 border-r border-ink/5 z-40 hidden lg:flex flex-col items-center py-12">
+    <div class="relative h-full flex flex-col items-center justify-between">
+      <!-- Vertical Progress Tracking Line -->
+      <div class="sidebar-progress-line">
+        <div id="progress-fill" class="sidebar-progress-fill"></div>
+      </div>
+
+      <div class="flex flex-col gap-10 items-center h-full">
+        <!-- Step 01: Upload (Purple) -->
+        <button class="icon-step w-12 h-12 rounded-full bg-white border border-ink/5 flex items-center justify-center group" data-step="1">
+          <iconify-icon icon="lucide:upload" class="text-xl text-brandPurple transition-transform group-hover:scale-110"></iconify-icon>
+          <span class="tooltip">01 Upload Protocol</span>
+        </button>
+
+        <!-- Step 02: Synthesis (Cyan) - ACTIVE -->
+        <button class="icon-step active w-12 h-12 rounded-full bg-white border flex items-center justify-center group" data-step="2">
+          <iconify-icon icon="lucide:zap" class="text-xl text-brandCyan animate-pulse"></iconify-icon>
+          <span class="tooltip">02 Synthesis Input</span>
+        </button>
+
+        <!-- Step 03: Generation (Orange) -->
+        <button class="icon-step w-12 h-12 rounded-full bg-white border border-ink/5 flex items-center justify-center group" data-step="3">
+          <iconify-icon icon="lucide:sparkles" class="text-xl text-brandOrange transition-transform group-hover:scale-110"></iconify-icon>
+          <span class="tooltip">03 Neural Process</span>
+        </button>
+
+        <!-- Step 04: Results (Purple) -->
+        <button class="icon-step w-12 h-12 rounded-full bg-white border border-ink/5 flex items-center justify-center group" data-step="4">
+          <iconify-icon icon="lucide:eye" class="text-xl text-brandPurple transition-transform group-hover:scale-110"></iconify-icon>
+          <span class="tooltip">04 Visual Result</span>
+        </button>
+
+        <!-- Step 05: Choice (Cyan) -->
+        <button class="icon-step w-12 h-12 rounded-full bg-white border border-ink/5 flex items-center justify-center group" data-step="5">
+          <iconify-icon icon="lucide:shopping-bag" class="text-xl text-brandCyan transition-transform group-hover:scale-110"></iconify-icon>
+          <span class="tooltip">05 Product Spec</span>
+        </button>
+
+        <!-- Step 06: Production (Orange) -->
+        <button class="icon-step w-12 h-12 rounded-full bg-white border border-ink/5 flex items-center justify-center group" data-step="6">
+          <iconify-icon icon="lucide:settings" class="text-xl text-brandOrange animate-spin-slow"></iconify-icon>
+          <span class="tooltip">06 Fabric Configuration</span>
+        </button>
+
+        <!-- Step 07: Finalize (Purple) -->
+        <button class="icon-step w-12 h-12 rounded-full bg-white border border-ink/5 flex items-center justify-center group" data-step="7">
+          <iconify-icon icon="lucide:check-circle" class="text-xl text-brandPurple transition-transform group-hover:scale-110"></iconify-icon>
+          <span class="tooltip">07 Archival Confirm</span>
+        </button>
+      </div>
+
+      <div class="mt-auto">
+         <iconify-icon icon="lucide:help-circle" class="text-ink/10 hover:text-ink/50 transition-colors text-xl"></iconify-icon>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="lg:ml-20 snap-container hide-scrollbar">
+    <!-- Placeholders for sections based on Brutalist Studio structure -->
+    <section class="scroll-section px-12 lg:px-24">
+      <div class="max-w-4xl">
+        <div class="flex items-center gap-6 mb-12">
+          <div class="h-px w-20 bg-brandCyan"></div>
+          <span class="text-[10px] font-bold tracking-[0.4em] uppercase opacity-30">Protocol Sequence 02</span>
+        </div>
+        <h1 class="font-anton text-7xl md:text-9xl uppercase tracking-tighter leading-none mb-12">
+          AI <span class="text-brandCyan">Synthesis</span>
+        </h1>
+        <div class="p-12 border-4 border-ink bg-white shadow-[20px_20px_0px_var(--cyan)] shadow-opacity-20">
+          <p class="text-xl uppercase font-bold tracking-tight mb-8 opacity-60">Initializing neural networks for creative synthesis...</p>
+          <div class="space-y-4">
+             <div class="w-full bg-concrete h-2">
+               <div class="h-full bg-brandCyan w-[45%]"></div>
+             </div>
+             <div class="flex justify-between text-[9px] font-bold tracking-widest uppercase opacity-40">
+               <span>Status: Mapping Layers</span>
+               <span>45.2%</span>
+             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Next Placeholder -->
+    <section class="scroll-section px-12 lg:px-24">
+      <div class="max-w-4xl">
+        <h2 class="font-anton text-7xl uppercase tracking-tighter mb-8">Product <span class="text-brandOrange">Selection</span></h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-ink p-10 text-white flex flex-col justify-between h-[300px] hover:bg-brandPurple transition-colors cursor-pointer group">
+             <span class="font-anton text-4xl opacity-20 group-hover:opacity-100">01</span>
+             <div class="text-center">
+               <iconify-icon icon="lucide:shirt" class="text-6xl mb-4 opacity-40 group-hover:opacity-100"></iconify-icon>
+               <h3 class="font-anton text-2xl uppercase">Heavy Tee</h3>
+             </div>
+             <span class="font-anton text-xl mt-4">$48.00+</span>
+          </div>
+          <div class="bg-ink p-10 text-white flex flex-col justify-between h-[300px] hover:bg-brandCyan transition-colors cursor-pointer group">
+             <span class="font-anton text-4xl opacity-20 group-hover:opacity-100">02</span>
+             <div class="text-center">
+               <iconify-icon icon="mdi:tshirt-crew" class="text-6xl mb-4 opacity-40 group-hover:opacity-100"></iconify-icon>
+               <h3 class="font-anton text-2xl uppercase">Archival Hoodie</h3>
+             </div>
+             <span class="font-anton text-xl mt-4">$85.00+</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Simple logic to demonstrate interactivity
+    const steps = document.querySelectorAll('.icon-step');
+    const progressFill = document.getElementById('progress-fill');
+
+    steps.forEach((step, index) => {
+      step.addEventListener('click', () => {
+        // Update UI state
+        steps.forEach(s => s.classList.remove('active'));
+        step.classList.add('active');
+
+        // Update progress line
+        const percentage = ((index + 1) / steps.length) * 100;
+        progressFill.style.height = percentage + '%';
+      });
+    });
+  </script>
+</body>
+</html>

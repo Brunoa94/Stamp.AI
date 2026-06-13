@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { useMemo, type CSSProperties } from "react";
+import { type CSSProperties } from "react";
 import { useAvailablePromoCodes } from "@/queries/promocodeQueries";
 import {
   FALLBACK_PROMO_CODES,
@@ -22,23 +22,16 @@ export function PromoCodesCarouselSection() {
 
   const sourceCodes = promoCodes.length > 0 ? promoCodes : FALLBACK_PROMO_CODES;
 
-  const dependencyKey = useMemo(
-    () =>
-      sourceCodes
-        .map((promo) => `${promo.promocode_id}-${promo.code}`)
-        .join("|"),
-    [sourceCodes],
-  );
+  const dependencyKey = sourceCodes
+    .map((promo) => `${promo.promocode_id}-${promo.code}`)
+    .join("|");
 
   const { viewportRef, trackRef, shouldAnimate } = usePromoCarouselOverflow(
     isLoading,
     dependencyKey,
   );
 
-  const carouselItems = useMemo(
-    () => (shouldAnimate ? [...sourceCodes, ...sourceCodes] : sourceCodes),
-    [shouldAnimate, sourceCodes],
-  );
+  const carouselItems = shouldAnimate ? [...sourceCodes, ...sourceCodes] : sourceCodes;
 
   return (
     <section

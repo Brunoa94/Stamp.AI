@@ -65,6 +65,7 @@
     "zustand": "^5.0.10"
   },
   "devDependencies": {
+    "@ai-hero/sandcastle": "^0.8.0",
     "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",

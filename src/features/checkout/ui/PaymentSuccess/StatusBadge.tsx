@@ -1,4 +1,4 @@
-interface StatusBadgeProps {
+interface PropsI {
   status: string;
 }
 
@@ -6,7 +6,7 @@ interface StatusBadgeProps {
  * StatusBadge - Payment status indicator
  * Displays order status with animated pulse dot
  */
-export function StatusBadge({ status }: StatusBadgeProps) {
+export function StatusBadge({ status }: PropsI) {
   return (
     <div className="flex items-center gap-1.5">
       <span

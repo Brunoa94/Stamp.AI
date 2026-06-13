@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { CheckoutPromoCodeService } from "../services/promoCodeService";
@@ -44,12 +44,12 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
   });
 
   // Calculate subtotal from cart items
-  const subtotal = useMemo(() => {
+  const subtotal = (() => {
     if (!cart?.cart_items) return 0;
     return cart.cart_items.reduce((sum, item) => {
       return sum + (item.unit_price * item.quantity);
     }, 0);
-  }, [cart]);
+  })();
 
   // Shipping is always free (Standard only)
   const shipping = 0;

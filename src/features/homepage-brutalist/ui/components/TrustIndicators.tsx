@@ -1,17 +1,17 @@
 import { cn } from "@/lib/utils";
 import { Span } from "@/features/ui/span";
 
-interface TrustIndicatorItem {
+type TrustIndicatorItemType = {
   label: string;
   dotClassName: string;
-}
+};
 
-interface TrustIndicatorsProps {
-  items: TrustIndicatorItem[];
+interface PropsI {
+  items: TrustIndicatorItemType[];
   className?: string;
 }
 
-export function TrustIndicators({ items, className }: TrustIndicatorsProps) {
+export function TrustIndicators({ items, className }: PropsI) {
   return (
     <div
       className={cn(
