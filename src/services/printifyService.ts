@@ -131,28 +131,49 @@ export class PrintifyService {
     /**
      * Fetch all t-shirt products from Printify catalog
      * Retrieves blueprints via Supabase Edge Function and transforms them to TshirtType
-     * Returns the 4 cheapest options for shipping to Netherlands
+     * Returns the 4 cheapest options for the specified country
+     *
+     * @param countryCode - ISO country code (e.g., 'NL', 'US', 'GB'). Defaults to 'NL'
      */
-    static async getTshirtProducts(): Promise<TshirtType[]> {
+    static async getTshirtProducts(countryCode: string = "NL"): Promise<TshirtType[]> {
         try {
+            // Priority 1: Try new provider_catalog system (multi-country support)
+            try {
+                const { ProviderCatalogService } = await import("./providerCatalogService");
+                const catalogProducts = await ProviderCatalogService.getCachedCatalog(countryCode);
+
+                if (catalogProducts && catalogProducts.length > 0) {
+                    console.log(`✅ Using provider_catalog for country: ${countryCode}`);
+                    return catalogProducts;
+                }
+            } catch (catalogError) {
+                console.warn("⚠️ Provider catalog fetch failed, falling back to legacy system", catalogError);
+            }
+
+            // Priority 2: Fall back to legacy products_provider cache (NL only)
             // Only attempt server-side cached blueprint lookup when running on the server.
             // On the client (browser/tests) we skip the DB cache to avoid invoking
             // server-only Supabase clients which require environment configuration.
-            if (typeof window === "undefined") {
+            if (typeof window === "undefined" && countryCode === "NL") {
                 const { BlueprintCacheService } = await import("./blueprintCacheService");
                 const cachedBlueprints = await BlueprintCacheService.getCachedBlueprints("NL");
 
                 if (cachedBlueprints && cachedBlueprints.length > 0) {
-                    console.log("✅ Using cached blueprints from database");
+                    console.log("✅ Using legacy cached blueprints (products_provider)");
                     return cachedBlueprints;
                 }
 
                 // Cache miss - fetch from edge function
                 console.log("❌ Cache miss - fetching from edge function");
+            } else if (countryCode !== "NL") {
+                // Non-NL countries not supported by legacy system
+                throw new Error(`No catalog data available for country: ${countryCode}`);
             } else {
                 // Client-side: skip server cache lookup
                 console.log("Client-side environment - skipping server-side cache lookup");
             }
+
+            // Priority 3: Final fallback to get-cheapest-blueprints (NL only)
 
             const { supabaseUrl, supabaseAnonKey } = this.getSupabaseConfig();
 

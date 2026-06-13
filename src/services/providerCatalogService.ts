@@ -1,224 +1,334 @@
-import type {
-  ProviderCatalogEntryI,
-  BlueprintProviderSummaryI,
-  BestProviderResultI,
-} from "../../supabase/types/provider-catalog";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase/client";
+import { TshirtType } from "@/types/product";
 import { ErrorClient } from "./errorClient";
 
+// Curated blueprint IDs matching the Edge Function
+const CURATED_BLUEPRINT_IDS = [12, 6, 145, 157, 553];
+
+interface ProviderCatalogEntry {
+  id: string;
+  blueprint_id: number;
+  provider_id: number;
+  provider_name: string;
+  provider_location: string;
+  variants_data: Array<{
+    id: number;
+    title: string;
+    price: number;
+    is_enabled: boolean;
+    options: {
+      color?: string;
+      size?: string;
+    };
+  }>;
+  shipping_profiles: Array<{
+    variant_ids: number[];
+    first_item: { cost: number };
+    additional_items: { cost: number };
+    countries: string[];
+  }>;
+  cache_metadata: {
+    variants_count: number;
+    colors_available: string[];
+    sizes_available: string[];
+    min_price: number;
+    max_price: number;
+  };
+  fetched_at: string;
+  expires_at: string;
+  // Blueprint metadata (will be added in migration)
+  blueprint_title?: string;
+  blueprint_brand?: string;
+  blueprint_model?: string;
+  blueprint_images?: string[];
+  blueprint_print_areas?: Array<{
+    position: string;
+    width: number;
+    height: number;
+  }>;
+}
+
+interface BlueprintWithBestProvider {
+  blueprintId: number;
+  providerId: number;
+  providerName: string;
+  title: string;
+  brand: string;
+  model: string;
+  images: string[];
+  printAreas: Array<{ position: string; width: number; height: number }>;
+  minPrice: number;
+  shippingCost: number;
+  totalCost: number;
+  colorsAvailable: string[];
+  sizesAvailable: string[];
+  variantsCount: number;
+}
+
+/**
+ * Service for interacting with the provider_catalog table
+ * Provides cached product catalog data with multi-country support
+ */
 export class ProviderCatalogService {
   /**
-   * Get Supabase client - must be passed in since this service works in both client and server contexts
-   *
-   * Server usage:
-   *   const supabase = await createClient(); // from @/lib/supabase/server
-   *   const result = await ProviderCatalogService.getBestProviderForCountry(supabase, 12, "NL");
-   *
-   * Client usage:
-   *   const supabase = createClient(); // from @/lib/supabase/client
-   *   const result = await ProviderCatalogService.getBestProviderForCountry(supabase, 12, "NL");
+   * Get the Supabase client for database queries
    */
-  private static getSupabase(client?: SupabaseClient): SupabaseClient {
-    if (!client) {
-      throw new Error("Supabase client must be provided to ProviderCatalogService methods");
+  private static getSupabase() {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+    // Return null if environment variables not available (test environment)
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return null;
     }
-    return client;
+
+    return createClient();
   }
 
   /**
-   * Get cached provider catalog from database
-   * Returns null if cache is expired or missing
+   * Get the Supabase URL for Edge Function calls
+   */
+  private static getSupabaseUrl(): string {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    return supabaseUrl || "";
+  }
+
+  /**
+   * Get the Supabase anon key for authorization
+   */
+  private static getSupabaseAnonKey(): string {
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    return supabaseAnonKey || "";
+  }
+
+  /**
+   * Call an Edge Function
+   */
+  private static async callEdgeFunction<T>(
+    functionName: string,
+    body: any = {}
+  ): Promise<T> {
+    const supabaseUrl = this.getSupabaseUrl();
+    const supabaseAnonKey = this.getSupabaseAnonKey();
+
+    // If NEXT_PUBLIC_SUPABASE_URL is not provided (e.g. local test runs),
+    // fall back to a relative functions URL so Playwright route handlers
+    // can intercept requests.
+    const fetchUrl = supabaseUrl
+      ? `${supabaseUrl}/functions/v1/${functionName}`
+      : `/functions/v1/${functionName}`;
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (supabaseAnonKey) {
+      headers["Authorization"] = `Bearer ${supabaseAnonKey}`;
+    }
+
+    const response = await fetch(fetchUrl, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Edge Function ${functionName} failed: HTTP ${response.status}: ${errorText}`
+      );
+    }
+
+    return await response.json();
+  }
+
+  /**
+   * Extract shipping cost for a specific country from shipping profiles
+   */
+  private static getShippingCostForCountry(
+    shippingProfiles: ProviderCatalogEntry["shipping_profiles"],
+    countryCode: string
+  ): number {
+    if (!shippingProfiles || shippingProfiles.length === 0) {
+      return 600; // Default fallback (6 dollars in cents)
+    }
+
+    // Find a profile that includes this country
+    for (const profile of shippingProfiles) {
+      if (profile.countries && profile.countries.includes(countryCode)) {
+        return profile.first_item?.cost || 0;
+      }
+    }
+
+    // Country not found in any profile, use default
+    return 600;
+  }
+
+  /**
+   * Select the best provider (lowest total cost) for each blueprint and country
+   */
+  private static selectBestProvidersPerCountry(
+    catalogData: ProviderCatalogEntry[],
+    countryCode: string
+  ): BlueprintWithBestProvider[] {
+    // Group by blueprint_id
+    const blueprintGroups = new Map<number, ProviderCatalogEntry[]>();
+
+    for (const entry of catalogData) {
+      if (!blueprintGroups.has(entry.blueprint_id)) {
+        blueprintGroups.set(entry.blueprint_id, []);
+      }
+      blueprintGroups.get(entry.blueprint_id)!.push(entry);
+    }
+
+    const results: BlueprintWithBestProvider[] = [];
+
+    // For each blueprint, find the cheapest provider for this country
+    for (const [blueprintId, providers] of blueprintGroups) {
+      const providersWithCosts = providers.map((p) => {
+        const shippingCost = this.getShippingCostForCountry(
+          p.shipping_profiles,
+          countryCode
+        );
+        const totalCost = p.cache_metadata.min_price + shippingCost;
+
+        return {
+          entry: p,
+          shippingCost,
+          totalCost,
+        };
+      });
+
+      // Sort by total cost and pick the cheapest
+      providersWithCosts.sort((a, b) => a.totalCost - b.totalCost);
+      const cheapest = providersWithCosts[0];
+
+      if (!cheapest) continue;
+
+      const entry = cheapest.entry;
+
+      results.push({
+        blueprintId: entry.blueprint_id,
+        providerId: entry.provider_id,
+        providerName: entry.provider_name,
+        title: entry.blueprint_title || `Blueprint ${entry.blueprint_id}`,
+        brand: entry.blueprint_brand || "Unknown",
+        model: entry.blueprint_model || "",
+        images: entry.blueprint_images || [],
+        printAreas: entry.blueprint_print_areas || [],
+        minPrice: entry.cache_metadata.min_price,
+        shippingCost: cheapest.shippingCost,
+        totalCost: cheapest.totalCost,
+        colorsAvailable: entry.cache_metadata.colors_available || [],
+        sizesAvailable: entry.cache_metadata.sizes_available || [],
+        variantsCount: entry.cache_metadata.variants_count || 0,
+      });
+    }
+
+    // Sort by total cost and return top 4 (matching current UX)
+    return results.sort((a, b) => a.totalCost - b.totalCost).slice(0, 4);
+  }
+
+  /**
+   * Transform BlueprintWithBestProvider to TshirtType format
+   */
+  private static transformToTshirtType(
+    bestProviders: BlueprintWithBestProvider[]
+  ): TshirtType[] {
+    return bestProviders.map((bp) => ({
+      id: `blueprint-${bp.blueprintId}`,
+      name: bp.title,
+      description: `${bp.brand} ${bp.model}`.trim() || bp.title,
+      image: bp.images[0] || "/api/placeholder/200/200",
+      images: bp.images,
+      features: bp.printAreas.map((area) => area.position),
+      price: bp.totalCost / 100, // Convert cents to dollars
+      material: bp.brand || "Cotton",
+      fit: "Classic",
+      blueprint_id: bp.blueprintId,
+      print_provider_id: bp.providerId,
+      brand: bp.brand,
+      model: bp.model,
+    }));
+  }
+
+  /**
+   * Get cached product catalog from provider_catalog table
+   * Returns the 4 cheapest products for the specified country
+   *
+   * @param countryCode - ISO country code (e.g., 'NL', 'US', 'GB')
+   * @returns Array of TshirtType products with country-specific pricing
    */
   static async getCachedCatalog(
-    supabase: SupabaseClient,
-    blueprintIds?: number[]
-  ): Promise<ProviderCatalogEntryI[] | null> {
+    countryCode: string = "NL"
+  ): Promise<TshirtType[]> {
     try {
-
-      let query = supabase
-        .from("provider_catalog")
-        .select("*")
-        .gt("expires_at", new Date().toISOString());
-
-      if (blueprintIds && blueprintIds.length > 0) {
-        query = query.in("blueprint_id", blueprintIds);
-      }
-
-      const { data, error } = await query.order("blueprint_id", {
-        ascending: true,
+      const response = await this.callEdgeFunction<{
+        success: boolean;
+        data?: ProviderCatalogEntry[];
+        error?: string;
+        cache_miss?: boolean;
+      }>("get-provider-catalog", {
+        blueprint_ids: CURATED_BLUEPRINT_IDS,
       });
 
-      if (error) {
-        console.error("Error fetching provider catalog:", error);
-        return null;
-      }
-
-      if (!data || data.length === 0) {
-        console.log("No valid cache found for provider catalog");
-        return null;
-      }
-
-      console.log(`✅ Cache hit! Found ${data.length} provider catalog entries`);
-      return data as ProviderCatalogEntryI[];
-    } catch (error) {
-      console.error("Error in getCachedCatalog:", error);
-      return null;
-    }
-  }
-
-  /**
-   * Get all providers for a specific blueprint
-   */
-  static async getProvidersForBlueprint(
-    supabase: SupabaseClient,
-    blueprintId: number
-  ): Promise<ProviderCatalogEntryI[]> {
-    try {
-
-      const { data, error } = await supabase
-        .from("provider_catalog")
-        .select("*")
-        .eq("blueprint_id", blueprintId)
-        .gt("expires_at", new Date().toISOString())
-        .order("cache_metadata->min_price", { ascending: true });
-
-      if (error) {
-        throw ErrorClient.handleError({
-          error,
-          service: "ProviderCatalog",
-          action: "Get Providers for Blueprint",
-        });
-      }
-
-      return data as ProviderCatalogEntryI[];
-    } catch (error) {
-      throw ErrorClient.handleError({
-        error,
-        service: "ProviderCatalog",
-        action: "Get Providers for Blueprint",
-      });
-    }
-  }
-
-  /**
-   * Get best provider for a blueprint and country
-   * Selection criteria: Lowest total cost (product price + shipping cost)
-   *
-   * @param supabase - Supabase client instance
-   * @param blueprintId - Printify blueprint ID
-   * @param countryCode - 2-letter ISO country code (e.g., "US", "NL", "GB")
-   * @returns Best provider with cost breakdown, or null if not found
-   */
-  static async getBestProviderForCountry(
-    supabase: SupabaseClient,
-    blueprintId: number,
-    countryCode: string
-  ): Promise<BestProviderResultI | null> {
-    try {
-
-      // Use the database function for efficient calculation
-      const { data, error } = await supabase.rpc(
-        "get_best_provider_for_country",
-        {
-          p_blueprint_id: blueprintId,
-          p_country_code: countryCode.toUpperCase(),
+      if (!response.success || !response.data || response.data.length === 0) {
+        if (response.cache_miss) {
+          console.log("⚠️ Provider catalog cache miss - needs refresh");
+          return [];
         }
-      );
-
-      if (error) {
-        console.error("Error getting best provider:", error);
-        return null;
+        throw new Error(response.error || "No catalog data available");
       }
 
-      if (!data || data.length === 0) {
-        console.log(
-          `No provider found for blueprint ${blueprintId} in country ${countryCode}`
-        );
-        return null;
-      }
-
-      // Return the first result (cheapest)
-      const bestProvider = data[0];
       console.log(
-        `✅ Best provider for blueprint ${blueprintId} in ${countryCode}: ${bestProvider.provider_name} (Total: $${(bestProvider.total_cost / 100).toFixed(2)})`
+        `✅ Retrieved ${response.data.length} catalog entries from provider_catalog`
       );
 
-      return bestProvider as BestProviderResultI;
-    } catch (error) {
-      console.error("Error in getBestProviderForCountry:", error);
-      return null;
-    }
-  }
+      // Select best provider per blueprint for this country
+      const bestProviders = this.selectBestProvidersPerCountry(
+        response.data,
+        countryCode
+      );
 
-  /**
-   * Get summary of all blueprints with provider counts
-   */
-  static async getBlueprintSummary(
-    supabase: SupabaseClient
-  ): Promise<BlueprintProviderSummaryI[]> {
-    try {
+      console.log(
+        `✅ Selected ${bestProviders.length} best providers for country: ${countryCode}`
+      );
 
-      const { data, error } = await supabase
-        .from("provider_catalog")
-        .select("blueprint_id, provider_id, provider_name, cache_metadata")
-        .gt("expires_at", new Date().toISOString());
-
-      if (error) {
-        throw error;
-      }
-
-      // Group by blueprint
-      const blueprintMap = new Map<number, any>();
-
-      data.forEach((entry: any) => {
-        if (!blueprintMap.has(entry.blueprint_id)) {
-          blueprintMap.set(entry.blueprint_id, {
-            blueprint_id: entry.blueprint_id,
-            providers: [],
-          });
-        }
-
-        blueprintMap.get(entry.blueprint_id).providers.push({
-          provider_id: entry.provider_id,
-          provider_name: entry.provider_name,
-          variants_count: entry.cache_metadata.variants_count,
-          min_price: entry.cache_metadata.min_price,
-          colors_available: entry.cache_metadata.colors_available,
-          sizes_available: entry.cache_metadata.sizes_available,
-        });
-      });
-
-      return Array.from(blueprintMap.values()).map((item) => ({
-        ...item,
-        providers_count: item.providers.length,
-      }));
+      // Transform to TshirtType format
+      return this.transformToTshirtType(bestProviders);
     } catch (error) {
       throw ErrorClient.handleError({
         error,
         service: "ProviderCatalog",
-        action: "Get Blueprint Summary",
+        action: "Get Cached Catalog",
       });
     }
   }
 
   /**
-   * Trigger catalog refresh via edge function
+   * Manually trigger a refresh of the provider catalog
+   * Calls the fetch-provider-catalog Edge Function
    */
   static async refreshCatalog(): Promise<void> {
     try {
-      const response = await fetch("/api/refresh-provider-catalog", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      console.log("🔄 Triggering provider catalog refresh...");
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to refresh catalog");
+      const response = await this.callEdgeFunction<{
+        success: boolean;
+        summary?: {
+          blueprints_processed: number;
+          providers_found: number;
+          entries_cached: number;
+          cache_duration_hours: number;
+        };
+        error?: string;
+      }>("fetch-provider-catalog", {});
+
+      if (!response.success) {
+        throw new Error(response.error || "Catalog refresh failed");
       }
 
       console.log("✅ Provider catalog refreshed successfully");
+      console.log("Summary:", response.summary);
     } catch (error) {
       throw ErrorClient.handleError({
         error,
@@ -229,188 +339,37 @@ export class ProviderCatalogService {
   }
 
   /**
-   * Check if cache is valid for specific blueprints
+   * Check if the catalog cache is valid for the specified blueprints
+   * Uses the database helper function has_valid_catalog_cache()
+   *
+   * @param blueprintIds - Array of blueprint IDs to check
+   * @returns true if cache is valid (not expired) for all blueprints
    */
   static async hasCachedCatalog(
-    supabase: SupabaseClient,
-    blueprintIds: number[]
+    blueprintIds: number[] = CURATED_BLUEPRINT_IDS
   ): Promise<boolean> {
     try {
+      const supabase = this.getSupabase();
 
+      if (!supabase) {
+        console.warn("Supabase client not available");
+        return false;
+      }
+
+      // Call the database function
       const { data, error } = await supabase.rpc("has_valid_catalog_cache", {
         p_blueprint_ids: blueprintIds,
       });
 
       if (error) {
-        console.error("Error checking cache validity:", error);
+        console.error("Error checking catalog cache:", error);
         return false;
       }
 
       return data === true;
     } catch (error) {
-      console.error("Error in hasCachedCatalog:", error);
+      console.error("Error checking catalog cache:", error);
       return false;
-    }
-  }
-
-  /**
-   * Get all providers with their cheapest product for a country
-   * Useful for showing a comparison table
-   */
-  static async getProviderComparison(
-    supabase: SupabaseClient,
-    blueprintId: number,
-    countryCode: string
-  ): Promise<BestProviderResultI[]> {
-    try {
-      const providers = await this.getProvidersForBlueprint(supabase, blueprintId);
-
-      const comparisons: BestProviderResultI[] = [];
-
-      for (const provider of providers) {
-        // Find shipping cost for this country
-        // Note: countries is an array of strings, cost is at profile level
-        let shippingCost = 0;
-
-        for (const profile of provider.shipping_profiles) {
-          // Check if this profile ships to the requested country
-          if (profile.countries.includes(countryCode.toUpperCase())) {
-            shippingCost = profile.first_item.cost;
-            break;
-          }
-        }
-
-        if (shippingCost > 0 || provider.shipping_profiles.length === 0) {
-          const productPrice = provider.cache_metadata.min_price;
-          comparisons.push({
-            provider_id: provider.provider_id,
-            provider_name: provider.provider_name,
-            total_cost: productPrice + shippingCost,
-            product_price: productPrice,
-            shipping_cost: shippingCost,
-          });
-        }
-      }
-
-      // Sort by total cost (lowest first)
-      return comparisons.sort((a, b) => a.total_cost - b.total_cost);
-    } catch (error) {
-      throw ErrorClient.handleError({
-        error,
-        service: "ProviderCatalog",
-        action: "Get Provider Comparison",
-      });
-    }
-  }
-
-  /**
-   * Get lowest prices per variant_id for a specific country
-   * Returns a map of variant_id -> { provider_id, provider_name, variant_price, shipping_cost, total_cost }
-   *
-   * @param supabase - Supabase client instance
-   * @param blueprintId - Printify blueprint ID
-   * @param countryCode - 2-letter ISO country code (e.g., "US", "NL", "GB")
-   * @returns Map of variant_id to cheapest pricing information
-   */
-  static async getLowestPricesPerVariant(
-    supabase: SupabaseClient,
-    blueprintId: number,
-    countryCode: string
-  ): Promise<
-    Map<
-      number,
-      {
-        variant_id: number;
-        provider_id: number;
-        provider_name: string;
-        variant_price: number;
-        shipping_cost: number;
-        total_cost: number;
-      }
-    >
-  > {
-    try {
-      const upperCountry = countryCode.toUpperCase();
-
-      // Get all providers for this blueprint
-      const { data: providers, error } = await supabase
-        .from("provider_catalog")
-        .select("*")
-        .eq("blueprint_id", blueprintId)
-        .gt("expires_at", new Date().toISOString());
-
-      if (error) {
-        console.error("Error fetching providers:", error);
-        return new Map();
-      }
-
-      if (!providers || providers.length === 0) {
-        console.log(`No providers found for blueprint ${blueprintId}`);
-        return new Map();
-      }
-
-      // Map to track the cheapest option for each variant
-      const variantPriceMap = new Map<
-        number,
-        {
-          variant_id: number;
-          provider_id: number;
-          provider_name: string;
-          variant_price: number;
-          shipping_cost: number;
-          total_cost: number;
-        }
-      >();
-
-      for (const provider of providers) {
-        // Find shipping cost for this country
-        let shippingCost: number | null = null;
-
-        for (const profile of provider.shipping_profiles) {
-          if (profile.countries.includes(upperCountry)) {
-            shippingCost = profile.first_item.cost;
-            break;
-          }
-        }
-
-        // Skip if this provider doesn't ship to the requested country
-        if (shippingCost === null) {
-          continue;
-        }
-
-        // Process all variants for this provider
-        for (const variant of provider.variants_data) {
-          if (!variant.is_enabled) {
-            continue;
-          }
-
-          const variantPrice = variant.price;
-          const totalCost = variantPrice + shippingCost;
-
-          const existing = variantPriceMap.get(variant.id);
-
-          // Update if this is cheaper or if it's the first entry for this variant
-          if (!existing || totalCost < existing.total_cost) {
-            variantPriceMap.set(variant.id, {
-              variant_id: variant.id,
-              provider_id: provider.provider_id,
-              provider_name: provider.provider_name,
-              variant_price: variantPrice,
-              shipping_cost: shippingCost,
-              total_cost: totalCost,
-            });
-          }
-        }
-      }
-
-      console.log(
-        `✅ Found lowest prices for ${variantPriceMap.size} variants in ${countryCode}`
-      );
-
-      return variantPriceMap;
-    } catch (error) {
-      console.error("Error in getLowestPricesPerVariant:", error);
-      return new Map();
     }
   }
 }
