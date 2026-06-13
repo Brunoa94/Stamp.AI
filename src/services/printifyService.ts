@@ -25,7 +25,7 @@ export class PrintifyService {
     }
 
     static async getCustomProduct(productId: string): Promise<CustomProductT> {
-        try{
+        try {
             const url = `/api/fetch-custom-product?product_id=${productId}`;
 
             const response = await GET<CustomProductT>(url);
@@ -34,8 +34,8 @@ export class PrintifyService {
             const validatedResponse = CustomProductResponseSchema.parse(response);
 
             return validatedResponse as CustomProductT;
-        }catch(error){
-            throw ErrorClient.handleError({error, service: "Printify", action: "Get Custom Product"})
+        } catch (error) {
+            throw ErrorClient.handleError({ error, service: "Printify", action: "Get Custom Product" });
         }
     }
 
@@ -123,7 +123,7 @@ export class PrintifyService {
 
             return validatedResponse as PrintifyOrderResponse;
         } catch (error) {
-            throw ErrorClient.handleError({error, service: "Printify", action: "Create Printify Order"})
+            throw ErrorClient.handleError({ error, service: "Printify", action: "Create Printify Order" });
         }
     }
 
@@ -149,11 +149,7 @@ export class PrintifyService {
                 `Please ensure the provider_catalog table is populated.`
             );
         } catch (error) {
-            throw ErrorClient.handleError({
-                error,
-                service: "Printify",
-                action: "Get Tshirt Products"
-            });
+            throw ErrorClient.handleError({ error, service: "Printify", action: "Get Tshirt Products" });
         }
     }
 }
