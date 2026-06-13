@@ -125,41 +125,93 @@ export class ProviderCatalogService {
       headers["Authorization"] = `Bearer ${supabaseAnonKey}`;
     }
 
-    const response = await fetch(fetchUrl, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body),
-    });
+    try {
+      const response = await fetch(fetchUrl, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(body),
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `Edge Function ${functionName} failed: HTTP ${response.status}: ${errorText}`
-      );
+      if (!response.ok) {
+        const errorText = await response.text();
+        let errorMessage = `Edge Function ${functionName} failed: HTTP ${response.status}`;
+
+        // Parse error details if available
+        try {
+          const errorJson = JSON.parse(errorText);
+          if (errorJson.error) {
+            errorMessage += `: ${errorJson.error}`;
+          } else {
+            errorMessage += `: ${errorText}`;
+          }
+        } catch {
+          errorMessage += `: ${errorText}`;
+        }
+
+        // Provide specific error messages for common status codes
+        if (response.status === 404) {
+          throw new Error(
+            `Edge Function "${functionName}" not found. Ensure it is deployed.`
+          );
+        } else if (response.status === 401 || response.status === 403) {
+          throw new Error(
+            `Authentication failed for Edge Function "${functionName}". Check your Supabase credentials.`
+          );
+        } else if (response.status === 504 || response.status === 524) {
+          throw new Error(
+            `Edge Function "${functionName}" timed out. This function may require background execution.`
+          );
+        }
+
+        throw new Error(errorMessage);
+      }
+
+      const data = await response.json();
+      return data as T;
+    } catch (error) {
+      // Handle network errors
+      if (error instanceof TypeError && error.message.includes("fetch")) {
+        throw new Error(
+          `Network error calling Edge Function "${functionName}". Check your connection and Supabase URL.`
+        );
+      }
+      throw error;
     }
-
-    return await response.json();
   }
 
   /**
    * Extract shipping cost for a specific country from shipping profiles
    */
   private static getShippingCostForCountry(
-    shippingProfiles: ProviderCatalogEntry["shipping_profiles"],
+    shippingProfiles: ProviderCatalogEntry["shipping_profiles"] | undefined | null,
     countryCode: string
   ): number {
     if (!shippingProfiles || shippingProfiles.length === 0) {
+      console.warn(
+        `No shipping profiles available for country: ${countryCode}, using default cost`
+      );
       return 600; // Default fallback (6 dollars in cents)
     }
 
     // Find a profile that includes this country
     for (const profile of shippingProfiles) {
-      if (profile.countries && profile.countries.includes(countryCode)) {
-        return profile.first_item?.cost || 0;
+      if (
+        profile &&
+        profile.countries &&
+        Array.isArray(profile.countries) &&
+        profile.countries.includes(countryCode)
+      ) {
+        const cost = profile.first_item?.cost;
+        if (typeof cost === "number" && cost >= 0) {
+          return cost;
+        }
       }
     }
 
     // Country not found in any profile, use default
+    console.warn(
+      `Country ${countryCode} not found in shipping profiles, using default cost`
+    );
     return 600;
   }
 
@@ -170,10 +222,27 @@ export class ProviderCatalogService {
     catalogData: ProviderCatalogEntry[],
     countryCode: string
   ): BlueprintWithBestProvider[] {
+    // Validate input
+    if (!catalogData || !Array.isArray(catalogData) || catalogData.length === 0) {
+      console.warn("No catalog data provided to selectBestProvidersPerCountry");
+      return [];
+    }
+
     // Group by blueprint_id
     const blueprintGroups = new Map<number, ProviderCatalogEntry[]>();
 
     for (const entry of catalogData) {
+      // Skip entries with invalid data
+      if (!entry || typeof entry.blueprint_id !== "number") {
+        console.warn("Invalid catalog entry, skipping:", entry);
+        continue;
+      }
+
+      if (!entry.cache_metadata || typeof entry.cache_metadata.min_price !== "number") {
+        console.warn(`Invalid cache_metadata for blueprint ${entry.blueprint_id}, skipping`);
+        continue;
+      }
+
       if (!blueprintGroups.has(entry.blueprint_id)) {
         blueprintGroups.set(entry.blueprint_id, []);
       }
@@ -189,7 +258,8 @@ export class ProviderCatalogService {
           p.shipping_profiles,
           countryCode
         );
-        const totalCost = p.cache_metadata.min_price + shippingCost;
+        const minPrice = p.cache_metadata?.min_price ?? 0;
+        const totalCost = minPrice + shippingCost;
 
         return {
           entry: p,
@@ -206,21 +276,64 @@ export class ProviderCatalogService {
 
       const entry = cheapest.entry;
 
+      // Validate blueprint metadata exists
+      const blueprintTitle =
+        entry.blueprint_title && typeof entry.blueprint_title === "string"
+          ? entry.blueprint_title
+          : `Blueprint ${entry.blueprint_id}`;
+
+      const blueprintBrand =
+        entry.blueprint_brand && typeof entry.blueprint_brand === "string"
+          ? entry.blueprint_brand
+          : "Unknown";
+
+      const blueprintModel =
+        entry.blueprint_model && typeof entry.blueprint_model === "string"
+          ? entry.blueprint_model
+          : "";
+
+      const blueprintImages =
+        entry.blueprint_images && Array.isArray(entry.blueprint_images)
+          ? entry.blueprint_images
+          : [];
+
+      const blueprintPrintAreas =
+        entry.blueprint_print_areas && Array.isArray(entry.blueprint_print_areas)
+          ? entry.blueprint_print_areas
+          : [];
+
+      const colorsAvailable =
+        entry.cache_metadata?.colors_available &&
+        Array.isArray(entry.cache_metadata.colors_available)
+          ? entry.cache_metadata.colors_available
+          : [];
+
+      const sizesAvailable =
+        entry.cache_metadata?.sizes_available &&
+        Array.isArray(entry.cache_metadata.sizes_available)
+          ? entry.cache_metadata.sizes_available
+          : [];
+
+      const variantsCount =
+        typeof entry.cache_metadata?.variants_count === "number"
+          ? entry.cache_metadata.variants_count
+          : 0;
+
       results.push({
         blueprintId: entry.blueprint_id,
         providerId: entry.provider_id,
-        providerName: entry.provider_name,
-        title: entry.blueprint_title || `Blueprint ${entry.blueprint_id}`,
-        brand: entry.blueprint_brand || "Unknown",
-        model: entry.blueprint_model || "",
-        images: entry.blueprint_images || [],
-        printAreas: entry.blueprint_print_areas || [],
+        providerName: entry.provider_name || "Unknown Provider",
+        title: blueprintTitle,
+        brand: blueprintBrand,
+        model: blueprintModel,
+        images: blueprintImages,
+        printAreas: blueprintPrintAreas,
         minPrice: entry.cache_metadata.min_price,
         shippingCost: cheapest.shippingCost,
         totalCost: cheapest.totalCost,
-        colorsAvailable: entry.cache_metadata.colors_available || [],
-        sizesAvailable: entry.cache_metadata.sizes_available || [],
-        variantsCount: entry.cache_metadata.variants_count || 0,
+        colorsAvailable,
+        sizesAvailable,
+        variantsCount,
       });
     }
 
@@ -234,21 +347,34 @@ export class ProviderCatalogService {
   private static transformToTshirtType(
     bestProviders: BlueprintWithBestProvider[]
   ): TshirtType[] {
-    return bestProviders.map((bp) => ({
-      id: `blueprint-${bp.blueprintId}`,
-      name: bp.title,
-      description: `${bp.brand} ${bp.model}`.trim() || bp.title,
-      image: bp.images[0] || "/api/placeholder/200/200",
-      images: bp.images,
-      features: bp.printAreas.map((area) => area.position),
-      price: bp.totalCost / 100, // Convert cents to dollars
-      material: bp.brand || "Cotton",
-      fit: "Classic",
-      blueprint_id: bp.blueprintId,
-      print_provider_id: bp.providerId,
-      brand: bp.brand,
-      model: bp.model,
-    }));
+    if (!bestProviders || !Array.isArray(bestProviders)) {
+      console.warn("Invalid bestProviders data in transformToTshirtType");
+      return [];
+    }
+
+    return bestProviders.map((bp) => {
+      const description = `${bp.brand} ${bp.model}`.trim();
+      const primaryImage = bp.images && bp.images.length > 0 ? bp.images[0] : "/api/placeholder/200/200";
+      const features = bp.printAreas && Array.isArray(bp.printAreas)
+        ? bp.printAreas.map((area) => area.position).filter(Boolean)
+        : [];
+
+      return {
+        id: `blueprint-${bp.blueprintId}`,
+        name: bp.title || `Product ${bp.blueprintId}`,
+        description: description || bp.title,
+        image: primaryImage,
+        images: bp.images || [],
+        features,
+        price: bp.totalCost / 100, // Convert cents to dollars
+        material: bp.brand || "Cotton",
+        fit: "Classic",
+        blueprint_id: bp.blueprintId,
+        print_provider_id: bp.providerId,
+        brand: bp.brand,
+        model: bp.model,
+      };
+    });
   }
 
   /**
@@ -262,6 +388,19 @@ export class ProviderCatalogService {
     countryCode: string = "NL"
   ): Promise<TshirtType[]> {
     try {
+      // Validate country code
+      if (!countryCode || typeof countryCode !== "string") {
+        throw new Error("Country code must be a non-empty string");
+      }
+
+      const normalizedCountryCode = countryCode.trim().toUpperCase();
+
+      if (normalizedCountryCode.length !== 2) {
+        throw new Error(
+          `Invalid country code: "${countryCode}". Must be a 2-letter ISO country code (e.g., 'NL', 'US', 'GB')`
+        );
+      }
+
       const response = await this.callEdgeFunction<{
         success: boolean;
         data?: ProviderCatalogEntry[];
@@ -286,11 +425,11 @@ export class ProviderCatalogService {
       // Select best provider per blueprint for this country
       const bestProviders = this.selectBestProvidersPerCountry(
         response.data,
-        countryCode
+        normalizedCountryCode
       );
 
       console.log(
-        `✅ Selected ${bestProviders.length} best providers for country: ${countryCode}`
+        `✅ Selected ${bestProviders.length} best providers for country: ${normalizedCountryCode}`
       );
 
       // Transform to TshirtType format
@@ -349,6 +488,18 @@ export class ProviderCatalogService {
     blueprintIds: number[] = CURATED_BLUEPRINT_IDS
   ): Promise<boolean> {
     try {
+      // Validate input
+      if (!blueprintIds || !Array.isArray(blueprintIds) || blueprintIds.length === 0) {
+        console.warn("Invalid blueprintIds provided to hasCachedCatalog");
+        return false;
+      }
+
+      // Validate all blueprint IDs are numbers
+      if (!blueprintIds.every((id) => typeof id === "number" && id > 0)) {
+        console.warn("Invalid blueprint ID in array:", blueprintIds);
+        return false;
+      }
+
       const supabase = this.getSupabase();
 
       if (!supabase) {
