@@ -23,6 +23,13 @@ export async function GET(request: NextRequest) {
         }
         const body = await res.json();
 
+        // Debug logging to check if images are in the response
+        console.log('[fetch-custom-product] Product ID:', productId);
+        console.log('[fetch-custom-product] Images count:', body.images?.length || 0);
+        if (body.images && body.images.length > 0) {
+            console.log('[fetch-custom-product] First image:', body.images[0]);
+        }
+
         return NextResponse.json(body);
     }catch(e){
         throw e

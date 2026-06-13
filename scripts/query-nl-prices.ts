@@ -5,8 +5,8 @@
  *   npx tsx scripts/query-nl-prices.ts
  */
 
-import { ProviderCatalogService } from "../src/services/providerCatalogService";
 import { createClient } from "@supabase/supabase-js";
+import type { BestProviderResultI } from "../supabase/types/provider-catalog";
 
 const blueprints = [
   { id: 12, name: "Bella+Canvas 3001 T-Shirt" },
@@ -32,16 +32,21 @@ async function main() {
 
   for (const blueprint of blueprints) {
     try {
-      const best = await ProviderCatalogService.getBestProviderForCountry(
-        supabase,
-        blueprint.id,
-        "NL",
+      // Call database function directly
+      const { data, error } = await supabase.rpc(
+        "get_best_provider_for_country",
+        {
+          p_blueprint_id: blueprint.id,
+          p_country_code: "NL",
+        }
       );
 
-      if (!best) {
+      if (error || !data || data.length === 0) {
         console.log(`❌ ${blueprint.name}: No provider ships to NL\n`);
         continue;
       }
+
+      const best = data[0] as BestProviderResultI;
 
       console.log(`✅ ${blueprint.name}:`);
       console.log(
@@ -67,11 +72,46 @@ async function main() {
 
   for (const blueprint of blueprints) {
     try {
-      const comparison = await ProviderCatalogService.getProviderComparison(
-        supabase,
-        blueprint.id,
-        "NL",
-      );
+      // Get all providers for this blueprint
+      const { data: providers, error: fetchError } = await supabase
+        .from("provider_catalog")
+        .select("*")
+        .eq("blueprint_id", blueprint.id)
+        .gt("expires_at", new Date().toISOString())
+        .order("cache_metadata->min_price", { ascending: true });
+
+      if (fetchError || !providers || providers.length === 0) {
+        console.log(`${blueprint.name}: No providers ship to NL\n`);
+        continue;
+      }
+
+      const comparison: BestProviderResultI[] = [];
+
+      for (const provider of providers) {
+        // Find shipping cost for NL
+        let shippingCost = 0;
+
+        for (const profile of provider.shipping_profiles) {
+          if (profile.countries.includes("NL")) {
+            shippingCost = profile.first_item.cost;
+            break;
+          }
+        }
+
+        if (shippingCost > 0 || provider.shipping_profiles.length === 0) {
+          const productPrice = provider.cache_metadata.min_price;
+          comparison.push({
+            provider_id: provider.provider_id,
+            provider_name: provider.provider_name,
+            total_cost: productPrice + shippingCost,
+            product_price: productPrice,
+            shipping_cost: shippingCost,
+          });
+        }
+      }
+
+      // Sort by total cost (lowest first)
+      comparison.sort((a, b) => a.total_cost - b.total_cost);
 
       if (comparison.length === 0) {
         console.log(`${blueprint.name}: No providers ship to NL\n`);

@@ -527,6 +527,26 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
+  /* Generation loader animations */
+  .generation-ring-delayed {
+    animation-delay: 0.15s;
+  }
+
+  .generation-progress-bar {
+    width: 65%;
+    animation: progressPulse 2s ease-in-out infinite;
+  }
+
+  /* Synthesis section animations */
+  .synthesis-gradient-delayed {
+    animation-delay: -4s;
+  }
+
+  .synthesis-blob {
+    animation: floatBlob 40s ease-in-out infinite;
+    animation-delay: -2s;
+  }
+
   /* CTA gradient border */
   .cta-gradient-border {
     position: relative;
@@ -1447,6 +1467,16 @@
   }
 }
 
+@keyframes progressPulse {
+  0%,
+  100% {
+    width: 45%;
+  }
+  50% {
+    width: 85%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),
   ::view-transition-new(root),
@@ -1478,4 +1508,232 @@
   .grayscale-hover {
     animation: none !important;
   }
+
+  /* Disable progress animations */
+  [style*="progressPulse"] {
+    animation: none !important;
+  }
+
+  /* Disable stamp scroll animations */
+  .stamp-section,
+  .sidebar-progress-fill,
+  .step-circle {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ============================================
+   STAMP BRUTALIST - SNAP SCROLL & ANIMATIONS
+   ============================================ */
+
+/* Snap scroll container */
+.stamp-snap-container {
+  /* Disable snap scrolling - sections are navigated programmatically only */
+  scroll-snap-type: none;
+  height: 100vh;
+  overflow-y: hidden; /* Hide overflow to prevent manual scrolling */
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  position: relative;
+}
+
+/* Hide scrollbar but keep functionality */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Snap scroll sections */
+.stamp-section {
+  /* Stack sections absolutely for programmatic navigation */
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* Height should be viewport height minus navbar height (~64px) */
+  min-height: calc(100vh - 4rem);
+  height: calc(100vh - 4rem);
+  max-height: calc(100vh - 4rem);
+  width: 100%;
+  max-width: 100%; /* Ensure sections don't overflow horizontally */
+  overflow: hidden; /* Prevent section itself from scrolling */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 2rem; /* Add horizontal padding */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(30px); /* Subtle slide up animation */
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              visibility 0s 0.4s;
+  z-index: 1;
+}
+
+/* Force all section content to have consistent max-width */
+.stamp-section > * {
+  max-width: 72rem; /* 6xl = 72rem */
+  width: 100%;
+}
+
+.stamp-section.active-section {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
+  pointer-events: auto !important;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+              visibility 0s 0s;
+  z-index: 10 !important;
+}
+
+/* Background overlay for sections */
+.section-bg-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.gradient-layer {
+  position: absolute;
+  inset: -50%;
+  background: conic-gradient(from 0deg, var(--purple), var(--cyan), var(--orange), var(--purple));
+  opacity: 0.04;
+  animation: gradientRotate 12s linear infinite;
+}
+
+@keyframes gradientRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Floating blobs */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.15;
+}
+
+@keyframes floatBlob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 40px) scale(0.9); }
+}
+
+/* Sidebar progress line */
+.sidebar-progress-line {
+  width: 2px;
+  background: rgba(10, 10, 10, 0.05);
+  position: absolute;
+  left: 19px;
+  top: 0;
+  bottom: 0;
+}
+
+.sidebar-progress-fill {
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(to bottom, var(--purple), var(--cyan), var(--orange));
+  transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Step circle animations */
+.step-circle {
+  transition: all 0.4s ease;
+}
+
+.active .step-circle {
+  background: var(--ink);
+  color: white;
+  border-color: var(--ink);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+}
+
+.completed .step-circle {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  color: var(--ink);
+}
+
+/* Footer snap at end */
+.footer-snap {
+  scroll-snap-align: end;
+}
+
+/* Icon Sidebar Styles */
+.icon-sidebar-progress-line {
+  width: 2px;
+  background: rgba(10, 10, 10, 0.05);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  bottom: 0;
+}
+
+.icon-step {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 10;
+}
+
+.icon-step.active {
+  transform: scale(1.15);
+}
+
+.icon-step:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(10, 10, 10, 0.1);
+}
+
+.icon-step .tooltip {
+  position: absolute;
+  left: 100%;
+  margin-left: 20px;
+  background: var(--ink);
+  color: white;
+  padding: 6px 12px;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.icon-step:hover .tooltip {
+  opacity: 1;
+  visibility: visible;
+  margin-left: 15px;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* CTA gradient border animation */
+.cta-border-wrap {
+  padding: 2px;
+  background: linear-gradient(90deg, var(--purple), var(--cyan), var(--orange));
+  transition: transform 0.3s ease;
+}
+
+.cta-border-wrap:hover {
+  transform: translateY(-2px);
 }

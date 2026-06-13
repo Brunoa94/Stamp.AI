@@ -40,32 +40,25 @@ const CART_ITEMS = [
 
 export function BrutalistNavbar() {
   return (
-    <header className="fixed top-0 left-0 w-full z-40 px-8 py-4 flex items-center justify-between text-ink bg-concrete/80 backdrop-blur-sm">
+    <header className="fixed top-0 left-0 right-0 w-full z-40 px-6 py-2 flex items-center justify-between text-ink bg-concrete/80 backdrop-blur-sm">
       {/* Left: Logo with animated dot */}
       <div className="flex-1 flex justify-start items-center">
-        <div className="flex flex-col">
-          <Link
-            href="/"
-            id="header-logo-redesign"
-            className="flex items-center font-anton text-4xl md:text-6xl leading-none tracking-tighter uppercase hover:opacity-80 transition-opacity"
-          >
-            <Span unstyled>STAMP</Span>
-            <AnimatedLogoDot size="md" className="mx-1.5" />
-            <Span unstyled>AI</Span>
-          </Link>
-          <Span variant="micro" className="mt-1 opacity-60">
-            Est. 2024 / NYC
+        <Link
+          href="/"
+          id="header-logo-redesign"
+          className="flex items-center font-anton text-xl md:text-2xl leading-none tracking-tighter uppercase hover:opacity-80 transition-opacity gap-1"
+        >
+          <Span className="text-3xl" unstyled>
+            STAMP
           </Span>
-        </div>
+          <AnimatedLogoDot size="md" className="mx-2" />
+          <Span unstyled>AI</Span>
+        </Link>
       </div>
 
       {/* Center: "STAMP IT" CTA */}
       <div className="flex-1 flex justify-center items-center">
-        <Button
-          asChild
-          variant="default"
-          className="cta-gradient-border h-auto rounded-none bg-ink px-8 md:px-12 py-2.5 md:py-3.5 font-anton text-base md:text-xl tracking-widest uppercase hover:scale-110 transition-all duration-300 shadow-[8px_8px_0px_rgba(10,10,10,0.1)] text-white"
-        >
+        <Button asChild variant="brutalist-primary">
           <Link href="/create" id="header-center-cta">
             STAMP IT
           </Link>
@@ -73,9 +66,9 @@ export function BrutalistNavbar() {
       </div>
 
       {/* Right: Navigation + Cart + Login */}
-      <div className="flex-1 flex justify-end items-center mr-0 md:mr-16 relative">
+      <div className="flex-1 flex justify-end items-center mr-0 md:mr-8 relative">
         {/* Navigation menu (desktop only, positioned below header) */}
-        <nav className="hidden lg:block absolute top-full right-0 mt-10">
+        <nav className="hidden lg:block absolute top-full right-0 mt-4">
           <List className="flex flex-col items-end gap-2">
             {NAV_LINKS.map((link) => (
               <li key={link.id} className="overflow-hidden">
@@ -94,10 +87,7 @@ export function BrutalistNavbar() {
         <div className="flex items-center gap-3 md:gap-6">
           {/* Cart dropdown (desktop only XL) */}
           <div className="hidden xl:block relative group/cart">
-            <Button
-              variant="ghost"
-              className="h-auto rounded-none border border-ink/10 px-4 py-2 hover:border-brandCyan hover:bg-transparent transition-colors"
-            >
+            <Button variant="brutalist-ghost">
               <ShoppingBag className="w-4 h-4 text-ink" />
               <Span variant="default" className="tracking-widest">
                 Cart ({CART_ITEMS.length})
@@ -137,11 +127,7 @@ export function BrutalistNavbar() {
                     $237.00 TOTAL
                   </Span>
                 </div>
-                <Button
-                  asChild
-                  variant="ghost"
-                  className="h-auto w-full rounded-none flex items-center justify-center gap-2 text-brandCyan font-bold text-[10px] tracking-widest uppercase hover:text-brandRed hover:bg-transparent transition-colors border border-brandCyan/20 py-2 font-space"
-                >
+                <Button asChild variant="brutalist-danger">
                   <Link href="/cart" id="header-cart-preview-link">
                     <ShoppingBag className="w-3 h-3" />
                     View Full Cart
@@ -155,7 +141,7 @@ export function BrutalistNavbar() {
           <Button
             asChild
             variant="outline"
-            className="h-auto rounded-none border border-ink/20 px-4 md:px-6 py-2 font-bold text-[10px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-space"
+            className="h-auto rounded-none border border-ink/20 px-3 md:px-4 py-1.5 font-bold text-[9px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-space"
           >
             <Link href="/auth/login" id="nav-login-btn-header">
               LOGIN

@@ -1,5 +1,5 @@
 import { ProductCustomizationT } from "@/schemas/checkout";
-import type { CustomProductData, OrderData } from "./types";
+import type { CustomProductDataType, OrderDataType } from "./types";
 
 /**
  * Maps order and custom product data to ProductCustomizationT (fallback)
@@ -12,8 +12,8 @@ import type { CustomProductData, OrderData } from "./types";
  * @returns Mapped ProductCustomizationT object with fallback values
  */
 export function mapOrderToCustomization(
-  order: OrderData,
-  customProduct: CustomProductData,
+  order: OrderDataType,
+  customProduct: CustomProductDataType,
 ): ProductCustomizationT {
   const firstVariant = customProduct.variants?.[0];
   const variantPriceInDollars = firstVariant ? firstVariant.price / 100 : 25.0;

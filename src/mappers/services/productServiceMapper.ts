@@ -66,6 +66,7 @@ export class ProductServiceMapper {
       blueprint_id: input.blueprintId,
       print_provider_id: input.printProviderId,
       print_areas: input.printAreas as any,
+      user_id: input.userId,
       is_active: true,
       is_featured: false,
       currency: 'USD',

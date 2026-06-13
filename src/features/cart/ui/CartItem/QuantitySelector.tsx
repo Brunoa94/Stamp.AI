@@ -2,7 +2,7 @@ import { Minus, Plus } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { cartTheme } from "@/theme/components";
 
-interface Props {
+interface PropsI {
   quantity: number;
   onIncrement: () => void;
   onDecrement: () => void;
@@ -18,7 +18,7 @@ export function QuantitySelector({
   disabled = false,
   min = 1,
   max = 99,
-}: Props) {
+}: PropsI) {
   const canDecrement = quantity > min;
   const canIncrement = quantity < max;
 

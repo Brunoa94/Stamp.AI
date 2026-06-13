@@ -1,5 +1,5 @@
 import { ProductCustomizationT } from "@/schemas/checkout";
-import { CustomProductData, OrderItemData } from "./types";
+import { CustomProductDataType, OrderItemDataType } from "./types";
 
 /**
  * Maps order item and custom product data to ProductCustomizationT
@@ -12,8 +12,8 @@ import { CustomProductData, OrderItemData } from "./types";
  * @returns Mapped ProductCustomizationT object
  */
 export function mapOrderItemToCustomization(
-  orderItem: OrderItemData,
-  customProduct?: CustomProductData,
+  orderItem: OrderItemDataType,
+  customProduct?: CustomProductDataType,
 ): ProductCustomizationT {
   const designConfig = orderItem.design_config as any;
 

@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 type PriceRowVariant = "normal" | "discount" | "total";
 
-interface PriceRowProps {
+interface PropsI {
   label: string;
   value: string | number;
   variant?: PriceRowVariant;
@@ -12,7 +12,7 @@ interface PriceRowProps {
  * PriceRow - Single price line item component
  * Used in price breakdowns to display pricing information
  */
-export function PriceRow({ label, value, variant = "normal" }: PriceRowProps) {
+export function PriceRow({ label, value, variant = "normal" }: PropsI) {
   const formattedValue = typeof value === "number" ? `$${value.toFixed(2)}` : value;
 
   const labelClasses = cn(

@@ -2,7 +2,7 @@
  * Type definitions for customization mapping
  */
 
-export interface OrderItemData {
+export type OrderItemDataType = {
   product_id?: string;
   variant_id?: string;
   quantity: number;
@@ -13,7 +13,7 @@ export interface OrderItemData {
   custom_image_url?: string;
 }
 
-export interface CustomProductData {
+export type CustomProductDataType = {
   id?: string;
   title?: string;
   blueprint_id?: number;
@@ -28,6 +28,6 @@ export interface CustomProductData {
   }>;
 }
 
-export interface OrderData {
+export type OrderDataType = {
   product_id?: string;
 }

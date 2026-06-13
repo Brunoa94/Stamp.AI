@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ProviderCatalogService } from "@/services/providerCatalogService";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -27,13 +26,28 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = await createClient();
-    const bestProvider = await ProviderCatalogService.getBestProviderForCountry(
-      supabase,
-      blueprint_id,
-      country_code
+
+    // Call database function directly
+    const { data, error } = await supabase.rpc(
+      "get_best_provider_for_country",
+      {
+        p_blueprint_id: blueprint_id,
+        p_country_code: country_code.toUpperCase(),
+      }
     );
 
-    if (!bestProvider) {
+    if (error) {
+      console.error("Error getting best provider:", error);
+      return NextResponse.json(
+        {
+          error: "Database error",
+          message: error.message,
+        },
+        { status: 500 }
+      );
+    }
+
+    if (!data || data.length === 0) {
       return NextResponse.json(
         {
           error: "No provider found",
@@ -45,7 +59,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: bestProvider,
+      data: data[0],
     });
   } catch (error) {
     console.error("Error getting best provider:", error);
@@ -76,13 +90,28 @@ export async function GET(request: NextRequest) {
     }
 
     const supabase = await createClient();
-    const bestProvider = await ProviderCatalogService.getBestProviderForCountry(
-      supabase,
-      parseInt(blueprint_id),
-      country_code
+
+    // Call database function directly
+    const { data, error } = await supabase.rpc(
+      "get_best_provider_for_country",
+      {
+        p_blueprint_id: parseInt(blueprint_id),
+        p_country_code: country_code.toUpperCase(),
+      }
     );
 
-    if (!bestProvider) {
+    if (error) {
+      console.error("Error getting best provider:", error);
+      return NextResponse.json(
+        {
+          error: "Database error",
+          message: error.message,
+        },
+        { status: 500 }
+      );
+    }
+
+    if (!data || data.length === 0) {
       return NextResponse.json(
         {
           error: "No provider found",
@@ -94,7 +123,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: bestProvider,
+      data: data[0],
     });
   } catch (error) {
     console.error("Error getting best provider:", error);

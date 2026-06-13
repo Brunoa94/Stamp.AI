@@ -1,4 +1,4 @@
-interface DetailItemProps {
+interface PropsI {
   label: string;
   value: string;
 }
@@ -7,7 +7,7 @@ interface DetailItemProps {
  * DetailItem - Single detail field display atom
  * Used in payment success details grid to show label-value pairs
  */
-export function DetailItem({ label, value }: DetailItemProps) {
+export function DetailItem({ label, value }: PropsI) {
   return (
     <div className="flex flex-col gap-1">
       <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">

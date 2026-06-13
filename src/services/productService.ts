@@ -135,6 +135,35 @@ export class ProductService {
   }
 
   /**
+   * Get all custom products for a user
+   */
+  static async getUserProducts(userId: string): Promise<ProductRow[]> {
+    try {
+      const supabase = this.getSupabase();
+
+      // In test environment without supabase, return empty array
+      if (!supabase) {
+        console.warn("Skipping user products fetch (no supabase client in test environment)");
+        return [];
+      }
+
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw ErrorClient.handleError({ error, service: "Product", action: "Get User Products" });
+      }
+
+      return data || [];
+    } catch (error) {
+      throw ErrorClient.handleError({ error, service: "Product", action: "Get User Products" });
+    }
+  }
+
+  /**
    * Helper to convert Printify product response to SavePrintifyProductInput
    * Delegates to ProductServiceMapper for the actual mapping logic
    */

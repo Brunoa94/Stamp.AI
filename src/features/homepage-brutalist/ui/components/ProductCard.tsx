@@ -13,7 +13,7 @@ import { Span } from "@/features/ui/span";
  * - Hard border and shadow
  */
 
-interface ProductCardProps {
+interface PropsI {
   id: string;
   name: string;
   price: number;
@@ -31,7 +31,7 @@ export function ProductCard({
   label,
   imageUrl,
   href,
-}: ProductCardProps) {
+}: PropsI) {
   return (
     <Link href={href} id={id} className="group cursor-pointer block">
       {/* Image container */}
