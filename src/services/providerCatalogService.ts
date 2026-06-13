@@ -1,69 +1,13 @@
 import { createClient } from "@/lib/supabase/client";
 import { TshirtType } from "@/types/product";
+import {
+  ProviderCatalogEntryType,
+  BlueprintWithBestProviderType,
+} from "@/types/providerCatalog";
 import { ErrorClient } from "./errorClient";
 
 // Curated blueprint IDs matching the Edge Function
 const CURATED_BLUEPRINT_IDS = [12, 6, 145, 157, 553];
-
-interface ProviderCatalogEntry {
-  id: string;
-  blueprint_id: number;
-  provider_id: number;
-  provider_name: string;
-  provider_location: string;
-  variants_data: Array<{
-    id: number;
-    title: string;
-    price: number;
-    is_enabled: boolean;
-    options: {
-      color?: string;
-      size?: string;
-    };
-  }>;
-  shipping_profiles: Array<{
-    variant_ids: number[];
-    first_item: { cost: number };
-    additional_items: { cost: number };
-    countries: string[];
-  }>;
-  cache_metadata: {
-    variants_count: number;
-    colors_available: string[];
-    sizes_available: string[];
-    min_price: number;
-    max_price: number;
-  };
-  fetched_at: string;
-  expires_at: string;
-  // Blueprint metadata (will be added in migration)
-  blueprint_title?: string;
-  blueprint_brand?: string;
-  blueprint_model?: string;
-  blueprint_images?: string[];
-  blueprint_print_areas?: Array<{
-    position: string;
-    width: number;
-    height: number;
-  }>;
-}
-
-interface BlueprintWithBestProvider {
-  blueprintId: number;
-  providerId: number;
-  providerName: string;
-  title: string;
-  brand: string;
-  model: string;
-  images: string[];
-  printAreas: Array<{ position: string; width: number; height: number }>;
-  minPrice: number;
-  shippingCost: number;
-  totalCost: number;
-  colorsAvailable: string[];
-  sizesAvailable: string[];
-  variantsCount: number;
-}
 
 /**
  * Service for interacting with the provider_catalog table
@@ -183,7 +127,7 @@ export class ProviderCatalogService {
    * Extract shipping cost for a specific country from shipping profiles
    */
   private static getShippingCostForCountry(
-    shippingProfiles: ProviderCatalogEntry["shipping_profiles"] | undefined | null,
+    shippingProfiles: ProviderCatalogEntryType["shipping_profiles"] | undefined | null,
     countryCode: string
   ): number {
     if (!shippingProfiles || shippingProfiles.length === 0) {
@@ -219,9 +163,9 @@ export class ProviderCatalogService {
    * Select the best provider (lowest total cost) for each blueprint and country
    */
   private static selectBestProvidersPerCountry(
-    catalogData: ProviderCatalogEntry[],
+    catalogData: ProviderCatalogEntryType[],
     countryCode: string
-  ): BlueprintWithBestProvider[] {
+  ): BlueprintWithBestProviderType[] {
     // Validate input
     if (!catalogData || !Array.isArray(catalogData) || catalogData.length === 0) {
       console.warn("No catalog data provided to selectBestProvidersPerCountry");
@@ -229,7 +173,7 @@ export class ProviderCatalogService {
     }
 
     // Group by blueprint_id
-    const blueprintGroups = new Map<number, ProviderCatalogEntry[]>();
+    const blueprintGroups = new Map<number, ProviderCatalogEntryType[]>();
 
     for (const entry of catalogData) {
       // Skip entries with invalid data
@@ -249,7 +193,7 @@ export class ProviderCatalogService {
       blueprintGroups.get(entry.blueprint_id)!.push(entry);
     }
 
-    const results: BlueprintWithBestProvider[] = [];
+    const results: BlueprintWithBestProviderType[] = [];
 
     // For each blueprint, find the cheapest provider for this country
     for (const [blueprintId, providers] of blueprintGroups) {
@@ -342,10 +286,10 @@ export class ProviderCatalogService {
   }
 
   /**
-   * Transform BlueprintWithBestProvider to TshirtType format
+   * Transform BlueprintWithBestProviderType to TshirtType format
    */
   private static transformToTshirtType(
-    bestProviders: BlueprintWithBestProvider[]
+    bestProviders: BlueprintWithBestProviderType[]
   ): TshirtType[] {
     if (!bestProviders || !Array.isArray(bestProviders)) {
       console.warn("Invalid bestProviders data in transformToTshirtType");
@@ -403,7 +347,7 @@ export class ProviderCatalogService {
 
       const response = await this.callEdgeFunction<{
         success: boolean;
-        data?: ProviderCatalogEntry[];
+        data?: ProviderCatalogEntryType[];
         error?: string;
         cache_miss?: boolean;
       }>("get-provider-catalog", {
