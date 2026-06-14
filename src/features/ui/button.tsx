@@ -21,6 +21,8 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline focus-visible:ring-offset-0",
         "brutalist-primary":
           "h-auto rounded-none bg-ink px-6 md:px-8 py-1.5 md:py-2 font-anton text-sm md:text-base tracking-widest uppercase border-2 border-brandCyan hover:bg-brandCyan hover:text-ink transition-colors duration-300 shadow-[4px_4px_0px_rgba(10,10,10,0.1)] text-white",
+        "brutalist-checkout":
+          "h-auto rounded-none bg-ink px-6 md:px-8 py-6 md:py-8 font-anton text-xl md:text-2xl tracking-widest uppercase border-2 border-brandCyan hover:bg-brandCyan hover:text-ink transition-colors duration-300 shadow-[4px_4px_0px_rgba(10,10,10,0.1)] text-white",
         "brutalist-ghost":
           "h-auto rounded-none border border-ink/10 px-4 py-2 hover:border-brandCyan hover:bg-transparent transition-colors",
         "brutalist-danger":

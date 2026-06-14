@@ -1,0 +1,90 @@
+/**
+ * Cart Feature Styles
+ * Isolated styling for the brutalist cart design
+ */
+
+/* Cart item card hover effect */
+.cart-item-card {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cart-item-card:hover {
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05);
+  border-color: rgba(10, 10, 10, 0.2);
+}
+
+/* Grain overlay - fixed noise texture */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  opacity: 0.04;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Section background overlay for cart page */
+.section-bg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Gradient layer animation */
+.gradient-layer {
+  position: absolute;
+  inset: -50%;
+  background: conic-gradient(
+    from 0deg,
+    var(--brandPurple),
+    var(--brandCyan),
+    var(--brandOrange),
+    var(--brandPurple)
+  );
+  opacity: 0.04;
+  animation: gradientRotate 12s linear infinite;
+}
+
+/* Floating blob */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.15;
+  animation: floatBlob 20s ease-in-out infinite;
+}
+
+/* Keyframe animations */
+@keyframes gradientRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes floatBlob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 40px) scale(0.9);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .cart-item-card,
+  .gradient-layer,
+  .blob {
+    animation: none !important;
+    transition: none !important;
+  }
+}
