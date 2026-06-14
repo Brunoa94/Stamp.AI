@@ -1,48 +1,81 @@
 import { Shimmer } from "@/features/ui/shimmer";
+import { PageContainer } from "@/shared/ui/PageContainer";
+import { ordersLoadingTheme } from "@/features/orders/styles/ordersTheme";
 
 export function OrdersLoadingSkeleton() {
   return (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <div className="space-y-2">
-          <Shimmer className="h-10 w-48" />
-          <Shimmer className="h-6 w-64" />
-        </div>
-        <Shimmer className="h-10 w-40" />
-      </div>
-
-      <div className="flex flex-wrap gap-4">
-        <Shimmer className="h-10 w-32" />
-        <Shimmer className="h-10 w-32" />
-        <Shimmer className="h-10 w-32" />
-        <Shimmer className="h-10 w-24" />
-      </div>
-
-      <ul className="space-y-4 list-none">
-        {Array.from({ length: 5 }).map((_, index) => (
-          <li key={index} className="border border-gray-200 rounded-2xl p-6">
-            <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
-              <div className="flex-1 space-y-2">
-                <Shimmer className="h-7 w-32" />
-                <Shimmer className="h-4 w-24" />
-                <Shimmer className="h-4 w-28" />
-                <Shimmer className="h-4 w-20" />
-              </div>
-
-              <div className="flex gap-2">
-                <Shimmer className="h-6 w-20" />
-                <Shimmer className="h-6 w-20" />
-              </div>
-
-              <div className="flex flex-col items-end gap-2">
-                <Shimmer className="h-4 w-12" />
-                <Shimmer className="h-8 w-24" />
-                <Shimmer className="h-9 w-28" />
-              </div>
+    <section className="orders-terminal relative z-10 px-8 lg:px-24 py-16 lg:py-24">
+      <PageContainer>
+        <div className={ordersLoadingTheme.container}>
+          <div className={ordersLoadingTheme.headerRow}>
+            <div className={ordersLoadingTheme.titleStack}>
+              <Shimmer
+                className={ordersLoadingTheme.titleLine}
+                style={{ backgroundColor: "rgb(124 58 237 / 0.3)" }}
+              />
+              <Shimmer className={ordersLoadingTheme.title} />
+              <Shimmer className={ordersLoadingTheme.subtitle} />
             </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+
+            <div className={ordersLoadingTheme.controlsWrap}>
+              <Shimmer className={ordersLoadingTheme.controlButton} />
+              <Shimmer className={ordersLoadingTheme.controlButton} />
+            </div>
+          </div>
+
+          <div className={ordersLoadingTheme.filtersRow}>
+            <Shimmer className={ordersLoadingTheme.filterPill} />
+            <Shimmer className={ordersLoadingTheme.filterPill} />
+            <Shimmer className={ordersLoadingTheme.filterPill} />
+            <Shimmer className={ordersLoadingTheme.filterPill} />
+          </div>
+
+          <ul className={ordersLoadingTheme.list}>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <li key={index} className={ordersLoadingTheme.card}>
+                <div className={ordersLoadingTheme.cardGrid}>
+                  <Shimmer className={ordersLoadingTheme.image} />
+
+                  <div className={ordersLoadingTheme.content}>
+                    <div className={ordersLoadingTheme.topRow}>
+                      <div className={ordersLoadingTheme.titleBlock}>
+                        <Shimmer className={ordersLoadingTheme.cardTitle} />
+                        <Shimmer className={ordersLoadingTheme.cardMeta} />
+                      </div>
+                      <Shimmer className={ordersLoadingTheme.status} />
+                    </div>
+
+                    <div className={ordersLoadingTheme.statsGrid}>
+                      <div className="space-y-2">
+                        <Shimmer className={ordersLoadingTheme.statLabel} />
+                        <Shimmer className={ordersLoadingTheme.statValue} />
+                      </div>
+                      <div className="space-y-2">
+                        <Shimmer className={ordersLoadingTheme.statLabel} />
+                        <Shimmer className={ordersLoadingTheme.statValue} />
+                      </div>
+                      <div className="space-y-2">
+                        <Shimmer className={ordersLoadingTheme.statLabel} />
+                        <Shimmer className={ordersLoadingTheme.statValue} />
+                      </div>
+                      <div className="space-y-2">
+                        <Shimmer className={ordersLoadingTheme.statLabel} />
+                        <Shimmer className={ordersLoadingTheme.statValue} />
+                      </div>
+                    </div>
+
+                    <div className={ordersLoadingTheme.actionsRow}>
+                      <Shimmer className={ordersLoadingTheme.actionPrimary} />
+                      <Shimmer className={ordersLoadingTheme.actionSecondary} />
+                      <Shimmer className={ordersLoadingTheme.actionDestructive} />
+                    </div>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </PageContainer>
+    </section>
   );
 }
