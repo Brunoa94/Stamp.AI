@@ -16,8 +16,8 @@ export function Login({ className }: LoginProps) {
           aria-label="Open login dialog"
           className={className}
         >
-          <LogIn className="mr-2 h-4 w-4" />
-          Login
+          <LogIn className="mr-2 h-3 w-3" />
+          <span className="uppercase">Login</span>
         </Button>
       </DialogTrigger>
       <LoginForm />

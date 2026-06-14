@@ -5,8 +5,10 @@ import { CartContent } from "@/features/cart/ui/CartContent";
 
 export default function CartPage() {
   return (
-    <ProtectedRoute>
-      <CartContent />
-    </ProtectedRoute>
+    <div className="bg-concrete text-ink font-space antialiased min-h-screen">
+      <ProtectedRoute>
+        <CartContent />
+      </ProtectedRoute>
+    </div>
   );
 }

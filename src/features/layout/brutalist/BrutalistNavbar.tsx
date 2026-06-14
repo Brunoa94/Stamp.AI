@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, LogIn } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { AnimatedLogoDot } from "./AnimatedLogoDot";
 import { Span } from "@/features/ui/span";
 import { List } from "@/features/ui/list";
+import { Login } from "@/features/auth/login/Login";
+import { useIsAuthenticated } from "@/queries/authQueries";
 
 /**
  * Brutalist Navbar Component
@@ -39,6 +41,8 @@ const CART_ITEMS = [
 ];
 
 export function BrutalistNavbar() {
+  const { isAuthenticated } = useIsAuthenticated();
+
   return (
     <header className="fixed top-0 left-0 right-0 w-full z-40 px-6 py-2 flex items-center justify-between text-ink bg-concrete/80 backdrop-blur-sm">
       {/* Left: Logo with animated dot */}
@@ -137,16 +141,20 @@ export function BrutalistNavbar() {
             </div>
           </div>
 
-          {/* Login button */}
-          <Button
-            asChild
-            variant="outline"
-            className="h-auto rounded-none border border-ink/20 px-3 md:px-4 py-1.5 font-bold text-[9px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-space"
-          >
-            <Link href="/auth/login" id="nav-login-btn-header">
-              LOGIN
-            </Link>
-          </Button>
+          {/* Login button or user section */}
+          {!isAuthenticated ? (
+            <Login className="h-auto rounded-none border border-ink/20 px-3 md:px-4 py-1.5 font-bold text-[9px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-space" />
+          ) : (
+            <Button
+              asChild
+              variant="outline"
+              className="h-auto rounded-none border border-ink/20 px-3 md:px-4 py-1.5 font-bold text-[9px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-space"
+            >
+              <Link href="/account" id="nav-account-btn-header">
+                ACCOUNT
+              </Link>
+            </Button>
+          )}
         </div>
       </div>
     </header>

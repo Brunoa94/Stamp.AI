@@ -2,20 +2,20 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import {
   useCartSummary,
   useUpdateCartItem,
   useRemoveCartItem,
 } from "@/queries/cartQueries";
-import { CartList } from "./CartList/CartList";
-import { EmptyCart } from "./CartList/EmptyCart";
-import { CartSummary } from "./CartSummary/CartSummary";
-import { PromoCodeInput } from "./components/PromoCodeInput";
-import { CartHeader } from "./sections/CartHeader";
-import { CartPageLayout } from "./sections/CartPageLayout";
+import { BrutalistCartBackground } from "./brutalist/BrutalistCartBackground";
+import { BrutalistCartLayout } from "./brutalist/BrutalistCartLayout";
+import { BrutalistCartHeader } from "./brutalist/BrutalistCartHeader";
+import { BrutalistCartItemCard } from "./brutalist/BrutalistCartItemCard";
+import { BrutalistOrderSummary } from "./brutalist/BrutalistOrderSummary";
+import { BrutalistEmptyCart } from "./brutalist/BrutalistEmptyCart";
 import { CartLoadingSkeleton } from "./sections/CartLoadingSkeleton";
 import { CartMobileCta } from "./mobile/CartMobileCta";
-import { cartTheme } from "@/theme/components";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 export function CartContent() {
@@ -43,77 +43,63 @@ export function CartContent() {
   // Loading state
   if (isLoading) {
     return (
-      <CartPageLayout>
-        <CartHeader itemCount={0} />
-        <CartLoadingSkeleton />
-      </CartPageLayout>
+      <>
+        <BrutalistCartBackground />
+        <BrutalistCartLayout>
+          <div className="lg:col-span-12">
+            <CartLoadingSkeleton />
+          </div>
+        </BrutalistCartLayout>
+      </>
     );
   }
 
   // Empty cart
   if (!cart || cart.cart_items.length === 0) {
     return (
-      <CartPageLayout>
-        <CartHeader itemCount={0} />
-        <EmptyCart />
-      </CartPageLayout>
+      <>
+        <BrutalistCartBackground />
+        <BrutalistCartLayout>
+          <BrutalistEmptyCart />
+        </BrutalistCartLayout>
+      </>
     );
   }
 
   // Cart with items
   return (
-    <CartPageLayout>
-      <CartHeader itemCount={itemCount} />
+    <>
+      <BrutalistCartBackground />
+      <BrutalistCartLayout>
+        <BrutalistCartHeader itemCount={itemCount} />
 
-      {/* Mobile: Single column layout */}
-      <div className="lg:hidden">
-        <CartList
-          items={cart.cart_items}
-          onUpdateQuantity={handleUpdateQuantity}
-          onRemove={handleRemove}
-          isUpdating={updateCartItem.isPending || removeCartItem.isPending}
-        />
-
-        <PromoCodeInput />
-
-        <CartSummary
-          itemCount={itemCount}
-          subtotal={subtotal}
-          onCheckout={handleCheckout}
-        />
-
-        <Link href="/stamp" className={cartTheme.continueLink}>
-          ← Continue Browsing
-        </Link>
-      </div>
-
-      {/* Desktop: 2-column grid layout */}
-      <div className={cartTheme.page.grid}>
         {/* Left column: Cart items */}
-        <div className={cartTheme.page.itemsColumn}>
-          <CartList
-            items={cart.cart_items}
-            onUpdateQuantity={handleUpdateQuantity}
-            onRemove={handleRemove}
-            isUpdating={updateCartItem.isPending || removeCartItem.isPending}
-          />
+        <div className="lg:col-span-8 space-y-12">
+          {cart.cart_items.map((item) => (
+            <BrutalistCartItemCard
+              key={item.id}
+              item={item}
+              onUpdateQuantity={handleUpdateQuantity}
+              onRemove={handleRemove}
+            />
+          ))}
 
-          <Link href="/stamp" className={cartTheme.continueLink}>
-            ← Continue Browsing
+          <Link
+            href="/create"
+            className="inline-flex items-center gap-3 text-[10px] font-bold tracking-[0.4em] uppercase opacity-40 hover:opacity-100 hover:text-brandPurple transition-all"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Continue Browsing Terminal
           </Link>
         </div>
 
-        {/* Right column: Summary */}
-        <aside className={cartTheme.page.summaryColumn}>
-          <CartSummary
-            itemCount={itemCount}
-            subtotal={subtotal}
-            onCheckout={handleCheckout}
-          />
-        </aside>
-      </div>
+        {/* Right column: Order summary */}
+        <div className="lg:col-span-4">
+          <BrutalistOrderSummary cart={cart} onCheckout={handleCheckout} />
+        </div>
+      </BrutalistCartLayout>
 
       <CartMobileCta onCheckout={handleCheckout} />
-    </CartPageLayout>
+    </>
   );
 }
