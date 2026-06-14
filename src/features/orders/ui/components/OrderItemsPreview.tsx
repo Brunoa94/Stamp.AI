@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/features/ui/button";
-import { ordersTheme } from "@/theme/components";
+import { ordersPageTheme } from "@/features/orders/styles/ordersTheme";
 import { OrderImage } from "../../helpers/OrderImage";
 import type { OrderItemT } from "@/types/order";
 import { OrderItemZoomDialog } from "./OrderItemZoomDialog";
@@ -30,10 +30,10 @@ export function OrderItemsPreview({
 
   if (itemCount === 0) {
     return (
-      <div className={cn(ordersTheme.table.itemsStack, className)}>
+      <div className={cn(ordersPageTheme.table.itemsStack, className)}>
         <div
           className={cn(
-            ordersTheme.table.itemImage,
+            ordersPageTheme.table.itemImage,
             imageClassName,
             "flex items-center justify-center bg-slate-100",
           )}
@@ -46,7 +46,7 @@ export function OrderItemsPreview({
 
   return (
     <>
-      <div className={cn(ordersTheme.table.itemsStack, className)}>
+      <div className={cn(ordersPageTheme.table.itemsStack, className)}>
         {displayItems.map((item) =>
           item.custom_image_url ? (
             <Button
@@ -55,7 +55,7 @@ export function OrderItemsPreview({
               variant="ghost"
               size="icon"
               className={cn(
-                ordersTheme.table.itemImage,
+                ordersPageTheme.table.itemImage,
                 imageClassName,
                 "group cursor-zoom-in overflow-hidden transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]/60",
               )}
@@ -73,7 +73,7 @@ export function OrderItemsPreview({
             <div
               key={item.id}
               className={cn(
-                ordersTheme.table.itemImage,
+                ordersPageTheme.table.itemImage,
                 imageClassName,
                 "flex items-center justify-center bg-slate-100",
               )}
@@ -83,7 +83,9 @@ export function OrderItemsPreview({
           ),
         )}
         {remainingCount > 0 && (
-          <div className={ordersTheme.table.itemBadge}>+{remainingCount}</div>
+          <div className={ordersPageTheme.table.itemBadge}>
+            +{remainingCount}
+          </div>
         )}
       </div>
 

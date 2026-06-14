@@ -5,6 +5,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { ChevronRight } from "lucide-react";
 import { dashboardTheme } from "@/theme/components";
+import { ordersCardTheme } from "@/features/orders/styles/ordersTheme";
 import type { OrderWithItemsT } from "@/types/order";
 import { MemoizedOrderCard } from "@/features/orders/ui/components/OrderCard/OrderCard";
 
@@ -41,13 +42,13 @@ export function RecentOrdersCard({ orders }: RecentOrdersCardProps) {
 
   return (
     <>
-      <section className={dashboardTheme.orders.card}>
-        <div className={dashboardTheme.orders.header}>
+      <section className={ordersCardTheme.card}>
+        <div className={ordersCardTheme.header}>
           <h4 className={dashboardTheme.card.sectionTitle}>Recent Orders</h4>
         </div>
 
         {recentOrders.length === 0 ? (
-          <p className={dashboardTheme.orders.emptyState}>
+          <p className={ordersCardTheme.emptyState}>
             No recent orders yet. Start a new design to place your first order.
           </p>
         ) : (

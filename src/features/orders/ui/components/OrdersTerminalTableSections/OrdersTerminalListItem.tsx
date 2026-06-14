@@ -111,11 +111,18 @@ export function OrdersTerminalListItem({
               <Paragraph
                 as="p"
                 variant="sm"
-                className={cn("text-[9px] font-bold tracking-widest", "text-ink/30")}
+                className={cn(
+                  "text-[9px] font-bold tracking-widest",
+                  "text-ink/30",
+                )}
               >
                 Ordered
               </Paragraph>
-              <Paragraph as="p" variant="body" className="text-sm font-bold tracking-tight">
+              <Paragraph
+                as="p"
+                variant="body"
+                className="text-sm font-bold tracking-tight"
+              >
                 {formatOrderDate(order.created_at)}
               </Paragraph>
             </div>
@@ -123,11 +130,18 @@ export function OrdersTerminalListItem({
               <Paragraph
                 as="p"
                 variant="sm"
-                className={cn("text-[9px] font-bold tracking-widest", "text-ink/30")}
+                className={cn(
+                  "text-[9px] font-bold tracking-widest",
+                  "text-ink/30",
+                )}
               >
                 Variant
               </Paragraph>
-              <Paragraph as="p" variant="body" className="text-sm font-bold tracking-tight">
+              <Paragraph
+                as="p"
+                variant="body"
+                className="text-sm font-bold tracking-tight"
+              >
                 {firstItem?.variant_name || "Standard"}
               </Paragraph>
             </div>
@@ -135,11 +149,18 @@ export function OrdersTerminalListItem({
               <Paragraph
                 as="p"
                 variant="sm"
-                className={cn("text-[9px] font-bold tracking-widest", "text-ink/30")}
+                className={cn(
+                  "text-[9px] font-bold tracking-widest",
+                  "text-ink/30",
+                )}
               >
                 Qty
               </Paragraph>
-              <Paragraph as="p" variant="body" className="text-sm font-bold tracking-tight">
+              <Paragraph
+                as="p"
+                variant="body"
+                className="text-sm font-bold tracking-tight"
+              >
                 {firstItem?.quantity || 1}
               </Paragraph>
             </div>
@@ -147,14 +168,20 @@ export function OrdersTerminalListItem({
               <Paragraph
                 as="p"
                 variant="sm"
-                className={cn("text-[9px] font-bold tracking-widest", "text-ink/30")}
+                className={cn(
+                  "text-[9px] font-bold tracking-widest",
+                  "text-ink/30",
+                )}
               >
                 Value
               </Paragraph>
               <Paragraph
                 as="p"
                 variant="body"
-                className={cn("text-sm font-bold tracking-tight", "text-purple")}
+                className={cn(
+                  "text-sm font-bold tracking-tight",
+                  "text-purple",
+                )}
               >
                 {formatPrice(order.total_amount)} USD
               </Paragraph>
@@ -162,7 +189,11 @@ export function OrdersTerminalListItem({
           </div>
 
           <div className="flex flex-wrap gap-4 pt-2">
-            <Button type="button" onClick={() => onViewOrder(order)} variant="default">
+            <Button
+              type="button"
+              onClick={() => onViewOrder(order)}
+              variant="default"
+            >
               Track Protocol
             </Button>
 
@@ -174,7 +205,11 @@ export function OrdersTerminalListItem({
                 </Link>
               </Button>
             ) : (
-              <Button type="button" onClick={() => onReorder(order)} variant="outline">
+              <Button
+                type="button"
+                onClick={() => onReorder(order)}
+                variant="outline"
+              >
                 View Blueprint
               </Button>
             )}

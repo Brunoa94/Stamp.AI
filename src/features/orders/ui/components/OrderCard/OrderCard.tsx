@@ -2,11 +2,11 @@
 
 import { memo } from "react";
 import { ChevronRight } from "lucide-react";
-import { dashboardTheme } from "@/theme/components";
 import type { OrderWithItemsT } from "@/types/order";
 import { formatOrderTotal } from "@/features/orders/helpers/formatOrderTotal";
 import { getOrderCardStatusClass } from "@/features/orders/helpers/getOrderCardStatusClass";
 import { OrderImage } from "@/features/orders/helpers/OrderImage";
+import { ordersCardTheme } from "@/features/orders/styles/ordersTheme";
 
 interface OrderCardPropsI {
   order: OrderWithItemsT;
@@ -22,33 +22,33 @@ function OrderCard({ order, onClick }: OrderCardPropsI) {
     <button
       type="button"
       onClick={() => onClick(order)}
-      className={`${dashboardTheme.orders.item} w-full text-left cursor-pointer transition-all duration-200 hover:bg-slate-50 hover:shadow-md active:scale-[0.99]`}
+      className={`${ordersCardTheme.item} w-full text-left cursor-pointer transition-all duration-200 hover:bg-slate-50 hover:shadow-md active:scale-[0.99]`}
     >
-      <div className={dashboardTheme.orders.itemImageWrap}>
+      <div className={ordersCardTheme.itemImageWrap}>
         <OrderImage
           src={imageUrl}
           alt={firstItem?.product_name || "Order item"}
           width={56}
           height={56}
-          className={dashboardTheme.orders.itemImage}
+          className={ordersCardTheme.itemImage}
         />
       </div>
 
       <div className="grow">
         <div className="flex justify-between mb-1">
-          <h5 className={dashboardTheme.orders.itemTitle}>
+          <h5 className={ordersCardTheme.itemTitle}>
             {firstItem?.product_name || "Custom Design"}
           </h5>
           <span
-            className={`${dashboardTheme.orders.statusBadge} ${statusClass}`}
+            className={`${ordersCardTheme.statusBadge} ${statusClass}`}
           >
             {order.status || "Processing"}
           </span>
         </div>
-        <p className={dashboardTheme.orders.itemMeta}>
+        <p className={ordersCardTheme.itemMeta}>
           Order #{order.order_number}
         </p>
-        <span className={dashboardTheme.orders.itemPrice}>
+        <span className={ordersCardTheme.itemPrice}>
           {formatOrderTotal(order.total_amount)}
         </span>
       </div>
