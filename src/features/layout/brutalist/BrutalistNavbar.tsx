@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, LogIn, LogOut } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { AnimatedLogoDot } from "./AnimatedLogoDot";
 import { Span } from "@/features/ui/span";
 import { List } from "@/features/ui/list";
+import { Login } from "@/features/auth/login/Login";
+import { useIsAuthenticated, useLogout } from "@/queries/authQueries";
 
 /**
  * Brutalist Navbar Component
@@ -39,6 +41,9 @@ const CART_ITEMS = [
 ];
 
 export function BrutalistNavbar() {
+  const { isAuthenticated } = useIsAuthenticated();
+  const logout = useLogout();
+
   return (
     <header className="brutalist-navbar fixed top-0 left-0 right-0 w-full z-40 px-6 py-2 flex items-center justify-between text-ink bg-concrete/80 backdrop-blur-sm transition-colors duration-300">
       {/* Left: Logo with animated dot */}
@@ -137,16 +142,30 @@ export function BrutalistNavbar() {
             </div>
           </div>
 
-          {/* Login button */}
-          <Button
-            asChild
-            variant="outline"
-            className="h-auto rounded-none border border-ink/20 px-3 md:px-4 py-1.5 font-bold text-[9px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-space"
-          >
-            <Link href="/auth/login" id="nav-login-btn-header">
-              LOGIN
-            </Link>
-          </Button>
+          {/* Login button or user section */}
+          {!isAuthenticated ? (
+            <Login className="h-auto rounded-none border border-ink/20 px-3 md:px-4 py-1.5 font-bold text-[9px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-space" />
+          ) : (
+            <div className="flex items-center gap-3">
+              <Button
+                asChild
+                variant="outline"
+                className="h-auto rounded-none border border-ink/20 px-3 md:px-4 py-1.5 font-bold text-[9px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-space"
+              >
+                <Link href="/account" id="nav-account-btn-header">
+                  ACCOUNT
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => logout.mutate()}
+                className="h-auto rounded-none border border-ink/20 px-3 md:px-4 py-1.5 font-bold text-[9px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-space"
+              >
+                <LogOut className="mr-2 h-3 w-3" />
+                <span className="uppercase">Logout</span>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </header>

@@ -74,7 +74,7 @@ export function CartContent() {
         <CartHeader itemCount={itemCount} />
 
         {/* Left column: Cart items */}
-        <div className="lg:col-span-8 space-y-12">
+        <div className="xl:col-span-8 space-y-12">
           {cart.cart_items.map((item) => (
             <CartItemCard
               key={item.id}
@@ -94,7 +94,7 @@ export function CartContent() {
         </div>
 
         {/* Right column: Order summary */}
-        <div className="lg:col-span-4">
+        <div className="xl:col-span-4">
           <OrderSummary cart={cart} onCheckout={handleCheckout} />
         </div>
       </CartLayout>

@@ -18,7 +18,7 @@ export function CartHeader({ itemCount }: CartHeaderPropsI) {
   const itemText = itemCount === 1 ? 'Item' : 'Items';
 
   return (
-    <div className="lg:col-span-12 space-y-4">
+    <div className="xl:col-span-12 space-y-4">
       {/* Purple accent bar */}
       <div className="h-1.5 w-20 bg-brandPurple" />
 

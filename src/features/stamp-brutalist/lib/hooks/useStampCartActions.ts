@@ -26,7 +26,12 @@ export function useStampCartActions() {
   const handleAddToCart = async (buyNow: boolean = false) => {
       // Validate product exists
       if (!createdProductId) {
-        toast.error("No product to add to cart");
+        console.error("[STAMP] No created product ID available", {
+          createdProductId,
+          selectedImageUrl,
+          enhancedPrompt,
+        });
+        toast.error("Please create a product first before adding to cart");
         logStampWarning("handleAddToCart", "No created product ID available");
         return;
       }
@@ -41,15 +46,29 @@ export function useStampCartActions() {
         hasCustomImage: !!selectedImageUrl,
       });
 
+      // Use a default base price (should ideally come from product data)
+      const unitPrice = 55.00;
+
+      console.log("[STAMP] Adding to cart with payload:", {
+        product_id: createdProductId,
+        quantity: 1,
+        product_name: productName,
+        unit_price: unitPrice,
+        custom_image_url: selectedImageUrl,
+        variant_id: null,
+      });
+
       try {
-        await addToCartMutation.mutateAsync({
+        const result = await addToCartMutation.mutateAsync({
           product_id: createdProductId,
           quantity: 1,
           product_name: productName,
-          unit_price: 0, // Will be calculated on backend
+          unit_price: unitPrice,
           custom_image_url: selectedImageUrl,
           variant_id: null,
         });
+
+        console.log("[STAMP] Add to cart result:", result);
 
         logStampInfo("handleAddToCart", "Product added to cart successfully", {
           productId: createdProductId,
@@ -67,6 +86,7 @@ export function useStampCartActions() {
           router.push("/cart");
         }
       } catch (error) {
+        console.error("[STAMP] Add to cart failed:", error);
         logStampError("handleAddToCart", error, {
           productId: createdProductId,
           buyNow,
