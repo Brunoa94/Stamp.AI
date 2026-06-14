@@ -40,7 +40,7 @@ const CART_ITEMS = [
 
 export function BrutalistNavbar() {
   return (
-    <header className="fixed top-0 left-0 right-0 w-full z-40 px-6 py-2 flex items-center justify-between text-ink bg-concrete/80 backdrop-blur-sm">
+    <header className="brutalist-navbar fixed top-0 left-0 right-0 w-full z-40 px-6 py-2 flex items-center justify-between text-ink bg-concrete/80 backdrop-blur-sm transition-colors duration-300">
       {/* Left: Logo with animated dot */}
       <div className="flex-1 flex justify-start items-center">
         <Link

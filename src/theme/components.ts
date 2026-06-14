@@ -46,6 +46,8 @@ export const componentThemes = {
     page: `${colors.backgroundGradient} min-h-screen`,
     section: `${colors.cardGradient} rounded-2xl p-8 ${colors.subtleShadow}`,
     grid: `grid gap-8 md:grid-cols-2`,
+    // Shared page content container - use across all pages for consistency
+    pageContent: `max-w-screen-2xl mx-auto w-full relative z-10`,
   },
 
   // Wizard upload area styles
@@ -115,7 +117,7 @@ export const componentThemes = {
   dashboard: {
     page: {
       wrapper: `min-h-screen flex flex-col relative`,
-      container: `flex-grow w-full mx-auto relative z-1`,
+      container: `flex-grow max-w-screen-2xl w-full mx-auto relative z-1`,
       grid: `grid grid-cols-1 lg:grid-cols-12 gap-8`,
       leftColumn: `lg:col-span-4 flex flex-col gap-8`,
       rightColumn: `lg:col-span-8 flex flex-col gap-8`,

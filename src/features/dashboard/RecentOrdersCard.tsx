@@ -6,11 +6,12 @@ import dynamic from "next/dynamic";
 import { ChevronRight } from "lucide-react";
 import { dashboardTheme } from "@/theme/components";
 import type { OrderWithItemsT } from "@/types/order";
-import { MemoizedOrderCard } from "@/features/orders/ui/OrderCard/OrderCard";
+import { MemoizedOrderCard } from "@/features/orders/ui/components/OrderCard/OrderCard";
 
 const OrderDetailsModal = dynamic(
-  () => import("@/features/orders/ui/orderDetails/OrderDetailsModal/OrderDetailsModal"),
-  { ssr: false }
+  () =>
+    import("@/features/orders/ui/components/OrderDetails/OrderDetailsModal/OrderDetailsModal"),
+  { ssr: false },
 );
 
 interface RecentOrdersCardProps {
@@ -20,7 +21,9 @@ interface RecentOrdersCardProps {
 const RECENT_ORDERS_LIMIT = 5;
 
 export function RecentOrdersCard({ orders }: RecentOrdersCardProps) {
-  const [selectedOrder, setSelectedOrder] = useState<OrderWithItemsT | null>(null);
+  const [selectedOrder, setSelectedOrder] = useState<OrderWithItemsT | null>(
+    null,
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const recentOrders = orders.slice(0, RECENT_ORDERS_LIMIT);

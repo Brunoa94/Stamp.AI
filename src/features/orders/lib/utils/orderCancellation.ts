@@ -1,15 +1,28 @@
 import { OrderWithItemsT } from "@/types/order";
+import { normalizeOrderStatus } from "@/features/orders/helpers/normalizeOrderStatus";
 
-const CANCELLABLE_ORDER_STATUSES = new Set(["", "created", "pending", "confirmed"]);
+type CancellableOrderStatusType = "" | "created" | "pending" | "confirmed";
 
-function normalizeStatus(value: string | null | undefined): string {
-  return (value ?? "").toLowerCase().replace(/[_-]/g, "").trim();
+const CANCELLABLE_ORDER_STATUSES: ReadonlySet<CancellableOrderStatusType> =
+    new Set([
+        "",
+        "created",
+        "pending",
+        "confirmed",
+    ]);
+
+function isCancellableOrderStatus(
+    status: string,
+): status is CancellableOrderStatusType {
+    return CANCELLABLE_ORDER_STATUSES.has(status as CancellableOrderStatusType);
 }
 
-export function canCancelOrder(order: Pick<OrderWithItemsT, "status">): boolean {
-  const orderStatus = normalizeStatus(order.status);
+export function canCancelOrder(
+    order: Pick<OrderWithItemsT, "status">,
+): boolean {
+    const orderStatus = normalizeOrderStatus(order.status);
 
-  if (orderStatus === "cancelled" || orderStatus === "canceled") return false;
+    if (orderStatus === "cancelled" || orderStatus === "canceled") return false;
 
-  return CANCELLABLE_ORDER_STATUSES.has(orderStatus);
+    return isCancellableOrderStatus(orderStatus);
 }

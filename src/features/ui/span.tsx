@@ -22,12 +22,10 @@ const spanVariants = {
 export type SpanVariant = keyof typeof spanVariants;
 type SpanTag = "span" | "p" | "div" | "footer" | "h6";
 
-interface SpanProps {
+interface SpanProps extends React.HTMLAttributes<HTMLElement> {
   as?: SpanTag;
   variant?: SpanVariant;
   unstyled?: boolean;
-  className?: string;
-  children?: React.ReactNode;
 }
 
 export function Span({
@@ -36,9 +34,13 @@ export function Span({
   unstyled = false,
   className,
   children,
+  ...props
 }: SpanProps) {
   return (
-    <Tag className={cn(!unstyled && spanVariants[variant], className)}>
+    <Tag
+      className={cn(!unstyled && spanVariants[variant], className)}
+      {...props}
+    >
       {children}
     </Tag>
   );

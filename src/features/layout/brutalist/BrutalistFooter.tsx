@@ -41,7 +41,7 @@ const FOOTER_LINKS = {
 
 export function BrutalistFooter() {
   return (
-    <footer className="bg-ink text-white pt-48 pb-12 px-8 relative overflow-hidden border-t border-white/10">
+    <footer className="brutalist-footer bg-ink text-white pt-48 pb-12 px-8 relative overflow-hidden border-t border-white/10 transition-colors duration-300">
       {/* Decorative blur blob */}
       <div className="absolute top-0 right-0 w-[40vw] h-[40vw] bg-brandPurple/5 blur-[150px] rounded-full" />
 
