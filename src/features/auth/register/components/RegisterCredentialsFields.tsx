@@ -1,8 +1,9 @@
 import { FormField } from "@/features/ui/form-field";
+import { Mail, Lock, User } from "lucide-react";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import type { RegisterI } from "@/schemas/auth";
 
-interface RegisterCredentialsFieldsProps {
+interface PropsI {
   register: UseFormRegister<RegisterI>;
   errors: FieldErrors<RegisterI>;
 }
@@ -10,26 +11,30 @@ interface RegisterCredentialsFieldsProps {
 export function RegisterCredentialsFields({
   register,
   errors,
-}: RegisterCredentialsFieldsProps) {
+}: PropsI) {
   return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <FormField
           id="firstName"
           label="First Name"
           placeholder="John"
+          required
           error={errors.firstName?.message}
           register={register("firstName")}
-          variant="auth-register"
+          variant="auth-login"
+          leadingIcon={<User className="h-5 w-5" />}
         />
 
         <FormField
           id="lastName"
           label="Last Name"
           placeholder="Doe"
+          required
           error={errors.lastName?.message}
           register={register("lastName")}
-          variant="auth-register"
+          variant="auth-login"
+          leadingIcon={<User className="h-5 w-5" />}
         />
       </div>
 
@@ -37,21 +42,25 @@ export function RegisterCredentialsFields({
         id="email"
         label="Email Address"
         type="email"
-        placeholder="john@example.com"
+        placeholder="name@company.com"
+        required
         error={errors.email?.message}
         register={register("email")}
-        variant="auth-register"
+        variant="auth-login"
+        leadingIcon={<Mail className="h-5 w-5" />}
       />
 
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <FormField
           id="password"
           label="Password"
           type="password"
           placeholder="••••••••"
+          required
           error={errors.password?.message}
           register={register("password")}
-          variant="auth-register"
+          variant="auth-login"
+          leadingIcon={<Lock className="h-5 w-5" />}
         />
 
         <FormField
@@ -59,9 +68,11 @@ export function RegisterCredentialsFields({
           label="Confirm Password"
           type="password"
           placeholder="••••••••"
+          required
           error={errors.confirmPassword?.message}
           register={register("confirmPassword")}
-          variant="auth-register"
+          variant="auth-login"
+          leadingIcon={<Lock className="h-5 w-5" />}
         />
       </div>
     </div>

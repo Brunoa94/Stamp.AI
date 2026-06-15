@@ -214,6 +214,13 @@
       inset 0 0 0 1px rgba(255, 255, 255, 0.25);
   }
 
+  /* Auth button gradient hover effect */
+  .btn-gradient:hover {
+    background: linear-gradient(135deg, #0a0a0a, #a855f7);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(168, 85, 247, 0.3);
+  }
+
   /* Homepage section arrival animation (triggered when scroll settles) */
   .section-arrival {
     will-change: transform, opacity, filter;

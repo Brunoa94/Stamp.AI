@@ -3,16 +3,14 @@
 import { useState } from "react";
 import { PasswordResetForm } from "./passwordResetForm/PasswordResetForm";
 import { Button } from "@/features/ui/button";
+import { Span } from "@/features/ui/span";
 
-interface InlinePasswordResetProps {
+interface PropsI {
   className?: string;
   buttonClassName?: string;
 }
 
-export function InlinePasswordReset({
-  className,
-  buttonClassName,
-}: InlinePasswordResetProps) {
+export function InlinePasswordReset({ className }: PropsI) {
   const [showPasswordReset, setShowPasswordReset] = useState(false);
 
   const handleClose = () => {
@@ -25,12 +23,14 @@ export function InlinePasswordReset({
       <div className="flex justify-end">
         <Button
           type="button"
-          variant="ghost"
+          variant="link"
           size="sm"
-          className={buttonClassName ?? "text-sm p-2 h-auto"}
+          className="h-auto p-0"
           onClick={() => setShowPasswordReset(!showPasswordReset)}
         >
-          Forgot password?
+          <Span variant="default" className="text-purple-500 hover:underline">
+            Forgot password?
+          </Span>
         </Button>
       </div>
 
