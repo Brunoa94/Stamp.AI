@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import Link from "next/link";
 import dynamic from "next/dynamic";
-import { ChevronRight } from "lucide-react";
 import { dashboardTheme } from "@/theme/components";
-import { ordersCardTheme } from "@/features/orders/styles/ordersTheme";
+import { BrutalistCard } from "./BrutalistCard";
+import { RecentOrdersCardHeader } from "./RecentOrders/RecentOrdersCardHeader";
+import { RecentOrdersEmptyState } from "./RecentOrders/RecentOrdersEmptyState";
+import { RecentOrderItem } from "./RecentOrders/RecentOrderItem";
 import type { OrderWithItemsT } from "@/types/order";
-import { MemoizedOrderCard } from "@/features/orders/ui/components/OrderCard/OrderCard";
 
 const OrderDetailsModal = dynamic(
   () =>
@@ -15,20 +15,19 @@ const OrderDetailsModal = dynamic(
   { ssr: false },
 );
 
-interface RecentOrdersCardProps {
+interface PropsI {
   orders: OrderWithItemsT[];
 }
 
 const RECENT_ORDERS_LIMIT = 5;
 
-export function RecentOrdersCard({ orders }: RecentOrdersCardProps) {
+export function RecentOrdersCard({ orders }: PropsI) {
   const [selectedOrder, setSelectedOrder] = useState<OrderWithItemsT | null>(
     null,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const recentOrders = orders.slice(0, RECENT_ORDERS_LIMIT);
-  const hasMore = orders.length > RECENT_ORDERS_LIMIT;
 
   const handleOrderClick = useCallback((order: OrderWithItemsT) => {
     setSelectedOrder(order);
@@ -42,37 +41,23 @@ export function RecentOrdersCard({ orders }: RecentOrdersCardProps) {
 
   return (
     <>
-      <section className={ordersCardTheme.card}>
-        <div className={ordersCardTheme.header}>
-          <h4 className={dashboardTheme.card.sectionTitle}>Recent Orders</h4>
-        </div>
+      <BrutalistCard accentColor="green">
+        <RecentOrdersCardHeader ordersCount={recentOrders.length} />
 
         {recentOrders.length === 0 ? (
-          <p className={ordersCardTheme.emptyState}>
-            No recent orders yet. Start a new design to place your first order.
-          </p>
+          <RecentOrdersEmptyState />
         ) : (
-          <div className="space-y-4">
+          <div className={dashboardTheme.orders.list}>
             {recentOrders.map((order) => (
-              <MemoizedOrderCard
+              <RecentOrderItem
                 key={order.id}
                 order={order}
                 onClick={handleOrderClick}
               />
             ))}
-
-            {hasMore && (
-              <Link
-                href="/orders"
-                className="flex items-center justify-center gap-1.5 w-full pt-2 text-sm font-medium text-[#7C3AED] hover:text-[#6D28D9] transition-colors"
-              >
-                View all {orders.length} order{orders.length !== 1 ? "s" : ""}
-                <ChevronRight className="w-4 h-4" />
-              </Link>
-            )}
           </div>
         )}
-      </section>
+      </BrutalistCard>
 
       <OrderDetailsModal
         order={selectedOrder}

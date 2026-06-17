@@ -141,76 +141,130 @@ export const componentThemes = {
   // Navbar styles
   navbar: navbarDesignSystem,
 
-  // Dashboard styles
+  // Dashboard styles (Brutalist Superdesign)
   dashboard: {
     page: {
-      wrapper: `min-h-screen flex flex-col relative`,
-      container: `flex-grow max-w-screen-2xl w-full mx-auto relative z-1`,
-      grid: `grid grid-cols-1 lg:grid-cols-12 gap-8`,
-      leftColumn: `lg:col-span-4 flex flex-col gap-8`,
-      rightColumn: `lg:col-span-8 flex flex-col gap-8`,
-      sideDivider:
-        `fixed top-0 bottom-0 w-px bg-[#E8E0F0]/60 z-40 hidden xl:block pointer-events-none`,
-      sideDividerLeft: `left-12`,
-      sideDividerRight: `right-12`,
+      wrapper: `min-h-screen flex flex-col relative bg-concrete`,
+      container:
+        `flex-grow w-full max-w-7xl mx-auto px-6 md:px-12 py-8 md:py-12 relative z-10`,
+      grid: `grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8`,
+      leftColumn: `lg:col-span-4 flex flex-col gap-6`,
+      rightColumn: `lg:col-span-8 flex flex-col gap-6`,
     },
     header: {
-      container: `mb-12`,
+      container: `mb-10 md:mb-12`,
+      accentBar: `h-1 w-20 md:w-24 bg-purple mb-4`,
       title:
-        `font-heading text-[clamp(2.25rem,4vw,3.25rem)] leading-[0.9] font-medium uppercase bg-linear-to-r from-[#1A2340] via-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent mb-2`,
+        `font-anton text-6xl md:text-8xl uppercase tracking-tighter leading-none text-ink`,
+      titleAccent: `text-purple`,
       metaRow:
-        `flex flex-wrap items-center gap-4 text-gray-500 uppercase tracking-widest text-xs font-bold`,
-      metaDot: `w-1 h-1 bg-gray-300 rounded-full`,
+        `flex flex-wrap items-center gap-3 mt-3 text-[10px] font-bold tracking-[0.3em] uppercase opacity-30`,
+      metaDivider: `text-ink/20`,
     },
     card: {
-      base: `glass-card p-6 rounded-lg`,
-      title: `text-xs font-bold uppercase tracking-widest text-gray-400`,
-      sectionTitle: `text-3xl font-heading font-bold uppercase`,
+      base: `brutalist-card p-8 md:p-10 border-l-4 transition-all duration-300`,
+      basePurple:
+        `brutalist-card p-8 md:p-10 border-l-4 border-l-purple transition-all duration-300`,
+      baseCyan:
+        `brutalist-card p-8 md:p-10 border-l-4 border-l-cyan transition-all duration-300`,
+      baseOrange:
+        `brutalist-card p-8 md:p-10 border-l-4 border-l-orange transition-all duration-300`,
+      baseGreen:
+        `brutalist-card p-8 md:p-10 border-l-4 border-l-green transition-all duration-300`,
+      title:
+        `font-anton text-3xl md:text-4xl uppercase tracking-tighter text-ink mb-2`,
+      subtitle:
+        `text-[8px] font-bold tracking-[0.3em] uppercase opacity-30 mb-6`,
+      label: `text-[9px] font-bold tracking-[0.25em] uppercase opacity-40`,
     },
     profile: {
       avatarWrap:
-        `w-16 h-16 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] p-1 shadow-lg`,
-      avatar: `w-full h-full rounded-md bg-white object-cover`,
-      name: `text-xl font-heading font-bold uppercase text-gray-900`,
-      email: `text-sm text-gray-500`,
+        `w-16 h-16 md:w-20 md:h-20 rounded-lg bg-purple/10 border-2 border-purple/20 flex items-center justify-center overflow-hidden`,
+      avatar: `w-full h-full object-cover`,
+      verifiedBadge:
+        `absolute -bottom-1 -right-1 w-6 h-6 bg-purple rounded-full flex items-center justify-center text-white text-xs border-2 border-white`,
+      name: `font-anton text-2xl md:text-3xl uppercase tracking-tight text-ink`,
+      email: `text-[10px] tracking-[0.2em] uppercase opacity-30 mt-1`,
       editButton:
-        `w-full py-3 bg-white/50 hover:bg-white text-gray-800 font-bold uppercase tracking-widest text-xs rounded-lg flex items-center justify-center gap-2 border border-gray-100 transition-all`,
+        `w-full mt-6 py-3 border border-ink/10 hover:border-purple hover:bg-purple/5 font-anton text-xs tracking-widest uppercase transition-all flex items-center justify-center gap-2`,
     },
     performance: {
-      rowLabel: `text-sm font-bold uppercase text-gray-600`,
-      rowValue: `text-xl font-heading font-bold text-gray-900`,
-      progressTrack: `w-full bg-gray-200/50 h-1.5 rounded-full overflow-hidden`,
+      metricRow: `flex items-end justify-between mb-3`,
+      metricLabel: `text-[8px] font-bold tracking-[0.3em] uppercase opacity-30`,
+      metricValue:
+        `font-anton text-5xl md:text-6xl uppercase tracking-tighter text-ink`,
+      progressBar: `dashboard-progress-bar mt-3`,
+      progressFill: `dashboard-progress-fill`,
     },
     credits: {
-      iconWrap:
-        `w-12 h-12 rounded-lg bg-gradient-to-br from-[#7C3AED]/10 to-[#06B6D4]/10 flex items-center justify-center border border-white/50 shadow-inner`,
+      header: `flex items-center gap-3 mb-6`,
+      icon: `w-6 h-6 text-cyan`,
+      balanceRow: `mb-6`,
       balanceLabel:
-        `text-[10px] font-bold uppercase tracking-widest text-gray-400 block mb-0.5`,
-      balanceValue: `text-3xl font-heading font-extrabold text-gray-900`,
-      balanceUnit: `text-xs font-bold text-gray-400 uppercase tracking-widest`,
+        `text-[8px] font-bold tracking-[0.3em] uppercase opacity-30 block mb-2`,
+      balanceValue:
+        `font-anton text-5xl md:text-6xl uppercase tracking-tighter text-ink`,
       usageRow:
-        `flex justify-between items-center text-[10px] font-bold uppercase tracking-widest`,
-      usageTrack: `w-full bg-gray-200/50 h-1.5 rounded-full overflow-hidden`,
+        `flex justify-between items-center text-[9px] font-bold tracking-[0.25em] uppercase opacity-40 mb-2`,
+      usageLabel: `opacity-40`,
+      usageValue: `text-ink`,
+      progressBar: `dashboard-progress-bar mb-6`,
+      progressFill:
+        `dashboard-progress-fill bg-gradient-to-r from-purple to-cyan`,
       actionPrimary:
-        `py-3 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] text-white font-bold uppercase tracking-widest text-[9px] rounded-lg shadow-lg shadow-purple-500/20 transition-all`,
+        `w-full py-3 bg-purple hover:bg-purple/90 text-white font-anton text-xs tracking-widest uppercase transition-all`,
       actionSecondary:
-        `py-3 border border-gray-200 text-gray-600 font-bold uppercase tracking-widest text-[9px] rounded-lg hover:bg-white transition-colors`,
+        `w-full py-3 border border-ink/10 hover:border-purple hover:bg-purple/5 font-anton text-xs tracking-widest uppercase transition-all mt-2`,
     },
     quickAccess: {
+      grid: `grid grid-cols-2 gap-4`,
       item:
-        `flex flex-col items-center justify-center p-4 bg-white/40 hover:bg-white border border-white/50 rounded-lg transition-all group`,
-      itemIcon: `text-2xl mb-2 text-gray-400 group-hover:text-[#7C3AED]`,
-      itemLabel: `text-[10px] font-bold uppercase tracking-wider text-gray-600`,
+        `flex flex-col items-center justify-center p-6 border border-ink/10 hover:border-purple hover:bg-purple/5 transition-all group`,
+      itemIcon:
+        `w-8 h-8 mb-3 text-ink/30 group-hover:text-purple transition-colors`,
+      itemLabel:
+        `text-[9px] font-bold tracking-[0.25em] uppercase opacity-40 group-hover:opacity-100 transition-opacity`,
     },
     cta: {
       card:
-        `bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] p-8 md:p-12 rounded-lg text-white flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl`,
-      title: `text-3xl md:text-4xl font-heading font-extrabold uppercase mb-4`,
-      description: `text-white/80 font-medium`,
+        `dashboard-cta-gradient p-8 md:p-12 text-white flex flex-col items-start justify-between gap-6 min-h-[280px]`,
+      title:
+        `font-anton text-4xl md:text-5xl uppercase tracking-tighter leading-tight mb-3`,
+      description: `text-sm tracking-wide uppercase opacity-80 mb-6`,
       button:
-        `whitespace-nowrap px-10 py-5 bg-white text-[#7C3AED] font-heading font-extrabold uppercase tracking-widest rounded-lg shadow-xl hover:scale-105 active:scale-95 transition-all`,
+        `px-8 py-3 bg-white text-ink font-anton text-xs tracking-widest uppercase hover:scale-105 active:scale-95 transition-all`,
     },
-    orders: ordersCardTheme,
+    orders: {
+      card: `brutalist-card p-8 md:p-10 border-l-4 border-l-green flex-grow`,
+      header: `flex justify-between items-center mb-6`,
+      title:
+        `font-anton text-3xl md:text-4xl uppercase tracking-tighter text-ink`,
+      badge:
+        `text-[8px] font-bold tracking-[0.3em] uppercase px-3 py-1 bg-green/10 text-green border border-green/20`,
+      viewAll:
+        `text-[10px] font-bold tracking-[0.2em] uppercase text-purple hover:text-purple/70 transition-colors`,
+      list: `space-y-4`,
+      item:
+        `flex items-center justify-between p-4 border border-ink/5 hover:border-purple/20 hover:bg-purple/5 transition-all group`,
+      itemLeft: `flex items-center gap-4`,
+      itemImageWrap:
+        `w-12 h-12 bg-concrete border border-ink/5 flex items-center justify-center`,
+      itemImage: `w-8 h-8 object-contain`,
+      itemDetails: `flex flex-col`,
+      itemId: `font-anton text-sm uppercase tracking-tight text-ink`,
+      itemMeta: `text-[9px] tracking-[0.2em] uppercase opacity-30`,
+      itemRight: `flex flex-col items-end gap-2`,
+      itemPrice: `font-anton text-lg uppercase tracking-tight text-ink`,
+      statusBadge:
+        `text-[9px] font-bold tracking-widest uppercase px-2 py-1 border`,
+      statusDelivered: `bg-green/5 text-green border-green/20`,
+      statusShipped: `bg-cyan/5 text-cyan border-cyan/20`,
+      statusProcessing: `bg-orange/5 text-orange border-orange/20`,
+      statusPending: `bg-purple/5 text-purple border-purple/20`,
+      statusCancelled: `bg-red/5 text-red border-red/20`,
+      emptyState:
+        `text-[10px] tracking-[0.2em] uppercase opacity-30 text-center py-8`,
+    },
   },
 
   // Footer styles
