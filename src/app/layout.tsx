@@ -13,7 +13,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import { SupabaseAuthProvider } from "@/providers/SupabaseAuthProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
-import { BrutalistNavbar } from "@/features/layout/brutalist/BrutalistNavbar";
+import { ModernTopNavbar } from "@/features/layout/brutalist/ModernTopNavbar";
 import { BrutalistFooter } from "@/features/layout/brutalist/BrutalistFooter";
 import { GrainOverlay } from "@/features/layout/brutalist/GrainOverlay";
 import { ScrollToTop } from "@/components/ScrollToTop";
@@ -107,8 +107,8 @@ export default function RootLayout({
           <SupabaseAuthProvider>
             <QueryProvider>
               <ScrollToTop />
-              <BrutalistNavbar />
-              <main>{children}</main>
+              <ModernTopNavbar />
+              <main className="pt-32">{children}</main>
               <BrutalistFooter />
               <Toaster />
             </QueryProvider>
