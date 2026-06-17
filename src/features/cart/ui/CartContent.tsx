@@ -22,7 +22,7 @@ export function CartContent() {
   const router = useRouter();
   const updateCartItem = useUpdateCartItem();
   const removeCartItem = useRemoveCartItem();
-  const { subtotal, itemCount, cart, isLoading, error } = useCartSummary();
+  const { itemCount, cart, isLoading, error } = useCartSummary();
   const { handleError } = useErrorHandler();
 
   if (error) handleError(error);
@@ -85,7 +85,7 @@ export function CartContent() {
           ))}
 
           <Link
-            href="/create"
+            href="/stamp"
             className="inline-flex items-center gap-3 text-[10px] font-bold tracking-[0.4em] uppercase opacity-40 hover:opacity-100 hover:text-brandPurple transition-all"
           >
             <ArrowLeft className="w-4 h-4" />

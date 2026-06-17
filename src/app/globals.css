@@ -17,7 +17,7 @@
   --color-cyan: #06b6d4;
   --color-orange: #fb923c;
   --color-ink: #0a0a0a;
-  --color-concrete: #f2f2f2;
+  --color-concrete: #fafafa;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -58,7 +58,7 @@
 
 :root {
   --radius: 0.625rem;
-  --background: #f8f8fa;
+  --background: #fafafa;
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
@@ -137,16 +137,7 @@
   }
   body {
     @apply text-foreground font-sans;
-    background: linear-gradient(
-      135deg,
-      #f5f3ff 0%,
-      #fef3f9 25%,
-      #ecfeff 50%,
-      #fef3f9 75%,
-      #f5f3ff 100%
-    );
-    background-size: 400% 400%;
-    animation: subtle-gradient-shift 10s ease-in-out infinite;
+    background: #fafafa;
   }
 
   /* Homepage scroll lock during section navigation */
@@ -1827,6 +1818,38 @@
 
 .brutalist-card:hover {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Gradient left border - purple to cyan */
+.border-l-gradient-purple-cyan {
+  border-left: none !important;
+  position: relative;
+}
+
+.border-l-gradient-purple-cyan::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, #9333ea, #06b6d4);
+}
+
+/* Gradient left border - orange to gold */
+.border-l-gradient-orange-gold {
+  border-left: none !important;
+  position: relative;
+}
+
+.border-l-gradient-orange-gold::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, #fb923c, #d4a76a);
 }
 
 /* Progress bar fill */

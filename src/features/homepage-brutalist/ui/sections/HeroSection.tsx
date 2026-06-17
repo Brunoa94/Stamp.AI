@@ -73,7 +73,7 @@ export function HeroSection() {
               variant="default"
               className="cta-gradient-border h-auto rounded-none bg-ink px-10 py-4 font-anton text-xl tracking-widest uppercase hover:scale-105 transition-all duration-300 shadow-[8px_8px_0px_rgba(10,10,10,0.15)] text-white text-center"
             >
-              <Link href="/create">Start Creating</Link>
+              <Link href="/stamp">Start Creating</Link>
             </Button>
             <Button
               asChild

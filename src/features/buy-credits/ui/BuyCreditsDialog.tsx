@@ -2,9 +2,9 @@
 
 import { useCallback } from "react";
 import { Modal } from "@/features/ui/modal/Modal";
-import { useBuyCredits } from "./useBuyCredits";
-import { CreditSelectionStep } from "./selection";
-import { CreditPaymentStep } from "./payment";
+import { useBuyCredits } from "../lib/useBuyCredits";
+import { CreditSelectionStep } from "./selection/CreditSelectionStep";
+import { CreditPaymentStep } from "./payment/CreditPaymentStep";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 interface BuyCreditsDialogProps {

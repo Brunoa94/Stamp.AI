@@ -72,7 +72,7 @@ export function CtaSection() {
             variant="default"
             className="cta-gradient-border h-auto rounded-none bg-ink px-12 py-5 font-anton text-xl md:text-2xl tracking-widest uppercase hover:scale-105 transition-all duration-300 shadow-[8px_8px_0px_rgba(255,255,255,0.1)] text-white flex items-center gap-3 group"
           >
-            <Link href="/create">
+            <Link href="/stamp">
               <Span>Start Creating</Span>
               <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
             </Link>

@@ -7,7 +7,7 @@ test.describe('Debug Navigation Issue', () => {
     // Enable console logging
     page.on('console', msg => console.log('PAGE LOG:', msg.text()));
 
-    await page.goto('/create-v2', { waitUntil: 'networkidle' });
+    await page.goto('/stamp', { waitUntil: 'networkidle' });
     await page.waitForTimeout(2000);
 
     console.log('\n=== INITIAL STATE ===');
@@ -168,7 +168,7 @@ test.describe('Debug Navigation Issue', () => {
   });
 
   test('should check if CSS is loading correctly', async ({ page }) => {
-    await page.goto('/create-v2', { waitUntil: 'networkidle' });
+    await page.goto('/stamp', { waitUntil: 'networkidle' });
     await page.waitForTimeout(2000);
 
     const cssCheck = await page.evaluate(() => {

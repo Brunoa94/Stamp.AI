@@ -31,7 +31,7 @@ export function EmptyCart() {
 
       {/* Continue browsing link */}
       <Button asChild variant="brutalist-ghost" className="gap-3">
-        <Link href="/create">
+        <Link href="/stamp">
           <ArrowLeft className="w-4 h-4" />
           <Span variant="default" className="tracking-[0.4em]">Start Creating Terminal</Span>
         </Link>

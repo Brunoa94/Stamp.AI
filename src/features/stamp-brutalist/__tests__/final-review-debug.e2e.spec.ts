@@ -12,7 +12,7 @@ test.describe('Final Review Image Debug', () => {
       console.log('BROWSER:', text);
     });
 
-    await page.goto('/create-v2', { waitUntil: 'networkidle' });
+    await page.goto('/stamp', { waitUntil: 'networkidle' });
     await page.waitForTimeout(2000);
 
     console.log('\n=== NAVIGATING TO FINAL REVIEW ===');
@@ -107,7 +107,7 @@ test.describe('Final Review Image Debug', () => {
   });
 
   test('should check query cache for product data', async ({ page }) => {
-    await page.goto('/create-v2', { waitUntil: 'networkidle' });
+    await page.goto('/stamp', { waitUntil: 'networkidle' });
     await page.waitForTimeout(2000);
 
     // Inject code to inspect React Query cache

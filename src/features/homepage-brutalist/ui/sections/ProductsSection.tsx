@@ -65,7 +65,7 @@ export function ProductsSection() {
           variant="ghost"
           className="group h-auto rounded-none p-0 font-anton text-2xl uppercase tracking-wider hover:text-brandPurple hover:bg-transparent"
         >
-          <Link href="/create">
+          <Link href="/stamp">
             <Span>View Full Catalog</Span>
             <Span className="inline-block group-hover:translate-x-2 transition-transform">
               -

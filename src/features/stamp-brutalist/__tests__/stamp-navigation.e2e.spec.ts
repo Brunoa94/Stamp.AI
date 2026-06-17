@@ -7,8 +7,8 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Stamp Flow Navigation E2E', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to the create-v2 page
-    await page.goto('/create-v2');
+    // Navigate to the stamp page
+    await page.goto('/stamp');
 
     // Wait for the page to be fully loaded
     await page.waitForLoadState('networkidle');
