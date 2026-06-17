@@ -15,12 +15,26 @@ export function RecentOrderItem({ order, onClick }: PropsI) {
   const totalAmount = order.total_amount || 0;
   const productName = firstItem?.product_name || "CUSTOM DESIGN";
 
+  // Get status color for hover border
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "delivered":
+        return "hover:bg-green/10 hover:border-l-4 hover:border-l-green";
+      case "shipped":
+        return "hover:bg-cyan/10 hover:border-l-4 hover:border-l-cyan";
+      case "processing":
+        return "hover:bg-orange/10 hover:border-l-4 hover:border-l-orange";
+      default:
+        return "hover:bg-purple/10 hover:border-l-4 hover:border-l-purple";
+    }
+  };
+
   return (
     <div
       onClick={() => onClick(order)}
-      className="flex items-center justify-between p-4 border-b border-ink/5 hover:bg-ink/2 transition-all cursor-pointer group"
+      className={`flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 group cursor-pointer hover:bg-opacity-10 transition-all border-l-0 ${getStatusColor(order.status)}`}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-6">
         <RecentOrderItemThumbnail
           imageUrl={firstItem?.custom_image_url}
           productName={productName}
@@ -32,10 +46,10 @@ export function RecentOrderItem({ order, onClick }: PropsI) {
         />
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-8 justify-between">
         <RecentOrderItemPrice amount={totalAmount} />
         <RecentOrderItemStatus status={order.status} />
-        <ChevronRight className="w-4 h-4 text-ink/20 group-hover:text-ink/40 transition-colors" />
+        <ChevronRight className="w-5 h-5 text-ink/20 group-hover:text-current transition-all" />
       </div>
     </div>
   );

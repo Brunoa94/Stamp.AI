@@ -2,8 +2,6 @@
 
 import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
-import { dashboardTheme } from "@/theme/components";
-import { BrutalistCard } from "./BrutalistCard";
 import { RecentOrdersCardHeader } from "./RecentOrders/RecentOrdersCardHeader";
 import { RecentOrdersEmptyState } from "./RecentOrders/RecentOrdersEmptyState";
 import { RecentOrderItem } from "./RecentOrders/RecentOrderItem";
@@ -41,13 +39,17 @@ export function RecentOrdersCard({ orders }: PropsI) {
 
   return (
     <>
-      <BrutalistCard accentColor="green">
-        <RecentOrdersCardHeader ordersCount={recentOrders.length} />
+      <section className="brutalist-card border-l-4 border-green">
+        <div className="p-8 border-b border-ink/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <RecentOrdersCardHeader ordersCount={recentOrders.length} />
+        </div>
 
         {recentOrders.length === 0 ? (
-          <RecentOrdersEmptyState />
+          <div className="p-20">
+            <RecentOrdersEmptyState />
+          </div>
         ) : (
-          <div className={dashboardTheme.orders.list}>
+          <div className="divide-y divide-ink/5">
             {recentOrders.map((order) => (
               <RecentOrderItem
                 key={order.id}
@@ -57,7 +59,7 @@ export function RecentOrdersCard({ orders }: PropsI) {
             ))}
           </div>
         )}
-      </BrutalistCard>
+      </section>
 
       <OrderDetailsModal
         order={selectedOrder}

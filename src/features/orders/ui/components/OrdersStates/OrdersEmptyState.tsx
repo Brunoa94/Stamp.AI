@@ -17,7 +17,7 @@ export function OrdersEmptyState({
   const isNoMatch = variant === "no-match";
 
   return (
-    <div className="flex items-center justify-center min-h-100">
+    <div className="flex items-center justify-center min-h-100 mb-24">
       <div className="bg-linear-to-br from-gray-50 via-slate-50 to-gray-100 border border-gray-200 rounded-2xl p-12 max-w-md text-center space-y-6">
         <div className="flex justify-center">
           <div className="bg-linear-to-br from-slate-600 to-gray-700 p-6 rounded-full">
