@@ -1,15 +1,17 @@
 "use client";
 
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { theme } from "@/theme";
+import { PageContainer } from "@/shared/ui/PageContainer";
 import { ProfileContent } from "@/features/profile/ui/ProfileContent";
 
 export default function ProfilePage() {
   return (
     <ProtectedRoute>
-      <main className={theme.page.container}>
-        <ProfileContent />
-      </main>
+      <section className="relative z-10 px-8 lg:px-24">
+        <PageContainer>
+          <ProfileContent />
+        </PageContainer>
+      </section>
     </ProtectedRoute>
   );
 }

@@ -61,7 +61,8 @@ export const componentThemes = {
     section: `${colors.cardGradient} rounded-2xl p-8 ${colors.subtleShadow}`,
     grid: `grid gap-8 md:grid-cols-2`,
     // Shared page content container - use across all pages for consistency
-    pageContent: `max-w-screen-2xl mx-auto w-full relative z-10`,
+    // Using w-full to take full width, with right padding accounting for the navigation
+    pageContent: `w-full relative z-10`,
   },
 
   // Wizard upload area styles
@@ -451,7 +452,7 @@ export const componentThemes = {
   checkout: {
     page: {
       container: "min-h-screen relative rounded-2xl pb-8",
-      mainContent: "max-w-11/12 mx-auto pb-16",
+      mainContent: "pb-16",
       grid: "flex flex-col lg:flex-row gap-10",
       formsColumn: "flex-1 space-y-8 lg:w-7/12",
       summaryColumn: "lg:w-5/12",
@@ -566,8 +567,7 @@ export const componentThemes = {
   // Profile page styles
   profile: {
     page: {
-      container:
-        `flex-grow w-full max-w-5xl mx-auto pt-32 pb-24 px-12 md:px-24`,
+      container: `flex-grow w-full max-w-5xl mx-auto pb-24 px-12 md:px-24`,
     },
     header: {
       card: `glass-card p-10 mb-10 rounded-3xl`,

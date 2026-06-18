@@ -17,15 +17,21 @@ export function OrdersEmptyState({
   const isNoMatch = variant === "no-match";
 
   return (
-    <div className="flex items-center justify-center min-h-100 mb-24">
+    <div className="flex items-center justify-center min-h-screen">
       <div className="w-full max-w-xl bg-white/40 backdrop-blur-md rounded-[3rem] border border-white/60 p-16 flex flex-col items-center text-center shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)] relative">
         {/* Icon Container */}
         <div className="w-24 h-24 sm:w-32 sm:h-32 bg-ink rounded-full flex items-center justify-center mb-10 shadow-xl relative group">
           <div className="absolute inset-0 rounded-full bg-cyan/10 scale-125 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           {isNoMatch ? (
-            <Filter className="w-12 h-12 sm:w-16 sm:h-16 text-cyan relative z-10" style={{ filter: 'drop-shadow(0 0 8px rgba(34, 211, 238, 0.6))' }} />
+            <Filter
+              className="w-12 h-12 sm:w-16 sm:h-16 text-cyan relative z-10"
+              style={{ filter: "drop-shadow(0 0 8px rgba(34, 211, 238, 0.6))" }}
+            />
           ) : (
-            <ShoppingBag className="w-12 h-12 sm:w-16 sm:h-16 text-cyan relative z-10" style={{ filter: 'drop-shadow(0 0 8px rgba(34, 211, 238, 0.6))' }} />
+            <ShoppingBag
+              className="w-12 h-12 sm:w-16 sm:h-16 text-cyan relative z-10"
+              style={{ filter: "drop-shadow(0 0 8px rgba(34, 211, 238, 0.6))" }}
+            />
           )}
         </div>
 

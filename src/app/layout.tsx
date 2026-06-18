@@ -108,7 +108,7 @@ export default function RootLayout({
             <QueryProvider>
               <ScrollToTop />
               <ModernTopNavbar />
-              <main className="pt-32">{children}</main>
+              <main className="pt-20 min-h-screen">{children}</main>
               <BrutalistFooter />
               <Toaster />
             </QueryProvider>

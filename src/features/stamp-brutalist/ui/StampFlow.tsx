@@ -77,7 +77,7 @@ export const StampFlow = memo(function StampFlow() {
         <StampIconSidebar />
 
         {/* Main Snap Container */}
-        <main id="stamp-snap-root" className="stamp-snap-container flex-1">
+        <div id="stamp-snap-root" className="stamp-snap-container flex-1">
           {/* Step 1: Upload */}
           <UploadSection />
 
@@ -101,7 +101,7 @@ export const StampFlow = memo(function StampFlow() {
 
           {/* Step 8: Final Review */}
           <FinalReviewSection />
-        </main>
+        </div>
       </div>
     </>
   );

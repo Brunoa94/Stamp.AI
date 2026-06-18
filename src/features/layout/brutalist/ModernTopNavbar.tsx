@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ShoppingBag, User, LogOut, Menu, X } from "lucide-react";
 import { useUser, useLogout } from "@/hooks/useAuth";
 import { useState } from "react";
+import { Login } from "@/features/auth/login/Login";
 
 export function ModernTopNavbar() {
   const { data: user } = useUser();
@@ -29,16 +30,16 @@ export function ModernTopNavbar() {
           </span>
         </Link>
 
-        {/* Center CTA Button - Hidden on mobile */}
+        {/* Center CTA Button - Hidden on mobile/tablet */}
         <Link
           href="/stamp"
-          className="hidden md:block gradient-badge px-10 py-3 rounded-lg font-anton text-white text-lg uppercase tracking-widest"
+          className="hidden lg:block gradient-badge px-10 py-3 rounded-lg font-anton text-white text-lg uppercase tracking-widest"
         >
           STAMP IT
         </Link>
 
         {/* Right Side - Desktop Icons */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden lg:flex items-center gap-4">
           <Link
             href="/cart"
             className="action-btn-refined btn-glow-cyan icon-glow-cyan flex items-center border p-3.5 rounded-xl group hover:px-6"
@@ -49,15 +50,22 @@ export function ModernTopNavbar() {
             </span>
           </Link>
 
-          <Link
-            href={user ? "/dashboard" : "/auth"}
-            className="action-btn-refined btn-glow-purple icon-glow-purple flex items-center border p-3.5 rounded-xl group hover:px-6"
-          >
-            <User className="w-5 h-5 text-purple group-hover:scale-110 transition-transform duration-300" />
-            <span className="btn-text text-xs font-bold uppercase tracking-widest text-purple group-hover:text-white">
-              {user ? "ACCOUNT" : "LOGIN"}
-            </span>
-          </Link>
+          {user ? (
+            <Link
+              href="/dashboard"
+              className="action-btn-refined btn-glow-purple icon-glow-purple flex items-center border p-3.5 rounded-xl group hover:px-6"
+            >
+              <User className="w-5 h-5 text-purple group-hover:scale-110 transition-transform duration-300" />
+              <span className="btn-text text-xs font-bold uppercase tracking-widest text-purple group-hover:text-white">
+                ACCOUNT
+              </span>
+            </Link>
+          ) : (
+            <Login
+              variant="brutalist"
+              className="action-btn-refined btn-glow-purple icon-glow-purple flex items-center border p-3.5 rounded-xl group hover:px-6"
+            />
+          )}
 
           {user && (
             <button
@@ -72,10 +80,10 @@ export function ModernTopNavbar() {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile/Tablet Menu Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 text-ink"
+          className="lg:hidden p-2 text-ink"
           aria-label="Toggle menu"
         >
           {mobileMenuOpen ? (
@@ -86,8 +94,8 @@ export function ModernTopNavbar() {
         </button>
       </header>
 
-      {/* Desktop Navigation Menu - Below Header */}
-      <nav className="hidden md:flex fixed top-32 right-10 z-40 flex-col gap-5 items-end">
+      {/* Desktop Navigation Menu - Below Header (Desktop only - lg breakpoint) */}
+      <nav className="hidden lg:flex fixed top-32 right-10 z-40 flex-col gap-5 items-end">
         <Link
           href="/"
           className="nav-link-underline font-anton text-lg uppercase tracking-[0.2em] text-ink"
@@ -114,9 +122,9 @@ export function ModernTopNavbar() {
         </Link>
       </nav>
 
-      {/* Mobile Menu Drawer */}
+      {/* Mobile/Tablet Menu Drawer */}
       <div
-        className={`md:hidden fixed top-20 left-0 right-0 bg-concrete border-b border-ink/5 z-40 transition-all duration-300 ${
+        className={`lg:hidden fixed top-20 left-0 right-0 bg-concrete border-b border-ink/5 z-40 transition-all duration-300 ${
           mobileMenuOpen
             ? "max-h-screen opacity-100"
             : "max-h-0 opacity-0 overflow-hidden"
@@ -168,16 +176,25 @@ export function ModernTopNavbar() {
               </span>
             </Link>
 
-            <Link
-              href={user ? "/dashboard" : "/auth"}
-              onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-center gap-3 border border-purple/20 p-4 rounded-xl bg-purple/5"
-            >
-              <User className="w-5 h-5 text-purple" />
-              <span className="text-sm font-bold uppercase tracking-widest text-purple">
-                {user ? "ACCOUNT" : "LOGIN"}
-              </span>
-            </Link>
+            {user ? (
+              <Link
+                href="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-3 border border-purple/20 p-4 rounded-xl bg-purple/5"
+              >
+                <User className="w-5 h-5 text-purple" />
+                <span className="text-sm font-bold uppercase tracking-widest text-purple">
+                  ACCOUNT
+                </span>
+              </Link>
+            ) : (
+              <Login className="w-full flex items-center justify-center gap-3 border border-purple/20 p-4 rounded-xl bg-purple/5">
+                <User className="w-5 h-5 text-purple" />
+                <span className="text-sm font-bold uppercase tracking-widest text-purple">
+                  LOGIN
+                </span>
+              </Login>
+            )}
 
             {user && (
               <button
