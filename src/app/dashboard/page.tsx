@@ -27,7 +27,7 @@ export default function DashboardPage() {
       <DashboardBackground />
 
       {/* Main Content Section - using global layout pattern */}
-      <section className="relative z-10 px-8 lg:px-24 py-16 lg:py-24">
+      <section className="relative z-10 px-8 lg:px-24 pb-16">
         <PageContainer>
           <DashboardHeader user={user} />
 
