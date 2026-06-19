@@ -229,7 +229,7 @@ export default function PayPalReturnPage() {
         const markOrderFailed = async (orderId: string, failureStatus: string) => {
           try {
             await updateOrderStatus.mutateAsync({ orderId, status: failureStatus });
-            await updatePaymentStatus.mutateAsync({ orderId, paymentStatus: "refund_pending" });
+            await updatePaymentStatus.mutateAsync({ orderId, paymentStatus: "pending" });
           } catch (updateError) {
             console.error(`Failed to mark order ${orderId} as ${failureStatus}:`, updateError);
           }

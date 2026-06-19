@@ -241,7 +241,7 @@ export default function StripeReturnPage() {
             });
             await updatePaymentStatus.mutateAsync({
               orderId,
-              paymentStatus: "refund_pending",
+              paymentStatus: "pending",
             });
           } catch (updateError) {
             console.error(

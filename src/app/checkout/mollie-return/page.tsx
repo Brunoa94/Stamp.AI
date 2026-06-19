@@ -314,10 +314,10 @@ export default function MollieReturnPage() {
               });
               await updatePaymentStatus.mutateAsync({
                 orderId,
-                paymentStatus: "refund_pending",
+                paymentStatus: "pending",
               });
               console.log(
-                `✅ Order ${orderId} marked as ${failureStatus} / refund_pending`,
+                `✅ Order ${orderId} marked as ${failureStatus} / pending`,
               );
             } catch (updateError) {
               console.error(
