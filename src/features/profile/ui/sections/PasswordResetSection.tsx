@@ -3,10 +3,8 @@
 import { Button } from "@/features/ui/button";
 import { Input } from "@/features/ui/input";
 import { Label } from "@/features/ui/label";
-import { Lock } from "lucide-react";
+import { Lock, Save, X } from "lucide-react";
 import { usePasswordReset } from "@/features/profile/lib/hooks/usePasswordReset";
-import { profileTheme } from "@/theme";
-import { ProfileSectionHeader } from "../components/ProfileSectionHeader";
 
 // Static field configuration outside component for performance
 const passwordFields = [
@@ -51,35 +49,49 @@ export function PasswordResetSection() {
   } as const;
 
   return (
-    <section className={profileTheme.section.card}>
-      <ProfileSectionHeader
-        icon={Lock}
-        title="Password & Security"
-        subtitle="Update your password to keep your account secure"
-        buttonText="Change Password"
-        isEditing={isEditing}
-        onEdit={handleStartEditing}
-      />
+    <section className="bg-white border border-ink/10 p-8 lg:p-12 shadow-[0_2px_15px_rgba(0,0,0,0.02)]">
+      {/* Section Header */}
+      <div className="flex justify-between items-start mb-8">
+        <div className="flex gap-5">
+          <div className="w-14 h-14 bg-white shadow-sm border border-slate-100 rounded-2xl flex items-center justify-center text-slate-500">
+            <Lock className="w-6 h-6" />
+          </div>
+          <div>
+            <h2 className="text-xl font-anton uppercase tracking-tight text-ink leading-tight mb-1">
+              PASSWORD & SECURITY
+            </h2>
+            <p className="text-slate-500 text-sm">Update your password to keep your account secure</p>
+          </div>
+        </div>
+        {!isEditing && (
+          <Button
+            onClick={handleStartEditing}
+            variant="brutalist-ghost"
+            className="text-[10px]"
+          >
+            CHANGE PASSWORD
+          </Button>
+        )}
+      </div>
 
       {/* Content */}
       {!isEditing ? (
-        <p className={profileTheme.password.description}>
-          Your password is hidden for security. Click "Change Password" to
-          update it.
+        <p className="text-sm text-slate-500 italic">
+          Your password is hidden for security. Click "Change Password" to update it.
         </p>
       ) : (
         <form
-          className="space-y-4"
+          className="space-y-6"
           onSubmit={(e) => {
             e.preventDefault();
             handleSave();
           }}
         >
           {passwordFields.map(({ id, label, placeholder, hint, key }) => (
-            <div key={id} className={profileTheme.personalInfo.fieldWrap}>
+            <div key={id} className="space-y-2">
               <Label
                 htmlFor={id}
-                className={profileTheme.personalInfo.label}
+                className="text-[10px] font-bold uppercase tracking-widest text-slate-400"
               >
                 {label}
               </Label>
@@ -89,29 +101,32 @@ export function PasswordResetSection() {
                 value={fieldValues[key]}
                 onChange={(e) => fieldSetters[key](e.target.value)}
                 placeholder={placeholder}
-                className={profileTheme.personalInfo.input}
+                className="w-full bg-white border border-ink/10 p-4 font-space placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all"
                 autoComplete="new-password"
               />
-              <p className={profileTheme.personalInfo.hint}>{hint}</p>
+              <p className="text-[11px] text-slate-400 font-medium italic">{hint}</p>
             </div>
           ))}
 
-          <div className="flex items-center gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row items-center gap-3 pt-8 mt-8 border-t border-slate-200/50">
             <Button
               type="submit"
               disabled={!canSubmit || isLoading}
-              className="bg-linear-to-r from-[#7C3AED] to-[#06B6D4] text-white font-bold uppercase tracking-widest text-xs px-6 py-2"
+              variant="brutalist-primary"
+              className="w-full sm:w-auto group"
             >
-              {isLoading ? "Updating..." : "Update Password"}
+              <Save className="w-4 h-4 mr-2" />
+              {isLoading ? "UPDATING..." : "UPDATE PASSWORD"}
             </Button>
             <Button
               type="button"
               onClick={handleCancel}
-              variant="ghost"
+              variant="brutalist-ghost"
               disabled={isLoading}
-              className="border border-slate-200 text-slate-600 font-bold uppercase tracking-widest text-xs px-6 py-2"
+              className="w-full sm:w-auto"
             >
-              Cancel
+              <X className="w-4 h-4 mr-2" />
+              CANCEL
             </Button>
           </div>
         </form>

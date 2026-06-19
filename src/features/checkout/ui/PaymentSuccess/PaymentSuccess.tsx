@@ -3,9 +3,10 @@ import Link from "next/link";
 
 import { Button } from "@/features/ui/button";
 import { PaymentResultDetailsGrid } from "../components/PaymentResultDetailsGrid";
-import { PageDividers } from "@/features/ui/page-dividers";
 import { paymentSuccessTheme } from "@/theme/components";
 import type { PaymentSuccessDetailsI } from "@/types/payment";
+import { PageContainer } from "@/shared/ui/PageContainer";
+import { PageHeader } from "@/shared/ui/PageHeader";
 
 interface Props {
   details: PaymentSuccessDetailsI | null;
@@ -20,15 +21,22 @@ const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
 
   return (
     <div className={paymentSuccessTheme.page}>
-      <PageDividers />
+      <div className="flex-1 px-6 lg:px-12 xl:px-24 py-16 lg:py-24">
+        <PageContainer>
+          <PageHeader
+            title="Payment"
+            highlightedWord="Success"
+            subtitle="Order confirmed and processing"
+            className="mb-12"
+          />
 
-      <div className={paymentSuccessTheme.wrapper}>
-        <section
-          className={paymentSuccessTheme.card}
-          aria-label="Payment confirmation"
-        >
-          {/* Top accent bar */}
-          <div className={paymentSuccessTheme.topAccent} aria-hidden="true" />
+          <div className={paymentSuccessTheme.wrapper}>
+            <section
+              className={paymentSuccessTheme.card}
+              aria-label="Payment confirmation"
+            >
+              {/* Top accent bar */}
+              <div className={paymentSuccessTheme.topAccent} aria-hidden="true" />
 
           {/* Animated success icon */}
           <div className={paymentSuccessTheme.iconWrapper} aria-hidden="true">
@@ -74,7 +82,9 @@ const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
               A confirmation email has been sent to {confirmationEmail}
             </p>
           )}
-        </section>
+            </section>
+          </div>
+        </PageContainer>
       </div>
     </div>
   );

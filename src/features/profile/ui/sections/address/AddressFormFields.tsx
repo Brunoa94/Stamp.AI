@@ -23,6 +23,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
           required
           register={register("first_name")}
           error={errors.first_name?.message}
+          variant="profile"
         />
         <FormField
           id="last_name"
@@ -31,6 +32,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
           required
           register={register("last_name")}
           error={errors.last_name?.message}
+          variant="profile"
         />
       </div>
 
@@ -43,6 +45,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
           required
           register={register("email")}
           error={errors.email?.message}
+          variant="profile"
         />
         <FormField
           id="phone"
@@ -51,6 +54,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
           required
           register={register("phone")}
           error={errors.phone?.message}
+          variant="profile"
         />
       </div>
 
@@ -63,6 +67,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
         required
         register={register("address1")}
         error={errors.address1?.message}
+        variant="profile"
       />
 
       {/* Address Line 2 */}
@@ -73,6 +78,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
         placeholder="Apartment, suite, unit, etc."
         register={register("address2")}
         error={errors.address2?.message}
+        variant="profile"
       />
 
       {/* City, State, ZIP */}
@@ -84,6 +90,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
           required
           register={register("city")}
           error={errors.city?.message}
+          variant="profile"
         />
         <FormField
           id="region"
@@ -92,6 +99,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
           required
           register={register("region")}
           error={errors.region?.message}
+          variant="profile"
         />
         <FormField
           id="zip"
@@ -100,6 +108,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
           required
           register={register("zip")}
           error={errors.zip?.message}
+          variant="profile"
         />
       </div>
 
@@ -111,6 +120,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
         required
         register={register("country")}
         error={errors.country?.message}
+        variant="profile"
       />
     </div>
   );

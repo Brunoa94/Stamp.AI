@@ -3,7 +3,8 @@
 import { useFormContext } from "react-hook-form";
 import { Elements } from "@stripe/react-stripe-js";
 import { stripePromise } from "@/lib/stripe";
-import { SectionHeader } from "@/features/ui/section-header";
+import { Heading } from "@/features/ui/heading";
+import { Span } from "@/features/ui/span";
 import { PromoCodeInput } from "../components/PromoCodeInput";
 import { CartItemsList } from "../components/CartItemsList";
 import { PriceBreakdown } from "../components/PriceBreakdown";
@@ -55,7 +56,7 @@ export function OrderSummarySection({
   if (isLoading || !cart) {
     return (
       <div
-        className="glass-card p-8 rounded-none lg:sticky lg:top-4 space-y-6"
+        className="bg-white border border-ink/10 p-8 lg:p-12 shadow-[0_2px_15px_rgba(0,0,0,0.02)] lg:sticky lg:top-4 space-y-6"
         aria-live="polite"
         aria-busy="true"
       >
@@ -76,14 +77,14 @@ export function OrderSummarySection({
   const lineItems = cart ? buildPrintifyLineItems(cart.cart_items) : [];
 
   return (
-    <div className="glass-card p-8 rounded-none lg:sticky lg:top-4 space-y-6">
-      <SectionHeader title="Order Summary" className="mb-0" />
-      <p className="text-sm text-slate-500 font-bold uppercase tracking-widest -mt-4">
-        {cart.cart_items.length}{" "}
-        {cart.cart_items.length === 1 ? "item" : "items"}
-      </p>
+    <div className="bg-white border border-ink/10 p-8 lg:p-12 shadow-[0_2px_15px_rgba(0,0,0,0.02)] lg:sticky lg:top-4">
+      {/* Header */}
+      <Heading as="h2" variant="card" className="mb-8">
+        Order <span className="text-brandPurple">Summary</span>
+      </Heading>
 
-      <div className="h-px bg-slate-100" />
+      <div className="space-y-6">
+        <div className="h-px bg-slate-100" />
 
       <CartItemsList items={cart.cart_items} />
 
@@ -130,10 +131,11 @@ export function OrderSummarySection({
         />
       )}
 
-      <p className="text-xs text-center text-slate-400 font-bold uppercase tracking-widest">
-        {paymentMethod === "stripe" && "Secure payment with Stripe"}
-        {paymentMethod === "paypal" && "You'll be redirected to PayPal"}
-      </p>
+        <Span variant="micro" className="text-center block tracking-[0.4em] opacity-30">
+          {paymentMethod === "stripe" && "Secure encrypted transactions"}
+          {paymentMethod === "paypal" && "Secure encrypted transactions"}
+        </Span>
+      </div>
     </div>
   );
 }

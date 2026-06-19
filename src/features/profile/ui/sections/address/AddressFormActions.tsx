@@ -1,7 +1,8 @@
 import { Button } from "@/features/ui/button";
+import { Save, X } from "lucide-react";
 
 interface AddressFormActionsProps {
-  onSave: (e: React.FormEvent) => void;
+  onSave: () => void;
   onCancel: () => void;
   isSaving: boolean;
 }
@@ -12,23 +13,26 @@ export function AddressFormActions({
   isSaving,
 }: AddressFormActionsProps) {
   return (
-    <div className="flex items-center gap-3 pt-4">
+    <div className="flex flex-col sm:flex-row items-center gap-3 pt-8 mt-8 border-t border-slate-200/50">
       <Button
         type="submit"
         onClick={onSave}
         disabled={isSaving}
-        className="bg-linear-to-r from-[#7C3AED] to-[#06B6D4] text-white font-bold uppercase tracking-widest text-xs px-6 py-2"
+        variant="brutalist-primary"
+        className="w-full sm:w-auto group"
       >
-        {isSaving ? "Saving..." : "Save Address"}
+        <Save className="w-4 h-4 mr-2" />
+        {isSaving ? "SAVING..." : "SAVE ADDRESS"}
       </Button>
       <Button
         type="button"
         onClick={onCancel}
-        variant="ghost"
+        variant="brutalist-ghost"
         disabled={isSaving}
-        className="border border-slate-200 text-slate-600 font-bold uppercase tracking-widest text-xs px-6 py-2"
+        className="w-full sm:w-auto"
       >
-        Cancel
+        <X className="w-4 h-4 mr-2" />
+        CANCEL
       </Button>
     </div>
   );

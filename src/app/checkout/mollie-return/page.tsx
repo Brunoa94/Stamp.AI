@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/features/ui/button";
-import { PageDividers } from "@/features/ui/page-dividers";
 import PaymentSuccess from "@/features/checkout/ui/PaymentSuccess/PaymentSuccess";
 import PaymentError from "@/features/checkout/ui/components/PaymentError";
 import { OrderService } from "@/services/orderService";
@@ -633,7 +632,6 @@ export default function MollieReturnPage() {
   if (status === "loading") {
     return (
       <div className={paymentSuccessTheme.page}>
-        <PageDividers />
         <div className={paymentSuccessTheme.wrapper}>
           <section
             className={paymentSuccessTheme.card}
@@ -706,7 +704,6 @@ export default function MollieReturnPage() {
   if (status === "pending") {
     return (
       <div className={paymentSuccessTheme.page}>
-        <PageDividers />
         <div className={paymentSuccessTheme.wrapper}>
           <section
             className={paymentSuccessTheme.card}
@@ -748,7 +745,6 @@ export default function MollieReturnPage() {
   // Error state
   return (
     <div className={paymentErrorTheme.page}>
-      <PageDividers />
       <div className={paymentErrorTheme.wrapper}>
         <section className={paymentErrorTheme.card} aria-label="Error">
           <div className={paymentErrorTheme.topAccent} aria-hidden="true" />

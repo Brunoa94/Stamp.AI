@@ -181,12 +181,15 @@ function validateAuthentication(
 }
 
 /**
- * Advances to a specific step with smooth scroll
+ * Advances to a specific step with smooth scroll (only on mobile)
  */
 function advanceToStep(step: number): void {
   // Use requestAnimationFrame to ensure DOM is ready
   requestAnimationFrame(() => {
-    const section = document.getElementById(`step-${step}`);
-    section?.scrollIntoView({ behavior: "smooth" });
+    const isMobile = window.innerWidth < 1024; // lg breakpoint
+    if (isMobile) {
+      const section = document.getElementById(`step-${step}`);
+      section?.scrollIntoView({ behavior: "smooth" });
+    }
   });
 }

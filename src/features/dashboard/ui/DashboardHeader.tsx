@@ -1,6 +1,8 @@
 import { Zap, Clock, ShieldCheck } from "lucide-react";
 import type { UserI } from "@/types/auth";
 import { formatLastLogin } from "../lib/helpers/formatLastLogin";
+import { PageHeader } from "@/shared/ui/PageHeader";
+import { Span } from "@/features/ui/span";
 
 interface PropsI {
   user?: UserI | null;
@@ -14,27 +16,22 @@ export function DashboardHeader({ user }: PropsI) {
 
   return (
     <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
-      <div className="space-y-4">
-        {/* Purple Accent Bar */}
-        <div className="h-1.5 w-16 bg-purple" />
-
-        {/* Welcome Title */}
-        <h1 className="font-anton text-6xl md:text-8xl uppercase tracking-tighter leading-none text-ink">
-          WELCOME, <span className="text-purple">{displayName.toUpperCase()}</span>
-        </h1>
-
-        {/* Metadata Row */}
-        <div className="flex flex-wrap gap-x-6 gap-y-2 text-[10px] font-bold tracking-[0.3em] uppercase opacity-40">
-          <span className="flex items-center gap-2">
-            <Clock className="w-3.5 h-3.5 text-purple" />
-            LAST SYNC: {lastLogin}
-          </span>
-          <span className="hidden sm:flex items-center gap-2">
-            <ShieldCheck className="w-3.5 h-3.5 text-cyan" />
-            PROTOCOL V2.4 ACTIVE
-          </span>
-        </div>
-      </div>
+      <PageHeader
+        title="Dash"
+        highlightedWord="board"
+        subtitle={
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            <Span variant="default" className="opacity-40 tracking-[0.5em] flex items-center gap-2">
+              <Clock className="w-3.5 h-3.5 text-brandPurple" />
+              Last sync: {lastLogin}
+            </Span>
+            <Span variant="default" className="hidden sm:flex opacity-40 tracking-[0.5em] items-center gap-2">
+              <ShieldCheck className="w-3.5 h-3.5 text-brandCyan" />
+              Protocol v2.4 active
+            </Span>
+          </div>
+        }
+      />
 
       {/* Pro Artist Badge (Desktop Only) */}
       <div className="hidden lg:block bg-white border border-purple/20 border-l-4 border-l-purple px-6 py-4 shadow-sm hover:shadow-purple/5 transition-all">

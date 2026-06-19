@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 import type { UseFormRegisterReturn } from "react-hook-form";
 
-type FormFieldVariant = "default" | "auth-login" | "auth-register" | "shipping";
+type FormFieldVariant = "default" | "auth-login" | "auth-register" | "shipping" | "profile";
 
 interface FormFieldProps {
   id: string;
@@ -47,6 +47,12 @@ const variantStyles: Record<
     labelColor: "mb-2 block text-slate-500",
     input:
       "rounded-none border border-slate-200 bg-white/90 px-4 py-3 text-sm text-slate-900 shadow-none focus-visible:ring-0 focus-visible:border-purple-500",
+  },
+  profile: {
+    container: "space-y-2",
+    labelColor: "text-[10px] font-bold uppercase tracking-widest text-slate-400",
+    input:
+      "w-full bg-white border border-ink/10 p-4 font-space uppercase placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all",
   },
 };
 

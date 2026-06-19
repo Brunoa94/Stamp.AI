@@ -52,7 +52,7 @@ export function ModernTopNavbar() {
 
           {user ? (
             <Link
-              href="/dashboard"
+              href="/profile"
               className="action-btn-refined btn-glow-purple icon-glow-purple flex items-center border p-3.5 rounded-xl group hover:px-6"
             >
               <User className="w-5 h-5 text-purple group-hover:scale-110 transition-transform duration-300" />
@@ -178,7 +178,7 @@ export function ModernTopNavbar() {
 
             {user ? (
               <Link
-                href="/dashboard"
+                href="/profile"
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-center gap-3 border border-purple/20 p-4 rounded-xl bg-purple/5"
               >
