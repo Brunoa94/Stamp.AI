@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/features/ui/button";
-import { PageDividers } from "@/features/ui/page-dividers";
 import PaymentSuccess from "@/features/checkout/ui/PaymentSuccess/PaymentSuccess";
 import PaymentError from "@/features/checkout/ui/components/PaymentError";
 import { OrderService } from "@/services/orderService";
@@ -230,7 +229,7 @@ export default function PayPalReturnPage() {
         const markOrderFailed = async (orderId: string, failureStatus: string) => {
           try {
             await updateOrderStatus.mutateAsync({ orderId, status: failureStatus });
-            await updatePaymentStatus.mutateAsync({ orderId, paymentStatus: "refund_pending" });
+            await updatePaymentStatus.mutateAsync({ orderId, paymentStatus: "pending" });
           } catch (updateError) {
             console.error(`Failed to mark order ${orderId} as ${failureStatus}:`, updateError);
           }
@@ -377,7 +376,6 @@ export default function PayPalReturnPage() {
   if (status === "loading" || status === "capturing") {
     return (
       <div className={paymentSuccessTheme.page}>
-        <PageDividers />
         <div className={paymentSuccessTheme.wrapper}>
           <section className={paymentSuccessTheme.card} aria-label="Processing payment">
             <div className={paymentSuccessTheme.topAccent} aria-hidden="true" />
@@ -462,7 +460,6 @@ export default function PayPalReturnPage() {
   // Error state
   return (
     <div className={paymentErrorTheme.page}>
-      <PageDividers />
       <div className={paymentErrorTheme.wrapper}>
         <section className={paymentErrorTheme.card} aria-label="Error">
           <div className={paymentErrorTheme.topAccent} aria-hidden="true" />

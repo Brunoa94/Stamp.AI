@@ -52,7 +52,7 @@ export function Navbar({
             </Link>
 
             <Link
-              href="/dashboard/create-product"
+              href="/stamp"
               className="px-6 py-2.5 text-base font-heading tracking-widest text-white bg-[#7C3AED] rounded shadow-[0_4px_14px_rgba(124,58,237,0.3)] transition-all duration-300 hover:bg-[#6D28D9] hover:shadow-[0_6px_20px_rgba(124,58,237,0.4)] hover:-translate-y-0.5"
             >
               Stamp It!

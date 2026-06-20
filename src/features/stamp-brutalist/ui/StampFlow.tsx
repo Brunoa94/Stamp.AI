@@ -5,6 +5,7 @@ import { useSnapScroll } from "../lib/hooks/useSnapScroll";
 import { useStampFlowStore } from "../lib/context/StampFormContext";
 import { StampIconSidebar } from "./components/StampIconSidebar";
 import { GrainOverlay } from "@/features/layout/brutalist/GrainOverlay";
+import { PageHeader } from "@/shared/ui/PageHeader";
 
 // Section imports - memoized
 import { UploadSection } from "./sections/UploadSection";
@@ -33,7 +34,7 @@ export const StampFlow = memo(function StampFlow() {
   useEffect(() => {
     try {
       const savedHistory = localStorage.getItem(
-        "stamp-brutalist:generated-history"
+        "stamp-brutalist:generated-history",
       );
       if (savedHistory) {
         const history = JSON.parse(savedHistory);
@@ -49,8 +50,11 @@ export const StampFlow = memo(function StampFlow() {
     if (!isGenerating && wasGenerating.current) {
       setTimeout(() => {
         setCurrentStep(4); // Go to Results
-        const section = document.getElementById("step-4");
-        section?.scrollIntoView({ behavior: "smooth" });
+        const isMobile = window.innerWidth < 1024; // lg breakpoint
+        if (isMobile) {
+          const section = document.getElementById("step-4");
+          section?.scrollIntoView({ behavior: "smooth" });
+        }
       }, 300);
     }
     wasGenerating.current = isGenerating;
@@ -61,8 +65,11 @@ export const StampFlow = memo(function StampFlow() {
     if (!isFinalizing && wasFinalizing.current) {
       setTimeout(() => {
         setCurrentStep(8); // Go to Final Review (step 8)
-        const section = document.getElementById("step-8");
-        section?.scrollIntoView({ behavior: "smooth" });
+        const isMobile = window.innerWidth < 1024; // lg breakpoint
+        if (isMobile) {
+          const section = document.getElementById("step-8");
+          section?.scrollIntoView({ behavior: "smooth" });
+        }
       }, 300);
     }
     wasFinalizing.current = isFinalizing;
@@ -72,12 +79,22 @@ export const StampFlow = memo(function StampFlow() {
     <>
       <GrainOverlay />
 
-      <div className="relative flex min-h-screen pt-16">
+      {/* Page Header - Fixed at top */}
+
+      <div className="max-w-400 mx-auto">
+        <PageHeader
+          title="Stamp"
+          highlightedWord="It"
+          subtitle="Create your custom product"
+        />
+      </div>
+
+      <div className="relative flex min-h-screen -mt-24">
         {/* Icon Sidebar */}
         <StampIconSidebar />
 
         {/* Main Snap Container */}
-        <main id="stamp-snap-root" className="stamp-snap-container flex-1">
+        <div id="stamp-snap-root" className="stamp-snap-container flex-1">
           {/* Step 1: Upload */}
           <UploadSection />
 
@@ -101,7 +118,7 @@ export const StampFlow = memo(function StampFlow() {
 
           {/* Step 8: Final Review */}
           <FinalReviewSection />
-        </main>
+        </div>
       </div>
     </>
   );

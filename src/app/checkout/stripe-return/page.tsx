@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/features/ui/button";
-import { PageDividers } from "@/features/ui/page-dividers";
 import PaymentSuccess from "@/features/checkout/ui/PaymentSuccess/PaymentSuccess";
 import PaymentError from "@/features/checkout/ui/components/PaymentError";
 import { OrderService } from "@/services/orderService";
@@ -35,7 +34,7 @@ class StripePipelineTimeoutError extends Error {
   constructor(timeoutMs: number) {
     super(
       `Order processing timed out after ${Math.round(timeoutMs / 1000)} seconds. ` +
-        `A full refund has been initiated and will appear within 3–5 business days.`
+        `A full refund has been initiated and will appear within 3–5 business days.`,
     );
     this.name = "StripePipelineTimeoutError";
   }
@@ -45,10 +44,15 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   let timeoutId: ReturnType<typeof setTimeout>;
 
   const timeout = new Promise<never>((_, reject) => {
-    timeoutId = setTimeout(() => reject(new StripePipelineTimeoutError(ms)), ms);
+    timeoutId = setTimeout(
+      () => reject(new StripePipelineTimeoutError(ms)),
+      ms,
+    );
   });
 
-  return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
+  return Promise.race([promise, timeout]).finally(() =>
+    clearTimeout(timeoutId),
+  );
 }
 
 export interface StripeCheckoutData {
@@ -116,7 +120,9 @@ export default function StripeReturnPage() {
 
         if (!paymentIntent) {
           setStatus("error");
-          setErrorMessage("Payment information not found. Please try again from the checkout page.");
+          setErrorMessage(
+            "Payment information not found. Please try again from the checkout page.",
+          );
           return;
         }
 
@@ -127,7 +133,7 @@ export default function StripeReturnPage() {
         if (!checkoutData) {
           setStatus("error");
           setErrorMessage(
-            "Checkout data expired or not found. Please try again from the checkout page."
+            "Checkout data expired or not found. Please try again from the checkout page.",
           );
           return;
         }
@@ -136,7 +142,7 @@ export default function StripeReturnPage() {
         if (!user) {
           setStatus("error");
           setErrorMessage(
-            "You must be logged in to complete your order. Please log in and try again."
+            "You must be logged in to complete your order. Please log in and try again.",
           );
           return;
         }
@@ -160,7 +166,7 @@ export default function StripeReturnPage() {
         // Extract checkout data
         const { lineItems, shippingAddress, amount, cartId } = checkoutData;
         const validatedLineItems = lineItems.map((item, index) =>
-          validatePrintifyLineItem(item, index)
+          validatePrintifyLineItem(item, index),
         );
 
         const idempotencyKey = `stripe_${paymentIntent}`;
@@ -170,7 +176,8 @@ export default function StripeReturnPage() {
           clearStoredStripeCheckoutData();
           setStatus("error");
           setErrorMessage(
-            "Cart information not found. Your payment was processed but we couldn't create your order. Please contact support with payment ID: " + paymentIntent
+            "Cart information not found. Your payment was processed but we couldn't create your order. Please contact support with payment ID: " +
+              paymentIntent,
           );
           return;
         }
@@ -196,7 +203,8 @@ export default function StripeReturnPage() {
         }
 
         // Check for existing order
-        const existingOrder = await OrderService.getOrderByIdempotencyKey(idempotencyKey);
+        const existingOrder =
+          await OrderService.getOrderByIdempotencyKey(idempotencyKey);
         if (existingOrder) {
           sessionStorage.setItem(finalizationDoneKey, "true");
           sessionStorage.removeItem(finalizationLockKey);
@@ -222,12 +230,24 @@ export default function StripeReturnPage() {
           }
         };
 
-        const markOrderFailed = async (orderId: string, failureStatus: string) => {
+        const markOrderFailed = async (
+          orderId: string,
+          failureStatus: string,
+        ) => {
           try {
-            await updateOrderStatus.mutateAsync({ orderId, status: failureStatus });
-            await updatePaymentStatus.mutateAsync({ orderId, paymentStatus: "refund_pending" });
+            await updateOrderStatus.mutateAsync({
+              orderId,
+              status: failureStatus,
+            });
+            await updatePaymentStatus.mutateAsync({
+              orderId,
+              paymentStatus: "pending",
+            });
           } catch (updateError) {
-            console.error(`Failed to mark order ${orderId} as ${failureStatus}:`, updateError);
+            console.error(
+              `Failed to mark order ${orderId} as ${failureStatus}:`,
+              updateError,
+            );
           }
         };
 
@@ -257,14 +277,14 @@ export default function StripeReturnPage() {
           } catch (orderError) {
             await triggerRefund("Order creation failed");
             throw new Error(
-              "Order creation failed. A full refund has been initiated."
+              "Order creation failed. A full refund has been initiated.",
             );
           }
 
           if (!createdOrderId) {
             await triggerRefund("Order ID not returned");
             throw new Error(
-              "Order creation failed. A full refund has been initiated."
+              "Order creation failed. A full refund has been initiated.",
             );
           }
 
@@ -281,7 +301,8 @@ export default function StripeReturnPage() {
           // Stage 2: Create Printify order
           const printifyPayload: CreatePrintifyOrderRequest = {
             line_items: validatedLineItems,
-            shipping_address: mapShippingAddressToPrintifyAddress(shippingAddress),
+            shipping_address:
+              mapShippingAddressToPrintifyAddress(shippingAddress),
             is_test: false,
             metadata: {
               payment_intent_id: paymentIntent,
@@ -291,7 +312,8 @@ export default function StripeReturnPage() {
           };
 
           try {
-            const printifyResult = await createPrintifyOrder.mutateAsync(printifyPayload);
+            const printifyResult =
+              await createPrintifyOrder.mutateAsync(printifyPayload);
             const printifyOrderId = printifyResult?.order?.id;
 
             if (printifyOrderId && createdOrderId) {
@@ -301,17 +323,24 @@ export default function StripeReturnPage() {
             }
           } catch (printifyError) {
             if (createdOrderId) {
-              await markOrderFailed(createdOrderId, "unsuccessful_confirmation");
+              await markOrderFailed(
+                createdOrderId,
+                "unsuccessful_confirmation",
+              );
             }
             await triggerRefund("Printify fulfillment failed");
             throw new Error(
-              "Order fulfillment failed. A full refund has been initiated."
+              "Order fulfillment failed. A full refund has been initiated.",
             );
           }
 
           // Stage 3: Mark payment recovered
           if (createdOrderId) {
-            await PaymentRecoveryService.markPaymentRecovered(paymentIntent, "stripe", createdOrderId);
+            await PaymentRecoveryService.markPaymentRecovered(
+              paymentIntent,
+              "stripe",
+              createdOrderId,
+            );
           }
 
           // Stage 4: Clear cart
@@ -323,7 +352,10 @@ export default function StripeReturnPage() {
         };
 
         try {
-          await withTimeout(runFulfillmentPipeline(), STRIPE_PIPELINE_TIMEOUT_MS);
+          await withTimeout(
+            runFulfillmentPipeline(),
+            STRIPE_PIPELINE_TIMEOUT_MS,
+          );
         } catch (pipelineError) {
           if (pipelineError instanceof StripePipelineTimeoutError) {
             if (createdOrderId) {
@@ -344,12 +376,16 @@ export default function StripeReturnPage() {
 
         const currentPaymentIntent = searchParams.get("payment_intent");
         if (currentPaymentIntent) {
-          sessionStorage.removeItem(`stripe_finalizing_${currentPaymentIntent}`);
+          sessionStorage.removeItem(
+            `stripe_finalizing_${currentPaymentIntent}`,
+          );
         }
 
         setStatus("error");
         setErrorMessage(
-          err instanceof Error ? err.message : "Failed to process Stripe payment"
+          err instanceof Error
+            ? err.message
+            : "Failed to process Stripe payment",
         );
       }
     };
@@ -369,15 +405,19 @@ export default function StripeReturnPage() {
   if (status === "loading" || status === "processing") {
     return (
       <div className={paymentSuccessTheme.page}>
-        <PageDividers />
         <div className={paymentSuccessTheme.wrapper}>
-          <section className={paymentSuccessTheme.card} aria-label="Processing payment">
+          <section
+            className={paymentSuccessTheme.card}
+            aria-label="Processing payment"
+          >
             <div className={paymentSuccessTheme.topAccent} aria-hidden="true" />
             <div className={paymentSuccessTheme.iconWrapper} aria-hidden="true">
               <Loader2 className="w-12 h-12 animate-spin" />
             </div>
             <h1 className={paymentSuccessTheme.title}>
-              {status === "processing" ? "Completing Your Payment" : "Processing Payment"}
+              {status === "processing"
+                ? "Completing Your Payment"
+                : "Processing Payment"}
             </h1>
             <p className={paymentSuccessTheme.subtitle}>
               {status === "processing"
@@ -398,7 +438,11 @@ export default function StripeReturnPage() {
           id: paymentIntentId || "",
           provider: "stripe",
           status: "succeeded",
-          orderNumber: orderNumber || (paymentIntentId ? `#ST-${paymentIntentId.slice(-6).toUpperCase()}` : "—"),
+          orderNumber:
+            orderNumber ||
+            (paymentIntentId
+              ? `#ST-${paymentIntentId.slice(-6).toUpperCase()}`
+              : "—"),
           totalPaid: "Paid via Stripe",
           estimatedDelivery: "7–10 business days",
           confirmationEmail: "",
@@ -414,7 +458,9 @@ export default function StripeReturnPage() {
       <PaymentError
         details={{
           paymentId: paymentIntentId || "",
-          orderNumber: paymentIntentId ? `#ST-${paymentIntentId.slice(-6).toUpperCase()}` : "—",
+          orderNumber: paymentIntentId
+            ? `#ST-${paymentIntentId.slice(-6).toUpperCase()}`
+            : "—",
           amountDue: "—",
           attemptedOn: new Date().toLocaleString(),
           status: "Declined",
@@ -433,7 +479,6 @@ export default function StripeReturnPage() {
   // Error state
   return (
     <div className={paymentErrorTheme.page}>
-      <PageDividers />
       <div className={paymentErrorTheme.wrapper}>
         <section className={paymentErrorTheme.card} aria-label="Error">
           <div className={paymentErrorTheme.topAccent} aria-hidden="true" />
@@ -446,10 +491,17 @@ export default function StripeReturnPage() {
               "We couldn't process your Stripe payment. Please try again or contact support."}
           </p>
           <div className={paymentErrorTheme.ctaStack}>
-            <Button onClick={handleRetryPayment} className={paymentErrorTheme.primaryBtn}>
+            <Button
+              onClick={handleRetryPayment}
+              className={paymentErrorTheme.primaryBtn}
+            >
               Return to Checkout
             </Button>
-            <Button asChild variant="outline" className={paymentErrorTheme.secondaryBtn}>
+            <Button
+              asChild
+              variant="outline"
+              className={paymentErrorTheme.secondaryBtn}
+            >
               <Link href="/dashboard">Go to Dashboard</Link>
             </Button>
           </div>

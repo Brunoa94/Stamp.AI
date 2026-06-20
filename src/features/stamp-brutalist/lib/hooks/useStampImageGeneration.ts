@@ -74,11 +74,14 @@ export function useStampImageGeneration() {
         logStampInfo("handleGenerate", "Results saved to localStorage");
       }
 
-      // Auto-advance to results with smooth scroll
+      // Auto-advance to results with smooth scroll (only on mobile)
       setCurrentStep(4);
       setTimeout(() => {
-        const section = document.getElementById("step-4");
-        section?.scrollIntoView({ behavior: "smooth" });
+        const isMobile = window.innerWidth < 1024; // lg breakpoint
+        if (isMobile) {
+          const section = document.getElementById("step-4");
+          section?.scrollIntoView({ behavior: "smooth" });
+        }
       }, 300);
 
       return result;

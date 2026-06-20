@@ -82,7 +82,7 @@ export function AddressForm({
                 required={field.required}
                 error={error?.message}
                 register={register(fieldName)}
-                variant="shipping"
+                variant="profile"
               />
             );
           })}

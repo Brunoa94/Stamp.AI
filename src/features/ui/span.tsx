@@ -11,12 +11,14 @@ import { cn } from "@/lib/utils";
  * - sm       Section tag labels, column headings — 11px, tracking-[0.4em]
  * - default  Platform labels, breakdown headers, UI meta text — 10px, tracking-[0.4em]
  * - micro    Testimonial badges, scroll indicator, sub-titles — 9px, tracking-[0.3em]
+ * - metric   Large metric display — 5xl-6xl, Anton font
  */
 
 const spanVariants = {
   sm: "font-space text-[11px] font-bold tracking-[0.4em] uppercase",
   default: "font-space text-[10px] font-bold tracking-[0.4em] uppercase",
   micro: "font-space text-[9px] font-bold tracking-[0.3em] uppercase",
+  metric: "font-anton text-5xl md:text-6xl uppercase tracking-tighter",
 } as const;
 
 export type SpanVariant = keyof typeof spanVariants;

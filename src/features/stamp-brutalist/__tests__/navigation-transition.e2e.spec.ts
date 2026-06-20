@@ -9,7 +9,7 @@ test.describe('Navigation Transition Tests', () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
   test('should smoothly transition from step 1 to step 2', async ({ page }) => {
-    await page.goto('/create-v2', { waitUntil: 'networkidle' });
+    await page.goto('/stamp', { waitUntil: 'networkidle' });
     await page.waitForTimeout(1000);
 
     // Take screenshot of initial state
@@ -109,7 +109,7 @@ test.describe('Navigation Transition Tests', () => {
   });
 
   test('should test manual step navigation via sidebar', async ({ page }) => {
-    await page.goto('/create-v2', { waitUntil: 'networkidle' });
+    await page.goto('/stamp', { waitUntil: 'networkidle' });
     await page.waitForTimeout(2000);
 
     // Take initial screenshot
@@ -168,7 +168,7 @@ test.describe('Navigation Transition Tests', () => {
   });
 
   test('should measure transition timing and visibility', async ({ page }) => {
-    await page.goto('/create-v2', { waitUntil: 'networkidle' });
+    await page.goto('/stamp', { waitUntil: 'networkidle' });
     await page.waitForTimeout(1000);
 
     // Inject monitoring script

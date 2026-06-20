@@ -1,8 +1,8 @@
-import { ShoppingBag, Filter } from "lucide-react";
-import { Button } from "@/features/ui/button";
+import { ShoppingBag, Filter, ArrowRight } from "lucide-react";
+import { useViewTransitionNavigate } from "@/features/ui/view-transition-link";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
-import { useViewTransitionNavigate } from "@/features/ui/view-transition-link";
+import { Button } from "@/features/ui/button";
 
 interface PropsI {
   variant?: "no-orders" | "no-match";
@@ -17,34 +17,56 @@ export function OrdersEmptyState({
   const isNoMatch = variant === "no-match";
 
   return (
-    <div className="flex items-center justify-center min-h-100">
-      <div className="bg-linear-to-br from-gray-50 via-slate-50 to-gray-100 border border-gray-200 rounded-2xl p-12 max-w-md text-center space-y-6">
-        <div className="flex justify-center">
-          <div className="bg-linear-to-br from-slate-600 to-gray-700 p-6 rounded-full">
-            {isNoMatch ? (
-              <Filter className="w-12 h-12 text-white" />
-            ) : (
-              <ShoppingBag className="w-12 h-12 text-white" />
-            )}
-          </div>
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="w-full max-w-xl bg-white/40 backdrop-blur-md rounded-[3rem] border border-white/60 p-16 flex flex-col items-center text-center shadow-[0_32px_64px_-16px_rgba(0,0,0,0.05)] relative">
+        {/* Icon Container */}
+        <div className="w-24 h-24 sm:w-32 sm:h-32 bg-ink rounded-full flex items-center justify-center mb-10 shadow-xl relative group">
+          <div className="absolute inset-0 rounded-full bg-cyan/10 scale-125 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          {isNoMatch ? (
+            <Filter
+              className="w-12 h-12 sm:w-16 sm:h-16 text-cyan relative z-10"
+              style={{ filter: "drop-shadow(0 0 8px rgba(34, 211, 238, 0.6))" }}
+            />
+          ) : (
+            <ShoppingBag
+              className="w-12 h-12 sm:w-16 sm:h-16 text-cyan relative z-10"
+              style={{ filter: "drop-shadow(0 0 8px rgba(34, 211, 238, 0.6))" }}
+            />
+          )}
         </div>
-        <div className="space-y-2">
-          <Heading as="h3" variant="card" className="text-gray-800">
-            {isNoMatch ? "No Orders Match Your Filters" : "No Orders Yet"}
-          </Heading>
-          <Paragraph as="p" variant="body" className="text-gray-600">
-            {isNoMatch
-              ? "Try adjusting or clearing your filters to see more results."
-              : "You haven't placed any orders yet. Start creating your custom designs and place your first order!"}
-          </Paragraph>
-        </div>
+
+        {/* Heading */}
+        <Heading as="h2" variant="card" className="mb-4">
+          {isNoMatch ? "NO ORDERS MATCH" : "NO ORDERS YET"}
+        </Heading>
+
+        {/* Description */}
+        <Paragraph variant="sm" className="text-[#6b7280] max-w-sm mb-12">
+          {isNoMatch
+            ? "TRY ADJUSTING OR CLEARING YOUR FILTERS TO SEE MORE RESULTS."
+            : "YOU HAVEN'T PLACED ANY ORDERS YET. START CREATING YOUR CUSTOM DESIGNS AND PLACE YOUR FIRST ORDER!"}
+        </Paragraph>
+
+        {/* CTA Button */}
         {isNoMatch ? (
-          <Button onClick={onClearFilters} variant="default">
-            Clear Filters
+          <Button
+            variant="brutalist-primary"
+            size="lg"
+            onClick={onClearFilters}
+            className="group"
+          >
+            CLEAR FILTERS
+            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
           </Button>
         ) : (
-          <Button onClick={() => navigate("/stamp")} variant="default">
-            Start Creating
+          <Button
+            variant="brutalist-primary"
+            size="lg"
+            onClick={() => navigate("/stamp")}
+            className="group"
+          >
+            START CREATING
+            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
           </Button>
         )}
       </div>

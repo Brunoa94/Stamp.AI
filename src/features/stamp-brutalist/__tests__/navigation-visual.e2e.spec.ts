@@ -8,16 +8,16 @@ import { test, expect } from '@playwright/test';
 test.describe('Stamp Navigation Visual Tests (No Auth)', () => {
   test.use({ storageState: { cookies: [], origins: [] } }); // Bypass auth
 
-  test('should render create-v2 page and show navigation structure', async ({ page }) => {
+  test('should render stamp page and show navigation structure', async ({ page }) => {
     // Navigate to the page
-    await page.goto('/create-v2', { waitUntil: 'networkidle' });
+    await page.goto('/stamp', { waitUntil: 'networkidle' });
 
     // Wait a bit for React to hydrate
     await page.waitForTimeout(1000);
 
     // Take screenshot of initial state
     await page.screenshot({
-      path: 'playwright-screenshots/create-v2-initial.png',
+      path: 'playwright-screenshots/stamp-initial.png',
       fullPage: true
     });
 
@@ -39,7 +39,7 @@ test.describe('Stamp Navigation Visual Tests (No Auth)', () => {
   });
 
   test('should check CSS properties of sections', async ({ page }) => {
-    await page.goto('/create-v2', { waitUntil: 'networkidle' });
+    await page.goto('/stamp', { waitUntil: 'networkidle' });
     await page.waitForTimeout(1000);
 
     // Get all sections
@@ -84,7 +84,7 @@ test.describe('Stamp Navigation Visual Tests (No Auth)', () => {
   });
 
   test('should verify active section is visible', async ({ page }) => {
-    await page.goto('/create-v2', { waitUntil: 'networkidle' });
+    await page.goto('/stamp', { waitUntil: 'networkidle' });
     await page.waitForTimeout(1000);
 
     // Find active section
@@ -151,7 +151,7 @@ test.describe('Stamp Navigation Visual Tests (No Auth)', () => {
   });
 
   test('should check if form context is working', async ({ page }) => {
-    await page.goto('/create-v2', { waitUntil: 'networkidle' });
+    await page.goto('/stamp', { waitUntil: 'networkidle' });
     await page.waitForTimeout(2000);
 
     // Check if React is hydrated and form context exists
@@ -173,7 +173,7 @@ test.describe('Stamp Navigation Visual Tests (No Auth)', () => {
   });
 
   test('should wait for hydration and check useSnapScroll effect', async ({ page }) => {
-    await page.goto('/create-v2', { waitUntil: 'networkidle' });
+    await page.goto('/stamp', { waitUntil: 'networkidle' });
 
     // Wait for React to hydrate and useEffect to run
     await page.waitForTimeout(3000);

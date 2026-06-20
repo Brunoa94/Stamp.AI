@@ -4,12 +4,13 @@ import Link from "next/link";
 import { AlternativePaymentMethods } from ".//AlternativePaymentMethods";
 import { PaymentResultDetailsGrid } from ".//PaymentResultDetailsGrid";
 import { Button } from "@/features/ui/button";
-import { PageDividers } from "@/features/ui/page-dividers";
 import { paymentErrorTheme } from "@/theme/components";
 import type {
   PaymentAlternativeMethodT,
   PaymentErrorDetailsI,
 } from "@/types/payment";
+import { PageContainer } from "@/shared/ui/PageContainer";
+import { PageHeader } from "@/shared/ui/PageHeader";
 
 interface Props {
   details: PaymentErrorDetailsI | null;
@@ -34,11 +35,18 @@ const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
 
   return (
     <div className={paymentErrorTheme.page}>
-      <PageDividers />
+      <div className="flex-1 px-6 lg:px-12 xl:px-24 py-16 lg:py-24">
+        <PageContainer>
+          <PageHeader
+            title="Payment"
+            highlightedWord="Error"
+            subtitle="Transaction could not be completed"
+            className="mb-12"
+          />
 
-      <div className={paymentErrorTheme.wrapper}>
-        <section className={paymentErrorTheme.card} aria-label="Payment failed">
-          <div className={paymentErrorTheme.topAccent} aria-hidden="true" />
+          <div className={paymentErrorTheme.wrapper}>
+            <section className={paymentErrorTheme.card} aria-label="Payment failed">
+              <div className={paymentErrorTheme.topAccent} aria-hidden="true" />
 
           <div className={paymentErrorTheme.iconWrapper} aria-hidden="true">
             <AlertCircle className={paymentErrorTheme.icon} />
@@ -101,7 +109,9 @@ const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
               Need help? Contact Support
             </Link>
           </div>
-        </section>
+            </section>
+          </div>
+        </PageContainer>
       </div>
     </div>
   );

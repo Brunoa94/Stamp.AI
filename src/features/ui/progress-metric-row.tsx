@@ -15,11 +15,11 @@ export function ProgressMetricRow({
 }: ProgressMetricRowProps) {
   return (
     <div>
-      <div className="flex justify-between items-end mb-2">
-        <span className={dashboardTheme.performance.rowLabel}>{label}</span>
-        <span className={dashboardTheme.performance.rowValue}>{value}</span>
+      <div className={dashboardTheme.performance.metricRow}>
+        <span className={dashboardTheme.performance.metricLabel}>{label}</span>
+        <span className={dashboardTheme.performance.metricValue}>{value}</span>
       </div>
-      <div className={dashboardTheme.performance.progressTrack}>
+      <div className={dashboardTheme.performance.progressBar}>
         <div className={barClassName} style={{ width: `${progress}%` }} />
       </div>
     </div>

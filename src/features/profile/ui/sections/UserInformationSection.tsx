@@ -3,10 +3,8 @@
 import { Button } from "@/features/ui/button";
 import { Input } from "@/features/ui/input";
 import { Label } from "@/features/ui/label";
-import { User } from "lucide-react";
+import { User, Save, X } from "lucide-react";
 import { useUserInformation } from "@/features/profile/lib/hooks/useUserInformation";
-import { profileTheme } from "@/theme";
-import { ProfileSectionHeader } from "../components/ProfileSectionHeader";
 
 // Static field configuration outside component for performance
 const formFields = [
@@ -47,23 +45,38 @@ export function UserInformationSection() {
   } as const;
 
   return (
-    <section className={profileTheme.section.card}>
-      <ProfileSectionHeader
-        icon={User}
-        title="Personal Information"
-        subtitle="Update your personal details"
-        buttonText="Edit"
-        isEditing={isEditing}
-        onEdit={handleStartEditing}
-      />
+    <section className="bg-white border border-ink/10 p-8 lg:p-12 shadow-[0_2px_15px_rgba(0,0,0,0.02)]">
+      {/* Section Header */}
+      <div className="flex justify-between items-start mb-8">
+        <div className="flex gap-5">
+          <div className="w-14 h-14 bg-white shadow-sm border border-slate-100 rounded-2xl flex items-center justify-center text-slate-500">
+            <User className="w-6 h-6" />
+          </div>
+          <div>
+            <h2 className="text-xl font-anton uppercase tracking-tight text-ink leading-tight mb-1">
+              PERSONAL INFORMATION
+            </h2>
+            <p className="text-slate-500 text-sm">Update your personal details</p>
+          </div>
+        </div>
+        {!isEditing && (
+          <Button
+            onClick={handleStartEditing}
+            variant="brutalist-ghost"
+            className="text-[10px]"
+          >
+            EDIT
+          </Button>
+        )}
+      </div>
 
       {/* Form Fields */}
-      <div className={profileTheme.personalInfo.grid}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {formFields.map(({ id, label, key }) => (
-          <div key={id} className={profileTheme.personalInfo.fieldWrap}>
+          <div key={id} className="space-y-2">
             <Label
               htmlFor={id}
-              className={profileTheme.personalInfo.label}
+              className="text-[10px] font-bold uppercase tracking-widest text-slate-400"
             >
               {label}
             </Label>
@@ -73,15 +86,15 @@ export function UserInformationSection() {
               value={fieldValues[key]}
               onChange={(e) => fieldSetters[key](e.target.value)}
               readOnly={!isEditing}
-              className={profileTheme.personalInfo.input}
+              className="w-full bg-white border border-ink/10 p-4 font-space uppercase placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all"
             />
           </div>
         ))}
 
-        <div className={profileTheme.personalInfo.fullWidth}>
+        <div className="md:col-span-2 space-y-2">
           <Label
             htmlFor="email"
-            className={profileTheme.personalInfo.label}
+            className="text-[10px] font-bold uppercase tracking-widest text-slate-400"
           >
             Email
           </Label>
@@ -90,9 +103,9 @@ export function UserInformationSection() {
             id="email"
             value={email}
             readOnly
-            className={`${profileTheme.personalInfo.input} ${profileTheme.personalInfo.inputReadonly}`}
+            className="w-full bg-concrete/30 border border-ink/10 p-4 font-space uppercase outline-none"
           />
-          <p className={profileTheme.personalInfo.hint}>
+          <p className="text-[11px] text-slate-400 font-medium italic">
             Email cannot be changed for security reasons
           </p>
         </div>
@@ -100,23 +113,26 @@ export function UserInformationSection() {
 
       {/* Action Buttons */}
       {isEditing && (
-        <div className="flex items-center gap-3 pt-6">
+        <div className="flex flex-col sm:flex-row items-center gap-3 pt-8 mt-8 border-t border-slate-200/50">
           <Button
             type="button"
             onClick={handleSave}
             disabled={isLoading}
-            className="bg-linear-to-r from-[#7C3AED] to-[#06B6D4] text-white font-bold uppercase tracking-widest text-xs px-6 py-2"
+            variant="brutalist-primary"
+            className="w-full sm:w-auto group"
           >
-            {isLoading ? "Saving..." : "Save Changes"}
+            <Save className="w-4 h-4 mr-2" />
+            {isLoading ? "SAVING..." : "SAVE CHANGES"}
           </Button>
           <Button
             type="button"
             onClick={handleCancel}
-            variant="ghost"
+            variant="brutalist-ghost"
             disabled={isLoading}
-            className="border border-slate-200 text-slate-600 font-bold uppercase tracking-widest text-xs px-6 py-2"
+            className="w-full sm:w-auto"
           >
-            Cancel
+            <X className="w-4 h-4 mr-2" />
+            CANCEL
           </Button>
         </div>
       )}

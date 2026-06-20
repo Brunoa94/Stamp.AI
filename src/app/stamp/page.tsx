@@ -1,20 +1,22 @@
-import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { CreateProductWizard } from "@/features/stamp/CreateProduct/ui/components/CreateProductWizard";
-import { PageHeader } from "@/features/ui/page-header";
+import { StampFormProvider } from "@/features/stamp-brutalist/lib/context/StampFormContext";
+import { StampFlow } from "@/features/stamp-brutalist/ui/StampFlow";
+import { StampMobileProgress } from "@/features/stamp-brutalist/ui/components/StampMobileProgress";
 
-export default function StampPage() {
+export const metadata = {
+  title: "STAMP IT | Create Custom Product",
+  description: "Create your custom AI-generated product with STAMP.AI",
+};
+
+export default function CreateProductPage() {
   return (
-    <ProtectedRoute>
-      <div className="grow flex flex-col pb-0 sm:pb-24 relative max-w-9xl mx-auto w-full">
-        <div className="hidden sm:block">
-          <PageHeader
-            title="Design Your Custom Tee"
-            description="Customize every detail of your perfect t-shirt in just a few simple steps with our advanced AI tools."
-          />
-        </div>
-
-        <CreateProductWizard />
+    <StampFormProvider>
+      {/* Mobile progress overlay */}
+      <div className="fixed top-4 right-8 z-50 lg:hidden">
+        <StampMobileProgress />
       </div>
-    </ProtectedRoute>
+
+      {/* Main stamp flow */}
+      <StampFlow />
+    </StampFormProvider>
   );
 }

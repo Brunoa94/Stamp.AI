@@ -8,8 +8,7 @@
 import { LayoutGrid, List } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/features/ui/button";
-import { Heading } from "@/features/ui/heading";
-import { Span } from "@/features/ui/span";
+import { PageHeader } from "@/shared/ui/PageHeader";
 import { OrdersViewModeType } from "../../types/orders-terminal";
 
 interface PropsI {
@@ -30,22 +29,11 @@ export function OrdersTerminalHeader({
   return (
     <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-20">
       {/* LEFT: Title Section */}
-      <div className="space-y-4">
-        <div className="h-1.5 w-20 bg-purple" />
-        <Heading
-          as="h1"
-          variant="title"
-          className="text-7xl md:text-8xl lg:text-8xl"
-        >
-          MY{" "}
-          <Span as="span" unstyled className="text-purple">
-            ORDERS
-          </Span>
-        </Heading>
-        <Span as="p" variant="default" className="tracking-[0.5em] text-ink/40">
-          Archives v4.2 / Synthesis Records
-        </Span>
-      </div>
+      <PageHeader
+        title="My"
+        highlightedWord="Orders"
+        subtitle={`${activeCount} ${activeCount === 1 ? 'Order' : 'Orders'} in archives`}
+      />
 
       {/* RIGHT: Controls Section */}
       <div className="flex flex-wrap items-center gap-4">

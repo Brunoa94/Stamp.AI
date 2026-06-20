@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import { Button } from "@/features/ui/button";
 import { PaymentResultDetailsGrid } from "../components/PaymentResultDetailsGrid";
-import { PageDividers } from "@/features/ui/page-dividers";
 import { paymentSuccessTheme } from "@/theme/components";
 import type { PaymentSuccessDetailsI } from "@/types/payment";
 
@@ -20,8 +19,6 @@ const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
 
   return (
     <div className={paymentSuccessTheme.page}>
-      <PageDividers />
-
       <div className={paymentSuccessTheme.wrapper}>
         <section
           className={paymentSuccessTheme.card}

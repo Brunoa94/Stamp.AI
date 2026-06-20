@@ -16,8 +16,9 @@
   --color-purple: #9333ea;
   --color-cyan: #06b6d4;
   --color-orange: #fb923c;
+  --color-green: #10b981;
   --color-ink: #0a0a0a;
-  --color-concrete: #f2f2f2;
+  --color-concrete: #fafafa;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -58,7 +59,7 @@
 
 :root {
   --radius: 0.625rem;
-  --background: #f8f8fa;
+  --background: #fafafa;
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
@@ -137,16 +138,7 @@
   }
   body {
     @apply text-foreground font-sans;
-    background: linear-gradient(
-      135deg,
-      #f5f3ff 0%,
-      #fef3f9 25%,
-      #ecfeff 50%,
-      #fef3f9 75%,
-      #f5f3ff 100%
-    );
-    background-size: 400% 400%;
-    animation: subtle-gradient-shift 10s ease-in-out infinite;
+    background: #fafafa;
   }
 
   /* Homepage scroll lock during section navigation */
@@ -527,7 +519,9 @@
     height: 0.32em;
     border-radius: 50%;
     background: conic-gradient(from 0deg, #9333ea, #06b6d4, #fb923c, #9333ea);
-    animation: gradientRotate 4s linear infinite, dotPulse 2s ease-in-out infinite;
+    animation:
+      gradientRotate 4s linear infinite,
+      dotPulse 2s ease-in-out infinite;
     box-shadow:
       0 0 20px rgba(147, 51, 234, 0.6),
       0 0 40px rgba(147, 51, 234, 0.3),
@@ -569,7 +563,7 @@
   }
 
   .cta-gradient-border::before {
-    content: '';
+    content: "";
     position: absolute;
     top: -3px;
     left: -3px;
@@ -582,7 +576,7 @@
 
   /* Brutalist color utilities */
   .bg-concrete {
-    background-color: #f2f2f2;
+    background-color: #fffdfd;
   }
 
   .bg-ink {
@@ -602,7 +596,7 @@
   }
 
   .text-brandPurple {
-    color: #9333ea;
+    color: #5f209a;
   }
 
   .text-brandCyan {
@@ -615,6 +609,39 @@
 
   .border-ink {
     border-color: #0a0a0a;
+  }
+
+  /* Border left color utilities */
+  .border-l-purple {
+    border-left-color: #9333ea;
+  }
+
+  .border-l-cyan {
+    border-left-color: #06b6d4;
+  }
+
+  .border-l-orange {
+    border-left-color: #fb923c;
+  }
+
+  .border-l-green {
+    border-left-color: #10b981;
+  }
+
+  .hover\:border-l-purple:hover {
+    border-left-color: #9333ea;
+  }
+
+  .hover\:border-l-cyan:hover {
+    border-left-color: #06b6d4;
+  }
+
+  .hover\:border-l-orange:hover {
+    border-left-color: #fb923c;
+  }
+
+  .hover\:border-l-green:hover {
+    border-left-color: #10b981;
   }
 
   .hover\:bg-brandPurple:hover {
@@ -1124,7 +1151,8 @@
 
 /* Fluid Ink Drift Animations - Smooth floating movement */
 @keyframes drift-1 {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) scale(1);
   }
   25% {
@@ -1139,7 +1167,8 @@
 }
 
 @keyframes drift-2 {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) scale(1);
   }
   25% {
@@ -1154,7 +1183,8 @@
 }
 
 @keyframes drift-3 {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) scale(1);
   }
   33% {
@@ -1166,7 +1196,8 @@
 }
 
 @keyframes drift-4 {
-  0%, 100% {
+  0%,
+  100% {
     transform: translate(0, 0) scale(1);
   }
   20% {
@@ -1211,28 +1242,36 @@
   animation:
     drift-1 25s ease-in-out infinite,
     blob-pulse 8s ease-in-out infinite;
-  animation-delay: 0s, -2s;
+  animation-delay:
+    0s,
+    -2s;
 }
 
 .animate-drift-2 {
   animation:
     drift-2 30s ease-in-out infinite,
     blob-pulse 10s ease-in-out infinite;
-  animation-delay: -8s, -4s;
+  animation-delay:
+    -8s,
+    -4s;
 }
 
 .animate-drift-3 {
   animation:
     drift-3 28s ease-in-out infinite,
     blob-pulse 9s ease-in-out infinite;
-  animation-delay: -12s, -3s;
+  animation-delay:
+    -12s,
+    -3s;
 }
 
 .animate-drift-4 {
   animation:
     drift-4 22s ease-in-out infinite,
     blob-pulse 7s ease-in-out infinite;
-  animation-delay: -5s, -1s;
+  animation-delay:
+    -5s,
+    -1s;
 }
 
 /* Payment Success Icon Animations */
@@ -1581,9 +1620,10 @@
   visibility: hidden;
   pointer-events: none;
   transform: translateY(30px); /* Subtle slide up animation */
-  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-              visibility 0s 0.4s;
+  transition:
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s 0.4s;
   z-index: 1;
 }
 
@@ -1598,9 +1638,10 @@
   visibility: visible !important;
   transform: translateY(0) !important;
   pointer-events: auto !important;
-  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-              visibility 0s 0s;
+  transition:
+    opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s 0s;
   z-index: 10 !important;
 }
 
@@ -1616,14 +1657,24 @@
 .gradient-layer {
   position: absolute;
   inset: -50%;
-  background: conic-gradient(from 0deg, var(--purple), var(--cyan), var(--orange), var(--purple));
+  background: conic-gradient(
+    from 0deg,
+    var(--purple),
+    var(--cyan),
+    var(--orange),
+    var(--purple)
+  );
   opacity: 0.04;
   animation: gradientRotate 12s linear infinite;
 }
 
 @keyframes gradientRotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Floating blobs */
@@ -1635,9 +1686,16 @@
 }
 
 @keyframes floatBlob {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(30px, -50px) scale(1.1); }
-  66% { transform: translate(-20px, 40px) scale(0.9); }
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 40px) scale(0.9);
+  }
 }
 
 /* Sidebar progress line */
@@ -1653,7 +1711,12 @@
 .sidebar-progress-fill {
   width: 100%;
   height: 0%;
-  background: linear-gradient(to bottom, var(--purple), var(--cyan), var(--orange));
+  background: linear-gradient(
+    to bottom,
+    var(--purple),
+    var(--cyan),
+    var(--orange)
+  );
   transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -1701,7 +1764,6 @@
   transform: scale(1.15);
 }
 
-
 .icon-step:hover {
   transform: scale(1.1);
   box-shadow: 0 0 15px rgba(10, 10, 10, 0.1);
@@ -1732,8 +1794,12 @@
 }
 
 @keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .animate-spin-slow {
@@ -1749,4 +1815,412 @@
 
 .cta-border-wrap:hover {
   transform: translateY(-2px);
+}
+
+/* ====================================
+   DASHBOARD SUPERDESIGN STYLES
+   ==================================== */
+
+/* Dashboard page grain overlay */
+.dashboard-grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.03;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='dashboardNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23dashboardNoise)'/%3E%3C/svg%3E");
+}
+
+/* Dashboard background overlay container */
+.dashboard-bg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Dashboard gradient layer - rotating conic gradient */
+.dashboard-gradient-layer {
+  position: absolute;
+  inset: -50%;
+  background: conic-gradient(from 0deg, #9333ea, #06b6d4, #fb923c, #9333ea);
+  opacity: 0.04;
+  animation: dashboardGradientRotate 12s linear infinite;
+}
+
+/* Dashboard floating blobs */
+.dashboard-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.12;
+  animation: dashboardFloatBlob 20s ease-in-out infinite;
+}
+
+.dashboard-blob.purple {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #9333ea 0%, transparent 70%);
+  top: 10%;
+  left: -5%;
+}
+
+.dashboard-blob.cyan {
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, #06b6d4 0%, transparent 70%);
+  top: 50%;
+  right: -10%;
+  animation-delay: -10s;
+}
+
+.dashboard-blob.orange {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, #fb923c 0%, transparent 70%);
+  bottom: 10%;
+  left: 20%;
+  animation-delay: -5s;
+}
+
+/* Brutalist card base */
+.brutalist-card {
+  background: white;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.brutalist-card:hover {
+  border-color: var(--color-ink);
+  box-shadow: 8px 8px 0px rgba(10, 10, 10, 0.02);
+}
+
+/* Gradient left border - purple to cyan */
+.border-l-gradient-purple-cyan {
+  border-left: none !important;
+  position: relative;
+}
+
+.border-l-gradient-purple-cyan::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, #9333ea, #06b6d4);
+}
+
+/* Gradient left border - orange to gold */
+.border-l-gradient-orange-gold {
+  border-left: none !important;
+  position: relative;
+}
+
+.border-l-gradient-orange-gold::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, #fb923c, #d4a76a);
+}
+
+/* Progress bar fill */
+.dashboard-progress-bar {
+  height: 8px;
+  background: rgba(10, 10, 10, 0.05);
+  overflow: hidden;
+  position: relative;
+}
+
+.dashboard-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #9333ea, #06b6d4);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Metric card hover effect */
+.metric-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 0;
+  background: linear-gradient(to bottom, #9333ea, #06b6d4);
+  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.metric-card:hover::before {
+  height: 100%;
+}
+
+/* CTA card gradient animation */
+.dashboard-cta-gradient {
+  position: relative;
+  background: linear-gradient(135deg, #9333ea 0%, #06b6d4 50%, #fb923c 100%);
+  background-size: 200% 200%;
+  animation: dashboardCtaGradient 8s ease infinite;
+}
+
+/* Buy credits modal step indicator */
+.step-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(10, 10, 10, 0.1);
+  transition: all 0.3s ease;
+}
+
+.step-indicator.active {
+  background: #9333ea;
+  box-shadow: 0 0 0 4px rgba(147, 51, 234, 0.1);
+}
+
+.step-indicator.completed {
+  background: #06b6d4;
+}
+
+/* Package selection cards */
+.package-card {
+  border: 2px solid rgba(10, 10, 10, 0.1);
+  transition: all 0.3s ease;
+}
+
+.package-card:hover {
+  border-color: rgba(147, 51, 234, 0.3);
+  transform: translateY(-2px);
+}
+
+.package-card.selected {
+  border-color: #9333ea;
+  background: rgba(147, 51, 234, 0.02);
+}
+
+.package-card.popular {
+  border-color: #06b6d4;
+  position: relative;
+}
+
+.package-card.popular::before {
+  content: "POPULAR";
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  background: #06b6d4;
+  color: white;
+  padding: 4px 12px;
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 0.2em;
+}
+
+/* Dashboard keyframe animations */
+@keyframes dashboardGradientRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dashboardFloatBlob {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 40px) scale(0.9);
+  }
+}
+
+@keyframes dashboardCtaGradient {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes dashboardPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* Protocol Sidebar animations */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+/* ====================================
+   MODERN NAVBAR ANIMATIONS
+   ==================================== */
+
+/* Navigation link underline effect */
+.nav-link-underline {
+  position: relative;
+}
+
+.nav-link-underline::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  right: 0;
+  width: 0%;
+  height: 2px;
+  background-color: var(--color-cyan);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link-underline:hover::after {
+  width: 100%;
+}
+
+/* Gradient badge for STAMP IT button */
+.gradient-badge {
+  background: linear-gradient(135deg, #a855f7 0%, #fb923c 100%);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px -5px rgba(168, 85, 247, 0.3);
+}
+
+.gradient-badge:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 15px 30px -5px rgba(251, 146, 60, 0.5);
+}
+
+/* Action button refined styles */
+.action-btn-refined {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-color: rgba(10, 10, 10, 0.15);
+}
+
+.action-btn-refined:hover {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+  border-color: transparent;
+  color: white;
+}
+
+/* Glow effects for buttons */
+.btn-glow-cyan:hover {
+  box-shadow:
+    0 0 20px rgba(34, 211, 238, 0.4),
+    0 0 40px rgba(34, 211, 238, 0.1);
+  border-color: var(--color-cyan);
+}
+
+.btn-glow-purple:hover {
+  box-shadow:
+    0 0 20px rgba(168, 85, 247, 0.4),
+    0 0 40px rgba(168, 85, 247, 0.1);
+  border-color: var(--color-purple);
+}
+
+.btn-glow-orange:hover {
+  box-shadow:
+    0 0 20px rgba(251, 146, 60, 0.4),
+    0 0 40px rgba(251, 146, 60, 0.1);
+  border-color: var(--color-orange);
+}
+
+/* Icon glow effects */
+.icon-glow-cyan:hover iconify-icon {
+  filter: drop-shadow(0 0 8px var(--color-cyan));
+}
+
+.icon-glow-purple:hover iconify-icon {
+  filter: drop-shadow(0 0 8px var(--color-purple));
+}
+
+.icon-glow-orange:hover iconify-icon {
+  filter: drop-shadow(0 0 8px var(--color-orange));
+}
+
+/* Button text slide animation */
+.btn-text {
+  max-width: 0;
+  opacity: 0;
+  margin-left: 0;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.action-btn-refined:hover .btn-text {
+  max-width: 150px;
+  opacity: 1;
+  margin-left: 0.6rem;
+}
+
+/* Logo animated gradient dot - fixed size */
+.logo-gradient-dot {
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  position: relative;
+  box-shadow:
+    0 0 20px rgba(147, 51, 234, 0.6),
+    0 0 40px rgba(147, 51, 234, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo-gradient-dot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #9333ea, #06b6d4, #fb923c, #9333ea);
+  animation: logoGradientSpin 4s linear infinite;
+}
+
+.logo-gradient-dot::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.4) 0%,
+    transparent 60%
+  );
+}
+
+@keyframes logoGradientSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

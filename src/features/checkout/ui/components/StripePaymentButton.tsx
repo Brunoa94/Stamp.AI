@@ -3,6 +3,7 @@
 import { useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/features/ui/button";
+import { Span } from "@/features/ui/span";
 import { usePaymentForm } from "../PaymentForm/usePaymentForm";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
@@ -92,8 +93,8 @@ export function StripePaymentButton({
         type="button"
         onClick={handleClick}
         disabled={disabled || loading}
-        className="w-full h-14 font-heading tracking-widest text-sm shadow-2xl shadow-purple-500/50 hover:-translate-y-1.5 hover:shadow-3xl transition-all duration-300"
-        size="lg"
+        variant="brutalist-checkout"
+        className="w-full shadow-xl shadow-brandPurple/5"
       >
         {loading ? (
           <span className="flex items-center gap-2">
@@ -101,7 +102,7 @@ export function StripePaymentButton({
             Processing...
           </span>
         ) : (
-          `PAY $${amount.toFixed(2)}`
+          `PAY $${(amount / 100).toFixed(2)}`
         )}
       </Button>
 

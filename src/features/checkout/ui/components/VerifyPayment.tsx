@@ -1,4 +1,3 @@
-import { PageDividers } from "@/features/ui/page-dividers";
 import { paymentSuccessTheme } from "@/theme";
 import { Loader2 } from "lucide-react";
 import React from "react";
@@ -18,7 +17,6 @@ const VerifyPayment = ({ paymentMethod }: VerifyPaymentProps) => {
 
   return (
     <div className={paymentSuccessTheme.page}>
-      <PageDividers />
       <div className={paymentSuccessTheme.wrapper}>
         <section
           className={paymentSuccessTheme.card}

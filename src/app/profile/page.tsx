@@ -1,15 +1,14 @@
 "use client";
 
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { theme } from "@/theme";
 import { ProfileContent } from "@/features/profile/ui/ProfileContent";
 
 export default function ProfilePage() {
   return (
-    <ProtectedRoute>
-      <main className={theme.page.container}>
+    <div className="bg-concrete text-ink font-space antialiased min-h-screen">
+      <ProtectedRoute>
         <ProfileContent />
-      </main>
-    </ProtectedRoute>
+      </ProtectedRoute>
+    </div>
   );
 }

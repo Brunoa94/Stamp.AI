@@ -15,9 +15,13 @@ export function StampIconSidebar() {
     if (step < 1 || step > 8) return;
     setCurrentStep(step);
 
+    // Only scroll on mobile - desktop uses snap scrolling
     setTimeout(() => {
-      const section = document.getElementById(`step-${step}`);
-      section?.scrollIntoView({ behavior: "smooth" });
+      const isMobile = window.innerWidth < 1024; // lg breakpoint
+      if (isMobile) {
+        const section = document.getElementById(`step-${step}`);
+        section?.scrollIntoView({ behavior: "smooth" });
+      }
     }, 100);
   };
 

@@ -17,10 +17,13 @@ export function useStampNavigation() {
     const { setCurrentStep } = useStampFlowStore.getState();
     setCurrentStep(step);
 
-    // Scroll to section
+    // Scroll to section (only on mobile - desktop uses snap scrolling)
     setTimeout(() => {
-      const section = document.getElementById(`step-${step}`);
-      section?.scrollIntoView({ behavior: "smooth" });
+      const isMobile = window.innerWidth < 1024; // lg breakpoint
+      if (isMobile) {
+        const section = document.getElementById(`step-${step}`);
+        section?.scrollIntoView({ behavior: "smooth" });
+      }
     }, 100);
   }, []); // No dependencies - always uses fresh store state
 

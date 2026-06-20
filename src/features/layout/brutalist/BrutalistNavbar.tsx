@@ -64,7 +64,7 @@ export function BrutalistNavbar() {
       {/* Center: "STAMP IT" CTA */}
       <div className="flex-1 flex justify-center items-center">
         <Button asChild variant="brutalist-primary">
-          <Link href="/create" id="header-center-cta">
+          <Link href="/stamp" id="header-center-cta">
             STAMP IT
           </Link>
         </Button>
