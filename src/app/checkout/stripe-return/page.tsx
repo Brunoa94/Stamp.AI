@@ -217,16 +217,22 @@ export default function StripeReturnPage() {
         const triggerRefund = async (reason: string) => {
           try {
             if (amount > 0) {
+              // Use real order ID if available, otherwise use temporary ID
+              const refundOrderId = createdOrderId || `temp_stripe_${paymentIntent}`;
+
               await RefundService.processRefund({
-                orderId: `temp_stripe_${paymentIntent}`,
+                orderId: refundOrderId,
                 paymentProvider: "stripe",
                 amount,
                 reason,
                 stripePaymentIntentId: paymentIntent,
               });
+
+              console.log(`✅ Refund triggered for order ${refundOrderId}`);
             }
           } catch (refundError) {
-            console.error("Refund initiation failed:", refundError);
+            console.error("❌ Refund initiation failed:", refundError);
+            // Log to refund_failures table via RefundService
           }
         };
 
@@ -239,13 +245,13 @@ export default function StripeReturnPage() {
               orderId,
               status: failureStatus,
             });
-            await updatePaymentStatus.mutateAsync({
-              orderId,
-              paymentStatus: "pending",
-            });
+            // Do NOT change payment_status - payment has been successfully captured
+            // The payment_transactions table will track refund status
+            // Keeping payment_status as "paid" accurately reflects that payment was captured
+            console.log(`✅ Order ${orderId} marked as ${failureStatus}`);
           } catch (updateError) {
             console.error(
-              `Failed to mark order ${orderId} as ${failureStatus}:`,
+              `❌ Failed to mark order ${orderId} as ${failureStatus}:`,
               updateError,
             );
           }
@@ -322,13 +328,22 @@ export default function StripeReturnPage() {
               });
             }
           } catch (printifyError) {
+            console.error("❌ Printify order creation failed:", printifyError);
+
             if (createdOrderId) {
+              // Mark order as failed BEFORE triggering refund
               await markOrderFailed(
                 createdOrderId,
                 "unsuccessful_confirmation",
               );
+              // Trigger refund with real order ID
+              await triggerRefund("Printify fulfillment failed");
+            } else {
+              // No order created yet, trigger refund with temp ID
+              console.warn("⚠️ No order ID available, triggering refund with temp ID");
+              await triggerRefund("Order creation failed before Printify");
             }
-            await triggerRefund("Printify fulfillment failed");
+
             throw new Error(
               "Order fulfillment failed. A full refund has been initiated.",
             );

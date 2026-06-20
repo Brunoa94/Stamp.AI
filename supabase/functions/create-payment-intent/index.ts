@@ -1,99 +1,106 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import Stripe from 'https://esm.sh/stripe@14.11.0?target=deno'
-import { ErrorCodes, handleError } from "../_shared/errors.ts"
-import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
-import { supabaseRest } from "../_shared/supabase.ts"
-import type { CreatePaymentIntentRequestI, PaymentIntentResponseI } from "../../types/index.ts"
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
+import { ErrorCodes, handleError } from "../_shared/errors.ts";
+import { validateEnvVars, validateRequest } from "../_shared/validators.ts";
+import { supabaseRest } from "../_shared/supabase.ts";
+import type { PaymentIntentResponseI } from "../../types/index.ts";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-}
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
 
 /**
  * Verify authentication - accepts both user JWT tokens and service role key
  * Returns user info if available, or service identifier if using service role
  */
-async function verifyAuth(authHeader: string | null): Promise<{ userId: string; userEmail: string }> {
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw ErrorCodes.INVALID_TOKEN()
+async function verifyAuth(
+  authHeader: string | null,
+): Promise<{ userId: string; userEmail: string }> {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    throw ErrorCodes.INVALID_TOKEN();
   }
 
-  const token = authHeader.replace('Bearer ', '')
-  const supabaseUrl = validateEnvVars.supabaseUrl()
-  const supabaseAnonKey = validateEnvVars.supabaseAnonKey()
-  const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+  const token = authHeader.replace("Bearer ", "");
+  const supabaseUrl = validateEnvVars.supabaseUrl();
+  const supabaseAnonKey = validateEnvVars.supabaseAnonKey();
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
   // Check if it's the service role key (server-to-server calls)
   if (serviceRoleKey && token === serviceRoleKey) {
-    console.log('Authenticated with service role key')
+    console.log("Authenticated with service role key");
     return {
-      userId: 'service-role',
-      userEmail: 'service@system.internal',
-    }
+      userId: "service-role",
+      userEmail: "service@system.internal",
+    };
   }
 
   // Otherwise, validate as user JWT token
   const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
     headers: {
-      'Authorization': `Bearer ${token}`,
-      'apikey': supabaseAnonKey,
+      "Authorization": `Bearer ${token}`,
+      "apikey": supabaseAnonKey,
     },
-  })
+  });
 
   if (!response.ok) {
-    console.error('Auth verification failed:', response.status, response.statusText)
-    throw ErrorCodes.INVALID_TOKEN()
+    console.error(
+      "Auth verification failed:",
+      response.status,
+      response.statusText,
+    );
+    throw ErrorCodes.INVALID_TOKEN();
   }
 
-  const user = await response.json()
+  const user = await response.json();
 
   if (!user || !user.id) {
-    throw ErrorCodes.INVALID_TOKEN()
+    throw ErrorCodes.INVALID_TOKEN();
   }
 
-  console.log('Authenticated user:', user.id)
+  console.log("Authenticated user:", user.id);
   return {
     userId: user.id,
-    userEmail: user.email || '',
-  }
+    userEmail: user.email || "",
+  };
 }
 
 serve(async (req) => {
   // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { 
+  if (req.method === "OPTIONS") {
+    return new Response(null, {
       status: 204,
-      headers: corsHeaders 
-    })
+      headers: corsHeaders,
+    });
   }
 
   try {
     // Verify authentication
-    const authHeader = req.headers.get('authorization')
-    const { userId, userEmail } = await verifyAuth(authHeader)
+    const authHeader = req.headers.get("authorization");
+    const { userId, userEmail } = await verifyAuth(authHeader);
 
-    console.log('Authenticated user:', userId)
+    console.log("Authenticated user:", userId);
 
     const {
       amount,
-      currency = 'usd',
+      currency = "usd",
       line_items,
       shipping_address,
       metadata,
       payment_method, // Optional: for testing with pm_card_visa, etc.
-      confirm = false // Optional: auto-confirm payment (for testing)
-    } = await req.json()
+      confirm = false, // Optional: auto-confirm payment (for testing)
+    } = await req.json();
 
     // Validate environment variables and request data
-    const stripeSecretKey = validateEnvVars.stripeSecretKey()
-    const validAmount = validateRequest.amount(amount)
+    const stripeSecretKey = validateEnvVars.stripeSecretKey();
+    const validAmount = validateRequest.amount(amount);
 
     const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: '2023-10-16',
+      apiVersion: "2023-10-16",
       httpClient: Stripe.createFetchHttpClient(),
-    })
+    });
 
     // Build payment intent options
     const paymentIntentOptions: any = {
@@ -106,45 +113,47 @@ serve(async (req) => {
         line_items: JSON.stringify(line_items),
         shipping_address: JSON.stringify(shipping_address),
       },
-    }
+    };
 
     // If a test payment method is provided (e.g., pm_card_visa), attach it
     if (payment_method) {
-      paymentIntentOptions.payment_method = payment_method
-      paymentIntentOptions.payment_method_types = ['card']
+      paymentIntentOptions.payment_method = payment_method;
+      paymentIntentOptions.payment_method_types = ["card"];
       if (confirm) {
-        paymentIntentOptions.confirm = true
+        paymentIntentOptions.confirm = true;
       }
     } else {
       // For regular checkout flow with card element
       paymentIntentOptions.automatic_payment_methods = {
         enabled: true,
-      }
+      };
     }
 
     // Create payment intent
-    let paymentIntent
+    let paymentIntent;
     try {
-      paymentIntent = await stripe.paymentIntents.create(paymentIntentOptions)
+      paymentIntent = await stripe.paymentIntents.create(paymentIntentOptions);
     } catch (stripeError: any) {
-      throw ErrorCodes.STRIPE_API_ERROR(stripeError.message || JSON.stringify(stripeError))
+      throw ErrorCodes.STRIPE_API_ERROR(
+        stripeError.message || JSON.stringify(stripeError),
+      );
     }
 
     // Create payment_transactions record immediately with user_id
     // Webhook will later update this record to 'succeeded' or 'failed'
     try {
       await supabaseRest(
-        'payment_transactions',
-        'POST',
+        "payment_transactions",
+        "POST",
         {
           user_id: userId,
-          payment_provider: 'stripe',
+          payment_provider: "stripe",
           stripe_payment_intent_id: paymentIntent.id,
           stripe_customer_id: paymentIntent.customer,
           amount: validAmount,
           currency: currency.toLowerCase(),
-          status: 'pending',
-          payment_method_type: payment_method ? 'card' : null,
+          status: "pending",
+          payment_method_type: payment_method ? "card" : null,
           metadata: {
             ...metadata,
             user_id: userId,
@@ -155,29 +164,29 @@ serve(async (req) => {
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
-        { prefer: 'resolution=merge-duplicates' }
-      )
-      console.log('✅ Payment transaction record created:', paymentIntent.id)
+        { prefer: "resolution=merge-duplicates" },
+      );
+      console.log("✅ Payment transaction record created:", paymentIntent.id);
     } catch (dbError) {
       // Log error but don't fail the request - webhook can still process it
-      console.error('Failed to create payment_transactions record:', dbError)
+      console.error("Failed to create payment_transactions record:", dbError);
     }
 
     const response: PaymentIntentResponseI = {
       success: true,
       clientSecret: paymentIntent.client_secret!,
-      paymentIntentId: paymentIntent.id
-    }
+      paymentIntentId: paymentIntent.id,
+    };
 
     return new Response(
       JSON.stringify(response),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
-      }
-    )
+      },
+    );
   } catch (error) {
-    console.error('Error creating payment intent:', error)
-    return handleError(error, corsHeaders)
+    console.error("Error creating payment intent:", error);
+    return handleError(error, corsHeaders);
   }
-})
+});

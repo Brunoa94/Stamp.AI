@@ -71,7 +71,7 @@ serve(async (req) => {
             country: shipping_address.country,
           }
         : undefined,
-      returnUrl: `${siteUrl}/checkout/success`,
+      returnUrl: `${siteUrl}/checkout/paypal-return`,
       cancelUrl: `${siteUrl}/checkout`,
     });
 
