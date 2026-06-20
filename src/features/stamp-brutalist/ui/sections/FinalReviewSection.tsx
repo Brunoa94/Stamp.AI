@@ -1,4 +1,3 @@
-
 "use client";
 
 import { memo, useCallback, useMemo } from "react";
@@ -57,7 +56,7 @@ export const FinalReviewSection = memo(function FinalReviewSection() {
   }, [handleAddToCart]);
 
   return (
-    <section id="step-8" className="stamp-section p-12 lg:p-24">
+    <section id="step-8" className="stamp-section p-8 lg:p-16">
       {/* Background decorations */}
       <div className="section-bg-overlay">
         <div className="gradient-layer"></div>
@@ -65,20 +64,23 @@ export const FinalReviewSection = memo(function FinalReviewSection() {
 
       <div className="max-w-6xl border-l-4 border-brandOrange/30 pl-8 md:pl-16 relative z-10">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-baseline mb-12 gap-4">
-          <div className="h-1.5 w-20 bg-linear-to-r from-brandOrange to-transparent mb-6 md:mb-0" />
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-baseline mb-8 gap-4">
+          <div className="h-1.5 w-20 bg-linear-to-r from-brandOrange to-transparent mb-4 md:mb-0" />
 
           <Heading
             variant="section"
             className="flex-1 text-center md:text-left"
           >
-            08 / Final <span className="text-brandOrange">Review</span>
+            08 / Final{" "}
+            <Heading as="span" variant="section" className="text-brandOrange">
+              Review
+            </Heading>
           </Heading>
         </div>
 
         <FinalReviewCard
           productTitle={displayTitle}
-          productPrice={55.0} // Base price, would come from API in production
+          productPrice={0.1} // Base price, would come from API in production
           variantInfo={variantInfo}
           onBagIt={handleBagIt}
           onBuyNow={handleBuyNow}

@@ -32,7 +32,24 @@ export function SynthesisSection() {
           accentColor="brandCyan"
         />
 
-        <div className="space-y-16">
+        {isGenerating ? (
+          <div className="space-y-16 animate-pulse">
+            <div className="flex flex-col items-center justify-center min-h-100 space-y-8">
+              <div className="relative">
+                <div className="w-24 h-24 border-4 border-brandCyan/20 border-t-brandCyan rounded-full animate-spin"></div>
+              </div>
+              <div className="text-center space-y-4">
+                <Span variant="metric" className="text-brandCyan">
+                  STAMPING...
+                </Span>
+                <Span variant="default" className="opacity-60 uppercase">
+                  AI is generating your design
+                </Span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-16">
           {/* Prompt textarea */}
           <div className="space-y-4">
             <Span variant="default" className="opacity-40 uppercase">
@@ -68,10 +85,11 @@ export function SynthesisSection() {
               disabled={isGenerating}
               className="h-auto rounded-none relative bg-ink text-white px-20 py-5 font-anton text-3xl tracking-[0.2em] uppercase disabled:opacity-50 border-2 border-brandCyan hover:bg-brandCyan hover:text-ink transition-colors duration-300"
             >
-              {isGenerating ? "STAMPING..." : "STAMP IT!"}
+              STAMP IT!
             </Button>
           </div>
         </div>
+        )}
       </div>
     </section>
   );

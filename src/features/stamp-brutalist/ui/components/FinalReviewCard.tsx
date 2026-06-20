@@ -30,9 +30,9 @@ export function FinalReviewCard({
   const displayImage = mockupImageUrl || productImage || selectedImageUrl;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-18">
       <div className="lg:col-span-7">
-        <div className="aspect-3/4 bg-[#e5e7eb] border-2 border-ink shadow-[60px_60px_0px_rgba(251,146,60,0.15)] relative overflow-hidden">
+        <div className="aspect-square bg-[#e5e7eb] border-2 border-ink shadow-[60px_60px_0px_rgba(251,146,60,0.15)] relative overflow-hidden">
           {displayImage ? (
             <>
               <Image
@@ -42,9 +42,12 @@ export function FinalReviewCard({
                 className="object-contain"
                 unoptimized
               />
-              <div className="absolute bottom-8 left-8 bg-ink text-white px-5 py-2 font-anton text-xs tracking-[0.3em] uppercase">
+              <Span
+                variant="sm"
+                className="absolute bottom-8 left-8 bg-ink text-white px-5 py-2"
+              >
                 {mockupImageUrl ? "MOCKUP PREVIEW" : "DESIGN PREVIEW"}
-              </div>
+              </Span>
             </>
           ) : (
             <div className="w-full h-full flex items-center justify-center">
@@ -54,8 +57,8 @@ export function FinalReviewCard({
         </div>
       </div>
 
-      <div className="lg:col-span-5 py-10">
-        <div className="space-y-12">
+      <div className="lg:col-span-5 py-6">
+        <div className="space-y-8">
           <Heading variant="title" className="leading-tight">
             {productTitle}
           </Heading>
