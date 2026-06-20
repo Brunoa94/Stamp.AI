@@ -121,43 +121,6 @@ serve(async (req) => {
 
         result.productsCreated++;
 
-        // Fetch blueprint details with variants
-        const blueprintResponse = await fetch(
-          `${PRINTIFY_API_BASE}/catalog/blueprints/${blueprint.id}.json`,
-          {
-            headers: { Authorization: `Bearer ${PRINTIFY_API_TOKEN}` },
-          }
-        );
-
-        if (!blueprintResponse.ok) {
-          throw new Error(`Failed to fetch blueprint details: ${blueprintResponse.statusText}`);
-        }
-
-        const blueprintDetails = await blueprintResponse.json();
-        const variants = blueprintDetails.variants || [];
-
-        // Upsert variants
-        for (const variant of variants) {
-          const { error: variantError } = await supabase
-            .from("product_variants")
-            .upsert(
-              {
-                product_id: product.id,
-                printify_variant_id: variant.id,
-                color: variant.options?.color || null,
-                size: variant.options?.size || null,
-                title: variant.title,
-              },
-              {
-                onConflict: "product_id,printify_variant_id",
-              }
-            );
-
-          if (!variantError) {
-            result.variantsCreated++;
-          }
-        }
-
         // Fetch print providers for this blueprint
         const providersResponse = await fetch(
           `${PRINTIFY_API_BASE}/catalog/blueprints/${blueprint.id}/print_providers.json`,
@@ -173,14 +136,59 @@ serve(async (req) => {
 
         const providers = await providersResponse.json();
 
-        // For each provider and country, fetch pricing
-        for (const provider of providers) {
+        // First, collect all variants from all providers (they should be the same, but we'll use the first provider)
+        if (providers.length > 0) {
+          const firstProvider = providers[0];
+
+          // Fetch variants for this blueprint from the first provider
+          const variantsResponse = await fetch(
+            `${PRINTIFY_API_BASE}/catalog/blueprints/${blueprint.id}/print_providers/${firstProvider.id}/variants.json`,
+            {
+              headers: { Authorization: `Bearer ${PRINTIFY_API_TOKEN}` },
+            }
+          );
+
+          if (variantsResponse.ok) {
+            const variantsData = await variantsResponse.json();
+            const variants = variantsData.variants || [];
+
+            // Upsert variants
+            for (const variant of variants) {
+              const { error: variantError } = await supabase
+                .from("product_variants")
+                .upsert(
+                  {
+                    product_id: product.id,
+                    printify_variant_id: variant.id,
+                    color: variant.options?.color || null,
+                    size: variant.options?.size || null,
+                    title: variant.title,
+                  },
+                  {
+                    onConflict: "product_id,printify_variant_id",
+                  }
+                );
+
+              if (!variantError) {
+                result.variantsCreated++;
+              }
+            }
+          }
+        }
+
+        // Now handle providers and pricing (limit to first provider for now to avoid timeout)
+        const providersToSync = providers.slice(0, 1); // Only sync first provider for testing
+        for (const provider of providersToSync) {
           // Upsert provider
+          const description = provider.location
+            ? `${provider.location.city || ''}, ${provider.location.country || ''}`.trim()
+            : provider.title;
+
           await supabase.from("print_providers").upsert(
             {
               id: provider.id,
               name: provider.title,
-              description: `${provider.location.city}, ${provider.location.country}`,
+              description: description || null,
               is_active: true,
             },
             {
