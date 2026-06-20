@@ -35,6 +35,8 @@ export function useCreatePrintifyOrder() {
     mutationFn: (payload: CreatePrintifyOrderRequest) =>
       PrintifyService.createPrintifyOrder(payload),
 
+    retry: 3,
+
     onSuccess: (data) => {
       console.log("✅ Printify order created successfully:", data);
       queryClient.invalidateQueries({ queryKey: ["orders"] });

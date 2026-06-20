@@ -2,7 +2,6 @@
 
 import { Button } from "@/features/ui/button";
 import { useLogout } from "@/hooks/useAuth";
-import { useUser } from "@/queries/authQueries";
 import { LogOut, ShoppingCart } from "lucide-react";
 import clsx from "clsx";
 import { navbarTheme } from "@/theme/components";
@@ -13,9 +12,6 @@ export function AuthenticatedUserSection() {
   const logoutMutation = useLogout();
   const navigate = useViewTransitionNavigate();
   const { itemCount } = useCartSummary();
-  const { data: user } = useUser();
-  const displayName =
-    user?.user_metadata?.first_name || user?.email?.split("@")[0] || null;
   const handleSignOut = () => {
     logoutMutation.mutate();
   };
@@ -47,20 +43,13 @@ export function AuthenticatedUserSection() {
           navbarTheme.actions.signOutButton,
           logoutMutation.isPending && "opacity-50 cursor-not-allowed",
         )}
+        aria-label="Sign out"
       >
-        <LogOut className="w-4 h-4" />
-        <span>{logoutMutation.isPending ? "Signing out..." : "Sign Out"}</span>
-      </Button>
-      {displayName && (
-        <span className="flex flex-col leading-none">
-          <span className="text-[9px] font-semibold uppercase tracking-[0.18em] text-black/40 dark:text-white/40">
-            Welcome back
-          </span>
-          <span className="text-sm font-bold text-violet-600 dark:text-violet-400 truncate max-w-30">
-            {displayName}
-          </span>
+        <LogOut className="w-3.5 h-3.5 md:w-4 md:h-4" />
+        <span className="hidden lg:inline">
+          {logoutMutation.isPending ? "Signing out..." : "Sign Out"}
         </span>
-      )}
+      </Button>
     </div>
   );
 }

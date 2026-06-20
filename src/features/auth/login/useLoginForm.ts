@@ -2,14 +2,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema, type LoginI } from "@/schemas/auth";
 import { useLogin } from "@/hooks/useAuth";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 export function useLoginForm() {
   const loginMutation = useLogin();
+  const { handleError } = useErrorHandler();
 
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors },
   } = useForm<LoginI>({
     resolver: zodResolver(LoginSchema),
@@ -19,9 +20,7 @@ export function useLoginForm() {
     try {
       await loginMutation.mutateAsync(data);
     } catch (error) {
-      setError("root", {
-        message: error instanceof Error ? error.message : "Login failed",
-      });
+      handleError(error);
     }
   };
 

@@ -1,0 +1,85 @@
+import type { CuratedBlueprintI, ProductCategory } from "@/supabase/types/provider-catalog";
+
+/**
+ * Curated Printify Blueprints for Provider Catalog
+ *
+ * This file contains a smaller, focused list of products for:
+ * - T-shirts (basic apparel)
+ * - Hoodies (premium apparel)
+ * - Tote bags (accessories)
+ * - Mugs (small goods)
+ *
+ * Blueprint IDs are from Printify's catalog and support front/back printing
+ * or all-over printing depending on the product type.
+ */
+
+export const CURATED_BLUEPRINTS: CuratedBlueprintI[] = [
+  // T-SHIRTS
+  {
+    id: 12,
+    category: 'tshirt',
+    title: 'Unisex Jersey Short Sleeve Tee (Bella+Canvas 3001)',
+    description: 'Premium soft cotton tee with front/back printing',
+  },
+  {
+    id: 6,
+    category: 'tshirt',
+    title: 'Unisex Heavy Cotton Tee (Gildan 5000)',
+    description: 'Classic heavy cotton tee with front/back printing',
+  },
+
+  // HOODIES
+  {
+    id: 145,
+    category: 'hoodie',
+    title: 'Unisex Heavy Blend Hoodie',
+    description: 'Classic pullover hoodie with front/back printing',
+  },
+
+  // TOTE BAGS
+  {
+    id: 157,
+    category: 'totebag',
+    title: 'Tote Bag',
+    description: 'Canvas tote bag with custom printing',
+  },
+
+  // MUGS
+  {
+    id: 553,
+    category: 'mug',
+    title: 'White Glossy Mug (11oz)',
+    description: 'Ceramic mug with all-over printing',
+  },
+];
+
+/**
+ * Get all blueprint IDs for catalog fetching
+ */
+export function getCuratedBlueprintIds(): number[] {
+  return CURATED_BLUEPRINTS.map((bp) => bp.id);
+}
+
+/**
+ * Get blueprints by category
+ */
+export function getBlueprintsByCategory(category: ProductCategory): CuratedBlueprintI[] {
+  return CURATED_BLUEPRINTS.filter((bp) => bp.category === category);
+}
+
+/**
+ * Get blueprint by ID
+ */
+export function getCuratedBlueprintById(id: number): CuratedBlueprintI | undefined {
+  return CURATED_BLUEPRINTS.find((bp) => bp.id === id);
+}
+
+/**
+ * Get all unique categories
+ */
+export function getProductCategories(): ProductCategory[] {
+  return ['tshirt', 'hoodie', 'totebag', 'mug'];
+}
+
+// Export the blueprint IDs as a constant for use in edge functions
+export const CURATED_BLUEPRINT_IDS = getCuratedBlueprintIds();

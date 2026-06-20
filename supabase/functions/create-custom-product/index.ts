@@ -170,61 +170,10 @@ serve(async (req) => {
 
     console.log('✅ Product created:', productData.id)
 
-    const productImageUrl = productData.images?.[0]?.src || null
+    // NOTE: Orders are now created ONLY during checkout after payment succeeds.
+    // This prevents duplicate "ghost" orders from being created prematurely.
 
-    // 🧾 Create order in database
-    const orderNumber = `ORD-${Date.now()}`
-    const orderPayload = {
-      user_id,
-      product_id: productData.id,
-      order_number: orderNumber,
-      customer_email: customer_email,
-      status: "created",
-    }
-
-    console.log('✅ Creating the order with the product:', productData.id)
-    const { data: order, error: orderError } = await supabase
-      .from("orders")
-      .insert(orderPayload)
-      .select()
-      .single()
-
-    if (orderError) {
-      console.error("❌ Failed to create order:", orderError)
-      throw ErrorCodes.DATABASE_ERROR(orderError.message)
-    }
-
-    console.log("🧾 Order created:", order.id)
-
-    // 🧾 Create order item so the order shows items in "My Orders"
-    const firstEnabledVariant = productData.variants?.find((v: any) => v.is_enabled) || productData.variants?.[0]
-    const unitPrice = firstEnabledVariant ? (firstEnabledVariant.price / 100) : 0
-    const orderItemPayload = {
-      order_id: order.id,
-      product_name: productData.title || "Custom T-Shirt",
-      custom_image_url: productImageUrl || "",
-      quantity: 1,
-      unit_price: unitPrice,
-      total_price: unitPrice,
-      variant_id: firstEnabledVariant ? String(firstEnabledVariant.id) : null,
-      variant_name: firstEnabledVariant?.title || null,
-      design_config: null,
-      fulfillment_status: null,
-      external_order_id: null,
-    }
-
-    const { error: orderItemError } = await supabase
-      .from("order_items")
-      .insert(orderItemPayload)
-
-    if (orderItemError) {
-      // Non-fatal — log but don't fail the whole request
-      console.warn("⚠️ Failed to create order item:", orderItemError.message)
-    } else {
-      console.log("🧾 Order item created for order:", order.id)
-    }
-
-    // ✅ Return both product and order
+    // ✅ Return product data
     return new Response(
       JSON.stringify({
         success: true,
@@ -245,7 +194,6 @@ serve(async (req) => {
             is_enabled: v.is_enabled,
           })),
         },
-        order,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )

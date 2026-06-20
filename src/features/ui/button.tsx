@@ -19,6 +19,26 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline focus-visible:ring-offset-0",
+        "brutalist-primary":
+          "h-auto rounded-none bg-ink px-6 md:px-8 py-1.5 md:py-2 font-anton text-sm md:text-base tracking-widest uppercase border-2 border-brandCyan hover:bg-brandCyan hover:text-ink transition-colors duration-300 shadow-[4px_4px_0px_rgba(10,10,10,0.1)] text-white",
+        "brutalist-checkout":
+          "h-auto rounded-none bg-ink px-6 md:px-8 py-6 md:py-8 font-anton text-xl md:text-2xl tracking-widest uppercase border-2 border-brandCyan hover:bg-brandCyan hover:text-ink transition-colors duration-300 shadow-[4px_4px_0px_rgba(10,10,10,0.1)] text-white",
+        "brutalist-ghost":
+          "h-auto rounded-none border border-ink/10 px-4 py-2 hover:border-brandCyan hover:bg-transparent transition-colors",
+        "brutalist-danger":
+          "h-auto w-full rounded-none flex items-center justify-center gap-2 text-brandCyan font-bold text-[10px] tracking-widest uppercase hover:text-brandRed hover:bg-transparent transition-colors border border-brandCyan/20 py-2 font-space",
+        "auth-primary":
+          "btn-gradient w-full py-5 px-6 rounded-full bg-ink font-anton text-xl uppercase tracking-[0.2em] text-white shadow-lg transition-all duration-300 hover:shadow-xl disabled:opacity-50 flex items-center justify-center relative overflow-hidden",
+        "auth-cancel":
+          "w-full py-5 px-6 rounded-full border border-ink/10 bg-white font-anton text-xl uppercase tracking-[0.2em] text-ink hover:bg-concrete transition-all duration-300",
+        "auth-close":
+          "h-10 w-10 rounded-full bg-concrete hover:bg-ink hover:text-white transition-all",
+        "auth-google":
+          "w-full gap-4 rounded-2xl border border-ink/5 bg-white py-4 px-6 font-bold text-sm text-ink/70 shadow-sm transition-shadow hover:shadow-md",
+        "dashboard-edit":
+          "w-full mt-6 py-3 border border-ink/10 hover:border-purple hover:bg-purple/5 font-anton text-xs tracking-widest uppercase transition-all flex items-center justify-center text-purple",
+        "dashboard-primary":
+          "w-full py-3 bg-purple hover:bg-purple/90 text-white font-anton text-xs tracking-widest uppercase transition-all",
       },
       size: {
         default: "h-10 px-4 py-2 has-[>svg]:px-3",

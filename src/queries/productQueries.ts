@@ -23,19 +23,20 @@ export function useCustomProduct(productId: string | null | undefined) {
       }
       return await PrintifyService.getCustomProduct(productId);
     },
-    enabled: !!productId, // Only run query if productId exists
-    retry: 2, // Retry failed requests twice
+    enabled: !!productId,
+    retry: 2,
   });
 }
 
 /**
  * Fetch all t-shirt products from Printify catalog
+ * @param countryCode - ISO country code (e.g., 'NL', 'US', 'GB'). Defaults to 'NL'
  */
-export function useTshirtProducts() {
+export function useTshirtProducts(countryCode: string = "NL") {
   return useQuery({
-    queryKey: ["products", "tshirts"],
-    queryFn: () => PrintifyService.getTshirtProducts(),
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    queryKey: ["products", "tshirts", countryCode],
+    queryFn: () => PrintifyService.getTshirtProducts(countryCode),
+    staleTime: 1000 * 60 * 30, // 30 minutes (increased from 5 for better performance)
     retry: 2,
   });
 }
@@ -44,13 +45,14 @@ export function useTshirtProducts() {
  * Prefetch t-shirt products into the React Query cache.
  * Call this on the step before the fabric selector so data is
  * already in cache when the user arrives.
+ * @param countryCode - ISO country code (e.g., 'NL', 'US', 'GB'). Defaults to 'NL'
  */
-export function usePrefetchTshirtProducts() {
+export function usePrefetchTshirtProducts(countryCode: string = "NL") {
   const queryClient = useQueryClient();
   queryClient.prefetchQuery({
-    queryKey: ["products", "tshirts"],
-    queryFn: () => PrintifyService.getTshirtProducts(),
-    staleTime: 1000 * 60 * 5,
+    queryKey: ["products", "tshirts", countryCode],
+    queryFn: () => PrintifyService.getTshirtProducts(countryCode),
+    staleTime: 1000 * 60 * 30,
   });
 }
 
@@ -80,6 +82,27 @@ export function useBlueprintVariants(
 // ============================================
 // MUTATIONS (Write Operations)
 // ============================================
+
+/**
+ * Fetch all custom products for a user
+ * @param userId - The user ID to fetch products for
+ * @returns React Query result with user's custom products
+ */
+export function useUserCustomProducts(userId: string | null | undefined) {
+  return useQuery({
+    queryKey: ["products", "user", userId],
+    queryFn: async () => {
+      if (!userId) {
+        throw new Error("User ID is required");
+      }
+      const { ProductService } = await import("@/services/productService");
+      return await ProductService.getUserProducts(userId);
+    },
+    enabled: !!userId,
+    staleTime: 1000 * 60 * 2, // 2 minutes
+    retry: 2,
+  });
+}
 
 /**
  * Create a custom product

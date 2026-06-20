@@ -5,6 +5,7 @@ import { CreateOrderT, UpdateOrderT } from "@/types/order";
 import { CartWithItems } from "@/types/cart";
 import { UserI } from "@/types/auth";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import type { ShippingAddressT } from "@/schemas/checkout";
 
 /**
  * Fetch a single order by ID
@@ -144,26 +145,6 @@ export function useUpdatePaymentStatus() {
 }
 
 /**
- * Update order fulfillment status
- */
-export function useUpdateFulfillmentStatus() {
-  const queryClient = useQueryClient();
-  const { handleError } = useErrorHandler();
-
-  return useMutation({
-    mutationFn: ({ orderId, fulfillmentStatus }: { orderId: string; fulfillmentStatus: string }) =>
-      OrderService.updateFulfillmentStatus(orderId, fulfillmentStatus),
-    onSuccess: (data, variables) => {
-      queryClient.setQueryData(["orders", variables.orderId], data);
-      queryClient.invalidateQueries({ queryKey: ["orders"] });
-    },
-    onError: (error: Error) => {
-      handleError(error);
-    },
-  });
-}
-
-/**
  * Delete an order
  */
 export function useDeleteOrder() {
@@ -190,11 +171,32 @@ export function useCreateOrderFromCart() {
   const { handleError } = useErrorHandler();
 
   return useMutation({
-    mutationFn: async ({ user, cart, paymentStatus = "paid" }: { user: UserI; cart: CartWithItems; paymentStatus?: string }) => {
+    mutationFn: async ({
+      user,
+      cart,
+      paymentStatus = "paid",
+      shippingAddress,
+      idempotencyKey,
+      orderStatus,
+    }: {
+      user: UserI;
+      cart: CartWithItems;
+      paymentStatus?: string;
+      shippingAddress?: ShippingAddressT;
+      idempotencyKey?: string;
+      orderStatus?: string;
+    }) => {
       if (!user) {
         throw new Error("User not authenticated");
       }
-      return await OrderService.createOrderFromCart({ cart, user, paymentStatus });
+      return await OrderService.createOrderFromCart({
+        cart,
+        user,
+        paymentStatus,
+        shippingAddress,
+        idempotencyKey,
+        orderStatus,
+      });
     },
     onSuccess: (orderId) => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
@@ -207,5 +209,8 @@ export function useCreateOrderFromCart() {
     onError: (error: Error) => {
       handleError(error);
     },
+    // CRITICAL: Do NOT retry order creation - duplicates can be created
+    // Idempotency is handled at the database level via idempotency_key
+    retry: false,
   });
 }

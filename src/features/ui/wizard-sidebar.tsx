@@ -28,8 +28,8 @@ export function WizardSidebar({
   return (
     <aside className="w-80 border-r border-white/20 flex flex-col min-h-187.5">
       <div className="p-8 pb-4">
-        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.25em] mb-10 border-b border-slate-200 pb-2 font-sans">
-          Design Pipeline
+        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-[0.25em] mb-10 border-b border-slate-200 pb-2 font-heading">
+          Design Steps
         </h2>
 
         {/* Steps List */}
@@ -45,21 +45,6 @@ export function WizardSidebar({
               onClick={() => onStepClick?.(step.id)}
             />
           ))}
-        </div>
-      </div>
-
-      {/* Sidebar Info Box */}
-      <div className="mt-auto p-8">
-        <div className="bg-white/30 rounded-lg p-6 border border-white/20 backdrop-blur-sm shadow-sm">
-          <div className="flex items-center gap-2 mb-3 text-[#7C3AED]">
-            <Info className="text-lg" />
-            <span className="font-bold text-xs uppercase tracking-wider font-sans">
-              {helpTitle}
-            </span>
-          </div>
-          <p className="text-sm text-slate-600 leading-relaxed font-sans">
-            {helpDescription}
-          </p>
         </div>
       </div>
     </aside>

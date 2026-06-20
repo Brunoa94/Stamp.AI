@@ -79,7 +79,10 @@ export function MobileNavbarSidebar({ isOpen, onClose }: Props) {
             onOpenProfile={() => handleNav("/profile")}
           />
 
-          <CoinsBadge className="mb-3" />
+          <div className="flex items-center gap-2 py-3 px-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 mb-3">
+            <CoinsBadge />
+            <span className="text-xs text-amber-700 dark:text-amber-300 font-medium">credits</span>
+          </div>
 
           <MobileNavbarSidebarThemeToggle
             isDark={isDark}

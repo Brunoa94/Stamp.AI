@@ -1,1 +1,0 @@
-export { OrdersMobileCard } from "./OrdersMobileCard";

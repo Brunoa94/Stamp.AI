@@ -4,12 +4,16 @@ import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import { navbarTheme } from "@/theme/components";
 import { ViewTransitionLink } from "@/features/ui/view-transition-link";
+import { useUser } from "@/queries/authQueries";
 
 export function NavbarLinks() {
   const pathname = usePathname();
   const isOrdersActive = pathname === "/orders";
   const isStampActive = pathname === "/stamp";
   const isDashboardActive = pathname === "/dashboard";
+  const { data: user } = useUser();
+  const displayName =
+    user?.user_metadata?.first_name || user?.email?.split("@")[0] || null;
 
   return (
     <div className={navbarTheme.navigation.container}>
@@ -22,19 +26,24 @@ export function NavbarLinks() {
             : navbarTheme.navigation.link.inactive,
         )}
       >
-        My Orders
+        <span className="hidden lg:inline">My Orders</span>
+        <span className="lg:hidden">Orders</span>
       </ViewTransitionLink>
 
       <ViewTransitionLink
         href="/stamp"
-        className={`${navbarTheme.navigation.stampButton} text-xl`}
+        className={navbarTheme.navigation.stampButton}
       >
         <span
           className={clsx(
             isStampActive && navbarTheme.navigation.stampButtonActive,
           )}
         >
-          Stamp It!
+          {/* Show personalized label only on larger screens */}
+          <span className="hidden lg:inline">
+            {displayName ? `Stamp It, ${displayName}!` : "Stamp It!"}
+          </span>
+          <span className="lg:hidden">Stamp It!</span>
         </span>
       </ViewTransitionLink>
 

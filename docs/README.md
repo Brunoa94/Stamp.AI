@@ -1,190 +1,195 @@
 # Imaginary Builder AI - Documentation
 
-This folder contains all architectural patterns, coding standards, and best practices for the Imaginary Builder AI project.
+This documentation defines the architectural patterns, coding standards, and best practices for the Imaginary Builder AI project.
 
-## Quick Navigation
+## Table of Contents
 
-### 🏗️ Architecture
-- **[Architecture Overview](./architecture/overview.md)** - Project structure and architectural principles
-- **[File Organization](./architecture/file-organization.md)** - How to organize files and folders
-- **[Queries Layer](./architecture/queries-layer.md)** - React Query patterns and centralized server state management ⭐
-
-### 📋 Standards
-- **[TypeScript Guidelines](./standards/typescript.md)** - TypeScript naming conventions and best practices
-- **[Zod Validation](./standards/zod-validation.md)** - Runtime validation patterns with Zod schemas
-
-### 📐 Guidelines
-- **[Styling Guidelines](./styling.md)** - Tailwind CSS, clsx, semantic HTML, and accessibility (WCAG 2.1 AA)
-- **[Component Guidelines](./components.md)** - Component patterns, React Query integration, error handling, E2E testing
-
-### 🎨 Design System
-- **[Design System](./design-system.md)** - Using design system components and custom hooks
-
-### 💻 Development
-- **[Commands](./development/commands.md)** - Available npm scripts and CLI commands
-- **[Tech Stack](./development/tech-stack.md)** - Technologies, dependencies, and versions
+- [Types & Interfaces](#types--interfaces)
+- [Components](#components)
+- [Architecture & Folder Structure](#architecture--folder-structure)
+- [Performance Optimization](#performance-optimization)
+- [Error Handling](#error-handling)
+- [General Guidelines](#general-guidelines)
 
 ---
 
-## Key Patterns at a Glance
+## Types & Interfaces
 
-### Data Flow Architecture
+### Type Definitions
 
-```
-┌─────────────────────────────────────┐
-│         Components Layer            │
-│      (UI & User Interactions)       │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│         Queries Layer               │  ⭐ NEW: Centralized React Query
-│  (React Query Hooks & Mutations)    │
-│       src/queries/*.ts              │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│        Services Layer               │
-│   (Business Logic & API Calls)      │
-│      src/services/*.ts              │
-└──────────────┬──────────────────────┘
-               │
-               ▼
-┌─────────────────────────────────────┐
-│         Data Sources                │
-│   (Supabase, APIs, Database)        │
-└─────────────────────────────────────┘
-```
+- **All data must be typed** - Every piece of data flowing through the application requires explicit type definitions.
+- **Always grant that the types derived from the database follow the schemas there implemented** - Types that have the same structure that in the database must infer the types generated from the database
+- **Type organization**:
+  - Feature-specific types: `src/features/[feature-name]/types/`
+  - Shared types: `src/types/` or `src/shared/types/`
+- **Naming convention**: All type names must include the `Type` suffix.
+  - Example: `UserType`, `ProductType`, `ConfigType`
 
-### Folder Structure
+### Interface Definitions
 
-```
-src/
-├── app/                    # Next.js App Router (routes & API)
-├── components/             # React components (feature-based organization)
-├── features/               # Feature-specific code
-│   └── ui/                 # Design system components
-├── queries/                # ⭐ React Query hooks (centralized)
-├── services/               # Business logic & API communication
-├── hooks/                  # Custom utility hooks (non-query)
-├── lib/                    # Core libraries
-│   └── supabase/           # Supabase client configs
-├── types/                  # TypeScript type definitions
-├── schemas/                # Zod validation schemas
-├── providers/              # React context providers
-├── theme/                  # Design system (colors, icons, themes)
-└── utils/                  # Helper functions
-```
-
-## Important Patterns
-
-### ✅ DO
-
-1. **Centralize React Query**
-   - Put ALL queries and mutations in `src/queries/`
-   - Organize by domain (orderQueries.ts, productQueries.ts)
-   - Use consistent query keys
-
-2. **Use Design System Components**
-   - Prioritize shadcn/ui components
-   - Import from `@/features/ui/`
-   - Extend with className props
-
-3. **Follow Feature-Based Organization**
-   - Group by feature, not by type
-   - Co-locate related files
-   - Keep shared code in common/
-
-4. **Maintain Accessibility**
-   - WCAG 2.1 AA compliance required
-   - Use semantic HTML elements
-   - Include proper ARIA attributes
-
-5. **Handle Errors Comprehensively**
-   - Try-catch in all service methods
-   - User-friendly error messages
-   - Proper error boundaries
-
-### ❌ DON'T
-
-1. **Don't Define Queries in Components**
-   - ❌ Bad: `useQuery()` directly in component files
-   - ✅ Good: Import from `@/queries/`
-
-2. **Don't Create Custom Buttons/Inputs**
-   - ❌ Bad: `<button className="px-4...">`
-   - ✅ Good: `<Button variant="outline">`
-
-3. **Don't Use Type-Based Organization**
-   - ❌ Bad: `components/buttons/`, `components/inputs/`
-   - ✅ Good: `components/checkout/`, `components/dashboard/`
-
-4. **Don't Skip Accessibility**
-   - ❌ Bad: Color-only indicators, missing alt text
-   - ✅ Good: Semantic HTML, ARIA labels, keyboard navigation
-
-5. **Don't Mix React Query Logic**
-   - ❌ Bad: Some queries in hooks/, some in components
-   - ✅ Good: ALL queries in queries/ folder
-
-6. **Don't Create Barrel Exports (index.ts)**
-   - ❌ Bad: Creating index.ts files in component folders
-   - ✅ Good: Import directly from file paths
-   - Reason: Adds complexity, harder to maintain, causes circular dependencies
-
-## Recently Added
-
-### ⭐ Queries Layer Pattern (NEW)
-
-A centralized location for all React Query hooks and mutations:
-
-- **Location:** `src/queries/`
-- **Purpose:** Single source of truth for server state management
-- **Benefits:** Consistent query keys, reusable across app, easy cache invalidation
+- **Component interfaces**: Define interfaces directly in component files.
+- **Props interfaces**: When an interface is specific to a single component, name it `PropsI`.
+- **Shared interfaces**: Place in appropriate shared locations with descriptive names.
 
 **Example:**
+
 ```typescript
-// src/queries/orderQueries.ts
-export function useOrders(userId?: string) {
-  return useQuery({
-    queryKey: ["orders", { userId }],
-    queryFn: () => OrderService.getOrders(userId),
-  });
+// Component-specific props
+interface PropsI {
+  title: string;
+  onSubmit: () => void;
 }
 
-export function useCreateOrder() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (payload) => OrderService.createOrder(payload),
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["orders"] });
-    },
-  });
-}
+// Shared type
+type UserType = {
+  id: string;
+  name: string;
+  email: string;
+};
 ```
 
-See [Queries Layer Documentation](./architecture/queries-layer.md) for complete patterns.
+---
 
-## Getting Started
+## Components
 
-1. **New to the project?** Start with [Architecture Overview](./architecture/overview.md)
-2. **Creating components?** Read [Component Guidelines](./guidelines/components.md)
-3. **Adding data fetching?** Check [Queries Layer](./architecture/queries-layer.md)
-4. **Styling components?** See [Styling Guidelines](./guidelines/styling.md)
-5. **TypeScript types?** Review [TypeScript Guidelines](./standards/typescript.md)
+### Core Principles
 
-## Questions?
+All components must adhere to these three principles:
 
-If you can't find what you're looking for:
-1. Check the relevant documentation file above
-2. Search for patterns in existing code
-3. Ask the team for guidance
+1. **Single Responsibility Principle (SRP)** - Each component should have one clear purpose.
+2. **DRY (Don't Repeat Yourself)** - Avoid code duplication by extracting reusable logic.
+3. **Atomicity** - Components should be as small and focused as possible.
 
-## Contributing to Docs
+### Component Guidelines
 
-When adding new patterns or updating existing ones:
-1. Update the relevant documentation file
-2. Add examples with ✅ Good and ❌ Bad patterns
-3. Keep documentation concise and practical
-4. Update this README if adding new sections
+- **Use the design system**: Always leverage existing UI components from the design system instead of creating custom HTML elements.
+- **Use Next.js Image component**: Always use `next/image` for images instead of `<img>` tags for better performance and optimization.
+  - Exception: Only use `<img>` for external/dynamic URLs that can't be optimized or when Image component causes issues.
+- **Styling approach**:
+  - Prefer component `variants` for styling.
+  - Only add custom styles when absolutely necessary for specific use cases.
+  - **Avoid inline styles** - use Tailwind classes instead. Only use inline `style` attributes for dynamic values that cannot be expressed with Tailwind (e.g., animation delays, dynamic widths from state).
+- **Avoid premature optimization**: Only use `useCallback`, `useMemo`, or `React.memo` for heavy computations or proven performance bottlenecks.
+
+**Example:**
+
+```tsx
+// Good - uses design system variant
+<Button variant="primary" size="lg">Submit</Button>
+
+// Avoid - custom styling unless necessary
+<Button className="custom-specific-case">Submit</Button>
+```
+
+---
+
+## Architecture & Folder Structure
+
+### Feature-Sliced Design (FSD)
+
+This project follows the **Feature-Sliced Design** pattern for scalable and maintainable architecture.
+
+- **Reference implementation**: See [`src/features/stamp-brutalist/`](../src/features/stamp-brutalist/) as a complete example.
+- **Feature structure**:
+  ```
+  src/features/[feature-name]/
+  ├── ui/              # UI components
+  ├── model/           # State management, business logic
+  ├── api/             # API calls, queries
+  ├── types/           # Feature-specific types
+  └── index.ts         # Public API
+  ```
+
+### Core Architecture Layers
+
+The project is organized into three primary layers:
+
+1. **UI Layer** (`src/features/*/ui/`) - Presentational components
+2. **Queries Layer** (`src/queries/`) - Data fetching and caching logic
+3. **Services Layer** (`src/services/`) - Business logic and external integrations
+
+### File Organization
+
+- Keep features self-contained and decoupled.
+- Share common utilities in `src/shared/`.
+- Follow consistent naming conventions across features.
+
+---
+
+## Performance Optimization
+
+- **React hooks**: Use performance hooks (`useCallback`, `useMemo`, `React.memo`) only when:
+  - Profiling shows measurable performance issues
+  - Handling expensive computations
+  - Preventing unnecessary re-renders in large lists
+- **Avoid premature optimization** - Measure first, optimize second.
+
+---
+
+## Error Handling
+
+- All error handling must follow the project's **ErrorHandling** implementation.
+- Errors should be caught at appropriate boundaries.
+- User-facing errors must provide clear, actionable messages.
+
+### Logging System Pattern
+
+When implementing logging in features, follow this structured approach:
+
+1. **Create feature-specific loggers** with consistent context prefixes
+2. **Use three log levels**:
+   - `logError()` - For exceptions and critical failures
+   - `logWarning()` - For recoverable issues or unexpected states
+   - `logInfo()` - For debugging and tracing execution flow
+3. **Always include**:
+   - Context (function/component name)
+   - Relevant data for debugging
+   - Structured additional info as objects
+
+**Example** (from stamp-brutalist feature):
+
+```typescript
+// lib/helpers/logger.ts
+export function logStampError(
+  context: string,
+  error: unknown,
+  additionalInfo?: Record<string, unknown>,
+): void {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  console.error(`[Stamp Flow - ${context}]`, {
+    error: errorMessage,
+    stack: error instanceof Error ? error.stack : undefined,
+    ...additionalInfo,
+  });
+}
+
+// Usage in components/hooks
+logStampError("handleCreateProduct", error, {
+  blueprintId: formData.blueprintId,
+  userId: user?.id,
+});
+```
+
+**Reference**: See [`src/features/stamp-brutalist/lib/helpers/logger.ts`](../src/features/stamp-brutalist/lib/helpers/logger.ts) for complete implementation.
+
+---
+
+## General Guidelines
+
+- **Documentation**: Do not create new markdown files for every change. Update existing documentation when appropriate.
+- **Code reviews**: Follow established patterns in the codebase.
+- **Consistency**: Maintain consistency with the Feature-Sliced Design architecture.
+- **No usage of index.ts**: Don't use index.ts for the files exports.
+
+---
+
+## Contributing
+
+When adding new features or modifying existing code:
+
+1. Follow the established patterns in existing features.
+2. Maintain consistency with the Feature-Sliced Design architecture.
+3. Document significant architectural decisions.
+4. Ensure all code is properly typed.
+
+For questions or clarifications, refer to existing implementations or consult the team.

@@ -29,6 +29,37 @@ serve(async (req) => {
     console.log("PayPal webhook event:", event.event_type);
     console.log("Resource ID:", event.resource?.id);
 
+    // ✅ CRITICAL FIX: Idempotency check
+    // Prevent duplicate webhook processing
+    const eventId = event.id || `${event.event_type}_${event.resource?.id}`;
+
+    // Check if this webhook was already processed
+    const isProcessed = await supabaseRest(
+      "rpc/is_webhook_processed",
+      "POST",
+      { p_provider: "paypal", p_event_id: eventId }
+    );
+
+    if (isProcessed.data === true) {
+      console.log(`✅ PayPal webhook ${eventId} already processed, skipping`);
+      return new Response(
+        JSON.stringify({ received: true, skipped: true, reason: "already_processed" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      );
+    }
+
+    // Record this webhook as being processed
+    await supabaseRest(
+      "rpc/record_webhook_event",
+      "POST",
+      {
+        p_provider: "paypal",
+        p_event_id: eventId,
+        p_event_type: event.event_type,
+        p_payload: event,
+      }
+    );
+
     switch (event.event_type) {
       // Order approved by customer (before capture)
       case "CHECKOUT.ORDER.APPROVED": {
@@ -47,6 +78,7 @@ serve(async (req) => {
         const orderId = capture.supplementary_data?.related_ids?.order_id;
 
         if (orderId) {
+          // Update existing payment_transactions record (created by create-paypal-order)
           const result = await supabaseRest(
             `payment_transactions?paypal_order_id=eq.${orderId}`,
             "PATCH",
@@ -64,18 +96,48 @@ serve(async (req) => {
 
           if (result.error) {
             console.error("Update error:", result.error);
+          }
+
+          // If no record was updated (race condition - webhook arrived before create-paypal-order), create it
+          // This should be very rare since PayPal webhooks usually come after the order is captured
+          if (!result.data || (Array.isArray(result.data) && result.data.length === 0)) {
+            console.log("No existing record found, creating new one (race condition)");
+            // Extract metadata from capture if available
+            const customId = capture.custom_id ? JSON.parse(capture.custom_id) : {};
+            const userId = customId.user_id;
+
+            await supabaseRest("payment_transactions", "POST", {
+              user_id: userId || null,
+              payment_provider: "paypal",
+              paypal_order_id: orderId,
+              paypal_capture_id: capture.id,
+              amount: parseFloat(capture.amount.value),
+              currency: capture.amount.currency_code.toLowerCase(),
+              status: "succeeded",
+              payment_method_details: {
+                capture_id: capture.id,
+                final_capture: capture.final_capture,
+                seller_protection: capture.seller_protection,
+              },
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            });
           } else {
-            console.log("Payment transaction updated");
+            console.log("✅ Payment transaction updated:", orderId);
 
             // Update order payment_status to "paid"
-            // First get the order_id from the payment transaction metadata
+            // Get the order_id from the payment transaction (now linked via order_id column)
             const txResult = await supabaseRest(
-              `payment_transactions?paypal_order_id=eq.${orderId}&select=metadata`,
+              `payment_transactions?paypal_order_id=eq.${orderId}&select=order_id,metadata`,
               "GET"
             );
 
-            const dbOrderId = txResult.data?.[0]?.metadata?.order_id;
+            // Try order_id column first (new approach), fallback to metadata (old approach)
+            const dbOrderId = txResult.data?.[0]?.order_id || txResult.data?.[0]?.metadata?.order_id;
             if (dbOrderId) {
+              // ✅ Update payment_status to "paid"
+              // NOTE: Webhooks should ONLY update payment_status, NEVER order status
+              // Order status is managed by the fulfillment service to prevent race conditions
               const orderResult = await supabaseRest(
                 `orders?id=eq.${dbOrderId}`,
                 "PATCH",
@@ -89,7 +151,7 @@ serve(async (req) => {
               if (orderResult.error) {
                 console.error("Failed to update order payment_status:", orderResult.error);
               } else {
-                console.log(`Order ${dbOrderId} payment_status updated to: paid`);
+                console.log(`✅ Order ${dbOrderId} payment_status updated to: paid`);
               }
             }
           }
@@ -168,6 +230,31 @@ serve(async (req) => {
 
           if (result.error) {
             console.error("Update error:", result.error);
+          } else {
+            // Also update the linked order's payment_status to "failed"
+            const txResult = await supabaseRest(
+              `payment_transactions?paypal_order_id=eq.${orderId}&select=order_id,metadata`,
+              "GET"
+            );
+
+            // Try order_id column first (new approach), fallback to metadata (old approach)
+            const dbOrderId = txResult.data?.[0]?.order_id || txResult.data?.[0]?.metadata?.order_id;
+            if (dbOrderId) {
+              const orderResult = await supabaseRest(
+                `orders?id=eq.${dbOrderId}`,
+                "PATCH",
+                {
+                  payment_status: "failed",
+                  updated_at: new Date().toISOString(),
+                }
+              );
+
+              if (orderResult.error) {
+                console.error("Failed to update order payment_status on denial:", orderResult.error);
+              } else {
+                console.log(`Order ${dbOrderId} payment_status updated to: failed`);
+              }
+            }
           }
         }
         break;

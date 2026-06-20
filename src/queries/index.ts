@@ -34,7 +34,6 @@ export {
   useUpdateOrder,
   useUpdateOrderStatus,
   useUpdatePaymentStatus,
-  useUpdateFulfillmentStatus,
   useDeleteOrder,
   useCreateOrderFromCart,
 } from "./orderQueries";
@@ -73,3 +72,7 @@ export {
   useAvailablePromoCodes,
   useValidatePromoCode,
 } from "./promocodeQueries";
+
+export {
+  useCreatePaymentIntent,
+} from "./stripeQueries";

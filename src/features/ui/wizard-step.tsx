@@ -56,7 +56,7 @@ export function WizardStep({
       <div>
         <h3
           className={clsx(
-            "font-['Cabinet_Grotesk'] text-xl font-bold tracking-wide transition-all duration-300 ease-in-out",
+            "font-heading text-xl transition-all duration-300 ease-in-out",
             {
               "text-slate-900": isActive,
               "text-slate-400 group-hover:text-slate-900": !isActive,
@@ -66,7 +66,7 @@ export function WizardStep({
           {title}
         </h3>
         <p
-          className={clsx("text-xs font-medium mt-0.5 font-accent", {
+          className={clsx("text-xs font-medium mt-0.5 font-sans", {
             "text-slate-500": isActive,
             "text-slate-400": !isActive,
           })}

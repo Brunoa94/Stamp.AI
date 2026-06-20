@@ -28,7 +28,7 @@ export function WizardStepHeader({
           </span>
           <div className="h-px w-12 bg-slate-200" />
         </div>
-        <h2 className="text-3xl sm:text-5xl font-heading text-slate-900 tracking-wide leading-tight">
+        <h2 className="text-3xl sm:text-5xl font-heading tracking-widest leading-tight uppercase bg-linear-to-r from-[#1A2340] via-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent">
           {title}
         </h2>
         <p className="text-black-500 mt-2 sm:mt-4 text-sm sm:text-lg font-light font-sans">
@@ -41,6 +41,7 @@ export function WizardStepHeader({
         {Array.from({ length: totalDots }).map((_, index) => (
           <div
             key={index}
+            data-testid="step-dot"
             className={
               index === currentDot ? dotStyles.active : dotStyles.inactive
             }

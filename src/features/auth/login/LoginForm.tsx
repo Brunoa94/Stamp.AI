@@ -1,6 +1,8 @@
 "use client";
 
-import { DialogContent, DialogTitle } from "@/features/ui/dialog";
+import { DialogContent, DialogTitle, DialogClose } from "@/features/ui/dialog";
+import { Button } from "@/features/ui/button";
+import { X } from "lucide-react";
 import { useLoginForm } from "./useLoginForm";
 import { LoginDialogHeader } from "./components/LoginDialogHeader";
 import { LoginCredentialsFields } from "./components/LoginCredentialsFields";
@@ -15,33 +17,36 @@ export function LoginForm() {
   return (
     <DialogContent
       showCloseButton={false}
-      className="max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none sm:max-w-135"
+      className="max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none sm:max-w-[550px]"
     >
       <DialogTitle className="sr-only">Login</DialogTitle>
-      <div className="relative overflow-hidden rounded-[2.25rem] border border-violet-200/45 bg-linear-to-br from-white/80 via-violet-50/70 to-cyan-50/65 p-8 shadow-[0_36px_90px_-24px_rgba(124,58,237,0.28)] backdrop-blur-2xl md:p-10 dark:border-violet-300/20 dark:from-slate-900/85 dark:via-violet-950/35 dark:to-cyan-950/25">
-        <div className="pointer-events-none absolute inset-0 rounded-[2.25rem] bg-linear-to-br from-white/35 via-transparent to-violet-200/20" />
+      <div className="relative overflow-hidden rounded-3xl border border-ink/5 bg-white shadow-2xl px-10 pt-12 pb-10">
+        {/* Close button */}
+        <DialogClose asChild>
+          <Button
+            type="button"
+            variant="auth-close"
+            size="icon"
+            aria-label="Close login modal"
+            className="absolute top-8 right-8 z-20"
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        </DialogClose>
 
         <LoginDialogHeader />
 
-        <div className="mb-6 relative z-10">
-          <GoogleSignInButton className="border-violet-200/70 bg-white/70 hover:bg-white/85 dark:border-violet-300/25 dark:bg-white/10 dark:text-white dark:hover:bg-white/15" />
+        <GoogleSignInButton />
 
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-violet-200/70 dark:border-violet-300/20" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase tracking-[0.12em]">
-              <span className="px-3 text-violet-500/80 dark:text-violet-300/80 bg-transparent">
-                or continue with email
-              </span>
-            </div>
-          </div>
+        <div className="relative flex items-center my-10">
+          <div className="grow border-t border-ink/5" />
+          <span className="shrink mx-4 text-[10px] font-bold text-purple-500 uppercase tracking-[0.3em]">
+            or continue with email
+          </span>
+          <div className="grow border-t border-ink/5" />
         </div>
 
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-6 relative z-10"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <LoginCredentialsFields register={register} errors={errors} />
 
           {errors.root?.message && (

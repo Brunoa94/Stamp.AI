@@ -43,6 +43,7 @@ export const CreatedProductSchema = z.object({
   title: z.string(),
   variants: z.array(ProductVariantSchema),
   images: z.array(ProductImageSchema).optional(),
+  uploaded_image_preview_url: z.string().url().optional(),
 });
 
 /**

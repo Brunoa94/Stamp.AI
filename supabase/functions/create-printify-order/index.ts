@@ -1,6 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars } from "../_shared/validators.ts"
+import { validateAndEnforceTestMode } from "../_shared/testModeSafeguard.ts"
+import { validatePaymentAmount } from "../_shared/amountValidator.ts"
+import { supabaseRest } from "../_shared/supabase.ts"
 
 // Environment variables will be validated when needed
 
@@ -97,7 +100,34 @@ serve(async (req) => {
       metadata,
       use_sample_order = false, // Flag to create a sample order for testing
       auto_cancel = false, // Flag to automatically cancel order after creation (for testing)
+      payment_amount, // For amount validation
+      payment_currency, // For amount validation
+      subtotal, // For amount validation
+      shipping_cost, // For amount validation
+      discount, // For amount validation
     } = requestBody
+
+    // ✅ CRITICAL FIX #1: Enforce test mode based on environment
+    const testModeValidation = validateAndEnforceTestMode(is_test, 'Printify order creation');
+    const enforcedTestMode = testModeValidation.testMode;
+
+    // ✅ CRITICAL FIX #2: Validate payment amount if provided
+    if (payment_amount !== undefined) {
+      const amountValidation = validatePaymentAmount({
+        paymentAmount: payment_amount,
+        paymentCurrency: payment_currency || 'USD',
+        subtotal,
+        shippingCost: shipping_cost,
+        discount,
+      });
+
+      if (!amountValidation.isValid) {
+        console.error('❌ AMOUNT VALIDATION FAILED:', amountValidation.errorMessage);
+        throw ErrorCodes.INVALID_REQUEST_BODY();
+      }
+
+      console.log(`✅ Amount validation passed: ${payment_currency || 'USD'} ${payment_amount}`);
+    }
 
     // Use shipping_address if address_to is not provided
     let finalAddressTo = address_to || shipping_address
@@ -106,7 +136,8 @@ serve(async (req) => {
     console.log('🔍 FULL REQUEST BODY:', JSON.stringify(requestBody, null, 2))
     console.log('📦 Line items received:', JSON.stringify(line_items, null, 2))
     console.log('📍 Shipping address:', JSON.stringify(finalAddressTo, null, 2))
-    console.log('🧪 Is test:', is_test)
+    console.log('🧪 Is test (client):', is_test)
+    console.log('🧪 Is test (enforced):', enforcedTestMode)
     console.log('📝 Use sample order:', use_sample_order)
     console.log('🔄 Auto cancel:', auto_cancel)
     console.log('ℹ️  Metadata:', JSON.stringify(metadata, null, 2))
@@ -130,7 +161,7 @@ serve(async (req) => {
       finalAddressTo = TEST_SHIPPING_ADDRESS
     }
 
-    const externalId = `${is_test ? 'test-' : ''}order-${Date.now()}`
+    const externalId = `${enforcedTestMode ? 'test-' : ''}order-${Date.now()}`
 
     // First, we need to get a real product from the shop to create an order
     // Fetch products from Printify
@@ -290,10 +321,75 @@ serve(async (req) => {
 
     if (!response.ok) {
       console.error('Printify API error:', data)
+
+      // Update order status to "unsuccessful_confirmation" if we have an order_id
+      const orderId = metadata?.order_id
+      console.log('📋 Metadata:', JSON.stringify(metadata, null, 2))
+      console.log('🔍 Order ID from metadata:', orderId)
+
+      if (orderId) {
+        try {
+          console.log(`🔄 Updating order ${orderId} status to unsuccessful_confirmation...`)
+          const statusUpdateResult = await supabaseRest(
+            'rpc/update_order_payment_status_atomic',
+            'POST',
+            {
+              p_order_id: orderId,
+              p_payment_status: 'paid',
+              p_order_status: 'unsuccessful_confirmation',
+            }
+          )
+
+          console.log('📊 Status update result:', JSON.stringify(statusUpdateResult, null, 2))
+
+          if (statusUpdateResult.error) {
+            console.error(`❌ Failed to update order ${orderId} status to unsuccessful_confirmation:`, statusUpdateResult.error)
+          } else {
+            console.log(`✅ Order ${orderId} status updated to unsuccessful_confirmation`)
+          }
+        } catch (updateError) {
+          console.error('❌ Exception updating order status:', updateError)
+        }
+      } else {
+        console.warn('⚠️ No order_id in metadata, cannot update order status to unsuccessful_confirmation')
+      }
+
       throw ErrorCodes.PRINTIFY_ORDER_API_ERROR(JSON.stringify(data))
     }
 
-    console.log(`✅ ${is_test ? 'TEST' : 'PRODUCTION'} order created:`, data.id)
+    console.log(`✅ ${enforcedTestMode ? 'TEST' : 'PRODUCTION'} order created:`, data.id)
+
+    // Update order status to "confirmed" if we have an order_id
+    const orderId = metadata?.order_id
+    console.log('📋 Metadata:', JSON.stringify(metadata, null, 2))
+    console.log('🔍 Order ID from metadata:', orderId)
+
+    if (orderId) {
+      try {
+        console.log(`🔄 Updating order ${orderId} status to confirmed...`)
+        const statusUpdateResult = await supabaseRest(
+          'rpc/update_order_payment_status_atomic',
+          'POST',
+          {
+            p_order_id: orderId,
+            p_payment_status: 'paid',
+            p_order_status: 'confirmed',
+          }
+        )
+
+        console.log('📊 Status update result:', JSON.stringify(statusUpdateResult, null, 2))
+
+        if (statusUpdateResult.error) {
+          console.error(`❌ Failed to update order ${orderId} status to confirmed:`, statusUpdateResult.error)
+        } else {
+          console.log(`✅ Order ${orderId} status updated to confirmed`)
+        }
+      } catch (updateError) {
+        console.error('❌ Exception updating order status:', updateError)
+      }
+    } else {
+      console.warn('⚠️ No order_id in metadata, cannot update order status')
+    }
 
     // Auto-cancel order if requested (useful for testing)
     let cancelResult = null

@@ -69,7 +69,6 @@ export interface MolliePaymentResponseI {
   profileId: string;
   sequenceType: string;
   redirectUrl: string;
-  webhookUrl: string;
   _links: {
     self: { href: string };
     checkout?: { href: string };
@@ -86,7 +85,6 @@ export interface CreateMolliePaymentParamsI {
   currency?: string;
   description: string;
   redirectUrl: string;
-  webhookUrl: string;
   metadata?: Record<string, unknown>;
   locale?: string;
 }
@@ -103,7 +101,6 @@ export async function createMolliePayment(
     currency = "EUR",
     description,
     redirectUrl,
-    webhookUrl,
     metadata,
     locale = "en_US",
   } = params;
@@ -116,7 +113,6 @@ export async function createMolliePayment(
     },
     description,
     redirectUrl,
-    webhookUrl,
     metadata,
     locale,
   };

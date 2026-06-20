@@ -5,18 +5,19 @@ import {
   Bungee,
   Bebas_Neue,
   Poppins,
+  Anton,
+  Space_Grotesk,
 } from "next/font/google";
 import "./globals.css";
 
 import { Toaster } from "sonner";
 import { SupabaseAuthProvider } from "@/providers/SupabaseAuthProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
-import Navbar from "@/features/layout/navbar";
-import Footer from "@/features/layout/footer";
+import { ModernTopNavbar } from "@/features/layout/brutalist/ModernTopNavbar";
+import { BrutalistFooter } from "@/features/layout/brutalist/BrutalistFooter";
+import { GrainOverlay } from "@/features/layout/brutalist/GrainOverlay";
 import { ScrollToTop } from "@/components/ScrollToTop";
-import { MainContent } from "@/components/MainContent";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import { FluidInkDriftBackground } from "@/features/ui/fluid-ink-drift-background";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,6 +48,22 @@ const bebasNeue = Bebas_Neue({
   weight: "400",
   variable: "--font-heading",
   subsets: ["latin"],
+  display: "swap",
+});
+
+// Brutalist display font (Anton for massive brutalist headings)
+const anton = Anton({
+  weight: "400",
+  variable: "--font-anton",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+// Brutalist body font (Space Grotesk for geometric sans-serif)
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -83,18 +100,16 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} ${poppins.variable} ${bebasNeue.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} ${poppins.variable} ${bebasNeue.variable} ${anton.variable} ${spaceGrotesk.variable} antialiased`}
       >
-        <FluidInkDriftBackground />
+        <GrainOverlay />
         <ThemeProvider>
           <SupabaseAuthProvider>
             <QueryProvider>
               <ScrollToTop />
-              <header className="sticky top-0 z-50">
-                <Navbar />
-              </header>
-              <MainContent>{children}</MainContent>
-              <Footer />
+              <ModernTopNavbar />
+              <main className="pt-20 min-h-screen">{children}</main>
+              <BrutalistFooter />
               <Toaster />
             </QueryProvider>
           </SupabaseAuthProvider>
