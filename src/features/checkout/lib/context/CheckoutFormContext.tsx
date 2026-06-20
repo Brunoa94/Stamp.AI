@@ -4,6 +4,7 @@ import { createContext, ReactNode, useContext, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckoutFormSchema, type CheckoutFormDataT } from "@/schemas/checkout";
+import { TEST_BILLING_DATA } from "../constants/testData";
 
 // Re-export type for convenience
 export type CheckoutFormData = CheckoutFormDataT;
@@ -28,6 +29,7 @@ export function CheckoutFormProvider({
   const methods = useForm<CheckoutFormData>({
     resolver: zodResolver(CheckoutFormSchema),
     defaultValues: {
+      billing: TEST_BILLING_DATA,
       useShippingAddress: false,
       paymentMethod: "stripe",
       ...defaultValues,

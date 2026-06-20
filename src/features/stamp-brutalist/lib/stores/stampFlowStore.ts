@@ -27,6 +27,7 @@ const initialState = {
   selectedImageUrl: undefined,
   enhancedPrompt: undefined,
   createdProductId: undefined,
+  createdVariantId: undefined,
   mockupImageUrl: undefined,
 };
 
@@ -84,6 +85,7 @@ export const useStampFlowStore = create<StampFlowStateTypes>((set) => ({
 
   // Product state
   setCreatedProductId: (id) => set({ createdProductId: id }),
+  setCreatedVariantId: (id) => set({ createdVariantId: id }),
   setMockupImageUrl: (url) => set({ mockupImageUrl: url }),
 
   // Reset with error handling

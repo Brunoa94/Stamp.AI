@@ -45,6 +45,16 @@ export function useStampImageGeneration() {
 
     setIsGenerating(true);
 
+    // Navigate to generation loading screen (Step 3)
+    setCurrentStep(3);
+    setTimeout(() => {
+      const isMobile = window.innerWidth < 1024; // lg breakpoint
+      if (isMobile) {
+        const section = document.getElementById("step-3");
+        section?.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100);
+
     try {
       const result = await generateMutation.mutateAsync({
         image: referenceImage as File,

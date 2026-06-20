@@ -30,6 +30,8 @@ export interface StampFlowStateTypes {
   // Created product state
   createdProductId: string | undefined;
   setCreatedProductId: (id: string | undefined) => void;
+  createdVariantId: number | undefined;
+  setCreatedVariantId: (id: number | undefined) => void;
   mockupImageUrl: string | undefined;
   setMockupImageUrl: (url: string | undefined) => void;
 

@@ -29,9 +29,18 @@ export function buildPrintifyLineItems(cartItems: any[]): PrintifyLineItem[] {
 
       // Use the Printify product_id directly for existing Printify products
       console.log(`✅ Item ${index}: Using Printify product ID directly`);
+
+      const variantId = parseInt(item.variant_id);
+      if (!variantId || variantId === 0) {
+        console.error(`❌ Cart item ${index}: Invalid variant_id "${item.variant_id}"`);
+        console.error('Variant ID is required for Printify orders');
+        console.error(`To fix: Ensure size/color is selected when adding product to cart`);
+        return null;
+      }
+
       return {
         product_id: item.product_id,
-        variant_id: parseInt(item.variant_id) || 0,
+        variant_id: variantId,
         quantity: item.quantity || 1,
       };
     }
@@ -65,8 +74,16 @@ export function buildPrintifyLineItems(cartItems: any[]): PrintifyLineItem[] {
       has_print_areas: !!product.print_areas,
     });
 
+    const variantId = parseInt(item.variant_id);
+    if (!variantId || variantId === 0) {
+      console.error(`❌ Cart item ${index}: Invalid variant_id "${item.variant_id}"`);
+      console.error('Variant ID is required for Printify orders');
+      console.error(`To fix: Ensure size/color is selected when adding product to cart`);
+      return null;
+    }
+
     const lineItem: PrintifyLineItem = {
-      variant_id: parseInt(item.variant_id) || 0,
+      variant_id: variantId,
       quantity: item.quantity || 1,
     };
 
@@ -144,6 +161,13 @@ export function buildPrintifyLineItems(cartItems: any[]): PrintifyLineItem[] {
   console.log(
     `\n📦 Final result: ${validLineItems.length}/${cartItems.length} line items built successfully`
   );
+
+  // Throw error if no valid line items (all were filtered out)
+  if (validLineItems.length === 0 && cartItems.length > 0) {
+    console.error('❌ No valid line items could be built from cart items');
+    console.error('All cart items failed validation - check logs above for details');
+    throw new Error('Unable to process cart items. Please ensure all products have valid size/color selections.');
+  }
 
   return validLineItems;
 }

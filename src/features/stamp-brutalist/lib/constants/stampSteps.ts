@@ -76,28 +76,28 @@ export const ART_STYLES: readonly ArtStyleTypes[] = [
 
 export const PRODUCT_TYPE_MAP: Record<ProductTypeIdTypes, ProductTypeInfoTypes> = {
   tee: {
-    blueprintIds: [126, 127],
+    blueprintIds: [12, 6], // Bella+Canvas 3001, Gildan 5000
     name: 'Heavy Tee',
     icon: 'lucide:shirt',
     specs: 'Premium Cotton / 500GSM / Box Fit',
     hoverColor: 'hover:bg-brandCyan',
   },
   hoodie: {
-    blueprintIds: [111],
+    blueprintIds: [145], // Unisex Softstyle T-Shirt
     name: 'Archival Hoodie',
     icon: 'mdi:tshirt-crew',
     specs: 'Brushed Fleece / 650GSM / Oversized',
     hoverColor: 'hover:bg-brandPurple',
   },
   tote: {
-    blueprintIds: [169],
+    blueprintIds: [553], // Cotton Tote Bag
     name: 'Canvas Tote',
     icon: 'lucide:shopping-bag',
     specs: 'Canvas / 12oz / Reinforced Stitching',
     hoverColor: 'hover:bg-brandOrange',
   },
   poster: {
-    blueprintIds: [3],
+    blueprintIds: [157], // Kids Heavy Cotton Tee (placeholder for poster category)
     name: 'Giclée Print',
     icon: 'lucide:image',
     specs: 'Matte Finish / 250GSM / Archival',

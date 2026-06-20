@@ -86,7 +86,14 @@ export function usePaymentForm({
       const { clientSecret, paymentIntentId } = paymentData;
 
       if (isTestMode && requestBody.confirm) {
-        onSuccess?.({ id: paymentIntentId, status: "succeeded" }, lineItems);
+        onSuccess?.(
+          {
+            id: paymentIntentId,
+            status: "succeeded",
+            client_secret: clientSecret,
+          },
+          lineItems
+        );
         return;
       }
 

@@ -13,6 +13,8 @@ import {
   logStampInfo,
   logStampWarning,
 } from "../helpers/stampErrorHelpers";
+import { isValidProductSelections, isValidAuthenticatedUser } from "../helpers/validation";
+import { scrollToStep } from "../helpers/navigationUtils";
 import { mapToProductCreationPayload } from "../mappers/productCreationMapper";
 
 /**
@@ -29,6 +31,7 @@ export function useStampProductCreation() {
   const selectedImageUrl = useStampFlowStore((s) => s.selectedImageUrl);
   const enhancedPrompt = useStampFlowStore((s) => s.enhancedPrompt);
   const setCreatedProductId = useStampFlowStore((s) => s.setCreatedProductId);
+  const setCreatedVariantId = useStampFlowStore((s) => s.setCreatedVariantId);
   const setMockupImageUrl = useStampFlowStore((s) => s.setMockupImageUrl);
 
   const createProductMutation = useCreateCustomProduct();
@@ -38,12 +41,24 @@ export function useStampProductCreation() {
     const formData = watch();
 
     // Validate required selections
-    if (!validateSelections(formData, selectedImageUrl)) {
+    if (!isValidProductSelections(formData, selectedImageUrl)) {
+      const errorMsg = getStampErrorMessage("MISSING_COLOR_SIZE");
+      toast.error(errorMsg);
+      logStampWarning("handleCreateProduct", "Invalid product selections", {
+        hasColor: !!formData.selectedColor,
+        hasSize: !!formData.selectedSize,
+        hasImage: !!selectedImageUrl,
+        hasBlueprintId: !!formData.blueprintId,
+        hasPrintProviderId: !!formData.printProviderId,
+      });
       return;
     }
 
     // Validate authentication
-    if (!validateAuthentication(user, router)) {
+    if (!isValidAuthenticatedUser(user)) {
+      toast.error("You must be logged in to create a product");
+      logStampWarning("handleCreateProduct", "User not authenticated");
+      router.push("/auth/login");
       return;
     }
 
@@ -51,15 +66,15 @@ export function useStampProductCreation() {
 
     // Auto-advance to production/mockup generation step
     setCurrentStep(7);
-    advanceToStep(7);
+    scrollToStep(7);
 
     try {
       const payload = mapToProductCreationPayload(
         formData,
         selectedImageUrl!,
         enhancedPrompt,
-        user!.id,
-        user!.email,
+        user.id,
+        user.email,
       );
 
       logStampInfo("handleCreateProduct", "Creating product with payload", {
@@ -75,10 +90,25 @@ export function useStampProductCreation() {
         productId: product.id,
         hasImages: !!product.images,
         imagesCount: product.images?.length || 0,
+        variantsCount: product.variants?.length || 0,
       });
 
       // Store product data
       setCreatedProductId(product.id);
+
+      // Store first variant ID for cart
+      if (product.variants && product.variants.length > 0) {
+        const firstVariantId = product.variants[0].id;
+        setCreatedVariantId(firstVariantId);
+        logStampInfo("handleCreateProduct", "Storing variant ID for cart", {
+          variantId: firstVariantId,
+        });
+      } else {
+        logStampWarning(
+          "handleCreateProduct",
+          "No variants in product response",
+        );
+      }
 
       // Store mockup image URL
       if (product.images && product.images.length > 0) {
@@ -97,7 +127,7 @@ export function useStampProductCreation() {
       // Advance to final review after showing production animation
       setTimeout(() => {
         setCurrentStep(8);
-        advanceToStep(8);
+        scrollToStep(8);
       }, 2000);
 
       return product;
@@ -123,73 +153,4 @@ export function useStampProductCreation() {
     handleCreateProduct,
     isFinalizing,
   };
-}
-
-// ============================================================================
-// HELPER FUNCTIONS
-// ============================================================================
-
-/**
- * Validates required form selections
- */
-function validateSelections(
-  formData: StampFormData,
-  selectedImageUrl: string | undefined,
-): boolean {
-  if (!formData.selectedColor || !formData.selectedSize || !selectedImageUrl) {
-    const errorMsg = getStampErrorMessage("MISSING_COLOR_SIZE");
-    toast.error(errorMsg);
-    logStampWarning(
-      "validateSelections",
-      "Missing color, size, or image selection",
-      {
-        hasColor: !!formData.selectedColor,
-        hasSize: !!formData.selectedSize,
-        hasImage: !!selectedImageUrl,
-      },
-    );
-    return false;
-  }
-
-  if (!formData.blueprintId || !formData.printProviderId) {
-    const errorMsg = getStampErrorMessage("MISSING_PRODUCT_SELECTION");
-    toast.error(errorMsg);
-    logStampWarning("validateSelections", "Missing blueprint or provider", {
-      hasBlueprintId: !!formData.blueprintId,
-      hasPrintProviderId: !!formData.printProviderId,
-    });
-    return false;
-  }
-
-  return true;
-}
-
-/**
- * Validates user authentication
- */
-function validateAuthentication(
-  user: { id: string; email: string } | undefined | null,
-  router: ReturnType<typeof useRouter>,
-): boolean {
-  if (!user?.id || !user?.email) {
-    toast.error("You must be logged in to create a product");
-    logStampWarning("validateAuthentication", "User not authenticated");
-    router.push("/auth/login");
-    return false;
-  }
-  return true;
-}
-
-/**
- * Advances to a specific step with smooth scroll (only on mobile)
- */
-function advanceToStep(step: number): void {
-  // Use requestAnimationFrame to ensure DOM is ready
-  requestAnimationFrame(() => {
-    const isMobile = window.innerWidth < 1024; // lg breakpoint
-    if (isMobile) {
-      const section = document.getElementById(`step-${step}`);
-      section?.scrollIntoView({ behavior: "smooth" });
-    }
-  });
 }

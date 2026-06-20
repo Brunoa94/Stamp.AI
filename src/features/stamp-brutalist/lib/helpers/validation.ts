@@ -53,3 +53,37 @@ export function isValidUrl(url: unknown): url is string {
     return url.startsWith("/") || url.startsWith("data:");
   }
 }
+
+/**
+ * Validates form selections for product creation
+ * @param formData - The stamp form data
+ * @param selectedImageUrl - The selected image URL
+ * @returns {boolean} True if all required selections are present
+ */
+export function isValidProductSelections(
+  formData: { selectedColor?: string; selectedSize?: string; blueprintId?: number; printProviderId?: number },
+  selectedImageUrl: string | undefined,
+): boolean {
+  // Check color, size, and image
+  if (!formData.selectedColor || !formData.selectedSize || !selectedImageUrl) {
+    return false;
+  }
+
+  // Check blueprint and provider
+  if (!formData.blueprintId || !formData.printProviderId) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Validates user authentication data
+ * @param user - The user object to validate
+ * @returns {boolean} True if user has required authentication data
+ */
+export function isValidAuthenticatedUser(
+  user: { id?: string; email?: string } | undefined | null,
+): user is { id: string; email: string } {
+  return !!user?.id && !!user?.email;
+}
