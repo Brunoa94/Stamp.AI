@@ -1,29 +1,12 @@
 "use client";
 
 import { createContext, ReactNode, useContext, useEffect } from "react";
-import { useForm, FormProvider, UseFormReturn } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { ShippingAddressSchema } from "@/schemas/checkout";
-import type { PaymentMethodT } from "@/types/payment";
+import { CheckoutFormSchema, type CheckoutFormDataT } from "@/schemas/checkout";
 
-// Checkout form schema
-export const CheckoutFormSchema = z.object({
-  // Billing address (required)
-  billing: ShippingAddressSchema,
-
-  // Shipping address toggle and data
-  useShippingAddress: z.boolean(),
-  shipping: ShippingAddressSchema.optional(),
-
-  // Payment method
-  paymentMethod: z.enum(["stripe", "paypal"] as const),
-
-  // Promo code
-  promoCode: z.string().optional(),
-});
-
-export type CheckoutFormData = z.infer<typeof CheckoutFormSchema>;
+// Re-export type for convenience
+export type CheckoutFormData = CheckoutFormDataT;
 
 interface CheckoutFormContextValue {
   cartId: string | null;
@@ -49,7 +32,7 @@ export function CheckoutFormProvider({
       paymentMethod: "stripe",
       ...defaultValues,
     },
-    mode: "onBlur",
+    mode: "onChange", // Validate on change to enable/disable payment buttons in real-time
   });
 
   // Watch for shipping toggle changes

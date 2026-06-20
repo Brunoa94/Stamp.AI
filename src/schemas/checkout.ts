@@ -24,6 +24,38 @@ export const ShippingAddressSchema = z.object({
 
 export type ShippingAddressT = z.infer<typeof ShippingAddressSchema>;
 
+// Checkout Form Schema with conditional validation
+export const CheckoutFormSchema = z
+  .object({
+    // Billing address (required)
+    billing: ShippingAddressSchema,
+
+    // Shipping address toggle and data
+    useShippingAddress: z.boolean(),
+    shipping: ShippingAddressSchema.optional(),
+
+    // Payment method
+    paymentMethod: z.enum(["stripe", "paypal"] as const),
+
+    // Promo code
+    promoCode: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      // If shipping address toggle is enabled, shipping must be provided and valid
+      if (data.useShippingAddress) {
+        return data.shipping !== undefined;
+      }
+      return true;
+    },
+    {
+      message: "Shipping address is required when enabled",
+      path: ["shipping"],
+    }
+  );
+
+export type CheckoutFormDataT = z.infer<typeof CheckoutFormSchema>;
+
 // Product Customization Schema
 export const ProductCustomizationSchema = z.object({
   product_id: z.string().optional(),

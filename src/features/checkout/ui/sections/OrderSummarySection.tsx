@@ -36,11 +36,14 @@ export function OrderSummarySection({
   testMode = false,
   selectedTestMethod = "visa",
 }: OrderSummarySectionProps) {
-  const { watch } = useFormContext<CheckoutFormData>();
+  const { watch, formState } = useFormContext<CheckoutFormData>();
   const paymentMethod = watch("paymentMethod");
   const billingAddress = watch("billing");
   const shippingAddress = watch("shipping");
   const useShippingAddress = watch("useShippingAddress");
+
+  // Check if form is valid (all required fields filled and valid)
+  const isFormValid = formState.isValid;
 
   const {
     subtotal,
@@ -117,7 +120,7 @@ export function OrderSummarySection({
             cartId={cartId}
             testMode={testMode}
             selectedTestMethod={selectedTestMethod}
-            disabled={isSubmitting || total <= 0}
+            disabled={!isFormValid || isSubmitting || total <= 0}
           />
         </Elements>
       )}
@@ -127,7 +130,7 @@ export function OrderSummarySection({
           cart={cart}
           cartId={cartId ?? null}
           amount={total}
-          disabled={isSubmitting || total <= 0}
+          disabled={!isFormValid || isSubmitting || total <= 0}
         />
       )}
 

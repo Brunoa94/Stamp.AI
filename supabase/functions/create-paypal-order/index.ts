@@ -38,8 +38,13 @@ serve(async (req) => {
     // Validate request data
     const validAmount = validateRequest.amount(amount);
 
-    if (shipping_address && !shipping_address.zip?.trim()) {
-      throw ErrorCodes.MISSING_REQUIRED_FIELDS("shipping_address.zip");
+    if (shipping_address) {
+      if (!shipping_address.zip?.trim()) {
+        throw ErrorCodes.MISSING_REQUIRED_FIELDS("shipping_address.zip");
+      }
+      if (!shipping_address.country?.trim()) {
+        throw ErrorCodes.MISSING_REQUIRED_FIELDS("shipping_address.country");
+      }
     }
 
     // Build custom_id with metadata for webhook processing
