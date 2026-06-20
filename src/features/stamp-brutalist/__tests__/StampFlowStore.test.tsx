@@ -293,10 +293,19 @@ describe("useStampNavigation", () => {
     expect(useStampFlowStore.getState().currentStep).toBe(1);
   });
 
-  it("should call scrollIntoView after step change", async () => {
-    // Create mock element
+  it("should call scrollIntoView after step change on mobile", async () => {
+    // Mock mobile viewport
+    Object.defineProperty(window, 'innerWidth', {
+      writable: true,
+      configurable: true,
+      value: 768, // Mobile width (< 1024)
+    });
+
+    // Create mock element with spy
     const mockElement = document.createElement("section");
     mockElement.id = "step-2";
+    const scrollIntoViewSpy = vi.fn();
+    mockElement.scrollIntoView = scrollIntoViewSpy;
     document.body.appendChild(mockElement);
 
     const { result } = renderHook(() => useStampNavigation());
@@ -305,10 +314,10 @@ describe("useStampNavigation", () => {
       result.current.goToStep(2);
     });
 
-    // Wait for setTimeout
+    // Wait for setTimeout (hook uses 100ms delay)
     await new Promise((resolve) => setTimeout(resolve, 150));
 
-    expect(mockElement.scrollIntoView).toHaveBeenCalledWith({
+    expect(scrollIntoViewSpy).toHaveBeenCalledWith({
       behavior: "smooth",
     });
 
