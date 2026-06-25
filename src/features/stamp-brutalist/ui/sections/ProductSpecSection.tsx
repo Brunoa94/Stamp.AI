@@ -1,70 +1,21 @@
-
 "use client";
 
 import { memo, useMemo, useCallback } from "react";
+import { useQueries } from "@tanstack/react-query";
 import { Span } from "@/features/ui/span";
-import { Button } from "@/features/ui/button";
 import { useFormContext } from "react-hook-form";
-import { cn } from "@/lib/utils";
 import type { StampFormData } from "../../lib/schemas/stampFormSchema";
 import { SectionHeader } from "../components/SectionHeader";
-import { useTshirtProducts } from "@/queries/productQueries";
-import { useBestProvidersForBlueprints } from "@/queries/providerCatalogQueries";
+import { ProductSpecCard } from "../components/ProductSpecCard";
+import { useCatalogProducts } from "@/queries/catalogQueries";
 import { useStampNavigation } from "../../lib/hooks/useStampNavigation";
-import type { TshirtType } from "@/types/product";
-
-// Memoized product card component
-const ProductCard = memo(function ProductCard({
-  product,
-  isSelected,
-  onSelect,
-}: {
-  product: TshirtType & { fabricType: string; price: number };
-  isSelected: boolean;
-  onSelect: (product: TshirtType) => void;
-}) {
-  const handleClick = useCallback(() => {
-    onSelect(product);
-  }, [product, onSelect]);
-
-  return (
-    <Button
-      type="button"
-      variant="ghost"
-      onClick={handleClick}
-      className={cn(
-        "border-2 rounded-none p-3 space-y-2 text-left transition-all duration-300 flex flex-col h-auto",
-        "hover:shadow-xl hover:scale-[1.02]",
-        isSelected
-          ? "border-brandCyan bg-brandCyan/10 shadow-xl"
-          : "border-ink/20 hover:border-brandCyan",
-      )}
-    >
-      {/* Product Image */}
-      {product.image && (
-        <div className="relative w-full h-32 bg-paper/50">
-          <img
-            src={product.image}
-            alt={product.fabricType}
-            className="object-contain w-full h-full"
-          />
-        </div>
-      )}
-
-      {/* Product Title */}
-      <h3 className="font-anton text-sm tracking-wider uppercase text-ink">
-        {product.fabricType}
-      </h3>
-
-      {/* Price */}
-      <div className="inline-flex items-center gap-2 px-2 py-1 bg-ink text-white">
-        <span className="font-anton text-xs">
-          {product.price > 0 ? `$${product.price.toFixed(2)}` : "Loading..."}
-        </span>
-      </div>
-    </Button>
-  );
-});
+import { CatalogQueryService } from "@/services/catalogQueryService";
+import type { StampCatalogProduct } from "../../lib/types/catalogProduct";
+import {
+  EXCLUDED_BLUEPRINT_IDS,
+  FALLBACK_PRICE,
+  FABRIC_TYPE_NAMES,
+} from "../../lib/constants/productSpec";
 
 export const ProductSpecSection = memo(function ProductSpecSection() {
   const { watch, setValue } = useFormContext<StampFormData>();
@@ -72,51 +23,59 @@ export const ProductSpecSection = memo(function ProductSpecSection() {
   const printProviderId = watch("printProviderId");
 
   const { data: products = [], isLoading: loadingProducts } =
-    useTshirtProducts();
+    useCatalogProducts();
 
-  // Extract blueprint IDs for pricing - memoized
-  const blueprintIds = useMemo(
-    () => products.map((p) => p.blueprint_id),
+  const visibleProducts = useMemo(
+    () =>
+      products.filter(
+        (product) => !EXCLUDED_BLUEPRINT_IDS.has(product.blueprint_id),
+      ),
     [products],
   );
 
-  // Fetch cheapest prices for all blueprints
-  const { data: bestProviders, isLoading: isLoadingPrices } =
-    useBestProvidersForBlueprints(blueprintIds, "NL");
+  const providerQueries = useQueries({
+    queries: visibleProducts.map((product) => ({
+      queryKey: ["catalog", "providers", product.id, "NL"],
+      queryFn: () =>
+        CatalogQueryService.getProvidersForProduct(product.id, "NL"),
+      staleTime: 1000 * 60 * 10,
+      enabled: !!product.id,
+    })),
+  });
+
+  const isLoadingPrices = providerQueries.some((query) => query.isLoading);
 
   // Map catalog products with names and prices - memoized
   const catalogProducts = useMemo(() => {
-    const fabricTypeNames = [
-      "Premium Cotton",
-      "Organic Cotton",
-      "Eco Blend",
-      "Soft Cotton",
-    ];
+    return visibleProducts.map((product, index) => {
+      const providers = providerQueries[index]?.data || [];
+      const bestProvider = providers[0];
+      const totalPriceCents = bestProvider
+        ? bestProvider.basePriceCents + bestProvider.shippingCostCents
+        : 0;
+      const priceInDollars = totalPriceCents / 100;
 
-    return products.map((product, index) => {
-      const bestProvider = bestProviders?.get(product.blueprint_id);
-      const priceInCents = bestProvider?.total_cost || 0;
-      const priceInDollars = priceInCents / 100;
-
-      // Fallback to a base price if no pricing data is available
-      const FALLBACK_PRICE = 25.0;
       const displayPrice = priceInDollars > 0 ? priceInDollars : FALLBACK_PRICE;
 
       return {
-        ...product,
-        fabricType: fabricTypeNames[index] || product.name,
+        id: product.id,
+        name: product.name,
+        image: product.base_image_url || "",
+        blueprint_id: product.blueprint_id,
+        print_provider_id: bestProvider?.id || 0,
+        fabricType: FABRIC_TYPE_NAMES[index] || product.name,
         price: displayPrice,
-        providerName: bestProvider?.provider_name,
-        providerId: bestProvider?.provider_id,
+        providerName: bestProvider?.name,
+        availabilityStatus: product.availability_status,
       };
     });
-  }, [products, bestProviders]);
+  }, [visibleProducts, providerQueries]);
 
   const { goToStep } = useStampNavigation();
 
   // Stable callback for product selection
   const handleSelectCatalogProduct = useCallback(
-    (product: TshirtType) => {
+    (product: StampCatalogProduct) => {
       setValue("blueprintId", product.blueprint_id);
       setValue("printProviderId", product.print_provider_id);
       setValue("selectedColor", undefined);
@@ -176,10 +135,11 @@ export const ProductSpecSection = memo(function ProductSpecSection() {
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {catalogProducts.map((product) => (
-              <ProductCard
+              <ProductSpecCard
                 key={product.id}
                 product={product}
                 isSelected={selectedProduct?.id === product.id}
+                disabled={!product.print_provider_id}
                 onSelect={handleSelectCatalogProduct}
               />
             ))}

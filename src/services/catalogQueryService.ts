@@ -84,7 +84,8 @@ export class CatalogQueryService {
 
   /**
    * Get providers for a product in a specific country
-   * Returns: Array of providers with pricing, sorted by price (cheapest first)
+   * Returns: Array of providers with pricing, sorted by total cost (cheapest first)
+   * Automatically falls back to nearby countries if no providers available in requested country
    */
   static async getProvidersForProduct(
     productId: string,
@@ -92,26 +93,12 @@ export class CatalogQueryService {
   ): Promise<ProviderWithPricing[]> {
     const supabase = createClient();
 
-    const { data, error } = await supabase
-      .from("product_provider_availability")
-      .select(
-        `
-        print_provider_id,
-        base_price_cents,
-        currency_code,
-        shipping_cost_cents,
-        production_time_days,
-        print_providers (
-          id,
-          name,
-          description
-        )
-      `
-      )
-      .eq("product_id", productId)
-      .eq("country_code", countryCode)
-      .eq("is_available", true)
-      .order("base_price_cents", { ascending: true });
+    // Use RPC function with fallback logic (max shipping €6 / ~$6.50)
+    const { data, error } = await supabase.rpc("get_providers_for_product_with_fallback", {
+      p_product_id: productId,
+      p_country_code: countryCode,
+      p_max_shipping_cents: 650, // €6 / ~$6.50 USD
+    });
 
     if (error) {
       console.error("Error fetching providers:", error);
@@ -120,13 +107,14 @@ export class CatalogQueryService {
 
     return (
       data?.map((item: any) => ({
-        id: item.print_provider_id,
-        name: item.print_providers.name,
-        description: item.print_providers.description,
+        id: item.provider_id,
+        name: item.provider_name,
+        description: null, // RPC doesn't return description
         basePriceCents: item.base_price_cents,
         currencyCode: item.currency_code,
         shippingCostCents: item.shipping_cost_cents,
         productionTimeDays: item.production_time_days,
+        totalCostCents: item.total_cost_cents,
       })) || []
     );
   }

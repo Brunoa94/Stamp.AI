@@ -15,6 +15,15 @@ export interface CatalogProduct {
   category_id: string | null;
   base_image_url: string | null;
   is_active: boolean;
+  availability_status?: 'in_stock' | 'out_of_stock' | 'discontinued' | 'temporarily_unavailable';
+  last_availability_check?: string;
+  stock_check_error?: string | null;
+  printify_blueprint_exists?: boolean;
+  display_title?: string | null;
+  selling_price_cents?: number | null;
+  original_price_cents?: number | null;
+  is_on_sale?: boolean;
+  is_featured?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -39,6 +48,10 @@ export interface ProductProviderAvailability {
   shipping_cost_cents: number;
   production_time_days: number | null;
   is_available: boolean;
+  is_in_stock?: boolean;
+  stock_status?: 'available' | 'low_stock' | 'out_of_stock' | 'discontinued';
+  last_stock_check?: string;
+  next_restock_date?: string;
   last_synced_at: string;
   created_at: string;
   updated_at: string;
@@ -95,6 +108,7 @@ export interface ProviderWithPricing {
   currencyCode: string;
   shippingCostCents: number;
   productionTimeDays: number | null;
+  totalCostCents: number; // Base price + shipping cost
 }
 
 export interface VariantPrice {

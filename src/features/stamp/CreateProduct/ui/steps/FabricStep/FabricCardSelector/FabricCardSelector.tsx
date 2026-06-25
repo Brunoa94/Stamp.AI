@@ -1,14 +1,16 @@
 "use client";
 
 import { useTshirtProducts, type TshirtType } from "@/queries/productQueries";
-import { useBestProvidersForBlueprints } from "@/queries/providerCatalogQueries";
 import clsx from "clsx";
 import { Button } from "@/features/ui/button";
 import { CheckCircleIcon } from "@/theme/icons";
 import { FabricCardSelectorSkeleton } from "./FabricCardSelectorSkeleton";
 import { BlueprintImagesDialog } from "./BlueprintImagesDialog";
-import { useState, useMemo } from "react";
-import { ImageIcon } from "lucide-react";
+import { useState } from "react";
+import {
+  FABRIC_TYPE_NAMES,
+  FABRIC_DESCRIPTIONS,
+} from "../../../../lib/constants/fabricTypes";
 
 interface FabricCardSelectorProps {
   onTshirtSelect: (tshirt: TshirtType) => void;
@@ -26,62 +28,17 @@ export function FabricCardSelector({
   const [selectedFabricForImages, setSelectedFabricForImages] =
     useState<TshirtType | null>(null);
 
-  // Extract blueprint IDs
-  const blueprintIds = useMemo(
-    () => tshirtProducts.map((p) => p.blueprint_id),
-    [tshirtProducts]
-  );
-
-  // Fetch cheapest prices for all blueprints
-  const { data: bestProviders, isLoading: isLoadingPrices } =
-    useBestProvidersForBlueprints(blueprintIds, countryCode);
-
-  // Debug logging
-  console.log(
-    "📦 FabricCardSelector - Loaded products:",
-    tshirtProducts.length,
-  );
-  console.log("📦 Blueprint IDs:", blueprintIds);
-  console.log("💰 Best providers loaded:", bestProviders?.size || 0);
-
-  if (isLoading || isLoadingPrices) {
+  if (isLoading) {
     return <FabricCardSelectorSkeleton />;
   }
 
-  const handleViewImages = (fabric: TshirtType, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSelectedFabricForImages(fabric);
-    setImagesDialogOpen(true);
-  };
-
   // Map tshirt products to fabric types
-  const fabricTypeNames = [
-    "Premium Cotton",
-    "Organic Cotton",
-    "Eco Blend",
-    "Soft Cotton",
-  ];
-  const fabricDescriptions = [
-    "Ultra-soft combed cotton. Breathable, durable, and designed for superior comfort.",
-    "Eco-friendly, GOTS certified cotton. Gentle on your skin and even gentler on the planet.",
-    "Sustainable blend for ultimate comfort. Perfect balance of softness and durability.",
-    "Lightweight and soft. Ideal for everyday wear with exceptional breathability.",
-  ];
-
   const fabricOptions = tshirtProducts.map((tshirt, index) => {
-    // Get the cheapest price from provider catalog
-    const bestProvider = bestProviders?.get(tshirt.blueprint_id);
-    const priceInCents = bestProvider?.total_cost || 0;
-    const priceInDollars = priceInCents / 100;
-
     return {
       ...tshirt,
-      fabricType: fabricTypeNames[index] || tshirt.name,
-      fabricDescription: fabricDescriptions[index] || tshirt.description,
-      price: priceInDollars,
-      // Store provider info for debugging/display
-      providerName: bestProvider?.provider_name,
-      providerId: bestProvider?.provider_id,
+      fabricType: FABRIC_TYPE_NAMES[index] || tshirt.name,
+      fabricDescription: FABRIC_DESCRIPTIONS[index] || tshirt.description,
+      // Price already included in tshirtProduct from catalog
     };
   });
 
@@ -131,7 +88,9 @@ export function FabricCardSelector({
               {/* Price Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-linear-to-r from-[#7C3AED] to-[#6D28D9] text-white">
                 <span className="text-base sm:text-lg font-accent font-semibold">
-                  {fabric.price > 0 ? `$${fabric.price.toFixed(2)}` : "Loading..."}
+                  {fabric.price > 0
+                    ? `$${fabric.price.toFixed(2)}`
+                    : "Loading..."}
                 </span>
               </div>
 

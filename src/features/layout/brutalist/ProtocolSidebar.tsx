@@ -131,7 +131,6 @@ export function ProtocolSidebar() {
                     w-5 h-5 transition-transform group-hover:scale-110
                     ${getIconColor(step.color)}
                     ${isActive && step.animate ? "animate-pulse" : ""}
-                    ${!isActive && step.animate ? "animate-spin-slow" : ""}
                   `}
                 />
 
