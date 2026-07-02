@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/features/ui/button";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
 import PaymentSuccess from "@/features/checkout/ui/PaymentSuccess/PaymentSuccess";
 import PaymentError from "@/features/checkout/ui/components/PaymentError";
 import { OrderService } from "@/services/orderService";
@@ -40,7 +42,7 @@ class StripePipelineTimeoutError extends Error {
   }
 }
 
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   let timeoutId: ReturnType<typeof setTimeout>;
 
   const timeout = new Promise<never>((_, reject) => {
@@ -60,6 +62,7 @@ export interface StripeCheckoutData {
   amount: number;
   lineItems: any[];
   shippingAddress: any;
+  billing: any;
   cartId: string | null;
   timestamp: number;
 }
@@ -164,7 +167,13 @@ export default function StripeReturnPage() {
         setStatus("processing");
 
         // Extract checkout data
-        const { lineItems, shippingAddress, amount, cartId } = checkoutData;
+        const {
+          lineItems,
+          shippingAddress,
+          amount,
+          cartId,
+          billing: billingAddress,
+        } = checkoutData;
         const validatedLineItems = lineItems.map((item, index) =>
           validatePrintifyLineItem(item, index),
         );
@@ -218,7 +227,8 @@ export default function StripeReturnPage() {
           try {
             if (amount > 0) {
               // Use real order ID if available, otherwise use temporary ID
-              const refundOrderId = createdOrderId || `temp_stripe_${paymentIntent}`;
+              const refundOrderId =
+                createdOrderId || `temp_stripe_${paymentIntent}`;
 
               await RefundService.processRefund({
                 orderId: refundOrderId,
@@ -270,6 +280,7 @@ export default function StripeReturnPage() {
                 cart,
                 paymentStatus: "paid",
                 shippingAddress,
+                billingAddress,
                 idempotencyKey,
               })) ?? null;
 
@@ -340,7 +351,9 @@ export default function StripeReturnPage() {
               await triggerRefund("Printify fulfillment failed");
             } else {
               // No order created yet, trigger refund with temp ID
-              console.warn("⚠️ No order ID available, triggering refund with temp ID");
+              console.warn(
+                "⚠️ No order ID available, triggering refund with temp ID",
+              );
               await triggerRefund("Order creation failed before Printify");
             }
 
@@ -429,16 +442,16 @@ export default function StripeReturnPage() {
             <div className={paymentSuccessTheme.iconWrapper} aria-hidden="true">
               <Loader2 className="w-12 h-12 animate-spin" />
             </div>
-            <h1 className={paymentSuccessTheme.title}>
+            <Heading as="h1" variant="section" className={paymentSuccessTheme.title}>
               {status === "processing"
                 ? "Completing Your Payment"
                 : "Processing Payment"}
-            </h1>
-            <p className={paymentSuccessTheme.subtitle}>
+            </Heading>
+            <Paragraph variant="body" className={paymentSuccessTheme.subtitle}>
               {status === "processing"
                 ? "Please wait while we finalize your Stripe payment..."
                 : "Please wait while we verify your payment with Stripe..."}
-            </p>
+            </Paragraph>
           </section>
         </div>
       </div>
@@ -500,11 +513,13 @@ export default function StripeReturnPage() {
           <div className={paymentErrorTheme.iconWrapper} aria-hidden="true">
             <AlertCircle className={paymentErrorTheme.icon} />
           </div>
-          <h1 className={paymentErrorTheme.title}>Something Went Wrong</h1>
-          <p className={paymentErrorTheme.subtitle}>
+          <Heading as="h1" variant="section" className={paymentErrorTheme.title}>
+            Something Went Wrong
+          </Heading>
+          <Paragraph variant="body" className={paymentErrorTheme.subtitle}>
             {errorMessage ||
               "We couldn't process your Stripe payment. Please try again or contact support."}
-          </p>
+          </Paragraph>
           <div className={paymentErrorTheme.ctaStack}>
             <Button
               onClick={handleRetryPayment}

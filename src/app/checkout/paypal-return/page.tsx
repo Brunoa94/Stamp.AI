@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/features/ui/button";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
 import PaymentSuccess from "@/features/checkout/ui/PaymentSuccess/PaymentSuccess";
 import PaymentError from "@/features/checkout/ui/components/PaymentError";
 import { OrderService } from "@/services/orderService";
@@ -25,9 +27,14 @@ import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
 import { useClearCart } from "@/queries/cartQueries";
 import { useUser } from "@/hooks/useAuth";
 import { CheckoutStorageService } from "@/features/checkout/lib/services/checkoutStorageService";
-import type { CheckoutData } from "@/features/checkout/lib/services/checkoutStorageService";
 
-type PageStatus = "loading" | "capturing" | "success" | "failed" | "cancelled" | "error";
+type PageStatus =
+  | "loading"
+  | "capturing"
+  | "success"
+  | "failed"
+  | "cancelled"
+  | "error";
 
 const PAYPAL_PIPELINE_TIMEOUT_MS = 120_000; // 2 minutes
 
@@ -35,20 +42,25 @@ class PayPalPipelineTimeoutError extends Error {
   constructor(timeoutMs: number) {
     super(
       `Order processing timed out after ${Math.round(timeoutMs / 1000)} seconds. ` +
-        `A full refund has been initiated and will appear within 3–5 business days.`
+        `A full refund has been initiated and will appear within 3–5 business days.`,
     );
     this.name = "PayPalPipelineTimeoutError";
   }
 }
 
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   let timeoutId: ReturnType<typeof setTimeout>;
 
   const timeout = new Promise<never>((_, reject) => {
-    timeoutId = setTimeout(() => reject(new PayPalPipelineTimeoutError(ms)), ms);
+    timeoutId = setTimeout(
+      () => reject(new PayPalPipelineTimeoutError(ms)),
+      ms,
+    );
   });
 
-  return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
+  return Promise.race([promise, timeout]).finally(() =>
+    clearTimeout(timeoutId),
+  );
 }
 
 export default function PayPalReturnPage() {
@@ -95,7 +107,7 @@ export default function PayPalReturnPage() {
         if (!checkoutData) {
           setStatus("error");
           setErrorMessage(
-            "Checkout data expired or not found. Please try again from the checkout page."
+            "Checkout data expired or not found. Please try again from the checkout page.",
           );
           return;
         }
@@ -104,7 +116,7 @@ export default function PayPalReturnPage() {
         if (!user) {
           setStatus("error");
           setErrorMessage(
-            "You must be logged in to complete your order. Please log in and try again."
+            "You must be logged in to complete your order. Please log in and try again.",
           );
           return;
         }
@@ -139,21 +151,35 @@ export default function PayPalReturnPage() {
           CheckoutStorageService.clearPayPalCheckoutData();
 
           // Handle declined payment - show failed status with retry option
-          if (captureData.code === "INSTRUMENT_DECLINED" || captureData.isRetryable) {
+          if (
+            captureData.code === "INSTRUMENT_DECLINED" ||
+            captureData.isRetryable
+          ) {
             setStatus("failed");
-            setErrorMessage(captureData.error || "Your payment method was declined. Please try again with a different payment method.");
+            setErrorMessage(
+              captureData.error ||
+                "Your payment method was declined. Please try again with a different payment method.",
+            );
             return;
           }
 
-          throw new Error(captureData.error || "Failed to capture PayPal payment");
+          throw new Error(
+            captureData.error || "Failed to capture PayPal payment",
+          );
         }
 
         setCaptureId(captureData.captureId);
 
         // Payment captured successfully - now create the order
-        const { lineItems, shippingAddress, amount, cartId } = checkoutData;
+        const {
+          lineItems,
+          shippingAddress,
+          billing: billingAddress,
+          amount,
+          cartId,
+        } = checkoutData;
         const validatedLineItems = lineItems.map((item, index) =>
-          validatePrintifyLineItem(item, index)
+          validatePrintifyLineItem(item, index),
         );
 
         const idempotencyKey = `paypal_${token}`;
@@ -163,7 +189,8 @@ export default function PayPalReturnPage() {
           CheckoutStorageService.clearPayPalCheckoutData();
           setStatus("error");
           setErrorMessage(
-            "Cart information not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: " + token
+            "Cart information not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: " +
+              token,
           );
           return;
         }
@@ -172,7 +199,8 @@ export default function PayPalReturnPage() {
           CheckoutStorageService.clearPayPalCheckoutData();
           setStatus("error");
           setErrorMessage(
-            "Order amount not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: " + token
+            "Order amount not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: " +
+              token,
           );
           return;
         }
@@ -200,7 +228,8 @@ export default function PayPalReturnPage() {
         }
 
         // Check for existing order
-        const existingOrder = await OrderService.getOrderByIdempotencyKey(idempotencyKey);
+        const existingOrder =
+          await OrderService.getOrderByIdempotencyKey(idempotencyKey);
         if (existingOrder) {
           sessionStorage.setItem(finalizationDoneKey, "true");
           sessionStorage.removeItem(finalizationLockKey);
@@ -232,15 +261,24 @@ export default function PayPalReturnPage() {
           }
         };
 
-        const markOrderFailed = async (orderId: string, failureStatus: string) => {
+        const markOrderFailed = async (
+          orderId: string,
+          failureStatus: string,
+        ) => {
           try {
-            await updateOrderStatus.mutateAsync({ orderId, status: failureStatus });
+            await updateOrderStatus.mutateAsync({
+              orderId,
+              status: failureStatus,
+            });
             // Do NOT change payment_status - payment has been successfully captured
             // The payment_transactions table will track refund status
             // Keeping payment_status as "paid" accurately reflects that payment was captured
             console.log(`✅ Order ${orderId} marked as ${failureStatus}`);
           } catch (updateError) {
-            console.error(`❌ Failed to mark order ${orderId} as ${failureStatus}:`, updateError);
+            console.error(
+              `❌ Failed to mark order ${orderId} as ${failureStatus}:`,
+              updateError,
+            );
           }
         };
 
@@ -259,6 +297,7 @@ export default function PayPalReturnPage() {
                 cart,
                 paymentStatus: "paid",
                 shippingAddress,
+                billingAddress,
                 idempotencyKey,
               })) ?? null;
 
@@ -272,14 +311,14 @@ export default function PayPalReturnPage() {
           } catch (orderError) {
             await triggerRefund("Order creation failed");
             throw new Error(
-              "Order creation failed. A full refund has been initiated."
+              "Order creation failed. A full refund has been initiated.",
             );
           }
 
           if (!createdOrderId) {
             await triggerRefund("Order ID not returned");
             throw new Error(
-              "Order creation failed. A full refund has been initiated."
+              "Order creation failed. A full refund has been initiated.",
             );
           }
 
@@ -296,7 +335,8 @@ export default function PayPalReturnPage() {
           // Stage 2: Create Printify order
           const printifyPayload: CreatePrintifyOrderRequest = {
             line_items: validatedLineItems,
-            shipping_address: mapShippingAddressToPrintifyAddress(shippingAddress),
+            shipping_address:
+              mapShippingAddressToPrintifyAddress(shippingAddress),
             is_test: false,
             metadata: {
               payment_intent_id: token,
@@ -307,7 +347,8 @@ export default function PayPalReturnPage() {
           };
 
           try {
-            const printifyResult = await createPrintifyOrder.mutateAsync(printifyPayload);
+            const printifyResult =
+              await createPrintifyOrder.mutateAsync(printifyPayload);
             const printifyOrderId = printifyResult?.order?.id;
 
             if (printifyOrderId && createdOrderId) {
@@ -320,23 +361,32 @@ export default function PayPalReturnPage() {
 
             if (createdOrderId) {
               // Mark order as failed BEFORE triggering refund
-              await markOrderFailed(createdOrderId, "unsuccessful_confirmation");
+              await markOrderFailed(
+                createdOrderId,
+                "unsuccessful_confirmation",
+              );
               // Trigger refund with real order ID
               await triggerRefund("Printify fulfillment failed");
             } else {
               // No order created yet, trigger refund with temp ID
-              console.warn("⚠️ No order ID available, triggering refund with temp ID");
+              console.warn(
+                "⚠️ No order ID available, triggering refund with temp ID",
+              );
               await triggerRefund("Order creation failed before Printify");
             }
 
             throw new Error(
-              "Order fulfillment failed. A full refund has been initiated."
+              "Order fulfillment failed. A full refund has been initiated.",
             );
           }
 
           // Stage 3: Mark payment recovered
           if (createdOrderId) {
-            await PaymentRecoveryService.markPaymentRecovered(token, "paypal", createdOrderId);
+            await PaymentRecoveryService.markPaymentRecovered(
+              token,
+              "paypal",
+              createdOrderId,
+            );
           }
 
           // Stage 4: Clear cart
@@ -348,7 +398,10 @@ export default function PayPalReturnPage() {
         };
 
         try {
-          await withTimeout(runFulfillmentPipeline(), PAYPAL_PIPELINE_TIMEOUT_MS);
+          await withTimeout(
+            runFulfillmentPipeline(),
+            PAYPAL_PIPELINE_TIMEOUT_MS,
+          );
         } catch (pipelineError) {
           if (pipelineError instanceof PayPalPipelineTimeoutError) {
             if (createdOrderId) {
@@ -374,7 +427,9 @@ export default function PayPalReturnPage() {
 
         setStatus("error");
         setErrorMessage(
-          err instanceof Error ? err.message : "Failed to process PayPal payment"
+          err instanceof Error
+            ? err.message
+            : "Failed to process PayPal payment",
         );
       }
     };
@@ -395,19 +450,24 @@ export default function PayPalReturnPage() {
     return (
       <div className={paymentSuccessTheme.page}>
         <div className={paymentSuccessTheme.wrapper}>
-          <section className={paymentSuccessTheme.card} aria-label="Processing payment">
+          <section
+            className={paymentSuccessTheme.card}
+            aria-label="Processing payment"
+          >
             <div className={paymentSuccessTheme.topAccent} aria-hidden="true" />
             <div className={paymentSuccessTheme.iconWrapper} aria-hidden="true">
               <Loader2 className="w-12 h-12 animate-spin" />
             </div>
-            <h1 className={paymentSuccessTheme.title}>
-              {status === "capturing" ? "Completing Your Payment" : "Processing Payment"}
-            </h1>
-            <p className={paymentSuccessTheme.subtitle}>
+            <Heading as="h1" variant="section" className={paymentSuccessTheme.title}>
+              {status === "capturing"
+                ? "Completing Your Payment"
+                : "Processing Payment"}
+            </Heading>
+            <Paragraph variant="body" className={paymentSuccessTheme.subtitle}>
               {status === "capturing"
                 ? "Please wait while we finalize your PayPal payment..."
                 : "Please wait while we verify your payment with PayPal..."}
-            </p>
+            </Paragraph>
           </section>
         </div>
       </div>
@@ -422,7 +482,9 @@ export default function PayPalReturnPage() {
           id: captureId || paymentId || "",
           provider: "paypal",
           status: "succeeded",
-          orderNumber: orderNumber || (paymentId ? `#PP-${paymentId.slice(-6).toUpperCase()}` : "—"),
+          orderNumber:
+            orderNumber ||
+            (paymentId ? `#PP-${paymentId.slice(-6).toUpperCase()}` : "—"),
           totalPaid: "Paid via PayPal",
           estimatedDelivery: "7–10 business days",
           confirmationEmail: "",
@@ -459,7 +521,9 @@ export default function PayPalReturnPage() {
       <PaymentError
         details={{
           paymentId: paymentId || "",
-          orderNumber: paymentId ? `#PP-${paymentId.slice(-6).toUpperCase()}` : "—",
+          orderNumber: paymentId
+            ? `#PP-${paymentId.slice(-6).toUpperCase()}`
+            : "—",
           amountDue: "—",
           attemptedOn: new Date().toLocaleString(),
           status: "Declined",
@@ -484,16 +548,25 @@ export default function PayPalReturnPage() {
           <div className={paymentErrorTheme.iconWrapper} aria-hidden="true">
             <AlertCircle className={paymentErrorTheme.icon} />
           </div>
-          <h1 className={paymentErrorTheme.title}>Something Went Wrong</h1>
-          <p className={paymentErrorTheme.subtitle}>
+          <Heading as="h1" variant="section" className={paymentErrorTheme.title}>
+            Something Went Wrong
+          </Heading>
+          <Paragraph variant="body" className={paymentErrorTheme.subtitle}>
             {errorMessage ||
               "We couldn't process your PayPal payment. Please try again or contact support."}
-          </p>
+          </Paragraph>
           <div className={paymentErrorTheme.ctaStack}>
-            <Button onClick={handleRetryPayment} className={paymentErrorTheme.primaryBtn}>
+            <Button
+              onClick={handleRetryPayment}
+              className={paymentErrorTheme.primaryBtn}
+            >
               Return to Checkout
             </Button>
-            <Button asChild variant="outline" className={paymentErrorTheme.secondaryBtn}>
+            <Button
+              asChild
+              variant="outline"
+              className={paymentErrorTheme.secondaryBtn}
+            >
               <Link href="/dashboard">Go to Dashboard</Link>
             </Button>
           </div>
