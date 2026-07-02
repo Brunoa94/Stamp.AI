@@ -25,7 +25,7 @@ export function useCreateProductAndAddToCart() {
     userId: string;
     userEmail: string;
   }) => {
-    // Default price for custom t-shirt
+    // Default price for custom t-shirt (in dollars, will be converted to cents)
     const defaultPrice = 25.0;
 
     const productPayload: CreateProductPayloadT = {
@@ -42,14 +42,17 @@ export function useCreateProductAndAddToCart() {
       onSuccess: async (product) => {
         // Get the first enabled variant (or first variant) for the cart
         const firstEnabledVariant = product.variants?.find(v => v.is_enabled) || product.variants?.[0];
-        const variantPrice = firstEnabledVariant?.price || defaultPrice;
+        const variantPriceInDollars = firstEnabledVariant?.price || defaultPrice;
+
+        // Convert price from dollars to cents for database storage
+        const variantPriceInCents = Math.round(variantPriceInDollars * 100);
 
         addToCart.mutate(
           {
             product_id: product.id, // Printify product ID (now saved to database)
             product_name: product.title || `${tshirtName} - Custom Design`,
             quantity: 1,
-            unit_price: variantPrice,
+            unit_price: variantPriceInCents,
             custom_image_url: product.uploaded_image_preview_url || imageUrl,
             variant_id: firstEnabledVariant?.id?.toString() || null,
           },

@@ -2,12 +2,11 @@
 
 import { useFormContext } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 import type { StampFormData } from "../schemas/stampFormSchema";
 import { useStampFlowStore } from "../context/StampFormContext";
 import { useAddToCart } from "@/queries/cartQueries";
 import {
-  getStampErrorMessage,
   logStampError,
   logStampInfo,
   logStampWarning,
@@ -16,6 +15,7 @@ import {
 export function useStampCartActions() {
   const { watch } = useFormContext<StampFormData>();
   const router = useRouter();
+  const { handleError, handleSuccess } = useErrorHandler();
 
   const createdProductId = useStampFlowStore((s) => s.createdProductId);
   const createdVariantId = useStampFlowStore((s) => s.createdVariantId);
@@ -27,13 +27,12 @@ export function useStampCartActions() {
   const handleAddToCart = async (buyNow: boolean = false) => {
     // Validate product exists
     if (!createdProductId) {
-      console.error("[STAMP] No created product ID available", {
+      logStampWarning("handleAddToCart", "No created product ID available", {
         createdProductId,
         selectedImageUrl,
         enhancedPrompt,
       });
-      toast.error("Please create a product first before adding to cart");
-      logStampWarning("handleAddToCart", "No created product ID available");
+      handleError(new Error("Please create a product first before adding to cart"));
       return;
     }
 
@@ -47,17 +46,17 @@ export function useStampCartActions() {
       hasCustomImage: !!selectedImageUrl,
     });
 
-    // Use a default base price (should ideally come from product data)
-    const unitPrice = 0.80;
+    // Use a default base price in cents (should ideally come from product data)
+    // 80 cents = $0.80
+    const unitPrice = 80;
 
     // Validate variant ID is available
     if (!createdVariantId) {
-      console.error("[STAMP] No variant ID available", {
+      logStampWarning("handleAddToCart", "No variant ID available", {
         createdProductId,
         createdVariantId,
       });
-      toast.error("Product variant not found. Please try creating the product again.");
-      logStampWarning("handleAddToCart", "No variant ID available");
+      handleError(new Error("Product variant not found. Please try creating the product again."));
       return;
     }
 
@@ -80,14 +79,13 @@ export function useStampCartActions() {
         variant_id: createdVariantId.toString(),
       });
 
-      console.log("[STAMP] Add to cart result:", result);
-
       logStampInfo("handleAddToCart", "Product added to cart successfully", {
         productId: createdProductId,
+        result,
         buyNow,
       });
 
-      toast.success("Added to cart!");
+      handleSuccess("Added to cart!");
 
       // Navigate based on action
       if (buyNow) {
@@ -98,15 +96,12 @@ export function useStampCartActions() {
         router.push("/cart");
       }
     } catch (error) {
-      console.error("[STAMP] Add to cart failed:", error);
       logStampError("handleAddToCart", error, {
         productId: createdProductId,
         buyNow,
       });
-
-      const errorMsg = getStampErrorMessage("ADD_TO_CART_FAILED");
-      toast.error(errorMsg);
-      throw error;
+      // Error already handled by useAddToCart mutation's onError callback
+      // No need to call handleError or re-throw here
     }
   };
 

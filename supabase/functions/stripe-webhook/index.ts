@@ -193,61 +193,31 @@ serve(async (req) => {
           break
         }
 
-        // Update payment_transactions record (created by create-payment-intent)
-        // Extract user_id from metadata
+        // CRITICAL: Use atomic UPSERT to prevent race conditions
+        // Handles case where webhook arrives before create-payment-intent
         const userId = paymentIntent.metadata?.user_id
 
-        // Try to update existing record first
-        const updateResult = await supabaseRest(
-          `payment_transactions?stripe_payment_intent_id=eq.${paymentIntent.id}`,
-          'PATCH',
+        const upsertResult = await supabaseRest(
+          'rpc/upsert_stripe_payment_transaction',
+          'POST',
           {
-            user_id: userId || null,
-            stripe_customer_id: paymentIntent.customer,
-            amount: paymentIntent.amount / 100,
-            currency: paymentIntent.currency,
-            status: 'succeeded',
-            payment_method_type: paymentIntent.payment_method_types?.[0],
-            metadata: paymentIntent.metadata,
-            updated_at: new Date().toISOString()
+            p_stripe_payment_intent_id: paymentIntent.id,
+            p_user_id: userId || null,
+            p_stripe_customer_id: paymentIntent.customer,
+            p_amount: paymentIntent.amount / 100,
+            p_currency: paymentIntent.currency,
+            p_status: 'succeeded',
+            p_payment_method_type: paymentIntent.payment_method_types?.[0] || 'card',
+            p_metadata: paymentIntent.metadata || {}
           }
         )
 
-        // If no record was updated (race condition - webhook arrived before create-payment-intent), create it
-        if (!updateResult.data || (Array.isArray(updateResult.data) && updateResult.data.length === 0)) {
-          console.log('No existing record found, creating new one (race condition)')
-          const insertResult = await supabaseRest(
-            'payment_transactions',
-            'POST',
-            {
-              user_id: userId || null,
-              payment_provider: 'stripe',
-              stripe_payment_intent_id: paymentIntent.id,
-              stripe_customer_id: paymentIntent.customer,
-              amount: paymentIntent.amount / 100,
-              currency: paymentIntent.currency,
-              status: 'succeeded',
-              payment_method_type: paymentIntent.payment_method_types?.[0],
-              metadata: paymentIntent.metadata,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            }
-          )
-
-          if (insertResult.error) {
-            console.error('Insert error:', insertResult.error)
-          }
-        } else {
-          console.log('✅ Payment transaction updated:', paymentIntent.id)
-        }
-
-        const result = updateResult
-
-        console.log('Upsert result:', result)
-        if (result.error) {
-          console.error('Upsert error:', result.error)
+        if (upsertResult.error) {
+          console.error('❌ Upsert error:', upsertResult.error)
           break
         }
+
+        console.log('✅ Payment transaction upserted atomically:', paymentIntent.id)
 
         // Update order payment_status to "paid"
         // NOTE: Webhooks should ONLY update payment_status, NEVER order status

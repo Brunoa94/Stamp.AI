@@ -79,22 +79,6 @@ Deno.serve(async (req) => {
         if (syncResult.success && syncResult.errors.length === 0) {
           results.updated++;
           console.log(`✅ Blueprint ${product.blueprint_id} updated`);
-
-          // Check for price changes in the last hour
-          const { data: priceChanges } = await supabase
-            .from("catalog_price_history")
-            .select("id")
-            .eq("product_id", product.product_id)
-            .gte("changed_at", new Date(Date.now() - 3600000).toISOString())
-            .neq("price_change_cents", 0);
-
-          if (priceChanges && priceChanges.length > 0) {
-            results.priceChanges.push({
-              blueprint_id: product.blueprint_id,
-              name: product.name,
-              changes: priceChanges.length,
-            });
-          }
         } else if (
           syncResult.errors?.some(
             (e: { error: string }) =>

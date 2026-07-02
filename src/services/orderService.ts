@@ -162,16 +162,24 @@ export class OrderService {
 
       if (error) {
         console.error("Error checking idempotency:", error);
-        // Don't throw - return null so order creation can proceed
-        // This prevents idempotency check failures from blocking orders
-        return null;
+        // CRITICAL: Fail closed - throw error to prevent duplicate orders
+        // If we can't check for duplicates, we shouldn't create the order
+        throw ErrorClient.handleError({
+          error,
+          service: "Order",
+          action: "Check Idempotency Key"
+        });
       }
 
       return data;
     } catch (error) {
       console.error("Idempotency check failed:", error);
-      // Don't throw - fail open to allow order creation
-      return null;
+      // CRITICAL: Fail closed - rethrow to prevent duplicate orders
+      throw ErrorClient.handleError({
+        error,
+        service: "Order",
+        action: "Check Idempotency Key"
+      });
     }
   }
 
@@ -361,6 +369,7 @@ export class OrderService {
     cart,
     paymentStatus = "paid",
     shippingAddress,
+    billingAddress,
     idempotencyKey,
     orderStatus,
   }: {
@@ -368,10 +377,20 @@ export class OrderService {
     cart: CartWithItems;
     paymentStatus?: string;
     shippingAddress?: ShippingAddressT;
+    billingAddress?: ShippingAddressT;
     idempotencyKey?: string;
     orderStatus?: string;
   }) {
     try {
+      // CRITICAL: Check idempotency key to prevent duplicate orders
+      if (idempotencyKey) {
+        const existingOrder = await this.getOrderByIdempotencyKey(idempotencyKey);
+        if (existingOrder) {
+          console.log(`⚠️ Order already exists with idempotency key: ${idempotencyKey}, returning existing order: ${existingOrder.id}`);
+          return existingOrder.id;
+        }
+      }
+
       // Use mapper to generate unique order number
       const orderNumber = OrderServiceMapper.generateOrderNumber();
 
@@ -387,6 +406,7 @@ export class OrderService {
         orderNumber,
         totals,
         shippingAddress,
+        billingAddress,
         0, // discount amount
         paymentStatus,
         finalOrderStatus,

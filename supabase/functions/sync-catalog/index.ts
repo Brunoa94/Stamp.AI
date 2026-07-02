@@ -304,32 +304,53 @@ Deno.serve(async (req) => {
 
                   if (createResponse.ok) {
                     const createdProduct = await createResponse.json();
-                    console.log(
-                      `✓ Created temp product ${createdProduct.id}, extracting costs from ${createdProduct.variants?.length} variants`,
-                    );
+                    let tempProductId: string | null = null;
 
-                    // Extract costs
-                    for (const variant of createdProduct.variants || []) {
-                      if (variant.cost) {
-                        blueprintVariantCosts.set(variant.id, variant.cost);
+                    try {
+                      tempProductId = createdProduct.id;
+                      console.log(
+                        `✓ Created temp product ${tempProductId}, extracting costs from ${createdProduct.variants?.length} variants`,
+                      );
+
+                      // Extract costs
+                      for (const variant of createdProduct.variants || []) {
+                        if (variant.cost) {
+                          blueprintVariantCosts.set(variant.id, variant.cost);
+                        }
+                      }
+
+                      console.log(
+                        `✓ Extracted ${blueprintVariantCosts.size} variant costs`,
+                      );
+                    } finally {
+                      // CRITICAL: Always delete temp product, even if cost extraction fails
+                      if (tempProductId) {
+                        try {
+                          const deleteResponse = await fetch(
+                            `${PRINTIFY_API_BASE}/shops/${PRINTIFY_SHOP_ID}/products/${tempProductId}.json`,
+                            {
+                              method: "DELETE",
+                              headers: {
+                                Authorization: `Bearer ${PRINTIFY_API_TOKEN}`,
+                              },
+                            },
+                          );
+
+                          if (deleteResponse.ok) {
+                            console.log(`✓ Deleted temp product ${tempProductId}`);
+                          } else {
+                            console.error(
+                              `⚠️ Failed to delete temp product ${tempProductId}: ${deleteResponse.status}`,
+                            );
+                          }
+                        } catch (deleteError) {
+                          console.error(
+                            `⚠️ Error deleting temp product ${tempProductId}:`,
+                            deleteError,
+                          );
+                        }
                       }
                     }
-
-                    console.log(
-                      `✓ Extracted ${blueprintVariantCosts.size} variant costs`,
-                    );
-
-                    // Delete temp product
-                    await fetch(
-                      `${PRINTIFY_API_BASE}/shops/${PRINTIFY_SHOP_ID}/products/${createdProduct.id}.json`,
-                      {
-                        method: "DELETE",
-                        headers: {
-                          Authorization: `Bearer ${PRINTIFY_API_TOKEN}`,
-                        },
-                      },
-                    );
-                    console.log(`✓ Deleted temp product ${createdProduct.id}`);
                   } else {
                     const errorText = await createResponse.text();
                     console.error(
@@ -428,16 +449,6 @@ Deno.serve(async (req) => {
             if (!profile) {
               continue; // No shipping to this country
             }
-
-            // Record price change before updating
-            await supabase.rpc("record_price_change", {
-              p_product_id: product.id,
-              p_provider_id: provider.id,
-              p_country_code: country,
-              p_new_base_price_cents: Math.round(minVariantCost),
-              p_new_shipping_cents: Math.round(profile.first_item.cost),
-              p_change_reason: "daily_sync",
-            });
 
             // Upsert provider availability with CORRECT prices
             // NOTE: Printify API returns costs already in cents, so no need to multiply by 100

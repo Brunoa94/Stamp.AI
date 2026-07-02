@@ -36,6 +36,7 @@ export type AddToCartInput = Omit<
   'id' | 'cart_id' | 'created_at' | 'updated_at'
 > & {
   quantity: number; // Make quantity required for cart operations
+  unit_price: number; // Make unit_price required (in cents, not nullable)
 }
 
 // UpdateCartItemInput for updating cart item quantities

@@ -412,7 +412,7 @@ describe("OrderService Edge Cases", () => {
             id: "item_1",
             product_id: "prod_123",
             quantity: 2,
-            unit_price: 50.00,
+            unit_price: 5000, // $50.00 in cents
           },
         ],
       };
