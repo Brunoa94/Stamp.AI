@@ -176,6 +176,7 @@ export function useCreateOrderFromCart() {
       cart,
       paymentStatus = "paid",
       shippingAddress,
+      billingAddress,
       idempotencyKey,
       orderStatus,
     }: {
@@ -183,6 +184,7 @@ export function useCreateOrderFromCart() {
       cart: CartWithItems;
       paymentStatus?: string;
       shippingAddress?: ShippingAddressT;
+      billingAddress?: ShippingAddressT;
       idempotencyKey?: string;
       orderStatus?: string;
     }) => {
@@ -194,6 +196,7 @@ export function useCreateOrderFromCart() {
         user,
         paymentStatus,
         shippingAddress,
+        billingAddress,
         idempotencyKey,
         orderStatus,
       });

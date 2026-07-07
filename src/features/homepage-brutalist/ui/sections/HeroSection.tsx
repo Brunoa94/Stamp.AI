@@ -39,9 +39,9 @@ export function HeroSection() {
     <section className="relative min-h-screen flex items-center justify-center bg-concrete text-ink overflow-hidden pt-32 pb-20 px-8">
       {/* Animated gradient overlays - 3 layers at different speeds */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-1/4 left-1/4 w-[60vw] h-[60vw] bg-linear-to-br from-brandPurple via-brandCyan to-brandOrange rounded-full blur-[120px] animate-[gradientRotate_8s_linear_infinite]" />
-        <div className="absolute top-1/3 right-1/4 w-[50vw] h-[50vw] bg-linear-to-tl from-brandCyan via-brandOrange to-brandPurple rounded-full blur-[100px] animate-[gradientRotate_12s_linear_infinite_reverse]" />
-        <div className="absolute bottom-1/4 left-1/3 w-[55vw] h-[55vw] bg-linear-to-tr from-brandOrange via-brandPurple to-brandCyan rounded-full blur-[110px] animate-[gradientRotate_10s_linear_infinite]" />
+        <div className="absolute top-1/4 left-1/4 w-[60vw] h-[60vw] bg-linear-to-br from-brandPurple via-brandCyan to-brandOrange rounded-full blur-[120px]" />
+        <div className="absolute top-1/3 right-1/4 w-[50vw] h-[50vw] bg-linear-to-tl from-brandCyan via-brandOrange to-brandPurple rounded-full blur-[100px]" />
+        <div className="absolute bottom-1/4 left-1/3 w-[55vw] h-[55vw] bg-linear-to-tr from-brandOrange via-brandPurple to-brandCyan rounded-full blur-[110px]" />
       </div>
 
       {/* Floating blur blobs - purple, cyan, orange */}

@@ -48,7 +48,7 @@ export function CartItemCard({
   // Extract product details
   const productName = item.product_name || item.product?.name || 'Custom Product';
   const imageUrl = item.custom_image_url;
-  const price = item.unit_price;
+  const price: number = item.unit_price ?? 0;
   const variantName = item.variant?.name || 'Standard';
 
   // Parse variant for specs (if available)

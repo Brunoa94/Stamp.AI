@@ -127,16 +127,18 @@ export class RefundService {
       // Attempt refund with retry logic (3 attempts with exponential backoff)
       await this.retryWithBackoff(async () => {
         console.log(`💰 Attempting refund for ${paymentProvider} payment ${paymentId}...`);
+        console.log(`📋 Refund payload:`, JSON.stringify(refundBody, null, 2));
 
         const supabase = this.getSupabase();
         const headers = await getAuthenticatedHeaders("Refund");
 
-        const { error } = await supabase.functions.invoke("process-refund", {
+        const { data, error } = await supabase.functions.invoke("process-refund", {
           body: refundBody,
           headers,
         });
 
         if (error) {
+          console.error(`❌ Refund edge function error:`, error);
           throw ErrorClient.handleError({
             error,
             service: "Refund",
@@ -145,6 +147,7 @@ export class RefundService {
         }
 
         console.log(`✅ Refund successful for ${paymentProvider} payment ${paymentId}`);
+        console.log(`📊 Refund result:`, JSON.stringify(data, null, 2));
       }, 3, 1000);
 
     } catch (error) {

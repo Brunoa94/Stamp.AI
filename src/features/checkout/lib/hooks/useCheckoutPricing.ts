@@ -15,8 +15,9 @@ interface UseCheckoutPricingParams {
 
 export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
   const { watch } = useFormContext<CheckoutFormData>();
-
-  const [appliedPromo, setAppliedPromo] = useState<PromoCodeValidationResult | null>(
+  const [appliedPromo, setAppliedPromo] = useState<
+    PromoCodeValidationResult | null
+  >(
     null,
   );
   const [promoError, setPromoError] = useState<string | null>(null);
@@ -38,26 +39,31 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
     },
     onError: (error) => {
       setAppliedPromo(null);
-      const errorMessage = error instanceof Error ? error.message : "Failed to validate promo code";
+      const errorMessage = error instanceof Error
+        ? error.message
+        : "Failed to validate promo code";
       setPromoError(errorMessage);
     },
   });
 
-  // Calculate subtotal from cart items
-  const subtotal = (() => {
+  // Calculate subtotal from cart items (in cents)
+  const subtotalInCents = (() => {
     if (!cart?.cart_items) return 0;
     return cart.cart_items.reduce((sum, item) => {
-      return sum + (item.unit_price * item.quantity);
+      return sum + ((item.unit_price ?? 0) * item.quantity);
     }, 0);
   })();
+
+  // Convert cents to dollars for display
+  const subtotal = subtotalInCents / 100;
 
   // Shipping is always free (Standard only)
   const shipping = 0;
 
-  // Discount from applied promo code
+  // Discount from applied promo code (already in dollars)
   const discount = getDiscountValue(appliedPromo);
 
-  // Total = subtotal + shipping - discount
+  // Total = subtotal + shipping - discount (all in dollars)
   const total = subtotal + shipping - discount;
 
   // Apply promo code
@@ -68,7 +74,10 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
     }
 
     setPromoError(null);
-    await validatePromoCodeMutation.mutateAsync({ code: code.trim(), subtotal });
+    await validatePromoCodeMutation.mutateAsync({
+      code: code.trim(),
+      subtotal,
+    });
   };
 
   // Clear promo code

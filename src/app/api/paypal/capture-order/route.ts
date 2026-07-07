@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { capturePayPalOrder, PayPalCaptureError } from "@/lib/paypal-server";
+import { PayPalCaptureMapper } from "./paypalCaptureMapper";
 
 export const runtime = "nodejs";
 
@@ -33,68 +34,44 @@ export async function POST(request: NextRequest) {
     // Capture the PayPal order
     const captureResult = await capturePayPalOrder(orderId);
 
-    // Extract capture and payer info
-    const capture = captureResult.purchase_units?.[0]?.payments?.captures?.[0];
-    const payer = captureResult.payer;
+    // Extract capture details using mapper
+    const { customId } = PayPalCaptureMapper.extractCaptureDetails(captureResult);
+    const { metadata, userId } = PayPalCaptureMapper.parseCustomId(customId);
 
-    // Parse custom_id to get metadata
-    let metadata: Record<string, unknown> = {};
-    let userId: string | undefined;
-
+    // CRITICAL: Use atomic stored procedure to update payment + order together
+    // This prevents scenario where payment succeeds but order stays pending
     try {
-      const customData = JSON.parse(captureResult.purchase_units?.[0]?.custom_id || "{}");
-      metadata = customData;
-      userId = customData.user_id;
-    } catch (e) {
-      console.warn("Could not parse custom_id:", e);
-    }
+      const atomicParams = PayPalCaptureMapper.mapToAtomicCaptureParams(captureResult, orderId);
+      const { data: atomicResult, error: atomicError } = await supabase.rpc(
+        "atomic_paypal_payment_capture",
+        atomicParams
+      );
 
-    // Update payment transaction in database
-    try {
+      if (atomicError) {
+        console.error("Atomic payment capture failed:", atomicError);
+        throw new Error(`Failed to update payment and order: ${atomicError.message}`);
+      }
+
+      console.log("✅ Atomic payment capture successful:", atomicResult);
+
+      // Update additional payer info (non-critical, separate transaction OK)
+      const payerUpdate = PayPalCaptureMapper.mapPayerInfoToUpdate(captureResult, payerId);
       await supabase
         .from("payment_transactions")
-        .update({
-          paypal_capture_id: capture?.id,
-          paypal_payer_id: payer?.payer_id || payerId,
-          paypal_payer_email: payer?.email_address,
-          status: "succeeded",
-          payment_method_type: "paypal",
-          updated_at: new Date().toISOString(),
-        })
+        .update(payerUpdate)
         .eq("paypal_order_id", orderId);
 
-      console.log("Payment transaction updated:", orderId);
     } catch (dbError) {
       console.error("Database update error:", dbError);
-    }
-
-    // Update order payment_status if order_id exists in metadata
-    const dbOrderId = metadata.order_id as string | undefined;
-    if (dbOrderId) {
-      try {
-        await supabase
-          .from("orders")
-          .update({
-            payment_status: "paid",
-            payment_method: "paypal",
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", dbOrderId);
-
-        console.log(`Order ${dbOrderId} payment_status updated to: paid`);
-      } catch (orderError) {
-        console.error("Failed to update order payment_status:", orderError);
-      }
+      // CRITICAL: If atomic operation fails, return error to user
+      // Don't silently succeed when payment wasn't recorded
+      throw dbError;
     }
 
     console.log("PayPal order captured successfully:", orderId);
 
-    return NextResponse.json({
-      success: true,
-      captureId: capture?.id || orderId,
-      status: captureResult.status,
-      payerEmail: payer?.email_address,
-    });
+    const successResponse = PayPalCaptureMapper.mapToSuccessResponse(captureResult);
+    return NextResponse.json(successResponse);
   } catch (error) {
     console.error("Error capturing PayPal order:", error);
 

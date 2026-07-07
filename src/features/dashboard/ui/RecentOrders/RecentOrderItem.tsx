@@ -32,7 +32,7 @@ export function RecentOrderItem({ order, onClick }: PropsI) {
   return (
     <div
       onClick={() => onClick(order)}
-      className={`flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 group cursor-pointer hover:bg-opacity-10 transition-all border-l-0 ${getStatusColor(order.status)}`}
+      className={`flex flex-col md:flex-row md:items-center justify-between gap-6 p-8 group cursor-pointer hover:bg-opacity-10 transition-all border-l-0 ${getStatusColor(order.status ?? 'pending')}`}
     >
       <div className="flex items-center gap-6">
         <RecentOrderItemThumbnail
@@ -48,7 +48,7 @@ export function RecentOrderItem({ order, onClick }: PropsI) {
 
       <div className="flex items-center gap-8 justify-between">
         <RecentOrderItemPrice amount={totalAmount} />
-        <RecentOrderItemStatus status={order.status} />
+        <RecentOrderItemStatus status={order.status ?? 'pending'} />
         <ChevronRight className="w-5 h-5 text-ink/20 group-hover:text-current transition-all" />
       </div>
     </div>

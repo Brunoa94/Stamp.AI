@@ -137,7 +137,7 @@ serve(async (req) => {
       print_provider_id: finalPrintProviderId,
       variants: selectedVariants.map((variantId: number) => ({
         id: variantId,
-        price: 1, // Price in cents (1 cent = $0.01) - MUST be an integer
+        price: 50, // Price in cents (50 cents = €0.50) - MUST be an integer
         is_enabled: true,
       })),
       print_areas: [

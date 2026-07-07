@@ -24,7 +24,7 @@ export class CartServiceMapper {
    */
   static mapItemsToCartSummary(items: CartItem[]): CartSummary {
     const subtotal = items.reduce((sum, item) => {
-      return sum + (item.unit_price * item.quantity);
+      return sum + ((item.unit_price ?? 0) * item.quantity);
     }, 0);
 
     const itemCount = items.reduce((count, item) => {
@@ -57,7 +57,7 @@ export class CartServiceMapper {
    * Calculate item total price
    */
   static calculateItemTotal(item: CartItem): number {
-    return item.unit_price * item.quantity;
+    return (item.unit_price ?? 0) * item.quantity;
   }
 
   /**
@@ -113,7 +113,7 @@ export class CartServiceMapper {
       product_name: item.product_name,
       variant_id: item.variant_id ?? undefined,
       quantity: item.quantity,
-      unit_price: item.unit_price,
+      unit_price: item.unit_price ?? 0,
       custom_image_url: item.custom_image_url ?? undefined,
     };
   }

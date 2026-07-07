@@ -44,7 +44,6 @@
     var(--brandPurple)
   );
   opacity: 0.04;
-  animation: gradientRotate 12s linear infinite;
 }
 
 /* Floating blob */

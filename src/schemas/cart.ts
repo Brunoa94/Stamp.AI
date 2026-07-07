@@ -7,7 +7,7 @@ export const addToCartSchema = z.object({
   product_name: z.string().min(1, "Product name is required"),
   variant_id: z.string().nullable().optional(), // Printify variant ID (number as string)
   quantity: z.number().int().min(1, "Quantity must be at least 1").max(99, "Quantity cannot exceed 99"),
-  unit_price: z.number().positive("Unit price must be positive"),
+  unit_price: z.number().int().positive("Unit price must be a positive integer (in cents)"),
   custom_image_url: z.string().nullable().optional(), // Any string URL from user uploads
 });
 
