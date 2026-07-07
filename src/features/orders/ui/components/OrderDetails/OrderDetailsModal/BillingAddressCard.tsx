@@ -20,24 +20,18 @@ export function BillingAddressCard({
       </Heading>
       <div className="space-y-1 text-sm uppercase tracking-wide text-ink/85">
         {billingAddress.address1 && (
-          <Paragraph as="p" variant="body">
-            {billingAddress.address1}
-          </Paragraph>
+          <Paragraph as="p">{billingAddress.address1}</Paragraph>
         )}
         {billingAddress.address2 && (
-          <Paragraph as="p" variant="body">
-            {billingAddress.address2}
-          </Paragraph>
+          <Paragraph as="p">{billingAddress.address2}</Paragraph>
         )}
-        <Paragraph as="p" variant="body">
+        <Paragraph as="p">
           {billingAddress.city && `${billingAddress.city}, `}
           {billingAddress.region && `${billingAddress.region} `}
           {billingAddress.zip}
         </Paragraph>
         {billingAddress.country && (
-          <Paragraph as="p" variant="body">
-            {billingAddress.country}
-          </Paragraph>
+          <Paragraph as="p">{billingAddress.country}</Paragraph>
         )}
       </div>
     </div>

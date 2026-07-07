@@ -12,14 +12,12 @@ export function PaymentMethodCard({ paymentMethod }: PaymentMethodCardPropsI) {
       <div>
         <Paragraph
           as="p"
-          variant="sm"
           className="text-[10px] font-bold tracking-[0.25em] text-ink/45"
         >
           Payment Method
         </Paragraph>
         <Paragraph
           as="p"
-          variant="body"
           className="font-medium capitalize tracking-wide text-ink"
         >
           {paymentMethod}

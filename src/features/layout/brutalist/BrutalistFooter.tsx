@@ -58,7 +58,6 @@ export function BrutalistFooter() {
             <Span>AI</Span>
           </Link>
           <Paragraph
-            variant="sm"
             className="opacity-40 max-w-xs leading-loose font-bold tracking-widest"
           >
             Democratizing design precision through AI synthesis. Engineered for

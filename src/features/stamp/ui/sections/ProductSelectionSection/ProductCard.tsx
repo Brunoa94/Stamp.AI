@@ -49,7 +49,10 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
         </div>
       </div>
 
-      <div aria-hidden="true" className="relative z-10 w-32 h-32 lg:w-36 lg:h-36" />
+      <div
+        aria-hidden="true"
+        className="relative z-10 w-32 h-32 lg:w-36 lg:h-36"
+      />
 
       <div className="absolute z-10 left-6 right-6 bottom-6 flex flex-col items-center">
         <Heading

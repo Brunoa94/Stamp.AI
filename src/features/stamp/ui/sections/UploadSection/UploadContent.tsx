@@ -42,10 +42,7 @@ export function UploadContent({
         </span>
       </Heading>
 
-      <Paragraph
-        variant="card"
-        className="text-(--color-stamp-taupe) mb-10 max-w-sm"
-      >
+      <Paragraph className="text-(--color-stamp-taupe) mb-10 max-w-sm">
         Provide a visual seed for the neural engine. This architectural
         floorplan will guide the synthesis loop.
       </Paragraph>
@@ -61,10 +58,7 @@ export function UploadContent({
 
       {/* Next Button */}
       <div>
-        <Button
-          onClick={onNext}
-          className="w-full bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase"
-        >
+        <Button onClick={onNext} variant="stamp-primary" className="w-full">
           Next Protocol
         </Button>
       </div>

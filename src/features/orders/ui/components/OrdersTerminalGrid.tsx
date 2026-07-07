@@ -13,10 +13,12 @@ import { formatPrice } from "@/features/orders/lib/utils/formatPrice";
 import { canCancelOrder } from "@/features/orders/lib/utils/orderCancellation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/features/ui/button";
+import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { OrderActionsType, OrderStatusType } from "../../types/orders-terminal";
 import { getOrderStatusConfig } from "../../helpers/getOrderStatusConfig";
+import { OrderStatusBadge } from "./OrderStatusBadge";
 
 interface PropsI extends OrderActionsType {
   order: OrderWithItemsT;
@@ -44,7 +46,6 @@ function OrdersTerminalGrid({
       ? order.status
       : undefined;
   const statusConfig = getOrderStatusConfig(status);
-  const StatusIcon = statusConfig.icon;
 
   return (
     <div
@@ -59,61 +60,48 @@ function OrdersTerminalGrid({
       {/* Top Section: Number + Status Badge */}
       <div className="flex justify-between items-start mb-8">
         <Span
-          as="span"
-          unstyled
-          className={cn(
-            "font-anton text-4xl transition-opacity",
-            "text-ink opacity-10 group-hover:opacity-100",
-          )}
+          variant="metric"
+          className="text-ink opacity-10 transition-opacity group-hover:opacity-100"
         >
           {String(index + 1).padStart(2, "0")}
         </Span>
-        <div
-          className={cn(
-            "flex items-center gap-2 px-3 py-1 text-[10px] font-bold uppercase tracking-widest border",
-            `text-${statusConfig.color} bg-${statusConfig.bgColor} border-${statusConfig.borderColor}`,
-            "group-hover:bg-white/20 group-hover:text-white group-hover:border-white/40",
-          )}
-        >
-          <StatusIcon className="w-3 h-3" />
-          {statusConfig.label}
-        </div>
+        <OrderStatusBadge
+          status={order.status}
+          showIcon
+          className="group-hover:border-white/40 group-hover:bg-white/20 group-hover:text-white"
+        />
       </div>
 
       {/* Middle Section: Order ID + Date */}
       <div className="space-y-2 mb-12">
-        <h3 className="font-anton text-4xl uppercase tracking-tighter group-hover:text-white transition-colors">
+        <Heading
+          as="h3"
+          variant="card"
+          className="transition-colors group-hover:text-white"
+        >
           {formatOrderId(order.id)}
-        </h3>
-        <Paragraph
-          variant="sm"
+        </Heading>
+        <Span
           as="p"
-          className={cn(
-            "text-[10px] font-bold tracking-[0.3em] uppercase transition-colors",
-            "text-ink/30 group-hover:text-white/80",
-          )}
+          variant="default"
+          className="text-ink/30 transition-colors group-hover:text-white/80"
         >
           Processed {formatOrderDate(order.created_at)} / Terminal NYC
-        </Paragraph>
+        </Span>
       </div>
 
       {/* Product Details */}
       <div className="flex-1">
         <Paragraph
           as="p"
-          variant="body"
-          className="font-bold text-lg mb-1 group-hover:text-white transition-colors"
+          className="font-bold mb-1 transition-colors group-hover:text-white"
         >
           {firstItem?.product_name || "Custom Product"} -{" "}
           {firstItem?.variant_name || "Standard"}
         </Paragraph>
         <Paragraph
           as="p"
-          variant="sm"
-          className={cn(
-            "text-xs uppercase transition-colors",
-            "text-ink/60 group-hover:text-white/80",
-          )}
+          className="text-ink/60 transition-colors group-hover:text-white/80"
         >
           {firstItem?.variant_name || "Standard Variant"} / Qty{" "}
           {firstItem?.quantity || 1}
@@ -122,13 +110,13 @@ function OrdersTerminalGrid({
 
       {/* Bottom Section: Price + Actions */}
       <div className="flex items-end justify-between mt-12">
-        <Span
+        <Heading
           as="span"
-          unstyled
-          className="font-anton text-3xl group-hover:text-white transition-colors"
+          variant="card"
+          className="transition-colors group-hover:text-white"
         >
           {formatPrice(order.total_amount)}
-        </Span>
+        </Heading>
         <div className="flex gap-4">
           {canCancel && !isCancelled ? (
             <Button
@@ -136,12 +124,7 @@ function OrdersTerminalGrid({
                 e.stopPropagation();
                 onCancelOrder?.(order);
               }}
-              variant="outline"
-              className={cn(
-                "border px-6 py-2 font-anton text-xs tracking-widest uppercase transition-all",
-                "border-ink/20 group-hover:border-white/40 text-red-600 group-hover:text-red-600",
-                "hover:bg-transparent hover:text-red-600",
-              )}
+              variant="card-outline-danger"
             >
               CANCEL
             </Button>
@@ -151,30 +134,12 @@ function OrdersTerminalGrid({
                 e.stopPropagation();
                 onReorder(order);
               }}
-              variant="outline"
-              className={cn(
-                "border px-6 py-2 font-anton text-xs tracking-widest uppercase transition-all",
-                "border-ink/20 text-ink group-hover:border-white/40 group-hover:text-ink",
-                "hover:bg-transparent hover:text-ink",
-              )}
+              variant="card-outline"
             >
               REORDER
             </Button>
           )}
-          <Button
-            variant="default"
-            className={cn(
-              "px-6 py-2 font-anton text-xs tracking-widest uppercase transition-all",
-              "bg-ink text-white group-hover:bg-white",
-              order.status === "delivered" || order.status === "shipped"
-                ? "group-hover:text-cyan"
-                : order.status === "processing"
-                  ? "group-hover:text-orange"
-                  : "group-hover:text-purple",
-            )}
-          >
-            TRACK
-          </Button>
+          <Button variant="card-solid">TRACK</Button>
         </div>
       </div>
     </div>

@@ -22,10 +22,7 @@ export function PreservationSlider({ value, onChange }: PropsI) {
         Preservation
       </Label>
       <div className="flex items-center gap-4">
-        <Span
-          variant="micro"
-          className="text-(--color-stamp-taupe)/40"
-        >
+        <Span variant="micro" className="text-(--color-stamp-taupe)/40">
           LOW
         </Span>
         <input
@@ -38,10 +35,7 @@ export function PreservationSlider({ value, onChange }: PropsI) {
           className="flex-1 h-px bg-(--color-stamp-divider) appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-(--color-stamp-gold) [&::-webkit-slider-thumb]:rounded-full"
           aria-label="Preservation level slider"
         />
-        <Span
-          variant="micro"
-          className="text-(--color-stamp-taupe)/40"
-        >
+        <Span variant="micro" className="text-(--color-stamp-taupe)/40">
           HIGH
         </Span>
       </div>

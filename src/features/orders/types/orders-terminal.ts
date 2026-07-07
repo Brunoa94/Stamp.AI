@@ -34,17 +34,14 @@ export type OrderActionsType = {
  * Possible persisted order statuses received from the backend.
  */
 export type OrderStatusType =
-  | Exclude<OrderStatusFilterT, "all">
-  | null
-  | undefined;
+  Exclude<OrderStatusFilterT, "all"> | null | undefined;
 
 /**
  * Status configuration for order cards
  */
 export type OrderStatusConfigType = {
-  color: string;
-  bgColor: string;
-  borderColor: string;
+  /** Complete static badge classes (background, border and text color) */
+  badgeClass: string;
   hoverBg: string;
   icon: React.ComponentType<{ className?: string }>;
   label: string;

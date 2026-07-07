@@ -21,7 +21,6 @@ import { useCancelOrder } from "@/features/orders/lib/hooks/useCancelOrder";
 import { Alert, AlertDescription } from "@/features/ui/alert";
 import dynamic from "next/dynamic";
 import { CancelOrderModal } from "./components/CancelOrderModal/CancelOrderModal";
-import { cn } from "@/lib/utils";
 import { PageContainer } from "@/shared/ui/PageContainer";
 import { OrdersTerminalHeader } from "@/features/orders/ui/components/OrdersTerminalHeader";
 import { OrdersTerminalTable } from "@/features/orders/ui/components/OrdersTerminalTable";
@@ -101,11 +100,7 @@ export default function OrdersTerminalContent() {
 
   return (
     <>
-      <section
-        className={cn(
-          "orders-terminal relative z-10 px-8 lg:px-24 py-16 lg:py-24",
-        )}
-      >
+      <section className="orders-terminal relative z-10 px-8 lg:px-24 py-16 lg:py-24">
         <PageContainer>
           <OrdersTerminalHeader
             viewMode={viewMode}
@@ -133,9 +128,7 @@ export default function OrdersTerminalContent() {
               />
             </>
           ) : (
-            <Alert
-              className={cn("text-center border-ink/10 bg-white text-ink")}
-            >
+            <Alert className="text-center">
               <AlertDescription>
                 No orders match the selected filters.
               </AlertDescription>

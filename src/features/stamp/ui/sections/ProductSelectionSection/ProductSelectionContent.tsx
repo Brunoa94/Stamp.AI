@@ -34,10 +34,7 @@ export function ProductSelectionContent({ canProceed, onContinue }: PropsI) {
           </span>
         </Heading>
 
-        <Paragraph
-          variant="card"
-          className="text-(--color-stamp-taupe) mb-12 max-w-sm"
-        >
+        <Paragraph className="text-(--color-stamp-taupe) mb-12 max-w-sm">
           Translate digital permanence into physical form. Selected from our
           curated catalog of premium textiles.
         </Paragraph>
@@ -53,7 +50,8 @@ export function ProductSelectionContent({ canProceed, onContinue }: PropsI) {
       <Button
         onClick={onContinue}
         disabled={!canProceed}
-        className="w-full mt-12 bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed"
+        variant="stamp-primary"
+        className="w-full mt-12 gap-3 disabled:opacity-40"
       >
         CONTINUE TO CUSTOMIZATION
         <ArrowRight className="w-5 h-5" />

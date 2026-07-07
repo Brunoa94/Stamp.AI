@@ -58,7 +58,6 @@ export function ReviewsSection() {
                 ))}
               </div>
               <Paragraph
-                variant="sm"
                 className="tracking-widest opacity-60 font-bold"
               >
                 {brutalistRatingSummary.totalReviews.toLocaleString()} Verified
@@ -76,14 +75,14 @@ export function ReviewsSection() {
                   key={platform.name}
                   className="flex justify-between items-center pb-4 border-b border-white/10 last:border-0"
                 >
-                  <Paragraph as="span" variant="body">
+                  <Paragraph as="span">
                     {platform.name}
                   </Paragraph>
                   <div className="flex items-center gap-3">
                     <Span className="font-mono font-bold">
                       {platform.rating}
                     </Span>
-                    <Paragraph as="span" variant="sm" className="opacity-50">
+                    <Paragraph as="span" className="opacity-50">
                       ({platform.reviews})
                     </Paragraph>
                   </div>
@@ -119,7 +118,7 @@ export function ReviewsSection() {
                   </div>
 
                   {/* Review text */}
-                  <Paragraph variant="quote" className="mb-6">
+                  <Paragraph className="mb-6">
                     "{testimonial.text}"
                   </Paragraph>
                 </div>
@@ -137,7 +136,7 @@ export function ReviewsSection() {
                     </div>
                     <div className="flex items-center gap-2 text-xs opacity-60">
                       <ThumbsUp className="w-3 h-3" />
-                      <Paragraph as="span" variant="sm">
+                      <Paragraph as="span">
                         {testimonial.helpful}
                       </Paragraph>
                     </div>

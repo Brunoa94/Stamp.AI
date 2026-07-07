@@ -1,8 +1,10 @@
 import { OrderWithItemsT } from "@/types/order";
 import { ExternalLink, Package } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
 
 interface PropsI {
   order: OrderWithItemsT;
@@ -36,18 +38,10 @@ export function TrackingInfoSection({
       <div className="space-y-4 border border-ink/10 bg-concrete/35 p-4">
         {order.tracking_number && (
           <div>
-            <Paragraph
-              as="p"
-              variant="sm"
-              className="text-[10px] font-bold tracking-[0.25em] text-ink/45"
-            >
+            <Span as="p" variant="default" className="text-ink/45">
               Tracking Number
-            </Paragraph>
-            <Paragraph
-              as="p"
-              variant="body"
-              className="break-all font-medium tracking-wide text-ink"
-            >
+            </Span>
+            <Paragraph as="p" className="break-all font-medium text-ink">
               {order.tracking_number}
             </Paragraph>
           </div>
@@ -55,51 +49,40 @@ export function TrackingInfoSection({
 
         {order.tracking_url && (
           <div>
-            <Link
-              href={order.tracking_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 font-bold uppercase tracking-[0.16em] text-cyan transition-colors hover:text-purple"
+            <Button
+              asChild
+              variant="link"
+              className="text-cyan hover:text-purple"
             >
-              <ExternalLink className="w-4 h-4" />
-              Track Package
-            </Link>
+              <Link
+                href={order.tracking_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Track Package
+              </Link>
+            </Button>
           </div>
         )}
 
         <div className="grid gap-4 border-t border-ink/10 pt-4 md:grid-cols-2">
           {shippedDate && (
             <div>
-              <Paragraph
-                as="p"
-                variant="sm"
-                className="text-[10px] font-bold tracking-[0.25em] text-ink/45"
-              >
+              <Span as="p" variant="default" className="text-ink/45">
                 Shipped On
-              </Paragraph>
-              <Paragraph
-                as="p"
-                variant="body"
-                className="font-medium tracking-wide text-ink"
-              >
+              </Span>
+              <Paragraph as="p" className="font-medium text-ink">
                 {shippedDate}
               </Paragraph>
             </div>
           )}
           {deliveredDate && (
             <div>
-              <Paragraph
-                as="p"
-                variant="sm"
-                className="text-[10px] font-bold tracking-[0.25em] text-ink/45"
-              >
+              <Span as="p" variant="default" className="text-ink/45">
                 Delivered On
-              </Paragraph>
-              <Paragraph
-                as="p"
-                variant="body"
-                className="font-medium tracking-wide text-ink"
-              >
+              </Span>
+              <Paragraph as="p" className="font-medium text-ink">
                 {deliveredDate}
               </Paragraph>
             </div>

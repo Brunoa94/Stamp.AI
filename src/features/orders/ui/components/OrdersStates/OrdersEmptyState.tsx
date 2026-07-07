@@ -41,7 +41,7 @@ export function OrdersEmptyState({
         </Heading>
 
         {/* Description */}
-        <Paragraph variant="sm" className="text-[#6b7280] max-w-sm mb-12">
+        <Paragraph className="text-ink/60 max-w-sm mb-12">
           {isNoMatch
             ? "TRY ADJUSTING OR CLEARING YOUR FILTERS TO SEE MORE RESULTS."
             : "YOU HAVEN'T PLACED ANY ORDERS YET. START CREATING YOUR CUSTOM DESIGNS AND PLACE YOUR FIRST ORDER!"}

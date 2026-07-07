@@ -15,11 +15,7 @@ interface PropsI {
   onSelectSize: (size: SizeType) => void;
 }
 
-export function SizeSelector({
-  sizes,
-  selectedSize,
-  onSelectSize,
-}: PropsI) {
+export function SizeSelector({ sizes, selectedSize, onSelectSize }: PropsI) {
   return (
     <div>
       <Label className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe) block mb-6">

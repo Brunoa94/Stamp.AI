@@ -7,10 +7,7 @@ import {
   useStampProductSelection,
   useStampSelectedImage,
 } from "../../../lib/hooks/useStampSelectors";
-import {
-  STAMP_SIZES,
-  DEFAULT_SIZE,
-} from "../../../lib/constants/stampColors";
+import { STAMP_SIZES, DEFAULT_SIZE } from "../../../lib/constants/stampColors";
 import type { SizeType } from "../../../lib/types/stampTypes";
 import { CustomizationPreview } from "./CustomizationPreview";
 import { CustomizationControls } from "./CustomizationControls";

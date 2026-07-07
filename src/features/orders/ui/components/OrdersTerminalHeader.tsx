@@ -6,7 +6,6 @@
  */
 
 import { LayoutGrid, List } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/features/ui/button";
 import { PageHeader } from "@/shared/ui/PageHeader";
 import { OrdersViewModeType } from "../../types/orders-terminal";
@@ -32,7 +31,7 @@ export function OrdersTerminalHeader({
       <PageHeader
         title="My"
         highlightedWord="Orders"
-        subtitle={`${activeCount} ${activeCount === 1 ? 'Order' : 'Orders'} in archives`}
+        subtitle={`${activeCount} ${activeCount === 1 ? "Order" : "Orders"} in archives`}
       />
 
       {/* RIGHT: Controls Section */}
@@ -41,28 +40,16 @@ export function OrdersTerminalHeader({
         <div className="flex border border-ink/10 p-1 bg-white">
           <Button
             onClick={() => onViewModeChange("list")}
-            variant="ghost"
-            size="icon"
-            className={cn(
-              "w-12 h-12 flex items-center justify-center transition-all hover:bg-purple! hover:text-white!",
-              viewMode === "list"
-                ? "bg-purple text-white"
-                : "bg-concrete text-ink hover:bg-ink/5",
-            )}
+            variant={viewMode === "list" ? "toggle-active" : "toggle"}
+            size="icon-xl"
             aria-label="List view"
           >
             <List className="text-xl" />
           </Button>
           <Button
             onClick={() => onViewModeChange("grid")}
-            variant="ghost"
-            size="icon"
-            className={cn(
-              "w-12 h-12 flex items-center justify-center transition-all hover:bg-purple! hover:text-white!",
-              viewMode === "grid"
-                ? "bg-purple text-white"
-                : "bg-concrete text-ink hover:bg-ink/5",
-            )}
+            variant={viewMode === "grid" ? "toggle-active" : "toggle"}
+            size="icon-xl"
             aria-label="Grid view"
           >
             <LayoutGrid className="text-xl" />

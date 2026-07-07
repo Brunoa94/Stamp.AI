@@ -15,7 +15,7 @@ export function StampCtaCard() {
         <Heading as="h2" variant="section" className="font-anton text-4xl md:text-5xl uppercase tracking-tighter leading-tight mb-4">
           READY FOR YOUR NEXT<br />MASTERPIECE?
         </Heading>
-        <Paragraph variant="sm" className="text-[10px] font-bold tracking-[0.25em] uppercase opacity-90 max-w-xl leading-relaxed">
+        <Paragraph className="text-[10px] font-bold tracking-[0.25em] uppercase opacity-90 max-w-xl leading-relaxed">
           ACCESS HIGH-FIDELITY PRODUCTION TOOLS AND BEGIN<br />YOUR NEXT SYNTHESIS PROTOCOL INSTANTLY.
         </Paragraph>
       </div>

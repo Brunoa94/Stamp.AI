@@ -19,10 +19,7 @@ export function UploadInfo({ fileName, fileSize, onRemove }: PropsI) {
   return (
     <div className="mb-10 p-4 border border-(--color-stamp-divider) bg-white flex items-center gap-4">
       <div className="flex-1 min-w-0">
-        <Paragraph
-          variant="sm"
-          className="text-(--color-stamp-chocolate) truncate mb-1"
-        >
+        <Paragraph className="text-(--color-stamp-chocolate) truncate mb-1">
           {fileName}
         </Paragraph>
         <Span variant="micro" className="text-(--color-stamp-taupe)">

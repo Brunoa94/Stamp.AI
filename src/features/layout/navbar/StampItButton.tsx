@@ -29,7 +29,7 @@ export function StampItButton({ isActive, onClick }: StampItButtonProps) {
       />
       <span
         className={cn(
-          "text-lg font-(family-name:--font-bungee)",
+          "text-lg font-anton",
           !isActive &&
             "bg-linear-to-r from-purple-400 via-pink-400 to-purple-400 dark:from-purple-300 dark:via-pink-300 dark:to-purple-300 bg-clip-text text-transparent bg-size-[200%_auto] animate-[stamp-gradient_3s_ease-in-out_infinite]",
         )}

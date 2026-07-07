@@ -10,6 +10,24 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        primary:
+          "h-auto w-full rounded-none bg-ink px-6 py-4 font-anton text-xl tracking-widest uppercase text-white hover:bg-brandCyan hover:text-ink transition-colors shadow-xl disabled:opacity-50 disabled:cursor-not-allowed",
+        "stamp-primary":
+          "h-auto bg-(--color-stamp-chocolate) px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed",
+        "stamp-outline":
+          "h-auto bg-transparent border border-(--color-stamp-divider) px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase text-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed",
+        toggle:
+          "rounded-none border border-ink/10 bg-white font-anton text-lg text-ink hover:border-purple hover:bg-purple hover:text-white transition-all disabled:opacity-30",
+        "toggle-active":
+          "rounded-none bg-purple font-anton text-lg text-white hover:bg-purple hover:text-white transition-all",
+        "ghost-active":
+          "bg-purple/10 text-purple hover:bg-purple/20 transition-colors",
+        "card-outline":
+          "h-auto rounded-none border border-ink/20 bg-transparent px-6 py-2 font-anton text-xs tracking-widest uppercase text-ink transition-all hover:bg-transparent hover:text-ink group-hover:border-white/40",
+        "card-outline-danger":
+          "h-auto rounded-none border border-ink/20 bg-transparent px-6 py-2 font-anton text-xs tracking-widest uppercase text-brandRed transition-all hover:bg-transparent hover:text-brandRed group-hover:border-white/40",
+        "card-solid":
+          "h-auto rounded-none bg-ink px-6 py-2 font-anton text-xs tracking-widest uppercase text-white transition-all group-hover:bg-white group-hover:text-ink",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive dark:focus-visible:ring-destructive/80 dark:bg-destructive/60",
         outline:
@@ -47,6 +65,7 @@ const buttonVariants = cva(
         icon: "size-10",
         "icon-sm": "size-8",
         "icon-lg": "size-10",
+        "icon-xl": "size-12",
       },
     },
     defaultVariants: {
@@ -56,7 +75,7 @@ const buttonVariants = cva(
   },
 );
 
-type IconButtonSize = "icon" | "icon-sm" | "icon-lg";
+type IconButtonSize = "icon" | "icon-sm" | "icon-lg" | "icon-xl";
 
 // Base button props without size
 type BaseButtonProps = Omit<React.ComponentProps<"button">, "size"> &
@@ -93,7 +112,10 @@ function Button({
   // Development warning for icon buttons without aria-label
   if (process.env.NODE_ENV === "development") {
     const isIconButton =
-      size === "icon" || size === "icon-sm" || size === "icon-lg";
+      size === "icon" ||
+      size === "icon-sm" ||
+      size === "icon-lg" ||
+      size === "icon-xl";
     if (isIconButton && !ariaLabel && !props.children) {
       console.warn(
         `[Button Accessibility Warning]: Icon buttons (size="${size}") require an aria-label for screen reader support. Please add aria-label prop.`,

@@ -18,10 +18,7 @@ export function ResultsHeader({ outputNumber, date }: PropsI) {
         <Span variant="sm" className="text-(--color-stamp-taupe) mb-2">
           {outputNumber}
         </Span>
-        <Span
-          variant="micro"
-          className="text-(--color-stamp-taupe) block"
-        >
+        <Span variant="micro" className="text-(--color-stamp-taupe) block">
           Generated {date}
         </Span>
       </div>

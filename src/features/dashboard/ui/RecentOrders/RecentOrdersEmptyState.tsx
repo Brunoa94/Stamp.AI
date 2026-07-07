@@ -18,7 +18,7 @@ export function RecentOrdersEmptyState() {
       </Heading>
 
       {/* Description */}
-      <Paragraph variant="sm" className="opacity-40 max-w-sm mb-12 font-bold tracking-[0.3em]">
+      <Paragraph className="opacity-40 max-w-sm mb-12 font-bold tracking-[0.3em]">
         INITIATE YOUR FIRST SYNTHESIS TO POPULATE THIS LOG.
       </Paragraph>
 

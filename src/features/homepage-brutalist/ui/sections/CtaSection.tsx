@@ -57,7 +57,6 @@ export function CtaSection() {
 
         {/* Subtitle */}
         <Paragraph
-          variant="lead"
           className="max-w-2xl mx-auto mb-16 opacity-80"
         >
           Join thousands of creators using AI-powered design synthesis to bring

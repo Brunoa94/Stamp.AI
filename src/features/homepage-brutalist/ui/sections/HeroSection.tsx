@@ -60,7 +60,7 @@ export function HeroSection() {
           </Heading>
 
           {/* Subtitle */}
-          <Paragraph variant="lead" className="max-w-2xl mb-12 opacity-70">
+          <Paragraph className="max-w-2xl mb-12 opacity-70">
             AI-powered design synthesis for premium apparel. Create
             archive-quality graphics in seconds. Engineered for the creative
             elite who demand precision.

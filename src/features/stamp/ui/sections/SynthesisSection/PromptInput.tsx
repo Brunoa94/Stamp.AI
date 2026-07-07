@@ -34,10 +34,7 @@ export function PromptInput({ value, onChange, maxLength }: PropsI) {
         aria-label="Prompt synthesis input"
       />
       <div className="flex justify-end mt-2">
-        <Span
-          variant="micro"
-          className="text-(--color-stamp-taupe)/40"
-        >
+        <Span variant="micro" className="text-(--color-stamp-taupe)/40">
           {value.length} / {maxLength}
         </Span>
       </div>

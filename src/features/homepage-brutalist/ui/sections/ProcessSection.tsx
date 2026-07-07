@@ -47,7 +47,7 @@ export function ProcessSection() {
               <Heading as="h3" variant="card" className="mb-3">
                 {step.title}
               </Heading>
-              <Paragraph variant="card" className="opacity-80">
+              <Paragraph className="opacity-80">
                 {step.description}
               </Paragraph>
             </div>

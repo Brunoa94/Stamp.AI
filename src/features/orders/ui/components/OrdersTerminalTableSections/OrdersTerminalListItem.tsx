@@ -12,6 +12,7 @@ import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { cn } from "@/lib/utils";
 import { OrderActionsType } from "../../../types/orders-terminal";
+import { OrderStatusBadge } from "../OrderStatusBadge";
 
 interface PropsI extends OrderActionsType {
   order: OrderWithItemsT;
@@ -63,42 +64,15 @@ export function OrdersTerminalListItem({
         <div className="flex-1 w-full space-y-8">
           <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center">
             <div className="space-y-1">
-              <Heading as="h3" variant="card" className="text-3xl md:text-4xl">
+              <Heading as="h3" variant="card">
                 {firstItem?.product_name || "Custom Product"}
               </Heading>
-              <Span
-                as="p"
-                variant="default"
-                className={cn(
-                  "text-[10px] font-bold uppercase tracking-[0.3em]",
-                  "text-ink/30",
-                )}
-              >
+              <Span as="p" variant="default" className="text-ink/30">
                 ID: {formatOrderId(order.id)}
               </Span>
             </div>
 
-            <Span
-              as="span"
-              unstyled
-              className={cn(
-                "flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest",
-                order.status === "delivered" || order.status === "shipped"
-                  ? "bg-cyan/5 border border-cyan/20 text-cyan"
-                  : order.status === "processing"
-                    ? "bg-purple/5 border border-purple/20 text-purple"
-                    : order.status === "cancelled"
-                      ? "bg-ink/5 border border-ink/10 text-ink/40"
-                      : "bg-orange/5 border border-orange/20 text-orange",
-              )}
-            >
-              <Span
-                as="span"
-                unstyled
-                className="w-1.5 h-1.5 rounded-full bg-current"
-              />
-              {order.status || "Processing"}
-            </Span>
+            <OrderStatusBadge status={order.status} />
           </div>
 
           <div
@@ -108,81 +82,34 @@ export function OrdersTerminalListItem({
             )}
           >
             <div className="space-y-1">
-              <Paragraph
-                as="p"
-                variant="sm"
-                className={cn(
-                  "text-[9px] font-bold tracking-widest",
-                  "text-ink/30",
-                )}
-              >
+              <Span as="p" variant="micro" className="text-ink/30">
                 Ordered
-              </Paragraph>
-              <Paragraph
-                as="p"
-                variant="body"
-                className="text-sm font-bold tracking-tight"
-              >
+              </Span>
+              <Paragraph as="p" className="font-bold">
                 {formatOrderDate(order.created_at)}
               </Paragraph>
             </div>
             <div className="space-y-1">
-              <Paragraph
-                as="p"
-                variant="sm"
-                className={cn(
-                  "text-[9px] font-bold tracking-widest",
-                  "text-ink/30",
-                )}
-              >
+              <Span as="p" variant="micro" className="text-ink/30">
                 Variant
-              </Paragraph>
-              <Paragraph
-                as="p"
-                variant="body"
-                className="text-sm font-bold tracking-tight"
-              >
+              </Span>
+              <Paragraph as="p" className="font-bold">
                 {firstItem?.variant_name || "Standard"}
               </Paragraph>
             </div>
             <div className="space-y-1">
-              <Paragraph
-                as="p"
-                variant="sm"
-                className={cn(
-                  "text-[9px] font-bold tracking-widest",
-                  "text-ink/30",
-                )}
-              >
+              <Span as="p" variant="micro" className="text-ink/30">
                 Qty
-              </Paragraph>
-              <Paragraph
-                as="p"
-                variant="body"
-                className="text-sm font-bold tracking-tight"
-              >
+              </Span>
+              <Paragraph as="p" className="font-bold">
                 {firstItem?.quantity || 1}
               </Paragraph>
             </div>
             <div className="space-y-1">
-              <Paragraph
-                as="p"
-                variant="sm"
-                className={cn(
-                  "text-[9px] font-bold tracking-widest",
-                  "text-ink/30",
-                )}
-              >
+              <Span as="p" variant="micro" className="text-ink/30">
                 Value
-              </Paragraph>
-              <Paragraph
-                as="p"
-                variant="body"
-                className={cn(
-                  "text-sm font-bold tracking-tight",
-                  "text-purple",
-                )}
-              >
+              </Span>
+              <Paragraph as="p" className="font-bold text-purple">
                 {formatPrice(order.total_amount)} USD
               </Paragraph>
             </div>

@@ -24,19 +24,14 @@ export function UploadDropzone({ onClick, uploadError }: PropsI) {
     >
       <div className="text-center group-hover:scale-105 transition-transform duration-500">
         <UploadCloud className="mx-auto text-6xl text-(--color-stamp-taupe)/40 mb-4 w-16 h-16" />
-        <Paragraph
-          variant="sm"
-          className="text-(--color-stamp-chocolate) mb-2"
-        >
+        <Paragraph className="text-(--color-stamp-chocolate) mb-2">
           Upload Reference Image (Optional)
         </Paragraph>
         <Span variant="micro" className="text-(--color-stamp-taupe)">
           10MB max, JPG/PNG/GIF only
         </Span>
         {uploadError && (
-          <Paragraph variant="sm" className="text-red-500 mt-4">
-            {uploadError}
-          </Paragraph>
+          <Paragraph className="text-red-500 mt-4">{uploadError}</Paragraph>
         )}
       </div>
     </Button>

@@ -16,8 +16,8 @@ export function RecentOrderItem({ order, onClick }: PropsI) {
   const productName = firstItem?.product_name || "CUSTOM DESIGN";
 
   // Get status color for hover border
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
+  const getStatusColor = (status: string | null) => {
+    switch (status?.toLowerCase()) {
       case "delivered":
         return "hover:bg-green/10 hover:border-l-4 hover:border-l-green";
       case "shipped":

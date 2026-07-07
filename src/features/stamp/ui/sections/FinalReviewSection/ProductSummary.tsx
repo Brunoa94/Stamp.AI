@@ -28,10 +28,7 @@ export function ProductSummary({ productName, color, size, price }: PropsI) {
         </Heading>
         <Star className="text-(--color-stamp-gold) w-5 h-5" />
       </div>
-      <Span
-        variant="micro"
-        className="text-(--color-stamp-taupe) block mb-8"
-      >
+      <Span variant="micro" className="text-(--color-stamp-taupe) block mb-8">
         Color: {color || "Black"} | Size: {size || "M"}
       </Span>
       <div className="flex justify-between items-baseline pt-6 border-t border-(--color-stamp-divider)">

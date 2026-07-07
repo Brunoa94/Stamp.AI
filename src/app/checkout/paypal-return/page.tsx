@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { Suspense, useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2, AlertCircle } from "lucide-react";
@@ -63,7 +63,7 @@ async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   );
 }
 
-export default function PayPalReturnPage() {
+function PayPalReturnContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<PageStatus>("loading");
@@ -463,7 +463,7 @@ export default function PayPalReturnPage() {
                 ? "Completing Your Payment"
                 : "Processing Payment"}
             </Heading>
-            <Paragraph variant="body" className={paymentSuccessTheme.subtitle}>
+            <Paragraph className={paymentSuccessTheme.subtitle}>
               {status === "capturing"
                 ? "Please wait while we finalize your PayPal payment..."
                 : "Please wait while we verify your payment with PayPal..."}
@@ -551,7 +551,7 @@ export default function PayPalReturnPage() {
           <Heading as="h1" variant="section" className={paymentErrorTheme.title}>
             Something Went Wrong
           </Heading>
-          <Paragraph variant="body" className={paymentErrorTheme.subtitle}>
+          <Paragraph className={paymentErrorTheme.subtitle}>
             {errorMessage ||
               "We couldn't process your PayPal payment. Please try again or contact support."}
           </Paragraph>
@@ -573,5 +573,13 @@ export default function PayPalReturnPage() {
         </section>
       </div>
     </div>
+  );
+}
+
+export default function PayPalReturnPage() {
+  return (
+    <Suspense fallback={null}>
+      <PayPalReturnContent />
+    </Suspense>
   );
 }

@@ -10,7 +10,9 @@ import Link from "next/link";
 import { ChevronDown, Mail, Repeat, Sparkles, RefreshCw } from "lucide-react";
 import { OrderWithItemsT } from "@/types/order";
 import { Button } from "@/features/ui/button";
+import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
+import { OrderStatusBadge } from "./OrderStatusBadge";
 
 import { useOrderMoreActions } from "../../lib/hooks/useOrderMoreActions";
 
@@ -57,29 +59,14 @@ function OrdersTerminalMobileCard({
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <div className="font-anton text-2xl uppercase tracking-tight mb-1">
+          <Heading as="h3" variant="card" className="mb-1">
             {formatOrderId(order.id)}
-          </div>
-          <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-ink/30">
+          </Heading>
+          <Span as="p" variant="default" className="text-ink/30">
             Ordered {formatOrderDate(order.created_at)}
-          </div>
+          </Span>
         </div>
-        <Span
-          as="span"
-          unstyled
-          className={cn(
-            "flex items-center gap-2 px-3 py-1 text-[10px] font-bold uppercase tracking-widest border",
-            order.status === "delivered" || order.status === "shipped"
-              ? "bg-cyan/5 border-cyan/20 text-cyan"
-              : order.status === "processing"
-                ? "bg-purple/5 border-purple/20 text-purple"
-                : order.status === "cancelled"
-                  ? "bg-ink/5 border-ink/10 text-ink/40"
-                  : "bg-orange/5 border-orange/20 text-orange",
-          )}
-        >
-          {order.status || "Processing"}
-        </Span>
+        <OrderStatusBadge status={order.status} />
       </div>
 
       {/* Summary */}
@@ -91,9 +78,9 @@ function OrdersTerminalMobileCard({
         />
 
         <div className="text-right flex flex-col items-end">
-          <div className="text-lg font-anton text-ink mb-1">
+          <Heading as="span" variant="item" className="text-ink mb-1">
             {formatPrice(order.total_amount)}
-          </div>
+          </Heading>
 
           <div className="flex flex-col items-end">
             <Span
@@ -173,16 +160,10 @@ function OrdersTerminalMobileCard({
       <div className="flex justify-center mt-2">
         <Button
           type="button"
-          variant="ghost"
+          variant={isExpanded ? "ghost-active" : "ghost"}
           size="sm"
           onClick={() => setIsExpanded((previous: boolean) => !previous)}
           aria-expanded={isExpanded}
-          className={cn(
-            "transition-colors",
-            isExpanded
-              ? "bg-[#7C3AED]/12 text-[#7C3AED] hover:bg-[#7C3AED]/20"
-              : "text-ink/60 hover:bg-ink/10 hover:text-ink",
-          )}
         >
           More actions
           <ChevronDown

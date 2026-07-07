@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { Suspense, useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2, AlertCircle } from "lucide-react";
@@ -94,7 +94,7 @@ export function clearStoredStripeCheckoutData(): void {
   localStorage.removeItem(STRIPE_CHECKOUT_DATA_KEY);
 }
 
-export default function StripeReturnPage() {
+function StripeReturnContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<PageStatus>("loading");
@@ -447,7 +447,7 @@ export default function StripeReturnPage() {
                 ? "Completing Your Payment"
                 : "Processing Payment"}
             </Heading>
-            <Paragraph variant="body" className={paymentSuccessTheme.subtitle}>
+            <Paragraph className={paymentSuccessTheme.subtitle}>
               {status === "processing"
                 ? "Please wait while we finalize your Stripe payment..."
                 : "Please wait while we verify your payment with Stripe..."}
@@ -516,7 +516,7 @@ export default function StripeReturnPage() {
           <Heading as="h1" variant="section" className={paymentErrorTheme.title}>
             Something Went Wrong
           </Heading>
-          <Paragraph variant="body" className={paymentErrorTheme.subtitle}>
+          <Paragraph className={paymentErrorTheme.subtitle}>
             {errorMessage ||
               "We couldn't process your Stripe payment. Please try again or contact support."}
           </Paragraph>
@@ -538,5 +538,13 @@ export default function StripeReturnPage() {
         </section>
       </div>
     </div>
+  );
+}
+
+export default function StripeReturnPage() {
+  return (
+    <Suspense fallback={null}>
+      <StripeReturnContent />
+    </Suspense>
   );
 }

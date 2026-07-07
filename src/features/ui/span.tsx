@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 /**
  * Span
  *
- * Typography atom for small uppercase Space Grotesk label/meta text.
+ * Typography atom for small uppercase Poppins label/meta text.
  * Encapsulates: font-family, font-size, font-weight, letter-spacing, text-transform.
  * All other styling (color, margin, opacity) must come from the caller via `className`.
  *
@@ -15,9 +15,9 @@ import { cn } from "@/lib/utils";
  */
 
 const spanVariants = {
-  sm: "font-space text-[11px] font-bold tracking-[0.4em] uppercase",
-  default: "font-space text-[10px] font-bold tracking-[0.4em] uppercase",
-  micro: "font-space text-[9px] font-bold tracking-[0.3em] uppercase",
+  sm: "font-sans text-[11px] font-bold tracking-[0.4em] uppercase",
+  default: "font-sans text-[10px] font-bold tracking-[0.4em] uppercase",
+  micro: "font-sans text-[9px] font-bold tracking-[0.3em] uppercase",
   metric: "font-anton text-5xl md:text-6xl uppercase tracking-tighter",
 } as const;
 

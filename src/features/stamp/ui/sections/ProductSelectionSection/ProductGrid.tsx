@@ -60,7 +60,7 @@ export function ProductGrid({
           <Span variant="micro" className="text-red-500 mb-2">
             Failed to load products
           </Span>
-          <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
+          <Paragraph className="text-(--color-stamp-taupe)">
             Please refresh the page and try again.
           </Paragraph>
         </div>

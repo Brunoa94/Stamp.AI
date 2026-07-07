@@ -22,29 +22,23 @@ export function ShippingAddressCard({
       </Heading>
       <div className="space-y-1 text-sm uppercase tracking-wide text-ink/85">
         {customerName && (
-          <Paragraph as="p" variant="body" className="font-medium">
+          <Paragraph as="p" className="font-medium">
             {customerName}
           </Paragraph>
         )}
         {shippingAddress.address1 && (
-          <Paragraph as="p" variant="body">
-            {shippingAddress.address1}
-          </Paragraph>
+          <Paragraph as="p">{shippingAddress.address1}</Paragraph>
         )}
         {shippingAddress.address2 && (
-          <Paragraph as="p" variant="body">
-            {shippingAddress.address2}
-          </Paragraph>
+          <Paragraph as="p">{shippingAddress.address2}</Paragraph>
         )}
-        <Paragraph as="p" variant="body">
+        <Paragraph as="p">
           {shippingAddress.city && `${shippingAddress.city}, `}
           {shippingAddress.region && `${shippingAddress.region} `}
           {shippingAddress.zip}
         </Paragraph>
         {shippingAddress.country && (
-          <Paragraph as="p" variant="body">
-            {shippingAddress.country}
-          </Paragraph>
+          <Paragraph as="p">{shippingAddress.country}</Paragraph>
         )}
       </div>
     </div>

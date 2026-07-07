@@ -3,10 +3,6 @@
 import { colors } from "./colors";
 import { animationClasses, animations } from "./animations";
 import { navbarDesignSystem } from "./navbarDesignSystem";
-import {
-  ordersCardTheme,
-  ordersPageTheme,
-} from "../features/orders/styles/ordersTheme";
 
 export const componentThemes = {
   // Card variants
@@ -445,9 +441,6 @@ export const componentThemes = {
     },
   },
 
-  // Orders page styles
-  orders: ordersPageTheme,
-
   // Checkout page styles
   checkout: {
     page: {
@@ -638,7 +631,7 @@ export const componentThemes = {
     gradientBar:
       `h-1.5 w-24 bg-linear-to-r from-[#7C3AED] via-[#4F46E5] to-[#06B6D4] rounded-sm shadow-sm shrink-0`,
     description:
-      `font-['Satoshi'] text-sm leading-relaxed max-w-2xl font-normal text-slate-500`,
+      `font-space text-sm leading-relaxed max-w-2xl font-normal text-slate-500`,
   },
 
   // Payment success page styles
@@ -801,7 +794,6 @@ export const footerTheme = componentThemes.footer;
 export const mobilePageHeaderTheme = componentThemes.mobilePageHeader;
 export const cartTheme = componentThemes.cart;
 export const dashboardTheme = componentThemes.dashboard;
-export const ordersTheme = componentThemes.orders;
 export const checkoutTheme = componentThemes.checkout;
 export const profileTheme = componentThemes.profile;
 export const productConfirmationTheme = componentThemes.productConfirmation;

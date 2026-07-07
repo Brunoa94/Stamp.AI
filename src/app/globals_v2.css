@@ -80,23 +80,26 @@
 
 /* ==========================================
    STAMP LUXURY THEME UTILITIES
+   Only four font families are allowed in the project (Anton, Bebas Neue,
+   Space Grotesk, Poppins) — the legacy luxury utilities below alias onto
+   the allowed set.
    ========================================== */
 
 .font-outfit {
-  font-family: var(--font-outfit), sans-serif;
+  font-family: var(--font-poppins), sans-serif;
 }
 
 .font-playfair {
-  font-family: var(--font-playfair), serif;
+  font-family: var(--font-heading), serif;
 }
 
 /* Stamp specific font combinations for consistency */
 .stamp-body {
-  font-family: var(--font-outfit), sans-serif;
+  font-family: var(--font-space-grotesk), sans-serif;
   color: var(--color-stamp-chocolate);
 }
 
 .stamp-serif {
-  font-family: var(--font-playfair), serif;
+  font-family: var(--font-heading), serif;
   color: var(--color-stamp-taupe);
 }

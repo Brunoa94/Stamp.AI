@@ -38,7 +38,6 @@ export function FaqSection() {
             </summary>
             <Paragraph
               as="div"
-              variant="faq"
               className="mt-6 border-t-2 border-ink/10 pt-6 opacity-70"
             >
               {faq.answer}
@@ -50,7 +49,6 @@ export function FaqSection() {
       {/* Contact CTA */}
       <div className="max-w-4xl mx-auto mt-16 text-center">
         <Paragraph
-          variant="sm"
           className="font-bold mb-6 opacity-60 tracking-widest"
         >
           Still have questions?

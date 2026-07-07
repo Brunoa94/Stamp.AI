@@ -74,7 +74,8 @@ export function SynthesisForm({
         <Button
           onClick={onGenerate}
           disabled={isGenerating || !prompt.trim()}
-          className="w-full bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+          variant="stamp-primary"
+          className="w-full"
         >
           {isGenerating ? "GENERATING..." : "STAMP IT!"}
         </Button>

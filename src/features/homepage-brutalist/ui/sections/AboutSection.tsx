@@ -34,7 +34,7 @@ export function AboutSection() {
           </Heading>
 
           <blockquote className="border-l-4 border-brandPurple pl-8 mb-8">
-            <Paragraph variant="body" className="md:text-base font-light mb-6">
+            <Paragraph className="md:text-base font-light mb-6">
               "We believe exceptional design should be accessible to everyone.
               Our AI synthesis engine transforms creative vision into
               archival-quality apparel in seconds—no design experience
@@ -45,7 +45,7 @@ export function AboutSection() {
             </Span>
           </blockquote>
 
-          <Paragraph variant="loose" className="font-light opacity-60 max-w-md">
+          <Paragraph className="font-light opacity-60 max-w-md">
             Founded in 2024, STAMP.AI merges machine learning with textile
             engineering to create a new paradigm for custom apparel production.
           </Paragraph>
@@ -73,7 +73,7 @@ export function AboutSection() {
                 <Heading as="h3" variant="card" className="mb-4">
                   {card.title}
                 </Heading>
-                <Paragraph variant="sm" className="opacity-70">
+                <Paragraph className="opacity-70">
                   {card.description}
                 </Paragraph>
               </div>

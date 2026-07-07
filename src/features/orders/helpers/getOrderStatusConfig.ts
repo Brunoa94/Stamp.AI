@@ -1,57 +1,47 @@
 import { CheckCircle, Clock, Settings, Truck, XCircle } from "lucide-react";
 import {
-    OrderStatusConfigType,
-    OrderStatusType,
+  OrderStatusConfigType,
+  OrderStatusType,
 } from "../types/orders-terminal";
 
 export function getOrderStatusConfig(
-    status: OrderStatusType,
+  status: OrderStatusType,
 ): OrderStatusConfigType {
-    switch (status) {
-        case "delivered":
-            return {
-                color: "green-600",
-                bgColor: "green-600/10",
-                borderColor: "green-600/20",
-                hoverBg: "hover:bg-cyan",
-                icon: CheckCircle,
-                label: "Delivered",
-            };
-        case "shipped":
-            return {
-                color: "cyan",
-                bgColor: "cyan/10",
-                borderColor: "cyan/20",
-                hoverBg: "hover:bg-purple",
-                icon: Truck,
-                label: "Shipped",
-            };
-        case "processing":
-            return {
-                color: "orange",
-                bgColor: "orange/10",
-                borderColor: "orange/20",
-                hoverBg: "hover:bg-orange",
-                icon: Settings,
-                label: "Processing",
-            };
-        case "cancelled":
-            return {
-                color: "ink/40",
-                bgColor: "ink/5",
-                borderColor: "ink/10",
-                hoverBg: "hover:bg-ink/80",
-                icon: XCircle,
-                label: "Cancelled",
-            };
-        default:
-            return {
-                color: "purple",
-                bgColor: "purple/10",
-                borderColor: "purple/20",
-                hoverBg: "hover:bg-purple",
-                icon: Clock,
-                label: "Pending",
-            };
-    }
+  switch (status) {
+    case "delivered":
+      return {
+        badgeClass: "bg-green/10 border-green/20 text-green",
+        hoverBg: "hover:bg-cyan",
+        icon: CheckCircle,
+        label: "Delivered",
+      };
+    case "shipped":
+      return {
+        badgeClass: "bg-cyan/10 border-cyan/20 text-cyan",
+        hoverBg: "hover:bg-purple",
+        icon: Truck,
+        label: "Shipped",
+      };
+    case "processing":
+      return {
+        badgeClass: "bg-orange/10 border-orange/20 text-orange",
+        hoverBg: "hover:bg-orange",
+        icon: Settings,
+        label: "Processing",
+      };
+    case "cancelled":
+      return {
+        badgeClass: "bg-ink/5 border-ink/10 text-ink/40",
+        hoverBg: "hover:bg-ink/80",
+        icon: XCircle,
+        label: "Cancelled",
+      };
+    default:
+      return {
+        badgeClass: "bg-purple/10 border-purple/20 text-purple",
+        hoverBg: "hover:bg-purple",
+        icon: Clock,
+        label: "Pending",
+      };
+  }
 }

@@ -22,7 +22,8 @@ export function ResultsActions({
       <Button
         onClick={onUseProtocol}
         disabled={!canProceed}
-        className="flex-1 bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase"
+        variant="stamp-primary"
+        className="flex-1"
       >
         USE THIS PROTOCOL
       </Button>

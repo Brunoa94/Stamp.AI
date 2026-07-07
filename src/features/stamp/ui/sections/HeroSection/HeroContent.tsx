@@ -16,10 +16,7 @@ interface PropsI {
 export function HeroContent({ onBegin }: PropsI) {
   return (
     <div className="flex flex-col justify-center p-12 lg:p-24">
-      <Span
-        variant="sm"
-        className="text-(--color-stamp-taupe) mb-8 block"
-      >
+      <Span variant="sm" className="text-(--color-stamp-taupe) mb-8 block">
         Archive Access 00
       </Span>
 
@@ -34,10 +31,7 @@ export function HeroContent({ onBegin }: PropsI) {
         </span>
       </Heading>
 
-      <Paragraph
-        variant="lead"
-        className="text-(--color-stamp-taupe) mb-12 max-w-lg font-light"
-      >
+      <Paragraph className="text-(--color-stamp-taupe) mb-12 max-w-lg font-light">
         An advanced neural protocol for aesthetic curation. Translate your
         identity into bespoke permanence through our 8-stage synthesis.
       </Paragraph>
@@ -45,7 +39,7 @@ export function HeroContent({ onBegin }: PropsI) {
       <div>
         <Button
           onClick={onBegin}
-          className="bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase"
+          variant="stamp-primary"
           aria-label="Begin Customization Protocol"
         >
           Begin Customization

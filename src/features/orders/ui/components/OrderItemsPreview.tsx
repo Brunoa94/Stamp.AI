@@ -4,10 +4,14 @@ import { useState } from "react";
 import { ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/features/ui/button";
-import { ordersPageTheme } from "@/features/orders/styles/ordersTheme";
+import { Span } from "@/features/ui/span";
 import { OrderImage } from "../../helpers/OrderImage";
 import type { OrderItemT } from "@/types/order";
 import { OrderItemZoomDialog } from "./OrderItemZoomDialog";
+
+const stackClass = "flex -space-x-3 overflow-hidden";
+const imageClass =
+  "inline-block h-14 w-14 rounded-lg ring-2 ring-white object-cover bg-concrete";
 
 interface PropsI {
   items: OrderItemT[];
@@ -30,15 +34,15 @@ export function OrderItemsPreview({
 
   if (itemCount === 0) {
     return (
-      <div className={cn(ordersPageTheme.table.itemsStack, className)}>
+      <div className={cn(stackClass, className)}>
         <div
           className={cn(
-            ordersPageTheme.table.itemImage,
+            imageClass,
             imageClassName,
-            "flex items-center justify-center bg-slate-100",
+            "flex items-center justify-center",
           )}
         >
-          <ShoppingBag className="w-4 h-4 text-slate-400" />
+          <ShoppingBag className="w-4 h-4 text-ink/40" />
         </div>
       </div>
     );
@@ -46,7 +50,7 @@ export function OrderItemsPreview({
 
   return (
     <>
-      <div className={cn(ordersPageTheme.table.itemsStack, className)}>
+      <div className={cn(stackClass, className)}>
         {displayItems.map((item) =>
           item.custom_image_url ? (
             <Button
@@ -55,9 +59,9 @@ export function OrderItemsPreview({
               variant="ghost"
               size="icon"
               className={cn(
-                ordersPageTheme.table.itemImage,
+                imageClass,
                 imageClassName,
-                "group cursor-zoom-in overflow-hidden transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED]/60",
+                "group cursor-zoom-in overflow-hidden transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple/60",
               )}
               aria-label="Open item image zoom"
             >
@@ -73,19 +77,22 @@ export function OrderItemsPreview({
             <div
               key={item.id}
               className={cn(
-                ordersPageTheme.table.itemImage,
+                imageClass,
                 imageClassName,
-                "flex items-center justify-center bg-slate-100",
+                "flex items-center justify-center",
               )}
             >
-              <ShoppingBag className="w-4 h-4 text-slate-400" />
+              <ShoppingBag className="w-4 h-4 text-ink/40" />
             </div>
           ),
         )}
         {remainingCount > 0 && (
-          <div className={ordersPageTheme.table.itemBadge}>
+          <Span
+            variant="sm"
+            className="inline-flex h-14 w-14 items-center justify-center rounded-lg bg-ink text-white ring-2 ring-white"
+          >
             +{remainingCount}
-          </div>
+          </Span>
         )}
       </div>
 
