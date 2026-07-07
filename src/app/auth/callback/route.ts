@@ -4,15 +4,20 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
-  const next = requestUrl.searchParams.get('next') ?? '/stamp'
+  const rawNext = requestUrl.searchParams.get('next') ?? '/stamp'
   const type = requestUrl.searchParams.get('type')
+
+  // Only allow same-site relative redirects. Reject absolute URLs and
+  // protocol-relative (`//host`) values to prevent an open redirect.
+  const next =
+    rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/stamp'
 
   if (!code) {
     return NextResponse.redirect(new URL('/auth/auth-code-error', request.url))
   }
 
   // Create a response object that we can modify
-  let response = NextResponse.next({
+  const response = NextResponse.next({
     request,
   })
 

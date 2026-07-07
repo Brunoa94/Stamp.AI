@@ -92,13 +92,11 @@ serve(async (req) => {
         throw ErrorCodes.EMAIL_REQUIRED()
       }
 
-      // Verify the email using the token
-      const { data: verifyData, error: verifyError } = await supabase.auth.admin.updateUserById(
-        token, // This should be the user ID, but we'll handle this differently
-        { email_confirm: true }
-      )
-
-      // Alternative approach: Use the verification token directly
+      // Verify the OTP token hash. This is the ONLY thing that proves the
+      // caller controls the mailbox. We must NOT confirm the email by any
+      // other means (e.g. updateUserById with a caller-supplied user id),
+      // otherwise anyone could confirm arbitrary accounts. GoTrue marks the
+      // email confirmed as a side effect of a successful verifyOtp.
       const anonSupabase = createClient(supabaseUrl, Deno.env.get('SUPABASE_ANON_KEY') || '', {
         auth: {
           autoRefreshToken: false,
@@ -111,8 +109,8 @@ serve(async (req) => {
         type: 'email'
       })
 
-      if (confirmError) {
-        console.error('Email verification error:', confirmError)
+      if (confirmError || !confirmData?.user) {
+        console.error('Email verification failed')
         throw ErrorCodes.INVALID_TOKEN()
       }
 

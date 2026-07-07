@@ -206,27 +206,99 @@ export async function getPayPalOrder(orderId: string): Promise<PayPalOrderRespon
 }
 
 /**
- * Verify PayPal webhook signature
- * Note: For full security, implement signature verification
+ * Verify a PayPal webhook by asking PayPal to validate the transmission
+ * signature against our configured webhook id. Returns true only when PayPal
+ * responds with verification_status === "SUCCESS".
+ *
+ * Fails closed: any missing header, missing config, network error, or non-
+ * SUCCESS response returns false so the caller must reject the event.
  */
 export async function verifyPayPalWebhook(
   headers: Headers,
-  body: string
+  body: string,
 ): Promise<boolean> {
-  // In production, implement full webhook signature verification
-  // using the PAYPAL_WEBHOOK_ID and PayPal's verification API
-  // For now, we do basic validation
   const transmissionId = headers.get("paypal-transmission-id");
   const transmissionTime = headers.get("paypal-transmission-time");
   const transmissionSig = headers.get("paypal-transmission-sig");
+  const certUrl = headers.get("paypal-cert-url");
+  const authAlgo = headers.get("paypal-auth-algo");
 
-  if (!transmissionId || !transmissionTime || !transmissionSig) {
-    console.warn("Missing PayPal webhook headers");
+  if (
+    !transmissionId || !transmissionTime || !transmissionSig ||
+    !certUrl || !authAlgo
+  ) {
+    console.warn("PayPal webhook rejected: missing transmission headers");
     return false;
   }
 
-  // TODO: Implement full signature verification using PayPal's API
-  // POST /v1/notifications/verify-webhook-signature
-  // For now, return true if headers are present
-  return true;
+  // paypal-cert-url must be a genuine PayPal domain — reject anything the
+  // caller could point at their own signing cert.
+  try {
+    const host = new URL(certUrl).hostname;
+    if (host !== "api.paypal.com" && !host.endsWith(".paypal.com")) {
+      console.warn("PayPal webhook rejected: untrusted cert url host", host);
+      return false;
+    }
+  } catch {
+    console.warn("PayPal webhook rejected: invalid cert url");
+    return false;
+  }
+
+  let webhookId: string;
+  try {
+    webhookId = validateEnvVars.paypalWebhookId();
+  } catch {
+    console.error("PayPal webhook rejected: PAYPAL_WEBHOOK_ID not configured");
+    return false;
+  }
+
+  // The webhook_event must be the parsed request body, byte-for-byte the same
+  // payload PayPal signed.
+  let webhookEvent: unknown;
+  try {
+    webhookEvent = JSON.parse(body);
+  } catch {
+    console.warn("PayPal webhook rejected: body is not valid JSON");
+    return false;
+  }
+
+  try {
+    const apiBase = getPayPalApiBase();
+    const accessToken = await getPayPalAccessToken();
+
+    const response = await fetch(
+      `${apiBase}/v1/notifications/verify-webhook-signature`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          transmission_id: transmissionId,
+          transmission_time: transmissionTime,
+          transmission_sig: transmissionSig,
+          cert_url: certUrl,
+          auth_algo: authAlgo,
+          webhook_id: webhookId,
+          webhook_event: webhookEvent,
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      console.error(
+        "PayPal webhook verification call failed:",
+        response.status,
+        response.statusText,
+      );
+      return false;
+    }
+
+    const result = await response.json();
+    return result?.verification_status === "SUCCESS";
+  } catch (error) {
+    console.error("PayPal webhook verification error:", error);
+    return false;
+  }
 }

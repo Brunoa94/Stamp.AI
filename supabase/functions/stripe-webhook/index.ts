@@ -25,13 +25,20 @@ interface StripePaymentIntentI {
   metadata?: Record<string, string>;
 }
 
+// Server-side price per credit (in cents). Must match create-credit-payment.
+const CREDIT_PRICE_CENTS = parseInt(Deno.env.get('CREDIT_PRICE_CENTS') || '10', 10)
+
 /**
  * Handle credit purchase - update user credits and create transaction record
  */
 async function handleCreditPurchase(paymentIntent: StripePaymentIntentI) {
   const userId = paymentIntent.metadata?.user_id
-  const creditsToAdd = parseInt(paymentIntent.metadata?.credits || '0', 10)
   const amountPaid = paymentIntent.amount / 100
+
+  // Derive credits from the amount Stripe actually charged (a signature-
+  // verified value), NOT from client-supplied metadata. This prevents a user
+  // from paying for 10 credits but requesting 1,000,000 in metadata.
+  const creditsToAdd = Math.floor(paymentIntent.amount / CREDIT_PRICE_CENTS)
 
   if (!userId || userId === 'service-role') {
     console.error('Invalid user_id for credit purchase:', userId)
@@ -40,6 +47,17 @@ async function handleCreditPurchase(paymentIntent: StripePaymentIntentI) {
 
   if (creditsToAdd <= 0) {
     console.error('Invalid credits amount:', creditsToAdd)
+    return
+  }
+
+  // Idempotency: Stripe delivers webhooks at-least-once. If we already recorded
+  // a credit_transaction for this payment intent, do not grant again.
+  const existing = await supabaseRest<Array<{ id: string }>>(
+    `credit_transactions?reference_id=eq.${encodeURIComponent(paymentIntent.id)}&transaction_type=eq.purchase&select=id`,
+    'GET'
+  )
+  if (Array.isArray(existing.data) && existing.data.length > 0) {
+    console.log('Credit purchase already processed for', paymentIntent.id, '- skipping')
     return
   }
 

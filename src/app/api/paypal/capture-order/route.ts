@@ -38,6 +38,12 @@ export async function POST(request: NextRequest) {
     const { customId } = PayPalCaptureMapper.extractCaptureDetails(captureResult);
     const { metadata, userId } = PayPalCaptureMapper.parseCustomId(customId);
 
+    // Ownership: the order being captured must belong to the authenticated
+    // caller. Prevents a user from capturing/settling another user's order.
+    if (userId && userId !== user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     // CRITICAL: Use atomic stored procedure to update payment + order together
     // This prevents scenario where payment succeeds but order stays pending
     try {
@@ -89,9 +95,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      {
-        error: error instanceof Error ? error.message : "Failed to capture PayPal order",
-      },
+      { error: "Failed to capture PayPal order" },
       { status: 500 }
     );
   }

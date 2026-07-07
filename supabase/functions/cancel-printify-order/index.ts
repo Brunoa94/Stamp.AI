@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { ErrorCodes, handleError } from "../_shared/errors.ts"
+import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts"
 import { validateEnvVars } from "../_shared/validators.ts"
+import { requireUser } from "../_shared/authGuard.ts"
+import { supabaseRest } from "../_shared/supabase.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,10 +23,24 @@ serve(async (req) => {
   }
 
   try {
+    const auth = await requireUser(req.headers.get('authorization'))
+
     const { order_id } = await req.json()
 
     if (!order_id) {
       throw ErrorCodes.MISSING_REQUIRED_FIELDS("order_id is required")
+    }
+
+    // Ensure non-service callers can only cancel their own orders
+    if (!auth.isServiceRole) {
+      const { data: ownedOrders } = await supabaseRest<Array<{ id: string }>>(
+        `orders?printify_order_id=eq.${encodeURIComponent(order_id)}&user_id=eq.${encodeURIComponent(auth.userId)}&select=id`,
+        "GET"
+      )
+
+      if (!ownedOrders || ownedOrders.length === 0) {
+        throw new FunctionError(403, "FORBIDDEN", "Order not found for this user")
+      }
     }
 
     console.log('=== CANCEL PRINTIFY ORDER ===')

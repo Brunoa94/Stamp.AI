@@ -1,37 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 
 const PRINTIFY_TOKEN = process.env.PRINTIFY_API_TOKEN;
 
 export async function GET(request: NextRequest) {
-    try{
-        const url = new URL(request.url);
-        const productId = url.searchParams.get("product_id");
+  // Require authentication — this route uses the privileged Printify token.
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-        if (!productId) {
-            return NextResponse.json({ error: "Missing product_id" }, { status: 400 });
-        }
+  const productId = request.nextUrl.searchParams.get("product_id");
 
-        const res = await fetch(`https://api.printify.com/v1/shops/${process.env.PRINTIFY_SHOP_ID}/products/${productId}.json`, {
-            headers: {
-            "Authorization": `Bearer ${PRINTIFY_TOKEN}`,
-            "Content-Type": "application/json",
-            },
-        });
+  // Printify product ids are numeric strings; reject anything else so the
+  // value can't be used to reshape the API path.
+  if (!productId || !/^\d+$/.test(productId)) {
+    return NextResponse.json({ error: "Invalid product_id" }, { status: 400 });
+  }
 
-        if (!res.ok) {
-            throw new Error(`Printify API error: ${res.status}`);
-        }
-        const body = await res.json();
+  try {
+    const res = await fetch(
+      `https://api.printify.com/v1/shops/${process.env.PRINTIFY_SHOP_ID}/products/${encodeURIComponent(productId)}.json`,
+      {
+        headers: {
+          Authorization: `Bearer ${PRINTIFY_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
 
-        // Debug logging to check if images are in the response
-        console.log('[fetch-custom-product] Product ID:', productId);
-        console.log('[fetch-custom-product] Images count:', body.images?.length || 0);
-        if (body.images && body.images.length > 0) {
-            console.log('[fetch-custom-product] First image:', body.images[0]);
-        }
-
-        return NextResponse.json(body);
-    }catch(e){
-        throw e
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: "Failed to fetch product" },
+        { status: res.status === 404 ? 404 : 502 },
+      );
     }
+
+    const body = await res.json();
+    return NextResponse.json(body);
+  } catch {
+    return NextResponse.json({ error: "Failed to fetch product" }, { status: 502 });
+  }
 }

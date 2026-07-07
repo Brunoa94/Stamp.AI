@@ -47,11 +47,9 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString()
     })
   } catch (error) {
+    console.error('Revalidation error:', error)
     return NextResponse.json(
-      {
-        error: 'Failed to revalidate',
-        message: error instanceof Error ? error.message : 'Unknown error'
-      },
+      { error: 'Failed to revalidate' },
       { status: 500 }
     )
   }
