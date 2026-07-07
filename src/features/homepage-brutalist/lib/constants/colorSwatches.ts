@@ -38,6 +38,34 @@ const COLOR_HEX_MAP: Record<string, string> = {
   DEFAULT: "#CCCCCC",
 } as const;
 
+const COLOR_KEYWORD_HEX_MAP: Record<string, string> = {
+  black: "#000000",
+  white: "#FFFFFF",
+  red: "#DC143C",
+  blue: "#2563EB",
+  navy: "#000080",
+  green: "#16A34A",
+  yellow: "#FACC15",
+  orange: "#FF8200",
+  purple: "#7C3AED",
+  pink: "#EC4899",
+  gray: "#6B7280",
+  grey: "#6B7280",
+  brown: "#78350F",
+  beige: "#F5F5DC",
+  maroon: "#800000",
+  burgundy: "#7F1D1D",
+  charcoal: "#36454F",
+  heather: "#9CA3AF",
+  olive: "#4B5320",
+  mint: "#86EFAC",
+  teal: "#0D9488",
+  cyan: "#06B6D4",
+  gold: "#D4AF37",
+  cream: "#FFF8E1",
+  ivory: "#FFFFF0",
+};
+
 const DEFAULT_COLOR = COLOR_HEX_MAP.DEFAULT;
 const DARK_BORDER = "#000000";
 const LIGHT_BORDER = "#FFFFFF";
@@ -79,7 +107,41 @@ function calculateLuminance(rgb: { r: number; g: number; b: number }): number {
  */
 export function getColorHex(colorName: string | null): string {
   if (!colorName) return DEFAULT_COLOR;
-  return COLOR_HEX_MAP[colorName] || DEFAULT_COLOR;
+
+  const normalized = colorName.trim();
+
+  // If database already returns a hex value, trust it.
+  if (/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(normalized)) {
+    return normalized;
+  }
+
+  // Exact key match first.
+  if (COLOR_HEX_MAP[normalized]) {
+    return COLOR_HEX_MAP[normalized];
+  }
+
+  // Case-insensitive key match for DB values like "black" / "BLACK".
+  const key = Object.keys(COLOR_HEX_MAP).find(
+    (entry) => entry.toLowerCase() === normalized.toLowerCase(),
+  );
+
+  if (key) {
+    return COLOR_HEX_MAP[key];
+  }
+
+  const normalizedLower = normalized.toLowerCase();
+
+  // Fallback to brutalist-style fuzzy matching for provider names like
+  // "Heather Navy", "Dark Grey", "Royal Blue", etc.
+  const fuzzyKey = Object.keys(COLOR_KEYWORD_HEX_MAP).find((entry) =>
+    normalizedLower.includes(entry)
+  );
+
+  if (fuzzyKey) {
+    return COLOR_KEYWORD_HEX_MAP[fuzzyKey];
+  }
+
+  return DEFAULT_COLOR;
 }
 
 /**

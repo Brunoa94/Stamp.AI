@@ -57,6 +57,114 @@ All design system components are located in:
 
 ---
 
+## 🎨 Color Palette Rules
+
+### **ALWAYS FOLLOW THE COLOR ORGANIZATION GUIDELINES**
+
+All colors in this project must be properly organized and documented according to our color system guidelines.
+
+**Before adding or using colors:**
+
+1. ✅ Check if a color already exists in the design system
+2. ✅ Use semantic color tokens from CSS variables (e.g., `var(--color-primary)`)
+3. ✅ Document new colors with proper tags in `globals_v2.css`
+4. ✅ Follow the established naming conventions
+5. ❌ Never use arbitrary hex values directly in components
+6. ❌ Never create duplicate colors with different names
+
+### Color Organization
+
+All colors are organized in [src/app/globals_v2.css](./src/app/globals_v2.css) by category:
+
+- **Brand Colors** `[tag: brand-*]` - Core brand identity colors
+- **Design System Colors** `[tag: ds-*]` - Semantic UI tokens (light/dark mode)
+- **Product Colors** `[tag: product-*]` - T-shirt/fabric customization colors
+- **Utility Colors** `[tag: gradient-*, shadow-*, glass-*, brutalist-*]` - Special purpose colors
+
+### Color Naming Convention
+
+```
+{category}-{descriptor}[-{variant}]
+
+Examples:
+- brand-purple          (brand purple color)
+- ds-primary            (design system primary)
+- ds-dark-background    (dark mode background)
+- product-navy          (product navy fabric)
+- gradient-logo         (logo gradient)
+- shadow-cyan           (cyan shadow effect)
+```
+
+See [docs/COLOR_PALETTE_GUIDELINES.md](./docs/COLOR_PALETTE_GUIDELINES.md) for complete color organization rules and examples.
+
+---
+
+## 📁 File Naming and Organization Rules
+
+### **NEVER USE `index.tsx` FILES**
+
+**DO NOT create `index.tsx` files for components.** Always use explicit component names.
+
+#### ❌ Bad Pattern (Anti-pattern)
+```
+components/
+  Button/
+    index.tsx          ← NEVER DO THIS
+    ButtonIcon.tsx
+    ButtonGroup.tsx
+```
+
+#### ✅ Good Pattern (Explicit Names)
+```
+components/
+  Button/
+    Button.tsx         ← Component name matches folder
+    ButtonIcon.tsx
+    ButtonGroup.tsx
+```
+
+### Why This Matters
+
+1. **Better IDE Navigation**: Explicit names show up in tabs and search results
+2. **Easier Debugging**: Stack traces show actual component names, not just "index"
+3. **Better Git History**: File changes are clearly identifiable
+4. **Import Clarity**: Imports are explicit: `from './Button/Button'` not `from './Button'`
+5. **Reduces Confusion**: Multiple `index.tsx` files in different folders are hard to distinguish
+
+### Import Pattern
+
+```tsx
+// ✅ Explicit imports with full path
+import { Button } from "@/components/Button/Button";
+import { HeroSection } from "@/features/stamp/ui/sections/HeroSection/HeroSection";
+
+// ❌ Avoid barrel exports and index files
+import { Button } from "@/components/Button";  // relies on index.tsx
+```
+
+### When Creating New Components
+
+1. Create a folder with the component name
+2. Create a file with the same name as the folder: `ComponentName.tsx`
+3. Add sub-components in the same folder with descriptive names
+4. Import using explicit file paths
+
+### Example: Section Component Structure
+
+```
+sections/
+  HeroSection/
+    HeroSection.tsx       ← Main component
+    HeroImage.tsx         ← Sub-component
+    HeroContent.tsx       ← Sub-component
+  UploadSection/
+    UploadSection.tsx     ← Main component
+    UploadDropzone.tsx    ← Sub-component
+    UploadPreview.tsx     ← Sub-component
+```
+
+---
+
 ## Getting Started
 
 ### Installation

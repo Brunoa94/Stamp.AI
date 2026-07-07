@@ -1,22 +1,18 @@
-import { StampFormProvider } from "@/features/stamp-brutalist/lib/context/StampFormContext";
-import { StampFlow } from "@/features/stamp-brutalist/ui/StampFlow";
-import { StampMobileProgress } from "@/features/stamp-brutalist/ui/components/StampMobileProgress";
+import { StampPage as StampMainPage } from "@/features/stamp/ui/StampPage";
+
+/**
+ * /stamp Route
+ *
+ * Luxury theme stamp customization flow.
+ * 8-stage synthesis protocol for bespoke product creation.
+ */
 
 export const metadata = {
-  title: "STAMP IT | Create Custom Product",
-  description: "Create your custom AI-generated product with STAMP.AI",
+  title: "Stamp It | 8-Stage Synthesis Protocol",
+  description:
+    "An advanced neural protocol for aesthetic curation. Translate your identity into bespoke permanence through our 8-stage synthesis.",
 };
 
-export default function CreateProductPage() {
-  return (
-    <StampFormProvider>
-      {/* Mobile progress overlay */}
-      <div className="fixed top-4 right-8 z-50 lg:hidden">
-        <StampMobileProgress />
-      </div>
-
-      {/* Main stamp flow */}
-      <StampFlow />
-    </StampFormProvider>
-  );
+export default function StampPage() {
+  return <StampMainPage />;
 }

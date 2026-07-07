@@ -1,0 +1,102 @@
+/* ============================================
+   COLOR PALETTE - ORGANIZED BY CATEGORY
+   ============================================
+
+   This file contains all colors used in the project.
+   Follow the guidelines in docs/COLOR_PALETTE_GUIDELINES.md
+   when adding or modifying colors.
+
+   Color Categories:
+   - Brand Colors [tag: brand-*]
+   - Design System Colors [tag: ds-*]
+   - Product/Fabric Colors [tag: product-*]
+   - Utility Colors [tag: gradient-*, shadow-*, glass-*, brutalist-*]
+   ============================================ */
+
+/* ==========================================
+   ROOT VARIABLES - LIGHT MODE
+   ========================================== */
+:root {
+  /* ==========================================
+     BRAND COLORS [tag: brand-*]
+     Core brand identity colors
+     ========================================== */
+
+  /* Stamp Luxury Theme Colors */
+  --color-stamp-taupe: #c4a08a; /* [tag: brand-stamp-taupe] Warm taupe accent */
+  --color-stamp-chocolate: #3d2817; /* [tag: brand-stamp-chocolate] Primary dark brown */
+  --color-stamp-gold: #d4af37; /* [tag: brand-stamp-gold] Metallic gold accent */
+  --color-stamp-cream: #faf6f1; /* [tag: brand-stamp-cream] Soft cream background */
+  --color-stamp-off-white: #fdfcfb; /* [tag: brand-stamp-off-white] Near white surface */
+  --color-stamp-divider: rgba(
+    61,
+    40,
+    23,
+    0.08
+  ); /* [tag: brand-stamp-divider] Subtle divider */
+
+  /* ==========================================
+     DESIGN SYSTEM - LIGHT MODE [tag: ds-*]
+     Semantic color tokens for UI elements
+     ========================================== */
+  /* TODO: Add design system light mode colors */
+
+  /* ==========================================
+     SIDEBAR COLORS [tag: sidebar-*]
+     ========================================== */
+  /* TODO: Add sidebar colors */
+
+  /* ==========================================
+     CHART COLORS [tag: chart-*]
+     Data visualization colors
+     ========================================== */
+  /* TODO: Add chart colors */
+
+  /* ==========================================
+     UTILITY COLORS
+     ========================================== */
+  /* TODO: Add utility colors (gradients, shadows, effects) */
+}
+
+/* ==========================================
+   DARK MODE VARIABLES
+   ========================================== */
+.dark {
+  /* ==========================================
+     DESIGN SYSTEM - DARK MODE [tag: ds-dark-*]
+     ========================================== */
+  /* TODO: Add dark mode color variables */
+
+  /* ==========================================
+     SIDEBAR COLORS - DARK MODE
+     ========================================== */
+  /* TODO: Add dark sidebar colors */
+
+  /* ==========================================
+     CHART COLORS - DARK MODE
+     ========================================== */
+  /* TODO: Add dark chart colors */
+}
+
+/* ==========================================
+   STAMP LUXURY THEME UTILITIES
+   ========================================== */
+
+.font-outfit {
+  font-family: var(--font-outfit), sans-serif;
+}
+
+.font-playfair {
+  font-family: var(--font-playfair), serif;
+}
+
+/* Stamp specific font combinations for consistency */
+.stamp-body {
+  font-family: var(--font-outfit), sans-serif;
+  color: var(--color-stamp-chocolate);
+}
+
+.stamp-serif {
+  font-family: var(--font-playfair), serif;
+  color: var(--color-stamp-taupe);
+}

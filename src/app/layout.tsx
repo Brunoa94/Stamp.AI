@@ -7,17 +7,19 @@ import {
   Poppins,
   Anton,
   Space_Grotesk,
+  Outfit,
+  Playfair_Display,
 } from "next/font/google";
 import "./globals.css";
+import "./globals_v2.css";
 
 import { Toaster } from "sonner";
 import { SupabaseAuthProvider } from "@/providers/SupabaseAuthProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
-import { ModernTopNavbar } from "@/features/layout/brutalist/ModernTopNavbar";
-import { BrutalistFooter } from "@/features/layout/brutalist/BrutalistFooter";
 import { GrainOverlay } from "@/features/layout/brutalist/GrainOverlay";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import { AppLayoutChrome } from "@/components/AppLayoutChrome";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -67,6 +69,22 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
+// Stamp luxury fonts
+const outfit = Outfit({
+  variable: "--font-outfit",
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+const playfairDisplay = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Imaginary Builder AI",
   description: "AI-powered design and building platform",
@@ -83,12 +101,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className="light"
-      style={{ colorScheme: "light" }}
-      suppressHydrationWarning
-    >
+    <html lang="en" className="light scheme-light" suppressHydrationWarning>
       <head>
         <link
           href="https://api.fontshare.com/v2/css?f[]=zodiak@400,500,700&display=swap"
@@ -100,16 +113,14 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} ${poppins.variable} ${bebasNeue.variable} ${anton.variable} ${spaceGrotesk.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} ${poppins.variable} ${bebasNeue.variable} ${anton.variable} ${spaceGrotesk.variable} ${outfit.variable} ${playfairDisplay.variable} antialiased`}
       >
         <GrainOverlay />
         <ThemeProvider>
           <SupabaseAuthProvider>
             <QueryProvider>
               <ScrollToTop />
-              <ModernTopNavbar />
-              <main className="pt-20 min-h-screen">{children}</main>
-              <BrutalistFooter />
+              <AppLayoutChrome>{children}</AppLayoutChrome>
               <Toaster />
             </QueryProvider>
           </SupabaseAuthProvider>

@@ -2,16 +2,21 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthService } from "@/services/authService";
-import type { LoginI, RegisterI, PasswordResetRequestI, UpdateProfileI } from "@/schemas/auth";
+import type {
+  LoginI,
+  PasswordResetRequestI,
+  RegisterI,
+  UpdateProfileI,
+} from "@/schemas/auth";
 import { AuthResponseI, UserI } from "@/types/api";
 import { useRouter } from "next/navigation";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 // Query keys
 export const authKeys = {
-  all: ['auth'] as const,
-  user: () => [...authKeys.all, 'user'] as const,
-  session: () => [...authKeys.all, 'session'] as const,
+  all: ["auth"] as const,
+  user: () => [...authKeys.all, "user"] as const,
+  session: () => [...authKeys.all, "session"] as const,
 };
 
 // ============================================
@@ -94,7 +99,11 @@ export function useRegister() {
       return AuthService.register(userData);
     },
     onSuccess: (data) => {
-      handleSuccess(`Registration successful - ${data.message || "Please check your email to verify your account."}`);
+      handleSuccess(
+        `Registration successful - ${
+          data.message || "Please check your email to verify your account."
+        }`,
+      );
     },
     onError: (error: Error) => {
       handleError(error);
@@ -125,7 +134,7 @@ export function useLogout() {
 
       handleSuccess("Logged out successfully");
 
-      router.push("/");
+      router.push("/stamp");
     },
     onError: (error: Error) => {
       handleError(error);
@@ -147,7 +156,9 @@ export function usePasswordResetRequest() {
       return AuthService.requestPasswordReset(data);
     },
     onSuccess: () => {
-      handleSuccess("Password reset email sent - Please check your email for reset instructions.");
+      handleSuccess(
+        "Password reset email sent - Please check your email for reset instructions.",
+      );
     },
     onError: (error: Error) => {
       handleError(error);
@@ -184,7 +195,8 @@ export function useUpdatePassword() {
   const { handleError, handleSuccess } = useErrorHandler();
 
   return useMutation({
-    mutationFn: (newPassword: string) => AuthService.updatePassword(newPassword),
+    mutationFn: (newPassword: string) =>
+      AuthService.updatePassword(newPassword),
     onSuccess: () => {
       handleSuccess("Password updated successfully");
     },
