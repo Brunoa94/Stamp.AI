@@ -1,10 +1,14 @@
 import { ErrorCodeT } from "@/shared-types";
 import { AppError } from "./errorClient";
 
+// This client only ever calls our own same-origin API routes
+// (e.g. /api/fetch-custom-product, /api/generate-image), which authenticate
+// via the Supabase session cookie — not a Printify token. Never put a secret
+// here: this module is bundled into client components, so any header value
+// ships to the browser.
 const DEFAULT_HEADERS = {
   "Accept": "*/*",
   "Content-Type": "application/json",
-  "Authorization": `Bearer ${process.env.NEXT_PUBLIC_PRINTIFY_API_TOKEN}`,
 };
 
 interface RequestOptions {

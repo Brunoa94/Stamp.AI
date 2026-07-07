@@ -1,13 +1,67 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { ErrorCodes, handleError } from "../_shared/errors.ts";
+import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
+import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
+import { requireUser } from "../_shared/authGuard.ts";
+import { getPayPalOrder } from "../_shared/paypal.ts";
+import { getMolliePayment, isMolliePaymentPaid } from "../_shared/mollie.ts";
+import { validatePaymentAmount } from "../_shared/amountValidator.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
 };
+
+/**
+ * Verify with the payment provider that `payment_intent_id` was actually paid,
+ * and return the amount charged (in the major currency unit). Throws if the
+ * payment is missing/unpaid, or (for non-service callers) if it does not
+ * belong to the authenticated user. This is what prevents an attacker from
+ * fabricating a payment id to get free fulfillment.
+ */
+async function verifyPaymentPaid(
+  provider: string,
+  paymentIntentId: string,
+  callerUserId: string | null,
+): Promise<number> {
+  if (provider === "stripe") {
+    const stripe = new Stripe(validateEnvVars.stripeSecretKey(), {
+      apiVersion: "2023-10-16",
+      httpClient: Stripe.createFetchHttpClient(),
+    });
+    const pi = await stripe.paymentIntents.retrieve(paymentIntentId);
+    if (pi.status !== "succeeded") {
+      throw new FunctionError(402, "PAYMENT_NOT_COMPLETED", "Payment not completed");
+    }
+    if (callerUserId && pi.metadata?.user_id && pi.metadata.user_id !== callerUserId) {
+      throw new FunctionError(403, "FORBIDDEN", "Payment does not belong to caller");
+    }
+    return pi.amount / 100;
+  }
+
+  if (provider === "paypal") {
+    const order = await getPayPalOrder(paymentIntentId);
+    if (order.status !== "COMPLETED" && order.status !== "APPROVED") {
+      throw new FunctionError(402, "PAYMENT_NOT_COMPLETED", "Payment not completed");
+    }
+    const unit = order.purchase_units?.[0];
+    const value = Number(unit?.amount?.value ?? unit?.payments?.captures?.[0]?.amount?.value);
+    return Number.isFinite(value) ? value : NaN;
+  }
+
+  if (provider === "mollie") {
+    const payment = await getMolliePayment(paymentIntentId);
+    if (!isMolliePaymentPaid(payment)) {
+      throw new FunctionError(402, "PAYMENT_NOT_COMPLETED", "Payment not completed");
+    }
+    const value = Number(payment?.amount?.value);
+    return Number.isFinite(value) ? value : NaN;
+  }
+
+  throw ErrorCodes.INVALID_REQUEST_BODY();
+}
 
 /**
  * Process Payment Recovery Edge Function
@@ -21,6 +75,9 @@ serve(async (req) => {
   }
 
   try {
+    // Require an authenticated caller (or service-role for automated recovery).
+    const auth = await requireUser(req.headers.get("authorization"));
+
     const body = await req.json();
     const {
       recovery_id,
@@ -32,9 +89,6 @@ serve(async (req) => {
     } = body;
 
     console.log("=== PROCESS PAYMENT RECOVERY ===");
-    console.log("Recovery ID:", recovery_id);
-    console.log("Payment Provider:", payment_provider);
-    console.log("Payment Intent ID:", payment_intent_id);
 
     // Validate required fields
     if (!recovery_id || !payment_provider || !payment_intent_id) {
@@ -44,6 +98,21 @@ serve(async (req) => {
     if (!cart_snapshot || !shipping_address || !line_items) {
       throw ErrorCodes.INVALID_REQUEST_BODY();
     }
+
+    // CRITICAL: verify the payment actually succeeded with the provider before
+    // creating or fulfilling anything. Never trust a client-supplied payment
+    // id + cart snapshot as proof of payment.
+    const paidAmount = await verifyPaymentPaid(
+      payment_provider,
+      payment_intent_id,
+      auth.isServiceRole ? null : auth.userId,
+    );
+
+    // The user the order is attributed to: for a real user, always themselves;
+    // service-role recovery may act on behalf of the snapshot's user.
+    const effectiveUserId = auth.isServiceRole
+      ? cart_snapshot.user_id
+      : auth.userId;
 
     // Increment recovery attempt counter
     await supabaseRest("rpc/increment_recovery_attempt", "POST", {
@@ -96,12 +165,27 @@ serve(async (req) => {
     const discount = cart_snapshot.discount || 0;
     const totalAmount = subtotal + shippingCost - discount;
 
+    // The order total must match what the provider actually charged — reject
+    // recovery of a snapshot whose price differs from the real payment.
+    const amountCheck = validatePaymentAmount({
+      paymentAmount: paidAmount,
+      paymentCurrency: cart_snapshot.currency || "USD",
+      expectedTotal: totalAmount,
+    });
+    if (!amountCheck.isValid) {
+      throw new FunctionError(
+        400,
+        "AMOUNT_MISMATCH",
+        "Recovered cart total does not match the amount paid",
+      );
+    }
+
     // Generate order number
     const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
     // Create order
     const orderData = {
-      user_id: cart_snapshot.user_id,
+      user_id: effectiveUserId,
       order_number: orderNumber,
       subtotal,
       shipping_cost: shippingCost,

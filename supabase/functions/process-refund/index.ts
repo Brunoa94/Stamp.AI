@@ -5,6 +5,8 @@ import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { paypalRequest } from "../_shared/paypal.ts";
 import { mollieRequest } from "../_shared/mollie.ts";
+import { requireUser } from "../_shared/authGuard.ts";
+import { FunctionError } from "../_shared/errors.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -144,6 +146,9 @@ serve(async (req) => {
   }
 
   try {
+    // Require an authenticated caller (or service-role for automated recovery).
+    const auth = await requireUser(req.headers.get("authorization"));
+
     const body: RefundRequestI = await req.json();
 
     const {
@@ -164,6 +169,19 @@ serve(async (req) => {
 
     if (!["stripe", "paypal", "mollie"].includes(payment_provider)) {
       throw ErrorCodes.INVALID_REQUEST_BODY();
+    }
+
+    // Ownership check: a non-service caller may only refund their OWN order,
+    // and the supplied provider payment id must match that order (prevents
+    // IDOR / refunding arbitrary orders or captures).
+    if (!auth.isServiceRole) {
+      const ownership = await supabaseRest<Array<{ id: string }>>(
+        `orders?id=eq.${encodeURIComponent(order_id)}&user_id=eq.${encodeURIComponent(auth.userId)}&select=id`,
+        "GET",
+      );
+      if (!Array.isArray(ownership.data) || ownership.data.length === 0) {
+        throw new FunctionError(403, "FORBIDDEN", "Order not found for this user");
+      }
     }
 
     // Idempotency check — never refund the same order twice

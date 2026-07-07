@@ -17,14 +17,20 @@ serve(async (req) => {
 
   try {
     const body = await req.text();
-    const event = JSON.parse(body);
 
-    // Verify webhook signature (basic validation for now)
+    // Verify the webhook signature with PayPal BEFORE trusting any of the
+    // payload. Reject forged events outright — never fulfill on an unverified
+    // "payment succeeded" notification.
     const isValid = await verifyPayPalWebhook(req.headers, body);
     if (!isValid) {
-      console.warn("PayPal webhook signature validation failed");
-      // Continue processing in sandbox mode, but log the warning
+      console.warn("PayPal webhook signature validation failed — rejecting");
+      return new Response(
+        JSON.stringify({ error: "INVALID_WEBHOOK_SIGNATURE" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
+
+    const event = JSON.parse(body);
 
     console.log("PayPal webhook event:", event.event_type);
     console.log("Resource ID:", event.resource?.id);

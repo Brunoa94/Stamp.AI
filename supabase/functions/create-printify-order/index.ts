@@ -107,6 +107,22 @@ serve(async (req) => {
       discount, // For amount validation
     } = requestBody
 
+    // ✅ SECURITY: a normal end user may only fulfill THEIR OWN order. Without
+    // this, any authenticated user could pass another user's order_id and mark
+    // it paid/confirmed. Service-role callers (server-to-server, recovery) are
+    // trusted to act on any order.
+    const requestedOrderId = metadata?.order_id
+    if (userId !== 'service-role' && requestedOrderId) {
+      const ownership = await supabaseRest<Array<{ id: string }>>(
+        `orders?id=eq.${encodeURIComponent(String(requestedOrderId))}&user_id=eq.${encodeURIComponent(userId)}&select=id`,
+        'GET',
+      )
+      if (!Array.isArray(ownership.data) || ownership.data.length === 0) {
+        console.error('Order ownership check failed for user', userId)
+        throw ErrorCodes.INVALID_REQUEST_BODY()
+      }
+    }
+
     // ✅ CRITICAL FIX #1: Enforce test mode based on environment
     const testModeValidation = validateAndEnforceTestMode(is_test, 'Printify order creation');
     const enforcedTestMode = testModeValidation.testMode;
@@ -133,9 +149,8 @@ serve(async (req) => {
     let finalAddressTo = address_to || shipping_address
 
     console.log('=== CREATE PRINTIFY ORDER ===')
-    console.log('🔍 FULL REQUEST BODY:', JSON.stringify(requestBody, null, 2))
-    console.log('📦 Line items received:', JSON.stringify(line_items, null, 2))
-    console.log('📍 Shipping address:', JSON.stringify(finalAddressTo, null, 2))
+    // Avoid logging full request body / shipping address (customer PII).
+    console.log('📦 Line items count:', Array.isArray(line_items) ? line_items.length : 0)
     console.log('🧪 Is test (client):', is_test)
     console.log('🧪 Is test (enforced):', enforcedTestMode)
     console.log('📝 Use sample order:', use_sample_order)

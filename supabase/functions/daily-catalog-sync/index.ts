@@ -4,14 +4,12 @@
  * Syncs product costs from Printify by creating temporary products
  */
 
-Deno.serve(async (req) => {
-  // Verify this is a cron request
-  const authHeader = req.headers.get("authorization");
-  if (!authHeader?.includes("Bearer")) {
-    return new Response("Unauthorized", { status: 401 });
-  }
+import { requireServiceRoleOrCron } from "../_shared/authGuard.ts";
 
+Deno.serve(async (req) => {
   try {
+    requireServiceRoleOrCron(req);
+
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 

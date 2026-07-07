@@ -15,6 +15,7 @@
  */
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireServiceRoleOrCron } from "../_shared/authGuard.ts";
 
 const PRINTIFY_API_BASE = "https://api.printify.com/v1";
 
@@ -27,6 +28,8 @@ interface QueueJob {
 
 Deno.serve(async (req) => {
   try {
+    requireServiceRoleOrCron(req);
+
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const PRINTIFY_API_TOKEN = Deno.env.get("PRINTIFY_API_TOKEN")!;

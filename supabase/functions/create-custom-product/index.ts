@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { createClient } from "jsr:@supabase/supabase-js@2"
+import { requireUser } from "../_shared/authGuard.ts"
 
 // Environment variables will be validated when needed
 
@@ -23,6 +24,8 @@ serve(async (req) => {
   }
 
   try {
+    const auth = await requireUser(req.headers.get('authorization'))
+
     const {
       blueprint_id,
       print_provider_id,
@@ -38,6 +41,9 @@ serve(async (req) => {
       user_id,
       customer_email
     } = await req.json()
+
+    // Do not trust the client-supplied user_id for non-service callers.
+    const effectiveUserId = auth.isServiceRole ? user_id : auth.userId
 
     console.log('=== CREATE CUSTOM PRODUCT ===')
     console.log('🎨 Selected color:', selected_color)
