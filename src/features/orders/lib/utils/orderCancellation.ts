@@ -1,5 +1,5 @@
 import { OrderWithItemsT } from "@/types/order";
-import { normalizeOrderStatus } from "@/features/orders/helpers/normalizeOrderStatus";
+import { normalizeOrderStatus } from "../helpers/normalizeOrderStatus";
 
 type CancellableOrderStatusType = "" | "created" | "pending" | "confirmed";
 

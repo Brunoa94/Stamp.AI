@@ -7,6 +7,33 @@ import { canCancelOrder } from "../utils/orderCancellation";
 
 import { OrderService } from "@/services/orderService";
 
+type CancelResults = {
+    cancelled_at_printify?: boolean;
+    refund_processed?: boolean;
+    refund_error?: string;
+};
+
+function buildCancellationDescription(results?: CancelResults): string {
+    const defaultMessage = "Your order has been cancelled.";
+
+    if (!results) {
+        return defaultMessage;
+    }
+
+    const details: string[] = [];
+
+    if (results.cancelled_at_printify) {
+        details.push("Order cancelled at Printify");
+    }
+    if (results.refund_processed) {
+        details.push("Refund processed successfully");
+    } else if (results.refund_error) {
+        details.push("Note: Refund could not be processed automatically");
+    }
+
+    return details.length > 0 ? `${details.join(". ")}.` : defaultMessage;
+}
+
 export function useCancelOrder() {
     const [cancelModalOpen, setCancelModalOpen] = useState(false);
     const [orderToCancel, setOrderToCancel] = useState<OrderWithItemsT | null>(
@@ -24,29 +51,8 @@ export function useCancelOrder() {
                     queryKey: ["orders", orderId],
                 });
 
-                const { results } = data;
-                let description = "Your order has been cancelled.";
-
-                if (results) {
-                    const details: string[] = [];
-                    if (results.cancelled_at_printify) {
-                        details.push("Order cancelled at Printify");
-                    }
-                    if (results.refund_processed) {
-                        details.push("Refund processed successfully");
-                    } else if (results.refund_error) {
-                        details.push(
-                            "Note: Refund could not be processed automatically",
-                        );
-                    }
-
-                    if (details.length > 0) {
-                        description = `${details.join(". ")}.`;
-                    }
-                }
-
                 toast.success("Order cancelled", {
-                    description,
+                    description: buildCancellationDescription(data.results),
                 });
 
                 handleCloseCancelModal();

@@ -40,8 +40,7 @@ const variantStyles: Record<
   shipping: {
     container: "",
     label: "mb-2 block text-xs font-bold uppercase tracking-widest text-slate-500",
-    input:
-      "rounded-none border border-slate-200 bg-white/90 px-4 py-3 text-sm text-slate-900 shadow-none focus-visible:ring-0 focus-visible:border-purple-500",
+    input: "",
   },
 };
 

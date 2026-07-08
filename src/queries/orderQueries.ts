@@ -30,6 +30,7 @@ export function useOrders(userId?: string) {
   return useQuery({
     queryKey: ["orders", { userId }],
     queryFn: () => OrderService.getOrders(userId),
+    enabled: Boolean(userId),
   });
 }
 

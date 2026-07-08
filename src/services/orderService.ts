@@ -65,9 +65,16 @@ export class OrderService {
       }
 
       // Validate response with Zod schema
-      const validatedData = z.array(OrderWithItemsSchema).parse(data);
-
-      return validatedData as OrderWithItemsT[];
+      try {
+        const validatedData = z.array(OrderWithItemsSchema).parse(data);
+        
+        return validatedData as OrderWithItemsT[];
+      } catch (zodError: any) {
+        console.error("❌ Zod validation failed for orders");
+        console.error("Error details:", zodError.errors || zodError.message);
+        console.error("📦 First order data sample:", JSON.stringify(data[0], null, 2));
+        throw zodError;
+      }
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Order", action: "Get Orders"})
     }

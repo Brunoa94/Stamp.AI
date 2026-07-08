@@ -7,9 +7,11 @@ import { RecentOrdersEmptyState } from "./RecentOrders/RecentOrdersEmptyState";
 import { RecentOrderItem } from "./RecentOrders/RecentOrderItem";
 import type { OrderWithItemsT } from "@/types/order";
 
-const OrderDetailsModal = dynamic(
+const OrdersDetailsModal = dynamic(
   () =>
-    import("@/features/orders/ui/components/OrderDetails/OrderDetailsModal/OrderDetailsModal"),
+    import("@/features/orders/ui/components/OrdersDetailsModal/OrdersDetailsModal").then(
+      (mod) => mod.OrdersDetailsModal,
+    ),
   { ssr: false },
 );
 
@@ -61,11 +63,9 @@ export function RecentOrdersCard({ orders }: PropsI) {
         )}
       </section>
 
-      <OrderDetailsModal
-        order={selectedOrder}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
+      {isModalOpen && selectedOrder && (
+        <OrdersDetailsModal order={selectedOrder} onClose={handleCloseModal} />
+      )}
     </>
   );
 }

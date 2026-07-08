@@ -3,10 +3,6 @@
 import { colors } from "./colors";
 import { animationClasses, animations } from "./animations";
 import { navbarDesignSystem } from "./navbarDesignSystem";
-import {
-  ordersCardTheme,
-  ordersPageTheme,
-} from "../features/orders/styles/ordersTheme";
 
 export const componentThemes = {
   // Card variants
@@ -446,7 +442,7 @@ export const componentThemes = {
   },
 
   // Orders page styles
-  orders: ordersPageTheme,
+  orders: {},
 
   // Checkout page styles
   checkout: {

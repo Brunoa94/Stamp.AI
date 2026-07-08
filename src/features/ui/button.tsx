@@ -39,6 +39,10 @@ const buttonVariants = cva(
           "w-full mt-6 py-3 border border-ink/10 hover:border-purple hover:bg-purple/5 font-anton text-xs tracking-widest uppercase transition-all flex items-center justify-center text-purple",
         "dashboard-primary":
           "w-full py-3 bg-purple hover:bg-purple/90 text-white font-anton text-xs tracking-widest uppercase transition-all",
+        "secondary-brown":
+          "h-auto rounded-none bg-(--color-stamp-chocolate) px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)",
+        neutral:
+          "h-auto rounded-none border border-(--color-stamp-divider) bg-transparent px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-300 hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-white",
       },
       size: {
         default: "h-10 px-4 py-2 has-[>svg]:px-3",

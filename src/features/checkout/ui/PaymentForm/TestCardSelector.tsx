@@ -1,14 +1,25 @@
-interface TestCardOption {
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "@/features/ui/select";
+
+type TestCardOptionType = {
   value: string;
   label: string;
-}
+};
 
-interface TestCardGroup {
+type TestCardGroupType = {
   label: string;
-  options: TestCardOption[];
-}
+  options: TestCardOptionType[];
+};
 
-const TEST_CARD_GROUPS: TestCardGroup[] = [
+const TEST_CARD_GROUPS: TestCardGroupType[] = [
   {
     label: "Successful Payments",
     options: [
@@ -34,7 +45,7 @@ const TEST_CARD_GROUPS: TestCardGroup[] = [
   },
 ];
 
-interface TestCardSelectorProps {
+interface PropsI {
   value: string;
   onChange: (value: string) => void;
 }
@@ -43,7 +54,7 @@ interface TestCardSelectorProps {
  * TestCardSelector - Dropdown for selecting test card payment methods
  * Used in test mode to simulate different payment scenarios
  */
-export function TestCardSelector({ value, onChange }: TestCardSelectorProps) {
+export function TestCardSelector({ value, onChange }: PropsI) {
   return (
     <div className="space-y-3">
       <label
@@ -52,22 +63,24 @@ export function TestCardSelector({ value, onChange }: TestCardSelectorProps) {
       >
         Test Card Type
       </label>
-      <select
-        id="test-card-select"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-[#7C3AED] focus:ring-4 focus:ring-[#7C3AED]/20 transition-all duration-300 bg-white/50 backdrop-blur-sm text-sm font-medium text-slate-700"
-      >
-        {TEST_CARD_GROUPS.map((group) => (
-          <optgroup key={group.label} label={group.label}>
-            {group.options.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </optgroup>
-        ))}
-      </select>
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger id="test-card-select" className="w-full">
+          <SelectValue placeholder="Select test card type" />
+        </SelectTrigger>
+        <SelectContent>
+          {TEST_CARD_GROUPS.map((group, groupIndex) => (
+            <SelectGroup key={group.label}>
+              <SelectLabel>{group.label}</SelectLabel>
+              {group.options.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+              {groupIndex < TEST_CARD_GROUPS.length - 1 && <SelectSeparator />}
+            </SelectGroup>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

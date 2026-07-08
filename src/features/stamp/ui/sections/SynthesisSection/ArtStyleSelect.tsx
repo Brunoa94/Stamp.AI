@@ -1,4 +1,11 @@
 import { Label } from "@/features/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/features/ui/select";
 import { STAMP_ART_STYLES } from "../../../lib/constants/stampProducts";
 
 /**
@@ -21,19 +28,18 @@ export function ArtStyleSelect({ value, onChange }: PropsI) {
       >
         Art Style
       </Label>
-      <select
-        id="art-style"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-transparent border-b border-(--color-stamp-divider) focus:border-(--color-stamp-gold) focus:bg-(--color-stamp-gold)/5 transition-all px-0 py-3 text-sm cursor-pointer"
-        aria-label="Select art style"
-      >
-        {STAMP_ART_STYLES.map((style) => (
-          <option key={style.id} value={style.id}>
-            {style.label}
-          </option>
-        ))}
-      </select>
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger id="art-style" aria-label="Select art style" className="w-full">
+          <SelectValue placeholder="Select art style" />
+        </SelectTrigger>
+        <SelectContent>
+          {STAMP_ART_STYLES.map((style) => (
+            <SelectItem key={style.id} value={style.id}>
+              {style.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }
