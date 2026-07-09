@@ -22,9 +22,12 @@ function Row({ label, value }: { label: string; value: string }) {
       <Span variant="micro" className="text-(--color-stamp-taupe)">
         {label}
       </Span>
-      <span className="text-sm font-bold tabular-nums text-(--color-stamp-chocolate)">
+      <Span
+        unstyled
+        className="text-sm font-bold tabular-nums text-(--color-stamp-chocolate)"
+      >
         {value}
-      </span>
+      </Span>
     </div>
   );
 }
@@ -43,9 +46,12 @@ export function CheckoutV2PriceBreakdown({
         <Span variant="micro" className="text-(--color-stamp-taupe)">
           Shipping
         </Span>
-        <span className="text-sm font-bold uppercase tracking-[0.15em] text-(--color-stamp-success)">
+        <Span
+          unstyled
+          className="text-sm font-bold uppercase tracking-[0.15em] text-(--color-stamp-success)"
+        >
           {shipping === 0 ? "Free" : formatPrice(shipping)}
-        </span>
+        </Span>
       </div>
 
       {discount > 0 && (
@@ -53,9 +59,12 @@ export function CheckoutV2PriceBreakdown({
           <Span variant="micro" className="text-(--color-stamp-taupe)">
             Discount
           </Span>
-          <span className="text-sm font-bold tabular-nums text-(--color-stamp-success)">
+          <Span
+            unstyled
+            className="text-sm font-bold tabular-nums text-(--color-stamp-success)"
+          >
             −{formatPrice(discount)}
-          </span>
+          </Span>
         </div>
       )}
 

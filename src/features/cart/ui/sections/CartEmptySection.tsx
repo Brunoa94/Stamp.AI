@@ -1,5 +1,5 @@
 /**
- * CartV2EmptySection
+ * CartEmptySection
  *
  * Empty cart state in the luxury brutalist style:
  * - Cream icon plate with a subtle tilt
@@ -10,9 +10,10 @@
 import Link from "next/link";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import { Button } from "@/features/ui/button";
+import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 
-export function CartV2EmptySection() {
+export function CartEmptySection() {
   return (
     <div
       role="status"
@@ -25,9 +26,13 @@ export function CartV2EmptySection() {
         />
       </div>
 
-      <h1 className="mb-4 font-(--font-playfair) text-4xl italic text-(--color-stamp-chocolate)">
+      <Heading
+        as="h1"
+        unstyled
+        className="mb-4 font-(--font-playfair) text-4xl italic text-(--color-stamp-chocolate)"
+      >
         Your Bag is Empty
-      </h1>
+      </Heading>
 
       <Span variant="default" className="mb-10 text-(--color-stamp-taupe)">
         No items in production protocol

@@ -6,10 +6,8 @@ import "@/features/cart/ui/cart.css";
 
 export default function CartPage() {
   return (
-    <div className="bg-concrete text-ink font-space antialiased min-h-screen">
-      <ProtectedRoute>
-        <CartContent />
-      </ProtectedRoute>
-    </div>
+    <ProtectedRoute>
+      <CartContent />
+    </ProtectedRoute>
   );
 }

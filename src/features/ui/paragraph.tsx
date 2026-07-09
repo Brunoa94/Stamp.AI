@@ -30,20 +30,26 @@ const paragraphVariants = {
 export type ParagraphVariant = keyof typeof paragraphVariants;
 type ParagraphTag = "p" | "div" | "span";
 
-interface ParagraphProps {
+interface ParagraphProps extends React.HTMLAttributes<HTMLElement> {
   as?: ParagraphTag;
   variant?: ParagraphVariant;
-  className?: string;
-  children: React.ReactNode;
+  unstyled?: boolean;
 }
 
 export function Paragraph({
   as: Tag = "p",
   variant = "body",
+  unstyled = false,
   className,
   children,
+  ...props
 }: ParagraphProps) {
   return (
-    <Tag className={cn(paragraphVariants[variant], className)}>{children}</Tag>
+    <Tag
+      className={cn(!unstyled && paragraphVariants[variant], className)}
+      {...props}
+    >
+      {children}
+    </Tag>
   );
 }

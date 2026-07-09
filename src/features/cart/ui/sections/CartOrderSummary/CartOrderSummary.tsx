@@ -1,5 +1,5 @@
 /**
- * CartV2OrderSummary
+ * CartOrderSummary
  *
  * Sticky order-summary panel in the luxury brutalist style. Composes the
  * price breakdown and footer; totals are derived via CartServiceMapper.
@@ -10,18 +10,18 @@
 import { Heading } from "@/features/ui/heading";
 import type { CartWithItems } from "@/types/cart";
 import { CartServiceMapper } from "@/mappers/services/cartServiceMapper";
-import { CartV2OrderSummaryBreakdown } from "./CartV2OrderSummaryBreakdown";
-import { CartV2OrderSummaryFooter } from "./CartV2OrderSummaryFooter";
+import { CartOrderSummaryBreakdown } from "./CartOrderSummaryBreakdown";
+import { CartOrderSummaryFooter } from "./CartOrderSummaryFooter";
 
-interface CartV2OrderSummaryPropsI {
+interface CartOrderSummaryPropsI {
   cart: CartWithItems;
   onCheckout: () => void;
 }
 
-export function CartV2OrderSummary({
+export function CartOrderSummary({
   cart,
   onCheckout,
-}: CartV2OrderSummaryPropsI) {
+}: CartOrderSummaryPropsI) {
   const { subtotal, shipping } = CartServiceMapper.calculateCartTotals(
     cart.cart_items,
   );
@@ -33,12 +33,12 @@ export function CartV2OrderSummary({
         Order <span className="text-(--color-stamp-gold)">Summary</span>
       </Heading>
 
-      <CartV2OrderSummaryBreakdown
+      <CartOrderSummaryBreakdown
         subtotal={subtotal}
         shipping={shipping}
         total={total}
       />
-      <CartV2OrderSummaryFooter onCheckout={onCheckout} />
+      <CartOrderSummaryFooter onCheckout={onCheckout} />
     </div>
   );
 }

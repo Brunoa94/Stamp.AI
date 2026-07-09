@@ -1,5 +1,5 @@
 /**
- * CartV2LoadingSection
+ * CartLoadingSection
  *
  * Skeleton loading state matching the orders/stamp shimmer treatment:
  * cream → divider → cream gradient sweeping across placeholder blocks.
@@ -10,12 +10,12 @@ const SKELETON_ROWS = 3;
 function ShimmerBlock({ className }: { className?: string }) {
   return (
     <div
-      className={`cart-v2-shimmer bg-linear-to-r from-(--color-stamp-cream) via-(--color-stamp-divider) to-(--color-stamp-cream) bg-size-[200%_100%] animate-[cart-v2-shimmer_1.5s_linear_infinite] ${className ?? ""}`}
+      className={`cart-shimmer bg-linear-to-r from-(--color-stamp-cream) via-(--color-stamp-divider) to-(--color-stamp-cream) bg-size-[200%_100%] animate-[cart-shimmer_1.5s_linear_infinite] ${className ?? ""}`}
     />
   );
 }
 
-export function CartV2LoadingSection() {
+export function CartLoadingSection() {
   return (
     <div
       role="status"

@@ -12,6 +12,7 @@ import { useFormContext } from "react-hook-form";
 import { Tag, X } from "lucide-react";
 import { Input } from "@/features/ui/input";
 import { Button } from "@/features/ui/button";
+import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 
@@ -56,9 +57,12 @@ export function CheckoutV2PromoCode({
 
       {appliedCode ? (
         <div className="flex items-center justify-between border border-(--color-stamp-success)/30 bg-(--color-stamp-success)/5 px-4 py-3">
-          <span className="text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-success)">
+          <Span
+            unstyled
+            className="text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-success)"
+          >
             {appliedCode}
-          </span>
+          </Span>
           <Button
             type="button"
             variant="ghost"
@@ -100,12 +104,13 @@ export function CheckoutV2PromoCode({
       )}
 
       {error && (
-        <p
+        <Paragraph
+          unstyled
           role="alert"
           className="text-[11px] font-bold uppercase tracking-[0.15em] text-(--color-stamp-error)"
         >
           {error}
-        </p>
+        </Paragraph>
       )}
     </div>
   );

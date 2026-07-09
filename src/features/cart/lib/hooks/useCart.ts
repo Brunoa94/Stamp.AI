@@ -1,9 +1,9 @@
 /**
- * useCartV2
+ * useCart
  *
- * Orchestration hook for the cart-v2 page. Wraps the shared cart query layer
+ * Orchestration hook for the cart page. Wraps the shared cart query layer
  * and exposes the data plus the quantity/remove/checkout handlers the UI
- * needs, keeping CartV2Content purely presentational.
+ * needs, keeping CartContent purely presentational.
  */
 
 "use client";
@@ -17,7 +17,7 @@ import {
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { CartServiceMapper } from "@/mappers/services/cartServiceMapper";
 
-export function useCartV2() {
+export function useCart() {
   const router = useRouter();
   const updateCartItem = useUpdateCartItem();
   const removeCartItem = useRemoveCartItem();
@@ -36,7 +36,7 @@ export function useCartV2() {
 
   const checkout = () => {
     if (!cart) return;
-    router.push(`/checkout-v2?cartId=${cart.id}`);
+    router.push(`/checkout?cartId=${cart.id}`);
   };
 
   const totals = cart

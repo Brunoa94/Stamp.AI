@@ -11,6 +11,7 @@
 import { useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/features/ui/button";
+import { Paragraph } from "@/features/ui/paragraph";
 import { usePaymentForm } from "@/features/checkout/ui/PaymentForm/usePaymentForm";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
@@ -90,12 +91,13 @@ export function CheckoutV2StripeButton({
       </Button>
 
       {error && (
-        <p
+        <Paragraph
+          unstyled
           role="alert"
           className="mt-4 border border-(--color-stamp-error)/20 bg-(--color-stamp-error)/5 px-4 py-3 text-xs font-bold uppercase tracking-[0.15em] text-(--color-stamp-error)"
         >
           {error}
-        </p>
+        </Paragraph>
       )}
     </>
   );

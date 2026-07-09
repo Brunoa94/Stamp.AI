@@ -1,5 +1,5 @@
 /**
- * CartV2ItemCardImage
+ * CartItemCardImage
  *
  * Product image plate for a cart line item, on a cream surface with a
  * shopping-bag fallback when no custom image is present.
@@ -8,15 +8,15 @@
 import Image from "next/image";
 import { ShoppingBag } from "lucide-react";
 
-interface CartV2ItemCardImagePropsI {
+interface CartItemCardImagePropsI {
   imageUrl: string | null | undefined;
   productName: string;
 }
 
-export function CartV2ItemCardImage({
+export function CartItemCardImage({
   imageUrl,
   productName,
-}: CartV2ItemCardImagePropsI) {
+}: CartItemCardImagePropsI) {
   return (
     <div className="relative aspect-square w-full overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-cream) md:w-40">
       {imageUrl ? (

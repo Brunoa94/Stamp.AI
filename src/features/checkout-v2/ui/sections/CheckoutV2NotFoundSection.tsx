@@ -8,6 +8,7 @@
 import Link from "next/link";
 import { PackageX } from "lucide-react";
 import { Button } from "@/features/ui/button";
+import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 
 export function CheckoutV2NotFoundSection() {
@@ -23,14 +24,18 @@ export function CheckoutV2NotFoundSection() {
             aria-hidden="true"
           />
         </div>
-        <h1 className="mb-4 font-(--font-playfair) text-3xl italic">
+        <Heading
+          as="h1"
+          unstyled
+          className="mb-4 font-(--font-playfair) text-3xl italic"
+        >
           Cart Not Found
-        </h1>
+        </Heading>
         <Paragraph variant="sm" className="mb-8 text-(--color-stamp-taupe)">
           We couldn&apos;t find your cart. Please return and add items again.
         </Paragraph>
         <Button asChild variant="secondary-brown">
-          <Link href="/cart-v2">Back to Cart</Link>
+          <Link href="/cart">Back to Cart</Link>
         </Button>
       </div>
     </div>

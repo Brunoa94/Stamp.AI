@@ -1,5 +1,5 @@
 /**
- * CartV2ItemCardContent
+ * CartItemCardContent
  *
  * Textual content for a cart line item: product name, unit price, and the
  * specification grid (variant, colorway, line total).
@@ -9,12 +9,13 @@ import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import type { CartItem } from "@/types/cart";
 import { formatPrice } from "../../../lib/utils/formatPrice";
+import { CartItemCardSpecs } from "./CartItemCardSpecs";
 
-interface CartV2ItemCardContentPropsI {
+interface CartItemCardContentPropsI {
   item: CartItem;
 }
 
-export function CartV2ItemCardContent({ item }: CartV2ItemCardContentPropsI) {
+export function CartItemCardContent({ item }: CartItemCardContentPropsI) {
   const productName =
     item.product_name || item.product?.name || "Custom Product";
   const unitPrice = item.unit_price ?? 0;
@@ -43,38 +44,11 @@ export function CartV2ItemCardContent({ item }: CartV2ItemCardContentPropsI) {
         </Heading>
       </div>
 
-      <dl className="grid grid-cols-2 gap-6 border-t border-(--color-stamp-divider) pt-6 md:grid-cols-3">
-        <div className="space-y-1">
-          <dt>
-            <Span variant="micro" className="text-(--color-stamp-taupe)">
-              Variant
-            </Span>
-          </dt>
-          <dd className="text-xs font-bold uppercase tracking-[0.15em]">
-            {variantName}
-          </dd>
-        </div>
-        <div className="space-y-1">
-          <dt>
-            <Span variant="micro" className="text-(--color-stamp-taupe)">
-              Colorway
-            </Span>
-          </dt>
-          <dd className="text-xs font-bold uppercase tracking-[0.15em]">
-            {colorway}
-          </dd>
-        </div>
-        <div className="space-y-1">
-          <dt>
-            <Span variant="micro" className="text-(--color-stamp-taupe)">
-              Line Total
-            </Span>
-          </dt>
-          <dd className="text-xs font-bold uppercase tracking-[0.15em]">
-            {formatPrice(unitPrice * item.quantity)}
-          </dd>
-        </div>
-      </dl>
+      <CartItemCardSpecs
+        variantName={variantName}
+        colorway={colorway}
+        lineTotal={unitPrice * item.quantity}
+      />
     </div>
   );
 }

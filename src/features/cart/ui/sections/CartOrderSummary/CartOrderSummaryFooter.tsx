@@ -1,5 +1,5 @@
 /**
- * CartV2OrderSummaryFooter
+ * CartOrderSummaryFooter
  *
  * Checkout call-to-action plus the shipping estimate and secure-payment
  * reassurance beneath the cart summary breakdown.
@@ -11,13 +11,13 @@ import { ArrowRight, Truck, ShieldCheck } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 
-interface CartV2OrderSummaryFooterPropsI {
+interface CartOrderSummaryFooterPropsI {
   onCheckout: () => void;
 }
 
-export function CartV2OrderSummaryFooter({
+export function CartOrderSummaryFooter({
   onCheckout,
-}: CartV2OrderSummaryFooterPropsI) {
+}: CartOrderSummaryFooterPropsI) {
   return (
     <div className="mt-8 space-y-6">
       <Button
@@ -38,9 +38,9 @@ export function CartV2OrderSummaryFooter({
           <Span variant="micro" className="block text-(--color-stamp-taupe)">
             Estimated Arrival
           </Span>
-          <span className="text-xs font-bold uppercase tracking-[0.15em]">
+          <Span unstyled className="text-xs font-bold uppercase tracking-[0.15em]">
             3–5 Business Days
-          </span>
+          </Span>
         </div>
       </div>
 

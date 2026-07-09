@@ -1,5 +1,5 @@
 /**
- * CartV2ItemCardActions
+ * CartItemCardActions
  *
  * Quantity stepper and remove control for a cart line item.
  */
@@ -12,17 +12,17 @@ import { Span } from "@/features/ui/span";
 import type { CartItem } from "@/types/cart";
 import { MAX_QUANTITY, MIN_QUANTITY } from "../../../lib/constants/quantity";
 
-interface CartV2ItemCardActionsPropsI {
+interface CartItemCardActionsPropsI {
   item: CartItem;
   onUpdateQuantity: (itemId: string, quantity: number) => void;
   onRemove: (itemId: string) => void;
 }
 
-export function CartV2ItemCardActions({
+export function CartItemCardActions({
   item,
   onUpdateQuantity,
   onRemove,
-}: CartV2ItemCardActionsPropsI) {
+}: CartItemCardActionsPropsI) {
   const productName =
     item.product_name || item.product?.name || "Custom Product";
 
@@ -55,12 +55,13 @@ export function CartV2ItemCardActions({
         >
           <Minus className="h-4 w-4" />
         </Button>
-        <span
+        <Span
+          unstyled
           className="w-12 text-center text-sm font-bold tabular-nums"
           aria-live="polite"
         >
           {item.quantity}
-        </span>
+        </Span>
         <Button
           onClick={handleIncrement}
           disabled={item.quantity >= MAX_QUANTITY}
