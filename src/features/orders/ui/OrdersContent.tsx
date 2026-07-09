@@ -20,6 +20,8 @@ import { OrdersGridSection } from "./sections/OrdersGridSection";
 import { OrdersListSection } from "./sections/OrdersListSection";
 import { OrdersLoadingSection } from "./sections/OrdersLoadingSection";
 import { OrdersFilterSection } from "./sections/OrdersFilterSection/OrdersFilterSection";
+import { OrdersLayout } from "./components/OrdersLayout";
+import { OrdersHeader } from "./components/OrdersHeader";
 
 export default function OrdersContent() {
   const router = useRouter();
@@ -64,7 +66,11 @@ export default function OrdersContent() {
     return (
       <section className="min-h-[calc(100vh-6rem)] bg-(--color-stamp-off-white) px-12 pb-24 pt-12 lg:px-24">
         <div className="rounded-none border border-(--color-stamp-error)/20 bg-(--color-stamp-error)/5 p-8 text-center">
-          <Heading as="h2" variant="card" className="text-xl text-(--color-stamp-error)">
+          <Heading
+            as="h2"
+            variant="card"
+            className="text-xl text-(--color-stamp-error)"
+          >
             Archive Unavailable
           </Heading>
           <Paragraph
@@ -88,8 +94,8 @@ export default function OrdersContent() {
 
   return (
     <>
-      <div className="min-h-[calc(100vh-6rem)] bg-(--color-stamp-off-white) font-(--font-outfit) text-(--color-stamp-chocolate)">
-        <section className="px-12 pb-24 pt-12 lg:px-24">
+      <OrdersLayout header={<OrdersHeader />}>
+        <section className="min-h-[calc(100vh-6rem)] bg-(--color-stamp-off-white) font-(--font-outfit) text-(--color-stamp-chocolate) px-12 pb-24 lg:px-24">
           <OrdersFilterSection
             viewMode={viewMode}
             onViewModeChange={setViewMode}
@@ -144,7 +150,7 @@ export default function OrdersContent() {
             />
           )}
         </section>
-      </div>
+      </OrdersLayout>
 
       {selectedOrder && (
         <OrdersDetailsModal
