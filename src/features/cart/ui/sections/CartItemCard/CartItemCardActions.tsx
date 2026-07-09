@@ -51,13 +51,13 @@ export function CartItemCardActions({
           variant="ghost"
           size="icon"
           aria-label="Decrease quantity"
-          className="h-10 w-10 rounded-none text-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) disabled:opacity-30"
+          className="h-10 w-10 rounded-none font-heading text-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) disabled:opacity-30"
         >
           <Minus className="h-4 w-4" />
         </Button>
         <Span
           unstyled
-          className="w-12 text-center text-sm font-bold tabular-nums"
+          className="w-12 text-center text-sm font-heading font-bold tabular-nums"
           aria-live="polite"
         >
           {item.quantity}
@@ -68,7 +68,7 @@ export function CartItemCardActions({
           variant="ghost"
           size="icon"
           aria-label="Increase quantity"
-          className="h-10 w-10 rounded-none text-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) disabled:opacity-30"
+          className="h-10 w-10 rounded-none font-heading text-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) disabled:opacity-30"
         >
           <Plus className="h-4 w-4" />
         </Button>
@@ -77,13 +77,13 @@ export function CartItemCardActions({
       <Button
         onClick={() => onRemove(item.id)}
         variant="ghost"
-        className="h-auto gap-2 rounded-none p-0 text-(--color-stamp-error) hover:bg-transparent hover:underline"
+        className="h-auto gap-2 rounded-none p-0 font-heading text-(--color-stamp-error) hover:bg-transparent hover:underline"
       >
         <Trash2 className="h-3.5 w-3.5" />
         <Span
           variant="micro"
           unstyled
-          className="text-[10px] font-bold uppercase tracking-[0.2em]"
+          className="text-[10px] font-heading font-bold uppercase tracking-[0.2em]"
         >
           Remove
         </Span>

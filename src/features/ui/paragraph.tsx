@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 /**
  * Paragraph
  *
- * Typography atom for Space Grotesk body/description text.
+ * Typography atom for heading-family body/description text.
  * Encapsulates: font-family, font-size (responsive), line-height, letter-spacing, text-transform.
  * All other styling (color, margin, opacity, max-width) must come from the caller via `className`.
  *
@@ -18,13 +18,13 @@ import { cn } from "@/lib/utils";
  */
 
 const paragraphVariants = {
-  lead: "font-space text-sm md:text-base lg:text-lg font-light tracking-wide uppercase leading-relaxed",
-  body: "font-space text-sm tracking-wide uppercase leading-relaxed",
-  sm: "font-space text-xs tracking-wide uppercase leading-relaxed",
-  loose: "font-space text-xs tracking-wide uppercase leading-loose",
-  card: "font-space text-xs md:text-sm tracking-wide uppercase leading-relaxed",
-  faq: "font-space text-xs md:text-sm tracking-wide uppercase leading-loose",
-  quote: "font-space text-sm tracking-wide leading-relaxed",
+  lead: "font-heading text-base md:text-lg lg:text-xl font-light tracking-wide uppercase leading-relaxed",
+  body: "font-heading text-base tracking-wide uppercase leading-relaxed",
+  sm: "font-heading text-sm tracking-wide uppercase leading-relaxed",
+  loose: "font-heading text-sm tracking-wide uppercase leading-loose",
+  card: "font-heading text-sm md:text-base tracking-wide uppercase leading-relaxed",
+  faq: "font-heading text-sm md:text-base tracking-wide uppercase leading-loose",
+  quote: "font-heading text-base tracking-wide leading-relaxed",
 } as const;
 
 export type ParagraphVariant = keyof typeof paragraphVariants;

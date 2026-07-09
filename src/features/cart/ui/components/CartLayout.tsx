@@ -2,7 +2,7 @@
  * CartLayout
  *
  * Page shell for the luxury brutalist cart:
- * - Off-white surface with Outfit body font and chocolate text
+ * - Off-white surface with heading font family and chocolate text
  * - 12-column responsive grid (8-col items / 4-col summary)
  * - Consistent page padding matching the orders/stamp pages
  */
@@ -16,7 +16,7 @@ interface CartLayoutPropsI {
 
 export function CartLayout({ children }: CartLayoutPropsI) {
   return (
-    <div className="min-h-screen bg-(--color-stamp-off-white) font-(--font-outfit) text-(--color-stamp-chocolate)">
+    <div className="min-h-screen bg-(--color-stamp-off-white) font-heading text-(--color-stamp-chocolate)">
       <div className="px-6 pb-24 pt-12 lg:px-12 xl:px-24">
         <PageContainer>
           <div className="grid grid-cols-1 gap-12 xl:grid-cols-12 xl:gap-20">

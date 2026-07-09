@@ -57,7 +57,7 @@ export function CheckoutPayPalButton({
       onClick={handleClick}
       disabled={disabled || isPending}
       variant="secondary-brown"
-      className="w-full"
+      className="w-full font-heading"
     >
       {isPending ? (
         <Loader2 className="h-4 w-4 animate-spin" />

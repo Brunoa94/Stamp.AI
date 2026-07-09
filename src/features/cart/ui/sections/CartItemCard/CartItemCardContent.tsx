@@ -28,7 +28,11 @@ export function CartItemCardContent({ item }: CartItemCardContentPropsI) {
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
-          <Heading as="h3" variant="item">
+          <Heading
+            as="h3"
+            unstyled
+            className="font-heading text-lg md:text-xl font-bold uppercase tracking-tight"
+          >
             {productName}
           </Heading>
           <Span variant="micro" className="text-(--color-stamp-taupe)">
@@ -37,8 +41,8 @@ export function CartItemCardContent({ item }: CartItemCardContentPropsI) {
         </div>
         <Heading
           as="span"
-          variant="card"
-          className="whitespace-nowrap text-(--color-stamp-gold)"
+          unstyled
+          className="whitespace-nowrap font-heading text-2xl md:text-3xl font-black tracking-tight text-(--color-stamp-gold)"
         >
           {formatPrice(unitPrice)}
         </Heading>

@@ -23,7 +23,7 @@ export function CartOrderSummaryFooter({
       <Button
         onClick={onCheckout}
         variant="secondary-brown"
-        className="group w-full"
+        className="group w-full font-heading"
       >
         Proceed to Checkout
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -38,7 +38,10 @@ export function CartOrderSummaryFooter({
           <Span variant="micro" className="block text-(--color-stamp-taupe)">
             Estimated Arrival
           </Span>
-          <Span unstyled className="text-xs font-bold uppercase tracking-[0.15em]">
+          <Span
+            unstyled
+            className="text-xs font-bold uppercase tracking-[0.15em]"
+          >
             3–5 Business Days
           </Span>
         </div>

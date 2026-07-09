@@ -95,7 +95,7 @@ export default function OrdersContent() {
   return (
     <>
       <OrdersLayout header={<OrdersHeader />}>
-        <section className="min-h-[calc(100vh-6rem)] bg-(--color-stamp-off-white) font-(--font-outfit) text-(--color-stamp-chocolate) px-12 pb-24 lg:px-24">
+        <section className="min-h-[calc(100vh-6rem)] bg-(--color-stamp-off-white) font-heading text-(--color-stamp-chocolate)">
           <OrdersFilterSection
             viewMode={viewMode}
             onViewModeChange={setViewMode}

@@ -29,7 +29,7 @@ export function CartEmptySection() {
       <Heading
         as="h1"
         unstyled
-        className="mb-4 font-(--font-playfair) text-4xl italic text-(--color-stamp-chocolate)"
+        className="mb-4 font-heading text-4xl font-bold uppercase tracking-tight text-(--color-stamp-chocolate)"
       >
         Your Bag is Empty
       </Heading>

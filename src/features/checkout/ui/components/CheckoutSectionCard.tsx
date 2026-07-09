@@ -33,7 +33,11 @@ export function CheckoutSectionCard({
     >
       {title && (
         <header className="mb-8 space-y-2 border-b border-(--color-stamp-divider) pb-4">
-          <Heading as="h2" variant="card">
+          <Heading
+            as="h2"
+            unstyled
+            className="font-heading text-2xl md:text-3xl font-bold uppercase tracking-tight"
+          >
             {title}
           </Heading>
           {subtitle && (

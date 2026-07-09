@@ -51,7 +51,10 @@ export function CheckoutStripeButton({
         cartId: cartId || null,
         timestamp: Date.now(),
       };
-      localStorage.setItem("stripe_checkout_data", JSON.stringify(checkoutData));
+      localStorage.setItem(
+        "stripe_checkout_data",
+        JSON.stringify(checkoutData),
+      );
 
       const params = new URLSearchParams({
         payment_intent: paymentIntent.id,
@@ -62,15 +65,14 @@ export function CheckoutStripeButton({
     [router, amount, shippingAddress, cartId],
   );
 
-  const { loading, error, handleSubmit, setSelectedTestMethod } = usePaymentForm(
-    {
+  const { loading, error, handleSubmit, setSelectedTestMethod } =
+    usePaymentForm({
       amount,
       lineItems,
       shippingAddress,
       testMode,
       onSuccess: handleSuccess,
-    },
-  );
+    });
 
   useEffect(() => {
     if (testMode && selectedTestMethod) {
@@ -85,7 +87,7 @@ export function CheckoutStripeButton({
         onClick={(event) => handleSubmit(event as unknown as React.FormEvent)}
         disabled={disabled || loading}
         variant="secondary-brown"
-        className="w-full"
+        className="w-full font-heading"
       >
         {loading ? "Processing…" : `Pay $${(amount / 100).toFixed(2)}`}
       </Button>

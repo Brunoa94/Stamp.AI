@@ -63,7 +63,11 @@ export function CheckoutSummarySection({
 
   return (
     <div className="sticky top-8 border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 lg:p-10">
-      <Heading as="h2" variant="card" className="mb-8">
+      <Heading
+        as="h2"
+        unstyled
+        className="mb-8 font-heading text-2xl md:text-3xl font-bold uppercase tracking-tight"
+      >
         Order <span className="text-(--color-stamp-gold)">Summary</span>
       </Heading>
 
