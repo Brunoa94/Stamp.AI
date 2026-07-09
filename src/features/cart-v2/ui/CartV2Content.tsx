@@ -1,24 +1,16 @@
 /**
  * CartV2Content
  *
- * Container for the luxury brutalist cart. Handles data fetching and the
- * loading / empty / populated states, delegating presentation to the
- * colocated components. Reuses the existing cart query layer so no
- * business logic is duplicated.
+ * Presentational container for the luxury brutalist cart. Data and handlers
+ * come from the useCartV2 lib hook; this component only chooses between the
+ * loading / empty / populated layouts.
  */
 
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import {
-  useCartSummary,
-  useUpdateCartItem,
-  useRemoveCartItem,
-} from "@/queries/cartQueries";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { CartServiceMapper } from "@/mappers/services/cartServiceMapper";
+import { useCartV2 } from "../lib/hooks/useCartV2";
 import { CartV2Layout } from "./components/CartV2Layout";
 import { CartV2Header } from "./components/CartV2Header";
 import { CartV2MobileCta } from "./components/CartV2MobileCta";
@@ -28,26 +20,15 @@ import { CartV2EmptySection } from "./sections/CartV2EmptySection";
 import { CartV2LoadingSection } from "./sections/CartV2LoadingSection";
 
 export function CartV2Content() {
-  const router = useRouter();
-  const updateCartItem = useUpdateCartItem();
-  const removeCartItem = useRemoveCartItem();
-  const { itemCount, cart, isLoading, error } = useCartSummary();
-  const { handleError } = useErrorHandler();
-
-  if (error) handleError(error);
-
-  const handleUpdateQuantity = (itemId: string, quantity: number) => {
-    updateCartItem.mutate({ itemId, update: { quantity } });
-  };
-
-  const handleRemove = (itemId: string) => {
-    removeCartItem.mutate(itemId);
-  };
-
-  const handleCheckout = () => {
-    if (!cart) return;
-    router.push(`/checkout-v2?cartId=${cart.id}`);
-  };
+  const {
+    cart,
+    itemCount,
+    isLoading,
+    total,
+    updateQuantity,
+    removeItem,
+    checkout,
+  } = useCartV2();
 
   if (isLoading) {
     return (
@@ -65,11 +46,6 @@ export function CartV2Content() {
     );
   }
 
-  const { subtotal, shipping } = CartServiceMapper.calculateCartTotals(
-    cart.cart_items,
-  );
-  const total = subtotal + shipping;
-
   return (
     <>
       <CartV2Layout>
@@ -80,8 +56,8 @@ export function CartV2Content() {
             <CartV2ItemCard
               key={item.id}
               item={item}
-              onUpdateQuantity={handleUpdateQuantity}
-              onRemove={handleRemove}
+              onUpdateQuantity={updateQuantity}
+              onRemove={removeItem}
             />
           ))}
 
@@ -95,11 +71,11 @@ export function CartV2Content() {
         </div>
 
         <div className="xl:col-span-4">
-          <CartV2OrderSummary cart={cart} onCheckout={handleCheckout} />
+          <CartV2OrderSummary cart={cart} onCheckout={checkout} />
         </div>
       </CartV2Layout>
 
-      <CartV2MobileCta total={total} onCheckout={handleCheckout} />
+      <CartV2MobileCta total={total} onCheckout={checkout} />
     </>
   );
 }

@@ -9,6 +9,7 @@
 
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/features/ui/button";
+import { formatPrice } from "../../lib/utils/formatPrice";
 
 interface CartV2MobileCtaPropsI {
   total: number;
@@ -16,7 +17,7 @@ interface CartV2MobileCtaPropsI {
 }
 
 export function CartV2MobileCta({ total, onCheckout }: CartV2MobileCtaPropsI) {
-  const formattedTotal = `$${(total / 100).toFixed(2)}`;
+  const formattedTotal = formatPrice(total);
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-(--color-stamp-divider) bg-(--color-stamp-white) p-4 xl:hidden">

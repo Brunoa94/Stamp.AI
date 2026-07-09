@@ -24,6 +24,7 @@ export function CheckoutV2ShippingToggle() {
         onCheckedChange={(checked) =>
           setValue("useShippingAddress", checked === true)
         }
+        className="rounded-none border-(--color-stamp-divider) focus-visible:ring-(--color-stamp-gold) data-[state=checked]:border-(--color-stamp-gold) data-[state=checked]:bg-(--color-stamp-gold) data-[state=checked]:text-(--color-stamp-white)"
       />
       <Label
         htmlFor="useShippingAddress-v2"

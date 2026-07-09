@@ -8,6 +8,7 @@
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import type { CartItem } from "@/types/cart";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface CartV2ItemCardContentPropsI {
   item: CartItem;
@@ -21,8 +22,6 @@ export function CartV2ItemCardContent({ item }: CartV2ItemCardContentPropsI) {
   const colorway = variantName.includes("/")
     ? variantName.split("/")[0].trim()
     : variantName;
-
-  const formatCurrency = (cents: number) => `$${(cents / 100).toFixed(2)}`;
 
   return (
     <div className="space-y-6">
@@ -40,7 +39,7 @@ export function CartV2ItemCardContent({ item }: CartV2ItemCardContentPropsI) {
           variant="card"
           className="whitespace-nowrap text-(--color-stamp-gold)"
         >
-          {formatCurrency(unitPrice)}
+          {formatPrice(unitPrice)}
         </Heading>
       </div>
 
@@ -72,7 +71,7 @@ export function CartV2ItemCardContent({ item }: CartV2ItemCardContentPropsI) {
             </Span>
           </dt>
           <dd className="text-xs font-bold uppercase tracking-[0.15em]">
-            {formatCurrency(unitPrice * item.quantity)}
+            {formatPrice(unitPrice * item.quantity)}
           </dd>
         </div>
       </dl>

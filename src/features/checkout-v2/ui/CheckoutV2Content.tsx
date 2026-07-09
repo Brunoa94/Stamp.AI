@@ -10,9 +10,8 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { useCartById } from "@/queries/cartQueries";
 import { CheckoutFormProvider } from "@/features/checkout/lib/context/CheckoutFormContext";
+import { useCheckoutV2Cart } from "../lib/hooks/useCheckoutV2Cart";
 import { CheckoutV2Layout } from "./components/CheckoutV2Layout";
 import { CheckoutV2Header } from "./components/CheckoutV2Header";
 import { CheckoutV2TestModeToggle } from "./components/CheckoutV2TestModeToggle";
@@ -26,10 +25,7 @@ import { CheckoutV2SummarySection } from "./sections/CheckoutV2SummarySection/Ch
 import type { CartWithItems } from "@/types/cart";
 
 export function CheckoutV2Content() {
-  const searchParams = useSearchParams();
-  const cartId = searchParams.get("cartId");
-
-  const { data: cart, isLoading, error } = useCartById(cartId || "");
+  const { cartId, cart, isLoading, error } = useCheckoutV2Cart();
 
   if (isLoading) {
     return <CheckoutV2LoadingSection />;

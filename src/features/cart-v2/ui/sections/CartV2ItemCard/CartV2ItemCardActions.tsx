@@ -10,9 +10,7 @@ import { Minus, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import type { CartItem } from "@/types/cart";
-
-const MAX_QUANTITY = 99;
-const MIN_QUANTITY = 1;
+import { MAX_QUANTITY, MIN_QUANTITY } from "../../../lib/constants/quantity";
 
 interface CartV2ItemCardActionsPropsI {
   item: CartItem;

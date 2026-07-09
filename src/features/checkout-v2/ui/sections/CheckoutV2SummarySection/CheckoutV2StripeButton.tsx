@@ -14,13 +14,7 @@ import { Button } from "@/features/ui/button";
 import { usePaymentForm } from "@/features/checkout/ui/PaymentForm/usePaymentForm";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
-
-/** Minimal shape of the Stripe PaymentIntent returned by usePaymentForm's onSuccess. */
-interface StripePaymentIntentResultT {
-  id: string;
-  client_secret?: string | null;
-  status?: string;
-}
+import type { StripePaymentIntentResultT } from "../../../lib/types/payment";
 
 interface CheckoutV2StripeButtonPropsI {
   amount: number;

@@ -7,6 +7,7 @@
 
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface CartV2OrderSummaryBreakdownPropsI {
   subtotal: number;
@@ -19,8 +20,6 @@ export function CartV2OrderSummaryBreakdown({
   shipping,
   total,
 }: CartV2OrderSummaryBreakdownPropsI) {
-  const formatCurrency = (cents: number) => `$${(cents / 100).toFixed(2)}`;
-
   return (
     <>
       <dl className="mb-8 space-y-5">
@@ -31,7 +30,7 @@ export function CartV2OrderSummaryBreakdown({
             </Span>
           </dt>
           <dd className="text-sm font-bold tabular-nums">
-            {formatCurrency(subtotal)}
+            {formatPrice(subtotal)}
           </dd>
         </div>
         <div className="flex items-center justify-between">
@@ -41,7 +40,7 @@ export function CartV2OrderSummaryBreakdown({
             </Span>
           </dt>
           <dd className="text-sm font-bold uppercase tracking-[0.15em] text-(--color-stamp-success)">
-            {shipping === 0 ? "Free" : formatCurrency(shipping)}
+            {shipping === 0 ? "Free" : formatPrice(shipping)}
           </dd>
         </div>
         <div className="flex items-center justify-between">
@@ -68,7 +67,7 @@ export function CartV2OrderSummaryBreakdown({
             variant="card"
             className="text-(--color-stamp-gold)"
           >
-            {formatCurrency(total)}
+            {formatPrice(total)}
           </Heading>
         </div>
         <Span

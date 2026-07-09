@@ -9,6 +9,7 @@ import Image from "next/image";
 import { ShoppingBag } from "lucide-react";
 import { Span } from "@/features/ui/span";
 import type { CartWithItems } from "@/types/cart";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface CheckoutV2CartItemsPropsI {
   items: CartWithItems["cart_items"];
@@ -57,7 +58,7 @@ export function CheckoutV2CartItems({ items }: CheckoutV2CartItemsPropsI) {
                   Qty {item.quantity}
                 </Span>
                 <span className="text-xs font-bold tabular-nums text-(--color-stamp-chocolate)">
-                  ${(lineTotal / 100).toFixed(2)}
+                  {formatPrice(lineTotal / 100)}
                 </span>
               </div>
             </div>

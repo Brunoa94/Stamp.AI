@@ -31,6 +31,7 @@ export function CheckoutV2TestModeToggle({
         id="testMode-v2"
         checked={testMode}
         onCheckedChange={(checked) => onTestModeChange(checked === true)}
+        className="rounded-none border-(--color-stamp-warning)/50 focus-visible:ring-(--color-stamp-warning) data-[state=checked]:border-(--color-stamp-warning) data-[state=checked]:bg-(--color-stamp-warning) data-[state=checked]:text-(--color-stamp-white)"
       />
       <Label
         htmlFor="testMode-v2"

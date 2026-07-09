@@ -17,11 +17,11 @@ import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { useCheckoutPricing } from "@/features/checkout/lib/hooks/useCheckoutPricing";
 import { buildPrintifyLineItems } from "@/features/checkout/lib/mappers/printifyLineItemsMapper";
-import { CustomPayPalButton } from "@/features/checkout/ui/PayPalButton/CustomPayPalButton";
 import { CheckoutV2CartItems } from "./CheckoutV2CartItems";
 import { CheckoutV2PromoCode } from "./CheckoutV2PromoCode";
 import { CheckoutV2PriceBreakdown } from "./CheckoutV2PriceBreakdown";
 import { CheckoutV2StripeButton } from "./CheckoutV2StripeButton";
+import { CheckoutV2PayPalButton } from "./CheckoutV2PayPalButton";
 import type { CartWithItems } from "@/types/cart";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 
@@ -104,7 +104,7 @@ export function CheckoutV2SummarySection({
         )}
 
         {paymentMethod === "paypal" && paymentShippingAddress && (
-          <CustomPayPalButton
+          <CheckoutV2PayPalButton
             cart={cart}
             cartId={cartId ?? null}
             amount={total}

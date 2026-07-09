@@ -2,16 +2,16 @@
  * CheckoutV2StripeCardForm
  *
  * Stripe card input restyled to the luxury brutalist system. Wraps Stripe
- * Elements and the shared CardElement; in test mode it reuses the shared
- * TestCardSelector so predefined test scenarios remain available.
+ * Elements and the shared CardElement; in test mode it uses the stamp-styled
+ * test-card selector so predefined test scenarios remain available.
  */
 
 "use client";
 
 import { Elements, CardElement } from "@stripe/react-stripe-js";
 import { stripePromise } from "@/lib/stripe";
-import { STRIPE_CARD_ELEMENT_OPTIONS } from "@/constants/payment";
-import { TestCardSelector } from "@/features/checkout/ui/PaymentForm/TestCardSelector";
+import { buildCardElementOptions } from "../../../lib/helpers/stripeCardOptions";
+import { CheckoutV2TestCardSelector } from "./CheckoutV2TestCardSelector";
 
 interface CheckoutV2StripeCardFormPropsI {
   testMode?: boolean;
@@ -28,13 +28,13 @@ export function CheckoutV2StripeCardForm({
     <Elements stripe={stripePromise}>
       <div className="mt-6">
         {testMode ? (
-          <TestCardSelector
+          <CheckoutV2TestCardSelector
             value={selectedTestMethod}
             onChange={onTestMethodChange || (() => {})}
           />
         ) : (
           <div className="border border-(--color-stamp-divider) bg-(--color-stamp-white) p-4">
-            <CardElement options={STRIPE_CARD_ELEMENT_OPTIONS} />
+            <CardElement options={buildCardElementOptions()} />
           </div>
         )}
       </div>

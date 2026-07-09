@@ -7,6 +7,7 @@
 
 import { Span } from "@/features/ui/span";
 import { Heading } from "@/features/ui/heading";
+import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface CheckoutV2PriceBreakdownPropsI {
   subtotal: number;
@@ -34,18 +35,16 @@ export function CheckoutV2PriceBreakdown({
   discount,
   total,
 }: CheckoutV2PriceBreakdownPropsI) {
-  const money = (value: number) => `$${value.toFixed(2)}`;
-
   return (
     <div className="space-y-5">
-      <Row label="Subtotal" value={money(subtotal)} />
+      <Row label="Subtotal" value={formatPrice(subtotal)} />
 
       <div className="flex items-center justify-between">
         <Span variant="micro" className="text-(--color-stamp-taupe)">
           Shipping
         </Span>
         <span className="text-sm font-bold uppercase tracking-[0.15em] text-(--color-stamp-success)">
-          {shipping === 0 ? "Free" : money(shipping)}
+          {shipping === 0 ? "Free" : formatPrice(shipping)}
         </span>
       </div>
 
@@ -55,7 +54,7 @@ export function CheckoutV2PriceBreakdown({
             Discount
           </Span>
           <span className="text-sm font-bold tabular-nums text-(--color-stamp-success)">
-            −{money(discount)}
+            −{formatPrice(discount)}
           </span>
         </div>
       )}
@@ -65,7 +64,7 @@ export function CheckoutV2PriceBreakdown({
           Total
         </Span>
         <Heading as="span" variant="card" className="text-(--color-stamp-gold)">
-          {money(total)}
+          {formatPrice(total)}
         </Heading>
       </div>
     </div>
