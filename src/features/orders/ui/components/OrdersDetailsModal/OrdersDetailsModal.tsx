@@ -17,6 +17,7 @@ import {
   getStatusBadgeClass,
   toDisplayStatus,
 } from "../../../lib/helpers/statusPresentation";
+import { OrdersDetailsModalInvoice } from "./OrdersDetailsModalInvoice";
 
 interface PropsI {
   order: OrderWithItemsT;
@@ -179,6 +180,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
                 {formatPrice(order.total_amount)}
               </Heading>
             </div>
+            <OrdersDetailsModalInvoice order={order} />
           </aside>
         </div>
       </div>

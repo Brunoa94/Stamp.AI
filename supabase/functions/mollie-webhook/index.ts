@@ -3,6 +3,7 @@ import { handleError } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { getMolliePayment, mapMollieStatusToInternal, isMolliePaymentPaid } from "../_shared/mollie.ts";
+import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -157,6 +158,9 @@ serve(async (req) => {
           console.error(`Failed to update order ${finalOrderId} payment_status:`, orderUpdateResult.error);
         } else {
           console.log(`✅ Order ${finalOrderId} payment_status updated to: paid`);
+
+          // Issue the invoice now that the order is paid (idempotent, non-blocking)
+          await tryGenerateInvoiceForOrder(finalOrderId);
         }
       } else {
         console.warn("⚠️ No valid order_id found, skipping payment_status update.");
@@ -202,6 +206,9 @@ serve(async (req) => {
           console.error(`Failed to update order ${orderId} payment_status:`, orderUpdateResult.error);
         } else {
           console.log(`✅ Order ${orderId} payment_status updated to: paid`);
+
+          // Issue the invoice now that the order is paid (idempotent, non-blocking)
+          await tryGenerateInvoiceForOrder(orderId);
         }
       }
 

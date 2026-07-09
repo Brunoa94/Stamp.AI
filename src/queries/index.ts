@@ -38,6 +38,12 @@ export {
   useCreateOrderFromCart,
 } from "./orderQueries";
 
+// Invoice queries
+export {
+  useOrderInvoice,
+  useGenerateInvoice,
+} from "./invoiceQueries";
+
 // Product queries
 export {
   useCustomProduct,

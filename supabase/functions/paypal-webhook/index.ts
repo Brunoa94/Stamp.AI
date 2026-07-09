@@ -3,6 +3,7 @@ import { handleError } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { verifyPayPalWebhook } from "../_shared/paypal.ts";
+import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -125,6 +126,9 @@ serve(async (req) => {
                 console.error("Failed to update order payment_status:", orderResult.error);
               } else {
                 console.log(`✅ Order ${dbOrderId} payment_status updated to: paid`);
+
+                // Issue the invoice now that the order is paid (idempotent, non-blocking)
+                await tryGenerateInvoiceForOrder(finalOrderId);
               }
             }
           }
