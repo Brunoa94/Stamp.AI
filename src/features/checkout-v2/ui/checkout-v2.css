@@ -1,0 +1,38 @@
+/**
+ * Checkout V2 Feature Styles
+ * Isolated styling for the luxury brutalist checkout design.
+ * Color/shadow tokens live in globals_v2.css (--color-stamp-*); this file
+ * only holds keyframes and the custom scrollbar that Tailwind utilities
+ * cannot express.
+ */
+
+/* Loading skeleton shimmer */
+@keyframes checkout-v2-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Custom scrollbar for the summary item list */
+.checkout-v2-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.checkout-v2-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-stamp-off-white);
+}
+
+.checkout-v2-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-stamp-taupe);
+  border-radius: 9999px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .checkout-v2-shimmer {
+    animation: none !important;
+  }
+}
