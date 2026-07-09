@@ -24,8 +24,8 @@ export function OrdersListItemContent({
         <div>
           <Heading
             as="h3"
-            variant="card"
-            className="text-xl font-bold uppercase tracking-tight"
+            unstyled
+            className="font-heading text-xl font-bold uppercase tracking-tight"
           >
             {firstItem?.product_name || "Premium Synthesis Product"}
           </Heading>
@@ -96,8 +96,8 @@ export function OrdersListItemContent({
           </Paragraph>
           <Heading
             as="h4"
-            variant="card"
-            className="font-black text-2xl tracking-tight text-(--color-stamp-chocolate)"
+            unstyled
+            className="font-heading text-2xl font-black tracking-tight text-(--color-stamp-chocolate)"
           >
             {formatPrice(order.total_amount)}
           </Heading>

@@ -1,12 +1,10 @@
 /**
- * Cart Layout Component
+ * CartLayout
  *
- * Provides the main layout structure for the cart page:
- * - Min-height screen with flex column
- * - Concrete background
- * - 12-column responsive grid (8-col items, 4-col summary)
- * - Proper spacing and max-width container
- * - Uses PageContainer for consistent width across all pages
+ * Page shell for the luxury brutalist cart:
+ * - Off-white surface with heading font family and chocolate text
+ * - 12-column responsive grid (8-col items / 4-col summary)
+ * - Consistent page padding matching the orders/stamp pages
  */
 
 import { ReactNode } from "react";
@@ -18,10 +16,10 @@ interface CartLayoutPropsI {
 
 export function CartLayout({ children }: CartLayoutPropsI) {
   return (
-    <div className="min-h-screen flex flex-col relative z-10">
-      <div className="flex-1 px-6 lg:px-12 xl:px-24">
+    <div className="min-h-screen bg-(--color-stamp-off-white) font-heading text-(--color-stamp-chocolate)">
+      <div className="px-6 pb-24 pt-12 lg:px-12 xl:px-24">
         <PageContainer>
-          <div className="grid grid-cols-1 xl:grid-cols-12 gap-12 xl:gap-20">
+          <div className="grid grid-cols-1 gap-12 xl:grid-cols-12 xl:gap-20">
             {children}
           </div>
         </PageContainer>

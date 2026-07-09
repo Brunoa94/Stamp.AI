@@ -34,7 +34,7 @@ export function OrdersPagination({
           disabled={page <= 1}
           variant="outline"
           size="icon"
-          className="border-(--color-stamp-divider) transition-all hover:bg-(--color-stamp-chocolate) hover:text-white"
+          className="border-(--color-stamp-divider) transition-all hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white)"
           aria-label="Previous page"
         >
           <ChevronLeft className="h-4 w-4" />
@@ -50,8 +50,8 @@ export function OrdersPagination({
               variant={isActive ? "default" : "outline"}
               size="icon"
               className={isActive
-                ? "border-(--color-stamp-chocolate) bg-(--color-stamp-chocolate) text-[10px] font-bold text-white"
-                : "border-(--color-stamp-divider) text-[10px] font-bold hover:bg-(--color-stamp-chocolate) hover:text-white"}
+                ? "border-(--color-stamp-chocolate) bg-(--color-stamp-chocolate) text-[10px] font-bold text-(--color-stamp-white)"
+                : "border-(--color-stamp-divider) text-[10px] font-bold hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white)"}
               aria-label={`Go to page ${pageNumber}`}
               aria-current={isActive ? "page" : undefined}
             >
@@ -65,7 +65,7 @@ export function OrdersPagination({
           disabled={page >= totalPages}
           variant="outline"
           size="icon"
-          className="border-(--color-stamp-divider) transition-all hover:bg-(--color-stamp-chocolate) hover:text-white"
+          className="border-(--color-stamp-divider) transition-all hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white)"
           aria-label="Next page"
         >
           <ChevronRight className="h-4 w-4" />

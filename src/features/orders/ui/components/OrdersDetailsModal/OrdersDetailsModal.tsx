@@ -38,7 +38,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
 
   return (
     <div
-      className="fixed inset-0 z-100 flex items-center justify-center bg-[rgba(61,40,23,0.3)] p-6 backdrop-blur-sm"
+      className="fixed inset-0 z-100 flex items-center justify-center bg-(--color-stamp-chocolate)/30 p-6 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label="Order details"
@@ -47,7 +47,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto border border-(--color-stamp-divider) bg-white p-8 shadow-[0_50px_100px_rgba(61,40,23,0.3)] md:p-12"
+        className="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 shadow-(--shadow-stamp-modal) md:p-12"
         onClick={(event) => event.stopPropagation()}
       >
         <Button

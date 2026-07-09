@@ -24,7 +24,7 @@ export const OrdersCancelModalActions = forwardRef<HTMLButtonElement, PropsI>(
           onClick={onClose}
           disabled={isCancelling}
           variant="outline"
-          className="border-(--color-stamp-divider) bg-transparent py-4 text-[10px] tracking-[0.2em] text-(--color-stamp-chocolate) hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-white"
+          className="border-(--color-stamp-divider) bg-transparent py-4 text-[10px] tracking-[0.2em] text-(--color-stamp-chocolate) hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white)"
         >
           Keep Active
         </Button>

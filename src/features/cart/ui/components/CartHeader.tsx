@@ -1,36 +1,40 @@
 /**
- * Cart Header Component
+ * CartHeader
  *
- * Displays the cart page header with:
- * - Purple accent bar
- * - Large Anton typography for "Shopping Cart" (with purple accent on "Cart")
- * - Item count subtitle in uppercase with wide tracking
+ * Cart page header in the luxury brutalist style:
+ * - Thin gold accent bar
+ * - Large Anton title with a gold-accented word
+ * - Wide-tracked taupe subtitle reporting the item count
  */
 
-import { Heading } from '@/features/ui/heading';
-import { Span } from '@/features/ui/span';
+import { Heading } from "@/features/ui/heading";
+import { Span } from "@/features/ui/span";
 
 interface CartHeaderPropsI {
   itemCount: number;
 }
 
 export function CartHeader({ itemCount }: CartHeaderPropsI) {
-  const itemText = itemCount === 1 ? 'Item' : 'Items';
+  const itemText = itemCount === 1 ? "Item" : "Items";
 
   return (
-    <div className="xl:col-span-12 space-y-4">
-      {/* Purple accent bar */}
-      <div className="h-1.5 w-20 bg-brandPurple" />
+    <header className="space-y-4 xl:col-span-12">
+      <div className="h-1.5 w-20 bg-(--color-stamp-gold)" />
 
-      {/* Main heading */}
-      <Heading as="h1" variant="title">
-        Shopping <span className="text-brandPurple">Cart</span>
+      <Heading
+        as="h1"
+        variant="title"
+        className="text-(--color-stamp-chocolate)"
+      >
+        Shopping{" "}
+        <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
+          bag
+        </span>
       </Heading>
 
-      {/* Item count subtitle */}
-      <Span variant="default" className="opacity-40 tracking-[0.5em]">
+      <Span variant="default" className="text-(--color-stamp-taupe)">
         {itemCount} {itemText} ready for production protocol
       </Span>
-    </div>
+    </header>
   );
 }

@@ -36,18 +36,22 @@ type HeadingTag = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div" | "span";
 
 interface HeadingProps {
   as?: HeadingTag;
-  variant: HeadingVariant;
+  variant?: HeadingVariant;
+  unstyled?: boolean;
   className?: string;
   children: React.ReactNode;
 }
 
 export function Heading({
   as: Tag = "h2",
-  variant,
+  variant = "card",
+  unstyled = false,
   className,
   children,
 }: HeadingProps) {
   return (
-    <Tag className={cn(headingVariants[variant], className)}>{children}</Tag>
+    <Tag className={cn(!unstyled && headingVariants[variant], className)}>
+      {children}
+    </Tag>
   );
 }

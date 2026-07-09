@@ -1,13 +1,23 @@
-import { OrdersHeaderLogo } from "./OrdersHeaderLogo";
-import { OrdersHeaderCta } from "./OrdersHeaderCta";
-import { OrdersHeaderNav } from "./OrdersHeaderNav";
+import { Heading } from "@/features/ui/heading";
+import { Span } from "@/features/ui/span";
 
 export function OrdersHeader() {
   return (
-    <header className="fixed left-0 top-0 z-50 flex h-24 w-full items-center justify-between border-b border-(--color-stamp-divider) bg-(--color-stamp-off-white)/80 px-6 backdrop-blur-md md:px-12">
-      <OrdersHeaderLogo />
-      <OrdersHeaderCta />
-      <OrdersHeaderNav />
+    <header className="space-y-4">
+      <div className="h-1.5 w-20 bg-(--color-stamp-gold)" />
+      <Heading
+        as="h1"
+        variant="title"
+        className="text-(--color-stamp-chocolate)"
+      >
+        Your{" "}
+        <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
+          orders
+        </span>
+      </Heading>
+      <Span variant="default" className="text-(--color-stamp-taupe)">
+        View your orders
+      </Span>
     </header>
   );
 }

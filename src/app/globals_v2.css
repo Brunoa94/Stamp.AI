@@ -25,7 +25,7 @@
   /* Stamp Luxury Theme Colors */
   --color-stamp-taupe: #c4a08a; /* [tag: brand-stamp-taupe] Warm taupe accent */
   --color-stamp-chocolate: #3d2817; /* [tag: brand-stamp-chocolate] Primary dark brown */
-  --color-stamp-gold: #d4af37; /* [tag: brand-stamp-gold] Metallic gold accent */
+  --color-stamp-gold: #b9932f; /* [tag: brand-stamp-gold] Metallic gold accent */
   --color-stamp-cream: #faf6f1; /* [tag: brand-stamp-cream] Soft cream background */
   --color-stamp-off-white: #fdfcfb; /* [tag: brand-stamp-off-white] Near white surface */
   --color-stamp-divider: rgba(
@@ -34,6 +34,11 @@
     23,
     0.08
   ); /* [tag: brand-stamp-divider] Subtle divider */
+  --color-stamp-white: #ffffff; /* [tag: brand-stamp-white] Pure white surface / text on dark */
+  --color-stamp-error: #dc2626; /* [tag: brand-stamp-error] Error and destructive actions */
+  --color-stamp-success: #10b981; /* [tag: brand-stamp-success] Success / delivered status */
+  --color-stamp-info: #3b82f6; /* [tag: brand-stamp-info] Informational / shipped status */
+  --color-stamp-warning: #f59e0b; /* [tag: brand-stamp-warning] Warning / processing status */
 
   /* ==========================================
      DESIGN SYSTEM - LIGHT MODE [tag: ds-*]
@@ -55,7 +60,16 @@
   /* ==========================================
      UTILITY COLORS
      ========================================== */
-  /* TODO: Add utility colors (gradients, shadows, effects) */
+
+  /* Stamp shadows [tag: shadow-stamp-*] — derived from brand colors via color-mix */
+  --shadow-stamp-card-hover: 0 20px 40px
+    color-mix(in srgb, var(--color-stamp-chocolate) 5%, transparent); /* [tag: shadow-stamp-card-hover] Card lift on hover */
+  --shadow-stamp-gold-cta: 0 10px 20px
+    color-mix(in srgb, var(--color-stamp-gold) 20%, transparent); /* [tag: shadow-stamp-gold-cta] Gold CTA hover glow */
+  --shadow-stamp-modal: 0 50px 100px
+    color-mix(in srgb, var(--color-stamp-chocolate) 30%, transparent); /* [tag: shadow-stamp-modal] Modal elevation */
+  --shadow-stamp-modal-error: 0 50px 100px
+    color-mix(in srgb, var(--color-stamp-error) 20%, transparent); /* [tag: shadow-stamp-modal-error] Destructive modal elevation */
 }
 
 /* ==========================================

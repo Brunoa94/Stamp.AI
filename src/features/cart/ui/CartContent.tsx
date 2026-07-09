@@ -1,105 +1,81 @@
+/**
+ * CartContent
+ *
+ * Presentational container for the luxury brutalist cart. Data and handlers
+ * come from the useCart lib hook; this component only chooses between the
+ * loading / empty / populated layouts.
+ */
+
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import {
-  useCartSummary,
-  useUpdateCartItem,
-  useRemoveCartItem,
-} from "@/queries/cartQueries";
-import { CartBackground } from "./components/CartBackground";
+import { useCart } from "../lib/hooks/useCart";
 import { CartLayout } from "./components/CartLayout";
 import { CartHeader } from "./components/CartHeader";
-import { CartItemCard } from "./components/CartItemCard";
-import { OrderSummary } from "./components/OrderSummary";
-import { EmptyCart } from "./components/EmptyCart";
-import { CartLoadingSkeleton } from "./components/CartLoadingSkeleton";
 import { CartMobileCta } from "./components/CartMobileCta";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { CartItemCard } from "./sections/CartItemCard/CartItemCard";
+import { CartOrderSummary } from "./sections/CartOrderSummary/CartOrderSummary";
+import { CartEmptySection } from "./sections/CartEmptySection";
+import { CartLoadingSection } from "./sections/CartLoadingSection";
 
 export function CartContent() {
-  const router = useRouter();
-  const updateCartItem = useUpdateCartItem();
-  const removeCartItem = useRemoveCartItem();
-  const { itemCount, cart, isLoading, error } = useCartSummary();
-  const { handleError } = useErrorHandler();
+  const {
+    cart,
+    itemCount,
+    isLoading,
+    total,
+    updateQuantity,
+    removeItem,
+    checkout,
+  } = useCart();
 
-  if (error) handleError(error);
-
-  const handleUpdateQuantity = (itemId: string, quantity: number) => {
-    updateCartItem.mutate({ itemId, update: { quantity } });
-  };
-
-  const handleRemove = (itemId: string) => {
-    removeCartItem.mutate(itemId);
-  };
-
-  const handleCheckout = () => {
-    if (!cart) return;
-    router.push(`/checkout?cartId=${cart.id}`);
-  };
-
-  // Loading state
   if (isLoading) {
     return (
-      <>
-        <CartBackground />
-        <CartLayout>
-          <div className="lg:col-span-12">
-            <CartLoadingSkeleton />
-          </div>
-        </CartLayout>
-      </>
+      <CartLayout>
+        <CartLoadingSection />
+      </CartLayout>
     );
   }
 
-  // Empty cart
   if (!cart || cart.cart_items.length === 0) {
     return (
-      <>
-        <CartBackground />
-        <CartLayout>
-          <EmptyCart />
-        </CartLayout>
-      </>
+      <CartLayout>
+        <CartEmptySection />
+      </CartLayout>
     );
   }
 
-  // Cart with items
   return (
     <>
-      <CartBackground />
       <CartLayout>
         <CartHeader itemCount={itemCount} />
 
-        {/* Left column: Cart items */}
-        <div className="xl:col-span-8 space-y-12">
+        <div className="space-y-8 xl:col-span-8">
           {cart.cart_items.map((item) => (
             <CartItemCard
               key={item.id}
               item={item}
-              onUpdateQuantity={handleUpdateQuantity}
-              onRemove={handleRemove}
+              onUpdateQuantity={updateQuantity}
+              onRemove={removeItem}
             />
           ))}
 
           <Link
             href="/stamp"
-            className="inline-flex items-center gap-3 text-[10px] font-bold tracking-[0.4em] uppercase opacity-40 hover:opacity-100 hover:text-brandPurple transition-all"
+            className="inline-flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-(--color-stamp-taupe) transition-colors hover:text-(--color-stamp-gold)"
           >
-            <ArrowLeft className="w-4 h-4" />
-            Continue Browsing Terminal
+            <ArrowLeft className="h-4 w-4" />
+            Continue Browsing
           </Link>
         </div>
 
-        {/* Right column: Order summary */}
         <div className="xl:col-span-4">
-          <OrderSummary cart={cart} onCheckout={handleCheckout} />
+          <CartOrderSummary cart={cart} onCheckout={checkout} />
         </div>
       </CartLayout>
 
-      <CartMobileCta onCheckout={handleCheckout} />
+      <CartMobileCta total={total} onCheckout={checkout} />
     </>
   );
 }

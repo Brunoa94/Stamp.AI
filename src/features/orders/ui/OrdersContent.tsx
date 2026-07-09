@@ -13,8 +13,6 @@ import type { OrderWithItemsT } from "@/types/order";
 import { useOrdersState } from "../lib/hooks/useOrdersState";
 import { OrdersCancelModal } from "./components/OrdersCancelModal/OrdersCancelModal";
 import { OrdersDetailsModal } from "./components/OrdersDetailsModal/OrdersDetailsModal";
-import { OrdersFooter } from "./components/OrdersFooter/OrdersFooter";
-import { OrdersHeader } from "./components/OrdersHeader";
 import "./orders.css";
 import { OrdersPagination } from "./components/OrdersPagination";
 import { OrdersEmptySection } from "./sections/OrdersEmptySection";
@@ -22,6 +20,8 @@ import { OrdersGridSection } from "./sections/OrdersGridSection";
 import { OrdersListSection } from "./sections/OrdersListSection";
 import { OrdersLoadingSection } from "./sections/OrdersLoadingSection";
 import { OrdersFilterSection } from "./sections/OrdersFilterSection/OrdersFilterSection";
+import { OrdersLayout } from "./components/OrdersLayout";
+import { OrdersHeader } from "./components/OrdersHeader";
 
 export default function OrdersContent() {
   const router = useRouter();
@@ -64,14 +64,18 @@ export default function OrdersContent() {
 
   if (isError) {
     return (
-      <main className="mx-auto min-h-screen max-w-360 px-6 pb-24 pt-40 md:px-12">
-        <div className="rounded-none border border-red-200 bg-red-50 p-8 text-center">
-          <Heading as="h2" variant="card" className="text-xl text-red-700">
+      <section className="min-h-[calc(100vh-6rem)] bg-(--color-stamp-off-white) px-12 pb-24 pt-12 lg:px-24">
+        <div className="rounded-none border border-(--color-stamp-error)/20 bg-(--color-stamp-error)/5 p-8 text-center">
+          <Heading
+            as="h2"
+            variant="card"
+            className="text-xl text-(--color-stamp-error)"
+          >
             Archive Unavailable
           </Heading>
           <Paragraph
             variant="sm"
-            className="mt-2 text-sm tracking-normal text-red-600"
+            className="mt-2 text-sm tracking-normal text-(--color-stamp-error)/80"
           >
             We couldn&apos;t load your protocol records.
           </Paragraph>
@@ -84,16 +88,14 @@ export default function OrdersContent() {
             <RefreshCw className="h-3.5 w-3.5" />
           </Button>
         </div>
-      </main>
+      </section>
     );
   }
 
   return (
     <>
-      <div className="font-(--font-outfit) text-(--color-stamp-chocolate)">
-        <OrdersHeader />
-
-        <main className="mx-auto min-h-screen max-w-360 px-6 pb-24 pt-32 md:px-12">
+      <OrdersLayout header={<OrdersHeader />}>
+        <section className="min-h-[calc(100vh-6rem)] bg-(--color-stamp-off-white) font-heading text-(--color-stamp-chocolate)">
           <OrdersFilterSection
             viewMode={viewMode}
             onViewModeChange={setViewMode}
@@ -147,10 +149,8 @@ export default function OrdersContent() {
               onPageChange={setPage}
             />
           )}
-        </main>
-
-        <OrdersFooter />
-      </div>
+        </section>
+      </OrdersLayout>
 
       {selectedOrder && (
         <OrdersDetailsModal

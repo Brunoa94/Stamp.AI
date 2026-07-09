@@ -78,7 +78,7 @@ function OrdersStatusSelect({ value, onChange }: OrdersStatusSelectPropsI) {
     >
       <SelectTrigger
         aria-label="Filter by order status"
-        className="h-12 w-auto min-w-52 border border-(--color-stamp-divider) bg-white px-4 font-bold uppercase text-[11px] tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
+        className="h-12 w-auto min-w-52 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-bold uppercase text-[11px] tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
       >
         <SelectValue placeholder="Status: All Statuses" />
       </SelectTrigger>
@@ -106,7 +106,7 @@ function OrdersTimeSelect({ value, onChange }: OrdersTimeSelectPropsI) {
     >
       <SelectTrigger
         aria-label="Filter by date range"
-        className="h-12 w-auto min-w-44 border border-(--color-stamp-divider) bg-white px-4 font-bold uppercase text-[11px] tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
+        className="h-12 w-auto min-w-44 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-bold uppercase text-[11px] tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
       >
         <SelectValue placeholder="Last 30 Days" />
       </SelectTrigger>

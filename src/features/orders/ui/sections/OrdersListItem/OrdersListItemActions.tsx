@@ -23,7 +23,7 @@ export function OrdersListItemActions({
       <Button
         onClick={() => onOpenDetails(order)}
         variant="default"
-        className="w-full bg-(--color-stamp-chocolate) px-6 py-3 font-semibold uppercase text-[10px] tracking-[0.2em] text-white transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:bg-(--color-stamp-gold) hover:shadow-[0_10px_20px_rgba(212,175,55,0.2)]"
+        className="w-full bg-(--color-stamp-chocolate) px-6 py-3 font-heading font-semibold uppercase text-[10px] tracking-[0.2em] text-(--color-stamp-white) transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:bg-(--color-stamp-gold) hover:shadow-(--shadow-stamp-gold-cta)"
       >
         {displayedStatus === "Delivered" ? "View Blueprint" : "Track Protocol"}
       </Button>
@@ -31,7 +31,7 @@ export function OrdersListItemActions({
         <Button
           onClick={() => onCancelOrder(order)}
           variant="outline"
-          className="w-full border-(--color-stamp-divider) px-6 py-3 font-semibold uppercase text-[10px] tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-white"
+          className="w-full border-(--color-stamp-divider) px-6 py-3 font-heading font-semibold uppercase text-[10px] tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white)"
         >
           Halt Order
         </Button>
@@ -39,7 +39,7 @@ export function OrdersListItemActions({
         <Button
           onClick={onReorder}
           variant="outline"
-          className="w-full border-(--color-stamp-divider) px-6 py-3 font-semibold uppercase text-[10px] tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-white"
+          className="w-full border-(--color-stamp-divider) px-6 py-3 font-heading font-semibold uppercase text-[10px] tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white)"
         >
           Reorder
         </Button>

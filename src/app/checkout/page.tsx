@@ -1,11 +1,14 @@
+"use client";
+
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { CheckoutPageContent } from "@/features/checkout/ui/CheckoutPageContent";
-import { CheckoutLoading } from "@/features/checkout/ui/Checkout/CheckoutLoading";
+import { CheckoutContent } from "@/features/checkout/ui/CheckoutContent";
+import { CheckoutLoadingSection } from "@/features/checkout/ui/sections/CheckoutLoadingSection";
+import "@/features/checkout/ui/checkout.css";
 
 export default function CheckoutPage() {
   return (
-    <ProtectedRoute fallback={<CheckoutLoading />}>
-      <CheckoutPageContent />
+    <ProtectedRoute fallback={<CheckoutLoadingSection />}>
+      <CheckoutContent />
     </ProtectedRoute>
   );
 }
