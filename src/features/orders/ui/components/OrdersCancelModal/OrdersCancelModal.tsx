@@ -34,7 +34,7 @@ export function OrdersCancelModal({
 
   return (
     <div
-      className="fixed inset-0 z-110 flex items-center justify-center bg-[rgba(61,40,23,0.3)] p-6 backdrop-blur-sm"
+      className="fixed inset-0 z-110 flex items-center justify-center bg-(--color-stamp-chocolate)/30 p-6 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label="Cancel order confirmation"
@@ -43,7 +43,7 @@ export function OrdersCancelModal({
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className="w-full max-w-md border border-red-100 bg-white p-10 text-center shadow-[0_50px_100px_rgba(239,68,68,0.2)]"
+        className="w-full max-w-md border border-(--color-stamp-error)/10 bg-(--color-stamp-white) p-10 text-center shadow-(--shadow-stamp-modal-error)"
         onClick={(event) => event.stopPropagation()}
       >
         <OrdersCancelModalIcon />

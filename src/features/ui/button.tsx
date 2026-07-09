@@ -14,8 +14,6 @@ const buttonVariants = cva(
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive dark:focus-visible:ring-destructive/80 dark:bg-destructive/60",
         outline:
           "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline focus-visible:ring-offset-0",
@@ -37,12 +35,8 @@ const buttonVariants = cva(
           "w-full gap-4 rounded-2xl border border-ink/5 bg-white py-4 px-6 font-bold text-sm text-ink/70 shadow-sm transition-shadow hover:shadow-md",
         "dashboard-edit":
           "w-full mt-6 py-3 border border-ink/10 hover:border-purple hover:bg-purple/5 font-anton text-xs tracking-widest uppercase transition-all flex items-center justify-center text-purple",
-        "dashboard-primary":
-          "w-full py-3 bg-purple hover:bg-purple/90 text-white font-anton text-xs tracking-widest uppercase transition-all",
         "secondary-brown":
-          "h-auto rounded-none bg-(--color-stamp-chocolate) px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all duration-300 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)",
-        neutral:
-          "h-auto rounded-none border border-(--color-stamp-divider) bg-transparent px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-300 hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-white",
+          "h-auto rounded-none bg-(--color-stamp-chocolate) px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-white) transition-all duration-300 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)",
       },
       size: {
         default: "h-10 px-4 py-2 has-[>svg]:px-3",

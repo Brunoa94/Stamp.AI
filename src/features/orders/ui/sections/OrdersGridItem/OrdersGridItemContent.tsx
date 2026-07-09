@@ -69,14 +69,14 @@ export function OrdersGridItemContent({
         <Button
           onClick={() => onOpenDetails(order)}
           variant="default"
-          className="justify-center bg-(--color-stamp-chocolate) px-0 py-2 font-semibold uppercase text-[8px] tracking-[0.15em] text-white transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:bg-(--color-stamp-gold) hover:shadow-[0_10px_20px_rgba(212,175,55,0.2)]"
+          className="justify-center bg-(--color-stamp-chocolate) px-0 py-2 font-semibold uppercase text-[8px] tracking-[0.15em] text-(--color-stamp-white) transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:bg-(--color-stamp-gold) hover:shadow-(--shadow-stamp-gold-cta)"
         >
           Track
         </Button>
         <Button
           onClick={() => (canCancel ? onCancelOrder(order) : onReorder())}
           variant="outline"
-          className="justify-center border-(--color-stamp-divider) px-0 py-2 font-semibold uppercase text-[8px] tracking-[0.15em] text-(--color-stamp-chocolate) transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-white"
+          className="justify-center border-(--color-stamp-divider) px-0 py-2 font-semibold uppercase text-[8px] tracking-[0.15em] text-(--color-stamp-chocolate) transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white)"
         >
           {canCancel ? "Options" : "Reorder"}
         </Button>

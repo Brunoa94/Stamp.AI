@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { Suspense, useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2, AlertCircle } from "lucide-react";
@@ -95,6 +95,15 @@ export function clearStoredStripeCheckoutData(): void {
 }
 
 export default function StripeReturnPage() {
+  // useSearchParams() requires a Suspense boundary for static prerendering
+  return (
+    <Suspense fallback={null}>
+      <StripeReturnContent />
+    </Suspense>
+  );
+}
+
+function StripeReturnContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<PageStatus>("loading");

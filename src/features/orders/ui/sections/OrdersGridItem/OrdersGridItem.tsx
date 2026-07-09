@@ -25,7 +25,7 @@ export function OrdersGridItem({
   const displayedStatus = toDisplayStatus(order.status);
 
   return (
-    <article className="group relative overflow-hidden border border-(--color-stamp-divider) bg-white transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-[0_20px_40px_rgba(61,40,23,0.05)]">
+    <article className="group relative overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover)">
       <OrdersGridItemIndex index={index} />
       <OrdersGridItemStatusBadge displayedStatus={displayedStatus} />
       <OrdersGridItemImage

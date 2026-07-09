@@ -29,7 +29,7 @@ export function OrdersEmptySection({ onInitiate }: PropsI) {
         type="button"
         onClick={onInitiate}
         variant="default"
-        className="bg-(--color-stamp-chocolate) px-6 py-3 text-[10px] tracking-[0.2em] text-white hover:bg-(--color-stamp-gold)"
+        className="bg-(--color-stamp-chocolate) px-6 py-3 text-[10px] tracking-[0.2em] text-(--color-stamp-white) hover:bg-(--color-stamp-gold)"
       >
         Initiate Synthesis
       </Button>
