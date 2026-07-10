@@ -1,0 +1,59 @@
+/**
+ * HomeProcessSection
+ *
+ * "The Process" — six protocol steps as luxury cards with oversized
+ * gold step numbers that reveal on hover.
+ */
+
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
+import { HOME_PROCESS_STEPS } from "../../lib/constants/homepageContent";
+import { HomeSectionHeader } from "../components/HomeSectionHeader";
+
+export function HomeProcessSection() {
+  return (
+    <section
+      id="process"
+      className="bg-(--color-stamp-cream) px-6 py-24 lg:px-12 xl:px-24"
+    >
+      <div className="mx-auto max-w-screen-2xl">
+        <HomeSectionHeader title="The" accent="process" label="Protocol 001" />
+
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {HOME_PROCESS_STEPS.map((step) => (
+            <article
+              key={step.id}
+              id={step.id}
+              className="group flex min-h-72 flex-col justify-between border border-(--color-stamp-divider) bg-(--color-stamp-white) p-10 transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover)"
+            >
+              <Span
+                variant="metric"
+                className="text-(--color-stamp-gold)/20 transition-colors duration-500 group-hover:text-(--color-stamp-gold)"
+              >
+                {step.number}
+              </Span>
+              <div>
+                <Heading as="h3" variant="card" className="mb-3">
+                  {step.title}
+                </Heading>
+                <Paragraph
+                  variant="card"
+                  className="text-(--color-stamp-taupe)"
+                >
+                  {step.description}
+                </Paragraph>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-16 flex justify-center">
+          <Span variant="sm" className="text-(--color-stamp-taupe)/40">
+            Engineered for precision
+          </Span>
+        </div>
+      </div>
+    </section>
+  );
+}
