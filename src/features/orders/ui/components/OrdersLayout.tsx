@@ -19,7 +19,7 @@ export function OrdersLayout({ header, children }: OrdersLayoutPropsI) {
       <div className="px-6 pb-24 pt-12 lg:px-12 xl:px-24">
         <PageContainer>
           {header}
-          <div className="mt-12 gap-12 lg:gap-16">{children}</div>
+          <div className="mt-4 gap-12 lg:gap-16">{children}</div>
         </PageContainer>
       </div>
     </div>

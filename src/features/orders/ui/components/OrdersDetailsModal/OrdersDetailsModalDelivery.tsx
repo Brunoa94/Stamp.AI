@@ -16,10 +16,10 @@ export function OrdersDetailsModalDelivery({ order }: PropsI) {
       >
         Delivery
       </Span>
-      <Paragraph variant="sm" className="text-xs text-(--color-stamp-chocolate)">
+      <Paragraph variant="sm" className="text-lg text-(--color-stamp-chocolate)">
         {order.customer_name || "Archive Client"}
       </Paragraph>
-      <Paragraph variant="sm" className="text-xs text-(--color-stamp-taupe)">
+      <Paragraph variant="sm" className="text-lg text-(--color-stamp-taupe)">
         {getAddressSummary(order)}
       </Paragraph>
     </section>

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 import type { UseFormRegisterReturn } from "react-hook-form";
 
-type FormFieldVariant = "default" | "auth-login" | "auth-register" | "shipping" | "profile";
+type FormFieldVariant = "default" | "auth-login" | "auth-register" | "shipping" | "profile" | "stamp-auth";
 
 interface FormFieldProps {
   id: string;
@@ -54,6 +54,13 @@ const variantStyles: Record<
     input:
       "w-full bg-white border border-ink/10 p-4 font-space uppercase placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all",
   },
+  "stamp-auth": {
+    container: "space-y-2",
+    labelVariant: "default" as const,
+    labelColor: "text-(--color-stamp-chocolate)",
+    input:
+      "h-14 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-5 text-xl uppercase tracking-[0.05em] text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20",
+  },
 };
 
 export function FormField({
@@ -80,7 +87,7 @@ export function FormField({
             {label}
           </Span>
           {required && (
-            <span className="text-red-500 ml-1" aria-label="required">
+            <span className={variant === "stamp-auth" ? "text-(--color-stamp-gold) ml-1" : "text-red-500 ml-1"} aria-hidden="true">
               *
             </span>
           )}
@@ -89,7 +96,7 @@ export function FormField({
         <Label htmlFor={id} className={styles.labelColor}>
           {label}
           {required && (
-            <span className="text-red-500" aria-label="required">
+            <span className={variant === "stamp-auth" ? "text-(--color-stamp-gold)" : "text-red-500"} aria-hidden="true">
               {" "}
               *
             </span>
@@ -100,7 +107,10 @@ export function FormField({
       {hasIcons ? (
         <div className="relative">
           {leadingIcon && (
-            <div className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-ink/30">
+            <div className={cn(
+              "pointer-events-none absolute left-5 top-1/2 -translate-y-1/2",
+              variant === "stamp-auth" ? "text-(--color-stamp-taupe)" : "text-ink/30"
+            )}>
               {leadingIcon}
             </div>
           )}
@@ -115,7 +125,7 @@ export function FormField({
               styles.input,
               leadingIcon && "pl-14",
               trailingAction && "pr-14",
-              error && "border-red-400"
+              error && (variant === "stamp-auth" ? "border-(--color-stamp-error)" : "border-red-400")
             )}
             {...register}
           />
@@ -133,7 +143,7 @@ export function FormField({
           placeholder={placeholder}
           aria-invalid={!!error}
           aria-describedby={errorId}
-          className={cn(styles.input, error && "border-red-400")}
+          className={cn(styles.input, error && (variant === "stamp-auth" ? "border-(--color-stamp-error)" : "border-red-400"))}
           {...register}
         />
       )}
@@ -143,7 +153,9 @@ export function FormField({
           id={errorId}
           role="alert"
           className={cn(
-            "text-sm text-red-600 dark:text-red-400",
+            variant === "stamp-auth"
+              ? "text-lg font-bold uppercase tracking-widest text-(--color-stamp-error)"
+              : "text-sm text-red-600 dark:text-red-400",
             (variant === "auth-register" || variant === "shipping") && "mt-1"
           )}
         >

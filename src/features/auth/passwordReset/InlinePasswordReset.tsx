@@ -28,7 +28,10 @@ export function InlinePasswordReset({ className }: PropsI) {
           className="h-auto p-0"
           onClick={() => setShowPasswordReset(!showPasswordReset)}
         >
-          <Span variant="default" className="text-purple-500 hover:underline">
+          <Span
+            variant="default"
+            className="text-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) hover:underline"
+          >
             Forgot password?
           </Span>
         </Button>

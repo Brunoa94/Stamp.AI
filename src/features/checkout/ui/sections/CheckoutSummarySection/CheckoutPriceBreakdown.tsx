@@ -24,7 +24,7 @@ function Row({ label, value }: { label: string; value: string }) {
       </Span>
       <Span
         unstyled
-        className="text-sm font-bold tabular-nums text-(--color-stamp-chocolate)"
+        className="text-2xl font-bold tabular-nums text-(--color-stamp-chocolate)"
       >
         {value}
       </Span>
@@ -48,7 +48,7 @@ export function CheckoutPriceBreakdown({
         </Span>
         <Span
           unstyled
-          className="text-sm font-bold uppercase tracking-[0.15em] text-(--color-stamp-success)"
+          className="text-2xl font-bold uppercase tracking-[0.15em] text-(--color-stamp-success)"
         >
           {shipping === 0 ? "Free" : formatPrice(shipping)}
         </Span>
@@ -61,7 +61,7 @@ export function CheckoutPriceBreakdown({
           </Span>
           <Span
             unstyled
-            className="text-sm font-bold tabular-nums text-(--color-stamp-success)"
+            className="text-2xl font-bold tabular-nums text-(--color-stamp-success)"
           >
             −{formatPrice(discount)}
           </Span>

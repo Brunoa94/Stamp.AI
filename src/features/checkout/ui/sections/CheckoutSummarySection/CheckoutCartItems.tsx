@@ -47,17 +47,17 @@ export function CheckoutCartItems({ items }: CheckoutCartItemsPropsI) {
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-bold uppercase tracking-[0.15em] text-(--color-stamp-chocolate)">
+              <p className="truncate text-lg font-bold uppercase tracking-[0.15em] text-(--color-stamp-chocolate)">
                 {name}
               </p>
-              <Span variant="micro" className="mt-1 block text-(--color-stamp-taupe)">
+              <Span unstyled className="mt-1 block text-lg text-(--color-stamp-taupe)">
                 {item.variant?.name || "Standard"}
               </Span>
               <div className="mt-2 flex items-center justify-between">
-                <Span variant="micro" className="text-(--color-stamp-taupe)">
+                <Span unstyled className="text-lg text-(--color-stamp-taupe)">
                   Qty {item.quantity}
                 </Span>
-                <span className="text-xs font-bold tabular-nums text-(--color-stamp-chocolate)">
+                <span className="text-2xl font-bold tabular-nums text-(--color-stamp-chocolate)">
                   {formatPrice(lineTotal / 100)}
                 </span>
               </div>

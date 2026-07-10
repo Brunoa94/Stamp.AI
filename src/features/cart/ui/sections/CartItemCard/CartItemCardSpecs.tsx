@@ -28,7 +28,7 @@ function SpecItem({ label, value }: SpecItemPropsI) {
         </Span>
       </dt>
       <dd>
-        <Span unstyled className="text-xs font-bold uppercase tracking-[0.15em]">
+        <Span unstyled className="text-lg font-bold uppercase tracking-[0.15em]">
           {value}
         </Span>
       </dd>

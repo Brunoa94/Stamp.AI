@@ -25,13 +25,13 @@ export function OrdersListItemContent({
           <Heading
             as="h3"
             unstyled
-            className="font-heading text-xl font-bold uppercase tracking-tight"
+            className="font-heading text-2xl font-bold uppercase tracking-tight"
           >
             {firstItem?.product_name || "Premium Synthesis Product"}
           </Heading>
           <Span
             variant="default"
-            className="font-bold uppercase text-[10px] tracking-[0.2em] text-(--color-stamp-taupe)"
+            className="font-bold uppercase text-sm tracking-[0.2em] text-(--color-stamp-taupe)"
           >
             #{order.order_number || order.id.slice(0, 13).toUpperCase()}
           </Span>
@@ -48,13 +48,13 @@ export function OrdersListItemContent({
         <div>
           <Paragraph
             variant="sm"
-            className="mb-1 font-bold uppercase text-[9px] tracking-widest text-(--color-stamp-taupe)"
+            className="mb-1 font-bold uppercase text-sm tracking-widest text-(--color-stamp-taupe)"
           >
             Creation Date
           </Paragraph>
           <Paragraph
             variant="sm"
-            className="font-bold text-xs text-(--color-stamp-chocolate)"
+            className="font-bold text-base text-(--color-stamp-chocolate)"
           >
             {formatOrderDate(order.created_at)}
           </Paragraph>
@@ -62,13 +62,13 @@ export function OrdersListItemContent({
         <div>
           <Paragraph
             variant="sm"
-            className="mb-1 font-bold uppercase text-[9px] tracking-widest text-(--color-stamp-taupe)"
+            className="mb-1 font-bold uppercase text-sm tracking-widest text-(--color-stamp-taupe)"
           >
             Configuration
           </Paragraph>
           <Paragraph
             variant="sm"
-            className="font-bold text-xs text-(--color-stamp-chocolate)"
+            className="font-bold text-base text-(--color-stamp-chocolate)"
           >
             {firstItem?.variant_name || "Standard"}
           </Paragraph>
@@ -76,13 +76,13 @@ export function OrdersListItemContent({
         <div>
           <Paragraph
             variant="sm"
-            className="mb-1 font-bold uppercase text-[9px] tracking-widest text-(--color-stamp-taupe)"
+            className="mb-1 font-bold uppercase text-sm tracking-widest text-(--color-stamp-taupe)"
           >
             Quantity
           </Paragraph>
           <Paragraph
             variant="sm"
-            className="font-bold text-xs text-(--color-stamp-chocolate)"
+            className="font-bold text-base text-(--color-stamp-chocolate)"
           >
             {String(firstItem?.quantity || 1).padStart(2, "0")} Unit
           </Paragraph>
@@ -90,14 +90,14 @@ export function OrdersListItemContent({
         <div>
           <Paragraph
             variant="sm"
-            className="mb-1 font-bold uppercase text-[9px] tracking-widest text-(--color-stamp-taupe)"
+            className="mb-1 font-bold uppercase text-sm tracking-widest text-(--color-stamp-taupe)"
           >
             Protocol Value
           </Paragraph>
           <Heading
             as="h4"
             unstyled
-            className="font-heading text-2xl font-black tracking-tight text-(--color-stamp-chocolate)"
+            className="font-heading text-3xl font-black tracking-tight text-(--color-stamp-chocolate)"
           >
             {formatPrice(order.total_amount)}
           </Heading>

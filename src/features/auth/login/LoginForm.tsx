@@ -20,12 +20,12 @@ export function LoginForm() {
       className="max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none sm:max-w-[550px]"
     >
       <DialogTitle className="sr-only">Login</DialogTitle>
-      <div className="relative overflow-hidden rounded-3xl border border-ink/5 bg-white shadow-2xl px-10 pt-12 pb-10">
+      <div className="relative overflow-hidden border-2 border-(--color-stamp-divider) bg-(--color-stamp-off-white) px-10 pt-12 pb-10 shadow-(--shadow-stamp-modal)">
         {/* Close button */}
         <DialogClose asChild>
           <Button
             type="button"
-            variant="auth-close"
+            variant="stamp-auth-close"
             size="icon"
             aria-label="Close login modal"
             className="absolute top-8 right-8 z-20"
@@ -39,18 +39,18 @@ export function LoginForm() {
         <GoogleSignInButton />
 
         <div className="relative flex items-center my-10">
-          <div className="grow border-t border-ink/5" />
-          <span className="shrink mx-4 text-[10px] font-bold text-purple-500 uppercase tracking-[0.3em]">
+          <div className="grow border-t border-(--color-stamp-divider)" />
+          <span className="shrink mx-4 text-lg font-bold text-(--color-stamp-gold) uppercase tracking-[0.2em]">
             or continue with email
           </span>
-          <div className="grow border-t border-ink/5" />
+          <div className="grow border-t border-(--color-stamp-divider)" />
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <LoginCredentialsFields register={register} errors={errors} />
 
           {errors.root?.message && (
-            <p role="alert" className="text-sm font-medium text-red-600">
+            <p role="alert" className="text-lg font-bold uppercase tracking-widest text-(--color-stamp-error)">
               {errors.root.message}
             </p>
           )}

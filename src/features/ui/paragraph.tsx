@@ -8,23 +8,23 @@ import { cn } from "@/lib/utils";
  * All other styling (color, margin, opacity, max-width) must come from the caller via `className`.
  *
  * Variants:
- * - lead     Hero/CTA subtitle — responsive sm→base→lg, font-light, uppercase, relaxed leading
- * - body     Blockquote / testimonial body — sm, uppercase, relaxed leading
- * - sm       Card descriptions — xs, uppercase, relaxed leading
- * - loose    Muted descriptive copy — xs, font-light, uppercase, loose leading
- * - card     Process / FAQ responsive body — xs→sm, uppercase, relaxed leading
- * - faq      FAQ answer — xs→sm, uppercase, loose leading
- * - quote    Testimonial quote — sm, NO uppercase, relaxed leading
+ * - lead     Hero/CTA subtitle — responsive base→lg→xl, font-light, uppercase, relaxed leading
+ * - body     Blockquote / testimonial body — lg, uppercase, relaxed leading
+ * - sm       Card descriptions — base, uppercase, relaxed leading
+ * - loose    Muted descriptive copy — base, font-light, uppercase, loose leading
+ * - card     Process / FAQ responsive body — base→lg, uppercase, relaxed leading
+ * - faq      FAQ answer — base→lg, uppercase, loose leading
+ * - quote    Testimonial quote — lg, NO uppercase, relaxed leading
  */
 
 const paragraphVariants = {
-  lead: "font-heading text-base md:text-lg lg:text-xl font-light tracking-wide uppercase leading-relaxed",
-  body: "font-heading text-base tracking-wide uppercase leading-relaxed",
-  sm: "font-heading text-sm tracking-wide uppercase leading-relaxed",
-  loose: "font-heading text-sm tracking-wide uppercase leading-loose",
-  card: "font-heading text-sm md:text-base tracking-wide uppercase leading-relaxed",
-  faq: "font-heading text-sm md:text-base tracking-wide uppercase leading-loose",
-  quote: "font-heading text-base tracking-wide leading-relaxed",
+  lead: "font-heading text-xl md:text-2xl lg:text-3xl font-light tracking-wide uppercase leading-relaxed",
+  body: "font-heading text-xl tracking-wide uppercase leading-relaxed",
+  sm: "font-heading text-lg tracking-wide uppercase leading-relaxed",
+  loose: "font-heading text-lg tracking-wide uppercase leading-loose",
+  card: "font-heading text-lg md:text-xl tracking-wide uppercase leading-relaxed",
+  faq: "font-heading text-lg md:text-xl tracking-wide uppercase leading-loose",
+  quote: "font-heading text-xl tracking-wide leading-relaxed",
 } as const;
 
 export type ParagraphVariant = keyof typeof paragraphVariants;

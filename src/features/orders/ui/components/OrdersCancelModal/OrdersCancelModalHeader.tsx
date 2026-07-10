@@ -9,7 +9,7 @@ export function OrdersCancelModalHeader() {
       </Heading>
       <Paragraph
         variant="sm"
-        className="mb-10 text-xs tracking-[0.15em] text-(--color-stamp-taupe)"
+        className="mb-10 text-lg tracking-[0.15em] text-(--color-stamp-taupe)"
       >
         This action is irreversible once finalized.
       </Paragraph>

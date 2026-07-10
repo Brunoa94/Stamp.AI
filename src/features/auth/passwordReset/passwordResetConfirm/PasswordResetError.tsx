@@ -1,28 +1,27 @@
 import { Button } from "@/features/ui/button";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
+import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 
 export function PasswordResetError() {
   return (
-    <div className="text-center space-y-4">
-      <div className="text-red-600 mb-4">
-        <svg
-          className="w-16 h-16 mx-auto"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path
-            fillRule="evenodd"
-            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-            clipRule="evenodd"
-          />
-        </svg>
+    <div className="text-center space-y-6">
+      <div className="text-(--color-stamp-error) mb-4">
+        <AlertCircle className="w-16 h-16 mx-auto" strokeWidth={1.5} />
       </div>
-      <h3 className="text-lg font-medium text-gray-900">Reset Link Invalid</h3>
-      <p className="text-sm text-gray-600">
+      <Heading
+        as="h3"
+        variant="card"
+        className="text-2xl tracking-tight text-(--color-stamp-chocolate)"
+      >
+        Reset Link Invalid
+      </Heading>
+      <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
         This password reset link is invalid or has expired. Please request a new
         one.
-      </p>
-      <Button asChild variant="outline">
+      </Paragraph>
+      <Button asChild variant="stamp-auth-cancel">
         <Link href="/">Back to Home</Link>
       </Button>
     </div>

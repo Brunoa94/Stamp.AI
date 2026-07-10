@@ -39,7 +39,7 @@ const variantStyles: Record<
   },
   shipping: {
     container: "",
-    label: "mb-2 block text-xs font-bold uppercase tracking-widest text-slate-500",
+    label: "mb-2 block text-lg font-bold uppercase tracking-widest text-slate-500",
     input: "",
   },
 };

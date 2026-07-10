@@ -125,7 +125,7 @@ export function PaymentRecoveryBanner({
                   </Button>
                 </div>
 
-                <p className="text-xs text-amber-700 mt-2">
+                <p className="text-lg text-amber-700 mt-2">
                   Payment ID: {recovery.payment_intent_id.slice(-8)}
                   {" • "}
                   {new Date(recovery.created_at).toLocaleString()}

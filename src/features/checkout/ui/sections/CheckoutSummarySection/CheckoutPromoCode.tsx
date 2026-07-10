@@ -59,7 +59,7 @@ export function CheckoutPromoCode({
         <div className="flex items-center justify-between border border-(--color-stamp-success)/30 bg-(--color-stamp-success)/5 px-4 py-3">
           <Span
             unstyled
-            className="text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-success)"
+            className="text-lg font-bold uppercase tracking-[0.2em] text-(--color-stamp-success)"
           >
             {appliedCode}
           </Span>
@@ -96,7 +96,7 @@ export function CheckoutPromoCode({
             onClick={handleApply}
             disabled={!inputValue.trim() || isApplying}
             variant="outline"
-            className="rounded-none border-(--color-stamp-chocolate) text-[11px] font-bold uppercase tracking-[0.2em]"
+            className="rounded-none border-(--color-stamp-chocolate) text-lg font-bold uppercase tracking-[0.2em]"
           >
             {isApplying ? "…" : "Apply"}
           </Button>
@@ -107,7 +107,7 @@ export function CheckoutPromoCode({
         <Paragraph
           unstyled
           role="alert"
-          className="text-[11px] font-bold uppercase tracking-[0.15em] text-(--color-stamp-error)"
+          className="text-lg font-bold uppercase tracking-[0.15em] text-(--color-stamp-error)"
         >
           {error}
         </Paragraph>

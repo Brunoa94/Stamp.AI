@@ -37,7 +37,7 @@ export function OrdersFilterControls({
     <div className="flex flex-col gap-4">
       <Span
         variant="default"
-        className="font-bold uppercase text-[10px] tracking-[0.4em] text-(--color-stamp-taupe)"
+        className="font-bold uppercase text-sm tracking-[0.4em] text-(--color-stamp-taupe)"
       >
         Archive Filtering
       </Span>
@@ -53,7 +53,7 @@ export function OrdersFilterControls({
         <Button
           onClick={onClearFilters}
           variant="ghost"
-          className="h-12 flex items-center gap-2 px-4 font-bold uppercase text-[11px] tracking-widest text-(--color-stamp-taupe) hover:bg-transparent hover:text-(--color-stamp-gold)"
+          className="h-12 flex items-center gap-2 px-4 font-bold uppercase text-base tracking-widest text-(--color-stamp-taupe) hover:bg-transparent hover:text-(--color-stamp-gold)"
         >
           <RotateCcw className="h-4 w-4" />
           Clear Archive
@@ -78,7 +78,7 @@ function OrdersStatusSelect({ value, onChange }: OrdersStatusSelectPropsI) {
     >
       <SelectTrigger
         aria-label="Filter by order status"
-        className="h-12 w-auto min-w-52 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-bold uppercase text-[11px] tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
+        className="h-12 w-auto min-w-52 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-bold uppercase text-base tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
       >
         <SelectValue placeholder="Status: All Statuses" />
       </SelectTrigger>
@@ -106,7 +106,7 @@ function OrdersTimeSelect({ value, onChange }: OrdersTimeSelectPropsI) {
     >
       <SelectTrigger
         aria-label="Filter by date range"
-        className="h-12 w-auto min-w-44 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-bold uppercase text-[11px] tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
+        className="h-12 w-auto min-w-44 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-bold uppercase text-base tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
       >
         <SelectValue placeholder="Last 30 Days" />
       </SelectTrigger>
