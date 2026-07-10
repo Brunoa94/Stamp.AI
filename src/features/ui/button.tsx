@@ -39,6 +39,10 @@ const buttonVariants = cva(
           "h-auto bg-(--color-stamp-chocolate) px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-white) transition-all duration-300 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)",
         "primary-gold":
           "h-auto bg-(--color-stamp-gold) px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-300 hover:bg-(--color-stamp-off-white) hover:text-(--color-stamp-chocolate)",
+        "outline-brown":
+          "h-auto border border-(--color-stamp-chocolate)/20 bg-transparent px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-300 hover:border-(--color-stamp-gold) hover:text-(--color-stamp-gold)",
+        "outline-cream":
+          "h-auto border border-(--color-stamp-off-white)/20 bg-transparent px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-off-white) transition-all duration-300 hover:border-(--color-stamp-gold) hover:text-(--color-stamp-gold)",
       },
       size: {
         default: "h-10 px-4 py-2 has-[>svg]:px-3",
