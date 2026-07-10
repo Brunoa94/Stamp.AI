@@ -1,7 +1,7 @@
 /**
  * Cart Feature Styles
  * Isolated styling for the luxury brutalist cart design.
- * Tokens live in globals_v2.css (--color-stamp-*, --shadow-stamp-*);
+ * Tokens live in globals-stamp.css (--color-stamp-*, --shadow-stamp-*);
  * this file only holds keyframes and the custom scrollbar that Tailwind
  * utilities cannot express.
  */

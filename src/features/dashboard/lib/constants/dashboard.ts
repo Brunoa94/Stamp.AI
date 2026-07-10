@@ -1,8 +1,8 @@
 /**
- * Dashboard v2 constants
+ * Dashboard constants
  *
  * Credits and design-archive figures are placeholders until a credits
- * service/query exists — mirrors the values used by the legacy dashboard.
+ * service/query exists.
  */
 
 export const RECENT_ORDERS_LIMIT = 5;

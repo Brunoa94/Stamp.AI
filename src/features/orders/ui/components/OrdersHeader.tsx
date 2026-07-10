@@ -15,9 +15,6 @@ export function OrdersHeader() {
           orders
         </span>
       </Heading>
-      <Span variant="default" className="text-(--color-stamp-taupe)">
-        View your orders
-      </Span>
     </header>
   );
 }

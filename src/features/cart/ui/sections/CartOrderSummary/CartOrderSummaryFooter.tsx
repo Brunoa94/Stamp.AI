@@ -40,7 +40,7 @@ export function CartOrderSummaryFooter({
           </Span>
           <Span
             unstyled
-            className="text-xs font-bold uppercase tracking-[0.15em]"
+            className="text-lg font-bold uppercase tracking-[0.15em]"
           >
             3–5 Business Days
           </Span>

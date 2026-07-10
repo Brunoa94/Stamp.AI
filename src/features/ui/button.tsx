@@ -34,11 +34,11 @@ const buttonVariants = cva(
         "auth-google":
           "w-full gap-4 border border-ink/5 bg-white py-4 px-6 font-bold text-sm text-ink/70 shadow-sm transition-shadow hover:shadow-md",
         "dashboard-edit":
-          "w-full mt-6 py-3 border border-ink/10 hover:border-purple hover:bg-purple/5 font-anton text-xs tracking-widest uppercase transition-all flex items-center justify-center text-purple",
+          "w-full mt-6 py-3 border border-ink/10 hover:border-purple hover:bg-purple/5 font-anton text-lg tracking-widest uppercase transition-all flex items-center justify-center text-purple",
         "secondary-brown":
-          "h-auto bg-(--color-stamp-chocolate) px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-white) transition-all duration-300 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)",
+          "h-auto bg-(--color-stamp-chocolate) px-8 py-6 text-sm font-bold uppercase tracking-[0.2em] text-(--color-stamp-white) transition-all duration-300 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)",
         "primary-gold":
-          "h-auto bg-(--color-stamp-gold) px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-300 hover:bg-(--color-stamp-off-white) hover:text-(--color-stamp-chocolate)",
+          "h-auto bg-(--color-stamp-gold) px-8 py-6 text-sm font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-300 hover:bg-(--color-stamp-off-white) hover:text-(--color-stamp-chocolate)",
       },
       size: {
         default: "h-10 px-4 py-2 has-[>svg]:px-3",

@@ -35,7 +35,7 @@ export function CheckoutTestModeToggle({
       />
       <Label
         htmlFor="testMode"
-        className="cursor-pointer text-[10px] font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate)"
+        className="cursor-pointer text-base font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate)"
       >
         Test Mode · use predefined payment methods
       </Label>

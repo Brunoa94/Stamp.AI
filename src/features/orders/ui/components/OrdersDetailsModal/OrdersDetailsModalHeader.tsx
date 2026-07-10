@@ -15,7 +15,7 @@ export function OrdersDetailsModalHeader({ order, displayedStatus }: PropsI) {
     <div className="mb-10">
       <Span
         unstyled
-        className={`inline-flex rounded-full px-3 py-1 text-[9px] font-bold uppercase tracking-[0.15em] ${getStatusBadgeClass(displayedStatus)}`}
+        className={`inline-flex rounded-full px-3 py-1 text-lg font-bold uppercase tracking-[0.15em] ${getStatusBadgeClass(displayedStatus)}`}
       >
         {displayedStatus}
       </Span>
@@ -28,7 +28,7 @@ export function OrdersDetailsModalHeader({ order, displayedStatus }: PropsI) {
       </Heading>
       <Paragraph
         variant="sm"
-        className="mt-1 text-[10px] tracking-[0.2em] text-(--color-stamp-taupe)"
+        className="mt-1 text-lg tracking-[0.2em] text-(--color-stamp-taupe)"
       >
         Order #{order.order_number || order.id.slice(0, 13).toUpperCase()} •
         Initiated {formatOrderDate(order.created_at)}

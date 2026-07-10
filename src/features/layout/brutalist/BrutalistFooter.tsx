@@ -18,24 +18,24 @@ import { List } from "@/features/ui/list";
 
 const FOOTER_LINKS = {
   product: [
-    { id: "footer-custom-tee-v2", href: "#", label: "Custom Essentials" },
-    { id: "footer-hoodies-v2", href: "#", label: "Archival Hoodies" },
-    { id: "footer-caps-v2", href: "#", label: "Precision Caps" },
+    { id: "footer-custom-tee", href: "#", label: "Custom Essentials" },
+    { id: "footer-hoodies", href: "#", label: "Archival Hoodies" },
+    { id: "footer-caps", href: "#", label: "Precision Caps" },
   ],
   protocol: [
-    { id: "footer-manifesto-v2", href: "#", label: "Manifesto" },
-    { id: "footer-careers-v2", href: "#", label: "Terminal Hub" },
-    { id: "footer-press-v2", href: "#", label: "Public Keys" },
+    { id: "footer-manifesto", href: "#", label: "Manifesto" },
+    { id: "footer-careers", href: "#", label: "Terminal Hub" },
+    { id: "footer-press", href: "#", label: "Public Keys" },
   ],
   support: [
-    { id: "footer-help-v2", href: "#", label: "Operations" },
-    { id: "footer-track-v2", href: "#", label: "Track Assets" },
-    { id: "footer-shipping-v2", href: "#", label: "Logistics" },
+    { id: "footer-help", href: "#", label: "Operations" },
+    { id: "footer-track", href: "#", label: "Track Assets" },
+    { id: "footer-shipping", href: "#", label: "Logistics" },
   ],
   network: [
-    { id: "footer-ig-v2", href: "#", label: "Instagram" },
-    { id: "footer-tw-v2", href: "#", label: "X / Twitter" },
-    { id: "footer-tt-v2", href: "#", label: "Discord" },
+    { id: "footer-ig", href: "#", label: "Instagram" },
+    { id: "footer-tw", href: "#", label: "X / Twitter" },
+    { id: "footer-tt", href: "#", label: "Discord" },
   ],
 };
 

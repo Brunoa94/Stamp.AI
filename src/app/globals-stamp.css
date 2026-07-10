@@ -62,8 +62,10 @@
      ========================================== */
 
   /* Stamp shadows [tag: shadow-stamp-*] — derived from brand colors via color-mix */
-  --shadow-stamp-card-hover: 0 20px 40px
-    color-mix(in srgb, var(--color-stamp-chocolate) 5%, transparent); /* [tag: shadow-stamp-card-hover] Card lift on hover */
+  --shadow-stamp-card: 6px 6px 0
+    color-mix(in srgb, var(--color-stamp-chocolate) 12%, transparent); /* [tag: shadow-stamp-card] Square card shadow */
+  --shadow-stamp-card-hover: 8px 8px 0
+    color-mix(in srgb, var(--color-stamp-chocolate) 18%, transparent); /* [tag: shadow-stamp-card-hover] Square card shadow on hover */
   --shadow-stamp-gold-cta: 0 10px 20px
     color-mix(in srgb, var(--color-stamp-gold) 20%, transparent); /* [tag: shadow-stamp-gold-cta] Gold CTA hover glow */
   --shadow-stamp-modal: 0 50px 100px

@@ -64,7 +64,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
         <div className="mb-10">
           <Span
             unstyled
-            className={`inline-flex rounded-full px-3 py-1 text-[9px] font-bold uppercase tracking-[0.15em] ${getStatusBadgeClass(displayedStatus)}`}
+            className={`inline-flex rounded-full px-3 py-1 text-lg font-bold uppercase tracking-[0.15em] ${getStatusBadgeClass(displayedStatus)}`}
           >
             {displayedStatus}
           </Span>
@@ -77,7 +77,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
           </Heading>
           <Paragraph
             variant="sm"
-            className="mt-1 text-[10px] tracking-[0.2em] text-(--color-stamp-taupe)"
+            className="mt-1 text-lg tracking-[0.2em] text-(--color-stamp-taupe)"
           >
             Order #{order.order_number || order.id.slice(0, 13).toUpperCase()} •
             Initiated {formatOrderDate(order.created_at)}
@@ -119,7 +119,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
                   </Heading>
                   <Paragraph
                     variant="sm"
-                    className="text-[9px] tracking-widest text-(--color-stamp-taupe)"
+                    className="text-lg tracking-widest text-(--color-stamp-taupe)"
                   >
                     Variant: {firstItem?.variant_name || "Standard"} • Qty:{" "}
                     {firstItem?.quantity || 1}
@@ -144,13 +144,13 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
               </Span>
               <Paragraph
                 variant="sm"
-                className="text-xs text-(--color-stamp-chocolate)"
+                className="text-lg text-(--color-stamp-chocolate)"
               >
                 {order.customer_name || "Archive Client"}
               </Paragraph>
               <Paragraph
                 variant="sm"
-                className="text-xs text-(--color-stamp-taupe)"
+                className="text-lg text-(--color-stamp-taupe)"
               >
                 {getAddressSummary(order)}
               </Paragraph>
@@ -167,7 +167,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
             <div className="flex items-center justify-between border-t border-(--color-stamp-divider) pt-4">
               <Span
                 variant="default"
-                className="text-[11px] tracking-normal text-(--color-stamp-chocolate)"
+                className="text-lg tracking-normal text-(--color-stamp-chocolate)"
               >
                 Total
               </Span>

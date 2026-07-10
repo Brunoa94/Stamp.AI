@@ -24,7 +24,7 @@ export function DashboardCard({
   return (
     <section
       className={cn(
-        "border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover) lg:p-10",
+        "border-2 border-(--color-stamp-chocolate)/15 bg-(--color-stamp-white) p-8 shadow-(--shadow-stamp-card) transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover) lg:p-10",
         className,
       )}
     >
