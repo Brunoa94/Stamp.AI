@@ -1,17 +1,13 @@
 import { AuthModalHeader } from "@/features/ui/dialog/AuthModalHeader";
-import { Span } from "@/features/ui/span";
+import { Paragraph } from "@/features/ui/paragraph";
 
 export function RegisterDialogHeader() {
   return (
     <div>
       <AuthModalHeader label="Create Account" title="Sign Up" />
-      <Span
-        as="p"
-        unstyled
-        className="text-sm font-medium text-ink/60 font-space mb-2"
-      >
+      <Paragraph variant="sm" className="text-(--color-stamp-taupe) mb-2">
         Join the Stamp.AI creative community today.
-      </Span>
+      </Paragraph>
     </div>
   );
 }

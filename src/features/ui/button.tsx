@@ -39,6 +39,14 @@ const buttonVariants = cva(
           "h-auto bg-(--color-stamp-chocolate) px-8 py-6 text-sm font-bold uppercase tracking-[0.2em] text-(--color-stamp-white) transition-all duration-300 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)",
         "primary-gold":
           "h-auto bg-(--color-stamp-gold) px-8 py-6 text-sm font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-300 hover:bg-(--color-stamp-off-white) hover:text-(--color-stamp-chocolate)",
+        "stamp-auth-primary":
+          "w-full py-5 px-6 bg-(--color-stamp-chocolate) font-anton text-xl uppercase tracking-[0.2em] text-(--color-stamp-white) transition-all duration-300 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) disabled:opacity-50",
+        "stamp-auth-cancel":
+          "w-full py-5 px-6 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) font-anton text-xl uppercase tracking-[0.2em] text-(--color-stamp-chocolate) hover:bg-(--color-stamp-off-white) hover:border-(--color-stamp-taupe) transition-all duration-300",
+        "stamp-auth-close":
+          "h-10 w-10 bg-(--color-stamp-cream) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) transition-all border border-(--color-stamp-divider)",
+        "stamp-auth-google":
+          "w-full gap-4 border-2 border-(--color-stamp-divider) bg-(--color-stamp-white) py-8! px-6 font-bold text-lg uppercase tracking-widest text-(--color-stamp-chocolate) transition-all hover:border-(--color-stamp-taupe) hover:bg-(--color-stamp-cream)",
       },
       size: {
         default: "h-10 px-4 py-2 has-[>svg]:px-3",

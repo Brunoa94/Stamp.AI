@@ -24,7 +24,7 @@ export function PasswordResetRequest({ className }: PasswordResetRequestProps) {
         <Button
           variant="link"
           size="sm"
-          className={`text-sm p-0 h-auto ${className}`}
+          className={`text-lg p-0 h-auto text-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) ${className}`}
         >
           Forgot password?
         </Button>
