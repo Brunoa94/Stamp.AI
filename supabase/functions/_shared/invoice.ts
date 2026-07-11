@@ -114,6 +114,28 @@ export async function ensureInvoiceForOrder(orderId: string): Promise<InvoiceRow
     }
   }
 
+  const hadPdfAtStart = Boolean(rpcResult.data[0].pdf_path);
+
+  // Email once, best-effort — never fail invoice generation over delivery.
+  // If the PDF already existed when ensureInvoiceForOrder was called, re-render it for the attachment.
+  if (hadPdfAtStart && !invoice.emailed_at && invoice.customer_email) {
+    const pdfBytes = await renderInvoicePdf(invoice, seller);
+    const title = documentTitle(invoice.type);
+    const sent = await sendInvoiceEmail({
+      to: invoice.customer_email,
+      subject: `${seller.name} — ${title} ${invoice.invoice_number} for order ${invoice.order_number}`,
+      html: renderInvoiceHtml(invoice, seller),
+      pdfBytes,
+      pdfFilename: `${invoice.invoice_number}.pdf`,
+    });
+
+    if (sent) {
+      await supabaseRest(`invoices?id=eq.${invoice.id}`, "PATCH", {
+        emailed_at: new Date().toISOString(),
+      });
+    }
+  }
+
   return invoice;
 }
 
