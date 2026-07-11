@@ -1,8 +1,8 @@
 # Invoicing
 
 Provider-agnostic invoice generation for paid orders. Works identically for
-Stripe, PayPal and Mollie because invoices hang off the `orders` record, not
-any payment provider.
+Stripe and PayPal because invoices hang off the `orders` record, not any
+payment provider.
 
 ## How it works
 
@@ -20,8 +20,7 @@ any payment provider.
    Sent at most once (`emailed_at`). Skipped silently when not configured.
 4. **Triggers** — invoice generation runs best-effort (never fails the
    payment flow) from every place an order is marked paid:
-   `stripe-webhook`, `paypal-webhook`, `mollie-webhook`,
-   `capture-paypal-order`, `verify-mollie-payment`.
+   `stripe-webhook`, `paypal-webhook`, `capture-paypal-order`.
 5. **On demand** — the `generate-invoice` edge function lets the order's
    owner generate/fetch the invoice and returns a signed download URL. The
    whole pipeline is idempotent, so webhook and on-demand generation can
@@ -47,7 +46,7 @@ any payment provider.
 2. Deploy the edge functions:
 
    ```bash
-   supabase functions deploy generate-invoice stripe-webhook paypal-webhook mollie-webhook capture-paypal-order verify-mollie-payment --no-verify-jwt
+   supabase functions deploy generate-invoice stripe-webhook paypal-webhook capture-paypal-order --no-verify-jwt
    ```
 
 3. Configure edge function secrets (all optional — sensible defaults exist,

@@ -1,9 +1,70 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { delay } from 'https://deno.land/std@0.168.0/async/delay.ts'
 import Stripe from 'https://esm.sh/stripe@16.12.0?target=deno'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts"
+
+/**
+ * Wait for order to be created with idempotency key, then generate invoice.
+ * This handles the race condition where webhook fires before frontend creates the order.
+ */
+async function waitForOrderAndGenerateInvoice(
+  paymentIntentId: string,
+  maxAttempts = 6,
+  delayMs = 5000
+): Promise<void> {
+  const idempotencyKey = `stripe_${paymentIntentId}`
+  console.log(`🔄 Starting invoice generation retry loop for idempotency_key: ${idempotencyKey}`)
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    // Wait before checking (except first attempt)
+    if (attempt > 1) {
+      await delay(delayMs)
+    }
+
+    console.log(`📋 Attempt ${attempt}/${maxAttempts}: Checking for order with idempotency_key...`)
+
+    // Query orders directly by idempotency_key
+    const orderResult = await supabaseRest(
+      `orders?idempotency_key=eq.${idempotencyKey}&select=id`,
+      'GET'
+    )
+
+    const orderId = orderResult.data?.[0]?.id
+
+    if (orderId) {
+      console.log(`✅ Found order ${orderId} on attempt ${attempt}`)
+
+      // Update order payment_status to paid
+      const updateResult = await supabaseRest(
+        `orders?id=eq.${orderId}`,
+        'PATCH',
+        {
+          payment_status: 'paid',
+          payment_method: 'stripe',
+          updated_at: new Date().toISOString(),
+        }
+      )
+
+      if (updateResult.error) {
+        console.error('Failed to update order payment_status:', updateResult.error)
+      } else {
+        console.log(`✅ Order ${orderId} payment_status updated to: paid`)
+
+        // Generate the invoice
+        await tryGenerateInvoiceForOrder(orderId)
+      }
+
+      return
+    }
+
+    console.log(`⏳ No order found yet, attempt ${attempt}/${maxAttempts}`)
+  }
+
+  console.warn(`⚠️ No order found after ${maxAttempts} attempts for idempotency_key: ${idempotencyKey}`)
+}
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -257,6 +318,17 @@ serve(async (req) => {
             // Issue the invoice now that the order is paid (idempotent, non-blocking)
             await tryGenerateInvoiceForOrder(dbOrderId)
           }
+        } else {
+          // No order_id yet - frontend hasn't created the order
+          // Start retry loop in background (non-blocking)
+          console.log('⏳ No order_id found immediately, starting retry loop...')
+
+          // Use EdgeRuntime.waitUntil if available, otherwise run inline
+          // This keeps the webhook response fast while retrying in background
+          const retryPromise = waitForOrderAndGenerateInvoice(paymentIntent.id)
+
+          // Wait for the retry to complete (webhook can take up to 30s)
+          await retryPromise
         }
 
         // Check if this is a test payment

@@ -1,4 +1,4 @@
-import { encodeBase64 } from "https://deno.land/std@0.168.0/encoding/base64.ts";
+import { encodeBase64 } from "jsr:@std/encoding@1/base64";
 
 /**
  * Invoice email delivery via Resend (https://resend.com).

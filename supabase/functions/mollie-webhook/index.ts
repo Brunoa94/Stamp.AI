@@ -166,9 +166,6 @@ serve(async (req) => {
         console.warn("⚠️ No valid order_id found, skipping payment_status update.");
       }
     }
-    }
-
-    const result = updateResult;
 
     // If orderId not in metadata, try to get it from payment_transactions.order_id column
     // (set by client-side after order creation)

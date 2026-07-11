@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS invoice_counters (
 -- Amounts are DECIMAL dollars, matching the orders table.
 -- =====================================================
 CREATE TABLE IF NOT EXISTS invoices (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     invoice_number TEXT NOT NULL UNIQUE,
     type TEXT NOT NULL DEFAULT 'invoice' CHECK (type IN ('invoice', 'credit_note')),
     status TEXT NOT NULL DEFAULT 'issued' CHECK (status IN ('issued', 'void')),
