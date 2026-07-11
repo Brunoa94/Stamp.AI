@@ -15,11 +15,11 @@ interface OrdersLayoutPropsI extends PropsWithChildren {
 
 export function OrdersLayout({ header, children }: OrdersLayoutPropsI) {
   return (
-    <div className="min-h-screen bg-(--color-stamp-off-white) font-heading text-(--color-stamp-chocolate)">
+    <div className="min-h-screen bg-(--color-stamp-off-white) font-heading text-(--color-stamp-chocolate) pt-24">
       <div className="px-6 pb-24 pt-12 lg:px-12 xl:px-24">
         <PageContainer>
           {header}
-          <div className="mt-12 gap-12 lg:gap-16">{children}</div>
+          <div className="mt-4 gap-12 lg:gap-16">{children}</div>
         </PageContainer>
       </div>
     </div>

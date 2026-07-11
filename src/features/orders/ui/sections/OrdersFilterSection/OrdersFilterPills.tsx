@@ -16,7 +16,7 @@ export function OrdersFilterPills({ pills }: PropsI) {
         <Span
           key={pill.key}
           unstyled
-          className="inline-flex items-center gap-2 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-(--color-stamp-chocolate)"
+          className="inline-flex items-center gap-2 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 py-2 text-base font-bold uppercase tracking-widest text-(--color-stamp-chocolate)"
         >
           {pill.label}
           <Button

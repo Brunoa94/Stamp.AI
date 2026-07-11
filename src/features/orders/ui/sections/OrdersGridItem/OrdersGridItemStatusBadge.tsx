@@ -10,7 +10,7 @@ export function OrdersGridItemStatusBadge({ displayedStatus }: PropsI) {
     <div className="absolute right-2 top-2 z-10">
       <Span
         unstyled
-        className={`status-badge uppercase px-2! py-1! text-[7px]! backdrop-blur-md ${getStatusBadgeClass(displayedStatus)}`}
+        className={`status-badge uppercase px-2! py-1! text-lg! backdrop-blur-md ${getStatusBadgeClass(displayedStatus)}`}
       >
         {displayedStatus}
       </Span>

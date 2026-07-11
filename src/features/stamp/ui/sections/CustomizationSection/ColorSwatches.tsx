@@ -4,7 +4,7 @@ import { Span } from "@/features/ui/span";
 import {
   getBorderColor,
   getColorHex,
-} from "@/features/homepage-brutalist/lib/constants/colorSwatches";
+} from "@/features/homepage/lib/constants/colorSwatches";
 import { getColorClass } from "@/helpers/colors/colorMapping";
 
 /**

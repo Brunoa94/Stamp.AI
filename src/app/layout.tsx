@@ -11,7 +11,7 @@ import {
   Playfair_Display,
 } from "next/font/google";
 import "./globals.css";
-import "./globals_v2.css";
+import "./globals-stamp.css";
 
 import { Toaster } from "sonner";
 import { SupabaseAuthProvider } from "@/providers/SupabaseAuthProvider";

@@ -7,6 +7,7 @@ import { Span } from "@/features/ui/span";
 import { Login } from "@/features/auth/login/Login";
 import { useUser, useLogout } from "@/queries/authQueries";
 import { ShoppingCart } from "lucide-react";
+import { useScrolled } from "@/hooks/useScrolled";
 
 /**
  * StampHeader
@@ -24,6 +25,7 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
   const pathname = usePathname();
   const { data: user } = useUser();
   const logoutMutation = useLogout();
+  const isScrolled = useScrolled(24);
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -41,11 +43,17 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-24 px-6 lg:px-12 z-50 bg-(--color-stamp-off-white)/80 backdrop-blur-md border-b border-(--color-stamp-divider) flex items-center justify-between">
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 flex h-24 items-center justify-between px-6 lg:px-12 transition-all duration-300 ${
+        isScrolled
+          ? "bg-(--color-stamp-off-white)/80 backdrop-blur-md border-b border-(--color-stamp-divider)"
+          : "bg-transparent border-b border-transparent"
+      }`}
+    >
       {/* Logo */}
       <div className="flex-1">
         <Link
-          href="/stamp"
+          href="/"
           className="text-2xl font-bold tracking-tight uppercase text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-colors"
           aria-label="Return to Stamp homepage"
         >
@@ -58,18 +66,12 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
         <Button
           variant="ghost"
           onClick={handleStampIt}
-          className="relative px-6 py-3 group overflow-hidden rounded-none h-auto hover:bg-transparent"
+          className="px-8 py-3 rounded-lg h-auto btn-gradient-border animate-pulse-subtle transition-all duration-500 hover:scale-105"
           aria-label="Start stamping process"
         >
-          {/* Animated Border */}
-          <div className="absolute inset-0 bg-gradient-conic from-transparent via-(--color-stamp-gold) to-transparent animate-spin-slow opacity-40" />
-
-          {/* Inner Content */}
-          <span className="relative z-10 block">
-            <Span variant="micro" className="text-(--color-stamp-chocolate)">
-              Stamp It
-            </Span>
-          </span>
+          <Span variant="micro" className="text-(--color-stamp-chocolate)">
+            Stamp
+          </Span>
         </Button>
       </div>
 

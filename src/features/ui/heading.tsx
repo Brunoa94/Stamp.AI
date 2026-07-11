@@ -12,9 +12,9 @@ import { cn } from "@/lib/utils";
  * - cta       CTA section h2 — slightly smaller fluid title
  * - section   Section header h2 — fixed responsive scale (6xl→9xl)
  * - title     Interior section h2 — fixed responsive scale (6xl→8xl)
- * - card      Card / step h3 — 2xl→3xl
- * - question  FAQ summary — xl→2xl
- * - item      Product name / testimonial author — lg→xl
+ * - card      Card / step h3 — 3xl→4xl
+ * - question  FAQ summary — 2xl→3xl
+ * - item      Product name / testimonial author — xl→2xl
  */
 
 const headingVariants = {
@@ -25,10 +25,10 @@ const headingVariants = {
     "font-anton text-5xl md:text-6xl lg:text-7xl tracking-tighter leading-none uppercase",
   title:
     "font-anton text-6xl md:text-7xl lg:text-8xl tracking-tighter leading-none uppercase",
-  card: "font-anton text-2xl md:text-3xl tracking-tight leading-tight uppercase",
+  card: "font-anton text-3xl md:text-4xl tracking-tight leading-tight uppercase",
   question:
-    "font-anton text-xl md:text-2xl tracking-tight leading-tight uppercase",
-  item: "font-anton text-lg md:text-xl tracking-tight uppercase",
+    "font-anton text-2xl md:text-3xl tracking-tight leading-tight uppercase",
+  item: "font-anton text-xl md:text-2xl tracking-tight uppercase",
 } as const;
 
 export type HeadingVariant = keyof typeof headingVariants;

@@ -31,10 +31,6 @@ export function CartHeader({ itemCount }: CartHeaderPropsI) {
           bag
         </span>
       </Heading>
-
-      <Span variant="default" className="text-(--color-stamp-taupe)">
-        {itemCount} {itemText} ready for production protocol
-      </Span>
     </header>
   );
 }

@@ -15,7 +15,7 @@ export function AppLayoutChrome({ children }: AppLayoutChromeProps) {
   return (
     <>
       <StampHeader />
-      <main className="pt-24 min-h-screen">{children}</main>
+      <main className="min-h-screen">{children}</main>
       {!isStampRoute && <BrutalistFooter />}
     </>
   );

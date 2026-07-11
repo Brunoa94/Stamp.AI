@@ -22,7 +22,7 @@ export function RegisterCredentialsFields({
           required
           error={errors.firstName?.message}
           register={register("firstName")}
-          variant="auth-login"
+          variant="stamp-auth"
           leadingIcon={<User className="h-5 w-5" />}
         />
 
@@ -33,7 +33,7 @@ export function RegisterCredentialsFields({
           required
           error={errors.lastName?.message}
           register={register("lastName")}
-          variant="auth-login"
+          variant="stamp-auth"
           leadingIcon={<User className="h-5 w-5" />}
         />
       </div>
@@ -46,7 +46,7 @@ export function RegisterCredentialsFields({
         required
         error={errors.email?.message}
         register={register("email")}
-        variant="auth-login"
+        variant="stamp-auth"
         leadingIcon={<Mail className="h-5 w-5" />}
       />
 
@@ -59,7 +59,7 @@ export function RegisterCredentialsFields({
           required
           error={errors.password?.message}
           register={register("password")}
-          variant="auth-login"
+          variant="stamp-auth"
           leadingIcon={<Lock className="h-5 w-5" />}
         />
 
@@ -71,7 +71,7 @@ export function RegisterCredentialsFields({
           required
           error={errors.confirmPassword?.message}
           register={register("confirmPassword")}
-          variant="auth-login"
+          variant="stamp-auth"
           leadingIcon={<Lock className="h-5 w-5" />}
         />
       </div>

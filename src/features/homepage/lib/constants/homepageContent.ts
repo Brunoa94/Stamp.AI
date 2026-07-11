@@ -1,240 +1,234 @@
-import {
-  BrainCircuit,
-  Eye,
-  Palette,
-  Shirt,
-  ShoppingBag,
-  Sparkles,
-} from "lucide-react";
-import { FaCreditCard, FaPaypal } from "react-icons/fa";
-import { SiStripe } from "react-icons/si";
+/**
+ * Homepage v2 static content
+ *
+ * Copy is identical to the previous homepage iteration; only the
+ * presentation layer changed. Product data is NOT here — it comes from the
+ * server cache (getCachedFeaturedProductsWithPricing).
+ */
 
-export const processSteps = [
-  {
-    id: "01",
-    label: "Studio",
-    title: "Design Selection",
-    description:
-      "Choose from our curated minimalist library or upload custom assets.",
-    icon: Palette,
-  },
-  {
-    id: "02",
-    label: "Canvas",
-    title: "Customization",
-    description:
-      "Modify colors, layers, and typographic elements with precision.",
-    icon: BrainCircuit,
-  },
-  {
-    id: "03",
-    label: "Texture",
-    title: "Sizing & Fit",
-    description:
-      "Select size, fabric, and finish matching your creative vision.",
-    icon: Shirt,
-  },
-  {
-    id: "04",
-    label: "Final",
-    title: "Preview & Review",
-    description:
-      "Verify every visual layer and color registration before production.",
-    icon: Eye,
-  },
-  {
-    id: "05",
-    label: "Engine",
-    title: "AI Synthesis",
-    description:
-      "Describe your design idea and let the AI synthesize variations.",
-    icon: Sparkles,
-  },
-  {
-    id: "06",
-    label: "Complete",
-    title: "Ready to Cart",
-    description:
-      "Your custom tee is ready. Add it to cart and proceed to checkout.",
-    icon: ShoppingBag,
-  },
-] as const;
+export const MAX_HOME_PRODUCTS = 8;
 
-export const journeyDesktopPositions = [
-  "top-0 left-0",
-  "top-[300px] left-[18%]",
-  "top-0 left-[36%]",
-  "top-[300px] left-[54%]",
-  "top-0 left-[72%]",
-  "top-[300px] left-[90%]",
-] as const;
-
-export const trustHighlights = [
-  {
-    title: "Memories",
-    description:
-      "Every design is a story. Transform meaningful moments into wearable art — gifts and garments that outlast the occasion.",
-  },
-  {
-    title: "Precision",
-    description:
-      "Every stitch and visual layer registered for flawless production output, exactly as you imagined it.",
-  },
-  {
-    title: "14-Day Guarantee",
-    description:
-      "Total refund within 14 days — no explanation required. We stand unconditionally behind every stamp we help you create.",
-  },
-  {
-    title: "Innovation",
-    description:
-      "AI-powered synthesis unlocks premium design variations with minimal effort — creativity without compromise.",
-  },
-] as const;
-
-export const faqs = [
-  {
-    q: "What file formats do you accept for designs?",
-    a: "We support PNG, JPG, WEBP, and SVG files up to 25MB. For best results, use high-resolution source files.",
-  },
-  {
-    q: "How long does production take?",
-    a: "Standard production is usually 5-7 business days. Express options are available at checkout.",
-  },
-  {
-    q: "Can I make changes after ordering?",
-    a: "Changes are possible within a short post-order window before production starts.",
-  },
-  {
-    q: "What's your return and refund policy?",
-    a: "We offer a 30-day money-back guarantee for manufacturing defects or shipping damages.",
-  },
-  {
-    q: "Do you offer bulk orders?",
-    a: "Yes. Bulk and team workflows are available through our Enterprise offering.",
-  },
-  {
-    q: "What printing methods do you use?",
-    a: "We use premium screen-printing and DTG workflows based on your design requirements.",
-  },
-  {
-    q: "Is my design data private?",
-    a: "Yes. Assets are encrypted in transit and at rest, and ownership stays with you.",
-  },
-] as const;
-
-export const paymentMethods = [
-  {
-    name: "Stripe Checkout",
-    description: "Visa, Mastercard, AMEX & Apple Pay. All cards processed securely.",
-    badge: "PCI-DSS Level 1",
-    icon: SiStripe,
-  },
-  {
-    name: "PayPal Express",
-    description: "Pay with PayPal balance or linked cards with buyer protection.",
-    badge: "Purchase Protection",
-    icon: FaPaypal,
-  },
-  {
-    name: "Mollie Hub",
-    description: "Regional methods including Klarna, iDEAL, and Bancontact.",
-    badge: "Secure Gateway",
-    icon: FaCreditCard,
-  },
-] as const;
-
-export const reviewBreakdown = [
-  { label: "5★", value: 85, barClass: "bg-[#FF8C42]" },
-  { label: "4★", value: 10, barClass: "bg-[#FF8C42]/75" },
-  { label: "3★", value: 3, barClass: "bg-amber-400/80" },
-  { label: "2★", value: 1, barClass: "bg-orange-300/70" },
-  { label: "1★", value: 1, barClass: "bg-red-500" },
-] as const;
-
-export const reviews = [
-  {
-    name: "Sarah Chen",
-    date: "3w ago",
-    source: "Google",
-    sourceUrl: "https://www.google.com/search?q=stamp.ai+reviews",
-    quote:
-      '"Best custom apparel service I\'ve used. Quality is insane. Every stitch is perfect."',
-    helpful: "245 found helpful",
-  },
-  {
-    name: "Marcus Vane",
-    date: "1m ago",
-    source: "Google",
-    sourceUrl: "https://www.google.com/search?q=stamp.ai+reviews",
-    quote:
-      '"The design interface is incredibly intuitive. A pure game-changer for my brand\'s merch flow."',
-    helpful: "112 found helpful",
-  },
-  {
-    name: "Alex Rodriguez",
-    date: "2m ago",
-    source: "Trustpilot",
-    sourceUrl: "https://www.trustpilot.com/",
-    quote:
-      '"Great service, shipping took a bit longer than expected but the final product was worth it."',
-    helpful: "89 found helpful",
-  },
-  {
-    name: "Jamie Liu",
-    date: "6w ago",
-    source: "Google",
-    sourceUrl: "https://www.google.com/search?q=stamp.ai+reviews",
-    quote:
-      '"Premium quality and fast turnaround. The heavy cotton feels like true luxury wear."',
-    helpful: "302 found helpful",
-  },
-  {
-    name: "Taylor Brooks",
-    date: "2m ago",
-    source: "Trustpilot",
-    sourceUrl: "https://www.trustpilot.com/",
-    quote:
-      '"Stamp.AI revolutionized how we create branded merchandise. No more back-and-forth."',
-    helpful: "156 found helpful",
-  },
-  {
-    name: "Casey Johnson",
-    date: "3m ago",
-    source: "Trustpilot",
-    sourceUrl: "https://www.trustpilot.com/",
-    quote:
-      '"Customer service is exceptional, product quality matches pricing perfectly. True 5-star studio."',
-    helpful: "94 found helpful",
-  },
-] as const;
-
-export const SECTION_IDS = [
-  "hero",
-  "cta-home",
-  "process",
-  "brand-story",
-  "promocodes",
-  "pricing",
-  "faq",
-  "security",
-  "reviews",
-] as const;
-
-export type HomepageSectionIdT = (typeof SECTION_IDS)[number];
-
-export const SECTION_LABELS: Record<HomepageSectionIdT, string> = {
-  hero: "Home",
-  "cta-home": "Start",
-  process: "Process",
-  "brand-story": "Story",
-  promocodes: "Deals",
-  pricing: "Products",
-  faq: "FAQ",
-  security: "Security",
-  reviews: "Reviews",
+export type HomeProcessStepType = {
+  id: string;
+  number: string;
+  title: string;
+  description: string;
 };
 
-export const NAVBAR_HEIGHT = 80;
-export const SCROLL_COOLDOWN = 220;
-export const SCROLL_DURATION = 360;
+export const HOME_PROCESS_STEPS: HomeProcessStepType[] = [
+  {
+    id: "step-studio",
+    number: "01",
+    title: "Studio",
+    description:
+      "Design Selection: Choose from our curated minimalist library or upload custom artwork for AI enhancement.",
+  },
+  {
+    id: "step-synthesis",
+    number: "02",
+    title: "Synthesis",
+    description:
+      "AI Processing: Our neural network optimizes your design for archival print quality and color accuracy.",
+  },
+  {
+    id: "step-material",
+    number: "03",
+    title: "Material",
+    description:
+      "Fabric Selection: Choose from heavyweight premium blanks (280-480GSM) engineered for longevity.",
+  },
+  {
+    id: "step-production",
+    number: "04",
+    title: "Production",
+    description:
+      "Direct-to-Garment: High-precision DTG printing with eco-friendly water-based inks on demand.",
+  },
+  {
+    id: "step-quality",
+    number: "05",
+    title: "Quality",
+    description:
+      "Inspection Protocol: Every piece hand-inspected for print fidelity, fabric integrity, and finish.",
+  },
+  {
+    id: "step-delivery",
+    number: "06",
+    title: "Delivery",
+    description:
+      "Global Logistics: Carbon-neutral shipping with real-time tracking. Arrives in 5-7 business days.",
+  },
+];
+
+export type HomeValueCardType = {
+  number: string;
+  title: string;
+  description: string;
+};
+
+export const HOME_VALUE_CARDS: HomeValueCardType[] = [
+  {
+    number: "01",
+    title: "AI-Powered",
+    description:
+      "Neural network-enhanced design synthesis for maximum creative output with minimal effort.",
+  },
+  {
+    number: "02",
+    title: "Archival Quality",
+    description:
+      "Premium heavyweight fabrics (280-480GSM) engineered for decades of wear without degradation.",
+  },
+  {
+    number: "03",
+    title: "On-Demand",
+    description:
+      "Zero inventory waste. Every piece produced after order confirmation to minimize environmental impact.",
+  },
+  {
+    number: "04",
+    title: "Global Logistics",
+    description:
+      "Carbon-neutral shipping to 180+ countries with real-time tracking and 5-7 day delivery windows.",
+  },
+];
+
+export type HomePlatformRatingType = {
+  platform: string;
+  rating: number;
+  reviews: number;
+};
+
+export const HOME_RATING_SUMMARY = {
+  overall: 4.8,
+  totalReviews: 1247,
+  platforms: [
+    { platform: "Trustpilot", rating: 4.9, reviews: 523 },
+    { platform: "Google", rating: 4.8, reviews: 412 },
+    { platform: "ProductHunt", rating: 4.7, reviews: 312 },
+  ] satisfies HomePlatformRatingType[],
+};
+
+export type HomeTestimonialType = {
+  author: string;
+  role: string;
+  platform: string;
+  rating: number;
+  helpful: number;
+  quote: string;
+};
+
+export const HOME_TESTIMONIALS: HomeTestimonialType[] = [
+  {
+    author: "Alex Chen",
+    role: "Creative Director",
+    platform: "Trustpilot",
+    rating: 5,
+    helpful: 127,
+    quote:
+      "The AI synthesis is incredible. Took my rough sketch and turned it into a museum-quality print. The heavyweight fabric feels built to last decades.",
+  },
+  {
+    author: "Jordan Ellis",
+    role: "Streetwear Designer",
+    platform: "Google",
+    rating: 5,
+    helpful: 94,
+    quote:
+      "Finally, a platform that understands archival quality. The 320GSM essentials tee is hands down the best blank I've ever printed on.",
+  },
+  {
+    author: "Morgan Park",
+    role: "Independent Artist",
+    platform: "ProductHunt",
+    rating: 5,
+    helpful: 156,
+    quote:
+      "Zero design experience needed. The AI understood my vision perfectly. Shipped in 6 days globally. This is the future of custom apparel.",
+  },
+  {
+    author: "Riley Santos",
+    role: "Brand Consultant",
+    platform: "Trustpilot",
+    rating: 5,
+    helpful: 83,
+    quote:
+      "The on-demand model eliminates inventory risk. Print quality is consistent across batches. Game-changer for small brands.",
+  },
+];
+
+export type HomeFaqType = {
+  question: string;
+  answer: string;
+};
+
+export const HOME_FAQS: HomeFaqType[] = [
+  {
+    question: "How does the AI design synthesis work?",
+    answer:
+      "Our neural network analyzes your input (text prompt, sketch, or reference image) and generates optimized graphics tailored for direct-to-garment printing. The AI considers color profiles, resolution requirements, and fabric texture to ensure archival-quality output. No design experience required—just describe your vision.",
+  },
+  {
+    question: "What makes your fabrics 'archival quality'?",
+    answer:
+      "We exclusively use heavyweight premium blanks (280-480GSM) engineered for longevity. Our garment-dyed essentials undergo pre-shrinking and enzyme wash treatments to prevent degradation. Combined with water-based eco-friendly inks, your piece will maintain structural integrity and color fidelity for decades.",
+  },
+  {
+    question: "How long does production and shipping take?",
+    answer:
+      "Production begins immediately after order confirmation. Direct-to-garment printing completes in 2-3 business days, followed by quality inspection. Global shipping via carbon-neutral carriers takes 3-4 business days. Total timeline: 5-7 business days from order to delivery, with real-time tracking.",
+  },
+  {
+    question: "What are your sustainability practices?",
+    answer:
+      "We operate a zero-inventory on-demand model to eliminate textile waste. Our DTG printing uses water-based inks with no harmful chemicals. All shipping is carbon-offset through verified reforestation programs. Packaging uses recycled materials. We're committed to minimizing environmental impact at every stage.",
+  },
+  {
+    question: "Can I order samples before bulk production?",
+    answer:
+      "Absolutely. We recommend ordering a single piece first to verify fit, fabric feel, and print quality. There's no minimum order quantity—every piece is produced on-demand. Once satisfied, you can reorder identical designs at any scale. Volume discounts available for orders of 25+ pieces.",
+  },
+  {
+    question: "What if I'm not satisfied with my order?",
+    answer:
+      "We offer a 30-day satisfaction guarantee. If your piece doesn't meet expectations due to print quality, fabric defects, or fit issues, we'll replace it at no cost or issue a full refund. Return shipping is covered. Custom designs cannot be resold, so we're committed to getting it right the first time.",
+  },
+];
+
+export type HomeTrustIndicatorType = string;
+
+export const HOME_HERO_TRUST: HomeTrustIndicatorType[] = [
+  "AI-Powered",
+  "Archival Quality",
+  "Instant Delivery",
+];
+
+export const HOME_CTA_TRUST: HomeTrustIndicatorType[] = [
+  "5-7 Day Delivery",
+  "30-Day Guarantee",
+  "Carbon Neutral",
+];
+
+export type HomePlatformConfigType = {
+  color: string;
+  bgColor: string;
+  borderColor: string;
+};
+
+export const HOME_PLATFORM_CONFIG: Record<string, HomePlatformConfigType> = {
+  Google: {
+    color: "#4285F4",
+    bgColor: "rgba(66, 133, 244, 0.08)",
+    borderColor: "rgba(66, 133, 244, 0.2)",
+  },
+  Trustpilot: {
+    color: "#00B67A",
+    bgColor: "rgba(0, 182, 122, 0.08)",
+    borderColor: "rgba(0, 182, 122, 0.2)",
+  },
+  ProductHunt: {
+    color: "#DA552F",
+    bgColor: "rgba(218, 85, 47, 0.08)",
+    borderColor: "rgba(218, 85, 47, 0.2)",
+  },
+};

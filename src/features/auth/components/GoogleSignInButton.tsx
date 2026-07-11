@@ -14,13 +14,13 @@ export function GoogleSignInButton({ className }: GoogleSignInButtonProps) {
   return (
     <Button
       type="button"
-      variant="auth-google"
+      variant="stamp-auth-google"
       className={className}
       onClick={() => signInWithGoogle()}
       disabled={isPending}
     >
       <Image src="/assets/google-icon.svg" alt="Google" width={20} height={20} />
-      <span className="tracking-tight hover:text-ink transition-colors">
+      <span className="tracking-widest hover:text-(--color-stamp-chocolate) transition-colors">
         {isPending ? "Connecting..." : "Continue with Google"}
       </span>
     </Button>

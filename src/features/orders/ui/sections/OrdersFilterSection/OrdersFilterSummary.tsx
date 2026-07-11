@@ -11,7 +11,7 @@ export function OrdersFilterSummary({ total }: PropsI) {
     <div className="text-right">
       <Paragraph
         variant="sm"
-        className="font-bold uppercase text-[10px] tracking-[0.2em] text-(--color-stamp-taupe)"
+        className="font-bold uppercase text-lg tracking-[0.2em] text-(--color-stamp-taupe)"
       >
         Total Syntheses
       </Paragraph>
@@ -25,7 +25,7 @@ export function OrdersFilterSummary({ total }: PropsI) {
         </Heading>
         <Span
           unstyled
-          className="text-lg font-bold uppercase tracking-tight text-(--color-stamp-chocolate)"
+          className="text-2xl font-bold uppercase tracking-tight text-(--color-stamp-chocolate)"
         >
           Protocol Records
         </Span>
