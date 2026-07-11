@@ -125,7 +125,7 @@ serve(async (req) => {
               if (orderResult.error) {
                 console.error("Failed to update order payment_status:", orderResult.error);
               } else {
-                console.log(`✅ Order ${dbOrderId} payment_status updated to: paid`);
+                console.log(`✅ Order ${finalOrderId} payment_status updated to: paid`);
 
                 // Issue the invoice now that the order is paid (idempotent, non-blocking)
                 await tryGenerateInvoiceForOrder(finalOrderId);
