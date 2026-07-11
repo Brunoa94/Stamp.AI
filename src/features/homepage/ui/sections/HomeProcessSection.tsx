@@ -2,7 +2,7 @@
  * HomeProcessSection
  *
  * "The Process" — six protocol steps as luxury cards with oversized
- * gold step numbers that reveal on hover.
+ * gold step numbers that reveal in color on hover.
  */
 
 import { Heading } from "@/features/ui/heading";
@@ -10,6 +10,13 @@ import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { HOME_PROCESS_STEPS } from "../../lib/constants/homepageContent";
 import { HomeSectionHeader } from "../components/HomeSectionHeader";
+import { cn } from "@/lib/utils";
+
+const STEP_COLORS = [
+  { border: "hover:border-(--color-stamp-gold)", text: "group-hover:text-(--color-stamp-gold)" },
+  { border: "hover:border-(--color-stamp-chocolate)", text: "group-hover:text-(--color-stamp-chocolate)" },
+  { border: "hover:border-(--color-stamp-taupe)", text: "group-hover:text-(--color-stamp-taupe)" },
+];
 
 export function HomeProcessSection() {
   return (
@@ -21,31 +28,42 @@ export function HomeProcessSection() {
         <HomeSectionHeader title="The" accent="process" label="Protocol 001" />
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {HOME_PROCESS_STEPS.map((step) => (
-            <article
-              key={step.id}
-              id={step.id}
-              className="group flex min-h-72 flex-col justify-between border border-(--color-stamp-divider) bg-(--color-stamp-white) p-10 transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover)"
-            >
-              <Span
-                variant="metric"
-                className="text-(--color-stamp-gold)/20 transition-colors duration-500 group-hover:text-(--color-stamp-gold)"
+          {HOME_PROCESS_STEPS.map((step, index) => {
+            const colorIndex = index % STEP_COLORS.length;
+            const colors = STEP_COLORS[colorIndex];
+
+            return (
+              <article
+                key={step.id}
+                id={step.id}
+                className={cn(
+                  "group flex min-h-72 flex-col justify-between border border-(--color-stamp-divider) bg-(--color-stamp-white) p-10 transition-all duration-500 hover:-translate-y-1 hover:shadow-(--shadow-stamp-card-hover)",
+                  colors.border
+                )}
               >
-                {step.number}
-              </Span>
-              <div>
-                <Heading as="h3" variant="card" className="mb-3">
-                  {step.title}
-                </Heading>
-                <Paragraph
-                  variant="card"
-                  className="text-(--color-stamp-taupe)"
+                <Span
+                  variant="metric"
+                  className={cn(
+                    "text-(--color-stamp-gold)/20 transition-colors duration-500",
+                    colors.text
+                  )}
                 >
-                  {step.description}
-                </Paragraph>
-              </div>
-            </article>
-          ))}
+                  {step.number}
+                </Span>
+                <div>
+                  <Heading as="h3" variant="card" className="mb-3">
+                    {step.title}
+                  </Heading>
+                  <Paragraph
+                    variant="card"
+                    className="text-(--color-stamp-taupe)"
+                  >
+                    {step.description}
+                  </Paragraph>
+                </div>
+              </article>
+            );
+          })}
         </div>
 
         <div className="mt-16 flex justify-center">

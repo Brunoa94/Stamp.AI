@@ -7,6 +7,7 @@ import { Span } from "@/features/ui/span";
 import { Login } from "@/features/auth/login/Login";
 import { useUser, useLogout } from "@/queries/authQueries";
 import { ShoppingCart } from "lucide-react";
+import { useScrolled } from "@/hooks/useScrolled";
 
 /**
  * StampHeader
@@ -24,6 +25,7 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
   const pathname = usePathname();
   const { data: user } = useUser();
   const logoutMutation = useLogout();
+  const isScrolled = useScrolled(24);
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -41,7 +43,13 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-24 px-6 lg:px-12 z-50 bg-(--color-stamp-off-white)/80 backdrop-blur-md border-b border-(--color-stamp-divider) flex items-center justify-between">
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 flex h-24 items-center justify-between px-6 lg:px-12 transition-all duration-300 ${
+        isScrolled
+          ? "bg-(--color-stamp-off-white)/80 backdrop-blur-md border-b border-(--color-stamp-divider)"
+          : "bg-transparent border-b border-transparent"
+      }`}
+    >
       {/* Logo */}
       <div className="flex-1">
         <Link

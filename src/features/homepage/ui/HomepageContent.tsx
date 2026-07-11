@@ -27,7 +27,7 @@ export function HomepageContent({
   const products = mapProductsToCards(productsWithPricing);
 
   return (
-    <div className="min-h-screen bg-(--color-stamp-off-white) font-heading text-(--color-stamp-chocolate)">
+    <div className="">
       <HomeHeroSection />
       <HomeProductsSection products={products} />
       <HomeProcessSection />
