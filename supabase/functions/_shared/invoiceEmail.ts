@@ -1,3 +1,5 @@
+import { encodeBase64 } from "https://deno.land/std@0.168.0/encoding/base64.ts";
+
 /**
  * Invoice email delivery via Resend (https://resend.com).
  *
@@ -9,14 +11,9 @@
  *   INVOICE_FROM_EMAIL  sender, e.g. "Stamp.AI <invoices@stamp.ai>"
  */
 
-// Base64-encode without spreading large arrays onto the call stack
+// Base64-encode attachment bytes for Resend
 function toBase64(bytes: Uint8Array): string {
-  let binary = "";
-  const chunkSize = 0x8000;
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-  }
-  return btoa(binary);
+  return encodeBase64(bytes);
 }
 
 export interface SendInvoiceEmailParamsI {
