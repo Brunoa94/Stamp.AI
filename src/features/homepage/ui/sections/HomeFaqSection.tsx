@@ -16,7 +16,7 @@ import { HomeSectionHeader } from "../components/HomeSectionHeader";
 export function HomeFaqSection() {
   return (
     <section id="faq" className="px-6 py-24 lg:px-12 xl:px-24">
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto max-w-screen-2xl">
         <HomeSectionHeader
           title="Questions"
           accent="answered"

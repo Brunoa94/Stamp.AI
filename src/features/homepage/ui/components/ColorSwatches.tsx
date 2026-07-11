@@ -5,12 +5,6 @@ import { Span } from "@/features/ui/span";
  * Color Swatches Component
  *
  * Displays up to 5 color swatches as small rounded circles
- *
- * Features:
- * - Max 5 colors displayed
- * - Rounded circles (16x16px)
- * - Adaptive border (black/white based on color luminance)
- * - "+X more" indicator if more than 5 colors
  */
 
 interface ColorSwatchesProps {
@@ -35,7 +29,7 @@ export function ColorSwatches({ colors, maxDisplay = 5 }: ColorSwatchesProps) {
         return (
           <div
             key={`${colorName}-${index}`}
-            className="w-4 h-4 rounded-full"
+            className="h-4 w-4 rounded-full"
             style={{
               backgroundColor: hex,
               border: `1px solid ${borderColor}`,
@@ -46,7 +40,7 @@ export function ColorSwatches({ colors, maxDisplay = 5 }: ColorSwatchesProps) {
         );
       })}
       {remainingCount > 0 && (
-        <Span className="text-[10px] font-mono opacity-50 ml-0.5">
+        <Span className="ml-0.5 text-[10px] font-mono opacity-50">
           +{remainingCount}
         </Span>
       )}

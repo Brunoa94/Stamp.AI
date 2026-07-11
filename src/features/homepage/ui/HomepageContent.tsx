@@ -7,11 +7,12 @@
  */
 
 import type { ProductWithPricing } from "@/lib/supabase/server-cache";
-import { mapProductsToCards } from "@/features/homepage-brutalist/lib/mappers/productCardMapper";
+import { mapProductsToCards } from "../lib/mappers/productCardMapper";
 import { HomeHeroSection } from "./sections/HomeHeroSection";
 import { HomeProductsSection } from "./sections/HomeProductsSection";
 import { HomeProcessSection } from "./sections/HomeProcessSection";
 import { HomeManifestoSection } from "./sections/HomeManifestoSection";
+import { HomeFeaturedCarouselSection } from "./sections/HomeFeaturedCarouselSection";
 import { HomeCtaSection } from "./sections/HomeCtaSection";
 import { HomeReviewsSection } from "./sections/HomeReviewsSection";
 import { HomeFaqSection } from "./sections/HomeFaqSection";
@@ -31,6 +32,7 @@ export function HomepageContent({
       <HomeProductsSection products={products} />
       <HomeProcessSection />
       <HomeManifestoSection />
+      <HomeFeaturedCarouselSection />
       <HomeCtaSection />
       <HomeReviewsSection />
       <HomeFaqSection />

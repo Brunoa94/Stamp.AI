@@ -131,10 +131,10 @@ export function getColorHex(colorName: string | null): string {
 
   const normalizedLower = normalized.toLowerCase();
 
-  // Fallback to brutalist-style fuzzy matching for provider names like
+  // Fallback to fuzzy matching for provider names like
   // "Heather Navy", "Dark Grey", "Royal Blue", etc.
   const fuzzyKey = Object.keys(COLOR_KEYWORD_HEX_MAP).find((entry) =>
-    normalizedLower.includes(entry)
+    normalizedLower.includes(entry),
   );
 
   if (fuzzyKey) {

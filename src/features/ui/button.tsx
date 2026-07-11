@@ -39,11 +39,13 @@ const buttonVariants = cva(
           "h-auto bg-(--color-stamp-chocolate) px-8 py-6 text-sm font-bold uppercase tracking-[0.2em] text-(--color-stamp-white) transition-all duration-300 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)",
         "primary-gold":
           "h-auto bg-(--color-stamp-gold) px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-300 hover:bg-(--color-stamp-off-white) hover:text-(--color-stamp-chocolate)",
-        "outline-brown":
-          "h-auto border border-(--color-stamp-chocolate)/20 bg-transparent px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-300 hover:border-(--color-stamp-gold) hover:text-(--color-stamp-gold)",
-        "outline-cream":
-          "h-auto border border-(--color-stamp-off-white)/20 bg-transparent px-8 py-6 text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-off-white) transition-all duration-300 hover:border-(--color-stamp-gold) hover:text-(--color-stamp-gold)",
-          "h-auto bg-(--color-stamp-gold) px-8 py-6 text-sm font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-300 hover:bg-(--color-stamp-off-white) hover:text-(--color-stamp-chocolate)",
+        cta: "h-auto bg-(--color-stamp-chocolate) px-16 py-7 md:px-24 md:py-9 text-lg md:text-xl font-bold uppercase tracking-[0.125em] text-(--color-stamp-white) transition-all duration-500 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-95 animate-pulse-subtle shadow-lg hover:shadow-2xl",
+        "cta-gold":
+          "h-auto bg-(--color-stamp-gold) px-16 py-7 md:px-24 md:py-9 text-lg md:text-xl font-bold uppercase tracking-[0.25em] text-(--color-stamp-chocolate) transition-all duration-500 hover:bg-(--color-stamp-off-white) active:scale-95 animate-pulse-subtle shadow-lg hover:shadow-2xl",
+        "ghost-stamp":
+          "h-auto bg-transparent px-12 py-6 md:px-16 md:py-8 text-lg md:text-xl font-bold uppercase tracking-[0.25em] text-(--color-stamp-chocolate) transition-all duration-300 hover:text-(--color-stamp-gold) hover:bg-(--color-stamp-chocolate)/5",
+        "ghost-stamp-light":
+          "h-auto bg-transparent px-12 py-6 md:px-16 md:py-8 text-lg md:text-xl font-bold uppercase tracking-[0.25em] text-(--color-stamp-off-white) transition-all duration-300 hover:text-(--color-stamp-gold) hover:bg-(--color-stamp-off-white)/5",
         "stamp-auth-primary":
           "w-full py-5 px-6 bg-(--color-stamp-chocolate) font-anton text-xl uppercase tracking-[0.2em] text-(--color-stamp-white) transition-all duration-300 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) disabled:opacity-50",
         "stamp-auth-cancel":

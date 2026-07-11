@@ -44,14 +44,14 @@ export function HomeCtaSection() {
           in seconds.
         </Paragraph>
 
-        <div className="flex flex-col gap-4 sm:flex-row">
-          <Button asChild variant="primary-gold" className="group">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <Button asChild variant="cta-gold" className="group">
             <Link href="/stamp">
               Start Creating
-              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              <ArrowRight className="h-6 w-6 transition-transform duration-300 group-hover:translate-x-2" />
             </Link>
           </Button>
-          <Button asChild variant="outline-cream">
+          <Button asChild variant="ghost-stamp-light">
             <Link href="/products">Browse Catalog</Link>
           </Button>
         </div>

@@ -1,39 +1,23 @@
-import { HeroSection } from "@/features/homepage-brutalist/ui/sections/HeroSection";
-import { ProductsSection } from "@/features/homepage-brutalist/ui/sections/ProductsSection";
-import { ProcessSection } from "@/features/homepage-brutalist/ui/sections/ProcessSection";
-import { AboutSection } from "@/features/homepage-brutalist/ui/sections/AboutSection";
-import { CtaSection } from "@/features/homepage-brutalist/ui/sections/CtaSection";
-import { ReviewsSection } from "@/features/homepage-brutalist/ui/sections/ReviewsSection";
-import { FaqSection } from "@/features/homepage-brutalist/ui/sections/FaqSection";
+import { HomepageContent } from "@/features/homepage/ui/HomepageContent";
 import { getCachedFeaturedProductsWithPricing } from "@/lib/supabase/server-cache";
 
 /**
- * Brutalist Homepage
+ * Luxury Homepage (v2)
  *
- * Orchestrates all brutalist homepage sections following the Superdesign draft
- * Design: "STAMP.AI | Refined Cart Interface"
- *
- * Note: Navbar, Footer, and GrainOverlay are in the root layout
- *
- * Server Component: Fetches product data with 30-minute cache
+ * Main homepage route ("/") now uses the v2 luxury design system.
  */
 
 // Revalidate page every 30 minutes
-export const revalidate = 1800
+export const revalidate = 1800;
+
+export const metadata = {
+  title: "Stamp AI | Design Synthesis Atelier",
+  description:
+    "AI-powered design synthesis for premium apparel. Create archive-quality graphics in seconds.",
+};
 
 export default async function Home() {
-  // Fetch featured products with selling prices on server (cached for 30 min)
-  const productsWithPricing = await getCachedFeaturedProductsWithPricing('NL')
+  const productsWithPricing = await getCachedFeaturedProductsWithPricing("NL");
 
-  return (
-    <div className="min-h-screen bg-concrete text-ink font-space">
-      <HeroSection />
-      <ProductsSection productsWithPricing={productsWithPricing} />
-      <ProcessSection />
-      <AboutSection />
-      <CtaSection />
-      <ReviewsSection />
-      <FaqSection />
-    </div>
-  );
+  return <HomepageContent productsWithPricing={productsWithPricing} />;
 }

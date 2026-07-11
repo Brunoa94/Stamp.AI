@@ -45,7 +45,7 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
       {/* Logo */}
       <div className="flex-1">
         <Link
-          href="/stamp"
+          href="/"
           className="text-2xl font-bold tracking-tight uppercase text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-colors"
           aria-label="Return to Stamp homepage"
         >
@@ -58,18 +58,12 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
         <Button
           variant="ghost"
           onClick={handleStampIt}
-          className="relative px-6 py-3 group overflow-hidden rounded-none h-auto hover:bg-transparent"
+          className="px-8 py-3 rounded-lg h-auto btn-gradient-border animate-pulse-subtle transition-all duration-500 hover:scale-105"
           aria-label="Start stamping process"
         >
-          {/* Animated Border */}
-          <div className="absolute inset-0 bg-gradient-conic from-transparent via-(--color-stamp-gold) to-transparent animate-spin-slow opacity-40" />
-
-          {/* Inner Content */}
-          <span className="relative z-10 block">
-            <Span variant="micro" className="text-(--color-stamp-chocolate)">
-              Stamp It
-            </Span>
-          </span>
+          <Span variant="micro" className="text-(--color-stamp-chocolate)">
+            Stamp
+          </Span>
         </Button>
       </div>
 

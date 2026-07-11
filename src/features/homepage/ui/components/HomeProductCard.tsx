@@ -9,8 +9,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
-import { ColorSwatches } from "@/features/homepage-brutalist/ui/components/ColorSwatches";
-import type { ProductCardData } from "@/features/homepage-brutalist/lib/mappers/productCardMapper";
+import { ColorSwatches } from "./ColorSwatches";
+import type { ProductCardData } from "../../lib/mappers/productCardMapper";
 
 const AVAILABILITY_BADGES: Record<string, string> = {
   out_of_stock: "Out of stock",

@@ -33,7 +33,7 @@ export function ModernTopNavbar() {
         {/* Center CTA Button - Hidden on mobile/tablet */}
         <Link
           href="/stamp"
-          className="hidden lg:block gradient-badge px-10 py-3 rounded-lg font-anton text-white text-lg uppercase tracking-widest"
+          className="hidden lg:block bg-(--color-stamp-chocolate) px-10 py-4 font-bold text-white text-lg uppercase tracking-widest animate-pulse-subtle transition-all duration-500 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
         >
           STAMP IT
         </Link>

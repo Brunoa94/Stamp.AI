@@ -8,7 +8,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Span } from "@/features/ui/span";
-import type { ProductCardData } from "@/features/homepage-brutalist/lib/mappers/productCardMapper";
+import type { ProductCardData } from "../../lib/mappers/productCardMapper";
 import { MAX_HOME_PRODUCTS } from "../../lib/constants/homepageContent";
 import { HomeSectionHeader } from "../components/HomeSectionHeader";
 import { HomeProductCard } from "../components/HomeProductCard";
