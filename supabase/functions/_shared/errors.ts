@@ -107,6 +107,15 @@ export const ErrorCodes = {
   MOLLIE_PAYMENT_FAILED: (details: string) => new FunctionError(400, 'MOLLIE_PAYMENT_FAILED', `Mollie payment failed: ${details}`),
   MOLLIE_PAYMENT_ID_REQUIRED: () => new FunctionError(400, 'MOLLIE_PAYMENT_ID_REQUIRED', 'Mollie payment ID is required'),
 
+  // Invoice errors
+  ORDER_ID_REQUIRED: () => new FunctionError(400, 'ORDER_ID_REQUIRED', 'order_id is required'),
+  INVOICE_ORDER_NOT_PAID: () => new FunctionError(400, 'INVOICE_ORDER_NOT_PAID', 'Invoices can only be generated for paid orders'),
+  INVOICE_GENERATION_FAILED: (details: string) => new FunctionError(500, 'INVOICE_GENERATION_FAILED', `Invoice generation failed: ${details}`),
+
+  // Authorization / resource errors
+  UNAUTHORIZED: (details: string) => new FunctionError(403, 'UNAUTHORIZED', details),
+  RESOURCE_NOT_FOUND: (details: string) => new FunctionError(404, 'RESOURCE_NOT_FOUND', details),
+
   // Generic errors
   INTERNAL_ERROR: () => new FunctionError(500, 'INTERNAL_ERROR', 'Internal server error'),
   UNKNOWN_ERROR: () => new FunctionError(500, 'UNKNOWN_ERROR', 'Unknown error occurred'),

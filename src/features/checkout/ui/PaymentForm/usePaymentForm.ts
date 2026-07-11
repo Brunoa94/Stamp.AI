@@ -67,9 +67,9 @@ export function usePaymentForm({
         currency: "usd",
         line_items: lineItems,
         shipping_address: shippingAddress,
-        metadata: {
-          order_id: `order_${Date.now()}`,
-        },
+        // Note: order_id is NOT set here because the order doesn't exist yet.
+        // The order is created after payment succeeds, then linkPaymentTransactionToOrder
+        // sets payment_transactions.order_id which the webhook uses to find the order.
       };
 
       if (isTestMode) {
