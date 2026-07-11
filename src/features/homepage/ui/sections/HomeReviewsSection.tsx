@@ -17,6 +17,7 @@ import {
 import { HomeRatingStars } from "../components/HomeRatingStars";
 import { HomeSectionHeader } from "../components/HomeSectionHeader";
 import { HomePlatformIcon } from "../components/HomePlatformIcon";
+import { SectionReveal } from "../components/SectionReveal";
 
 export function HomeReviewsSection() {
   return (
@@ -24,7 +25,7 @@ export function HomeReviewsSection() {
       id="reviews"
       className="bg-(--color-stamp-cream) px-6 py-24 lg:px-12 xl:px-24"
     >
-      <div className="mx-auto max-w-screen-2xl">
+      <SectionReveal className="mx-auto max-w-screen-2xl">
         <HomeSectionHeader
           title="Social"
           accent="proof"
@@ -161,7 +162,7 @@ export function HomeReviewsSection() {
             })}
           </div>
         </div>
-      </div>
+      </SectionReveal>
     </section>
   );
 }

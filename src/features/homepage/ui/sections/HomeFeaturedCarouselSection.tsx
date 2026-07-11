@@ -20,6 +20,7 @@ import { Span } from "@/features/ui/span";
 import { useCatalogProducts } from "@/queries/catalogQueries";
 import { CatalogQueryService } from "@/services/catalogQueryService";
 import { HomeSectionHeader } from "../components/HomeSectionHeader";
+import { SectionReveal } from "../components/SectionReveal";
 
 const EXCLUDED_BLUEPRINT_IDS = new Set([12]);
 const PROVIDER_COUNTRY = "NL";
@@ -105,7 +106,7 @@ export function HomeFeaturedCarouselSection() {
 
   return (
     <section className="bg-(--color-stamp-cream) px-6 py-24 lg:px-12 xl:px-24">
-      <div className="mx-auto max-w-screen-2xl">
+      <SectionReveal className="mx-auto max-w-screen-2xl">
         <div className="flex items-end justify-between">
           <HomeSectionHeader
             title="Featured"
@@ -235,7 +236,7 @@ export function HomeFeaturedCarouselSection() {
           </Span>
           <ArrowRight className="h-3.5 w-3.5 text-(--color-stamp-taupe)" />
         </div>
-      </div>
+      </SectionReveal>
     </section>
   );
 }

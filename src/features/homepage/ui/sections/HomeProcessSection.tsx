@@ -11,11 +11,21 @@ import { Span } from "@/features/ui/span";
 import { HOME_PROCESS_STEPS } from "../../lib/constants/homepageContent";
 import { HomeSectionHeader } from "../components/HomeSectionHeader";
 import { cn } from "@/lib/utils";
+import { SectionReveal } from "../components/SectionReveal";
 
 const STEP_COLORS = [
-  { border: "hover:border-(--color-stamp-gold)", text: "group-hover:text-(--color-stamp-gold)" },
-  { border: "hover:border-(--color-stamp-chocolate)", text: "group-hover:text-(--color-stamp-chocolate)" },
-  { border: "hover:border-(--color-stamp-taupe)", text: "group-hover:text-(--color-stamp-taupe)" },
+  {
+    border: "hover:border-(--color-stamp-gold)",
+    text: "group-hover:text-(--color-stamp-gold)",
+  },
+  {
+    border: "hover:border-(--color-stamp-chocolate)",
+    text: "group-hover:text-(--color-stamp-chocolate)",
+  },
+  {
+    border: "hover:border-(--color-stamp-taupe)",
+    text: "group-hover:text-(--color-stamp-taupe)",
+  },
 ];
 
 export function HomeProcessSection() {
@@ -24,7 +34,7 @@ export function HomeProcessSection() {
       id="process"
       className="bg-(--color-stamp-cream) px-6 py-24 lg:px-12 xl:px-24"
     >
-      <div className="mx-auto max-w-screen-2xl">
+      <SectionReveal className="mx-auto max-w-screen-2xl">
         <HomeSectionHeader title="The" accent="process" label="Protocol 001" />
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -38,14 +48,14 @@ export function HomeProcessSection() {
                 id={step.id}
                 className={cn(
                   "group flex min-h-72 flex-col justify-between border border-(--color-stamp-divider) bg-(--color-stamp-white) p-10 transition-all duration-500 hover:-translate-y-1 hover:shadow-(--shadow-stamp-card-hover)",
-                  colors.border
+                  colors.border,
                 )}
               >
                 <Span
                   variant="metric"
                   className={cn(
                     "text-(--color-stamp-gold)/20 transition-colors duration-500",
-                    colors.text
+                    colors.text,
                   )}
                 >
                   {step.number}
@@ -71,7 +81,7 @@ export function HomeProcessSection() {
             Engineered for precision
           </Span>
         </div>
-      </div>
+      </SectionReveal>
     </section>
   );
 }

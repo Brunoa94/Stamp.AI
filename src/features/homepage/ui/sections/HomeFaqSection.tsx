@@ -12,11 +12,12 @@ import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { HOME_FAQS } from "../../lib/constants/homepageContent";
 import { HomeSectionHeader } from "../components/HomeSectionHeader";
+import { SectionReveal } from "../components/SectionReveal";
 
 export function HomeFaqSection() {
   return (
     <section id="faq" className="px-6 py-24 lg:px-12 xl:px-24">
-      <div className="mx-auto max-w-screen-2xl">
+      <SectionReveal className="mx-auto max-w-screen-2xl">
         <HomeSectionHeader
           title="Questions"
           accent="answered"
@@ -55,7 +56,7 @@ export function HomeFaqSection() {
             <Link href="/contact">Contact Support</Link>
           </Button>
         </div>
-      </div>
+      </SectionReveal>
     </section>
   );
 }
