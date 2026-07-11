@@ -464,6 +464,129 @@ export type Database = {
         }
         Relationships: []
       }
+      invoice_counters: {
+        Row: {
+          counter_key: string
+          last_value: number
+          updated_at: string | null
+        }
+        Insert: {
+          counter_key: string
+          last_value?: number
+          updated_at?: string | null
+        }
+        Update: {
+          counter_key?: string
+          last_value?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      invoices: {
+        Row: {
+          billing_address: Json | null
+          created_at: string | null
+          currency: string
+          customer_email: string
+          customer_name: string | null
+          discount_amount: number
+          emailed_at: string | null
+          id: string
+          invoice_number: string
+          issued_at: string
+          line_items: Json
+          order_id: string
+          order_number: string
+          payment_method: string | null
+          payment_provider: string | null
+          pdf_bucket: string | null
+          pdf_path: string | null
+          related_invoice_id: string | null
+          shipping_address: Json | null
+          shipping_cost: number
+          status: string
+          subtotal: number
+          tax_amount: number
+          total_amount: number
+          type: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          billing_address?: Json | null
+          created_at?: string | null
+          currency?: string
+          customer_email: string
+          customer_name?: string | null
+          discount_amount?: number
+          emailed_at?: string | null
+          id?: string
+          invoice_number: string
+          issued_at?: string
+          line_items?: Json
+          order_id: string
+          order_number: string
+          payment_method?: string | null
+          payment_provider?: string | null
+          pdf_bucket?: string | null
+          pdf_path?: string | null
+          related_invoice_id?: string | null
+          shipping_address?: Json | null
+          shipping_cost?: number
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          total_amount?: number
+          type?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          billing_address?: Json | null
+          created_at?: string | null
+          currency?: string
+          customer_email?: string
+          customer_name?: string | null
+          discount_amount?: number
+          emailed_at?: string | null
+          id?: string
+          invoice_number?: string
+          issued_at?: string
+          line_items?: Json
+          order_id?: string
+          order_number?: string
+          payment_method?: string | null
+          payment_provider?: string | null
+          pdf_bucket?: string | null
+          pdf_path?: string | null
+          related_invoice_id?: string | null
+          shipping_address?: Json | null
+          shipping_cost?: number
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          total_amount?: number
+          type?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_related_invoice_id_fkey"
+            columns: ["related_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           created_at: string | null
@@ -1563,6 +1686,44 @@ export type Database = {
       confirm_refund_completed: {
         Args: { p_refund_external_id: string; p_refund_id: string }
         Returns: Json
+      }
+      create_invoice_for_order: {
+        Args: { p_order_id: string; p_type?: string }
+        Returns: {
+          billing_address: Json | null
+          created_at: string | null
+          currency: string
+          customer_email: string
+          customer_name: string | null
+          discount_amount: number
+          emailed_at: string | null
+          id: string
+          invoice_number: string
+          issued_at: string
+          line_items: Json
+          order_id: string
+          order_number: string
+          payment_method: string | null
+          payment_provider: string | null
+          pdf_bucket: string | null
+          pdf_path: string | null
+          related_invoice_id: string | null
+          shipping_address: Json | null
+          shipping_cost: number
+          status: string
+          subtotal: number
+          tax_amount: number
+          total_amount: number
+          type: string
+          updated_at: string | null
+          user_id: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "invoices"
+          isOneToOne: false
+          isSetofReturn: true
+        }
       }
       create_refund_failure_alert: {
         Args: {

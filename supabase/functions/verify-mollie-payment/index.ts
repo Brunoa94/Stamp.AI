@@ -3,6 +3,7 @@ import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { getMolliePayment, isMolliePaymentPaid, mapMollieStatusToInternal } from "../_shared/mollie.ts";
+import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
 import type { MollieVerifyRequestI, MollieVerifyResponseI } from "../../types/index.ts";
 
 const corsHeaders = {
@@ -83,6 +84,9 @@ serve(async (req) => {
 
         if (orderResult.error) {
           console.error(`Failed to update order ${orderId} from verify endpoint:`, orderResult.error);
+        } else {
+          // Issue the invoice now that the order is paid (idempotent, non-blocking)
+          await tryGenerateInvoiceForOrder(orderId);
         }
       } else if (
         payment.status === "failed" ||
