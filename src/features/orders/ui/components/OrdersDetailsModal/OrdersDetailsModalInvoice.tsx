@@ -1,8 +1,7 @@
 import { FileText, Loader2 } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Paragraph } from "@/features/ui/paragraph";
-import { useGenerateInvoice, useOrderInvoice } from "@/queries";
-import { InvoiceService } from "@/services/invoiceService";
+import { useInvoiceDownload } from "@/features/orders/lib/hooks/useInvoiceDownload";
 import type { OrderWithItemsT } from "@/types/order";
 
 interface PropsI {
@@ -17,58 +16,36 @@ interface PropsI {
  */
 export function OrdersDetailsModalInvoice({ order }: PropsI) {
   const isPaid = order.payment_status === "paid";
-  const { data: invoice } = useOrderInvoice(isPaid ? order.id : null);
-  const generateInvoice = useGenerateInvoice();
+  const { isLoading, invoiceNumber, handleDownload } = useInvoiceDownload({
+    orderId: order.id,
+    isPaid,
+  });
 
   if (!isPaid) {
     return null;
   }
 
-  const handleDownload = async () => {
-    // Prefer a direct signed URL when the PDF already exists; otherwise
-    // ask the edge function to issue the invoice and return a URL.
-    let url: string | null = null;
-
-    if (invoice?.pdf_path) {
-      url = await InvoiceService.getInvoiceDownloadUrl(invoice);
-    }
-
-    if (!url) {
-      try {
-        const result = await generateInvoice.mutateAsync(order.id);
-        url = result.download_url;
-      } catch {
-        // Error already surfaced by the mutation's onError handler
-        return;
-      }
-    }
-
-    if (url) {
-      window.open(url, "_blank", "noopener,noreferrer");
-    }
-  };
-
   return (
     <div className="mt-6 border-t border-(--color-stamp-divider) pt-4">
       <Button
         onClick={handleDownload}
-        disabled={generateInvoice.isPending}
+        disabled={isLoading}
         variant="ghost"
         className="h-auto w-full justify-center gap-2 rounded-none border border-(--color-stamp-divider) px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) hover:bg-(--color-stamp-cream)/60 hover:text-(--color-stamp-chocolate)"
       >
-        {generateInvoice.isPending ? (
+        {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (
           <FileText className="h-4 w-4" />
         )}
-        {generateInvoice.isPending ? "Preparing Invoice…" : "Download Invoice"}
+        {isLoading ? "Preparing Invoice…" : "Download Invoice"}
       </Button>
-      {invoice?.invoice_number ? (
+      {invoiceNumber ? (
         <Paragraph
           variant="sm"
           className="mt-2 text-center text-[9px] tracking-[0.2em] text-(--color-stamp-taupe)"
         >
-          {invoice.invoice_number}
+          {invoiceNumber}
         </Paragraph>
       ) : null}
     </div>

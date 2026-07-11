@@ -68,7 +68,11 @@ export class InvoiceService {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || "Failed to generate invoice");
+      throw ErrorClient.handleError({
+        error: new Error(data.error || "Failed to generate invoice"),
+        service: "Invoice",
+        action: "Generate Invoice",
+      });
     }
 
     return data as GenerateInvoiceResponseI;
