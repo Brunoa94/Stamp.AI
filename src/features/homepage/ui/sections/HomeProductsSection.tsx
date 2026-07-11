@@ -12,6 +12,7 @@ import type { ProductCardData } from "../../lib/mappers/productCardMapper";
 import { MAX_HOME_PRODUCTS } from "../../lib/constants/homepageContent";
 import { HomeSectionHeader } from "../components/HomeSectionHeader";
 import { HomeProductCard } from "../components/HomeProductCard";
+import { SectionReveal } from "../components/SectionReveal";
 
 interface HomeProductsSectionPropsI {
   products: ProductCardData[];
@@ -22,7 +23,7 @@ export function HomeProductsSection({ products }: HomeProductsSectionPropsI) {
 
   return (
     <section id="products" className="px-6 py-24 lg:px-12 xl:px-24">
-      <div className="mx-auto max-w-screen-2xl">
+      <SectionReveal className="mx-auto max-w-screen-2xl">
         <HomeSectionHeader
           title="The"
           accent="essentials"
@@ -54,7 +55,7 @@ export function HomeProductsSection({ products }: HomeProductsSectionPropsI) {
             <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
         </div>
-      </div>
+      </SectionReveal>
     </section>
   );
 }
