@@ -1,31 +1,35 @@
 /**
- * Sync Catalog Edge Function
- * Syncs Printify catalog to local database for immediate price lookups
+ * Sync Catalog Edge Function (Final Simplified Version)
+ *
+ * Syncs Printify catalog using Printify Choice (provider 99)
+ * Uses blueprint_id as primary key
+ *
+ * IMPORTANT: Does NOT overwrite admin-editable fields:
+ * - display_title (preserved once set)
+ * - is_active (admin controlled)
+ * - selling_price_cents, original_price_cents, is_on_sale (admin overrides)
  *
  * Usage:
  * POST /sync-catalog
  * {
- *   "countries": ["US", "GB", "FR", "DE"],
- *   "blueprintIds": [12, 145], // Optional: only sync specific blueprints
- *   "forceUpdate": false // Optional: force update even if recently synced
+ *   "blueprintIds": [12, 145] // Optional: only sync specific blueprints
  * }
  */
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const PRINTIFY_API_BASE = "https://api.printify.com/v1";
+const PRINTIFY_CHOICE_PROVIDER_ID = 99;
 
 interface SyncOptions {
-  countries: string[];
   blueprintIds?: number[];
-  forceUpdate?: boolean;
 }
 
 interface SyncResult {
   success: boolean;
   productsCreated: number;
+  productsUpdated: number;
   variantsCreated: number;
-  pricingRecordsCreated: number;
   errors: Array<{
     blueprintId: number;
     error: string;
@@ -67,17 +71,20 @@ Deno.serve(async (req) => {
   try {
     // Get environment variables
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
-    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get(
-      "SUPABASE_SERVICE_ROLE_KEY",
-    )!;
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const PRINTIFY_API_TOKEN = Deno.env.get("PRINTIFY_API_TOKEN")!;
     const PRINTIFY_SHOP_ID = Deno.env.get("PRINTIFY_SHOP_ID")!;
 
     // Parse request body
-    const { countries = ["US", "GB", "FR", "DE"], blueprintIds, forceUpdate } =
-      (await req.json()) as SyncOptions;
+    let options: SyncOptions = {};
+    try {
+      options = await req.json();
+    } catch {
+      // Empty body is OK
+    }
+    const { blueprintIds } = options;
 
-    console.log(`Starting catalog sync for countries: ${countries.join(", ")}`);
+    console.log(`Starting catalog sync (Printify Choice only)`);
 
     // Initialize Supabase client
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
@@ -85,8 +92,8 @@ Deno.serve(async (req) => {
     const result: SyncResult = {
       success: false,
       productsCreated: 0,
+      productsUpdated: 0,
       variantsCreated: 0,
-      pricingRecordsCreated: 0,
       errors: [],
     };
 
@@ -96,13 +103,11 @@ Deno.serve(async (req) => {
       `${PRINTIFY_API_BASE}/catalog/blueprints.json`,
       {
         headers: { Authorization: `Bearer ${PRINTIFY_API_TOKEN}` },
-      },
+      }
     );
 
     if (!blueprintsResponse.ok) {
-      throw new Error(
-        `Failed to fetch blueprints: ${blueprintsResponse.statusText}`,
-      );
+      throw new Error(`Failed to fetch blueprints: ${blueprintsResponse.statusText}`);
     }
 
     const blueprints = await blueprintsResponse.json();
@@ -120,401 +125,262 @@ Deno.serve(async (req) => {
       try {
         console.log(`Syncing blueprint ${blueprint.id}: ${blueprint.title}`);
 
-        // The list endpoint often does not include a usable image set,
-        // so fetch per-blueprint details to reliably extract a base image URL.
-        let baseImageUrl: string | null = extractFirstImageUrl(
-          blueprint.images,
-        );
+        // Fetch blueprint details for image
+        let baseImageUrl: string | null = extractFirstImageUrl(blueprint.images);
         try {
           const blueprintDetailResponse = await fetch(
             `${PRINTIFY_API_BASE}/catalog/blueprints/${blueprint.id}.json`,
             {
               headers: { Authorization: `Bearer ${PRINTIFY_API_TOKEN}` },
-            },
+            }
           );
 
           if (blueprintDetailResponse.ok) {
             const blueprintDetail = await blueprintDetailResponse.json();
-            baseImageUrl = extractFirstImageUrl(blueprintDetail?.images) ||
-              baseImageUrl;
+            baseImageUrl = extractFirstImageUrl(blueprintDetail?.images) || baseImageUrl;
           }
         } catch (imageError) {
-          console.warn(
-            `Could not fetch blueprint image for ${blueprint.id}:`,
-            imageError,
-          );
+          console.warn(`Could not fetch blueprint image for ${blueprint.id}:`, imageError);
         }
 
-        // Upsert product to catalog_products
-        const { data: product, error: productError } = await supabase
+        // Fetch shipping info for NL
+        let shippingCents = 0;
+
+        try {
+          const shippingResponse = await fetch(
+            `${PRINTIFY_API_BASE}/catalog/blueprints/${blueprint.id}/print_providers/${PRINTIFY_CHOICE_PROVIDER_ID}/shipping.json`,
+            {
+              headers: { Authorization: `Bearer ${PRINTIFY_API_TOKEN}` },
+            }
+          );
+
+          if (shippingResponse.ok) {
+            const shippingInfo = await shippingResponse.json();
+            const nlProfile = shippingInfo.profiles?.find((p: any) => p.countries?.includes("NL"));
+            const profile = nlProfile || shippingInfo.profiles?.[0];
+
+            if (profile?.first_item) {
+              shippingCents = Math.round(profile.first_item.cost);
+            }
+          }
+        } catch (shippingError) {
+          console.warn(`Could not fetch shipping for blueprint ${blueprint.id}:`, shippingError);
+        }
+
+        // Check if product exists
+        const { data: existingProduct } = await supabase
           .from("catalog_products")
-          .upsert(
-            {
-              blueprint_id: blueprint.id,
-              name: blueprint.title,
-              description: blueprint.description,
-              base_image_url: baseImageUrl,
-              is_active: true,
-            },
-            {
-              onConflict: "blueprint_id",
-            },
-          )
-          .select()
+          .select("blueprint_id")
+          .eq("blueprint_id", blueprint.id)
           .single();
 
-        if (productError) {
-          throw new Error(`Failed to upsert product: ${productError.message}`);
+        if (existingProduct) {
+          // Update existing product - PRESERVE editable fields
+          const { error: updateError } = await supabase
+            .from("catalog_products")
+            .update({
+              base_image_url: baseImageUrl,
+              shipping_cents: shippingCents,
+              last_synced_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            })
+            .eq("blueprint_id", blueprint.id);
+
+          if (updateError) {
+            throw new Error(`Failed to update product: ${updateError.message}`);
+          }
+          result.productsUpdated++;
+          console.log(`✓ Updated product ${blueprint.id} (preserved editable fields)`);
+        } else {
+          // Create new product
+          const { error: insertError } = await supabase
+            .from("catalog_products")
+            .insert({
+              blueprint_id: blueprint.id,
+              display_title: blueprint.title,
+              base_image_url: baseImageUrl,
+              shipping_cents: shippingCents,
+              is_active: false, // New products start inactive until admin enables
+              last_synced_at: new Date().toISOString(),
+            });
+
+          if (insertError) {
+            throw new Error(`Failed to insert product: ${insertError.message}`);
+          }
+          result.productsCreated++;
+          console.log(`✓ Created new product ${blueprint.id}`);
         }
 
-        result.productsCreated++;
-
-        // Fetch print providers for this blueprint
-        const providersResponse = await fetch(
-          `${PRINTIFY_API_BASE}/catalog/blueprints/${blueprint.id}/print_providers.json`,
+        // Fetch variants from Printify Choice
+        const variantsResponse = await fetch(
+          `${PRINTIFY_API_BASE}/catalog/blueprints/${blueprint.id}/print_providers/${PRINTIFY_CHOICE_PROVIDER_ID}/variants.json`,
           {
             headers: { Authorization: `Bearer ${PRINTIFY_API_TOKEN}` },
-          },
+          }
         );
 
-        if (!providersResponse.ok) {
-          console.warn(`No providers for blueprint ${blueprint.id}`);
+        if (!variantsResponse.ok) {
+          console.warn(`No Printify Choice variants for blueprint ${blueprint.id}`);
           continue;
         }
 
-        const providers = await providersResponse.json();
+        const variantsData = await variantsResponse.json();
+        const variants = variantsData.variants || [];
 
-        // CREATE ONE TEMPORARY PRODUCT PER BLUEPRINT TO EXTRACT COSTS
-        // This is done ONCE per blueprint, then costs are reused for all providers
-        let blueprintVariantCosts: Map<number, number> = new Map();
+        // Extract costs by creating a temporary product
+        let variantCosts: Map<number, number> = new Map();
 
-        if (providers.length > 0) {
-          const firstProvider = providers[0];
+        if (variants.length > 0) {
+          try {
+            console.log(`Extracting costs for blueprint ${blueprint.id}...`);
 
-          // Fetch variants for this blueprint from the first provider
-          const variantsResponse = await fetch(
-            `${PRINTIFY_API_BASE}/catalog/blueprints/${blueprint.id}/print_providers/${firstProvider.id}/variants.json`,
-            {
-              headers: { Authorization: `Bearer ${PRINTIFY_API_TOKEN}` },
-            },
-          );
+            const minimalPNG =
+              "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
 
-          if (variantsResponse.ok) {
-            const variantsData = await variantsResponse.json();
-            const variants = variantsData.variants || [];
+            const uploadResponse = await fetch(
+              `${PRINTIFY_API_BASE}/uploads/images.json`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${PRINTIFY_API_TOKEN}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  file_name: "temp_sync.png",
+                  contents: minimalPNG,
+                }),
+              }
+            );
 
-            // Upsert variants to database
-            for (const variant of variants) {
-              const { error: variantError } = await supabase
-                .from("product_variants")
-                .upsert(
+            if (uploadResponse.ok) {
+              const uploadedImage = await uploadResponse.json();
+              const firstPlaceholder = variants[0]?.placeholders?.[0];
+
+              if (firstPlaceholder) {
+                const tempProduct = {
+                  title: `TEMP_${blueprint.id}_${Date.now()}`,
+                  description: "Temporary cost extraction",
+                  blueprint_id: blueprint.id,
+                  print_provider_id: PRINTIFY_CHOICE_PROVIDER_ID,
+                  variants: variants.map((v: any) => ({
+                    id: v.id,
+                    price: 9999,
+                    is_enabled: true,
+                  })),
+                  print_areas: [
+                    {
+                      variant_ids: variants.map((v: any) => v.id),
+                      placeholders: [
+                        {
+                          position: firstPlaceholder.position,
+                          images: [
+                            {
+                              id: uploadedImage.id,
+                              x: 0.5,
+                              y: 0.5,
+                              scale: 1,
+                              angle: 0,
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                };
+
+                const createResponse = await fetch(
+                  `${PRINTIFY_API_BASE}/shops/${PRINTIFY_SHOP_ID}/products.json`,
                   {
-                    product_id: product.id,
-                    printify_variant_id: variant.id,
-                    color: variant.options?.color || null,
-                    size: variant.options?.size || null,
-                    title: variant.title,
-                  },
-                  {
-                    onConflict: "product_id,printify_variant_id",
-                  },
+                    method: "POST",
+                    headers: {
+                      Authorization: `Bearer ${PRINTIFY_API_TOKEN}`,
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(tempProduct),
+                  }
                 );
 
-              if (!variantError) {
-                result.variantsCreated++;
-              }
-            }
+                if (createResponse.ok) {
+                  const createdProduct = await createResponse.json();
+                  let tempProductId: string | null = null;
 
-            // NOW CREATE TEMPORARY PRODUCT TO EXTRACT COSTS
-            try {
-              console.log(`Extracting costs for blueprint ${blueprint.id}...`);
+                  try {
+                    tempProductId = createdProduct.id;
+                    console.log(`✓ Created temp product ${tempProductId}`);
 
-              // Upload a minimal 1x1 transparent PNG
-              const minimalPNG =
-                "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
-
-              const uploadResponse = await fetch(
-                `${PRINTIFY_API_BASE}/uploads/images.json`,
-                {
-                  method: "POST",
-                  headers: {
-                    Authorization: `Bearer ${PRINTIFY_API_TOKEN}`,
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    file_name: "temp_sync.png",
-                    contents: minimalPNG,
-                  }),
-                },
-              );
-
-              if (uploadResponse.ok) {
-                const uploadedImage = await uploadResponse.json();
-
-                // Get first placeholder position from first variant
-                const firstPlaceholder = variants[0]?.placeholders?.[0];
-                if (!firstPlaceholder) {
-                  console.warn(
-                    `No placeholders found for blueprint ${blueprint.id}`,
-                  );
-                } else {
-                  // Create temp product
-                  const tempProduct = {
-                    title: `TEMP_${blueprint.id}_${Date.now()}`,
-                    description: "Temporary cost extraction",
-                    blueprint_id: blueprint.id,
-                    print_provider_id: firstProvider.id,
-                    variants: variants.map((v: any) => ({
-                      id: v.id,
-                      price: 9999,
-                      is_enabled: true,
-                    })),
-                    print_areas: [
-                      {
-                        variant_ids: variants.map((v: any) => v.id),
-                        placeholders: [
-                          {
-                            position: firstPlaceholder.position,
-                            images: [
-                              {
-                                id: uploadedImage.id,
-                                x: 0.5,
-                                y: 0.5,
-                                scale: 1,
-                                angle: 0,
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                    ],
-                  };
-
-                  const createResponse = await fetch(
-                    `${PRINTIFY_API_BASE}/shops/${PRINTIFY_SHOP_ID}/products.json`,
-                    {
-                      method: "POST",
-                      headers: {
-                        Authorization: `Bearer ${PRINTIFY_API_TOKEN}`,
-                        "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify(tempProduct),
-                    },
-                  );
-
-                  if (createResponse.ok) {
-                    const createdProduct = await createResponse.json();
-                    let tempProductId: string | null = null;
-
-                    try {
-                      tempProductId = createdProduct.id;
-                      console.log(
-                        `✓ Created temp product ${tempProductId}, extracting costs from ${createdProduct.variants?.length} variants`,
-                      );
-
-                      // Extract costs
-                      for (const variant of createdProduct.variants || []) {
-                        if (variant.cost) {
-                          blueprintVariantCosts.set(variant.id, variant.cost);
-                        }
-                      }
-
-                      console.log(
-                        `✓ Extracted ${blueprintVariantCosts.size} variant costs`,
-                      );
-                    } finally {
-                      // CRITICAL: Always delete temp product, even if cost extraction fails
-                      if (tempProductId) {
-                        try {
-                          const deleteResponse = await fetch(
-                            `${PRINTIFY_API_BASE}/shops/${PRINTIFY_SHOP_ID}/products/${tempProductId}.json`,
-                            {
-                              method: "DELETE",
-                              headers: {
-                                Authorization: `Bearer ${PRINTIFY_API_TOKEN}`,
-                              },
-                            },
-                          );
-
-                          if (deleteResponse.ok) {
-                            console.log(`✓ Deleted temp product ${tempProductId}`);
-                          } else {
-                            console.error(
-                              `⚠️ Failed to delete temp product ${tempProductId}: ${deleteResponse.status}`,
-                            );
-                          }
-                        } catch (deleteError) {
-                          console.error(
-                            `⚠️ Error deleting temp product ${tempProductId}:`,
-                            deleteError,
-                          );
-                        }
+                    for (const variant of createdProduct.variants || []) {
+                      if (variant.cost) {
+                        variantCosts.set(variant.id, variant.cost);
                       }
                     }
-                  } else {
-                    const errorText = await createResponse.text();
-                    console.error(
-                      `Failed to create temp product: ${createResponse.status} ${errorText}`,
-                    );
+
+                    console.log(`✓ Extracted ${variantCosts.size} variant costs`);
+                  } finally {
+                    if (tempProductId) {
+                      try {
+                        await fetch(
+                          `${PRINTIFY_API_BASE}/shops/${PRINTIFY_SHOP_ID}/products/${tempProductId}.json`,
+                          {
+                            method: "DELETE",
+                            headers: { Authorization: `Bearer ${PRINTIFY_API_TOKEN}` },
+                          }
+                        );
+                        console.log(`✓ Deleted temp product ${tempProductId}`);
+                      } catch (deleteError) {
+                        console.error(`⚠️ Error deleting temp product:`, deleteError);
+                      }
+                    }
                   }
                 }
-              } else {
-                console.warn(`Failed to upload placeholder image`);
               }
-            } catch (costError) {
-              console.error(
-                `Error extracting costs for blueprint ${blueprint.id}:`,
-                costError,
-              );
             }
+          } catch (costError) {
+            console.error(`Error extracting costs for blueprint ${blueprint.id}:`, costError);
           }
         }
 
-        // Now handle providers and pricing
-        for (const provider of providers) {
-          // Upsert provider
-          const description = provider.location
-            ? `${provider.location.city || ""}, ${
-              provider.location.country || ""
-            }`.trim()
-            : provider.title;
+        // Upsert variants
+        for (const variant of variants) {
+          const variantCost = variantCosts.get(variant.id) || 0;
 
-          await supabase.from("print_providers").upsert(
-            {
-              id: provider.id,
-              name: provider.title,
-              description: description || null,
-              is_active: true,
-            },
-            {
-              onConflict: "id",
-            },
-          );
-
-          // Fetch variants with pricing for this provider
-          const variantsResponse = await fetch(
-            `${PRINTIFY_API_BASE}/catalog/blueprints/${blueprint.id}/print_providers/${provider.id}/variants.json`,
-            {
-              headers: { Authorization: `Bearer ${PRINTIFY_API_TOKEN}` },
-            },
-          );
-
-          if (!variantsResponse.ok) {
-            console.warn(
-              `No variants for blueprint ${blueprint.id}, provider ${provider.id}`,
-            );
-            continue;
-          }
-
-          const variantsData = await variantsResponse.json();
-          const providerVariants = variantsData.variants || [];
-
-          // USE COSTS EXTRACTED FROM BLUEPRINT-LEVEL TEMP PRODUCT
-          // (We created ONE temp product per blueprint, now reuse those costs for all providers)
-          const minVariantCost = blueprintVariantCosts.size > 0
-            ? Math.min(...Array.from(blueprintVariantCosts.values()))
-            : 0;
-
-          // SKIP THIS PROVIDER if we couldn't extract costs
-          if (minVariantCost === 0) {
-            console.warn(
-              `Skipping provider ${provider.id} for blueprint ${blueprint.id} - no cost data extracted`,
-            );
-            continue;
-          }
-
-          // Fetch shipping info
-          const shippingResponse = await fetch(
-            `${PRINTIFY_API_BASE}/catalog/blueprints/${blueprint.id}/print_providers/${provider.id}/shipping.json`,
-            {
-              headers: { Authorization: `Bearer ${PRINTIFY_API_TOKEN}` },
-            },
-          );
-
-          if (!shippingResponse.ok) {
-            console.warn(
-              `No shipping info for blueprint ${blueprint.id}, provider ${provider.id}`,
-            );
-            continue;
-          }
-
-          const shippingInfo = await shippingResponse.json();
-
-          // For each country, create availability and pricing records
-          for (const country of countries) {
-            const profile = shippingInfo.profiles?.find((p: any) =>
-              p.countries.includes(country)
-            );
-
-            if (!profile) {
-              continue; // No shipping to this country
-            }
-
-            // Upsert provider availability with CORRECT prices
-            // NOTE: Printify API returns costs already in cents, so no need to multiply by 100
-            await supabase
-              .from("product_provider_availability")
-              .upsert(
-                {
-                  product_id: product.id,
-                  print_provider_id: provider.id,
-                  country_code: country,
-                  currency_code: profile.first_item.currency,
-                  base_price_cents: Math.round(minVariantCost), // Printify returns cents
-                  shipping_cost_cents: Math.round(profile.first_item.cost), // Printify returns cents
-                  production_time_days: shippingInfo.handling_time?.value ||
-                    null,
-                  is_available: true,
-                  is_in_stock: true,
-                  stock_status: 'available',
-                  last_synced_at: new Date().toISOString(),
-                  last_stock_check: new Date().toISOString(),
-                },
-                {
-                  onConflict: "product_id,print_provider_id,country_code",
-                },
-              );
-
-            // Get variants from database
-            const { data: dbVariants } = await supabase
-              .from("product_variants")
-              .select("id,printify_variant_id")
-              .eq("product_id", product.id);
-
-            // Upsert variant pricing with costs extracted from blueprint temp product
-            for (const dbVariant of dbVariants || []) {
-              const hasShipping = profile.variant_ids?.includes(
-                dbVariant.printify_variant_id,
-              );
-
-              if (hasShipping) {
-                // Get the cost from blueprint-level extraction
-                const variantCost = blueprintVariantCosts.get(dbVariant.printify_variant_id);
-
-                if (variantCost !== undefined && variantCost > 0) {
-                  // NOTE: Printify API returns costs already in cents
-                  await supabase
-                    .from("variant_pricing")
-                    .upsert(
-                      {
-                        variant_id: dbVariant.id,
-                        print_provider_id: provider.id,
-                        country_code: country,
-                        price_cents: Math.round(variantCost), // Printify returns cents
-                        cost_cents: Math.round(variantCost), // Printify returns cents
-                        is_available: true,
-                        last_synced_at: new Date().toISOString(),
-                      },
-                      {
-                        onConflict: "variant_id,print_provider_id,country_code",
-                      },
-                    );
-
-                  result.pricingRecordsCreated++;
-                }
+          const { error: variantError } = await supabase
+            .from("product_variants")
+            .upsert(
+              {
+                blueprint_id: blueprint.id,
+                printify_variant_id: variant.id,
+                color: variant.options?.color || null,
+                size: variant.options?.size || null,
+                price_cents: Math.round(variantCost),
+                is_available: variantCost > 0,
+                updated_at: new Date().toISOString(),
+              },
+              {
+                onConflict: "blueprint_id,printify_variant_id",
               }
-            }
+            );
+
+          if (!variantError) {
+            result.variantsCreated++;
           }
+        }
+
+        // Update min_price_cents on product
+        const { data: minPriceData } = await supabase
+          .from("product_variants")
+          .select("price_cents")
+          .eq("blueprint_id", blueprint.id)
+          .eq("is_available", true)
+          .gt("price_cents", 0)
+          .order("price_cents", { ascending: true })
+          .limit(1)
+          .single();
+
+        if (minPriceData) {
+          await supabase
+            .from("catalog_products")
+            .update({ min_price_cents: minPriceData.price_cents })
+            .eq("blueprint_id", blueprint.id);
         }
       } catch (error) {
         console.error(`Error syncing blueprint ${blueprint.id}:`, error);
@@ -547,7 +413,7 @@ Deno.serve(async (req) => {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
         },
-      },
+      }
     );
   }
 });

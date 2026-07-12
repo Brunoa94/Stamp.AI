@@ -7,7 +7,7 @@ import type { ProductWithPricing } from "@/lib/supabase/server-cache";
 import { getDisplayTitle } from "../constants/productDisplayTitles";
 
 export interface ProductCardData {
-  id: string;
+  blueprintId: number;
   name: string;
   price: number;
   originalPrice?: number;
@@ -16,22 +16,18 @@ export interface ProductCardData {
   label: string;
   imageUrl: string;
   href: string;
-  availabilityStatus?:
-    | "in_stock"
-    | "out_of_stock"
-    | "discontinued"
-    | "temporarily_unavailable";
   availableColors: string[];
 }
 
 export function mapProductToCard(product: ProductWithPricing): ProductCardData {
   // Use display_title from database or fallback to mapped title
-  const displayTitle =
-    product.display_title ||
-    getDisplayTitle(product.blueprint_id, product.name);
+  const displayTitle = getDisplayTitle(
+    product.blueprint_id,
+    product.display_title
+  );
 
   return {
-    id: product.id,
+    blueprintId: product.blueprint_id,
     name: displayTitle,
     price: product.selling_price_cents
       ? product.selling_price_cents / 100
@@ -45,16 +41,13 @@ export function mapProductToCard(product: ProductWithPricing): ProductCardData {
     specs: "", // No specs for featured products
     label: displayTitle.replace(/\s+/g, "_").toUpperCase(),
     imageUrl: product.base_image_url || "",
-    href: product.cheapestProvider
-      ? `/create?blueprint_id=${product.blueprint_id}&print_provider_id=${product.cheapestProvider.id}`
-      : "/stamp",
-    availabilityStatus: product.availability_status,
+    href: `/create?blueprint_id=${product.blueprint_id}`,
     availableColors: product.availableColors || [],
   };
 }
 
 export function mapProductsToCards(
-  products: ProductWithPricing[],
+  products: ProductWithPricing[]
 ): ProductCardData[] {
   return products.map(mapProductToCard);
 }

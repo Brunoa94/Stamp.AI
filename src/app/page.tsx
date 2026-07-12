@@ -1,5 +1,5 @@
 import { HomepageContent } from "@/features/homepage/ui/HomepageContent";
-import { getCachedFeaturedProductsWithPricing } from "@/lib/supabase/server-cache";
+import { getCachedProductsWithPricing } from "@/lib/supabase/server-cache";
 
 /**
  * Luxury Homepage (v2)
@@ -17,7 +17,7 @@ export const metadata = {
 };
 
 export default async function Home() {
-  const productsWithPricing = await getCachedFeaturedProductsWithPricing("NL");
+  const productsWithPricing = await getCachedProductsWithPricing();
 
   return <HomepageContent productsWithPricing={productsWithPricing} />;
 }

@@ -1,7 +1,7 @@
 /**
- * Daily Catalog Sync Cron Job
+ * Daily Catalog Sync Cron Job (Simplified)
  * Scheduled to run daily at 3 AM UTC
- * Syncs product costs from Printify by creating temporary products
+ * Syncs product costs from Printify Choice (provider 99)
  */
 
 Deno.serve(async (req) => {
@@ -15,7 +15,7 @@ Deno.serve(async (req) => {
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-    console.log("Starting daily catalog sync...");
+    console.log("Starting daily catalog sync (Printify Choice)...");
 
     // Call the sync-catalog Edge Function
     const syncResponse = await fetch(
@@ -27,7 +27,6 @@ Deno.serve(async (req) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          countries: ["NL", "US", "GB", "DE", "FR"],
           blueprintIds: [12, 6, 145, 1389], // 1389 = Tote Bag (AOP) with EU shipping
           forceUpdate: true,
         }),

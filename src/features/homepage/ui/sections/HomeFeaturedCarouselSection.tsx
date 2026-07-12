@@ -5,6 +5,7 @@
  * and a more editorial layout. Placed after the Manifesto section.
  *
  * Fetches ALL active products (like stamp page) instead of just featured ones.
+ * Simplified: uses embedded pricing from product_variants (Printify Choice)
  */
 
 "use client";
@@ -23,10 +24,9 @@ import { HomeSectionHeader } from "../components/HomeSectionHeader";
 import { SectionReveal } from "../components/SectionReveal";
 
 const EXCLUDED_BLUEPRINT_IDS = new Set([12]);
-const PROVIDER_COUNTRY = "NL";
 
 interface CarouselProductData {
-  id: string;
+  blueprintId: number;
   name: string;
   price: number;
   imageUrl: string;
@@ -47,17 +47,13 @@ export function HomeFeaturedCarouselSection() {
     [rawProducts],
   );
 
-  // Fetch provider pricing for each product
-  const providerQueries = useQueries({
+  // Fetch variant pricing for each product (simplified - no provider needed)
+  const variantQueries = useQueries({
     queries: visibleProducts.map((product) => ({
-      queryKey: ["catalog", "providers", product.id, PROVIDER_COUNTRY],
-      queryFn: () =>
-        CatalogQueryService.getProvidersForProduct(
-          product.id,
-          PROVIDER_COUNTRY,
-        ),
+      queryKey: ["catalog", "variants", product.blueprint_id],
+      queryFn: () => CatalogQueryService.getProductVariants(product.blueprint_id),
       staleTime: 1000 * 60 * 10,
-      enabled: !!product.id,
+      enabled: !!product.blueprint_id,
     })),
   });
 
@@ -65,11 +61,15 @@ export function HomeFeaturedCarouselSection() {
   const products = useMemo<CarouselProductData[]>(
     () =>
       visibleProducts.map((product, index) => {
-        const providers = providerQueries[index]?.data ?? [];
-        const bestProvider = providers[0];
-        const totalCents = bestProvider
-          ? bestProvider.basePriceCents + bestProvider.shippingCostCents
-          : 0;
+        const variants = variantQueries[index]?.data ?? [];
+        // Get cheapest variant price (or use min_price_cents from product)
+        const minPriceCents = variants.length > 0
+          ? Math.min(...variants.map(v => v.price_cents || 0).filter(p => p > 0))
+          : product.min_price_cents || 0;
+
+        const shippingCents = product.shipping_cents || 0;
+        const totalCents = minPriceCents + shippingCents;
+
         const price = product.selling_price_cents
           ? product.selling_price_cents / 100
           : totalCents > 0
@@ -77,16 +77,14 @@ export function HomeFeaturedCarouselSection() {
             : 0;
 
         return {
-          id: product.id,
-          name: product.display_title || product.name,
+          blueprintId: product.blueprint_id,
+          name: product.display_title,
           price,
           imageUrl: product.base_image_url ?? "",
-          href: bestProvider
-            ? `/create?blueprint_id=${product.blueprint_id}&print_provider_id=${bestProvider.id}`
-            : "/stamp",
+          href: `/create?blueprint_id=${product.blueprint_id}`,
         };
       }),
-    [visibleProducts, providerQueries],
+    [visibleProducts, variantQueries],
   );
 
   const scroll = (direction: "left" | "right") => {
@@ -156,7 +154,7 @@ export function HomeFeaturedCarouselSection() {
               ))
             : products.map((product, index) => (
                 <Link
-                  key={product.id}
+                  key={product.blueprintId}
                   href={product.href}
                   className="group block w-72 shrink-0 sm:w-80"
                 >

@@ -87,7 +87,7 @@ export function ProductGrid({
             if (selected) {
               return (
                 <SelectedProductCard
-                  key={product.id}
+                  key={product.blueprintId}
                   product={product}
                   onClearSelection={onClearSelection}
                 />
@@ -96,7 +96,7 @@ export function ProductGrid({
 
             return (
               <ProductCard
-                key={product.id}
+                key={product.blueprintId}
                 product={product}
                 isSelected={selected}
                 onSelect={onProductSelect}
