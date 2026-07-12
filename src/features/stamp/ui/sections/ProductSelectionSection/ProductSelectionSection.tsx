@@ -1,9 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useQueries } from "@tanstack/react-query";
 import { useCatalogProducts } from "@/queries/catalogQueries";
-import { CatalogQueryService } from "@/services/catalogQueryService";
 import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
 import { useStampProductSelection } from "../../../lib/hooks/useStampSelectors";
 import { ProductGrid } from "./ProductGrid";
@@ -41,27 +39,17 @@ export function ProductSelectionSection() {
     [rawProducts],
   );
 
-  // Fetch variants with embedded pricing for each product
-  const variantQueries = useQueries({
-    queries: visibleProducts.map((product) => ({
-      queryKey: ["catalog", "variants", product.blueprint_id],
-      queryFn: () => CatalogQueryService.getProductVariants(product.blueprint_id),
-      staleTime: 1000 * 60 * 10,
-      enabled: !!product.blueprint_id,
-    })),
-  });
-
   const catalogProducts = useMemo<CatalogProductMappedType[]>(
     () =>
-      visibleProducts.map((product, index) => {
-        const variants = variantQueries[index]?.data ?? [];
-        // Get cheapest variant price (or use min_price_cents from product)
-        const minPriceCents = variants.length > 0
-          ? Math.min(...variants.map(v => v.price_cents || 0).filter(p => p > 0))
-          : product.min_price_cents || 0;
-
+      visibleProducts.map((product) => {
+        // New flow: price comes from the product's precomputed
+        // min_price_cents (cheapest available Printify Choice variant)
+        // plus shipping, unless an admin selling-price override is set.
+        const baseCents = product.min_price_cents || 0;
         const shippingCents = product.shipping_cents || 0;
-        const totalCents = minPriceCents + shippingCents;
+        const totalCents =
+          product.selling_price_cents ??
+          (baseCents > 0 ? baseCents + shippingCents : 0);
         const price = totalCents > 0 ? totalCents / 100 : FALLBACK_PRICE;
 
         return {
@@ -73,7 +61,7 @@ export function ProductSelectionSection() {
           providerName: "Printify Choice",
         };
       }),
-    [visibleProducts, variantQueries],
+    [visibleProducts],
   );
 
   const handleProductSelect = (product: CatalogProductMappedType) => {

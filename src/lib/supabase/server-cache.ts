@@ -85,10 +85,14 @@ export const getCachedProductsWithPricing = unstable_cache(
           ...new Set(variants?.map((v) => v.color).filter(Boolean) || []),
         ];
 
-        // Use selling price if set, otherwise use min_price + shipping
+        // Use selling price override if set, otherwise the cheapest
+        // available variant price plus shipping. Products with no real
+        // variant price (min_price_cents === 0) resolve to 0 and are
+        // filtered out below instead of showing a shipping-only price.
+        const baseCents = product.min_price_cents || 0;
         const totalPriceCents =
-          product.selling_price_cents ||
-          (product.min_price_cents || 0) + (product.shipping_cents || 0);
+          product.selling_price_cents ??
+          (baseCents > 0 ? baseCents + (product.shipping_cents || 0) : 0);
 
         return {
           ...product,

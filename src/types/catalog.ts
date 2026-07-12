@@ -1,7 +1,8 @@
 /**
  * Catalog Types (Final Simplified Version)
- * Types for the simplified catalog architecture using Printify Choice
- * Primary key is blueprint_id (not UUID)
+ * Types for the simplified catalog architecture using Printify Choice.
+ * Primary key is blueprint_id (not UUID); single provider (99), no
+ * multi-provider / multi-country / separate pricing tables.
  */
 
 // ============================================
@@ -34,98 +35,4 @@ export interface ProductVariant {
   is_available: boolean;
   created_at: string;
   updated_at: string;
-}
-
-// ============================================
-// API TYPES (for queries and responses)
-// ============================================
-
-export interface VariantPrice {
-  printifyVariantId: number;
-  color: string | null;
-  size: string | null;
-  priceCents: number;
-}
-
-export interface ProductWithPricing {
-  product: CatalogProduct;
-  variants: ProductVariant[];
-  shippingCents: number;
-  totalPriceCents: number;
-}
-
-// ============================================
-// PRINTIFY API TYPES
-// ============================================
-
-export interface PrintifyBlueprint {
-  id: number;
-  title: string;
-  description: string;
-  brand: string;
-  model: string;
-  images: Array<{
-    src: string;
-    variant_ids: number[];
-    position: string;
-  }>;
-}
-
-export interface PrintifyVariant {
-  id: number;
-  title: string;
-  options: {
-    color?: string;
-    size?: string;
-  };
-  placeholders: Array<{
-    position: string;
-    height: number;
-    width: number;
-  }>;
-}
-
-export interface PrintifyShippingInfo {
-  handling_time: {
-    value: number;
-    unit: string;
-  };
-  profiles: Array<{
-    variant_ids: number[];
-    first_item: {
-      cost: number;
-      currency: string;
-    };
-    additional_items: {
-      cost: number;
-      currency: string;
-    };
-    countries: string[];
-  }>;
-}
-
-// ============================================
-// SYNC SERVICE TYPES
-// ============================================
-
-export interface SyncProgress {
-  total: number;
-  completed: number;
-  failed: number;
-  currentBlueprint: string | null;
-}
-
-export interface SyncResult {
-  success: boolean;
-  productsCreated: number;
-  variantsCreated: number;
-  errors: Array<{
-    blueprintId: number;
-    error: string;
-  }>;
-}
-
-export interface SyncOptions {
-  blueprintIds?: number[]; // If specified, only sync these blueprints
-  forceUpdate?: boolean; // Force update even if recently synced
 }

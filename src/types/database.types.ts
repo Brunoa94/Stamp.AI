@@ -198,151 +198,48 @@ export type Database = {
       }
       catalog_products: {
         Row: {
-          availability_status: string | null
           base_image_url: string | null
           blueprint_id: number
-          category_id: string | null
           created_at: string | null
-          description: string | null
-          display_title: string | null
-          id: string
+          display_title: string
           is_active: boolean | null
-          is_featured: boolean | null
           is_on_sale: boolean | null
-          last_availability_check: string | null
-          name: string
+          last_synced_at: string | null
+          min_price_cents: number | null
           original_price_cents: number | null
-          printify_blueprint_exists: boolean | null
           selling_price_cents: number | null
-          stock_check_error: string | null
+          shipping_cents: number | null
           updated_at: string | null
         }
         Insert: {
-          availability_status?: string | null
           base_image_url?: string | null
           blueprint_id: number
-          category_id?: string | null
           created_at?: string | null
-          description?: string | null
-          display_title?: string | null
-          id?: string
+          display_title: string
           is_active?: boolean | null
-          is_featured?: boolean | null
           is_on_sale?: boolean | null
-          last_availability_check?: string | null
-          name: string
+          last_synced_at?: string | null
+          min_price_cents?: number | null
           original_price_cents?: number | null
-          printify_blueprint_exists?: boolean | null
           selling_price_cents?: number | null
-          stock_check_error?: string | null
+          shipping_cents?: number | null
           updated_at?: string | null
         }
         Update: {
-          availability_status?: string | null
           base_image_url?: string | null
           blueprint_id?: number
-          category_id?: string | null
           created_at?: string | null
-          description?: string | null
-          display_title?: string | null
-          id?: string
+          display_title?: string
           is_active?: boolean | null
-          is_featured?: boolean | null
           is_on_sale?: boolean | null
-          last_availability_check?: string | null
-          name?: string
+          last_synced_at?: string | null
+          min_price_cents?: number | null
           original_price_cents?: number | null
-          printify_blueprint_exists?: boolean | null
           selling_price_cents?: number | null
-          stock_check_error?: string | null
+          shipping_cents?: number | null
           updated_at?: string | null
         }
         Relationships: []
-      }
-      catalog_stock_changes: {
-        Row: {
-          changed_at: string | null
-          changed_by: string | null
-          error_message: string | null
-          id: string
-          new_status: string
-          old_status: string | null
-          product_id: string
-          reason: string | null
-        }
-        Insert: {
-          changed_at?: string | null
-          changed_by?: string | null
-          error_message?: string | null
-          id?: string
-          new_status: string
-          old_status?: string | null
-          product_id: string
-          reason?: string | null
-        }
-        Update: {
-          changed_at?: string | null
-          changed_by?: string | null
-          error_message?: string | null
-          id?: string
-          new_status?: string
-          old_status?: string | null
-          product_id?: string
-          reason?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "catalog_stock_changes_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "catalog_products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      catalog_sync_queue: {
-        Row: {
-          blueprint_id: number
-          countries_to_sync: string[] | null
-          created_at: string | null
-          error_message: string | null
-          id: string
-          processed_at: string | null
-          product_id: string | null
-          retry_count: number | null
-          status: string | null
-        }
-        Insert: {
-          blueprint_id: number
-          countries_to_sync?: string[] | null
-          created_at?: string | null
-          error_message?: string | null
-          id?: string
-          processed_at?: string | null
-          product_id?: string | null
-          retry_count?: number | null
-          status?: string | null
-        }
-        Update: {
-          blueprint_id?: number
-          countries_to_sync?: string[] | null
-          created_at?: string | null
-          error_message?: string | null
-          id?: string
-          processed_at?: string | null
-          product_id?: string | null
-          retry_count?: number | null
-          status?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "catalog_sync_queue_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "catalog_products"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       credit_transactions: {
         Row: {
@@ -1001,151 +898,38 @@ export type Database = {
           },
         ]
       }
-      print_providers: {
+      product_variants: {
         Row: {
+          blueprint_id: number
+          color: string | null
           created_at: string | null
-          description: string | null
-          id: number
-          is_active: boolean | null
-          name: string
-          supported_countries: string[] | null
+          is_available: boolean | null
+          price_cents: number | null
+          printify_variant_id: number
+          size: string | null
           updated_at: string | null
         }
         Insert: {
+          blueprint_id: number
+          color?: string | null
           created_at?: string | null
-          description?: string | null
-          id: number
-          is_active?: boolean | null
-          name: string
-          supported_countries?: string[] | null
+          is_available?: boolean | null
+          price_cents?: number | null
+          printify_variant_id: number
+          size?: string | null
           updated_at?: string | null
         }
         Update: {
+          blueprint_id?: number
+          color?: string | null
           created_at?: string | null
-          description?: string | null
-          id?: number
-          is_active?: boolean | null
-          name?: string
-          supported_countries?: string[] | null
+          is_available?: boolean | null
+          price_cents?: number | null
+          printify_variant_id?: number
+          size?: string | null
           updated_at?: string | null
         }
         Relationships: []
-      }
-      product_provider_availability: {
-        Row: {
-          base_price_cents: number
-          country_code: string
-          created_at: string | null
-          currency_code: string
-          id: string
-          is_available: boolean | null
-          is_in_stock: boolean | null
-          last_stock_check: string | null
-          last_synced_at: string | null
-          next_restock_date: string | null
-          print_provider_id: number
-          product_id: string
-          production_time_days: number | null
-          shipping_cost_cents: number | null
-          stock_status: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          base_price_cents: number
-          country_code: string
-          created_at?: string | null
-          currency_code: string
-          id?: string
-          is_available?: boolean | null
-          is_in_stock?: boolean | null
-          last_stock_check?: string | null
-          last_synced_at?: string | null
-          next_restock_date?: string | null
-          print_provider_id: number
-          product_id: string
-          production_time_days?: number | null
-          shipping_cost_cents?: number | null
-          stock_status?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          base_price_cents?: number
-          country_code?: string
-          created_at?: string | null
-          currency_code?: string
-          id?: string
-          is_available?: boolean | null
-          is_in_stock?: boolean | null
-          last_stock_check?: string | null
-          last_synced_at?: string | null
-          next_restock_date?: string | null
-          print_provider_id?: number
-          product_id?: string
-          production_time_days?: number | null
-          shipping_cost_cents?: number | null
-          stock_status?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "product_provider_availability_print_provider_id_fkey"
-            columns: ["print_provider_id"]
-            isOneToOne: false
-            referencedRelation: "print_providers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "product_provider_availability_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "catalog_products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      product_variants: {
-        Row: {
-          color: string | null
-          created_at: string | null
-          id: string
-          printify_variant_id: number
-          product_id: string
-          size: string | null
-          sku: string | null
-          title: string
-          updated_at: string | null
-        }
-        Insert: {
-          color?: string | null
-          created_at?: string | null
-          id?: string
-          printify_variant_id: number
-          product_id: string
-          size?: string | null
-          sku?: string | null
-          title: string
-          updated_at?: string | null
-        }
-        Update: {
-          color?: string | null
-          created_at?: string | null
-          id?: string
-          printify_variant_id?: number
-          product_id?: string
-          size?: string | null
-          sku?: string | null
-          title?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "product_variants_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "catalog_products"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       products: {
         Row: {
@@ -1396,73 +1180,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_custom_designs: {
-        Row: {
-          country_code: string
-          created_at: string | null
-          design_image_url: string
-          id: string
-          printify_image_id: string | null
-          printify_product_id: string | null
-          product_id: string
-          provider_id: number
-          status: string | null
-          updated_at: string | null
-          user_id: string
-          variant_id: string | null
-        }
-        Insert: {
-          country_code: string
-          created_at?: string | null
-          design_image_url: string
-          id?: string
-          printify_image_id?: string | null
-          printify_product_id?: string | null
-          product_id: string
-          provider_id: number
-          status?: string | null
-          updated_at?: string | null
-          user_id: string
-          variant_id?: string | null
-        }
-        Update: {
-          country_code?: string
-          created_at?: string | null
-          design_image_url?: string
-          id?: string
-          printify_image_id?: string | null
-          printify_product_id?: string | null
-          product_id?: string
-          provider_id?: number
-          status?: string | null
-          updated_at?: string | null
-          user_id?: string
-          variant_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_custom_designs_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "catalog_products"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_custom_designs_provider_id_fkey"
-            columns: ["provider_id"]
-            isOneToOne: false
-            referencedRelation: "print_providers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_custom_designs_variant_id_fkey"
-            columns: ["variant_id"]
-            isOneToOne: false
-            referencedRelation: "product_variants"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       user_uploads: {
         Row: {
           created_at: string | null
@@ -1505,57 +1222,6 @@ export type Database = {
         }
         Relationships: []
       }
-      variant_pricing: {
-        Row: {
-          cost_cents: number
-          country_code: string
-          created_at: string | null
-          id: string
-          is_available: boolean | null
-          last_synced_at: string | null
-          price_cents: number
-          print_provider_id: number
-          variant_id: string
-        }
-        Insert: {
-          cost_cents: number
-          country_code: string
-          created_at?: string | null
-          id?: string
-          is_available?: boolean | null
-          last_synced_at?: string | null
-          price_cents: number
-          print_provider_id: number
-          variant_id: string
-        }
-        Update: {
-          cost_cents?: number
-          country_code?: string
-          created_at?: string | null
-          id?: string
-          is_available?: boolean | null
-          last_synced_at?: string | null
-          price_cents?: number
-          print_provider_id?: number
-          variant_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "variant_pricing_print_provider_id_fkey"
-            columns: ["print_provider_id"]
-            isOneToOne: false
-            referencedRelation: "print_providers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "variant_pricing_variant_id_fkey"
-            columns: ["variant_id"]
-            isOneToOne: false
-            referencedRelation: "product_variants"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       webhook_events: {
         Row: {
           created_at: string | null
@@ -1594,53 +1260,6 @@ export type Database = {
       }
     }
     Views: {
-      catalog_stock_health: {
-        Row: {
-          active_count: number | null
-          availability_status: string | null
-          last_checked: string | null
-          product_count: number | null
-          stale_checks: number | null
-        }
-        Relationships: []
-      }
-      catalog_sync_status: {
-        Row: {
-          blueprint_id: number | null
-          countries_to_sync: string[] | null
-          error_message: string | null
-          processed_at: string | null
-          processing_seconds: number | null
-          product_name: string | null
-          queue_id: string | null
-          queued_at: string | null
-          retry_count: number | null
-          status: string | null
-        }
-        Relationships: []
-      }
-      recent_stock_changes: {
-        Row: {
-          blueprint_id: number | null
-          changed_at: string | null
-          error_message: string | null
-          id: string | null
-          new_status: string | null
-          old_status: string | null
-          product_id: string | null
-          product_name: string | null
-          reason: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "catalog_stock_changes_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "catalog_products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
     }
     Functions: {
       atomic_mollie_payment_capture: {
@@ -1682,7 +1301,6 @@ export type Database = {
         Returns: Json
       }
       cleanup_expired_pairing_sessions: { Args: never; Returns: undefined }
-      cleanup_old_sync_queue: { Args: never; Returns: number }
       confirm_refund_completed: {
         Args: { p_refund_external_id: string; p_refund_id: string }
         Returns: Json
@@ -1739,29 +1357,6 @@ export type Database = {
       deduct_coin: { Args: { user_id: string }; Returns: boolean }
       expire_waiting_payment_orders: { Args: never; Returns: number }
       generate_order_number: { Args: never; Returns: string }
-      get_cheapest_provider: {
-        Args: {
-          p_color: string
-          p_country_code: string
-          p_product_id: string
-          p_size: string
-        }
-        Returns: {
-          price_cents: number
-          provider_name: string
-          shipping_cost_cents: number
-          total_cents: number
-        }[]
-      }
-      get_next_product_to_sync: {
-        Args: never
-        Returns: {
-          blueprint_id: number
-          countries: string[]
-          product_id: string
-          queue_id: string
-        }[]
-      }
       get_order_by_idempotency_key: { Args: { key: string }; Returns: string }
       get_pending_payment_recoveries: {
         Args: { p_hours_ago?: number; p_user_id: string }
@@ -1785,54 +1380,6 @@ export type Database = {
           last_synced: string
           name: string
           product_id: string
-        }[]
-      }
-      get_providers_for_product: {
-        Args: { p_country_code: string; p_product_id: string }
-        Returns: {
-          base_price_cents: number
-          currency_code: string
-          production_time_days: number
-          provider_id: number
-          provider_name: string
-          shipping_cost_cents: number
-          total_cost_cents: number
-        }[]
-      }
-      get_providers_for_product_with_fallback: {
-        Args: {
-          p_country_code?: string
-          p_max_shipping_cents?: number
-          p_product_id: string
-        }
-        Returns: {
-          base_price_cents: number
-          country_code: string
-          currency_code: string
-          is_fallback: boolean
-          production_time_days: number
-          provider_id: number
-          provider_name: string
-          shipping_cost_cents: number
-          total_cost_cents: number
-        }[]
-      }
-      get_variant_price: {
-        Args: {
-          p_color: string
-          p_country_code: string
-          p_product_id: string
-          p_provider_id: number
-          p_size: string
-        }
-        Returns: {
-          color: string
-          cost_cents: number
-          currency_code: string
-          price_cents: number
-          size: string
-          title: string
-          variant_id: string
         }[]
       }
       handle_refund_failure: {
@@ -1924,24 +1471,6 @@ export type Database = {
         }
       }
       refill_min_3_coins_daily: { Args: never; Returns: undefined }
-      trigger_catalog_sync: { Args: never; Returns: undefined }
-      trigger_product_sync: {
-        Args: { p_blueprint_id: number; p_countries?: string[] }
-        Returns: string
-      }
-      update_product_stock_status: {
-        Args: {
-          p_error_message?: string
-          p_new_status: string
-          p_product_id: string
-          p_reason?: string
-        }
-        Returns: undefined
-      }
-      update_sync_queue_status: {
-        Args: { p_error_message?: string; p_queue_id: string; p_status: string }
-        Returns: undefined
-      }
       upsert_cart_item:
         | {
             Args: {

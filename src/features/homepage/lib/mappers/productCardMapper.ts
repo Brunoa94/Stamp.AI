@@ -41,7 +41,7 @@ export function mapProductToCard(product: ProductWithPricing): ProductCardData {
     specs: "", // No specs for featured products
     label: displayTitle.replace(/\s+/g, "_").toUpperCase(),
     imageUrl: product.base_image_url || "",
-    href: `/create?blueprint_id=${product.blueprint_id}`,
+    href: "/stamp",
     availableColors: product.availableColors || [],
   };
 }

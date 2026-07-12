@@ -14,12 +14,10 @@ import { useRef, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useQueries } from "@tanstack/react-query";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { useCatalogProducts } from "@/queries/catalogQueries";
-import { CatalogQueryService } from "@/services/catalogQueryService";
 import { HomeSectionHeader } from "../components/HomeSectionHeader";
 import { SectionReveal } from "../components/SectionReveal";
 
@@ -47,44 +45,29 @@ export function HomeFeaturedCarouselSection() {
     [rawProducts],
   );
 
-  // Fetch variant pricing for each product (simplified - no provider needed)
-  const variantQueries = useQueries({
-    queries: visibleProducts.map((product) => ({
-      queryKey: ["catalog", "variants", product.blueprint_id],
-      queryFn: () => CatalogQueryService.getProductVariants(product.blueprint_id),
-      staleTime: 1000 * 60 * 10,
-      enabled: !!product.blueprint_id,
-    })),
-  });
-
   // Map products with pricing
   const products = useMemo<CarouselProductData[]>(
     () =>
-      visibleProducts.map((product, index) => {
-        const variants = variantQueries[index]?.data ?? [];
-        // Get cheapest variant price (or use min_price_cents from product)
-        const minPriceCents = variants.length > 0
-          ? Math.min(...variants.map(v => v.price_cents || 0).filter(p => p > 0))
-          : product.min_price_cents || 0;
-
+      visibleProducts.map((product) => {
+        // New flow: price comes from the product's precomputed
+        // min_price_cents (cheapest available Printify Choice variant)
+        // plus shipping, unless an admin selling-price override is set.
+        const baseCents = product.min_price_cents || 0;
         const shippingCents = product.shipping_cents || 0;
-        const totalCents = minPriceCents + shippingCents;
-
-        const price = product.selling_price_cents
-          ? product.selling_price_cents / 100
-          : totalCents > 0
-            ? totalCents / 100
-            : 0;
+        const totalCents =
+          product.selling_price_cents ??
+          (baseCents > 0 ? baseCents + shippingCents : 0);
+        const price = totalCents > 0 ? totalCents / 100 : 0;
 
         return {
           blueprintId: product.blueprint_id,
           name: product.display_title,
           price,
           imageUrl: product.base_image_url ?? "",
-          href: `/create?blueprint_id=${product.blueprint_id}`,
+          href: "/stamp",
         };
       }),
-    [visibleProducts, variantQueries],
+    [visibleProducts],
   );
 
   const scroll = (direction: "left" | "right") => {
