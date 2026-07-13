@@ -10,32 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
-  }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+    PostgrestVersion: "14.1"
   }
   public: {
     Tables: {
@@ -114,13 +89,15 @@ export type Database = {
         Row: {
           cart_id: string | null
           created_at: string | null
+          custom_image_public_id: string | null
           custom_image_url: string | null
+          design_id: string | null
           id: string
           printify_blueprint_id: number | null
           printify_print_provider_id: number | null
           product_id: string | null
-          product_name: string
-          quantity: number
+          product_name: string | null
+          quantity: number | null
           unit_price: number | null
           updated_at: string | null
           variant_id: string | null
@@ -129,13 +106,15 @@ export type Database = {
         Insert: {
           cart_id?: string | null
           created_at?: string | null
+          custom_image_public_id?: string | null
           custom_image_url?: string | null
+          design_id?: string | null
           id?: string
           printify_blueprint_id?: number | null
           printify_print_provider_id?: number | null
           product_id?: string | null
-          product_name: string
-          quantity?: number
+          product_name?: string | null
+          quantity?: number | null
           unit_price?: number | null
           updated_at?: string | null
           variant_id?: string | null
@@ -144,13 +123,15 @@ export type Database = {
         Update: {
           cart_id?: string | null
           created_at?: string | null
+          custom_image_public_id?: string | null
           custom_image_url?: string | null
+          design_id?: string | null
           id?: string
           printify_blueprint_id?: number | null
           printify_print_provider_id?: number | null
           product_id?: string | null
-          product_name?: string
-          quantity?: number
+          product_name?: string | null
+          quantity?: number | null
           unit_price?: number | null
           updated_at?: string | null
           variant_id?: string | null
@@ -198,151 +179,54 @@ export type Database = {
       }
       catalog_products: {
         Row: {
-          availability_status: string | null
           base_image_url: string | null
           blueprint_id: number
-          category_id: string | null
           created_at: string | null
-          description: string | null
-          display_title: string | null
-          id: string
+          discount_percent: number | null
+          display_title: string
           is_active: boolean | null
-          is_featured: boolean | null
           is_on_sale: boolean | null
-          last_availability_check: string | null
-          name: string
+          last_synced_at: string | null
+          min_price_cents: number | null
           original_price_cents: number | null
-          printify_blueprint_exists: boolean | null
+          print_provider_id: number
           selling_price_cents: number | null
-          stock_check_error: string | null
+          shipping_cents: number | null
           updated_at: string | null
         }
         Insert: {
-          availability_status?: string | null
           base_image_url?: string | null
           blueprint_id: number
-          category_id?: string | null
           created_at?: string | null
-          description?: string | null
-          display_title?: string | null
-          id?: string
+          discount_percent?: number | null
+          display_title: string
           is_active?: boolean | null
-          is_featured?: boolean | null
           is_on_sale?: boolean | null
-          last_availability_check?: string | null
-          name: string
+          last_synced_at?: string | null
+          min_price_cents?: number | null
           original_price_cents?: number | null
-          printify_blueprint_exists?: boolean | null
+          print_provider_id?: number
           selling_price_cents?: number | null
-          stock_check_error?: string | null
+          shipping_cents?: number | null
           updated_at?: string | null
         }
         Update: {
-          availability_status?: string | null
           base_image_url?: string | null
           blueprint_id?: number
-          category_id?: string | null
           created_at?: string | null
-          description?: string | null
-          display_title?: string | null
-          id?: string
+          discount_percent?: number | null
+          display_title?: string
           is_active?: boolean | null
-          is_featured?: boolean | null
           is_on_sale?: boolean | null
-          last_availability_check?: string | null
-          name?: string
+          last_synced_at?: string | null
+          min_price_cents?: number | null
           original_price_cents?: number | null
-          printify_blueprint_exists?: boolean | null
+          print_provider_id?: number
           selling_price_cents?: number | null
-          stock_check_error?: string | null
+          shipping_cents?: number | null
           updated_at?: string | null
         }
         Relationships: []
-      }
-      catalog_stock_changes: {
-        Row: {
-          changed_at: string | null
-          changed_by: string | null
-          error_message: string | null
-          id: string
-          new_status: string
-          old_status: string | null
-          product_id: string
-          reason: string | null
-        }
-        Insert: {
-          changed_at?: string | null
-          changed_by?: string | null
-          error_message?: string | null
-          id?: string
-          new_status: string
-          old_status?: string | null
-          product_id: string
-          reason?: string | null
-        }
-        Update: {
-          changed_at?: string | null
-          changed_by?: string | null
-          error_message?: string | null
-          id?: string
-          new_status?: string
-          old_status?: string | null
-          product_id?: string
-          reason?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "catalog_stock_changes_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "catalog_products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      catalog_sync_queue: {
-        Row: {
-          blueprint_id: number
-          countries_to_sync: string[] | null
-          created_at: string | null
-          error_message: string | null
-          id: string
-          processed_at: string | null
-          product_id: string | null
-          retry_count: number | null
-          status: string | null
-        }
-        Insert: {
-          blueprint_id: number
-          countries_to_sync?: string[] | null
-          created_at?: string | null
-          error_message?: string | null
-          id?: string
-          processed_at?: string | null
-          product_id?: string | null
-          retry_count?: number | null
-          status?: string | null
-        }
-        Update: {
-          blueprint_id?: number
-          countries_to_sync?: string[] | null
-          created_at?: string | null
-          error_message?: string | null
-          id?: string
-          processed_at?: string | null
-          product_id?: string | null
-          retry_count?: number | null
-          status?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "catalog_sync_queue_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "catalog_products"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       credit_transactions: {
         Row: {
@@ -374,93 +258,6 @@ export type Database = {
           reference_id?: string | null
           transaction_type?: string
           user_id?: string | null
-        }
-        Relationships: []
-      }
-      device_pairing_sessions: {
-        Row: {
-          created_at: string | null
-          desktop_connected: boolean | null
-          expires_at: string
-          id: string
-          pairing_code: string
-          phone_connected: boolean | null
-          updated_at: string | null
-          used: boolean | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          desktop_connected?: boolean | null
-          expires_at: string
-          id?: string
-          pairing_code: string
-          phone_connected?: boolean | null
-          updated_at?: string | null
-          used?: boolean | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          desktop_connected?: boolean | null
-          expires_at?: string
-          id?: string
-          pairing_code?: string
-          phone_connected?: boolean | null
-          updated_at?: string | null
-          used?: boolean | null
-          user_id?: string
-        }
-        Relationships: []
-      }
-      email_jobs: {
-        Row: {
-          attempts: number
-          created_at: string
-          dedupe_key: string
-          id: string
-          last_error: string | null
-          max_attempts: number
-          next_attempt_at: string
-          payload: Json
-          recipient_email: string
-          sent_at: string | null
-          status: string
-          subject: string
-          template: string
-          updated_at: string
-        }
-        Insert: {
-          attempts?: number
-          created_at?: string
-          dedupe_key: string
-          id?: string
-          last_error?: string | null
-          max_attempts?: number
-          next_attempt_at?: string
-          payload?: Json
-          recipient_email: string
-          sent_at?: string | null
-          status?: string
-          subject: string
-          template: string
-          updated_at?: string
-        }
-        Update: {
-          attempts?: number
-          created_at?: string
-          dedupe_key?: string
-          id?: string
-          last_error?: string | null
-          max_attempts?: number
-          next_attempt_at?: string
-          payload?: Json
-          recipient_email?: string
-          sent_at?: string | null
-          status?: string
-          subject?: string
-          template?: string
-          updated_at?: string
         }
         Relationships: []
       }
@@ -592,6 +389,8 @@ export type Database = {
           created_at: string | null
           custom_image_url: string
           design_config: Json | null
+          design_id: string | null
+          external_order_id: string | null
           fulfillment_status: string | null
           id: string
           order_id: string | null
@@ -608,12 +407,14 @@ export type Database = {
           created_at?: string | null
           custom_image_url: string
           design_config?: Json | null
+          design_id?: string | null
+          external_order_id?: string | null
           fulfillment_status?: string | null
           id?: string
           order_id?: string | null
           product_id?: string | null
           product_name: string
-          quantity: number
+          quantity?: number
           total_price?: number | null
           unit_price?: number | null
           updated_at?: string | null
@@ -624,6 +425,8 @@ export type Database = {
           created_at?: string | null
           custom_image_url?: string
           design_config?: Json | null
+          design_id?: string | null
+          external_order_id?: string | null
           fulfillment_status?: string | null
           id?: string
           order_id?: string | null
@@ -710,7 +513,6 @@ export type Database = {
           billing_address: Json | null
           cancellation_reason: string | null
           cancelled_at: string | null
-          confirmed_at: string | null
           created_at: string | null
           currency: string | null
           customer_email: string
@@ -718,23 +520,16 @@ export type Database = {
           customer_phone: string | null
           delivered_at: string | null
           discount_amount: number | null
-          expired_at: string | null
-          expires_at: string | null
           id: string
           idempotency_key: string | null
-          last_refund_error: string | null
-          manual_review_required: boolean
           order_number: string
-          paid_at: string | null
-          payment_failure_reason: string | null
           payment_method: string | null
           payment_provider: string | null
           payment_status: string | null
           printify_order_id: string | null
+          product_id: string | null
           promo_code: string | null
           promo_value: number | null
-          refund_attempts: number
-          refund_failed: boolean
           shipped_at: string | null
           shipping_address: Json | null
           shipping_cost: number | null
@@ -751,7 +546,6 @@ export type Database = {
           billing_address?: Json | null
           cancellation_reason?: string | null
           cancelled_at?: string | null
-          confirmed_at?: string | null
           created_at?: string | null
           currency?: string | null
           customer_email: string
@@ -759,23 +553,16 @@ export type Database = {
           customer_phone?: string | null
           delivered_at?: string | null
           discount_amount?: number | null
-          expired_at?: string | null
-          expires_at?: string | null
           id?: string
           idempotency_key?: string | null
-          last_refund_error?: string | null
-          manual_review_required?: boolean
           order_number: string
-          paid_at?: string | null
-          payment_failure_reason?: string | null
           payment_method?: string | null
           payment_provider?: string | null
           payment_status?: string | null
           printify_order_id?: string | null
+          product_id?: string | null
           promo_code?: string | null
           promo_value?: number | null
-          refund_attempts?: number
-          refund_failed?: boolean
           shipped_at?: string | null
           shipping_address?: Json | null
           shipping_cost?: number | null
@@ -792,7 +579,6 @@ export type Database = {
           billing_address?: Json | null
           cancellation_reason?: string | null
           cancelled_at?: string | null
-          confirmed_at?: string | null
           created_at?: string | null
           currency?: string | null
           customer_email?: string
@@ -800,23 +586,16 @@ export type Database = {
           customer_phone?: string | null
           delivered_at?: string | null
           discount_amount?: number | null
-          expired_at?: string | null
-          expires_at?: string | null
           id?: string
           idempotency_key?: string | null
-          last_refund_error?: string | null
-          manual_review_required?: boolean
           order_number?: string
-          paid_at?: string | null
-          payment_failure_reason?: string | null
           payment_method?: string | null
           payment_provider?: string | null
           payment_status?: string | null
           printify_order_id?: string | null
+          product_id?: string | null
           promo_code?: string | null
           promo_value?: number | null
-          refund_attempts?: number
-          refund_failed?: boolean
           shipped_at?: string | null
           shipping_address?: Json | null
           shipping_cost?: number | null
@@ -914,8 +693,9 @@ export type Database = {
       payment_transactions: {
         Row: {
           amount: number
+          captured_at: string | null
           created_at: string | null
-          currency: string | null
+          currency: string
           error_message: string | null
           id: string
           metadata: Json | null
@@ -938,8 +718,9 @@ export type Database = {
         }
         Insert: {
           amount: number
+          captured_at?: string | null
           created_at?: string | null
-          currency?: string | null
+          currency?: string
           error_message?: string | null
           id?: string
           metadata?: Json | null
@@ -962,8 +743,9 @@ export type Database = {
         }
         Update: {
           amount?: number
+          captured_at?: string | null
           created_at?: string | null
-          currency?: string | null
+          currency?: string
           error_message?: string | null
           id?: string
           metadata?: Json | null
@@ -992,158 +774,46 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "payment_transactions_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      print_providers: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          id: number
-          is_active: boolean | null
-          name: string
-          supported_countries: string[] | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          id: number
-          is_active?: boolean | null
-          name: string
-          supported_countries?: string[] | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          id?: number
-          is_active?: boolean | null
-          name?: string
-          supported_countries?: string[] | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      product_provider_availability: {
-        Row: {
-          base_price_cents: number
-          country_code: string
-          created_at: string | null
-          currency_code: string
-          id: string
-          is_available: boolean | null
-          is_in_stock: boolean | null
-          last_stock_check: string | null
-          last_synced_at: string | null
-          next_restock_date: string | null
-          print_provider_id: number
-          product_id: string
-          production_time_days: number | null
-          shipping_cost_cents: number | null
-          stock_status: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          base_price_cents: number
-          country_code: string
-          created_at?: string | null
-          currency_code: string
-          id?: string
-          is_available?: boolean | null
-          is_in_stock?: boolean | null
-          last_stock_check?: string | null
-          last_synced_at?: string | null
-          next_restock_date?: string | null
-          print_provider_id: number
-          product_id: string
-          production_time_days?: number | null
-          shipping_cost_cents?: number | null
-          stock_status?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          base_price_cents?: number
-          country_code?: string
-          created_at?: string | null
-          currency_code?: string
-          id?: string
-          is_available?: boolean | null
-          is_in_stock?: boolean | null
-          last_stock_check?: string | null
-          last_synced_at?: string | null
-          next_restock_date?: string | null
-          print_provider_id?: number
-          product_id?: string
-          production_time_days?: number | null
-          shipping_cost_cents?: number | null
-          stock_status?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "product_provider_availability_print_provider_id_fkey"
-            columns: ["print_provider_id"]
-            isOneToOne: false
-            referencedRelation: "print_providers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "product_provider_availability_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "catalog_products"
-            referencedColumns: ["id"]
-          },
         ]
       }
       product_variants: {
         Row: {
+          blueprint_id: number
           color: string | null
           created_at: string | null
-          id: string
+          is_available: boolean | null
+          price_cents: number | null
           printify_variant_id: number
-          product_id: string
           size: string | null
-          sku: string | null
-          title: string
           updated_at: string | null
         }
         Insert: {
+          blueprint_id: number
           color?: string | null
           created_at?: string | null
-          id?: string
+          is_available?: boolean | null
+          price_cents?: number | null
           printify_variant_id: number
-          product_id: string
           size?: string | null
-          sku?: string | null
-          title: string
           updated_at?: string | null
         }
         Update: {
+          blueprint_id?: number
           color?: string | null
           created_at?: string | null
-          id?: string
+          is_available?: boolean | null
+          price_cents?: number | null
           printify_variant_id?: number
-          product_id?: string
           size?: string | null
-          sku?: string | null
-          title?: string
           updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "product_variants_product_id_fkey"
-            columns: ["product_id"]
+            foreignKeyName: "product_variants_new_blueprint_id_fkey"
+            columns: ["blueprint_id"]
             isOneToOne: false
             referencedRelation: "catalog_products"
-            referencedColumns: ["id"]
+            referencedColumns: ["blueprint_id"]
           },
         ]
       }
@@ -1186,69 +856,6 @@ export type Database = {
           printify_product_id?: string | null
           updated_at?: string | null
           user_id?: string | null
-        }
-        Relationships: []
-      }
-      products_provider: {
-        Row: {
-          blueprint_id: number
-          brand: string | null
-          country_code: string
-          created_at: string | null
-          description: string | null
-          expires_at: string
-          id: string
-          images: Json | null
-          min_price: number
-          model: string | null
-          print_areas: Json | null
-          print_provider_id: number
-          provider_name: string | null
-          rank: number
-          shipping_cost: number
-          title: string
-          total_cost: number
-          updated_at: string | null
-        }
-        Insert: {
-          blueprint_id: number
-          brand?: string | null
-          country_code: string
-          created_at?: string | null
-          description?: string | null
-          expires_at: string
-          id?: string
-          images?: Json | null
-          min_price: number
-          model?: string | null
-          print_areas?: Json | null
-          print_provider_id: number
-          provider_name?: string | null
-          rank: number
-          shipping_cost: number
-          title: string
-          total_cost: number
-          updated_at?: string | null
-        }
-        Update: {
-          blueprint_id?: number
-          brand?: string | null
-          country_code?: string
-          created_at?: string | null
-          description?: string | null
-          expires_at?: string
-          id?: string
-          images?: Json | null
-          min_price?: number
-          model?: string | null
-          print_areas?: Json | null
-          print_provider_id?: number
-          provider_name?: string | null
-          rank?: number
-          shipping_cost?: number
-          title?: string
-          total_cost?: number
-          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1396,73 +1003,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_custom_designs: {
-        Row: {
-          country_code: string
-          created_at: string | null
-          design_image_url: string
-          id: string
-          printify_image_id: string | null
-          printify_product_id: string | null
-          product_id: string
-          provider_id: number
-          status: string | null
-          updated_at: string | null
-          user_id: string
-          variant_id: string | null
-        }
-        Insert: {
-          country_code: string
-          created_at?: string | null
-          design_image_url: string
-          id?: string
-          printify_image_id?: string | null
-          printify_product_id?: string | null
-          product_id: string
-          provider_id: number
-          status?: string | null
-          updated_at?: string | null
-          user_id: string
-          variant_id?: string | null
-        }
-        Update: {
-          country_code?: string
-          created_at?: string | null
-          design_image_url?: string
-          id?: string
-          printify_image_id?: string | null
-          printify_product_id?: string | null
-          product_id?: string
-          provider_id?: number
-          status?: string | null
-          updated_at?: string | null
-          user_id?: string
-          variant_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_custom_designs_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "catalog_products"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_custom_designs_provider_id_fkey"
-            columns: ["provider_id"]
-            isOneToOne: false
-            referencedRelation: "print_providers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_custom_designs_variant_id_fkey"
-            columns: ["variant_id"]
-            isOneToOne: false
-            referencedRelation: "product_variants"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       user_uploads: {
         Row: {
           created_at: string | null
@@ -1505,57 +1045,6 @@ export type Database = {
         }
         Relationships: []
       }
-      variant_pricing: {
-        Row: {
-          cost_cents: number
-          country_code: string
-          created_at: string | null
-          id: string
-          is_available: boolean | null
-          last_synced_at: string | null
-          price_cents: number
-          print_provider_id: number
-          variant_id: string
-        }
-        Insert: {
-          cost_cents: number
-          country_code: string
-          created_at?: string | null
-          id?: string
-          is_available?: boolean | null
-          last_synced_at?: string | null
-          price_cents: number
-          print_provider_id: number
-          variant_id: string
-        }
-        Update: {
-          cost_cents?: number
-          country_code?: string
-          created_at?: string | null
-          id?: string
-          is_available?: boolean | null
-          last_synced_at?: string | null
-          price_cents?: number
-          print_provider_id?: number
-          variant_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "variant_pricing_print_provider_id_fkey"
-            columns: ["print_provider_id"]
-            isOneToOne: false
-            referencedRelation: "print_providers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "variant_pricing_variant_id_fkey"
-            columns: ["variant_id"]
-            isOneToOne: false
-            referencedRelation: "product_variants"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       webhook_events: {
         Row: {
           created_at: string | null
@@ -1594,53 +1083,7 @@ export type Database = {
       }
     }
     Views: {
-      catalog_stock_health: {
-        Row: {
-          active_count: number | null
-          availability_status: string | null
-          last_checked: string | null
-          product_count: number | null
-          stale_checks: number | null
-        }
-        Relationships: []
-      }
-      catalog_sync_status: {
-        Row: {
-          blueprint_id: number | null
-          countries_to_sync: string[] | null
-          error_message: string | null
-          processed_at: string | null
-          processing_seconds: number | null
-          product_name: string | null
-          queue_id: string | null
-          queued_at: string | null
-          retry_count: number | null
-          status: string | null
-        }
-        Relationships: []
-      }
-      recent_stock_changes: {
-        Row: {
-          blueprint_id: number | null
-          changed_at: string | null
-          error_message: string | null
-          id: string | null
-          new_status: string | null
-          old_status: string | null
-          product_id: string | null
-          product_name: string | null
-          reason: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "catalog_stock_changes_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "catalog_products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
       atomic_mollie_payment_capture: {
@@ -1669,22 +1112,6 @@ export type Database = {
           p_currency: string
           p_stripe_payment_intent_id: string
         }
-        Returns: Json
-      }
-      cancel_order_with_refund_atomic: {
-        Args: {
-          p_cancellation_reason?: string
-          p_order_id: string
-          p_refund_amount: number
-          p_refund_external_id: string
-          p_refund_provider: string
-        }
-        Returns: Json
-      }
-      cleanup_expired_pairing_sessions: { Args: never; Returns: undefined }
-      cleanup_old_sync_queue: { Args: never; Returns: number }
-      confirm_refund_completed: {
-        Args: { p_refund_external_id: string; p_refund_id: string }
         Returns: Json
       }
       create_invoice_for_order: {
@@ -1737,30 +1164,13 @@ export type Database = {
         Returns: string
       }
       deduct_coin: { Args: { user_id: string }; Returns: boolean }
-      expire_waiting_payment_orders: { Args: never; Returns: number }
-      generate_order_number: { Args: never; Returns: string }
-      get_cheapest_provider: {
-        Args: {
-          p_color: string
-          p_country_code: string
-          p_product_id: string
-          p_size: string
-        }
-        Returns: {
-          price_cents: number
-          provider_name: string
-          shipping_cost_cents: number
-          total_cents: number
-        }[]
+      get_available_colors: {
+        Args: { p_blueprint_id: number }
+        Returns: string[]
       }
-      get_next_product_to_sync: {
-        Args: never
-        Returns: {
-          blueprint_id: number
-          countries: string[]
-          product_id: string
-          queue_id: string
-        }[]
+      get_available_sizes: {
+        Args: { p_blueprint_id: number; p_color: string }
+        Returns: string[]
       }
       get_order_by_idempotency_key: { Args: { key: string }; Returns: string }
       get_pending_payment_recoveries: {
@@ -1777,67 +1187,16 @@ export type Database = {
           shipping_address: Json
         }[]
       }
-      get_products_for_daily_price_update: {
-        Args: never
+      get_variant: {
+        Args: { p_blueprint_id: number; p_color: string; p_size: string }
         Returns: {
-          blueprint_id: number
-          hours_since_sync: number
-          last_synced: string
-          name: string
-          product_id: string
-        }[]
-      }
-      get_providers_for_product: {
-        Args: { p_country_code: string; p_product_id: string }
-        Returns: {
-          base_price_cents: number
-          currency_code: string
-          production_time_days: number
-          provider_id: number
-          provider_name: string
-          shipping_cost_cents: number
-          total_cost_cents: number
-        }[]
-      }
-      get_providers_for_product_with_fallback: {
-        Args: {
-          p_country_code?: string
-          p_max_shipping_cents?: number
-          p_product_id: string
-        }
-        Returns: {
-          base_price_cents: number
-          country_code: string
-          currency_code: string
-          is_fallback: boolean
-          production_time_days: number
-          provider_id: number
-          provider_name: string
-          shipping_cost_cents: number
-          total_cost_cents: number
-        }[]
-      }
-      get_variant_price: {
-        Args: {
-          p_color: string
-          p_country_code: string
-          p_product_id: string
-          p_provider_id: number
-          p_size: string
-        }
-        Returns: {
-          color: string
-          cost_cents: number
-          currency_code: string
           price_cents: number
-          size: string
-          title: string
-          variant_id: string
+          printify_variant_id: number
         }[]
       }
-      handle_refund_failure: {
-        Args: { p_error_message: string; p_order_id: string }
-        Returns: Json
+      has_size_available: {
+        Args: { p_blueprint_id: number; p_size: string }
+        Returns: boolean
       }
       increment_recovery_attempt: {
         Args: {
@@ -1923,121 +1282,51 @@ export type Database = {
           isSetofReturn: false
         }
       }
-      refill_min_3_coins_daily: { Args: never; Returns: undefined }
       trigger_catalog_sync: { Args: never; Returns: undefined }
-      trigger_product_sync: {
-        Args: { p_blueprint_id: number; p_countries?: string[] }
-        Returns: string
-      }
-      update_product_stock_status: {
+      update_order_payment_status_atomic: {
         Args: {
-          p_error_message?: string
-          p_new_status: string
-          p_product_id: string
-          p_reason?: string
+          p_order_id: string
+          p_order_status: string
+          p_payment_method?: string
+          p_payment_status: string
         }
-        Returns: undefined
+        Returns: Json
       }
-      update_sync_queue_status: {
-        Args: { p_error_message?: string; p_queue_id: string; p_status: string }
-        Returns: undefined
+      upsert_cart_item: {
+        Args: {
+          p_cart_id: string
+          p_custom_image_public_id?: string
+          p_custom_image_url?: string
+          p_product_id: string
+          p_product_name?: string
+          p_quantity: number
+          p_unit_price?: number
+          p_variant_id: string
+        }
+        Returns: {
+          cart_id: string | null
+          created_at: string | null
+          custom_image_public_id: string | null
+          custom_image_url: string | null
+          design_id: string | null
+          id: string
+          printify_blueprint_id: number | null
+          printify_print_provider_id: number | null
+          product_id: string | null
+          product_name: string | null
+          quantity: number | null
+          unit_price: number | null
+          updated_at: string | null
+          variant_id: string | null
+          variant_name: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "cart_items"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
-      upsert_cart_item:
-        | {
-            Args: {
-              p_cart_id: string
-              p_custom_image_public_id?: string
-              p_custom_image_url?: string
-              p_product_id: string
-              p_quantity: number
-              p_selling_price?: number
-              p_variant_id: string
-            }
-            Returns: {
-              cart_id: string | null
-              created_at: string | null
-              custom_image_url: string | null
-              id: string
-              printify_blueprint_id: number | null
-              printify_print_provider_id: number | null
-              product_id: string | null
-              product_name: string
-              quantity: number
-              unit_price: number | null
-              updated_at: string | null
-              variant_id: string | null
-              variant_name: string | null
-            }
-            SetofOptions: {
-              from: "*"
-              to: "cart_items"
-              isOneToOne: true
-              isSetofReturn: false
-            }
-          }
-        | {
-            Args: {
-              p_cart_id: string
-              p_custom_image_url?: string
-              p_product_id: string
-              p_product_name?: string
-              p_quantity: number
-              p_variant_id: string
-            }
-            Returns: {
-              cart_id: string | null
-              created_at: string | null
-              custom_image_url: string | null
-              id: string
-              printify_blueprint_id: number | null
-              printify_print_provider_id: number | null
-              product_id: string | null
-              product_name: string
-              quantity: number
-              unit_price: number | null
-              updated_at: string | null
-              variant_id: string | null
-              variant_name: string | null
-            }
-            SetofOptions: {
-              from: "*"
-              to: "cart_items"
-              isOneToOne: true
-              isSetofReturn: false
-            }
-          }
-        | {
-            Args: {
-              p_cart_id: string
-              p_custom_image_url?: string
-              p_product_id: string
-              p_product_name?: string
-              p_quantity: number
-              p_unit_price?: number
-              p_variant_id: string
-            }
-            Returns: {
-              cart_id: string | null
-              created_at: string | null
-              custom_image_url: string | null
-              id: string
-              printify_blueprint_id: number | null
-              printify_print_provider_id: number | null
-              product_id: string | null
-              product_name: string
-              quantity: number
-              unit_price: number | null
-              updated_at: string | null
-              variant_id: string | null
-              variant_name: string | null
-            }
-            SetofOptions: {
-              from: "*"
-              to: "cart_items"
-              isOneToOne: true
-              isSetofReturn: false
-            }
-          }
       upsert_mollie_payment_transaction: {
         Args: {
           p_amount: number
@@ -2050,8 +1339,9 @@ export type Database = {
         }
         Returns: {
           amount: number
+          captured_at: string | null
           created_at: string | null
-          currency: string | null
+          currency: string
           error_message: string | null
           id: string
           metadata: Json | null
@@ -2094,8 +1384,9 @@ export type Database = {
         }
         Returns: {
           amount: number
+          captured_at: string | null
           created_at: string | null
-          currency: string | null
+          currency: string
           error_message: string | null
           id: string
           metadata: Json | null
@@ -2136,8 +1427,9 @@ export type Database = {
         }
         Returns: {
           amount: number
+          captured_at: string | null
           created_at: string | null
-          currency: string | null
+          currency: string
           error_message: string | null
           id: string
           metadata: Json | null
@@ -2293,9 +1585,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {},
   },

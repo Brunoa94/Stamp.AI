@@ -3,7 +3,7 @@
  *
  * Copy is identical to the previous homepage iteration; only the
  * presentation layer changed. Product data is NOT here — it comes from the
- * server cache (getCachedFeaturedProductsWithPricing).
+ * server cache (getCachedProductsWithPricing).
  */
 
 export const MAX_HOME_PRODUCTS = 8;

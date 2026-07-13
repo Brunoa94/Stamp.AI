@@ -67,8 +67,8 @@ export class OrderService {
       // Validate response with Zod schema
       try {
         const validatedData = z.array(OrderWithItemsSchema).parse(data);
-        
-        return validatedData as OrderWithItemsT[];
+
+        return validatedData as unknown as OrderWithItemsT[];
       } catch (zodError: any) {
         console.error("❌ Zod validation failed for orders");
         console.error("Error details:", zodError.errors || zodError.message);
@@ -108,7 +108,7 @@ export class OrderService {
       // Validate response with Zod schema
       const validatedData = OrderWithItemsSchema.parse(data);
 
-      return validatedData as OrderWithItemsT;
+      return validatedData as unknown as OrderWithItemsT;
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Order", action: "Get Order"})
     }
@@ -142,7 +142,7 @@ export class OrderService {
       // Validate response with Zod schema
       const validatedData = OrderWithItemsSchema.parse(data);
 
-      return validatedData as OrderWithItemsT;
+      return validatedData as unknown as OrderWithItemsT;
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Order", action: "Get Order By Number"})
     }

@@ -49,19 +49,12 @@ export type FabricColorType = {
 // Size types
 export type SizeType = "XS" | "S" | "M" | "L" | "XL" | "XXL";
 
-// Presentation-layer catalog product (mapped from CatalogProduct + ProviderWithPricing)
+// Presentation-layer catalog product (mapped from CatalogProduct)
 export type CatalogProductMappedType = {
-  id: string;
+  blueprintId: number;
   name: string;
   imageUrl: string;
-  blueprintId: number;
   printProviderId: number;
   price: number;
-  providerName: string | undefined;
-  availabilityStatus:
-    | "in_stock"
-    | "out_of_stock"
-    | "discontinued"
-    | "temporarily_unavailable"
-    | undefined;
+  providerName: string;
 };

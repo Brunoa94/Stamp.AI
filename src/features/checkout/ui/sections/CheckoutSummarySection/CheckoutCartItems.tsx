@@ -23,7 +23,8 @@ export function CheckoutCartItems({ items }: CheckoutCartItemsPropsI) {
     >
       {items.map((item) => {
         const name = item.product_name || item.product?.name || "Custom Product";
-        const lineTotal = (item.unit_price ?? 0) * item.quantity;
+        const quantity = item.quantity ?? 1;
+        const lineTotal = (item.unit_price ?? 0) * quantity;
         return (
           <li
             key={item.id}
@@ -55,7 +56,7 @@ export function CheckoutCartItems({ items }: CheckoutCartItemsPropsI) {
               </Span>
               <div className="mt-2 flex items-center justify-between">
                 <Span unstyled className="text-lg text-(--color-stamp-taupe)">
-                  Qty {item.quantity}
+                  Qty {quantity}
                 </Span>
                 <span className="text-2xl font-bold tabular-nums text-(--color-stamp-chocolate)">
                   {formatPrice(lineTotal / 100)}

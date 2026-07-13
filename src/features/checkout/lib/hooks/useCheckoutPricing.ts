@@ -50,7 +50,7 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
   const subtotalInCents = (() => {
     if (!cart?.cart_items) return 0;
     return cart.cart_items.reduce((sum, item) => {
-      return sum + ((item.unit_price ?? 0) * item.quantity);
+      return sum + ((item.unit_price ?? 0) * (item.quantity ?? 1));
     }, 0);
   })();
 

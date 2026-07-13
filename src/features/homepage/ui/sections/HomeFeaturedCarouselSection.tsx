@@ -5,6 +5,7 @@
  * and a more editorial layout. Placed after the Manifesto section.
  *
  * Fetches ALL active products (like stamp page) instead of just featured ones.
+ * Simplified: uses embedded pricing from product_variants (Printify Choice)
  */
 
 "use client";
@@ -13,19 +14,17 @@ import { useRef, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useQueries } from "@tanstack/react-query";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { useCatalogProducts } from "@/queries/catalogQueries";
-import { CatalogQueryService } from "@/services/catalogQueryService";
 import { HomeSectionHeader } from "../components/HomeSectionHeader";
+import { SectionReveal } from "../components/SectionReveal";
 
 const EXCLUDED_BLUEPRINT_IDS = new Set([12]);
-const PROVIDER_COUNTRY = "NL";
 
 interface CarouselProductData {
-  id: string;
+  blueprintId: number;
   name: string;
   price: number;
   imageUrl: string;
@@ -46,46 +45,29 @@ export function HomeFeaturedCarouselSection() {
     [rawProducts],
   );
 
-  // Fetch provider pricing for each product
-  const providerQueries = useQueries({
-    queries: visibleProducts.map((product) => ({
-      queryKey: ["catalog", "providers", product.id, PROVIDER_COUNTRY],
-      queryFn: () =>
-        CatalogQueryService.getProvidersForProduct(
-          product.id,
-          PROVIDER_COUNTRY,
-        ),
-      staleTime: 1000 * 60 * 10,
-      enabled: !!product.id,
-    })),
-  });
-
   // Map products with pricing
   const products = useMemo<CarouselProductData[]>(
     () =>
-      visibleProducts.map((product, index) => {
-        const providers = providerQueries[index]?.data ?? [];
-        const bestProvider = providers[0];
-        const totalCents = bestProvider
-          ? bestProvider.basePriceCents + bestProvider.shippingCostCents
-          : 0;
-        const price = product.selling_price_cents
-          ? product.selling_price_cents / 100
-          : totalCents > 0
-            ? totalCents / 100
-            : 0;
+      visibleProducts.map((product) => {
+        // New flow: price comes from the product's precomputed
+        // min_price_cents (cheapest available Printify Choice variant)
+        // plus shipping, unless an admin selling-price override is set.
+        const baseCents = product.min_price_cents || 0;
+        const shippingCents = product.shipping_cents || 0;
+        const totalCents =
+          product.selling_price_cents ??
+          (baseCents > 0 ? baseCents + shippingCents : 0);
+        const price = totalCents > 0 ? totalCents / 100 : 0;
 
         return {
-          id: product.id,
-          name: product.display_title || product.name,
+          blueprintId: product.blueprint_id,
+          name: product.display_title,
           price,
           imageUrl: product.base_image_url ?? "",
-          href: bestProvider
-            ? `/create?blueprint_id=${product.blueprint_id}&print_provider_id=${bestProvider.id}`
-            : "/stamp",
+          href: "/stamp",
         };
       }),
-    [visibleProducts, providerQueries],
+    [visibleProducts],
   );
 
   const scroll = (direction: "left" | "right") => {
@@ -105,7 +87,7 @@ export function HomeFeaturedCarouselSection() {
 
   return (
     <section className="bg-(--color-stamp-cream) px-6 py-24 lg:px-12 xl:px-24">
-      <div className="mx-auto max-w-screen-2xl">
+      <SectionReveal className="mx-auto max-w-screen-2xl">
         <div className="flex items-end justify-between">
           <HomeSectionHeader
             title="Featured"
@@ -155,7 +137,7 @@ export function HomeFeaturedCarouselSection() {
               ))
             : products.map((product, index) => (
                 <Link
-                  key={product.id}
+                  key={product.blueprintId}
                   href={product.href}
                   className="group block w-72 shrink-0 sm:w-80"
                 >
@@ -235,7 +217,7 @@ export function HomeFeaturedCarouselSection() {
           </Span>
           <ArrowRight className="h-3.5 w-3.5 text-(--color-stamp-taupe)" />
         </div>
-      </div>
+      </SectionReveal>
     </section>
   );
 }

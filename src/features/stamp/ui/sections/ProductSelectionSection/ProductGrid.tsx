@@ -10,10 +10,12 @@ import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
  * ProductGrid
  *
  * Manages the grid layout of products and handles loading/error/empty states.
+ * Products are grouped into clothing (apparel) and accessories with a visual separator.
  */
 
 interface PropsI {
-  products: CatalogProductMappedType[];
+  clothingProducts: CatalogProductMappedType[];
+  accessoryProducts: CatalogProductMappedType[];
   selectedProduct: CatalogProductMappedType | undefined;
   isLoading: boolean;
   isError: boolean;
@@ -22,8 +24,42 @@ interface PropsI {
   isProductSelected: (product: CatalogProductMappedType) => boolean;
 }
 
+function ProductCardItem({
+  product,
+  isProductSelected,
+  onClearSelection,
+  onProductSelect,
+}: {
+  product: CatalogProductMappedType;
+  isProductSelected: (product: CatalogProductMappedType) => boolean;
+  onClearSelection: () => void;
+  onProductSelect: (product: CatalogProductMappedType) => void;
+}) {
+  const selected = isProductSelected(product);
+
+  if (selected) {
+    return (
+      <SelectedProductCard
+        key={product.blueprintId}
+        product={product}
+        onClearSelection={onClearSelection}
+      />
+    );
+  }
+
+  return (
+    <ProductCard
+      key={product.blueprintId}
+      product={product}
+      isSelected={selected}
+      onSelect={onProductSelect}
+    />
+  );
+}
+
 export function ProductGrid({
-  products,
+  clothingProducts,
+  accessoryProducts,
   selectedProduct,
   isLoading,
   isError,
@@ -31,7 +67,8 @@ export function ProductGrid({
   onClearSelection,
   isProductSelected,
 }: PropsI) {
-  const productsToRender = selectedProduct ? [selectedProduct] : products;
+  const allProducts = [...clothingProducts, ...accessoryProducts];
+  const hasProducts = allProducts.length > 0;
 
   return (
     <div className="h-full min-h-0 overflow-y-auto bg-(--color-stamp-cream)/20">
@@ -66,7 +103,7 @@ export function ProductGrid({
         </div>
       )}
 
-      {!isLoading && !isError && products.length === 0 && (
+      {!isLoading && !isError && !hasProducts && (
         <div
           role="status"
           className="h-full flex items-center justify-center p-12 text-center"
@@ -77,32 +114,81 @@ export function ProductGrid({
         </div>
       )}
 
-      {!isLoading && !isError && products.length > 0 && (
-        <div
-          className={`p-4 lg:p-6 grid grid-cols-1 gap-4 ${selectedProduct ? "" : "sm:grid-cols-2"}`}
-        >
-          {productsToRender.map((product) => {
-            const selected = isProductSelected(product);
-
-            if (selected) {
-              return (
-                <SelectedProductCard
-                  key={product.id}
-                  product={product}
-                  onClearSelection={onClearSelection}
-                />
-              );
-            }
-
-            return (
-              <ProductCard
-                key={product.id}
-                product={product}
-                isSelected={selected}
-                onSelect={onProductSelect}
+      {!isLoading && !isError && hasProducts && (
+        <div className="p-4 lg:p-6">
+          {/* When a product is selected, show only that product */}
+          {selectedProduct ? (
+            <div className="grid grid-cols-1 gap-4">
+              <ProductCardItem
+                product={selectedProduct}
+                isProductSelected={isProductSelected}
+                onClearSelection={onClearSelection}
+                onProductSelect={onProductSelect}
               />
-            );
-          })}
+            </div>
+          ) : (
+            <>
+              {/* Clothing Section */}
+              {clothingProducts.length > 0 && (
+                <div>
+                  <Span
+                    variant="micro"
+                    className="text-(--color-stamp-taupe) uppercase tracking-widest mb-4 block"
+                  >
+                    Apparel
+                  </Span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {clothingProducts.map((product) => (
+                      <ProductCardItem
+                        key={product.blueprintId}
+                        product={product}
+                        isProductSelected={isProductSelected}
+                        onClearSelection={onClearSelection}
+                        onProductSelect={onProductSelect}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Visual Separator */}
+              {clothingProducts.length > 0 && accessoryProducts.length > 0 && (
+                <div className="my-8 flex items-center gap-4">
+                  <div className="flex-1 h-px bg-(--color-stamp-divider)" />
+                  <Span
+                    variant="micro"
+                    className="text-(--color-stamp-taupe)/60 uppercase tracking-widest"
+                  >
+                    More Options
+                  </Span>
+                  <div className="flex-1 h-px bg-(--color-stamp-divider)" />
+                </div>
+              )}
+
+              {/* Accessories Section */}
+              {accessoryProducts.length > 0 && (
+                <div>
+                  <Span
+                    variant="micro"
+                    className="text-(--color-stamp-taupe) uppercase tracking-widest mb-4 block"
+                  >
+                    Accessories
+                  </Span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {accessoryProducts.map((product) => (
+                      <ProductCardItem
+                        key={product.blueprintId}
+                        product={product}
+                        isProductSelected={isProductSelected}
+                        onClearSelection={onClearSelection}
+                        onProductSelect={onProductSelect}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       )}
     </div>

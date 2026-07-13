@@ -25,16 +25,17 @@ export function CartItemCardActions({
 }: CartItemCardActionsPropsI) {
   const productName =
     item.product_name || item.product?.name || "Custom Product";
+  const quantity = item.quantity ?? 1;
 
   const handleIncrement = () => {
-    if (item.quantity < MAX_QUANTITY) {
-      onUpdateQuantity(item.id, item.quantity + 1);
+    if (quantity < MAX_QUANTITY) {
+      onUpdateQuantity(item.id, quantity + 1);
     }
   };
 
   const handleDecrement = () => {
-    if (item.quantity > MIN_QUANTITY) {
-      onUpdateQuantity(item.id, item.quantity - 1);
+    if (quantity > MIN_QUANTITY) {
+      onUpdateQuantity(item.id, quantity - 1);
     }
   };
 
@@ -47,7 +48,7 @@ export function CartItemCardActions({
       >
         <Button
           onClick={handleDecrement}
-          disabled={item.quantity <= MIN_QUANTITY}
+          disabled={quantity <= MIN_QUANTITY}
           variant="ghost"
           size="icon"
           aria-label="Decrease quantity"
@@ -60,11 +61,11 @@ export function CartItemCardActions({
           className="w-12 text-center text-sm font-heading font-bold tabular-nums"
           aria-live="polite"
         >
-          {item.quantity}
+          {quantity}
         </Span>
         <Button
           onClick={handleIncrement}
-          disabled={item.quantity >= MAX_QUANTITY}
+          disabled={quantity >= MAX_QUANTITY}
           variant="ghost"
           size="icon"
           aria-label="Increase quantity"

@@ -141,6 +141,28 @@ export const useStampProductSelection = () => {
   };
 };
 
+// Customization selection state selectors
+export const useStampCustomization = () => {
+  const selectedColor = useStampFlowStore((state) => state.selectedColor);
+  const setSelectedColor = useStampFlowStore((state) => state.setSelectedColor);
+  const selectedSize = useStampFlowStore((state) => state.selectedSize);
+  const setSelectedSize = useStampFlowStore((state) => state.setSelectedSize);
+  const selectedPriceCents = useStampFlowStore(
+    (state) => state.selectedPriceCents,
+  );
+  const setSelectedPriceCents = useStampFlowStore(
+    (state) => state.setSelectedPriceCents,
+  );
+  return {
+    selectedColor,
+    setSelectedColor,
+    selectedSize,
+    setSelectedSize,
+    selectedPriceCents,
+    setSelectedPriceCents,
+  };
+};
+
 // Combined data selector for convenience
 export const useStampData = () => {
   const currentStep = useStampFlowStore((state) => state.currentStep);

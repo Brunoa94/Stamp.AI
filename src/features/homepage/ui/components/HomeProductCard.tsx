@@ -12,20 +12,11 @@ import { Span } from "@/features/ui/span";
 import { ColorSwatches } from "./ColorSwatches";
 import type { ProductCardData } from "../../lib/mappers/productCardMapper";
 
-const AVAILABILITY_BADGES: Record<string, string> = {
-  out_of_stock: "Out of stock",
-  discontinued: "Discontinued",
-  temporarily_unavailable: "Temp unavailable",
-};
-
 interface HomeProductCardPropsI {
   product: ProductCardData;
 }
 
 export function HomeProductCard({ product }: HomeProductCardPropsI) {
-  const badge = product.availabilityStatus
-    ? AVAILABILITY_BADGES[product.availabilityStatus]
-    : undefined;
 
   return (
     <Link href={product.href} className="group block">
@@ -52,13 +43,12 @@ export function HomeProductCard({ product }: HomeProductCardPropsI) {
           </div>
         )}
 
-        {badge && (
-          <Span
-            variant="micro"
-            className="absolute right-4 top-4 bg-(--color-stamp-error)/90 px-3 py-1.5 text-(--color-stamp-white)"
-          >
-            {badge}
-          </Span>
+        {product.discountPercent && product.discountPercent > 0 && (
+          <div className="absolute top-4 right-4 bg-(--color-stamp-gold) px-2.5 py-1">
+            <Span variant="micro" className="font-medium text-(--color-stamp-white)">
+              -{product.discountPercent}%
+            </Span>
+          </div>
         )}
       </div>
 

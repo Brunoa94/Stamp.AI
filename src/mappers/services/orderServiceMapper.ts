@@ -18,14 +18,15 @@ export class OrderServiceMapper {
   ): Array<Omit<Database['public']['Tables']['order_items']['Insert'], 'id' | 'created_at' | 'updated_at'>> {
     return cartItems.map(item => {
       const unitPrice = item.unit_price ?? 0;
+      const quantity = item.quantity ?? 1;
       return {
         order_id: orderId,
         product_id: item.product_id || null,
-        product_name: item.product_name,
+        product_name: item.product_name || 'Custom Product',
         variant_id: item.variant_id,
-        quantity: item.quantity,
+        quantity,
         unit_price: unitPrice,
-        total_price: unitPrice * item.quantity,
+        total_price: unitPrice * quantity,
         custom_image_url: item.custom_image_url || '',
         design_config: item.custom_image_url
           ? { reusable_image_url: item.custom_image_url }
@@ -52,7 +53,7 @@ export class OrderServiceMapper {
    */
   static calculateOrderTotals(items: CartItem[]) {
     const subtotal = items.reduce((sum, item) => {
-      return sum + ((item.unit_price ?? 0) * item.quantity);
+      return sum + ((item.unit_price ?? 0) * (item.quantity ?? 1));
     }, 0);
 
     // Future: Add tax and shipping calculations
@@ -165,13 +166,14 @@ export class OrderServiceMapper {
    */
   static mapCartItemToOrderItem(cartItem: CartItem, orderId: string) {
     const unitPrice = cartItem.unit_price ?? 0;
-    const totalPrice = unitPrice * cartItem.quantity;
+    const quantity = cartItem.quantity ?? 1;
+    const totalPrice = unitPrice * quantity;
 
     return {
       order_id: orderId,
       product_id: cartItem.product_id || null,
       variant_id: cartItem.variant_id || null,
-      quantity: cartItem.quantity,
+      quantity,
       unit_price: unitPrice,
       total_price: totalPrice,
       custom_image_url: cartItem.custom_image_url || "",

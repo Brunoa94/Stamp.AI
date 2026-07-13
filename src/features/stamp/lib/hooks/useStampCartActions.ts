@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import {
   useStampFinalization,
   useStampSelectedImage,
+  useStampCustomization,
 } from "./useStampSelectors";
 import { useAddToCart } from "@/queries/cartQueries";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
@@ -32,6 +33,7 @@ export function useStampCartActions() {
 
   const { createdProductId, createdVariantId } = useStampFinalization();
   const { selectedImageUrl, enhancedPrompt } = useStampSelectedImage();
+  const { selectedPriceCents } = useStampCustomization();
 
   const addToCartMutation = useAddToCart();
 
@@ -109,9 +111,9 @@ export function useStampCartActions() {
 
     const productName = enhancedPrompt || "Custom Design";
 
-    // TODO: Get actual price from product data
-    // For now using default price in cents
-    const unitPrice = 80; // $0.80
+    // Use actual price from customization selection (in cents)
+    // Default to 1999 cents ($19.99) if no price selected
+    const unitPrice = selectedPriceCents ?? 1999;
 
     try {
       await addToCartMutation.mutateAsync({

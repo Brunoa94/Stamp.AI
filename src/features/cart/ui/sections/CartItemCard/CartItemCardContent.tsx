@@ -19,6 +19,7 @@ export function CartItemCardContent({ item }: CartItemCardContentPropsI) {
   const productName =
     item.product_name || item.product?.name || "Custom Product";
   const unitPrice = item.unit_price ?? 0;
+  const quantity = item.quantity ?? 1;
   const variantName = item.variant?.name || "Standard";
   const colorway = variantName.includes("/")
     ? variantName.split("/")[0].trim()
@@ -51,7 +52,7 @@ export function CartItemCardContent({ item }: CartItemCardContentPropsI) {
       <CartItemCardSpecs
         variantName={variantName}
         colorway={colorway}
-        lineTotal={unitPrice * item.quantity}
+        lineTotal={unitPrice * quantity}
       />
     </div>
   );
