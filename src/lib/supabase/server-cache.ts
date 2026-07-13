@@ -81,9 +81,11 @@ export const getCachedProductsWithPricing = unstable_cache(
           .eq("blueprint_id", product.blueprint_id)
           .eq("is_available", true);
 
-        const uniqueColors = [
-          ...new Set(variants?.map((v) => v.color).filter(Boolean) || []),
-        ];
+        // Filter out non-displayable colors (Default = single variant, null = no color)
+        const displayableColors = variants
+          ?.map((v) => v.color)
+          .filter((c): c is string => Boolean(c) && c !== "Default") || [];
+        const uniqueColors = [...new Set(displayableColors)];
 
         // Use selling price override if set, otherwise the cheapest
         // available variant price plus shipping. Products with no real

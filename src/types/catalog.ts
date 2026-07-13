@@ -16,10 +16,12 @@ export interface CatalogProduct {
   min_price_cents: number;
   shipping_cents: number;
   is_active: boolean;
+  print_provider_id: number; // Printify print provider ID (default 99)
   // Admin overrides (editable)
   selling_price_cents: number | null;
   original_price_cents: number | null;
   is_on_sale: boolean;
+  discount_percent: number | null; // e.g., 20 for 20% off
   // Metadata
   last_synced_at: string | null;
   created_at: string;

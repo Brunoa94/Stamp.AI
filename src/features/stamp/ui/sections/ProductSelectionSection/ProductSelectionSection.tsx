@@ -2,11 +2,18 @@
 
 import { useMemo } from "react";
 import { useCatalogProducts } from "@/queries/catalogQueries";
+import { getCuratedBlueprintById } from "@/lib/printify/curatedBlueprints";
 import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
-import { useStampProductSelection } from "../../../lib/hooks/useStampSelectors";
+import {
+  useStampProductSelection,
+  useStampCustomization,
+} from "../../../lib/hooks/useStampSelectors";
 import { ProductGrid } from "./ProductGrid";
 import { ProductSelectionContent } from "./ProductSelectionContent";
 import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
+
+// Clothing categories (apparel)
+const CLOTHING_CATEGORIES = new Set(["tshirt", "hoodie"]);
 
 /**
  * ProductSelectionSection
@@ -15,17 +22,17 @@ import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
  * Protocol 05 / Canvas
  *
  * Fetches products from the catalog_products table with embedded pricing
- * Uses Printify Choice (provider 99) - no multi-provider complexity
+ * Each product has its own print_provider_id (most use 99 = Printify Choice)
  */
 
 const EXCLUDED_BLUEPRINT_IDS = new Set([12]);
 const FALLBACK_PRICE = 25.0;
-const PRINTIFY_CHOICE_PROVIDER_ID = 99;
 
 export function ProductSelectionSection() {
   const { nextStep } = useStampNavigation();
   const { blueprintId, printProviderId, setBlueprintId, setPrintProviderId } =
     useStampProductSelection();
+  const { setSelectedPriceCents } = useStampCustomization();
   const canProceedToCustomization =
     blueprintId !== undefined && printProviderId !== undefined;
 
@@ -56,22 +63,44 @@ export function ProductSelectionSection() {
           blueprintId: product.blueprint_id,
           name: product.display_title,
           imageUrl: product.base_image_url ?? "",
-          printProviderId: PRINTIFY_CHOICE_PROVIDER_ID,
+          printProviderId: product.print_provider_id,
           price,
-          providerName: "Printify Choice",
+          providerName: product.print_provider_id === 99 ? "Printify Choice" : "Print Provider",
         };
       }),
     [visibleProducts],
   );
 
+  // Group products into clothing (apparel) and accessories
+  const { clothingProducts, accessoryProducts } = useMemo(() => {
+    const clothing: CatalogProductMappedType[] = [];
+    const accessories: CatalogProductMappedType[] = [];
+
+    for (const product of catalogProducts) {
+      const blueprint = getCuratedBlueprintById(product.blueprintId);
+      const category = blueprint?.category;
+
+      if (category && CLOTHING_CATEGORIES.has(category)) {
+        clothing.push(product);
+      } else {
+        accessories.push(product);
+      }
+    }
+
+    return { clothingProducts: clothing, accessoryProducts: accessories };
+  }, [catalogProducts]);
+
   const handleProductSelect = (product: CatalogProductMappedType) => {
     setBlueprintId(product.blueprintId);
     setPrintProviderId(product.printProviderId);
+    // Store price in cents (product.price is in dollars)
+    setSelectedPriceCents(Math.round(product.price * 100));
   };
 
   const handleClearSelection = () => {
     setBlueprintId(undefined);
     setPrintProviderId(undefined);
+    setSelectedPriceCents(undefined);
   };
 
   const isSelected = (product: CatalogProductMappedType) =>
@@ -90,7 +119,8 @@ export function ProductSelectionSection() {
         onContinue={nextStep}
       />
       <ProductGrid
-        products={catalogProducts}
+        clothingProducts={clothingProducts}
+        accessoryProducts={accessoryProducts}
         selectedProduct={selectedProduct}
         isLoading={isLoading}
         isError={isError}

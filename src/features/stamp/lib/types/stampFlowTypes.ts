@@ -52,6 +52,14 @@ export interface StampFlowStateType {
   printProviderId: number | undefined;
   setPrintProviderId: (id: number | undefined) => void;
 
+  // Customization selection state
+  selectedColor: string | undefined;
+  setSelectedColor: (color: string | undefined) => void;
+  selectedSize: string | undefined;
+  setSelectedSize: (size: string | undefined) => void;
+  selectedPriceCents: number | undefined;
+  setSelectedPriceCents: (price: number | undefined) => void;
+
   // Created product state
   createdProductId: string | undefined;
   setCreatedProductId: (id: string | undefined) => void;

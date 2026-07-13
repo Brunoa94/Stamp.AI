@@ -1,7 +1,7 @@
 -- Add promocodes support
 
 CREATE TABLE IF NOT EXISTS promocodes (
-  promocode_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  promocode_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   code TEXT NOT NULL UNIQUE,
   type TEXT NOT NULL CHECK (type IN ('percentage', 'numeric')),
   value DECIMAL(10,2) NOT NULL CHECK (value > 0),

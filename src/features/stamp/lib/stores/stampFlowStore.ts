@@ -34,6 +34,11 @@ const initialState = {
   selectedProductType: "tshirt" as const,
   blueprintId: undefined,
   printProviderId: undefined,
+  // Customization selection state
+  selectedColor: undefined,
+  selectedSize: undefined,
+  selectedPriceCents: undefined,
+  // Created product state
   createdProductId: undefined,
   createdVariantId: undefined,
   mockupImageUrl: undefined,
@@ -139,6 +144,11 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
     set({ selectedProductType: productType }),
   setBlueprintId: (id) => set({ blueprintId: id }),
   setPrintProviderId: (id) => set({ printProviderId: id }),
+
+  // Customization selection
+  setSelectedColor: (color) => set({ selectedColor: color }),
+  setSelectedSize: (size) => set({ selectedSize: size }),
+  setSelectedPriceCents: (price) => set({ selectedPriceCents: price }),
 
   // Product state
   setCreatedProductId: (id) => set({ createdProductId: id }),

@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useBlueprintVariants } from "@/queries/productQueries";
 import { useStampProductCreation } from "../../../lib/hooks/useStampProductCreation";
 import {
   useStampProductSelection,
   useStampSelectedImage,
+  useStampCustomization,
 } from "../../../lib/hooks/useStampSelectors";
 import {
   STAMP_SIZES,
@@ -27,10 +28,8 @@ export function CustomizationSection() {
     useStampProductCreation();
   const { blueprintId, printProviderId } = useStampProductSelection();
   const { selectedImageUrl } = useStampSelectedImage();
-  const [selectedColor, setSelectedColor] = useState<string | undefined>(
-    undefined,
-  );
-  const [selectedSize, setSelectedSize] = useState<SizeType>(DEFAULT_SIZE);
+  const { selectedColor, setSelectedColor, selectedSize, setSelectedSize } =
+    useStampCustomization();
   const { data: variants, isLoading: isLoadingVariants } = useBlueprintVariants(
     blueprintId,
     printProviderId,
@@ -41,16 +40,25 @@ export function CustomizationSection() {
     [variants?.colors],
   );
 
+  // Initialize selectedSize with default if not set
+  useEffect(() => {
+    if (!selectedSize) {
+      setSelectedSize(DEFAULT_SIZE);
+    }
+  }, [selectedSize, setSelectedSize]);
+
+  // Auto-select first available color when colors load
   useEffect(() => {
     if (availableColors.length === 0) {
       setSelectedColor(undefined);
       return;
     }
 
-    setSelectedColor((prev) =>
-      prev && availableColors.includes(prev) ? prev : availableColors[0],
-    );
-  }, [availableColors]);
+    // If current selection is valid, keep it; otherwise use first available
+    if (!selectedColor || !availableColors.includes(selectedColor)) {
+      setSelectedColor(availableColors[0]);
+    }
+  }, [availableColors, selectedColor, setSelectedColor]);
 
   const canCreateProduct =
     !isFinalizing &&
@@ -65,7 +73,7 @@ export function CustomizationSection() {
       blueprintId,
       printProviderId,
       fabricColor: selectedColor || "",
-      size: selectedSize,
+      size: (selectedSize as SizeType) || DEFAULT_SIZE,
     });
   };
 
@@ -79,13 +87,13 @@ export function CustomizationSection() {
         colors={availableColors}
         selectedColor={selectedColor}
         sizes={STAMP_SIZES}
-        selectedSize={selectedSize}
+        selectedSize={(selectedSize as SizeType) || DEFAULT_SIZE}
         isLoadingColors={isLoadingVariants}
         hasProduct={Boolean(blueprintId)}
         canCreate={canCreateProduct}
         isFinalizing={isFinalizing}
         onSelectColor={setSelectedColor}
-        onSelectSize={setSelectedSize}
+        onSelectSize={(size) => setSelectedSize(size)}
         onCreateProduct={handleCreateProduct}
       />
     </section>

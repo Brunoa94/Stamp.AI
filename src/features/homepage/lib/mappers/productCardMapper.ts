@@ -12,6 +12,7 @@ export interface ProductCardData {
   price: number;
   originalPrice?: number;
   isOnSale: boolean;
+  discountPercent?: number; // e.g., 20 for 20% off
   specs: string;
   label: string;
   imageUrl: string;
@@ -38,6 +39,7 @@ export function mapProductToCard(product: ProductWithPricing): ProductCardData {
       ? product.original_price_cents / 100
       : undefined,
     isOnSale: product.is_on_sale || false,
+    discountPercent: product.discount_percent ?? undefined,
     specs: "", // No specs for featured products
     label: displayTitle.replace(/\s+/g, "_").toUpperCase(),
     imageUrl: product.base_image_url || "",

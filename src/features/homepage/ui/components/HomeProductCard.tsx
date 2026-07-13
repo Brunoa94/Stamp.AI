@@ -43,6 +43,13 @@ export function HomeProductCard({ product }: HomeProductCardPropsI) {
           </div>
         )}
 
+        {product.discountPercent && product.discountPercent > 0 && (
+          <div className="absolute top-4 right-4 bg-(--color-stamp-gold) px-2.5 py-1">
+            <Span variant="micro" className="font-medium text-(--color-stamp-white)">
+              -{product.discountPercent}%
+            </Span>
+          </div>
+        )}
       </div>
 
       <div className="flex items-start justify-between gap-4">
