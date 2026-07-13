@@ -25,6 +25,8 @@ const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 const uid = () => crypto.randomUUID();
 const stamp = () => `${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
+// payment_transactions.user_id / orders.user_id FK auth.users; use NULL for throwaway rows.
+const NO_USER = null;
 
 // Track rows created per test so we can clean up (payments before orders: FK order).
 const createdPaymentIds: string[] = [];
@@ -67,7 +69,7 @@ test.describe('Payment transaction registration', () => {
   // so create-payment-intent / create-paypal-order silently failed to record a row.
   test('records a pending payment row', async () => {
     const id = await insertPayment({
-      user_id: uid(),
+      user_id: NO_USER,
       payment_provider: 'stripe',
       stripe_payment_intent_id: `pi_test_pending_${stamp()}`,
       amount: 100,
@@ -86,7 +88,7 @@ test.describe('Payment transaction registration', () => {
   test('accepts every status the app uses', async () => {
     for (const status of ['pending', 'processing', 'succeeded', 'failed', 'refunded', 'canceled']) {
       await insertPayment({
-        user_id: uid(),
+        user_id: NO_USER,
         payment_provider: 'stripe',
         stripe_payment_intent_id: `pi_test_${status}_${stamp()}`,
         amount: 50,
@@ -106,7 +108,7 @@ test.describe('PayPal capture flow', () => {
     const paypalOrderId = `paypal_test_capture_${stamp()}`;
     const orderId = await insertOrder({ status: 'pending', payment_status: 'pending', total_amount: 40, currency: 'eur' });
     await insertPayment({
-      user_id: uid(),
+      user_id: NO_USER,
       order_id: orderId,
       payment_provider: 'paypal',
       paypal_order_id: paypalOrderId,
@@ -151,7 +153,7 @@ test.describe('Cancellation refund flow', () => {
     const orderId = await insertOrder({ status: 'cancelled', payment_status: 'paid', total_amount: 30, currency: 'usd' });
     const refundId = `re_test_${stamp()}`;
     await insertPayment({
-      user_id: uid(),
+      user_id: NO_USER,
       order_id: orderId,
       payment_provider: 'stripe',
       stripe_payment_intent_id: `pi_test_refund_${stamp()}`,
@@ -184,7 +186,7 @@ test.describe('Cancellation refund flow', () => {
   test('refund is idempotent (already-refunded row is not updated again)', async () => {
     const orderId = await insertOrder({ status: 'cancelled', payment_status: 'paid', total_amount: 30, currency: 'usd' });
     await insertPayment({
-      user_id: uid(),
+      user_id: NO_USER,
       order_id: orderId,
       payment_provider: 'stripe',
       stripe_payment_intent_id: `pi_test_refunded_${stamp()}`,
