@@ -693,6 +693,7 @@ export type Database = {
       payment_transactions: {
         Row: {
           amount: number
+          captured_at: string | null
           created_at: string | null
           currency: string
           error_message: string | null
@@ -717,6 +718,7 @@ export type Database = {
         }
         Insert: {
           amount: number
+          captured_at?: string | null
           created_at?: string | null
           currency?: string
           error_message?: string | null
@@ -741,6 +743,7 @@ export type Database = {
         }
         Update: {
           amount?: number
+          captured_at?: string | null
           created_at?: string | null
           currency?: string
           error_message?: string | null
@@ -1336,6 +1339,7 @@ export type Database = {
         }
         Returns: {
           amount: number
+          captured_at: string | null
           created_at: string | null
           currency: string
           error_message: string | null
@@ -1380,6 +1384,7 @@ export type Database = {
         }
         Returns: {
           amount: number
+          captured_at: string | null
           created_at: string | null
           currency: string
           error_message: string | null
@@ -1422,6 +1427,7 @@ export type Database = {
         }
         Returns: {
           amount: number
+          captured_at: string | null
           created_at: string | null
           currency: string
           error_message: string | null
