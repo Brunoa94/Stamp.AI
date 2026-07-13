@@ -60,7 +60,7 @@ export function SynthesisForm({
           maxLength={maxPromptLength}
         />
 
-        <div className="grid grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <ArtStyleSelect value={artStyle} onChange={onArtStyleChange} />
           <PreservationSlider
             value={preservation}
