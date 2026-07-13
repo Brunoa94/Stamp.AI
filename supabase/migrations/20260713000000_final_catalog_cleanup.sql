@@ -68,7 +68,7 @@ DROP FUNCTION IF EXISTS get_products_for_daily_price_update() CASCADE;
 DROP FUNCTION IF EXISTS calculate_price_change() CASCADE;
 DROP FUNCTION IF EXISTS get_next_product_to_sync() CASCADE;
 DROP FUNCTION IF EXISTS update_sync_queue_status(UUID, TEXT, TEXT) CASCADE;
-DROP FUNCTION IF EXISTS trigger_product_sync(INTEGER) CASCADE;
+DROP FUNCTION IF EXISTS trigger_product_sync(INTEGER, TEXT[]) CASCADE;
 DROP FUNCTION IF EXISTS cleanup_old_sync_queue() CASCADE;
 DROP FUNCTION IF EXISTS get_variant_price_simple(UUID, TEXT, TEXT) CASCADE;
 DROP FUNCTION IF EXISTS get_product_with_pricing(UUID) CASCADE;

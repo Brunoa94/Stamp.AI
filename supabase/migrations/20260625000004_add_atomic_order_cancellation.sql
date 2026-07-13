@@ -6,6 +6,13 @@
  */
 
 -- ============================================================================
+-- 0. Columns the cancellation flow needs (written by the cancel-order edge fn)
+-- ============================================================================
+
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS cancelled_at TIMESTAMPTZ;
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS cancellation_reason TEXT;
+
+-- ============================================================================
 -- 1. Atomic Order Cancellation with Refund
 -- ============================================================================
 
@@ -36,7 +43,7 @@ BEGIN
     RAISE EXCEPTION 'Order not found: %', p_order_id;
   END IF;
 
-  IF v_order_record.order_status = 'cancelled' THEN
+  IF v_order_record.status = 'cancelled' THEN
     RAISE EXCEPTION 'Order already cancelled: %', p_order_id;
   END IF;
 
@@ -86,13 +93,10 @@ BEGIN
   -- Step 3: Update order status to cancelled
   UPDATE orders
   SET
-    order_status = 'cancelled',
+    status = 'cancelled',
     payment_status = 'refunded',
-    metadata = COALESCE(metadata, '{}'::jsonb) || jsonb_build_object(
-      'cancellation_reason', p_cancellation_reason,
-      'cancelled_at', NOW(),
-      'refund_id', v_payment_record.id
-    ),
+    cancellation_reason = p_cancellation_reason,
+    cancelled_at = NOW(),
     updated_at = NOW()
   WHERE id = p_order_id;
 
@@ -179,16 +183,13 @@ BEGIN
   -- Revert order status
   UPDATE orders
   SET
-    order_status = 'confirmed', -- Or previous status
+    status = 'confirmed', -- Or previous status
     payment_status = 'paid',
-    metadata = COALESCE(metadata, '{}'::jsonb) || jsonb_build_object(
-      'refund_failed', true,
-      'refund_error', p_error_message,
-      'refund_failed_at', NOW()
-    ),
+    cancellation_reason = NULL,
+    cancelled_at = NULL,
     updated_at = NOW()
   WHERE id = p_order_id
-    AND order_status = 'cancelled';
+    AND status = 'cancelled';
 
   -- Mark refund as failed
   UPDATE payment_transactions
@@ -220,7 +221,9 @@ $$;
 -- 4. Comments for documentation
 -- ============================================================================
 
-
+COMMENT ON FUNCTION cancel_order_with_refund_atomic IS
+  'Atomically cancels an order and creates a pending refund transaction.';
+COMMENT ON FUNCTION confirm_refund_completed IS
   'Marks refund as completed after external payment provider confirms refund.';
-
+COMMENT ON FUNCTION handle_refund_failure IS
   'Reverts order cancellation if refund fails at payment provider.';
