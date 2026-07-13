@@ -1111,20 +1111,6 @@ export type Database = {
         }
         Returns: Json
       }
-      cancel_order_with_refund_atomic: {
-        Args: {
-          p_cancellation_reason?: string
-          p_order_id: string
-          p_refund_amount: number
-          p_refund_external_id: string
-          p_refund_provider: string
-        }
-        Returns: Json
-      }
-      confirm_refund_completed: {
-        Args: { p_refund_external_id: string; p_refund_id: string }
-        Returns: Json
-      }
       create_invoice_for_order: {
         Args: { p_order_id: string; p_type?: string }
         Returns: {
@@ -1204,10 +1190,6 @@ export type Database = {
           price_cents: number
           printify_variant_id: number
         }[]
-      }
-      handle_refund_failure: {
-        Args: { p_error_message: string; p_order_id: string }
-        Returns: Json
       }
       has_size_available: {
         Args: { p_blueprint_id: number; p_size: string }
