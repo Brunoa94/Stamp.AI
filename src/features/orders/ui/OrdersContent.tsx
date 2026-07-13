@@ -94,7 +94,7 @@ export default function OrdersContent() {
 
   return (
     <>
-      <OrdersLayout header={<OrdersHeader />}>
+      <OrdersLayout header={<OrdersHeader total={filteredOrders.length} />}>
         <section className="min-h-[calc(100vh-6rem)] bg-(--color-stamp-off-white) font-heading text-(--color-stamp-chocolate)">
           <OrdersFilterSection
             viewMode={viewMode}
@@ -105,7 +105,6 @@ export default function OrdersContent() {
             onTimeFilterChange={setTimeFilter}
             onClearFilters={clearFilters}
             activePills={activePills}
-            total={filteredOrders.length}
           />
 
           {(isLoading || isFilterLoading) && <OrdersLoadingSection />}
