@@ -16,7 +16,6 @@ import { PaymentRecoveryService } from "@/services/paymentRecoveryService";
 import type { CreatePrintifyOrderRequest } from "@/types/printifyOrder";
 import { validatePrintifyLineItem } from "@/types/printifyOrder";
 import { mapShippingAddressToPrintifyAddress } from "@/mappers/mapShippingAddressToPrintifyAddress";
-import { paymentSuccessTheme, paymentErrorTheme } from "@/theme/components";
 import type { UserI } from "@/types/auth";
 import {
   useCreateOrderFromCart,
@@ -457,22 +456,28 @@ function PayPalReturnContent() {
   // Loading state
   if (status === "loading" || status === "capturing") {
     return (
-      <div className={paymentSuccessTheme.page}>
-        <div className={paymentSuccessTheme.wrapper}>
+      <div className="min-h-screen flex justify-center pt-32 lg:pt-40 px-6 bg-(--color-stamp-cream)">
+        <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
           <section
-            className={paymentSuccessTheme.card}
+            className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
             aria-label="Processing payment"
           >
-            <div className={paymentSuccessTheme.topAccent} aria-hidden="true" />
-            <div className={paymentSuccessTheme.iconWrapper} aria-hidden="true">
+            <div
+              className="absolute top-0 left-0 w-full h-1 bg-(--color-stamp-gold)"
+              aria-hidden="true"
+            />
+            <div
+              className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-10 bg-(--color-stamp-gold)/10 text-(--color-stamp-gold)"
+              aria-hidden="true"
+            >
               <Loader2 className="w-12 h-12 animate-spin" />
             </div>
-            <Heading as="h1" variant="section" className={paymentSuccessTheme.title}>
+            <Heading as="h1" variant="card" className="text-(--color-stamp-chocolate) mb-4">
               {status === "capturing"
                 ? "Completing Your Payment"
                 : "Processing Payment"}
             </Heading>
-            <Paragraph variant="body" className={paymentSuccessTheme.subtitle}>
+            <Paragraph variant="sm" className="text-(--color-stamp-taupe) max-w-sm mx-auto">
               {status === "capturing"
                 ? "Please wait while we finalize your PayPal payment..."
                 : "Please wait while we verify your payment with PayPal..."}
@@ -550,31 +555,40 @@ function PayPalReturnContent() {
 
   // Error state
   return (
-    <div className={paymentErrorTheme.page}>
-      <div className={paymentErrorTheme.wrapper}>
-        <section className={paymentErrorTheme.card} aria-label="Error">
-          <div className={paymentErrorTheme.topAccent} aria-hidden="true" />
-          <div className={paymentErrorTheme.iconWrapper} aria-hidden="true">
-            <AlertCircle className={paymentErrorTheme.icon} />
+    <div className="min-h-screen flex justify-center pt-32 lg:pt-40 px-6 bg-(--color-stamp-cream)">
+      <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
+        <section
+          className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
+          aria-label="Error"
+        >
+          <div
+            className="absolute top-0 left-0 w-full h-1 bg-(--color-stamp-error)"
+            aria-hidden="true"
+          />
+          <div
+            className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-10 bg-(--color-stamp-error)/10 text-(--color-stamp-error)"
+            aria-hidden="true"
+          >
+            <AlertCircle className="w-12 h-12" />
           </div>
-          <Heading as="h1" variant="section" className={paymentErrorTheme.title}>
+          <Heading as="h1" variant="card" className="text-(--color-stamp-chocolate) mb-4">
             Something Went Wrong
           </Heading>
-          <Paragraph variant="body" className={paymentErrorTheme.subtitle}>
+          <Paragraph variant="sm" className="text-(--color-stamp-taupe) max-w-sm mx-auto mb-12">
             {errorMessage ||
               "We couldn't process your PayPal payment. Please try again or contact support."}
           </Paragraph>
-          <div className={paymentErrorTheme.ctaStack}>
+          <div className="flex flex-col gap-4">
             <Button
               onClick={handleRetryPayment}
-              className={paymentErrorTheme.primaryBtn}
+              className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-chocolate)/90"
             >
               Return to Checkout
             </Button>
             <Button
               asChild
               variant="outline"
-              className={paymentErrorTheme.secondaryBtn}
+              className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase border-(--color-stamp-divider) text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
             >
               <Link href="/dashboard">Go to Dashboard</Link>
             </Button>

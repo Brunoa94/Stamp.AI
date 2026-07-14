@@ -23,7 +23,6 @@ import {
   isMolliePaymentPending,
 } from "@/lib/mollie";
 import type { MolliePaymentStatus } from "@/lib/mollie";
-import { paymentSuccessTheme, paymentErrorTheme } from "@/theme/components";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import { UserI } from "@/types/auth";
 import {
@@ -631,18 +630,26 @@ export default function MollieReturnPage() {
   // Loading state
   if (status === "loading") {
     return (
-      <div className={paymentSuccessTheme.page}>
-        <div className={paymentSuccessTheme.wrapper}>
+      <div className="min-h-screen flex justify-center pt-32 lg:pt-32 px-6 bg-(--color-stamp-cream)">
+        <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
           <section
-            className={paymentSuccessTheme.card}
+            className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
             aria-label="Verifying payment"
           >
-            <div className={paymentSuccessTheme.topAccent} aria-hidden="true" />
-            <div className={paymentSuccessTheme.iconWrapper} aria-hidden="true">
+            <div
+              className="absolute top-0 left-0 w-full h-1 bg-(--color-stamp-gold)"
+              aria-hidden="true"
+            />
+            <div
+              className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-10 bg-(--color-stamp-gold)/10 text-(--color-stamp-gold)"
+              aria-hidden="true"
+            >
               <Loader2 className="w-12 h-12 animate-spin" />
             </div>
-            <h1 className={paymentSuccessTheme.title}>Verifying Payment</h1>
-            <p className={paymentSuccessTheme.subtitle}>
+            <h1 className="font-anton text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
+              Verifying Payment
+            </h1>
+            <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto">
               Please wait while we confirm your payment with Mollie...
             </p>
           </section>
@@ -703,35 +710,40 @@ export default function MollieReturnPage() {
   // Pending state
   if (status === "pending") {
     return (
-      <div className={paymentSuccessTheme.page}>
-        <div className={paymentSuccessTheme.wrapper}>
+      <div className="min-h-screen flex justify-center pt-32 lg:pt-24 px-6 bg-(--color-stamp-cream)">
+        <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
           <section
-            className={paymentSuccessTheme.card}
+            className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
             aria-label="Payment pending"
           >
             <div
-              className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-amber-400 via-amber-500 to-amber-400"
+              className="absolute top-0 left-0 w-full h-1 bg-(--color-stamp-gold)"
               aria-hidden="true"
             />
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+            <div
+              className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-10 bg-(--color-stamp-gold)/10 text-(--color-stamp-gold)"
+              aria-hidden="true"
+            >
               <AlertCircle className="w-12 h-12" />
             </div>
-            <h1 className={paymentSuccessTheme.title}>Payment Pending</h1>
-            <p className={paymentSuccessTheme.subtitle}>
+            <h1 className="font-anton text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
+              Payment Pending
+            </h1>
+            <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12">
               Your payment is being processed. This may take a few moments. You
               will receive an email confirmation once your payment is complete.
             </p>
-            <div className={paymentSuccessTheme.ctaStack}>
+            <div className="flex flex-col gap-4">
               <Button
                 onClick={handleViewOrders}
-                className={paymentSuccessTheme.primaryBtn}
+                className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-chocolate)/90"
               >
                 View Orders
               </Button>
               <Button
                 variant="outline"
                 onClick={handleCreateAnother}
-                className={paymentSuccessTheme.secondaryBtn}
+                className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase border-(--color-stamp-divider) text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
               >
                 Go to Dashboard
               </Button>
@@ -744,29 +756,40 @@ export default function MollieReturnPage() {
 
   // Error state
   return (
-    <div className={paymentErrorTheme.page}>
-      <div className={paymentErrorTheme.wrapper}>
-        <section className={paymentErrorTheme.card} aria-label="Error">
-          <div className={paymentErrorTheme.topAccent} aria-hidden="true" />
-          <div className={paymentErrorTheme.iconWrapper} aria-hidden="true">
-            <AlertCircle className={paymentErrorTheme.icon} />
+    <div className="min-h-screen flex justify-center pt-32 lg:pt-24 px-6 bg-(--color-stamp-cream)">
+      <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
+        <section
+          className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
+          aria-label="Error"
+        >
+          <div
+            className="absolute top-0 left-0 w-full h-1 bg-(--color-stamp-error)"
+            aria-hidden="true"
+          />
+          <div
+            className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-10 bg-(--color-stamp-error)/10 text-(--color-stamp-error)"
+            aria-hidden="true"
+          >
+            <AlertCircle className="w-12 h-12" />
           </div>
-          <h1 className={paymentErrorTheme.title}>Something Went Wrong</h1>
-          <p className={paymentErrorTheme.subtitle}>
+          <h1 className="font-anton text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
+            Something Went Wrong
+          </h1>
+          <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12">
             {errorMessage ||
               "We couldn't verify your payment status. Please contact support if you believe your payment was successful."}
           </p>
-          <div className={paymentErrorTheme.ctaStack}>
+          <div className="flex flex-col gap-4">
             <Button
               onClick={handleRetryPayment}
-              className={paymentErrorTheme.primaryBtn}
+              className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-chocolate)/90"
             >
               Return to Checkout
             </Button>
             <Button
               asChild
               variant="outline"
-              className={paymentErrorTheme.secondaryBtn}
+              className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase border-(--color-stamp-divider) text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
             >
               <Link href="/dashboard">Go to Dashboard</Link>
             </Button>

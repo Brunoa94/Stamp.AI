@@ -15,6 +15,9 @@ import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
 // Clothing categories (apparel)
 const CLOTHING_CATEGORIES = new Set(["tshirt", "hoodie"]);
 
+// Keywords to detect clothing from product name if no category match
+const CLOTHING_KEYWORDS = ["tee", "t-shirt", "shirt", "hoodie", "sweatshirt"];
+
 /**
  * ProductSelectionSection
  *
@@ -80,10 +83,23 @@ export function ProductSelectionSection() {
       const blueprint = getCuratedBlueprintById(product.blueprintId);
       const category = blueprint?.category;
 
+      // Check category from curated blueprints first
       if (category && CLOTHING_CATEGORIES.has(category)) {
         clothing.push(product);
-      } else {
+      } else if (category) {
+        // Has a category but it's not clothing (e.g., totebag, poster, mug)
         accessories.push(product);
+      } else {
+        // No category match - use product name to determine
+        const nameLower = product.name.toLowerCase();
+        const isClothing = CLOTHING_KEYWORDS.some((keyword) =>
+          nameLower.includes(keyword)
+        );
+        if (isClothing) {
+          clothing.push(product);
+        } else {
+          accessories.push(product);
+        }
       }
     }
 

@@ -96,7 +96,7 @@ export const GetProviderCatalogResponseSchema = z.object({
 });
 
 // Curated blueprint schema
-export const ProductCategorySchema = z.enum(['tshirt', 'hoodie', 'totebag', 'mug']);
+export const ProductCategorySchema = z.enum(['tshirt', 'hoodie', 'totebag', 'poster', 'mug']);
 
 export const CuratedBlueprintSchema = z.object({
   id: z.number().int().positive(),

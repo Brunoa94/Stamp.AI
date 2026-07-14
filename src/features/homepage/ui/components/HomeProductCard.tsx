@@ -20,13 +20,13 @@ export function HomeProductCard({ product }: HomeProductCardPropsI) {
 
   return (
     <Link href={product.href} className="group block">
-      <div className="relative mb-5 aspect-3/4 overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all duration-500 group-hover:-translate-y-1 group-hover:border-(--color-stamp-gold) group-hover:shadow-(--shadow-stamp-card-hover)">
+      <div className="relative mb-3 sm:mb-5 aspect-3/4 overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all duration-500 group-hover:-translate-y-1 group-hover:border-(--color-stamp-gold) group-hover:shadow-(--shadow-stamp-card-hover)">
         {product.imageUrl ? (
           <Image
             src={product.imageUrl}
             alt={product.name}
             fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
             className="object-cover grayscale transition-all duration-700 group-hover:scale-[1.02] group-hover:grayscale-0"
           />
         ) : (
@@ -38,13 +38,13 @@ export function HomeProductCard({ product }: HomeProductCardPropsI) {
         )}
 
         {product.availableColors.length > 0 && (
-          <div className="absolute bottom-4 left-4 border border-(--color-stamp-divider) bg-(--color-stamp-off-white)/90 px-2.5 py-2 backdrop-blur-sm">
-            <ColorSwatches colors={product.availableColors} maxDisplay={5} />
+          <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 border border-(--color-stamp-divider) bg-(--color-stamp-off-white)/90 px-1.5 py-1 sm:px-2.5 sm:py-2 backdrop-blur-sm">
+            <ColorSwatches colors={product.availableColors} maxDisplay={4} />
           </div>
         )}
 
         {product.discountPercent && product.discountPercent > 0 && (
-          <div className="absolute top-4 right-4 bg-(--color-stamp-gold) px-2.5 py-1">
+          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-(--color-stamp-gold) px-1.5 py-0.5 sm:px-2.5 sm:py-1">
             <Span variant="micro" className="font-medium text-(--color-stamp-white)">
               -{product.discountPercent}%
             </Span>
@@ -52,30 +52,30 @@ export function HomeProductCard({ product }: HomeProductCardPropsI) {
         )}
       </div>
 
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-2 sm:gap-4">
         <Heading
           as="h3"
           variant="item"
-          className="text-(--color-stamp-chocolate) transition-colors duration-300 group-hover:text-(--color-stamp-gold)"
+          className="text-xs sm:text-sm text-(--color-stamp-chocolate) transition-colors duration-300 group-hover:text-(--color-stamp-gold)"
         >
           {product.name}
         </Heading>
-        <div className="flex flex-col items-end gap-0.5">
+        <div className="flex flex-col items-end gap-0.5 shrink-0">
           {product.isOnSale && product.originalPrice && (
             <Span
               variant="micro"
-              className="text-(--color-stamp-taupe) line-through"
+              className="text-(--color-stamp-taupe) line-through text-[10px] sm:text-xs"
             >
               €{product.originalPrice.toFixed(2)}
             </Span>
           )}
           <Span
             variant="sm"
-            className={
+            className={`text-xs sm:text-sm ${
               product.isOnSale
                 ? "text-(--color-stamp-gold)"
                 : "text-(--color-stamp-chocolate)"
-            }
+            }`}
           >
             €{product.price.toFixed(2)}
           </Span>

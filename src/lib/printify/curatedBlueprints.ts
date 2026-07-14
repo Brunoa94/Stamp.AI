@@ -27,6 +27,18 @@ export const CURATED_BLUEPRINTS: CuratedBlueprintI[] = [
     title: 'Unisex Heavy Cotton Tee (Gildan 5000)',
     description: 'Classic heavy cotton tee with front/back printing',
   },
+  {
+    id: 478,
+    category: 'tshirt',
+    title: 'Kids Heavy Cotton Tee',
+    description: 'Classic kids cotton tee with the same quality as adult sizes',
+  },
+  {
+    id: 1159,
+    category: 'tshirt',
+    title: 'Unisex Midweight T-Shirt',
+    description: 'Comfortable midweight unisex t-shirt',
+  },
 
   // HOODIES
   {
@@ -38,10 +50,24 @@ export const CURATED_BLUEPRINTS: CuratedBlueprintI[] = [
 
   // TOTE BAGS
   {
-    id: 157,
+    id: 1389,
     category: 'totebag',
     title: 'Tote Bag',
     description: 'Canvas tote bag with custom printing',
+  },
+
+  // POSTERS
+  {
+    id: 157,
+    category: 'poster',
+    title: 'Premium Matte Vertical Poster',
+    description: 'High-quality matte finish poster',
+  },
+  {
+    id: 1525,
+    category: 'poster',
+    title: 'Matte Canvas Poster',
+    description: 'Canvas-style poster with matte finish',
   },
 
   // MUGS
@@ -78,7 +104,7 @@ export function getCuratedBlueprintById(id: number): CuratedBlueprintI | undefin
  * Get all unique categories
  */
 export function getProductCategories(): ProductCategory[] {
-  return ['tshirt', 'hoodie', 'totebag', 'mug'];
+  return ['tshirt', 'hoodie', 'totebag', 'poster', 'mug'];
 }
 
 // Export the blueprint IDs as a constant for use in edge functions
