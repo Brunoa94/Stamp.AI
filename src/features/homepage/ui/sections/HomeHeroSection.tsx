@@ -18,7 +18,7 @@ import { SectionReveal } from "../components/SectionReveal";
 
 export function HomeHeroSection() {
   return (
-    <section className="relative overflow-hidden bg-(--color-stamp-off-white) px-6 pb-24 pt-30 lg:px-12 xl:px-24">
+    <section className="relative flex min-h-screen flex-col overflow-hidden bg-(--color-stamp-off-white) px-6 pb-12 pt-30 lg:px-12 xl:px-24">
       {/* Animated blur blobs - subtle on light background */}
       <div
         aria-hidden
@@ -33,8 +33,8 @@ export function HomeHeroSection() {
         className="hero-blur-blob hero-blob-orange absolute bottom-0 left-1/3 opacity-15"
       />
 
-      <SectionReveal className="relative z-10">
-        <div className="mx-auto grid max-w-screen-2xl grid-cols-1 items-center gap-16 lg:grid-cols-12">
+      <SectionReveal className="relative z-10 flex flex-1 items-center">
+        <div className="mx-auto grid w-full max-w-screen-2xl grid-cols-1 items-center gap-16 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <Heading
               as="h1"
@@ -110,7 +110,7 @@ export function HomeHeroSection() {
         </div>
       </SectionReveal>
 
-      <SectionReveal className="relative z-10 mt-20" delayMs={120}>
+      <SectionReveal className="relative z-10 mt-8" delayMs={120}>
         <div className="flex flex-col items-center gap-3">
           <Span variant="micro" className="text-(--color-stamp-taupe)">
             Scroll to Build

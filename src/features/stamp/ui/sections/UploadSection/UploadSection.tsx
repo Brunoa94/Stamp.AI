@@ -53,7 +53,7 @@ export function UploadSection() {
   return (
     <section
       id="step-1"
-      className="h-full grid grid-cols-1 lg:grid-cols-2 border-b border-(--color-stamp-divider)"
+      className="h-full overflow-y-auto grid grid-cols-1 lg:grid-cols-2 border-b border-(--color-stamp-divider)"
     >
       {/* Hidden file input */}
       <Input

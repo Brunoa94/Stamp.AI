@@ -190,3 +190,73 @@ export const useStampData = () => {
     mockupImageUrl,
   };
 };
+
+// Reset store selector
+export const useStampReset = () => {
+  const reset = useStampFlowStore((state) => state.reset);
+  return { reset };
+};
+
+/**
+ * Step accessibility selector
+ *
+ * Determines which steps are accessible based on completion state.
+ * Users can only navigate to steps that have their prerequisites met.
+ */
+export const useStampStepAccessibility = () => {
+  const currentStep = useStampFlowStore((state) => state.currentStep);
+  const generatedResults = useStampFlowStore(
+    (state) => state.generatedResults,
+  );
+  const selectedImageUrl = useStampFlowStore(
+    (state) => state.selectedImageUrl,
+  );
+  const blueprintId = useStampFlowStore((state) => state.blueprintId);
+  const printProviderId = useStampFlowStore((state) => state.printProviderId);
+  const selectedColor = useStampFlowStore((state) => state.selectedColor);
+  const createdProductId = useStampFlowStore(
+    (state) => state.createdProductId,
+  );
+
+  /**
+   * Returns the highest step that is currently accessible.
+   * Steps become accessible when their prerequisites are complete.
+   */
+  const getMaxAccessibleStep = (): number => {
+    // Step 0-2: Always accessible (hero, upload, synthesis)
+    // Step 3-4: Accessible once generation has results
+    if (generatedResults.length === 0) return 2;
+
+    // Step 5: Accessible once an image is selected
+    if (!selectedImageUrl) return 4;
+
+    // Step 6: Accessible once a product is selected
+    if (!blueprintId || !printProviderId) return 5;
+
+    // Step 7: Accessible once customization is done (color selected)
+    if (!selectedColor) return 6;
+
+    // Step 8: Accessible once product is created
+    if (!createdProductId) return 7;
+
+    // All steps accessible
+    return 8;
+  };
+
+  /**
+   * Check if a specific step is accessible
+   */
+  const isStepAccessible = (step: number): boolean => {
+    // Can always go back to current or previous steps
+    if (step <= currentStep) return true;
+
+    // Can only go forward up to max accessible step
+    return step <= getMaxAccessibleStep();
+  };
+
+  return {
+    currentStep,
+    getMaxAccessibleStep,
+    isStepAccessible,
+  };
+};

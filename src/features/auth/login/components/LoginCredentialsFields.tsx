@@ -41,7 +41,6 @@ export function LoginCredentialsFields({ register, errors }: PropsI) {
               *
             </span>
           </Label>
-          <InlinePasswordReset className="ml-auto" />
         </div>
 
         <div className="relative space-y-2">
@@ -77,6 +76,8 @@ export function LoginCredentialsFields({ register, errors }: PropsI) {
               </Button>
             </div>
           </div>
+
+          <InlinePasswordReset className="w-full" />
 
           {errors.password?.message && (
             <p

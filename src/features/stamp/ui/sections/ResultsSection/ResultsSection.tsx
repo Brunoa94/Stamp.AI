@@ -39,7 +39,7 @@ export function ResultsSection() {
   return (
     <section
       id="step-4"
-      className="h-full flex flex-col items-center justify-center p-24 bg-(--color-stamp-off-white) border-b border-(--color-stamp-divider)"
+      className="h-full overflow-y-auto flex flex-col items-center justify-center p-8 md:p-16 lg:p-24 bg-(--color-stamp-off-white) border-b border-(--color-stamp-divider)"
     >
       <div className="max-w-2xl w-full">
         <ResultsHeader outputNumber="Output Result #01" date={currentDate} />
