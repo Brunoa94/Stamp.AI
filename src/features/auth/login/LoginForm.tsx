@@ -38,9 +38,9 @@ export function LoginForm() {
 
         <GoogleSignInButton />
 
-        <div className="relative flex items-center my-10">
+        <div className="relative flex items-center my-8">
           <div className="grow border-t border-(--color-stamp-divider)" />
-          <span className="shrink mx-4 text-lg font-bold text-(--color-stamp-gold) uppercase tracking-[0.2em]">
+          <span className="shrink mx-4 text-xs font-bold text-(--color-stamp-gold) uppercase tracking-[0.2em]">
             or continue with email
           </span>
           <div className="grow border-t border-(--color-stamp-divider)" />
@@ -50,7 +50,7 @@ export function LoginForm() {
           <LoginCredentialsFields register={register} errors={errors} />
 
           {errors.root?.message && (
-            <p role="alert" className="text-lg font-bold uppercase tracking-widest text-(--color-stamp-error)">
+            <p role="alert" className="text-xs font-bold uppercase tracking-widest text-(--color-stamp-error)">
               {errors.root.message}
             </p>
           )}

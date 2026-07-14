@@ -16,9 +16,9 @@ import { cn } from "@/lib/utils";
  */
 
 const spanVariants = {
-  sm: "font-space text-lg font-bold uppercase",
-  default: "font-space text-base font-bold uppercase",
-  micro: "font-space text-base font-bold uppercase",
+  sm: "font-space text-sm font-bold uppercase",
+  default: "font-space text-xs font-bold uppercase",
+  micro: "font-space text-xs font-bold uppercase",
   metric: "font-anton text-7xl md:text-8xl uppercase tracking-tighter",
   serif: "font-serif italic lowercase font-light",
 } as const;

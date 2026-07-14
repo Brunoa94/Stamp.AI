@@ -21,14 +21,14 @@ interface SpecItemPropsI {
 
 function SpecItem({ label, value }: SpecItemPropsI) {
   return (
-    <div className="space-y-1">
+    <div className="space-y-0.5 md:space-y-1">
       <dt>
-        <Span variant="micro" className="text-(--color-stamp-taupe)">
+        <Span variant="micro" className="text-(--color-stamp-taupe) text-[10px] md:text-xs">
           {label}
         </Span>
       </dt>
       <dd>
-        <Span unstyled className="text-lg font-bold uppercase tracking-[0.15em]">
+        <Span unstyled className="text-xs md:text-lg font-bold uppercase tracking-[0.15em]">
           {value}
         </Span>
       </dd>
@@ -42,7 +42,7 @@ export function CartItemCardSpecs({
   lineTotal,
 }: CartItemCardSpecsPropsI) {
   return (
-    <dl className="grid grid-cols-2 gap-6 border-t border-(--color-stamp-divider) pt-6 md:grid-cols-3">
+    <dl className="grid grid-cols-2 gap-3 border-t border-(--color-stamp-divider) pt-3 md:grid-cols-3 md:gap-6 md:pt-6">
       <SpecItem label="Variant" value={variantName} />
       <SpecItem label="Colorway" value={colorway} />
       <SpecItem label="Line Total" value={formatPrice(lineTotal)} />

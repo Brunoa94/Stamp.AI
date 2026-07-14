@@ -130,7 +130,7 @@ function OrdersViewModeToggle({
   onChange,
 }: OrdersViewModeTogglePropsI) {
   return (
-    <div className="flex items-center gap-2 border-l border-(--color-stamp-divider) pl-4">
+    <div className="hidden lg:flex items-center gap-2 border-l border-(--color-stamp-divider) pl-4">
       <Button
         onClick={() => onChange("list")}
         variant="ghost"
