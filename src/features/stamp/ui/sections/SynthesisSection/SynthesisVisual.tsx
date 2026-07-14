@@ -30,35 +30,31 @@ export function SynthesisVisual({ onSelectSuggestion }: PropsI) {
         Tap a suggestion to seed your prompt, then refine it on the right.
       </p>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2.5">
         {STAMP_EDIT_SUGGESTIONS.map(({ id, label, hint, prompt, image }) => (
           <button
             key={id}
             type="button"
             onClick={() => onSelectSuggestion?.(prompt)}
-            aria-label={`Apply suggestion: ${label}`}
-            className="group relative aspect-square overflow-hidden rounded-lg border border-(--color-stamp-divider) hover:border-(--color-stamp-gold) focus:outline-none focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/40 transition-all duration-300"
+            aria-label={`Apply suggestion: ${label} — ${hint}`}
+            title={hint}
+            className="group relative aspect-[4/5] overflow-hidden rounded-2xl ring-1 ring-black/5 hover:ring-2 hover:ring-(--color-stamp-gold) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) transition-all duration-300"
           >
             {/* Thumbnail */}
             <div
               aria-hidden
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-110"
               style={{ backgroundImage: `url(${image})` }}
             />
-            {/* Legibility scrim */}
+            {/* Subtle bottom gradient for label legibility */}
             <div
               aria-hidden
-              className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent"
+              className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent"
             />
-            {/* Label */}
-            <div className="absolute inset-x-0 bottom-0 p-3 text-left">
-              <span className="block text-[11px] font-bold uppercase tracking-wide text-white">
-                {label}
-              </span>
-              <span className="block text-[10px] text-white/70 mt-0.5">
-                {hint}
-              </span>
-            </div>
+            {/* Single short label, bottom-left */}
+            <span className="absolute bottom-2 left-2.5 right-2 text-left text-[13px] font-medium text-white drop-shadow-sm">
+              {label}
+            </span>
           </button>
         ))}
       </div>
