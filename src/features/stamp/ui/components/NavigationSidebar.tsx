@@ -5,6 +5,7 @@ import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { STAMP_STEPS } from "../../lib/constants/stampSteps";
 import { useStampNavigation } from "../../lib/hooks/useStampNavigation";
+import { useStampStepAccessibility } from "../../lib/hooks/useStampSelectors";
 
 /**
  * NavigationSidebar
@@ -15,6 +16,7 @@ import { useStampNavigation } from "../../lib/hooks/useStampNavigation";
 
 export function NavigationSidebar() {
   const { currentStep, goToStep } = useStampNavigation();
+  const { isStepAccessible } = useStampStepAccessibility();
 
   return (
     <aside className="hidden lg:flex flex-col py-32 px-10 w-68 h-full fixed right-0 top-24 bg-(--color-stamp-off-white) border-l border-(--color-stamp-divider) z-40">
@@ -39,19 +41,23 @@ export function NavigationSidebar() {
           const isActive =
             stepNumber === currentStep ||
             (stepNumber === 0 && currentStep === 0);
+          const isAccessible = isStepAccessible(stepNumber);
 
           return (
             <Button
               key={step.id}
               variant="ghost"
-              onClick={() => goToStep(stepNumber)}
+              onClick={() => isAccessible && goToStep(stepNumber)}
+              disabled={!isAccessible}
               className={`flex items-center justify-start gap-4 group transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] w-full text-left h-auto p-0 rounded-none hover:bg-transparent ${
                 isActive
                   ? "opacity-100 -translate-x-2"
-                  : "opacity-30 hover:opacity-60"
+                  : isAccessible
+                    ? "opacity-30 hover:opacity-60"
+                    : "opacity-15 cursor-not-allowed"
               }`}
               aria-current={isActive ? "step" : undefined}
-              aria-label={`Navigate to ${step.title}`}
+              aria-label={`Navigate to ${step.title}${!isAccessible ? " (locked)" : ""}`}
             >
               {/* Dot Indicator */}
               <div
