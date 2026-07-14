@@ -3,7 +3,6 @@ import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
 import { PromptInput } from "./PromptInput";
-import { ArtStyleSelect } from "./ArtStyleSelect";
 import { PreservationSlider } from "./PreservationSlider";
 
 /**
@@ -14,24 +13,20 @@ import { PreservationSlider } from "./PreservationSlider";
 
 interface PropsI {
   prompt: string;
-  artStyle: string;
   preservation: number;
   maxPromptLength: number;
   isGenerating: boolean;
   onPromptChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
-  onArtStyleChange: (value: string) => void;
   onPreservationChange: (value: number) => void;
   onGenerate: () => void;
 }
 
 export function SynthesisForm({
   prompt,
-  artStyle,
   preservation,
   maxPromptLength,
   isGenerating,
   onPromptChange,
-  onArtStyleChange,
   onPreservationChange,
   onGenerate,
 }: PropsI) {
@@ -60,13 +55,10 @@ export function SynthesisForm({
           maxLength={maxPromptLength}
         />
 
-        <div className="grid grid-cols-2 gap-8">
-          <ArtStyleSelect value={artStyle} onChange={onArtStyleChange} />
-          <PreservationSlider
-            value={preservation}
-            onChange={onPreservationChange}
-          />
-        </div>
+        <PreservationSlider
+          value={preservation}
+          onChange={onPreservationChange}
+        />
       </div>
 
       {/* Generate Button */}

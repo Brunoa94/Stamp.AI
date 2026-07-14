@@ -19,9 +19,6 @@ export const StampFormSchema = z.object({
     .string()
     .max(500, "Prompt must be 500 characters or less")
     .optional(),
-  artStyle: z
-    .enum(["editorial", "classic", "avant-garde", "abstract"])
-    .optional(),
   preservation: z.number().min(0).max(100).optional(),
 
   // Product selection

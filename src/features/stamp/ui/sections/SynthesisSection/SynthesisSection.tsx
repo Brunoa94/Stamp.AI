@@ -19,7 +19,6 @@ export function SynthesisSection() {
     useStampImageGeneration();
 
   const [prompt, setPrompt] = useState("");
-  const [artStyle, setArtStyle] = useState("editorial");
   const [preservation, setPreservation] = useState(50);
 
   const handlePromptChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -29,10 +28,16 @@ export function SynthesisSection() {
     }
   };
 
+  const handleSelectSuggestion = (suggestion: string) => {
+    setPrompt((current) => {
+      const next = current.trim() ? `${current.trim()} ${suggestion}` : suggestion;
+      return next.slice(0, MAX_PROMPT_LENGTH);
+    });
+  };
+
   const handleGenerate = async () => {
     await generateImage({
       prompt,
-      artStyle,
       preservation,
     });
   };
@@ -42,15 +47,13 @@ export function SynthesisSection() {
       id="step-2"
       className="h-full grid grid-cols-1 lg:grid-cols-2 border-b border-(--color-stamp-divider)"
     >
-      <SynthesisVisual />
+      <SynthesisVisual onSelectSuggestion={handleSelectSuggestion} />
       <SynthesisForm
         prompt={prompt}
-        artStyle={artStyle}
         preservation={preservation}
         maxPromptLength={MAX_PROMPT_LENGTH}
         isGenerating={isGenerating}
         onPromptChange={handlePromptChange}
-        onArtStyleChange={setArtStyle}
         onPreservationChange={setPreservation}
         onGenerate={handleGenerate}
       />

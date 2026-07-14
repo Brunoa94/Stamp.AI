@@ -39,7 +39,6 @@ export function StampFormProvider({
     resolver: zodResolver(StampFormSchema),
     defaultValues: {
       currentStep: 0,
-      artStyle: "editorial",
       preservation: 50,
       isGenerating: false,
       isFinalizing: false,

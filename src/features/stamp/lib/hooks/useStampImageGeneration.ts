@@ -40,9 +40,12 @@ class ImageGenerationTimeoutError extends Error {
 
 interface GenerateImageParamsType {
   prompt: string;
-  artStyle: string;
   preservation: number;
 }
+
+// Art-style selection was removed from the UI; the generation API still
+// accepts a style, so we send a sensible default.
+const DEFAULT_SYNTHESIS_STYLE = "editorial";
 
 export function useStampImageGeneration() {
   const { nextStep } = useStampNavigation();
@@ -62,7 +65,6 @@ export function useStampImageGeneration() {
 
   const handleGenerate = async ({
     prompt,
-    artStyle,
     preservation,
   }: GenerateImageParamsType) => {
     // Idempotency check: Prevent duplicate generation requests
@@ -106,7 +108,7 @@ export function useStampImageGeneration() {
         generateMutation.mutateAsync({
           image: uploadedImageUrl ? new File([], "reference") : undefined,
           prompt,
-          selectedStyle: artStyle,
+          selectedStyle: DEFAULT_SYNTHESIS_STYLE,
           preservation: uploadedImageUrl ? preservation : undefined,
         } as any),
         IMAGE_GENERATION_TIMEOUT_MS,

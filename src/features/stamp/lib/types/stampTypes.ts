@@ -15,16 +15,14 @@ export type StampStepType = {
   label: string;
 };
 
-// Art style options
-export type ArtStyleIdType =
-  | "editorial"
-  | "classic"
-  | "avant-garde"
-  | "abstract";
-
-export type ArtStyleType = {
-  id: ArtStyleIdType;
+// Edit suggestion tiles (Synthesis left-panel grid)
+export type EditSuggestionType = {
+  id: string;
   label: string;
+  hint: string;
+  prompt: string;
+  /** Path to a representative thumbnail image (public/). */
+  image: string;
 };
 
 // Product types
