@@ -20,6 +20,7 @@ export function SynthesisSection() {
 
   const [prompt, setPrompt] = useState("");
   const [preservation, setPreservation] = useState(50);
+  const [selectedSuggestionId, setSelectedSuggestionId] = useState<string | null>(null);
 
   const handlePromptChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
@@ -28,11 +29,8 @@ export function SynthesisSection() {
     }
   };
 
-  const handleSelectSuggestion = (suggestion: string) => {
-    setPrompt((current) => {
-      const next = current.trim() ? `${current.trim()} ${suggestion}` : suggestion;
-      return next.slice(0, MAX_PROMPT_LENGTH);
-    });
+  const handleSelectSuggestion = (id: string) => {
+    setSelectedSuggestionId(id);
   };
 
   const handleGenerate = async () => {
@@ -47,7 +45,10 @@ export function SynthesisSection() {
       id="step-2"
       className="h-full grid grid-cols-1 lg:grid-cols-2 border-b border-(--color-stamp-divider)"
     >
-      <SynthesisVisual onSelectSuggestion={handleSelectSuggestion} />
+      <SynthesisVisual
+        selectedId={selectedSuggestionId}
+        onSelectSuggestion={handleSelectSuggestion}
+      />
       <SynthesisForm
         prompt={prompt}
         preservation={preservation}

@@ -1,20 +1,26 @@
 import { Sparkles } from "lucide-react";
 import { Span } from "@/features/ui/span";
 import { STAMP_EDIT_SUGGESTIONS } from "../../../lib/constants/stampProducts";
+import { SuggestionCard } from "./SuggestionCard";
+import { NoFilterCard, NO_FILTER_ID } from "./NoFilterCard";
 
 /**
  * SynthesisVisual
  *
  * Left panel — a Gemini-style grid of suggested edits. Each tile is a
  * representative thumbnail image with the label overlaid on a gradient
- * scrim; selecting a tile seeds the synthesis prompt via `onSelectSuggestion`.
+ * scrim; selecting a tile updates the selected suggestion via `onSelectSuggestion`.
  */
 
 interface PropsI {
-  onSelectSuggestion?: (prompt: string) => void;
+  selectedId: string | null;
+  onSelectSuggestion?: (id: string) => void;
 }
 
-export function SynthesisVisual({ onSelectSuggestion }: PropsI) {
+export function SynthesisVisual({ selectedId, onSelectSuggestion }: PropsI) {
+  const isNoFilterSelected =
+    selectedId === null || selectedId === NO_FILTER_ID;
+
   return (
     <div className="p-12 lg:p-24 bg-white flex flex-col justify-center border-r border-(--color-stamp-divider)">
       <div className="flex items-center gap-3 mb-2">
@@ -26,37 +32,29 @@ export function SynthesisVisual({ onSelectSuggestion }: PropsI) {
           Suggested Edits
         </Span>
       </div>
-      <p className="text-sm text-(--color-stamp-taupe)/70 mb-8 max-w-xs">
+      <Span variant="sm" className="text-(--color-stamp-taupe)/70 mb-8 max-w-xs">
         Tap a suggestion to seed your prompt, then refine it on the right.
-      </p>
+      </Span>
 
-      <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2.5">
-        {STAMP_EDIT_SUGGESTIONS.map(({ id, label, hint, prompt, image }) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => onSelectSuggestion?.(prompt)}
-            aria-label={`Apply suggestion: ${label} — ${hint}`}
-            title={hint}
-            className="group relative aspect-[4/5] overflow-hidden rounded-2xl ring-1 ring-black/5 hover:ring-2 hover:ring-(--color-stamp-gold) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) transition-all duration-300"
-          >
-            {/* Thumbnail */}
-            <div
-              aria-hidden
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-110"
-              style={{ backgroundImage: `url(${image})` }}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {STAMP_EDIT_SUGGESTIONS.map(({ id, label, hint, image }) => {
+          const isSelected = selectedId === id;
+          return (
+            <SuggestionCard
+              key={id}
+              id={id}
+              label={label}
+              hint={hint}
+              image={image}
+              isSelected={isSelected}
+              onSelect={onSelectSuggestion}
             />
-            {/* Subtle bottom gradient for label legibility */}
-            <div
-              aria-hidden
-              className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent"
-            />
-            {/* Single short label, bottom-left */}
-            <span className="absolute bottom-2 left-2.5 right-2 text-left text-[13px] font-medium text-white drop-shadow-sm">
-              {label}
-            </span>
-          </button>
-        ))}
+          );
+        })}
+        <NoFilterCard
+          isSelected={isNoFilterSelected}
+          onSelect={onSelectSuggestion}
+        />
       </div>
     </div>
   );
