@@ -80,7 +80,7 @@ export function CustomizationSection() {
   return (
     <section
       id="step-6"
-      className="h-full grid grid-cols-1 lg:grid-cols-2 border-b border-(--color-stamp-divider)"
+      className="h-full overflow-y-auto grid grid-cols-1 lg:grid-cols-2 border-b border-(--color-stamp-divider)"
     >
       <CustomizationPreview />
       <CustomizationControls

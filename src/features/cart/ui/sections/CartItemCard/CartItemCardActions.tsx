@@ -40,7 +40,7 @@ export function CartItemCardActions({
   };
 
   return (
-    <div className="mt-8 flex flex-col items-start gap-6 border-t border-(--color-stamp-divider) pt-6 sm:flex-row sm:items-center sm:justify-between">
+    <div className="mt-4 flex flex-col items-start gap-4 border-t border-(--color-stamp-divider) pt-3 sm:flex-row sm:items-center sm:justify-between md:mt-8 md:gap-6 md:pt-6">
       <div
         className="flex items-center border border-(--color-stamp-divider)"
         role="group"
@@ -52,13 +52,13 @@ export function CartItemCardActions({
           variant="ghost"
           size="icon"
           aria-label="Decrease quantity"
-          className="h-10 w-10 rounded-none font-heading text-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) disabled:opacity-30"
+          className="h-8 w-8 rounded-none font-heading text-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) disabled:opacity-30 md:h-10 md:w-10"
         >
-          <Minus className="h-4 w-4" />
+          <Minus className="h-3 w-3 md:h-4 md:w-4" />
         </Button>
         <Span
           unstyled
-          className="w-12 text-center text-sm font-heading font-bold tabular-nums"
+          className="w-10 text-center text-xs font-heading font-bold tabular-nums md:w-12 md:text-sm"
           aria-live="polite"
         >
           {quantity}
@@ -69,9 +69,9 @@ export function CartItemCardActions({
           variant="ghost"
           size="icon"
           aria-label="Increase quantity"
-          className="h-10 w-10 rounded-none font-heading text-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) disabled:opacity-30"
+          className="h-8 w-8 rounded-none font-heading text-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) disabled:opacity-30 md:h-10 md:w-10"
         >
-          <Plus className="h-4 w-4" />
+          <Plus className="h-3 w-3 md:h-4 md:w-4" />
         </Button>
       </div>
 

@@ -26,24 +26,24 @@ export function CartItemCardContent({ item }: CartItemCardContentPropsI) {
     : variantName;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4">
-        <div className="space-y-1">
+    <div className="space-y-3 md:space-y-6">
+      <div className="flex items-start justify-between gap-2 md:gap-4">
+        <div className="space-y-0.5 md:space-y-1">
           <Heading
             as="h3"
             unstyled
-            className="font-heading text-lg md:text-xl font-bold uppercase tracking-tight"
+            className="font-heading text-sm md:text-xl font-bold uppercase tracking-tight"
           >
             {productName}
           </Heading>
-          <Span variant="micro" className="text-(--color-stamp-taupe)">
+          <Span variant="micro" className="text-(--color-stamp-taupe) text-[10px] md:text-xs">
             Custom Design Synthesis
           </Span>
         </div>
         <Heading
           as="span"
           unstyled
-          className="whitespace-nowrap font-heading text-2xl md:text-3xl font-black tracking-tight text-(--color-stamp-gold)"
+          className="whitespace-nowrap font-heading text-base md:text-3xl font-black tracking-tight text-(--color-stamp-gold)"
         >
           {formatPrice(unitPrice)}
         </Heading>

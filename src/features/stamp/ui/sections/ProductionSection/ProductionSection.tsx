@@ -20,7 +20,7 @@ export function ProductionSection() {
   return (
     <section
       id="step-7"
-      className="h-full flex flex-col items-center justify-center p-24 bg-white text-center border-b border-(--color-stamp-divider)"
+      className="h-full overflow-y-auto flex flex-col items-center justify-center p-8 md:p-16 lg:p-24 bg-white text-center border-b border-(--color-stamp-divider)"
     >
       {/* Animated Loader */}
       <div className="relative mb-12">

@@ -28,8 +28,8 @@ export function CartItemCard({
     item.product_name || item.product?.name || "Custom Product";
 
   return (
-    <article className="cart-item border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 font-heading transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover) lg:p-10">
-      <div className="flex flex-col items-start gap-8 md:flex-row md:gap-10">
+    <article className="cart-item border border-(--color-stamp-divider) bg-(--color-stamp-white) p-4 font-heading transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover) md:p-8 lg:p-10">
+      <div className="flex flex-col items-start gap-4 md:flex-row md:gap-10">
         <CartItemCardImage
           imageUrl={item.custom_image_url}
           productName={productName}

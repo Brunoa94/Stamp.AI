@@ -197,67 +197,76 @@ serve(async (req) => {
     results.database_updated = true;
 
     // Step 3: Process refund if payment was successful
-    if (order.payment_status === "paid" && order.payment_method) {
-      console.log("Order was paid, processing refund");
+    // NOTE: We check payment_transactions directly instead of relying on orders.payment_method
+    // because payment_method may be NULL in some orders (legacy data or incomplete flows)
+    console.log("Order payment details:", {
+      payment_status: order.payment_status,
+      payment_method: order.payment_method,
+      total_amount: order.total_amount,
+    });
 
-      // Get payment transaction details
-      const paymentResult = await supabaseRest<PaymentTransactionI[]>(
-        `payment_transactions?order_id=eq.${order_id}&status=eq.succeeded&select=payment_provider,stripe_payment_intent_id,paypal_capture_id,mollie_payment_id,amount,currency`,
-        "GET"
-      );
+    // Get payment transaction details - check this FIRST before deciding on refund
+    const paymentResult = await supabaseRest<PaymentTransactionI[]>(
+      `payment_transactions?order_id=eq.${order_id}&status=eq.succeeded&select=payment_provider,stripe_payment_intent_id,paypal_capture_id,mollie_payment_id,amount,currency`,
+      "GET"
+    );
 
-      if (paymentResult.data && paymentResult.data.length > 0) {
-        const payment = paymentResult.data[0];
+    console.log("Payment transaction query result:", {
+      hasData: !!paymentResult.data,
+      count: paymentResult.data?.length || 0,
+      error: paymentResult.error,
+    });
 
-        console.log("Processing refund via", payment.payment_provider);
+    // Process refund if we have a succeeded payment transaction
+    // This is more reliable than checking orders.payment_method which may be NULL
+    if (paymentResult.data && paymentResult.data.length > 0) {
+      const payment = paymentResult.data[0];
 
-        try {
-          // Call process-refund function
-          const SUPABASE_URL = validateEnvVars.supabaseUrl();
-          const SUPABASE_SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+      console.log("Found succeeded payment transaction, processing refund via", payment.payment_provider);
 
-          const refundResponse = await fetch(
-            `${SUPABASE_URL}/functions/v1/process-refund`,
-            {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                order_id: order.id,
-                payment_provider: payment.payment_provider,
-                amount: payment.amount,
-                currency: payment.currency || order.currency,
-                reason: cancellation_reason || "Order cancelled by customer",
-                stripe_payment_intent_id: payment.stripe_payment_intent_id,
-                paypal_capture_id: payment.paypal_capture_id,
-                mollie_payment_id: payment.mollie_payment_id,
-              }),
-            }
-          );
+      try {
+        // Call process-refund function
+        const SUPABASE_URL = validateEnvVars.supabaseUrl();
+        const SUPABASE_SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-          const refundData = await refundResponse.json();
-
-          if (refundResponse.ok) {
-            console.log("✅ Refund processed successfully:", refundData);
-            results.refund_processed = true;
-            results.refund_id = refundData.refundId;
-          } else {
-            console.error("Failed to process refund:", refundData);
-            results.refund_error = refundData.message || "Unknown error";
+        const refundResponse = await fetch(
+          `${SUPABASE_URL}/functions/v1/process-refund`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${SUPABASE_SERVICE_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              order_id: order.id,
+              payment_provider: payment.payment_provider,
+              amount: payment.amount,
+              currency: payment.currency || order.currency,
+              reason: cancellation_reason || "Order cancelled by customer",
+              stripe_payment_intent_id: payment.stripe_payment_intent_id,
+              paypal_capture_id: payment.paypal_capture_id,
+              mollie_payment_id: payment.mollie_payment_id,
+            }),
           }
-        } catch (refundError) {
-          console.error("Error processing refund:", refundError);
-          results.refund_error = String(refundError);
+        );
+
+        const refundData = await refundResponse.json();
+
+        if (refundResponse.ok) {
+          console.log("✅ Refund processed successfully:", refundData);
+          results.refund_processed = true;
+          results.refund_id = refundData.refundId;
+        } else {
+          console.error("Failed to process refund:", refundData);
+          results.refund_error = refundData.message || "Unknown error";
         }
-      } else {
-        console.log("No successful payment transaction found for refund");
-        results.refund_skipped = "No successful payment transaction found";
+      } catch (refundError) {
+        console.error("Error processing refund:", refundError);
+        results.refund_error = String(refundError);
       }
     } else {
-      console.log("Order was not paid, skipping refund");
-      results.refund_skipped = "Order payment status is not 'paid'";
+      console.log("No successful payment transaction found, skipping refund");
+      results.refund_skipped = "No successful payment transaction found";
     }
 
     console.log("=== CANCEL ORDER COMPLETE ===");

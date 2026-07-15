@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { NavigationSidebar } from "./components/NavigationSidebar";
 import { HeroSection } from "./sections/HeroSection/HeroSection";
 import { UploadSection } from "./sections/UploadSection/UploadSection";
@@ -10,6 +11,7 @@ import { CustomizationSection } from "./sections/CustomizationSection/Customizat
 import { ProductionSection } from "./sections/ProductionSection/ProductionSection";
 import { FinalReviewSection } from "./sections/FinalReviewSection/FinalReviewSection";
 import { useStampNavigation } from "../lib/hooks/useStampNavigation";
+import { useStampReset } from "../lib/hooks/useStampSelectors";
 import { StampFormProvider } from "../lib/context/StampFormContext";
 import { ProductSelectionSection } from "./sections/ProductSelectionSection/ProductSelectionSection";
 
@@ -28,6 +30,14 @@ import { ProductSelectionSection } from "./sections/ProductSelectionSection/Prod
 
 export function StampPage() {
   const { currentStep, goToStep } = useStampNavigation();
+  const { reset } = useStampReset();
+
+  // Reset store state when page unmounts
+  useEffect(() => {
+    return () => {
+      reset();
+    };
+  }, [reset]);
 
   const handleBegin = () => {
     goToStep(1);

@@ -20,7 +20,7 @@ export function GenerationSection() {
   return (
     <section
       id="step-3"
-      className="h-full flex flex-col items-center justify-center p-24 bg-(--color-stamp-chocolate) text-white text-center border-b border-(--color-stamp-divider)"
+      className="h-full overflow-y-auto flex flex-col items-center justify-center p-8 md:p-16 lg:p-24 bg-(--color-stamp-chocolate) text-white text-center border-b border-(--color-stamp-divider)"
     >
       {/* Animated Loader */}
       <div className="relative mb-12">

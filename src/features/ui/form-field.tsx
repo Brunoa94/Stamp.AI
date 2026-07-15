@@ -56,10 +56,10 @@ const variantStyles: Record<
   },
   "stamp-auth": {
     container: "space-y-2",
-    labelVariant: "default" as const,
+    labelVariant: "sm" as const,
     labelColor: "text-(--color-stamp-chocolate)",
     input:
-      "h-14 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-5 text-xl uppercase tracking-[0.05em] text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20",
+      "h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-5 text-sm uppercase tracking-[0.05em] text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20",
   },
 };
 
@@ -154,7 +154,7 @@ export function FormField({
           role="alert"
           className={cn(
             variant === "stamp-auth"
-              ? "text-lg font-bold uppercase tracking-widest text-(--color-stamp-error)"
+              ? "text-xs font-bold uppercase tracking-widest text-(--color-stamp-error)"
               : "text-sm text-red-600 dark:text-red-400",
             (variant === "auth-register" || variant === "shipping") && "mt-1"
           )}

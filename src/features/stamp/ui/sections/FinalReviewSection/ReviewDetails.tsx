@@ -12,6 +12,9 @@ import { ReviewActions } from "./ReviewActions";
 
 interface PropsI {
   productName: string;
+  color?: string;
+  size?: string;
+  price: string;
   isAddingToCart: boolean;
   onBagIt: () => void;
   onBuyNow: () => void;
@@ -19,12 +22,15 @@ interface PropsI {
 
 export function ReviewDetails({
   productName,
+  color,
+  size,
+  price,
   isAddingToCart,
   onBagIt,
   onBuyNow,
 }: PropsI) {
   return (
-    <div className="p-12 lg:p-24 flex flex-col justify-center bg-white">
+    <div className="p-6 md:p-12 lg:p-24 flex flex-col justify-center bg-white">
       <Span variant="sm" className="text-(--color-stamp-taupe) mb-6">
         Protocol 08 / Acquisition
       </Span>
@@ -43,9 +49,9 @@ export function ReviewDetails({
       <div className="space-y-6 mb-12">
         <ProductSummary
           productName={productName}
-          color="Black"
-          size="M"
-          price="$34.99"
+          color={color}
+          size={size}
+          price={price}
         />
 
         <div className="flex items-center gap-4 text-(--color-stamp-taupe)">

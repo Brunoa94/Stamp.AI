@@ -37,6 +37,22 @@ async function waitForOrderAndGenerateInvoice(
     if (orderId) {
       console.log(`✅ Found order ${orderId} on attempt ${attempt}`)
 
+      // Link payment_transactions to order_id
+      const linkResult = await supabaseRest(
+        `payment_transactions?stripe_payment_intent_id=eq.${idempotencyKey.replace('stripe_', '')}`,
+        'PATCH',
+        {
+          order_id: orderId,
+          updated_at: new Date().toISOString(),
+        }
+      )
+
+      if (linkResult.error) {
+        console.error('Failed to link payment transaction to order:', linkResult.error)
+      } else {
+        console.log(`✅ Payment transaction linked to order: ${orderId}`)
+      }
+
       // Update order payment_status to paid
       const updateResult = await supabaseRest(
         `orders?id=eq.${orderId}`,
@@ -258,6 +274,7 @@ serve(async (req) => {
         // CRITICAL: Use atomic UPSERT to prevent race conditions
         // Handles case where webhook arrives before create-payment-intent
         const userId = paymentIntent.metadata?.user_id
+        const orderId = paymentIntent.metadata?.order_id
 
         const upsertResult = await supabaseRest(
           'rpc/upsert_stripe_payment_transaction',
@@ -270,7 +287,8 @@ serve(async (req) => {
             p_currency: paymentIntent.currency,
             p_status: 'succeeded',
             p_payment_method_type: paymentIntent.payment_method_types?.[0] || 'card',
-            p_metadata: paymentIntent.metadata || {}
+            p_metadata: paymentIntent.metadata || {},
+            p_order_id: orderId || null
           }
         )
 
@@ -300,6 +318,22 @@ serve(async (req) => {
         }
 
         if (dbOrderId) {
+          // Update payment_transactions with order_id (in case it wasn't in metadata)
+          const linkResult = await supabaseRest(
+            `payment_transactions?stripe_payment_intent_id=eq.${paymentIntent.id}`,
+            'PATCH',
+            {
+              order_id: dbOrderId,
+              updated_at: new Date().toISOString(),
+            }
+          )
+
+          if (linkResult.error) {
+            console.error('Failed to link payment transaction to order:', linkResult.error)
+          } else {
+            console.log(`✅ Payment transaction linked to order: ${dbOrderId}`)
+          }
+
           const orderResult = await supabaseRest(
             `orders?id=eq.${dbOrderId}`,
             'PATCH',

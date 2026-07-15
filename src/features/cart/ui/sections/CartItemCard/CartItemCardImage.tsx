@@ -18,7 +18,7 @@ export function CartItemCardImage({
   productName,
 }: CartItemCardImagePropsI) {
   return (
-    <div className="relative aspect-square w-full overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-cream) md:w-40">
+    <div className="relative aspect-square w-24 overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-cream) md:w-40">
       {imageUrl ? (
         <Image
           src={imageUrl}
