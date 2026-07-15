@@ -64,11 +64,26 @@ export function CustomizationControls({
           onSelectColor={onSelectColor}
         />
 
-        <SizeSelector
-          sizes={sizes}
-          selectedSize={selectedSize}
-          onSelectSize={onSelectSize}
-        />
+        {/* Only show size selector if there's more than one size option */}
+        {sizes.length > 1 ? (
+          <SizeSelector
+            sizes={sizes}
+            selectedSize={selectedSize}
+            onSelectSize={onSelectSize}
+          />
+        ) : sizes.length === 1 ? (
+          <div>
+            <Span
+              variant="micro"
+              className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe) block mb-2"
+            >
+              Size
+            </Span>
+            <Span variant="sm" className="text-(--color-stamp-chocolate)">
+              {sizes[0]}
+            </Span>
+          </div>
+        ) : null}
       </div>
 
       <div>

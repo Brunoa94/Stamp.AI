@@ -44,8 +44,29 @@ export type FabricColorType = {
   label: string;
 };
 
-// Size types
-export type SizeType = "XS" | "S" | "M" | "L" | "XL" | "XXL";
+// Size types - extended to support all Printify sizes including accessories
+export type SizeType =
+  | "XS"
+  | "S"
+  | "M"
+  | "L"
+  | "XL"
+  | "XXL"
+  | "2XL"
+  | "3XL"
+  | "4XL"
+  | "5XL"
+  | "One Size"
+  // Poster/print sizes
+  | "8×10"
+  | "12×16"
+  | "12×18"
+  | "16×20"
+  | "18×24"
+  | "24×36"
+  // Mug sizes
+  | "11oz"
+  | "15oz";
 
 // Presentation-layer catalog product (mapped from CatalogProduct)
 export type CatalogProductMappedType = {

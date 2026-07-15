@@ -2,21 +2,15 @@
 
 import { useMemo } from "react";
 import { useCatalogProducts } from "@/queries/catalogQueries";
-import { getCuratedBlueprintById } from "@/lib/printify/curatedBlueprints";
 import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
 import {
   useStampProductSelection,
   useStampCustomization,
 } from "../../../lib/hooks/useStampSelectors";
+import { isClothingProduct } from "../../../lib/helpers/productCategoryDetector";
 import { ProductGrid } from "./ProductGrid";
 import { ProductSelectionContent } from "./ProductSelectionContent";
 import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
-
-// Clothing categories (apparel)
-const CLOTHING_CATEGORIES = new Set(["tshirt", "hoodie"]);
-
-// Keywords to detect clothing from product name if no category match
-const CLOTHING_KEYWORDS = ["tee", "t-shirt", "shirt", "hoodie", "sweatshirt"];
 
 /**
  * ProductSelectionSection
@@ -79,32 +73,16 @@ export function ProductSelectionSection() {
     [visibleProducts],
   );
 
-  // Group products into clothing (apparel) and accessories
+  // Group products into clothing (apparel) and accessories based on display title
   const { clothingProducts, accessoryProducts } = useMemo(() => {
     const clothing: CatalogProductMappedType[] = [];
     const accessories: CatalogProductMappedType[] = [];
 
     for (const product of catalogProducts) {
-      const blueprint = getCuratedBlueprintById(product.blueprintId);
-      const category = blueprint?.category;
-
-      // Check category from curated blueprints first
-      if (category && CLOTHING_CATEGORIES.has(category)) {
+      if (isClothingProduct(product.name)) {
         clothing.push(product);
-      } else if (category) {
-        // Has a category but it's not clothing (e.g., totebag, poster, mug)
-        accessories.push(product);
       } else {
-        // No category match - use product name to determine
-        const nameLower = product.name.toLowerCase();
-        const isClothing = CLOTHING_KEYWORDS.some((keyword) =>
-          nameLower.includes(keyword)
-        );
-        if (isClothing) {
-          clothing.push(product);
-        } else {
-          accessories.push(product);
-        }
+        accessories.push(product);
       }
     }
 
