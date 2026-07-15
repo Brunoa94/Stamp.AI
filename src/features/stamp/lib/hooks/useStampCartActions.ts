@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { getCuratedBlueprintById } from "@/lib/printify/curatedBlueprints";
 import {
   useStampFinalization,
   useStampSelectedImage,
@@ -36,7 +35,7 @@ export function useStampCartActions() {
   const { createdProductId, createdVariantId } = useStampFinalization();
   const { selectedImageUrl } = useStampSelectedImage();
   const { selectedPriceCents } = useStampCustomization();
-  const { blueprintId } = useStampProductSelection();
+  const { selectedProductTitle } = useStampProductSelection();
 
   const addToCartMutation = useAddToCart();
 
@@ -112,8 +111,7 @@ export function useStampCartActions() {
     // Set idempotency lock
     isAddingRef.current = true;
 
-    const blueprint = blueprintId ? getCuratedBlueprintById(blueprintId) : null;
-    const productName = blueprint?.title || "Custom Design";
+    const productName = selectedProductTitle || "Custom Design";
 
     // Use actual price from customization selection (in cents)
     // Default to 1999 cents ($19.99) if no price selected

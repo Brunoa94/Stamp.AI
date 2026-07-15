@@ -34,6 +34,7 @@ const initialState = {
   selectedProductType: "tshirt" as const,
   blueprintId: undefined,
   printProviderId: undefined,
+  selectedProductTitle: undefined,
   // Customization selection state
   selectedColor: undefined,
   selectedSize: undefined,
@@ -144,6 +145,7 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
     set({ selectedProductType: productType }),
   setBlueprintId: (id) => set({ blueprintId: id }),
   setPrintProviderId: (id) => set({ printProviderId: id }),
+  setSelectedProductTitle: (title) => set({ selectedProductTitle: title }),
 
   // Customization selection
   setSelectedColor: (color) => set({ selectedColor: color }),

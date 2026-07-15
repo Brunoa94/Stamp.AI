@@ -51,6 +51,8 @@ export interface StampFlowStateType {
   setBlueprintId: (id: number | undefined) => void;
   printProviderId: number | undefined;
   setPrintProviderId: (id: number | undefined) => void;
+  selectedProductTitle: string | undefined;
+  setSelectedProductTitle: (title: string | undefined) => void;
 
   // Customization selection state
   selectedColor: string | undefined;

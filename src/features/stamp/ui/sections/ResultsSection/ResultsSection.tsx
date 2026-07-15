@@ -4,6 +4,7 @@ import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
 import { useStampSelectedImage } from "../../../lib/hooks/useStampSelectors";
 import { ResultsHeader } from "./ResultsHeader";
 import { ResultsImage } from "./ResultsImage";
+import { ResultsDetails } from "./ResultsDetails";
 import { ResultsActions } from "./ResultsActions";
 
 /**
@@ -15,7 +16,7 @@ import { ResultsActions } from "./ResultsActions";
 
 export function ResultsSection() {
   const { nextStep, goToStep } = useStampNavigation();
-  const { selectedImageUrl } = useStampSelectedImage();
+  const { selectedImageUrl, enhancedPrompt } = useStampSelectedImage();
   const canProceedToProduct = Boolean(selectedImageUrl);
 
   const handleUseProtocol = () => {
@@ -44,6 +45,7 @@ export function ResultsSection() {
       <div className="max-w-2xl w-full">
         <ResultsHeader outputNumber="Output Result #01" date={currentDate} />
         <ResultsImage imageUrl={displayImageUrl} />
+        <ResultsDetails prompt={enhancedPrompt} />
         <ResultsActions
           canProceed={canProceedToProduct}
           onUseProtocol={handleUseProtocol}

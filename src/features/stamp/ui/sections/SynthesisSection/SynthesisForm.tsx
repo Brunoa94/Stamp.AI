@@ -54,7 +54,6 @@ export function SynthesisForm({
           onChange={onPromptChange}
           maxLength={maxPromptLength}
         />
-
         <PreservationSlider
           value={preservation}
           onChange={onPreservationChange}

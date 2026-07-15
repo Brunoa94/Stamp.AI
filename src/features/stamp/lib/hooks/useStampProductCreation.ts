@@ -143,6 +143,8 @@ export function useStampProductCreation() {
 
     setIsFinalizing(true);
     setProductionProgress(0);
+    // Clear previous mockup to prevent stale image flash on FinalReviewSection
+    setMockupImageUrl(undefined);
 
     // Navigate to production step
     nextStep();

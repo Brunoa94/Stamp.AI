@@ -33,8 +33,13 @@ const FALLBACK_PRICE = 25.0;
 
 export function ProductSelectionSection() {
   const { nextStep } = useStampNavigation();
-  const { blueprintId, printProviderId, setBlueprintId, setPrintProviderId } =
-    useStampProductSelection();
+  const {
+    blueprintId,
+    printProviderId,
+    setBlueprintId,
+    setPrintProviderId,
+    setSelectedProductTitle,
+  } = useStampProductSelection();
   const { setSelectedPriceCents } = useStampCustomization();
   const canProceedToCustomization =
     blueprintId !== undefined && printProviderId !== undefined;
@@ -109,6 +114,7 @@ export function ProductSelectionSection() {
   const handleProductSelect = (product: CatalogProductMappedType) => {
     setBlueprintId(product.blueprintId);
     setPrintProviderId(product.printProviderId);
+    setSelectedProductTitle(product.name);
     // Store price in cents (product.price is in dollars)
     setSelectedPriceCents(Math.round(product.price * 100));
   };
@@ -116,6 +122,7 @@ export function ProductSelectionSection() {
   const handleClearSelection = () => {
     setBlueprintId(undefined);
     setPrintProviderId(undefined);
+    setSelectedProductTitle(undefined);
     setSelectedPriceCents(undefined);
   };
 
