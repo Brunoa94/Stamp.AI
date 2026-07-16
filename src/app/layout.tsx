@@ -129,7 +129,14 @@ export default async function RootLayout({
               <QueryProvider>
                 <ScrollToTop />
                 <AppLayoutChrome>{children}</AppLayoutChrome>
-                <Toaster />
+                <Toaster
+                  position="bottom-right"
+                  offset={24}
+                  gap={12}
+                  toastOptions={{
+                    unstyled: true,
+                  }}
+                />
               </QueryProvider>
             </SupabaseAuthProvider>
           </ThemeProvider>
