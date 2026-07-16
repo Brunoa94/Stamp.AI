@@ -1,6 +1,7 @@
 "use client";
 
 import { Filter, X, ChevronDown, ChevronUp } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -20,10 +21,13 @@ export function CollapsibleFilters({
   onToggle,
   onClearFilters,
   hasActiveFilters = false,
-  toggleLabel = "Filters",
-  clearLabel = "Clear Filters",
+  toggleLabel,
+  clearLabel,
   children,
 }: CollapsibleFiltersProps) {
+  const t = useTranslations("ui.collapsibleFilters");
+  const resolvedToggleLabel = toggleLabel ?? t("toggle");
+  const resolvedClearLabel = clearLabel ?? t("clear");
   return (
     <div className="w-full space-y-4">
       {/* Toggle Button Row */}
@@ -37,7 +41,7 @@ export function CollapsibleFilters({
           )}
         >
           <Filter className="w-4 h-4" />
-          <span>{toggleLabel}</span>
+          <span>{resolvedToggleLabel}</span>
           {isOpen ? (
             <ChevronUp className="w-4 h-4 ml-1 text-slate-400" />
           ) : (
@@ -53,7 +57,7 @@ export function CollapsibleFilters({
             className="text-rose-600 hover:text-rose-700 hover:bg-rose-50 flex items-center gap-2"
           >
             <X className="w-4 h-4" />
-            {clearLabel}
+            {resolvedClearLabel}
           </Button>
         )}
       </div>

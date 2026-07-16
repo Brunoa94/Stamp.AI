@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { formatOrderDate } from "../../../lib/utils/formatOrderDate";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { Heading } from "@/features/ui/heading";
@@ -18,6 +19,8 @@ export function OrdersListItemContent({
   firstItem,
   displayedStatus,
 }: PropsI) {
+  const t = useTranslations("orders.listItem");
+
   return (
     <div className="flex-1">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
@@ -27,7 +30,7 @@ export function OrdersListItemContent({
             unstyled
             className="font-heading text-2xl font-bold uppercase tracking-tight"
           >
-            {firstItem?.product_name || "Premium Synthesis Product"}
+            {firstItem?.product_name || t("productFallback")}
           </Heading>
           <Span
             variant="default"
@@ -50,7 +53,7 @@ export function OrdersListItemContent({
             variant="sm"
             className="mb-1 font-bold uppercase text-sm tracking-widest text-(--color-stamp-taupe)"
           >
-            Creation Date
+            {t("creationDate")}
           </Paragraph>
           <Paragraph
             variant="sm"
@@ -64,13 +67,13 @@ export function OrdersListItemContent({
             variant="sm"
             className="mb-1 font-bold uppercase text-sm tracking-widest text-(--color-stamp-taupe)"
           >
-            Configuration
+            {t("configuration")}
           </Paragraph>
           <Paragraph
             variant="sm"
             className="font-bold text-base text-(--color-stamp-chocolate)"
           >
-            {firstItem?.variant_name || "Standard"}
+            {firstItem?.variant_name || t("standard")}
           </Paragraph>
         </div>
         <div>
@@ -78,13 +81,15 @@ export function OrdersListItemContent({
             variant="sm"
             className="mb-1 font-bold uppercase text-sm tracking-widest text-(--color-stamp-taupe)"
           >
-            Quantity
+            {t("quantity")}
           </Paragraph>
           <Paragraph
             variant="sm"
             className="font-bold text-base text-(--color-stamp-chocolate)"
           >
-            {String(firstItem?.quantity || 1).padStart(2, "0")} Unit
+            {t("unit", {
+              count: String(firstItem?.quantity || 1).padStart(2, "0"),
+            })}
           </Paragraph>
         </div>
         <div>
@@ -92,7 +97,7 @@ export function OrdersListItemContent({
             variant="sm"
             className="mb-1 font-bold uppercase text-sm tracking-widest text-(--color-stamp-taupe)"
           >
-            Protocol Value
+            {t("protocolValue")}
           </Paragraph>
           <Heading
             as="h4"

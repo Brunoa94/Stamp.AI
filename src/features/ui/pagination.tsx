@@ -1,17 +1,21 @@
 import * as React from "react"
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 import { cn } from "@/lib/utils"
 import { type ButtonProps, buttonVariants } from "./button"
 
-const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => (
+const Pagination = ({ className, ...props }: React.ComponentProps<"nav">) => {
+  const t = useTranslations("ui.pagination")
+  return (
   <nav
     role="navigation"
-    aria-label="pagination"
+    aria-label={t("label")}
     className={cn("mx-auto flex w-full justify-center", className)}
     {...props}
   />
-)
+  )
+}
 Pagination.displayName = "Pagination"
 
 const PaginationContent = React.forwardRef<
@@ -63,46 +67,55 @@ PaginationLink.displayName = "PaginationLink"
 const PaginationPrevious = ({
   className,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
+}: React.ComponentProps<typeof PaginationLink>) => {
+  const t = useTranslations("ui.pagination")
+  return (
   <PaginationLink
-    aria-label="Go to previous page"
+    aria-label={t("previous")}
     size="icon-sm"
     className={cn("", className)}
     {...props}
   >
     <ChevronLeft className="h-4 w-4" />
   </PaginationLink>
-)
+  )
+}
 PaginationPrevious.displayName = "PaginationPrevious"
 
 const PaginationNext = ({
   className,
   ...props
-}: React.ComponentProps<typeof PaginationLink>) => (
+}: React.ComponentProps<typeof PaginationLink>) => {
+  const t = useTranslations("ui.pagination")
+  return (
   <PaginationLink
-    aria-label="Go to next page"
+    aria-label={t("next")}
     size="icon-sm"
     className={cn("", className)}
     {...props}
   >
     <ChevronRight className="h-4 w-4" />
   </PaginationLink>
-)
+  )
+}
 PaginationNext.displayName = "PaginationNext"
 
 const PaginationEllipsis = ({
   className,
   ...props
-}: React.ComponentProps<"span">) => (
+}: React.ComponentProps<"span">) => {
+  const t = useTranslations("ui.pagination")
+  return (
   <span
     aria-hidden
     className={cn("flex h-9 w-9 items-center justify-center", className)}
     {...props}
   >
     <MoreHorizontal className="h-4 w-4" />
-    <span className="sr-only">More pages</span>
+    <span className="sr-only">{t("morePages")}</span>
   </span>
-)
+  )
+}
 PaginationEllipsis.displayName = "PaginationEllipsis"
 
 export {

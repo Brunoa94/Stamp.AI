@@ -5,6 +5,7 @@
  * Supports inverted mode for dark backgrounds.
  */
 
+import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { cn } from "@/lib/utils";
 
@@ -16,11 +17,15 @@ interface HomeTrustIndicatorsPropsI {
   inverted?: boolean;
 }
 
+const SUB_LABEL_KEYS = ["generative", "heritage", "logistics"] as const;
+
 export function HomeTrustIndicators({
   items,
   className,
   inverted = false,
 }: HomeTrustIndicatorsPropsI) {
+  const t = useTranslations("home.trustIndicators");
+
   return (
     <ul
       className={cn(
@@ -39,7 +44,7 @@ export function HomeTrustIndicators({
               variant="micro"
               className={inverted ? "text-(--color-stamp-cream)" : "text-(--color-stamp-chocolate)"}
             >
-              {item}
+              {t(`items.${item}`)}
             </Span>
           </div>
           <Span
@@ -47,9 +52,7 @@ export function HomeTrustIndicators({
             className={inverted ? "text-(--color-stamp-cream)/40" : "text-(--color-stamp-taupe)"}
             style={{ letterSpacing: "0.2em" }}
           >
-            {index === 0 && "Generative Logic"}
-            {index === 1 && "Heritage Grade"}
-            {index === 2 && "Global Logistics"}
+            {SUB_LABEL_KEYS[index] && t(`subLabels.${SUB_LABEL_KEYS[index]}`)}
           </Span>
         </li>
       ))}

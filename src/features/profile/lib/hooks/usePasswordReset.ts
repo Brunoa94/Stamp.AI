@@ -1,5 +1,6 @@
 import { useReducer } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useUpdatePassword } from "@/queries/authQueries";
 import { UpdatePasswordSchema } from "@/schemas/auth";
 
@@ -48,6 +49,7 @@ function passwordResetReducer(
 }
 
 export function usePasswordReset() {
+  const t = useTranslations("profile.toasts");
   const [state, dispatch] = useReducer(passwordResetReducer, initialState);
   const updatePasswordMutation = useUpdatePassword();
 
@@ -78,10 +80,10 @@ export function usePasswordReset() {
     try {
       await updatePasswordMutation.mutateAsync(state.newPassword);
       dispatch({ type: "RESET" });
-      
-      toast.success("Password updated successfully!");
+
+      toast.success(t("passwordUpdated"));
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to update password";
+      const errorMessage = error instanceof Error ? error.message : t("passwordUpdateFailed");
 
       toast.error(errorMessage);
     }

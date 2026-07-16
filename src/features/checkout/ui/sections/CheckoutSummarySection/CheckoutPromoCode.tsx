@@ -8,6 +8,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { Tag, X } from "lucide-react";
 import { Input } from "@/features/ui/input";
@@ -31,6 +32,7 @@ export function CheckoutPromoCode({
   error,
   isApplying = false,
 }: CheckoutPromoCodePropsI) {
+  const t = useTranslations("checkout.promoCode");
   const { setValue } = useFormContext<CheckoutFormData>();
   const [inputValue, setInputValue] = useState("");
 
@@ -51,7 +53,7 @@ export function CheckoutPromoCode({
       <div className="flex items-center gap-2">
         <Tag className="h-3.5 w-3.5 text-(--color-stamp-taupe)" aria-hidden="true" />
         <Span variant="micro" className="text-(--color-stamp-taupe)">
-          Promo Code
+          {t("label")}
         </Span>
       </div>
 
@@ -68,7 +70,7 @@ export function CheckoutPromoCode({
             variant="ghost"
             size="icon-sm"
             onClick={handleClear}
-            aria-label="Remove promo code"
+            aria-label={t("removeAria")}
             className="rounded-none text-(--color-stamp-success) hover:bg-(--color-stamp-success)/10"
           >
             <X className="h-4 w-4" />
@@ -78,7 +80,7 @@ export function CheckoutPromoCode({
         <div className="flex gap-2">
           <Input
             type="text"
-            placeholder="ENTER CODE"
+            placeholder={t("placeholder")}
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value.toUpperCase())}
             onKeyDown={(e) => {
@@ -88,7 +90,7 @@ export function CheckoutPromoCode({
               }
             }}
             disabled={isApplying}
-            aria-label="Promo code"
+            aria-label={t("inputAria")}
             className="flex-1 rounded-none border-(--color-stamp-divider) uppercase tracking-[0.15em]"
           />
           <Button
@@ -98,7 +100,7 @@ export function CheckoutPromoCode({
             variant="outline"
             className="rounded-none border-(--color-stamp-chocolate) text-lg font-bold uppercase tracking-[0.2em]"
           >
-            {isApplying ? "…" : "Apply"}
+            {isApplying ? t("applying") : t("apply")}
           </Button>
         </div>
       )}

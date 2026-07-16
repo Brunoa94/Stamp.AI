@@ -1,5 +1,6 @@
 import { FormField } from "@/features/ui/form-field";
 import { Mail, Lock, User } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import type { RegisterI } from "@/schemas/auth";
 
@@ -12,13 +13,15 @@ export function RegisterCredentialsFields({
   register,
   errors,
 }: PropsI) {
+  const t = useTranslations("auth.register.fields");
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <FormField
           id="firstName"
-          label="First Name"
-          placeholder="John"
+          label={t("firstName")}
+          placeholder={t("firstNamePlaceholder")}
           required
           error={errors.firstName?.message}
           register={register("firstName")}
@@ -28,8 +31,8 @@ export function RegisterCredentialsFields({
 
         <FormField
           id="lastName"
-          label="Last Name"
-          placeholder="Doe"
+          label={t("lastName")}
+          placeholder={t("lastNamePlaceholder")}
           required
           error={errors.lastName?.message}
           register={register("lastName")}
@@ -40,9 +43,9 @@ export function RegisterCredentialsFields({
 
       <FormField
         id="email"
-        label="Email Address"
+        label={t("emailLabel")}
         type="email"
-        placeholder="name@company.com"
+        placeholder={t("emailPlaceholder")}
         required
         error={errors.email?.message}
         register={register("email")}
@@ -53,9 +56,9 @@ export function RegisterCredentialsFields({
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <FormField
           id="password"
-          label="Password"
+          label={t("passwordLabel")}
           type="password"
-          placeholder="••••••••"
+          placeholder={t("passwordPlaceholder")}
           required
           error={errors.password?.message}
           register={register("password")}
@@ -65,9 +68,9 @@ export function RegisterCredentialsFields({
 
         <FormField
           id="confirmPassword"
-          label="Confirm Password"
+          label={t("confirmPassword")}
           type="password"
-          placeholder="••••••••"
+          placeholder={t("confirmPasswordPlaceholder")}
           required
           error={errors.confirmPassword?.message}
           register={register("confirmPassword")}

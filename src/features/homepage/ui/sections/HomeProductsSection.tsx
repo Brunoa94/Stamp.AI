@@ -6,6 +6,7 @@
  */
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Span } from "@/features/ui/span";
 import type { ProductCardData } from "../../lib/mappers/productCardMapper";
@@ -19,15 +20,16 @@ interface HomeProductsSectionPropsI {
 }
 
 export function HomeProductsSection({ products }: HomeProductsSectionPropsI) {
+  const t = useTranslations("home.products");
   const displayedProducts = products.slice(0, MAX_HOME_PRODUCTS);
 
   return (
     <section id="products" className="px-6 py-24 lg:px-12 xl:px-24">
       <SectionReveal className="mx-auto max-w-screen-2xl">
         <HomeSectionHeader
-          title="The"
-          accent="essentials"
-          label="Catalog 001"
+          title={t("title")}
+          accent={t("accent")}
+          label={t("label")}
         />
 
         {displayedProducts.length === 0 ? (
@@ -36,7 +38,7 @@ export function HomeProductsSection({ products }: HomeProductsSectionPropsI) {
             variant="default"
             className="block py-16 text-center text-(--color-stamp-taupe)"
           >
-            The catalog is temporarily unavailable — please check back soon
+            {t("emptyState")}
           </Span>
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:gap-8 lg:grid-cols-4 lg:gap-12">
@@ -51,7 +53,7 @@ export function HomeProductsSection({ products }: HomeProductsSectionPropsI) {
             href="/stamp"
             className="group inline-flex items-center gap-2 text-(--color-stamp-taupe) transition-colors duration-300 hover:text-(--color-stamp-gold)"
           >
-            <Span variant="default">View Full Catalog</Span>
+            <Span variant="default">{t("viewFullCatalog")}</Span>
             <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
         </div>

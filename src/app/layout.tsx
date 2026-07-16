@@ -13,6 +13,8 @@ import {
 import "./globals.css";
 import "./globals-stamp.css";
 
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages, getTranslations } from "next-intl/server";
 import { Toaster } from "sonner";
 import { SupabaseAuthProvider } from "@/providers/SupabaseAuthProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
@@ -85,21 +87,26 @@ const playfairDisplay = Playfair_Display({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Imaginary Builder AI",
-  description: "AI-powered design and building platform",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("common.metadata");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const messages = await getMessages();
+
   return (
     <html lang="en" className="light scheme-light" suppressHydrationWarning>
       <head>
@@ -116,15 +123,17 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} ${poppins.variable} ${bebasNeue.variable} ${anton.variable} ${spaceGrotesk.variable} ${outfit.variable} ${playfairDisplay.variable} antialiased`}
       >
         <GrainOverlay />
-        <ThemeProvider>
-          <SupabaseAuthProvider>
-            <QueryProvider>
-              <ScrollToTop />
-              <AppLayoutChrome>{children}</AppLayoutChrome>
-              <Toaster />
-            </QueryProvider>
-          </SupabaseAuthProvider>
-        </ThemeProvider>
+        <NextIntlClientProvider messages={messages}>
+          <ThemeProvider>
+            <SupabaseAuthProvider>
+              <QueryProvider>
+                <ScrollToTop />
+                <AppLayoutChrome>{children}</AppLayoutChrome>
+                <Toaster />
+              </QueryProvider>
+            </SupabaseAuthProvider>
+          </ThemeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

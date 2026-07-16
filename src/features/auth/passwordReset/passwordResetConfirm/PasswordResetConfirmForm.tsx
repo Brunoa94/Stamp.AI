@@ -6,6 +6,7 @@ import { PasswordResetError } from "./PasswordResetError";
 import { FormField } from "@/features/ui/form-field";
 import { Button } from "@/features/ui/button";
 import { Lock } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function PasswordResetConfirmForm() {
   const {
@@ -17,6 +18,7 @@ export function PasswordResetConfirmForm() {
     isError,
     errors,
   } = usePasswordResetConfirmForm();
+  const t = useTranslations("auth.passwordReset.confirm");
 
   if (isSuccess) {
     return <PasswordResetSuccess />;
@@ -31,7 +33,7 @@ export function PasswordResetConfirmForm() {
       <div className="space-y-6">
         <FormField
           id="password"
-          label="New Password"
+          label={t("newPassword")}
           type="password"
           error={errors.password?.message}
           register={register("password")}
@@ -41,7 +43,7 @@ export function PasswordResetConfirmForm() {
 
         <FormField
           id="confirmPassword"
-          label="Confirm New Password"
+          label={t("confirmNewPassword")}
           type="password"
           error={errors.confirmPassword?.message}
           register={register("confirmPassword")}
@@ -51,7 +53,7 @@ export function PasswordResetConfirmForm() {
       </div>
 
       <Button type="submit" disabled={isPending} variant="stamp-auth-primary" className="w-full">
-        {isPending ? "Resetting Password..." : "Reset Password"}
+        {isPending ? t("resetting") : t("resetPassword")}
       </Button>
     </form>
   );

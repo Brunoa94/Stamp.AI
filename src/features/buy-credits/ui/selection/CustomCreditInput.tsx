@@ -1,6 +1,7 @@
 "use client";
 
 import { Coins } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
 import { Input } from "@/features/ui/input";
@@ -21,6 +22,7 @@ export function CustomCreditInput({
   onChange,
   onFocus,
 }: CustomCreditInputProps) {
+  const t = useTranslations("buyCredits.selection");
   const theme = buyCreditsTheme.customInput;
   const numericValue = parseInt(value) || 0;
   const price = numericValue * PRICE_PER_CREDIT;
@@ -29,7 +31,7 @@ export function CustomCreditInput({
 
   return (
     <div>
-      <Label className={buyCreditsTheme.sectionLabel}>Or Enter Custom Amount</Label>
+      <Label className={buyCreditsTheme.sectionLabel}>{t("customLabel")}</Label>
       <Button
         type="button"
         variant="outline"
@@ -45,7 +47,7 @@ export function CustomCreditInput({
             <Input
               type="text"
               inputMode="numeric"
-              placeholder={`Enter credits (min. ${MIN_CUSTOM_CREDITS})`}
+              placeholder={t("customPlaceholder", { min: MIN_CUSTOM_CREDITS })}
               value={value}
               onChange={(e) => onChange(e.target.value)}
               onFocus={onFocus}
@@ -58,7 +60,7 @@ export function CustomCreditInput({
         </div>
         {showError && (
           <p className={theme.error}>
-            Minimum {MIN_CUSTOM_CREDITS} credits required
+            {t("customError", { min: MIN_CUSTOM_CREDITS })}
           </p>
         )}
       </Button>

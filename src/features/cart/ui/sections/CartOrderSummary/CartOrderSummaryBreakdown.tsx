@@ -5,6 +5,7 @@
  * the gold total. Amounts arrive in cents.
  */
 
+import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { CartOrderSummaryRow } from "./CartOrderSummaryRow";
@@ -21,24 +22,29 @@ export function CartOrderSummaryBreakdown({
   shipping,
   total,
 }: CartOrderSummaryBreakdownPropsI) {
+  const t = useTranslations("cart.summary");
+
   return (
     <>
       <dl className="mb-8 space-y-5">
-        <CartOrderSummaryRow label="Subtotal" value={formatPrice(subtotal)} />
         <CartOrderSummaryRow
-          label="Shipping Protocol"
-          value={shipping === 0 ? "Free" : formatPrice(shipping)}
+          label={t("subtotal")}
+          value={formatPrice(subtotal)}
+        />
+        <CartOrderSummaryRow
+          label={t("shippingProtocol")}
+          value={shipping === 0 ? t("free") : formatPrice(shipping)}
           valueClassName="text-sm font-bold uppercase tracking-[0.15em] text-(--color-stamp-success)"
         />
         <div className="flex items-center justify-between">
           <dt>
             <Span variant="micro" className="text-(--color-stamp-taupe)">
-              Tax Logistics
+              {t("taxLogistics")}
             </Span>
           </dt>
           <dd>
             <Span variant="micro" className="text-(--color-stamp-taupe)/60">
-              Calculated at checkout
+              {t("taxNote")}
             </Span>
           </dd>
         </div>

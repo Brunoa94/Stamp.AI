@@ -1,4 +1,5 @@
 import { Truck } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { ProductSummary } from "./ProductSummary";
@@ -29,10 +30,12 @@ export function ReviewDetails({
   onBagIt,
   onBuyNow,
 }: PropsI) {
+  const t = useTranslations("stamp.finalReview");
+
   return (
     <div className="p-6 md:p-12 lg:p-24 flex flex-col justify-center bg-white">
       <Span variant="sm" className="text-(--color-stamp-taupe) mb-6">
-        Protocol 08 / Acquisition
+        {t("protocol")}
       </Span>
 
       <Heading
@@ -40,10 +43,13 @@ export function ReviewDetails({
         variant="title"
         className="text-(--color-stamp-chocolate) mb-6"
       >
-        Your Custom{" "}
-        <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
-          Product
-        </span>
+        {t.rich("title", {
+          accent: (chunks) => (
+            <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
+              {chunks}
+            </span>
+          ),
+        })}
       </Heading>
 
       <div className="space-y-6 mb-12">
@@ -56,7 +62,7 @@ export function ReviewDetails({
 
         <div className="flex items-center gap-4 text-(--color-stamp-taupe)">
           <Truck className="text-(--color-stamp-gold) w-5 h-5 shrink-0" />
-          <Span variant="micro">Free shipping on neural archive orders</Span>
+          <Span variant="micro">{t("freeShipping")}</Span>
         </div>
       </div>
 

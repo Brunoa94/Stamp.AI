@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
 import { useStampNavigation } from "./useStampNavigation";
 import {
   useStampGeneration,
@@ -27,13 +28,8 @@ import { withTimeout } from "@/lib/promiseUtils";
 const IMAGE_GENERATION_TIMEOUT_MS = 90_000; // 90 seconds for AI generation
 
 class ImageGenerationTimeoutError extends Error {
-  constructor(timeoutMs: number) {
-    super(
-      `Image generation timed out after ${
-        Math.round(timeoutMs / 1000)
-      } seconds. ` +
-        `Please try again with a simpler prompt or contact support.`,
-    );
+  constructor(message: string) {
+    super(message);
     this.name = "ImageGenerationTimeoutError";
   }
 }
@@ -48,6 +44,7 @@ interface GenerateImageParamsType {
 const DEFAULT_SYNTHESIS_STYLE = "editorial";
 
 export function useStampImageGeneration() {
+  const t = useTranslations("stamp.errors.imageGeneration");
   const { nextStep } = useStampNavigation();
   const { handleError } = useErrorHandler();
   const { uploadedImageUrl } = useStampUpload();
@@ -78,7 +75,7 @@ export function useStampImageGeneration() {
 
     // Validate prompt
     if (!prompt || prompt.trim().length === 0) {
-      handleError(new Error("Please enter a description for your design"));
+      handleError(new Error(t("emptyPrompt")));
       return;
     }
 
@@ -112,7 +109,11 @@ export function useStampImageGeneration() {
           preservation: uploadedImageUrl ? preservation : undefined,
         } as any),
         IMAGE_GENERATION_TIMEOUT_MS,
-        new ImageGenerationTimeoutError(IMAGE_GENERATION_TIMEOUT_MS),
+        new ImageGenerationTimeoutError(
+          t("timeout", {
+            seconds: Math.round(IMAGE_GENERATION_TIMEOUT_MS / 1000),
+          }),
+        ),
       );
 
       clearInterval(progressInterval);

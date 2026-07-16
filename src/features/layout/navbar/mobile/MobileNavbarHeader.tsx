@@ -1,6 +1,7 @@
 "use client";
 
 import { Menu, ShoppingCart, Wand2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { cn } from "@/lib/utils";
 import { navbarTheme } from "@/theme/components";
@@ -18,6 +19,7 @@ export function MobileNavbarHeader({
   isMenuOpen,
   onOpenMenu,
 }: Props) {
+  const t = useTranslations("layout.mobileHeader");
   const mobileHeader = navbarTheme.mobileHeader;
 
   return (
@@ -36,16 +38,16 @@ export function MobileNavbarHeader({
         >
           <ViewTransitionLink
             href="/stamp"
-            aria-label="Create a new stamp design"
+            aria-label={t("stampAriaLabel")}
           >
             <Wand2 className="w-4 h-4" />
-            <span>Stamp It!</span>
+            <span>{t("stampIt")}</span>
           </ViewTransitionLink>
         </Button>
 
         <div className="flex items-center gap-1 shrink-0">
           <Button asChild variant="ghost" className={mobileHeader.cartButton}>
-            <ViewTransitionLink href="/cart" aria-label="View cart">
+            <ViewTransitionLink href="/cart" aria-label={t("viewCart")}>
               <ShoppingCart className="w-5 h-5" />
               {itemCount > 0 && (
                 <span className={mobileHeader.badge}>
@@ -60,7 +62,7 @@ export function MobileNavbarHeader({
             size="icon"
             onClick={onOpenMenu}
             className={mobileHeader.menuButton}
-            aria-label="Open navigation menu"
+            aria-label={t("openMenu")}
             aria-expanded={isMenuOpen}
           >
             <Menu className="w-5 h-5" />

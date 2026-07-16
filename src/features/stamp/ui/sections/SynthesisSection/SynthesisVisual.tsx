@@ -1,4 +1,5 @@
 import { Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { STAMP_EDIT_SUGGESTIONS } from "../../../lib/constants/stampProducts";
 import { SuggestionCard } from "./SuggestionCard";
@@ -18,6 +19,8 @@ interface PropsI {
 }
 
 export function SynthesisVisual({ selectedId, onSelectSuggestion }: PropsI) {
+  const t = useTranslations("stamp.synthesis");
+  const ts = useTranslations("stamp.suggestions");
   const isNoFilterSelected = selectedId === null || selectedId === NO_FILTER_ID;
 
   return (
@@ -28,25 +31,25 @@ export function SynthesisVisual({ selectedId, onSelectSuggestion }: PropsI) {
           variant="micro"
           className="text-[10px] tracking-widest text-(--color-stamp-taupe)"
         >
-          Suggested Edits
+          {t("eyebrow")}
         </Span>
       </div>
       <Span
         variant="sm"
         className="text-(--color-stamp-taupe)/70 mb-8 max-w-xs"
       >
-        Tap a suggestion to seed your prompt, then refine it on the right.
+        {t("subtitle")}
       </Span>
 
       <div className="grid grid-cols-4 gap-4 w-full">
-        {STAMP_EDIT_SUGGESTIONS.map(({ id, label, hint, image }) => {
+        {STAMP_EDIT_SUGGESTIONS.map(({ id, image }) => {
           const isSelected = selectedId === id;
           return (
             <SuggestionCard
               key={id}
               id={id}
-              label={label}
-              hint={hint}
+              label={ts(`${id}.label`)}
+              hint={ts(`${id}.hint`)}
               image={image}
               isSelected={isSelected}
               onSelect={onSelectSuggestion}

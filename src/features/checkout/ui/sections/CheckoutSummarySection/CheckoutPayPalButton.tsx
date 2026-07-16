@@ -9,6 +9,7 @@
 
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { FaPaypal } from "react-icons/fa";
 import { Loader2 } from "lucide-react";
@@ -31,6 +32,7 @@ export function CheckoutPayPalButton({
   amount,
   disabled = false,
 }: CheckoutPayPalButtonPropsI) {
+  const t = useTranslations("checkout.paypalButton");
   const { getValues } = useFormContext<CheckoutFormData>();
   const { mutateAsync: preparePayPal, isPending } = usePreparePayPalPayment();
 
@@ -65,7 +67,7 @@ export function CheckoutPayPalButton({
         <FaPaypal className="h-4 w-4" />
       )}
       {isPending
-        ? "Redirecting to PayPal…"
+        ? t("redirecting")
         : PAYMENT_CONFIRM_METHOD_UI.paypal.labelDesktop}
     </Button>
   );

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { ShoppingBag } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import type { OrderWithItemsT } from "@/types/order";
 import type { getFirstOrderItem } from "../../../lib/helpers/orderPresentation";
@@ -15,17 +16,19 @@ export function OrdersGridItemImage({
   firstItem,
   onOpenDetails,
 }: PropsI) {
+  const t = useTranslations("orders.gridItem");
+
   return (
     <Button
       onClick={() => onOpenDetails(order)}
       variant="ghost"
       className="relative h-40 w-full overflow-hidden bg-(--color-stamp-cream)"
-      aria-label={`Open details for order ${order.order_number || order.id}`}
+      aria-label={t("openDetails", { order: order.order_number || order.id })}
     >
       {firstItem?.custom_image_url ? (
         <Image
           src={firstItem.custom_image_url}
-          alt={firstItem.product_name || "Order product"}
+          alt={firstItem.product_name || t("productAlt")}
           fill
           sizes="(max-width: 768px) 100vw, 240px"
           className="object-cover transition-all duration-1000 group-hover:scale-110"

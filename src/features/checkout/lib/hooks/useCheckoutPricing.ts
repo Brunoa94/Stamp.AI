@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { CheckoutPromoCodeService } from "../services/promoCodeService";
@@ -14,6 +15,7 @@ interface UseCheckoutPricingParams {
 }
 
 export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
+  const t = useTranslations("checkout.pricing");
   const { watch } = useFormContext<CheckoutFormData>();
   const [appliedPromo, setAppliedPromo] = useState<
     PromoCodeValidationResult | null
@@ -34,14 +36,14 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
         setPromoError(null);
       } else {
         setAppliedPromo(null);
-        setPromoError(result.message || "Invalid promo code");
+        setPromoError(result.message || t("invalidPromoCode"));
       }
     },
     onError: (error) => {
       setAppliedPromo(null);
       const errorMessage = error instanceof Error
         ? error.message
-        : "Failed to validate promo code";
+        : t("validationFailed");
       setPromoError(errorMessage);
     },
   });
@@ -69,7 +71,7 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
   // Apply promo code
   const applyPromoCode = async (code: string) => {
     if (!code.trim()) {
-      setPromoError("Please enter a promo code");
+      setPromoError(t("enterPromoCode"));
       return;
     }
 

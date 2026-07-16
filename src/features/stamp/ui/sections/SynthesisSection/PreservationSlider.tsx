@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Label } from "@/features/ui/label";
 import { Span } from "@/features/ui/span";
 
@@ -13,20 +14,22 @@ interface PropsI {
 }
 
 export function PreservationSlider({ value, onChange }: PropsI) {
+  const t = useTranslations("stamp.synthesis");
+
   return (
     <div>
       <Label
         htmlFor="preservation"
         className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe) block mb-4"
       >
-        Preservation
+        {t("preservationLabel")}
       </Label>
       <div className="flex items-center gap-4">
         <Span
           variant="micro"
           className="text-(--color-stamp-taupe)/40"
         >
-          LOW
+          {t("low")}
         </Span>
         <input
           id="preservation"
@@ -36,13 +39,13 @@ export function PreservationSlider({ value, onChange }: PropsI) {
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
           className="flex-1 h-px bg-(--color-stamp-divider) appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-(--color-stamp-gold) [&::-webkit-slider-thumb]:rounded-full"
-          aria-label="Preservation level slider"
+          aria-label={t("preservationAria")}
         />
         <Span
           variant="micro"
           className="text-(--color-stamp-taupe)/40"
         >
-          HIGH
+          {t("high")}
         </Span>
       </div>
     </div>

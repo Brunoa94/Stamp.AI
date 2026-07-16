@@ -10,6 +10,7 @@
 
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { Input } from "@/features/ui/input";
 import { Label } from "@/features/ui/label";
@@ -39,6 +40,7 @@ export function CheckoutAddressForm({
   fieldPrefix,
   config = shippingFormConfig,
 }: CheckoutAddressFormPropsI) {
+  const t = useTranslations("checkout.addressForm");
   const {
     register,
     setValue,
@@ -78,7 +80,7 @@ export function CheckoutAddressForm({
                       id={fieldName}
                       className="h-12 rounded-none border-(--color-stamp-divider) bg-(--color-stamp-white) text-xl uppercase tracking-[0.05em] text-(--color-stamp-chocolate) focus:ring-2 focus:ring-(--color-stamp-gold)/30"
                     >
-                      <SelectValue placeholder="Select country" />
+                      <SelectValue placeholder={t("selectCountryPlaceholder")} />
                     </SelectTrigger>
                     <SelectContent>
                       {field.options.map((option) => (

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { UploadCloud } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 
@@ -15,11 +16,13 @@ interface PropsI {
 }
 
 export function UploadPreview({ imageUrl, onReplace }: PropsI) {
+  const t = useTranslations("stamp.upload");
+
   return (
     <>
       <Image
         src={imageUrl}
-        alt="Uploaded reference preview"
+        alt={t("previewAlt")}
         fill
         className="object-cover"
         sizes="(max-width: 1024px) 100vw, 50vw"
@@ -28,14 +31,14 @@ export function UploadPreview({ imageUrl, onReplace }: PropsI) {
         variant="ghost"
         onClick={onReplace}
         className="absolute inset-0 h-auto w-auto rounded-none flex flex-col items-center justify-center bg-black/0 hover:bg-black/40 transition-colors duration-500 cursor-pointer group"
-        aria-label="Replace uploaded image"
+        aria-label={t("replaceAria")}
       >
         <UploadCloud className="w-10 h-10 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 mb-2" />
         <Span
           variant="micro"
           className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 tracking-widest"
         >
-          REPLACE
+          {t("replace")}
         </Span>
       </Button>
     </>

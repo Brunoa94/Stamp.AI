@@ -1,5 +1,6 @@
 import { MapPin } from "lucide-react";
 import { ProfileSectionHeader } from "../../components/ProfileSectionHeader";
+import { useTranslations } from "next-intl";
 
 interface AddressSectionHeaderProps {
   hasAddress: boolean;
@@ -12,16 +13,18 @@ export function AddressSectionHeader({
   isEditing,
   onEdit,
 }: AddressSectionHeaderProps) {
+  const t = useTranslations("profile.addressSectionHeader");
+
   return (
     <ProfileSectionHeader
       icon={MapPin}
-      title="Shipping Address"
+      title={t("title")}
       subtitle={
         hasAddress
-          ? "Manage your default shipping address"
-          : "Add a shipping address for faster checkout"
+          ? t("subtitleHasAddress")
+          : t("subtitleNoAddress")
       }
-      buttonText={hasAddress ? "Edit" : "Add Address"}
+      buttonText={hasAddress ? t("edit") : t("addAddress")}
       isEditing={isEditing}
       onEdit={onEdit}
     />

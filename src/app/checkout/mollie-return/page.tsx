@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import PaymentSuccess from "@/features/checkout/ui/PaymentSuccess/PaymentSuccess";
@@ -66,6 +67,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 }
 
 export default function MollieReturnPage() {
+  const t = useTranslations("checkout.returns.mollie");
   const router = useRouter();
   const [status, setStatus] = useState<PageStatus>("loading");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -156,9 +158,7 @@ export default function MollieReturnPage() {
 
         if (!storedPaymentId) {
           setStatus("error");
-          setErrorMessage(
-            "No payment information found. If you completed a payment, please contact support with your payment details.",
-          );
+          setErrorMessage(t("errorNoPaymentInfo"));
           return;
         }
 
@@ -167,8 +167,7 @@ export default function MollieReturnPage() {
           console.error("❌ User not authenticated during payment return");
           setStatus("error");
           setErrorMessage(
-            "You must be logged in to complete your order. Please log in and contact support with payment ID: " +
-              storedPaymentId,
+            t("errorMustBeLoggedIn", { paymentId: storedPaymentId }),
           );
           return;
         }
@@ -180,8 +179,7 @@ export default function MollieReturnPage() {
           console.error("❌ Cart ID not found in session storage");
           setStatus("error");
           setErrorMessage(
-            "Cart information not found. Please contact support with payment ID: " +
-              storedPaymentId,
+            t("errorCartNotFound", { paymentId: storedPaymentId }),
           );
           return;
         }
@@ -215,9 +213,7 @@ export default function MollieReturnPage() {
         // ── CRITICAL: Record payment for recovery BEFORE verification ──
         // This ensures payment is captured even if verification fails
         if (!storedLineItems || !storedShippingAddress) {
-          throw new Error(
-            "Missing checkout context to finalize order after payment.",
-          );
+          throw new Error(t("errorMissingContext"));
         }
 
         const parsedLineItems = JSON.parse(
@@ -228,7 +224,7 @@ export default function MollieReturnPage() {
         ) as ShippingAddressT;
 
         if (!Array.isArray(parsedLineItems) || parsedLineItems.length === 0) {
-          throw new Error("No order items found to finalize Mollie checkout.");
+          throw new Error(t("errorNoOrderItems"));
         }
 
         const validatedLineItems = parsedLineItems.map((item, index) =>
@@ -385,16 +381,12 @@ export default function MollieReturnPage() {
 
             if (!storedCartId) {
               await triggerRefund("Missing cart ID in session storage");
-              throw new Error(
-                "Cannot create order: cart information not found. A full refund has been initiated and will appear within 3–5 business days.",
-              );
+              throw new Error(t("errorCannotCreateOrderNoCart"));
             }
 
             if (!user) {
               await triggerRefund("User not authenticated");
-              throw new Error(
-                "Cannot create order: you must be logged in to complete checkout. A full refund has been initiated and will appear within 3–5 business days.",
-              );
+              throw new Error(t("errorCannotCreateOrderNotLoggedIn"));
             }
 
             try {
@@ -426,18 +418,14 @@ export default function MollieReturnPage() {
               const reason =
                 orderError instanceof Error
                   ? orderError.message
-                  : "Order creation failed after retry attempts.";
-              throw new Error(
-                `${reason} A full refund has been initiated and will appear within 3–5 business days.`,
-              );
+                  : t("orderCreationReasonFallback");
+              throw new Error(t("reasonWithRefund", { reason }));
             }
 
             // Validate that we have a valid order ID before proceeding
             if (!createdOrderId) {
               await triggerRefund("Order ID not returned from order creation");
-              throw new Error(
-                "Order creation failed to return order ID. A full refund has been initiated and will appear within 3–5 business days.",
-              );
+              throw new Error(t("errorOrderIdNotReturned"));
             }
 
             console.log(`✅ Order created with ID: ${createdOrderId}`);
@@ -513,10 +501,8 @@ export default function MollieReturnPage() {
               const reason =
                 printifyError instanceof Error
                   ? printifyError.message
-                  : "Order fulfillment failed.";
-              throw new Error(
-                `${reason} A full refund has been initiated and will appear within 3–5 business days.`,
-              );
+                  : t("orderFulfillmentReasonFallback");
+              throw new Error(t("reasonWithRefund", { reason }));
             }
 
             // ── Stage 3: Mark payment recovered ──
@@ -592,13 +578,12 @@ export default function MollieReturnPage() {
 
         // Provide helpful error message since payment was already recorded for recovery
         const errorMessage =
-          err instanceof Error
-            ? err.message
-            : "Failed to verify payment status";
+          err instanceof Error ? err.message : t("errorVerifyFallback");
         setErrorMessage(
-          `${errorMessage}. Your payment has been recorded (ID: ${currentPaymentId ?? "unknown"}). ` +
-            `Our team will process your order automatically. You will receive an email confirmation within 24 hours. ` +
-            `If you need immediate assistance, please contact support with your payment ID.`,
+          t("errorRecorded", {
+            message: errorMessage,
+            paymentId: currentPaymentId ?? t("unknownPaymentId"),
+          }),
         );
       }
     };
@@ -634,7 +619,7 @@ export default function MollieReturnPage() {
         <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
           <section
             className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
-            aria-label="Verifying payment"
+            aria-label={t("verifyingAria")}
           >
             <div
               className="absolute top-0 left-0 w-full h-1 bg-(--color-stamp-gold)"
@@ -647,10 +632,10 @@ export default function MollieReturnPage() {
               <Loader2 className="w-12 h-12 animate-spin" />
             </div>
             <h1 className="font-anton text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
-              Verifying Payment
+              {t("verifyingTitle")}
             </h1>
             <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto">
-              Please wait while we confirm your payment with Mollie...
+              {t("verifyingMessage")}
             </p>
           </section>
         </div>
@@ -669,8 +654,8 @@ export default function MollieReturnPage() {
           orderNumber:
             orderNumber ||
             (paymentId ? `#ML-${paymentId.slice(-6).toUpperCase()}` : "—"),
-          totalPaid: "Paid via Mollie",
-          estimatedDelivery: "7–10 business days",
+          totalPaid: t("totalPaid"),
+          estimatedDelivery: t("estimatedDelivery"),
           confirmationEmail: "",
         }}
         onCreateAnother={handleCreateAnother}
@@ -682,10 +667,10 @@ export default function MollieReturnPage() {
   if (status === "failed") {
     const reasonMessage =
       paymentStatus === "canceled"
-        ? "You canceled the payment. No charges have been made."
+        ? t("reasonCanceled")
         : paymentStatus === "expired"
-          ? "Your payment session has expired. Please try again."
-          : "Unfortunately, your payment could not be processed. Please try again or use a different payment method.";
+          ? t("reasonExpired")
+          : t("reasonDefault");
 
     return (
       <PaymentError
@@ -696,8 +681,11 @@ export default function MollieReturnPage() {
             : "—",
           amountDue: "—",
           attemptedOn: new Date().toLocaleString(),
-          status: paymentStatus === "canceled" ? "Canceled" : "Failed",
-          reasonTitle: "Payment status",
+          status:
+            paymentStatus === "canceled"
+              ? t("canceledStatus")
+              : t("failedStatus"),
+          reasonTitle: t("paymentStatusTitle"),
           reasonMessage,
           availableMethods: ["stripe", "paypal"],
         }}
@@ -714,7 +702,7 @@ export default function MollieReturnPage() {
         <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
           <section
             className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
-            aria-label="Payment pending"
+            aria-label={t("pendingAria")}
           >
             <div
               className="absolute top-0 left-0 w-full h-1 bg-(--color-stamp-gold)"
@@ -727,25 +715,24 @@ export default function MollieReturnPage() {
               <AlertCircle className="w-12 h-12" />
             </div>
             <h1 className="font-anton text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
-              Payment Pending
+              {t("pendingTitle")}
             </h1>
             <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12">
-              Your payment is being processed. This may take a few moments. You
-              will receive an email confirmation once your payment is complete.
+              {t("pendingMessage")}
             </p>
             <div className="flex flex-col gap-4">
               <Button
                 onClick={handleViewOrders}
                 className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-chocolate)/90"
               >
-                View Orders
+                {t("viewOrders")}
               </Button>
               <Button
                 variant="outline"
                 onClick={handleCreateAnother}
                 className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase border-(--color-stamp-divider) text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
               >
-                Go to Dashboard
+                {t("goToDashboard")}
               </Button>
             </div>
           </section>
@@ -760,7 +747,7 @@ export default function MollieReturnPage() {
       <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
         <section
           className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
-          aria-label="Error"
+          aria-label={t("errorAria")}
         >
           <div
             className="absolute top-0 left-0 w-full h-1 bg-(--color-stamp-error)"
@@ -773,25 +760,24 @@ export default function MollieReturnPage() {
             <AlertCircle className="w-12 h-12" />
           </div>
           <h1 className="font-anton text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
-            Something Went Wrong
+            {t("somethingWentWrongTitle")}
           </h1>
           <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12">
-            {errorMessage ||
-              "We couldn't verify your payment status. Please contact support if you believe your payment was successful."}
+            {errorMessage || t("somethingWentWrongMessage")}
           </p>
           <div className="flex flex-col gap-4">
             <Button
               onClick={handleRetryPayment}
               className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-chocolate)/90"
             >
-              Return to Checkout
+              {t("returnToCheckout")}
             </Button>
             <Button
               asChild
               variant="outline"
               className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase border-(--color-stamp-divider) text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
             >
-              <Link href="/dashboard">Go to Dashboard</Link>
+              <Link href="/dashboard">{t("goToDashboard")}</Link>
             </Button>
           </div>
         </section>

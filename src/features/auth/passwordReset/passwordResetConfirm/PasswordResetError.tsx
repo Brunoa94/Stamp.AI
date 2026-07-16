@@ -3,8 +3,11 @@ import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export function PasswordResetError() {
+  const t = useTranslations("auth.passwordReset.error");
+
   return (
     <div className="text-center space-y-6">
       <div className="text-(--color-stamp-error) mb-4">
@@ -15,14 +18,13 @@ export function PasswordResetError() {
         variant="card"
         className="text-2xl tracking-tight text-(--color-stamp-chocolate)"
       >
-        Reset Link Invalid
+        {t("title")}
       </Heading>
       <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
-        This password reset link is invalid or has expired. Please request a new
-        one.
+        {t("description")}
       </Paragraph>
       <Button asChild variant="stamp-auth-cancel">
-        <Link href="/">Back to Home</Link>
+        <Link href="/">{t("backToHome")}</Link>
       </Button>
     </div>
   );

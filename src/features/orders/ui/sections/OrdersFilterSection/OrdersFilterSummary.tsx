@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
@@ -7,13 +8,15 @@ interface PropsI {
 }
 
 export function OrdersFilterSummary({ total }: PropsI) {
+  const t = useTranslations("orders.filterSummary");
+
   return (
     <div className="shrink-0 sm:text-right">
       <Paragraph
         variant="sm"
         className="font-bold uppercase text-base md:text-lg tracking-[0.2em] text-(--color-stamp-taupe)"
       >
-        Total Syntheses
+        {t("totalSyntheses")}
       </Paragraph>
       <div className="flex items-baseline gap-2 sm:justify-end">
         <Heading
@@ -27,7 +30,7 @@ export function OrdersFilterSummary({ total }: PropsI) {
           unstyled
           className="text-lg md:text-2xl font-bold uppercase tracking-tight text-(--color-stamp-chocolate)"
         >
-          Protocol Records
+          {t("protocolRecords")}
         </Span>
       </div>
     </div>

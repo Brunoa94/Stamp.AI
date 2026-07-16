@@ -1,5 +1,6 @@
 import { Button } from "@/features/ui/button";
 import { Save, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface AddressFormActionsProps {
   onSave: () => void;
@@ -12,6 +13,8 @@ export function AddressFormActions({
   onCancel,
   isSaving,
 }: AddressFormActionsProps) {
+  const t = useTranslations("profile.address");
+
   return (
     <div className="flex flex-col sm:flex-row items-center gap-3 pt-8 mt-8 border-t border-slate-200/50">
       <Button
@@ -22,7 +25,7 @@ export function AddressFormActions({
         className="w-full sm:w-auto group"
       >
         <Save className="w-4 h-4 mr-2" />
-        {isSaving ? "SAVING..." : "SAVE ADDRESS"}
+        {isSaving ? t("saving") : t("saveAddress")}
       </Button>
       <Button
         type="button"
@@ -32,7 +35,7 @@ export function AddressFormActions({
         className="w-full sm:w-auto"
       >
         <X className="w-4 h-4 mr-2" />
-        CANCEL
+        {t("cancel")}
       </Button>
     </div>
   );

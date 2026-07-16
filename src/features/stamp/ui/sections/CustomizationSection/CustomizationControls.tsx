@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
@@ -38,10 +39,12 @@ export function CustomizationControls({
   onSelectSize,
   onCreateProduct,
 }: PropsI) {
+  const t = useTranslations("stamp.customization");
+
   return (
     <div className="p-12 lg:p-24 flex flex-col justify-center bg-white">
       <Span variant="sm" className="text-(--color-stamp-taupe) mb-6">
-        Protocol 06 / Refinement
+        {t("protocol")}
       </Span>
 
       <Heading
@@ -49,10 +52,13 @@ export function CustomizationControls({
         variant="title"
         className="text-(--color-stamp-chocolate) mb-6"
       >
-        Customize Your{" "}
-        <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
-          Product
-        </span>
+        {t.rich("title", {
+          accent: (chunks) => (
+            <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
+              {chunks}
+            </span>
+          ),
+        })}
       </Heading>
 
       <div className="space-y-12 mb-12">
@@ -77,7 +83,7 @@ export function CustomizationControls({
               variant="micro"
               className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe) block mb-2"
             >
-              Size
+              {t("sizeLabel")}
             </Span>
             <Span variant="sm" className="text-(--color-stamp-chocolate)">
               {sizes[0]}
@@ -92,7 +98,7 @@ export function CustomizationControls({
           disabled={!canCreate}
           className="w-full bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isFinalizing ? "CREATING..." : "CREATE PRODUCT"}
+          {isFinalizing ? t("creating") : t("createProduct")}
         </Button>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import { PasswordResetRequestSkeleton } from "./PasswordResetRequestSkeleton";
 import { Dialog, DialogTrigger } from "@/features/ui/dialog";
 import { Button } from "@/features/ui/button";
@@ -18,6 +19,8 @@ interface PasswordResetRequestProps {
 }
 
 export function PasswordResetRequest({ className }: PasswordResetRequestProps) {
+  const t = useTranslations("auth.passwordReset.request");
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -26,7 +29,7 @@ export function PasswordResetRequest({ className }: PasswordResetRequestProps) {
           size="sm"
           className={`text-lg p-0 h-auto text-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) ${className}`}
         >
-          Forgot password?
+          {t("forgotPassword")}
         </Button>
       </DialogTrigger>
       <PasswordResetRequestForm />

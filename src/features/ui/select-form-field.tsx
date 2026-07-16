@@ -7,6 +7,7 @@ import {
   SelectValue,
 } from "@/features/ui/select";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 import type { Control, FieldValues, Path } from "react-hook-form";
 import { Controller } from "react-hook-form";
 
@@ -54,6 +55,7 @@ export function SelectFormField<T extends FieldValues = FieldValues>({
   variant = "default",
   placeholder,
 }: SelectFormFieldProps<T>) {
+  const t = useTranslations("ui.selectFormField");
   const errorId = error ? `${id}-error` : undefined;
   const styles = variantStyles[variant];
 
@@ -62,7 +64,7 @@ export function SelectFormField<T extends FieldValues = FieldValues>({
       <Label htmlFor={id} className={styles.label}>
         {label}
         {required && (
-          <span className="text-red-500" aria-label="required">
+          <span className="text-red-500" aria-label={t("required")}>
             {" "}
             *
           </span>
@@ -80,7 +82,9 @@ export function SelectFormField<T extends FieldValues = FieldValues>({
               className={cn(styles.input, error && "border-red-400")}
             >
               <SelectValue
-                placeholder={placeholder ?? `Select ${label.toLowerCase()}`}
+                placeholder={
+                  placeholder ?? t("placeholder", { label: label.toLowerCase() })
+                }
               />
             </SelectTrigger>
             <SelectContent>

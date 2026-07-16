@@ -1,4 +1,5 @@
 import { LayoutGrid, List, RotateCcw } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import {
@@ -33,13 +34,15 @@ export function OrdersFilterControls({
   onTimeFilterChange,
   onClearFilters,
 }: PropsI) {
+  const t = useTranslations("orders.filterControls");
+
   return (
     <div className="flex flex-col gap-4">
       <Span
         variant="default"
         className="font-bold uppercase text-sm tracking-[0.4em] text-(--color-stamp-taupe)"
       >
-        Archive Filtering
+        {t("archiveFiltering")}
       </Span>
 
       <div className="flex flex-wrap items-center gap-4">
@@ -56,7 +59,7 @@ export function OrdersFilterControls({
           className="h-12 flex items-center gap-2 px-4 font-bold uppercase text-base tracking-widest text-(--color-stamp-taupe) hover:bg-transparent hover:text-(--color-stamp-gold)"
         >
           <RotateCcw className="h-4 w-4" />
-          Clear Archive
+          {t("clearArchive")}
         </Button>
 
         <OrdersViewModeToggle viewMode={viewMode} onChange={onViewModeChange} />
@@ -71,23 +74,25 @@ interface OrdersStatusSelectPropsI {
 }
 
 function OrdersStatusSelect({ value, onChange }: OrdersStatusSelectPropsI) {
+  const t = useTranslations("orders.filterControls");
+
   return (
     <Select
       value={value}
       onValueChange={(v) => onChange(v as OrdersStatusFilterType)}
     >
       <SelectTrigger
-        aria-label="Filter by order status"
+        aria-label={t("statusAriaLabel")}
         className="h-12 w-auto min-w-52 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-bold uppercase text-base tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
       >
-        <SelectValue placeholder="Status: All Statuses" />
+        <SelectValue placeholder={t("status.allPlaceholder")} />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="all">Status: All Statuses</SelectItem>
-        <SelectItem value="delivered">Delivered</SelectItem>
-        <SelectItem value="shipped">Shipped</SelectItem>
-        <SelectItem value="processing">Processing</SelectItem>
-        <SelectItem value="cancelled">Cancelled</SelectItem>
+        <SelectItem value="all">{t("status.allPlaceholder")}</SelectItem>
+        <SelectItem value="delivered">{t("status.delivered")}</SelectItem>
+        <SelectItem value="shipped">{t("status.shipped")}</SelectItem>
+        <SelectItem value="processing">{t("status.processing")}</SelectItem>
+        <SelectItem value="cancelled">{t("status.cancelled")}</SelectItem>
       </SelectContent>
     </Select>
   );
@@ -99,22 +104,24 @@ interface OrdersTimeSelectPropsI {
 }
 
 function OrdersTimeSelect({ value, onChange }: OrdersTimeSelectPropsI) {
+  const t = useTranslations("orders.filterControls");
+
   return (
     <Select
       value={value}
       onValueChange={(v) => onChange(v as OrdersTimeFilterType)}
     >
       <SelectTrigger
-        aria-label="Filter by date range"
+        aria-label={t("timeAriaLabel")}
         className="h-12 w-auto min-w-44 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-bold uppercase text-base tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
       >
-        <SelectValue placeholder="Last 30 Days" />
+        <SelectValue placeholder={t("time.last30")} />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="30">Last 30 Days</SelectItem>
-        <SelectItem value="90">Last 90 Days</SelectItem>
-        <SelectItem value="2023">Year 2023</SelectItem>
-        <SelectItem value="all">All Time</SelectItem>
+        <SelectItem value="30">{t("time.last30")}</SelectItem>
+        <SelectItem value="90">{t("time.last90")}</SelectItem>
+        <SelectItem value="2023">{t("time.year2023")}</SelectItem>
+        <SelectItem value="all">{t("time.allTime")}</SelectItem>
       </SelectContent>
     </Select>
   );
@@ -129,13 +136,15 @@ function OrdersViewModeToggle({
   viewMode,
   onChange,
 }: OrdersViewModeTogglePropsI) {
+  const t = useTranslations("orders.filterControls");
+
   return (
     <div className="hidden lg:flex items-center gap-2 border-l border-(--color-stamp-divider) pl-4">
       <Button
         onClick={() => onChange("list")}
         variant="ghost"
         size="icon"
-        aria-label="Switch to list view"
+        aria-label={t("listViewAriaLabel")}
         className={`h-10 w-10 transition-all hover:scale-110 ${viewMode === "list" ? "text-(--color-stamp-chocolate)" : "text-(--color-stamp-taupe)"}`}
       >
         <List className="h-5 w-5" />
@@ -144,7 +153,7 @@ function OrdersViewModeToggle({
         onClick={() => onChange("grid")}
         variant="ghost"
         size="icon"
-        aria-label="Switch to grid view"
+        aria-label={t("gridViewAriaLabel")}
         className={`h-10 w-10 transition-all hover:scale-110 ${viewMode === "grid" ? "text-(--color-stamp-chocolate)" : "text-(--color-stamp-taupe)"}`}
       >
         <LayoutGrid className="h-5 w-5" />

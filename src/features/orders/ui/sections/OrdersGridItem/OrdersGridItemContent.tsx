@@ -1,4 +1,6 @@
+import { useTranslations } from "next-intl";
 import { canCancelOrder } from "../../../lib/utils/orderCancellation";
+import { formatOrderDate } from "../../../lib/utils/formatOrderDate";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
@@ -6,7 +8,7 @@ import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import type { OrderWithItemsT } from "@/types/order";
 import type { getFirstOrderItem } from "../../../lib/helpers/orderPresentation";
-import { getArchiveLine } from "../../../lib/helpers/orderPresentation";
+import { getAddressSummary } from "../../../lib/helpers/orderPresentation";
 
 interface PropsI {
   order: OrderWithItemsT;
@@ -23,6 +25,7 @@ export function OrdersGridItemContent({
   onCancelOrder,
   onReorder,
 }: PropsI) {
+  const t = useTranslations("orders.gridItem");
   const canCancel = canCancelOrder(order);
 
   return (
@@ -37,7 +40,10 @@ export function OrdersGridItemContent({
         variant="sm"
         className="mb-3 font-bold uppercase text-lg tracking-widest text-(--color-stamp-taupe)"
       >
-        {getArchiveLine(order)}
+        {t("archiveLine", {
+          date: formatOrderDate(order.created_at),
+          address: getAddressSummary(order) || t("archiveAddress"),
+        })}
       </Paragraph>
 
       <Heading
@@ -45,16 +51,16 @@ export function OrdersGridItemContent({
         unstyled
         className="mb-1 line-clamp-2 font-heading text-lg font-bold uppercase leading-tight tracking-tight"
       >
-        {firstItem?.product_name || "Premium Synthesis Product"}
+        {firstItem?.product_name || t("productFallback")}
       </Heading>
 
       <div className="mb-4 flex gap-2 text-sm font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
-        <Span unstyled>{firstItem?.variant_name || "Standard"}</Span>
+        <Span unstyled>{firstItem?.variant_name || t("standard")}</Span>
         <Span
           unstyled
           className="mt-1.5 h-0.5 w-0.5 rounded-full bg-(--color-stamp-divider)"
         />
-        <Span unstyled>Qty. {firstItem?.quantity || 1}</Span>
+        <Span unstyled>{t("qty", { count: firstItem?.quantity || 1 })}</Span>
       </div>
 
       <Heading
@@ -71,14 +77,14 @@ export function OrdersGridItemContent({
           variant="default"
           className="justify-center bg-(--color-stamp-chocolate) px-0 py-2 font-heading font-semibold uppercase text-sm tracking-[0.15em] text-(--color-stamp-white) transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:bg-(--color-stamp-gold) hover:shadow-(--shadow-stamp-gold-cta)"
         >
-          Track
+          {t("track")}
         </Button>
         <Button
           onClick={() => (canCancel ? onCancelOrder(order) : onReorder())}
           variant="outline"
           className="justify-center border-(--color-stamp-divider) px-0 py-2 font-heading font-semibold uppercase text-sm tracking-[0.15em] text-(--color-stamp-chocolate) transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white)"
         >
-          {canCancel ? "Options" : "Reorder"}
+          {canCancel ? t("options") : t("reorder")}
         </Button>
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, ChangeEvent } from "react";
+import { useTranslations } from "next-intl";
 import { Input } from "@/features/ui/input";
 import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
 import { useStampUpload } from "../../../lib/hooks/useStampSelectors";
@@ -17,6 +18,7 @@ import { UploadContent } from "./UploadContent";
  */
 
 export function UploadSection() {
+  const t = useTranslations("stamp.upload");
   const { nextStep } = useStampNavigation();
   const { uploadedImageUrl } = useStampUpload();
   const { uploadImage, removeImage, uploadError } = useStampImageUpload();
@@ -62,7 +64,7 @@ export function UploadSection() {
         onChange={handleFileChange}
         className="hidden"
         accept=".jpg,.jpeg,.png,.gif"
-        aria-label="File upload input"
+        aria-label={t("inputAria")}
       />
 
       {/* Left Panel: Upload Dropzone / Image Preview */}

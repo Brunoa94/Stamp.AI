@@ -5,6 +5,7 @@
  * Values arrive already computed (in dollars) from useCheckoutPricing.
  */
 
+import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { Heading } from "@/features/ui/heading";
 import { formatPrice } from "../../../lib/utils/formatPrice";
@@ -38,26 +39,27 @@ export function CheckoutPriceBreakdown({
   discount,
   total,
 }: CheckoutPriceBreakdownPropsI) {
+  const t = useTranslations("checkout.priceBreakdown");
   return (
     <div className="space-y-5">
-      <Row label="Subtotal" value={formatPrice(subtotal)} />
+      <Row label={t("subtotal")} value={formatPrice(subtotal)} />
 
       <div className="flex items-center justify-between">
         <Span variant="micro" className="text-(--color-stamp-taupe)">
-          Shipping
+          {t("shipping")}
         </Span>
         <Span
           unstyled
           className="text-2xl font-bold uppercase tracking-[0.15em] text-(--color-stamp-success)"
         >
-          {shipping === 0 ? "Free" : formatPrice(shipping)}
+          {shipping === 0 ? t("free") : formatPrice(shipping)}
         </Span>
       </div>
 
       {discount > 0 && (
         <div className="flex items-center justify-between">
           <Span variant="micro" className="text-(--color-stamp-taupe)">
-            Discount
+            {t("discount")}
           </Span>
           <Span
             unstyled
@@ -70,7 +72,7 @@ export function CheckoutPriceBreakdown({
 
       <div className="flex items-baseline justify-between border-t border-(--color-stamp-divider) pt-5">
         <Span variant="sm" className="text-(--color-stamp-chocolate)">
-          Total
+          {t("total")}
         </Span>
         <Heading
           as="span"

@@ -6,8 +6,10 @@ import { useAddressForm } from "@/features/profile/lib/hooks/useAddressForm";
 import { AddressFormFields } from "./address/AddressFormFields";
 import { AddressFormActions } from "./address/AddressFormActions";
 import { AddressDisplay } from "./address/AddressDisplay";
+import { useTranslations } from "next-intl";
 
 export function AddressSection() {
+  const t = useTranslations("profile.address");
   const {
     form,
     isEditing,
@@ -31,10 +33,10 @@ export function AddressSection() {
           </div>
           <div>
             <h2 className="text-xl font-anton uppercase tracking-tight text-ink leading-tight mb-1">
-              SHIPPING ADDRESS
+              {t("title")}
             </h2>
             <p className="text-slate-500 text-sm">
-              {hasAddress ? "Your default shipping address" : "Add your shipping address"}
+              {hasAddress ? t("subtitleHasAddress") : t("subtitleNoAddress")}
             </p>
           </div>
         </div>
@@ -44,7 +46,7 @@ export function AddressSection() {
             variant="brutalist-ghost"
             className="text-[10px]"
           >
-            {hasAddress ? "EDIT ADDRESS" : "ADD ADDRESS"}
+            {hasAddress ? t("editAddress") : t("addAddress")}
           </Button>
         )}
       </div>
@@ -63,7 +65,7 @@ export function AddressSection() {
         <AddressDisplay address={savedAddress} />
       ) : (
         <p className="text-sm text-slate-500 italic">
-          No shipping address saved. Click "Add Address" to add one.
+          {t("emptyState")}
         </p>
       )}
     </section>

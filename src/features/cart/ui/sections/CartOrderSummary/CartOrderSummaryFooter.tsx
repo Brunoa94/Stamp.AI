@@ -8,6 +8,7 @@
 "use client";
 
 import { ArrowRight, Truck, ShieldCheck } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 
@@ -18,6 +19,8 @@ interface CartOrderSummaryFooterPropsI {
 export function CartOrderSummaryFooter({
   onCheckout,
 }: CartOrderSummaryFooterPropsI) {
+  const t = useTranslations("cart.summary");
+
   return (
     <div className="mt-8 space-y-6">
       <Button
@@ -25,7 +28,7 @@ export function CartOrderSummaryFooter({
         variant="secondary-brown"
         className="group w-full font-heading"
       >
-        Proceed to Checkout
+        {t("proceedToCheckout")}
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
       </Button>
 
@@ -36,20 +39,20 @@ export function CartOrderSummaryFooter({
         />
         <div className="space-y-1">
           <Span variant="micro" className="block text-(--color-stamp-taupe)">
-            Estimated Arrival
+            {t("estimatedArrival")}
           </Span>
           <Span
             unstyled
             className="text-lg font-bold uppercase tracking-[0.15em]"
           >
-            3–5 Business Days
+            {t("arrivalWindow")}
           </Span>
         </div>
       </div>
 
       <div className="flex items-center justify-center gap-2 text-(--color-stamp-taupe)">
         <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-        <Span variant="micro">Secure encrypted transactions</Span>
+        <Span variant="micro">{t("secureTransactions")}</Span>
       </div>
     </div>
   );

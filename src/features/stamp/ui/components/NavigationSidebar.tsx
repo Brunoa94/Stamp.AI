@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
@@ -15,6 +16,8 @@ import { useStampStepAccessibility } from "../../lib/hooks/useStampSelectors";
  */
 
 export function NavigationSidebar() {
+  const t = useTranslations("stamp.nav");
+  const tSteps = useTranslations("stamp.steps");
   const { currentStep, goToStep } = useStampNavigation();
   const { isStepAccessible } = useStampStepAccessibility();
 
@@ -23,25 +26,26 @@ export function NavigationSidebar() {
       {/* Header */}
       <div className="mb-16">
         <Span variant="micro" className="text-(--color-stamp-taupe) mb-2">
-          Protocol Tracker
+          {t("eyebrow")}
         </Span>
         <Heading
           as="h4"
           variant="question"
           className="text-(--color-stamp-chocolate)"
         >
-          8-Stage Synthesis
+          {t("title")}
         </Heading>
       </div>
 
       {/* Navigation Links */}
-      <nav className="space-y-6 flex-1" aria-label="Step navigation">
+      <nav className="space-y-6 flex-1" aria-label={t("stepNavAria")}>
         {STAMP_STEPS.map((step, index) => {
           const stepNumber = index;
           const isActive =
             stepNumber === currentStep ||
             (stepNumber === 0 && currentStep === 0);
           const isAccessible = isStepAccessible(stepNumber);
+          const stepTitle = tSteps(`${step.id}.title`);
 
           return (
             <Button
@@ -57,7 +61,11 @@ export function NavigationSidebar() {
                     : "opacity-15 cursor-not-allowed"
               }`}
               aria-current={isActive ? "step" : undefined}
-              aria-label={`Navigate to ${step.title}${!isAccessible ? " (locked)" : ""}`}
+              aria-label={
+                isAccessible
+                  ? t("navigate", { title: stepTitle })
+                  : t("navigateLocked", { title: stepTitle })
+              }
             >
               {/* Dot Indicator */}
               <div
@@ -71,8 +79,8 @@ export function NavigationSidebar() {
               {/* Step Label */}
               <Span variant="micro" className="text-(--color-stamp-chocolate)">
                 {step.number === "00"
-                  ? "Entry"
-                  : `${step.number} ${step.title}`}
+                  ? stepTitle
+                  : `${step.number} ${stepTitle}`}
               </Span>
             </Button>
           );

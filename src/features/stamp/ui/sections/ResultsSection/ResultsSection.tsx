@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
 import { useStampSelectedImage } from "../../../lib/hooks/useStampSelectors";
 import { ResultsHeader } from "./ResultsHeader";
@@ -15,6 +16,7 @@ import { ResultsActions } from "./ResultsActions";
  */
 
 export function ResultsSection() {
+  const t = useTranslations("stamp.results");
   const { nextStep, goToStep } = useStampNavigation();
   const { selectedImageUrl, enhancedPrompt } = useStampSelectedImage();
   const canProceedToProduct = Boolean(selectedImageUrl);
@@ -43,7 +45,7 @@ export function ResultsSection() {
       className="h-full overflow-y-auto flex flex-col items-center justify-center p-8 md:p-16 lg:p-24 bg-(--color-stamp-off-white) border-b border-(--color-stamp-divider)"
     >
       <div className="max-w-2xl w-full">
-        <ResultsHeader outputNumber="Output Result #01" date={currentDate} />
+        <ResultsHeader outputNumber={t("outputNumber")} date={currentDate} />
         <ResultsImage imageUrl={displayImageUrl} />
         <ResultsDetails prompt={enhancedPrompt} />
         <ResultsActions

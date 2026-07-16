@@ -8,6 +8,7 @@
 
 "use client";
 
+import { useTranslations } from "next-intl";
 import { CartItemCardImage } from "./CartItemCardImage";
 import { CartItemCardContent } from "./CartItemCardContent";
 import { CartItemCardActions } from "./CartItemCardActions";
@@ -24,8 +25,9 @@ export function CartItemCard({
   onUpdateQuantity,
   onRemove,
 }: CartItemCardPropsI) {
+  const t = useTranslations("cart.itemCard");
   const productName =
-    item.product_name || item.product?.name || "Custom Product";
+    item.product_name || item.product?.name || t("customProduct");
 
   return (
     <article className="cart-item border border-(--color-stamp-divider) bg-(--color-stamp-white) p-4 font-heading transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover) md:p-8 lg:p-10">

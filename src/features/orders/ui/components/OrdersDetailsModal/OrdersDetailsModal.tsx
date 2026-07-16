@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { ShoppingBag, X } from "lucide-react";
 import { formatOrderDate } from "../../../lib/utils/formatOrderDate";
 import { formatPrice } from "../../../lib/utils/formatPrice";
@@ -25,6 +26,7 @@ interface PropsI {
 }
 
 export function OrdersDetailsModal({ order, onClose }: PropsI) {
+  const t = useTranslations("orders.detailsModal");
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const firstItem = getFirstOrderItem(order);
@@ -42,7 +44,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
       className="fixed inset-0 z-100 flex items-center justify-center bg-(--color-stamp-chocolate)/30 p-6 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
-      aria-label="Order details"
+      aria-label={t("ariaLabel")}
       onClick={onClose}
     >
       <div
@@ -57,7 +59,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
           variant="ghost"
           size="icon"
           className="absolute right-8 top-8 text-(--color-stamp-taupe) hover:bg-transparent hover:text-(--color-stamp-chocolate)"
-          aria-label="Close details modal"
+          aria-label={t("close")}
         >
           <X className="h-6 w-6" />
         </Button>
@@ -74,14 +76,17 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
             variant="card"
             className="mt-4 text-3xl tracking-tight text-(--color-stamp-chocolate)"
           >
-            Protocol Record Details
+            {t("recordDetails")}
           </Heading>
           <Paragraph
             variant="sm"
             className="mt-1 text-lg tracking-[0.2em] text-(--color-stamp-taupe)"
           >
-            Order #{order.order_number || order.id.slice(0, 13).toUpperCase()} •
-            Initiated {formatOrderDate(order.created_at)}
+            {t("orderMeta", {
+              orderNumber:
+                order.order_number || order.id.slice(0, 13).toUpperCase(),
+              date: formatOrderDate(order.created_at),
+            })}
           </Paragraph>
         </div>
 
@@ -92,14 +97,14 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
                 variant="default"
                 className="mb-5 block border-b border-(--color-stamp-divider) pb-2 tracking-[0.3em] text-(--color-stamp-gold)"
               >
-                Protocol Items
+                {t("protocolItems")}
               </Span>
               <div className="flex items-center gap-4 border border-(--color-stamp-divider) bg-(--color-stamp-cream)/20 p-4">
                 <div className="relative h-20 w-20 flex-none bg-(--color-stamp-cream)">
                   {firstItem?.custom_image_url ? (
                     <Image
                       src={firstItem.custom_image_url}
-                      alt={firstItem.product_name || "Order item"}
+                      alt={firstItem.product_name || t("itemAlt")}
                       fill
                       sizes="80px"
                       className="object-cover"
@@ -116,14 +121,16 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
                     variant="item"
                     className="text-sm text-(--color-stamp-chocolate)"
                   >
-                    {firstItem?.product_name || "Custom Product"}
+                    {firstItem?.product_name || t("customProduct")}
                   </Heading>
                   <Paragraph
                     variant="sm"
                     className="text-lg tracking-widest text-(--color-stamp-taupe)"
                   >
-                    Variant: {firstItem?.variant_name || "Standard"} • Qty:{" "}
-                    {firstItem?.quantity || 1}
+                    {t("variantQty", {
+                      variant: firstItem?.variant_name || t("standard"),
+                      qty: firstItem?.quantity || 1,
+                    })}
                   </Paragraph>
                 </div>
                 <Heading
@@ -141,19 +148,19 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
                 variant="default"
                 className="mb-5 block border-b border-(--color-stamp-divider) pb-2 tracking-[0.3em] text-(--color-stamp-gold)"
               >
-                Delivery
+                {t("delivery")}
               </Span>
               <Paragraph
                 variant="sm"
                 className="text-lg text-(--color-stamp-chocolate)"
               >
-                {order.customer_name || "Archive Client"}
+                {order.customer_name || t("archiveClient")}
               </Paragraph>
               <Paragraph
                 variant="sm"
                 className="text-lg text-(--color-stamp-taupe)"
               >
-                {getAddressSummary(order)}
+                {getAddressSummary(order) || t("archiveAddress")}
               </Paragraph>
             </section>
           </div>
@@ -163,14 +170,14 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
               variant="default"
               className="mb-6 block border-b border-(--color-stamp-divider) pb-2 tracking-[0.3em] text-(--color-stamp-gold)"
             >
-              Valuation
+              {t("valuation")}
             </Span>
             <div className="flex items-center justify-between border-t border-(--color-stamp-divider) pt-4">
               <Span
                 variant="default"
                 className="text-lg tracking-normal text-(--color-stamp-chocolate)"
               >
-                Total
+                {t("total")}
               </Span>
               <Heading
                 as="h5"

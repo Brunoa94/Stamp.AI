@@ -10,6 +10,7 @@
 
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useCart } from "../lib/hooks/useCart";
 import { CartLayout } from "./components/CartLayout";
 import { CartHeader } from "./components/CartHeader";
@@ -20,6 +21,7 @@ import { CartEmptySection } from "./sections/CartEmptySection";
 import { CartLoadingSection } from "./sections/CartLoadingSection";
 
 export function CartContent() {
+  const t = useTranslations("cart.content");
   const {
     cart,
     itemCount,
@@ -66,7 +68,7 @@ export function CartContent() {
             className="inline-flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-(--color-stamp-taupe) transition-colors hover:text-(--color-stamp-gold)"
           >
             <ArrowLeft className="h-4 w-4" />
-            Continue Browsing
+            {t("continueBrowsing")}
           </Link>
         </div>
 

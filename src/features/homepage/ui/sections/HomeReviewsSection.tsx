@@ -5,6 +5,7 @@
  * 2×2 grid of testimonial cards with platform-specific colors and icons.
  */
 
+import { useTranslations } from "next-intl";
 import { ThumbsUp } from "lucide-react";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
@@ -20,6 +21,8 @@ import { HomePlatformIcon } from "../components/HomePlatformIcon";
 import { SectionReveal } from "../components/SectionReveal";
 
 export function HomeReviewsSection() {
+  const t = useTranslations("home.reviews");
+
   return (
     <section
       id="reviews"
@@ -27,9 +30,9 @@ export function HomeReviewsSection() {
     >
       <SectionReveal className="mx-auto max-w-screen-2xl">
         <HomeSectionHeader
-          title="Social"
-          accent="proof"
-          label="Verified Reviews"
+          title={t("title")}
+          accent={t("accent")}
+          label={t("label")}
         />
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
@@ -46,8 +49,9 @@ export function HomeReviewsSection() {
               variant="micro"
               className="mt-3 text-(--color-stamp-taupe)"
             >
-              {HOME_RATING_SUMMARY.totalReviews.toLocaleString()} Verified
-              Reviews
+              {t("verifiedReviews", {
+                count: HOME_RATING_SUMMARY.totalReviews,
+              })}
             </Span>
 
             <div className="mt-10 space-y-4 border-t border-(--color-stamp-divider) pt-8">
@@ -56,7 +60,7 @@ export function HomeReviewsSection() {
                 variant="micro"
                 className="text-(--color-stamp-taupe)"
               >
-                Platform Breakdown
+                {t("platformBreakdown")}
               </Span>
               {HOME_RATING_SUMMARY.platforms.map((entry) => {
                 const config = HOME_PLATFORM_CONFIG[entry.platform];
@@ -96,7 +100,7 @@ export function HomeReviewsSection() {
               const config = HOME_PLATFORM_CONFIG[testimonial.platform];
               return (
                 <article
-                  key={testimonial.author}
+                  key={testimonial.id}
                   className="flex flex-col border bg-(--color-stamp-white) p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-(--shadow-stamp-card-hover)"
                   style={{
                     borderColor:
@@ -127,7 +131,7 @@ export function HomeReviewsSection() {
                     variant="quote"
                     className="flex-1 text-(--color-stamp-chocolate)"
                   >
-                    &ldquo;{testimonial.quote}&rdquo;
+                    &ldquo;{t(`testimonials.${testimonial.id}.quote`)}&rdquo;
                   </Paragraph>
 
                   <div
@@ -139,14 +143,14 @@ export function HomeReviewsSection() {
                   >
                     <div>
                       <Heading as="h3" variant="item">
-                        {testimonial.author}
+                        {t(`testimonials.${testimonial.id}.author`)}
                       </Heading>
                       <Span
                         as="p"
                         variant="micro"
                         className="mt-1 text-(--color-stamp-taupe)"
                       >
-                        {testimonial.role}
+                        {t(`testimonials.${testimonial.id}.role`)}
                       </Span>
                     </div>
                     <Span

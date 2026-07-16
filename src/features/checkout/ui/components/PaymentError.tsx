@@ -1,5 +1,6 @@
 import { AlertCircle, Info, RefreshCw } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import { AlternativePaymentMethods } from "./AlternativePaymentMethods";
 import { PaymentResultDetailsGrid } from "./PaymentResultDetailsGrid";
@@ -19,26 +20,26 @@ interface Props {
 }
 
 const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
+  const t = useTranslations("checkout.paymentError");
   const isPostPaymentError = details?.isPostPaymentError ?? false;
 
   const reasonMessage =
-    details?.reasonMessage ||
-    "Your transaction couldn't be completed. Please retry or choose an alternative method.";
+    details?.reasonMessage || t("reasonMessageFallback");
 
   const title = isPostPaymentError
-    ? "Order Processing Issue"
-    : "Payment Failed";
+    ? t("titlePostPayment")
+    : t("titleDefault");
 
   const subtitle = isPostPaymentError
-    ? "Your payment was successful, but we encountered an issue processing your order. Our team has been notified and will assist you shortly."
-    : "Your transaction couldn't be completed. Don't worry, your design has been saved and is ready for retry.";
+    ? t("subtitlePostPayment")
+    : t("subtitleDefault");
 
   return (
     <div className="min-h-screen flex justify-center pt-32 lg:pt-40 px-6 bg-(--color-stamp-cream)">
       <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
         <section
           className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
-          aria-label="Payment failed"
+          aria-label={t("ariaLabel")}
         >
           {/* Top accent bar */}
           <div
@@ -78,7 +79,7 @@ const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
                   variant="micro"
                   className="text-(--color-stamp-error) block mb-1"
                 >
-                  {details?.reasonTitle ?? "Reason"}
+                  {details?.reasonTitle ?? t("reasonFallback")}
                 </Span>
                 <Paragraph
                   variant="sm"
@@ -94,16 +95,16 @@ const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
           {/* Details grid */}
           <PaymentResultDetailsGrid
             items={[
-              { label: "Order Number", value: details?.orderNumber ?? "—" },
-              { label: "Amount Due", value: details?.amountDue ?? "—" },
+              { label: t("orderNumber"), value: details?.orderNumber ?? "—" },
+              { label: t("amountDue"), value: details?.amountDue ?? "—" },
               {
-                label: "Attempted On",
+                label: t("attemptedOn"),
                 value: details?.attemptedOn ?? "—",
                 valueMuted: true,
               },
             ]}
-            statusLabel="Status"
-            statusValue={details?.status ?? "Failed"}
+            statusLabel={t("statusLabel")}
+            statusValue={details?.status ?? t("statusFallback")}
             statusVariant="error"
           />
 
@@ -114,7 +115,7 @@ const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
                 onClick={onTryAgain}
                 className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-chocolate)/90 flex items-center justify-center gap-2"
               >
-                Retry Payment <RefreshCw className="w-4 h-4" />
+                {t("retryPayment")} <RefreshCw className="w-4 h-4" />
               </Button>
             )}
             <Button
@@ -122,7 +123,7 @@ const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
               variant="outline"
               className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase border-(--color-stamp-divider) text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
             >
-              <Link href="/dashboard">Cancel &amp; Go to Dashboard</Link>
+              <Link href="/dashboard">{t("cancelGoToDashboard")}</Link>
             </Button>
 
             {!isPostPaymentError && (
@@ -133,7 +134,7 @@ const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
               href="/profile"
               className="block mt-8 text-(--color-stamp-taupe) hover:text-(--color-stamp-chocolate) text-xs font-bold uppercase tracking-widest transition-colors"
             >
-              Need help? Contact Support
+              {t("contactSupport")}
             </Link>
           </div>
         </section>

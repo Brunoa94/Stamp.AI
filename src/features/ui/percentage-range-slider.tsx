@@ -1,3 +1,5 @@
+import { useTranslations } from "next-intl";
+
 interface PercentageRangeSliderProps {
   value: number;
   onChange: (value: number) => void;
@@ -15,10 +17,13 @@ export function PercentageRangeSlider({
   disabled = false,
   min = 0,
   max = 100,
-  leftLabel = "Less",
-  rightLabel = "More",
+  leftLabel,
+  rightLabel,
   className,
 }: PercentageRangeSliderProps) {
+  const t = useTranslations("ui.percentageRangeSlider");
+  const resolvedLeftLabel = leftLabel ?? t("less");
+  const resolvedRightLabel = rightLabel ?? t("more");
   return (
     <div className={className}>
       <div className="flex flex-col gap-2">
@@ -33,8 +38,8 @@ export function PercentageRangeSlider({
         />
 
         <div className="flex justify-between text-[10px] text-[#B8B7CC]">
-          <span>{leftLabel}</span>
-          <span>{rightLabel}</span>
+          <span>{resolvedLeftLabel}</span>
+          <span>{resolvedRightLabel}</span>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Moon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Button } from "@/features/ui/button";
 import { navbarTheme } from "@/theme/components";
@@ -14,6 +15,8 @@ export function MobileNavbarSidebarThemeToggle({
   isDark,
   onToggleTheme,
 }: MobileNavbarSidebarThemeToggleProps) {
+  const t = useTranslations("layout.mobileSidebar");
+
   return (
     <Button
       variant="ghost"
@@ -22,7 +25,7 @@ export function MobileNavbarSidebarThemeToggle({
     >
       <div className="flex items-center gap-4">
         <Moon className="w-5 h-5 shrink-0" />
-        <span className="text-sm font-medium">Dark Mode</span>
+        <span className="text-sm font-medium">{t("darkMode")}</span>
       </div>
 
       <div

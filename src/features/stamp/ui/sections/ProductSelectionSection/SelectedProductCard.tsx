@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { CheckCircle, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
@@ -20,19 +21,21 @@ interface PropsI {
 }
 
 export function SelectedProductCard({ product, onClearSelection }: PropsI) {
+  const t = useTranslations("stamp.productSelection");
+
   return (
     <div
       className="relative overflow-hidden rounded-none whitespace-normal wrap-break-word aspect-square min-h-96 xl:min-h-128 p-6 lg:p-8 flex flex-col items-center justify-center text-center border-2 border-(--color-stamp-gold) bg-(--color-stamp-gold)/5 scale-[1.02]"
-      aria-label={`Selected ${product.name}`}
+      aria-label={t("selectedAria", { name: product.name })}
     >
       <Button
         variant="outline"
         onClick={onClearSelection}
         className="absolute top-4 right-4 z-20 h-auto px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] bg-white/90 text-(--color-stamp-chocolate) border border-(--color-stamp-divider) hover:bg-white rounded-none"
-        aria-label="Remove selected product"
+        aria-label={t("removeAria")}
       >
         <X className="w-3.5 h-3.5" />
-        Remove
+        {t("remove")}
       </Button>
 
       <div className="relative z-10 w-64 h-64 lg:w-80 lg:h-80 mb-6 overflow-hidden">

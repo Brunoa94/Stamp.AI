@@ -6,6 +6,7 @@
  */
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ArrowRight, Fingerprint } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
@@ -16,6 +17,8 @@ import { HomeTrustIndicators } from "../components/HomeTrustIndicators";
 import { SectionReveal } from "../components/SectionReveal";
 
 export function HomeCtaSection() {
+  const t = useTranslations("home.cta");
+
   return (
     <section className="relative overflow-hidden bg-(--color-stamp-chocolate) px-6 py-32 lg:px-12 xl:px-24">
       <Fingerprint
@@ -30,31 +33,31 @@ export function HomeCtaSection() {
             variant="cta"
             className="mb-10 text-(--color-stamp-off-white)"
           >
-            Ready to stamp your{" "}
-            <Span variant="serif" className="text-(--color-stamp-gold)">
-              vision
-            </Span>
-            ?
+            {t.rich("heading", {
+              accent: (chunks) => (
+                <Span variant="serif" className="text-(--color-stamp-gold)">
+                  {chunks}
+                </Span>
+              ),
+            })}
           </Heading>
 
           <Paragraph
             variant="lead"
             className="mb-14 max-w-2xl text-(--color-stamp-taupe)"
           >
-            Join thousands of creators using AI-powered design synthesis to
-            bring their ideas to life. Start creating archival-quality apparel
-            in seconds.
+            {t("lead")}
           </Paragraph>
 
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <Button asChild variant="cta-gold" className="group">
               <Link href="/stamp">
-                Start Creating
+                {t("ctaPrimary")}
                 <ArrowRight className="h-6 w-6 transition-transform duration-300 group-hover:translate-x-2" />
               </Link>
             </Button>
             <Button asChild variant="ghost-stamp-light">
-              <Link href="/products">Browse Catalog</Link>
+              <Link href="/products">{t("ctaSecondary")}</Link>
             </Button>
           </div>
 

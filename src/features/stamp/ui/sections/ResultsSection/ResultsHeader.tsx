@@ -1,4 +1,5 @@
 import { Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 
@@ -14,10 +15,12 @@ interface PropsI {
 }
 
 export function ResultsHeader({ outputNumber, date }: PropsI) {
+  const t = useTranslations("stamp.results");
+
   return (
     <div className="mb-8">
       <Span variant="sm" className="text-(--color-stamp-taupe) mb-6 block">
-        Protocol 04 / Output
+        {t("protocol")}
       </Span>
 
       <Heading
@@ -25,10 +28,13 @@ export function ResultsHeader({ outputNumber, date }: PropsI) {
         variant="title"
         className="text-(--color-stamp-chocolate) mb-6"
       >
-        Your{" "}
-        <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
-          Creation
-        </span>
+        {t.rich("title", {
+          accent: (chunks) => (
+            <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
+              {chunks}
+            </span>
+          ),
+        })}
       </Heading>
 
       <div className="flex justify-between items-end">
@@ -40,13 +46,13 @@ export function ResultsHeader({ outputNumber, date }: PropsI) {
             </Span>
           </div>
           <Span variant="micro" className="text-(--color-stamp-taupe)">
-            Generated {date}
+            {t("generated", { date })}
           </Span>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 bg-green-500/5 rounded-full border border-green-500/10">
           <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
           <Span variant="micro" className="text-green-600">
-            Saved to history
+            {t("savedToHistory")}
           </Span>
         </div>
       </div>

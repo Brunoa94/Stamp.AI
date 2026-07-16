@@ -5,12 +5,15 @@
  */
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ArrowRight, Fingerprint } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 
 export function DashboardCtaSection() {
+  const t = useTranslations("dashboard.cta");
+
   return (
     <section className="relative overflow-hidden border border-(--color-stamp-chocolate) bg-(--color-stamp-chocolate) p-8 lg:p-12">
       <Fingerprint
@@ -24,18 +27,20 @@ export function DashboardCtaSection() {
           variant="card"
           className="text-(--color-stamp-off-white)"
         >
-          Ready for your next{" "}
-          <Span variant="serif" className="text-(--color-stamp-gold)">
-            masterpiece
-          </Span>
-          ?
+          {t.rich("title", {
+            accent: (chunks) => (
+              <Span variant="serif" className="text-(--color-stamp-gold)">
+                {chunks}
+              </Span>
+            ),
+          })}
         </Heading>
         <Span as="p" variant="default" className="text-(--color-stamp-taupe)">
-          Initiate a new synthesis protocol
+          {t("subtitle")}
         </Span>
         <Button asChild variant="primary-gold" className="group">
           <Link href="/stamp">
-            Stamp it
+            {t("cta")}
             <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
         </Button>

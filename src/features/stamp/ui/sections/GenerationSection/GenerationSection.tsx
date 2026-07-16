@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2, Cpu } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { useStampGeneration } from "../../../lib/hooks/useStampSelectors";
@@ -15,6 +16,7 @@ import { useStampGeneration } from "../../../lib/hooks/useStampSelectors";
  */
 
 export function GenerationSection() {
+  const t = useTranslations("stamp.generation");
   const { generationProgress } = useStampGeneration();
 
   return (
@@ -36,7 +38,7 @@ export function GenerationSection() {
         variant="card"
         className="text-white mb-6 tracking-[0.5em]"
       >
-        Generating Your Design...
+        {t("status")}
       </Heading>
 
       {/* Progress Bar */}
@@ -48,7 +50,7 @@ export function GenerationSection() {
           />
         </div>
         <Span variant="micro" className="text-white/40 tracking-[0.4em]">
-          {generationProgress}%
+          {t("percent", { progress: generationProgress })}
         </Span>
       </div>
     </section>

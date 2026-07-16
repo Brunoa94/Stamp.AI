@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { CheckCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
@@ -21,6 +22,8 @@ interface PropsI {
 }
 
 export function ProductCard({ product, isSelected, onSelect }: PropsI) {
+  const t = useTranslations("stamp.productSelection");
+
   return (
     <Button
       variant="ghost"
@@ -31,7 +34,7 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
           : "border bg-white"
       }`}
       aria-pressed={isSelected}
-      aria-label={`Select ${product.name}`}
+      aria-label={t("selectAria", { name: product.name })}
     >
       <div className="pointer-events-none absolute inset-0 z-0 flex items-start justify-center pt-6 lg:pt-8 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:pt-0">
         <div className="relative w-32 h-32 lg:w-36 lg:h-36 overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-full group-hover:h-full">

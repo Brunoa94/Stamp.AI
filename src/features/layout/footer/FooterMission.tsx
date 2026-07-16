@@ -1,13 +1,13 @@
+import { useTranslations } from "next-intl";
 import { footerTheme } from "@/theme/components";
 
 export function FooterMission() {
+  const t = useTranslations("layout.footerMission");
+
   return (
     <div className="col-span-1">
-      <h3 className={footerTheme.missionTitle}>Our Mission</h3>
-      <p className={footerTheme.missionText}>
-        Empowering creators with AI-driven apparel design. High quality prints,
-        delivered to your door.
-      </p>
+      <h3 className={footerTheme.missionTitle}>{t("title")}</h3>
+      <p className={footerTheme.missionText}>{t("text")}</p>
     </div>
   );
 }
