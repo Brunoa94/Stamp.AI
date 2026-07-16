@@ -50,6 +50,7 @@ function passwordResetReducer(
 
 export function usePasswordReset() {
   const t = useTranslations("profile.toasts");
+  const tv = useTranslations("validation");
   const [state, dispatch] = useReducer(passwordResetReducer, initialState);
   const updatePasswordMutation = useUpdatePassword();
 
@@ -63,7 +64,7 @@ export function usePasswordReset() {
       const firstError = result.error.issues[0];
 
       if (firstError) {
-        toast.error(firstError.message);
+        toast.error(tv(firstError.message));
       }
 
       return false;

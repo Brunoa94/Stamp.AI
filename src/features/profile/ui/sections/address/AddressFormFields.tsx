@@ -2,6 +2,7 @@ import type { UseFormReturn } from "react-hook-form";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import { FormField } from "@/features/ui/form-field";
 import { useTranslations } from "next-intl";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 
 interface AddressFormFieldsProps {
   form: UseFormReturn<ShippingAddressT>;
@@ -9,6 +10,7 @@ interface AddressFormFieldsProps {
 
 export function AddressFormFields({ form }: AddressFormFieldsProps) {
   const t = useTranslations("profile.addressForm");
+  const ve = useValidationMessage();
   const {
     register,
     formState: { errors },
@@ -24,7 +26,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
           type="text"
           required
           register={register("first_name")}
-          error={errors.first_name?.message}
+          error={ve(errors.first_name?.message)}
           variant="profile"
         />
         <FormField
@@ -33,7 +35,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
           type="text"
           required
           register={register("last_name")}
-          error={errors.last_name?.message}
+          error={ve(errors.last_name?.message)}
           variant="profile"
         />
       </div>
@@ -46,7 +48,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
           type="email"
           required
           register={register("email")}
-          error={errors.email?.message}
+          error={ve(errors.email?.message)}
           variant="profile"
         />
         <FormField
@@ -55,7 +57,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
           type="tel"
           required
           register={register("phone")}
-          error={errors.phone?.message}
+          error={ve(errors.phone?.message)}
           variant="profile"
         />
       </div>
@@ -68,7 +70,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
         placeholder={t("address1Placeholder")}
         required
         register={register("address1")}
-        error={errors.address1?.message}
+        error={ve(errors.address1?.message)}
         variant="profile"
       />
 
@@ -79,7 +81,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
         type="text"
         placeholder={t("address2Placeholder")}
         register={register("address2")}
-        error={errors.address2?.message}
+        error={ve(errors.address2?.message)}
         variant="profile"
       />
 
@@ -91,7 +93,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
           type="text"
           required
           register={register("city")}
-          error={errors.city?.message}
+          error={ve(errors.city?.message)}
           variant="profile"
         />
         <FormField
@@ -100,7 +102,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
           type="text"
           required
           register={register("region")}
-          error={errors.region?.message}
+          error={ve(errors.region?.message)}
           variant="profile"
         />
         <FormField
@@ -109,7 +111,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
           type="text"
           required
           register={register("zip")}
-          error={errors.zip?.message}
+          error={ve(errors.zip?.message)}
           variant="profile"
         />
       </div>
@@ -121,7 +123,7 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
         type="text"
         required
         register={register("country")}
-        error={errors.country?.message}
+        error={ve(errors.country?.message)}
         variant="profile"
       />
     </div>

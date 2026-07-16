@@ -1,4 +1,3 @@
-import { Check, Layers, Palette, Zap } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 
@@ -14,12 +13,6 @@ interface PropsI {
 
 export function ResultsDetails({ prompt }: PropsI) {
   const t = useTranslations("stamp.results");
-  const features = [
-    { icon: Zap, label: "AI Enhanced" },
-    { icon: Palette, label: "Print Ready" },
-    { icon: Layers, label: "High Resolution" },
-    { icon: Check, label: "Quality Verified" },
-  ];
 
   return (
     <div className="mb-10">

@@ -36,7 +36,16 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
         setPromoError(null);
       } else {
         setAppliedPromo(null);
-        setPromoError(result.message || t("invalidPromoCode"));
+        // result.message may be one of our own catalog keys (from
+        // CheckoutPromoCodeService) or a raw backend message — translate the
+        // former, pass the latter through untouched.
+        setPromoError(
+          result.message
+            ? t.has(result.message)
+              ? t(result.message)
+              : result.message
+            : t("invalidPromoCode")
+        );
       }
     },
     onError: (error) => {

@@ -8,6 +8,7 @@ import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import type { LoginI } from "@/schemas/auth";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 import { InlinePasswordReset } from "../../passwordReset/InlinePasswordReset";
 
 interface PropsI {
@@ -18,6 +19,7 @@ interface PropsI {
 export function LoginCredentialsFields({ register, errors }: PropsI) {
   const [showPassword, setShowPassword] = useState(false);
   const t = useTranslations("auth.login.fields");
+  const ve = useValidationMessage();
 
   return (
     <>
@@ -27,7 +29,7 @@ export function LoginCredentialsFields({ register, errors }: PropsI) {
         type="email"
         required
         placeholder={t("emailPlaceholder")}
-        error={errors.email?.message}
+        error={ve(errors.email?.message)}
         register={register("email")}
         variant="stamp-auth"
         leadingIcon={<Mail className="h-5 w-5" />}
@@ -87,7 +89,7 @@ export function LoginCredentialsFields({ register, errors }: PropsI) {
               role="alert"
               className="text-xs font-bold uppercase tracking-widest text-(--color-stamp-error)"
             >
-              {errors.password.message}
+              {ve(errors.password.message)}
             </p>
           )}
         </div>

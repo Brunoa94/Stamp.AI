@@ -1,4 +1,5 @@
 import { useTranslations } from "next-intl";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 import { usePasswordResetRequestForm } from "./usePasswordResetRequestForm";
 import { PasswordResetRequestSuccess } from "./PasswordResetRequestSuccess";
 import { Heading } from "@/features/ui/heading";
@@ -17,6 +18,7 @@ export function PasswordResetRequestForm() {
   const { register, handleSubmit, onSubmit, isPending, errors, isSuccess } =
     usePasswordResetRequestForm();
   const t = useTranslations("auth.passwordReset.request");
+  const ve = useValidationMessage();
 
   if (isSuccess) {
     return <PasswordResetRequestSuccess />;
@@ -45,7 +47,7 @@ export function PasswordResetRequestForm() {
             id="email"
             label={t("emailLabel")}
             type="email"
-            error={errors.email?.message}
+            error={ve(errors.email?.message)}
             register={register("email")}
             variant="stamp-auth"
           />

@@ -7,6 +7,7 @@ import { FormField } from "@/features/ui/form-field";
 import { Button } from "@/features/ui/button";
 import { Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 
 export function PasswordResetConfirmForm() {
   const {
@@ -19,6 +20,7 @@ export function PasswordResetConfirmForm() {
     errors,
   } = usePasswordResetConfirmForm();
   const t = useTranslations("auth.passwordReset.confirm");
+  const ve = useValidationMessage();
 
   if (isSuccess) {
     return <PasswordResetSuccess />;
@@ -35,7 +37,7 @@ export function PasswordResetConfirmForm() {
           id="password"
           label={t("newPassword")}
           type="password"
-          error={errors.password?.message}
+          error={ve(errors.password?.message)}
           register={register("password")}
           variant="stamp-auth"
           leadingIcon={<Lock className="h-5 w-5" />}
@@ -45,7 +47,7 @@ export function PasswordResetConfirmForm() {
           id="confirmPassword"
           label={t("confirmNewPassword")}
           type="password"
-          error={errors.confirmPassword?.message}
+          error={ve(errors.confirmPassword?.message)}
           register={register("confirmPassword")}
           variant="stamp-auth"
           leadingIcon={<Lock className="h-5 w-5" />}
