@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import type { OrderWithItemsT } from "@/types/order";
 import { OrdersListItem } from "./OrdersListItem/OrdersListItem";
 
@@ -14,8 +15,10 @@ export function OrdersListSection({
   onCancelOrder,
   onReorder,
 }: PropsI) {
+  const t = useTranslations("orders.listSection");
+
   return (
-    <section className="space-y-4" aria-label="Orders list view">
+    <section className="space-y-4" aria-label={t("ariaLabel")}>
       {orders.map((order) => (
         <OrdersListItem
           key={order.id}

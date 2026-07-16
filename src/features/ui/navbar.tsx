@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import clsx from "clsx";
 
@@ -25,6 +26,7 @@ export function Navbar({
   onViewProfile,
   onSignOut,
 }: NavbarProps) {
+  const t = useTranslations("ui.navbar");
   return (
     <nav className="bg-white border-b border-[#E8E0F0] sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-6">
@@ -48,14 +50,14 @@ export function Navbar({
                 activeItem === "orders" ? navStyles.active : navStyles.inactive,
               )}
             >
-              My Orders
+              {t("myOrders")}
             </Link>
 
             <Link
               href="/stamp"
               className="px-6 py-2.5 text-base font-heading tracking-widest text-white bg-[#7C3AED] rounded shadow-[0_4px_14px_rgba(124,58,237,0.3)] transition-all duration-300 hover:bg-[#6D28D9] hover:shadow-[0_6px_20px_rgba(124,58,237,0.4)] hover:-translate-y-0.5"
             >
-              Stamp It!
+              {t("stampIt")}
             </Link>
 
             <Link
@@ -67,7 +69,7 @@ export function Navbar({
                   : navStyles.inactive,
               )}
             >
-              Dashboard
+              {t("dashboard")}
             </Link>
           </div>
 
@@ -76,7 +78,7 @@ export function Navbar({
             <button
               onClick={onToggleTheme}
               className={navStyles.iconButton}
-              aria-label="Toggle theme"
+              aria-label={t("toggleTheme")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -98,7 +100,7 @@ export function Navbar({
             <button
               onClick={onViewProfile}
               className="flex items-center gap-2 pl-2 group"
-              aria-label="View profile"
+              aria-label={t("viewProfile")}
             >
               <div className="w-10 h-10 rounded-md bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-[#F3ECFF] group-hover:text-[#7C3AED] transition-all duration-300">
                 <svg
@@ -122,7 +124,7 @@ export function Navbar({
               onClick={onSignOut}
               className="ml-2 px-5 py-2 text-sm font-heading tracking-widest text-white bg-[#FF4444] rounded transition-all duration-300 hover:bg-[#E03333] hover:shadow-[0_4px_14px_rgba(255,68,68,0.3)] hover:-translate-y-0.5"
             >
-              Sign Out
+              {t("signOut")}
             </Button>
           </div>
         </div>

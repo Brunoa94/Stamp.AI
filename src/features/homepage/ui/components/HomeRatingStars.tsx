@@ -4,6 +4,7 @@
  * Row of five stars, gold-filled up to the given rating.
  */
 
+import { useTranslations } from "next-intl";
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -15,12 +16,13 @@ interface HomeRatingStarsPropsI {
 }
 
 export function HomeRatingStars({ rating, className }: HomeRatingStarsPropsI) {
+  const t = useTranslations("home.ratingStars");
   const filled = Math.floor(rating);
 
   return (
     <div
       role="img"
-      aria-label={`Rated ${rating} out of ${TOTAL_STARS} stars`}
+      aria-label={t("ariaLabel", { rating, total: TOTAL_STARS })}
       className={cn("flex items-center gap-1", className)}
     >
       {Array.from({ length: TOTAL_STARS }).map((_, idx) => (

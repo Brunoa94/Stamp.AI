@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import { useLogout } from "@/hooks/useAuth";
 import { useUser } from "@/queries/authQueries";
@@ -21,6 +22,7 @@ interface Props {
 }
 
 export function MobileNavbarSidebar({ isOpen, onClose }: Props) {
+  const t = useTranslations("layout.mobileSidebar");
   const pathname = usePathname();
   const navigate = useViewTransitionNavigate();
   const logoutMutation = useLogout();
@@ -61,7 +63,7 @@ export function MobileNavbarSidebar({ isOpen, onClose }: Props) {
             size="icon"
             onClick={onClose}
             className={navbarTheme.mobileSidebar.closeButton}
-            aria-label="Close menu"
+            aria-label={t("closeMenu")}
           >
             <X className="w-5 h-5" />
           </Button>
@@ -81,7 +83,7 @@ export function MobileNavbarSidebar({ isOpen, onClose }: Props) {
 
           <div className="flex items-center gap-2 py-3 px-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 mb-3">
             <CoinsBadge />
-            <span className="text-xs text-amber-700 dark:text-amber-300 font-medium">credits</span>
+            <span className="text-xs text-amber-700 dark:text-amber-300 font-medium">{t("credits")}</span>
           </div>
 
           <MobileNavbarSidebarThemeToggle

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { buyCreditsTheme } from "@/theme/components";
 import { CreditPackageSelector } from "./CreditPackageSelector";
@@ -32,6 +33,7 @@ export function CreditSelectionStep({
   onContinue,
 }: CreditSelectionStepProps) {
   const theme = buyCreditsTheme.selectionStep;
+  const t = useTranslations("buyCredits.selection");
 
   return (
     <div className={theme.container}>
@@ -57,7 +59,7 @@ export function CreditSelectionStep({
         disabled={!canProceed}
         className={theme.submitButton}
       >
-        Continue to Payment
+        {t("continueButton")}
       </Button>
     </div>
   );

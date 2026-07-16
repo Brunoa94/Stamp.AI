@@ -1,5 +1,6 @@
 import { AlertCircle } from "lucide-react";
 import { clsx } from "clsx";
+import { useTranslations } from "next-intl";
 import ProgressBar from "@/features/ui/progress-bar";
 import { getWordCountColor } from "@/utils/formUtils";
 
@@ -18,6 +19,7 @@ const WordCountIndicator = ({
   colorClass,
   showProgressBar = true,
 }: Props) => {
+  const t = useTranslations("ui.wordCountIndicator");
   const computedColorClass = colorClass || getWordCountColor(wordCount, limit);
 
   return (
@@ -35,13 +37,13 @@ const WordCountIndicator = ({
               "bg-current": !isOverLimit,
             })}
           />
-          {wordCount}/{limit} words
+          {t("count", { wordCount, limit })}
         </div>
 
         {isOverLimit && (
           <div className="flex items-center text-red-500 text-xs font-medium animate-[shake_0.5s_ease-in-out]">
             <AlertCircle className="w-3 h-3 mr-1" />
-            Keep it under {limit} words
+            {t("overLimit", { limit })}
           </div>
         )}
       </div>

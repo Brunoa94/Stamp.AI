@@ -9,11 +9,14 @@
 
 import Link from "next/link";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 
 export function CartEmptySection() {
+  const t = useTranslations("cart.empty");
+
   return (
     <div
       role="status"
@@ -31,17 +34,17 @@ export function CartEmptySection() {
         unstyled
         className="mb-4 font-heading text-4xl font-bold uppercase tracking-tight text-(--color-stamp-chocolate)"
       >
-        Your Bag is Empty
+        {t("title")}
       </Heading>
 
       <Span variant="default" className="mb-10 text-(--color-stamp-taupe)">
-        No items in production protocol
+        {t("subtitle")}
       </Span>
 
       <Button asChild variant="secondary-brown" className="group">
         <Link href="/stamp">
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-          Start Creating
+          {t("cta")}
         </Link>
       </Button>
     </div>

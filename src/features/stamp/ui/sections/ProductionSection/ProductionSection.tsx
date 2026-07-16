@@ -1,6 +1,7 @@
 "use client";
 
 import { Box } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { useStampFinalization } from "../../../lib/hooks/useStampSelectors";
@@ -15,6 +16,7 @@ import { useStampFinalization } from "../../../lib/hooks/useStampSelectors";
  */
 
 export function ProductionSection() {
+  const t = useTranslations("stamp.production");
   const { productionProgress } = useStampFinalization();
 
   return (
@@ -36,11 +38,11 @@ export function ProductionSection() {
         variant="card"
         className="text-(--color-stamp-chocolate) mb-4 tracking-[0.5em]"
       >
-        Creating Your Product Mockup...
+        {t("status")}
       </Heading>
 
       <Span variant="micro" className="text-(--color-stamp-taupe) mb-12">
-        Est. 15 seconds...
+        {t("estimate")}
       </Span>
 
       {/* Progress Bar */}

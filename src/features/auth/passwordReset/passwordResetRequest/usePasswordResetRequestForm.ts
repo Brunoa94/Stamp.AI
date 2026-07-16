@@ -4,11 +4,13 @@ import { PasswordResetRequestSchema, type PasswordResetRequestI } from "@/schema
 import { usePasswordResetRequest } from "@/hooks/useAuth";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 export function usePasswordResetRequestForm() {
   const resetMutation = usePasswordResetRequest();
   const [isSuccess, setIsSuccess] = useState(false);
   const { handleError, handleSuccess } = useErrorHandler();
+  const t = useTranslations("auth.passwordReset.request");
 
   const {
     register,
@@ -22,7 +24,7 @@ export function usePasswordResetRequestForm() {
     try {
       await resetMutation.mutateAsync(data);
       setIsSuccess(true);
-      handleSuccess("Password reset email sent successfully. Check your inbox for instructions.");
+      handleSuccess(t("successToast"));
     } catch (error) {
       handleError(error);
     }

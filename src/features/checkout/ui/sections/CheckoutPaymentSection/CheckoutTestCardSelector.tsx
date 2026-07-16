@@ -6,6 +6,7 @@
  * mode. Groups mirror the shared TestCardSelector's scenarios.
  */
 
+import { useTranslations } from "next-intl";
 import {
   Select,
   SelectContent,
@@ -28,11 +29,12 @@ export function CheckoutTestCardSelector({
   value,
   onChange,
 }: CheckoutTestCardSelectorPropsI) {
+  const t = useTranslations("checkout.testCards");
   return (
     <div className="space-y-3">
       <label htmlFor="test-card-select">
         <Span variant="micro" className="text-(--color-stamp-taupe)">
-          Test Card Type
+          {t("selectorLabel")}
         </Span>
       </label>
       <Select value={value} onValueChange={onChange}>
@@ -40,15 +42,15 @@ export function CheckoutTestCardSelector({
           id="test-card-select"
           className="h-12 w-full rounded-none border-(--color-stamp-divider) bg-(--color-stamp-white) text-sm uppercase tracking-[0.05em] text-(--color-stamp-chocolate) focus:ring-2 focus:ring-(--color-stamp-gold)/30"
         >
-          <SelectValue placeholder="Select test card type" />
+          <SelectValue placeholder={t("selectorPlaceholder")} />
         </SelectTrigger>
         <SelectContent>
           {TEST_CARD_GROUPS.map((group, groupIndex) => (
-            <SelectGroup key={group.label}>
-              <SelectLabel>{group.label}</SelectLabel>
+            <SelectGroup key={group.id}>
+              <SelectLabel>{t(`groups.${group.id}.label`)}</SelectLabel>
               {group.options.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
-                  {option.label}
+                  {t(`options.${option.value}`)}
                 </SelectItem>
               ))}
               {groupIndex < TEST_CARD_GROUPS.length - 1 && <SelectSeparator />}

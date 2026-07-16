@@ -13,6 +13,7 @@
 import { useRef, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
@@ -32,6 +33,7 @@ interface CarouselProductData {
 }
 
 export function HomeFeaturedCarouselSection() {
+  const t = useTranslations("home.featured");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Fetch all active products (same as stamp page)
@@ -90,9 +92,9 @@ export function HomeFeaturedCarouselSection() {
       <SectionReveal className="mx-auto max-w-screen-2xl">
         <div className="flex items-end justify-between">
           <HomeSectionHeader
-            title="Featured"
-            accent="pieces"
-            label="Curated Selection"
+            title={t("title")}
+            accent={t("accent")}
+            label={t("label")}
             className="mb-0"
           />
 
@@ -101,7 +103,7 @@ export function HomeFeaturedCarouselSection() {
               variant="ghost"
               size="icon"
               onClick={() => scroll("left")}
-              aria-label="Scroll left"
+              aria-label={t("scrollLeft")}
               className="h-12 w-12 border border-(--color-stamp-divider) bg-(--color-stamp-white) text-(--color-stamp-chocolate) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-gold) hover:bg-(--color-stamp-white)"
             >
               <ArrowLeft className="h-5 w-5" />
@@ -110,7 +112,7 @@ export function HomeFeaturedCarouselSection() {
               variant="ghost"
               size="icon"
               onClick={() => scroll("right")}
-              aria-label="Scroll right"
+              aria-label={t("scrollRight")}
               className="h-12 w-12 border border-(--color-stamp-divider) bg-(--color-stamp-white) text-(--color-stamp-chocolate) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-gold) hover:bg-(--color-stamp-white)"
             >
               <ArrowRight className="h-5 w-5" />
@@ -162,7 +164,7 @@ export function HomeFeaturedCarouselSection() {
                             variant="micro"
                             className="text-(--color-stamp-taupe)"
                           >
-                            No image
+                            {t("noImage")}
                           </Span>
                         </div>
                       )}
@@ -193,7 +195,7 @@ export function HomeFeaturedCarouselSection() {
                           variant="micro"
                           className="mt-0.5 text-(--color-stamp-taupe)"
                         >
-                          Premium Collection
+                          {t("collectionLabel")}
                         </Span>
                       </div>
                       {product.price > 0 && (
@@ -213,7 +215,7 @@ export function HomeFeaturedCarouselSection() {
         {/* Mobile scroll hint */}
         <div className="mt-6 flex items-center justify-center gap-2 sm:hidden">
           <Span variant="micro" className="text-(--color-stamp-taupe)">
-            Swipe to explore
+            {t("swipeHint")}
           </Span>
           <ArrowRight className="h-3.5 w-3.5 text-(--color-stamp-taupe)" />
         </div>

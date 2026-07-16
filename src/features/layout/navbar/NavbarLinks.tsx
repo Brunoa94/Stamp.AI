@@ -1,12 +1,14 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import clsx from "clsx";
 import { navbarTheme } from "@/theme/components";
 import { ViewTransitionLink } from "@/features/ui/view-transition-link";
 import { useUser } from "@/queries/authQueries";
 
 export function NavbarLinks() {
+  const t = useTranslations("layout.navbar");
   const pathname = usePathname();
   const isOrdersActive = pathname === "/orders";
   const isStampActive = pathname === "/stamp";
@@ -26,8 +28,8 @@ export function NavbarLinks() {
             : navbarTheme.navigation.link.inactive,
         )}
       >
-        <span className="hidden lg:inline">My Orders</span>
-        <span className="lg:hidden">Orders</span>
+        <span className="hidden lg:inline">{t("myOrders")}</span>
+        <span className="lg:hidden">{t("orders")}</span>
       </ViewTransitionLink>
 
       <ViewTransitionLink
@@ -41,9 +43,11 @@ export function NavbarLinks() {
         >
           {/* Show personalized label only on larger screens */}
           <span className="hidden lg:inline">
-            {displayName ? `Stamp It, ${displayName}!` : "Stamp It!"}
+            {displayName
+              ? t("stampItPersonalized", { name: displayName })
+              : t("stampIt")}
           </span>
-          <span className="lg:hidden">Stamp It!</span>
+          <span className="lg:hidden">{t("stampIt")}</span>
         </span>
       </ViewTransitionLink>
 
@@ -56,7 +60,7 @@ export function NavbarLinks() {
             : navbarTheme.navigation.link.inactive,
         )}
       >
-        Dashboard
+        {t("dashboard")}
       </ViewTransitionLink>
     </div>
   );

@@ -6,6 +6,7 @@
  */
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { ShoppingBag } from "lucide-react";
 import { Span } from "@/features/ui/span";
 import type { CartWithItems } from "@/types/cart";
@@ -16,15 +17,18 @@ interface CheckoutCartItemsPropsI {
 }
 
 export function CheckoutCartItems({ items }: CheckoutCartItemsPropsI) {
+  const t = useTranslations("checkout.cartItems");
   return (
     <ul
-      aria-label="Order items"
+      aria-label={t("listAria")}
       className="checkout-scrollbar max-h-80 space-y-3 overflow-y-auto"
     >
       {items.map((item) => {
-        const name = item.product_name || item.product?.name || "Custom Product";
+        const name =
+          item.product_name || item.product?.name || t("defaultProductName");
         const quantity = item.quantity ?? 1;
         const lineTotal = (item.unit_price ?? 0) * quantity;
+        const variantName = item.variant?.name || t("standardVariant");
         return (
           <li
             key={item.id}
@@ -34,7 +38,7 @@ export function CheckoutCartItems({ items }: CheckoutCartItemsPropsI) {
               {item.custom_image_url ? (
                 <Image
                   src={item.custom_image_url}
-                  alt={`${name} — ${item.variant?.name || "Standard variant"}`}
+                  alt={t("imageAlt", { name, variant: variantName })}
                   width={64}
                   height={64}
                   className="h-full w-full object-cover"
@@ -52,11 +56,11 @@ export function CheckoutCartItems({ items }: CheckoutCartItemsPropsI) {
                 {name}
               </p>
               <Span unstyled className="mt-1 block text-lg text-(--color-stamp-taupe)">
-                {item.variant?.name || "Standard"}
+                {item.variant?.name || t("standard")}
               </Span>
               <div className="mt-2 flex items-center justify-between">
                 <Span unstyled className="text-lg text-(--color-stamp-taupe)">
-                  Qty {quantity}
+                  {t("qty", { quantity })}
                 </Span>
                 <span className="text-2xl font-bold tabular-nums text-(--color-stamp-chocolate)">
                   {formatPrice(lineTotal / 100)}

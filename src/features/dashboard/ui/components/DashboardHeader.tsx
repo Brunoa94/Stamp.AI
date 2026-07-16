@@ -5,6 +5,7 @@
  * accent word, and a personalized taupe subtitle.
  */
 
+import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import type { UserI } from "@/types/auth";
@@ -15,6 +16,8 @@ interface DashboardHeaderPropsI {
 }
 
 export function DashboardHeader({ user }: DashboardHeaderPropsI) {
+  const t = useTranslations("dashboard.header");
+
   return (
     <header className="space-y-4">
       <div className="h-1.5 w-20 bg-(--color-stamp-gold)" />
@@ -23,13 +26,16 @@ export function DashboardHeader({ user }: DashboardHeaderPropsI) {
         variant="title"
         className="text-(--color-stamp-chocolate)"
       >
-        Your{" "}
-        <Span variant="serif" className="text-(--color-stamp-taupe)">
-          atelier
-        </Span>
+        {t.rich("title", {
+          accent: (chunks) => (
+            <Span variant="serif" className="text-(--color-stamp-taupe)">
+              {chunks}
+            </Span>
+          ),
+        })}
       </Heading>
       <Span variant="default" className="text-(--color-stamp-taupe)">
-        Welcome back, {getDisplayName(user)} — your production overview
+        {t("subtitle", { name: getDisplayName(user) })}
       </Span>
     </header>
   );

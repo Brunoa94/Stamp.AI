@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
 import { Span } from "@/features/ui/span";
@@ -28,28 +29,30 @@ export function ColorSwatches({
   hasProduct,
   onSelectColor,
 }: PropsI) {
+  const t = useTranslations("stamp.customization");
+
   return (
     <div>
       <Label className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe) block mb-6">
-        Color Swatches
+        {t("colorLabel")}
       </Label>
       {isLoading ? (
         <Span variant="micro" className="text-(--color-stamp-taupe)">
-          Loading colors...
+          {t("colorLoading")}
         </Span>
       ) : !hasProduct ? (
         <Span variant="micro" className="text-(--color-stamp-taupe)">
-          Select a product first to load available colors.
+          {t("colorSelectFirst")}
         </Span>
       ) : colors.length === 0 ? (
         <Span variant="micro" className="text-(--color-stamp-taupe)">
-          No colors available for this product.
+          {t("colorNone")}
         </Span>
       ) : (
         <div
           className="flex gap-4"
           role="radiogroup"
-          aria-label="Color selection"
+          aria-label={t("colorSelectionAria")}
         >
           {colors.map((colorName) => {
             const isActive = selectedColor === colorName;
@@ -76,7 +79,7 @@ export function ColorSwatches({
                     : borderColor,
                 }}
                 aria-pressed={isActive}
-                aria-label={`Select ${colorName} color`}
+                aria-label={t("colorSwatchAria", { color: colorName })}
                 title={colorName}
               />
             );

@@ -2,6 +2,7 @@
 
 import { useUser, useSession, useLogout } from "@/hooks/useAuth";
 import { User, LogOut } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "../ui/button";
 
 interface SessionDisplayProps {
@@ -12,17 +13,18 @@ export function SessionDisplay({ className }: SessionDisplayProps) {
   const { data: user, isLoading: userLoading, error: userError } = useUser();
   const { data: session, isLoading: sessionLoading } = useSession();
   const logoutMutation = useLogout();
+  const t = useTranslations("auth.sessionDisplay");
 
   if (userLoading || sessionLoading) {
-    return <div className="animate-pulse">Loading session...</div>;
+    return <div className="animate-pulse">{t("loadingSession")}</div>;
   }
 
   if (userError) {
-    return <div className="text-red-500">Error loading session</div>;
+    return <div className="text-red-500">{t("errorLoadingSession")}</div>;
   }
 
   if (!user) {
-    return <div>No user session</div>;
+    return <div>{t("noUserSession")}</div>;
   }
 
   const handleLogout = () => {
@@ -32,7 +34,7 @@ export function SessionDisplay({ className }: SessionDisplayProps) {
   return (
     <div className={`space-y-6 ${className}`}>
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Session Information</h2>
+        <h2 className="text-2xl font-bold">{t("sessionInformation")}</h2>
         <Button
           onClick={handleLogout}
           variant="outline"
@@ -40,7 +42,7 @@ export function SessionDisplay({ className }: SessionDisplayProps) {
           className="flex items-center gap-2"
         >
           <LogOut className="h-4 w-4" />
-          {logoutMutation.isPending ? "Signing out..." : "Sign out"}
+          {logoutMutation.isPending ? t("signingOut") : t("signOut")}
         </Button>
       </div>
 
@@ -49,40 +51,40 @@ export function SessionDisplay({ className }: SessionDisplayProps) {
         <div className="bg-gray-50 rounded-lg p-4">
           <h3 className="font-medium mb-3 flex items-center gap-2">
             <User className="h-4 w-4" />
-            User Information
+            {t("userInformation")}
           </h3>
           <div className="space-y-2 text-sm">
             <div>
-              <span className="font-medium">ID:</span> {user.id}
+              <span className="font-medium">{t("idLabel")}</span> {user.id}
             </div>
             <div>
-              <span className="font-medium">Email:</span> {user.email}
+              <span className="font-medium">{t("emailLabel")}</span> {user.email}
             </div>
             {user.user_metadata?.first_name && (
               <div>
-                <span className="font-medium">First Name:</span>{" "}
+                <span className="font-medium">{t("firstNameLabel")}</span>{" "}
                 {user.user_metadata.first_name}
               </div>
             )}
             {user.user_metadata?.last_name && (
               <div>
-                <span className="font-medium">Last Name:</span>{" "}
+                <span className="font-medium">{t("lastNameLabel")}</span>{" "}
                 {user.user_metadata.last_name}
               </div>
             )}
             <div>
-              <span className="font-medium">Created At:</span>{" "}
+              <span className="font-medium">{t("createdAtLabel")}</span>{" "}
               {new Date(user.created_at).toLocaleDateString()}
             </div>
             {user.email_confirmed_at && (
               <div>
-                <span className="font-medium">Email Confirmed:</span>{" "}
+                <span className="font-medium">{t("emailConfirmedLabel")}</span>{" "}
                 {new Date(user.email_confirmed_at).toLocaleDateString()}
               </div>
             )}
             {user.last_sign_in_at && (
               <div>
-                <span className="font-medium">Last Sign In:</span>{" "}
+                <span className="font-medium">{t("lastSignInLabel")}</span>{" "}
                 {new Date(user.last_sign_in_at).toLocaleDateString()}
               </div>
             )}
@@ -92,19 +94,21 @@ export function SessionDisplay({ className }: SessionDisplayProps) {
         {/* Session Information */}
         {session && (
           <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="font-medium mb-3">Session Details</h3>
+            <h3 className="font-medium mb-3">{t("sessionDetails")}</h3>
             <div className="space-y-2 text-sm">
               <div>
-                <span className="font-medium">Token Type:</span>{" "}
+                <span className="font-medium">{t("tokenTypeLabel")}</span>{" "}
                 {session.token_type}
               </div>
               <div>
-                <span className="font-medium">Expires At:</span>{" "}
+                <span className="font-medium">{t("expiresAtLabel")}</span>{" "}
                 {new Date(session.expires_at * 1000).toLocaleString()}
               </div>
               <div>
-                <span className="font-medium">Expires In:</span>{" "}
-                {Math.floor(session.expires_in / 60)} minutes
+                <span className="font-medium">{t("expiresInLabel")}</span>{" "}
+                {t("expiresInMinutes", {
+                  minutes: Math.floor(session.expires_in / 60),
+                })}
               </div>
             </div>
           </div>
@@ -113,7 +117,7 @@ export function SessionDisplay({ className }: SessionDisplayProps) {
         {/* Raw Data */}
         <details className="bg-gray-50 rounded-lg p-4">
           <summary className="font-medium cursor-pointer">
-            Raw Session Data
+            {t("rawSessionData")}
           </summary>
           <pre className="text-xs bg-white p-3 rounded border overflow-auto mt-2">
             {JSON.stringify({ user, session }, null, 2)}

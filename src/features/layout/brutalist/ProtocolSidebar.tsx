@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   Upload,
   Zap,
@@ -16,7 +17,6 @@ import {
 interface SidebarStepI {
   number: number;
   icon: React.ElementType;
-  label: string;
   color: "purple" | "cyan" | "orange";
   href?: string;
   animate?: boolean;
@@ -26,14 +26,12 @@ const SIDEBAR_STEPS: SidebarStepI[] = [
   {
     number: 1,
     icon: Upload,
-    label: "01 Upload Protocol",
     color: "purple",
     href: "/stamp?step=upload",
   },
   {
     number: 2,
     icon: Zap,
-    label: "02 Synthesis Input",
     color: "cyan",
     href: "/stamp?step=synthesis",
     animate: true,
@@ -41,28 +39,24 @@ const SIDEBAR_STEPS: SidebarStepI[] = [
   {
     number: 3,
     icon: Sparkles,
-    label: "03 Neural Process",
     color: "orange",
     href: "/stamp?step=generation",
   },
   {
     number: 4,
     icon: Eye,
-    label: "04 Visual Result",
     color: "purple",
     href: "/stamp?step=results",
   },
   {
     number: 5,
     icon: ShoppingBag,
-    label: "05 Product Spec",
     color: "cyan",
     href: "/stamp?step=product",
   },
   {
     number: 6,
     icon: Settings,
-    label: "06 Fabric Configuration",
     color: "orange",
     href: "/stamp?step=fabric",
     animate: true,
@@ -70,7 +64,6 @@ const SIDEBAR_STEPS: SidebarStepI[] = [
   {
     number: 7,
     icon: CheckCircle,
-    label: "07 Archival Confirm",
     color: "purple",
     href: "/stamp?step=confirm",
   },
@@ -90,6 +83,7 @@ const getIconColor = (color: SidebarStepI["color"]) => {
 };
 
 export function ProtocolSidebar() {
+  const t = useTranslations("layout.protocolSidebar");
   const [activeStep, setActiveStep] = useState(2); // Default: Synthesis
 
   const progressPercentage = (activeStep / SIDEBAR_STEPS.length) * 100;
@@ -143,7 +137,7 @@ export function ProtocolSidebar() {
                     transition-all duration-300 pointer-events-none
                   `}
                 >
-                  {step.label}
+                  {t(`steps.${step.number}`)}
                 </span>
               </Link>
             );
@@ -153,7 +147,7 @@ export function ProtocolSidebar() {
         {/* Help Icon at Bottom */}
         <button
           className="mt-auto text-ink/10 hover:text-ink/50 transition-colors"
-          aria-label="Help"
+          aria-label={t("help")}
         >
           <HelpCircle className="w-5 h-5" />
         </button>

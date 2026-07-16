@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Separator } from "@/features/ui/separator";
 import { AnimatedLogoDot } from "./AnimatedLogoDot";
 import { Paragraph } from "@/features/ui/paragraph";
@@ -18,28 +19,30 @@ import { List } from "@/features/ui/list";
 
 const FOOTER_LINKS = {
   product: [
-    { id: "footer-custom-tee", href: "#", label: "Custom Essentials" },
-    { id: "footer-hoodies", href: "#", label: "Archival Hoodies" },
-    { id: "footer-caps", href: "#", label: "Precision Caps" },
+    { id: "footer-custom-tee", href: "#" },
+    { id: "footer-hoodies", href: "#" },
+    { id: "footer-caps", href: "#" },
   ],
   protocol: [
-    { id: "footer-manifesto", href: "#", label: "Manifesto" },
-    { id: "footer-careers", href: "#", label: "Terminal Hub" },
-    { id: "footer-press", href: "#", label: "Public Keys" },
+    { id: "footer-manifesto", href: "#" },
+    { id: "footer-careers", href: "#" },
+    { id: "footer-press", href: "#" },
   ],
   support: [
-    { id: "footer-help", href: "#", label: "Operations" },
-    { id: "footer-track", href: "#", label: "Track Assets" },
-    { id: "footer-shipping", href: "#", label: "Logistics" },
+    { id: "footer-help", href: "#" },
+    { id: "footer-track", href: "#" },
+    { id: "footer-shipping", href: "#" },
   ],
   network: [
-    { id: "footer-ig", href: "#", label: "Instagram" },
-    { id: "footer-tw", href: "#", label: "X / Twitter" },
-    { id: "footer-tt", href: "#", label: "Discord" },
+    { id: "footer-ig", href: "#" },
+    { id: "footer-tw", href: "#" },
+    { id: "footer-tt", href: "#" },
   ],
 };
 
 export function BrutalistFooter() {
+  const t = useTranslations("layout.brutalistFooter");
+
   return (
     <footer className="brutalist-footer bg-ink text-white pt-48 pb-12 px-8 relative overflow-hidden border-t border-white/10 transition-colors duration-300">
       {/* Decorative blur blob */}
@@ -53,16 +56,19 @@ export function BrutalistFooter() {
             href="/"
             className="font-anton text-4xl md:text-6xl leading-none uppercase tracking-tighter mb-8 flex items-center hover:opacity-80 transition-opacity"
           >
-            <Span>STAMP</Span>
-            <AnimatedLogoDot size="md" className="mx-1.5 md:mx-2" />
-            <Span>AI</Span>
+            {t.rich("brand", {
+              stamp: (chunks) => <Span>{chunks}</Span>,
+              dot: () => (
+                <AnimatedLogoDot size="md" className="mx-1.5 md:mx-2" />
+              ),
+              ai: (chunks) => <Span>{chunks}</Span>,
+            })}
           </Link>
           <Paragraph
             variant="sm"
             className="opacity-40 max-w-xs leading-loose font-bold tracking-widest"
           >
-            Democratizing design precision through AI synthesis. Engineered for
-            the creative elite who demand archival textile quality.
+            {t("mission")}
           </Paragraph>
         </div>
 
@@ -70,7 +76,7 @@ export function BrutalistFooter() {
         <div className="flex flex-col gap-8">
           <div>
             <Span as="h6" variant="sm" className="opacity-20 mb-8">
-              Product
+              {t("columns.product")}
             </Span>
             <List className="space-y-4">
               {FOOTER_LINKS.product.map((link) => (
@@ -80,7 +86,7 @@ export function BrutalistFooter() {
                     id={link.id}
                     className="text-xs uppercase font-bold hover:text-brandPurple transition-colors duration-300 font-space"
                   >
-                    {link.label}
+                    {t(`links.${link.id}`)}
                   </Link>
                 </li>
               ))}
@@ -92,7 +98,7 @@ export function BrutalistFooter() {
         <div className="flex flex-col gap-8">
           <div>
             <Span as="h6" variant="sm" className="opacity-20 mb-8">
-              Protocol
+              {t("columns.protocol")}
             </Span>
             <List className="space-y-4">
               {FOOTER_LINKS.protocol.map((link) => (
@@ -102,7 +108,7 @@ export function BrutalistFooter() {
                     id={link.id}
                     className="text-xs uppercase font-bold hover:text-brandCyan transition-colors duration-300 font-space"
                   >
-                    {link.label}
+                    {t(`links.${link.id}`)}
                   </Link>
                 </li>
               ))}
@@ -114,7 +120,7 @@ export function BrutalistFooter() {
         <div className="flex flex-col gap-8">
           <div>
             <Span as="h6" variant="sm" className="opacity-20 mb-8">
-              Support
+              {t("columns.support")}
             </Span>
             <List className="space-y-4">
               {FOOTER_LINKS.support.map((link) => (
@@ -124,7 +130,7 @@ export function BrutalistFooter() {
                     id={link.id}
                     className="text-xs uppercase font-bold hover:text-brandOrange transition-colors duration-300 font-space"
                   >
-                    {link.label}
+                    {t(`links.${link.id}`)}
                   </Link>
                 </li>
               ))}
@@ -136,7 +142,7 @@ export function BrutalistFooter() {
         <div className="flex flex-col gap-8">
           <div>
             <Span as="h6" variant="sm" className="opacity-20 mb-8">
-              Network
+              {t("columns.network")}
             </Span>
             <List className="space-y-4">
               {FOOTER_LINKS.network.map((link) => (
@@ -146,7 +152,7 @@ export function BrutalistFooter() {
                     id={link.id}
                     className="text-xs uppercase font-bold hover:text-brandPurple transition-colors duration-300 font-space"
                   >
-                    {link.label}
+                    {t(`links.${link.id}`)}
                   </Link>
                 </li>
               ))}
@@ -162,19 +168,19 @@ export function BrutalistFooter() {
       <div className="relative flex justify-center py-20">
         {/* Massive background text */}
         <h2 className="font-anton text-[28vw] leading-none text-white opacity-[0.03] uppercase tracking-tighter pointer-events-none select-none">
-          STAMP
+          {t("bgText")}
         </h2>
 
         {/* Copyright overlay */}
         <div className="absolute bottom-0 w-full flex flex-col md:flex-row justify-between items-center gap-4 opacity-30">
           <Span variant="micro" className="tracking-[0.4em]">
-            STAMP.AI © 2024 / ARCHIVE
+            {t("copyrightLeft")}
           </Span>
           <Span variant="micro" className="hidden md:inline tracking-[0.4em]">
-            Privacy Protocols / Terms of Service
+            {t("copyrightCenter")}
           </Span>
           <Span variant="micro" className="tracking-[0.4em]">
-            EST. NYC TERMINAL
+            {t("copyrightRight")}
           </Span>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useReducer, useEffect } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useUser } from "@/hooks/useAuth";
 import { useUpdateProfile } from "@/queries/authQueries";
 
@@ -52,6 +53,7 @@ function userInformationReducer(
 }
 
 export function useUserInformation() {
+  const t = useTranslations("profile.toasts");
   const { data: user } = useUser();
   const [state, dispatch] = useReducer(userInformationReducer, initialState);
   const updateProfileMutation = useUpdateProfile();
@@ -82,9 +84,9 @@ export function useUserInformation() {
           lastName: state.lastName,
         },
       });
-      toast.success("Profile updated successfully!");
+      toast.success(t("profileUpdated"));
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to update profile";
+      const errorMessage = error instanceof Error ? error.message : t("profileUpdateFailed");
       toast.error(errorMessage);
     }
   };

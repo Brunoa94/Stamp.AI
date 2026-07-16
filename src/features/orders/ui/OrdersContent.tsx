@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { RefreshCw } from "lucide-react";
 import { useUser } from "@/hooks/useAuth";
 import { useOrders } from "@/queries/orderQueries";
@@ -24,6 +25,7 @@ import { OrdersLayout } from "./components/OrdersLayout";
 import { OrdersHeader } from "./components/OrdersHeader";
 
 export default function OrdersContent() {
+  const t = useTranslations("orders.content");
   const router = useRouter();
   const { data: user, isLoading: isUserLoading } = useUser();
   const {
@@ -71,20 +73,20 @@ export default function OrdersContent() {
             variant="card"
             className="text-xl text-(--color-stamp-error)"
           >
-            Archive Unavailable
+            {t("errorTitle")}
           </Heading>
           <Paragraph
             variant="sm"
             className="mt-2 text-sm tracking-normal text-(--color-stamp-error)/80"
           >
-            We couldn&apos;t load your protocol records.
+            {t("errorDescription")}
           </Paragraph>
           <Button
             onClick={() => refetch()}
             variant="secondary-brown"
             className="mt-6"
           >
-            Retry
+            {t("retry")}
             <RefreshCw className="h-3.5 w-3.5" />
           </Button>
         </div>

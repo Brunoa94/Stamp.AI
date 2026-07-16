@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 
 /**
@@ -17,6 +18,8 @@ export function ResultsActions({
   onUseProtocol,
   onReSynthesize,
 }: PropsI) {
+  const t = useTranslations("stamp.results");
+
   return (
     <div className="flex gap-6">
       <Button
@@ -24,13 +27,13 @@ export function ResultsActions({
         disabled={!canProceed}
         className="flex-1 bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase"
       >
-        USE THIS PROTOCOL
+        {t("useProtocol")}
       </Button>
       <Button
         onClick={onReSynthesize}
         className="flex-1 bg-transparent text-(--color-stamp-chocolate) border border-(--color-stamp-divider) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase"
       >
-        RE-SYNTHESIZE
+        {t("reSynthesize")}
       </Button>
     </div>
   );

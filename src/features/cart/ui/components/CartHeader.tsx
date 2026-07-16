@@ -9,12 +9,14 @@
 
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
+import { useTranslations } from "next-intl";
 
 interface CartHeaderPropsI {
   itemCount: number;
 }
 
 export function CartHeader({ itemCount }: CartHeaderPropsI) {
+  const t = useTranslations("cart.header");
   const itemText = itemCount === 1 ? "Item" : "Items";
 
   return (
@@ -26,10 +28,13 @@ export function CartHeader({ itemCount }: CartHeaderPropsI) {
         variant="title"
         className="text-(--color-stamp-chocolate)"
       >
-        Shopping{" "}
-        <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
-          bag
-        </span>
+        {t.rich("title", {
+          accent: (chunks) => (
+            <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
+              {chunks}
+            </span>
+          ),
+        })}
       </Heading>
     </header>
   );

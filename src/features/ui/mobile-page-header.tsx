@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { ArrowLeft } from "lucide-react";
 import { mobilePageHeaderTheme } from "@/theme/components";
 import { Button } from "@/features/ui/button";
@@ -15,6 +16,7 @@ export function MobilePageHeader({
   description,
 }: MobilePageHeaderProps) {
   const router = useRouter();
+  const t = useTranslations("ui.mobilePageHeader");
 
   return (
     <div className={mobilePageHeaderTheme.root}>
@@ -25,7 +27,7 @@ export function MobilePageHeader({
             size="icon"
             onClick={() => router.back()}
             className={mobilePageHeaderTheme.backButton}
-            aria-label="Go back"
+            aria-label={t("goBack")}
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>

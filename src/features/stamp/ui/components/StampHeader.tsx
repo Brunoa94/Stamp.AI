@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import { Login } from "@/features/auth/login/Login";
@@ -24,6 +25,7 @@ interface StampHeaderProps {
 }
 
 export function StampHeader({ onStampItClick }: StampHeaderProps) {
+  const t = useTranslations("stamp.header");
   const router = useRouter();
   const pathname = usePathname();
   const { data: user } = useUser();
@@ -65,9 +67,9 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
           <Link
             href="/"
             className="text-2xl font-bold tracking-tight uppercase text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-colors whitespace-nowrap"
-            aria-label="Return to Stamp homepage"
+            aria-label={t("logoAria")}
           >
-            STAMP IT
+            {t("brand")}
           </Link>
         </div>
 
@@ -77,10 +79,10 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
             variant="ghost"
             onClick={handleStampIt}
             className="px-8 py-3 rounded-lg h-auto btn-gradient-border animate-pulse-subtle transition-all duration-500 hover:scale-105"
-            aria-label="Start stamping process"
+            aria-label={t("stampAria")}
           >
             <Span variant="micro" className="text-(--color-stamp-chocolate)">
-              Stamp
+              {t("stamp")}
             </Span>
           </Button>
         </div>
@@ -88,19 +90,19 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
         {/* Navigation Links (lg+) */}
         <nav
           className="flex-1 hidden lg:flex justify-end gap-8 lg:gap-10 items-center"
-          aria-label="Main navigation"
+          aria-label={t("mainNavAria")}
         >
           {user && (
             <>
               <Link href="/dashboard" className={linkClass}>
-                Dashboard
+                {t("dashboard")}
               </Link>
               <Link href="/orders" className={linkClass}>
-                Orders
+                {t("orders")}
               </Link>
               <Link href="/cart" className={`${linkClass} flex items-center gap-2`}>
                 <ShoppingCart className="w-3.5 h-3.5" />
-                Cart
+                {t("cart")}
               </Link>
             </>
           )}
@@ -111,12 +113,12 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
               onClick={handleLogout}
               disabled={logoutMutation.isPending}
               className="text-[10px] font-semibold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) hover:bg-transparent transition-colors h-auto p-0 rounded-none"
-              aria-label="Logout"
+              aria-label={t("logoutAria")}
             >
-              {logoutMutation.isPending ? "Logging Out" : "Logout"}
+              {logoutMutation.isPending ? t("loggingOut") : t("logout")}
             </Button>
           ) : (
-            <Login className={linkClass}>Login</Login>
+            <Login className={linkClass}>{t("login")}</Login>
           )}
         </nav>
 
@@ -124,7 +126,7 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
         <button
           onClick={() => setMobileMenuOpen((v) => !v)}
           className="lg:hidden flex-none p-2 -mr-2 text-(--color-stamp-chocolate)"
-          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-label={mobileMenuOpen ? t("closeMenu") : t("openMenu")}
           aria-expanded={mobileMenuOpen}
         >
           {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -139,16 +141,16 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
       >
         <nav
           className="flex flex-col gap-1 p-6"
-          aria-label="Mobile navigation"
+          aria-label={t("mobileNavAria")}
         >
           <Button
             variant="ghost"
             onClick={handleStampIt}
             className="justify-start px-4 py-3 rounded-lg h-auto btn-gradient-border w-full mb-2"
-            aria-label="Start stamping process"
+            aria-label={t("stampAria")}
           >
             <Span variant="micro" className="text-(--color-stamp-chocolate)">
-              Stamp
+              {t("stamp")}
             </Span>
           </Button>
 
@@ -159,14 +161,14 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
                 onClick={() => setMobileMenuOpen(false)}
                 className={`${linkClass} py-3`}
               >
-                Dashboard
+                {t("dashboard")}
               </Link>
               <Link
                 href="/orders"
                 onClick={() => setMobileMenuOpen(false)}
                 className={`${linkClass} py-3`}
               >
-                Orders
+                {t("orders")}
               </Link>
               <Link
                 href="/cart"
@@ -174,7 +176,7 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
                 className={`${linkClass} py-3 flex items-center gap-2`}
               >
                 <ShoppingCart className="w-3.5 h-3.5" />
-                Cart
+                {t("cart")}
               </Link>
             </>
           )}
@@ -185,12 +187,12 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
               onClick={handleLogout}
               disabled={logoutMutation.isPending}
               className="justify-start text-[10px] font-semibold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) hover:bg-transparent transition-colors h-auto p-0 py-3 rounded-none"
-              aria-label="Logout"
+              aria-label={t("logoutAria")}
             >
-              {logoutMutation.isPending ? "Logging Out" : "Logout"}
+              {logoutMutation.isPending ? t("loggingOut") : t("logout")}
             </Button>
           ) : (
-            <Login className={`${linkClass} py-3 text-left`}>Login</Login>
+            <Login className={`${linkClass} py-3 text-left`}>{t("login")}</Login>
           )}
         </nav>
       </div>

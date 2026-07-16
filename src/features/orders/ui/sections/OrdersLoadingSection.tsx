@@ -1,8 +1,12 @@
+import { useTranslations } from "next-intl";
+
 export function OrdersLoadingSection() {
+  const t = useTranslations("orders.loading");
+
   return (
     <section
       className="space-y-4"
-      aria-label="Loading orders"
+      aria-label={t("ariaLabel")}
       aria-busy="true"
       role="status"
     >

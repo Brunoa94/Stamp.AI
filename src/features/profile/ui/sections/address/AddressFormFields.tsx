@@ -1,12 +1,16 @@
 import type { UseFormReturn } from "react-hook-form";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import { FormField } from "@/features/ui/form-field";
+import { useTranslations } from "next-intl";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 
 interface AddressFormFieldsProps {
   form: UseFormReturn<ShippingAddressT>;
 }
 
 export function AddressFormFields({ form }: AddressFormFieldsProps) {
+  const t = useTranslations("profile.addressForm");
+  const ve = useValidationMessage();
   const {
     register,
     formState: { errors },
@@ -18,20 +22,20 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <FormField
           id="first_name"
-          label="First Name"
+          label={t("firstName")}
           type="text"
           required
           register={register("first_name")}
-          error={errors.first_name?.message}
+          error={ve(errors.first_name?.message)}
           variant="profile"
         />
         <FormField
           id="last_name"
-          label="Last Name"
+          label={t("lastName")}
           type="text"
           required
           register={register("last_name")}
-          error={errors.last_name?.message}
+          error={ve(errors.last_name?.message)}
           variant="profile"
         />
       </div>
@@ -40,20 +44,20 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <FormField
           id="email"
-          label="Email"
+          label={t("email")}
           type="email"
           required
           register={register("email")}
-          error={errors.email?.message}
+          error={ve(errors.email?.message)}
           variant="profile"
         />
         <FormField
           id="phone"
-          label="Phone"
+          label={t("phone")}
           type="tel"
           required
           register={register("phone")}
-          error={errors.phone?.message}
+          error={ve(errors.phone?.message)}
           variant="profile"
         />
       </div>
@@ -61,23 +65,23 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
       {/* Address Line 1 */}
       <FormField
         id="address1"
-        label="Address Line 1"
+        label={t("address1")}
         type="text"
-        placeholder="Street address"
+        placeholder={t("address1Placeholder")}
         required
         register={register("address1")}
-        error={errors.address1?.message}
+        error={ve(errors.address1?.message)}
         variant="profile"
       />
 
       {/* Address Line 2 */}
       <FormField
         id="address2"
-        label="Address Line 2 (Optional)"
+        label={t("address2")}
         type="text"
-        placeholder="Apartment, suite, unit, etc."
+        placeholder={t("address2Placeholder")}
         register={register("address2")}
-        error={errors.address2?.message}
+        error={ve(errors.address2?.message)}
         variant="profile"
       />
 
@@ -85,29 +89,29 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <FormField
           id="city"
-          label="City"
+          label={t("city")}
           type="text"
           required
           register={register("city")}
-          error={errors.city?.message}
+          error={ve(errors.city?.message)}
           variant="profile"
         />
         <FormField
           id="region"
-          label="State/Region"
+          label={t("region")}
           type="text"
           required
           register={register("region")}
-          error={errors.region?.message}
+          error={ve(errors.region?.message)}
           variant="profile"
         />
         <FormField
           id="zip"
-          label="ZIP/Postal Code"
+          label={t("zip")}
           type="text"
           required
           register={register("zip")}
-          error={errors.zip?.message}
+          error={ve(errors.zip?.message)}
           variant="profile"
         />
       </div>
@@ -115,11 +119,11 @@ export function AddressFormFields({ form }: AddressFormFieldsProps) {
       {/* Country */}
       <FormField
         id="country"
-        label="Country"
+        label={t("country")}
         type="text"
         required
         register={register("country")}
-        error={errors.country?.message}
+        error={ve(errors.country?.message)}
         variant="profile"
       />
     </div>

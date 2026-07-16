@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/features/ui/button";
+import { useTranslations } from "next-intl";
 import { usePasswordResetForm } from "./usePasswordResetForm";
 
 interface PasswordResetFormProps {
@@ -16,6 +17,7 @@ export function PasswordResetForm({ isVisible, onClose }: PasswordResetFormProps
     handleClose,
     isLoading,
   } = usePasswordResetForm({ onClose });
+  const t = useTranslations("auth.passwordReset.form");
 
   return (
     <div
@@ -25,12 +27,12 @@ export function PasswordResetForm({ isVisible, onClose }: PasswordResetFormProps
     >
       <div className="pt-4 space-y-3 border-t border-(--color-stamp-divider)">
         <p className="text-lg font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
-          Enter your email to reset your password
+          {t("prompt")}
         </p>
         <div className="space-y-3">
           <input
             type="email"
-            placeholder="Enter your email"
+            placeholder={t("emailPlaceholder")}
             value={resetEmail}
             onChange={(e) => setResetEmail(e.target.value)}
             className="w-full px-4 py-3 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) text-xl uppercase tracking-[0.05em] text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus:outline-none focus:border-(--color-stamp-gold) focus:ring-2 focus:ring-(--color-stamp-gold)/20"
@@ -49,7 +51,7 @@ export function PasswordResetForm({ isVisible, onClose }: PasswordResetFormProps
               className="flex-1 py-3"
               onClick={handlePasswordReset}
             >
-              {isLoading ? "Sending..." : "Send Reset Link"}
+              {isLoading ? t("sending") : t("sendResetLink")}
             </Button>
             <Button
               type="button"
@@ -57,7 +59,7 @@ export function PasswordResetForm({ isVisible, onClose }: PasswordResetFormProps
               className="py-3 px-6"
               onClick={handleClose}
             >
-              Cancel
+              {t("cancel")}
             </Button>
           </div>
         </div>

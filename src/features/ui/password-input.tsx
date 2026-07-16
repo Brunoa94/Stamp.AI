@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Input } from "@/features/ui/input";
 import { Label } from "@/features/ui/label";
 import { Eye, EyeOff } from "lucide-react";
@@ -20,12 +21,13 @@ export function PasswordInput({
   label,
   value,
   onChange,
-  placeholder = "Enter password",
+  placeholder,
   required = false,
   disabled = false,
   hint,
   autoComplete = "current-password",
 }: PasswordInputProps) {
+  const t = useTranslations("ui.passwordInput");
   const [showPassword, setShowPassword] = useState(false);
   const hintId = hint ? `${id}_hint` : undefined;
 
@@ -34,7 +36,7 @@ export function PasswordInput({
       <Label htmlFor={id}>
         {label}
         {required && (
-          <span className="text-red-500 ml-1" aria-label="required">
+          <span className="text-red-500 ml-1" aria-label={t("required")}>
             *
           </span>
         )}
@@ -45,7 +47,7 @@ export function PasswordInput({
           type={showPassword ? "text" : "password"}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
+          placeholder={placeholder ?? t("placeholder")}
           required={required}
           disabled={disabled}
           aria-describedby={hintId}
@@ -58,8 +60,8 @@ export function PasswordInput({
           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 rounded"
           aria-label={
             showPassword
-              ? `Hide ${label.toLowerCase()}`
-              : `Show ${label.toLowerCase()}`
+              ? t("hide", { label: label.toLowerCase() })
+              : t("show", { label: label.toLowerCase() })
           }
           disabled={disabled}
           tabIndex={0}

@@ -8,6 +8,7 @@
 
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { CheckoutSectionCard } from "../../components/CheckoutSectionCard";
 import { CheckoutPaymentMethods } from "./CheckoutPaymentMethods";
@@ -26,6 +27,7 @@ export function CheckoutPaymentSection({
   selectedTestMethod,
   onTestMethodChange,
 }: CheckoutPaymentSectionPropsI) {
+  const t = useTranslations("checkout.payment");
   const { watch, setValue } = useFormContext<CheckoutFormData>();
   const selectedMethod = watch("paymentMethod");
 
@@ -35,8 +37,8 @@ export function CheckoutPaymentSection({
 
   return (
     <CheckoutSectionCard
-      title="Payment Method"
-      subtitle="Select your preferred payment method"
+      title={t("title")}
+      subtitle={t("subtitle")}
     >
       <CheckoutPaymentMethods
         selectedMethod={selectedMethod}
@@ -56,7 +58,7 @@ export function CheckoutPaymentSection({
           role="status"
           className="mt-6 border border-(--color-stamp-info)/20 bg-(--color-stamp-info)/5 px-4 py-3 text-[11px] font-bold uppercase tracking-[0.15em] text-(--color-stamp-info)"
         >
-          You will be redirected to PayPal to complete your payment securely.
+          {t("paypalNotice")}
         </p>
       )}
     </CheckoutSectionCard>

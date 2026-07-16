@@ -1,4 +1,5 @@
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import type { OrdersFilterPillType } from "../../../lib/types/filters";
@@ -8,6 +9,8 @@ interface PropsI {
 }
 
 export function OrdersFilterPills({ pills }: PropsI) {
+  const t = useTranslations("orders.filterPills");
+
   if (pills.length === 0) return null;
 
   return (
@@ -23,7 +26,7 @@ export function OrdersFilterPills({ pills }: PropsI) {
             onClick={pill.onClear}
             variant="ghost"
             size="icon-sm"
-            aria-label={`Clear ${pill.label} filter`}
+            aria-label={t("clearFilter", { label: pill.label })}
             className="h-4 w-4 p-0 hover:bg-transparent hover:text-(--color-stamp-gold)"
           >
             <X className="h-3.5 w-3.5" />

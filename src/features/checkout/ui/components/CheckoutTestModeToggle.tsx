@@ -8,6 +8,7 @@
 
 "use client";
 
+import { useTranslations } from "next-intl";
 import { FlaskConical } from "lucide-react";
 import { Checkbox } from "@/features/ui/checkbox";
 import { Label } from "@/features/ui/label";
@@ -21,6 +22,7 @@ export function CheckoutTestModeToggle({
   testMode,
   onTestModeChange,
 }: CheckoutTestModePropsI) {
+  const t = useTranslations("checkout.testMode");
   return (
     <div className="flex items-center gap-3 border border-dashed border-(--color-stamp-warning)/40 bg-(--color-stamp-warning)/5 px-6 py-4">
       <FlaskConical
@@ -37,7 +39,7 @@ export function CheckoutTestModeToggle({
         htmlFor="testMode"
         className="cursor-pointer text-base font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate)"
       >
-        Test Mode · use predefined payment methods
+        {t("label")}
       </Label>
     </div>
   );

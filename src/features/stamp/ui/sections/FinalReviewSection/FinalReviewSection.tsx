@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useStampCartActions } from "../../../lib/hooks/useStampCartActions";
 import {
   useStampFinalization,
@@ -17,6 +18,7 @@ import { ReviewDetails } from "./ReviewDetails";
  */
 
 export function FinalReviewSection() {
+  const t = useTranslations("stamp.finalReview");
   const { handleBagIt, handleBuyNow, isAddingToCart } = useStampCartActions();
   const { mockupImageUrl } = useStampFinalization();
   const { selectedProductTitle } = useStampProductSelection();
@@ -26,7 +28,7 @@ export function FinalReviewSection() {
     mockupImageUrl ||
     "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=2000&auto=format&fit=crop";
 
-  const productName = selectedProductTitle || "Custom Product";
+  const productName = selectedProductTitle || t("defaultProductName");
 
   // Format price from cents to dollars
   const formattedPrice = selectedPriceCents

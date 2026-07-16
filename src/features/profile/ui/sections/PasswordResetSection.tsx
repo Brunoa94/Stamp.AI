@@ -5,26 +5,22 @@ import { Input } from "@/features/ui/input";
 import { Label } from "@/features/ui/label";
 import { Lock, Save, X } from "lucide-react";
 import { usePasswordReset } from "@/features/profile/lib/hooks/usePasswordReset";
+import { useTranslations } from "next-intl";
 
 // Static field configuration outside component for performance
 const passwordFields = [
   {
     id: "new_password",
-    label: "New Password",
-    placeholder: "Enter new password",
-    hint: "Password must be at least 6 characters",
     key: "newPassword" as const,
   },
   {
     id: "confirm_password",
-    label: "Confirm New Password",
-    placeholder: "Confirm new password",
-    hint: "Re-enter your new password",
     key: "confirmPassword" as const,
   },
 ] as const;
 
 export function PasswordResetSection() {
+  const t = useTranslations("profile.passwordReset");
   const {
     isEditing,
     newPassword,
@@ -58,9 +54,9 @@ export function PasswordResetSection() {
           </div>
           <div>
             <h2 className="text-xl font-anton uppercase tracking-tight text-ink leading-tight mb-1">
-              PASSWORD & SECURITY
+              {t("title")}
             </h2>
-            <p className="text-slate-500 text-sm">Update your password to keep your account secure</p>
+            <p className="text-slate-500 text-sm">{t("subtitle")}</p>
           </div>
         </div>
         {!isEditing && (
@@ -69,7 +65,7 @@ export function PasswordResetSection() {
             variant="brutalist-ghost"
             className="text-[10px]"
           >
-            CHANGE PASSWORD
+            {t("changePassword")}
           </Button>
         )}
       </div>
@@ -77,7 +73,7 @@ export function PasswordResetSection() {
       {/* Content */}
       {!isEditing ? (
         <p className="text-sm text-slate-500 italic">
-          Your password is hidden for security. Click "Change Password" to update it.
+          {t("hiddenNote")}
         </p>
       ) : (
         <form
@@ -87,24 +83,24 @@ export function PasswordResetSection() {
             handleSave();
           }}
         >
-          {passwordFields.map(({ id, label, placeholder, hint, key }) => (
+          {passwordFields.map(({ id, key }) => (
             <div key={id} className="space-y-2">
               <Label
                 htmlFor={id}
                 className="text-[10px] font-bold uppercase tracking-widest text-slate-400"
               >
-                {label}
+                {t(`${key}Label`)}
               </Label>
               <Input
                 type="password"
                 id={id}
                 value={fieldValues[key]}
                 onChange={(e) => fieldSetters[key](e.target.value)}
-                placeholder={placeholder}
+                placeholder={t(`${key}Placeholder`)}
                 className="w-full bg-white border border-ink/10 p-4 font-space placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all"
                 autoComplete="new-password"
               />
-              <p className="text-[11px] text-slate-400 font-medium italic">{hint}</p>
+              <p className="text-[11px] text-slate-400 font-medium italic">{t(`${key}Hint`)}</p>
             </div>
           ))}
 
@@ -116,7 +112,7 @@ export function PasswordResetSection() {
               className="w-full sm:w-auto group"
             >
               <Save className="w-4 h-4 mr-2" />
-              {isLoading ? "UPDATING..." : "UPDATE PASSWORD"}
+              {isLoading ? t("updating") : t("updatePassword")}
             </Button>
             <Button
               type="button"
@@ -126,7 +122,7 @@ export function PasswordResetSection() {
               className="w-full sm:w-auto"
             >
               <X className="w-4 h-4 mr-2" />
-              CANCEL
+              {t("cancel")}
             </Button>
           </div>
         </form>

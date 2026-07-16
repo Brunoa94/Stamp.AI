@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ShoppingBag, LogIn, LogOut } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { AnimatedLogoDot } from "./AnimatedLogoDot";
 import { Span } from "@/features/ui/span";
@@ -19,28 +20,20 @@ import { useIsAuthenticated, useLogout } from "@/queries/authQueries";
  */
 
 const NAV_LINKS = [
-  { id: "nav-home-link", href: "#", label: "Home" },
-  { id: "nav-products-link", href: "#pricing", label: "Products" },
-  { id: "nav-gallery-link", href: "#", label: "Gallery" },
-  { id: "nav-about-link", href: "#about", label: "About" },
+  { id: "nav-home-link", href: "#" },
+  { id: "nav-products-link", href: "#pricing" },
+  { id: "nav-gallery-link", href: "#" },
+  { id: "nav-about-link", href: "#about" },
 ];
 
 const CART_ITEMS = [
-  {
-    name: "Essential Box Tee",
-    details: "Size M / Qty 1 / $48.00",
-  },
-  {
-    name: "Archival Black Tee",
-    details: "Size L / Qty 2 / $104.00",
-  },
-  {
-    name: "Concrete Hoodie",
-    details: "Size M / Qty 1 / $85.00",
-  },
+  { id: "essential-box-tee" },
+  { id: "archival-black-tee" },
+  { id: "concrete-hoodie" },
 ];
 
 export function BrutalistNavbar() {
+  const t = useTranslations("layout.brutalistNavbar");
   const { isAuthenticated } = useIsAuthenticated();
   const logout = useLogout();
 
@@ -53,11 +46,15 @@ export function BrutalistNavbar() {
           id="header-logo-redesign"
           className="flex items-center font-anton text-xl md:text-2xl leading-none tracking-tighter uppercase hover:opacity-80 transition-opacity gap-1"
         >
-          <Span className="text-3xl" unstyled>
-            STAMP
-          </Span>
-          <AnimatedLogoDot size="md" className="mx-2" />
-          <Span unstyled>AI</Span>
+          {t.rich("brand", {
+            stamp: (chunks) => (
+              <Span className="text-3xl" unstyled>
+                {chunks}
+              </Span>
+            ),
+            dot: () => <AnimatedLogoDot size="md" className="mx-2" />,
+            ai: (chunks) => <Span unstyled>{chunks}</Span>,
+          })}
         </Link>
       </div>
 
@@ -65,7 +62,7 @@ export function BrutalistNavbar() {
       <div className="flex-1 flex justify-center items-center">
         <Button asChild variant="brutalist-primary">
           <Link href="/stamp" id="header-center-cta">
-            STAMP IT
+            {t("centerCta")}
           </Link>
         </Button>
       </div>
@@ -82,7 +79,7 @@ export function BrutalistNavbar() {
                   id={link.id}
                   className="nav-link uppercase text-[10px] font-bold tracking-widest font-space hover:text-brandPurple transition-colors"
                 >
-                  {link.label}
+                  {t(`navLinks.${link.id}`)}
                 </Link>
               </li>
             ))}
@@ -95,7 +92,7 @@ export function BrutalistNavbar() {
             <Button variant="brutalist-ghost">
               <ShoppingBag className="w-4 h-4 text-ink" />
               <Span variant="default" className="tracking-widest">
-                Cart ({CART_ITEMS.length})
+                {t("cartLabel", { count: CART_ITEMS.length })}
               </Span>
             </Button>
 
@@ -108,13 +105,13 @@ export function BrutalistNavbar() {
                     className="flex flex-col gap-1 hover:bg-concrete/30 p-2 -m-2 rounded transition-colors"
                   >
                     <Span className="font-anton text-sm uppercase tracking-tight text-ink">
-                      {item.name}
+                      {t(`cartItems.${item.id}.name`)}
                     </Span>
                     <Span
                       variant="micro"
                       className="opacity-60 tracking-widest text-ink"
                     >
-                      {item.details}
+                      {t(`cartItems.${item.id}.details`)}
                     </Span>
                   </div>
                 ))}
@@ -126,16 +123,16 @@ export function BrutalistNavbar() {
                     variant="default"
                     className="opacity-40 tracking-widest"
                   >
-                    Subtotal
+                    {t("subtotal")}
                   </Span>
                   <Span className="text-[10px] font-anton text-ink tracking-normal">
-                    $237.00 TOTAL
+                    {t("total")}
                   </Span>
                 </div>
                 <Button asChild variant="brutalist-danger">
                   <Link href="/cart" id="header-cart-preview-link">
                     <ShoppingBag className="w-3 h-3" />
-                    View Full Cart
+                    {t("viewFullCart")}
                   </Link>
                 </Button>
               </div>
@@ -153,7 +150,7 @@ export function BrutalistNavbar() {
                 className="h-auto rounded-none border border-ink/20 px-3 md:px-4 py-1.5 font-bold text-[9px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-space"
               >
                 <Link href="/account" id="nav-account-btn-header">
-                  ACCOUNT
+                  {t("account")}
                 </Link>
               </Button>
               <Button
@@ -162,7 +159,7 @@ export function BrutalistNavbar() {
                 className="h-auto rounded-none border border-ink/20 px-3 md:px-4 py-1.5 font-bold text-[9px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-space"
               >
                 <LogOut className="mr-2 h-3 w-3" />
-                <span className="uppercase">Logout</span>
+                <span className="uppercase">{t("logout")}</span>
               </Button>
             </div>
           )}

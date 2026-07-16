@@ -8,6 +8,7 @@
 
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PAYMENT_METHODS } from "@/constants/payment";
@@ -24,10 +25,11 @@ export function CheckoutPaymentMethods({
   onMethodChange,
   disabled = false,
 }: CheckoutPaymentMethodsPropsI) {
+  const t = useTranslations("checkout.payment");
   return (
     <div
       role="radiogroup"
-      aria-label="Select payment method"
+      aria-label={t("selectMethodAria")}
       className="flex flex-col gap-4 sm:flex-row"
       data-disabled={disabled || undefined}
     >

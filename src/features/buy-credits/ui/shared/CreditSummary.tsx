@@ -1,6 +1,7 @@
 "use client";
 
 import { Coins } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { buyCreditsTheme } from "@/theme/components";
 
 interface CreditSummaryProps {
@@ -10,6 +11,7 @@ interface CreditSummaryProps {
 
 export function CreditSummary({ credits, price }: CreditSummaryProps) {
   const theme = buyCreditsTheme.summary;
+  const t = useTranslations("buyCredits.summary");
 
   return (
     <div className={theme.container}>
@@ -17,7 +19,7 @@ export function CreditSummary({ credits, price }: CreditSummaryProps) {
         <div className={theme.creditsWrap}>
           <Coins className={theme.creditsIcon} />
           <span className={theme.creditsLabel}>
-            {credits.toLocaleString()} Credits
+            {t("credits", { credits: credits.toLocaleString() })}
           </span>
         </div>
         <span className={theme.priceValue}>${price.toFixed(2)}</span>

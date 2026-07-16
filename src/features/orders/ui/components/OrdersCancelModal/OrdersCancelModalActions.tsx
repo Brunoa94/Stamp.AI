@@ -1,4 +1,5 @@
 import { forwardRef } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 
 interface PropsI {
@@ -9,6 +10,8 @@ interface PropsI {
 
 export const OrdersCancelModalActions = forwardRef<HTMLButtonElement, PropsI>(
   function OrdersCancelModalActions({ isCancelling, onConfirm, onClose }, ref) {
+    const t = useTranslations("orders.cancelModal");
+
     return (
       <div className="flex flex-col gap-3">
         <Button
@@ -17,7 +20,7 @@ export const OrdersCancelModalActions = forwardRef<HTMLButtonElement, PropsI>(
           variant="destructive"
           className="py-4 text-[10px] tracking-[0.2em]"
         >
-          {isCancelling ? "Halting..." : "Halt Synthesis"}
+          {isCancelling ? t("halting") : t("haltSynthesis")}
         </Button>
         <Button
           ref={ref}
@@ -26,7 +29,7 @@ export const OrdersCancelModalActions = forwardRef<HTMLButtonElement, PropsI>(
           variant="outline"
           className="border-(--color-stamp-divider) bg-transparent py-4 text-[10px] tracking-[0.2em] text-(--color-stamp-chocolate) hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white)"
         >
-          Keep Active
+          {t("keepActive")}
         </Button>
       </div>
     );

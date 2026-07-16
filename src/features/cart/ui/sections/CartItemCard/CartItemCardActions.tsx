@@ -7,6 +7,7 @@
 "use client";
 
 import { Minus, Plus, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import type { CartItem } from "@/types/cart";
@@ -23,8 +24,9 @@ export function CartItemCardActions({
   onUpdateQuantity,
   onRemove,
 }: CartItemCardActionsPropsI) {
+  const t = useTranslations("cart.itemCard");
   const productName =
-    item.product_name || item.product?.name || "Custom Product";
+    item.product_name || item.product?.name || t("customProduct");
   const quantity = item.quantity ?? 1;
 
   const handleIncrement = () => {
@@ -44,14 +46,14 @@ export function CartItemCardActions({
       <div
         className="flex items-center border border-(--color-stamp-divider)"
         role="group"
-        aria-label={`Quantity for ${productName}`}
+        aria-label={t("quantityGroupLabel", { productName })}
       >
         <Button
           onClick={handleDecrement}
           disabled={quantity <= MIN_QUANTITY}
           variant="ghost"
           size="icon"
-          aria-label="Decrease quantity"
+          aria-label={t("decreaseQuantity")}
           className="h-8 w-8 rounded-none font-heading text-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) disabled:opacity-30 md:h-10 md:w-10"
         >
           <Minus className="h-3 w-3 md:h-4 md:w-4" />
@@ -68,7 +70,7 @@ export function CartItemCardActions({
           disabled={quantity >= MAX_QUANTITY}
           variant="ghost"
           size="icon"
-          aria-label="Increase quantity"
+          aria-label={t("increaseQuantity")}
           className="h-8 w-8 rounded-none font-heading text-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) disabled:opacity-30 md:h-10 md:w-10"
         >
           <Plus className="h-3 w-3 md:h-4 md:w-4" />
@@ -86,7 +88,7 @@ export function CartItemCardActions({
           unstyled
           className="text-[10px] font-heading font-bold uppercase tracking-[0.2em]"
         >
-          Remove
+          {t("remove")}
         </Span>
       </Button>
     </div>

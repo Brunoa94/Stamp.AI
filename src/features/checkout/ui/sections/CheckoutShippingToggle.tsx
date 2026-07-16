@@ -7,12 +7,14 @@
 
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { Checkbox } from "@/features/ui/checkbox";
 import { Label } from "@/features/ui/label";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 
 export function CheckoutShippingToggle() {
+  const t = useTranslations("checkout.shipping");
   const { watch, setValue } = useFormContext<CheckoutFormData>();
   const useShippingAddress = watch("useShippingAddress");
 
@@ -30,7 +32,7 @@ export function CheckoutShippingToggle() {
         htmlFor="useShippingAddress"
         className="cursor-pointer text-[11px] font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate)"
       >
-        Ship to a different address
+        {t("toggleLabel")}
       </Label>
     </div>
   );

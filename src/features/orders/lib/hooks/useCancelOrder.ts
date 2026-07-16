@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { OrderWithItemsT } from "@/types/order";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { canCancelOrder } from "../utils/orderCancellation";
 
@@ -13,34 +14,35 @@ type CancelResults = {
     refund_error?: string;
 };
 
-function buildCancellationDescription(results?: CancelResults): string {
-    const defaultMessage = "Your order has been cancelled.";
-
-    if (!results) {
-        return defaultMessage;
-    }
-
-    const details: string[] = [];
-
-    if (results.cancelled_at_printify) {
-        details.push("Order cancelled at Printify");
-    }
-    if (results.refund_processed) {
-        details.push("Refund processed successfully");
-    } else if (results.refund_error) {
-        details.push("Note: Refund could not be processed automatically");
-    }
-
-    return details.length > 0 ? `${details.join(". ")}.` : defaultMessage;
-}
-
 export function useCancelOrder() {
+    const t = useTranslations("orders.cancel");
     const [cancelModalOpen, setCancelModalOpen] = useState(false);
     const [orderToCancel, setOrderToCancel] = useState<OrderWithItemsT | null>(
         null,
     );
     const queryClient = useQueryClient();
     const { handleError } = useErrorHandler();
+
+    const buildCancellationDescription = (results?: CancelResults): string => {
+        const defaultMessage = t("defaultDescription");
+
+        if (!results) {
+            return defaultMessage;
+        }
+
+        const details: string[] = [];
+
+        if (results.cancelled_at_printify) {
+            details.push(t("cancelledAtPrintify"));
+        }
+        if (results.refund_processed) {
+            details.push(t("refundProcessed"));
+        } else if (results.refund_error) {
+            details.push(t("refundError"));
+        }
+
+        return details.length > 0 ? `${details.join(". ")}.` : defaultMessage;
+    };
 
     const { mutate: executeCancelOrder, isPending: isCancelling } = useMutation(
         {
@@ -51,7 +53,7 @@ export function useCancelOrder() {
                     queryKey: ["orders", orderId],
                 });
 
-                toast.success("Order cancelled", {
+                toast.success(t("toastTitle"), {
                     description: buildCancellationDescription(data.results),
                 });
 
@@ -59,7 +61,7 @@ export function useCancelOrder() {
             },
             onError: (error: Error) => {
                 handleError(
-                    new Error(`Failed to cancel order: ${error.message}`),
+                    new Error(t("failedToCancel", { message: error.message })),
                 );
             },
         },
@@ -67,11 +69,7 @@ export function useCancelOrder() {
 
     const handleCancelOrder = (order: OrderWithItemsT) => {
         if (!canCancelOrder(order)) {
-            handleError(
-                new Error(
-                    "Order can no longer be cancelled. Orders can only be cancelled before entering In Production.",
-                ),
-            );
+            handleError(new Error(t("cannotCancel")));
             return;
         }
 
@@ -87,11 +85,7 @@ export function useCancelOrder() {
     const handleConfirmCancel = () => {
         if (!orderToCancel) return;
         if (!canCancelOrder(orderToCancel)) {
-            handleError(
-                new Error(
-                    "Order can no longer be cancelled. Orders can only be cancelled before entering In Production.",
-                ),
-            );
+            handleError(new Error(t("cannotCancel")));
             handleCloseCancelModal();
             return;
         }

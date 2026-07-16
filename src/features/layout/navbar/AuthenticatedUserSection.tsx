@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/features/ui/button";
+import { useTranslations } from "next-intl";
 import { useLogout } from "@/hooks/useAuth";
 import { LogOut, ShoppingCart } from "lucide-react";
 import clsx from "clsx";
@@ -9,6 +10,7 @@ import { useCartSummary } from "@/queries/cartQueries";
 import { useViewTransitionNavigate } from "@/features/ui/view-transition-link";
 
 export function AuthenticatedUserSection() {
+  const t = useTranslations("layout.userSection");
   const logoutMutation = useLogout();
   const navigate = useViewTransitionNavigate();
   const { itemCount } = useCartSummary();
@@ -23,7 +25,7 @@ export function AuthenticatedUserSection() {
         variant="ghost"
         size="icon"
         className={navbarTheme.actions.cartButton}
-        aria-label="View cart"
+        aria-label={t("viewCart")}
       >
         <ShoppingCart className={navbarTheme.actions.cartIcon} />
         {itemCount > 0 && (
@@ -43,11 +45,11 @@ export function AuthenticatedUserSection() {
           navbarTheme.actions.signOutButton,
           logoutMutation.isPending && "opacity-50 cursor-not-allowed",
         )}
-        aria-label="Sign out"
+        aria-label={t("signOutAria")}
       >
         <LogOut className="w-3.5 h-3.5 md:w-4 md:h-4" />
         <span className="hidden lg:inline">
-          {logoutMutation.isPending ? "Signing out..." : "Sign Out"}
+          {logoutMutation.isPending ? t("signingOut") : t("signOut")}
         </span>
       </Button>
     </div>

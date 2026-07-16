@@ -5,6 +5,8 @@
  * treatment used across the orders/cart luxury pages.
  */
 
+import { useTranslations } from "next-intl";
+
 function ShimmerBlock({ className }: { className?: string }) {
   return (
     <div
@@ -14,12 +16,13 @@ function ShimmerBlock({ className }: { className?: string }) {
 }
 
 export function CheckoutLoadingSection() {
+  const t = useTranslations("checkout.loading");
   return (
     <div className="min-h-screen bg-(--color-stamp-off-white) px-6 pb-24 pt-12 lg:px-12 xl:px-24">
       <div
         role="status"
         aria-busy="true"
-        aria-label="Loading checkout"
+        aria-label={t("loadingAria")}
         className="mx-auto max-w-6xl space-y-12"
       >
         <div className="space-y-4">

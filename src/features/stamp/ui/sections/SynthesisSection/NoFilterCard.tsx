@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
 
@@ -15,13 +16,14 @@ interface PropsI {
 }
 
 export function NoFilterCard({ isSelected, onSelect }: PropsI) {
+  const t = useTranslations("stamp.synthesis.noFilter");
   return (
     <Button
       variant="ghost"
       onClick={() => onSelect?.(NO_FILTER_ID)}
-      aria-label="No filter — Use original image without style changes"
+      aria-label={t("aria")}
       aria-pressed={isSelected}
-      title="Use original image without style changes"
+      title={t("hint")}
       className={`group relative aspect-2/3 w-full min-h-48 overflow-hidden rounded-xl p-0 ring-1 focus:outline-none transition-all duration-300 bg-linear-to-br from-stone-100 to-stone-200 flex items-center justify-center ${
         isSelected
           ? "ring-2 ring-(--color-stamp-gold)"
@@ -32,7 +34,7 @@ export function NoFilterCard({ isSelected, onSelect }: PropsI) {
         variant="sm"
         className="absolute bottom-2 left-2.5 right-2 text-left font-medium text-(--color-stamp-taupe) drop-shadow-sm"
       >
-        No filter
+        {t("label")}
       </Span>
     </Button>
   );
