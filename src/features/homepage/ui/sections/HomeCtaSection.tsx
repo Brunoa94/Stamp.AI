@@ -57,11 +57,6 @@ export function HomeCtaSection() {
               <Link href="/products">Browse Catalog</Link>
             </Button>
           </div>
-
-          <HomeTrustIndicators
-            items={HOME_CTA_TRUST}
-            className="mt-20 justify-center"
-          />
         </div>
       </SectionReveal>
     </section>

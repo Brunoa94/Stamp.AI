@@ -98,12 +98,6 @@ export function HomeHeroSection() {
                   sizes="(max-width: 1024px) 0px, 40vw"
                   className="object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
                 />
-                <Span
-                  variant="micro"
-                  className="absolute bottom-6 left-6 bg-(--color-stamp-off-white)/90 px-4 py-2 text-(--color-stamp-chocolate) backdrop-blur-sm"
-                >
-                  Essential_Wht / 320GSM
-                </Span>
               </div>
             </div>
           </div>

@@ -22,9 +22,6 @@ export function NavigationSidebar() {
     <aside className="hidden lg:flex flex-col py-32 px-10 w-68 h-full fixed right-0 top-24 bg-(--color-stamp-off-white) border-l border-(--color-stamp-divider) z-40">
       {/* Header */}
       <div className="mb-16">
-        <Span variant="micro" className="text-(--color-stamp-taupe) mb-2">
-          Protocol Tracker
-        </Span>
         <Heading
           as="h4"
           variant="question"

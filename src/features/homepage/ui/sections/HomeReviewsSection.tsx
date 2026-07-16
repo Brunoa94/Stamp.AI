@@ -32,8 +32,8 @@ export function HomeReviewsSection() {
           label="Verified Reviews"
         />
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-          <article className="border border-(--color-stamp-divider) bg-(--color-stamp-white) p-10 lg:col-span-4">
+        <div className="grid grid-cols-1 gap-4 sm:gap-8 lg:grid-cols-12">
+          <article className="border border-(--color-stamp-divider) bg-(--color-stamp-white) p-6 sm:p-10 lg:col-span-4">
             <Span variant="metric" className="text-(--color-stamp-chocolate)">
               {HOME_RATING_SUMMARY.overall}
             </Span>
@@ -51,13 +51,6 @@ export function HomeReviewsSection() {
             </Span>
 
             <div className="mt-10 space-y-4 border-t border-(--color-stamp-divider) pt-8">
-              <Span
-                as="p"
-                variant="micro"
-                className="text-(--color-stamp-taupe)"
-              >
-                Platform Breakdown
-              </Span>
               {HOME_RATING_SUMMARY.platforms.map((entry) => {
                 const config = HOME_PLATFORM_CONFIG[entry.platform];
                 return (
@@ -91,13 +84,13 @@ export function HomeReviewsSection() {
             </div>
           </article>
 
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:col-span-8">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-8 lg:col-span-8">
             {HOME_TESTIMONIALS.map((testimonial) => {
               const config = HOME_PLATFORM_CONFIG[testimonial.platform];
               return (
                 <article
                   key={testimonial.author}
-                  className="flex flex-col border bg-(--color-stamp-white) p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-(--shadow-stamp-card-hover)"
+                  className="flex flex-col border bg-(--color-stamp-white) p-5 sm:p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-(--shadow-stamp-card-hover)"
                   style={{
                     borderColor:
                       config?.borderColor ?? "var(--color-stamp-divider)",

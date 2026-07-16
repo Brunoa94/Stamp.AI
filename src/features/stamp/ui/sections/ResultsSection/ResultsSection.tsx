@@ -2,10 +2,10 @@
 
 import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
 import { useStampSelectedImage } from "../../../lib/hooks/useStampSelectors";
-import { ResultsHeader } from "./ResultsHeader";
 import { ResultsImage } from "./ResultsImage";
 import { ResultsDetails } from "./ResultsDetails";
 import { ResultsActions } from "./ResultsActions";
+import { Heading } from "@/features/ui/heading";
 
 /**
  * ResultsSection
@@ -43,9 +43,17 @@ export function ResultsSection() {
       className="h-full overflow-y-auto flex flex-col items-center justify-center p-8 md:p-16 lg:p-24 bg-(--color-stamp-off-white) border-b border-(--color-stamp-divider)"
     >
       <div className="max-w-2xl w-full">
-        <ResultsHeader outputNumber="Output Result #01" date={currentDate} />
+        <Heading
+          as="h2"
+          variant="title"
+          className="text-(--color-stamp-chocolate) mb-6"
+        >
+          Your{" "}
+          <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
+            Creation
+          </span>
+        </Heading>
         <ResultsImage imageUrl={displayImageUrl} />
-        <ResultsDetails prompt={enhancedPrompt} />
         <ResultsActions
           canProceed={canProceedToProduct}
           onUseProtocol={handleUseProtocol}

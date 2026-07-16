@@ -32,10 +32,6 @@ export function SynthesisForm({
 }: PropsI) {
   return (
     <div className="p-12 lg:p-24 flex flex-col justify-center bg-white">
-      <Span variant="sm" className="text-(--color-stamp-taupe) mb-6">
-        Protocol 02 / Logic
-      </Span>
-
       <Heading
         as="h2"
         variant="title"

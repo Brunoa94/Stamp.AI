@@ -31,10 +31,6 @@ export function ReviewDetails({
 }: PropsI) {
   return (
     <div className="p-6 md:p-12 lg:p-24 flex flex-col justify-center bg-white">
-      <Span variant="sm" className="text-(--color-stamp-taupe) mb-6">
-        Protocol 08 / Acquisition
-      </Span>
-
       <Heading
         as="h2"
         variant="title"

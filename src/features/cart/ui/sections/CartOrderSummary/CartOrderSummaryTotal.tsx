@@ -27,12 +27,6 @@ export function CartOrderSummaryTotal({ total }: CartOrderSummaryTotalPropsI) {
           {formatPrice(total)}
         </Heading>
       </div>
-      <Span
-        variant="micro"
-        className="mt-2 block text-right text-(--color-stamp-taupe)/60"
-      >
-        Currency: USD
-      </Span>
     </div>
   );
 }

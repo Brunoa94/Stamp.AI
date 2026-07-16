@@ -27,10 +27,6 @@ export function UploadContent({
 }: PropsI) {
   return (
     <div className="p-12 lg:p-24 flex flex-col justify-center">
-      <Span variant="sm" className="text-(--color-stamp-taupe) mb-6">
-        Protocol 01 / Initiation
-      </Span>
-
       <Heading
         as="h2"
         variant="title"

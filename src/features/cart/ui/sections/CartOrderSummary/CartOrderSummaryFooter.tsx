@@ -46,11 +46,6 @@ export function CartOrderSummaryFooter({
           </Span>
         </div>
       </div>
-
-      <div className="flex items-center justify-center gap-2 text-(--color-stamp-taupe)">
-        <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-        <Span variant="micro">Secure encrypted transactions</Span>
-      </div>
     </div>
   );
 }

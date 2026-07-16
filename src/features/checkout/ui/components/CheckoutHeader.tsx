@@ -22,9 +22,6 @@ export function CheckoutHeader() {
           out
         </span>
       </Heading>
-      <Span variant="default" className="text-(--color-stamp-taupe)">
-        Complete your order
-      </Span>
     </header>
   );
 }

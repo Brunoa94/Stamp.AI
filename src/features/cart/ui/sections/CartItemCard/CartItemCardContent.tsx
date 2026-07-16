@@ -36,9 +36,6 @@ export function CartItemCardContent({ item }: CartItemCardContentPropsI) {
           >
             {productName}
           </Heading>
-          <Span variant="micro" className="text-(--color-stamp-taupe) text-[10px] md:text-xs">
-            Custom Design Synthesis
-          </Span>
         </div>
         <Heading
           as="span"

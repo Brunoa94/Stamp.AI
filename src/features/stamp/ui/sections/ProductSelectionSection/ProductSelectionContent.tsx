@@ -19,10 +19,6 @@ export function ProductSelectionContent({ canProceed, onContinue }: PropsI) {
   return (
     <div className="h-full p-12 lg:p-24 flex flex-col justify-between border-r border-(--color-stamp-divider)">
       <div>
-        <Span variant="sm" className="text-(--color-stamp-taupe) mb-6">
-          Protocol 05 / Canvas
-        </Span>
-
         <Heading
           as="h2"
           variant="title"
