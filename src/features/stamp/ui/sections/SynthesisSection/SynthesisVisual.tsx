@@ -34,12 +34,6 @@ export function SynthesisVisual({ selectedId, onSelectSuggestion }: PropsI) {
           {t("eyebrow")}
         </Span>
       </div>
-      <Span
-        variant="sm"
-        className="text-(--color-stamp-taupe)/70 mb-8 max-w-xs"
-      >
-        {t("subtitle")}
-      </Span>
 
       <div className="grid grid-cols-4 gap-4 w-full">
         {STAMP_EDIT_SUGGESTIONS.map(({ id, image }) => {
