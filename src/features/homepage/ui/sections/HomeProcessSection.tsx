@@ -5,6 +5,7 @@
  * gold step numbers that reveal in color on hover.
  */
 
+import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
@@ -29,13 +30,19 @@ const STEP_COLORS = [
 ];
 
 export function HomeProcessSection() {
+  const t = useTranslations("home.process");
+
   return (
     <section
       id="process"
       className="bg-(--color-stamp-cream) px-6 py-24 lg:px-12 xl:px-24"
     >
       <SectionReveal className="mx-auto max-w-screen-2xl">
-        <HomeSectionHeader title="The" accent="process" label="Protocol 001" />
+        <HomeSectionHeader
+          title={t("title")}
+          accent={t("accent")}
+          label={t("label")}
+        />
 
         {/* Mobile: Horizontal carousel */}
         <div className="sm:hidden -mx-6 px-6 overflow-x-auto scrollbar-hide">
@@ -64,13 +71,13 @@ export function HomeProcessSection() {
                   </Span>
                   <div className="mt-6">
                     <Heading as="h3" variant="card" className="mb-2">
-                      {step.title}
+                      {t(`steps.${step.id}.title`)}
                     </Heading>
                     <Paragraph
                       variant="card"
                       className="text-(--color-stamp-taupe) text-sm"
                     >
-                      {step.description}
+                      {t(`steps.${step.id}.description`)}
                     </Paragraph>
                   </div>
                 </article>
@@ -105,13 +112,13 @@ export function HomeProcessSection() {
                 </Span>
                 <div>
                   <Heading as="h3" variant="card" className="mb-3">
-                    {step.title}
+                    {t(`steps.${step.id}.title`)}
                   </Heading>
                   <Paragraph
                     variant="card"
                     className="text-(--color-stamp-taupe)"
                   >
-                    {step.description}
+                    {t(`steps.${step.id}.description`)}
                   </Paragraph>
                 </div>
               </article>
@@ -121,7 +128,7 @@ export function HomeProcessSection() {
 
         <div className="mt-16 flex justify-center">
           <Span variant="sm" className="text-(--color-stamp-taupe)/40">
-            Engineered for precision
+            {t("footer")}
           </Span>
         </div>
       </SectionReveal>

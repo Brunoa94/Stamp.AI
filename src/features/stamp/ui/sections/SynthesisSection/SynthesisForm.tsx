@@ -1,4 +1,5 @@
 import { ChangeEvent } from "react";
+import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
@@ -30,6 +31,8 @@ export function SynthesisForm({
   onPreservationChange,
   onGenerate,
 }: PropsI) {
+  const t = useTranslations("stamp.synthesis");
+
   return (
     <div className="p-12 lg:p-24 flex flex-col justify-center bg-white">
       <Heading
@@ -37,10 +40,13 @@ export function SynthesisForm({
         variant="title"
         className="text-(--color-stamp-chocolate) mb-6"
       >
-        Descriptive{" "}
-        <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
-          Synthesis
-        </span>
+        {t.rich("title", {
+          accent: (chunks) => (
+            <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
+              {chunks}
+            </span>
+          ),
+        })}
       </Heading>
 
       {/* Form Fields */}
@@ -63,7 +69,7 @@ export function SynthesisForm({
           disabled={isGenerating || !prompt.trim()}
           className="w-full bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isGenerating ? "GENERATING..." : "STAMP IT!"}
+          {isGenerating ? t("generating") : t("generate")}
         </Button>
       </div>
     </div>

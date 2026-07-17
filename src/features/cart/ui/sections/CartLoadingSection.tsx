@@ -5,6 +5,8 @@
  * cream → divider → cream gradient sweeping across placeholder blocks.
  */
 
+import { useTranslations } from "next-intl";
+
 const SKELETON_ROWS = 3;
 
 function ShimmerBlock({ className }: { className?: string }) {
@@ -16,11 +18,13 @@ function ShimmerBlock({ className }: { className?: string }) {
 }
 
 export function CartLoadingSection() {
+  const t = useTranslations("cart.loading");
+
   return (
     <div
       role="status"
       aria-busy="true"
-      aria-label="Loading cart"
+      aria-label={t("label")}
       className="space-y-12 xl:col-span-12"
     >
       <div className="space-y-4">

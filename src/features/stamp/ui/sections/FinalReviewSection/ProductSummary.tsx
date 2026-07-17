@@ -1,4 +1,5 @@
 import { Star } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 
@@ -16,6 +17,8 @@ interface PropsI {
 }
 
 export function ProductSummary({ productName, color, size, price }: PropsI) {
+  const t = useTranslations("stamp.finalReview");
+
   return (
     <div className="p-6 border border-(--color-stamp-divider)">
       <div className="flex justify-between items-start mb-4">
@@ -32,11 +35,11 @@ export function ProductSummary({ productName, color, size, price }: PropsI) {
         variant="micro"
         className="text-(--color-stamp-taupe) block mb-8"
       >
-        Color: {color || "Black"} | Size: {size || "M"}
+        {t("productDetails", { color: color || "Black", size: size || "M" })}
       </Span>
       <div className="flex justify-between items-baseline pt-6 border-t border-(--color-stamp-divider)">
         <Span variant="sm" className="text-(--color-stamp-chocolate)">
-          Final Valuation
+          {t("finalValuation")}
         </Span>
         <Heading
           as="h3"

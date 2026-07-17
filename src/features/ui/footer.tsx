@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 const footerStyles = {
   heading:
@@ -11,6 +12,7 @@ const footerStyles = {
 } as const;
 
 export function Footer() {
+  const t = useTranslations("ui.footer");
   const currentYear = new Date().getFullYear();
 
   return (
@@ -27,30 +29,29 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
           {/* Mission */}
           <div className="col-span-1">
-            <h4 className={footerStyles.heading}>Our Mission</h4>
+            <h4 className={footerStyles.heading}>{t("mission.heading")}</h4>
             <p className="text-slate-500 text-sm leading-loose max-w-xs font-accent italic">
-              Empowering creators with AI-driven apparel design. High quality
-              prints, delivered to your door with a nostalgic touch.
+              {t("mission.body")}
             </p>
           </div>
 
           {/* Platform */}
           <div>
-            <h4 className={footerStyles.heading}>Platform</h4>
+            <h4 className={footerStyles.heading}>{t("platform.heading")}</h4>
             <ul className="space-y-4 text-sm font-accent">
               <li>
                 <Link href="/how-it-works" className={footerStyles.link}>
-                  How it Works
+                  {t("platform.howItWorks")}
                 </Link>
               </li>
               <li>
                 <Link href="/showcase" className={footerStyles.link}>
-                  Showcase
+                  {t("platform.showcase")}
                 </Link>
               </li>
               <li>
                 <Link href="/pricing" className={footerStyles.link}>
-                  Bulk Pricing
+                  {t("platform.bulkPricing")}
                 </Link>
               </li>
             </ul>
@@ -58,21 +59,21 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <h4 className={footerStyles.heading}>Company</h4>
+            <h4 className={footerStyles.heading}>{t("company.heading")}</h4>
             <ul className="space-y-4 text-sm font-accent">
               <li>
                 <Link href="/about" className={footerStyles.link}>
-                  About Us
+                  {t("company.aboutUs")}
                 </Link>
               </li>
               <li>
                 <Link href="/blog" className={footerStyles.link}>
-                  Blog
+                  {t("company.blog")}
                 </Link>
               </li>
               <li>
                 <Link href="/careers" className={footerStyles.link}>
-                  Careers
+                  {t("company.careers")}
                 </Link>
               </li>
             </ul>
@@ -80,21 +81,21 @@ export function Footer() {
 
           {/* Support */}
           <div>
-            <h4 className={footerStyles.heading}>Support</h4>
+            <h4 className={footerStyles.heading}>{t("support.heading")}</h4>
             <ul className="space-y-4 text-sm font-accent">
               <li>
                 <Link href="/help" className={footerStyles.link}>
-                  Help Center
+                  {t("support.helpCenter")}
                 </Link>
               </li>
               <li>
                 <Link href="/terms" className={footerStyles.link}>
-                  Terms of Service
+                  {t("support.termsOfService")}
                 </Link>
               </li>
               <li>
                 <Link href="/privacy" className={footerStyles.link}>
-                  Privacy Policy
+                  {t("support.privacyPolicy")}
                 </Link>
               </li>
             </ul>
@@ -104,7 +105,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="pt-10 border-t border-slate-50 flex flex-col md:flex-row justify-between items-center gap-8">
           <p className="text-slate-400 text-sm font-accent">
-            © {currentYear} Stamp.AI Design Inc. Crafted for the Dreamers.
+            {t("copyright", { year: currentYear })}
           </p>
           <div className="flex gap-8">
             <Link
@@ -112,7 +113,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               className={footerStyles.socialIcon}
-              aria-label="Twitter"
+              aria-label={t("social.twitter")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -133,7 +134,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               className={footerStyles.socialIcon}
-              aria-label="Instagram"
+              aria-label={t("social.instagram")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -156,7 +157,7 @@ export function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               className={footerStyles.socialIcon}
-              aria-label="LinkedIn"
+              aria-label={t("social.linkedin")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Label } from "./label";
 import {
   Select,
@@ -26,9 +27,11 @@ export function FilterSelect<T extends string = string>({
   value,
   onChange,
   options,
-  placeholder = "Select an option",
+  placeholder,
   className = "",
 }: FilterSelectProps<T>) {
+  const t = useTranslations("ui.filterSelect");
+  const resolvedPlaceholder = placeholder ?? t("placeholder");
   return (
     <div className={className}>
       <Label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -36,10 +39,10 @@ export function FilterSelect<T extends string = string>({
       </Label>
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger className="w-full">
-          <SelectValue placeholder={placeholder} />
+          <SelectValue placeholder={resolvedPlaceholder} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">{placeholder}</SelectItem>
+          <SelectItem value="all">{resolvedPlaceholder}</SelectItem>
           {options.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}

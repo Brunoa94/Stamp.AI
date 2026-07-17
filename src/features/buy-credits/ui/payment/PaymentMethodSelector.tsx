@@ -1,6 +1,7 @@
 "use client";
 
 import { Check } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
 import { cn } from "@/lib/utils";
@@ -19,11 +20,12 @@ export function PaymentMethodSelector({
   disabled = false,
 }: PaymentMethodSelectorProps) {
   const theme = checkoutTheme.paymentMethodSelector;
+  const t = useTranslations("buyCredits.payment");
 
   return (
     <div
       role="radiogroup"
-      aria-label="Select payment method"
+      aria-label={t("methodSelectorLabel")}
       className={theme.container}
     >
       {PAYMENT_METHODS.map((method) => (

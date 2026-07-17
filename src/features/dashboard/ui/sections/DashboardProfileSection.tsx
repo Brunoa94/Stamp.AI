@@ -7,6 +7,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { BadgeCheck, UserRound } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
@@ -27,18 +28,19 @@ interface DashboardProfileSectionPropsI {
 export function DashboardProfileSection({
   user,
 }: DashboardProfileSectionPropsI) {
+  const t = useTranslations("dashboard.profile");
   const verified = isEmailVerified(user);
 
   return (
     <DashboardCard
-      label="User profile"
+      label={t("label")}
       icon={<UserRound className="h-4 w-4 text-(--color-stamp-taupe)" />}
     >
       <div className="flex items-center gap-6">
         <div className="relative h-20 w-20 flex-none border border-(--color-stamp-divider) bg-(--color-stamp-cream)">
           <Image
             src={getAvatarUrl(user)}
-            alt={`${getDisplayName(user)} avatar`}
+            alt={t("avatarAlt", { name: getDisplayName(user) })}
             width={80}
             height={80}
             unoptimized
@@ -48,11 +50,11 @@ export function DashboardProfileSection({
             <Span
               unstyled
               className="absolute -bottom-1.5 -right-1.5 flex h-6 w-6 items-center justify-center bg-(--color-stamp-gold) text-(--color-stamp-chocolate)"
-              title="Verified account"
+              title={t("verified")}
             >
               <BadgeCheck className="h-4 w-4" aria-hidden />
               <Span unstyled className="sr-only">
-                Verified account
+                {t("verified")}
               </Span>
             </Span>
           )}
@@ -70,7 +72,7 @@ export function DashboardProfileSection({
         </div>
       </div>
       <Button asChild variant="secondary-brown" className="mt-8 w-full">
-        <Link href="/profile">Edit profile</Link>
+        <Link href="/profile">{t("editProfile")}</Link>
       </Button>
     </DashboardCard>
   );

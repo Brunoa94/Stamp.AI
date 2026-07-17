@@ -10,6 +10,7 @@
  */
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
@@ -18,6 +19,7 @@ import { HOME_VALUE_CARDS } from "../../lib/constants/homepageContent";
 import { SectionReveal } from "../components/SectionReveal";
 
 export function HomeManifestoSection() {
+  const t = useTranslations("home.manifesto");
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -31,10 +33,13 @@ export function HomeManifestoSection() {
               variant="title"
               className="mb-12 text-(--color-stamp-chocolate)"
             >
-              Democratizing{" "}
-              <Span variant="serif" className="text-(--color-stamp-taupe)">
-                design
-              </Span>
+              {t.rich("title", {
+                accent: (chunks) => (
+                  <Span variant="serif" className="text-(--color-stamp-taupe)">
+                    {chunks}
+                  </Span>
+                ),
+              })}
             </Heading>
 
             <blockquote className="border-l-2 border-(--color-stamp-gold) pl-8">
@@ -42,17 +47,14 @@ export function HomeManifestoSection() {
                 variant="quote"
                 className="text-(--color-stamp-chocolate)"
               >
-                &ldquo;We believe exceptional design should be accessible to
-                everyone. Our AI synthesis engine transforms creative vision
-                into archival-quality apparel in seconds—no design experience
-                required.&rdquo;
+                {t("quote")}
               </Paragraph>
               <Span
                 as="footer"
                 variant="micro"
                 className="mt-6 text-(--color-stamp-taupe)"
               >
-                — Stamp AI Manifesto
+                {t("quoteAttribution")}
               </Span>
             </blockquote>
 
@@ -60,9 +62,7 @@ export function HomeManifestoSection() {
               variant="loose"
               className="mt-12 text-(--color-stamp-taupe)"
             >
-              Founded in 2024, Stamp AI merges machine learning with textile
-              engineering to create a new paradigm for custom apparel
-              production.
+              {t("intro")}
             </Paragraph>
           </div>
 
@@ -79,7 +79,7 @@ export function HomeManifestoSection() {
                 variant="micro"
                 className="uppercase tracking-widest text-(--color-stamp-taupe)"
               >
-                Our Values
+                {t("valuesToggle")}
               </Span>
               <ChevronDown
                 className={`h-5 w-5 shrink-0 text-(--color-stamp-taupe) transition-transform duration-300 ${
@@ -101,7 +101,7 @@ export function HomeManifestoSection() {
                 <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
                   {HOME_VALUE_CARDS.map((card, index) => (
                     <article
-                      key={card.title}
+                      key={card.number}
                       className={`border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover) lg:p-10 ${
                         index % 2 === 1 ? "sm:translate-y-8" : ""
                       }`}
@@ -110,13 +110,13 @@ export function HomeManifestoSection() {
                         {card.number}
                       </Span>
                       <Heading as="h3" variant="card" className="mb-3 mt-6">
-                        {card.title}
+                        {t(`values.${card.number}.title`)}
                       </Heading>
                       <Paragraph
                         variant="sm"
                         className="text-(--color-stamp-taupe)"
                       >
-                        {card.description}
+                        {t(`values.${card.number}.description`)}
                       </Paragraph>
                     </article>
                   ))}

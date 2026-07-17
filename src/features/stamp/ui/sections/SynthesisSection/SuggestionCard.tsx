@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
 
@@ -25,11 +26,12 @@ export function SuggestionCard({
   isSelected,
   onSelect,
 }: PropsI) {
+  const t = useTranslations("stamp.synthesis");
   return (
     <Button
       variant="ghost"
       onClick={() => onSelect?.(id)}
-      aria-label={`Apply suggestion: ${label} — ${hint}`}
+      aria-label={t("applySuggestion", { label, hint })}
       aria-pressed={isSelected}
       title={hint}
       className={`group relative aspect-2/3 w-full min-h-48 overflow-hidden rounded-xl p-0 ring-1 focus:outline-none transition-all duration-300 ${

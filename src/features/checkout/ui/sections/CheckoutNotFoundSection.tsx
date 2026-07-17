@@ -6,12 +6,15 @@
  */
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { PackageX } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 
 export function CheckoutNotFoundSection() {
+  const t = useTranslations("checkout.notFound");
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-(--color-stamp-off-white) px-6 font-heading text-(--color-stamp-chocolate)">
       <div
@@ -29,13 +32,13 @@ export function CheckoutNotFoundSection() {
           unstyled
           className="mb-4 font-heading text-3xl font-bold uppercase tracking-tight"
         >
-          Cart Not Found
+          {t("title")}
         </Heading>
         <Paragraph variant="sm" className="mb-8 text-(--color-stamp-taupe)">
-          We couldn&apos;t find your cart. Please return and add items again.
+          {t("description")}
         </Paragraph>
         <Button asChild variant="secondary-brown">
-          <Link href="/cart">Back to Cart</Link>
+          <Link href="/cart">{t("backToCart")}</Link>
         </Button>
       </div>
     </div>

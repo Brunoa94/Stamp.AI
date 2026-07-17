@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { Paragraph } from "@/features/ui/paragraph";
 import { ProductCard } from "./ProductCard";
@@ -67,6 +68,7 @@ export function ProductGrid({
   onClearSelection,
   isProductSelected,
 }: PropsI) {
+  const t = useTranslations("stamp.productSelection");
   const allProducts = [...clothingProducts, ...accessoryProducts];
   const hasProducts = allProducts.length > 0;
 
@@ -76,7 +78,7 @@ export function ProductGrid({
         <div
           className="h-full flex items-center justify-center"
           aria-busy="true"
-          aria-label="Loading products"
+          aria-label={t("loadingAria")}
         >
           <div className="space-y-4 w-full p-8 lg:p-10">
             {[1, 2, 3, 4].map((index) => (
@@ -95,10 +97,10 @@ export function ProductGrid({
           className="h-full flex flex-col items-center justify-center p-12 text-center"
         >
           <Span variant="micro" className="text-red-500 mb-2">
-            Failed to load products
+            {t("loadError")}
           </Span>
           <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
-            Please refresh the page and try again.
+            {t("loadErrorHint")}
           </Paragraph>
         </div>
       )}
@@ -109,7 +111,7 @@ export function ProductGrid({
           className="h-full flex items-center justify-center p-12 text-center"
         >
           <Span variant="micro" className="text-(--color-stamp-taupe)">
-            No products available at this time.
+            {t("empty")}
           </Span>
         </div>
       )}
@@ -135,7 +137,7 @@ export function ProductGrid({
                     variant="micro"
                     className="text-(--color-stamp-taupe) uppercase tracking-widest mb-4 block"
                   >
-                    Apparel
+                    {t("apparel")}
                   </Span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {clothingProducts.map((product) => (
@@ -159,7 +161,7 @@ export function ProductGrid({
                     variant="micro"
                     className="text-(--color-stamp-taupe)/60 uppercase tracking-widest"
                   >
-                    More Options
+                    {t("moreOptions")}
                   </Span>
                   <div className="flex-1 h-px bg-(--color-stamp-divider)" />
                 </div>
@@ -172,7 +174,7 @@ export function ProductGrid({
                     variant="micro"
                     className="text-(--color-stamp-taupe) uppercase tracking-widest mb-4 block"
                   >
-                    Accessories
+                    {t("accessories")}
                   </Span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {accessoryProducts.map((product) => (

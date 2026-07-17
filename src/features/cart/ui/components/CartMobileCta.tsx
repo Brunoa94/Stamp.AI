@@ -8,6 +8,7 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { formatPrice } from "../../lib/utils/formatPrice";
 
@@ -17,6 +18,7 @@ interface CartMobileCtaPropsI {
 }
 
 export function CartMobileCta({ total, onCheckout }: CartMobileCtaPropsI) {
+  const t = useTranslations("cart.mobileCta");
   const formattedTotal = formatPrice(total);
 
   return (
@@ -26,7 +28,7 @@ export function CartMobileCta({ total, onCheckout }: CartMobileCtaPropsI) {
         variant="secondary-brown"
         className="group w-full font-heading"
       >
-        <span>Checkout · {formattedTotal}</span>
+        <span>{t("checkout", { total: formattedTotal })}</span>
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
       </Button>
     </div>

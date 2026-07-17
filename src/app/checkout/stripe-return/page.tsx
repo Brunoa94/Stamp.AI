@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
@@ -103,6 +104,7 @@ export default function StripeReturnPage() {
 }
 
 function StripeReturnContent() {
+  const t = useTranslations("checkout.returns.stripe");
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<PageStatus>("loading");
@@ -131,9 +133,7 @@ function StripeReturnContent() {
 
         if (!paymentIntent) {
           setStatus("error");
-          setErrorMessage(
-            "Payment information not found. Please try again from the checkout page.",
-          );
+          setErrorMessage(t("errorNoPaymentInfo"));
           return;
         }
 
@@ -143,18 +143,14 @@ function StripeReturnContent() {
         const checkoutData = getStoredStripeCheckoutData();
         if (!checkoutData) {
           setStatus("error");
-          setErrorMessage(
-            "Checkout data expired or not found. Please try again from the checkout page.",
-          );
+          setErrorMessage(t("errorCheckoutDataExpired"));
           return;
         }
 
         // Verify user is authenticated
         if (!user) {
           setStatus("error");
-          setErrorMessage(
-            "You must be logged in to complete your order. Please log in and try again.",
-          );
+          setErrorMessage(t("errorMustBeLoggedIn"));
           return;
         }
 
@@ -193,8 +189,7 @@ function StripeReturnContent() {
           clearStoredStripeCheckoutData();
           setStatus("error");
           setErrorMessage(
-            "Cart information not found. Your payment was processed but we couldn't create your order. Please contact support with payment ID: " +
-              paymentIntent,
+            t("errorCartNotFound", { paymentId: paymentIntent }),
           );
           return;
         }
@@ -301,16 +296,12 @@ function StripeReturnContent() {
             }
           } catch (orderError) {
             await triggerRefund("Order creation failed");
-            throw new Error(
-              "Order creation failed. A full refund has been initiated.",
-            );
+            throw new Error(t("orderCreationFailedRefund"));
           }
 
           if (!createdOrderId) {
             await triggerRefund("Order ID not returned");
-            throw new Error(
-              "Order creation failed. A full refund has been initiated.",
-            );
+            throw new Error(t("orderCreationFailedRefund"));
           }
 
           // Get order number
@@ -365,9 +356,7 @@ function StripeReturnContent() {
               await triggerRefund("Order creation failed before Printify");
             }
 
-            throw new Error(
-              "Order fulfillment failed. A full refund has been initiated.",
-            );
+            throw new Error(t("orderFulfillmentFailedRefund"));
           }
 
           // Stage 3: Mark payment recovered
@@ -419,9 +408,7 @@ function StripeReturnContent() {
 
         setStatus("error");
         setErrorMessage(
-          err instanceof Error
-            ? err.message
-            : "Failed to process Stripe payment",
+          err instanceof Error ? err.message : t("errorFallback"),
         );
       }
     };
@@ -444,7 +431,7 @@ function StripeReturnContent() {
         <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
           <section
             className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
-            aria-label="Processing payment"
+            aria-label={t("processingAria")}
           >
             <div
               className="absolute top-0 left-0 w-full h-1 bg-(--color-stamp-gold)"
@@ -458,13 +445,13 @@ function StripeReturnContent() {
             </div>
             <Heading as="h1" variant="card" className="text-(--color-stamp-chocolate) mb-4">
               {status === "processing"
-                ? "Completing Your Payment"
-                : "Processing Payment"}
+                ? t("completingTitle")
+                : t("processingTitle")}
             </Heading>
             <Paragraph variant="sm" className="text-(--color-stamp-taupe) max-w-sm mx-auto">
               {status === "processing"
-                ? "Please wait while we finalize your Stripe payment..."
-                : "Please wait while we verify your payment with Stripe..."}
+                ? t("completingMessage")
+                : t("processingMessage")}
             </Paragraph>
           </section>
         </div>
@@ -485,8 +472,8 @@ function StripeReturnContent() {
             (paymentIntentId
               ? `#ST-${paymentIntentId.slice(-6).toUpperCase()}`
               : "—"),
-          totalPaid: "Paid via Stripe",
-          estimatedDelivery: "7–10 business days",
+          totalPaid: t("totalPaid"),
+          estimatedDelivery: t("estimatedDelivery"),
           confirmationEmail: "",
         }}
         onCreateAnother={handleCreateAnother}
@@ -505,11 +492,9 @@ function StripeReturnContent() {
             : "—",
           amountDue: "—",
           attemptedOn: new Date().toLocaleString(),
-          status: "Declined",
-          reasonTitle: "Payment declined",
-          reasonMessage:
-            errorMessage ||
-            "Your Stripe payment could not be processed. Please try again or use a different payment method.",
+          status: t("declinedStatus"),
+          reasonTitle: t("paymentDeclinedTitle"),
+          reasonMessage: errorMessage || t("paymentDeclinedMessage"),
           availableMethods: ["stripe", "paypal"],
         }}
         onTryAgain={handleRetryPayment}
@@ -524,7 +509,7 @@ function StripeReturnContent() {
       <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
         <section
           className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
-          aria-label="Error"
+          aria-label={t("errorAria")}
         >
           <div
             className="absolute top-0 left-0 w-full h-1 bg-(--color-stamp-error)"
@@ -537,25 +522,24 @@ function StripeReturnContent() {
             <AlertCircle className="w-12 h-12" />
           </div>
           <Heading as="h1" variant="card" className="text-(--color-stamp-chocolate) mb-4">
-            Something Went Wrong
+            {t("somethingWentWrongTitle")}
           </Heading>
           <Paragraph variant="sm" className="text-(--color-stamp-taupe) max-w-sm mx-auto mb-12">
-            {errorMessage ||
-              "We couldn't process your Stripe payment. Please try again or contact support."}
+            {errorMessage || t("somethingWentWrongMessage")}
           </Paragraph>
           <div className="flex flex-col gap-4">
             <Button
               onClick={handleRetryPayment}
               className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-chocolate)/90"
             >
-              Return to Checkout
+              {t("returnToCheckout")}
             </Button>
             <Button
               asChild
               variant="outline"
               className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase border-(--color-stamp-divider) text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
             >
-              <Link href="/dashboard">Go to Dashboard</Link>
+              <Link href="/dashboard">{t("goToDashboard")}</Link>
             </Button>
           </div>
         </section>

@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { formatOrderDate } from "../../../lib/utils/formatOrderDate";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
@@ -11,6 +12,8 @@ interface PropsI {
 }
 
 export function OrdersDetailsModalHeader({ order, displayedStatus }: PropsI) {
+  const t = useTranslations("orders.detailsModal");
+
   return (
     <div className="mb-10">
       <Span
@@ -24,14 +27,17 @@ export function OrdersDetailsModalHeader({ order, displayedStatus }: PropsI) {
         variant="card"
         className="mt-4 text-3xl tracking-tight text-(--color-stamp-chocolate)"
       >
-        Protocol Record Details
+        {t("recordDetails")}
       </Heading>
       <Paragraph
         variant="sm"
         className="mt-1 text-lg tracking-[0.2em] text-(--color-stamp-taupe)"
       >
-        Order #{order.order_number || order.id.slice(0, 13).toUpperCase()} •
-        Initiated {formatOrderDate(order.created_at)}
+        {t("orderMeta", {
+          orderNumber:
+            order.order_number || order.id.slice(0, 13).toUpperCase(),
+          date: formatOrderDate(order.created_at),
+        })}
       </Paragraph>
     </div>
   );

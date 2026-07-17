@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import type { OrderWithItemsT } from "@/types/order";
 import { OrdersGridItem } from "./OrdersGridItem/OrdersGridItem";
 
@@ -16,8 +17,10 @@ export function OrdersGridSection({
   onCancelOrder,
   onReorder,
 }: PropsI) {
+  const t = useTranslations("orders.gridSection");
+
   return (
-    <section aria-label="Orders grid view">
+    <section aria-label={t("ariaLabel")}>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
         {orders.map((order, idx) => (
           <OrdersGridItem

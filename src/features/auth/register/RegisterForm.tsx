@@ -5,6 +5,7 @@ import { RegistrationSuccessMessage } from "./RegistrationSuccessMessage";
 import { DialogContent, DialogTitle, DialogClose } from "@/features/ui/dialog";
 import { Button } from "@/features/ui/button";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { RegisterDialogHeader } from "./components/RegisterDialogHeader";
 import { RegisterCredentialsFields } from "./components/RegisterCredentialsFields";
 import { RegisterFormActions } from "./components/RegisterFormActions";
@@ -14,6 +15,7 @@ import { GoogleSignInButton } from "../components/GoogleSignInButton";
 export function RegisterForm() {
   const { register, handleSubmit, onSubmit, isPending, errors, isSuccess } =
     useRegisterForm();
+  const t = useTranslations("auth.register.form");
 
   if (isSuccess) {
     return <RegistrationSuccessMessage />;
@@ -24,7 +26,7 @@ export function RegisterForm() {
       showCloseButton={false}
       className="max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none sm:max-w-[550px]"
     >
-      <DialogTitle className="sr-only">Create Account</DialogTitle>
+      <DialogTitle className="sr-only">{t("srTitle")}</DialogTitle>
       <div className="relative overflow-hidden border-2 border-(--color-stamp-divider) bg-(--color-stamp-off-white) px-10 pt-12 pb-10 shadow-(--shadow-stamp-modal)">
         {/* Close button */}
         <DialogClose asChild>
@@ -32,7 +34,7 @@ export function RegisterForm() {
             type="button"
             variant="stamp-auth-close"
             size="icon"
-            aria-label="Close register modal"
+            aria-label={t("closeAria")}
             className="absolute top-8 right-8 z-20"
           >
             <X className="h-5 w-5" />
@@ -46,7 +48,7 @@ export function RegisterForm() {
         <div className="relative flex items-center my-10">
           <div className="grow border-t border-(--color-stamp-divider)" />
           <span className="shrink mx-4 text-lg font-bold text-(--color-stamp-gold) uppercase tracking-[0.2em]">
-            or continue with email
+            {t("orContinueWithEmail")}
           </span>
           <div className="grow border-t border-(--color-stamp-divider)" />
         </div>

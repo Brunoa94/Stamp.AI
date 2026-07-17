@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import {
   useStampFinalization,
   useStampSelectedImage,
@@ -29,6 +30,7 @@ import {
  */
 
 export function useStampCartActions() {
+  const t = useTranslations("stamp.errors.cart");
   const router = useRouter();
   const { handleError, handleSuccess } = useErrorHandler();
 
@@ -67,7 +69,7 @@ export function useStampCartActions() {
           createdVariantId,
         },
       });
-      toast.info("Product already in cart. Navigating...");
+      toast.info(t("alreadyInCart"));
 
       if (buyNow) {
         router.push("/checkout");
@@ -84,9 +86,7 @@ export function useStampCartActions() {
         event: "missing_created_product_id",
         metadata: { buyNow },
       });
-      handleError(
-        new Error("Please create a product first before adding to cart"),
-      );
+      handleError(new Error(t("noProduct")));
       return;
     }
 
@@ -100,11 +100,7 @@ export function useStampCartActions() {
           createdProductId,
         },
       });
-      handleError(
-        new Error(
-          "Product variant not found. Please try creating the product again.",
-        ),
-      );
+      handleError(new Error(t("noVariant")));
       return;
     }
 
@@ -140,7 +136,7 @@ export function useStampCartActions() {
         },
       });
 
-      handleSuccess("Added to cart!");
+      handleSuccess(t("added"));
 
       // Navigate based on action
       if (buyNow) {

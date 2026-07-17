@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useUser } from "@/hooks/useAuth";
 import { useUpdateProfile } from "./useUpdateProfile";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { ShippingAddressSchema, type ShippingAddressT } from "@/schemas/checkout";
 
 function createEmptyAddress(email?: string): ShippingAddressT {
@@ -22,6 +23,7 @@ function createEmptyAddress(email?: string): ShippingAddressT {
 }
 
 export function useAddressForm() {
+  const t = useTranslations("profile.toasts");
   const { data: user } = useUser();
   const updateProfileMutation = useUpdateProfile();
   
@@ -50,12 +52,12 @@ export function useAddressForm() {
           },
         });
         setIsEditing(false);
-        toast.success("Address updated successfully!");
+        toast.success(t("addressUpdated"));
       } catch (error) {
-        toast.error("Failed to update address");
+        toast.error(t("addressUpdateFailed"));
       }
     },
-    [updateProfileMutation]
+    [updateProfileMutation, t]
   );
 
   const handleCancel = useCallback(() => {

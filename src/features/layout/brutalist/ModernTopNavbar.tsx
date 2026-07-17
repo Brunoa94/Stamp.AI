@@ -4,9 +4,11 @@ import Link from "next/link";
 import { ShoppingBag, User, LogOut, Menu, X } from "lucide-react";
 import { useUser, useLogout } from "@/hooks/useAuth";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Login } from "@/features/auth/login/Login";
 
 export function ModernTopNavbar() {
+  const t = useTranslations("layout.modernNavbar");
   const { data: user } = useUser();
   const logoutMutation = useLogout();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -21,13 +23,19 @@ export function ModernTopNavbar() {
       <header className="fixed top-0 left-0 right-0 h-20 bg-concrete border-b border-ink/5 z-50 px-4 md:px-8 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-1.5 md:gap-2">
-          <span className="font-anton text-2xl md:text-3xl leading-none uppercase tracking-tight text-ink">
-            STAMP
-          </span>
-          <span className="logo-gradient-dot" />
-          <span className="font-anton text-2xl md:text-3xl leading-none uppercase tracking-tight text-ink">
-            AI
-          </span>
+          {t.rich("brand", {
+            stamp: (chunks) => (
+              <span className="font-anton text-2xl md:text-3xl leading-none uppercase tracking-tight text-ink">
+                {chunks}
+              </span>
+            ),
+            dot: () => <span className="logo-gradient-dot" />,
+            ai: (chunks) => (
+              <span className="font-anton text-2xl md:text-3xl leading-none uppercase tracking-tight text-ink">
+                {chunks}
+              </span>
+            ),
+          })}
         </Link>
 
         {/* Center CTA Button - Hidden on mobile/tablet */}
@@ -35,7 +43,7 @@ export function ModernTopNavbar() {
           href="/stamp"
           className="hidden lg:block bg-(--color-stamp-chocolate) px-10 py-4 font-bold text-white text-lg uppercase tracking-widest animate-pulse-subtle transition-all duration-500 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
         >
-          STAMP IT
+          {t("stampIt")}
         </Link>
 
         {/* Right Side - Desktop Icons */}
@@ -46,7 +54,7 @@ export function ModernTopNavbar() {
           >
             <ShoppingBag className="w-5 h-5 text-brandCyan group-hover:scale-110 transition-transform duration-300" />
             <span className="btn-text text-xs font-bold uppercase tracking-widest text-brandCyan group-hover:text-white">
-              CART
+              {t("cart")}
             </span>
           </Link>
 
@@ -57,7 +65,7 @@ export function ModernTopNavbar() {
             >
               <User className="w-5 h-5 text-purple group-hover:scale-110 transition-transform duration-300" />
               <span className="btn-text text-xs font-bold uppercase tracking-widest text-purple group-hover:text-white">
-                ACCOUNT
+                {t("account")}
               </span>
             </Link>
           ) : (
@@ -74,7 +82,7 @@ export function ModernTopNavbar() {
             >
               <LogOut className="w-5 h-5 text-orange group-hover:scale-110 transition-transform duration-300" />
               <span className="btn-text text-xs font-bold uppercase tracking-widest text-orange group-hover:text-white">
-                LOGOUT
+                {t("logout")}
               </span>
             </button>
           )}
@@ -84,7 +92,7 @@ export function ModernTopNavbar() {
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="lg:hidden p-2 text-ink"
-          aria-label="Toggle menu"
+          aria-label={t("toggleMenu")}
         >
           {mobileMenuOpen ? (
             <X className="w-6 h-6" />
@@ -100,25 +108,25 @@ export function ModernTopNavbar() {
           href="/"
           className="nav-link-underline font-anton text-lg uppercase tracking-[0.2em] text-ink"
         >
-          HOME
+          {t("nav.home")}
         </Link>
         <Link
           href="/stamp"
           className="nav-link-underline font-anton text-lg uppercase tracking-[0.2em] text-ink"
         >
-          STAMP
+          {t("nav.stamp")}
         </Link>
         <Link
           href="/orders"
           className="nav-link-underline font-anton text-lg uppercase tracking-[0.2em] text-ink"
         >
-          ORDERS
+          {t("nav.orders")}
         </Link>
         <Link
           href="/dashboard"
           className="nav-link-underline font-anton text-lg uppercase tracking-[0.2em] text-ink"
         >
-          DASHBOARD
+          {t("nav.dashboard")}
         </Link>
       </nav>
 
@@ -138,28 +146,28 @@ export function ModernTopNavbar() {
               onClick={() => setMobileMenuOpen(false)}
               className="font-anton text-xl uppercase tracking-[0.2em] text-ink py-2"
             >
-              HOME
+              {t("nav.home")}
             </Link>
             <Link
               href="/stamp"
               onClick={() => setMobileMenuOpen(false)}
               className="font-anton text-xl uppercase tracking-[0.2em] text-ink py-2"
             >
-              STAMP
+              {t("nav.stamp")}
             </Link>
             <Link
               href="/orders"
               onClick={() => setMobileMenuOpen(false)}
               className="font-anton text-xl uppercase tracking-[0.2em] text-ink py-2"
             >
-              ORDERS
+              {t("nav.orders")}
             </Link>
             <Link
               href="/dashboard"
               onClick={() => setMobileMenuOpen(false)}
               className="font-anton text-xl uppercase tracking-[0.2em] text-ink py-2"
             >
-              DASHBOARD
+              {t("nav.dashboard")}
             </Link>
           </nav>
 
@@ -172,7 +180,7 @@ export function ModernTopNavbar() {
             >
               <ShoppingBag className="w-5 h-5 text-brandCyan" />
               <span className="text-sm font-bold uppercase tracking-widest text-brandCyan">
-                CART
+                {t("cart")}
               </span>
             </Link>
 
@@ -184,14 +192,14 @@ export function ModernTopNavbar() {
               >
                 <User className="w-5 h-5 text-purple" />
                 <span className="text-sm font-bold uppercase tracking-widest text-purple">
-                  ACCOUNT
+                  {t("account")}
                 </span>
               </Link>
             ) : (
               <Login className="w-full flex items-center justify-center gap-3 border border-purple/20 p-4 rounded-xl bg-purple/5">
                 <User className="w-5 h-5 text-purple" />
                 <span className="text-sm font-bold uppercase tracking-widest text-purple">
-                  LOGIN
+                  {t("login")}
                 </span>
               </Login>
             )}
@@ -203,7 +211,7 @@ export function ModernTopNavbar() {
               >
                 <LogOut className="w-5 h-5 text-orange" />
                 <span className="text-sm font-bold uppercase tracking-widest text-orange">
-                  LOGOUT
+                  {t("logout")}
                 </span>
               </button>
             )}

@@ -1,5 +1,6 @@
 import { CheckCircle2 } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
@@ -14,9 +15,11 @@ interface Props {
 }
 
 const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
+  const t = useTranslations("checkout.success");
   const orderNumber = details?.orderNumber ?? "—";
   const totalPaid = details?.totalPaid ?? "—";
-  const estimatedDelivery = details?.estimatedDelivery ?? "7–10 business days";
+  const estimatedDelivery =
+    details?.estimatedDelivery ?? t("defaultEstimatedDelivery");
   const confirmationEmail = details?.confirmationEmail;
 
   return (
@@ -24,7 +27,7 @@ const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
       <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
         <section
           className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
-          aria-label="Payment confirmation"
+          aria-label={t("ariaLabel")}
         >
           {/* Top accent bar */}
           <div
@@ -46,25 +49,24 @@ const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
             variant="card"
             className="text-(--color-stamp-chocolate) mb-4"
           >
-            Order Confirmed
+            {t("title")}
           </Heading>
           <Paragraph
             variant="sm"
             className="text-(--color-stamp-taupe) max-w-sm mx-auto mb-12"
           >
-            Your custom masterpiece is officially in the queue. We&apos;re
-            warming up the ink jets right now.
+            {t("description")}
           </Paragraph>
 
           {/* Order details grid */}
           <PaymentResultDetailsGrid
             items={[
-              { label: "Order Number", value: orderNumber },
-              { label: "Estimated Delivery", value: estimatedDelivery },
-              { label: "Total Paid", value: totalPaid },
+              { label: t("orderNumber"), value: orderNumber },
+              { label: t("estimatedDelivery"), value: estimatedDelivery },
+              { label: t("totalPaid"), value: totalPaid },
             ]}
-            statusLabel="Status"
-            statusValue="Processing"
+            statusLabel={t("statusLabel")}
+            statusValue={t("statusProcessing")}
             statusVariant="success"
           />
 
@@ -74,14 +76,14 @@ const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
               asChild
               className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-chocolate)/90"
             >
-              <Link href="/orders">Track Your Order</Link>
+              <Link href="/orders">{t("trackOrder")}</Link>
             </Button>
             <Button
               variant="outline"
               onClick={onCreateAnother}
               className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase border-(--color-stamp-divider) text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
             >
-              Create Another Order
+              {t("createAnother")}
             </Button>
           </div>
 
@@ -91,7 +93,7 @@ const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
               variant="micro"
               className="block mt-12 text-(--color-stamp-taupe)"
             >
-              A confirmation email has been sent to {confirmationEmail}
+              {t("confirmationEmail", { email: confirmationEmail })}
             </Span>
           )}
         </section>

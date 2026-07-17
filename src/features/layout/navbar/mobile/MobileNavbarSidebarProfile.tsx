@@ -1,6 +1,7 @@
 "use client";
 
 import type { UserI } from "@/types/api";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 
 interface MobileNavbarSidebarProfileProps {
@@ -21,7 +22,8 @@ export function MobileNavbarSidebarProfile({
   user,
   onOpenProfile,
 }: MobileNavbarSidebarProfileProps) {
-  const firstName = user?.user_metadata?.first_name || "User";
+  const t = useTranslations("layout.mobileSidebar");
+  const firstName = user?.user_metadata?.first_name || t("defaultName");
   const lastName = user?.user_metadata?.last_name || "";
   const fullName = `${firstName} ${lastName}`.trim();
   const avatarInitials =
@@ -37,7 +39,7 @@ export function MobileNavbarSidebarProfile({
       <div className="flex flex-col text-left min-w-0">
         <span className={profileStyles.name}>{fullName}</span>
         <span className={profileStyles.email}>
-          {user?.email || "View profile"}
+          {user?.email || t("profileFallback")}
         </span>
       </div>
     </Button>

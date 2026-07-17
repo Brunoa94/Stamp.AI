@@ -7,6 +7,7 @@
 
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import type { CartWithItems } from "@/types/cart";
 import { CartServiceMapper } from "@/mappers/services/cartServiceMapper";
@@ -19,6 +20,7 @@ interface CartOrderSummaryPropsI {
 }
 
 export function CartOrderSummary({ cart, onCheckout }: CartOrderSummaryPropsI) {
+  const t = useTranslations("cart.summary");
   const { subtotal, shipping } = CartServiceMapper.calculateCartTotals(
     cart.cart_items,
   );
@@ -31,7 +33,11 @@ export function CartOrderSummary({ cart, onCheckout }: CartOrderSummaryPropsI) {
         unstyled
         className="mb-8 font-heading text-2xl md:text-3xl font-bold uppercase tracking-tight"
       >
-        Order <span className="text-(--color-stamp-gold)">Summary</span>
+        {t.rich("title", {
+          accent: (chunks) => (
+            <span className="text-(--color-stamp-gold)">{chunks}</span>
+          ),
+        })}
       </Heading>
 
       <CartOrderSummaryBreakdown

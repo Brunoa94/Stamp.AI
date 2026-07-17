@@ -116,3 +116,80 @@
   font-family: var(--font-playfair), serif;
   color: var(--color-stamp-taupe);
 }
+
+/* ==========================================
+   SONNER TOAST STYLES [tag: toast-*]
+   Toast notifications styled for Stamp design system
+   ========================================== */
+
+[data-sonner-toaster] {
+  font-family: var(--font-outfit), sans-serif;
+}
+
+[data-sonner-toast] {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  min-width: 360px;
+  border-radius: 0;
+  border: 1px solid var(--color-stamp-divider);
+  background-color: var(--color-stamp-off-white);
+  box-shadow: var(--shadow-stamp-card);
+}
+
+[data-sonner-toast][data-type="success"] {
+  border-left: 4px solid var(--color-stamp-success);
+}
+
+[data-sonner-toast][data-type="error"] {
+  border-left: 4px solid var(--color-stamp-error);
+}
+
+[data-sonner-toast][data-type="info"] {
+  border-left: 4px solid var(--color-stamp-info);
+}
+
+[data-sonner-toast][data-type="warning"] {
+  border-left: 4px solid var(--color-stamp-warning);
+}
+
+[data-sonner-toast] [data-title] {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-stamp-chocolate);
+}
+
+[data-sonner-toast] [data-description] {
+  font-size: 0.875rem;
+  color: color-mix(in srgb, var(--color-stamp-chocolate) 70%, transparent);
+  margin-top: 0.25rem;
+}
+
+[data-sonner-toast] button[data-button] {
+  background-color: var(--color-stamp-chocolate);
+  color: var(--color-stamp-white);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0;
+  transition: background-color 0.2s;
+}
+
+[data-sonner-toast] button[data-button]:hover {
+  background-color: color-mix(in srgb, var(--color-stamp-chocolate) 90%, transparent);
+}
+
+[data-sonner-toast] button[data-cancel] {
+  background-color: transparent;
+  color: color-mix(in srgb, var(--color-stamp-chocolate) 60%, transparent);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0;
+  transition: color 0.2s;
+}
+
+[data-sonner-toast] button[data-cancel]:hover {
+  color: var(--color-stamp-chocolate);
+}

@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
 import { Span } from "@/features/ui/span";
@@ -20,15 +21,17 @@ export function SizeSelector({
   selectedSize,
   onSelectSize,
 }: PropsI) {
+  const t = useTranslations("stamp.customization");
+
   return (
     <div>
       <Label className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe) block mb-6">
-        Size Selector
+        {t("sizeSelectorLabel")}
       </Label>
       <div
         className="flex flex-wrap gap-2"
         role="radiogroup"
-        aria-label="Size selection"
+        aria-label={t("sizeSelectionAria")}
       >
         {sizes.map((size) => {
           const isActive = selectedSize === size;
@@ -43,7 +46,7 @@ export function SizeSelector({
                   : "bg-transparent text-(--color-stamp-chocolate) border-(--color-stamp-divider) hover:border-(--color-stamp-chocolate) hover:bg-transparent"
               }`}
               aria-pressed={isActive}
-              aria-label={`Select size ${size}`}
+              aria-label={t("sizeAria", { size })}
             >
               <Span variant="micro">{size}</Span>
             </Button>

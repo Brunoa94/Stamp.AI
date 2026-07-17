@@ -1,5 +1,8 @@
+import { useTranslations } from "next-intl";
 import { AuthModalHeader } from "@/features/ui/dialog/AuthModalHeader";
 
 export function LoginDialogHeader() {
-  return <AuthModalHeader label="Access Account" title="Login" />;
+  const t = useTranslations("auth.login.header");
+
+  return <AuthModalHeader label={t("label")} title={t("title")} />;
 }

@@ -7,12 +7,14 @@
 
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { CheckoutAddressForm } from "../components/CheckoutAddressForm";
 import { CheckoutSectionCard } from "../components/CheckoutSectionCard";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 
 export function CheckoutShippingSection() {
+  const t = useTranslations("checkout.shipping");
   const { watch } = useFormContext<CheckoutFormData>();
   const useShippingAddress = watch("useShippingAddress");
 
@@ -20,8 +22,8 @@ export function CheckoutShippingSection() {
 
   return (
     <CheckoutSectionCard
-      title="Shipping Address"
-      subtitle="Enter where you want your order shipped"
+      title={t("title")}
+      subtitle={t("subtitle")}
     >
       <CheckoutAddressForm fieldPrefix="shipping" />
     </CheckoutSectionCard>

@@ -5,22 +5,22 @@ import { Input } from "@/features/ui/input";
 import { Label } from "@/features/ui/label";
 import { User, Save, X } from "lucide-react";
 import { useUserInformation } from "@/features/profile/lib/hooks/useUserInformation";
+import { useTranslations } from "next-intl";
 
 // Static field configuration outside component for performance
 const formFields = [
   {
     id: "first_name",
-    label: "First Name",
     key: "firstName" as const,
   },
   {
     id: "last_name",
-    label: "Last Name",
     key: "lastName" as const,
   },
 ] as const;
 
 export function UserInformationSection() {
+  const t = useTranslations("profile.userInformation");
   const {
     isEditing,
     firstName,
@@ -54,9 +54,9 @@ export function UserInformationSection() {
           </div>
           <div>
             <h2 className="text-xl font-anton uppercase tracking-tight text-ink leading-tight mb-1">
-              PERSONAL INFORMATION
+              {t("title")}
             </h2>
-            <p className="text-slate-500 text-sm">Update your personal details</p>
+            <p className="text-slate-500 text-sm">{t("subtitle")}</p>
           </div>
         </div>
         {!isEditing && (
@@ -65,20 +65,20 @@ export function UserInformationSection() {
             variant="brutalist-ghost"
             className="text-[10px]"
           >
-            EDIT
+            {t("edit")}
           </Button>
         )}
       </div>
 
       {/* Form Fields */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {formFields.map(({ id, label, key }) => (
+        {formFields.map(({ id, key }) => (
           <div key={id} className="space-y-2">
             <Label
               htmlFor={id}
               className="text-[10px] font-bold uppercase tracking-widest text-slate-400"
             >
-              {label}
+              {t(`${key}Label`)}
             </Label>
             <Input
               type="text"
@@ -96,7 +96,7 @@ export function UserInformationSection() {
             htmlFor="email"
             className="text-[10px] font-bold uppercase tracking-widest text-slate-400"
           >
-            Email
+            {t("emailLabel")}
           </Label>
           <Input
             type="email"
@@ -106,7 +106,7 @@ export function UserInformationSection() {
             className="w-full bg-concrete/30 border border-ink/10 p-4 font-space uppercase outline-none"
           />
           <p className="text-[11px] text-slate-400 font-medium italic">
-            Email cannot be changed for security reasons
+            {t("emailNote")}
           </p>
         </div>
       </div>
@@ -122,7 +122,7 @@ export function UserInformationSection() {
             className="w-full sm:w-auto group"
           >
             <Save className="w-4 h-4 mr-2" />
-            {isLoading ? "SAVING..." : "SAVE CHANGES"}
+            {isLoading ? t("saving") : t("saveChanges")}
           </Button>
           <Button
             type="button"
@@ -132,7 +132,7 @@ export function UserInformationSection() {
             className="w-full sm:w-auto"
           >
             <X className="w-4 h-4 mr-2" />
-            CANCEL
+            {t("cancel")}
           </Button>
         </div>
       )}

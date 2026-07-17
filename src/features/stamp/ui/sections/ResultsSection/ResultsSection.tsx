@@ -1,9 +1,9 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
 import { useStampSelectedImage } from "../../../lib/hooks/useStampSelectors";
 import { ResultsImage } from "./ResultsImage";
-import { ResultsDetails } from "./ResultsDetails";
 import { ResultsActions } from "./ResultsActions";
 import { Heading } from "@/features/ui/heading";
 
@@ -15,6 +15,7 @@ import { Heading } from "@/features/ui/heading";
  */
 
 export function ResultsSection() {
+  const t = useTranslations("stamp.results");
   const { nextStep, goToStep } = useStampNavigation();
   const { selectedImageUrl, enhancedPrompt } = useStampSelectedImage();
   const canProceedToProduct = Boolean(selectedImageUrl);
@@ -48,10 +49,13 @@ export function ResultsSection() {
           variant="title"
           className="text-(--color-stamp-chocolate) mb-6"
         >
-          Your{" "}
-          <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
-            Creation
-          </span>
+          {t.rich("title", {
+            accent: (chunks) => (
+              <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
+                {chunks}
+              </span>
+            ),
+          })}
         </Heading>
         <ResultsImage imageUrl={displayImageUrl} />
         <ResultsActions

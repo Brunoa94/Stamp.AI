@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { HomepageContent } from "@/features/homepage/ui/HomepageContent";
 import { getCachedProductsWithPricing } from "@/lib/supabase/server-cache";
 
@@ -10,11 +11,13 @@ import { getCachedProductsWithPricing } from "@/lib/supabase/server-cache";
 // Revalidate page every 30 minutes
 export const revalidate = 1800;
 
-export const metadata = {
-  title: "Stamp AI | Design Synthesis Atelier",
-  description:
-    "AI-powered design synthesis for premium apparel. Create archive-quality graphics in seconds.",
-};
+export async function generateMetadata() {
+  const t = await getTranslations("home.meta");
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 export default async function Home() {
   const productsWithPricing = await getCachedProductsWithPricing();

@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
 import { useModalFocusTrap } from "@/hooks/useModalFocusTrap";
 import type { OrderWithItemsT } from "@/types/order";
 import { OrdersCancelModalIcon } from "./OrdersCancelModalIcon";
@@ -20,6 +21,7 @@ export function OrdersCancelModal({
   onConfirm,
   onClose,
 }: PropsI) {
+  const t = useTranslations("orders.cancelModal");
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
 
@@ -37,7 +39,7 @@ export function OrdersCancelModal({
       className="fixed inset-0 z-110 flex items-center justify-center bg-(--color-stamp-chocolate)/30 p-6 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
-      aria-label="Cancel order confirmation"
+      aria-label={t("ariaLabel")}
       onClick={onClose}
     >
       <div

@@ -7,29 +7,31 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/features/ui/dialog";
+import { useTranslations } from "next-intl";
 
 export function PasswordResetRequestSuccess() {
+  const t = useTranslations("auth.passwordReset.requestSuccess");
+
   return (
     <DialogContent className="max-w-md border-2 border-(--color-stamp-divider) bg-(--color-stamp-off-white) p-10">
       <div className="flex flex-col gap-6 text-center">
         <DialogHeader>
-          <DialogTitle className="sr-only">Reset Email Sent</DialogTitle>
+          <DialogTitle className="sr-only">{t("srTitle")}</DialogTitle>
           <Heading
             as="h2"
             variant="card"
             className="text-3xl tracking-tight text-(--color-stamp-chocolate)"
           >
-            Reset Email Sent!
+            {t("title")}
           </Heading>
         </DialogHeader>
         <div className="space-y-6">
           <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
-            We've sent a password reset link to your email address. Please check
-            your email and follow the instructions to reset your password.
+            {t("description")}
           </Paragraph>
           <DialogClose asChild>
             <Button variant="stamp-auth-primary" className="w-full">
-              Got it
+              {t("gotIt")}
             </Button>
           </DialogClose>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Coins } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Shimmer } from "@/features/ui/shimmer";
 import { useCoins } from "@/queries/coinsQueries";
 import { cn } from "@/lib/utils";
@@ -14,6 +15,7 @@ interface CoinsBadgeProps {
  * Shows a shimmer skeleton while loading.
  */
 export function CoinsBadge({ className }: CoinsBadgeProps) {
+  const t = useTranslations("layout.navbar");
   const { coins, isLoading } = useCoins();
 
   if (isLoading) {
@@ -27,7 +29,7 @@ export function CoinsBadge({ className }: CoinsBadgeProps) {
         "text-yellow-500 dark:text-yellow-400",
         className,
       )}
-      title={`${coins ?? 0} coins remaining`}
+      title={t("coinsRemaining", { coins: coins ?? 0 })}
     >
       <Coins className="w-5 h-5 shrink-0" />
       <span>{coins ?? 0}</span>

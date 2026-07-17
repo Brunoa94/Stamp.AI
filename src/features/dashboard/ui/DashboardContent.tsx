@@ -11,6 +11,7 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
@@ -39,6 +40,7 @@ const OrdersDetailsModal = dynamic(
 
 export function DashboardContent() {
   const router = useRouter();
+  const t = useTranslations("dashboard.content");
   const {
     user,
     ordersPlaced,
@@ -56,20 +58,20 @@ export function DashboardContent() {
       <DashboardLayout header={<DashboardHeader user={user} />}>
         <div className="border border-(--color-stamp-error)/20 bg-(--color-stamp-error)/5 p-8 text-center">
           <Heading as="h2" variant="card" className="text-(--color-stamp-error)">
-            Dashboard unavailable
+            {t("errorTitle")}
           </Heading>
           <Paragraph
             variant="sm"
             className="mt-2 text-(--color-stamp-error)/80"
           >
-            We couldn&apos;t load your production data.
+            {t("errorDescription")}
           </Paragraph>
           <Button
             onClick={() => refetch()}
             variant="secondary-brown"
             className="mt-6"
           >
-            Retry
+            {t("retry")}
             <RefreshCw className="h-3.5 w-3.5" />
           </Button>
         </div>

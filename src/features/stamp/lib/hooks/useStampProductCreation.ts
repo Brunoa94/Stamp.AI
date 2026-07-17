@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useStampNavigation } from "./useStampNavigation";
 import {
   useStampFinalization,
@@ -33,13 +34,8 @@ import { withTimeout } from "@/lib/promiseUtils";
 const PRODUCT_CREATION_TIMEOUT_MS = 120_000; // 2 minutes
 
 class ProductCreationTimeoutError extends Error {
-  constructor(timeoutMs: number) {
-    super(
-      `Product creation timed out after ${
-        Math.round(timeoutMs / 1000)
-      } seconds. ` +
-        `Please try again or contact support if the issue persists.`,
-    );
+  constructor(message: string) {
+    super(message);
     this.name = "ProductCreationTimeoutError";
   }
 }
@@ -52,6 +48,7 @@ interface CreateProductParamsType {
 }
 
 export function useStampProductCreation() {
+  const t = useTranslations("stamp.errors.productCreation");
   const router = useRouter();
   const { nextStep, goToStep } = useStampNavigation();
   const { handleError } = useErrorHandler();
@@ -108,32 +105,32 @@ export function useStampProductCreation() {
           size,
         },
       });
-      toast.info("Product already created. Proceeding to review.");
+      toast.info(t("alreadyCreated"));
       nextStep();
       return;
     }
 
     // Validate required data
     if (!selectedImageUrl) {
-      handleError(new Error("Please generate a design first"));
+      handleError(new Error(t("noDesign")));
       goToStep(2);
       return;
     }
 
     if (!blueprintId || !printProviderId) {
-      handleError(new Error("Please select a product type"));
+      handleError(new Error(t("noProduct")));
       goToStep(5);
       return;
     }
 
     if (!fabricColor || !size) {
-      handleError(new Error("Please select color and size"));
+      handleError(new Error(t("noColorSize")));
       return;
     }
 
     // Validate authentication
     if (!user) {
-      handleError(new Error("You must be logged in to create a product"));
+      handleError(new Error(t("notLoggedIn")));
       router.push("/auth/login");
       return;
     }
@@ -175,7 +172,11 @@ export function useStampProductCreation() {
           selected_size: size,
         }),
         PRODUCT_CREATION_TIMEOUT_MS,
-        new ProductCreationTimeoutError(PRODUCT_CREATION_TIMEOUT_MS),
+        new ProductCreationTimeoutError(
+          t("timeout", {
+            seconds: Math.round(PRODUCT_CREATION_TIMEOUT_MS / 1000),
+          }),
+        ),
       );
 
       logStampInfo({

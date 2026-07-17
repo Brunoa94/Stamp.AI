@@ -5,6 +5,7 @@
  * 2×2 grid of testimonial cards with platform-specific colors and icons.
  */
 
+import { useTranslations } from "next-intl";
 import { ThumbsUp } from "lucide-react";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
@@ -20,6 +21,7 @@ import { HomePlatformIcon } from "../components/HomePlatformIcon";
 import { SectionReveal } from "../components/SectionReveal";
 
 export function HomeReviewsSection() {
+  const t = useTranslations("home.reviews");
   return (
     <section
       id="reviews"
@@ -89,7 +91,7 @@ export function HomeReviewsSection() {
               const config = HOME_PLATFORM_CONFIG[testimonial.platform];
               return (
                 <article
-                  key={testimonial.author}
+                  key={testimonial.id}
                   className="flex flex-col border bg-(--color-stamp-white) p-5 sm:p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-(--shadow-stamp-card-hover)"
                   style={{
                     borderColor:
@@ -120,7 +122,7 @@ export function HomeReviewsSection() {
                     variant="quote"
                     className="flex-1 text-(--color-stamp-chocolate)"
                   >
-                    &ldquo;{testimonial.quote}&rdquo;
+                    &ldquo;{t(`testimonials.${testimonial.id}.quote`)}&rdquo;
                   </Paragraph>
 
                   <div
@@ -132,14 +134,14 @@ export function HomeReviewsSection() {
                   >
                     <div>
                       <Heading as="h3" variant="item">
-                        {testimonial.author}
+                        {t(`testimonials.${testimonial.id}.author`)}
                       </Heading>
                       <Span
                         as="p"
                         variant="micro"
                         className="mt-1 text-(--color-stamp-taupe)"
                       >
-                        {testimonial.role}
+                        {t(`testimonials.${testimonial.id}.role`)}
                       </Span>
                     </div>
                     <Span

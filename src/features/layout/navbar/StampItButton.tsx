@@ -1,6 +1,7 @@
 import { Button } from "@/features/ui/button";
 import { cn } from "@/lib/utils";
 import { Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface StampItButtonProps {
   isActive: boolean;
@@ -8,6 +9,8 @@ interface StampItButtonProps {
 }
 
 export function StampItButton({ isActive, onClick }: StampItButtonProps) {
+  const t = useTranslations("layout.navbar");
+
   return (
     <Button
       onClick={onClick}
@@ -35,7 +38,7 @@ export function StampItButton({ isActive, onClick }: StampItButtonProps) {
         )}
         style={isActive ? {} : { backgroundSize: "200% auto" }}
       >
-        Stamp It
+        {t("stampItButton")}
       </span>
       {isActive && <Sparkles className="w-7 h-7 animate-pulse text-white" />}
     </Button>

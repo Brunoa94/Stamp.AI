@@ -5,6 +5,7 @@
  */
 
 import { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { calculatePercentage } from "../../lib/helpers/calculatePercentage";
 import { DashboardCard } from "../components/DashboardCard";
@@ -27,6 +28,7 @@ export function DashboardMetricCard({
   target,
   targetCaption,
 }: DashboardMetricCardPropsI) {
+  const t = useTranslations("dashboard.metricCard");
   const percent = calculatePercentage(value, target);
 
   return (
@@ -47,7 +49,10 @@ export function DashboardMetricCard({
       </Span>
 
       <div className="mt-8 space-y-3">
-        <DashboardProgressBar percent={percent} label={`${label} progress`} />
+        <DashboardProgressBar
+          percent={percent}
+          label={t("progressLabel", { label })}
+        />
         <div className="flex items-center justify-between">
           <Span variant="micro" className="text-(--color-stamp-taupe)">
             {targetCaption} {target.toLocaleString()}

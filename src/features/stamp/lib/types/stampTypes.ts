@@ -8,19 +8,19 @@ import type { LucideIcon } from "lucide-react";
  */
 
 // Step navigation types
+// Display strings (title, label) are translated via `stamp.steps.<id>`.
 export type StampStepType = {
   id: string;
   number: string;
-  title: string;
-  label: string;
 };
 
 // Edit suggestion tiles (Synthesis left-panel grid)
 export type EditSuggestionType = {
+  /**
+   * Stable identifier. Also the i18n key: display strings (label, hint,
+   * prompt) live under `stamp.suggestions.<id>` in the message catalog.
+   */
   id: string;
-  label: string;
-  hint: string;
-  prompt: string;
   /** Path to a representative thumbnail image (public/). */
   image: string;
 };

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { ShippingAddressT } from "@/schemas/checkout";
 import { mapShippingAddressToBillingDetails } from "@/mappers/mapShippingAddressToBillingDetails";
@@ -35,6 +36,7 @@ export function usePaymentForm({
   onSuccess,
   onError,
 }: UsePaymentFormProps) {
+  const t = useTranslations("checkout.paymentForm");
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -45,14 +47,14 @@ export function usePaymentForm({
 
   const processPayment = async () => {
     if (!stripe) {
-      const notReadyMessage = "Stripe is not ready yet. Please wait a moment and try again.";
+      const notReadyMessage = t("stripeNotReady");
       setError(notReadyMessage);
       onError?.(notReadyMessage);
       return;
     }
 
     if (!elements && !isTestMode) {
-      const missingElementMessage = "Payment form is not ready. Please refresh the page and try again.";
+      const missingElementMessage = t("formNotReady");
       setError(missingElementMessage);
       onError?.(missingElementMessage);
       return;
@@ -99,7 +101,7 @@ export function usePaymentForm({
 
       const cardElement = elements!.getElement(CardElement);
       if (!cardElement) {
-        throw new Error("Card element not found");
+        throw new Error(t("cardElementNotFound"));
       }
 
       const { error: confirmError, paymentIntent } =
@@ -119,7 +121,7 @@ export function usePaymentForm({
       }
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "Payment failed";
+        err instanceof Error ? err.message : t("paymentFailed");
       setError(errorMessage);
       onError?.(errorMessage);
     } finally {

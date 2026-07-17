@@ -9,6 +9,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import { Coins } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
@@ -26,13 +27,14 @@ const BuyCreditsDialog = dynamic(
 );
 
 export function DashboardCreditsSection() {
+  const t = useTranslations("dashboard.credits");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { total, used } = CREDITS_PLACEHOLDER;
   const percentSpent = calculatePercentage(used, total);
 
   return (
     <DashboardCard
-      label="Available credits"
+      label={t("label")}
       icon={<Coins className="h-4 w-4 text-(--color-stamp-gold)" />}
     >
       <div className="flex items-baseline gap-3">
@@ -40,20 +42,20 @@ export function DashboardCreditsSection() {
           {(total - used).toLocaleString()}
         </Span>
         <Span variant="micro" className="text-(--color-stamp-taupe)">
-          of {total.toLocaleString()}
+          {t("ofTotal", { total: total.toLocaleString() })}
         </Span>
       </div>
 
       <div className="mt-8 space-y-3">
         <div className="flex items-center justify-between">
           <Span variant="micro" className="text-(--color-stamp-taupe)">
-            Usage capacity
+            {t("usageCapacity")}
           </Span>
           <Span variant="micro" className="text-(--color-stamp-chocolate)">
-            {percentSpent}% spent
+            {t("percentSpent", { percent: percentSpent })}
           </Span>
         </div>
-        <DashboardProgressBar percent={percentSpent} label="Credits usage" />
+        <DashboardProgressBar percent={percentSpent} label={t("usageLabel")} />
       </div>
 
       <Button
@@ -62,7 +64,7 @@ export function DashboardCreditsSection() {
         className="mt-8 w-full"
         onClick={() => setIsDialogOpen(true)}
       >
-        Buy more credits
+        {t("buyMore")}
       </Button>
 
       {isDialogOpen && (

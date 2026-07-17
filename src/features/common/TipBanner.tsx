@@ -1,4 +1,5 @@
 import { Lightbulb } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Alert, AlertDescription } from "../ui/alert";
 
 interface ITipBannerProps {
@@ -6,6 +7,8 @@ interface ITipBannerProps {
 }
 
 const TipBanner = ({ uploadedImage }: ITipBannerProps) => {
+  const t = useTranslations("common.tipBanner");
+
   if (!uploadedImage) return null;
 
   return (
@@ -14,8 +17,7 @@ const TipBanner = ({ uploadedImage }: ITipBannerProps) => {
         <Lightbulb className="w-3 h-3 text-white" />
       </div>
       <AlertDescription className="text-xs text-emerald-600 group-hover:text-emerald-700 transition-colors duration-300">
-        <strong>Tip:</strong> Be specific about style, colors & mood. Example:
-        "Anime style like Naruto"
+        {t.rich("tip", { strong: (chunks) => <strong>{chunks}</strong> })}
       </AlertDescription>
     </Alert>
   );

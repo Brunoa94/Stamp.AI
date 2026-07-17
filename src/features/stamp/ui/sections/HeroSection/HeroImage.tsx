@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 /**
  * HeroImage
@@ -7,11 +8,13 @@ import Image from "next/image";
  */
 
 export function HeroImage() {
+  const t = useTranslations("stamp.hero");
+
   return (
     <div className="relative h-full overflow-hidden">
       <Image
         src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=2000&auto=format&fit=crop"
-        alt="Luxury Fashion Lifestyle"
+        alt={t("imageAlt")}
         fill
         className="object-cover"
         priority

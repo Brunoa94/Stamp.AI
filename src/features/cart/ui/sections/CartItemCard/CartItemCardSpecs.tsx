@@ -5,6 +5,7 @@
  * for a cart line item.
  */
 
+import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 
@@ -41,11 +42,13 @@ export function CartItemCardSpecs({
   colorway,
   lineTotal,
 }: CartItemCardSpecsPropsI) {
+  const t = useTranslations("cart.itemCard");
+
   return (
     <dl className="grid grid-cols-2 gap-3 border-t border-(--color-stamp-divider) pt-3 md:grid-cols-3 md:gap-6 md:pt-6">
-      <SpecItem label="Variant" value={variantName} />
-      <SpecItem label="Colorway" value={colorway} />
-      <SpecItem label="Line Total" value={formatPrice(lineTotal)} />
+      <SpecItem label={t("variant")} value={variantName} />
+      <SpecItem label={t("colorway")} value={colorway} />
+      <SpecItem label={t("lineTotal")} value={formatPrice(lineTotal)} />
     </dl>
   );
 }

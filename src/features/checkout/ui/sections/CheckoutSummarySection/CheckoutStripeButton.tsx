@@ -10,6 +10,7 @@
 
 import { useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Paragraph } from "@/features/ui/paragraph";
 import { usePaymentForm } from "@/features/checkout/ui/PaymentForm/usePaymentForm";
@@ -36,6 +37,7 @@ export function CheckoutStripeButton({
   selectedTestMethod = "visa",
   disabled = false,
 }: CheckoutStripeButtonPropsI) {
+  const t = useTranslations("checkout.stripeButton");
   const router = useRouter();
 
   const handleSuccess = useCallback(
@@ -89,7 +91,9 @@ export function CheckoutStripeButton({
         variant="secondary-brown"
         className="w-full font-heading"
       >
-        {loading ? "Processing…" : `Pay $${(amount / 100).toFixed(2)}`}
+        {loading
+          ? t("processing")
+          : t("pay", { amount: (amount / 100).toFixed(2) })}
       </Button>
 
       {error && (

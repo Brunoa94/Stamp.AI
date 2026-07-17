@@ -10,6 +10,8 @@
 
 "use client";
 
+import { useTranslations } from "next-intl";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 import { useFormContext } from "react-hook-form";
 import { Input } from "@/features/ui/input";
 import { Label } from "@/features/ui/label";
@@ -39,6 +41,8 @@ export function CheckoutAddressForm({
   fieldPrefix,
   config = shippingFormConfig,
 }: CheckoutAddressFormPropsI) {
+  const t = useTranslations("checkout.addressForm");
+  const ve = useValidationMessage();
   const {
     register,
     setValue,
@@ -61,7 +65,7 @@ export function CheckoutAddressForm({
             return (
               <div key={field.id} className="space-y-2">
                 <Label htmlFor={fieldName} className={LABEL_CLASS}>
-                  {field.label}
+                  {t(`fields.${field.id}`)}
                   {field.required && (
                     <span className="text-(--color-stamp-gold)" aria-hidden="true">
                       *
@@ -78,7 +82,7 @@ export function CheckoutAddressForm({
                       id={fieldName}
                       className="h-12 rounded-none border-(--color-stamp-divider) bg-(--color-stamp-white) text-xl uppercase tracking-[0.05em] text-(--color-stamp-chocolate) focus:ring-2 focus:ring-(--color-stamp-gold)/30"
                     >
-                      <SelectValue placeholder="Select country" />
+                      <SelectValue placeholder={t("selectCountryPlaceholder")} />
                     </SelectTrigger>
                     <SelectContent>
                       {field.options.map((option) => (
@@ -101,7 +105,7 @@ export function CheckoutAddressForm({
 
                 {error && (
                   <p id={`${fieldName}-error`} role="alert" className={ERROR_CLASS}>
-                    {error.message}
+                    {ve(error.message)}
                   </p>
                 )}
               </div>

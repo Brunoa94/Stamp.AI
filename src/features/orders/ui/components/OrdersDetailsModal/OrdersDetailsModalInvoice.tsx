@@ -1,4 +1,5 @@
 import { FileText, Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Paragraph } from "@/features/ui/paragraph";
 import { useInvoiceDownload } from "@/features/orders/lib/hooks/useInvoiceDownload";
@@ -15,6 +16,7 @@ interface PropsI {
  * (webhook-generated) and when it still needs to be issued.
  */
 export function OrdersDetailsModalInvoice({ order }: PropsI) {
+  const t = useTranslations("orders.detailsModal.invoice");
   const isPaid = order.payment_status === "paid";
   const { isLoading, invoiceNumber, handleDownload } = useInvoiceDownload({
     orderId: order.id,
@@ -38,7 +40,7 @@ export function OrdersDetailsModalInvoice({ order }: PropsI) {
         ) : (
           <FileText className="h-4 w-4" />
         )}
-        {isLoading ? "Preparing Invoice…" : "Download Invoice"}
+        {isLoading ? t("preparing") : t("download")}
       </Button>
       {invoiceNumber ? (
         <Paragraph

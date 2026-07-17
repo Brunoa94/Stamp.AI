@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import clsx from "clsx";
+import { useTranslations } from "next-intl";
 
 interface WizardContentProps {
   children: ReactNode;
@@ -19,11 +20,14 @@ export function WizardContent({
   showActions = true,
   onBack,
   onNext,
-  nextLabel = "Continue",
-  backLabel = "Back",
+  nextLabel,
+  backLabel,
   isNextDisabled = false,
   className,
 }: WizardContentProps) {
+  const t = useTranslations("ui.wizardContent");
+  const resolvedNextLabel = nextLabel ?? t("next");
+  const resolvedBackLabel = backLabel ?? t("back");
   return (
     <>
       {/* Active Step Content */}
@@ -46,7 +50,7 @@ export function WizardContent({
               onClick={onBack}
               className="px-8 py-3 text-slate-500 font-medium hover:text-slate-900 hover:bg-slate-50 rounded-xl transition-colors"
             >
-              {backLabel}
+              {resolvedBackLabel}
             </button>
           )}
           {onNext && (
@@ -64,7 +68,7 @@ export function WizardContent({
                 }
               )}
             >
-              {nextLabel}
+              {resolvedNextLabel}
             </button>
           )}
         </div>

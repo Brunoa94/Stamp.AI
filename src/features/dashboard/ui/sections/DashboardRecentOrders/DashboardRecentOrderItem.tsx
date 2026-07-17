@@ -6,6 +6,7 @@
  */
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { ChevronRight, ShoppingBag } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Paragraph } from "@/features/ui/paragraph";
@@ -28,6 +29,7 @@ export function DashboardRecentOrderItem({
   order,
   onOpenDetails,
 }: DashboardRecentOrderItemPropsI) {
+  const t = useTranslations("dashboard.recentOrders");
   const firstItem = order.order_items[0];
   const displayedStatus = toDisplayStatus(order.status);
 
@@ -37,14 +39,16 @@ export function DashboardRecentOrderItem({
         type="button"
         variant="ghost"
         onClick={() => onOpenDetails(order)}
-        aria-label={`Open details for order ${formatOrderId(order.id, order.created_at)}`}
+        aria-label={t("openDetails", {
+          orderId: formatOrderId(order.id, order.created_at),
+        })}
         className="group h-auto w-full justify-start gap-5 px-2 py-5 text-left transition-colors duration-300 hover:bg-(--color-stamp-cream)/60 hover:text-(--color-stamp-chocolate) sm:px-4"
       >
         <div className="relative h-14 w-14 flex-none overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-cream)">
           {firstItem?.custom_image_url ? (
             <Image
               src={firstItem.custom_image_url}
-              alt={firstItem.product_name || "Order product"}
+              alt={firstItem.product_name || t("productAlt")}
               fill
               sizes="56px"
               className="object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
@@ -62,7 +66,7 @@ export function DashboardRecentOrderItem({
             {formatOrderDate(order.created_at)}
           </Span>
           <Paragraph variant="body" className="mt-1 truncate">
-            {firstItem?.product_name || "Custom design"}
+            {firstItem?.product_name || t("customDesign")}
           </Paragraph>
         </div>
 
