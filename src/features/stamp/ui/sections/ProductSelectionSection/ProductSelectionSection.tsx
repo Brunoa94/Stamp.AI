@@ -67,7 +67,10 @@ export function ProductSelectionSection() {
           imageUrl: product.base_image_url ?? "",
           printProviderId: product.print_provider_id,
           price,
-          providerName: product.print_provider_id === 99 ? "Printify Choice" : "Print Provider",
+          providerName:
+            product.print_provider_id === 99
+              ? "Printify Choice"
+              : "Print Provider",
         };
       }),
     [visibleProducts],

@@ -22,7 +22,8 @@ export function FinalReviewSection() {
   const { handleBagIt, handleBuyNow, isAddingToCart } = useStampCartActions();
   const { mockupImageUrl } = useStampFinalization();
   const { selectedProductTitle } = useStampProductSelection();
-  const { selectedColor, selectedSize, selectedPriceCents } = useStampCustomization();
+  const { selectedColor, selectedSize, selectedPriceCents } =
+    useStampCustomization();
 
   const mockupUrl =
     mockupImageUrl ||
