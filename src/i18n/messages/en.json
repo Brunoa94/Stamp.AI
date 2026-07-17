@@ -2,60 +2,68 @@
   "home": {
     "hero": {
       "title": "Stamp <accent>ai</accent>",
-      "tagline": "AI-powered design synthesis for premium apparel. Create archive-quality graphics in seconds. Engineered for the creative elite who demand precision.",
+      "tagline": "Type an idea, get a print-ready design in seconds, and wear it on heavyweight apparel that lasts. No design skills required.",
       "ctaPrimary": "Start Creating",
       "ctaSecondary": "View Catalog",
       "productBadge": "Essential_Wht / 320GSM",
       "scrollCue": "Scroll to Build",
-      "productImageAlt": "Premium custom apparel"
+      "productImageAlt": "Premium heavyweight t-shirt with a custom AI-generated print"
     },
     "meta": {
-      "title": "Stamp AI | Design Synthesis Atelier",
-      "description": "AI-powered design synthesis for premium apparel. Create archive-quality graphics in seconds."
+      "title": "Custom AI T-Shirt & Apparel Design | Stamp AI",
+      "description": "Describe an idea, get a print-ready design in seconds, and put it on premium heavyweight apparel. No design skills needed — start for free.",
+      "keywords": [
+        "custom AI t-shirt design",
+        "AI t-shirt generator",
+        "design your own t-shirt",
+        "print on demand apparel",
+        "AI design generator",
+        "custom hoodies"
+      ]
     },
     "process": {
       "title": "The",
       "accent": "process",
-      "label": "Protocol 001",
-      "footer": "Engineered for precision",
+      "label": "How it works",
+      "footer": "Simple, from idea to doorstep.",
       "steps": {
         "step-studio": {
           "title": "Studio",
-          "description": "Design Selection: Choose from our curated minimalist library or upload custom artwork for AI enhancement."
+          "description": "Describe your idea or upload your own art, then pick a starting style from our curated presets."
         },
         "step-synthesis": {
           "title": "Synthesis",
-          "description": "AI Processing: Our neural network optimizes your design for archival print quality and color accuracy."
+          "description": "The AI turns it into clean, print-ready artwork — sharp lines, accurate color, high resolution."
         },
         "step-material": {
           "title": "Material",
-          "description": "Fabric Selection: Choose from heavyweight premium blanks (280-480GSM) engineered for longevity."
+          "description": "Choose your blank: heavyweight tees, hoodies, totes and more, from 280 to 480 GSM."
         },
         "step-production": {
           "title": "Production",
-          "description": "Direct-to-Garment: High-precision DTG printing with eco-friendly water-based inks on demand."
+          "description": "We print on demand with water-based, eco-friendly inks. Nothing is made until you order it."
         },
         "step-quality": {
           "title": "Quality",
-          "description": "Inspection Protocol: Every piece hand-inspected for print fidelity, fabric integrity, and finish."
+          "description": "Every order is checked by hand for print quality, color and finish before it ships."
         },
         "step-delivery": {
           "title": "Delivery",
-          "description": "Global Logistics: Carbon-neutral shipping with real-time tracking. Arrives in 5-7 business days."
+          "description": "Carbon-neutral shipping with tracking. Most orders arrive in 5 to 7 business days."
         }
       }
     },
     "products": {
       "title": "The",
       "accent": "essentials",
-      "label": "Catalog 001",
+      "label": "Our apparel",
       "emptyState": "The catalog is temporarily unavailable — please check back soon",
-      "viewFullCatalog": "View Full Catalog"
+      "viewFullCatalog": "Browse all products"
     },
     "featured": {
       "title": "Featured",
       "accent": "pieces",
-      "label": "Curated Selection",
+      "label": "Featured pieces",
       "scrollLeft": "Scroll left",
       "scrollRight": "Scroll right",
       "noImage": "No image",
@@ -63,62 +71,62 @@
       "swipeHint": "Swipe to explore"
     },
     "manifesto": {
-      "title": "Democratizing <accent>design</accent>",
-      "quote": "“We believe exceptional design should be accessible to everyone. Our AI synthesis engine transforms creative vision into archival-quality apparel in seconds—no design experience required.”",
+      "title": "Design for <accent>everyone</accent>",
+      "quote": "Good design shouldn't need a design degree or a 500-unit minimum. Tell us what you want, and we'll help you make it — one piece at a time.",
       "quoteAttribution": "— Stamp AI Manifesto",
-      "intro": "Founded in 2024, Stamp AI merges machine learning with textile engineering to create a new paradigm for custom apparel production.",
+      "intro": "We built Stamp AI to close the gap between a good idea and a good product. The AI handles the design work and we handle the printing and the blanks, so anyone can make apparel worth keeping.",
       "valuesToggle": "Our Values",
       "values": {
         "01": {
           "title": "AI-Powered",
-          "description": "Neural network-enhanced design synthesis for maximum creative output with minimal effort."
+          "description": "Describe what you want in plain words. The AI turns it into print-ready art — no software to learn."
         },
         "02": {
           "title": "Archival Quality",
-          "description": "Premium heavyweight fabrics (280-480GSM) engineered for decades of wear without degradation."
+          "description": "Heavyweight blanks, 280 to 480 GSM, picked to survive years of wear and washing."
         },
         "03": {
           "title": "On-Demand",
-          "description": "Zero inventory waste. Every piece produced after order confirmation to minimize environmental impact."
+          "description": "Everything is made to order, so there's no dead stock and far less waste."
         },
         "04": {
           "title": "Global Logistics",
-          "description": "Carbon-neutral shipping to 180+ countries with real-time tracking and 5-7 day delivery windows."
+          "description": "Carbon-neutral shipping to 180+ countries, tracked from our press to your door."
         }
       }
     },
     "cta": {
       "heading": "Ready to stamp your <accent>vision</accent>?",
-      "lead": "Join thousands of creators using AI-powered design synthesis to bring their ideas to life. Start creating archival-quality apparel in seconds.",
+      "lead": "Start with a prompt and see your design in seconds. No minimum order and no commitment — just make the thing you've been picturing.",
       "ctaPrimary": "Start Creating",
       "ctaSecondary": "Browse Catalog"
     },
     "reviews": {
       "title": "Social",
       "accent": "proof",
-      "label": "Verified Reviews",
-      "verifiedReviews": "{count, number} Verified Reviews",
+      "label": "Customer reviews",
+      "verifiedReviews": "{count, number} customer reviews",
       "platformBreakdown": "Platform Breakdown",
       "testimonials": {
         "alex-chen": {
           "author": "Alex Chen",
           "role": "Creative Director",
-          "quote": "The AI synthesis is incredible. Took my rough sketch and turned it into a museum-quality print. The heavyweight fabric feels built to last decades."
+          "quote": "I fed it a rough sketch and got back something I'd actually frame. The tee it printed on is heavier than most blanks I've bought."
         },
         "jordan-ellis": {
           "author": "Jordan Ellis",
           "role": "Streetwear Designer",
-          "quote": "Finally, a platform that understands archival quality. The 320GSM essentials tee is hands down the best blank I've ever printed on."
+          "quote": "The 320 GSM tee is the best blank I've printed on, full stop, and the prints come out crisp every time."
         },
         "morgan-park": {
           "author": "Morgan Park",
           "role": "Independent Artist",
-          "quote": "Zero design experience needed. The AI understood my vision perfectly. Shipped in 6 days globally. This is the future of custom apparel."
+          "quote": "I can't design to save my life, but I described what I wanted and it just got it. Showed up in six days."
         },
         "riley-santos": {
           "author": "Riley Santos",
           "role": "Brand Consultant",
-          "quote": "The on-demand model eliminates inventory risk. Print quality is consistent across batches. Game-changer for small brands."
+          "quote": "Made-to-order means I'm not sitting on inventory, and the print quality doesn't drift between batches."
         }
       }
     },
@@ -162,7 +170,7 @@
       "items": {
         "aiPowered": "AI-Powered",
         "archivalQuality": "Archival Quality",
-        "instantDelivery": "Instant Delivery",
+        "instantDelivery": "Made to Order",
         "fiveSevenDayDelivery": "5-7 Day Delivery",
         "thirtyDayGuarantee": "30-Day Guarantee",
         "carbonNeutral": "Carbon Neutral"
@@ -279,8 +287,15 @@
       }
     },
     "metadata": {
-      "title": "Stamp It | 8-Stage Synthesis Protocol",
-      "description": "An advanced neural protocol for aesthetic curation. Translate your identity into bespoke permanence through our 8-stage synthesis."
+      "title": "AI Design Studio — Create Your Print | Stamp AI",
+      "description": "Upload art or describe your idea, choose a style, and let AI generate print-ready designs. Fine-tune the product and order in minutes.",
+      "keywords": [
+        "AI design studio",
+        "create custom t-shirt",
+        "text to t-shirt design",
+        "AI image to apparel",
+        "custom print maker"
+      ]
     },
     "header": {
       "logoAria": "Return to Stamp homepage",
@@ -678,8 +693,16 @@
   },
   "common": {
     "metadata": {
-      "title": "Imaginary Builder AI",
-      "description": "AI-powered design and building platform"
+      "title": "Stamp AI — Custom AI-Designed Apparel & Prints",
+      "description": "Turn a prompt or your own artwork into print-ready designs, then order premium custom t-shirts, hoodies and prints made to last.",
+      "keywords": [
+        "AI apparel design",
+        "custom t-shirt generator",
+        "AI t-shirt design",
+        "print on demand",
+        "custom hoodies",
+        "design your own clothes"
+      ]
     },
     "notFound": {
       "ariaLabel": "Page not found",
