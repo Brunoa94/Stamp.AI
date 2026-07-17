@@ -2,16 +2,16 @@
   "home": {
     "hero": {
       "title": "Stamp <accent>ai</accent>",
-      "tagline": "Type an idea, get a print-ready design in seconds, and wear it on heavyweight apparel that lasts. No design skills required.",
+      "tagline": "Type an idea, get a print-ready design in seconds, and wear it on heavyweight clothes that last. No design skills needed.",
       "ctaPrimary": "Start Creating",
       "ctaSecondary": "View Catalog",
       "productBadge": "Essential_Wht / 320GSM",
       "scrollCue": "Scroll to Build",
-      "productImageAlt": "Premium heavyweight t-shirt with a custom AI-generated print"
+      "productImageAlt": "Heavyweight t-shirt with a custom AI-generated print"
     },
     "meta": {
       "title": "Custom AI T-Shirt & Apparel Design | Stamp AI",
-      "description": "Describe an idea, get a print-ready design in seconds, and put it on premium heavyweight apparel. No design skills needed — start for free.",
+      "description": "Describe an idea, get a print-ready design in seconds, and put it on heavyweight clothes. No design skills needed — start for free.",
       "keywords": [
         "custom AI t-shirt design",
         "AI t-shirt generator",
@@ -29,10 +29,10 @@
       "steps": {
         "step-studio": {
           "title": "Studio",
-          "description": "Describe your idea or upload your own art, then pick a starting style from our curated presets."
+          "description": "Describe your idea or upload your own art, then pick a starting style from our presets."
         },
         "step-synthesis": {
-          "title": "Synthesis",
+          "title": "Design",
           "description": "The AI turns it into clean, print-ready artwork — sharp lines, accurate color, high resolution."
         },
         "step-material": {
@@ -67,14 +67,14 @@
       "scrollLeft": "Scroll left",
       "scrollRight": "Scroll right",
       "noImage": "No image",
-      "collectionLabel": "Premium Collection",
+      "collectionLabel": "Our Collection",
       "swipeHint": "Swipe to explore"
     },
     "manifesto": {
       "title": "Design for <accent>everyone</accent>",
       "quote": "Good design shouldn't need a design degree or a 500-unit minimum. Tell us what you want, and we'll help you make it — one piece at a time.",
       "quoteAttribution": "— Stamp AI Manifesto",
-      "intro": "We built Stamp AI to close the gap between a good idea and a good product. The AI handles the design work and we handle the printing and the blanks, so anyone can make apparel worth keeping.",
+      "intro": "We built Stamp AI to close the gap between a good idea and a good product. The AI handles the design work and we handle the printing and the blanks, so anyone can make clothes worth keeping.",
       "valuesToggle": "Our Values",
       "values": {
         "01": {
@@ -82,7 +82,7 @@
           "description": "Describe what you want in plain words. The AI turns it into print-ready art — no software to learn."
         },
         "02": {
-          "title": "Archival Quality",
+          "title": "Built to Last",
           "description": "Heavyweight blanks, 280 to 480 GSM, picked to survive years of wear and washing."
         },
         "03": {
@@ -139,7 +139,7 @@
       "items": {
         "ai-synthesis": {
           "question": "How does the AI turn my idea into a design?",
-          "answer": "You type a prompt, upload a sketch, or drop in a reference image, and the AI builds artwork made to print straight onto fabric. It handles the color, resolution, and detail so the print holds up on the garment. No design experience needed."
+          "answer": "You type a prompt, upload a sketch, or drop in a reference image, and the AI builds artwork made to print straight onto fabric. It handles the color, resolution, and detail so the print holds up on the piece. No design experience needed."
         },
         "archival-quality": {
           "question": "What makes your fabrics last so long?",
@@ -151,7 +151,7 @@
         },
         "sustainability": {
           "question": "What are your sustainability practices?",
-          "answer": "We make everything to order, so nothing sits in a warehouse going to waste. We print with water-based inks, offset shipping through verified reforestation, and pack in recycled materials. We work to keep the footprint low at every step."
+          "answer": "We make everything to order, so nothing sits in a warehouse going to waste. We print with water-based inks, offset shipping through verified tree planting, and pack in recycled materials. We work to keep the footprint low at every step."
         },
         "samples": {
           "question": "Can I order samples before bulk production?",
@@ -169,7 +169,7 @@
     "trustIndicators": {
       "items": {
         "aiPowered": "AI-Powered",
-        "archivalQuality": "Archival Quality",
+        "archivalQuality": "Built to Last",
         "instantDelivery": "Made to Order",
         "fiveSevenDayDelivery": "5-7 Day Delivery",
         "thirtyDayGuarantee": "30-Day Guarantee",
@@ -177,7 +177,7 @@
       },
       "subLabels": {
         "generative": "Generative Logic",
-        "heritage": "Heritage Grade",
+        "heritage": "Built to Last",
         "logistics": "Global Logistics"
       }
     },
@@ -189,7 +189,7 @@
   "stamp": {
     "synthesis": {
       "eyebrow": "Suggested Edits",
-      "subtitle": "Tap a suggestion to start your prompt, then fine-tune it on the right.",
+      "subtitle": "Tap a suggestion to start your prompt, then tweak it on the right.",
       "applySuggestion": "Apply suggestion: {label} — {hint}",
       "noFilter": {
         "label": "No filter",
@@ -288,7 +288,7 @@
     },
     "metadata": {
       "title": "AI Design Studio — Create Your Print | Stamp AI",
-      "description": "Upload art or describe your idea, choose a style, and let AI generate print-ready designs. Fine-tune the product and order in minutes.",
+      "description": "Upload art or describe your idea, choose a style, and let AI make print-ready designs. Adjust the product and order in minutes.",
       "keywords": [
         "AI design studio",
         "create custom t-shirt",
@@ -365,7 +365,7 @@
       "description": "Turn a prompt or your own artwork into a print-ready design. Eight quick steps from idea to finished product.",
       "cta": "Begin Customization",
       "ctaAria": "Begin customizing",
-      "imageAlt": "Luxury Fashion Lifestyle"
+      "imageAlt": "Fashion lifestyle"
     },
     "upload": {
       "protocol": "Step 01 / Upload",
@@ -400,7 +400,7 @@
     "productSelection": {
       "protocol": "Step 05 / Product",
       "title": "Select Your <accent>Canvas</accent>",
-      "description": "Pick what you want your design printed on. Everything is premium and printed on demand.",
+      "description": "Pick what you want your design printed on. Everything's good quality and printed on demand.",
       "pricingNote": "Pricing reflects global print provider rates",
       "continue": "CONTINUE TO CUSTOMIZATION",
       "selectAria": "Select {name}",
@@ -499,7 +499,7 @@
       "standardVariant": "Standard",
       "customDesignSynthesis": "Custom design",
       "variant": "Variant",
-      "colorway": "Colorway",
+      "colorway": "Color",
       "lineTotal": "Line Total",
       "quantityGroupLabel": "Quantity for {productName}",
       "decreaseQuantity": "Decrease quantity",
@@ -516,10 +516,10 @@
       "free": "Free",
       "taxLogistics": "Tax",
       "taxNote": "Calculated at checkout",
-      "proceedToCheckout": "Proceed to Checkout",
+      "proceedToCheckout": "Checkout",
       "estimatedArrival": "Estimated Arrival",
       "arrivalWindow": "3–5 Business Days",
-      "secureTransactions": "Secure encrypted transactions",
+      "secureTransactions": "Secure, encrypted checkout",
       "total": "Total",
       "currencyNote": "Currency: USD"
     }
@@ -555,7 +555,7 @@
   "dashboard": {
     "content": {
       "errorTitle": "Dashboard unavailable",
-      "errorDescription": "We couldn't load your production data.",
+      "errorDescription": "We couldn't load your data.",
       "retry": "Retry"
     },
     "header": {
@@ -693,8 +693,8 @@
   },
   "common": {
     "metadata": {
-      "title": "Stamp AI — Custom AI-Designed Apparel & Prints",
-      "description": "Type a prompt or upload your own artwork, then order it on premium t-shirts, hoodies, and prints built to last.",
+      "title": "Stamp AI — Custom AI-Designed Clothes & Prints",
+      "description": "Type a prompt or upload your own art, then put it on good t-shirts, hoodies, and prints built to last.",
       "keywords": [
         "AI apparel design",
         "custom t-shirt generator",
@@ -736,7 +736,7 @@
     },
     "footer": {
       "brand": "Stamp<dot></dot>AI",
-      "mission": "Type an idea, get apparel worth wearing. We print it and ship it to your door.",
+      "mission": "Type an idea, get clothes worth wearing. We print it and ship it to your door.",
       "sections": {
         "company": "Company",
         "support": "Support",
@@ -769,7 +769,7 @@
     },
     "footerMission": {
       "title": "Our Mission",
-      "text": "Type an idea, get apparel worth wearing. We print it and ship it to your door."
+      "text": "Type an idea, get clothes worth wearing. We print it and ship it to your door."
     },
     "mobileHeader": {
       "stampAriaLabel": "Create a new stamp design",
@@ -1017,7 +1017,7 @@
       "header": {
         "label": "Create Account",
         "title": "Sign Up",
-        "tagline": "Start turning your ideas into printed apparel."
+        "tagline": "Start turning your ideas into printed clothes."
       },
       "fields": {
         "firstName": "First Name",
@@ -1076,7 +1076,7 @@
     "footer": {
       "mission": {
         "heading": "Our Mission",
-        "body": "Turn a prompt or your own artwork into a design, printed on premium apparel and shipped to your door."
+        "body": "Turn a prompt or your own artwork into a design, printed on quality clothes and shipped to your door."
       },
       "platform": {
         "heading": "Platform",
@@ -1096,7 +1096,7 @@
         "termsOfService": "Terms of Service",
         "privacyPolicy": "Privacy Policy"
       },
-      "copyright": "© {year} Stamp.AI Design Inc. Crafted for the Dreamers.",
+      "copyright": "© {year} Stamp.AI Design Inc. Made for the Dreamers.",
       "social": {
         "twitter": "Twitter",
         "instagram": "Instagram",
@@ -1315,8 +1315,8 @@
     },
     "payment": {
       "title": "Payment Method",
-      "subtitle": "Select your preferred payment method",
-      "paypalNotice": "You will be redirected to PayPal to complete your payment securely.",
+      "subtitle": "Pick how you want to pay",
+      "paypalNotice": "We'll send you to PayPal to pay securely.",
       "selectMethodAria": "Select payment method"
     },
     "testCards": {
@@ -1425,7 +1425,7 @@
       "unknownError": "Unknown error",
       "recoverFailedContactSupport": "Failed to recover payment. Please contact support.",
       "title": "Incomplete Order Found",
-      "body": "We found a successful {providerName} payment for <amount>{currency} {amountValue}</amount> that wasn't completed. Would you like to finalize this order now?",
+      "body": "We found a successful {providerName} payment for <amount>{currency} {amountValue}</amount> that wasn't completed. Want to finish this order now?",
       "completing": "Completing Order...",
       "complete": "Complete Order",
       "dismiss": "Dismiss",
@@ -1454,8 +1454,8 @@
         "errorFallback": "Failed to process Stripe payment",
         "completingTitle": "Completing Your Payment",
         "processingTitle": "Processing Payment",
-        "completingMessage": "Please wait while we finalize your Stripe payment...",
-        "processingMessage": "Please wait while we verify your payment with Stripe...",
+        "completingMessage": "Please wait while we finish your Stripe payment...",
+        "processingMessage": "Please wait while we check your payment with Stripe...",
         "processingAria": "Processing payment",
         "errorAria": "Error",
         "somethingWentWrongTitle": "Something Went Wrong",
@@ -1466,12 +1466,12 @@
         "estimatedDelivery": "7–10 business days",
         "declinedStatus": "Declined",
         "paymentDeclinedTitle": "Payment declined",
-        "paymentDeclinedMessage": "Your Stripe payment could not be processed. Please try again or use a different payment method."
+        "paymentDeclinedMessage": "We couldn't process your Stripe payment. Try again or use a different payment method."
       },
       "paypal": {
         "errorCheckoutDataExpired": "Checkout data expired or not found. Please try again from the checkout page.",
         "errorMustBeLoggedIn": "You must be logged in to complete your order. Please log in and try again.",
-        "declinedFallback": "Your payment method was declined. Please try again with a different payment method.",
+        "declinedFallback": "Your payment was declined. Try again with a different payment method.",
         "captureFailed": "Failed to capture PayPal payment",
         "errorCartNotFound": "Cart information not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: {paymentId}",
         "errorAmountNotFound": "Order amount not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: {paymentId}",
@@ -1480,8 +1480,8 @@
         "errorFallback": "Failed to process PayPal payment",
         "capturingTitle": "Completing Your Payment",
         "processingTitle": "Processing Payment",
-        "capturingMessage": "Please wait while we finalize your PayPal payment...",
-        "processingMessage": "Please wait while we verify your payment with PayPal...",
+        "capturingMessage": "Please wait while we finish your PayPal payment...",
+        "processingMessage": "Please wait while we check your payment with PayPal...",
         "processingAria": "Processing payment",
         "errorAria": "Error",
         "somethingWentWrongTitle": "Something Went Wrong",
@@ -1495,7 +1495,7 @@
         "paymentCancelledMessage": "You cancelled the PayPal payment. No charges have been made to your account.",
         "declinedStatus": "Declined",
         "paymentDeclinedTitle": "Payment declined",
-        "paymentDeclinedMessage": "Your PayPal payment could not be processed. Please try again or use a different payment method."
+        "paymentDeclinedMessage": "We couldn't process your PayPal payment. Try again or use a different payment method."
       },
       "mollie": {
         "errorNoPaymentInfo": "No payment information found. If you completed a payment, please contact support with your payment details.",
@@ -1519,7 +1519,7 @@
         "estimatedDelivery": "7–10 business days",
         "reasonCanceled": "You canceled the payment. No charges have been made.",
         "reasonExpired": "Your payment session has expired. Please try again.",
-        "reasonDefault": "Unfortunately, your payment could not be processed. Please try again or use a different payment method.",
+        "reasonDefault": "Sorry, your payment didn't go through. Try again or use a different payment method.",
         "canceledStatus": "Canceled",
         "failedStatus": "Failed",
         "paymentStatusTitle": "Payment status",
@@ -1530,7 +1530,7 @@
         "goToDashboard": "Go to Dashboard",
         "errorAria": "Error",
         "somethingWentWrongTitle": "Something Went Wrong",
-        "somethingWentWrongMessage": "We couldn't verify your payment status. Please contact support if you believe your payment was successful.",
+        "somethingWentWrongMessage": "We couldn't check your payment status. Please contact support if you believe your payment was successful.",
         "returnToCheckout": "Return to Checkout"
       }
     }
@@ -1561,7 +1561,7 @@
     "EMAIL_REQUIRED": "Email address is required",
     "PASSWORD_REQUIRED": "Password is required",
     "INVALID_EMAIL_FORMAT": "Please enter a valid email address",
-    "PASSWORD_TOO_SHORT": "Password must be at least 8 characters long",
+    "PASSWORD_TOO_SHORT": "Password must be at least 8 characters",
     "AMOUNT_REQUIRED": "Amount is required",
     "INVALID_AMOUNT": "Amount must be a positive number",
     "INVALID_REQUEST_BODY": "Invalid request data",
