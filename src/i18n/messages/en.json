@@ -2,123 +2,131 @@
   "home": {
     "hero": {
       "title": "Stamp <accent>ai</accent>",
-      "tagline": "AI-powered design synthesis for premium apparel. Create archive-quality graphics in seconds. Engineered for the creative elite who demand precision.",
+      "tagline": "Type an idea, get a print-ready design in seconds, and wear it on heavyweight clothes that last. No design skills needed.",
       "ctaPrimary": "Start Creating",
       "ctaSecondary": "View Catalog",
       "productBadge": "Essential_Wht / 320GSM",
       "scrollCue": "Scroll to Build",
-      "productImageAlt": "Premium custom apparel"
+      "productImageAlt": "Heavyweight t-shirt with a custom AI-generated print"
     },
     "meta": {
-      "title": "Stamp AI | Design Synthesis Atelier",
-      "description": "AI-powered design synthesis for premium apparel. Create archive-quality graphics in seconds."
+      "title": "Custom AI T-Shirt & Apparel Design | Stamp AI",
+      "description": "Describe an idea, get a print-ready design in seconds, and put it on heavyweight clothes. No design skills needed — start for free.",
+      "keywords": [
+        "custom AI t-shirt design",
+        "AI t-shirt generator",
+        "design your own t-shirt",
+        "print on demand apparel",
+        "AI design generator",
+        "custom hoodies"
+      ]
     },
     "process": {
       "title": "The",
       "accent": "process",
-      "label": "Protocol 001",
-      "footer": "Engineered for precision",
+      "label": "How it works",
+      "footer": "Simple, from idea to doorstep.",
       "steps": {
         "step-studio": {
           "title": "Studio",
-          "description": "Design Selection: Choose from our curated minimalist library or upload custom artwork for AI enhancement."
+          "description": "Describe your idea or upload your own art, then pick a starting style from our presets."
         },
         "step-synthesis": {
-          "title": "Synthesis",
-          "description": "AI Processing: Our neural network optimizes your design for archival print quality and color accuracy."
+          "title": "Design",
+          "description": "The AI turns it into clean, print-ready artwork — sharp lines, accurate color, high resolution."
         },
         "step-material": {
           "title": "Material",
-          "description": "Fabric Selection: Choose from heavyweight premium blanks (280-480GSM) engineered for longevity."
+          "description": "Choose your blank: heavyweight tees, hoodies, totes and more, from 280 to 480 GSM."
         },
         "step-production": {
           "title": "Production",
-          "description": "Direct-to-Garment: High-precision DTG printing with eco-friendly water-based inks on demand."
+          "description": "We print on demand with water-based, eco-friendly inks. Nothing is made until you order it."
         },
         "step-quality": {
           "title": "Quality",
-          "description": "Inspection Protocol: Every piece hand-inspected for print fidelity, fabric integrity, and finish."
+          "description": "Every order is checked by hand for print quality, color and finish before it ships."
         },
         "step-delivery": {
           "title": "Delivery",
-          "description": "Global Logistics: Carbon-neutral shipping with real-time tracking. Arrives in 5-7 business days."
+          "description": "Carbon-neutral shipping with tracking. Most orders arrive in 5 to 7 business days."
         }
       }
     },
     "products": {
       "title": "The",
       "accent": "essentials",
-      "label": "Catalog 001",
+      "label": "Our apparel",
       "emptyState": "The catalog is temporarily unavailable — please check back soon",
-      "viewFullCatalog": "View Full Catalog"
+      "viewFullCatalog": "Browse all products"
     },
     "featured": {
       "title": "Featured",
       "accent": "pieces",
-      "label": "Curated Selection",
+      "label": "Featured pieces",
       "scrollLeft": "Scroll left",
       "scrollRight": "Scroll right",
       "noImage": "No image",
-      "collectionLabel": "Premium Collection",
+      "collectionLabel": "Our Collection",
       "swipeHint": "Swipe to explore"
     },
     "manifesto": {
-      "title": "Democratizing <accent>design</accent>",
-      "quote": "“We believe exceptional design should be accessible to everyone. Our AI synthesis engine transforms creative vision into archival-quality apparel in seconds—no design experience required.”",
+      "title": "Design for <accent>everyone</accent>",
+      "quote": "Good design shouldn't need a design degree or a 500-unit minimum. Tell us what you want, and we'll help you make it — one piece at a time.",
       "quoteAttribution": "— Stamp AI Manifesto",
-      "intro": "Founded in 2024, Stamp AI merges machine learning with textile engineering to create a new paradigm for custom apparel production.",
+      "intro": "We built Stamp AI to close the gap between a good idea and a good product. The AI handles the design work and we handle the printing and the blanks, so anyone can make clothes worth keeping.",
       "valuesToggle": "Our Values",
       "values": {
         "01": {
           "title": "AI-Powered",
-          "description": "Neural network-enhanced design synthesis for maximum creative output with minimal effort."
+          "description": "Describe what you want in plain words. The AI turns it into print-ready art — no software to learn."
         },
         "02": {
-          "title": "Archival Quality",
-          "description": "Premium heavyweight fabrics (280-480GSM) engineered for decades of wear without degradation."
+          "title": "Built to Last",
+          "description": "Heavyweight blanks, 280 to 480 GSM, picked to survive years of wear and washing."
         },
         "03": {
           "title": "On-Demand",
-          "description": "Zero inventory waste. Every piece produced after order confirmation to minimize environmental impact."
+          "description": "Everything is made to order, so there's no dead stock and far less waste."
         },
         "04": {
           "title": "Global Logistics",
-          "description": "Carbon-neutral shipping to 180+ countries with real-time tracking and 5-7 day delivery windows."
+          "description": "Carbon-neutral shipping to 180+ countries, tracked from our press to your door."
         }
       }
     },
     "cta": {
       "heading": "Ready to stamp your <accent>vision</accent>?",
-      "lead": "Join thousands of creators using AI-powered design synthesis to bring their ideas to life. Start creating archival-quality apparel in seconds.",
+      "lead": "Start with a prompt and see your design in seconds. No minimum order and no commitment — just make the thing you've been picturing.",
       "ctaPrimary": "Start Creating",
       "ctaSecondary": "Browse Catalog"
     },
     "reviews": {
       "title": "Social",
       "accent": "proof",
-      "label": "Verified Reviews",
-      "verifiedReviews": "{count, number} Verified Reviews",
+      "label": "Customer reviews",
+      "verifiedReviews": "{count, number} customer reviews",
       "platformBreakdown": "Platform Breakdown",
       "testimonials": {
         "alex-chen": {
           "author": "Alex Chen",
           "role": "Creative Director",
-          "quote": "The AI synthesis is incredible. Took my rough sketch and turned it into a museum-quality print. The heavyweight fabric feels built to last decades."
+          "quote": "I fed it a rough sketch and got back something I'd actually frame. The tee it printed on is heavier than most blanks I've bought."
         },
         "jordan-ellis": {
           "author": "Jordan Ellis",
           "role": "Streetwear Designer",
-          "quote": "Finally, a platform that understands archival quality. The 320GSM essentials tee is hands down the best blank I've ever printed on."
+          "quote": "The 320 GSM tee is the best blank I've printed on, full stop, and the prints come out crisp every time."
         },
         "morgan-park": {
           "author": "Morgan Park",
           "role": "Independent Artist",
-          "quote": "Zero design experience needed. The AI understood my vision perfectly. Shipped in 6 days globally. This is the future of custom apparel."
+          "quote": "I can't design to save my life, but I described what I wanted and it just got it. Showed up in six days."
         },
         "riley-santos": {
           "author": "Riley Santos",
           "role": "Brand Consultant",
-          "quote": "The on-demand model eliminates inventory risk. Print quality is consistent across batches. Game-changer for small brands."
+          "quote": "Made-to-order means I'm not sitting on inventory, and the print quality doesn't drift between batches."
         }
       }
     },
@@ -130,28 +138,28 @@
       "contactSupport": "Contact Support",
       "items": {
         "ai-synthesis": {
-          "question": "How does the AI design synthesis work?",
-          "answer": "Our neural network analyzes your input (text prompt, sketch, or reference image) and generates optimized graphics tailored for direct-to-garment printing. The AI considers color profiles, resolution requirements, and fabric texture to ensure archival-quality output. No design experience required—just describe your vision."
+          "question": "How does the AI turn my idea into a design?",
+          "answer": "You type a prompt, upload a sketch, or drop in a reference image, and the AI builds artwork made to print straight onto fabric. It handles the color, resolution, and detail so the print holds up on the piece. No design experience needed."
         },
         "archival-quality": {
-          "question": "What makes your fabrics 'archival quality'?",
-          "answer": "We exclusively use heavyweight premium blanks (280-480GSM) engineered for longevity. Our garment-dyed essentials undergo pre-shrinking and enzyme wash treatments to prevent degradation. Combined with water-based eco-friendly inks, your piece will maintain structural integrity and color fidelity for decades."
+          "question": "What makes your fabrics last so long?",
+          "answer": "We only use heavyweight blanks, 280 to 480 GSM. They're pre-shrunk and enzyme-washed so they keep their shape, and we print with water-based inks. Your piece holds its fit and color for years."
         },
         "production-shipping": {
           "question": "How long does production and shipping take?",
-          "answer": "Production begins immediately after order confirmation. Direct-to-garment printing completes in 2-3 business days, followed by quality inspection. Global shipping via carbon-neutral carriers takes 3-4 business days. Total timeline: 5-7 business days from order to delivery, with real-time tracking."
+          "answer": "We start printing as soon as your order is confirmed. Printing takes 2 to 3 business days, then we inspect every piece by hand. Carbon-neutral shipping adds 3 to 4 more days, so most orders arrive within 5 to 7 business days. You can track it the whole way."
         },
         "sustainability": {
           "question": "What are your sustainability practices?",
-          "answer": "We operate a zero-inventory on-demand model to eliminate textile waste. Our DTG printing uses water-based inks with no harmful chemicals. All shipping is carbon-offset through verified reforestation programs. Packaging uses recycled materials. We're committed to minimizing environmental impact at every stage."
+          "answer": "We make everything to order, so nothing sits in a warehouse going to waste. We print with water-based inks, offset shipping through verified tree planting, and pack in recycled materials. We work to keep the footprint low at every step."
         },
         "samples": {
           "question": "Can I order samples before bulk production?",
-          "answer": "Absolutely. We recommend ordering a single piece first to verify fit, fabric feel, and print quality. There's no minimum order quantity—every piece is produced on-demand. Once satisfied, you can reorder identical designs at any scale. Volume discounts available for orders of 25+ pieces."
+          "answer": "Yes. Order a single piece first to check the fit, feel, and print quality. There's no minimum, and every piece is made on demand. Once you're happy, reorder the same design at any quantity. Orders of 25 or more get a volume discount."
         },
         "satisfaction": {
           "question": "What if I'm not satisfied with my order?",
-          "answer": "We offer a 30-day satisfaction guarantee. If your piece doesn't meet expectations due to print quality, fabric defects, or fit issues, we'll replace it at no cost or issue a full refund. Return shipping is covered. Custom designs cannot be resold, so we're committed to getting it right the first time."
+          "answer": "You're covered by a 30-day guarantee. If the print, fabric, or fit isn't right, we'll replace it free or refund you in full, and we cover return shipping. Custom designs can't be resold, so we'd rather get it right the first time."
         }
       }
     },
@@ -161,15 +169,15 @@
     "trustIndicators": {
       "items": {
         "aiPowered": "AI-Powered",
-        "archivalQuality": "Archival Quality",
-        "instantDelivery": "Instant Delivery",
+        "archivalQuality": "Built to Last",
+        "instantDelivery": "Made to Order",
         "fiveSevenDayDelivery": "5-7 Day Delivery",
         "thirtyDayGuarantee": "30-Day Guarantee",
         "carbonNeutral": "Carbon Neutral"
       },
       "subLabels": {
         "generative": "Generative Logic",
-        "heritage": "Heritage Grade",
+        "heritage": "Built to Last",
         "logistics": "Global Logistics"
       }
     },
@@ -181,20 +189,20 @@
   "stamp": {
     "synthesis": {
       "eyebrow": "Suggested Edits",
-      "subtitle": "Tap a suggestion to seed your prompt, then refine it on the right.",
+      "subtitle": "Tap a suggestion to start your prompt, then tweak it on the right.",
       "applySuggestion": "Apply suggestion: {label} — {hint}",
       "noFilter": {
         "label": "No filter",
         "hint": "Use original image without style changes",
         "aria": "No filter — Use original image without style changes"
       },
-      "protocol": "Protocol 02 / Logic",
-      "title": "Descriptive <accent>Synthesis</accent>",
+      "protocol": "Step 02 / Describe",
+      "title": "Describe Your <accent>Design</accent>",
       "generate": "STAMP IT!",
       "generating": "GENERATING...",
-      "promptLabel": "Prompt Synthesis",
-      "promptPlaceholder": "Describe silhouette, texture, and atmospheric intent...",
-      "promptAria": "Prompt synthesis input",
+      "promptLabel": "Your Prompt",
+      "promptPlaceholder": "Describe the shape, colors, and mood you want...",
+      "promptAria": "Prompt input",
       "counter": "{count} / {max}",
       "preservationLabel": "Preservation",
       "low": "LOW",
@@ -279,8 +287,15 @@
       }
     },
     "metadata": {
-      "title": "Stamp It | 8-Stage Synthesis Protocol",
-      "description": "An advanced neural protocol for aesthetic curation. Translate your identity into bespoke permanence through our 8-stage synthesis."
+      "title": "AI Design Studio — Create Your Print | Stamp AI",
+      "description": "Upload art or describe your idea, choose a style, and let AI make print-ready designs. Adjust the product and order in minutes.",
+      "keywords": [
+        "AI design studio",
+        "create custom t-shirt",
+        "text to t-shirt design",
+        "AI image to apparel",
+        "custom print maker"
+      ]
     },
     "header": {
       "logoAria": "Return to Stamp homepage",
@@ -300,8 +315,8 @@
       "mobileNavAria": "Mobile navigation"
     },
     "nav": {
-      "eyebrow": "Protocol Tracker",
-      "title": "8-Stage Synthesis",
+      "eyebrow": "Your Progress",
+      "title": "8 Steps to Print",
       "stepNavAria": "Step navigation",
       "navigate": "Navigate to {title}",
       "navigateLocked": "Navigate to {title} (locked)"
@@ -309,54 +324,54 @@
     "steps": {
       "hero": {
         "title": "Entry",
-        "label": "Archive Access"
+        "label": "Start Here"
       },
       "step-1": {
         "title": "Upload",
-        "label": "Protocol 01 / Initiation"
+        "label": "Step 01 / Upload"
       },
       "step-2": {
-        "title": "Synthesis",
-        "label": "Protocol 02 / Logic"
+        "title": "Describe",
+        "label": "Step 02 / Describe"
       },
       "step-3": {
         "title": "Process",
-        "label": "Protocol 03 / Generation"
+        "label": "Step 03 / Generate"
       },
       "step-4": {
         "title": "Results",
-        "label": "Protocol 04 / Output"
+        "label": "Step 04 / Results"
       },
       "step-5": {
         "title": "Product",
-        "label": "Protocol 05 / Canvas"
+        "label": "Step 05 / Product"
       },
       "step-6": {
         "title": "Custom",
-        "label": "Protocol 06 / Refinement"
+        "label": "Step 06 / Customize"
       },
       "step-7": {
         "title": "Creation",
-        "label": "Protocol 07 / Production"
+        "label": "Step 07 / Create"
       },
       "step-8": {
         "title": "Final",
-        "label": "Protocol 08 / Acquisition"
+        "label": "Step 08 / Checkout"
       }
     },
     "hero": {
-      "eyebrow": "Archive Access 00",
+      "eyebrow": "Start Here",
       "title": "Stamp <br></br><accent>It</accent>",
-      "description": "An advanced neural protocol for aesthetic curation. Translate your identity into bespoke permanence through our 8-stage synthesis.",
+      "description": "Turn a prompt or your own artwork into a print-ready design. Eight quick steps from idea to finished product.",
       "cta": "Begin Customization",
-      "ctaAria": "Begin Customization Protocol",
-      "imageAlt": "Luxury Fashion Lifestyle"
+      "ctaAria": "Begin customizing",
+      "imageAlt": "Fashion lifestyle"
     },
     "upload": {
-      "protocol": "Protocol 01 / Initiation",
+      "protocol": "Step 01 / Upload",
       "title": "Upload <accent>Reference</accent>",
-      "description": "Provide a visual seed for the neural engine. This architectural floorplan will guide the synthesis loop.",
-      "next": "Next Protocol",
+      "description": "Add an image to guide your design. It's optional — you can also start from just a text prompt.",
+      "next": "Next Step",
       "dropzoneAria": "Upload reference image",
       "dropzoneText": "Upload Reference Image (Optional)",
       "dropzoneHint": "10MB max, JPG/PNG/GIF only",
@@ -372,20 +387,20 @@
       "percent": "{progress}%"
     },
     "results": {
-      "protocol": "Protocol 04 / Output",
+      "protocol": "Step 04 / Results",
       "title": "Your <accent>Creation</accent>",
-      "outputNumber": "Output Result #01",
+      "outputNumber": "Result #01",
       "generated": "Generated {date}",
       "savedToHistory": "Saved to history",
       "appliedPrompt": "Applied Prompt",
-      "useProtocol": "USE THIS PROTOCOL",
-      "reSynthesize": "RE-SYNTHESIZE",
+      "useProtocol": "USE THIS PROMPT",
+      "reSynthesize": "REGENERATE",
       "imageAlt": "Generated design result"
     },
     "productSelection": {
-      "protocol": "Protocol 05 / Canvas",
+      "protocol": "Step 05 / Product",
       "title": "Select Your <accent>Canvas</accent>",
-      "description": "Translate digital permanence into physical form. Selected from our curated catalog of premium textiles.",
+      "description": "Pick what you want your design printed on. Everything's good quality and printed on demand.",
       "pricingNote": "Pricing reflects global print provider rates",
       "continue": "CONTINUE TO CUSTOMIZATION",
       "selectAria": "Select {name}",
@@ -401,7 +416,7 @@
       "accessories": "Accessories"
     },
     "customization": {
-      "protocol": "Protocol 06 / Refinement",
+      "protocol": "Step 06 / Customize",
       "title": "Customize Your <accent>Product</accent>",
       "creating": "CREATING...",
       "createProduct": "CREATE PRODUCT",
@@ -422,14 +437,14 @@
       "estimate": "Est. 15 seconds..."
     },
     "finalReview": {
-      "protocol": "Protocol 08 / Acquisition",
+      "protocol": "Step 08 / Checkout",
       "title": "Your Custom <accent>Product</accent>",
       "defaultProductName": "Custom Product",
       "mockupAlt": "Final product mockup",
-      "previewSealed": "Preview Sealed",
+      "previewSealed": "Final preview",
       "productDetails": "Color: {color} | Size: {size}",
-      "finalValuation": "Final Valuation",
-      "freeShipping": "Free shipping on neural archive orders",
+      "finalValuation": "Final Total",
+      "freeShipping": "Free shipping on every order",
       "bagIt": "BAG IT",
       "adding": "ADDING...",
       "buyNow": "BUY NOW",
@@ -475,16 +490,16 @@
       "checkout": "Checkout · {total}"
     },
     "empty": {
-      "title": "Your Bag is Empty",
-      "subtitle": "No items in production protocol",
+      "title": "Your bag's empty",
+      "subtitle": "Nothing in it yet.",
       "cta": "Start Creating"
     },
     "itemCard": {
       "customProduct": "Custom Product",
       "standardVariant": "Standard",
-      "customDesignSynthesis": "Custom Design Synthesis",
+      "customDesignSynthesis": "Custom design",
       "variant": "Variant",
-      "colorway": "Colorway",
+      "colorway": "Color",
       "lineTotal": "Line Total",
       "quantityGroupLabel": "Quantity for {productName}",
       "decreaseQuantity": "Decrease quantity",
@@ -497,14 +512,14 @@
     "summary": {
       "title": "Order <accent>Summary</accent>",
       "subtotal": "Subtotal",
-      "shippingProtocol": "Shipping Protocol",
+      "shippingProtocol": "Shipping",
       "free": "Free",
-      "taxLogistics": "Tax Logistics",
+      "taxLogistics": "Tax",
       "taxNote": "Calculated at checkout",
-      "proceedToCheckout": "Proceed to Checkout",
+      "proceedToCheckout": "Checkout",
       "estimatedArrival": "Estimated Arrival",
       "arrivalWindow": "3–5 Business Days",
-      "secureTransactions": "Secure encrypted transactions",
+      "secureTransactions": "Secure, encrypted checkout",
       "total": "Total",
       "currencyNote": "Currency: USD"
     }
@@ -513,13 +528,13 @@
     "dialog": {
       "selectTitle": "Buy Credits",
       "paymentTitle": "Complete Payment",
-      "description": "Purchase credits to create more AI-powered designs"
+      "description": "Buy credits to make more designs from your prompts."
     },
     "selection": {
       "packageLabel": "Select a Package",
       "customLabel": "Or Enter Custom Amount",
       "customPlaceholder": "Enter credits (min. {min})",
-      "customError": "Minimum {min} credits required",
+      "customError": "You need at least {min} credits.",
       "popularBadge": "Popular",
       "continueButton": "Continue to Payment"
     },
@@ -533,19 +548,19 @@
       "payButton": "Pay ${amount}",
       "cardElementNotFound": "Card element not found",
       "paymentFailed": "Payment failed",
-      "paypalComingSoon": "PayPal support for credit purchases coming soon.",
+      "paypalComingSoon": "PayPal for credit purchases is coming soon.",
       "paypalUseCard": "Please use a credit card for now."
     }
   },
   "dashboard": {
     "content": {
       "errorTitle": "Dashboard unavailable",
-      "errorDescription": "We couldn't load your production data.",
+      "errorDescription": "We couldn't load your data.",
       "retry": "Retry"
     },
     "header": {
-      "title": "Your <accent>atelier</accent>",
-      "subtitle": "Welcome back, {name} — your production overview"
+      "title": "Your <accent>studio</accent>",
+      "subtitle": "Welcome back, {name}. Here's where your work lives."
     },
     "profile": {
       "label": "User profile",
@@ -569,10 +584,10 @@
       }
     },
     "metrics": {
-      "ordersLabel": "Synthesis metrics",
+      "ordersLabel": "Orders",
       "ordersCaption": "Orders placed",
       "ordersTarget": "Target",
-      "designsLabel": "Archive storage",
+      "designsLabel": "Design storage",
       "designsCaption": "Designs created",
       "designsTarget": "Limit"
     },
@@ -580,8 +595,8 @@
       "progressLabel": "{label} progress"
     },
     "cta": {
-      "title": "Ready for your next <accent>masterpiece</accent>?",
-      "subtitle": "Initiate a new synthesis protocol",
+      "title": "Ready for your next <accent>design</accent>?",
+      "subtitle": "Type a prompt and go",
       "cta": "Stamp it"
     },
     "recentOrders": {
@@ -589,7 +604,7 @@
       "recordsOnFile": "{count, plural, one {# record} other {# records}} on file",
       "viewArchive": "View archive",
       "emptyTitle": "No records found",
-      "emptyDescription": "Your first synthesis is one stamp away",
+      "emptyDescription": "Your first design is one prompt away",
       "emptyCta": "Start creating",
       "openDetails": "Open details for order {orderId}",
       "productAlt": "Order product",
@@ -612,16 +627,16 @@
       "firstNameLabel": "First Name",
       "lastNameLabel": "Last Name",
       "emailLabel": "Email",
-      "emailNote": "Email cannot be changed for security reasons",
+      "emailNote": "Your email is locked and can't be changed.",
       "saving": "SAVING...",
       "saveChanges": "SAVE CHANGES",
       "cancel": "CANCEL"
     },
     "passwordReset": {
       "title": "PASSWORD & SECURITY",
-      "subtitle": "Update your password to keep your account secure",
+      "subtitle": "Change your password whenever you like.",
       "changePassword": "CHANGE PASSWORD",
-      "hiddenNote": "Your password is hidden for security. Click \"Change Password\" to update it.",
+      "hiddenNote": "We keep your password hidden. Hit \"Change Password\" to set a new one.",
       "newPasswordLabel": "New Password",
       "newPasswordPlaceholder": "Enter new password",
       "newPasswordHint": "Password must be at least 6 characters",
@@ -638,7 +653,7 @@
       "subtitleNoAddress": "Add your shipping address",
       "editAddress": "EDIT ADDRESS",
       "addAddress": "ADD ADDRESS",
-      "emptyState": "No shipping address saved. Click \"Add Address\" to add one.",
+      "emptyState": "No address saved yet. Add one to speed up checkout.",
       "saving": "SAVING...",
       "saveAddress": "SAVE ADDRESS",
       "cancel": "CANCEL"
@@ -668,25 +683,33 @@
       "addAddress": "Add Address"
     },
     "toasts": {
-      "passwordUpdated": "Password updated successfully!",
-      "passwordUpdateFailed": "Failed to update password",
-      "addressUpdated": "Address updated successfully!",
-      "addressUpdateFailed": "Failed to update address",
-      "profileUpdated": "Profile updated successfully!",
-      "profileUpdateFailed": "Failed to update profile"
+      "passwordUpdated": "Password updated.",
+      "passwordUpdateFailed": "Couldn't update your password.",
+      "addressUpdated": "Address saved.",
+      "addressUpdateFailed": "Couldn't save your address.",
+      "profileUpdated": "Profile updated.",
+      "profileUpdateFailed": "Couldn't update your profile."
     }
   },
   "common": {
     "metadata": {
-      "title": "Imaginary Builder AI",
-      "description": "AI-powered design and building platform"
+      "title": "Stamp AI — Custom AI-Designed Clothes & Prints",
+      "description": "Type a prompt or upload your own art, then put it on good t-shirts, hoodies, and prints built to last.",
+      "keywords": [
+        "AI apparel design",
+        "custom t-shirt generator",
+        "AI t-shirt design",
+        "print on demand",
+        "custom hoodies",
+        "design your own clothes"
+      ]
     },
     "notFound": {
       "ariaLabel": "Page not found",
-      "title": "Page Not Found"
+      "title": "We can't find that page"
     },
     "tipBanner": {
-      "tip": "<strong>Tip:</strong> Be specific about style, colors & mood. Example: \"Anime style like Naruto\""
+      "tip": "<strong>Tip:</strong> Name the style, colors, and mood. Try something like \"Anime style, like Naruto\"."
     }
   },
   "layout": {
@@ -713,7 +736,7 @@
     },
     "footer": {
       "brand": "Stamp<dot></dot>AI",
-      "mission": "Empowering creators with AI-driven apparel design. High quality prints, delivered to your door.",
+      "mission": "Type an idea, get clothes worth wearing. We print it and ship it to your door.",
       "sections": {
         "company": "Company",
         "support": "Support",
@@ -730,7 +753,7 @@
         "footer-terms": "Terms of Service",
         "footer-refunds": "Refund Policy"
       },
-      "copyright": "© {year} Stamp.AI · Crafted for the Dreamers",
+      "copyright": "© {year} Stamp.AI · Made for people who make things",
       "social": {
         "twitter": "Twitter",
         "instagram": "Instagram",
@@ -738,7 +761,7 @@
       }
     },
     "footerBottom": {
-      "copyright": "© {year} AI Magic Studio. Made with <heart></heart> by your AI assistant",
+      "copyright": "© {year} Stamp.AI. Made with <heart></heart> by the team here",
       "securePrivate": "Secure & Private"
     },
     "footerBrand": {
@@ -746,7 +769,7 @@
     },
     "footerMission": {
       "title": "Our Mission",
-      "text": "Empowering creators with AI-driven apparel design. High quality prints, delivered to your door."
+      "text": "Type an idea, get clothes worth wearing. We print it and ship it to your door."
     },
     "mobileHeader": {
       "stampAriaLabel": "Create a new stamp design",
@@ -813,7 +836,7 @@
     },
     "brutalistFooter": {
       "brand": "<stamp>STAMP</stamp><dot></dot><ai>AI</ai>",
-      "mission": "Democratizing design precision through AI synthesis. Engineered for the creative elite who demand archival textile quality.",
+      "mission": "Turn a prompt into a design, then print it on shirts and hoodies built to last.",
       "columns": {
         "product": "Product",
         "protocol": "Protocol",
@@ -846,38 +869,38 @@
     },
     "protocolSidebar": {
       "steps": {
-        "1": "01 Upload Protocol",
-        "2": "02 Synthesis Input",
-        "3": "03 Neural Process",
-        "4": "04 Visual Result",
-        "5": "05 Product Spec",
-        "6": "06 Fabric Configuration",
-        "7": "07 Archival Confirm"
+        "1": "01 Upload Art",
+        "2": "02 Write Prompt",
+        "3": "03 Generating",
+        "4": "04 Your Design",
+        "5": "05 Pick Product",
+        "6": "06 Choose Fabric",
+        "7": "07 Confirm Order"
       },
       "help": "Help"
     }
   },
   "auth": {
     "authCodeError": {
-      "title": "Authentication Error",
-      "description": "There was an error processing your authentication request.",
-      "expiredNote": "This could happen if the link has expired or has already been used.",
+      "title": "Something went wrong",
+      "description": "We couldn't process your sign-in request.",
+      "expiredNote": "The link may have expired, or it's already been used.",
       "returnHome": "Return to Home",
-      "requestNewReset": "Request New Password Reset"
+      "requestNewReset": "Request a new reset link"
     },
     "resetPasswordPage": {
       "title": "Reset Password",
-      "description": "Enter your new password below"
+      "description": "Pick a new password below."
     },
     "protectedRoute": {
       "authenticating": "Authenticating",
-      "checkingSession": "Checking your session...",
+      "checkingSession": "Checking your session",
       "redirecting": "Redirecting..."
     },
     "sessionDisplay": {
-      "loadingSession": "Loading session...",
-      "errorLoadingSession": "Error loading session",
-      "noUserSession": "No user session",
+      "loadingSession": "Loading your session",
+      "errorLoadingSession": "We couldn't load your session",
+      "noUserSession": "You're not signed in",
       "sessionInformation": "Session Information",
       "signingOut": "Signing out...",
       "signOut": "Sign out",
@@ -919,7 +942,7 @@
         "hidePassword": "Hide password"
       },
       "header": {
-        "label": "Access Account",
+        "label": "Welcome back",
         "title": "Login"
       },
       "actions": {
@@ -942,21 +965,21 @@
         "confirmNewPassword": "Confirm New Password",
         "resetting": "Resetting Password...",
         "resetPassword": "Reset Password",
-        "invalidSessionError": "Invalid reset link or session expired. Please request a new password reset.",
-        "successToast": "Password reset successful. You can now log in with your new password."
+        "invalidSessionError": "This reset link is invalid or has expired. Request a new one to continue.",
+        "successToast": "Your password is set. Sign in with it now."
       },
       "error": {
-        "title": "Reset Link Invalid",
-        "description": "This password reset link is invalid or has expired. Please request a new one.",
+        "title": "This link won't work",
+        "description": "This reset link is invalid or expired. Request a new one to continue.",
         "backToHome": "Back to Home"
       },
       "success": {
-        "title": "Password Reset Successful!",
-        "description": "Your password has been reset successfully. You will be redirected to the login page in 3 seconds.",
+        "title": "Your password is set",
+        "description": "All done. We'll send you to the login page in 3 seconds.",
         "goToLogin": "Go to Login"
       },
       "form": {
-        "prompt": "Enter your email to reset your password",
+        "prompt": "Enter your email and we'll send you a reset link.",
         "emailPlaceholder": "Enter your email",
         "sending": "Sending...",
         "sendResetLink": "Send Reset Link",
@@ -966,26 +989,26 @@
         "forgotPassword": "Forgot password?",
         "srTitle": "Reset Password",
         "title": "Reset Password",
-        "description": "Enter your email address and we'll send you a link to reset your password.",
+        "description": "Enter your email and we'll send you a link to reset your password.",
         "emailLabel": "Email",
         "sendAria": "Send Reset Email",
         "sending": "Sending...",
         "send": "Send Reset Email",
         "cancelAria": "Cancel",
         "cancel": "Cancel",
-        "successToast": "Password reset email sent successfully. Check your inbox for instructions."
+        "successToast": "Reset email sent. Check your inbox for the link."
       },
       "requestSuccess": {
         "srTitle": "Reset Email Sent",
-        "title": "Reset Email Sent!",
-        "description": "We've sent a password reset link to your email address. Please check your email and follow the instructions to reset your password.",
+        "title": "Check your inbox",
+        "description": "We sent a reset link to your email. Open it and follow the steps to set a new password.",
         "gotIt": "Got it"
       }
     },
     "register": {
       "openDialogAria": "Open register dialog",
       "signUp": "Sign Up",
-      "successToast": "Account created successfully! Please check your email to verify your account.",
+      "successToast": "Account created. Check your email to verify it.",
       "form": {
         "srTitle": "Create Account",
         "closeAria": "Close register modal",
@@ -994,7 +1017,7 @@
       "header": {
         "label": "Create Account",
         "title": "Sign Up",
-        "tagline": "Join the Stamp.AI creative community today."
+        "tagline": "Start turning your ideas into printed clothes."
       },
       "fields": {
         "firstName": "First Name",
@@ -1020,8 +1043,8 @@
       },
       "success": {
         "srTitle": "Registration Successful",
-        "title": "Registration Successful!",
-        "description": "Your account has been created successfully. Please check your email to verify your account before logging in.",
+        "title": "You're all set",
+        "description": "Your account is created. Check your email to verify it before you sign in.",
         "gotIt": "Got it"
       }
     }
@@ -1053,7 +1076,7 @@
     "footer": {
       "mission": {
         "heading": "Our Mission",
-        "body": "Empowering creators with AI-driven apparel design. High quality prints, delivered to your door with a nostalgic touch."
+        "body": "Turn a prompt or your own artwork into a design, printed on quality clothes and shipped to your door."
       },
       "platform": {
         "heading": "Platform",
@@ -1073,7 +1096,7 @@
         "termsOfService": "Terms of Service",
         "privacyPolicy": "Privacy Policy"
       },
-      "copyright": "© {year} Stamp.AI Design Inc. Crafted for the Dreamers.",
+      "copyright": "© {year} Stamp.AI Design Inc. Made for the Dreamers.",
       "social": {
         "twitter": "Twitter",
         "instagram": "Instagram",
@@ -1127,16 +1150,16 @@
   },
   "orders": {
     "content": {
-      "errorTitle": "Archive Unavailable",
-      "errorDescription": "We couldn't load your protocol records.",
+      "errorTitle": "We couldn't load your orders",
+      "errorDescription": "Something went wrong. Give it another try.",
       "retry": "Retry"
     },
     "header": {
       "title": "Your <accent>orders</accent>"
     },
     "filterSummary": {
-      "totalSyntheses": "Total Syntheses",
-      "protocolRecords": "Protocol Records"
+      "totalSyntheses": "Total orders",
+      "protocolRecords": "Orders"
     },
     "loading": {
       "ariaLabel": "Loading orders"
@@ -1149,26 +1172,26 @@
     },
     "empty": {
       "ariaLabel": "Empty order archive",
-      "title": "No Synthesis Records",
-      "description": "Try adjusting your archive filters or initiate a new synthesis protocol",
-      "initiate": "Initiate Synthesis"
+      "title": "No orders yet",
+      "description": "Try changing your filters, or start a new design",
+      "initiate": "Start a design"
     },
     "pagination": {
-      "showing": "Showing {start}-{end} of {total} records",
+      "showing": "Showing {start}-{end} of {total} orders",
       "navAriaLabel": "Pagination",
       "previousPage": "Previous page",
       "nextPage": "Next page",
       "goToPage": "Go to page {page}"
     },
     "filterControls": {
-      "archiveFiltering": "Archive Filtering",
-      "clearArchive": "Clear Archive",
+      "archiveFiltering": "Filters",
+      "clearArchive": "Clear filters",
       "statusAriaLabel": "Filter by order status",
       "timeAriaLabel": "Filter by date range",
       "listViewAriaLabel": "Switch to list view",
       "gridViewAriaLabel": "Switch to grid view",
       "status": {
-        "allPlaceholder": "Status: All Statuses",
+        "allPlaceholder": "Status: All",
         "delivered": "Delivered",
         "shipped": "Shipped",
         "processing": "Processing",
@@ -1190,59 +1213,59 @@
       "defaultDescription": "Your order has been cancelled.",
       "cancelledAtPrintify": "Order cancelled at Printify",
       "refundProcessed": "Refund processed successfully",
-      "refundError": "Note: Refund could not be processed automatically",
-      "failedToCancel": "Failed to cancel order: {message}",
-      "cannotCancel": "Order can no longer be cancelled. Orders can only be cancelled before entering In Production."
+      "refundError": "We couldn't process your refund automatically",
+      "failedToCancel": "Couldn't cancel your order: {message}",
+      "cannotCancel": "This order can't be cancelled anymore. You can only cancel before an order goes into production."
     },
     "cancelModal": {
       "ariaLabel": "Cancel order confirmation",
-      "title": "Halt Protocol?",
-      "description": "This action is irreversible once finalized.",
-      "halting": "Halting...",
-      "haltSynthesis": "Halt Synthesis",
-      "keepActive": "Keep Active"
+      "title": "Cancel this order?",
+      "description": "You can't undo this.",
+      "halting": "Cancelling…",
+      "haltSynthesis": "Cancel order",
+      "keepActive": "Keep order"
     },
     "detailsModal": {
       "ariaLabel": "Order details",
       "close": "Close details modal",
-      "recordDetails": "Protocol Record Details",
-      "orderMeta": "Order #{orderNumber} • Initiated {date}",
-      "protocolItems": "Protocol Items",
+      "recordDetails": "Order details",
+      "orderMeta": "Order #{orderNumber} • Placed {date}",
+      "protocolItems": "Items",
       "itemAlt": "Order item",
       "customProduct": "Custom Product",
       "variantQty": "Variant: {variant} • Qty: {qty}",
       "delivery": "Delivery",
-      "archiveClient": "Archive Client",
-      "archiveAddress": "Archive Address",
-      "valuation": "Valuation",
+      "archiveClient": "Recipient",
+      "archiveAddress": "Shipping address",
+      "valuation": "Summary",
       "total": "Total",
       "standard": "Standard",
       "invoice": {
-        "preparing": "Preparing Invoice…",
-        "download": "Download Invoice"
+        "preparing": "Preparing invoice…",
+        "download": "Download invoice"
       }
     },
     "listItem": {
       "openDetails": "Open details for order {order}",
       "productAlt": "Order product",
-      "productFallback": "Premium Synthesis Product",
-      "creationDate": "Creation Date",
-      "configuration": "Configuration",
+      "productFallback": "Custom product",
+      "creationDate": "Ordered",
+      "configuration": "Shipping",
       "standard": "Standard",
       "quantity": "Quantity",
-      "unit": "{count} Unit",
-      "protocolValue": "Protocol Value",
-      "viewBlueprint": "View Blueprint",
-      "trackProtocol": "Track Protocol",
-      "haltOrder": "Halt Order",
+      "unit": "{count} unit",
+      "protocolValue": "Total",
+      "viewBlueprint": "View design",
+      "trackProtocol": "Track order",
+      "haltOrder": "Cancel order",
       "reorder": "Reorder"
     },
     "gridItem": {
       "openDetails": "Open details for order {order}",
       "productAlt": "Order product",
-      "productFallback": "Premium Synthesis Product",
-      "archiveLine": "Archive {date} • {address}",
-      "archiveAddress": "Archive Address",
+      "productFallback": "Custom product",
+      "archiveLine": "Ordered {date} • {address}",
+      "archiveAddress": "Shipping address",
       "standard": "Standard",
       "qty": "Qty. {count}",
       "track": "Track",
@@ -1292,8 +1315,8 @@
     },
     "payment": {
       "title": "Payment Method",
-      "subtitle": "Select your preferred payment method",
-      "paypalNotice": "You will be redirected to PayPal to complete your payment securely.",
+      "subtitle": "Pick how you want to pay",
+      "paypalNotice": "We'll send you to PayPal to pay securely.",
       "selectMethodAria": "Select payment method"
     },
     "testCards": {
@@ -1370,7 +1393,7 @@
       "defaultEstimatedDelivery": "7–10 business days",
       "ariaLabel": "Payment confirmation",
       "title": "Order Confirmed",
-      "description": "Your custom masterpiece is officially in the queue. We're warming up the ink jets right now.",
+      "description": "Your order's in. We're printing it right now.",
       "orderNumber": "Order Number",
       "estimatedDelivery": "Estimated Delivery",
       "totalPaid": "Total Paid",
@@ -1381,11 +1404,11 @@
       "confirmationEmail": "A confirmation email has been sent to {email}"
     },
     "paymentError": {
-      "reasonMessageFallback": "Your transaction couldn't be completed. Please retry or choose an alternative method.",
+      "reasonMessageFallback": "Your payment didn't go through. Try again, or pick another way to pay.",
       "titlePostPayment": "Order Processing Issue",
       "titleDefault": "Payment Failed",
-      "subtitlePostPayment": "Your payment was successful, but we encountered an issue processing your order. Our team has been notified and will assist you shortly.",
-      "subtitleDefault": "Your transaction couldn't be completed. Don't worry, your design has been saved and is ready for retry.",
+      "subtitlePostPayment": "Your payment went through, but something went wrong setting up your order. We've been notified and we'll sort it out shortly.",
+      "subtitleDefault": "Your payment didn't go through. Your design is saved, so you can try again whenever you're ready.",
       "ariaLabel": "Payment failed",
       "reasonFallback": "Reason",
       "orderNumber": "Order Number",
@@ -1402,7 +1425,7 @@
       "unknownError": "Unknown error",
       "recoverFailedContactSupport": "Failed to recover payment. Please contact support.",
       "title": "Incomplete Order Found",
-      "body": "We found a successful {providerName} payment for <amount>{currency} {amountValue}</amount> that wasn't completed. Would you like to finalize this order now?",
+      "body": "We found a successful {providerName} payment for <amount>{currency} {amountValue}</amount> that wasn't completed. Want to finish this order now?",
       "completing": "Completing Order...",
       "complete": "Complete Order",
       "dismiss": "Dismiss",
@@ -1431,8 +1454,8 @@
         "errorFallback": "Failed to process Stripe payment",
         "completingTitle": "Completing Your Payment",
         "processingTitle": "Processing Payment",
-        "completingMessage": "Please wait while we finalize your Stripe payment...",
-        "processingMessage": "Please wait while we verify your payment with Stripe...",
+        "completingMessage": "Please wait while we finish your Stripe payment...",
+        "processingMessage": "Please wait while we check your payment with Stripe...",
         "processingAria": "Processing payment",
         "errorAria": "Error",
         "somethingWentWrongTitle": "Something Went Wrong",
@@ -1443,12 +1466,12 @@
         "estimatedDelivery": "7–10 business days",
         "declinedStatus": "Declined",
         "paymentDeclinedTitle": "Payment declined",
-        "paymentDeclinedMessage": "Your Stripe payment could not be processed. Please try again or use a different payment method."
+        "paymentDeclinedMessage": "We couldn't process your Stripe payment. Try again or use a different payment method."
       },
       "paypal": {
         "errorCheckoutDataExpired": "Checkout data expired or not found. Please try again from the checkout page.",
         "errorMustBeLoggedIn": "You must be logged in to complete your order. Please log in and try again.",
-        "declinedFallback": "Your payment method was declined. Please try again with a different payment method.",
+        "declinedFallback": "Your payment was declined. Try again with a different payment method.",
         "captureFailed": "Failed to capture PayPal payment",
         "errorCartNotFound": "Cart information not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: {paymentId}",
         "errorAmountNotFound": "Order amount not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: {paymentId}",
@@ -1457,8 +1480,8 @@
         "errorFallback": "Failed to process PayPal payment",
         "capturingTitle": "Completing Your Payment",
         "processingTitle": "Processing Payment",
-        "capturingMessage": "Please wait while we finalize your PayPal payment...",
-        "processingMessage": "Please wait while we verify your payment with PayPal...",
+        "capturingMessage": "Please wait while we finish your PayPal payment...",
+        "processingMessage": "Please wait while we check your payment with PayPal...",
         "processingAria": "Processing payment",
         "errorAria": "Error",
         "somethingWentWrongTitle": "Something Went Wrong",
@@ -1472,7 +1495,7 @@
         "paymentCancelledMessage": "You cancelled the PayPal payment. No charges have been made to your account.",
         "declinedStatus": "Declined",
         "paymentDeclinedTitle": "Payment declined",
-        "paymentDeclinedMessage": "Your PayPal payment could not be processed. Please try again or use a different payment method."
+        "paymentDeclinedMessage": "We couldn't process your PayPal payment. Try again or use a different payment method."
       },
       "mollie": {
         "errorNoPaymentInfo": "No payment information found. If you completed a payment, please contact support with your payment details.",
@@ -1496,7 +1519,7 @@
         "estimatedDelivery": "7–10 business days",
         "reasonCanceled": "You canceled the payment. No charges have been made.",
         "reasonExpired": "Your payment session has expired. Please try again.",
-        "reasonDefault": "Unfortunately, your payment could not be processed. Please try again or use a different payment method.",
+        "reasonDefault": "Sorry, your payment didn't go through. Try again or use a different payment method.",
         "canceledStatus": "Canceled",
         "failedStatus": "Failed",
         "paymentStatusTitle": "Payment status",
@@ -1507,28 +1530,28 @@
         "goToDashboard": "Go to Dashboard",
         "errorAria": "Error",
         "somethingWentWrongTitle": "Something Went Wrong",
-        "somethingWentWrongMessage": "We couldn't verify your payment status. Please contact support if you believe your payment was successful.",
+        "somethingWentWrongMessage": "We couldn't check your payment status. Please contact support if you believe your payment was successful.",
         "returnToCheckout": "Return to Checkout"
       }
     }
   },
   "validation": {
-    "emailRequired": "Email is required",
-    "emailInvalid": "Invalid email address",
-    "passwordMin": "Password must be at least 6 characters",
-    "passwordsNoMatch": "Passwords don't match",
-    "urlInvalid": "Invalid URL format",
-    "firstNameEmpty": "First name cannot be empty",
-    "lastNameEmpty": "Last name cannot be empty",
-    "firstNameRequired": "First name is required",
-    "countryRequired": "Country is required",
-    "countryInvalid": "Please select a valid country",
-    "addressRequired": "Address is required",
-    "cityRequired": "City is required",
-    "zipRequired": "ZIP/Postal code is required",
-    "shippingRequiredWhenEnabled": "Shipping address is required when enabled",
-    "quantityMin": "Quantity must be at least 1",
-    "promptMax": "Prompt must be 500 characters or less"
+    "emailRequired": "Please enter your email",
+    "emailInvalid": "That email doesn't look right",
+    "passwordMin": "Use at least 6 characters",
+    "passwordsNoMatch": "Those passwords don't match",
+    "urlInvalid": "That URL doesn't look right",
+    "firstNameEmpty": "Please enter your first name",
+    "lastNameEmpty": "Please enter your last name",
+    "firstNameRequired": "Please enter your first name",
+    "countryRequired": "Please pick your country",
+    "countryInvalid": "Please pick a country from the list",
+    "addressRequired": "Please enter your address",
+    "cityRequired": "Please enter your city",
+    "zipRequired": "Please enter your ZIP or postal code",
+    "shippingRequiredWhenEnabled": "Please add a shipping address",
+    "quantityMin": "Pick at least 1",
+    "promptMax": "Keep your prompt under 500 characters"
   },
   "errors": {
     "withCode": "{message} (Code: {code})",
@@ -1538,7 +1561,7 @@
     "EMAIL_REQUIRED": "Email address is required",
     "PASSWORD_REQUIRED": "Password is required",
     "INVALID_EMAIL_FORMAT": "Please enter a valid email address",
-    "PASSWORD_TOO_SHORT": "Password must be at least 8 characters long",
+    "PASSWORD_TOO_SHORT": "Password must be at least 8 characters",
     "AMOUNT_REQUIRED": "Amount is required",
     "INVALID_AMOUNT": "Amount must be a positive number",
     "INVALID_REQUEST_BODY": "Invalid request data",
@@ -1546,7 +1569,7 @@
     "NO_LINE_ITEMS": "No items found for this order",
     "MISSING_SHIPPING_ADDRESS": "Shipping address is required",
     "WEBHOOK_SIGNATURE_MISSING": "Invalid webhook signature",
-    "MISSING_REQUIRED_FIELDS": "Some required fields are missing",
+    "MISSING_REQUIRED_FIELDS": "Please fill in the required fields",
     "PAYPAL_ORDER_ID_REQUIRED": "PayPal order ID is required",
     "MOLLIE_PAYMENT_ID_REQUIRED": "Mollie payment ID is required",
     "CREDITS_REQUIRED": "Credits amount is required",
@@ -1556,7 +1579,7 @@
     "INVALID_TOKEN": "Your session has expired. Please sign in again",
     "WEBHOOK_SIGNATURE_INVALID": "Invalid webhook signature",
     "PAYPAL_WEBHOOK_SIGNATURE_INVALID": "Invalid PayPal webhook signature",
-    "USER_NOT_FOUND": "User account not found",
+    "USER_NOT_FOUND": "We couldn't find that account",
     "PAYPAL_ORDER_NOT_FOUND": "PayPal order not found",
     "MOLLIE_PAYMENT_NOT_FOUND": "Mollie payment not found",
     "EMAIL_ALREADY_REGISTERED": "This email address is already registered",
@@ -1586,7 +1609,24 @@
     "PAYPAL_CAPTURE_FAILED": "PayPal payment capture failed. Please try again",
     "MOLLIE_API_ERROR": "Mollie service error. Please try again",
     "MOLLIE_PAYMENT_FAILED": "Mollie payment failed. Please try again",
-    "INTERNAL_ERROR": "An internal error occurred. Please try again",
-    "UNKNOWN_ERROR": "An unexpected error occurred. Please try again"
+    "INTERNAL_ERROR": "Something went wrong on our end. Please try again",
+    "UNKNOWN_ERROR": "Something went wrong. Please try again"
+  },
+  "trust": {
+    "bar": {
+      "secureCheckout": "Secure checkout",
+      "guarantee": "30-day guarantee",
+      "madeToOrder": "Made to order",
+      "carbonNeutral": "Carbon-neutral shipping"
+    },
+    "payment": {
+      "title": "Your payment is safe",
+      "body": "Payments run through Stripe and PayPal. We never see or store your card details.",
+      "accept": "We accept"
+    },
+    "guarantee": {
+      "title": "30-day guarantee",
+      "body": "If the print, fabric, or fit isn't right, we'll replace it or refund you. Return shipping is on us."
+    }
   }
 }
