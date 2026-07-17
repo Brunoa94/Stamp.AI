@@ -25,7 +25,7 @@ export function SynthesisVisual({ selectedId, onSelectSuggestion }: PropsI) {
 
   return (
     <div className="p-12 lg:p-24 lg:pt-8 overflow-hidden lg:px-10 bg-white flex flex-col justify-center border-r border-(--color-stamp-divider)">
-      <div className="flex items-center gap-3 mb-2">
+      <div className="flex items-center gap-3 mb-6">
         <Sparkles className="w-4 h-4 text-(--color-stamp-gold)" />
         <Span
           variant="micro"
