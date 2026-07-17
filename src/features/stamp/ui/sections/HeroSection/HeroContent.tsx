@@ -19,13 +19,6 @@ export function HeroContent({ onBegin }: PropsI) {
 
   return (
     <div className="flex flex-col justify-center p-12 lg:p-24">
-      <Span
-        variant="sm"
-        className="text-(--color-stamp-taupe) mb-8 block"
-      >
-        {t("eyebrow")}
-      </Span>
-
       <Heading
         as="h1"
         variant="display"

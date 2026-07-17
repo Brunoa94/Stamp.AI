@@ -22,7 +22,6 @@ import { SectionReveal } from "../components/SectionReveal";
 
 export function HomeReviewsSection() {
   const t = useTranslations("home.reviews");
-
   return (
     <section
       id="reviews"
@@ -30,13 +29,13 @@ export function HomeReviewsSection() {
     >
       <SectionReveal className="mx-auto max-w-screen-2xl">
         <HomeSectionHeader
-          title={t("title")}
-          accent={t("accent")}
-          label={t("label")}
+          title="Social"
+          accent="proof"
+          label="Verified Reviews"
         />
 
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-          <article className="border border-(--color-stamp-divider) bg-(--color-stamp-white) p-10 lg:col-span-4">
+        <div className="grid grid-cols-1 gap-4 sm:gap-8 lg:grid-cols-12">
+          <article className="border border-(--color-stamp-divider) bg-(--color-stamp-white) p-6 sm:p-10 lg:col-span-4">
             <Span variant="metric" className="text-(--color-stamp-chocolate)">
               {HOME_RATING_SUMMARY.overall}
             </Span>
@@ -49,19 +48,11 @@ export function HomeReviewsSection() {
               variant="micro"
               className="mt-3 text-(--color-stamp-taupe)"
             >
-              {t("verifiedReviews", {
-                count: HOME_RATING_SUMMARY.totalReviews,
-              })}
+              {HOME_RATING_SUMMARY.totalReviews.toLocaleString()} Verified
+              Reviews
             </Span>
 
             <div className="mt-10 space-y-4 border-t border-(--color-stamp-divider) pt-8">
-              <Span
-                as="p"
-                variant="micro"
-                className="text-(--color-stamp-taupe)"
-              >
-                {t("platformBreakdown")}
-              </Span>
               {HOME_RATING_SUMMARY.platforms.map((entry) => {
                 const config = HOME_PLATFORM_CONFIG[entry.platform];
                 return (
@@ -95,13 +86,13 @@ export function HomeReviewsSection() {
             </div>
           </article>
 
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:col-span-8">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-8 lg:col-span-8">
             {HOME_TESTIMONIALS.map((testimonial) => {
               const config = HOME_PLATFORM_CONFIG[testimonial.platform];
               return (
                 <article
                   key={testimonial.id}
-                  className="flex flex-col border bg-(--color-stamp-white) p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-(--shadow-stamp-card-hover)"
+                  className="flex flex-col border bg-(--color-stamp-white) p-5 sm:p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-(--shadow-stamp-card-hover)"
                   style={{
                     borderColor:
                       config?.borderColor ?? "var(--color-stamp-divider)",

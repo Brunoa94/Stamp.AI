@@ -9,7 +9,6 @@
 
 "use client";
 
-import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { Elements } from "@stripe/react-stripe-js";
 import { ShieldCheck } from "lucide-react";
@@ -39,7 +38,6 @@ export function CheckoutSummarySection({
   testMode = false,
   selectedTestMethod = "visa",
 }: CheckoutSummarySectionPropsI) {
-  const t = useTranslations("checkout.summary");
   const { watch, formState } = useFormContext<CheckoutFormData>();
   const paymentMethod = watch("paymentMethod");
   const billingAddress = watch("billing");
@@ -70,11 +68,7 @@ export function CheckoutSummarySection({
         unstyled
         className="mb-8 font-heading text-2xl md:text-3xl font-bold uppercase tracking-tight"
       >
-        {t.rich("title", {
-          accent: (chunks) => (
-            <span className="text-(--color-stamp-gold)">{chunks}</span>
-          ),
-        })}
+        Order <span className="text-(--color-stamp-gold)">Summary</span>
       </Heading>
 
       <div className="space-y-6">
@@ -121,11 +115,6 @@ export function CheckoutSummarySection({
             disabled={disablePayment}
           />
         )}
-
-        <div className="flex items-center justify-center gap-2 text-(--color-stamp-taupe)">
-          <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-          <Span variant="micro">{t("secureNote")}</Span>
-        </div>
       </div>
     </div>
   );

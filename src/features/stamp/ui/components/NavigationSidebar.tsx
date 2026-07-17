@@ -16,8 +16,7 @@ import { useStampStepAccessibility } from "../../lib/hooks/useStampSelectors";
  */
 
 export function NavigationSidebar() {
-  const t = useTranslations("stamp.nav");
-  const tSteps = useTranslations("stamp.steps");
+  const t = useTranslations("stamp");
   const { currentStep, goToStep } = useStampNavigation();
   const { isStepAccessible } = useStampStepAccessibility();
 
@@ -25,27 +24,24 @@ export function NavigationSidebar() {
     <aside className="hidden lg:flex flex-col py-32 px-10 w-68 h-full fixed right-0 top-24 bg-(--color-stamp-off-white) border-l border-(--color-stamp-divider) z-40">
       {/* Header */}
       <div className="mb-16">
-        <Span variant="micro" className="text-(--color-stamp-taupe) mb-2">
-          {t("eyebrow")}
-        </Span>
         <Heading
           as="h4"
           variant="question"
           className="text-(--color-stamp-chocolate)"
         >
-          {t("title")}
+          {t("nav.title")}
         </Heading>
       </div>
 
       {/* Navigation Links */}
-      <nav className="space-y-6 flex-1" aria-label={t("stepNavAria")}>
+      <nav className="space-y-6 flex-1" aria-label={t("nav.stepNavAria")}>
         {STAMP_STEPS.map((step, index) => {
           const stepNumber = index;
           const isActive =
             stepNumber === currentStep ||
             (stepNumber === 0 && currentStep === 0);
           const isAccessible = isStepAccessible(stepNumber);
-          const stepTitle = tSteps(`${step.id}.title`);
+          const stepTitle = t(`steps.${step.id}.title`);
 
           return (
             <Button
@@ -63,8 +59,8 @@ export function NavigationSidebar() {
               aria-current={isActive ? "step" : undefined}
               aria-label={
                 isAccessible
-                  ? t("navigate", { title: stepTitle })
-                  : t("navigateLocked", { title: stepTitle })
+                  ? t("nav.navigate", { title: stepTitle })
+                  : t("nav.navigateLocked", { title: stepTitle })
               }
             >
               {/* Dot Indicator */}

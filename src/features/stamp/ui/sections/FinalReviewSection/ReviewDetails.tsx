@@ -1,5 +1,5 @@
-import { Truck } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Truck } from "lucide-react";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { ProductSummary } from "./ProductSummary";
@@ -34,10 +34,6 @@ export function ReviewDetails({
 
   return (
     <div className="p-6 md:p-12 lg:p-24 flex flex-col justify-center bg-white">
-      <Span variant="sm" className="text-(--color-stamp-taupe) mb-6">
-        {t("protocol")}
-      </Span>
-
       <Heading
         as="h2"
         variant="title"

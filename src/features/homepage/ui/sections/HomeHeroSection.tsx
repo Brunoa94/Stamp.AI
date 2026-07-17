@@ -19,7 +19,6 @@ import { SectionReveal } from "../components/SectionReveal";
 
 export function HomeHeroSection() {
   const t = useTranslations("home.hero");
-
   return (
     <section className="relative flex min-h-screen flex-col overflow-hidden bg-(--color-stamp-off-white) px-6 pb-12 pt-30 lg:px-12 xl:px-24">
       {/* Animated blur blobs - subtle on light background */}
@@ -102,12 +101,6 @@ export function HomeHeroSection() {
                   sizes="(max-width: 1024px) 0px, 40vw"
                   className="object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
                 />
-                <Span
-                  variant="micro"
-                  className="absolute bottom-6 left-6 bg-(--color-stamp-off-white)/90 px-4 py-2 text-(--color-stamp-chocolate) backdrop-blur-sm"
-                >
-                  {t("productBadge")}
-                </Span>
               </div>
             </div>
           </div>

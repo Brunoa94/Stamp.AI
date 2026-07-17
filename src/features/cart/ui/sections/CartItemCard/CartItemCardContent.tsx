@@ -5,7 +5,6 @@
  * specification grid (variant, colorway, line total).
  */
 
-import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import type { CartItem } from "@/types/cart";
@@ -17,12 +16,11 @@ interface CartItemCardContentPropsI {
 }
 
 export function CartItemCardContent({ item }: CartItemCardContentPropsI) {
-  const t = useTranslations("cart.itemCard");
   const productName =
-    item.product_name || item.product?.name || t("customProduct");
+    item.product_name || item.product?.name || "Custom Product";
   const unitPrice = item.unit_price ?? 0;
   const quantity = item.quantity ?? 1;
-  const variantName = item.variant?.name || t("standardVariant");
+  const variantName = item.variant?.name || "Standard";
   const colorway = variantName.includes("/")
     ? variantName.split("/")[0].trim()
     : variantName;
@@ -38,9 +36,6 @@ export function CartItemCardContent({ item }: CartItemCardContentPropsI) {
           >
             {productName}
           </Heading>
-          <Span variant="micro" className="text-(--color-stamp-taupe) text-[10px] md:text-xs">
-            {t("customDesignSynthesis")}
-          </Span>
         </div>
         <Heading
           as="span"

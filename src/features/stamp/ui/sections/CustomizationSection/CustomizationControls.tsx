@@ -43,10 +43,6 @@ export function CustomizationControls({
 
   return (
     <div className="p-12 lg:p-24 flex flex-col justify-center bg-white">
-      <Span variant="sm" className="text-(--color-stamp-taupe) mb-6">
-        {t("protocol")}
-      </Span>
-
       <Heading
         as="h2"
         variant="title"

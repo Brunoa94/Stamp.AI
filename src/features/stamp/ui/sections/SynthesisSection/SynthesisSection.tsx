@@ -20,7 +20,9 @@ export function SynthesisSection() {
 
   const [prompt, setPrompt] = useState("");
   const [preservation, setPreservation] = useState(50);
-  const [selectedSuggestionId, setSelectedSuggestionId] = useState<string | null>(null);
+  const [selectedSuggestionId, setSelectedSuggestionId] = useState<
+    string | null
+  >(null);
 
   const handlePromptChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;

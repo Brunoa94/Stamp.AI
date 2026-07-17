@@ -53,9 +53,6 @@ export function HomeSectionHeader({
           </>
         )}
       </Heading>
-      <Span variant="default" className="text-(--color-stamp-taupe)">
-        {label}
-      </Span>
     </header>
   );
 }
