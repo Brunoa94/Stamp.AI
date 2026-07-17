@@ -13,6 +13,7 @@ import { useFormContext } from "react-hook-form";
 import { CheckoutSectionCard } from "../../components/CheckoutSectionCard";
 import { CheckoutPaymentMethods } from "./CheckoutPaymentMethods";
 import { CheckoutStripeCardForm } from "./CheckoutStripeCardForm";
+import { SecureCheckoutNotice } from "@/features/ui/trust";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 import type { PaymentMethodT } from "@/types/payment";
 
@@ -61,6 +62,8 @@ export function CheckoutPaymentSection({
           {t("paypalNotice")}
         </p>
       )}
+
+      <SecureCheckoutNotice className="mt-6" />
     </CheckoutSectionCard>
   );
 }

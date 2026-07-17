@@ -1,6 +1,9 @@
 import { getTranslations } from "next-intl/server";
 import { HomepageContent } from "@/features/homepage/ui/HomepageContent";
 import { getCachedProductsWithPricing } from "@/lib/supabase/server-cache";
+import { StructuredData } from "@/features/seo/StructuredData";
+import { faqPageSchema } from "@/features/seo/jsonLd";
+import { HOME_FAQS } from "@/features/homepage/lib/constants/homepageContent";
 
 /**
  * Luxury Homepage (v2)
@@ -23,5 +26,16 @@ export async function generateMetadata() {
 export default async function Home() {
   const productsWithPricing = await getCachedProductsWithPricing();
 
-  return <HomepageContent productsWithPricing={productsWithPricing} />;
+  const tFaq = await getTranslations("home.faq.items");
+  const faqEntries = HOME_FAQS.map(({ id }) => ({
+    question: tFaq(`${id}.question`),
+    answer: tFaq(`${id}.answer`),
+  }));
+
+  return (
+    <>
+      <StructuredData data={faqPageSchema(faqEntries)} />
+      <HomepageContent productsWithPricing={productsWithPricing} />
+    </>
+  );
 }

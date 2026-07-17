@@ -19,6 +19,8 @@ import { Toaster } from "sonner";
 import { SupabaseAuthProvider } from "@/providers/SupabaseAuthProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { GrainOverlay } from "@/features/layout/brutalist/GrainOverlay";
+import { StructuredData } from "@/features/seo/StructuredData";
+import { organizationSchema } from "@/features/seo/jsonLd";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { AppLayoutChrome } from "@/components/AppLayoutChrome";
@@ -123,6 +125,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${bungee.variable} ${poppins.variable} ${bebasNeue.variable} ${anton.variable} ${spaceGrotesk.variable} ${outfit.variable} ${playfairDisplay.variable} antialiased`}
       >
+        <StructuredData data={organizationSchema()} />
         <GrainOverlay />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider>
