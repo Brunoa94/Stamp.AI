@@ -29,7 +29,7 @@
       "steps": {
         "step-studio": {
           "title": "Studio",
-          "description": "Describe your idea or upload your own art, then pick a starting style from our presets."
+          "description": "Describe your idea or upload your own photo, then pick a starting style from our presets."
         },
         "step-synthesis": {
           "title": "Design",
@@ -188,7 +188,7 @@
   },
   "stamp": {
     "synthesis": {
-      "eyebrow": "Suggested Edits",
+      "eyebrow": "Choose a filter",
       "subtitle": "Tap a suggestion to start your prompt, then tweak it on the right.",
       "applySuggestion": "Apply suggestion: {label} — {hint}",
       "noFilter": {
@@ -288,7 +288,7 @@
     },
     "metadata": {
       "title": "AI Design Studio — Create Your Print | Stamp AI",
-      "description": "Upload art or describe your idea, choose a style, and let AI make print-ready designs. Adjust the product and order in minutes.",
+      "description": "Upload a photo or describe your idea, choose a style, and let AI make print-ready designs. Adjust the product and order in minutes.",
       "keywords": [
         "AI design studio",
         "create custom t-shirt",
@@ -362,7 +362,7 @@
     "hero": {
       "eyebrow": "Start Here",
       "title": "Stamp <br></br><accent>It</accent>",
-      "description": "Turn a prompt or your own artwork into a print-ready design. Eight quick steps from idea to finished product.",
+      "description": "Turn a prompt or your own photo into a print-ready design. Eight quick steps from idea to finished product.",
       "cta": "Begin Customization",
       "ctaAria": "Begin customizing",
       "imageAlt": "Fashion lifestyle"
@@ -394,7 +394,7 @@
       "savedToHistory": "Saved to history",
       "appliedPrompt": "Applied Prompt",
       "useProtocol": "USE THIS PROMPT",
-      "reSynthesize": "REGENERATE",
+      "reSynthesize": "REPEAT",
       "imageAlt": "Generated design result"
     },
     "productSelection": {
@@ -694,7 +694,7 @@
   "common": {
     "metadata": {
       "title": "Stamp AI — Custom AI-Designed Clothes & Prints",
-      "description": "Type a prompt or upload your own art, then put it on good t-shirts, hoodies, and prints built to last.",
+      "description": "Type a prompt or upload your own photo, then put it on good t-shirts, hoodies, and prints built to last.",
       "keywords": [
         "AI apparel design",
         "custom t-shirt generator",
@@ -869,7 +869,7 @@
     },
     "protocolSidebar": {
       "steps": {
-        "1": "01 Upload Art",
+        "1": "01 Upload Photo",
         "2": "02 Write Prompt",
         "3": "03 Generating",
         "4": "04 Your Design",
@@ -1076,7 +1076,7 @@
     "footer": {
       "mission": {
         "heading": "Our Mission",
-        "body": "Turn a prompt or your own artwork into a design, printed on quality clothes and shipped to your door."
+        "body": "Turn a prompt or your own photo into a design, printed on quality clothes and shipped to your door."
       },
       "platform": {
         "heading": "Platform",
