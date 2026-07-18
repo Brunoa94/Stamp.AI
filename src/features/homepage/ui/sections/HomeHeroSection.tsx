@@ -2,122 +2,56 @@
  * HomeHeroSection
  *
  * Luxury hero with animated blur blobs, gradient logo text,
- * and framed product image on light background.
+ * animated product images, and scroll-based parallax animations.
  */
 
-import Image from "next/image";
-import Link from "next/link";
-import { useTranslations } from "next-intl";
-import { ArrowDown, ArrowRight } from "lucide-react";
-import { Button } from "@/features/ui/button";
-import { Heading } from "@/features/ui/heading";
-import { Paragraph } from "@/features/ui/paragraph";
-import { Span } from "@/features/ui/span";
-import { HOME_HERO_TRUST } from "../../lib/constants/homepageContent";
-import { HomeTrustIndicators } from "../components/HomeTrustIndicators";
+"use client";
+
+import { useRef } from "react";
+import { useImageCarousel } from "@/hooks/useImageCarousel";
+import { useHeroParallax } from "@/hooks/useHeroParallax";
+import {
+  HOME_HERO_IMAGES,
+  HOME_HERO_PARALLAX_CONFIG,
+} from "../../lib/constants/homepageContent";
 import { SectionReveal } from "../components/SectionReveal";
+import { HeroBlobs } from "../components/HeroSection/HeroBlobs";
+import { HeroContent } from "../components/HeroSection/HeroContent";
+import { HeroImage } from "../components/HeroSection/HeroImage";
+import { HeroScrollCue } from "../components/HeroSection/HeroScrollCue";
 
 export function HomeHeroSection() {
-  const t = useTranslations("home.hero");
+  const sectionRef = useRef<HTMLElement>(null);
+
+  const { currentImage, isTransitioning } = useImageCarousel({
+    images: HOME_HERO_IMAGES,
+    interval: 2500,
+    transitionDuration: 500,
+  });
+
+  const { textTransform, imageTranslateY, blobTranslates, fadeOpacity } =
+    useHeroParallax(sectionRef, HOME_HERO_PARALLAX_CONFIG);
+
   return (
-    <section className="relative flex min-h-screen flex-col overflow-hidden bg-(--color-stamp-off-white) px-6 pb-12 pt-30 lg:px-12 xl:px-24">
-      {/* Animated blur blobs - subtle on light background */}
-      <div
-        aria-hidden
-        className="hero-blur-blob hero-blob-purple absolute -left-40 -top-40 opacity-20"
-      />
-      <div
-        aria-hidden
-        className="hero-blur-blob hero-blob-cyan absolute right-[-5%] top-1/2 opacity-15"
-      />
-      <div
-        aria-hidden
-        className="hero-blur-blob hero-blob-orange absolute bottom-0 left-1/3 opacity-15"
-      />
+    <section
+      ref={sectionRef}
+      className="relative flex min-h-screen flex-col overflow-hidden bg-(--color-stamp-off-white) px-6 pb-12 pt-30 lg:px-12 xl:px-24"
+    >
+      <HeroBlobs blobTranslates={blobTranslates} />
 
       <SectionReveal className="relative z-10 flex flex-1 items-center">
         <div className="mx-auto grid w-full max-w-screen-2xl grid-cols-1 items-center gap-16 lg:grid-cols-12">
-          <div className="lg:col-span-7">
-            <Heading
-              as="h1"
-              variant="title"
-              className="relative mb-10 text-7xl text-(--color-stamp-chocolate) md:text-8xl lg:text-9xl"
-            >
-              {t.rich("title", {
-                accent: (chunks) => (
-                  <Span
-                    variant="serif"
-                    className="text-7xl text-(--color-stamp-taupe) md:text-8xl lg:text-9xl"
-                  >
-                    {chunks}
-                  </Span>
-                ),
-              })}
-              {/* Subtle glow effect */}
-              <div
-                aria-hidden
-                className="absolute -inset-4 -z-10 bg-linear-to-r from-(--color-stamp-chocolate)/10 via-(--color-stamp-gold)/15 to-(--color-stamp-cream)/20 opacity-60 blur-3xl"
-              />
-            </Heading>
-
-            <Paragraph
-              variant="lead"
-              className="mb-12 max-w-xl text-(--color-stamp-chocolate)/70"
-            >
-              {t("tagline")}
-            </Paragraph>
-
-            <div className="flex flex-col gap-4 sm:flex-row">
-              <Button asChild variant="cta" className="group">
-                <Link href="/stamp">
-                  {t("ctaPrimary")}
-                  <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-2" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="ghost-stamp"
-                className="border border-(--color-stamp-divider) hover:border-(--color-stamp-gold)"
-              >
-                <Link href="#products">{t("ctaSecondary")}</Link>
-              </Button>
-            </div>
-
-            <HomeTrustIndicators items={HOME_HERO_TRUST} className="mt-16" />
-          </div>
-
-          <div className="hidden lg:col-span-5 lg:block">
-            <div className="group relative">
-              <div
-                aria-hidden
-                className="absolute -bottom-4 -right-4 h-full w-full border border-(--color-stamp-gold) transition-all duration-500 group-hover:-bottom-6 group-hover:-right-6"
-              />
-              <div className="relative aspect-3/4 overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-cream) transition-transform duration-500 group-hover:scale-[1.02]">
-                <Image
-                  src="/images/hero-product.jpg"
-                  alt={t("productImageAlt")}
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 0px, 40vw"
-                  className="object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </SectionReveal>
-
-      <SectionReveal className="relative z-10 mt-8" delayMs={120}>
-        <div className="flex flex-col items-center gap-3">
-          <Span variant="micro" className="text-(--color-stamp-taupe)">
-            {t("scrollCue")}
-          </Span>
-          <ArrowDown
-            aria-hidden
-            className="h-4 w-4 animate-bounce text-(--color-stamp-gold)"
+          <HeroContent transform={textTransform} opacity={fadeOpacity} />
+          <HeroImage
+            currentImage={currentImage}
+            isTransitioning={isTransitioning}
+            translateY={imageTranslateY}
+            opacity={fadeOpacity}
           />
         </div>
       </SectionReveal>
+
+      <HeroScrollCue />
     </section>
   );
 }

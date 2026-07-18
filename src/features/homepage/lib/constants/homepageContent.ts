@@ -8,6 +8,41 @@
 
 export const MAX_HOME_PRODUCTS = 8;
 
+// Featured carousel - blueprint IDs to exclude from the carousel
+export const FEATURED_CAROUSEL_EXCLUDED_BLUEPRINTS = new Set([12]);
+
+// Process section - stagger delay between card reveals (ms)
+export const PROCESS_STAGGER_DELAY_MS = 120;
+
+// Trust guarantees section - stagger delay between card reveals (ms)
+export const TRUST_GUARANTEES_STAGGER_DELAY_MS = 100;
+
+// Hero section image carousel - cycles through product images
+export const HOME_HERO_IMAGES = [
+  "/home/1-a.png",
+  "/home/1-b.png",
+  "/home/2-a.png",
+  "/home/2-b.png",
+  "/home/3-a.png",
+  "/home/3-b.png",
+  "/home/4-a.png",
+  "/home/4-b.png",
+  "/home/5-a.png",
+  "/home/5-b.png",
+  "/home/6-a.png",
+  "/home/6-b.png",
+];
+
+// Hero parallax configuration
+export const HOME_HERO_PARALLAX_CONFIG = {
+  textFactor: 0.4,
+  imageFactor: 0.2,
+  blobFactors: [0.15, 0.1, 0.12] as const,
+  fadeDistance: 500,
+  scaleMin: 0.85,
+  scaleDistance: 2000,
+} as const;
+
 // Display copy lives in messages (home.process.steps.<id>); only structural
 // fields remain here.
 export type HomeProcessStepType = {
@@ -22,6 +57,27 @@ export const HOME_PROCESS_STEPS: HomeProcessStepType[] = [
   { id: "step-production", number: "04" },
   { id: "step-quality", number: "05" },
   { id: "step-delivery", number: "06" },
+];
+
+// Alternating color styles for process step cards
+export type ProcessStepColorType = {
+  border: string;
+  text: string;
+};
+
+export const PROCESS_STEP_COLORS: ProcessStepColorType[] = [
+  {
+    border: "hover:border-(--color-stamp-gold)",
+    text: "group-hover:text-(--color-stamp-gold)",
+  },
+  {
+    border: "hover:border-(--color-stamp-chocolate)",
+    text: "group-hover:text-(--color-stamp-chocolate)",
+  },
+  {
+    border: "hover:border-(--color-stamp-taupe)",
+    text: "group-hover:text-(--color-stamp-taupe)",
+  },
 ];
 
 // Display copy lives in messages (home.manifesto.values.<number>); the number
@@ -98,6 +154,32 @@ export const HOME_CTA_TRUST: HomeTrustIndicatorType[] = [
   "thirtyDayGuarantee",
   "carbonNeutral",
 ];
+
+// Display copy lives in messages (home.guarantees.items.<id>).
+// Icons are lucide-react icon names.
+export type HomeTrustGuaranteeType = {
+  id: string;
+  icon: string;
+};
+
+export const HOME_TRUST_GUARANTEES: HomeTrustGuaranteeType[] = [
+  { id: "returns", icon: "RotateCcw" },
+  { id: "refund", icon: "ShieldCheck" },
+  { id: "securePayment", icon: "Lock" },
+  { id: "freeShipping", icon: "Truck" },
+];
+
+// Payment methods displayed in the trust section
+export const HOME_PAYMENT_METHODS = [
+  "visa",
+  "mastercard",
+  "amex",
+  "paypal",
+  "applepay",
+  "googlepay",
+] as const;
+
+export type HomePaymentMethodType = (typeof HOME_PAYMENT_METHODS)[number];
 
 export type HomePlatformConfigType = {
   color: string;
