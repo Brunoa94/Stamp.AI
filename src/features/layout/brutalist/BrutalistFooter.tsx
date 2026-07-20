@@ -1,10 +1,10 @@
-/** TO REFACTOR: There are components here with styling applied directly and not through the variants. Refactor them to use variants */
 "use client";
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Separator } from "@/features/ui/separator";
 import { AnimatedLogoDot } from "./AnimatedLogoDot";
+import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { List } from "@/features/ui/list";
@@ -55,14 +55,14 @@ export function BrutalistFooter() {
         <div className="col-span-2">
           <Link
             href="/"
-            className="font-(family-name:--font-outfit) text-4xl md:text-6xl leading-none uppercase tracking-tighter mb-8 flex items-center hover:opacity-80 transition-opacity font-bold"
+            className="font-heading text-4xl md:text-6xl leading-none uppercase tracking-tighter mb-8 flex items-center hover:opacity-80 transition-opacity font-bold"
           >
             {t.rich("brand", {
-              stamp: (chunks) => <Span>{chunks}</Span>,
+              stamp: (chunks) => <Span unstyled>{chunks}</Span>,
               dot: () => (
                 <AnimatedLogoDot size="md" className="mx-1.5 md:mx-2" />
               ),
-              ai: (chunks) => <Span>{chunks}</Span>,
+              ai: (chunks) => <Span unstyled>{chunks}</Span>,
             })}
           </Link>
           <Paragraph
@@ -85,7 +85,7 @@ export function BrutalistFooter() {
                   <Link
                     href={link.href}
                     id={link.id}
-                    className="text-xs uppercase font-bold hover:text-brandPurple transition-colors duration-300 font-(family-name:--font-outfit)"
+                    className="text-xs uppercase font-bold hover:text-brandPurple transition-colors duration-300 font-heading"
                   >
                     {t(`links.${link.id}`)}
                   </Link>
@@ -107,7 +107,7 @@ export function BrutalistFooter() {
                   <Link
                     href={link.href}
                     id={link.id}
-                    className="text-xs uppercase font-bold hover:text-brandCyan transition-colors duration-300 font-(family-name:--font-outfit)"
+                    className="text-xs uppercase font-bold hover:text-brandCyan transition-colors duration-300 font-heading"
                   >
                     {t(`links.${link.id}`)}
                   </Link>
@@ -129,7 +129,7 @@ export function BrutalistFooter() {
                   <Link
                     href={link.href}
                     id={link.id}
-                    className="text-xs uppercase font-bold hover:text-brandOrange transition-colors duration-300 font-(family-name:--font-outfit)"
+                    className="text-xs uppercase font-bold hover:text-brandOrange transition-colors duration-300 font-heading"
                   >
                     {t(`links.${link.id}`)}
                   </Link>
@@ -151,7 +151,7 @@ export function BrutalistFooter() {
                   <Link
                     href={link.href}
                     id={link.id}
-                    className="text-xs uppercase font-bold hover:text-brandPurple transition-colors duration-300 font-(family-name:--font-outfit)"
+                    className="text-xs uppercase font-bold hover:text-brandPurple transition-colors duration-300 font-heading"
                   >
                     {t(`links.${link.id}`)}
                   </Link>
@@ -168,9 +168,13 @@ export function BrutalistFooter() {
       {/* Bottom section with massive text */}
       <div className="relative flex justify-center py-20">
         {/* Massive background text */}
-        <h2 className="font-(family-name:--font-bebas-neue) text-[28vw] leading-none text-white opacity-[0.03] uppercase tracking-tighter pointer-events-none select-none">
+        <Heading
+          as="h2"
+          variant="sectionDisplay"
+          className="text-[28vw] text-white opacity-[0.03] pointer-events-none select-none"
+        >
           {t("bgText")}
-        </h2>
+        </Heading>
 
         {/* Copyright overlay */}
         <div className="absolute bottom-0 w-full flex flex-col md:flex-row justify-between items-center gap-4 opacity-30">

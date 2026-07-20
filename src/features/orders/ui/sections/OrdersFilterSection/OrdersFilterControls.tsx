@@ -56,7 +56,7 @@ export function OrdersFilterControls({
         <Button
           onClick={onClearFilters}
           variant="ghost"
-          className="h-10 flex items-center gap-2 px-4 font-heading font-bold uppercase text-sm tracking-[0.1em] text-(--color-stamp-taupe) hover:bg-transparent hover:text-(--color-stamp-gold)"
+          className="h-10 flex items-center gap-2 px-4 font-heading font-bold uppercase text-sm tracking-widest text-(--color-stamp-taupe) hover:bg-transparent hover:text-(--color-stamp-gold)"
         >
           <RotateCcw className="h-4 w-4" />
           {t("clearArchive")}
@@ -83,7 +83,7 @@ function OrdersStatusSelect({ value, onChange }: OrdersStatusSelectPropsI) {
     >
       <SelectTrigger
         aria-label={t("statusAriaLabel")}
-        className="h-10 w-auto min-w-48 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-heading font-bold uppercase text-sm tracking-[0.1em] text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
+        className="h-10 w-auto min-w-48 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-heading font-bold uppercase text-sm tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
       >
         <SelectValue placeholder={t("status.allPlaceholder")} />
       </SelectTrigger>
@@ -113,7 +113,7 @@ function OrdersTimeSelect({ value, onChange }: OrdersTimeSelectPropsI) {
     >
       <SelectTrigger
         aria-label={t("timeAriaLabel")}
-        className="h-10 w-auto min-w-40 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-heading font-bold uppercase text-sm tracking-[0.1em] text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
+        className="h-10 w-auto min-w-40 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-heading font-bold uppercase text-sm tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
       >
         <SelectValue placeholder={t("time.last30")} />
       </SelectTrigger>

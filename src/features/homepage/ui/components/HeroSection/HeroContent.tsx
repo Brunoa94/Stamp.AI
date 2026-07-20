@@ -1,5 +1,3 @@
-/** TO REFACTOR: There are components here with styling applied directly and not through the variants. Refactor them to use variants */
-
 /**
  * HeroContent
  *

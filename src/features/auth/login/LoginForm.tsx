@@ -19,7 +19,7 @@ export function LoginForm() {
   return (
     <DialogContent
       showCloseButton={false}
-      className="max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none sm:max-w-[550px]"
+      className="max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none sm:max-w-137.5"
     >
       <DialogTitle className="sr-only">{t("srTitle")}</DialogTitle>
       <div className="relative overflow-hidden border-2 border-(--color-stamp-divider) bg-(--color-stamp-off-white) px-10 pt-12 pb-10 shadow-(--shadow-stamp-modal)">
@@ -52,7 +52,10 @@ export function LoginForm() {
           <LoginCredentialsFields register={register} errors={errors} />
 
           {errors.root?.message && (
-            <p role="alert" className="text-xs font-bold uppercase tracking-widest text-(--color-stamp-error)">
+            <p
+              role="alert"
+              className="text-xs font-bold uppercase tracking-widest text-(--color-stamp-error)"
+            >
               {errors.root.message}
             </p>
           )}

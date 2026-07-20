@@ -1,9 +1,11 @@
-/** TO REFACTOR: There are components here with styling applied directly and not through the variants. Refactor them to use variants and components from the design system*/
 "use client";
 
 import { Button } from "@/features/ui/button";
 import { Input } from "@/features/ui/input";
 import { Label } from "@/features/ui/label";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
 import { User, Save, X } from "lucide-react";
 import { useUserInformation } from "@/features/profile/lib/hooks/useUserInformation";
 import { useTranslations } from "next-intl";
@@ -54,10 +56,16 @@ export function UserInformationSection() {
             <User className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-(family-name:--font-outfit) uppercase tracking-tight text-ink leading-tight mb-1">
+            <Heading
+              as="h2"
+              variant="cardCompact"
+              className="text-xl text-ink mb-1"
+            >
               {t("title")}
-            </h2>
-            <p className="text-slate-500 text-sm">{t("subtitle")}</p>
+            </Heading>
+            <Paragraph variant="sm" className="text-slate-500 text-sm">
+              {t("subtitle")}
+            </Paragraph>
           </div>
         </div>
         {!isEditing && (
@@ -75,11 +83,10 @@ export function UserInformationSection() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {formFields.map(({ id, key }) => (
           <div key={id} className="space-y-2">
-            <Label
-              htmlFor={id}
-              className="text-[10px] font-bold uppercase tracking-widest text-slate-400"
-            >
-              {t(`${key}Label`)}
+            <Label htmlFor={id}>
+              <Span variant="label" className="text-slate-400">
+                {t(`${key}Label`)}
+              </Span>
             </Label>
             <Input
               type="text"
@@ -87,28 +94,27 @@ export function UserInformationSection() {
               value={fieldValues[key]}
               onChange={(e) => fieldSetters[key](e.target.value)}
               readOnly={!isEditing}
-              className="w-full bg-white border border-ink/10 p-4 font-(family-name:--font-outfit) uppercase placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all"
+              className="w-full bg-white border border-ink/10 p-4 font-heading uppercase placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all"
             />
           </div>
         ))}
 
         <div className="md:col-span-2 space-y-2">
-          <Label
-            htmlFor="email"
-            className="text-[10px] font-bold uppercase tracking-widest text-slate-400"
-          >
-            {t("emailLabel")}
+          <Label htmlFor="email">
+            <Span variant="label" className="text-slate-400">
+              {t("emailLabel")}
+            </Span>
           </Label>
           <Input
             type="email"
             id="email"
             value={email}
             readOnly
-            className="w-full bg-concrete/30 border border-ink/10 p-4 font-(family-name:--font-outfit) uppercase outline-none"
+            className="w-full bg-concrete/30 border border-ink/10 p-4 font-heading uppercase outline-none"
           />
-          <p className="text-[11px] text-slate-400 font-medium italic">
+          <Paragraph variant="xs" className="text-slate-400 italic">
             {t("emailNote")}
-          </p>
+          </Paragraph>
         </div>
       </div>
 

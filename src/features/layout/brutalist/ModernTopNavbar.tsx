@@ -1,4 +1,3 @@
-/** TO REFACTOR: There are components here with styling applied directly and not through the variants. Refactor them to use variants and components from the design system*/
 "use client";
 
 import Link from "next/link";
@@ -7,6 +6,8 @@ import { useUser, useLogout } from "@/hooks/useAuth";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Login } from "@/features/auth/login/Login";
+import { Button } from "@/features/ui/button";
+import { Span } from "@/features/ui/span";
 
 export function ModernTopNavbar() {
   const t = useTranslations("layout.modernNavbar");
@@ -26,49 +27,68 @@ export function ModernTopNavbar() {
         <Link href="/" className="flex items-center gap-1.5 md:gap-2">
           {t.rich("brand", {
             stamp: (chunks) => (
-              <span className="font-(family-name:--font-outfit) text-2xl md:text-3xl leading-none uppercase tracking-tight text-ink font-bold">
+              <Span
+                variant="sm"
+                className="text-2xl md:text-3xl leading-none tracking-tight text-ink font-bold"
+              >
                 {chunks}
-              </span>
+              </Span>
             ),
             dot: () => <span className="logo-gradient-dot" />,
             ai: (chunks) => (
-              <span className="font-(family-name:--font-outfit) text-2xl md:text-3xl leading-none uppercase tracking-tight text-ink font-bold">
+              <Span
+                variant="sm"
+                className="text-2xl md:text-3xl leading-none tracking-tight text-ink font-bold"
+              >
                 {chunks}
-              </span>
+              </Span>
             ),
           })}
         </Link>
 
         {/* Center CTA Button - Hidden on mobile/tablet */}
-        <Link
-          href="/stamp"
-          className="hidden lg:block bg-(--color-stamp-chocolate) px-10 py-4 font-bold text-white text-lg uppercase tracking-widest animate-pulse-subtle transition-all duration-500 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
+        <Button
+          asChild
+          variant="brutalist-primary"
+          className="hidden lg:block px-10 py-4 text-lg animate-pulse-subtle"
         >
-          {t("stampIt")}
-        </Link>
+          <Link href="/stamp">{t("stampIt")}</Link>
+        </Button>
 
         {/* Right Side - Desktop Icons */}
         <div className="hidden lg:flex items-center gap-4">
-          <Link
-            href="/cart"
-            className="action-btn-refined btn-glow-cyan icon-glow-cyan flex items-center border p-3.5 rounded-xl group hover:px-6"
+          <Button
+            asChild
+            variant="brutalist-ghost"
+            className="action-btn-refined btn-glow-cyan icon-glow-cyan p-3.5 rounded-xl group hover:px-6"
           >
-            <ShoppingBag className="w-5 h-5 text-brandCyan group-hover:scale-110 transition-transform duration-300" />
-            <span className="btn-text text-xs font-bold uppercase tracking-widest text-brandCyan group-hover:text-white">
-              {t("cart")}
-            </span>
-          </Link>
+            <Link href="/cart">
+              <ShoppingBag className="w-5 h-5 text-brandCyan group-hover:scale-110 transition-transform duration-300" />
+              <Span
+                variant="label"
+                className="btn-text text-brandCyan group-hover:text-white"
+              >
+                {t("cart")}
+              </Span>
+            </Link>
+          </Button>
 
           {user ? (
-            <Link
-              href="/profile"
-              className="action-btn-refined btn-glow-purple icon-glow-purple flex items-center border p-3.5 rounded-xl group hover:px-6"
+            <Button
+              asChild
+              variant="brutalist-ghost"
+              className="action-btn-refined btn-glow-purple icon-glow-purple p-3.5 rounded-xl group hover:px-6"
             >
-              <User className="w-5 h-5 text-purple group-hover:scale-110 transition-transform duration-300" />
-              <span className="btn-text text-xs font-bold uppercase tracking-widest text-purple group-hover:text-white">
-                {t("account")}
-              </span>
-            </Link>
+              <Link href="/profile">
+                <User className="w-5 h-5 text-purple group-hover:scale-110 transition-transform duration-300" />
+                <Span
+                  variant="label"
+                  className="btn-text text-purple group-hover:text-white"
+                >
+                  {t("account")}
+                </Span>
+              </Link>
+            </Button>
           ) : (
             <Login
               variant="brutalist"
@@ -77,20 +97,25 @@ export function ModernTopNavbar() {
           )}
 
           {user && (
-            <button
+            <Button
+              variant="brutalist-ghost"
               onClick={handleLogout}
-              className="action-btn-refined btn-glow-orange icon-glow-orange flex items-center border p-3.5 rounded-xl group hover:px-6"
+              className="action-btn-refined btn-glow-orange icon-glow-orange p-3.5 rounded-xl group hover:px-6"
             >
               <LogOut className="w-5 h-5 text-orange group-hover:scale-110 transition-transform duration-300" />
-              <span className="btn-text text-xs font-bold uppercase tracking-widest text-orange group-hover:text-white">
+              <Span
+                variant="label"
+                className="btn-text text-orange group-hover:text-white"
+              >
                 {t("logout")}
-              </span>
-            </button>
+              </Span>
+            </Button>
           )}
         </div>
 
         {/* Mobile/Tablet Menu Button */}
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="lg:hidden p-2 text-ink"
           aria-label={t("toggleMenu")}
@@ -100,34 +125,42 @@ export function ModernTopNavbar() {
           ) : (
             <Menu className="w-6 h-6" />
           )}
-        </button>
+        </Button>
       </header>
 
       {/* Desktop Navigation Menu - Below Header (Desktop only - lg breakpoint) */}
       <nav className="hidden lg:flex fixed top-32 right-10 z-40 flex-col gap-5 items-end">
-        <Link
-          href="/"
-          className="nav-link-underline font-(family-name:--font-outfit) text-lg uppercase tracking-[0.2em] text-ink font-semibold"
-        >
-          {t("nav.home")}
+        <Link href="/" className="nav-link-underline">
+          <Span
+            variant="sm"
+            className="text-lg tracking-[0.2em] text-ink font-semibold"
+          >
+            {t("nav.home")}
+          </Span>
         </Link>
-        <Link
-          href="/stamp"
-          className="nav-link-underline font-(family-name:--font-outfit) text-lg uppercase tracking-[0.2em] text-ink font-semibold"
-        >
-          {t("nav.stamp")}
+        <Link href="/stamp" className="nav-link-underline">
+          <Span
+            variant="sm"
+            className="text-lg tracking-[0.2em] text-ink font-semibold"
+          >
+            {t("nav.stamp")}
+          </Span>
         </Link>
-        <Link
-          href="/orders"
-          className="nav-link-underline font-(family-name:--font-outfit) text-lg uppercase tracking-[0.2em] text-ink font-semibold"
-        >
-          {t("nav.orders")}
+        <Link href="/orders" className="nav-link-underline">
+          <Span
+            variant="sm"
+            className="text-lg tracking-[0.2em] text-ink font-semibold"
+          >
+            {t("nav.orders")}
+          </Span>
         </Link>
-        <Link
-          href="/dashboard"
-          className="nav-link-underline font-(family-name:--font-outfit) text-lg uppercase tracking-[0.2em] text-ink font-semibold"
-        >
-          {t("nav.dashboard")}
+        <Link href="/dashboard" className="nav-link-underline">
+          <Span
+            variant="sm"
+            className="text-lg tracking-[0.2em] text-ink font-semibold"
+          >
+            {t("nav.dashboard")}
+          </Span>
         </Link>
       </nav>
 
@@ -142,79 +175,78 @@ export function ModernTopNavbar() {
         <div className="flex flex-col p-6 gap-6">
           {/* Mobile Navigation Links */}
           <nav className="flex flex-col gap-4 border-b border-ink/10 pb-6">
-            <Link
-              href="/"
-              onClick={() => setMobileMenuOpen(false)}
-              className="font-(family-name:--font-outfit) text-xl uppercase tracking-[0.2em] text-ink py-2 font-semibold"
-            >
-              {t("nav.home")}
+            <Link href="/" onClick={() => setMobileMenuOpen(false)} className="py-2">
+              <Span variant="sm" className="text-xl tracking-[0.2em] text-ink">
+                {t("nav.home")}
+              </Span>
             </Link>
-            <Link
-              href="/stamp"
-              onClick={() => setMobileMenuOpen(false)}
-              className="font-(family-name:--font-outfit) text-xl uppercase tracking-[0.2em] text-ink py-2 font-semibold"
-            >
-              {t("nav.stamp")}
+            <Link href="/stamp" onClick={() => setMobileMenuOpen(false)} className="py-2">
+              <Span variant="sm" className="text-xl tracking-[0.2em] text-ink">
+                {t("nav.stamp")}
+              </Span>
             </Link>
-            <Link
-              href="/orders"
-              onClick={() => setMobileMenuOpen(false)}
-              className="font-(family-name:--font-outfit) text-xl uppercase tracking-[0.2em] text-ink py-2 font-semibold"
-            >
-              {t("nav.orders")}
+            <Link href="/orders" onClick={() => setMobileMenuOpen(false)} className="py-2">
+              <Span variant="sm" className="text-xl tracking-[0.2em] text-ink">
+                {t("nav.orders")}
+              </Span>
             </Link>
-            <Link
-              href="/dashboard"
-              onClick={() => setMobileMenuOpen(false)}
-              className="font-(family-name:--font-outfit) text-xl uppercase tracking-[0.2em] text-ink py-2 font-semibold"
-            >
-              {t("nav.dashboard")}
+            <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="py-2">
+              <Span variant="sm" className="text-xl tracking-[0.2em] text-ink">
+                {t("nav.dashboard")}
+              </Span>
             </Link>
           </nav>
 
           {/* Mobile Action Buttons */}
           <div className="flex flex-col gap-3">
-            <Link
-              href="/cart"
+            <Button
+              asChild
+              variant="outline"
+              className="justify-center gap-3 border-brandCyan/20 p-4 rounded-xl bg-brandCyan/5"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center justify-center gap-3 border border-brandCyan/20 p-4 rounded-xl bg-brandCyan/5"
             >
-              <ShoppingBag className="w-5 h-5 text-brandCyan" />
-              <span className="text-sm font-bold uppercase tracking-widest text-brandCyan">
-                {t("cart")}
-              </span>
-            </Link>
+              <Link href="/cart">
+                <ShoppingBag className="w-5 h-5 text-brandCyan" />
+                <Span variant="label" className="text-sm text-brandCyan">
+                  {t("cart")}
+                </Span>
+              </Link>
+            </Button>
 
             {user ? (
-              <Link
-                href="/profile"
+              <Button
+                asChild
+                variant="outline"
+                className="justify-center gap-3 border-purple/20 p-4 rounded-xl bg-purple/5"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-3 border border-purple/20 p-4 rounded-xl bg-purple/5"
               >
-                <User className="w-5 h-5 text-purple" />
-                <span className="text-sm font-bold uppercase tracking-widest text-purple">
-                  {t("account")}
-                </span>
-              </Link>
+                <Link href="/profile">
+                  <User className="w-5 h-5 text-purple" />
+                  <Span variant="label" className="text-sm text-purple">
+                    {t("account")}
+                  </Span>
+                </Link>
+              </Button>
             ) : (
               <Login className="w-full flex items-center justify-center gap-3 border border-purple/20 p-4 rounded-xl bg-purple/5">
                 <User className="w-5 h-5 text-purple" />
-                <span className="text-sm font-bold uppercase tracking-widest text-purple">
+                <Span variant="label" className="text-sm text-purple">
                   {t("login")}
-                </span>
+                </Span>
               </Login>
             )}
 
             {user && (
-              <button
+              <Button
+                variant="outline"
                 onClick={handleLogout}
-                className="flex items-center justify-center gap-3 border border-orange/20 p-4 rounded-xl bg-orange/5"
+                className="justify-center gap-3 border-orange/20 p-4 rounded-xl bg-orange/5"
               >
                 <LogOut className="w-5 h-5 text-orange" />
-                <span className="text-sm font-bold uppercase tracking-widest text-orange">
+                <Span variant="label" className="text-sm text-orange">
                   {t("logout")}
-                </span>
-              </button>
+                </Span>
+              </Button>
             )}
           </div>
         </div>

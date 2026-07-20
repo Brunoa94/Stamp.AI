@@ -1,8 +1,9 @@
-/** TO REFACTOR: There are components here with styling applied directly and not through the variants. Refactor them to use variants and components from the design system*/
 "use client";
 
 import { MapPin } from "lucide-react";
 import { Button } from "@/features/ui/button";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
 import { useAddressForm } from "@/features/profile/lib/hooks/useAddressForm";
 import { AddressFormFields } from "./address/AddressFormFields";
 import { AddressFormActions } from "./address/AddressFormActions";
@@ -33,12 +34,16 @@ export function AddressSection() {
             <MapPin className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-(family-name:--font-outfit) uppercase tracking-tight text-ink leading-tight mb-1">
+            <Heading
+              as="h2"
+              variant="cardCompact"
+              className="text-xl text-ink mb-1"
+            >
               {t("title")}
-            </h2>
-            <p className="text-slate-500 text-sm">
+            </Heading>
+            <Paragraph variant="sm" className="text-slate-500 text-sm">
               {hasAddress ? t("subtitleHasAddress") : t("subtitleNoAddress")}
-            </p>
+            </Paragraph>
           </div>
         </div>
         {!isEditing && (
@@ -65,7 +70,9 @@ export function AddressSection() {
       ) : hasAddress && savedAddress ? (
         <AddressDisplay address={savedAddress} />
       ) : (
-        <p className="text-sm text-slate-500 italic">{t("emptyState")}</p>
+        <Paragraph variant="sm" className="text-sm text-slate-500 italic">
+          {t("emptyState")}
+        </Paragraph>
       )}
     </section>
   );

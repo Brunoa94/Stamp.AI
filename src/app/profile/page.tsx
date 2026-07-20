@@ -5,7 +5,7 @@ import { ProfileContent } from "@/features/profile/ui/ProfileContent";
 
 export default function ProfilePage() {
   return (
-    <div className="bg-concrete text-ink font-(family-name:--font-outfit) antialiased min-h-screen">
+    <div className="bg-concrete text-ink font-heading antialiased min-h-screen">
       <ProtectedRoute>
         <ProfileContent />
       </ProtectedRoute>

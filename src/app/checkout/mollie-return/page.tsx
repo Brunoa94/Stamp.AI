@@ -631,7 +631,7 @@ export default function MollieReturnPage() {
             >
               <Loader2 className="w-12 h-12 animate-spin" />
             </div>
-            <h1 className="font-(family-name:--font-outfit) text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
+            <h1 className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
               {t("verifyingTitle")}
             </h1>
             <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto">
@@ -714,7 +714,7 @@ export default function MollieReturnPage() {
             >
               <AlertCircle className="w-12 h-12" />
             </div>
-            <h1 className="font-(family-name:--font-outfit) text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
+            <h1 className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
               {t("pendingTitle")}
             </h1>
             <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12">
@@ -759,7 +759,7 @@ export default function MollieReturnPage() {
           >
             <AlertCircle className="w-12 h-12" />
           </div>
-          <h1 className="font-(family-name:--font-outfit) text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
+          <h1 className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
             {t("somethingWentWrongTitle")}
           </h1>
           <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12">

@@ -1,10 +1,9 @@
-/** TO REFACTOR: There are components here with styling applied directly and not through the variants. Refactor them to use variants and components from the design system*/
-
 "use client";
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useUser } from "@/hooks/useAuth";
+import { Span } from "@/features/ui/span";
 
 export function MinimalistHeader() {
   const t = useTranslations("layout.minimalistHeader");
@@ -15,13 +14,18 @@ export function MinimalistHeader() {
       {/* Logo */}
       <div className="flex-1">
         <Link href="/" className="flex items-center gap-1 group">
-          <span className="font-(family-name:--font-outfit) text-4xl leading-none uppercase tracking-tighter">
+          <Span
+            variant="sm"
+            className="font-heading text-4xl leading-none tracking-tighter"
+          >
             {t.rich("brand", {
               accent: (chunks) => (
-                <span className="text-brandCyan">{chunks}</span>
+                <Span unstyled className="text-brandCyan">
+                  {chunks}
+                </Span>
               ),
             })}
-          </span>
+          </Span>
         </Link>
       </div>
 
@@ -29,9 +33,9 @@ export function MinimalistHeader() {
       <div className="flex-1 flex justify-end">
         <Link
           href={user ? "/dashboard" : "/auth"}
-          className="text-[10px] font-bold tracking-widest uppercase text-ink/40 hover:text-ink/100 transition-opacity"
+          className="text-ink/40 hover:text-ink transition-opacity"
         >
-          {user ? t("accountTerminal") : t("login")}
+          <Span variant="label">{user ? t("accountTerminal") : t("login")}</Span>
         </Link>
       </div>
     </header>
