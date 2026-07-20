@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
  * Variants:
  * - display        Hero h1 — massive fluid viewport-relative title (Outfit)
  * - sectionDisplay Section header h2 — bold condensed display style (Bebas Neue)
+ * - cta            CTA section h2 — large fluid viewport-relative title (Outfit)
+ * - section        Section header h2 — 5xl→7xl (Outfit)
  * - title          Interior section h2 — fixed responsive scale 6xl→8xl (Outfit)
  * - card           Card / step h3 — 3xl→4xl (Outfit)
  * - cardCompact    Compact card title — xl (Outfit)
@@ -26,6 +28,9 @@ const headingVariants = {
     "font-heading font-bold text-[12vw] md:text-[10vw] lg:text-[8vw] leading-[0.85] tracking-tighter uppercase",
   sectionDisplay:
     "font-(family-name:--font-bebas-neue) text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none uppercase",
+  cta: "font-heading font-bold text-[10vw] md:text-[8vw] lg:text-[6vw] leading-[0.9] tracking-tighter uppercase",
+  section:
+    "font-heading font-bold text-5xl md:text-6xl lg:text-7xl tracking-tighter leading-none uppercase",
   title:
     "font-heading font-bold text-6xl md:text-7xl lg:text-8xl tracking-tighter leading-none uppercase",
   card: "font-heading font-semibold text-3xl md:text-4xl tracking-tight leading-tight uppercase",
