@@ -25,7 +25,7 @@ export function CartMobileCta({ total, onCheckout }: CartMobileCtaPropsI) {
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-(--color-stamp-divider) bg-(--color-stamp-white) p-4 xl:hidden">
       <Button
         onClick={onCheckout}
-        variant="secondary-brown"
+        variant="primary"
         className="group w-full font-heading"
       >
         <span>{t("checkout", { total: formattedTotal })}</span>

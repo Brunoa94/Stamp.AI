@@ -152,7 +152,7 @@ export const componentThemes = {
       container: `mb-10 md:mb-12`,
       accentBar: `h-1 w-20 md:w-24 bg-purple mb-4`,
       title:
-        `font-anton text-6xl md:text-8xl uppercase tracking-tighter leading-none text-ink`,
+        `font-(family-name:--font-outfit) text-6xl md:text-8xl uppercase tracking-tighter leading-none text-ink`,
       titleAccent: `text-purple`,
       metaRow:
         `flex flex-wrap items-center gap-3 mt-3 text-[10px] font-bold tracking-[0.3em] uppercase opacity-30`,
@@ -169,7 +169,7 @@ export const componentThemes = {
       baseGreen:
         `brutalist-card p-8 md:p-10 border-l-4 border-l-green transition-all duration-300`,
       title:
-        `font-anton text-3xl md:text-4xl uppercase tracking-tighter text-ink mb-2`,
+        `font-(family-name:--font-outfit) text-3xl md:text-4xl uppercase tracking-tighter text-ink mb-2`,
       subtitle:
         `text-[8px] font-bold tracking-[0.3em] uppercase opacity-30 mb-6`,
       label: `text-[9px] font-bold tracking-[0.25em] uppercase opacity-40`,
@@ -180,16 +180,16 @@ export const componentThemes = {
       avatar: `w-full h-full object-cover`,
       verifiedBadge:
         `absolute -bottom-1 -right-1 w-6 h-6 bg-purple rounded-full flex items-center justify-center text-white text-xs border-2 border-white`,
-      name: `font-anton text-2xl md:text-3xl uppercase tracking-tight text-ink`,
+      name: `font-(family-name:--font-outfit) text-2xl md:text-3xl uppercase tracking-tight text-ink`,
       email: `text-[10px] tracking-[0.2em] uppercase opacity-30 mt-1`,
       editButton:
-        `w-full mt-6 py-3 border border-ink/10 hover:border-purple hover:bg-purple/5 font-anton text-xs tracking-widest uppercase transition-all flex items-center justify-center gap-2`,
+        `w-full mt-6 py-3 border border-ink/10 hover:border-purple hover:bg-purple/5 font-(family-name:--font-outfit) text-xs tracking-widest uppercase transition-all flex items-center justify-center gap-2`,
     },
     performance: {
       metricRow: `flex items-end justify-between mb-3`,
       metricLabel: `text-[8px] font-bold tracking-[0.3em] uppercase opacity-30`,
       metricValue:
-        `font-anton text-5xl md:text-6xl uppercase tracking-tighter text-ink`,
+        `font-(family-name:--font-outfit) text-5xl md:text-6xl uppercase tracking-tighter text-ink`,
       progressBar: `dashboard-progress-bar mt-3`,
       progressFill: `dashboard-progress-fill`,
     },
@@ -200,7 +200,7 @@ export const componentThemes = {
       balanceLabel:
         `text-[8px] font-bold tracking-[0.3em] uppercase opacity-30 block mb-2`,
       balanceValue:
-        `font-anton text-5xl md:text-6xl uppercase tracking-tighter text-ink`,
+        `font-(family-name:--font-outfit) text-5xl md:text-6xl uppercase tracking-tighter text-ink`,
       usageRow:
         `flex justify-between items-center text-[9px] font-bold tracking-[0.25em] uppercase opacity-40 mb-2`,
       usageLabel: `opacity-40`,
@@ -209,9 +209,9 @@ export const componentThemes = {
       progressFill:
         `dashboard-progress-fill bg-gradient-to-r from-purple to-cyan`,
       actionPrimary:
-        `w-full py-3 bg-purple hover:bg-purple/90 text-white font-anton text-xs tracking-widest uppercase transition-all`,
+        `w-full py-3 bg-purple hover:bg-purple/90 text-white font-(family-name:--font-outfit) text-xs tracking-widest uppercase transition-all`,
       actionSecondary:
-        `w-full py-3 border border-ink/10 hover:border-purple hover:bg-purple/5 font-anton text-xs tracking-widest uppercase transition-all mt-2`,
+        `w-full py-3 border border-ink/10 hover:border-purple hover:bg-purple/5 font-(family-name:--font-outfit) text-xs tracking-widest uppercase transition-all mt-2`,
     },
     quickAccess: {
       grid: `grid grid-cols-2 gap-4`,
@@ -226,16 +226,16 @@ export const componentThemes = {
       card:
         `dashboard-cta-gradient p-8 md:p-12 text-white flex flex-col items-start justify-between gap-6 min-h-[280px]`,
       title:
-        `font-anton text-4xl md:text-5xl uppercase tracking-tighter leading-tight mb-3`,
+        `font-(family-name:--font-outfit) text-4xl md:text-5xl uppercase tracking-tighter leading-tight mb-3`,
       description: `text-sm tracking-wide uppercase opacity-80 mb-6`,
       button:
-        `px-8 py-3 bg-white text-ink font-anton text-xs tracking-widest uppercase hover:scale-105 active:scale-95 transition-all`,
+        `px-8 py-3 bg-white text-ink font-(family-name:--font-outfit) text-xs tracking-widest uppercase hover:scale-105 active:scale-95 transition-all`,
     },
     orders: {
       card: `brutalist-card p-8 md:p-10 border-l-4 border-l-green flex-grow`,
       header: `flex justify-between items-center mb-6`,
       title:
-        `font-anton text-3xl md:text-4xl uppercase tracking-tighter text-ink`,
+        `font-(family-name:--font-outfit) text-3xl md:text-4xl uppercase tracking-tighter text-ink`,
       badge:
         `text-[8px] font-bold tracking-[0.3em] uppercase px-3 py-1 bg-green/10 text-green border border-green/20`,
       viewAll:
@@ -248,10 +248,10 @@ export const componentThemes = {
         `w-12 h-12 bg-concrete border border-ink/5 flex items-center justify-center`,
       itemImage: `w-8 h-8 object-contain`,
       itemDetails: `flex flex-col`,
-      itemId: `font-anton text-sm uppercase tracking-tight text-ink`,
+      itemId: `font-(family-name:--font-outfit) text-sm uppercase tracking-tight text-ink`,
       itemMeta: `text-[9px] tracking-[0.2em] uppercase opacity-30`,
       itemRight: `flex flex-col items-end gap-2`,
-      itemPrice: `font-anton text-lg uppercase tracking-tight text-ink`,
+      itemPrice: `font-(family-name:--font-outfit) text-lg uppercase tracking-tight text-ink`,
       statusBadge:
         `text-[9px] font-bold tracking-widest uppercase px-2 py-1 border`,
       statusDelivered: `bg-green/5 text-green border-green/20`,

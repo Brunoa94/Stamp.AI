@@ -168,9 +168,9 @@
     },
     "trustIndicators": {
       "items": {
-        "aiPowered": "AI-Powered",
-        "archivalQuality": "Built to Last",
-        "instantDelivery": "Made to Order",
+        "aiPowered": "AI Design",
+        "archivalQuality": "Premium Quality",
+        "instantDelivery": "Fast Delivery",
         "fiveSevenDayDelivery": "5-7 Day Delivery",
         "thirtyDayGuarantee": "30-Day Guarantee",
         "carbonNeutral": "Carbon Neutral"
@@ -184,6 +184,31 @@
     "productCard": {
       "noImage": "No image",
       "discountBadge": "-{percent}%"
+    },
+    "guarantees": {
+      "title": "Shop with",
+      "accent": "confidence",
+      "label": "Trust & Security",
+      "paymentTitle": "Secure Payment",
+      "paymentDescription": "All transactions are encrypted and processed through trusted payment providers.",
+      "items": {
+        "returns": {
+          "title": "14-Day Returns",
+          "description": "Changed your mind? Return any unworn item within 14 days for a full refund."
+        },
+        "refund": {
+          "title": "100% Money Back",
+          "description": "Not satisfied with your order? We'll refund every cent, no questions asked."
+        },
+        "securePayment": {
+          "title": "Secure Checkout",
+          "description": "Your payment info is protected with bank-level SSL encryption."
+        },
+        "freeShipping": {
+          "title": "Free Shipping",
+          "description": "Free carbon-neutral delivery on all orders over $75."
+        }
+      }
     }
   },
   "stamp": {

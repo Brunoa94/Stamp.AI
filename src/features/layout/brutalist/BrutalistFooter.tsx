@@ -1,3 +1,4 @@
+/** TO REFACTOR: There are components here with styling applied directly and not through the variants. Refactor them to use variants */
 "use client";
 
 import Link from "next/link";
@@ -54,7 +55,7 @@ export function BrutalistFooter() {
         <div className="col-span-2">
           <Link
             href="/"
-            className="font-anton text-4xl md:text-6xl leading-none uppercase tracking-tighter mb-8 flex items-center hover:opacity-80 transition-opacity"
+            className="font-(family-name:--font-outfit) text-4xl md:text-6xl leading-none uppercase tracking-tighter mb-8 flex items-center hover:opacity-80 transition-opacity font-bold"
           >
             {t.rich("brand", {
               stamp: (chunks) => <Span>{chunks}</Span>,
@@ -84,7 +85,7 @@ export function BrutalistFooter() {
                   <Link
                     href={link.href}
                     id={link.id}
-                    className="text-xs uppercase font-bold hover:text-brandPurple transition-colors duration-300 font-space"
+                    className="text-xs uppercase font-bold hover:text-brandPurple transition-colors duration-300 font-(family-name:--font-outfit)"
                   >
                     {t(`links.${link.id}`)}
                   </Link>
@@ -106,7 +107,7 @@ export function BrutalistFooter() {
                   <Link
                     href={link.href}
                     id={link.id}
-                    className="text-xs uppercase font-bold hover:text-brandCyan transition-colors duration-300 font-space"
+                    className="text-xs uppercase font-bold hover:text-brandCyan transition-colors duration-300 font-(family-name:--font-outfit)"
                   >
                     {t(`links.${link.id}`)}
                   </Link>
@@ -128,7 +129,7 @@ export function BrutalistFooter() {
                   <Link
                     href={link.href}
                     id={link.id}
-                    className="text-xs uppercase font-bold hover:text-brandOrange transition-colors duration-300 font-space"
+                    className="text-xs uppercase font-bold hover:text-brandOrange transition-colors duration-300 font-(family-name:--font-outfit)"
                   >
                     {t(`links.${link.id}`)}
                   </Link>
@@ -150,7 +151,7 @@ export function BrutalistFooter() {
                   <Link
                     href={link.href}
                     id={link.id}
-                    className="text-xs uppercase font-bold hover:text-brandPurple transition-colors duration-300 font-space"
+                    className="text-xs uppercase font-bold hover:text-brandPurple transition-colors duration-300 font-(family-name:--font-outfit)"
                   >
                     {t(`links.${link.id}`)}
                   </Link>
@@ -167,7 +168,7 @@ export function BrutalistFooter() {
       {/* Bottom section with massive text */}
       <div className="relative flex justify-center py-20">
         {/* Massive background text */}
-        <h2 className="font-anton text-[28vw] leading-none text-white opacity-[0.03] uppercase tracking-tighter pointer-events-none select-none">
+        <h2 className="font-(family-name:--font-bebas-neue) text-[28vw] leading-none text-white opacity-[0.03] uppercase tracking-tighter pointer-events-none select-none">
           {t("bgText")}
         </h2>
 

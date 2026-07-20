@@ -1,3 +1,5 @@
+/** TO REFACTOR: There are components here with styling applied directly and not through the variants. Refactor them to use variants */
+
 /**
  * HeroContent
  *
@@ -14,29 +16,15 @@ import { Span } from "@/features/ui/span";
 import { HOME_HERO_TRUST } from "../../../lib/constants/homepageContent";
 import { HomeTrustIndicators } from "../HomeTrustIndicators";
 
-interface HeroContentProps {
-  transform: {
-    translateY: number;
-    scale: number;
-  };
-  opacity: number;
-}
-
-export function HeroContent({ transform, opacity }: HeroContentProps) {
+export function HeroContent() {
   const t = useTranslations("home.hero");
 
   return (
-    <div
-      className="hero-scroll-up lg:col-span-7"
-      style={{
-        transform: `translateY(${transform.translateY}px) scale(${transform.scale})`,
-        opacity,
-      }}
-    >
+    <div className="lg:col-span-7">
       <Heading
         as="h1"
         variant="title"
-        className="relative mb-10 text-7xl text-(--color-stamp-chocolate) md:text-8xl lg:text-9xl"
+        className="mb-10 text-7xl text-(--color-stamp-chocolate) md:text-8xl lg:text-9xl"
       >
         {t.rich("title", {
           accent: (chunks) => (
@@ -48,15 +36,11 @@ export function HeroContent({ transform, opacity }: HeroContentProps) {
             </Span>
           ),
         })}
-        <div
-          aria-hidden
-          className="absolute -inset-4 -z-10 bg-linear-to-r from-(--color-stamp-chocolate)/10 via-(--color-stamp-gold)/15 to-(--color-stamp-cream)/20 opacity-60 blur-3xl"
-        />
       </Heading>
 
       <Paragraph
-        variant="lead"
-        className="mb-12 max-w-xl text-(--color-stamp-chocolate)/70"
+        variant="heroTagline"
+        className="mb-12 max-w-xl text-(--color-stamp-chocolate)/80"
       >
         {t("tagline")}
       </Paragraph>

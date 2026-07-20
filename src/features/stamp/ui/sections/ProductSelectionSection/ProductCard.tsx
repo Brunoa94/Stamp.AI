@@ -28,7 +28,7 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
     <Button
       variant="ghost"
       onClick={() => onSelect(product)}
-      className={`group relative overflow-hidden rounded-none whitespace-normal wrap-break-word aspect-square min-h-72 xl:min-h-80 p-6 lg:p-8 flex flex-col items-center text-center border-(--color-stamp-divider) hover:bg-(--color-stamp-gold)/5 transition-all duration-500 ${
+      className={`group relative overflow-hidden rounded-none whitespace-normal wrap-break-word aspect-square min-h-30 xl:min-h-80 p-6 lg:p-8 flex flex-col items-center text-center border-(--color-stamp-divider) hover:bg-(--color-stamp-gold)/5 transition-all duration-500 ${
         isSelected
           ? "border-2 border-(--color-stamp-gold) bg-(--color-stamp-gold)/5"
           : "border bg-white"
@@ -36,15 +36,15 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
       aria-pressed={isSelected}
       aria-label={t("selectAria", { name: product.name })}
     >
-      <div className="pointer-events-none absolute inset-0 z-0 flex items-start justify-center pt-6 lg:pt-8 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:pt-0">
-        <div className="relative w-32 h-32 lg:w-36 lg:h-36 overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-full group-hover:h-full">
+      <div className="pointer-events-none absolute inset-0 z-0 flex items-start justify-center pt-4 lg:pt-6 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:pt-0">
+        <div className="relative w-48 h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64 overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-full group-hover:h-full">
           {product.imageUrl ? (
             <Image
               src={product.imageUrl}
               alt={product.name}
               fill
               className="object-contain transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:object-cover group-hover:scale-[1.02]"
-              sizes="(max-width: 1024px) 128px, 144px"
+              sizes="(max-width: 1024px) 320px, 420px"
             />
           ) : (
             <div className="w-full h-full bg-(--color-stamp-cream)" />
@@ -52,9 +52,18 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
         </div>
       </div>
 
-      <div aria-hidden="true" className="relative z-10 w-32 h-32 lg:w-36 lg:h-36" />
+      <div
+        aria-hidden="true"
+        className="relative z-10 w-48 h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64"
+      />
 
-      <div className="absolute z-10 left-6 right-6 bottom-6 flex flex-col items-center">
+      {/* Opacity overlay between image and text */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-1/2 bg-linear-to-t from-white via-white/80 to-transparent opacity-100 transition-opacity duration-500 group-hover:opacity-0"
+      />
+
+      <div className="absolute z-20 left-6 right-6 bottom-6 flex flex-col items-center">
         <Heading
           as="h4"
           variant="item"

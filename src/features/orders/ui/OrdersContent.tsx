@@ -83,7 +83,7 @@ export default function OrdersContent() {
           </Paragraph>
           <Button
             onClick={() => refetch()}
-            variant="secondary-brown"
+            variant="primary"
             className="mt-6"
           >
             {t("retry")}

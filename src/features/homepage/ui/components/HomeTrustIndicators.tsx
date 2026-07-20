@@ -5,6 +5,9 @@
  * Supports inverted mode for dark backgrounds.
  */
 
+"use client";
+
+import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +28,8 @@ export function HomeTrustIndicators({
   className,
   inverted = false,
 }: HomeTrustIndicatorsPropsI) {
+  const t = useTranslations("home.trustIndicators.items");
+
   return (
     <ul className={cn("grid grid-cols-3 gap-10", className)}>
       {items.map((item, index) => (
@@ -45,7 +50,7 @@ export function HomeTrustIndicators({
                   : "text-(--color-stamp-chocolate)"
               }
             >
-              {item}
+              {t(item)}
             </Span>
           </div>
         </li>

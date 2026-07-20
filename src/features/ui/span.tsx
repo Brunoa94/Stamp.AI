@@ -8,18 +8,26 @@ import { cn } from "@/lib/utils";
  * All other styling (color, margin, opacity) must come from the caller via `className`.
  *
  * Variants:
- * - sm       Section tag labels, column headings — sm, tracking-[0.4em]
- * - default  Platform labels, breakdown headers, UI meta text — xs, tracking-[0.4em]
- * - micro    Testimonial badges, scroll indicator, sub-titles — xs, tracking-[0.3em]
- * - metric   Large metric display — 6xl-7xl, Anton font
- * - serif    Serif-italic accent word inside headings — inherits size from parent
+ * - sm         Section tag labels, column headings — sm, tracking-wide
+ * - default    Platform labels, breakdown headers, UI meta text — sm, tracking-wide
+ * - micro      Testimonial badges, scroll indicator, sub-titles — xs, tracking-wide
+ * - label      Section labels — 10px, tracking-[0.3em]
+ * - meta       Order meta, timestamps — 10px, tracking-[0.2em]
+ * - badge      Status badges — 10px, tracking-[0.15em]
+ * - value      Data values — xs→sm, tracking-[0.15em]
+ * - metric     Large metric display — 6xl-7xl, Anton font
+ * - serif      Serif-italic accent word inside headings — inherits size from parent
  */
 
 const spanVariants = {
-  sm: "font-space text-sm font-bold uppercase",
-  default: "font-space text-xs font-bold uppercase",
-  micro: "font-space text-xs font-bold uppercase",
-  metric: "font-anton text-7xl md:text-8xl uppercase tracking-tighter",
+  sm: "font-heading text-base font-semibold uppercase tracking-wide",
+  default: "font-heading text-sm font-semibold uppercase tracking-wide",
+  micro: "font-heading text-xs font-medium uppercase tracking-wide",
+  label: "font-heading text-[10px] font-bold uppercase tracking-[0.3em]",
+  meta: "font-heading text-[10px] font-bold uppercase tracking-[0.2em]",
+  badge: "font-heading text-[10px] font-bold uppercase tracking-[0.15em]",
+  value: "font-heading text-xs md:text-sm font-bold uppercase tracking-[0.15em]",
+  metric: "font-(family-name:--font-bebas-neue) text-7xl md:text-8xl uppercase tracking-tighter",
   serif: "font-serif italic lowercase font-light",
 } as const;
 

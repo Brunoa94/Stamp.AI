@@ -23,7 +23,7 @@ export function PasswordResetError() {
       <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
         {t("description")}
       </Paragraph>
-      <Button asChild variant="stamp-auth-cancel">
+      <Button asChild variant="secondary">
         <Link href="/">{t("backToHome")}</Link>
       </Button>
     </div>

@@ -30,7 +30,7 @@ export function PasswordResetRequestSuccess() {
             {t("description")}
           </Paragraph>
           <DialogClose asChild>
-            <Button variant="stamp-auth-primary" className="w-full">
+            <Button variant="primary" className="w-full">
               {t("gotIt")}
             </Button>
           </DialogClose>

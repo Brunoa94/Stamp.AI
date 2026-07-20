@@ -1,7 +1,7 @@
 /**
  * HeroImage
  *
- * Hero section product image with carousel effect and parallax.
+ * Hero section product image with carousel effect.
  */
 
 import Image from "next/image";
@@ -11,26 +11,13 @@ import { cn } from "@/lib/utils";
 interface HeroImageProps {
   currentImage: string;
   isTransitioning: boolean;
-  translateY: number;
-  opacity: number;
 }
 
-export function HeroImage({
-  currentImage,
-  isTransitioning,
-  translateY,
-  opacity,
-}: HeroImageProps) {
+export function HeroImage({ currentImage, isTransitioning }: HeroImageProps) {
   const t = useTranslations("home.hero");
 
   return (
-    <div
-      className="hero-scroll-scale hidden lg:col-span-5 lg:block"
-      style={{
-        transform: `translateY(${translateY}px)`,
-        opacity,
-      }}
-    >
+    <div className="hidden lg:col-span-5 lg:block">
       <div className="group relative">
         <div
           aria-hidden

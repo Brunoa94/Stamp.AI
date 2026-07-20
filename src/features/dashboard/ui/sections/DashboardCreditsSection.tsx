@@ -60,7 +60,7 @@ export function DashboardCreditsSection() {
 
       <Button
         type="button"
-        variant="secondary-brown"
+        variant="primary"
         className="mt-8 w-full"
         onClick={() => setIsDialogOpen(true)}
       >

@@ -37,7 +37,7 @@ export function CheckoutNotFoundSection() {
         <Paragraph variant="sm" className="mb-8 text-(--color-stamp-taupe)">
           {t("description")}
         </Paragraph>
-        <Button asChild variant="secondary-brown">
+        <Button asChild variant="primary">
           <Link href="/cart">{t("backToCart")}</Link>
         </Button>
       </div>

@@ -19,7 +19,7 @@ export function OrdersEmptySection({ onInitiate }: PropsI) {
       <div className="mb-12 flex h-48 w-48 rotate-3 items-center justify-center border border-(--color-stamp-divider) bg-(--color-stamp-cream)">
         <ShoppingBag className="h-16 w-16 text-(--color-stamp-taupe)/30" />
       </div>
-      <Heading as="h2" variant="title" className="font-(--font-playfair) text-4xl italic">
+      <Heading as="h2" variant="title" className="text-4xl">
         {t("title")}
       </Heading>
       <Paragraph
@@ -31,8 +31,7 @@ export function OrdersEmptySection({ onInitiate }: PropsI) {
       <Button
         type="button"
         onClick={onInitiate}
-        variant="default"
-        className="bg-(--color-stamp-chocolate) px-6 py-3 text-[10px] tracking-[0.2em] text-(--color-stamp-white) hover:bg-(--color-stamp-gold)"
+        variant="cta"
       >
         {t("initiate")}
       </Button>

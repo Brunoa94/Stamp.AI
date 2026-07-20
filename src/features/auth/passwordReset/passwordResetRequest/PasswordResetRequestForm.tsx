@@ -56,14 +56,14 @@ export function PasswordResetRequestForm() {
         <DialogFooter className="flex flex-col gap-3">
           <Button
             aria-label={t("sendAria")}
-            variant="stamp-auth-primary"
+            variant="primary"
             type="submit"
             disabled={isPending}
           >
             {isPending ? t("sending") : t("send")}
           </Button>
           <DialogClose asChild>
-            <Button aria-label={t("cancelAria")} variant="stamp-auth-cancel">
+            <Button aria-label={t("cancelAria")} variant="secondary">
               {t("cancel")}
             </Button>
           </DialogClose>

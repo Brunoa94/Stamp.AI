@@ -29,18 +29,14 @@ export function CartItemCardContent({ item }: CartItemCardContentPropsI) {
     <div className="space-y-3 md:space-y-6">
       <div className="flex items-start justify-between gap-2 md:gap-4">
         <div className="space-y-0.5 md:space-y-1">
-          <Heading
-            as="h3"
-            unstyled
-            className="font-heading text-sm md:text-xl font-bold uppercase tracking-tight"
-          >
+          <Heading as="h3" variant="itemCompact">
             {productName}
           </Heading>
         </div>
         <Heading
           as="span"
-          unstyled
-          className="whitespace-nowrap font-heading text-base md:text-3xl font-black tracking-tight text-(--color-stamp-gold)"
+          variant="priceCompact"
+          className="whitespace-nowrap text-(--color-stamp-gold)"
         >
           {formatPrice(unitPrice)}
         </Heading>

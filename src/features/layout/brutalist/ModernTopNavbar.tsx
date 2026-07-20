@@ -1,3 +1,4 @@
+/** TO REFACTOR: There are components here with styling applied directly and not through the variants. Refactor them to use variants and components from the design system*/
 "use client";
 
 import Link from "next/link";
@@ -25,13 +26,13 @@ export function ModernTopNavbar() {
         <Link href="/" className="flex items-center gap-1.5 md:gap-2">
           {t.rich("brand", {
             stamp: (chunks) => (
-              <span className="font-anton text-2xl md:text-3xl leading-none uppercase tracking-tight text-ink">
+              <span className="font-(family-name:--font-outfit) text-2xl md:text-3xl leading-none uppercase tracking-tight text-ink font-bold">
                 {chunks}
               </span>
             ),
             dot: () => <span className="logo-gradient-dot" />,
             ai: (chunks) => (
-              <span className="font-anton text-2xl md:text-3xl leading-none uppercase tracking-tight text-ink">
+              <span className="font-(family-name:--font-outfit) text-2xl md:text-3xl leading-none uppercase tracking-tight text-ink font-bold">
                 {chunks}
               </span>
             ),
@@ -106,25 +107,25 @@ export function ModernTopNavbar() {
       <nav className="hidden lg:flex fixed top-32 right-10 z-40 flex-col gap-5 items-end">
         <Link
           href="/"
-          className="nav-link-underline font-anton text-lg uppercase tracking-[0.2em] text-ink"
+          className="nav-link-underline font-(family-name:--font-outfit) text-lg uppercase tracking-[0.2em] text-ink font-semibold"
         >
           {t("nav.home")}
         </Link>
         <Link
           href="/stamp"
-          className="nav-link-underline font-anton text-lg uppercase tracking-[0.2em] text-ink"
+          className="nav-link-underline font-(family-name:--font-outfit) text-lg uppercase tracking-[0.2em] text-ink font-semibold"
         >
           {t("nav.stamp")}
         </Link>
         <Link
           href="/orders"
-          className="nav-link-underline font-anton text-lg uppercase tracking-[0.2em] text-ink"
+          className="nav-link-underline font-(family-name:--font-outfit) text-lg uppercase tracking-[0.2em] text-ink font-semibold"
         >
           {t("nav.orders")}
         </Link>
         <Link
           href="/dashboard"
-          className="nav-link-underline font-anton text-lg uppercase tracking-[0.2em] text-ink"
+          className="nav-link-underline font-(family-name:--font-outfit) text-lg uppercase tracking-[0.2em] text-ink font-semibold"
         >
           {t("nav.dashboard")}
         </Link>
@@ -144,28 +145,28 @@ export function ModernTopNavbar() {
             <Link
               href="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="font-anton text-xl uppercase tracking-[0.2em] text-ink py-2"
+              className="font-(family-name:--font-outfit) text-xl uppercase tracking-[0.2em] text-ink py-2 font-semibold"
             >
               {t("nav.home")}
             </Link>
             <Link
               href="/stamp"
               onClick={() => setMobileMenuOpen(false)}
-              className="font-anton text-xl uppercase tracking-[0.2em] text-ink py-2"
+              className="font-(family-name:--font-outfit) text-xl uppercase tracking-[0.2em] text-ink py-2 font-semibold"
             >
               {t("nav.stamp")}
             </Link>
             <Link
               href="/orders"
               onClick={() => setMobileMenuOpen(false)}
-              className="font-anton text-xl uppercase tracking-[0.2em] text-ink py-2"
+              className="font-(family-name:--font-outfit) text-xl uppercase tracking-[0.2em] text-ink py-2 font-semibold"
             >
               {t("nav.orders")}
             </Link>
             <Link
               href="/dashboard"
               onClick={() => setMobileMenuOpen(false)}
-              className="font-anton text-xl uppercase tracking-[0.2em] text-ink py-2"
+              className="font-(family-name:--font-outfit) text-xl uppercase tracking-[0.2em] text-ink py-2 font-semibold"
             >
               {t("nav.dashboard")}
             </Link>

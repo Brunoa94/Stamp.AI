@@ -17,6 +17,8 @@ export type ProductCategory =
   | "canvas"
   | "phone-case"
   | "hat"
+  | "socks"
+  | "pillow"
   | "other";
 
 export type ProductGroup = "clothing" | "accessories";
@@ -100,6 +102,18 @@ const CATEGORY_KEYWORDS: Record<ProductCategory, string[]> = {
     "beanie",
     "cap",
     "hat",
+  ],
+  socks: [
+    "crew socks",
+    "sublimation socks",
+    "ankle socks",
+    "socks",
+  ],
+  pillow: [
+    "throw pillow",
+    "faux linen pillow",
+    "pillow",
+    "cushion",
   ],
   other: [],
 };

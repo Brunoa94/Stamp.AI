@@ -32,7 +32,7 @@ export function RegisterForm() {
         <DialogClose asChild>
           <Button
             type="button"
-            variant="stamp-auth-close"
+            variant="stamp-close"
             size="icon"
             aria-label={t("closeAria")}
             className="absolute top-8 right-8 z-20"

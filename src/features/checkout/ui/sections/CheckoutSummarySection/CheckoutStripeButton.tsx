@@ -88,7 +88,7 @@ export function CheckoutStripeButton({
         type="button"
         onClick={(event) => handleSubmit(event as unknown as React.FormEvent)}
         disabled={disabled || loading}
-        variant="secondary-brown"
+        variant="primary"
         className="w-full font-heading"
       >
         {loading

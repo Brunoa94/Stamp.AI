@@ -20,7 +20,7 @@ export function HomeFaqSection() {
 
   return (
     <section id="faq" className="px-6 py-24 lg:px-12 xl:px-24">
-      <SectionReveal className="mx-auto max-w-screen-2xl">
+      <SectionReveal className="mx-auto max-w-screen-2xl" parallax fadeOnScroll>
         <HomeSectionHeader
           title={t("title")}
           accent={t("accent")}
@@ -55,7 +55,7 @@ export function HomeFaqSection() {
           <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
             {t("stillHaveQuestions")}
           </Paragraph>
-          <Button asChild variant="secondary-brown">
+          <Button asChild variant="primary">
             <Link href="/contact">{t("contactSupport")}</Link>
           </Button>
         </div>

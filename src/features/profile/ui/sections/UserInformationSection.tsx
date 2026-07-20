@@ -1,3 +1,4 @@
+/** TO REFACTOR: There are components here with styling applied directly and not through the variants. Refactor them to use variants and components from the design system*/
 "use client";
 
 import { Button } from "@/features/ui/button";
@@ -53,7 +54,7 @@ export function UserInformationSection() {
             <User className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-anton uppercase tracking-tight text-ink leading-tight mb-1">
+            <h2 className="text-xl font-(family-name:--font-outfit) uppercase tracking-tight text-ink leading-tight mb-1">
               {t("title")}
             </h2>
             <p className="text-slate-500 text-sm">{t("subtitle")}</p>
@@ -86,7 +87,7 @@ export function UserInformationSection() {
               value={fieldValues[key]}
               onChange={(e) => fieldSetters[key](e.target.value)}
               readOnly={!isEditing}
-              className="w-full bg-white border border-ink/10 p-4 font-space uppercase placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all"
+              className="w-full bg-white border border-ink/10 p-4 font-(family-name:--font-outfit) uppercase placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all"
             />
           </div>
         ))}
@@ -103,7 +104,7 @@ export function UserInformationSection() {
             id="email"
             value={email}
             readOnly
-            className="w-full bg-concrete/30 border border-ink/10 p-4 font-space uppercase outline-none"
+            className="w-full bg-concrete/30 border border-ink/10 p-4 font-(family-name:--font-outfit) uppercase outline-none"
           />
           <p className="text-[11px] text-slate-400 font-medium italic">
             {t("emailNote")}

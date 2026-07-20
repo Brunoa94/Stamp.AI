@@ -1,3 +1,4 @@
+/** TO REFACTOR: There are components here with styling applied directly and not through the variants. Refactor them to use variants and components from the design system*/
 "use client";
 
 import { Button } from "@/features/ui/button";
@@ -53,7 +54,7 @@ export function PasswordResetSection() {
             <Lock className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-anton uppercase tracking-tight text-ink leading-tight mb-1">
+            <h2 className="text-xl font-(family-name:--font-outfit) uppercase tracking-tight text-ink leading-tight mb-1">
               {t("title")}
             </h2>
             <p className="text-slate-500 text-sm">{t("subtitle")}</p>
@@ -72,9 +73,7 @@ export function PasswordResetSection() {
 
       {/* Content */}
       {!isEditing ? (
-        <p className="text-sm text-slate-500 italic">
-          {t("hiddenNote")}
-        </p>
+        <p className="text-sm text-slate-500 italic">{t("hiddenNote")}</p>
       ) : (
         <form
           className="space-y-6"
@@ -97,10 +96,12 @@ export function PasswordResetSection() {
                 value={fieldValues[key]}
                 onChange={(e) => fieldSetters[key](e.target.value)}
                 placeholder={t(`${key}Placeholder`)}
-                className="w-full bg-white border border-ink/10 p-4 font-space placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all"
+                className="w-full bg-white border border-ink/10 p-4 font-(family-name:--font-outfit) placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all"
                 autoComplete="new-password"
               />
-              <p className="text-[11px] text-slate-400 font-medium italic">{t(`${key}Hint`)}</p>
+              <p className="text-[11px] text-slate-400 font-medium italic">
+                {t(`${key}Hint`)}
+              </p>
             </div>
           ))}
 

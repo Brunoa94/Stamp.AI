@@ -71,7 +71,7 @@ export function DashboardProfileSection({
           </Paragraph>
         </div>
       </div>
-      <Button asChild variant="secondary-brown" className="mt-8 w-full">
+      <Button asChild variant="primary" className="mt-8 w-full">
         <Link href="/profile">{t("editProfile")}</Link>
       </Button>
     </DashboardCard>

@@ -16,7 +16,7 @@ export function GoogleSignInButton({ className }: GoogleSignInButtonProps) {
   return (
     <Button
       type="button"
-      variant="stamp-auth-google"
+      variant="stamp-google"
       className={className}
       onClick={() => signInWithGoogle()}
       disabled={isPending}

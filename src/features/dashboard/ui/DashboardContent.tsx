@@ -68,7 +68,7 @@ export function DashboardContent() {
           </Paragraph>
           <Button
             onClick={() => refetch()}
-            variant="secondary-brown"
+            variant="primary"
             className="mt-6"
           >
             {t("retry")}

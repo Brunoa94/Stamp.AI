@@ -52,7 +52,7 @@ const poppins = Poppins({
 // Retro heading font (Bebas Neue for retro display text)
 const bebasNeue = Bebas_Neue({
   weight: "400",
-  variable: "--font-heading",
+  variable: "--font-bebas-neue",
   subsets: ["latin"],
   display: "swap",
 });

@@ -54,7 +54,7 @@ export function PasswordResetConfirmForm() {
         />
       </div>
 
-      <Button type="submit" disabled={isPending} variant="stamp-auth-primary" className="w-full">
+      <Button type="submit" disabled={isPending} variant="primary" className="w-full">
         {isPending ? t("resetting") : t("resetPassword")}
       </Button>
     </form>

@@ -11,6 +11,7 @@ import { mapProductsToCards } from "../lib/mappers/productCardMapper";
 import { HomeHeroSection } from "./sections/HomeHeroSection";
 import { HomeProductsSection } from "./sections/HomeProductsSection";
 import { HomeProcessSection } from "./sections/HomeProcessSection";
+import { HomeTrustGuaranteesSection } from "./sections/HomeTrustGuaranteesSection";
 import { HomeManifestoSection } from "./sections/HomeManifestoSection";
 import { HomeFeaturedCarouselSection } from "./sections/HomeFeaturedCarouselSection";
 import { HomeCtaSection } from "./sections/HomeCtaSection";
@@ -27,10 +28,11 @@ export function HomepageContent({
   const products = mapProductsToCards(productsWithPricing);
 
   return (
-    <div className="">
+    <div>
       <HomeHeroSection />
       <HomeProductsSection products={products} />
       <HomeProcessSection />
+      <HomeTrustGuaranteesSection />
       <HomeManifestoSection />
       <HomeFeaturedCarouselSection />
       <HomeCtaSection />

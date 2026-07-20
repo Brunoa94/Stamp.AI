@@ -46,7 +46,7 @@ export function PasswordResetForm({ isVisible, onClose }: PasswordResetFormProps
           <div className="flex gap-3">
             <Button
               type="button"
-              variant="stamp-auth-primary"
+              variant="primary"
               disabled={isLoading || !resetEmail.trim()}
               className="flex-1 py-3"
               onClick={handlePasswordReset}
@@ -55,7 +55,7 @@ export function PasswordResetForm({ isVisible, onClose }: PasswordResetFormProps
             </Button>
             <Button
               type="button"
-              variant="stamp-auth-cancel"
+              variant="secondary"
               className="py-3 px-6"
               onClick={handleClose}
             >

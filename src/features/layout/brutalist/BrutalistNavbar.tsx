@@ -44,7 +44,7 @@ export function BrutalistNavbar() {
         <Link
           href="/"
           id="header-logo-redesign"
-          className="flex items-center font-anton text-xl md:text-2xl leading-none tracking-tighter uppercase hover:opacity-80 transition-opacity gap-1"
+          className="flex items-center font-(family-name:--font-outfit) text-xl md:text-2xl leading-none tracking-tighter uppercase hover:opacity-80 transition-opacity gap-1"
         >
           {t.rich("brand", {
             stamp: (chunks) => (
@@ -77,7 +77,7 @@ export function BrutalistNavbar() {
                 <Link
                   href={link.href}
                   id={link.id}
-                  className="nav-link uppercase text-[10px] font-bold tracking-widest font-space hover:text-brandPurple transition-colors"
+                  className="nav-link uppercase text-[10px] font-bold tracking-widest font-(family-name:--font-outfit) hover:text-brandPurple transition-colors"
                 >
                   {t(`navLinks.${link.id}`)}
                 </Link>
@@ -104,7 +104,7 @@ export function BrutalistNavbar() {
                     key={index}
                     className="flex flex-col gap-1 hover:bg-concrete/30 p-2 -m-2 rounded transition-colors"
                   >
-                    <Span className="font-anton text-sm uppercase tracking-tight text-ink">
+                    <Span className="font-(family-name:--font-outfit) text-sm uppercase tracking-tight text-ink">
                       {t(`cartItems.${item.id}.name`)}
                     </Span>
                     <Span
@@ -125,7 +125,7 @@ export function BrutalistNavbar() {
                   >
                     {t("subtotal")}
                   </Span>
-                  <Span className="text-[10px] font-anton text-ink tracking-normal">
+                  <Span className="text-[10px] font-(family-name:--font-outfit) text-ink tracking-normal">
                     {t("total")}
                   </Span>
                 </div>
@@ -141,13 +141,13 @@ export function BrutalistNavbar() {
 
           {/* Login button or user section */}
           {!isAuthenticated ? (
-            <Login className="h-auto rounded-none border border-ink/20 px-3 md:px-4 py-1.5 font-bold text-[9px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-space" />
+            <Login className="h-auto rounded-none border border-ink/20 px-3 md:px-4 py-1.5 font-bold text-[9px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-(family-name:--font-outfit)" />
           ) : (
             <div className="flex items-center gap-3">
               <Button
                 asChild
                 variant="outline"
-                className="h-auto rounded-none border border-ink/20 px-3 md:px-4 py-1.5 font-bold text-[9px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-space"
+                className="h-auto rounded-none border border-ink/20 px-3 md:px-4 py-1.5 font-bold text-[9px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-(family-name:--font-outfit)"
               >
                 <Link href="/account" id="nav-account-btn-header">
                   {t("account")}
@@ -156,7 +156,7 @@ export function BrutalistNavbar() {
               <Button
                 variant="outline"
                 onClick={() => logout.mutate()}
-                className="h-auto rounded-none border border-ink/20 px-3 md:px-4 py-1.5 font-bold text-[9px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-space"
+                className="h-auto rounded-none border border-ink/20 px-3 md:px-4 py-1.5 font-bold text-[9px] tracking-widest uppercase hover:text-brandRed hover:border-brandRed transition-all duration-300 whitespace-nowrap font-(family-name:--font-outfit)"
               >
                 <LogOut className="mr-2 h-3 w-3" />
                 <span className="uppercase">{t("logout")}</span>

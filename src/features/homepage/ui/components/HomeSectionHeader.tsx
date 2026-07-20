@@ -29,7 +29,7 @@ export function HomeSectionHeader({
       <div className="h-1.5 w-20 bg-(--color-stamp-gold)" />
       <Heading
         as="h2"
-        variant="section"
+        variant="sectionDisplay"
         className={
           inverted
             ? "text-(--color-stamp-off-white)"

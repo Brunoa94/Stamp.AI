@@ -52,7 +52,7 @@ const variantStyles: Record<
     container: "space-y-2",
     labelColor: "text-[10px] font-bold uppercase tracking-widest text-slate-400",
     input:
-      "w-full bg-white border border-ink/10 p-4 font-space uppercase placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all",
+      "w-full bg-white border border-ink/10 p-4 font-heading uppercase placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all",
   },
   "stamp-auth": {
     container: "space-y-2",

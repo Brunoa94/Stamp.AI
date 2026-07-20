@@ -20,11 +20,7 @@ export function CartOrderSummaryFooter({
 }: CartOrderSummaryFooterPropsI) {
   return (
     <div className="mt-8 space-y-6">
-      <Button
-        onClick={onCheckout}
-        variant="secondary-brown"
-        className="group w-full font-heading"
-      >
+      <Button onClick={onCheckout} variant="primary" className="group w-full">
         Proceed to Checkout
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
       </Button>
@@ -35,15 +31,10 @@ export function CartOrderSummaryFooter({
           aria-hidden="true"
         />
         <div className="space-y-1">
-          <Span variant="micro" className="block text-(--color-stamp-taupe)">
+          <Span variant="label" className="block text-(--color-stamp-taupe)">
             Estimated Arrival
           </Span>
-          <Span
-            unstyled
-            className="text-lg font-bold uppercase tracking-[0.15em]"
-          >
-            3–5 Business Days
-          </Span>
+          <Span variant="value">3–5 Business Days</Span>
         </div>
       </div>
     </div>

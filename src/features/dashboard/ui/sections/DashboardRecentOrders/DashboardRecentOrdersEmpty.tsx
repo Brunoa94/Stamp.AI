@@ -30,7 +30,7 @@ export function DashboardRecentOrdersEmpty() {
       >
         {t("emptyDescription")}
       </Span>
-      <Button asChild variant="secondary-brown">
+      <Button asChild variant="primary">
         <Link href="/stamp">{t("emptyCta")}</Link>
       </Button>
     </div>

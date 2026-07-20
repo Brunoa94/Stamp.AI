@@ -23,7 +23,7 @@ export function PasswordResetSuccess() {
       <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
         {t("description")}
       </Paragraph>
-      <Button asChild variant="stamp-auth-primary" className="mt-4">
+      <Button asChild variant="primary" className="mt-4">
         <Link href="/">{t("goToLogin")}</Link>
       </Button>
     </div>

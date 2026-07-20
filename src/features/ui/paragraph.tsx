@@ -8,23 +8,28 @@ import { cn } from "@/lib/utils";
  * All other styling (color, margin, opacity, max-width) must come from the caller via `className`.
  *
  * Variants:
- * - lead     Hero/CTA subtitle — responsive base→lg→xl, font-light, uppercase, relaxed leading
- * - body     Blockquote / testimonial body — lg, uppercase, relaxed leading
- * - sm       Card descriptions — base, uppercase, relaxed leading
- * - loose    Muted descriptive copy — base, font-light, uppercase, loose leading
- * - card     Process / FAQ responsive body — base→lg, uppercase, relaxed leading
- * - faq      FAQ answer — base→lg, uppercase, loose leading
- * - quote    Testimonial quote — lg, NO uppercase, relaxed leading
+ * - lead        Hero/CTA subtitle — responsive lg→2xl, font-light, relaxed leading
+ * - heroTagline Hero tagline — larger, medium weight, snug leading (stronger style)
+ * - body        Blockquote / testimonial body — lg, uppercase, relaxed leading
+ * - sm          Card descriptions — base, uppercase, relaxed leading
+ * - xs          Compact descriptions — xs, relaxed leading
+ * - loose       Muted descriptive copy — base, font-light, uppercase, loose leading
+ * - card        Process / FAQ responsive body — base→lg, uppercase, relaxed leading
+ * - faq         FAQ answer — base→lg, uppercase, loose leading
+ * - quote       Testimonial quote — lg, NO uppercase, relaxed leading
  */
 
 const paragraphVariants = {
-  lead: "font-heading text-xl md:text-2xl lg:text-3xl font-light tracking-wide uppercase leading-relaxed",
-  body: "font-heading text-xl tracking-wide uppercase leading-relaxed",
-  sm: "font-heading text-lg tracking-wide uppercase leading-relaxed",
-  loose: "font-heading text-lg tracking-wide uppercase leading-loose",
-  card: "font-heading text-lg md:text-xl tracking-wide uppercase leading-relaxed",
-  faq: "font-heading text-lg md:text-xl tracking-wide uppercase leading-loose",
-  quote: "font-heading text-xl tracking-wide leading-relaxed",
+  lead: "font-heading text-lg md:text-xl lg:text-2xl font-light tracking-normal leading-relaxed",
+  heroTagline:
+    "font-heading text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug",
+  body: "font-heading text-lg md:text-xl tracking-normal leading-relaxed",
+  sm: "font-heading text-base md:text-lg tracking-normal leading-relaxed",
+  xs: "font-heading text-xs tracking-normal leading-relaxed",
+  loose: "font-heading text-base md:text-lg tracking-normal leading-loose",
+  card: "font-heading text-base md:text-lg tracking-normal leading-relaxed",
+  faq: "font-heading text-base md:text-lg tracking-normal leading-relaxed",
+  quote: "font-heading text-lg md:text-xl italic tracking-normal leading-relaxed",
 } as const;
 
 export type ParagraphVariant = keyof typeof paragraphVariants;

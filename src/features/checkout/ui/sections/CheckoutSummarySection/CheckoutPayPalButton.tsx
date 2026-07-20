@@ -58,7 +58,7 @@ export function CheckoutPayPalButton({
       type="button"
       onClick={handleClick}
       disabled={disabled || isPending}
-      variant="secondary-brown"
+      variant="primary"
       className="w-full font-heading"
     >
       {isPending ? (

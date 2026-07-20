@@ -31,8 +31,8 @@ export function CartEmptySection() {
 
       <Heading
         as="h1"
-        unstyled
-        className="mb-4 font-heading text-4xl font-bold uppercase tracking-tight text-(--color-stamp-chocolate)"
+        variant="question"
+        className="mb-4 text-(--color-stamp-chocolate)"
       >
         {t("title")}
       </Heading>
@@ -41,7 +41,7 @@ export function CartEmptySection() {
         {t("subtitle")}
       </Span>
 
-      <Button asChild variant="secondary-brown" className="group">
+      <Button asChild variant="primary" className="group">
         <Link href="/stamp">
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
           {t("cta")}

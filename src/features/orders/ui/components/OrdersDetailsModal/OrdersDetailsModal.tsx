@@ -64,79 +64,73 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
           <X className="h-6 w-6" />
         </Button>
 
-        <div className="mb-10">
+        <div className="mb-8">
           <Span
-            unstyled
-            className={`inline-flex rounded-full px-3 py-1 text-lg font-bold uppercase tracking-[0.15em] ${getStatusBadgeClass(displayedStatus)}`}
+            variant="badge"
+            className={`inline-flex rounded-full px-3 py-1 ${getStatusBadgeClass(displayedStatus)}`}
           >
             {displayedStatus}
           </Span>
           <Heading
             as="h3"
-            variant="card"
-            className="mt-4 text-3xl tracking-tight text-(--color-stamp-chocolate)"
+            variant="cardCompact"
+            className="mt-4 text-(--color-stamp-chocolate)"
           >
             {t("recordDetails")}
           </Heading>
-          <Paragraph
-            variant="sm"
-            className="mt-1 text-lg tracking-[0.2em] text-(--color-stamp-taupe)"
-          >
+          <Span variant="meta" className="mt-1 block text-(--color-stamp-taupe)">
             {t("orderMeta", {
               orderNumber:
                 order.order_number || order.id.slice(0, 13).toUpperCase(),
               date: formatOrderDate(order.created_at),
             })}
-          </Paragraph>
+          </Span>
         </div>
 
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
-          <div className="space-y-10 lg:col-span-2">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+          <div className="space-y-8 lg:col-span-2">
             <section>
               <Span
-                variant="default"
-                className="mb-5 block border-b border-(--color-stamp-divider) pb-2 tracking-[0.3em] text-(--color-stamp-gold)"
+                variant="label"
+                className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold)"
               >
                 {t("protocolItems")}
               </Span>
               <div className="flex items-center gap-4 border border-(--color-stamp-divider) bg-(--color-stamp-cream)/20 p-4">
-                <div className="relative h-20 w-20 flex-none bg-(--color-stamp-cream)">
+                <div className="relative h-16 w-16 flex-none bg-(--color-stamp-cream)">
                   {firstItem?.custom_image_url ? (
                     <Image
                       src={firstItem.custom_image_url}
                       alt={firstItem.product_name || t("itemAlt")}
                       fill
-                      sizes="80px"
+                      sizes="64px"
                       className="object-cover"
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center text-(--color-stamp-taupe)">
-                      <ShoppingBag className="h-8 w-8" />
+                      <ShoppingBag className="h-6 w-6" />
                     </div>
                   )}
                 </div>
                 <div className="flex-1">
                   <Heading
                     as="h4"
-                    variant="item"
-                    className="text-sm text-(--color-stamp-chocolate)"
+                    variant="itemCompact"
+                    className="text-(--color-stamp-chocolate)"
                   >
                     {firstItem?.product_name || t("customProduct")}
                   </Heading>
-                  <Paragraph
-                    variant="sm"
-                    className="text-lg tracking-widest text-(--color-stamp-taupe)"
-                  >
+                  <Span variant="micro" className="text-(--color-stamp-taupe)">
                     {t("variantQty", {
                       variant: firstItem?.variant_name || t("standard"),
                       qty: firstItem?.quantity || 1,
                     })}
-                  </Paragraph>
+                  </Span>
                 </div>
                 <Heading
                   as="h5"
-                  variant="card"
-                  className="text-right text-2xl tracking-tight text-(--color-stamp-chocolate)"
+                  variant="priceMini"
+                  className="text-right text-(--color-stamp-chocolate)"
                 >
                   {formatPrice(firstItem?.unit_price || 0)}
                 </Heading>
@@ -145,44 +139,35 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
 
             <section>
               <Span
-                variant="default"
-                className="mb-5 block border-b border-(--color-stamp-divider) pb-2 tracking-[0.3em] text-(--color-stamp-gold)"
+                variant="label"
+                className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold)"
               >
                 {t("delivery")}
               </Span>
-              <Paragraph
-                variant="sm"
-                className="text-lg text-(--color-stamp-chocolate)"
-              >
+              <Paragraph variant="xs" className="font-bold text-(--color-stamp-chocolate)">
                 {order.customer_name || t("archiveClient")}
               </Paragraph>
-              <Paragraph
-                variant="sm"
-                className="text-lg text-(--color-stamp-taupe)"
-              >
+              <Paragraph variant="xs" className="text-(--color-stamp-taupe)">
                 {getAddressSummary(order) || t("archiveAddress")}
               </Paragraph>
             </section>
           </div>
 
-          <aside className="self-start border border-(--color-stamp-divider) bg-(--color-stamp-cream)/40 p-8">
+          <aside className="self-start border border-(--color-stamp-divider) bg-(--color-stamp-cream)/40 p-6">
             <Span
-              variant="default"
-              className="mb-6 block border-b border-(--color-stamp-divider) pb-2 tracking-[0.3em] text-(--color-stamp-gold)"
+              variant="label"
+              className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold)"
             >
               {t("valuation")}
             </Span>
             <div className="flex items-center justify-between border-t border-(--color-stamp-divider) pt-4">
-              <Span
-                variant="default"
-                className="text-lg tracking-normal text-(--color-stamp-chocolate)"
-              >
+              <Span variant="meta" className="text-(--color-stamp-chocolate)">
                 {t("total")}
               </Span>
               <Heading
                 as="h5"
-                variant="card"
-                className="text-3xl tracking-tight text-(--color-stamp-gold)"
+                variant="priceCompact"
+                className="text-(--color-stamp-gold)"
               >
                 {formatPrice(order.total_amount)}
               </Heading>

@@ -6,7 +6,7 @@
  * server cache (getCachedProductsWithPricing).
  */
 
-export const MAX_HOME_PRODUCTS = 8;
+export const MAX_HOME_PRODUCTS = 4;
 
 // Featured carousel - blueprint IDs to exclude from the carousel
 export const FEATURED_CAROUSEL_EXCLUDED_BLUEPRINTS = new Set([12]);

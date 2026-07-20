@@ -24,7 +24,7 @@ export function HomeManifestoSection() {
 
   return (
     <section id="about" className="px-6 py-24 lg:px-12 xl:px-24">
-      <SectionReveal className="mx-auto max-w-screen-2xl">
+      <SectionReveal className="mx-auto max-w-screen-2xl" parallax fadeOnScroll>
         <div className="grid grid-cols-1 gap-16 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <div className="mb-10 h-1.5 w-20 bg-(--color-stamp-gold)" />

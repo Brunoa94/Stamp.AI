@@ -1,3 +1,5 @@
+/** TO REFACTOR: There are components here with styling applied directly and not through the variants. Refactor them to use variants and components from the design system*/
+
 "use client";
 
 import Link from "next/link";
@@ -13,7 +15,7 @@ export function MinimalistHeader() {
       {/* Logo */}
       <div className="flex-1">
         <Link href="/" className="flex items-center gap-1 group">
-          <span className="font-anton text-4xl leading-none uppercase tracking-tighter">
+          <span className="font-(family-name:--font-outfit) text-4xl leading-none uppercase tracking-tighter">
             {t.rich("brand", {
               accent: (chunks) => (
                 <span className="text-brandCyan">{chunks}</span>

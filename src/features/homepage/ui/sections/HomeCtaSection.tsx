@@ -12,8 +12,6 @@ import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
-import { HOME_CTA_TRUST } from "../../lib/constants/homepageContent";
-import { HomeTrustIndicators } from "../components/HomeTrustIndicators";
 import { SectionReveal } from "../components/SectionReveal";
 
 export function HomeCtaSection() {
@@ -25,7 +23,11 @@ export function HomeCtaSection() {
         aria-hidden
         className="pointer-events-none absolute -right-20 -top-20 h-96 w-96 text-(--color-stamp-gold)/10"
       />
-      <SectionReveal className="relative mx-auto max-w-screen-2xl">
+      <SectionReveal
+        className="relative mx-auto max-w-screen-2xl"
+        parallax
+        fadeOnScroll
+      >
         <div className="flex flex-col items-center text-center">
           <div className="mb-10 h-1.5 w-20 bg-(--color-stamp-gold)" />
           <Heading

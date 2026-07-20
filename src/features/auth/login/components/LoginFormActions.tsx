@@ -12,7 +12,7 @@ export function LoginFormActions({ isPending }: PropsI) {
   return (
     <div className="grid grid-cols-2 gap-4 pt-6">
       <DialogClose asChild>
-        <Button aria-label={t("cancelAria")} variant="stamp-auth-cancel">
+        <Button aria-label={t("cancelAria")} variant="secondary">
           {t("cancel")}
         </Button>
       </DialogClose>
@@ -21,7 +21,7 @@ export function LoginFormActions({ isPending }: PropsI) {
         aria-label={t("loginAria")}
         type="submit"
         disabled={isPending}
-        variant="stamp-auth-primary"
+        variant="primary"
       >
         {isPending ? t("loggingIn") : t("login")}
       </Button>

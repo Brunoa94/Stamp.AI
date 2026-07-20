@@ -1,3 +1,4 @@
+/** TO REFACTOR: There are components here with styling applied directly and not through the variants. Refactor them to use variants and components from the design system*/
 "use client";
 
 import { MapPin } from "lucide-react";
@@ -32,7 +33,7 @@ export function AddressSection() {
             <MapPin className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-anton uppercase tracking-tight text-ink leading-tight mb-1">
+            <h2 className="text-xl font-(family-name:--font-outfit) uppercase tracking-tight text-ink leading-tight mb-1">
               {t("title")}
             </h2>
             <p className="text-slate-500 text-sm">
@@ -64,9 +65,7 @@ export function AddressSection() {
       ) : hasAddress && savedAddress ? (
         <AddressDisplay address={savedAddress} />
       ) : (
-        <p className="text-sm text-slate-500 italic">
-          {t("emptyState")}
-        </p>
+        <p className="text-sm text-slate-500 italic">{t("emptyState")}</p>
       )}
     </section>
   );

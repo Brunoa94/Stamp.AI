@@ -24,14 +24,12 @@ function SpecItem({ label, value }: SpecItemPropsI) {
   return (
     <div className="space-y-0.5 md:space-y-1">
       <dt>
-        <Span variant="micro" className="text-(--color-stamp-taupe) text-[10px] md:text-xs">
+        <Span variant="label" className="text-(--color-stamp-taupe)">
           {label}
         </Span>
       </dt>
       <dd>
-        <Span unstyled className="text-xs md:text-lg font-bold uppercase tracking-[0.15em]">
-          {value}
-        </Span>
+        <Span variant="value">{value}</Span>
       </dd>
     </div>
   );

@@ -47,16 +47,8 @@ serve(async (req) => {
     const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken()
     const PRINTIFY_SHOP_ID = validateEnvVars.printifyShopId()
 
-    // Support both legacy image_id and new print_areas format
-    const frontImageId = print_areas?.front || image_id
-    const backImageId = print_areas?.back
-
     const validBlueprintId = validateRequest.blueprintId(blueprint_id)
     const validPrintProviderId = validateRequest.printProviderId(print_provider_id)
-
-    if (!frontImageId && !backImageId) {
-      throw ErrorCodes.IMAGE_REQUIRED()
-    }
 
     const finalBlueprintId = validBlueprintId
     const finalPrintProviderId = validPrintProviderId
@@ -69,10 +61,49 @@ serve(async (req) => {
       }
     )
     const variantsData = await variantsResponse.json()
-    
+
     const availableVariants = variantsData.variants || []
     if (availableVariants.length === 0) {
       throw ErrorCodes.NO_VARIANTS_AVAILABLE()
+    }
+
+    // Get available print areas from first variant's placeholders
+    const availablePrintAreas = availableVariants[0]?.placeholders?.map((p: any) => p.position) || ['front']
+    console.log('📍 Available print areas:', availablePrintAreas.join(', '))
+
+    // Support both legacy image_id and new print_areas format
+    // Map the provided image to the first available print area if using legacy format
+    const primaryPrintArea = availablePrintAreas[0] || 'front'
+    const secondaryPrintArea = availablePrintAreas[1] || null
+
+    // Get image IDs - support both explicit print_areas and legacy image_id
+    let primaryImageId: string | undefined
+    let secondaryImageId: string | undefined
+
+    if (print_areas) {
+      // New format: print_areas can contain any position names
+      // Try to match provided areas to available areas
+      for (const area of availablePrintAreas) {
+        if (print_areas[area] && !primaryImageId) {
+          primaryImageId = print_areas[area]
+        } else if (print_areas[area] && !secondaryImageId) {
+          secondaryImageId = print_areas[area]
+        }
+      }
+      // Fallback to front/back if those were provided but areas have different names
+      if (!primaryImageId && print_areas.front) {
+        primaryImageId = print_areas.front
+      }
+      if (!secondaryImageId && print_areas.back) {
+        secondaryImageId = print_areas.back
+      }
+    } else if (image_id) {
+      // Legacy format: use image_id for primary print area
+      primaryImageId = image_id
+    }
+
+    if (!primaryImageId && !secondaryImageId) {
+      throw ErrorCodes.IMAGE_REQUIRED()
     }
 
     // Filter variants by selected color and size if provided
@@ -111,21 +142,23 @@ serve(async (req) => {
       selectedVariants = availableVariants.slice(0, 100).map((v: any) => v.id)
     }
 
-    // Build placeholders
+    // Build placeholders using actual available print areas
     const placeholders = []
 
-    if (frontImageId) {
+    if (primaryImageId) {
       placeholders.push({
-        position: 'front',
-        images: [{ id: frontImageId, x: 0.5, y: 0.5, scale: 1, angle: 0 }],
+        position: primaryPrintArea,
+        images: [{ id: primaryImageId, x: 0.5, y: 0.5, scale: 1, angle: 0 }],
       })
+      console.log(`🖼️ Adding image to ${primaryPrintArea}`)
     }
 
-    if (backImageId) {
+    if (secondaryImageId && secondaryPrintArea) {
       placeholders.push({
-        position: 'back',
-        images: [{ id: backImageId, x: 0.5, y: 0.5, scale: 1, angle: 0 }],
+        position: secondaryPrintArea,
+        images: [{ id: secondaryImageId, x: 0.5, y: 0.5, scale: 1, angle: 0 }],
       })
+      console.log(`🖼️ Adding image to ${secondaryPrintArea}`)
     }
 
     // IMPORTANT: Printify API requires all prices to be integers (in cents)
