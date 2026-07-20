@@ -11,7 +11,9 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import type { CartItem } from "@/types/cart";
-import { MAX_QUANTITY, MIN_QUANTITY } from "../../../lib/constants/quantity";
+
+const MIN_QUANTITY = 1;
+const MAX_QUANTITY = 99;
 
 interface CartItemCardActionsPropsI {
   item: CartItem;

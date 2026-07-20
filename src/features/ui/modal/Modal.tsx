@@ -1,10 +1,12 @@
-import { ReactNode } from "react";
+"use client";
+
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/features/ui/dialog";
 
 interface ModalProps {
@@ -12,34 +14,27 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   description?: string;
-  children: ReactNode;
   className?: string;
+  children: React.ReactNode;
 }
 
-export const Modal = ({
+export function Modal({
   isOpen,
   onClose,
   title,
   description,
+  className,
   children,
-  className = "max-w-3xl max-h-[85vh] overflow-y-auto",
-}: ModalProps) => {
+}: ModalProps) {
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={className}>
-        <DialogHeader className="mb-6">
-          <DialogTitle className="text-3xl bg-linear-to-r from-slate-600 via-gray-600 to-slate-700 dark:from-slate-400 dark:via-gray-400 dark:to-slate-400 bg-clip-text text-transparent">
-            {title}
-          </DialogTitle>
-          {description && (
-            <DialogDescription className="sr-only">
-              {description}
-            </DialogDescription>
-          )}
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className={cn(className)}>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
-
         {children}
       </DialogContent>
     </Dialog>
   );
-};
+}
