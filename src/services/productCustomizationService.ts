@@ -1,9 +1,9 @@
-import { CatalogBlueprintsResponseSchema } from "@/schemas/services";
+import { CatalogBlueprintsResponseSchema } from "@/schemas/services/productCustomizationServiceSchemas";
 import { BlueprintVariantsResponseSchema } from "@/schemas/printify";
 import { z } from "zod";
 import { ErrorClient } from "./errorClient";
 
-export interface CatalogBlueprint {
+interface CatalogBlueprint {
   id: number;
   title: string;
   description: string;
@@ -18,7 +18,7 @@ export interface CatalogBlueprint {
   min_price?: number;
 }
 
-export interface VariantInfo {
+interface VariantInfo {
   id: number;
   title: string;
   options: { color?: string; size?: string };

@@ -22,7 +22,7 @@ export const RegisterSchema = z.object({
 });
 
 // Password reset request schema
-export const PasswordResetRequestSchema = z.object({
+const PasswordResetRequestSchema = z.object({
   email: z.string().min(1, "emailRequired").email("emailInvalid"),
 });
 
@@ -36,7 +36,7 @@ export const PasswordResetConfirmSchema = z.object({
 });
 
 // Update profile schema
-export const UpdateProfileSchema = z.object({
+const UpdateProfileSchema = z.object({
   firstName: z.string().min(1, "firstNameEmpty").optional(),
   lastName: z.string().min(1, "lastNameEmpty").optional(),
   avatarUrl: z.string().url("urlInvalid").or(z.literal("")).optional(),
@@ -58,4 +58,4 @@ export type RegisterI = z.infer<typeof RegisterSchema>;
 export type PasswordResetRequestI = z.infer<typeof PasswordResetRequestSchema>;
 export type PasswordResetConfirmI = z.infer<typeof PasswordResetConfirmSchema>;
 export type UpdateProfileI = z.infer<typeof UpdateProfileSchema>;
-export type UpdatePasswordI = z.infer<typeof UpdatePasswordSchema>;
+type UpdatePasswordI = z.infer<typeof UpdatePasswordSchema>;

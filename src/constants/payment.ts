@@ -35,30 +35,6 @@ export interface PaymentConfirmMethodUi {
   Icon: LucideIcon | IconType;
 }
 
-export interface PaymentBrandStyleUi {
-  border: string;
-  bg: string;
-  icon: string;
-  check: string;
-}
-
-export const PAYMENT_BRAND_STYLES: Record<
-  PaymentMethodId,
-  PaymentBrandStyleUi
-> = {
-  stripe: {
-    border: "border-[#635BFF]",
-    bg: "bg-[#635BFF]/5 hover:bg-[#635BFF]/10",
-    icon: "text-[#635BFF]",
-    check: "bg-[#635BFF]",
-  },
-  paypal: {
-    border: "border-[#0070BA]",
-    bg: "bg-[#0070BA]/5 hover:bg-[#0070BA]/10",
-    icon: "text-[#0070BA]",
-    check: "bg-[#0070BA]",
-  },
-};
 
 export const PAYMENT_CONFIRM_METHOD_UI: Record<
   PaymentMethodId,

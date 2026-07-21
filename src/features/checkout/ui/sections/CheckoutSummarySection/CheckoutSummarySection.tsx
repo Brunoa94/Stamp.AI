@@ -11,10 +11,8 @@
 
 import { useFormContext } from "react-hook-form";
 import { Elements } from "@stripe/react-stripe-js";
-import { ShieldCheck } from "lucide-react";
 import { stripePromise } from "@/lib/stripe";
 import { Heading } from "@/features/ui/heading";
-import { Span } from "@/features/ui/span";
 import { useCheckoutPricing } from "@/features/checkout/lib/hooks/useCheckoutPricing";
 import { buildPrintifyLineItems } from "@/features/checkout/lib/mappers/printifyLineItemsMapper";
 import { CheckoutCartItems } from "./CheckoutCartItems";

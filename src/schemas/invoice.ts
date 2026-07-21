@@ -3,7 +3,7 @@ import { z } from "zod";
 /**
  * Zod schema for invoice line items (snapshot of order_items at issuance)
  */
-export const InvoiceLineItemSchema = z.object({
+const InvoiceLineItemSchema = z.object({
   product_name: z.string(),
   variant_name: z.string().nullable(),
   quantity: z.number(),

@@ -4,7 +4,7 @@ import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { ShippingAddressT } from "@/schemas/checkout";
 import { mapShippingAddressToBillingDetails } from "@/mappers/mapShippingAddressToBillingDetails";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
-import { useCreatePaymentIntent } from "@/queries";
+import { useCreatePaymentIntent } from "@/queries/stripeQueries";
 
 interface UsePaymentFormProps {
   amount: number;

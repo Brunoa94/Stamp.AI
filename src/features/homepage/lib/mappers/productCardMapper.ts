@@ -20,7 +20,7 @@ export interface ProductCardData {
   availableColors: string[];
 }
 
-export function mapProductToCard(product: ProductWithPricing): ProductCardData {
+function mapProductToCard(product: ProductWithPricing): ProductCardData {
   // Use display_title from database or fallback to mapped title
   const displayTitle = getDisplayTitle(
     product.blueprint_id,

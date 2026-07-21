@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useUser } from "@/hooks/useAuth";
-import { useUpdateProfile } from "./useUpdateProfile";
+import { useUpdateProfile } from "@/queries/authQueries";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { ShippingAddressSchema, type ShippingAddressT } from "@/schemas/checkout";

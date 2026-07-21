@@ -28,7 +28,7 @@ export type EditSuggestionType = {
 // Product types
 export type ProductTypeIdType = "tshirt" | "hoodie" | "tote" | "poster";
 
-export type ProductTypeInfoType = {
+type ProductTypeInfoType = {
   id: ProductTypeIdType;
   blueprintIds: number[];
   name: string;
@@ -38,7 +38,7 @@ export type ProductTypeInfoType = {
 };
 
 // Color types
-export type FabricColorType = {
+type FabricColorType = {
   name: string;
   hex: string;
   label: string;

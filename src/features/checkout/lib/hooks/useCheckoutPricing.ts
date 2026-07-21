@@ -8,7 +8,7 @@ import { CheckoutPromoCodeService } from "../services/promoCodeService";
 import { getDiscountValue } from "../helpers/promoCodeHelpers";
 import type { CartWithItems } from "@/types/cart";
 import type { CheckoutFormData } from "../context/CheckoutFormContext";
-import type { PromoCodeValidationResult } from "@/types/promocode";
+import type { PromoCodeValidationResult } from "@/schemas/promocode";
 
 interface UseCheckoutPricingParams {
   cart: CartWithItems | null;

@@ -94,6 +94,6 @@ export const OrderWithItemsSchema = OrderSchema.extend({
 /**
  * Infer TypeScript types from Zod schemas
  */
-export type OrderItemSchemaT = z.infer<typeof OrderItemSchema>;
-export type OrderSchemaT = z.infer<typeof OrderSchema>;
-export type OrderWithItemsSchemaT = z.infer<typeof OrderWithItemsSchema>;
+type OrderItemSchemaT = z.infer<typeof OrderItemSchema>;
+type OrderSchemaT = z.infer<typeof OrderSchema>;
+type OrderWithItemsSchemaT = z.infer<typeof OrderWithItemsSchema>;

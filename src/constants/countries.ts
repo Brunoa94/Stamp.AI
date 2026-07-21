@@ -129,21 +129,6 @@ export const COUNTRIES: CountryOption[] = [
 ];
 
 /**
- * Get country by code
- */
-export function getCountryByCode(code: string): CountryOption | undefined {
-  return COUNTRIES.find((country) => country.code === code);
-}
-
-/**
- * Get country label with flag
- */
-export function getCountryLabel(code: string): string {
-  const country = getCountryByCode(code);
-  return country ? `${country.flag} ${country.name}` : code;
-}
-
-/**
  * Format countries for select dropdown
  */
 export function getCountrySelectOptions(): Array<{ value: string; label: string }> {

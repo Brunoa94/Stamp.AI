@@ -1,4 +1,4 @@
-import type { UserI } from "@/types/auth";
+import type { UserI } from "../../../../../supabase/types";
 
 /**
  * User display helpers for the dashboard header and profile card.

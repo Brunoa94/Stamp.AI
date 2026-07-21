@@ -4,7 +4,6 @@ import { formatOrderDate } from "../../../lib/utils/formatOrderDate";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
-import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import type { OrderWithItemsT } from "@/types/order";
 import type { getFirstOrderItem } from "../../../lib/helpers/orderPresentation";

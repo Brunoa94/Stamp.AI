@@ -1,8 +1,6 @@
 import { notFoundTheme } from "@/theme/components";
 import { HelpCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { PageContainer } from "@/shared/ui/PageContainer";
-import { PageHeader } from "@/shared/ui/PageHeader";
 
 export default function NotFound() {
   const t = useTranslations("common.notFound");

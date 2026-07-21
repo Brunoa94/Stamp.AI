@@ -6,7 +6,6 @@
  */
 
 import { Heading } from "@/features/ui/heading";
-import { Span } from "@/features/ui/span";
 
 export function CheckoutHeader() {
   return (

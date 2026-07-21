@@ -2,7 +2,6 @@ import {
   CreateProductPayloadT,
   CreatedProductT,
   CreateCustomProductRequestI,
-  UploadImageRequestI,
 } from "@/types/customProduct";
 import {
   CreateProductPayloadSchema,
@@ -11,8 +10,7 @@ import {
   CreateCustomProductRequestSchema,
   CreateCustomProductResponseSchema,
 } from "@/schemas/customProduct";
-import { CustomProductServiceMapper } from "@/mappers/services";
-import { z } from "zod";
+import { CustomProductServiceMapper } from "@/mappers/services/customProductServiceMapper";
 import { ProductService } from "./productService";
 import { ErrorClient } from "./errorClient";
 

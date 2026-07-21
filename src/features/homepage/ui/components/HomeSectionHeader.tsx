@@ -20,7 +20,7 @@ interface HomeSectionHeaderPropsI {
 export function HomeSectionHeader({
   title,
   accent,
-  label,
+  label: _label,
   inverted = false,
   className,
 }: HomeSectionHeaderPropsI) {

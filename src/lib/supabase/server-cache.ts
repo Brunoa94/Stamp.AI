@@ -32,7 +32,7 @@ function createServiceClient() {
 /**
  * Get all active catalog products with 30-minute cache
  */
-export const getCachedProducts = unstable_cache(
+const getCachedProducts = unstable_cache(
   async (): Promise<CatalogProduct[]> => {
     const supabase = createServiceClient();
 
@@ -113,59 +113,3 @@ export const getCachedProductsWithPricing = unstable_cache(
   }
 );
 
-/**
- * Get a product by blueprint ID with cached data
- */
-export const getCachedProductByBlueprint = unstable_cache(
-  async (blueprintId: number): Promise<CatalogProduct | null> => {
-    const supabase = createServiceClient();
-
-    const { data, error } = await supabase
-      .from("catalog_products")
-      .select("*")
-      .eq("blueprint_id", blueprintId)
-      .eq("is_active", true)
-      .single();
-
-    if (error) {
-      console.error("Error fetching cached product by blueprint:", error);
-      return null;
-    }
-
-    return data;
-  },
-  ["catalog-product-blueprint"],
-  {
-    revalidate: 1800, // 30 minutes
-    tags: ["products"],
-  }
-);
-
-/**
- * Get product variants by blueprint ID with cached data
- */
-export const getCachedProductVariants = unstable_cache(
-  async (blueprintId: number) => {
-    const supabase = createServiceClient();
-
-    const { data, error } = await supabase
-      .from("product_variants")
-      .select("*")
-      .eq("blueprint_id", blueprintId)
-      .eq("is_available", true)
-      .order("color")
-      .order("size");
-
-    if (error) {
-      console.error("Error fetching cached variants:", error);
-      return [];
-    }
-
-    return data || [];
-  },
-  ["catalog-variants"],
-  {
-    revalidate: 1800, // 30 minutes
-    tags: ["products"],
-  }
-);

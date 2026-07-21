@@ -3,8 +3,8 @@ import {
   PromoCodeValidationResult,
   ValidatePromoCodePayload,
   PromoCodeT,
-} from "@/types/promocode";
-import { PromoCodeSchema } from "@/schemas/promocode";
+  PromoCodeSchema,
+} from "@/schemas/promocode";
 
 export class PromoCodeService {
   private static getSupabase() {

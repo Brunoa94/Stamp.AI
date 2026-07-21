@@ -5,7 +5,7 @@
  * Used for grouping products in the UI and determining appropriate sizes.
  */
 
-export type ProductCategory =
+type ProductCategory =
   | "tshirt"
   | "hoodie"
   | "sweatshirt"
@@ -21,7 +21,7 @@ export type ProductCategory =
   | "pillow"
   | "other";
 
-export type ProductGroup = "clothing" | "accessories";
+type ProductGroup = "clothing" | "accessories";
 
 /**
  * Keywords to detect product category from title
@@ -132,7 +132,7 @@ const CLOTHING_CATEGORIES: Set<ProductCategory> = new Set([
 /**
  * Detect product category from display title
  */
-export function detectProductCategory(displayTitle: string): ProductCategory {
+function detectProductCategory(displayTitle: string): ProductCategory {
   const titleLower = displayTitle.toLowerCase();
 
   // Check each category's keywords
@@ -152,14 +152,14 @@ export function detectProductCategory(displayTitle: string): ProductCategory {
 /**
  * Get product group (clothing vs accessories) from category
  */
-export function getProductGroup(category: ProductCategory): ProductGroup {
+function getProductGroup(category: ProductCategory): ProductGroup {
   return CLOTHING_CATEGORIES.has(category) ? "clothing" : "accessories";
 }
 
 /**
  * Detect product group directly from display title
  */
-export function detectProductGroup(displayTitle: string): ProductGroup {
+function detectProductGroup(displayTitle: string): ProductGroup {
   const category = detectProductCategory(displayTitle);
   return getProductGroup(category);
 }
@@ -174,7 +174,7 @@ export function isClothingProduct(displayTitle: string): boolean {
 /**
  * Check if a product is an accessory based on title
  */
-export function isAccessoryProduct(displayTitle: string): boolean {
+function isAccessoryProduct(displayTitle: string): boolean {
   return detectProductGroup(displayTitle) === "accessories";
 }
 
@@ -182,9 +182,9 @@ export function isAccessoryProduct(displayTitle: string): boolean {
  * Expected size type for each product category
  * Used to validate sizes returned from Printify API
  */
-export type ExpectedSizeType = "apparel" | "one-size" | "mug" | "poster" | "variable";
+type ExpectedSizeType = "apparel" | "one-size" | "mug" | "poster" | "variable";
 
-export function getExpectedSizeType(category: ProductCategory): ExpectedSizeType {
+function getExpectedSizeType(category: ProductCategory): ExpectedSizeType {
   switch (category) {
     case "tshirt":
     case "hoodie":
@@ -208,7 +208,7 @@ export function getExpectedSizeType(category: ProductCategory): ExpectedSizeType
 /**
  * Get expected size type from display title
  */
-export function detectExpectedSizeType(displayTitle: string): ExpectedSizeType {
+function detectExpectedSizeType(displayTitle: string): ExpectedSizeType {
   const category = detectProductCategory(displayTitle);
   return getExpectedSizeType(category);
 }

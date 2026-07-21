@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { animations } from "@/theme";
+import { animations } from "@/theme/animations";
 
 interface ProtectedRouteProps {
   children: ReactNode;

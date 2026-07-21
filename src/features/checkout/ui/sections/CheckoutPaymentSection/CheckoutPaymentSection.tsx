@@ -13,7 +13,7 @@ import { useFormContext } from "react-hook-form";
 import { CheckoutSectionCard } from "../../components/CheckoutSectionCard";
 import { CheckoutPaymentMethods } from "./CheckoutPaymentMethods";
 import { CheckoutStripeCardForm } from "./CheckoutStripeCardForm";
-import { SecureCheckoutNotice } from "@/features/ui/trust";
+import { SecureCheckoutNotice } from "@/features/ui/trust/SecureCheckoutNotice";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 import type { PaymentMethodT } from "@/types/payment";
 

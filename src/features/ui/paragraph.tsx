@@ -32,7 +32,7 @@ const paragraphVariants = {
   quote: "font-heading text-lg md:text-xl italic tracking-normal leading-relaxed",
 } as const;
 
-export type ParagraphVariant = keyof typeof paragraphVariants;
+type ParagraphVariant = keyof typeof paragraphVariants;
 type ParagraphTag = "p" | "div" | "span";
 
 interface ParagraphProps extends React.HTMLAttributes<HTMLElement> {

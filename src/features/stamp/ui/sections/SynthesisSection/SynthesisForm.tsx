@@ -1,7 +1,6 @@
 import { ChangeEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
-import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
 import { PromptInput } from "./PromptInput";
 import { PreservationSlider } from "./PreservationSlider";

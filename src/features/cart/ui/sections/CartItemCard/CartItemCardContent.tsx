@@ -6,7 +6,6 @@
  */
 
 import { Heading } from "@/features/ui/heading";
-import { Span } from "@/features/ui/span";
 import type { CartItem } from "@/types/cart";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { CartItemCardSpecs } from "./CartItemCardSpecs";

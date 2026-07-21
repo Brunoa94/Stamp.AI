@@ -8,7 +8,7 @@ import { z } from "zod";
 /**
  * Schema for image generation API request
  */
-export const ImageGenerationRequestSchema = z.object({
+const ImageGenerationRequestSchema = z.object({
   prompt: z.string().min(1, "Prompt is required"),
   image: z.instanceof(File, { message: "Image file is required" }),
 });
@@ -26,7 +26,7 @@ export const ImageGenerationResponseSchema = z.object({
 /**
  * Schema for image generation result
  */
-export const ImageGenerationResultSchema = z.object({
+const ImageGenerationResultSchema = z.object({
   imageUrl: z.string().url("Image URL must be a valid URL"),
   enhancedPrompt: z.string(),
   originalPrompt: z.string(),

@@ -17,7 +17,7 @@ import { PaymentRecoveryService } from "@/services/paymentRecoveryService";
 import type { CreatePrintifyOrderRequest } from "@/types/printifyOrder";
 import { validatePrintifyLineItem } from "@/types/printifyOrder";
 import { mapShippingAddressToPrintifyAddress } from "@/mappers/mapShippingAddressToPrintifyAddress";
-import type { UserI } from "@/types/auth";
+import type { UserI } from "../../../../supabase/types";
 import {
   useCreateOrderFromCart,
   useUpdateOrderStatus,

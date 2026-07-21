@@ -9,13 +9,6 @@ import { useStampFlowStore } from "../stores/stampFlowStore";
  * Each property is subscribed independently to prevent unnecessary re-renders.
  */
 
-// Step state selectors
-export const useStampStep = () => {
-  const currentStep = useStampFlowStore((state) => state.currentStep);
-  const setCurrentStep = useStampFlowStore((state) => state.setCurrentStep);
-  return { currentStep, setCurrentStep };
-};
-
 // Generation state selectors
 export const useStampGeneration = () => {
   const isGenerating = useStampFlowStore((state) => state.isGenerating);
@@ -168,34 +161,6 @@ export const useStampCustomization = () => {
     setSelectedSize,
     selectedPriceCents,
     setSelectedPriceCents,
-  };
-};
-
-// Combined data selector for convenience
-export const useStampData = () => {
-  const currentStep = useStampFlowStore((state) => state.currentStep);
-  const uploadedImageUrl = useStampFlowStore(
-    (state) => state.uploadedImageUrl,
-  );
-  const generatedResults = useStampFlowStore(
-    (state) => state.generatedResults,
-  );
-  const selectedImageUrl = useStampFlowStore(
-    (state) => state.selectedImageUrl,
-  );
-  const enhancedPrompt = useStampFlowStore((state) => state.enhancedPrompt);
-  const createdProductId = useStampFlowStore(
-    (state) => state.createdProductId,
-  );
-  const mockupImageUrl = useStampFlowStore((state) => state.mockupImageUrl);
-  return {
-    currentStep,
-    uploadedImageUrl,
-    generatedResults,
-    selectedImageUrl,
-    enhancedPrompt,
-    createdProductId,
-    mockupImageUrl,
   };
 };
 

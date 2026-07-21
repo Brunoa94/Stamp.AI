@@ -13,7 +13,7 @@ import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
-import type { UserI } from "@/types/auth";
+import type { UserI } from "../../../../../supabase/types";
 import {
   getAvatarUrl,
   getDisplayName,

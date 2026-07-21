@@ -18,12 +18,12 @@ export interface CancelOrderResponseI {
 import { createClient } from "@/lib/supabase/client";
 import { CreateOrderT, OrderT, UpdateOrderT, OrderWithItemsT } from "../types/order";
 import { OrderWithItemsSchema, OrderSchema } from "@/schemas/order";
-import { OrderServiceMapper } from "@/mappers/services";
+import { OrderServiceMapper } from "@/mappers/services/orderServiceMapper";
 import { z } from "zod";
 import { CartItem, CartT, CartWithItems } from "@/types/cart";
 import { CartService } from "./cartService";
 import { OrderItemService } from "./orderItemService";
-import { UserI } from "@/types/auth";
+import { UserI } from "../../supabase/types";
 import { ErrorClient } from "./errorClient";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import { RefundService } from "./refundService";

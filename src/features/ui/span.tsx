@@ -31,7 +31,7 @@ const spanVariants = {
   serif: "font-serif italic lowercase font-light",
 } as const;
 
-export type SpanVariant = keyof typeof spanVariants;
+type SpanVariant = keyof typeof spanVariants;
 type SpanTag = "span" | "p" | "div" | "footer" | "h6";
 
 interface SpanProps extends React.HTMLAttributes<HTMLElement> {

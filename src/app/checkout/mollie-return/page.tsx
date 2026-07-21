@@ -25,7 +25,7 @@ import {
 } from "@/lib/mollie";
 import type { MolliePaymentStatus } from "@/lib/mollie";
 import type { ShippingAddressT } from "@/schemas/checkout";
-import { UserI } from "@/types/auth";
+import { UserI } from "../../../../supabase/types";
 import {
   useCreateOrderFromCart,
   useUpdateOrderStatus,

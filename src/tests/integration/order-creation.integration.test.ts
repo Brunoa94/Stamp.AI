@@ -5,7 +5,7 @@
 
 import { getAuthenticatedClient } from './setup-auth';
 import { OrderService } from '@/services/orderService';
-import type { UserI } from '@/types/auth';
+import type { UserI } from '../../../supabase/types';
 import type { ShippingAddressT } from '@/schemas/checkout';
 
 describe('Order Creation Integration Tests', () => {

@@ -6,11 +6,11 @@
  * stable structural values (group id + option value) live here.
  */
 
-export type TestCardOptionType = {
+type TestCardOptionType = {
   value: string;
 };
 
-export type TestCardGroupType = {
+type TestCardGroupType = {
   id: string;
   options: TestCardOptionType[];
 };

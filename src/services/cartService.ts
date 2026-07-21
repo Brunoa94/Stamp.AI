@@ -12,7 +12,7 @@ import {
   CartSchema,
   updateCartItemSchema,
 } from "@/schemas/cart";
-import { CartServiceMapper } from "@/mappers/services";
+import { CartServiceMapper } from "@/mappers/services/cartServiceMapper";
 import { ErrorClient } from "./errorClient";
 
 export class CartService {

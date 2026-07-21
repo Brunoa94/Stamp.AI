@@ -4,7 +4,7 @@ import { colors } from "./colors";
 import { animationClasses, animations } from "./animations";
 import { navbarDesignSystem } from "./navbarDesignSystem";
 
-export const componentThemes = {
+const componentThemes = {
   // Card variants
   card: {
     base:
@@ -785,38 +785,8 @@ export const componentThemes = {
 } as const;
 
 // Individual theme exports for better tree-shaking
-export const cardTheme = componentThemes.card;
-export const buttonTheme = componentThemes.button;
-export const inputTheme = componentThemes.input;
-export const textTheme = componentThemes.text;
 export const containerTheme = componentThemes.container;
-export const wizardUploadAreaTheme = componentThemes.wizardUploadArea;
-export const statusTheme = componentThemes.status;
-export const loadingTheme = componentThemes.loading;
-export const navbarTheme = componentThemes.navbar;
-export const footerTheme = componentThemes.footer;
-export const mobilePageHeaderTheme = componentThemes.mobilePageHeader;
-export const cartTheme = componentThemes.cart;
-export const dashboardTheme = componentThemes.dashboard;
-export const ordersTheme = componentThemes.orders;
 export const checkoutTheme = componentThemes.checkout;
-export const profileTheme = componentThemes.profile;
-export const productConfirmationTheme = componentThemes.productConfirmation;
-export const paymentSuccessTheme = componentThemes.paymentSuccess;
 export const paymentErrorTheme = componentThemes.paymentError;
 export const notFoundTheme = componentThemes.notFound;
 export const buyCreditsTheme = componentThemes.buyCredits;
-
-// Utility functions
-export const getButtonVariant = (
-  variant: keyof typeof componentThemes.button,
-) => componentThemes.button[variant];
-
-export const getCardVariant = (variant: keyof typeof componentThemes.card) =>
-  componentThemes.card[variant];
-
-export const getTextVariant = (variant: keyof typeof componentThemes.text) =>
-  componentThemes.text[variant];
-
-export const combineClasses = (...classes: string[]) =>
-  classes.filter(Boolean).join(" ");

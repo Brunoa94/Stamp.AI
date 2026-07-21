@@ -14,7 +14,7 @@ export const PromoCodeSchema = z.object({
 /**
  * Zod schema for the validated/applied promo code
  */
-export const AppliedPromoCodeSchema = z.object({
+const AppliedPromoCodeSchema = z.object({
   code: z.string(),
   type: z.enum(["percentage", "numeric"]),
   value: z.number(),
@@ -22,27 +22,27 @@ export const AppliedPromoCodeSchema = z.object({
 });
 
 /**
- * Zod schema for the promo code validation payload
- */
-export const ValidatePromoCodePayloadSchema = z.object({
-  code: z.string().min(1),
-  subtotal: z.number().positive(),
-});
-
-/**
  * Zod schema for the promo code validation result
  */
-export const PromoCodeValidationResultSchema = z.object({
+const PromoCodeValidationResultSchema = z.object({
   isValid: z.boolean(),
   message: z.string(),
   appliedPromo: AppliedPromoCodeSchema.nullable(),
 });
 
 /**
+ * Zod schema for validating promo code input
+ */
+const ValidatePromoCodePayloadSchema = z.object({
+  code: z.string(),
+  subtotal: z.number(),
+});
+
+/**
  * Inferred TypeScript types from Zod schemas
  */
-export type PromoCodeTypeT = z.infer<typeof PromoCodeSchema>["type"];
+type PromoCodeTypeT = z.infer<typeof PromoCodeSchema>["type"];
 export type PromoCodeT = z.infer<typeof PromoCodeSchema>;
-export type AppliedPromoCodeI = z.infer<typeof AppliedPromoCodeSchema>;
+type AppliedPromoCodeI = z.infer<typeof AppliedPromoCodeSchema>;
 export type ValidatePromoCodePayload = z.infer<typeof ValidatePromoCodePayloadSchema>;
 export type PromoCodeValidationResult = z.infer<typeof PromoCodeValidationResultSchema>;

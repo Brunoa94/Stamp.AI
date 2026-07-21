@@ -8,7 +8,7 @@
 import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
-import type { UserI } from "@/types/auth";
+import type { UserI } from "../../../../../supabase/types";
 import { getDisplayName } from "../../lib/helpers/userPresentation";
 
 interface DashboardHeaderPropsI {

@@ -33,16 +33,6 @@ export const HOME_HERO_IMAGES = [
   "/home/6-b.png",
 ];
 
-// Hero parallax configuration
-export const HOME_HERO_PARALLAX_CONFIG = {
-  textFactor: 0.4,
-  imageFactor: 0.2,
-  blobFactors: [0.15, 0.1, 0.12] as const,
-  fadeDistance: 500,
-  scaleMin: 0.85,
-  scaleDistance: 2000,
-} as const;
-
 // Display copy lives in messages (home.process.steps.<id>); only structural
 // fields remain here.
 export type HomeProcessStepType = {
@@ -149,12 +139,6 @@ export const HOME_HERO_TRUST: HomeTrustIndicatorType[] = [
   "instantDelivery",
 ];
 
-export const HOME_CTA_TRUST: HomeTrustIndicatorType[] = [
-  "fiveSevenDayDelivery",
-  "thirtyDayGuarantee",
-  "carbonNeutral",
-];
-
 // Display copy lives in messages (home.guarantees.items.<id>).
 // Icons are lucide-react icon names.
 export type HomeTrustGuaranteeType = {
@@ -168,18 +152,6 @@ export const HOME_TRUST_GUARANTEES: HomeTrustGuaranteeType[] = [
   { id: "securePayment", icon: "Lock" },
   { id: "freeShipping", icon: "Truck" },
 ];
-
-// Payment methods displayed in the trust section
-export const HOME_PAYMENT_METHODS = [
-  "visa",
-  "mastercard",
-  "amex",
-  "paypal",
-  "applepay",
-  "googlepay",
-] as const;
-
-export type HomePaymentMethodType = (typeof HOME_PAYMENT_METHODS)[number];
 
 export type HomePlatformConfigType = {
   color: string;
