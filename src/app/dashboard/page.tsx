@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { DashboardContent } from "@/features/dashboard/ui/DashboardContent";
+import DashboardPageClient from "./DashboardPageClient";
 
 export const metadata: Metadata = {
   title: "Dashboard | Stamp AI",
@@ -9,9 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function DashboardPage() {
-  return (
-    <ProtectedRoute>
-      <DashboardContent />
-    </ProtectedRoute>
-  );
+  return <DashboardPageClient />;
 }

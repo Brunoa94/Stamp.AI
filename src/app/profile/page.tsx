@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { ProfileContent } from "@/features/profile/ui/ProfileContent";
+import ProfilePageClient from "./ProfilePageClient";
 
 export const metadata: Metadata = {
   title: "My Profile | Stamp AI",
@@ -9,11 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function ProfilePage() {
-  return (
-    <div className="bg-concrete text-ink font-heading antialiased min-h-screen">
-      <ProtectedRoute>
-        <ProfileContent />
-      </ProtectedRoute>
-    </div>
-  );
+  return <ProfilePageClient />;
 }

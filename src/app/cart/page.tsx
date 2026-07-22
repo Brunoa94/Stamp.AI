@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { CartContent } from "@/features/cart/ui/CartContent";
-import "@/features/cart/ui/cart.css";
+import CartPageClient from "./CartPageClient";
 
 export const metadata: Metadata = {
   title: "Shopping Cart | Stamp AI",
@@ -10,9 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function CartPage() {
-  return (
-    <ProtectedRoute>
-      <CartContent />
-    </ProtectedRoute>
-  );
+  return <CartPageClient />;
 }

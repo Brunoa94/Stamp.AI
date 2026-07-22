@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
-import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { CheckoutContent } from "@/features/checkout/ui/CheckoutContent";
-import { CheckoutLoadingSection } from "@/features/checkout/ui/sections/CheckoutLoadingSection";
-import "@/features/checkout/ui/checkout.css";
+import CheckoutPageClient from "./CheckoutPageClient";
 
 export const metadata: Metadata = {
   title: "Checkout | Stamp AI",
@@ -11,9 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function CheckoutPage() {
-  return (
-    <ProtectedRoute fallback={<CheckoutLoadingSection />}>
-      <CheckoutContent />
-    </ProtectedRoute>
-  );
+  return <CheckoutPageClient />;
 }
