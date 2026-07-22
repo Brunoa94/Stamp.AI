@@ -16,10 +16,8 @@ export { CartServiceMapper } from './cartServiceMapper';
 export { CustomProductServiceMapper } from './customProductServiceMapper';
 export { ImageGenerationServiceMapper } from './imageGenerationServiceMapper';
 export { OrderServiceMapper } from './orderServiceMapper';
-export { PrintifyServiceMapper } from './printifyServiceMapper';
 export { ProductServiceMapper } from './productServiceMapper';
 
 // Re-export types that are commonly used
 export type { SavePrintifyProductInput } from './productServiceMapper';
-export type { PrintifyProduct, PrintifyOrder } from './printifyServiceMapper';
 export type { ImageGenerationRequestPayload } from './imageGenerationServiceMapper';

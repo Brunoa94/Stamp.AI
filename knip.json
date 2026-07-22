@@ -1,0 +1,43 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "src/app/**/page.tsx",
+    "src/app/**/layout.tsx",
+    "src/app/**/route.ts",
+    "src/middleware.ts",
+    "supabase/functions/**/index.ts"
+  ],
+  "project": ["src/**/*.{ts,tsx}", "supabase/**/*.ts"],
+  "ignore": [
+    "**/*.d.ts",
+    "**/*.test.ts",
+    "src/types/**",
+    "supabase/types/**",
+    "database.types.ts",
+    ".sandcastle/**",
+    "scripts/**",
+    "playwright.config.ts"
+  ],
+  "ignoreDependencies": [
+    "postcss",
+    "tailwindcss",
+    "typescript",
+    "@types/node",
+    "autoprefixer",
+    "encoding",
+    "@ai-hero/sandcastle",
+    "@testing-library/react",
+    "@testing-library/user-event"
+  ],
+  "ignoreBinaries": ["supabase"],
+  "next": {
+    "entry": [
+      "next.config.{js,ts,mjs}",
+      "src/app/**/page.tsx",
+      "src/app/**/layout.tsx",
+      "src/app/**/route.ts",
+      "src/app/api/**/*.ts",
+      "src/middleware.ts"
+    ]
+  }
+}

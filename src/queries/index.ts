@@ -38,12 +38,6 @@ export {
   useCreateOrderFromCart,
 } from "./orderQueries";
 
-// Invoice queries
-export {
-  useOrderInvoice,
-  useGenerateInvoice,
-} from "./invoiceQueries";
-
 // Product queries
 export {
   useCustomProduct,
@@ -58,26 +52,10 @@ export {
   useImageGeneration,
 } from "./imageGenerationQueries";
 
-// Coins queries
-export {
-  coinsKeys,
-  useCoins,
-} from "./coinsQueries";
-
-export {
-  useCreatePayPalOrder,
-  useCapturePayPalOrder,
-} from "./paypalQueries";
-
 export {
   useCreateMolliePayment,
   useVerifyMolliePayment,
 } from "./mollieQueries";
-
-export {
-  useAvailablePromoCodes,
-  useValidatePromoCode,
-} from "./promocodeQueries";
 
 export {
   useCreatePaymentIntent,

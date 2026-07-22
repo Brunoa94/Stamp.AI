@@ -8,9 +8,7 @@ import { Span } from "@/features/ui/span";
  *
  * Payment-trust panel for the checkout. States plainly how payment is handled
  * (Stripe / PayPal, no card details stored) and lists the methods actually
- * accepted. This reflects the real integration — it is not a decorative
- * "security seal". Card-network names are shown as plain text, not logos, to
- * avoid implying endorsements or shipping third-party brand assets.
+ * accepted.
  */
 
 const METHODS = ["Visa", "Mastercard", "American Express", "PayPal"];
