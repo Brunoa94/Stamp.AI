@@ -7,7 +7,6 @@
  * the restyled variant (same underlying payment hook).
  */
 
-"use client";
 
 import { useFormContext } from "react-hook-form";
 import { Elements } from "@stripe/react-stripe-js";

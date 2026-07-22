@@ -5,8 +5,6 @@
  * Displays trusted payment providers (Visa, Mastercard, etc.)
  */
 
-"use client";
-
 import { Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Paragraph } from "@/features/ui/paragraph";

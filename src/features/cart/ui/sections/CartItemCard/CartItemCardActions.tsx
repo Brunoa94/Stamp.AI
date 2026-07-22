@@ -4,8 +4,6 @@
  * Quantity stepper and remove control for a cart line item.
  */
 
-"use client";
-
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";

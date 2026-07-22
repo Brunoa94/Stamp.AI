@@ -6,7 +6,6 @@
  * checkout form context.
  */
 
-"use client";
 
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";

@@ -1,5 +1,3 @@
-"use client";
-
 import { DialogClose } from "@/features/ui/dialog";
 import { Dialog, DialogTrigger } from "@/features/ui/dialog";
 import { Button } from "@/features/ui/button";

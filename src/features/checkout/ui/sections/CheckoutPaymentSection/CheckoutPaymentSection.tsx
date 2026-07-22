@@ -6,7 +6,6 @@
  * PayPal notice.
  */
 
-"use client";
 
 import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
