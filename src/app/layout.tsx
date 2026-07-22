@@ -4,53 +4,55 @@ import "./globals.css";
 import "./globals-stamp.css";
 
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages, getTranslations } from "next-intl/server";
+import { getMessages } from "next-intl/server";
 import { Toaster } from "sonner";
 import { SupabaseAuthProvider } from "@/providers/SupabaseAuthProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { GrainOverlay } from "@/features/layout/brutalist/GrainOverlay";
 import { StructuredData } from "@/features/seo/StructuredData";
-import { organizationSchema } from "@/features/seo/jsonLd";
+import { organizationSchema } from "@/features/seo/schemas/organization";
+import { webSiteSchema } from "@/features/seo/schemas/website";
+import { generateRootMetadata } from "@/features/seo/metadata/rootMetadata";
+import { BRAND_COLORS } from "@/features/seo/config/site";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { AppLayoutChrome } from "@/components/AppLayoutChrome";
 
-// Body font (Poppins for clean, modern body text)
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
+  preload: true,
 });
 
-// Retro heading font (Bebas Neue for display text)
 const bebasNeue = Bebas_Neue({
   weight: "400",
   variable: "--font-bebas-neue",
   subsets: ["latin"],
   display: "swap",
+  preload: true,
 });
 
-// Primary heading font (Outfit for headings and UI text)
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700"],
   display: "swap",
+  preload: true,
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("common.metadata");
-  return {
-    title: t("title"),
-    description: t("description"),
-    keywords: t.raw("keywords") as string[],
-  };
-}
+export const metadata: Metadata = generateRootMetadata();
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: BRAND_COLORS.themeLight },
+    { media: "(prefers-color-scheme: dark)", color: BRAND_COLORS.themeDark },
+  ],
 };
 
 export default async function RootLayout({
@@ -66,6 +68,7 @@ export default async function RootLayout({
         className={`${poppins.variable} ${bebasNeue.variable} ${outfit.variable} antialiased`}
       >
         <StructuredData data={organizationSchema()} />
+        <StructuredData data={webSiteSchema()} />
         <GrainOverlay />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider>

@@ -1,14 +1,16 @@
-"use client";
+import type { Metadata } from "next";
+import { PAGE_METADATA_CONFIGS } from "@/features/seo/metadata/pageConfigs";
+import ProfilePageClient from "./ProfilePageClient";
 
-import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { ProfileContent } from "@/features/profile/ui/ProfileContent";
+export const metadata: Metadata = {
+  title: PAGE_METADATA_CONFIGS.profile.title,
+  description: PAGE_METADATA_CONFIGS.profile.description,
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function ProfilePage() {
-  return (
-    <div className="bg-concrete text-ink font-heading antialiased min-h-screen">
-      <ProtectedRoute>
-        <ProfileContent />
-      </ProtectedRoute>
-    </div>
-  );
+  return <ProfilePageClient />;
 }
