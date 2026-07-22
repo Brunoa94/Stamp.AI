@@ -4,13 +4,15 @@ import "./globals.css";
 import "./globals-stamp.css";
 
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages, getTranslations } from "next-intl/server";
+import { getMessages } from "next-intl/server";
 import { Toaster } from "sonner";
 import { SupabaseAuthProvider } from "@/providers/SupabaseAuthProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { GrainOverlay } from "@/features/layout/brutalist/GrainOverlay";
 import { StructuredData } from "@/features/seo/StructuredData";
-import { organizationSchema } from "@/features/seo/jsonLd";
+import { organizationSchema, webSiteSchema } from "@/features/seo/jsonLd";
+import { generateRootMetadata } from "@/features/seo/metadata";
+import { BRAND_COLORS } from "@/features/seo/config";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { AppLayoutChrome } from "@/components/AppLayoutChrome";
@@ -21,6 +23,7 @@ const poppins = Poppins({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
+  preload: true,
 });
 
 // Retro heading font (Bebas Neue for display text)
@@ -29,6 +32,7 @@ const bebasNeue = Bebas_Neue({
   variable: "--font-bebas-neue",
   subsets: ["latin"],
   display: "swap",
+  preload: true,
 });
 
 // Primary heading font (Outfit for headings and UI text)
@@ -37,20 +41,27 @@ const outfit = Outfit({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700"],
   display: "swap",
+  preload: true,
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("common.metadata");
-  return {
-    title: t("title"),
-    description: t("description"),
-    keywords: t.raw("keywords") as string[],
-  };
-}
+/**
+ * Root metadata configuration
+ * Includes comprehensive SEO settings following e-commerce best practices
+ */
+export const metadata: Metadata = generateRootMetadata();
 
+/**
+ * Viewport configuration for mobile optimization
+ */
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: BRAND_COLORS.themeLight },
+    { media: "(prefers-color-scheme: dark)", color: BRAND_COLORS.themeDark },
+  ],
 };
 
 export default async function RootLayout({
@@ -65,7 +76,9 @@ export default async function RootLayout({
       <body
         className={`${poppins.variable} ${bebasNeue.variable} ${outfit.variable} antialiased`}
       >
+        {/* Organization + WebSite structured data for rich search results */}
         <StructuredData data={organizationSchema()} />
+        <StructuredData data={webSiteSchema()} />
         <GrainOverlay />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider>

@@ -1,12 +1,23 @@
-"use client";
+import type { Metadata } from "next";
+import { PAGE_METADATA_CONFIGS } from "@/features/seo/metadata";
+import OrdersPageClient from "./OrdersPageClient";
 
-import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import OrdersContent from "@/features/orders/ui/OrdersContent";
+/**
+ * /orders Route - Order History
+ *
+ * Protected route for viewing past orders and tracking shipments.
+ * SEO: noindex (user-specific content)
+ */
+
+export const metadata: Metadata = {
+  title: PAGE_METADATA_CONFIGS.orders.title,
+  description: PAGE_METADATA_CONFIGS.orders.description,
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function OrdersPage() {
-  return (
-    <ProtectedRoute>
-      <OrdersContent />
-    </ProtectedRoute>
-  );
+  return <OrdersPageClient />;
 }

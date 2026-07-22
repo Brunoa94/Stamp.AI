@@ -1,6 +1,24 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
+
+/**
+ * /auth/auth-code-error Route - Authentication Error
+ *
+ * Error recovery page for failed authentication attempts.
+ * SEO: noindex (error/utility page)
+ */
+
+export const metadata: Metadata = {
+  title: "Authentication Error | Stamp AI",
+  description:
+    "There was an issue with your authentication request. Please try again or request a new link.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function AuthCodeErrorPage() {
   const t = useTranslations("auth.authCodeError");

@@ -1,14 +1,23 @@
-"use client";
+import type { Metadata } from "next";
+import { PAGE_METADATA_CONFIGS } from "@/features/seo/metadata";
+import CheckoutPageClient from "./CheckoutPageClient";
 
-import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { CheckoutContent } from "@/features/checkout/ui/CheckoutContent";
-import { CheckoutLoadingSection } from "@/features/checkout/ui/sections/CheckoutLoadingSection";
-import "@/features/checkout/ui/checkout.css";
+/**
+ * /checkout Route - Secure Checkout
+ *
+ * Protected route for completing purchases.
+ * SEO: noindex (user-specific, transactional content)
+ */
+
+export const metadata: Metadata = {
+  title: PAGE_METADATA_CONFIGS.checkout.title,
+  description: PAGE_METADATA_CONFIGS.checkout.description,
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function CheckoutPage() {
-  return (
-    <ProtectedRoute fallback={<CheckoutLoadingSection />}>
-      <CheckoutContent />
-    </ProtectedRoute>
-  );
+  return <CheckoutPageClient />;
 }
