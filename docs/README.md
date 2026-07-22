@@ -371,7 +371,7 @@ When implementing error handling, ensure:
 - **Documentation**: Do not create new markdown files for every change. Update existing documentation when appropriate.
 - **Code reviews**: Follow established patterns in the codebase.
 - **Consistency**: Maintain consistency with the Feature-Sliced Design architecture.
-- **No usage of index.ts**: Don't use index.ts for the files exports.
+- **No barrel exports**: Do not use `index.ts` files for re-exporting. Import directly from specific files instead of using barrel files. This improves tree-shaking, reduces circular dependencies, and makes imports explicit.
 
 ---
 

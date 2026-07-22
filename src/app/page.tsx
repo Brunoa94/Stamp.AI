@@ -3,31 +3,16 @@ import { getTranslations } from "next-intl/server";
 import { HomepageContent } from "@/features/homepage/ui/HomepageContent";
 import { getCachedProductsWithPricing } from "@/lib/supabase/server-cache";
 import { StructuredData } from "@/features/seo/StructuredData";
-import {
-  faqPageSchema,
-  serviceSchema,
-  howToSchema,
-} from "@/features/seo/jsonLd";
-import { generatePageMetadata } from "@/features/seo/metadata";
-import { PAGE_KEYWORDS, SITE_URL } from "@/features/seo/config";
+import { faqPageSchema } from "@/features/seo/schemas/faq";
+import { serviceSchema } from "@/features/seo/schemas/service";
+import { howToSchema } from "@/features/seo/schemas/howto";
+import { generatePageMetadata } from "@/features/seo/metadata/pageMetadata";
+import { PAGE_KEYWORDS } from "@/features/seo/config/keywords";
+import { SITE_URL } from "@/features/seo/config/site";
 import { HOME_FAQS } from "@/features/homepage/lib/constants/homepageContent";
 
-/**
- * Homepage - Main landing page
- *
- * SEO optimized with:
- * - Rich Open Graph and Twitter Cards
- * - FAQ structured data for rich snippets
- * - Service schema for brand visibility
- * - HowTo schema for the design process
- */
-
-// Revalidate page every 30 minutes for fresh content
 export const revalidate = 1800;
 
-/**
- * Homepage metadata with full SEO optimization
- */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("home.meta");
 
@@ -49,13 +34,11 @@ export default async function Home() {
   const tFaq = await getTranslations("home.faq.items");
   const tProcess = await getTranslations("home.process.steps");
 
-  // Build FAQ entries for structured data
   const faqEntries = HOME_FAQS.map(({ id }) => ({
     question: tFaq(`${id}.question`),
     answer: tFaq(`${id}.answer`),
   }));
 
-  // Build HowTo steps for the design process
   const howToSteps = [
     {
       name: tProcess("step-studio.title"),
@@ -85,11 +68,8 @@ export default async function Home() {
 
   return (
     <>
-      {/* FAQ structured data for rich snippets in search results */}
       <StructuredData data={faqPageSchema(faqEntries)} />
-      {/* Service schema for brand visibility */}
       <StructuredData data={serviceSchema()} />
-      {/* HowTo schema for the design process */}
       <StructuredData data={howToSchema(howToSteps)} />
       <HomepageContent productsWithPricing={productsWithPricing} />
     </>

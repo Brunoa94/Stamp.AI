@@ -1,16 +1,8 @@
-/**
- * StructuredData
- *
- * Renders a JSON-LD <script> for the given schema.org object. The payload is
- * first-party data we build ourselves (see jsonLd.ts), so the serialized JSON
- * is safe to inline.
- */
-
-interface StructuredDataProps {
+interface PropsI {
   data: Record<string, unknown>;
 }
 
-export function StructuredData({ data }: StructuredDataProps) {
+export function StructuredData({ data }: PropsI) {
   return (
     <script
       type="application/ld+json"

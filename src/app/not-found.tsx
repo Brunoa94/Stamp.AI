@@ -2,14 +2,7 @@ import type { Metadata } from "next";
 import { notFoundTheme } from "@/theme/components";
 import { HelpCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { PAGE_METADATA_CONFIGS } from "@/features/seo/metadata";
-
-/**
- * 404 Not Found Page
- *
- * Catch-all error page for non-existent routes.
- * SEO: noindex (error page, no value for search engines)
- */
+import { PAGE_METADATA_CONFIGS } from "@/features/seo/metadata/pageConfigs";
 
 export const metadata: Metadata = {
   title: PAGE_METADATA_CONFIGS.notFound.title,

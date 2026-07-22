@@ -1,13 +1,6 @@
 import type { Metadata } from "next";
-import { PAGE_METADATA_CONFIGS } from "@/features/seo/metadata";
+import { PAGE_METADATA_CONFIGS } from "@/features/seo/metadata/pageConfigs";
 import OrdersPageClient from "./OrdersPageClient";
-
-/**
- * /orders Route - Order History
- *
- * Protected route for viewing past orders and tracking shipments.
- * SEO: noindex (user-specific content)
- */
 
 export const metadata: Metadata = {
   title: PAGE_METADATA_CONFIGS.orders.title,

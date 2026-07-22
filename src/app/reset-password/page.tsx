@@ -3,14 +3,7 @@ import { Suspense } from "react";
 import { useTranslations } from "next-intl";
 import { PasswordResetConfirmForm } from "@/features/auth/passwordReset/passwordResetConfirm/PasswordResetConfirmForm";
 import { PasswordResetConfirmSkeleton } from "@/features/auth/passwordReset/passwordResetConfirm/PasswordResetConfirmSkeleton";
-import { PAGE_METADATA_CONFIGS } from "@/features/seo/metadata";
-
-/**
- * /reset-password Route - Password Reset
- *
- * Public utility page for password recovery.
- * SEO: noindex (transactional/utility page)
- */
+import { PAGE_METADATA_CONFIGS } from "@/features/seo/metadata/pageConfigs";
 
 export const metadata: Metadata = {
   title: PAGE_METADATA_CONFIGS.resetPassword.title,

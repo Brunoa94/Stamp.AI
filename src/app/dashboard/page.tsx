@@ -1,13 +1,6 @@
 import type { Metadata } from "next";
-import { PAGE_METADATA_CONFIGS } from "@/features/seo/metadata";
+import { PAGE_METADATA_CONFIGS } from "@/features/seo/metadata/pageConfigs";
 import DashboardPageClient from "./DashboardPageClient";
-
-/**
- * /dashboard Route - User Dashboard
- *
- * Protected route for viewing saved designs and account overview.
- * SEO: noindex (user-specific content)
- */
 
 export const metadata: Metadata = {
   title: PAGE_METADATA_CONFIGS.dashboard.title,

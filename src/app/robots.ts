@@ -1,16 +1,7 @@
 import { MetadataRoute } from "next";
-import { SITE_URL, DISALLOW_PATHS } from "@/features/seo/config";
+import { SITE_URL } from "@/features/seo/config/site";
+import { DISALLOW_PATHS } from "@/features/seo/config/routes";
 
-/**
- * Dynamic robots.txt generation
- *
- * Controls how search engines crawl the site.
- * - Allows crawling of public pages
- * - Disallows crawling of private/user-specific pages
- * - Points to sitemap for efficient indexing
- *
- * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/robots
- */
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
@@ -19,7 +10,6 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         disallow: [...DISALLOW_PATHS],
       },
-      // Block specific bots that are resource-intensive
       {
         userAgent: "GPTBot",
         disallow: "/",

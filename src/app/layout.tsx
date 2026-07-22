@@ -10,14 +10,14 @@ import { SupabaseAuthProvider } from "@/providers/SupabaseAuthProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { GrainOverlay } from "@/features/layout/brutalist/GrainOverlay";
 import { StructuredData } from "@/features/seo/StructuredData";
-import { organizationSchema, webSiteSchema } from "@/features/seo/jsonLd";
-import { generateRootMetadata } from "@/features/seo/metadata";
-import { BRAND_COLORS } from "@/features/seo/config";
+import { organizationSchema } from "@/features/seo/schemas/organization";
+import { webSiteSchema } from "@/features/seo/schemas/website";
+import { generateRootMetadata } from "@/features/seo/metadata/rootMetadata";
+import { BRAND_COLORS } from "@/features/seo/config/site";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { AppLayoutChrome } from "@/components/AppLayoutChrome";
 
-// Body font (Poppins for clean, modern body text)
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
@@ -26,7 +26,6 @@ const poppins = Poppins({
   preload: true,
 });
 
-// Retro heading font (Bebas Neue for display text)
 const bebasNeue = Bebas_Neue({
   weight: "400",
   variable: "--font-bebas-neue",
@@ -35,7 +34,6 @@ const bebasNeue = Bebas_Neue({
   preload: true,
 });
 
-// Primary heading font (Outfit for headings and UI text)
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
@@ -44,15 +42,8 @@ const outfit = Outfit({
   preload: true,
 });
 
-/**
- * Root metadata configuration
- * Includes comprehensive SEO settings following e-commerce best practices
- */
 export const metadata: Metadata = generateRootMetadata();
 
-/**
- * Viewport configuration for mobile optimization
- */
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
@@ -76,7 +67,6 @@ export default async function RootLayout({
       <body
         className={`${poppins.variable} ${bebasNeue.variable} ${outfit.variable} antialiased`}
       >
-        {/* Organization + WebSite structured data for rich search results */}
         <StructuredData data={organizationSchema()} />
         <StructuredData data={webSiteSchema()} />
         <GrainOverlay />
