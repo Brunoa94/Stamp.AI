@@ -1,0 +1,23 @@
+{
+  "name": "Stamp AI",
+  "short_name": "Stamp AI",
+  "description": "Type a prompt or upload your own photo, then put it on good t-shirts, hoodies, and prints built to last.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["shopping", "lifestyle"],
+  "orientation": "portrait-primary"
+}

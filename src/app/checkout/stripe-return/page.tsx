@@ -9,7 +9,7 @@ import StripeReturnClient from "./StripeReturnClient";
  */
 
 export const metadata: Metadata = {
-  title: "Processing Payment | Stamp AI",
+  title: "Processing Payment",
   description: "Processing your Stripe payment. Please wait...",
   robots: {
     index: false,
