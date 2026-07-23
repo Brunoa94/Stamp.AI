@@ -1,10 +1,32 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import {
+  generateRequestId,
+  getRequestIdFromHeaders,
+  REQUEST_ID_HEADER,
+} from '@/lib/observability/requestId'
 
 export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
+  // ── Request ID ──────────────────────────────────────────────────────────────
+  // Generate or extract request ID for correlation across the request lifecycle
+  const requestId = getRequestIdFromHeaders(request.headers) || generateRequestId()
+
+  // Clone the request with the request ID header
+  const requestWithId = new Request(request.url, {
+    method: request.method,
+    headers: new Headers(request.headers),
+    body: request.body,
+    // @ts-expect-error - duplex is required for streaming bodies
+    duplex: 'half',
   })
+  requestWithId.headers.set(REQUEST_ID_HEADER, requestId)
+
+  let supabaseResponse = NextResponse.next({
+    request: requestWithId,
+  })
+
+  // Add request ID to response headers for client-side correlation
+  supabaseResponse.headers.set(REQUEST_ID_HEADER, requestId)
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
