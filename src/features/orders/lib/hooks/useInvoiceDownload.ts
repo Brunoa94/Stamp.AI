@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { useGenerateInvoice, useOrderInvoice } from "@/queries";
+import { useGenerateInvoice, useOrderInvoice } from "@/queries/invoiceQueries";
 import { InvoiceService } from "@/services/invoiceService";
 
 interface UseInvoiceDownloadOptions {

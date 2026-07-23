@@ -1,7 +1,7 @@
 import type { Database } from "@/types/database.types";
 import type { OrderWithItemsT, CreateOrderT } from "@/types/order";
 import type { CartItem } from "@/types/cart";
-import type { UserI } from "@/types/auth";
+import type { UserI } from "../../../supabase/types";
 import type { ShippingAddressT } from "@/schemas/checkout";
 
 type OrderRow = Database['public']['Tables']['orders']['Row'];

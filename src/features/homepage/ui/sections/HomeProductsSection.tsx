@@ -42,8 +42,8 @@ export function HomeProductsSection({ products }: HomeProductsSectionPropsI) {
           </Span>
         ) : (
           <div className="grid grid-cols-2 gap-4 sm:gap-8 lg:grid-cols-4 lg:gap-12">
-            {displayedProducts.map((product) => (
-              <HomeProductCard key={product.blueprintId} product={product} />
+            {displayedProducts.map((product, index) => (
+              <HomeProductCard key={product.blueprintId} product={product} index={index} />
             ))}
           </div>
         )}

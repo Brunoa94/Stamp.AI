@@ -17,6 +17,17 @@ const eslintConfig = defineConfig([
   {
     files: ["src/**/*.ts", "src/**/*.tsx"],
     rules: {
+      // Warn on unused imports and variables
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          vars: "all",
+          varsIgnorePattern: "^_",
+          args: "after-used",
+          argsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
       // Disallow barrel exports (index.ts files)
       "no-restricted-syntax": [
         "error",

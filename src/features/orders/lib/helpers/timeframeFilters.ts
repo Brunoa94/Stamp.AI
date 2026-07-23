@@ -1,14 +1,6 @@
 import type { OrderTimeframeFilterT } from "@/types/order";
 import type { OrdersTimeFilterType } from "../types/filters";
 
-export function mapTimeFilterToOrderTimeframe(
-  value: OrdersTimeFilterType,
-): OrderTimeframeFilterT {
-  if (value === "30") return "last-30";
-  if (value === "90") return "last-90";
-  if (value === "2023") return "2023";
-  return "all-time";
-}
 
 export function isWithinTimeframe(
   dateString: string | null,

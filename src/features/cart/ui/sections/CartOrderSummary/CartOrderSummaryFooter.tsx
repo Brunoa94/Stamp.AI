@@ -5,9 +5,7 @@
  * reassurance beneath the cart summary breakdown.
  */
 
-"use client";
-
-import { ArrowRight, Truck, ShieldCheck } from "lucide-react";
+import { ArrowRight, Truck } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 

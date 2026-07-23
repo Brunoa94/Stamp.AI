@@ -57,15 +57,7 @@ const VariantSchema = z.object({
 }).passthrough();
 
 // Primary cart item schema with relations (use this for validation)
-export const CartItemSchema = CartItemRowSchema.extend({
+const CartItemSchema = CartItemRowSchema.extend({
   product: ProductSchema.nullable().optional(),
   variant: VariantSchema.nullable().optional(),
 });
-
-export const CartWithItemsSchema = CartSchema.extend({
-  cart_items: z.array(CartItemSchema).default([]),
-});
-
-// Export inferred types from schemas for validation
-export type AddToCartInputSchema = z.infer<typeof addToCartSchema>;
-export type UpdateCartItemInputSchema = z.infer<typeof updateCartItemSchema>;

@@ -5,8 +5,6 @@
  * Supports inverted mode for dark backgrounds.
  */
 
-"use client";
-
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { cn } from "@/lib/utils";

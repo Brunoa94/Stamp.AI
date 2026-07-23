@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/features/ui/button";
 import { Input } from "@/features/ui/input";
 import { Label } from "@/features/ui/label";

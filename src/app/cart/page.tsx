@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
-import { PAGE_METADATA_CONFIGS } from "@/features/seo/metadata/pageConfigs";
 import CartPageClient from "./CartPageClient";
 
 export const metadata: Metadata = {
-  title: PAGE_METADATA_CONFIGS.cart.title,
-  description: PAGE_METADATA_CONFIGS.cart.description,
-  robots: {
-    index: false,
-    follow: false,
-  },
+  title: "Shopping Cart | Stamp AI",
+  description: "Review your custom AI-designed apparel before checkout.",
+  robots: { index: false, follow: false },
 };
 
 export default function CartPage() {

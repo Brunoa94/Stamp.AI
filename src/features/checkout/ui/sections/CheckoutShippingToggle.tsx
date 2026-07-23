@@ -5,8 +5,6 @@
  * context and the design-system Checkbox, styled to the luxury system.
  */
 
-"use client";
-
 import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { Checkbox } from "@/features/ui/checkbox";

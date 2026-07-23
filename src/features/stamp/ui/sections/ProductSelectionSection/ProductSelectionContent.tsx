@@ -2,7 +2,6 @@ import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
-import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
 
 /**

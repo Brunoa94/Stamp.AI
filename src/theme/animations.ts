@@ -53,8 +53,8 @@ export const animationClasses = {
 
 } as const;
 
-// CSS keyframes to be added to globals.css
-export const keyframes = `
+// CSS keyframes to be added to globals.css (kept for reference)
+const keyframes = `
   @keyframes bounceIn {
     0% { opacity: 0; transform: scale(0.3) rotate(-10deg); }
     50% { opacity: 1; transform: scale(1.05) rotate(5deg); }

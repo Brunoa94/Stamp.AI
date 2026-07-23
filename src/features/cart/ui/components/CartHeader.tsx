@@ -8,7 +8,6 @@
  */
 
 import { Heading } from "@/features/ui/heading";
-import { Span } from "@/features/ui/span";
 import { useTranslations } from "next-intl";
 
 interface CartHeaderPropsI {
@@ -17,7 +16,6 @@ interface CartHeaderPropsI {
 
 export function CartHeader({ itemCount }: CartHeaderPropsI) {
   const t = useTranslations("cart.header");
-  const itemText = itemCount === 1 ? "Item" : "Items";
 
   return (
     <header className="space-y-4 xl:col-span-12">

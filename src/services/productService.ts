@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/database.types";
 import type { CreatedProductT } from "@/types/customProduct";
-import { ProductServiceMapper, type SavePrintifyProductInput } from "@/mappers/services";
+import { ProductServiceMapper, type SavePrintifyProductInput } from "@/mappers/services/productServiceMapper";
 import { ErrorClient } from "./errorClient";
 
 type ProductInsert = Database['public']['Tables']['products']['Insert'];

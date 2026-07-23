@@ -1,15 +1,13 @@
 import { createClient } from "@/lib/supabase/client";
 import type { LoginI, RegisterI, PasswordResetRequestI, UpdateProfileI } from "@/schemas/auth";
-import type { UserI, SessionI, AuthResponseI } from "@/types/auth";
-import { AuthServiceMapper } from "@/mappers/services";
+import type { UserI, SessionI, AuthResponseI } from "../../supabase/types";
+import { AuthServiceMapper } from "@/mappers/services/authServiceMapper";
 import {
   SupabaseAuthResponseSchema,
   GetUserResponseSchema,
   GetSessionResponseSchema,
   UpdateUserResponseSchema,
-} from "@/schemas/services";
-import { z } from "zod";
-import type { User, Session } from "@supabase/supabase-js";
+} from "@/schemas/services/authServiceSchemas";
 import { ErrorClient } from "./errorClient";
 
 class AuthService {

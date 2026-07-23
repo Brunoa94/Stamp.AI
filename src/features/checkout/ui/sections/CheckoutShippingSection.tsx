@@ -5,7 +5,6 @@
  * useShippingAddress toggle. Uses the stamp-styled CheckoutAddressForm.
  */
 
-"use client";
 
 import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";

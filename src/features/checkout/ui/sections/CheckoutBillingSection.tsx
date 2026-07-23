@@ -5,7 +5,6 @@
  * inside the luxury brutalist section card.
  */
 
-"use client";
 
 import { useTranslations } from "next-intl";
 import { CheckoutAddressForm } from "../components/CheckoutAddressForm";

@@ -80,7 +80,7 @@ type RegularButtonProps = BaseButtonProps & {
 };
 
 // Union type: if size is icon variant, aria-label is required
-export type ButtonProps = IconButtonProps | RegularButtonProps;
+type ButtonProps = IconButtonProps | RegularButtonProps;
 
 function Button({
   className,
@@ -118,4 +118,4 @@ function Button({
   );
 }
 
-export { Button, buttonVariants };
+export { Button };

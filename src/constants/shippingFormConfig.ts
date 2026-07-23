@@ -1,7 +1,7 @@
 import { ShippingAddressT } from "@/schemas/checkout";
 import { getCountrySelectOptions } from "./countries";
 
-export interface FieldConfig {
+interface FieldConfig {
   /**
    * Field id. Also the i18n key for the label: rendered via
    * `checkout.addressForm.fields.<id>` at the form site.

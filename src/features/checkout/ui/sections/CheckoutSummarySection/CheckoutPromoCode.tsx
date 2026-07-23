@@ -5,7 +5,6 @@
  * only — validation/state is owned by useCheckoutPricing upstream.
  */
 
-"use client";
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";

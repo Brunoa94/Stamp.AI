@@ -33,15 +33,18 @@ export const HOME_HERO_IMAGES = [
   "/home/6-b.png",
 ];
 
-// Hero parallax configuration
-export const HOME_HERO_PARALLAX_CONFIG = {
-  textFactor: 0.4,
-  imageFactor: 0.2,
-  blobFactors: [0.15, 0.1, 0.12] as const,
-  fadeDistance: 500,
-  scaleMin: 0.85,
-  scaleDistance: 2000,
-} as const;
+// Hero product grid - grouped image sets for each square
+// Each set cycles independently with staggered timing
+export const HERO_PRODUCT_SETS: string[][] = [
+  // Top-right (large) - products 1 & 2
+  ["/home/1-a.png", "/home/1-b.png", "/home/2-a.png", "/home/2-b.png"],
+  // Middle-left (medium) - products 3 & 4
+  ["/home/3-a.png", "/home/3-b.png", "/home/4-a.png", "/home/4-b.png"],
+  // Bottom-right (medium) - products 5 & 6
+  ["/home/5-a.png", "/home/5-b.png", "/home/6-a.png", "/home/6-b.png"],
+  // Bottom-left (small) - mix of all
+  ["/home/1-a.png", "/home/3-a.png", "/home/5-a.png", "/home/2-a.png"],
+];
 
 // Display copy lives in messages (home.process.steps.<id>); only structural
 // fields remain here.
@@ -149,12 +152,6 @@ export const HOME_HERO_TRUST: HomeTrustIndicatorType[] = [
   "instantDelivery",
 ];
 
-export const HOME_CTA_TRUST: HomeTrustIndicatorType[] = [
-  "fiveSevenDayDelivery",
-  "thirtyDayGuarantee",
-  "carbonNeutral",
-];
-
 // Display copy lives in messages (home.guarantees.items.<id>).
 // Icons are lucide-react icon names.
 export type HomeTrustGuaranteeType = {
@@ -168,18 +165,6 @@ export const HOME_TRUST_GUARANTEES: HomeTrustGuaranteeType[] = [
   { id: "securePayment", icon: "Lock" },
   { id: "freeShipping", icon: "Truck" },
 ];
-
-// Payment methods displayed in the trust section
-export const HOME_PAYMENT_METHODS = [
-  "visa",
-  "mastercard",
-  "amex",
-  "paypal",
-  "applepay",
-  "googlepay",
-] as const;
-
-export type HomePaymentMethodType = (typeof HOME_PAYMENT_METHODS)[number];
 
 export type HomePlatformConfigType = {
   color: string;

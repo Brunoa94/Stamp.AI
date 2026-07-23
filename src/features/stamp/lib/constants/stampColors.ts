@@ -12,7 +12,7 @@ import type { SizeType } from "../types/stampTypes";
  * Standard size ordering for sorting API-returned sizes
  * Lower index = appears first in the size selector
  */
-export const SIZE_ORDER: Record<string, number> = {
+const SIZE_ORDER: Record<string, number> = {
   // Apparel sizes (standard order)
   XS: 1,
   S: 2,
@@ -57,7 +57,7 @@ export const STAMP_SIZES: SizeType[] = ["XS", "S", "M", "L", "XL", "XXL"];
 /**
  * Default size for apparel products
  */
-export const DEFAULT_SIZE: SizeType = "M";
+const DEFAULT_SIZE: SizeType = "M";
 
 /**
  * Get the default/recommended size for a given list of available sizes

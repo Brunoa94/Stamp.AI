@@ -45,7 +45,7 @@ const headingVariants = {
   priceMini: "font-heading font-black text-base tracking-tight uppercase",
 } as const;
 
-export type HeadingVariant = keyof typeof headingVariants;
+type HeadingVariant = keyof typeof headingVariants;
 type HeadingTag = "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "div" | "span";
 
 interface HeadingProps {

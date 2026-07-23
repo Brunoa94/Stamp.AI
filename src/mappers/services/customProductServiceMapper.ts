@@ -1,4 +1,4 @@
-import type { CreateProductPayloadT, CreatedProductT, UploadImageRequestI } from "@/types/customProduct";
+import type { CreatedProductT, UploadImageRequestI } from "@/types/customProduct";
 
 export class CustomProductServiceMapper {
   private static isDataUrl(value: string): boolean {

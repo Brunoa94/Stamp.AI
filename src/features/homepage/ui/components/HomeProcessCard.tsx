@@ -1,5 +1,3 @@
-"use client";
-
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";

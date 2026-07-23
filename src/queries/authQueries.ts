@@ -8,12 +8,12 @@ import type {
   RegisterI,
   UpdateProfileI,
 } from "@/schemas/auth";
-import { AuthResponseI, UserI } from "@/types/api";
+import { AuthResponseI, UserI } from "../../supabase/types";
 import { useRouter } from "next/navigation";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 // Query keys
-export const authKeys = {
+const authKeys = {
   all: ["auth"] as const,
   user: () => [...authKeys.all, "user"] as const,
   session: () => [...authKeys.all, "session"] as const,
@@ -30,18 +30,6 @@ export function useUser() {
   return useQuery({
     queryKey: authKeys.user(),
     queryFn: AuthService.getUser,
-    retry: false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-}
-
-/**
- * Get current session
- */
-export function useSession() {
-  return useQuery({
-    queryKey: authKeys.session(),
-    queryFn: AuthService.getSession,
     retry: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -199,25 +187,6 @@ export function useUpdatePassword() {
       AuthService.updatePassword(newPassword),
     onSuccess: () => {
       handleSuccess("Password updated successfully");
-    },
-    onError: (error: Error) => {
-      handleError(error);
-    },
-  });
-}
-
-/**
- * Resend email verification
- */
-export function useResendEmailVerification() {
-  const { handleError, handleSuccess } = useErrorHandler();
-
-  return useMutation({
-    mutationFn: (email: string): Promise<void> => {
-      return AuthService.resendEmailVerification(email);
-    },
-    onSuccess: () => {
-      handleSuccess("Verification email sent - Please check your email.");
     },
     onError: (error: Error) => {
       handleError(error);

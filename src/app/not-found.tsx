@@ -1,17 +1,6 @@
-import type { Metadata } from "next";
 import { notFoundTheme } from "@/theme/components";
 import { HelpCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { PAGE_METADATA_CONFIGS } from "@/features/seo/metadata/pageConfigs";
-
-export const metadata: Metadata = {
-  title: PAGE_METADATA_CONFIGS.notFound.title,
-  description: PAGE_METADATA_CONFIGS.notFound.description,
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
 
 export default function NotFound() {
   const t = useTranslations("common.notFound");

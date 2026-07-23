@@ -1,6 +1,6 @@
 import { PromoCodeService } from "@/services/promocodeService";
 import { ErrorClient } from "@/services/errorClient";
-import type { PromoCodeValidationResult } from "@/types/promocode";
+import type { PromoCodeValidationResult } from "@/schemas/promocode";
 
 /**
  * CheckoutPromoCodeService

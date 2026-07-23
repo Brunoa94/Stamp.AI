@@ -1,5 +1,4 @@
-import type { ShippingAddressI } from "@/types/api";
-import { profileTheme } from "@/theme";
+import type { ShippingAddressI } from "../../../../../../supabase/types";
 import { useTranslations } from "next-intl";
 
 interface AddressDisplayProps {

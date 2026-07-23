@@ -8,8 +8,6 @@
  * validation or field logic is duplicated.
  */
 
-"use client";
-
 import { useTranslations } from "next-intl";
 import { useValidationMessage } from "@/hooks/useValidationMessage";
 import { useFormContext } from "react-hook-form";

@@ -66,18 +66,3 @@ export const colors = {
   info: "text-blue-600 bg-blue-50 border-blue-200",
 } as const;
 
-export const gradientText = (gradient: string) =>
-  `${gradient} bg-clip-text text-transparent bg-[length:200%_200%]`;
-
-export const glowEffect = (color: string) =>
-  `drop-shadow-[0_0_10px_${color}] filter`;
-
-export const colorfulBorder = "bg-linear-to-r from-slate-500 via-gray-500 to-slate-600 p-[2px] rounded-lg";
-
-export const hoverGlow = {
-  slate: "hover:shadow-lg hover:shadow-slate-500/50 transition-shadow duration-300",
-  gray: "hover:shadow-lg hover:shadow-gray-500/50 transition-shadow duration-300",
-  neutral: "hover:shadow-lg hover:shadow-slate-500/50 transition-shadow duration-300",
-  subtle: "hover:shadow-xl hover:shadow-gray-500/30 transition-all duration-300",
-  purple: "hover:shadow-3xl hover:shadow-purple-500/60 transition-all duration-300",
-} as const;

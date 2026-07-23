@@ -54,12 +54,3 @@ export function CheckoutFormProvider({
   );
 }
 
-export function useCheckoutFormContext() {
-  const context = useContext(CheckoutFormContext);
-  if (!context) {
-    throw new Error(
-      "useCheckoutFormContext must be used within CheckoutFormProvider"
-    );
-  }
-  return context;
-}

@@ -1,13 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { StripeService } from "@/services/stripeService";
-import type {
-  CreatePaymentIntentPayloadI,
-  CreatePaymentIntentResponseI
-} from "@/types/payment";
-
-// Re-export types for backward compatibility
-export type { CreatePaymentIntentPayloadI, CreatePaymentIntentResponseI };
+import type { CreatePaymentIntentPayloadI } from "@/types/payment";
 
 export function useCreatePaymentIntent() {
   const { handleError } = useErrorHandler();
