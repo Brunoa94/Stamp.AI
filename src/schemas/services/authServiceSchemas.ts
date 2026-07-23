@@ -8,7 +8,7 @@ import { z } from "zod";
 /**
  * Schema for Supabase User metadata
  */
-export const SupabaseUserMetadataSchema = z.object({
+const SupabaseUserMetadataSchema = z.object({
   first_name: z.string().optional(),
   last_name: z.string().optional(),
   avatar_url: z.string().url().optional(),
@@ -17,7 +17,7 @@ export const SupabaseUserMetadataSchema = z.object({
 /**
  * Schema for Supabase User object
  */
-export const SupabaseUserSchema = z.object({
+const SupabaseUserSchema = z.object({
   id: z.string(),
   email: z.string().email().optional(),
   user_metadata: SupabaseUserMetadataSchema.optional(),
@@ -34,7 +34,7 @@ export const SupabaseUserSchema = z.object({
 /**
  * Schema for Supabase Session object
  */
-export const SupabaseSessionSchema = z.object({
+const SupabaseSessionSchema = z.object({
   access_token: z.string(),
   refresh_token: z.string(),
   expires_in: z.number(),

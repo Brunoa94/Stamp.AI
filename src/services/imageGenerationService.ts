@@ -1,9 +1,9 @@
 import { IImageGenerationResult } from "@/schemas/productCreateSchema";
-import { ImageGenerationResponseSchema } from "@/schemas/services";
+import { ImageGenerationResponseSchema } from "@/schemas/services/imageGenerationServiceSchemas";
 import {
   ImageGenerationServiceMapper,
   type ImageGenerationRequestPayload,
-} from "@/mappers/services";
+} from "@/mappers/services/imageGenerationServiceMapper";
 import { POST } from "./apiClient";
 import { z } from "zod";
 import { ErrorClient } from "./errorClient";

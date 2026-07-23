@@ -1,7 +1,84 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { applySecurityHeaders } from '@/lib/security/headers'
+import { checkCombinedRateLimit } from '@/lib/security/rate-limiter/check'
+import { RATE_LIMIT_CONFIGS, type RateLimitType } from '@/lib/security/rate-limiter/configs'
+
+/**
+ * Determine the rate limit type based on the request path
+ */
+function getRateLimitType(pathname: string): RateLimitType | null {
+  // Auth endpoints - strict rate limiting
+  if (pathname.startsWith('/auth') || pathname.startsWith('/api/auth')) {
+    return 'auth'
+  }
+
+  // Password reset - very strict
+  if (pathname.includes('password') || pathname.includes('reset-password')) {
+    return 'passwordReset'
+  }
+
+  // Image generation - expensive operation
+  if (pathname.startsWith('/api/generate-image')) {
+    return 'imageGeneration'
+  }
+
+  // Payment endpoints
+  if (
+    pathname.startsWith('/api/paypal') ||
+    pathname.startsWith('/api/stripe') ||
+    pathname.includes('payment')
+  ) {
+    return 'payment'
+  }
+
+  // Webhook endpoints (from payment providers)
+  if (pathname.includes('webhook')) {
+    return 'webhook'
+  }
+
+  // Other API routes
+  if (pathname.startsWith('/api')) {
+    return 'api'
+  }
+
+  // Don't rate limit static pages
+  return null
+}
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  // ── Rate Limiting ─────────────────────────────────────────────────────────────
+  const rateLimitType = getRateLimitType(pathname)
+  let rateLimitResult: ReturnType<typeof checkCombinedRateLimit> | null = null
+
+  if (rateLimitType) {
+    const config = RATE_LIMIT_CONFIGS[rateLimitType]
+    rateLimitResult = checkCombinedRateLimit(request, pathname, config)
+
+    if (rateLimitResult.isLimited) {
+      const response = NextResponse.json(
+        {
+          error: config.message || 'Too many requests',
+          retryAfter: rateLimitResult.retryAfter,
+        },
+        { status: 429 }
+      )
+
+      // Add rate limit headers
+      Object.entries(rateLimitResult.headers).forEach(([key, value]: [string, string]) => {
+        response.headers.set(key, value)
+      })
+
+      // Apply security headers even to rate-limited responses
+      applySecurityHeaders(response)
+
+      return response
+    }
+  }
+
+  // ── Supabase Auth ─────────────────────────────────────────────────────────────
   let supabaseResponse = NextResponse.next({
     request,
   })
@@ -55,6 +132,16 @@ export async function middleware(request: NextRequest) {
   //    return myNewResponse
   // If this is not done, you may be causing the browser and server to go out
   // of sync and terminate the user's session prematurely!
+
+  // ── Apply Security Headers ────────────────────────────────────────────────────
+  applySecurityHeaders(supabaseResponse)
+
+  // Add rate limit headers to successful responses (reuse earlier result to avoid double-counting)
+  if (rateLimitResult) {
+    Object.entries(rateLimitResult.headers).forEach(([key, value]: [string, string]) => {
+      supabaseResponse.headers.set(key, value)
+    })
+  }
 
   return supabaseResponse
 }

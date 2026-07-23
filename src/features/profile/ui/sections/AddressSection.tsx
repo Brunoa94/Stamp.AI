@@ -2,12 +2,16 @@
 
 import { MapPin } from "lucide-react";
 import { Button } from "@/features/ui/button";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
 import { useAddressForm } from "@/features/profile/lib/hooks/useAddressForm";
 import { AddressFormFields } from "./address/AddressFormFields";
 import { AddressFormActions } from "./address/AddressFormActions";
 import { AddressDisplay } from "./address/AddressDisplay";
+import { useTranslations } from "next-intl";
 
 export function AddressSection() {
+  const t = useTranslations("profile.address");
   const {
     form,
     isEditing,
@@ -30,12 +34,16 @@ export function AddressSection() {
             <MapPin className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-anton uppercase tracking-tight text-ink leading-tight mb-1">
-              SHIPPING ADDRESS
-            </h2>
-            <p className="text-slate-500 text-sm">
-              {hasAddress ? "Your default shipping address" : "Add your shipping address"}
-            </p>
+            <Heading
+              as="h2"
+              variant="cardCompact"
+              className="text-xl text-ink mb-1"
+            >
+              {t("title")}
+            </Heading>
+            <Paragraph variant="sm" className="text-slate-500 text-sm">
+              {hasAddress ? t("subtitleHasAddress") : t("subtitleNoAddress")}
+            </Paragraph>
           </div>
         </div>
         {!isEditing && (
@@ -44,7 +52,7 @@ export function AddressSection() {
             variant="brutalist-ghost"
             className="text-[10px]"
           >
-            {hasAddress ? "EDIT ADDRESS" : "ADD ADDRESS"}
+            {hasAddress ? t("editAddress") : t("addAddress")}
           </Button>
         )}
       </div>
@@ -62,9 +70,9 @@ export function AddressSection() {
       ) : hasAddress && savedAddress ? (
         <AddressDisplay address={savedAddress} />
       ) : (
-        <p className="text-sm text-slate-500 italic">
-          No shipping address saved. Click "Add Address" to add one.
-        </p>
+        <Paragraph variant="sm" className="text-sm text-slate-500 italic">
+          {t("emptyState")}
+        </Paragraph>
       )}
     </section>
   );

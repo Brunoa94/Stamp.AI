@@ -1,9 +1,10 @@
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { ShippingAddressT } from "@/schemas/checkout";
 import { mapShippingAddressToBillingDetails } from "@/mappers/mapShippingAddressToBillingDetails";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
-import { useCreatePaymentIntent } from "@/queries";
+import { useCreatePaymentIntent } from "@/queries/stripeQueries";
 
 interface UsePaymentFormProps {
   amount: number;
@@ -35,6 +36,7 @@ export function usePaymentForm({
   onSuccess,
   onError,
 }: UsePaymentFormProps) {
+  const t = useTranslations("checkout.paymentForm");
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -45,14 +47,14 @@ export function usePaymentForm({
 
   const processPayment = async () => {
     if (!stripe) {
-      const notReadyMessage = "Stripe is not ready yet. Please wait a moment and try again.";
+      const notReadyMessage = t("stripeNotReady");
       setError(notReadyMessage);
       onError?.(notReadyMessage);
       return;
     }
 
     if (!elements && !isTestMode) {
-      const missingElementMessage = "Payment form is not ready. Please refresh the page and try again.";
+      const missingElementMessage = t("formNotReady");
       setError(missingElementMessage);
       onError?.(missingElementMessage);
       return;
@@ -67,9 +69,9 @@ export function usePaymentForm({
         currency: "usd",
         line_items: lineItems,
         shipping_address: shippingAddress,
-        metadata: {
-          order_id: `order_${Date.now()}`,
-        },
+        // Note: order_id is NOT set here because the order doesn't exist yet.
+        // The order is created after payment succeeds, then linkPaymentTransactionToOrder
+        // sets payment_transactions.order_id which the webhook uses to find the order.
       };
 
       if (isTestMode) {
@@ -86,13 +88,20 @@ export function usePaymentForm({
       const { clientSecret, paymentIntentId } = paymentData;
 
       if (isTestMode && requestBody.confirm) {
-        onSuccess?.({ id: paymentIntentId, status: "succeeded" }, lineItems);
+        onSuccess?.(
+          {
+            id: paymentIntentId,
+            status: "succeeded",
+            client_secret: clientSecret,
+          },
+          lineItems
+        );
         return;
       }
 
       const cardElement = elements!.getElement(CardElement);
       if (!cardElement) {
-        throw new Error("Card element not found");
+        throw new Error(t("cardElementNotFound"));
       }
 
       const { error: confirmError, paymentIntent } =
@@ -112,7 +121,7 @@ export function usePaymentForm({
       }
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "Payment failed";
+        err instanceof Error ? err.message : t("paymentFailed");
       setError(errorMessage);
       onError?.(errorMessage);
     } finally {

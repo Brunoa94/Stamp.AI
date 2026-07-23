@@ -1,11 +1,13 @@
-import type { ShippingAddressI } from "@/types/api";
-import { profileTheme } from "@/theme";
+import type { ShippingAddressI } from "../../../../../../supabase/types";
+import { useTranslations } from "next-intl";
 
 interface AddressDisplayProps {
   address: ShippingAddressI;
 }
 
 export function AddressDisplay({ address }: AddressDisplayProps) {
+  const t = useTranslations("profile.addressDisplay");
+
   return (
     <div className="space-y-2">
       <p className="font-medium text-slate-900">
@@ -20,7 +22,7 @@ export function AddressDisplay({ address }: AddressDisplayProps) {
       </p>
       <p className="text-sm text-slate-600">{address.country}</p>
       {address.phone && (
-        <p className="text-sm text-slate-600">Phone: {address.phone}</p>
+        <p className="text-sm text-slate-600">{t("phone", { phone: address.phone })}</p>
       )}
     </div>
   );

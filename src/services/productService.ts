@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/database.types";
 import type { CreatedProductT } from "@/types/customProduct";
-import { ProductServiceMapper, type SavePrintifyProductInput } from "@/mappers/services";
+import { ProductServiceMapper, type SavePrintifyProductInput } from "@/mappers/services/productServiceMapper";
 import { ErrorClient } from "./errorClient";
 
 type ProductInsert = Database['public']['Tables']['products']['Insert'];
@@ -21,15 +21,12 @@ export class ProductService {
       id: fakeId,
       printify_product_id: input.printifyProductId,
       name: productData.name,
-      slug: productData.slug,
       description: productData.description,
-      base_price: productData.base_price,
       blueprint_id: productData.blueprint_id,
       print_provider_id: productData.print_provider_id,
       print_areas: productData.print_areas,
       is_active: productData.is_active,
-      is_featured: productData.is_featured,
-      currency: productData.currency,
+      user_id: productData.user_id,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     } as ProductRow;

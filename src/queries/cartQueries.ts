@@ -7,7 +7,7 @@ import { useErrorHandler } from "@/hooks/useErrorHandler";
 /**
  * Hook to get or create cart for current user/session
  */
-export function useCart() {
+function useCart() {
   const { data: user } = useUser();
   const userId = user?.id;
   const userEmail = user?.email;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { StripeService } from "@/services/stripeService";
 
@@ -24,6 +25,7 @@ export function useStripePayment({
   onSuccess,
   onError,
 }: UseStripePaymentProps): UseStripePaymentReturn {
+  const t = useTranslations("buyCredits.payment");
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -51,7 +53,7 @@ export function useStripePayment({
         // Get card element for confirmation
         const cardElement = elements.getElement(CardElement);
         if (!cardElement) {
-          throw new Error("Card element not found");
+          throw new Error(t("cardElementNotFound"));
         }
 
         // Confirm payment with Stripe
@@ -71,14 +73,14 @@ export function useStripePayment({
         }
       } catch (err) {
         const errorMessage =
-          err instanceof Error ? err.message : "Payment failed";
+          err instanceof Error ? err.message : t("paymentFailed");
         setError(errorMessage);
         onError(errorMessage);
       } finally {
         setLoading(false);
       }
     },
-    [stripe, elements, amount, credits, onSuccess, onError]
+    [stripe, elements, amount, credits, onSuccess, onError, t]
   );
 
   return {

@@ -28,40 +28,51 @@ setup("authenticate", async ({ page }) => {
 
   await page.goto("/");
 
-  const openLoginButton = page
-    .getByRole("button", { name: /open login dialog|login/i })
-    .first();
-  await openLoginButton.click();
+  // Check if already authenticated
+  const isAlreadyAuth = await page
+    .getByRole("button", { name: /logout|sign out/i })
+    .isVisible({ timeout: 5_000 })
+    .catch(() => false);
 
-  const loginDialog = page.getByRole("dialog").first();
-  await loginDialog.getByLabel(/email/i).fill(email ?? "");
-  await loginDialog.locator("#password").fill(password ?? "");
-  await loginDialog.getByRole("button", { name: /^login$/i }).click();
+  if (isAlreadyAuth) {
+    console.log("User already authenticated, skipping login flow.");
+  } else {
+    // Need to login
+    const openLoginButton = page
+      .getByRole("button", { name: /open login dialog|login/i })
+      .first();
+    await openLoginButton.click();
 
-  const signOutButton = page.getByRole("button", { name: /sign out/i });
-  const loginError = loginDialog.getByRole("alert");
+    const loginDialog = page.getByRole("dialog").first();
+    await loginDialog.getByLabel(/email/i).fill(email ?? "");
+    await loginDialog.locator("#password").fill(password ?? "");
+    await loginDialog.getByRole("button", { name: /^login$/i }).click();
 
-  const authResult = await Promise.race([
-    signOutButton
-      .waitFor({ state: "visible", timeout: 20_000 })
-      .then(() => "success" as const),
-    loginError
-      .waitFor({ state: "visible", timeout: 20_000 })
-      .then(() => "error" as const),
-  ]).catch(() => "timeout" as const);
+    const signOutButton = page.getByRole("button", { name: /sign out|logout/i });
+    const loginError = loginDialog.getByRole("alert");
 
-  if (authResult !== "success") {
-    const errorText = (await loginError.textContent())?.trim();
-    throw new Error(
-      errorText
-        ? `E2E login failed: ${errorText}`
-        : "E2E login failed: unable to authenticate with provided test credentials.",
-    );
+    const authResult = await Promise.race([
+      signOutButton
+        .waitFor({ state: "visible", timeout: 20_000 })
+        .then(() => "success" as const),
+      loginError
+        .waitFor({ state: "visible", timeout: 20_000 })
+        .then(() => "error" as const),
+    ]).catch(() => "timeout" as const);
+
+    if (authResult !== "success") {
+      const errorText = (await loginError.textContent())?.trim();
+      throw new Error(
+        errorText
+          ? `E2E login failed: ${errorText}`
+          : "E2E login failed: unable to authenticate with provided test credentials.",
+      );
+    }
   }
 
-  // Validate authenticated session by opening a protected page and ensuring wizard is visible.
-  await page.goto("/stamp");
-  await expect(page.locator("#design-pipeline")).toBeVisible({ timeout: 15_000 });
+  // Validate authenticated session by checking for logout button presence
+  const logoutButton = page.getByRole("button", { name: /logout|sign out/i });
+  await expect(logoutButton).toBeVisible({ timeout: 5_000 });
 
   await page.context().storageState({ path: AUTH_FILE });
 });

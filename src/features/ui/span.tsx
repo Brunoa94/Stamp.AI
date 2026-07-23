@@ -8,20 +8,30 @@ import { cn } from "@/lib/utils";
  * All other styling (color, margin, opacity) must come from the caller via `className`.
  *
  * Variants:
- * - sm       Section tag labels, column headings — 11px, tracking-[0.4em]
- * - default  Platform labels, breakdown headers, UI meta text — 10px, tracking-[0.4em]
- * - micro    Testimonial badges, scroll indicator, sub-titles — 9px, tracking-[0.3em]
- * - metric   Large metric display — 5xl-6xl, Anton font
+ * - sm         Section tag labels, column headings — sm, tracking-wide
+ * - default    Platform labels, breakdown headers, UI meta text — sm, tracking-wide
+ * - micro      Testimonial badges, scroll indicator, sub-titles — xs, tracking-wide
+ * - label      Section labels — 10px, tracking-[0.3em]
+ * - meta       Order meta, timestamps — 10px, tracking-[0.2em]
+ * - badge      Status badges — 10px, tracking-[0.15em]
+ * - value      Data values — xs→sm, tracking-[0.15em]
+ * - metric     Large metric display — 6xl-7xl, Anton font
+ * - serif      Serif-italic accent word inside headings — inherits size from parent
  */
 
 const spanVariants = {
-  sm: "font-space text-[11px] font-bold tracking-[0.4em] uppercase",
-  default: "font-space text-[10px] font-bold tracking-[0.4em] uppercase",
-  micro: "font-space text-[9px] font-bold tracking-[0.3em] uppercase",
-  metric: "font-anton text-5xl md:text-6xl uppercase tracking-tighter",
+  sm: "font-heading text-base font-semibold uppercase tracking-wide",
+  default: "font-heading text-sm font-semibold uppercase tracking-wide",
+  micro: "font-heading text-xs font-medium uppercase tracking-wide",
+  label: "font-heading text-[10px] font-bold uppercase tracking-[0.3em]",
+  meta: "font-heading text-[10px] font-bold uppercase tracking-[0.2em]",
+  badge: "font-heading text-[10px] font-bold uppercase tracking-[0.15em]",
+  value: "font-heading text-xs md:text-sm font-bold uppercase tracking-[0.15em]",
+  metric: "font-(family-name:--font-bebas-neue) text-7xl md:text-8xl uppercase tracking-tighter",
+  serif: "font-serif italic lowercase font-light",
 } as const;
 
-export type SpanVariant = keyof typeof spanVariants;
+type SpanVariant = keyof typeof spanVariants;
 type SpanTag = "span" | "p" | "div" | "footer" | "h6";
 
 interface SpanProps extends React.HTMLAttributes<HTMLElement> {

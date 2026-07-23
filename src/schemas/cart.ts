@@ -7,7 +7,7 @@ export const addToCartSchema = z.object({
   product_name: z.string().min(1, "Product name is required"),
   variant_id: z.string().nullable().optional(), // Printify variant ID (number as string)
   quantity: z.number().int().min(1, "Quantity must be at least 1").max(99, "Quantity cannot exceed 99"),
-  unit_price: z.number().positive("Unit price must be positive"),
+  unit_price: z.number().int().positive("Unit price must be a positive integer (in cents)"),
   custom_image_url: z.string().nullable().optional(), // Any string URL from user uploads
 });
 
@@ -57,15 +57,7 @@ const VariantSchema = z.object({
 }).passthrough();
 
 // Primary cart item schema with relations (use this for validation)
-export const CartItemSchema = CartItemRowSchema.extend({
+const CartItemSchema = CartItemRowSchema.extend({
   product: ProductSchema.nullable().optional(),
   variant: VariantSchema.nullable().optional(),
 });
-
-export const CartWithItemsSchema = CartSchema.extend({
-  cart_items: z.array(CartItemSchema).default([]),
-});
-
-// Export inferred types from schemas for validation
-export type AddToCartInputSchema = z.infer<typeof addToCartSchema>;
-export type UpdateCartItemInputSchema = z.infer<typeof updateCartItemSchema>;

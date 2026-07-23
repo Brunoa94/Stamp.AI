@@ -3,24 +3,27 @@
 import { Button } from "@/features/ui/button";
 import { Input } from "@/features/ui/input";
 import { Label } from "@/features/ui/label";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
 import { User, Save, X } from "lucide-react";
 import { useUserInformation } from "@/features/profile/lib/hooks/useUserInformation";
+import { useTranslations } from "next-intl";
 
 // Static field configuration outside component for performance
 const formFields = [
   {
     id: "first_name",
-    label: "First Name",
     key: "firstName" as const,
   },
   {
     id: "last_name",
-    label: "Last Name",
     key: "lastName" as const,
   },
 ] as const;
 
 export function UserInformationSection() {
+  const t = useTranslations("profile.userInformation");
   const {
     isEditing,
     firstName,
@@ -53,10 +56,16 @@ export function UserInformationSection() {
             <User className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-anton uppercase tracking-tight text-ink leading-tight mb-1">
-              PERSONAL INFORMATION
-            </h2>
-            <p className="text-slate-500 text-sm">Update your personal details</p>
+            <Heading
+              as="h2"
+              variant="cardCompact"
+              className="text-xl text-ink mb-1"
+            >
+              {t("title")}
+            </Heading>
+            <Paragraph variant="sm" className="text-slate-500 text-sm">
+              {t("subtitle")}
+            </Paragraph>
           </div>
         </div>
         {!isEditing && (
@@ -65,20 +74,19 @@ export function UserInformationSection() {
             variant="brutalist-ghost"
             className="text-[10px]"
           >
-            EDIT
+            {t("edit")}
           </Button>
         )}
       </div>
 
       {/* Form Fields */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {formFields.map(({ id, label, key }) => (
+        {formFields.map(({ id, key }) => (
           <div key={id} className="space-y-2">
-            <Label
-              htmlFor={id}
-              className="text-[10px] font-bold uppercase tracking-widest text-slate-400"
-            >
-              {label}
+            <Label htmlFor={id}>
+              <Span variant="label" className="text-slate-400">
+                {t(`${key}Label`)}
+              </Span>
             </Label>
             <Input
               type="text"
@@ -86,28 +94,27 @@ export function UserInformationSection() {
               value={fieldValues[key]}
               onChange={(e) => fieldSetters[key](e.target.value)}
               readOnly={!isEditing}
-              className="w-full bg-white border border-ink/10 p-4 font-space uppercase placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all"
+              className="w-full bg-white border border-ink/10 p-4 font-heading uppercase placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all"
             />
           </div>
         ))}
 
         <div className="md:col-span-2 space-y-2">
-          <Label
-            htmlFor="email"
-            className="text-[10px] font-bold uppercase tracking-widest text-slate-400"
-          >
-            Email
+          <Label htmlFor="email">
+            <Span variant="label" className="text-slate-400">
+              {t("emailLabel")}
+            </Span>
           </Label>
           <Input
             type="email"
             id="email"
             value={email}
             readOnly
-            className="w-full bg-concrete/30 border border-ink/10 p-4 font-space uppercase outline-none"
+            className="w-full bg-concrete/30 border border-ink/10 p-4 font-heading uppercase outline-none"
           />
-          <p className="text-[11px] text-slate-400 font-medium italic">
-            Email cannot be changed for security reasons
-          </p>
+          <Paragraph variant="xs" className="text-slate-400 italic">
+            {t("emailNote")}
+          </Paragraph>
         </div>
       </div>
 
@@ -122,7 +129,7 @@ export function UserInformationSection() {
             className="w-full sm:w-auto group"
           >
             <Save className="w-4 h-4 mr-2" />
-            {isLoading ? "SAVING..." : "SAVE CHANGES"}
+            {isLoading ? t("saving") : t("saveChanges")}
           </Button>
           <Button
             type="button"
@@ -132,7 +139,7 @@ export function UserInformationSection() {
             className="w-full sm:w-auto"
           >
             <X className="w-4 h-4 mr-2" />
-            CANCEL
+            {t("cancel")}
           </Button>
         </div>
       )}

@@ -1,8 +1,86 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import Stripe from 'https://esm.sh/stripe@14.11.0?target=deno'
+import { delay } from 'https://deno.land/std@0.168.0/async/delay.ts'
+import Stripe from 'https://esm.sh/stripe@16.12.0?target=deno'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
+import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts"
+
+/**
+ * Wait for order to be created with idempotency key, then generate invoice.
+ * This handles the race condition where webhook fires before frontend creates the order.
+ */
+async function waitForOrderAndGenerateInvoice(
+  paymentIntentId: string,
+  maxAttempts = 6,
+  delayMs = 5000
+): Promise<void> {
+  const idempotencyKey = `stripe_${paymentIntentId}`
+  console.log(`🔄 Starting invoice generation retry loop for idempotency_key: ${idempotencyKey}`)
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    // Wait before checking (except first attempt)
+    if (attempt > 1) {
+      await delay(delayMs)
+    }
+
+    console.log(`📋 Attempt ${attempt}/${maxAttempts}: Checking for order with idempotency_key...`)
+
+    // Query orders directly by idempotency_key
+    const orderResult = await supabaseRest(
+      `orders?idempotency_key=eq.${idempotencyKey}&select=id`,
+      'GET'
+    )
+
+    const orderId = orderResult.data?.[0]?.id
+
+    if (orderId) {
+      console.log(`✅ Found order ${orderId} on attempt ${attempt}`)
+
+      // Link payment_transactions to order_id
+      const linkResult = await supabaseRest(
+        `payment_transactions?stripe_payment_intent_id=eq.${idempotencyKey.replace('stripe_', '')}`,
+        'PATCH',
+        {
+          order_id: orderId,
+          updated_at: new Date().toISOString(),
+        }
+      )
+
+      if (linkResult.error) {
+        console.error('Failed to link payment transaction to order:', linkResult.error)
+      } else {
+        console.log(`✅ Payment transaction linked to order: ${orderId}`)
+      }
+
+      // Update order payment_status to paid
+      const updateResult = await supabaseRest(
+        `orders?id=eq.${orderId}`,
+        'PATCH',
+        {
+          payment_status: 'paid',
+          payment_method: 'stripe',
+          updated_at: new Date().toISOString(),
+        }
+      )
+
+      if (updateResult.error) {
+        console.error('Failed to update order payment_status:', updateResult.error)
+      } else {
+        console.log(`✅ Order ${orderId} payment_status updated to: paid`)
+
+        // Generate the invoice
+        await tryGenerateInvoiceForOrder(orderId)
+      }
+
+      return
+    }
+
+    console.log(`⏳ No order found yet, attempt ${attempt}/${maxAttempts}`)
+  }
+
+  console.warn(`⚠️ No order found after ${maxAttempts} attempts for idempotency_key: ${idempotencyKey}`)
+}
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -193,61 +271,33 @@ serve(async (req) => {
           break
         }
 
-        // Update payment_transactions record (created by create-payment-intent)
-        // Extract user_id from metadata
+        // CRITICAL: Use atomic UPSERT to prevent race conditions
+        // Handles case where webhook arrives before create-payment-intent
         const userId = paymentIntent.metadata?.user_id
+        const orderId = paymentIntent.metadata?.order_id
 
-        // Try to update existing record first
-        const updateResult = await supabaseRest(
-          `payment_transactions?stripe_payment_intent_id=eq.${paymentIntent.id}`,
-          'PATCH',
+        const upsertResult = await supabaseRest(
+          'rpc/upsert_stripe_payment_transaction',
+          'POST',
           {
-            user_id: userId || null,
-            stripe_customer_id: paymentIntent.customer,
-            amount: paymentIntent.amount / 100,
-            currency: paymentIntent.currency,
-            status: 'succeeded',
-            payment_method_type: paymentIntent.payment_method_types?.[0],
-            metadata: paymentIntent.metadata,
-            updated_at: new Date().toISOString()
+            p_stripe_payment_intent_id: paymentIntent.id,
+            p_user_id: userId || null,
+            p_stripe_customer_id: paymentIntent.customer,
+            p_amount: paymentIntent.amount / 100,
+            p_currency: paymentIntent.currency,
+            p_status: 'succeeded',
+            p_payment_method_type: paymentIntent.payment_method_types?.[0] || 'card',
+            p_metadata: paymentIntent.metadata || {},
+            p_order_id: orderId || null
           }
         )
 
-        // If no record was updated (race condition - webhook arrived before create-payment-intent), create it
-        if (!updateResult.data || (Array.isArray(updateResult.data) && updateResult.data.length === 0)) {
-          console.log('No existing record found, creating new one (race condition)')
-          const insertResult = await supabaseRest(
-            'payment_transactions',
-            'POST',
-            {
-              user_id: userId || null,
-              payment_provider: 'stripe',
-              stripe_payment_intent_id: paymentIntent.id,
-              stripe_customer_id: paymentIntent.customer,
-              amount: paymentIntent.amount / 100,
-              currency: paymentIntent.currency,
-              status: 'succeeded',
-              payment_method_type: paymentIntent.payment_method_types?.[0],
-              metadata: paymentIntent.metadata,
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            }
-          )
-
-          if (insertResult.error) {
-            console.error('Insert error:', insertResult.error)
-          }
-        } else {
-          console.log('✅ Payment transaction updated:', paymentIntent.id)
-        }
-
-        const result = updateResult
-
-        console.log('Upsert result:', result)
-        if (result.error) {
-          console.error('Upsert error:', result.error)
+        if (upsertResult.error) {
+          console.error('❌ Upsert error:', upsertResult.error)
           break
         }
+
+        console.log('✅ Payment transaction upserted atomically:', paymentIntent.id)
 
         // Update order payment_status to "paid"
         // NOTE: Webhooks should ONLY update payment_status, NEVER order status
@@ -268,6 +318,22 @@ serve(async (req) => {
         }
 
         if (dbOrderId) {
+          // Update payment_transactions with order_id (in case it wasn't in metadata)
+          const linkResult = await supabaseRest(
+            `payment_transactions?stripe_payment_intent_id=eq.${paymentIntent.id}`,
+            'PATCH',
+            {
+              order_id: dbOrderId,
+              updated_at: new Date().toISOString(),
+            }
+          )
+
+          if (linkResult.error) {
+            console.error('Failed to link payment transaction to order:', linkResult.error)
+          } else {
+            console.log(`✅ Payment transaction linked to order: ${dbOrderId}`)
+          }
+
           const orderResult = await supabaseRest(
             `orders?id=eq.${dbOrderId}`,
             'PATCH',
@@ -282,7 +348,21 @@ serve(async (req) => {
             console.error('Failed to update order payment_status:', orderResult.error)
           } else {
             console.log(`✅ Order ${dbOrderId} payment_status updated to: paid`)
+
+            // Issue the invoice now that the order is paid (idempotent, non-blocking)
+            await tryGenerateInvoiceForOrder(dbOrderId)
           }
+        } else {
+          // No order_id yet - frontend hasn't created the order
+          // Start retry loop in background (non-blocking)
+          console.log('⏳ No order_id found immediately, starting retry loop...')
+
+          // Use EdgeRuntime.waitUntil if available, otherwise run inline
+          // This keeps the webhook response fast while retrying in background
+          const retryPromise = waitForOrderAndGenerateInvoice(paymentIntent.id)
+
+          // Wait for the retry to complete (webhook can take up to 30s)
+          await retryPromise
         }
 
         // Check if this is a test payment

@@ -8,11 +8,15 @@ import { cn } from "@/lib/utils";
  * Item content typography should use Span or Paragraph inside each <li>.
  */
 
-interface ListProps {
+interface ListProps extends React.HTMLAttributes<HTMLUListElement> {
   className?: string;
   children: React.ReactNode;
 }
 
-export function List({ className, children }: ListProps) {
-  return <ul className={cn("list-none", className)}>{children}</ul>;
+export function List({ className, children, ...props }: ListProps) {
+  return (
+    <ul className={cn("list-none", className)} {...props}>
+      {children}
+    </ul>
+  );
 }

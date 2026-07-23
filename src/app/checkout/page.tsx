@@ -1,11 +1,12 @@
-import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import { CheckoutPageContent } from "@/features/checkout/ui/CheckoutPageContent";
-import { CheckoutLoading } from "@/features/checkout/ui/Checkout/CheckoutLoading";
+import type { Metadata } from "next";
+import CheckoutPageClient from "./CheckoutPageClient";
+
+export const metadata: Metadata = {
+  title: "Checkout | Stamp AI",
+  description: "Complete your order for custom AI-designed apparel. Secure payment.",
+  robots: { index: false, follow: false },
+};
 
 export default function CheckoutPage() {
-  return (
-    <ProtectedRoute fallback={<CheckoutLoading />}>
-      <CheckoutPageContent />
-    </ProtectedRoute>
-  );
+  return <CheckoutPageClient />;
 }

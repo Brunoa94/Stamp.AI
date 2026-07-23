@@ -1,22 +1,35 @@
+/**
+ * CartMobileCta
+ *
+ * Fixed bottom checkout bar shown only on small screens where the
+ * sticky summary sidebar is not visible.
+ */
+
 "use client";
 
 import { ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
+import { formatPrice } from "../../lib/utils/formatPrice";
 
-interface Props {
+interface CartMobileCtaPropsI {
+  total: number;
   onCheckout: () => void;
 }
 
-export function CartMobileCta({ onCheckout }: Props) {
+export function CartMobileCta({ total, onCheckout }: CartMobileCtaPropsI) {
+  const t = useTranslations("cart.mobileCta");
+  const formattedTotal = formatPrice(total);
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white border-t border-ink/10 p-4 shadow-[0_-4px_20px_rgba(0,0,0,0.1)]">
+    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-(--color-stamp-divider) bg-(--color-stamp-white) p-4 xl:hidden">
       <Button
         onClick={onCheckout}
-        variant="brutalist-checkout"
-        className="w-full group"
+        variant="primary"
+        className="group w-full font-heading"
       >
-        Proceed to Checkout
-        <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+        <span>{t("checkout", { total: formattedTotal })}</span>
+        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
       </Button>
     </div>
   );

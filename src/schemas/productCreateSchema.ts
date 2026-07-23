@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const productCreateSchema = z.object({
+const productCreateSchema = z.object({
   image: z
     .instanceof(File, { message: "Please upload an image" })
     .refine(

@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       ai_generations: {
@@ -110,99 +85,57 @@ export type Database = {
           },
         ]
       }
-      amount_validation_failures: {
-        Row: {
-          action_taken: string | null
-          created_at: string | null
-          difference: number
-          error_message: string | null
-          expected_amount: number
-          id: string
-          ip_address: string | null
-          payment_amount: number
-          payment_currency: string
-          payment_intent_id: string
-          payment_provider: string
-          refund_id: string | null
-          user_agent: string | null
-          user_email: string | null
-          user_id: string | null
-          validation_context: Json | null
-        }
-        Insert: {
-          action_taken?: string | null
-          created_at?: string | null
-          difference: number
-          error_message?: string | null
-          expected_amount: number
-          id?: string
-          ip_address?: string | null
-          payment_amount: number
-          payment_currency: string
-          payment_intent_id: string
-          payment_provider: string
-          refund_id?: string | null
-          user_agent?: string | null
-          user_email?: string | null
-          user_id?: string | null
-          validation_context?: Json | null
-        }
-        Update: {
-          action_taken?: string | null
-          created_at?: string | null
-          difference?: number
-          error_message?: string | null
-          expected_amount?: number
-          id?: string
-          ip_address?: string | null
-          payment_amount?: number
-          payment_currency?: string
-          payment_intent_id?: string
-          payment_provider?: string
-          refund_id?: string | null
-          user_agent?: string | null
-          user_email?: string | null
-          user_id?: string | null
-          validation_context?: Json | null
-        }
-        Relationships: []
-      }
       cart_items: {
         Row: {
           cart_id: string | null
           created_at: string | null
+          custom_image_public_id: string | null
           custom_image_url: string | null
+          design_id: string | null
           id: string
+          printify_blueprint_id: number | null
+          printify_print_provider_id: number | null
           product_id: string | null
-          product_name: string
-          quantity: number
-          unit_price: number
+          product_name: string | null
+          quantity: number | null
+          unit_price: number | null
           updated_at: string | null
           variant_id: string | null
+          variant_name: string | null
         }
         Insert: {
           cart_id?: string | null
           created_at?: string | null
+          custom_image_public_id?: string | null
           custom_image_url?: string | null
+          design_id?: string | null
           id?: string
+          printify_blueprint_id?: number | null
+          printify_print_provider_id?: number | null
           product_id?: string | null
-          product_name: string
-          quantity?: number
-          unit_price: number
+          product_name?: string | null
+          quantity?: number | null
+          unit_price?: number | null
           updated_at?: string | null
           variant_id?: string | null
+          variant_name?: string | null
         }
         Update: {
           cart_id?: string | null
           created_at?: string | null
+          custom_image_public_id?: string | null
           custom_image_url?: string | null
+          design_id?: string | null
           id?: string
+          printify_blueprint_id?: number | null
+          printify_print_provider_id?: number | null
           product_id?: string | null
-          product_name?: string
-          quantity?: number
-          unit_price?: number
+          product_name?: string | null
+          quantity?: number | null
+          unit_price?: number | null
           updated_at?: string | null
           variant_id?: string | null
+          variant_name?: string | null
         }
         Relationships: [
           {
@@ -219,6 +152,7 @@ export type Database = {
           created_at: string | null
           id: string
           session_id: string | null
+          status: string | null
           updated_at: string | null
           user_email: string | null
           user_id: string | null
@@ -227,6 +161,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           session_id?: string | null
+          status?: string | null
           updated_at?: string | null
           user_email?: string | null
           user_id?: string | null
@@ -235,9 +170,61 @@ export type Database = {
           created_at?: string | null
           id?: string
           session_id?: string | null
+          status?: string | null
           updated_at?: string | null
           user_email?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      catalog_products: {
+        Row: {
+          base_image_url: string | null
+          blueprint_id: number
+          created_at: string | null
+          discount_percent: number | null
+          display_title: string
+          is_active: boolean | null
+          is_on_sale: boolean | null
+          last_synced_at: string | null
+          min_price_cents: number | null
+          original_price_cents: number | null
+          print_provider_id: number
+          selling_price_cents: number | null
+          shipping_cents: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          base_image_url?: string | null
+          blueprint_id: number
+          created_at?: string | null
+          discount_percent?: number | null
+          display_title: string
+          is_active?: boolean | null
+          is_on_sale?: boolean | null
+          last_synced_at?: string | null
+          min_price_cents?: number | null
+          original_price_cents?: number | null
+          print_provider_id?: number
+          selling_price_cents?: number | null
+          shipping_cents?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          base_image_url?: string | null
+          blueprint_id?: number
+          created_at?: string | null
+          discount_percent?: number | null
+          display_title?: string
+          is_active?: boolean | null
+          is_on_sale?: boolean | null
+          last_synced_at?: string | null
+          min_price_cents?: number | null
+          original_price_cents?: number | null
+          print_provider_id?: number
+          selling_price_cents?: number | null
+          shipping_cents?: number | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -274,70 +261,144 @@ export type Database = {
         }
         Relationships: []
       }
-      email_jobs: {
+      invoice_counters: {
         Row: {
-          attempts: number
-          created_at: string
-          dedupe_key: string
-          id: string
-          last_error: string | null
-          max_attempts: number
-          next_attempt_at: string
-          payload: Json
-          recipient_email: string
-          sent_at: string | null
-          status: string
-          subject: string
-          template: string
-          updated_at: string
+          counter_key: string
+          last_value: number
+          updated_at: string | null
         }
         Insert: {
-          attempts?: number
-          created_at?: string
-          dedupe_key: string
-          id?: string
-          last_error?: string | null
-          max_attempts?: number
-          next_attempt_at?: string
-          payload?: Json
-          recipient_email: string
-          sent_at?: string | null
-          status?: string
-          subject: string
-          template: string
-          updated_at?: string
+          counter_key: string
+          last_value?: number
+          updated_at?: string | null
         }
         Update: {
-          attempts?: number
-          created_at?: string
-          dedupe_key?: string
-          id?: string
-          last_error?: string | null
-          max_attempts?: number
-          next_attempt_at?: string
-          payload?: Json
-          recipient_email?: string
-          sent_at?: string | null
-          status?: string
-          subject?: string
-          template?: string
-          updated_at?: string
+          counter_key?: string
+          last_value?: number
+          updated_at?: string | null
         }
         Relationships: []
+      }
+      invoices: {
+        Row: {
+          billing_address: Json | null
+          created_at: string | null
+          currency: string
+          customer_email: string
+          customer_name: string | null
+          discount_amount: number
+          emailed_at: string | null
+          id: string
+          invoice_number: string
+          issued_at: string
+          line_items: Json
+          order_id: string
+          order_number: string
+          payment_method: string | null
+          payment_provider: string | null
+          pdf_bucket: string | null
+          pdf_path: string | null
+          related_invoice_id: string | null
+          shipping_address: Json | null
+          shipping_cost: number
+          status: string
+          subtotal: number
+          tax_amount: number
+          total_amount: number
+          type: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          billing_address?: Json | null
+          created_at?: string | null
+          currency?: string
+          customer_email: string
+          customer_name?: string | null
+          discount_amount?: number
+          emailed_at?: string | null
+          id?: string
+          invoice_number: string
+          issued_at?: string
+          line_items?: Json
+          order_id: string
+          order_number: string
+          payment_method?: string | null
+          payment_provider?: string | null
+          pdf_bucket?: string | null
+          pdf_path?: string | null
+          related_invoice_id?: string | null
+          shipping_address?: Json | null
+          shipping_cost?: number
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          total_amount?: number
+          type?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          billing_address?: Json | null
+          created_at?: string | null
+          currency?: string
+          customer_email?: string
+          customer_name?: string | null
+          discount_amount?: number
+          emailed_at?: string | null
+          id?: string
+          invoice_number?: string
+          issued_at?: string
+          line_items?: Json
+          order_id?: string
+          order_number?: string
+          payment_method?: string | null
+          payment_provider?: string | null
+          pdf_bucket?: string | null
+          pdf_path?: string | null
+          related_invoice_id?: string | null
+          shipping_address?: Json | null
+          shipping_cost?: number
+          status?: string
+          subtotal?: number
+          tax_amount?: number
+          total_amount?: number
+          type?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_related_invoice_id_fkey"
+            columns: ["related_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       order_items: {
         Row: {
           created_at: string | null
           custom_image_url: string
           design_config: Json | null
+          design_id: string | null
+          external_order_id: string | null
           fulfillment_status: string | null
           id: string
           order_id: string | null
           product_id: string | null
           product_name: string
           quantity: number
-          total_price: number
-          unit_price: number
+          total_price: number | null
+          unit_price: number | null
           updated_at: string | null
           variant_id: string | null
           variant_name: string | null
@@ -346,14 +407,16 @@ export type Database = {
           created_at?: string | null
           custom_image_url: string
           design_config?: Json | null
+          design_id?: string | null
+          external_order_id?: string | null
           fulfillment_status?: string | null
           id?: string
           order_id?: string | null
           product_id?: string | null
           product_name: string
-          quantity: number
-          total_price: number
-          unit_price: number
+          quantity?: number
+          total_price?: number | null
+          unit_price?: number | null
           updated_at?: string | null
           variant_id?: string | null
           variant_name?: string | null
@@ -362,14 +425,16 @@ export type Database = {
           created_at?: string | null
           custom_image_url?: string
           design_config?: Json | null
+          design_id?: string | null
+          external_order_id?: string | null
           fulfillment_status?: string | null
           id?: string
           order_id?: string | null
           product_id?: string | null
           product_name?: string
           quantity?: number
-          total_price?: number
-          unit_price?: number
+          total_price?: number | null
+          unit_price?: number | null
           updated_at?: string | null
           variant_id?: string | null
           variant_name?: string | null
@@ -448,36 +513,26 @@ export type Database = {
           billing_address: Json | null
           cancellation_reason: string | null
           cancelled_at: string | null
-          confirmed_at: string | null
           created_at: string | null
           currency: string | null
           customer_email: string
           customer_name: string | null
-          customer_notes: string | null
           customer_phone: string | null
           delivered_at: string | null
           discount_amount: number | null
-          expired_at: string | null
-          expires_at: string | null
           id: string
           idempotency_key: string | null
-          internal_notes: string | null
-          last_refund_error: string | null
-          manual_review_required: boolean
           order_number: string
-          paid_at: string | null
-          payment_failure_reason: string | null
           payment_method: string | null
+          payment_provider: string | null
           payment_status: string | null
           printify_order_id: string | null
+          product_id: string | null
           promo_code: string | null
           promo_value: number | null
-          refund_attempts: number
-          refund_failed: boolean
           shipped_at: string | null
           shipping_address: Json | null
           shipping_cost: number | null
-          shipping_method: string | null
           status: string | null
           subtotal: number | null
           tax_amount: number | null
@@ -491,36 +546,26 @@ export type Database = {
           billing_address?: Json | null
           cancellation_reason?: string | null
           cancelled_at?: string | null
-          confirmed_at?: string | null
           created_at?: string | null
           currency?: string | null
           customer_email: string
           customer_name?: string | null
-          customer_notes?: string | null
           customer_phone?: string | null
           delivered_at?: string | null
           discount_amount?: number | null
-          expired_at?: string | null
-          expires_at?: string | null
           id?: string
           idempotency_key?: string | null
-          internal_notes?: string | null
-          last_refund_error?: string | null
-          manual_review_required?: boolean
           order_number: string
-          paid_at?: string | null
-          payment_failure_reason?: string | null
           payment_method?: string | null
+          payment_provider?: string | null
           payment_status?: string | null
           printify_order_id?: string | null
+          product_id?: string | null
           promo_code?: string | null
           promo_value?: number | null
-          refund_attempts?: number
-          refund_failed?: boolean
           shipped_at?: string | null
           shipping_address?: Json | null
           shipping_cost?: number | null
-          shipping_method?: string | null
           status?: string | null
           subtotal?: number | null
           tax_amount?: number | null
@@ -534,36 +579,26 @@ export type Database = {
           billing_address?: Json | null
           cancellation_reason?: string | null
           cancelled_at?: string | null
-          confirmed_at?: string | null
           created_at?: string | null
           currency?: string | null
           customer_email?: string
           customer_name?: string | null
-          customer_notes?: string | null
           customer_phone?: string | null
           delivered_at?: string | null
           discount_amount?: number | null
-          expired_at?: string | null
-          expires_at?: string | null
           id?: string
           idempotency_key?: string | null
-          internal_notes?: string | null
-          last_refund_error?: string | null
-          manual_review_required?: boolean
           order_number?: string
-          paid_at?: string | null
-          payment_failure_reason?: string | null
           payment_method?: string | null
+          payment_provider?: string | null
           payment_status?: string | null
           printify_order_id?: string | null
+          product_id?: string | null
           promo_code?: string | null
           promo_value?: number | null
-          refund_attempts?: number
-          refund_failed?: boolean
           shipped_at?: string | null
           shipping_address?: Json | null
           shipping_cost?: number | null
-          shipping_method?: string | null
           status?: string | null
           subtotal?: number | null
           tax_amount?: number | null
@@ -658,8 +693,9 @@ export type Database = {
       payment_transactions: {
         Row: {
           amount: number
+          captured_at: string | null
           created_at: string | null
-          currency: string | null
+          currency: string
           error_message: string | null
           id: string
           metadata: Json | null
@@ -682,8 +718,9 @@ export type Database = {
         }
         Insert: {
           amount: number
+          captured_at?: string | null
           created_at?: string | null
-          currency?: string | null
+          currency?: string
           error_message?: string | null
           id?: string
           metadata?: Json | null
@@ -706,8 +743,9 @@ export type Database = {
         }
         Update: {
           amount?: number
+          captured_at?: string | null
           created_at?: string | null
-          currency?: string | null
+          currency?: string
           error_message?: string | null
           id?: string
           metadata?: Json | null
@@ -736,129 +774,88 @@ export type Database = {
             referencedRelation: "orders"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      product_variants: {
+        Row: {
+          blueprint_id: number
+          color: string | null
+          created_at: string | null
+          is_available: boolean | null
+          price_cents: number | null
+          printify_variant_id: number
+          size: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          blueprint_id: number
+          color?: string | null
+          created_at?: string | null
+          is_available?: boolean | null
+          price_cents?: number | null
+          printify_variant_id: number
+          size?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          blueprint_id?: number
+          color?: string | null
+          created_at?: string | null
+          is_available?: boolean | null
+          price_cents?: number | null
+          printify_variant_id?: number
+          size?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
           {
-            foreignKeyName: "payment_transactions_order_id_fkey"
-            columns: ["order_id"]
+            foreignKeyName: "product_variants_new_blueprint_id_fkey"
+            columns: ["blueprint_id"]
             isOneToOne: false
-            referencedRelation: "orders"
-            referencedColumns: ["id"]
+            referencedRelation: "catalog_products"
+            referencedColumns: ["blueprint_id"]
           },
         ]
       }
       products: {
         Row: {
-          base_price: number
           blueprint_id: number | null
           created_at: string | null
-          currency: string | null
           description: string | null
           id: string
           is_active: boolean | null
-          is_featured: boolean | null
           name: string
           print_areas: Json | null
           print_provider_id: number | null
           printify_product_id: string | null
-          slug: string
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
-          base_price: number
           blueprint_id?: number | null
           created_at?: string | null
-          currency?: string | null
           description?: string | null
           id?: string
           is_active?: boolean | null
-          is_featured?: boolean | null
           name: string
           print_areas?: Json | null
           print_provider_id?: number | null
           printify_product_id?: string | null
-          slug: string
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
-          base_price?: number
           blueprint_id?: number | null
           created_at?: string | null
-          currency?: string | null
           description?: string | null
           id?: string
           is_active?: boolean | null
-          is_featured?: boolean | null
           name?: string
           print_areas?: Json | null
           print_provider_id?: number | null
           printify_product_id?: string | null
-          slug?: string
           updated_at?: string | null
           user_id?: string | null
-        }
-        Relationships: []
-      }
-      products_provider: {
-        Row: {
-          blueprint_id: number
-          brand: string | null
-          country_code: string
-          created_at: string | null
-          description: string | null
-          expires_at: string
-          id: string
-          images: Json | null
-          min_price: number
-          model: string | null
-          print_areas: Json | null
-          print_provider_id: number
-          provider_name: string | null
-          rank: number
-          shipping_cost: number
-          title: string
-          total_cost: number
-          updated_at: string | null
-        }
-        Insert: {
-          blueprint_id: number
-          brand?: string | null
-          country_code: string
-          created_at?: string | null
-          description?: string | null
-          expires_at: string
-          id?: string
-          images?: Json | null
-          min_price: number
-          model?: string | null
-          print_areas?: Json | null
-          print_provider_id: number
-          provider_name?: string | null
-          rank: number
-          shipping_cost: number
-          title: string
-          total_cost: number
-          updated_at?: string | null
-        }
-        Update: {
-          blueprint_id?: number
-          brand?: string | null
-          country_code?: string
-          created_at?: string | null
-          description?: string | null
-          expires_at?: string
-          id?: string
-          images?: Json | null
-          min_price?: number
-          model?: string | null
-          print_areas?: Json | null
-          print_provider_id?: number
-          provider_name?: string | null
-          rank?: number
-          shipping_cost?: number
-          title?: string
-          total_cost?: number
-          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1006,76 +1003,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_designs: {
-        Row: {
-          ai_generation_id: string | null
-          base_image_id: string | null
-          created_at: string | null
-          design_config: Json | null
-          final_image_url: string
-          id: string
-          is_favorite: boolean | null
-          mockup_image_url: string | null
-          name: string | null
-          product_id: string | null
-          updated_at: string | null
-          user_id: string | null
-          variant_id: string | null
-        }
-        Insert: {
-          ai_generation_id?: string | null
-          base_image_id?: string | null
-          created_at?: string | null
-          design_config?: Json | null
-          final_image_url: string
-          id?: string
-          is_favorite?: boolean | null
-          mockup_image_url?: string | null
-          name?: string | null
-          product_id?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-          variant_id?: string | null
-        }
-        Update: {
-          ai_generation_id?: string | null
-          base_image_id?: string | null
-          created_at?: string | null
-          design_config?: Json | null
-          final_image_url?: string
-          id?: string
-          is_favorite?: boolean | null
-          mockup_image_url?: string | null
-          name?: string | null
-          product_id?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-          variant_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_designs_ai_generation_id_fkey"
-            columns: ["ai_generation_id"]
-            isOneToOne: false
-            referencedRelation: "ai_generations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_designs_base_image_id_fkey"
-            columns: ["base_image_id"]
-            isOneToOne: false
-            referencedRelation: "user_uploads"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_designs_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       user_uploads: {
         Row: {
           created_at: string | null
@@ -1159,6 +1086,72 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      atomic_mollie_payment_capture: {
+        Args: {
+          p_amount: number
+          p_captured_at?: string
+          p_currency: string
+          p_mollie_payment_id: string
+        }
+        Returns: Json
+      }
+      atomic_paypal_payment_capture: {
+        Args: {
+          p_amount: number
+          p_captured_at?: string
+          p_currency: string
+          p_paypal_capture_id: string
+          p_paypal_order_id: string
+        }
+        Returns: Json
+      }
+      atomic_stripe_payment_capture: {
+        Args: {
+          p_amount: number
+          p_captured_at?: string
+          p_currency: string
+          p_stripe_payment_intent_id: string
+        }
+        Returns: Json
+      }
+      create_invoice_for_order: {
+        Args: { p_order_id: string; p_type?: string }
+        Returns: {
+          billing_address: Json | null
+          created_at: string | null
+          currency: string
+          customer_email: string
+          customer_name: string | null
+          discount_amount: number
+          emailed_at: string | null
+          id: string
+          invoice_number: string
+          issued_at: string
+          line_items: Json
+          order_id: string
+          order_number: string
+          payment_method: string | null
+          payment_provider: string | null
+          pdf_bucket: string | null
+          pdf_path: string | null
+          related_invoice_id: string | null
+          shipping_address: Json | null
+          shipping_cost: number
+          status: string
+          subtotal: number
+          tax_amount: number
+          total_amount: number
+          type: string
+          updated_at: string | null
+          user_id: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "invoices"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       create_refund_failure_alert: {
         Args: {
           p_amount: number
@@ -1171,7 +1164,14 @@ export type Database = {
         Returns: string
       }
       deduct_coin: { Args: { user_id: string }; Returns: boolean }
-      expire_waiting_payment_orders: { Args: never; Returns: number }
+      get_available_colors: {
+        Args: { p_blueprint_id: number }
+        Returns: string[]
+      }
+      get_available_sizes: {
+        Args: { p_blueprint_id: number; p_color: string }
+        Returns: string[]
+      }
       get_order_by_idempotency_key: { Args: { key: string }; Returns: string }
       get_pending_payment_recoveries: {
         Args: { p_hours_ago?: number; p_user_id: string }
@@ -1187,6 +1187,17 @@ export type Database = {
           shipping_address: Json
         }[]
       }
+      get_variant: {
+        Args: { p_blueprint_id: number; p_color: string; p_size: string }
+        Returns: {
+          price_cents: number
+          printify_variant_id: number
+        }[]
+      }
+      has_size_available: {
+        Args: { p_blueprint_id: number; p_size: string }
+        Returns: boolean
+      }
       increment_recovery_attempt: {
         Args: {
           p_error?: string
@@ -1194,6 +1205,10 @@ export type Database = {
           p_payment_provider: string
         }
         Returns: number
+      }
+      is_webhook_event_processed: {
+        Args: { p_event_id: string; p_provider: string }
+        Returns: boolean
       }
       is_webhook_processed: {
         Args: { p_event_id: string; p_provider: string }
@@ -1215,19 +1230,6 @@ export type Database = {
           p_refund_id: string
         }
         Returns: Json
-      }
-      record_amount_validation_failure: {
-        Args: {
-          p_error_message: string
-          p_expected_amount: number
-          p_payment_amount: number
-          p_payment_currency: string
-          p_payment_intent_id: string
-          p_payment_provider: string
-          p_user_id: string
-          p_validation_context: Json
-        }
-        Returns: string
       }
       record_payment_for_recovery: {
         Args: {
@@ -1254,19 +1256,210 @@ export type Database = {
         }
         Returns: string
       }
-      refill_min_3_coins_daily: { Args: never; Returns: undefined }
+      record_webhook_event_atomic: {
+        Args: {
+          p_event_id: string
+          p_event_type: string
+          p_payload: Json
+          p_processed_at?: string
+          p_provider: string
+        }
+        Returns: {
+          created_at: string | null
+          error_message: string | null
+          event_id: string
+          event_type: string
+          id: string
+          payload: Json | null
+          processed_at: string | null
+          processing_status: string | null
+          provider: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "webhook_events"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      trigger_catalog_sync: { Args: never; Returns: undefined }
       update_order_payment_status_atomic: {
         Args: {
           p_order_id: string
-          p_order_status?: string
+          p_order_status: string
           p_payment_method?: string
           p_payment_status: string
         }
         Returns: Json
       }
+      upsert_cart_item: {
+        Args: {
+          p_cart_id: string
+          p_custom_image_public_id?: string
+          p_custom_image_url?: string
+          p_product_id: string
+          p_product_name?: string
+          p_quantity: number
+          p_unit_price?: number
+          p_variant_id: string
+        }
+        Returns: {
+          cart_id: string | null
+          created_at: string | null
+          custom_image_public_id: string | null
+          custom_image_url: string | null
+          design_id: string | null
+          id: string
+          printify_blueprint_id: number | null
+          printify_print_provider_id: number | null
+          product_id: string | null
+          product_name: string | null
+          quantity: number | null
+          unit_price: number | null
+          updated_at: string | null
+          variant_id: string | null
+          variant_name: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "cart_items"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      upsert_mollie_payment_transaction: {
+        Args: {
+          p_amount: number
+          p_currency: string
+          p_metadata?: Json
+          p_mollie_payment_id: string
+          p_order_id: string
+          p_status: string
+          p_user_id: string
+        }
+        Returns: {
+          amount: number
+          captured_at: string | null
+          created_at: string | null
+          currency: string
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          mollie_payment_id: string | null
+          mollie_status: string | null
+          order_id: string | null
+          payment_method_details: Json | null
+          payment_method_type: string | null
+          payment_provider: string
+          paypal_capture_id: string | null
+          paypal_order_id: string | null
+          paypal_payer_email: string | null
+          paypal_payer_id: string | null
+          status: string
+          stripe_charge_id: string | null
+          stripe_customer_id: string | null
+          stripe_payment_intent_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payment_transactions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      upsert_paypal_payment_transaction: {
+        Args: {
+          p_amount: number
+          p_currency: string
+          p_metadata?: Json
+          p_order_id: string
+          p_paypal_capture_id?: string
+          p_paypal_order_id: string
+          p_paypal_payer_email?: string
+          p_paypal_payer_id?: string
+          p_status: string
+          p_user_id: string
+        }
+        Returns: {
+          amount: number
+          captured_at: string | null
+          created_at: string | null
+          currency: string
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          mollie_payment_id: string | null
+          mollie_status: string | null
+          order_id: string | null
+          payment_method_details: Json | null
+          payment_method_type: string | null
+          payment_provider: string
+          paypal_capture_id: string | null
+          paypal_order_id: string | null
+          paypal_payer_email: string | null
+          paypal_payer_id: string | null
+          status: string
+          stripe_charge_id: string | null
+          stripe_customer_id: string | null
+          stripe_payment_intent_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payment_transactions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      upsert_stripe_payment_transaction: {
+        Args: {
+          p_amount: number
+          p_currency: string
+          p_metadata?: Json
+          p_payment_method_type: string
+          p_status: string
+          p_stripe_customer_id: string
+          p_stripe_payment_intent_id: string
+          p_user_id: string
+        }
+        Returns: {
+          amount: number
+          captured_at: string | null
+          created_at: string | null
+          currency: string
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          mollie_payment_id: string | null
+          mollie_status: string | null
+          order_id: string | null
+          payment_method_details: Json | null
+          payment_method_type: string | null
+          payment_provider: string
+          paypal_capture_id: string | null
+          paypal_order_id: string | null
+          paypal_payer_email: string | null
+          paypal_payer_id: string | null
+          status: string
+          stripe_charge_id: string | null
+          stripe_customer_id: string | null
+          stripe_payment_intent_id: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "payment_transactions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
-      PAYMENT_STATUS: "PENDING" | "FAILED" | "COMPLETED"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1392,12 +1585,7 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
-    Enums: {
-      PAYMENT_STATUS: ["PENDING", "FAILED", "COMPLETED"],
-    },
+    Enums: {},
   },
 } as const

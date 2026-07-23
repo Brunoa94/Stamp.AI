@@ -1,0 +1,195 @@
+/* ============================================
+   COLOR PALETTE - ORGANIZED BY CATEGORY
+   ============================================
+
+   This file contains all colors used in the project.
+   Follow the guidelines in docs/COLOR_PALETTE_GUIDELINES.md
+   when adding or modifying colors.
+
+   Color Categories:
+   - Brand Colors [tag: brand-*]
+   - Design System Colors [tag: ds-*]
+   - Product/Fabric Colors [tag: product-*]
+   - Utility Colors [tag: gradient-*, shadow-*, glass-*, brutalist-*]
+   ============================================ */
+
+/* ==========================================
+   ROOT VARIABLES - LIGHT MODE
+   ========================================== */
+:root {
+  /* ==========================================
+     BRAND COLORS [tag: brand-*]
+     Core brand identity colors
+     ========================================== */
+
+  /* Stamp Luxury Theme Colors */
+  --color-stamp-taupe: #c4a08a; /* [tag: brand-stamp-taupe] Warm taupe accent */
+  --color-stamp-chocolate: #3d2817; /* [tag: brand-stamp-chocolate] Primary dark brown */
+  --color-stamp-gold: #b9932f; /* [tag: brand-stamp-gold] Metallic gold accent */
+  --color-stamp-cream: #faf6f1; /* [tag: brand-stamp-cream] Soft cream background */
+  --color-stamp-off-white: #fdfcfb; /* [tag: brand-stamp-off-white] Near white surface */
+  --color-stamp-divider: rgba(
+    61,
+    40,
+    23,
+    0.08
+  ); /* [tag: brand-stamp-divider] Subtle divider */
+  --color-stamp-white: #ffffff; /* [tag: brand-stamp-white] Pure white surface / text on dark */
+  --color-stamp-error: #dc2626; /* [tag: brand-stamp-error] Error and destructive actions */
+  --color-stamp-success: #10b981; /* [tag: brand-stamp-success] Success / delivered status */
+  --color-stamp-info: #3b82f6; /* [tag: brand-stamp-info] Informational / shipped status */
+  --color-stamp-warning: #f59e0b; /* [tag: brand-stamp-warning] Warning / processing status */
+
+  /* ==========================================
+     DESIGN SYSTEM - LIGHT MODE [tag: ds-*]
+     Semantic color tokens for UI elements
+     ========================================== */
+  /* TODO: Add design system light mode colors */
+
+  /* ==========================================
+     SIDEBAR COLORS [tag: sidebar-*]
+     ========================================== */
+  /* TODO: Add sidebar colors */
+
+  /* ==========================================
+     CHART COLORS [tag: chart-*]
+     Data visualization colors
+     ========================================== */
+  /* TODO: Add chart colors */
+
+  /* ==========================================
+     UTILITY COLORS
+     ========================================== */
+
+  /* Stamp shadows [tag: shadow-stamp-*] — derived from brand colors via color-mix */
+  --shadow-stamp-card: 6px 6px 0
+    color-mix(in srgb, var(--color-stamp-chocolate) 12%, transparent); /* [tag: shadow-stamp-card] Square card shadow */
+  --shadow-stamp-card-hover: 8px 8px 0
+    color-mix(in srgb, var(--color-stamp-chocolate) 18%, transparent); /* [tag: shadow-stamp-card-hover] Square card shadow on hover */
+  --shadow-stamp-gold-cta: 0 10px 20px
+    color-mix(in srgb, var(--color-stamp-gold) 20%, transparent); /* [tag: shadow-stamp-gold-cta] Gold CTA hover glow */
+  --shadow-stamp-modal: 0 50px 100px
+    color-mix(in srgb, var(--color-stamp-chocolate) 30%, transparent); /* [tag: shadow-stamp-modal] Modal elevation */
+  --shadow-stamp-modal-error: 0 50px 100px
+    color-mix(in srgb, var(--color-stamp-error) 20%, transparent); /* [tag: shadow-stamp-modal-error] Destructive modal elevation */
+}
+
+/* ==========================================
+   DARK MODE VARIABLES
+   ========================================== */
+.dark {
+  /* ==========================================
+     DESIGN SYSTEM - DARK MODE [tag: ds-dark-*]
+     ========================================== */
+  /* TODO: Add dark mode color variables */
+
+  /* ==========================================
+     SIDEBAR COLORS - DARK MODE
+     ========================================== */
+  /* TODO: Add dark sidebar colors */
+
+  /* ==========================================
+     CHART COLORS - DARK MODE
+     ========================================== */
+  /* TODO: Add dark chart colors */
+}
+
+/* ==========================================
+   STAMP LUXURY THEME UTILITIES
+   ========================================== */
+
+.font-outfit {
+  font-family: var(--font-outfit), sans-serif;
+}
+
+.font-playfair {
+  font-family: var(--font-playfair), serif;
+}
+
+/* Stamp specific font combinations for consistency */
+.stamp-body {
+  font-family: var(--font-outfit), sans-serif;
+  color: var(--color-stamp-chocolate);
+}
+
+.stamp-serif {
+  font-family: var(--font-playfair), serif;
+  color: var(--color-stamp-taupe);
+}
+
+/* ==========================================
+   SONNER TOAST STYLES [tag: toast-*]
+   Toast notifications styled for Stamp design system
+   ========================================== */
+
+[data-sonner-toaster] {
+  font-family: var(--font-outfit), sans-serif;
+}
+
+[data-sonner-toast] {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  min-width: 360px;
+  border-radius: 0;
+  border: 1px solid var(--color-stamp-divider);
+  background-color: var(--color-stamp-off-white);
+  box-shadow: var(--shadow-stamp-card);
+}
+
+[data-sonner-toast][data-type="success"] {
+  border-left: 4px solid var(--color-stamp-success);
+}
+
+[data-sonner-toast][data-type="error"] {
+  border-left: 4px solid var(--color-stamp-error);
+}
+
+[data-sonner-toast][data-type="info"] {
+  border-left: 4px solid var(--color-stamp-info);
+}
+
+[data-sonner-toast][data-type="warning"] {
+  border-left: 4px solid var(--color-stamp-warning);
+}
+
+[data-sonner-toast] [data-title] {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-stamp-chocolate);
+}
+
+[data-sonner-toast] [data-description] {
+  font-size: 0.875rem;
+  color: color-mix(in srgb, var(--color-stamp-chocolate) 70%, transparent);
+  margin-top: 0.25rem;
+}
+
+[data-sonner-toast] button[data-button] {
+  background-color: var(--color-stamp-chocolate);
+  color: var(--color-stamp-white);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0;
+  transition: background-color 0.2s;
+}
+
+[data-sonner-toast] button[data-button]:hover {
+  background-color: color-mix(in srgb, var(--color-stamp-chocolate) 90%, transparent);
+}
+
+[data-sonner-toast] button[data-cancel] {
+  background-color: transparent;
+  color: color-mix(in srgb, var(--color-stamp-chocolate) 60%, transparent);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0;
+  transition: color 0.2s;
+}
+
+[data-sonner-toast] button[data-cancel]:hover {
+  color: var(--color-stamp-chocolate);
+}

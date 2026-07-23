@@ -3,6 +3,7 @@ import { handleError } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { getMolliePayment, mapMollieStatusToInternal, isMolliePaymentPaid } from "../_shared/mollie.ts";
+import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -113,56 +114,39 @@ serve(async (req) => {
 
     console.log("Parsed metadata - order_id:", orderId, "user_id:", userId);
 
-    // Update payment transaction in database (created by create-mollie-payment)
-    // Try to update existing record first
-    const updateResult = await supabaseRest(
-      `payment_transactions?mollie_payment_id=eq.${payment.id}`,
-      "PATCH",
+    // CRITICAL: Use atomic UPSERT to handle race conditions
+    // Validate order_id is a valid UUID
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    const safeOrderId = orderId && uuidRegex.test(orderId) ? orderId : null;
+
+    if (orderId && !safeOrderId) {
+      console.warn(`⚠️ Invalid order_id format: ${orderId}`);
+    }
+
+    const upsertResult = await supabaseRest(
+      "rpc/upsert_mollie_payment_transaction",
+      "POST",
       {
-        user_id: userId || null,
-        order_id: orderId || null,
-        mollie_status: payment.status,
-        amount: parseFloat(payment.amount.value),
-        currency: payment.amount.currency.toLowerCase(),
-        status: internalStatus,
-        payment_method_type: payment.method || "unknown",
-        metadata: metadata,
-        updated_at: new Date().toISOString(),
+        p_mollie_payment_id: payment.id,
+        p_user_id: userId || null,
+        p_order_id: safeOrderId,
+        p_amount: parseFloat(payment.amount.value),
+        p_currency: payment.amount.currency.toLowerCase(),
+        p_status: internalStatus,
+        p_metadata: metadata,
       }
     );
 
-    // If no record was updated (race condition - webhook arrived before create-mollie-payment), create it
-    if (!updateResult.data || (Array.isArray(updateResult.data) && updateResult.data.length === 0)) {
-      // Insert payment_transactions record if missing, but only with valid UUID order_id
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-      const safeOrderId = orderId && uuidRegex.test(orderId) ? orderId : null;
-      if (orderId && !safeOrderId) {
-        console.warn(`⚠️ Skipping payment_transactions insert: invalid order_id: ${orderId}`);
-      } else {
-        const insertResult = await supabaseRest("payment_transactions", "POST", {
-          user_id: userId || null,
-          order_id: safeOrderId,
-          payment_provider: "mollie",
-          mollie_payment_id: payment.id,
-          mollie_status: payment.status,
-          amount: parseFloat(payment.amount.value),
-          currency: payment.amount.currency.toLowerCase(),
-          status: internalStatus,
-          payment_method_type: payment.method || "unknown",
-          metadata: metadata,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        });
-        if (insertResult.error) {
-          console.error("Database error (full result):", JSON.stringify(insertResult, null, 2));
-        } else {
-          console.log("Payment transaction created");
-        }
-      }
-      // Always update payment_status if order_id is valid
-      if (safeOrderId) {
+    if (upsertResult.error) {
+      console.error("❌ Upsert error:", upsertResult.error);
+    } else {
+      console.log("✅ Payment transaction upserted atomically:", payment.id);
+
+      // Update order payment_status if order_id is valid
+      if (safeOrderId || upsertResult.data?.order_id) {
+        const finalOrderId = safeOrderId || upsertResult.data?.order_id;
         const orderUpdateResult = await supabaseRest(
-          `orders?id=eq.${safeOrderId}`,
+          `orders?id=eq.${finalOrderId}`,
           "PATCH",
           {
             payment_status: "paid",
@@ -171,18 +155,17 @@ serve(async (req) => {
           }
         );
         if (orderUpdateResult.error) {
-          console.error(`Failed to update order ${safeOrderId} payment_status:`, orderUpdateResult.error);
+          console.error(`Failed to update order ${finalOrderId} payment_status:`, orderUpdateResult.error);
         } else {
-          console.log(`✅ Order ${safeOrderId} payment_status updated to: paid`);
+          console.log(`✅ Order ${finalOrderId} payment_status updated to: paid`);
+
+          // Issue the invoice now that the order is paid (idempotent, non-blocking)
+          await tryGenerateInvoiceForOrder(finalOrderId);
         }
       } else {
         console.warn("⚠️ No valid order_id found, skipping payment_status update.");
       }
-    } else {
-      console.log("✅ Payment transaction updated:", payment.id);
     }
-
-    const result = updateResult;
 
     // If orderId not in metadata, try to get it from payment_transactions.order_id column
     // (set by client-side after order creation)
@@ -220,6 +203,9 @@ serve(async (req) => {
           console.error(`Failed to update order ${orderId} payment_status:`, orderUpdateResult.error);
         } else {
           console.log(`✅ Order ${orderId} payment_status updated to: paid`);
+
+          // Issue the invoice now that the order is paid (idempotent, non-blocking)
+          await tryGenerateInvoiceForOrder(orderId);
         }
       }
 

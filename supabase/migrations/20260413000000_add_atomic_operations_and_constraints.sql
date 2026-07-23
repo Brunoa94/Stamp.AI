@@ -208,7 +208,7 @@ ALTER TABLE payment_transactions
 
 -- Create table to track processed webhooks
 CREATE TABLE IF NOT EXISTS webhook_events (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
 
   -- Webhook identification
   provider TEXT NOT NULL CHECK (provider IN ('stripe', 'paypal', 'mollie')),

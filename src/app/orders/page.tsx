@@ -1,13 +1,12 @@
-"use client";
+import type { Metadata } from "next";
+import OrdersPageClient from "./OrdersPageClient";
 
-import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
-import OrdersTerminalContent from "@/features/orders/ui/OrdersTerminalContent";
-import { OrdersLoadingSkeleton } from "@/features/orders/ui/components/OrdersStates/OrdersLoadingSkeleton";
+export const metadata: Metadata = {
+  title: "My Orders | Stamp AI",
+  description: "Track your custom apparel orders and view order history.",
+  robots: { index: false, follow: false },
+};
 
 export default function OrdersPage() {
-  return (
-    <ProtectedRoute fallback={<OrdersLoadingSkeleton />}>
-      <OrdersTerminalContent />
-    </ProtectedRoute>
-  );
+  return <OrdersPageClient />;
 }

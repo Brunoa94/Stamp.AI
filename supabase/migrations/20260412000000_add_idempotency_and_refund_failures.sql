@@ -30,7 +30,7 @@ COMMENT ON COLUMN orders.idempotency_key IS
 -- =====================================================
 
 CREATE TABLE IF NOT EXISTS refund_failures (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
 
   -- Payment Information
   payment_id TEXT NOT NULL,
@@ -100,6 +100,7 @@ CREATE POLICY "Users cannot access refund failures"
   USING (false);
 
 -- Add updated_at trigger
+DROP TRIGGER IF EXISTS update_refund_failures_updated_at ON refund_failures;
 CREATE TRIGGER update_refund_failures_updated_at
   BEFORE UPDATE ON refund_failures
   FOR EACH ROW
@@ -111,7 +112,7 @@ CREATE TRIGGER update_refund_failures_updated_at
 
 -- Track cases where Printify order succeeds but status update fails
 CREATE TABLE IF NOT EXISTS order_status_reconciliation (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
 
   -- Expected vs Actual Status
@@ -157,6 +158,7 @@ CREATE POLICY "Service role can manage status reconciliation"
   USING (auth.role() = 'service_role');
 
 -- Add updated_at trigger
+DROP TRIGGER IF EXISTS update_status_reconciliation_updated_at ON order_status_reconciliation;
 CREATE TRIGGER update_status_reconciliation_updated_at
   BEFORE UPDATE ON order_status_reconciliation
   FOR EACH ROW

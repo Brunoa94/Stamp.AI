@@ -42,11 +42,11 @@ export const OrderSchema = z.object({
   printify_order_id: z.string().nullable(),
   shipping_address: z.any().nullable(),
   billing_address: z.any().nullable(),
-  shipping_method: z.string().nullable(),
-  tracking_number: z.string().nullable(),
-  tracking_url: z.string().nullable(),
-  customer_notes: z.string().nullable(),
-  internal_notes: z.string().nullable(),
+  shipping_method: z.string().nullable().optional(),
+  tracking_number: z.string().nullable().optional(),
+  tracking_url: z.string().nullable().optional(),
+  customer_notes: z.string().nullable().optional(),
+  internal_notes: z.string().nullable().optional(),
   // Backward compatibility: older schemas had orders.product_id,
   // but current remote schema may omit this column.
   product_id: z.string().nullable().optional(),
@@ -54,18 +54,46 @@ export const OrderSchema = z.object({
   updated_at: z.string().nullable(),
   shipped_at: z.string().nullable(),
   delivered_at: z.string().nullable(),
+  // Additional fields from database schema
+  cancellation_reason: z.string().nullable().optional(),
+  cancelled_at: z.string().nullable().optional(),
+  confirmed_at: z.string().nullable().optional(),
+  expired_at: z.string().nullable().optional(),
+  failed_at: z.string().nullable().optional(),
+  idempotency_key: z.string().nullable().optional(),
+  payment_gateway: z.string().nullable().optional(),
+  payment_intent_id: z.string().nullable().optional(),
+  printify_error: z.string().nullable().optional(),
+  refund_amount: z.number().nullable().optional(),
+  refund_status: z.string().nullable().optional(),
+  refunded_at: z.string().nullable().optional(),
+  expires_at: z.string().nullable().optional(),
+  last_refund_error: z.string().nullable().optional(),
+  manual_review_required: z.boolean().nullable().optional(),
+  paid_at: z.string().nullable().optional(),
+  payment_provider: z.string().nullable().optional(),
+  promo_code_id: z.string().nullable().optional(),
+  refund_id: z.string().nullable().optional(),
+  refund_reason: z.string().nullable().optional(),
+  requires_manual_review: z.boolean().nullable().optional(),
+  stripe_payment_intent_id: z.string().nullable().optional(),
+  payment_failure_reason: z.string().nullable().optional(),
+  promo_code: z.string().nullable().optional(),
+  promo_value: z.number().nullable().optional(),
+  refund_attempts: z.number().nullable().optional(),
+  refund_failed: z.boolean().nullable().optional(),
 });
 
 /**
  * Zod schema for orders with order items included
  */
 export const OrderWithItemsSchema = OrderSchema.extend({
-  order_items: z.array(OrderItemSchema),
-});
+  order_items: z.array(OrderItemSchema.passthrough()),
+}).passthrough();
 
 /**
  * Infer TypeScript types from Zod schemas
  */
-export type OrderItemSchemaT = z.infer<typeof OrderItemSchema>;
-export type OrderSchemaT = z.infer<typeof OrderSchema>;
-export type OrderWithItemsSchemaT = z.infer<typeof OrderWithItemsSchema>;
+type OrderItemSchemaT = z.infer<typeof OrderItemSchema>;
+type OrderSchemaT = z.infer<typeof OrderSchema>;
+type OrderWithItemsSchemaT = z.infer<typeof OrderWithItemsSchema>;

@@ -128,9 +128,187 @@ The project is organized into three primary layers:
 
 ## Error Handling
 
+### Core Principles
+
 - All error handling must follow the project's **ErrorHandling** implementation.
 - Errors should be caught at appropriate boundaries.
 - User-facing errors must provide clear, actionable messages.
+- Always provide recovery paths for users when errors occur.
+
+### Error Handling Patterns
+
+#### 1. **Payment & Transaction Errors**
+
+For payment processing, implement comprehensive error states with recovery mechanisms:
+
+**Required Error States:**
+- `loading` - Initial state, verifying data
+- `processing` - Payment being processed
+- `success` - Transaction completed successfully
+- `failed` - Retryable failure (declined card, insufficient funds)
+- `error` - Non-retryable system error
+- `cancelled` - User cancelled the transaction
+
+**Example Pattern** (from payment return pages):
+
+```typescript
+type PageStatus = "loading" | "processing" | "success" | "failed" | "error" | "cancelled";
+
+const [status, setStatus] = useState<PageStatus>("loading");
+const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+// Handle different error types
+if (captureData.code === "INSTRUMENT_DECLINED" || captureData.isRetryable) {
+  setStatus("failed"); // Retryable - show "Try Again" option
+  setErrorMessage(captureData.error || "Your payment method was declined.");
+} else {
+  setStatus("error"); // Non-retryable - show support contact
+  setErrorMessage("Failed to process payment. Please contact support.");
+}
+```
+
+**User-Facing Error UI:**
+- Display clear error reason
+- Provide actionable next steps
+- Show alternative payment methods for failed payments
+- Include support contact information for system errors
+
+#### 2. **Idempotency & Race Condition Prevention**
+
+Always implement idempotency checks to prevent duplicate operations:
+
+```typescript
+// Check if operation already completed
+const finalizationDoneKey = `operation_finalized_${uniqueId}`;
+const finalizationLockKey = `operation_finalizing_${uniqueId}`;
+
+if (sessionStorage.getItem(finalizationDoneKey) === "true") {
+  setStatus("success");
+  return;
+}
+
+if (sessionStorage.getItem(finalizationLockKey) === "true") {
+  return; // Already processing
+}
+
+sessionStorage.setItem(finalizationLockKey, "true");
+
+try {
+  // Perform operation
+  await processOperation();
+
+  sessionStorage.setItem(finalizationDoneKey, "true");
+  sessionStorage.removeItem(finalizationLockKey);
+} catch (error) {
+  sessionStorage.removeItem(finalizationLockKey);
+  throw error;
+}
+```
+
+#### 3. **Timeout Handling**
+
+Implement timeouts for long-running operations with proper cleanup:
+
+```typescript
+class PipelineTimeoutError extends Error {
+  constructor(timeoutMs: number) {
+    super(
+      `Operation timed out after ${Math.round(timeoutMs / 1000)} seconds. ` +
+      `Please contact support if the issue persists.`
+    );
+    this.name = "PipelineTimeoutError";
+  }
+}
+
+async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout>;
+
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(
+      () => reject(new PipelineTimeoutError(ms)),
+      ms
+    );
+  });
+
+  return Promise.race([promise, timeout]).finally(() =>
+    clearTimeout(timeoutId)
+  );
+}
+
+// Usage
+try {
+  await withTimeout(longRunningOperation(), 120_000); // 2 minutes
+} catch (error) {
+  if (error instanceof PipelineTimeoutError) {
+    // Handle timeout specifically
+    await triggerCleanup();
+  }
+  throw error;
+}
+```
+
+#### 4. **Graceful Degradation & Recovery**
+
+When operations fail, implement recovery mechanisms:
+
+```typescript
+const triggerRefund = async (reason: string) => {
+  try {
+    await RefundService.processRefund({
+      orderId: orderId || `temp_${transactionId}`,
+      paymentProvider: "stripe",
+      amount,
+      reason,
+    });
+    console.log(`✅ Refund triggered`);
+  } catch (refundError) {
+    console.error("❌ Refund initiation failed:", refundError);
+    // Log to failure tracking system
+  }
+};
+
+const markOrderFailed = async (orderId: string, status: string) => {
+  try {
+    await updateOrderStatus({ orderId, status });
+    console.log(`✅ Order marked as ${status}`);
+  } catch (updateError) {
+    console.error(`❌ Failed to update order:`, updateError);
+  }
+};
+
+// Use in error scenarios
+try {
+  await createPrintifyOrder();
+} catch (error) {
+  await markOrderFailed(orderId, "unsuccessful_confirmation");
+  await triggerRefund("Fulfillment failed");
+  throw new Error("Order fulfillment failed. A full refund has been initiated.");
+}
+```
+
+#### 5. **Data Validation Errors**
+
+Validate critical data early and provide clear error messages:
+
+```typescript
+// Validate required data
+if (!cartId) {
+  setStatus("error");
+  setErrorMessage(
+    "Cart information not found. Your payment was captured but we couldn't create your order. " +
+    "Please contact support with payment ID: " + paymentIntentId
+  );
+  return;
+}
+
+if (!user) {
+  setStatus("error");
+  setErrorMessage(
+    "You must be logged in to complete your order. Please log in and try again."
+  );
+  return;
+}
+```
 
 ### Logging System Pattern
 
@@ -172,6 +350,20 @@ logStampError("handleCreateProduct", error, {
 
 **Reference**: See [`src/features/stamp-brutalist/lib/helpers/logger.ts`](../src/features/stamp-brutalist/lib/helpers/logger.ts) for complete implementation.
 
+### Error Handling Checklist
+
+When implementing error handling, ensure:
+
+- ✅ All possible error states are defined and handled
+- ✅ User-facing errors provide clear, actionable messages
+- ✅ Recovery mechanisms are in place (retry, refund, rollback)
+- ✅ Idempotency is implemented for critical operations
+- ✅ Timeouts are set for long-running operations
+- ✅ Errors are logged with sufficient context for debugging
+- ✅ Race conditions are prevented with proper locks
+- ✅ Cleanup operations run in finally blocks
+- ✅ Users have clear paths forward (retry, contact support, go back)
+
 ---
 
 ## General Guidelines
@@ -179,7 +371,7 @@ logStampError("handleCreateProduct", error, {
 - **Documentation**: Do not create new markdown files for every change. Update existing documentation when appropriate.
 - **Code reviews**: Follow established patterns in the codebase.
 - **Consistency**: Maintain consistency with the Feature-Sliced Design architecture.
-- **No usage of index.ts**: Don't use index.ts for the files exports.
+- **No barrel exports**: Do not use `index.ts` files for re-exporting. Import directly from specific files instead of using barrel files. This improves tree-shaking, reduces circular dependencies, and makes imports explicit.
 
 ---
 

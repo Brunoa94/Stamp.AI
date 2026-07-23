@@ -1,30 +1,77 @@
-import { HeroSection } from "@/features/homepage-brutalist/ui/sections/HeroSection";
-import { ProductsSection } from "@/features/homepage-brutalist/ui/sections/ProductsSection";
-import { ProcessSection } from "@/features/homepage-brutalist/ui/sections/ProcessSection";
-import { AboutSection } from "@/features/homepage-brutalist/ui/sections/AboutSection";
-import { CtaSection } from "@/features/homepage-brutalist/ui/sections/CtaSection";
-import { ReviewsSection } from "@/features/homepage-brutalist/ui/sections/ReviewsSection";
-import { FaqSection } from "@/features/homepage-brutalist/ui/sections/FaqSection";
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { HomepageContent } from "@/features/homepage/ui/HomepageContent";
+import { getCachedProductsWithPricing } from "@/lib/supabase/server-cache";
+import { StructuredData } from "@/features/seo/StructuredData";
+import { faqPageSchema } from "@/features/seo/schemas/faq";
+import { serviceSchema } from "@/features/seo/schemas/service";
+import { howToSchema } from "@/features/seo/schemas/howto";
+import { generatePageMetadata } from "@/features/seo/metadata/pageMetadata";
+import { PAGE_KEYWORDS } from "@/features/seo/config/keywords";
+import { SITE_URL } from "@/features/seo/config/site";
+import { HOME_FAQS } from "@/features/homepage/lib/constants/homepageContent";
 
-/**
- * Brutalist Homepage
- *
- * Orchestrates all brutalist homepage sections following the Superdesign draft
- * Design: "STAMP.AI | Refined Cart Interface"
- *
- * Note: Navbar, Footer, and GrainOverlay are in the root layout
- */
+export const revalidate = 1800;
 
-export default function Home() {
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("home.meta");
+
+  return generatePageMetadata({
+    title: t("title"),
+    description: t("description"),
+    path: "/",
+    keywords: [...(t.raw("keywords") as string[]), ...PAGE_KEYWORDS.home],
+    openGraph: {
+      type: "website",
+      url: SITE_URL,
+    },
+  });
+}
+
+export default async function Home() {
+  const productsWithPricing = await getCachedProductsWithPricing();
+
+  const tFaq = await getTranslations("home.faq.items");
+  const tProcess = await getTranslations("home.process.steps");
+
+  const faqEntries = HOME_FAQS.map(({ id }) => ({
+    question: tFaq(`${id}.question`),
+    answer: tFaq(`${id}.answer`),
+  }));
+
+  const howToSteps = [
+    {
+      name: tProcess("step-studio.title"),
+      text: tProcess("step-studio.description"),
+    },
+    {
+      name: tProcess("step-synthesis.title"),
+      text: tProcess("step-synthesis.description"),
+    },
+    {
+      name: tProcess("step-material.title"),
+      text: tProcess("step-material.description"),
+    },
+    {
+      name: tProcess("step-production.title"),
+      text: tProcess("step-production.description"),
+    },
+    {
+      name: tProcess("step-quality.title"),
+      text: tProcess("step-quality.description"),
+    },
+    {
+      name: tProcess("step-delivery.title"),
+      text: tProcess("step-delivery.description"),
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-concrete text-ink font-space">
-      <HeroSection />
-      <ProductsSection />
-      <ProcessSection />
-      <AboutSection />
-      <CtaSection />
-      <ReviewsSection />
-      <FaqSection />
-    </div>
+    <>
+      <StructuredData data={faqPageSchema(faqEntries)} />
+      <StructuredData data={serviceSchema()} />
+      <StructuredData data={howToSchema(howToSteps)} />
+      <HomepageContent productsWithPricing={productsWithPricing} />
+    </>
   );
 }

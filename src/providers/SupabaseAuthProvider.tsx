@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
 
@@ -53,10 +53,3 @@ export function SupabaseAuthProvider({
   );
 }
 
-export const useSupabaseAuth = () => {
-  const context = useContext(SupabaseAuthContext);
-  if (context === undefined) {
-    throw new Error("useSupabaseAuth must be used within a SupabaseAuthProvider");
-  }
-  return context;
-};

@@ -1,7 +1,9 @@
 import { FormField } from "@/features/ui/form-field";
 import { Mail, Lock, User } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import type { RegisterI } from "@/schemas/auth";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 
 interface PropsI {
   register: UseFormRegister<RegisterI>;
@@ -12,66 +14,69 @@ export function RegisterCredentialsFields({
   register,
   errors,
 }: PropsI) {
+  const t = useTranslations("auth.register.fields");
+  const ve = useValidationMessage();
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <FormField
           id="firstName"
-          label="First Name"
-          placeholder="John"
+          label={t("firstName")}
+          placeholder={t("firstNamePlaceholder")}
           required
-          error={errors.firstName?.message}
+          error={ve(errors.firstName?.message)}
           register={register("firstName")}
-          variant="auth-login"
+          variant="stamp-auth"
           leadingIcon={<User className="h-5 w-5" />}
         />
 
         <FormField
           id="lastName"
-          label="Last Name"
-          placeholder="Doe"
+          label={t("lastName")}
+          placeholder={t("lastNamePlaceholder")}
           required
-          error={errors.lastName?.message}
+          error={ve(errors.lastName?.message)}
           register={register("lastName")}
-          variant="auth-login"
+          variant="stamp-auth"
           leadingIcon={<User className="h-5 w-5" />}
         />
       </div>
 
       <FormField
         id="email"
-        label="Email Address"
+        label={t("emailLabel")}
         type="email"
-        placeholder="name@company.com"
+        placeholder={t("emailPlaceholder")}
         required
-        error={errors.email?.message}
+        error={ve(errors.email?.message)}
         register={register("email")}
-        variant="auth-login"
+        variant="stamp-auth"
         leadingIcon={<Mail className="h-5 w-5" />}
       />
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <FormField
           id="password"
-          label="Password"
+          label={t("passwordLabel")}
           type="password"
-          placeholder="••••••••"
+          placeholder={t("passwordPlaceholder")}
           required
-          error={errors.password?.message}
+          error={ve(errors.password?.message)}
           register={register("password")}
-          variant="auth-login"
+          variant="stamp-auth"
           leadingIcon={<Lock className="h-5 w-5" />}
         />
 
         <FormField
           id="confirmPassword"
-          label="Confirm Password"
+          label={t("confirmPassword")}
           type="password"
-          placeholder="••••••••"
+          placeholder={t("confirmPasswordPlaceholder")}
           required
-          error={errors.confirmPassword?.message}
+          error={ve(errors.confirmPassword?.message)}
           register={register("confirmPassword")}
-          variant="auth-login"
+          variant="stamp-auth"
           leadingIcon={<Lock className="h-5 w-5" />}
         />
       </div>

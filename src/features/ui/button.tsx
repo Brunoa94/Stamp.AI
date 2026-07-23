@@ -5,7 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
       variant: {
@@ -14,36 +14,39 @@ const buttonVariants = cva(
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive dark:focus-visible:ring-destructive/80 dark:bg-destructive/60",
         outline:
           "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline focus-visible:ring-offset-0",
         "brutalist-primary":
-          "h-auto rounded-none bg-ink px-6 md:px-8 py-1.5 md:py-2 font-anton text-sm md:text-base tracking-widest uppercase border-2 border-brandCyan hover:bg-brandCyan hover:text-ink transition-colors duration-300 shadow-[4px_4px_0px_rgba(10,10,10,0.1)] text-white",
-        "brutalist-checkout":
-          "h-auto rounded-none bg-ink px-6 md:px-8 py-6 md:py-8 font-anton text-xl md:text-2xl tracking-widest uppercase border-2 border-brandCyan hover:bg-brandCyan hover:text-ink transition-colors duration-300 shadow-[4px_4px_0px_rgba(10,10,10,0.1)] text-white",
+          "h-auto bg-ink px-6 md:px-8 py-1.5 md:py-2 font-heading text-sm md:text-base tracking-widest uppercase border-2 border-brandCyan hover:bg-brandCyan hover:text-ink transition-colors duration-300 shadow-[4px_4px_0px_rgba(10,10,10,0.1)] text-white",
         "brutalist-ghost":
-          "h-auto rounded-none border border-ink/10 px-4 py-2 hover:border-brandCyan hover:bg-transparent transition-colors",
+          "h-auto border border-ink/10 px-4 py-2 hover:border-brandCyan hover:bg-transparent transition-colors",
         "brutalist-danger":
-          "h-auto w-full rounded-none flex items-center justify-center gap-2 text-brandCyan font-bold text-[10px] tracking-widest uppercase hover:text-brandRed hover:bg-transparent transition-colors border border-brandCyan/20 py-2 font-space",
-        "auth-primary":
-          "btn-gradient w-full py-5 px-6 rounded-full bg-ink font-anton text-xl uppercase tracking-[0.2em] text-white shadow-lg transition-all duration-300 hover:shadow-xl disabled:opacity-50 flex items-center justify-center relative overflow-hidden",
-        "auth-cancel":
-          "w-full py-5 px-6 rounded-full border border-ink/10 bg-white font-anton text-xl uppercase tracking-[0.2em] text-ink hover:bg-concrete transition-all duration-300",
-        "auth-close":
-          "h-10 w-10 rounded-full bg-concrete hover:bg-ink hover:text-white transition-all",
-        "auth-google":
-          "w-full gap-4 rounded-2xl border border-ink/5 bg-white py-4 px-6 font-bold text-sm text-ink/70 shadow-sm transition-shadow hover:shadow-md",
-        "dashboard-edit":
-          "w-full mt-6 py-3 border border-ink/10 hover:border-purple hover:bg-purple/5 font-anton text-xs tracking-widest uppercase transition-all flex items-center justify-center text-purple",
-        "dashboard-primary":
-          "w-full py-3 bg-purple hover:bg-purple/90 text-white font-anton text-xs tracking-widest uppercase transition-all",
+          "h-auto w-full flex items-center justify-center gap-2 text-brandCyan font-bold text-[10px] tracking-widest uppercase hover:text-brandRed hover:bg-transparent transition-colors border border-brandCyan/20 py-2 font-heading",
+        primary:
+          "h-auto bg-(--color-stamp-chocolate) px-6 py-4 md:px-8 md:py-6 font-heading text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-white) transition-all duration-300 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed",
+        "primary-compact":
+          "h-auto bg-(--color-stamp-chocolate) px-4 py-3 font-heading text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-white) transition-all duration-300 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed",
+        secondary:
+          "h-auto border-2 border-(--color-stamp-divider) bg-transparent px-6 py-4 md:px-8 md:py-6 font-heading text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-300 hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) active:scale-[0.98]",
+        "secondary-compact":
+          "h-auto border-2 border-(--color-stamp-divider) bg-transparent px-4 py-3 font-heading text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-300 hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) active:scale-[0.98]",
+        cta: "h-auto bg-(--color-stamp-chocolate) px-16 py-7 md:px-24 md:py-9 font-heading text-lg md:text-xl font-bold uppercase tracking-[0.125em] text-(--color-stamp-white) transition-all duration-300 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg disabled:opacity-50",
+        "cta-gold":
+          "h-auto bg-(--color-stamp-gold) px-16 py-7 md:px-24 md:py-9 font-heading text-lg md:text-xl font-bold uppercase tracking-[0.125em] text-(--color-stamp-chocolate) transition-all duration-300 hover:bg-(--color-stamp-off-white) active:scale-[0.98] shadow-md hover:shadow-lg disabled:opacity-50",
+        "ghost-stamp":
+          "h-auto bg-transparent px-6 py-4 md:px-8 md:py-5 font-heading text-base md:text-lg font-bold uppercase tracking-[0.15em] text-(--color-stamp-chocolate) transition-all duration-300 hover:text-(--color-stamp-gold) hover:bg-(--color-stamp-chocolate)/5",
+        "ghost-stamp-light":
+          "h-auto bg-transparent px-6 py-4 md:px-8 md:py-5 font-heading text-base md:text-lg font-bold uppercase tracking-[0.15em] text-(--color-stamp-off-white) transition-all duration-300 hover:text-(--color-stamp-gold) hover:bg-(--color-stamp-off-white)/5",
+        "stamp-close":
+          "h-10 w-10 bg-(--color-stamp-cream) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) transition-all border border-(--color-stamp-divider)",
+        "stamp-google":
+          "w-full gap-4 border-2 border-(--color-stamp-divider) bg-(--color-stamp-white) py-6 px-6 font-heading font-bold text-base uppercase tracking-widest text-(--color-stamp-chocolate) transition-all hover:border-(--color-stamp-taupe) hover:bg-(--color-stamp-cream)",
       },
       size: {
         default: "h-10 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        sm: "h-8 gap-1.5 px-3 has-[>svg]:px-2.5",
+        lg: "h-10 px-6 has-[>svg]:px-4",
         icon: "size-10",
         "icon-sm": "size-8",
         "icon-lg": "size-10",
@@ -77,7 +80,7 @@ type RegularButtonProps = BaseButtonProps & {
 };
 
 // Union type: if size is icon variant, aria-label is required
-export type ButtonProps = IconButtonProps | RegularButtonProps;
+type ButtonProps = IconButtonProps | RegularButtonProps;
 
 function Button({
   className,
@@ -115,4 +118,4 @@ function Button({
   );
 }
 
-export { Button, buttonVariants };
+export { Button };

@@ -1,21 +1,18 @@
 import { createClient } from "@/lib/supabase/client";
 import {
-  CartT,
-  CartItem,
-  CartWithItems,
   AddToCartInput,
-  UpdateCartItemInput,
+  CartItem,
   CartSummary,
+  CartT,
+  CartWithItems,
+  UpdateCartItemInput,
 } from "@/types/cart";
 import {
-  CartSchema,
-  CartItemSchema,
-  CartWithItemsSchema,
   addToCartSchema,
+  CartSchema,
   updateCartItemSchema,
 } from "@/schemas/cart";
-import { CartServiceMapper } from "@/mappers/services";
-import { z } from "zod";
+import { CartServiceMapper } from "@/mappers/services/cartServiceMapper";
 import { ErrorClient } from "./errorClient";
 
 export class CartService {
@@ -26,7 +23,11 @@ export class CartService {
   /**
    * Get or create cart for user/session
    */
-  static async getOrCreateCart(userId?: string, sessionId?: string, userEmail?: string): Promise<CartT> {
+  static async getOrCreateCart(
+    userId?: string,
+    sessionId?: string,
+    userEmail?: string,
+  ): Promise<CartT> {
     try {
       const supabase = this.getSupabase();
 
@@ -38,13 +39,22 @@ export class CartService {
       } else if (sessionId) {
         query = query.eq("session_id", sessionId);
       } else {
-        throw ErrorClient.handleError({ error: new Error("Either userId or sessionId must be provided"), service: "Cart", action: "Get Or Create Cart" });
+        throw ErrorClient.handleError({
+          error: new Error("Either userId or sessionId must be provided"),
+          service: "Cart",
+          action: "Get Or Create Cart",
+        });
       }
 
-      const { data: existingCart, error: fetchError } = await query.maybeSingle();
+      const { data: existingCart, error: fetchError } = await query
+        .maybeSingle();
 
       if (fetchError) {
-        throw ErrorClient.handleError({ error: fetchError, service: "Cart", action: "Get Or Create Cart" });
+        throw ErrorClient.handleError({
+          error: fetchError,
+          service: "Cart",
+          action: "Get Or Create Cart",
+        });
       }
 
       // Return existing cart if found
@@ -65,18 +75,30 @@ export class CartService {
         .single();
 
       if (createError) {
-        throw ErrorClient.handleError({ error: createError, service: "Cart", action: "Get Or Create Cart" });
+        throw ErrorClient.handleError({
+          error: createError,
+          service: "Cart",
+          action: "Get Or Create Cart",
+        });
       }
 
       if (!newCart) {
-        throw ErrorClient.handleError({ error: new Error("Failed to create cart"), service: "Cart", action: "Get Or Create Cart" });
+        throw ErrorClient.handleError({
+          error: new Error("Failed to create cart"),
+          service: "Cart",
+          action: "Get Or Create Cart",
+        });
       }
 
       const validatedCart = CartSchema.parse(newCart);
 
       return validatedCart as CartT;
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Cart", action: "Get Or Create Cart"})
+      throw ErrorClient.handleError({
+        error,
+        service: "Cart",
+        action: "Get Or Create Cart",
+      });
     }
   }
 
@@ -95,22 +117,34 @@ export class CartService {
           cart_items (
             *
           )
-        `
+        `,
         )
         .eq("id", cartId)
         .single();
 
       if (error) {
-        throw ErrorClient.handleError({ error, service: "Cart", action: "Get Cart" });
+        throw ErrorClient.handleError({
+          error,
+          service: "Cart",
+          action: "Get Cart",
+        });
       }
 
       if (!data) {
-        throw ErrorClient.handleError({ error: new Error(`Cart not found with id: ${cartId}`), service: "Cart", action: "Get Cart" });
+        throw ErrorClient.handleError({
+          error: new Error(`Cart not found with id: ${cartId}`),
+          service: "Cart",
+          action: "Get Cart",
+        });
       }
 
       return data as CartWithItems;
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Cart", action: "Get Cart"})
+      throw ErrorClient.handleError({
+        error,
+        service: "Cart",
+        action: "Get Cart",
+      });
     }
   }
 
@@ -118,64 +152,51 @@ export class CartService {
    * Add item to cart
    * Returns CartItem with full product and variant information
    */
-  static async addToCart(cartId: string, item: AddToCartInput): Promise<CartItem> {
+  static async addToCart(
+    cartId: string,
+    item: AddToCartInput,
+  ): Promise<CartItem> {
     try {
       // Validate input
       const validatedInput = addToCartSchema.parse(item);
 
       const supabase = this.getSupabase();
 
-      // Check if item already exists in cart
-      // Build query to handle null values properly
-      let query = supabase
-        .from("cart_items")
-        .select("*")
-        .eq("cart_id", cartId);
+      // CRITICAL: Use atomic UPSERT to prevent duplicate cart items
+      // Handles race condition where same item added twice quickly
+      const { data, error } = await supabase.rpc("upsert_cart_item", {
+        p_cart_id: cartId,
+        p_product_id: validatedInput.product_id || null,
+        p_variant_id: validatedInput.variant_id,
+        p_quantity: validatedInput.quantity,
+        p_custom_image_url: validatedInput.custom_image_url || null,
+        p_product_name: validatedInput.product_name || "Product",
+        p_unit_price: validatedInput.unit_price,
+      });
 
-      // Handle product_id (can be null for custom products)
-      if (validatedInput.product_id === null || validatedInput.product_id === undefined) {
-        query = query.is("product_id", null);
-      } else {
-        query = query.eq("product_id", validatedInput.product_id);
-      }
-
-      // For custom products (product_id is null), also check custom_image_url
-      // to ensure we're matching the exact same custom product
-      if (validatedInput.product_id === null || validatedInput.product_id === undefined) {
-        if (validatedInput.custom_image_url) {
-          query = query.eq("custom_image_url", validatedInput.custom_image_url);
-        }
-      }
-
-      const { data: existingItem } = await query.maybeSingle();
-
-      // If item exists, update quantity
-      if (existingItem) {
-        return await this.updateCartItem(existingItem.id, {
-          quantity: existingItem.quantity + validatedInput.quantity,
+      if (error) {
+        throw ErrorClient.handleError({
+          error,
+          service: "Cart",
+          action: "Add To Cart",
         });
       }
 
-      // Add new item using mapper
-      const insertData = CartServiceMapper.mapAddToCartInputToInsert(cartId, validatedInput);
-
-      const { data, error } = await supabase
-        .from("cart_items")
-        .insert(insertData)
-        .select("*")
-        .single();
-
-      if (error) {
-        throw ErrorClient.handleError({ error, service: "Cart", action: "Add To Cart" });
-      }
-
       if (!data) {
-        throw ErrorClient.handleError({ error: new Error("Failed to add item to cart"), service: "Cart", action: "Add To Cart" });
+        throw ErrorClient.handleError({
+          error: new Error("Failed to add item to cart"),
+          service: "Cart",
+          action: "Add To Cart",
+        });
       }
 
       return data as CartItem;
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Cart", action: "Add To Cart"})
+      throw ErrorClient.handleError({
+        error,
+        service: "Cart",
+        action: "Add To Cart",
+      });
     }
   }
 
@@ -185,7 +206,7 @@ export class CartService {
    */
   static async updateCartItem(
     itemId: string,
-    update: UpdateCartItemInput
+    update: UpdateCartItemInput,
   ): Promise<CartItem> {
     try {
       // Validate input
@@ -194,7 +215,9 @@ export class CartService {
       const supabase = this.getSupabase();
 
       // Use mapper to create update object
-      const updateData = CartServiceMapper.mapQuantityUpdate(validatedUpdate.quantity);
+      const updateData = CartServiceMapper.mapQuantityUpdate(
+        validatedUpdate.quantity,
+      );
 
       const { data, error } = await supabase
         .from("cart_items")
@@ -204,16 +227,28 @@ export class CartService {
         .single();
 
       if (error) {
-        throw ErrorClient.handleError({ error, service: "Cart", action: "Update Cart Item" });
+        throw ErrorClient.handleError({
+          error,
+          service: "Cart",
+          action: "Update Cart Item",
+        });
       }
 
       if (!data) {
-        throw ErrorClient.handleError({ error: new Error(`Cart item not found with id: ${itemId}`), service: "Cart", action: "Update Cart Item" });
+        throw ErrorClient.handleError({
+          error: new Error(`Cart item not found with id: ${itemId}`),
+          service: "Cart",
+          action: "Update Cart Item",
+        });
       }
 
       return data as CartItem;
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Cart", action: "Update Cart Item"})
+      throw ErrorClient.handleError({
+        error,
+        service: "Cart",
+        action: "Update Cart Item",
+      });
     }
   }
 
@@ -224,13 +259,24 @@ export class CartService {
     try {
       const supabase = this.getSupabase();
 
-      const { error } = await supabase.from("cart_items").delete().eq("id", itemId);
+      const { error } = await supabase.from("cart_items").delete().eq(
+        "id",
+        itemId,
+      );
 
       if (error) {
-        throw ErrorClient.handleError({ error, service: "Cart", action: "Remove Cart Item" });
+        throw ErrorClient.handleError({
+          error,
+          service: "Cart",
+          action: "Remove Cart Item",
+        });
       }
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Cart", action: "Remove Cart Item"})
+      throw ErrorClient.handleError({
+        error,
+        service: "Cart",
+        action: "Remove Cart Item",
+      });
     }
   }
 
@@ -241,13 +287,24 @@ export class CartService {
     try {
       const supabase = this.getSupabase();
 
-      const { error } = await supabase.from("cart_items").delete().eq("cart_id", cartId);
+      const { error } = await supabase.from("cart_items").delete().eq(
+        "cart_id",
+        cartId,
+      );
 
       if (error) {
-        throw ErrorClient.handleError({ error, service: "Cart", action: "Clear Cart" });
+        throw ErrorClient.handleError({
+          error,
+          service: "Cart",
+          action: "Clear Cart",
+        });
       }
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Cart", action: "Clear Cart"})
+      throw ErrorClient.handleError({
+        error,
+        service: "Cart",
+        action: "Clear Cart",
+      });
     }
   }
 
@@ -260,8 +317,8 @@ export class CartService {
       return {
         subtotal: 0,
         itemCount: 0,
-        items: []
-      }
+        items: [],
+      };
     }
 
     const items = cart.cart_items || [];
@@ -271,7 +328,10 @@ export class CartService {
   /**
    * Merge guest cart with user cart on login
    */
-  static async mergeCart(guestCartId: string, userCartId: string): Promise<void> {
+  static async mergeCart(
+    guestCartId: string,
+    userCartId: string,
+  ): Promise<void> {
     try {
       const supabase = this.getSupabase();
 
@@ -282,7 +342,11 @@ export class CartService {
         .eq("cart_id", guestCartId);
 
       if (fetchError) {
-        throw ErrorClient.handleError({ error: fetchError, service: "Cart", action: "Merge Cart" });
+        throw ErrorClient.handleError({
+          error: fetchError,
+          service: "Cart",
+          action: "Merge Cart",
+        });
       }
 
       if (!guestItems || guestItems.length === 0) {
@@ -291,14 +355,20 @@ export class CartService {
 
       // Move items to user cart using mapper
       for (const item of guestItems) {
-        const addToCartInput = CartServiceMapper.mapCartItemRowToAddToCartInput(item);
+        const addToCartInput = CartServiceMapper.mapCartItemRowToAddToCartInput(
+          item,
+        );
         await this.addToCart(userCartId, addToCartInput);
       }
 
       // Delete guest cart
       await supabase.from("carts").delete().eq("id", guestCartId);
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Cart", action: "Merge Cart"})
+      throw ErrorClient.handleError({
+        error,
+        service: "Cart",
+        action: "Merge Cart",
+      });
     }
   }
 }

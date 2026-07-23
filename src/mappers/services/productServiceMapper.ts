@@ -52,24 +52,15 @@ export class ProductServiceMapper {
    * Map SavePrintifyProductInput to database ProductInsert
    */
   static mapInputToProductInsert(input: SavePrintifyProductInput): ProductInsert {
-    const slug = `${input.userId}-${input.printifyProductId}`
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
-
     return {
       printify_product_id: input.printifyProductId,
       name: input.title,
-      slug: slug,
       description: input.description || null,
-      base_price: input.basePrice,
       blueprint_id: input.blueprintId,
       print_provider_id: input.printProviderId,
       print_areas: input.printAreas as any,
       user_id: input.userId,
       is_active: true,
-      is_featured: false,
-      currency: 'USD',
     };
   }
 
@@ -80,16 +71,13 @@ export class ProductServiceMapper {
     return {
       id: product.id,
       name: product.name,
-      slug: product.slug,
       description: product.description,
-      basePrice: product.base_price,
-      currency: product.currency,
       isActive: product.is_active,
-      isFeatured: product.is_featured,
       printifyProductId: product.printify_product_id,
       blueprintId: product.blueprint_id,
       printProviderId: product.print_provider_id,
       printAreas: product.print_areas,
+      userId: product.user_id,
       createdAt: product.created_at,
       updatedAt: product.updated_at,
     };

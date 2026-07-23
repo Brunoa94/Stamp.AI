@@ -4,7 +4,7 @@ import {
   CustomProductResponseSchema,
   CreatePrintifyOrderRequestSchema,
   PrintifyOrderResponseSchema
-} from "@/schemas/services";
+} from "@/schemas/services/printifyServiceSchemas";
 import { createClient } from "@/lib/supabase/client";
 import type {
     CreatePrintifyOrderRequest,
@@ -128,28 +128,16 @@ export class PrintifyService {
     }
 
     /**
-     * Fetch all t-shirt products from Printify catalog using provider_catalog system
-     * Returns the 4 cheapest options for the specified country
+     * Fetch all t-shirt products from the new catalog system
+     * This method is deprecated - use catalogQueries directly instead
      *
+     * @deprecated Use catalogQueries.useCatalogProducts() instead
      * @param countryCode - ISO country code (e.g., 'NL', 'US', 'GB'). Defaults to 'NL'
      */
     static async getTshirtProducts(countryCode: string = "NL"): Promise<TshirtType[]> {
-        try {
-            const { ProviderCatalogService } = await import("./providerCatalogService");
-            const catalogProducts = await ProviderCatalogService.getCachedCatalog(countryCode);
-
-            if (catalogProducts && catalogProducts.length > 0) {
-                console.log(`✅ Using provider_catalog for country: ${countryCode}`);
-                return catalogProducts;
-            }
-
-            // If catalog is empty, throw error with helpful message
-            throw new Error(
-                `No products available in catalog for country: ${countryCode}. ` +
-                `Please ensure the provider_catalog table is populated.`
-            );
-        } catch (error) {
-            throw ErrorClient.handleError({ error, service: "Printify", action: "Get Tshirt Products" });
-        }
+        throw new Error(
+            `getTshirtProducts is deprecated. The provider_catalog system has been replaced. ` +
+            `Use catalogQueries.useCatalogProducts() and catalogQueries.useProvidersForProduct() instead.`
+        );
     }
 }

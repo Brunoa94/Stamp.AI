@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Variant info from blueprint variants endpoint
-export const VariantInfoSchema = z.object({
+const VariantInfoSchema = z.object({
   id: z.number(),
   title: z.string(),
   options: z.object({

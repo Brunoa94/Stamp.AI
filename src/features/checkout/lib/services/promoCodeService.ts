@@ -1,6 +1,6 @@
 import { PromoCodeService } from "@/services/promocodeService";
 import { ErrorClient } from "@/services/errorClient";
-import type { PromoCodeValidationResult } from "@/types/promocode";
+import type { PromoCodeValidationResult } from "@/schemas/promocode";
 
 /**
  * CheckoutPromoCodeService
@@ -24,11 +24,12 @@ export class CheckoutPromoCodeService {
     subtotal: number
   ): Promise<PromoCodeValidationResult> {
     try {
-      // Validate input
+      // Validate input. `message` is an i18n key under the `checkout.pricing`
+      // namespace, translated by the consuming hook (useCheckoutPricing).
       if (!code.trim()) {
         return {
           isValid: false,
-          message: "Please enter a promo code",
+          message: "enterPromoCode",
           appliedPromo: null,
         };
       }
@@ -36,7 +37,7 @@ export class CheckoutPromoCodeService {
       if (subtotal <= 0) {
         return {
           isValid: false,
-          message: "Cart total must be greater than 0",
+          message: "cartTotalInvalid",
           appliedPromo: null,
         };
       }

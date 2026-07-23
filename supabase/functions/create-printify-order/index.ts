@@ -96,7 +96,7 @@ serve(async (req) => {
       shipping_method,
       shipping_address,
       address_to,
-      is_test = true,
+      is_test = true, // Default to test mode for safety; client must explicitly set false for production
       metadata,
       use_sample_order = false, // Flag to create a sample order for testing
       auto_cancel = false, // Flag to automatically cancel order after creation (for testing)
@@ -182,7 +182,7 @@ serve(async (req) => {
 
     if (line_items && line_items.length > 0) {
       // Use provided line items with print_areas support
-      formattedLineItems = line_items.map((item: any, index: number) => {
+      formattedLineItems = await Promise.all(line_items.map(async (item: any, index: number) => {
         console.log(`Processing line item ${index}:`, JSON.stringify(item, null, 2))
 
         // CRITICAL VALIDATION: Printify API requires blueprint_id when print_provider_id is present
@@ -197,6 +197,36 @@ serve(async (req) => {
         // For existing products, we should NOT include print_provider_id or blueprint_id
         if (item.product_id) {
           console.log(`✅ Line item ${index}: Ordering existing product: ${item.product_id}`)
+
+          // Verify the product exists in Printify before creating order
+          try {
+            const productCheckResponse = await fetch(
+              `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/products/${item.product_id}.json`,
+              {
+                headers: { 'Authorization': `Bearer ${PRINTIFY_API_TOKEN}` },
+              }
+            )
+
+            if (!productCheckResponse.ok) {
+              if (productCheckResponse.status === 404) {
+                console.error(`❌ Product ${item.product_id} not found in Printify shop`)
+                throw ErrorCodes.PRINTIFY_ORDER_API_ERROR(
+                  `Product ${item.product_id} no longer exists in Printify. Please recreate the product.`
+                )
+              }
+              throw new Error(`Failed to verify product: ${productCheckResponse.status}`)
+            }
+
+            console.log(`✅ Product ${item.product_id} verified in Printify`)
+          } catch (verifyError: any) {
+            if (verifyError.errorId) {
+              throw verifyError // Re-throw ErrorCodes errors
+            }
+            throw ErrorCodes.PRINTIFY_ORDER_API_ERROR(
+              `Failed to verify product ${item.product_id}: ${verifyError.message}`
+            )
+          }
+
           const lineItem: any = {
             product_id: item.product_id,
             variant_id: item.variant_id,
@@ -248,7 +278,7 @@ serve(async (req) => {
         throw ErrorCodes.PRINTIFY_ORDER_API_ERROR(
           `Line item ${index}: must have either product_id, blueprint_id, or sku`
         )
-      })
+      }))
     } else if (use_sample_order && productsData.data && productsData.data.length > 0) {
       // Use first available product for sample order
       const firstProduct = productsData.data[0]
@@ -416,9 +446,9 @@ serve(async (req) => {
           console.warn('⚠️ Failed to auto-cancel order:', cancelData)
           cancelResult = { success: false, error: cancelData.errors?.reason || 'Unknown error' }
         }
-      } catch (cancelError) {
+      } catch (cancelError: any) {
         console.error('❌ Error auto-canceling order:', cancelError)
-        cancelResult = { success: false, error: cancelError.message }
+        cancelResult = { success: false, error: cancelError?.message || 'Unknown error' }
       }
     }
 

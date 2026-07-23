@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTranslations } from "next-intl";
 import { AlertCircle, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { usePaymentRecovery } from "@/queries/paymentRecoveryQueries";
@@ -13,6 +14,7 @@ interface PaymentRecoveryBannerProps {
 export function PaymentRecoveryBanner({
   onRecoveryComplete,
 }: PaymentRecoveryBannerProps) {
+  const t = useTranslations("checkout.recoveryBanner");
   const {
     pendingRecoveries,
     hasPendingRecoveries,
@@ -44,11 +46,13 @@ export function PaymentRecoveryBanner({
         console.log("✅ Order recovered:", result.orderId);
         onRecoveryComplete?.(result.orderId);
       } else {
-        alert(`Failed to recover payment: ${result.error || "Unknown error"}`);
+        alert(
+          t("recoverFailed", { error: result.error || t("unknownError") }),
+        );
       }
     } catch (error) {
       console.error("Recovery error:", error);
-      alert("Failed to recover payment. Please contact support.");
+      alert(t("recoverFailedContactSupport"));
     }
   };
 
@@ -81,16 +85,16 @@ export function PaymentRecoveryBanner({
 
               <div className="flex-1 min-w-0">
                 <h3 className="text-sm font-semibold text-amber-900 mb-1">
-                  Incomplete Order Found
+                  {t("title")}
                 </h3>
 
                 <p className="text-sm text-amber-800 mb-3">
-                  We found a successful {providerName} payment for{" "}
-                  <strong>
-                    {recovery.currency} {recovery.amount.toFixed(2)}
-                  </strong>{" "}
-                  that wasn't completed. Would you like to finalize this order
-                  now?
+                  {t.rich("body", {
+                    providerName,
+                    currency: recovery.currency,
+                    amountValue: recovery.amount.toFixed(2),
+                    amount: (chunks) => <strong>{chunks}</strong>,
+                  })}
                 </p>
 
                 <div className="flex gap-2 flex-wrap">
@@ -103,12 +107,12 @@ export function PaymentRecoveryBanner({
                     {isThisProcessing ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
-                        Completing Order...
+                        {t("completing")}
                       </>
                     ) : (
                       <>
                         <CheckCircle className="w-4 h-4 mr-1.5" />
-                        Complete Order
+                        {t("complete")}
                       </>
                     )}
                   </Button>
@@ -121,14 +125,15 @@ export function PaymentRecoveryBanner({
                     className="border-amber-300 text-amber-900 hover:bg-amber-100"
                   >
                     <XCircle className="w-4 h-4 mr-1.5" />
-                    Dismiss
+                    {t("dismiss")}
                   </Button>
                 </div>
 
-                <p className="text-xs text-amber-700 mt-2">
-                  Payment ID: {recovery.payment_intent_id.slice(-8)}
-                  {" • "}
-                  {new Date(recovery.created_at).toLocaleString()}
+                <p className="text-lg text-amber-700 mt-2">
+                  {t("paymentIdLine", {
+                    id: recovery.payment_intent_id.slice(-8),
+                    date: new Date(recovery.created_at).toLocaleString(),
+                  })}
                 </p>
               </div>
             </div>

@@ -4,6 +4,7 @@ import { PasswordResetConfirmSchema, type PasswordResetConfirmI } from "@/schema
 import { createClient } from "@/lib/supabase/client";
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 export function usePasswordResetConfirmForm() {
@@ -14,6 +15,7 @@ export function usePasswordResetConfirmForm() {
   const [isError, setIsError] = useState(false);
   const supabase = createClient();
   const { handleError, handleSuccess } = useErrorHandler();
+  const t = useTranslations("auth.passwordReset.confirm");
 
   const {
     register,
@@ -54,7 +56,7 @@ export function usePasswordResetConfirmForm() {
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
 
       if (sessionError || !sessionData?.session) {
-        throw new Error('Invalid reset link or session expired. Please request a new password reset.');
+        throw new Error(t("invalidSessionError"));
       }
 
       // Update the password
@@ -67,7 +69,7 @@ export function usePasswordResetConfirmForm() {
       }
 
       setIsSuccess(true);
-      handleSuccess("Password reset successful. You can now log in with your new password.");
+      handleSuccess(t("successToast"));
 
     } catch (error) {
       handleError(error);

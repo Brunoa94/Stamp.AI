@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@14.11.0?target=deno";
+import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
 import { handleError, ErrorCodes } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
@@ -64,8 +64,30 @@ async function refundStripe(
     refundParams.metadata = { internal_reason: reason };
   }
 
-  const refund = await stripe.refunds.create(refundParams as Parameters<typeof stripe.refunds.create>[0]);
-  return refund.id;
+  try {
+    const refund = await stripe.refunds.create(refundParams as Parameters<typeof stripe.refunds.create>[0]);
+    return refund.id;
+  } catch (error: unknown) {
+    // Handle idempotency: if charge already refunded, get existing refund ID
+    if (error && typeof error === 'object' && 'code' in error && error.code === 'charge_already_refunded') {
+      console.log(`Charge already refunded for payment intent ${stripePaymentIntentId}, fetching existing refund...`);
+
+      // Get the payment intent to find the refund ID
+      const paymentIntent = await stripe.paymentIntents.retrieve(stripePaymentIntentId);
+      const existingRefund = paymentIntent.charges?.data?.[0]?.refunds?.data?.[0];
+
+      if (existingRefund?.id) {
+        console.log(`Found existing refund: ${existingRefund.id}`);
+        return existingRefund.id;
+      }
+
+      // Fallback: return a generated ID to indicate already refunded
+      return `already_refunded_${stripePaymentIntentId}`;
+    }
+
+    // Re-throw other errors
+    throw error;
+  }
 }
 
 /**

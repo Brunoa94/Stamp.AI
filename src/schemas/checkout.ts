@@ -4,101 +4,58 @@ import { COUNTRIES } from "@/constants/countries";
 // Valid country codes from our countries list
 const validCountryCodes = COUNTRIES.map(c => c.code);
 
+// Zod `message` values are i18n keys under the `validation` namespace,
+// translated at the form render site via next-intl (useTranslations).
+
 // Shipping Address Schema
 export const ShippingAddressSchema = z.object({
-  first_name: z.string().min(1, "First name is required"),
+  first_name: z.string().min(1, "firstNameRequired"),
   last_name: z.string().optional(),
-  email: z.string().email("Invalid email address"),
+  email: z.string().email("emailInvalid"),
   phone: z.string().optional(),
   country: z.string()
-    .min(2, "Country is required")
+    .min(2, "countryRequired")
     .refine((code) => validCountryCodes.includes(code), {
-      message: "Please select a valid country",
+      message: "countryInvalid",
     }),
   region: z.string().optional(),
-  address1: z.string().min(1, "Address is required"),
+  address1: z.string().min(1, "addressRequired"),
   address2: z.string().optional(),
-  city: z.string().min(1, "City is required"),
-  zip: z.string().min(1, "ZIP/Postal code is required"),
+  city: z.string().min(1, "cityRequired"),
+  zip: z.string().min(1, "zipRequired"),
 });
 
 export type ShippingAddressT = z.infer<typeof ShippingAddressSchema>;
 
-// Product Customization Schema
-export const ProductCustomizationSchema = z.object({
-  product_id: z.string().optional(),
-  variant_id: z.number(),
-  quantity: z.number().min(1, "Quantity must be at least 1"),
-  print_areas: z.object({
-    front: z.string().optional(),
-    back: z.string().optional(),
-    left_sleeve: z.string().optional(),
-    right_sleeve: z.string().optional(),
-    neck: z.string().optional(),
-  }),
-  product_title: z.string(),
-  variant_title: z.string(),
-  price: z.number().min(0),
-  preview_url: z.string().optional(),
-  blueprint_id: z.number().optional(),
-  print_provider_id: z.number().optional(),
-  tshirt_type: z.object({
-    id: z.string(),
-    name: z.string(),
-    price: z.number(),
-    blueprint_id: z.number(),
-    print_provider_id: z.number(),
-  }).optional(),
-});
+// Checkout Form Schema with conditional validation
+export const CheckoutFormSchema = z
+  .object({
+    // Billing address (required)
+    billing: ShippingAddressSchema,
 
-export type ProductCustomizationT = z.infer<typeof ProductCustomizationSchema>;
+    // Shipping address toggle and data
+    useShippingAddress: z.boolean(),
+    shipping: ShippingAddressSchema.optional(),
 
-// Printify Image Schema
-export const PrintifyImageSchema = z.object({
-  id: z.string(),
-  file_name: z.string(),
-  preview_url: z.string().optional(),
-});
+    // Payment method
+    paymentMethod: z.enum(["stripe", "paypal"] as const),
 
-export type PrintifyImageT = z.infer<typeof PrintifyImageSchema>;
+    // Promo code
+    promoCode: z.string().optional(),
+  })
+  .refine(
+    (data) => {
+      // If shipping address toggle is enabled, shipping must be provided and valid
+      if (data.useShippingAddress) {
+        return data.shipping !== undefined;
+      }
+      return true;
+    },
+    {
+      message: "shippingRequiredWhenEnabled",
+      path: ["shipping"],
+    }
+  );
 
-// Catalog Blueprint Schema
-export const CatalogBlueprintSchema = z.object({
-  id: z.number(),
-  title: z.string(),
-  description: z.string(),
-  brand: z.string(),
-  model: z.string(),
-  images: z.array(z.string()),
-  printAreas: z.array(
-    z.object({
-      position: z.string(),
-      width: z.number(),
-      height: z.number(),
-    })
-  ),
-});
+export type CheckoutFormDataT = z.infer<typeof CheckoutFormSchema>;
 
-export type CatalogBlueprintT = z.infer<typeof CatalogBlueprintSchema>;
-
-// Variant Info Schema
-export const VariantInfoSchema = z.object({
-  id: z.number(),
-  title: z.string(),
-  options: z.object({
-    color: z.string().optional(),
-    size: z.string().optional(),
-  }),
-});
-
-export type VariantInfoT = z.infer<typeof VariantInfoSchema>;
-
-// Custom Product Schema (result from Printify)
-export const CustomProductSchema = z.object({
-  id: z.string(),
-  variant_id: z.number(),
-  title: z.string(),
-  price: z.number(),
-});
-
-export type CustomProductT = z.infer<typeof CustomProductSchema>;

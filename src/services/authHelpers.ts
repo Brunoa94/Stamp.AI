@@ -8,7 +8,7 @@ import { ErrorClient } from "./errorClient";
  * @returns Access token for authenticated requests
  * @throws Error if session is invalid or user is not authenticated
  */
-export async function getAuthenticatedSession(serviceName: string): Promise<string> {
+async function getAuthenticatedSession(serviceName: string): Promise<string> {
   const supabase = createClient();
 
   const {
@@ -41,7 +41,7 @@ export async function getAuthenticatedSession(serviceName: string): Promise<stri
  * @param accessToken - Optional access token (if not provided, only includes API key)
  * @returns Headers object ready for Supabase function invoke
  */
-export function createSupabaseHeaders(accessToken?: string): Record<string, string> {
+function createSupabaseHeaders(accessToken?: string): Record<string, string> {
   const headers: Record<string, string> = {
     apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   };

@@ -1,240 +1,191 @@
-import {
-  BrainCircuit,
-  Eye,
-  Palette,
-  Shirt,
-  ShoppingBag,
-  Sparkles,
-} from "lucide-react";
-import { FaCreditCard, FaPaypal } from "react-icons/fa";
-import { SiStripe } from "react-icons/si";
+/**
+ * Homepage v2 static content
+ *
+ * Copy is identical to the previous homepage iteration; only the
+ * presentation layer changed. Product data is NOT here — it comes from the
+ * server cache (getCachedProductsWithPricing).
+ */
 
-export const processSteps = [
-  {
-    id: "01",
-    label: "Studio",
-    title: "Design Selection",
-    description:
-      "Choose from our curated minimalist library or upload custom assets.",
-    icon: Palette,
-  },
-  {
-    id: "02",
-    label: "Canvas",
-    title: "Customization",
-    description:
-      "Modify colors, layers, and typographic elements with precision.",
-    icon: BrainCircuit,
-  },
-  {
-    id: "03",
-    label: "Texture",
-    title: "Sizing & Fit",
-    description:
-      "Select size, fabric, and finish matching your creative vision.",
-    icon: Shirt,
-  },
-  {
-    id: "04",
-    label: "Final",
-    title: "Preview & Review",
-    description:
-      "Verify every visual layer and color registration before production.",
-    icon: Eye,
-  },
-  {
-    id: "05",
-    label: "Engine",
-    title: "AI Synthesis",
-    description:
-      "Describe your design idea and let the AI synthesize variations.",
-    icon: Sparkles,
-  },
-  {
-    id: "06",
-    label: "Complete",
-    title: "Ready to Cart",
-    description:
-      "Your custom tee is ready. Add it to cart and proceed to checkout.",
-    icon: ShoppingBag,
-  },
-] as const;
+export const MAX_HOME_PRODUCTS = 4;
 
-export const journeyDesktopPositions = [
-  "top-0 left-0",
-  "top-[300px] left-[18%]",
-  "top-0 left-[36%]",
-  "top-[300px] left-[54%]",
-  "top-0 left-[72%]",
-  "top-[300px] left-[90%]",
-] as const;
+// Featured carousel - blueprint IDs to exclude from the carousel
+export const FEATURED_CAROUSEL_EXCLUDED_BLUEPRINTS = new Set([12]);
 
-export const trustHighlights = [
-  {
-    title: "Memories",
-    description:
-      "Every design is a story. Transform meaningful moments into wearable art — gifts and garments that outlast the occasion.",
-  },
-  {
-    title: "Precision",
-    description:
-      "Every stitch and visual layer registered for flawless production output, exactly as you imagined it.",
-  },
-  {
-    title: "14-Day Guarantee",
-    description:
-      "Total refund within 14 days — no explanation required. We stand unconditionally behind every stamp we help you create.",
-  },
-  {
-    title: "Innovation",
-    description:
-      "AI-powered synthesis unlocks premium design variations with minimal effort — creativity without compromise.",
-  },
-] as const;
+// Process section - stagger delay between card reveals (ms)
+export const PROCESS_STAGGER_DELAY_MS = 120;
 
-export const faqs = [
-  {
-    q: "What file formats do you accept for designs?",
-    a: "We support PNG, JPG, WEBP, and SVG files up to 25MB. For best results, use high-resolution source files.",
-  },
-  {
-    q: "How long does production take?",
-    a: "Standard production is usually 5-7 business days. Express options are available at checkout.",
-  },
-  {
-    q: "Can I make changes after ordering?",
-    a: "Changes are possible within a short post-order window before production starts.",
-  },
-  {
-    q: "What's your return and refund policy?",
-    a: "We offer a 30-day money-back guarantee for manufacturing defects or shipping damages.",
-  },
-  {
-    q: "Do you offer bulk orders?",
-    a: "Yes. Bulk and team workflows are available through our Enterprise offering.",
-  },
-  {
-    q: "What printing methods do you use?",
-    a: "We use premium screen-printing and DTG workflows based on your design requirements.",
-  },
-  {
-    q: "Is my design data private?",
-    a: "Yes. Assets are encrypted in transit and at rest, and ownership stays with you.",
-  },
-] as const;
+// Trust guarantees section - stagger delay between card reveals (ms)
+export const TRUST_GUARANTEES_STAGGER_DELAY_MS = 100;
 
-export const paymentMethods = [
-  {
-    name: "Stripe Checkout",
-    description: "Visa, Mastercard, AMEX & Apple Pay. All cards processed securely.",
-    badge: "PCI-DSS Level 1",
-    icon: SiStripe,
-  },
-  {
-    name: "PayPal Express",
-    description: "Pay with PayPal balance or linked cards with buyer protection.",
-    badge: "Purchase Protection",
-    icon: FaPaypal,
-  },
-  {
-    name: "Mollie Hub",
-    description: "Regional methods including Klarna, iDEAL, and Bancontact.",
-    badge: "Secure Gateway",
-    icon: FaCreditCard,
-  },
-] as const;
+// Hero section image carousel - cycles through product images
+export const HOME_HERO_IMAGES = [
+  "/home/1-a.png",
+  "/home/1-b.png",
+  "/home/2-a.png",
+  "/home/2-b.png",
+  "/home/3-a.png",
+  "/home/3-b.png",
+  "/home/4-a.png",
+  "/home/4-b.png",
+  "/home/5-a.png",
+  "/home/5-b.png",
+  "/home/6-a.png",
+  "/home/6-b.png",
+];
 
-export const reviewBreakdown = [
-  { label: "5★", value: 85, barClass: "bg-[#FF8C42]" },
-  { label: "4★", value: 10, barClass: "bg-[#FF8C42]/75" },
-  { label: "3★", value: 3, barClass: "bg-amber-400/80" },
-  { label: "2★", value: 1, barClass: "bg-orange-300/70" },
-  { label: "1★", value: 1, barClass: "bg-red-500" },
-] as const;
+// Hero product grid - grouped image sets for each square
+// Each set cycles independently with staggered timing
+export const HERO_PRODUCT_SETS: string[][] = [
+  // Top-right (large) - products 1 & 2
+  ["/home/1-a.png", "/home/1-b.png", "/home/2-a.png", "/home/2-b.png"],
+  // Middle-left (medium) - products 3 & 4
+  ["/home/3-a.png", "/home/3-b.png", "/home/4-a.png", "/home/4-b.png"],
+  // Bottom-right (medium) - products 5 & 6
+  ["/home/5-a.png", "/home/5-b.png", "/home/6-a.png", "/home/6-b.png"],
+  // Bottom-left (small) - mix of all
+  ["/home/1-a.png", "/home/3-a.png", "/home/5-a.png", "/home/2-a.png"],
+];
 
-export const reviews = [
-  {
-    name: "Sarah Chen",
-    date: "3w ago",
-    source: "Google",
-    sourceUrl: "https://www.google.com/search?q=stamp.ai+reviews",
-    quote:
-      '"Best custom apparel service I\'ve used. Quality is insane. Every stitch is perfect."',
-    helpful: "245 found helpful",
-  },
-  {
-    name: "Marcus Vane",
-    date: "1m ago",
-    source: "Google",
-    sourceUrl: "https://www.google.com/search?q=stamp.ai+reviews",
-    quote:
-      '"The design interface is incredibly intuitive. A pure game-changer for my brand\'s merch flow."',
-    helpful: "112 found helpful",
-  },
-  {
-    name: "Alex Rodriguez",
-    date: "2m ago",
-    source: "Trustpilot",
-    sourceUrl: "https://www.trustpilot.com/",
-    quote:
-      '"Great service, shipping took a bit longer than expected but the final product was worth it."',
-    helpful: "89 found helpful",
-  },
-  {
-    name: "Jamie Liu",
-    date: "6w ago",
-    source: "Google",
-    sourceUrl: "https://www.google.com/search?q=stamp.ai+reviews",
-    quote:
-      '"Premium quality and fast turnaround. The heavy cotton feels like true luxury wear."',
-    helpful: "302 found helpful",
-  },
-  {
-    name: "Taylor Brooks",
-    date: "2m ago",
-    source: "Trustpilot",
-    sourceUrl: "https://www.trustpilot.com/",
-    quote:
-      '"Stamp.AI revolutionized how we create branded merchandise. No more back-and-forth."',
-    helpful: "156 found helpful",
-  },
-  {
-    name: "Casey Johnson",
-    date: "3m ago",
-    source: "Trustpilot",
-    sourceUrl: "https://www.trustpilot.com/",
-    quote:
-      '"Customer service is exceptional, product quality matches pricing perfectly. True 5-star studio."',
-    helpful: "94 found helpful",
-  },
-] as const;
-
-export const SECTION_IDS = [
-  "hero",
-  "cta-home",
-  "process",
-  "brand-story",
-  "promocodes",
-  "pricing",
-  "faq",
-  "security",
-  "reviews",
-] as const;
-
-export type HomepageSectionIdT = (typeof SECTION_IDS)[number];
-
-export const SECTION_LABELS: Record<HomepageSectionIdT, string> = {
-  hero: "Home",
-  "cta-home": "Start",
-  process: "Process",
-  "brand-story": "Story",
-  promocodes: "Deals",
-  pricing: "Products",
-  faq: "FAQ",
-  security: "Security",
-  reviews: "Reviews",
+// Display copy lives in messages (home.process.steps.<id>); only structural
+// fields remain here.
+export type HomeProcessStepType = {
+  id: string;
+  number: string;
 };
 
-export const NAVBAR_HEIGHT = 80;
-export const SCROLL_COOLDOWN = 220;
-export const SCROLL_DURATION = 360;
+export const HOME_PROCESS_STEPS: HomeProcessStepType[] = [
+  { id: "step-studio", number: "01" },
+  { id: "step-synthesis", number: "02" },
+  { id: "step-material", number: "03" },
+  { id: "step-production", number: "04" },
+  { id: "step-quality", number: "05" },
+  { id: "step-delivery", number: "06" },
+];
+
+// Alternating color styles for process step cards
+export type ProcessStepColorType = {
+  border: string;
+  text: string;
+};
+
+export const PROCESS_STEP_COLORS: ProcessStepColorType[] = [
+  {
+    border: "hover:border-(--color-stamp-gold)",
+    text: "group-hover:text-(--color-stamp-gold)",
+  },
+  {
+    border: "hover:border-(--color-stamp-chocolate)",
+    text: "group-hover:text-(--color-stamp-chocolate)",
+  },
+  {
+    border: "hover:border-(--color-stamp-taupe)",
+    text: "group-hover:text-(--color-stamp-taupe)",
+  },
+];
+
+// Display copy lives in messages (home.manifesto.values.<number>); the number
+// doubles as the stable id.
+export type HomeValueCardType = {
+  number: string;
+};
+
+export const HOME_VALUE_CARDS: HomeValueCardType[] = [
+  { number: "01" },
+  { number: "02" },
+  { number: "03" },
+  { number: "04" },
+];
+
+export type HomePlatformRatingType = {
+  platform: string;
+  rating: number;
+  reviews: number;
+};
+
+export const HOME_RATING_SUMMARY = {
+  overall: 4.8,
+  totalReviews: 1247,
+  platforms: [
+    { platform: "Trustpilot", rating: 4.9, reviews: 523 },
+    { platform: "Google", rating: 4.8, reviews: 412 },
+    { platform: "ProductHunt", rating: 4.7, reviews: 312 },
+  ] satisfies HomePlatformRatingType[],
+};
+
+// Display copy (author, role, quote) lives in messages
+// (home.reviews.testimonials.<id>); only structural fields remain here.
+export type HomeTestimonialType = {
+  id: string;
+  platform: string;
+  rating: number;
+  helpful: number;
+};
+
+export const HOME_TESTIMONIALS: HomeTestimonialType[] = [
+  { id: "alex-chen", platform: "Trustpilot", rating: 5, helpful: 127 },
+  { id: "jordan-ellis", platform: "Google", rating: 5, helpful: 94 },
+  { id: "morgan-park", platform: "ProductHunt", rating: 5, helpful: 156 },
+  { id: "riley-santos", platform: "Trustpilot", rating: 5, helpful: 83 },
+];
+
+// Display copy (question, answer) lives in messages (home.faq.items.<id>).
+export type HomeFaqType = {
+  id: string;
+};
+
+export const HOME_FAQS: HomeFaqType[] = [
+  { id: "ai-synthesis" },
+  { id: "archival-quality" },
+  { id: "production-shipping" },
+  { id: "sustainability" },
+  { id: "samples" },
+  { id: "satisfaction" },
+];
+
+// Values are stable ids resolved to labels in messages
+// (home.trustIndicators.items.<id>).
+export type HomeTrustIndicatorType = string;
+
+export const HOME_HERO_TRUST: HomeTrustIndicatorType[] = [
+  "aiPowered",
+  "archivalQuality",
+  "instantDelivery",
+];
+
+// Display copy lives in messages (home.guarantees.items.<id>).
+// Icons are lucide-react icon names.
+export type HomeTrustGuaranteeType = {
+  id: string;
+  icon: string;
+};
+
+export const HOME_TRUST_GUARANTEES: HomeTrustGuaranteeType[] = [
+  { id: "returns", icon: "RotateCcw" },
+  { id: "refund", icon: "ShieldCheck" },
+  { id: "securePayment", icon: "Lock" },
+  { id: "freeShipping", icon: "Truck" },
+];
+
+export type HomePlatformConfigType = {
+  color: string;
+  bgColor: string;
+  borderColor: string;
+};
+
+export const HOME_PLATFORM_CONFIG: Record<string, HomePlatformConfigType> = {
+  Google: {
+    color: "#4285F4",
+    bgColor: "rgba(66, 133, 244, 0.08)",
+    borderColor: "rgba(66, 133, 244, 0.2)",
+  },
+  Trustpilot: {
+    color: "#00B67A",
+    bgColor: "rgba(0, 182, 122, 0.08)",
+    borderColor: "rgba(0, 182, 122, 0.2)",
+  },
+  ProductHunt: {
+    color: "#DA552F",
+    bgColor: "rgba(218, 85, 47, 0.08)",
+    borderColor: "rgba(218, 85, 47, 0.2)",
+  },
+};

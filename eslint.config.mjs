@@ -13,6 +13,35 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  // Project-wide rules
+  {
+    files: ["src/**/*.ts", "src/**/*.tsx"],
+    rules: {
+      // Warn on unused imports and variables
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          vars: "all",
+          varsIgnorePattern: "^_",
+          args: "after-used",
+          argsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
+      // Disallow barrel exports (index.ts files)
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "ExportAllDeclaration",
+          message: "Avoid barrel exports (export *). Import directly from source files.",
+        },
+        {
+          selector: "ExportNamedDeclaration[source][specifiers.length>0]",
+          message: "Avoid re-exports in index.ts. Import directly from source files.",
+        },
+      ],
+    },
+  },
   // Special config for Supabase functions (Deno)
   {
     files: ["supabase/functions/**/*.ts"],

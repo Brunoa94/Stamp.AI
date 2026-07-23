@@ -2,10 +2,13 @@ import { useState } from "react";
 import { Button } from "@/features/ui/button";
 import { FormField } from "@/features/ui/form-field";
 import { Span } from "@/features/ui/span";
+import { Label } from "@/features/ui/label";
 import { Input } from "@/features/ui/input";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import type { LoginI } from "@/schemas/auth";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 import { InlinePasswordReset } from "../../passwordReset/InlinePasswordReset";
 
 interface PropsI {
@@ -13,52 +16,50 @@ interface PropsI {
   errors: FieldErrors<LoginI>;
 }
 
-export function LoginCredentialsFields({
-  register,
-  errors,
-}: PropsI) {
+export function LoginCredentialsFields({ register, errors }: PropsI) {
   const [showPassword, setShowPassword] = useState(false);
+  const t = useTranslations("auth.login.fields");
+  const ve = useValidationMessage();
 
   return (
     <>
       <FormField
         id="email"
-        label="Email"
+        label={t("emailLabel")}
         type="email"
         required
-        placeholder="name@company.com"
-        error={errors.email?.message}
+        placeholder={t("emailPlaceholder")}
+        error={ve(errors.email?.message)}
         register={register("email")}
-        variant="auth-login"
+        variant="stamp-auth"
         leadingIcon={<Mail className="h-5 w-5" />}
       />
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <label htmlFor="password" className="flex items-center">
-            <Span variant="default" className="text-ink">
-              Password
+          <Label htmlFor="password" className="flex items-center">
+            <Span variant="default" className="text-(--color-stamp-chocolate)">
+              {t("passwordLabel")}
             </Span>
-            <span className="text-red-500 ml-1" aria-label="required">
+            <span className="text-(--color-stamp-gold) ml-1" aria-hidden="true">
               *
             </span>
-          </label>
-          <InlinePasswordReset className="ml-auto" />
+          </Label>
         </div>
 
         <div className="relative space-y-2">
           <div className="relative">
-            <div className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-ink/30">
+            <div className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-(--color-stamp-taupe)">
               <Lock className="h-5 w-5" />
             </div>
 
             <Input
               id="password"
               type={showPassword ? "text" : "password"}
-              placeholder="••••••••"
+              placeholder={t("passwordPlaceholder")}
               aria-invalid={!!errors.password}
               aria-describedby={errors.password ? "password-error" : undefined}
-              className="h-14 rounded-2xl border-ink/5 bg-concrete/50 font-medium text-ink placeholder:text-ink/20 focus-visible:border-cyan focus-visible:ring-4 focus-visible:ring-cyan/15 pl-14 pr-14"
+              className="h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-5 text-sm uppercase tracking-[0.05em] text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20 pl-14 pr-14"
               {...register("password")}
             />
 
@@ -67,8 +68,8 @@ export function LoginCredentialsFields({
                 type="button"
                 variant="ghost"
                 size="icon"
-                aria-label={showPassword ? "Hide password" : "Show password"}
-                className="h-7 w-7 rounded-full text-ink/30 hover:text-ink hover:bg-transparent transition-colors"
+                aria-label={showPassword ? t("hidePassword") : t("showPassword")}
+                className="h-7 w-7 text-(--color-stamp-taupe) hover:text-(--color-stamp-chocolate) hover:bg-transparent transition-colors"
                 onClick={() => setShowPassword((prev) => !prev)}
               >
                 {showPassword ? (
@@ -80,13 +81,15 @@ export function LoginCredentialsFields({
             </div>
           </div>
 
+          <InlinePasswordReset className="w-full" />
+
           {errors.password?.message && (
             <p
               id="password-error"
               role="alert"
-              className="text-sm text-red-600 dark:text-red-400"
+              className="text-xs font-bold uppercase tracking-widest text-(--color-stamp-error)"
             >
-              {errors.password.message}
+              {ve(errors.password.message)}
             </p>
           )}
         </div>

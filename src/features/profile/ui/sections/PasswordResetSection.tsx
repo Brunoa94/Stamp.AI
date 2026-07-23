@@ -1,30 +1,27 @@
-"use client";
-
 import { Button } from "@/features/ui/button";
 import { Input } from "@/features/ui/input";
 import { Label } from "@/features/ui/label";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
 import { Lock, Save, X } from "lucide-react";
 import { usePasswordReset } from "@/features/profile/lib/hooks/usePasswordReset";
+import { useTranslations } from "next-intl";
 
 // Static field configuration outside component for performance
 const passwordFields = [
   {
     id: "new_password",
-    label: "New Password",
-    placeholder: "Enter new password",
-    hint: "Password must be at least 6 characters",
     key: "newPassword" as const,
   },
   {
     id: "confirm_password",
-    label: "Confirm New Password",
-    placeholder: "Confirm new password",
-    hint: "Re-enter your new password",
     key: "confirmPassword" as const,
   },
 ] as const;
 
 export function PasswordResetSection() {
+  const t = useTranslations("profile.passwordReset");
   const {
     isEditing,
     newPassword,
@@ -57,10 +54,16 @@ export function PasswordResetSection() {
             <Lock className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-xl font-anton uppercase tracking-tight text-ink leading-tight mb-1">
-              PASSWORD & SECURITY
-            </h2>
-            <p className="text-slate-500 text-sm">Update your password to keep your account secure</p>
+            <Heading
+              as="h2"
+              variant="cardCompact"
+              className="text-xl text-ink mb-1"
+            >
+              {t("title")}
+            </Heading>
+            <Paragraph variant="sm" className="text-slate-500 text-sm">
+              {t("subtitle")}
+            </Paragraph>
           </div>
         </div>
         {!isEditing && (
@@ -69,16 +72,16 @@ export function PasswordResetSection() {
             variant="brutalist-ghost"
             className="text-[10px]"
           >
-            CHANGE PASSWORD
+            {t("changePassword")}
           </Button>
         )}
       </div>
 
       {/* Content */}
       {!isEditing ? (
-        <p className="text-sm text-slate-500 italic">
-          Your password is hidden for security. Click "Change Password" to update it.
-        </p>
+        <Paragraph variant="sm" className="text-sm text-slate-500 italic">
+          {t("hiddenNote")}
+        </Paragraph>
       ) : (
         <form
           className="space-y-6"
@@ -87,24 +90,25 @@ export function PasswordResetSection() {
             handleSave();
           }}
         >
-          {passwordFields.map(({ id, label, placeholder, hint, key }) => (
+          {passwordFields.map(({ id, key }) => (
             <div key={id} className="space-y-2">
-              <Label
-                htmlFor={id}
-                className="text-[10px] font-bold uppercase tracking-widest text-slate-400"
-              >
-                {label}
+              <Label htmlFor={id}>
+                <Span variant="label" className="text-slate-400">
+                  {t(`${key}Label`)}
+                </Span>
               </Label>
               <Input
                 type="password"
                 id={id}
                 value={fieldValues[key]}
                 onChange={(e) => fieldSetters[key](e.target.value)}
-                placeholder={placeholder}
-                className="w-full bg-white border border-ink/10 p-4 font-space placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all"
+                placeholder={t(`${key}Placeholder`)}
+                className="w-full bg-white border border-ink/10 p-4 font-heading placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all"
                 autoComplete="new-password"
               />
-              <p className="text-[11px] text-slate-400 font-medium italic">{hint}</p>
+              <Paragraph variant="xs" className="text-slate-400 italic">
+                {t(`${key}Hint`)}
+              </Paragraph>
             </div>
           ))}
 
@@ -116,7 +120,7 @@ export function PasswordResetSection() {
               className="w-full sm:w-auto group"
             >
               <Save className="w-4 h-4 mr-2" />
-              {isLoading ? "UPDATING..." : "UPDATE PASSWORD"}
+              {isLoading ? t("updating") : t("updatePassword")}
             </Button>
             <Button
               type="button"
@@ -126,7 +130,7 @@ export function PasswordResetSection() {
               className="w-full sm:w-auto"
             >
               <X className="w-4 h-4 mr-2" />
-              CANCEL
+              {t("cancel")}
             </Button>
           </div>
         </form>

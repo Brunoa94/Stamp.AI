@@ -35,7 +35,7 @@ export const CustomProductResponseSchema = z.object({
 /**
  * Schema for line item in Printify order
  */
-export const PrintifyOrderLineItemSchema = z.object({
+const PrintifyOrderLineItemSchema = z.object({
   product_id: z.string().optional(),
   variant_id: z.number(),
   quantity: z.number().int().positive().default(1),
@@ -49,7 +49,7 @@ export const PrintifyOrderLineItemSchema = z.object({
 /**
  * Schema for shipping address
  */
-export const ShippingAddressSchema = z.object({
+const ShippingAddressSchema = z.object({
   first_name: z.string().min(1, "First name is required"),
   last_name: z.string().optional(),
   email: z.string().email("Invalid email address"),

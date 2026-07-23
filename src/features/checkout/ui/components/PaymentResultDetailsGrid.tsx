@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { Span } from "@/features/ui/span";
 
 interface PaymentResultGridItemI {
   label: string;
@@ -10,23 +11,8 @@ interface Props {
   items: PaymentResultGridItemI[];
   statusLabel: string;
   statusValue: string;
-  statusVariant?: "success" | "error";
+  statusVariant?: "success" | "error" | "pending";
 }
-
-const styles = {
-  grid: "grid grid-cols-2 gap-8 text-left border-y border-slate-100 py-8 mb-12",
-  item: "flex flex-col gap-1",
-  label: "text-[10px] font-bold uppercase tracking-widest text-slate-400",
-  value: "text-base font-heading text-slate-900",
-  valueMuted: "text-base font-heading text-slate-400",
-  statusBadge: "flex items-center gap-1.5",
-  statusDot: "w-1.5 h-1.5 rounded-full",
-  statusText: "text-xs font-bold uppercase tracking-widest",
-  successDot: "bg-green-500 animate-pulse",
-  successText: "text-green-600",
-  errorDot: "bg-red-500",
-  errorText: "text-red-500",
-} as const;
 
 export function PaymentResultDetailsGrid({
   items,
@@ -34,35 +20,64 @@ export function PaymentResultDetailsGrid({
   statusValue,
   statusVariant = "success",
 }: Props) {
+  const getStatusColors = () => {
+    switch (statusVariant) {
+      case "success":
+        return {
+          dot: "bg-(--color-stamp-success) animate-pulse",
+          text: "text-(--color-stamp-success)",
+        };
+      case "error":
+        return {
+          dot: "bg-(--color-stamp-error)",
+          text: "text-(--color-stamp-error)",
+        };
+      case "pending":
+        return {
+          dot: "bg-(--color-stamp-gold) animate-pulse",
+          text: "text-(--color-stamp-gold)",
+        };
+    }
+  };
+
+  const statusColors = getStatusColors();
+
   return (
-    <div className={styles.grid} aria-live="polite">
+    <div
+      className="grid grid-cols-2 gap-8 text-left border-y border-(--color-stamp-divider) py-8 mb-12"
+      aria-live="polite"
+    >
       {items.map((item) => (
-        <div className={styles.item} key={item.label}>
-          <span className={styles.label}>{item.label}</span>
+        <div className="flex flex-col gap-1" key={item.label}>
+          <Span variant="micro" className="text-(--color-stamp-taupe)">
+            {item.label}
+          </Span>
           <span
-            className={clsx(styles.value, item.valueMuted && styles.valueMuted)}
+            className={clsx(
+              "font-heading text-base uppercase tracking-wide",
+              item.valueMuted
+                ? "text-(--color-stamp-taupe)"
+                : "text-(--color-stamp-chocolate)"
+            )}
           >
             {item.value}
           </span>
         </div>
       ))}
 
-      <div className={styles.item}>
-        <span className={styles.label}>{statusLabel}</span>
-        <div className={styles.statusBadge}>
+      <div className="flex flex-col gap-1">
+        <Span variant="micro" className="text-(--color-stamp-taupe)">
+          {statusLabel}
+        </Span>
+        <div className="flex items-center gap-2">
           <span
-            className={clsx(
-              styles.statusDot,
-              statusVariant === "success" ? styles.successDot : styles.errorDot,
-            )}
+            className={clsx("w-2 h-2 rounded-full", statusColors.dot)}
             aria-hidden="true"
           />
           <span
             className={clsx(
-              styles.statusText,
-              statusVariant === "success"
-                ? styles.successText
-                : styles.errorText,
+              "font-heading text-lg uppercase tracking-wide font-bold",
+              statusColors.text
             )}
           >
             {statusValue}
