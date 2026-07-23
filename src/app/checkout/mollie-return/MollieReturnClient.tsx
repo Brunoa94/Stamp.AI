@@ -25,7 +25,7 @@ import {
 } from "@/lib/mollie";
 import type { MolliePaymentStatus } from "@/lib/mollie";
 import type { ShippingAddressT } from "@/schemas/checkout";
-import { UserI } from "@/types/auth";
+
 import {
   useCreateOrderFromCart,
   useUpdateOrderStatus,
@@ -35,6 +35,7 @@ import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
 import { useClearCart } from "@/queries/cartQueries";
 import { useVerifyMolliePayment } from "@/queries/mollieQueries";
 import { useUser } from "@/hooks/useAuth";
+import { UserI } from "@/supabase/types";
 
 type PageStatus = "loading" | "success" | "failed" | "pending" | "error";
 
