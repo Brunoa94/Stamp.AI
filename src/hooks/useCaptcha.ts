@@ -1,13 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CaptchaAction } from "@/lib/security/captcha/constants";
 
 declare global {
   interface Window {
     grecaptcha: {
       ready: (callback: () => void) => void;
-      execute: (siteKey: string, options: { action: string }) => Promise<string>;
+      execute: (
+        siteKey: string,
+        options: { action: string },
+      ) => Promise<string>;
     };
   }
 }
@@ -62,15 +65,23 @@ export function useCaptcha(options: UseCaptchaOptions): UseCaptchaReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
+  // Keep latest callbacks in refs so the effect doesn't re-run when the
+  // parent passes new inline function references on every render.
+  const onReadyRef = useRef(onReady);
+  const onErrorRef = useRef(onError);
+  useEffect(() => {
+    onReadyRef.current = onReady;
+    onErrorRef.current = onError;
+  });
+
   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
-  // Load reCAPTCHA script
+  // Load reCAPTCHA script — only re-runs when siteKey changes.
   useEffect(() => {
     // Skip if no site key (development mode)
     if (!siteKey) {
-      console.warn("[CAPTCHA] No site key configured, CAPTCHA disabled");
       setIsReady(true);
-      onReady?.();
+      onReadyRef.current?.();
       return;
     }
 
@@ -81,7 +92,7 @@ export function useCaptcha(options: UseCaptchaOptions): UseCaptchaReturn {
       if (window.grecaptcha) {
         window.grecaptcha.ready(() => {
           setIsReady(true);
-          onReady?.();
+          onReadyRef.current?.();
         });
       }
       return;
@@ -97,14 +108,14 @@ export function useCaptcha(options: UseCaptchaOptions): UseCaptchaReturn {
     script.onload = () => {
       window.grecaptcha.ready(() => {
         setIsReady(true);
-        onReady?.();
+        onReadyRef.current?.();
       });
     };
 
     script.onerror = () => {
       const err = new Error("Failed to load reCAPTCHA script");
       setError(err);
-      onError?.(err);
+      onErrorRef.current?.(err);
     };
 
     document.head.appendChild(script);
@@ -113,14 +124,12 @@ export function useCaptcha(options: UseCaptchaOptions): UseCaptchaReturn {
     return () => {
       // Don't remove script as other components might need it
     };
-  }, [siteKey, onReady, onError]);
+  }, [siteKey]);
 
   // Get CAPTCHA token
   const getToken = useCallback(async (): Promise<string | null> => {
-    // If no site key, return mock token for development
     if (!siteKey) {
-      console.warn("[CAPTCHA] Returning mock token (no site key)");
-      return "mock-captcha-token-development";
+      return null;
     }
 
     if (!isReady || !window.grecaptcha) {
@@ -135,15 +144,16 @@ export function useCaptcha(options: UseCaptchaOptions): UseCaptchaReturn {
       const token = await window.grecaptcha.execute(siteKey, { action });
       return token;
     } catch (err) {
-      const error =
-        err instanceof Error ? err : new Error("Failed to execute reCAPTCHA");
+      const error = err instanceof Error
+        ? err
+        : new Error("Failed to execute reCAPTCHA");
       setError(error);
-      onError?.(error);
+      onErrorRef.current?.(error);
       return null;
     } finally {
       setIsLoading(false);
     }
-  }, [siteKey, isReady, action, onError]);
+  }, [siteKey, isReady, action]);
 
   return {
     isReady,

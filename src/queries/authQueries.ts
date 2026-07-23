@@ -59,8 +59,13 @@ export function useLogin() {
   const { handleError, handleSuccess } = useErrorHandler();
 
   return useMutation({
-    mutationFn: (credentials: LoginI): Promise<AuthResponseI> => {
-      return AuthService.login(credentials);
+    mutationFn: (
+      { credentials, captchaToken }: {
+        credentials: LoginI;
+        captchaToken?: string | null;
+      },
+    ): Promise<AuthResponseI> => {
+      return AuthService.login(credentials, captchaToken ?? undefined);
     },
     onSuccess: (data) => {
       queryClient.setQueryData(authKeys.user(), data.user);

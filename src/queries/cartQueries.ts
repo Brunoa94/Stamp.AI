@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { CartService } from "@/services/cartService";
 import { AddToCartInput, UpdateCartItemInput } from "@/types/cart";
-import { useUser } from "@/hooks/useAuth";
+import { useUser } from "@/queries/authQueries";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 /**

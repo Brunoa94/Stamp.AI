@@ -34,7 +34,7 @@ import {
 import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
 import { useClearCart } from "@/queries/cartQueries";
 import { useVerifyMolliePayment } from "@/queries/mollieQueries";
-import { useUser } from "@/hooks/useAuth";
+import { useUser } from "@/queries/authQueries";
 import { UserI } from "@/supabase/types";
 
 type PageStatus = "loading" | "success" | "failed" | "pending" | "error";
