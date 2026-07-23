@@ -3,11 +3,15 @@
  *
  * Catalog product card: framed 3:4 image with grayscale-to-color hover,
  * color swatches, availability badge, name and price.
+ * Slides in from right to left when first scrolled into view.
  */
+
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { ColorSwatches } from "./ColorSwatches";
@@ -15,13 +19,30 @@ import type { ProductCardData } from "../../lib/mappers/productCardMapper";
 
 interface HomeProductCardPropsI {
   product: ProductCardData;
+  index: number;
 }
 
-export function HomeProductCard({ product }: HomeProductCardPropsI) {
+export function HomeProductCard({ product, index }: HomeProductCardPropsI) {
   const t = useTranslations("home.productCard");
+  const { ref, isVisible } = useIntersectionObserver<HTMLAnchorElement>({
+    threshold: 0.1,
+    triggerOnce: true,
+  });
+
+  // Stagger delay: each card animates 100ms after the previous
+  const staggerDelay = index * 100;
 
   return (
-    <Link href={product.href} className="group block">
+    <Link
+      ref={ref}
+      href={product.href}
+      className="group block"
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? "translateX(0)" : "translateX(100px)",
+        transition: `opacity 0.6s ease-out ${staggerDelay}ms, transform 0.6s ease-out ${staggerDelay}ms`,
+      }}
+    >
       <div className="relative mb-3 sm:mb-5 aspect-3/4 overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all duration-500 group-hover:-translate-y-1 group-hover:border-(--color-stamp-gold) group-hover:shadow-(--shadow-stamp-card-hover)">
         {product.imageUrl ? (
           <Image

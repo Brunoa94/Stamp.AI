@@ -2,11 +2,15 @@
  * FeaturedCarouselCard
  *
  * Individual product card for the featured carousel with vintage frame styling.
+ * Slides in from right to left when first scrolled into view.
  */
+
+"use client";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import type { CarouselProductData } from "../../../lib/types/carousel";
@@ -21,11 +25,24 @@ export function FeaturedCarouselCard({
   index,
 }: FeaturedCarouselCardProps) {
   const t = useTranslations("home.featured");
+  const { ref, isVisible } = useIntersectionObserver<HTMLAnchorElement>({
+    threshold: 0.1,
+    triggerOnce: true,
+  });
+
+  // Stagger delay: each card animates 100ms after the previous
+  const staggerDelay = index * 100;
 
   return (
     <Link
+      ref={ref}
       href={product.href}
       className="group block w-72 shrink-0 sm:w-80"
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? "translateX(0)" : "translateX(100px)",
+        transition: `opacity 0.6s ease-out ${staggerDelay}ms, transform 0.6s ease-out ${staggerDelay}ms`,
+      }}
     >
       <div className="relative border-2 border-(--color-stamp-divider) bg-linear-to-br from-(--color-stamp-cream) to-(--color-stamp-off-white) p-3 shadow-[inset_0_0_0_1px_var(--color-stamp-taupe)/20,0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-500 group-hover:-translate-y-1">
         <div className="pointer-events-none absolute inset-2 border border-(--color-stamp-taupe)/30" />

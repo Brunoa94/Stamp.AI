@@ -33,6 +33,19 @@ export const HOME_HERO_IMAGES = [
   "/home/6-b.png",
 ];
 
+// Hero product grid - grouped image sets for each square
+// Each set cycles independently with staggered timing
+export const HERO_PRODUCT_SETS: string[][] = [
+  // Top-right (large) - products 1 & 2
+  ["/home/1-a.png", "/home/1-b.png", "/home/2-a.png", "/home/2-b.png"],
+  // Middle-left (medium) - products 3 & 4
+  ["/home/3-a.png", "/home/3-b.png", "/home/4-a.png", "/home/4-b.png"],
+  // Bottom-right (medium) - products 5 & 6
+  ["/home/5-a.png", "/home/5-b.png", "/home/6-a.png", "/home/6-b.png"],
+  // Bottom-left (small) - mix of all
+  ["/home/1-a.png", "/home/3-a.png", "/home/5-a.png", "/home/2-a.png"],
+];
+
 // Display copy lives in messages (home.process.steps.<id>); only structural
 // fields remain here.
 export type HomeProcessStepType = {

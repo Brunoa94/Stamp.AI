@@ -1,7 +1,7 @@
 /**
  * HeroContent
  *
- * Hero section text content with title, tagline, CTAs, and trust indicators.
+ * Hero section text content with animated title, tagline, CTAs, and trust indicators.
  */
 
 import Link from "next/link";
@@ -13,37 +13,40 @@ import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { HOME_HERO_TRUST } from "../../../lib/constants/homepageContent";
 import { HomeTrustIndicators } from "../HomeTrustIndicators";
+import { HeroAnimatedTitle } from "./HeroAnimatedTitle";
 
 export function HeroContent() {
   const t = useTranslations("home.hero");
 
   return (
-    <div className="lg:col-span-7">
-      <Heading
-        as="h1"
-        variant="title"
-        className="mb-10 text-7xl text-(--color-stamp-chocolate) md:text-8xl lg:text-9xl"
-      >
-        {t.rich("title", {
-          accent: (chunks) => (
-            <Span
-              variant="serif"
-              className="text-7xl text-(--color-stamp-taupe) md:text-8xl lg:text-9xl"
-            >
-              {chunks}
-            </Span>
-          ),
-        })}
-      </Heading>
+    <div>
+      <HeroAnimatedTitle>
+        <Heading
+          as="h1"
+          variant="title"
+          className="mb-10 text-7xl text-(--color-stamp-chocolate) md:text-8xl lg:text-9xl"
+        >
+          {t.rich("title", {
+            accent: (chunks) => (
+              <Span
+                variant="serif"
+                className="text-7xl text-(--color-stamp-taupe) md:text-8xl lg:text-9xl"
+              >
+                {chunks}
+              </Span>
+            ),
+          })}
+        </Heading>
+      </HeroAnimatedTitle>
 
       <Paragraph
         variant="heroTagline"
-        className="mb-12 max-w-xl text-(--color-stamp-chocolate)/80"
+        className="mx-auto mb-12 max-w-xl text-(--color-stamp-chocolate)/80"
       >
         {t("tagline")}
       </Paragraph>
 
-      <div className="flex flex-col gap-4 sm:flex-row">
+      <div className="flex flex-col justify-center gap-4 sm:flex-row">
         <Button asChild variant="cta" className="group">
           <Link href="/stamp">
             {t("ctaPrimary")}
@@ -51,15 +54,17 @@ export function HeroContent() {
           </Link>
         </Button>
         <Button
-          asChild
-          variant="ghost-stamp"
-          className="border border-(--color-stamp-divider) hover:border-(--color-stamp-gold)"
+          variant="ghost"
+          className="text-lg text-(--color-stamp-taupe) hover:text-(--color-stamp-gold) hover:bg-transparent"
+          onClick={() => {
+            document.getElementById("products")?.scrollIntoView({ behavior: "smooth" });
+          }}
         >
-          <Link href="#products">{t("ctaSecondary")}</Link>
+          {t("ctaSecondary")}
         </Button>
       </div>
 
-      <HomeTrustIndicators items={HOME_HERO_TRUST} className="mt-16" />
+      <HomeTrustIndicators items={HOME_HERO_TRUST} className="mt-16 justify-center" />
     </div>
   );
 }
