@@ -30,11 +30,11 @@ export function HeroProductGrid() {
 
   return (
     <div
-      className="pointer-events-none absolute inset-0 hidden overflow-hidden lg:block"
+      className="pointer-events-none absolute inset-0 hidden overflow-hidden xl:block"
       style={{ opacity: scrollOpacity }}
     >
       {/* Top-left square - medium */}
-      <div className="absolute left-[5%] top-[15%]">
+      <div className="absolute left-[2%] top-[15%] xl:left-[5%]">
         <HeroProductSquare
           images={HERO_PRODUCT_SETS[0]}
           size="md"
@@ -43,7 +43,7 @@ export function HeroProductGrid() {
       </div>
 
       {/* Top-right square - large */}
-      <div className="absolute right-[8%] top-[10%]">
+      <div className="absolute right-[2%] top-[10%] xl:right-[8%]">
         <HeroProductSquare
           images={HERO_PRODUCT_SETS[1]}
           size="lg"
@@ -52,7 +52,7 @@ export function HeroProductGrid() {
       </div>
 
       {/* Middle-left square - small */}
-      <div className="absolute bottom-[35%] left-[3%]">
+      <div className="absolute bottom-[35%] left-[1%] xl:left-[3%]">
         <HeroProductSquare
           images={HERO_PRODUCT_SETS[2]}
           size="sm"
@@ -61,7 +61,7 @@ export function HeroProductGrid() {
       </div>
 
       {/* Bottom-left square - medium */}
-      <div className="absolute bottom-[8%] left-[12%]">
+      <div className="absolute bottom-[8%] left-[5%] xl:left-[12%]">
         <HeroProductSquare
           images={HERO_PRODUCT_SETS[3]}
           size="md"
@@ -70,7 +70,7 @@ export function HeroProductGrid() {
       </div>
 
       {/* Bottom-right square - medium */}
-      <div className="absolute bottom-[15%] right-[5%]">
+      <div className="absolute bottom-[15%] right-[2%] xl:right-[5%]">
         <HeroProductSquare
           images={HERO_PRODUCT_SETS[0]}
           size="md"
@@ -79,7 +79,7 @@ export function HeroProductGrid() {
       </div>
 
       {/* Middle-right square - small */}
-      <div className="absolute bottom-[45%] right-[3%]">
+      <div className="absolute bottom-[45%] right-[1%] xl:right-[3%]">
         <HeroProductSquare
           images={HERO_PRODUCT_SETS[1]}
           size="sm"
