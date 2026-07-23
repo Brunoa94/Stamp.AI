@@ -5,6 +5,7 @@ import { ShippingAddressT } from "@/schemas/checkout";
 import { mapShippingAddressToBillingDetails } from "@/mappers/mapShippingAddressToBillingDetails";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 import { useCreatePaymentIntent } from "@/queries/stripeQueries";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 interface UsePaymentFormProps {
   amount: number;
@@ -44,6 +45,8 @@ export function usePaymentForm({
   const [selectedTestMethod, setSelectedTestMethod] = useState<string>("visa");
   const isTestMode = testMode === true;
   const createPaymentIntent = useCreatePaymentIntent();
+  // Use showToast: false since this form shows inline errors
+  const { handleError } = useErrorHandler({ showToast: false });
 
   const processPayment = async () => {
     if (!stripe) {
@@ -120,8 +123,8 @@ export function usePaymentForm({
         onSuccess?.(paymentIntent, lineItems);
       }
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : t("paymentFailed");
+      // Process error through handler for consistent error code extraction
+      const { message: errorMessage } = handleError(err);
       setError(errorMessage);
       onError?.(errorMessage);
     } finally {
