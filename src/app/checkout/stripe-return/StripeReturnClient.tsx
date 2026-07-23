@@ -17,7 +17,6 @@ import { PaymentRecoveryService } from "@/services/paymentRecoveryService";
 import type { CreatePrintifyOrderRequest } from "@/types/printifyOrder";
 import { validatePrintifyLineItem } from "@/types/printifyOrder";
 import { mapShippingAddressToPrintifyAddress } from "@/mappers/mapShippingAddressToPrintifyAddress";
-import type { UserI } from "@/types/auth";
 import {
   useCreateOrderFromCart,
   useUpdateOrderStatus,
@@ -26,6 +25,7 @@ import {
 import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
 import { useClearCart } from "@/queries/cartQueries";
 import { useUser } from "@/hooks/useAuth";
+import { UserI } from "@/supabase/types";
 
 type PageStatus = "loading" | "processing" | "success" | "failed" | "error";
 
@@ -188,9 +188,7 @@ function StripeReturnContent() {
         if (!cartId) {
           clearStoredStripeCheckoutData();
           setStatus("error");
-          setErrorMessage(
-            t("errorCartNotFound", { paymentId: paymentIntent }),
-          );
+          setErrorMessage(t("errorCartNotFound", { paymentId: paymentIntent }));
           return;
         }
 
@@ -443,12 +441,19 @@ function StripeReturnContent() {
             >
               <Loader2 className="w-12 h-12 animate-spin" />
             </div>
-            <Heading as="h1" variant="card" className="text-(--color-stamp-chocolate) mb-4">
+            <Heading
+              as="h1"
+              variant="card"
+              className="text-(--color-stamp-chocolate) mb-4"
+            >
               {status === "processing"
                 ? t("completingTitle")
                 : t("processingTitle")}
             </Heading>
-            <Paragraph variant="sm" className="text-(--color-stamp-taupe) max-w-sm mx-auto">
+            <Paragraph
+              variant="sm"
+              className="text-(--color-stamp-taupe) max-w-sm mx-auto"
+            >
               {status === "processing"
                 ? t("completingMessage")
                 : t("processingMessage")}
@@ -521,10 +526,17 @@ function StripeReturnContent() {
           >
             <AlertCircle className="w-12 h-12" />
           </div>
-          <Heading as="h1" variant="card" className="text-(--color-stamp-chocolate) mb-4">
+          <Heading
+            as="h1"
+            variant="card"
+            className="text-(--color-stamp-chocolate) mb-4"
+          >
             {t("somethingWentWrongTitle")}
           </Heading>
-          <Paragraph variant="sm" className="text-(--color-stamp-taupe) max-w-sm mx-auto mb-12">
+          <Paragraph
+            variant="sm"
+            className="text-(--color-stamp-taupe) max-w-sm mx-auto mb-12"
+          >
             {errorMessage || t("somethingWentWrongMessage")}
           </Paragraph>
           <div className="flex flex-col gap-4">
