@@ -5,7 +5,17 @@ import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 import type { UseFormRegisterReturn } from "react-hook-form";
 
-type FormFieldVariant = "default" | "auth-login" | "auth-register" | "shipping" | "profile" | "stamp-auth";
+type FormFieldVariant = "default" | "auth-login" | "auth-register" | "shipping" | "profile" | "profile-readonly" | "stamp-auth";
+
+// Exported input styles for direct use in components with controlled inputs
+export const profileInputStyles = {
+  editable:
+    "w-full bg-(--color-stamp-white) border-2 border-(--color-stamp-divider) p-4 font-heading text-sm uppercase placeholder:opacity-30 focus:border-(--color-stamp-gold) focus:ring-4 focus:ring-(--color-stamp-gold)/10 outline-none transition-all",
+  readonly:
+    "w-full bg-(--color-stamp-cream) border-2 border-(--color-stamp-divider) p-4 font-heading text-sm uppercase outline-none cursor-not-allowed",
+  password:
+    "w-full bg-(--color-stamp-white) border-2 border-(--color-stamp-divider) p-4 font-heading text-sm placeholder:opacity-30 focus:border-(--color-stamp-gold) focus:ring-4 focus:ring-(--color-stamp-gold)/10 outline-none transition-all",
+};
 
 interface FormFieldProps {
   id: string;
@@ -50,9 +60,17 @@ const variantStyles: Record<
   },
   profile: {
     container: "space-y-2",
-    labelColor: "text-[10px] font-bold uppercase tracking-widest text-slate-400",
+    labelVariant: "sm" as const,
+    labelColor: "text-(--color-stamp-taupe)",
     input:
-      "w-full bg-white border border-ink/10 p-4 font-heading uppercase placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all",
+      "w-full bg-(--color-stamp-white) border-2 border-(--color-stamp-divider) p-4 font-heading text-sm uppercase placeholder:opacity-30 focus:border-(--color-stamp-gold) focus:ring-4 focus:ring-(--color-stamp-gold)/10 outline-none transition-all",
+  },
+  "profile-readonly": {
+    container: "space-y-2",
+    labelVariant: "sm" as const,
+    labelColor: "text-(--color-stamp-taupe)",
+    input:
+      "w-full bg-(--color-stamp-cream) border-2 border-(--color-stamp-divider) p-4 font-heading text-sm uppercase outline-none cursor-not-allowed",
   },
   "stamp-auth": {
     container: "space-y-2",
