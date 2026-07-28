@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
@@ -65,10 +66,17 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
         <div className="flex-1">
           <Link
             href="/"
-            className="text-2xl font-bold tracking-tight uppercase text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-colors whitespace-nowrap"
+            className="block"
             aria-label={t("logoAria")}
           >
-            {t("brand")}
+            <Image
+              src="/assets/brand/logo.png"
+              alt="Stamp.AI"
+              width={180}
+              height={52}
+              className="h-13 w-auto"
+              priority
+            />
           </Link>
         </div>
 

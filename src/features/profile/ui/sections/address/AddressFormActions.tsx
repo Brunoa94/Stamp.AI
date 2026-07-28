@@ -16,12 +16,12 @@ export function AddressFormActions({
   const t = useTranslations("profile.address");
 
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-3 pt-8 mt-8 border-t border-slate-200/50">
+    <div className="flex flex-col sm:flex-row items-center gap-3 pt-8 mt-8 border-t border-(--color-stamp-divider)">
       <Button
         type="submit"
         onClick={onSave}
         disabled={isSaving}
-        variant="brutalist-primary"
+        variant="primary-compact"
         className="w-full sm:w-auto group"
       >
         <Save className="w-4 h-4 mr-2" />
@@ -30,7 +30,7 @@ export function AddressFormActions({
       <Button
         type="button"
         onClick={onCancel}
-        variant="brutalist-ghost"
+        variant="secondary-compact"
         disabled={isSaving}
         className="w-full sm:w-auto"
       >

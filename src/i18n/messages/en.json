@@ -644,12 +644,12 @@
   },
   "profile": {
     "header": {
-      "title": "My",
-      "highlightedWord": "Profile",
+      "title": "Your <accent>profile</accent>",
       "subtitle": "Manage your account settings"
     },
     "userInformation": {
-      "title": "PERSONAL INFORMATION",
+      "label": "Account",
+      "title": "Personal Information",
       "subtitle": "Update your personal details",
       "edit": "EDIT",
       "firstNameLabel": "First Name",
@@ -661,7 +661,8 @@
       "cancel": "CANCEL"
     },
     "passwordReset": {
-      "title": "PASSWORD & SECURITY",
+      "label": "Security",
+      "title": "Password & Security",
       "subtitle": "Change your password whenever you like.",
       "changePassword": "CHANGE PASSWORD",
       "hiddenNote": "We keep your password hidden. Hit \"Change Password\" to set a new one.",
@@ -676,7 +677,8 @@
       "cancel": "CANCEL"
     },
     "address": {
-      "title": "SHIPPING ADDRESS",
+      "label": "Shipping",
+      "title": "Shipping Address",
       "subtitleHasAddress": "Your default shipping address",
       "subtitleNoAddress": "Add your shipping address",
       "editAddress": "EDIT ADDRESS",

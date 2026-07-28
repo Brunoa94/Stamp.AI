@@ -46,7 +46,7 @@ export function HeroContent() {
         {t("tagline")}
       </Paragraph>
 
-      <div className="flex flex-col justify-center gap-4 sm:flex-row">
+      <div className="flex flex-col justify-center gap-4 sm:flex-row items-center">
         <Button asChild variant="cta" className="group">
           <Link href="/stamp">
             {t("ctaPrimary")}
@@ -57,14 +57,19 @@ export function HeroContent() {
           variant="ghost"
           className="text-lg text-(--color-stamp-taupe) hover:text-(--color-stamp-gold) hover:bg-transparent"
           onClick={() => {
-            document.getElementById("products")?.scrollIntoView({ behavior: "smooth" });
+            document
+              .getElementById("products")
+              ?.scrollIntoView({ behavior: "smooth" });
           }}
         >
           {t("ctaSecondary")}
         </Button>
       </div>
 
-      <HomeTrustIndicators items={HOME_HERO_TRUST} className="mt-16 justify-center" />
+      <HomeTrustIndicators
+        items={HOME_HERO_TRUST}
+        className="mt-16 justify-center"
+      />
     </div>
   );
 }
