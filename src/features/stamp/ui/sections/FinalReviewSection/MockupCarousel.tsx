@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef, memo } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -39,7 +39,7 @@ function getPreloadIndices(currentIndex: number, totalImages: number): Set<numbe
   return indices;
 }
 
-function FullscreenModal({
+const FullscreenModal = memo(function FullscreenModal({
   images,
   isAnimating,
   onClose,
@@ -65,6 +65,27 @@ function FullscreenModal({
     () => getPreloadIndices(currentIndex, images.length),
     [currentIndex, images.length]
   );
+
+  // Memoized handlers to prevent inline function recreation
+  const handlePrevClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onPrev();
+    },
+    [onPrev]
+  );
+
+  const handleNextClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onNext();
+    },
+    [onNext]
+  );
+
+  const handleContainerClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+  }, []);
 
   return createPortal(
     <div
@@ -93,10 +114,7 @@ function FullscreenModal({
         <>
           <button
             type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onPrev();
-            }}
+            onClick={handlePrevClick}
             className={`absolute left-6 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 ${
               isAnimating ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
             }`}
@@ -106,10 +124,7 @@ function FullscreenModal({
           </button>
           <button
             type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onNext();
-            }}
+            onClick={handleNextClick}
             className={`absolute right-6 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 ${
               isAnimating ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4"
             }`}
@@ -125,7 +140,7 @@ function FullscreenModal({
         className={`relative w-[90vw] h-[90vh] max-w-5xl transition-all duration-300 ease-out ${
           isAnimating ? "opacity-100 scale-100" : "opacity-0 scale-75"
         }`}
-        onClick={(e) => e.stopPropagation()}
+        onClick={handleContainerClick}
       >
         {/* Loading spinner */}
         {!loadedImages.has(currentIndex) && (
@@ -141,6 +156,7 @@ function FullscreenModal({
               src={img.src}
               alt={t("mockupAlt")}
               fill
+              unoptimized
               className={`object-contain transition-opacity duration-200 ${
                 index === currentIndex && loadedImages.has(index) ? "opacity-100" : "opacity-0"
               }`}
@@ -168,27 +184,46 @@ function FullscreenModal({
     </div>,
     document.body
   );
-}
+});
 
-export function MockupCarousel({ mockupImages, fallbackUrl }: PropsI) {
+function MockupCarouselComponent({ mockupImages, fallbackUrl }: PropsI) {
   const t = useTranslations("stamp.finalReview");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
+
+  // Track loaded indices in a ref to avoid re-renders for off-screen preloads.
+  // Only track whether the *current* image is loaded as state (to show/hide spinner).
+  const loadedRef = useRef<Set<number>>(new Set());
+  const [isCurrentLoaded, setIsCurrentLoaded] = useState(false);
+  const currentIndexRef = useRef(currentIndex);
+  currentIndexRef.current = currentIndex;
 
   const handleImageLoad = useCallback((index: number) => {
-    setLoadedImages((prev) => new Set(prev).add(index));
+    loadedRef.current.add(index);
+    // Only trigger a state update when the visible image finishes loading.
+    if (index === currentIndexRef.current) {
+      setIsCurrentLoaded(true);
+    }
   }, []);
 
-  // Use mockup images or fallback
-  const images =
-    mockupImages.length > 0
-      ? mockupImages
-      : fallbackUrl
-        ? [{ src: fallbackUrl, variant_ids: [], position: "front", is_default: true }]
-        : [];
+  // Handler for direct index navigation (dots)
+  const goToIndex = useCallback((index: number) => {
+    setCurrentIndex(index);
+    setIsCurrentLoaded(loadedRef.current.has(index));
+  }, []);
+
+  // Memoize images array to prevent recreating on every render
+  const images = useMemo(
+    () =>
+      mockupImages.length > 0
+        ? mockupImages
+        : fallbackUrl
+          ? [{ src: fallbackUrl, variant_ids: [], position: "front", is_default: true }]
+          : [],
+    [mockupImages, fallbackUrl]
+  );
 
   const currentImage = images[currentIndex]?.src || fallbackUrl || "";
 
@@ -198,17 +233,35 @@ export function MockupCarousel({ mockupImages, fallbackUrl }: PropsI) {
     [currentIndex, images.length]
   );
 
+  // Reset loaded state when the image set changes (e.g., real mockups replace the fallback).
+  // Without this, isCurrentLoaded stays true from the previous image and the spinner
+  // never shows for the first real image.
+  const firstImageSrc = images[0]?.src ?? null;
+  useEffect(() => {
+    loadedRef.current = new Set();
+    setCurrentIndex(0);
+    setIsCurrentLoaded(false);
+  }, [firstImageSrc]);
+
   // Ensure we're on client side for portal
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
   const goToPrev = useCallback(() => {
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    setCurrentIndex((prev) => {
+      const next = prev === 0 ? images.length - 1 : prev - 1;
+      setIsCurrentLoaded(loadedRef.current.has(next));
+      return next;
+    });
   }, [images.length]);
 
   const goToNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    setCurrentIndex((prev) => {
+      const next = prev === images.length - 1 ? 0 : prev + 1;
+      setIsCurrentLoaded(loadedRef.current.has(next));
+      return next;
+    });
   }, [images.length]);
 
   const openFullscreen = useCallback(() => {
@@ -266,7 +319,7 @@ export function MockupCarousel({ mockupImages, fallbackUrl }: PropsI) {
         >
           <div className="aspect-square bg-(--color-stamp-cream) flex items-center justify-center overflow-hidden mb-6 relative">
             {/* Loading spinner */}
-            {!loadedImages.has(currentIndex) && (
+            {!isCurrentLoaded && (
               <div className="absolute inset-0 flex items-center justify-center bg-(--color-stamp-cream) z-10">
                 <Loader2 className="w-8 h-8 animate-spin text-(--color-stamp-taupe)/40" />
               </div>
@@ -279,8 +332,9 @@ export function MockupCarousel({ mockupImages, fallbackUrl }: PropsI) {
                   src={img.src}
                   alt={t("mockupAlt")}
                   fill
+                  unoptimized
                   className={`object-cover transition-opacity duration-200 ${
-                    index === currentIndex && loadedImages.has(index) ? "opacity-100" : "opacity-0"
+                    index === currentIndex && isCurrentLoaded ? "opacity-100" : "opacity-0"
                   }`}
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 576px, 672px"
                   priority
@@ -315,7 +369,7 @@ export function MockupCarousel({ mockupImages, fallbackUrl }: PropsI) {
                   <button
                     key={index}
                     type="button"
-                    onClick={() => setCurrentIndex(index)}
+                    onClick={() => goToIndex(index)}
                     className={`w-2 h-2 rounded-full transition-all ${
                       index === currentIndex
                         ? "bg-(--color-stamp-black) scale-125"
@@ -326,7 +380,7 @@ export function MockupCarousel({ mockupImages, fallbackUrl }: PropsI) {
                 ))}
               </div>
             ) : (
-              <span className="text-sm font-medium text-(--color-stamp-black) min-w-[4rem] text-center">
+              <span className="text-sm font-medium text-(--color-stamp-black) min-w-16 text-center">
                 {currentIndex + 1} / {images.length}
               </span>
             )}
@@ -359,7 +413,7 @@ export function MockupCarousel({ mockupImages, fallbackUrl }: PropsI) {
           onPrev={goToPrev}
           onNext={goToNext}
           currentIndex={currentIndex}
-          loadedImages={loadedImages}
+          loadedImages={loadedRef.current}
           onImageLoad={handleImageLoad}
           t={t}
         />
@@ -367,3 +421,5 @@ export function MockupCarousel({ mockupImages, fallbackUrl }: PropsI) {
     </>
   );
 }
+
+export const MockupCarousel = memo(MockupCarouselComponent);

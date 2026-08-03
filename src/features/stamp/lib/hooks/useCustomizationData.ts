@@ -33,22 +33,23 @@ export function useCustomizationData() {
   );
 
   // Filter colors to only show White and Black if both are available
-  // Otherwise show all available colors
+  // Otherwise show all available colors (single-pass optimization)
   const availableColors = useMemo(() => {
     const allColors = (variants?.colors || []).filter(Boolean);
-    const preferredColors = ["White", "Black"];
-    const hasWhite = allColors.some(
-      (c) => c.toLowerCase() === "white"
-    );
-    const hasBlack = allColors.some(
-      (c) => c.toLowerCase() === "black"
-    );
+    let white: string | null = null;
+    let black: string | null = null;
 
-    if (hasWhite && hasBlack) {
-      // Return only White and Black in preferred order
-      return allColors.filter((c) =>
-        preferredColors.some((pc) => pc.toLowerCase() === c.toLowerCase())
-      );
+    for (const c of allColors) {
+      const lower = c.toLowerCase();
+      if (lower === "white") white = c;
+      else if (lower === "black") black = c;
+      // Early exit if both found
+      if (white && black) break;
+    }
+
+    // Return only White and Black if both available, preserving original casing
+    if (white && black) {
+      return [white, black];
     }
 
     // Return all available colors if both White and Black aren't available

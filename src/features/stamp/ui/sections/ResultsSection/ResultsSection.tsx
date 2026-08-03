@@ -1,7 +1,8 @@
 "use client";
 
+import { memo } from "react";
 import { useTranslations } from "next-intl";
-import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
+import { useStampNavigationActions } from "../../../lib/hooks/useStampNavigation";
 import { useStampSelectedImage } from "../../../lib/hooks/useStampSelectors";
 import { ResultsImage } from "./ResultsImage";
 import { ResultsActions } from "./ResultsActions";
@@ -14,9 +15,9 @@ import { Heading } from "@/features/ui/heading";
  * Protocol 04 / Output
  */
 
-export function ResultsSection() {
+function ResultsSectionComponent() {
   const t = useTranslations("stamp.results");
-  const { nextStep, goToStep } = useStampNavigation();
+  const { nextStep, goToStep } = useStampNavigationActions();
   const { selectedImageUrl, enhancedPrompt } = useStampSelectedImage();
   const canProceedToProduct = Boolean(selectedImageUrl);
 
@@ -67,3 +68,5 @@ export function ResultsSection() {
     </section>
   );
 }
+
+export const ResultsSection = memo(ResultsSectionComponent);

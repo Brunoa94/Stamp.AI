@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { useTranslations } from "next-intl";
 import { useStampCartActions } from "../../../lib/hooks/useStampCartActions";
 import {
@@ -17,7 +18,7 @@ import { ReviewDetails } from "./ReviewDetails";
  * Protocol 08 / Acquisition
  */
 
-export function FinalReviewSection() {
+function FinalReviewSectionComponent() {
   const t = useTranslations("stamp.finalReview");
   const { handleBagIt, handleBuyNow, isAddingToCart } = useStampCartActions();
   const { mockupImageUrl, mockupImages } = useStampFinalization();
@@ -40,7 +41,10 @@ export function FinalReviewSection() {
       id="step-8"
       className="h-full overflow-y-auto grid grid-cols-1 lg:grid-cols-2 border-b border-(--color-stamp-divider)"
     >
-      <MockupCarousel mockupImages={mockupImages} fallbackUrl={mockupImageUrl || fallbackUrl} />
+      <MockupCarousel
+        mockupImages={mockupImages}
+        fallbackUrl={mockupImageUrl || fallbackUrl}
+      />
       <ReviewDetails
         productName={productName}
         color={selectedColor}
@@ -53,3 +57,5 @@ export function FinalReviewSection() {
     </section>
   );
 }
+
+export const FinalReviewSection = memo(FinalReviewSectionComponent);

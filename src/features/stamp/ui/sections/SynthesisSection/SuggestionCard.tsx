@@ -1,3 +1,4 @@
+import { memo } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
@@ -18,7 +19,7 @@ interface PropsI {
   onSelect?: (id: string) => void;
 }
 
-export function SuggestionCard({
+function SuggestionCardComponent({
   id,
   label,
   hint,
@@ -62,3 +63,5 @@ export function SuggestionCard({
     </Button>
   );
 }
+
+export const SuggestionCard = memo(SuggestionCardComponent);

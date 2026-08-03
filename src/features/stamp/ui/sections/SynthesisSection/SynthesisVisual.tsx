@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
@@ -18,7 +19,7 @@ interface PropsI {
   onSelectSuggestion?: (id: string) => void;
 }
 
-export function SynthesisVisual({ selectedId, onSelectSuggestion }: PropsI) {
+function SynthesisVisualComponent({ selectedId, onSelectSuggestion }: PropsI) {
   const t = useTranslations("stamp.synthesis");
   const ts = useTranslations("stamp.suggestions");
   const isNoFilterSelected = selectedId === null || selectedId === NO_FILTER_ID;
@@ -58,3 +59,5 @@ export function SynthesisVisual({ selectedId, onSelectSuggestion }: PropsI) {
     </div>
   );
 }
+
+export const SynthesisVisual = memo(SynthesisVisualComponent);

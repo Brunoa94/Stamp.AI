@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ChangeEvent } from "react";
+import { useState, useCallback, ChangeEvent, memo } from "react";
 import { useStampImageGeneration } from "../../../lib/hooks/useStampImageGeneration";
 import { SynthesisVisual } from "./SynthesisVisual";
 import { SynthesisForm } from "./SynthesisForm";
@@ -14,7 +14,7 @@ import { SynthesisForm } from "./SynthesisForm";
 
 const MAX_PROMPT_LENGTH = 500;
 
-export function SynthesisSection() {
+function SynthesisSectionComponent() {
   const { handleGenerate: generateImage, isGenerating } =
     useStampImageGeneration();
 
@@ -25,24 +25,27 @@ export function SynthesisSection() {
     string | null
   >(null);
 
-  const handlePromptChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    if (value.length <= MAX_PROMPT_LENGTH) {
-      setPrompt(value);
-    }
-  };
+  const handlePromptChange = useCallback(
+    (e: ChangeEvent<HTMLTextAreaElement>) => {
+      const value = e.target.value;
+      if (value.length <= MAX_PROMPT_LENGTH) {
+        setPrompt(value);
+      }
+    },
+    [],
+  );
 
-  const handleSelectSuggestion = (id: string) => {
+  const handleSelectSuggestion = useCallback((id: string) => {
     setSelectedSuggestionId(id);
-  };
+  }, []);
 
-  const handleGenerate = async () => {
+  const handleGenerate = useCallback(async () => {
     await generateImage({
       prompt,
       preservation,
       removeBackground,
     });
-  };
+  }, [generateImage, prompt, preservation, removeBackground]);
 
   return (
     <section
@@ -67,3 +70,5 @@ export function SynthesisSection() {
     </section>
   );
 }
+
+export const SynthesisSection = memo(SynthesisSectionComponent);

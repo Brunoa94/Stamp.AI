@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { CustomizationPreview } from "./CustomizationPreview";
 import { CustomizationControls } from "./CustomizationControls";
 import { useCustomizationData } from "../../../lib/hooks/useCustomizationData";
@@ -16,7 +17,7 @@ import { useCustomizationHandlers } from "../../../lib/hooks/useCustomizationHan
  * Products like tote bags and mugs have different sizes than apparel.
  */
 
-export function CustomizationSection() {
+function CustomizationSectionComponent() {
   const {
     blueprintId,
     printProviderId,
@@ -72,3 +73,5 @@ export function CustomizationSection() {
     </section>
   );
 }
+
+export const CustomizationSection = memo(CustomizationSectionComponent);

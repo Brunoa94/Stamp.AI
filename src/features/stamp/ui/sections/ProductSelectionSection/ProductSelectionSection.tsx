@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, memo } from "react";
 import { useCatalogProducts } from "@/queries/catalogQueries";
-import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
+import { useStampNavigationActions } from "../../../lib/hooks/useStampNavigation";
 import {
   useStampProductSelection,
   useStampCustomization,
@@ -25,8 +25,8 @@ import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
 const EXCLUDED_BLUEPRINT_IDS = new Set([12]);
 const FALLBACK_PRICE = 25.0;
 
-export function ProductSelectionSection() {
-  const { nextStep } = useStampNavigation();
+function ProductSelectionSectionComponent() {
+  const { nextStep } = useStampNavigationActions();
   const {
     blueprintId,
     printProviderId,
@@ -135,3 +135,5 @@ export function ProductSelectionSection() {
     </section>
   );
 }
+
+export const ProductSelectionSection = memo(ProductSelectionSectionComponent);

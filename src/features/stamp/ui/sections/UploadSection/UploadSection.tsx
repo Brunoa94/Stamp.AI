@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef, ChangeEvent } from "react";
+import { useState, useRef, ChangeEvent, memo } from "react";
 import { useTranslations } from "next-intl";
 import { Input } from "@/features/ui/input";
-import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
+import { useStampNavigationActions } from "../../../lib/hooks/useStampNavigation";
 import { useStampUpload } from "../../../lib/hooks/useStampSelectors";
 import { useStampImageUpload } from "../../../lib/hooks/useStampImageUpload";
 import { UploadDropzone } from "./UploadDropzone";
@@ -17,9 +17,9 @@ import { UploadContent } from "./UploadContent";
  * Protocol 01 / Initiation
  */
 
-export function UploadSection() {
+function UploadSectionComponent() {
   const t = useTranslations("stamp.upload");
-  const { nextStep } = useStampNavigation();
+  const { nextStep } = useStampNavigationActions();
   const { uploadedImageUrl } = useStampUpload();
   const { uploadImage, removeImage, uploadError } = useStampImageUpload();
 
@@ -93,3 +93,5 @@ export function UploadSection() {
     </section>
   );
 }
+
+export const UploadSection = memo(UploadSectionComponent);

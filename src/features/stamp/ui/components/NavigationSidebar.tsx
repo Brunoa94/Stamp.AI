@@ -1,4 +1,4 @@
-
+import { memo } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
@@ -14,7 +14,7 @@ import { useStampStepAccessibility } from "../../lib/hooks/useStampSelectors";
  * Displays progress through the 8-stage synthesis protocol.
  */
 
-export function NavigationSidebar() {
+function NavigationSidebarComponent() {
   const t = useTranslations("stamp");
   const { currentStep, goToStep } = useStampNavigation();
   const { isStepAccessible } = useStampStepAccessibility();
@@ -84,3 +84,5 @@ export function NavigationSidebar() {
     </aside>
   );
 }
+
+export const NavigationSidebar = memo(NavigationSidebarComponent);

@@ -93,3 +93,34 @@ export function useStampNavigation() {
 
   return { currentStep, goToStep, nextStep, prevStep };
 }
+
+/**
+ * useStampNavigationActions
+ *
+ * Returns only the stable navigation action callbacks WITHOUT subscribing to
+ * currentStep state. Use this in sections that need to navigate (nextStep,
+ * goToStep) but don't need to re-render when the current step changes.
+ */
+export function useStampNavigationActions() {
+  const goToStep = useCallback((step: number) => {
+    if (step < 0 || step > STAMP_TOTAL_STEPS) return;
+    if (!isStepAccessibleForJump(step)) return;
+    useStampFlowStore.getState().setCurrentStep(step);
+  }, []);
+
+  const nextStep = useCallback(() => {
+    const current = useStampFlowStore.getState().currentStep;
+    if (current < STAMP_TOTAL_STEPS) {
+      useStampFlowStore.getState().setCurrentStep(current + 1);
+    }
+  }, []);
+
+  const prevStep = useCallback(() => {
+    const current = useStampFlowStore.getState().currentStep;
+    if (current > 0) {
+      useStampFlowStore.getState().setCurrentStep(current - 1);
+    }
+  }, []);
+
+  return { goToStep, nextStep, prevStep };
+}

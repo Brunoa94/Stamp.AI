@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Loader2, Cpu } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
@@ -15,7 +16,7 @@ import { useStampGeneration } from "../../../lib/hooks/useStampSelectors";
  * Note: Progress and navigation are managed by useStampImageGeneration hook
  */
 
-export function GenerationSection() {
+function GenerationSectionComponent() {
   const t = useTranslations("stamp.generation");
   const { generationProgress } = useStampGeneration();
 
@@ -56,3 +57,5 @@ export function GenerationSection() {
     </section>
   );
 }
+
+export const GenerationSection = memo(GenerationSectionComponent);
