@@ -2,6 +2,8 @@ import { ChangeEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Button } from "@/features/ui/button";
+import { Checkbox } from "@/features/ui/checkbox";
+import { Label } from "@/features/ui/label";
 import { PromptInput } from "./PromptInput";
 import { PreservationSlider } from "./PreservationSlider";
 
@@ -14,20 +16,24 @@ import { PreservationSlider } from "./PreservationSlider";
 interface PropsI {
   prompt: string;
   preservation: number;
+  removeBackground: boolean;
   maxPromptLength: number;
   isGenerating: boolean;
   onPromptChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onPreservationChange: (value: number) => void;
+  onRemoveBackgroundChange: (value: boolean) => void;
   onGenerate: () => void;
 }
 
 export function SynthesisForm({
   prompt,
   preservation,
+  removeBackground,
   maxPromptLength,
   isGenerating,
   onPromptChange,
   onPreservationChange,
+  onRemoveBackgroundChange,
   onGenerate,
 }: PropsI) {
   const t = useTranslations("stamp.synthesis");
@@ -59,6 +65,23 @@ export function SynthesisForm({
           value={preservation}
           onChange={onPreservationChange}
         />
+        <div className="flex items-center gap-3">
+          <Checkbox
+            id="removeBackground"
+            checked={removeBackground}
+            onCheckedChange={(checked) =>
+              onRemoveBackgroundChange(checked === true)
+            }
+            aria-label={t("removeBackgroundAria")}
+            className="data-[state=checked]:bg-(--color-stamp-gold) data-[state=checked]:border-(--color-stamp-gold)"
+          />
+          <Label
+            htmlFor="removeBackground"
+            className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe) cursor-pointer"
+          >
+            {t("removeBackgroundLabel")}
+          </Label>
+        </div>
       </div>
 
       {/* Generate Button */}

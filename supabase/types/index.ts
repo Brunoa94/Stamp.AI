@@ -241,6 +241,9 @@ export interface CreateCustomProductRequestI {
   customer_email: string
   selected_color?: string | null
   selected_size?: string | null
+  // Image dimensions for auto-placement calculation
+  image_width?: number
+  image_height?: number
 }
 
 export interface ProductVariantI {

@@ -59,6 +59,8 @@ export const useStampFinalization = () => {
   const setMockupImageUrl = useStampFlowStore(
     (state) => state.setMockupImageUrl,
   );
+  const mockupImages = useStampFlowStore((state) => state.mockupImages);
+  const setMockupImages = useStampFlowStore((state) => state.setMockupImages);
   const productionProgress = useStampFlowStore(
     (state) => state.productionProgress,
   );
@@ -74,6 +76,8 @@ export const useStampFinalization = () => {
     setCreatedVariantId,
     mockupImageUrl,
     setMockupImageUrl,
+    mockupImages,
+    setMockupImages,
     productionProgress,
     setProductionProgress,
   };

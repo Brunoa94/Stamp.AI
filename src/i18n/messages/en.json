@@ -236,7 +236,9 @@
       "preservationLabel": "Preservation",
       "low": "LOW",
       "high": "HIGH",
-      "preservationAria": "Preservation level slider"
+      "preservationAria": "Preservation level slider",
+      "removeBackgroundLabel": "Remove Background",
+      "removeBackgroundAria": "Toggle background removal"
     },
     "suggestions": {
       "vibrant": {
@@ -470,6 +472,13 @@
       "defaultProductName": "Custom Product",
       "mockupAlt": "Final product mockup",
       "previewSealed": "Final preview",
+      "viewFullscreen": "Click to view fullscreen",
+      "fullscreenPreview": "Fullscreen product preview",
+      "closeFullscreen": "Close fullscreen view",
+      "pressEscToClose": "Press ESC or click anywhere to close",
+      "previousImage": "Previous mockup",
+      "nextImage": "Next mockup",
+      "goToImage": "Go to mockup",
       "productDetails": "Color: {color} | Size: {size}",
       "finalValuation": "Final Total",
       "freeShipping": "Free shipping on every order",

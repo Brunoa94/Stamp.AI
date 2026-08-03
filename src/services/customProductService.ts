@@ -27,10 +27,11 @@ export class CustomProductService {
   /**
    * Upload image to Printify
    * Uses CustomProductServiceMapper to create upload request
+   * Returns image ID, preview URL, and dimensions for auto-placement
    */
   static async uploadImage(
     imageUrl: string,
-  ): Promise<{ id: string; previewUrl: string }> {
+  ): Promise<{ id: string; previewUrl: string; width: number; height: number }> {
     try {
       const { supabaseUrl, supabaseAnonKey } = this.getSupabaseConfig();
 
@@ -74,6 +75,8 @@ export class CustomProductService {
       return {
         id: validatedData.image.id,
         previewUrl: validatedData.image.preview_url,
+        width: validatedData.image.width,
+        height: validatedData.image.height,
       };
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Custom Product", action: "Upload Image"})
@@ -95,7 +98,7 @@ export class CustomProductService {
       // Step 1: Upload image to Printify
       const uploadedImage = await this.uploadImage(validatedInput.image_url);
 
-      // Step 2: Create custom product
+      // Step 2: Create custom product with image dimensions for auto-placement
       const productPayload: CreateCustomProductRequestI = {
         blueprint_id: validatedInput.blueprint_id,
         print_provider_id: validatedInput.print_provider_id,
@@ -108,6 +111,9 @@ export class CustomProductService {
         customer_email: validatedInput.customer_email,
         selected_color: validatedInput.selected_color,
         selected_size: validatedInput.selected_size,
+        // Pass image dimensions for auto-placement calculation
+        image_width: uploadedImage.width,
+        image_height: uploadedImage.height,
       };
 
       // Validate product payload

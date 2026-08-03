@@ -34,9 +34,26 @@ class ImageGenerationTimeoutError extends Error {
   }
 }
 
+/**
+ * Convert a data URL to a File object
+ */
+function dataURLtoFile(dataUrl: string, filename: string): File {
+  const arr = dataUrl.split(",");
+  const mimeMatch = arr[0].match(/:(.*?);/);
+  const mime = mimeMatch ? mimeMatch[1] : "image/jpeg";
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, { type: mime });
+}
+
 interface GenerateImageParamsType {
   prompt: string;
   preservation: number;
+  removeBackground: boolean;
 }
 
 // Art-style selection was removed from the UI; the generation API still
@@ -63,6 +80,7 @@ export function useStampImageGeneration() {
   const handleGenerate = async ({
     prompt,
     preservation,
+    removeBackground,
   }: GenerateImageParamsType) => {
     // Idempotency check: Prevent duplicate generation requests
     if (isGeneratingRef.current) {
@@ -100,14 +118,34 @@ export function useStampImageGeneration() {
     }, 400);
 
     try {
+      // Convert uploaded image URL to File, or use placeholder if none uploaded
+      let imageFile: File;
+
+      if (uploadedImageUrl) {
+        if (uploadedImageUrl.startsWith("data:")) {
+          imageFile = dataURLtoFile(uploadedImageUrl, `reference-${Date.now()}.png`);
+        } else {
+          // For remote URLs, fetch and convert to File
+          const response = await fetch(uploadedImageUrl);
+          const blob = await response.blob();
+          imageFile = new File([blob], `reference-${Date.now()}.png`, { type: blob.type });
+        }
+      } else {
+        // No image uploaded - create a minimal placeholder file
+        // The backend will use mock image anyway in mock mode
+        const placeholderBlob = new Blob([new Uint8Array(1)], { type: "image/png" });
+        imageFile = new File([placeholderBlob], `placeholder-${Date.now()}.png`, { type: "image/png" });
+      }
+
       // Wrap mutation with timeout
       const result = await withTimeout(
         generateMutation.mutateAsync({
-          image: uploadedImageUrl ? new File([], "reference") : undefined,
+          image: imageFile,
           prompt,
           selectedStyle: DEFAULT_SYNTHESIS_STYLE,
-          preservation: uploadedImageUrl ? preservation : undefined,
-        } as any),
+          preservation,
+          removeBackground,
+        }),
         IMAGE_GENERATION_TIMEOUT_MS,
         new ImageGenerationTimeoutError(
           t("timeout", {

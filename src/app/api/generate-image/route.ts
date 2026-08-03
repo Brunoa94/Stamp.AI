@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { GeminiImageService } from "@/services/geminiImageService";
 
 export const runtime = "nodejs";
 
@@ -40,12 +41,10 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const prompt = formData.get("prompt") as string;
     const image = formData.get("image") as File;
-    const selectedStyle = (formData.get("selectedStyle") as string | null) ?? "N/A";
-    const preservationRaw = formData.get("preservation") as string | null;
-    const parsedPreservation = Number(preservationRaw ?? "80");
-    const preservation = Number.isFinite(parsedPreservation)
-      ? Math.min(100, Math.max(0, parsedPreservation))
-      : 80;
+    const preservationStr = formData.get("preservation") as string;
+    const preservation = preservationStr ? parseInt(preservationStr, 10) : 50;
+    const removeBackgroundStr = formData.get("removeBackground") as string;
+    const removeBackground = removeBackgroundStr !== "false";
 
     if (!prompt) {
       return NextResponse.json(
@@ -61,15 +60,75 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ── [MOCK] Return a static mockup image instead of calling Gemini ──────────
-    console.log("[MOCK] Skipping Gemini image generation, returning mockup image");
+    // ── Read image data ────────────────────────────────────────────────────────
+    console.log("Image info:", { name: image.name, type: image.type, size: image.size });
+
+    if (image.size === 0) {
+      return NextResponse.json(
+        { error: "Image file is empty" },
+        { status: 400 }
+      );
+    }
+
+    // Read the image bytes
+    const imageBytes = await image.bytes();
+    const imageBuffer = imageBytes.buffer.slice(
+      imageBytes.byteOffset,
+      imageBytes.byteOffset + imageBytes.byteLength
+    );
+
+    console.log("Image buffer size:", imageBuffer.byteLength);
+
+    if (imageBuffer.byteLength === 0) {
+      return NextResponse.json(
+        { error: "Failed to read image data" },
+        { status: 400 }
+      );
+    }
+
+    // ── Determine correct MIME type ────────────────────────────────────────────
+    let mimeType = image.type;
+
+    // If MIME type is missing or generic, detect from file signature (magic bytes)
+    if (!mimeType || mimeType === "application/octet-stream") {
+      const uint8Array = new Uint8Array(imageBuffer).slice(0, 12);
+
+      if (uint8Array[0] === 0xFF && uint8Array[1] === 0xD8 && uint8Array[2] === 0xFF) {
+        mimeType = "image/jpeg";
+      } else if (uint8Array[0] === 0x89 && uint8Array[1] === 0x50 && uint8Array[2] === 0x4E && uint8Array[3] === 0x47) {
+        mimeType = "image/png";
+      } else if (uint8Array[0] === 0x47 && uint8Array[1] === 0x49 && uint8Array[2] === 0x46) {
+        mimeType = "image/gif";
+      } else if (uint8Array[0] === 0x52 && uint8Array[1] === 0x49 && uint8Array[2] === 0x46 && uint8Array[3] === 0x46 &&
+                 uint8Array[8] === 0x57 && uint8Array[9] === 0x45 && uint8Array[10] === 0x42 && uint8Array[11] === 0x50) {
+        mimeType = "image/webp";
+      } else {
+        // Default to JPEG if we can't detect
+        mimeType = "image/jpeg";
+      }
+      console.log(`Detected MIME type from magic bytes: ${mimeType}`);
+    }
+
+    // ── Generate image using Gemini (2.5 Flash + 2.5 Flash Image) ──────────────
+    console.log("Generating image with Gemini");
     console.log("Original prompt:", prompt);
+    console.log("Preservation level:", preservation);
+    console.log("Remove background:", removeBackground);
+    console.log("Image file:", image.name, "MIME type:", mimeType);
+
+    const result = await GeminiImageService.generateImage(
+      imageBuffer,
+      mimeType,
+      prompt,
+      preservation,
+      removeBackground
+    );
 
     return NextResponse.json({
       success: true,
-      imageUrl: "https://placehold.co/1024x1024/png",
-      enhancedPrompt: `[MOCK] ${prompt}`,
-      originalPrompt: prompt,
+      imageUrl: result.imageUrl,
+      enhancedPrompt: result.enhancedPrompt,
+      originalPrompt: prompt
     });
 
   } catch (error: any) {

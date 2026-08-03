@@ -32,10 +32,28 @@ export function useCustomizationData() {
     printProviderId,
   );
 
-  const availableColors = useMemo(
-    () => (variants?.colors || []).filter(Boolean),
-    [variants?.colors],
-  );
+  // Filter colors to only show White and Black if both are available
+  // Otherwise show all available colors
+  const availableColors = useMemo(() => {
+    const allColors = (variants?.colors || []).filter(Boolean);
+    const preferredColors = ["White", "Black"];
+    const hasWhite = allColors.some(
+      (c) => c.toLowerCase() === "white"
+    );
+    const hasBlack = allColors.some(
+      (c) => c.toLowerCase() === "black"
+    );
+
+    if (hasWhite && hasBlack) {
+      // Return only White and Black in preferred order
+      return allColors.filter((c) =>
+        preferredColors.some((pc) => pc.toLowerCase() === c.toLowerCase())
+      );
+    }
+
+    // Return all available colors if both White and Black aren't available
+    return allColors;
+  }, [variants?.colors]);
 
   // Get available sizes from variants API, sorted properly
   // Falls back to standard apparel sizes if API doesn't return sizes

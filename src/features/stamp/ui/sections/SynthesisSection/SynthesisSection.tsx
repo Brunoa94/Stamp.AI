@@ -20,6 +20,7 @@ export function SynthesisSection() {
 
   const [prompt, setPrompt] = useState("");
   const [preservation, setPreservation] = useState(50);
+  const [removeBackground, setRemoveBackground] = useState(true);
   const [selectedSuggestionId, setSelectedSuggestionId] = useState<
     string | null
   >(null);
@@ -39,6 +40,7 @@ export function SynthesisSection() {
     await generateImage({
       prompt,
       preservation,
+      removeBackground,
     });
   };
 
@@ -54,10 +56,12 @@ export function SynthesisSection() {
       <SynthesisForm
         prompt={prompt}
         preservation={preservation}
+        removeBackground={removeBackground}
         maxPromptLength={MAX_PROMPT_LENGTH}
         isGenerating={isGenerating}
         onPromptChange={handlePromptChange}
         onPreservationChange={setPreservation}
+        onRemoveBackgroundChange={setRemoveBackground}
         onGenerate={handleGenerate}
       />
     </section>

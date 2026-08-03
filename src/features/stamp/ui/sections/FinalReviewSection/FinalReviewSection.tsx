@@ -7,7 +7,7 @@ import {
   useStampProductSelection,
   useStampCustomization,
 } from "../../../lib/hooks/useStampSelectors";
-import { MockupPreview } from "./MockupPreview";
+import { MockupCarousel } from "./MockupCarousel";
 import { ReviewDetails } from "./ReviewDetails";
 
 /**
@@ -20,13 +20,12 @@ import { ReviewDetails } from "./ReviewDetails";
 export function FinalReviewSection() {
   const t = useTranslations("stamp.finalReview");
   const { handleBagIt, handleBuyNow, isAddingToCart } = useStampCartActions();
-  const { mockupImageUrl } = useStampFinalization();
+  const { mockupImageUrl, mockupImages } = useStampFinalization();
   const { selectedProductTitle } = useStampProductSelection();
   const { selectedColor, selectedSize, selectedPriceCents } =
     useStampCustomization();
 
-  const mockupUrl =
-    mockupImageUrl ||
+  const fallbackUrl =
     "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=2000&auto=format&fit=crop";
 
   const productName = selectedProductTitle || t("defaultProductName");
@@ -41,7 +40,7 @@ export function FinalReviewSection() {
       id="step-8"
       className="h-full overflow-y-auto grid grid-cols-1 lg:grid-cols-2 border-b border-(--color-stamp-divider)"
     >
-      <MockupPreview mockupUrl={mockupUrl} />
+      <MockupCarousel mockupImages={mockupImages} fallbackUrl={mockupImageUrl || fallbackUrl} />
       <ReviewDetails
         productName={productName}
         color={selectedColor}

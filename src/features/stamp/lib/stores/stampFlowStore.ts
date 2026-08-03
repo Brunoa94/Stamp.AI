@@ -43,6 +43,7 @@ const initialState = {
   createdProductId: undefined,
   createdVariantId: undefined,
   mockupImageUrl: undefined,
+  mockupImages: [],
   generationProgress: 0,
   productionProgress: 0,
 };
@@ -156,6 +157,7 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
   setCreatedProductId: (id) => set({ createdProductId: id }),
   setCreatedVariantId: (id) => set({ createdVariantId: id }),
   setMockupImageUrl: (url) => set({ mockupImageUrl: url }),
+  setMockupImages: (images) => set({ mockupImages: images }),
 
   // Progress tracking
   setGenerationProgress: (progress) =>

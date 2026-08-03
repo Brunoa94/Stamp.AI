@@ -93,6 +93,9 @@ export const CreateCustomProductRequestSchema = z.object({
   customer_email: z.string(),
   selected_color: z.string().nullable().optional(),
   selected_size: z.string().nullable().optional(),
+  // Image dimensions for auto-placement calculation
+  image_width: z.number().int().positive().optional(),
+  image_height: z.number().int().positive().optional(),
 });
 
 /**

@@ -1,3 +1,4 @@
+// REFACTOR: THIS FILE SHOULD BE BETTER DECOMPOSED IN ORDER TO FOLLOW THE PATTERNS OF THE PROJECT
 "use client";
 
 import { useRef } from "react";
@@ -18,6 +19,7 @@ import {
   logStampWarn,
 } from "../helpers/stampLogger";
 import { withTimeout } from "@/lib/promiseUtils";
+import { MockupImageType } from "../types/stampFlowTypes";
 
 /**
  * useStampProductCreation
@@ -59,6 +61,7 @@ export function useStampProductCreation() {
     setCreatedProductId,
     setCreatedVariantId,
     setMockupImageUrl,
+    setMockupImages,
     setProductionProgress,
   } = useStampFinalization();
 
@@ -206,8 +209,38 @@ export function useStampProductCreation() {
         setCreatedVariantId(firstVariantId);
       }
 
-      // Store mockup image URL
+      const productMapper = (
+        { img }: {
+          img: {
+            src: string;
+            variant_ids?: number[];
+            position?: string;
+            is_default?: boolean;
+          };
+        },
+      ): MockupImageType =>
+        ({
+          src: img.src,
+          variant_ids: img.variant_ids || [],
+          position: img.position || "front",
+          is_default: img.is_default || false,
+        }) as MockupImageType;
+
+      // Store all mockup images for carousel
       if (product.images && product.images.length > 0) {
+        const productMapped = productMapper({ img: product.images[0] });
+        setMockupImages([productMapped]);
+
+        const mappedImages = product.images.map((
+          img: {
+            src: string;
+            variant_ids?: number[];
+            position?: string;
+            is_default?: boolean;
+          },
+        ) => productMapper({ img }));
+        setMockupImages(mappedImages);
+        // Also set first image as primary mockup for backwards compatibility
         const mockupUrl = product.images[0].src;
         setMockupImageUrl(mockupUrl);
       }

@@ -1,9 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
+import { calculatePlacement } from "../_shared/printPlacement.ts"
 import { createClient } from "jsr:@supabase/supabase-js@2"
-
-// Environment variables will be validated when needed
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -33,8 +32,10 @@ serve(async (req) => {
       variants,
       selected_color,
       selected_size,
-
-      // ➕ Order-related fields from client
+      // Image dimensions for placement calculation (optional, from upload response)
+      image_width,
+      image_height,
+      // Order-related fields from client
       user_id,
       customer_email
     } = await req.json()
@@ -42,6 +43,7 @@ serve(async (req) => {
     console.log('=== CREATE CUSTOM PRODUCT ===')
     console.log('🎨 Selected color:', selected_color)
     console.log('📏 Selected size:', selected_size)
+    console.log('🖼️ Received image dimensions:', image_width, 'x', image_height)
 
     // Validate environment variables
     const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken()
@@ -67,22 +69,26 @@ serve(async (req) => {
       throw ErrorCodes.NO_VARIANTS_AVAILABLE()
     }
 
-    // Get available print areas from first variant's placeholders
-    const availablePrintAreas = availableVariants[0]?.placeholders?.map((p: any) => p.position) || ['front']
+    // Get print area dimensions from first variant's placeholders
+    const firstVariantPlaceholders = availableVariants[0]?.placeholders || []
+    const availablePrintAreas = firstVariantPlaceholders.map((p: any) => p.position) || ['front']
     console.log('📍 Available print areas:', availablePrintAreas.join(', '))
 
-    // Support both legacy image_id and new print_areas format
-    // Map the provided image to the first available print area if using legacy format
-    const primaryPrintArea = availablePrintAreas[0] || 'front'
-    const secondaryPrintArea = availablePrintAreas[1] || null
+    // Find print area dimensions for front position
+    const frontPlaceholder = firstVariantPlaceholders.find((p: any) => p.position === 'front')
+    const printAreaWidth = frontPlaceholder?.width || 3500
+    const printAreaHeight = frontPlaceholder?.height || 4000
+    console.log(`📐 Print area dimensions: ${printAreaWidth}x${printAreaHeight}px`)
+
+    // Prioritize "front" for primary print area (some products list "neck" first)
+    const primaryPrintArea = availablePrintAreas.includes('front') ? 'front' : availablePrintAreas[0] || 'front'
+    const secondaryPrintArea = availablePrintAreas.includes('back') ? 'back' : null
 
     // Get image IDs - support both explicit print_areas and legacy image_id
     let primaryImageId: string | undefined
     let secondaryImageId: string | undefined
 
     if (print_areas) {
-      // New format: print_areas can contain any position names
-      // Try to match provided areas to available areas
       for (const area of availablePrintAreas) {
         if (print_areas[area] && !primaryImageId) {
           primaryImageId = print_areas[area]
@@ -90,7 +96,6 @@ serve(async (req) => {
           secondaryImageId = print_areas[area]
         }
       }
-      // Fallback to front/back if those were provided but areas have different names
       if (!primaryImageId && print_areas.front) {
         primaryImageId = print_areas.front
       }
@@ -98,7 +103,6 @@ serve(async (req) => {
         secondaryImageId = print_areas.back
       }
     } else if (image_id) {
-      // Legacy format: use image_id for primary print area
       primaryImageId = image_id
     }
 
@@ -110,14 +114,11 @@ serve(async (req) => {
     let selectedVariants: number[] = []
 
     if (variants && variants.length > 0) {
-      // Use explicitly provided variant IDs
       selectedVariants = variants
     } else if (selected_color || selected_size) {
-      // Filter variants by selected color and/or size
       console.log(`🎨 Filtering variants by color: "${selected_color}", size: "${selected_size}"`)
 
       const matchingVariants = availableVariants.filter((v: any) => {
-        // Extract color and size from variant options or title
         const variantColor = v.options?.color || v.title?.split(' / ')[0]?.trim()
         const variantSize = v.options?.size || v.title?.split(' / ')[1]?.trim()
 
@@ -133,36 +134,73 @@ serve(async (req) => {
         selectedVariants = matchingVariants.map((v: any) => v.id)
         console.log(`✅ Found ${selectedVariants.length} matching variant(s): ${selectedVariants.join(', ')}`)
       } else {
-        // Fallback to first 100 if no match found
         console.warn(`⚠️ No variants match color: "${selected_color}", size: "${selected_size}". Using defaults.`)
         selectedVariants = availableVariants.slice(0, 100).map((v: any) => v.id)
       }
     } else {
-      // No filter specified, use first 100 variants
       selectedVariants = availableVariants.slice(0, 100).map((v: any) => v.id)
     }
 
-    // Build placeholders using actual available print areas
+    // === AUTO-PLACEMENT CALCULATION ===
+    // If image dimensions are provided, calculate optimal placement
+    // Otherwise, fall back to default centered placement
+    let primaryPlacement = { x: 0.5, y: 0.5, scale: 1, angle: 0 }
+
+    if (image_width && image_height && image_width > 0 && image_height > 0) {
+      console.log(`🖼️ Image dimensions: ${image_width}x${image_height}px`)
+      primaryPlacement = calculatePlacement(
+        image_width,
+        image_height,
+        printAreaWidth,
+        printAreaHeight,
+        finalBlueprintId,
+        primaryPrintArea
+      )
+    } else {
+      // Default fallback: calculate for a typical square image (1:1 aspect ratio)
+      console.log('⚠️ No image dimensions provided, using optimized default placement')
+      primaryPlacement = calculatePlacement(
+        3000, // Assume reasonable resolution
+        3000,
+        printAreaWidth,
+        printAreaHeight,
+        finalBlueprintId,
+        primaryPrintArea
+      )
+    }
+
+    console.log(`🎯 Final placement: x=${primaryPlacement.x.toFixed(3)}, y=${primaryPlacement.y.toFixed(3)}, scale=${primaryPlacement.scale.toFixed(3)}`)
+
+    // Build placeholders with auto-corrected placement
     const placeholders = []
 
     if (primaryImageId) {
       placeholders.push({
         position: primaryPrintArea,
-        images: [{ id: primaryImageId, x: 0.5, y: 0.5, scale: 1, angle: 0 }],
+        images: [{
+          id: primaryImageId,
+          x: primaryPlacement.x,
+          y: primaryPlacement.y,
+          scale: primaryPlacement.scale,
+          angle: primaryPlacement.angle,
+        }],
       })
-      console.log(`🖼️ Adding image to ${primaryPrintArea}`)
     }
 
     if (secondaryImageId && secondaryPrintArea) {
+      // Use same placement for back
       placeholders.push({
         position: secondaryPrintArea,
-        images: [{ id: secondaryImageId, x: 0.5, y: 0.5, scale: 1, angle: 0 }],
+        images: [{
+          id: secondaryImageId,
+          x: primaryPlacement.x,
+          y: primaryPlacement.y,
+          scale: primaryPlacement.scale,
+          angle: primaryPlacement.angle,
+        }],
       })
-      console.log(`🖼️ Adding image to ${secondaryPrintArea}`)
     }
 
-    // IMPORTANT: Printify API requires all prices to be integers (in cents)
-    // Example: $29.99 should be sent as 2999 (not 29.99)
     const productPayload = {
       title: title || `Custom Design ${Date.now()}`,
       description: description || 'Custom designed product',
@@ -170,7 +208,7 @@ serve(async (req) => {
       print_provider_id: finalPrintProviderId,
       variants: selectedVariants.map((variantId: number) => ({
         id: variantId,
-        price: 50, // Price in cents (50 cents = €0.50) - MUST be an integer
+        price: 50,
         is_enabled: true,
       })),
       print_areas: [
@@ -181,7 +219,7 @@ serve(async (req) => {
       ],
     }
 
-    // 🚀 Create Printify product
+    // Create Printify product
     const createResponse = await fetch(
       `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/products.json`,
       {
@@ -203,10 +241,24 @@ serve(async (req) => {
 
     console.log('✅ Product created:', productData.id)
 
-    // NOTE: Orders are now created ONLY during checkout after payment succeeds.
-    // This prevents duplicate "ghost" orders from being created prematurely.
+    // Transform image URLs to use front camera view
+    const transformedImages = productData.images?.map((img: any) => {
+      let src = img.src
+      if (src && src.includes('camera_label=')) {
+        src = src.replace(/camera_label=[^&]+/, 'camera_label=front')
+      } else if (src && src.includes('?')) {
+        src = src + '&camera_label=front'
+      } else if (src) {
+        src = src + '?camera_label=front'
+      }
+      return {
+        src,
+        variant_ids: img.variant_ids,
+        position: img.position,
+        is_default: img.is_default,
+      }
+    }) || []
 
-    // ✅ Return product data
     return new Response(
       JSON.stringify({
         success: true,
@@ -214,12 +266,7 @@ serve(async (req) => {
           id: productData.id,
           title: productData.title,
           description: productData.description,
-          images: productData.images?.map((img: any) => ({
-            src: img.src,
-            variant_ids: img.variant_ids,
-            position: img.position,
-            is_default: img.is_default,
-          })) || [],
+          images: transformedImages,
           variants: productData.variants?.map((v: any) => ({
             id: v.id,
             title: v.title,
@@ -227,6 +274,8 @@ serve(async (req) => {
             is_enabled: v.is_enabled,
           })),
         },
+        // Include placement info for debugging
+        placement: primaryPlacement,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )

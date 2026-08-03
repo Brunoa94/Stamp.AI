@@ -12,6 +12,13 @@ export interface GeneratedResultType {
   enhancedPrompt: string;
 }
 
+export interface MockupImageType {
+  src: string;
+  variant_ids: number[];
+  position: string;
+  is_default: boolean;
+}
+
 export interface StampFlowStateType {
   // Step navigation (lightweight - high frequency updates)
   currentStep: number;
@@ -69,6 +76,8 @@ export interface StampFlowStateType {
   setCreatedVariantId: (id: number | undefined) => void;
   mockupImageUrl: string | undefined;
   setMockupImageUrl: (url: string | undefined) => void;
+  mockupImages: MockupImageType[];
+  setMockupImages: (images: MockupImageType[]) => void;
 
   // Progress tracking
   generationProgress: number;
