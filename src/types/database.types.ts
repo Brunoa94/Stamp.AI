@@ -89,15 +89,16 @@ export type Database = {
         Row: {
           cart_id: string | null
           created_at: string | null
+          custom_image_hash: string | null
           custom_image_public_id: string | null
           custom_image_url: string | null
-          design_id: string | null
           id: string
           printify_blueprint_id: number | null
           printify_print_provider_id: number | null
           product_id: string | null
           product_name: string | null
           quantity: number | null
+          selling_price: number | null
           unit_price: number | null
           updated_at: string | null
           variant_id: string | null
@@ -106,15 +107,16 @@ export type Database = {
         Insert: {
           cart_id?: string | null
           created_at?: string | null
+          custom_image_hash?: string | null
           custom_image_public_id?: string | null
           custom_image_url?: string | null
-          design_id?: string | null
           id?: string
           printify_blueprint_id?: number | null
           printify_print_provider_id?: number | null
           product_id?: string | null
           product_name?: string | null
           quantity?: number | null
+          selling_price?: number | null
           unit_price?: number | null
           updated_at?: string | null
           variant_id?: string | null
@@ -123,15 +125,16 @@ export type Database = {
         Update: {
           cart_id?: string | null
           created_at?: string | null
+          custom_image_hash?: string | null
           custom_image_public_id?: string | null
           custom_image_url?: string | null
-          design_id?: string | null
           id?: string
           printify_blueprint_id?: number | null
           printify_print_provider_id?: number | null
           product_id?: string | null
           product_name?: string | null
           quantity?: number | null
+          selling_price?: number | null
           unit_price?: number | null
           updated_at?: string | null
           variant_id?: string | null
@@ -389,8 +392,6 @@ export type Database = {
           created_at: string | null
           custom_image_url: string
           design_config: Json | null
-          design_id: string | null
-          external_order_id: string | null
           fulfillment_status: string | null
           id: string
           order_id: string | null
@@ -407,8 +408,6 @@ export type Database = {
           created_at?: string | null
           custom_image_url: string
           design_config?: Json | null
-          design_id?: string | null
-          external_order_id?: string | null
           fulfillment_status?: string | null
           id?: string
           order_id?: string | null
@@ -425,8 +424,6 @@ export type Database = {
           created_at?: string | null
           custom_image_url?: string
           design_config?: Json | null
-          design_id?: string | null
-          external_order_id?: string | null
           fulfillment_status?: string | null
           id?: string
           order_id?: string | null
@@ -1306,15 +1303,16 @@ export type Database = {
         Returns: {
           cart_id: string | null
           created_at: string | null
+          custom_image_hash: string | null
           custom_image_public_id: string | null
           custom_image_url: string | null
-          design_id: string | null
           id: string
           printify_blueprint_id: number | null
           printify_print_provider_id: number | null
           product_id: string | null
           product_name: string | null
           quantity: number | null
+          selling_price: number | null
           unit_price: number | null
           updated_at: string | null
           variant_id: string | null
@@ -1419,6 +1417,7 @@ export type Database = {
           p_amount: number
           p_currency: string
           p_metadata?: Json
+          p_order_id?: string
           p_payment_method_type: string
           p_status: string
           p_stripe_customer_id: string
@@ -1589,3 +1588,5 @@ export const Constants = {
     Enums: {},
   },
 } as const
+A new version of Supabase CLI is available: v2.111.0 (currently installed v2.92.1)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli

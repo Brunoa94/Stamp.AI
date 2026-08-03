@@ -65,16 +65,37 @@ export function useAddToCart() {
 
   return useMutation({
     mutationFn: async (item: AddToCartInput) => {
+      // DEBUG: Log the item received by the mutation
+      console.log("[useAddToCart] Mutation called with item:", {
+        item,
+        hasProductName: "product_name" in item,
+        hasUnitPrice: "unit_price" in item,
+        productNameValue: item.product_name,
+        unitPriceValue: item.unit_price,
+        allKeys: Object.keys(item),
+      });
+
       if (!userId) {
         throw new Error("User not authenticated");
       }
       const cart = await CartService.getOrCreateCart(userId, undefined, userEmail);
+
+      // DEBUG: Log before calling CartService
+      console.log("[useAddToCart] Calling CartService.addToCart with:", {
+        cartId: cart.id,
+        item,
+      });
+
       return await CartService.addToCart(cart.id, item);
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // DEBUG: Log successful result
+      console.log("[useAddToCart] Success, returned data:", data);
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: (error: Error) => {
+      // DEBUG: Log error details
+      console.error("[useAddToCart] Error:", error);
       handleError(error);
     },
   });

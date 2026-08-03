@@ -11,6 +11,7 @@ import {
   sortSizes,
   STAMP_SIZES,
 } from "../constants/stampColors";
+import { filterDisplayColors } from "@/features/homepage/lib/constants/colorSwatches";
 import type { SizeType } from "../types/stampTypes";
 
 /**
@@ -33,27 +34,10 @@ export function useCustomizationData() {
   );
 
   // Filter colors to only show White and Black if both are available
-  // Otherwise show all available colors (single-pass optimization)
+  // Otherwise show all available colors
   const availableColors = useMemo(() => {
     const allColors = (variants?.colors || []).filter(Boolean);
-    let white: string | null = null;
-    let black: string | null = null;
-
-    for (const c of allColors) {
-      const lower = c.toLowerCase();
-      if (lower === "white") white = c;
-      else if (lower === "black") black = c;
-      // Early exit if both found
-      if (white && black) break;
-    }
-
-    // Return only White and Black if both available, preserving original casing
-    if (white && black) {
-      return [white, black];
-    }
-
-    // Return all available colors if both White and Black aren't available
-    return allColors;
+    return filterDisplayColors(allColors);
   }, [variants?.colors]);
 
   // Get available sizes from variants API, sorted properly
