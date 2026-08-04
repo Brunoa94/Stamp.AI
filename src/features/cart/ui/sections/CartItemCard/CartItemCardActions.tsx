@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import type { CartItem } from "@/types/cart";
+import { AnalyticsService } from "@/services/analyticsService";
 
 const MIN_QUANTITY = 1;
 const MAX_QUANTITY = 99;
@@ -39,6 +40,23 @@ export function CartItemCardActions({
     if (quantity > MIN_QUANTITY) {
       onUpdateQuantity(item.id, quantity - 1);
     }
+  };
+
+  const handleRemove = () => {
+    const unitPrice = (item.unit_price ?? 0) / 100;
+    AnalyticsService.track("remove_from_cart", {
+      currency: "USD",
+      value: unitPrice * quantity,
+      items: [
+        {
+          item_id: item.product_id ?? item.id,
+          item_name: productName,
+          price: unitPrice,
+          quantity,
+        },
+      ],
+    });
+    onRemove(item.id);
   };
 
   return (
@@ -78,7 +96,7 @@ export function CartItemCardActions({
       </div>
 
       <Button
-        onClick={() => onRemove(item.id)}
+        onClick={handleRemove}
         variant="ghost"
         className="h-auto gap-2 rounded-none p-0 font-heading text-(--color-stamp-error) hover:bg-transparent hover:underline"
       >

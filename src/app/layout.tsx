@@ -17,6 +17,8 @@ import { BRAND_COLORS } from "@/features/seo/config/site";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { AppLayoutChrome } from "@/components/AppLayoutChrome";
+import { GoogleAnalytics } from "@/features/analytics/GoogleAnalytics";
+import { AnalyticsPageViewTracker } from "@/features/analytics/AnalyticsPageViewTracker";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -67,6 +69,8 @@ export default async function RootLayout({
       <body
         className={`${poppins.variable} ${bebasNeue.variable} ${outfit.variable} antialiased`}
       >
+        <GoogleAnalytics />
+        <AnalyticsPageViewTracker />
         <StructuredData data={organizationSchema()} />
         <StructuredData data={webSiteSchema()} />
         <GrainOverlay />

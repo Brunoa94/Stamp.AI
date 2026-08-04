@@ -4,6 +4,7 @@ import { useState, ChangeEvent } from "react";
 import { useStampImageGeneration } from "../../../lib/hooks/useStampImageGeneration";
 import { SynthesisVisual } from "./SynthesisVisual";
 import { SynthesisForm } from "./SynthesisForm";
+import { AnalyticsService } from "@/services/analyticsService";
 
 /**
  * SynthesisSection
@@ -36,6 +37,12 @@ export function SynthesisSection() {
   };
 
   const handleGenerate = async () => {
+    AnalyticsService.track("stamp_generate_start", {
+      step: "synthesis",
+      prompt_length: prompt.length,
+      preservation,
+    });
+
     await generateImage({
       prompt,
       preservation,

@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { AnalyticsService } from "@/services/analyticsService";
 
 /**
  * useCustomizationHandlers
@@ -30,6 +31,14 @@ export function useCustomizationHandlers({
 }: UseCustomizationHandlersParams) {
   const handleCreateProduct = useCallback(async () => {
     if (!blueprintId || !printProviderId) return;
+
+    AnalyticsService.track("stamp_create_product", {
+      step: "customization",
+      product_id: blueprintId,
+      color: selectedColor || "",
+      size: effectiveSelectedSize,
+    });
+
     await createProduct({
       blueprintId,
       printProviderId,

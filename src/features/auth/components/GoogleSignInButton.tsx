@@ -20,6 +20,8 @@ export function GoogleSignInButton({ className }: GoogleSignInButtonProps) {
       className={className}
       onClick={() => signInWithGoogle()}
       disabled={isPending}
+      trackingId="login"
+      trackingData={{ method: "google" }}
     >
       <Image src="/assets/google-icon.svg" alt={t("iconAlt")} width={20} height={20} />
       <span className="tracking-widest hover:text-(--color-stamp-chocolate) transition-colors">

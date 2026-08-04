@@ -12,6 +12,7 @@ import { useImageGeneration as useImageGenerationMutation } from "@/queries/imag
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { logStampError, logStampWarn } from "../helpers/stampLogger";
 import { withTimeout } from "@/lib/promiseUtils";
+import { AnalyticsService } from "@/services/analyticsService";
 
 /**
  * useStampImageGeneration
@@ -119,6 +120,12 @@ export function useStampImageGeneration() {
       clearInterval(progressInterval);
       setGenerationProgress(100);
 
+      AnalyticsService.track("stamp_generate_complete", {
+        step: "generation",
+        prompt_length: prompt.length,
+        used_reference_image: Boolean(uploadedImageUrl),
+      });
+
       // Add result to history
       addGeneratedResult(result);
       setSelectedImageUrl(result.imageUrl);
@@ -151,6 +158,12 @@ export function useStampImageGeneration() {
     } catch (error) {
       clearInterval(progressInterval);
       setGenerationProgress(0);
+
+      AnalyticsService.track("stamp_generate_failed", {
+        step: "generation",
+        reason:
+          error instanceof ImageGenerationTimeoutError ? "timeout" : "error",
+      });
 
       if (error instanceof ImageGenerationTimeoutError) {
         logStampError({
