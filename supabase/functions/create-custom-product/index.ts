@@ -27,6 +27,9 @@ serve(async (req) => {
       print_provider_id,
       image_id,
       print_areas,
+      // Per-position placements chosen by the user (optional). Positions
+      // without an entry fall back to auto-placement.
+      placements: userPlacements,
       title,
       description,
       variants,
@@ -82,31 +85,25 @@ serve(async (req) => {
 
     // Prioritize "front" for primary print area (some products list "neck" first)
     const primaryPrintArea = availablePrintAreas.includes('front') ? 'front' : availablePrintAreas[0] || 'front'
-    const secondaryPrintArea = availablePrintAreas.includes('back') ? 'back' : null
 
-    // Get image IDs - support both explicit print_areas and legacy image_id
-    let primaryImageId: string | undefined
-    let secondaryImageId: string | undefined
-
+    // Resolve position -> image id map. Supports the position-keyed
+    // print_areas object and the legacy single image_id (front only).
+    // Positions the product doesn't offer are dropped.
+    const requestedAreas: Record<string, string> = {}
     if (print_areas) {
-      for (const area of availablePrintAreas) {
-        if (print_areas[area] && !primaryImageId) {
-          primaryImageId = print_areas[area]
-        } else if (print_areas[area] && !secondaryImageId) {
-          secondaryImageId = print_areas[area]
+      for (const [position, imageId] of Object.entries(print_areas)) {
+        if (!imageId || typeof imageId !== 'string') continue
+        if (!availablePrintAreas.includes(position)) {
+          console.warn(`⚠️ Position "${position}" not offered by blueprint; skipping`)
+          continue
         }
-      }
-      if (!primaryImageId && print_areas.front) {
-        primaryImageId = print_areas.front
-      }
-      if (!secondaryImageId && print_areas.back) {
-        secondaryImageId = print_areas.back
+        requestedAreas[position] = imageId
       }
     } else if (image_id) {
-      primaryImageId = image_id
+      requestedAreas[primaryPrintArea] = image_id
     }
 
-    if (!primaryImageId && !secondaryImageId) {
+    if (Object.keys(requestedAreas).length === 0) {
       throw ErrorCodes.IMAGE_REQUIRED()
     }
 
@@ -141,62 +138,58 @@ serve(async (req) => {
       selectedVariants = availableVariants.slice(0, 100).map((v: any) => v.id)
     }
 
-    // === AUTO-PLACEMENT CALCULATION ===
-    // If image dimensions are provided, calculate optimal placement
-    // Otherwise, fall back to default centered placement
+    // === PLACEMENT RESOLUTION ===
+    // For each requested position: use the user's placement when provided,
+    // otherwise auto-calculate from the image and print-area dimensions.
+    const isValidPlacement = (p: any): boolean =>
+      p && typeof p === 'object' &&
+      typeof p.x === 'number' && p.x >= 0 && p.x <= 1 &&
+      typeof p.y === 'number' && p.y >= 0 && p.y <= 1 &&
+      typeof p.scale === 'number' && p.scale > 0 && p.scale <= 2 &&
+      typeof p.angle === 'number'
+
+    const artworkWidth = image_width && image_width > 0 ? image_width : 3000
+    const artworkHeight = image_height && image_height > 0 ? image_height : 3000
+    if (!(image_width && image_height)) {
+      console.log('⚠️ No image dimensions provided, assuming 3000x3000 for auto-placement')
+    }
+
+    const resolvePlacement = (position: string) => {
+      const userPlacement = userPlacements?.[position]
+      if (isValidPlacement(userPlacement)) {
+        console.log(`🎯 Using user placement for "${position}"`)
+        return userPlacement
+      }
+      const placeholder = firstVariantPlaceholders.find((p: any) => p.position === position)
+      return calculatePlacement(
+        artworkWidth,
+        artworkHeight,
+        placeholder?.width || printAreaWidth,
+        placeholder?.height || printAreaHeight,
+        finalBlueprintId,
+        position
+      )
+    }
+
+    // Track the primary placement for the debug field in the response
     let primaryPlacement = { x: 0.5, y: 0.5, scale: 1, angle: 0 }
 
-    if (image_width && image_height && image_width > 0 && image_height > 0) {
-      console.log(`🖼️ Image dimensions: ${image_width}x${image_height}px`)
-      primaryPlacement = calculatePlacement(
-        image_width,
-        image_height,
-        printAreaWidth,
-        printAreaHeight,
-        finalBlueprintId,
-        primaryPrintArea
-      )
-    } else {
-      // Default fallback: calculate for a typical square image (1:1 aspect ratio)
-      console.log('⚠️ No image dimensions provided, using optimized default placement')
-      primaryPlacement = calculatePlacement(
-        3000, // Assume reasonable resolution
-        3000,
-        printAreaWidth,
-        printAreaHeight,
-        finalBlueprintId,
-        primaryPrintArea
-      )
-    }
-
-    console.log(`🎯 Final placement: x=${primaryPlacement.x.toFixed(3)}, y=${primaryPlacement.y.toFixed(3)}, scale=${primaryPlacement.scale.toFixed(3)}`)
-
-    // Build placeholders with auto-corrected placement
+    // Build placeholders, one per requested position
     const placeholders = []
-
-    if (primaryImageId) {
+    for (const [position, imageId] of Object.entries(requestedAreas)) {
+      const placement = resolvePlacement(position)
+      if (position === primaryPrintArea || placeholders.length === 0) {
+        primaryPlacement = placement
+      }
+      console.log(`🎯 Placement for "${position}": x=${placement.x.toFixed(3)}, y=${placement.y.toFixed(3)}, scale=${placement.scale.toFixed(3)}, angle=${placement.angle}`)
       placeholders.push({
-        position: primaryPrintArea,
+        position,
         images: [{
-          id: primaryImageId,
-          x: primaryPlacement.x,
-          y: primaryPlacement.y,
-          scale: primaryPlacement.scale,
-          angle: primaryPlacement.angle,
-        }],
-      })
-    }
-
-    if (secondaryImageId && secondaryPrintArea) {
-      // Use same placement for back
-      placeholders.push({
-        position: secondaryPrintArea,
-        images: [{
-          id: secondaryImageId,
-          x: primaryPlacement.x,
-          y: primaryPlacement.y,
-          scale: primaryPlacement.scale,
-          angle: primaryPlacement.angle,
+          id: imageId,
+          x: placement.x,
+          y: placement.y,
+          scale: placement.scale,
+          angle: placement.angle,
         }],
       })
     }

@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import type {
   GeneratedResultType,
+  PlacementParamsType,
+  PrintPositionConfigType,
   StampFlowStateType,
 } from "../types/stampFlowTypes";
 import { STAMP_TOTAL_STEPS } from "../constants/stampSteps";
@@ -19,6 +21,14 @@ import { logStampError, logStampWarn } from "../helpers/stampLogger";
 
 const MAX_GENERATED_RESULTS = 20;
 
+/** Centered, full-width placement — matches the Printify default. */
+export const DEFAULT_PLACEMENT: PlacementParamsType = {
+  x: 0.5,
+  y: 0.5,
+  scale: 1,
+  angle: 0,
+};
+
 // ============================================================================
 // INITIAL STATE
 // ============================================================================
@@ -35,6 +45,11 @@ const initialState = {
   blueprintId: undefined,
   printProviderId: undefined,
   selectedProductTitle: undefined,
+  // Print position / placement state
+  availablePrintPositions: [] as string[],
+  printPositionConfigs: {} as Record<string, PrintPositionConfigType>,
+  activeEditPosition: "front",
+  defaultPlacement: DEFAULT_PLACEMENT,
   // Customization selection state
   selectedColor: undefined,
   selectedSize: undefined,
@@ -147,6 +162,78 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
   setBlueprintId: (id) => set({ blueprintId: id }),
   setPrintProviderId: (id) => set({ printProviderId: id }),
   setSelectedProductTitle: (title) => set({ selectedProductTitle: title }),
+
+  // Print position / placement state
+  setAvailablePrintPositions: (positions) =>
+    set({ availablePrintPositions: positions }),
+
+  setPrintPositionConfig: (position, config) =>
+    set((state) => {
+      const existing = state.printPositionConfigs[position];
+      if (!existing) {
+        logStampWarn({
+          scope: "stampFlowStore",
+          event: "unknown_print_position_rejected",
+          metadata: { position },
+        });
+        return state;
+      }
+      return {
+        printPositionConfigs: {
+          ...state.printPositionConfigs,
+          [position]: {
+            ...existing,
+            ...config,
+            placement: { ...existing.placement, ...config.placement },
+          },
+        },
+      };
+    }),
+
+  togglePrintPosition: (position) =>
+    set((state) => {
+      const existing = state.printPositionConfigs[position];
+      if (!existing) return state;
+      return {
+        printPositionConfigs: {
+          ...state.printPositionConfigs,
+          [position]: { ...existing, enabled: !existing.enabled },
+        },
+      };
+    }),
+
+  setActiveEditPosition: (position) => set({ activeEditPosition: position }),
+
+  resetPlacementForPosition: (position) =>
+    set((state) => {
+      const existing = state.printPositionConfigs[position];
+      if (!existing) return state;
+      return {
+        printPositionConfigs: {
+          ...state.printPositionConfigs,
+          [position]: { ...existing, placement: { ...state.defaultPlacement } },
+        },
+      };
+    }),
+
+  initializePrintPositions: (positions, defaultPlacement) =>
+    set(() => {
+      const configs: Record<string, PrintPositionConfigType> = {};
+      positions.forEach((position, index) => {
+        configs[position] = {
+          position,
+          enabled: index === 0,
+          placement: { ...defaultPlacement },
+          additionalCost: 0,
+        };
+      });
+      return {
+        availablePrintPositions: positions,
+        printPositionConfigs: configs,
+        activeEditPosition: positions[0] ?? "front",
+        defaultPlacement,
+      };
+    }),
 
   // Customization selection
   setSelectedColor: (color) => set({ selectedColor: color }),

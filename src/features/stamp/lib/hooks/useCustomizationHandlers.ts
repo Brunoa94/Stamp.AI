@@ -1,4 +1,7 @@
 import { useCallback } from "react";
+import { useStampFlowStore } from "../stores/stampFlowStore";
+import { buildPrintPositionsPayload } from "./useDesignAdjustment";
+import type { PlacementParamsType } from "../types/stampFlowTypes";
 
 /**
  * useCustomizationHandlers
@@ -11,6 +14,7 @@ interface CreateProductParams {
   printProviderId: number;
   fabricColor: string;
   size: string;
+  printPositions?: { position: string; placement: PlacementParamsType }[];
 }
 
 interface UseCustomizationHandlersParams {
@@ -30,11 +34,17 @@ export function useCustomizationHandlers({
 }: UseCustomizationHandlersParams) {
   const handleCreateProduct = useCallback(async () => {
     if (!blueprintId || !printProviderId) return;
+    // Read the placement configs at click time so the payload always matches
+    // the user's latest adjustments without re-memoizing on every nudge.
+    const printPositions = buildPrintPositionsPayload(
+      useStampFlowStore.getState().printPositionConfigs,
+    );
     await createProduct({
       blueprintId,
       printProviderId,
       fabricColor: selectedColor || "",
       size: effectiveSelectedSize,
+      ...(printPositions.length > 0 ? { printPositions } : {}),
     });
   }, [blueprintId, printProviderId, selectedColor, effectiveSelectedSize, createProduct]);
 

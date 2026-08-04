@@ -519,6 +519,45 @@
         "uploaded": "Image uploaded successfully",
         "removed": "Image removed"
       }
+    },
+    "adjust": {
+      "positionsTitle": "Print Positions",
+      "positionsHelp": "Pick where your design gets printed.",
+      "positionIncluded": "Included",
+      "positionExtraCost": "+{price}",
+      "positionToggleAria": "Toggle {position} print",
+      "position": {
+        "front": "Front",
+        "back": "Back",
+        "neck": "Neck",
+        "left_sleeve": "Left Sleeve",
+        "right_sleeve": "Right Sleeve"
+      },
+      "editingLabel": "Adjusting",
+      "editingSelectAria": "Choose which position to adjust",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "moveLeft": "Move left",
+      "moveRight": "Move right",
+      "center": "Center",
+      "horizontalLabel": "Horizontal",
+      "verticalLabel": "Vertical",
+      "horizontalAria": "Horizontal position",
+      "verticalAria": "Vertical position",
+      "sizeLabel": "Size",
+      "scaleDown": "Smaller",
+      "scaleUp": "Larger",
+      "scaleAria": "Design size",
+      "rotationLabel": "Rotation",
+      "rotationAria": "Rotate to {degrees} degrees",
+      "reset": "Reset",
+      "resetAria": "Reset placement for {position}",
+      "safeZoneWarning": "You've hit the edge of the safe print area.",
+      "previewAlt": "Your design placed on the product",
+      "printAreaLabel": "Print area",
+      "noImageTitle": "No design yet",
+      "noImageBody": "Generate and pick a design first, then adjust how it sits on the product.",
+      "extraCostSummary": "Extra print positions: {price}"
     }
   },
   "cart": {

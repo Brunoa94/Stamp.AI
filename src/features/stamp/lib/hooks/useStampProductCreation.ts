@@ -19,7 +19,10 @@ import {
   logStampWarn,
 } from "../helpers/stampLogger";
 import { withTimeout } from "@/lib/promiseUtils";
-import { MockupImageType } from "../types/stampFlowTypes";
+import type {
+  MockupImageType,
+  PlacementParamsType,
+} from "../types/stampFlowTypes";
 
 /**
  * useStampProductCreation
@@ -47,6 +50,8 @@ interface CreateProductParamsType {
   printProviderId: number;
   fabricColor: string;
   size: string;
+  /** User-selected print positions with placements (Step 6 adjustment). */
+  printPositions?: { position: string; placement: PlacementParamsType }[];
 }
 
 export function useStampProductCreation() {
@@ -76,6 +81,7 @@ export function useStampProductCreation() {
     printProviderId,
     fabricColor,
     size,
+    printPositions,
   }: CreateProductParamsType) => {
     // Idempotency check: Prevent duplicate operations
     if (isCreatingRef.current) {
@@ -173,6 +179,9 @@ export function useStampProductCreation() {
           customer_email: user.email || "",
           selected_color: fabricColor,
           selected_size: size,
+          ...(printPositions?.length
+            ? { print_positions: printPositions }
+            : {}),
         }),
         PRODUCT_CREATION_TIMEOUT_MS,
         new ProductCreationTimeoutError(
