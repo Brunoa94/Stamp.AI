@@ -210,7 +210,7 @@
         },
         "freeShipping": {
           "title": "Free Shipping",
-          "description": "Free carbon-neutral delivery on all orders over $75."
+          "description": "Free carbon-neutral delivery on orders over €60."
         }
       }
     }
@@ -230,14 +230,16 @@
       "generate": "STAMP IT!",
       "generating": "GENERATING...",
       "promptLabel": "Your Prompt",
-      "promptPlaceholder": "Describe the shape, colors, and mood you want...",
+      "promptPlaceholder": "Be as detailed as you can: describe the changes, colors, textures, style, and mood you want...",
       "promptAria": "Prompt input",
       "counter": "{count} / {max}",
       "preservationLabel": "Preservation",
+      "preservationTooltip": "Controls how much of the original image is kept. Lower values allow more creative changes, higher values preserve more of the original.",
       "low": "LOW",
       "high": "HIGH",
       "preservationAria": "Preservation level slider",
       "removeBackgroundLabel": "Remove Background",
+      "removeBackgroundTooltip": "Automatically removes the background from your generated design, leaving only the main subject.",
       "removeBackgroundAria": "Toggle background removal"
     },
     "suggestions": {
@@ -399,11 +401,11 @@
     },
     "upload": {
       "protocol": "Step 01 / Upload",
-      "title": "Upload <accent>Reference</accent>",
+      "title": "Upload <accent>Image</accent>",
       "description": "Add an image to guide your design. It's optional — you can also start from just a text prompt.",
       "next": "Next Step",
-      "dropzoneAria": "Upload reference image",
-      "dropzoneText": "Upload Reference Image (Optional)",
+      "dropzoneAria": "Upload image",
+      "dropzoneText": "Upload Image (Optional)",
       "dropzoneHint": "10MB max, JPG/PNG/GIF only",
       "fileSize": "{size} MB",
       "removeAria": "Remove uploaded file",
@@ -423,13 +425,13 @@
       "generated": "Generated {date}",
       "savedToHistory": "Saved to history",
       "appliedPrompt": "Applied Prompt",
-      "useProtocol": "USE THIS PROMPT",
+      "useProtocol": "USE THIS IMAGE",
       "reSynthesize": "REPEAT",
       "imageAlt": "Generated design result"
     },
     "productSelection": {
       "protocol": "Step 05 / Product",
-      "title": "Select Your <accent>Canvas</accent>",
+      "title": "Select Your <accent>Product</accent>",
       "description": "Pick what you want your design printed on. Everything's good quality and printed on demand.",
       "pricingNote": "Pricing reflects global print provider rates",
       "continue": "CONTINUE TO CUSTOMIZATION",
@@ -443,7 +445,10 @@
       "empty": "No products available at this time.",
       "apparel": "Apparel",
       "moreOptions": "More Options",
-      "accessories": "Accessories"
+      "accessories": "Accessories",
+      "selectedBadge": "Selected",
+      "qualityNote": "Premium quality, printed on demand",
+      "customizeNext": "Customize colors and size in the next step"
     },
     "customization": {
       "protocol": "Step 06 / Customize",
@@ -468,7 +473,7 @@
     },
     "finalReview": {
       "protocol": "Step 08 / Checkout",
-      "title": "Your Custom <accent>Product</accent>",
+      "title": "Ready to <accent>Wear</accent>",
       "defaultProductName": "Custom Product",
       "mockupAlt": "Final product mockup",
       "previewSealed": "Final preview",

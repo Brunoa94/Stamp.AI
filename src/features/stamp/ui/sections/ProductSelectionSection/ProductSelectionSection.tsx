@@ -1,7 +1,9 @@
 "use client";
 
-import { useMemo, memo } from "react";
+import { useMemo, memo, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCatalogProducts } from "@/queries/catalogQueries";
+import { PrintifyService } from "@/services/printifyService";
 import { useStampNavigationActions } from "../../../lib/hooks/useStampNavigation";
 import {
   useStampProductSelection,
@@ -91,6 +93,35 @@ function ProductSelectionSectionComponent() {
 
     return { clothingProducts: clothing, accessoryProducts: accessories };
   }, [catalogProducts]);
+
+  // Prefetch variants (colors & sizes) for all products when grid loads
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    if (catalogProducts.length === 0) return;
+
+    catalogProducts.forEach((product) => {
+      const queryKey = [
+        "products",
+        "blueprint-variants",
+        product.blueprintId,
+        product.printProviderId,
+      ];
+
+      // Only prefetch if not already in cache
+      const existingData = queryClient.getQueryData(queryKey);
+      if (!existingData) {
+        queryClient.prefetchQuery({
+          queryKey,
+          queryFn: () =>
+            PrintifyService.getBlueprintVariants(
+              product.blueprintId,
+              product.printProviderId
+            ),
+          staleTime: 1000 * 60 * 10, // 10 minutes
+        });
+      }
+    });
+  }, [catalogProducts, queryClient]);
 
   const handleProductSelect = (product: CatalogProductMappedType) => {
     setBlueprintId(product.blueprintId);

@@ -27,7 +27,7 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
     <Button
       variant="ghost"
       onClick={() => onSelect(product)}
-      className={`group relative overflow-hidden rounded-none whitespace-normal wrap-break-word aspect-square min-h-30 xl:min-h-80 p-6 lg:p-8 flex flex-col items-center text-center border-(--color-stamp-divider) hover:bg-(--color-stamp-gold)/5 transition-all duration-500 ${
+      className={`group relative overflow-hidden rounded-none whitespace-normal h-auto p-0 flex flex-col items-center text-center border-(--color-stamp-divider) hover:bg-(--color-stamp-gold)/5 transition-all duration-300 ${
         isSelected
           ? "border-2 border-(--color-stamp-gold) bg-(--color-stamp-gold)/5"
           : "border bg-white"
@@ -35,54 +35,44 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
       aria-pressed={isSelected}
       aria-label={t("selectAria", { name: product.name })}
     >
-      <div className="pointer-events-none absolute inset-0 z-0 flex items-start justify-center pt-4 lg:pt-6 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:pt-0">
-        <div className="relative w-48 h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64 overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-full group-hover:h-full">
-          {product.imageUrl ? (
-            <Image
-              src={product.imageUrl}
-              alt={product.name}
-              fill
-              className="object-contain transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:object-cover group-hover:scale-[1.02]"
-              sizes="(max-width: 1024px) 320px, 420px"
-            />
-          ) : (
-            <div className="w-full h-full bg-(--color-stamp-cream)" />
-          )}
-        </div>
+      {/* Image container - fills most of the card */}
+      <div className="relative w-full aspect-square overflow-hidden bg-(--color-stamp-cream)/30">
+        {product.imageUrl ? (
+          <Image
+            src={product.imageUrl}
+            alt={product.name}
+            fill
+            className="object-contain p-4 transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          />
+        ) : (
+          <div className="w-full h-full bg-(--color-stamp-cream)" />
+        )}
+
+        {/* Selection indicator */}
+        {isSelected && (
+          <div className="absolute top-3 right-3 z-10">
+            <CheckCircle className="text-(--color-stamp-gold) w-6 h-6" />
+          </div>
+        )}
       </div>
 
-      <div
-        aria-hidden="true"
-        className="relative z-10 w-48 h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64"
-      />
-
-      {/* Opacity overlay between image and text */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-1/2 bg-linear-to-t from-white via-white/80 to-transparent opacity-100 transition-opacity duration-500 group-hover:opacity-0"
-      />
-
-      <div className="absolute z-20 left-6 right-6 bottom-6 flex flex-col items-center">
+      {/* Text content */}
+      <div className="w-full p-4 bg-white">
         <Heading
           as="h4"
           variant="item"
-          className="text-(--color-stamp-chocolate) mb-2 text-center leading-tight h-12 overflow-hidden line-clamp-2 flex items-center justify-center text-base md:text-lg w-full max-w-full wrap-break-word px-2 transition-opacity duration-500 group-hover:opacity-0"
+          className="text-(--color-stamp-chocolate) mb-1 text-center leading-tight min-h-10 overflow-hidden line-clamp-2 flex items-center justify-center text-sm md:text-base w-full"
         >
           {product.name}
         </Heading>
 
         <Span
           variant="sm"
-          className="text-(--color-stamp-taupe) mb-4 transition-opacity duration-500 group-hover:opacity-0"
+          className="text-(--color-stamp-taupe)"
         >
           ${product.price.toFixed(2)}
         </Span>
-
-        <div
-          className={`transition-opacity duration-500 group-hover:opacity-0 ${isSelected ? "opacity-100" : "opacity-0"}`}
-        >
-          <CheckCircle className="text-(--color-stamp-gold) w-5 h-5" />
-        </div>
       </div>
     </Button>
   );

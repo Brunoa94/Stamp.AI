@@ -4,6 +4,7 @@ import { Heading } from "@/features/ui/heading";
 import { Button } from "@/features/ui/button";
 import { Checkbox } from "@/features/ui/checkbox";
 import { Label } from "@/features/ui/label";
+import { InfoTooltip } from "@/features/ui/info-tooltip";
 import { PromptInput } from "./PromptInput";
 import { PreservationSlider } from "./PreservationSlider";
 
@@ -81,6 +82,7 @@ export function SynthesisForm({
           >
             {t("removeBackgroundLabel")}
           </Label>
+          <InfoTooltip content={t("removeBackgroundTooltip")} />
         </div>
       </div>
 

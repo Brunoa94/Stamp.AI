@@ -1,7 +1,5 @@
 import { useTranslations } from "next-intl";
-import { Truck } from "lucide-react";
 import { Heading } from "@/features/ui/heading";
-import { Span } from "@/features/ui/span";
 import { ProductSummary } from "./ProductSummary";
 import { ReviewActions } from "./ReviewActions";
 
@@ -55,11 +53,6 @@ export function ReviewDetails({
           size={size}
           price={price}
         />
-
-        <div className="flex items-center gap-4 text-(--color-stamp-taupe)">
-          <Truck className="text-(--color-stamp-gold) w-5 h-5 shrink-0" />
-          <Span variant="micro">{t("freeShipping")}</Span>
-        </div>
       </div>
 
       <ReviewActions
