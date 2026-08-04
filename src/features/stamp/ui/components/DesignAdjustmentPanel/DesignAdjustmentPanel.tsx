@@ -65,19 +65,22 @@ export function DesignAdjustmentPanel({ imageUrl, disabled = false }: PropsI) {
         safeZone={productConfig.safeZone}
       />
 
-      <PlacementAdjuster
-        positions={enabledPositions}
-        activePosition={activeEditPosition}
-        placement={activeConfig.placement}
-        bounds={bounds}
-        atBounds={atBounds}
-        onPositionChange={setActiveEditPosition}
-        onPlacementChange={updateActivePlacement}
-        onNudge={nudgeActivePlacement}
-        onCenter={centerActivePlacement}
-        onReset={() => resetPlacementForPosition(activeEditPosition)}
-        disabled={disabled}
-      />
+      {/* Hide placement controls for products that don't support manual adjustment (e.g., mugs) */}
+      {!productConfig.disablePlacementAdjustment && (
+        <PlacementAdjuster
+          positions={enabledPositions}
+          activePosition={activeEditPosition}
+          placement={activeConfig.placement}
+          bounds={bounds}
+          atBounds={atBounds}
+          onPositionChange={setActiveEditPosition}
+          onPlacementChange={updateActivePlacement}
+          onNudge={nudgeActivePlacement}
+          onCenter={centerActivePlacement}
+          onReset={() => resetPlacementForPosition(activeEditPosition)}
+          disabled={disabled}
+        />
+      )}
 
       {totalAdditionalCost > 0 && (
         <Span variant="micro" className="block text-(--color-stamp-taupe)">

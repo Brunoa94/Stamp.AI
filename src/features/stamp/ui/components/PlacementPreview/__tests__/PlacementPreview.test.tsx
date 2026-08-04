@@ -84,4 +84,56 @@ describe("PlacementPreview", () => {
     );
     expect(screen.getByTestId("placement-preview")).toBeInTheDocument();
   });
+
+  it("renders the mug silhouette without crashing", () => {
+    renderWithIntl(
+      <PlacementPreview
+        imageUrl={IMAGE_URL}
+        placement={PLACEMENT}
+        productCategory="mug"
+        position="front"
+        safeZone={{ top: 0.05, bottom: 0.05, left: 0.15, right: 0.15 }}
+      />,
+    );
+    expect(screen.getByTestId("placement-preview")).toBeInTheDocument();
+  });
+
+  it("renders the canvas silhouette without crashing", () => {
+    renderWithIntl(
+      <PlacementPreview
+        imageUrl={IMAGE_URL}
+        placement={PLACEMENT}
+        productCategory="canvas"
+        position="front"
+        safeZone={SAFE_ZONE}
+      />,
+    );
+    expect(screen.getByTestId("placement-preview")).toBeInTheDocument();
+  });
+
+  it("renders the socks silhouette without crashing", () => {
+    renderWithIntl(
+      <PlacementPreview
+        imageUrl={IMAGE_URL}
+        placement={PLACEMENT}
+        productCategory="socks"
+        position="front"
+        safeZone={SAFE_ZONE}
+      />,
+    );
+    expect(screen.getByTestId("placement-preview")).toBeInTheDocument();
+  });
+
+  it("renders the poster silhouette without crashing", () => {
+    renderWithIntl(
+      <PlacementPreview
+        imageUrl={IMAGE_URL}
+        placement={PLACEMENT}
+        productCategory="poster"
+        position="front"
+        safeZone={SAFE_ZONE}
+      />,
+    );
+    expect(screen.getByTestId("placement-preview")).toBeInTheDocument();
+  });
 });

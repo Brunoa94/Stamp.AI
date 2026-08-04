@@ -86,6 +86,16 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     minDpi: 150,
     anchorY: 0.42,  // Higher due to hood
   },
+  1525: {
+    blueprintId: 1525,
+    name: 'Unisex Heavy Blend Hoodie (Gildan 18500)',
+    category: 'apparel',
+    positions: ['front', 'back'],
+    defaultPosition: 'front',
+    safeZone: HOODIE_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.42,  // Higher due to hood
+  },
   49: {
     blueprintId: 49,
     name: 'Unisex Heavy Blend Crewneck Sweatshirt',
@@ -103,6 +113,54 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     name: 'Cotton Tote Bag',
     category: 'tote',
     positions: ['front', 'back'],
+    defaultPosition: 'front',
+    safeZone: DEFAULT_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.5,
+  },
+
+  // Mugs - placement disabled (wrap-around print, auto-centered)
+  1320: {
+    blueprintId: 1320,
+    name: 'Ceramic Mug 11oz',
+    category: 'mug',
+    positions: ['front'],
+    defaultPosition: 'front',
+    safeZone: MUG_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.5,
+    disablePlacementAdjustment: true,
+  },
+  468: {
+    blueprintId: 468,
+    name: 'White Glossy Mug',
+    category: 'mug',
+    positions: ['front'],
+    defaultPosition: 'front',
+    safeZone: MUG_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.5,
+    disablePlacementAdjustment: true,
+  },
+
+  // Canvas - full bleed, center placement
+  658: {
+    blueprintId: 658,
+    name: 'Matte Canvas',
+    category: 'canvas',
+    positions: ['front'],
+    defaultPosition: 'front',
+    safeZone: DEFAULT_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.5,
+  },
+
+  // Socks - all-over print
+  462: {
+    blueprintId: 462,
+    name: 'Cushioned Crew Socks',
+    category: 'socks',
+    positions: ['front'],
     defaultPosition: 'front',
     safeZone: DEFAULT_SAFE_ZONE,
     minDpi: 150,

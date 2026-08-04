@@ -66,12 +66,20 @@ const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
   6: { safeZone: { top: 0.05, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.45 },
   // Hoodies
   77: { safeZone: { top: 0.08, bottom: 0.05, left: 0.05, right: 0.05 }, minDpi: 150, anchorY: 0.42 },
+  1525: { safeZone: { top: 0.08, bottom: 0.05, left: 0.05, right: 0.05 }, minDpi: 150, anchorY: 0.42 },
   49: { safeZone: { top: 0.05, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.45 },
   // Tote bags - center placement
   553: { safeZone: { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.5 },
   // AOP Tote Bag (all-over print, very tall 2175x4350 print area)
   // Anchor at 0.30 to place design in upper-center, maxScale 0.85 (~90% of 0.94)
   1389: { safeZone: { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.30, maxScale: 0.85 },
+  // Mugs - wrap-around print with handle margins
+  1320: { safeZone: { top: 0.05, bottom: 0.05, left: 0.15, right: 0.15 }, minDpi: 150, anchorY: 0.5 },
+  468: { safeZone: { top: 0.05, bottom: 0.05, left: 0.15, right: 0.15 }, minDpi: 150, anchorY: 0.5 },
+  // Canvas - full bleed
+  658: { safeZone: { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.5 },
+  // Socks - all-over print
+  462: { safeZone: { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.5 },
 };
 
 const DEFAULT_CONFIG: ProductConfig = {

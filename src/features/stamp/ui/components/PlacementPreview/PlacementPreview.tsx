@@ -16,7 +16,7 @@ import { DesignOverlay } from "./DesignOverlay";
  * placement check still runs server-side at product creation.
  */
 
-type CategoryType = "apparel" | "tote" | "mug" | "poster" | "pillow" | "canvas";
+type CategoryType = "apparel" | "tote" | "mug" | "poster" | "pillow" | "canvas" | "socks";
 
 interface PropsI {
   imageUrl: string;
@@ -50,9 +50,32 @@ const TOTE_AREAS: Record<string, AreaRect> = {
   back: { left: "22%", top: "32%", width: "56%", height: "52%" },
 };
 
+const MUG_AREAS: Record<string, AreaRect> = {
+  front: { left: "22%", top: "28%", width: "50%", height: "55%" },
+};
+
+const CANVAS_AREAS: Record<string, AreaRect> = {
+  front: { left: "14%", top: "18%", width: "72%", height: "68%" },
+};
+
+const SOCKS_AREAS: Record<string, AreaRect> = {
+  front: { left: "15%", top: "20%", width: "70%", height: "50%" },
+};
+
 function getAreaRect(category: CategoryType, position: string): AreaRect {
-  const areas = category === "tote" ? TOTE_AREAS : APPAREL_AREAS;
-  return areas[position] ?? areas.front;
+  switch (category) {
+    case "tote":
+      return TOTE_AREAS[position] ?? TOTE_AREAS.front;
+    case "mug":
+      return MUG_AREAS[position] ?? MUG_AREAS.front;
+    case "canvas":
+    case "poster":
+      return CANVAS_AREAS[position] ?? CANVAS_AREAS.front;
+    case "socks":
+      return SOCKS_AREAS[position] ?? SOCKS_AREAS.front;
+    default:
+      return APPAREL_AREAS[position] ?? APPAREL_AREAS.front;
+  }
 }
 
 export function PlacementPreview({
