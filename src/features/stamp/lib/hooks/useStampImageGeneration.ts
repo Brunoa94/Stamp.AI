@@ -9,8 +9,9 @@ import {
   useStampUpload,
 } from "./useStampSelectors";
 import { useImageGeneration as useImageGenerationMutation } from "@/queries/imageGenerationQueries";
+import { useDeductCoin } from "@/queries/coinsQueries";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { logStampError, logStampWarn } from "../helpers/stampLogger";
+import { logStampError, logStampWarn, logStampInfo } from "../helpers/stampLogger";
 import { withTimeout } from "@/lib/promiseUtils";
 
 /**
@@ -23,6 +24,10 @@ import { withTimeout } from "@/lib/promiseUtils";
  * - Implements idempotency checks to prevent duplicate generation requests
  * - Uses timeout handling for long-running AI operations
  * - Provides clear user-facing error messages with recovery paths
+ *
+ * Coins Integration:
+ * - Deducts 1 coin before image generation
+ * - Aborts generation if coin deduction fails
  */
 
 const IMAGE_GENERATION_TIMEOUT_MS = 90_000; // 90 seconds for AI generation
@@ -62,6 +67,7 @@ const DEFAULT_SYNTHESIS_STYLE = "editorial";
 
 export function useStampImageGeneration() {
   const t = useTranslations("stamp.errors.imageGeneration");
+  const tCoins = useTranslations("stamp.errors.coins");
   const { nextStep } = useStampNavigation();
   const { handleError } = useErrorHandler();
   const { uploadedImageUrl } = useStampUpload();
@@ -73,6 +79,7 @@ export function useStampImageGeneration() {
   const { setSelectedImageUrl, setEnhancedPrompt } = useStampSelectedImage();
 
   const generateMutation = useImageGenerationMutation();
+  const deductCoinMutation = useDeductCoin();
 
   // Idempotency: Track if generation is in progress to prevent duplicates
   const isGeneratingRef = useRef(false);
@@ -136,6 +143,30 @@ export function useStampImageGeneration() {
         const placeholderBlob = new Blob([new Uint8Array(1)], { type: "image/png" });
         imageFile = new File([placeholderBlob], `placeholder-${Date.now()}.png`, { type: "image/png" });
       }
+
+      // Deduct coin before generation
+      logStampInfo({
+        scope: "useStampImageGeneration",
+        event: "deducting_coin_before_generation",
+      });
+
+      const coinDeducted = await deductCoinMutation.mutateAsync();
+
+      if (!coinDeducted) {
+        logStampWarn({
+          scope: "useStampImageGeneration",
+          event: "coin_deduction_failed_no_coins",
+        });
+        clearInterval(progressInterval);
+        setGenerationProgress(0);
+        handleError(new Error(tCoins("deductFailed")));
+        return;
+      }
+
+      logStampInfo({
+        scope: "useStampImageGeneration",
+        event: "coin_deducted_successfully",
+      });
 
       // Wrap mutation with timeout
       const result = await withTimeout(

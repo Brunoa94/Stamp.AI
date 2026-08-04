@@ -518,6 +518,18 @@
         "uploadFailed": "Upload failed",
         "uploaded": "Image uploaded successfully",
         "removed": "Image removed"
+      },
+      "coins": {
+        "noCoins": "You're out of coins for today",
+        "noCoinsDescription": "Coins reset daily at midnight. You can still use your uploaded image directly.",
+        "notLoggedIn": "Login or register to continue",
+        "notLoggedInDescription": "Create an account to start designing",
+        "login": "Login",
+        "register": "Register",
+        "display": "{coins} Coins available",
+        "displayAria": "{coins} coins available",
+        "deductFailed": "Not enough coins to generate",
+        "skipGeneration": "Use My Image"
       }
     }
   },
