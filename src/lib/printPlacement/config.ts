@@ -7,6 +7,36 @@
 
 import type { ProductConfig, SafeZone } from './types';
 
+/**
+ * Detect product category from display title
+ * Used as fallback when blueprint ID is not in PRODUCT_CONFIGS
+ */
+export function detectCategoryFromTitle(displayTitle: string): ProductConfig['category'] {
+  const titleLower = displayTitle.toLowerCase();
+
+  if (titleLower.includes('mug') || titleLower.includes('tumbler')) {
+    return 'mug';
+  }
+  if (titleLower.includes('tote') || titleLower.includes('shopping bag')) {
+    return 'tote';
+  }
+  if (titleLower.includes('sock')) {
+    return 'socks';
+  }
+  if (titleLower.includes('canvas') || titleLower.includes('gallery wrap')) {
+    return 'canvas';
+  }
+  if (titleLower.includes('poster') || titleLower.includes('art print') || titleLower.includes('wall art')) {
+    return 'poster';
+  }
+  if (titleLower.includes('pillow') || titleLower.includes('cushion')) {
+    return 'pillow';
+  }
+
+  // Default to apparel for t-shirts, hoodies, etc.
+  return 'apparel';
+}
+
 // Default safe zone: 3% margin on all sides
 const DEFAULT_SAFE_ZONE: SafeZone = {
   top: 0.03,
@@ -155,7 +185,7 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     anchorY: 0.5,
   },
 
-  // Socks - all-over print
+  // Socks - all-over print, placement disabled
   462: {
     blueprintId: 462,
     name: 'Cushioned Crew Socks',
@@ -165,21 +195,37 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     safeZone: DEFAULT_SAFE_ZONE,
     minDpi: 150,
     anchorY: 0.5,
+    disablePlacementAdjustment: true,
   },
 };
 
 /**
- * Get product config by blueprint ID, with fallback to defaults
+ * Get product config by blueprint ID, with fallback to defaults.
+ * Optionally accepts displayTitle to detect category for unknown blueprints.
  */
-export function getProductConfig(blueprintId: number): ProductConfig {
-  return PRODUCT_CONFIGS[blueprintId] || {
+export function getProductConfig(blueprintId: number, displayTitle?: string): ProductConfig {
+  const existingConfig = PRODUCT_CONFIGS[blueprintId];
+  if (existingConfig) {
+    return existingConfig;
+  }
+
+  // Detect category from display title if provided
+  const category = displayTitle ? detectCategoryFromTitle(displayTitle) : 'apparel';
+
+  // Apply category-specific defaults
+  const isMug = category === 'mug';
+  const isSocks = category === 'socks';
+  const disablePlacement = isMug || isSocks;
+
+  return {
     blueprintId,
-    name: `Blueprint ${blueprintId}`,
-    category: 'apparel',
+    name: displayTitle || `Blueprint ${blueprintId}`,
+    category,
     positions: ['front'],
     defaultPosition: 'front',
-    safeZone: DEFAULT_SAFE_ZONE,
+    safeZone: isMug ? MUG_SAFE_ZONE : DEFAULT_SAFE_ZONE,
     minDpi: 150,
+    disablePlacementAdjustment: disablePlacement,
   };
 }
 

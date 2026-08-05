@@ -57,17 +57,18 @@ export function DesignAdjustmentPanel({ imageUrl, disabled = false }: PropsI) {
 
       <div className="h-px bg-(--color-stamp-divider)" aria-hidden="true" />
 
-      <PlacementPreview
-        imageUrl={imageUrl}
-        placement={activeConfig.placement}
-        productCategory={productConfig.category}
-        position={activeEditPosition}
-        safeZone={productConfig.safeZone}
-      />
-
-      {/* Hide placement controls for products that don't support manual adjustment (e.g., mugs) */}
+      {/* Hide preview and placement controls for products that don't support manual adjustment (e.g., mugs, socks) */}
       {!productConfig.disablePlacementAdjustment && (
-        <PlacementAdjuster
+        <>
+          <PlacementPreview
+            imageUrl={imageUrl}
+            placement={activeConfig.placement}
+            productCategory={productConfig.category}
+            position={activeEditPosition}
+            safeZone={productConfig.safeZone}
+          />
+
+          <PlacementAdjuster
           positions={enabledPositions}
           activePosition={activeEditPosition}
           placement={activeConfig.placement}
@@ -80,6 +81,7 @@ export function DesignAdjustmentPanel({ imageUrl, disabled = false }: PropsI) {
           onReset={() => resetPlacementForPosition(activeEditPosition)}
           disabled={disabled}
         />
+        </>
       )}
 
       {totalAdditionalCost > 0 && (

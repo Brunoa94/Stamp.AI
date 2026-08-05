@@ -94,15 +94,13 @@ describe("DesignAdjustmentPanel", () => {
     ).toEqual({ x: 0.5, y: 0.45, scale: 1, angle: 0 });
   });
 
-  it("hides placement adjuster for products with disablePlacementAdjustment", () => {
+  it("hides preview and placement adjuster for products with disablePlacementAdjustment", () => {
     // Use mug blueprint (1320) which has disablePlacementAdjustment: true
     useStampFlowStore.setState({ blueprintId: 1320 });
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
 
-    // Preview should still be visible
-    expect(screen.getByTestId("placement-preview")).toBeInTheDocument();
-
-    // Placement controls should be hidden
+    // Preview and placement controls should be hidden
+    expect(screen.queryByTestId("placement-preview")).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Move up" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Move down" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /reset placement/i })).not.toBeInTheDocument();

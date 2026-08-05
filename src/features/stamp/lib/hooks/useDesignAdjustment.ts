@@ -87,7 +87,7 @@ export function buildPrintPositionsPayload(
 }
 
 export function useDesignAdjustment() {
-  const { blueprintId } = useStampProductSelection();
+  const { blueprintId, selectedProductTitle } = useStampProductSelection();
   const {
     availablePrintPositions,
     printPositionConfigs,
@@ -101,8 +101,8 @@ export function useDesignAdjustment() {
   } = useStampPrintPlacement();
 
   const productConfig = useMemo(
-    () => (blueprintId ? getProductConfig(blueprintId) : undefined),
-    [blueprintId],
+    () => (blueprintId ? getProductConfig(blueprintId, selectedProductTitle) : undefined),
+    [blueprintId, selectedProductTitle],
   );
 
   // Seed positions whenever the selected product changes. Guarded so a
