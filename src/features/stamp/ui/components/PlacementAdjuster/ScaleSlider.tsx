@@ -4,6 +4,7 @@ import { Minus, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
+import { Slider } from "@/features/ui/slider";
 import { Span } from "@/features/ui/span";
 import type { PlacementBounds } from "../../../lib/types/stampFlowTypes";
 import { ADJUST_STEP } from "../../../lib/hooks/useDesignAdjustment";
@@ -50,16 +51,15 @@ export function ScaleSlider({
         >
           <Minus className="h-4 w-4" />
         </Button>
-        <input
+        <Slider
           id="placement-scale"
-          type="range"
           min={bounds.minScale}
           max={bounds.maxScale}
           step={0.01}
           value={scale}
           disabled={disabled}
           onChange={(e) => onScaleChange(Number(e.target.value))}
-          className="flex-1 h-px bg-(--color-stamp-divider) appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-(--color-stamp-gold) [&::-webkit-slider-thumb]:rounded-full"
+          className="flex-1"
           aria-label={t("scaleAria")}
         />
         <Button

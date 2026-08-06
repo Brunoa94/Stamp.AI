@@ -10,6 +10,7 @@ import {
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
+import { Slider } from "@/features/ui/slider";
 import { Span } from "@/features/ui/span";
 import type { PlacementBounds, PlacementParamsType } from "../../../lib/types/stampFlowTypes";
 import { ADJUST_STEP } from "../../../lib/hooks/useDesignAdjustment";
@@ -32,9 +33,6 @@ interface PropsI {
 
 const ARROW_BUTTON_CLASS =
   "h-9 w-9 rounded-none border border-(--color-stamp-divider) p-0 text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)";
-
-const RANGE_CLASS =
-  "flex-1 h-px bg-(--color-stamp-divider) appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-(--color-stamp-gold) [&::-webkit-slider-thumb]:rounded-full";
 
 export function PositionControls({
   placement,
@@ -106,16 +104,15 @@ export function PositionControls({
         >
           {t("horizontalLabel")}
         </Label>
-        <input
+        <Slider
           id="placement-x"
-          type="range"
           min={bounds.minX}
           max={bounds.maxX}
           step={0.01}
           value={placement.x}
           disabled={disabled}
           onChange={(e) => onPlacementChange({ x: Number(e.target.value) })}
-          className={RANGE_CLASS}
+          className="flex-1"
           aria-label={t("horizontalAria")}
         />
       </div>
@@ -127,16 +124,15 @@ export function PositionControls({
         >
           {t("verticalLabel")}
         </Label>
-        <input
+        <Slider
           id="placement-y"
-          type="range"
           min={bounds.minY}
           max={bounds.maxY}
           step={0.01}
           value={placement.y}
           disabled={disabled}
           onChange={(e) => onPlacementChange({ y: Number(e.target.value) })}
-          className={RANGE_CLASS}
+          className="flex-1"
           aria-label={t("verticalAria")}
         />
       </div>
