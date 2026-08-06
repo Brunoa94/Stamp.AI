@@ -103,8 +103,15 @@ export interface StampFlowStateType {
       enableAll?: boolean;
       /** Per-position placement overrides (socks: per-leg calibration). */
       placements?: Record<string, PlacementParamsType>;
+      /** Blueprint these positions were seeded for (drives reset-on-change). */
+      blueprintId?: number;
     },
   ) => void;
+  /**
+   * Blueprint the placement state was last seeded for. Selecting a different
+   * product resets the adjustment state (see useDesignAdjustment).
+   */
+  placementSeededBlueprintId: number | undefined;
   defaultPlacement: PlacementParamsType;
 
   // Customization selection state

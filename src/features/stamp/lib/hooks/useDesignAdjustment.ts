@@ -102,6 +102,7 @@ export function useDesignAdjustment() {
     resetPlacementForPosition,
     initializePrintPositions,
     defaultPlacement,
+    placementSeededBlueprintId,
   } = useStampPrintPlacement();
 
   const productConfig = useMemo(
@@ -109,11 +110,14 @@ export function useDesignAdjustment() {
     [blueprintId, selectedProductTitle],
   );
 
-  // Seed positions whenever the selected product changes. Guarded so a
-  // re-mount of Step 6 (navigating back and forth) doesn't wipe the user's
-  // adjustments: skip when the store already holds this product's positions.
+  // Seed positions whenever the selected product changes. Guarded by the
+  // blueprint the store was last seeded for: re-mounting Step 6 (navigating
+  // back and forth) keeps the user's adjustments, while selecting a
+  // different product — even one with identical positions — resets the
+  // placement to that product's defaults.
   useEffect(() => {
-    if (!productConfig) return;
+    if (!productConfig || !blueprintId) return;
+    if (placementSeededBlueprintId === blueprintId) return;
     const isSocks = productConfig.category === "socks";
     // Socks: both legs enabled, design visually centered on each leg (the
     // blueprint only prints the front panel; each leg has its own calibrated
@@ -121,18 +125,9 @@ export function useDesignAdjustment() {
     const expectedDefault: PlacementParamsType = isSocks
       ? sockLegPlacement(productConfig.positions[0] ?? "left_leg")
       : { x: 0.5, y: productConfig.anchorY ?? 0.5, scale: 1, angle: 0 };
-    const alreadySeeded =
-      availablePrintPositions.length === productConfig.positions.length &&
-      productConfig.positions.every(
-        (position, index) => availablePrintPositions[index] === position,
-      ) &&
-      defaultPlacement.x === expectedDefault.x &&
-      defaultPlacement.y === expectedDefault.y;
-    if (alreadySeeded) return;
-    initializePrintPositions(
-      productConfig.positions,
-      expectedDefault,
-      isSocks
+    initializePrintPositions(productConfig.positions, expectedDefault, {
+      blueprintId,
+      ...(isSocks
         ? {
             enableAll: true,
             placements: Object.fromEntries(
@@ -142,13 +137,12 @@ export function useDesignAdjustment() {
               ]),
             ),
           }
-        : undefined,
-    );
+        : {}),
+    });
   }, [
     productConfig,
-    availablePrintPositions,
-    defaultPlacement.x,
-    defaultPlacement.y,
+    blueprintId,
+    placementSeededBlueprintId,
     initializePrintPositions,
   ]);
 

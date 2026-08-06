@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { screen } from "@testing-library/react";
+import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl } from "@/tests/utils/renderWithIntl";
 import { useStampFlowStore } from "../../../../lib/stores/stampFlowStore";
@@ -164,5 +164,64 @@ describe("DesignAdjustmentPanel — socks (blueprint 496)", () => {
       { position: "left_leg", placement: { x: 0.58, y: 0.35, scale: 0.6, angle: 0 } },
       { position: "right_leg", placement: { x: 0.5, y: 0.35, scale: 0.6, angle: 0 } },
     ]);
+  });
+});
+
+describe("DesignAdjustmentPanel — reset on product change", () => {
+  beforeEach(() => {
+    useStampFlowStore.getState().reset();
+  });
+
+  it("resets placement when a different product with identical positions is selected", async () => {
+    // Blueprints 145 and 5 are both tees with positions [front, back, neck]
+    // and the same anchor — the case a positions-based guard would miss.
+    useStampFlowStore.setState({ blueprintId: 145 });
+    const user = userEvent.setup();
+    renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
+
+    await user.click(screen.getByRole("button", { name: "Move up" }));
+    expect(
+      useStampFlowStore.getState().printPositionConfigs.front.placement.y,
+    ).toBeCloseTo(0.35);
+
+    act(() => {
+      useStampFlowStore.setState({ blueprintId: 5 });
+    });
+
+    await waitFor(() => {
+      expect(
+        useStampFlowStore.getState().printPositionConfigs.front.placement.y,
+      ).toBeCloseTo(0.45);
+    });
+    expect(useStampFlowStore.getState().placementSeededBlueprintId).toBe(5);
+  });
+
+  it("keeps adjustments when Step 6 re-mounts with the same product", async () => {
+    useStampFlowStore.setState({ blueprintId: 145 });
+    const user = userEvent.setup();
+    const { unmount } = renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
+
+    await user.click(screen.getByRole("button", { name: "Move up" }));
+    unmount();
+
+    renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
+    expect(
+      useStampFlowStore.getState().printPositionConfigs.front.placement.y,
+    ).toBeCloseTo(0.35);
+  });
+
+  it("switching from apparel to socks reseeds sock defaults", async () => {
+    useStampFlowStore.setState({ blueprintId: 6 });
+    renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
+
+    act(() => {
+      useStampFlowStore.setState({ blueprintId: 496 });
+    });
+
+    await waitFor(() => {
+      const configs = useStampFlowStore.getState().printPositionConfigs;
+      expect(configs.left_leg?.placement).toEqual({ x: 0.58, y: 0.35, scale: 0.6, angle: 0 });
+      expect(configs.right_leg?.enabled).toBe(true);
+    });
   });
 });

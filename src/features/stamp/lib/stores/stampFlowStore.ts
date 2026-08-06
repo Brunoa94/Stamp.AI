@@ -50,6 +50,7 @@ const initialState = {
   printPositionConfigs: {} as Record<string, PrintPositionConfigType>,
   activeEditPosition: "front",
   defaultPlacement: DEFAULT_PLACEMENT,
+  placementSeededBlueprintId: undefined as number | undefined,
   // Customization selection state
   selectedColor: undefined,
   selectedSize: undefined,
@@ -232,6 +233,7 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
         printPositionConfigs: configs,
         activeEditPosition: positions[0] ?? "front",
         defaultPlacement,
+        placementSeededBlueprintId: options?.blueprintId,
       };
     }),
 

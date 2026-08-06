@@ -270,6 +270,9 @@ export const useStampPrintPlacement = () => {
   const defaultPlacement = useStampFlowStore(
     (state) => state.defaultPlacement,
   );
+  const placementSeededBlueprintId = useStampFlowStore(
+    (state) => state.placementSeededBlueprintId,
+  );
   return {
     availablePrintPositions,
     setAvailablePrintPositions,
@@ -281,5 +284,6 @@ export const useStampPrintPlacement = () => {
     resetPlacementForPosition,
     initializePrintPositions,
     defaultPlacement,
+    placementSeededBlueprintId,
   };
 };
