@@ -23,6 +23,7 @@ function CustomizationSectionComponent() {
     printProviderId,
     availableColors,
     selectedColor,
+    effectiveSelectedColor,
     setSelectedColor,
     isLoadingVariants,
     availableSizes,
@@ -46,7 +47,7 @@ function CustomizationSectionComponent() {
   const { handleCreateProduct } = useCustomizationHandlers({
     blueprintId,
     printProviderId,
-    selectedColor,
+    selectedColor: effectiveSelectedColor,
     effectiveSelectedSize,
     createProduct,
   });
