@@ -5,7 +5,67 @@
  * These values are based on Printify API data and print industry standards.
  */
 
-import type { ProductConfig, SafeZone } from './types';
+import type { PlacementParams, ProductConfig, SafeZone } from './types';
+
+export type CanvasOrientation = 'vertical' | 'horizontal' | 'square';
+
+/**
+ * Determine canvas orientation from size string (e.g., "10" x 20" (VERTICAL)")
+ * Parses the dimensions and compares width vs height
+ */
+export function getCanvasOrientation(sizeString: string): CanvasOrientation {
+  // Extract dimensions from formats like:
+  // - "10" x 20" (VERTICAL)" or "10" x 8" (HORIZONTAL)"
+  // - "12" x 12"" or "10×10"
+  const cleanSize = sizeString
+    .replace(/\(VERTICAL\)/gi, '')
+    .replace(/\(HORIZONTAL\)/gi, '')
+    .replace(/"/g, '')
+    .replace(/×/g, 'x')
+    .trim();
+
+  const match = cleanSize.match(/(\d+)\s*x\s*(\d+)/i);
+  if (!match) {
+    return 'vertical'; // default
+  }
+
+  const width = parseInt(match[1], 10);
+  const height = parseInt(match[2], 10);
+
+  if (width === height) return 'square';
+  if (width > height) return 'horizontal';
+  return 'vertical';
+}
+
+/**
+ * Detect product category from display title
+ * Used as fallback when blueprint ID is not in PRODUCT_CONFIGS
+ */
+export function detectCategoryFromTitle(displayTitle: string): ProductConfig['category'] {
+  const titleLower = displayTitle.toLowerCase();
+
+  if (titleLower.includes('mug') || titleLower.includes('tumbler')) {
+    return 'mug';
+  }
+  if (titleLower.includes('tote') || titleLower.includes('shopping bag')) {
+    return 'tote';
+  }
+  if (titleLower.includes('sock')) {
+    return 'socks';
+  }
+  if (titleLower.includes('canvas') || titleLower.includes('gallery wrap')) {
+    return 'canvas';
+  }
+  if (titleLower.includes('poster') || titleLower.includes('art print') || titleLower.includes('wall art')) {
+    return 'poster';
+  }
+  if (titleLower.includes('pillow') || titleLower.includes('cushion')) {
+    return 'pillow';
+  }
+
+  // Default to apparel for t-shirts, hoodies, etc.
+  return 'apparel';
+}
 
 // Default safe zone: 3% margin on all sides
 const DEFAULT_SAFE_ZONE: SafeZone = {
@@ -86,6 +146,16 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     minDpi: 150,
     anchorY: 0.42,  // Higher due to hood
   },
+  1525: {
+    blueprintId: 1525,
+    name: 'Unisex Heavy Blend Hoodie (Gildan 18500)',
+    category: 'apparel',
+    positions: ['front', 'back'],
+    defaultPosition: 'front',
+    safeZone: HOODIE_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.42,  // Higher due to hood
+  },
   49: {
     blueprintId: 49,
     name: 'Unisex Heavy Blend Crewneck Sweatshirt',
@@ -108,20 +178,142 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     minDpi: 150,
     anchorY: 0.5,
   },
-};
 
-/**
- * Get product config by blueprint ID, with fallback to defaults
- */
-export function getProductConfig(blueprintId: number): ProductConfig {
-  return PRODUCT_CONFIGS[blueprintId] || {
-    blueprintId,
-    name: `Blueprint ${blueprintId}`,
-    category: 'apparel',
+  // AOP Tote Bag - very tall print area (2175x4350) wraps front+back
+  // Client-side anchorY: 0.5 for centered mockup preview
+  // Server-side uses different calculation for Printify (see edge function)
+  // Always centered horizontally, only scale adjustment allowed
+  1389: {
+    blueprintId: 1389,
+    name: 'AOP Tote Bag',
+    category: 'tote',
     positions: ['front'],
     defaultPosition: 'front',
     safeZone: DEFAULT_SAFE_ZONE,
     minDpi: 150,
+    anchorY: 0.5,
+    scaleOnly: true,
+  },
+
+  // Mugs - placement disabled (wrap-around print, auto-centered)
+  1320: {
+    blueprintId: 1320,
+    name: 'Ceramic Mug 11oz',
+    category: 'mug',
+    positions: ['front'],
+    defaultPosition: 'front',
+    safeZone: MUG_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.5,
+    disablePlacementAdjustment: true,
+    autoPlacement: true,  // wrap-around print; server auto-fits the image
+  },
+  468: {
+    blueprintId: 468,
+    name: 'White Glossy Mug',
+    category: 'mug',
+    positions: ['front'],
+    defaultPosition: 'front',
+    safeZone: MUG_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.5,
+    disablePlacementAdjustment: true,
+    autoPlacement: true,  // wrap-around print; server auto-fits the image
+  },
+
+  // Canvas - full bleed, center placement
+  658: {
+    blueprintId: 658,
+    name: 'Matte Canvas',
+    category: 'canvas',
+    positions: ['front'],
+    defaultPosition: 'front',
+    safeZone: DEFAULT_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.5,
+  },
+
+  // Socks - all-over print on both legs, placement disabled
+  462: {
+    blueprintId: 462,
+    name: 'Cushioned Crew Socks',
+    category: 'socks',
+    positions: ['left_leg', 'right_leg'],
+    defaultPosition: 'left_leg',
+    safeZone: DEFAULT_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.5,
+    disablePlacementAdjustment: true,
+  },
+  496: {
+    blueprintId: 496,
+    name: 'Crew Socks',
+    category: 'socks',
+    positions: ['left_leg', 'right_leg'],
+    defaultPosition: 'left_leg',
+    safeZone: DEFAULT_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.5,
+    disablePlacementAdjustment: true,
+  },
+};
+
+/**
+ * Sock leg placement presets, per leg.
+ *
+ * Calibrated empirically against blueprint 496 / provider 26 mockups
+ * (eight probe products, 2026-08, positions measured pixel-exact against
+ * the sock centerline): the per-leg print file covers only the FRONT panel
+ * of the sock, and the LEFT leg's print area sits offset ~0.08 template
+ * units to the left of the fabric center, so its x is compensated to
+ * render dead-center (verified within 1px). The right leg is true at 0.5.
+ * y/scale center the design on the upper-middle of the leg (target zone).
+ */
+export const SOCK_LEG_PLACEMENTS: Record<
+  'left_leg' | 'right_leg',
+  PlacementParams
+> = {
+  left_leg: { x: 0.58, y: 0.35, scale: 0.6, angle: 0 },
+  right_leg: { x: 0.5, y: 0.35, scale: 0.6, angle: 0 },
+};
+
+/** Placement preset for a sock leg (visually centered on the leg). */
+export function sockLegPlacement(position: string): PlacementParams {
+  return {
+    ...(position === 'left_leg'
+      ? SOCK_LEG_PLACEMENTS.left_leg
+      : SOCK_LEG_PLACEMENTS.right_leg),
+  };
+}
+
+/**
+ * Get product config by blueprint ID, with fallback to defaults.
+ * Optionally accepts displayTitle to detect category for unknown blueprints.
+ */
+export function getProductConfig(blueprintId: number, displayTitle?: string): ProductConfig {
+  const existingConfig = PRODUCT_CONFIGS[blueprintId];
+  if (existingConfig) {
+    return existingConfig;
+  }
+
+  // Detect category from display title if provided
+  const category = displayTitle ? detectCategoryFromTitle(displayTitle) : 'apparel';
+
+  // Apply category-specific defaults
+  const isMug = category === 'mug';
+  const isSocks = category === 'socks';
+  const disablePlacement = isMug || isSocks;
+
+  return {
+    blueprintId,
+    name: displayTitle || `Blueprint ${blueprintId}`,
+    category,
+    positions: ['front'],
+    defaultPosition: 'front',
+    safeZone: isMug ? MUG_SAFE_ZONE : DEFAULT_SAFE_ZONE,
+    minDpi: 150,
+    disablePlacementAdjustment: disablePlacement,
+    autoPlacement: isMug,
   };
 }
 

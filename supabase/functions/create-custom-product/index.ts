@@ -1,7 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
-import { calculatePlacement } from "../_shared/printPlacement.ts"
+import { calculatePlacement, isScaleOnlyBlueprint, getBlueprintAnchorY } from "../_shared/printPlacement.ts"
+import { resolvePrintAreas } from "../_shared/resolvePrintAreas.ts"
 import { createClient } from "jsr:@supabase/supabase-js@2"
 
 const corsHeaders = {
@@ -27,6 +28,9 @@ serve(async (req) => {
       print_provider_id,
       image_id,
       print_areas,
+      // Per-position placements chosen by the user (optional). Positions
+      // without an entry fall back to auto-placement.
+      placements: userPlacements,
       title,
       description,
       variants,
@@ -82,31 +86,29 @@ serve(async (req) => {
 
     // Prioritize "front" for primary print area (some products list "neck" first)
     const primaryPrintArea = availablePrintAreas.includes('front') ? 'front' : availablePrintAreas[0] || 'front'
-    const secondaryPrintArea = availablePrintAreas.includes('back') ? 'back' : null
 
-    // Get image IDs - support both explicit print_areas and legacy image_id
-    let primaryImageId: string | undefined
-    let secondaryImageId: string | undefined
+    // Resolve position -> image id map. Supports the position-keyed
+    // print_areas object and the legacy single image_id (front only).
+    // Positions the product doesn't offer are dropped.
+    console.log('🖼️ Received print_areas:', JSON.stringify(print_areas))
+    console.log('🖼️ Received image_id:', image_id)
 
-    if (print_areas) {
-      for (const area of availablePrintAreas) {
-        if (print_areas[area] && !primaryImageId) {
-          primaryImageId = print_areas[area]
-        } else if (print_areas[area] && !secondaryImageId) {
-          secondaryImageId = print_areas[area]
-        }
-      }
-      if (!primaryImageId && print_areas.front) {
-        primaryImageId = print_areas.front
-      }
-      if (!secondaryImageId && print_areas.back) {
-        secondaryImageId = print_areas.back
-      }
-    } else if (image_id) {
-      primaryImageId = image_id
+    const { areas: requestedAreas, remappedFrom, droppedPositions } = resolvePrintAreas(
+      print_areas,
+      image_id,
+      availablePrintAreas,
+    )
+    if (droppedPositions.length > 0) {
+      console.warn(`⚠️ Positions not offered by blueprint: ${droppedPositions.join(', ')}`)
+    }
+    if (remappedFrom) {
+      console.log(`🔄 Requested "${remappedFrom}" unavailable; printing on all available positions instead`)
     }
 
-    if (!primaryImageId && !secondaryImageId) {
+    console.log('🎯 Final requestedAreas:', JSON.stringify(requestedAreas))
+
+    if (Object.keys(requestedAreas).length === 0) {
+      console.error('❌ IMAGE_REQUIRED: No valid print areas found')
       throw ErrorCodes.IMAGE_REQUIRED()
     }
 
@@ -141,68 +143,100 @@ serve(async (req) => {
       selectedVariants = availableVariants.slice(0, 100).map((v: any) => v.id)
     }
 
-    // === AUTO-PLACEMENT CALCULATION ===
-    // If image dimensions are provided, calculate optimal placement
-    // Otherwise, fall back to default centered placement
+    // === PLACEMENT RESOLUTION ===
+    // For each requested position: use the user's placement when provided,
+    // otherwise auto-calculate from the image and print-area dimensions.
+    const isValidPlacement = (p: any): boolean =>
+      p && typeof p === 'object' &&
+      typeof p.x === 'number' && p.x >= 0 && p.x <= 1 &&
+      typeof p.y === 'number' && p.y >= 0 && p.y <= 1 &&
+      typeof p.scale === 'number' && p.scale > 0 && p.scale <= 2 &&
+      typeof p.angle === 'number'
+
+    const artworkWidth = image_width && image_width > 0 ? image_width : 3000
+    const artworkHeight = image_height && image_height > 0 ? image_height : 3000
+    if (!(image_width && image_height)) {
+      console.log('⚠️ No image dimensions provided, assuming 3000x3000 for auto-placement')
+    }
+
+    const resolvePlacement = (position: string) => {
+      const userPlacement = userPlacements?.[position]
+
+      // For scaleOnly blueprints (like AOP Tote Bag), force centered placement
+      // Only accept the scale value from user, ignore x/y/angle
+      if (isScaleOnlyBlueprint(finalBlueprintId)) {
+        const userScale = isValidPlacement(userPlacement) ? userPlacement.scale : 1
+
+        // For AOP Tote Bag (blueprint 1389), the print area is 2175x4350 (front+back)
+        // The front panel is the TOP HALF of the print area (0 to 0.5 in y coordinates)
+        // We need to center the image within the front panel, accounting for image height
+        const placeholder = firstVariantPlaceholders.find((p: any) => p.position === position)
+        const paWidth = placeholder?.width || printAreaWidth
+        const paHeight = placeholder?.height || printAreaHeight
+
+        // Calculate image height in normalized coordinates
+        // scale = image width / print area width
+        // imageHeightNorm = (imageHeight / imageWidth) * scale * (paWidth / paHeight)
+        const imageAspect = artworkWidth / artworkHeight
+        const printAreaAspect = paWidth / paHeight
+        const imageHeightNorm = (userScale / imageAspect) * printAreaAspect
+
+        // For front+back tote (1389), front panel is y: 0 to 0.5
+        // Center of front panel is 0.25, but we need to account for image height
+        // y position is the CENTER of the image, so:
+        // y = frontPanelCenter = 0.25 (center of top half)
+        // But adjust slightly down to account for handle area at top
+        const frontPanelCenter = 0.27  // Slightly below center to avoid handles
+        const y = frontPanelCenter
+
+        console.log(`🔒 ScaleOnly blueprint ${finalBlueprintId}: x=0.5, y=${y.toFixed(3)}, scale=${userScale}, imageHeightNorm=${imageHeightNorm.toFixed(3)}`)
+        return { x: 0.5, y, scale: userScale, angle: 0 }
+      }
+
+      if (isValidPlacement(userPlacement)) {
+        console.log(`🎯 Using user placement for "${position}"`)
+        return userPlacement
+      }
+      const placeholder = firstVariantPlaceholders.find((p: any) => p.position === position)
+      return calculatePlacement(
+        artworkWidth,
+        artworkHeight,
+        placeholder?.width || printAreaWidth,
+        placeholder?.height || printAreaHeight,
+        finalBlueprintId,
+        position
+      )
+    }
+
+    // Track the primary placement for the debug field in the response
     let primaryPlacement = { x: 0.5, y: 0.5, scale: 1, angle: 0 }
 
-    if (image_width && image_height && image_width > 0 && image_height > 0) {
-      console.log(`🖼️ Image dimensions: ${image_width}x${image_height}px`)
-      primaryPlacement = calculatePlacement(
-        image_width,
-        image_height,
-        printAreaWidth,
-        printAreaHeight,
-        finalBlueprintId,
-        primaryPrintArea
-      )
-    } else {
-      // Default fallback: calculate for a typical square image (1:1 aspect ratio)
-      console.log('⚠️ No image dimensions provided, using optimized default placement')
-      primaryPlacement = calculatePlacement(
-        3000, // Assume reasonable resolution
-        3000,
-        printAreaWidth,
-        printAreaHeight,
-        finalBlueprintId,
-        primaryPrintArea
-      )
-    }
-
-    console.log(`🎯 Final placement: x=${primaryPlacement.x.toFixed(3)}, y=${primaryPlacement.y.toFixed(3)}, scale=${primaryPlacement.scale.toFixed(3)}`)
-
-    // Build placeholders with auto-corrected placement
+    // Build placeholders, one per requested position
     const placeholders = []
-
-    if (primaryImageId) {
+    for (const [position, imageId] of Object.entries(requestedAreas)) {
+      const placement = resolvePlacement(position)
+      if (position === primaryPrintArea || placeholders.length === 0) {
+        primaryPlacement = placement
+      }
+      console.log(`🎯 Placement for "${position}": x=${placement.x.toFixed(3)}, y=${placement.y.toFixed(3)}, scale=${placement.scale.toFixed(3)}, angle=${placement.angle}`)
       placeholders.push({
-        position: primaryPrintArea,
+        position,
         images: [{
-          id: primaryImageId,
-          x: primaryPlacement.x,
-          y: primaryPlacement.y,
-          scale: primaryPlacement.scale,
-          angle: primaryPlacement.angle,
+          id: imageId,
+          x: placement.x,
+          y: placement.y,
+          scale: placement.scale,
+          angle: placement.angle,
         }],
       })
     }
 
-    if (secondaryImageId && secondaryPrintArea) {
-      // Use same placement for back
-      placeholders.push({
-        position: secondaryPrintArea,
-        images: [{
-          id: secondaryImageId,
-          x: primaryPlacement.x,
-          y: primaryPlacement.y,
-          scale: primaryPlacement.scale,
-          angle: primaryPlacement.angle,
-        }],
-      })
-    }
+    // Include scale in title for debugging placement issues
+    const scaleInfo = `[scale:${primaryPlacement.scale.toFixed(2)}, y:${primaryPlacement.y.toFixed(2)}]`
+    const productTitle = title ? `${title} ${scaleInfo}` : `Custom Design ${Date.now()} ${scaleInfo}`
 
     const productPayload = {
-      title: title || `Custom Design ${Date.now()}`,
+      title: productTitle,
       description: description || 'Custom designed product',
       blueprint_id: finalBlueprintId,
       print_provider_id: finalPrintProviderId,
@@ -241,15 +275,22 @@ serve(async (req) => {
 
     console.log('✅ Product created:', productData.id)
 
-    // Transform image URLs to use front camera view
+    // Transform image URLs to use the front camera view — but only when the
+    // design actually prints on the front. For positions like sock legs
+    // (where the design may sit on the back of the leg) forcing the front
+    // camera would make every mockup look blank, so keep Printify's mix of
+    // camera angles instead.
+    const printsOnFront = Object.keys(requestedAreas).includes('front')
     const transformedImages = productData.images?.map((img: any) => {
       let src = img.src
-      if (src && src.includes('camera_label=')) {
-        src = src.replace(/camera_label=[^&]+/, 'camera_label=front')
-      } else if (src && src.includes('?')) {
-        src = src + '&camera_label=front'
-      } else if (src) {
-        src = src + '?camera_label=front'
+      if (printsOnFront) {
+        if (src && src.includes('camera_label=')) {
+          src = src.replace(/camera_label=[^&]+/, 'camera_label=front')
+        } else if (src && src.includes('?')) {
+          src = src + '&camera_label=front'
+        } else if (src) {
+          src = src + '?camera_label=front'
+        }
       }
       return {
         src,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, memo, useEffect } from "react";
+import { useMemo, memo, useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCatalogProducts } from "@/queries/catalogQueries";
 import { PrintifyService } from "@/services/printifyService";
@@ -95,11 +95,19 @@ function ProductSelectionSectionComponent() {
   }, [catalogProducts]);
 
   // Prefetch variants (colors & sizes) for all products when grid loads
+  // Use a ref to track which products have been prefetched to avoid duplicate requests
   const queryClient = useQueryClient();
+  const prefetchedRef = useRef<Set<string>>(new Set());
+
   useEffect(() => {
     if (catalogProducts.length === 0) return;
 
     catalogProducts.forEach((product) => {
+      const cacheKey = `${product.blueprintId}-${product.printProviderId}`;
+
+      // Skip if already prefetched in this session
+      if (prefetchedRef.current.has(cacheKey)) return;
+
       const queryKey = [
         "products",
         "blueprint-variants",
@@ -110,6 +118,7 @@ function ProductSelectionSectionComponent() {
       // Only prefetch if not already in cache
       const existingData = queryClient.getQueryData(queryKey);
       if (!existingData) {
+        prefetchedRef.current.add(cacheKey);
         queryClient.prefetchQuery({
           queryKey,
           queryFn: () =>

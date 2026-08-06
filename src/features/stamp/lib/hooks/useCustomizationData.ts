@@ -59,10 +59,13 @@ export function useCustomizationData() {
     return getDefaultSizeForProduct(availableSizes) as SizeType;
   }, [selectedSize, availableSizes]);
 
+  // Color selection is only required if colors are available
+  const colorRequirementMet = availableColors.length === 0 || Boolean(selectedColor);
+
   const canCreateProduct = !isFinalizing &&
     Boolean(blueprintId) &&
     Boolean(printProviderId) &&
-    Boolean(selectedColor) &&
+    colorRequirementMet &&
     Boolean(selectedImageUrl);
 
   return {
