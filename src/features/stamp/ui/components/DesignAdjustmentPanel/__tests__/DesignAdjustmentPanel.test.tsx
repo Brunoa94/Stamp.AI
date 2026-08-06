@@ -124,18 +124,14 @@ describe("DesignAdjustmentPanel — socks (blueprint 496)", () => {
     useStampFlowStore.setState({ blueprintId: 496 });
   });
 
-  it("seeds both legs enabled with the design on the back by default", () => {
+  it("seeds both legs enabled with the centered placement", () => {
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
 
     const configs = useStampFlowStore.getState().printPositionConfigs;
     expect(configs.left_leg.enabled).toBe(true);
     expect(configs.right_leg.enabled).toBe(true);
-    expect(configs.left_leg.face).toBe("back");
-    expect(configs.right_leg.face).toBe("back");
-
-    expect(
-      screen.getByRole("button", { name: "Print on the Back of the Left Sock" }),
-    ).toHaveAttribute("aria-pressed", "true");
+    expect(configs.left_leg.placement).toEqual({ x: 0.5, y: 0.35, scale: 0.45, angle: 0 });
+    expect(configs.right_leg.placement).toEqual({ x: 0.5, y: 0.35, scale: 0.45, angle: 0 });
   });
 
   it("hides the free-form placement controls for socks", () => {
@@ -143,37 +139,20 @@ describe("DesignAdjustmentPanel — socks (blueprint 496)", () => {
     expect(screen.queryByRole("button", { name: "Move up" })).not.toBeInTheDocument();
   });
 
-  it("seeds mirrored back presets per leg (calibrated wrap regions)", () => {
-    renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
-
-    const configs = useStampFlowStore.getState().printPositionConfigs;
-    expect(configs.left_leg.placement.x).toBe(0.175);
-    expect(configs.right_leg.placement.x).toBe(0.825);
-  });
-
-  it("switching a leg to front updates its placement preset in the store", async () => {
+  it("still allows toggling a leg off", async () => {
     const user = userEvent.setup();
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
 
     await user.click(
-      screen.getByRole("button", { name: "Print on the Front of the Left Sock" }),
+      screen.getByRole("button", { name: /toggle right sock print/i }),
     );
-
-    const configs = useStampFlowStore.getState().printPositionConfigs;
-    expect(configs.left_leg.face).toBe("front");
-    expect(configs.left_leg.placement.x).toBe(0.5);
-    // Right leg keeps its own back preset
-    expect(configs.right_leg.face).toBe("back");
-    expect(configs.right_leg.placement.x).toBe(0.825);
+    expect(
+      useStampFlowStore.getState().printPositionConfigs.right_leg.enabled,
+    ).toBe(false);
   });
 
-  it("builds a payload with both legs and their face placements", async () => {
-    const user = userEvent.setup();
+  it("builds a payload with both legs centered", async () => {
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
-
-    await user.click(
-      screen.getByRole("button", { name: "Print on the Front of the Left Sock" }),
-    );
 
     const { buildPrintPositionsPayload } = await import(
       "../../../../lib/hooks/useDesignAdjustment"
@@ -183,7 +162,7 @@ describe("DesignAdjustmentPanel — socks (blueprint 496)", () => {
     );
     expect(payload).toEqual([
       { position: "left_leg", placement: { x: 0.5, y: 0.35, scale: 0.45, angle: 0 } },
-      { position: "right_leg", placement: { x: 0.825, y: 0.35, scale: 0.35, angle: 0 } },
+      { position: "right_leg", placement: { x: 0.5, y: 0.35, scale: 0.45, angle: 0 } },
     ]);
   });
 });

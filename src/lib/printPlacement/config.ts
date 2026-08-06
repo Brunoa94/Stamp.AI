@@ -257,45 +257,26 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
 };
 
 /**
- * Sock face -> placement presets, per leg.
+ * Sock leg placement preset.
  *
  * Calibrated empirically against blueprint 496 / provider 26 mockups
- * (five probe products, 2026-08): the per-leg print file covers only the
- * FRONT panel of the sock — x maps straight (x=0.5 = front center, both
- * legs, angle unrotated) and the printable area never reaches the true back
- * of the leg. A dead-center back print is therefore physically impossible
- * on this blueprint.
- *
- * "back" here means the furthest outer-side placement the file allows
- * without clipping (x = 1 - scale/2, mirrored per leg) — on a worn sock the
- * design faces outward/sideways, the classic sock placement visible when
- * wearing shoes. For true back-of-leg prints a different blueprint with a
- * wraparound print area would be needed.
+ * (six probe products, 2026-08): the per-leg print file covers only the
+ * FRONT panel of the sock — x maps straight (x=0.5 = center of the visible
+ * leg, both legs, angle unrotated) and the printable area never reaches the
+ * back of the leg, so there is no front/back choice on this blueprint.
+ * This preset centers the design on the upper-middle of each leg (the
+ * target zone confirmed with the final probe mockup).
  */
-export const SOCK_FACE_PLACEMENTS: Record<
-  'left_leg' | 'right_leg',
-  Record<'front' | 'back', PlacementParams>
-> = {
-  left_leg: {
-    front: { x: 0.5, y: 0.35, scale: 0.45, angle: 0 },
-    back: { x: 0.175, y: 0.35, scale: 0.35, angle: 0 },
-  },
-  right_leg: {
-    front: { x: 0.5, y: 0.35, scale: 0.45, angle: 0 },
-    back: { x: 0.825, y: 0.35, scale: 0.35, angle: 0 },
-  },
+export const SOCK_LEG_PLACEMENT: PlacementParams = {
+  x: 0.5,
+  y: 0.35,
+  scale: 0.45,
+  angle: 0,
 };
 
-/** Placement preset for a sock face choice on a specific leg. */
-export function sockPlacementForFace(
-  position: string,
-  face: 'front' | 'back',
-): PlacementParams {
-  const leg =
-    position === 'right_leg'
-      ? SOCK_FACE_PLACEMENTS.right_leg
-      : SOCK_FACE_PLACEMENTS.left_leg;
-  return { ...leg[face] };
+/** Placement preset for a sock leg (same centered preset for both legs). */
+export function sockLegPlacement(): PlacementParams {
+  return { ...SOCK_LEG_PLACEMENT };
 }
 
 /**

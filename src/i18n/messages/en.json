@@ -560,14 +560,7 @@
       "printAreaLabel": "Print area",
       "noImageTitle": "No design yet",
       "noImageBody": "Generate and pick a design first, then adjust how it sits on the product.",
-      "extraCostSummary": "Extra print positions: {price}",
-      "faceTitle": "Design Side",
-      "faceHelp": "Pick which side of each sock the design prints on.",
-      "face": {
-        "front": "Front",
-        "back": "Back"
-      },
-      "faceAria": "Print on the {face} of the {position}"
+      "extraCostSummary": "Extra print positions: {price}"
     }
   },
   "cart": {

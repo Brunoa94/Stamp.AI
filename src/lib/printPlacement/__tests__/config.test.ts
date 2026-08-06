@@ -61,7 +61,7 @@ describe("detectCategoryFromTitle", () => {
   });
 });
 
-describe("sock face placements", () => {
+describe("sock leg placement", () => {
   it("blueprint 496 (Crew Socks) resolves to socks with leg positions", async () => {
     const { getProductConfig } = await import("../config");
     const config = getProductConfig(496);
@@ -70,35 +70,13 @@ describe("sock face placements", () => {
     expect(config.disablePlacementAdjustment).toBe(true);
   });
 
-  it("front is dead-center on both legs; back wraps mirrored per leg", async () => {
-    const { SOCK_FACE_PLACEMENTS, sockPlacementForFace } = await import("../config");
-    // Front renders centered on the leg for both socks (calibrated)
-    expect(SOCK_FACE_PLACEMENTS.left_leg.front.x).toBe(0.5);
-    expect(SOCK_FACE_PLACEMENTS.right_leg.front.x).toBe(0.5);
-    // Back presets are mirrored between the legs (0.25 / 0.75 wrap regions)
-    expect(SOCK_FACE_PLACEMENTS.left_leg.back.x).toBeCloseTo(
-      1 - SOCK_FACE_PLACEMENTS.right_leg.back.x,
-    );
-    expect(sockPlacementForFace("right_leg", "back")).toEqual(
-      SOCK_FACE_PLACEMENTS.right_leg.back,
-    );
+  it("centers the design on the leg (calibrated target zone)", async () => {
+    const { SOCK_LEG_PLACEMENT, sockLegPlacement } = await import("../config");
+    expect(SOCK_LEG_PLACEMENT).toEqual({ x: 0.5, y: 0.35, scale: 0.45, angle: 0 });
+    expect(sockLegPlacement()).toEqual(SOCK_LEG_PLACEMENT);
     // Returns a copy, not the shared object
-    const placement = sockPlacementForFace("left_leg", "front");
+    const placement = sockLegPlacement();
     placement.x = 0;
-    expect(SOCK_FACE_PLACEMENTS.left_leg.front.x).not.toBe(0);
-  });
-
-  it("keeps sock placements inside the print area", async () => {
-    const { SOCK_FACE_PLACEMENTS } = await import("../config");
-    for (const leg of Object.values(SOCK_FACE_PLACEMENTS)) {
-      for (const placement of Object.values(leg)) {
-        expect(placement.x).toBeGreaterThan(0);
-        expect(placement.x).toBeLessThan(1);
-        expect(placement.y).toBeGreaterThan(0);
-        expect(placement.y).toBeLessThan(1);
-        expect(placement.scale).toBeGreaterThan(0);
-        expect(placement.scale).toBeLessThanOrEqual(1);
-      }
-    }
+    expect(SOCK_LEG_PLACEMENT.x).toBe(0.5);
   });
 });

@@ -4,14 +4,13 @@ import { useCallback, useEffect, useMemo } from "react";
 import {
   getProductConfig,
   MIN_SCALE,
-  sockPlacementForFace,
+  sockLegPlacement,
 } from "@/lib/printPlacement/config";
 import type { SafeZone } from "@/lib/printPlacement/types";
 import { useStampPrintPlacement, useStampProductSelection } from "./useStampSelectors";
 import type {
   PlacementParamsType,
   PrintPositionConfigType,
-  SockFaceType,
 } from "../types/stampFlowTypes";
 
 /**
@@ -116,10 +115,10 @@ export function useDesignAdjustment() {
   useEffect(() => {
     if (!productConfig) return;
     const isSocks = productConfig.category === "socks";
-    // Socks: both legs enabled, design on the back of each leg by default
-    // (each leg gets its own mirrored back preset).
+    // Socks: both legs enabled, design centered on each leg (the blueprint
+    // only prints the front panel, so there is no front/back choice).
     const expectedDefault: PlacementParamsType = isSocks
-      ? sockPlacementForFace(productConfig.positions[0] ?? "left_leg", "back")
+      ? sockLegPlacement()
       : { x: 0.5, y: productConfig.anchorY ?? 0.5, scale: 1, angle: 0 };
     const alreadySeeded =
       availablePrintPositions.length === productConfig.positions.length &&
@@ -132,18 +131,7 @@ export function useDesignAdjustment() {
     initializePrintPositions(
       productConfig.positions,
       expectedDefault,
-      isSocks
-        ? {
-            enableAll: true,
-            defaultFace: "back",
-            placements: Object.fromEntries(
-              productConfig.positions.map((position) => [
-                position,
-                sockPlacementForFace(position, "back"),
-              ]),
-            ),
-          }
-        : undefined,
+      isSocks ? { enableAll: true } : undefined,
     );
   }, [
     productConfig,
@@ -211,18 +199,6 @@ export function useDesignAdjustment() {
     updateActivePlacement({ x: 0.5, y: defaultPlacement.y });
   }, [updateActivePlacement, defaultPlacement.y]);
 
-  // Socks: choose which side of a leg the design prints on. The face maps to
-  // a placement preset so the choice flows into the Printify payload.
-  const setPositionFace = useCallback(
-    (position: string, face: SockFaceType) => {
-      setPrintPositionConfig(position, {
-        face,
-        placement: sockPlacementForFace(position, face),
-      });
-    },
-    [setPrintPositionConfig],
-  );
-
   const totalAdditionalCost = useMemo(
     () =>
       Object.values(printPositionConfigs)
@@ -245,7 +221,6 @@ export function useDesignAdjustment() {
     updateActivePlacement,
     nudgeActivePlacement,
     centerActivePlacement,
-    setPositionFace,
     resetPlacementForPosition,
     totalAdditionalCost,
   };
