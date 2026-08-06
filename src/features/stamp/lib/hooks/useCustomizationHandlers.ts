@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import { useStampFlowStore } from "../stores/stampFlowStore";
 import { buildPrintPositionsPayload } from "./useDesignAdjustment";
-import { getProductConfig } from "@/lib/printPlacement/config";
 import type { PlacementParamsType } from "../types/stampFlowTypes";
 
 /**
@@ -37,24 +36,13 @@ export function useCustomizationHandlers({
   const handleCreateProduct = useCallback(async () => {
     if (!blueprintId || !printProviderId) return;
 
-    // Get product config to check if placement adjustment is disabled
-    const productConfig = getProductConfig(blueprintId);
-
-    // For products with disabled placement (mugs, socks), don't send print positions
-    // from the store - let the server use all available positions from the config
-    if (productConfig.disablePlacementAdjustment) {
-      await createProduct({
-        blueprintId,
-        printProviderId,
-        fabricColor: selectedColor || "",
-        size: effectiveSelectedSize,
-        // No printPositions - service will use all positions from config
-      });
-      return;
-    }
-
     // Read the placement configs at click time so the payload always matches
     // the user's latest adjustments without re-memoizing on every nudge.
+    // The store is seeded per category by useDesignAdjustment — for socks
+    // that's both legs with the chosen face's placement preset — so the
+    // user's choices always reach the payload. When the store has nothing
+    // (edge case: panel never mounted), the service falls back to the
+    // product config's positions with server-side auto-placement.
     const printPositions = buildPrintPositionsPayload(
       useStampFlowStore.getState().printPositionConfigs,
     );

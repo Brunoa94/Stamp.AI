@@ -532,7 +532,9 @@
         "back": "Back",
         "neck": "Neck",
         "left_sleeve": "Left Sleeve",
-        "right_sleeve": "Right Sleeve"
+        "right_sleeve": "Right Sleeve",
+        "left_leg": "Left Sock",
+        "right_leg": "Right Sock"
       },
       "editingLabel": "Adjusting",
       "editingSelectAria": "Choose which position to adjust",
@@ -558,7 +560,14 @@
       "printAreaLabel": "Print area",
       "noImageTitle": "No design yet",
       "noImageBody": "Generate and pick a design first, then adjust how it sits on the product.",
-      "extraCostSummary": "Extra print positions: {price}"
+      "extraCostSummary": "Extra print positions: {price}",
+      "faceTitle": "Design Side",
+      "faceHelp": "Pick which side of each sock the design prints on.",
+      "face": {
+        "front": "Front",
+        "back": "Back"
+      },
+      "faceAria": "Print on the {face} of the {position}"
     }
   },
   "cart": {

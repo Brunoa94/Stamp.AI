@@ -8,6 +8,7 @@ import { getCanvasOrientation } from "@/lib/printPlacement/config";
 import { PrintPositionSelector } from "../PrintPositionSelector/PrintPositionSelector";
 import { PlacementAdjuster } from "../PlacementAdjuster/PlacementAdjuster";
 import { PlacementPreview } from "../PlacementPreview/PlacementPreview";
+import { SockFaceSelector } from "../SockFaceSelector/SockFaceSelector";
 
 /**
  * DesignAdjustmentPanel
@@ -42,6 +43,7 @@ export function DesignAdjustmentPanel({ imageUrl, disabled = false }: PropsI) {
     updateActivePlacement,
     nudgeActivePlacement,
     centerActivePlacement,
+    setPositionFace,
     resetPlacementForPosition,
     totalAdditionalCost,
   } = useDesignAdjustment();
@@ -65,6 +67,16 @@ export function DesignAdjustmentPanel({ imageUrl, disabled = false }: PropsI) {
       />
 
       <div className="h-px bg-(--color-stamp-divider)" aria-hidden="true" />
+
+      {/* Socks: no free-form placement — choose the side of each leg instead */}
+      {productConfig.category === "socks" && (
+        <SockFaceSelector
+          positions={availablePrintPositions}
+          printPositionConfigs={printPositionConfigs}
+          onFaceChange={setPositionFace}
+          disabled={disabled}
+        />
+      )}
 
       {/* Hide preview and placement controls for products that don't support manual adjustment (e.g., mugs, socks) */}
       {!productConfig.disablePlacementAdjustment && (

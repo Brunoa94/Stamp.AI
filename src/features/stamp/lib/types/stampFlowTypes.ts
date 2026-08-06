@@ -21,12 +21,21 @@ export type PlacementParamsType = PlacementParams;
  * `position` matches Printify placeholder positions ('front', 'back',
  * 'neck', 'left_sleeve', 'right_sleeve').
  */
+/** Which side of a sock leg the design prints on. */
+export type SockFaceType = "front" | "back";
+
 export interface PrintPositionConfigType {
   position: string;
   enabled: boolean;
   placement: PlacementParamsType;
   /** Extra cost in cents for printing this position (0 = included). */
   additionalCost: number;
+  /**
+   * Socks only: the chosen side of the leg. The face maps to a placement
+   * preset (see SOCK_FACE_PLACEMENTS) — this field remembers the choice so
+   * the UI can highlight it.
+   */
+  face?: SockFaceType;
 }
 
 export interface MockupImageType {
@@ -98,6 +107,12 @@ export interface StampFlowStateType {
   initializePrintPositions: (
     positions: string[],
     defaultPlacement: PlacementParamsType,
+    options?: {
+      /** Enable every position instead of only the first (socks: both legs). */
+      enableAll?: boolean;
+      /** Seed each config with this face (socks default: "back"). */
+      defaultFace?: SockFaceType;
+    },
   ) => void;
   defaultPlacement: PlacementParamsType;
 

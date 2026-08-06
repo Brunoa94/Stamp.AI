@@ -216,15 +216,16 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
       };
     }),
 
-  initializePrintPositions: (positions, defaultPlacement) =>
+  initializePrintPositions: (positions, defaultPlacement, options) =>
     set(() => {
       const configs: Record<string, PrintPositionConfigType> = {};
       positions.forEach((position, index) => {
         configs[position] = {
           position,
-          enabled: index === 0,
+          enabled: options?.enableAll ? true : index === 0,
           placement: { ...defaultPlacement },
           additionalCost: 0,
+          ...(options?.defaultFace ? { face: options.defaultFace } : {}),
         };
       });
       return {

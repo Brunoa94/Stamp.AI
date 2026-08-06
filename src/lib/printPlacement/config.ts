@@ -5,7 +5,7 @@
  * These values are based on Printify API data and print industry standards.
  */
 
-import type { ProductConfig, SafeZone } from './types';
+import type { PlacementParams, ProductConfig, SafeZone } from './types';
 
 export type CanvasOrientation = 'vertical' | 'horizontal' | 'square';
 
@@ -243,7 +243,40 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     anchorY: 0.5,
     disablePlacementAdjustment: true,
   },
+  496: {
+    blueprintId: 496,
+    name: 'Crew Socks',
+    category: 'socks',
+    positions: ['left_leg', 'right_leg'],
+    defaultPosition: 'left_leg',
+    safeZone: DEFAULT_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.5,
+    disablePlacementAdjustment: true,
+  },
 };
+
+/**
+ * Sock face -> placement presets.
+ *
+ * Printify sock print areas are a flattened wrap of the leg: the horizontal
+ * position decides where on the circumference the design lands. The template
+ * center (x=0.5) faces forward in Printify's front mockups; x=0.75 lands a
+ * quarter-turn around, on the back of the leg.
+ *
+ * ⚠️ CALIBRATION: these x values are an informed estimate of the wrap layout.
+ * Verify once with a real product's mockups (front + back camera) and tune
+ * the x offsets here — everything else (UI, payload, edge) keys off this map.
+ */
+export const SOCK_FACE_PLACEMENTS: Record<'front' | 'back', PlacementParams> = {
+  front: { x: 0.5, y: 0.35, scale: 0.45, angle: 0 },
+  back: { x: 0.75, y: 0.35, scale: 0.45, angle: 0 },
+};
+
+/** Placement preset for a sock face choice. */
+export function sockPlacementForFace(face: 'front' | 'back'): PlacementParams {
+  return { ...SOCK_FACE_PLACEMENTS[face] };
+}
 
 /**
  * Get product config by blueprint ID, with fallback to defaults.

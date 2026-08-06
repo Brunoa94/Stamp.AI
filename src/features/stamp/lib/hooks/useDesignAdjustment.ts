@@ -1,12 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useMemo } from "react";
-import { getProductConfig, MIN_SCALE } from "@/lib/printPlacement/config";
+import {
+  getProductConfig,
+  MIN_SCALE,
+  sockPlacementForFace,
+} from "@/lib/printPlacement/config";
 import type { SafeZone } from "@/lib/printPlacement/types";
 import { useStampPrintPlacement, useStampProductSelection } from "./useStampSelectors";
 import type {
   PlacementParamsType,
   PrintPositionConfigType,
+  SockFaceType,
 } from "../types/stampFlowTypes";
 
 /**
@@ -110,23 +115,28 @@ export function useDesignAdjustment() {
   // adjustments: skip when the store already holds this product's positions.
   useEffect(() => {
     if (!productConfig) return;
-    const anchorY = productConfig.anchorY ?? 0.5;
+    const isSocks = productConfig.category === "socks";
+    // Socks: both legs enabled, design on the back of each leg by default.
+    const expectedDefault: PlacementParamsType = isSocks
+      ? sockPlacementForFace("back")
+      : { x: 0.5, y: productConfig.anchorY ?? 0.5, scale: 1, angle: 0 };
     const alreadySeeded =
       availablePrintPositions.length === productConfig.positions.length &&
       productConfig.positions.every(
         (position, index) => availablePrintPositions[index] === position,
       ) &&
-      defaultPlacement.y === anchorY;
+      defaultPlacement.x === expectedDefault.x &&
+      defaultPlacement.y === expectedDefault.y;
     if (alreadySeeded) return;
-    initializePrintPositions(productConfig.positions, {
-      x: 0.5,
-      y: anchorY,
-      scale: 1,
-      angle: 0,
-    });
+    initializePrintPositions(
+      productConfig.positions,
+      expectedDefault,
+      isSocks ? { enableAll: true, defaultFace: "back" } : undefined,
+    );
   }, [
     productConfig,
     availablePrintPositions,
+    defaultPlacement.x,
     defaultPlacement.y,
     initializePrintPositions,
   ]);
@@ -189,6 +199,18 @@ export function useDesignAdjustment() {
     updateActivePlacement({ x: 0.5, y: defaultPlacement.y });
   }, [updateActivePlacement, defaultPlacement.y]);
 
+  // Socks: choose which side of a leg the design prints on. The face maps to
+  // a placement preset so the choice flows into the Printify payload.
+  const setPositionFace = useCallback(
+    (position: string, face: SockFaceType) => {
+      setPrintPositionConfig(position, {
+        face,
+        placement: sockPlacementForFace(face),
+      });
+    },
+    [setPrintPositionConfig],
+  );
+
   const totalAdditionalCost = useMemo(
     () =>
       Object.values(printPositionConfigs)
@@ -211,6 +233,7 @@ export function useDesignAdjustment() {
     updateActivePlacement,
     nudgeActivePlacement,
     centerActivePlacement,
+    setPositionFace,
     resetPlacementForPosition,
     totalAdditionalCost,
   };

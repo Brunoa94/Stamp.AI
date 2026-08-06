@@ -60,3 +60,35 @@ describe("detectCategoryFromTitle", () => {
     expect(detectCategoryFromTitle(title)).toBe(category);
   });
 });
+
+describe("sock face placements", () => {
+  it("blueprint 496 (Crew Socks) resolves to socks with leg positions", async () => {
+    const { getProductConfig } = await import("../config");
+    const config = getProductConfig(496);
+    expect(config.category).toBe("socks");
+    expect(config.positions).toEqual(["left_leg", "right_leg"]);
+    expect(config.disablePlacementAdjustment).toBe(true);
+  });
+
+  it("maps front and back to distinct placements on the leg wrap", async () => {
+    const { SOCK_FACE_PLACEMENTS, sockPlacementForFace } = await import("../config");
+    expect(SOCK_FACE_PLACEMENTS.front.x).not.toBe(SOCK_FACE_PLACEMENTS.back.x);
+    expect(sockPlacementForFace("back")).toEqual(SOCK_FACE_PLACEMENTS.back);
+    // Returns a copy, not the shared object
+    const placement = sockPlacementForFace("front");
+    placement.x = 0;
+    expect(SOCK_FACE_PLACEMENTS.front.x).not.toBe(0);
+  });
+
+  it("keeps sock placements inside the print area", async () => {
+    const { SOCK_FACE_PLACEMENTS } = await import("../config");
+    for (const placement of Object.values(SOCK_FACE_PLACEMENTS)) {
+      expect(placement.x).toBeGreaterThan(0);
+      expect(placement.x).toBeLessThan(1);
+      expect(placement.y).toBeGreaterThan(0);
+      expect(placement.y).toBeLessThan(1);
+      expect(placement.scale).toBeGreaterThan(0);
+      expect(placement.scale).toBeLessThanOrEqual(1);
+    }
+  });
+});

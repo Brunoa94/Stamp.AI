@@ -128,3 +128,69 @@ describe("stampFlowStore placement state", () => {
     expect(state.defaultPlacement).toEqual(DEFAULT_PLACEMENT);
   });
 });
+
+describe("stampFlowStore socks seeding options", () => {
+  beforeEach(() => {
+    useStampFlowStore.getState().reset();
+  });
+
+  const SOCK_POSITIONS = ["left_leg", "right_leg"];
+  const BACK_PLACEMENT = { x: 0.75, y: 0.35, scale: 0.45, angle: 0 };
+
+  it("enableAll enables every position", () => {
+    useStampFlowStore
+      .getState()
+      .initializePrintPositions(SOCK_POSITIONS, BACK_PLACEMENT, {
+        enableAll: true,
+        defaultFace: "back",
+      });
+
+    const configs = useStampFlowStore.getState().printPositionConfigs;
+    expect(configs.left_leg.enabled).toBe(true);
+    expect(configs.right_leg.enabled).toBe(true);
+  });
+
+  it("defaultFace seeds the face on every config", () => {
+    useStampFlowStore
+      .getState()
+      .initializePrintPositions(SOCK_POSITIONS, BACK_PLACEMENT, {
+        enableAll: true,
+        defaultFace: "back",
+      });
+
+    const configs = useStampFlowStore.getState().printPositionConfigs;
+    expect(configs.left_leg.face).toBe("back");
+    expect(configs.right_leg.face).toBe("back");
+    expect(configs.left_leg.placement).toEqual(BACK_PLACEMENT);
+  });
+
+  it("without options keeps the original behavior (first enabled, no face)", () => {
+    useStampFlowStore
+      .getState()
+      .initializePrintPositions(SOCK_POSITIONS, BACK_PLACEMENT);
+
+    const configs = useStampFlowStore.getState().printPositionConfigs;
+    expect(configs.left_leg.enabled).toBe(true);
+    expect(configs.right_leg.enabled).toBe(false);
+    expect(configs.left_leg.face).toBeUndefined();
+  });
+
+  it("face updates via setPrintPositionConfig keep independent per leg", () => {
+    const store = useStampFlowStore.getState();
+    store.initializePrintPositions(SOCK_POSITIONS, BACK_PLACEMENT, {
+      enableAll: true,
+      defaultFace: "back",
+    });
+
+    store.setPrintPositionConfig("left_leg", {
+      face: "front",
+      placement: { x: 0.5, y: 0.35, scale: 0.45, angle: 0 },
+    });
+
+    const configs = useStampFlowStore.getState().printPositionConfigs;
+    expect(configs.left_leg.face).toBe("front");
+    expect(configs.left_leg.placement.x).toBe(0.5);
+    expect(configs.right_leg.face).toBe("back");
+    expect(configs.right_leg.placement.x).toBe(0.75);
+  });
+});
