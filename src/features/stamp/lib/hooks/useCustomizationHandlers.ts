@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { useStampFlowStore } from "../stores/stampFlowStore";
 import { buildPrintPositionsPayload } from "./useDesignAdjustment";
+import { getProductConfig } from "@/lib/printPlacement/config";
 import type { PlacementParamsType } from "../types/stampFlowTypes";
 
 /**
@@ -36,13 +37,29 @@ export function useCustomizationHandlers({
   const handleCreateProduct = useCallback(async () => {
     if (!blueprintId || !printProviderId) return;
 
+    // Auto-placement products (mugs: wrap-around print areas) must NOT send
+    // client placements — the store's generic seed (scale 1) is far too big
+    // for a wide wrap area. Omitting print positions makes the service fall
+    // back to config positions and the server fit the image to the area.
+    const { selectedProductTitle } = useStampFlowStore.getState();
+    const productConfig = getProductConfig(blueprintId, selectedProductTitle);
+    if (productConfig.autoPlacement) {
+      await createProduct({
+        blueprintId,
+        printProviderId,
+        fabricColor: selectedColor || "",
+        size: effectiveSelectedSize,
+      });
+      return;
+    }
+
     // Read the placement configs at click time so the payload always matches
     // the user's latest adjustments without re-memoizing on every nudge.
     // The store is seeded per category by useDesignAdjustment — for socks
-    // that's both legs with the chosen face's placement preset — so the
-    // user's choices always reach the payload. When the store has nothing
-    // (edge case: panel never mounted), the service falls back to the
-    // product config's positions with server-side auto-placement.
+    // that's both legs with the calibrated per-leg presets — so the user's
+    // choices always reach the payload. When the store has nothing (edge
+    // case: panel never mounted), the service falls back to the product
+    // config's positions with server-side auto-placement.
     const printPositions = buildPrintPositionsPayload(
       useStampFlowStore.getState().printPositionConfigs,
     );

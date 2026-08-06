@@ -83,3 +83,19 @@ describe("sock leg placement", () => {
     expect(SOCK_LEG_PLACEMENTS.left_leg.x).toBe(0.58);
   });
 });
+
+describe("auto-placement products (mugs)", () => {
+  it("marks mug blueprints as autoPlacement so no client placements are sent", () => {
+    expect(getProductConfig(1320).autoPlacement).toBe(true);
+    expect(getProductConfig(468).autoPlacement).toBe(true);
+  });
+
+  it("marks title-detected mugs as autoPlacement", () => {
+    expect(getProductConfig(999999, "Ceramic Coffee Mug 11oz").autoPlacement).toBe(true);
+  });
+
+  it("does not auto-place socks or apparel (they send explicit placements)", () => {
+    expect(getProductConfig(496).autoPlacement).toBeFalsy();
+    expect(getProductConfig(6).autoPlacement).toBeFalsy();
+  });
+});

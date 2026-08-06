@@ -206,6 +206,7 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     minDpi: 150,
     anchorY: 0.5,
     disablePlacementAdjustment: true,
+    autoPlacement: true,  // wrap-around print; server auto-fits the image
   },
   468: {
     blueprintId: 468,
@@ -217,6 +218,7 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     minDpi: 150,
     anchorY: 0.5,
     disablePlacementAdjustment: true,
+    autoPlacement: true,  // wrap-around print; server auto-fits the image
   },
 
   // Canvas - full bleed, center placement
@@ -311,6 +313,7 @@ export function getProductConfig(blueprintId: number, displayTitle?: string): Pr
     safeZone: isMug ? MUG_SAFE_ZONE : DEFAULT_SAFE_ZONE,
     minDpi: 150,
     disablePlacementAdjustment: disablePlacement,
+    autoPlacement: isMug,
   };
 }
 
