@@ -350,6 +350,8 @@
       "eyebrow": "Your Progress",
       "title": "8 Steps to Print",
       "stepNavAria": "Step navigation",
+      "back": "BACK",
+      "backTo": "Go back to {step}",
       "navigate": "Navigate to {title}",
       "navigateLocked": "Navigate to {title} (locked)"
     },

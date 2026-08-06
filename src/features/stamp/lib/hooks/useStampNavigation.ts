@@ -91,7 +91,21 @@ export function useStampNavigation() {
     }
   }, []);
 
-  return { currentStep, goToStep, nextStep, prevStep };
+  // prevStepSkipLoading skips loading states (steps 3 and 7) when going back
+  const prevStepSkipLoading = useCallback(() => {
+    const current = useStampFlowStore.getState().currentStep;
+    if (current > 0) {
+      const { setCurrentStep } = useStampFlowStore.getState();
+      // Loading states are step 3 (generation) and step 7 (production)
+      let targetStep = current - 1;
+      if (targetStep === 7 || targetStep === 3) {
+        targetStep = targetStep - 1;
+      }
+      setCurrentStep(Math.max(0, targetStep));
+    }
+  }, []);
+
+  return { currentStep, goToStep, nextStep, prevStep, prevStepSkipLoading };
 }
 
 /**
@@ -122,5 +136,18 @@ export function useStampNavigationActions() {
     }
   }, []);
 
-  return { goToStep, nextStep, prevStep };
+  // prevStepSkipLoading skips loading states (steps 3 and 7) when going back
+  const prevStepSkipLoading = useCallback(() => {
+    const current = useStampFlowStore.getState().currentStep;
+    if (current > 0) {
+      // Loading states are step 3 (generation) and step 7 (production)
+      let targetStep = current - 1;
+      if (targetStep === 7 || targetStep === 3) {
+        targetStep = targetStep - 1;
+      }
+      useStampFlowStore.getState().setCurrentStep(Math.max(0, targetStep));
+    }
+  }, []);
+
+  return { goToStep, nextStep, prevStep, prevStepSkipLoading };
 }
