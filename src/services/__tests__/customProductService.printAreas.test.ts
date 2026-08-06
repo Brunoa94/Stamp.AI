@@ -101,6 +101,23 @@ describe("CustomProductService.createCustomProduct print areas", () => {
     expect(body.image_height).toBe(1024);
   });
 
+  it("mug (auto-placement): sends its config position with NO placements so the server fits the image", async () => {
+    // Regression guard: a client-supplied scale-1 placement on a mug's wide
+    // wrap area prints the design far too big. Without print_positions the
+    // service must emit the config position and leave placements out
+    // entirely, so the edge function auto-fits.
+    const fetchMock = mockFetchSequence();
+
+    await CustomProductService.createCustomProduct({
+      ...basePayload,
+      blueprint_id: 1320,
+    });
+
+    const body = sentCreateBody(fetchMock);
+    expect(body.print_areas).toEqual({ front: UPLOADED_IMAGE_ID });
+    expect(body.placements).toBeUndefined();
+  });
+
   it("falls back to a front print area for unknown blueprints (server remaps if needed)", async () => {
     // A socks product whose blueprint isn't in PRODUCT_CONFIGS resolves to the
     // apparel default and sends "front" — the edge function's
