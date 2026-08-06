@@ -1,37 +1,30 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Coins, LogIn, UserPlus, ArrowRight } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
+import { Login } from "@/features/auth/login/Login";
+import { Register } from "@/features/auth/register/Register";
 
 interface CoinsOverlayProps {
   variant: "not-logged-in" | "no-coins";
   onSkip?: () => void;
+  hasCachedImages?: boolean;
 }
 
 /**
  * CoinsOverlay
  *
  * Displays an overlay when user cannot generate:
- * - "not-logged-in": User needs to authenticate
+ * - "not-logged-in": User needs to authenticate (opens modal dialogs)
  * - "no-coins": User has exhausted daily coins (with skip option)
  *
  * Uses frosted glass effect following project design patterns.
  */
-export function CoinsOverlay({ variant, onSkip }: CoinsOverlayProps) {
+export function CoinsOverlay({ variant, onSkip, hasCachedImages }: CoinsOverlayProps) {
   const t = useTranslations("stamp.errors.coins");
-  const router = useRouter();
-
-  const handleLogin = () => {
-    router.push("/auth/login");
-  };
-
-  const handleRegister = () => {
-    router.push("/auth/register");
-  };
 
   if (variant === "not-logged-in") {
     return (
@@ -57,22 +50,30 @@ export function CoinsOverlay({ variant, onSkip }: CoinsOverlayProps) {
             </Paragraph>
           </div>
           <div className="flex gap-3">
-            <Button
-              variant="primary-compact"
-              onClick={handleLogin}
-              className="gap-2"
-            >
-              <LogIn className="h-4 w-4" />
-              {t("login")}
-            </Button>
-            <Button
-              variant="secondary-compact"
-              onClick={handleRegister}
-              className="gap-2"
-            >
-              <UserPlus className="h-4 w-4" />
-              {t("register")}
-            </Button>
+            <Login>
+              <Button
+                variant="primary-compact"
+                className="gap-2"
+                asChild
+              >
+                <span>
+                  <LogIn className="h-4 w-4" />
+                  {t("login")}
+                </span>
+              </Button>
+            </Login>
+            <Register>
+              <Button
+                variant="secondary-compact"
+                className="gap-2"
+                asChild
+              >
+                <span>
+                  <UserPlus className="h-4 w-4" />
+                  {t("register")}
+                </span>
+              </Button>
+            </Register>
           </div>
         </div>
       </div>
@@ -104,7 +105,7 @@ export function CoinsOverlay({ variant, onSkip }: CoinsOverlayProps) {
         </div>
         {onSkip && (
           <Button variant="primary-compact" onClick={onSkip} className="gap-2">
-            {t("skipGeneration")}
+            {hasCachedImages ? t("usePreviousCreations") : t("skipGeneration")}
             <ArrowRight className="h-4 w-4" />
           </Button>
         )}

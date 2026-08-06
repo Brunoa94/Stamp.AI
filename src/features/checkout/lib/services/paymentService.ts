@@ -52,7 +52,7 @@ export class PaymentService {
       // Build payment intent payload
       const payload: CreatePaymentIntentPayloadI = {
         amount,
-        currency: "usd",
+        currency: "eur",
         line_items: checkoutData.lineItems,
         shipping_address: checkoutData.shippingAddress,
         metadata: {

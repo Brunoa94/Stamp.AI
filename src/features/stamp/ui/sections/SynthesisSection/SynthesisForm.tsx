@@ -56,7 +56,7 @@ export function SynthesisForm({
   onGenerate,
 }: PropsI) {
   const t = useTranslations("stamp.synthesis");
-  const { handleSkipGeneration, canSkip } = useSkipGeneration();
+  const { handleSkipGeneration, canSkip, hasCachedImages } = useSkipGeneration();
 
   // Determine overlay state (only show after loading is complete)
   const showLoginOverlay = !isAuthLoading && !isAuthenticated;
@@ -128,6 +128,7 @@ export function SynthesisForm({
         <CoinsOverlay
           variant="no-coins"
           onSkip={canSkip ? handleSkipGeneration : undefined}
+          hasCachedImages={hasCachedImages}
         />
       )}
     </div>

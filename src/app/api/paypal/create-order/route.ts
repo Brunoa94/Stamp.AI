@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     // Create PayPal order
     const paypalOrder = await createPayPalOrder({
       amount,
-      currency: "USD",
+      currency: "EUR",
       description: `Order for ${user.email}`,
       customId,
       shippingAddress: shippingAddress
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
           payment_provider: "paypal",
           paypal_order_id: paypalOrder.id,
           amount,
-          currency: "usd",
+          currency: "eur",
           status: "pending",
           metadata: {
             user_id: user.id,

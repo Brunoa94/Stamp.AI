@@ -47,7 +47,7 @@ export function useStripePayment({
         const { clientSecret } = await StripeService.createCreditPayment({
           amount,
           credits,
-          currency: "usd",
+          currency: "eur",
         });
 
         // Get card element for confirmation

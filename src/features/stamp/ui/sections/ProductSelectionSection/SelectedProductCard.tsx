@@ -71,7 +71,7 @@ export function SelectedProductCard({ product, onClearSelection }: PropsI) {
         </Heading>
 
         <Span variant="sm" className="text-(--color-stamp-chocolate) text-xl mb-4">
-          ${product.price.toFixed(2)}
+          €{product.price.toFixed(2)}
         </Span>
 
         {/* Additional info section */}

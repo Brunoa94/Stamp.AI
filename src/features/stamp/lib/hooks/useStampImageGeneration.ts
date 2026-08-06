@@ -13,6 +13,7 @@ import { useDeductCoin } from "@/queries/coinsQueries";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { logStampError, logStampWarn, logStampInfo } from "../helpers/stampLogger";
 import { withTimeout } from "@/lib/promiseUtils";
+import { addStoredImage } from "../services/generatedImagesStorage";
 
 /**
  * useStampImageGeneration
@@ -193,23 +194,8 @@ export function useStampImageGeneration() {
       setSelectedImageUrl(result.imageUrl);
       setEnhancedPrompt(result.enhancedPrompt);
 
-      // Save to localStorage for persistence
-      try {
-        const currentResults = JSON.parse(
-          localStorage.getItem("stamp:generated-history") || "[]",
-        );
-        const updatedResults = [result, ...currentResults].slice(0, 20);
-        localStorage.setItem(
-          "stamp:generated-history",
-          JSON.stringify(updatedResults),
-        );
-      } catch (storageError) {
-        logStampWarn({
-          scope: "useStampImageGeneration",
-          event: "generated_history_persist_failed",
-          error: storageError,
-        });
-      }
+      // Save to localStorage with 24h TTL
+      addStoredImage(result);
 
       // Auto-advance to results after a short delay
       setTimeout(() => {

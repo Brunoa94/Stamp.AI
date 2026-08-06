@@ -31,10 +31,10 @@ function FinalReviewSectionComponent() {
 
   const productName = selectedProductTitle || t("defaultProductName");
 
-  // Format price from cents to dollars
+  // Format price from cents to euros
   const formattedPrice = selectedPriceCents
-    ? `$${(selectedPriceCents / 100).toFixed(2)}`
-    : "$0.00";
+    ? `€${(selectedPriceCents / 100).toFixed(2)}`
+    : "€0.00";
 
   return (
     <section
