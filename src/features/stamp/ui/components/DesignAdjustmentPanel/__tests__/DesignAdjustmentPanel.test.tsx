@@ -147,8 +147,8 @@ describe("DesignAdjustmentPanel — socks (blueprint 496)", () => {
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
 
     const configs = useStampFlowStore.getState().printPositionConfigs;
-    expect(configs.left_leg.placement.x).toBe(0.25);
-    expect(configs.right_leg.placement.x).toBe(0.75);
+    expect(configs.left_leg.placement.x).toBe(0.175);
+    expect(configs.right_leg.placement.x).toBe(0.825);
   });
 
   it("switching a leg to front updates its placement preset in the store", async () => {
@@ -164,7 +164,7 @@ describe("DesignAdjustmentPanel — socks (blueprint 496)", () => {
     expect(configs.left_leg.placement.x).toBe(0.5);
     // Right leg keeps its own back preset
     expect(configs.right_leg.face).toBe("back");
-    expect(configs.right_leg.placement.x).toBe(0.75);
+    expect(configs.right_leg.placement.x).toBe(0.825);
   });
 
   it("builds a payload with both legs and their face placements", async () => {
@@ -183,7 +183,7 @@ describe("DesignAdjustmentPanel — socks (blueprint 496)", () => {
     );
     expect(payload).toEqual([
       { position: "left_leg", placement: { x: 0.5, y: 0.35, scale: 0.45, angle: 0 } },
-      { position: "right_leg", placement: { x: 0.75, y: 0.35, scale: 0.35, angle: 0 } },
+      { position: "right_leg", placement: { x: 0.825, y: 0.35, scale: 0.35, angle: 0 } },
     ]);
   });
 });
