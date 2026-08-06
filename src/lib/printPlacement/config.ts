@@ -257,26 +257,31 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
 };
 
 /**
- * Sock leg placement preset.
+ * Sock leg placement presets, per leg.
  *
  * Calibrated empirically against blueprint 496 / provider 26 mockups
- * (six probe products, 2026-08): the per-leg print file covers only the
- * FRONT panel of the sock — x maps straight (x=0.5 = center of the visible
- * leg, both legs, angle unrotated) and the printable area never reaches the
- * back of the leg, so there is no front/back choice on this blueprint.
- * This preset centers the design on the upper-middle of each leg (the
- * target zone confirmed with the final probe mockup).
+ * (eight probe products, 2026-08, positions measured pixel-exact against
+ * the sock centerline): the per-leg print file covers only the FRONT panel
+ * of the sock, and the LEFT leg's print area sits offset ~0.08 template
+ * units to the left of the fabric center, so its x is compensated to
+ * render dead-center (verified within 1px). The right leg is true at 0.5.
+ * y/scale center the design on the upper-middle of the leg (target zone).
  */
-export const SOCK_LEG_PLACEMENT: PlacementParams = {
-  x: 0.5,
-  y: 0.35,
-  scale: 0.45,
-  angle: 0,
+export const SOCK_LEG_PLACEMENTS: Record<
+  'left_leg' | 'right_leg',
+  PlacementParams
+> = {
+  left_leg: { x: 0.58, y: 0.35, scale: 0.6, angle: 0 },
+  right_leg: { x: 0.5, y: 0.35, scale: 0.6, angle: 0 },
 };
 
-/** Placement preset for a sock leg (same centered preset for both legs). */
-export function sockLegPlacement(): PlacementParams {
-  return { ...SOCK_LEG_PLACEMENT };
+/** Placement preset for a sock leg (visually centered on the leg). */
+export function sockLegPlacement(position: string): PlacementParams {
+  return {
+    ...(position === 'left_leg'
+      ? SOCK_LEG_PLACEMENTS.left_leg
+      : SOCK_LEG_PLACEMENTS.right_leg),
+  };
 }
 
 /**

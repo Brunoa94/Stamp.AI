@@ -130,8 +130,8 @@ describe("DesignAdjustmentPanel — socks (blueprint 496)", () => {
     const configs = useStampFlowStore.getState().printPositionConfigs;
     expect(configs.left_leg.enabled).toBe(true);
     expect(configs.right_leg.enabled).toBe(true);
-    expect(configs.left_leg.placement).toEqual({ x: 0.5, y: 0.35, scale: 0.45, angle: 0 });
-    expect(configs.right_leg.placement).toEqual({ x: 0.5, y: 0.35, scale: 0.45, angle: 0 });
+    expect(configs.left_leg.placement).toEqual({ x: 0.58, y: 0.35, scale: 0.6, angle: 0 });
+    expect(configs.right_leg.placement).toEqual({ x: 0.5, y: 0.35, scale: 0.6, angle: 0 });
   });
 
   it("hides the free-form placement controls for socks", () => {
@@ -161,8 +161,8 @@ describe("DesignAdjustmentPanel — socks (blueprint 496)", () => {
       useStampFlowStore.getState().printPositionConfigs,
     );
     expect(payload).toEqual([
-      { position: "left_leg", placement: { x: 0.5, y: 0.35, scale: 0.45, angle: 0 } },
-      { position: "right_leg", placement: { x: 0.5, y: 0.35, scale: 0.45, angle: 0 } },
+      { position: "left_leg", placement: { x: 0.58, y: 0.35, scale: 0.6, angle: 0 } },
+      { position: "right_leg", placement: { x: 0.5, y: 0.35, scale: 0.6, angle: 0 } },
     ]);
   });
 });

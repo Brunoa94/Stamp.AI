@@ -70,13 +70,16 @@ describe("sock leg placement", () => {
     expect(config.disablePlacementAdjustment).toBe(true);
   });
 
-  it("centers the design on the leg (calibrated target zone)", async () => {
-    const { SOCK_LEG_PLACEMENT, sockLegPlacement } = await import("../config");
-    expect(SOCK_LEG_PLACEMENT).toEqual({ x: 0.5, y: 0.35, scale: 0.45, angle: 0 });
-    expect(sockLegPlacement()).toEqual(SOCK_LEG_PLACEMENT);
+  it("centers the design on each leg (pixel-calibrated per-leg x)", async () => {
+    const { SOCK_LEG_PLACEMENTS, sockLegPlacement } = await import("../config");
+    // Left leg print area is offset on the fabric; x compensates for it
+    expect(SOCK_LEG_PLACEMENTS.left_leg).toEqual({ x: 0.58, y: 0.35, scale: 0.6, angle: 0 });
+    expect(SOCK_LEG_PLACEMENTS.right_leg).toEqual({ x: 0.5, y: 0.35, scale: 0.6, angle: 0 });
+    expect(sockLegPlacement("left_leg")).toEqual(SOCK_LEG_PLACEMENTS.left_leg);
+    expect(sockLegPlacement("right_leg")).toEqual(SOCK_LEG_PLACEMENTS.right_leg);
     // Returns a copy, not the shared object
-    const placement = sockLegPlacement();
+    const placement = sockLegPlacement("left_leg");
     placement.x = 0;
-    expect(SOCK_LEG_PLACEMENT.x).toBe(0.5);
+    expect(SOCK_LEG_PLACEMENTS.left_leg.x).toBe(0.58);
   });
 });

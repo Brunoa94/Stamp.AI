@@ -101,6 +101,8 @@ export interface StampFlowStateType {
     options?: {
       /** Enable every position instead of only the first (socks: both legs). */
       enableAll?: boolean;
+      /** Per-position placement overrides (socks: per-leg calibration). */
+      placements?: Record<string, PlacementParamsType>;
     },
   ) => void;
   defaultPlacement: PlacementParamsType;

@@ -115,10 +115,11 @@ export function useDesignAdjustment() {
   useEffect(() => {
     if (!productConfig) return;
     const isSocks = productConfig.category === "socks";
-    // Socks: both legs enabled, design centered on each leg (the blueprint
-    // only prints the front panel, so there is no front/back choice).
+    // Socks: both legs enabled, design visually centered on each leg (the
+    // blueprint only prints the front panel; each leg has its own calibrated
+    // x — see SOCK_LEG_PLACEMENTS).
     const expectedDefault: PlacementParamsType = isSocks
-      ? sockLegPlacement()
+      ? sockLegPlacement(productConfig.positions[0] ?? "left_leg")
       : { x: 0.5, y: productConfig.anchorY ?? 0.5, scale: 1, angle: 0 };
     const alreadySeeded =
       availablePrintPositions.length === productConfig.positions.length &&
@@ -131,7 +132,17 @@ export function useDesignAdjustment() {
     initializePrintPositions(
       productConfig.positions,
       expectedDefault,
-      isSocks ? { enableAll: true } : undefined,
+      isSocks
+        ? {
+            enableAll: true,
+            placements: Object.fromEntries(
+              productConfig.positions.map((position) => [
+                position,
+                sockLegPlacement(position),
+              ]),
+            ),
+          }
+        : undefined,
     );
   }, [
     productConfig,

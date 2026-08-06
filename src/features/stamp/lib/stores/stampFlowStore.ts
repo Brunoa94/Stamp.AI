@@ -223,7 +223,7 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
         configs[position] = {
           position,
           enabled: options?.enableAll ? true : index === 0,
-          placement: { ...defaultPlacement },
+          placement: { ...(options?.placements?.[position] ?? defaultPlacement) },
           additionalCost: 0,
         };
       });
