@@ -1,6 +1,25 @@
 import { z } from "zod";
 
 /**
+ * Placement of a design within a print area (Printify semantics):
+ * x/y = design center (0-1), scale = width relative to print-area width.
+ */
+export const PlacementParamsSchema = z.object({
+  x: z.number().min(0).max(1),
+  y: z.number().min(0).max(1),
+  scale: z.number().min(0.1).max(2),
+  angle: z.number(),
+});
+
+/**
+ * A user-selected print position with its placement.
+ */
+export const PrintPositionSchema = z.object({
+  position: z.string().min(1),
+  placement: PlacementParamsSchema,
+});
+
+/**
  * Schema for creating a custom product
  */
 export const CreateProductPayloadSchema = z.object({
@@ -13,6 +32,9 @@ export const CreateProductPayloadSchema = z.object({
   customer_email: z.string().email("Customer email must be a valid email"),
   selected_color: z.string().nullable().optional(),
   selected_size: z.string().nullable().optional(),
+  // Optional user-adjusted print positions (Step 6 design adjustment).
+  // When omitted the server falls back to auto-placement on the front.
+  print_positions: z.array(PrintPositionSchema).optional(),
 });
 
 /**
@@ -83,10 +105,15 @@ export const UploadImageResponseSchema = z.object({
 export const CreateCustomProductRequestSchema = z.object({
   blueprint_id: z.number(),
   print_provider_id: z.number(),
-  print_areas: z.object({
-    front: z.string(),
-    back: z.string().optional(),
-  }),
+  // Position -> uploaded Printify image id. At least one entry required.
+  print_areas: z
+    .record(z.string(), z.string())
+    .refine((areas) => Object.keys(areas).length > 0, {
+      message: "At least one print area is required",
+    }),
+  // Optional per-position placements chosen by the user; positions without
+  // an entry get server-side auto-placement.
+  placements: z.record(z.string(), PlacementParamsSchema).optional(),
   title: z.string(),
   description: z.string(),
   user_id: z.string(),

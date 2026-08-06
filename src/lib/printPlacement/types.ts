@@ -32,12 +32,15 @@ export interface SafeZone {
 export interface ProductConfig {
   blueprintId: number;
   name: string;
-  category: 'apparel' | 'mug' | 'poster' | 'tote' | 'pillow' | 'canvas';
+  category: 'apparel' | 'mug' | 'poster' | 'tote' | 'pillow' | 'canvas' | 'socks';
   positions: string[];
   defaultPosition: string;
   safeZone: SafeZone;
   minDpi: number;
   anchorY?: number;  // Custom Y anchor (e.g., 0.45 for chest placement)
+  disablePlacementAdjustment?: boolean;  // Disable manual placement controls (e.g., for mugs)
+  scaleOnly?: boolean;  // Allow only scale adjustment, keep centered (e.g., for tote bags)
+  autoPlacement?: boolean;  // Never send client placements; server auto-fits (e.g., mug wrap areas)
 }
 
 export interface VariantPrintArea {

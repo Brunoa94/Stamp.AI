@@ -1,0 +1,102 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+import { Span } from "@/features/ui/span";
+import { formatPrice } from "@/lib/formatPrice";
+import { useDesignAdjustment } from "../../../lib/hooks/useDesignAdjustment";
+import { useStampCustomization } from "../../../lib/hooks/useStampSelectors";
+import { getCanvasOrientation } from "@/lib/printPlacement/config";
+import { PrintPositionSelector } from "../PrintPositionSelector/PrintPositionSelector";
+import { PlacementAdjuster } from "../PlacementAdjuster/PlacementAdjuster";
+import { PlacementPreview } from "../PlacementPreview/PlacementPreview";
+
+/**
+ * DesignAdjustmentPanel
+ *
+ * Step 6 left panel: pick print positions, see a live CSS preview, and adjust
+ * placement (move / size / rotation) per position. State lives in the stamp
+ * flow store via useDesignAdjustment.
+ */
+
+interface PropsI {
+  imageUrl: string;
+  disabled?: boolean;
+}
+
+export function DesignAdjustmentPanel({ imageUrl, disabled = false }: PropsI) {
+  const t = useTranslations("stamp.adjust");
+  const {
+    productConfig,
+    availablePrintPositions,
+    printPositionConfigs,
+    enabledPositions,
+    activeEditPosition,
+    setActiveEditPosition,
+    activeConfig,
+    bounds,
+    atBounds,
+    togglePrintPosition,
+    updateActivePlacement,
+    nudgeActivePlacement,
+    centerActivePlacement,
+    resetPlacementForPosition,
+    totalAdditionalCost,
+  } = useDesignAdjustment();
+  const { selectedSize } = useStampCustomization();
+
+  if (!productConfig || !activeConfig) return null;
+
+  // Determine canvas orientation from selected size
+  const isCanvasOrPoster = productConfig.category === "canvas" || productConfig.category === "poster";
+  const orientation = isCanvasOrPoster && selectedSize
+    ? getCanvasOrientation(selectedSize)
+    : undefined;
+
+  return (
+    <div className="w-full space-y-10">
+      <PrintPositionSelector
+        availablePositions={availablePrintPositions}
+        printPositionConfigs={printPositionConfigs}
+        onTogglePosition={togglePrintPosition}
+        disabled={disabled}
+      />
+
+      <div className="h-px bg-(--color-stamp-divider)" aria-hidden="true" />
+
+      {/* Hide preview and placement controls for products that don't support manual adjustment (e.g., mugs, socks) */}
+      {!productConfig.disablePlacementAdjustment && (
+        <>
+          <PlacementPreview
+            imageUrl={imageUrl}
+            placement={activeConfig.placement}
+            productCategory={productConfig.category}
+            position={activeEditPosition}
+            safeZone={productConfig.safeZone}
+            orientation={orientation}
+          />
+
+          <PlacementAdjuster
+            positions={enabledPositions}
+            activePosition={activeEditPosition}
+            placement={activeConfig.placement}
+            bounds={bounds}
+            atBounds={atBounds}
+            onPositionChange={setActiveEditPosition}
+            onPlacementChange={updateActivePlacement}
+            onNudge={nudgeActivePlacement}
+            onCenter={centerActivePlacement}
+            onReset={() => resetPlacementForPosition(activeEditPosition)}
+            disabled={disabled}
+            scaleOnly={productConfig.scaleOnly}
+          />
+        </>
+      )}
+
+      {totalAdditionalCost > 0 && (
+        <Span variant="micro" className="block text-(--color-stamp-taupe)">
+          {t("extraCostSummary", { price: formatPrice(totalAdditionalCost) })}
+        </Span>
+      )}
+    </div>
+  );
+}
