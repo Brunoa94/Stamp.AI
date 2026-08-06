@@ -143,6 +143,14 @@ describe("DesignAdjustmentPanel — socks (blueprint 496)", () => {
     expect(screen.queryByRole("button", { name: "Move up" })).not.toBeInTheDocument();
   });
 
+  it("seeds mirrored back presets per leg (calibrated wrap regions)", () => {
+    renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
+
+    const configs = useStampFlowStore.getState().printPositionConfigs;
+    expect(configs.left_leg.placement.x).toBe(0.25);
+    expect(configs.right_leg.placement.x).toBe(0.75);
+  });
+
   it("switching a leg to front updates its placement preset in the store", async () => {
     const user = userEvent.setup();
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
@@ -154,7 +162,7 @@ describe("DesignAdjustmentPanel — socks (blueprint 496)", () => {
     const configs = useStampFlowStore.getState().printPositionConfigs;
     expect(configs.left_leg.face).toBe("front");
     expect(configs.left_leg.placement.x).toBe(0.5);
-    // Right leg keeps the back preset
+    // Right leg keeps its own back preset
     expect(configs.right_leg.face).toBe("back");
     expect(configs.right_leg.placement.x).toBe(0.75);
   });
@@ -175,7 +183,7 @@ describe("DesignAdjustmentPanel — socks (blueprint 496)", () => {
     );
     expect(payload).toEqual([
       { position: "left_leg", placement: { x: 0.5, y: 0.35, scale: 0.45, angle: 0 } },
-      { position: "right_leg", placement: { x: 0.75, y: 0.35, scale: 0.45, angle: 0 } },
+      { position: "right_leg", placement: { x: 0.75, y: 0.35, scale: 0.35, angle: 0 } },
     ]);
   });
 });

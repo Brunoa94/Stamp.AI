@@ -112,6 +112,8 @@ export interface StampFlowStateType {
       enableAll?: boolean;
       /** Seed each config with this face (socks default: "back"). */
       defaultFace?: SockFaceType;
+      /** Per-position placement overrides (socks: mirrored back presets). */
+      placements?: Record<string, PlacementParamsType>;
     },
   ) => void;
   defaultPlacement: PlacementParamsType;

@@ -116,9 +116,10 @@ export function useDesignAdjustment() {
   useEffect(() => {
     if (!productConfig) return;
     const isSocks = productConfig.category === "socks";
-    // Socks: both legs enabled, design on the back of each leg by default.
+    // Socks: both legs enabled, design on the back of each leg by default
+    // (each leg gets its own mirrored back preset).
     const expectedDefault: PlacementParamsType = isSocks
-      ? sockPlacementForFace("back")
+      ? sockPlacementForFace(productConfig.positions[0] ?? "left_leg", "back")
       : { x: 0.5, y: productConfig.anchorY ?? 0.5, scale: 1, angle: 0 };
     const alreadySeeded =
       availablePrintPositions.length === productConfig.positions.length &&
@@ -131,7 +132,18 @@ export function useDesignAdjustment() {
     initializePrintPositions(
       productConfig.positions,
       expectedDefault,
-      isSocks ? { enableAll: true, defaultFace: "back" } : undefined,
+      isSocks
+        ? {
+            enableAll: true,
+            defaultFace: "back",
+            placements: Object.fromEntries(
+              productConfig.positions.map((position) => [
+                position,
+                sockPlacementForFace(position, "back"),
+              ]),
+            ),
+          }
+        : undefined,
     );
   }, [
     productConfig,
@@ -205,7 +217,7 @@ export function useDesignAdjustment() {
     (position: string, face: SockFaceType) => {
       setPrintPositionConfig(position, {
         face,
-        placement: sockPlacementForFace(face),
+        placement: sockPlacementForFace(position, face),
       });
     },
     [setPrintPositionConfig],

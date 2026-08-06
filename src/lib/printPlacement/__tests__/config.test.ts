@@ -70,25 +70,35 @@ describe("sock face placements", () => {
     expect(config.disablePlacementAdjustment).toBe(true);
   });
 
-  it("maps front and back to distinct placements on the leg wrap", async () => {
+  it("front is dead-center on both legs; back wraps mirrored per leg", async () => {
     const { SOCK_FACE_PLACEMENTS, sockPlacementForFace } = await import("../config");
-    expect(SOCK_FACE_PLACEMENTS.front.x).not.toBe(SOCK_FACE_PLACEMENTS.back.x);
-    expect(sockPlacementForFace("back")).toEqual(SOCK_FACE_PLACEMENTS.back);
+    // Front renders centered on the leg for both socks (calibrated)
+    expect(SOCK_FACE_PLACEMENTS.left_leg.front.x).toBe(0.5);
+    expect(SOCK_FACE_PLACEMENTS.right_leg.front.x).toBe(0.5);
+    // Back presets are mirrored between the legs (0.25 / 0.75 wrap regions)
+    expect(SOCK_FACE_PLACEMENTS.left_leg.back.x).toBeCloseTo(
+      1 - SOCK_FACE_PLACEMENTS.right_leg.back.x,
+    );
+    expect(sockPlacementForFace("right_leg", "back")).toEqual(
+      SOCK_FACE_PLACEMENTS.right_leg.back,
+    );
     // Returns a copy, not the shared object
-    const placement = sockPlacementForFace("front");
+    const placement = sockPlacementForFace("left_leg", "front");
     placement.x = 0;
-    expect(SOCK_FACE_PLACEMENTS.front.x).not.toBe(0);
+    expect(SOCK_FACE_PLACEMENTS.left_leg.front.x).not.toBe(0);
   });
 
   it("keeps sock placements inside the print area", async () => {
     const { SOCK_FACE_PLACEMENTS } = await import("../config");
-    for (const placement of Object.values(SOCK_FACE_PLACEMENTS)) {
-      expect(placement.x).toBeGreaterThan(0);
-      expect(placement.x).toBeLessThan(1);
-      expect(placement.y).toBeGreaterThan(0);
-      expect(placement.y).toBeLessThan(1);
-      expect(placement.scale).toBeGreaterThan(0);
-      expect(placement.scale).toBeLessThanOrEqual(1);
+    for (const leg of Object.values(SOCK_FACE_PLACEMENTS)) {
+      for (const placement of Object.values(leg)) {
+        expect(placement.x).toBeGreaterThan(0);
+        expect(placement.x).toBeLessThan(1);
+        expect(placement.y).toBeGreaterThan(0);
+        expect(placement.y).toBeLessThan(1);
+        expect(placement.scale).toBeGreaterThan(0);
+        expect(placement.scale).toBeLessThanOrEqual(1);
+      }
     }
   });
 });

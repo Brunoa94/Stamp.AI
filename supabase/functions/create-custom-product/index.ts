@@ -275,15 +275,22 @@ serve(async (req) => {
 
     console.log('✅ Product created:', productData.id)
 
-    // Transform image URLs to use front camera view
+    // Transform image URLs to use the front camera view — but only when the
+    // design actually prints on the front. For positions like sock legs
+    // (where the design may sit on the back of the leg) forcing the front
+    // camera would make every mockup look blank, so keep Printify's mix of
+    // camera angles instead.
+    const printsOnFront = Object.keys(requestedAreas).includes('front')
     const transformedImages = productData.images?.map((img: any) => {
       let src = img.src
-      if (src && src.includes('camera_label=')) {
-        src = src.replace(/camera_label=[^&]+/, 'camera_label=front')
-      } else if (src && src.includes('?')) {
-        src = src + '&camera_label=front'
-      } else if (src) {
-        src = src + '?camera_label=front'
+      if (printsOnFront) {
+        if (src && src.includes('camera_label=')) {
+          src = src.replace(/camera_label=[^&]+/, 'camera_label=front')
+        } else if (src && src.includes('?')) {
+          src = src + '&camera_label=front'
+        } else if (src) {
+          src = src + '?camera_label=front'
+        }
       }
       return {
         src,
