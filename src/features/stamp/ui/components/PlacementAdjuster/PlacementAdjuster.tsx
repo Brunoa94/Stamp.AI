@@ -4,9 +4,15 @@ import { RotateCcw, TriangleAlert } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/features/ui/select";
 import { Span } from "@/features/ui/span";
-import type { PlacementParamsType } from "../../../lib/types/stampFlowTypes";
-import type { PlacementBounds } from "../../../lib/hooks/useDesignAdjustment";
+import type { PlacementBounds, PlacementParamsType } from "../../../lib/types/stampFlowTypes";
 import { PositionControls } from "./PositionControls";
 import { ScaleSlider } from "./ScaleSlider";
 import { RotationSelector } from "./RotationSelector";
@@ -61,20 +67,30 @@ export function PlacementAdjuster({
           >
             {t("editingLabel")}
           </Label>
-          <select
-            id="active-position"
+          <Select
             value={activePosition}
+            onValueChange={onPositionChange}
             disabled={disabled}
-            onChange={(e) => onPositionChange(e.target.value)}
-            aria-label={t("editingSelectAria")}
-            className="border border-(--color-stamp-divider) bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-chocolate) focus:border-(--color-stamp-gold) focus:outline-none"
           >
-            {positions.map((position) => (
-              <option key={position} value={position}>
-                {t(`position.${position}`)}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger
+              id="active-position"
+              aria-label={t("editingSelectAria")}
+              className="h-auto w-auto border border-(--color-stamp-divider) bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-chocolate) focus:border-(--color-stamp-gold) focus:ring-0"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {positions.map((position) => (
+                <SelectItem
+                  key={position}
+                  value={position}
+                  className="text-[10px] font-bold uppercase tracking-widest"
+                >
+                  {t(`position.${position}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       )}
 
@@ -117,7 +133,9 @@ export function PlacementAdjuster({
         </Button>
 
         {atBounds && (
-          <span
+          <Span
+            as="span"
+            variant="micro"
             role="status"
             className="flex items-center gap-2 text-(--color-stamp-taupe)"
           >
@@ -128,7 +146,7 @@ export function PlacementAdjuster({
             <Span variant="micro" className="text-[9px]">
               {t("safeZoneWarning")}
             </Span>
-          </span>
+          </Span>
         )}
       </div>
     </div>

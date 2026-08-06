@@ -9,6 +9,7 @@ import {
 import type { SafeZone } from "@/lib/printPlacement/types";
 import { useStampPrintPlacement, useStampProductSelection } from "./useStampSelectors";
 import type {
+  PlacementBounds,
   PlacementParamsType,
   PrintPositionConfigType,
 } from "../types/stampFlowTypes";
@@ -32,15 +33,6 @@ export const ADJUST_STEP = 0.1;
 
 /** Rotation presets offered in the UI. */
 export const ROTATION_PRESETS = [0, 90, 180, 270] as const;
-
-export interface PlacementBounds {
-  minX: number;
-  maxX: number;
-  minY: number;
-  maxY: number;
-  minScale: number;
-  maxScale: number;
-}
 
 export function boundsFromSafeZone(safeZone: SafeZone): PlacementBounds {
   return {

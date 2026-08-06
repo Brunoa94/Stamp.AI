@@ -4,7 +4,9 @@ import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import type { SafeZone } from "@/lib/printPlacement/types";
 import type { PlacementParamsType } from "../../../lib/types/stampFlowTypes";
-import { ProductSilhouette, type OrientationType } from "./ProductSilhouette";
+import type { CategoryType, OrientationType } from "../../../lib/config/silhouetteConfig";
+import { getAreaRect, SCALE_MULTIPLIERS } from "../../../lib/config/printAreaConfig";
+import { ProductSilhouette } from "./ProductSilhouette";
 import { DesignOverlay } from "./DesignOverlay";
 
 /**
@@ -16,18 +18,6 @@ import { DesignOverlay } from "./DesignOverlay";
  * placement check still runs server-side at product creation.
  */
 
-type CategoryType = "apparel" | "tote" | "mug" | "poster" | "pillow" | "canvas" | "socks";
-
-/**
- * Scale multipliers to adjust mockup preview to better match actual print output.
- * The AOP Tote Bag has a very tall print area (2175x4350) that wraps front+back,
- * but our preview only shows the front portion. This multiplier compensates for
- * the difference between preview aspect ratio and actual print area ratio.
- */
-const SCALE_MULTIPLIERS: Partial<Record<CategoryType, number>> = {
-  tote: 1.25, // Tote preview appears smaller than actual print, scale up by 25%
-};
-
 interface PropsI {
   imageUrl: string;
   placement: PlacementParamsType;
@@ -36,58 +26,6 @@ interface PropsI {
   safeZone: SafeZone;
   /** For canvas/poster: controls the silhouette orientation */
   orientation?: OrientationType;
-}
-
-interface AreaRect {
-  left: string;
-  top: string;
-  width: string;
-  height: string;
-}
-
-/**
- * Approximate print-area rectangle per position, as percentages of the
- * silhouette container. Tuned for the simple apparel/tote silhouettes.
- */
-const APPAREL_AREAS: Record<string, AreaRect> = {
-  front: { left: "27%", top: "24%", width: "46%", height: "52%" },
-  back: { left: "27%", top: "24%", width: "46%", height: "52%" },
-  neck: { left: "40%", top: "10%", width: "20%", height: "10%" },
-  left_sleeve: { left: "4%", top: "22%", width: "15%", height: "13%" },
-  right_sleeve: { left: "81%", top: "22%", width: "15%", height: "13%" },
-};
-
-const TOTE_AREAS: Record<string, AreaRect> = {
-  front: { left: "22%", top: "32%", width: "56%", height: "52%" },
-  back: { left: "22%", top: "32%", width: "56%", height: "52%" },
-};
-
-const MUG_AREAS: Record<string, AreaRect> = {
-  front: { left: "22%", top: "28%", width: "50%", height: "55%" },
-};
-
-const CANVAS_AREAS: Record<string, AreaRect> = {
-  front: { left: "14%", top: "18%", width: "72%", height: "68%" },
-};
-
-const SOCKS_AREAS: Record<string, AreaRect> = {
-  front: { left: "15%", top: "20%", width: "70%", height: "50%" },
-};
-
-function getAreaRect(category: CategoryType, position: string): AreaRect {
-  switch (category) {
-    case "tote":
-      return TOTE_AREAS[position] ?? TOTE_AREAS.front;
-    case "mug":
-      return MUG_AREAS[position] ?? MUG_AREAS.front;
-    case "canvas":
-    case "poster":
-      return CANVAS_AREAS[position] ?? CANVAS_AREAS.front;
-    case "socks":
-      return SOCKS_AREAS[position] ?? SOCKS_AREAS.front;
-    default:
-      return APPAREL_AREAS[position] ?? APPAREL_AREAS.front;
-  }
 }
 
 export function PlacementPreview({

@@ -17,6 +17,18 @@ export interface GeneratedResultType {
 export type PlacementParamsType = PlacementParams;
 
 /**
+ * Bounds for placement clamping (safe zone limits).
+ */
+export interface PlacementBounds {
+  minX: number;
+  maxX: number;
+  minY: number;
+  maxY: number;
+  minScale: number;
+  maxScale: number;
+}
+
+/**
  * Per-print-position configuration chosen by the user in Step 6.
  * `position` matches Printify placeholder positions ('front', 'back',
  * 'neck', 'left_sleeve', 'right_sleeve').

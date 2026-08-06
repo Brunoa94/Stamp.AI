@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
+import { formatPrice } from "@/lib/formatPrice";
 import { useDesignAdjustment } from "../../../lib/hooks/useDesignAdjustment";
 import { useStampCustomization } from "../../../lib/hooks/useStampSelectors";
 import { getCanvasOrientation } from "@/lib/printPlacement/config";
@@ -20,10 +21,6 @@ import { PlacementPreview } from "../PlacementPreview/PlacementPreview";
 interface PropsI {
   imageUrl: string;
   disabled?: boolean;
-}
-
-function formatCents(cents: number): string {
-  return `$${(cents / 100).toFixed(2)}`;
 }
 
 export function DesignAdjustmentPanel({ imageUrl, disabled = false }: PropsI) {
@@ -97,7 +94,7 @@ export function DesignAdjustmentPanel({ imageUrl, disabled = false }: PropsI) {
 
       {totalAdditionalCost > 0 && (
         <Span variant="micro" className="block text-(--color-stamp-taupe)">
-          {t("extraCostSummary", { price: formatCents(totalAdditionalCost) })}
+          {t("extraCostSummary", { price: formatPrice(totalAdditionalCost) })}
         </Span>
       )}
     </div>

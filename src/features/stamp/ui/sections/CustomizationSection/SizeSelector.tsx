@@ -1,5 +1,12 @@
 import { useTranslations } from "next-intl";
 import { Label } from "@/features/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/features/ui/select";
 import type { SizeType } from "../../../lib/types/stampTypes";
 
 /**
@@ -29,25 +36,25 @@ export function SizeSelector({
       >
         {t("sizeSelectorLabel")}
       </Label>
-      <select
-        id="size-select"
+      <Select
         value={selectedSize}
-        onChange={(e) => onSelectSize(e.target.value as SizeType)}
-        className="w-full px-4 py-3 border border-(--color-stamp-divider) bg-white text-(--color-stamp-chocolate) text-sm font-medium appearance-none cursor-pointer focus:outline-none focus:border-(--color-stamp-chocolate) transition-colors duration-200"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234A3728'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "right 12px center",
-          backgroundSize: "16px",
-        }}
-        aria-label={t("sizeSelectionAria")}
+        onValueChange={(value) => onSelectSize(value as SizeType)}
       >
-        {sizes.map((size) => (
-          <option key={size} value={size}>
-            {size}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger
+          id="size-select"
+          aria-label={t("sizeSelectionAria")}
+          className="w-full px-4 py-3 border border-(--color-stamp-divider) bg-white text-(--color-stamp-chocolate) text-sm font-medium focus:border-(--color-stamp-chocolate) focus:ring-0"
+        >
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {sizes.map((size) => (
+            <SelectItem key={size} value={size}>
+              {size}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

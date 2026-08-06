@@ -4,7 +4,8 @@ import { Minus, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
-import type { PlacementBounds } from "../../../lib/hooks/useDesignAdjustment";
+import { Span } from "@/features/ui/span";
+import type { PlacementBounds } from "../../../lib/types/stampFlowTypes";
 import { ADJUST_STEP } from "../../../lib/hooks/useDesignAdjustment";
 
 /**
@@ -70,9 +71,9 @@ export function ScaleSlider({
         >
           <Plus className="h-4 w-4" />
         </Button>
-        <span className="w-12 text-right text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
+        <Span variant="label" className="w-12 text-right text-[10px] text-(--color-stamp-taupe)">
           {Math.round(scale * 100)}%
-        </span>
+        </Span>
       </div>
     </div>
   );

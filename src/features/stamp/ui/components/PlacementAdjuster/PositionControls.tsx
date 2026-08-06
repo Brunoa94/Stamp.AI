@@ -10,8 +10,8 @@ import {
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
-import type { PlacementParamsType } from "../../../lib/types/stampFlowTypes";
-import type { PlacementBounds } from "../../../lib/hooks/useDesignAdjustment";
+import { Span } from "@/features/ui/span";
+import type { PlacementBounds, PlacementParamsType } from "../../../lib/types/stampFlowTypes";
 import { ADJUST_STEP } from "../../../lib/hooks/useDesignAdjustment";
 
 /**
@@ -93,9 +93,9 @@ export function PositionControls({
           onClick={onCenter}
         >
           <Crosshair className="h-4 w-4" />
-          <span className="text-[10px] font-bold uppercase tracking-widest">
+          <Span variant="label" className="text-[10px]">
             {t("center")}
-          </span>
+          </Span>
         </Button>
       </div>
 

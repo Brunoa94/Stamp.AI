@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
+import { formatPrice } from "@/lib/formatPrice";
 
 /**
  * PositionCard
@@ -17,10 +18,6 @@ interface PropsI {
   additionalCost: number;
   onToggle: () => void;
   disabled?: boolean;
-}
-
-function formatCents(cents: number): string {
-  return `$${(cents / 100).toFixed(2)}`;
 }
 
 export function PositionCard({
@@ -58,7 +55,7 @@ export function PositionCard({
       </Span>
       <Span variant="micro" className="text-[9px] text-(--color-stamp-taupe)/60">
         {additionalCost > 0
-          ? t("positionExtraCost", { price: formatCents(additionalCost) })
+          ? t("positionExtraCost", { price: formatPrice(additionalCost) })
           : t("positionIncluded")}
       </Span>
     </Button>
