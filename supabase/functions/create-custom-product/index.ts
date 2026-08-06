@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { calculatePlacement, isScaleOnlyBlueprint, getBlueprintAnchorY } from "../_shared/printPlacement.ts"
+import { resolvePrintAreas } from "../_shared/resolvePrintAreas.ts"
 import { createClient } from "jsr:@supabase/supabase-js@2"
 
 const corsHeaders = {
@@ -92,22 +93,16 @@ serve(async (req) => {
     console.log('🖼️ Received print_areas:', JSON.stringify(print_areas))
     console.log('🖼️ Received image_id:', image_id)
 
-    const requestedAreas: Record<string, string> = {}
-    if (print_areas && typeof print_areas === 'object') {
-      for (const [position, imageId] of Object.entries(print_areas)) {
-        console.log(`  Processing position "${position}" with imageId: ${imageId}`)
-        if (!imageId || typeof imageId !== 'string') {
-          console.warn(`  ⚠️ Skipping "${position}": invalid imageId`)
-          continue
-        }
-        if (!availablePrintAreas.includes(position)) {
-          console.warn(`  ⚠️ Position "${position}" not offered by blueprint; skipping`)
-          continue
-        }
-        requestedAreas[position] = imageId
-      }
-    } else if (image_id) {
-      requestedAreas[primaryPrintArea] = image_id
+    const { areas: requestedAreas, remappedFrom, droppedPositions } = resolvePrintAreas(
+      print_areas,
+      image_id,
+      availablePrintAreas,
+    )
+    if (droppedPositions.length > 0) {
+      console.warn(`⚠️ Positions not offered by blueprint: ${droppedPositions.join(', ')}`)
+    }
+    if (remappedFrom) {
+      console.log(`🔄 Requested "${remappedFrom}" unavailable; printing on all available positions instead`)
     }
 
     console.log('🎯 Final requestedAreas:', JSON.stringify(requestedAreas))
