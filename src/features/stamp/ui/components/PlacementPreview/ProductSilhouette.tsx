@@ -5,11 +5,15 @@
  * of the CSS placement preview. Purely decorative.
  */
 
+export type OrientationType = "vertical" | "horizontal" | "square";
+
 interface PropsI {
   category: "apparel" | "tote" | "mug" | "poster" | "pillow" | "canvas" | "socks";
+  /** For canvas/poster: controls the aspect ratio of the frame */
+  orientation?: OrientationType;
 }
 
-export function ProductSilhouette({ category }: PropsI) {
+export function ProductSilhouette({ category, orientation = "vertical" }: PropsI) {
   if (category === "tote") {
     return (
       <svg
@@ -76,6 +80,74 @@ export function ProductSilhouette({ category }: PropsI) {
   }
 
   if (category === "canvas" || category === "poster") {
+    // Adjust dimensions based on orientation
+    if (orientation === "horizontal") {
+      return (
+        <svg
+          viewBox="0 0 120 100"
+          className="h-full w-full"
+          aria-hidden="true"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          {/* Canvas/poster frame - horizontal */}
+          <rect
+            x="10"
+            y="10"
+            width="100"
+            height="80"
+            fill="var(--color-stamp-cream)"
+            stroke="var(--color-stamp-divider)"
+            strokeWidth="1.5"
+          />
+          {/* Inner frame border */}
+          <rect
+            x="14"
+            y="14"
+            width="92"
+            height="72"
+            fill="none"
+            stroke="var(--color-stamp-divider)"
+            strokeWidth="0.5"
+            strokeDasharray="2,2"
+          />
+        </svg>
+      );
+    }
+
+    if (orientation === "square") {
+      return (
+        <svg
+          viewBox="0 0 100 100"
+          className="h-full w-full"
+          aria-hidden="true"
+          preserveAspectRatio="xMidYMid meet"
+        >
+          {/* Canvas/poster frame - square */}
+          <rect
+            x="10"
+            y="10"
+            width="80"
+            height="80"
+            fill="var(--color-stamp-cream)"
+            stroke="var(--color-stamp-divider)"
+            strokeWidth="1.5"
+          />
+          {/* Inner frame border */}
+          <rect
+            x="14"
+            y="14"
+            width="72"
+            height="72"
+            fill="none"
+            stroke="var(--color-stamp-divider)"
+            strokeWidth="0.5"
+            strokeDasharray="2,2"
+          />
+        </svg>
+      );
+    }
+
+    // Default: vertical
     return (
       <svg
         viewBox="0 0 100 120"
@@ -83,7 +155,7 @@ export function ProductSilhouette({ category }: PropsI) {
         aria-hidden="true"
         preserveAspectRatio="xMidYMid meet"
       >
-        {/* Canvas/poster frame */}
+        {/* Canvas/poster frame - vertical */}
         <rect
           x="10"
           y="15"

@@ -58,13 +58,16 @@ export function CustomizationControls({
       </Heading>
 
       <div className="space-y-12 mb-12">
-        <ColorSwatches
-          colors={colors}
-          selectedColor={selectedColor}
-          isLoading={isLoadingColors}
-          hasProduct={hasProduct}
-          onSelectColor={onSelectColor}
-        />
+        {/* Only show color swatches if colors are available */}
+        {colors.length > 0 && (
+          <ColorSwatches
+            colors={colors}
+            selectedColor={selectedColor}
+            isLoading={isLoadingColors}
+            hasProduct={hasProduct}
+            onSelectColor={onSelectColor}
+          />
+        )}
 
         {/* Only show size selector if there's more than one size option */}
         {sizes.length > 1 ? (

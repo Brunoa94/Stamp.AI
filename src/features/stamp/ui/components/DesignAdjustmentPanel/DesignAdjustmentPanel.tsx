@@ -3,6 +3,8 @@
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { useDesignAdjustment } from "../../../lib/hooks/useDesignAdjustment";
+import { useStampCustomization } from "../../../lib/hooks/useStampSelectors";
+import { getCanvasOrientation } from "@/lib/printPlacement/config";
 import { PrintPositionSelector } from "../PrintPositionSelector/PrintPositionSelector";
 import { PlacementAdjuster } from "../PlacementAdjuster/PlacementAdjuster";
 import { PlacementPreview } from "../PlacementPreview/PlacementPreview";
@@ -43,8 +45,15 @@ export function DesignAdjustmentPanel({ imageUrl, disabled = false }: PropsI) {
     resetPlacementForPosition,
     totalAdditionalCost,
   } = useDesignAdjustment();
+  const { selectedSize } = useStampCustomization();
 
   if (!productConfig || !activeConfig) return null;
+
+  // Determine canvas orientation from selected size
+  const isCanvasOrPoster = productConfig.category === "canvas" || productConfig.category === "poster";
+  const orientation = isCanvasOrPoster && selectedSize
+    ? getCanvasOrientation(selectedSize)
+    : undefined;
 
   return (
     <div className="w-full space-y-10">
@@ -66,21 +75,23 @@ export function DesignAdjustmentPanel({ imageUrl, disabled = false }: PropsI) {
             productCategory={productConfig.category}
             position={activeEditPosition}
             safeZone={productConfig.safeZone}
+            orientation={orientation}
           />
 
           <PlacementAdjuster
-          positions={enabledPositions}
-          activePosition={activeEditPosition}
-          placement={activeConfig.placement}
-          bounds={bounds}
-          atBounds={atBounds}
-          onPositionChange={setActiveEditPosition}
-          onPlacementChange={updateActivePlacement}
-          onNudge={nudgeActivePlacement}
-          onCenter={centerActivePlacement}
-          onReset={() => resetPlacementForPosition(activeEditPosition)}
-          disabled={disabled}
-        />
+            positions={enabledPositions}
+            activePosition={activeEditPosition}
+            placement={activeConfig.placement}
+            bounds={bounds}
+            atBounds={atBounds}
+            onPositionChange={setActiveEditPosition}
+            onPlacementChange={updateActivePlacement}
+            onNudge={nudgeActivePlacement}
+            onCenter={centerActivePlacement}
+            onReset={() => resetPlacementForPosition(activeEditPosition)}
+            disabled={disabled}
+            scaleOnly={productConfig.scaleOnly}
+          />
         </>
       )}
 

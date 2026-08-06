@@ -13,6 +13,7 @@ import {
 import { CustomProductServiceMapper } from "@/mappers/services/customProductServiceMapper";
 import { ProductService } from "./productService";
 import { ErrorClient } from "./errorClient";
+import { getProductConfig } from "@/lib/printPlacement/config";
 
 export class CustomProductService {
   private static getSupabaseConfig() {
@@ -113,7 +114,21 @@ export class CustomProductService {
           placements[position] = placement;
         }
       } else {
-        printAreas.front = uploadedImage.id;
+        // Get product config to determine the correct print positions
+        // Some products (like socks) don't have a 'front' position
+        const productConfig = getProductConfig(validatedInput.blueprint_id);
+        const positions = productConfig.positions;
+
+        // For products with placement disabled (mugs, socks), use all positions
+        // For others, use just the default position
+        if (productConfig.disablePlacementAdjustment) {
+          for (const position of positions) {
+            printAreas[position] = uploadedImage.id;
+          }
+        } else {
+          const defaultPosition = productConfig.defaultPosition || positions[0] || 'front';
+          printAreas[defaultPosition] = uploadedImage.id;
+        }
       }
 
       // Step 2: Create custom product with image dimensions for auto-placement

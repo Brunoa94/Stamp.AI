@@ -162,10 +162,15 @@ export function useDesignAdjustment() {
     (partial: Partial<PlacementParamsType>) => {
       const current = printPositionConfigs[activeEditPosition];
       if (!current) return;
-      const next = clampPlacement({ ...current.placement, ...partial }, bounds);
+      let next = clampPlacement({ ...current.placement, ...partial }, bounds);
+      // When scaleOnly is true, force centered placement (only allow scale changes)
+      if (productConfig?.scaleOnly) {
+        const anchorY = productConfig.anchorY ?? 0.5;
+        next = { ...next, x: 0.5, y: anchorY, angle: 0 };
+      }
       setPrintPositionConfig(activeEditPosition, { placement: next });
     },
-    [printPositionConfigs, activeEditPosition, bounds, setPrintPositionConfig],
+    [printPositionConfigs, activeEditPosition, bounds, setPrintPositionConfig, productConfig],
   );
 
   const nudgeActivePlacement = useCallback(

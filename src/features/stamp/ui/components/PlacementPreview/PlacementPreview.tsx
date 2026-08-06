@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import type { SafeZone } from "@/lib/printPlacement/types";
 import type { PlacementParamsType } from "../../../lib/types/stampFlowTypes";
-import { ProductSilhouette } from "./ProductSilhouette";
+import { ProductSilhouette, type OrientationType } from "./ProductSilhouette";
 import { DesignOverlay } from "./DesignOverlay";
 
 /**
@@ -18,12 +18,24 @@ import { DesignOverlay } from "./DesignOverlay";
 
 type CategoryType = "apparel" | "tote" | "mug" | "poster" | "pillow" | "canvas" | "socks";
 
+/**
+ * Scale multipliers to adjust mockup preview to better match actual print output.
+ * The AOP Tote Bag has a very tall print area (2175x4350) that wraps front+back,
+ * but our preview only shows the front portion. This multiplier compensates for
+ * the difference between preview aspect ratio and actual print area ratio.
+ */
+const SCALE_MULTIPLIERS: Partial<Record<CategoryType, number>> = {
+  tote: 1.25, // Tote preview appears smaller than actual print, scale up by 25%
+};
+
 interface PropsI {
   imageUrl: string;
   placement: PlacementParamsType;
   productCategory: CategoryType;
   position: string;
   safeZone: SafeZone;
+  /** For canvas/poster: controls the silhouette orientation */
+  orientation?: OrientationType;
 }
 
 interface AreaRect {
@@ -84,16 +96,34 @@ export function PlacementPreview({
   productCategory,
   position,
   safeZone,
+  orientation,
 }: PropsI) {
   const t = useTranslations("stamp.adjust");
   const area = getAreaRect(productCategory, position);
 
+  // Apply scale multiplier for categories where preview differs from print
+  const scaleMultiplier = SCALE_MULTIPLIERS[productCategory] ?? 1;
+  const adjustedPlacement = {
+    ...placement,
+    scale: placement.scale * scaleMultiplier,
+  };
+
+  // Determine aspect ratio class based on orientation for canvas/poster
+  const isCanvasOrPoster = productCategory === "canvas" || productCategory === "poster";
+  const aspectClass = isCanvasOrPoster
+    ? orientation === "horizontal"
+      ? "aspect-6/5"
+      : orientation === "square"
+        ? "aspect-square"
+        : "aspect-5/6"
+    : "aspect-5/6";
+
   return (
     <div
       data-testid="placement-preview"
-      className="relative mx-auto aspect-5/6 w-full max-w-sm"
+      className={`relative mx-auto w-full max-w-sm ${aspectClass}`}
     >
-      <ProductSilhouette category={productCategory} />
+      <ProductSilhouette category={productCategory} orientation={orientation} />
 
       {/* Print area boundary */}
       <div
@@ -118,7 +148,7 @@ export function PlacementPreview({
         {imageUrl && (
           <DesignOverlay
             imageUrl={imageUrl}
-            placement={placement}
+            placement={adjustedPlacement}
             alt={t("previewAlt")}
           />
         )}

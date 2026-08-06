@@ -122,4 +122,33 @@ describe("PlacementAdjuster", () => {
       expect(button).toBeDisabled();
     });
   });
+
+  it("hides position and rotation controls when scaleOnly is true", () => {
+    renderAdjuster({ scaleOnly: true });
+
+    // Position controls should be hidden
+    expect(screen.queryByRole("button", { name: "Move up" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Move down" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Move left" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Move right" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Center" })).not.toBeInTheDocument();
+
+    // Rotation controls should be hidden
+    expect(screen.queryByRole("button", { name: /rotate to 90/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /rotate to 180/i })).not.toBeInTheDocument();
+
+    // Scale controls should still be visible
+    expect(screen.getByRole("button", { name: "Larger" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Smaller" })).toBeInTheDocument();
+
+    // Reset button should still be visible
+    expect(screen.getByRole("button", { name: /reset/i })).toBeInTheDocument();
+  });
+
+  it("hides position picker when scaleOnly is true even with multiple positions", () => {
+    renderAdjuster({ scaleOnly: true, positions: ["front", "back"] });
+
+    // Position picker should be hidden
+    expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
+  });
 });

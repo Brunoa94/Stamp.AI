@@ -39,6 +39,7 @@ export interface ProductConfig {
   minDpi: number;
   anchorY?: number;  // Custom Y anchor (e.g., 0.45 for chest placement)
   disablePlacementAdjustment?: boolean;  // Disable manual placement controls (e.g., for mugs)
+  scaleOnly?: boolean;  // Allow only scale adjustment, keep centered (e.g., for tote bags)
 }
 
 export interface VariantPrintArea {

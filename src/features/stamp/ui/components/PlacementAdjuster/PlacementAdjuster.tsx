@@ -31,6 +31,8 @@ interface PropsI {
   onCenter: () => void;
   onReset: () => void;
   disabled?: boolean;
+  /** When true, only show scale slider (hide position and rotation controls) */
+  scaleOnly?: boolean;
 }
 
 export function PlacementAdjuster({
@@ -45,12 +47,13 @@ export function PlacementAdjuster({
   onCenter,
   onReset,
   disabled = false,
+  scaleOnly = false,
 }: PropsI) {
   const t = useTranslations("stamp.adjust");
 
   return (
     <div className="space-y-6">
-      {positions.length > 1 && (
+      {!scaleOnly && positions.length > 1 && (
         <div className="flex items-center gap-3">
           <Label
             htmlFor="active-position"
@@ -75,14 +78,16 @@ export function PlacementAdjuster({
         </div>
       )}
 
-      <PositionControls
-        placement={placement}
-        bounds={bounds}
-        onNudge={onNudge}
-        onCenter={onCenter}
-        onPlacementChange={onPlacementChange}
-        disabled={disabled}
-      />
+      {!scaleOnly && (
+        <PositionControls
+          placement={placement}
+          bounds={bounds}
+          onNudge={onNudge}
+          onCenter={onCenter}
+          onPlacementChange={onPlacementChange}
+          disabled={disabled}
+        />
+      )}
 
       <ScaleSlider
         scale={placement.scale}
@@ -91,11 +96,13 @@ export function PlacementAdjuster({
         disabled={disabled}
       />
 
-      <RotationSelector
-        angle={placement.angle}
-        onAngleChange={(angle) => onPlacementChange({ angle })}
-        disabled={disabled}
-      />
+      {!scaleOnly && (
+        <RotationSelector
+          angle={placement.angle}
+          onAngleChange={(angle) => onPlacementChange({ angle })}
+          disabled={disabled}
+        />
+      )}
 
       <div className="flex items-center justify-between gap-4">
         <Button

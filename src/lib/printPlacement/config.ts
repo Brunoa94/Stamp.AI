@@ -7,6 +7,36 @@
 
 import type { ProductConfig, SafeZone } from './types';
 
+export type CanvasOrientation = 'vertical' | 'horizontal' | 'square';
+
+/**
+ * Determine canvas orientation from size string (e.g., "10" x 20" (VERTICAL)")
+ * Parses the dimensions and compares width vs height
+ */
+export function getCanvasOrientation(sizeString: string): CanvasOrientation {
+  // Extract dimensions from formats like:
+  // - "10" x 20" (VERTICAL)" or "10" x 8" (HORIZONTAL)"
+  // - "12" x 12"" or "10×10"
+  const cleanSize = sizeString
+    .replace(/\(VERTICAL\)/gi, '')
+    .replace(/\(HORIZONTAL\)/gi, '')
+    .replace(/"/g, '')
+    .replace(/×/g, 'x')
+    .trim();
+
+  const match = cleanSize.match(/(\d+)\s*x\s*(\d+)/i);
+  if (!match) {
+    return 'vertical'; // default
+  }
+
+  const width = parseInt(match[1], 10);
+  const height = parseInt(match[2], 10);
+
+  if (width === height) return 'square';
+  if (width > height) return 'horizontal';
+  return 'vertical';
+}
+
 /**
  * Detect product category from display title
  * Used as fallback when blueprint ID is not in PRODUCT_CONFIGS
@@ -149,6 +179,22 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     anchorY: 0.5,
   },
 
+  // AOP Tote Bag - very tall print area (2175x4350) wraps front+back
+  // Client-side anchorY: 0.5 for centered mockup preview
+  // Server-side uses different calculation for Printify (see edge function)
+  // Always centered horizontally, only scale adjustment allowed
+  1389: {
+    blueprintId: 1389,
+    name: 'AOP Tote Bag',
+    category: 'tote',
+    positions: ['front'],
+    defaultPosition: 'front',
+    safeZone: DEFAULT_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.5,
+    scaleOnly: true,
+  },
+
   // Mugs - placement disabled (wrap-around print, auto-centered)
   1320: {
     blueprintId: 1320,
@@ -185,13 +231,13 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     anchorY: 0.5,
   },
 
-  // Socks - all-over print, placement disabled
+  // Socks - all-over print on both legs, placement disabled
   462: {
     blueprintId: 462,
     name: 'Cushioned Crew Socks',
     category: 'socks',
-    positions: ['front'],
-    defaultPosition: 'front',
+    positions: ['left_leg', 'right_leg'],
+    defaultPosition: 'left_leg',
     safeZone: DEFAULT_SAFE_ZONE,
     minDpi: 150,
     anchorY: 0.5,

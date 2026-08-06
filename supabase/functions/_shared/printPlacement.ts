@@ -43,6 +43,7 @@ interface ProductConfig {
   minDpi: number;
   anchorY?: number;
   maxScale?: number; // Limit max scale for products where smaller print looks better
+  scaleOnly?: boolean; // Force centered placement, only allow scale changes
 }
 
 interface PlacementResult {
@@ -70,9 +71,10 @@ const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
   49: { safeZone: { top: 0.05, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.45 },
   // Tote bags - center placement
   553: { safeZone: { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.5 },
-  // AOP Tote Bag (all-over print, very tall 2175x4350 print area)
-  // Anchor at 0.30 to place design in upper-center, maxScale 0.85 (~90% of 0.94)
-  1389: { safeZone: { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.30, maxScale: 0.85 },
+  // AOP Tote Bag (all-over print, very tall 2175x4350 print area wraps front+back)
+  // Front panel is TOP HALF (0 to 0.5), anchorY: 0.22 centers on front panel
+  // scaleOnly: true - forces centered placement, ignores user x/y adjustments
+  1389: { safeZone: { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.22, maxScale: 0.85, scaleOnly: true },
   // Mugs - wrap-around print with handle margins
   1320: { safeZone: { top: 0.05, bottom: 0.05, left: 0.15, right: 0.15 }, minDpi: 150, anchorY: 0.5 },
   468: { safeZone: { top: 0.05, bottom: 0.05, left: 0.15, right: 0.15 }, minDpi: 150, anchorY: 0.5 },
@@ -89,6 +91,22 @@ const DEFAULT_CONFIG: ProductConfig = {
 
 function getProductConfig(blueprintId: number): ProductConfig {
   return PRODUCT_CONFIGS[blueprintId] || DEFAULT_CONFIG;
+}
+
+/**
+ * Check if a blueprint uses scaleOnly mode (centered placement, user can only adjust scale)
+ */
+export function isScaleOnlyBlueprint(blueprintId: number): boolean {
+  const config = getProductConfig(blueprintId);
+  return config.scaleOnly === true;
+}
+
+/**
+ * Get the anchorY for a blueprint (default 0.5)
+ */
+export function getBlueprintAnchorY(blueprintId: number): number {
+  const config = getProductConfig(blueprintId);
+  return config.anchorY ?? 0.5;
 }
 
 /**

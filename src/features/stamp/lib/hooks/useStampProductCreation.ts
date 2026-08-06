@@ -52,6 +52,8 @@ interface CreateProductParamsType {
   size: string;
   /** User-selected print positions with placements (Step 6 adjustment). */
   printPositions?: { position: string; placement: PlacementParamsType }[];
+  /** Scale value for idempotency key (to allow different scales for same product) */
+  scale?: number;
 }
 
 export function useStampProductCreation() {
@@ -82,6 +84,7 @@ export function useStampProductCreation() {
     fabricColor,
     size,
     printPositions,
+    scale,
   }: CreateProductParamsType) => {
     // Idempotency check: Prevent duplicate operations
     if (isCreatingRef.current) {
@@ -93,14 +96,17 @@ export function useStampProductCreation() {
           printProviderId,
           fabricColor,
           size,
+          scale,
         },
       });
       return;
     }
 
     // Check sessionStorage for completed operations
+    // Include scale in the key to allow different scales for same product
+    const scaleKey = scale !== undefined ? `_scale${scale.toFixed(2)}` : "";
     const operationKey =
-      `stamp_product_${blueprintId}_${printProviderId}_${fabricColor}_${size}`;
+      `stamp_product_${blueprintId}_${printProviderId}_${fabricColor}_${size}${scaleKey}`;
     const completedKey = `${operationKey}_completed`;
 
     if (sessionStorage.getItem(completedKey) === "true") {
@@ -132,8 +138,8 @@ export function useStampProductCreation() {
       return;
     }
 
-    if (!fabricColor || !size) {
-      handleError(new Error(t("noColorSize")));
+    if (!size) {
+      handleError(new Error(t("noSize")));
       return;
     }
 

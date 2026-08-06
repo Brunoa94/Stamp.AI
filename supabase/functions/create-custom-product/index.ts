@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
-import { calculatePlacement } from "../_shared/printPlacement.ts"
+import { calculatePlacement, isScaleOnlyBlueprint, getBlueprintAnchorY } from "../_shared/printPlacement.ts"
 import { createClient } from "jsr:@supabase/supabase-js@2"
 
 const corsHeaders = {
@@ -89,12 +89,19 @@ serve(async (req) => {
     // Resolve position -> image id map. Supports the position-keyed
     // print_areas object and the legacy single image_id (front only).
     // Positions the product doesn't offer are dropped.
+    console.log('🖼️ Received print_areas:', JSON.stringify(print_areas))
+    console.log('🖼️ Received image_id:', image_id)
+
     const requestedAreas: Record<string, string> = {}
-    if (print_areas) {
+    if (print_areas && typeof print_areas === 'object') {
       for (const [position, imageId] of Object.entries(print_areas)) {
-        if (!imageId || typeof imageId !== 'string') continue
+        console.log(`  Processing position "${position}" with imageId: ${imageId}`)
+        if (!imageId || typeof imageId !== 'string') {
+          console.warn(`  ⚠️ Skipping "${position}": invalid imageId`)
+          continue
+        }
         if (!availablePrintAreas.includes(position)) {
-          console.warn(`⚠️ Position "${position}" not offered by blueprint; skipping`)
+          console.warn(`  ⚠️ Position "${position}" not offered by blueprint; skipping`)
           continue
         }
         requestedAreas[position] = imageId
@@ -103,7 +110,10 @@ serve(async (req) => {
       requestedAreas[primaryPrintArea] = image_id
     }
 
+    console.log('🎯 Final requestedAreas:', JSON.stringify(requestedAreas))
+
     if (Object.keys(requestedAreas).length === 0) {
+      console.error('❌ IMAGE_REQUIRED: No valid print areas found')
       throw ErrorCodes.IMAGE_REQUIRED()
     }
 
@@ -156,6 +166,38 @@ serve(async (req) => {
 
     const resolvePlacement = (position: string) => {
       const userPlacement = userPlacements?.[position]
+
+      // For scaleOnly blueprints (like AOP Tote Bag), force centered placement
+      // Only accept the scale value from user, ignore x/y/angle
+      if (isScaleOnlyBlueprint(finalBlueprintId)) {
+        const userScale = isValidPlacement(userPlacement) ? userPlacement.scale : 1
+
+        // For AOP Tote Bag (blueprint 1389), the print area is 2175x4350 (front+back)
+        // The front panel is the TOP HALF of the print area (0 to 0.5 in y coordinates)
+        // We need to center the image within the front panel, accounting for image height
+        const placeholder = firstVariantPlaceholders.find((p: any) => p.position === position)
+        const paWidth = placeholder?.width || printAreaWidth
+        const paHeight = placeholder?.height || printAreaHeight
+
+        // Calculate image height in normalized coordinates
+        // scale = image width / print area width
+        // imageHeightNorm = (imageHeight / imageWidth) * scale * (paWidth / paHeight)
+        const imageAspect = artworkWidth / artworkHeight
+        const printAreaAspect = paWidth / paHeight
+        const imageHeightNorm = (userScale / imageAspect) * printAreaAspect
+
+        // For front+back tote (1389), front panel is y: 0 to 0.5
+        // Center of front panel is 0.25, but we need to account for image height
+        // y position is the CENTER of the image, so:
+        // y = frontPanelCenter = 0.25 (center of top half)
+        // But adjust slightly down to account for handle area at top
+        const frontPanelCenter = 0.27  // Slightly below center to avoid handles
+        const y = frontPanelCenter
+
+        console.log(`🔒 ScaleOnly blueprint ${finalBlueprintId}: x=0.5, y=${y.toFixed(3)}, scale=${userScale}, imageHeightNorm=${imageHeightNorm.toFixed(3)}`)
+        return { x: 0.5, y, scale: userScale, angle: 0 }
+      }
+
       if (isValidPlacement(userPlacement)) {
         console.log(`🎯 Using user placement for "${position}"`)
         return userPlacement
@@ -194,8 +236,12 @@ serve(async (req) => {
       })
     }
 
+    // Include scale in title for debugging placement issues
+    const scaleInfo = `[scale:${primaryPlacement.scale.toFixed(2)}, y:${primaryPlacement.y.toFixed(2)}]`
+    const productTitle = title ? `${title} ${scaleInfo}` : `Custom Design ${Date.now()} ${scaleInfo}`
+
     const productPayload = {
-      title: title || `Custom Design ${Date.now()}`,
+      title: productTitle,
       description: description || 'Custom designed product',
       blueprint_id: finalBlueprintId,
       print_provider_id: finalPrintProviderId,
