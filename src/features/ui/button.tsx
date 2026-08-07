@@ -8,6 +8,18 @@ const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
+      // NOTE: definition order matters — cva emits classes in this order and
+      // tailwind-merge resolves conflicts last-wins. `size` is defined FIRST so
+      // variants that carry their own dimensions (cta, *-compact, stamp-*)
+      // override the default size instead of being clobbered by it.
+      size: {
+        default: "h-10 px-4 py-2 has-[>svg]:px-3",
+        sm: "h-8 gap-1.5 px-3 has-[>svg]:px-2.5",
+        lg: "h-10 px-6 has-[>svg]:px-4",
+        icon: "size-10",
+        "icon-sm": "size-8",
+        "icon-lg": "size-10",
+      },
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
@@ -43,15 +55,7 @@ const buttonVariants = cva(
         "stamp-google":
           "w-full gap-4 border-2 border-(--color-stamp-divider) bg-(--color-stamp-white) py-6 px-6 font-heading font-bold text-base uppercase tracking-widest text-(--color-stamp-chocolate) transition-all hover:border-(--color-stamp-taupe) hover:bg-(--color-stamp-cream)",
         "stamp-thumbnail":
-          "relative h-20 w-20 shrink-0 overflow-hidden rounded-none border-2 border-(--color-stamp-divider) p-0 transition-all duration-300 hover:border-(--color-stamp-chocolate) aria-pressed:border-(--color-stamp-gold) aria-pressed:ring-2 aria-pressed:ring-(--color-stamp-gold)/20",
-      },
-      size: {
-        default: "h-10 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 px-6 has-[>svg]:px-4",
-        icon: "size-10",
-        "icon-sm": "size-8",
-        "icon-lg": "size-10",
+          "relative h-20 w-20 shrink-0 overflow-hidden rounded-none border-2 border-(--color-stamp-divider) p-0 transition-all duration-300 not-aria-pressed:hover:border-(--color-stamp-chocolate) aria-pressed:border-(--color-stamp-gold) aria-pressed:ring-2 aria-pressed:ring-(--color-stamp-gold)/20",
       },
     },
     defaultVariants: {
