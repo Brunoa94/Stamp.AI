@@ -11,10 +11,17 @@ import { Span } from "@/features/ui/span";
  * (Stripe / PayPal, no card details stored) and displays security badges.
  */
 
-// All of these are supported by Stripe: Visa/Mastercard/Amex as card
-// networks, PayPal and iDEAL as Stripe payment methods (iDEAL integration
-// planned — shown here as an accepted method ahead of it).
-const PAYMENT_METHODS = ["Visa", "Mastercard", "Amex", "PayPal", "iDEAL"];
+// All Stripe-supported: Visa/Mastercard/Amex card networks, plus PayPal and
+// iDEAL as Stripe payment methods. iDEAL isn't wired up yet, so it is flagged
+// `comingSoon` rather than presented as live — a trust panel must not imply a
+// checkout path that doesn't work. Drop the flag when the integration ships.
+const PAYMENT_METHODS: { label: string; comingSoon?: boolean }[] = [
+  { label: "Visa" },
+  { label: "Mastercard" },
+  { label: "Amex" },
+  { label: "PayPal" },
+  { label: "iDEAL", comingSoon: true },
+];
 
 interface SecureCheckoutNoticeProps {
   className?: string;
@@ -68,13 +75,24 @@ export function SecureCheckoutNotice({ className }: SecureCheckoutNoticeProps) {
         <Span variant="micro" className="text-(--color-stamp-taupe)">
           {t("accept")}
         </Span>
-        {PAYMENT_METHODS.map((method) => (
+        {PAYMENT_METHODS.map(({ label, comingSoon }) => (
           <Span
-            key={method}
+            key={label}
             variant="micro"
-            className="border border-(--color-stamp-divider) bg-(--color-stamp-white) px-2 py-1 text-[10px] font-bold tracking-widest text-(--color-stamp-chocolate)"
+            className={cn(
+              "inline-flex items-center gap-1 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-2 py-1 text-[10px] font-bold tracking-widest text-(--color-stamp-chocolate)",
+              comingSoon && "opacity-60"
+            )}
           >
-            {method}
+            {label}
+            {comingSoon && (
+              <Span
+                variant="micro"
+                className="text-[8px] font-medium tracking-normal text-(--color-stamp-taupe)"
+              >
+                {t("comingSoon")}
+              </Span>
+            )}
           </Span>
         ))}
       </div>
