@@ -90,7 +90,7 @@ describe("PrintPositionSelector", () => {
       />,
     );
 
-    expect(screen.getByText("+$2.50")).toBeInTheDocument();
+    expect(screen.getByText("+€2.50")).toBeInTheDocument();
   });
 
   it("disables all cards when disabled", () => {

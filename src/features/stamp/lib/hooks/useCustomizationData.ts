@@ -59,8 +59,25 @@ export function useCustomizationData() {
     return getDefaultSizeForProduct(availableSizes) as SizeType;
   }, [selectedSize, availableSizes]);
 
-  // Color selection is only required if colors are available
-  const colorRequirementMet = availableColors.length === 0 || Boolean(selectedColor);
+  // Determine effective color: use selected, or auto-select if only one option
+  const effectiveSelectedColor = useMemo(() => {
+    if (selectedColor && availableColors.includes(selectedColor)) {
+      return selectedColor;
+    }
+    // Auto-select if only one color available
+    if (availableColors.length === 1) {
+      return availableColors[0];
+    }
+    return selectedColor;
+  }, [selectedColor, availableColors]);
+
+  // Color selection is only required if there are multiple colors to choose from
+  // If there's only one color, it will be auto-used
+  // If there are no colors, no selection is needed
+  const colorRequirementMet =
+    availableColors.length === 0 ||
+    availableColors.length === 1 ||
+    Boolean(selectedColor);
 
   const canCreateProduct = !isFinalizing &&
     Boolean(blueprintId) &&
@@ -75,6 +92,7 @@ export function useCustomizationData() {
     // Colors
     availableColors,
     selectedColor,
+    effectiveSelectedColor,
     setSelectedColor,
     isLoadingVariants,
     // Sizes

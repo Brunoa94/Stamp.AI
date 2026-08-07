@@ -2,6 +2,8 @@
 
 import { useState, useCallback, ChangeEvent, memo } from "react";
 import { useStampImageGeneration } from "../../../lib/hooks/useStampImageGeneration";
+import { useUser } from "@/queries/authQueries";
+import { useUserCoins } from "@/queries/coinsQueries";
 import { SynthesisVisual } from "./SynthesisVisual";
 import { SynthesisForm } from "./SynthesisForm";
 
@@ -10,6 +12,11 @@ import { SynthesisForm } from "./SynthesisForm";
  *
  * Step 2: Descriptive synthesis and configuration
  * Protocol 02 / Logic
+ *
+ * Coins Integration:
+ * - Checks authentication state
+ * - Checks coins balance
+ * - Shows overlay if not authenticated or no coins
  */
 
 const MAX_PROMPT_LENGTH = 500;
@@ -17,6 +24,14 @@ const MAX_PROMPT_LENGTH = 500;
 function SynthesisSectionComponent() {
   const { handleGenerate: generateImage, isGenerating } =
     useStampImageGeneration();
+
+  // Auth and coins state
+  const { data: user, isLoading: isAuthLoading } = useUser();
+  const { data: coinsData, isLoading: isCoinsLoading } = useUserCoins();
+
+  const isAuthenticated = !!user;
+  const coins = coinsData?.coins ?? 0;
+  const hasCoins = coins > 0;
 
   const [prompt, setPrompt] = useState("");
   const [preservation, setPreservation] = useState(50);
@@ -62,6 +77,10 @@ function SynthesisSectionComponent() {
         removeBackground={removeBackground}
         maxPromptLength={MAX_PROMPT_LENGTH}
         isGenerating={isGenerating}
+        isAuthenticated={isAuthenticated}
+        isAuthLoading={isAuthLoading}
+        hasCoins={hasCoins}
+        isCoinsLoading={isCoinsLoading}
         onPromptChange={handlePromptChange}
         onPreservationChange={setPreservation}
         onRemoveBackgroundChange={setRemoveBackground}

@@ -34,7 +34,7 @@ export function useStampCartActions() {
   const router = useRouter();
   const { handleError, handleSuccess } = useErrorHandler();
 
-  const { createdProductId, createdVariantId } = useStampFinalization();
+  const { createdProductId, createdVariantId, mockupImageUrl } = useStampFinalization();
   const { selectedImageUrl } = useStampSelectedImage();
   const { selectedPriceCents } = useStampCustomization();
   const { selectedProductTitle } = useStampProductSelection();
@@ -119,7 +119,7 @@ export function useStampCartActions() {
       quantity: 1,
       product_name: productName,
       unit_price: unitPrice,
-      custom_image_url: selectedImageUrl,
+      custom_image_url: mockupImageUrl || selectedImageUrl,
       variant_id: createdVariantId.toString(),
     };
 
@@ -134,6 +134,7 @@ export function useStampCartActions() {
           selectedProductTitle,
           selectedPriceCents,
           selectedImageUrl,
+          mockupImageUrl,
           createdProductId,
           createdVariantId,
         },

@@ -5,14 +5,14 @@ import type { ShippingAddressT } from "@/schemas/checkout";
  * This data is used to speed up testing by pre-filling all required fields
  */
 export const TEST_BILLING_DATA: ShippingAddressT = {
-  first_name: "John",
-  last_name: "Doe",
-  email: "john.doe@example.com",
-  phone: "+1 555-0123",
-  country: "US",
-  region: "CA",
-  address1: "123 Main Street",
-  address2: "Apt 4B",
-  city: "San Francisco",
-  zip: "94102",
+  first_name: "Jan",
+  last_name: "de Vries",
+  email: "jan.devries@example.nl",
+  phone: "+31 20 123 4567",
+  country: "NL",
+  region: "Noord-Holland",
+  address1: "Kalverstraat 92",
+  address2: "3e verdieping",
+  city: "Amsterdam",
+  zip: "1012 PH",
 };

@@ -6,7 +6,6 @@
  * checkout form context.
  */
 
-
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";

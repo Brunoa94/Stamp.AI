@@ -350,6 +350,8 @@
       "eyebrow": "Your Progress",
       "title": "8 Steps to Print",
       "stepNavAria": "Step navigation",
+      "back": "BACK",
+      "backTo": "Go back to {step}",
       "navigate": "Navigate to {title}",
       "navigateLocked": "Navigate to {title} (locked)"
     },
@@ -427,7 +429,10 @@
       "appliedPrompt": "Applied Prompt",
       "useProtocol": "USE THIS IMAGE",
       "reSynthesize": "REPEAT",
-      "imageAlt": "Generated design result"
+      "imageAlt": "Generated design result",
+      "previousCreations": "YOUR PREVIOUS CREATIONS",
+      "selectImage": "Select image {number}",
+      "galleryImageAlt": "Previously generated design {number}"
     },
     "productSelection": {
       "protocol": "Step 05 / Product",
@@ -519,6 +524,19 @@
         "uploadFailed": "Upload failed",
         "uploaded": "Image uploaded successfully",
         "removed": "Image removed"
+      },
+      "coins": {
+        "noCoins": "You're out of coins for today",
+        "noCoinsDescription": "Coins reset daily at midnight. You can still use your uploaded image directly.",
+        "notLoggedIn": "Login or register to continue",
+        "notLoggedInDescription": "Create an account to start designing",
+        "login": "Login",
+        "register": "Register",
+        "display": "{coins} Coins available",
+        "displayAria": "{coins} coins available",
+        "deductFailed": "Not enough coins to generate",
+        "skipGeneration": "Use My Image",
+        "usePreviousCreations": "Use Previous Creations"
       }
     },
     "adjust": {
@@ -629,7 +647,7 @@
       "backButton": "Back to selection",
       "methodSelectorLabel": "Select payment method",
       "processing": "Processing...",
-      "payButton": "Pay ${amount}",
+      "payButton": "Pay €{amount}",
       "cardElementNotFound": "Card element not found",
       "paymentFailed": "Payment failed",
       "paypalComingSoon": "PayPal for credit purchases is coming soon.",
@@ -905,7 +923,7 @@
         }
       },
       "subtotal": "Subtotal",
-      "total": "$237.00 TOTAL",
+      "total": "€237.00 TOTAL",
       "viewFullCart": "View Full Cart",
       "account": "ACCOUNT",
       "logout": "Logout"
@@ -1097,6 +1115,7 @@
       }
     },
     "register": {
+      "register": "Register",
       "openDialogAria": "Open register dialog",
       "signUp": "Sign Up",
       "successToast": "Account created. Check your email to verify it.",
@@ -1466,7 +1485,7 @@
     },
     "stripeButton": {
       "processing": "Processing…",
-      "pay": "Pay ${amount}"
+      "pay": "Pay €{amount}"
     },
     "paypalButton": {
       "redirecting": "Redirecting to PayPal…"
@@ -1713,7 +1732,9 @@
     "payment": {
       "title": "Your payment is safe",
       "body": "Payments run through Stripe and PayPal. We never see or store your card details.",
-      "accept": "We accept"
+      "accept": "We accept",
+      "sslSecured": "256-bit SSL Secured",
+      "comingSoon": "Soon"
     },
     "guarantee": {
       "title": "30-day guarantee",

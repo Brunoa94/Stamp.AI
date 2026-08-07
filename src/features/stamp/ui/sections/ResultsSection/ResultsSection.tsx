@@ -1,11 +1,16 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useStampNavigationActions } from "../../../lib/hooks/useStampNavigation";
-import { useStampSelectedImage } from "../../../lib/hooks/useStampSelectors";
+import {
+  useStampSelectedImage,
+  useStampGeneration,
+} from "../../../lib/hooks/useStampSelectors";
+import { useLoadCachedImages } from "../../../lib/hooks/useLoadCachedImages";
 import { ResultsImage } from "./ResultsImage";
 import { ResultsActions } from "./ResultsActions";
+import { ResultsGallery } from "./ResultsGallery";
 import { Heading } from "@/features/ui/heading";
 
 /**
@@ -13,13 +18,35 @@ import { Heading } from "@/features/ui/heading";
  *
  * Step 4: Display generated results
  * Protocol 04 / Output
+ *
+ * Shows the currently selected image and a gallery of previously
+ * generated images (cached in localStorage with 24h TTL).
  */
 
 function ResultsSectionComponent() {
   const t = useTranslations("stamp.results");
   const { nextStep, goToStep } = useStampNavigationActions();
-  const { selectedImageUrl, enhancedPrompt } = useStampSelectedImage();
+  const { selectedImageUrl, setSelectedImageUrl, setEnhancedPrompt } =
+    useStampSelectedImage();
+  const { generatedResults } = useStampGeneration();
   const canProceedToProduct = Boolean(selectedImageUrl);
+
+  // Load cached images from localStorage on mount
+  useLoadCachedImages();
+
+  // Auto-select first image if none selected and we have results
+  useEffect(() => {
+    if (!selectedImageUrl && generatedResults.length > 0) {
+      const firstResult = generatedResults[0];
+      setSelectedImageUrl(firstResult.imageUrl);
+      setEnhancedPrompt(firstResult.enhancedPrompt);
+    }
+  }, [
+    selectedImageUrl,
+    generatedResults,
+    setSelectedImageUrl,
+    setEnhancedPrompt,
+  ]);
 
   const handleUseProtocol = () => {
     nextStep();
@@ -29,15 +56,14 @@ function ResultsSectionComponent() {
     goToStep(2);
   };
 
+  const handleSelectImage = (imageUrl: string, enhancedPrompt: string) => {
+    setSelectedImageUrl(imageUrl);
+    setEnhancedPrompt(enhancedPrompt);
+  };
+
   const displayImageUrl =
     selectedImageUrl ||
     "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1974&auto=format&fit=crop";
-
-  const currentDate = new Date().toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
 
   return (
     <section
@@ -59,6 +85,11 @@ function ResultsSectionComponent() {
           })}
         </Heading>
         <ResultsImage imageUrl={displayImageUrl} />
+        <ResultsGallery
+          results={generatedResults}
+          selectedImageUrl={selectedImageUrl}
+          onSelectImage={handleSelectImage}
+        />
         <ResultsActions
           canProceed={canProceedToProduct}
           onUseProtocol={handleUseProtocol}

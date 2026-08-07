@@ -71,7 +71,7 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
           variant="sm"
           className="text-(--color-stamp-taupe)"
         >
-          ${product.price.toFixed(2)}
+          €{product.price.toFixed(2)}
         </Span>
       </div>
     </Button>

@@ -4,14 +4,24 @@ import { Heading } from "@/features/ui/heading";
 import { Button } from "@/features/ui/button";
 import { Checkbox } from "@/features/ui/checkbox";
 import { Label } from "@/features/ui/label";
+import { Span } from "@/features/ui/span";
 import { InfoTooltip } from "@/features/ui/info-tooltip";
 import { PromptInput } from "./PromptInput";
 import { PreservationSlider } from "./PreservationSlider";
+import { CoinsOverlay } from "../../components/CoinsOverlay/CoinsOverlay";
+import { CoinsDisplay } from "../../components/CoinsDisplay";
+import { useSkipGeneration } from "../../../lib/hooks/useSkipGeneration";
 
 /**
  * SynthesisForm
  *
  * Right panel form with all synthesis controls
+ *
+ * Coins Integration:
+ * - Shows login overlay if not authenticated
+ * - Shows no coins overlay if coins depleted (with skip option)
+ * - Displays coins count near Generate button
+ * - Disables Generate button if no coins or not authenticated
  */
 
 interface PropsI {
@@ -20,6 +30,10 @@ interface PropsI {
   removeBackground: boolean;
   maxPromptLength: number;
   isGenerating: boolean;
+  isAuthenticated: boolean;
+  isAuthLoading: boolean;
+  hasCoins: boolean;
+  isCoinsLoading: boolean;
   onPromptChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onPreservationChange: (value: number) => void;
   onRemoveBackgroundChange: (value: boolean) => void;
@@ -32,15 +46,25 @@ export function SynthesisForm({
   removeBackground,
   maxPromptLength,
   isGenerating,
+  isAuthenticated,
+  isAuthLoading,
+  hasCoins,
+  isCoinsLoading,
   onPromptChange,
   onPreservationChange,
   onRemoveBackgroundChange,
   onGenerate,
 }: PropsI) {
   const t = useTranslations("stamp.synthesis");
+  const { handleSkipGeneration, canSkip, hasCachedImages } = useSkipGeneration();
+
+  // Determine overlay state (only show after loading is complete)
+  const showLoginOverlay = !isAuthLoading && !isAuthenticated;
+  const showNoCoinsOverlay = !isAuthLoading && isAuthenticated && !isCoinsLoading && !hasCoins;
+  const canGenerate = isAuthenticated && hasCoins;
 
   return (
-    <div className="p-12 lg:p-24 flex flex-col justify-center bg-white">
+    <div className="relative p-12 lg:p-24 flex flex-col justify-center bg-white">
       <Heading
         as="h2"
         variant="title"
@@ -48,9 +72,9 @@ export function SynthesisForm({
       >
         {t.rich("title", {
           accent: (chunks) => (
-            <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
+            <Span variant="serif" className="text-(--color-stamp-taupe)">
               {chunks}
-            </span>
+            </Span>
           ),
         })}
       </Heading>
@@ -86,16 +110,27 @@ export function SynthesisForm({
         </div>
       </div>
 
-      {/* Generate Button */}
-      <div>
+      {/* Generate Button with Coins Display */}
+      <div className="space-y-4">
+        {isAuthenticated && <CoinsDisplay className="justify-end" />}
         <Button
           onClick={onGenerate}
-          disabled={isGenerating || !prompt.trim()}
+          disabled={isGenerating || !prompt.trim() || !canGenerate}
           className="w-full bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isGenerating ? t("generating") : t("generate")}
         </Button>
       </div>
+
+      {/* Overlays */}
+      {showLoginOverlay && <CoinsOverlay variant="not-logged-in" />}
+      {showNoCoinsOverlay && (
+        <CoinsOverlay
+          variant="no-coins"
+          onSkip={canSkip ? handleSkipGeneration : undefined}
+          hasCachedImages={hasCachedImages}
+        />
+      )}
     </div>
   );
 }

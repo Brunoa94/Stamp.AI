@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import { BackButton } from "./components/BackButton/BackButton";
 import { NavigationSidebar } from "./components/NavigationSidebar";
 import { HeroSection } from "./sections/HeroSection/HeroSection";
 import { UploadSection } from "./sections/UploadSection/UploadSection";
@@ -31,6 +32,9 @@ export function StampCanvas() {
 
   return (
     <div className="fixed inset-0 bg-(--color-stamp-off-white)">
+      {/* Back Button (Top Left) */}
+      <BackButton />
+
       {/* Main protocol canvas aligned with the submitted layout */}
       <main className="absolute inset-x-0 top-24 bottom-0 overflow-hidden lg:mr-68">
         <div
