@@ -1,13 +1,29 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { CoinsOverlay } from "./CoinsOverlay";
+import { CoinsOverlay } from "../CoinsOverlay";
 
-// Mock next/navigation
-const mockPush = vi.fn();
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({
-    push: mockPush,
-  }),
+/**
+ * ========================================================================
+ * CoinsOverlay Component Tests
+ * ========================================================================
+ * Tests for the overlay shown when the user cannot generate.
+ *
+ * The auth entry points are the shared Login/Register dialogs (owned by the
+ * auth feature and covered by their own tests); they are stubbed here so
+ * this suite stays a focused unit test of the overlay itself and doesn't
+ * need the react-query / router providers those dialogs pull in.
+ */
+
+vi.mock("@/features/auth/login/Login", () => ({
+  Login: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="login-dialog">{children}</div>
+  ),
+}));
+
+vi.mock("@/features/auth/register/Register", () => ({
+  Register: ({ children }: { children?: React.ReactNode }) => (
+    <div data-testid="register-dialog">{children}</div>
+  ),
 }));
 
 // Mock next-intl
@@ -21,28 +37,16 @@ vi.mock("next-intl", () => ({
       noCoins: "You're out of coins for today",
       noCoinsDescription: "Coins reset daily at midnight",
       skipGeneration: "Use My Image",
+      usePreviousCreations: "Use Previous Creations",
     };
     return translations[key] || key;
   },
 }));
 
-/**
- * ========================================================================
- * CoinsOverlay Component Tests
- * ========================================================================
- * Tests for the overlay components that appear when user cannot generate.
- */
-
 describe("CoinsOverlay", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
-  /**
-   * ========================================================================
-   * LoginOverlay Tests
-   * ========================================================================
-   */
 
   describe("LoginOverlay (not-logged-in variant)", () => {
     it("should render login message", () => {
@@ -52,29 +56,13 @@ describe("CoinsOverlay", () => {
       expect(screen.getByText("Create an account to start designing")).toBeInTheDocument();
     });
 
-    it("should render Login and Register buttons", () => {
+    it("should offer the Login and Register dialogs", () => {
       render(<CoinsOverlay variant="not-logged-in" />);
 
-      expect(screen.getByRole("button", { name: /login/i })).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: /register/i })).toBeInTheDocument();
-    });
-
-    it("should navigate to /auth/login on Login click", () => {
-      render(<CoinsOverlay variant="not-logged-in" />);
-
-      const loginButton = screen.getByRole("button", { name: /login/i });
-      fireEvent.click(loginButton);
-
-      expect(mockPush).toHaveBeenCalledWith("/auth/login");
-    });
-
-    it("should navigate to /auth/register on Register click", () => {
-      render(<CoinsOverlay variant="not-logged-in" />);
-
-      const registerButton = screen.getByRole("button", { name: /register/i });
-      fireEvent.click(registerButton);
-
-      expect(mockPush).toHaveBeenCalledWith("/auth/register");
+      expect(screen.getByTestId("login-dialog")).toBeInTheDocument();
+      expect(screen.getByTestId("register-dialog")).toBeInTheDocument();
+      expect(screen.getByText("Login")).toBeInTheDocument();
+      expect(screen.getByText("Register")).toBeInTheDocument();
     });
 
     it("should have correct test ID", () => {
@@ -83,12 +71,6 @@ describe("CoinsOverlay", () => {
       expect(screen.getByTestId("coins-overlay-login")).toBeInTheDocument();
     });
   });
-
-  /**
-   * ========================================================================
-   * NoCoinsOverlay Tests
-   * ========================================================================
-   */
 
   describe("NoCoinsOverlay (no-coins variant)", () => {
     it("should render no coins message", () => {
@@ -103,11 +85,11 @@ describe("CoinsOverlay", () => {
       expect(screen.getByText("Coins reset daily at midnight")).toBeInTheDocument();
     });
 
-    it("should not render Login/Register buttons", () => {
+    it("should not offer the auth dialogs", () => {
       render(<CoinsOverlay variant="no-coins" />);
 
-      expect(screen.queryByRole("button", { name: /login/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole("button", { name: /register/i })).not.toBeInTheDocument();
+      expect(screen.queryByTestId("login-dialog")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("register-dialog")).not.toBeInTheDocument();
     });
 
     it("should have correct test ID", () => {
@@ -121,6 +103,17 @@ describe("CoinsOverlay", () => {
       render(<CoinsOverlay variant="no-coins" onSkip={mockOnSkip} />);
 
       expect(screen.getByRole("button", { name: /use my image/i })).toBeInTheDocument();
+    });
+
+    it("should label the skip button for cached images", () => {
+      const mockOnSkip = vi.fn();
+      render(
+        <CoinsOverlay variant="no-coins" onSkip={mockOnSkip} hasCachedImages />,
+      );
+
+      expect(
+        screen.getByRole("button", { name: /use previous creations/i }),
+      ).toBeInTheDocument();
     });
 
     it("should not render skip button when onSkip is not provided", () => {
@@ -139,12 +132,6 @@ describe("CoinsOverlay", () => {
       expect(mockOnSkip).toHaveBeenCalledTimes(1);
     });
   });
-
-  /**
-   * ========================================================================
-   * Styling Tests
-   * ========================================================================
-   */
 
   describe("Styling", () => {
     it("should have backdrop blur class for glass effect", () => {

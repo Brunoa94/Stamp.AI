@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useMemo } from "react";
+import { useMemo } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
@@ -16,7 +16,7 @@ import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
  * Only visible when not on the first step.
  */
 
-function BackButtonComponent() {
+export function BackButton() {
   const t = useTranslations("stamp");
   const { currentStep, prevStepSkipLoading } = useStampNavigation();
 
@@ -53,5 +53,3 @@ function BackButtonComponent() {
     </Button>
   );
 }
-
-export const BackButton = memo(BackButtonComponent);

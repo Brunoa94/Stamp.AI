@@ -8,7 +8,7 @@ import { Span } from "@/features/ui/span";
 import { InfoTooltip } from "@/features/ui/info-tooltip";
 import { PromptInput } from "./PromptInput";
 import { PreservationSlider } from "./PreservationSlider";
-import { CoinsOverlay } from "../../components/CoinsOverlay";
+import { CoinsOverlay } from "../../components/CoinsOverlay/CoinsOverlay";
 import { CoinsDisplay } from "../../components/CoinsDisplay";
 import { useSkipGeneration } from "../../../lib/hooks/useSkipGeneration";
 

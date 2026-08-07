@@ -2,6 +2,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import type { GeneratedResultType } from "../../../lib/types/stampFlowTypes";
 
@@ -39,16 +40,12 @@ export function ResultsGallery({
         {results.map((result, index) => {
           const isSelected = result.imageUrl === selectedImageUrl;
           return (
-            <button
+            <Button
               key={`gallery-image-${index}`}
               type="button"
+              variant="stamp-thumbnail"
               onClick={() => onSelectImage(result.imageUrl, result.enhancedPrompt)}
-              className={cn(
-                "relative shrink-0 w-20 h-20 border-2 transition-all duration-300 overflow-hidden group",
-                isSelected
-                  ? "border-(--color-stamp-gold) ring-2 ring-(--color-stamp-gold)/20"
-                  : "border-(--color-stamp-divider) hover:border-(--color-stamp-chocolate)"
-              )}
+              className="group"
               aria-label={t("selectImage", { number: index + 1 })}
               aria-pressed={isSelected}
             >
@@ -69,7 +66,7 @@ export function ResultsGallery({
                   </div>
                 </div>
               )}
-            </button>
+            </Button>
           );
         })}
       </div>

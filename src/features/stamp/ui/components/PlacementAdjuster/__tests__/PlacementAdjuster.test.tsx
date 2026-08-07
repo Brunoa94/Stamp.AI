@@ -107,7 +107,11 @@ describe("PlacementAdjuster", () => {
     const user = userEvent.setup();
     const props = renderAdjuster();
 
-    await user.selectOptions(screen.getByRole("combobox"), "back");
+    // Design-system Select (Radix) renders a combobox trigger + listbox,
+    // not a native <select>, so drive it by opening and picking the option.
+    await user.click(screen.getByRole("combobox"));
+    await user.click(await screen.findByRole("option", { name: "Back" }));
+
     expect(props.onPositionChange).toHaveBeenCalledWith("back");
   });
 

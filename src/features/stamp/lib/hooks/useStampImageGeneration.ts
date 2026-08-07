@@ -14,12 +14,22 @@ import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { logStampError, logStampWarn, logStampInfo } from "../helpers/stampLogger";
 import { withTimeout } from "@/lib/promiseUtils";
 import { addStoredImage } from "../services/generatedImagesStorage";
+import {
+  DEFAULT_SYNTHESIS_STYLE,
+  IMAGE_GENERATION_TIMEOUT_MS,
+} from "../constants/imageGeneration";
+import {
+  ImageGenerationTimeoutError,
+  resolveReferenceImageFile,
+  startSimulatedProgress,
+} from "../helpers/imageGenerationHelpers";
 
 /**
  * useStampImageGeneration
  *
- * Hook for handling AI image generation in Stamp.
- * Integrates with the existing ImageGenerationService.
+ * Hook for handling AI image generation in Stamp. Orchestrates the flow;
+ * file conversion, timeout error and progress simulation live in
+ * ../helpers/imageGenerationHelpers, config in ../constants/imageGeneration.
  *
  * Error Handling Pattern:
  * - Implements idempotency checks to prevent duplicate generation requests
@@ -31,40 +41,11 @@ import { addStoredImage } from "../services/generatedImagesStorage";
  * - Aborts generation if coin deduction fails
  */
 
-const IMAGE_GENERATION_TIMEOUT_MS = 90_000; // 90 seconds for AI generation
-
-class ImageGenerationTimeoutError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "ImageGenerationTimeoutError";
-  }
-}
-
-/**
- * Convert a data URL to a File object
- */
-function dataURLtoFile(dataUrl: string, filename: string): File {
-  const arr = dataUrl.split(",");
-  const mimeMatch = arr[0].match(/:(.*?);/);
-  const mime = mimeMatch ? mimeMatch[1] : "image/jpeg";
-  const bstr = atob(arr[1]);
-  let n = bstr.length;
-  const u8arr = new Uint8Array(n);
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n);
-  }
-  return new File([u8arr], filename, { type: mime });
-}
-
 interface GenerateImageParamsType {
   prompt: string;
   preservation: number;
   removeBackground: boolean;
 }
-
-// Art-style selection was removed from the UI; the generation API still
-// accepts a style, so we send a sensible default.
-const DEFAULT_SYNTHESIS_STYLE = "editorial";
 
 export function useStampImageGeneration() {
   const t = useTranslations("stamp.errors.imageGeneration");
@@ -115,35 +96,10 @@ export function useStampImageGeneration() {
     nextStep();
 
     // Simulate progress for better UX
-    const progressInterval = setInterval(() => {
-      setGenerationProgress((prev) => {
-        if (prev >= 90) {
-          clearInterval(progressInterval);
-          return 90;
-        }
-        return prev + 10;
-      });
-    }, 400);
+    const stopProgress = startSimulatedProgress(setGenerationProgress);
 
     try {
-      // Convert uploaded image URL to File, or use placeholder if none uploaded
-      let imageFile: File;
-
-      if (uploadedImageUrl) {
-        if (uploadedImageUrl.startsWith("data:")) {
-          imageFile = dataURLtoFile(uploadedImageUrl, `reference-${Date.now()}.png`);
-        } else {
-          // For remote URLs, fetch and convert to File
-          const response = await fetch(uploadedImageUrl);
-          const blob = await response.blob();
-          imageFile = new File([blob], `reference-${Date.now()}.png`, { type: blob.type });
-        }
-      } else {
-        // No image uploaded - create a minimal placeholder file
-        // The backend will use mock image anyway in mock mode
-        const placeholderBlob = new Blob([new Uint8Array(1)], { type: "image/png" });
-        imageFile = new File([placeholderBlob], `placeholder-${Date.now()}.png`, { type: "image/png" });
-      }
+      const imageFile = await resolveReferenceImageFile(uploadedImageUrl);
 
       // Deduct coin before generation
       logStampInfo({
@@ -158,7 +114,7 @@ export function useStampImageGeneration() {
           scope: "useStampImageGeneration",
           event: "coin_deduction_failed_no_coins",
         });
-        clearInterval(progressInterval);
+        stopProgress();
         setGenerationProgress(0);
         handleError(new Error(tCoins("deductFailed")));
         return;
@@ -186,7 +142,7 @@ export function useStampImageGeneration() {
         ),
       );
 
-      clearInterval(progressInterval);
+      stopProgress();
       setGenerationProgress(100);
 
       // Add result to history
@@ -204,7 +160,7 @@ export function useStampImageGeneration() {
 
       return result;
     } catch (error) {
-      clearInterval(progressInterval);
+      stopProgress();
       setGenerationProgress(0);
 
       if (error instanceof ImageGenerationTimeoutError) {

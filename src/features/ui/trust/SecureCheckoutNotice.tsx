@@ -1,6 +1,7 @@
 import { Lock, ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 
 /**
@@ -10,7 +11,10 @@ import { Span } from "@/features/ui/span";
  * (Stripe / PayPal, no card details stored) and displays security badges.
  */
 
-const PAYMENT_METHODS = ["Visa", "Mastercard", "Amex", "PayPal"];
+// All of these are supported by Stripe: Visa/Mastercard/Amex as card
+// networks, PayPal and iDEAL as Stripe payment methods (iDEAL integration
+// planned — shown here as an accepted method ahead of it).
+const PAYMENT_METHODS = ["Visa", "Mastercard", "Amex", "PayPal", "iDEAL"];
 
 interface SecureCheckoutNoticeProps {
   className?: string;
@@ -36,19 +40,27 @@ export function SecureCheckoutNotice({ className }: SecureCheckoutNoticeProps) {
             <Lock className="h-3.5 w-3.5 text-(--color-stamp-gold)" aria-hidden="true" />
             <Span variant="sm" className="font-bold">{t("title")}</Span>
           </div>
-          <p className="text-xs text-(--color-stamp-taupe)">{t("body")}</p>
+          <Paragraph variant="xs" className="text-(--color-stamp-taupe)">
+            {t("body")}
+          </Paragraph>
         </div>
       </div>
 
       {/* Security Badges */}
       <div className="flex items-center gap-3 border-t border-(--color-stamp-divider) pt-4">
-        <span className="border border-(--color-stamp-divider) bg-(--color-stamp-white) px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#635BFF]">
+        <Span
+          variant="micro"
+          className="border border-(--color-stamp-divider) bg-(--color-stamp-white) px-2.5 py-1 text-[10px] font-bold tracking-wider text-[#635BFF]"
+        >
           Stripe
-        </span>
+        </Span>
         <div className="h-4 w-px bg-(--color-stamp-divider)" />
-        <span className="text-[9px] font-medium uppercase tracking-wider text-(--color-stamp-taupe)">
+        <Span
+          variant="micro"
+          className="text-[9px] tracking-wider text-(--color-stamp-taupe)"
+        >
           {t("sslSecured")}
-        </span>
+        </Span>
       </div>
 
       {/* Payment Methods */}
@@ -57,12 +69,13 @@ export function SecureCheckoutNotice({ className }: SecureCheckoutNoticeProps) {
           {t("accept")}
         </Span>
         {PAYMENT_METHODS.map((method) => (
-          <span
+          <Span
             key={method}
-            className="border border-(--color-stamp-divider) bg-(--color-stamp-white) px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-chocolate)"
+            variant="micro"
+            className="border border-(--color-stamp-divider) bg-(--color-stamp-white) px-2 py-1 text-[10px] font-bold tracking-widest text-(--color-stamp-chocolate)"
           >
             {method}
-          </span>
+          </Span>
         ))}
       </div>
     </div>

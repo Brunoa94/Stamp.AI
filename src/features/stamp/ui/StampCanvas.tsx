@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import { BackButton } from "./components/BackButton";
+import { BackButton } from "./components/BackButton/BackButton";
 import { NavigationSidebar } from "./components/NavigationSidebar";
 import { HeroSection } from "./sections/HeroSection/HeroSection";
 import { UploadSection } from "./sections/UploadSection/UploadSection";

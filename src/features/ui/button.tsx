@@ -42,6 +42,8 @@ const buttonVariants = cva(
           "h-10 w-10 bg-(--color-stamp-cream) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) transition-all border border-(--color-stamp-divider)",
         "stamp-google":
           "w-full gap-4 border-2 border-(--color-stamp-divider) bg-(--color-stamp-white) py-6 px-6 font-heading font-bold text-base uppercase tracking-widest text-(--color-stamp-chocolate) transition-all hover:border-(--color-stamp-taupe) hover:bg-(--color-stamp-cream)",
+        "stamp-thumbnail":
+          "relative h-20 w-20 shrink-0 overflow-hidden rounded-none border-2 border-(--color-stamp-divider) p-0 transition-all duration-300 hover:border-(--color-stamp-chocolate) aria-pressed:border-(--color-stamp-gold) aria-pressed:ring-2 aria-pressed:ring-(--color-stamp-gold)/20",
       },
       size: {
         default: "h-10 px-4 py-2 has-[>svg]:px-3",
