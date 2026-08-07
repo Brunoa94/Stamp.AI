@@ -8,10 +8,12 @@ import { CoinsOverlay } from "../CoinsOverlay";
  * ========================================================================
  * Tests for the overlay shown when the user cannot generate.
  *
- * The auth entry points are the shared Login/Register dialogs (owned by the
- * auth feature and covered by their own tests); they are stubbed here so
- * this suite stays a focused unit test of the overlay itself and doesn't
- * need the react-query / router providers those dialogs pull in.
+ * The auth entry points are the shared Login/Register dialogs. Their wiring
+ * is covered by AuthDialog's own test (features/auth/components/__tests__);
+ * here they are stubbed so this stays a focused unit test of the overlay and
+ * doesn't drag in the react-query / router providers those dialogs need.
+ * NOTE: the stubs only assert the overlay *renders* the auth entry points —
+ * dialog-open behavior is AuthDialog's test, not this one.
  */
 
 vi.mock("@/features/auth/login/Login", () => ({

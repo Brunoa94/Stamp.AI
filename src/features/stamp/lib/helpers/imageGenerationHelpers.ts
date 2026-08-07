@@ -19,7 +19,8 @@ export class ImageGenerationTimeoutError extends Error {
 export function dataURLtoFile(dataUrl: string, filename: string): File {
   const arr = dataUrl.split(",");
   const mimeMatch = arr[0].match(/:(.*?);/);
-  const mime = mimeMatch ? mimeMatch[1] : "image/jpeg";
+  // Fall back when the mime segment is missing OR empty ("data:;base64,...").
+  const mime = mimeMatch?.[1] || "image/jpeg";
   const bstr = atob(arr[1]);
   let n = bstr.length;
   const u8arr = new Uint8Array(n);

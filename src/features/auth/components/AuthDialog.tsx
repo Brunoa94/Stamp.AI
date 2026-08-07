@@ -35,7 +35,11 @@ export function AuthDialog({
     <Dialog>
       <DialogTrigger asChild suppressHydrationWarning>
         {children ? (
-          <button aria-label={triggerAriaLabel} className={className}>
+          // Deliberately a plain button: this path exists for triggers whose
+          // appearance is fully caller-owned (nav links, overlay CTAs that
+          // pass a styled element). The design-system Button's base classes
+          // would fight the caller's styling here.
+          <button type="button" aria-label={triggerAriaLabel} className={className}>
             {children}
           </button>
         ) : (
