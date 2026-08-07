@@ -23,14 +23,16 @@ export function CustomizationPreview() {
   const { isFinalizing } = useStampFinalization();
 
   return (
-    <div className="p-12 lg:p-24 lg:px-16 flex items-center justify-center bg-white border-r border-(--color-stamp-divider)">
+    <div className="p-6 pt-16 md:p-10 md:pt-16 lg:p-16 lg:pt-16 xl:p-24 xl:px-16 flex flex-col items-center bg-white border-r border-(--color-stamp-divider)">
       {selectedImageUrl ? (
-        <DesignAdjustmentPanel
-          imageUrl={selectedImageUrl}
-          disabled={isFinalizing}
-        />
+        <div className="my-auto w-full">
+          <DesignAdjustmentPanel
+            imageUrl={selectedImageUrl}
+            disabled={isFinalizing}
+          />
+        </div>
       ) : (
-        <div className="w-full max-w-sm aspect-4/5 bg-(--color-stamp-cream)/40 flex flex-col items-center justify-center gap-4">
+        <div className="my-auto w-full max-w-sm aspect-4/5 bg-(--color-stamp-cream)/40 flex flex-col items-center justify-center gap-4">
           <Shirt className="h-24 w-24 text-(--color-stamp-taupe)/10" />
           <div className="px-8 text-center">
             <Span

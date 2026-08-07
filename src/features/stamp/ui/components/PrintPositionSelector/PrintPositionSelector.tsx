@@ -43,7 +43,7 @@ export function PrintPositionSelector({
       >
         {t("positionsHelp")}
       </Span>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(7rem,1fr))] gap-2">
         {availablePositions.map((position) => {
           const config = printPositionConfigs[position];
           return (

@@ -1,17 +1,20 @@
-import { memo } from "react";
-import { Sparkles } from "lucide-react";
+import { memo, useState } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { STAMP_EDIT_SUGGESTIONS } from "../../../lib/constants/stampProducts";
+import { Disclosure } from "../../components/Disclosure/Disclosure";
 import { SuggestionCard } from "./SuggestionCard";
 import { NoFilterCard, NO_FILTER_ID } from "./NoFilterCard";
 
 /**
  * SynthesisVisual
  *
- * Left panel — a Gemini-style grid of suggested edits. Each tile is a
- * representative thumbnail image with the label overlaid on a gradient
- * scrim; selecting a tile updates the selected suggestion via `onSelectSuggestion`.
+ * Left panel — a collapsible filter picker. The trigger shows the currently
+ * selected filter; expanding it reveals the tile grid of suggested edits.
+ * Keeping the grid folded lets the whole step fit the viewport without
+ * scrolling. On large screens a preview of the selected filter fills the
+ * panel below the picker.
  */
 
 interface PropsI {
@@ -22,39 +25,75 @@ interface PropsI {
 function SynthesisVisualComponent({ selectedId, onSelectSuggestion }: PropsI) {
   const t = useTranslations("stamp.synthesis");
   const ts = useTranslations("stamp.suggestions");
+  const [pickerOpen, setPickerOpen] = useState(false);
   const isNoFilterSelected = selectedId === null || selectedId === NO_FILTER_ID;
 
-  return (
-    <div className="p-12 lg:p-24 lg:pt-8 overflow-hidden lg:px-10 bg-white flex flex-col justify-center border-r border-(--color-stamp-divider)">
-      <div className="flex items-center gap-3 mb-6">
-        <Sparkles className="w-4 h-4 text-(--color-stamp-gold)" />
-        <Span
-          variant="micro"
-          className="text-[10px] tracking-widest text-(--color-stamp-taupe)"
-        >
-          {t("eyebrow")}
-        </Span>
-      </div>
+  const selectedSuggestion = isNoFilterSelected
+    ? undefined
+    : STAMP_EDIT_SUGGESTIONS.find(({ id }) => id === selectedId);
+  const selectedLabel = selectedSuggestion
+    ? ts(`${selectedSuggestion.id}.label`)
+    : t("noFilter.label");
 
-      <div className="grid grid-cols-4 gap-4 w-full">
-        {STAMP_EDIT_SUGGESTIONS.map(({ id, image }) => {
-          const isSelected = selectedId === id;
-          return (
-            <SuggestionCard
-              key={id}
-              id={id}
-              label={ts(`${id}.label`)}
-              hint={ts(`${id}.hint`)}
-              image={image}
-              isSelected={isSelected}
-              onSelect={onSelectSuggestion}
+  const handleSelect = (id: string) => {
+    onSelectSuggestion?.(id);
+    setPickerOpen(false);
+  };
+
+  return (
+    <div className="p-6 pt-16 md:p-10 md:pt-16 lg:p-16 lg:pt-16 xl:p-24 xl:pt-24 bg-white flex flex-col border-r border-(--color-stamp-divider)">
+      <div className="my-auto w-full space-y-4">
+        <Disclosure
+          label={t("eyebrow")}
+          value={selectedLabel}
+          open={pickerOpen}
+          onOpenChange={setPickerOpen}
+        >
+          <div className="grid max-h-[45vh] grid-cols-2 gap-3 overflow-y-auto pr-1 sm:grid-cols-3">
+            {STAMP_EDIT_SUGGESTIONS.map(({ id, image }) => (
+              <SuggestionCard
+                key={id}
+                id={id}
+                label={ts(`${id}.label`)}
+                hint={ts(`${id}.hint`)}
+                image={image}
+                isSelected={selectedId === id}
+                onSelect={handleSelect}
+              />
+            ))}
+            <NoFilterCard
+              isSelected={isNoFilterSelected}
+              onSelect={handleSelect}
             />
-          );
-        })}
-        <NoFilterCard
-          isSelected={isNoFilterSelected}
-          onSelect={onSelectSuggestion}
-        />
+          </div>
+        </Disclosure>
+
+        {/* Selected filter preview — desktop only, keeps the panel visual */}
+        <div className="relative mx-auto hidden w-full max-w-60 overflow-hidden rounded-xl ring-1 ring-black/5 lg:block aspect-2/3">
+          {selectedSuggestion ? (
+            <Image
+              src={selectedSuggestion.image}
+              alt={selectedLabel}
+              fill
+              className="object-cover"
+              sizes="240px"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-stone-100 to-stone-200" />
+          )}
+          <div
+            aria-hidden
+            className="absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-black/60 to-transparent"
+          />
+          <Span
+            variant="sm"
+            className={`absolute bottom-2 left-2.5 right-2 text-left font-medium drop-shadow-sm ${
+              selectedSuggestion ? "text-white" : "text-(--color-stamp-taupe)"
+            }`}
+          >
+            {selectedLabel}
+          </Span>
+        </div>
       </div>
     </div>
   );

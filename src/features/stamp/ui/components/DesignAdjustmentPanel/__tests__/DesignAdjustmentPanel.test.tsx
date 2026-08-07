@@ -12,6 +12,13 @@ import { DesignAdjustmentPanel } from "../DesignAdjustmentPanel";
 
 const IMAGE_URL = "https://images.unsplash.com/test-design.png";
 
+/** The move/size/rotation controls live behind the "Adjust placement" disclosure. */
+async function openAdjuster(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(
+    screen.getByRole("button", { name: /adjust placement/i }),
+  );
+}
+
 describe("DesignAdjustmentPanel", () => {
   beforeEach(() => {
     useStampFlowStore.getState().reset();
@@ -57,6 +64,7 @@ describe("DesignAdjustmentPanel", () => {
   it("adjusting placement updates the live preview", async () => {
     const user = userEvent.setup();
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
+    await openAdjuster(user);
 
     const before = screen.getByTestId("design-overlay").style.top;
     await user.click(screen.getByRole("button", { name: "Move up" }));
@@ -69,6 +77,7 @@ describe("DesignAdjustmentPanel", () => {
   it("clamps adjustments to the safe zone and shows the warning", async () => {
     const user = userEvent.setup();
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
+    await openAdjuster(user);
 
     const moveUp = screen.getByRole("button", { name: "Move up" });
     for (let i = 0; i < 10; i += 1) {
@@ -85,6 +94,7 @@ describe("DesignAdjustmentPanel", () => {
   it("reset restores the default placement", async () => {
     const user = userEvent.setup();
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
+    await openAdjuster(user);
 
     await user.click(screen.getByRole("button", { name: "Move up" }));
     await user.click(screen.getByRole("button", { name: /reset placement/i }));
@@ -99,17 +109,22 @@ describe("DesignAdjustmentPanel", () => {
     useStampFlowStore.setState({ blueprintId: 1320 });
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
 
-    // Preview and placement controls should be hidden
+    // Preview, adjuster disclosure, and placement controls should be hidden
     expect(screen.queryByTestId("placement-preview")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /adjust placement/i }),
+    ).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Move up" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Move down" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /reset placement/i })).not.toBeInTheDocument();
   });
 
-  it("shows placement adjuster for products without disablePlacementAdjustment", () => {
+  it("shows placement adjuster for products without disablePlacementAdjustment", async () => {
     // Use tshirt blueprint (6) which does not have disablePlacementAdjustment
     useStampFlowStore.setState({ blueprintId: 6 });
+    const user = userEvent.setup();
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
+    await openAdjuster(user);
 
     // Placement controls should be visible
     expect(screen.getByRole("button", { name: "Move up" })).toBeInTheDocument();
@@ -136,6 +151,10 @@ describe("DesignAdjustmentPanel — socks (blueprint 496)", () => {
 
   it("hides the free-form placement controls for socks", () => {
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
+    // Socks disable placement adjustment entirely — no adjuster disclosure
+    expect(
+      screen.queryByRole("button", { name: /adjust placement/i }),
+    ).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Move up" })).not.toBeInTheDocument();
   });
 
@@ -178,6 +197,7 @@ describe("DesignAdjustmentPanel — reset on product change", () => {
     useStampFlowStore.setState({ blueprintId: 145 });
     const user = userEvent.setup();
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
+    await openAdjuster(user);
 
     await user.click(screen.getByRole("button", { name: "Move up" }));
     expect(
@@ -200,6 +220,7 @@ describe("DesignAdjustmentPanel — reset on product change", () => {
     useStampFlowStore.setState({ blueprintId: 145 });
     const user = userEvent.setup();
     const { unmount } = renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
+    await openAdjuster(user);
 
     await user.click(screen.getByRole("button", { name: "Move up" }));
     unmount();

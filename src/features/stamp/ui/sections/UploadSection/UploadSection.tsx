@@ -55,7 +55,7 @@ function UploadSectionComponent() {
   return (
     <section
       id="step-1"
-      className="h-full overflow-y-auto grid grid-cols-1 lg:grid-cols-2 border-b border-(--color-stamp-divider)"
+      className="h-full overflow-y-auto grid grid-cols-1 md:grid-cols-2 border-b border-(--color-stamp-divider)"
     >
       {/* Hidden file input */}
       <Input
@@ -68,7 +68,7 @@ function UploadSectionComponent() {
       />
 
       {/* Left Panel: Upload Dropzone / Image Preview */}
-      <div className="relative flex items-center justify-center bg-(--color-stamp-divider)/5 overflow-hidden p-12 lg:p-24">
+      <div className="relative flex items-center justify-center bg-(--color-stamp-divider)/5 overflow-hidden p-6 pt-16 md:p-10 md:pt-16 lg:p-16 lg:pt-16 xl:p-24 xl:pt-24">
         {uploadedImageUrl ? (
           <UploadPreview
             imageUrl={uploadedImageUrl}

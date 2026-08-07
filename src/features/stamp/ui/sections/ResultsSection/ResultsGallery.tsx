@@ -32,8 +32,8 @@ export function ResultsGallery({
   }
 
   return (
-    <div className="mb-8">
-      <Span variant="micro" className="text-(--color-stamp-taupe) mb-3 block">
+    <div className="mb-6">
+      <Span variant="micro" className="text-(--color-stamp-taupe) mb-2 block">
         {t("previousCreations")}
       </Span>
       <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-(--color-stamp-divider) scrollbar-track-transparent">

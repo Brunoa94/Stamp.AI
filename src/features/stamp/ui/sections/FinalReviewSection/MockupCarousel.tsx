@@ -309,12 +309,12 @@ function MockupCarouselComponent({ mockupImages, fallbackUrl }: PropsI) {
 
   return (
     <>
-      <div className="p-6 md:p-8 lg:p-12 flex flex-col items-center justify-center bg-(--color-stamp-divider)/5 border-r border-(--color-stamp-divider)">
+      <div className="hidden md:flex p-6 md:p-8 md:pt-16 lg:p-12 lg:pt-16 flex-col items-center justify-center bg-(--color-stamp-divider)/5 border-r border-(--color-stamp-divider)">
         {/* Main image */}
         <button
           type="button"
           onClick={openFullscreen}
-          className="w-full max-w-xl lg:max-w-2xl bg-white p-6 shadow-2xl relative rotate-1 group hover:rotate-0 transition-all duration-1000 cursor-zoom-in hover:shadow-3xl hover:scale-[1.02]"
+          className="w-full max-w-[min(36rem,52vh)] bg-white p-6 shadow-2xl relative rotate-1 group hover:rotate-0 transition-all duration-1000 cursor-zoom-in hover:shadow-3xl hover:scale-[1.02]"
           aria-label={t("viewFullscreen")}
         >
           <div className="aspect-square bg-(--color-stamp-cream) flex items-center justify-center overflow-hidden mb-6 relative">

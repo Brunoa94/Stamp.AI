@@ -542,6 +542,8 @@
     "adjust": {
       "positionsTitle": "Print Positions",
       "positionsHelp": "Pick where your design gets printed.",
+      "adjustToggle": "Adjust placement",
+      "previewToggle": "Preview & placement",
       "positionIncluded": "Included",
       "positionExtraCost": "+{price}",
       "positionToggleAria": "Toggle {position} print",

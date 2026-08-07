@@ -42,11 +42,11 @@ export function CustomizationControls({
   const t = useTranslations("stamp.customization");
 
   return (
-    <div className="p-12 lg:p-24 flex flex-col justify-center bg-white">
+    <div className="p-6 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-white">
       <Heading
         as="h2"
-        variant="title"
-        className="text-(--color-stamp-chocolate) mb-6"
+        variant="panelTitle"
+        className="text-(--color-stamp-chocolate) mb-4 md:mb-6"
       >
         {t.rich("title", {
           accent: (chunks) => (
@@ -57,7 +57,7 @@ export function CustomizationControls({
         })}
       </Heading>
 
-      <div className="space-y-12 mb-12">
+      <div className="space-y-6 md:space-y-12 mb-8 md:mb-12">
         {/* Only show color swatches if colors are available */}
         {colors.length > 0 && (
           <ColorSwatches
