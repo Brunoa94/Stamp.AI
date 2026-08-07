@@ -56,6 +56,8 @@ const buttonVariants = cva(
           "w-full gap-4 border-2 border-(--color-stamp-divider) bg-(--color-stamp-white) py-6 px-6 font-heading font-bold text-base uppercase tracking-widest text-(--color-stamp-chocolate) transition-all hover:border-(--color-stamp-taupe) hover:bg-(--color-stamp-cream)",
         "stamp-thumbnail":
           "relative h-20 w-20 shrink-0 overflow-hidden rounded-none border-2 border-(--color-stamp-divider) p-0 transition-all duration-300 not-aria-pressed:hover:border-(--color-stamp-chocolate) aria-pressed:border-(--color-stamp-gold) aria-pressed:ring-2 aria-pressed:ring-(--color-stamp-gold)/20",
+        "stamp-disclosure":
+          "flex w-full h-auto cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-(--color-stamp-gold)/5",
       },
     },
     defaultVariants: {

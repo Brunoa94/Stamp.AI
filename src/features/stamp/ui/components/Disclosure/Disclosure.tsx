@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Span } from "@/features/ui/span";
+import { Button } from "@/features/ui/button";
 
 /**
  * Disclosure
@@ -53,12 +54,12 @@ export function Disclosure({
         className,
       )}
     >
-      <button
+      <Button
         type="button"
+        variant="stamp-disclosure"
         onClick={toggle}
         aria-expanded={isOpen}
         aria-controls={contentId}
-        className="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-(--color-stamp-gold)/5"
       >
         <Span
           variant="micro"
@@ -83,7 +84,7 @@ export function Disclosure({
             )}
           />
         </span>
-      </button>
+      </Button>
       {isOpen && (
         <div
           id={contentId}
