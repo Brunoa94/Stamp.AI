@@ -68,14 +68,14 @@ function ResultsSectionComponent() {
   return (
     <section
       id="step-4"
-      className="h-full overflow-y-auto flex flex-col items-center p-6 pt-16 md:p-10 md:pt-16 lg:p-16 lg:pt-16 bg-(--color-stamp-off-white) border-b border-(--color-stamp-divider)"
+      className="h-full overflow-y-auto flex flex-col items-center p-6 pt-16 md:p-10 md:pt-16 lg:p-16 lg:pt-16 xl:p-24 xl:pt-24 bg-(--color-stamp-off-white) border-b border-(--color-stamp-divider)"
     >
       {/* my-auto (not justify-center) so tall content scrolls instead of clipping at the top */}
-      <div className="max-w-2xl w-full my-auto">
+      <div className="max-w-3xl w-full my-auto">
         <Heading
           as="h2"
-          variant="title"
-          className="text-(--color-stamp-chocolate) mb-4 text-4xl md:text-5xl lg:text-6xl"
+          variant="panelTitle"
+          className="text-(--color-stamp-chocolate) mb-4 md:mb-6"
         >
           {t.rich("title", {
             accent: (chunks) => (

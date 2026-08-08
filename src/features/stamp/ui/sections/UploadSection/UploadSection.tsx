@@ -68,7 +68,7 @@ function UploadSectionComponent() {
       />
 
       {/* Left Panel: Upload Dropzone / Image Preview */}
-      <div className="relative flex items-center justify-center bg-(--color-stamp-divider)/5 overflow-hidden p-6 pt-16 md:p-10 md:pt-16 lg:p-16 lg:pt-16 xl:p-24 xl:pt-24">
+      <div className="relative flex items-center justify-center bg-(--color-stamp-divider)/5 overflow-hidden p-6 pt-20 md:p-10 md:pt-16 lg:p-16 lg:pt-16 xl:p-24 xl:pt-24">
         {uploadedImageUrl ? (
           <UploadPreview
             imageUrl={uploadedImageUrl}

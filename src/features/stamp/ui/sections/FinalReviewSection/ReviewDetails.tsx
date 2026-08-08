@@ -1,6 +1,6 @@
-import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
+import { PolaroidPreview } from "../../components/PolaroidPreview/PolaroidPreview";
 import { ProductSummary } from "./ProductSummary";
 import { ReviewActions } from "./ReviewActions";
 
@@ -8,11 +8,12 @@ import { ReviewActions } from "./ReviewActions";
  * ReviewDetails
  *
  * Right panel with product details and actions. On mobile the carousel
- * column is hidden, so a compact mockup thumbnail renders here instead.
+ * column is hidden, so a polaroid-style mockup preview renders here instead,
+ * using the shared PolaroidPreview component.
  */
 
 interface PropsI {
-  /** Mockup shown as a compact thumbnail on mobile (carousel is md+ only). */
+  /** Mockup shown as a polaroid preview on mobile (carousel is md+ only). */
   mockupUrl?: string;
   productName: string;
   color?: string;
@@ -36,17 +37,18 @@ export function ReviewDetails({
   const t = useTranslations("stamp.finalReview");
 
   return (
-    <div className="p-6 pt-16 md:pt-10 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-white">
-      {/* Mobile-only mockup thumbnail (the carousel column is hidden below md) */}
+    <div className="p-6 pt-24 md:pt-10 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-white">
+      {/* Mobile-only polaroid mockup preview (carousel is md+ only) */}
       {mockupUrl && (
-        <div className="md:hidden relative mx-auto mb-4 h-36 aspect-square bg-white p-1 shadow-lg border border-(--color-stamp-divider)">
-          <Image
-            src={mockupUrl}
+        <div className="md:hidden flex justify-center mb-6">
+          <PolaroidPreview
+            imageUrl={mockupUrl}
             alt={t("mockupAlt")}
-            fill
-            unoptimized
-            className="object-cover"
-            sizes="144px"
+            badgeText={t("previewSealed")}
+            fullscreenLabel={t("viewFullscreen")}
+            closeLabel={t("closeFullscreen")}
+            hintText={t("pressEscToClose")}
+            size="sm"
           />
         </div>
       )}

@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { BackButton } from "./components/BackButton/BackButton";
+import { MobileStepFooter } from "./components/MobileStepFooter/MobileStepFooter";
 import { NavigationSidebar } from "./components/NavigationSidebar";
 import { HeroSection } from "./sections/HeroSection/HeroSection";
 import { UploadSection } from "./sections/UploadSection/UploadSection";
@@ -72,6 +73,9 @@ export function StampCanvas() {
 
       {/* Sidebar Navigation (Desktop Only) */}
       <NavigationSidebar />
+
+      {/* Mobile Sticky Footer */}
+      <MobileStepFooter />
     </div>
   );
 }
