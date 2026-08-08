@@ -1,3 +1,5 @@
+"use client";
+
 import { ChangeEvent } from "react";
 import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
@@ -11,6 +13,7 @@ import { PreservationSlider } from "./PreservationSlider";
 import { CoinsOverlay } from "../../components/CoinsOverlay/CoinsOverlay";
 import { CoinsDisplay } from "../../components/CoinsDisplay";
 import { useSkipGeneration } from "../../../lib/hooks/useSkipGeneration";
+import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction";
 
 /**
  * SynthesisForm
@@ -56,15 +59,25 @@ export function SynthesisForm({
   onGenerate,
 }: PropsI) {
   const t = useTranslations("stamp.synthesis");
-  const { handleSkipGeneration, canSkip, hasCachedImages } = useSkipGeneration();
+  const { handleSkipGeneration, canSkip, hasCachedImages } =
+    useSkipGeneration();
 
   // Determine overlay state (only show after loading is complete)
   const showLoginOverlay = !isAuthLoading && !isAuthenticated;
-  const showNoCoinsOverlay = !isAuthLoading && isAuthenticated && !isCoinsLoading && !hasCoins;
+  const showNoCoinsOverlay =
+    !isAuthLoading && isAuthenticated && !isCoinsLoading && !hasCoins;
   const canGenerate = isAuthenticated && hasCoins;
 
+  // Register action for mobile sticky footer (Step 2)
+  useRegisterMobileAction(2, {
+    action: onGenerate,
+    label: isGenerating ? t("generating") : t("generate"),
+    disabled: isGenerating || !prompt.trim() || !canGenerate,
+    loading: isGenerating,
+  });
+
   return (
-    <div className="relative p-6 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-white">
+    <div className="relative p-6 pb-36 md:pb-6 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-white">
       <Heading
         as="h2"
         variant="panelTitle"
@@ -110,8 +123,8 @@ export function SynthesisForm({
         </div>
       </div>
 
-      {/* Generate Button with Coins Display */}
-      <div className="space-y-4">
+      {/* Generate Button with Coins Display - hidden on mobile */}
+      <div className="hidden md:block space-y-4">
         {isAuthenticated && <CoinsDisplay className="justify-end" />}
         <Button
           onClick={onGenerate}
@@ -121,6 +134,13 @@ export function SynthesisForm({
           {isGenerating ? t("generating") : t("generate")}
         </Button>
       </div>
+
+      {/* Mobile: show coins display above sticky footer */}
+      {isAuthenticated && (
+        <div className="md:hidden mb-4">
+          <CoinsDisplay className="justify-center" />
+        </div>
+      )}
 
       {/* Overlays */}
       {showLoginOverlay && <CoinsOverlay variant="not-logged-in" />}

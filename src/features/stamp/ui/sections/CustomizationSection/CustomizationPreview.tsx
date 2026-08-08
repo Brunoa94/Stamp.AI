@@ -1,13 +1,7 @@
 "use client";
 
-import { Shirt } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { Span } from "@/features/ui/span";
-import {
-  useStampFinalization,
-  useStampSelectedImage,
-} from "../../../lib/hooks/useStampSelectors";
-import { DesignAdjustmentPanel } from "../../components/DesignAdjustmentPanel/DesignAdjustmentPanel";
+import { DesktopPreviewPanel } from "./DesktopPreviewPanel";
+import { MobilePreviewPanel } from "./MobilePreviewPanel";
 
 /**
  * CustomizationPreview
@@ -15,41 +9,34 @@ import { DesignAdjustmentPanel } from "../../components/DesignAdjustmentPanel/De
  * Left panel of Step 6. Interactive design adjustment: print positions,
  * live placement preview, and move/size/rotation controls. Falls back to an
  * empty state when no design has been selected yet.
+ *
+ * On mobile flow: Shows as a separate step with title, preview/adjuster only,
+ * and create button in sticky footer (no position selector - that's in CustomizationControls).
  */
 
-export function CustomizationPreview() {
-  const t = useTranslations("stamp.adjust");
-  const { selectedImageUrl } = useStampSelectedImage();
-  const { isFinalizing } = useStampFinalization();
+interface PropsI {
+  // Mobile flow props
+  isMobileFlow?: boolean;
+  canCreate?: boolean;
+  isFinalizing?: boolean;
+  onCreateProduct?: () => void;
+}
+
+export function CustomizationPreview({
+  isMobileFlow = false,
+  canCreate = false,
+  isFinalizing = false,
+  onCreateProduct,
+}: PropsI) {
+  if (!isMobileFlow) {
+    return <DesktopPreviewPanel />;
+  }
 
   return (
-    <div className="p-6 pt-16 md:p-10 md:pt-16 lg:p-16 lg:pt-16 xl:p-24 xl:px-16 flex flex-col items-center bg-white border-r border-(--color-stamp-divider)">
-      {selectedImageUrl ? (
-        <div className="my-auto w-full">
-          <DesignAdjustmentPanel
-            imageUrl={selectedImageUrl}
-            disabled={isFinalizing}
-          />
-        </div>
-      ) : (
-        <div className="my-auto w-full max-w-sm aspect-4/5 bg-(--color-stamp-cream)/40 flex flex-col items-center justify-center gap-4">
-          <Shirt className="h-24 w-24 text-(--color-stamp-taupe)/10" />
-          <div className="px-8 text-center">
-            <Span
-              variant="micro"
-              className="mb-2 block tracking-[0.3em] text-(--color-stamp-taupe)"
-            >
-              {t("noImageTitle")}
-            </Span>
-            <Span
-              variant="micro"
-              className="block text-[9px] normal-case tracking-normal text-(--color-stamp-taupe)/60"
-            >
-              {t("noImageBody")}
-            </Span>
-          </div>
-        </div>
-      )}
-    </div>
+    <MobilePreviewPanel
+      canCreate={canCreate}
+      isFinalizing={isFinalizing}
+      onCreateProduct={onCreateProduct ?? (() => {})}
+    />
   );
 }

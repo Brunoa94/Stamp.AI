@@ -35,7 +35,7 @@ function SuggestionCardComponent({
       aria-label={t("applySuggestion", { label, hint })}
       aria-pressed={isSelected}
       title={hint}
-      className={`group relative aspect-2/3 w-full overflow-hidden rounded-xl p-0 ring-1 focus:outline-none transition-all duration-300 ${
+      className={`group relative aspect-2/3 w-full min-h-48 overflow-hidden rounded-xl p-0 ring-1 focus:outline-none transition-all duration-300 ${
         isSelected
           ? "ring-2 ring-(--color-stamp-gold)"
           : "ring-black/5 hover:ring-2 hover:ring-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)"

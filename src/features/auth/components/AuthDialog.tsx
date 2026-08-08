@@ -1,7 +1,8 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useState, useEffect, useRef } from "react";
 import { Dialog, DialogTrigger } from "@/features/ui/dialog";
+import { useUser } from "@/queries/authQueries";
 
 /**
  * AuthDialog
@@ -10,6 +11,8 @@ import { Dialog, DialogTrigger } from "@/features/ui/dialog";
  * children or the caller's default button) and opens the given form.
  * Login and Register compose this instead of each recreating the
  * Dialog + DialogTrigger wiring.
+ *
+ * Auto-closes when authentication state changes (user logs in).
  */
 
 interface PropsI {
@@ -31,8 +34,20 @@ export function AuthDialog({
   children,
   className,
 }: PropsI) {
+  const [open, setOpen] = useState(false);
+  const { data: user } = useUser();
+  const wasOpenRef = useRef(false);
+
+  // Auto-close dialog when user becomes authenticated
+  useEffect(() => {
+    if (wasOpenRef.current && user) {
+      setOpen(false);
+    }
+    wasOpenRef.current = open;
+  }, [user, open]);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild suppressHydrationWarning>
         {children ? (
           // Deliberately a plain button: this path exists for triggers whose

@@ -3,6 +3,7 @@
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { STAMP_STEPS } from "../../../lib/constants/stampSteps";
 import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
 
@@ -13,13 +14,17 @@ import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
  * Shows contextual label based on the target step.
  * Skips loading states (steps 3 and 7) when going back.
  * Only visible when not on the first step.
+ * Hidden on mobile (<md) where the back button is in the sticky footer.
  */
 
 export function BackButton() {
   const t = useTranslations("stamp");
+  const isMdUp = useMediaQuery("(min-width: 768px)", true);
   const { currentStep, prevStepSkipLoading } = useStampNavigation();
 
-  if (currentStep === 0) {
+  // Hide on mobile (back button is in the sticky footer)
+  // Also hide on hero step
+  if (!isMdUp || currentStep === 0) {
     return null;
   }
 

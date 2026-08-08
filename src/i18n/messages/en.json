@@ -218,6 +218,8 @@
   "stamp": {
     "synthesis": {
       "eyebrow": "Choose a filter",
+      "showMore": "Show {count} more",
+      "showLess": "Show less",
       "subtitle": "Tap a suggestion to start your prompt, then tweak it on the right.",
       "applySuggestion": "Apply suggestion: {label} — {hint}",
       "noFilter": {
@@ -453,13 +455,17 @@
       "accessories": "Accessories",
       "selectedBadge": "Selected",
       "qualityNote": "Premium quality, printed on demand",
-      "customizeNext": "Customize colors and size in the next step"
+      "customizeNext": "Customize colors and size in the next step",
+      "showMore": "Show {count} more",
+      "showLess": "Show less"
     },
     "customization": {
       "protocol": "Step 06 / Customize",
       "title": "Customize Your <accent>Product</accent>",
+      "previewTitle": "Preview & <accent>Placement</accent>",
       "creating": "CREATING...",
       "createProduct": "CREATE PRODUCT",
+      "continueToPreview": "CONTINUE TO PREVIEW",
       "sizeLabel": "Size",
       "colorLabel": "Color Swatches",
       "colorLoading": "Loading colors...",

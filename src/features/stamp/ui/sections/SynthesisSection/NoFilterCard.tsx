@@ -25,7 +25,7 @@ function NoFilterCardComponent({ isSelected, onSelect }: PropsI) {
       aria-label={t("aria")}
       aria-pressed={isSelected}
       title={t("hint")}
-      className={`group relative aspect-2/3 w-full overflow-hidden rounded-xl p-0 ring-1 focus:outline-none transition-all duration-300 bg-linear-to-br from-stone-100 to-stone-200 flex items-center justify-center ${
+      className={`group relative aspect-2/3 w-full min-h-48 overflow-hidden rounded-xl p-0 ring-1 focus:outline-none transition-all duration-300 bg-linear-to-br from-stone-100 to-stone-200 flex items-center justify-center ${
         isSelected
           ? "ring-2 ring-(--color-stamp-gold)"
           : "ring-black/5 hover:ring-2 hover:ring-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)"

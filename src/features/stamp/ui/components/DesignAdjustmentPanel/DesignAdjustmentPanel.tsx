@@ -7,10 +7,13 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useDesignAdjustment } from "../../../lib/hooks/useDesignAdjustment";
 import { useStampCustomization } from "../../../lib/hooks/useStampSelectors";
 import { getCanvasOrientation } from "@/lib/printPlacement/config";
-import { Disclosure } from "../Disclosure/Disclosure";
 import { PrintPositionSelector } from "../PrintPositionSelector/PrintPositionSelector";
-import { PlacementAdjuster } from "../PlacementAdjuster/PlacementAdjuster";
-import { PlacementPreview } from "../PlacementPreview/PlacementPreview";
+import { DesignPreview } from "./DesignPreview";
+import { DesignAdjuster } from "./DesignAdjuster";
+import { DesktopLayout } from "./DesktopLayout";
+import { TabletLayout } from "./TabletLayout";
+import { MobileLayout } from "./MobileLayout";
+import { MobilePreviewLayout } from "./MobilePreviewLayout";
 
 /**
  * DesignAdjustmentPanel
@@ -22,14 +25,23 @@ import { PlacementPreview } from "../PlacementPreview/PlacementPreview";
  * The fine-grained placement controls live behind an "Adjust placement"
  * disclosure so the step fits the viewport; on small screens the position
  * cards and the preview fold away too.
+ *
+ * On mobile flow (mobilePreviewOnly=true): Shows only preview and adjuster
+ * without position selector or Disclosures.
  */
 
 interface PropsI {
   imageUrl: string;
   disabled?: boolean;
+  /** Mobile flow: show only preview and adjuster, no position selector */
+  mobilePreviewOnly?: boolean;
 }
 
-export function DesignAdjustmentPanel({ imageUrl, disabled = false }: PropsI) {
+export function DesignAdjustmentPanel({
+  imageUrl,
+  disabled = false,
+  mobilePreviewOnly = false,
+}: PropsI) {
   const t = useTranslations("stamp.adjust");
   const {
     productConfig,
@@ -50,6 +62,7 @@ export function DesignAdjustmentPanel({ imageUrl, disabled = false }: PropsI) {
   } = useDesignAdjustment();
   const { selectedSize } = useStampCustomization();
   const isMdUp = useMediaQuery("(min-width: 768px)", true);
+  const isLgUp = useMediaQuery("(min-width: 1024px)", true);
 
   if (!productConfig || !activeConfig) return null;
 
@@ -58,6 +71,8 @@ export function DesignAdjustmentPanel({ imageUrl, disabled = false }: PropsI) {
   const orientation = isCanvasOrPoster && selectedSize
     ? getCanvasOrientation(selectedSize)
     : undefined;
+
+  const supportsAdjustment = !productConfig.disablePlacementAdjustment;
 
   const positionSelector = (
     <PrintPositionSelector
@@ -69,20 +84,18 @@ export function DesignAdjustmentPanel({ imageUrl, disabled = false }: PropsI) {
   );
 
   const preview = (
-    <div className="mx-auto w-full max-w-56 pb-6">
-      <PlacementPreview
-        imageUrl={imageUrl}
-        placement={activeConfig.placement}
-        productCategory={productConfig.category}
-        position={activeEditPosition}
-        safeZone={productConfig.safeZone}
-        orientation={orientation}
-      />
-    </div>
+    <DesignPreview
+      imageUrl={imageUrl}
+      placement={activeConfig.placement}
+      productCategory={productConfig.category}
+      position={activeEditPosition}
+      safeZone={productConfig.safeZone}
+      orientation={orientation}
+    />
   );
 
   const adjuster = (
-    <PlacementAdjuster
+    <DesignAdjuster
       positions={enabledPositions}
       activePosition={activeEditPosition}
       placement={activeConfig.placement}
@@ -98,34 +111,41 @@ export function DesignAdjustmentPanel({ imageUrl, disabled = false }: PropsI) {
     />
   );
 
-  const supportsAdjustment = !productConfig.disablePlacementAdjustment;
+  // Mobile flow: show only preview and adjuster (no position selector, no Disclosures)
+  if (mobilePreviewOnly) {
+    return (
+      <MobilePreviewLayout
+        preview={preview}
+        adjuster={adjuster}
+        supportsAdjustment={supportsAdjustment}
+        totalAdditionalCost={totalAdditionalCost}
+      />
+    );
+  }
 
   return (
     <div className="w-full space-y-4 md:space-y-6">
-      {isMdUp ? (
-        <>
-          {/* md+: positions and preview side by side, fine controls folded */}
-          <div className={supportsAdjustment ? "grid gap-6 md:grid-cols-2 items-center" : undefined}>
-            {positionSelector}
-            {supportsAdjustment && preview}
-          </div>
-          {supportsAdjustment && (
-            <Disclosure key={`adjust-${isMdUp}`} label={t("adjustToggle")}>
-              {adjuster}
-            </Disclosure>
-          )}
-        </>
+      {isLgUp ? (
+        <DesktopLayout
+          positionSelector={positionSelector}
+          preview={preview}
+          adjuster={adjuster}
+          supportsAdjustment={supportsAdjustment}
+        />
+      ) : isMdUp ? (
+        <TabletLayout
+          positionSelector={positionSelector}
+          preview={preview}
+          adjuster={adjuster}
+          supportsAdjustment={supportsAdjustment}
+        />
       ) : (
-        <>
-          {/* mobile: everything folded so the step fits the screen */}
-          <Disclosure label={t("positionsTitle")}>{positionSelector}</Disclosure>
-          {supportsAdjustment && (
-            <Disclosure label={t("previewToggle")}>
-              {preview}
-              <div className="mt-6">{adjuster}</div>
-            </Disclosure>
-          )}
-        </>
+        <MobileLayout
+          positionSelector={positionSelector}
+          preview={preview}
+          adjuster={adjuster}
+          supportsAdjustment={supportsAdjustment}
+        />
       )}
 
       {totalAdditionalCost > 0 && (

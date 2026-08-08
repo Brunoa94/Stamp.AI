@@ -71,9 +71,18 @@ export function useLogin() {
       queryClient.setQueryData(authKeys.user(), data.user);
       queryClient.setQueryData(authKeys.session(), data.session);
 
+      // Invalidate coins query so new user's coins are fetched
+      queryClient.invalidateQueries({ queryKey: ["coins"] });
+
       handleSuccess("Login successful - Welcome back!");
 
-      router.push("/stamp");
+      // Only navigate if not already on stamp page
+      if (typeof window !== "undefined" && !window.location.pathname.startsWith("/stamp")) {
+        router.push("/stamp");
+      } else {
+        // Force a refresh of the current page state
+        router.refresh();
+      }
     },
     onError: (error: Error) => {
       handleError(error);
