@@ -115,9 +115,16 @@ function serializeError(error: unknown): LogEntry["error"] | undefined {
     };
   }
 
+  let message: string;
+  try {
+    message = JSON.stringify(error);
+  } catch {
+    // Handle circular references or other serialization errors
+    message = String(error);
+  }
   return {
     name: "UnknownError",
-    message: JSON.stringify(error),
+    message,
   };
 }
 

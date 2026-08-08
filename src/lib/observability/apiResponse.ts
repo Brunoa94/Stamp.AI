@@ -7,9 +7,9 @@
  */
 
 import { NextResponse } from "next/server";
-import { headers } from "next/headers";
 import { ErrorCodeT } from "@/shared-types";
 import { REQUEST_ID_HEADER } from "./requestId";
+import { getServerRequestId } from "./requestId.server";
 import { captureError, ErrorContext } from "./errorCapture";
 import { createLogger } from "./logger";
 
@@ -77,12 +77,7 @@ export interface SuccessResponseOptions<T> {
  * Get request ID from current request context
  */
 async function getRequestId(): Promise<string | undefined> {
-  try {
-    const headersList = await headers();
-    return headersList.get(REQUEST_ID_HEADER) || undefined;
-  } catch {
-    return undefined;
-  }
+  return getServerRequestId();
 }
 
 /**
@@ -137,6 +132,7 @@ export async function createErrorResponse(
     action: context.action || "api_error",
     error,
     metadata: {
+      requestId,
       code,
       status,
       details,

@@ -8,9 +8,10 @@
  * - Client components (via header)
  * - Error capture (correlation)
  * - Logs (tracing)
+ *
+ * NOTE: This module is Edge-compatible. For server-only helpers
+ * that use next/headers, see requestId.server.ts
  */
-
-import { headers } from "next/headers";
 
 /**
  * Header name for request ID
@@ -37,27 +38,9 @@ export function generateRequestId(): string {
  * @param headersList - Headers object from request
  * @returns Request ID (existing or newly generated)
  */
-export function getRequestIdFromHeaders(
-  headersList: Headers
-): string {
+export function getRequestIdFromHeaders(headersList: Headers): string {
   const existingId = headersList.get(REQUEST_ID_HEADER);
   return existingId || generateRequestId();
-}
-
-/**
- * Get request ID in a server component or API route
- * Uses Next.js headers() function
- *
- * @returns Request ID or undefined if not in request context
- */
-export async function getServerRequestId(): Promise<string | undefined> {
-  try {
-    const headersList = await headers();
-    return headersList.get(REQUEST_ID_HEADER) || undefined;
-  } catch {
-    // Not in a request context
-    return undefined;
-  }
 }
 
 /**
@@ -83,6 +66,8 @@ export function createRequestIdHeaders(
  * @param response - Fetch Response object
  * @returns Request ID or undefined
  */
-export function getRequestIdFromResponse(response: Response): string | undefined {
+export function getRequestIdFromResponse(
+  response: Response
+): string | undefined {
   return response.headers.get(REQUEST_ID_HEADER) || undefined;
 }

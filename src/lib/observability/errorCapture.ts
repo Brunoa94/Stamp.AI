@@ -75,10 +75,24 @@ const config: CaptureConfig = {
   sampleRate: parseFloat(process.env.NEXT_PUBLIC_ERROR_SAMPLE_RATE || "1.0"),
 };
 
-// Current user context (set via setUser)
+/**
+ * Current user context (set via setUser)
+ *
+ * NOTE: This is module-level state which is safe for:
+ * - Client-side (single user per browser tab)
+ * - Sentry integration (uses its own scope management)
+ *
+ * For server-side concurrent requests, always pass userId/requestId
+ * explicitly via ErrorContext rather than relying on these globals.
+ */
 let currentUser: UserContext | null = null;
 
-// Request ID for the current context
+/**
+ * Request ID for the current context
+ *
+ * NOTE: On the server, prefer passing requestId via ErrorContext
+ * for proper request isolation. This global is primarily for client use.
+ */
 let currentRequestId: string | null = null;
 
 /**
