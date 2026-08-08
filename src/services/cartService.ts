@@ -157,14 +157,30 @@ export class CartService {
     item: AddToCartInput,
   ): Promise<CartItem> {
     try {
+      // DEBUG: Log raw input before validation
+      console.log("[CartService.addToCart] Raw input received:", {
+        cartId,
+        item,
+        hasProductName: "product_name" in item,
+        hasUnitPrice: "unit_price" in item,
+        productNameValue: item.product_name,
+        unitPriceValue: item.unit_price,
+      });
+
       // Validate input
       const validatedInput = addToCartSchema.parse(item);
 
+      // DEBUG: Log validated input
+      console.log("[CartService.addToCart] Validated input:", {
+        validatedInput,
+        hasProductName: "product_name" in validatedInput,
+        hasUnitPrice: "unit_price" in validatedInput,
+      });
+
       const supabase = this.getSupabase();
 
-      // CRITICAL: Use atomic UPSERT to prevent duplicate cart items
-      // Handles race condition where same item added twice quickly
-      const { data, error } = await supabase.rpc("upsert_cart_item", {
+      // Build RPC params explicitly to trace what's being sent
+      const rpcParams = {
         p_cart_id: cartId,
         p_product_id: validatedInput.product_id || null,
         p_variant_id: validatedInput.variant_id,
@@ -172,9 +188,31 @@ export class CartService {
         p_custom_image_url: validatedInput.custom_image_url || null,
         p_product_name: validatedInput.product_name || "Product",
         p_unit_price: validatedInput.unit_price,
-      });
+      };
+
+      // DEBUG: Log exact RPC params being sent to Supabase
+      console.log("[CartService.addToCart] RPC params to Supabase:", rpcParams);
+
+      // Validate critical fields
+      if (!rpcParams.p_product_name) {
+        console.error("[CartService.addToCart] CRITICAL: p_product_name is missing!");
+      }
+      if (typeof rpcParams.p_unit_price !== "number") {
+        console.error("[CartService.addToCart] CRITICAL: p_unit_price is not a number!", {
+          type: typeof rpcParams.p_unit_price,
+          value: rpcParams.p_unit_price,
+        });
+      }
+
+      // CRITICAL: Use atomic UPSERT to prevent duplicate cart items
+      // Handles race condition where same item added twice quickly
+      const { data, error } = await supabase.rpc("upsert_cart_item", rpcParams);
+
+      // DEBUG: Log response
+      console.log("[CartService.addToCart] RPC response:", { data, error });
 
       if (error) {
+        console.error("[CartService.addToCart] RPC error:", error);
         throw ErrorClient.handleError({
           error,
           service: "Cart",
@@ -192,6 +230,7 @@ export class CartService {
 
       return data as CartItem;
     } catch (error) {
+      console.error("[CartService.addToCart] Exception caught:", error);
       throw ErrorClient.handleError({
         error,
         service: "Cart",

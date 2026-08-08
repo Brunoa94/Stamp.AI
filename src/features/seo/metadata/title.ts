@@ -10,5 +10,5 @@ export function generateTitle(pageTitle: string): string {
 
 export const titleTemplate = {
   template: `%s | ${SITE_NAME}`,
-  default: `${SITE_NAME} - Custom AI-Designed Clothes & Prints`,
+  default: `Custom AI-Designed Clothes & Prints | ${SITE_NAME}`,
 };

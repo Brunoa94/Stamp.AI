@@ -9,7 +9,7 @@ import MollieReturnClient from "./MollieReturnClient";
  */
 
 export const metadata: Metadata = {
-  title: "Processing Payment | Stamp AI",
+  title: "Processing Payment",
   description: "Processing your payment. Please wait...",
   robots: {
     index: false,

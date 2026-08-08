@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Separator } from "@/features/ui/separator";
-import { AnimatedLogoDot } from "./AnimatedLogoDot";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { List } from "@/features/ui/list";
+import { footerTheme } from "@/theme/components";
+import { cn } from "@/lib/utils";
 
 /**
  * Brutalist Footer Component
@@ -18,7 +20,14 @@ import { List } from "@/features/ui/list";
  * - Copyright overlay at bottom
  */
 
-const FOOTER_LINKS = {
+type FooterColumnKey = "product" | "protocol" | "support" | "network";
+
+interface FooterLink {
+  id: string;
+  href: string;
+}
+
+const FOOTER_LINKS: Record<FooterColumnKey, FooterLink[]> = {
   product: [
     { id: "footer-custom-tee", href: "#" },
     { id: "footer-hoodies", href: "#" },
@@ -41,150 +50,109 @@ const FOOTER_LINKS = {
   ],
 };
 
+const COLUMN_ORDER: FooterColumnKey[] = [
+  "product",
+  "protocol",
+  "support",
+  "network",
+];
+
+interface FooterLinkColumnProps {
+  columnKey: FooterColumnKey;
+  links: FooterLink[];
+  t: ReturnType<typeof useTranslations<"layout.brutalistFooter">>;
+}
+
+function FooterLinkColumn({ columnKey, links, t }: FooterLinkColumnProps) {
+  const hoverColor = footerTheme.linkHoverColors[columnKey];
+
+  return (
+    <div className={footerTheme.linkColumn.container}>
+      <div className={footerTheme.linkColumn.inner}>
+        <Span as="h6" variant="sm" className={footerTheme.linkColumn.heading}>
+          {t(`columns.${columnKey}`)}
+        </Span>
+        <List className={footerTheme.linkColumn.list}>
+          {links.map((link) => (
+            <li key={link.id}>
+              <Link
+                href={link.href}
+                id={link.id}
+                className={cn(footerTheme.linkColumn.link, hoverColor)}
+              >
+                {t(`links.${link.id}`)}
+              </Link>
+            </li>
+          ))}
+        </List>
+      </div>
+    </div>
+  );
+}
+
 export function BrutalistFooter() {
   const t = useTranslations("layout.brutalistFooter");
 
   return (
-    <footer className="brutalist-footer bg-ink text-white pt-48 pb-12 px-8 relative overflow-hidden border-t border-white/10 transition-colors duration-300">
+    <footer className={cn("brutalist-footer", footerTheme.root)}>
       {/* Decorative blur blob */}
-      <div className="absolute top-0 right-0 w-[40vw] h-[40vw] bg-brandPurple/5 blur-[150px] rounded-full" />
+      <div className={footerTheme.decorativeBlob} />
 
       {/* Top section: Logo + link columns */}
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-8 md:gap-16 relative z-10 mb-48">
+      <div className={footerTheme.grid}>
         {/* Logo + Mission */}
-        <div className="col-span-2">
-          <Link
-            href="/"
-            className="font-heading text-4xl md:text-6xl leading-none uppercase tracking-tighter mb-8 flex items-center hover:opacity-80 transition-opacity font-bold"
-          >
-            {t.rich("brand", {
-              stamp: (chunks) => <Span unstyled>{chunks}</Span>,
-              dot: () => (
-                <AnimatedLogoDot size="md" className="mx-1.5 md:mx-2" />
-              ),
-              ai: (chunks) => <Span unstyled>{chunks}</Span>,
-            })}
+        <div className={footerTheme.brand.container}>
+          <Link href="/" className="block">
+            <Image
+              src="/assets/brand/logo.png"
+              alt="Stamp.AI"
+              width={280}
+              height={80}
+              className="h-20 w-auto"
+            />
           </Link>
-          <Paragraph
-            variant="sm"
-            className="opacity-40 max-w-xs leading-loose font-bold tracking-widest"
-          >
+          <Paragraph variant="sm" className={footerTheme.brand.mission}>
             {t("mission")}
           </Paragraph>
         </div>
 
-        {/* Product Links */}
-        <div className="flex flex-col gap-8">
-          <div>
-            <Span as="h6" variant="sm" className="opacity-20 mb-8">
-              {t("columns.product")}
-            </Span>
-            <List className="space-y-4">
-              {FOOTER_LINKS.product.map((link) => (
-                <li key={link.id}>
-                  <Link
-                    href={link.href}
-                    id={link.id}
-                    className="text-xs uppercase font-bold hover:text-brandPurple transition-colors duration-300 font-heading"
-                  >
-                    {t(`links.${link.id}`)}
-                  </Link>
-                </li>
-              ))}
-            </List>
-          </div>
-        </div>
-
-        {/* Protocol Links */}
-        <div className="flex flex-col gap-8">
-          <div>
-            <Span as="h6" variant="sm" className="opacity-20 mb-8">
-              {t("columns.protocol")}
-            </Span>
-            <List className="space-y-4">
-              {FOOTER_LINKS.protocol.map((link) => (
-                <li key={link.id}>
-                  <Link
-                    href={link.href}
-                    id={link.id}
-                    className="text-xs uppercase font-bold hover:text-brandCyan transition-colors duration-300 font-heading"
-                  >
-                    {t(`links.${link.id}`)}
-                  </Link>
-                </li>
-              ))}
-            </List>
-          </div>
-        </div>
-
-        {/* Support Links */}
-        <div className="flex flex-col gap-8">
-          <div>
-            <Span as="h6" variant="sm" className="opacity-20 mb-8">
-              {t("columns.support")}
-            </Span>
-            <List className="space-y-4">
-              {FOOTER_LINKS.support.map((link) => (
-                <li key={link.id}>
-                  <Link
-                    href={link.href}
-                    id={link.id}
-                    className="text-xs uppercase font-bold hover:text-brandOrange transition-colors duration-300 font-heading"
-                  >
-                    {t(`links.${link.id}`)}
-                  </Link>
-                </li>
-              ))}
-            </List>
-          </div>
-        </div>
-
-        {/* Network Links */}
-        <div className="flex flex-col gap-8">
-          <div>
-            <Span as="h6" variant="sm" className="opacity-20 mb-8">
-              {t("columns.network")}
-            </Span>
-            <List className="space-y-4">
-              {FOOTER_LINKS.network.map((link) => (
-                <li key={link.id}>
-                  <Link
-                    href={link.href}
-                    id={link.id}
-                    className="text-xs uppercase font-bold hover:text-brandPurple transition-colors duration-300 font-heading"
-                  >
-                    {t(`links.${link.id}`)}
-                  </Link>
-                </li>
-              ))}
-            </List>
-          </div>
-        </div>
+        {/* Link Columns */}
+        {COLUMN_ORDER.map((columnKey) => (
+          <FooterLinkColumn
+            key={columnKey}
+            columnKey={columnKey}
+            links={FOOTER_LINKS[columnKey]}
+            t={t}
+          />
+        ))}
       </div>
 
       {/* Divider */}
-      <Separator className="w-full bg-linear-to-r from-transparent via-white/10 to-transparent mb-12" />
+      <Separator className={footerTheme.divider} />
 
       {/* Bottom section with massive text */}
-      <div className="relative flex justify-center py-20">
+      <div className={footerTheme.bottom.container}>
         {/* Massive background text */}
         <Heading
           as="h2"
           variant="sectionDisplay"
-          className="text-[28vw] text-white opacity-[0.03] pointer-events-none select-none"
+          className={footerTheme.bottom.bgText}
         >
           {t("bgText")}
         </Heading>
 
         {/* Copyright overlay */}
-        <div className="absolute bottom-0 w-full flex flex-col md:flex-row justify-between items-center gap-4 opacity-30">
-          <Span variant="micro" className="tracking-[0.4em]">
+        <div className={footerTheme.bottom.copyright.container}>
+          <Span variant="micro" className={footerTheme.bottom.copyright.text}>
             {t("copyrightLeft")}
           </Span>
-          <Span variant="micro" className="hidden md:inline tracking-[0.4em]">
+          <Span
+            variant="micro"
+            className={footerTheme.bottom.copyright.centerText}
+          >
             {t("copyrightCenter")}
           </Span>
-          <Span variant="micro" className="tracking-[0.4em]">
+          <Span variant="micro" className={footerTheme.bottom.copyright.text}>
             {t("copyrightRight")}
           </Span>
         </div>

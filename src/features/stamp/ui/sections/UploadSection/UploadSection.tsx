@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef, ChangeEvent } from "react";
+import { useState, useRef, ChangeEvent, memo } from "react";
 import { useTranslations } from "next-intl";
 import { Input } from "@/features/ui/input";
-import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
+import { useStampNavigationActions } from "../../../lib/hooks/useStampNavigation";
 import { useStampUpload } from "../../../lib/hooks/useStampSelectors";
 import { useStampImageUpload } from "../../../lib/hooks/useStampImageUpload";
 import { UploadDropzone } from "./UploadDropzone";
@@ -17,9 +17,9 @@ import { UploadContent } from "./UploadContent";
  * Protocol 01 / Initiation
  */
 
-export function UploadSection() {
+function UploadSectionComponent() {
   const t = useTranslations("stamp.upload");
-  const { nextStep } = useStampNavigation();
+  const { nextStep } = useStampNavigationActions();
   const { uploadedImageUrl } = useStampUpload();
   const { uploadImage, removeImage, uploadError } = useStampImageUpload();
 
@@ -55,7 +55,7 @@ export function UploadSection() {
   return (
     <section
       id="step-1"
-      className="h-full overflow-y-auto grid grid-cols-1 lg:grid-cols-2 border-b border-(--color-stamp-divider)"
+      className="h-full overflow-y-auto grid grid-cols-1 md:grid-cols-2 border-b border-(--color-stamp-divider)"
     >
       {/* Hidden file input */}
       <Input
@@ -68,7 +68,7 @@ export function UploadSection() {
       />
 
       {/* Left Panel: Upload Dropzone / Image Preview */}
-      <div className="relative flex items-center justify-center bg-(--color-stamp-divider)/5 overflow-hidden p-12 lg:p-24">
+      <div className="relative flex items-center justify-center bg-(--color-stamp-divider)/5 overflow-hidden p-6 pt-20 md:p-10 md:pt-16 lg:p-16 lg:pt-16 xl:p-24 xl:pt-24">
         {uploadedImageUrl ? (
           <UploadPreview
             imageUrl={uploadedImageUrl}
@@ -93,3 +93,5 @@ export function UploadSection() {
     </section>
   );
 }
+
+export const UploadSection = memo(UploadSectionComponent);

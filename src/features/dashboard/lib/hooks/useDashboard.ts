@@ -1,6 +1,6 @@
 "use client";
 
-import { useUser } from "@/hooks/useAuth";
+import { useUser } from "@/queries/authQueries";
 import { useOrders } from "@/queries/orderQueries";
 import { RECENT_ORDERS_LIMIT } from "../constants/dashboard";
 

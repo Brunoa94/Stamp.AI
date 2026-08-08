@@ -59,6 +59,8 @@ export const useStampFinalization = () => {
   const setMockupImageUrl = useStampFlowStore(
     (state) => state.setMockupImageUrl,
   );
+  const mockupImages = useStampFlowStore((state) => state.mockupImages);
+  const setMockupImages = useStampFlowStore((state) => state.setMockupImages);
   const productionProgress = useStampFlowStore(
     (state) => state.productionProgress,
   );
@@ -74,6 +76,8 @@ export const useStampFinalization = () => {
     setCreatedVariantId,
     mockupImageUrl,
     setMockupImageUrl,
+    mockupImages,
+    setMockupImages,
     productionProgress,
     setProductionProgress,
   };
@@ -231,5 +235,55 @@ export const useStampStepAccessibility = () => {
     currentStep,
     getMaxAccessibleStep,
     isStepAccessible,
+  };
+};
+
+// Print position / placement selectors (Step 6 design adjustment)
+export const useStampPrintPlacement = () => {
+  const availablePrintPositions = useStampFlowStore(
+    (state) => state.availablePrintPositions,
+  );
+  const setAvailablePrintPositions = useStampFlowStore(
+    (state) => state.setAvailablePrintPositions,
+  );
+  const printPositionConfigs = useStampFlowStore(
+    (state) => state.printPositionConfigs,
+  );
+  const setPrintPositionConfig = useStampFlowStore(
+    (state) => state.setPrintPositionConfig,
+  );
+  const togglePrintPosition = useStampFlowStore(
+    (state) => state.togglePrintPosition,
+  );
+  const activeEditPosition = useStampFlowStore(
+    (state) => state.activeEditPosition,
+  );
+  const setActiveEditPosition = useStampFlowStore(
+    (state) => state.setActiveEditPosition,
+  );
+  const resetPlacementForPosition = useStampFlowStore(
+    (state) => state.resetPlacementForPosition,
+  );
+  const initializePrintPositions = useStampFlowStore(
+    (state) => state.initializePrintPositions,
+  );
+  const defaultPlacement = useStampFlowStore(
+    (state) => state.defaultPlacement,
+  );
+  const placementSeededBlueprintId = useStampFlowStore(
+    (state) => state.placementSeededBlueprintId,
+  );
+  return {
+    availablePrintPositions,
+    setAvailablePrintPositions,
+    printPositionConfigs,
+    setPrintPositionConfig,
+    togglePrintPosition,
+    activeEditPosition,
+    setActiveEditPosition,
+    resetPlacementForPosition,
+    initializePrintPositions,
+    defaultPlacement,
+    placementSeededBlueprintId,
   };
 };

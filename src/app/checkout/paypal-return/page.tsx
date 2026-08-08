@@ -9,7 +9,7 @@ import PaypalReturnClient from "./PaypalReturnClient";
  */
 
 export const metadata: Metadata = {
-  title: "Processing Payment | Stamp AI",
+  title: "Processing Payment",
   description: "Processing your PayPal payment. Please wait...",
   robots: {
     index: false,

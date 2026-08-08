@@ -69,7 +69,7 @@ export function usePaymentForm({
     try {
       const requestBody: any = {
         amount: amount,
-        currency: "usd",
+        currency: "eur",
         line_items: lineItems,
         shipping_address: shippingAddress,
         // Note: order_id is NOT set here because the order doesn't exist yet.

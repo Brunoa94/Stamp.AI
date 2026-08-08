@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { RefreshCw } from "lucide-react";
-import { useUser } from "@/hooks/useAuth";
+import { useUser } from "@/queries/authQueries";
 import { useOrders } from "@/queries/orderQueries";
 import { useCancelOrder } from "../lib/hooks/useCancelOrder";
 import { Button } from "@/features/ui/button";

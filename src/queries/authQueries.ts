@@ -59,16 +59,30 @@ export function useLogin() {
   const { handleError, handleSuccess } = useErrorHandler();
 
   return useMutation({
-    mutationFn: (credentials: LoginI): Promise<AuthResponseI> => {
-      return AuthService.login(credentials);
+    mutationFn: (
+      { credentials, captchaToken }: {
+        credentials: LoginI;
+        captchaToken?: string | null;
+      },
+    ): Promise<AuthResponseI> => {
+      return AuthService.login(credentials, captchaToken ?? undefined);
     },
     onSuccess: (data) => {
       queryClient.setQueryData(authKeys.user(), data.user);
       queryClient.setQueryData(authKeys.session(), data.session);
 
+      // Invalidate coins query so new user's coins are fetched
+      queryClient.invalidateQueries({ queryKey: ["coins"] });
+
       handleSuccess("Login successful - Welcome back!");
 
-      router.push("/stamp");
+      // Only navigate if not already on stamp page
+      if (typeof window !== "undefined" && !window.location.pathname.startsWith("/stamp")) {
+        router.push("/stamp");
+      } else {
+        // Force a refresh of the current page state
+        router.refresh();
+      }
     },
     onError: (error: Error) => {
       handleError(error);

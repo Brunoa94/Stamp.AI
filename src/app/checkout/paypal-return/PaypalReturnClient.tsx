@@ -17,7 +17,6 @@ import { PaymentRecoveryService } from "@/services/paymentRecoveryService";
 import type { CreatePrintifyOrderRequest } from "@/types/printifyOrder";
 import { validatePrintifyLineItem } from "@/types/printifyOrder";
 import { mapShippingAddressToPrintifyAddress } from "@/mappers/mapShippingAddressToPrintifyAddress";
-import type { UserI } from "../../../../supabase/types";
 import { captureError } from "@/lib/observability/errorCapture";
 import {
   useCreateOrderFromCart,
@@ -26,8 +25,9 @@ import {
 } from "@/queries/orderQueries";
 import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
 import { useClearCart } from "@/queries/cartQueries";
-import { useUser } from "@/hooks/useAuth";
+import { useUser } from "@/queries/authQueries";
 import { CheckoutStorageService } from "@/features/checkout/lib/services/checkoutStorageService";
+import { UserI } from "@/supabase/types";
 
 type PageStatus =
   | "loading"
@@ -462,12 +462,19 @@ function PayPalReturnContent() {
             >
               <Loader2 className="w-12 h-12 animate-spin" />
             </div>
-            <Heading as="h1" variant="card" className="text-(--color-stamp-chocolate) mb-4">
+            <Heading
+              as="h1"
+              variant="card"
+              className="text-(--color-stamp-chocolate) mb-4"
+            >
               {status === "capturing"
                 ? t("capturingTitle")
                 : t("processingTitle")}
             </Heading>
-            <Paragraph variant="sm" className="text-(--color-stamp-taupe) max-w-sm mx-auto">
+            <Paragraph
+              variant="sm"
+              className="text-(--color-stamp-taupe) max-w-sm mx-auto"
+            >
               {status === "capturing"
                 ? t("capturingMessage")
                 : t("processingMessage")}
@@ -558,10 +565,17 @@ function PayPalReturnContent() {
           >
             <AlertCircle className="w-12 h-12" />
           </div>
-          <Heading as="h1" variant="card" className="text-(--color-stamp-chocolate) mb-4">
+          <Heading
+            as="h1"
+            variant="card"
+            className="text-(--color-stamp-chocolate) mb-4"
+          >
             {t("somethingWentWrongTitle")}
           </Heading>
-          <Paragraph variant="sm" className="text-(--color-stamp-taupe) max-w-sm mx-auto mb-12">
+          <Paragraph
+            variant="sm"
+            className="text-(--color-stamp-taupe) max-w-sm mx-auto mb-12"
+          >
             {errorMessage || t("somethingWentWrongMessage")}
           </Paragraph>
           <div className="flex flex-col gap-4">

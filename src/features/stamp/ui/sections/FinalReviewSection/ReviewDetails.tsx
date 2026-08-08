@@ -1,17 +1,20 @@
 import { useTranslations } from "next-intl";
-import { Truck } from "lucide-react";
 import { Heading } from "@/features/ui/heading";
-import { Span } from "@/features/ui/span";
+import { PolaroidPreview } from "../../components/PolaroidPreview/PolaroidPreview";
 import { ProductSummary } from "./ProductSummary";
 import { ReviewActions } from "./ReviewActions";
 
 /**
  * ReviewDetails
  *
- * Right panel with product details and actions
+ * Right panel with product details and actions. On mobile the carousel
+ * column is hidden, so a polaroid-style mockup preview renders here instead,
+ * using the shared PolaroidPreview component.
  */
 
 interface PropsI {
+  /** Mockup shown as a polaroid preview on mobile (carousel is md+ only). */
+  mockupUrl?: string;
   productName: string;
   color?: string;
   size?: string;
@@ -22,6 +25,7 @@ interface PropsI {
 }
 
 export function ReviewDetails({
+  mockupUrl,
   productName,
   color,
   size,
@@ -33,11 +37,26 @@ export function ReviewDetails({
   const t = useTranslations("stamp.finalReview");
 
   return (
-    <div className="p-6 md:p-12 lg:p-24 flex flex-col justify-center bg-white">
+    <div className="p-6 pt-24 md:pt-10 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-white">
+      {/* Mobile-only polaroid mockup preview (carousel is md+ only) */}
+      {mockupUrl && (
+        <div className="md:hidden flex justify-center mb-6">
+          <PolaroidPreview
+            imageUrl={mockupUrl}
+            alt={t("mockupAlt")}
+            badgeText={t("previewSealed")}
+            fullscreenLabel={t("viewFullscreen")}
+            closeLabel={t("closeFullscreen")}
+            hintText={t("pressEscToClose")}
+            size="sm"
+          />
+        </div>
+      )}
+
       <Heading
         as="h2"
-        variant="title"
-        className="text-(--color-stamp-chocolate) mb-6"
+        variant="panelTitle"
+        className="text-(--color-stamp-chocolate) mb-4 md:mb-6"
       >
         {t.rich("title", {
           accent: (chunks) => (
@@ -48,18 +67,13 @@ export function ReviewDetails({
         })}
       </Heading>
 
-      <div className="space-y-6 mb-12">
+      <div className="space-y-6 mb-6 md:mb-12">
         <ProductSummary
           productName={productName}
           color={color}
           size={size}
           price={price}
         />
-
-        <div className="flex items-center gap-4 text-(--color-stamp-taupe)">
-          <Truck className="text-(--color-stamp-gold) w-5 h-5 shrink-0" />
-          <Span variant="micro">{t("freeShipping")}</Span>
-        </div>
       </div>
 
       <ReviewActions

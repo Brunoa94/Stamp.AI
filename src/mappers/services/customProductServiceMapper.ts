@@ -5,6 +5,20 @@ export class CustomProductServiceMapper {
     return value.startsWith("data:image/");
   }
 
+  private static isRelativePath(value: string): boolean {
+    return value.startsWith("/") && !value.startsWith("//");
+  }
+
+  /**
+   * Convert relative path to absolute URL using window.location.origin
+   */
+  private static toAbsoluteUrl(relativePath: string): string {
+    if (typeof window !== "undefined") {
+      return `${window.location.origin}${relativePath}`;
+    }
+    return relativePath;
+  }
+
   /**
    * Map image URL to upload request
    */
@@ -16,8 +30,13 @@ export class CustomProductServiceMapper {
       };
     }
 
+    // Convert relative paths to absolute URLs
+    const absoluteUrl = this.isRelativePath(imageUrl)
+      ? this.toAbsoluteUrl(imageUrl)
+      : imageUrl;
+
     return {
-      image_url: imageUrl,
+      image_url: absoluteUrl,
       file_name: `design-${Date.now()}.png`,
     };
   }

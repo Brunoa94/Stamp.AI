@@ -27,7 +27,7 @@ export class PayPalService {
         {
           body: {
             amount,
-            currency: "usd",
+            currency: "eur",
             line_items: lineItems,
             shipping_address: shippingAddress,
             metadata: {
