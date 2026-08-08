@@ -156,7 +156,7 @@ function ProductSelectionSectionComponent() {
   return (
     <section
       id="step-5"
-      className="h-full min-h-0 overflow-y-auto grid grid-cols-1 lg:grid-cols-2 border-b border-(--color-stamp-divider)"
+      className="h-full min-h-0 overflow-hidden flex flex-col md:grid md:grid-cols-2 border-b border-(--color-stamp-divider)"
     >
       <ProductSelectionContent
         canProceed={canProceedToCustomization}

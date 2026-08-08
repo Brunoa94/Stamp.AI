@@ -33,8 +33,9 @@ export function useUserCoins() {
       return CoinsService.getUserCoins(userId);
     },
     enabled: !!userId,
-    staleTime: 30 * 1000, // 30 seconds
+    staleTime: 10 * 1000, // 10 seconds - shorter to ensure fresher data
     refetchOnWindowFocus: true,
+    refetchOnMount: "always", // Always refetch when component mounts
   });
 }
 

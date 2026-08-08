@@ -12,6 +12,13 @@ const STORAGE_KEY = "stamp:generated-images";
 const TTL_MS = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 const MAX_ITEMS = 20;
 
+/**
+ * Check if we're in a browser environment
+ */
+function isBrowser(): boolean {
+  return typeof window !== "undefined" && typeof localStorage !== "undefined";
+}
+
 interface StoredImageEntry {
   result: GeneratedResultType;
   createdAt: number; // Unix timestamp
@@ -32,6 +39,8 @@ function isExpired(entry: StoredImageEntry): boolean {
  * Get all stored images, filtering out expired ones
  */
 export function getStoredImages(): GeneratedResultType[] {
+  if (!isBrowser()) return [];
+
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
@@ -70,6 +79,8 @@ function saveEntries(entries: StoredImageEntry[]): void {
  * Add a new generated image to storage
  */
 export function addStoredImage(result: GeneratedResultType): void {
+  if (!isBrowser()) return;
+
   try {
     const currentImages = getStoredImagesRaw();
 
@@ -94,6 +105,8 @@ export function addStoredImage(result: GeneratedResultType): void {
  * Get raw entries (including timestamps) without filtering
  */
 function getStoredImagesRaw(): StoredImageEntry[] {
+  if (!isBrowser()) return [];
+
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
@@ -112,6 +125,8 @@ function getStoredImagesRaw(): StoredImageEntry[] {
  * Clear all stored images
  */
 export function clearStoredImages(): void {
+  if (!isBrowser()) return;
+
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch (error) {

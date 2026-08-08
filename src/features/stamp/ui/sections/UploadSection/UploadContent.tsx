@@ -28,11 +28,11 @@ export function UploadContent({
   const t = useTranslations("stamp.upload");
 
   return (
-    <div className="p-12 lg:p-24 flex flex-col justify-center">
+    <div className="p-6 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center">
       <Heading
         as="h2"
-        variant="title"
-        className="text-(--color-stamp-chocolate) mb-6"
+        variant="panelTitle"
+        className="text-(--color-stamp-chocolate) mb-4 md:mb-6"
       >
         {t.rich("title", {
           accent: (chunks) => (
@@ -45,7 +45,7 @@ export function UploadContent({
 
       <Paragraph
         variant="card"
-        className="text-(--color-stamp-taupe) mb-10 max-w-sm"
+        className="text-(--color-stamp-taupe) mb-6 md:mb-10 max-w-sm"
       >
         {t("description")}
       </Paragraph>

@@ -64,11 +64,11 @@ export function SynthesisForm({
   const canGenerate = isAuthenticated && hasCoins;
 
   return (
-    <div className="relative p-12 lg:p-24 flex flex-col justify-center bg-white">
+    <div className="relative p-6 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-white">
       <Heading
         as="h2"
-        variant="title"
-        className="text-(--color-stamp-chocolate) mb-6"
+        variant="panelTitle"
+        className="text-(--color-stamp-chocolate) mb-4 md:mb-6"
       >
         {t.rich("title", {
           accent: (chunks) => (
@@ -80,7 +80,7 @@ export function SynthesisForm({
       </Heading>
 
       {/* Form Fields */}
-      <div className="space-y-8 mb-12">
+      <div className="space-y-4 md:space-y-8 mb-6 md:mb-12">
         <PromptInput
           value={prompt}
           onChange={onPromptChange}

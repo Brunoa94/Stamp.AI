@@ -22,11 +22,11 @@ export function ReviewActions({
   const t = useTranslations("stamp.finalReview");
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3 md:gap-4">
       <Button
         onClick={onBagIt}
         disabled={isAddingToCart}
-        className="w-full bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-4 md:py-6 text-xs font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <ShoppingBag className="w-5 h-5" />
         {isAddingToCart ? t("adding") : t("bagIt")}
@@ -34,7 +34,7 @@ export function ReviewActions({
       <Button
         onClick={onBuyNow}
         disabled={isAddingToCart}
-        className="w-full bg-transparent text-(--color-stamp-chocolate) border border-(--color-stamp-divider) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-transparent text-(--color-stamp-chocolate) border border-(--color-stamp-divider) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 px-8 py-4 md:py-6 text-xs font-bold tracking-[0.2em] uppercase disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isAddingToCart ? t("processing") : t("buyNow")}
       </Button>

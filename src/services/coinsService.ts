@@ -13,16 +13,15 @@ export class CoinsService {
 
   /**
    * Get user's current coins and reset date
+   * Uses RPC function that auto-resets coins daily if needed
    */
   static async getUserCoins(userId: string): Promise<UserCoins> {
     try {
       const supabase = this.getSupabase();
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("coins, coins_reset_at")
-        .eq("id", userId)
-        .single();
+      const { data, error } = await supabase.rpc("get_user_coins", {
+        p_user_id: userId,
+      });
 
       if (error) {
         throw ErrorClient.handleError({
@@ -32,7 +31,7 @@ export class CoinsService {
         });
       }
 
-      if (!data) {
+      if (!data || data.length === 0) {
         throw ErrorClient.handleError({
           error: new Error(`Profile not found for user: ${userId}`),
           service: "Coins",
@@ -40,9 +39,11 @@ export class CoinsService {
         });
       }
 
+      // RPC returns array with single row
+      const row = data[0];
       return {
-        coins: data.coins,
-        coinsResetAt: data.coins_reset_at,
+        coins: row.coins,
+        coinsResetAt: row.coins_reset_at,
       };
     } catch (error) {
       throw ErrorClient.handleError({

@@ -39,13 +39,14 @@ function FinalReviewSectionComponent() {
   return (
     <section
       id="step-8"
-      className="h-full overflow-y-auto grid grid-cols-1 lg:grid-cols-2 border-b border-(--color-stamp-divider)"
+      className="h-full overflow-y-auto grid grid-cols-1 md:grid-cols-2 border-b border-(--color-stamp-divider)"
     >
       <MockupCarousel
         mockupImages={mockupImages}
         fallbackUrl={mockupImageUrl || fallbackUrl}
       />
       <ReviewDetails
+        mockupUrl={mockupImages[0]?.src || mockupImageUrl || fallbackUrl}
         productName={productName}
         color={selectedColor}
         size={selectedSize}
