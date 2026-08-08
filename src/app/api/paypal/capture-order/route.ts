@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { capturePayPalOrder, PayPalCaptureError } from "@/lib/paypal-server";
 import { PayPalCaptureMapper } from "./paypalCaptureMapper";
+import { captureError } from "@/lib/observability/errorCapture";
 
 export const runtime = "nodejs";
 
@@ -73,7 +74,10 @@ export async function POST(request: NextRequest) {
     const successResponse = PayPalCaptureMapper.mapToSuccessResponse(captureResult);
     return NextResponse.json(successResponse);
   } catch (error) {
-    console.error("Error capturing PayPal order:", error);
+    captureError(error, {
+      service: "PayPalAPI",
+      action: "captureOrder",
+    });
 
     // Handle PayPalCaptureError with user-friendly message
     if (error instanceof PayPalCaptureError) {

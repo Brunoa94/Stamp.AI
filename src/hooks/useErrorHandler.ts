@@ -3,6 +3,7 @@ import { ERROR_CODES } from "@/constants/errorMessages";
 import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { captureError } from "@/lib/observability/errorCapture";
 
 export interface UseErrorHandlerOptionsI {
   showToast?: boolean;
@@ -57,6 +58,13 @@ export const useErrorHandler = (options: UseErrorHandlerOptionsI = {}) => {
     } else {
       errorMessage = t("UNKNOWN_ERROR");
     }
+
+    // Capture error to Sentry
+    captureError(error, {
+      errorCode,
+      service: "useErrorHandler",
+      metadata: { hasCode, rawMessage },
+    });
 
     // Show toast notification
     if (showToast) {

@@ -8,6 +8,7 @@
  * with any observability provider without changing application code.
  */
 
+import * as Sentry from "@sentry/nextjs";
 import { ErrorCodeT } from "@/shared-types";
 
 /**
@@ -89,16 +90,21 @@ function generateErrorId(): string {
   return `err_${timestamp}_${random}`;
 }
 
+
 /**
- * Serialize error for logging/transmission
+ * Map our severity levels to Sentry severity levels
  */
-function serializeError(error: Error): Record<string, unknown> {
-  return {
-    name: error.name,
-    message: error.message,
-    stack: error.stack,
-    ...(error as unknown as Record<string, unknown>),
+function mapSeverityToSentry(
+  severity: ErrorSeverity
+): Sentry.SeverityLevel {
+  const mapping: Record<ErrorSeverity, Sentry.SeverityLevel> = {
+    fatal: "fatal",
+    error: "error",
+    warning: "warning",
+    info: "info",
+    debug: "debug",
   };
+  return mapping[severity];
 }
 
 /**
@@ -116,47 +122,66 @@ async function sendToService(
     return;
   }
 
-  const payload = {
-    errorId,
-    error: serializeError(error),
-    context: {
-      ...context,
-      requestId: context.requestId || currentRequestId,
-      userId: context.userId || currentUser?.id,
-      userEmail: context.userEmail || currentUser?.email,
-    },
-    severity,
-    environment: config.environment,
-    release: config.release,
-    timestamp: new Date().toISOString(),
-    user: currentUser,
+  const enrichedContext = {
+    ...context,
+    requestId: context.requestId || currentRequestId,
+    userId: context.userId || currentUser?.id,
+    userEmail: context.userEmail || currentUser?.email,
   };
 
   // Log in development
   if (config.environment === "development") {
     console.group(`[ErrorCapture] ${severity.toUpperCase()}: ${error.message}`);
     console.log("Error ID:", errorId);
-    console.log("Context:", context);
-    console.log("Payload:", payload);
+    console.log("Context:", enrichedContext);
     console.groupEnd();
   }
 
-  // TODO: Integrate with actual observability service
-  // Example Sentry integration:
-  // if (typeof Sentry !== 'undefined') {
-  //   Sentry.withScope((scope) => {
-  //     scope.setTag("error_id", errorId);
-  //     scope.setContext("error_context", context);
-  //     scope.setLevel(severity);
-  //     if (currentUser) scope.setUser(currentUser);
-  //     Sentry.captureException(error);
-  //   });
-  // }
+  // Send to Sentry
+  Sentry.withScope((scope) => {
+    // Set error ID for tracking
+    scope.setTag("error_id", errorId);
+    scope.setLevel(mapSeverityToSentry(severity));
 
-  // For now, log to console in production too (for debugging)
-  if (config.environment === "production") {
-    console.error(`[Error ${errorId}]`, error.message, context);
-  }
+    // Set context tags
+    if (enrichedContext.errorCode) {
+      scope.setTag("error_code", enrichedContext.errorCode);
+    }
+    if (enrichedContext.service) {
+      scope.setTag("service", enrichedContext.service);
+    }
+    if (enrichedContext.action) {
+      scope.setTag("action", enrichedContext.action);
+    }
+    if (enrichedContext.requestId) {
+      scope.setTag("request_id", enrichedContext.requestId);
+    }
+
+    // Set component context for React errors
+    if (enrichedContext.componentName || enrichedContext.componentStack) {
+      scope.setContext("react", {
+        componentName: enrichedContext.componentName,
+        componentStack: enrichedContext.componentStack,
+      });
+    }
+
+    // Set additional metadata
+    if (enrichedContext.metadata) {
+      scope.setContext("metadata", enrichedContext.metadata);
+    }
+
+    // Set user context
+    if (currentUser) {
+      scope.setUser({
+        id: currentUser.id,
+        email: currentUser.email,
+        username: currentUser.name,
+      });
+    }
+
+    // Capture the exception
+    Sentry.captureException(error);
+  });
 }
 
 /**
@@ -243,10 +268,16 @@ export function captureMessage(
 export function setUser(user: UserContext | null): void {
   currentUser = user;
 
-  // TODO: Also set in Sentry
-  // if (typeof Sentry !== 'undefined') {
-  //   Sentry.setUser(user);
-  // }
+  // Set user in Sentry
+  if (user) {
+    Sentry.setUser({
+      id: user.id,
+      email: user.email,
+      username: user.name,
+    });
+  } else {
+    Sentry.setUser(null);
+  }
 }
 
 /**
@@ -293,10 +324,13 @@ export function addBreadcrumb(
     console.log(`[Breadcrumb] [${category}] ${message}`, data || "");
   }
 
-  // TODO: Add to Sentry
-  // if (typeof Sentry !== 'undefined') {
-  //   Sentry.addBreadcrumb({ message, category, data, level: 'info' });
-  // }
+  // Add breadcrumb to Sentry
+  Sentry.addBreadcrumb({
+    message,
+    category,
+    data,
+    level: "info",
+  });
 }
 
 /**
@@ -306,10 +340,8 @@ export function addBreadcrumb(
  * @param value - Tag value
  */
 export function setTag(key: string, value: string): void {
-  // TODO: Set in Sentry
-  // if (typeof Sentry !== 'undefined') {
-  //   Sentry.setTag(key, value);
-  // }
+  // Set tag in Sentry
+  Sentry.setTag(key, value);
 
   if (config.environment === "development") {
     console.log(`[Tag] ${key}: ${value}`);

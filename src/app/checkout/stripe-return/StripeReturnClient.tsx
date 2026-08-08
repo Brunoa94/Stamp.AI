@@ -18,6 +18,7 @@ import type { CreatePrintifyOrderRequest } from "@/types/printifyOrder";
 import { validatePrintifyLineItem } from "@/types/printifyOrder";
 import { mapShippingAddressToPrintifyAddress } from "@/mappers/mapShippingAddressToPrintifyAddress";
 import type { UserI } from "../../../../supabase/types";
+import { captureError } from "@/lib/observability/errorCapture";
 import {
   useCreateOrderFromCart,
   useUpdateOrderStatus,
@@ -211,7 +212,11 @@ function StripeReturnContent() {
             },
           });
         } catch (recoveryError) {
-          console.error("Payment recovery recording failed:", recoveryError);
+          captureError(recoveryError, {
+            service: "StripeReturn",
+            action: "recordPaymentForRecovery",
+            metadata: { paymentIntent },
+          });
         }
 
         // Check for existing order
@@ -244,8 +249,11 @@ function StripeReturnContent() {
               console.log(`✅ Refund triggered for order ${refundOrderId}`);
             }
           } catch (refundError) {
-            console.error("❌ Refund initiation failed:", refundError);
-            // Log to refund_failures table via RefundService
+            captureError(refundError, {
+              service: "StripeReturn",
+              action: "triggerRefund",
+              metadata: { paymentIntent, amount, reason },
+            });
           }
         };
 
@@ -261,12 +269,12 @@ function StripeReturnContent() {
             // Do NOT change payment_status - payment has been successfully captured
             // The payment_transactions table will track refund status
             // Keeping payment_status as "paid" accurately reflects that payment was captured
-            console.log(`✅ Order ${orderId} marked as ${failureStatus}`);
-          } catch (updateError) {
-            console.error(
-              `❌ Failed to mark order ${orderId} as ${failureStatus}:`,
-              updateError,
-            );
+            } catch (updateError) {
+            captureError(updateError, {
+              service: "StripeReturn",
+              action: "markOrderFailed",
+              metadata: { orderId, failureStatus },
+            });
           }
         };
 
@@ -338,7 +346,11 @@ function StripeReturnContent() {
               });
             }
           } catch (printifyError) {
-            console.error("❌ Printify order creation failed:", printifyError);
+            captureError(printifyError, {
+              service: "StripeReturn",
+              action: "createPrintifyOrder",
+              metadata: { paymentIntent, createdOrderId },
+            });
 
             if (createdOrderId) {
               // Mark order as failed BEFORE triggering refund
@@ -349,10 +361,6 @@ function StripeReturnContent() {
               // Trigger refund with real order ID
               await triggerRefund("Printify fulfillment failed");
             } else {
-              // No order created yet, trigger refund with temp ID
-              console.warn(
-                "⚠️ No order ID available, triggering refund with temp ID",
-              );
               await triggerRefund("Order creation failed before Printify");
             }
 
@@ -397,7 +405,11 @@ function StripeReturnContent() {
         clearStoredStripeCheckoutData();
         setStatus("success");
       } catch (err) {
-        console.error("Stripe return error:", err);
+        captureError(err, {
+          service: "StripeReturn",
+          action: "processStripeReturn",
+          metadata: { paymentIntent: searchParams.get("payment_intent") },
+        });
 
         const currentPaymentIntent = searchParams.get("payment_intent");
         if (currentPaymentIntent) {

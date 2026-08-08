@@ -17,7 +17,7 @@ export function ErrorFallback({ error, errorId, onRetry }: ErrorFallbackProps) {
   const isDev = process.env.NODE_ENV === "development";
 
   return (
-    <div className="flex min-h-[400px] w-full flex-col items-center justify-center gap-6 p-8">
+    <div className="flex min-h-100 w-full flex-col items-center justify-center gap-6 p-8">
       <div className="flex flex-col items-center gap-4 text-center">
         {/* Error icon */}
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
