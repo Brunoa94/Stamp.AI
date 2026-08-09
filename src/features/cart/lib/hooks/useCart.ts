@@ -16,6 +16,7 @@ import {
 } from "@/queries/cartQueries";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { CartServiceMapper } from "@/mappers/services/cartServiceMapper";
+import { AnalyticsService } from "@/services/analyticsService";
 
 export function useCart() {
   const router = useRouter();
@@ -36,6 +37,19 @@ export function useCart() {
 
   const checkout = () => {
     if (!cart) return;
+
+    const totals = CartServiceMapper.calculateCartTotals(cart.cart_items);
+    AnalyticsService.track("begin_checkout", {
+      currency: "USD",
+      value: totals.subtotal + totals.shipping,
+      items: cart.cart_items.map((item) => ({
+        item_id: item.product_id || item.id,
+        item_name: item.product_name || "Custom Product",
+        price: (item.selling_price ?? item.unit_price ?? 0) / 100,
+        quantity: item.quantity ?? 1,
+      })),
+    });
+
     router.push(`/checkout?cartId=${cart.id}`);
   };
 

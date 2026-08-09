@@ -8,6 +8,7 @@
 
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -19,6 +20,7 @@ import { CartItemCard } from "./sections/CartItemCard/CartItemCard";
 import { CartOrderSummary } from "./sections/CartOrderSummary/CartOrderSummary";
 import { CartEmptySection } from "./sections/CartEmptySection";
 import { CartLoadingSection } from "./sections/CartLoadingSection";
+import { AnalyticsService } from "@/services/analyticsService";
 
 export function CartContent() {
   const t = useTranslations("cart.content");
@@ -31,6 +33,24 @@ export function CartContent() {
     removeItem,
     checkout,
   } = useCart();
+
+  // Track view_cart once when cart is loaded with items
+  const hasTrackedViewCart = useRef(false);
+  useEffect(() => {
+    if (!isLoading && cart && cart.cart_items.length > 0 && !hasTrackedViewCart.current) {
+      hasTrackedViewCart.current = true;
+      AnalyticsService.track("view_cart", {
+        currency: "USD",
+        value: total,
+        items: cart.cart_items.map((item) => ({
+          item_id: item.product_id || item.id,
+          item_name: item.product_name || "Custom Product",
+          price: (item.selling_price ?? item.unit_price ?? 0) / 100,
+          quantity: item.quantity ?? 1,
+        })),
+      });
+    }
+  }, [isLoading, cart, total]);
 
   if (isLoading) {
     return (

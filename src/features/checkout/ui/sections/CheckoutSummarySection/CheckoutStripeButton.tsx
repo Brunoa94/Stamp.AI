@@ -59,6 +59,13 @@ export function CheckoutStripeButton({
         JSON.stringify(checkoutData),
       );
 
+      // Calculate total quantity for per-item price estimation
+      const totalQuantity = processedLineItems.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+      );
+      const pricePerItem = totalQuantity > 0 ? (amount / 100) / totalQuantity : 0;
+
       AnalyticsService.track("purchase", {
         transaction_id: paymentIntent.id,
         currency: "USD",
@@ -70,6 +77,7 @@ export function CheckoutStripeButton({
             lineItem.sku ??
             String(lineItem.blueprint_id ?? index),
           item_name: "Custom Product",
+          price: pricePerItem,
           quantity: lineItem.quantity,
           item_variant: lineItem.variant_id?.toString(),
         })),
