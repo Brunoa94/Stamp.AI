@@ -501,7 +501,8 @@
       "bagIt": "BAG IT",
       "adding": "ADDING...",
       "buyNow": "BUY NOW",
-      "processing": "PROCESSING..."
+      "processing": "PROCESSING...",
+      "bagItAndCreateAnother": "BAG IT & CREATE ANOTHER"
     },
     "errors": {
       "imageGeneration": {

@@ -20,7 +20,7 @@ import { ReviewDetails } from "./ReviewDetails";
 
 function FinalReviewSectionComponent() {
   const t = useTranslations("stamp.finalReview");
-  const { handleBagIt, handleBuyNow, isAddingToCart } = useStampCartActions();
+  const { handleBagIt, handleBagItAndCreateAnother, isAddingToCart } = useStampCartActions();
   const { mockupImageUrl, mockupImages } = useStampFinalization();
   const { selectedProductTitle } = useStampProductSelection();
   const { selectedColor, selectedSize, selectedPriceCents } =
@@ -53,7 +53,7 @@ function FinalReviewSectionComponent() {
         price={formattedPrice}
         isAddingToCart={isAddingToCart}
         onBagIt={handleBagIt}
-        onBuyNow={handleBuyNow}
+        onBagItAndCreateAnother={handleBagItAndCreateAnother}
       />
     </section>
   );

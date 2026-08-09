@@ -286,4 +286,46 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
       });
     }
   },
+
+  // Reset for creating another product with same image
+  resetForNewProduct: () => {
+    try {
+      set((state) => ({
+        // Keep the selected image and enhanced prompt
+        selectedImageUrl: state.selectedImageUrl,
+        enhancedPrompt: state.enhancedPrompt,
+        // Keep generated results for reference
+        generatedResults: state.generatedResults,
+        // Reset product selection
+        selectedProductType: "tshirt" as const,
+        blueprintId: undefined,
+        printProviderId: undefined,
+        selectedProductTitle: undefined,
+        // Reset print positions
+        availablePrintPositions: [],
+        printPositionConfigs: {},
+        activeEditPosition: "front",
+        placementSeededBlueprintId: undefined,
+        // Reset customization
+        selectedColor: undefined,
+        selectedSize: undefined,
+        selectedPriceCents: undefined,
+        // Reset created product
+        createdProductId: undefined,
+        createdVariantId: undefined,
+        mockupImageUrl: undefined,
+        mockupImages: [],
+        // Reset progress
+        productionProgress: 0,
+        // Navigate to product selection step (step 5)
+        currentStep: 5,
+      }));
+    } catch (error) {
+      logStampError({
+        scope: "stampFlowStore",
+        event: "reset_for_new_product_failed",
+        error,
+      });
+    }
+  },
 }));

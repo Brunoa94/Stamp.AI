@@ -21,7 +21,7 @@ interface PropsI {
   price: string;
   isAddingToCart: boolean;
   onBagIt: () => void;
-  onBuyNow: () => void;
+  onBagItAndCreateAnother: () => void;
 }
 
 export function ReviewDetails({
@@ -32,7 +32,7 @@ export function ReviewDetails({
   price,
   isAddingToCart,
   onBagIt,
-  onBuyNow,
+  onBagItAndCreateAnother,
 }: PropsI) {
   const t = useTranslations("stamp.finalReview");
 
@@ -79,7 +79,7 @@ export function ReviewDetails({
       <ReviewActions
         isAddingToCart={isAddingToCart}
         onBagIt={onBagIt}
-        onBuyNow={onBuyNow}
+        onBagItAndCreateAnother={onBagItAndCreateAnother}
       />
     </div>
   );
