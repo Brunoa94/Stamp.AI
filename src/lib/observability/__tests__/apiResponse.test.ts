@@ -1,10 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { NextResponse } from "next/server";
-import {
-  createErrorResponse,
-  createSuccessResponse,
-  ApiErrors,
-} from "../apiResponse";
+import { createErrorResponse, createSuccessResponse } from "../apiResponse";
 
 // Mock dependencies
 vi.mock("../requestId.server", () => ({
@@ -138,96 +134,4 @@ describe("apiResponse", () => {
     });
   });
 
-  describe("ApiErrors helpers", () => {
-    it("badRequest should return 400", async () => {
-      const response = await ApiErrors.badRequest("Invalid input");
-      expect(response.status).toBe(400);
-      const body = await response.json();
-      expect(body.error.code).toBe("BAD_REQUEST");
-    });
-
-    it("badRequest should include details", async () => {
-      const response = await ApiErrors.badRequest("Invalid input", {
-        fields: ["name", "email"],
-      });
-      const body = await response.json();
-      expect(body.error.details).toEqual({ fields: ["name", "email"] });
-    });
-
-    it("unauthorized should return 401", async () => {
-      const response = await ApiErrors.unauthorized();
-      expect(response.status).toBe(401);
-      const body = await response.json();
-      expect(body.error.code).toBe("UNAUTHORIZED");
-    });
-
-    it("unauthorized should accept custom message", async () => {
-      const response = await ApiErrors.unauthorized("Token expired");
-      const body = await response.json();
-      expect(body.error.message).toBe("Token expired");
-    });
-
-    it("forbidden should return 403", async () => {
-      const response = await ApiErrors.forbidden();
-      expect(response.status).toBe(403);
-      const body = await response.json();
-      expect(body.error.code).toBe("FORBIDDEN");
-    });
-
-    it("notFound should return 404", async () => {
-      const response = await ApiErrors.notFound("User");
-      expect(response.status).toBe(404);
-      const body = await response.json();
-      expect(body.error.message).toBe("User not found");
-    });
-
-    it("conflict should return 409", async () => {
-      const response = await ApiErrors.conflict("Email already exists");
-      expect(response.status).toBe(409);
-      const body = await response.json();
-      expect(body.error.code).toBe("CONFLICT");
-    });
-
-    it("unprocessable should return 422", async () => {
-      const response = await ApiErrors.unprocessable(
-        "INSUFFICIENT_FUNDS",
-        "Not enough balance"
-      );
-      expect(response.status).toBe(422);
-      const body = await response.json();
-      expect(body.error.code).toBe("INSUFFICIENT_FUNDS");
-    });
-
-    it("rateLimited should return 429", async () => {
-      const response = await ApiErrors.rateLimited(60);
-      expect(response.status).toBe(429);
-      const body = await response.json();
-      expect(body.error.code).toBe("RATE_LIMITED");
-      expect(body.error.details?.retryAfter).toBe(60);
-    });
-
-    it("internal should return 500", async () => {
-      const response = await ApiErrors.internal(new Error("Unexpected"));
-      expect(response.status).toBe(500);
-      const body = await response.json();
-      expect(body.error.code).toBe("INTERNAL_ERROR");
-    });
-
-    it("externalService should return 502", async () => {
-      const response = await ApiErrors.externalService(
-        "Stripe",
-        new Error("API timeout")
-      );
-      expect(response.status).toBe(502);
-      const body = await response.json();
-      expect(body.error.code).toBe("STRIPE_API_ERROR");
-    });
-
-    it("unavailable should return 503", async () => {
-      const response = await ApiErrors.unavailable();
-      expect(response.status).toBe(503);
-      const body = await response.json();
-      expect(body.error.code).toBe("SERVICE_UNAVAILABLE");
-    });
-  });
 });
