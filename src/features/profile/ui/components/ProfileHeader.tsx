@@ -1,36 +1,37 @@
 /**
  * ProfileHeader
  *
- * Luxury page header: gold accent bar, Anton title with a serif-italic
- * accent word, and a taupe subtitle.
+ * Stamp-styled page header matching panelTitle pattern:
+ * - Large heading with serif accent
+ * - Taupe subtitle text
  */
 
 import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
+import { Paragraph } from "@/features/ui/paragraph";
 
 export function ProfileHeader() {
   const t = useTranslations("profile.header");
 
   return (
-    <header className="space-y-4">
-      <div className="h-1.5 w-20 bg-(--color-stamp-gold)" />
+    <header>
       <Heading
         as="h1"
-        variant="title"
-        className="text-(--color-stamp-chocolate)"
+        variant="panelTitle"
+        className="text-(--color-stamp-chocolate) mb-4"
       >
         {t.rich("title", {
           accent: (chunks) => (
-            <Span variant="serif" className="text-(--color-stamp-taupe)">
+            <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
               {chunks}
-            </Span>
+            </span>
           ),
         })}
       </Heading>
-      <Span variant="default" className="text-(--color-stamp-taupe)">
+      <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
         {t("subtitle")}
-      </Span>
+      </Paragraph>
     </header>
   );
 }

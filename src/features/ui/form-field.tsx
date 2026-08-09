@@ -61,7 +61,7 @@ const variantStyles: Record<
   profile: {
     container: "space-y-2",
     labelVariant: "sm" as const,
-    labelColor: "text-(--color-stamp-taupe)",
+    labelColor: "text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe)",
     input:
       "w-full bg-(--color-stamp-white) border-2 border-(--color-stamp-divider) p-4 font-heading text-sm uppercase placeholder:opacity-30 focus:border-(--color-stamp-gold) focus:ring-4 focus:ring-(--color-stamp-gold)/10 outline-none transition-all",
   },

@@ -1,9 +1,9 @@
 /**
  * ProfileLayout
  *
- * Page shell for the luxury profile page:
+ * Page shell for the luxury profile page matching orders layout:
  * - Off-white surface, heading font family, chocolate text
- * - Header on top, profile sections below
+ * - Uses PageContainer for consistent width with other pages
  */
 
 import { PropsWithChildren, ReactNode } from "react";
@@ -19,7 +19,9 @@ export function ProfileLayout({ header, children }: ProfileLayoutProps) {
       <div className="px-6 pb-24 pt-12 lg:px-12 xl:px-24">
         <PageContainer>
           {header}
-          <div className="mt-12 space-y-8">{children}</div>
+          <div className="mt-8 space-y-6">
+            {children}
+          </div>
         </PageContainer>
       </div>
     </div>

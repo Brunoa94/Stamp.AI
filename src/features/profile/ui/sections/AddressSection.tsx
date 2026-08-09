@@ -1,7 +1,7 @@
 "use client";
 
-import { MapPin } from "lucide-react";
 import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
 import { useAddressForm } from "@/features/profile/lib/hooks/useAddressForm";
 import { AddressFormFields } from "./address/AddressFormFields";
 import { AddressFormActions } from "./address/AddressFormActions";
@@ -27,8 +27,13 @@ export function AddressSection() {
   return (
     <ProfileCard
       label={t("label")}
-      icon={<MapPin className="w-5 h-5" />}
-      title={t("title")}
+      title={t.rich("title", {
+        accent: (chunks) => (
+          <Span variant="serif" className="text-(--color-stamp-taupe)">
+            {chunks}
+          </Span>
+        ),
+      })}
       subtitle={hasAddress ? t("subtitleHasAddress") : t("subtitleNoAddress")}
       editLabel={hasAddress ? t("editAddress") : t("addAddress")}
       onEdit={handleEdit}
@@ -36,7 +41,7 @@ export function AddressSection() {
     >
       {/* Content */}
       {isEditing ? (
-        <form onSubmit={onSubmit} className="space-y-6">
+        <form onSubmit={onSubmit} className="space-y-6 md:space-y-8">
           <AddressFormFields form={form} />
           <AddressFormActions
             onSave={onSubmit}

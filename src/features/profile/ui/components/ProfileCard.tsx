@@ -1,9 +1,10 @@
 /**
  * ProfileCard
  *
- * Standard luxury card surface for profile sections: white background,
- * hairline divider border, gold hover accent with a subtle lift.
- * Includes section header with icon and optional edit action.
+ * Luxury card surface for profile sections matching orders/cart design:
+ * - White background with border and shadow
+ * - Consistent padding and hover effects
+ * - Section header with edit action
  */
 
 import { PropsWithChildren, ReactNode } from "react";
@@ -16,7 +17,7 @@ import { Button } from "@/features/ui/button";
 interface ProfileCardProps extends PropsWithChildren {
   label?: string;
   icon?: ReactNode;
-  title: string;
+  title: ReactNode;
   subtitle?: string;
   editLabel?: string;
   onEdit?: () => void;
@@ -38,28 +39,29 @@ export function ProfileCard({
   return (
     <section
       className={cn(
-        "border-2 border-(--color-stamp-chocolate)/15 bg-(--color-stamp-white) p-8 shadow-(--shadow-stamp-card) transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover) lg:p-10",
+        "border-2 border-(--color-stamp-chocolate)/15 bg-(--color-stamp-white) p-6 md:p-8 shadow-(--shadow-stamp-card) transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover)",
         className,
       )}
     >
-      {/* Label Row */}
-      {label && (
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <Span variant="micro" className="text-(--color-stamp-taupe)">
-            {label}
-          </Span>
-          {icon && (
-            <div className="text-(--color-stamp-taupe)">{icon}</div>
-          )}
-        </div>
-      )}
-
       {/* Section Header */}
-      <div className="flex justify-between items-start mb-8">
-        <div className="space-y-1">
+      <div className="flex justify-between items-start mb-6 md:mb-8">
+        <div className="space-y-2">
+          {label && (
+            <div className="flex items-center gap-3">
+              <Span
+                variant="micro"
+                className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe)"
+              >
+                {label}
+              </Span>
+              {icon && (
+                <div className="text-(--color-stamp-taupe)">{icon}</div>
+              )}
+            </div>
+          )}
           <Heading
             as="h2"
-            variant="cardCompact"
+            variant="panelTitleCompact"
             className="text-(--color-stamp-chocolate)"
           >
             {title}
@@ -73,8 +75,7 @@ export function ProfileCard({
         {showEditButton && onEdit && editLabel && (
           <Button
             onClick={onEdit}
-            variant="ghost-stamp"
-            className="text-[10px] px-4 py-2"
+            className="bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-6 py-3 text-[10px] font-bold tracking-[0.15em] uppercase"
           >
             {editLabel}
           </Button>
