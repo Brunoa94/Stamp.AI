@@ -41,7 +41,7 @@ export function ResultsGallery({
           const isSelected = result.imageUrl === selectedImageUrl;
           return (
             <Button
-              key={`gallery-image-${index}`}
+              key={result.imageUrl}
               type="button"
               variant="stamp-thumbnail"
               onClick={() => onSelectImage(result.imageUrl, result.enhancedPrompt)}
