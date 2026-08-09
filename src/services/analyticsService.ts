@@ -37,9 +37,9 @@ export class AnalyticsService {
   static track(name: AnalyticsEventNameT, params?: AnalyticsEventParamsT): void {
     if (!this.isBrowser()) return;
 
+    // Always log in development for debugging
     if (this.isDevelopment()) {
       console.info("[analytics]", name, params ?? {});
-      return;
     }
 
     if (!this.isConfigured()) return;
