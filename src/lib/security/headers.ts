@@ -52,14 +52,20 @@ const TRUSTED_DOMAINS = {
 
 /**
  * Generate Content Security Policy header value
- * @param nonce - Optional nonce for inline scripts (generated per request)
+ *
+ * Note: We use 'unsafe-inline' for scripts instead of nonces because:
+ * 1. Next.js generates many inline scripts for hydration that cannot receive nonces
+ * 2. Static/ISR rendering is incompatible with per-request nonces
+ * 3. Third-party scripts (analytics, payment providers) inject inline scripts
+ *
+ * @param _nonce - Deprecated: nonce parameter kept for backward compatibility but not used
  */
-export function generateCSP(nonce?: string): string {
+export function generateCSP(_nonce?: string): string {
   const directives: Record<string, string[]> = {
     "default-src": ["'self'"],
     "script-src": [
       "'self'",
-      ...(nonce ? [`'nonce-${nonce}'`] : ["'unsafe-inline'"]),
+      "'unsafe-inline'", // Required for Next.js hydration and third-party scripts
       ...TRUSTED_DOMAINS.scripts,
     ],
     "style-src": [

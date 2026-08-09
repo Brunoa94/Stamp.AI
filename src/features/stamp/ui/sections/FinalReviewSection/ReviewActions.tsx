@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingBag } from "lucide-react";
+import { Plus, ShoppingBag } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction";
@@ -8,20 +8,20 @@ import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction"
 /**
  * ReviewActions
  *
- * Action buttons for adding to bag or buying now.
+ * Action buttons for adding to bag and creating another product.
  * On mobile, the primary action (Bag It) is shown in the sticky footer.
  */
 
 interface PropsI {
   isAddingToCart: boolean;
   onBagIt: () => void;
-  onBuyNow: () => void;
+  onBagItAndCreateAnother: () => void;
 }
 
 export function ReviewActions({
   isAddingToCart,
   onBagIt,
-  onBuyNow,
+  onBagItAndCreateAnother,
 }: PropsI) {
   const t = useTranslations("stamp.finalReview");
 
@@ -46,22 +46,24 @@ export function ReviewActions({
           {isAddingToCart ? t("adding") : t("bagIt")}
         </Button>
         <Button
-          onClick={onBuyNow}
+          onClick={onBagItAndCreateAnother}
           disabled={isAddingToCart}
-          className="w-full bg-transparent text-(--color-stamp-chocolate) border border-(--color-stamp-divider) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 px-8 py-4 md:py-6 text-xs font-bold tracking-[0.2em] uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-(--color-stamp-gold) text-(--color-stamp-chocolate) border-2 border-(--color-stamp-gold) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 px-8 py-4 md:py-6 text-xs font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isAddingToCart ? t("processing") : t("buyNow")}
+          <Plus className="w-5 h-5" />
+          {t("bagItAndCreateAnother")}
         </Button>
       </div>
 
-      {/* Mobile: only show Buy Now button (Bag It is in footer) */}
+      {/* Mobile: Bag It & Create Another button (Bag It is in footer) */}
       <div className="md:hidden">
         <Button
-          onClick={onBuyNow}
+          onClick={onBagItAndCreateAnother}
           disabled={isAddingToCart}
-          className="w-full bg-transparent text-(--color-stamp-chocolate) border border-(--color-stamp-divider) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 px-8 py-4 text-xs font-bold tracking-[0.2em] uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-(--color-stamp-gold) text-(--color-stamp-chocolate) border-2 border-(--color-stamp-gold) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 px-8 py-4 text-xs font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isAddingToCart ? t("processing") : t("buyNow")}
+          <Plus className="w-5 h-5" />
+          {t("bagItAndCreateAnother")}
         </Button>
       </div>
     </div>

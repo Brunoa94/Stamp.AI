@@ -156,4 +156,6 @@ export interface StampFlowStateType {
 
   // Reset
   reset: () => void;
+  /** Reset product state while keeping the selected image for creating another product */
+  resetForNewProduct: () => void;
 }

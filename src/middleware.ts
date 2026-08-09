@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
-import { applySecurityHeaders, generateNonce } from "@/lib/security/headers";
+import { applySecurityHeaders } from "@/lib/security/headers";
 import { checkCombinedRateLimit } from "@/lib/security/rate-limiter/check";
 import {
   RATE_LIMIT_CONFIGS,
@@ -56,7 +56,6 @@ function getRateLimitType(pathname: string): RateLimitType | null {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const nonce = generateNonce();
 
   // ── Request ID ──────────────────────────────────────────────────────────────
   // Generate or extract request ID for correlation across the request lifecycle
@@ -87,7 +86,7 @@ export async function middleware(request: NextRequest) {
       );
 
       // Apply security headers even to rate-limited responses
-      applySecurityHeaders(response, { nonce });
+      applySecurityHeaders(response);
       response.headers.set(REQUEST_ID_HEADER, requestId);
 
       return response;
@@ -155,8 +154,7 @@ export async function middleware(request: NextRequest) {
   // of sync and terminate the user's session prematurely!
 
   // ── Apply Security Headers ────────────────────────────────────────────────────
-  applySecurityHeaders(supabaseResponse, { nonce });
-  supabaseResponse.headers.set("x-nonce", nonce);
+  applySecurityHeaders(supabaseResponse);
 
   // Add rate limit headers to successful responses (reuse earlier result to avoid double-counting)
   if (rateLimitResult) {
