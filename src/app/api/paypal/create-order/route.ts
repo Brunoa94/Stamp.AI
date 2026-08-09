@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createPayPalOrder } from "@/lib/paypal-server";
+import { captureError } from "@/lib/observability/errorCapture";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 
@@ -107,7 +108,10 @@ export async function POST(request: NextRequest) {
       approvalUrl: approvalLink?.href,
     });
   } catch (error) {
-    console.error("Error creating PayPal order:", error);
+    captureError(error, {
+      service: "PayPalAPI",
+      action: "createOrder",
+    });
 
     return NextResponse.json(
       {

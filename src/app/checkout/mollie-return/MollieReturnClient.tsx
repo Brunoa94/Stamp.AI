@@ -25,7 +25,7 @@ import {
 } from "@/lib/mollie";
 import type { MolliePaymentStatus } from "@/lib/mollie";
 import type { ShippingAddressT } from "@/schemas/checkout";
-
+import { captureError } from "@/lib/observability/errorCapture";
 import {
   useCreateOrderFromCart,
   useUpdateOrderStatus,
@@ -150,10 +150,10 @@ export default function MollieReturnClient() {
               }
             }
           } catch (recoveryError) {
-            console.error(
-              "Failed to recover payment from database:",
-              recoveryError,
-            );
+            captureError(recoveryError, {
+              service: "MollieReturn",
+              action: "recoverFromDatabase",
+            });
           }
         }
 
@@ -258,11 +258,11 @@ export default function MollieReturnClient() {
               "✅ Payment recorded for crash recovery (pre-verification)",
             );
           } catch (recoveryError) {
-            console.error(
-              "❌ Payment recovery recording failed:",
-              recoveryError,
-            );
-            // Non-blocking - continue with verification
+            captureError(recoveryError, {
+              service: "MollieReturn",
+              action: "recordPaymentForRecovery",
+              metadata: { storedPaymentId },
+            });
           }
         }
 
@@ -295,7 +295,11 @@ export default function MollieReturnClient() {
                 );
               }
             } catch (refundError) {
-              console.error("❌ Refund initiation failed:", refundError);
+              captureError(refundError, {
+                service: "MollieReturn",
+                action: "triggerRefund",
+                metadata: { storedPaymentId, orderAmount, reason },
+              });
             }
           };
 
@@ -312,14 +316,12 @@ export default function MollieReturnClient() {
                 orderId,
                 paymentStatus: "pending",
               });
-              console.log(
-                `✅ Order ${orderId} marked as ${failureStatus} / pending`,
-              );
-            } catch (updateError) {
-              console.error(
-                `❌ Failed to mark order ${orderId} as ${failureStatus}:`,
-                updateError,
-              );
+              } catch (updateError) {
+              captureError(updateError, {
+                service: "MollieReturn",
+                action: "markOrderFailed",
+                metadata: { orderId, failureStatus },
+              });
             }
           };
 
@@ -356,11 +358,11 @@ export default function MollieReturnClient() {
               });
               console.log("✅ Payment recovery status updated to succeeded");
             } catch (recoveryError) {
-              console.error(
-                "❌ Payment recovery update failed:",
-                recoveryError,
-              );
-              // Non-blocking
+              captureError(recoveryError, {
+                service: "MollieReturn",
+                action: "updatePaymentRecovery",
+                metadata: { storedPaymentId },
+              });
             }
           }
 
@@ -439,8 +441,11 @@ export default function MollieReturnClient() {
                 console.log(`✅ Order number: ${fullOrder.order_number}`);
               }
             } catch (fetchError) {
-              console.error("❌ Failed to fetch order details:", fetchError);
-              // Non-blocking - continue with order processing
+              captureError(fetchError, {
+                service: "MollieReturn",
+                action: "fetchOrderDetails",
+                metadata: { createdOrderId },
+              });
             }
 
             // ── Stage 2: Create Printify order (uses React Query mutation with retry: 3) ──
@@ -480,10 +485,11 @@ export default function MollieReturnClient() {
                     `✅ Saved printify_order_id ${printifyOrderId} to order ${createdOrderId}`,
                   );
                 } catch (updateErr) {
-                  console.error(
-                    "❌ Failed to save printify_order_id:",
-                    updateErr,
-                  );
+                  captureError(updateErr, {
+                    service: "MollieReturn",
+                    action: "savePrintifyOrderId",
+                    metadata: { printifyOrderId, createdOrderId },
+                  });
                 }
               }
             } catch (printifyError) {
@@ -523,10 +529,11 @@ export default function MollieReturnClient() {
                 await clearCart.mutateAsync();
                 console.log("✅ Cart cleared successfully");
               } catch (cartError) {
-                console.error(
-                  "Failed to clear cart after Mollie payment:",
-                  cartError,
-                );
+                captureError(cartError, {
+                  service: "MollieReturn",
+                  action: "clearCart",
+                  metadata: { storedCartId },
+                });
               }
             }
           };
@@ -568,9 +575,12 @@ export default function MollieReturnClient() {
           setStatus("pending");
         }
       } catch (err) {
-        console.error("Error verifying payment:", err);
-
         const currentPaymentId = sessionStorage.getItem("mollie_payment_id");
+        captureError(err, {
+          service: "MollieReturn",
+          action: "verifyPayment",
+          metadata: { paymentId: currentPaymentId },
+        });
         if (currentPaymentId) {
           sessionStorage.removeItem(`mollie_finalizing_${currentPaymentId}`);
         }

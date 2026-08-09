@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { captureError } from "@/lib/observability/errorCapture";
 import { GeminiImageService } from "@/services/geminiImageService";
 
 export const runtime = "nodejs";
@@ -132,7 +133,10 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error("Image generation error:", error);
+    captureError(error, {
+      service: "ImageGeneration",
+      action: "generateImage",
+    });
 
     return NextResponse.json(
       {

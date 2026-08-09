@@ -6,6 +6,11 @@ import {
   RATE_LIMIT_CONFIGS,
   type RateLimitType,
 } from "@/lib/security/rate-limiter/configs";
+import {
+  generateRequestId,
+  getRequestIdFromHeaders,
+  REQUEST_ID_HEADER,
+} from "@/lib/observability/requestId";
 
 /**
  * Determine the rate limit type based on the request path
@@ -53,6 +58,10 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
 
+  // ── Request ID ──────────────────────────────────────────────────────────────
+  // Generate or extract request ID for correlation across the request lifecycle
+  const requestId = getRequestIdFromHeaders(request.headers) || generateRequestId();
+
   // ── Rate Limiting ─────────────────────────────────────────────────────────────
   const rateLimitType = getRateLimitType(pathname);
   let rateLimitResult: ReturnType<typeof checkCombinedRateLimit> | null = null;
@@ -79,6 +88,7 @@ export async function middleware(request: NextRequest) {
 
       // Apply security headers even to rate-limited responses
       applySecurityHeaders(response, { nonce });
+      response.headers.set(REQUEST_ID_HEADER, requestId);
 
       return response;
     }
@@ -88,6 +98,9 @@ export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   });
+
+  // Add request ID to response headers for client-side correlation
+  supabaseResponse.headers.set(REQUEST_ID_HEADER, requestId);
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

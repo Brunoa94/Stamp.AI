@@ -17,6 +17,8 @@ import { BRAND_COLORS } from "@/features/seo/config/site";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { AppLayoutChrome } from "@/components/AppLayoutChrome";
+import { GlobalErrorBoundary } from "@/components/ErrorBoundary/GlobalErrorBoundary";
+import { WebVitalsReporter } from "@/components/WebVitalsReporter";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -72,20 +74,23 @@ export default async function RootLayout({
         <GrainOverlay />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider>
-            <SupabaseAuthProvider>
-              <QueryProvider>
-                <ScrollToTop />
-                <AppLayoutChrome>{children}</AppLayoutChrome>
-                <Toaster
-                  position="bottom-right"
-                  offset={24}
-                  gap={12}
-                  toastOptions={{
-                    unstyled: true,
-                  }}
-                />
-              </QueryProvider>
-            </SupabaseAuthProvider>
+            <WebVitalsReporter />
+            <GlobalErrorBoundary>
+              <SupabaseAuthProvider>
+                <QueryProvider>
+                  <ScrollToTop />
+                  <AppLayoutChrome>{children}</AppLayoutChrome>
+                  <Toaster
+                    position="bottom-right"
+                    offset={24}
+                    gap={12}
+                    toastOptions={{
+                      unstyled: true,
+                    }}
+                  />
+                </QueryProvider>
+              </SupabaseAuthProvider>
+            </GlobalErrorBoundary>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>
