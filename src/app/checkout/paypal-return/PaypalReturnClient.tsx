@@ -17,6 +17,7 @@ import { PaymentRecoveryService } from "@/services/paymentRecoveryService";
 import type { CreatePrintifyOrderRequest } from "@/types/printifyOrder";
 import { validatePrintifyLineItem } from "@/types/printifyOrder";
 import { mapShippingAddressToPrintifyAddress } from "@/mappers/mapShippingAddressToPrintifyAddress";
+import { captureError } from "@/lib/observability/errorCapture";
 import {
   useCreateOrderFromCart,
   useUpdateOrderStatus,
@@ -24,7 +25,7 @@ import {
 } from "@/queries/orderQueries";
 import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
 import { useClearCart } from "@/queries/cartQueries";
-import { useUser } from "@/hooks/useAuth";
+import { useUser } from "@/queries/authQueries";
 import { CheckoutStorageService } from "@/features/checkout/lib/services/checkoutStorageService";
 import { UserI } from "@/supabase/types";
 
@@ -219,7 +220,11 @@ function PayPalReturnContent() {
             },
           });
         } catch (recoveryError) {
-          console.error("Payment recovery recording failed:", recoveryError);
+          captureError(recoveryError, {
+            service: "PayPalReturn",
+            action: "recordPaymentForRecovery",
+            metadata: { token },
+          });
         }
 
         // Check for existing order
@@ -248,11 +253,13 @@ function PayPalReturnContent() {
                 paypalCaptureId: captureData.captureId,
               });
 
-              console.log(`✅ Refund triggered for order ${refundOrderId}`);
-            }
+              }
           } catch (refundError) {
-            console.error("❌ Refund initiation failed:", refundError);
-            // Log to refund_failures table via RefundService
+            captureError(refundError, {
+              service: "PayPalReturn",
+              action: "triggerRefund",
+              metadata: { token, amount, reason },
+            });
           }
         };
 
@@ -268,12 +275,12 @@ function PayPalReturnContent() {
             // Do NOT change payment_status - payment has been successfully captured
             // The payment_transactions table will track refund status
             // Keeping payment_status as "paid" accurately reflects that payment was captured
-            console.log(`✅ Order ${orderId} marked as ${failureStatus}`);
           } catch (updateError) {
-            console.error(
-              `❌ Failed to mark order ${orderId} as ${failureStatus}:`,
-              updateError,
-            );
+            captureError(updateError, {
+              service: "PayPalReturn",
+              action: "markOrderFailed",
+              metadata: { orderId, failureStatus },
+            });
           }
         };
 
@@ -348,7 +355,11 @@ function PayPalReturnContent() {
               });
             }
           } catch (printifyError) {
-            console.error("❌ Printify order creation failed:", printifyError);
+            captureError(printifyError, {
+              service: "PayPalReturn",
+              action: "createPrintifyOrder",
+              metadata: { token, createdOrderId },
+            });
 
             if (createdOrderId) {
               // Mark order as failed BEFORE triggering refund
@@ -359,10 +370,6 @@ function PayPalReturnContent() {
               // Trigger refund with real order ID
               await triggerRefund("Printify fulfillment failed");
             } else {
-              // No order created yet, trigger refund with temp ID
-              console.warn(
-                "⚠️ No order ID available, triggering refund with temp ID",
-              );
               await triggerRefund("Order creation failed before Printify");
             }
 
@@ -407,7 +414,11 @@ function PayPalReturnContent() {
         CheckoutStorageService.clearPayPalCheckoutData();
         setStatus("success");
       } catch (err) {
-        console.error("PayPal return error:", err);
+        captureError(err, {
+          service: "PayPalReturn",
+          action: "processPayPalReturn",
+          metadata: { token: searchParams.get("token") },
+        });
 
         const currentToken = searchParams.get("token");
         if (currentToken) {

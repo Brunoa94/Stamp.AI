@@ -56,13 +56,12 @@ export function generateCSP(nonce?: string): string {
     "default-src": ["'self'"],
     "script-src": [
       "'self'",
-      ...(nonce ? [`'nonce-${nonce}'`] : []),
-      "'strict-dynamic'",
+      ...(nonce ? [`'nonce-${nonce}'`] : ["'unsafe-inline'"]),
       ...TRUSTED_DOMAINS.scripts,
     ],
     "style-src": [
       "'self'",
-      "'unsafe-inline'", // Required for Tailwind CSS
+      "'unsafe-inline'",
       ...TRUSTED_DOMAINS.styles,
     ],
     "img-src": [
@@ -114,8 +113,8 @@ export const SECURITY_HEADERS: Record<string, string> = {
   // Prevent MIME type sniffing
   "X-Content-Type-Options": "nosniff",
 
-  // Enable XSS filter in older browsers
-  "X-XSS-Protection": "1; mode=block",
+  // Deprecated — set to 0; rely on CSP for XSS protection instead
+  "X-XSS-Protection": "0",
 
   // Control referrer information
   "Referrer-Policy": "strict-origin-when-cross-origin",
@@ -141,7 +140,7 @@ export const SECURITY_HEADERS: Record<string, string> = {
  */
 export function applySecurityHeaders(
   response: NextResponse,
-  options?: { nonce?: string }
+  options?: { nonce?: string },
 ): NextResponse {
   // Apply static security headers
   Object.entries(SECURITY_HEADERS).forEach(([key, value]) => {

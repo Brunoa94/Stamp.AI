@@ -97,7 +97,7 @@ export function CheckoutPromoCode({
             onClick={handleApply}
             disabled={!inputValue.trim() || isApplying}
             variant="outline"
-            className="rounded-none border-(--color-stamp-chocolate) text-lg font-bold uppercase tracking-[0.2em]"
+            className="rounded-none border-(--color-stamp-chocolate) text-xs font-bold uppercase tracking-[0.15em] px-4"
           >
             {isApplying ? t("applying") : t("apply")}
           </Button>

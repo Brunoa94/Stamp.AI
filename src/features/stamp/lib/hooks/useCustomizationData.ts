@@ -11,6 +11,7 @@ import {
   sortSizes,
   STAMP_SIZES,
 } from "../constants/stampColors";
+import { filterDisplayColors } from "@/features/homepage/lib/constants/colorSwatches";
 import type { SizeType } from "../types/stampTypes";
 
 /**
@@ -32,10 +33,12 @@ export function useCustomizationData() {
     printProviderId,
   );
 
-  const availableColors = useMemo(
-    () => (variants?.colors || []).filter(Boolean),
-    [variants?.colors],
-  );
+  // Filter colors to only show White and Black if both are available
+  // Otherwise show all available colors
+  const availableColors = useMemo(() => {
+    const allColors = (variants?.colors || []).filter(Boolean);
+    return filterDisplayColors(allColors);
+  }, [variants?.colors]);
 
   // Get available sizes from variants API, sorted properly
   // Falls back to standard apparel sizes if API doesn't return sizes
@@ -56,10 +59,30 @@ export function useCustomizationData() {
     return getDefaultSizeForProduct(availableSizes) as SizeType;
   }, [selectedSize, availableSizes]);
 
+  // Determine effective color: use selected, or auto-select if only one option
+  const effectiveSelectedColor = useMemo(() => {
+    if (selectedColor && availableColors.includes(selectedColor)) {
+      return selectedColor;
+    }
+    // Auto-select if only one color available
+    if (availableColors.length === 1) {
+      return availableColors[0];
+    }
+    return selectedColor;
+  }, [selectedColor, availableColors]);
+
+  // Color selection is only required if there are multiple colors to choose from
+  // If there's only one color, it will be auto-used
+  // If there are no colors, no selection is needed
+  const colorRequirementMet =
+    availableColors.length === 0 ||
+    availableColors.length === 1 ||
+    Boolean(selectedColor);
+
   const canCreateProduct = !isFinalizing &&
     Boolean(blueprintId) &&
     Boolean(printProviderId) &&
-    Boolean(selectedColor) &&
+    colorRequirementMet &&
     Boolean(selectedImageUrl);
 
   return {
@@ -69,6 +92,7 @@ export function useCustomizationData() {
     // Colors
     availableColors,
     selectedColor,
+    effectiveSelectedColor,
     setSelectedColor,
     isLoadingVariants,
     // Sizes

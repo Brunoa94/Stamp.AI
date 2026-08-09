@@ -1,3 +1,4 @@
+// REFACTOR: THIS FILE SHOULD BE BETTER DECOMPOSED IN ORDER TO FOLLOW THE PATTERNS OF THE PROJECT
 "use client";
 
 import { useRef } from "react";
@@ -18,6 +19,10 @@ import {
   logStampWarn,
 } from "../helpers/stampLogger";
 import { withTimeout } from "@/lib/promiseUtils";
+import type {
+  MockupImageType,
+  PlacementParamsType,
+} from "../types/stampFlowTypes";
 
 /**
  * useStampProductCreation
@@ -45,6 +50,10 @@ interface CreateProductParamsType {
   printProviderId: number;
   fabricColor: string;
   size: string;
+  /** User-selected print positions with placements (Step 6 adjustment). */
+  printPositions?: { position: string; placement: PlacementParamsType }[];
+  /** Scale value for idempotency key (to allow different scales for same product) */
+  scale?: number;
 }
 
 export function useStampProductCreation() {
@@ -59,6 +68,7 @@ export function useStampProductCreation() {
     setCreatedProductId,
     setCreatedVariantId,
     setMockupImageUrl,
+    setMockupImages,
     setProductionProgress,
   } = useStampFinalization();
 
@@ -73,6 +83,8 @@ export function useStampProductCreation() {
     printProviderId,
     fabricColor,
     size,
+    printPositions,
+    scale,
   }: CreateProductParamsType) => {
     // Idempotency check: Prevent duplicate operations
     if (isCreatingRef.current) {
@@ -84,14 +96,17 @@ export function useStampProductCreation() {
           printProviderId,
           fabricColor,
           size,
+          scale,
         },
       });
       return;
     }
 
     // Check sessionStorage for completed operations
+    // Include scale in the key to allow different scales for same product
+    const scaleKey = scale !== undefined ? `_scale${scale.toFixed(2)}` : "";
     const operationKey =
-      `stamp_product_${blueprintId}_${printProviderId}_${fabricColor}_${size}`;
+      `stamp_product_${blueprintId}_${printProviderId}_${fabricColor}_${size}${scaleKey}`;
     const completedKey = `${operationKey}_completed`;
 
     if (sessionStorage.getItem(completedKey) === "true") {
@@ -123,8 +138,8 @@ export function useStampProductCreation() {
       return;
     }
 
-    if (!fabricColor || !size) {
-      handleError(new Error(t("noColorSize")));
+    if (!size) {
+      handleError(new Error(t("noSize")));
       return;
     }
 
@@ -170,6 +185,9 @@ export function useStampProductCreation() {
           customer_email: user.email || "",
           selected_color: fabricColor,
           selected_size: size,
+          ...(printPositions?.length
+            ? { print_positions: printPositions }
+            : {}),
         }),
         PRODUCT_CREATION_TIMEOUT_MS,
         new ProductCreationTimeoutError(
@@ -206,8 +224,38 @@ export function useStampProductCreation() {
         setCreatedVariantId(firstVariantId);
       }
 
-      // Store mockup image URL
+      const productMapper = (
+        { img }: {
+          img: {
+            src: string;
+            variant_ids?: number[];
+            position?: string;
+            is_default?: boolean;
+          };
+        },
+      ): MockupImageType =>
+        ({
+          src: img.src,
+          variant_ids: img.variant_ids || [],
+          position: img.position || "front",
+          is_default: img.is_default || false,
+        }) as MockupImageType;
+
+      // Store all mockup images for carousel
       if (product.images && product.images.length > 0) {
+        const productMapped = productMapper({ img: product.images[0] });
+        setMockupImages([productMapped]);
+
+        const mappedImages = product.images.map((
+          img: {
+            src: string;
+            variant_ids?: number[];
+            position?: string;
+            is_default?: boolean;
+          },
+        ) => productMapper({ img }));
+        setMockupImages(mappedImages);
+        // Also set first image as primary mockup for backwards compatibility
         const mockupUrl = product.images[0].src;
         setMockupImageUrl(mockupUrl);
       }

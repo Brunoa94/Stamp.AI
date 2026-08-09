@@ -11,7 +11,7 @@ import { Button } from "@/features/ui/button";
  */
 
 export const metadata: Metadata = {
-  title: "Authentication Error | Stamp AI",
+  title: "Authentication Error",
   description:
     "There was an issue with your authentication request. Please try again or request a new link.",
   robots: {

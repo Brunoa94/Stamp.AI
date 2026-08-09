@@ -55,7 +55,7 @@ export function CustomCreditInput({
             />
           </div>
           {showPrice && (
-            <span className={theme.price}>${price.toFixed(2)}</span>
+            <span className={theme.price}>€{price.toFixed(2)}</span>
           )}
         </div>
         {showError && (

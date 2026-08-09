@@ -99,7 +99,7 @@ export class OrderServiceMapper {
       shipping_cost: createOrder.shipping_cost,
       discount_amount: createOrder.discount_amount,
       total_amount: createOrder.total_amount,
-      currency: createOrder.currency || 'USD',
+      currency: createOrder.currency || 'EUR',
       status: 'pending',
       payment_status: 'pending',
     };
@@ -227,7 +227,7 @@ export class OrderServiceMapper {
       tax_amount: totals.tax_amount,
       discount_amount: discountAmount,
       total_amount: totals.total_amount,
-      currency: "USD", // Default currency
+      currency: "EUR", // Default currency
       idempotency_key: idempotencyKey || null,
     };
   }

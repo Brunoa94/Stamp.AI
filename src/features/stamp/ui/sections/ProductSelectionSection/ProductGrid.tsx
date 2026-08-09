@@ -1,7 +1,9 @@
-
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { Paragraph } from "@/features/ui/paragraph";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { Disclosure } from "../../components/Disclosure/Disclosure";
+import { ExpandablePicker } from "../../components/ExpandablePicker/ExpandablePicker";
 import { ProductCard } from "./ProductCard";
 import { SelectedProductCard } from "./SelectedProductCard";
 import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
@@ -10,8 +12,15 @@ import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
  * ProductGrid
  *
  * Manages the grid layout of products and handles loading/error/empty states.
- * Products are grouped into clothing (apparel) and accessories with a visual separator.
+ * Products are grouped into clothing (apparel) and accessories.
+ *
+ * On mobile (<md): uses ExpandablePicker with "Show more" overlay pattern
+ * On tablet (md to lg): uses collapsible Disclosure components
+ * On desktop (lg+): shows products directly without collapsing
  */
+
+// Number of products to show initially on mobile before expanding
+const MOBILE_INITIAL_COUNT = 4;
 
 interface PropsI {
   clothingProducts: CatalogProductMappedType[];
@@ -68,11 +77,23 @@ export function ProductGrid({
   isProductSelected,
 }: PropsI) {
   const t = useTranslations("stamp.productSelection");
+  const isMdUp = useMediaQuery("(min-width: 768px)", true);
+  const isLgUp = useMediaQuery("(min-width: 1024px)", true);
   const allProducts = [...clothingProducts, ...accessoryProducts];
   const hasProducts = allProducts.length > 0;
 
+  // Header for mobile ExpandablePicker
+  const mobileHeader = (
+    <Span
+      variant="micro"
+      className="block mb-3 text-(--color-stamp-taupe) tracking-widest"
+    >
+      {t("apparel")} & {t("accessories")} ({allProducts.length})
+    </Span>
+  );
+
   return (
-    <div className="h-full min-h-0 overflow-y-auto bg-(--color-stamp-cream)/20">
+    <div className="flex-1 md:flex-none md:h-full min-h-0 overflow-y-auto bg-(--color-stamp-cream)/20 pb-40 md:pb-0">
       {isLoading && (
         <div
           className="h-full flex items-center justify-center"
@@ -127,18 +148,19 @@ export function ProductGrid({
                 onProductSelect={onProductSelect}
               />
             </div>
-          ) : (
-            <>
+          ) : isLgUp ? (
+            /* Desktop (lg+): show products directly without Disclosure */
+            <div className="space-y-6">
               {/* Clothing Section */}
               {clothingProducts.length > 0 && (
                 <div>
                   <Span
                     variant="micro"
-                    className="text-(--color-stamp-taupe) uppercase tracking-widest mb-4 block"
+                    className="block mb-3 text-(--color-stamp-taupe) tracking-widest"
                   >
-                    {t("apparel")}
+                    {t("apparel")} ({clothingProducts.length})
                   </Span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     {clothingProducts.map((product) => (
                       <ProductCardItem
                         key={product.blueprintId}
@@ -152,30 +174,16 @@ export function ProductGrid({
                 </div>
               )}
 
-              {/* Visual Separator */}
-              {clothingProducts.length > 0 && accessoryProducts.length > 0 && (
-                <div className="my-8 flex items-center gap-4">
-                  <div className="flex-1 h-px bg-(--color-stamp-divider)" />
-                  <Span
-                    variant="micro"
-                    className="text-(--color-stamp-taupe)/60 uppercase tracking-widest"
-                  >
-                    {t("moreOptions")}
-                  </Span>
-                  <div className="flex-1 h-px bg-(--color-stamp-divider)" />
-                </div>
-              )}
-
               {/* Accessories Section */}
               {accessoryProducts.length > 0 && (
                 <div>
                   <Span
                     variant="micro"
-                    className="text-(--color-stamp-taupe) uppercase tracking-widest mb-4 block"
+                    className="block mb-3 text-(--color-stamp-taupe) tracking-widest"
                   >
-                    {t("accessories")}
+                    {t("accessories")} ({accessoryProducts.length})
                   </Span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     {accessoryProducts.map((product) => (
                       <ProductCardItem
                         key={product.blueprintId}
@@ -188,7 +196,72 @@ export function ProductGrid({
                   </div>
                 </div>
               )}
-            </>
+            </div>
+          ) : isMdUp ? (
+            /* Tablet (md to lg): use Disclosure for collapsible sections */
+            <div className="space-y-4">
+              {/* Clothing Section */}
+              {clothingProducts.length > 0 && (
+                <Disclosure
+                  key="apparel-tablet"
+                  label={t("apparel")}
+                  value={String(clothingProducts.length)}
+                  defaultOpen
+                >
+                  <div className="grid grid-cols-2 gap-3">
+                    {clothingProducts.map((product) => (
+                      <ProductCardItem
+                        key={product.blueprintId}
+                        product={product}
+                        isProductSelected={isProductSelected}
+                        onClearSelection={onClearSelection}
+                        onProductSelect={onProductSelect}
+                      />
+                    ))}
+                  </div>
+                </Disclosure>
+              )}
+
+              {/* Accessories Section */}
+              {accessoryProducts.length > 0 && (
+                <Disclosure
+                  label={t("accessories")}
+                  value={String(accessoryProducts.length)}
+                >
+                  <div className="grid grid-cols-2 gap-3">
+                    {accessoryProducts.map((product) => (
+                      <ProductCardItem
+                        key={product.blueprintId}
+                        product={product}
+                        isProductSelected={isProductSelected}
+                        onClearSelection={onClearSelection}
+                        onProductSelect={onProductSelect}
+                      />
+                    ))}
+                  </div>
+                </Disclosure>
+              )}
+            </div>
+          ) : (
+            /* Mobile (<md): use ExpandablePicker with overlay pattern */
+            <ExpandablePicker
+              initialCount={MOBILE_INITIAL_COUNT}
+              showMoreLabel={t("showMore", { count: "{count}" })}
+              showLessLabel={t("showLess")}
+              columns={2}
+              gap={3}
+              header={mobileHeader}
+            >
+              {allProducts.map((product) => (
+                <ProductCardItem
+                  key={product.blueprintId}
+                  product={product}
+                  isProductSelected={isProductSelected}
+                  onClearSelection={onClearSelection}
+                  onProductSelect={onProductSelect}
+                />
+              ))}
+            </ExpandablePicker>
           )}
         </div>
       )}

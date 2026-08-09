@@ -35,7 +35,7 @@ export function useStampCartActions() {
   const router = useRouter();
   const { handleError, handleSuccess } = useErrorHandler();
 
-  const { createdProductId, createdVariantId } = useStampFinalization();
+  const { createdProductId, createdVariantId, mockupImageUrl } = useStampFinalization();
   const { selectedImageUrl } = useStampSelectedImage();
   const { selectedPriceCents } = useStampCustomization();
   const { selectedProductTitle } = useStampProductSelection();
@@ -114,15 +114,55 @@ export function useStampCartActions() {
     // Default to 1999 cents ($19.99) if no price selected
     const unitPrice = selectedPriceCents ?? 1999;
 
-    try {
-      await addToCartMutation.mutateAsync({
-        product_id: createdProductId,
-        quantity: 1,
-        product_name: productName,
-        unit_price: unitPrice,
-        custom_image_url: selectedImageUrl,
-        variant_id: createdVariantId.toString(),
+    // Build cart item payload
+    const cartItemPayload = {
+      product_id: createdProductId,
+      quantity: 1,
+      product_name: productName,
+      unit_price: unitPrice,
+      custom_image_url: mockupImageUrl || selectedImageUrl,
+      variant_id: createdVariantId.toString(),
+    };
+
+    // DEBUG: Log the exact payload being sent to cart
+    logStampInfo({
+      scope: "useStampCartActions",
+      event: "add_to_cart_payload",
+      metadata: {
+        buyNow,
+        payload: cartItemPayload,
+        rawValues: {
+          selectedProductTitle,
+          selectedPriceCents,
+          selectedImageUrl,
+          mockupImageUrl,
+          createdProductId,
+          createdVariantId,
+        },
+      },
+    });
+
+    // Validate critical fields before sending
+    if (!cartItemPayload.product_name) {
+      logStampError({
+        scope: "useStampCartActions",
+        event: "missing_product_name_in_payload",
+        error: new Error("product_name is missing from cart payload"),
+        metadata: { payload: cartItemPayload },
       });
+    }
+
+    if (typeof cartItemPayload.unit_price !== "number" || cartItemPayload.unit_price <= 0) {
+      logStampError({
+        scope: "useStampCartActions",
+        event: "invalid_unit_price_in_payload",
+        error: new Error(`unit_price is invalid: ${cartItemPayload.unit_price}`),
+        metadata: { payload: cartItemPayload },
+      });
+    }
+
+    try {
+      await addToCartMutation.mutateAsync(cartItemPayload);
 
       // Mark operation as completed for idempotency
       sessionStorage.setItem(cartOperationKey, "true");

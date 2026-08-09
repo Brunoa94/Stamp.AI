@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
  * - cta            CTA section h2 — large fluid viewport-relative title (Outfit)
  * - section        Section header h2 — 5xl→7xl (Outfit)
  * - title          Interior section h2 — fixed responsive scale 6xl→8xl (Outfit)
+ * - panelTitle     Split-panel h2 — fluid size that fits a half-width grid column (Outfit)
  * - card           Card / step h3 — 3xl→4xl (Outfit)
  * - cardCompact    Compact card title — xl (Outfit)
  * - question       FAQ summary — 2xl→3xl (Outfit)
@@ -33,6 +34,8 @@ const headingVariants = {
     "font-heading font-bold text-5xl md:text-6xl lg:text-7xl tracking-tighter leading-none uppercase",
   title:
     "font-heading font-bold text-6xl md:text-7xl lg:text-8xl tracking-tighter leading-none uppercase",
+  panelTitle:
+    "font-heading font-bold text-[clamp(1.875rem,9vw,3.75rem)] md:text-[clamp(2.5rem,4.75vw,6rem)] tracking-tighter leading-none uppercase",
   card: "font-heading font-semibold text-3xl md:text-4xl tracking-tight leading-tight uppercase",
   cardCompact:
     "font-heading font-semibold text-xl tracking-tight leading-tight uppercase",

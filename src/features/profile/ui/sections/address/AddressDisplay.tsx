@@ -1,5 +1,6 @@
 import type { ShippingAddressI } from "../../../../../../supabase/types";
 import { useTranslations } from "next-intl";
+import { Paragraph } from "@/features/ui/paragraph";
 
 interface AddressDisplayProps {
   address: ShippingAddressI;
@@ -10,19 +11,27 @@ export function AddressDisplay({ address }: AddressDisplayProps) {
 
   return (
     <div className="space-y-2">
-      <p className="font-medium text-slate-900">
+      <Paragraph variant="sm" className="font-medium text-(--color-stamp-chocolate)">
         {address.first_name} {address.last_name}
-      </p>
-      <p className="text-sm text-slate-600">{address.address1}</p>
+      </Paragraph>
+      <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
+        {address.address1}
+      </Paragraph>
       {address.address2 && (
-        <p className="text-sm text-slate-600">{address.address2}</p>
+        <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
+          {address.address2}
+        </Paragraph>
       )}
-      <p className="text-sm text-slate-600">
+      <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
         {address.city}, {address.region} {address.zip}
-      </p>
-      <p className="text-sm text-slate-600">{address.country}</p>
+      </Paragraph>
+      <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
+        {address.country}
+      </Paragraph>
       {address.phone && (
-        <p className="text-sm text-slate-600">{t("phone", { phone: address.phone })}</p>
+        <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
+          {t("phone", { phone: address.phone })}
+        </Paragraph>
       )}
     </div>
   );

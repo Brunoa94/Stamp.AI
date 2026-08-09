@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ReactNode, useState } from "react";
+import { captureError } from "@/lib/observability/errorCapture";
 
 interface QueryProviderProps {
   children: ReactNode;
@@ -25,6 +26,13 @@ export function QueryProvider({ children }: QueryProviderProps) {
           },
           mutations: {
             retry: 1,
+            onError: (error) => {
+              // Capture all mutation errors to Sentry
+              captureError(error, {
+                service: "ReactQuery",
+                action: "mutation",
+              });
+            },
           },
         },
       })

@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Separator } from "@/features/ui/separator";
-import { AnimatedLogoDot } from "./AnimatedLogoDot";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
@@ -102,14 +102,14 @@ export function BrutalistFooter() {
       <div className={footerTheme.grid}>
         {/* Logo + Mission */}
         <div className={footerTheme.brand.container}>
-          <Link href="/" className={footerTheme.brand.logo}>
-            {t.rich("brand", {
-              stamp: (chunks) => <Span unstyled>{chunks}</Span>,
-              dot: () => (
-                <AnimatedLogoDot size="md" className="mx-1.5 md:mx-2" />
-              ),
-              ai: (chunks) => <Span unstyled>{chunks}</Span>,
-            })}
+          <Link href="/" className="block">
+            <Image
+              src="/assets/brand/logo.png"
+              alt="Stamp.AI"
+              width={280}
+              height={80}
+              className="h-20 w-auto"
+            />
           </Link>
           <Paragraph variant="sm" className={footerTheme.brand.mission}>
             {t("mission")}

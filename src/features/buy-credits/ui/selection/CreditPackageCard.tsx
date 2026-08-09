@@ -49,7 +49,7 @@ export function CreditPackageCard({
         </span>
       </div>
 
-      <span className={theme.price}>${pkg.price.toFixed(2)}</span>
+      <span className={theme.price}>€{pkg.price.toFixed(2)}</span>
 
       {isSelected && <SelectedCheckmark />}
     </Button>
