@@ -147,7 +147,7 @@ export function SynthesisForm({
       {showNoCoinsOverlay && (
         <CoinsOverlay
           variant="no-coins"
-          onSkip={canSkip ? handleSkipGeneration : undefined}
+          onSkip={handleSkipGeneration}
           hasCachedImages={hasCachedImages}
         />
       )}

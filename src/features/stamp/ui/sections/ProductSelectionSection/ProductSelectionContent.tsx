@@ -30,7 +30,7 @@ export function ProductSelectionContent({ canProceed, onContinue }: PropsI) {
   });
 
   return (
-    <div className="md:h-full p-6 pt-4 md:pt-16 pb-6 md:p-10 lg:p-16 lg:pt-16 xl:p-24 xl:pt-24 flex flex-col md:justify-between border-r border-(--color-stamp-divider)">
+    <div className="md:h-full p-6 pt-4 md:pt-30 pb-6 md:p-10 lg:p-16 lg:pt-16 xl:p-24 xl:pt-24 flex flex-col md:justify-between border-r border-(--color-stamp-divider)">
       <div>
         <Heading
           as="h2"
