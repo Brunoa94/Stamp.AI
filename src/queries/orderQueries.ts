@@ -7,12 +7,18 @@ import type { ShippingAddressT } from "@/schemas/checkout";
 
 /**
  * Fetch orders for a specific user
+ *
+ * Orders should always show fresh data since users expect to see
+ * recent order updates immediately (e.g., after placing an order).
  */
 export function useOrders(userId?: string) {
   return useQuery({
     queryKey: ["orders", { userId }],
     queryFn: () => OrderService.getOrders(userId),
     enabled: Boolean(userId),
+    staleTime: 0, // Orders data is always considered stale
+    refetchOnMount: true, // Refetch when component mounts
+    refetchOnWindowFocus: true, // Refetch when user returns to tab
   });
 }
 
