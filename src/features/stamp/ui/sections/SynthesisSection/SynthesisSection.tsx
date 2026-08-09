@@ -6,6 +6,7 @@ import { useUser } from "@/queries/authQueries";
 import { useUserCoins } from "@/queries/coinsQueries";
 import { SynthesisVisual } from "./SynthesisVisual";
 import { SynthesisForm } from "./SynthesisForm";
+import { AnalyticsService } from "@/services/analyticsService";
 
 /**
  * SynthesisSection
@@ -55,6 +56,12 @@ function SynthesisSectionComponent() {
   }, []);
 
   const handleGenerate = useCallback(async () => {
+    AnalyticsService.track("stamp_generate_start", {
+      step: "synthesis",
+      prompt_length: prompt.length,
+      preservation,
+    });
+
     await generateImage({
       prompt,
       preservation,

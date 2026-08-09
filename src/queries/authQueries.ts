@@ -11,6 +11,7 @@ import type {
 import { AuthResponseI, UserI } from "../../supabase/types";
 import { useRouter } from "next/navigation";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { AnalyticsService } from "@/services/analyticsService";
 
 // Query keys
 const authKeys = {
@@ -71,6 +72,8 @@ export function useLogin() {
       queryClient.setQueryData(authKeys.user(), data.user);
       queryClient.setQueryData(authKeys.session(), data.session);
 
+      AnalyticsService.track("login", { method: "email" });
+
       // Invalidate coins query so new user's coins are fetched
       queryClient.invalidateQueries({ queryKey: ["coins"] });
 
@@ -101,6 +104,8 @@ export function useRegister() {
       return AuthService.register(userData);
     },
     onSuccess: (data) => {
+      AnalyticsService.track("sign_up", { method: "email" });
+
       handleSuccess(
         `Registration successful - ${
           data.message || "Please check your email to verify your account."
@@ -133,6 +138,8 @@ export function useLogout() {
       queryClient.invalidateQueries({ queryKey: authKeys.user() });
       queryClient.invalidateQueries({ queryKey: authKeys.session() });
       queryClient.removeQueries({ queryKey: authKeys.all });
+
+      AnalyticsService.track("logout");
 
       handleSuccess("Logged out successfully");
 

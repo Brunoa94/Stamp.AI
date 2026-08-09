@@ -13,6 +13,7 @@ import { useDeductCoin } from "@/queries/coinsQueries";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { logStampError, logStampWarn, logStampInfo } from "../helpers/stampLogger";
 import { withTimeout } from "@/lib/promiseUtils";
+import { AnalyticsService } from "@/services/analyticsService";
 import { addStoredImage } from "../services/generatedImagesStorage";
 import {
   DEFAULT_SYNTHESIS_STYLE,
@@ -145,6 +146,12 @@ export function useStampImageGeneration() {
       stopProgress();
       setGenerationProgress(100);
 
+      AnalyticsService.track("stamp_generate_complete", {
+        step: "generation",
+        prompt_length: prompt.length,
+        used_reference_image: Boolean(uploadedImageUrl),
+      });
+
       // Add result to history
       addGeneratedResult(result);
       setSelectedImageUrl(result.imageUrl);
@@ -162,6 +169,12 @@ export function useStampImageGeneration() {
     } catch (error) {
       stopProgress();
       setGenerationProgress(0);
+
+      AnalyticsService.track("stamp_generate_failed", {
+        step: "generation",
+        reason:
+          error instanceof ImageGenerationTimeoutError ? "timeout" : "error",
+      });
 
       if (error instanceof ImageGenerationTimeoutError) {
         logStampError({

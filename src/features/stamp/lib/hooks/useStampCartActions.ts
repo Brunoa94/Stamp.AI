@@ -17,6 +17,7 @@ import {
   logStampInfo,
   logStampWarn,
 } from "../helpers/stampLogger";
+import { AnalyticsService } from "@/services/analyticsService";
 
 /**
  * useStampCartActions
@@ -174,6 +175,20 @@ export function useStampCartActions() {
           createdProductId,
           createdVariantId,
         },
+      });
+
+      AnalyticsService.track("add_to_cart", {
+        currency: "USD",
+        value: unitPrice / 100,
+        items: [
+          {
+            item_id: createdProductId,
+            item_name: productName,
+            price: unitPrice / 100,
+            quantity: 1,
+            item_variant: createdVariantId.toString(),
+          },
+        ],
       });
 
       handleSuccess(t("added"));

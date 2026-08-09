@@ -17,6 +17,8 @@ import { usePaymentForm } from "@/features/checkout/ui/PaymentForm/usePaymentFor
 import type { ShippingAddressT } from "@/schemas/checkout";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 import type { StripePaymentIntentResultT } from "../../../lib/types/payment";
+import { AnalyticsService } from "@/services/analyticsService";
+import { mapPurchaseEvent } from "@/features/analytics/mappers/ecommerceMappers";
 
 interface CheckoutStripeButtonPropsI {
   amount: number;
@@ -56,6 +58,15 @@ export function CheckoutStripeButton({
       localStorage.setItem(
         "stripe_checkout_data",
         JSON.stringify(checkoutData),
+      );
+
+      AnalyticsService.track(
+        "purchase",
+        mapPurchaseEvent({
+          transactionId: paymentIntent.id,
+          lineItems: processedLineItems,
+          amount,
+        })
       );
 
       const params = new URLSearchParams({

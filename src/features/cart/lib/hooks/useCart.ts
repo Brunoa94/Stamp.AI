@@ -16,6 +16,8 @@ import {
 } from "@/queries/cartQueries";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { CartServiceMapper } from "@/mappers/services/cartServiceMapper";
+import { AnalyticsService } from "@/services/analyticsService";
+import { mapBeginCheckoutEvent } from "@/features/analytics/mappers/ecommerceMappers";
 
 export function useCart() {
   const router = useRouter();
@@ -36,6 +38,16 @@ export function useCart() {
 
   const checkout = () => {
     if (!cart) return;
+
+    const totals = CartServiceMapper.calculateCartTotals(cart.cart_items);
+    AnalyticsService.track(
+      "begin_checkout",
+      mapBeginCheckoutEvent({
+        items: cart.cart_items,
+        value: totals.subtotal + totals.shipping,
+      })
+    );
+
     router.push(`/checkout?cartId=${cart.id}`);
   };
 

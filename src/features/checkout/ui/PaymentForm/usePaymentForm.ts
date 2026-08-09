@@ -6,6 +6,8 @@ import { mapShippingAddressToBillingDetails } from "@/mappers/mapShippingAddress
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 import { useCreatePaymentIntent } from "@/queries/stripeQueries";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { AnalyticsService } from "@/services/analyticsService";
+import { mapAddPaymentInfoEvent } from "@/features/analytics/mappers/ecommerceMappers";
 
 interface UsePaymentFormProps {
   amount: number;
@@ -106,6 +108,12 @@ export function usePaymentForm({
       if (!cardElement) {
         throw new Error(t("cardElementNotFound"));
       }
+
+      // Track add_payment_info before confirming payment
+      AnalyticsService.track(
+        "add_payment_info",
+        mapAddPaymentInfoEvent({ lineItems, amount })
+      );
 
       const { error: confirmError, paymentIntent } =
         await stripe.confirmCardPayment(clientSecret, {
