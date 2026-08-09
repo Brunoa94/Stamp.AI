@@ -1,12 +1,14 @@
 "use client";
 
-import { memo, useState } from "react";
+import { memo, useState, useCallback } from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { CustomizationPreview } from "./CustomizationPreview";
 import { CustomizationControls } from "./CustomizationControls";
 import { useCustomizationData } from "../../../lib/hooks/useCustomizationData";
 import { useCustomizationEffects } from "../../../lib/hooks/useCustomizationEffects";
 import { useCustomizationHandlers } from "../../../lib/hooks/useCustomizationHandlers";
+import { AnalyticsService } from "@/services/analyticsService";
+import { mapColorSelectEvent, mapSizeSelectEvent } from "@/features/analytics/mappers/stampFlowMappers";
 
 /**
  * CustomizationSection
@@ -63,6 +65,30 @@ function CustomizationSectionComponent() {
     createProduct,
   });
 
+  // Track color selection
+  const handleSelectColor = useCallback(
+    (color: string) => {
+      AnalyticsService.track(
+        "color_select",
+        mapColorSelectEvent({ color, productId: blueprintId })
+      );
+      setSelectedColor(color);
+    },
+    [blueprintId, setSelectedColor]
+  );
+
+  // Track size selection
+  const handleSelectSize = useCallback(
+    (size: string) => {
+      AnalyticsService.track(
+        "size_select",
+        mapSizeSelectEvent({ size, productId: blueprintId })
+      );
+      setSelectedSize(size);
+    },
+    [blueprintId, setSelectedSize]
+  );
+
   // Mobile: navigate to preview sub-step
   const handleContinueToPreview = () => {
     setMobileSubStep("preview");
@@ -85,8 +111,8 @@ function CustomizationSectionComponent() {
           hasProduct={Boolean(blueprintId)}
           canCreate={canCreateProduct}
           isFinalizing={isFinalizing}
-          onSelectColor={setSelectedColor}
-          onSelectSize={(size) => setSelectedSize(size)}
+          onSelectColor={handleSelectColor}
+          onSelectSize={handleSelectSize}
           onCreateProduct={handleCreateProduct}
         />
       </section>
@@ -109,8 +135,8 @@ function CustomizationSectionComponent() {
           hasProduct={Boolean(blueprintId)}
           canCreate={canCreateProduct}
           isFinalizing={isFinalizing}
-          onSelectColor={setSelectedColor}
-          onSelectSize={(size) => setSelectedSize(size)}
+          onSelectColor={handleSelectColor}
+          onSelectSize={handleSelectSize}
           onCreateProduct={handleCreateProduct}
           // Mobile-specific props
           isMobileFlow

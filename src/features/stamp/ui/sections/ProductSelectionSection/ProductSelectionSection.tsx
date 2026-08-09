@@ -13,6 +13,7 @@ import { isClothingProduct } from "../../../lib/helpers/productCategoryDetector"
 import { ProductGrid } from "./ProductGrid";
 import { ProductSelectionContent } from "./ProductSelectionContent";
 import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
+import { AnalyticsService } from "@/services/analyticsService";
 
 /**
  * ProductSelectionSection
@@ -138,6 +139,17 @@ function ProductSelectionSectionComponent() {
     setSelectedProductTitle(product.name);
     // Store price in cents (product.price is in dollars)
     setSelectedPriceCents(Math.round(product.price * 100));
+
+    AnalyticsService.track("select_item", {
+      item_list_name: "stamp_product_selection",
+      items: [
+        {
+          item_id: String(product.blueprintId),
+          item_name: product.name,
+          price: product.price,
+        },
+      ],
+    });
   };
 
   const handleClearSelection = () => {

@@ -26,12 +26,15 @@ const TRUSTED_DOMAINS = {
     "https://placehold.co",
     "https://images.unsplash.com",
     "https://picsum.photos",
+    "https://www.googletagmanager.com",
   ],
   scripts: [
     "https://js.stripe.com",
     "https://www.paypal.com",
     "https://www.google.com",
     "https://www.gstatic.com",
+    "https://www.googletagmanager.com",
+    "https://googletagmanager.com",
   ],
   frames: [
     "https://js.stripe.com",
@@ -83,6 +86,10 @@ export function generateCSP(nonce?: string): string {
       "https://api.paypal.com",
       "https://api.sandbox.paypal.com",
       "https://api.mollie.com",
+      "https://www.google-analytics.com",
+      "https://*.google-analytics.com",
+      "https://analytics.google.com",
+      "https://www.googletagmanager.com",
     ],
     "frame-src": [
       "'self'",

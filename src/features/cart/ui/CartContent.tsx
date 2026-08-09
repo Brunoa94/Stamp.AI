@@ -8,6 +8,7 @@
 
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -19,6 +20,8 @@ import { CartItemCard } from "./sections/CartItemCard/CartItemCard";
 import { CartOrderSummary } from "./sections/CartOrderSummary/CartOrderSummary";
 import { CartEmptySection } from "./sections/CartEmptySection";
 import { CartLoadingSection } from "./sections/CartLoadingSection";
+import { AnalyticsService } from "@/services/analyticsService";
+import { mapViewCartEvent } from "@/features/analytics/mappers/ecommerceMappers";
 
 export function CartContent() {
   const t = useTranslations("cart.content");
@@ -31,6 +34,18 @@ export function CartContent() {
     removeItem,
     checkout,
   } = useCart();
+
+  // Track view_cart once when cart is loaded with items
+  const hasTrackedViewCart = useRef(false);
+  useEffect(() => {
+    if (!isLoading && cart && cart.cart_items.length > 0 && !hasTrackedViewCart.current) {
+      hasTrackedViewCart.current = true;
+      AnalyticsService.track(
+        "view_cart",
+        mapViewCartEvent({ items: cart.cart_items, value: total })
+      );
+    }
+  }, [isLoading, cart, total]);
 
   if (isLoading) {
     return (

@@ -1,8 +1,12 @@
+"use client";
+
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
+import { AnalyticsService } from "@/services/analyticsService";
+import type { AnalyticsEventNameT } from "@/features/analytics/types/analyticsTypes";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
@@ -73,6 +77,10 @@ type IconButtonSize = "icon" | "icon-sm" | "icon-lg";
 type BaseButtonProps = Omit<React.ComponentProps<"button">, "size"> &
   Omit<VariantProps<typeof buttonVariants>, "size"> & {
     asChild?: boolean;
+    /** GA4 event name; when set, clicks are tracked automatically */
+    trackingId?: AnalyticsEventNameT;
+    /** Additional parameters sent with the tracking event */
+    trackingData?: Record<string, string | number>;
   };
 
 // Icon button props - aria-label is required
@@ -97,9 +105,19 @@ function Button({
   asChild = false,
   disabled,
   "aria-label": ariaLabel,
+  trackingId,
+  trackingData,
+  onClick,
   ...props
 }: ButtonProps) {
   const Comp = asChild ? Slot : "button";
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (trackingId) {
+      AnalyticsService.track(trackingId, trackingData);
+    }
+    onClick?.(event);
+  };
 
   // Development warning for icon buttons without aria-label
   if (process.env.NODE_ENV === "development") {
@@ -121,6 +139,7 @@ function Button({
       disabled={disabled}
       aria-disabled={disabled}
       aria-label={ariaLabel}
+      onClick={handleClick}
       {...props}
     />
   );
