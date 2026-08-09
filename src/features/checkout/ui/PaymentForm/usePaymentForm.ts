@@ -7,6 +7,7 @@ import type { PrintifyLineItem } from "@/types/printifyOrder";
 import { useCreatePaymentIntent } from "@/queries/stripeQueries";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { AnalyticsService } from "@/services/analyticsService";
+import { mapAddPaymentInfoEvent } from "@/features/analytics/mappers/ecommerceMappers";
 
 interface UsePaymentFormProps {
   amount: number;
@@ -109,16 +110,10 @@ export function usePaymentForm({
       }
 
       // Track add_payment_info before confirming payment
-      AnalyticsService.track("add_payment_info", {
-        currency: "USD",
-        value: amount / 100,
-        payment_type: "card",
-        items: lineItems.map((item, index) => ({
-          item_id: item.product_id ?? item.sku ?? String(item.blueprint_id ?? index),
-          item_name: "Custom Product",
-          quantity: item.quantity,
-        })),
-      });
+      AnalyticsService.track(
+        "add_payment_info",
+        mapAddPaymentInfoEvent({ lineItems, amount })
+      );
 
       const { error: confirmError, paymentIntent } =
         await stripe.confirmCardPayment(clientSecret, {

@@ -8,6 +8,7 @@ import { useCustomizationData } from "../../../lib/hooks/useCustomizationData";
 import { useCustomizationEffects } from "../../../lib/hooks/useCustomizationEffects";
 import { useCustomizationHandlers } from "../../../lib/hooks/useCustomizationHandlers";
 import { AnalyticsService } from "@/services/analyticsService";
+import { mapColorSelectEvent, mapSizeSelectEvent } from "@/features/analytics/mappers/stampFlowMappers";
 
 /**
  * CustomizationSection
@@ -67,10 +68,10 @@ function CustomizationSectionComponent() {
   // Track color selection
   const handleSelectColor = useCallback(
     (color: string) => {
-      AnalyticsService.track("color_select", {
-        color,
-        product_id: blueprintId,
-      });
+      AnalyticsService.track(
+        "color_select",
+        mapColorSelectEvent({ color, productId: blueprintId })
+      );
       setSelectedColor(color);
     },
     [blueprintId, setSelectedColor]
@@ -79,10 +80,10 @@ function CustomizationSectionComponent() {
   // Track size selection
   const handleSelectSize = useCallback(
     (size: string) => {
-      AnalyticsService.track("size_select", {
-        size,
-        product_id: blueprintId,
-      });
+      AnalyticsService.track(
+        "size_select",
+        mapSizeSelectEvent({ size, productId: blueprintId })
+      );
       setSelectedSize(size);
     },
     [blueprintId, setSelectedSize]

@@ -18,6 +18,7 @@ import type { ShippingAddressT } from "@/schemas/checkout";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 import type { StripePaymentIntentResultT } from "../../../lib/types/payment";
 import { AnalyticsService } from "@/services/analyticsService";
+import { mapPurchaseEvent } from "@/features/analytics/mappers/ecommerceMappers";
 
 interface CheckoutStripeButtonPropsI {
   amount: number;
@@ -59,29 +60,14 @@ export function CheckoutStripeButton({
         JSON.stringify(checkoutData),
       );
 
-      // Calculate total quantity for per-item price estimation
-      const totalQuantity = processedLineItems.reduce(
-        (sum, item) => sum + item.quantity,
-        0
+      AnalyticsService.track(
+        "purchase",
+        mapPurchaseEvent({
+          transactionId: paymentIntent.id,
+          lineItems: processedLineItems,
+          amount,
+        })
       );
-      const pricePerItem = totalQuantity > 0 ? (amount / 100) / totalQuantity : 0;
-
-      AnalyticsService.track("purchase", {
-        transaction_id: paymentIntent.id,
-        currency: "USD",
-        value: amount / 100,
-        payment_method: "stripe",
-        items: processedLineItems.map((lineItem, index) => ({
-          item_id:
-            lineItem.product_id ??
-            lineItem.sku ??
-            String(lineItem.blueprint_id ?? index),
-          item_name: "Custom Product",
-          price: pricePerItem,
-          quantity: lineItem.quantity,
-          item_variant: lineItem.variant_id?.toString(),
-        })),
-      });
 
       const params = new URLSearchParams({
         payment_intent: paymentIntent.id,

@@ -8,6 +8,7 @@ import type {
 import { STAMP_TOTAL_STEPS } from "../constants/stampSteps";
 import { logStampError, logStampWarn } from "../helpers/stampLogger";
 import { AnalyticsService } from "@/services/analyticsService";
+import { mapStepChangeEvent } from "@/features/analytics/mappers/stampFlowMappers";
 
 /**
  * Stamp Flow Store
@@ -104,11 +105,10 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
     // Track step changes for funnel analysis
     const previousStep = useStampFlowStore.getState().currentStep;
     if (step !== previousStep) {
-      AnalyticsService.track("step_change", {
-        from_step: previousStep,
-        to_step: step,
-        direction: step > previousStep ? "forward" : "backward",
-      });
+      AnalyticsService.track(
+        "step_change",
+        mapStepChangeEvent({ fromStep: previousStep, toStep: step })
+      );
     }
 
     set({ currentStep: step });
