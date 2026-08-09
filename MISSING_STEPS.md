@@ -1,0 +1,8 @@
+- Implement observability
+- Implement the analytics plan on Analytics
+- Improve the design of Orders, Profile.
+- Reduce the text inside the input text.
+- Implement iDeal
+- Confirmar fatura a ser enviada
+- Improve the homepage design
+- Aditional pages, for legal and stuff

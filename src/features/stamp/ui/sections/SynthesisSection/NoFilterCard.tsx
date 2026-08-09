@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
@@ -15,7 +16,7 @@ interface PropsI {
   onSelect?: (id: string) => void;
 }
 
-export function NoFilterCard({ isSelected, onSelect }: PropsI) {
+function NoFilterCardComponent({ isSelected, onSelect }: PropsI) {
   const t = useTranslations("stamp.synthesis.noFilter");
   return (
     <Button
@@ -40,4 +41,5 @@ export function NoFilterCard({ isSelected, onSelect }: PropsI) {
   );
 }
 
+export const NoFilterCard = memo(NoFilterCardComponent);
 export { NO_FILTER_ID };

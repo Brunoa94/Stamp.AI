@@ -1,24 +1,28 @@
 import { NextRequest } from "next/server";
 
 /**
- * Get the client identifier for rate limiting
- * Uses IP address, falling back to forwarded headers
+ * Get the client identifier for rate limiting.
+ *
+ * Priority:
+ * 1. `cf-connecting-ip` — only trusted when TRUST_CF_HEADERS=true, i.e. the
+ *    app is confirmed to be behind Cloudflare (otherwise it is spoofable).
+ * 2. `x-forwarded-for` first entry — on Vercel (Next.js 15+) this is set by
+ *    platform infrastructure after stripping any client-supplied value, so it
+ *    is safe to trust. On other hosts, only trust it if your reverse proxy
+ *    strips the header before forwarding.
+ * 3. Falls back to "unknown" so all unidentified clients share one bucket.
  */
 export function getClientIdentifier(request: NextRequest): string {
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  const realIp = request.headers.get("x-real-ip");
-  const cfConnectingIp = request.headers.get("cf-connecting-ip");
-
-  if (cfConnectingIp) {
-    return cfConnectingIp;
+  // Cloudflare: only trust cf-connecting-ip when explicitly configured
+  if (process.env.TRUST_CF_HEADERS === "true") {
+    const cfIp = request.headers.get("cf-connecting-ip");
+    if (cfIp) return cfIp;
   }
 
+  // Vercel / platform-injected x-forwarded-for (first entry = client IP)
+  const forwardedFor = request.headers.get("x-forwarded-for");
   if (forwardedFor) {
     return forwardedFor.split(",")[0].trim();
-  }
-
-  if (realIp) {
-    return realIp;
   }
 
   return "unknown";
@@ -30,7 +34,7 @@ export function getClientIdentifier(request: NextRequest): string {
 export function createRateLimitHeaders(
   remaining: number,
   resetTime: number,
-  limit: number
+  limit: number,
 ): Record<string, string> {
   return {
     "X-RateLimit-Limit": limit.toString(),

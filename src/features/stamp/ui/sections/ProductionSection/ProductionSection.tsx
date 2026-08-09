@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Box } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
@@ -15,7 +16,7 @@ import { useStampFinalization } from "../../../lib/hooks/useStampSelectors";
  * Note: Progress and navigation are managed by useStampProductCreation hook
  */
 
-export function ProductionSection() {
+function ProductionSectionComponent() {
   const t = useTranslations("stamp.production");
   const { productionProgress } = useStampFinalization();
 
@@ -57,3 +58,5 @@ export function ProductionSection() {
     </section>
   );
 }
+
+export const ProductionSection = memo(ProductionSectionComponent);

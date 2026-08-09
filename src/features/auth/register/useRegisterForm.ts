@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type RegisterI, RegisterSchema } from "@/schemas/auth";
-import { useRegister } from "@/hooks/useAuth";
+import { useRegister } from "@/queries/authQueries";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { useState } from "react";
 import { useTranslations } from "next-intl";

@@ -33,18 +33,18 @@ export function ProductSummary({ productName, color, size, price }: PropsI) {
       </div>
       <Span
         variant="micro"
-        className="text-(--color-stamp-taupe) block mb-8"
+        className="text-(--color-stamp-taupe) block mb-4 md:mb-8"
       >
         {t("productDetails", { color: color || "Black", size: size || "M" })}
       </Span>
-      <div className="flex justify-between items-baseline pt-6 border-t border-(--color-stamp-divider)">
+      <div className="flex flex-wrap justify-between items-baseline gap-x-4 gap-y-2 pt-4 md:pt-6 border-t border-(--color-stamp-divider)">
         <Span variant="sm" className="text-(--color-stamp-chocolate)">
           {t("finalValuation")}
         </Span>
         <Heading
           as="h3"
           variant="section"
-          className="text-(--color-stamp-chocolate)"
+          className="text-(--color-stamp-chocolate) text-5xl lg:text-4xl xl:text-5xl 2xl:text-6xl"
         >
           {price}
         </Heading>

@@ -1,10 +1,12 @@
-import { getColorHex, getBorderColor } from "../../lib/constants/colorSwatches";
+import { getColorHex, getBorderColor, filterDisplayColors } from "../../lib/constants/colorSwatches";
 import { Span } from "@/features/ui/span";
 
 /**
  * Color Swatches Component
  *
- * Displays up to 5 color swatches as small rounded circles
+ * Displays up to 5 color swatches as small rounded circles.
+ * Applies smart filtering: shows only White and Black if both are available,
+ * otherwise shows all colors (up to maxDisplay).
  */
 
 interface ColorSwatchesProps {
@@ -17,8 +19,11 @@ export function ColorSwatches({ colors, maxDisplay = 5 }: ColorSwatchesProps) {
     return null;
   }
 
-  const displayColors = colors.slice(0, maxDisplay);
-  const remainingCount = colors.length - maxDisplay;
+  // Apply the same filtering logic used in customization:
+  // show only White/Black if both available, otherwise all colors
+  const filteredColors = filterDisplayColors(colors);
+  const displayColors = filteredColors.slice(0, maxDisplay);
+  const remainingCount = filteredColors.length - maxDisplay;
 
   return (
     <div className="flex items-center gap-1.5">

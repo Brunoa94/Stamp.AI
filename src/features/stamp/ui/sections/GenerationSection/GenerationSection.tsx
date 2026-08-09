@@ -1,6 +1,7 @@
 "use client";
 
-import { Loader2, Cpu } from "lucide-react";
+import { memo } from "react";
+import { Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
@@ -15,20 +16,20 @@ import { useStampGeneration } from "../../../lib/hooks/useStampSelectors";
  * Note: Progress and navigation are managed by useStampImageGeneration hook
  */
 
-export function GenerationSection() {
+function GenerationSectionComponent() {
   const t = useTranslations("stamp.generation");
   const { generationProgress } = useStampGeneration();
 
   return (
     <section
       id="step-3"
-      className="h-full overflow-y-auto flex flex-col items-center justify-center p-8 md:p-16 lg:p-24 bg-(--color-stamp-chocolate) text-white text-center border-b border-(--color-stamp-divider)"
+      className="h-full overflow-y-auto flex flex-col items-center justify-center p-8 md:p-16 lg:p-24 bg-(--color-stamp-chocolate) text-center border-b border-(--color-stamp-divider)"
     >
       {/* Animated Loader */}
       <div className="relative mb-12">
-        <Loader2 className="text-8xl text-(--color-stamp-gold) animate-spin opacity-30 w-32 h-32" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <Cpu className="text-4xl text-white w-12 h-12 animate-pulse" />
+        <div className="absolute inset-0 w-32 h-32 border-4 border-white/10 border-t-(--color-stamp-gold) rounded-full animate-spin" />
+        <div className="w-32 h-32 flex items-center justify-center">
+          <Sparkles className="text-4xl text-(--color-stamp-gold) animate-pulse w-12 h-12" />
         </div>
       </div>
 
@@ -36,23 +37,26 @@ export function GenerationSection() {
       <Heading
         as="h3"
         variant="card"
-        className="text-white mb-6 tracking-[0.5em]"
+        className="text-white mb-4 tracking-[0.5em]"
       >
         {t("status")}
       </Heading>
 
+      <Span variant="micro" className="text-white/40 mb-12">
+        {t("estimate")}
+      </Span>
+
       {/* Progress Bar */}
-      <div className="w-full max-w-md">
-        <div className="h-px bg-white/10 w-full relative overflow-hidden mb-4">
+      <div className="w-full max-w-sm">
+        <div className="h-1 bg-white/10 w-full rounded-full overflow-hidden">
           <div
-            className="absolute inset-y-0 left-0 bg-(--color-stamp-gold) transition-[width] duration-100 ease-linear"
+            className="h-full bg-(--color-stamp-gold) transition-[width] duration-100 ease-linear"
             style={{ width: `${generationProgress}%` }}
           />
         </div>
-        <Span variant="micro" className="text-white/40 tracking-[0.4em]">
-          {t("percent", { progress: generationProgress })}
-        </Span>
       </div>
     </section>
   );
 }
+
+export const GenerationSection = memo(GenerationSectionComponent);

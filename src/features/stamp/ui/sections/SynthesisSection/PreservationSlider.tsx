@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Label } from "@/features/ui/label";
 import { Span } from "@/features/ui/span";
+import { InfoTooltip } from "@/features/ui/info-tooltip";
 
 /**
  * PreservationSlider
@@ -18,12 +19,15 @@ export function PreservationSlider({ value, onChange }: PropsI) {
 
   return (
     <div>
-      <Label
-        htmlFor="preservation"
-        className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe) block mb-4"
-      >
-        {t("preservationLabel")}
-      </Label>
+      <div className="flex items-center gap-2 mb-4">
+        <Label
+          htmlFor="preservation"
+          className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe)"
+        >
+          {t("preservationLabel")}
+        </Label>
+        <InfoTooltip content={t("preservationTooltip")} />
+      </div>
       <div className="flex items-center gap-4">
         <Span
           variant="micro"

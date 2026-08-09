@@ -97,30 +97,28 @@ export function HomeManifestoSection() {
                   : "grid-rows-[0fr] opacity-0 lg:grid-rows-[1fr] lg:opacity-100"
               }`}
             >
-              <div className="overflow-hidden">
-                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-                  {HOME_VALUE_CARDS.map((card, index) => (
-                    <article
-                      key={card.number}
-                      className={`border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover) lg:p-10 ${
-                        index % 2 === 1 ? "sm:translate-y-8" : ""
-                      }`}
+              <div className="grid grid-cols-1 sm:grid-cols-2">
+                {HOME_VALUE_CARDS.map((card, index) => (
+                  <article
+                    key={card.number}
+                    className={`border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover) lg:p-10 ${
+                      index % 2 === 1 ? "sm:translate-y-8" : ""
+                    }`}
+                  >
+                    <Span variant="sm" className="text-(--color-stamp-gold)">
+                      {card.number}
+                    </Span>
+                    <Heading as="h3" variant="card" className="mb-3 mt-6">
+                      {t(`values.${card.number}.title`)}
+                    </Heading>
+                    <Paragraph
+                      variant="sm"
+                      className="text-(--color-stamp-taupe)"
                     >
-                      <Span variant="sm" className="text-(--color-stamp-gold)">
-                        {card.number}
-                      </Span>
-                      <Heading as="h3" variant="card" className="mb-3 mt-6">
-                        {t(`values.${card.number}.title`)}
-                      </Heading>
-                      <Paragraph
-                        variant="sm"
-                        className="text-(--color-stamp-taupe)"
-                      >
-                        {t(`values.${card.number}.description`)}
-                      </Paragraph>
-                    </article>
-                  ))}
-                </div>
+                      {t(`values.${card.number}.description`)}
+                    </Paragraph>
+                  </article>
+                ))}
               </div>
             </div>
           </div>

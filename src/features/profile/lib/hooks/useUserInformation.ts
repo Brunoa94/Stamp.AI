@@ -1,7 +1,7 @@
 import { useReducer, useEffect } from "react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { useUser } from "@/hooks/useAuth";
+import { useUser } from "@/queries/authQueries";
 import { useUpdateProfile } from "@/queries/authQueries";
 
 interface UserInformationState {

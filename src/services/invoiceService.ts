@@ -50,7 +50,11 @@ export class InvoiceService {
     } = await supabase.auth.getSession();
 
     if (!session) {
-      throw new Error("Not authenticated");
+      throw ErrorClient.handleError({
+        error: new Error("Not authenticated"),
+        service: "Invoice",
+        action: "Generate Invoice"
+      });
     }
 
     const response = await fetch(
@@ -94,8 +98,11 @@ export class InvoiceService {
       .createSignedUrl(invoice.pdf_path, expiresInSeconds);
 
     if (error) {
-      console.error("Failed to create invoice download URL:", error);
-      return null;
+      throw ErrorClient.handleError({
+        error,
+        service: "Invoice",
+        action: "Get Invoice Download URL"
+      });
     }
 
     return data?.signedUrl ?? null;

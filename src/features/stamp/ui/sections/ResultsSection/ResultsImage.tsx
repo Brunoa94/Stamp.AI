@@ -15,7 +15,7 @@ export function ResultsImage({ imageUrl }: PropsI) {
   const t = useTranslations("stamp.results");
 
   return (
-    <div className="aspect-square w-full bg-white border border-(--color-stamp-divider) shadow-2xl flex items-center justify-center mb-12 overflow-hidden group relative">
+    <div className="aspect-square h-[45vh] md:h-[50vh] lg:h-[55vh] max-w-full mx-auto bg-white border border-(--color-stamp-divider) shadow-2xl flex items-center justify-center mb-6 overflow-hidden group relative">
       <Image
         src={imageUrl}
         alt={t("imageAlt")}

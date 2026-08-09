@@ -227,6 +227,15 @@ export interface ShippingAddressI {
 export interface PrintAreaI {
   front?: string
   back?: string
+  // Any other Printify placeholder position ('neck', 'left_sleeve', ...)
+  [position: string]: string | undefined
+}
+
+export interface PlacementParamsI {
+  x: number
+  y: number
+  scale: number
+  angle: number
 }
 
 export interface CreateCustomProductRequestI {
@@ -234,6 +243,9 @@ export interface CreateCustomProductRequestI {
   print_provider_id: number
   image_id?: string // Legacy support
   print_areas?: PrintAreaI
+  // Per-position placements chosen by the user; positions without an entry
+  // get auto-placement server-side.
+  placements?: Record<string, PlacementParamsI>
   title?: string
   description?: string
   variants?: number[]
@@ -241,6 +253,9 @@ export interface CreateCustomProductRequestI {
   customer_email: string
   selected_color?: string | null
   selected_size?: string | null
+  // Image dimensions for auto-placement calculation
+  image_width?: number
+  image_height?: number
 }
 
 export interface ProductVariantI {

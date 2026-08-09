@@ -518,30 +518,42 @@ export class OrderService {
     } = await supabase.auth.getSession();
 
     if (!session) {
-      throw new Error("Not authenticated");
+      throw ErrorClient.handleError({
+        error: new Error("Not authenticated"),
+        service: "Order",
+        action: "Cancel Order"
+      });
     }
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/cancel-order`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          order_id: orderId,
-          cancellation_reason: "Cancelled by customer",
-        }),
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/cancel-order`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            order_id: orderId,
+            cancellation_reason: "Cancelled by customer",
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw ErrorClient.handleError({
+          error: { error: data.error || data.message || "Failed to cancel order" },
+          service: "Order",
+          action: "Cancel Order"
+        });
       }
-    );
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to cancel order");
+      return data;
+    } catch (error) {
+      throw ErrorClient.handleError({ error, service: "Order", action: "Cancel Order" });
     }
-
-    return data;
   }
 }

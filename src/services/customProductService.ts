@@ -13,6 +13,7 @@ import {
 import { CustomProductServiceMapper } from "@/mappers/services/customProductServiceMapper";
 import { ProductService } from "./productService";
 import { ErrorClient } from "./errorClient";
+import { getProductConfig } from "@/lib/printPlacement/config";
 
 export class CustomProductService {
   private static getSupabaseConfig() {
@@ -27,10 +28,11 @@ export class CustomProductService {
   /**
    * Upload image to Printify
    * Uses CustomProductServiceMapper to create upload request
+   * Returns image ID, preview URL, and dimensions for auto-placement
    */
   static async uploadImage(
     imageUrl: string,
-  ): Promise<{ id: string; previewUrl: string }> {
+  ): Promise<{ id: string; previewUrl: string; width: number; height: number }> {
     try {
       const { supabaseUrl, supabaseAnonKey } = this.getSupabaseConfig();
 
@@ -74,6 +76,8 @@ export class CustomProductService {
       return {
         id: validatedData.image.id,
         previewUrl: validatedData.image.preview_url,
+        width: validatedData.image.width,
+        height: validatedData.image.height,
       };
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Custom Product", action: "Upload Image"})
@@ -95,19 +99,53 @@ export class CustomProductService {
       // Step 1: Upload image to Printify
       const uploadedImage = await this.uploadImage(validatedInput.image_url);
 
-      // Step 2: Create custom product
+      // Build print areas from the user's selected positions (Step 6 design
+      // adjustment). The same uploaded image is used for every position.
+      // Falls back to auto-placed front print when no positions were chosen.
+      const printAreas: Record<string, string> = {};
+      const placements: Record<
+        string,
+        { x: number; y: number; scale: number; angle: number }
+      > = {};
+
+      if (validatedInput.print_positions?.length) {
+        for (const { position, placement } of validatedInput.print_positions) {
+          printAreas[position] = uploadedImage.id;
+          placements[position] = placement;
+        }
+      } else {
+        // Get product config to determine the correct print positions
+        // Some products (like socks) don't have a 'front' position
+        const productConfig = getProductConfig(validatedInput.blueprint_id);
+        const positions = productConfig.positions;
+
+        // For products with placement disabled (mugs, socks), use all positions
+        // For others, use just the default position
+        if (productConfig.disablePlacementAdjustment) {
+          for (const position of positions) {
+            printAreas[position] = uploadedImage.id;
+          }
+        } else {
+          const defaultPosition = productConfig.defaultPosition || positions[0] || 'front';
+          printAreas[defaultPosition] = uploadedImage.id;
+        }
+      }
+
+      // Step 2: Create custom product with image dimensions for auto-placement
       const productPayload: CreateCustomProductRequestI = {
         blueprint_id: validatedInput.blueprint_id,
         print_provider_id: validatedInput.print_provider_id,
-        print_areas: {
-          front: uploadedImage.id,
-        },
+        print_areas: printAreas,
+        ...(Object.keys(placements).length > 0 ? { placements } : {}),
         title: validatedInput.title || `Custom Design ${Date.now()}`,
         description: validatedInput.description || "Custom designed product",
         user_id: validatedInput.user_id,
         customer_email: validatedInput.customer_email,
         selected_color: validatedInput.selected_color,
         selected_size: validatedInput.selected_size,
+        // Pass image dimensions for auto-placement calculation
+        image_width: uploadedImage.width,
+        image_height: uploadedImage.height,
       };
 
       // Validate product payload
@@ -154,7 +192,7 @@ export class CustomProductService {
           printifyProduct,
           validatedInput.blueprint_id,
           validatedInput.print_provider_id,
-          { front: uploadedImage.id }, // Store the print areas
+          printAreas, // Store the print areas
           validatedInput.user_id
         );
 

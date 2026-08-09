@@ -210,7 +210,7 @@
         },
         "freeShipping": {
           "title": "Free Shipping",
-          "description": "Free carbon-neutral delivery on all orders over $75."
+          "description": "Free carbon-neutral delivery on orders over €60."
         }
       }
     }
@@ -218,6 +218,8 @@
   "stamp": {
     "synthesis": {
       "eyebrow": "Choose a filter",
+      "showMore": "Show {count} more",
+      "showLess": "Show less",
       "subtitle": "Tap a suggestion to start your prompt, then tweak it on the right.",
       "applySuggestion": "Apply suggestion: {label} — {hint}",
       "noFilter": {
@@ -230,13 +232,17 @@
       "generate": "STAMP IT!",
       "generating": "GENERATING...",
       "promptLabel": "Your Prompt",
-      "promptPlaceholder": "Describe the shape, colors, and mood you want...",
+      "promptPlaceholder": "Be as detailed as you can: describe the changes, colors, textures, style, and mood you want...",
       "promptAria": "Prompt input",
       "counter": "{count} / {max}",
       "preservationLabel": "Preservation",
+      "preservationTooltip": "Controls how much of the original image is kept. Lower values allow more creative changes, higher values preserve more of the original.",
       "low": "LOW",
       "high": "HIGH",
-      "preservationAria": "Preservation level slider"
+      "preservationAria": "Preservation level slider",
+      "removeBackgroundLabel": "Remove Background",
+      "removeBackgroundTooltip": "Automatically removes the background from your generated design, leaving only the main subject.",
+      "removeBackgroundAria": "Toggle background removal"
     },
     "suggestions": {
       "vibrant": {
@@ -331,12 +337,11 @@
       "brand": "STAMP IT",
       "stampAria": "Start stamping process",
       "stamp": "Stamp",
-      "dashboard": "Dashboard",
+      "profile": "Profile",
+      "profileAria": "View your profile",
       "orders": "Orders",
       "cart": "Cart",
-      "logout": "Logout",
-      "loggingOut": "Logging Out",
-      "logoutAria": "Logout",
+      "logoutAria": "Logout from your account",
       "login": "Login",
       "openMenu": "Open menu",
       "closeMenu": "Close menu",
@@ -347,6 +352,8 @@
       "eyebrow": "Your Progress",
       "title": "8 Steps to Print",
       "stepNavAria": "Step navigation",
+      "back": "BACK",
+      "backTo": "Go back to {step}",
       "navigate": "Navigate to {title}",
       "navigateLocked": "Navigate to {title} (locked)"
     },
@@ -398,11 +405,11 @@
     },
     "upload": {
       "protocol": "Step 01 / Upload",
-      "title": "Upload <accent>Reference</accent>",
+      "title": "Upload <accent>Image</accent>",
       "description": "Add an image to guide your design. It's optional — you can also start from just a text prompt.",
       "next": "Next Step",
-      "dropzoneAria": "Upload reference image",
-      "dropzoneText": "Upload Reference Image (Optional)",
+      "dropzoneAria": "Upload image",
+      "dropzoneText": "Upload Image (Optional)",
       "dropzoneHint": "10MB max, JPG/PNG/GIF only",
       "fileSize": "{size} MB",
       "removeAria": "Remove uploaded file",
@@ -413,7 +420,7 @@
     },
     "generation": {
       "status": "Generating Your Design...",
-      "percent": "{progress}%"
+      "estimate": "Est. 10 seconds..."
     },
     "results": {
       "protocol": "Step 04 / Results",
@@ -422,13 +429,16 @@
       "generated": "Generated {date}",
       "savedToHistory": "Saved to history",
       "appliedPrompt": "Applied Prompt",
-      "useProtocol": "USE THIS PROMPT",
+      "useProtocol": "USE THIS IMAGE",
       "reSynthesize": "REPEAT",
-      "imageAlt": "Generated design result"
+      "imageAlt": "Generated design result",
+      "previousCreations": "YOUR PREVIOUS CREATIONS",
+      "selectImage": "Select image {number}",
+      "galleryImageAlt": "Previously generated design {number}"
     },
     "productSelection": {
       "protocol": "Step 05 / Product",
-      "title": "Select Your <accent>Canvas</accent>",
+      "title": "Select Your <accent>Product</accent>",
       "description": "Pick what you want your design printed on. Everything's good quality and printed on demand.",
       "pricingNote": "Pricing reflects global print provider rates",
       "continue": "CONTINUE TO CUSTOMIZATION",
@@ -442,13 +452,20 @@
       "empty": "No products available at this time.",
       "apparel": "Apparel",
       "moreOptions": "More Options",
-      "accessories": "Accessories"
+      "accessories": "Accessories",
+      "selectedBadge": "Selected",
+      "qualityNote": "Premium quality, printed on demand",
+      "customizeNext": "Customize colors and size in the next step",
+      "showMore": "Show {count} more",
+      "showLess": "Show less"
     },
     "customization": {
       "protocol": "Step 06 / Customize",
       "title": "Customize Your <accent>Product</accent>",
+      "previewTitle": "Preview & <accent>Placement</accent>",
       "creating": "CREATING...",
       "createProduct": "CREATE PRODUCT",
+      "continueToPreview": "CONTINUE TO PREVIEW",
       "sizeLabel": "Size",
       "colorLabel": "Color Swatches",
       "colorLoading": "Loading colors...",
@@ -467,10 +484,17 @@
     },
     "finalReview": {
       "protocol": "Step 08 / Checkout",
-      "title": "Your Custom <accent>Product</accent>",
+      "title": "Ready to <accent>Wear</accent>",
       "defaultProductName": "Custom Product",
       "mockupAlt": "Final product mockup",
       "previewSealed": "Final preview",
+      "viewFullscreen": "Click to view fullscreen",
+      "fullscreenPreview": "Fullscreen product preview",
+      "closeFullscreen": "Close fullscreen view",
+      "pressEscToClose": "Press ESC or click anywhere to close",
+      "previousImage": "Previous mockup",
+      "nextImage": "Next mockup",
+      "goToImage": "Go to mockup",
       "productDetails": "Color: {color} | Size: {size}",
       "finalValuation": "Final Total",
       "freeShipping": "Free shipping on every order",
@@ -489,6 +513,7 @@
         "noDesign": "Please generate a design first",
         "noProduct": "Please select a product type",
         "noColorSize": "Please select color and size",
+        "noSize": "Please select a size",
         "notLoggedIn": "You must be logged in to create a product",
         "timeout": "Product creation timed out after {seconds} seconds. Please try again or contact support if the issue persists."
       },
@@ -505,7 +530,63 @@
         "uploadFailed": "Upload failed",
         "uploaded": "Image uploaded successfully",
         "removed": "Image removed"
+      },
+      "coins": {
+        "noCoins": "You're out of coins for today",
+        "noCoinsDescription": "Coins reset daily at midnight. You can still use your uploaded image directly.",
+        "notLoggedIn": "Login or register to continue",
+        "notLoggedInDescription": "Create an account to start designing",
+        "login": "Login",
+        "register": "Register",
+        "display": "{coins} Coins available",
+        "displayAria": "{coins} coins available",
+        "deductFailed": "Not enough coins to generate",
+        "skipGeneration": "Use My Image",
+        "usePreviousCreations": "Use Previous Creations"
       }
+    },
+    "adjust": {
+      "positionsTitle": "Print Positions",
+      "positionsHelp": "Pick where your design gets printed.",
+      "adjustToggle": "Adjust placement",
+      "previewToggle": "Preview & placement",
+      "positionIncluded": "Included",
+      "positionExtraCost": "+{price}",
+      "positionToggleAria": "Toggle {position} print",
+      "position": {
+        "front": "Front",
+        "back": "Back",
+        "neck": "Neck",
+        "left_sleeve": "Left Sleeve",
+        "right_sleeve": "Right Sleeve",
+        "left_leg": "Left Sock",
+        "right_leg": "Right Sock"
+      },
+      "editingLabel": "Adjusting",
+      "editingSelectAria": "Choose which position to adjust",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "moveLeft": "Move left",
+      "moveRight": "Move right",
+      "center": "Center",
+      "horizontalLabel": "Horizontal",
+      "verticalLabel": "Vertical",
+      "horizontalAria": "Horizontal position",
+      "verticalAria": "Vertical position",
+      "sizeLabel": "Size",
+      "scaleDown": "Smaller",
+      "scaleUp": "Larger",
+      "scaleAria": "Design size",
+      "rotationLabel": "Rotation",
+      "rotationAria": "Rotate to {degrees} degrees",
+      "reset": "Reset",
+      "resetAria": "Reset placement for {position}",
+      "safeZoneWarning": "You've hit the edge of the safe print area.",
+      "previewAlt": "Your design placed on the product",
+      "printAreaLabel": "Print area",
+      "noImageTitle": "No design yet",
+      "noImageBody": "Generate and pick a design first, then adjust how it sits on the product.",
+      "extraCostSummary": "Extra print positions: {price}"
     }
   },
   "cart": {
@@ -574,7 +655,7 @@
       "backButton": "Back to selection",
       "methodSelectorLabel": "Select payment method",
       "processing": "Processing...",
-      "payButton": "Pay ${amount}",
+      "payButton": "Pay €{amount}",
       "cardElementNotFound": "Card element not found",
       "paymentFailed": "Payment failed",
       "paypalComingSoon": "PayPal for credit purchases is coming soon.",
@@ -645,12 +726,12 @@
   },
   "profile": {
     "header": {
-      "title": "My",
-      "highlightedWord": "Profile",
+      "title": "Your <accent>profile</accent>",
       "subtitle": "Manage your account settings"
     },
     "userInformation": {
-      "title": "PERSONAL INFORMATION",
+      "label": "Account",
+      "title": "Personal Information",
       "subtitle": "Update your personal details",
       "edit": "EDIT",
       "firstNameLabel": "First Name",
@@ -662,7 +743,8 @@
       "cancel": "CANCEL"
     },
     "passwordReset": {
-      "title": "PASSWORD & SECURITY",
+      "label": "Security",
+      "title": "Password & Security",
       "subtitle": "Change your password whenever you like.",
       "changePassword": "CHANGE PASSWORD",
       "hiddenNote": "We keep your password hidden. Hit \"Change Password\" to set a new one.",
@@ -677,7 +759,8 @@
       "cancel": "CANCEL"
     },
     "address": {
-      "title": "SHIPPING ADDRESS",
+      "label": "Shipping",
+      "title": "Shipping Address",
       "subtitleHasAddress": "Your default shipping address",
       "subtitleNoAddress": "Add your shipping address",
       "editAddress": "EDIT ADDRESS",
@@ -848,7 +931,7 @@
         }
       },
       "subtotal": "Subtotal",
-      "total": "$237.00 TOTAL",
+      "total": "€237.00 TOTAL",
       "viewFullCart": "View Full Cart",
       "account": "ACCOUNT",
       "logout": "Logout"
@@ -1040,6 +1123,7 @@
       }
     },
     "register": {
+      "register": "Register",
       "openDialogAria": "Open register dialog",
       "signUp": "Sign Up",
       "successToast": "Account created. Check your email to verify it.",
@@ -1409,7 +1493,7 @@
     },
     "stripeButton": {
       "processing": "Processing…",
-      "pay": "Pay ${amount}"
+      "pay": "Pay €{amount}"
     },
     "paypalButton": {
       "redirecting": "Redirecting to PayPal…"
@@ -1656,7 +1740,9 @@
     "payment": {
       "title": "Your payment is safe",
       "body": "Payments run through Stripe and PayPal. We never see or store your card details.",
-      "accept": "We accept"
+      "accept": "We accept",
+      "sslSecured": "256-bit SSL Secured",
+      "comingSoon": "Soon"
     },
     "guarantee": {
       "title": "30-day guarantee",

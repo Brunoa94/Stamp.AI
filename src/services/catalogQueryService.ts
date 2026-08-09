@@ -4,6 +4,7 @@
  */
 
 import { createClient } from "@/lib/supabase/client";
+import { ErrorClient } from "./errorClient";
 
 export interface CatalogProduct {
   blueprint_id: number;
@@ -49,8 +50,7 @@ export class CatalogQueryService {
       .order("display_title");
 
     if (error) {
-      console.error("Error fetching catalog products:", error);
-      throw error;
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Products" });
     }
 
     return data || [];
@@ -70,8 +70,11 @@ export class CatalogQueryService {
       .single();
 
     if (error) {
-      console.error("Error fetching product:", error);
-      return null;
+      // PGRST116 = "not found" for .single() - return null instead of throwing
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product" });
     }
 
     return data;
@@ -96,8 +99,15 @@ export class CatalogQueryService {
       .eq("is_available", true)
       .single();
 
-    if (error || !data) {
-      console.error("Error fetching variant price:", error);
+    if (error) {
+      // PGRST116 = "not found" for .single() - return null instead of throwing
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Variant Price" });
+    }
+
+    if (!data) {
       return null;
     }
 
@@ -123,8 +133,7 @@ export class CatalogQueryService {
       .not("color", "is", null);
 
     if (error) {
-      console.error("Error fetching product colors:", error);
-      return [];
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product Colors" });
     }
 
     const uniqueColors = [...new Set(data?.map((v) => v.color!).filter(Boolean))];
@@ -149,8 +158,7 @@ export class CatalogQueryService {
       .not("size", "is", null);
 
     if (error) {
-      console.error("Error fetching product sizes:", error);
-      return [];
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product Sizes" });
     }
 
     // Sort sizes in standard order
@@ -177,8 +185,7 @@ export class CatalogQueryService {
       .order("size");
 
     if (error) {
-      console.error("Error fetching product variants:", error);
-      return [];
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product Variants" });
     }
 
     return data || [];

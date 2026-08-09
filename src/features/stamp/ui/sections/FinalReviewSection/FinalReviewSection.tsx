@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { useTranslations } from "next-intl";
 import { useStampCartActions } from "../../../lib/hooks/useStampCartActions";
 import {
@@ -7,7 +8,7 @@ import {
   useStampProductSelection,
   useStampCustomization,
 } from "../../../lib/hooks/useStampSelectors";
-import { MockupPreview } from "./MockupPreview";
+import { MockupCarousel } from "./MockupCarousel";
 import { ReviewDetails } from "./ReviewDetails";
 
 /**
@@ -17,32 +18,35 @@ import { ReviewDetails } from "./ReviewDetails";
  * Protocol 08 / Acquisition
  */
 
-export function FinalReviewSection() {
+function FinalReviewSectionComponent() {
   const t = useTranslations("stamp.finalReview");
   const { handleBagIt, handleBuyNow, isAddingToCart } = useStampCartActions();
-  const { mockupImageUrl } = useStampFinalization();
+  const { mockupImageUrl, mockupImages } = useStampFinalization();
   const { selectedProductTitle } = useStampProductSelection();
   const { selectedColor, selectedSize, selectedPriceCents } =
     useStampCustomization();
 
-  const mockupUrl =
-    mockupImageUrl ||
+  const fallbackUrl =
     "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=2000&auto=format&fit=crop";
 
   const productName = selectedProductTitle || t("defaultProductName");
 
-  // Format price from cents to dollars
+  // Format price from cents to euros
   const formattedPrice = selectedPriceCents
-    ? `$${(selectedPriceCents / 100).toFixed(2)}`
-    : "$0.00";
+    ? `€${(selectedPriceCents / 100).toFixed(2)}`
+    : "€0.00";
 
   return (
     <section
       id="step-8"
-      className="h-full overflow-y-auto grid grid-cols-1 lg:grid-cols-2 border-b border-(--color-stamp-divider)"
+      className="h-full overflow-y-auto grid grid-cols-1 md:grid-cols-2 border-b border-(--color-stamp-divider)"
     >
-      <MockupPreview mockupUrl={mockupUrl} />
+      <MockupCarousel
+        mockupImages={mockupImages}
+        fallbackUrl={mockupImageUrl || fallbackUrl}
+      />
       <ReviewDetails
+        mockupUrl={mockupImages[0]?.src || mockupImageUrl || fallbackUrl}
         productName={productName}
         color={selectedColor}
         size={selectedSize}
@@ -54,3 +58,5 @@ export function FinalReviewSection() {
     </section>
   );
 }
+
+export const FinalReviewSection = memo(FinalReviewSectionComponent);
