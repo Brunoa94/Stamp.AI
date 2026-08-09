@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
-import { useStampNavigation } from "./useStampNavigation";
+import { useCallback, useEffect, useState } from "react";
+import { useStampFlowStore } from "../stores/stampFlowStore";
 import {
   useStampGeneration,
   useStampSelectedImage,
@@ -9,6 +9,7 @@ import {
 } from "./useStampSelectors";
 import { logStampInfo, logStampWarn } from "../helpers/stampLogger";
 import { getStoredImages } from "../services/generatedImagesStorage";
+import type { GeneratedResultType } from "../types/stampFlowTypes";
 
 /**
  * useSkipGeneration
@@ -23,13 +24,29 @@ import { getStoredImages } from "../services/generatedImagesStorage";
  * - If only uploaded image: Use it as selected design and go to product selection (step 5)
  */
 export function useSkipGeneration() {
-  const { goToStep } = useStampNavigation();
   const { uploadedImageUrl } = useStampUpload();
   const { addGeneratedResult, setGeneratedResults } = useStampGeneration();
   const { setSelectedImageUrl, setEnhancedPrompt } = useStampSelectedImage();
 
-  // Check for cached images
-  const cachedImages = useMemo(() => getStoredImages(), []);
+  // Use setCurrentStep directly to bypass accessibility checks when skipping
+  // This is intentional - skip is a special case where we populate data AND navigate
+  const setCurrentStep = useStampFlowStore((state) => state.setCurrentStep);
+
+  // Check for cached images - initialize with stored images to avoid flash
+  const [cachedImages, setCachedImages] = useState<GeneratedResultType[]>(() => {
+    // Initialize with stored images (runs once on mount, client-side only)
+    if (typeof window === "undefined") return [];
+    return getStoredImages();
+  });
+
+  // Re-check for cached images periodically in case they were added elsewhere
+  useEffect(() => {
+    const images = getStoredImages();
+    if (images.length !== cachedImages.length) {
+      setCachedImages(images);
+    }
+  }, [cachedImages.length]);
+
   const hasCachedImages = cachedImages.length > 0;
 
   const handleSkipGeneration = useCallback(() => {
@@ -51,7 +68,8 @@ export function useSkipGeneration() {
 
       // Navigate to results section (step 4) to show cached images
       // Steps: 0=hero, 1=upload, 2=synthesis, 3=generation, 4=results, 5=product-selection
-      goToStep(4);
+      // Use setCurrentStep directly to bypass accessibility checks (we just set the data)
+      setCurrentStep(4);
 
       logStampInfo({
         scope: "useSkipGeneration",
@@ -67,6 +85,8 @@ export function useSkipGeneration() {
         scope: "useSkipGeneration",
         event: "skip_failed_no_images_available",
       });
+      // Go back to upload step so user can re-upload their image
+      setCurrentStep(1);
       return false;
     }
 
@@ -89,7 +109,8 @@ export function useSkipGeneration() {
     setEnhancedPrompt(placeholderResult.enhancedPrompt);
 
     // Navigate directly to product selection (step 5)
-    goToStep(5);
+    // Use setCurrentStep directly to bypass accessibility checks (we just set the data)
+    setCurrentStep(5);
 
     logStampInfo({
       scope: "useSkipGeneration",
@@ -105,12 +126,18 @@ export function useSkipGeneration() {
     setGeneratedResults,
     setSelectedImageUrl,
     setEnhancedPrompt,
-    goToStep,
+    setCurrentStep,
   ]);
+
+  // Allow skip if we have cached images OR an uploaded image
+  // Always allow skip with uploaded image since user is on synthesis step
+  const canSkip = hasCachedImages || !!uploadedImageUrl;
 
   return {
     handleSkipGeneration,
-    canSkip: hasCachedImages || !!uploadedImageUrl,
+    canSkip,
     hasCachedImages,
+    // Expose for debugging
+    hasUploadedImage: !!uploadedImageUrl,
   };
 }

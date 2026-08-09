@@ -20,6 +20,11 @@ interface PropsI {
 export function NoCoinsOverlay({ onSkip, hasCachedImages }: PropsI) {
   const t = useTranslations("stamp.errors.coins");
 
+  // Determine button text based on available options
+  const buttonText = hasCachedImages
+    ? t("usePreviousCreations")
+    : t("skipGeneration");
+
   return (
     <CoinsOverlayShell
       testId="coins-overlay-no-coins"
@@ -30,7 +35,7 @@ export function NoCoinsOverlay({ onSkip, hasCachedImages }: PropsI) {
     >
       {onSkip && (
         <Button variant="primary-compact" onClick={onSkip} className="gap-2">
-          {hasCachedImages ? t("usePreviousCreations") : t("skipGeneration")}
+          {buttonText}
           <ArrowRight className="h-4 w-4" />
         </Button>
       )}
