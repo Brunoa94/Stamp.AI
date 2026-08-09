@@ -1,5 +1,5 @@
-- Implement observability
-- Implement the analytics plan on Analytics
+- Implement observability - X
+- Implement the analytics plan on Analytics - X
 - Improve the design of Orders, Profile.
 - Reduce the text inside the input text.
 - Implement iDeal

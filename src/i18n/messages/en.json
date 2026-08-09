@@ -731,7 +731,7 @@
     },
     "userInformation": {
       "label": "Account",
-      "title": "Personal Information",
+      "title": "Personal <accent>information</accent>",
       "subtitle": "Update your personal details",
       "edit": "EDIT",
       "firstNameLabel": "First Name",
@@ -744,7 +744,7 @@
     },
     "passwordReset": {
       "label": "Security",
-      "title": "Password & Security",
+      "title": "Password & <accent>security</accent>",
       "subtitle": "Change your password whenever you like.",
       "changePassword": "CHANGE PASSWORD",
       "hiddenNote": "We keep your password hidden. Hit \"Change Password\" to set a new one.",
@@ -760,7 +760,7 @@
     },
     "address": {
       "label": "Shipping",
-      "title": "Shipping Address",
+      "title": "Shipping <accent>address</accent>",
       "subtitleHasAddress": "Your default shipping address",
       "subtitleNoAddress": "Add your shipping address",
       "editAddress": "EDIT ADDRESS",
