@@ -431,7 +431,7 @@ function StripeReturnContent() {
   };
 
   const handleCreateAnother = () => {
-    router.push("/dashboard");
+    router.push("/stamp");
   };
 
   // Loading state

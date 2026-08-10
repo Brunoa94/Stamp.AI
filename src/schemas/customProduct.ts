@@ -66,6 +66,9 @@ export const CreatedProductSchema = z.object({
   variants: z.array(ProductVariantSchema),
   images: z.array(ProductImageSchema).optional(),
   uploaded_image_preview_url: z.string().url().optional(),
+  // The exact variant ID matching the user's selected color/size
+  // This ensures the cart uses the correct variant, not just the first one
+  selected_variant_id: z.number().nullable().optional(),
 });
 
 /**

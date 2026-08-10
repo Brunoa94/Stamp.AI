@@ -218,10 +218,33 @@ export function useStampProductCreation() {
       // Store product data
       setCreatedProductId(product.id);
 
-      // Store first variant ID for cart
-      if (product.variants && product.variants.length > 0) {
+      // Store variant ID for cart - prefer selected_variant_id (exact color/size match)
+      // Fall back to first variant only if selected_variant_id is not available
+      if (product.selected_variant_id) {
+        setCreatedVariantId(product.selected_variant_id);
+        logStampInfo({
+          scope: "useStampProductCreation",
+          event: "using_selected_variant_id",
+          metadata: {
+            selected_variant_id: product.selected_variant_id,
+            fabricColor,
+            size,
+          },
+        });
+      } else if (product.variants && product.variants.length > 0) {
+        // Fallback: use first variant (legacy behavior)
         const firstVariantId = product.variants[0].id;
         setCreatedVariantId(firstVariantId);
+        logStampWarn({
+          scope: "useStampProductCreation",
+          event: "fallback_to_first_variant",
+          metadata: {
+            firstVariantId,
+            fabricColor,
+            size,
+            note: "selected_variant_id not returned from server",
+          },
+        });
       }
 
       const productMapper = (

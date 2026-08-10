@@ -620,7 +620,7 @@ export default function MollieReturnClient() {
   };
 
   const handleCreateAnother = () => {
-    router.push("/dashboard");
+    router.push("/stamp");
   };
 
   // Loading state

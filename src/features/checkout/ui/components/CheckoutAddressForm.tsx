@@ -31,7 +31,7 @@ interface CheckoutAddressFormPropsI {
 const LABEL_CLASS =
   "text-base font-bold uppercase tracking-[0.2em] text-(--color-stamp-taupe)";
 const INPUT_CLASS =
-  "h-12 rounded-none border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 text-xl uppercase tracking-[0.05em] text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/40 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20";
+  "h-12 rounded-none border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 text-base md:text-sm uppercase tracking-[0.05em] text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/40 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20";
 const ERROR_CLASS =
   "text-[11px] font-bold uppercase tracking-[0.15em] text-(--color-stamp-error)";
 
@@ -78,7 +78,7 @@ export function CheckoutAddressForm({
                   >
                     <SelectTrigger
                       id={fieldName}
-                      className="h-12 rounded-none border-(--color-stamp-divider) bg-(--color-stamp-white) text-xl uppercase tracking-[0.05em] text-(--color-stamp-chocolate) focus:ring-2 focus:ring-(--color-stamp-gold)/30"
+                      className="h-12 rounded-none border-(--color-stamp-divider) bg-(--color-stamp-white) text-base md:text-sm uppercase tracking-[0.05em] text-(--color-stamp-chocolate) focus:ring-2 focus:ring-(--color-stamp-gold)/30"
                     >
                       <SelectValue placeholder={t("selectCountryPlaceholder")} />
                     </SelectTrigger>
