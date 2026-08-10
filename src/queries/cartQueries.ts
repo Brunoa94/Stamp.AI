@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CartService } from "@/services/cartService";
 import { AddToCartInput, UpdateCartItemInput } from "@/types/cart";
 import { useUser } from "@/queries/authQueries";
@@ -19,12 +19,18 @@ function useCart() {
         throw new Error("User not authenticated");
       }
       // Get or create cart
-      const cart = await CartService.getOrCreateCart(userId, undefined, userEmail);
+      const cart = await CartService.getOrCreateCart(
+        userId,
+        undefined,
+        userEmail,
+      );
       // Get cart with items
       return CartService.getCart(cart.id);
     },
     enabled: !!userId, // Only run query when userId exists
     retry: 1,
+    refetchOnMount: "always", // Always refetch on client-side navigation
+    staleTime: 0, // Consider data always stale to ensure fresh data
   });
 }
 
@@ -36,6 +42,9 @@ export function useCartById(cartId: string | null) {
     queryKey: ["cart", cartId],
     queryFn: () => CartService.getCart(cartId!),
     enabled: !!cartId,
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always", // Always refetch on client-side navigation
+    staleTime: 0, // Consider data always stale to ensure fresh data
   });
 }
 
@@ -49,7 +58,7 @@ export function useCartSummary() {
     cart,
     isLoading,
     ...CartService.calculateCartSummary(cart),
-    error
+    error,
   };
 }
 
@@ -78,7 +87,11 @@ export function useAddToCart() {
       if (!userId) {
         throw new Error("User not authenticated");
       }
-      const cart = await CartService.getOrCreateCart(userId, undefined, userEmail);
+      const cart = await CartService.getOrCreateCart(
+        userId,
+        undefined,
+        userEmail,
+      );
 
       // DEBUG: Log before calling CartService
       console.log("[useAddToCart] Calling CartService.addToCart with:", {
@@ -148,6 +161,28 @@ export function useRemoveCartItem() {
 }
 
 /**
+ * Update cart items selection (persist which items are selected for checkout)
+ */
+export function useUpdateCartItemsSelection() {
+  const { handleError } = useErrorHandler();
+
+  return useMutation({
+    mutationFn: ({
+      cartId,
+      selectedItemIds,
+    }: {
+      cartId: string;
+      selectedItemIds: string[];
+    }) => {
+      return CartService.updateCartItemsSelection(cartId, selectedItemIds);
+    },
+    onError: (error: Error) => {
+      handleError(error);
+    },
+  });
+}
+
+/**
  * Clear all items from cart
  */
 export function useClearCart() {
@@ -162,7 +197,11 @@ export function useClearCart() {
       if (!userId) {
         throw new Error("User not authenticated");
       }
-      const cart = await CartService.getOrCreateCart(userId, undefined, userEmail);
+      const cart = await CartService.getOrCreateCart(
+        userId,
+        undefined,
+        userEmail,
+      );
       return await CartService.clearCart(cart.id);
     },
     onSuccess: () => {

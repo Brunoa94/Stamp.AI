@@ -484,7 +484,12 @@
     },
     "finalReview": {
       "protocol": "Step 08 / Checkout",
-      "title": "Ready to <accent>Wear</accent>",
+      "title": {
+        "tshirt": "Ready to <accent>Wear</accent>",
+        "hoodie": "Ready to <accent>Wear</accent>",
+        "tote": "Ready to <accent>Carry</accent>",
+        "poster": "Ready to <accent>Display</accent>"
+      },
       "defaultProductName": "Custom Product",
       "mockupAlt": "Final product mockup",
       "previewSealed": "Final preview",
@@ -597,8 +602,15 @@
     "header": {
       "title": "Shopping <accent>bag</accent>"
     },
+    "selection": {
+      "selectedCount": "{selected} of {total} selected",
+      "selectAll": "Select all ({count})",
+      "deselectAll": "Deselect all"
+    },
     "mobileCta": {
-      "checkout": "Checkout · {total}"
+      "checkout": "Checkout · {total}",
+      "itemsSelected": "{count, plural, one {# item selected} other {# items selected}}",
+      "selectItems": "Select items to checkout"
     },
     "empty": {
       "title": "Your bag's empty",
@@ -615,7 +627,8 @@
       "quantityGroupLabel": "Quantity for {productName}",
       "decreaseQuantity": "Decrease quantity",
       "increaseQuantity": "Increase quantity",
-      "remove": "Remove"
+      "remove": "Remove",
+      "selectItem": "Select {product} for checkout"
     },
     "loading": {
       "label": "Loading cart"
@@ -629,10 +642,12 @@
       "taxNote": "Calculated at checkout",
       "proceedToCheckout": "Checkout",
       "estimatedArrival": "Estimated Arrival",
-      "arrivalWindow": "3–5 Business Days",
+      "arrivalWindow": "5-8 Business Days",
       "secureTransactions": "Secure, encrypted checkout",
       "total": "Total",
-      "currencyNote": "Currency: USD"
+      "currencyNote": "Currency: USD",
+      "noItemsSelected": "Select items from your bag to proceed to checkout.",
+      "itemsSelected": "{count, plural, one {# item selected} other {# items selected}}"
     }
   },
   "buyCredits": {

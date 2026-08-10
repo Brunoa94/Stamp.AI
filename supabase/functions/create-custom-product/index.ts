@@ -3,6 +3,7 @@ import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { calculatePlacement, isScaleOnlyBlueprint, getBlueprintAnchorY } from "../_shared/printPlacement.ts"
 import { resolvePrintAreas } from "../_shared/resolvePrintAreas.ts"
+import { validateColorForBlueprint, filterVariantsByAllowedColors } from "../_shared/colorValidation.ts"
 import { createClient } from "jsr:@supabase/supabase-js@2"
 
 const corsHeaders = {
@@ -59,6 +60,15 @@ serve(async (req) => {
     const finalBlueprintId = validBlueprintId
     const finalPrintProviderId = validPrintProviderId
 
+    // Validate color for this product type (enforce Black/White for apparel)
+    const colorValidation = validateColorForBlueprint(selected_color, finalBlueprintId)
+    if (!colorValidation.valid) {
+      console.error(`❌ Color validation failed: ${colorValidation.error}`)
+      throw ErrorCodes.INVALID_REQUEST(colorValidation.error || 'Invalid color')
+    }
+    const validatedColor = colorValidation.normalizedColor
+    console.log(`✅ Color validated: "${selected_color}" -> "${validatedColor}" (category: ${colorValidation.category})`)
+
     // Get print provider variants
     const variantsResponse = await fetch(
       `https://api.printify.com/v1/catalog/blueprints/${finalBlueprintId}/print_providers/${finalPrintProviderId}/variants.json`,
@@ -113,34 +123,53 @@ serve(async (req) => {
     }
 
     // Filter variants by selected color and size if provided
+    // IMPORTANT: First filter to only allowed colors (Black/White for apparel)
     let selectedVariants: number[] = []
 
     if (variants && variants.length > 0) {
       selectedVariants = variants
-    } else if (selected_color || selected_size) {
-      console.log(`🎨 Filtering variants by color: "${selected_color}", size: "${selected_size}"`)
-
-      const matchingVariants = availableVariants.filter((v: any) => {
-        const variantColor = v.options?.color || v.title?.split(' / ')[0]?.trim()
-        const variantSize = v.options?.size || v.title?.split(' / ')[1]?.trim()
-
-        const colorMatches = !selected_color ||
-          variantColor?.toLowerCase() === selected_color.toLowerCase()
-        const sizeMatches = !selected_size ||
-          variantSize?.toLowerCase() === selected_size.toLowerCase()
-
-        return colorMatches && sizeMatches
-      })
-
-      if (matchingVariants.length > 0) {
-        selectedVariants = matchingVariants.map((v: any) => v.id)
-        console.log(`✅ Found ${selectedVariants.length} matching variant(s): ${selectedVariants.join(', ')}`)
-      } else {
-        console.warn(`⚠️ No variants match color: "${selected_color}", size: "${selected_size}". Using defaults.`)
-        selectedVariants = availableVariants.slice(0, 100).map((v: any) => v.id)
-      }
     } else {
-      selectedVariants = availableVariants.slice(0, 100).map((v: any) => v.id)
+      // First, filter variants to only allowed colors for this product category
+      const allowedColorVariants = filterVariantsByAllowedColors(
+        availableVariants,
+        finalBlueprintId,
+        validatedColor
+      )
+      console.log(`🎨 Filtered to ${allowedColorVariants.length} variants with allowed colors`)
+
+      if (validatedColor || selected_size) {
+        console.log(`🎨 Filtering variants by color: "${validatedColor}", size: "${selected_size}"`)
+
+        const matchingVariants = allowedColorVariants.filter((v: any) => {
+          const variantColor = v.options?.color || v.title?.split(' / ')[0]?.trim()
+          const variantSize = v.options?.size || v.title?.split(' / ')[1]?.trim()
+
+          const colorMatches = !validatedColor ||
+            variantColor?.toLowerCase() === validatedColor.toLowerCase()
+          const sizeMatches = !selected_size ||
+            variantSize?.toLowerCase() === selected_size.toLowerCase()
+
+          return colorMatches && sizeMatches
+        })
+
+        if (matchingVariants.length > 0) {
+          selectedVariants = matchingVariants.map((v: any) => v.id)
+          console.log(`✅ Found ${selectedVariants.length} matching variant(s): ${selectedVariants.join(', ')}`)
+        } else {
+          // Fall back to first allowed color variant if no exact match
+          console.warn(`⚠️ No variants match color: "${validatedColor}", size: "${selected_size}". Using allowed color variants.`)
+          selectedVariants = allowedColorVariants.slice(0, 100).map((v: any) => v.id)
+        }
+      } else {
+        // No color/size specified - use all allowed color variants
+        selectedVariants = allowedColorVariants.slice(0, 100).map((v: any) => v.id)
+      }
+
+      // Final safety check - if somehow no variants selected, fail explicitly
+      if (selectedVariants.length === 0) {
+        console.error('❌ No valid variants found after color filtering')
+        throw ErrorCodes.NO_VARIANTS_AVAILABLE()
+      }
     }
 
     // === PLACEMENT RESOLUTION ===
@@ -300,6 +329,33 @@ serve(async (req) => {
       }
     }) || []
 
+    // Find the exact variant matching the user's selected color and size
+    // This ensures the cart gets the correct variant, not just the first one
+    let selectedVariantId: number | null = null
+    if (productData.variants && productData.variants.length > 0) {
+      // Try to find exact match for color AND size
+      const exactMatch = productData.variants.find((v: any) => {
+        const variantColor = v.options?.color || v.title?.split(' / ')[0]?.trim()
+        const variantSize = v.options?.size || v.title?.split(' / ')[1]?.trim()
+
+        const colorMatches = !validatedColor ||
+          variantColor?.toLowerCase() === validatedColor.toLowerCase()
+        const sizeMatches = !selected_size ||
+          variantSize?.toLowerCase() === selected_size.toLowerCase()
+
+        return colorMatches && sizeMatches
+      })
+
+      if (exactMatch) {
+        selectedVariantId = exactMatch.id
+        console.log(`✅ Found exact variant match: ${selectedVariantId} (${exactMatch.title})`)
+      } else {
+        // Fallback to first variant (shouldn't happen if validation worked)
+        selectedVariantId = productData.variants[0].id
+        console.warn(`⚠️ No exact variant match found, using first variant: ${selectedVariantId}`)
+      }
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
@@ -314,9 +370,14 @@ serve(async (req) => {
             price: v.price,
             is_enabled: v.is_enabled,
           })),
+          // Return the exact variant matching the user's selection
+          selected_variant_id: selectedVariantId,
         },
         // Include placement info for debugging
         placement: primaryPlacement,
+        // Echo back the validated color/size for debugging
+        selected_color: validatedColor,
+        selected_size: selected_size,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )

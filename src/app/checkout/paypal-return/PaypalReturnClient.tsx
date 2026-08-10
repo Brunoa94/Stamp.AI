@@ -440,7 +440,7 @@ function PayPalReturnContent() {
   };
 
   const handleCreateAnother = () => {
-    router.push("/dashboard");
+    router.push("/stamp");
   };
 
   // Loading state
