@@ -1,7 +1,7 @@
 /**
- * Format price with currency symbol
+ * Format a price given in cents as a EUR currency string.
  */
-export function formatPrice(amount: number | null | undefined): string {
-  if (amount === null || amount === undefined) return "€0.00";
-  return `€${amount.toFixed(2)}`;
+export function formatPrice(cents: number | null | undefined): string {
+  if (cents === null || cents === undefined) return "€0.00";
+  return `€${(cents / 100).toFixed(2)}`;
 }
