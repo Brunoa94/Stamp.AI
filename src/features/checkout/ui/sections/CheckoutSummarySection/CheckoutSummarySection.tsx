@@ -19,6 +19,7 @@ import { CheckoutPromoCode } from "./CheckoutPromoCode";
 import { CheckoutPriceBreakdown } from "./CheckoutPriceBreakdown";
 import { CheckoutStripeButton } from "./CheckoutStripeButton";
 import { CheckoutPayPalButton } from "./CheckoutPayPalButton";
+import { CheckoutIdealButton } from "./CheckoutIdealButton";
 import type { CartWithItems } from "@/types/cart";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 
@@ -106,6 +107,15 @@ export function CheckoutSummarySection({
 
         {paymentMethod === "paypal" && paymentShippingAddress && (
           <CheckoutPayPalButton
+            cart={cart}
+            cartId={cartId ?? null}
+            amount={total}
+            disabled={disablePayment}
+          />
+        )}
+
+        {paymentMethod === "ideal" && paymentShippingAddress && (
+          <CheckoutIdealButton
             cart={cart}
             cartId={cartId ?? null}
             amount={total}

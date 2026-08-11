@@ -1,5 +1,6 @@
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 import type { ShippingAddressT } from "@/schemas/checkout";
+import type { PaymentMethodT } from "@/types/payment";
 
 export interface CheckoutData {
   billing: ShippingAddressT;
@@ -7,7 +8,7 @@ export interface CheckoutData {
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
   cartId: string | null;
-  paymentMethod: "stripe" | "paypal";
+  paymentMethod: PaymentMethodT;
   promoCode?: string;
   amount?: number; // Total amount for the order
   timestamp: number;
@@ -20,6 +21,7 @@ export interface CheckoutData {
  * Responsibilities:
  * - Store/retrieve Stripe checkout data
  * - Store/retrieve PayPal checkout data
+ * - Store Mollie (iDEAL) checkout data for the mollie-return page
  * - Validate data expiration (1 hour)
  * - Clean up expired data
  */
@@ -27,6 +29,15 @@ export class CheckoutStorageService {
   private static readonly STORAGE_KEYS = {
     STRIPE: "stripe_checkout_data",
     PAYPAL: "paypal_checkout_data",
+  } as const;
+
+  // sessionStorage keys read by MollieReturnClient after the redirect back from Mollie
+  private static readonly MOLLIE_SESSION_KEYS = {
+    PAYMENT_ID: "mollie_payment_id",
+    LINE_ITEMS: "mollie_line_items",
+    SHIPPING_ADDRESS: "mollie_shipping_address",
+    CART_ID: "mollie_cart_id",
+    ORDER_AMOUNT: "mollie_order_amount",
   } as const;
 
   private static readonly EXPIRATION_TIME = 60 * 60 * 1000; // 1 hour in milliseconds
@@ -133,10 +144,54 @@ export class CheckoutStorageService {
   }
 
   /**
-   * Clear all checkout data from localStorage
+   * Save Mollie (iDEAL) checkout data to sessionStorage.
+   * MollieReturnClient reads these keys after the redirect back from Mollie
+   * to verify the payment and create the order.
+   */
+  static saveMollieCheckoutData(data: CheckoutData, paymentId: string): void {
+    try {
+      sessionStorage.setItem(this.MOLLIE_SESSION_KEYS.PAYMENT_ID, paymentId);
+      sessionStorage.setItem(
+        this.MOLLIE_SESSION_KEYS.LINE_ITEMS,
+        JSON.stringify(data.lineItems)
+      );
+      sessionStorage.setItem(
+        this.MOLLIE_SESSION_KEYS.SHIPPING_ADDRESS,
+        JSON.stringify(data.shippingAddress)
+      );
+      if (data.cartId) {
+        sessionStorage.setItem(this.MOLLIE_SESSION_KEYS.CART_ID, data.cartId);
+      }
+      if (data.amount !== undefined) {
+        sessionStorage.setItem(
+          this.MOLLIE_SESSION_KEYS.ORDER_AMOUNT,
+          String(data.amount)
+        );
+      }
+    } catch (error) {
+      console.error("Failed to save Mollie checkout data:", error);
+    }
+  }
+
+  /**
+   * Clear Mollie checkout data from sessionStorage
+   */
+  static clearMollieCheckoutData(): void {
+    try {
+      Object.values(this.MOLLIE_SESSION_KEYS).forEach((key) =>
+        sessionStorage.removeItem(key)
+      );
+    } catch (error) {
+      console.error("Failed to clear Mollie checkout data:", error);
+    }
+  }
+
+  /**
+   * Clear all checkout data from storage
    */
   static clearAllCheckoutData(): void {
     this.clearStripeCheckoutData();
     this.clearPayPalCheckoutData();
+    this.clearMollieCheckoutData();
   }
 }

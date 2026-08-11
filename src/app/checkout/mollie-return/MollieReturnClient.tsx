@@ -248,7 +248,7 @@ export default function MollieReturnClient() {
               paymentIntentId: storedPaymentId,
               paymentStatus: "pending", // Will be updated by webhook
               amount: orderAmount,
-              currency: "USD",
+              currency: "EUR",
               cartSnapshot: cart,
               shippingAddress: parsedShippingAddress,
               lineItems: validatedLineItems,
@@ -350,7 +350,7 @@ export default function MollieReturnClient() {
                 paymentIntentId: storedPaymentId,
                 paymentStatus: "succeeded",
                 amount: orderAmount,
-                currency: "USD",
+                currency: "EUR",
                 cartSnapshot: cart,
                 shippingAddress: parsedShippingAddress,
                 lineItems: validatedLineItems,
@@ -660,7 +660,7 @@ export default function MollieReturnClient() {
       <PaymentSuccess
         details={{
           id: paymentId ?? "",
-          provider: "mollie" as "stripe", // Legacy Mollie payment - type assertion for backward compatibility
+          provider: "ideal",
           status: paymentStatus ?? "paid",
           orderNumber:
             orderNumber ||
@@ -698,7 +698,7 @@ export default function MollieReturnClient() {
               : t("failedStatus"),
           reasonTitle: t("paymentStatusTitle"),
           reasonMessage,
-          availableMethods: ["stripe", "paypal"],
+          availableMethods: ["stripe", "paypal", "ideal"],
         }}
         onTryAgain={handleRetryPayment}
         onSelectMethod={handleRetryPayment}

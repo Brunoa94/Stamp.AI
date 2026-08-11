@@ -62,6 +62,15 @@ export function CheckoutPaymentSection({
         </p>
       )}
 
+      {selectedMethod === "ideal" && (
+        <p
+          role="status"
+          className="mt-6 border border-(--color-stamp-info)/20 bg-(--color-stamp-info)/5 px-4 py-3 text-[11px] font-bold uppercase tracking-[0.15em] text-(--color-stamp-info)"
+        >
+          {t("idealNotice")}
+        </p>
+      )}
+
       <SecureCheckoutNotice className="mt-6" />
     </CheckoutSectionCard>
   );

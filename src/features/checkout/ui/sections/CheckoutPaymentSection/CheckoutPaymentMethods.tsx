@@ -9,7 +9,7 @@
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { PAYMENT_METHODS } from "@/constants/payment";
+import { CHECKOUT_PAYMENT_METHODS } from "@/constants/payment";
 import type { PaymentMethodT } from "@/types/payment";
 
 interface CheckoutPaymentMethodsPropsI {
@@ -31,7 +31,7 @@ export function CheckoutPaymentMethods({
       className="flex flex-col gap-4 sm:flex-row"
       data-disabled={disabled || undefined}
     >
-      {PAYMENT_METHODS.map((method) => {
+      {CHECKOUT_PAYMENT_METHODS.map((method) => {
         const isSelected = selectedMethod === method.id;
         return (
           <button

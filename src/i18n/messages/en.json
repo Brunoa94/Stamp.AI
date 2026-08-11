@@ -1451,6 +1451,7 @@
       "title": "Payment Method",
       "subtitle": "Pick how you want to pay",
       "paypalNotice": "We'll send you to PayPal to pay securely.",
+      "idealNotice": "We'll send you to your bank via iDEAL to pay securely.",
       "selectMethodAria": "Select payment method"
     },
     "testCards": {
@@ -1513,6 +1514,9 @@
     },
     "paypalButton": {
       "redirecting": "Redirecting to PayPal…"
+    },
+    "idealButton": {
+      "redirecting": "Redirecting to iDEAL…"
     },
     "alternativeMethods": {
       "title": "Try Alternative Method",
@@ -1755,7 +1759,7 @@
     },
     "payment": {
       "title": "Your payment is safe",
-      "body": "Payments run through Stripe and PayPal. We never see or store your card details.",
+      "body": "Payments run through Stripe, PayPal and Mollie. We never see or store your card details.",
       "accept": "We accept",
       "sslSecured": "256-bit SSL Secured",
       "comingSoon": "Soon"

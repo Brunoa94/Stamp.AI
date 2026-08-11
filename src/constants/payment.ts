@@ -1,10 +1,10 @@
-import { CreditCard } from "lucide-react";
+import { CreditCard, Landmark } from "lucide-react";
 import { FaPaypal } from "react-icons/fa";
 import type { StripeCardElementOptions } from "@stripe/stripe-js";
 import type { LucideIcon } from "lucide-react";
 import type { IconType } from "react-icons";
 
-export type PaymentMethodId = "stripe" | "paypal";
+export type PaymentMethodId = "stripe" | "paypal" | "ideal";
 
 export interface PaymentMethodOption {
   id: PaymentMethodId;
@@ -26,7 +26,36 @@ export const PAYMENT_METHODS: PaymentMethodOption[] = [
     description: "PayPal, Venmo, Pay Later",
     Icon: FaPaypal,
   },
+  {
+    id: "ideal",
+    label: "iDEAL",
+    description: "Pay with your Dutch bank",
+    Icon: Landmark,
+  },
 ];
+
+/**
+ * iDEAL runs through Mollie, which needs MOLLIE_API_KEY configured in the
+ * Supabase edge-function secrets. The flag lets environments without that
+ * setup hide iDEAL from the checkout selector.
+ */
+export const IDEAL_PAYMENT_ENABLED =
+  process.env.NEXT_PUBLIC_MOLLIE_ENABLED === "true";
+
+/**
+ * Payment methods offered in the checkout selector.
+ */
+export const CHECKOUT_PAYMENT_METHODS: PaymentMethodOption[] =
+  IDEAL_PAYMENT_ENABLED
+    ? PAYMENT_METHODS
+    : PAYMENT_METHODS.filter((method) => method.id !== "ideal");
+
+/**
+ * Payment methods available for credit purchases.
+ * The create-credit-payment flow does not support iDEAL, so it is excluded here.
+ */
+export const CREDIT_PAYMENT_METHODS: PaymentMethodOption[] =
+  PAYMENT_METHODS.filter((method) => method.id !== "ideal");
 
 export interface PaymentConfirmMethodUi {
   labelDesktop: string;
@@ -51,6 +80,12 @@ export const PAYMENT_CONFIRM_METHOD_UI: Record<
     labelMobile: "Confirm Order • PayPal",
     className: "bg-[#0070BA] hover:bg-[#005EA6]",
     Icon: FaPaypal,
+  },
+  ideal: {
+    labelDesktop: "Confirm Order • Pay with iDEAL",
+    labelMobile: "Confirm Order • iDEAL",
+    className: "bg-[#CC0066] hover:bg-[#B3005C]",
+    Icon: Landmark,
   },
 };
 

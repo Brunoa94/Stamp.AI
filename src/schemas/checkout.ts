@@ -38,7 +38,7 @@ export const CheckoutFormSchema = z
     shipping: ShippingAddressSchema.optional(),
 
     // Payment method
-    paymentMethod: z.enum(["stripe", "paypal"] as const),
+    paymentMethod: z.enum(["stripe", "paypal", "ideal"] as const),
 
     // Promo code
     promoCode: z.string().optional(),
