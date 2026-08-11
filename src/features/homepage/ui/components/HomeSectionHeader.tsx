@@ -6,6 +6,7 @@
  */
 
 import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +14,7 @@ interface HomeSectionHeaderPropsI {
   title: string;
   accent?: string;
   label: string;
+  subtitle?: string;
   inverted?: boolean;
   className?: string;
 }
@@ -21,6 +23,7 @@ export function HomeSectionHeader({
   title,
   accent,
   label: _label,
+  subtitle,
   inverted = false,
   className,
 }: HomeSectionHeaderPropsI) {
@@ -53,6 +56,19 @@ export function HomeSectionHeader({
           </>
         )}
       </Heading>
+      {subtitle && (
+        <Paragraph
+          variant="sm"
+          className={cn(
+            "max-w-2xl",
+            inverted
+              ? "text-(--color-stamp-off-white)/70"
+              : "text-(--color-stamp-taupe)"
+          )}
+        >
+          {subtitle}
+        </Paragraph>
+      )}
     </header>
   );
 }

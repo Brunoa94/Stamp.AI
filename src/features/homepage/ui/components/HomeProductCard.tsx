@@ -1,9 +1,9 @@
 /**
  * HomeProductCard
  *
- * Catalog product card: framed 3:4 image with grayscale-to-color hover,
- * color swatches, availability badge, name and price.
- * Slides in from right to left when first scrolled into view.
+ * Showcase product card: full-bleed 3:4 image with a chocolate gradient
+ * overlay carrying the product name, price and color swatches, plus a
+ * discount badge. Slides in from the right when first scrolled into view.
  */
 
 "use client";
@@ -11,6 +11,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { ArrowRight } from "lucide-react";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
@@ -36,73 +37,87 @@ export function HomeProductCard({ product, index }: HomeProductCardPropsI) {
     <Link
       ref={ref}
       href={product.href}
-      className="group block"
+      className="group relative block aspect-3/4 overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover)"
       style={{
         opacity: isVisible ? 1 : 0,
         transform: isVisible ? "translateX(0)" : "translateX(100px)",
         transition: `opacity 0.6s ease-out ${staggerDelay}ms, transform 0.6s ease-out ${staggerDelay}ms`,
       }}
     >
-      <div className="relative mb-3 sm:mb-5 aspect-3/4 overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all duration-500 group-hover:-translate-y-1 group-hover:border-(--color-stamp-gold) group-hover:shadow-(--shadow-stamp-card-hover)">
-        {product.imageUrl ? (
-          <Image
-            src={product.imageUrl}
-            alt={product.name}
-            fill
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover grayscale transition-all duration-700 group-hover:scale-[1.02] group-hover:grayscale-0"
-          />
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-(--color-stamp-cream)">
-            <Span variant="micro" className="text-(--color-stamp-taupe)">
-              {t("noImage")}
-            </Span>
-          </div>
-        )}
-
-        {product.availableColors.length > 0 && (
-          <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 border border-(--color-stamp-divider) bg-(--color-stamp-off-white)/90 px-1.5 py-1 sm:px-2.5 sm:py-2 backdrop-blur-sm">
-            <ColorSwatches colors={product.availableColors} maxDisplay={4} />
-          </div>
-        )}
-
-        {product.discountPercent && product.discountPercent > 0 && (
-          <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-(--color-stamp-gold) px-1.5 py-0.5 sm:px-2.5 sm:py-1">
-            <Span variant="micro" className="font-medium text-(--color-stamp-white)">
-              {t("discountBadge", { percent: product.discountPercent })}
-            </Span>
-          </div>
-        )}
-      </div>
-
-      <div className="flex items-start justify-between gap-2 sm:gap-4">
-        <Heading
-          as="h3"
-          variant="item"
-          className="text-xs sm:text-sm text-(--color-stamp-chocolate) transition-colors duration-300 group-hover:text-(--color-stamp-gold)"
-        >
-          {product.name}
-        </Heading>
-        <div className="flex flex-col items-end gap-0.5 shrink-0">
-          {product.isOnSale && product.originalPrice && (
-            <Span
-              variant="micro"
-              className="text-(--color-stamp-taupe) line-through text-[10px] sm:text-xs"
-            >
-              €{product.originalPrice.toFixed(2)}
-            </Span>
-          )}
-          <Span
-            variant="sm"
-            className={`text-xs sm:text-sm ${
-              product.isOnSale
-                ? "text-(--color-stamp-gold)"
-                : "text-(--color-stamp-chocolate)"
-            }`}
-          >
-            €{product.price.toFixed(2)}
+      {product.imageUrl ? (
+        <Image
+          src={product.imageUrl}
+          alt={product.name}
+          fill
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+      ) : (
+        <div className="flex h-full w-full items-center justify-center bg-(--color-stamp-cream)">
+          <Span variant="micro" className="text-(--color-stamp-taupe)">
+            {t("noImage")}
           </Span>
         </div>
+      )}
+
+      {/* Gradient scrim so the overlaid name and price stay readable */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-t from-(--color-stamp-chocolate)/75 via-(--color-stamp-chocolate)/10 to-transparent"
+      />
+
+      {product.discountPercent && product.discountPercent > 0 && (
+        <div className="absolute right-3 top-3 bg-(--color-stamp-gold) px-2.5 py-1 sm:right-4 sm:top-4">
+          <Span
+            variant="micro"
+            className="font-medium text-(--color-stamp-white)"
+          >
+            {t("discountBadge", { percent: product.discountPercent })}
+          </Span>
+        </div>
+      )}
+
+      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-2 p-4 sm:gap-3 sm:p-6">
+        {product.availableColors.length > 0 && (
+          <ColorSwatches colors={product.availableColors} maxDisplay={4} />
+        )}
+
+        <div className="flex items-end justify-between gap-2 sm:gap-4">
+          <Heading
+            as="h3"
+            variant="item"
+            className="text-sm text-(--color-stamp-off-white) sm:text-base md:text-lg"
+          >
+            {product.name}
+          </Heading>
+          <div className="flex shrink-0 flex-col items-end gap-0.5">
+            {product.isOnSale && product.originalPrice && (
+              <Span
+                variant="micro"
+                className="text-[10px] text-(--color-stamp-off-white)/60 line-through sm:text-xs"
+              >
+                €{product.originalPrice.toFixed(2)}
+              </Span>
+            )}
+            <Span
+              variant="sm"
+              className={`text-xs sm:text-sm ${
+                product.isOnSale
+                  ? "text-(--color-stamp-gold)"
+                  : "text-(--color-stamp-off-white)"
+              }`}
+            >
+              €{product.price.toFixed(2)}
+            </Span>
+          </div>
+        </div>
+
+        <span className="flex items-center gap-2 text-(--color-stamp-off-white)/0 transition-all duration-300 group-hover:text-(--color-stamp-off-white)">
+          <Span variant="micro" className="uppercase tracking-widest">
+            {t("shopNow")}
+          </Span>
+          <ArrowRight aria-hidden className="h-3.5 w-3.5" />
+        </span>
       </div>
     </Link>
   );

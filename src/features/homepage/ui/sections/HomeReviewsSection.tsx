@@ -5,6 +5,7 @@
  * 2×2 grid of testimonial cards with platform-specific colors and icons.
  */
 
+import { useTranslations } from "next-intl";
 import { HOME_TESTIMONIALS } from "../../lib/constants/homepageContent";
 import { HomeSectionHeader } from "../components/HomeSectionHeader";
 import { SectionReveal } from "../components/SectionReveal";
@@ -12,6 +13,8 @@ import { ReviewsRatingSummary } from "../components/ReviewsSection/ReviewsRating
 import { ReviewsTestimonialCard } from "../components/ReviewsSection/ReviewsTestimonialCard";
 
 export function HomeReviewsSection() {
+  const t = useTranslations("home.reviews");
+
   return (
     <section
       id="reviews"
@@ -19,9 +22,9 @@ export function HomeReviewsSection() {
     >
       <SectionReveal className="mx-auto max-w-screen-2xl" parallax fadeOnScroll>
         <HomeSectionHeader
-          title="Social"
-          accent="proof"
-          label="Verified Reviews"
+          title={t("title")}
+          accent={t("accent")}
+          label={t("label")}
         />
 
         <div className="grid grid-cols-1 gap-4 sm:gap-8 lg:grid-cols-12">

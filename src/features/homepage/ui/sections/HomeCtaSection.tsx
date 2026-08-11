@@ -59,7 +59,7 @@ export function HomeCtaSection() {
               </Link>
             </Button>
             <Button asChild variant="ghost-stamp-light">
-              <Link href="/products">{t("ctaSecondary")}</Link>
+              <Link href="#products">{t("ctaSecondary")}</Link>
             </Button>
           </div>
         </div>

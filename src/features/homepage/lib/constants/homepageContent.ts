@@ -8,42 +8,80 @@
 
 export const MAX_HOME_PRODUCTS = 4;
 
-// Featured carousel - blueprint IDs to exclude from the carousel
-export const FEATURED_CAROUSEL_EXCLUDED_BLUEPRINTS = new Set([12]);
-
 // Process section - stagger delay between card reveals (ms)
 export const PROCESS_STAGGER_DELAY_MS = 120;
 
 // Trust guarantees section - stagger delay between card reveals (ms)
 export const TRUST_GUARANTEES_STAGGER_DELAY_MS = 100;
 
-// Hero section image carousel - cycles through product images
-export const HOME_HERO_IMAGES = [
-  "/home/1-a.png",
-  "/home/1-b.png",
-  "/home/2-a.png",
-  "/home/2-b.png",
-  "/home/3-a.png",
-  "/home/3-b.png",
-  "/home/4-a.png",
-  "/home/4-b.png",
-  "/home/5-a.png",
-  "/home/5-b.png",
-  "/home/6-a.png",
-  "/home/6-b.png",
+// Hero showcase - the same subject rendered in different AI styles, cycled
+// as a live print on the hero garment. Labels live in messages
+// (home.hero.showcase.styles.<id>).
+export type HeroShowcaseStyleType = {
+  id: string;
+  src: string;
+};
+
+export const HERO_SHOWCASE_STYLES: HeroShowcaseStyleType[] = [
+  { id: "watercolor", src: "/suggested-edits/watercolor.png" },
+  { id: "pop-art", src: "/suggested-edits/pop-art.png" },
+  { id: "neon", src: "/suggested-edits/neon.png" },
+  { id: "sketch", src: "/suggested-edits/sketch.png" },
+  { id: "oil-paint", src: "/suggested-edits/oil-paint.png" },
+  { id: "vintage", src: "/suggested-edits/vintage.png" },
 ];
 
-// Hero product grid - grouped image sets for each square
-// Each set cycles independently with staggered timing
-export const HERO_PRODUCT_SETS: string[][] = [
-  // Top-right (large) - products 1 & 2
-  ["/home/1-a.png", "/home/1-b.png", "/home/2-a.png", "/home/2-b.png"],
-  // Middle-left (medium) - products 3 & 4
-  ["/home/3-a.png", "/home/3-b.png", "/home/4-a.png", "/home/4-b.png"],
-  // Bottom-right (medium) - products 5 & 6
-  ["/home/5-a.png", "/home/5-b.png", "/home/6-a.png", "/home/6-b.png"],
-  // Bottom-left (small) - mix of all
-  ["/home/1-a.png", "/home/3-a.png", "/home/5-a.png", "/home/2-a.png"],
+export const HERO_SHOWCASE_GARMENT = "/home/1-a.png";
+
+// Interval between style swaps on the hero garment (ms)
+export const HERO_SHOWCASE_INTERVAL_MS = 2800;
+
+// The artwork previews share this intrinsic aspect ratio (width / height)
+export const HERO_SHOWCASE_ART_ASPECT = "929 / 1152";
+
+// Values are stable ids resolved to labels in messages
+// (home.hero.highlights.<id>).
+export const HOME_HERO_HIGHLIGHTS: string[] = [
+  "noSkills",
+  "madeToOrder",
+  "shipping",
+  "guarantee",
+];
+
+// Story section - alternating image + text splits. Display copy lives in
+// messages (home.story.blocks.<id>); a block with multiple images renders
+// them as a collage.
+export type HomeStoryBlockType = {
+  id: string;
+  images: string[];
+  imagePosition: "left" | "right";
+  href: string;
+};
+
+export const HOME_STORY_BLOCKS: HomeStoryBlockType[] = [
+  {
+    id: "design",
+    images: [
+      "/suggested-edits/golden-hour.png",
+      "/suggested-edits/line-art.png",
+      "/suggested-edits/minimal.png",
+      "/suggested-edits/film-grain.png",
+    ],
+    imagePosition: "right",
+    href: "/stamp",
+  },
+  {
+    id: "quality",
+    images: ["/home/3-a.png"],
+    imagePosition: "left",
+    href: "#products",
+  },
+  {
+    id: "planet",
+    images: ["/home/6-a.png"],
+    imagePosition: "right",
+    href: "#process",
+  },
 ];
 
 // Display copy lives in messages (home.process.steps.<id>); only structural
@@ -81,19 +119,6 @@ export const PROCESS_STEP_COLORS: ProcessStepColorType[] = [
     border: "hover:border-(--color-stamp-taupe)",
     text: "group-hover:text-(--color-stamp-taupe)",
   },
-];
-
-// Display copy lives in messages (home.manifesto.values.<number>); the number
-// doubles as the stable id.
-export type HomeValueCardType = {
-  number: string;
-};
-
-export const HOME_VALUE_CARDS: HomeValueCardType[] = [
-  { number: "01" },
-  { number: "02" },
-  { number: "03" },
-  { number: "04" },
 ];
 
 export type HomePlatformRatingType = {
@@ -140,16 +165,6 @@ export const HOME_FAQS: HomeFaqType[] = [
   { id: "sustainability" },
   { id: "samples" },
   { id: "satisfaction" },
-];
-
-// Values are stable ids resolved to labels in messages
-// (home.trustIndicators.items.<id>).
-export type HomeTrustIndicatorType = string;
-
-export const HOME_HERO_TRUST: HomeTrustIndicatorType[] = [
-  "aiPowered",
-  "archivalQuality",
-  "instantDelivery",
 ];
 
 // Display copy lives in messages (home.guarantees.items.<id>).
