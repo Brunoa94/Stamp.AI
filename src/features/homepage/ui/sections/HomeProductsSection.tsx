@@ -30,6 +30,7 @@ export function HomeProductsSection({ products }: HomeProductsSectionPropsI) {
           title={t("title")}
           accent={t("accent")}
           label={t("label")}
+          className="mb-16"
         />
 
         {displayedProducts.length === 0 ? (

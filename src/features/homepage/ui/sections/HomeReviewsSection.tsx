@@ -25,6 +25,7 @@ export function HomeReviewsSection() {
           title={t("title")}
           accent={t("accent")}
           label={t("label")}
+          className="mb-16"
         />
 
         <div className="grid grid-cols-1 gap-4 sm:gap-8 lg:grid-cols-12">
