@@ -2,8 +2,8 @@
 - Implement the analytics plan on Analytics - X
 - Improve the design of Orders, Profile. -X
 - Reduce the text inside the input text. - X
-- Implement iDeal
+- Implement iDeal - X
 - Confirmar fatura a ser enviada - X
 - Improve the homepage design
-- Aditional pages, for legal and stuff
+- Aditional pages, for legal and stuff, improve the footer.
 - Multiple orders - X
