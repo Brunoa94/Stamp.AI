@@ -17,6 +17,10 @@ const ALLOWED_COLORS: Record<string, string[]> = {
   canvas: [],
   // Socks - white base for all-over print
   socks: ["white"],
+  // Notebooks - no color restrictions (cover print)
+  notebook: [],
+  // Pillows - no color restrictions (all-over print)
+  pillow: [],
 };
 
 // Blueprint IDs mapped to categories
@@ -36,7 +40,7 @@ const BLUEPRINT_CATEGORIES: Record<number, string> = {
   1389: "tote", // AOP Tote Bag
 
   // Mugs
-  1320: "mug", // Ceramic Mug 11oz
+  441: "mug", // Ceramic Mug EU
   468: "mug", // White Glossy Mug
 
   // Canvas
@@ -45,6 +49,12 @@ const BLUEPRINT_CATEGORIES: Record<number, string> = {
   // Socks
   462: "socks", // Cushioned Crew Socks
   496: "socks", // Crew Socks
+
+  // Notebooks
+  475: "notebook", // Spiral Journal EU
+
+  // Pillows
+  229: "pillow", // Spun Polyester Square Pillowcase
 };
 
 export interface ColorValidationResult {

@@ -1,30 +1,13 @@
 {
   "home": {
     "hero": {
-      "title": "Type it. <accent>Stamp</accent> it. Wear it.",
+      "title": "Stamp <accent>ai</accent>",
       "tagline": "Type an idea, get a print-ready design in seconds, and wear it on heavyweight clothes that last. No design skills needed.",
       "ctaPrimary": "Start Creating",
       "ctaSecondary": "View Catalog",
+      "productBadge": "Essential_Wht / 320GSM",
       "scrollCue": "Scroll to Build",
-      "eyebrow": "AI-powered print on demand",
-      "highlights": {
-        "noSkills": "No design skills needed",
-        "madeToOrder": "Made to order — no minimums",
-        "shipping": "Ships worldwide in 5–7 days",
-        "guarantee": "30-day money-back guarantee"
-      },
-      "showcase": {
-        "chipLabel": "AI style",
-        "styles": {
-          "watercolor": "Watercolor",
-          "pop-art": "Pop Art",
-          "neon": "Neon",
-          "sketch": "Sketch",
-          "oil-paint": "Oil Paint",
-          "vintage": "Vintage"
-        },
-        "garmentAlt": "Model wearing a heavyweight hoodie with a custom AI-generated print that cycles through art styles"
-      }
+      "productImageAlt": "Heavyweight t-shirt with a custom AI-generated print"
     },
     "meta": {
       "title": "Custom AI T-Shirt & Apparel Design | Stamp AI",
@@ -79,8 +62,42 @@
       "accent": "essentials",
       "label": "Our apparel",
       "emptyState": "The catalog is temporarily unavailable — please check back soon",
-      "viewFullCatalog": "Browse all products",
-      "subtitle": "Every piece is printed when you order it. No stock, no waste — just heavyweight blanks worth keeping."
+      "viewFullCatalog": "Browse all products"
+    },
+    "featured": {
+      "title": "Featured",
+      "accent": "pieces",
+      "label": "Featured pieces",
+      "scrollLeft": "Scroll left",
+      "scrollRight": "Scroll right",
+      "noImage": "No image",
+      "collectionLabel": "Our Collection",
+      "swipeHint": "Swipe to explore"
+    },
+    "manifesto": {
+      "title": "Design for <accent>everyone</accent>",
+      "quote": "Good design shouldn't need a design degree or a 500-unit minimum. Tell us what you want, and we'll help you make it — one piece at a time.",
+      "quoteAttribution": "— Stamp AI Manifesto",
+      "intro": "We built Stamp AI to close the gap between a good idea and a good product. The AI handles the design work and we handle the printing and the blanks, so anyone can make clothes worth keeping.",
+      "valuesToggle": "Our Values",
+      "values": {
+        "01": {
+          "title": "AI-Powered",
+          "description": "Describe what you want in plain words. The AI turns it into print-ready art — no software to learn."
+        },
+        "02": {
+          "title": "Built to Last",
+          "description": "Heavyweight blanks, 280 to 480 GSM, picked to survive years of wear and washing."
+        },
+        "03": {
+          "title": "On-Demand",
+          "description": "Everything is made to order, so there's no dead stock and far less waste."
+        },
+        "04": {
+          "title": "Global Logistics",
+          "description": "Carbon-neutral shipping to 180+ countries, tracked from our press to your door."
+        }
+      }
     },
     "cta": {
       "heading": "Ready to stamp your <accent>vision</accent>?",
@@ -148,15 +165,29 @@
           "answer": "You're covered by a 30-day guarantee. If the print, fabric, or fit isn't right, we'll replace it free or refund you in full, and we cover return shipping. Custom designs can't be resold, so we'd rather get it right the first time."
         }
       },
-      "faqCta": "Start Your First Design"
+      "contactSupport": "Contact Support"
     },
     "ratingStars": {
       "ariaLabel": "Rated {rating} out of {total} stars"
     },
+    "trustIndicators": {
+      "items": {
+        "aiPowered": "AI Design",
+        "archivalQuality": "Premium Quality",
+        "instantDelivery": "Fast Delivery",
+        "fiveSevenDayDelivery": "5-7 Day Delivery",
+        "thirtyDayGuarantee": "30-Day Guarantee",
+        "carbonNeutral": "Carbon Neutral"
+      },
+      "subLabels": {
+        "generative": "Generative Logic",
+        "heritage": "Built to Last",
+        "logistics": "Global Logistics"
+      }
+    },
     "productCard": {
       "noImage": "No image",
-      "discountBadge": "-{percent}%",
-      "shopNow": "Customize it"
+      "discountBadge": "-{percent}%"
     },
     "guarantees": {
       "title": "Shop with",
@@ -183,6 +214,13 @@
         }
       }
     },
+    "productOfMonth": {
+      "eyebrow": "This month's pick",
+      "title": "Product of the month",
+      "badge": "Pick of the month",
+      "cta": "Design yours now",
+      "noImage": "No image"
+    },
     "story": {
       "blocks": {
         "design": {
@@ -198,13 +236,6 @@
           "body": "We print on 280 to 480 GSM fabrics that are pre-shrunk and enzyme-washed, using water-based, eco-friendly inks. Your piece keeps its fit, color and print through years of wear and washing.",
           "cta": "See the essentials",
           "imageAlt": "Model wearing a heavyweight white t-shirt"
-        },
-        "planet": {
-          "eyebrow": "Made to order",
-          "title": "Nothing is made until <accent>you</accent> order it.",
-          "body": "Every piece is produced on demand, so there is no dead stock and far less waste. Carbon-neutral shipping brings it to your door, tracked from our press to 180+ countries.",
-          "cta": "See how it works",
-          "imageAlt": "Model carrying a custom printed tote bag over the shoulder"
         }
       }
     }

@@ -30,7 +30,6 @@ export function HomeProductsSection({ products }: HomeProductsSectionPropsI) {
           title={t("title")}
           accent={t("accent")}
           label={t("label")}
-          subtitle={t("subtitle")}
         />
 
         {displayedProducts.length === 0 ? (

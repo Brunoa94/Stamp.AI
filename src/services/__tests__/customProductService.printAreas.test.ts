@@ -110,7 +110,7 @@ describe("CustomProductService.createCustomProduct print areas", () => {
 
     await CustomProductService.createCustomProduct({
       ...basePayload,
-      blueprint_id: 1320,
+      blueprint_id: 441,
     });
 
     const body = sentCreateBody(fetchMock);

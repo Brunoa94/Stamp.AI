@@ -1,46 +1,36 @@
 /**
  * HeroContent
  *
- * Hero text column: eyebrow, animated punchy headline, tagline, a
- * checkmark list of value props and the primary/secondary CTAs.
+ * Hero section text content with animated title, tagline, CTAs, and trust indicators.
  */
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
-import { HOME_HERO_HIGHLIGHTS } from "../../../lib/constants/homepageContent";
+import { HOME_HERO_TRUST } from "../../../lib/constants/homepageContent";
+import { HomeTrustIndicators } from "../HomeTrustIndicators";
 import { HeroAnimatedTitle } from "./HeroAnimatedTitle";
 
 export function HeroContent() {
   const t = useTranslations("home.hero");
 
   return (
-    <div className="text-center lg:text-left">
-      <div className="mb-8 flex items-center justify-center gap-4 lg:justify-start">
-        <div className="h-1.5 w-12 bg-(--color-stamp-gold)" />
-        <Span
-          variant="micro"
-          className="uppercase tracking-widest text-(--color-stamp-taupe)"
-        >
-          {t("eyebrow")}
-        </Span>
-      </div>
-
+    <div>
       <HeroAnimatedTitle>
         <Heading
           as="h1"
           variant="title"
-          className="mb-8 text-5xl text-(--color-stamp-chocolate) md:text-6xl xl:text-7xl"
+          className="mb-10 text-7xl text-(--color-stamp-chocolate) md:text-8xl lg:text-9xl"
         >
           {t.rich("title", {
             accent: (chunks) => (
               <Span
                 variant="serif"
-                className="text-5xl text-(--color-stamp-taupe) md:text-6xl xl:text-7xl"
+                className="text-7xl text-(--color-stamp-taupe) md:text-8xl lg:text-9xl"
               >
                 {chunks}
               </Span>
@@ -51,26 +41,12 @@ export function HeroContent() {
 
       <Paragraph
         variant="heroTagline"
-        className="mx-auto mb-10 max-w-xl text-(--color-stamp-chocolate)/80 lg:mx-0"
+        className="mx-auto mb-12 max-w-xl text-(--color-stamp-chocolate)/80"
       >
         {t("tagline")}
       </Paragraph>
 
-      <ul className="mx-auto mb-12 grid max-w-xl grid-cols-1 gap-3 text-left sm:grid-cols-2 lg:mx-0">
-        {HOME_HERO_HIGHLIGHTS.map((id) => (
-          <li key={id} className="flex items-center gap-3">
-            <Check
-              aria-hidden
-              className="h-4 w-4 flex-none text-(--color-stamp-gold)"
-            />
-            <Span variant="sm" className="text-(--color-stamp-chocolate)/80">
-              {t(`highlights.${id}`)}
-            </Span>
-          </li>
-        ))}
-      </ul>
-
-      <div className="flex flex-col items-center justify-center gap-4 sm:flex-row lg:justify-start">
+      <div className="flex flex-col justify-center gap-4 sm:flex-row items-center">
         <Button asChild variant="cta" className="group">
           <Link href="/stamp">
             {t("ctaPrimary")}
@@ -79,7 +55,7 @@ export function HeroContent() {
         </Button>
         <Button
           variant="ghost"
-          className="text-lg text-(--color-stamp-taupe) hover:bg-transparent hover:text-(--color-stamp-gold)"
+          className="text-lg text-(--color-stamp-taupe) hover:text-(--color-stamp-gold) hover:bg-transparent"
           onClick={() => {
             document
               .getElementById("products")
@@ -89,6 +65,11 @@ export function HeroContent() {
           {t("ctaSecondary")}
         </Button>
       </div>
+
+      <HomeTrustIndicators
+        items={HOME_HERO_TRUST}
+        className="mt-16 justify-center"
+      />
     </div>
   );
 }

@@ -56,7 +56,7 @@ export function HomeFaqSection() {
             {t("stillHaveQuestions")}
           </Paragraph>
           <Button asChild variant="primary">
-            <Link href="/stamp">{t("faqCta")}</Link>
+            <Link href="/contact">{t("contactSupport")}</Link>
           </Button>
         </div>
       </SectionReveal>

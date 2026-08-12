@@ -17,6 +17,7 @@ export interface CatalogProduct {
   selling_price_cents: number | null;
   original_price_cents: number | null;
   is_on_sale: boolean;
+  is_product_of_month: boolean;
   last_synced_at: string | null;
 }
 
@@ -233,6 +234,30 @@ export class CatalogQueryService {
     }
 
     return !!data;
+  }
+
+  /**
+   * Get the Product of the Month (if any is set)
+   */
+  static async getProductOfMonth(): Promise<CatalogProduct | null> {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("catalog_products")
+      .select("*")
+      .eq("is_active", true)
+      .eq("is_product_of_month", true)
+      .single();
+
+    if (error) {
+      // PGRST116 = "not found" for .single() - return null instead of throwing
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product of Month" });
+    }
+
+    return data;
   }
 
   /**

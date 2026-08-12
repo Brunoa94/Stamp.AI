@@ -1,8 +1,9 @@
 - Implement observability - X
 - Implement the analytics plan on Analytics - X
-- Improve the design of Orders, Profile.
-- Reduce the text inside the input text.
+- Improve the design of Orders, Profile. -X
+- Reduce the text inside the input text. - X
 - Implement iDeal
-- Confirmar fatura a ser enviada
+- Confirmar fatura a ser enviada - X
 - Improve the homepage design
 - Aditional pages, for legal and stuff
+- Multiple orders - X

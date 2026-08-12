@@ -41,7 +41,7 @@ function validateColorForProduct(
   // Map category to a blueprint ID for validation
   const categoryBlueprintMap: Record<ProductCategory, number> = {
     apparel: 145, // T-Shirt
-    mug: 1320, // Ceramic Mug
+    mug: 441, // Ceramic Mug EU
     tote: 553, // Tote Bag
     canvas: 658, // Canvas
     socks: 462, // Socks
@@ -170,8 +170,8 @@ describe("Color Validation for Printify Products", () => {
     });
   });
 
-  describe("Mug Products (Ceramic, Glossy)", () => {
-    const mugBlueprints = [1320, 468];
+  describe("Mug Products (Ceramic EU, Glossy)", () => {
+    const mugBlueprints = [441, 468];
 
     it.each(mugBlueprints)(
       "should allow White color for mug blueprint %i",
@@ -323,7 +323,7 @@ describe("Blueprint Category Mapping", () => {
   });
 
   it("should correctly map Mug blueprints", () => {
-    expect(getCategoryForBlueprint(1320)).toBe("mug");
+    expect(getCategoryForBlueprint(441)).toBe("mug");
     expect(getCategoryForBlueprint(468)).toBe("mug");
   });
 
@@ -420,7 +420,7 @@ describe("Integration: Color Selection in Cart Items", () => {
   it("should validate mug cart items (white only)", () => {
     const mugCartItem: MockCartItem = {
       product_id: "prod_789",
-      blueprint_id: 1320, // Ceramic Mug
+      blueprint_id: 441, // Ceramic Mug EU
       variant_name: "11oz",
       color: "White",
     };
@@ -447,7 +447,7 @@ describe("Integration: Color Selection in Cart Items", () => {
       },
       {
         product_id: "prod_3",
-        blueprint_id: 1320, // Mug
+        blueprint_id: 441, // Mug EU
         variant_name: "11oz",
         color: "White",
       },
@@ -580,7 +580,7 @@ describe("Server-Side Color Enforcement", () => {
 
   describe("Mug Products - MUST be White only", () => {
     const mugBlueprints = [
-      { id: 1320, name: "Ceramic Mug 11oz" },
+      { id: 441, name: "Ceramic Mug EU" },
       { id: 468, name: "White Glossy Mug" },
     ];
 

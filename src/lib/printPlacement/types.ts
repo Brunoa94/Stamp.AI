@@ -11,10 +11,10 @@ export interface PrintAreaDimensions {
 }
 
 export interface PlacementParams {
-  x: number;      // 0.0-1.0, horizontal position (0.5 = center)
-  y: number;      // 0.0-1.0, vertical position (0.5 = center)
-  scale: number;  // Scale factor (1.0 = image width fills print area width)
-  angle: number;  // Rotation in degrees
+  x: number; // 0.0-1.0, horizontal position (0.5 = center)
+  y: number; // 0.0-1.0, vertical position (0.5 = center)
+  scale: number; // Scale factor (1.0 = image width fills print area width)
+  angle: number; // Rotation in degrees
 }
 
 export interface ArtworkDimensions {
@@ -23,24 +23,32 @@ export interface ArtworkDimensions {
 }
 
 export interface SafeZone {
-  top: number;    // Percentage margin from top (0.0-1.0)
+  top: number; // Percentage margin from top (0.0-1.0)
   bottom: number; // Percentage margin from bottom
-  left: number;   // Percentage margin from left
-  right: number;  // Percentage margin from right
+  left: number; // Percentage margin from left
+  right: number; // Percentage margin from right
 }
 
 export interface ProductConfig {
   blueprintId: number;
   name: string;
-  category: 'apparel' | 'mug' | 'poster' | 'tote' | 'pillow' | 'canvas' | 'socks';
+  category:
+    | "apparel"
+    | "mug"
+    | "poster"
+    | "tote"
+    | "pillow"
+    | "canvas"
+    | "socks"
+    | "notebook";
   positions: string[];
   defaultPosition: string;
   safeZone: SafeZone;
   minDpi: number;
-  anchorY?: number;  // Custom Y anchor (e.g., 0.45 for chest placement)
-  disablePlacementAdjustment?: boolean;  // Disable manual placement controls (e.g., for mugs)
-  scaleOnly?: boolean;  // Allow only scale adjustment, keep centered (e.g., for tote bags)
-  autoPlacement?: boolean;  // Never send client placements; server auto-fits (e.g., mug wrap areas)
+  anchorY?: number; // Custom Y anchor (e.g., 0.45 for chest placement)
+  disablePlacementAdjustment?: boolean; // Disable manual placement controls (e.g., for mugs)
+  scaleOnly?: boolean; // Allow only scale adjustment, keep centered (e.g., for tote bags)
+  autoPlacement?: boolean; // Never send client placements; server auto-fits (e.g., mug wrap areas)
 }
 
 export interface VariantPrintArea {
@@ -59,7 +67,7 @@ export interface PlacementVerificationResult {
 }
 
 export interface BoundingBox {
-  left: number;   // 0.0-1.0, relative to print area
+  left: number; // 0.0-1.0, relative to print area
   right: number;
   top: number;
   bottom: number;

@@ -76,12 +76,16 @@ const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
   // scaleOnly: true - forces centered placement, ignores user x/y adjustments
   1389: { safeZone: { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.22, maxScale: 0.85, scaleOnly: true },
   // Mugs - wrap-around print with handle margins
-  1320: { safeZone: { top: 0.05, bottom: 0.05, left: 0.15, right: 0.15 }, minDpi: 150, anchorY: 0.5 },
+  441: { safeZone: { top: 0.05, bottom: 0.05, left: 0.15, right: 0.15 }, minDpi: 150, anchorY: 0.5 },
   468: { safeZone: { top: 0.05, bottom: 0.05, left: 0.15, right: 0.15 }, minDpi: 150, anchorY: 0.5 },
   // Canvas - full bleed
   658: { safeZone: { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.5 },
   // Socks - all-over print
   462: { safeZone: { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.5 },
+  // Notebooks - cover print
+  475: { safeZone: { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.5 },
+  // Pillows - all-over print
+  229: { safeZone: { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.5 },
 };
 
 const DEFAULT_CONFIG: ProductConfig = {
