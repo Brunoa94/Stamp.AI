@@ -196,9 +196,9 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
   },
 
   // Mugs - placement disabled (wrap-around print, auto-centered)
-  1320: {
-    blueprintId: 1320,
-    name: 'Ceramic Mug 11oz',
+  441: {
+    blueprintId: 441,
+    name: 'Ceramic Mug EU',
     category: 'mug',
     positions: ['front'],
     defaultPosition: 'front',
@@ -255,6 +255,30 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     minDpi: 150,
     anchorY: 0.5,
     disablePlacementAdjustment: true,
+  },
+
+  // Notebooks - cover print
+  475: {
+    blueprintId: 475,
+    name: 'Spiral Journal EU',
+    category: 'notebook',
+    positions: ['front'],
+    defaultPosition: 'front',
+    safeZone: DEFAULT_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.5,
+  },
+
+  // Pillows - all-over print
+  229: {
+    blueprintId: 229,
+    name: 'Spun Polyester Square Pillowcase',
+    category: 'pillow',
+    positions: ['front'],
+    defaultPosition: 'front',
+    safeZone: DEFAULT_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.5,
   },
 };
 

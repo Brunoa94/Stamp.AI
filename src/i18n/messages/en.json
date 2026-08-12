@@ -139,7 +139,6 @@
       "accent": "answered",
       "label": "Support Archive",
       "stillHaveQuestions": "Still have questions?",
-      "contactSupport": "Contact Support",
       "items": {
         "ai-synthesis": {
           "question": "How does the AI turn my idea into a design?",
@@ -165,7 +164,8 @@
           "question": "What if I'm not satisfied with my order?",
           "answer": "You're covered by a 30-day guarantee. If the print, fabric, or fit isn't right, we'll replace it free or refund you in full, and we cover return shipping. Custom designs can't be resold, so we'd rather get it right the first time."
         }
-      }
+      },
+      "contactSupport": "Contact Support"
     },
     "ratingStars": {
       "ariaLabel": "Rated {rating} out of {total} stars"
@@ -211,6 +211,31 @@
         "freeShipping": {
           "title": "Free Shipping",
           "description": "Free carbon-neutral delivery on orders over €60."
+        }
+      }
+    },
+    "productOfMonth": {
+      "eyebrow": "This month's pick",
+      "title": "Product of the month",
+      "badge": "Pick of the month",
+      "cta": "Design yours now",
+      "noImage": "No image"
+    },
+    "story": {
+      "blocks": {
+        "design": {
+          "eyebrow": "Create",
+          "title": "Describe it. The AI <accent>designs</accent> it.",
+          "body": "Type a prompt, upload a photo, or start from a sketch. The AI turns it into clean, print-ready artwork in seconds — sharp lines, accurate color, high resolution — in any style you can imagine.",
+          "cta": "Start creating",
+          "imageAlt": "Four AI-generated artworks of the same portrait in different styles"
+        },
+        "quality": {
+          "eyebrow": "Quality",
+          "title": "Heavyweight blanks, <accent>built</accent> to last.",
+          "body": "We print on 280 to 480 GSM fabrics that are pre-shrunk and enzyme-washed, using water-based, eco-friendly inks. Your piece keeps its fit, color and print through years of wear and washing.",
+          "cta": "See the essentials",
+          "imageAlt": "Model wearing a heavyweight white t-shirt"
         }
       }
     }

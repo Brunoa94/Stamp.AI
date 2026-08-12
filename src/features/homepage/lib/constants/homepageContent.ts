@@ -46,6 +46,36 @@ export const HERO_PRODUCT_SETS: string[][] = [
   ["/home/1-a.png", "/home/3-a.png", "/home/5-a.png", "/home/2-a.png"],
 ];
 
+// Story section - alternating image + text splits. Display copy lives in
+// messages (home.story.blocks.<id>); a block with multiple images renders
+// them as a collage.
+export type HomeStoryBlockType = {
+  id: string;
+  images: string[];
+  imagePosition: "left" | "right";
+  href: string;
+};
+
+export const HOME_STORY_BLOCKS: HomeStoryBlockType[] = [
+  {
+    id: "design",
+    images: [
+      "/suggested-edits/golden-hour.png",
+      "/suggested-edits/line-art.png",
+      "/suggested-edits/minimal.png",
+      "/suggested-edits/film-grain.png",
+    ],
+    imagePosition: "right",
+    href: "/stamp",
+  },
+  {
+    id: "quality",
+    images: ["/home/3-a.png"],
+    imagePosition: "left",
+    href: "#products",
+  },
+];
+
 // Display copy lives in messages (home.process.steps.<id>); only structural
 // fields remain here.
 export type HomeProcessStepType = {

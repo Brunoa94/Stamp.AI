@@ -5,8 +5,6 @@
  * decorative circle animation, and clean layout.
  */
 
-"use client";
-
 import { SectionReveal } from "../components/SectionReveal";
 import { HeroContent } from "../components/HeroSection/HeroContent";
 import { HeroProductGrid } from "../components/HeroSection/HeroProductGrid";
@@ -21,7 +19,10 @@ export function HomeHeroSection() {
       {/* Product squares scattered around the section */}
       <HeroProductGrid />
 
-      <SectionReveal className="relative z-10 flex flex-1 items-center justify-center" fadeOnScroll>
+      <SectionReveal
+        className="relative z-10 flex flex-1 items-center justify-center"
+        fadeOnScroll
+      >
         <div className="mx-auto max-w-3xl text-center">
           <HeroContent />
         </div>

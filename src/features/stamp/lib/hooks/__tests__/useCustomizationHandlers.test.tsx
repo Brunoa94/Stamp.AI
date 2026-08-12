@@ -32,15 +32,15 @@ describe("useCustomizationHandlers payload", () => {
   });
 
   it("mug: omits print positions so the server auto-fits (regression)", async () => {
-    useStampFlowStore.setState({ blueprintId: 1320 });
+    useStampFlowStore.setState({ blueprintId: 441 });
     // Simulate the panel having seeded the store with the generic default
     useStampFlowStore
       .getState()
       .initializePrintPositions(["front"], { x: 0.5, y: 0.5, scale: 1, angle: 0 }, {
-        blueprintId: 1320,
+        blueprintId: 441,
       });
 
-    const { handleCreateProduct, createProduct } = renderHandler(1320);
+    const { handleCreateProduct, createProduct } = renderHandler(441);
     await handleCreateProduct();
 
     expect(createProduct).toHaveBeenCalledTimes(1);

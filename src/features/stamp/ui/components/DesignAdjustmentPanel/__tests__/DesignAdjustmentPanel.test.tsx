@@ -105,8 +105,8 @@ describe("DesignAdjustmentPanel", () => {
   });
 
   it("hides preview and placement adjuster for products with disablePlacementAdjustment", () => {
-    // Use mug blueprint (1320) which has disablePlacementAdjustment: true
-    useStampFlowStore.setState({ blueprintId: 1320 });
+    // Use mug blueprint (441) which has disablePlacementAdjustment: true
+    useStampFlowStore.setState({ blueprintId: 441 });
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
 
     // Preview, adjuster disclosure, and placement controls should be hidden

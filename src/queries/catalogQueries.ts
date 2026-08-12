@@ -21,3 +21,14 @@ export function useCatalogProducts(): UseQueryResult<CatalogProduct[]> {
     staleTime: 1000 * 60 * 30, // 30 minutes
   });
 }
+
+/**
+ * Hook to fetch the Product of the Month
+ */
+export function useProductOfMonth(): UseQueryResult<CatalogProduct | null> {
+  return useQuery({
+    queryKey: ["catalog", "productOfMonth"],
+    queryFn: () => CatalogQueryService.getProductOfMonth(),
+    staleTime: 1000 * 60 * 30, // 30 minutes
+  });
+}

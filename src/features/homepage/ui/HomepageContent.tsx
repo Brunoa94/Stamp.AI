@@ -13,10 +13,11 @@ import { HomeProductsSection } from "./sections/HomeProductsSection";
 import { HomeProcessSection } from "./sections/HomeProcessSection";
 import { HomeTrustGuaranteesSection } from "./sections/HomeTrustGuaranteesSection";
 import { HomeManifestoSection } from "./sections/HomeManifestoSection";
-import { HomeFeaturedCarouselSection } from "./sections/HomeFeaturedCarouselSection";
 import { HomeCtaSection } from "./sections/HomeCtaSection";
 import { HomeReviewsSection } from "./sections/HomeReviewsSection";
 import { HomeFaqSection } from "./sections/HomeFaqSection";
+import { HomeStorySection } from "./sections/HomeStorySection";
+import { HomeProductOfMonthSection } from "./sections/HomeProductOfMonthSection";
 
 interface HomepageContentPropsI {
   productsWithPricing: ProductWithPricing[];
@@ -31,10 +32,12 @@ export function HomepageContent({
     <div>
       <HomeHeroSection />
       <HomeProductsSection products={products} />
+      <HomeStorySection blockIds={["design"]} />
+      <HomeProductOfMonthSection />
+      <HomeStorySection blockIds={["quality"]} background="white" />
       <HomeProcessSection />
       <HomeTrustGuaranteesSection />
       <HomeManifestoSection />
-      <HomeFeaturedCarouselSection />
       <HomeCtaSection />
       <HomeReviewsSection />
       <HomeFaqSection />
