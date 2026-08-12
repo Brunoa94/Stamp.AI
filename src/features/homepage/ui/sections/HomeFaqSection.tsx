@@ -25,6 +25,7 @@ export function HomeFaqSection() {
           title={t("title")}
           accent={t("accent")}
           label={t("label")}
+          className="mb-16"
         />
 
         <div className="space-y-4">
