@@ -12,6 +12,7 @@ import {
   STAMP_SIZES,
 } from "../constants/stampColors";
 import { filterDisplayColors } from "@/features/homepage/lib/constants/colorSwatches";
+import { shouldShowColorSelection } from "../helpers/productCategoryDetector";
 import type { SizeType } from "../types/stampTypes";
 
 /**
@@ -23,7 +24,7 @@ import type { SizeType } from "../types/stampTypes";
 export function useCustomizationData() {
   const { handleCreateProduct: createProduct, isFinalizing } =
     useStampProductCreation();
-  const { blueprintId, printProviderId } = useStampProductSelection();
+  const { blueprintId, printProviderId, selectedProductTitle } = useStampProductSelection();
   const { selectedImageUrl } = useStampSelectedImage();
   const { selectedColor, setSelectedColor, selectedSize, setSelectedSize } =
     useStampCustomization();
@@ -33,12 +34,18 @@ export function useCustomizationData() {
     printProviderId,
   );
 
+  // Check if this product type should show color selection
+  // Products like mugs, socks, pillows only have one color
+  const showColors = shouldShowColorSelection(selectedProductTitle || "");
+
   // Filter colors to only show White and Black if both are available
   // Otherwise show all available colors
+  // For products that don't support color selection, return empty array
   const availableColors = useMemo(() => {
+    if (!showColors) return [];
     const allColors = (variants?.colors || []).filter(Boolean);
     return filterDisplayColors(allColors);
-  }, [variants?.colors]);
+  }, [variants?.colors, showColors]);
 
   // Get available sizes from variants API, sorted properly
   // Falls back to standard apparel sizes if API doesn't return sizes

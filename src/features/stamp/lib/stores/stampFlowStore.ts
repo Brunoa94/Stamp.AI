@@ -215,6 +215,27 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
       };
     }),
 
+  selectPrintPosition: (position) =>
+    set((state) => {
+      if (!state.printPositionConfigs[position]) {
+        logStampWarn({
+          scope: "stampFlowStore",
+          event: "unknown_print_position_rejected",
+          metadata: { position },
+        });
+        return state;
+      }
+      return {
+        printPositionConfigs: Object.fromEntries(
+          Object.entries(state.printPositionConfigs).map(([key, config]) => [
+            key,
+            { ...config, enabled: key === position },
+          ]),
+        ),
+        activeEditPosition: position,
+      };
+    }),
+
   setActiveEditPosition: (position) => set({ activeEditPosition: position }),
 
   resetPlacementForPosition: (position) =>
@@ -329,3 +350,4 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
     }
   },
 }));
+

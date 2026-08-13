@@ -617,7 +617,11 @@
       "printAreaLabel": "Print area",
       "noImageTitle": "No design yet",
       "noImageBody": "Generate and pick a design first, then adjust how it sits on the product.",
-      "extraCostSummary": "Extra print positions: {price}"
+      "extraCostSummary": "Extra print positions: {price}",
+      "positionsHelpSingle": "Pick which side your design gets printed on.",
+      "positionsGroupAria": "Print position",
+      "positionSelectAria": "Print on {position}",
+      "mockupNote": "Preview only. Final mockup shown in next step."
     }
   },
   "cart": {

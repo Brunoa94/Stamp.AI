@@ -95,4 +95,27 @@ describe("useCustomizationHandlers payload", () => {
     ]);
     expect(payload.scale).toBe(0.8);
   });
+
+  it("apparel back printing: sends only the back position after selection", async () => {
+    useStampFlowStore.setState({ blueprintId: 6 });
+    const store = useStampFlowStore.getState();
+    store.initializePrintPositions(
+      ["front", "back", "neck", "left_sleeve", "right_sleeve"],
+      { x: 0.5, y: 0.45, scale: 1, angle: 0 },
+      { blueprintId: 6 },
+    );
+    store.selectPrintPosition("back");
+    store.setPrintPositionConfig("back", {
+      placement: { x: 0.5, y: 0.35, scale: 0.9, angle: 0 },
+    });
+
+    const { handleCreateProduct, createProduct } = renderHandler(6);
+    await handleCreateProduct();
+
+    const payload = createProduct.mock.calls[0][0];
+    expect(payload.printPositions).toEqual([
+      { position: "back", placement: { x: 0.5, y: 0.35, scale: 0.9, angle: 0 } },
+    ]);
+    expect(payload.scale).toBe(0.9);
+  });
 });

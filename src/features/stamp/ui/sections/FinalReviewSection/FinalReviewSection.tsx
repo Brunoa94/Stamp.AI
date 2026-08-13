@@ -16,6 +16,9 @@ import { ReviewDetails } from "./ReviewDetails";
  *
  * Step 8: Final product review and acquisition
  * Protocol 08 / Acquisition
+ *
+ * Note: mockupImages are pre-ordered in useStampProductCreation based on
+ * print position (back print first when selected). No reordering needed here.
  */
 
 function FinalReviewSectionComponent() {

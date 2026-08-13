@@ -402,6 +402,7 @@ export default function MollieReturnClient() {
                   paymentStatus: "paid",
                   shippingAddress: parsedShippingAddress,
                   idempotencyKey,
+                  paymentMethod: "mollie",
                 })) ?? null;
               console.log("✅ Order and order items created in database");
 
