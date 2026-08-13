@@ -129,6 +129,64 @@ describe("stampFlowStore placement state", () => {
   });
 });
 
+describe("stampFlowStore selectPrintPosition (single-select)", () => {
+  beforeEach(() => {
+    useStampFlowStore.getState().reset();
+    useStampFlowStore
+      .getState()
+      .initializePrintPositions(TSHIRT_POSITIONS, TSHIRT_DEFAULT);
+  });
+
+  it("enables exactly the selected position and disables the rest", () => {
+    useStampFlowStore.getState().selectPrintPosition("back");
+
+    const configs = useStampFlowStore.getState().printPositionConfigs;
+    expect(configs.front.enabled).toBe(false);
+    expect(configs.back.enabled).toBe(true);
+    expect(configs.neck.enabled).toBe(false);
+  });
+
+  it("moves the active edit position to the selection", () => {
+    useStampFlowStore.getState().selectPrintPosition("back");
+    expect(useStampFlowStore.getState().activeEditPosition).toBe("back");
+
+    useStampFlowStore.getState().selectPrintPosition("front");
+    expect(useStampFlowStore.getState().activeEditPosition).toBe("front");
+  });
+
+  it("is idempotent when re-selecting the current position", () => {
+    useStampFlowStore.getState().selectPrintPosition("back");
+    useStampFlowStore.getState().selectPrintPosition("back");
+
+    const state = useStampFlowStore.getState();
+    expect(state.printPositionConfigs.back.enabled).toBe(true);
+    expect(state.printPositionConfigs.front.enabled).toBe(false);
+    expect(state.activeEditPosition).toBe("back");
+  });
+
+  it("preserves per-position placements when switching sides", () => {
+    const store = useStampFlowStore.getState();
+    store.setPrintPositionConfig("front", { placement: { x: 0.3 } });
+
+    store.selectPrintPosition("back");
+    store.setPrintPositionConfig("back", { placement: { x: 0.7 } });
+    store.selectPrintPosition("front");
+
+    const configs = useStampFlowStore.getState().printPositionConfigs;
+    expect(configs.front.placement.x).toBe(0.3);
+    expect(configs.back.placement.x).toBe(0.7);
+  });
+
+  it("ignores unknown positions", () => {
+    useStampFlowStore.getState().selectPrintPosition("left_sleeve");
+
+    const state = useStampFlowStore.getState();
+    expect(state.printPositionConfigs.front.enabled).toBe(true);
+    expect(state.activeEditPosition).toBe("front");
+    expect(state.printPositionConfigs.left_sleeve).toBeUndefined();
+  });
+});
+
 describe("stampFlowStore socks seeding options", () => {
   beforeEach(() => {
     useStampFlowStore.getState().reset();

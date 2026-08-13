@@ -134,6 +134,16 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     minDpi: 150,
     anchorY: 0.45,
   },
+  157: {
+    blueprintId: 157,
+    name: 'Kids Heavy Cotton Tee',
+    category: 'apparel',
+    positions: ['front', 'back'],
+    defaultPosition: 'front',
+    safeZone: TSHIRT_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.45,
+  },
 
   // Hoodies
   77: {

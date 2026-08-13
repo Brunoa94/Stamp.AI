@@ -63,6 +63,7 @@ const PRINT_AREAS: Record<CategoryType, Record<string, AreaRect>> = {
   poster: CANVAS_AREAS,
   pillow: APPAREL_AREAS,
   socks: SOCKS_AREAS,
+  notebook: CANVAS_AREAS,
 };
 
 /**

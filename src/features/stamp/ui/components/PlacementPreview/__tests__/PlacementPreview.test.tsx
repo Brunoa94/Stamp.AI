@@ -72,6 +72,57 @@ describe("PlacementPreview", () => {
     }
   });
 
+  it("shows the back silhouette when previewing the back position", () => {
+    renderWithIntl(
+      <PlacementPreview
+        imageUrl={IMAGE_URL}
+        placement={PLACEMENT}
+        productCategory="apparel"
+        position="back"
+        safeZone={SAFE_ZONE}
+      />,
+    );
+
+    expect(screen.getByTestId("product-silhouette")).toHaveAttribute(
+      "data-silhouette-key",
+      "apparel-back",
+    );
+  });
+
+  it("shows the front silhouette for the front position", () => {
+    renderWithIntl(
+      <PlacementPreview
+        imageUrl={IMAGE_URL}
+        placement={PLACEMENT}
+        productCategory="apparel"
+        position="front"
+        safeZone={SAFE_ZONE}
+      />,
+    );
+
+    expect(screen.getByTestId("product-silhouette")).toHaveAttribute(
+      "data-silhouette-key",
+      "apparel",
+    );
+  });
+
+  it("falls back to the category silhouette for positions without a view", () => {
+    renderWithIntl(
+      <PlacementPreview
+        imageUrl={IMAGE_URL}
+        placement={PLACEMENT}
+        productCategory="mug"
+        position="back"
+        safeZone={SAFE_ZONE}
+      />,
+    );
+
+    expect(screen.getByTestId("product-silhouette")).toHaveAttribute(
+      "data-silhouette-key",
+      "mug",
+    );
+  });
+
   it("renders the tote silhouette without crashing", () => {
     renderWithIntl(
       <PlacementPreview

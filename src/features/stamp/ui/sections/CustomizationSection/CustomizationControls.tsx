@@ -58,6 +58,8 @@ export function CustomizationControls({
     availablePrintPositions,
     printPositionConfigs,
     togglePrintPosition,
+    selectPrintPosition,
+    positionSelectionMode,
   } = useDesignAdjustment();
 
   // Check if color and size are selected (for mobile continue button)
@@ -127,7 +129,12 @@ export function CustomizationControls({
           <PrintPositionSelector
             availablePositions={availablePrintPositions}
             printPositionConfigs={printPositionConfigs}
-            onTogglePosition={togglePrintPosition}
+            onTogglePosition={
+              positionSelectionMode === "single"
+                ? selectPrintPosition
+                : togglePrintPosition
+            }
+            selectionMode={positionSelectionMode}
             disabled={isFinalizing}
           />
         )}

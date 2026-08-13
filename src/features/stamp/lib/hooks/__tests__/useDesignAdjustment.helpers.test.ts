@@ -70,6 +70,30 @@ describe("isAtBounds", () => {
 });
 
 describe("buildPrintPositionsPayload", () => {
+  it("yields a back-only payload when back is the selected position", () => {
+    const configs: Record<string, PrintPositionConfigType> = {
+      front: {
+        position: "front",
+        enabled: false,
+        placement: { x: 0.5, y: 0.45, scale: 1, angle: 0 },
+        additionalCost: 0,
+      },
+      back: {
+        position: "back",
+        enabled: true,
+        placement: { x: 0.5, y: 0.35, scale: 0.9, angle: 0 },
+        additionalCost: 0,
+      },
+    };
+
+    expect(buildPrintPositionsPayload(configs)).toEqual([
+      {
+        position: "back",
+        placement: { x: 0.5, y: 0.35, scale: 0.9, angle: 0 },
+      },
+    ]);
+  });
+
   it("includes only enabled positions with their placements", () => {
     const configs: Record<string, PrintPositionConfigType> = {
       front: {

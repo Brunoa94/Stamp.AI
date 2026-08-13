@@ -65,6 +65,7 @@ const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
   145: { safeZone: { top: 0.05, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.45 },
   5: { safeZone: { top: 0.05, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.45 },
   6: { safeZone: { top: 0.05, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.45 },
+  157: { safeZone: { top: 0.05, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.45 },
   // Hoodies
   77: { safeZone: { top: 0.08, bottom: 0.05, left: 0.05, right: 0.05 }, minDpi: 150, anchorY: 0.42 },
   1525: { safeZone: { top: 0.08, bottom: 0.05, left: 0.05, right: 0.05 }, minDpi: 150, anchorY: 0.42 },
