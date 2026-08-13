@@ -5,12 +5,12 @@
  * zero JS) with a contact support CTA.
  */
 
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
+import { LEGAL_ENTITY } from "@/features/legal/lib/constants/legalEntity";
 import { HOME_FAQS } from "../../lib/constants/homepageContent";
 import { HomeSectionHeader } from "../components/HomeSectionHeader";
 import { SectionReveal } from "../components/SectionReveal";
@@ -57,7 +57,9 @@ export function HomeFaqSection() {
             {t("stillHaveQuestions")}
           </Paragraph>
           <Button asChild variant="primary">
-            <Link href="/contact">{t("contactSupport")}</Link>
+            <a href={`mailto:${LEGAL_ENTITY.supportEmail}`}>
+              {t("contactSupport")}
+            </a>
           </Button>
         </div>
       </SectionReveal>
