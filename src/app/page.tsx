@@ -6,6 +6,8 @@ import { StructuredData } from "@/features/seo/StructuredData";
 import { faqPageSchema } from "@/features/seo/schemas/faq";
 import { serviceSchema } from "@/features/seo/schemas/service";
 import { howToSchema } from "@/features/seo/schemas/howto";
+import { productSchema } from "@/features/seo/schemas/product";
+import { mapProductsToSchemaData } from "@/features/seo/lib/productSchemaMapper";
 import { generatePageMetadata } from "@/features/seo/metadata/pageMetadata";
 import { PAGE_KEYWORDS } from "@/features/seo/config/keywords";
 import { SITE_URL } from "@/features/seo/config/site";
@@ -31,8 +33,14 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Home() {
   const productsWithPricing = await getCachedProductsWithPricing();
 
+  const tMeta = await getTranslations("home.meta");
   const tFaq = await getTranslations("home.faq.items");
   const tProcess = await getTranslations("home.process.steps");
+
+  const productSchemaEntries = mapProductsToSchemaData(
+    productsWithPricing,
+    tMeta("description")
+  );
 
   const faqEntries = HOME_FAQS.map(({ id }) => ({
     question: tFaq(`${id}.question`),
@@ -71,6 +79,9 @@ export default async function Home() {
       <StructuredData data={faqPageSchema(faqEntries)} />
       <StructuredData data={serviceSchema()} />
       <StructuredData data={howToSchema(howToSteps)} />
+      {productSchemaEntries.map((entry) => (
+        <StructuredData key={entry.name} data={productSchema(entry)} />
+      ))}
       <HomepageContent productsWithPricing={productsWithPricing} />
     </>
   );
