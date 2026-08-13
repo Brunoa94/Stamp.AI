@@ -49,6 +49,7 @@ export interface ProductConfig {
   disablePlacementAdjustment?: boolean; // Disable manual placement controls (e.g., for mugs)
   scaleOnly?: boolean; // Allow only scale adjustment, keep centered (e.g., for tote bags)
   autoPlacement?: boolean; // Never send client placements; server auto-fits (e.g., mug wrap areas)
+  backPrintDefaultImageIndex?: number; // Default mockup image index when back print is selected (0-indexed)
 }
 
 export interface VariantPrintArea {

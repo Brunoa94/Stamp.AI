@@ -92,8 +92,8 @@ export function CustomizationControls({
       </Heading>
 
       <div className="space-y-6 md:space-y-12 mb-8 md:mb-12">
-        {/* Only show color swatches if colors are available */}
-        {colors.length > 0 && (
+        {/* Only show color swatches if there are multiple colors to choose from */}
+        {colors.length > 1 && (
           <ColorSwatches
             colors={colors}
             selectedColor={selectedColor}

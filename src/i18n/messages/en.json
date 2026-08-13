@@ -620,7 +620,8 @@
       "extraCostSummary": "Extra print positions: {price}",
       "positionsHelpSingle": "Pick which side your design gets printed on.",
       "positionsGroupAria": "Print position",
-      "positionSelectAria": "Print on {position}"
+      "positionSelectAria": "Print on {position}",
+      "mockupNote": "Preview only. Final mockup shown in next step."
     }
   },
   "cart": {

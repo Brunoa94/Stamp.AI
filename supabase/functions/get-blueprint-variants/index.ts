@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
+import { parseVariantColorSize } from "../_shared/colorValidation.ts"
 
 // Environment variables will be validated when needed
 
@@ -67,9 +68,8 @@ serve(async (req) => {
     const sizesSet = new Set<string>()
 
     variants.forEach((v) => {
-      const color = v.options.color || v.title.split(' / ')[0]?.trim()
-      const size = v.options.size || v.title.split(' / ')[1]?.trim()
-      
+      const { color, size } = parseVariantColorSize(v)
+
       if (color) {
         if (!colorsMap.has(color)) {
           colorsMap.set(color, [])

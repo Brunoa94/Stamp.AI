@@ -982,6 +982,79 @@ export type Database = {
         }
         Relationships: []
       }
+      refunds: {
+        Row: {
+          id: string
+          order_id: string
+          payment_transaction_id: string | null
+          invoice_id: string | null
+          payment_provider: string
+          provider_refund_id: string
+          amount: number
+          currency: string
+          reason: string | null
+          status: string
+          metadata: Json | null
+          refunded_at: string
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          order_id: string
+          payment_transaction_id?: string | null
+          invoice_id?: string | null
+          payment_provider: string
+          provider_refund_id: string
+          amount: number
+          currency?: string
+          reason?: string | null
+          status?: string
+          metadata?: Json | null
+          refunded_at?: string
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          order_id?: string
+          payment_transaction_id?: string | null
+          invoice_id?: string | null
+          payment_provider?: string
+          provider_refund_id?: string
+          amount?: number
+          currency?: string
+          reason?: string | null
+          status?: string
+          metadata?: Json | null
+          refunded_at?: string
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refunds_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_payment_transaction_id_fkey"
+            columns: ["payment_transaction_id"]
+            isOneToOne: false
+            referencedRelation: "payment_transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       user_credits: {
         Row: {
           credits: number | null
@@ -1222,9 +1295,11 @@ export type Database = {
       process_refund_atomic: {
         Args: {
           p_order_id: string
-          p_payment_provider: string
-          p_reason: string
           p_refund_id: string
+          p_reason: string
+          p_payment_provider: string
+          p_amount?: number | null
+          p_currency?: string
         }
         Returns: Json
       }

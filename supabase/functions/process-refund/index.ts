@@ -216,8 +216,8 @@ serve(async (req) => {
     console.log(`Refund created: ${refundId}`);
 
     // ✅ CRITICAL FIX: Use atomic stored procedure
-    // This ensures payment_transactions and orders are updated together
-    // Either both succeed or both rollback
+    // This ensures payment_transactions, orders, invoices, and refunds table are all updated together
+    // Either all succeed or all rollback
     const atomicResult = await supabaseRest(
       "rpc/process_refund_atomic",
       "POST",
@@ -226,6 +226,8 @@ serve(async (req) => {
         p_refund_id: refundId,
         p_reason: reason,
         p_payment_provider: payment_provider,
+        p_amount: amount ?? null,
+        p_currency: currency ?? "USD",
       }
     );
 
