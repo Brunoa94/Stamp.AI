@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { StampFooter } from "@/features/layout/stamp/StampFooter";
+import { StampFooter } from "@/features/stamp/ui/components/StampFooter/StampFooter";
 import { StampHeader } from "@/features/stamp/ui/components/StampHeader";
 
 interface AppLayoutChromeProps {
