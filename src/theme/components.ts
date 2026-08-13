@@ -82,52 +82,6 @@ export const notFoundTheme = {
 // =============================================================================
 
 // =============================================================================
-// FOOTER THEME
-// Used by: BrutalistFooter.tsx
-// =============================================================================
-
-export const footerTheme = {
-  root: "bg-ink text-white pt-48 pb-12 px-8 relative overflow-hidden border-t border-white/10 transition-colors duration-300",
-  decorativeBlob:
-    "absolute top-0 right-0 w-[40vw] h-[40vw] bg-brandPurple/5 blur-[150px] rounded-full",
-  grid: "grid grid-cols-2 md:grid-cols-6 gap-8 md:gap-16 relative z-10 mb-48",
-  // Brand section
-  brand: {
-    container: "col-span-2",
-    logo: "font-heading text-4xl md:text-6xl leading-none uppercase tracking-tighter mb-8 flex items-center hover:opacity-80 transition-opacity font-bold",
-    mission: "opacity-40 max-w-xs leading-loose font-bold tracking-widest",
-  },
-  // Link columns
-  linkColumn: {
-    container: "flex flex-col gap-8",
-    inner: "",
-    heading: "opacity-20 mb-8",
-    list: "space-y-4",
-    link: "text-xs uppercase font-bold transition-colors duration-300 font-heading",
-  },
-  // Link hover colors by column
-  linkHoverColors: {
-    product: "hover:text-brandPurple",
-    protocol: "hover:text-brandCyan",
-    support: "hover:text-brandOrange",
-    network: "hover:text-brandPurple",
-  },
-  // Divider
-  divider: "w-full bg-linear-to-r from-transparent via-white/10 to-transparent mb-12",
-  // Bottom section
-  bottom: {
-    container: "relative flex justify-center py-20",
-    bgText: "text-[28vw] text-white opacity-[0.03] pointer-events-none select-none",
-    copyright: {
-      container:
-        "absolute bottom-0 w-full flex flex-col md:flex-row justify-between items-center gap-4 opacity-30",
-      text: "tracking-[0.4em]",
-      centerText: "hidden md:inline tracking-[0.4em]",
-    },
-  },
-} as const;
-
-// =============================================================================
 // BUY CREDITS THEME
 // Used by: CreditPackageCard.tsx, CreditPackageSelector.tsx, CreditSelectionStep.tsx,
 //          CreditPaymentStep.tsx, CreditSummary.tsx, CustomCreditInput.tsx, StripeCardForm.tsx

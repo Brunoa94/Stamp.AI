@@ -53,6 +53,48 @@ export const ROUTE_SEO = {
     changefreq: "yearly" as const,
     index: false,
   },
+  faq: {
+    path: "/faq",
+    priority: 0.7,
+    changefreq: "monthly" as const,
+    index: true,
+  },
+  shipping: {
+    path: "/shipping",
+    priority: 0.6,
+    changefreq: "monthly" as const,
+    index: true,
+  },
+  returns: {
+    path: "/returns",
+    priority: 0.6,
+    changefreq: "monthly" as const,
+    index: true,
+  },
+  terms: {
+    path: "/terms",
+    priority: 0.4,
+    changefreq: "yearly" as const,
+    index: true,
+  },
+  privacy: {
+    path: "/privacy",
+    priority: 0.4,
+    changefreq: "yearly" as const,
+    index: true,
+  },
+  cookies: {
+    path: "/cookies",
+    priority: 0.4,
+    changefreq: "yearly" as const,
+    index: true,
+  },
+  security: {
+    path: "/security",
+    priority: 0.4,
+    changefreq: "yearly" as const,
+    index: true,
+  },
 } as const;
 
 export const NOINDEX_PATHS = [
