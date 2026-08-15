@@ -3,7 +3,8 @@
 /**
  * HeroContent
  *
- * Hero section text content with animated title, tagline, CTAs, and trust indicators.
+ * Hero section text content with animated title, tagline, and CTAs.
+ * Designed to be sticky at the top while products bubble up below.
  */
 
 import Link from "next/link";
@@ -13,26 +14,24 @@ import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
-import { HOME_HERO_TRUST } from "../../../lib/constants/homepageContent";
-import { HomeTrustIndicators } from "../HomeTrustIndicators";
 import { HeroAnimatedTitle } from "./HeroAnimatedTitle";
 
 export function HeroContent() {
   const t = useTranslations("home.hero");
 
   return (
-    <div>
+    <div className="bg-(--color-stamp-off-white)/95 backdrop-blur-sm rounded-3xl sm:p-8">
       <HeroAnimatedTitle>
         <Heading
           as="h1"
           variant="title"
-          className="mb-10 text-7xl text-(--color-stamp-chocolate) md:text-8xl lg:text-9xl"
+          className="mb-6 text-5xl text-(--color-stamp-chocolate) sm:text-6xl md:text-7xl lg:text-8xl"
         >
           {t.rich("title", {
             accent: (chunks) => (
               <Span
                 variant="serif"
-                className="text-7xl text-(--color-stamp-taupe) md:text-8xl lg:text-9xl"
+                className="text-5xl text-(--color-stamp-taupe) sm:text-6xl md:text-7xl lg:text-8xl"
               >
                 {chunks}
               </Span>
@@ -43,12 +42,12 @@ export function HeroContent() {
 
       <Paragraph
         variant="heroTagline"
-        className="mx-auto mb-12 max-w-xl text-(--color-stamp-chocolate)/80"
+        className="mx-auto mb-8  text-(--color-stamp-chocolate)/80"
       >
         {t("tagline")}
       </Paragraph>
 
-      <div className="flex flex-col justify-center gap-4 sm:flex-row items-center">
+      <div className="flex flex-col justify-center gap-3 sm:flex-row items-center">
         <Button asChild variant="cta" className="group">
           <Link href="/stamp">
             {t("ctaPrimary")}
@@ -67,11 +66,6 @@ export function HeroContent() {
           {t("ctaSecondary")}
         </Button>
       </div>
-
-      <HomeTrustIndicators
-        items={HOME_HERO_TRUST}
-        className="mt-16 justify-center"
-      />
     </div>
   );
 }

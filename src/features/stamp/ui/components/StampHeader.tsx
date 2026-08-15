@@ -64,13 +64,9 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
       >
         {/* Logo */}
         <div className="flex-1">
-          <Link
-            href="/"
-            className="block"
-            aria-label={t("logoAria")}
-          >
+          <Link href="/" className="block" aria-label={t("logoAria")}>
             <Image
-              src="/assets/brand/logo.png"
+              src="/assets/logo-stamp.png"
               alt="Stamp.AI"
               width={180}
               height={52}
@@ -99,11 +95,17 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
         >
           {user && (
             <>
-              <Link href="/orders" className={`${linkClass} flex items-center gap-2`}>
+              <Link
+                href="/orders"
+                className={`${linkClass} flex items-center gap-2`}
+              >
                 <Package className="w-3.5 h-3.5" />
                 {t("orders")}
               </Link>
-              <Link href="/cart" className={`${linkClass} flex items-center gap-2`}>
+              <Link
+                href="/cart"
+                className={`${linkClass} flex items-center gap-2`}
+              >
                 <ShoppingCart className="w-3.5 h-3.5" />
                 {t("cart")}
               </Link>
@@ -141,14 +143,20 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
           aria-label={mobileMenuOpen ? t("closeMenu") : t("openMenu")}
           aria-expanded={mobileMenuOpen}
         >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileMenuOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
         </button>
       </header>
 
       {/* Mobile/tablet drawer (below lg) */}
       <div
         className={`lg:hidden fixed top-24 left-0 right-0 z-40 bg-(--color-stamp-off-white) border-b border-(--color-stamp-divider) shadow-lg transition-all duration-300 ${
-          mobileMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0 overflow-hidden"
+          mobileMenuOpen
+            ? "max-h-screen opacity-100"
+            : "max-h-0 opacity-0 overflow-hidden"
         }`}
       >
         <nav
@@ -205,7 +213,9 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
               <LogOut className="w-3.5 h-3.5" />
             </Button>
           ) : (
-            <Login className={`${linkClass} py-3 text-left`}>{t("login")}</Login>
+            <Login className={`${linkClass} py-3 text-left`}>
+              {t("login")}
+            </Login>
           )}
         </nav>
       </div>
