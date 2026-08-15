@@ -134,6 +134,12 @@ export const useStampProductSelection = () => {
   const setSelectedProductTitle = useStampFlowStore(
     (state) => state.setSelectedProductTitle,
   );
+  const selectedProductDescription = useStampFlowStore(
+    (state) => state.selectedProductDescription,
+  );
+  const setSelectedProductDescription = useStampFlowStore(
+    (state) => state.setSelectedProductDescription,
+  );
   return {
     selectedProductType,
     setSelectedProductType,
@@ -143,6 +149,8 @@ export const useStampProductSelection = () => {
     setPrintProviderId,
     selectedProductTitle,
     setSelectedProductTitle,
+    selectedProductDescription,
+    setSelectedProductDescription,
   };
 };
 

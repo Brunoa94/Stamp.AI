@@ -2,7 +2,8 @@
 
 import { useMemo, memo, useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCatalogProducts } from "@/queries/catalogQueries";
+import { useCatalogProductsWithSeo } from "@/queries/catalogQueries";
+import { resolveProductDescription } from "@/lib/seo/productDescription";
 import { PrintifyService } from "@/services/printifyService";
 import { useStampNavigationActions } from "../../../lib/hooks/useStampNavigation";
 import {
@@ -14,6 +15,7 @@ import { ProductGrid } from "./ProductGrid";
 import { ProductSelectionContent } from "./ProductSelectionContent";
 import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
 import { AnalyticsService } from "@/services/analyticsService";
+import { mapSelectItemEvent } from "@/features/analytics/mappers/stampFlowMappers";
 
 /**
  * ProductSelectionSection
@@ -36,12 +38,13 @@ function ProductSelectionSectionComponent() {
     setBlueprintId,
     setPrintProviderId,
     setSelectedProductTitle,
+    setSelectedProductDescription,
   } = useStampProductSelection();
   const { setSelectedPriceCents } = useStampCustomization();
   const canProceedToCustomization =
     blueprintId !== undefined && printProviderId !== undefined;
 
-  const { data: rawProducts = [], isLoading, isError } = useCatalogProducts();
+  const { data: rawProducts = [], isLoading, isError } = useCatalogProductsWithSeo();
 
   const visibleProducts = useMemo(
     () =>
@@ -67,6 +70,8 @@ function ProductSelectionSectionComponent() {
         return {
           blueprintId: product.blueprint_id,
           name: product.display_title,
+          description: resolveProductDescription(product.product_seo),
+          printifyDescription: product.product_seo?.printify_description ?? null,
           imageUrl: product.base_image_url ?? "",
           printProviderId: product.print_provider_id,
           price,
@@ -137,25 +142,25 @@ function ProductSelectionSectionComponent() {
     setBlueprintId(product.blueprintId);
     setPrintProviderId(product.printProviderId);
     setSelectedProductTitle(product.name);
+    setSelectedProductDescription(product.description);
     // Store price in cents (product.price is in dollars)
     setSelectedPriceCents(Math.round(product.price * 100));
 
-    AnalyticsService.track("select_item", {
-      item_list_name: "stamp_product_selection",
-      items: [
-        {
-          item_id: String(product.blueprintId),
-          item_name: product.name,
-          price: product.price,
-        },
-      ],
-    });
+    AnalyticsService.track(
+      "select_item",
+      mapSelectItemEvent({
+        blueprintId: product.blueprintId,
+        productName: product.name,
+        price: product.price,
+      })
+    );
   };
 
   const handleClearSelection = () => {
     setBlueprintId(undefined);
     setPrintProviderId(undefined);
     setSelectedProductTitle(undefined);
+    setSelectedProductDescription(undefined);
     setSelectedPriceCents(undefined);
   };
 

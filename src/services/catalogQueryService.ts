@@ -42,6 +42,25 @@ export class CatalogQueryService {
   }
 
   /**
+   * Get all active products with SEO data
+   */
+  static async getProductsWithSeo(): Promise<CatalogProductWithSeo[]> {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("catalog_products")
+      .select("*, product_seo(*)")
+      .eq("is_active", true)
+      .order("display_title");
+
+    if (error) {
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Products With SEO" });
+    }
+
+    return data || [];
+  }
+
+  /**
    * Get a single product by blueprint_id
    */
   static async getProduct(blueprintId: number): Promise<CatalogProduct | null> {

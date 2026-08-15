@@ -47,6 +47,7 @@ const initialState = {
   blueprintId: undefined,
   printProviderId: undefined,
   selectedProductTitle: undefined,
+  selectedProductDescription: undefined,
   // Print position / placement state
   availablePrintPositions: [] as string[],
   printPositionConfigs: {} as Record<string, PrintPositionConfigType>,
@@ -175,6 +176,7 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
   setBlueprintId: (id) => set({ blueprintId: id }),
   setPrintProviderId: (id) => set({ printProviderId: id }),
   setSelectedProductTitle: (title) => set({ selectedProductTitle: title }),
+  setSelectedProductDescription: (description) => set({ selectedProductDescription: description }),
 
   // Print position / placement state
   setAvailablePrintPositions: (positions) =>
@@ -301,6 +303,7 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
         blueprintId: undefined,
         printProviderId: undefined,
         selectedProductTitle: undefined,
+        selectedProductDescription: undefined,
         // Reset print positions
         availablePrintPositions: [],
         printPositionConfigs: {},

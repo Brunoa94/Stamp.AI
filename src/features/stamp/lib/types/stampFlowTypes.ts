@@ -89,6 +89,8 @@ export interface StampFlowStateType {
   setPrintProviderId: (id: number | undefined) => void;
   selectedProductTitle: string | undefined;
   setSelectedProductTitle: (title: string | undefined) => void;
+  selectedProductDescription: string | null | undefined;
+  setSelectedProductDescription: (description: string | null | undefined) => void;
 
   // Print position / placement state (Step 6 design adjustment)
   availablePrintPositions: string[];

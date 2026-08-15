@@ -66,10 +66,43 @@ serve(async (req) => {
     const colorsMap = new Map<string, number[]>() // color -> variant IDs
     const sizesSet = new Set<string>()
 
+    // Known size patterns to detect when a "color" is actually a size
+    // Matches: S, M, L, XL, 11oz, 15oz, 10", 12x12, 14" × 14", ONE SIZE, etc.
+    const sizePatterns = /^(XXS|XS|S|M|L|XL|XXL|XXXL|2XL|3XL|4XL|5XL|ONE SIZE|\d+(?:\.\d+)?\s*(?:oz|ml|inch|cm|"|')?\s*[×x]?\s*\d*(?:\.\d+)?\s*(?:oz|ml|inch|cm|"|')?)$/i
+
     variants.forEach((v) => {
-      const color = v.options.color || v.title.split(' / ')[0]?.trim()
-      const size = v.options.size || v.title.split(' / ')[1]?.trim()
-      
+      // Try to get color and size from options first (most reliable)
+      let color = v.options.color
+      let size = v.options.size
+
+      // Fallback to parsing title if options are missing
+      if (!color && !size && v.title) {
+        const titleParts = v.title.split(' / ').map((p: string) => p.trim())
+
+        if (titleParts.length === 2) {
+          // Standard format: "Color / Size"
+          color = titleParts[0]
+          size = titleParts[1]
+        } else if (titleParts.length === 1) {
+          // Single value - determine if it's a size or color
+          const singleValue = titleParts[0]
+          if (sizePatterns.test(singleValue)) {
+            // It's a size (e.g., "M", "L", "XL", "ONE SIZE")
+            size = singleValue
+            // For products with only sizes (like white socks), don't set color from title
+          } else {
+            // It's a color
+            color = singleValue
+          }
+        }
+      }
+
+      // Additional check: if parsed "color" looks like a size, treat it as size
+      if (color && sizePatterns.test(color) && !size) {
+        size = color
+        color = undefined
+      }
+
       if (color) {
         if (!colorsMap.has(color)) {
           colorsMap.set(color, [])
@@ -83,6 +116,9 @@ serve(async (req) => {
 
     const colors = Array.from(colorsMap.keys())
     const sizes = Array.from(sizesSet)
+
+    console.log(`Parsed colors: [${colors.join(', ')}]`)
+    console.log(`Parsed sizes: [${sizes.join(', ')}]`)
 
     console.log(`Found ${variants.length} variants, ${colors.length} colors, ${sizes.length} sizes`)
 

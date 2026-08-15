@@ -13,6 +13,8 @@ import { cn } from "@/lib/utils";
 
 interface HeroProductSquareProps {
   images: string[];
+  /** Product name for SEO-friendly alt text */
+  productName?: string;
   /** Delay before starting the carousel (ms) - creates staggered effect */
   startDelay?: number;
   /** Size variant */
@@ -23,6 +25,7 @@ interface HeroProductSquareProps {
 
 export function HeroProductSquare({
   images,
+  productName,
   startDelay = 0,
   size = "md",
   className,
@@ -59,7 +62,7 @@ export function HeroProductSquare({
       >
         <Image
           src={currentImage}
-          alt="Product showcase"
+          alt={productName ? `${productName} - AI-generated custom design` : "Custom AI-designed apparel showcase"}
           fill
           sizes="(max-width: 1024px) 160px, 256px"
           className={cn(

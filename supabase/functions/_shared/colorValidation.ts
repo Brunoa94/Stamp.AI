@@ -11,16 +11,16 @@ const ALLOWED_COLORS: Record<string, string[]> = {
   apparel: ["black", "white"],
   // Mugs - typically white only
   mug: ["white"],
-  // Tote bags - Black, White, or Natural
-  tote: ["black", "white", "natural"],
-  // Canvas/Poster - no color restrictions (print on white canvas)
-  canvas: [],
+  // Tote bags - Black only (no user selection)
+  tote: ["black"],
+  // Canvas/Poster - white only (no user selection)
+  canvas: ["white"],
   // Socks - white base for all-over print
   socks: ["white"],
   // Notebooks - no color restrictions (cover print)
   notebook: [],
-  // Pillows - no color restrictions (all-over print)
-  pillow: [],
+  // Pillows - white only (no user selection)
+  pillow: ["white"],
 };
 
 // Blueprint IDs mapped to categories
@@ -107,10 +107,35 @@ export function validateColorForBlueprint(
     };
   }
 
-  // If no color provided
-  if (!color || color.trim() === "") {
-    // For categories that require color (apparel, tote), default to first allowed
-    if (category === "apparel" || category === "tote") {
+  // Check if color looks like a size (misclassified from variant parsing)
+  // Matches: S, M, L, XL, 11oz, 15oz, 10", 12x12, 14" × 14", ONE SIZE, etc.
+  const sizePattern = /^(XXS|XS|S|M|L|XL|XXL|XXXL|2XL|3XL|4XL|5XL|ONE SIZE|\d+(?:\.\d+)?\s*(?:oz|ml|inch|cm|"|')?\s*[×x]?\s*\d*(?:\.\d+)?\s*(?:oz|ml|inch|cm|"|')?)$/i;
+  const colorLooksLikeSize = color && sizePattern.test(color.trim());
+
+  // If no color provided OR color looks like a size (misclassified)
+  if (!color || color.trim() === "" || colorLooksLikeSize) {
+    if (colorLooksLikeSize) {
+      console.warn(
+        `⚠️ Color "${color}" looks like a size for ${category}, using default color instead`
+      );
+    }
+
+    // For categories with only one allowed color (mug, socks), default to that color
+    if (allowedColors.length === 1) {
+      const defaultColor = allowedColors[0];
+      const properColor = defaultColor.charAt(0).toUpperCase() + defaultColor.slice(1);
+      console.log(
+        `📋 Defaulting to only allowed color "${properColor}" for ${category}`
+      );
+      return {
+        valid: true,
+        normalizedColor: properColor,
+        category,
+      };
+    }
+
+    // For categories that require color selection (apparel), default to first allowed
+    if (category === "apparel") {
       const defaultColor = allowedColors[0];
       console.log(
         `📋 No color provided for ${category}, defaulting to "${defaultColor}"`
@@ -121,7 +146,8 @@ export function validateColorForBlueprint(
         category,
       };
     }
-    // For other categories (mug, socks), allow no color
+
+    // For other categories (notebook), allow no color
     return {
       valid: true,
       normalizedColor: null,
@@ -185,6 +211,10 @@ export function filterVariantsByAllowedColors(
     return variants;
   }
 
+  // Size pattern to detect when variant has no color (only size)
+  // Matches: S, M, L, XL, 11oz, 15oz, 10", 12x12, 14" × 14", ONE SIZE, etc.
+  const sizePattern = /^(XXS|XS|S|M|L|XL|XXL|XXXL|2XL|3XL|4XL|5XL|ONE SIZE|\d+(?:\.\d+)?\s*(?:oz|ml|inch|cm|"|')?\s*[×x]?\s*\d*(?:\.\d+)?\s*(?:oz|ml|inch|cm|"|')?)$/i;
+
   // Filter variants to only include allowed colors
   const filtered = variants.filter((v: any) => {
     const variantColor = (
@@ -192,6 +222,12 @@ export function filterVariantsByAllowedColors(
       v.title?.split(" / ")[0]?.trim() ||
       ""
     ).toLowerCase();
+
+    // If variant has no color or color looks like a size, and we only allow one color,
+    // assume it's that color (e.g., socks that are always white but don't specify color)
+    if ((!variantColor || sizePattern.test(variantColor)) && allowedColors.length === 1) {
+      return true;
+    }
 
     // Check if variant color is in allowed list
     return allowedColors.some((allowed) => variantColor.includes(allowed));

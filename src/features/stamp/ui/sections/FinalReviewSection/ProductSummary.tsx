@@ -1,22 +1,24 @@
 import { Star } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 
 /**
  * ProductSummary
  *
- * Product details card with name, specs, and price
+ * Product details card with name, specs, description, and price
  */
 
 interface PropsI {
   productName: string;
+  productDescription?: string | null;
   color?: string;
   size?: string;
   price: string;
 }
 
-export function ProductSummary({ productName, color, size, price }: PropsI) {
+export function ProductSummary({ productName, productDescription, color, size, price }: PropsI) {
   const t = useTranslations("stamp.finalReview");
 
   return (
@@ -33,10 +35,18 @@ export function ProductSummary({ productName, color, size, price }: PropsI) {
       </div>
       <Span
         variant="micro"
-        className="text-(--color-stamp-taupe) block mb-4 md:mb-8"
+        className="text-(--color-stamp-taupe) block mb-2"
       >
         {t("productDetails", { color: color || "Black", size: size || "M" })}
       </Span>
+      {productDescription && (
+        <Paragraph
+          variant="sm"
+          className="text-(--color-stamp-chocolate)/60 line-clamp-2 mb-4 md:mb-6"
+        >
+          {productDescription}
+        </Paragraph>
+      )}
       <div className="flex flex-wrap justify-between items-baseline gap-x-4 gap-y-2 pt-4 md:pt-6 border-t border-(--color-stamp-divider)">
         <Span variant="sm" className="text-(--color-stamp-chocolate)">
           {t("finalValuation")}

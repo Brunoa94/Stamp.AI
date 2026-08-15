@@ -72,6 +72,9 @@ export type SizeType =
 export type CatalogProductMappedType = {
   blueprintId: number;
   name: string;
+  description: string | null;
+  /** Raw Printify description (may contain HTML) for spec extraction */
+  printifyDescription: string | null;
   imageUrl: string;
   printProviderId: number;
   price: number;

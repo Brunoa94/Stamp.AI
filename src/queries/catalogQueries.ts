@@ -26,6 +26,17 @@ export function useCatalogProducts(): UseQueryResult<CatalogProduct[]> {
 }
 
 /**
+ * Hook to fetch all active catalog products with SEO data
+ */
+export function useCatalogProductsWithSeo(): UseQueryResult<CatalogProductWithSeo[]> {
+  return useQuery({
+    queryKey: ["catalog", "products", "withSeo"],
+    queryFn: () => CatalogQueryService.getProductsWithSeo(),
+    staleTime: 1000 * 60 * 30, // 30 minutes
+  });
+}
+
+/**
  * Hook to fetch the Product of the Month (includes SEO data)
  */
 export function useProductOfMonth(): UseQueryResult<CatalogProductWithSeo | null> {
