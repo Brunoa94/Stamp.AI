@@ -69,7 +69,7 @@ export function ProcessTimeline() {
       <div className="sticky top-0 lg:top-24 px-6 py-12 lg:pt-0 lg:px-12 xl:px-24">
         <div className="mx-auto max-w-screen-2xl">
           {/* Steps viewport */}
-          <div className="relative h-56 sm:h-64 md:h-72">
+          <div className="relative h-40 sm:h-44 md:h-48">
             {HOME_PROCESS_STEPS.map((step, index) => {
               const isPast = index < activeStepIndex;
               const isActive = index === activeStepIndex;
@@ -86,7 +86,6 @@ export function ProcessTimeline() {
               return (
                 <ProcessTimelineStep
                   key={step.id}
-                  number={step.number}
                   title={t(`steps.${step.id}.title`)}
                   description={t(`steps.${step.id}.description`)}
                   isActive={isActive}
