@@ -5,9 +5,10 @@
  *
  * Brevo-style scroll-driven sticky carousel that cycles through process steps.
  * Image on the left slides up/down, text on the right crossfades.
+ * Includes a sticky stepper at the bottom showing current progress.
  */
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { Heading } from "@/features/ui/heading";
@@ -15,6 +16,43 @@ import { Paragraph } from "@/features/ui/paragraph";
 import { HOME_PROCESS_STEPS } from "../../../lib/constants/homepageContent";
 import { PROCESS_STEP_IMAGES } from "../../../lib/constants/processStepImages";
 import { HomeSectionHeader } from "../HomeSectionHeader";
+
+/**
+ * ProcessStepper - Simple sticky bottom stepper with dots
+ */
+function ProcessStepper({
+  activeStepIndex,
+  totalSteps,
+}: {
+  activeStepIndex: number;
+  totalSteps: number;
+}) {
+  return (
+    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+      <div className="flex items-center gap-2 px-4 py-2.5 bg-(--color-stamp-cream)/95 backdrop-blur-md rounded-full shadow-lg border border-(--color-stamp-chocolate)/10">
+        {Array.from({ length: totalSteps }).map((_, index) => {
+          const isActive = index === activeStepIndex;
+          const isCompleted = index < activeStepIndex;
+
+          return (
+            <div
+              key={index}
+              className={`
+                w-2.5 h-2.5 rounded-full transition-all duration-200
+                ${isActive
+                  ? "bg-(--color-stamp-gold) scale-125"
+                  : isCompleted
+                    ? "bg-(--color-stamp-gold)/60"
+                    : "bg-(--color-stamp-chocolate)/20"
+                }
+              `}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 // Height per step in vh units (controls scroll speed per step)
 const STEP_HEIGHT_VH = 100;
@@ -27,32 +65,43 @@ export function ProcessStickyCarousel() {
 
   const totalSteps = HOME_PROCESS_STEPS.length;
 
-  const handleScroll = useCallback(() => {
-    if (!containerRef.current) return;
-
-    const rect = containerRef.current.getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    const scrollableDistance = rect.height - viewportHeight;
-    const scrolledIntoSection = -rect.top;
-
-    const overallProgress = Math.max(
-      0,
-      Math.min(1, scrolledIntoSection / scrollableDistance),
-    );
-
-    const stepFloat = overallProgress * totalSteps;
-    const currentStep = Math.min(Math.floor(stepFloat), totalSteps - 1);
-    const progressWithinStep = stepFloat - currentStep;
-
-    setActiveStepIndex(currentStep);
-    setStepProgress(progressWithinStep);
-  }, [totalSteps]);
-
   useEffect(() => {
+    let rafId: number | null = null;
+
+    const handleScroll = () => {
+      if (rafId) return;
+
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        if (!containerRef.current) return;
+
+        const rect = containerRef.current.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const scrollableDistance = rect.height - viewportHeight;
+        const scrolledIntoSection = -rect.top;
+
+        const overallProgress = Math.max(
+          0,
+          Math.min(1, scrolledIntoSection / scrollableDistance),
+        );
+
+        const stepFloat = overallProgress * totalSteps;
+        const currentStep = Math.min(Math.floor(stepFloat), totalSteps - 1);
+        const progressWithinStep = stepFloat - currentStep;
+
+        setActiveStepIndex(currentStep);
+        setStepProgress(progressWithinStep);
+      });
+    };
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
+  }, [totalSteps]);
 
   const totalHeight = `${totalSteps * STEP_HEIGHT_VH}vh`;
 
@@ -67,6 +116,12 @@ export function ProcessStickyCarousel() {
     >
       {/* Sticky container */}
       <div className="sticky top-0 h-screen flex flex-col">
+        {/* Sticky stepper at bottom */}
+        <ProcessStepper
+          activeStepIndex={activeStepIndex}
+          totalSteps={totalSteps}
+        />
+
         {/* Section header - stays at top */}
         <div className="pt-24 pb-8 px-6 lg:px-12 xl:px-24">
           <div className="mx-auto max-w-screen-2xl">
@@ -79,10 +134,10 @@ export function ProcessStickyCarousel() {
         </div>
 
         {/* Content - centered in remaining space */}
-        <div className="flex-1 flex items-center">
+        <div className="flex-1 flex items-start mt-12">
           <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-30 max-w-8xl mx-auto px-6 md:px-12 lg:px-16">
             {/* Left side - Image with slide animation */}
-            <div className="hidden lg:flex items-center relative w-72 xl:w-80 h-96 xl:h-105">
+            <div className="hidden lg:flex items-center relative w-72 xl:w-80 h-96 xl:h-105 mt-10">
               {HOME_PROCESS_STEPS.map((step, index) => {
                 const isActive = index === activeStepIndex;
                 const isPast = index < activeStepIndex;
@@ -126,7 +181,7 @@ export function ProcessStickyCarousel() {
                       zIndex,
                     }}
                   >
-                    <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-xl">
+                    <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-xl ring-2 ring-(--color-stamp-gold)/20">
                       {imageData && (
                         <Image
                           src={imageData.src}
@@ -137,8 +192,8 @@ export function ProcessStickyCarousel() {
                           priority={index === 0}
                         />
                       )}
-                      <div className="absolute bottom-4 left-4 w-10 h-10 flex items-center justify-center bg-white/90 backdrop-blur-sm rounded-full shadow-lg">
-                        <span className="text-sm font-semibold text-(--color-stamp-chocolate)">
+                      <div className="absolute bottom-4 left-4 w-10 h-10 flex items-center justify-center bg-(--color-stamp-gold) rounded-full shadow-lg">
+                        <span className="text-sm font-semibold text-(--color-stamp-cream)">
                           {step.number}
                         </span>
                       </div>
@@ -162,8 +217,8 @@ export function ProcessStickyCarousel() {
                     priority
                   />
                 )}
-                <div className="absolute bottom-3 left-3 w-8 h-8 flex items-center justify-center bg-white/90 backdrop-blur-sm rounded-full shadow-md">
-                  <span className="text-xs font-semibold text-(--color-stamp-chocolate)">
+                <div className="absolute bottom-3 left-3 w-8 h-8 flex items-center justify-center bg-(--color-stamp-gold) rounded-full shadow-md">
+                  <span className="text-xs font-semibold text-(--color-stamp-cream)">
                     {currentStep?.number}
                   </span>
                 </div>
@@ -208,7 +263,7 @@ export function ProcessStickyCarousel() {
                         pointerEvents: isActive ? "auto" : "none",
                       }}
                     >
-                      <span className="inline-block px-3 py-1 mb-4 text-xs font-bold uppercase tracking-widest bg-(--color-stamp-gold)/10 text-(--color-stamp-gold) rounded-full">
+                      <span className="inline-block px-3 py-1 mb-4 text-xs font-bold uppercase tracking-widest bg-(--color-stamp-gold) text-(--color-stamp-cream) rounded-full shadow-sm">
                         Step {step.number}
                       </span>
 
@@ -222,7 +277,7 @@ export function ProcessStickyCarousel() {
 
                       <Paragraph
                         variant="loose"
-                        className="text-(--color-stamp-taupe) text-base lg:text-lg leading-relaxed"
+                        className="text-(--color-stamp-chocolate)/70 text-base lg:text-lg leading-relaxed"
                       >
                         {t(`steps.${step.id}.description`)}
                       </Paragraph>

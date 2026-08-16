@@ -26,7 +26,7 @@ export function HeroPromoBanner({ progress }: HeroPromoBannerProps) {
 
   return (
     <div
-      className="absolute bottom-32 sm:bottom-36 md:bottom-40 left-0 right-0 z-10 px-4 sm:px-6 lg:px-12"
+      className="relative z-10 px-4 sm:px-6 lg:px-12"
       style={{
         opacity,
         transform: `translateY(${translateY}px)`,
@@ -38,10 +38,7 @@ export function HeroPromoBanner({ progress }: HeroPromoBannerProps) {
         {/* Trust items row */}
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-10">
           {TRUST_ITEMS.map((item, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-2"
-            >
+            <div key={index} className="flex items-center gap-2">
               <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-(--color-stamp-cream)/50 border border-(--color-stamp-taupe)/10">
                 <item.icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-(--color-stamp-taupe)" />
               </div>
