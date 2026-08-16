@@ -44,8 +44,10 @@ export function CheckoutSummarySection({
 
   const {
     subtotal,
+    shipping,
     discount,
     total,
+    totalInCents,
     appliedPromo,
     promoError,
     isApplyingPromo,
@@ -85,7 +87,7 @@ export function CheckoutSummarySection({
 
         <CheckoutPriceBreakdown
           subtotal={subtotal}
-          shipping={0}
+          shipping={shipping}
           discount={discount}
           total={total}
         />
@@ -93,7 +95,7 @@ export function CheckoutSummarySection({
         {paymentMethod === "stripe" && paymentShippingAddress && (
           <Elements stripe={stripePromise}>
             <CheckoutStripeButton
-              amount={total}
+              amount={totalInCents}
               lineItems={lineItems}
               shippingAddress={paymentShippingAddress}
               cartId={cartId}
@@ -108,7 +110,7 @@ export function CheckoutSummarySection({
           <CheckoutPayPalButton
             cart={cart}
             cartId={cartId ?? null}
-            amount={total}
+            amount={totalInCents}
             disabled={disablePayment}
           />
         )}

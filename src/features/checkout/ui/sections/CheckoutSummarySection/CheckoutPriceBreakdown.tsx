@@ -50,7 +50,11 @@ export function CheckoutPriceBreakdown({
         </Span>
         <Span
           unstyled
-          className="text-2xl font-bold uppercase tracking-[0.15em] text-(--color-stamp-success)"
+          className={`text-2xl font-bold tabular-nums ${
+            shipping === 0
+              ? "uppercase tracking-[0.15em] text-(--color-stamp-success)"
+              : "text-(--color-stamp-chocolate)"
+          }`}
         >
           {shipping === 0 ? t("free") : formatPrice(shipping)}
         </Span>

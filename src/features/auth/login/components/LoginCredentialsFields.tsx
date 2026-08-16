@@ -59,7 +59,7 @@ export function LoginCredentialsFields({ register, errors }: PropsI) {
               placeholder={t("passwordPlaceholder")}
               aria-invalid={!!errors.password}
               aria-describedby={errors.password ? "password-error" : undefined}
-              className="h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-5 text-sm uppercase tracking-[0.05em] text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20 pl-14 pr-14"
+              className="h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20 pl-14 pr-14"
               {...register("password")}
             />
 
