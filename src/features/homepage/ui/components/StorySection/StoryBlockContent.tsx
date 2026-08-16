@@ -27,16 +27,6 @@ export function StoryBlockContent({
 }: StoryBlockContentProps) {
   return (
     <div className="flex-1 text-center md:text-left">
-      <div className="mb-4 flex items-center justify-center gap-3 md:justify-start">
-        <div className="h-1 w-8 bg-(--color-stamp-gold)" />
-        <Span
-          variant="micro"
-          className="uppercase tracking-widest text-(--color-stamp-taupe)"
-        >
-          {eyebrow}
-        </Span>
-      </div>
-
       <Heading
         as="h2"
         variant="card"

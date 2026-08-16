@@ -8,9 +8,9 @@
  * Fades out as bubbling products animation progresses.
  */
 
-import { cn } from "@/lib/utils";
 import { Span } from "@/features/ui/span";
 import { TRUST_ITEMS } from "@/features/homepage/lib/constants/trustItems";
+import { PAYMENT_ICONS } from "@/features/homepage/lib/constants/paymentIcons";
 
 interface HeroPromoBannerProps {
   /** Animation progress from 0 to 1 - banner fades out as this increases */
@@ -34,7 +34,7 @@ export function HeroPromoBanner({ progress }: HeroPromoBannerProps) {
         pointerEvents: opacity < 0.5 ? "none" : "auto",
       }}
     >
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto max-w-4xl mt-30">
         {/* Trust items row */}
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-10">
           {TRUST_ITEMS.map((item, index) => (
@@ -61,22 +61,13 @@ export function HeroPromoBanner({ progress }: HeroPromoBannerProps) {
         </div>
 
         {/* Payment methods */}
-        <div className="flex items-center justify-center gap-2 mt-4">
+        <div className="flex flex-col items-center gap-3 mt-6">
           <Span variant="micro" className="text-(--color-stamp-taupe)/70">
             We accept
           </Span>
-          <div className="flex items-center gap-1.5">
-            {["Visa", "Mastercard", "PayPal", "Apple Pay"].map((method) => (
-              <span
-                key={method}
-                className={cn(
-                  "px-2 py-0.5 text-[10px] font-medium",
-                  "bg-(--color-stamp-cream)/30 rounded",
-                  "text-(--color-stamp-chocolate)/60",
-                )}
-              >
-                {method}
-              </span>
+          <div className="flex items-center justify-center gap-4">
+            {PAYMENT_ICONS.map((payment) => (
+              <div key={payment.id}>{payment.icon}</div>
             ))}
           </div>
         </div>

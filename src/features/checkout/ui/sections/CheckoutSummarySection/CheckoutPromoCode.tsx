@@ -90,7 +90,7 @@ export function CheckoutPromoCode({
             }}
             disabled={isApplying}
             aria-label={t("inputAria")}
-            className="flex-1 rounded-none border-(--color-stamp-divider) uppercase tracking-[0.15em]"
+            className="flex-1 h-12 rounded-none border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 text-base tracking-[0.02em] font-normal text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/40 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20"
           />
           <Button
             type="button"
@@ -108,7 +108,7 @@ export function CheckoutPromoCode({
         <Paragraph
           unstyled
           role="alert"
-          className="text-lg font-bold uppercase tracking-[0.15em] text-(--color-stamp-error)"
+          className="text-[10px] font-medium uppercase tracking-[0.15em] text-(--color-stamp-error)"
         >
           {error}
         </Paragraph>

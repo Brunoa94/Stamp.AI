@@ -6,7 +6,8 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-poppins);
-  --font-heading: var(--font-outfit);
+  --font-heading: var(--font-sanchez);
+  --font-serif: var(--font-indie-flower);
   --color-purple: #9333ea;
   --color-cyan: #06b6d4;
   --color-orange: #fb923c;
@@ -161,8 +162,16 @@
   }
 
   .font-heading {
-    font-family: var(--font-heading);
-    letter-spacing: 0.05em;
+    font-family: var(--font-sanchez), var(--font-outfit), sans-serif;
+    letter-spacing: -0.01em;
+    font-weight: 600;
+    -webkit-text-stroke: 0.3px currentColor;
+  }
+
+  .font-body {
+    font-family: var(--font-sanchez), var(--font-outfit), sans-serif;
+    letter-spacing: -0.01em;
+    font-weight: 400;
   }
 
   .font-accent {
@@ -1837,13 +1846,17 @@
 
 /* Scroll-triggered fade effects */
 .hero-scroll-fade {
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out;
   will-change: opacity, transform;
 }
 
 /* Hero content that moves up on scroll */
 .hero-scroll-up {
-  transition: transform 0.1s linear, opacity 0.2s ease-out;
+  transition:
+    transform 0.1s linear,
+    opacity 0.2s ease-out;
   will-change: transform, opacity;
 }
 
@@ -1905,5 +1918,66 @@
     transform: none !important;
     filter: none !important;
     opacity: 1 !important;
+  }
+}
+
+/* ====================================
+   HERO BUBBLING PRODUCTS ANIMATION
+   GPU-accelerated transforms via CSS custom properties
+   ==================================== */
+
+.bubbling-product {
+  /* Hint to browser for compositor layer promotion */
+  will-change: transform, opacity;
+  /* Use GPU-accelerated properties only */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+
+  /*
+   * Animation driven by --bubble-progress (0 to 1) set on parent container.
+   * All calculations use CSS calc() for GPU acceleration without JS re-renders.
+   *
+   * Variables set per-element:
+   * --base-height: vertical travel distance (30-50)
+   * --appear-threshold: staggered appearance delay (0-0.05)
+   * --start-x: horizontal position (0-100%)
+   * --x-drift: pre-calculated drift amount
+   * --rotation: pre-calculated rotation amount
+   */
+
+  /* Calculate local progress accounting for stagger delay */
+  --local-progress: max(
+    0,
+    min(
+      1,
+      calc(
+        (var(--bubble-progress, 0) - var(--appear-threshold, 0)) /
+          max(0.001, 1 - var(--appear-threshold, 0))
+      )
+    )
+  );
+
+  /* Y offset: starts at 95% (below visible), rises to 0 */
+  --y-offset: calc((1 - var(--local-progress)) * 95);
+
+  /* Scale: 0.85 at start, 1.0 at full progress */
+  --scale-value: calc(0.85 + var(--local-progress) * 0.15);
+
+  /* Opacity: 0.3 at start, 1.0 at full progress */
+  --opacity-value: calc(0.3 + min(1, var(--local-progress) * 1.5) * 0.7);
+
+  /* Apply calculated values */
+  left: calc(var(--start-x, 50) * 1%);
+  bottom: calc((1 - var(--y-offset) / 100) * (var(--base-height, 40) + 10) * 1%);
+  transform: translateX(-50%) scale(var(--scale-value)) rotate(calc(var(--rotation, 0) * var(--local-progress) * 1deg));
+  opacity: var(--opacity-value);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubbling-product {
+    will-change: auto;
+    --local-progress: 1;
+    opacity: 1;
+    transform: translateX(-50%) scale(1) rotate(0deg);
   }
 }

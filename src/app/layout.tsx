@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bebas_Neue, Poppins, Outfit } from "next/font/google";
+import { Bebas_Neue, Poppins, Outfit, Sanchez, Indie_Flower } from "next/font/google";
 import "./globals.css";
 import "./globals-stamp.css";
 
@@ -46,6 +46,22 @@ const outfit = Outfit({
   preload: true,
 });
 
+const sanchez = Sanchez({
+  variable: "--font-sanchez",
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+  preload: true,
+});
+
+const indieFlower = Indie_Flower({
+  variable: "--font-indie-flower",
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+  preload: true,
+});
+
 export const metadata: Metadata = generateRootMetadata();
 
 export const viewport: Viewport = {
@@ -69,7 +85,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className="light scheme-light" suppressHydrationWarning>
       <body
-        className={`${poppins.variable} ${bebasNeue.variable} ${outfit.variable} antialiased`}
+        className={`${poppins.variable} ${bebasNeue.variable} ${outfit.variable} ${sanchez.variable} ${indieFlower.variable} antialiased`}
       >
         <GoogleAnalytics />
         <AnalyticsPageViewTracker />

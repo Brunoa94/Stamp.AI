@@ -5,10 +5,17 @@
  *
  * Individual product image that animates based on scroll progress.
  * Part of the HeroBubblingProducts composition.
+ *
+ * Performance optimizations:
+ * - Uses CSS custom properties (--bubble-progress) set by parent
+ * - All transforms computed in CSS for GPU acceleration
+ * - No React re-renders during animation
+ * - will-change hints for compositor layer promotion
  */
 
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useMemo } from "react";
 import { type HeroBubblingProductType } from "../../../lib/constants/homepageContent";
 
 const SIZE_CLASSES = {
@@ -19,59 +26,49 @@ const SIZE_CLASSES = {
 
 interface PropsI {
   product: HeroBubblingProductType;
-  progress: number;
   index: number;
 }
 
-export function BubblingProduct({ product, progress, index }: PropsI) {
-  // Products appear immediately with tiny staggered delays for visual interest
-  const delayFactor = product.delay / 500;
-  const appearThreshold = delayFactor * 0.05;
-  const localProgress = Math.max(
-    0,
-    (progress - appearThreshold) / (1 - appearThreshold)
-  );
+export function BubblingProduct({ product, index }: PropsI) {
+  // Memoize static calculations that don't depend on progress
+  const staticStyles = useMemo(() => {
+    // Side products (left/right edges) are positioned lower
+    const isSideProduct = product.startX <= 15 || product.startX >= 75;
+    const sideOffset = isSideProduct ? 15 : 0;
+    const baseHeight =
+      (product.size === "lg" ? 50 : product.size === "md" ? 40 : 30) - sideOffset;
 
-  // Calculate Y position: starts just below visible, rises as progress increases
-  // Side products (left/right edges) are positioned lower
-  const isSideProduct = product.startX <= 15 || product.startX >= 75;
-  const sideOffset = isSideProduct ? 15 : 0;
-  const baseHeight =
-    (product.size === "lg" ? 50 : product.size === "md" ? 40 : 30) - sideOffset;
-  const startOffset = 5;
-  const yOffset = (1 - Math.min(1, localProgress)) * (100 - startOffset);
+    // Delay factor for staggered appearance
+    const delayFactor = product.delay / 500;
+    const appearThreshold = delayFactor * 0.05;
 
-  // Subtle horizontal drift as they rise
-  const xDrift = Math.sin(index * 1.2 + localProgress * Math.PI) * 4;
+    // Pre-calculate rotation amount (alternating direction based on index)
+    const rotationAmount = (index % 2 === 0 ? 1 : -1) * (3 + (index % 3));
 
-  // Opacity: start partially visible, fade in fully
-  const opacity = 0.3 + Math.min(1, localProgress * 1.5) * 0.7;
+    return {
+      baseHeight,
+      appearThreshold,
+      startX: product.startX,
+      rotation: rotationAmount,
+    };
+  }, [product.startX, product.size, product.delay, index]);
 
-  // Scale animation - start slightly smaller
-  const scale = 0.85 + Math.min(1, localProgress) * 0.15;
-
-  // Rotation for organic movement
-  const rotation = Math.sin(index * 2.5 + localProgress * Math.PI * 0.5) * 3;
-
-  // Round values to avoid hydration mismatches between server/client
-  const roundedLeft = Math.round((product.startX + xDrift) * 100) / 100;
-  const roundedBottom = Math.round((1 - yOffset / 100) * (baseHeight + 10) * 100) / 100;
-  const roundedScale = Math.round(scale * 10000) / 10000;
-  const roundedRotation = Math.round(rotation * 100) / 100;
-  const roundedOpacity = Math.round(opacity * 100) / 100;
+  // CSS custom properties for animation calculations
+  // These are calculated in CSS using calc() for GPU acceleration
+  const cssVars = {
+    "--base-height": `${staticStyles.baseHeight}`,
+    "--appear-threshold": `${staticStyles.appearThreshold}`,
+    "--start-x": `${staticStyles.startX}`,
+    "--rotation": `${staticStyles.rotation}`,
+  } as React.CSSProperties;
 
   return (
     <div
       className={cn(
-        "absolute pointer-events-none transition-all duration-100 ease-out",
+        "bubbling-product absolute pointer-events-none",
         SIZE_CLASSES[product.size]
       )}
-      style={{
-        left: `${roundedLeft}%`,
-        bottom: `${roundedBottom}%`,
-        transform: `translateX(-50%) scale(${roundedScale}) rotate(${roundedRotation}deg)`,
-        opacity: roundedOpacity,
-      }}
+      style={cssVars}
     >
       <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-lg bg-(--color-stamp-off-white)/90 backdrop-blur-sm">
         <Image

@@ -4,7 +4,7 @@
  * Trust indicators displayed in the hero promo banner.
  */
 
-import { Gift, Shield, Truck, Star, Lock, type LucideIcon } from "lucide-react";
+import { Lock, type LucideIcon, Shield, Star, Truck } from "lucide-react";
 
 export interface TrustItem {
   icon: LucideIcon;
@@ -13,16 +13,6 @@ export interface TrustItem {
 }
 
 export const TRUST_ITEMS: TrustItem[] = [
-  {
-    icon: Gift,
-    label: "5 Free Designs",
-    sublabel: "Daily",
-  },
-  {
-    icon: Star,
-    label: "4.8 Rating",
-    sublabel: "1,200+ Reviews",
-  },
   {
     icon: Shield,
     label: "30-Day",

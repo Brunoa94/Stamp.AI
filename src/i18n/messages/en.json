@@ -5,6 +5,7 @@
       "tagline": "Type an idea, get a print-ready design in seconds, and wear it on heavyweight clothes that last. No design skills needed.",
       "ctaPrimary": "Start Creating",
       "ctaSecondary": "View Catalog",
+      "freeCredits": "<signUp>Sign up</signUp> and get 5 free edits per day",
       "productBadge": "Essential_Wht / 320GSM",
       "scrollCue": "Scroll to Build",
       "productImageAlt": "Heavyweight t-shirt with a custom AI-generated print"
@@ -1343,7 +1344,8 @@
       "title": "Payment Method",
       "subtitle": "Pick how you want to pay",
       "paypalNotice": "We'll send you to PayPal to pay securely.",
-      "selectMethodAria": "Select payment method"
+      "selectMethodAria": "Select payment method",
+      "comingSoon": "Coming Soon"
     },
     "testCards": {
       "selectorLabel": "Test Card Type",

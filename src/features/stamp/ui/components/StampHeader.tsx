@@ -66,11 +66,11 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
         <div className="flex-1">
           <Link href="/" className="block" aria-label={t("logoAria")}>
             <Image
-              src="/assets/logo-stamp.png"
+              src="/logo.png"
               alt="Stamp.AI"
-              width={180}
-              height={52}
-              className="h-13 w-auto"
+              width={64}
+              height={64}
+              className="h-16 w-16 object-contain"
               priority
             />
           </Link>

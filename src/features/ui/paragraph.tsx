@@ -20,16 +20,16 @@ import { cn } from "@/lib/utils";
  */
 
 const paragraphVariants = {
-  lead: "font-heading text-lg md:text-xl lg:text-2xl font-light tracking-normal leading-relaxed",
+  lead: "font-body text-lg md:text-xl lg:text-2xl font-light tracking-normal leading-relaxed",
   heroTagline:
-    "font-heading text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug",
-  body: "font-heading text-lg md:text-xl tracking-normal leading-relaxed",
-  sm: "font-heading text-base md:text-lg tracking-normal leading-relaxed",
-  xs: "font-heading text-xs tracking-normal leading-relaxed",
-  loose: "font-heading text-base md:text-lg tracking-normal leading-loose",
-  card: "font-heading text-base md:text-lg tracking-normal leading-relaxed",
-  faq: "font-heading text-base md:text-lg tracking-normal leading-relaxed",
-  quote: "font-heading text-lg md:text-xl italic tracking-normal leading-relaxed",
+    "font-body text-xl md:text-2xl lg:text-3xl font-medium tracking-tight leading-snug",
+  body: "font-body text-lg md:text-xl font-normal tracking-normal leading-relaxed",
+  sm: "font-body text-base md:text-lg font-normal tracking-normal leading-relaxed",
+  xs: "font-body text-sm font-normal tracking-normal leading-relaxed",
+  loose: "font-body text-base md:text-lg font-light tracking-normal leading-loose",
+  card: "font-body text-base md:text-lg font-normal tracking-normal leading-relaxed",
+  faq: "font-body text-base md:text-lg font-normal tracking-normal leading-relaxed",
+  quote: "font-body text-lg md:text-xl font-normal italic tracking-normal leading-relaxed",
 } as const;
 
 type ParagraphVariant = keyof typeof paragraphVariants;

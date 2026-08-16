@@ -66,6 +66,27 @@ export function HeroContent() {
           {t("ctaSecondary")}
         </Button>
       </div>
+
+      {/* Free credits highlight */}
+      <Span
+        as="p"
+        variant="serif"
+        className="mt-12 text-center text-2xl text-(--color-stamp-taupe) sm:text-3xl lg:text-4xl"
+      >
+        {t.rich("freeCredits", {
+          signUp: (chunks) => (
+            <Button
+              variant="link"
+              className="inline p-0 h-auto font-serif italic lowercase text-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)! sm:text-3xl lg:text-4xl font-bold"
+              onClick={() => {
+                document.dispatchEvent(new CustomEvent("open-auth-modal"));
+              }}
+            >
+              {chunks}
+            </Button>
+          ),
+        })}
+      </Span>
     </div>
   );
 }
