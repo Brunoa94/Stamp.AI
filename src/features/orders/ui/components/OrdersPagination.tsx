@@ -22,6 +22,11 @@ export function OrdersPagination({
 }: PropsI) {
   const t = useTranslations("orders.pagination");
 
+  const handlePageChange = (newPage: number) => {
+    onPageChange(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <footer className="mt-24 flex flex-col items-center justify-between gap-8 border-t border-(--color-stamp-divider) pt-12 md:flex-row">
       <Span
@@ -37,7 +42,7 @@ export function OrdersPagination({
 
       <nav className="flex items-center gap-2" aria-label={t("navAriaLabel")}>
         <Button
-          onClick={() => onPageChange(Math.max(1, page - 1))}
+          onClick={() => handlePageChange(Math.max(1, page - 1))}
           disabled={page <= 1}
           variant="outline"
           size="icon"
@@ -53,7 +58,7 @@ export function OrdersPagination({
           return (
             <Button
               key={pageNumber}
-              onClick={() => onPageChange(pageNumber)}
+              onClick={() => handlePageChange(pageNumber)}
               variant={isActive ? "default" : "outline"}
               size="icon"
               className={isActive
@@ -68,7 +73,7 @@ export function OrdersPagination({
         })}
 
         <Button
-          onClick={() => onPageChange(Math.min(totalPages, page + 1))}
+          onClick={() => handlePageChange(Math.min(totalPages, page + 1))}
           disabled={page >= totalPages}
           variant="outline"
           size="icon"

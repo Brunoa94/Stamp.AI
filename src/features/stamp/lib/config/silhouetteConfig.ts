@@ -255,6 +255,42 @@ export const SILHOUETTE_CONFIGS: Record<string, SilhouetteConfig> = {
       { x1: 50, y1: 20, x2: 65, y2: 20, strokeWidth: 0.75 },
     ],
   },
+  pillow: {
+    viewBox: "0 0 100 100",
+    paths: [
+      {
+        // Square pillow with rounded corners and puffy edges
+        d: "M15 15 Q10 15, 10 20 L10 80 Q10 85, 15 85 L85 85 Q90 85, 90 80 L90 20 Q90 15, 85 15 Z",
+        fill: true,
+        strokeWidth: 1.5,
+        strokeLinejoin: "round",
+      },
+      {
+        // Top puffy edge curve
+        d: "M15 15 Q50 8, 85 15",
+        fill: false,
+        strokeWidth: 1,
+      },
+      {
+        // Bottom puffy edge curve
+        d: "M15 85 Q50 92, 85 85",
+        fill: false,
+        strokeWidth: 1,
+      },
+      {
+        // Left puffy edge curve
+        d: "M10 20 Q4 50, 10 80",
+        fill: false,
+        strokeWidth: 1,
+      },
+      {
+        // Right puffy edge curve
+        d: "M90 20 Q96 50, 90 80",
+        fill: false,
+        strokeWidth: 1,
+      },
+    ],
+  },
 };
 
 /**

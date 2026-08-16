@@ -22,10 +22,26 @@ export interface CatalogProduct {
   original_price_cents: number | null;
   is_on_sale: boolean;
   discount_percent: number | null; // e.g., 20 for 20% off
+  is_product_of_month: boolean;
   // Metadata
   last_synced_at: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface ProductSeo {
+  blueprint_id: number;
+  printify_description: string | null; // Raw description from Printify (may contain HTML)
+  meta_title: string | null; // Custom SEO title (falls back to display_title)
+  meta_description: string | null; // Custom meta description (falls back to printify_description)
+  meta_keywords: string[] | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/** catalog_products row with its embedded product_seo relation (one-to-one) */
+export interface CatalogProductWithSeo extends CatalogProduct {
+  product_seo: ProductSeo | null;
 }
 
 export interface ProductVariant {

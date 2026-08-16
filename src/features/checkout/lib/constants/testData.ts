@@ -7,7 +7,7 @@ import type { ShippingAddressT } from "@/schemas/checkout";
 export const TEST_BILLING_DATA: ShippingAddressT = {
   first_name: "Jan",
   last_name: "de Vries",
-  email: "jan.devries@example.nl",
+  email: "bruno.afonso94@hotmail.com",
   phone: "+31 20 123 4567",
   country: "NL",
   region: "Noord-Holland",

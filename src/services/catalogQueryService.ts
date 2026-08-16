@@ -5,30 +5,14 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { ErrorClient } from "./errorClient";
+import type {
+  CatalogProduct,
+  CatalogProductWithSeo,
+  ProductVariant,
+} from "@/types/catalog";
 
-export interface CatalogProduct {
-  blueprint_id: number;
-  display_title: string;
-  base_image_url: string | null;
-  min_price_cents: number;
-  shipping_cents: number;
-  is_active: boolean;
-  print_provider_id: number; // Printify print provider ID (default 99)
-  selling_price_cents: number | null;
-  original_price_cents: number | null;
-  is_on_sale: boolean;
-  is_product_of_month: boolean;
-  last_synced_at: string | null;
-}
-
-export interface ProductVariant {
-  blueprint_id: number;
-  printify_variant_id: number;
-  color: string | null;
-  size: string | null;
-  price_cents: number;
-  is_available: boolean;
-}
+// Re-export for existing consumers of this module's types
+export type { CatalogProduct, CatalogProductWithSeo, ProductVariant };
 
 export interface VariantPrice {
   printifyVariantId: number;
@@ -58,6 +42,25 @@ export class CatalogQueryService {
   }
 
   /**
+   * Get all active products with SEO data
+   */
+  static async getProductsWithSeo(): Promise<CatalogProductWithSeo[]> {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("catalog_products")
+      .select("*, product_seo(*)")
+      .eq("is_active", true)
+      .order("display_title");
+
+    if (error) {
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Products With SEO" });
+    }
+
+    return data || [];
+  }
+
+  /**
    * Get a single product by blueprint_id
    */
   static async getProduct(blueprintId: number): Promise<CatalogProduct | null> {
@@ -76,6 +79,32 @@ export class CatalogQueryService {
         return null;
       }
       throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product" });
+    }
+
+    return data;
+  }
+
+  /**
+   * Get a single active product with its SEO data (product_seo relation)
+   */
+  static async getProductWithSeo(
+    blueprintId: number
+  ): Promise<CatalogProductWithSeo | null> {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("catalog_products")
+      .select("*, product_seo(*)")
+      .eq("blueprint_id", blueprintId)
+      .eq("is_active", true)
+      .single();
+
+    if (error) {
+      // PGRST116 = "not found" for .single() - return null instead of throwing
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product With SEO" });
     }
 
     return data;
@@ -237,14 +266,14 @@ export class CatalogQueryService {
   }
 
   /**
-   * Get the Product of the Month (if any is set)
+   * Get the Product of the Month (if any is set), including SEO data
    */
-  static async getProductOfMonth(): Promise<CatalogProduct | null> {
+  static async getProductOfMonth(): Promise<CatalogProductWithSeo | null> {
     const supabase = createClient();
 
     const { data, error } = await supabase
       .from("catalog_products")
-      .select("*")
+      .select("*, product_seo(*)")
       .eq("is_active", true)
       .eq("is_product_of_month", true)
       .single();

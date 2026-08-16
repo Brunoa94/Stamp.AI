@@ -17,6 +17,7 @@ interface PropsI {
   /** Mockup shown as a polaroid preview on mobile (carousel is md+ only). */
   mockupUrl?: string;
   productName: string;
+  productDescription?: string | null;
   productType: ProductTypeIdType;
   color?: string;
   size?: string;
@@ -29,6 +30,7 @@ interface PropsI {
 export function ReviewDetails({
   mockupUrl,
   productName,
+  productDescription,
   productType,
   color,
   size,
@@ -73,6 +75,7 @@ export function ReviewDetails({
       <div className="space-y-6 mb-6 md:mb-12">
         <ProductSummary
           productName={productName}
+          productDescription={productDescription}
           color={color}
           size={size}
           price={price}

@@ -17,6 +17,7 @@ import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { useProductOfMonth } from "@/queries/catalogQueries";
+import { resolveProductDescription } from "@/lib/seo/productDescription";
 import { SectionReveal } from "../components/SectionReveal";
 
 export function HomeProductOfMonthSection() {
@@ -27,6 +28,8 @@ export function HomeProductOfMonthSection() {
   if (isLoading || !product) {
     return null;
   }
+
+  const description = resolveProductDescription(product.product_seo);
 
   const price = product.selling_price_cents
     ? product.selling_price_cents / 100
@@ -94,6 +97,15 @@ export function HomeProductOfMonthSection() {
             >
               {product.display_title}
             </Heading>
+
+            {description && (
+              <Paragraph
+                variant="sm"
+                className="mb-6 line-clamp-3 max-w-xl text-(--color-stamp-taupe)"
+              >
+                {description}
+              </Paragraph>
+            )}
 
             <div className="mb-8 inline-flex items-baseline gap-3 border border-(--color-stamp-gold)/40 bg-(--color-stamp-gold)/10 px-6 py-3">
               <Span variant="default" className="text-3xl font-medium text-(--color-stamp-gold)">

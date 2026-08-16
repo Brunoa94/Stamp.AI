@@ -28,7 +28,7 @@ export function productSchema(product: ProductData) {
           shippingRate: {
             "@type": "MonetaryAmount",
             value: "0",
-            currency: "USD",
+            currency: product.priceCurrency ?? "USD",
           },
           shippingDestination: {
             "@type": "DefinedRegion",

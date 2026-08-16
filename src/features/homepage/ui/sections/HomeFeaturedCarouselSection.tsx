@@ -12,7 +12,7 @@
 
 import { useRef, useMemo, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { useCatalogProducts } from "@/queries/catalogQueries";
+import { useCatalogProductsWithSeo } from "@/queries/catalogQueries";
 import { HomeSectionHeader } from "../components/HomeSectionHeader";
 import { SectionReveal } from "../components/SectionReveal";
 import { FeaturedCarouselCard } from "../components/FeaturedCarousel/FeaturedCarouselCard";
@@ -30,7 +30,7 @@ export function HomeFeaturedCarouselSection() {
   const t = useTranslations("home.featured");
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const { data: rawProducts = [], isLoading } = useCatalogProducts();
+  const { data: rawProducts = [], isLoading } = useCatalogProductsWithSeo();
 
   const products = useMemo(() => {
     const filtered = filterCarouselProducts(rawProducts);

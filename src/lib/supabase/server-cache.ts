@@ -7,7 +7,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { unstable_cache } from "next/cache";
-import type { CatalogProduct } from "@/types/catalog";
+import type { CatalogProductWithSeo } from "@/types/catalog";
 
 /**
  * Create a service role Supabase client (no cookies, no auth)
@@ -30,15 +30,15 @@ function createServiceClient() {
 }
 
 /**
- * Get all active catalog products with 30-minute cache
+ * Get all active catalog products (with SEO data) with 30-minute cache
  */
 const getCachedProducts = unstable_cache(
-  async (): Promise<CatalogProduct[]> => {
+  async (): Promise<CatalogProductWithSeo[]> => {
     const supabase = createServiceClient();
 
     const { data, error } = await supabase
       .from("catalog_products")
-      .select("*")
+      .select("*, product_seo(*)")
       .eq("is_active", true)
       .order("display_title");
 
@@ -59,7 +59,7 @@ const getCachedProducts = unstable_cache(
 /**
  * Product with pricing information
  */
-export interface ProductWithPricing extends CatalogProduct {
+export interface ProductWithPricing extends CatalogProductWithSeo {
   totalPriceCents: number;
   availableColors?: string[];
 }

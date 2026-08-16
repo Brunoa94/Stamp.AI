@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
+import { buildProductSeoRow } from "../_shared/productSeo.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -135,6 +136,27 @@ serve(async (req) => {
       throw new Error(`Database error: ${productError.message}`)
     }
 
+    // Update product_seo table with the Printify description
+    console.log('Updating product_seo...')
+    let seoSynced = false
+    const { error: seoError } = await supabase
+      .from('product_seo')
+      .upsert(
+        buildProductSeoRow(validBlueprintId, blueprintData.description, new Date().toISOString()),
+        {
+          onConflict: 'blueprint_id',
+          ignoreDuplicates: false,
+        }
+      )
+
+    if (seoError) {
+      console.error('Error updating product_seo:', seoError)
+      // Don't throw, just log - we still synced the product
+    } else {
+      seoSynced = true
+      console.log('Synced product SEO description')
+    }
+
     // Update product_variants table
     if (variants.length > 0) {
       console.log('Updating product_variants...')
@@ -179,6 +201,7 @@ serve(async (req) => {
         base_image_url: baseImageUrl,
         variants_count: variants.length,
         min_price_cents: minPriceCents,
+        seo_synced: seoSynced,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )

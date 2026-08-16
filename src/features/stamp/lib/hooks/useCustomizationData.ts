@@ -66,8 +66,10 @@ export function useCustomizationData() {
     return getDefaultSizeForProduct(availableSizes) as SizeType;
   }, [selectedSize, availableSizes]);
 
-  // Determine effective color: use selected, or auto-select if only one option
+  // Determine effective color:
+  // Use selected color, or auto-select if only one option
   const effectiveSelectedColor = useMemo(() => {
+    // User-selected color if valid
     if (selectedColor && availableColors.includes(selectedColor)) {
       return selectedColor;
     }

@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { ColorSwatches } from "./ColorSwatches";
 import type { ProductCardData } from "../../lib/mappers/productCardMapper";
@@ -104,6 +105,15 @@ export function HomeProductCard({ product, index }: HomeProductCardPropsI) {
           </Span>
         </div>
       </div>
+
+      {product.description && (
+        <Paragraph
+          variant="xs"
+          className="mt-1.5 line-clamp-2 text-(--color-stamp-taupe)"
+        >
+          {product.description}
+        </Paragraph>
+      )}
     </Link>
   );
 }

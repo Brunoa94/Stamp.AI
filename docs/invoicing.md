@@ -15,9 +15,10 @@ payment provider.
 2. **PDF** — `_shared/invoicePdf.ts` renders an A4 PDF with pdf-lib and
    stores it in the **private `invoices` storage bucket** under
    `{user_id}/{invoice_number}.pdf`.
-3. **Email** — if `RESEND_API_KEY` is configured, the invoice is emailed to
+3. **Email** — if an email provider is configured, the invoice is emailed to
    the customer (HTML body from `_shared/invoiceTemplate.ts`, PDF attached).
    Sent at most once (`emailed_at`). Skipped silently when not configured.
+   Supports **Brevo** (preferred) and **Resend** (fallback).
 4. **Triggers** — invoice generation runs best-effort (never fails the
    payment flow) from every place an order is marked paid:
    `stripe-webhook`, `paypal-webhook`, `capture-paypal-order`.
@@ -50,16 +51,42 @@ payment provider.
    ```
 
 3. Configure edge function secrets (all optional — sensible defaults exist,
-   email is disabled without `RESEND_API_KEY`):
+   email is disabled without an email provider API key):
 
+   **Invoice Details:**
    | Secret | Purpose |
    | --- | --- |
    | `INVOICE_SELLER_NAME` | Company name on the invoice (default `Stamp.AI`) |
    | `INVOICE_SELLER_ADDRESS` | Newline-separated address lines |
    | `INVOICE_SELLER_EMAIL` | Billing contact shown on the invoice |
    | `INVOICE_SELLER_VAT_ID` | VAT/tax registration number |
-   | `RESEND_API_KEY` | Enables emailing invoices via Resend |
-   | `INVOICE_FROM_EMAIL` | Sender, e.g. `Stamp.AI <invoices@stamp.ai>` |
+   | `INVOICE_FROM_EMAIL` | Sender email (used by both providers) |
+
+   **Email Provider - Brevo (recommended):**
+   | Secret | Purpose |
+   | --- | --- |
+   | `BREVO_API_KEY` | Brevo API key (get from https://app.brevo.com/settings/keys/api) |
+   | `BREVO_FROM_EMAIL` | Sender email (falls back to `INVOICE_FROM_EMAIL`) |
+   | `BREVO_FROM_NAME` | Sender name (falls back to `INVOICE_SELLER_NAME`) |
+
+   **Email Provider - Resend (fallback):**
+   | Secret | Purpose |
+   | --- | --- |
+   | `RESEND_API_KEY` | Resend API key (only used if `BREVO_API_KEY` not set) |
+
+   **Configuring Supabase secrets:**
+   ```bash
+   # Brevo (preferred)
+   supabase secrets set BREVO_API_KEY=xsmtpsib-your-api-key
+   supabase secrets set BREVO_FROM_EMAIL=invoices@yourdomain.com
+   supabase secrets set BREVO_FROM_NAME="Your Company"
+
+   # Invoice details
+   supabase secrets set INVOICE_SELLER_NAME="Your Company"
+   supabase secrets set INVOICE_SELLER_ADDRESS="Your Address"
+   supabase secrets set INVOICE_SELLER_EMAIL=billing@yourdomain.com
+   supabase secrets set INVOICE_SELLER_VAT_ID=PT123456789
+   ```
 
 ## Known caveats
 

@@ -12,7 +12,6 @@ import { HomeHeroSection } from "./sections/HomeHeroSection";
 import { HomeProductsSection } from "./sections/HomeProductsSection";
 import { HomeProcessSection } from "./sections/HomeProcessSection";
 import { HomeTrustGuaranteesSection } from "./sections/HomeTrustGuaranteesSection";
-import { HomeManifestoSection } from "./sections/HomeManifestoSection";
 import { HomeCtaSection } from "./sections/HomeCtaSection";
 import { HomeReviewsSection } from "./sections/HomeReviewsSection";
 import { HomeFaqSection } from "./sections/HomeFaqSection";
@@ -37,7 +36,6 @@ export function HomepageContent({
       <HomeStorySection blockIds={["quality"]} background="white" />
       <HomeProcessSection />
       <HomeTrustGuaranteesSection />
-      <HomeManifestoSection />
       <HomeCtaSection />
       <HomeReviewsSection />
       <HomeFaqSection />

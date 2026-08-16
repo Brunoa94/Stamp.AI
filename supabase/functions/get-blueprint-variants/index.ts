@@ -84,6 +84,9 @@ serve(async (req) => {
     const colors = Array.from(colorsMap.keys())
     const sizes = Array.from(sizesSet)
 
+    console.log(`Parsed colors: [${colors.join(', ')}]`)
+    console.log(`Parsed sizes: [${sizes.join(', ')}]`)
+
     console.log(`Found ${variants.length} variants, ${colors.length} colors, ${sizes.length} sizes`)
 
     return new Response(

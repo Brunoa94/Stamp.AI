@@ -25,7 +25,7 @@ function FinalReviewSectionComponent() {
   const t = useTranslations("stamp.finalReview");
   const { handleBagIt, handleBagItAndCreateAnother, isAddingToCart } = useStampCartActions();
   const { mockupImageUrl, mockupImages } = useStampFinalization();
-  const { selectedProductTitle, selectedProductType } = useStampProductSelection();
+  const { selectedProductTitle, selectedProductType, selectedProductDescription } = useStampProductSelection();
   const { selectedColor, selectedSize, selectedPriceCents } =
     useStampCustomization();
 
@@ -51,6 +51,7 @@ function FinalReviewSectionComponent() {
       <ReviewDetails
         mockupUrl={mockupImages[0]?.src || mockupImageUrl || fallbackUrl}
         productName={productName}
+        productDescription={selectedProductDescription}
         productType={selectedProductType}
         color={selectedColor}
         size={selectedSize}

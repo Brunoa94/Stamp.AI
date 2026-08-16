@@ -46,6 +46,38 @@ export const HERO_PRODUCT_SETS: string[][] = [
   ["/home/1-a.png", "/home/3-a.png", "/home/5-a.png", "/home/2-a.png"],
 ];
 
+// Hero bubbling products - product images that float up on scroll
+export type HeroBubblingProductType = {
+  src: string;
+  alt: string;
+  size: "sm" | "md" | "lg";
+  startX: number; // percentage from left (0-100)
+  delay: number; // animation delay in ms
+};
+
+export const HERO_BUBBLING_PRODUCTS: HeroBubblingProductType[] = [
+  // Row 1 - Bottom layer (appears first)
+  { src: "/products-images/tote/tote-a-printed.png", alt: "Custom tote bag with AI design", size: "lg", startX: 12, delay: 0 },
+  { src: "/products-images/kid t-shirt/kid-t-shirt-b-printed.jpeg", alt: "Personalized children's tee", size: "lg", startX: 70, delay: 0 },
+  { src: "/home/2-a.png", alt: "Custom hoodie design", size: "md", startX: 42, delay: 0 },
+  // Row 2
+  { src: "/products-images/tote/tote-b-printed.png", alt: "Personalized canvas tote", size: "md", startX: 28, delay: 100 },
+  { src: "/home/1-a.png", alt: "AI-designed apparel", size: "md", startX: 88, delay: 100 },
+  { src: "/products-images/kid t-shirt/kid-t-shirt-a-printed.png", alt: "Custom kids t-shirt", size: "sm", startX: 55, delay: 100 },
+  // Row 3
+  { src: "/home/3-a.png", alt: "Custom print product", size: "sm", startX: 8, delay: 200 },
+  { src: "/products-images/tote/tote-c-printed.png", alt: "Unique tote bag design", size: "sm", startX: 38, delay: 200 },
+  { src: "/home/4-a.png", alt: "Designer merchandise", size: "md", startX: 78, delay: 200 },
+  // Row 4
+  { src: "/home/5-a.png", alt: "Personalized merchandise", size: "sm", startX: 22, delay: 300 },
+  { src: "/home/6-a.png", alt: "Custom apparel piece", size: "sm", startX: 62, delay: 300 },
+  { src: "/home/1-b.png", alt: "AI-generated design", size: "sm", startX: 92, delay: 300 },
+  // Row 5 - Top layer (appears last)
+  { src: "/home/2-b.png", alt: "Unique print design", size: "sm", startX: 48, delay: 400 },
+  { src: "/home/3-b.png", alt: "Creative merchandise", size: "sm", startX: 5, delay: 400 },
+  { src: "/home/4-b.png", alt: "Custom creation", size: "sm", startX: 82, delay: 400 },
+];
+
 // Story section - alternating image + text splits. Display copy lives in
 // messages (home.story.blocks.<id>); a block with multiple images renders
 // them as a collage.

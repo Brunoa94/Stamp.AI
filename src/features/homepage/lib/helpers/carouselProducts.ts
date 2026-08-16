@@ -5,6 +5,8 @@
  */
 
 import type { CarouselProductData } from "../types/carousel";
+import type { ProductSeo } from "@/types/catalog";
+import { resolveProductDescription } from "@/lib/seo/productDescription";
 import { FEATURED_CAROUSEL_EXCLUDED_BLUEPRINTS } from "../constants/homepageContent";
 
 interface CatalogProduct {
@@ -14,6 +16,7 @@ interface CatalogProduct {
   shipping_cents: number | null;
   selling_price_cents: number | null;
   base_image_url: string | null;
+  product_seo?: ProductSeo | null;
 }
 
 /**
@@ -44,6 +47,7 @@ export function mapToCarouselProducts(
     return {
       blueprintId: product.blueprint_id,
       name: product.display_title,
+      description: resolveProductDescription(product.product_seo),
       price,
       imageUrl: product.base_image_url ?? "",
       href: "/stamp",
