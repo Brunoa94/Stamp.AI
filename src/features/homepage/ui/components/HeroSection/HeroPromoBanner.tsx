@@ -59,18 +59,6 @@ export function HeroPromoBanner({ progress }: HeroPromoBannerProps) {
             </div>
           ))}
         </div>
-
-        {/* Payment methods */}
-        <div className="flex flex-col items-center gap-3 mt-6">
-          <Span variant="micro" className="text-(--color-stamp-taupe)/70">
-            We accept
-          </Span>
-          <div className="flex items-center justify-center gap-4">
-            {PAYMENT_ICONS.map((payment) => (
-              <div key={payment.id}>{payment.icon}</div>
-            ))}
-          </div>
-        </div>
       </div>
     </div>
   );

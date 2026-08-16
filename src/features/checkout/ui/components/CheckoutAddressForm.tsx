@@ -28,12 +28,13 @@ interface CheckoutAddressFormPropsI {
   config?: FieldRow[];
 }
 
+// Consistent with stamp-auth styling from login forms
 const LABEL_CLASS =
-  "text-[11px] font-bold uppercase tracking-[0.2em] text-(--color-stamp-taupe)";
+  "text-sm font-semibold uppercase tracking-wide text-(--color-stamp-chocolate)";
 const INPUT_CLASS =
-  "h-12 rounded-none border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 text-base tracking-[0.02em] font-normal text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/40 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20";
+  "h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-5 text-sm uppercase tracking-[0.05em] text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20";
 const ERROR_CLASS =
-  "text-[10px] font-medium uppercase tracking-[0.15em] text-(--color-stamp-error)";
+  "text-xs font-bold uppercase tracking-widest text-(--color-stamp-error)";
 
 export function CheckoutAddressForm({
   fieldPrefix,
@@ -78,7 +79,7 @@ export function CheckoutAddressForm({
                   >
                     <SelectTrigger
                       id={fieldName}
-                      className="h-12 rounded-none border-(--color-stamp-divider) bg-(--color-stamp-white) text-base tracking-[0.02em] font-normal text-(--color-stamp-chocolate) focus:ring-2 focus:ring-(--color-stamp-gold)/30"
+                      className="h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-5 text-sm uppercase tracking-[0.05em] text-(--color-stamp-chocolate) focus:ring-2 focus:ring-(--color-stamp-gold)/20 focus:border-(--color-stamp-gold)"
                     >
                       <SelectValue placeholder={t("selectCountryPlaceholder")} />
                     </SelectTrigger>
