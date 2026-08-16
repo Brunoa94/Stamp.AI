@@ -12,20 +12,8 @@ import {
   STAMP_SIZES,
 } from "../constants/stampColors";
 import { filterDisplayColors } from "@/features/homepage/lib/constants/colorSwatches";
-import { getProductConfig } from "@/lib/printPlacement/config";
+import { shouldShowColorSelection } from "../helpers/productCategoryDetector";
 import type { SizeType } from "../types/stampTypes";
-
-/**
- * Fixed colors for product categories that don't allow user color selection.
- * These products always use a specific color regardless of what the API returns.
- */
-const FIXED_COLOR_BY_CATEGORY: Record<string, string> = {
-  mug: "White",
-  socks: "White",
-  canvas: "White",
-  tote: "Black", // Default for tote bags (most versatile)
-  pillow: "White",
-};
 
 /**
  * useCustomizationData
@@ -36,7 +24,7 @@ const FIXED_COLOR_BY_CATEGORY: Record<string, string> = {
 export function useCustomizationData() {
   const { handleCreateProduct: createProduct, isFinalizing } =
     useStampProductCreation();
-  const { blueprintId, printProviderId } = useStampProductSelection();
+  const { blueprintId, printProviderId, selectedProductTitle } = useStampProductSelection();
   const { selectedImageUrl } = useStampSelectedImage();
   const { selectedColor, setSelectedColor, selectedSize, setSelectedSize } =
     useStampCustomization();
@@ -46,27 +34,18 @@ export function useCustomizationData() {
     printProviderId,
   );
 
-  // Determine product category and if it has a fixed color
-  const productCategory = useMemo(() => {
-    if (!blueprintId) return null;
-    return getProductConfig(blueprintId).category;
-  }, [blueprintId]);
+  // Check if this product type should show color selection
+  // Products like mugs, socks, pillows only have one color
+  const showColors = shouldShowColorSelection(selectedProductTitle || "");
 
-  const fixedColor = useMemo(() => {
-    if (!productCategory) return null;
-    return FIXED_COLOR_BY_CATEGORY[productCategory] || null;
-  }, [productCategory]);
-
-  // For products with fixed colors (mugs, socks, canvas, tote), don't show color selection
-  // Otherwise filter colors to only show White and Black if both are available
+  // Filter colors to only show White and Black if both are available
+  // Otherwise show all available colors
+  // For products that don't support color selection, return empty array
   const availableColors = useMemo(() => {
-    // If product has a fixed color, return empty array (no user selection needed)
-    if (fixedColor) {
-      return [];
-    }
+    if (!showColors) return [];
     const allColors = (variants?.colors || []).filter(Boolean);
     return filterDisplayColors(allColors);
-  }, [variants?.colors, fixedColor]);
+  }, [variants?.colors, showColors]);
 
   // Get available sizes from variants API, sorted properly
   // Falls back to standard apparel sizes if API doesn't return sizes
@@ -88,13 +67,8 @@ export function useCustomizationData() {
   }, [selectedSize, availableSizes]);
 
   // Determine effective color:
-  // 1. For fixed-color products (mugs, socks, canvas, tote), always use the fixed color
-  // 2. Otherwise use selected color, or auto-select if only one option
+  // Use selected color, or auto-select if only one option
   const effectiveSelectedColor = useMemo(() => {
-    // Fixed color products always use their designated color
-    if (fixedColor) {
-      return fixedColor;
-    }
     // User-selected color if valid
     if (selectedColor && availableColors.includes(selectedColor)) {
       return selectedColor;
@@ -104,7 +78,7 @@ export function useCustomizationData() {
       return availableColors[0];
     }
     return selectedColor;
-  }, [selectedColor, availableColors, fixedColor]);
+  }, [selectedColor, availableColors]);
 
   // Color selection is only required if there are multiple colors to choose from
   // If there's only one color, it will be auto-used

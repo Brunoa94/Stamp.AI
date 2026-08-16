@@ -52,4 +52,24 @@ export const PAGE_KEYWORDS = {
   orders: ["order history", "track order", "order status", "my orders"],
   dashboard: ["design dashboard", "my designs", "saved creations"],
   profile: ["account settings", "user profile", "shipping address"],
+  faq: [
+    "custom apparel FAQ",
+    "AI t-shirt design questions",
+    "print on demand help",
+  ],
+  shipping: [
+    "custom apparel shipping",
+    "print on demand delivery times",
+    "worldwide shipping",
+    "order tracking",
+  ],
+  returns: [
+    "custom apparel returns",
+    "print on demand refund policy",
+    "30 day guarantee",
+  ],
+  terms: ["terms of service", "user agreement", "custom apparel terms"],
+  privacy: ["privacy policy", "GDPR", "data protection"],
+  cookies: ["cookie policy", "cookies", "analytics opt-out"],
+  security: ["data security", "secure checkout", "payment security"],
 } as const;

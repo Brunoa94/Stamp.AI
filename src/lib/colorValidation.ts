@@ -34,6 +34,7 @@ const BLUEPRINT_CATEGORIES: Record<number, string> = {
   145: "apparel", // Unisex Softstyle T-Shirt (Gildan 64000)
   5: "apparel", // Unisex Cotton Crew Tee (Next Level)
   6: "apparel", // Unisex Heavy Cotton Tee (Gildan 5000)
+  157: "apparel", // Kids Heavy Cotton Tee
 
   // Hoodies & Sweatshirts
   77: "apparel", // Unisex Heavy Blend Hoodie (Gildan)

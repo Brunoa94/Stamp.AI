@@ -5,7 +5,15 @@
  * Separated from the component for maintainability.
  */
 
-export type CategoryType = "apparel" | "tote" | "mug" | "poster" | "pillow" | "canvas" | "socks";
+export type CategoryType =
+  | "apparel"
+  | "tote"
+  | "mug"
+  | "poster"
+  | "pillow"
+  | "canvas"
+  | "socks"
+  | "notebook";
 export type OrientationType = "vertical" | "horizontal" | "square";
 
 interface SvgPathConfig {
@@ -65,6 +73,35 @@ export const SILHOUETTE_CONFIGS: Record<string, SilhouetteConfig> = {
         d: "M35 10 C38 16, 45 19, 50 19 C55 19, 62 16, 65 10",
         fill: false,
         strokeWidth: 1.5,
+      },
+    ],
+  },
+  "apparel-back": {
+    viewBox: "0 0 100 120",
+    paths: [
+      {
+        // Same tee body as the front view, but with the shallow back
+        // neckline instead of the front collar drop.
+        d: "M35 10 L20 18 L4 34 L14 46 L22 40 L22 112 L78 112 L78 40 L86 46 L96 34 L80 18 L65 10 C62 13, 55 14.5, 50 14.5 C45 14.5, 38 13, 35 10 Z",
+        fill: true,
+        strokeWidth: 1.5,
+        strokeLinejoin: "round",
+      },
+      {
+        d: "M35 10 C38 13, 45 14.5, 50 14.5 C55 14.5, 62 13, 65 10",
+        fill: false,
+        strokeWidth: 1.5,
+      },
+    ],
+    rects: [
+      // Small label tag under the back collar
+      {
+        x: 46,
+        y: 17,
+        width: 8,
+        height: 5,
+        fill: false,
+        strokeWidth: 0.75,
       },
     ],
   },
@@ -179,6 +216,23 @@ export const SILHOUETTE_CONFIGS: Record<string, SilhouetteConfig> = {
       },
     ],
   },
+  notebook: {
+    viewBox: "0 0 100 120",
+    rects: [
+      {
+        x: 22,
+        y: 10,
+        width: 60,
+        height: 100,
+        fill: true,
+        strokeWidth: 1.5,
+      },
+    ],
+    lines: [
+      // Spiral binding on the left edge
+      { x1: 27, y1: 10, x2: 27, y2: 110, strokeWidth: 0.75 },
+    ],
+  },
   socks: {
     viewBox: "0 0 100 120",
     paths: [
@@ -240,14 +294,23 @@ export const SILHOUETTE_CONFIGS: Record<string, SilhouetteConfig> = {
 };
 
 /**
- * Get the silhouette config key based on category and orientation
+ * Get the silhouette config key based on category, orientation and print
+ * position. Positions with a dedicated view (e.g. `apparel-back`) get it;
+ * everything else falls back to the category's default silhouette.
  */
 export function getSilhouetteKey(
   category: CategoryType,
-  orientation?: OrientationType
+  orientation?: OrientationType,
+  position?: string
 ): string {
   if (category === "canvas" || category === "poster") {
     return `canvas-${orientation || "vertical"}`;
+  }
+  if (position) {
+    const positionKey = `${category}-${position}`;
+    if (positionKey in SILHOUETTE_CONFIGS) {
+      return positionKey;
+    }
   }
   return category;
 }

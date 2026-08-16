@@ -176,6 +176,17 @@ export const useStampCustomization = () => {
   };
 };
 
+// Print position state selectors
+export const useStampPrintPositions = () => {
+  const printPositionConfigs = useStampFlowStore(
+    (state) => state.printPositionConfigs,
+  );
+  const activeEditPosition = useStampFlowStore(
+    (state) => state.activeEditPosition,
+  );
+  return { printPositionConfigs, activeEditPosition };
+};
+
 // Reset store selector
 export const useStampReset = () => {
   const reset = useStampFlowStore((state) => state.reset);
@@ -263,6 +274,9 @@ export const useStampPrintPlacement = () => {
   const togglePrintPosition = useStampFlowStore(
     (state) => state.togglePrintPosition,
   );
+  const selectPrintPosition = useStampFlowStore(
+    (state) => state.selectPrintPosition,
+  );
   const activeEditPosition = useStampFlowStore(
     (state) => state.activeEditPosition,
   );
@@ -287,6 +301,7 @@ export const useStampPrintPlacement = () => {
     printPositionConfigs,
     setPrintPositionConfig,
     togglePrintPosition,
+    selectPrintPosition,
     activeEditPosition,
     setActiveEditPosition,
     resetPlacementForPosition,

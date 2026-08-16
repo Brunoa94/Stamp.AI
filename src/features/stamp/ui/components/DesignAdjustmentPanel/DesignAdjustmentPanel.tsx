@@ -54,6 +54,8 @@ export function DesignAdjustmentPanel({
     bounds,
     atBounds,
     togglePrintPosition,
+    selectPrintPosition,
+    positionSelectionMode,
     updateActivePlacement,
     nudgeActivePlacement,
     centerActivePlacement,
@@ -78,7 +80,12 @@ export function DesignAdjustmentPanel({
     <PrintPositionSelector
       availablePositions={availablePrintPositions}
       printPositionConfigs={printPositionConfigs}
-      onTogglePosition={togglePrintPosition}
+      onTogglePosition={
+        positionSelectionMode === "single"
+          ? selectPrintPosition
+          : togglePrintPosition
+      }
+      selectionMode={positionSelectionMode}
       disabled={disabled}
     />
   );

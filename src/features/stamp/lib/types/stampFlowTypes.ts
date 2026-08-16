@@ -101,6 +101,12 @@ export interface StampFlowStateType {
     config: Partial<PrintPositionConfigType>,
   ) => void;
   togglePrintPosition: (position: string) => void;
+  /**
+   * Single-select: enable exactly this position, disable every other one and
+   * move the active edit position to it (apparel front OR back). Placements
+   * are preserved per position so switching back keeps prior adjustments.
+   */
+  selectPrintPosition: (position: string) => void;
   activeEditPosition: string;
   setActiveEditPosition: (position: string) => void;
   resetPlacementForPosition: (position: string) => void;

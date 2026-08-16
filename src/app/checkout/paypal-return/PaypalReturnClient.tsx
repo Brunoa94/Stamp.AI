@@ -301,6 +301,7 @@ function PayPalReturnContent() {
                 shippingAddress,
                 billingAddress,
                 idempotencyKey,
+                paymentMethod: "paypal",
               })) ?? null;
 
             if (createdOrderId) {

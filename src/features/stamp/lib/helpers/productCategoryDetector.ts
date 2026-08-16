@@ -30,12 +30,14 @@ type ProductGroup = "clothing" | "accessories";
 const CATEGORY_KEYWORDS: Record<ProductCategory, string[]> = {
   tshirt: [
     "unisex t-shirt",
+    "kids t-shirt",
     "t-shirt",
     "tshirt",
     "tee shirt",
     "classic tee",
     "premium tee",
     "cotton tee",
+    "heavy cotton",
     "crew neck",
   ],
   hoodie: [
@@ -211,4 +213,25 @@ function getExpectedSizeType(category: ProductCategory): ExpectedSizeType {
 function detectExpectedSizeType(displayTitle: string): ExpectedSizeType {
   const category = detectProductCategory(displayTitle);
   return getExpectedSizeType(category);
+}
+
+/**
+ * Categories that should NOT show color selection
+ * These products only come in one color (e.g., white mugs, white socks)
+ */
+const NO_COLOR_SELECTION_CATEGORIES: Set<ProductCategory> = new Set([
+  "mug",
+  "socks",
+  "pillow",
+  "canvas",
+  "poster",
+]);
+
+/**
+ * Check if a product should show color selection based on its title
+ * Returns false for products that only come in one color (mugs, socks, etc.)
+ */
+export function shouldShowColorSelection(displayTitle: string): boolean {
+  const category = detectProductCategory(displayTitle);
+  return !NO_COLOR_SELECTION_CATEGORIES.has(category);
 }

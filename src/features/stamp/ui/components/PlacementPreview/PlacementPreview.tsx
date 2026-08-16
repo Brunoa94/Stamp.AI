@@ -61,7 +61,11 @@ export function PlacementPreview({
       data-testid="placement-preview"
       className={`relative mx-auto w-full max-w-sm ${aspectClass}`}
     >
-      <ProductSilhouette category={productCategory} orientation={orientation} />
+      <ProductSilhouette
+        category={productCategory}
+        orientation={orientation}
+        position={position}
+      />
 
       {/* Print area boundary */}
       <div
