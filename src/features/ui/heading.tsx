@@ -32,7 +32,7 @@ const headingVariants = {
   sectionDisplay:
     "font-heading font-normal text-3xl md:text-4xl lg:text-5xl tracking-tight leading-none uppercase",
   sectionSlab:
-    "font-heading font-normal text-2xl md:text-3xl lg:text-4xl tracking-tight leading-tight font-bold",
+    "font-heading font-normal text-2xl md:text-3xl lg:text-4xl tracking-tight leading-tight",
   cta: "font-heading font-normal text-[10vw] md:text-[8vw] lg:text-[6vw] leading-[0.95] tracking-tight",
   section:
     "font-heading font-normal text-2xl md:text-5xl lg:text-7xl tracking-tight leading-none",
@@ -47,9 +47,9 @@ const headingVariants = {
   question:
     "font-heading font-normal text-2xl md:text-3xl tracking-tight leading-tight",
   item: "font-heading font-normal text-xl md:text-2xl tracking-tight",
-  itemCompact: "font-heading font-normal text-sm md:text-base tracking-tight",
+  itemCompact: "font-heading font-normal text-xl md:text-2xl tracking-tight",
   price: "font-heading font-normal text-xl md:text-2xl tracking-tight",
-  priceCompact: "font-heading font-normal text-xl tracking-tight",
+  priceCompact: "font-heading font-normal text-xl md:text-2xl tracking-tight",
   priceMini: "font-heading font-normal text-base tracking-tight",
 } as const;
 
