@@ -19,6 +19,7 @@ import { CheckoutPromoCode } from "./CheckoutPromoCode";
 import { CheckoutPriceBreakdown } from "./CheckoutPriceBreakdown";
 import { CheckoutStripeButton } from "./CheckoutStripeButton";
 import { CheckoutPayPalButton } from "./CheckoutPayPalButton";
+import { VerifiedSecureBadge } from "@/features/ui/trust/VerifiedSecureBadge";
 import type { CartWithItems } from "@/types/cart";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 
@@ -114,6 +115,9 @@ export function CheckoutSummarySection({
             disabled={disablePayment}
           />
         )}
+
+        {/* Security verification badge */}
+        <VerifiedSecureBadge variant="compact" className="mt-4" />
       </div>
     </div>
   );

@@ -226,14 +226,14 @@
       "blocks": {
         "design": {
           "eyebrow": "Create",
-          "title": "Describe it. The AI <accent>designs</accent> it.",
+          "title": "Describe it. The AI <accent>designs it.</accent>",
           "body": "Type a prompt, upload a photo, or start from a sketch. The AI turns it into clean, print-ready artwork in seconds — sharp lines, accurate color, high resolution — in any style you can imagine.",
           "cta": "Start creating",
           "imageAlt": "Four AI-generated artworks of the same portrait in different styles"
         },
         "quality": {
           "eyebrow": "Quality",
-          "title": "Heavyweight blanks, <accent>built</accent> to last.",
+          "title": "Heavyweight blanks, <accent>built to last.</accent>",
           "body": "We print on 280 to 480 GSM fabrics that are pre-shrunk and enzyme-washed, using water-based, eco-friendly inks. Your piece keeps its fit, color and print through years of wear and washing.",
           "cta": "See the essentials",
           "imageAlt": "Model wearing a heavyweight white t-shirt"
@@ -1661,12 +1661,36 @@
       "title": "Your payment is safe",
       "body": "Payments run through Stripe and PayPal. We never see or store your card details.",
       "accept": "We accept",
-      "sslSecured": "256-bit SSL Secured",
-      "comingSoon": "Soon"
+      "sslSecured": "Secure Checkout",
+      "comingSoon": "Soon",
+      "securePayment": "Secure Payment",
+      "noCardStored": "Card details never stored",
+      "encryptedTransmission": "Encrypted connection"
     },
     "guarantee": {
       "title": "30-day guarantee",
       "body": "If the print, fabric, or fit isn't right, we'll replace it or refund you. Return shipping is on us."
+    },
+    "socialProof": {
+      "ordersFulfilled": "{count} orders fulfilled"
+    },
+    "reviews": {
+      "ariaLabel": "Rated {rating} out of {total} stars",
+      "reviewCount": "{count} reviews",
+      "basedOn": "Based on {count} reviews",
+      "verified": "Verified reviews"
+    },
+    "verification": {
+      "verified": "Verified",
+      "secure": "Secure",
+      "siteVerified": "Protected checkout",
+      "encryption": "Encrypted connection"
+    },
+    "reviewCta": {
+      "enjoyedExperience": "Enjoyed your experience?",
+      "leaveReview": "Leave a Review",
+      "rateUs": "Rate us on",
+      "poweredBy": "Powered by"
     }
   },
   "legal": {
@@ -1996,12 +2020,7 @@
       "meta": {
         "title": "Cookie Policy",
         "description": "Which cookies Stamp AI uses, what each one does, how long it lasts, and how to control or refuse them.",
-        "keywords": [
-          "cookie policy",
-          "cookies",
-          "tracking",
-          "consent"
-        ]
+        "keywords": ["cookie policy", "cookies", "tracking", "consent"]
       },
       "title": "Cookie",
       "accent": "policy",
@@ -2073,9 +2092,7 @@
         },
         "contact": {
           "heading": "9. Contact",
-          "body": [
-            "Questions about cookies can go to {privacyEmail}."
-          ]
+          "body": ["Questions about cookies can go to {privacyEmail}."]
         }
       }
     },
@@ -2174,9 +2191,7 @@
         },
         "your-role": {
           "heading": "11. What you can do",
-          "body": [
-            "The strongest account security depends partly on you:"
-          ],
+          "body": ["The strongest account security depends partly on you:"],
           "bullets": [
             "Use a long, unique password, or sign in with Google.",
             "Never reuse your Stamp AI password anywhere else.",
@@ -2437,13 +2452,7 @@
     "meta": {
       "title": "Frequently Asked Questions",
       "description": "Answers about designing with AI, ordering, credits, sizing, shipping times, returns and account management on Stamp AI.",
-      "keywords": [
-        "FAQ",
-        "help",
-        "questions",
-        "support",
-        "how it works"
-      ]
+      "keywords": ["FAQ", "help", "questions", "support", "how it works"]
     },
     "title": "Frequently asked",
     "accent": "questions",

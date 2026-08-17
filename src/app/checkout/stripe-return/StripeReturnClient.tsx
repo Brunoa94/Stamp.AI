@@ -267,7 +267,7 @@ function StripeReturnContent() {
             // Do NOT change payment_status - payment has been successfully captured
             // The payment_transactions table will track refund status
             // Keeping payment_status as "paid" accurately reflects that payment was captured
-            } catch (updateError) {
+          } catch (updateError) {
             captureError(updateError, {
               service: "StripeReturn",
               action: "markOrderFailed",
@@ -438,7 +438,7 @@ function StripeReturnContent() {
   // Loading state
   if (status === "loading" || status === "processing") {
     return (
-      <div className="min-h-screen flex justify-center pt-32 lg:pt-40 px-6 bg-(--color-stamp-cream)">
+      <div className="min-h-screen flex justify-center pt-20 px-6 bg-(--color-stamp-cream)">
         <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
           <section
             className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
@@ -523,7 +523,7 @@ function StripeReturnContent() {
 
   // Error state
   return (
-    <div className="min-h-screen flex justify-center pt-32 lg:pt-40 px-6 bg-(--color-stamp-cream)">
+    <div className="min-h-screen flex justify-center pt-20 px-6 bg-(--color-stamp-cream)">
       <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
         <section
           className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"

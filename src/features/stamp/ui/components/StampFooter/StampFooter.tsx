@@ -8,6 +8,7 @@ import { Paragraph } from "@/features/ui/paragraph";
 import { Separator } from "@/features/ui/separator";
 import { Span } from "@/features/ui/span";
 import { SOCIAL_PROFILES } from "@/features/seo/config/social";
+import { FooterPaymentIcons } from "@/features/ui/trust/FooterPaymentIcons";
 import {
   FooterLinkColumn,
   type FooterColumnKeyType,
@@ -98,6 +99,11 @@ export function StampFooter() {
               t={t}
             />
           ))}
+        </div>
+
+        {/* Payment icons section */}
+        <div className="mt-12 flex justify-center md:justify-start">
+          <FooterPaymentIcons />
         </div>
 
         {/* Decorative wordmark */}

@@ -27,7 +27,7 @@ export function HomeHeroSection() {
         <div className="mx-auto">
           <div className="flex items-end">
             {/* Left showcase - hidden on mobile */}
-            <div className="hidden lg:block shrink-0 mb-0 xl:-mb-20">
+            <div className="hidden lg:block shrink-0 mb-0 ">
               <SectionReveal delayMs={200}>
                 <HeroTransformShowcase position="left" startIndex={0} />
               </SectionReveal>
@@ -39,7 +39,7 @@ export function HomeHeroSection() {
             </SectionReveal>
 
             {/* Right showcase - hidden on mobile */}
-            <div className="hidden lg:block shrink-0 mb-0 xl:-mb-20">
+            <div className="hidden lg:block shrink-0 mb-0 ">
               <SectionReveal delayMs={400}>
                 <HeroTransformShowcase position="right" startIndex={2} />
               </SectionReveal>

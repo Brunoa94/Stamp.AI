@@ -15,6 +15,9 @@ import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { HeroAnimatedTitle } from "./HeroAnimatedTitle";
+import { HeroSecurityBadge } from "@/features/ui/trust/HeroSecurityBadge";
+import { OrdersFulfilledCounter } from "@/features/ui/trust/OrdersFulfilledCounter";
+import { TrustpilotWidget } from "@/features/ui/trust/TrustpilotWidget";
 
 export function HeroContent() {
   const t = useTranslations("home.hero");
@@ -87,6 +90,13 @@ export function HeroContent() {
           ),
         })}
       </Span>
+
+      {/* Trust signals - above fold */}
+      <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+        <HeroSecurityBadge />
+        <OrdersFulfilledCounter variant="default" count={10000} />
+        <TrustpilotWidget variant="compact" />
+      </div>
     </div>
   );
 }
