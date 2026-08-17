@@ -40,6 +40,8 @@ export const OrderSchema = z.object({
   currency: z.string().nullable(),
   payment_method: z.string().nullable(),
   printify_order_id: z.string().nullable(),
+  printify_status: z.string().nullable().optional(),
+  printify_synced_at: z.string().nullable().optional(),
   shipping_address: z.any().nullable(),
   billing_address: z.any().nullable(),
   shipping_method: z.string().nullable().optional(),

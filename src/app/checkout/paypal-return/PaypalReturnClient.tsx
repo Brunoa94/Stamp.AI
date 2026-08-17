@@ -402,7 +402,7 @@ function PayPalReturnContent() {
         } catch (pipelineError) {
           if (pipelineError instanceof PayPalPipelineTimeoutError) {
             if (createdOrderId) {
-              await markOrderFailed(createdOrderId, "fulfillment_failed");
+              await markOrderFailed(createdOrderId, "unsuccessful_confirmation");
             }
             await triggerRefund("PayPal checkout pipeline timed out");
           }

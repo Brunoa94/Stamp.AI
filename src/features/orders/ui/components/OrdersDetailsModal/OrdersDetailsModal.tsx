@@ -15,8 +15,8 @@ import {
   getFirstOrderItem,
 } from "../../../lib/helpers/orderPresentation";
 import {
+  getOrderDisplayStatus,
   getStatusBadgeClass,
-  toDisplayStatus,
 } from "../../../lib/helpers/statusPresentation";
 import { OrdersDetailsModalInvoice } from "./OrdersDetailsModalInvoice";
 
@@ -27,10 +27,11 @@ interface PropsI {
 
 export function OrdersDetailsModal({ order, onClose }: PropsI) {
   const t = useTranslations("orders.detailsModal");
+  const tStatus = useTranslations("orders.statusBadge");
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const firstItem = getFirstOrderItem(order);
-  const displayedStatus = toDisplayStatus(order.status);
+  const displayedStatus = getOrderDisplayStatus(order);
 
   useModalFocusTrap({
     isOpen: true,
@@ -69,7 +70,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
             variant="badge"
             className={`inline-flex rounded-full px-3 py-1 ${getStatusBadgeClass(displayedStatus)}`}
           >
-            {displayedStatus}
+            {tStatus(displayedStatus)}
           </Span>
           <Heading
             as="h3"
@@ -150,6 +151,25 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
               <Paragraph variant="xs" className="text-(--color-stamp-taupe)">
                 {getAddressSummary(order) || t("archiveAddress")}
               </Paragraph>
+              {order.tracking_number && (
+                <Paragraph variant="xs" className="mt-2 text-(--color-stamp-taupe)">
+                  {t("trackingNumber")}:{" "}
+                  {order.tracking_url ? (
+                    <a
+                      href={order.tracking_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold text-(--color-stamp-gold) underline underline-offset-2"
+                    >
+                      {order.tracking_number}
+                    </a>
+                  ) : (
+                    <Span variant="value" className="text-(--color-stamp-chocolate)">
+                      {order.tracking_number}
+                    </Span>
+                  )}
+                </Paragraph>
+              )}
             </section>
           </div>
 

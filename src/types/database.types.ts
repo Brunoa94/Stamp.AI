@@ -524,6 +524,8 @@ export type Database = {
           payment_provider: string | null
           payment_status: string | null
           printify_order_id: string | null
+          printify_status: string | null
+          printify_synced_at: string | null
           product_id: string | null
           promo_code: string | null
           promo_value: number | null
@@ -557,6 +559,8 @@ export type Database = {
           payment_provider?: string | null
           payment_status?: string | null
           printify_order_id?: string | null
+          printify_status?: string | null
+          printify_synced_at?: string | null
           product_id?: string | null
           promo_code?: string | null
           promo_value?: number | null
@@ -590,6 +594,8 @@ export type Database = {
           payment_provider?: string | null
           payment_status?: string | null
           printify_order_id?: string | null
+          printify_status?: string | null
+          printify_synced_at?: string | null
           product_id?: string | null
           promo_code?: string | null
           promo_value?: number | null

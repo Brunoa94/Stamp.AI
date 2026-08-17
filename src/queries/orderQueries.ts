@@ -19,6 +19,7 @@ export function useOrders(userId?: string) {
     staleTime: 0, // Orders data is always considered stale
     refetchOnMount: true, // Refetch when component mounts
     refetchOnWindowFocus: true, // Refetch when user returns to tab
+    refetchInterval: 60_000, // Poll for live status while the tab is visible
   });
 }
 
