@@ -11,19 +11,19 @@ import { cn } from "@/lib/utils";
  * - display        Hero h1 — massive fluid viewport-relative title (Sanchez)
  * - sectionDisplay Section header h2 — large display style (Sanchez)
  * - sectionSlab    Section header h2 — smaller slab-serif style (Sanchez)
- * - cta            CTA section h2 — large fluid viewport-relative title (Outfit)
- * - section        Section header h2 — 5xl→7xl (Outfit)
- * - title          Interior section h2 — fixed responsive scale 6xl→8xl (Outfit)
- * - panelTitle     Split-panel h2 — fluid size that fits a half-width grid column (Outfit)
- * - panelTitleCompact Compact panel h2 — smaller fluid size for profile cards (Outfit)
- * - card           Card / step h3 — 3xl→4xl (Outfit)
- * - cardCompact    Compact card title — xl (Outfit)
- * - question       FAQ summary — 2xl→3xl (Outfit)
- * - item           Product name / testimonial author — xl→2xl (Outfit)
- * - itemCompact    Compact product name — base (Outfit)
- * - price          Large price display — 2xl (Outfit)
- * - priceCompact   Compact price display — xl (Outfit)
- * - priceMini      Small inline price — base (Outfit)
+ * - cta            CTA section h2 — large fluid viewport-relative title (Sanchez)
+ * - section        Section header h2 — 5xl→7xl (Sanchez)
+ * - title          Interior section h2 — fixed responsive scale 6xl→8xl (Sanchez)
+ * - panelTitle     Split-panel h2 — fluid size that fits a half-width grid column (Sanchez)
+ * - panelTitleCompact Compact panel h2 — smaller fluid size for profile cards (Sanchez)
+ * - card           Card / step h3 — 3xl→4xl (Sanchez)
+ * - cardCompact    Compact card title — xl (Sanchez)
+ * - question       FAQ summary — 2xl→3xl (Sanchez)
+ * - item           Product name / testimonial author — xl→2xl (Inter)
+ * - itemCompact    Compact product name — base (Inter)
+ * - price          Large price display — 2xl (Inter)
+ * - priceCompact   Compact price display — xl (Inter)
+ * - priceMini      Small inline price — base (Inter)
  */
 
 const headingVariants = {
@@ -46,11 +46,11 @@ const headingVariants = {
   cardCompact: "font-heading font-normal text-xl tracking-tight leading-tight",
   question:
     "font-heading font-normal text-2xl md:text-3xl tracking-tight leading-tight",
-  item: "font-heading font-normal text-xl md:text-2xl tracking-tight",
-  itemCompact: "font-heading font-normal text-xl md:text-2xl tracking-tight",
-  price: "font-heading font-normal text-xl md:text-2xl tracking-tight",
-  priceCompact: "font-heading font-normal text-xl md:text-2xl tracking-tight",
-  priceMini: "font-heading font-normal text-base tracking-tight",
+  item: "font-body font-semibold text-xl md:text-2xl tracking-tight",
+  itemCompact: "font-body font-semibold text-lg md:text-xl tracking-tight",
+  price: "font-body font-bold text-xl md:text-2xl tracking-tight",
+  priceCompact: "font-body font-bold text-xl tracking-tight",
+  priceMini: "font-body font-semibold text-base tracking-tight",
 } as const;
 
 type HeadingVariant = keyof typeof headingVariants;

@@ -20,12 +20,12 @@ interface CheckoutPriceBreakdownPropsI {
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between">
-      <Span variant="micro" className="text-(--color-stamp-taupe)">
+      <Span variant="label" className="text-(--color-stamp-chocolate)">
         {label}
       </Span>
       <Span
         unstyled
-        className="text-2xl font-bold tabular-nums text-(--color-stamp-chocolate)"
+        className="font-body text-base font-bold tabular-nums text-(--color-stamp-chocolate)"
       >
         {value}
       </Span>
@@ -45,12 +45,12 @@ export function CheckoutPriceBreakdown({
       <Row label={t("subtotal")} value={formatPrice(subtotal)} />
 
       <div className="flex items-center justify-between">
-        <Span variant="micro" className="text-(--color-stamp-taupe)">
+        <Span variant="label" className="text-(--color-stamp-chocolate)">
           {t("shipping")}
         </Span>
         <Span
           unstyled
-          className={`text-2xl font-bold tabular-nums ${
+          className={`font-body text-base font-bold tabular-nums ${
             shipping === 0
               ? "uppercase tracking-[0.15em] text-(--color-stamp-success)"
               : "text-(--color-stamp-chocolate)"
@@ -62,12 +62,12 @@ export function CheckoutPriceBreakdown({
 
       {discount > 0 && (
         <div className="flex items-center justify-between">
-          <Span variant="micro" className="text-(--color-stamp-taupe)">
+          <Span variant="label" className="text-(--color-stamp-chocolate)">
             {t("discount")}
           </Span>
           <Span
             unstyled
-            className="text-2xl font-bold tabular-nums text-(--color-stamp-success)"
+            className="font-body text-base font-bold tabular-nums text-(--color-stamp-success)"
           >
             −{formatPrice(discount)}
           </Span>
@@ -75,14 +75,10 @@ export function CheckoutPriceBreakdown({
       )}
 
       <div className="flex items-baseline justify-between border-t border-(--color-stamp-divider) pt-5">
-        <Span variant="sm" className="text-(--color-stamp-chocolate)">
+        <Span variant="sm" className="text-xl font-bold text-(--color-stamp-chocolate)">
           {t("total")}
         </Span>
-        <Heading
-          as="span"
-          unstyled
-          className="font-heading text-2xl md:text-3xl font-black uppercase tracking-tight text-(--color-stamp-gold)"
-        >
+        <Heading as="span" unstyled className="font-body text-2xl md:text-3xl font-bold text-(--color-stamp-gold)">
           {formatPrice(total)}
         </Heading>
       </div>

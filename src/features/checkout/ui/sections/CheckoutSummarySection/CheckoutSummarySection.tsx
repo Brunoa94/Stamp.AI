@@ -61,7 +61,7 @@ export function CheckoutSummarySection({
   const disablePayment = !isFormValid || total <= 0;
 
   return (
-    <div className="sticky top-8 border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 lg:p-10">
+    <div className="sticky top-32 border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 lg:p-10">
       <Heading
         as="h2"
         unstyled

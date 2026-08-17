@@ -5,7 +5,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-poppins);
+  --font-sans: var(--font-inter);
   --font-heading: var(--font-sanchez);
   --font-serif: var(--font-indie-flower);
   --color-purple: #9333ea;
@@ -169,7 +169,7 @@
   }
 
   .font-body {
-    font-family: var(--font-sanchez), var(--font-outfit), sans-serif;
+    font-family: var(--font-inter), var(--font-poppins), sans-serif;
     letter-spacing: -0.01em;
     font-weight: 400;
   }

@@ -50,8 +50,8 @@ export function CheckoutPromoCode({
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <Tag className="h-3.5 w-3.5 text-(--color-stamp-taupe)" aria-hidden="true" />
-        <Span variant="micro" className="text-(--color-stamp-taupe)">
+        <Tag className="h-4 w-4 text-(--color-stamp-chocolate)" aria-hidden="true" />
+        <Span variant="label" className="text-(--color-stamp-chocolate)">
           {t("label")}
         </Span>
       </div>
@@ -96,8 +96,8 @@ export function CheckoutPromoCode({
             type="button"
             onClick={handleApply}
             disabled={!inputValue.trim() || isApplying}
-            variant="outline"
-            className="rounded-none border-(--color-stamp-chocolate) text-xs font-bold uppercase tracking-[0.15em] px-4"
+            variant="primary"
+            className="h-12 px-6 text-base font-bold uppercase tracking-wide"
           >
             {isApplying ? t("applying") : t("apply")}
           </Button>

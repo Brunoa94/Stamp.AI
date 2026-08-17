@@ -24,7 +24,7 @@ const spanVariants = {
   default: "font-body text-sm font-semibold uppercase tracking-wide",
   micro: "font-body text-xs font-medium uppercase tracking-wide",
   label: "font-body text-sm font-bold uppercase tracking-[0.3em]",
-  meta: "font-body text-sm md:text-base font-bold uppercase tracking-[0.2em]",
+  meta: "font-body text-xs md:text-sm font-bold uppercase tracking-[0.2em]",
   badge: "font-body text-xs font-bold uppercase tracking-[0.15em]",
   value: "font-body text-sm md:text-base font-bold uppercase tracking-[0.15em]",
   metric: "font-(family-name:--font-bebas-neue) text-7xl md:text-8xl uppercase tracking-tighter",
