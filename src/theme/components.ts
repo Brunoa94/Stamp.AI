@@ -70,9 +70,9 @@ export const notFoundTheme = {
     "text-4xl md:text-6xl font-heading tracking-[0.25em] uppercase bg-linear-to-r from-[#7C3AED] via-[#4F46E5] to-[#06B6D4] bg-clip-text text-transparent",
   numberWrap: "relative inline-block mb-0",
   numberGlow:
-    "text-[180px] md:text-[240px] font-heading text-slate-900 leading-none block opacity-10 blur-xl absolute inset-0 select-none",
+    "text-8xl sm:text-[180px] md:text-[240px] font-heading text-slate-900 leading-none block opacity-10 blur-xl absolute inset-0 select-none",
   numberMain:
-    "text-[180px] md:text-[240px] font-heading text-slate-900 leading-none block glitch-text-404 relative z-10",
+    "text-8xl sm:text-[180px] md:text-[240px] font-heading text-slate-900 leading-none block glitch-text-404 relative z-10",
 } as const;
 
 // =============================================================================

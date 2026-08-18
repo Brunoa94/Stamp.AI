@@ -58,7 +58,7 @@ export type HeroBubblingProductType = {
 export const HERO_BUBBLING_PRODUCTS: HeroBubblingProductType[] = [
   // Row 1 - Bottom layer (appears first)
   { src: "/products-images/tote/tote-a-printed.png", alt: "Custom tote bag with AI design", size: "lg", startX: 12, delay: 0 },
-  { src: "/products-images/kid t-shirt/kid-t-shirt-b-printed.jpeg", alt: "Personalized children's tee", size: "lg", startX: 70, delay: 0 },
+  { src: "/products-images/kid t-shirt/kid-t-shirt-b-printed.png", alt: "Personalized children's tee", size: "lg", startX: 70, delay: 0 },
   { src: "/home/2-a.png", alt: "Custom hoodie design", size: "md", startX: 42, delay: 0 },
   // Row 2
   { src: "/products-images/tote/tote-b-printed.png", alt: "Personalized canvas tote", size: "md", startX: 28, delay: 100 },

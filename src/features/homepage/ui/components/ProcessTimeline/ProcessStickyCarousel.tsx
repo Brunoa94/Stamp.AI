@@ -11,6 +11,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { HOME_PROCESS_STEPS } from "../../../lib/constants/homepageContent";
@@ -59,6 +60,7 @@ const STEP_HEIGHT_VH = 100;
 
 export function ProcessStickyCarousel() {
   const t = useTranslations("home.process");
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [stepProgress, setStepProgress] = useState(0);
@@ -123,7 +125,7 @@ export function ProcessStickyCarousel() {
         />
 
         {/* Section header - stays at top */}
-        <div className="pt-24 pb-8 px-6 lg:px-12 xl:px-24">
+        <div className="pt-20 lg:pt-24 pb-4 lg:pb-8 px-6 lg:px-12 xl:px-24">
           <div className="mx-auto max-w-screen-2xl">
             <HomeSectionHeader
               title={t("title")}
@@ -134,7 +136,7 @@ export function ProcessStickyCarousel() {
         </div>
 
         {/* Content - centered in remaining space */}
-        <div className="flex-1 flex items-start mt-12">
+        <div className="flex-1 flex items-start mt-4 lg:mt-12">
           <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-30 max-w-8xl mx-auto px-6 md:px-12 lg:px-16">
             {/* Left side - Image with slide animation */}
             <div className="hidden lg:flex items-center relative w-72 xl:w-80 h-96 xl:h-105 mt-10">
@@ -204,9 +206,9 @@ export function ProcessStickyCarousel() {
             </div>
 
             {/* Right side - Text content with crossfade */}
-            <div className="flex-1 max-w-2xl">
+            <div className="w-full flex-1 max-w-2xl">
               {/* Mobile image */}
-              <div className="lg:hidden mb-8 relative aspect-4/3 w-full max-w-sm mx-auto rounded-2xl overflow-hidden shadow-lg">
+              <div className="lg:hidden mb-6 relative aspect-video sm:aspect-4/3 w-full max-w-xs sm:max-w-sm mx-auto rounded-2xl overflow-hidden shadow-lg">
                 {currentImageData && (
                   <Image
                     src={currentImageData.src}
@@ -224,28 +226,30 @@ export function ProcessStickyCarousel() {
                 </div>
               </div>
 
-              {/* Text content - slide up/down with fade */}
-              <div className="relative h-96 lg:h-112 overflow-visible">
+              {/* Text content - slide up/down with fade (crossfade in place on mobile) */}
+              <div className="relative h-72 sm:h-80 lg:h-112 overflow-visible">
                 {HOME_PROCESS_STEPS.map((step, index) => {
                   const isActive = index === activeStepIndex;
 
                   // Position: center the active step, others offset by 280px each
                   // Adding centerOffset to position active step in the middle of container
-                  const centerOffset = 150; // roughly half of container height minus half of step height
-                  const baseOffset = (index - activeStepIndex) * 280;
-                  const scrollOffset = -stepProgress * 280;
+                  const centerOffset = isDesktop ? 150 : 0; // roughly half of container height minus half of step height
+                  const baseOffset = isDesktop
+                    ? (index - activeStepIndex) * 280
+                    : 0;
+                  const scrollOffset = isDesktop ? -stepProgress * 280 : 0;
                   const translateY = centerOffset + baseOffset + scrollOffset;
 
                   // Opacity based on distance from center
                   let opacity = 0;
                   if (isActive) {
-                    opacity = 1;
+                    opacity = isDesktop ? 1 : 1 - stepProgress;
                   } else if (index === activeStepIndex + 1) {
                     // Next step fades in
-                    opacity = 0.4 + stepProgress * 0.6;
+                    opacity = isDesktop ? 0.4 + stepProgress * 0.6 : stepProgress;
                   } else if (index === activeStepIndex - 1) {
                     // Previous step (already faded)
-                    opacity = 0.3;
+                    opacity = isDesktop ? 0.3 : 0;
                   }
 
                   // Only render nearby steps
@@ -277,7 +281,7 @@ export function ProcessStickyCarousel() {
 
                       <Paragraph
                         variant="loose"
-                        className="text-(--color-stamp-chocolate)/70 text-base lg:text-lg leading-relaxed"
+                        className="text-(--color-stamp-chocolate)/70 text-sm sm:text-base lg:text-lg leading-relaxed"
                       >
                         {t(`steps.${step.id}.description`)}
                       </Paragraph>

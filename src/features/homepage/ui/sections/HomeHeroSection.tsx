@@ -23,7 +23,7 @@ export function HomeHeroSection() {
   return (
     <section className="relative h-screen overflow-hidden bg-(--color-stamp-off-white)">
       {/* Title and CTA with transform showcases on sides */}
-      <div className="relative z-20 px-6 pt-24 pb-8 lg:px-12 xl:px-24">
+      <div className="relative z-20 px-6 pt-20 sm:pt-24 pb-8 lg:px-12 xl:px-24">
         <div className="mx-auto">
           <div className="flex items-end">
             {/* Left showcase - hidden on mobile */}
