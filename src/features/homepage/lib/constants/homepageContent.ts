@@ -115,13 +115,16 @@ export type HomeProcessStepType = {
   number: string;
 };
 
+// Mirrors the 8-step studio flow (see stamp/lib/constants/stampSteps.ts)
 export const HOME_PROCESS_STEPS: HomeProcessStepType[] = [
-  { id: "step-studio", number: "01" },
-  { id: "step-synthesis", number: "02" },
-  { id: "step-material", number: "03" },
-  { id: "step-production", number: "04" },
-  { id: "step-quality", number: "05" },
-  { id: "step-delivery", number: "06" },
+  { id: "step-upload", number: "01" },
+  { id: "step-describe", number: "02" },
+  { id: "step-generate", number: "03" },
+  { id: "step-results", number: "04" },
+  { id: "step-product", number: "05" },
+  { id: "step-customize", number: "06" },
+  { id: "step-create", number: "07" },
+  { id: "step-checkout", number: "08" },
 ];
 
 // Alternating color styles for process step cards

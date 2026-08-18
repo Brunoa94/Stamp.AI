@@ -31,30 +31,39 @@
       "accent": "process",
       "label": "How it works",
       "footer": "Simple, from idea to doorstep.",
+      "stepCounter": "Step {current} of {total}",
       "steps": {
-        "step-studio": {
-          "title": "Studio",
-          "description": "Describe your idea or upload your own photo, then pick a starting style from our presets."
+        "step-upload": {
+          "title": "Upload",
+          "description": "Start with a photo or a sketch you already have. No photo? Skip this and use words only."
         },
-        "step-synthesis": {
-          "title": "Design",
-          "description": "The AI turns it into clean, print-ready artwork — sharp lines, accurate color, high resolution."
+        "step-describe": {
+          "title": "Describe",
+          "description": "Type what you want in one or two simple sentences, like \"my dog as an astronaut\"."
         },
-        "step-material": {
-          "title": "Material",
-          "description": "Choose your blank: heavyweight tees, hoodies, totes and more, from 280 to 480 GSM."
+        "step-generate": {
+          "title": "Generate",
+          "description": "Press generate and wait a few seconds while the AI draws your design."
         },
-        "step-production": {
-          "title": "Production",
-          "description": "We print on demand with water-based, eco-friendly inks. Nothing is made until you order it."
+        "step-results": {
+          "title": "Results",
+          "description": "Look at the designs you get back and pick your favorite. Not happy? Change a word and try again."
         },
-        "step-quality": {
-          "title": "Quality",
-          "description": "Every order is checked by hand for print quality, color and finish before it ships."
+        "step-product": {
+          "title": "Product",
+          "description": "Pick what to print it on: a tee, hoodie, mug, canvas or tote bag."
         },
-        "step-delivery": {
-          "title": "Delivery",
-          "description": "Carbon-neutral shipping with tracking. Most orders arrive in 5 to 7 business days."
+        "step-customize": {
+          "title": "Customize",
+          "description": "Choose your size and color, and move the design to where you want it."
+        },
+        "step-create": {
+          "title": "Preview",
+          "description": "See your design on the real product and check that everything looks right."
+        },
+        "step-checkout": {
+          "title": "Checkout",
+          "description": "Add it to your cart and pay. We print your piece and ship it to your door."
         }
       }
     },

@@ -110,6 +110,22 @@ export function ProcessStickyCarousel() {
   const currentStep = HOME_PROCESS_STEPS[activeStepIndex];
   const currentImageData = PROCESS_STEP_IMAGES[currentStep?.id];
 
+  // Keep the step steady while it's read: only crossfade/slide during the
+  // last 30% of each step's scroll range.
+  const fadeProgress = Math.max(0, (stepProgress - 0.7) / 0.3);
+
+  // Jump to the middle of a step's scroll range (used by the desktop rail)
+  const scrollToStep = (index: number) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY;
+    const scrollableDistance = el.offsetHeight - window.innerHeight;
+    window.scrollTo({
+      top: top + ((index + 0.5) / totalSteps) * scrollableDistance,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <div
       ref={containerRef}
@@ -118,11 +134,13 @@ export function ProcessStickyCarousel() {
     >
       {/* Sticky container */}
       <div className="sticky top-0 h-screen flex flex-col">
-        {/* Sticky stepper at bottom */}
-        <ProcessStepper
-          activeStepIndex={activeStepIndex}
-          totalSteps={totalSteps}
-        />
+        {/* Sticky stepper at bottom - mobile only (desktop has the side rail) */}
+        <div className="lg:hidden">
+          <ProcessStepper
+            activeStepIndex={activeStepIndex}
+            totalSteps={totalSteps}
+          />
+        </div>
 
         {/* Section header - stays at top */}
         <div className="pt-20 lg:pt-24 pb-4 lg:pb-8 px-6 lg:px-12 xl:px-24">
@@ -137,7 +155,55 @@ export function ProcessStickyCarousel() {
 
         {/* Content - centered in remaining space */}
         <div className="flex-1 flex items-start mt-4 lg:mt-12">
-          <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-30 max-w-8xl mx-auto px-6 md:px-12 lg:px-16">
+          <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-12 xl:gap-20 max-w-8xl mx-auto px-6 md:px-12 lg:px-16">
+            {/* Desktop step rail - overview of all steps, click to jump */}
+            <nav
+              aria-label={t("label")}
+              className="hidden lg:flex flex-col gap-1 shrink-0 self-center w-44"
+            >
+              {HOME_PROCESS_STEPS.map((step, index) => {
+                const isActive = index === activeStepIndex;
+                const isCompleted = index < activeStepIndex;
+
+                return (
+                  <button
+                    key={step.id}
+                    type="button"
+                    onClick={() => scrollToStep(index)}
+                    aria-current={isActive ? "step" : undefined}
+                    className={`
+                      group flex items-baseline gap-3 border-l-2 px-3 py-1.5 text-left transition-all duration-300
+                      ${isActive
+                        ? "border-(--color-stamp-gold)"
+                        : isCompleted
+                          ? "border-(--color-stamp-gold)/40 hover:border-(--color-stamp-gold)"
+                          : "border-(--color-stamp-chocolate)/10 hover:border-(--color-stamp-chocolate)/30"
+                      }
+                    `}
+                  >
+                    <span
+                      className={`text-[10px] font-bold tracking-[0.15em] transition-colors duration-300 ${
+                        isActive || isCompleted
+                          ? "text-(--color-stamp-gold)"
+                          : "text-(--color-stamp-chocolate)/40"
+                      }`}
+                    >
+                      {step.number}
+                    </span>
+                    <span
+                      className={`text-xs uppercase tracking-[0.15em] transition-colors duration-300 ${
+                        isActive
+                          ? "font-bold text-(--color-stamp-chocolate)"
+                          : "font-medium text-(--color-stamp-chocolate)/50 group-hover:text-(--color-stamp-chocolate)/80"
+                      }`}
+                    >
+                      {t(`steps.${step.id}.title`)}
+                    </span>
+                  </button>
+                );
+              })}
+            </nav>
+
             {/* Left side - Image with slide animation */}
             <div className="hidden lg:flex items-center relative w-72 xl:w-80 h-96 xl:h-105 mt-10">
               {HOME_PROCESS_STEPS.map((step, index) => {
@@ -158,8 +224,8 @@ export function ProcessStickyCarousel() {
                   const distanceFromActive = index - activeStepIndex;
                   if (distanceFromActive === 1) {
                     // Next image slides up from below
-                    translateY = 80 * (1 - stepProgress);
-                    opacity = stepProgress;
+                    translateY = 80 * (1 - fadeProgress);
+                    opacity = fadeProgress;
                     zIndex = 1;
                   } else {
                     translateY = 80;
@@ -168,8 +234,8 @@ export function ProcessStickyCarousel() {
                   }
                 } else if (isActive) {
                   // Current image slides up and fades out
-                  translateY = -80 * stepProgress;
-                  opacity = 1 - stepProgress;
+                  translateY = -80 * fadeProgress;
+                  opacity = 1 - fadeProgress;
                   zIndex = 2;
                 }
 
@@ -237,19 +303,21 @@ export function ProcessStickyCarousel() {
                   const baseOffset = isDesktop
                     ? (index - activeStepIndex) * 280
                     : 0;
-                  const scrollOffset = isDesktop ? -stepProgress * 280 : 0;
+                  const scrollOffset = isDesktop ? -fadeProgress * 280 : 0;
                   const translateY = centerOffset + baseOffset + scrollOffset;
 
                   // Opacity based on distance from center
                   let opacity = 0;
                   if (isActive) {
-                    opacity = isDesktop ? 1 : 1 - stepProgress;
+                    opacity = isDesktop ? 1 : 1 - fadeProgress;
                   } else if (index === activeStepIndex + 1) {
                     // Next step fades in
-                    opacity = isDesktop ? 0.4 + stepProgress * 0.6 : stepProgress;
+                    opacity = isDesktop
+                      ? 0.3 + fadeProgress * 0.7
+                      : fadeProgress;
                   } else if (index === activeStepIndex - 1) {
                     // Previous step (already faded)
-                    opacity = isDesktop ? 0.3 : 0;
+                    opacity = isDesktop ? 0.15 : 0;
                   }
 
                   // Only render nearby steps
@@ -268,7 +336,10 @@ export function ProcessStickyCarousel() {
                       }}
                     >
                       <span className="inline-block px-3 py-1 mb-4 text-xs font-bold uppercase tracking-widest bg-(--color-stamp-gold) text-(--color-stamp-cream) rounded-full shadow-sm">
-                        Step {step.number}
+                        {t("stepCounter", {
+                          current: step.number,
+                          total: String(totalSteps).padStart(2, "0"),
+                        })}
                       </span>
 
                       <Heading
