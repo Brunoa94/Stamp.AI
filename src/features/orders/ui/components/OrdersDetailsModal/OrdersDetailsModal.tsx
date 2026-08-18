@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { ShoppingBag, X } from "lucide-react";
 import { formatOrderDate } from "../../../lib/utils/formatOrderDate";
 import { formatPrice } from "../../../lib/utils/formatPrice";
+import { Anchor } from "@/features/ui/anchor";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
@@ -155,14 +156,13 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
                 <Paragraph variant="xs" className="mt-2 text-(--color-stamp-taupe)">
                   {t("trackingNumber")}:{" "}
                   {order.tracking_url ? (
-                    <a
+                    <Anchor
                       href={order.tracking_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-bold text-(--color-stamp-gold) underline underline-offset-2"
+                      variant="bold"
+                      className="text-(--color-stamp-gold)"
                     >
                       {order.tracking_number}
-                    </a>
+                    </Anchor>
                   ) : (
                     <Span variant="value" className="text-(--color-stamp-chocolate)">
                       {order.tracking_number}
