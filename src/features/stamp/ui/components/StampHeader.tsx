@@ -8,7 +8,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Login } from "@/features/auth/login/Login";
 import { useUser, useLogout } from "@/queries/authQueries";
-import { ShoppingCart, Menu, X, User, LogOut, Package } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useScrolled } from "@/hooks/useScrolled";
 
 /**
@@ -51,7 +51,7 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
   };
 
   const linkClass =
-    "text-xs font-semibold uppercase tracking-[0.15em] text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-colors";
+    "font-heading text-base font-normal uppercase tracking-[0.15em] text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-colors";
 
   return (
     <>
@@ -95,26 +95,17 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
         >
           {user && (
             <>
-              <Link
-                href="/orders"
-                className={`${linkClass} flex items-center gap-2`}
-              >
-                <Package className="w-3.5 h-3.5" />
+              <Link href="/orders" className={linkClass}>
                 {t("orders")}
               </Link>
-              <Link
-                href="/cart"
-                className={`${linkClass} flex items-center gap-2`}
-              >
-                <ShoppingCart className="w-3.5 h-3.5" />
+              <Link href="/cart" className={linkClass}>
                 {t("cart")}
               </Link>
               <Link
                 href="/profile"
-                className={`${linkClass} flex items-center gap-2`}
+                className={linkClass}
                 aria-label={t("profileAria")}
               >
-                <User className="w-3.5 h-3.5" />
                 {t("profile")}
               </Link>
             </>
@@ -123,13 +114,12 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
           {user ? (
             <Button
               variant="ghost"
-              size="icon-sm"
               onClick={handleLogout}
               disabled={logoutMutation.isPending}
-              className="text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) hover:bg-transparent transition-colors"
+              className={`${linkClass} hover:bg-transparent`}
               aria-label={t("logoutAria")}
             >
-              <LogOut className="w-4 h-4" />
+              {t("logout")}
             </Button>
           ) : (
             <Login className={linkClass}>{t("login")}</Login>
@@ -177,26 +167,23 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
               <Link
                 href="/orders"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`${linkClass} py-3 flex items-center gap-2`}
+                className={`${linkClass} py-3`}
               >
-                <Package className="w-3.5 h-3.5" />
                 {t("orders")}
               </Link>
               <Link
                 href="/cart"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`${linkClass} py-3 flex items-center gap-2`}
+                className={`${linkClass} py-3`}
               >
-                <ShoppingCart className="w-3.5 h-3.5" />
                 {t("cart")}
               </Link>
               <Link
                 href="/profile"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`${linkClass} py-3 flex items-center gap-2`}
+                className={`${linkClass} py-3`}
                 aria-label={t("profileAria")}
               >
-                <User className="w-3.5 h-3.5" />
                 {t("profile")}
               </Link>
             </>
@@ -207,10 +194,10 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
               variant="ghost"
               onClick={handleLogout}
               disabled={logoutMutation.isPending}
-              className="justify-start text-xs font-semibold uppercase tracking-[0.15em] text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) hover:bg-transparent transition-colors h-auto p-0 py-3 rounded-none flex items-center gap-2"
+              className="justify-start font-heading text-base font-normal uppercase tracking-[0.15em] text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) hover:bg-transparent transition-colors h-auto p-0 py-3 rounded-none"
               aria-label={t("logoutAria")}
             >
-              <LogOut className="w-3.5 h-3.5" />
+              {t("logout")}
             </Button>
           ) : (
             <Login className={`${linkClass} py-3 text-left`}>

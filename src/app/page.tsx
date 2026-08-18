@@ -49,28 +49,36 @@ export default async function Home() {
 
   const howToSteps = [
     {
-      name: tProcess("step-studio.title"),
-      text: tProcess("step-studio.description"),
+      name: tProcess("step-upload.title"),
+      text: tProcess("step-upload.description"),
     },
     {
-      name: tProcess("step-synthesis.title"),
-      text: tProcess("step-synthesis.description"),
+      name: tProcess("step-describe.title"),
+      text: tProcess("step-describe.description"),
     },
     {
-      name: tProcess("step-material.title"),
-      text: tProcess("step-material.description"),
+      name: tProcess("step-generate.title"),
+      text: tProcess("step-generate.description"),
     },
     {
-      name: tProcess("step-production.title"),
-      text: tProcess("step-production.description"),
+      name: tProcess("step-results.title"),
+      text: tProcess("step-results.description"),
     },
     {
-      name: tProcess("step-quality.title"),
-      text: tProcess("step-quality.description"),
+      name: tProcess("step-product.title"),
+      text: tProcess("step-product.description"),
     },
     {
-      name: tProcess("step-delivery.title"),
-      text: tProcess("step-delivery.description"),
+      name: tProcess("step-customize.title"),
+      text: tProcess("step-customize.description"),
+    },
+    {
+      name: tProcess("step-create.title"),
+      text: tProcess("step-create.description"),
+    },
+    {
+      name: tProcess("step-checkout.title"),
+      text: tProcess("step-checkout.description"),
     },
   ];
 

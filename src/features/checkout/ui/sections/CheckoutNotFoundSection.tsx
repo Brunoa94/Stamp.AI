@@ -16,7 +16,7 @@ export function CheckoutNotFoundSection() {
   const t = useTranslations("checkout.notFound");
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-(--color-stamp-off-white) px-6 font-heading text-(--color-stamp-chocolate)">
+    <div className="flex min-h-screen items-center justify-center bg-(--color-stamp-off-white) px-6 text-(--color-stamp-chocolate)">
       <div
         role="alert"
         className="max-w-md border border-(--color-stamp-divider) bg-(--color-stamp-white) p-12 text-center"

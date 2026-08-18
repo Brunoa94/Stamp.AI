@@ -44,7 +44,7 @@ export function HomeProductCard({ product, index }: HomeProductCardPropsI) {
         transition: `opacity 0.6s ease-out ${staggerDelay}ms, transform 0.6s ease-out ${staggerDelay}ms`,
       }}
     >
-      <div className="relative mb-3 sm:mb-5 aspect-3/4 overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all duration-500 group-hover:-translate-y-1 group-hover:border-(--color-stamp-gold) group-hover:shadow-(--shadow-stamp-card-hover)">
+      <div className="relative mb-3 sm:mb-5 aspect-square sm:aspect-3/4 overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all duration-500 group-hover:-translate-y-1 group-hover:border-(--color-stamp-gold) group-hover:shadow-(--shadow-stamp-card-hover)">
         {product.imageUrl ? (
           <Image
             src={product.imageUrl}

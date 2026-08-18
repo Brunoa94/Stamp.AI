@@ -15,6 +15,10 @@ import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { HeroAnimatedTitle } from "./HeroAnimatedTitle";
+import { PencilUnderline } from "./PencilUnderline";
+import { HeroSecurityBadge } from "@/features/ui/trust/HeroSecurityBadge";
+import { OrdersFulfilledCounter } from "@/features/ui/trust/OrdersFulfilledCounter";
+import { TrustpilotWidget } from "@/features/ui/trust/TrustpilotWidget";
 
 export function HeroContent() {
   const t = useTranslations("home.hero");
@@ -31,9 +35,10 @@ export function HeroContent() {
             accent: (chunks) => (
               <Span
                 variant="serif"
-                className="text-5xl text-(--color-stamp-taupe) sm:text-6xl md:text-7xl lg:text-8xl"
+                className="relative inline-block text-5xl text-(--color-stamp-taupe) sm:text-6xl md:text-7xl lg:text-8xl"
               >
                 {chunks}
+                <PencilUnderline className="text-(--color-stamp-gold)" />
               </Span>
             ),
           })}
@@ -42,7 +47,7 @@ export function HeroContent() {
 
       <Paragraph
         variant="heroTagline"
-        className="mx-auto mb-8  text-(--color-stamp-chocolate)/80"
+        className="mx-auto mb-6 sm:mb-8 text-(--color-stamp-chocolate)/80"
       >
         {t("tagline")}
       </Paragraph>
@@ -71,7 +76,7 @@ export function HeroContent() {
       <Span
         as="p"
         variant="serif"
-        className="mt-12 text-center text-2xl text-(--color-stamp-taupe) sm:text-3xl lg:text-4xl"
+        className="mt-6 sm:mt-12 text-center text-2xl text-(--color-stamp-taupe) sm:text-3xl lg:text-4xl"
       >
         {t.rich("freeCredits", {
           signUp: (chunks) => (
@@ -87,6 +92,13 @@ export function HeroContent() {
           ),
         })}
       </Span>
+
+      {/* Trust signals - above fold */}
+      <div className="mt-5 sm:mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-4">
+        <HeroSecurityBadge />
+        <OrdersFulfilledCounter variant="default" count={10000} />
+        <TrustpilotWidget variant="compact" />
+      </div>
     </div>
   );
 }

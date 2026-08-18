@@ -23,19 +23,16 @@ const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
   const t = useTranslations("checkout.paymentError");
   const isPostPaymentError = details?.isPostPaymentError ?? false;
 
-  const reasonMessage =
-    details?.reasonMessage || t("reasonMessageFallback");
+  const reasonMessage = details?.reasonMessage || t("reasonMessageFallback");
 
-  const title = isPostPaymentError
-    ? t("titlePostPayment")
-    : t("titleDefault");
+  const title = isPostPaymentError ? t("titlePostPayment") : t("titleDefault");
 
   const subtitle = isPostPaymentError
     ? t("subtitlePostPayment")
     : t("subtitleDefault");
 
   return (
-    <div className="min-h-screen flex justify-center pt-32 lg:pt-40 px-6 bg-(--color-stamp-cream)">
+    <div className="min-h-screen flex justify-center pt-20 px-6 bg-(--color-stamp-cream)">
       <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
         <section
           className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"

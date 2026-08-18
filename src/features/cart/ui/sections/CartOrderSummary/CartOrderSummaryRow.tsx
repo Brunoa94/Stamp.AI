@@ -16,12 +16,12 @@ interface CartOrderSummaryRowPropsI {
 export function CartOrderSummaryRow({
   label,
   value,
-  valueClassName = "text-sm font-bold tabular-nums",
+  valueClassName = "font-body text-base font-bold tabular-nums",
 }: CartOrderSummaryRowPropsI) {
   return (
     <div className="flex items-center justify-between">
       <dt>
-        <Span variant="micro" className="text-(--color-stamp-taupe)">
+        <Span variant="label" className="text-(--color-stamp-chocolate)">
           {label}
         </Span>
       </dt>

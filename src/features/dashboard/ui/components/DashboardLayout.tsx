@@ -15,7 +15,7 @@ interface DashboardLayoutPropsI extends PropsWithChildren {
 
 export function DashboardLayout({ header, children }: DashboardLayoutPropsI) {
   return (
-    <div className="min-h-screen bg-(--color-stamp-off-white) font-heading text-(--color-stamp-chocolate) pt-24">
+    <div className="min-h-screen bg-(--color-stamp-off-white) text-(--color-stamp-chocolate) pt-24">
       <div className="px-6 pb-24 pt-12 lg:px-12 xl:px-24">
         <PageContainer>
           {header}

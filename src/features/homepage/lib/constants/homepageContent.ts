@@ -58,7 +58,7 @@ export type HeroBubblingProductType = {
 export const HERO_BUBBLING_PRODUCTS: HeroBubblingProductType[] = [
   // Row 1 - Bottom layer (appears first)
   { src: "/products-images/tote/tote-a-printed.png", alt: "Custom tote bag with AI design", size: "lg", startX: 12, delay: 0 },
-  { src: "/products-images/kid t-shirt/kid-t-shirt-b-printed.jpeg", alt: "Personalized children's tee", size: "lg", startX: 70, delay: 0 },
+  { src: "/products-images/kid t-shirt/kid-t-shirt-b-printed.png", alt: "Personalized children's tee", size: "lg", startX: 70, delay: 0 },
   { src: "/home/2-a.png", alt: "Custom hoodie design", size: "md", startX: 42, delay: 0 },
   // Row 2
   { src: "/products-images/tote/tote-b-printed.png", alt: "Personalized canvas tote", size: "md", startX: 28, delay: 100 },
@@ -115,13 +115,16 @@ export type HomeProcessStepType = {
   number: string;
 };
 
+// Mirrors the 8-step studio flow (see stamp/lib/constants/stampSteps.ts)
 export const HOME_PROCESS_STEPS: HomeProcessStepType[] = [
-  { id: "step-studio", number: "01" },
-  { id: "step-synthesis", number: "02" },
-  { id: "step-material", number: "03" },
-  { id: "step-production", number: "04" },
-  { id: "step-quality", number: "05" },
-  { id: "step-delivery", number: "06" },
+  { id: "step-upload", number: "01" },
+  { id: "step-describe", number: "02" },
+  { id: "step-generate", number: "03" },
+  { id: "step-results", number: "04" },
+  { id: "step-product", number: "05" },
+  { id: "step-customize", number: "06" },
+  { id: "step-create", number: "07" },
+  { id: "step-checkout", number: "08" },
 ];
 
 // Alternating color styles for process step cards

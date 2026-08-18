@@ -19,6 +19,7 @@ import { CheckoutPromoCode } from "./CheckoutPromoCode";
 import { CheckoutPriceBreakdown } from "./CheckoutPriceBreakdown";
 import { CheckoutStripeButton } from "./CheckoutStripeButton";
 import { CheckoutPayPalButton } from "./CheckoutPayPalButton";
+import { VerifiedSecureBadge } from "@/features/ui/trust/VerifiedSecureBadge";
 import type { CartWithItems } from "@/types/cart";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 
@@ -61,7 +62,7 @@ export function CheckoutSummarySection({
   const disablePayment = !isFormValid || total <= 0;
 
   return (
-    <div className="sticky top-8 border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 lg:p-10">
+    <div className="sticky top-32 border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 lg:p-10">
       <Heading
         as="h2"
         unstyled
@@ -114,6 +115,9 @@ export function CheckoutSummarySection({
             disabled={disablePayment}
           />
         )}
+
+        {/* Security verification badge */}
+        <VerifiedSecureBadge variant="compact" className="mt-4" />
       </div>
     </div>
   );

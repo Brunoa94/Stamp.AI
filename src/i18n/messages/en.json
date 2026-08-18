@@ -8,11 +8,11 @@
       "freeCredits": "<signUp>Sign up</signUp> and get 5 free edits per day",
       "productBadge": "Essential_Wht / 320GSM",
       "scrollCue": "Scroll to Build",
-      "productImageAlt": "Heavyweight t-shirt with a custom AI-generated print"
+      "productImageAlt": "Heavyweight t-shirt with a custom print"
     },
     "meta": {
-      "title": "Custom AI T-Shirt & Apparel Design | Stamp AI",
-      "description": "Describe an idea, get a print-ready design in seconds, and put it on heavyweight clothes. No design skills needed — start for free today.",
+      "title": "Design & Order Custom T-Shirts and Apparel | Stamp AI",
+      "description": "Turn your idea into a print-ready design in seconds and put it on heavyweight, made-to-order clothes. No minimums, no design skills needed. Start free today.",
       "keywords": [
         "custom AI t-shirt design",
         "AI t-shirt generator",
@@ -31,30 +31,39 @@
       "accent": "process",
       "label": "How it works",
       "footer": "Simple, from idea to doorstep.",
+      "stepCounter": "Step {current} of {total}",
       "steps": {
-        "step-studio": {
-          "title": "Studio",
-          "description": "Describe your idea or upload your own photo, then pick a starting style from our presets."
+        "step-upload": {
+          "title": "Upload",
+          "description": "Start with a photo or a sketch you already have. No photo? Skip this and use words only."
         },
-        "step-synthesis": {
-          "title": "Design",
-          "description": "The AI turns it into clean, print-ready artwork — sharp lines, accurate color, high resolution."
+        "step-describe": {
+          "title": "Describe",
+          "description": "Type what you want in one or two simple sentences, like \"my dog as an astronaut\"."
         },
-        "step-material": {
-          "title": "Material",
-          "description": "Choose your blank: heavyweight tees, hoodies, totes and more, from 280 to 480 GSM."
+        "step-generate": {
+          "title": "Generate",
+          "description": "Press generate and give us a few seconds to draw up your design."
         },
-        "step-production": {
-          "title": "Production",
-          "description": "We print on demand with water-based, eco-friendly inks. Nothing is made until you order it."
+        "step-results": {
+          "title": "Results",
+          "description": "Look at the designs you get back and pick your favorite. Not happy? Change a word and try again."
         },
-        "step-quality": {
-          "title": "Quality",
-          "description": "Every order is checked by hand for print quality, color and finish before it ships."
+        "step-product": {
+          "title": "Product",
+          "description": "Pick what to print it on: a tee, hoodie, mug, canvas or tote bag."
         },
-        "step-delivery": {
-          "title": "Delivery",
-          "description": "Carbon-neutral shipping with tracking. Most orders arrive in 5 to 7 business days."
+        "step-customize": {
+          "title": "Customize",
+          "description": "Choose your size and color, and move the design to where you want it."
+        },
+        "step-create": {
+          "title": "Preview",
+          "description": "See your design on the real product and check that everything looks right."
+        },
+        "step-checkout": {
+          "title": "Checkout",
+          "description": "Add it to your cart and pay. We print your piece and ship it to your door."
         }
       }
     },
@@ -79,12 +88,12 @@
       "title": "Design for <accent>everyone</accent>",
       "quote": "Good design shouldn't need a design degree or a 500-unit minimum. Tell us what you want, and we'll help you make it — one piece at a time.",
       "quoteAttribution": "— Stamp AI Manifesto",
-      "intro": "We built Stamp AI to close the gap between a good idea and a good product. The AI handles the design work and we handle the printing and the blanks, so anyone can make clothes worth keeping.",
+      "intro": "We built Stamp AI to close the gap between a good idea and a good product. You bring the idea; we take care of the artwork, the printing and the blanks, so anyone can make clothes worth keeping.",
       "valuesToggle": "Our Values",
       "values": {
         "01": {
-          "title": "AI-Powered",
-          "description": "Describe what you want in plain words. The AI turns it into print-ready art — no software to learn."
+          "title": "Made Simple",
+          "description": "Describe what you want in plain words and get print-ready art back. No software to learn."
         },
         "02": {
           "title": "Built to Last",
@@ -102,7 +111,7 @@
     },
     "cta": {
       "heading": "Ready to stamp your <accent>vision</accent>?",
-      "lead": "Start with a prompt and see your design in seconds. No minimum order and no commitment — just make the thing you've been picturing.",
+      "lead": "Start with a few words and see your design in seconds. No minimum order and no commitment. Just make the thing you've been picturing.",
       "ctaPrimary": "Start Creating",
       "ctaSecondary": "Browse Catalog"
     },
@@ -142,8 +151,8 @@
       "stillHaveQuestions": "Still have questions?",
       "items": {
         "ai-synthesis": {
-          "question": "How does the AI turn my idea into a design?",
-          "answer": "You type a prompt, upload a sketch, or drop in a reference image, and the AI builds artwork made to print straight onto fabric. It handles the color, resolution, and detail so the print holds up on the piece. No design experience needed."
+          "question": "How does my idea become a design?",
+          "answer": "Type a few words, upload a sketch, or drop in a reference image, and our design studio turns it into artwork made to print straight onto fabric. Color, resolution and detail are handled for you, so the print holds up on the piece. No design experience needed."
         },
         "archival-quality": {
           "question": "What makes your fabrics last so long?",
@@ -173,7 +182,7 @@
     },
     "trustIndicators": {
       "items": {
-        "aiPowered": "AI Design",
+        "aiPowered": "Custom Design",
         "archivalQuality": "Premium Quality",
         "instantDelivery": "Fast Delivery",
         "fiveSevenDayDelivery": "5-7 Day Delivery",
@@ -181,7 +190,7 @@
         "carbonNeutral": "Carbon Neutral"
       },
       "subLabels": {
-        "generative": "Generative Logic",
+        "generative": "Design Studio",
         "heritage": "Built to Last",
         "logistics": "Global Logistics"
       }
@@ -226,14 +235,14 @@
       "blocks": {
         "design": {
           "eyebrow": "Create",
-          "title": "Describe it. The AI <accent>designs</accent> it.",
-          "body": "Type a prompt, upload a photo, or start from a sketch. The AI turns it into clean, print-ready artwork in seconds — sharp lines, accurate color, high resolution — in any style you can imagine.",
+          "title": "Describe it. <accent>We'll design it.</accent>",
+          "body": "Type a few words, upload a photo, or start from a rough sketch. Seconds later you'll have clean, print-ready artwork in whatever style you're picturing.",
           "cta": "Start creating",
-          "imageAlt": "Four AI-generated artworks of the same portrait in different styles"
+          "imageAlt": "The same portrait drawn in four different styles"
         },
         "quality": {
           "eyebrow": "Quality",
-          "title": "Heavyweight blanks, <accent>built</accent> to last.",
+          "title": "Heavyweight blanks, <accent>built to last.</accent>",
           "body": "We print on 280 to 480 GSM fabrics that are pre-shrunk and enzyme-washed, using water-based, eco-friendly inks. Your piece keeps its fit, color and print through years of wear and washing.",
           "cta": "See the essentials",
           "imageAlt": "Model wearing a heavyweight white t-shirt"
@@ -368,6 +377,7 @@
       "orders": "Orders",
       "cart": "Cart",
       "logoutAria": "Logout from your account",
+      "logout": "Logout",
       "login": "Login",
       "openMenu": "Open menu",
       "closeMenu": "Close menu",
@@ -1264,7 +1274,16 @@
       "delivery": "Delivery",
       "archiveClient": "Recipient",
       "archiveAddress": "Shipping address",
+      "orderInfo": "Order Information",
+      "orderDate": "Order Date",
+      "paymentMethod": "Payment",
+      "shippedDate": "Shipped",
+      "deliveredDate": "Delivered",
+      "trackingNumber": "Tracking",
       "valuation": "Summary",
+      "subtotal": "Subtotal",
+      "shippingCost": "Shipping",
+      "discount": "Discount",
       "total": "Total",
       "standard": "Standard",
       "invoice": {
@@ -1666,12 +1685,36 @@
       "title": "Your payment is safe",
       "body": "Payments run through Stripe and PayPal. We never see or store your card details.",
       "accept": "We accept",
-      "sslSecured": "256-bit SSL Secured",
-      "comingSoon": "Soon"
+      "sslSecured": "Secure Checkout",
+      "comingSoon": "Soon",
+      "securePayment": "Secure Payment",
+      "noCardStored": "Card details never stored",
+      "encryptedTransmission": "Encrypted connection"
     },
     "guarantee": {
       "title": "30-day guarantee",
       "body": "If the print, fabric, or fit isn't right, we'll replace it or refund you. Return shipping is on us."
+    },
+    "socialProof": {
+      "ordersFulfilled": "{count} orders fulfilled"
+    },
+    "reviews": {
+      "ariaLabel": "Rated {rating} out of {total} stars",
+      "reviewCount": "{count} reviews",
+      "basedOn": "Based on {count} reviews",
+      "verified": "Verified reviews"
+    },
+    "verification": {
+      "verified": "Verified",
+      "secure": "Secure",
+      "siteVerified": "Protected checkout",
+      "encryption": "Encrypted connection"
+    },
+    "reviewCta": {
+      "enjoyedExperience": "Enjoyed your experience?",
+      "leaveReview": "Leave a Review",
+      "rateUs": "Rate us on",
+      "poweredBy": "Powered by"
     }
   },
   "legal": {
@@ -2001,12 +2044,7 @@
       "meta": {
         "title": "Cookie Policy",
         "description": "Which cookies Stamp AI uses, what each one does, how long it lasts, and how to control or refuse them.",
-        "keywords": [
-          "cookie policy",
-          "cookies",
-          "tracking",
-          "consent"
-        ]
+        "keywords": ["cookie policy", "cookies", "tracking", "consent"]
       },
       "title": "Cookie",
       "accent": "policy",
@@ -2078,9 +2116,7 @@
         },
         "contact": {
           "heading": "9. Contact",
-          "body": [
-            "Questions about cookies can go to {privacyEmail}."
-          ]
+          "body": ["Questions about cookies can go to {privacyEmail}."]
         }
       }
     },
@@ -2179,9 +2215,7 @@
         },
         "your-role": {
           "heading": "11. What you can do",
-          "body": [
-            "The strongest account security depends partly on you:"
-          ],
+          "body": ["The strongest account security depends partly on you:"],
           "bullets": [
             "Use a long, unique password, or sign in with Google.",
             "Never reuse your Stamp AI password anywhere else.",
@@ -2442,13 +2476,7 @@
     "meta": {
       "title": "Frequently Asked Questions",
       "description": "Answers about designing with AI, ordering, credits, sizing, shipping times, returns and account management on Stamp AI.",
-      "keywords": [
-        "FAQ",
-        "help",
-        "questions",
-        "support",
-        "how it works"
-      ]
+      "keywords": ["FAQ", "help", "questions", "support", "how it works"]
     },
     "title": "Frequently asked",
     "accent": "questions",

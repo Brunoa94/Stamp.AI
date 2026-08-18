@@ -13,6 +13,7 @@ import { CheckoutSectionCard } from "../../components/CheckoutSectionCard";
 import { CheckoutPaymentMethods } from "./CheckoutPaymentMethods";
 import { CheckoutStripeCardForm } from "./CheckoutStripeCardForm";
 import { SecureCheckoutNotice } from "@/features/ui/trust/SecureCheckoutNotice";
+import { PaymentSecurityBadge } from "@/features/ui/trust/PaymentSecurityBadge";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 import type { PaymentMethodT } from "@/types/payment";
 
@@ -44,6 +45,9 @@ export function CheckoutPaymentSection({
         selectedMethod={selectedMethod}
         onMethodChange={handleMethodChange}
       />
+
+      {/* Security badge next to payment form */}
+      <PaymentSecurityBadge variant="inline" className="mt-4" />
 
       {selectedMethod === "stripe" && (
         <CheckoutStripeCardForm

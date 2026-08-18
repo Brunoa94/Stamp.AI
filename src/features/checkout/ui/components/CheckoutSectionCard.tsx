@@ -41,7 +41,7 @@ export function CheckoutSectionCard({
             {title}
           </Heading>
           {subtitle && (
-            <Span variant="micro" className="text-(--color-stamp-taupe)">
+            <Span variant="label" className="text-(--color-stamp-taupe)">
               {subtitle}
             </Span>
           )}
