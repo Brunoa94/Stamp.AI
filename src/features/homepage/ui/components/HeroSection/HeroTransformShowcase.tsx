@@ -59,7 +59,7 @@ export function HeroTransformShowcase({
 
   // Icon and badge config based on position
   const TopIcon = position === "left" ? Camera : Sparkles;
-  const topBadgeText = position === "left" ? "Upload" : "AI Magic";
+  const topBadgeText = position === "left" ? "Upload" : "Made to Order";
   const BottomIcon = position === "left" ? Sparkles : Truck;
   const bottomBadgeText = position === "left" ? "Your Design" : "Ready to Ship";
 

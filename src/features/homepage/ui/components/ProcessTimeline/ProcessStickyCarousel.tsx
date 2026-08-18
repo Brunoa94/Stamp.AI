@@ -51,7 +51,7 @@ export function ProcessStickyCarousel() {
 
         const overallProgress = Math.max(
           0,
-          Math.min(1, scrolledIntoSection / scrollableDistance)
+          Math.min(1, scrolledIntoSection / scrollableDistance),
         );
 
         const stepFloat = overallProgress * totalSteps;
@@ -82,11 +82,13 @@ export function ProcessStickyCarousel() {
     >
       {/* Sticky container */}
       <div className="sticky top-0 h-screen flex flex-col">
-        {/* Sticky stepper at bottom */}
-        <ProcessStepper
-          activeStepIndex={activeStepIndex}
-          totalSteps={totalSteps}
-        />
+        {/* Sticky stepper at bottom - mobile only (desktop has the side rail) */}
+        <div className="lg:hidden">
+          <ProcessStepper
+            activeStepIndex={activeStepIndex}
+            totalSteps={totalSteps}
+          />
+        </div>
 
         {/* Section header - stays at top */}
         <div className="pt-20 lg:pt-24 pb-4 lg:pb-8 px-6 lg:px-12 xl:px-24">
@@ -105,7 +107,11 @@ export function ProcessStickyCarousel() {
             {/* Left side - Desktop image with slide animation */}
             <div className="hidden lg:flex items-center relative w-72 xl:w-80 h-96 xl:h-105 mt-10">
               {HOME_PROCESS_STEPS.map((step, index) => {
-                const animation = computeDesktopImageAnimation(index, activeStepIndex, stepProgress);
+                const animation = computeDesktopImageAnimation(
+                  index,
+                  activeStepIndex,
+                  stepProgress,
+                );
                 const imageData = PROCESS_STEP_IMAGES[step.id];
 
                 return (
@@ -127,7 +133,11 @@ export function ProcessStickyCarousel() {
               {/* Mobile: Combined image and text with slide animations */}
               <div className="lg:hidden relative h-120 sm:h-130 overflow-visible">
                 {HOME_PROCESS_STEPS.map((step, index) => {
-                  const animation = computeMobileCardAnimation(index, activeStepIndex, stepProgress);
+                  const animation = computeMobileCardAnimation(
+                    index,
+                    activeStepIndex,
+                    stepProgress,
+                  );
                   if (!animation.isVisible) return null;
 
                   const imageData = PROCESS_STEP_IMAGES[step.id];
@@ -152,7 +162,11 @@ export function ProcessStickyCarousel() {
               {/* Desktop: Text content - slide up/down with fade */}
               <div className="hidden lg:block relative h-112 overflow-visible">
                 {HOME_PROCESS_STEPS.map((step, index) => {
-                  const animation = computeDesktopTextAnimation(index, activeStepIndex, stepProgress);
+                  const animation = computeDesktopTextAnimation(
+                    index,
+                    activeStepIndex,
+                    stepProgress,
+                  );
                   if (!animation.isVisible) return null;
 
                   return (
