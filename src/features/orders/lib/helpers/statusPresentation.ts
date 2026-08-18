@@ -77,3 +77,14 @@ export function getStatusFilterLabel(value: OrdersStatusFilterType): string {
   if (value === "all") return "All Statuses";
   return value.replaceAll("_", " ");
 }
+
+/**
+ * Get localized status label for display
+ */
+export function getStatusLabel(
+  status: string,
+  t: (key: string) => string
+): string {
+  const displayStatus = toDisplayStatus(status);
+  return t(displayStatus) || status;
+}

@@ -1,28 +1,11 @@
 import { useTranslations } from "next-intl";
-import { Check, Circle, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Span } from "@/features/ui/span";
 import { useOrderStatusHistory } from "@/queries/orderQueries";
-import type { OrderStatusHistoryT } from "@/types/order";
-import { toDisplayStatus, getStatusBadgeClass } from "../../../lib/helpers/statusPresentation";
+import { TimelineEntry } from "./TimelineEntry";
 
 interface PropsI {
   orderId: string;
-}
-
-function formatTimestamp(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-function getStatusLabel(status: string, t: (key: string) => string): string {
-  const displayStatus = toDisplayStatus(status);
-  return t(displayStatus) || status;
 }
 
 export function OrderStatusTimeline({ orderId }: PropsI) {
@@ -66,55 +49,5 @@ export function OrderStatusTimeline({ orderId }: PropsI) {
         </ul>
       </div>
     </section>
-  );
-}
-
-interface TimelineEntryPropsI {
-  entry: OrderStatusHistoryT;
-  isLast: boolean;
-  t: (key: string) => string;
-}
-
-function TimelineEntry({ entry, isLast, t }: TimelineEntryPropsI) {
-  const displayStatus = toDisplayStatus(entry.status);
-  const isTerminal = displayStatus === "delivered" || displayStatus === "cancelled";
-
-  return (
-    <li className="relative flex items-start gap-3">
-      {/* Status indicator */}
-      <div className="relative z-10 -ml-6 flex h-4 w-4 items-center justify-center">
-        {isTerminal ? (
-          <div
-            className={`flex h-4 w-4 items-center justify-center rounded-full ${
-              displayStatus === "delivered"
-                ? "bg-(--color-stamp-success)"
-                : "bg-(--color-stamp-error)"
-            }`}
-          >
-            <Check className="h-2.5 w-2.5 text-(--color-stamp-white)" />
-          </div>
-        ) : isLast ? (
-          <Circle className="h-4 w-4 fill-(--color-stamp-gold) text-(--color-stamp-gold)" />
-        ) : (
-          <div className="h-2 w-2 rounded-full bg-(--color-stamp-taupe)" />
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 pb-1">
-        <Span
-          variant="badge"
-          className={`inline-flex rounded-full px-2 py-0.5 ${getStatusBadgeClass(displayStatus)}`}
-        >
-          {getStatusLabel(entry.status, t)}
-        </Span>
-        <Span
-          variant="meta"
-          className="mt-1 block text-(--color-stamp-taupe)"
-        >
-          {formatTimestamp(entry.created_at)}
-        </Span>
-      </div>
-    </li>
   );
 }
