@@ -25,9 +25,9 @@ export function HomeHeroSection() {
       {/* Title and CTA with transform showcases on sides */}
       <div className="relative z-20 px-6 pt-20 sm:pt-24 pb-8 lg:px-12 xl:px-24">
         <div className="mx-auto">
-          <div className="flex items-end">
-            {/* Left showcase - hidden on mobile */}
-            <div className="hidden lg:block shrink-0 mb-0 ">
+          <div className="flex items-end justify-center">
+            {/* Left showcase - hidden below 1200px */}
+            <div className="hidden 3xl:block shrink-0 mb-0">
               <SectionReveal delayMs={200}>
                 <HeroTransformShowcase position="left" startIndex={0} />
               </SectionReveal>
@@ -38,8 +38,8 @@ export function HomeHeroSection() {
               <HeroContent />
             </SectionReveal>
 
-            {/* Right showcase - hidden on mobile */}
-            <div className="hidden lg:block shrink-0 mb-0 ">
+            {/* Right showcase - hidden below 1200px */}
+            <div className="hidden 3xl:block shrink-0 mb-0">
               <SectionReveal delayMs={400}>
                 <HeroTransformShowcase position="right" startIndex={2} />
               </SectionReveal>

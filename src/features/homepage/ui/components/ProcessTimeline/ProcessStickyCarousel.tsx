@@ -11,7 +11,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { HOME_PROCESS_STEPS } from "../../../lib/constants/homepageContent";
@@ -60,7 +59,6 @@ const STEP_HEIGHT_VH = 100;
 
 export function ProcessStickyCarousel() {
   const t = useTranslations("home.process");
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [stepProgress, setStepProgress] = useState(0);
@@ -106,9 +104,6 @@ export function ProcessStickyCarousel() {
   }, [totalSteps]);
 
   const totalHeight = `${totalSteps * STEP_HEIGHT_VH}vh`;
-
-  const currentStep = HOME_PROCESS_STEPS[activeStepIndex];
-  const currentImageData = PROCESS_STEP_IMAGES[currentStep?.id];
 
   return (
     <div
@@ -207,49 +202,118 @@ export function ProcessStickyCarousel() {
 
             {/* Right side - Text content with crossfade */}
             <div className="w-full flex-1 max-w-2xl">
-              {/* Mobile image */}
-              <div className="lg:hidden mb-6 relative aspect-video sm:aspect-4/3 w-full max-w-xs sm:max-w-sm mx-auto rounded-2xl overflow-hidden shadow-lg">
-                {currentImageData && (
-                  <Image
-                    src={currentImageData.src}
-                    alt={currentImageData.alt}
-                    fill
-                    sizes="(max-width: 640px) 90vw, 384px"
-                    className="object-cover"
-                    priority
-                  />
-                )}
-                <div className="absolute bottom-3 left-3 w-8 h-8 flex items-center justify-center bg-(--color-stamp-gold) rounded-full shadow-md">
-                  <span className="text-xs font-semibold text-(--color-stamp-cream)">
-                    {currentStep?.number}
-                  </span>
-                </div>
+              {/* Mobile: Combined image and text with slide animations - shows prev/next */}
+              <div className="lg:hidden relative h-120 sm:h-130 overflow-visible">
+                {HOME_PROCESS_STEPS.map((step, index) => {
+                  const isActive = index === activeStepIndex;
+                  const imageData = PROCESS_STEP_IMAGES[step.id];
+
+                  // Mobile slide animation similar to desktop
+                  // Center offset positions active step in the middle
+                  const stepHeight = 380; // Height of each step card (smaller for tighter spacing)
+                  const centerOffset = 30; // Push content down to center in viewport
+                  const baseOffset = (index - activeStepIndex) * stepHeight;
+                  const scrollOffset = -stepProgress * stepHeight;
+                  const translateY = centerOffset + baseOffset + scrollOffset;
+
+                  // Opacity: active is full, prev/next are dimmed
+                  let opacity = 0;
+                  if (isActive) {
+                    opacity = 1;
+                  } else if (index === activeStepIndex + 1) {
+                    // Next step fades in as we scroll
+                    opacity = 0.3 + stepProgress * 0.7;
+                  } else if (index === activeStepIndex - 1) {
+                    // Previous step fades out
+                    opacity = 0.3;
+                  }
+
+                  // Scale: active is full size, others are slightly smaller
+                  const scale = isActive ? 1 : 0.92;
+
+                  // Only render nearby steps (prev, current, next)
+                  if (Math.abs(index - activeStepIndex) > 1) {
+                    return null;
+                  }
+
+                  return (
+                    <div
+                      key={step.id}
+                      className="absolute inset-x-0 flex flex-col items-center"
+                      style={{
+                        transform: `translateY(${translateY}px) scale(${scale})`,
+                        opacity,
+                        pointerEvents: isActive ? "auto" : "none",
+                        transition: "transform 0.15s ease-out, opacity 0.15s ease-out",
+                      }}
+                    >
+                      {/* Mobile image with fade - bigger images */}
+                      <div className="mb-3 relative aspect-video w-full max-w-sm sm:max-w-md rounded-2xl overflow-hidden shadow-lg">
+                        {imageData && (
+                          <Image
+                            src={imageData.src}
+                            alt={imageData.alt}
+                            fill
+                            sizes="(max-width: 640px) 384px, 448px"
+                            className="object-cover"
+                            priority={index === 0}
+                          />
+                        )}
+                        <div className="absolute bottom-3 left-3 w-8 h-8 flex items-center justify-center bg-(--color-stamp-gold) rounded-full shadow-md">
+                          <span className="text-xs font-semibold text-(--color-stamp-cream)">
+                            {step.number}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Mobile text content - tighter spacing */}
+                      <div className="text-center px-4">
+                        <span className="inline-block px-3 py-1 mb-2 text-xs font-bold uppercase tracking-widest bg-(--color-stamp-gold) text-(--color-stamp-cream) rounded-full shadow-sm">
+                          Step {step.number}
+                        </span>
+
+                        <Heading
+                          as="h3"
+                          variant="section"
+                          className="mb-2 text-(--color-stamp-chocolate)"
+                        >
+                          {t(`steps.${step.id}.title`)}
+                        </Heading>
+
+                        <Paragraph
+                          variant="loose"
+                          className="text-(--color-stamp-chocolate)/70 text-sm sm:text-base leading-relaxed"
+                        >
+                          {t(`steps.${step.id}.description`)}
+                        </Paragraph>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
-              {/* Text content - slide up/down with fade (crossfade in place on mobile) */}
-              <div className="relative h-72 sm:h-80 lg:h-112 overflow-visible">
+              {/* Desktop: Text content - slide up/down with fade */}
+              <div className="hidden lg:block relative h-112 overflow-visible">
                 {HOME_PROCESS_STEPS.map((step, index) => {
                   const isActive = index === activeStepIndex;
 
                   // Position: center the active step, others offset by 280px each
                   // Adding centerOffset to position active step in the middle of container
-                  const centerOffset = isDesktop ? 150 : 0; // roughly half of container height minus half of step height
-                  const baseOffset = isDesktop
-                    ? (index - activeStepIndex) * 280
-                    : 0;
-                  const scrollOffset = isDesktop ? -stepProgress * 280 : 0;
+                  const centerOffset = 150; // roughly half of container height minus half of step height
+                  const baseOffset = (index - activeStepIndex) * 280;
+                  const scrollOffset = -stepProgress * 280;
                   const translateY = centerOffset + baseOffset + scrollOffset;
 
                   // Opacity based on distance from center
                   let opacity = 0;
                   if (isActive) {
-                    opacity = isDesktop ? 1 : 1 - stepProgress;
+                    opacity = 1;
                   } else if (index === activeStepIndex + 1) {
                     // Next step fades in
-                    opacity = isDesktop ? 0.4 + stepProgress * 0.6 : stepProgress;
+                    opacity = 0.4 + stepProgress * 0.6;
                   } else if (index === activeStepIndex - 1) {
                     // Previous step (already faded)
-                    opacity = isDesktop ? 0.3 : 0;
+                    opacity = 0.3;
                   }
 
                   // Only render nearby steps
