@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
+import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -244,6 +245,9 @@ serve(async (req) => {
 
     console.log("✅ Order status updated to cancelled");
     results.database_updated = true;
+
+    // Insert status history for cancellation
+    await insertOrderStatusHistory(order_id, "cancelled", "cancellation");
 
     // Step 3: Process refund if payment was successful
     // NOTE: We check payment_transactions directly instead of relying on orders.payment_method

@@ -1289,7 +1289,12 @@
       "invoice": {
         "preparing": "Preparing invoice…",
         "download": "Download invoice"
-      }
+      },
+      "trackingNumber": "Tracking number",
+      "trackShipment": "Track shipment"
+    },
+    "timeline": {
+      "title": "Order timeline"
     },
     "listItem": {
       "openDetails": "Open details for order {order}",
@@ -1304,7 +1309,8 @@
       "viewBlueprint": "View design",
       "trackProtocol": "Track order",
       "haltOrder": "Cancel order",
-      "reorder": "Reorder"
+      "reorder": "Reorder",
+      "trackShipment": "Track shipment"
     },
     "gridItem": {
       "openDetails": "Open details for order {order}",
@@ -1317,6 +1323,15 @@
       "track": "Track",
       "options": "Options",
       "reorder": "Reorder"
+    },
+    "statusBadge": {
+      "processing": "Processing",
+      "preparing": "Preparing",
+      "inProduction": "In production",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "hasIssues": "Needs attention"
     }
   },
   "checkout": {

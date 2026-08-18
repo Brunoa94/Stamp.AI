@@ -391,7 +391,7 @@ function StripeReturnContent() {
         } catch (pipelineError) {
           if (pipelineError instanceof StripePipelineTimeoutError) {
             if (createdOrderId) {
-              await markOrderFailed(createdOrderId, "fulfillment_failed");
+              await markOrderFailed(createdOrderId, "unsuccessful_confirmation");
             }
             await triggerRefund("Stripe checkout pipeline timed out");
           }
