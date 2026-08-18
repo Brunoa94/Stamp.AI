@@ -44,7 +44,7 @@ export function ProfileCard({
       )}
     >
       {/* Section Header */}
-      <div className="flex justify-between items-start mb-6 md:mb-8">
+      <div className="flex flex-col items-start gap-4 sm:flex-row sm:justify-between mb-6 md:mb-8">
         <div className="space-y-2">
           <Heading
             as="h2"
