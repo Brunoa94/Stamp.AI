@@ -10,57 +10,24 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { Heading } from "@/features/ui/heading";
-import { Paragraph } from "@/features/ui/paragraph";
 import { HOME_PROCESS_STEPS } from "../../../lib/constants/homepageContent";
 import { PROCESS_STEP_IMAGES } from "../../../lib/constants/processStepImages";
 import { HomeSectionHeader } from "../HomeSectionHeader";
-
-/**
- * ProcessStepper - Simple sticky bottom stepper with dots
- */
-function ProcessStepper({
-  activeStepIndex,
-  totalSteps,
-}: {
-  activeStepIndex: number;
-  totalSteps: number;
-}) {
-  return (
-    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-      <div className="flex items-center gap-2 px-4 py-2.5 bg-(--color-stamp-cream)/95 backdrop-blur-md rounded-full shadow-lg border border-(--color-stamp-chocolate)/10">
-        {Array.from({ length: totalSteps }).map((_, index) => {
-          const isActive = index === activeStepIndex;
-          const isCompleted = index < activeStepIndex;
-
-          return (
-            <div
-              key={index}
-              className={`
-                w-2.5 h-2.5 rounded-full transition-all duration-200
-                ${isActive
-                  ? "bg-(--color-stamp-gold) scale-125"
-                  : isCompleted
-                    ? "bg-(--color-stamp-gold)/60"
-                    : "bg-(--color-stamp-chocolate)/20"
-                }
-              `}
-            />
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+import { ProcessStepper } from "./ProcessStepper";
+import { ProcessDesktopImage } from "./ProcessDesktopImage";
+import { ProcessMobileCard } from "./ProcessMobileCard";
+import { ProcessDesktopText } from "./ProcessDesktopText";
+import {
+  computeDesktopImageAnimation,
+  computeMobileCardAnimation,
+  computeDesktopTextAnimation,
+} from "../../../lib/helpers/processAnimationHelpers";
 
 // Height per step in vh units (controls scroll speed per step)
 const STEP_HEIGHT_VH = 100;
 
 export function ProcessStickyCarousel() {
   const t = useTranslations("home.process");
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [stepProgress, setStepProgress] = useState(0);
@@ -107,25 +74,6 @@ export function ProcessStickyCarousel() {
 
   const totalHeight = `${totalSteps * STEP_HEIGHT_VH}vh`;
 
-  const currentStep = HOME_PROCESS_STEPS[activeStepIndex];
-  const currentImageData = PROCESS_STEP_IMAGES[currentStep?.id];
-
-  // Keep the step steady while it's read: only crossfade/slide during the
-  // last 30% of each step's scroll range.
-  const fadeProgress = Math.max(0, (stepProgress - 0.7) / 0.3);
-
-  // Jump to the middle of a step's scroll range (used by the desktop rail)
-  const scrollToStep = (index: number) => {
-    const el = containerRef.current;
-    if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY;
-    const scrollableDistance = el.offsetHeight - window.innerHeight;
-    window.scrollTo({
-      top: top + ((index + 0.5) / totalSteps) * scrollableDistance,
-      behavior: "smooth",
-    });
-  };
-
   return (
     <div
       ref={containerRef}
@@ -155,208 +103,82 @@ export function ProcessStickyCarousel() {
 
         {/* Content - centered in remaining space */}
         <div className="flex-1 flex items-start mt-4 lg:mt-12">
-          <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-12 xl:gap-20 max-w-8xl mx-auto px-6 md:px-12 lg:px-16">
-            {/* Desktop step rail - overview of all steps, click to jump */}
-            <nav
-              aria-label={t("label")}
-              className="hidden lg:flex flex-col gap-1 shrink-0 self-center w-44"
-            >
-              {HOME_PROCESS_STEPS.map((step, index) => {
-                const isActive = index === activeStepIndex;
-                const isCompleted = index < activeStepIndex;
-
-                return (
-                  <button
-                    key={step.id}
-                    type="button"
-                    onClick={() => scrollToStep(index)}
-                    aria-current={isActive ? "step" : undefined}
-                    className={`
-                      group flex items-baseline gap-3 border-l-2 px-3 py-1.5 text-left transition-all duration-300
-                      ${isActive
-                        ? "border-(--color-stamp-gold)"
-                        : isCompleted
-                          ? "border-(--color-stamp-gold)/40 hover:border-(--color-stamp-gold)"
-                          : "border-(--color-stamp-chocolate)/10 hover:border-(--color-stamp-chocolate)/30"
-                      }
-                    `}
-                  >
-                    <span
-                      className={`text-[10px] font-bold tracking-[0.15em] transition-colors duration-300 ${
-                        isActive || isCompleted
-                          ? "text-(--color-stamp-gold)"
-                          : "text-(--color-stamp-chocolate)/40"
-                      }`}
-                    >
-                      {step.number}
-                    </span>
-                    <span
-                      className={`text-xs uppercase tracking-[0.15em] transition-colors duration-300 ${
-                        isActive
-                          ? "font-bold text-(--color-stamp-chocolate)"
-                          : "font-medium text-(--color-stamp-chocolate)/50 group-hover:text-(--color-stamp-chocolate)/80"
-                      }`}
-                    >
-                      {t(`steps.${step.id}.title`)}
-                    </span>
-                  </button>
-                );
-              })}
-            </nav>
-
-            {/* Left side - Image with slide animation */}
+          <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-30 max-w-8xl mx-auto px-6 md:px-12 lg:px-16">
+            {/* Left side - Desktop image with slide animation */}
             <div className="hidden lg:flex items-center relative w-72 xl:w-80 h-96 xl:h-105 mt-10">
               {HOME_PROCESS_STEPS.map((step, index) => {
-                const isActive = index === activeStepIndex;
-                const isPast = index < activeStepIndex;
-                const isFuture = index > activeStepIndex;
+                const animation = computeDesktopImageAnimation(
+                  index,
+                  activeStepIndex,
+                  stepProgress,
+                );
                 const imageData = PROCESS_STEP_IMAGES[step.id];
 
-                let translateY = 0;
-                let opacity = 1;
-                let zIndex = 1;
-
-                if (isPast) {
-                  translateY = -80;
-                  opacity = 0;
-                  zIndex = 0;
-                } else if (isFuture) {
-                  const distanceFromActive = index - activeStepIndex;
-                  if (distanceFromActive === 1) {
-                    // Next image slides up from below
-                    translateY = 80 * (1 - fadeProgress);
-                    opacity = fadeProgress;
-                    zIndex = 1;
-                  } else {
-                    translateY = 80;
-                    opacity = 0;
-                    zIndex = 0;
-                  }
-                } else if (isActive) {
-                  // Current image slides up and fades out
-                  translateY = -80 * fadeProgress;
-                  opacity = 1 - fadeProgress;
-                  zIndex = 2;
-                }
-
                 return (
-                  <div
+                  <ProcessDesktopImage
                     key={step.id}
-                    className="absolute inset-0"
-                    style={{
-                      transform: `translateY(${translateY}px)`,
-                      opacity,
-                      zIndex,
-                    }}
-                  >
-                    <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-xl ring-2 ring-(--color-stamp-gold)/20">
-                      {imageData && (
-                        <Image
-                          src={imageData.src}
-                          alt={imageData.alt}
-                          fill
-                          sizes="400px"
-                          className="object-cover"
-                          priority={index === 0}
-                        />
-                      )}
-                      <div className="absolute bottom-4 left-4 w-10 h-10 flex items-center justify-center bg-(--color-stamp-gold) rounded-full shadow-lg">
-                        <span className="text-sm font-semibold text-(--color-stamp-cream)">
-                          {step.number}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                    step={step}
+                    imageData={imageData}
+                    translateY={animation.translateY}
+                    opacity={animation.opacity}
+                    zIndex={animation.zIndex}
+                    isPriority={index === 0}
+                  />
                 );
               })}
             </div>
 
             {/* Right side - Text content with crossfade */}
             <div className="w-full flex-1 max-w-2xl">
-              {/* Mobile image */}
-              <div className="lg:hidden mb-6 relative aspect-video sm:aspect-4/3 w-full max-w-xs sm:max-w-sm mx-auto rounded-2xl overflow-hidden shadow-lg">
-                {currentImageData && (
-                  <Image
-                    src={currentImageData.src}
-                    alt={currentImageData.alt}
-                    fill
-                    sizes="(max-width: 640px) 90vw, 384px"
-                    className="object-cover"
-                    priority
-                  />
-                )}
-                <div className="absolute bottom-3 left-3 w-8 h-8 flex items-center justify-center bg-(--color-stamp-gold) rounded-full shadow-md">
-                  <span className="text-xs font-semibold text-(--color-stamp-cream)">
-                    {currentStep?.number}
-                  </span>
-                </div>
-              </div>
-
-              {/* Text content - slide up/down with fade (crossfade in place on mobile) */}
-              <div className="relative h-72 sm:h-80 lg:h-112 overflow-visible">
+              {/* Mobile: Combined image and text with slide animations */}
+              <div className="lg:hidden relative h-120 sm:h-130 overflow-visible">
                 {HOME_PROCESS_STEPS.map((step, index) => {
-                  const isActive = index === activeStepIndex;
+                  const animation = computeMobileCardAnimation(
+                    index,
+                    activeStepIndex,
+                    stepProgress,
+                  );
+                  if (!animation.isVisible) return null;
 
-                  // Position: center the active step, others offset by 280px each
-                  // Adding centerOffset to position active step in the middle of container
-                  const centerOffset = isDesktop ? 150 : 0; // roughly half of container height minus half of step height
-                  const baseOffset = isDesktop
-                    ? (index - activeStepIndex) * 280
-                    : 0;
-                  const scrollOffset = isDesktop ? -fadeProgress * 280 : 0;
-                  const translateY = centerOffset + baseOffset + scrollOffset;
-
-                  // Opacity based on distance from center
-                  let opacity = 0;
-                  if (isActive) {
-                    opacity = isDesktop ? 1 : 1 - fadeProgress;
-                  } else if (index === activeStepIndex + 1) {
-                    // Next step fades in
-                    opacity = isDesktop
-                      ? 0.3 + fadeProgress * 0.7
-                      : fadeProgress;
-                  } else if (index === activeStepIndex - 1) {
-                    // Previous step (already faded)
-                    opacity = isDesktop ? 0.15 : 0;
-                  }
-
-                  // Only render nearby steps
-                  if (Math.abs(index - activeStepIndex) > 1) {
-                    return null;
-                  }
+                  const imageData = PROCESS_STEP_IMAGES[step.id];
 
                   return (
-                    <div
+                    <ProcessMobileCard
                       key={step.id}
-                      className="absolute inset-x-0"
-                      style={{
-                        transform: `translateY(${translateY}px)`,
-                        opacity,
-                        pointerEvents: isActive ? "auto" : "none",
-                      }}
-                    >
-                      <span className="inline-block px-3 py-1 mb-4 text-xs font-bold uppercase tracking-widest bg-(--color-stamp-gold) text-(--color-stamp-cream) rounded-full shadow-sm">
-                        {t("stepCounter", {
-                          current: step.number,
-                          total: String(totalSteps).padStart(2, "0"),
-                        })}
-                      </span>
+                      step={step}
+                      imageData={imageData}
+                      title={t(`steps.${step.id}.title`)}
+                      description={t(`steps.${step.id}.description`)}
+                      translateY={animation.translateY}
+                      opacity={animation.opacity}
+                      scale={animation.scale}
+                      isActive={animation.isActive}
+                      isPriority={index === 0}
+                    />
+                  );
+                })}
+              </div>
 
-                      <Heading
-                        as="h3"
-                        variant="section"
-                        className="mb-4 text-(--color-stamp-chocolate)"
-                      >
-                        {t(`steps.${step.id}.title`)}
-                      </Heading>
+              {/* Desktop: Text content - slide up/down with fade */}
+              <div className="hidden lg:block relative h-112 overflow-visible">
+                {HOME_PROCESS_STEPS.map((step, index) => {
+                  const animation = computeDesktopTextAnimation(
+                    index,
+                    activeStepIndex,
+                    stepProgress,
+                  );
+                  if (!animation.isVisible) return null;
 
-                      <Paragraph
-                        variant="loose"
-                        className="text-(--color-stamp-chocolate)/70 text-sm sm:text-base lg:text-lg leading-relaxed"
-                      >
-                        {t(`steps.${step.id}.description`)}
-                      </Paragraph>
-                    </div>
+                  return (
+                    <ProcessDesktopText
+                      key={step.id}
+                      step={step}
+                      title={t(`steps.${step.id}.title`)}
+                      description={t(`steps.${step.id}.description`)}
+                      translateY={animation.translateY}
+                      opacity={animation.opacity}
+                      isActive={animation.isActive}
+                    />
                   );
                 })}
               </div>
