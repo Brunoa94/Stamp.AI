@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
+import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts";
 import {
   REVIEW_STATUSES,
   mapPrintifyToOrderUpdate,
@@ -49,7 +50,8 @@ async function flagForReview(
 async function persistOrderUpdate(
   orderId: string,
   update: OrderSyncUpdateT | null,
-  nowIso: string
+  nowIso: string,
+  oldStatus?: string | null
 ): Promise<void> {
   const payload: Record<string, unknown> = {
     ...update,
@@ -64,6 +66,16 @@ async function persistOrderUpdate(
   if (result.error) {
     throw new Error(
       `Failed to update order ${orderId}: ${JSON.stringify(result.error)}`
+    );
+  }
+
+  // Insert status history if the status actually changed
+  if (update?.status && update.status !== oldStatus) {
+    await insertOrderStatusHistory(
+      orderId,
+      update.status,
+      "printify_sync",
+      update.printify_status
     );
   }
 }
@@ -142,7 +154,7 @@ async function syncOrder(
     );
   }
 
-  await persistOrderUpdate(dbOrder.id, update, nowIso);
+  await persistOrderUpdate(dbOrder.id, update, nowIso, dbOrder.status);
 
   if (update) {
     console.log(`Order ${dbOrder.id} updated:`, update);

@@ -1274,6 +1274,9 @@
       "trackingNumber": "Tracking number",
       "trackShipment": "Track shipment"
     },
+    "timeline": {
+      "title": "Order timeline"
+    },
     "listItem": {
       "openDetails": "Open details for order {order}",
       "productAlt": "Order product",

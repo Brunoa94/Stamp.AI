@@ -120,3 +120,15 @@ export function useCreateOrderFromCart() {
     retry: false,
   });
 }
+
+/**
+ * Fetch status history for an order (for tracking timeline)
+ */
+export function useOrderStatusHistory(orderId?: string) {
+  return useQuery({
+    queryKey: ["orderStatusHistory", orderId],
+    queryFn: () => OrderService.getOrderStatusHistory(orderId!),
+    enabled: Boolean(orderId),
+    staleTime: 30_000, // Status history doesn't change as frequently
+  });
+}

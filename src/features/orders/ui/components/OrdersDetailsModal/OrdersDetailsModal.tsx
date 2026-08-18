@@ -20,6 +20,7 @@ import {
   getStatusBadgeClass,
 } from "../../../lib/helpers/statusPresentation";
 import { OrdersDetailsModalInvoice } from "./OrdersDetailsModalInvoice";
+import { OrderStatusTimeline } from "./OrderStatusTimeline";
 
 interface PropsI {
   order: OrderWithItemsT;
@@ -171,6 +172,8 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
                 </Paragraph>
               )}
             </section>
+
+            <OrderStatusTimeline orderId={order.id} />
           </div>
 
           <aside className="self-start border border-(--color-stamp-divider) bg-(--color-stamp-cream)/40 p-6">
