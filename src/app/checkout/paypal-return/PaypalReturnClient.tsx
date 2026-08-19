@@ -19,6 +19,10 @@ import { validatePrintifyLineItem } from "@/types/printifyOrder";
 import { mapShippingAddressToPrintifyAddress } from "@/mappers/mapShippingAddressToPrintifyAddress";
 import { captureError } from "@/lib/observability/errorCapture";
 import {
+  UserFacingError,
+  getUserFacingMessage,
+} from "@/features/checkout/lib/errors/UserFacingError";
+import {
   useCreateOrderFromCart,
   useUpdateOrderStatus,
   useUpdatePaymentStatus,
@@ -39,7 +43,7 @@ type PageStatus =
 
 const PAYPAL_PIPELINE_TIMEOUT_MS = 120_000; // 2 minutes
 
-class PayPalPipelineTimeoutError extends Error {
+class PayPalPipelineTimeoutError extends UserFacingError {
   constructor(timeoutMs: number) {
     super(
       `Order processing timed out after ${Math.round(timeoutMs / 1000)} seconds. ` +
@@ -167,7 +171,8 @@ function PayPalReturnContent() {
             return;
           }
 
-          throw new Error(captureData.error || t("captureFailed"));
+          // The capture API returns vetted, user-friendly messages in `error`
+          throw new UserFacingError(captureData.error || t("captureFailed"));
         }
 
         setCaptureId(captureData.captureId);
@@ -312,12 +317,12 @@ function PayPalReturnContent() {
             }
           } catch (orderError) {
             await triggerRefund("Order creation failed");
-            throw new Error(t("orderCreationFailedRefund"));
+            throw new UserFacingError(t("orderCreationFailedRefund"));
           }
 
           if (!createdOrderId) {
             await triggerRefund("Order ID not returned");
-            throw new Error(t("orderCreationFailedRefund"));
+            throw new UserFacingError(t("orderCreationFailedRefund"));
           }
 
           // Get order number
@@ -373,7 +378,7 @@ function PayPalReturnContent() {
               await triggerRefund("Order creation failed before Printify");
             }
 
-            throw new Error(t("orderFulfillmentFailedRefund"));
+            throw new UserFacingError(t("orderFulfillmentFailedRefund"));
           }
 
           // Stage 3: Mark payment recovered
@@ -426,9 +431,7 @@ function PayPalReturnContent() {
         }
 
         setStatus("error");
-        setErrorMessage(
-          err instanceof Error ? err.message : t("errorFallback"),
-        );
+        setErrorMessage(getUserFacingMessage(err, t("errorFallback")));
       }
     };
 

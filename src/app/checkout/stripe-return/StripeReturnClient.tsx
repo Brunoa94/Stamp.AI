@@ -19,6 +19,10 @@ import { validatePrintifyLineItem } from "@/types/printifyOrder";
 import { mapShippingAddressToPrintifyAddress } from "@/mappers/mapShippingAddressToPrintifyAddress";
 import { captureError } from "@/lib/observability/errorCapture";
 import {
+  UserFacingError,
+  getUserFacingMessage,
+} from "@/features/checkout/lib/errors/UserFacingError";
+import {
   useCreateOrderFromCart,
   useUpdateOrderStatus,
   useUpdatePaymentStatus,
@@ -33,7 +37,7 @@ type PageStatus = "loading" | "processing" | "success" | "failed" | "error";
 const STRIPE_PIPELINE_TIMEOUT_MS = 120_000; // 2 minutes
 const STRIPE_CHECKOUT_DATA_KEY = "stripe_checkout_data";
 
-class StripePipelineTimeoutError extends Error {
+class StripePipelineTimeoutError extends UserFacingError {
   constructor(timeoutMs: number) {
     super(
       `Order processing timed out after ${Math.round(timeoutMs / 1000)} seconds. ` +
@@ -303,12 +307,12 @@ function StripeReturnContent() {
             }
           } catch (orderError) {
             await triggerRefund("Order creation failed");
-            throw new Error(t("orderCreationFailedRefund"));
+            throw new UserFacingError(t("orderCreationFailedRefund"));
           }
 
           if (!createdOrderId) {
             await triggerRefund("Order ID not returned");
-            throw new Error(t("orderCreationFailedRefund"));
+            throw new UserFacingError(t("orderCreationFailedRefund"));
           }
 
           // Get order number
@@ -363,7 +367,7 @@ function StripeReturnContent() {
               await triggerRefund("Order creation failed before Printify");
             }
 
-            throw new Error(t("orderFulfillmentFailedRefund"));
+            throw new UserFacingError(t("orderFulfillmentFailedRefund"));
           }
 
           // Stage 3: Mark payment recovered
@@ -418,9 +422,7 @@ function StripeReturnContent() {
         }
 
         setStatus("error");
-        setErrorMessage(
-          err instanceof Error ? err.message : t("errorFallback"),
-        );
+        setErrorMessage(getUserFacingMessage(err, t("errorFallback")));
       }
     };
 
