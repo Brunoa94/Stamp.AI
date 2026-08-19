@@ -1,5 +1,17 @@
 {
   "home": {
+    "topBanner": {
+      "freeShipping": "Free shipping on orders over €{threshold}",
+      "returns": "{days}-day returns",
+      "securePayment": "Secure payment"
+    },
+    "paymentBanner": {
+      "securePayment": "Secure payment",
+      "freeShipping": "Free shipping on orders over €{threshold}",
+      "fastDelivery": "Fast delivery",
+      "returns": "{days}-day returns",
+      "trustedProviders": "Trusted payment providers"
+    },
     "hero": {
       "title": "tamp <accent>.ai</accent>",
       "tagline": "From imagination to thing. Just describe it, we'll design it, and print it on premium products made to last.",
@@ -207,8 +219,8 @@
       "paymentDescription": "All transactions are encrypted and processed through trusted payment providers.",
       "items": {
         "returns": {
-          "title": "14-Day Returns",
-          "description": "Changed your mind? Return any unworn item within 14 days for a full refund."
+          "title": "30-Day Guarantee",
+          "description": "Not satisfied? Return any item within 30 days for a full refund — we cover return shipping."
         },
         "refund": {
           "title": "100% Money Back",
@@ -902,6 +914,7 @@
         "footer-faq": "FAQ",
         "footer-shipping": "Shipping & Delivery",
         "footer-returns": "Returns & Refunds",
+        "footer-contact": "Contact Us",
         "footer-terms": "Terms of Service",
         "footer-privacy": "Privacy Policy",
         "footer-cookies": "Cookie Policy",

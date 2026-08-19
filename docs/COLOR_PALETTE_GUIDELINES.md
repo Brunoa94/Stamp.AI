@@ -60,23 +60,36 @@ Color System
 
 ---
 
-### 2. Brand Colors
+### 2. Brand Colors (Stamp Palette)
 
-**Purpose**: Core brand identity colors used for marketing and branding
+**Purpose**: Core brand identity colors for the luxury brutalist Stamp aesthetic
 
 **Location**: `src/app/globals.css` (custom properties section)
 
-**Format**: Hex values or RGB
+**Format**: CSS custom properties
 
-**Examples**:
+**Primary Palette (Active)**:
 
-- `--color-purple: #9333ea` (Primary brand)
-- `--color-cyan: #06b6d4` (Secondary brand)
-- `--color-orange: #fb923c` (Tertiary brand)
+- `--color-stamp-chocolate` - Primary text/headings, luxurious brown
+- `--color-stamp-gold` - Primary accent, interactive elements
+- `--color-stamp-cream` - Section backgrounds, cards
+- `--color-stamp-off-white` - Page backgrounds
+- `--color-stamp-taupe` - Secondary text, muted elements
+- `--color-stamp-divider` - Borders and dividers
+- `--color-stamp-white` - Card backgrounds, content areas
 
-**When to use**: For brand-specific elements, gradients, special effects
+**Legacy Colors (Deprecated)**:
 
-**Tag prefix**: `brand-`
+- `--color-purple: #9333ea` - **DEPRECATED**: Not used in current design
+- `--color-cyan: #06b6d4` - **DEPRECATED**: Not used in current design
+- `--color-orange: #fb923c` - Tertiary accent (limited use)
+
+> **Note**: The purple/cyan gradient palette was used in an earlier design iteration.
+> All new components should use the stamp palette tokens instead.
+
+**When to use**: For all brand-specific elements, buttons, text, backgrounds
+
+**Tag prefix**: `brand-` or `stamp-`
 
 ---
 
@@ -127,10 +140,14 @@ Color System
 --color-background
 --color-card-foreground
 
-/* Format: --color-{brand-name} */
---color-purple
---color-cyan
---color-ink
+/* Format: --color-stamp-{name} (Preferred for brand) */
+--color-stamp-chocolate
+--color-stamp-gold
+--color-stamp-cream
+
+/* Legacy (deprecated) */
+--color-purple /* Not used in current design */
+--color-cyan   /* Not used in current design */
 ```
 
 ### Tag Names
@@ -278,12 +295,13 @@ Create an entry in your color documentation:
 }
 ```
 
-**Brand Colors:**
+**Brand Colors (Stamp Palette):**
 
 ```css
 .element {
-  background: var(--color-purple);
-  background: linear-gradient(135deg, var(--color-purple), var(--color-cyan));
+  background: var(--color-stamp-cream);
+  color: var(--color-stamp-chocolate);
+  border-color: var(--color-stamp-gold);
 }
 ```
 
@@ -316,8 +334,8 @@ const bgColor = getColorHex("Navy");
   Content
 </div>
 
-// Or inline CSS variables
-<div style={{ color: 'var(--color-cyan)' }}>
+// Or inline CSS variables (use stamp palette)
+<div style={{ color: 'var(--color-stamp-gold)' }}>
   Content
 </div>
 ```
@@ -325,8 +343,9 @@ const bgColor = getColorHex("Navy");
 **Avoid:**
 
 ```tsx
-/* ❌ DON'T: Hardcoded values */
+/* ❌ DON'T: Hardcoded values or deprecated colors */
 <div style={{ backgroundColor: '#9333ea' }}>
+<div className="text-(--color-purple)"> /* Deprecated */
 ```
 
 ---
@@ -399,8 +418,8 @@ When documenting colors, use this markdown table format:
   Click me
 </Button>
 
-// Using brand color
-<div className="text-[var(--color-purple)]">
+// Using brand color (stamp palette)
+<div className="text-(--color-stamp-gold)">
   Brand element
 </div>
 

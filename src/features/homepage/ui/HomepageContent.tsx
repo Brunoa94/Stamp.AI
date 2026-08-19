@@ -1,13 +1,20 @@
+"use client";
+
 /**
  * HomepageContent
  *
- * Server-side orchestrator for the luxury homepage: maps the server-fetched
+ * Client-side orchestrator for the luxury homepage: maps the server-fetched
  * products and composes all sections. Navbar and footer come from the root
  * layout chrome — not re-added here.
+ *
+ * Manages bubbling animation progress state to coordinate TopTrustBanner fade.
  */
 
+import { useState } from "react";
 import type { ProductWithPricing } from "@/lib/supabase/server-cache";
 import { mapProductsToCards } from "../lib/mappers/productCardMapper";
+import { TopTrustBanner } from "./components/TopTrustBanner";
+import { PaymentMethodsBanner } from "./components/PaymentMethodsBanner";
 import { HomeHeroSection } from "./sections/HomeHeroSection";
 import { HomeProductsSection } from "./sections/HomeProductsSection";
 import { HomeProcessSection } from "./sections/HomeProcessSection";
@@ -26,10 +33,13 @@ export function HomepageContent({
   productsWithPricing,
 }: HomepageContentPropsI) {
   const products = mapProductsToCards(productsWithPricing);
+  const [bubblingProgress, setBubblingProgress] = useState(0);
 
   return (
     <div>
-      <HomeHeroSection />
+      <TopTrustBanner progress={bubblingProgress} />
+      <HomeHeroSection onBubblingProgressChange={setBubblingProgress} />
+      <PaymentMethodsBanner />
       <HomeProductsSection products={products} />
       <HomeStorySection blockIds={["design"]} />
       <HomeProductOfMonthSection />

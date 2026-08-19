@@ -9,8 +9,8 @@
  */
 
 import { Span } from "@/features/ui/span";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { TRUST_ITEMS } from "@/features/homepage/lib/constants/trustItems";
-import { PAYMENT_ICONS } from "@/features/homepage/lib/constants/paymentIcons";
 
 interface HeroPromoBannerProps {
   /** Animation progress from 0 to 1 - banner fades out as this increases */
@@ -18,21 +18,28 @@ interface HeroPromoBannerProps {
 }
 
 export function HeroPromoBanner({ progress }: HeroPromoBannerProps) {
+  const prefersReducedMotion = useReducedMotion();
+
   // Fade out quickly as products start rising
   const opacity = Math.max(0, 1 - progress * 3);
   const translateY = progress * 20;
 
   if (opacity <= 0) return null;
 
-  return (
-    <div
-      className="relative z-10 px-4 sm:px-6 lg:px-12"
-      style={{
+  // When reduced motion is preferred, show at full opacity without transitions
+  const animationStyle = prefersReducedMotion
+    ? { opacity: 1 }
+    : {
         opacity,
         transform: `translateY(${translateY}px)`,
         transition: "opacity 0.15s ease-out, transform 0.15s ease-out",
-        pointerEvents: opacity < 0.5 ? "none" : "auto",
-      }}
+        pointerEvents: opacity < 0.5 ? ("none" as const) : ("auto" as const),
+      };
+
+  return (
+    <div
+      className="relative z-10 px-4 sm:px-6 lg:px-12"
+      style={animationStyle}
     >
       <div className="mx-auto max-w-4xl mt-30">
         {/* Trust items row */}

@@ -7,7 +7,6 @@
  * the restyled variant (same underlying payment hook).
  */
 
-
 import { useFormContext } from "react-hook-form";
 import { Elements } from "@stripe/react-stripe-js";
 import { stripePromise } from "@/lib/stripe";
@@ -115,9 +114,6 @@ export function CheckoutSummarySection({
             disabled={disablePayment}
           />
         )}
-
-        {/* Security verification badge */}
-        <VerifiedSecureBadge variant="compact" className="mt-4" />
       </div>
     </div>
   );

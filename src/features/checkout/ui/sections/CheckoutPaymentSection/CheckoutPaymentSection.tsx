@@ -6,7 +6,6 @@
  * PayPal notice.
  */
 
-
 import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { CheckoutSectionCard } from "../../components/CheckoutSectionCard";
@@ -37,10 +36,7 @@ export function CheckoutPaymentSection({
   };
 
   return (
-    <CheckoutSectionCard
-      title={t("title")}
-      subtitle={t("subtitle")}
-    >
+    <CheckoutSectionCard title={t("title")}>
       <CheckoutPaymentMethods
         selectedMethod={selectedMethod}
         onMethodChange={handleMethodChange}
