@@ -1671,6 +1671,7 @@
     "PAYPAL_CAPTURE_FAILED": "PayPal payment capture failed. Please try again",
     "MOLLIE_API_ERROR": "Mollie service error. Please try again",
     "MOLLIE_PAYMENT_FAILED": "Mollie payment failed. Please try again",
+    "CONFIRMATION_EMAIL_SEND_FAILED": "We couldn't send the confirmation email. Please try again in a moment",
     "INTERNAL_ERROR": "Something went wrong on our end. Please try again",
     "UNKNOWN_ERROR": "Something went wrong. Please try again"
   },

@@ -3,6 +3,7 @@ import type {
   LoginI,
   PasswordResetRequestI,
   RegisterI,
+  SignupRequestI,
   UpdateProfileI,
 } from "@/schemas/auth";
 import type { AuthResponseI, SessionI, UserI } from "../../supabase/types";
@@ -13,7 +14,7 @@ import {
   SupabaseAuthResponseSchema,
   UpdateUserResponseSchema,
 } from "@/schemas/services/authServiceSchemas";
-import { ErrorClient } from "./errorClient";
+import { AppError, ErrorClient } from "./errorClient";
 
 class AuthService {
   private static getSupabase() {
@@ -37,8 +38,14 @@ class AuthService {
         });
 
       if (error) {
+        // Supabase's own confirmation gate uses a lowercase code that the
+        // error handler can't translate — map it to our error code
+        const mappedError = error.code === "email_not_confirmed"
+          ? new AppError("EMAIL_NOT_CONFIRMED", "EMAIL_NOT_CONFIRMED")
+          : error;
+
         throw ErrorClient.handleError({
-          error,
+          error: mappedError,
           service: "Auth",
           action: "Login",
         });
@@ -46,6 +53,13 @@ class AuthService {
 
       // Validate Supabase response
       SupabaseAuthResponseSchema.parse(data);
+
+      // Supabase only rejects unconfirmed sign-ins when "Confirm email" is
+      // enabled server-side, so enforce activation here as well
+      if (!data.user?.email_confirmed_at) {
+        await AuthService.getSupabase().auth.signOut();
+        throw new AppError("EMAIL_NOT_CONFIRMED", "EMAIL_NOT_CONFIRMED");
+      }
 
       return AuthServiceMapper.mapSupabaseAuthToAuthResponse(
         data.user,
@@ -62,37 +76,39 @@ class AuthService {
 
   /**
    * Register new user
-   * Uses AuthServiceMapper to transform Supabase response
+   * Server route creates the account and emails a confirmation link; the
+   * account stays inactive (no session) until the link is clicked
    */
   static async register(userData: RegisterI): Promise<AuthResponseI> {
     try {
-      const { data, error } = await AuthService.getSupabase().auth.signUp({
+      const body: SignupRequestI = {
         email: userData.email,
         password: userData.password,
-        options: {
-          data: {
-            first_name: userData.firstName,
-            last_name: userData.lastName,
-          },
-        },
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+      };
+
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
       });
 
-      if (error) {
+      const result = await response.json();
+
+      if (!response.ok) {
         throw ErrorClient.handleError({
-          error,
+          error: result,
           service: "Auth",
           action: "Register",
         });
       }
 
-      // Validate Supabase response
-      SupabaseAuthResponseSchema.parse(data);
-
-      return AuthServiceMapper.mapSupabaseAuthToAuthResponse(
-        data.user,
-        data.session,
-        "Registration successful. Please check your email to verify your account.",
-      );
+      return {
+        success: true,
+        message: result.message ??
+          "Registration successful. Please check your email to confirm your account.",
+      };
     } catch (error) {
       throw ErrorClient.handleError({
         error,
@@ -273,17 +289,20 @@ class AuthService {
 
   /**
    * Resend email verification
+   * Server route re-issues the confirmation link and emails it via Brevo
    */
   static async resendEmailVerification(email: string): Promise<void> {
     try {
-      const { error } = await AuthService.getSupabase().auth.resend({
-        type: "signup",
-        email: email,
+      const response = await fetch("/api/auth/resend-confirmation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
       });
 
-      if (error) {
+      if (!response.ok) {
+        const result = await response.json();
         throw ErrorClient.handleError({
-          error,
+          error: result,
           service: "Auth",
           action: "Resend Email Verification",
         });
