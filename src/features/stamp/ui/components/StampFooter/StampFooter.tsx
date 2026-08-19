@@ -30,6 +30,7 @@ const FOOTER_COLUMNS: { key: FooterColumnKeyType; links: FooterLinkType[] }[] =
       key: "create",
       links: [
         { id: "footer-studio", href: "/stamp" },
+        { id: "footer-catalog", href: "/catalog" },
         { id: "footer-cart", href: "/cart" },
         { id: "footer-orders", href: "/orders" },
       ],

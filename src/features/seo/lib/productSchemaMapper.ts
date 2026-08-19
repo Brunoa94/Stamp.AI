@@ -16,7 +16,8 @@ import type { ProductData } from "../schemas/types";
  */
 export function mapProductToSchemaData(
   product: ProductWithPricing,
-  fallbackDescription: string
+  fallbackDescription: string,
+  url: string = `${SITE_URL}/stamp`
 ): ProductData {
   const description =
     resolveProductDescription(product.product_seo) ?? fallbackDescription;
@@ -31,15 +32,16 @@ export function mapProductToSchemaData(
     price: priceCents > 0 ? priceCents / 100 : undefined,
     priceCurrency: "EUR",
     availability: "InStock",
-    url: `${SITE_URL}/stamp`,
+    url,
   };
 }
 
 export function mapProductsToSchemaData(
   products: ProductWithPricing[],
-  fallbackDescription: string
+  fallbackDescription: string,
+  url?: string
 ): ProductData[] {
   return products.map((product) =>
-    mapProductToSchemaData(product, fallbackDescription)
+    mapProductToSchemaData(product, fallbackDescription, url)
   );
 }

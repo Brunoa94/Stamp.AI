@@ -5,7 +5,7 @@
  * Used for grouping products in the UI and determining appropriate sizes.
  */
 
-type ProductCategory =
+export type ProductCategory =
   | "tshirt"
   | "hoodie"
   | "sweatshirt"
@@ -134,7 +134,7 @@ const CLOTHING_CATEGORIES: Set<ProductCategory> = new Set([
 /**
  * Detect product category from display title
  */
-function detectProductCategory(displayTitle: string): ProductCategory {
+export function detectProductCategory(displayTitle: string): ProductCategory {
   const titleLower = displayTitle.toLowerCase();
 
   // Check each category's keywords

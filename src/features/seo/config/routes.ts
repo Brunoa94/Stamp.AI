@@ -11,6 +11,12 @@ export const ROUTE_SEO = {
     changefreq: "weekly" as const,
     index: true,
   },
+  catalog: {
+    path: "/catalog",
+    priority: 0.9,
+    changefreq: "weekly" as const,
+    index: true,
+  },
   cart: {
     path: "/cart",
     priority: 0.3,
