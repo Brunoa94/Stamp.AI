@@ -19,32 +19,41 @@ import { PencilUnderline } from "./PencilUnderline";
 import { HeroSecurityBadge } from "@/features/ui/trust/HeroSecurityBadge";
 import { OrdersFulfilledCounter } from "@/features/ui/trust/OrdersFulfilledCounter";
 import { TrustpilotWidget } from "@/features/ui/trust/TrustpilotWidget";
+import Image from "next/image";
 
 export function HeroContent() {
   const t = useTranslations("home.hero");
 
   return (
-    <div className="bg-(--color-stamp-off-white)/95 backdrop-blur-sm rounded-3xl sm:p-8">
-      <HeroAnimatedTitle>
-        <Heading
-          as="h1"
-          variant="title"
-          className="mb-6 text-5xl text-(--color-stamp-chocolate) sm:text-6xl md:text-7xl lg:text-8xl"
-        >
-          {t.rich("title", {
-            accent: (chunks) => (
-              <Span
-                variant="serif"
-                className="relative inline-block text-5xl text-(--color-stamp-taupe) sm:text-6xl md:text-7xl lg:text-8xl"
-              >
-                {chunks}
-                <PencilUnderline className="text-(--color-stamp-gold)" />
-              </Span>
-            ),
-          })}
-        </Heading>
-      </HeroAnimatedTitle>
-
+    <div className="bg-(--color-stamp-off-white)/95 backdrop-blur-sm rounded-3xl sm:p-8 flex justify-center flex-col items-center">
+      <div className="flex items-center">
+        <Image
+          src="/logo.png"
+          alt="Stamp.AI"
+          width={96}
+          height={96}
+          className="object-contain mb-8"
+          priority
+        />
+        <HeroAnimatedTitle>
+          <Heading
+            as="h1"
+            variant="title"
+            className="mb-6 text-5xl text-(--color-stamp-chocolate) sm:text-6xl md:text-7xl lg:text-8xl"
+          >
+            {t.rich("title", {
+              accent: (chunks) => (
+                <Span
+                  variant="serif"
+                  className="relative inline-block text-5xl text-(--color-stamp-taupe) sm:text-6xl md:text-7xl lg:text-8xl -ml-8 pt-2"
+                >
+                  {chunks}
+                </Span>
+              ),
+            })}
+          </Heading>
+        </HeroAnimatedTitle>
+      </div>
       <Paragraph
         variant="heroTagline"
         className="mx-auto mb-6 sm:mb-8 text-(--color-stamp-chocolate)/80"

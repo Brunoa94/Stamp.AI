@@ -1,62 +1,23 @@
 "use client";
 
-/**
- * HeroTransformShowcase
- *
- * Animated showcase that cycles through photos or printed products.
- * Left side shows original photos, right side shows printed products.
- */
-
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Camera, Sparkles, Truck } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-  IMAGE_PAIRS,
-  DISPLAY_MS,
-} from "@/features/homepage/lib/constants/transformShowcase";
+import { IMAGE_PAIRS } from "@/features/homepage/lib/constants/transformShowcase";
 
 interface PropsI {
   /** Left shows photos, right shows printed products */
   position: "left" | "right";
-  startIndex?: number;
+  /** Controlled index from parent for synchronized animations */
+  currentIndex: number;
   className?: string;
 }
 
 export function HeroTransformShowcase({
   position,
-  startIndex = 0,
+  currentIndex,
   className,
 }: PropsI) {
-  const [currentIndex, setCurrentIndex] = useState(startIndex);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-
-  // Get image from pair based on position (left = photo, right = printed)
-  const currentPair = IMAGE_PAIRS[currentIndex % IMAGE_PAIRS.length];
-  const nextPair = IMAGE_PAIRS[(currentIndex + 1) % IMAGE_PAIRS.length];
-  const currentImage = position === "left" ? currentPair.photo : currentPair.printed;
-  const nextImage = position === "left" ? nextPair.photo : nextPair.printed;
-  const label = position === "left" ? "Photo" : "Printed";
-  const labelStyle = position === "left"
-    ? "bg-white/90 text-(--color-stamp-chocolate)"
-    : "bg-(--color-stamp-gold) text-white";
-
-  useEffect(() => {
-    const cycleTimeout = setTimeout(() => {
-      setIsTransitioning(true);
-
-      // After transition, update index
-      setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % IMAGE_PAIRS.length);
-        setIsTransitioning(false);
-      }, 700);
-    }, DISPLAY_MS);
-
-    return () => {
-      clearTimeout(cycleTimeout);
-    };
-  }, [currentIndex]);
-
   // Icon and badge config based on position
   const TopIcon = position === "left" ? Camera : Sparkles;
   const topBadgeText = position === "left" ? "Upload" : "Made to Order";
@@ -78,41 +39,31 @@ export function HeroTransformShowcase({
         )}
       />
 
-      {/* Current image layer - positioned lower */}
-      <div
-        className={cn(
-          "absolute inset-x-2 top-8 bottom-2 rounded-2xl overflow-hidden shadow-lg",
-          "transition-all duration-700 ease-in-out",
-          isTransitioning ? "opacity-0 scale-95" : "opacity-100 scale-100",
-        )}
-      >
-        <Image
-          src={currentImage.src}
-          alt={currentImage.alt}
-          fill
-          sizes="(max-width: 640px) 192px, (max-width: 768px) 224px, (max-width: 1024px) 256px, (max-width: 1280px) 320px, 384px"
-          className="object-cover"
-          priority
-        />
-      </div>
+      {/* All images stacked with crossfade */}
+      {IMAGE_PAIRS.map((pair, index) => {
+        const image = position === "left" ? pair.photo : pair.printed;
+        const isActive = index === currentIndex;
 
-      {/* Next image layer (shown during transition) - positioned lower */}
-      <div
-        className={cn(
-          "absolute inset-x-2 top-8 bottom-2 rounded-2xl overflow-hidden shadow-xl",
-          "transition-all duration-700 ease-in-out",
-          isTransitioning ? "opacity-100 scale-100" : "opacity-0 scale-105",
-        )}
-      >
-        <Image
-          src={nextImage.src}
-          alt={nextImage.alt}
-          fill
-          sizes="(max-width: 640px) 192px, (max-width: 768px) 224px, (max-width: 1024px) 256px, (max-width: 1280px) 320px, 384px"
-          className="object-cover"
-          priority
-        />
-      </div>
+        return (
+          <div
+            key={index}
+            className={cn(
+              "absolute inset-x-2 top-8 bottom-2 rounded-2xl overflow-hidden shadow-lg",
+              "transition-opacity duration-700 ease-in-out",
+              isActive ? "opacity-100" : "opacity-0",
+            )}
+          >
+            <Image
+              src={image.src}
+              alt={image.alt}
+              fill
+              sizes="(max-width: 640px) 192px, (max-width: 768px) 224px, (max-width: 1024px) 256px, (max-width: 1280px) 320px, 384px"
+              className="object-cover"
+              priority={index === 0}
+            />
+          </div>
+        );
+      })}
 
       {/* Top left badge with icon */}
       <div
@@ -123,7 +74,6 @@ export function HeroTransformShowcase({
           "rounded-full shadow-lg",
           "bg-white border border-(--color-stamp-cream)",
           "transition-all duration-700 ease-in-out",
-          isTransitioning ? "scale-90 opacity-70" : "scale-100 opacity-100",
         )}
         style={{
           animation: "float 3s ease-in-out infinite",

@@ -9,16 +9,26 @@
  * The section itself doesn't scroll - wheel events drive the animation.
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SectionReveal } from "../components/SectionReveal";
 import { HeroContent } from "../components/HeroSection/HeroContent";
 import { HeroBubblingProducts } from "../components/HeroSection/HeroBubblingProducts";
 import { HeroScrollCue } from "../components/HeroSection/HeroScrollCue";
 import { HeroTransformShowcase } from "../components/HeroSection/HeroTransformShowcase";
 import { HeroPromoBanner } from "../components/HeroSection/HeroPromoBanner";
+import { IMAGE_PAIRS } from "../../lib/constants/transformShowcase";
 
 export function HomeHeroSection() {
   const [bubblingProgress, setBubblingProgress] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const intervalId = setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % IMAGE_PAIRS.length);
+    }, 3000);
+
+    return () => clearTimeout(intervalId);
+  }, [currentIndex]);
 
   return (
     <section className="relative h-screen overflow-hidden bg-(--color-stamp-off-white)">
@@ -29,7 +39,10 @@ export function HomeHeroSection() {
             {/* Left showcase - hidden below 1200px */}
             <div className="hidden min-[1200px]:block shrink-0 mb-0">
               <SectionReveal delayMs={200}>
-                <HeroTransformShowcase position="left" startIndex={0} />
+                <HeroTransformShowcase
+                  position="left"
+                  currentIndex={currentIndex}
+                />
               </SectionReveal>
             </div>
 
@@ -41,7 +54,10 @@ export function HomeHeroSection() {
             {/* Right showcase - hidden below 1200px */}
             <div className="hidden min-[1200px]:block shrink-0 mb-0">
               <SectionReveal delayMs={400}>
-                <HeroTransformShowcase position="right" startIndex={2} />
+                <HeroTransformShowcase
+                  position="right"
+                  currentIndex={currentIndex}
+                />
               </SectionReveal>
             </div>
           </div>
