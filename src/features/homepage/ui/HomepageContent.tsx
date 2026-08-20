@@ -8,6 +8,8 @@
 
 import type { ProductWithPricing } from "@/lib/supabase/server-cache";
 import { mapProductsToCards } from "../lib/mappers/productCardMapper";
+import { TopTrustBanner } from "./components/TopTrustBanner";
+import { PaymentMethodsBanner } from "./components/PaymentMethodsBanner";
 import { HomeHeroSection } from "./sections/HomeHeroSection";
 import { HomeProductsSection } from "./sections/HomeProductsSection";
 import { HomeProcessSection } from "./sections/HomeProcessSection";
@@ -29,7 +31,9 @@ export function HomepageContent({
 
   return (
     <div>
+      <TopTrustBanner />
       <HomeHeroSection />
+      <PaymentMethodsBanner />
       <HomeProductsSection products={products} />
       <HomeStorySection blockIds={["design"]} />
       <HomeProductOfMonthSection />

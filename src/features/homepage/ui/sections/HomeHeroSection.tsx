@@ -6,7 +6,6 @@
  * Hero section with title and CTA prominently displayed at the top,
  * photo-to-print transform showcases on either side,
  * and product images that bubble up from the bottom driven by scroll/wheel.
- * The section itself doesn't scroll - wheel events drive the animation.
  */
 
 import { useEffect, useState } from "react";
@@ -19,7 +18,6 @@ import { HeroPromoBanner } from "../components/HeroSection/HeroPromoBanner";
 import { IMAGE_PAIRS } from "../../lib/constants/transformShowcase";
 
 export function HomeHeroSection() {
-  const [bubblingProgress, setBubblingProgress] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -64,16 +62,11 @@ export function HomeHeroSection() {
         </div>
       </div>
 
-      {/* Promotional banner - fades out as products bubble up */}
-      <HeroPromoBanner progress={bubblingProgress} />
+      {/* Promotional banner */}
+      <HeroPromoBanner />
 
-      {/* Bubbling products that rise based on wheel events */}
-      <HeroBubblingProducts onProgressChange={setBubblingProgress} />
-
-      {/* Scroll cue */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30">
-        <HeroScrollCue />
-      </div>
+      {/* Bubbling products */}
+      {/* <HeroBubblingProducts /> */}
     </section>
   );
 }

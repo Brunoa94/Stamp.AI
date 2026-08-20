@@ -1,39 +1,16 @@
-"use client";
-
 /**
  * HeroPromoBanner
  *
  * Promotional banner below the hero content.
  * Shows trust indicators, payment methods, and promo offers.
- * Fades out as bubbling products animation progresses.
  */
 
 import { Span } from "@/features/ui/span";
 import { TRUST_ITEMS } from "@/features/homepage/lib/constants/trustItems";
-import { PAYMENT_ICONS } from "@/features/homepage/lib/constants/paymentIcons";
 
-interface HeroPromoBannerProps {
-  /** Animation progress from 0 to 1 - banner fades out as this increases */
-  progress: number;
-}
-
-export function HeroPromoBanner({ progress }: HeroPromoBannerProps) {
-  // Fade out quickly as products start rising
-  const opacity = Math.max(0, 1 - progress * 3);
-  const translateY = progress * 20;
-
-  if (opacity <= 0) return null;
-
+export function HeroPromoBanner() {
   return (
-    <div
-      className="relative z-10 px-4 sm:px-6 lg:px-12"
-      style={{
-        opacity,
-        transform: `translateY(${translateY}px)`,
-        transition: "opacity 0.15s ease-out, transform 0.15s ease-out",
-        pointerEvents: opacity < 0.5 ? "none" : "auto",
-      }}
-    >
+    <div className="relative z-10 px-4 sm:px-6 lg:px-12">
       <div className="mx-auto max-w-4xl mt-30">
         {/* Trust items row */}
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-10">

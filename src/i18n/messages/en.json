@@ -1,5 +1,17 @@
 {
   "home": {
+    "topBanner": {
+      "freeShipping": "Free shipping over €{threshold}",
+      "returns": "{days}-day returns",
+      "securePayment": "Secure payment"
+    },
+    "paymentBanner": {
+      "securePayment": "Secure payment",
+      "freeShipping": "Free shipping over €{threshold}",
+      "fastDelivery": "Fast delivery",
+      "returns": "{days}-day returns",
+      "trustedProviders": "Trusted payment providers"
+    },
     "hero": {
       "title": "tamp <accent>.ai</accent>",
       "tagline": "From imagination to thing. Just describe it, we'll design it, and print it on premium products made to last.",
