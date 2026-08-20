@@ -15,7 +15,8 @@ import { CatalogProductDialog } from "./CatalogProductDialog";
  *
  * Catalog grid card mirroring the homepage product card treatment
  * (framed image, grayscale-to-color hover, swatches, discount badge),
- * but acting as a button that opens the quick-view dialog.
+ * but acting as a button that opens the quick-view dialog. Hovering
+ * swaps to the second gallery photo and reveals a quick-view bar.
  * Raw <button> by design: the Button atom only ships CTA variants and
  * a card-sized trigger needs block layout and left-aligned text.
  */
@@ -29,6 +30,7 @@ export function CatalogProductCard({ product }: PropsI) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const coverImageUrl = product.imageUrls[0];
+  const hoverImageUrl = product.imageUrls[1];
 
   return (
     <>
@@ -40,13 +42,25 @@ export function CatalogProductCard({ product }: PropsI) {
       >
         <div className="relative mb-3 sm:mb-5 aspect-square sm:aspect-3/4 overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all duration-500 group-hover:-translate-y-1 group-hover:border-(--color-stamp-gold) group-hover:shadow-(--shadow-stamp-card-hover)">
           {coverImageUrl ? (
-            <Image
-              src={coverImageUrl}
-              alt={product.name}
-              fill
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
-              className="object-cover grayscale transition-all duration-700 group-hover:scale-[1.02] group-hover:grayscale-0"
-            />
+            <>
+              <Image
+                src={coverImageUrl}
+                alt={product.name}
+                fill
+                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
+                className="object-cover grayscale transition-all duration-700 group-hover:scale-[1.02] group-hover:grayscale-0"
+              />
+              {hoverImageUrl && (
+                <Image
+                  src={hoverImageUrl}
+                  alt=""
+                  aria-hidden
+                  fill
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
+                  className="object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                />
+              )}
+            </>
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-(--color-stamp-cream)">
               <Span variant="micro" className="text-(--color-stamp-taupe)">
@@ -79,6 +93,12 @@ export function CatalogProductCard({ product }: PropsI) {
               </Span>
             </div>
           )}
+
+          <div className="absolute inset-x-0 bottom-0 hidden translate-y-full bg-(--color-stamp-chocolate)/90 py-2.5 text-center backdrop-blur-sm transition-transform duration-300 group-hover:translate-y-0 group-focus-visible:translate-y-0 sm:block">
+            <Span variant="micro" className="text-(--color-stamp-white)">
+              {t("quickView")}
+            </Span>
+          </div>
         </div>
 
         <div className="flex items-start justify-between gap-2 sm:gap-4">

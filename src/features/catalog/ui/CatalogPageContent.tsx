@@ -1,17 +1,22 @@
+"use client";
+
 import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
+import { useCatalogFilters } from "../lib/hooks/useCatalogFilters";
 import type { CatalogCategorySectionType } from "../lib/types/catalogPageTypes";
-import { CatalogCategoryNav } from "./components/CatalogCategoryNav";
+import { CatalogEmptyResults } from "./components/CatalogEmptyResults";
+import { CatalogToolbar } from "./components/CatalogToolbar";
 import { CatalogCategorySection } from "./sections/CatalogCategorySection";
 
 /**
  * CatalogPageContent
  *
- * Full product catalog: page header, anchor navigation over the category
- * sections, and one product grid per category. Server-rendered from the
- * cached product list; product cards open a client quick-view dialog.
+ * Full product catalog: page header, browsing toolbar (category pills,
+ * search, sort) and one product grid per matching category. The initial
+ * server render shows the complete catalog; filtering runs client-side
+ * over the cached sections.
  */
 
 interface PropsI {
@@ -20,6 +25,7 @@ interface PropsI {
 
 export function CatalogPageContent({ sections }: PropsI) {
   const t = useTranslations("catalog");
+  const filters = useCatalogFilters(sections);
 
   return (
     <article className="px-6 pt-40 pb-24 lg:px-12 xl:px-24">
@@ -55,16 +61,31 @@ export function CatalogPageContent({ sections }: PropsI) {
           </Span>
         ) : (
           <>
-            <CatalogCategoryNav sections={sections} />
+            <CatalogToolbar
+              sections={sections}
+              category={filters.category}
+              query={filters.query}
+              sort={filters.sort}
+              resultCount={filters.resultCount}
+              onCategoryChange={filters.setCategory}
+              onQueryChange={filters.setQuery}
+              onSortChange={filters.setSort}
+            />
 
-            <div className="mt-16 space-y-24">
-              {sections.map((section) => (
-                <CatalogCategorySection
-                  key={section.category}
-                  section={section}
-                />
-              ))}
-            </div>
+            {filters.filteredSections.length === 0 ? (
+              <div className="mt-16">
+                <CatalogEmptyResults onClearFilters={filters.clearFilters} />
+              </div>
+            ) : (
+              <div className="mt-16 space-y-24">
+                {filters.filteredSections.map((section) => (
+                  <CatalogCategorySection
+                    key={section.category}
+                    section={section}
+                  />
+                ))}
+              </div>
+            )}
           </>
         )}
       </div>

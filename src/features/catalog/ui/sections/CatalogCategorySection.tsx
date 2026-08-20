@@ -8,8 +8,8 @@ import { CatalogProductCard } from "../components/CatalogProductCard";
  * CatalogCategorySection
  *
  * One category of the catalog: heading with product count and the
- * product card grid. Anchored for the category navigation, with a
- * scroll margin clearing the fixed h-24 header.
+ * product card grid. Keeps a deep-linkable anchor id, with a scroll
+ * margin clearing the fixed h-24 header.
  */
 
 interface PropsI {

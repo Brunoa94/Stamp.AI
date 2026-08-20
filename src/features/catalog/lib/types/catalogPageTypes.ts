@@ -27,3 +27,17 @@ export type CatalogCategorySectionType = {
   category: ProductCategory;
   products: CatalogDisplayProductType[];
 };
+
+export type CatalogSortOptionType =
+  | "featured"
+  | "price-asc"
+  | "price-desc"
+  | "name-asc";
+
+export type CatalogCategoryFilterType = ProductCategory | "all";
+
+export type CatalogFilterStateType = {
+  category: CatalogCategoryFilterType;
+  query: string;
+  sort: CatalogSortOptionType;
+};

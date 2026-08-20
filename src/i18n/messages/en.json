@@ -266,7 +266,25 @@
     "intro": "Every product in our collection, ready for your design. Browse by category, explore the photos and details, and take any of them into the studio.",
     "emptyState": "The catalog is temporarily unavailable — please check back soon",
     "categoryNavAria": "Product categories",
+    "allCategory": "All products",
     "productCount": "{count, plural, one {# product} other {# products}}",
+    "toolbar": {
+      "searchPlaceholder": "Search products…",
+      "searchAria": "Search products",
+      "sortAria": "Sort products",
+      "sortOptions": {
+        "featured": "Featured",
+        "price-asc": "Price: low to high",
+        "price-desc": "Price: high to low",
+        "name-asc": "Name: A to Z"
+      },
+      "resultsCount": "{count, plural, one {# product} other {# products}}"
+    },
+    "noResults": {
+      "title": "No products found",
+      "body": "Try a different search or clear the filters to see the full collection.",
+      "clearFilters": "Clear filters"
+    },
     "categories": {
       "tshirt": "T-Shirts",
       "hoodie": "Hoodies",
@@ -287,6 +305,7 @@
       "noImage": "No image",
       "discountBadge": "-{percent}%",
       "photoCount": "{count} photos",
+      "quickView": "Quick view",
       "quickViewAria": "View {name} details"
     },
     "dialog": {

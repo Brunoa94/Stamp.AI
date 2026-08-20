@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { renderWithIntl } from "@/tests/utils/renderWithIntl";
 import messages from "@/i18n/messages/en.json";
 import { CatalogPageContent } from "../CatalogPageContent";
@@ -65,18 +66,98 @@ describe("CatalogPageContent", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders category navigation linking to each section", () => {
+  it("renders the category filter with an active all-products pill", () => {
     renderWithIntl(<CatalogPageContent sections={SECTIONS} />);
 
     const nav = screen.getByRole("navigation", {
       name: messages.catalog.categoryNavAria,
     });
     expect(nav).toBeInTheDocument();
+
     expect(
-      screen.getByRole("link", {
-        name: new RegExp(messages.catalog.categories.tshirt),
+      screen.getByRole("button", {
+        name: new RegExp(messages.catalog.allCategory),
+        pressed: true,
       })
-    ).toHaveAttribute("href", "#category-tshirt");
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {
+        name: new RegExp(messages.catalog.categories.tshirt),
+        pressed: false,
+      })
+    ).toBeInTheDocument();
+  });
+
+  it("narrows the grid to the selected category", async () => {
+    const user = userEvent.setup();
+    renderWithIntl(<CatalogPageContent sections={SECTIONS} />);
+
+    await user.click(
+      screen.getByRole("button", {
+        name: new RegExp(messages.catalog.categories.mug),
+      })
+    );
+
+    expect(
+      screen.getByRole("heading", {
+        level: 2,
+        name: messages.catalog.categories.mug,
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", {
+        level: 2,
+        name: messages.catalog.categories.tshirt,
+      })
+    ).not.toBeInTheDocument();
+  });
+
+  it("filters products by search query", async () => {
+    const user = userEvent.setup();
+    renderWithIntl(<CatalogPageContent sections={SECTIONS} />);
+
+    await user.type(
+      screen.getByRole("searchbox", {
+        name: messages.catalog.toolbar.searchAria,
+      }),
+      "ceramic"
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Ceramic Mug" })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", {
+        level: 3,
+        name: "Unisex Heavy Cotton Tee",
+      })
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows the no-results state and clears filters from it", async () => {
+    const user = userEvent.setup();
+    renderWithIntl(<CatalogPageContent sections={SECTIONS} />);
+
+    await user.type(
+      screen.getByRole("searchbox", {
+        name: messages.catalog.toolbar.searchAria,
+      }),
+      "no-such-product"
+    );
+
+    expect(
+      screen.getByText(messages.catalog.noResults.title)
+    ).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", {
+        name: messages.catalog.noResults.clearFilters,
+      })
+    );
+
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Ceramic Mug" })
+    ).toBeInTheDocument();
   });
 
   it("renders the empty state when there are no sections", () => {
