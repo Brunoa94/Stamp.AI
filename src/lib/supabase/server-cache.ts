@@ -65,9 +65,12 @@ export interface ProductWithPricing extends CatalogProductWithSeo {
 }
 
 /**
- * Get all products with their pricing with 30-minute cache
+ * Get ALL active products with their pricing with 30-minute cache,
+ * including products whose variants have no synced price
+ * (totalPriceCents = 0). Consumers that show those products must
+ * render a fallback price, like the stamp flow does.
  */
-export const getCachedProductsWithPricing = unstable_cache(
+export const getCachedAllProductsWithPricing = unstable_cache(
   async (): Promise<ProductWithPricing[]> => {
     const products = await getCachedProducts();
     const supabase = createServiceClient();
@@ -104,12 +107,25 @@ export const getCachedProductsWithPricing = unstable_cache(
       })
     );
 
-    return productsWithPricing.filter((p) => p.totalPriceCents > 0);
+    return productsWithPricing;
   },
-  ["products-with-pricing"],
+  ["all-products-with-pricing"],
   {
     revalidate: 1800, // 30 minutes
     tags: ["products"],
   }
 );
+
+/**
+ * Get products with real pricing only. Products with no variant price
+ * (min_price_cents === 0) are filtered out instead of showing a
+ * shipping-only or fallback price — used by surfaces that must not
+ * display synthetic prices (homepage grid, SEO schemas).
+ */
+export async function getCachedProductsWithPricing(): Promise<
+  ProductWithPricing[]
+> {
+  const products = await getCachedAllProductsWithPricing();
+  return products.filter((p) => p.totalPriceCents > 0);
+}
 

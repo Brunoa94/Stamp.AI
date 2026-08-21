@@ -3,10 +3,12 @@ import {
   countCatalogProducts,
   filterCatalogSections,
 } from "../filterCatalogSections";
+import { groupCatalogSections } from "../groupCatalogSections";
 import type {
   CatalogCategorySectionType,
   CatalogDisplayProductType,
   CatalogFilterStateType,
+  CatalogGroupSectionType,
 } from "../../types/catalogPageTypes";
 
 function buildProduct(
@@ -26,16 +28,16 @@ function buildProduct(
   };
 }
 
-const SECTIONS: CatalogCategorySectionType[] = [
+const SECTIONS: CatalogGroupSectionType[] = [
   {
-    category: "tshirt",
+    group: "clothing",
     products: [
       buildProduct({ blueprintId: 6, name: "Classic Tee", price: 20 }),
       buildProduct({ blueprintId: 12, name: "Premium Tee", price: 30 }),
     ],
   },
   {
-    category: "mug",
+    group: "accessories",
     products: [
       buildProduct({
         blueprintId: 68,
@@ -51,8 +53,54 @@ const SECTIONS: CatalogCategorySectionType[] = [
 function buildFilters(
   overrides: Partial<CatalogFilterStateType> = {}
 ): CatalogFilterStateType {
-  return { category: "all", query: "", sort: "featured", ...overrides };
+  return { group: "all", query: "", sort: "featured", ...overrides };
 }
+
+describe("groupCatalogSections", () => {
+  it("merges category sections into clothing and accessories groups", () => {
+    const categorySections: CatalogCategorySectionType[] = [
+      {
+        category: "mug",
+        products: [
+          buildProduct({ blueprintId: 68, name: "Ceramic Mug", category: "mug" }),
+        ],
+      },
+      {
+        category: "tshirt",
+        products: [buildProduct({ blueprintId: 6, name: "Classic Tee" })],
+      },
+      {
+        category: "hoodie",
+        products: [
+          buildProduct({ blueprintId: 77, name: "Cozy Hoodie", category: "hoodie" }),
+        ],
+      },
+    ];
+
+    const result = groupCatalogSections(categorySections);
+
+    expect(result.map((section) => section.group)).toEqual([
+      "clothing",
+      "accessories",
+    ]);
+    expect(result[0].products.map((p) => p.name)).toEqual([
+      "Classic Tee",
+      "Cozy Hoodie",
+    ]);
+    expect(result[1].products.map((p) => p.name)).toEqual(["Ceramic Mug"]);
+  });
+
+  it("drops groups without products", () => {
+    const result = groupCatalogSections([
+      {
+        category: "tshirt",
+        products: [buildProduct()],
+      },
+    ]);
+
+    expect(result.map((section) => section.group)).toEqual(["clothing"]);
+  });
+});
 
 describe("filterCatalogSections", () => {
   it("returns all sections untouched with default filters", () => {
@@ -62,14 +110,14 @@ describe("filterCatalogSections", () => {
     expect(result[0].products.map((p) => p.blueprintId)).toEqual([6, 12]);
   });
 
-  it("keeps only the selected category", () => {
+  it("keeps only the selected group", () => {
     const result = filterCatalogSections(
       SECTIONS,
-      buildFilters({ category: "mug" })
+      buildFilters({ group: "accessories" })
     );
 
     expect(result).toHaveLength(1);
-    expect(result[0].category).toBe("mug");
+    expect(result[0].group).toBe("accessories");
   });
 
   it("matches the query against name and description, ignoring case", () => {
@@ -85,7 +133,7 @@ describe("filterCatalogSections", () => {
       buildFilters({ query: "coffee" })
     );
     expect(byDescription).toHaveLength(1);
-    expect(byDescription[0].category).toBe("mug");
+    expect(byDescription[0].group).toBe("accessories");
   });
 
   it("drops sections left without products", () => {
@@ -112,9 +160,9 @@ describe("filterCatalogSections", () => {
   });
 
   it("sorts products by name without mutating the input", () => {
-    const input: CatalogCategorySectionType[] = [
+    const input: CatalogGroupSectionType[] = [
       {
-        category: "tshirt",
+        group: "clothing",
         products: [
           buildProduct({ blueprintId: 12, name: "Premium Tee" }),
           buildProduct({ blueprintId: 6, name: "Classic Tee" }),

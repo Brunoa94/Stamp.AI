@@ -33,17 +33,13 @@ export function CatalogSortSelect({ sort, onSortChange }: PropsI) {
     >
       <SelectTrigger
         aria-label={t("sortAria")}
-        className="h-11 w-full rounded-none border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-body text-sm text-(--color-stamp-chocolate) shadow-none focus:ring-(--color-stamp-gold)/30 sm:w-56"
+        className="h-10 w-auto min-w-40 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-heading font-bold uppercase text-sm tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
       >
         <SelectValue />
       </SelectTrigger>
-      <SelectContent className="rounded-none border-(--color-stamp-divider) bg-(--color-stamp-off-white)">
+      <SelectContent>
         {CATALOG_SORT_OPTIONS.map((option) => (
-          <SelectItem
-            key={option}
-            value={option}
-            className="rounded-none font-body text-sm text-(--color-stamp-chocolate)"
-          >
+          <SelectItem key={option} value={option}>
             {t(`sortOptions.${option}`)}
           </SelectItem>
         ))}

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import type {
-  CatalogCategoryFilterType,
-  CatalogCategorySectionType,
+  CatalogGroupFilterType,
+  CatalogGroupSectionType,
   CatalogSortOptionType,
 } from "../types/catalogPageTypes";
 import { DEFAULT_CATALOG_SORT } from "../constants/catalogSortOptions";
@@ -15,33 +15,33 @@ import {
 /**
  * useCatalogFilters
  *
- * Client state for the catalog toolbar: active category, search query
- * and sort order, plus the derived filtered sections and result count.
- * The product list is small (one cached page), so filtering runs on
- * every render without memoization.
+ * Client state for the catalog toolbar: active group, search query
+ * and sort order, plus the derived filtered group sections and result
+ * count. The product list is small (one cached page), so filtering
+ * runs on every render without memoization.
  */
 
-export function useCatalogFilters(sections: CatalogCategorySectionType[]) {
-  const [category, setCategory] = useState<CatalogCategoryFilterType>("all");
+export function useCatalogFilters(sections: CatalogGroupSectionType[]) {
+  const [group, setGroup] = useState<CatalogGroupFilterType>("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<CatalogSortOptionType>(DEFAULT_CATALOG_SORT);
 
   const filteredSections = filterCatalogSections(sections, {
-    category,
+    group,
     query,
     sort,
   });
 
   const clearFilters = () => {
-    setCategory("all");
+    setGroup("all");
     setQuery("");
   };
 
   return {
-    category,
+    group,
     query,
     sort,
-    setCategory,
+    setGroup,
     setQuery,
     setSort,
     filteredSections,

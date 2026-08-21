@@ -21,7 +21,7 @@ export type ProductCategory =
   | "pillow"
   | "other";
 
-type ProductGroup = "clothing" | "accessories";
+export type ProductGroup = "clothing" | "accessories";
 
 /**
  * Keywords to detect product category from title
@@ -154,7 +154,7 @@ export function detectProductCategory(displayTitle: string): ProductCategory {
 /**
  * Get product group (clothing vs accessories) from category
  */
-function getProductGroup(category: ProductCategory): ProductGroup {
+export function getProductGroup(category: ProductCategory): ProductGroup {
   return CLOTHING_CATEGORIES.has(category) ? "clothing" : "accessories";
 }
 

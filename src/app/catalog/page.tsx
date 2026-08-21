@@ -7,7 +7,7 @@ import { mapProductsToSchemaData } from "@/features/seo/lib/productSchemaMapper"
 import { generatePageMetadata } from "@/features/seo/metadata/pageMetadata";
 import { PAGE_KEYWORDS } from "@/features/seo/config/keywords";
 import { SITE_URL } from "@/features/seo/config/site";
-import { getCachedProductsWithPricing } from "@/lib/supabase/server-cache";
+import { getCachedAllProductsWithPricing } from "@/lib/supabase/server-cache";
 import { mapProductsToCatalogDisplay } from "@/features/catalog/lib/mappers/catalogProductMapper";
 import { groupProductsByCategory } from "@/features/catalog/lib/helpers/groupProductsByCategory";
 import { CatalogPageContent } from "@/features/catalog/ui/CatalogPageContent";
@@ -26,15 +26,16 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CatalogPage() {
-  const productsWithPricing = await getCachedProductsWithPricing();
+  const productsWithPricing = await getCachedAllProductsWithPricing();
   const tMeta = await getTranslations("catalog.meta");
 
   const sections = groupProductsByCategory(
     mapProductsToCatalogDisplay(productsWithPricing)
   );
 
+  // SEO schemas only advertise real synced prices, never the fallback.
   const productSchemaEntries = mapProductsToSchemaData(
-    productsWithPricing,
+    productsWithPricing.filter((p) => p.totalPriceCents > 0),
     tMeta("description"),
     `${SITE_URL}/catalog`
   );

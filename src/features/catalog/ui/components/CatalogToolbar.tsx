@@ -1,67 +1,79 @@
 "use client";
 
+import { RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import type {
-  CatalogCategoryFilterType,
-  CatalogCategorySectionType,
+  CatalogGroupFilterType,
+  CatalogGroupSectionType,
   CatalogSortOptionType,
 } from "../../lib/types/catalogPageTypes";
-import { CatalogCategoryNav } from "./CatalogCategoryNav";
+import { CatalogGroupSelect } from "./CatalogGroupSelect";
 import { CatalogSearchInput } from "./CatalogSearchInput";
 import { CatalogSortSelect } from "./CatalogSortSelect";
 
 /**
  * CatalogToolbar
  *
- * Catalog browsing controls: category filter pills, product search,
- * sort order and a live result count. Sticky below the fixed h-24
- * header on desktop so the controls stay reachable while scrolling
- * the grid.
+ * Catalog browsing controls mirroring the orders page filter section,
+ * on a cream panel: a "filters" label over a row of selects (group,
+ * sort) with a clear action, and a prominent full-width search bar
+ * underneath.
  */
 
 interface PropsI {
-  sections: CatalogCategorySectionType[];
-  category: CatalogCategoryFilterType;
+  sections: CatalogGroupSectionType[];
+  group: CatalogGroupFilterType;
   query: string;
   sort: CatalogSortOptionType;
-  resultCount: number;
-  onCategoryChange: (category: CatalogCategoryFilterType) => void;
+  onGroupChange: (group: CatalogGroupFilterType) => void;
   onQueryChange: (query: string) => void;
   onSortChange: (sort: CatalogSortOptionType) => void;
+  onClearFilters: () => void;
 }
 
 export function CatalogToolbar({
   sections,
-  category,
+  group,
   query,
   sort,
-  resultCount,
-  onCategoryChange,
+  onGroupChange,
   onQueryChange,
   onSortChange,
+  onClearFilters,
 }: PropsI) {
   const t = useTranslations("catalog.toolbar");
 
   return (
-    <div className="border-y border-(--color-stamp-divider) bg-(--color-stamp-off-white)/95 py-5 backdrop-blur-md lg:sticky lg:top-24 lg:z-30">
-      <CatalogCategoryNav
-        sections={sections}
-        activeCategory={category}
-        onCategoryChange={onCategoryChange}
-      />
+    <div className="flex flex-col gap-4 border border-(--color-stamp-divider) bg-(--color-stamp-cream) p-4 sm:p-6">
+      <Span
+        variant="default"
+        className="font-bold uppercase text-sm tracking-[0.4em] text-(--color-stamp-taupe)"
+      >
+        {t("filteringLabel")}
+      </Span>
 
-      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <CatalogSearchInput query={query} onQueryChange={onQueryChange} />
+      <div className="flex flex-wrap items-center gap-4">
+        <CatalogGroupSelect
+          sections={sections}
+          group={group}
+          onGroupChange={onGroupChange}
+        />
+
         <CatalogSortSelect sort={sort} onSortChange={onSortChange} />
-        <Span
-          role="status"
-          variant="micro"
-          className="shrink-0 text-(--color-stamp-taupe) sm:pl-2"
+
+        <Button
+          onClick={onClearFilters}
+          variant="ghost"
+          className="h-10 flex items-center gap-2 px-4 font-heading font-bold uppercase text-sm tracking-widest text-(--color-stamp-taupe) hover:bg-transparent hover:text-(--color-stamp-gold)"
         >
-          {t("resultsCount", { count: resultCount })}
-        </Span>
+          <RotateCcw className="h-4 w-4" />
+          {t("clearFilters")}
+        </Button>
       </div>
+
+      <CatalogSearchInput query={query} onQueryChange={onQueryChange} />
     </div>
   );
 }

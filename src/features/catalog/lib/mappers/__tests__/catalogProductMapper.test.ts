@@ -76,6 +76,18 @@ describe("mapProductsToCatalogDisplay", () => {
     expect(product.price).toBe(18);
   });
 
+  it("falls back to the stamp flow price when the product has no synced price", () => {
+    const [product] = mapProductsToCatalogDisplay([
+      buildProduct({
+        selling_price_cents: null,
+        min_price_cents: 0,
+        totalPriceCents: 0,
+      }),
+    ]);
+
+    expect(product.price).toBe(25);
+  });
+
   it("resolves description and specs from product SEO data", () => {
     const [product] = mapProductsToCatalogDisplay([
       buildProduct({

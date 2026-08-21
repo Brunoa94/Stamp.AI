@@ -1,16 +1,16 @@
 /**
  * Catalog Section Filtering
  *
- * Pure helpers applying the toolbar's filter state (category, search
- * query, sort order) to the catalog's category sections. Sections that
+ * Pure helpers applying the toolbar's filter state (group, search
+ * query, sort order) to the catalog's group sections. Sections that
  * end up without products are dropped so the grid never renders an
- * empty category heading.
+ * empty group heading.
  */
 
 import type {
-  CatalogCategorySectionType,
   CatalogDisplayProductType,
   CatalogFilterStateType,
+  CatalogGroupSectionType,
   CatalogSortOptionType,
 } from "../types/catalogPageTypes";
 
@@ -46,15 +46,14 @@ function compareProducts(
 }
 
 export function filterCatalogSections(
-  sections: CatalogCategorySectionType[],
+  sections: CatalogGroupSectionType[],
   filters: CatalogFilterStateType
-): CatalogCategorySectionType[] {
+): CatalogGroupSectionType[] {
   const normalizedQuery = filters.query.trim().toLowerCase();
 
   return sections
     .filter(
-      (section) =>
-        filters.category === "all" || section.category === filters.category
+      (section) => filters.group === "all" || section.group === filters.group
     )
     .map((section) => ({
       ...section,
@@ -66,7 +65,7 @@ export function filterCatalogSections(
 }
 
 export function countCatalogProducts(
-  sections: CatalogCategorySectionType[]
+  sections: CatalogGroupSectionType[]
 ): number {
   return sections.reduce(
     (total, section) => total + section.products.length,

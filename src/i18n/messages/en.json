@@ -267,9 +267,24 @@
     "emptyState": "The catalog is temporarily unavailable — please check back soon",
     "categoryNavAria": "Product categories",
     "allCategory": "All products",
-    "productCount": "{count, plural, one {# product} other {# products}}",
+    "groups": {
+      "clothing": "Clothing",
+      "accessories": "Accessories & Goodies"
+    },
+    "showcase": {
+      "title": "Explore our best",
+      "subtitle": "Here are some of the most popular product categories in our catalog.",
+      "cardAria": "Browse {group}"
+    },
+    "section": {
+      "subtitle": "Handpicked {group} from our collection, ready for your design.",
+      "seeAll": "See all",
+      "seeAllAria": "See all {group}"
+    },
     "toolbar": {
-      "searchPlaceholder": "Search products…",
+      "filteringLabel": "Filters",
+      "clearFilters": "Clear filters",
+      "searchPlaceholder": "What are you looking for?",
       "searchAria": "Search products",
       "sortAria": "Sort products",
       "sortOptions": {
@@ -277,29 +292,12 @@
         "price-asc": "Price: low to high",
         "price-desc": "Price: high to low",
         "name-asc": "Name: A to Z"
-      },
-      "resultsCount": "{count, plural, one {# product} other {# products}}"
+      }
     },
     "noResults": {
       "title": "No products found",
       "body": "Try a different search or clear the filters to see the full collection.",
       "clearFilters": "Clear filters"
-    },
-    "categories": {
-      "tshirt": "T-Shirts",
-      "hoodie": "Hoodies",
-      "sweatshirt": "Sweatshirts",
-      "tank": "Tank Tops",
-      "longsleeve": "Long Sleeves",
-      "totebag": "Tote Bags",
-      "mug": "Mugs",
-      "poster": "Posters",
-      "canvas": "Canvas Prints",
-      "phone-case": "Phone Cases",
-      "hat": "Hats",
-      "socks": "Socks",
-      "pillow": "Pillows",
-      "other": "More Products"
     },
     "card": {
       "noImage": "No image",

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl } from "@/tests/utils/renderWithIntl";
 import messages from "@/i18n/messages/en.json";
@@ -46,19 +46,19 @@ describe("CatalogPageContent", () => {
     expect(screen.getByText(messages.catalog.intro)).toBeInTheDocument();
   });
 
-  it("renders one section per category with its products", () => {
+  it("renders one section per group with its products", () => {
     renderWithIntl(<CatalogPageContent sections={SECTIONS} />);
 
     expect(
       screen.getByRole("heading", {
         level: 2,
-        name: messages.catalog.categories.tshirt,
+        name: messages.catalog.groups.clothing,
       })
     ).toBeInTheDocument();
     expect(
       screen.getByRole("heading", {
         level: 2,
-        name: messages.catalog.categories.mug,
+        name: messages.catalog.groups.accessories,
       })
     ).toBeInTheDocument();
     expect(
@@ -66,50 +66,77 @@ describe("CatalogPageContent", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders the category filter with an active all-products pill", () => {
+  it("renders the group filter with all products selected", () => {
     renderWithIntl(<CatalogPageContent sections={SECTIONS} />);
 
-    const nav = screen.getByRole("navigation", {
-      name: messages.catalog.categoryNavAria,
-    });
-    expect(nav).toBeInTheDocument();
-
     expect(
-      screen.getByRole("button", {
-        name: new RegExp(messages.catalog.allCategory),
-        pressed: true,
+      screen.getByRole("combobox", {
+        name: messages.catalog.categoryNavAria,
       })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", {
-        name: new RegExp(messages.catalog.categories.tshirt),
-        pressed: false,
-      })
-    ).toBeInTheDocument();
+    ).toHaveTextContent(messages.catalog.allCategory);
   });
 
-  it("narrows the grid to the selected category", async () => {
+  it("narrows the grid to the selected group", async () => {
     const user = userEvent.setup();
     renderWithIntl(<CatalogPageContent sections={SECTIONS} />);
 
     await user.click(
-      screen.getByRole("button", {
-        name: new RegExp(messages.catalog.categories.mug),
+      screen.getByRole("combobox", {
+        name: messages.catalog.categoryNavAria,
+      })
+    );
+    await user.click(
+      screen.getByRole("option", {
+        name: messages.catalog.groups.accessories,
       })
     );
 
     expect(
       screen.getByRole("heading", {
         level: 2,
-        name: messages.catalog.categories.mug,
+        name: messages.catalog.groups.accessories,
       })
     ).toBeInTheDocument();
     expect(
       screen.queryByRole("heading", {
         level: 2,
-        name: messages.catalog.categories.tshirt,
+        name: messages.catalog.groups.clothing,
       })
     ).not.toBeInTheDocument();
+  });
+
+  it("narrows the grid from a showcase group card", async () => {
+    const user = userEvent.setup();
+    renderWithIntl(<CatalogPageContent sections={SECTIONS} />);
+
+    expect(
+      screen.getByRole("heading", {
+        level: 2,
+        name: messages.catalog.showcase.title,
+      })
+    ).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole("button", {
+        name: `Browse ${messages.catalog.groups.accessories}`,
+      })
+    );
+
+    expect(
+      screen.queryByRole("heading", {
+        level: 2,
+        name: messages.catalog.showcase.title,
+      })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", {
+        level: 2,
+        name: messages.catalog.groups.clothing,
+      })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 3, name: "Ceramic Mug" })
+    ).toBeInTheDocument();
   });
 
   it("filters products by search query", async () => {
@@ -150,7 +177,7 @@ describe("CatalogPageContent", () => {
     ).toBeInTheDocument();
 
     await user.click(
-      screen.getByRole("button", {
+      within(screen.getByRole("status")).getByRole("button", {
         name: messages.catalog.noResults.clearFilters,
       })
     );
