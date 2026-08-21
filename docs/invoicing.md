@@ -14,9 +14,16 @@ payment provider.
    are modeled as credit notes (`type = 'credit_note'`, `CN-…` series).
 2. **PDF** — `_shared/invoicePdf.ts` renders an A4 PDF with pdf-lib and
    stores it in the **private `invoices` storage bucket** under
-   `{user_id}/{invoice_number}.pdf`.
+   `{user_id}/{invoice_number}.pdf`. The Stamp.ai wordmark
+   (`public/assets/logo-stamp.png`) is inlined as base64 in
+   `_shared/invoiceAssets.ts`, and Inter (latin subset) is embedded from
+   `_shared/invoiceFonts.ts` — non-embedded standard fonts render the euro
+   sign with a broken advance width in macOS Preview/Quick Look.
 3. **Email** — if an email provider is configured, the invoice is emailed to
    the customer (HTML body from `_shared/invoiceTemplate.ts`, PDF attached).
+   The email header logo is loaded from `{SITE_URL}/assets/logo-stamp.png`,
+   so the `SITE_URL` secret (already used by the payment functions) must
+   point at the deployed site for the image to resolve.
    Sent at most once (`emailed_at`). Skipped silently when not configured.
    Supports **Brevo** (preferred) and **Resend** (fallback).
 4. **Triggers** — invoice generation runs best-effort (never fails the
