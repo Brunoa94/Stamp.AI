@@ -293,8 +293,10 @@ export async function capturePayPalOrder(orderId: string): Promise<PayPalCapture
     // Parse PayPal error response
     const errorCode = data.details?.[0]?.issue || data.name || "UNKNOWN_ERROR";
     const debugId = data.debug_id;
+    // Unmapped codes get a generic friendly message — PayPal's own
+    // `data.message` is technical and must not be shown to the user.
     const errorInfo = PAYPAL_ERROR_MESSAGES[errorCode] || {
-      message: data.message || "Payment could not be processed. Please try again.",
+      message: "Your payment could not be processed. Please try again or use a different payment method.",
       isRetryable: true,
     };
 
@@ -326,7 +328,8 @@ export async function capturePayPalOrder(orderId: string): Promise<PayPalCapture
     };
 
     const statusInfo = statusMessages[data.status] || {
-      message: `Unexpected payment status: ${data.status}. Please contact support.`,
+      message:
+        "We couldn't confirm your payment. Please contact support if you were charged.",
       isRetryable: false,
     };
 
