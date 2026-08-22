@@ -35,20 +35,10 @@ export const PAYMENT_METHODS: PaymentMethodOption[] = [
 ];
 
 /**
- * iDEAL runs through Mollie, which needs MOLLIE_API_KEY configured in the
- * Supabase edge-function secrets. The flag lets environments without that
- * setup hide iDEAL from the checkout selector.
- */
-export const IDEAL_PAYMENT_ENABLED =
-  process.env.NEXT_PUBLIC_MOLLIE_ENABLED === "true";
-
-/**
  * Payment methods offered in the checkout selector.
+ * iDEAL is always enabled (runs through Mollie).
  */
-export const CHECKOUT_PAYMENT_METHODS: PaymentMethodOption[] =
-  IDEAL_PAYMENT_ENABLED
-    ? PAYMENT_METHODS
-    : PAYMENT_METHODS.filter((method) => method.id !== "ideal");
+export const CHECKOUT_PAYMENT_METHODS: PaymentMethodOption[] = PAYMENT_METHODS;
 
 /**
  * Payment methods available for credit purchases.
