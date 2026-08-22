@@ -14,6 +14,7 @@ import { OrderService } from "@/services/orderService";
 import { CartService } from "@/services/cartService";
 import { RefundService } from "@/services/refundService";
 import { PaymentRecoveryService } from "@/services/paymentRecoveryService";
+import { InvoiceService } from "@/services/invoiceService";
 import type {
   CreatePrintifyOrderRequest,
   PrintifyLineItem,
@@ -543,7 +544,25 @@ function MollieReturnContent() {
               console.log("✅ Payment marked as recovered");
             }
 
-            // ── Stage 4: Cart cleanup (non-blocking) ──
+            // ── Stage 4: Generate invoice (non-blocking) ──
+            // Invoice generation must happen after order creation since the order
+            // doesn't exist in Mollie metadata at payment time
+            if (createdOrderId) {
+              try {
+                await InvoiceService.generateInvoice(createdOrderId);
+                console.log("✅ Invoice generated successfully");
+              } catch (invoiceError) {
+                // Non-blocking: invoice can be regenerated later from order details
+                captureError(invoiceError, {
+                  service: "MollieReturn",
+                  action: "generateInvoice",
+                  metadata: { createdOrderId },
+                });
+                console.warn("⚠️ Invoice generation failed (non-blocking):", invoiceError);
+              }
+            }
+
+            // ── Stage 5: Cart cleanup (non-blocking) ──
             if (storedCartId) {
               try {
                 await clearCart.mutateAsync();

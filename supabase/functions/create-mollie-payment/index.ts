@@ -124,11 +124,14 @@ serve(async (req) => {
 
     // Create payment_transactions record immediately with user_id
     // Webhook will later update this record to 'succeeded' or 'failed'
+    // CRITICAL: user_id must be set for RLS policy to allow later updates
+    // (linkPaymentTransactionToOrder requires auth.uid() = user_id)
     try {
       await supabaseRest(
         'payment_transactions',
         'POST',
         {
+          user_id: userId,
           payment_provider: 'mollie',
           mollie_payment_id: molliePayment.id,
           mollie_status: molliePayment.status,
