@@ -19,6 +19,7 @@ import {
   logStampWarn,
 } from "../helpers/stampLogger";
 import { AnalyticsService } from "@/services/analyticsService";
+import { mapAddToCartEvent } from "@/features/analytics/mappers/stampFlowMappers";
 
 /**
  * useStampCartActions
@@ -178,19 +179,15 @@ export function useStampCartActions() {
         },
       });
 
-      AnalyticsService.track("add_to_cart", {
-        currency: "USD",
-        value: unitPrice / 100,
-        items: [
-          {
-            item_id: createdProductId,
-            item_name: productName,
-            price: unitPrice / 100,
-            quantity: 1,
-            item_variant: createdVariantId.toString(),
-          },
-        ],
-      });
+      AnalyticsService.track(
+        "add_to_cart",
+        mapAddToCartEvent({
+          productId: createdProductId,
+          productName,
+          unitPriceCents: unitPrice,
+          variantId: createdVariantId,
+        })
+      );
 
       handleSuccess(t("added"));
 
@@ -306,19 +303,15 @@ export function useStampCartActions() {
         },
       });
 
-      AnalyticsService.track("add_to_cart", {
-        currency: "USD",
-        value: unitPrice / 100,
-        items: [
-          {
-            item_id: createdProductId,
-            item_name: productName,
-            price: unitPrice / 100,
-            quantity: 1,
-            item_variant: createdVariantId.toString(),
-          },
-        ],
-      });
+      AnalyticsService.track(
+        "add_to_cart",
+        mapAddToCartEvent({
+          productId: createdProductId,
+          productName,
+          unitPriceCents: unitPrice,
+          variantId: createdVariantId,
+        })
+      );
 
       handleSuccess(t("added"));
 

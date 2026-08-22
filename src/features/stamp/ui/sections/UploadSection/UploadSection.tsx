@@ -10,6 +10,7 @@ import { UploadDropzone } from "./UploadDropzone";
 import { UploadPreview } from "./UploadPreview";
 import { UploadContent } from "./UploadContent";
 import { AnalyticsService } from "@/services/analyticsService";
+import { mapImageUploadEvent } from "@/features/analytics/mappers/stampFlowMappers";
 
 /**
  * UploadSection
@@ -38,11 +39,13 @@ function UploadSectionComponent() {
       setFileName(file.name);
       setFileSize((file.size / 1024 / 1024).toFixed(2));
 
-      AnalyticsService.track("stamp_image_upload", {
-        step: "upload",
-        file_type: file.type,
-        file_size_kb: Math.round(file.size / 1024),
-      });
+      AnalyticsService.track(
+        "stamp_image_upload",
+        mapImageUploadEvent({
+          fileType: file.type,
+          fileSizeKb: Math.round(file.size / 1024),
+        })
+      );
     }
   };
 

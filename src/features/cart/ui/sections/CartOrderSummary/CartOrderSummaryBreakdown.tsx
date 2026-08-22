@@ -34,20 +34,8 @@ export function CartOrderSummaryBreakdown({
         <CartOrderSummaryRow
           label={t("shippingProtocol")}
           value={shipping === 0 ? t("free") : formatPrice(shipping)}
-          valueClassName="text-sm font-bold uppercase tracking-[0.15em] text-(--color-stamp-success)"
+          valueClassName="font-body text-base font-bold uppercase tracking-[0.15em] text-(--color-stamp-success)"
         />
-        <div className="flex items-center justify-between">
-          <dt>
-            <Span variant="micro" className="text-(--color-stamp-taupe)">
-              {t("taxLogistics")}
-            </Span>
-          </dt>
-          <dd>
-            <Span variant="micro" className="text-(--color-stamp-taupe)/60">
-              {t("taxNote")}
-            </Span>
-          </dd>
-        </div>
       </dl>
 
       <CartOrderSummaryTotal total={total} />

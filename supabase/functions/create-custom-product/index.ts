@@ -3,7 +3,7 @@ import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { calculatePlacement, isScaleOnlyBlueprint, getBlueprintAnchorY } from "../_shared/printPlacement.ts"
 import { resolvePrintAreas } from "../_shared/resolvePrintAreas.ts"
-import { validateColorForBlueprint, filterVariantsByAllowedColors } from "../_shared/colorValidation.ts"
+import { validateColorForBlueprint, filterVariantsByAllowedColors, parseVariantColorSize } from "../_shared/colorValidation.ts"
 import { createClient } from "jsr:@supabase/supabase-js@2"
 
 const corsHeaders = {
@@ -141,8 +141,7 @@ serve(async (req) => {
         console.log(`🎨 Filtering variants by color: "${validatedColor}", size: "${selected_size}"`)
 
         const matchingVariants = allowedColorVariants.filter((v: any) => {
-          const variantColor = v.options?.color || v.title?.split(' / ')[0]?.trim()
-          const variantSize = v.options?.size || v.title?.split(' / ')[1]?.trim()
+          const { color: variantColor, size: variantSize } = parseVariantColorSize(v)
 
           const colorMatches = !validatedColor ||
             variantColor?.toLowerCase() === validatedColor.toLowerCase()
@@ -335,8 +334,7 @@ serve(async (req) => {
     if (productData.variants && productData.variants.length > 0) {
       // Try to find exact match for color AND size
       const exactMatch = productData.variants.find((v: any) => {
-        const variantColor = v.options?.color || v.title?.split(' / ')[0]?.trim()
-        const variantSize = v.options?.size || v.title?.split(' / ')[1]?.trim()
+        const { color: variantColor, size: variantSize } = parseVariantColorSize(v)
 
         const colorMatches = !validatedColor ||
           variantColor?.toLowerCase() === validatedColor.toLowerCase()

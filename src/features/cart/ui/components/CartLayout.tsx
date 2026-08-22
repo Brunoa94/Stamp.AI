@@ -16,9 +16,9 @@ interface CartLayoutPropsI {
 
 export function CartLayout({ children }: CartLayoutPropsI) {
   return (
-    <div className="min-h-screen bg-(--color-stamp-off-white) font-heading text-(--color-stamp-chocolate) pt-24">
+    <div className="min-h-screen bg-(--color-stamp-off-white) text-(--color-stamp-chocolate) pt-24">
       <div className="px-6 pb-24 pt-12 lg:px-12 xl:px-24">
-        <PageContainer>
+        <PageContainer className="mx-auto max-w-screen-2xl">
           <div className="grid grid-cols-1 gap-12 xl:grid-cols-12">
             {children}
           </div>

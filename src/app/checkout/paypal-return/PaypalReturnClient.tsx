@@ -252,8 +252,7 @@ function PayPalReturnContent() {
                 reason,
                 paypalCaptureId: captureData.captureId,
               });
-
-              }
+            }
           } catch (refundError) {
             captureError(refundError, {
               service: "PayPalReturn",
@@ -301,6 +300,7 @@ function PayPalReturnContent() {
                 shippingAddress,
                 billingAddress,
                 idempotencyKey,
+                paymentMethod: "paypal",
               })) ?? null;
 
             if (createdOrderId) {
@@ -401,7 +401,7 @@ function PayPalReturnContent() {
         } catch (pipelineError) {
           if (pipelineError instanceof PayPalPipelineTimeoutError) {
             if (createdOrderId) {
-              await markOrderFailed(createdOrderId, "fulfillment_failed");
+              await markOrderFailed(createdOrderId, "unsuccessful_confirmation");
             }
             await triggerRefund("PayPal checkout pipeline timed out");
           }
@@ -446,7 +446,7 @@ function PayPalReturnContent() {
   // Loading state
   if (status === "loading" || status === "capturing") {
     return (
-      <div className="min-h-screen flex justify-center pt-32 lg:pt-40 px-6 bg-(--color-stamp-cream)">
+      <div className="min-h-screen flex justify-center pt-20 px-6 bg-(--color-stamp-cream)">
         <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
           <section
             className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
@@ -549,7 +549,7 @@ function PayPalReturnContent() {
 
   // Error state
   return (
-    <div className="min-h-screen flex justify-center pt-32 lg:pt-40 px-6 bg-(--color-stamp-cream)">
+    <div className="min-h-screen flex justify-center pt-20 px-6 bg-(--color-stamp-cream)">
       <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
         <section
           className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"

@@ -62,14 +62,192 @@ All components must adhere to these three principles:
 
 ### Component Guidelines
 
-- **Use the design system**: Always leverage existing UI components from the design system instead of creating custom HTML elements.
-- **Use Next.js Image component**: Always use `next/image` for images instead of `<img>` tags for better performance and optimization.
-  - Exception: Only use `<img>` for external/dynamic URLs that can't be optimized or when Image component causes issues.
+- **Use the design system**: Always use components from `@/features/ui/` instead of raw HTML elements. This ensures consistent typography, spacing, and styling across the application.
+
+  | HTML Element | Design System Component | Import |
+  |--------------|------------------------|--------|
+  | `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>` | `<Heading>` | `@/features/ui/heading` |
+  | `<p>` | `<Paragraph>` | `@/features/ui/paragraph` |
+  | `<span>` (labels, badges, meta text) | `<Span>` | `@/features/ui/span` |
+  | `<button>` | `<Button>` | `@/features/ui/button` |
+  | `<input>` | `<Input>` | `@/features/ui/input` |
+  | `<textarea>` | `<Textarea>` | `@/features/ui/textarea` |
+  | `<select>` | `<Select>` | `@/features/ui/select` |
+  | `<label>` | `<Label>` | `@/features/ui/label` |
+  | `<input type="checkbox">` | `<Checkbox>` | `@/features/ui/checkbox` |
+  | `<ul>`, `<ol>` | `<List>` | `@/features/ui/list` |
+  | `<hr>` | `<Separator>` | `@/features/ui/separator` |
+  | `<img>` | `<Image>` | `next/image` |
+
+  **Exception**: Only use raw HTML elements when:
+  - Building a new design system component
+  - The design system doesn't have a suitable component (rare)
+  - External/dynamic image URLs that can't be optimized
+
 - **Styling approach**:
   - Prefer component `variants` for styling.
   - Only add custom styles when absolutely necessary for specific use cases.
   - **Avoid inline styles** - use Tailwind classes instead. Only use inline `style` attributes for dynamic values that cannot be expressed with Tailwind (e.g., animation delays, dynamic widths from state).
-- **Avoid premature optimization**: Only use `useCallback`, `useMemo`, or `React.memo` for heavy computations or proven performance bottlenecks.
+- **Avoid premature optimization**: Only use `useCallback`, `useMemo`, `React.memo` for heavy computations or proven performance bottlenecks.
+
+### File & Component Atomicity
+
+**Every component file should contain only ONE exported component.** This is a strict rule that ensures maintainability, testability, and reusability.
+
+#### Rules
+
+1. **One file, one component**: Each `.tsx` file should export a single component.
+2. **Extract sub-components**: If a component grows to include helper components, extract them to separate files.
+3. **Organize in folders**: Related components should be grouped in folders with individual files.
+
+#### Bad Example
+
+```tsx
+// ❌ BAD: ProcessStickyCarousel.tsx with multiple components
+function ProcessStepper({ activeStepIndex, totalSteps }) {
+  return <div>...</div>;
+}
+
+export function ProcessStickyCarousel() {
+  return (
+    <div>
+      <ProcessStepper activeStepIndex={0} totalSteps={5} />
+      ...
+    </div>
+  );
+}
+```
+
+#### Good Example
+
+```
+// ✅ GOOD: Separate files for each component
+src/features/homepage/ui/components/ProcessTimeline/
+├── ProcessStickyCarousel.tsx    # Main carousel component
+├── ProcessStepper.tsx           # Stepper dots component
+├── ProcessStepCard.tsx          # Individual step card
+└── ProcessStepImage.tsx         # Step image component
+```
+
+```tsx
+// ProcessStepper.tsx
+interface ProcessStepperPropsI {
+  activeStepIndex: number;
+  totalSteps: number;
+}
+
+export function ProcessStepper({ activeStepIndex, totalSteps }: ProcessStepperPropsI) {
+  return <div>...</div>;
+}
+
+// ProcessStickyCarousel.tsx
+import { ProcessStepper } from "./ProcessStepper";
+
+export function ProcessStickyCarousel() {
+  return (
+    <div>
+      <ProcessStepper activeStepIndex={0} totalSteps={5} />
+      ...
+    </div>
+  );
+}
+```
+
+#### Benefits
+
+- **Easier testing**: Each component can be unit tested in isolation.
+- **Better code navigation**: File names match component names.
+- **Improved reusability**: Components can be imported individually.
+- **Clearer dependencies**: Import statements show component relationships.
+- **Smaller bundle sizes**: Tree-shaking works more effectively.
+
+### No Complex Logic in JSX Loops
+
+**Extract complex computations from `.map()` loops into helper functions.** The `.map()` itself stays in the JSX return, but the logic inside should be minimal.
+
+#### Rules
+
+1. **Extract computation logic**: Move calculations to helper functions that return computed values.
+2. **Keep `.map()` in JSX**: The iteration itself belongs in the return statement.
+3. **Minimal logic in callbacks**: Only simple property access and helper function calls inside `.map()`.
+
+#### Bad Example
+
+```tsx
+// ❌ BAD: Complex logic inside .map() callback
+return (
+  <div>
+    {items.map((item, index) => {
+      const isActive = index === activeIndex;
+      const isPast = index < activeIndex;
+
+      let opacity = 0;
+      let translateY = 0;
+
+      if (isActive) {
+        opacity = 1 - progress;
+        translateY = -40 * progress;
+      } else if (index === activeIndex + 1) {
+        opacity = progress;
+        translateY = 40 * (1 - progress);
+      }
+
+      if (Math.abs(index - activeIndex) > 1) {
+        return null;
+      }
+
+      return <div style={{ opacity, transform: `translateY(${translateY}px)` }}>...</div>;
+    })}
+  </div>
+);
+```
+
+#### Good Example
+
+```tsx
+// ✅ GOOD: Extract logic to helper function, keep .map() in JSX
+// helpers.ts
+interface AnimationData {
+  opacity: number;
+  translateY: number;
+  isVisible: boolean;
+}
+
+function computeAnimation(index: number, activeIndex: number, progress: number): AnimationData {
+  const isActive = index === activeIndex;
+  let opacity = 0;
+  let translateY = 0;
+
+  if (isActive) {
+    opacity = 1 - progress;
+    translateY = -40 * progress;
+  } else if (index === activeIndex + 1) {
+    opacity = progress;
+    translateY = 40 * (1 - progress);
+  }
+
+  const isVisible = Math.abs(index - activeIndex) <= 1;
+  return { opacity, translateY, isVisible };
+}
+
+// Component.tsx
+return (
+  <div>
+    {items.map((item, index) => {
+      const animation = computeAnimation(index, activeIndex, progress);
+      if (!animation.isVisible) return null;
+
+      return <StepCard key={item.id} item={item} {...animation} />;
+    })}
+  </div>
+);
+```
+
+#### Benefits
+
+- **Testable logic**: Helper functions can be unit tested independently.
+- **Readable JSX**: The return statement clearly shows the component structure.
+- **Reusable calculations**: Logic can be shared across components.
 
 **Example:**
 
@@ -89,16 +267,64 @@ All components must adhere to these three principles:
 
 This project follows the **Feature-Sliced Design** pattern for scalable and maintainable architecture.
 
-- **Reference implementation**: See [`src/features/stamp-brutalist/`](../src/features/stamp-brutalist/) as a complete example.
 - **Feature structure**:
   ```
   src/features/[feature-name]/
-  ├── ui/              # UI components
-  ├── model/           # State management, business logic
-  ├── api/             # API calls, queries
-  ├── types/           # Feature-specific types
-  └── index.ts         # Public API
+  ├── ui/              # UI components only
+  │   ├── sections/    # Page sections
+  │   └── components/  # Reusable components
+  ├── lib/             # Non-component code
+  │   ├── helpers/     # Helper functions
+  │   ├── constants/   # Constants and static data
+  │   ├── types/       # Feature-specific types
+  │   ├── hooks/       # Custom hooks
+  │   ├── mappers/     # Data transformation functions
+  │   ├── services/    # Business logic services
+  │   └── utils/       # Utility functions
+  └── index.ts         # Public API (optional)
   ```
+
+### Separation of Concerns in Folders
+
+**IMPORTANT**: Keep a strict separation between UI and non-UI code:
+
+1. **`ui/` folder**: Contains ONLY React components (`.tsx` files)
+   - Components organized in subfolders by purpose
+   - No helper functions, constants, or types directly in component folders
+
+2. **`lib/` folder**: Contains ALL non-component code
+   - `helpers/` - Pure functions for computations (e.g., animation calculations)
+   - `constants/` - Static data and configuration
+   - `types/` - TypeScript type definitions
+   - `hooks/` - Custom React hooks
+   - `mappers/` - Data transformation functions
+   - `services/` - Business logic and external integrations
+   - `utils/` - Generic utility functions
+
+#### Bad Example
+
+```
+// ❌ BAD: Helper file inside component folder
+src/features/homepage/ui/components/ProcessTimeline/
+├── ProcessStickyCarousel.tsx
+├── ProcessStepper.tsx
+└── processAnimationHelpers.ts   # Wrong location!
+```
+
+#### Good Example
+
+```
+// ✅ GOOD: Helper in lib/helpers, components in ui/components
+src/features/homepage/
+├── ui/
+│   └── components/
+│       └── ProcessTimeline/
+│           ├── ProcessStickyCarousel.tsx
+│           └── ProcessStepper.tsx
+└── lib/
+    └── helpers/
+        └── processAnimationHelpers.ts
+```
 
 ### Core Architecture Layers
 
@@ -113,6 +339,7 @@ The project is organized into three primary layers:
 - Keep features self-contained and decoupled.
 - Share common utilities in `src/shared/`.
 - Follow consistent naming conventions across features.
+- **Never place helper functions, constants, or types inside `ui/` folders.**
 
 ---
 

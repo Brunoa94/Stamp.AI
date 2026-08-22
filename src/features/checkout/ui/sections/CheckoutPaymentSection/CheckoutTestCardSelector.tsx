@@ -40,7 +40,7 @@ export function CheckoutTestCardSelector({
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger
           id="test-card-select"
-          className="h-12 w-full rounded-none border-(--color-stamp-divider) bg-(--color-stamp-white) text-sm uppercase tracking-[0.05em] text-(--color-stamp-chocolate) focus:ring-2 focus:ring-(--color-stamp-gold)/30"
+          className="h-12 w-full rounded-none border-(--color-stamp-divider) bg-(--color-stamp-white) text-base font-normal text-(--color-stamp-chocolate) focus:ring-2 focus:ring-(--color-stamp-gold)/30"
         >
           <SelectValue placeholder={t("selectorPlaceholder")} />
         </SelectTrigger>

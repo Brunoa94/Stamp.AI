@@ -5,18 +5,109 @@
  * This prevents unwanted color variations from being created on Printify.
  */
 
+// Known size patterns (for products like mugs that only have size, no color)
+const SIZE_ONLY_PATTERNS = /^(\d+oz|\d+ml|\d+"?\s*x\s*\d+"?|one size)$/i;
+
+/**
+ * Check if a value looks like a size (not a color)
+ */
+function isSizePattern(value: string | null | undefined): boolean {
+  if (!value) return false;
+  return SIZE_ONLY_PATTERNS.test(value.trim());
+}
+
+/**
+ * Parse color and size from a Printify variant
+ *
+ * Handles different variant title formats:
+ * - "Color / Size" (e.g., "Black / M") - standard apparel format
+ * - "Size" only (e.g., "11oz") - mugs and similar products
+ * - Malformed API data (e.g., color: "11oz", size: "11oz") - treats as size-only
+ *
+ * @param variant - Printify variant object with title and options
+ * @returns Object with parsed color and size
+ */
+export function parseVariantColorSize(variant: {
+  title?: string;
+  options?: { color?: string; size?: string };
+}): { color: string | null; size: string | null } {
+  const optionsColor = variant.options?.color;
+  const optionsSize = variant.options?.size;
+
+  // Check for malformed API data: when "color" looks like a size (e.g., "11oz")
+  // This happens with some Printify products like mugs
+  if (optionsColor && isSizePattern(optionsColor)) {
+    // The "color" is actually a size - treat as size-only product
+    return {
+      color: null,
+      size: optionsColor,
+    };
+  }
+
+  // If we have valid explicit options, use them
+  if (optionsColor || optionsSize) {
+    return {
+      color: optionsColor || null,
+      size: optionsSize || null,
+    };
+  }
+
+  // Parse from title
+  const title = variant.title || "";
+  const titleParts = title.split(" / ");
+
+  if (titleParts.length >= 2) {
+    const firstPart = titleParts[0]?.trim();
+    const secondPart = titleParts[1]?.trim();
+
+    // Check if first part looks like a size (malformed "Size / Size" format)
+    if (isSizePattern(firstPart)) {
+      return {
+        color: null,
+        size: firstPart,
+      };
+    }
+
+    // Normal "Color / Size" format
+    return {
+      color: firstPart || null,
+      size: secondPart || null,
+    };
+  }
+
+  // Single value - check if it's a size pattern (like "11oz" for mugs)
+  const singleValue = titleParts[0]?.trim();
+  if (singleValue && isSizePattern(singleValue)) {
+    // It's a size (e.g., "11oz", "15oz", "12x16")
+    return {
+      color: null,
+      size: singleValue,
+    };
+  }
+
+  // Otherwise treat as color
+  return {
+    color: singleValue || null,
+    size: null,
+  };
+}
+
 // Allowed colors per product category
 const ALLOWED_COLORS: Record<string, string[]> = {
   // Apparel (T-shirts, Hoodies, Sweatshirts) - only Black and White
   apparel: ["black", "white"],
   // Mugs - typically white only
   mug: ["white"],
-  // Tote bags - Black, White, or Natural
-  tote: ["black", "white", "natural"],
-  // Canvas/Poster - no color restrictions (print on white canvas)
-  canvas: [],
+  // Tote bags - Black only (no user selection)
+  tote: ["black"],
+  // Canvas/Poster - white only (no user selection)
+  canvas: ["white"],
   // Socks - white base for all-over print
   socks: ["white"],
+  // Notebooks - no color restrictions (cover print)
+  notebook: [],
+  // Pillows - white only (no user selection)
+  pillow: ["white"],
 };
 
 // Blueprint IDs mapped to categories
@@ -25,6 +116,7 @@ const BLUEPRINT_CATEGORIES: Record<number, string> = {
   145: "apparel", // Unisex Softstyle T-Shirt (Gildan 64000)
   5: "apparel", // Unisex Cotton Crew Tee (Next Level)
   6: "apparel", // Unisex Heavy Cotton Tee (Gildan 5000)
+  157: "apparel", // Kids Heavy Cotton Tee
 
   // Hoodies & Sweatshirts
   77: "apparel", // Unisex Heavy Blend Hoodie (Gildan)
@@ -36,7 +128,7 @@ const BLUEPRINT_CATEGORIES: Record<number, string> = {
   1389: "tote", // AOP Tote Bag
 
   // Mugs
-  1320: "mug", // Ceramic Mug 11oz
+  441: "mug", // Ceramic Mug EU
   468: "mug", // White Glossy Mug
 
   // Canvas
@@ -45,6 +137,12 @@ const BLUEPRINT_CATEGORIES: Record<number, string> = {
   // Socks
   462: "socks", // Cushioned Crew Socks
   496: "socks", // Crew Socks
+
+  // Notebooks
+  475: "notebook", // Spiral Journal EU
+
+  // Pillows
+  229: "pillow", // Spun Polyester Square Pillowcase
 };
 
 export interface ColorValidationResult {
@@ -97,10 +195,35 @@ export function validateColorForBlueprint(
     };
   }
 
-  // If no color provided
-  if (!color || color.trim() === "") {
-    // For categories that require color (apparel, tote), default to first allowed
-    if (category === "apparel" || category === "tote") {
+  // Check if color looks like a size (misclassified from variant parsing)
+  // Matches: S, M, L, XL, 11oz, 15oz, 10", 12x12, 14" × 14", ONE SIZE, etc.
+  const sizePattern = /^(XXS|XS|S|M|L|XL|XXL|XXXL|2XL|3XL|4XL|5XL|ONE SIZE|\d+(?:\.\d+)?\s*(?:oz|ml|inch|cm|"|')?\s*[×x]?\s*\d*(?:\.\d+)?\s*(?:oz|ml|inch|cm|"|')?)$/i;
+  const colorLooksLikeSize = color && sizePattern.test(color.trim());
+
+  // If no color provided OR color looks like a size (misclassified)
+  if (!color || color.trim() === "" || colorLooksLikeSize) {
+    if (colorLooksLikeSize) {
+      console.warn(
+        `⚠️ Color "${color}" looks like a size for ${category}, using default color instead`
+      );
+    }
+
+    // For categories with only one allowed color (mug, socks), default to that color
+    if (allowedColors.length === 1) {
+      const defaultColor = allowedColors[0];
+      const properColor = defaultColor.charAt(0).toUpperCase() + defaultColor.slice(1);
+      console.log(
+        `📋 Defaulting to only allowed color "${properColor}" for ${category}`
+      );
+      return {
+        valid: true,
+        normalizedColor: properColor,
+        category,
+      };
+    }
+
+    // For categories that require color selection (apparel), default to first allowed
+    if (category === "apparel") {
       const defaultColor = allowedColors[0];
       console.log(
         `📋 No color provided for ${category}, defaulting to "${defaultColor}"`
@@ -111,7 +234,8 @@ export function validateColorForBlueprint(
         category,
       };
     }
-    // For other categories (mug, socks), allow no color
+
+    // For other categories (notebook), allow no color
     return {
       valid: true,
       normalizedColor: null,
@@ -175,28 +299,36 @@ export function filterVariantsByAllowedColors(
     return variants;
   }
 
+  // Size pattern to detect when variant has no color (only size)
+  // Matches: S, M, L, XL, 11oz, 15oz, 10", 12x12, 14" × 14", ONE SIZE, etc.
+  const sizePattern = /^(XXS|XS|S|M|L|XL|XXL|XXXL|2XL|3XL|4XL|5XL|ONE SIZE|\d+(?:\.\d+)?\s*(?:oz|ml|inch|cm|"|')?\s*[×x]?\s*\d*(?:\.\d+)?\s*(?:oz|ml|inch|cm|"|')?)$/i;
+
   // Filter variants to only include allowed colors
   const filtered = variants.filter((v: any) => {
-    const variantColor = (
-      v.options?.color ||
-      v.title?.split(" / ")[0]?.trim() ||
-      ""
-    ).toLowerCase();
+    const { color: variantColor } = parseVariantColorSize(v);
+
+    // If no color in variant (e.g., mugs with size only), allow it
+    if (!variantColor) {
+      return true;
+    }
+
+    // If variant has no color or color looks like a size, and we only allow one color,
+    // assume it's that color (e.g., socks that are always white but don't specify color)
+    if ((!variantColor || sizePattern.test(variantColor)) && allowedColors.length === 1) {
+      return true;
+    }
 
     // Check if variant color is in allowed list
-    return allowedColors.some((allowed) => variantColor.includes(allowed));
+    return allowedColors.some((allowed) => variantColor.toLowerCase().includes(allowed));
   });
 
   // If selected color is provided, further filter to that specific color
   if (selectedColor) {
     const normalizedSelected = selectedColor.toLowerCase().trim();
     const specificFiltered = filtered.filter((v: any) => {
-      const variantColor = (
-        v.options?.color ||
-        v.title?.split(" / ")[0]?.trim() ||
-        ""
-      ).toLowerCase();
-      return variantColor === normalizedSelected || variantColor.includes(normalizedSelected);
+      const { color: variantColor } = parseVariantColorSize(v);
+      if (!variantColor) return true; // Allow colorless variants
+      return variantColor.toLowerCase() === normalizedSelected || variantColor.toLowerCase().includes(normalizedSelected);
     });
 
     if (specificFiltered.length > 0) {

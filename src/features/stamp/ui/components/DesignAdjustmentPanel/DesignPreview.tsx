@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { SafeZone } from "@/lib/printPlacement/types";
 import type { PlacementParamsType } from "../../../lib/types/stampFlowTypes";
 import type { CategoryType, OrientationType } from "../../../lib/config/silhouetteConfig";
@@ -28,6 +29,8 @@ export function DesignPreview({
   safeZone,
   orientation,
 }: PropsI) {
+  const t = useTranslations("stamp.adjust");
+
   return (
     <div className="mx-auto w-full max-w-56 lg:max-w-72 pb-6">
       <PlacementPreview
@@ -38,6 +41,9 @@ export function DesignPreview({
         safeZone={safeZone ?? { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }}
         orientation={orientation}
       />
+      <p className="mt-2 text-[10px] text-(--color-stamp-muted) text-center italic leading-tight">
+        {t("mockupNote")}
+      </p>
     </div>
   );
 }

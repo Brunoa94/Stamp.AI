@@ -109,8 +109,10 @@ export class PaymentService {
       );
 
       // Create PayPal order through PayPalService
+      // PayPal expects amount in euros (full currency units), not cents
+      const amountInEuros = amount / 100;
       const { orderId, approvalUrl } = await PayPalService.createOrder({
-        amount,
+        amount: amountInEuros,
         lineItems: checkoutData.lineItems,
         shippingAddress: checkoutData.shippingAddress,
       });

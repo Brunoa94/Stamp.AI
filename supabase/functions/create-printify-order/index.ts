@@ -4,6 +4,7 @@ import { validateEnvVars } from "../_shared/validators.ts"
 import { validateAndEnforceTestMode } from "../_shared/testModeSafeguard.ts"
 import { validatePaymentAmount } from "../_shared/amountValidator.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
+import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts"
 
 // Environment variables will be validated when needed
 
@@ -376,6 +377,7 @@ serve(async (req) => {
             console.error(`❌ Failed to update order ${orderId} status to unsuccessful_confirmation:`, statusUpdateResult.error)
           } else {
             console.log(`✅ Order ${orderId} status updated to unsuccessful_confirmation`)
+            await insertOrderStatusHistory(orderId, 'unsuccessful_confirmation', 'order_creation')
           }
         } catch (updateError) {
           console.error('❌ Exception updating order status:', updateError)
@@ -413,6 +415,7 @@ serve(async (req) => {
           console.error(`❌ Failed to update order ${orderId} status to confirmed:`, statusUpdateResult.error)
         } else {
           console.log(`✅ Order ${orderId} status updated to confirmed`)
+          await insertOrderStatusHistory(orderId, 'confirmed', 'order_creation')
         }
       } catch (updateError) {
         console.error('❌ Exception updating order status:', updateError)

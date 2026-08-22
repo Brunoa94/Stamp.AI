@@ -103,17 +103,18 @@
 }
 
 .font-playfair {
-  font-family: var(--font-playfair), serif;
+  font-family: var(--font-indie-flower), var(--font-playfair), serif;
 }
 
 /* Stamp specific font combinations for consistency */
 .stamp-body {
-  font-family: var(--font-outfit), sans-serif;
+  font-family: var(--font-inter), var(--font-poppins), sans-serif;
+  font-weight: 500;
   color: var(--color-stamp-chocolate);
 }
 
 .stamp-serif {
-  font-family: var(--font-playfair), serif;
+  font-family: var(--font-indie-flower), var(--font-playfair), serif;
   color: var(--color-stamp-taupe);
 }
 
@@ -123,7 +124,7 @@
    ========================================== */
 
 [data-sonner-toaster] {
-  font-family: var(--font-outfit), sans-serif;
+  font-family: var(--font-inter), var(--font-poppins), sans-serif;
 }
 
 [data-sonner-toast] {

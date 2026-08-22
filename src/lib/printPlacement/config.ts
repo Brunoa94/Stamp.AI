@@ -108,17 +108,18 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     blueprintId: 145,
     name: 'Unisex Softstyle T-Shirt (Gildan 64000)',
     category: 'apparel',
-    positions: ['front', 'back', 'neck'],
+    positions: ['front', 'back'],
     defaultPosition: 'front',
     safeZone: TSHIRT_SAFE_ZONE,
     minDpi: 150,
     anchorY: 0.45,  // Slightly higher than center for chest
+    backPrintDefaultImageIndex: 3, // 4th image (0-indexed)
   },
   5: {
     blueprintId: 5,
     name: 'Unisex Cotton Crew Tee (Next Level)',
     category: 'apparel',
-    positions: ['front', 'back', 'neck'],
+    positions: ['front', 'back'],
     defaultPosition: 'front',
     safeZone: TSHIRT_SAFE_ZONE,
     minDpi: 150,
@@ -128,11 +129,22 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     blueprintId: 6,
     name: 'Unisex Heavy Cotton Tee (Gildan 5000)',
     category: 'apparel',
-    positions: ['front', 'back', 'neck', 'left_sleeve', 'right_sleeve'],
+    positions: ['front', 'back', 'left_sleeve', 'right_sleeve'],
     defaultPosition: 'front',
     safeZone: TSHIRT_SAFE_ZONE,
     minDpi: 150,
     anchorY: 0.45,
+  },
+  157: {
+    blueprintId: 157,
+    name: 'Kids Heavy Cotton Tee',
+    category: 'apparel',
+    positions: ['front', 'back'],
+    defaultPosition: 'front',
+    safeZone: TSHIRT_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.45,
+    backPrintDefaultImageIndex: 1, // 2nd image (0-indexed)
   },
 
   // Hoodies
@@ -140,11 +152,12 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     blueprintId: 77,
     name: 'Unisex Heavy Blend Hoodie (Gildan)',
     category: 'apparel',
-    positions: ['front', 'back', 'neck', 'left_sleeve', 'right_sleeve'],
+    positions: ['front', 'back', 'left_sleeve', 'right_sleeve'],
     defaultPosition: 'front',
     safeZone: HOODIE_SAFE_ZONE,
     minDpi: 150,
     anchorY: 0.42,  // Higher due to hood
+    backPrintDefaultImageIndex: 1, // 2nd image (0-indexed)
   },
   1525: {
     blueprintId: 1525,
@@ -155,12 +168,13 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     safeZone: HOODIE_SAFE_ZONE,
     minDpi: 150,
     anchorY: 0.42,  // Higher due to hood
+    backPrintDefaultImageIndex: 1, // 2nd image (0-indexed)
   },
   49: {
     blueprintId: 49,
     name: 'Unisex Heavy Blend Crewneck Sweatshirt',
     category: 'apparel',
-    positions: ['front', 'back', 'neck', 'left_sleeve', 'right_sleeve'],
+    positions: ['front', 'back', 'left_sleeve', 'right_sleeve'],
     defaultPosition: 'front',
     safeZone: TSHIRT_SAFE_ZONE,
     minDpi: 150,
@@ -196,9 +210,9 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
   },
 
   // Mugs - placement disabled (wrap-around print, auto-centered)
-  1320: {
-    blueprintId: 1320,
-    name: 'Ceramic Mug 11oz',
+  441: {
+    blueprintId: 441,
+    name: 'Ceramic Mug EU',
     category: 'mug',
     positions: ['front'],
     defaultPosition: 'front',
@@ -255,6 +269,30 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     minDpi: 150,
     anchorY: 0.5,
     disablePlacementAdjustment: true,
+  },
+
+  // Notebooks - cover print
+  475: {
+    blueprintId: 475,
+    name: 'Spiral Journal EU',
+    category: 'notebook',
+    positions: ['front'],
+    defaultPosition: 'front',
+    safeZone: DEFAULT_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.5,
+  },
+
+  // Pillows - all-over print
+  229: {
+    blueprintId: 229,
+    name: 'Spun Polyester Square Pillowcase',
+    category: 'pillow',
+    positions: ['front'],
+    defaultPosition: 'front',
+    safeZone: DEFAULT_SAFE_ZONE,
+    minDpi: 150,
+    anchorY: 0.5,
   },
 };
 

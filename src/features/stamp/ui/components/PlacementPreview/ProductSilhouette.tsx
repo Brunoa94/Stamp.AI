@@ -20,10 +20,16 @@ interface PropsI {
   category: CategoryType;
   /** For canvas/poster: controls the aspect ratio of the frame */
   orientation?: OrientationType;
+  /** Print position being previewed; picks a position view when one exists */
+  position?: string;
 }
 
-export function ProductSilhouette({ category, orientation = "vertical" }: PropsI) {
-  const configKey = getSilhouetteKey(category, orientation);
+export function ProductSilhouette({
+  category,
+  orientation = "vertical",
+  position,
+}: PropsI) {
+  const configKey = getSilhouetteKey(category, orientation, position);
   const config = SILHOUETTE_CONFIGS[configKey] || SILHOUETTE_CONFIGS.apparel;
 
   return (
@@ -32,6 +38,8 @@ export function ProductSilhouette({ category, orientation = "vertical" }: PropsI
       className="h-full w-full"
       aria-hidden="true"
       preserveAspectRatio="xMidYMid meet"
+      data-testid="product-silhouette"
+      data-silhouette-key={configKey}
     >
       {config.paths?.map((path, index) => (
         <path

@@ -93,6 +93,7 @@ export type Database = {
           custom_image_public_id: string | null
           custom_image_url: string | null
           id: string
+          is_selected: boolean
           printify_blueprint_id: number | null
           printify_print_provider_id: number | null
           product_id: string | null
@@ -111,6 +112,7 @@ export type Database = {
           custom_image_public_id?: string | null
           custom_image_url?: string | null
           id?: string
+          is_selected?: boolean
           printify_blueprint_id?: number | null
           printify_print_provider_id?: number | null
           product_id?: string | null
@@ -129,6 +131,7 @@ export type Database = {
           custom_image_public_id?: string | null
           custom_image_url?: string | null
           id?: string
+          is_selected?: boolean
           printify_blueprint_id?: number | null
           printify_print_provider_id?: number | null
           product_id?: string | null
@@ -189,6 +192,7 @@ export type Database = {
           display_title: string
           is_active: boolean | null
           is_on_sale: boolean | null
+          is_product_of_month: boolean | null
           last_synced_at: string | null
           min_price_cents: number | null
           original_price_cents: number | null
@@ -205,6 +209,7 @@ export type Database = {
           display_title: string
           is_active?: boolean | null
           is_on_sale?: boolean | null
+          is_product_of_month?: boolean | null
           last_synced_at?: string | null
           min_price_cents?: number | null
           original_price_cents?: number | null
@@ -221,6 +226,7 @@ export type Database = {
           display_title?: string
           is_active?: boolean | null
           is_on_sale?: boolean | null
+          is_product_of_month?: boolean | null
           last_synced_at?: string | null
           min_price_cents?: number | null
           original_price_cents?: number | null
@@ -446,6 +452,41 @@ export type Database = {
           },
         ]
       }
+      order_status_history: {
+        Row: {
+          created_at: string | null
+          id: string
+          order_id: string
+          printify_status: string | null
+          source: string
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          order_id: string
+          printify_status?: string | null
+          source: string
+          status: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          order_id?: string
+          printify_status?: string | null
+          source?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_status_history_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_status_reconciliation: {
         Row: {
           actual_status: string | null
@@ -524,6 +565,8 @@ export type Database = {
           payment_provider: string | null
           payment_status: string | null
           printify_order_id: string | null
+          printify_status: string | null
+          printify_synced_at: string | null
           product_id: string | null
           promo_code: string | null
           promo_value: number | null
@@ -557,6 +600,8 @@ export type Database = {
           payment_provider?: string | null
           payment_status?: string | null
           printify_order_id?: string | null
+          printify_status?: string | null
+          printify_synced_at?: string | null
           product_id?: string | null
           promo_code?: string | null
           promo_value?: number | null
@@ -590,6 +635,8 @@ export type Database = {
           payment_provider?: string | null
           payment_status?: string | null
           printify_order_id?: string | null
+          printify_status?: string | null
+          printify_synced_at?: string | null
           product_id?: string | null
           promo_code?: string | null
           promo_value?: number | null
@@ -770,6 +817,103 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "orders"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      print_providers: {
+        Row: {
+          blueprint_id: number
+          country_code: string
+          created_at: string | null
+          handling_time_days: number | null
+          id: string
+          last_synced_at: string | null
+          product_cost_cents: number | null
+          provider_id: number
+          provider_name: string
+          rank: number
+          shipping_additional_item_cents: number
+          shipping_first_item_cents: number
+          total_cost_cents: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          blueprint_id: number
+          country_code: string
+          created_at?: string | null
+          handling_time_days?: number | null
+          id?: string
+          last_synced_at?: string | null
+          product_cost_cents?: number | null
+          provider_id: number
+          provider_name: string
+          rank: number
+          shipping_additional_item_cents?: number
+          shipping_first_item_cents?: number
+          total_cost_cents?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          blueprint_id?: number
+          country_code?: string
+          created_at?: string | null
+          handling_time_days?: number | null
+          id?: string
+          last_synced_at?: string | null
+          product_cost_cents?: number | null
+          provider_id?: number
+          provider_name?: string
+          rank?: number
+          shipping_additional_item_cents?: number
+          shipping_first_item_cents?: number
+          total_cost_cents?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "print_providers_blueprint_id_fkey"
+            columns: ["blueprint_id"]
+            isOneToOne: false
+            referencedRelation: "catalog_products"
+            referencedColumns: ["blueprint_id"]
+          },
+        ]
+      }
+      product_seo: {
+        Row: {
+          blueprint_id: number
+          created_at: string | null
+          meta_description: string | null
+          meta_keywords: string[] | null
+          meta_title: string | null
+          printify_description: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          blueprint_id: number
+          created_at?: string | null
+          meta_description?: string | null
+          meta_keywords?: string[] | null
+          meta_title?: string | null
+          printify_description?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          blueprint_id?: number
+          created_at?: string | null
+          meta_description?: string | null
+          meta_keywords?: string[] | null
+          meta_title?: string | null
+          printify_description?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_seo_blueprint_id_fkey"
+            columns: ["blueprint_id"]
+            isOneToOne: true
+            referencedRelation: "catalog_products"
+            referencedColumns: ["blueprint_id"]
           },
         ]
       }
@@ -982,6 +1126,79 @@ export type Database = {
         }
         Relationships: []
       }
+      refunds: {
+        Row: {
+          amount: number
+          created_at: string | null
+          currency: string
+          id: string
+          invoice_id: string | null
+          metadata: Json | null
+          order_id: string
+          payment_provider: string
+          payment_transaction_id: string | null
+          provider_refund_id: string
+          reason: string | null
+          refunded_at: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          currency?: string
+          id?: string
+          invoice_id?: string | null
+          metadata?: Json | null
+          order_id: string
+          payment_provider: string
+          payment_transaction_id?: string | null
+          provider_refund_id: string
+          reason?: string | null
+          refunded_at?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          currency?: string
+          id?: string
+          invoice_id?: string | null
+          metadata?: Json | null
+          order_id?: string
+          payment_provider?: string
+          payment_transaction_id?: string | null
+          provider_refund_id?: string
+          reason?: string | null
+          refunded_at?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refunds_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_payment_transaction_id_fkey"
+            columns: ["payment_transaction_id"]
+            isOneToOne: false
+            referencedRelation: "payment_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_credits: {
         Row: {
           credits: number | null
@@ -1169,6 +1386,31 @@ export type Database = {
         Args: { p_blueprint_id: number; p_color: string }
         Returns: string[]
       }
+      get_best_provider_with_fallback: {
+        Args: { p_blueprint_id: number; p_country_code: string }
+        Returns: {
+          actual_country_code: string
+          handling_time_days: number
+          product_cost_cents: number
+          provider_id: number
+          provider_name: string
+          shipping_additional_item_cents: number
+          shipping_first_item_cents: number
+          total_cost_cents: number
+        }[]
+      }
+      get_cheapest_provider_for_country: {
+        Args: { p_blueprint_id: number; p_country_code: string }
+        Returns: {
+          handling_time_days: number
+          product_cost_cents: number
+          provider_id: number
+          provider_name: string
+          shipping_additional_item_cents: number
+          shipping_first_item_cents: number
+          total_cost_cents: number
+        }[]
+      }
       get_order_by_idempotency_key: { Args: { key: string }; Returns: string }
       get_pending_payment_recoveries: {
         Args: { p_hours_ago?: number; p_user_id: string }
@@ -1182,6 +1424,30 @@ export type Database = {
           payment_intent_id: string
           payment_provider: string
           shipping_address: Json
+        }[]
+      }
+      get_providers_for_country: {
+        Args: {
+          p_blueprint_id: number
+          p_country_code: string
+          p_limit?: number
+        }
+        Returns: {
+          handling_time_days: number
+          product_cost_cents: number
+          provider_id: number
+          provider_name: string
+          rank: number
+          shipping_additional_item_cents: number
+          shipping_first_item_cents: number
+          total_cost_cents: number
+        }[]
+      }
+      get_user_coins: {
+        Args: { p_user_id: string }
+        Returns: {
+          coins: number
+          coins_reset_at: string
         }[]
       }
       get_variant: {
@@ -1219,15 +1485,27 @@ export type Database = {
         }
         Returns: boolean
       }
-      process_refund_atomic: {
-        Args: {
-          p_order_id: string
-          p_payment_provider: string
-          p_reason: string
-          p_refund_id: string
-        }
-        Returns: Json
-      }
+      process_refund_atomic:
+        | {
+            Args: {
+              p_order_id: string
+              p_payment_provider: string
+              p_reason: string
+              p_refund_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_amount?: number
+              p_currency?: string
+              p_order_id: string
+              p_payment_provider: string
+              p_reason: string
+              p_refund_id: string
+            }
+            Returns: Json
+          }
       record_payment_for_recovery: {
         Args: {
           p_amount: number
@@ -1280,6 +1558,10 @@ export type Database = {
         }
       }
       trigger_catalog_sync: { Args: never; Returns: undefined }
+      update_cart_items_selection: {
+        Args: { p_cart_id: string; p_selected_item_ids: string[] }
+        Returns: undefined
+      }
       update_order_payment_status_atomic: {
         Args: {
           p_order_id: string
@@ -1307,6 +1589,7 @@ export type Database = {
           custom_image_public_id: string | null
           custom_image_url: string | null
           id: string
+          is_selected: boolean
           printify_blueprint_id: number | null
           printify_print_provider_id: number | null
           product_id: string | null

@@ -21,6 +21,7 @@ export function HomeTrustGuaranteesSection() {
           title={t("title")}
           accent={t("accent")}
           label={t("label")}
+          className="mb-16"
         />
 
         <TrustGuaranteesGrid />

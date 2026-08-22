@@ -1,33 +1,78 @@
+"use client";
+
 /**
  * HomeHeroSection
  *
- * Hero section with product squares scattered around centered content,
- * decorative circle animation, and clean layout.
+ * Hero section with title and CTA prominently displayed at the top,
+ * photo-to-print transform showcases on either side,
+ * and product images that bubble up from the bottom driven by scroll/wheel.
  */
 
-"use client";
-
+import { useEffect, useState } from "react";
 import { SectionReveal } from "../components/SectionReveal";
 import { HeroContent } from "../components/HeroSection/HeroContent";
-import { HeroProductGrid } from "../components/HeroSection/HeroProductGrid";
+import { HeroBubblingProducts } from "../components/HeroSection/HeroBubblingProducts";
 import { HeroScrollCue } from "../components/HeroSection/HeroScrollCue";
-import { HeroDecorativeCircle } from "../components/HeroSection/HeroDecorativeCircle";
+import { HeroTransformShowcase } from "../components/HeroSection/HeroTransformShowcase";
+import { HeroPromoBanner } from "../components/HeroSection/HeroPromoBanner";
+import { IMAGE_PAIRS } from "../../lib/constants/transformShowcase";
 
 export function HomeHeroSection() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const intervalId = setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % IMAGE_PAIRS.length);
+    }, 3000);
+
+    return () => clearTimeout(intervalId);
+  }, [currentIndex]);
+
   return (
-    <section className="relative flex min-h-screen flex-col overflow-hidden bg-(--color-stamp-off-white) px-6 pb-12 pt-30 lg:px-12 xl:px-24">
-      <HeroDecorativeCircle />
+    <section className="relative h-screen overflow-hidden bg-(--color-stamp-off-white)">
+      {/* Title and CTA with transform showcases on sides */}
+      {/* pt-32 sm:pt-36 accounts for fixed header (h-24) + trust banner (~40px) */}
+      <div className="relative z-20 px-6 pt-32 sm:pt-20 pb-8 lg:px-12 xl:px-24">
+        <div className="mx-auto">
+          <div className="flex items-end justify-center">
+            {/* Left showcase - hidden below 1200px */}
+            <div className="hidden 3xl:block shrink-0 mb-0">
+              <SectionReveal delayMs={200}>
+                <HeroTransformShowcase
+                  position="left"
+                  currentIndex={currentIndex}
+                />
+              </SectionReveal>
+            </div>
 
-      {/* Product squares scattered around the section */}
-      <HeroProductGrid />
+            {/* Center content */}
+            <SectionReveal className="max-w-5xl text-center w-full">
+              <HeroContent />
+            </SectionReveal>
 
-      <SectionReveal className="relative z-10 flex flex-1 items-center justify-center" fadeOnScroll>
-        <div className="mx-auto max-w-3xl text-center">
-          <HeroContent />
+            {/* Right showcase - hidden below 1200px */}
+            <div className="hidden min-[1200px]:block shrink-0 mb-0">
+              <SectionReveal delayMs={400}>
+                <HeroTransformShowcase
+                  position="right"
+                  currentIndex={currentIndex}
+                />
+              </SectionReveal>
+            </div>
+          </div>
         </div>
-      </SectionReveal>
+      </div>
 
-      <HeroScrollCue />
+      {/* Promotional banner */}
+      <HeroPromoBanner />
+
+      {/* Bubbling products that rise based on wheel events */}
+      <HeroBubblingProducts />
+
+      {/* Scroll cue */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30">
+        <HeroScrollCue />
+      </div>
     </section>
   );
 }

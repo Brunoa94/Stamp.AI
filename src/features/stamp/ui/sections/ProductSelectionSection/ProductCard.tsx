@@ -62,7 +62,7 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
         <Heading
           as="h4"
           variant="item"
-          className="text-(--color-stamp-chocolate) mb-1 text-center leading-tight min-h-10 overflow-hidden line-clamp-2 flex items-center justify-center text-sm md:text-base w-full"
+          className="text-(--color-stamp-chocolate) mb-1 text-center leading-tight min-h-10 overflow-hidden line-clamp-2 flex items-center justify-center text-base md:text-lg w-full"
         >
           {product.name}
         </Heading>

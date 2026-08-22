@@ -1,17 +1,30 @@
 {
   "home": {
+    "topBanner": {
+      "freeShipping": "Free shipping on orders over €{threshold}",
+      "returns": "{days}-day returns",
+      "securePayment": "Secure payment"
+    },
+    "paymentBanner": {
+      "securePayment": "Secure payment",
+      "freeShipping": "Free shipping on orders over €{threshold}",
+      "fastDelivery": "Fast delivery",
+      "returns": "{days}-day returns",
+      "trustedProviders": "Trusted payment providers"
+    },
     "hero": {
-      "title": "Stamp <accent>ai</accent>",
-      "tagline": "Type an idea, get a print-ready design in seconds, and wear it on heavyweight clothes that last. No design skills needed.",
+      "title": "tamp <accent>.ai</accent>",
+      "tagline": "From imagination to thing. Just describe it, we'll design it, and print it on premium products made to last.",
       "ctaPrimary": "Start Creating",
       "ctaSecondary": "View Catalog",
+      "freeCredits": "<signUp>Sign up</signUp> and get 5 free edits per day",
       "productBadge": "Essential_Wht / 320GSM",
       "scrollCue": "Scroll to Build",
-      "productImageAlt": "Heavyweight t-shirt with a custom AI-generated print"
+      "productImageAlt": "Heavyweight t-shirt with a custom print"
     },
     "meta": {
-      "title": "Custom AI T-Shirt & Apparel Design | Stamp AI",
-      "description": "Describe an idea, get a print-ready design in seconds, and put it on heavyweight clothes. No design skills needed — start for free today.",
+      "title": "Design & Order Custom T-Shirts and Apparel | Stamp AI",
+      "description": "Turn your idea into a print-ready design in seconds and put it on heavyweight, made-to-order clothes. No minimums, no design skills needed. Start free today.",
       "keywords": [
         "custom AI t-shirt design",
         "AI t-shirt generator",
@@ -30,30 +43,39 @@
       "accent": "process",
       "label": "How it works",
       "footer": "Simple, from idea to doorstep.",
+      "stepCounter": "Step {current} of {total}",
       "steps": {
-        "step-studio": {
-          "title": "Studio",
-          "description": "Describe your idea or upload your own photo, then pick a starting style from our presets."
+        "step-upload": {
+          "title": "Upload",
+          "description": "Start with a photo or a sketch you already have. No photo? Skip this and use words only."
         },
-        "step-synthesis": {
-          "title": "Design",
-          "description": "The AI turns it into clean, print-ready artwork — sharp lines, accurate color, high resolution."
+        "step-describe": {
+          "title": "Describe",
+          "description": "Type what you want in one or two simple sentences, like \"my dog as an astronaut\"."
         },
-        "step-material": {
-          "title": "Material",
-          "description": "Choose your blank: heavyweight tees, hoodies, totes and more, from 280 to 480 GSM."
+        "step-generate": {
+          "title": "Generate",
+          "description": "Press generate and give us a few seconds to draw up your design."
         },
-        "step-production": {
-          "title": "Production",
-          "description": "We print on demand with water-based, eco-friendly inks. Nothing is made until you order it."
+        "step-results": {
+          "title": "Results",
+          "description": "Look at the designs you get back and pick your favorite. Not happy? Change a word and try again."
         },
-        "step-quality": {
-          "title": "Quality",
-          "description": "Every order is checked by hand for print quality, color and finish before it ships."
+        "step-product": {
+          "title": "Product",
+          "description": "Pick what to print it on: a tee, hoodie, mug, canvas or tote bag."
         },
-        "step-delivery": {
-          "title": "Delivery",
-          "description": "Carbon-neutral shipping with tracking. Most orders arrive in 5 to 7 business days."
+        "step-customize": {
+          "title": "Customize",
+          "description": "Choose your size and color, and move the design to where you want it."
+        },
+        "step-create": {
+          "title": "Preview",
+          "description": "See your design on the real product and check that everything looks right."
+        },
+        "step-checkout": {
+          "title": "Checkout",
+          "description": "Add it to your cart and pay. We print your piece and ship it to your door."
         }
       }
     },
@@ -78,12 +100,12 @@
       "title": "Design for <accent>everyone</accent>",
       "quote": "Good design shouldn't need a design degree or a 500-unit minimum. Tell us what you want, and we'll help you make it — one piece at a time.",
       "quoteAttribution": "— Stamp AI Manifesto",
-      "intro": "We built Stamp AI to close the gap between a good idea and a good product. The AI handles the design work and we handle the printing and the blanks, so anyone can make clothes worth keeping.",
+      "intro": "We built Stamp AI to close the gap between a good idea and a good product. You bring the idea; we take care of the artwork, the printing and the blanks, so anyone can make clothes worth keeping.",
       "valuesToggle": "Our Values",
       "values": {
         "01": {
-          "title": "AI-Powered",
-          "description": "Describe what you want in plain words. The AI turns it into print-ready art — no software to learn."
+          "title": "Made Simple",
+          "description": "Describe what you want in plain words and get print-ready art back. No software to learn."
         },
         "02": {
           "title": "Built to Last",
@@ -101,7 +123,7 @@
     },
     "cta": {
       "heading": "Ready to stamp your <accent>vision</accent>?",
-      "lead": "Start with a prompt and see your design in seconds. No minimum order and no commitment — just make the thing you've been picturing.",
+      "lead": "Start with a few words and see your design in seconds. No minimum order and no commitment. Just make the thing you've been picturing.",
       "ctaPrimary": "Start Creating",
       "ctaSecondary": "Browse Catalog"
     },
@@ -139,11 +161,10 @@
       "accent": "answered",
       "label": "Support Archive",
       "stillHaveQuestions": "Still have questions?",
-      "contactSupport": "Contact Support",
       "items": {
         "ai-synthesis": {
-          "question": "How does the AI turn my idea into a design?",
-          "answer": "You type a prompt, upload a sketch, or drop in a reference image, and the AI builds artwork made to print straight onto fabric. It handles the color, resolution, and detail so the print holds up on the piece. No design experience needed."
+          "question": "How does my idea become a design?",
+          "answer": "Type a few words, upload a sketch, or drop in a reference image, and our design studio turns it into artwork made to print straight onto fabric. Color, resolution and detail are handled for you, so the print holds up on the piece. No design experience needed."
         },
         "archival-quality": {
           "question": "What makes your fabrics last so long?",
@@ -165,14 +186,15 @@
           "question": "What if I'm not satisfied with my order?",
           "answer": "You're covered by a 30-day guarantee. If the print, fabric, or fit isn't right, we'll replace it free or refund you in full, and we cover return shipping. Custom designs can't be resold, so we'd rather get it right the first time."
         }
-      }
+      },
+      "contactSupport": "Contact Support"
     },
     "ratingStars": {
       "ariaLabel": "Rated {rating} out of {total} stars"
     },
     "trustIndicators": {
       "items": {
-        "aiPowered": "AI Design",
+        "aiPowered": "Custom Design",
         "archivalQuality": "Premium Quality",
         "instantDelivery": "Fast Delivery",
         "fiveSevenDayDelivery": "5-7 Day Delivery",
@@ -180,7 +202,7 @@
         "carbonNeutral": "Carbon Neutral"
       },
       "subLabels": {
-        "generative": "Generative Logic",
+        "generative": "Design Studio",
         "heritage": "Built to Last",
         "logistics": "Global Logistics"
       }
@@ -197,8 +219,8 @@
       "paymentDescription": "All transactions are encrypted and processed through trusted payment providers.",
       "items": {
         "returns": {
-          "title": "14-Day Returns",
-          "description": "Changed your mind? Return any unworn item within 14 days for a full refund."
+          "title": "30-Day Guarantee",
+          "description": "Not satisfied? Return any item within 30 days for a full refund — we cover return shipping."
         },
         "refund": {
           "title": "100% Money Back",
@@ -211,6 +233,31 @@
         "freeShipping": {
           "title": "Free Shipping",
           "description": "Free carbon-neutral delivery on orders over €60."
+        }
+      }
+    },
+    "productOfMonth": {
+      "eyebrow": "This month's pick",
+      "title": "Product of the month",
+      "badge": "Pick of the month",
+      "cta": "Design yours now",
+      "noImage": "No image"
+    },
+    "story": {
+      "blocks": {
+        "design": {
+          "eyebrow": "Create",
+          "title": "Describe it. <accent>We'll design it.</accent>",
+          "body": "Type a few words, upload a photo, or start from a rough sketch. Seconds later you'll have clean, print-ready artwork in whatever style you're picturing.",
+          "cta": "Start creating",
+          "imageAlt": "The same portrait drawn in four different styles"
+        },
+        "quality": {
+          "eyebrow": "Quality",
+          "title": "Heavyweight blanks, <accent>built to last.</accent>",
+          "body": "We print on 280 to 480 GSM fabrics that are pre-shrunk and enzyme-washed, using water-based, eco-friendly inks. Your piece keeps its fit, color and print through years of wear and washing.",
+          "cta": "See the essentials",
+          "imageAlt": "Model wearing a heavyweight white t-shirt"
         }
       }
     }
@@ -342,6 +389,7 @@
       "orders": "Orders",
       "cart": "Cart",
       "logoutAria": "Logout from your account",
+      "logout": "Logout",
       "login": "Login",
       "openMenu": "Open menu",
       "closeMenu": "Close menu",
@@ -592,7 +640,11 @@
       "printAreaLabel": "Print area",
       "noImageTitle": "No design yet",
       "noImageBody": "Generate and pick a design first, then adjust how it sits on the product.",
-      "extraCostSummary": "Extra print positions: {price}"
+      "extraCostSummary": "Extra print positions: {price}",
+      "positionsHelpSingle": "Pick which side your design gets printed on.",
+      "positionsGroupAria": "Print position",
+      "positionSelectAria": "Print on {position}",
+      "mockupNote": "Preview only. Final mockup shown in next step."
     }
   },
   "cart": {
@@ -846,171 +898,35 @@
     }
   },
   "layout": {
-    "navbar": {
-      "brand": "Stamp<dot></dot>AI",
-      "stampIt": "Stamp It!",
-      "stampItButton": "Stamp It",
-      "myOrders": "My Orders",
-      "orders": "Orders",
-      "stampItPersonalized": "Stamp It, {name}!",
-      "dashboard": "Dashboard",
-      "coinsRemaining": "{coins} coins remaining"
-    },
-    "userSection": {
-      "viewCart": "View cart",
-      "signOut": "Sign Out",
-      "signOutAria": "Sign out",
-      "signingOut": "Signing out..."
-    },
-    "navbarActions": {
-      "loading": "Loading...",
-      "cart": "Cart",
-      "myOrders": "My Orders"
-    },
-    "footer": {
-      "brand": "Stamp<dot></dot>AI",
-      "mission": "Type an idea, get clothes worth wearing. We print it and ship it to your door.",
-      "sections": {
-        "company": "Company",
-        "support": "Support",
-        "legal": "Legal"
-      },
-      "links": {
-        "footer-about": "About Us",
-        "footer-contact": "Contact",
-        "footer-careers": "Careers",
-        "footer-help": "Help Center",
-        "footer-faq": "FAQ",
-        "footer-shipping": "Shipping Info",
-        "footer-privacy": "Privacy Policy",
-        "footer-terms": "Terms of Service",
-        "footer-refunds": "Refund Policy"
-      },
-      "copyright": "© {year} Stamp.AI · Made for people who make things",
-      "social": {
-        "twitter": "Twitter",
-        "instagram": "Instagram",
-        "linkedin": "LinkedIn"
-      }
-    },
-    "footerBottom": {
-      "copyright": "© {year} Stamp.AI. Made with <heart></heart> by the team here",
-      "securePrivate": "Secure & Private"
-    },
-    "footerBrand": {
-      "brand": "STAMP<dot></dot>AI"
-    },
-    "footerMission": {
-      "title": "Our Mission",
-      "text": "Type an idea, get clothes worth wearing. We print it and ship it to your door."
-    },
-    "mobileHeader": {
-      "stampAriaLabel": "Create a new stamp design",
-      "stampIt": "Stamp It!",
-      "viewCart": "View cart",
-      "openMenu": "Open navigation menu"
-    },
-    "mobileSidebar": {
-      "closeMenu": "Close menu",
-      "credits": "credits",
-      "darkMode": "Dark Mode",
-      "defaultName": "User",
-      "profileFallback": "View profile",
-      "dashboard": "Dashboard",
-      "myOrders": "My Orders",
-      "viewProfile": "View Profile",
-      "signingOut": "Signing out…",
-      "signOut": "Sign Out"
-    },
-    "brutalistNavbar": {
-      "brand": "<stamp>STAMP</stamp><dot></dot><ai>AI</ai>",
-      "centerCta": "STAMP IT",
-      "navLinks": {
-        "nav-home-link": "Home",
-        "nav-products-link": "Products",
-        "nav-gallery-link": "Gallery",
-        "nav-about-link": "About"
-      },
-      "cartLabel": "Cart ({count})",
-      "cartItems": {
-        "essential-box-tee": {
-          "name": "Essential Box Tee",
-          "details": "Size M / Qty 1 / $48.00"
-        },
-        "archival-black-tee": {
-          "name": "Archival Black Tee",
-          "details": "Size L / Qty 2 / $104.00"
-        },
-        "concrete-hoodie": {
-          "name": "Concrete Hoodie",
-          "details": "Size M / Qty 1 / $85.00"
-        }
-      },
-      "subtotal": "Subtotal",
-      "total": "€237.00 TOTAL",
-      "viewFullCart": "View Full Cart",
-      "account": "ACCOUNT",
-      "logout": "Logout"
-    },
-    "modernNavbar": {
-      "brand": "<stamp>STAMP</stamp><dot></dot><ai>AI</ai>",
-      "stampIt": "STAMP IT",
-      "cart": "CART",
-      "account": "ACCOUNT",
-      "logout": "LOGOUT",
-      "login": "LOGIN",
-      "toggleMenu": "Toggle menu",
-      "nav": {
-        "home": "HOME",
-        "stamp": "STAMP",
-        "orders": "ORDERS",
-        "dashboard": "DASHBOARD"
-      }
-    },
-    "brutalistFooter": {
-      "brand": "<stamp>STAMP</stamp><dot></dot><ai>AI</ai>",
-      "mission": "Turn a prompt into a design, then print it on shirts and hoodies built to last.",
+    "stampFooter": {
+      "logoAlt": "Stamp.AI",
+      "mission": "Type an idea, get clothes worth wearing. Printed on demand and shipped to your door.",
       "columns": {
-        "product": "Product",
-        "protocol": "Protocol",
+        "create": "Create",
         "support": "Support",
-        "network": "Network"
+        "legal": "Legal",
+        "social": "Follow"
       },
       "links": {
-        "footer-custom-tee": "Custom Essentials",
-        "footer-hoodies": "Archival Hoodies",
-        "footer-caps": "Precision Caps",
-        "footer-manifesto": "Manifesto",
-        "footer-careers": "Terminal Hub",
-        "footer-press": "Public Keys",
-        "footer-help": "Operations",
-        "footer-track": "Track Assets",
-        "footer-shipping": "Logistics",
-        "footer-ig": "Instagram",
-        "footer-tw": "X / Twitter",
-        "footer-tt": "Discord"
+        "footer-studio": "Design Studio",
+        "footer-cart": "Cart",
+        "footer-orders": "Your Orders",
+        "footer-faq": "FAQ",
+        "footer-shipping": "Shipping & Delivery",
+        "footer-returns": "Returns & Refunds",
+        "footer-contact": "Contact Us",
+        "footer-terms": "Terms of Service",
+        "footer-privacy": "Privacy Policy",
+        "footer-cookies": "Cookie Policy",
+        "footer-security": "Security",
+        "footer-instagram": "Instagram",
+        "footer-twitter": "X / Twitter",
+        "footer-tiktok": "TikTok",
+        "footer-linkedin": "LinkedIn"
       },
-      "bgText": "STAMP",
-      "copyrightLeft": "STAMP.AI © 2024 / ARCHIVE",
-      "copyrightCenter": "Privacy Protocols / Terms of Service",
-      "copyrightRight": "EST. NYC TERMINAL"
-    },
-    "minimalistHeader": {
-      "brand": "STAMP<accent>.</accent>AI",
-      "accountTerminal": "Account Terminal",
-      "login": "Login"
-    },
-    "protocolSidebar": {
-      "steps": {
-        "1": "01 Upload Photo",
-        "2": "02 Write Prompt",
-        "3": "03 Generating",
-        "4": "04 Your Design",
-        "5": "05 Pick Product",
-        "6": "06 Choose Fabric",
-        "7": "07 Confirm Order"
-      },
-      "help": "Help"
+      "wordmark": "Stamp",
+      "copyright": "© {year} Stamp AI. All rights reserved.",
+      "tagline": "Made for people who make things"
     }
   },
   "auth": {
@@ -1371,13 +1287,27 @@
       "delivery": "Delivery",
       "archiveClient": "Recipient",
       "archiveAddress": "Shipping address",
+      "orderInfo": "Order Information",
+      "orderDate": "Order Date",
+      "paymentMethod": "Payment",
+      "shippedDate": "Shipped",
+      "deliveredDate": "Delivered",
+      "trackingNumber": "Tracking",
       "valuation": "Summary",
+      "subtotal": "Subtotal",
+      "shippingCost": "Shipping",
+      "discount": "Discount",
       "total": "Total",
       "standard": "Standard",
       "invoice": {
         "preparing": "Preparing invoice…",
         "download": "Download invoice"
-      }
+      },
+      "trackingNumber": "Tracking number",
+      "trackShipment": "Track shipment"
+    },
+    "timeline": {
+      "title": "Order timeline"
     },
     "listItem": {
       "openDetails": "Open details for order {order}",
@@ -1392,7 +1322,8 @@
       "viewBlueprint": "View design",
       "trackProtocol": "Track order",
       "haltOrder": "Cancel order",
-      "reorder": "Reorder"
+      "reorder": "Reorder",
+      "trackShipment": "Track shipment"
     },
     "gridItem": {
       "openDetails": "Open details for order {order}",
@@ -1405,6 +1336,15 @@
       "track": "Track",
       "options": "Options",
       "reorder": "Reorder"
+    },
+    "statusBadge": {
+      "processing": "Processing",
+      "preparing": "Preparing",
+      "inProduction": "In production",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "hasIssues": "Needs attention"
     }
   },
   "checkout": {
@@ -1452,7 +1392,8 @@
       "subtitle": "Pick how you want to pay",
       "paypalNotice": "We'll send you to PayPal to pay securely.",
       "idealNotice": "We'll send you to your bank via iDEAL to pay securely.",
-      "selectMethodAria": "Select payment method"
+      "selectMethodAria": "Select payment method",
+      "comingSoon": "Coming Soon"
     },
     "testCards": {
       "selectorLabel": "Test Card Type",
@@ -1761,12 +1702,922 @@
       "title": "Your payment is safe",
       "body": "Payments run through Stripe, PayPal and Mollie. We never see or store your card details.",
       "accept": "We accept",
-      "sslSecured": "256-bit SSL Secured",
-      "comingSoon": "Soon"
+      "sslSecured": "Secure Checkout",
+      "comingSoon": "Soon",
+      "securePayment": "Secure Payment",
+      "noCardStored": "Card details never stored",
+      "encryptedTransmission": "Encrypted connection"
     },
     "guarantee": {
       "title": "30-day guarantee",
       "body": "If the print, fabric, or fit isn't right, we'll replace it or refund you. Return shipping is on us."
+    },
+    "socialProof": {
+      "ordersFulfilled": "{count} orders fulfilled"
+    },
+    "reviews": {
+      "ariaLabel": "Rated {rating} out of {total} stars",
+      "reviewCount": "{count} reviews",
+      "basedOn": "Based on {count} reviews",
+      "verified": "Verified reviews"
+    },
+    "verification": {
+      "verified": "Verified",
+      "secure": "Secure",
+      "siteVerified": "Protected checkout",
+      "encryption": "Encrypted connection"
+    },
+    "reviewCta": {
+      "enjoyedExperience": "Enjoyed your experience?",
+      "leaveReview": "Leave a Review",
+      "rateUs": "Rate us on",
+      "poweredBy": "Powered by"
+    }
+  },
+  "legal": {
+    "common": {
+      "updated": "Last updated",
+      "onThisPage": "On this page",
+      "backToTop": "Back to top",
+      "questionsHeading": "Still need help?",
+      "questionsBody": "If anything on this page is unclear, email us and a person will get back to you within one business day.",
+      "questionsCta": "Email support"
+    },
+    "terms": {
+      "meta": {
+        "title": "Terms of Service",
+        "description": "The terms that govern your use of Stamp AI, including account rules, design ownership, credits, production and returns.",
+        "keywords": [
+          "terms of service",
+          "terms and conditions",
+          "user agreement"
+        ]
+      },
+      "title": "Terms of",
+      "accent": "service",
+      "label": "Legal",
+      "intro": "These terms are the agreement between you and {legalName} for everything you do on Stamp AI: generating designs, buying credits, and ordering the clothes we print for you. We have tried to keep them readable. Where something matters to your rights, it is called out plainly.",
+      "sections": {
+        "about-these-terms": {
+          "heading": "1. About these terms",
+          "body": [
+            "By creating an account, buying credits, or placing an order on Stamp AI, you agree to these Terms of Service. If you do not agree with them, please do not use the service.",
+            "These terms work together with our Privacy Policy, Cookie Policy, Shipping & Delivery policy, and Returns & Refunds policy. Together they form the whole agreement between us.",
+            "If you are agreeing to these terms on behalf of a company or other organisation, you confirm that you are authorised to bind that organisation, and “you” in these terms means that organisation."
+          ]
+        },
+        "who-we-are": {
+          "heading": "2. Who we are",
+          "body": [
+            "Stamp AI is operated by {legalName}, registered at {address}. Our company registration number is {registration} and our VAT number is {vat}.",
+            "You can reach us at {supportEmail} for anything relating to your account or your order."
+          ]
+        },
+        "eligibility-accounts": {
+          "heading": "3. Eligibility and your account",
+          "body": [
+            "You must be at least 18 years old, or the age of majority where you live, to buy from Stamp AI. If you are between 16 and 18 you may use the service only with the involvement of a parent or guardian who accepts these terms on your behalf.",
+            "You are responsible for keeping your login details secure and for everything that happens under your account. Tell us straight away at {supportEmail} if you think someone else has access to it.",
+            "Please keep your account details accurate. We rely on your email address to send order confirmations and delivery updates, and on your shipping address to get your order to the right place."
+          ]
+        },
+        "credits-and-payment": {
+          "heading": "4. Credits, prices and payment",
+          "body": [
+            "Generating designs uses credits. Credits are bought in advance, are tied to your account, and are not a payment instrument — they hold no cash value, earn no interest, and cannot be transferred to another person or exchanged for cash.",
+            "Prices for products and credits are shown before you confirm, in the currency displayed at checkout, and include applicable taxes where we are required to show them. Shipping costs are shown separately at checkout before payment.",
+            "Payments are handled by our payment providers. We never see or store your full card details — see our Security page for how that works.",
+            "We try hard to keep pricing accurate. If a product or credit pack is listed at an obviously incorrect price because of a technical error, we may cancel the affected order and refund you in full rather than fulfil it at that price."
+          ],
+          "bullets": [
+            "Credits are consumed when a generation runs, including when you are not happy with the result.",
+            "Unused credits stay on your account and do not expire while your account is open.",
+            "If a generation fails because of a fault on our side, we return the credits it consumed."
+          ]
+        },
+        "creating-designs": {
+          "heading": "5. Generating designs",
+          "body": [
+            "Stamp AI turns your prompts, sketches and reference images into print-ready artwork using automated systems. Output is generated, not curated — results vary, and two identical prompts can produce different artwork.",
+            "Because generation is automated, we cannot promise that any particular result will match what you pictured, be unique to you, or be free of similarity to other work. Review your design carefully before you order it printed.",
+            "We may apply automated safety filtering to prompts and outputs. A prompt that is blocked does not mean an accusation — filters are imperfect — but repeated attempts to defeat them may lead to suspension under section 15."
+          ]
+        },
+        "your-content-and-licence": {
+          "heading": "6. What you upload",
+          "body": [
+            "You keep ownership of everything you upload — prompts, sketches, photos and reference images. We call this your content.",
+            "You confirm that you have the right to upload your content and to have it printed, and that doing so does not infringe anyone else's copyright, trade mark, or right to their own name and likeness.",
+            "You give us a licence to use your content only for the purpose of running the service: generating your designs, producing your order, providing support, and keeping records we are legally required to keep. This licence is worldwide and royalty-free because our production and hosting partners operate in several countries, and it ends when you delete the content or close your account, apart from copies we must retain by law.",
+            "We do not sell your content, and we do not use your designs in our marketing without asking you first."
+          ]
+        },
+        "ownership-of-designs": {
+          "heading": "7. Who owns the finished design",
+          "body": [
+            "As between you and us, the design generated from your prompt is yours to use, including commercially — you can print it, sell items carrying it, and use it in your own branding.",
+            "Be aware of a limit that is not ours to set: in many countries, including across the EU and in the United States, purely machine-generated artwork may not attract copyright protection at all. That means we cannot guarantee you an enforceable copyright in a generated design, and you may not be able to stop someone else using something similar. If exclusivity matters to your business, take your own legal advice.",
+            "We do not claim ownership of your designs and we will not resell them."
+          ]
+        },
+        "prohibited-designs": {
+          "heading": "8. What you may not create or order",
+          "body": [
+            "Print-on-demand only works if we refuse some jobs. You may not use Stamp AI to generate, order, or distribute anything in the list below, and we may reject or cancel an order at any point before dispatch if it falls into it."
+          ],
+          "bullets": [
+            "Content that infringes someone else's copyright, trade mark, or design right — including brand logos, sports club badges, band artwork, and film or game characters.",
+            "A real person's name, face, signature or likeness without their permission.",
+            "Sexual content involving minors, or any content that sexualises a person under 18, in any style.",
+            "Content that incites violence or hatred against people because of race, ethnicity, national origin, religion, disability, sex, gender identity or sexual orientation.",
+            "Content promoting terrorism, mass violence, or serious self-harm.",
+            "Content designed to deceive — counterfeit goods, forged official documents, or false claims of endorsement.",
+            "Content that is unlawful where it is produced or where it is being shipped."
+          ]
+        },
+        "production-and-shipping": {
+          "heading": "9. Production and delivery",
+          "body": [
+            "Every item is made to order. Production begins once your order is confirmed, which is why the window for changes is short — see section 10.",
+            "Delivery estimates are estimates, not guarantees. Production times, shipping times, costs, customs and duties are set out in full in our Shipping & Delivery policy.",
+            "Because items are printed individually, small variations in print placement and colour between one item and the next are normal and are not defects.",
+            "Risk in the goods passes to you on delivery. If you are ordering as a business rather than a consumer, risk passes when we hand the goods to the carrier."
+          ]
+        },
+        "cancellations-returns": {
+          "heading": "10. Changes, cancellations and returns",
+          "body": [
+            "You can change or cancel an order only before it enters production. Once printing has started we cannot stop it, because the item exists only for you.",
+            "Our 30-day guarantee, the EU right of withdrawal and its carve-out for custom-made goods, and the process for damaged or incorrect items are all set out in our Returns & Refunds policy. Nothing in these terms removes the statutory rights you have as a consumer."
+          ]
+        },
+        "service-availability": {
+          "heading": "11. Availability of the service",
+          "body": [
+            "We aim to keep Stamp AI running continuously, but we do not promise uninterrupted availability. We may take the service down for maintenance, and parts of it depend on third parties whose availability we do not control.",
+            "We may change, add or remove features. If a change materially reduces something you have already paid for, we will tell you and offer a refund of the affected amount."
+          ]
+        },
+        "our-ip": {
+          "heading": "12. Our intellectual property",
+          "body": [
+            "The Stamp AI name, logo, site design, software and underlying models belong to us or our licensors. Nothing in these terms transfers those rights to you.",
+            "You may not copy our software, reverse-engineer the service, scrape it at scale, or use automated systems to place orders or generate designs outside the normal interface."
+          ]
+        },
+        "liability": {
+          "heading": "13. Our liability",
+          "body": [
+            "Nothing in these terms limits our liability for death or personal injury caused by our negligence, for fraud, or for anything else that cannot lawfully be limited — including your mandatory rights as a consumer.",
+            "Subject to that, our total liability to you for any claim connected to an order is limited to the amount you paid for that order, and for any claim connected to credits, to the amount you paid for the credits in question.",
+            "We are not liable for indirect or consequential loss, for lost profits or lost business, or for losses arising because a generated design turned out not to be protectable or not to be unique."
+          ]
+        },
+        "indemnity": {
+          "heading": "14. Your responsibility for what you print",
+          "body": [
+            "You are responsible for the content you ask us to print. If a third party brings a claim against us because something you ordered infringed their rights or broke the rules in section 8, you agree to cover the reasonable costs and damages we incur as a result.",
+            "This does not apply where the claim arises from something we did wrong independently of your instructions."
+          ]
+        },
+        "suspension-termination": {
+          "heading": "15. Suspension and closing your account",
+          "body": [
+            "You can close your account at any time from your profile. Closing it does not automatically refund unused credits, but you can ask us and we will deal with the request fairly.",
+            "We may suspend or close an account that breaks these terms, in particular section 8, or where we are legally required to. Where it is safe and lawful to do so, we will tell you why and give you a chance to respond.",
+            "If we close your account without cause, we will refund your unused credits."
+          ]
+        },
+        "changes-to-terms": {
+          "heading": "16. Changes to these terms",
+          "body": [
+            "We may update these terms as the service changes. The date at the top of this page always shows the current version.",
+            "If a change materially affects your rights, we will give you reasonable notice by email or in the app before it takes effect. The terms that apply to an order are the ones in force when you placed it."
+          ]
+        },
+        "governing-law": {
+          "heading": "17. Governing law and disputes",
+          "body": [
+            "These terms are governed by {jurisdiction} law, and disputes will be heard by {courts}.",
+            "If you are a consumer resident in the EU, this does not deprive you of the protection of the mandatory consumer law of the country you live in, and you may also bring proceedings in your local courts.",
+            "Please contact us first at {supportEmail} — most problems are quicker to fix directly. EU consumers may also use the European Commission's online dispute resolution platform."
+          ]
+        },
+        "contact": {
+          "heading": "18. Contact",
+          "body": [
+            "Questions about these terms can go to {supportEmail}, or by post to {legalName}, {address}."
+          ]
+        }
+      }
+    },
+    "privacy": {
+      "meta": {
+        "title": "Privacy Policy",
+        "description": "How Stamp AI collects, uses and protects your personal data under the GDPR, including your prompts, orders and payment information.",
+        "keywords": [
+          "privacy policy",
+          "GDPR",
+          "data protection",
+          "personal data"
+        ]
+      },
+      "title": "Privacy",
+      "accent": "policy",
+      "label": "Legal",
+      "intro": "This policy explains what personal data Stamp AI collects, why we collect it, who we share it with, and the control you have over it. It is written to meet the EU General Data Protection Regulation (GDPR), and it applies wherever you are.",
+      "sections": {
+        "controller": {
+          "heading": "1. Who is responsible for your data",
+          "body": [
+            "{legalName}, registered at {address}, is the data controller for the personal data described in this policy. That means we decide why and how it is processed, and we are accountable for it.",
+            "For any privacy question or request, contact {privacyEmail}."
+          ]
+        },
+        "data-we-collect": {
+          "heading": "2. What we collect",
+          "body": [
+            "We collect only what we need to run the service. That falls into a few groups:"
+          ],
+          "bullets": [
+            "Account data — your email address, your name if you give it, and authentication data. If you sign in with Google we receive your email address, name and profile picture from Google, not your Google password.",
+            "Design data — the prompts you write, images you upload, and the designs generated from them.",
+            "Order data — what you ordered, size and colour, your shipping and billing address, phone number if given for delivery, order history and delivery status.",
+            "Payment data — the amount, currency, payment method type and the outcome of the transaction. Your full card number never reaches our systems; it goes directly to our payment providers.",
+            "Support data — the messages you send us and our replies.",
+            "Technical data — IP address, browser and device type, pages viewed, and error diagnostics. Some of this is collected through cookies; see our Cookie Policy."
+          ]
+        },
+        "how-we-use": {
+          "heading": "3. Why we use it, and our lawful basis",
+          "body": [
+            "Under the GDPR we must have a lawful basis for each purpose. Ours are:"
+          ],
+          "bullets": [
+            "To create and run your account, generate your designs, take payment and deliver your order — because it is necessary to perform our contract with you.",
+            "To provide customer support and handle returns — performance of our contract, and our legitimate interest in resolving problems.",
+            "To keep the service secure, prevent fraud and abuse, and enforce our terms — our legitimate interest in protecting the service and its users.",
+            "To measure how the site is used and improve it — our legitimate interest in understanding and improving the service, and your consent where the law requires it for the underlying cookies.",
+            "To send marketing email — your consent. Every marketing email has an unsubscribe link, and unsubscribing never affects your orders.",
+            "To keep accounting, tax and consumer-law records — compliance with our legal obligations."
+          ]
+        },
+        "ai-prompts-and-designs": {
+          "heading": "4. Your prompts and generated designs",
+          "body": [
+            "Your prompts and uploads are sent to the AI systems that generate your artwork. This is necessary to deliver what you asked for.",
+            "We do not sell your prompts or designs, and we do not publish them.",
+            "Please avoid putting personal details about yourself or anyone else into a prompt — names, addresses, health information — as prompts are processed and stored as part of your design history.",
+            "Uploading a photograph of another person means processing their personal data. Please only do that if you have their agreement."
+          ]
+        },
+        "sharing-processors": {
+          "heading": "5. Who we share it with",
+          "body": [
+            "We share personal data only with service providers who process it on our instructions under a data processing agreement, and only as far as they need it. We do not sell personal data to anyone."
+          ],
+          "bullets": [
+            "Hosting, database and authentication providers, which store your account, design and order records.",
+            "Payment providers, which process your payment and carry out fraud and sanctions checks as their own controllers.",
+            "Print and fulfilment partners, which receive your design, item details and shipping address in order to produce and send your order.",
+            "Carriers, which receive your name, address and contact details to make the delivery.",
+            "Error monitoring and analytics providers, which receive technical and usage data.",
+            "Email providers, which send your transactional and, if you opted in, marketing email.",
+            "Professional advisers, and public authorities where the law requires it."
+          ]
+        },
+        "international-transfers": {
+          "heading": "6. Transfers outside the EEA",
+          "body": [
+            "Some of our providers operate outside the European Economic Area, including in the United States. When personal data is transferred there, we rely on the European Commission's Standard Contractual Clauses, or on an adequacy decision where one applies, together with additional safeguards where they are needed.",
+            "You can ask us at {privacyEmail} for details of the safeguards in place for a specific transfer."
+          ]
+        },
+        "retention": {
+          "heading": "7. How long we keep it",
+          "body": [
+            "We keep personal data only as long as we have a reason to:"
+          ],
+          "bullets": [
+            "Account and design data — while your account is open, and deleted within 30 days of you closing it.",
+            "Order and transaction records — seven years from the order, because tax and accounting law requires it. This applies even after you close your account.",
+            "Support conversations — three years, so we can handle repeat or related issues.",
+            "Security and access logs — up to 12 months.",
+            "Analytics data — up to 14 months.",
+            "Marketing consent records — until you withdraw consent, plus a short period to prove the withdrawal was honoured."
+          ]
+        },
+        "your-rights": {
+          "heading": "8. Your rights",
+          "body": [
+            "Under the GDPR you have the following rights over your personal data. They are free to use, and we will respond within one month."
+          ],
+          "bullets": [
+            "Access — get a copy of the personal data we hold about you.",
+            "Rectification — have inaccurate or incomplete data corrected.",
+            "Erasure — have your data deleted where we no longer need it, subject to records we must keep by law.",
+            "Restriction — ask us to pause processing while a dispute about accuracy or legitimate interests is resolved.",
+            "Portability — receive the data you gave us in a structured, machine-readable format, or have it sent to another provider.",
+            "Objection — object to processing based on legitimate interests, and object to direct marketing at any time, which we will always honour.",
+            "Withdraw consent — at any time, without affecting processing that already happened.",
+            "Automated decisions — we do not make decisions with legal or similarly significant effects about you by automated means alone."
+          ]
+        },
+        "cookies": {
+          "heading": "9. Cookies",
+          "body": [
+            "We use a small number of cookies, some strictly necessary and some that need your consent. What each one does and how to turn it off is set out in our Cookie Policy."
+          ]
+        },
+        "security": {
+          "heading": "10. How we protect it",
+          "body": [
+            "We use encryption in transit and at rest, strict access controls, and continuous monitoring. Our Security page describes the specific measures.",
+            "No system is perfectly secure. If a breach ever affects your rights and freedoms, we will notify the supervisory authority within 72 hours and tell you directly where the risk to you is high."
+          ]
+        },
+        "children": {
+          "heading": "11. Children",
+          "body": [
+            "Stamp AI is not intended for children. We do not knowingly collect personal data from anyone under 16. If you believe a child has given us their data, contact {privacyEmail} and we will delete it."
+          ]
+        },
+        "changes": {
+          "heading": "12. Changes to this policy",
+          "body": [
+            "We will update this policy when our practices change. The date at the top of the page shows the current version, and we will notify you by email before any change that materially affects your rights takes effect."
+          ]
+        },
+        "contact-complaints": {
+          "heading": "13. Contact and complaints",
+          "body": [
+            "To exercise a right or ask a question, email {privacyEmail} or write to {legalName}, {address}.",
+            "If you are not satisfied with our response, you can complain to your national data protection authority. In the Netherlands that is the Autoriteit Persoonsgegevens; if you live elsewhere in the EU you can complain to the authority where you live or work."
+          ]
+        }
+      }
+    },
+    "cookies": {
+      "meta": {
+        "title": "Cookie Policy",
+        "description": "Which cookies Stamp AI uses, what each one does, how long it lasts, and how to control or refuse them.",
+        "keywords": ["cookie policy", "cookies", "tracking", "consent"]
+      },
+      "title": "Cookie",
+      "accent": "policy",
+      "label": "Legal",
+      "intro": "We use a small number of cookies — some the site cannot work without, and some that only run if you agree. This page lists them all and tells you how to turn off the optional ones.",
+      "sections": {
+        "what-are-cookies": {
+          "heading": "1. What cookies are",
+          "body": [
+            "Cookies are small text files a site stores on your device so it can recognise you between page loads. Related technologies such as local storage do much the same thing, and everything on this page applies to those too.",
+            "A cookie is a first-party cookie when it is set by Stamp AI, and a third-party cookie when it is set by another company whose service we use."
+          ]
+        },
+        "why-we-use": {
+          "heading": "2. Why we use them",
+          "body": [
+            "We use cookies to keep you signed in, to remember what is in your cart, to keep the checkout secure, and — only with your agreement — to understand which parts of the site people actually use.",
+            "We do not use cookies to build advertising profiles, and we do not sell what they tell us."
+          ]
+        },
+        "strictly-necessary": {
+          "heading": "3. Strictly necessary cookies",
+          "body": [
+            "These make the site work. They are set without asking, because the service cannot be delivered without them, and you cannot switch them off from within the site."
+          ],
+          "bullets": [
+            "Authentication — keeps you signed in and refreshes your session. Expires when your session ends or after a short renewal window.",
+            "Cart — remembers the items you have added so they are still there when you return. Persists for up to 30 days.",
+            "Security — protects forms and checkout against cross-site request forgery. Expires with your session."
+          ]
+        },
+        "analytics": {
+          "heading": "4. Analytics cookies",
+          "body": [
+            "We use Google Analytics 4 to count visits, see which pages get used, and find where people get stuck. IP addresses are truncated before storage, and we do not use these cookies to identify you personally or to build advertising profiles.",
+            "They persist for up to 14 months. Section 7 explains how to block them, and Google also provides a browser add-on that opts you out of Google Analytics on every site."
+          ]
+        },
+        "preference": {
+          "heading": "5. Preference cookies",
+          "body": [
+            "These remember choices you have made — such as light or dark appearance — so the site looks the way you left it. They hold a setting, nothing more, and persist for up to 12 months."
+          ]
+        },
+        "third-party": {
+          "heading": "6. Cookies set by others",
+          "body": [
+            "Some cookies come from services we rely on rather than from us directly:"
+          ],
+          "bullets": [
+            "Payment providers set cookies during checkout to complete your payment and detect fraud. These are necessary for the transaction.",
+            "Google Analytics sets analytics cookies, and only after you consent.",
+            "If you sign in with Google, Google sets cookies as part of the sign-in flow."
+          ]
+        },
+        "managing-cookies": {
+          "heading": "7. How to control cookies",
+          "body": [
+            "Every major browser lets you block or delete cookies through its settings, usually under Privacy, both site by site and globally. Blocking strictly necessary cookies will stop you from signing in or completing checkout.",
+            "To opt out of Google Analytics specifically, install Google's opt-out browser add-on, or block third-party cookies for this site in your browser.",
+            "If you want us to delete data already collected through analytics cookies, email {privacyEmail} and we will handle it as an erasure request under the GDPR."
+          ]
+        },
+        "changes": {
+          "heading": "8. Changes to this policy",
+          "body": [
+            "When we add or remove a cookie we update this page. The date at the top shows the current version."
+          ]
+        },
+        "contact": {
+          "heading": "9. Contact",
+          "body": ["Questions about cookies can go to {privacyEmail}."]
+        }
+      }
+    },
+    "security": {
+      "meta": {
+        "title": "Security",
+        "description": "How Stamp AI protects your account, your designs and your payment data — encryption, access control, monitoring and responsible disclosure.",
+        "keywords": [
+          "security",
+          "data security",
+          "encryption",
+          "PCI DSS",
+          "vulnerability disclosure"
+        ]
+      },
+      "title": "Security",
+      "accent": "at stamp",
+      "label": "Trust",
+      "intro": "You are trusting us with your designs, your address and your payment. This page sets out what we actually do to protect them, in enough detail to be useful rather than reassuring.",
+      "sections": {
+        "our-approach": {
+          "heading": "1. Our approach",
+          "body": [
+            "We build on the principle of least privilege: every system, every service and every person gets the narrowest access that lets them do their job, and nothing more.",
+            "We would rather hold less data than defend more of it, so we collect only what the service needs and delete it when the reason for holding it ends."
+          ]
+        },
+        "encryption": {
+          "heading": "2. Encryption",
+          "body": [
+            "All traffic between your browser and Stamp AI runs over TLS 1.2 or higher. HTTP requests are redirected to HTTPS, and we send HTTP Strict Transport Security so your browser refuses to connect any other way.",
+            "Data at rest — your account, designs and order records — is encrypted with AES-256 on managed infrastructure. Backups are encrypted with the same standard."
+          ]
+        },
+        "authentication-access": {
+          "heading": "3. Accounts and access control",
+          "body": [
+            "Authentication is handled by a managed identity provider. Passwords are never stored in plain text; they are hashed with a slow, salted algorithm designed for the purpose.",
+            "You can sign in with Google instead of a password, in which case we never handle a password at all.",
+            "Every database query runs under row-level security, so a request can only ever reach the rows belonging to the authenticated user. This is enforced at the database, not in application code, which means a bug in our code cannot expose another user's data.",
+            "Staff access to production is restricted to the few people who need it, requires multi-factor authentication, and is logged."
+          ]
+        },
+        "payment-security": {
+          "heading": "4. Payment security",
+          "body": [
+            "We never see your card number. Card details are entered into fields hosted by our PCI DSS Level 1 certified payment providers and go straight to them; our servers receive only a token and the result of the transaction.",
+            "This means a compromise of Stamp AI could not expose your card details, because they were never on our systems.",
+            "3-D Secure and Strong Customer Authentication are applied where your bank or the law requires it."
+          ]
+        },
+        "infrastructure": {
+          "heading": "5. Infrastructure",
+          "body": [
+            "Stamp AI runs on managed cloud infrastructure with data hosted in the EU. Our providers hold ISO 27001 and SOC 2 Type II certification and are responsible for physical security, network isolation and patching at the platform layer.",
+            "Production, staging and development are fully separated, and production data is never copied into development environments.",
+            "Secrets and API keys are held in a managed secret store, never in source control, and are rotated when someone with access leaves."
+          ]
+        },
+        "application-hardening": {
+          "heading": "6. Application hardening",
+          "body": [
+            "The application ships a set of security headers on every response, including a Content Security Policy that restricts where scripts may load from, X-Frame-Options to prevent clickjacking, X-Content-Type-Options, and a strict Referrer-Policy.",
+            "Requests are rate limited to blunt brute-force attempts and abuse of the generation endpoints.",
+            "All input is validated against a schema at the API boundary before it reaches business logic, and database access uses parameterised queries throughout.",
+            "Dependencies are scanned automatically for known vulnerabilities, and security patches are applied on a priority basis."
+          ]
+        },
+        "monitoring-logging": {
+          "heading": "7. Monitoring and logging",
+          "body": [
+            "Errors and anomalies are captured by an application monitoring service, with personal data scrubbed before events are sent.",
+            "Authentication events, administrative actions and access to sensitive endpoints are logged and retained so that unusual activity can be investigated after the fact."
+          ]
+        },
+        "availability-backups": {
+          "heading": "8. Backups and continuity",
+          "body": [
+            "Databases are backed up automatically with point-in-time recovery. Backups are encrypted, held in a separate location, and restores are tested periodically — an untested backup is not a backup."
+          ]
+        },
+        "vendor-security": {
+          "heading": "9. Our suppliers",
+          "body": [
+            "We review the security posture of every provider that touches personal data before we adopt it, and we have a data processing agreement in place with each one.",
+            "Where a provider operates outside the EEA, transfers are covered by Standard Contractual Clauses — see our Privacy Policy."
+          ]
+        },
+        "incident-response": {
+          "heading": "10. If something goes wrong",
+          "body": [
+            "We have a defined process for detecting, containing and investigating security incidents.",
+            "If a personal data breach affects your rights and freedoms, we will notify the relevant supervisory authority within 72 hours of becoming aware of it, and we will tell you directly, without undue delay, where the risk to you is high.",
+            "After any significant incident we carry out a review and publish what we changed as a result."
+          ]
+        },
+        "your-role": {
+          "heading": "11. What you can do",
+          "body": ["The strongest account security depends partly on you:"],
+          "bullets": [
+            "Use a long, unique password, or sign in with Google.",
+            "Never reuse your Stamp AI password anywhere else.",
+            "Be sceptical of emails asking for your password — we will never ask for it.",
+            "Sign out on shared devices, and tell us at {securityEmail} if you see activity you do not recognise."
+          ]
+        },
+        "vulnerability-disclosure": {
+          "heading": "12. Reporting a vulnerability",
+          "body": [
+            "If you have found a security issue, please tell us at {securityEmail}. Include enough detail to reproduce it, and give us a reasonable period to fix it before disclosing it publicly.",
+            "We will acknowledge your report within three business days and keep you informed while we work on it. We will not pursue legal action against researchers who act in good faith, stay within the scope of their own test accounts, and avoid degrading the service or accessing other people's data."
+          ]
+        }
+      }
+    },
+    "shipping": {
+      "meta": {
+        "title": "Shipping & Delivery",
+        "description": "Production and delivery times, shipping costs, tracking, customs and duties for Stamp AI orders shipped worldwide.",
+        "keywords": [
+          "shipping",
+          "delivery",
+          "shipping times",
+          "tracking",
+          "customs"
+        ]
+      },
+      "title": "Shipping &",
+      "accent": "delivery",
+      "label": "Support",
+      "intro": "Everything on Stamp AI is printed after you order it, so delivery has two parts: the time to make your item, and the time to get it to you. Here is what to expect from both.",
+      "sections": {
+        "how-fulfilment-works": {
+          "heading": "1. How fulfilment works",
+          "body": [
+            "Nothing sits in a warehouse waiting for a buyer. When your order is confirmed we send it to the print facility closest to your delivery address, where it is printed, inspected by hand and packed.",
+            "Printing locally is why nothing goes to waste, and it also keeps the last leg of the journey short."
+          ]
+        },
+        "production-times": {
+          "heading": "2. Production time",
+          "body": [
+            "Production takes 2 to 3 business days for most items. Every piece is checked by hand before it is packed, and anything that fails inspection is reprinted rather than sent.",
+            "Orders with several items may be produced at different facilities and arrive in separate parcels at no extra cost to you.",
+            "Production can run longer during peak periods such as late November and December. We flag this at checkout when it applies."
+          ]
+        },
+        "shipping-times": {
+          "heading": "3. Delivery time",
+          "body": [
+            "Once your parcel leaves the facility, typical transit times are:"
+          ],
+          "bullets": [
+            "Netherlands and Belgium — 1 to 2 business days.",
+            "Rest of the EU — 2 to 4 business days.",
+            "United Kingdom and Switzerland — 3 to 5 business days.",
+            "United States and Canada — 3 to 5 business days.",
+            "Rest of the world — 6 to 12 business days."
+          ]
+        },
+        "total-time": {
+          "heading": "4. Total time to your door",
+          "body": [
+            "Adding production to transit, most orders arrive within 5 to 7 business days of being confirmed.",
+            "Business days exclude weekends and public holidays in the country of production. Delivery estimates are estimates, not guaranteed dates."
+          ]
+        },
+        "shipping-costs": {
+          "heading": "5. Shipping costs",
+          "body": [
+            "Shipping is calculated from the delivery address and the size of the order, and is always shown at checkout before you pay. There are no charges added after payment.",
+            "Where a free shipping threshold applies, it is shown in your cart as you approach it."
+          ]
+        },
+        "where-we-ship": {
+          "heading": "6. Where we ship",
+          "body": [
+            "We ship worldwide. A small number of destinations are excluded where carriers do not deliver or where sanctions apply; if yours is one of them, checkout will tell you before you pay.",
+            "We cannot deliver to PO boxes for all carriers, and we cannot ship to freight forwarders."
+          ]
+        },
+        "tracking": {
+          "heading": "7. Tracking your order",
+          "body": [
+            "You will get a confirmation email when you order, and a second email with a tracking link when your parcel is dispatched. Your order history in your account shows the same status.",
+            "Tracking can take up to 24 hours to show its first scan after dispatch. That gap is normal and does not mean anything has gone wrong."
+          ]
+        },
+        "customs-duties": {
+          "heading": "8. Customs, duties and taxes",
+          "body": [
+            "Orders delivered within the EU carry no additional customs charges.",
+            "For deliveries outside the EU, import duties, taxes and customs handling fees may be charged by your country on arrival. These are set by your customs authority, not by us, and they are your responsibility as the importer.",
+            "We are required to declare the full value of the goods on the customs form and cannot mark an order as a gift or declare a lower value.",
+            "If a parcel is refused at customs and returned to us, we will refund the item price minus the outbound and return shipping costs."
+          ]
+        },
+        "delays": {
+          "heading": "9. Delays",
+          "body": [
+            "Most delays come from customs clearance, carrier backlogs, severe weather or an incomplete address.",
+            "If your parcel has not moved for seven business days, contact us at {supportEmail} and we will open an investigation with the carrier."
+          ]
+        },
+        "wrong-address": {
+          "heading": "10. Incorrect addresses",
+          "body": [
+            "Please check your address before confirming. We can correct it only before the order enters production — email {supportEmail} straight away if you spot a mistake.",
+            "If a parcel is returned to us because the address was wrong or incomplete, we will reship it once you have paid the new shipping cost, or refund the item price minus shipping.",
+            "If a parcel is returned because it was unclaimed after the carrier's attempts, the same applies."
+          ]
+        },
+        "lost-damaged": {
+          "heading": "11. Lost or damaged in transit",
+          "body": [
+            "If tracking shows delivered but the parcel has not arrived, check with neighbours and your building's reception first, then contact us within 14 days and we will investigate with the carrier.",
+            "If your item arrives damaged, send us a photo of the item and the packaging within 30 days and we will replace it free of charge. See our Returns & Refunds policy for how that works."
+          ]
+        },
+        "sustainability": {
+          "heading": "12. Packaging and emissions",
+          "body": [
+            "We pack in recycled and recyclable materials, with no unnecessary plastic.",
+            "Shipping emissions are offset through verified programmes, and printing on demand near the delivery address keeps both transport distance and overproduction down."
+          ]
+        },
+        "contact": {
+          "heading": "13. Contact",
+          "body": [
+            "Any question about a delivery can go to {supportEmail} with your order number, and we will come back to you within one business day."
+          ]
+        }
+      }
+    },
+    "returns": {
+      "meta": {
+        "title": "Returns & Refunds",
+        "description": "Stamp AI's 30-day guarantee, how to return or exchange an item, refund timing, and your EU right of withdrawal on custom-made goods.",
+        "keywords": [
+          "returns",
+          "refunds",
+          "exchange",
+          "right of withdrawal",
+          "guarantee"
+        ]
+      },
+      "title": "Returns &",
+      "accent": "refunds",
+      "label": "Support",
+      "intro": "Every item is made for one person, so we would rather get it right than take it back. When we do not get it right, this is what happens — and we cover the return shipping.",
+      "sections": {
+        "our-guarantee": {
+          "heading": "1. Our 30-day guarantee",
+          "body": [
+            "If the print, the fabric or the fit is not right, tell us within 30 days of delivery and we will replace the item free of charge or refund you in full. You choose which.",
+            "We cover return shipping on any claim under this guarantee. You will not be out of pocket for a problem we caused.",
+            "In many cases we will not ask for the item back at all. If we do, we send you a prepaid label."
+          ]
+        },
+        "what-is-covered": {
+          "heading": "2. What the guarantee covers",
+          "body": [
+            "The guarantee is about our work, not about a change of mind:"
+          ],
+          "bullets": [
+            "Print defects — cracking, fading, misalignment, or colour clearly different from the design you approved.",
+            "Fabric faults — holes, loose seams, or a garment that does not match its stated size chart.",
+            "The wrong item, size or colour arriving.",
+            "Damage in transit.",
+            "An item that never arrived."
+          ]
+        },
+        "not-covered": {
+          "heading": "3. What it does not cover",
+          "body": [
+            "Some things are outside it, and it is fairer to say so up front:"
+          ],
+          "bullets": [
+            "Ordering the wrong size when the item matches the size chart — see exchanges in section 8.",
+            "Not liking a design you approved before printing. Please review your design carefully at checkout.",
+            "Small variations in print placement or colour between individual items, which are inherent to printing on demand.",
+            "Normal wear, or damage from washing against the care instructions.",
+            "Claims made more than 30 days after delivery, unless your statutory rights give you longer."
+          ]
+        },
+        "custom-items": {
+          "heading": "4. Why custom items are different",
+          "body": [
+            "Your item did not exist until you ordered it, and it cannot be resold to anyone else. That is why the ordinary right to return an unwanted item does not apply here in the way it would to something off a shelf.",
+            "Our 30-day guarantee is our answer to that: it is broader than the law requires on custom goods, and it puts the cost of any fault on us."
+          ]
+        },
+        "eu-right-of-withdrawal": {
+          "heading": "5. EU right of withdrawal",
+          "body": [
+            "EU consumers normally have 14 days to withdraw from a distance purchase without giving a reason. Article 16(c) of the Consumer Rights Directive excludes goods made to the consumer's specification or clearly personalised, which is what every Stamp AI item is. By confirming your order you acknowledge that this exclusion applies once production has started.",
+            "Before production starts, you may cancel for any reason and receive a full refund — see section 10.",
+            "This exclusion does not touch your statutory rights where an item is faulty, not as described, or does not match the design you approved. Those rights last two years from delivery under EU law, and nothing in this policy limits them."
+          ]
+        },
+        "how-to-start": {
+          "heading": "6. How to start a claim",
+          "body": [
+            "Email {supportEmail} within 30 days of delivery with your order number and, where the problem is visible, a photo of the item and its packaging. A photo usually lets us resolve it on the first reply.",
+            "We respond within one business day, and most claims are settled the same day.",
+            "Please do not send anything back before contacting us — unrequested returns cannot be tracked to your order."
+          ]
+        },
+        "return-shipping": {
+          "heading": "7. Return shipping",
+          "body": [
+            "For any valid claim under the guarantee, we pay return shipping and send you a prepaid label.",
+            "Where we ask for the item back, please send it within 14 days of receiving the label."
+          ]
+        },
+        "exchanges": {
+          "heading": "8. Exchanges and sizing",
+          "body": [
+            "If an item matches its size chart but does not fit you, we will produce a replacement in a different size at 50% of the item price — covering the cost of making a second item without charging you twice.",
+            "If the item does not match the size chart, that is a fault and the guarantee applies in full at no cost to you.",
+            "Check the size chart on the product page before ordering; our garments are heavyweight and can fit differently from what you are used to."
+          ]
+        },
+        "refund-timing": {
+          "heading": "9. Refund timing",
+          "body": [
+            "Approved refunds are issued within 3 business days to the original payment method.",
+            "How quickly it appears depends on your bank: cards typically take 5 to 10 business days, and PayPal or iDEAL usually 1 to 3.",
+            "We refund the item price and the original shipping cost when the whole order was faulty. Where only part of an order was faulty, we refund that part."
+          ]
+        },
+        "cancelling-an-order": {
+          "heading": "10. Cancelling before production",
+          "body": [
+            "You can cancel for a full refund any time before your order enters production, which is usually a short window after you confirm it.",
+            "Email {supportEmail} with your order number as soon as you can. If printing has already started we cannot stop it, because the item exists only for you."
+          ]
+        },
+        "credits-refunds": {
+          "heading": "11. Credits",
+          "body": [
+            "Credits pay for generating designs, and a generation that ran has used real computing resources, so credits are not generally refundable once spent.",
+            "If a generation fails because of a fault on our side, we return the credits automatically. If that has not happened, tell us and we will fix it.",
+            "Unused credits do not expire while your account is open. If you want to close your account with credits remaining, contact us and we will deal with it fairly."
+          ]
+        },
+        "contact": {
+          "heading": "12. Contact",
+          "body": [
+            "Email {supportEmail} with your order number. If you are not satisfied with how we handled a claim, say so in your reply and it will be reviewed by someone else."
+          ]
+        }
+      }
+    }
+  },
+  "faq": {
+    "meta": {
+      "title": "Frequently Asked Questions",
+      "description": "Answers about designing with AI, ordering, credits, sizing, shipping times, returns and account management on Stamp AI.",
+      "keywords": ["FAQ", "help", "questions", "support", "how it works"]
+    },
+    "title": "Frequently asked",
+    "accent": "questions",
+    "label": "Support",
+    "intro": "Answers to what people ask us most, grouped by topic. If yours is not here, email us and a person will reply.",
+    "stillHaveQuestions": "Still have questions?",
+    "contactSupport": "Email support",
+    "categories": {
+      "design-ai": {
+        "heading": "Designing with AI"
+      },
+      "ordering": {
+        "heading": "Ordering and credits"
+      },
+      "products-sizing": {
+        "heading": "Products and sizing"
+      },
+      "shipping": {
+        "heading": "Shipping and delivery"
+      },
+      "returns": {
+        "heading": "Returns and refunds"
+      },
+      "account": {
+        "heading": "Your account"
+      }
+    },
+    "items": {
+      "prompt-tips": {
+        "question": "How do I write a prompt that gives a good result?",
+        "answer": "Be specific about subject, style and composition, and say what you do not want. “A line-drawn mountain range, single weight, centred, no colour, no text” beats “mountains” every time. Mentioning a medium — woodcut, risograph, technical drawing — tends to give cleaner output than naming an artist."
+      },
+      "upload-own-art": {
+        "question": "Can I upload my own artwork instead of using a prompt?",
+        "answer": "Yes. Upload a sketch, photo or finished file and we will prepare it for print. You can also upload a reference image and use a prompt to push it in a direction. You need the rights to whatever you upload."
+      },
+      "design-ownership": {
+        "question": "Do I own the design the AI creates?",
+        "answer": "As between you and us, yes — including for commercial use. One honest caveat: in many countries purely machine-generated artwork may not attract copyright protection at all, so we cannot promise you an enforceable exclusive right in it. Our Terms of Service explain this in full."
+      },
+      "not-happy-with-design": {
+        "question": "What if I do not like what the AI generates?",
+        "answer": "Generate again with an adjusted prompt. Each run uses credits, including runs you do not like, because the computing happens either way. Nothing is printed until you approve a design, so an unwanted generation never costs you a garment."
+      },
+      "prohibited-content": {
+        "question": "Are there designs you will not print?",
+        "answer": "Yes. We will not print other people's trade marks or copyrighted characters, a real person's likeness without permission, sexual content involving minors, or content inciting violence or hatred. Section 8 of our Terms of Service has the full list."
+      },
+      "what-are-credits": {
+        "question": "What are credits and how do they work?",
+        "answer": "Credits pay for generating designs. You buy them in advance, they sit on your account, and one is consumed each time a generation runs. Printing and shipping are paid separately when you order an item."
+      },
+      "credits-expire": {
+        "question": "Do credits expire?",
+        "answer": "No. Unused credits stay on your account for as long as it is open. They cannot be transferred to another account or exchanged for cash."
+      },
+      "payment-methods": {
+        "question": "Which payment methods can I use?",
+        "answer": "Visa, Mastercard and American Express, plus PayPal, iDEAL, Apple Pay and Google Pay. Your card details go straight to our payment provider and never touch our servers."
+      },
+      "change-order": {
+        "question": "Can I change or cancel my order?",
+        "answer": "Only before it enters production, which is a short window after you confirm. Email support with your order number as soon as possible. Once printing has started we cannot stop it, because the item exists only for you."
+      },
+      "bulk-orders": {
+        "question": "Can I order in bulk?",
+        "answer": "Yes, there is no maximum. Orders of 25 items or more get a volume discount, applied automatically in your cart. There is no minimum either — a single item is a perfectly normal order."
+      },
+      "product-range": {
+        "question": "What can I get my design printed on?",
+        "answer": "T-shirts, hoodies, sweatshirts and caps, in a range of colours. Each product page lists the exact blank, its weight and its composition."
+      },
+      "sizing": {
+        "question": "How do I choose the right size?",
+        "answer": "Use the size chart on the product page rather than the size you usually wear. Our blanks are heavyweight and cut differently from high-street sizing. The chart gives flat measurements, so compare them against a garment you already own."
+      },
+      "print-durability": {
+        "question": "How long will the print last?",
+        "answer": "We print with water-based inks that bond into the fabric rather than sitting on top of it, so the print does not crack or peel. Wash inside out at 30°C and skip the tumble dryer and it will outlast the garment."
+      },
+      "care-instructions": {
+        "question": "How should I wash it?",
+        "answer": "Inside out, at 30°C or cooler, with similar colours. No bleach, and do not iron directly on the print. Line dry where you can. Every garment carries the same instructions on its care label."
+      },
+      "where-printed": {
+        "question": "Where are the items printed?",
+        "answer": "At the print facility closest to your delivery address, which keeps transport short and delivery fast. A multi-item order may be produced at more than one facility and arrive in separate parcels at no extra cost."
+      },
+      "shipping-cost": {
+        "question": "How much is shipping?",
+        "answer": "It depends on your address and the size of your order, and it is always shown at checkout before you pay. Nothing is added afterwards. Full details are on our Shipping & Delivery page."
+      },
+      "customs": {
+        "question": "Will I pay customs or import duty?",
+        "answer": "Not within the EU. Outside it, your country may charge import duty and taxes on arrival, set by your customs authority rather than by us. We are legally required to declare the full value of the goods."
+      },
+      "track-order": {
+        "question": "How do I track my order?",
+        "answer": "You get a tracking link by email when your parcel is dispatched, and your order history shows the same status. The first carrier scan can take up to 24 hours to appear — that gap is normal."
+      },
+      "return-window": {
+        "question": "Can I return something?",
+        "answer": "If the print, fabric or fit is not right, tell us within 30 days and we will replace it free or refund you in full, with return shipping covered. Because every item is made for one person, a simple change of mind is not covered once production has started."
+      },
+      "wrong-size-ordered": {
+        "question": "I ordered the wrong size. What now?",
+        "answer": "If the item matches its size chart, we will produce a replacement in the right size at 50% of the item price. If it does not match the chart, that is our fault and we replace it at no cost."
+      },
+      "refund-time": {
+        "question": "How long does a refund take?",
+        "answer": "We issue approved refunds within 3 business days to the original payment method. Cards typically show it in 5 to 10 business days; PayPal and iDEAL usually 1 to 3."
+      },
+      "delete-account": {
+        "question": "How do I delete my account?",
+        "answer": "From your profile. We delete your account and design data within 30 days. Order and transaction records are kept for seven years because tax law requires it — our Privacy Policy explains what is kept and why."
+      },
+      "data-privacy": {
+        "question": "What do you do with my prompts and designs?",
+        "answer": "We use them to generate your artwork, produce your order and provide support. We do not sell them, publish them, or use your designs in our marketing without asking you first."
+      },
+      "contact-human": {
+        "question": "How do I reach a person?",
+        "answer": "Email us with your order number if you have one. We reply within one business day, and a person reads every message."
+      }
     }
   }
 }

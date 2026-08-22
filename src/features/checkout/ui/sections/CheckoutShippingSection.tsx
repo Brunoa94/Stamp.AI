@@ -5,7 +5,6 @@
  * useShippingAddress toggle. Uses the stamp-styled CheckoutAddressForm.
  */
 
-
 import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { CheckoutAddressForm } from "../components/CheckoutAddressForm";
@@ -20,10 +19,7 @@ export function CheckoutShippingSection() {
   if (!useShippingAddress) return null;
 
   return (
-    <CheckoutSectionCard
-      title={t("title")}
-      subtitle={t("subtitle")}
-    >
+    <CheckoutSectionCard title={t("title")}>
       <CheckoutAddressForm fieldPrefix="shipping" />
     </CheckoutSectionCard>
   );

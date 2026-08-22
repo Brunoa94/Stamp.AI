@@ -36,7 +36,7 @@ export function TrustGuaranteeCard({
       <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-(--color-stamp-gold)/10 transition-colors duration-300 group-hover:bg-(--color-stamp-gold)/20">
         {Icon && <Icon className="h-6 w-6 text-(--color-stamp-gold)" />}
       </div>
-      <Heading as="h3" variant="card" className="mb-2">
+      <Heading as="h3" variant="item" className="mb-2 text-(--color-stamp-chocolate)">
         {title}
       </Heading>
       <Paragraph variant="sm" className="text-(--color-stamp-taupe)">

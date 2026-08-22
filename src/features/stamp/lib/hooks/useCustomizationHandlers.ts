@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { AnalyticsService } from "@/services/analyticsService";
+import { mapCreateProductEvent } from "@/features/analytics/mappers/stampFlowMappers";
 import { useStampFlowStore } from "../stores/stampFlowStore";
 import { buildPrintPositionsPayload } from "./useDesignAdjustment";
 import { getProductConfig } from "@/lib/printPlacement/config";
@@ -38,12 +39,14 @@ export function useCustomizationHandlers({
   const handleCreateProduct = useCallback(async () => {
     if (!blueprintId || !printProviderId) return;
 
-    AnalyticsService.track("stamp_create_product", {
-      step: "customization",
-      product_id: blueprintId,
-      color: selectedColor || "",
-      size: effectiveSelectedSize,
-    });
+    AnalyticsService.track(
+      "stamp_create_product",
+      mapCreateProductEvent({
+        blueprintId,
+        color: selectedColor || "",
+        size: effectiveSelectedSize,
+      })
+    );
 
     // Auto-placement products (mugs: wrap-around print areas) must NOT send
     // client placements — the store's generic seed (scale 1) is far too big

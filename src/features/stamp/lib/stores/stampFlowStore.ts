@@ -47,6 +47,7 @@ const initialState = {
   blueprintId: undefined,
   printProviderId: undefined,
   selectedProductTitle: undefined,
+  selectedProductDescription: undefined,
   // Print position / placement state
   availablePrintPositions: [] as string[],
   printPositionConfigs: {} as Record<string, PrintPositionConfigType>,
@@ -175,6 +176,7 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
   setBlueprintId: (id) => set({ blueprintId: id }),
   setPrintProviderId: (id) => set({ printProviderId: id }),
   setSelectedProductTitle: (title) => set({ selectedProductTitle: title }),
+  setSelectedProductDescription: (description) => set({ selectedProductDescription: description }),
 
   // Print position / placement state
   setAvailablePrintPositions: (positions) =>
@@ -212,6 +214,27 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
           ...state.printPositionConfigs,
           [position]: { ...existing, enabled: !existing.enabled },
         },
+      };
+    }),
+
+  selectPrintPosition: (position) =>
+    set((state) => {
+      if (!state.printPositionConfigs[position]) {
+        logStampWarn({
+          scope: "stampFlowStore",
+          event: "unknown_print_position_rejected",
+          metadata: { position },
+        });
+        return state;
+      }
+      return {
+        printPositionConfigs: Object.fromEntries(
+          Object.entries(state.printPositionConfigs).map(([key, config]) => [
+            key,
+            { ...config, enabled: key === position },
+          ]),
+        ),
+        activeEditPosition: position,
       };
     }),
 
@@ -301,6 +324,7 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
         blueprintId: undefined,
         printProviderId: undefined,
         selectedProductTitle: undefined,
+        selectedProductDescription: undefined,
         // Reset print positions
         availablePrintPositions: [],
         printPositionConfigs: {},
@@ -329,3 +353,4 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
     }
   },
 }));
+

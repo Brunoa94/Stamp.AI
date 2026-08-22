@@ -7,7 +7,6 @@
  * the restyled variant (same underlying payment hook).
  */
 
-
 import { useFormContext } from "react-hook-form";
 import { Elements } from "@stripe/react-stripe-js";
 import { stripePromise } from "@/lib/stripe";
@@ -20,6 +19,7 @@ import { CheckoutPriceBreakdown } from "./CheckoutPriceBreakdown";
 import { CheckoutStripeButton } from "./CheckoutStripeButton";
 import { CheckoutPayPalButton } from "./CheckoutPayPalButton";
 import { CheckoutIdealButton } from "./CheckoutIdealButton";
+import { VerifiedSecureBadge } from "@/features/ui/trust/VerifiedSecureBadge";
 import type { CartWithItems } from "@/types/cart";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 
@@ -45,8 +45,10 @@ export function CheckoutSummarySection({
 
   const {
     subtotal,
+    shipping,
     discount,
     total,
+    totalInCents,
     appliedPromo,
     promoError,
     isApplyingPromo,
@@ -60,7 +62,7 @@ export function CheckoutSummarySection({
   const disablePayment = !isFormValid || total <= 0;
 
   return (
-    <div className="sticky top-8 border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 lg:p-10">
+    <div className="sticky top-32 border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 lg:p-10">
       <Heading
         as="h2"
         unstyled
@@ -86,7 +88,7 @@ export function CheckoutSummarySection({
 
         <CheckoutPriceBreakdown
           subtotal={subtotal}
-          shipping={0}
+          shipping={shipping}
           discount={discount}
           total={total}
         />
@@ -94,7 +96,7 @@ export function CheckoutSummarySection({
         {paymentMethod === "stripe" && paymentShippingAddress && (
           <Elements stripe={stripePromise}>
             <CheckoutStripeButton
-              amount={total}
+              amount={totalInCents}
               lineItems={lineItems}
               shippingAddress={paymentShippingAddress}
               cartId={cartId}
@@ -109,7 +111,7 @@ export function CheckoutSummarySection({
           <CheckoutPayPalButton
             cart={cart}
             cartId={cartId ?? null}
-            amount={total}
+            amount={totalInCents}
             disabled={disablePayment}
           />
         )}

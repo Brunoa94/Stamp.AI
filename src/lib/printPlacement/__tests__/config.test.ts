@@ -86,7 +86,7 @@ describe("sock leg placement", () => {
 
 describe("auto-placement products (mugs)", () => {
   it("marks mug blueprints as autoPlacement so no client placements are sent", () => {
-    expect(getProductConfig(1320).autoPlacement).toBe(true);
+    expect(getProductConfig(441).autoPlacement).toBe(true);
     expect(getProductConfig(468).autoPlacement).toBe(true);
   });
 

@@ -19,6 +19,7 @@ export function useOrders(userId?: string) {
     staleTime: 0, // Orders data is always considered stale
     refetchOnMount: true, // Refetch when component mounts
     refetchOnWindowFocus: true, // Refetch when user returns to tab
+    refetchInterval: 60_000, // Poll for live status while the tab is visible
   });
 }
 
@@ -78,6 +79,7 @@ export function useCreateOrderFromCart() {
       billingAddress,
       idempotencyKey,
       orderStatus,
+      paymentMethod,
     }: {
       user: UserI;
       cart: CartWithItems;
@@ -86,6 +88,7 @@ export function useCreateOrderFromCart() {
       billingAddress?: ShippingAddressT;
       idempotencyKey?: string;
       orderStatus?: string;
+      paymentMethod?: string;
     }) => {
       if (!user) {
         throw new Error("User not authenticated");
@@ -98,6 +101,7 @@ export function useCreateOrderFromCart() {
         billingAddress,
         idempotencyKey,
         orderStatus,
+        paymentMethod,
       });
     },
     onSuccess: (orderId) => {
@@ -114,5 +118,17 @@ export function useCreateOrderFromCart() {
     // CRITICAL: Do NOT retry order creation - duplicates can be created
     // Idempotency is handled at the database level via idempotency_key
     retry: false,
+  });
+}
+
+/**
+ * Fetch status history for an order (for tracking timeline)
+ */
+export function useOrderStatusHistory(orderId?: string) {
+  return useQuery({
+    queryKey: ["orderStatusHistory", orderId],
+    queryFn: () => OrderService.getOrderStatusHistory(orderId!),
+    enabled: Boolean(orderId),
+    staleTime: 30_000, // Status history doesn't change as frequently
   });
 }

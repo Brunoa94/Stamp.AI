@@ -44,21 +44,8 @@ export function ProfileCard({
       )}
     >
       {/* Section Header */}
-      <div className="flex justify-between items-start mb-6 md:mb-8">
+      <div className="flex flex-col items-start gap-4 sm:flex-row sm:justify-between mb-6 md:mb-8">
         <div className="space-y-2">
-          {label && (
-            <div className="flex items-center gap-3">
-              <Span
-                variant="micro"
-                className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe)"
-              >
-                {label}
-              </Span>
-              {icon && (
-                <div className="text-(--color-stamp-taupe)">{icon}</div>
-              )}
-            </div>
-          )}
           <Heading
             as="h2"
             variant="panelTitleCompact"

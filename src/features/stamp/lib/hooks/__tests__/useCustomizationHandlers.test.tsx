@@ -32,15 +32,15 @@ describe("useCustomizationHandlers payload", () => {
   });
 
   it("mug: omits print positions so the server auto-fits (regression)", async () => {
-    useStampFlowStore.setState({ blueprintId: 1320 });
+    useStampFlowStore.setState({ blueprintId: 441 });
     // Simulate the panel having seeded the store with the generic default
     useStampFlowStore
       .getState()
       .initializePrintPositions(["front"], { x: 0.5, y: 0.5, scale: 1, angle: 0 }, {
-        blueprintId: 1320,
+        blueprintId: 441,
       });
 
-    const { handleCreateProduct, createProduct } = renderHandler(1320);
+    const { handleCreateProduct, createProduct } = renderHandler(441);
     await handleCreateProduct();
 
     expect(createProduct).toHaveBeenCalledTimes(1);
@@ -94,5 +94,28 @@ describe("useCustomizationHandlers payload", () => {
       { position: "front", placement: { x: 0.4, y: 0.3, scale: 0.8, angle: 0 } },
     ]);
     expect(payload.scale).toBe(0.8);
+  });
+
+  it("apparel back printing: sends only the back position after selection", async () => {
+    useStampFlowStore.setState({ blueprintId: 6 });
+    const store = useStampFlowStore.getState();
+    store.initializePrintPositions(
+      ["front", "back", "neck", "left_sleeve", "right_sleeve"],
+      { x: 0.5, y: 0.45, scale: 1, angle: 0 },
+      { blueprintId: 6 },
+    );
+    store.selectPrintPosition("back");
+    store.setPrintPositionConfig("back", {
+      placement: { x: 0.5, y: 0.35, scale: 0.9, angle: 0 },
+    });
+
+    const { handleCreateProduct, createProduct } = renderHandler(6);
+    await handleCreateProduct();
+
+    const payload = createProduct.mock.calls[0][0];
+    expect(payload.printPositions).toEqual([
+      { position: "back", placement: { x: 0.5, y: 0.35, scale: 0.9, angle: 0 } },
+    ]);
+    expect(payload.scale).toBe(0.9);
   });
 });

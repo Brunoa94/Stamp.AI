@@ -21,9 +21,9 @@ export function CheckoutLayout({
   summary,
 }: CheckoutLayoutPropsI) {
   return (
-    <div className="min-h-screen bg-(--color-stamp-off-white) font-heading text-(--color-stamp-chocolate) pt-24">
+    <div className="min-h-screen bg-(--color-stamp-off-white) text-(--color-stamp-chocolate) pt-24">
       <div className="px-6 pb-24 pt-12 lg:px-12 xl:px-24">
-        <PageContainer>
+        <PageContainer className="mx-auto max-w-screen-2xl">
           {header}
           <div className="mt-12 grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
             <div className="space-y-8 lg:col-span-7">{forms}</div>

@@ -3,10 +3,12 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --breakpoint-3xl: 1200px;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-poppins);
-  --font-heading: var(--font-outfit);
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-sanchez);
+  --font-serif: var(--font-indie-flower);
   --color-purple: #9333ea;
   --color-cyan: #06b6d4;
   --color-orange: #fb923c;
@@ -161,8 +163,16 @@
   }
 
   .font-heading {
-    font-family: var(--font-heading);
-    letter-spacing: 0.05em;
+    font-family: var(--font-sanchez), var(--font-outfit), sans-serif;
+    letter-spacing: -0.01em;
+    font-weight: 600;
+    -webkit-text-stroke: 0.3px currentColor;
+  }
+
+  .font-body {
+    font-family: var(--font-inter), var(--font-poppins), sans-serif;
+    letter-spacing: -0.01em;
+    font-weight: 400;
   }
 
   .font-accent {
@@ -207,16 +217,7 @@
     transform: translateY(0) scale(1);
   }
 
-  /* Glass card effect */
-  .glass-card {
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow:
-      0 25px 50px -12px rgba(0, 0, 0, 0.05),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.25);
-  }
+  /* Dead CSS removed: .glass-card - not used by any component */
 
   /* Auth button gradient hover effect */
   .btn-gradient:hover {
@@ -239,34 +240,9 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
 
-  /* Animated logo dot */
-  .animated-dot {
-    display: inline-block;
-    width: 0.32em;
-    height: 0.32em;
-    border-radius: 50%;
-    background: conic-gradient(from 0deg, #9333ea, #06b6d4, #fb923c, #9333ea);
-    animation: dotPulse 2s ease-in-out infinite;
-    box-shadow:
-      0 0 20px rgba(147, 51, 234, 0.6),
-      0 0 40px rgba(147, 51, 234, 0.3),
-      inset 0 2px 4px rgba(255, 255, 255, 0.4);
-    vertical-align: baseline;
-    margin: 0 0.05em;
-    position: relative;
-    top: 0.12em;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
+  /* Dead CSS removed: .animated-dot - component deleted */
 
-  /* Synthesis section animations */
-  .synthesis-gradient-delayed {
-    animation-delay: -4s;
-  }
-
-  .synthesis-blob {
-    animation: floatBlob 40s ease-in-out infinite;
-    animation-delay: -2s;
-  }
+  /* Dead CSS removed: .synthesis-gradient-delayed, .synthesis-blob - not used by any component */
 
   /* Brutalist color utilities */
   .bg-concrete {
@@ -390,6 +366,16 @@
   }
 }
 
+@keyframes bounce-subtle {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(2deg);
+  }
+}
+
 @keyframes inspectionFloat {
   0%,
   100% {
@@ -429,15 +415,7 @@
   }
 }
 
-/* Glass card effect for orders page */
-.glass-card {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-  border-radius: 16px;
-}
+/* Dead CSS removed: .glass-card (duplicate) - not used by any component */
 
 /* Order row hover effect */
 .order-row:hover {
@@ -631,71 +609,6 @@
   }
 }
 
-/* Fluid Ink Drift Animations - Smooth floating movement */
-@keyframes drift-1 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  25% {
-    transform: translate(80px, -60px) scale(1.08);
-  }
-  50% {
-    transform: translate(40px, 40px) scale(0.95);
-  }
-  75% {
-    transform: translate(-60px, -20px) scale(1.05);
-  }
-}
-
-@keyframes drift-2 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  25% {
-    transform: translate(-70px, 50px) scale(1.1);
-  }
-  50% {
-    transform: translate(60px, -40px) scale(0.92);
-  }
-  75% {
-    transform: translate(-30px, 80px) scale(1.03);
-  }
-}
-
-@keyframes drift-3 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(90px, 30px) scale(1.06);
-  }
-  66% {
-    transform: translate(-50px, -70px) scale(0.94);
-  }
-}
-
-@keyframes drift-4 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  20% {
-    transform: translate(-80px, -50px) scale(1.12);
-  }
-  40% {
-    transform: translate(50px, 60px) scale(0.9);
-  }
-  60% {
-    transform: translate(70px, -30px) scale(1.05);
-  }
-  80% {
-    transform: translate(-40px, 40px) scale(0.98);
-  }
-}
-
 /* Subtle background gradient shift */
 @keyframes subtle-gradient-shift {
   0%,
@@ -707,54 +620,9 @@
   }
 }
 
-/* Pulsing glow effect for blobs */
-@keyframes blob-pulse {
-  0%,
-  100% {
-    filter: blur(100px) saturate(1.2) brightness(1);
-    opacity: 0.7;
-  }
-  50% {
-    filter: blur(120px) saturate(1.5) brightness(1.1);
-    opacity: 0.85;
-  }
-}
+/* Dead CSS removed: @keyframes drift-1..4, blob-pulse - not used by any component */
 
-.animate-drift-1 {
-  animation:
-    drift-1 25s ease-in-out infinite,
-    blob-pulse 8s ease-in-out infinite;
-  animation-delay:
-    0s,
-    -2s;
-}
-
-.animate-drift-2 {
-  animation:
-    drift-2 30s ease-in-out infinite,
-    blob-pulse 10s ease-in-out infinite;
-  animation-delay:
-    -8s,
-    -4s;
-}
-
-.animate-drift-3 {
-  animation:
-    drift-3 28s ease-in-out infinite,
-    blob-pulse 9s ease-in-out infinite;
-  animation-delay:
-    -12s,
-    -3s;
-}
-
-.animate-drift-4 {
-  animation:
-    drift-4 22s ease-in-out infinite,
-    blob-pulse 7s ease-in-out infinite;
-  animation-delay:
-    -5s,
-    -1s;
-}
+/* Dead CSS removed: .animate-drift-1..4 - not used by any component */
 
 /* Payment Success Icon Animations */
 @keyframes icon-bounce {
@@ -1159,39 +1027,7 @@
   pointer-events: none;
 }
 
-.gradient-layer {
-  position: absolute;
-  inset: -50%;
-  background: conic-gradient(
-    from 0deg,
-    var(--purple),
-    var(--cyan),
-    var(--orange),
-    var(--purple)
-  );
-  opacity: 0.04;
-}
-
-/* Floating blobs */
-.blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.15;
-}
-
-@keyframes floatBlob {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 40px) scale(0.9);
-  }
-}
+/* Dead CSS removed: .gradient-layer, .blob, @keyframes floatBlob - not used by any component */
 
 /* Sidebar progress line */
 .sidebar-progress-line {
@@ -1328,51 +1164,7 @@
   animation: dashboardGradientRotate 12s linear infinite;
 }
 
-/* Dashboard floating blobs */
-.dashboard-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.12;
-  animation: dashboardFloatBlob 20s ease-in-out infinite;
-}
-
-.dashboard-blob.purple {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, #9333ea 0%, transparent 70%);
-  top: 10%;
-  left: -5%;
-}
-
-.dashboard-blob.cyan {
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, #06b6d4 0%, transparent 70%);
-  top: 50%;
-  right: -10%;
-  animation-delay: -10s;
-}
-
-.dashboard-blob.orange {
-  width: 450px;
-  height: 450px;
-  background: radial-gradient(circle, #fb923c 0%, transparent 70%);
-  bottom: 10%;
-  left: 20%;
-  animation-delay: -5s;
-}
-
-/* Brutalist card base */
-.brutalist-card {
-  background: white;
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.brutalist-card:hover {
-  border-color: var(--color-ink);
-  box-shadow: 8px 8px 0px rgba(10, 10, 10, 0.02);
-}
+/* Dead CSS removed: .dashboard-blob, .brutalist-card - not used by any component */
 
 /* Progress bar fill */
 .dashboard-progress-bar {
@@ -1427,25 +1219,7 @@
    MODERN NAVBAR ANIMATIONS
    ==================================== */
 
-/* Navigation link underline effect */
-.nav-link-underline {
-  position: relative;
-}
-
-.nav-link-underline::after {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  right: 0;
-  width: 0%;
-  height: 2px;
-  background-color: var(--color-cyan);
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.nav-link-underline:hover::after {
-  width: 100%;
-}
+/* Dead CSS removed: .nav-link-underline - not used by any component */
 
 /* Action button refined styles */
 .action-btn-refined {
@@ -1459,40 +1233,7 @@
   color: white;
 }
 
-/* Glow effects for buttons */
-.btn-glow-cyan:hover {
-  box-shadow:
-    0 0 20px rgba(34, 211, 238, 0.4),
-    0 0 40px rgba(34, 211, 238, 0.1);
-  border-color: var(--color-cyan);
-}
-
-.btn-glow-purple:hover {
-  box-shadow:
-    0 0 20px rgba(168, 85, 247, 0.4),
-    0 0 40px rgba(168, 85, 247, 0.1);
-  border-color: var(--color-purple);
-}
-
-.btn-glow-orange:hover {
-  box-shadow:
-    0 0 20px rgba(251, 146, 60, 0.4),
-    0 0 40px rgba(251, 146, 60, 0.1);
-  border-color: var(--color-orange);
-}
-
-/* Icon glow effects */
-.icon-glow-cyan:hover iconify-icon {
-  filter: drop-shadow(0 0 8px var(--color-cyan));
-}
-
-.icon-glow-purple:hover iconify-icon {
-  filter: drop-shadow(0 0 8px var(--color-purple));
-}
-
-.icon-glow-orange:hover iconify-icon {
-  filter: drop-shadow(0 0 8px var(--color-orange));
-}
+/* Dead CSS removed: .btn-glow-*, .icon-glow-* - not used by any component */
 
 /* Button text slide animation */
 .btn-text {
@@ -1646,63 +1387,10 @@
    HOMEPAGE HERO - ENHANCED CONTRAST
    ==================================== */
 
-/* Animated blur blobs for hero background */
-@keyframes heroFloat {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-}
-
-.hero-blur-blob {
-  position: absolute;
-  filter: blur(100px);
-  opacity: 0.4;
-  border-radius: 50%;
-  z-index: 0;
-  pointer-events: none;
-  animation: heroFloat 40s infinite linear;
-  will-change: transform;
-}
-
-.hero-blob-purple {
-  background: var(--color-stamp-chocolate);
-  width: 600px;
-  height: 600px;
-}
-
-.hero-blob-cyan {
-  background: var(--color-stamp-gold);
-  width: 500px;
-  height: 500px;
-  animation-delay: -10s;
-}
-
-.hero-blob-orange {
-  background: var(--color-stamp-cream);
-  width: 450px;
-  height: 450px;
-  animation-delay: -20s;
-}
+/* Dead CSS removed: .hero-blur-blob, .hero-blob-*, @keyframes heroFloat - not used by any component */
 
 /* Gradient text for logo "AI" */
-.logo-gradient-text {
-  background: linear-gradient(
-    90deg,
-    var(--color-purple),
-    var(--color-cyan),
-    var(--color-orange)
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+/* Dead CSS removed: .logo-gradient-text - not used by any component */
 
 /* Stagger card effect */
 .hero-stagger-card {
@@ -1715,100 +1403,7 @@
   box-shadow: 16px 16px 0px 0px rgba(0, 0, 0, 0.2);
 }
 
-/* Process section - dark variant */
-.process-card-dark {
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.process-card-dark:hover {
-  border-color: var(--color-purple);
-}
-
-.process-card-dark:nth-child(2):hover {
-  border-color: var(--color-cyan);
-}
-
-.process-card-dark:nth-child(3):hover {
-  border-color: var(--color-orange);
-}
-
-.process-card-dark:nth-child(4):hover {
-  border-color: #dc2626;
-}
-
-.process-card-dark:nth-child(5):hover {
-  border-color: var(--color-purple);
-}
-
-.process-card-dark:nth-child(6):hover {
-  border-color: var(--color-cyan);
-}
-
-/* Review card colored shadows */
-.review-card-purple {
-  border-left: 4px solid var(--color-purple);
-  background: rgba(168, 85, 247, 0.08);
-  box-shadow: 0 4px 16px rgba(168, 85, 247, 0.15);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.review-card-purple:hover {
-  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.25);
-  transform: scale(1.02);
-}
-
-.review-card-cyan {
-  border-left: 4px solid var(--color-cyan);
-  background: rgba(6, 182, 212, 0.08);
-  box-shadow: 0 4px 16px rgba(6, 182, 212, 0.15);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.review-card-cyan:hover {
-  box-shadow: 0 8px 24px rgba(6, 182, 212, 0.25);
-  transform: scale(1.02);
-}
-
-.review-card-orange {
-  border-left: 4px solid var(--color-orange);
-  background: rgba(234, 88, 12, 0.08);
-  box-shadow: 0 4px 16px rgba(234, 88, 12, 0.15);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.review-card-orange:hover {
-  box-shadow: 0 8px 24px rgba(234, 88, 12, 0.25);
-  transform: scale(1.02);
-}
-
-.review-card-red {
-  border-left: 4px solid #dc2626;
-  background: rgba(220, 38, 38, 0.08);
-  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.15);
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.review-card-red:hover {
-  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.25);
-  transform: scale(1.02);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-blur-blob {
-    animation: none;
-  }
-
-  .hero-stagger-card:hover {
-    transform: none;
-  }
-
-  .review-card-purple:hover,
-  .review-card-cyan:hover,
-  .review-card-orange:hover,
-  .review-card-red:hover {
-    transform: none;
-  }
-}
+/* Dead CSS removed: .process-card-dark, .review-card-* - not used by any component */
 
 /* ====================================
    HOMEPAGE SCROLL ANIMATIONS
@@ -1827,13 +1422,17 @@
 
 /* Scroll-triggered fade effects */
 .hero-scroll-fade {
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out;
   will-change: opacity, transform;
 }
 
 /* Hero content that moves up on scroll */
 .hero-scroll-up {
-  transition: transform 0.1s linear, opacity 0.2s ease-out;
+  transition:
+    transform 0.1s linear,
+    opacity 0.2s ease-out;
   will-change: transform, opacity;
 }
 
@@ -1895,5 +1494,66 @@
     transform: none !important;
     filter: none !important;
     opacity: 1 !important;
+  }
+}
+
+/* ====================================
+   HERO BUBBLING PRODUCTS ANIMATION
+   GPU-accelerated transforms via CSS custom properties
+   ==================================== */
+
+.bubbling-product {
+  /* Hint to browser for compositor layer promotion */
+  will-change: transform, opacity;
+  /* Use GPU-accelerated properties only */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+
+  /*
+   * Animation driven by --bubble-progress (0 to 1) set on parent container.
+   * All calculations use CSS calc() for GPU acceleration without JS re-renders.
+   *
+   * Variables set per-element:
+   * --base-height: vertical travel distance (30-50)
+   * --appear-threshold: staggered appearance delay (0-0.05)
+   * --start-x: horizontal position (0-100%)
+   * --x-drift: pre-calculated drift amount
+   * --rotation: pre-calculated rotation amount
+   */
+
+  /* Calculate local progress accounting for stagger delay */
+  --local-progress: max(
+    0,
+    min(
+      1,
+      calc(
+        (var(--bubble-progress, 0) - var(--appear-threshold, 0)) /
+          max(0.001, 1 - var(--appear-threshold, 0))
+      )
+    )
+  );
+
+  /* Y offset: starts at 95% (below visible), rises to 0 */
+  --y-offset: calc((1 - var(--local-progress)) * 95);
+
+  /* Scale: 0.85 at start, 1.0 at full progress */
+  --scale-value: calc(0.85 + var(--local-progress) * 0.15);
+
+  /* Opacity: 0.3 at start, 1.0 at full progress */
+  --opacity-value: calc(0.3 + min(1, var(--local-progress) * 1.5) * 0.7);
+
+  /* Apply calculated values */
+  left: calc(var(--start-x, 50) * 1%);
+  bottom: calc((1 - var(--y-offset) / 100) * (var(--base-height, 40) + 10) * 1%);
+  transform: translateX(-50%) scale(var(--scale-value)) rotate(calc(var(--rotation, 0) * var(--local-progress) * 1deg));
+  opacity: var(--opacity-value);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubbling-product {
+    will-change: auto;
+    --local-progress: 1;
+    opacity: 1;
+    transform: translateX(-50%) scale(1) rotate(0deg);
   }
 }

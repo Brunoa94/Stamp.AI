@@ -79,8 +79,8 @@ export function PasswordResetSection() {
             <div key={id} className="space-y-2">
               <Label htmlFor={id}>
                 <Span
-                  variant="micro"
-                  className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe)"
+                  variant="sm"
+                  className="text-(--color-stamp-chocolate)"
                 >
                   {t(`${key}Label`)}
                 </Span>

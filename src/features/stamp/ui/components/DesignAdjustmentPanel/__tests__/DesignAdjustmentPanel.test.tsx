@@ -12,11 +12,16 @@ import { DesignAdjustmentPanel } from "../DesignAdjustmentPanel";
 
 const IMAGE_URL = "https://images.unsplash.com/test-design.png";
 
-/** The move/size/rotation controls live behind the "Adjust placement" disclosure. */
+/**
+ * The move/size/rotation controls live behind an "Adjust placement"
+ * disclosure on tablet; on desktop (the jsdom default layout) the adjuster
+ * is always expanded, so there is nothing to open.
+ */
 async function openAdjuster(user: ReturnType<typeof userEvent.setup>) {
-  await user.click(
-    screen.getByRole("button", { name: /adjust placement/i }),
-  );
+  const toggle = screen.queryByRole("button", { name: /adjust placement/i });
+  if (toggle) {
+    await user.click(toggle);
+  }
 }
 
 describe("DesignAdjustmentPanel", () => {
@@ -25,17 +30,20 @@ describe("DesignAdjustmentPanel", () => {
     useStampFlowStore.setState({ blueprintId: 6 });
   });
 
-  it("seeds print positions from the product config", () => {
+  it("seeds print positions from the product config as a radio group", () => {
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
 
     expect(
-      screen.getByRole("button", { name: /toggle front print/i }),
-    ).toHaveAttribute("aria-pressed", "true");
+      screen.getByRole("radiogroup", { name: /print position/i }),
+    ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /toggle back print/i }),
-    ).toHaveAttribute("aria-pressed", "false");
+      screen.getByRole("radio", { name: /print on front/i }),
+    ).toBeChecked();
     expect(
-      screen.getByRole("button", { name: /toggle left sleeve print/i }),
+      screen.getByRole("radio", { name: /print on back/i }),
+    ).not.toBeChecked();
+    expect(
+      screen.getByRole("radio", { name: /print on left sleeve/i }),
     ).toBeInTheDocument();
   });
 
@@ -47,18 +55,60 @@ describe("DesignAdjustmentPanel", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("toggling a position updates the store and the card state", async () => {
+  it("selecting back prints only the back and deselects front", async () => {
     const user = userEvent.setup();
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
 
-    await user.click(screen.getByRole("button", { name: /toggle back print/i }));
+    await user.click(screen.getByRole("radio", { name: /print on back/i }));
 
     expect(
-      screen.getByRole("button", { name: /toggle back print/i }),
-    ).toHaveAttribute("aria-pressed", "true");
+      screen.getByRole("radio", { name: /print on back/i }),
+    ).toBeChecked();
     expect(
-      useStampFlowStore.getState().printPositionConfigs.back.enabled,
-    ).toBe(true);
+      screen.getByRole("radio", { name: /print on front/i }),
+    ).not.toBeChecked();
+    const configs = useStampFlowStore.getState().printPositionConfigs;
+    expect(configs.back.enabled).toBe(true);
+    expect(configs.front.enabled).toBe(false);
+  });
+
+  it("selecting back switches the preview to the back silhouette", async () => {
+    const user = userEvent.setup();
+    renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
+
+    expect(screen.getByTestId("product-silhouette")).toHaveAttribute(
+      "data-silhouette-key",
+      "apparel",
+    );
+
+    await user.click(screen.getByRole("radio", { name: /print on back/i }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-silhouette")).toHaveAttribute(
+        "data-silhouette-key",
+        "apparel-back",
+      );
+    });
+    expect(useStampFlowStore.getState().activeEditPosition).toBe("back");
+  });
+
+  it("back placement adjustments are independent of the front", async () => {
+    const user = userEvent.setup();
+    renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
+
+    await user.click(screen.getByRole("radio", { name: /print on back/i }));
+    await openAdjuster(user);
+    await user.click(screen.getByRole("button", { name: "Move up" }));
+
+    const configs = useStampFlowStore.getState().printPositionConfigs;
+    expect(configs.back.placement.y).toBeCloseTo(0.35);
+    expect(configs.front.placement.y).toBeCloseTo(0.45);
+
+    // Switching back to front restores the front placement in the preview
+    await user.click(screen.getByRole("radio", { name: /print on front/i }));
+    await waitFor(() => {
+      expect(screen.getByTestId("design-overlay").style.top).toBe("45%");
+    });
   });
 
   it("adjusting placement updates the live preview", async () => {
@@ -105,8 +155,8 @@ describe("DesignAdjustmentPanel", () => {
   });
 
   it("hides preview and placement adjuster for products with disablePlacementAdjustment", () => {
-    // Use mug blueprint (1320) which has disablePlacementAdjustment: true
-    useStampFlowStore.setState({ blueprintId: 1320 });
+    // Use mug blueprint (441) which has disablePlacementAdjustment: true
+    useStampFlowStore.setState({ blueprintId: 441 });
     renderWithIntl(<DesignAdjustmentPanel imageUrl={IMAGE_URL} />);
 
     // Preview, adjuster disclosure, and placement controls should be hidden

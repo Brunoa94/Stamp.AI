@@ -22,6 +22,10 @@ const ALLOWED_COLORS: Record<string, string[]> = {
   socks: ["white"],
   // Poster - no color restrictions
   poster: [],
+  // Notebooks - no color restrictions (cover print)
+  notebook: [],
+  // Pillows - no color restrictions (all-over print)
+  pillow: [],
 };
 
 // Blueprint IDs mapped to categories
@@ -30,6 +34,7 @@ const BLUEPRINT_CATEGORIES: Record<number, string> = {
   145: "apparel", // Unisex Softstyle T-Shirt (Gildan 64000)
   5: "apparel", // Unisex Cotton Crew Tee (Next Level)
   6: "apparel", // Unisex Heavy Cotton Tee (Gildan 5000)
+  157: "apparel", // Kids Heavy Cotton Tee
 
   // Hoodies & Sweatshirts
   77: "apparel", // Unisex Heavy Blend Hoodie (Gildan)
@@ -41,7 +46,7 @@ const BLUEPRINT_CATEGORIES: Record<number, string> = {
   1389: "tote", // AOP Tote Bag
 
   // Mugs
-  1320: "mug", // Ceramic Mug 11oz
+  441: "mug", // Ceramic Mug EU
   468: "mug", // White Glossy Mug
 
   // Canvas
@@ -50,6 +55,12 @@ const BLUEPRINT_CATEGORIES: Record<number, string> = {
   // Socks
   462: "socks", // Cushioned Crew Socks
   496: "socks", // Crew Socks
+
+  // Notebooks
+  475: "notebook", // Spiral Journal EU
+
+  // Pillows
+  229: "pillow", // Spun Polyester Square Pillowcase
 };
 
 export interface ColorValidationResult {

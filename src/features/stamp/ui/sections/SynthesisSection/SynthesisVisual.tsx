@@ -1,7 +1,5 @@
 import { memo } from "react";
-import { Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Span } from "@/features/ui/span";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { STAMP_EDIT_SUGGESTIONS } from "../../../lib/constants/stampProducts";
 import { ExpandablePicker } from "../../components/ExpandablePicker/ExpandablePicker";
@@ -34,24 +32,10 @@ function SynthesisVisualComponent({ selectedId, onSelectSuggestion }: PropsI) {
   const isLgUp = useMediaQuery("(min-width: 1024px)", true);
   const isNoFilterSelected = selectedId === null || selectedId === NO_FILTER_ID;
 
-  // Header with sparkles icon
-  const header = (
-    <div className="flex items-center gap-3 mb-6">
-      <Sparkles className="w-4 h-4 text-(--color-stamp-gold)" />
-      <Span
-        variant="micro"
-        className="text-[10px] tracking-widest text-(--color-stamp-taupe)"
-      >
-        {t("eyebrow")}
-      </Span>
-    </div>
-  );
-
   // Desktop (lg+): 4-column grid
   if (isLgUp) {
     return (
       <div className="p-12 lg:p-24 lg:pt-8 overflow-hidden lg:px-10 bg-white flex flex-col justify-center border-r border-(--color-stamp-divider)">
-        {header}
         <div className="grid grid-cols-4 gap-4 w-full">
           {STAMP_EDIT_SUGGESTIONS.map(({ id, image }) => (
             <SuggestionCard
@@ -77,7 +61,6 @@ function SynthesisVisualComponent({ selectedId, onSelectSuggestion }: PropsI) {
   if (isMdUp) {
     return (
       <div className="p-10 pt-8 overflow-hidden bg-white flex flex-col justify-center border-r border-(--color-stamp-divider)">
-        {header}
         <div className="grid grid-cols-3 gap-4 w-full">
           {STAMP_EDIT_SUGGESTIONS.map(({ id, image }) => (
             <SuggestionCard
@@ -109,7 +92,6 @@ function SynthesisVisualComponent({ selectedId, onSelectSuggestion }: PropsI) {
           showLessLabel={t("showLess")}
           columns={2}
           gap={3}
-          header={header}
         >
           {STAMP_EDIT_SUGGESTIONS.map(({ id, image }) => (
             <SuggestionCard

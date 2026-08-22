@@ -82,6 +82,13 @@ export function buildPrintPositionsPayload(
     .map(({ position, placement }) => ({ position, placement: { ...placement } }));
 }
 
+/**
+ * How the position selector behaves for a product:
+ * - "single": exactly one position prints (apparel front OR back) — radio.
+ * - "multiple": positions toggle independently (socks print both legs).
+ */
+export type PositionSelectionModeType = "single" | "multiple";
+
 export function useDesignAdjustment() {
   const { blueprintId, selectedProductTitle } = useStampProductSelection();
   const {
@@ -89,6 +96,7 @@ export function useDesignAdjustment() {
     printPositionConfigs,
     setPrintPositionConfig,
     togglePrintPosition,
+    selectPrintPosition,
     activeEditPosition,
     setActiveEditPosition,
     resetPlacementForPosition,
@@ -196,6 +204,11 @@ export function useDesignAdjustment() {
     updateActivePlacement({ x: 0.5, y: defaultPlacement.y });
   }, [updateActivePlacement, defaultPlacement.y]);
 
+  // Socks deliberately print both legs at once; every other product prints
+  // exactly one position (the user picks front OR back).
+  const positionSelectionMode: PositionSelectionModeType =
+    productConfig?.category === "socks" ? "multiple" : "single";
+
   const totalAdditionalCost = useMemo(
     () =>
       Object.values(printPositionConfigs)
@@ -215,6 +228,8 @@ export function useDesignAdjustment() {
     bounds,
     atBounds: activeConfig ? isAtBounds(activeConfig.placement, bounds) : false,
     togglePrintPosition,
+    selectPrintPosition,
+    positionSelectionMode,
     updateActivePlacement,
     nudgeActivePlacement,
     centerActivePlacement,

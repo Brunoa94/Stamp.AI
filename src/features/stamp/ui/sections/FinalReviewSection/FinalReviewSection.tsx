@@ -16,13 +16,16 @@ import { ReviewDetails } from "./ReviewDetails";
  *
  * Step 8: Final product review and acquisition
  * Protocol 08 / Acquisition
+ *
+ * Note: mockupImages are pre-ordered in useStampProductCreation based on
+ * print position (back print first when selected). No reordering needed here.
  */
 
 function FinalReviewSectionComponent() {
   const t = useTranslations("stamp.finalReview");
   const { handleBagIt, handleBagItAndCreateAnother, isAddingToCart } = useStampCartActions();
   const { mockupImageUrl, mockupImages } = useStampFinalization();
-  const { selectedProductTitle, selectedProductType } = useStampProductSelection();
+  const { selectedProductTitle, selectedProductType, selectedProductDescription } = useStampProductSelection();
   const { selectedColor, selectedSize, selectedPriceCents } =
     useStampCustomization();
 
@@ -48,6 +51,7 @@ function FinalReviewSectionComponent() {
       <ReviewDetails
         mockupUrl={mockupImages[0]?.src || mockupImageUrl || fallbackUrl}
         productName={productName}
+        productDescription={selectedProductDescription}
         productType={selectedProductType}
         color={selectedColor}
         size={selectedSize}

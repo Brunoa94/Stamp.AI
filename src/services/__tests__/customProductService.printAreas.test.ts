@@ -110,7 +110,7 @@ describe("CustomProductService.createCustomProduct print areas", () => {
 
     await CustomProductService.createCustomProduct({
       ...basePayload,
-      blueprint_id: 1320,
+      blueprint_id: 441,
     });
 
     const body = sentCreateBody(fetchMock);
@@ -157,6 +157,23 @@ describe("CustomProductService.createCustomProduct print areas", () => {
       left_leg: leftPlacement,
       right_leg: rightPlacement,
     });
+  });
+
+  it("back printing: sends a back-only print area with its placement", async () => {
+    const fetchMock = mockFetchSequence();
+
+    const backPlacement = { x: 0.5, y: 0.35, scale: 0.9, angle: 0 };
+
+    await CustomProductService.createCustomProduct({
+      ...basePayload,
+      blueprint_id: 6,
+      print_positions: [{ position: "back", placement: backPlacement }],
+    });
+
+    const body = sentCreateBody(fetchMock);
+    expect(body.print_areas).toEqual({ back: UPLOADED_IMAGE_ID });
+    expect(body.print_areas.front).toBeUndefined();
+    expect(body.placements).toEqual({ back: backPlacement });
   });
 
   it("rejects invalid placements before any network call", async () => {
