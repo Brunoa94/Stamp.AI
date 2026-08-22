@@ -9,18 +9,15 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Heading } from "@/features/ui/heading";
-import { Span } from "@/features/ui/span";
 
 interface CheckoutSectionCardPropsI {
   title?: string;
-  subtitle?: string;
   children: ReactNode;
   className?: string;
 }
 
 export function CheckoutSectionCard({
   title,
-  subtitle,
   children,
   className,
 }: CheckoutSectionCardPropsI) {
@@ -40,11 +37,6 @@ export function CheckoutSectionCard({
           >
             {title}
           </Heading>
-          {subtitle && (
-            <Span variant="label" className="text-(--color-stamp-taupe)">
-              {subtitle}
-            </Span>
-          )}
         </header>
       )}
       {children}

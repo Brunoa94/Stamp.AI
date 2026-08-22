@@ -8,6 +8,7 @@ import { Paragraph } from "@/features/ui/paragraph";
 import { Separator } from "@/features/ui/separator";
 import { Span } from "@/features/ui/span";
 import { SOCIAL_PROFILES } from "@/features/seo/config/social";
+import { LEGAL_ENTITY } from "@/features/legal/lib/constants/legalEntity";
 import { FooterPaymentIcons } from "@/features/ui/trust/FooterPaymentIcons";
 import {
   FooterLinkColumn,
@@ -40,6 +41,7 @@ const FOOTER_COLUMNS: { key: FooterColumnKeyType; links: FooterLinkType[] }[] =
         { id: "footer-faq", href: "/faq" },
         { id: "footer-shipping", href: "/shipping" },
         { id: "footer-returns", href: "/returns" },
+        { id: "footer-contact", href: `mailto:${LEGAL_ENTITY.supportEmail}` },
       ],
     },
     {
