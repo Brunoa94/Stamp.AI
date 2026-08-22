@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/features/ui/button";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
 import PaymentSuccess from "@/features/checkout/ui/PaymentSuccess/PaymentSuccess";
 import PaymentError from "@/features/checkout/ui/components/PaymentError";
 import { OrderService } from "@/services/orderService";
@@ -30,6 +32,7 @@ import {
   UserFacingError,
   getUserFacingMessage,
 } from "@/features/checkout/lib/errors/UserFacingError";
+import { CheckoutStorageService } from "@/features/checkout/lib/services/checkoutStorageService";
 import {
   useCreateOrderFromCart,
   useUpdateOrderStatus,
@@ -72,14 +75,25 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 }
 
 export default function MollieReturnClient() {
+  // useSearchParams() requires a Suspense boundary for static prerendering
+  return (
+    <Suspense fallback={null}>
+      <MollieReturnContent />
+    </Suspense>
+  );
+}
+
+function MollieReturnContent() {
   const t = useTranslations("checkout.returns.mollie");
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [status, setStatus] = useState<PageStatus>("loading");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [paymentStatus, setPaymentStatus] =
     useState<MolliePaymentStatus | null>(null);
   const [paymentId, setPaymentId] = useState<string | null>(null);
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
+  const [cartId, setCartId] = useState<string | null>(null);
   const hasVerified = useRef(false);
 
   // React Query mutations — same hooks used by handlePaymentSuccess in actions.ts
@@ -109,18 +123,15 @@ export default function MollieReturnClient() {
 
     const verifyPayment = async () => {
       try {
-        // ✅ CRITICAL FIX: Try to get payment ID from URL first, then sessionStorage, then database
-        const urlParams = new URLSearchParams(window.location.search);
-        const paymentIdFromUrl = urlParams.get("payment_id");
+        // Try to get payment ID from URL first, then sessionStorage, then database
+        const paymentIdFromUrl = searchParams.get("payment_id");
 
-        let storedPaymentId =
-          paymentIdFromUrl || sessionStorage.getItem("mollie_payment_id");
-        let storedLineItems = sessionStorage.getItem("mollie_line_items");
-        let storedShippingAddress = sessionStorage.getItem(
-          "mollie_shipping_address",
-        );
-        let storedCartId = sessionStorage.getItem("mollie_cart_id");
-        let storedOrderAmount = sessionStorage.getItem("mollie_order_amount");
+        const stored = CheckoutStorageService.getMollieCheckoutData();
+        let storedPaymentId = paymentIdFromUrl || stored?.paymentId || null;
+        let storedLineItems = stored?.lineItems ?? null;
+        let storedShippingAddress = stored?.shippingAddress ?? null;
+        let storedCartId = stored?.cartId ?? null;
+        let storedOrderAmount = stored?.orderAmount ?? null;
 
         // ✅ CRITICAL FIX: If sessionStorage is empty, try to recover from database
         if (!storedPaymentId || !storedLineItems || !storedShippingAddress) {
@@ -166,6 +177,8 @@ export default function MollieReturnClient() {
           setErrorMessage(t("errorNoPaymentInfo"));
           return;
         }
+
+        setCartId(storedCartId);
 
         // Check if user is authenticated
         if (!user) {
@@ -320,7 +333,7 @@ export default function MollieReturnClient() {
                 orderId,
                 paymentStatus: "pending",
               });
-              } catch (updateError) {
+            } catch (updateError) {
               captureError(updateError, {
                 service: "MollieReturn",
                 action: "markOrderFailed",
@@ -554,7 +567,10 @@ export default function MollieReturnClient() {
           } catch (pipelineError) {
             if (pipelineError instanceof MolliePipelineTimeoutError) {
               if (createdOrderId) {
-                await markOrderFailed(createdOrderId, "unsuccessful_confirmation");
+                await markOrderFailed(
+                  createdOrderId,
+                  "unsuccessful_confirmation",
+                );
               }
               await triggerRefund("Mollie checkout pipeline timed out");
             }
@@ -567,16 +583,11 @@ export default function MollieReturnClient() {
 
           setStatus("success");
 
-          // Clear sessionStorage
-          sessionStorage.removeItem("mollie_payment_id");
-          sessionStorage.removeItem("mollie_line_items");
-          sessionStorage.removeItem("mollie_shipping_address");
-          sessionStorage.removeItem("mollie_cart_id");
+          CheckoutStorageService.clearMollieCheckoutData();
         } else if (isMolliePaymentFailed(result.status)) {
           sessionStorage.removeItem(finalizationLockKey);
           setStatus("failed");
-          sessionStorage.removeItem("mollie_payment_id");
-          sessionStorage.removeItem("mollie_cart_id");
+          CheckoutStorageService.clearMollieCheckoutData();
         } else if (isMolliePaymentPending(result.status)) {
           sessionStorage.removeItem(finalizationLockKey);
           setStatus("pending");
@@ -590,7 +601,8 @@ export default function MollieReturnClient() {
           );
         }
       } catch (err) {
-        const currentPaymentId = sessionStorage.getItem("mollie_payment_id");
+        const currentPaymentId =
+          CheckoutStorageService.getMollieCheckoutData()?.paymentId ?? null;
         captureError(err, {
           service: "MollieReturn",
           action: "verifyPayment",
@@ -619,16 +631,11 @@ export default function MollieReturnClient() {
     };
 
     verifyPayment();
-  }, [isUserLoading, user]); // Re-run when user loading state changes
-
-  const storedCartId =
-    typeof window !== "undefined"
-      ? sessionStorage.getItem("mollie_cart_id")
-      : null;
+  }, [isUserLoading, user, searchParams]); // Re-run when user loading state changes
 
   const handleRetryPayment = () => {
-    if (storedCartId) {
-      router.push(`/checkout?cartId=${storedCartId}`);
+    if (cartId) {
+      router.push(`/checkout?cartId=${cartId}`);
     } else {
       router.push("/cart");
     }
@@ -661,12 +668,19 @@ export default function MollieReturnClient() {
             >
               <Loader2 className="w-12 h-12 animate-spin" />
             </div>
-            <h1 className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
+            <Heading
+              as="h1"
+              variant="card"
+              className="uppercase text-(--color-stamp-chocolate) mb-4"
+            >
               {t("verifyingTitle")}
-            </h1>
-            <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto">
+            </Heading>
+            <Paragraph
+              variant="sm"
+              className="text-(--color-stamp-taupe) max-w-sm mx-auto"
+            >
               {t("verifyingMessage")}
-            </p>
+            </Paragraph>
           </section>
         </div>
       </div>
@@ -744,12 +758,19 @@ export default function MollieReturnClient() {
             >
               <AlertCircle className="w-12 h-12" />
             </div>
-            <h1 className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
+            <Heading
+              as="h1"
+              variant="card"
+              className="uppercase text-(--color-stamp-chocolate) mb-4"
+            >
               {t("pendingTitle")}
-            </h1>
-            <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12">
+            </Heading>
+            <Paragraph
+              variant="sm"
+              className="text-(--color-stamp-taupe) max-w-sm mx-auto mb-12"
+            >
               {t("pendingMessage")}
-            </p>
+            </Paragraph>
             <div className="flex flex-col gap-4">
               <Button
                 onClick={handleViewOrders}
@@ -789,12 +810,19 @@ export default function MollieReturnClient() {
           >
             <AlertCircle className="w-12 h-12" />
           </div>
-          <h1 className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
+          <Heading
+            as="h1"
+            variant="card"
+            className="uppercase text-(--color-stamp-chocolate) mb-4"
+          >
             {t("somethingWentWrongTitle")}
-          </h1>
-          <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12">
+          </Heading>
+          <Paragraph
+            variant="sm"
+            className="text-(--color-stamp-taupe) max-w-sm mx-auto mb-12"
+          >
             {errorMessage || t("somethingWentWrongMessage")}
-          </p>
+          </Paragraph>
           <div className="flex flex-col gap-4">
             <Button
               onClick={handleRetryPayment}

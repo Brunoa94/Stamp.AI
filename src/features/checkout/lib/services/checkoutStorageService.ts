@@ -2,6 +2,14 @@ import type { PrintifyLineItem } from "@/types/printifyOrder";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import type { PaymentMethodT } from "@/types/payment";
 
+export interface MollieCheckoutSessionData {
+  paymentId: string | null;
+  lineItems: string | null;
+  shippingAddress: string | null;
+  cartId: string | null;
+  orderAmount: string | null;
+}
+
 export interface CheckoutData {
   billing: ShippingAddressT;
   shipping?: ShippingAddressT;
@@ -153,11 +161,11 @@ export class CheckoutStorageService {
       sessionStorage.setItem(this.MOLLIE_SESSION_KEYS.PAYMENT_ID, paymentId);
       sessionStorage.setItem(
         this.MOLLIE_SESSION_KEYS.LINE_ITEMS,
-        JSON.stringify(data.lineItems)
+        JSON.stringify(data.lineItems),
       );
       sessionStorage.setItem(
         this.MOLLIE_SESSION_KEYS.SHIPPING_ADDRESS,
-        JSON.stringify(data.shippingAddress)
+        JSON.stringify(data.shippingAddress),
       );
       if (data.cartId) {
         sessionStorage.setItem(this.MOLLIE_SESSION_KEYS.CART_ID, data.cartId);
@@ -165,11 +173,43 @@ export class CheckoutStorageService {
       if (data.amount !== undefined) {
         sessionStorage.setItem(
           this.MOLLIE_SESSION_KEYS.ORDER_AMOUNT,
-          String(data.amount)
+          String(data.amount),
         );
       }
     } catch (error) {
       console.error("Failed to save Mollie checkout data:", error);
+    }
+  }
+
+  /**
+   * Retrieve Mollie checkout data from sessionStorage.
+   * Returns null if all keys are absent (e.g. after a clear or on SSR).
+   */
+  static getMollieCheckoutData(): MollieCheckoutSessionData | null {
+    try {
+      const paymentId = sessionStorage.getItem(
+        this.MOLLIE_SESSION_KEYS.PAYMENT_ID,
+      );
+      const lineItems = sessionStorage.getItem(
+        this.MOLLIE_SESSION_KEYS.LINE_ITEMS,
+      );
+      const shippingAddress = sessionStorage.getItem(
+        this.MOLLIE_SESSION_KEYS.SHIPPING_ADDRESS,
+      );
+      const cartId = sessionStorage.getItem(this.MOLLIE_SESSION_KEYS.CART_ID);
+      const orderAmount = sessionStorage.getItem(
+        this.MOLLIE_SESSION_KEYS.ORDER_AMOUNT,
+      );
+
+      if (
+        !paymentId && !lineItems && !shippingAddress && !cartId && !orderAmount
+      ) {
+        return null;
+      }
+
+      return { paymentId, lineItems, shippingAddress, cartId, orderAmount };
+    } catch {
+      return null;
     }
   }
 
