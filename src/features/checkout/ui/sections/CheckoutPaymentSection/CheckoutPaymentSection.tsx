@@ -13,6 +13,7 @@ import { CheckoutPaymentMethods } from "./CheckoutPaymentMethods";
 import { CheckoutStripeCardForm } from "./CheckoutStripeCardForm";
 import { SecureCheckoutNotice } from "@/features/ui/trust/SecureCheckoutNotice";
 import { PaymentSecurityBadge } from "@/features/ui/trust/PaymentSecurityBadge";
+import { Paragraph } from "@/features/ui/paragraph";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 import type { PaymentMethodT } from "@/types/payment";
 
@@ -54,12 +55,25 @@ export function CheckoutPaymentSection({
       )}
 
       {selectedMethod === "paypal" && (
-        <p
+        <Paragraph
+          variant="xs"
+          unstyled
           role="status"
           className="mt-6 border border-(--color-stamp-info)/20 bg-(--color-stamp-info)/5 px-4 py-3 text-[11px] font-bold uppercase tracking-[0.15em] text-(--color-stamp-info)"
         >
           {t("paypalNotice")}
-        </p>
+        </Paragraph>
+      )}
+
+      {selectedMethod === "ideal" && (
+        <Paragraph
+          variant="xs"
+          unstyled
+          role="status"
+          className="mt-6 border border-(--color-stamp-info)/20 bg-(--color-stamp-info)/5 px-4 py-3 text-[11px] font-bold uppercase tracking-[0.15em] text-(--color-stamp-info)"
+        >
+          {t("idealNotice")}
+        </Paragraph>
       )}
 
       <SecureCheckoutNotice className="mt-6" />

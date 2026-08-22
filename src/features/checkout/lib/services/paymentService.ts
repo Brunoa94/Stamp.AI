@@ -1,6 +1,7 @@
 import { ErrorClient } from "@/services/errorClient";
 import { StripeService } from "@/services/stripeService";
 import { PayPalService } from "@/services/paypalService";
+import { MollieService } from "@/services/mollieService";
 import type { CheckoutFormData } from "../context/CheckoutFormContext";
 import type { CartWithItems } from "@/types/cart";
 import type { CreatePaymentIntentPayloadI } from "@/types/payment";
@@ -137,6 +138,69 @@ export class PaymentService {
         error: error instanceof Error ? error : new Error("Unknown error"),
         service: "Payment",
         action: "Prepare PayPal Payment",
+      });
+    }
+  }
+
+  /**
+   * Prepare iDEAL payment (via Mollie)
+   * Builds checkout data, creates a Mollie payment pinned to iDEAL, and stores
+   * the data MollieReturnClient needs to finalize the order after the redirect
+   */
+  static async prepareIdealPayment(
+    formData: CheckoutFormData,
+    cart: CartWithItems,
+    cartId: string | null,
+    amount: number
+  ) {
+    try {
+      // Validate cart
+      if (!cart || cart.cart_items.length === 0) {
+        throw ErrorClient.handleError({
+          error: new Error("Cart is empty"),
+          service: "Payment",
+          action: "Prepare iDEAL Payment",
+        });
+      }
+
+      // Build checkout data using CheckoutDataBuilder service
+      const checkoutData = CheckoutDataBuilder.buildCheckoutData(
+        formData,
+        cart,
+        cartId,
+        amount
+      );
+
+      // Create Mollie payment pinned to iDEAL (EUR only)
+      const { paymentId, checkoutUrl } = await MollieService.createPayment({
+        amount,
+        currency: "EUR",
+        method: "ideal",
+        lineItems: checkoutData.lineItems,
+        shippingAddress: checkoutData.shippingAddress,
+      });
+
+      // Store checkout data for the mollie-return page
+      CheckoutStorageService.saveMollieCheckoutData(checkoutData, paymentId);
+
+      if (!checkoutUrl) {
+        throw ErrorClient.handleError({
+          error: new Error("Mollie checkout URL not received"),
+          service: "Payment",
+          action: "Prepare iDEAL Payment",
+        });
+      }
+
+      return {
+        paymentId,
+        checkoutUrl,
+        checkoutData,
+      };
+    } catch (error) {
+      throw ErrorClient.handleError({
+        error: error instanceof Error ? error : new Error("Unknown error"),
+        service: "Payment",
+        action: "Prepare iDEAL Payment",
       });
     }
   }
