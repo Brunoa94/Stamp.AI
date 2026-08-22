@@ -88,22 +88,23 @@ export function CatalogPageContent({ sections }: PropsI) {
               </div>
             )}
 
-            {filters.filteredSections.length === 0 ? (
-              <div className="mt-16">
-                <CatalogEmptyResults onClearFilters={filters.clearFilters} />
-              </div>
-            ) : (
-              <div className="mt-16 space-y-24">
-                {filters.filteredSections.map((section) => (
-                  <CatalogGroupSection
-                    key={section.group}
-                    section={section}
-                    isPreview={isBrowsingAll}
-                    onSeeAll={() => filters.setGroup(section.group)}
-                  />
-                ))}
-              </div>
-            )}
+            {!isBrowsingAll &&
+              (filters.filteredSections.length === 0 ? (
+                <div className="mt-16">
+                  <CatalogEmptyResults onClearFilters={filters.clearFilters} />
+                </div>
+              ) : (
+                <div className="mt-16 space-y-24">
+                  {filters.filteredSections.map((section) => (
+                    <CatalogGroupSection
+                      key={section.group}
+                      section={section}
+                      isPreview={false}
+                      onSeeAll={() => filters.setGroup(section.group)}
+                    />
+                  ))}
+                </div>
+              ))}
           </>
         )}
       </div>
