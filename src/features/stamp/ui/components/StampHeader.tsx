@@ -51,7 +51,7 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
   };
 
   const linkClass =
-    "font-heading text-base font-normal uppercase tracking-[0.15em] text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-colors";
+    "font-body text-sm font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-colors";
 
   return (
     <>
@@ -194,7 +194,7 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
               variant="ghost"
               onClick={handleLogout}
               disabled={logoutMutation.isPending}
-              className="justify-start font-heading text-base font-normal uppercase tracking-[0.15em] text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) hover:bg-transparent transition-colors h-auto p-0 py-3 rounded-none"
+              className="justify-start font-body text-sm font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) hover:bg-transparent transition-colors h-auto p-0 py-3 rounded-none"
               aria-label={t("logoutAria")}
             >
               {t("logout")}

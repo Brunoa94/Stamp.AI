@@ -45,7 +45,7 @@ export function ProcessAnimatedButton({
       {/* Button content */}
       <span
         className={cn(
-          "relative z-10 text-lg md:text-xl font-bold uppercase tracking-[0.2em]",
+          "relative z-10 font-body text-lg md:text-xl font-bold uppercase tracking-[0.2em]",
           "transition-colors duration-300",
           overallProgress > 0.5
             ? "text-(--color-stamp-chocolate)"
