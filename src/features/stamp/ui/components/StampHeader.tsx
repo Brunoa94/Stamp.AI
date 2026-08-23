@@ -93,6 +93,10 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
           className="flex-1 hidden lg:flex justify-end gap-8 lg:gap-10 items-center"
           aria-label={t("mainNavAria")}
         >
+          <Link href="/catalog" className={linkClass}>
+            {t("catalog")}
+          </Link>
+
           {user && (
             <>
               <Link href="/orders" className={linkClass}>
@@ -161,6 +165,14 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
           >
             {t("stamp")}
           </Button>
+
+          <Link
+            href="/catalog"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`${linkClass} py-3`}
+          >
+            {t("catalog")}
+          </Link>
 
           {user && (
             <>

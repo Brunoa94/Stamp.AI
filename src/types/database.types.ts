@@ -190,6 +190,7 @@ export type Database = {
           created_at: string | null
           discount_percent: number | null
           display_title: string
+          image_urls: string[] | null
           is_active: boolean | null
           is_on_sale: boolean | null
           is_product_of_month: boolean | null
@@ -207,6 +208,7 @@ export type Database = {
           created_at?: string | null
           discount_percent?: number | null
           display_title: string
+          image_urls?: string[] | null
           is_active?: boolean | null
           is_on_sale?: boolean | null
           is_product_of_month?: boolean | null
@@ -224,6 +226,7 @@ export type Database = {
           created_at?: string | null
           discount_percent?: number | null
           display_title?: string
+          image_urls?: string[] | null
           is_active?: boolean | null
           is_on_sale?: boolean | null
           is_product_of_month?: boolean | null

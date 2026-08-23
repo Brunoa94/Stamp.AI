@@ -4,6 +4,7 @@ import { AlertTriangle } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
 
 interface ErrorFallbackProps {
   error: Error | null;
@@ -38,9 +39,9 @@ export function ErrorFallback({ error, errorId, onRetry }: ErrorFallbackProps) {
             className="text-(--color-stamp-chocolate)"
           >
             Something went{" "}
-            <span className="text-(--color-stamp-taupe) italic font-serif lowercase font-light">
+            <Span variant="default" className="text-(--color-stamp-taupe) italic font-serif lowercase font-light">
               wrong
-            </span>
+            </Span>
           </Heading>
 
           <Paragraph
@@ -55,9 +56,9 @@ export function ErrorFallback({ error, errorId, onRetry }: ErrorFallbackProps) {
         {/* Error ID for support reference */}
         {errorId && (
           <div className="bg-(--color-stamp-off-white) px-6 py-3 border border-(--color-stamp-divider) shadow-(--shadow-stamp-card)">
-            <p className="font-mono text-xs text-(--color-stamp-taupe) tracking-wider uppercase">
+            <Paragraph variant="micro" className="font-mono text-(--color-stamp-taupe) tracking-wider uppercase">
               Reference: {errorId}
-            </p>
+            </Paragraph>
           </div>
         )}
 

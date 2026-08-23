@@ -2,6 +2,8 @@
 
 import { DialogContent, DialogTitle, DialogClose } from "@/features/ui/dialog";
 import { Button } from "@/features/ui/button";
+import { Span } from "@/features/ui/span";
+import { Paragraph } from "@/features/ui/paragraph";
 import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useLoginForm } from "./useLoginForm";
@@ -42,9 +44,9 @@ export function LoginForm() {
 
         <div className="relative flex items-center my-8">
           <div className="grow border-t border-(--color-stamp-divider)" />
-          <span className="shrink mx-4 text-xs font-bold text-(--color-stamp-gold) uppercase tracking-[0.2em]">
+          <Span variant="default" className="shrink mx-4 text-xs font-bold text-(--color-stamp-gold) uppercase tracking-[0.2em]">
             {t("orContinueWithEmail")}
-          </span>
+          </Span>
           <div className="grow border-t border-(--color-stamp-divider)" />
         </div>
 
@@ -52,12 +54,13 @@ export function LoginForm() {
           <LoginCredentialsFields register={register} errors={errors} />
 
           {errors.root?.message && (
-            <p
+            <Paragraph
+              variant="micro"
               role="alert"
-              className="text-xs font-bold uppercase tracking-widest text-(--color-stamp-error)"
+              className="font-bold uppercase tracking-widest text-(--color-stamp-error)"
             >
               {errors.root.message}
-            </p>
+            </Paragraph>
           )}
 
           <LoginFormActions isPending={isPending} />

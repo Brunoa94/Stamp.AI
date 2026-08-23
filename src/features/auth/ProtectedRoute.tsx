@@ -6,6 +6,7 @@ import { useEffect, ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { animations } from "@/theme/animations";
+import { Paragraph } from "@/features/ui/paragraph";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -43,12 +44,12 @@ export function ProtectedRoute({
             </div>
 
             <div>
-              <p className="text-base font-semibold font-heading uppercase tracking-wide text-[#1A2340]">
+              <Paragraph variant="default" className="text-base font-semibold font-heading uppercase tracking-wide text-[#1A2340]">
                 {t("authenticating")}
-              </p>
-              <p className="mt-1 text-sm text-slate-500">
+              </Paragraph>
+              <Paragraph variant="sm" className="mt-1 text-slate-500">
                 {t("checkingSession")}
-              </p>
+              </Paragraph>
             </div>
           </div>
         </div>

@@ -11,6 +11,7 @@ import {
   useStampCustomization,
 } from "../../../lib/hooks/useStampSelectors";
 import { isClothingProduct } from "../../../lib/helpers/productCategoryDetector";
+import { FALLBACK_PRODUCT_PRICE_CENTS } from "../../../lib/constants/productPricing";
 import { ProductGrid } from "./ProductGrid";
 import { ProductSelectionContent } from "./ProductSelectionContent";
 import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
@@ -28,7 +29,7 @@ import { mapSelectItemEvent } from "@/features/analytics/mappers/stampFlowMapper
  */
 
 const EXCLUDED_BLUEPRINT_IDS = new Set([12]);
-const FALLBACK_PRICE = 25.0;
+const FALLBACK_PRICE = FALLBACK_PRODUCT_PRICE_CENTS / 100;
 
 function ProductSelectionSectionComponent() {
   const { nextStep } = useStampNavigationActions();
