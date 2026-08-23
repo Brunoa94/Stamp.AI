@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/features/ui/button";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
 import PaymentSuccess from "@/features/checkout/ui/PaymentSuccess/PaymentSuccess";
 import PaymentError from "@/features/checkout/ui/components/PaymentError";
 import { OrderService } from "@/services/orderService";
@@ -661,12 +663,19 @@ export default function MollieReturnClient() {
             >
               <Loader2 className="w-12 h-12 animate-spin" />
             </div>
-            <h1 className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
+            <Heading
+              as="h1"
+              variant="title"
+              className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4"
+            >
               {t("verifyingTitle")}
-            </h1>
-            <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto">
+            </Heading>
+            <Paragraph
+              variant="lead"
+              className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto"
+            >
               {t("verifyingMessage")}
-            </p>
+            </Paragraph>
           </section>
         </div>
       </div>
@@ -744,12 +753,19 @@ export default function MollieReturnClient() {
             >
               <AlertCircle className="w-12 h-12" />
             </div>
-            <h1 className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
+            <Heading
+              as="h1"
+              variant="title"
+              className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4"
+            >
               {t("pendingTitle")}
-            </h1>
-            <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12">
+            </Heading>
+            <Paragraph
+              variant="lead"
+              className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12"
+            >
               {t("pendingMessage")}
-            </p>
+            </Paragraph>
             <div className="flex flex-col gap-4">
               <Button
                 onClick={handleViewOrders}
@@ -789,12 +805,19 @@ export default function MollieReturnClient() {
           >
             <AlertCircle className="w-12 h-12" />
           </div>
-          <h1 className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
+          <Heading
+            as="h1"
+            variant="title"
+            className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4"
+          >
             {t("somethingWentWrongTitle")}
-          </h1>
-          <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12">
+          </Heading>
+          <Paragraph
+            variant="lead"
+            className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12"
+          >
             {errorMessage || t("somethingWentWrongMessage")}
-          </p>
+          </Paragraph>
           <div className="flex flex-col gap-4">
             <Button
               onClick={handleRetryPayment}

@@ -88,8 +88,9 @@ serve(async (req) => {
     console.log(`Blueprint: ${blueprintData.title}`)
     console.log(`Images: ${blueprintData.images?.length || 0}`)
 
-    // Get the first image URL
-    const baseImageUrl = blueprintData.images?.[0] || null
+    // Get the first image URL and keep the full gallery
+    const imageUrls = blueprintData.images || []
+    const baseImageUrl = imageUrls[0] || null
     console.log(`Base image URL: ${baseImageUrl}`)
 
     // Fetch variants from Printify
@@ -123,6 +124,7 @@ serve(async (req) => {
         blueprint_id: validBlueprintId,
         display_title: blueprintData.title,
         base_image_url: baseImageUrl,
+        image_urls: imageUrls,
         min_price_cents: minPriceCents,
         print_provider_id: providerId,
         last_synced_at: new Date().toISOString(),
@@ -199,6 +201,7 @@ serve(async (req) => {
         blueprint_id: validBlueprintId,
         title: blueprintData.title,
         base_image_url: baseImageUrl,
+        images_count: imageUrls.length,
         variants_count: variants.length,
         min_price_cents: minPriceCents,
         seo_synced: seoSynced,

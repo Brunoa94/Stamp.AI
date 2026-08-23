@@ -1,12 +1,15 @@
-import { PDFDocument, PDFFont, PDFPage, rgb, StandardFonts } from "https://esm.sh/pdf-lib@1.17.1";
+import { PDFDocument, PDFFont, PDFImage, PDFPage, rgb } from "https://esm.sh/pdf-lib@1.17.1";
+import fontkit from "https://esm.sh/@pdf-lib/fontkit@1.1.1";
 import {
   documentTitle,
-  formatAddressLines,
+  formatBillToLines,
   formatInvoiceDate,
   formatMoney,
   InvoiceRowI,
   SellerInfoI,
 } from "./invoiceTemplate.ts";
+import { INVOICE_LOGO_HEIGHT, INVOICE_LOGO_PNG_BASE64, INVOICE_LOGO_WIDTH } from "./invoiceAssets.ts";
+import { INTER_BOLD_TTF_BASE64, INTER_REGULAR_TTF_BASE64 } from "./invoiceFonts.ts";
 
 const PAGE_WIDTH = 595.28; // A4
 const PAGE_HEIGHT = 841.89;
@@ -16,6 +19,11 @@ const COLOR_INK = rgb(0.24, 0.17, 0.12); // chocolate
 const COLOR_MUTED = rgb(0.54, 0.48, 0.42); // taupe
 const COLOR_ACCENT = rgb(0.7, 0.6, 0.36); // gold
 const COLOR_LINE = rgb(0.91, 0.89, 0.85); // divider
+const COLOR_CREAM = rgb(0.969, 0.953, 0.925); // header band
+const COLOR_PAPER = rgb(1, 1, 1);
+
+const LOGO_WIDTH = 132;
+const LOGO_HEIGHT = LOGO_WIDTH * (INVOICE_LOGO_HEIGHT / INVOICE_LOGO_WIDTH);
 
 interface PdfContextI {
   doc: PDFDocument;
@@ -56,6 +64,25 @@ function drawText(
   });
 }
 
+/** Letter-spaced uppercase labels ("BILLED TO", column headers). */
+function drawTracked(
+  ctx: PdfContextI,
+  text: string,
+  options: { x: number; size?: number; bold?: boolean; color?: ReturnType<typeof rgb>; tracking?: number; rightAlignAt?: number }
+) {
+  const font = options.bold ? ctx.fontBold : ctx.font;
+  const size = options.size ?? 9;
+  const tracking = options.tracking ?? 1.6;
+  const chars = [...text];
+  const width =
+    font.widthOfTextAtSize(text, size) + tracking * Math.max(chars.length - 1, 0);
+  let x = options.rightAlignAt !== undefined ? options.rightAlignAt - width : options.x;
+  for (const char of chars) {
+    ctx.page.drawText(char, { x, y: ctx.y, size, font, color: options.color ?? COLOR_INK });
+    x += font.widthOfTextAtSize(char, size) + tracking;
+  }
+}
+
 function drawLine(ctx: PdfContextI, thickness: number, color = COLOR_LINE) {
   ctx.page.drawLine({
     start: { x: MARGIN, y: ctx.y },
@@ -71,76 +98,112 @@ function drawLine(ctx: PdfContextI, thickness: number, color = COLOR_LINE) {
  */
 export async function renderInvoicePdf(invoice: InvoiceRowI, seller: SellerInfoI): Promise<Uint8Array> {
   const doc = await PDFDocument.create();
-  const font = await doc.embedFont(StandardFonts.Helvetica);
-  const fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
+  doc.registerFontkit(fontkit);
+  const font = await doc.embedFont(INTER_REGULAR_TTF_BASE64, { subset: true });
+  const fontBold = await doc.embedFont(INTER_BOLD_TTF_BASE64, { subset: true });
+  const logo: PDFImage = await doc.embedPng(INVOICE_LOGO_PNG_BASE64);
   const ctx: PdfContextI = { doc, page: doc.addPage([PAGE_WIDTH, PAGE_HEIGHT]), font, fontBold, y: PAGE_HEIGHT - MARGIN };
   const rightEdge = PAGE_WIDTH - MARGIN;
 
   doc.setTitle(`${documentTitle(invoice.type)} ${invoice.invoice_number}`);
 
-  // Header: seller (left) and document meta (right)
-  drawText(ctx, seller.name, { x: MARGIN, size: 20, bold: true });
-  drawText(ctx, documentTitle(invoice.type).toUpperCase(), {
-    x: MARGIN,
-    size: 12,
-    bold: true,
-    color: COLOR_ACCENT,
-    rightAlignAt: rightEdge,
-  });
-  ctx.y -= 18;
-  drawText(ctx, invoice.invoice_number, { x: MARGIN, size: 14, bold: true, rightAlignAt: rightEdge });
-
   const metaLines = [
-    `Issued: ${formatInvoiceDate(invoice.issued_at)}`,
-    `Order: ${invoice.order_number}`,
+    `Issued ${formatInvoiceDate(invoice.issued_at)}`,
+    `Order ${invoice.order_number}`,
     ...(invoice.payment_method ? [`Paid via ${invoice.payment_method}`] : []),
   ];
   const sellerLines = [
+    seller.name,
     ...seller.addressLines,
     seller.email,
     ...(seller.vatId ? [`VAT: ${seller.vatId}`] : []),
   ];
-  for (let i = 0; i < Math.max(sellerLines.length, metaLines.length); i++) {
+
+  // Cream header band sized to fit whichever column is taller
+  const leftHeight = 44 + LOGO_HEIGHT + 22 + sellerLines.length * 13;
+  const rightHeight = 52 + 26 + metaLines.length * 14;
+  const headerHeight = Math.max(leftHeight, rightHeight) + 28;
+  ctx.page.drawRectangle({
+    x: 0,
+    y: PAGE_HEIGHT - headerHeight,
+    width: PAGE_WIDTH,
+    height: headerHeight,
+    color: COLOR_CREAM,
+  });
+  ctx.page.drawLine({
+    start: { x: 0, y: PAGE_HEIGHT - headerHeight },
+    end: { x: PAGE_WIDTH, y: PAGE_HEIGHT - headerHeight },
+    thickness: 2,
+    color: COLOR_ACCENT,
+  });
+
+  // Left: wordmark + seller identity
+  ctx.page.drawImage(logo, {
+    x: MARGIN,
+    y: PAGE_HEIGHT - 44 - LOGO_HEIGHT,
+    width: LOGO_WIDTH,
+    height: LOGO_HEIGHT,
+  });
+  ctx.y = PAGE_HEIGHT - 44 - LOGO_HEIGHT - 22;
+  for (const line of sellerLines) {
+    drawText(ctx, line, { x: MARGIN, size: 8.5, color: COLOR_MUTED });
+    ctx.y -= 13;
+  }
+
+  // Right: document title, number and meta
+  ctx.y = PAGE_HEIGHT - 52;
+  drawTracked(ctx, documentTitle(invoice.type).toUpperCase(), {
+    x: 0,
+    size: 10,
+    bold: true,
+    color: COLOR_ACCENT,
+    tracking: 2.4,
+    rightAlignAt: rightEdge,
+  });
+  ctx.y -= 24;
+  drawText(ctx, invoice.invoice_number, { x: 0, size: 17, bold: true, rightAlignAt: rightEdge });
+  ctx.y -= 20;
+  for (const line of metaLines) {
+    drawText(ctx, line, { x: 0, size: 8.5, color: COLOR_MUTED, rightAlignAt: rightEdge });
     ctx.y -= 14;
-    if (sellerLines[i]) drawText(ctx, sellerLines[i], { x: MARGIN, size: 9, color: COLOR_MUTED });
-    if (metaLines[i]) drawText(ctx, metaLines[i], { x: MARGIN, size: 9, color: COLOR_MUTED, rightAlignAt: rightEdge });
   }
 
   // Billed to
-  ctx.y -= 36;
-  drawText(ctx, "BILLED TO", { x: MARGIN, size: 9, bold: true, color: COLOR_ACCENT });
-  ctx.y -= 6;
-  drawLine(ctx, 0.5);
-  const billTo = [
-    invoice.customer_name || "",
-    ...formatAddressLines(invoice.billing_address ?? invoice.shipping_address),
-    invoice.customer_email,
-  ].filter(Boolean);
+  ctx.y = PAGE_HEIGHT - headerHeight - 44;
+  drawTracked(ctx, "BILLED TO", { x: MARGIN, size: 8.5, bold: true, color: COLOR_ACCENT });
+  const billTo = formatBillToLines(invoice);
   for (const line of billTo) {
-    ctx.y -= 14;
+    ctx.y -= 15;
     drawText(ctx, line, { x: MARGIN, size: 10 });
   }
 
   // Items table
   const columns = {
-    item: MARGIN,
+    item: MARGIN + 12,
     qty: rightEdge - 190,
     unitPrice: rightEdge - 110,
-    amount: rightEdge,
+    amount: rightEdge - 12,
   };
 
-  ctx.y -= 32;
-  drawText(ctx, "ITEM", { x: columns.item, size: 9, bold: true, color: COLOR_ACCENT });
-  drawText(ctx, "QTY", { x: 0, size: 9, bold: true, color: COLOR_ACCENT, rightAlignAt: columns.qty });
-  drawText(ctx, "UNIT PRICE", { x: 0, size: 9, bold: true, color: COLOR_ACCENT, rightAlignAt: columns.unitPrice });
-  drawText(ctx, "AMOUNT", { x: 0, size: 9, bold: true, color: COLOR_ACCENT, rightAlignAt: columns.amount });
-  ctx.y -= 8;
-  drawLine(ctx, 1.2, COLOR_INK);
+  ctx.y -= 40;
+  ctx.page.drawRectangle({
+    x: MARGIN,
+    y: ctx.y - 9,
+    width: rightEdge - MARGIN,
+    height: 26,
+    color: COLOR_INK,
+  });
+  const headerLabel = { size: 8, bold: true, color: COLOR_CREAM, tracking: 1.4 };
+  drawTracked(ctx, "ITEM", { ...headerLabel, x: columns.item });
+  drawTracked(ctx, "QTY", { ...headerLabel, x: 0, rightAlignAt: columns.qty });
+  drawTracked(ctx, "UNIT PRICE", { ...headerLabel, x: 0, rightAlignAt: columns.unitPrice });
+  drawTracked(ctx, "AMOUNT", { ...headerLabel, x: 0, rightAlignAt: columns.amount });
+  ctx.y -= 9;
 
   const maxDescriptionWidth = columns.qty - columns.item - 60;
   for (const item of invoice.line_items) {
-    ensureSpace(ctx, 40);
-    ctx.y -= 18;
+    ensureSpace(ctx, 44);
+    ctx.y -= 22;
     let description = item.variant_name
       ? `${item.product_name} — ${item.variant_name}`
       : item.product_name;
@@ -148,53 +211,50 @@ export async function renderInvoicePdf(invoice: InvoiceRowI, seller: SellerInfoI
       description = `${description.slice(0, -4)}…`;
     }
     drawText(ctx, description, { x: columns.item, size: 10 });
-    drawText(ctx, String(item.quantity), { x: 0, size: 10, rightAlignAt: columns.qty });
-    drawText(ctx, formatMoney(item.unit_price, invoice.currency), { x: 0, size: 10, rightAlignAt: columns.unitPrice });
-    drawText(ctx, formatMoney(item.total_price, invoice.currency), { x: 0, size: 10, rightAlignAt: columns.amount });
-    ctx.y -= 8;
+    drawText(ctx, String(item.quantity), { x: 0, size: 10, color: COLOR_MUTED, rightAlignAt: columns.qty });
+    drawText(ctx, formatMoney(item.unit_price, invoice.currency), { x: 0, size: 10, color: COLOR_MUTED, rightAlignAt: columns.unitPrice });
+    drawText(ctx, formatMoney(item.total_price, invoice.currency), { x: 0, size: 10, bold: true, rightAlignAt: columns.amount });
+    ctx.y -= 10;
     drawLine(ctx, 0.5);
   }
 
   // Totals
-  const totals: Array<[string, number, boolean]> = [
-    ["Subtotal", invoice.subtotal, false],
-    ...(invoice.discount_amount > 0 ? [["Discount", -invoice.discount_amount, false] as [string, number, boolean]] : []),
-    ["Shipping", invoice.shipping_cost, false],
-    ["Tax", invoice.tax_amount, false],
-    ["Total", invoice.total_amount, true],
+  const totals: Array<[string, number]> = [
+    ["Subtotal", invoice.subtotal],
+    ...(invoice.discount_amount > 0 ? [["Discount", -invoice.discount_amount] as [string, number]] : []),
+    ["Shipping", invoice.shipping_cost],
+    ["Tax", invoice.tax_amount],
   ];
-  const totalsLabelX = rightEdge - 200;
-  ensureSpace(ctx, totals.length * 18 + 60);
-  ctx.y -= 10;
-  for (const [label, amount, emphasize] of totals) {
+  const totalsLabelX = rightEdge - 210;
+  ensureSpace(ctx, totals.length * 18 + 110);
+  ctx.y -= 12;
+  for (const [label, amount] of totals) {
     ctx.y -= 18;
-    if (emphasize) {
-      ctx.y += 6;
-      ctx.page.drawLine({
-        start: { x: totalsLabelX, y: ctx.y + 12 },
-        end: { x: rightEdge, y: ctx.y + 12 },
-        thickness: 1.2,
-        color: COLOR_INK,
-      });
-      ctx.y -= 6;
-    }
-    drawText(ctx, label, {
-      x: totalsLabelX,
-      size: emphasize ? 12 : 10,
-      bold: emphasize,
-      color: emphasize ? COLOR_INK : COLOR_MUTED,
-    });
-    drawText(ctx, formatMoney(amount, invoice.currency), {
-      x: 0,
-      size: emphasize ? 12 : 10,
-      bold: emphasize,
-      rightAlignAt: rightEdge,
-    });
+    drawText(ctx, label, { x: totalsLabelX, size: 10, color: COLOR_MUTED });
+    drawText(ctx, formatMoney(amount, invoice.currency), { x: 0, size: 10, rightAlignAt: rightEdge - 12 });
   }
 
-  // Footer
-  ensureSpace(ctx, 60);
+  // Emphasized total on a chocolate band
   ctx.y -= 40;
+  ctx.page.drawRectangle({
+    x: totalsLabelX - 12,
+    y: ctx.y - 10,
+    width: rightEdge - totalsLabelX + 12,
+    height: 32,
+    color: COLOR_INK,
+  });
+  drawText(ctx, "Total", { x: totalsLabelX, size: 12, bold: true, color: COLOR_CREAM });
+  drawText(ctx, formatMoney(invoice.total_amount, invoice.currency), {
+    x: 0,
+    size: 12,
+    bold: true,
+    color: COLOR_PAPER,
+    rightAlignAt: rightEdge - 12,
+  });
+
+  // Footer
+  ensureSpace(ctx, 70);
+  ctx.y -= 50;
   drawLine(ctx, 0.5);
   ctx.y -= 16;
   const footer = `Thank you for your order. This ${documentTitle(invoice.type).toLowerCase()} was generated automatically for order ${invoice.order_number}.`;

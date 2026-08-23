@@ -262,6 +262,77 @@
       }
     }
   },
+  "catalog": {
+    "meta": {
+      "title": "Product Catalog",
+      "description": "Browse every product you can customize with AI on Stamp AI — t-shirts, hoodies, sweatshirts, tote bags, mugs, posters and more, organized by category with photos, prices and details.",
+      "keywords": [
+        "product catalog",
+        "browse products",
+        "custom products",
+        "all products"
+      ]
+    },
+    "title": "The",
+    "accent": "catalog",
+    "intro": "Every product in our collection, ready for your design. Browse by category, explore the photos and details, and take any of them into the studio.",
+    "emptyState": "The catalog is temporarily unavailable — please check back soon",
+    "categoryNavAria": "Product categories",
+    "allCategory": "All products",
+    "groups": {
+      "clothing": "Clothing",
+      "accessories": "Accessories & Goodies"
+    },
+    "showcase": {
+      "title": "Explore our best",
+      "subtitle": "Here are some of the most popular product categories in our catalog.",
+      "cardAria": "Browse {group}"
+    },
+    "backToShowcase": "Back to explore",
+    "section": {
+      "subtitle": "Handpicked {group} from our collection, ready for your design.",
+      "seeAll": "See all",
+      "seeAllAria": "See all {group}"
+    },
+    "toolbar": {
+      "filteringLabel": "Filters",
+      "clearFilters": "Clear filters",
+      "searchPlaceholder": "What are you looking for?",
+      "searchAria": "Search products",
+      "sortAria": "Sort products",
+      "sortOptions": {
+        "featured": "Featured",
+        "price-asc": "Price: low to high",
+        "price-desc": "Price: high to low",
+        "name-asc": "Name: A to Z"
+      }
+    },
+    "noResults": {
+      "title": "No products found",
+      "body": "Try a different search or clear the filters to see the full collection.",
+      "clearFilters": "Clear filters"
+    },
+    "card": {
+      "noImage": "No image",
+      "discountBadge": "-{percent}%",
+      "photoCount": "{count} photos",
+      "quickView": "Quick view",
+      "quickViewAria": "View {name} details"
+    },
+    "dialog": {
+      "noImage": "No image",
+      "photosLabel": "Product photos",
+      "photoAlt": "{name} — photo {number} of {total}",
+      "thumbnailAria": "Show photo {number}",
+      "colorsLabel": "Available colors",
+      "specsLabel": "Details",
+      "customizeCta": "Design yours"
+    },
+    "reviews": {
+      "label": "Reviews",
+      "comingSoon": "No reviews yet — customer reviews are coming soon."
+    }
+  },
   "stamp": {
     "synthesis": {
       "eyebrow": "Choose a filter",
@@ -384,6 +455,7 @@
       "brand": "STAMP IT",
       "stampAria": "Start stamping process",
       "stamp": "Stamp",
+      "catalog": "Catalog",
       "profile": "Profile",
       "profileAria": "View your profile",
       "orders": "Orders",
@@ -909,6 +981,7 @@
       },
       "links": {
         "footer-studio": "Design Studio",
+        "footer-catalog": "Product Catalog",
         "footer-cart": "Cart",
         "footer-orders": "Your Orders",
         "footer-faq": "FAQ",

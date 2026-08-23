@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/features/ui/button";
 import { FormField } from "@/features/ui/form-field";
 import { Span } from "@/features/ui/span";
+import { Paragraph } from "@/features/ui/paragraph";
 import { Label } from "@/features/ui/label";
 import { Input } from "@/features/ui/input";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
@@ -41,9 +42,9 @@ export function LoginCredentialsFields({ register, errors }: PropsI) {
             <Span variant="default" className="text-(--color-stamp-chocolate)">
               {t("passwordLabel")}
             </Span>
-            <span className="text-(--color-stamp-gold) ml-1" aria-hidden="true">
+            <Span variant="default" className="text-(--color-stamp-gold) ml-1" aria-hidden="true">
               *
-            </span>
+            </Span>
           </Label>
         </div>
 
@@ -84,13 +85,14 @@ export function LoginCredentialsFields({ register, errors }: PropsI) {
           <InlinePasswordReset className="w-full" />
 
           {errors.password?.message && (
-            <p
+            <Paragraph
               id="password-error"
+              variant="micro"
               role="alert"
-              className="text-xs font-bold uppercase tracking-widest text-(--color-stamp-error)"
+              className="font-bold uppercase tracking-widest text-(--color-stamp-error)"
             >
               {ve(errors.password.message)}
-            </p>
+            </Paragraph>
           )}
         </div>
       </div>

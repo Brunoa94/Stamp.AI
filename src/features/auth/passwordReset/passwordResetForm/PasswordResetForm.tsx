@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/features/ui/button";
+import { Paragraph } from "@/features/ui/paragraph";
 import { useTranslations } from "next-intl";
 import { usePasswordResetForm } from "./usePasswordResetForm";
 
@@ -26,9 +27,9 @@ export function PasswordResetForm({ isVisible, onClose }: PasswordResetFormProps
       }`}
     >
       <div className="pt-4 space-y-3 border-t border-(--color-stamp-divider)">
-        <p className="text-lg font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
+        <Paragraph variant="default" className="text-lg font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
           {t("prompt")}
-        </p>
+        </Paragraph>
         <div className="space-y-3">
           <input
             type="email"
