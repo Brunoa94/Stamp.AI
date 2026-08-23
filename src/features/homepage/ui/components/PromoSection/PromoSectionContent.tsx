@@ -90,7 +90,7 @@ export function PromoSectionContent({
           href={ctaHref}
           className={cn(
             "group inline-flex items-center gap-3 mt-2",
-            "px-6 py-3 rounded-full",
+            "px-6 py-3 rounded-md",
             "bg-(--color-stamp-chocolate) text-(--color-stamp-white)",
             "font-semibold text-sm uppercase tracking-wider",
             "transition-all duration-300",
