@@ -25,7 +25,7 @@ type SectionVariant = "brand-logo" | "memories" | "special-moments";
 interface PropsI {
   variant: SectionVariant;
   /** Background color variant */
-  background?: "cream" | "white";
+  background?: "cream" | "white" | "chocolate";
   /** Content position relative to carousel */
   contentPosition?: "left" | "right";
 }
@@ -49,27 +49,28 @@ export function HomePromoSection({
 }: PropsI) {
   const t = useTranslations("home.promo");
   const images = VARIANT_IMAGES[variant];
+  const isDark = background === "chocolate";
 
   return (
     <section
       className={cn(
         "relative px-6 py-20 lg:px-12 xl:px-24 lg:py-28 overflow-hidden",
-        background === "white"
-          ? "bg-(--color-stamp-white)"
-          : "bg-(--color-stamp-cream)",
+        background === "chocolate"
+          ? "bg-(--color-stamp-chocolate)"
+          : background === "white"
+            ? "bg-(--color-stamp-white)"
+            : "bg-(--color-stamp-cream)",
       )}
     >
-      {/* Decorative background number */}
-      <div
-        className={cn(
-          "absolute top-1/2 -translate-y-1/2 text-[20rem] lg:text-[28rem] font-heading font-bold leading-none select-none pointer-events-none",
-          "text-(--color-stamp-chocolate)/3",
-          contentPosition === "left" ? "right-0 translate-x-1/3" : "left-0 -translate-x-1/3",
-        )}
-        aria-hidden="true"
-      >
-        {VARIANT_NUMBERS[variant]}
-      </div>
+      {/* Decorative corner frames for dark background */}
+      {isDark && (
+        <>
+          <div className="absolute top-8 left-6 lg:left-12 xl:left-24 w-20 h-20 border-t-2 border-l-2 border-(--color-stamp-gold)/30 rounded-tl-lg" aria-hidden="true" />
+          <div className="absolute top-8 right-6 lg:right-12 xl:right-24 w-20 h-20 border-t-2 border-r-2 border-(--color-stamp-gold)/30 rounded-tr-lg" aria-hidden="true" />
+          <div className="absolute bottom-8 left-6 lg:left-12 xl:left-24 w-20 h-20 border-b-2 border-l-2 border-(--color-stamp-gold)/30 rounded-bl-lg" aria-hidden="true" />
+          <div className="absolute bottom-8 right-6 lg:right-12 xl:right-24 w-20 h-20 border-b-2 border-r-2 border-(--color-stamp-gold)/30 rounded-br-lg" aria-hidden="true" />
+        </>
+      )}
 
       {/* Decorative gold accent line */}
       <div
@@ -98,6 +99,7 @@ export function HomePromoSection({
                 ctaHref="/stamp"
                 align={contentPosition === "left" ? "left" : "right"}
                 sectionNumber={VARIANT_NUMBERS[variant]}
+                inverted={isDark}
               />
             </div>
 

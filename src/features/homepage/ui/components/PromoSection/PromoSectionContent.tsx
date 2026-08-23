@@ -16,6 +16,8 @@ interface PropsI {
   align?: "left" | "center" | "right";
   /** Section number for luxury styling (e.g., "01") */
   sectionNumber?: string;
+  /** Inverted colors for dark backgrounds */
+  inverted?: boolean;
 }
 
 export function PromoSectionContent({
@@ -26,6 +28,7 @@ export function PromoSectionContent({
   ctaHref = "/stamp",
   align = "center",
   sectionNumber,
+  inverted = false,
 }: PropsI) {
   const renderTagline = () => {
     if (!accentWord || !tagline.includes(accentWord)) {
@@ -36,7 +39,14 @@ export function PromoSectionContent({
     return (
       <>
         {parts[0]}
-        <Span variant="serif" className="text-(--color-stamp-taupe)">
+        <Span
+          variant="serif"
+          className={
+            inverted
+              ? "text-(--color-stamp-gold)"
+              : "text-(--color-stamp-taupe)"
+          }
+        >
           {accentWord}
         </Span>
         {parts[1]}
@@ -66,7 +76,12 @@ export function PromoSectionContent({
       <Heading
         as="h2"
         variant="section"
-        className="text-(--color-stamp-chocolate) max-w-lg"
+        className={cn(
+          "max-w-lg",
+          inverted
+            ? "text-(--color-stamp-off-white)"
+            : "text-(--color-stamp-chocolate)",
+        )}
       >
         {renderTagline()}
       </Heading>
@@ -76,31 +91,15 @@ export function PromoSectionContent({
         <Paragraph
           variant="sm"
           className={cn(
-            "max-w-md text-(--color-stamp-chocolate)/70 leading-relaxed",
+            "max-w-md leading-relaxed",
+            inverted
+              ? "text-(--color-stamp-taupe)"
+              : "text-(--color-stamp-chocolate)/70",
             align === "center" && "mx-auto",
           )}
         >
           {description}
         </Paragraph>
-      )}
-
-      {/* Luxury CTA button */}
-      {ctaText && (
-        <Link
-          href={ctaHref}
-          className={cn(
-            "group inline-flex items-center gap-3 mt-2",
-            "px-6 py-3 rounded-md",
-            "bg-(--color-stamp-chocolate) text-(--color-stamp-white)",
-            "font-semibold text-sm uppercase tracking-wider",
-            "transition-all duration-300",
-            "hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)",
-            "shadow-md hover:shadow-lg",
-          )}
-        >
-          <span>{ctaText}</span>
-          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-        </Link>
       )}
     </div>
   );

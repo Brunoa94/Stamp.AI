@@ -36,13 +36,25 @@ export function HomepageContent({
       <HomeHeroSection />
       <PaymentMethodsBanner />
       <HomeProductsSection products={products} />
-      <HomePromoSection variant="brand-logo" background="cream" contentPosition="left" />
-      <HomeStorySection blockIds={["design"]} />
+      <HomeStorySection blockIds={["design"]} background="chocolate" />
+      <HomePromoSection
+        variant="brand-logo"
+        background="cream"
+        contentPosition="right"
+      />
       <HomeProductOfMonthSection />
-      <HomePromoSection variant="memories" background="white" contentPosition="right" />
-      <HomeStorySection blockIds={["quality"]} background="white" />
+      <HomePromoSection
+        variant="memories"
+        background="white"
+        contentPosition="right"
+      />
+      {/* <HomeStorySection blockIds={["quality"]} background="white" /> */}
       <HomeProcessSection />
-      <HomePromoSection variant="special-moments" background="cream" contentPosition="left" />
+      <HomePromoSection
+        variant="special-moments"
+        background="chocolate"
+        contentPosition="left"
+      />
       <HomeTrustGuaranteesSection />
       <HomeCtaSection />
       <HomeReviewsSection />
