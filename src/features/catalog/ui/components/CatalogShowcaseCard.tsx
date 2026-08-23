@@ -49,7 +49,7 @@ export function CatalogShowcaseCard({ item, onSelect }: PropsI) {
       </div>
 
       <div className="border-t border-(--color-stamp-divider) bg-(--color-stamp-off-white) px-2 py-3 sm:px-3 sm:py-5">
-        <Span variant="micro" className="text-(--color-stamp-chocolate)">
+        <Span variant="label" className="text-(--color-stamp-chocolate)">
           {label}
         </Span>
       </div>
