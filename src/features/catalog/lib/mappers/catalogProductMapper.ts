@@ -9,8 +9,8 @@ import {
   resolveProductDescription,
   extractProductSpecs,
 } from "@/lib/seo/productDescription";
+import { resolveDisplayPrice } from "@/lib/pricing";
 import { detectProductCategory } from "@/features/stamp/lib/helpers/productCategoryDetector";
-import { FALLBACK_PRODUCT_PRICE_CENTS } from "@/features/stamp/lib/constants/productPricing";
 import { getDisplayTitle } from "@/features/homepage/lib/constants/productDisplayTitles";
 import type { CatalogDisplayProductType } from "../types/catalogPageTypes";
 
@@ -26,16 +26,6 @@ function resolveImageUrls(product: ProductWithPricing): string[] {
   return product.base_image_url ? [product.base_image_url] : [];
 }
 
-/**
- * Resolve the display price: the admin selling-price override, the
- * computed variant total, or — for products with no synced price —
- * the same fallback the stamp flow charges.
- */
-function resolveDisplayPriceCents(product: ProductWithPricing): number {
-  const priceCents = product.selling_price_cents || product.totalPriceCents;
-  return priceCents > 0 ? priceCents : FALLBACK_PRODUCT_PRICE_CENTS;
-}
-
 function mapProductToCatalogDisplay(
   product: ProductWithPricing
 ): CatalogDisplayProductType {
@@ -45,7 +35,7 @@ function mapProductToCatalogDisplay(
     category: detectProductCategory(product.display_title),
     description: resolveProductDescription(product.product_seo),
     specs: extractProductSpecs(product.product_seo),
-    price: resolveDisplayPriceCents(product) / 100,
+    price: resolveDisplayPrice(product),
     originalPrice: product.original_price_cents
       ? product.original_price_cents / 100
       : undefined,
