@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import type { CatalogShowcaseItemType } from "../../lib/types/catalogPageTypes";
 
@@ -10,8 +11,8 @@ import type { CatalogShowcaseItemType } from "../../lib/types/catalogPageTypes";
  *
  * One group card of the showcase row: a product photo on top and a
  * label strip underneath, marketplace-style. Selecting it narrows the
- * catalog to that group. Raw <button> by design: the Button atom only
- * ships CTA variants and the card needs block layout.
+ * catalog to that group. Uses Button variant="unstyled" for card-style
+ * trigger with block layout.
  */
 
 interface PropsI {
@@ -24,8 +25,9 @@ export function CatalogShowcaseCard({ item, onSelect }: PropsI) {
   const label = t(`groups.${item.group}`);
 
   return (
-    <button
+    <Button
       type="button"
+      variant="unstyled"
       onClick={onSelect}
       aria-label={t("showcase.cardAria", { group: label })}
       className="group block w-full overflow-hidden rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-white) text-center transition-all duration-300 hover:-translate-y-1 hover:border-(--color-stamp-gold) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-gold)"
@@ -53,6 +55,6 @@ export function CatalogShowcaseCard({ item, onSelect }: PropsI) {
           {label}
         </Span>
       </div>
-    </button>
+    </Button>
   );
 }

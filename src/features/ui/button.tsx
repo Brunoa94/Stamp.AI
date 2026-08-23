@@ -62,6 +62,7 @@ const buttonVariants = cva(
           "relative h-20 w-20 shrink-0 overflow-hidden rounded-none border-2 border-(--color-stamp-divider) p-0 transition-all duration-300 not-aria-pressed:hover:border-(--color-stamp-chocolate) aria-pressed:border-(--color-stamp-gold) aria-pressed:ring-2 aria-pressed:ring-(--color-stamp-gold)/20",
         "stamp-disclosure":
           "flex w-full h-auto cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-(--color-stamp-gold)/5",
+        unstyled: "",
       },
     },
     defaultVariants: {
@@ -70,6 +71,12 @@ const buttonVariants = cva(
     },
   },
 );
+
+/**
+ * Minimal base styles for unstyled buttons - only essential focus/disabled states
+ */
+const unstyledBase =
+  "outline-none focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50";
 
 type IconButtonSize = "icon" | "icon-sm" | "icon-lg";
 
@@ -130,12 +137,18 @@ function Button({
     }
   }
 
+  // For unstyled variant, skip cva base styles entirely
+  const computedClassName =
+    variant === "unstyled"
+      ? cn(unstyledBase, className)
+      : cn(buttonVariants({ variant, size, className }));
+
   return (
     <Comp
       data-slot="button"
       data-variant={variant}
-      data-size={size}
-      className={cn(buttonVariants({ variant, size, className }))}
+      data-size={variant === "unstyled" ? undefined : size}
+      className={computedClassName}
       disabled={disabled}
       aria-disabled={disabled}
       aria-label={ariaLabel}

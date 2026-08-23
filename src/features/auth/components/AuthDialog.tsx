@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode, useState, useEffect, useRef } from "react";
+import { Button } from "@/features/ui/button";
 import { Dialog, DialogTrigger } from "@/features/ui/dialog";
 import { useUser } from "@/queries/authQueries";
 
@@ -50,13 +51,16 @@ export function AuthDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild suppressHydrationWarning>
         {children ? (
-          // Deliberately a plain button: this path exists for triggers whose
-          // appearance is fully caller-owned (nav links, overlay CTAs that
-          // pass a styled element). The design-system Button's base classes
-          // would fight the caller's styling here.
-          <button type="button" aria-label={triggerAriaLabel} className={className}>
+          // Uses unstyled variant for triggers whose appearance is fully
+          // caller-owned (nav links, overlay CTAs that pass a styled element).
+          <Button
+            type="button"
+            variant="unstyled"
+            aria-label={triggerAriaLabel}
+            className={className}
+          >
             {children}
-          </button>
+          </Button>
         ) : (
           defaultTrigger
         )}

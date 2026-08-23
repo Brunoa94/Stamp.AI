@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
@@ -17,8 +18,8 @@ import { CatalogProductDialog } from "./CatalogProductDialog";
  * (framed image, grayscale-to-color hover, swatches, discount badge),
  * but acting as a button that opens the quick-view dialog. Hovering
  * swaps to the second gallery photo and reveals a quick-view bar.
- * Raw <button> by design: the Button atom only ships CTA variants and
- * a card-sized trigger needs block layout and left-aligned text.
+ * Uses Button variant="unstyled" for card-sized trigger with block
+ * layout and left-aligned text.
  */
 
 interface PropsI {
@@ -34,11 +35,12 @@ export function CatalogProductCard({ product }: PropsI) {
 
   return (
     <>
-      <button
+      <Button
         type="button"
+        variant="unstyled"
         onClick={() => setIsDialogOpen(true)}
         aria-label={t("quickViewAria", { name: product.name })}
-        className="group block w-full text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--color-stamp-gold)"
+        className="group flex h-full w-full flex-col text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--color-stamp-gold)"
       >
         <div className="relative mb-3 sm:mb-5 aspect-square sm:aspect-3/4 overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all duration-500 group-hover:-translate-y-1 group-hover:border-(--color-stamp-gold) group-hover:shadow-(--shadow-stamp-card-hover)">
           {coverImageUrl ? (
@@ -101,26 +103,18 @@ export function CatalogProductCard({ product }: PropsI) {
           </div>
         </div>
 
-        <div className="flex items-start justify-between gap-2 sm:gap-4">
-          <Heading
-            as="h3"
-            variant="item"
-            className="text-xs sm:text-sm text-(--color-stamp-chocolate) transition-colors duration-300 group-hover:text-(--color-stamp-gold)"
-          >
-            {product.name}
-          </Heading>
-          <div className="flex flex-col items-end gap-0.5 shrink-0">
-            {product.isOnSale && product.originalPrice && (
-              <Span
-                variant="micro"
-                className="text-(--color-stamp-taupe) line-through text-[10px] sm:text-xs"
-              >
-                €{product.originalPrice.toFixed(2)}
-              </Span>
-            )}
+        <div className="flex flex-1 flex-col">
+          <div className="flex items-start justify-between gap-2 sm:gap-4">
+            <Heading
+              as="h3"
+              variant="item"
+              className="line-clamp-2 text-xs sm:text-sm text-(--color-stamp-chocolate) transition-colors duration-300 group-hover:text-(--color-stamp-gold)"
+            >
+              {product.name}
+            </Heading>
             <Span
               variant="sm"
-              className={`text-xs sm:text-sm ${
+              className={`shrink-0 text-xs sm:text-sm ${
                 product.isOnSale
                   ? "text-(--color-stamp-gold)"
                   : "text-(--color-stamp-chocolate)"
@@ -129,17 +123,15 @@ export function CatalogProductCard({ product }: PropsI) {
               €{product.price.toFixed(2)}
             </Span>
           </div>
-        </div>
 
-        {product.description && (
           <Paragraph
             variant="xs"
-            className="mt-1.5 line-clamp-2 text-(--color-stamp-taupe)"
+            className="mt-auto pt-1.5 line-clamp-2 text-(--color-stamp-taupe)"
           >
-            {product.description}
+            {product.description || "\u00A0"}
           </Paragraph>
-        )}
-      </button>
+        </div>
+      </Button>
 
       <CatalogProductDialog
         product={product}

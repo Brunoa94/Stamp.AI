@@ -49,12 +49,6 @@ const eslintConfig = defineConfig([
       "src/features/ui/**/*.tsx",
       // Root error boundary cannot import external styles/components
       "src/app/global-error.tsx",
-      // Auth components use unstyled elements intentionally for caller-owned styling
-      "src/features/auth/components/AuthDialog.tsx",
-      "src/features/auth/login/Login.tsx",
-      // Card components use unstyled button for block layout and custom styling
-      "src/features/catalog/ui/components/CatalogProductCard.tsx",
-      "src/features/catalog/ui/components/CatalogShowcaseCard.tsx",
       // Test files can use raw elements for mocking purposes
       "src/**/__tests__/**/*.tsx",
       "src/**/*.test.tsx",
