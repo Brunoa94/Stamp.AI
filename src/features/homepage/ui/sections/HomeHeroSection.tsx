@@ -67,7 +67,7 @@ export function HomeHeroSection() {
       <HeroPromoBanner />
 
       {/* Bubbling products that rise based on wheel events */}
-      <HeroBubblingProducts />
+      {/* <HeroBubblingProducts /> */}
 
       {/* Scroll cue */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30">

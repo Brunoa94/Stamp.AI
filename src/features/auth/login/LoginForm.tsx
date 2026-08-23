@@ -44,7 +44,10 @@ export function LoginForm() {
 
         <div className="relative flex items-center my-8">
           <div className="grow border-t border-(--color-stamp-divider)" />
-          <Span variant="default" className="shrink mx-4 text-xs font-bold text-(--color-stamp-gold) uppercase tracking-[0.2em]">
+          <Span
+            variant="default"
+            className="shrink mx-4 text-xs font-bold text-(--color-stamp-gold) uppercase tracking-[0.2em]"
+          >
             {t("orContinueWithEmail")}
           </Span>
           <div className="grow border-t border-(--color-stamp-divider)" />
@@ -55,7 +58,7 @@ export function LoginForm() {
 
           {errors.root?.message && (
             <Paragraph
-              variant="micro"
+              variant="xs"
               role="alert"
               className="font-bold uppercase tracking-widest text-(--color-stamp-error)"
             >
