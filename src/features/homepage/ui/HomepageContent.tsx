@@ -19,6 +19,7 @@ import { HomeReviewsSection } from "./sections/HomeReviewsSection";
 import { HomeFaqSection } from "./sections/HomeFaqSection";
 import { HomeStorySection } from "./sections/HomeStorySection";
 import { HomeProductOfMonthSection } from "./sections/HomeProductOfMonthSection";
+import { HomePromoSection } from "./sections/HomePromoSection";
 
 interface HomepageContentPropsI {
   productsWithPricing: ProductWithPricing[];
@@ -35,10 +36,13 @@ export function HomepageContent({
       <HomeHeroSection />
       <PaymentMethodsBanner />
       <HomeProductsSection products={products} />
+      <HomePromoSection variant="brand-logo" background="cream" contentPosition="left" />
       <HomeStorySection blockIds={["design"]} />
       <HomeProductOfMonthSection />
+      <HomePromoSection variant="memories" background="white" contentPosition="right" />
       <HomeStorySection blockIds={["quality"]} background="white" />
       <HomeProcessSection />
+      <HomePromoSection variant="special-moments" background="cream" contentPosition="left" />
       <HomeTrustGuaranteesSection />
       <HomeCtaSection />
       <HomeReviewsSection />

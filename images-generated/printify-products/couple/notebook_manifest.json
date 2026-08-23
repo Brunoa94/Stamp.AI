@@ -1,0 +1,38 @@
+{
+  "design": "couple",
+  "products": [
+    {
+      "product_key": "notebook",
+      "blueprint_id": 475,
+      "color": "white",
+      "created_at": "2026-08-23T16:35:57.273Z",
+      "images": [
+        {
+          "filename": "notebook_475_white_front_1.png",
+          "position": "front",
+          "size_kb": 554
+        },
+        {
+          "filename": "notebook_475_white_other_2.png",
+          "position": "other",
+          "size_kb": 504
+        },
+        {
+          "filename": "notebook_475_white_other_3.png",
+          "position": "other",
+          "size_kb": 445
+        },
+        {
+          "filename": "notebook_475_white_other_4.png",
+          "position": "other",
+          "size_kb": 344
+        },
+        {
+          "filename": "notebook_475_white_other_5.png",
+          "position": "other",
+          "size_kb": 850
+        }
+      ]
+    }
+  ]
+}

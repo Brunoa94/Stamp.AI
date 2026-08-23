@@ -1,0 +1,133 @@
+{
+  "design": "happy-family-with-original",
+  "products": [
+    {
+      "product_key": "tote-aop",
+      "blueprint_id": 1389,
+      "color": "white",
+      "created_at": "2026-08-23T16:19:52.157Z",
+      "images": [
+        {
+          "filename": "tote-aop_1389_white_other_1.png",
+          "position": "other",
+          "size_kb": 57
+        },
+        {
+          "filename": "tote-aop_1389_white_other_2.png",
+          "position": "other",
+          "size_kb": 36
+        },
+        {
+          "filename": "tote-aop_1389_white_other_3.png",
+          "position": "other",
+          "size_kb": 127
+        },
+        {
+          "filename": "tote-aop_1389_white_other_4.png",
+          "position": "other",
+          "size_kb": 51
+        },
+        {
+          "filename": "tote-aop_1389_white_other_5.png",
+          "position": "other",
+          "size_kb": 72
+        },
+        {
+          "filename": "tote-aop_1389_white_other_6.png",
+          "position": "other",
+          "size_kb": 79
+        },
+        {
+          "filename": "tote-aop_1389_white_other_7.png",
+          "position": "other",
+          "size_kb": 91
+        },
+        {
+          "filename": "tote-aop_1389_white_other_8.png",
+          "position": "other",
+          "size_kb": 87
+        },
+        {
+          "filename": "tote-aop_1389_white_other_9.png",
+          "position": "other",
+          "size_kb": 55
+        },
+        {
+          "filename": "tote-aop_1389_white_other_10.png",
+          "position": "other",
+          "size_kb": 35
+        },
+        {
+          "filename": "tote-aop_1389_white_other_11.png",
+          "position": "other",
+          "size_kb": 67
+        },
+        {
+          "filename": "tote-aop_1389_white_other_12.png",
+          "position": "other",
+          "size_kb": 70
+        },
+        {
+          "filename": "tote-aop_1389_white_other_13.png",
+          "position": "other",
+          "size_kb": 65
+        },
+        {
+          "filename": "tote-aop_1389_white_other_14.png",
+          "position": "other",
+          "size_kb": 83
+        },
+        {
+          "filename": "tote-aop_1389_white_other_15.png",
+          "position": "other",
+          "size_kb": 103
+        },
+        {
+          "filename": "tote-aop_1389_white_other_16.png",
+          "position": "other",
+          "size_kb": 86
+        },
+        {
+          "filename": "tote-aop_1389_white_other_17.png",
+          "position": "other",
+          "size_kb": 55
+        },
+        {
+          "filename": "tote-aop_1389_white_other_18.png",
+          "position": "other",
+          "size_kb": 35
+        },
+        {
+          "filename": "tote-aop_1389_white_other_19.png",
+          "position": "other",
+          "size_kb": 66
+        },
+        {
+          "filename": "tote-aop_1389_white_other_20.png",
+          "position": "other",
+          "size_kb": 73
+        },
+        {
+          "filename": "tote-aop_1389_white_other_21.png",
+          "position": "other",
+          "size_kb": 66
+        },
+        {
+          "filename": "tote-aop_1389_white_other_22.png",
+          "position": "other",
+          "size_kb": 81
+        },
+        {
+          "filename": "tote-aop_1389_white_other_23.png",
+          "position": "other",
+          "size_kb": 82
+        },
+        {
+          "filename": "tote-aop_1389_white_other_24.png",
+          "position": "other",
+          "size_kb": 86
+        }
+      ]
+    }
+  ]
+}

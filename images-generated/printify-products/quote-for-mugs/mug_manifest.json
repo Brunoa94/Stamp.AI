@@ -1,0 +1,53 @@
+{
+  "design": "quote-for-mugs",
+  "products": [
+    {
+      "product_key": "mug",
+      "blueprint_id": 441,
+      "color": "white",
+      "created_at": "2026-08-23T16:33:59.429Z",
+      "images": [
+        {
+          "filename": "mug_441_white_front_1.png",
+          "position": "front",
+          "size_kb": 275
+        },
+        {
+          "filename": "mug_441_white_front_2.png",
+          "position": "front",
+          "size_kb": 159
+        },
+        {
+          "filename": "mug_441_white_front_3.png",
+          "position": "front",
+          "size_kb": 157
+        },
+        {
+          "filename": "mug_441_white_front_4.png",
+          "position": "front",
+          "size_kb": 591
+        },
+        {
+          "filename": "mug_441_white_front_5.png",
+          "position": "front",
+          "size_kb": 256
+        },
+        {
+          "filename": "mug_441_white_front_6.png",
+          "position": "front",
+          "size_kb": 161
+        },
+        {
+          "filename": "mug_441_white_front_7.png",
+          "position": "front",
+          "size_kb": 166
+        },
+        {
+          "filename": "mug_441_white_front_8.png",
+          "position": "front",
+          "size_kb": 422
+        }
+      ]
+    }
+  ]
+}

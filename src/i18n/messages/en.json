@@ -127,6 +127,26 @@
       "ctaPrimary": "Start Creating",
       "ctaSecondary": "Browse Catalog"
     },
+    "promo": {
+      "brand-logo": {
+        "tagline": "Create your own logos, stamp your brand",
+        "accentWord": "brand",
+        "description": "Transform your ideas into professional logos. From fitness brands to luxury labels, bring your vision to life on premium merchandise.",
+        "cta": "Start Creating"
+      },
+      "memories": {
+        "tagline": "Stamp your best memories",
+        "accentWord": "memories",
+        "description": "Turn your cherished moments into lasting keepsakes. Family photos, couple portraits, and beloved pets - all printed on quality products.",
+        "cta": "Create Yours"
+      },
+      "special-moments": {
+        "tagline": "Design for special moments",
+        "accentWord": "special moments",
+        "description": "Celebrate life's milestones with custom merchandise. Perfect for birthdays, bachelor parties, sports achievements, and more.",
+        "cta": "Get Started"
+      }
+    },
     "reviews": {
       "title": "Social",
       "accent": "proof",

@@ -1,0 +1,209 @@
+{
+  "design": "girlfriend",
+  "products": [
+    {
+      "product_key": "socks",
+      "blueprint_id": 496,
+      "color": "white",
+      "created_at": "2026-08-23T16:25:47.953Z",
+      "images": [
+        {
+          "filename": "socks_496_white_left_leg_1.png",
+          "position": "left_leg",
+          "size_kb": 281
+        },
+        {
+          "filename": "socks_496_white_right_leg_2.png",
+          "position": "right_leg",
+          "size_kb": 255
+        },
+        {
+          "filename": "socks_496_white_all_3.png",
+          "position": "all",
+          "size_kb": 271
+        },
+        {
+          "filename": "socks_496_white_all_4.png",
+          "position": "all",
+          "size_kb": 320
+        },
+        {
+          "filename": "socks_496_white_left_leg_5.png",
+          "position": "left_leg",
+          "size_kb": 306
+        },
+        {
+          "filename": "socks_496_white_right_leg_6.png",
+          "position": "right_leg",
+          "size_kb": 282
+        },
+        {
+          "filename": "socks_496_white_all_7.png",
+          "position": "all",
+          "size_kb": 293
+        },
+        {
+          "filename": "socks_496_white_all_8.png",
+          "position": "all",
+          "size_kb": 363
+        },
+        {
+          "filename": "socks_496_white_left_leg_9.png",
+          "position": "left_leg",
+          "size_kb": 305
+        },
+        {
+          "filename": "socks_496_white_right_leg_10.png",
+          "position": "right_leg",
+          "size_kb": 281
+        },
+        {
+          "filename": "socks_496_white_all_11.png",
+          "position": "all",
+          "size_kb": 299
+        },
+        {
+          "filename": "socks_496_white_all_12.png",
+          "position": "all",
+          "size_kb": 353
+        }
+      ]
+    },
+    {
+      "product_key": "socks",
+      "blueprint_id": 496,
+      "color": "white",
+      "created_at": "2026-08-23T16:27:59.693Z",
+      "images": [
+        {
+          "filename": "socks_496_white_left_leg_1.png",
+          "position": "left_leg",
+          "size_kb": 281
+        },
+        {
+          "filename": "socks_496_white_right_leg_2.png",
+          "position": "right_leg",
+          "size_kb": 281
+        },
+        {
+          "filename": "socks_496_white_all_3.png",
+          "position": "all",
+          "size_kb": 283
+        },
+        {
+          "filename": "socks_496_white_all_4.png",
+          "position": "all",
+          "size_kb": 328
+        },
+        {
+          "filename": "socks_496_white_left_leg_5.png",
+          "position": "left_leg",
+          "size_kb": 306
+        },
+        {
+          "filename": "socks_496_white_right_leg_6.png",
+          "position": "right_leg",
+          "size_kb": 306
+        },
+        {
+          "filename": "socks_496_white_all_7.png",
+          "position": "all",
+          "size_kb": 305
+        },
+        {
+          "filename": "socks_496_white_all_8.png",
+          "position": "all",
+          "size_kb": 370
+        },
+        {
+          "filename": "socks_496_white_left_leg_9.png",
+          "position": "left_leg",
+          "size_kb": 305
+        },
+        {
+          "filename": "socks_496_white_right_leg_10.png",
+          "position": "right_leg",
+          "size_kb": 305
+        },
+        {
+          "filename": "socks_496_white_all_11.png",
+          "position": "all",
+          "size_kb": 311
+        },
+        {
+          "filename": "socks_496_white_all_12.png",
+          "position": "all",
+          "size_kb": 361
+        }
+      ]
+    },
+    {
+      "product_key": "socks",
+      "blueprint_id": 496,
+      "color": "white",
+      "created_at": "2026-08-23T16:29:01.083Z",
+      "images": [
+        {
+          "filename": "socks_496_white_left_leg_1.png",
+          "position": "left_leg",
+          "size_kb": 309
+        },
+        {
+          "filename": "socks_496_white_right_leg_2.png",
+          "position": "right_leg",
+          "size_kb": 309
+        },
+        {
+          "filename": "socks_496_white_all_3.png",
+          "position": "all",
+          "size_kb": 312
+        },
+        {
+          "filename": "socks_496_white_all_4.png",
+          "position": "all",
+          "size_kb": 346
+        },
+        {
+          "filename": "socks_496_white_left_leg_5.png",
+          "position": "left_leg",
+          "size_kb": 331
+        },
+        {
+          "filename": "socks_496_white_right_leg_6.png",
+          "position": "right_leg",
+          "size_kb": 331
+        },
+        {
+          "filename": "socks_496_white_all_7.png",
+          "position": "all",
+          "size_kb": 331
+        },
+        {
+          "filename": "socks_496_white_all_8.png",
+          "position": "all",
+          "size_kb": 384
+        },
+        {
+          "filename": "socks_496_white_left_leg_9.png",
+          "position": "left_leg",
+          "size_kb": 332
+        },
+        {
+          "filename": "socks_496_white_right_leg_10.png",
+          "position": "right_leg",
+          "size_kb": 332
+        },
+        {
+          "filename": "socks_496_white_all_11.png",
+          "position": "all",
+          "size_kb": 337
+        },
+        {
+          "filename": "socks_496_white_all_12.png",
+          "position": "all",
+          "size_kb": 375
+        }
+      ]
+    }
+  ]
+}
