@@ -59,7 +59,7 @@ export function HomeProductsSection({ products }: HomeProductsSectionPropsI) {
 
         <div className="mt-16 flex justify-center">
           <Link
-            href="/stamp"
+            href="/catalog"
             className="group inline-flex items-center gap-2 text-(--color-stamp-taupe) transition-colors duration-300 hover:text-(--color-stamp-gold)"
           >
             <Span variant="default">{t("viewFullCatalog")}</Span>

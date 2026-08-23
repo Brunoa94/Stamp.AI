@@ -13,6 +13,7 @@ export interface CatalogProduct {
   blueprint_id: number;
   display_title: string;
   base_image_url: string | null;
+  image_urls: string[] | null; // Full Printify blueprint gallery (first entry = base_image_url)
   min_price_cents: number;
   shipping_cents: number;
   is_active: boolean;

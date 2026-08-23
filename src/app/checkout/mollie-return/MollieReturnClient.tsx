@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/features/ui/button";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
 import PaymentSuccess from "@/features/checkout/ui/PaymentSuccess/PaymentSuccess";
 import PaymentError from "@/features/checkout/ui/components/PaymentError";
 import { OrderService } from "@/services/orderService";
@@ -27,6 +29,10 @@ import type { MolliePaymentStatus } from "@/lib/mollie";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import { captureError } from "@/lib/observability/errorCapture";
 import {
+  UserFacingError,
+  getUserFacingMessage,
+} from "@/features/checkout/lib/errors/UserFacingError";
+import {
   useCreateOrderFromCart,
   useUpdateOrderStatus,
   useUpdatePaymentStatus,
@@ -42,7 +48,7 @@ type PageStatus = "loading" | "success" | "failed" | "pending" | "error";
 /** Maximum time (ms) the post-payment pipeline is allowed to run before aborting. */
 const MOLLIE_PIPELINE_TIMEOUT_MS = 120_000; // 2 minutes — matches handlePaymentSuccess
 
-class MolliePipelineTimeoutError extends Error {
+class MolliePipelineTimeoutError extends UserFacingError {
   constructor(timeoutMs: number) {
     super(
       `Order processing timed out after ${Math.round(timeoutMs / 1000)} seconds. ` +
@@ -214,7 +220,7 @@ export default function MollieReturnClient() {
         // ── CRITICAL: Record payment for recovery BEFORE verification ──
         // This ensures payment is captured even if verification fails
         if (!storedLineItems || !storedShippingAddress) {
-          throw new Error(t("errorMissingContext"));
+          throw new UserFacingError(t("errorMissingContext"));
         }
 
         const parsedLineItems = JSON.parse(
@@ -225,7 +231,7 @@ export default function MollieReturnClient() {
         ) as ShippingAddressT;
 
         if (!Array.isArray(parsedLineItems) || parsedLineItems.length === 0) {
-          throw new Error(t("errorNoOrderItems"));
+          throw new UserFacingError(t("errorNoOrderItems"));
         }
 
         const validatedLineItems = parsedLineItems.map((item, index) =>
@@ -248,7 +254,7 @@ export default function MollieReturnClient() {
               paymentIntentId: storedPaymentId,
               paymentStatus: "pending", // Will be updated by webhook
               amount: orderAmount,
-              currency: "USD",
+              currency: "EUR",
               cartSnapshot: cart,
               shippingAddress: parsedShippingAddress,
               lineItems: validatedLineItems,
@@ -350,7 +356,7 @@ export default function MollieReturnClient() {
                 paymentIntentId: storedPaymentId,
                 paymentStatus: "succeeded",
                 amount: orderAmount,
-                currency: "USD",
+                currency: "EUR",
                 cartSnapshot: cart,
                 shippingAddress: parsedShippingAddress,
                 lineItems: validatedLineItems,
@@ -384,12 +390,12 @@ export default function MollieReturnClient() {
 
             if (!storedCartId) {
               await triggerRefund("Missing cart ID in session storage");
-              throw new Error(t("errorCannotCreateOrderNoCart"));
+              throw new UserFacingError(t("errorCannotCreateOrderNoCart"));
             }
 
             if (!user) {
               await triggerRefund("User not authenticated");
-              throw new Error(t("errorCannotCreateOrderNotLoggedIn"));
+              throw new UserFacingError(t("errorCannotCreateOrderNotLoggedIn"));
             }
 
             try {
@@ -419,17 +425,19 @@ export default function MollieReturnClient() {
                 "❌ All order creation attempts failed. Initiating refund...",
               );
               await triggerRefund("Order creation failed after retry attempts");
-              const reason =
-                orderError instanceof Error
-                  ? orderError.message
-                  : t("orderCreationReasonFallback");
-              throw new Error(t("reasonWithRefund", { reason }));
+              // Only intentionally user-facing messages may be shown; raw
+              // service errors fall back to the translated reason.
+              const reason = getUserFacingMessage(
+                orderError,
+                t("orderCreationReasonFallback"),
+              );
+              throw new UserFacingError(t("reasonWithRefund", { reason }));
             }
 
             // Validate that we have a valid order ID before proceeding
             if (!createdOrderId) {
               await triggerRefund("Order ID not returned from order creation");
-              throw new Error(t("errorOrderIdNotReturned"));
+              throw new UserFacingError(t("errorOrderIdNotReturned"));
             }
 
             console.log(`✅ Order created with ID: ${createdOrderId}`);
@@ -506,11 +514,11 @@ export default function MollieReturnClient() {
               await triggerRefund(
                 "Printify fulfillment failed after successful payment",
               );
-              const reason =
-                printifyError instanceof Error
-                  ? printifyError.message
-                  : t("orderFulfillmentReasonFallback");
-              throw new Error(t("reasonWithRefund", { reason }));
+              const reason = getUserFacingMessage(
+                printifyError,
+                t("orderFulfillmentReasonFallback"),
+              );
+              throw new UserFacingError(t("reasonWithRefund", { reason }));
             }
 
             // ── Stage 3: Mark payment recovered ──
@@ -574,6 +582,14 @@ export default function MollieReturnClient() {
         } else if (isMolliePaymentPending(result.status)) {
           sessionStorage.removeItem(finalizationLockKey);
           setStatus("pending");
+        } else {
+          // Backend returned a status outside the known Mollie set — without
+          // this branch the page would stay on "Verifying" forever.
+          sessionStorage.removeItem(finalizationLockKey);
+          setStatus("error");
+          setErrorMessage(
+            t("errorUnknownStatus", { paymentId: storedPaymentId }),
+          );
         }
       } catch (err) {
         const currentPaymentId = sessionStorage.getItem("mollie_payment_id");
@@ -588,9 +604,13 @@ export default function MollieReturnClient() {
 
         setStatus("error");
 
-        // Provide helpful error message since payment was already recorded for recovery
-        const errorMessage =
-          err instanceof Error ? err.message : t("errorVerifyFallback");
+        // Provide helpful error message since payment was already recorded
+        // for recovery. Raw service errors are replaced by the translated
+        // fallback so only user-friendly text reaches the alert.
+        const errorMessage = getUserFacingMessage(
+          err,
+          t("errorVerifyFallback"),
+        );
         setErrorMessage(
           t("errorRecorded", {
             message: errorMessage,
@@ -643,12 +663,19 @@ export default function MollieReturnClient() {
             >
               <Loader2 className="w-12 h-12 animate-spin" />
             </div>
-            <h1 className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
+            <Heading
+              as="h1"
+              variant="title"
+              className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4"
+            >
               {t("verifyingTitle")}
-            </h1>
-            <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto">
+            </Heading>
+            <Paragraph
+              variant="lead"
+              className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto"
+            >
               {t("verifyingMessage")}
-            </p>
+            </Paragraph>
           </section>
         </div>
       </div>
@@ -661,7 +688,7 @@ export default function MollieReturnClient() {
       <PaymentSuccess
         details={{
           id: paymentId ?? "",
-          provider: "mollie" as "stripe", // Legacy Mollie payment - type assertion for backward compatibility
+          provider: "ideal",
           status: paymentStatus ?? "paid",
           orderNumber:
             orderNumber ||
@@ -699,7 +726,7 @@ export default function MollieReturnClient() {
               : t("failedStatus"),
           reasonTitle: t("paymentStatusTitle"),
           reasonMessage,
-          availableMethods: ["stripe", "paypal"],
+          availableMethods: ["stripe", "paypal", "ideal"],
         }}
         onTryAgain={handleRetryPayment}
         onSelectMethod={handleRetryPayment}
@@ -726,12 +753,19 @@ export default function MollieReturnClient() {
             >
               <AlertCircle className="w-12 h-12" />
             </div>
-            <h1 className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
+            <Heading
+              as="h1"
+              variant="title"
+              className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4"
+            >
               {t("pendingTitle")}
-            </h1>
-            <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12">
+            </Heading>
+            <Paragraph
+              variant="lead"
+              className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12"
+            >
               {t("pendingMessage")}
-            </p>
+            </Paragraph>
             <div className="flex flex-col gap-4">
               <Button
                 onClick={handleViewOrders}
@@ -771,12 +805,19 @@ export default function MollieReturnClient() {
           >
             <AlertCircle className="w-12 h-12" />
           </div>
-          <h1 className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4">
+          <Heading
+            as="h1"
+            variant="title"
+            className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4"
+          >
             {t("somethingWentWrongTitle")}
-          </h1>
-          <p className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12">
+          </Heading>
+          <Paragraph
+            variant="lead"
+            className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12"
+          >
             {errorMessage || t("somethingWentWrongMessage")}
-          </p>
+          </Paragraph>
           <div className="flex flex-col gap-4">
             <Button
               onClick={handleRetryPayment}

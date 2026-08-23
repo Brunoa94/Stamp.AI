@@ -1,13 +1,13 @@
 {
   "home": {
     "topBanner": {
-      "freeShipping": "Free shipping over €{threshold}",
+      "freeShipping": "Free shipping on orders over €{threshold}",
       "returns": "{days}-day returns",
       "securePayment": "Secure payment"
     },
     "paymentBanner": {
       "securePayment": "Secure payment",
-      "freeShipping": "Free shipping over €{threshold}",
+      "freeShipping": "Free shipping on orders over €{threshold}",
       "fastDelivery": "Fast delivery",
       "returns": "{days}-day returns",
       "trustedProviders": "Trusted payment providers"
@@ -239,8 +239,8 @@
       "paymentDescription": "All transactions are encrypted and processed through trusted payment providers.",
       "items": {
         "returns": {
-          "title": "14-Day Returns",
-          "description": "Changed your mind? Return any unworn item within 14 days for a full refund."
+          "title": "30-Day Guarantee",
+          "description": "Not satisfied? Return any item within 30 days for a full refund — we cover return shipping."
         },
         "refund": {
           "title": "100% Money Back",
@@ -280,6 +280,77 @@
           "imageAlt": "Model wearing a heavyweight white t-shirt"
         }
       }
+    }
+  },
+  "catalog": {
+    "meta": {
+      "title": "Product Catalog",
+      "description": "Browse every product you can customize with AI on Stamp AI — t-shirts, hoodies, sweatshirts, tote bags, mugs, posters and more, organized by category with photos, prices and details.",
+      "keywords": [
+        "product catalog",
+        "browse products",
+        "custom products",
+        "all products"
+      ]
+    },
+    "title": "The",
+    "accent": "catalog",
+    "intro": "Every product in our collection, ready for your design. Browse by category, explore the photos and details, and take any of them into the studio.",
+    "emptyState": "The catalog is temporarily unavailable — please check back soon",
+    "categoryNavAria": "Product categories",
+    "allCategory": "All products",
+    "groups": {
+      "clothing": "Clothing",
+      "accessories": "Accessories & Goodies"
+    },
+    "showcase": {
+      "title": "Explore our best",
+      "subtitle": "Here are some of the most popular product categories in our catalog.",
+      "cardAria": "Browse {group}"
+    },
+    "backToShowcase": "Back to explore",
+    "section": {
+      "subtitle": "Handpicked {group} from our collection, ready for your design.",
+      "seeAll": "See all",
+      "seeAllAria": "See all {group}"
+    },
+    "toolbar": {
+      "filteringLabel": "Filters",
+      "clearFilters": "Clear filters",
+      "searchPlaceholder": "What are you looking for?",
+      "searchAria": "Search products",
+      "sortAria": "Sort products",
+      "sortOptions": {
+        "featured": "Featured",
+        "price-asc": "Price: low to high",
+        "price-desc": "Price: high to low",
+        "name-asc": "Name: A to Z"
+      }
+    },
+    "noResults": {
+      "title": "No products found",
+      "body": "Try a different search or clear the filters to see the full collection.",
+      "clearFilters": "Clear filters"
+    },
+    "card": {
+      "noImage": "No image",
+      "discountBadge": "-{percent}%",
+      "photoCount": "{count} photos",
+      "quickView": "Quick view",
+      "quickViewAria": "View {name} details"
+    },
+    "dialog": {
+      "noImage": "No image",
+      "photosLabel": "Product photos",
+      "photoAlt": "{name} — photo {number} of {total}",
+      "thumbnailAria": "Show photo {number}",
+      "colorsLabel": "Available colors",
+      "specsLabel": "Details",
+      "customizeCta": "Design yours"
+    },
+    "reviews": {
+      "label": "Reviews",
+      "comingSoon": "No reviews yet — customer reviews are coming soon."
     }
   },
   "stamp": {
@@ -404,6 +475,7 @@
       "brand": "STAMP IT",
       "stampAria": "Start stamping process",
       "stamp": "Stamp",
+      "catalog": "Catalog",
       "profile": "Profile",
       "profileAria": "View your profile",
       "orders": "Orders",
@@ -929,11 +1001,13 @@
       },
       "links": {
         "footer-studio": "Design Studio",
+        "footer-catalog": "Product Catalog",
         "footer-cart": "Cart",
         "footer-orders": "Your Orders",
         "footer-faq": "FAQ",
         "footer-shipping": "Shipping & Delivery",
         "footer-returns": "Returns & Refunds",
+        "footer-contact": "Contact Us",
         "footer-terms": "Terms of Service",
         "footer-privacy": "Privacy Policy",
         "footer-cookies": "Cookie Policy",
@@ -1410,6 +1484,7 @@
       "title": "Payment Method",
       "subtitle": "Pick how you want to pay",
       "paypalNotice": "We'll send you to PayPal to pay securely.",
+      "idealNotice": "We'll send you to your bank via iDEAL to pay securely.",
       "selectMethodAria": "Select payment method",
       "comingSoon": "Coming Soon"
     },
@@ -1474,6 +1549,9 @@
     "paypalButton": {
       "redirecting": "Redirecting to PayPal…"
     },
+    "idealButton": {
+      "redirecting": "Redirecting to iDEAL…"
+    },
     "alternativeMethods": {
       "title": "Try Alternative Method",
       "paypal": "PayPal",
@@ -1528,8 +1606,13 @@
     "paymentForm": {
       "stripeNotReady": "Stripe is not ready yet. Please wait a moment and try again.",
       "formNotReady": "Payment form is not ready. Please refresh the page and try again.",
-      "cardElementNotFound": "Card element not found",
-      "paymentFailed": "Payment failed"
+      "cardElementNotFound": "We couldn't load the card form. Please refresh the page and try again.",
+      "paymentFailed": "Your payment could not be processed. Please try again.",
+      "statusProcessing": "Your payment is still being processed. Please wait a few minutes and check your orders before trying again.",
+      "statusRequiresPaymentMethod": "Your payment was not completed. Please try again or use a different payment method.",
+      "statusRequiresAction": "Your payment needs additional verification. Please try again and complete the verification step.",
+      "statusCanceled": "The payment was canceled and you have not been charged. Please try again when you're ready.",
+      "statusUnknown": "We couldn't confirm your payment. Please try again, or contact support if you were charged."
     },
     "pricing": {
       "invalidPromoCode": "Invalid promo code",
@@ -1545,7 +1628,7 @@
         "errorCartNotFound": "Cart information not found. Your payment was processed but we couldn't create your order. Please contact support with payment ID: {paymentId}",
         "orderCreationFailedRefund": "Order creation failed. A full refund has been initiated.",
         "orderFulfillmentFailedRefund": "Order fulfillment failed. A full refund has been initiated.",
-        "errorFallback": "Failed to process Stripe payment",
+        "errorFallback": "We couldn't finish processing your payment. If you were charged, your payment is safe — please contact support and we'll sort it out.",
         "completingTitle": "Completing Your Payment",
         "processingTitle": "Processing Payment",
         "completingMessage": "Please wait while we finish your Stripe payment...",
@@ -1566,12 +1649,12 @@
         "errorCheckoutDataExpired": "Checkout data expired or not found. Please try again from the checkout page.",
         "errorMustBeLoggedIn": "You must be logged in to complete your order. Please log in and try again.",
         "declinedFallback": "Your payment was declined. Try again with a different payment method.",
-        "captureFailed": "Failed to capture PayPal payment",
+        "captureFailed": "We couldn't complete your PayPal payment. Please try again or use a different payment method.",
         "errorCartNotFound": "Cart information not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: {paymentId}",
         "errorAmountNotFound": "Order amount not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: {paymentId}",
         "orderCreationFailedRefund": "Order creation failed. A full refund has been initiated.",
         "orderFulfillmentFailedRefund": "Order fulfillment failed. A full refund has been initiated.",
-        "errorFallback": "Failed to process PayPal payment",
+        "errorFallback": "We couldn't finish processing your PayPal payment. If you were charged, your payment is safe — please contact support and we'll sort it out.",
         "capturingTitle": "Completing Your Payment",
         "processingTitle": "Processing Payment",
         "capturingMessage": "Please wait while we finish your PayPal payment...",
@@ -1595,15 +1678,16 @@
         "errorNoPaymentInfo": "No payment information found. If you completed a payment, please contact support with your payment details.",
         "errorMustBeLoggedIn": "You must be logged in to complete your order. Please log in and contact support with payment ID: {paymentId}",
         "errorCartNotFound": "Cart information not found. Please contact support with payment ID: {paymentId}",
-        "errorMissingContext": "Missing checkout context to finalize order after payment.",
-        "errorNoOrderItems": "No order items found to finalize Mollie checkout.",
+        "errorMissingContext": "We couldn't find your checkout details to finish creating your order.",
+        "errorNoOrderItems": "We couldn't find the items for your order.",
         "errorCannotCreateOrderNoCart": "Cannot create order: cart information not found. A full refund has been initiated and will appear within 3–5 business days.",
         "errorCannotCreateOrderNotLoggedIn": "Cannot create order: you must be logged in to complete checkout. A full refund has been initiated and will appear within 3–5 business days.",
         "orderCreationReasonFallback": "Order creation failed after retry attempts.",
         "orderFulfillmentReasonFallback": "Order fulfillment failed.",
         "reasonWithRefund": "{reason} A full refund has been initiated and will appear within 3–5 business days.",
         "errorOrderIdNotReturned": "Order creation failed to return order ID. A full refund has been initiated and will appear within 3–5 business days.",
-        "errorVerifyFallback": "Failed to verify payment status",
+        "errorVerifyFallback": "We couldn't verify your payment status",
+        "errorUnknownStatus": "We couldn't determine the status of your payment. If you were charged, your payment has been recorded and our team will process your order automatically. If you need help, contact support with payment ID: {paymentId}",
         "errorRecorded": "{message}. Your payment has been recorded (ID: {paymentId}). Our team will process your order automatically. You will receive an email confirmation within 24 hours. If you need immediate assistance, please contact support with your payment ID.",
         "unknownPaymentId": "unknown",
         "verifyingAria": "Verifying payment",
@@ -1715,7 +1799,7 @@
     },
     "payment": {
       "title": "Your payment is safe",
-      "body": "Payments run through Stripe and PayPal. We never see or store your card details.",
+      "body": "Payments run through Stripe, PayPal and Mollie. We never see or store your card details.",
       "accept": "We accept",
       "sslSecured": "Secure Checkout",
       "comingSoon": "Soon",

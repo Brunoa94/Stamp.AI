@@ -29,11 +29,12 @@ export function HomeHeroSection() {
   return (
     <section className="relative h-screen overflow-hidden bg-(--color-stamp-off-white)">
       {/* Title and CTA with transform showcases on sides */}
-      <div className="relative z-20 px-6 pt-20 sm:pt-24 pb-8 lg:px-12 xl:px-24">
+      {/* pt-32 sm:pt-36 accounts for fixed header (h-24) + trust banner (~40px) */}
+      <div className="relative z-20 px-6 pt-32 sm:pt-20 pb-8 lg:px-12 xl:px-24">
         <div className="mx-auto">
           <div className="flex items-end justify-center">
             {/* Left showcase - hidden below 1200px */}
-            <div className="hidden min-[1200px]:block shrink-0 mb-0">
+            <div className="hidden 3xl:block shrink-0 mb-0">
               <SectionReveal delayMs={200}>
                 <HeroTransformShowcase
                   position="left"
@@ -63,8 +64,13 @@ export function HomeHeroSection() {
       {/* Promotional banner */}
       <HeroPromoBanner />
 
-      {/* Bubbling products */}
-      {/* <HeroBubblingProducts /> */}
+      {/* Bubbling products that rise based on wheel events */}
+      <HeroBubblingProducts />
+
+      {/* Scroll cue */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30">
+        <HeroScrollCue />
+      </div>
     </section>
   );
 }

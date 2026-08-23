@@ -35,9 +35,10 @@ export function HomeProductOfMonthSection() {
     ? product.selling_price_cents / 100
     : (product.min_price_cents + product.shipping_cents) / 100;
 
-  const originalPrice = product.is_on_sale && product.original_price_cents
-    ? product.original_price_cents / 100
-    : null;
+  const originalPrice =
+    product.is_on_sale && product.original_price_cents
+      ? product.original_price_cents / 100
+      : null;
 
   return (
     <section className="relative bg-(--color-stamp-gold) px-6 py-24 lg:px-12 xl:px-24 lg:py-32 overflow-hidden">
@@ -90,16 +91,6 @@ export function HomeProductOfMonthSection() {
 
           {/* Right Column - Content */}
           <div className="flex flex-1 flex-col items-center text-center md:items-start md:text-left">
-            <div className="mb-6 flex items-center gap-3">
-              <div className="h-1 w-10 bg-(--color-stamp-chocolate)" />
-              <Span
-                variant="micro"
-                className="uppercase tracking-widest text-(--color-stamp-chocolate)"
-              >
-                {t("eyebrow")}
-              </Span>
-            </div>
-
             <Heading
               as="h2"
               variant="section"
@@ -130,13 +121,20 @@ export function HomeProductOfMonthSection() {
                 €{price.toFixed(2)}
               </Span>
               {originalPrice && (
-                <Span variant="sm" className="text-(--color-stamp-chocolate)/60 line-through">
+                <Span
+                  variant="sm"
+                  className="text-(--color-stamp-chocolate)/60 line-through"
+                >
                   €{originalPrice.toFixed(2)}
                 </Span>
               )}
             </div>
 
-            <Button asChild variant="cta" className="group bg-(--color-stamp-chocolate) text-(--color-stamp-cream) hover:bg-(--color-stamp-chocolate)/90">
+            <Button
+              asChild
+              variant="cta"
+              className="group bg-(--color-stamp-chocolate) text-(--color-stamp-cream) hover:bg-(--color-stamp-chocolate)/90"
+            >
               <Link href="/stamp">
                 {t("cta")}
                 <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-2" />

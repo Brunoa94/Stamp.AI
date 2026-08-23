@@ -5,7 +5,7 @@
  * Used for grouping products in the UI and determining appropriate sizes.
  */
 
-type ProductCategory =
+export type ProductCategory =
   | "tshirt"
   | "hoodie"
   | "sweatshirt"
@@ -21,7 +21,7 @@ type ProductCategory =
   | "pillow"
   | "other";
 
-type ProductGroup = "clothing" | "accessories";
+export type ProductGroup = "clothing" | "accessories";
 
 /**
  * Keywords to detect product category from title
@@ -134,7 +134,7 @@ const CLOTHING_CATEGORIES: Set<ProductCategory> = new Set([
 /**
  * Detect product category from display title
  */
-function detectProductCategory(displayTitle: string): ProductCategory {
+export function detectProductCategory(displayTitle: string): ProductCategory {
   const titleLower = displayTitle.toLowerCase();
 
   // Check each category's keywords
@@ -154,7 +154,7 @@ function detectProductCategory(displayTitle: string): ProductCategory {
 /**
  * Get product group (clothing vs accessories) from category
  */
-function getProductGroup(category: ProductCategory): ProductGroup {
+export function getProductGroup(category: ProductCategory): ProductGroup {
   return CLOTHING_CATEGORIES.has(category) ? "clothing" : "accessories";
 }
 
