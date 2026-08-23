@@ -1,31 +1,21 @@
 "use client";
 
-/**
- * HeroTransformShowcase
- *
- * Animated showcase that cycles through photos or printed products.
- * Left side shows original photos, right side shows printed products.
- */
-
-import { useEffect, useState } from "react";
 import Image from "next/image";
 
 import { cn } from "@/lib/utils";
-import {
-  IMAGE_PAIRS,
-  DISPLAY_MS,
-} from "@/features/homepage/lib/constants/transformShowcase";
+import { IMAGE_PAIRS } from "@/features/homepage/lib/constants/transformShowcase";
 
 interface PropsI {
   /** Left shows photos, right shows printed products */
   position: "left" | "right";
-  startIndex?: number;
+  /** Controlled index from parent for synchronized animations */
+  currentIndex: number;
   className?: string;
 }
 
 export function HeroTransformShowcase({
   position,
-  startIndex = 0,
+  currentIndex,
   className,
 }: PropsI) {
   const [currentIndex, setCurrentIndex] = useState(startIndex);
@@ -58,6 +48,11 @@ export function HeroTransformShowcase({
       clearTimeout(cycleTimeout);
     };
   }, [currentIndex]);
+  // Icon and badge config based on position
+  const TopIcon = position === "left" ? Camera : Sparkles;
+  const topBadgeText = position === "left" ? "Upload" : "Made to Order";
+  const BottomIcon = position === "left" ? Sparkles : Truck;
+  const bottomBadgeText = position === "left" ? "Your Design" : "Ready to Ship";
 
   return (
     <div
@@ -74,41 +69,31 @@ export function HeroTransformShowcase({
         )}
       />
 
-      {/* Current image layer - positioned lower */}
-      <div
-        className={cn(
-          "absolute inset-x-2 top-8 bottom-2 rounded-2xl overflow-hidden shadow-lg",
-          "transition-all duration-700 ease-in-out",
-          isTransitioning ? "opacity-0 scale-95" : "opacity-100 scale-100",
-        )}
-      >
-        <Image
-          src={currentImage.src}
-          alt={currentImage.alt}
-          fill
-          sizes="(max-width: 640px) 192px, (max-width: 768px) 224px, (max-width: 1024px) 256px, (max-width: 1280px) 320px, 384px"
-          className="object-cover"
-          priority
-        />
-      </div>
+      {/* All images stacked with crossfade */}
+      {IMAGE_PAIRS.map((pair, index) => {
+        const image = position === "left" ? pair.photo : pair.printed;
+        const isActive = index === currentIndex;
 
-      {/* Next image layer (shown during transition) - positioned lower */}
-      <div
-        className={cn(
-          "absolute inset-x-2 top-8 bottom-2 rounded-2xl overflow-hidden shadow-xl",
-          "transition-all duration-700 ease-in-out",
-          isTransitioning ? "opacity-100 scale-100" : "opacity-0 scale-105",
-        )}
-      >
-        <Image
-          src={nextImage.src}
-          alt={nextImage.alt}
-          fill
-          sizes="(max-width: 640px) 192px, (max-width: 768px) 224px, (max-width: 1024px) 256px, (max-width: 1280px) 320px, 384px"
-          className="object-cover"
-          priority
-        />
-      </div>
+        return (
+          <div
+            key={index}
+            className={cn(
+              "absolute inset-x-2 top-8 bottom-2 rounded-2xl overflow-hidden shadow-lg",
+              "transition-opacity duration-700 ease-in-out",
+              isActive ? "opacity-100" : "opacity-0",
+            )}
+          >
+            <Image
+              src={image.src}
+              alt={image.alt}
+              fill
+              sizes="(max-width: 640px) 192px, (max-width: 768px) 224px, (max-width: 1024px) 256px, (max-width: 1280px) 320px, 384px"
+              className="object-cover"
+              priority={index === 0}
+            />
+          </div>
+        );
+      })}
 
       {/* Top left badge - image badge for left, icon+text for right */}
       {position === "left" ? (
@@ -132,6 +117,25 @@ export function HeroTransformShowcase({
           />
         </div>
       ) : null}
+      {/* Top left badge with icon */}
+      <div
+        className={cn(
+          "absolute -top-2 -left-2 sm:-top-3 sm:-left-3",
+          "flex items-center gap-1.5 sm:gap-2",
+          "px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2",
+          "rounded-full shadow-lg",
+          "bg-white border border-(--color-stamp-cream)",
+          "transition-all duration-700 ease-in-out",
+        )}
+        style={{
+          animation: "float 3s ease-in-out infinite",
+        }}
+      >
+        <TopIcon className="w-3 h-3 sm:w-4 sm:h-4 text-(--color-stamp-gold)" />
+        <span className="text-[8px] sm:text-[10px] md:text-xs font-bold uppercase tracking-wider text-(--color-stamp-chocolate) whitespace-nowrap">
+          {topBadgeText}
+        </span>
+      </div>
 
       {/* Bottom right badge — only shown for the right (printed) showcase */}
       {position === "right" && (

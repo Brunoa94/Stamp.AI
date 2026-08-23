@@ -85,8 +85,11 @@ export interface CreateMolliePaymentParamsI {
   currency?: string;
   description: string;
   redirectUrl: string;
+  webhookUrl?: string;
   metadata?: Record<string, unknown>;
   locale?: string;
+  /** Pin the payment to a specific Mollie method (e.g. "ideal") instead of showing the method chooser */
+  method?: string;
 }
 
 /**
@@ -101,12 +104,14 @@ export async function createMolliePayment(
     currency = "EUR",
     description,
     redirectUrl,
+    webhookUrl,
     metadata,
     locale = "en_US",
+    method,
   } = params;
 
   // Mollie requires amount as string with 2 decimal places
-  const paymentPayload = {
+  const paymentPayload: Record<string, unknown> = {
     amount: {
       currency: currency.toUpperCase(),
       value: amount.toFixed(2),
@@ -117,7 +122,15 @@ export async function createMolliePayment(
     locale,
   };
 
-  return mollieRequest<MolliePaymentResponse>("/payments", "POST", paymentPayload);
+  if (webhookUrl) {
+    paymentPayload.webhookUrl = webhookUrl;
+  }
+
+  if (method) {
+    paymentPayload.method = method;
+  }
+
+  return mollieRequest<MolliePaymentResponseI>("/payments", "POST", paymentPayload);
 }
 
 /**
@@ -128,7 +141,7 @@ export async function getMolliePayment(paymentId: string): Promise<MolliePayment
     throw ErrorCodes.MOLLIE_PAYMENT_ID_REQUIRED();
   }
 
-  return mollieRequest<MolliePaymentResponse>(`/payments/${paymentId}`, "GET");
+  return mollieRequest<MolliePaymentResponseI>(`/payments/${paymentId}`, "GET");
 }
 
 /**

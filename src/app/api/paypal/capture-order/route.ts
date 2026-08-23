@@ -20,14 +20,21 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      // `error` is shown to the user in the payment alert — keep it friendly
+      return NextResponse.json(
+        { error: "Your session has expired. Please log in and try again." },
+        { status: 401 }
+      );
     }
 
     const body: CaptureOrderRequest = await request.json();
     const { orderId, payerId } = body;
 
     if (!orderId) {
-      return NextResponse.json({ error: "Order ID is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "We couldn't find your payment details. Please try again from the checkout page." },
+        { status: 400 }
+      );
     }
 
     console.log("Capturing PayPal order:", orderId);
@@ -92,9 +99,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Never surface raw internal errors (database, network) to the user —
+    // the details are already captured above for debugging.
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Failed to capture PayPal order",
+        error:
+          "We couldn't complete your PayPal payment. If you were charged, please contact support.",
       },
       { status: 500 }
     );

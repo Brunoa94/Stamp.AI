@@ -14,6 +14,7 @@ import { HOME_PROCESS_STEPS } from "../../../lib/constants/homepageContent";
 import { PROCESS_STEP_IMAGES } from "../../../lib/constants/processStepImages";
 import { HomeSectionHeader } from "../HomeSectionHeader";
 import { ProcessStepper } from "./ProcessStepper";
+import { ProcessAnimatedButton } from "./ProcessAnimatedButton";
 import { ProcessDesktopImage } from "./ProcessDesktopImage";
 import { ProcessMobileCard } from "./ProcessMobileCard";
 import { ProcessDesktopText } from "./ProcessDesktopText";
@@ -184,6 +185,14 @@ export function ProcessStickyCarousel() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Animated CTA button at bottom */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
+          <ProcessAnimatedButton
+            activeStepIndex={activeStepIndex}
+            stepProgress={stepProgress}
+          />
         </div>
       </div>
     </div>

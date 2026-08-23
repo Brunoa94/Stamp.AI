@@ -29,6 +29,10 @@ import type { MolliePaymentStatus } from "@/lib/mollie";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import { captureError } from "@/lib/observability/errorCapture";
 import {
+  UserFacingError,
+  getUserFacingMessage,
+} from "@/features/checkout/lib/errors/UserFacingError";
+import {
   useCreateOrderFromCart,
   useUpdateOrderStatus,
   useUpdatePaymentStatus,
@@ -44,7 +48,7 @@ type PageStatus = "loading" | "success" | "failed" | "pending" | "error";
 /** Maximum time (ms) the post-payment pipeline is allowed to run before aborting. */
 const MOLLIE_PIPELINE_TIMEOUT_MS = 120_000; // 2 minutes — matches handlePaymentSuccess
 
-class MolliePipelineTimeoutError extends Error {
+class MolliePipelineTimeoutError extends UserFacingError {
   constructor(timeoutMs: number) {
     super(
       `Order processing timed out after ${Math.round(timeoutMs / 1000)} seconds. ` +
@@ -216,7 +220,7 @@ export default function MollieReturnClient() {
         // ── CRITICAL: Record payment for recovery BEFORE verification ──
         // This ensures payment is captured even if verification fails
         if (!storedLineItems || !storedShippingAddress) {
-          throw new Error(t("errorMissingContext"));
+          throw new UserFacingError(t("errorMissingContext"));
         }
 
         const parsedLineItems = JSON.parse(
@@ -227,7 +231,7 @@ export default function MollieReturnClient() {
         ) as ShippingAddressT;
 
         if (!Array.isArray(parsedLineItems) || parsedLineItems.length === 0) {
-          throw new Error(t("errorNoOrderItems"));
+          throw new UserFacingError(t("errorNoOrderItems"));
         }
 
         const validatedLineItems = parsedLineItems.map((item, index) =>
@@ -250,7 +254,7 @@ export default function MollieReturnClient() {
               paymentIntentId: storedPaymentId,
               paymentStatus: "pending", // Will be updated by webhook
               amount: orderAmount,
-              currency: "USD",
+              currency: "EUR",
               cartSnapshot: cart,
               shippingAddress: parsedShippingAddress,
               lineItems: validatedLineItems,
@@ -352,7 +356,7 @@ export default function MollieReturnClient() {
                 paymentIntentId: storedPaymentId,
                 paymentStatus: "succeeded",
                 amount: orderAmount,
-                currency: "USD",
+                currency: "EUR",
                 cartSnapshot: cart,
                 shippingAddress: parsedShippingAddress,
                 lineItems: validatedLineItems,
@@ -386,12 +390,12 @@ export default function MollieReturnClient() {
 
             if (!storedCartId) {
               await triggerRefund("Missing cart ID in session storage");
-              throw new Error(t("errorCannotCreateOrderNoCart"));
+              throw new UserFacingError(t("errorCannotCreateOrderNoCart"));
             }
 
             if (!user) {
               await triggerRefund("User not authenticated");
-              throw new Error(t("errorCannotCreateOrderNotLoggedIn"));
+              throw new UserFacingError(t("errorCannotCreateOrderNotLoggedIn"));
             }
 
             try {
@@ -421,17 +425,19 @@ export default function MollieReturnClient() {
                 "❌ All order creation attempts failed. Initiating refund...",
               );
               await triggerRefund("Order creation failed after retry attempts");
-              const reason =
-                orderError instanceof Error
-                  ? orderError.message
-                  : t("orderCreationReasonFallback");
-              throw new Error(t("reasonWithRefund", { reason }));
+              // Only intentionally user-facing messages may be shown; raw
+              // service errors fall back to the translated reason.
+              const reason = getUserFacingMessage(
+                orderError,
+                t("orderCreationReasonFallback"),
+              );
+              throw new UserFacingError(t("reasonWithRefund", { reason }));
             }
 
             // Validate that we have a valid order ID before proceeding
             if (!createdOrderId) {
               await triggerRefund("Order ID not returned from order creation");
-              throw new Error(t("errorOrderIdNotReturned"));
+              throw new UserFacingError(t("errorOrderIdNotReturned"));
             }
 
             console.log(`✅ Order created with ID: ${createdOrderId}`);
@@ -508,11 +514,11 @@ export default function MollieReturnClient() {
               await triggerRefund(
                 "Printify fulfillment failed after successful payment",
               );
-              const reason =
-                printifyError instanceof Error
-                  ? printifyError.message
-                  : t("orderFulfillmentReasonFallback");
-              throw new Error(t("reasonWithRefund", { reason }));
+              const reason = getUserFacingMessage(
+                printifyError,
+                t("orderFulfillmentReasonFallback"),
+              );
+              throw new UserFacingError(t("reasonWithRefund", { reason }));
             }
 
             // ── Stage 3: Mark payment recovered ──
@@ -576,6 +582,14 @@ export default function MollieReturnClient() {
         } else if (isMolliePaymentPending(result.status)) {
           sessionStorage.removeItem(finalizationLockKey);
           setStatus("pending");
+        } else {
+          // Backend returned a status outside the known Mollie set — without
+          // this branch the page would stay on "Verifying" forever.
+          sessionStorage.removeItem(finalizationLockKey);
+          setStatus("error");
+          setErrorMessage(
+            t("errorUnknownStatus", { paymentId: storedPaymentId }),
+          );
         }
       } catch (err) {
         const currentPaymentId = sessionStorage.getItem("mollie_payment_id");
@@ -590,9 +604,13 @@ export default function MollieReturnClient() {
 
         setStatus("error");
 
-        // Provide helpful error message since payment was already recorded for recovery
-        const errorMessage =
-          err instanceof Error ? err.message : t("errorVerifyFallback");
+        // Provide helpful error message since payment was already recorded
+        // for recovery. Raw service errors are replaced by the translated
+        // fallback so only user-friendly text reaches the alert.
+        const errorMessage = getUserFacingMessage(
+          err,
+          t("errorVerifyFallback"),
+        );
         setErrorMessage(
           t("errorRecorded", {
             message: errorMessage,
@@ -670,7 +688,7 @@ export default function MollieReturnClient() {
       <PaymentSuccess
         details={{
           id: paymentId ?? "",
-          provider: "mollie" as "stripe", // Legacy Mollie payment - type assertion for backward compatibility
+          provider: "ideal",
           status: paymentStatus ?? "paid",
           orderNumber:
             orderNumber ||
@@ -708,7 +726,7 @@ export default function MollieReturnClient() {
               : t("failedStatus"),
           reasonTitle: t("paymentStatusTitle"),
           reasonMessage,
-          availableMethods: ["stripe", "paypal"],
+          availableMethods: ["stripe", "paypal", "ideal"],
         }}
         onTryAgain={handleRetryPayment}
         onSelectMethod={handleRetryPayment}

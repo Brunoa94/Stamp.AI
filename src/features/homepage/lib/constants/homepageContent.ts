@@ -6,6 +6,8 @@
  * server cache (getCachedProductsWithPricing).
  */
 
+import { TRUST_REVIEW_METRICS } from "@/shared/constants/trustMetrics";
+
 export const MAX_HOME_PRODUCTS = 4;
 
 // Featured carousel - blueprint IDs to exclude from the carousel
@@ -168,12 +170,12 @@ export type HomePlatformRatingType = {
 };
 
 export const HOME_RATING_SUMMARY = {
-  overall: 4.8,
-  totalReviews: 1247,
+  overall: TRUST_REVIEW_METRICS.overallRating,
+  totalReviews: TRUST_REVIEW_METRICS.totalReviews,
   platforms: [
-    { platform: "Trustpilot", rating: 4.9, reviews: 523 },
-    { platform: "Google", rating: 4.8, reviews: 412 },
-    { platform: "ProductHunt", rating: 4.7, reviews: 312 },
+    { platform: "Trustpilot", rating: TRUST_REVIEW_METRICS.platforms.trustpilot.rating, reviews: TRUST_REVIEW_METRICS.platforms.trustpilot.reviews },
+    { platform: "Google", rating: TRUST_REVIEW_METRICS.platforms.google.rating, reviews: TRUST_REVIEW_METRICS.platforms.google.reviews },
+    { platform: "ProductHunt", rating: TRUST_REVIEW_METRICS.platforms.productHunt.rating, reviews: TRUST_REVIEW_METRICS.platforms.productHunt.reviews },
   ] satisfies HomePlatformRatingType[],
 };
 
