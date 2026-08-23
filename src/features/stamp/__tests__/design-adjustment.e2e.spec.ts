@@ -38,21 +38,37 @@ test.describe("Design Adjustment Panel", () => {
 
   test("shows the available print positions for the selected product", async ({ page }) => {
     await expect(
-      page.getByRole("button", { name: /toggle front print/i }),
+      page.getByRole("radio", { name: /print on front/i }),
     ).toBeVisible();
     await expect(
-      page.getByRole("button", { name: /toggle back print/i }),
+      page.getByRole("radio", { name: /print on back/i }),
     ).toBeVisible();
   });
 
-  test("toggles print positions on and off", async ({ page }) => {
-    const back = page.getByRole("button", { name: /toggle back print/i });
-    await back.click();
-    await expect(back).toHaveAttribute("aria-pressed", "true");
-    await page.screenshot({ path: "test-results/position-toggle.png" });
+  test("switches between front and back printing (single-select)", async ({ page }) => {
+    const front = page.getByRole("radio", { name: /print on front/i });
+    const back = page.getByRole("radio", { name: /print on back/i });
+    await expect(front).toHaveAttribute("aria-checked", "true");
 
     await back.click();
-    await expect(back).toHaveAttribute("aria-pressed", "false");
+    await expect(back).toHaveAttribute("aria-checked", "true");
+    await expect(front).toHaveAttribute("aria-checked", "false");
+    await page.screenshot({ path: "test-results/position-back-selected.png" });
+
+    await front.click();
+    await expect(front).toHaveAttribute("aria-checked", "true");
+    await expect(back).toHaveAttribute("aria-checked", "false");
+  });
+
+  test("shows the back silhouette while the back is selected", async ({ page }) => {
+    const silhouette = page.getByTestId("product-silhouette");
+    await expect(silhouette).toHaveAttribute("data-silhouette-key", "apparel");
+
+    await page.getByRole("radio", { name: /print on back/i }).click();
+    await expect(silhouette).toHaveAttribute(
+      "data-silhouette-key",
+      "apparel-back",
+    );
   });
 
   test("updates the preview when adjusting placement", async ({ page }) => {
@@ -85,8 +101,8 @@ test.describe("Design Adjustment Panel", () => {
     expect(after).toBe(initial);
   });
 
-  test("creates the product with custom placements", async ({ page }) => {
-    await page.getByRole("button", { name: /toggle back print/i }).click();
+  test("creates the product with a back print", async ({ page }) => {
+    await page.getByRole("radio", { name: /print on back/i }).click();
     await page.getByRole("button", { name: /move up/i }).click();
 
     await page.getByRole("button", { name: /create product/i }).click();

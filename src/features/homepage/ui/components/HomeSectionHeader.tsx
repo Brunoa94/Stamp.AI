@@ -25,7 +25,7 @@ export function HomeSectionHeader({
   className,
 }: HomeSectionHeaderPropsI) {
   return (
-    <header className={cn("mb-16 space-y-4", className)}>
+    <header className={cn("space-y-4", className)}>
       <div className="h-1.5 w-20 bg-(--color-stamp-gold)" />
       <Heading
         as="h2"

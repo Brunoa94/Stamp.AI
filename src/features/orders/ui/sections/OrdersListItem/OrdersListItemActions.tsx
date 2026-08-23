@@ -24,10 +24,20 @@ export function OrdersListItemActions({
   return (
     <div className="flex w-full flex-col gap-2 lg:w-40">
       <Button onClick={() => onOpenDetails(order)} variant="primary-compact">
-        {displayedStatus === "Delivered"
+        {displayedStatus === "delivered"
           ? t("viewBlueprint")
           : t("trackProtocol")}
       </Button>
+      {order.tracking_url && (
+        <Button
+          onClick={() =>
+            window.open(order.tracking_url!, "_blank", "noopener,noreferrer")
+          }
+          variant="secondary-compact"
+        >
+          {t("trackShipment")}
+        </Button>
+      )}
       {canCancel ? (
         <Button
           onClick={() => onCancelOrder(order)}

@@ -14,6 +14,10 @@ import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { logStampError, logStampWarn, logStampInfo } from "../helpers/stampLogger";
 import { withTimeout } from "@/lib/promiseUtils";
 import { AnalyticsService } from "@/services/analyticsService";
+import {
+  mapGenerateCompleteEvent,
+  mapGenerateFailedEvent,
+} from "@/features/analytics/mappers/stampFlowMappers";
 import { addStoredImage } from "../services/generatedImagesStorage";
 import {
   DEFAULT_SYNTHESIS_STYLE,
@@ -146,11 +150,13 @@ export function useStampImageGeneration() {
       stopProgress();
       setGenerationProgress(100);
 
-      AnalyticsService.track("stamp_generate_complete", {
-        step: "generation",
-        prompt_length: prompt.length,
-        used_reference_image: Boolean(uploadedImageUrl),
-      });
+      AnalyticsService.track(
+        "stamp_generate_complete",
+        mapGenerateCompleteEvent({
+          promptLength: prompt.length,
+          usedReferenceImage: Boolean(uploadedImageUrl),
+        })
+      );
 
       // Add result to history
       addGeneratedResult(result);
@@ -170,11 +176,12 @@ export function useStampImageGeneration() {
       stopProgress();
       setGenerationProgress(0);
 
-      AnalyticsService.track("stamp_generate_failed", {
-        step: "generation",
-        reason:
-          error instanceof ImageGenerationTimeoutError ? "timeout" : "error",
-      });
+      AnalyticsService.track(
+        "stamp_generate_failed",
+        mapGenerateFailedEvent({
+          reason: error instanceof ImageGenerationTimeoutError ? "timeout" : "error",
+        })
+      );
 
       if (error instanceof ImageGenerationTimeoutError) {
         logStampError({

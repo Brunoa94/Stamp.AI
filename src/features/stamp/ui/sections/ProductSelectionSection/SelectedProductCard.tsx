@@ -1,11 +1,13 @@
 
+import { useMemo, useState } from "react";
 import Image from "next/image";
-import { CheckCircle, X, Sparkles, Palette } from "lucide-react";
+import { CheckCircle, X, ChevronDown, ChevronUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
-import { Paragraph } from "@/features/ui/paragraph";
+import { List } from "@/features/ui/list";
+import { extractProductSpecs } from "@/lib/seo/productDescription";
 import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
 
 /**
@@ -15,6 +17,57 @@ import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
  * Allows user to clear the selection.
  */
 
+const COLLAPSED_HEIGHT = 80;
+
+function ExpandableSpecsList({ specs }: { specs: string[] }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className="w-full max-w-xs mt-4 pt-4 border-t border-(--color-stamp-divider)">
+      <div
+        className="relative overflow-hidden transition-all duration-300 ease-in-out"
+        style={{ maxHeight: isExpanded ? `${specs.length * 28}px` : `${COLLAPSED_HEIGHT}px` }}
+      >
+        <List className="text-left w-full space-y-1.5">
+          {specs.map((spec, index) => (
+            <li key={index}>
+              <Span
+                variant="micro"
+                unstyled
+                className="font-heading text-[11px] font-normal normal-case tracking-normal leading-relaxed text-(--color-stamp-taupe)"
+              >
+                {spec}
+              </Span>
+            </li>
+          ))}
+        </List>
+        {!isExpanded && specs.length > 3 && (
+          <div className="absolute bottom-0 left-0 right-0 h-8 bg-linear-to-t from-(--color-stamp-gold)/5 to-transparent pointer-events-none" />
+        )}
+      </div>
+      {specs.length > 3 && (
+        <button
+          type="button"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="flex items-center justify-center gap-1 w-full mt-2 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wider text-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) hover:bg-(--color-stamp-gold)/10 transition-all duration-300 cursor-pointer"
+        >
+          {isExpanded ? (
+            <>
+              See less
+              <ChevronUp className="w-3 h-3" />
+            </>
+          ) : (
+            <>
+              See more
+              <ChevronDown className="w-3 h-3" />
+            </>
+          )}
+        </button>
+      )}
+    </div>
+  );
+}
+
 interface PropsI {
   product: CatalogProductMappedType;
   onClearSelection: () => void;
@@ -22,6 +75,10 @@ interface PropsI {
 
 export function SelectedProductCard({ product, onClearSelection }: PropsI) {
   const t = useTranslations("stamp.productSelection");
+
+  const specs = useMemo(() => {
+    return extractProductSpecs({ printify_description: product.printifyDescription });
+  }, [product.printifyDescription]);
 
   return (
     <div
@@ -74,17 +131,10 @@ export function SelectedProductCard({ product, onClearSelection }: PropsI) {
           €{product.price.toFixed(2)}
         </Span>
 
-        {/* Additional info section */}
-        <div className="space-y-3 mt-2">
-          <div className="flex items-center justify-center gap-2 text-(--color-stamp-taupe)">
-            <Sparkles className="w-4 h-4 text-(--color-stamp-gold)" />
-            <Paragraph variant="sm">{t("qualityNote")}</Paragraph>
-          </div>
-          <div className="flex items-center justify-center gap-2 text-(--color-stamp-taupe)">
-            <Palette className="w-4 h-4 text-(--color-stamp-gold)" />
-            <Paragraph variant="sm">{t("customizeNext")}</Paragraph>
-          </div>
-        </div>
+        {/* Product specs list with fixed height and expand option */}
+        {specs.length > 0 && (
+          <ExpandableSpecsList specs={specs} />
+        )}
       </div>
     </div>
   );

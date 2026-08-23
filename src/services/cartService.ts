@@ -365,6 +365,38 @@ export class CartService {
   }
 
   /**
+   * Update which cart items are selected for checkout
+   * Called when user proceeds to checkout to persist their selection
+   */
+  static async updateCartItemsSelection(
+    cartId: string,
+    selectedItemIds: string[],
+  ): Promise<void> {
+    try {
+      const supabase = this.getSupabase();
+
+      const { error } = await supabase.rpc("update_cart_items_selection", {
+        p_cart_id: cartId,
+        p_selected_item_ids: selectedItemIds,
+      });
+
+      if (error) {
+        throw ErrorClient.handleError({
+          error,
+          service: "Cart",
+          action: "Update Cart Items Selection",
+        });
+      }
+    } catch (error) {
+      throw ErrorClient.handleError({
+        error,
+        service: "Cart",
+        action: "Update Cart Items Selection",
+      });
+    }
+  }
+
+  /**
    * Merge guest cart with user cart on login
    */
   static async mergeCart(

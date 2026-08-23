@@ -24,7 +24,7 @@ export function RegisterForm() {
   return (
     <DialogContent
       showCloseButton={false}
-      className="max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none sm:max-w-137.5"
+      className="max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none sm:max-w-xl"
     >
       <DialogTitle className="sr-only">{t("srTitle")}</DialogTitle>
       <div className="relative overflow-hidden border-2 border-(--color-stamp-divider) bg-(--color-stamp-off-white) px-10 pt-12 pb-10 shadow-(--shadow-stamp-modal)">

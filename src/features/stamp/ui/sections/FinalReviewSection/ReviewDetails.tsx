@@ -3,6 +3,7 @@ import { Heading } from "@/features/ui/heading";
 import { PolaroidPreview } from "../../components/PolaroidPreview/PolaroidPreview";
 import { ProductSummary } from "./ProductSummary";
 import { ReviewActions } from "./ReviewActions";
+import type { ProductTypeIdType } from "../../../lib/types/stampTypes";
 
 /**
  * ReviewDetails
@@ -16,6 +17,8 @@ interface PropsI {
   /** Mockup shown as a polaroid preview on mobile (carousel is md+ only). */
   mockupUrl?: string;
   productName: string;
+  productDescription?: string | null;
+  productType: ProductTypeIdType;
   color?: string;
   size?: string;
   price: string;
@@ -27,6 +30,8 @@ interface PropsI {
 export function ReviewDetails({
   mockupUrl,
   productName,
+  productDescription,
+  productType,
   color,
   size,
   price,
@@ -58,7 +63,7 @@ export function ReviewDetails({
         variant="panelTitle"
         className="text-(--color-stamp-chocolate) mb-4 md:mb-6"
       >
-        {t.rich("title", {
+        {t.rich(`title.${productType}`, {
           accent: (chunks) => (
             <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
               {chunks}
@@ -70,6 +75,7 @@ export function ReviewDetails({
       <div className="space-y-6 mb-6 md:mb-12">
         <ProductSummary
           productName={productName}
+          productDescription={productDescription}
           color={color}
           size={size}
           price={price}

@@ -53,6 +53,10 @@ const SOCKS_AREAS: Record<string, AreaRect> = {
   front: { left: "15%", top: "20%", width: "70%", height: "50%" },
 };
 
+const PILLOW_AREAS: Record<string, AreaRect> = {
+  front: { left: "12%", top: "12%", width: "76%", height: "76%" },
+};
+
 const DEFAULT_AREA: AreaRect = { left: "27%", top: "24%", width: "46%", height: "52%" };
 
 const PRINT_AREAS: Record<CategoryType, Record<string, AreaRect>> = {
@@ -61,8 +65,9 @@ const PRINT_AREAS: Record<CategoryType, Record<string, AreaRect>> = {
   mug: MUG_AREAS,
   canvas: CANVAS_AREAS,
   poster: CANVAS_AREAS,
-  pillow: APPAREL_AREAS,
+  pillow: PILLOW_AREAS,
   socks: SOCKS_AREAS,
+  notebook: CANVAS_AREAS,
 };
 
 /**

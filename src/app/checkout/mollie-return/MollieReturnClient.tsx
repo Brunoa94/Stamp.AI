@@ -402,6 +402,7 @@ export default function MollieReturnClient() {
                   paymentStatus: "paid",
                   shippingAddress: parsedShippingAddress,
                   idempotencyKey,
+                  paymentMethod: "mollie",
                 })) ?? null;
               console.log("✅ Order and order items created in database");
 
@@ -547,7 +548,7 @@ export default function MollieReturnClient() {
           } catch (pipelineError) {
             if (pipelineError instanceof MolliePipelineTimeoutError) {
               if (createdOrderId) {
-                await markOrderFailed(createdOrderId, "fulfillment_failed");
+                await markOrderFailed(createdOrderId, "unsuccessful_confirmation");
               }
               await triggerRefund("Mollie checkout pipeline timed out");
             }
@@ -620,7 +621,7 @@ export default function MollieReturnClient() {
   };
 
   const handleCreateAnother = () => {
-    router.push("/dashboard");
+    router.push("/stamp");
   };
 
   // Loading state

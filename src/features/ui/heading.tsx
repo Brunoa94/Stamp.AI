@@ -8,47 +8,49 @@ import { cn } from "@/lib/utils";
  * All other styling (color, margin, opacity, effects) must come from the caller via `className`.
  *
  * Variants:
- * - display        Hero h1 — massive fluid viewport-relative title (Outfit)
- * - sectionDisplay Section header h2 — bold condensed display style (Bebas Neue)
- * - cta            CTA section h2 — large fluid viewport-relative title (Outfit)
- * - section        Section header h2 — 5xl→7xl (Outfit)
- * - title          Interior section h2 — fixed responsive scale 6xl→8xl (Outfit)
- * - panelTitle     Split-panel h2 — fluid size that fits a half-width grid column (Outfit)
- * - panelTitleCompact Compact panel h2 — smaller fluid size for profile cards (Outfit)
- * - card           Card / step h3 — 3xl→4xl (Outfit)
- * - cardCompact    Compact card title — xl (Outfit)
- * - question       FAQ summary — 2xl→3xl (Outfit)
- * - item           Product name / testimonial author — xl→2xl (Outfit)
- * - itemCompact    Compact product name — base (Outfit)
- * - price          Large price display — 2xl (Outfit)
- * - priceCompact   Compact price display — xl (Outfit)
- * - priceMini      Small inline price — base (Outfit)
+ * - display        Hero h1 — massive fluid viewport-relative title (Sanchez)
+ * - sectionDisplay Section header h2 — large display style (Sanchez)
+ * - sectionSlab    Section header h2 — smaller slab-serif style (Sanchez)
+ * - cta            CTA section h2 — large fluid viewport-relative title (Sanchez)
+ * - section        Section header h2 — 5xl→7xl (Sanchez)
+ * - title          Interior section h2 — fixed responsive scale 6xl→8xl (Sanchez)
+ * - panelTitle     Split-panel h2 — fluid size that fits a half-width grid column (Sanchez)
+ * - panelTitleCompact Compact panel h2 — smaller fluid size for profile cards (Sanchez)
+ * - card           Card / step h3 — 3xl→4xl (Sanchez)
+ * - cardCompact    Compact card title — xl (Sanchez)
+ * - question       FAQ summary — 2xl→3xl (Sanchez)
+ * - item           Product name / testimonial author — xl→2xl (Inter)
+ * - itemCompact    Compact product name — base (Inter)
+ * - price          Large price display — 2xl (Inter)
+ * - priceCompact   Compact price display — xl (Inter)
+ * - priceMini      Small inline price — base (Inter)
  */
 
 const headingVariants = {
   display:
-    "font-heading font-bold text-[12vw] md:text-[10vw] lg:text-[8vw] leading-[0.85] tracking-tighter uppercase",
+    "font-heading font-normal text-[12vw] md:text-[10vw] lg:text-[8vw] leading-[0.9] tracking-tight",
   sectionDisplay:
-    "font-(family-name:--font-bebas-neue) text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none uppercase",
-  cta: "font-heading font-bold text-[10vw] md:text-[8vw] lg:text-[6vw] leading-[0.9] tracking-tighter uppercase",
+    "font-heading font-normal text-3xl md:text-4xl lg:text-5xl tracking-tight leading-none uppercase",
+  sectionSlab:
+    "font-heading font-normal text-2xl md:text-3xl lg:text-4xl tracking-tight leading-tight",
+  cta: "font-heading font-normal text-[10vw] md:text-[8vw] lg:text-[6vw] leading-[0.95] tracking-tight",
   section:
-    "font-heading font-bold text-5xl md:text-6xl lg:text-7xl tracking-tighter leading-none uppercase",
+    "font-heading font-normal text-2xl md:text-5xl lg:text-7xl tracking-tight leading-none",
   title:
-    "font-heading font-bold text-6xl md:text-7xl lg:text-8xl tracking-tighter leading-none uppercase",
+    "font-heading font-normal text-6xl md:text-7xl lg:text-8xl tracking-tight leading-none",
   panelTitle:
-    "font-heading font-bold text-[clamp(1.875rem,9vw,3.75rem)] md:text-[clamp(2.5rem,4.75vw,6rem)] tracking-tighter leading-none uppercase",
+    "font-heading font-normal text-[clamp(1.875rem,9vw,3.75rem)] md:text-[clamp(2.5rem,4.75vw,6rem)] tracking-tight leading-none",
   panelTitleCompact:
-    "font-heading font-bold text-3xl md:text-4xl tracking-tighter leading-none uppercase",
-  card: "font-heading font-semibold text-3xl md:text-4xl tracking-tight leading-tight uppercase",
-  cardCompact:
-    "font-heading font-semibold text-xl tracking-tight leading-tight uppercase",
+    "font-heading font-normal text-3xl md:text-4xl tracking-tight leading-none",
+  card: "font-heading font-normal text-3xl md:text-4xl tracking-tight leading-tight",
+  cardCompact: "font-heading font-normal text-xl tracking-tight leading-tight",
   question:
-    "font-heading font-semibold text-2xl md:text-3xl tracking-tight leading-tight uppercase",
-  item: "font-heading font-medium text-xl md:text-2xl tracking-tight uppercase",
-  itemCompact: "font-heading font-bold text-sm md:text-base tracking-tight uppercase",
-  price: "font-heading font-black text-xl md:text-2xl tracking-tight uppercase",
-  priceCompact: "font-heading font-black text-xl tracking-tight uppercase",
-  priceMini: "font-heading font-black text-base tracking-tight uppercase",
+    "font-heading font-normal text-2xl md:text-3xl tracking-tight leading-tight",
+  item: "font-body font-semibold text-xl md:text-2xl tracking-tight",
+  itemCompact: "font-body font-semibold text-lg md:text-xl tracking-tight",
+  price: "font-body font-bold text-xl md:text-2xl tracking-tight",
+  priceCompact: "font-body font-bold text-xl tracking-tight",
+  priceMini: "font-body font-semibold text-base tracking-tight",
 } as const;
 
 type HeadingVariant = keyof typeof headingVariants;

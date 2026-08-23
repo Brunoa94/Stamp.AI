@@ -8,15 +8,18 @@
 
 import type { ProductWithPricing } from "@/lib/supabase/server-cache";
 import { mapProductsToCards } from "../lib/mappers/productCardMapper";
+import { TopTrustBanner } from "./components/TopTrustBanner";
+import { PaymentMethodsBanner } from "./components/PaymentMethodsBanner";
 import { HomeHeroSection } from "./sections/HomeHeroSection";
 import { HomeProductsSection } from "./sections/HomeProductsSection";
 import { HomeProcessSection } from "./sections/HomeProcessSection";
 import { HomeTrustGuaranteesSection } from "./sections/HomeTrustGuaranteesSection";
-import { HomeManifestoSection } from "./sections/HomeManifestoSection";
-import { HomeFeaturedCarouselSection } from "./sections/HomeFeaturedCarouselSection";
 import { HomeCtaSection } from "./sections/HomeCtaSection";
 import { HomeReviewsSection } from "./sections/HomeReviewsSection";
 import { HomeFaqSection } from "./sections/HomeFaqSection";
+import { HomeStorySection } from "./sections/HomeStorySection";
+import { HomeProductOfMonthSection } from "./sections/HomeProductOfMonthSection";
+import { HomePromoSection } from "./sections/HomePromoSection";
 
 interface HomepageContentPropsI {
   productsWithPricing: ProductWithPricing[];
@@ -29,12 +32,30 @@ export function HomepageContent({
 
   return (
     <div>
+      <TopTrustBanner />
       <HomeHeroSection />
+      <PaymentMethodsBanner />
       <HomeProductsSection products={products} />
+      <HomeStorySection blockIds={["design"]} background="chocolate" />
+      <HomePromoSection
+        variant="brand-logo"
+        background="cream"
+        contentPosition="right"
+      />
+      <HomeProductOfMonthSection />
+      <HomePromoSection
+        variant="memories"
+        background="white"
+        contentPosition="right"
+      />
+      {/* <HomeStorySection blockIds={["quality"]} background="white" /> */}
       <HomeProcessSection />
+      <HomePromoSection
+        variant="special-moments"
+        background="chocolate"
+        contentPosition="left"
+      />
       <HomeTrustGuaranteesSection />
-      <HomeManifestoSection />
-      <HomeFeaturedCarouselSection />
       <HomeCtaSection />
       <HomeReviewsSection />
       <HomeFaqSection />

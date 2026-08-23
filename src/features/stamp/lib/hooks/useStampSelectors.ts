@@ -134,6 +134,12 @@ export const useStampProductSelection = () => {
   const setSelectedProductTitle = useStampFlowStore(
     (state) => state.setSelectedProductTitle,
   );
+  const selectedProductDescription = useStampFlowStore(
+    (state) => state.selectedProductDescription,
+  );
+  const setSelectedProductDescription = useStampFlowStore(
+    (state) => state.setSelectedProductDescription,
+  );
   return {
     selectedProductType,
     setSelectedProductType,
@@ -143,6 +149,8 @@ export const useStampProductSelection = () => {
     setPrintProviderId,
     selectedProductTitle,
     setSelectedProductTitle,
+    selectedProductDescription,
+    setSelectedProductDescription,
   };
 };
 
@@ -166,6 +174,17 @@ export const useStampCustomization = () => {
     selectedPriceCents,
     setSelectedPriceCents,
   };
+};
+
+// Print position state selectors
+export const useStampPrintPositions = () => {
+  const printPositionConfigs = useStampFlowStore(
+    (state) => state.printPositionConfigs,
+  );
+  const activeEditPosition = useStampFlowStore(
+    (state) => state.activeEditPosition,
+  );
+  return { printPositionConfigs, activeEditPosition };
 };
 
 // Reset store selector
@@ -255,6 +274,9 @@ export const useStampPrintPlacement = () => {
   const togglePrintPosition = useStampFlowStore(
     (state) => state.togglePrintPosition,
   );
+  const selectPrintPosition = useStampFlowStore(
+    (state) => state.selectPrintPosition,
+  );
   const activeEditPosition = useStampFlowStore(
     (state) => state.activeEditPosition,
   );
@@ -279,6 +301,7 @@ export const useStampPrintPlacement = () => {
     printPositionConfigs,
     setPrintPositionConfig,
     togglePrintPosition,
+    selectPrintPosition,
     activeEditPosition,
     setActiveEditPosition,
     resetPlacementForPosition,

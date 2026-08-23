@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import type { MockupImageType } from "../../../lib/types/stampFlowTypes";
+import { getPreloadIndices } from "../../../lib/utils/carouselUtils";
 
 /**
  * MockupCarousel
@@ -14,29 +15,9 @@ import type { MockupImageType } from "../../../lib/types/stampFlowTypes";
  * Clicking opens a fullscreen animated modal.
  */
 
-// Number of images to preload around the current index
-const PRELOAD_BUFFER = 2;
-
 interface PropsI {
   mockupImages: MockupImageType[];
   fallbackUrl?: string;
-}
-
-/**
- * Get indices of images to preload around the current index
- */
-function getPreloadIndices(currentIndex: number, totalImages: number): Set<number> {
-  const indices = new Set<number>();
-  for (let i = -PRELOAD_BUFFER; i <= PRELOAD_BUFFER; i++) {
-    let idx = currentIndex + i;
-    // Wrap around for circular navigation
-    if (idx < 0) idx = totalImages + idx;
-    if (idx >= totalImages) idx = idx - totalImages;
-    if (idx >= 0 && idx < totalImages) {
-      indices.add(idx);
-    }
-  }
-  return indices;
 }
 
 const FullscreenModal = memo(function FullscreenModal({

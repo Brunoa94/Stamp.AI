@@ -19,6 +19,7 @@ import {
   logStampWarn,
 } from "../helpers/stampLogger";
 import { withTimeout } from "@/lib/promiseUtils";
+import { getProductConfig } from "@/lib/printPlacement/config";
 import type {
   MockupImageType,
   PlacementParamsType,
@@ -218,10 +219,33 @@ export function useStampProductCreation() {
       // Store product data
       setCreatedProductId(product.id);
 
-      // Store first variant ID for cart
-      if (product.variants && product.variants.length > 0) {
+      // Store variant ID for cart - prefer selected_variant_id (exact color/size match)
+      // Fall back to first variant only if selected_variant_id is not available
+      if (product.selected_variant_id) {
+        setCreatedVariantId(product.selected_variant_id);
+        logStampInfo({
+          scope: "useStampProductCreation",
+          event: "using_selected_variant_id",
+          metadata: {
+            selected_variant_id: product.selected_variant_id,
+            fabricColor,
+            size,
+          },
+        });
+      } else if (product.variants && product.variants.length > 0) {
+        // Fallback: use first variant (legacy behavior)
         const firstVariantId = product.variants[0].id;
         setCreatedVariantId(firstVariantId);
+        logStampWarn({
+          scope: "useStampProductCreation",
+          event: "fallback_to_first_variant",
+          metadata: {
+            firstVariantId,
+            fabricColor,
+            size,
+            note: "selected_variant_id not returned from server",
+          },
+        });
       }
 
       const productMapper = (
@@ -243,9 +267,6 @@ export function useStampProductCreation() {
 
       // Store all mockup images for carousel
       if (product.images && product.images.length > 0) {
-        const productMapped = productMapper({ img: product.images[0] });
-        setMockupImages([productMapped]);
-
         const mappedImages = product.images.map((
           img: {
             src: string;
@@ -254,10 +275,37 @@ export function useStampProductCreation() {
             is_default?: boolean;
           },
         ) => productMapper({ img }));
-        setMockupImages(mappedImages);
-        // Also set first image as primary mockup for backwards compatibility
-        const mockupUrl = product.images[0].src;
-        setMockupImageUrl(mockupUrl);
+
+        // Check if back printing is selected
+        const isBackPrintSelected = printPositions?.some(
+          (pos) => pos.position === 'back'
+        );
+
+        // Get the product config to check for backPrintDefaultImageIndex
+        const productConfig = getProductConfig(blueprintId);
+        const backImageIndex = productConfig.backPrintDefaultImageIndex;
+
+        // Determine primary image index based on print position
+        // If back print is selected and product has a backPrintDefaultImageIndex, use that
+        let primaryImageIndex = 0;
+        if (
+          isBackPrintSelected &&
+          backImageIndex !== undefined &&
+          backImageIndex < product.images.length
+        ) {
+          primaryImageIndex = backImageIndex;
+        }
+
+        // Reorder images so the primary image is first (for cart display and carousel)
+        const reorderedImages = [...mappedImages];
+        if (primaryImageIndex > 0) {
+          const [targetImage] = reorderedImages.splice(primaryImageIndex, 1);
+          reorderedImages.unshift(targetImage);
+        }
+
+        setMockupImages(reorderedImages);
+        // Set the primary mockup URL (first image in reordered array)
+        setMockupImageUrl(reorderedImages[0].src);
       }
 
       // Advance to final review after showing production animation

@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { ColorSwatches } from "./ColorSwatches";
 import type { ProductCardData } from "../../lib/mappers/productCardMapper";
@@ -43,7 +44,7 @@ export function HomeProductCard({ product, index }: HomeProductCardPropsI) {
         transition: `opacity 0.6s ease-out ${staggerDelay}ms, transform 0.6s ease-out ${staggerDelay}ms`,
       }}
     >
-      <div className="relative mb-3 sm:mb-5 aspect-3/4 overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all duration-500 group-hover:-translate-y-1 group-hover:border-(--color-stamp-gold) group-hover:shadow-(--shadow-stamp-card-hover)">
+      <div className="relative mb-3 sm:mb-5 aspect-square sm:aspect-3/4 overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all duration-500 group-hover:-translate-y-1 group-hover:border-(--color-stamp-gold) group-hover:shadow-(--shadow-stamp-card-hover)">
         {product.imageUrl ? (
           <Image
             src={product.imageUrl}
@@ -104,6 +105,15 @@ export function HomeProductCard({ product, index }: HomeProductCardPropsI) {
           </Span>
         </div>
       </div>
+
+      {product.description && (
+        <Paragraph
+          variant="xs"
+          className="mt-1.5 line-clamp-2 text-(--color-stamp-taupe)"
+        >
+          {product.description}
+        </Paragraph>
+      )}
     </Link>
   );
 }

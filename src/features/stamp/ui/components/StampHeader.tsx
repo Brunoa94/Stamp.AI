@@ -8,7 +8,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Login } from "@/features/auth/login/Login";
 import { useUser, useLogout } from "@/queries/authQueries";
-import { ShoppingCart, Menu, X, User, LogOut, Package } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useScrolled } from "@/hooks/useScrolled";
 
 /**
@@ -51,7 +51,7 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
   };
 
   const linkClass =
-    "text-xs font-semibold uppercase tracking-[0.15em] text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-colors";
+    "font-semibold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-all duration-300";
 
   return (
     <>
@@ -64,17 +64,13 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
       >
         {/* Logo */}
         <div className="flex-1">
-          <Link
-            href="/"
-            className="block"
-            aria-label={t("logoAria")}
-          >
+          <Link href="/" className="block" aria-label={t("logoAria")}>
             <Image
-              src="/assets/brand/logo.png"
+              src="/logo.png"
               alt="Stamp.AI"
-              width={180}
-              height={52}
-              className="h-13 w-auto"
+              width={64}
+              height={64}
+              className="h-16 w-16 object-contain"
               priority
             />
           </Link>
@@ -99,20 +95,17 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
         >
           {user && (
             <>
-              <Link href="/orders" className={`${linkClass} flex items-center gap-2`}>
-                <Package className="w-3.5 h-3.5" />
+              <Link href="/orders" className={linkClass}>
                 {t("orders")}
               </Link>
-              <Link href="/cart" className={`${linkClass} flex items-center gap-2`}>
-                <ShoppingCart className="w-3.5 h-3.5" />
+              <Link href="/cart" className={linkClass}>
                 {t("cart")}
               </Link>
               <Link
                 href="/profile"
-                className={`${linkClass} flex items-center gap-2`}
+                className={linkClass}
                 aria-label={t("profileAria")}
               >
-                <User className="w-3.5 h-3.5" />
                 {t("profile")}
               </Link>
             </>
@@ -121,13 +114,12 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
           {user ? (
             <Button
               variant="ghost"
-              size="icon-sm"
               onClick={handleLogout}
               disabled={logoutMutation.isPending}
-              className="text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) hover:bg-transparent transition-colors"
+              className={`${linkClass} hover:bg-transparent`}
               aria-label={t("logoutAria")}
             >
-              <LogOut className="w-4 h-4" />
+              {t("logout")}
             </Button>
           ) : (
             <Login className={linkClass}>{t("login")}</Login>
@@ -141,14 +133,20 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
           aria-label={mobileMenuOpen ? t("closeMenu") : t("openMenu")}
           aria-expanded={mobileMenuOpen}
         >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {mobileMenuOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
+          )}
         </button>
       </header>
 
       {/* Mobile/tablet drawer (below lg) */}
       <div
         className={`lg:hidden fixed top-24 left-0 right-0 z-40 bg-(--color-stamp-off-white) border-b border-(--color-stamp-divider) shadow-lg transition-all duration-300 ${
-          mobileMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0 overflow-hidden"
+          mobileMenuOpen
+            ? "max-h-screen opacity-100"
+            : "max-h-0 opacity-0 overflow-hidden"
         }`}
       >
         <nav
@@ -169,26 +167,23 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
               <Link
                 href="/orders"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`${linkClass} py-3 flex items-center gap-2`}
+                className={`${linkClass} py-3`}
               >
-                <Package className="w-3.5 h-3.5" />
                 {t("orders")}
               </Link>
               <Link
                 href="/cart"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`${linkClass} py-3 flex items-center gap-2`}
+                className={`${linkClass} py-3`}
               >
-                <ShoppingCart className="w-3.5 h-3.5" />
                 {t("cart")}
               </Link>
               <Link
                 href="/profile"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`${linkClass} py-3 flex items-center gap-2`}
+                className={`${linkClass} py-3`}
                 aria-label={t("profileAria")}
               >
-                <User className="w-3.5 h-3.5" />
                 {t("profile")}
               </Link>
             </>
@@ -199,13 +194,15 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
               variant="ghost"
               onClick={handleLogout}
               disabled={logoutMutation.isPending}
-              className="justify-start text-xs font-semibold uppercase tracking-[0.15em] text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) hover:bg-transparent transition-colors h-auto p-0 py-3 rounded-none flex items-center gap-2"
+              className="justify-start font-semibold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) hover:bg-transparent transition-all duration-300 h-auto p-0 py-3"
               aria-label={t("logoutAria")}
             >
-              <LogOut className="w-3.5 h-3.5" />
+              {t("logout")}
             </Button>
           ) : (
-            <Login className={`${linkClass} py-3 text-left`}>{t("login")}</Login>
+            <Login className={`${linkClass} py-3 text-left`}>
+              {t("login")}
+            </Login>
           )}
         </nav>
       </div>

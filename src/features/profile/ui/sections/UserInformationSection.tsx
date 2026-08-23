@@ -46,8 +46,8 @@ export function UserInformationSection() {
           <div className="space-y-2">
             <Label htmlFor="first_name">
               <Span
-                variant="micro"
-                className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe)"
+                variant="sm"
+                className="text-(--color-stamp-chocolate)"
               >
                 {t("firstNameLabel")}
               </Span>
@@ -65,8 +65,8 @@ export function UserInformationSection() {
           <div className="space-y-2">
             <Label htmlFor="last_name">
               <Span
-                variant="micro"
-                className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe)"
+                variant="sm"
+                className="text-(--color-stamp-chocolate)"
               >
                 {t("lastNameLabel")}
               </Span>
@@ -85,8 +85,8 @@ export function UserInformationSection() {
         <div className="space-y-2">
           <Label htmlFor="email">
             <Span
-              variant="micro"
-              className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe)"
+              variant="sm"
+              className="text-(--color-stamp-chocolate)"
             >
               {t("emailLabel")}
             </Span>

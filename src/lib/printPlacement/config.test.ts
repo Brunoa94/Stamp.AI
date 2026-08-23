@@ -108,8 +108,8 @@ describe('PRODUCT_CONFIGS', () => {
   });
 
   describe('Mugs', () => {
-    it('blueprint 1320 (Ceramic Mug 11oz) has disablePlacementAdjustment', () => {
-      const config = PRODUCT_CONFIGS[1320];
+    it('blueprint 441 (Ceramic Mug EU) has disablePlacementAdjustment', () => {
+      const config = PRODUCT_CONFIGS[441];
       expect(config).toBeDefined();
       expect(config.disablePlacementAdjustment).toBe(true);
       expect(config.category).toBe('mug');

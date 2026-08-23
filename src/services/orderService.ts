@@ -16,7 +16,7 @@ export interface CancelOrderResponseI {
 
 
 import { createClient } from "@/lib/supabase/client";
-import { CreateOrderT, OrderT, UpdateOrderT, OrderWithItemsT } from "../types/order";
+import { CreateOrderT, OrderT, UpdateOrderT, OrderWithItemsT, OrderStatusHistoryT } from "../types/order";
 import { OrderWithItemsSchema, OrderSchema } from "@/schemas/order";
 import { OrderServiceMapper } from "@/mappers/services/orderServiceMapper";
 import { z } from "zod";
@@ -111,6 +111,29 @@ export class OrderService {
       return validatedData as unknown as OrderWithItemsT;
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Order", action: "Get Order"})
+    }
+  }
+
+  /**
+   * Get status history for an order (for tracking timeline)
+   */
+  static async getOrderStatusHistory(orderId: string): Promise<OrderStatusHistoryT[]> {
+    try {
+      const supabase = this.getSupabase();
+
+      const { data, error } = await supabase
+        .from('order_status_history')
+        .select('*')
+        .eq('order_id', orderId)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        throw ErrorClient.handleError({ error, service: "Order", action: "Get Status History" });
+      }
+
+      return (data ?? []) as OrderStatusHistoryT[];
+    } catch (error) {
+      throw ErrorClient.handleError({ error, service: "Order", action: "Get Status History" });
     }
   }
 
@@ -379,6 +402,7 @@ export class OrderService {
     billingAddress,
     idempotencyKey,
     orderStatus,
+    paymentMethod,
   }: {
     user: UserI;
     cart: CartWithItems;
@@ -387,6 +411,7 @@ export class OrderService {
     billingAddress?: ShippingAddressT;
     idempotencyKey?: string;
     orderStatus?: string;
+    paymentMethod?: string;
   }) {
     try {
       // CRITICAL: Check idempotency key to prevent duplicate orders
@@ -417,7 +442,8 @@ export class OrderService {
         0, // discount amount
         paymentStatus,
         finalOrderStatus,
-        idempotencyKey
+        idempotencyKey,
+        paymentMethod
       );
 
       // Create order from cart

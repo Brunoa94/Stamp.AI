@@ -9,7 +9,7 @@ import { AnalyticsService } from "@/services/analyticsService";
 import type { AnalyticsEventNameT } from "@/features/analytics/types/analyticsTypes";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
       // NOTE: definition order matters — cva emits classes in this order and
@@ -25,43 +25,43 @@ const buttonVariants = cva(
         "icon-lg": "size-10",
       },
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        default: "bg-primary text-primary-foreground shadow-md hover:bg-primary/90 hover:shadow-lg",
         destructive:
-          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive dark:focus-visible:ring-destructive/80 dark:bg-destructive/60",
+          "bg-destructive text-white shadow-md hover:bg-destructive/90 hover:shadow-lg focus-visible:ring-destructive dark:focus-visible:ring-destructive/80 dark:bg-destructive/60",
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "border-2 border-(--color-stamp-divider) bg-background shadow-sm hover:bg-accent hover:text-accent-foreground hover:shadow-md dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline focus-visible:ring-offset-0",
+        link: "text-primary underline-offset-4 hover:underline focus-visible:ring-offset-0 rounded-none",
         "brutalist-primary":
-          "h-auto bg-ink px-6 md:px-8 py-1.5 md:py-2 font-heading text-sm md:text-base tracking-widest uppercase border-2 border-brandCyan hover:bg-brandCyan hover:text-ink transition-colors duration-300 shadow-[4px_4px_0px_rgba(10,10,10,0.1)] text-white",
+          "h-auto bg-ink px-6 md:px-8 py-3 md:py-4 font-heading text-sm md:text-base font-bold tracking-widest uppercase border-2 border-brandCyan hover:bg-brandCyan hover:text-ink shadow-md hover:shadow-lg text-white",
         "brutalist-ghost":
-          "h-auto border border-ink/10 px-4 py-2 hover:border-brandCyan hover:bg-transparent transition-colors",
+          "h-auto border-2 border-ink/10 px-4 py-3 font-bold uppercase tracking-wider hover:border-brandCyan hover:bg-transparent",
         "brutalist-danger":
-          "h-auto w-full flex items-center justify-center gap-2 text-brandCyan font-bold text-[10px] tracking-widest uppercase hover:text-brandRed hover:bg-transparent transition-colors border border-brandCyan/20 py-2 font-heading",
+          "h-auto w-full flex items-center justify-center gap-2 text-brandCyan font-bold text-xs tracking-widest uppercase hover:text-brandRed hover:bg-transparent border-2 border-brandCyan/20 py-3 font-heading",
         primary:
-          "h-auto bg-(--color-stamp-chocolate) px-6 py-4 md:px-8 md:py-6 font-heading text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-white) transition-all duration-300 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed",
+          "h-auto bg-(--color-stamp-chocolate) px-6 py-4 md:px-8 md:py-5 font-semibold text-sm uppercase tracking-wider text-(--color-stamp-white) hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg disabled:cursor-not-allowed",
         "primary-compact":
-          "h-auto bg-(--color-stamp-chocolate) px-4 py-3 font-heading text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-white) transition-all duration-300 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed",
+          "h-auto bg-(--color-stamp-chocolate) px-4 py-3 font-semibold text-sm uppercase tracking-wider text-(--color-stamp-white) hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg disabled:cursor-not-allowed",
         secondary:
-          "h-auto border-2 border-(--color-stamp-divider) bg-transparent px-6 py-4 md:px-8 md:py-6 font-heading text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-300 hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) active:scale-[0.98]",
+          "h-auto border-2 border-(--color-stamp-divider) bg-transparent px-6 py-4 md:px-8 md:py-5 font-semibold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) hover:shadow-md active:scale-[0.98]",
         "secondary-compact":
-          "h-auto border-2 border-(--color-stamp-divider) bg-transparent px-4 py-3 font-heading text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) transition-all duration-300 hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) active:scale-[0.98]",
-        cta: "h-auto bg-(--color-stamp-chocolate) px-16 py-7 md:px-24 md:py-9 font-heading text-lg md:text-xl font-bold uppercase tracking-[0.125em] text-(--color-stamp-white) transition-all duration-300 hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg disabled:opacity-50",
+          "h-auto border-2 border-(--color-stamp-divider) bg-transparent px-4 py-3 font-semibold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) hover:shadow-md active:scale-[0.98]",
+        cta: "h-auto bg-(--color-stamp-chocolate) px-12 py-6 md:px-16 md:py-7 font-semibold text-base md:text-lg uppercase tracking-wider text-(--color-stamp-white) hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg",
         "cta-gold":
-          "h-auto bg-(--color-stamp-gold) px-16 py-7 md:px-24 md:py-9 font-heading text-lg md:text-xl font-bold uppercase tracking-[0.125em] text-(--color-stamp-chocolate) transition-all duration-300 hover:bg-(--color-stamp-off-white) active:scale-[0.98] shadow-md hover:shadow-lg disabled:opacity-50",
+          "h-auto bg-(--color-stamp-gold) px-12 py-6 md:px-16 md:py-7 font-semibold text-base md:text-lg uppercase tracking-wider text-(--color-stamp-chocolate) hover:bg-(--color-stamp-off-white) active:scale-[0.98] shadow-md hover:shadow-lg",
         "ghost-stamp":
-          "h-auto bg-transparent px-6 py-4 md:px-8 md:py-5 font-heading text-base md:text-lg font-bold uppercase tracking-[0.15em] text-(--color-stamp-chocolate) transition-all duration-300 hover:text-(--color-stamp-gold) hover:bg-(--color-stamp-chocolate)/5",
+          "h-auto bg-transparent px-6 py-4 md:px-8 md:py-5 font-semibold text-sm md:text-base uppercase tracking-wider text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) hover:bg-(--color-stamp-chocolate)/5",
         "ghost-stamp-light":
-          "h-auto bg-transparent px-6 py-4 md:px-8 md:py-5 font-heading text-base md:text-lg font-bold uppercase tracking-[0.15em] text-(--color-stamp-off-white) transition-all duration-300 hover:text-(--color-stamp-gold) hover:bg-(--color-stamp-off-white)/5",
+          "h-auto bg-transparent px-6 py-4 md:px-8 md:py-5 font-semibold text-sm md:text-base uppercase tracking-wider text-(--color-stamp-off-white) hover:text-(--color-stamp-gold) hover:bg-(--color-stamp-off-white)/5",
         "stamp-close":
-          "h-10 w-10 bg-(--color-stamp-cream) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) transition-all border border-(--color-stamp-divider)",
+          "h-10 w-10 bg-(--color-stamp-cream) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) border border-(--color-stamp-divider) shadow-sm hover:shadow-md",
         "stamp-google":
-          "w-full gap-4 border-2 border-(--color-stamp-divider) bg-(--color-stamp-white) py-6 px-6 font-heading font-bold text-base uppercase tracking-widest text-(--color-stamp-chocolate) transition-all hover:border-(--color-stamp-taupe) hover:bg-(--color-stamp-cream)",
+          "w-full gap-4 border-2 border-(--color-stamp-divider) bg-(--color-stamp-white) py-5 px-6 font-semibold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:border-(--color-stamp-taupe) hover:bg-(--color-stamp-cream) shadow-sm hover:shadow-md",
         "stamp-thumbnail":
-          "relative h-20 w-20 shrink-0 overflow-hidden rounded-none border-2 border-(--color-stamp-divider) p-0 transition-all duration-300 not-aria-pressed:hover:border-(--color-stamp-chocolate) aria-pressed:border-(--color-stamp-gold) aria-pressed:ring-2 aria-pressed:ring-(--color-stamp-gold)/20",
+          "relative h-20 w-20 shrink-0 overflow-hidden rounded-md border-2 border-(--color-stamp-divider) p-0 not-aria-pressed:hover:border-(--color-stamp-chocolate) aria-pressed:border-(--color-stamp-gold) aria-pressed:ring-2 aria-pressed:ring-(--color-stamp-gold)/20 shadow-sm",
         "stamp-disclosure":
-          "flex w-full h-auto cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-(--color-stamp-gold)/5",
+          "flex w-full h-auto cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left hover:bg-(--color-stamp-gold)/5 rounded-md",
       },
     },
     defaultVariants: {
