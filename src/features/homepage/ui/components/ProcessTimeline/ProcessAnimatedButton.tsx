@@ -45,7 +45,7 @@ export function ProcessAnimatedButton({
       {/* Button content */}
       <span
         className={cn(
-          "relative z-10 font-heading text-lg md:text-xl font-bold uppercase tracking-[0.125em]",
+          "relative z-10 font-semibold text-base md:text-lg uppercase tracking-wider",
           "transition-colors duration-300",
           overallProgress > 0.5
             ? "text-(--color-stamp-chocolate)"
@@ -67,8 +67,8 @@ export function ProcessAnimatedButton({
   );
 
   const baseClasses = cn(
-    "group relative inline-flex items-center justify-center gap-2 overflow-hidden",
-    "h-auto px-16 py-7 md:px-24 md:py-9",
+    "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-md",
+    "h-auto px-12 py-6 md:px-16 md:py-7",
     "bg-(--color-stamp-chocolate) shadow-md",
     "transition-all duration-300",
     isComplete
