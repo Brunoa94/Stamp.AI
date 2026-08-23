@@ -10,6 +10,7 @@
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { Button } from "@/features/ui/button";
 import { cn } from "@/lib/utils";
 
 const TOTAL_BLOCKS = 8;
@@ -31,63 +32,61 @@ export function ProcessAnimatedButton({
   const overallProgress = (activeStepIndex + stepProgress) / TOTAL_BLOCKS;
   const isComplete = activeStepIndex >= TOTAL_BLOCKS - 1 && stepProgress > 0.8;
 
-  const buttonContent = (
-    <>
-      {/* Background fill that builds up */}
-      <div
-        className="absolute inset-0 bg-(--color-stamp-gold) origin-left"
-        style={{
-          transform: `scaleX(${overallProgress})`,
-          transition: "transform 0.15s ease-out",
-        }}
-      />
-
-      {/* Button content */}
-      <span
-        className={cn(
-          "relative z-10 font-body text-lg md:text-xl font-bold uppercase tracking-[0.2em]",
-          "transition-colors duration-300",
-          overallProgress > 0.5
-            ? "text-(--color-stamp-chocolate)"
-            : "text-(--color-stamp-white)",
-        )}
-      >
-        Start creating, stamp it!
-      </span>
-      <ArrowRight
-        className={cn(
-          "relative z-10 h-5 w-5 md:h-6 md:w-6 transition-all duration-300",
-          overallProgress > 0.5
-            ? "text-(--color-stamp-chocolate)"
-            : "text-(--color-stamp-white)",
-          isComplete && "group-hover:translate-x-2",
-        )}
-      />
-    </>
+  const progressFill = (
+    <div
+      className="absolute inset-0 bg-(--color-stamp-gold) origin-left pointer-events-none"
+      style={{
+        transform: `scaleX(${overallProgress})`,
+        transition: "transform 0.15s ease-out",
+      }}
+    />
   );
 
-  const baseClasses = cn(
-    "group relative inline-flex items-center justify-center gap-2 overflow-hidden",
-    "h-auto px-32 py-7 md:px-48 md:py-9",
-    "bg-(--color-stamp-chocolate) shadow-md",
-    "transition-all duration-300",
-    isComplete
-      ? "cursor-pointer hover:shadow-lg active:scale-[0.98]"
-      : "cursor-not-allowed opacity-70",
-    className,
-  );
+  const textColorClass =
+    overallProgress > 0.5
+      ? "text-(--color-stamp-chocolate)"
+      : "text-(--color-stamp-white)";
 
   if (isComplete) {
     return (
-      <Link href="/stamp" className={baseClasses}>
-        {buttonContent}
-      </Link>
+      <Button
+        asChild
+        variant="cta"
+        className={cn("group relative overflow-hidden", className)}
+      >
+        <Link href="/stamp">
+          {progressFill}
+          <span className={cn("relative z-10", textColorClass)}>
+            Start creating, stamp it!
+          </span>
+          <ArrowRight
+            className={cn(
+              "relative z-10 h-5 w-5 md:h-6 md:w-6 transition-transform duration-300 group-hover:translate-x-2",
+              textColorClass,
+            )}
+          />
+        </Link>
+      </Button>
     );
   }
 
   return (
-    <div className={baseClasses} aria-disabled="true">
-      {buttonContent}
-    </div>
+    <Button
+      variant="cta"
+      disabled
+      className={cn("relative overflow-hidden", className)}
+      aria-disabled="true"
+    >
+      {progressFill}
+      <span className={cn("relative z-10", textColorClass)}>
+        Start creating, stamp it!
+      </span>
+      <ArrowRight
+        className={cn(
+          "relative z-10 h-5 w-5 md:h-6 md:w-6",
+          textColorClass,
+        )}
+      />
+    </Button>
   );
 }

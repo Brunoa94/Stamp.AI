@@ -9,7 +9,7 @@ import { AnalyticsService } from "@/services/analyticsService";
 import type { AnalyticsEventNameT } from "@/features/analytics/types/analyticsTypes";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-body text-xs font-bold tracking-[0.2em] uppercase transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-none font-heading text-xs font-bold tracking-[0.2em] uppercase transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
   {
     variants: {
       // NOTE: definition order matters — cva emits classes in this order and
@@ -32,7 +32,7 @@ const buttonVariants = cva(
           "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline focus-visible:ring-offset-0",
+        link: "font-bold text-md md:text-lg text-primary underline-offset-4 hover:underline focus-visible:ring-offset-0",
         "brutalist-primary":
           "h-auto bg-ink px-6 md:px-8 py-1.5 md:py-2 text-sm md:text-base tracking-widest border-2 border-brandCyan hover:bg-brandCyan hover:text-ink transition-colors duration-300 shadow-[4px_4px_0px_rgba(10,10,10,0.1)] text-white",
         "brutalist-ghost":

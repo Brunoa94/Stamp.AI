@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Login } from "@/features/auth/login/Login";
+import { Register } from "@/features/auth/register/Register";
 import { useUser, useLogout } from "@/queries/authQueries";
 import { Menu, X } from "lucide-react";
 import { useScrolled } from "@/hooks/useScrolled";
@@ -51,7 +52,7 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
   };
 
   const linkClass =
-    "font-body text-sm font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-colors";
+    "font-heading text-sm font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-colors";
 
   return (
     <>
@@ -126,7 +127,10 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
               {t("logout")}
             </Button>
           ) : (
-            <Login className={linkClass}>{t("login")}</Login>
+            <>
+              <Login className={linkClass}>{t("signIn")}</Login>
+              <Register className={linkClass}>{t("signUp")}</Register>
+            </>
           )}
         </nav>
 
@@ -206,15 +210,20 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
               variant="ghost"
               onClick={handleLogout}
               disabled={logoutMutation.isPending}
-              className="justify-start font-body text-sm font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) hover:bg-transparent transition-colors h-auto p-0 py-3 rounded-none"
+              className="justify-start font-heading text-sm font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) hover:bg-transparent transition-colors h-auto p-0 py-3 rounded-none"
               aria-label={t("logoutAria")}
             >
               {t("logout")}
             </Button>
           ) : (
-            <Login className={`${linkClass} py-3 text-left`}>
-              {t("login")}
-            </Login>
+            <>
+              <Login className={`${linkClass} py-3 text-left`}>
+                {t("signIn")}
+              </Login>
+              <Register className={`${linkClass} py-3 text-left`}>
+                {t("signUp")}
+              </Register>
+            </>
           )}
         </nav>
       </div>

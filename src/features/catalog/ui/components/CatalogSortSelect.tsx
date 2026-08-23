@@ -33,7 +33,7 @@ export function CatalogSortSelect({ sort, onSortChange }: PropsI) {
     >
       <SelectTrigger
         aria-label={t("sortAria")}
-        className="h-10 w-auto min-w-40 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-heading font-bold uppercase text-sm tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
+        className="h-10 w-auto min-w-40 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-heading text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
       >
         <SelectValue />
       </SelectTrigger>

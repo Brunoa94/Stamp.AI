@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/features/ui/button";
+import { Input } from "@/features/ui/input";
 import { Paragraph } from "@/features/ui/paragraph";
 import { useTranslations } from "next-intl";
 import { usePasswordResetForm } from "./usePasswordResetForm";
@@ -31,12 +32,12 @@ export function PasswordResetForm({ isVisible, onClose }: PasswordResetFormProps
           {t("prompt")}
         </Paragraph>
         <div className="space-y-3">
-          <input
+          <Input
             type="email"
             placeholder={t("emailPlaceholder")}
             value={resetEmail}
             onChange={(e) => setResetEmail(e.target.value)}
-            className="w-full px-4 py-3 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) text-xl uppercase tracking-[0.05em] text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus:outline-none focus:border-(--color-stamp-gold) focus:ring-2 focus:ring-(--color-stamp-gold)/20"
+            className="h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
