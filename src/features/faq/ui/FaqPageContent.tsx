@@ -20,7 +20,7 @@ export function FaqPageContent() {
 
   return (
     <article className="px-6 pt-40 pb-24 lg:px-12 xl:px-24">
-      <div className="mx-auto max-w-4xl">
+      <div className="mx-auto max-w-screen-2xl">
         <header className="mb-12 space-y-4">
           <div className="h-1.5 w-20 bg-(--color-stamp-gold)" />
           <Heading

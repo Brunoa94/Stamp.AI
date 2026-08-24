@@ -73,8 +73,12 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
   NOK: "kr ",
 };
 
-export function formatMoney(amount: number | null | undefined, currency: string): string {
-  const value = amount ?? 0;
+/**
+ * Format money amount for display.
+ * Amounts are stored in cents, so we divide by 100.
+ */
+export function formatMoney(amountInCents: number | null | undefined, currency: string): string {
+  const value = (amountInCents ?? 0) / 100;
   const code = (currency || "USD").toUpperCase();
   const symbol = CURRENCY_SYMBOLS[code];
   return symbol ? `${symbol}${value.toFixed(2)}` : `${value.toFixed(2)} ${code}`;
