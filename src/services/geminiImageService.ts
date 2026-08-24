@@ -11,8 +11,8 @@ interface GeminiImageGenerationResult {
 const MAX_IMAGE_DIMENSION = 2048;
 const MAX_IMAGE_SIZE_BYTES = 4 * 1024 * 1024; // 4MB
 
-// Set to true to use mock image instead of calling Gemini API
-const USE_MOCK_IMAGE = true;
+// Use mock image in development, real Gemini API in production
+const USE_MOCK_IMAGE = process.env.NODE_ENV !== "production";
 
 /**
  * Google Gemini Image Generation Service
