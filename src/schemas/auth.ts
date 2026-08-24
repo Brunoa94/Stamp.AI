@@ -21,6 +21,20 @@ export const RegisterSchema = z.object({
   path: ["confirmPassword"],
 });
 
+// Signup API request schema (server-side; no confirmPassword — the form
+// already validates the match client-side via RegisterSchema)
+export const SignupRequestSchema = z.object({
+  email: z.string().min(1, "emailRequired").email("emailInvalid"),
+  password: z.string().min(6, "passwordMin"),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+});
+
+// Resend confirmation API request schema
+export const ResendConfirmationSchema = z.object({
+  email: z.string().min(1, "emailRequired").email("emailInvalid"),
+});
+
 // Password reset request schema
 const PasswordResetRequestSchema = z.object({
   email: z.string().min(1, "emailRequired").email("emailInvalid"),
@@ -55,6 +69,7 @@ export const UpdatePasswordSchema = z.object({
 // Export inferred types
 export type LoginI = z.infer<typeof LoginSchema>;
 export type RegisterI = z.infer<typeof RegisterSchema>;
+export type SignupRequestI = z.infer<typeof SignupRequestSchema>;
 export type PasswordResetRequestI = z.infer<typeof PasswordResetRequestSchema>;
 export type PasswordResetConfirmI = z.infer<typeof PasswordResetConfirmSchema>;
 export type UpdateProfileI = z.infer<typeof UpdateProfileSchema>;
