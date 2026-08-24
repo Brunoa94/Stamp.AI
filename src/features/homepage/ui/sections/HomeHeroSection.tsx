@@ -33,7 +33,6 @@ export function HomeHeroSection() {
       <div className="relative z-20 px-6 pt-32 sm:pt-20 pb-8 lg:px-12 xl:px-24">
         <div className="mx-auto">
           <div className="flex items-end justify-center">
-            {/* Left showcase - hidden below 1200px */}
             <div className="hidden 3xl:block shrink-0 mb-0">
               <SectionReveal delayMs={200}>
                 <HeroTransformShowcase
@@ -63,14 +62,6 @@ export function HomeHeroSection() {
 
       {/* Promotional banner */}
       <HeroPromoBanner />
-
-      {/* Bubbling products that rise based on wheel events */}
-      <HeroBubblingProducts />
-
-      {/* Scroll cue */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30">
-        <HeroScrollCue />
-      </div>
     </section>
   );
 }
