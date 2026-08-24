@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { Camera, Sparkles } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { IMAGE_PAIRS } from "@/features/homepage/lib/constants/transformShowcase";
@@ -10,49 +11,20 @@ interface PropsI {
   position: "left" | "right";
   /** Controlled index from parent for synchronized animations */
   currentIndex: number;
+  /** Whether currently transitioning between images */
+  isTransitioning?: boolean;
   className?: string;
 }
 
 export function HeroTransformShowcase({
   position,
   currentIndex,
+  isTransitioning = false,
   className,
 }: PropsI) {
-  const [currentIndex, setCurrentIndex] = useState(startIndex);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-
-  // Get image from pair based on position (left = photo, right = printed)
-  const currentPair = IMAGE_PAIRS[currentIndex % IMAGE_PAIRS.length];
-  const nextPair = IMAGE_PAIRS[(currentIndex + 1) % IMAGE_PAIRS.length];
-  const currentImage =
-    position === "left" ? currentPair.photo : currentPair.printed;
-  const nextImage = position === "left" ? nextPair.photo : nextPair.printed;
-  const label = position === "left" ? "Photo" : "Printed";
-  const labelStyle =
-    position === "left"
-      ? "bg-white/90 text-(--color-stamp-chocolate)"
-      : "bg-(--color-stamp-gold) text-white";
-
-  useEffect(() => {
-    const cycleTimeout = setTimeout(() => {
-      setIsTransitioning(true);
-
-      // After transition, update index
-      setTimeout(() => {
-        setCurrentIndex((prev) => (prev + 1) % IMAGE_PAIRS.length);
-        setIsTransitioning(false);
-      }, 700);
-    }, DISPLAY_MS);
-
-    return () => {
-      clearTimeout(cycleTimeout);
-    };
-  }, [currentIndex]);
   // Icon and badge config based on position
   const TopIcon = position === "left" ? Camera : Sparkles;
   const topBadgeText = position === "left" ? "Upload" : "Made to Order";
-  const BottomIcon = position === "left" ? Sparkles : Truck;
-  const bottomBadgeText = position === "left" ? "Your Design" : "Ready to Ship";
 
   return (
     <div

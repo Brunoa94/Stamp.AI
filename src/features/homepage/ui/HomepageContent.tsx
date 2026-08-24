@@ -53,6 +53,7 @@ export function HomepageContent({
         contentPosition="right"
       />
       {/* <HomeStorySection blockIds={["quality"]} background="white" /> */}
+
       <HomeProcessSection />
       <HomePromoSection
         variant="special-moments"
