@@ -44,7 +44,7 @@ export function ProtectedRoute({
             </div>
 
             <div>
-              <Paragraph variant="default" className="text-base font-semibold font-heading uppercase tracking-wide text-[#1A2340]">
+              <Paragraph variant="body" className="text-base font-semibold font-heading uppercase tracking-wide text-[#1A2340]">
                 {t("authenticating")}
               </Paragraph>
               <Paragraph variant="sm" className="mt-1 text-slate-500">

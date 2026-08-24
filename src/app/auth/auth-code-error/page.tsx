@@ -39,7 +39,7 @@ export default function AuthCodeErrorPage() {
 
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="text-center space-y-4">
-            <Paragraph variant="default" className="text-gray-600">
+            <Paragraph variant="body" className="text-gray-600">
               {t("expiredNote")}
             </Paragraph>
 

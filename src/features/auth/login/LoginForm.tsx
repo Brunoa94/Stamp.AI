@@ -55,7 +55,7 @@ export function LoginForm() {
 
           {errors.root?.message && (
             <Paragraph
-              variant="micro"
+              variant="xs"
               role="alert"
               className="font-bold uppercase tracking-widest text-(--color-stamp-error)"
             >

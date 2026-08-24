@@ -87,7 +87,7 @@ export function LoginCredentialsFields({ register, errors }: PropsI) {
           {errors.password?.message && (
             <Paragraph
               id="password-error"
-              variant="micro"
+              variant="xs"
               role="alert"
               className="font-bold uppercase tracking-widest text-(--color-stamp-error)"
             >

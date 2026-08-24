@@ -27,7 +27,7 @@ export function PasswordResetForm({ isVisible, onClose }: PasswordResetFormProps
       }`}
     >
       <div className="pt-4 space-y-3 border-t border-(--color-stamp-divider)">
-        <Paragraph variant="default" className="text-lg font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
+        <Paragraph variant="body" className="text-lg font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
           {t("prompt")}
         </Paragraph>
         <div className="space-y-3">

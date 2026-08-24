@@ -11,7 +11,7 @@ export function LoginSignupFooter() {
   return (
     <div className="mt-12 text-center">
       <div className="mb-8 h-px w-full bg-(--color-stamp-divider)" />
-      <Paragraph variant="default" className="text-lg font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
+      <Paragraph variant="body" className="text-lg font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
         {t.rich("noAccount", {
           link: (chunks) => (
             <Dialog>
