@@ -1,5 +1,4 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import sharp from "sharp";
 import fs from "fs";
 import path from "path";
 
@@ -8,7 +7,6 @@ interface GeminiImageGenerationResult {
   enhancedPrompt: string;
 }
 
-const MAX_IMAGE_DIMENSION = 2048;
 const MAX_IMAGE_SIZE_BYTES = 4 * 1024 * 1024; // 4MB
 
 // Use mock image in development, real Gemini API in production
@@ -30,69 +28,101 @@ export class GeminiImageService {
 
   /**
    * Preprocess image to ensure compatibility with Gemini API
+   * Uses sharp if available, otherwise returns base64 directly
    */
   private static async preprocessImage(
     imageBuffer: ArrayBuffer,
   ): Promise<{ base64: string; mimeType: string }> {
-    let sharpInstance = sharp(Buffer.from(imageBuffer));
-    const metadata = await sharpInstance.metadata();
-    const width = metadata.width || 0;
-    const height = metadata.height || 0;
+    try {
+      // Try to use sharp for image processing
+      const sharp = (await import("sharp")).default;
 
-    if (width > MAX_IMAGE_DIMENSION || height > MAX_IMAGE_DIMENSION) {
-      sharpInstance = sharpInstance.resize(
-        MAX_IMAGE_DIMENSION,
-        MAX_IMAGE_DIMENSION,
-        {
-          fit: "inside",
-          withoutEnlargement: true,
-        },
-      );
+      let sharpInstance = sharp(Buffer.from(imageBuffer));
+      const metadata = await sharpInstance.metadata();
+      const width = metadata.width || 0;
+      const height = metadata.height || 0;
+      const MAX_IMAGE_DIMENSION = 2048;
+
+      if (width > MAX_IMAGE_DIMENSION || height > MAX_IMAGE_DIMENSION) {
+        sharpInstance = sharpInstance.resize(
+          MAX_IMAGE_DIMENSION,
+          MAX_IMAGE_DIMENSION,
+          {
+            fit: "inside",
+            withoutEnlargement: true,
+          },
+        );
+      }
+
+      let quality = 90;
+      let outputBuffer = await sharpInstance.jpeg({ quality }).toBuffer();
+
+      while (outputBuffer.byteLength > MAX_IMAGE_SIZE_BYTES && quality > 50) {
+        quality -= 10;
+        outputBuffer = await sharp(Buffer.from(imageBuffer))
+          .resize(MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION, {
+            fit: "inside",
+            withoutEnlargement: true,
+          })
+          .jpeg({ quality })
+          .toBuffer();
+      }
+
+      return {
+        base64: outputBuffer.toString("base64"),
+        mimeType: "image/jpeg",
+      };
+    } catch (error) {
+      // Fallback: convert ArrayBuffer to base64 without processing
+      console.warn("[GeminiImageService] Sharp not available, using raw image:", error);
+      const buffer = Buffer.from(imageBuffer);
+
+      // Detect mime type from magic bytes
+      let mimeType = "image/jpeg";
+      if (buffer[0] === 0x89 && buffer[1] === 0x50) {
+        mimeType = "image/png";
+      } else if (buffer[0] === 0x47 && buffer[1] === 0x49) {
+        mimeType = "image/gif";
+      }
+
+      return {
+        base64: buffer.toString("base64"),
+        mimeType,
+      };
     }
-
-    let quality = 90;
-    let outputBuffer = await sharpInstance.jpeg({ quality }).toBuffer();
-
-    while (outputBuffer.byteLength > MAX_IMAGE_SIZE_BYTES && quality > 50) {
-      quality -= 10;
-      outputBuffer = await sharp(Buffer.from(imageBuffer))
-        .resize(MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION, {
-          fit: "inside",
-          withoutEnlargement: true,
-        })
-        .jpeg({ quality })
-        .toBuffer();
-    }
-
-    return {
-      base64: outputBuffer.toString("base64"),
-      mimeType: "image/jpeg",
-    };
   }
 
   /**
-   * Remove background from generated image
+   * Remove background from generated image with fallback
+   * Returns original image if background removal fails
    */
-  private static async removeBackground(imageDataUrl: string): Promise<string> {
-    const match = imageDataUrl.match(/^data:([^;]+);base64,(.+)$/);
-    if (!match) {
-      throw new Error("Invalid data URL format");
+  private static async removeBackgroundSafe(imageDataUrl: string): Promise<string> {
+    try {
+      const match = imageDataUrl.match(/^data:([^;]+);base64,(.+)$/);
+      if (!match) {
+        console.warn("[GeminiImageService] Invalid data URL format, skipping background removal");
+        return imageDataUrl;
+      }
+
+      const { removeBackground } = await import("@imgly/background-removal-node");
+
+      const sourceBuffer = Buffer.from(match[2], "base64");
+      const sourceBlob = new Blob([sourceBuffer], {
+        type: match[1] || "image/png",
+      });
+
+      const processedBlob = await removeBackground(sourceBlob, {
+        model: "small",
+        output: { format: "image/png", quality: 1 },
+      });
+
+      const processedBuffer = Buffer.from(await processedBlob.arrayBuffer());
+      return `data:image/png;base64,${processedBuffer.toString("base64")}`;
+    } catch (error) {
+      console.error("[GeminiImageService] Background removal failed, returning original image:", error);
+      // Return the original image without background removal
+      return imageDataUrl;
     }
-
-    const { removeBackground } = await import("@imgly/background-removal-node");
-
-    const sourceBuffer = Buffer.from(match[2], "base64");
-    const sourceBlob = new Blob([sourceBuffer], {
-      type: match[1] || "image/png",
-    });
-
-    const processedBlob = await removeBackground(sourceBlob, {
-      model: "small",
-      output: { format: "image/png", quality: 1 },
-    });
-
-    const processedBuffer = Buffer.from(await processedBlob.arrayBuffer());
-    return `data:image/png;base64,${processedBuffer.toString("base64")}`;
   }
 
   /**
@@ -141,8 +171,8 @@ export class GeminiImageService {
     const mockImageBase64 = mockImageBuffer.toString("base64");
     const imageUrl = `data:image/png;base64,${mockImageBase64}`;
 
-    // Always run background removal to ensure transparency
-    const transparentImageUrl = await this.removeBackground(imageUrl);
+    // Try background removal, fallback to original if it fails
+    const transparentImageUrl = await this.removeBackgroundSafe(imageUrl);
 
     const mockEnhancedPrompt =
       `[MOCK] Enhanced prompt based on: "${prompt}" with removeBackground=${removeBackground}`;
@@ -253,8 +283,8 @@ Output ONLY the prompt text, no explanations.`,
 
     const imageUrl = `data:${generatedMimeType};base64,${generatedImageBase64}`;
 
-    // Step 3: Always remove background to avoid checkerboard artifacts
-    const transparentImageUrl = await this.removeBackground(imageUrl);
+    // Step 3: Try to remove background, fallback to original if it fails
+    const transparentImageUrl = await this.removeBackgroundSafe(imageUrl);
 
     return { imageUrl: transparentImageUrl, enhancedPrompt };
   }

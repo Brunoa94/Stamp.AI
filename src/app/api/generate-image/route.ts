@@ -132,16 +132,34 @@ export async function POST(request: NextRequest) {
       originalPrompt: prompt
     });
 
-  } catch (error: any) {
-    captureError(error, {
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+
+    captureError(err, {
       service: "ImageGeneration",
       action: "generateImage",
     });
 
+    console.error("[generate-image] Error:", err.message, err.stack);
+
+    // Return user-friendly error messages
+    let userMessage = "We couldn't generate your image right now. Please try again in a moment.";
+
+    if (err.message?.includes("API key")) {
+      userMessage = "Image generation service is temporarily unavailable. Please try again later.";
+    } else if (err.message?.includes("sharp") || err.message?.includes("libvips")) {
+      userMessage = "Image processing is temporarily unavailable. Please try again later.";
+    } else if (err.message?.includes("background-removal")) {
+      userMessage = "Image processing is temporarily unavailable. Please try again later.";
+    } else if (err.message?.includes("GOOGLE_GEMINI_API_KEY")) {
+      userMessage = "Image generation service is not configured. Please contact support.";
+    }
+
     return NextResponse.json(
       {
-        error: "Failed to generate image",
-        details: error.message || "Unknown error"
+        error: userMessage,
+        // Only include technical details in development
+        ...(process.env.NODE_ENV !== "production" && { details: err.message })
       },
       { status: 500 }
     );
