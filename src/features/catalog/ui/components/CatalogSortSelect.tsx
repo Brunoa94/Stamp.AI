@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { buttonVariants } from "@/features/ui/button";
 import {
   Select,
   SelectContent,
@@ -33,7 +34,7 @@ export function CatalogSortSelect({ sort, onSortChange }: PropsI) {
     >
       <SelectTrigger
         aria-label={t("sortAria")}
-        className="h-10 w-auto min-w-40 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-heading font-bold uppercase text-sm tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
+        className={buttonVariants({ variant: "stamp-filter", className: "w-auto min-w-40" })}
       >
         <SelectValue />
       </SelectTrigger>

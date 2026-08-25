@@ -63,11 +63,7 @@ export function CatalogToolbar({
 
         <CatalogSortSelect sort={sort} onSortChange={onSortChange} />
 
-        <Button
-          onClick={onClearFilters}
-          variant="ghost"
-          className="h-10 flex items-center gap-2 px-4 font-heading font-bold uppercase text-sm tracking-widest text-(--color-stamp-taupe) hover:bg-transparent hover:text-(--color-stamp-gold)"
-        >
+        <Button onClick={onClearFilters} variant="stamp-filter-ghost">
           <RotateCcw className="h-4 w-4" />
           {t("clearFilters")}
         </Button>

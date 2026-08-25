@@ -58,7 +58,7 @@ export function CheckoutIdealButton({
       onClick={handleClick}
       disabled={disabled || isPending}
       variant="primary"
-      className="w-full font-heading"
+      className="w-full"
     >
       {isPending ? (
         <Loader2 className="h-4 w-4 animate-spin" />

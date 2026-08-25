@@ -1,6 +1,6 @@
 import { LayoutGrid, List, RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/features/ui/button";
+import { Button, buttonVariants } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import {
   Select,
@@ -53,11 +53,7 @@ export function OrdersFilterControls({
 
         <OrdersTimeSelect value={timeFilter} onChange={onTimeFilterChange} />
 
-        <Button
-          onClick={onClearFilters}
-          variant="ghost"
-          className="h-10 flex items-center gap-2 px-4 font-body font-bold uppercase text-sm tracking-widest text-(--color-stamp-taupe) hover:bg-transparent hover:text-(--color-stamp-gold)"
-        >
+        <Button onClick={onClearFilters} variant="stamp-filter-ghost">
           <RotateCcw className="h-4 w-4" />
           {t("clearArchive")}
         </Button>
@@ -83,7 +79,7 @@ function OrdersStatusSelect({ value, onChange }: OrdersStatusSelectPropsI) {
     >
       <SelectTrigger
         aria-label={t("statusAriaLabel")}
-        className="h-10 w-auto min-w-48 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-body font-bold uppercase text-sm tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
+        className={buttonVariants({ variant: "stamp-filter", className: "w-auto min-w-48" })}
       >
         <SelectValue placeholder={t("status.allPlaceholder")} />
       </SelectTrigger>
@@ -113,7 +109,7 @@ function OrdersTimeSelect({ value, onChange }: OrdersTimeSelectPropsI) {
     >
       <SelectTrigger
         aria-label={t("timeAriaLabel")}
-        className="h-10 w-auto min-w-40 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 font-body font-bold uppercase text-sm tracking-widest text-(--color-stamp-chocolate) shadow-none hover:border-(--color-stamp-chocolate)"
+        className={buttonVariants({ variant: "stamp-filter", className: "w-auto min-w-40" })}
       >
         <SelectValue placeholder={t("time.last30")} />
       </SelectTrigger>

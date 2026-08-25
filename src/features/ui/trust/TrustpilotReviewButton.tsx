@@ -34,7 +34,7 @@ export function TrustpilotReviewButton({
         </Span>
         <Button
           asChild
-          className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase bg-[#00b67a] text-white hover:bg-[#00a06a]"
+          className="w-full py-5 h-auto text-xs tracking-widest uppercase bg-[#00b67a] text-white hover:bg-[#00a06a]"
         >
           <a
             href={trustpilotUrl}

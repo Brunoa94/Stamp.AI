@@ -767,17 +767,10 @@ export default function MollieReturnClient() {
               {t("pendingMessage")}
             </Paragraph>
             <div className="flex flex-col gap-4">
-              <Button
-                onClick={handleViewOrders}
-                className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-chocolate)/90"
-              >
+              <Button onClick={handleViewOrders} variant="primary" className="w-full">
                 {t("viewOrders")}
               </Button>
-              <Button
-                variant="outline"
-                onClick={handleCreateAnother}
-                className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase border-(--color-stamp-divider) text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
-              >
+              <Button variant="secondary" onClick={handleCreateAnother} className="w-full">
                 {t("goToDashboard")}
               </Button>
             </div>
@@ -819,17 +812,10 @@ export default function MollieReturnClient() {
             {errorMessage || t("somethingWentWrongMessage")}
           </Paragraph>
           <div className="flex flex-col gap-4">
-            <Button
-              onClick={handleRetryPayment}
-              className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-chocolate)/90"
-            >
+            <Button onClick={handleRetryPayment} variant="primary" className="w-full">
               {t("returnToCheckout")}
             </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase border-(--color-stamp-divider) text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
-            >
+            <Button asChild variant="secondary" className="w-full">
               <Link href="/dashboard">{t("goToDashboard")}</Link>
             </Button>
           </div>
