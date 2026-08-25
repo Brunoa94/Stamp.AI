@@ -25,7 +25,8 @@ const buttonVariants = cva(
         "icon-lg": "size-10",
       },
       variant: {
-        default: "bg-primary text-primary-foreground shadow-md hover:bg-primary/90 hover:shadow-lg",
+        default:
+          "bg-primary text-primary-foreground shadow-md hover:bg-primary/90 hover:shadow-lg",
         destructive:
           "bg-destructive text-white shadow-md hover:bg-destructive/90 hover:shadow-lg focus-visible:ring-destructive dark:focus-visible:ring-destructive/80 dark:bg-destructive/60",
         outline:
@@ -40,13 +41,13 @@ const buttonVariants = cva(
         "brutalist-danger":
           "h-auto w-full flex items-center justify-center gap-2 text-brandCyan font-bold text-xs tracking-widest uppercase hover:text-brandRed hover:bg-transparent border-2 border-brandCyan/20 py-3 font-heading",
         primary:
-          "h-auto bg-(--color-stamp-chocolate) px-6 py-4 md:px-8 md:py-5 font-semibold text-sm uppercase tracking-wider text-(--color-stamp-white) hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg disabled:cursor-not-allowed",
+          "h-auto bg-(--color-stamp-chocolate) px-6 py-4 md:px-8 md:py-5 font-body font-bold text-sm uppercase tracking-wider text-(--color-stamp-white) hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg disabled:cursor-not-allowed",
         "primary-compact":
-          "h-auto bg-(--color-stamp-chocolate) px-4 py-3 font-semibold text-sm uppercase tracking-wider text-(--color-stamp-white) hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg disabled:cursor-not-allowed",
+          "h-auto bg-(--color-stamp-chocolate) px-4 py-3 font-body font-bold text-sm uppercase tracking-wider text-(--color-stamp-white) hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg disabled:cursor-not-allowed",
         secondary:
-          "h-auto border-2 border-(--color-stamp-divider) bg-transparent px-6 py-4 md:px-8 md:py-5 font-semibold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) hover:shadow-md active:scale-[0.98]",
+          "h-auto border-2 border-(--color-stamp-divider) bg-transparent px-6 py-4 md:px-8 md:py-5 font-body font-bold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) hover:shadow-md active:scale-[0.98]",
         "secondary-compact":
-          "h-auto border-2 border-(--color-stamp-divider) bg-transparent px-4 py-3 font-semibold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) hover:shadow-md active:scale-[0.98]",
+          "h-auto border-2 border-(--color-stamp-divider) bg-transparent px-4 py-3 font-body font-bold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) hover:shadow-md active:scale-[0.98]",
         cta: "h-auto bg-(--color-stamp-chocolate) px-12 py-6 md:px-16 md:py-7 font-semibold text-base md:text-lg uppercase tracking-wider text-(--color-stamp-white) hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg",
         "cta-gold":
           "h-auto bg-(--color-stamp-gold) px-12 py-6 md:px-16 md:py-7 font-semibold text-base md:text-lg uppercase tracking-wider text-(--color-stamp-chocolate) hover:bg-(--color-stamp-off-white) active:scale-[0.98] shadow-md hover:shadow-lg",
