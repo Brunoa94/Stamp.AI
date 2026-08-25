@@ -48,7 +48,7 @@ export function ProductSelectionContent({ canProceed, onContinue }: PropsI) {
 
         <Paragraph
           variant="card"
-          className="text-(--color-stamp-taupe) mb-4 md:mb-12 max-w-sm line-clamp-2 md:line-clamp-none"
+          className="text-(--color-stamp-taupe) mb-4 md:mb-12"
         >
           {t("description")}
         </Paragraph>

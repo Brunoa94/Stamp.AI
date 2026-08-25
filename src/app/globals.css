@@ -175,6 +175,11 @@
     font-weight: 400;
   }
 
+  .font-button {
+    font-family: var(--font-inter), var(--font-poppins), sans-serif;
+    font-weight: 600;
+  }
+
   .font-accent {
     font-family: "Zodiak", serif;
   }
