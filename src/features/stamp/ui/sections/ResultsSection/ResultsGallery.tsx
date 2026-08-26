@@ -32,7 +32,7 @@ export function ResultsGallery({
   }
 
   return (
-    <div className="mb-6">
+    <div className="mb-6 w-full max-w-[min(100%,45vh)] md:max-w-[min(100%,50vh)] lg:max-w-[min(100%,55vh)] mx-auto">
       <Span variant="micro" className="text-(--color-stamp-taupe) mb-2 block">
         {t("previousCreations")}
       </Span>

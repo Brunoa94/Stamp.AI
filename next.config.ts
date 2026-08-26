@@ -63,7 +63,7 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   // External packages that use native binaries - needed for Vercel serverless
-  serverExternalPackages: ["sharp", "@imgly/background-removal-node"],
+  serverExternalPackages: ["sharp"],
 
   // Security headers for all routes
   async headers() {

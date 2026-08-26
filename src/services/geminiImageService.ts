@@ -9,8 +9,8 @@ interface GeminiImageGenerationResult {
 
 const MAX_IMAGE_SIZE_BYTES = 4 * 1024 * 1024; // 4MB
 
-// Use mock image in development, real Gemini API in production
-const USE_MOCK_IMAGE = process.env.NODE_ENV !== "production";
+// Always use real Gemini API (mock disabled)
+const USE_MOCK_IMAGE = false;
 
 /**
  * Google Gemini Image Generation Service
@@ -93,39 +93,6 @@ export class GeminiImageService {
   }
 
   /**
-   * Remove background from generated image with fallback
-   * Returns original image if background removal fails
-   */
-  private static async removeBackgroundSafe(imageDataUrl: string): Promise<string> {
-    try {
-      const match = imageDataUrl.match(/^data:([^;]+);base64,(.+)$/);
-      if (!match) {
-        console.warn("[GeminiImageService] Invalid data URL format, skipping background removal");
-        return imageDataUrl;
-      }
-
-      const { removeBackground } = await import("@imgly/background-removal-node");
-
-      const sourceBuffer = Buffer.from(match[2], "base64");
-      const sourceBlob = new Blob([sourceBuffer], {
-        type: match[1] || "image/png",
-      });
-
-      const processedBlob = await removeBackground(sourceBlob, {
-        model: "small",
-        output: { format: "image/png", quality: 1 },
-      });
-
-      const processedBuffer = Buffer.from(await processedBlob.arrayBuffer());
-      return `data:image/png;base64,${processedBuffer.toString("base64")}`;
-    } catch (error) {
-      console.error("[GeminiImageService] Background removal failed, returning original image:", error);
-      // Return the original image without background removal
-      return imageDataUrl;
-    }
-  }
-
-  /**
    * Get preservation instruction based on level (0-100)
    * 0 = low preservation (more creative freedom)
    * 100 = high preservation (stay close to original)
@@ -149,7 +116,7 @@ export class GeminiImageService {
    */
   private static getBackgroundInstruction(removeBackground: boolean): string {
     if (removeBackground) {
-      return "- Isolated subject on a solid white or transparent background, no shadows or environmental elements";
+      return "- CRITICAL: Generate the subject completely isolated on a fully TRANSPARENT background (alpha channel = 0). NO shadows, NO gradients, NO environmental elements, NO floor reflections. The subject must have clean, crisp edges with transparency preserved. Output as PNG with alpha transparency.";
     }
     return "- Include the background as part of the design, keep environmental elements and context from the original image";
   }
@@ -171,14 +138,11 @@ export class GeminiImageService {
     const mockImageBase64 = mockImageBuffer.toString("base64");
     const imageUrl = `data:image/png;base64,${mockImageBase64}`;
 
-    // Try background removal, fallback to original if it fails
-    const transparentImageUrl = await this.removeBackgroundSafe(imageUrl);
-
     const mockEnhancedPrompt =
       `[MOCK] Enhanced prompt based on: "${prompt}" with removeBackground=${removeBackground}`;
 
     return {
-      imageUrl: transparentImageUrl,
+      imageUrl,
       enhancedPrompt: mockEnhancedPrompt,
     };
   }
@@ -248,7 +212,7 @@ Output ONLY the prompt text, no explanations.`,
     });
 
     const backgroundSuffix = removeBackground
-      ? "Transparent background, isolated subject, print-ready artwork."
+      ? "CRITICAL: Render the subject with a fully TRANSPARENT background (PNG with alpha channel). No shadows, no gradients, no floor reflections, no background elements whatsoever. The subject must be completely isolated with sharp, clean edges and full transparency around it. Output format must be PNG with alpha transparency preserved."
       : "Include background and environmental context, print-ready artwork.";
 
     const imageResult = await imageModel.generateContent({
@@ -283,9 +247,6 @@ Output ONLY the prompt text, no explanations.`,
 
     const imageUrl = `data:${generatedMimeType};base64,${generatedImageBase64}`;
 
-    // Step 3: Try to remove background, fallback to original if it fails
-    const transparentImageUrl = await this.removeBackgroundSafe(imageUrl);
-
-    return { imageUrl: transparentImageUrl, enhancedPrompt };
+    return { imageUrl, enhancedPrompt };
   }
 }
