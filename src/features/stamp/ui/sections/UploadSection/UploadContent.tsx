@@ -57,10 +57,12 @@ export function UploadContent({
         disabled: false,
       };
     }
+    // Allow proceeding to step 2 even without uploaded/cached images
+    // User can still enter a prompt on step 2 and generate images
     return {
       action: onNext,
-      label: t("next"),
-      disabled: true,
+      label: t("skipUpload"),
+      disabled: false,
     };
   };
 

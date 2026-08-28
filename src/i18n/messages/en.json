@@ -550,6 +550,7 @@
       "title": "Upload <accent>Image</accent>",
       "description": "Add an image to guide your design. It's optional — you can also start from just a text prompt.",
       "next": "Next Step",
+      "skipUpload": "Skip Upload",
       "proceedWithoutUpload": "Proceed with previous photos",
       "dropzoneAria": "Upload image",
       "dropzoneText": "Upload Image (Optional)",
