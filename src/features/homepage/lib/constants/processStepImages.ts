@@ -12,7 +12,7 @@ export type ProcessStepImageType = {
 
 export const PROCESS_STEP_IMAGES: Record<string, ProcessStepImageType> = {
   "step-upload": {
-    src: "/suggested-edits/golden-hour.png",
+    src: "/stamp-steps/upload.png",
     alt: "Upload your own photo or sketch as a starting point",
   },
   "step-describe": {
@@ -24,15 +24,15 @@ export const PROCESS_STEP_IMAGES: Record<string, ProcessStepImageType> = {
     alt: "The AI draws your design in seconds",
   },
   "step-results": {
-    src: "/suggested-edits/vibrant.png",
+    src: "/stamp-steps/result.png",
     alt: "Pick your favorite design from the results",
   },
   "step-product": {
-    src: "/home/3-a.png",
+    src: "/stamp-steps/product.png",
     alt: "Pick a product to print on - tees, hoodies, mugs and more",
   },
   "step-customize": {
-    src: "/home/5-a.png",
+    src: "/stamp-steps/customize.png",
     alt: "Choose size and color, and place your design",
   },
   "step-create": {

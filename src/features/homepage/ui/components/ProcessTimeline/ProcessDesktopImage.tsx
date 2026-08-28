@@ -5,7 +5,6 @@
  */
 
 import Image from "next/image";
-import { Span } from "@/features/ui/span";
 import type { HomeProcessStepType } from "../../../lib/constants/homepageContent";
 import type { ProcessStepImageType } from "../../../lib/constants/processStepImages";
 
@@ -28,30 +27,23 @@ export function ProcessDesktopImage({
 }: ProcessDesktopImagePropsI) {
   return (
     <div
-      className="absolute inset-0"
+      className="absolute inset-0 flex items-center justify-center"
       style={{
         transform: `translateY(${translateY}px)`,
         opacity,
         zIndex,
       }}
     >
-      <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-xl ring-2 ring-(--color-stamp-gold)/20">
-        {imageData && (
-          <Image
-            src={imageData.src}
-            alt={imageData.alt}
-            fill
-            sizes="400px"
-            className="object-cover"
-            priority={isPriority}
-          />
-        )}
-        <div className="absolute bottom-4 left-4 w-10 h-10 flex items-center justify-center bg-(--color-stamp-gold) rounded-full shadow-lg">
-          <Span variant="micro" className="text-(--color-stamp-cream)">
-            {step.number}
-          </Span>
-        </div>
-      </div>
+      {imageData && (
+        <Image
+          src={imageData.src}
+          alt={imageData.alt}
+          width={800}
+          height={1000}
+          className="w-auto h-auto max-w-full max-h-full rounded-4xl"
+          priority={isPriority}
+        />
+      )}
     </div>
   );
 }
