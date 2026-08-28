@@ -1,9 +1,14 @@
 import OpenAI from "openai";
+import fs from "fs";
+import path from "path";
 
 interface OpenAIImageGenerationResult {
   imageUrl: string;
   enhancedPrompt: string;
 }
+
+// Use mock image for local development (uses public/zoe.png)
+const USE_MOCK_IMAGE = true;
 
 /**
  * OpenAI Image Generation Service
@@ -50,6 +55,30 @@ export class OpenAIImageService {
   }
 
   /**
+   * Generate a mock image for local development (uses public/zoe.png)
+   */
+  private static generateMockImage(
+    prompt: string,
+    removeBackground: boolean,
+  ): OpenAIImageGenerationResult {
+    console.log("[MOCK] Using mock image instead of OpenAI API");
+    console.log("[MOCK] Prompt:", prompt);
+    console.log("[MOCK] Remove background:", removeBackground);
+
+    const mockImagePath = path.join(process.cwd(), "public", "zoe.png");
+    const mockImageBuffer = fs.readFileSync(mockImagePath);
+    const mockImageBase64 = mockImageBuffer.toString("base64");
+    const imageUrl = `data:image/png;base64,${mockImageBase64}`;
+
+    const mockEnhancedPrompt = `[MOCK] Enhanced prompt based on: "${prompt}" with removeBackground=${removeBackground}`;
+
+    return {
+      imageUrl,
+      enhancedPrompt: mockEnhancedPrompt,
+    };
+  }
+
+  /**
    * Generate an image using OpenAI with optional transparent background
    * @param imageBuffer - The input image as ArrayBuffer
    * @param mimeType - The MIME type of the input image
@@ -64,6 +93,11 @@ export class OpenAIImageService {
     preservation: number = 50,
     removeBackground: boolean = true,
   ): Promise<OpenAIImageGenerationResult> {
+    // Use mock image for local development
+    if (USE_MOCK_IMAGE) {
+      return this.generateMockImage(prompt, removeBackground);
+    }
+
     const client = this.getClient();
 
     // Convert image to base64 data URL

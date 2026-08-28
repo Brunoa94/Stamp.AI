@@ -9,8 +9,8 @@ interface GeminiImageGenerationResult {
 
 const MAX_IMAGE_SIZE_BYTES = 4 * 1024 * 1024; // 4MB
 
-// Always use real Gemini API (mock disabled)
-const USE_MOCK_IMAGE = false;
+// Use mock image for local development (uses public/zoe.png)
+const USE_MOCK_IMAGE = true;
 
 /**
  * Google Gemini Image Generation Service
