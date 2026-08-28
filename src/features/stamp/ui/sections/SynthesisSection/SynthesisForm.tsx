@@ -59,7 +59,7 @@ export function SynthesisForm({
   onGenerate,
 }: PropsI) {
   const t = useTranslations("stamp.synthesis");
-  const { handleSkipGeneration, canSkip, hasCachedImages } =
+  const { handleSkipGeneration, canSkip, hasCachedImages, hasUploadedImage } =
     useSkipGeneration();
 
   // Determine overlay state (only show after loading is complete)
@@ -133,6 +133,19 @@ export function SynthesisForm({
         >
           {isGenerating ? t("generating") : t("generate")}
         </Button>
+
+        {/* Skip generation option - shown when user can proceed without AI */}
+        {canSkip && !showNoCoinsOverlay && (
+          <Button
+            variant="ghost"
+            onClick={handleSkipGeneration}
+            className="w-full text-(--color-stamp-taupe) hover:text-(--color-stamp-chocolate) text-xs font-medium tracking-wide"
+          >
+            {hasUploadedImage
+              ? t("skipWithUploadedImage")
+              : t("skipWithCachedImages")}
+          </Button>
+        )}
       </div>
 
       {/* Mobile: show coins display above sticky footer */}
@@ -147,8 +160,9 @@ export function SynthesisForm({
       {showNoCoinsOverlay && (
         <CoinsOverlay
           variant="no-coins"
-          onSkip={handleSkipGeneration}
+          onSkip={canSkip ? handleSkipGeneration : undefined}
           hasCachedImages={hasCachedImages}
+          hasUploadedImage={hasUploadedImage}
         />
       )}
     </div>

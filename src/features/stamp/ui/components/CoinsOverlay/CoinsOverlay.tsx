@@ -18,15 +18,23 @@ interface CoinsOverlayProps {
   variant: "not-logged-in" | "no-coins";
   onSkip?: () => void;
   hasCachedImages?: boolean;
+  hasUploadedImage?: boolean;
 }
 
 export function CoinsOverlay({
   variant,
   onSkip,
   hasCachedImages,
+  hasUploadedImage,
 }: CoinsOverlayProps) {
   if (variant === "not-logged-in") {
     return <NotLoggedInOverlay />;
   }
-  return <NoCoinsOverlay onSkip={onSkip} hasCachedImages={hasCachedImages} />;
+  return (
+    <NoCoinsOverlay
+      onSkip={onSkip}
+      hasCachedImages={hasCachedImages}
+      hasUploadedImage={hasUploadedImage}
+    />
+  );
 }

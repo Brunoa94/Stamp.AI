@@ -380,7 +380,9 @@
       "preservationAria": "Preservation level slider",
       "removeBackgroundLabel": "Remove Background",
       "removeBackgroundTooltip": "Automatically removes the background from your generated design, leaving only the main subject.",
-      "removeBackgroundAria": "Toggle background removal"
+      "removeBackgroundAria": "Toggle background removal",
+      "skipWithUploadedImage": "Proceed without editing my photo",
+      "skipWithCachedImages": "Proceed with previous photos"
     },
     "suggestions": {
       "vibrant": {
@@ -548,6 +550,7 @@
       "title": "Upload <accent>Image</accent>",
       "description": "Add an image to guide your design. It's optional — you can also start from just a text prompt.",
       "next": "Next Step",
+      "proceedWithoutUpload": "Proceed with previous photos",
       "dropzoneAria": "Upload image",
       "dropzoneText": "Upload Image (Optional)",
       "dropzoneHint": "10MB max, JPG/PNG/GIF only",
@@ -688,7 +691,9 @@
         "displayAria": "{coins} coins available",
         "deductFailed": "Not enough coins to generate",
         "skipGeneration": "Use My Image",
-        "usePreviousCreations": "Use Previous Creations"
+        "usePreviousCreations": "Use Previous Creations",
+        "proceedWithUploadedImage": "Proceed without editing my photo",
+        "proceedWithCachedImages": "Proceed with previous generated photos"
       }
     },
     "adjust": {
