@@ -45,7 +45,7 @@ export function HeroContent() {
               accent: (chunks) => (
                 <Span
                   variant="serif"
-                  className="relative inline-block text-5xl text-(--color-stamp-taupe) sm:text-6xl md:text-7xl lg:text-8xl -ml-8 pt-2"
+                  className="relative inline-block text-5xl text-(--color-stamp-taupe) sm:text-6xl md:text-7xl lg:text-8xl -ml-4 lg:-ml-8 pt-2"
                 >
                   {chunks}
                 </Span>

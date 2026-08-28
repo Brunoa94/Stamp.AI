@@ -10,7 +10,6 @@
  * Manages bubbling animation progress state to coordinate TopTrustBanner fade.
  */
 
-import { useState } from "react";
 import type { ProductWithPricing } from "@/lib/supabase/server-cache";
 import { mapProductsToCards } from "../lib/mappers/productCardMapper";
 import { TopTrustBanner } from "./components/TopTrustBanner";
