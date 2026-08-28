@@ -15,9 +15,6 @@ import { TRUST_GUARANTEE_METRICS } from "@/shared/constants/trustMetrics";
 export function PaymentMethodsBanner() {
   const t = useTranslations("home.paymentBanner");
 
-  // Filter out iDEAL since it's not live yet
-  const activePaymentIcons = PAYMENT_ICONS.filter((icon) => icon.id !== "ideal");
-
   const trustItems = [
     {
       icon: Lock,
@@ -65,7 +62,7 @@ export function PaymentMethodsBanner() {
         >
           {t("trustedProviders")}
         </Span>
-        {activePaymentIcons.map((payment) => (
+        {PAYMENT_ICONS.map((payment) => (
           <div
             key={payment.id}
             className="flex h-10 items-center justify-center opacity-70 transition-opacity hover:opacity-100"
