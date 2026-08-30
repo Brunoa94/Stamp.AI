@@ -133,6 +133,11 @@ class AuthService {
       const { data, error } = await AuthService.getSupabase().auth.getSession();
 
       if (error) {
+        // AuthSessionMissingError is expected when user is not logged in
+        // Return null instead of throwing an error
+        if (error.name === "AuthSessionMissingError") {
+          return null;
+        }
         throw ErrorClient.handleError({
           error,
           service: "Auth",
@@ -146,6 +151,10 @@ class AuthService {
       return AuthServiceMapper.mapSupabaseSessionToSession(data.session) ||
         null;
     } catch (error) {
+      // Also handle AuthSessionMissingError if thrown directly
+      if (error instanceof Error && error.name === "AuthSessionMissingError") {
+        return null;
+      }
       throw ErrorClient.handleError({
         error,
         service: "Auth",
@@ -163,6 +172,11 @@ class AuthService {
       const { data, error } = await AuthService.getSupabase().auth.getUser();
 
       if (error) {
+        // AuthSessionMissingError is expected when user is not logged in
+        // Return null instead of throwing an error
+        if (error.name === "AuthSessionMissingError") {
+          return null;
+        }
         throw ErrorClient.handleError({
           error,
           service: "Auth",
@@ -179,6 +193,10 @@ class AuthService {
 
       return AuthServiceMapper.mapSupabaseUserToUser(data.user);
     } catch (error) {
+      // Also handle AuthSessionMissingError if thrown directly
+      if (error instanceof Error && error.name === "AuthSessionMissingError") {
+        return null;
+      }
       throw ErrorClient.handleError({
         error,
         service: "Auth",
