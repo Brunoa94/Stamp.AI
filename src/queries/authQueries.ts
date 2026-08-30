@@ -143,7 +143,7 @@ export function useLogout() {
 
       handleSuccess("Logged out successfully");
 
-      router.push("/stamp");
+      router.push("/");
     },
     onError: (error: Error) => {
       handleError(error);
