@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
@@ -20,14 +19,8 @@ import { useScrolled } from "@/hooks/useScrolled";
  * nav + centre CTA no longer fit (logo wraps / links overflow / CTA overlaps).
  */
 
-interface StampHeaderProps {
-  onStampItClick?: () => void;
-}
-
-export function StampHeader({ onStampItClick }: StampHeaderProps) {
+export function StampHeader() {
   const t = useTranslations("stamp.header");
-  const router = useRouter();
-  const pathname = usePathname();
   const { data: user } = useUser();
   const logoutMutation = useLogout();
   const isScrolled = useScrolled(24);
@@ -36,18 +29,6 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
   const handleLogout = () => {
     logoutMutation.mutate();
     setMobileMenuOpen(false);
-  };
-
-  const handleStampIt = () => {
-    setMobileMenuOpen(false);
-    if (onStampItClick) {
-      onStampItClick();
-      return;
-    }
-
-    if (pathname !== "/stamp") {
-      router.push("/stamp");
-    }
   };
 
   const linkClass =
@@ -78,14 +59,13 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
 
         {/* Center CTA (lg+) */}
         <div className="flex-none hidden lg:block">
-          <Button
-            variant="primary"
-            onClick={handleStampIt}
-            className="px-16 py-5 text-sm"
+          <Link
+            href="/stamp"
+            className="inline-flex items-center justify-center rounded-md px-16 py-5 text-sm font-bold uppercase tracking-wider bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg transition-all duration-300"
             aria-label={t("stampAria")}
           >
             {t("stamp")}
-          </Button>
+          </Link>
         </div>
 
         {/* Navigation Links (lg+) */}
@@ -157,14 +137,14 @@ export function StampHeader({ onStampItClick }: StampHeaderProps) {
           className="flex flex-col gap-1 p-6"
           aria-label={t("mobileNavAria")}
         >
-          <Button
-            variant="primary-compact"
-            onClick={handleStampIt}
-            className="w-full mb-2"
+          <Link
+            href="/stamp"
+            onClick={() => setMobileMenuOpen(false)}
+            className="inline-flex items-center justify-center rounded-md w-full mb-2 px-4 py-3 font-bold text-sm uppercase tracking-wider bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg transition-all duration-300"
             aria-label={t("stampAria")}
           >
             {t("stamp")}
-          </Button>
+          </Link>
 
           <Link
             href="/catalog"
