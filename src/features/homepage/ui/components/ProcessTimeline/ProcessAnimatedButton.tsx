@@ -4,15 +4,16 @@
  * ProcessAnimatedButton
  *
  * Animated CTA button that builds block by block as the user scrolls through
- * the 8 process steps. Each block corresponds to one step. The button
+ * the 6 process steps. Each block corresponds to one step. The button
  * becomes enabled and clickable only when fully built.
  */
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { HOME_PROCESS_STEPS } from "@/features/homepage/lib/constants/homepageContent";
 
-const TOTAL_BLOCKS = 8;
+const TOTAL_BLOCKS = HOME_PROCESS_STEPS.length;
 
 interface PropsI {
   /** Current active step index (0-7) */

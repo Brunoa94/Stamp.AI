@@ -70,12 +70,8 @@
           "description": "Choose your size and color, and move the design to where you want it."
         },
         "step-create": {
-          "title": "Preview",
-          "description": "See your design on the real product and check that everything looks right."
-        },
-        "step-checkout": {
-          "title": "Checkout",
-          "description": "Add it to your cart and pay. We print your piece and ship it to your door."
+          "title": "Preview and add to bag",
+          "description": "See your design on the real product and add it to your bag. We print your piece and ship it to your door."
         }
       }
     },
