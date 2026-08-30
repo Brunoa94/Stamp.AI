@@ -8,7 +8,7 @@ interface OpenAIImageGenerationResult {
 }
 
 // Use mock image for local development (uses public/zoe.png)
-const USE_MOCK_IMAGE = true;
+const USE_MOCK_IMAGE = process.env.NODE_ENV === "development";
 
 /**
  * OpenAI Image Generation Service
