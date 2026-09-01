@@ -8,6 +8,7 @@ import {
   SelectValue,
 } from "@/features/ui/select";
 import type { SizeType } from "../../../lib/types/stampTypes";
+import { formatSizeForDisplay } from "../../../lib/helpers/sizeDisplayMapper";
 
 /**
  * SizeSelector
@@ -50,7 +51,7 @@ export function SizeSelector({
         <SelectContent>
           {sizes.map((size) => (
             <SelectItem key={size} value={size}>
-              {size}
+              {formatSizeForDisplay(size)}
             </SelectItem>
           ))}
         </SelectContent>
