@@ -395,7 +395,10 @@ function StripeReturnContent() {
         } catch (pipelineError) {
           if (pipelineError instanceof StripePipelineTimeoutError) {
             if (createdOrderId) {
-              await markOrderFailed(createdOrderId, "unsuccessful_confirmation");
+              await markOrderFailed(
+                createdOrderId,
+                "unsuccessful_confirmation",
+              );
             }
             await triggerRefund("Stripe checkout pipeline timed out");
           }
@@ -459,7 +462,7 @@ function StripeReturnContent() {
             <Heading
               as="h1"
               variant="card"
-              className="text-(--color-stamp-chocolate) mb-4"
+              className="font-body text-3xl md:text-4xl font-semibold tracking-tight text-(--color-stamp-chocolate) mb-4"
             >
               {status === "processing"
                 ? t("completingTitle")
@@ -467,7 +470,7 @@ function StripeReturnContent() {
             </Heading>
             <Paragraph
               variant="sm"
-              className="text-(--color-stamp-taupe) max-w-sm mx-auto"
+              className="font-body text-(--color-stamp-taupe) max-w-sm mx-auto"
             >
               {status === "processing"
                 ? t("completingMessage")
@@ -555,7 +558,11 @@ function StripeReturnContent() {
             {errorMessage || t("somethingWentWrongMessage")}
           </Paragraph>
           <div className="flex flex-col gap-4">
-            <Button onClick={handleRetryPayment} variant="primary" className="w-full">
+            <Button
+              onClick={handleRetryPayment}
+              variant="primary"
+              className="w-full"
+            >
               {t("returnToCheckout")}
             </Button>
             <Button asChild variant="secondary" className="w-full">

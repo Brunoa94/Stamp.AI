@@ -3,7 +3,7 @@
 import { memo } from "react";
 import { Box } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { useStampFinalization } from "../../../lib/hooks/useStampSelectors";
 
@@ -34,13 +34,13 @@ function ProductionSectionComponent() {
       </div>
 
       {/* Status Text */}
-      <Heading
+      <Paragraph
         as="h3"
         variant="card"
-        className="text-(--color-stamp-chocolate) mb-4 tracking-[0.5em]"
+        className="text-(--color-stamp-chocolate) mb-4 font-bold uppercase tracking-[0.3em]"
       >
         {t("status")}
-      </Heading>
+      </Paragraph>
 
       <Span variant="micro" className="text-(--color-stamp-taupe) mb-12">
         {t("estimate")}

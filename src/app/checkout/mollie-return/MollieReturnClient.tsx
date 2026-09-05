@@ -322,7 +322,7 @@ export default function MollieReturnClient() {
                 orderId,
                 paymentStatus: "pending",
               });
-              } catch (updateError) {
+            } catch (updateError) {
               captureError(updateError, {
                 service: "MollieReturn",
                 action: "markOrderFailed",
@@ -556,7 +556,10 @@ export default function MollieReturnClient() {
           } catch (pipelineError) {
             if (pipelineError instanceof MolliePipelineTimeoutError) {
               if (createdOrderId) {
-                await markOrderFailed(createdOrderId, "unsuccessful_confirmation");
+                await markOrderFailed(
+                  createdOrderId,
+                  "unsuccessful_confirmation",
+                );
               }
               await triggerRefund("Mollie checkout pipeline timed out");
             }
@@ -666,13 +669,13 @@ export default function MollieReturnClient() {
             <Heading
               as="h1"
               variant="title"
-              className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4"
+              className="font-body text-3xl md:text-4xl font-semibold tracking-tight leading-tight text-(--color-stamp-chocolate) mb-4"
             >
               {t("verifyingTitle")}
             </Heading>
             <Paragraph
               variant="lead"
-              className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto"
+              className="font-body text-lg tracking-normal leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto"
             >
               {t("verifyingMessage")}
             </Paragraph>
@@ -756,21 +759,29 @@ export default function MollieReturnClient() {
             <Heading
               as="h1"
               variant="title"
-              className="font-heading text-3xl md:text-4xl tracking-tight leading-tight uppercase text-(--color-stamp-chocolate) mb-4"
+              className="font-body text-3xl md:text-4xl font-semibold tracking-tight leading-tight text-(--color-stamp-chocolate) mb-4"
             >
               {t("pendingTitle")}
             </Heading>
             <Paragraph
               variant="lead"
-              className="font-heading text-lg tracking-wide uppercase leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12"
+              className="font-body text-lg tracking-normal leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12"
             >
               {t("pendingMessage")}
             </Paragraph>
             <div className="flex flex-col gap-4">
-              <Button onClick={handleViewOrders} variant="primary" className="w-full">
+              <Button
+                onClick={handleViewOrders}
+                variant="primary"
+                className="w-full"
+              >
                 {t("viewOrders")}
               </Button>
-              <Button variant="secondary" onClick={handleCreateAnother} className="w-full">
+              <Button
+                variant="secondary"
+                onClick={handleCreateAnother}
+                className="w-full"
+              >
                 {t("goToDashboard")}
               </Button>
             </div>
@@ -812,7 +823,11 @@ export default function MollieReturnClient() {
             {errorMessage || t("somethingWentWrongMessage")}
           </Paragraph>
           <div className="flex flex-col gap-4">
-            <Button onClick={handleRetryPayment} variant="primary" className="w-full">
+            <Button
+              onClick={handleRetryPayment}
+              variant="primary"
+              className="w-full"
+            >
               {t("returnToCheckout")}
             </Button>
             <Button asChild variant="secondary" className="w-full">

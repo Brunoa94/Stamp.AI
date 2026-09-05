@@ -406,7 +406,10 @@ function PayPalReturnContent() {
         } catch (pipelineError) {
           if (pipelineError instanceof PayPalPipelineTimeoutError) {
             if (createdOrderId) {
-              await markOrderFailed(createdOrderId, "unsuccessful_confirmation");
+              await markOrderFailed(
+                createdOrderId,
+                "unsuccessful_confirmation",
+              );
             }
             await triggerRefund("PayPal checkout pipeline timed out");
           }
@@ -468,7 +471,7 @@ function PayPalReturnContent() {
             <Heading
               as="h1"
               variant="card"
-              className="text-(--color-stamp-chocolate) mb-4"
+              className="font-body text-3xl md:text-4xl font-semibold tracking-tight text-(--color-stamp-chocolate) mb-4"
             >
               {status === "capturing"
                 ? t("capturingTitle")
@@ -476,7 +479,7 @@ function PayPalReturnContent() {
             </Heading>
             <Paragraph
               variant="sm"
-              className="text-(--color-stamp-taupe) max-w-sm mx-auto"
+              className="font-body text-(--color-stamp-taupe) max-w-sm mx-auto"
             >
               {status === "capturing"
                 ? t("capturingMessage")
@@ -582,7 +585,11 @@ function PayPalReturnContent() {
             {errorMessage || t("somethingWentWrongMessage")}
           </Paragraph>
           <div className="flex flex-col gap-4">
-            <Button onClick={handleRetryPayment} variant="primary" className="w-full">
+            <Button
+              onClick={handleRetryPayment}
+              variant="primary"
+              className="w-full"
+            >
               {t("returnToCheckout")}
             </Button>
             <Button asChild variant="secondary" className="w-full">
