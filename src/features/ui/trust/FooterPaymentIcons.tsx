@@ -18,9 +18,6 @@ interface FooterPaymentIconsProps {
 export function FooterPaymentIcons({ className }: FooterPaymentIconsProps) {
   const t = useTranslations("trust.payment");
 
-  // Filter out iDEAL since it's not live yet
-  const activePaymentIcons = PAYMENT_ICONS.filter((icon) => icon.id !== "ideal");
-
   return (
     <div className={cn("flex flex-col gap-3", className)}>
       <div className="flex items-center gap-2">
@@ -30,7 +27,7 @@ export function FooterPaymentIcons({ className }: FooterPaymentIconsProps) {
         </Span>
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        {activePaymentIcons.map((icon) => (
+        {PAYMENT_ICONS.map((icon) => (
           <div
             key={icon.id}
             className="flex h-8 items-center justify-center border border-(--color-stamp-divider) bg-(--color-stamp-white) px-2"

@@ -11,6 +11,7 @@ import { PrintPositionSelector } from "../../components/PrintPositionSelector/Pr
 import { useDesignAdjustment } from "../../../lib/hooks/useDesignAdjustment";
 import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction";
 import type { SizeType } from "../../../lib/types/stampTypes";
+import { formatSizeForDisplay } from "../../../lib/helpers/sizeDisplayMapper";
 
 /**
  * CustomizationControls
@@ -119,7 +120,7 @@ export function CustomizationControls({
               {t("sizeLabel")}
             </Span>
             <Span variant="sm" className="text-(--color-stamp-chocolate)">
-              {sizes[0]}
+              {formatSizeForDisplay(sizes[0])}
             </Span>
           </div>
         ) : null}

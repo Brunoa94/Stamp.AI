@@ -45,6 +45,7 @@ type FabricColorType = {
 };
 
 // Size types - extended to support all Printify sizes including accessories
+// Note: API returns these values; use formatSizeForDisplay() for UI display
 export type SizeType =
   | "XS"
   | "S"
@@ -57,16 +58,23 @@ export type SizeType =
   | "4XL"
   | "5XL"
   | "One Size"
-  // Poster/print sizes
+  // Poster/print sizes (inches - displayed as cm in UI)
   | "8×10"
   | "12×16"
   | "12×18"
   | "16×20"
   | "18×24"
   | "24×36"
-  // Mug sizes
+  // Mug sizes (oz - displayed as cl in UI)
   | "11oz"
-  | "15oz";
+  | "15oz"
+  // Tote bag sizes (inches - displayed as cm in UI)
+  | "13×13"
+  | "15×15"
+  | "16×16"
+  | "18×18"
+  // Generic string for dynamic API sizes
+  | (string & {});
 
 // Presentation-layer catalog product (mapped from CatalogProduct)
 export type CatalogProductMappedType = {

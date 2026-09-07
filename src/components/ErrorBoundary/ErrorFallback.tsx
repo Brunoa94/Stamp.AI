@@ -56,7 +56,7 @@ export function ErrorFallback({ error, errorId, onRetry }: ErrorFallbackProps) {
         {/* Error ID for support reference */}
         {errorId && (
           <div className="bg-(--color-stamp-off-white) px-6 py-3 border border-(--color-stamp-divider) shadow-(--shadow-stamp-card)">
-            <Paragraph variant="micro" className="font-mono text-(--color-stamp-taupe) tracking-wider uppercase">
+            <Paragraph variant="xs" className="font-mono text-(--color-stamp-taupe) tracking-wider uppercase">
               Reference: {errorId}
             </Paragraph>
           </div>

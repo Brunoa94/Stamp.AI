@@ -15,13 +15,13 @@ import type { GeneratedResultType } from "../types/stampFlowTypes";
  * useSkipGeneration
  *
  * Hook for skipping AI generation when user has no coins.
- * Allows two skip scenarios:
- * 1. Use the uploaded image directly
- * 2. Use previously cached images from localStorage (24h TTL)
+ * Allows two skip scenarios with priority:
  *
- * Flow:
- * - If cached images exist: Load them and go to results (step 4)
- * - If only uploaded image: Use it as selected design and go to product selection (step 5)
+ * Priority 1 (highest): Use the uploaded image directly → step 5 (product selection)
+ * Priority 2: Use previously cached images from localStorage (24h TTL) → step 4 (results)
+ *
+ * This priority ensures users can always proceed with their freshly uploaded image,
+ * even if they have previously generated images cached.
  */
 export function useSkipGeneration() {
   const { uploadedImageUrl } = useStampUpload();
@@ -50,7 +50,41 @@ export function useSkipGeneration() {
   const hasCachedImages = cachedImages.length > 0;
 
   const handleSkipGeneration = useCallback(() => {
-    // Priority 1: Use cached images if available
+    // Priority 1 (HIGHEST): Use uploaded image if available
+    // This takes priority because the user just uploaded this image and wants to use it
+    if (uploadedImageUrl) {
+      logStampInfo({
+        scope: "useSkipGeneration",
+        event: "skipping_generation_using_uploaded_image",
+        metadata: { uploadedImageUrl },
+      });
+
+      // Create a placeholder result using the uploaded image
+      const placeholderResult = {
+        imageUrl: uploadedImageUrl,
+        enhancedPrompt: "Original uploaded image (no AI generation)",
+        timestamp: Date.now(),
+      };
+
+      // Set the uploaded image as the selected design
+      addGeneratedResult(placeholderResult);
+      setSelectedImageUrl(uploadedImageUrl);
+      setEnhancedPrompt(placeholderResult.enhancedPrompt);
+
+      // Navigate directly to product selection (step 5)
+      // Steps: 0=hero, 1=upload, 2=synthesis, 3=generation, 4=results, 5=product-selection
+      // Use setCurrentStep directly to bypass accessibility checks (we just set the data)
+      setCurrentStep(5);
+
+      logStampInfo({
+        scope: "useSkipGeneration",
+        event: "skip_generation_completed",
+      });
+
+      return true;
+    }
+
+    // Priority 2: Use cached images if no uploaded image
     if (hasCachedImages) {
       logStampInfo({
         scope: "useSkipGeneration",
@@ -67,7 +101,6 @@ export function useSkipGeneration() {
       setEnhancedPrompt(firstResult.enhancedPrompt);
 
       // Navigate to results section (step 4) to show cached images
-      // Steps: 0=hero, 1=upload, 2=synthesis, 3=generation, 4=results, 5=product-selection
       // Use setCurrentStep directly to bypass accessibility checks (we just set the data)
       setCurrentStep(4);
 
@@ -79,49 +112,17 @@ export function useSkipGeneration() {
       return true;
     }
 
-    // Priority 2: Use uploaded image if no cached images
-    if (!uploadedImageUrl) {
-      logStampWarn({
-        scope: "useSkipGeneration",
-        event: "skip_failed_no_images_available",
-      });
-      // Go back to upload step so user can re-upload their image
-      setCurrentStep(1);
-      return false;
-    }
-
-    logStampInfo({
+    // Priority 3: No images available - go back to upload
+    logStampWarn({
       scope: "useSkipGeneration",
-      event: "skipping_generation_using_uploaded_image",
-      metadata: { uploadedImageUrl },
+      event: "skip_failed_no_images_available",
     });
-
-    // Create a placeholder result using the uploaded image
-    const placeholderResult = {
-      imageUrl: uploadedImageUrl,
-      enhancedPrompt: "Original uploaded image (no AI generation)",
-      timestamp: Date.now(),
-    };
-
-    // Set the uploaded image as the selected design
-    addGeneratedResult(placeholderResult);
-    setSelectedImageUrl(uploadedImageUrl);
-    setEnhancedPrompt(placeholderResult.enhancedPrompt);
-
-    // Navigate directly to product selection (step 5)
-    // Use setCurrentStep directly to bypass accessibility checks (we just set the data)
-    setCurrentStep(5);
-
-    logStampInfo({
-      scope: "useSkipGeneration",
-      event: "skip_generation_completed",
-    });
-
-    return true;
+    setCurrentStep(1);
+    return false;
   }, [
+    uploadedImageUrl,
     hasCachedImages,
     cachedImages,
-    uploadedImageUrl,
     addGeneratedResult,
     setGeneratedResults,
     setSelectedImageUrl,

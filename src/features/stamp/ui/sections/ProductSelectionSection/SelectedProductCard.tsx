@@ -46,10 +46,10 @@ function ExpandableSpecsList({ specs }: { specs: string[] }) {
         )}
       </div>
       {specs.length > 3 && (
-        <button
-          type="button"
+        <Button
+          variant="stamp-expand"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center justify-center gap-1 w-full mt-2 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wider text-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) hover:bg-(--color-stamp-gold)/10 transition-all duration-300 cursor-pointer"
+          className="mt-2"
         >
           {isExpanded ? (
             <>
@@ -62,7 +62,7 @@ function ExpandableSpecsList({ specs }: { specs: string[] }) {
               <ChevronDown className="w-3 h-3" />
             </>
           )}
-        </button>
+        </Button>
       )}
     </div>
   );

@@ -85,8 +85,9 @@ const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
   462: { safeZone: { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.5 },
   // Notebooks - cover print
   475: { safeZone: { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.5 },
-  // Pillows - all-over print
-  229: { safeZone: { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }, minDpi: 150, anchorY: 0.5 },
+  // Pillows - print area is 4650x2325 (front+back HORIZONTAL layout)
+  // Front panel is LEFT HALF (x: 0 to 0.5), placement handled in create-custom-product
+  229: { safeZone: { top: 0.02, bottom: 0.02, left: 0.02, right: 0.02 }, minDpi: 150, anchorY: 0.5, scaleOnly: true },
 };
 
 const DEFAULT_CONFIG: ProductConfig = {

@@ -108,18 +108,11 @@ const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
           {/* CTAs */}
           <div className="space-y-4">
             {!isPostPaymentError && (
-              <Button
-                onClick={onTryAgain}
-                className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-chocolate)/90 flex items-center justify-center gap-2"
-              >
+              <Button onClick={onTryAgain} variant="primary" className="w-full">
                 {t("retryPayment")} <RefreshCw className="w-4 h-4" />
               </Button>
             )}
-            <Button
-              asChild
-              variant="outline"
-              className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase border-(--color-stamp-divider) text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
-            >
+            <Button asChild variant="secondary" className="w-full">
               <Link href="/dashboard">{t("cancelGoToDashboard")}</Link>
             </Button>
 

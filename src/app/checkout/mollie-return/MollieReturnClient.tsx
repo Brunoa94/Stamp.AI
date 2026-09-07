@@ -8,8 +8,6 @@ import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
-import { Heading } from "@/features/ui/heading";
-import { Paragraph } from "@/features/ui/paragraph";
 import PaymentSuccess from "@/features/checkout/ui/PaymentSuccess/PaymentSuccess";
 import PaymentError from "@/features/checkout/ui/components/PaymentError";
 import { OrderService } from "@/services/orderService";
@@ -694,14 +692,14 @@ function MollieReturnContent() {
             </div>
             <Heading
               as="h1"
-              variant="card"
-              className="uppercase text-(--color-stamp-chocolate) mb-4"
+              variant="title"
+              className="font-body text-3xl md:text-4xl font-semibold tracking-tight leading-tight text-(--color-stamp-chocolate) mb-4"
             >
               {t("verifyingTitle")}
             </Heading>
             <Paragraph
-              variant="sm"
-              className="text-(--color-stamp-taupe) max-w-sm mx-auto"
+              variant="lead"
+              className="font-body text-lg tracking-normal leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto"
             >
               {t("verifyingMessage")}
             </Paragraph>
@@ -784,28 +782,29 @@ function MollieReturnContent() {
             </div>
             <Heading
               as="h1"
-              variant="card"
-              className="uppercase text-(--color-stamp-chocolate) mb-4"
+              variant="title"
+              className="font-body text-3xl md:text-4xl font-semibold tracking-tight leading-tight text-(--color-stamp-chocolate) mb-4"
             >
               {t("pendingTitle")}
             </Heading>
             <Paragraph
-              variant="sm"
-              className="text-(--color-stamp-taupe) max-w-sm mx-auto mb-12"
+              variant="lead"
+              className="font-body text-lg tracking-normal leading-relaxed text-(--color-stamp-taupe) max-w-sm mx-auto mb-12"
             >
               {t("pendingMessage")}
             </Paragraph>
             <div className="flex flex-col gap-4">
               <Button
                 onClick={handleViewOrders}
-                className="w-full py-5 h-auto bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-chocolate)/90"
+                variant="primary"
+                className="w-full"
               >
                 {t("viewOrders")}
               </Button>
               <Button
-                variant="outline"
+                variant="secondary"
                 onClick={handleCreateAnother}
-                className="w-full py-5 h-auto border-(--color-stamp-divider) text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
+                className="w-full"
               >
                 {t("goToDashboard")}
               </Button>
@@ -850,15 +849,12 @@ function MollieReturnContent() {
           <div className="flex flex-col gap-4">
             <Button
               onClick={handleRetryPayment}
-              className="w-full py-5 h-auto bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-chocolate)/90"
+              variant="primary"
+              className="w-full"
             >
               {t("returnToCheckout")}
             </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="w-full py-5 h-auto border-(--color-stamp-divider) text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
-            >
+            <Button asChild variant="secondary" className="w-full">
               <Link href="/dashboard">{t("goToDashboard")}</Link>
             </Button>
           </div>

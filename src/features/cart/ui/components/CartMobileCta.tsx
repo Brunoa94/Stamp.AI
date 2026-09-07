@@ -39,7 +39,7 @@ export function CartMobileCta({
         <Button
           onClick={onCheckout}
           variant="primary"
-          className="group w-full font-heading"
+          className="group w-full"
           disabled={!canCheckout}
         >
           <Lock className="h-4 w-4" aria-hidden="true" />

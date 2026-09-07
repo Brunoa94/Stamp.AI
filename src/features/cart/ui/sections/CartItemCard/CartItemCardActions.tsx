@@ -72,13 +72,13 @@ export function CartItemCardActions({
           variant="ghost"
           size="icon"
           aria-label={t("decreaseQuantity")}
-          className="h-8 w-8 rounded-none font-heading text-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) disabled:opacity-30 md:h-10 md:w-10"
+          className="h-8 w-8 rounded-none text-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) disabled:opacity-30 md:h-10 md:w-10"
         >
           <Minus className="h-3 w-3 md:h-4 md:w-4" />
         </Button>
         <Span
           unstyled
-          className="w-10 text-center text-xs font-heading font-bold tabular-nums md:w-12 md:text-sm"
+          className="w-10 text-center text-xs font-button font-bold tabular-nums md:w-12 md:text-sm"
           aria-live="polite"
         >
           {quantity}
@@ -89,7 +89,7 @@ export function CartItemCardActions({
           variant="ghost"
           size="icon"
           aria-label={t("increaseQuantity")}
-          className="h-8 w-8 rounded-none font-heading text-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) disabled:opacity-30 md:h-10 md:w-10"
+          className="h-8 w-8 rounded-none text-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) disabled:opacity-30 md:h-10 md:w-10"
         >
           <Plus className="h-3 w-3 md:h-4 md:w-4" />
         </Button>
@@ -98,13 +98,13 @@ export function CartItemCardActions({
       <Button
         onClick={handleRemove}
         variant="ghost"
-        className="h-auto gap-2 rounded-none p-0 font-heading text-(--color-stamp-error) hover:bg-transparent hover:underline"
+        className="h-auto gap-2 rounded-none p-0 text-(--color-stamp-error) hover:bg-transparent hover:underline"
       >
         <Trash2 className="h-3.5 w-3.5" />
         <Span
           variant="micro"
           unstyled
-          className="text-[10px] font-heading font-bold uppercase tracking-[0.2em]"
+          className="text-[10px] font-button font-bold uppercase tracking-[0.2em]"
         >
           {t("remove")}
         </Span>

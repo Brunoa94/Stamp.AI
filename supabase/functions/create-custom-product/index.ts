@@ -1,26 +1,35 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { ErrorCodes, handleError } from "../_shared/errors.ts"
-import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
-import { calculatePlacement, isScaleOnlyBlueprint, getBlueprintAnchorY } from "../_shared/printPlacement.ts"
-import { resolvePrintAreas } from "../_shared/resolvePrintAreas.ts"
-import { validateColorForBlueprint, filterVariantsByAllowedColors, parseVariantColorSize } from "../_shared/colorValidation.ts"
-import { createClient } from "jsr:@supabase/supabase-js@2"
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { ErrorCodes, handleError } from "../_shared/errors.ts";
+import { validateEnvVars, validateRequest } from "../_shared/validators.ts";
+import {
+  calculatePlacement,
+  getBlueprintAnchorY,
+  isScaleOnlyBlueprint,
+} from "../_shared/printPlacement.ts";
+import { resolvePrintAreas } from "../_shared/resolvePrintAreas.ts";
+import {
+  filterVariantsByAllowedColors,
+  parseVariantColorSize,
+  validateColorForBlueprint,
+} from "../_shared/colorValidation.ts";
+import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-}
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
 
 // Initialize Supabase
-const supabaseUrl = Deno.env.get("SUPABASE_URL")!
-const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-const supabase = createClient(supabaseUrl, supabaseServiceRoleKey)
+const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
 serve(async (req) => {
   // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: corsHeaders })
+  if (req.method === "OPTIONS") {
+    return new Response(null, { status: 204, headers: corsHeaders });
   }
 
   try {
@@ -42,132 +51,174 @@ serve(async (req) => {
       image_height,
       // Order-related fields from client
       user_id,
-      customer_email
-    } = await req.json()
+      customer_email,
+    } = await req.json();
 
-    console.log('=== CREATE CUSTOM PRODUCT ===')
-    console.log('🎨 Selected color:', selected_color)
-    console.log('📏 Selected size:', selected_size)
-    console.log('🖼️ Received image dimensions:', image_width, 'x', image_height)
+    console.log("=== CREATE CUSTOM PRODUCT ===");
+    console.log("🎨 Selected color:", selected_color);
+    console.log("📏 Selected size:", selected_size);
+    console.log(
+      "🖼️ Received image dimensions:",
+      image_width,
+      "x",
+      image_height,
+    );
 
     // Validate environment variables
-    const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken()
-    const PRINTIFY_SHOP_ID = validateEnvVars.printifyShopId()
+    const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken();
+    const PRINTIFY_SHOP_ID = validateEnvVars.printifyShopId();
 
-    const validBlueprintId = validateRequest.blueprintId(blueprint_id)
-    const validPrintProviderId = validateRequest.printProviderId(print_provider_id)
+    const validBlueprintId = validateRequest.blueprintId(blueprint_id);
+    const validPrintProviderId = validateRequest.printProviderId(
+      print_provider_id,
+    );
 
-    const finalBlueprintId = validBlueprintId
-    const finalPrintProviderId = validPrintProviderId
+    const finalBlueprintId = validBlueprintId;
+    const finalPrintProviderId = validPrintProviderId;
 
     // Validate color for this product type (enforce Black/White for apparel)
-    const colorValidation = validateColorForBlueprint(selected_color, finalBlueprintId)
+    const colorValidation = validateColorForBlueprint(
+      selected_color,
+      finalBlueprintId,
+    );
     if (!colorValidation.valid) {
-      console.error(`❌ Color validation failed: ${colorValidation.error}`)
-      throw ErrorCodes.INVALID_REQUEST(colorValidation.error || 'Invalid color')
+      console.error(`❌ Color validation failed: ${colorValidation.error}`);
+      throw ErrorCodes.INVALID_REQUEST(
+        colorValidation.error || "Invalid color",
+      );
     }
-    const validatedColor = colorValidation.normalizedColor
-    console.log(`✅ Color validated: "${selected_color}" -> "${validatedColor}" (category: ${colorValidation.category})`)
+    const validatedColor = colorValidation.normalizedColor;
+    console.log(
+      `✅ Color validated: "${selected_color}" -> "${validatedColor}" (category: ${colorValidation.category})`,
+    );
 
     // Get print provider variants
     const variantsResponse = await fetch(
       `https://api.printify.com/v1/catalog/blueprints/${finalBlueprintId}/print_providers/${finalPrintProviderId}/variants.json`,
       {
-        headers: { 'Authorization': `Bearer ${PRINTIFY_API_TOKEN}` },
-      }
-    )
-    const variantsData = await variantsResponse.json()
+        headers: { "Authorization": `Bearer ${PRINTIFY_API_TOKEN}` },
+      },
+    );
+    const variantsData = await variantsResponse.json();
 
-    const availableVariants = variantsData.variants || []
+    const availableVariants = variantsData.variants || [];
     if (availableVariants.length === 0) {
-      throw ErrorCodes.NO_VARIANTS_AVAILABLE()
+      throw ErrorCodes.NO_VARIANTS_AVAILABLE();
     }
 
     // Get print area dimensions from first variant's placeholders
-    const firstVariantPlaceholders = availableVariants[0]?.placeholders || []
-    const availablePrintAreas = firstVariantPlaceholders.map((p: any) => p.position) || ['front']
-    console.log('📍 Available print areas:', availablePrintAreas.join(', '))
+    const firstVariantPlaceholders = availableVariants[0]?.placeholders || [];
+    const availablePrintAreas = firstVariantPlaceholders.map((p: any) =>
+      p.position
+    ) || ["front"];
+    console.log("📍 Available print areas:", availablePrintAreas.join(", "));
 
     // Find print area dimensions for front position
-    const frontPlaceholder = firstVariantPlaceholders.find((p: any) => p.position === 'front')
-    const printAreaWidth = frontPlaceholder?.width || 3500
-    const printAreaHeight = frontPlaceholder?.height || 4000
-    console.log(`📐 Print area dimensions: ${printAreaWidth}x${printAreaHeight}px`)
+    const frontPlaceholder = firstVariantPlaceholders.find((p: any) =>
+      p.position === "front"
+    );
+    const printAreaWidth = frontPlaceholder?.width || 3500;
+    const printAreaHeight = frontPlaceholder?.height || 4000;
+    console.log(
+      `📐 Print area dimensions: ${printAreaWidth}x${printAreaHeight}px`,
+    );
 
     // Prioritize "front" for primary print area (some products list "neck" first)
-    const primaryPrintArea = availablePrintAreas.includes('front') ? 'front' : availablePrintAreas[0] || 'front'
+    const primaryPrintArea = availablePrintAreas.includes("front")
+      ? "front"
+      : availablePrintAreas[0] || "front";
 
     // Resolve position -> image id map. Supports the position-keyed
     // print_areas object and the legacy single image_id (front only).
     // Positions the product doesn't offer are dropped.
-    console.log('🖼️ Received print_areas:', JSON.stringify(print_areas))
-    console.log('🖼️ Received image_id:', image_id)
+    console.log("🖼️ Received print_areas:", JSON.stringify(print_areas));
+    console.log("🖼️ Received image_id:", image_id);
 
-    const { areas: requestedAreas, remappedFrom, droppedPositions } = resolvePrintAreas(
-      print_areas,
-      image_id,
-      availablePrintAreas,
-    )
+    const { areas: requestedAreas, remappedFrom, droppedPositions } =
+      resolvePrintAreas(
+        print_areas,
+        image_id,
+        availablePrintAreas,
+      );
     if (droppedPositions.length > 0) {
-      console.warn(`⚠️ Positions not offered by blueprint: ${droppedPositions.join(', ')}`)
+      console.warn(
+        `⚠️ Positions not offered by blueprint: ${droppedPositions.join(", ")}`,
+      );
     }
     if (remappedFrom) {
-      console.log(`🔄 Requested "${remappedFrom}" unavailable; printing on all available positions instead`)
+      console.log(
+        `🔄 Requested "${remappedFrom}" unavailable; printing on all available positions instead`,
+      );
     }
 
-    console.log('🎯 Final requestedAreas:', JSON.stringify(requestedAreas))
+    console.log("🎯 Final requestedAreas:", JSON.stringify(requestedAreas));
 
     if (Object.keys(requestedAreas).length === 0) {
-      console.error('❌ IMAGE_REQUIRED: No valid print areas found')
-      throw ErrorCodes.IMAGE_REQUIRED()
+      console.error("❌ IMAGE_REQUIRED: No valid print areas found");
+      throw ErrorCodes.IMAGE_REQUIRED();
     }
 
     // Filter variants by selected color and size if provided
     // IMPORTANT: First filter to only allowed colors (Black/White for apparel)
-    let selectedVariants: number[] = []
+    let selectedVariants: number[] = [];
 
     if (variants && variants.length > 0) {
-      selectedVariants = variants
+      selectedVariants = variants;
     } else {
       // First, filter variants to only allowed colors for this product category
       const allowedColorVariants = filterVariantsByAllowedColors(
         availableVariants,
         finalBlueprintId,
-        validatedColor
-      )
-      console.log(`🎨 Filtered to ${allowedColorVariants.length} variants with allowed colors`)
+        validatedColor,
+      );
+      console.log(
+        `🎨 Filtered to ${allowedColorVariants.length} variants with allowed colors`,
+      );
 
       if (validatedColor || selected_size) {
-        console.log(`🎨 Filtering variants by color: "${validatedColor}", size: "${selected_size}"`)
+        console.log(
+          `🎨 Filtering variants by color: "${validatedColor}", size: "${selected_size}"`,
+        );
 
         const matchingVariants = allowedColorVariants.filter((v: any) => {
-          const { color: variantColor, size: variantSize } = parseVariantColorSize(v)
+          const { color: variantColor, size: variantSize } =
+            parseVariantColorSize(v);
 
           const colorMatches = !validatedColor ||
-            variantColor?.toLowerCase() === validatedColor.toLowerCase()
+            variantColor?.toLowerCase() === validatedColor.toLowerCase();
           const sizeMatches = !selected_size ||
-            variantSize?.toLowerCase() === selected_size.toLowerCase()
+            variantSize?.toLowerCase() === selected_size.toLowerCase();
 
-          return colorMatches && sizeMatches
-        })
+          return colorMatches && sizeMatches;
+        });
 
         if (matchingVariants.length > 0) {
-          selectedVariants = matchingVariants.map((v: any) => v.id)
-          console.log(`✅ Found ${selectedVariants.length} matching variant(s): ${selectedVariants.join(', ')}`)
+          selectedVariants = matchingVariants.map((v: any) => v.id);
+          console.log(
+            `✅ Found ${selectedVariants.length} matching variant(s): ${
+              selectedVariants.join(", ")
+            }`,
+          );
         } else {
           // Fall back to first allowed color variant if no exact match
-          console.warn(`⚠️ No variants match color: "${validatedColor}", size: "${selected_size}". Using allowed color variants.`)
-          selectedVariants = allowedColorVariants.slice(0, 100).map((v: any) => v.id)
+          console.warn(
+            `⚠️ No variants match color: "${validatedColor}", size: "${selected_size}". Using allowed color variants.`,
+          );
+          selectedVariants = allowedColorVariants.slice(0, 100).map((v: any) =>
+            v.id
+          );
         }
       } else {
         // No color/size specified - use all allowed color variants
-        selectedVariants = allowedColorVariants.slice(0, 100).map((v: any) => v.id)
+        selectedVariants = allowedColorVariants.slice(0, 100).map((v: any) =>
+          v.id
+        );
       }
 
       // Final safety check - if somehow no variants selected, fail explicitly
       if (selectedVariants.length === 0) {
-        console.error('❌ No valid variants found after color filtering')
-        throw ErrorCodes.NO_VARIANTS_AVAILABLE()
+        console.error("❌ No valid variants found after color filtering");
+        throw ErrorCodes.NO_VARIANTS_AVAILABLE();
       }
     }
 
@@ -175,78 +226,103 @@ serve(async (req) => {
     // For each requested position: use the user's placement when provided,
     // otherwise auto-calculate from the image and print-area dimensions.
     const isValidPlacement = (p: any): boolean =>
-      p && typeof p === 'object' &&
-      typeof p.x === 'number' && p.x >= 0 && p.x <= 1 &&
-      typeof p.y === 'number' && p.y >= 0 && p.y <= 1 &&
-      typeof p.scale === 'number' && p.scale > 0 && p.scale <= 2 &&
-      typeof p.angle === 'number'
+      p && typeof p === "object" &&
+      typeof p.x === "number" && p.x >= 0 && p.x <= 1 &&
+      typeof p.y === "number" && p.y >= 0 && p.y <= 1 &&
+      typeof p.scale === "number" && p.scale > 0 && p.scale <= 2 &&
+      typeof p.angle === "number";
 
-    const artworkWidth = image_width && image_width > 0 ? image_width : 3000
-    const artworkHeight = image_height && image_height > 0 ? image_height : 3000
+    const artworkWidth = image_width && image_width > 0 ? image_width : 3000;
+    const artworkHeight = image_height && image_height > 0
+      ? image_height
+      : 3000;
     if (!(image_width && image_height)) {
-      console.log('⚠️ No image dimensions provided, assuming 3000x3000 for auto-placement')
+      console.log(
+        "⚠️ No image dimensions provided, assuming 3000x3000 for auto-placement",
+      );
     }
 
     const resolvePlacement = (position: string) => {
-      const userPlacement = userPlacements?.[position]
+      const userPlacement = userPlacements?.[position];
 
-      // For scaleOnly blueprints (like AOP Tote Bag), force centered placement
+      // For scaleOnly blueprints, force centered placement
       // Only accept the scale value from user, ignore x/y/angle
       if (isScaleOnlyBlueprint(finalBlueprintId)) {
-        const userScale = isValidPlacement(userPlacement) ? userPlacement.scale : 1
+        const placeholder = firstVariantPlaceholders.find((p: any) =>
+          p.position === position
+        );
+        const paWidth = placeholder?.width || printAreaWidth;
+        const paHeight = placeholder?.height || printAreaHeight;
+        const printAreaAspect = paWidth / paHeight;
+        const artworkAspect = artworkWidth / artworkHeight;
 
-        // For AOP Tote Bag (blueprint 1389), the print area is 2175x4350 (front+back)
-        // The front panel is the TOP HALF of the print area (0 to 0.5 in y coordinates)
-        // We need to center the image within the front panel, accounting for image height
-        const placeholder = firstVariantPlaceholders.find((p: any) => p.position === position)
-        const paWidth = placeholder?.width || printAreaWidth
-        const paHeight = placeholder?.height || printAreaHeight
+        // Pillow (blueprint 229): print area is 4650x2325 (HORIZONTAL layout: left=front, right=back)
+        // Front panel is LEFT HALF (x: 0 to 0.5), center at x=0.25
+        // ALWAYS use fixed scale 0.35 - ignore user placement (pillow needs exact positioning)
+        if (finalBlueprintId === 229) {
+          // Fixed optimal scale of 0.35 (empirically tested)
+          // ALWAYS use this scale - ignore user's scale to ensure proper fit
+          const scale = 0.35;
 
-        // Calculate image height in normalized coordinates
-        // scale = image width / print area width
-        // imageHeightNorm = (imageHeight / imageWidth) * scale * (paWidth / paHeight)
-        const imageAspect = artworkWidth / artworkHeight
-        const printAreaAspect = paWidth / paHeight
-        const imageHeightNorm = (userScale / imageAspect) * printAreaAspect
+          // Center in left half (front panel): x = 0.25
+          const x = 0.25;
+          const y = 0.5;
 
-        // For front+back tote (1389), front panel is y: 0 to 0.5
-        // Center of front panel is 0.25, but we need to account for image height
-        // y position is the CENTER of the image, so:
-        // y = frontPanelCenter = 0.25 (center of top half)
-        // But adjust slightly down to account for handle area at top
-        const frontPanelCenter = 0.27  // Slightly below center to avoid handles
-        const y = frontPanelCenter
+          console.log(
+            `🔒 Pillow (229): FORCED x=${x}, y=${y}, scale=${scale.toFixed(3)}, printArea=${paWidth}x${paHeight}`,
+          );
+          return { x, y, scale, angle: 0 };
+        }
 
-        console.log(`🔒 ScaleOnly blueprint ${finalBlueprintId}: x=0.5, y=${y.toFixed(3)}, scale=${userScale}, imageHeightNorm=${imageHeightNorm.toFixed(3)}`)
-        return { x: 0.5, y, scale: userScale, angle: 0 }
+        // AOP Tote Bag (blueprint 1389): print area is 2175x4350 (VERTICAL layout: top=front, bottom=back)
+        // Front panel is TOP HALF (y: 0 to 0.5), center at y=0.25
+        const userScale = isValidPlacement(userPlacement)
+          ? userPlacement.scale
+          : 1;
+        const imageHeightNorm = (userScale / artworkAspect) * printAreaAspect;
+        const frontPanelCenter = 0.27; // Slightly below center to avoid handles
+        const y = frontPanelCenter;
+
+        console.log(
+          `🔒 ScaleOnly blueprint ${finalBlueprintId}: x=0.5, y=${
+            y.toFixed(3)
+          }, scale=${userScale}, imageHeightNorm=${imageHeightNorm.toFixed(3)}`,
+        );
+        return { x: 0.5, y, scale: userScale, angle: 0 };
       }
 
       if (isValidPlacement(userPlacement)) {
-        console.log(`🎯 Using user placement for "${position}"`)
-        return userPlacement
+        console.log(`🎯 Using user placement for "${position}"`);
+        return userPlacement;
       }
-      const placeholder = firstVariantPlaceholders.find((p: any) => p.position === position)
+      const placeholder = firstVariantPlaceholders.find((p: any) =>
+        p.position === position
+      );
       return calculatePlacement(
         artworkWidth,
         artworkHeight,
         placeholder?.width || printAreaWidth,
         placeholder?.height || printAreaHeight,
         finalBlueprintId,
-        position
-      )
-    }
+        position,
+      );
+    };
 
     // Track the primary placement for the debug field in the response
-    let primaryPlacement = { x: 0.5, y: 0.5, scale: 1, angle: 0 }
+    let primaryPlacement = { x: 0.5, y: 0.5, scale: 1, angle: 0 };
 
     // Build placeholders, one per requested position
-    const placeholders = []
+    const placeholders = [];
     for (const [position, imageId] of Object.entries(requestedAreas)) {
-      const placement = resolvePlacement(position)
+      const placement = resolvePlacement(position);
       if (position === primaryPrintArea || placeholders.length === 0) {
-        primaryPlacement = placement
+        primaryPlacement = placement;
       }
-      console.log(`🎯 Placement for "${position}": x=${placement.x.toFixed(3)}, y=${placement.y.toFixed(3)}, scale=${placement.scale.toFixed(3)}, angle=${placement.angle}`)
+      console.log(
+        `🎯 Placement for "${position}": x=${placement.x.toFixed(3)}, y=${
+          placement.y.toFixed(3)
+        }, scale=${placement.scale.toFixed(3)}, angle=${placement.angle}`,
+      );
       placeholders.push({
         position,
         images: [{
@@ -256,16 +332,20 @@ serve(async (req) => {
           scale: placement.scale,
           angle: placement.angle,
         }],
-      })
+      });
     }
 
     // Include scale in title for debugging placement issues
-    const scaleInfo = `[scale:${primaryPlacement.scale.toFixed(2)}, y:${primaryPlacement.y.toFixed(2)}]`
-    const productTitle = title ? `${title} ${scaleInfo}` : `Custom Design ${Date.now()} ${scaleInfo}`
+    const scaleInfo = `[scale:${primaryPlacement.scale.toFixed(2)}, y:${
+      primaryPlacement.y.toFixed(2)
+    }]`;
+    const productTitle = title
+      ? `${title} ${scaleInfo}`
+      : `Custom Design ${Date.now()} ${scaleInfo}`;
 
     const productPayload = {
       title: productTitle,
-      description: description || 'Custom designed product',
+      description: description || "Custom designed product",
       blueprint_id: finalBlueprintId,
       print_provider_id: finalPrintProviderId,
       variants: selectedVariants.map((variantId: number) => ({
@@ -277,47 +357,47 @@ serve(async (req) => {
         {
           variant_ids: selectedVariants,
           placeholders,
-        }
+        },
       ],
-    }
+    };
 
     // Create Printify product
     const createResponse = await fetch(
       `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/products.json`,
       {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${PRINTIFY_API_TOKEN}`,
-          'Content-Type': 'application/json',
+          "Authorization": `Bearer ${PRINTIFY_API_TOKEN}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(productPayload),
-      }
-    )
+      },
+    );
 
-    const productData = await createResponse.json()
+    const productData = await createResponse.json();
 
     if (!createResponse.ok) {
-      console.error('Failed to create product:', productData)
-      throw ErrorCodes.PRINTIFY_API_ERROR(JSON.stringify(productData))
+      console.error("Failed to create product:", productData);
+      throw ErrorCodes.PRINTIFY_API_ERROR(JSON.stringify(productData));
     }
 
-    console.log('✅ Product created:', productData.id)
+    console.log("✅ Product created:", productData.id);
 
     // Transform image URLs to use the front camera view — but only when the
     // design actually prints on the front. For positions like sock legs
     // (where the design may sit on the back of the leg) forcing the front
     // camera would make every mockup look blank, so keep Printify's mix of
     // camera angles instead.
-    const printsOnFront = Object.keys(requestedAreas).includes('front')
+    const printsOnFront = Object.keys(requestedAreas).includes("front");
     const transformedImages = productData.images?.map((img: any) => {
-      let src = img.src
+      let src = img.src;
       if (printsOnFront) {
-        if (src && src.includes('camera_label=')) {
-          src = src.replace(/camera_label=[^&]+/, 'camera_label=front')
-        } else if (src && src.includes('?')) {
-          src = src + '&camera_label=front'
+        if (src && src.includes("camera_label=")) {
+          src = src.replace(/camera_label=[^&]+/, "camera_label=front");
+        } else if (src && src.includes("?")) {
+          src = src + "&camera_label=front";
         } else if (src) {
-          src = src + '?camera_label=front'
+          src = src + "?camera_label=front";
         }
       }
       return {
@@ -325,32 +405,37 @@ serve(async (req) => {
         variant_ids: img.variant_ids,
         position: img.position,
         is_default: img.is_default,
-      }
-    }) || []
+      };
+    }) || [];
 
     // Find the exact variant matching the user's selected color and size
     // This ensures the cart gets the correct variant, not just the first one
-    let selectedVariantId: number | null = null
+    let selectedVariantId: number | null = null;
     if (productData.variants && productData.variants.length > 0) {
       // Try to find exact match for color AND size
       const exactMatch = productData.variants.find((v: any) => {
-        const { color: variantColor, size: variantSize } = parseVariantColorSize(v)
+        const { color: variantColor, size: variantSize } =
+          parseVariantColorSize(v);
 
         const colorMatches = !validatedColor ||
-          variantColor?.toLowerCase() === validatedColor.toLowerCase()
+          variantColor?.toLowerCase() === validatedColor.toLowerCase();
         const sizeMatches = !selected_size ||
-          variantSize?.toLowerCase() === selected_size.toLowerCase()
+          variantSize?.toLowerCase() === selected_size.toLowerCase();
 
-        return colorMatches && sizeMatches
-      })
+        return colorMatches && sizeMatches;
+      });
 
       if (exactMatch) {
-        selectedVariantId = exactMatch.id
-        console.log(`✅ Found exact variant match: ${selectedVariantId} (${exactMatch.title})`)
+        selectedVariantId = exactMatch.id;
+        console.log(
+          `✅ Found exact variant match: ${selectedVariantId} (${exactMatch.title})`,
+        );
       } else {
         // Fallback to first variant (shouldn't happen if validation worked)
-        selectedVariantId = productData.variants[0].id
-        console.warn(`⚠️ No exact variant match found, using first variant: ${selectedVariantId}`)
+        selectedVariantId = productData.variants[0].id;
+        console.warn(
+          `⚠️ No exact variant match found, using first variant: ${selectedVariantId}`,
+        );
       }
     }
 
@@ -377,10 +462,10 @@ serve(async (req) => {
         selected_color: validatedColor,
         selected_size: selected_size,
       }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
   } catch (error) {
-    console.error('Error creating custom product:', error)
-    return handleError(error, corsHeaders)
+    console.error("Error creating custom product:", error);
+    return handleError(error, corsHeaders);
   }
-})
+});

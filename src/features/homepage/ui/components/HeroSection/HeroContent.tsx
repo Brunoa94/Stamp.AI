@@ -15,7 +15,6 @@ import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { HeroAnimatedTitle } from "./HeroAnimatedTitle";
-import { PencilUnderline } from "./PencilUnderline";
 import { HeroSecurityBadge } from "@/features/ui/trust/HeroSecurityBadge";
 import { OrdersFulfilledCounter } from "@/features/ui/trust/OrdersFulfilledCounter";
 import { TrustpilotWidget } from "@/features/ui/trust/TrustpilotWidget";
@@ -45,7 +44,7 @@ export function HeroContent() {
               accent: (chunks) => (
                 <Span
                   variant="serif"
-                  className="relative inline-block text-5xl text-(--color-stamp-taupe) sm:text-6xl md:text-7xl lg:text-8xl -ml-8 pt-2"
+                  className="relative inline-block text-5xl text-(--color-stamp-taupe) sm:text-6xl md:text-7xl lg:text-8xl -ml-4 lg:-ml-8 pt-2"
                 >
                   {chunks}
                 </Span>

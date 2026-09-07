@@ -43,7 +43,7 @@ export function StoryBlockContent({
       </Heading>
 
       <Paragraph
-        variant="default"
+        variant="body"
         className={cn(
           "mb-8 max-w-xl text-base md:text-lg lg:text-xl leading-relaxed",
           inverted ? "text-(--color-stamp-taupe)" : "text-(--color-stamp-taupe)"

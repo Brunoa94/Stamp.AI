@@ -45,22 +45,17 @@ export function ProcessMobileCard({
       }}
     >
       {/* Mobile image */}
-      <div className="mb-3 relative aspect-video w-full max-w-sm sm:max-w-md rounded-2xl overflow-hidden shadow-lg">
+      <div className="mb-3 flex items-center justify-center w-full max-w-sm sm:max-w-md">
         {imageData && (
           <Image
             src={imageData.src}
             alt={imageData.alt}
-            fill
-            sizes="(max-width: 640px) 384px, 448px"
-            className="object-cover"
+            width={500}
+            height={500}
+            className="w-auto h-auto max-w-full max-h-80 rounded-lg"
             priority={isPriority}
           />
         )}
-        <div className="absolute bottom-3 left-3 w-8 h-8 flex items-center justify-center bg-(--color-stamp-gold) rounded-full shadow-md">
-          <Span variant="micro" className="text-(--color-stamp-cream)">
-            {step.number}
-          </Span>
-        </div>
       </div>
 
       {/* Mobile text content */}

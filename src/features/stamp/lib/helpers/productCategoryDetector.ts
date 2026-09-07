@@ -114,6 +114,7 @@ const CATEGORY_KEYWORDS: Record<ProductCategory, string[]> = {
   pillow: [
     "throw pillow",
     "faux linen pillow",
+    "pillowcase",
     "pillow",
     "cushion",
   ],
@@ -230,8 +231,13 @@ const NO_COLOR_SELECTION_CATEGORIES: Set<ProductCategory> = new Set([
 /**
  * Check if a product should show color selection based on its title
  * Returns false for products that only come in one color (mugs, socks, etc.)
+ * Returns false if title is empty/unknown (safer default - wait for title to load)
  */
 export function shouldShowColorSelection(displayTitle: string): boolean {
+  // If no title provided, default to hiding colors (safer - wait for data to load)
+  if (!displayTitle || displayTitle.trim() === "") {
+    return false;
+  }
   const category = detectProductCategory(displayTitle);
   return !NO_COLOR_SELECTION_CATEGORIES.has(category);
 }

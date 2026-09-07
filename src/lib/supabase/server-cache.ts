@@ -14,11 +14,17 @@ import type { CatalogProductWithSeo } from "@/types/catalog";
  * Safe to use inside unstable_cache
  */
 function createServiceClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  if (!supabaseUrl || !supabaseServiceKey) {
-    throw new Error("Missing Supabase environment variables");
+  if (!supabaseUrl) {
+    console.error("[server-cache] NEXT_PUBLIC_SUPABASE_URL is not set");
+    throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL environment variable");
+  }
+
+  if (!supabaseServiceKey) {
+    console.error("[server-cache] SUPABASE_SERVICE_ROLE_KEY is not set");
+    throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY environment variable");
   }
 
   return createClient(supabaseUrl, supabaseServiceKey, {
@@ -34,20 +40,26 @@ function createServiceClient() {
  */
 const getCachedProducts = unstable_cache(
   async (): Promise<CatalogProductWithSeo[]> => {
-    const supabase = createServiceClient();
+    try {
+      const supabase = createServiceClient();
 
-    const { data, error } = await supabase
-      .from("catalog_products")
-      .select("*, product_seo(*)")
-      .eq("is_active", true)
-      .order("display_title");
+      const { data, error } = await supabase
+        .from("catalog_products")
+        .select("*, product_seo(*)")
+        .eq("is_active", true)
+        .order("display_title");
 
-    if (error) {
-      console.error("Error fetching cached products:", error);
+      if (error) {
+        console.error("[server-cache] Error fetching catalog_products:", error.message, error.details);
+        return [];
+      }
+
+      console.log(`[server-cache] Fetched ${data?.length ?? 0} catalog products`);
+      return data || [];
+    } catch (err) {
+      console.error("[server-cache] Exception in getCachedProducts:", err);
       return [];
     }
-
-    return data || [];
   },
   ["catalog-products"],
   {

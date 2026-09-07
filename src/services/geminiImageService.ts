@@ -1,5 +1,4 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import sharp from "sharp";
 import fs from "fs";
 import path from "path";
 
@@ -8,10 +7,9 @@ interface GeminiImageGenerationResult {
   enhancedPrompt: string;
 }
 
-const MAX_IMAGE_DIMENSION = 2048;
 const MAX_IMAGE_SIZE_BYTES = 4 * 1024 * 1024; // 4MB
 
-// Set to true to use mock image instead of calling Gemini API
+// Use mock image for local development (uses public/zoe.png)
 const USE_MOCK_IMAGE = true;
 
 /**
@@ -30,69 +28,68 @@ export class GeminiImageService {
 
   /**
    * Preprocess image to ensure compatibility with Gemini API
+   * Uses sharp if available, otherwise returns base64 directly
    */
   private static async preprocessImage(
     imageBuffer: ArrayBuffer,
   ): Promise<{ base64: string; mimeType: string }> {
-    let sharpInstance = sharp(Buffer.from(imageBuffer));
-    const metadata = await sharpInstance.metadata();
-    const width = metadata.width || 0;
-    const height = metadata.height || 0;
+    try {
+      // Try to use sharp for image processing
+      const sharp = (await import("sharp")).default;
 
-    if (width > MAX_IMAGE_DIMENSION || height > MAX_IMAGE_DIMENSION) {
-      sharpInstance = sharpInstance.resize(
-        MAX_IMAGE_DIMENSION,
-        MAX_IMAGE_DIMENSION,
-        {
-          fit: "inside",
-          withoutEnlargement: true,
-        },
-      );
+      let sharpInstance = sharp(Buffer.from(imageBuffer));
+      const metadata = await sharpInstance.metadata();
+      const width = metadata.width || 0;
+      const height = metadata.height || 0;
+      const MAX_IMAGE_DIMENSION = 2048;
+
+      if (width > MAX_IMAGE_DIMENSION || height > MAX_IMAGE_DIMENSION) {
+        sharpInstance = sharpInstance.resize(
+          MAX_IMAGE_DIMENSION,
+          MAX_IMAGE_DIMENSION,
+          {
+            fit: "inside",
+            withoutEnlargement: true,
+          },
+        );
+      }
+
+      let quality = 90;
+      let outputBuffer = await sharpInstance.jpeg({ quality }).toBuffer();
+
+      while (outputBuffer.byteLength > MAX_IMAGE_SIZE_BYTES && quality > 50) {
+        quality -= 10;
+        outputBuffer = await sharp(Buffer.from(imageBuffer))
+          .resize(MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION, {
+            fit: "inside",
+            withoutEnlargement: true,
+          })
+          .jpeg({ quality })
+          .toBuffer();
+      }
+
+      return {
+        base64: outputBuffer.toString("base64"),
+        mimeType: "image/jpeg",
+      };
+    } catch (error) {
+      // Fallback: convert ArrayBuffer to base64 without processing
+      console.warn("[GeminiImageService] Sharp not available, using raw image:", error);
+      const buffer = Buffer.from(imageBuffer);
+
+      // Detect mime type from magic bytes
+      let mimeType = "image/jpeg";
+      if (buffer[0] === 0x89 && buffer[1] === 0x50) {
+        mimeType = "image/png";
+      } else if (buffer[0] === 0x47 && buffer[1] === 0x49) {
+        mimeType = "image/gif";
+      }
+
+      return {
+        base64: buffer.toString("base64"),
+        mimeType,
+      };
     }
-
-    let quality = 90;
-    let outputBuffer = await sharpInstance.jpeg({ quality }).toBuffer();
-
-    while (outputBuffer.byteLength > MAX_IMAGE_SIZE_BYTES && quality > 50) {
-      quality -= 10;
-      outputBuffer = await sharp(Buffer.from(imageBuffer))
-        .resize(MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION, {
-          fit: "inside",
-          withoutEnlargement: true,
-        })
-        .jpeg({ quality })
-        .toBuffer();
-    }
-
-    return {
-      base64: outputBuffer.toString("base64"),
-      mimeType: "image/jpeg",
-    };
-  }
-
-  /**
-   * Remove background from generated image
-   */
-  private static async removeBackground(imageDataUrl: string): Promise<string> {
-    const match = imageDataUrl.match(/^data:([^;]+);base64,(.+)$/);
-    if (!match) {
-      throw new Error("Invalid data URL format");
-    }
-
-    const { removeBackground } = await import("@imgly/background-removal-node");
-
-    const sourceBuffer = Buffer.from(match[2], "base64");
-    const sourceBlob = new Blob([sourceBuffer], {
-      type: match[1] || "image/png",
-    });
-
-    const processedBlob = await removeBackground(sourceBlob, {
-      model: "small",
-      output: { format: "image/png", quality: 1 },
-    });
-
-    const processedBuffer = Buffer.from(await processedBlob.arrayBuffer());
-    return `data:image/png;base64,${processedBuffer.toString("base64")}`;
   }
 
   /**
@@ -119,7 +116,7 @@ export class GeminiImageService {
    */
   private static getBackgroundInstruction(removeBackground: boolean): string {
     if (removeBackground) {
-      return "- Isolated subject on a solid white or transparent background, no shadows or environmental elements";
+      return "- CRITICAL: Generate the subject completely isolated on a fully TRANSPARENT background (alpha channel = 0). NO shadows, NO gradients, NO environmental elements, NO floor reflections. The subject must have clean, crisp edges with transparency preserved. Output as PNG with alpha transparency.";
     }
     return "- Include the background as part of the design, keep environmental elements and context from the original image";
   }
@@ -141,14 +138,11 @@ export class GeminiImageService {
     const mockImageBase64 = mockImageBuffer.toString("base64");
     const imageUrl = `data:image/png;base64,${mockImageBase64}`;
 
-    // Always run background removal to ensure transparency
-    const transparentImageUrl = await this.removeBackground(imageUrl);
-
     const mockEnhancedPrompt =
       `[MOCK] Enhanced prompt based on: "${prompt}" with removeBackground=${removeBackground}`;
 
     return {
-      imageUrl: transparentImageUrl,
+      imageUrl,
       enhancedPrompt: mockEnhancedPrompt,
     };
   }
@@ -218,7 +212,7 @@ Output ONLY the prompt text, no explanations.`,
     });
 
     const backgroundSuffix = removeBackground
-      ? "Transparent background, isolated subject, print-ready artwork."
+      ? "CRITICAL: Render the subject with a fully TRANSPARENT background (PNG with alpha channel). No shadows, no gradients, no floor reflections, no background elements whatsoever. The subject must be completely isolated with sharp, clean edges and full transparency around it. Output format must be PNG with alpha transparency preserved."
       : "Include background and environmental context, print-ready artwork.";
 
     const imageResult = await imageModel.generateContent({
@@ -253,9 +247,6 @@ Output ONLY the prompt text, no explanations.`,
 
     const imageUrl = `data:${generatedMimeType};base64,${generatedImageBase64}`;
 
-    // Step 3: Always remove background to avoid checkerboard artifacts
-    const transparentImageUrl = await this.removeBackground(imageUrl);
-
-    return { imageUrl: transparentImageUrl, enhancedPrompt };
+    return { imageUrl, enhancedPrompt };
   }
 }

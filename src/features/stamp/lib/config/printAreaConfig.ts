@@ -19,9 +19,12 @@ export interface AreaRect {
  * The AOP Tote Bag has a very tall print area (2175x4350) that wraps front+back,
  * but our preview only shows the front portion. This multiplier compensates for
  * the difference between preview aspect ratio and actual print area ratio.
+ *
+ * Note: Tote bags now use a smaller default scale (0.5) in useDesignAdjustment,
+ * so we keep the multiplier at 1.0 to show the actual intended size.
  */
 export const SCALE_MULTIPLIERS: Partial<Record<CategoryType, number>> = {
-  tote: 1.25, // Tote preview appears smaller than actual print, scale up by 25%
+  // No multipliers needed - default scale handles sizing appropriately
 };
 
 /**

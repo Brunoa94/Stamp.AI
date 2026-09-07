@@ -40,6 +40,8 @@ vi.mock("next-intl", () => ({
       noCoinsDescription: "Coins reset daily at midnight",
       skipGeneration: "Use My Image",
       usePreviousCreations: "Use Previous Creations",
+      proceedWithUploadedImage: "Proceed without editing my photo",
+      proceedWithCachedImages: "Proceed with previous generated photos",
     };
     return translations[key] || key;
   },
@@ -100,36 +102,170 @@ describe("CoinsOverlay", () => {
       expect(screen.getByTestId("coins-overlay-no-coins")).toBeInTheDocument();
     });
 
-    it("should render skip button when onSkip is provided", () => {
-      const mockOnSkip = vi.fn();
-      render(<CoinsOverlay variant="no-coins" onSkip={mockOnSkip} />);
-
-      expect(screen.getByRole("button", { name: /use my image/i })).toBeInTheDocument();
-    });
-
-    it("should label the skip button for cached images", () => {
+    it("should render skip button when onSkip is provided with hasUploadedImage", () => {
       const mockOnSkip = vi.fn();
       render(
-        <CoinsOverlay variant="no-coins" onSkip={mockOnSkip} hasCachedImages />,
+        <CoinsOverlay
+          variant="no-coins"
+          onSkip={mockOnSkip}
+          hasUploadedImage={true}
+        />,
       );
 
       expect(
-        screen.getByRole("button", { name: /use previous creations/i }),
+        screen.getByRole("button", { name: /proceed without editing my photo/i }),
+      ).toBeInTheDocument();
+    });
+
+    it("should render skip button when onSkip is provided with hasCachedImages", () => {
+      const mockOnSkip = vi.fn();
+      render(
+        <CoinsOverlay
+          variant="no-coins"
+          onSkip={mockOnSkip}
+          hasCachedImages={true}
+        />,
+      );
+
+      expect(
+        screen.getByRole("button", { name: /proceed with previous generated photos/i }),
       ).toBeInTheDocument();
     });
 
     it("should not render skip button when onSkip is not provided", () => {
       render(<CoinsOverlay variant="no-coins" />);
 
-      expect(screen.queryByRole("button", { name: /use my image/i })).not.toBeInTheDocument();
+      expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    });
+
+    it("should not render skip button when neither uploaded nor cached images exist", () => {
+      const mockOnSkip = vi.fn();
+      render(
+        <CoinsOverlay
+          variant="no-coins"
+          onSkip={mockOnSkip}
+          hasUploadedImage={false}
+          hasCachedImages={false}
+        />,
+      );
+
+      expect(screen.queryByRole("button")).not.toBeInTheDocument();
     });
 
     it("should call onSkip when skip button is clicked", () => {
       const mockOnSkip = vi.fn();
-      render(<CoinsOverlay variant="no-coins" onSkip={mockOnSkip} />);
+      render(
+        <CoinsOverlay
+          variant="no-coins"
+          onSkip={mockOnSkip}
+          hasUploadedImage={true}
+        />,
+      );
 
-      const skipButton = screen.getByRole("button", { name: /use my image/i });
+      const skipButton = screen.getByRole("button", {
+        name: /proceed without editing my photo/i,
+      });
       fireEvent.click(skipButton);
+
+      expect(mockOnSkip).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("NoCoinsOverlay three-state button (priority logic)", () => {
+    it("should show 'Proceed without editing my photo' when hasUploadedImage=true (priority 1)", () => {
+      const mockOnSkip = vi.fn();
+      render(
+        <CoinsOverlay
+          variant="no-coins"
+          onSkip={mockOnSkip}
+          hasUploadedImage={true}
+          hasCachedImages={false}
+        />,
+      );
+
+      expect(
+        screen.getByRole("button", { name: /proceed without editing my photo/i }),
+      ).toBeInTheDocument();
+    });
+
+    it("should show uploaded image button even when both uploaded and cached exist (priority test)", () => {
+      const mockOnSkip = vi.fn();
+      render(
+        <CoinsOverlay
+          variant="no-coins"
+          onSkip={mockOnSkip}
+          hasUploadedImage={true}
+          hasCachedImages={true}
+        />,
+      );
+
+      expect(
+        screen.getByRole("button", { name: /proceed without editing my photo/i }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /proceed with previous generated/i }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("should show 'Proceed with previous generated photos' when hasCachedImages=true and no upload", () => {
+      const mockOnSkip = vi.fn();
+      render(
+        <CoinsOverlay
+          variant="no-coins"
+          onSkip={mockOnSkip}
+          hasUploadedImage={false}
+          hasCachedImages={true}
+        />,
+      );
+
+      expect(
+        screen.getByRole("button", { name: /proceed with previous generated photos/i }),
+      ).toBeInTheDocument();
+    });
+
+    it("should not render skip button when neither hasUploadedImage nor hasCachedImages", () => {
+      const mockOnSkip = vi.fn();
+      render(
+        <CoinsOverlay
+          variant="no-coins"
+          onSkip={mockOnSkip}
+          hasUploadedImage={false}
+          hasCachedImages={false}
+        />,
+      );
+
+      expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    });
+
+    it("should call onSkip when uploaded image button is clicked", () => {
+      const mockOnSkip = vi.fn();
+      render(
+        <CoinsOverlay
+          variant="no-coins"
+          onSkip={mockOnSkip}
+          hasUploadedImage={true}
+        />,
+      );
+
+      const button = screen.getByRole("button", { name: /proceed without editing my photo/i });
+      fireEvent.click(button);
+
+      expect(mockOnSkip).toHaveBeenCalledTimes(1);
+    });
+
+    it("should call onSkip when cached images button is clicked", () => {
+      const mockOnSkip = vi.fn();
+      render(
+        <CoinsOverlay
+          variant="no-coins"
+          onSkip={mockOnSkip}
+          hasUploadedImage={false}
+          hasCachedImages={true}
+        />,
+      );
+
+      const button = screen.getByRole("button", { name: /proceed with previous generated photos/i });
+      fireEvent.click(button);
 
       expect(mockOnSkip).toHaveBeenCalledTimes(1);
     });

@@ -22,7 +22,8 @@ const COLOR_LINE = rgb(0.91, 0.89, 0.85); // divider
 const COLOR_CREAM = rgb(0.969, 0.953, 0.925); // header band
 const COLOR_PAPER = rgb(1, 1, 1);
 
-const LOGO_WIDTH = 132;
+// Logo sized to fit the new wider brand logo (810x286 aspect ratio)
+const LOGO_WIDTH = 160;
 const LOGO_HEIGHT = LOGO_WIDTH * (INVOICE_LOGO_HEIGHT / INVOICE_LOGO_WIDTH);
 
 interface PdfContextI {
