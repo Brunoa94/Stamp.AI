@@ -19,6 +19,7 @@ import { createClient } from "@/lib/supabase/client";
 import { CreateOrderT, OrderT, UpdateOrderT, OrderWithItemsT, OrderStatusHistoryT } from "../types/order";
 import { OrderWithItemsSchema, OrderSchema } from "@/schemas/order";
 import { OrderServiceMapper } from "@/mappers/services/orderServiceMapper";
+import { CartServiceMapper } from "@/mappers/services/cartServiceMapper";
 import { z } from "zod";
 import { CartItem, CartT, CartWithItems } from "@/types/cart";
 import { CartService } from "./cartService";
@@ -423,11 +424,14 @@ export class OrderService {
         }
       }
 
+      // Only the items selected for checkout belong to the order (and its invoice)
+      const checkoutCart = CartServiceMapper.mapCartToCheckoutCart(cart);
+
       // Use mapper to generate unique order number
       const orderNumber = OrderServiceMapper.generateOrderNumber();
 
       // Use mapper to calculate order totals
-      const totals = OrderServiceMapper.calculateOrderTotals(cart.cart_items);
+      const totals = OrderServiceMapper.calculateOrderTotals(checkoutCart.cart_items);
 
       // Derive order status: use provided or default logic
       const finalOrderStatus = orderStatus ?? (paymentStatus === "paid" ? "confirmed" : "pending");
@@ -452,8 +456,8 @@ export class OrderService {
       console.log("✅ Order created from cart:", newOrder.id);
 
       // Create order items from cart items using mapper
-      if (cart.cart_items && cart.cart_items.length > 0) {
-        const orderItems = cart.cart_items.map((cartItem) =>
+      if (checkoutCart.cart_items.length > 0) {
+        const orderItems = checkoutCart.cart_items.map((cartItem) =>
           OrderServiceMapper.mapCartItemToOrderItem(cartItem, newOrder.id)
         );
 
