@@ -119,12 +119,15 @@ export function useDesignAdjustment() {
     if (!productConfig || !blueprintId) return;
     if (placementSeededBlueprintId === blueprintId) return;
     const isSocks = productConfig.category === "socks";
+    const isTote = productConfig.category === "tote";
     // Socks: both legs enabled, design visually centered on each leg (the
     // blueprint only prints the front panel; each leg has its own calibrated
     // x — see SOCK_LEG_PLACEMENTS).
+    // Tote bags: smaller default scale (0.5) to prevent oversized prints
+    const defaultScale = isTote ? 0.5 : 1;
     const expectedDefault: PlacementParamsType = isSocks
       ? sockLegPlacement(productConfig.positions[0] ?? "left_leg")
-      : { x: 0.5, y: productConfig.anchorY ?? 0.5, scale: 1, angle: 0 };
+      : { x: 0.5, y: productConfig.anchorY ?? 0.5, scale: defaultScale, angle: 0 };
     initializePrintPositions(productConfig.positions, expectedDefault, {
       blueprintId,
       ...(isSocks
