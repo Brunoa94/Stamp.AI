@@ -90,7 +90,9 @@ export class PromoCodeService {
     const discountRaw =
       promo.type === "percentage"
         ? subtotal * (promo.value / 100)
-        : promo.value;
+        : promo.type === "fixed_total"
+          ? subtotal - promo.value
+          : promo.value;
 
     const discountValue = Math.max(0, Math.min(discountRaw, subtotal));
 
