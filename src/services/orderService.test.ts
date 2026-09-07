@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { OrderService } from "./orderService";
 import { createClient } from "@/lib/supabase/client";
+import type { CartWithItems } from "@/types/cart";
+import type { UserI } from "../../supabase/types";
 
 // Mock Supabase client
 vi.mock("@/lib/supabase/client", () => ({
@@ -486,6 +488,98 @@ describe("OrderService Edge Cases", () => {
 
       // This is potentially a bug - should we allow empty orders?
       expect(orderId).toBe("order_123");
+    });
+  });
+
+  /**
+   * ========================================================================
+   * REGRESSION: Partial cart checkout
+   * ========================================================================
+   * When the user only selects part of the cart, the order (and the invoice
+   * generated from its order_items) must contain the selected items only.
+   */
+
+  describe("createOrderFromCart with partially selected cart", () => {
+    const user = {
+      id: "user_123",
+      email: "test@example.com",
+    } as unknown as UserI;
+    const cart = {
+      id: "cart_123",
+      user_id: "user_123",
+      created_at: new Date().toISOString(),
+      cart_items: [
+        {
+          id: "item_1",
+          product_id: "prod_1",
+          quantity: 2,
+          unit_price: 2500,
+          is_selected: true,
+        },
+        {
+          id: "item_2",
+          product_id: "prod_2",
+          quantity: 1,
+          unit_price: 5000,
+          is_selected: false, // NOT selected for checkout
+        },
+        {
+          id: "item_3",
+          product_id: "prod_3",
+          quantity: 3,
+          unit_price: 1500,
+          is_selected: true,
+        },
+      ],
+    } as unknown as CartWithItems;
+
+    beforeEach(() => {
+      mockSupabase.single.mockResolvedValueOnce({
+        data: { id: "order_123", order_number: "ORD-123" },
+        error: null,
+      });
+
+      let selectCallCount = 0;
+      mockSupabase.select.mockImplementation(() => {
+        selectCallCount++;
+        if (selectCallCount === 1) {
+          return mockSupabase;
+        }
+        return Promise.resolve({ data: [], error: null });
+      });
+    });
+
+    it("creates order items only for the selected cart items", async () => {
+      await OrderService.createOrderFromCart({
+        user,
+        cart,
+        paymentStatus: "paid",
+      });
+
+      // insert #1 = order, insert #2 = order items
+      expect(mockSupabase.insert).toHaveBeenCalledTimes(2);
+      const orderItems: Array<{ product_id: string }> =
+        mockSupabase.insert.mock.calls[1][0];
+
+      expect(orderItems).toHaveLength(2);
+      expect(orderItems.map((item) => item.product_id)).toEqual([
+        "prod_1",
+        "prod_3",
+      ]);
+    });
+
+    it("computes order totals from the selected cart items only", async () => {
+      await OrderService.createOrderFromCart({
+        user,
+        cart,
+        paymentStatus: "paid",
+      });
+
+      const orderPayload = mockSupabase.insert.mock.calls[0][0];
+
+      // item_1 (2 × 2500) + item_3 (3 × 1500) = 9500; item_2 excluded
+      expect(orderPayload.subtotal).toBe(9500);
+      expect(orderPayload.total_amount).toBe(9500);
     });
   });
 });
