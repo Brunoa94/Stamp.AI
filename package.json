@@ -26,6 +26,7 @@
     "supabase:migrate": "supabase db push"
   },
   "dependencies": {
+    "@google/genai": "^2.18.0",
     "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^5.2.2",
     "@imgly/background-removal-node": "^1.4.5",

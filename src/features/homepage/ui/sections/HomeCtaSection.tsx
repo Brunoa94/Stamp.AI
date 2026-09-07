@@ -19,10 +19,18 @@ export function HomeCtaSection() {
 
   return (
     <section className="relative overflow-hidden bg-(--color-stamp-chocolate) px-6 py-32 lg:px-12 xl:px-24">
+      {/* Decorative corner frames */}
+      <div className="absolute top-8 left-6 lg:left-12 xl:left-24 w-20 h-20 border-t-2 border-l-2 border-(--color-stamp-gold)/30 rounded-tl-lg" aria-hidden="true" />
+      <div className="absolute top-8 right-6 lg:right-12 xl:right-24 w-20 h-20 border-t-2 border-r-2 border-(--color-stamp-gold)/30 rounded-tr-lg" aria-hidden="true" />
+      <div className="absolute bottom-8 left-6 lg:left-12 xl:left-24 w-20 h-20 border-b-2 border-l-2 border-(--color-stamp-gold)/30 rounded-bl-lg" aria-hidden="true" />
+      <div className="absolute bottom-8 right-6 lg:right-12 xl:right-24 w-20 h-20 border-b-2 border-r-2 border-(--color-stamp-gold)/30 rounded-br-lg" aria-hidden="true" />
+
+      {/* Fingerprint decorative icon */}
       <Fingerprint
         aria-hidden
         className="pointer-events-none absolute -right-20 -top-20 h-96 w-96 text-(--color-stamp-gold)/10"
       />
+
       <SectionReveal
         className="relative mx-auto max-w-screen-2xl"
         parallax

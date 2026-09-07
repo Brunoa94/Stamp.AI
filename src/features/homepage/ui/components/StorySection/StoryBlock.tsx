@@ -15,9 +15,11 @@ import { StoryBlockContent } from "./StoryBlockContent";
 
 interface StoryBlockProps {
   block: HomeStoryBlockType;
+  /** Inverted colors for dark backgrounds */
+  inverted?: boolean;
 }
 
-export function StoryBlock({ block }: StoryBlockProps) {
+export function StoryBlock({ block, inverted = false }: StoryBlockProps) {
   const t = useTranslations("home.story");
 
   return (
@@ -40,7 +42,7 @@ export function StoryBlock({ block }: StoryBlockProps) {
           eyebrow={t(`blocks.${block.id}.eyebrow`)}
           title={t.rich(`blocks.${block.id}.title`, {
             accent: (chunks) => (
-              <Span variant="serif" className="text-(--color-stamp-taupe)">
+              <Span variant="serif" className={inverted ? "text-(--color-stamp-gold)" : "text-(--color-stamp-taupe)"}>
                 {chunks}
               </Span>
             ),
@@ -48,6 +50,7 @@ export function StoryBlock({ block }: StoryBlockProps) {
           body={t(`blocks.${block.id}.body`)}
           cta={t(`blocks.${block.id}.cta`)}
           href={block.href}
+          inverted={inverted}
         />
       </article>
     </SectionReveal>

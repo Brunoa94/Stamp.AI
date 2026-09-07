@@ -11,8 +11,6 @@
 import { useEffect, useState } from "react";
 import { SectionReveal } from "../components/SectionReveal";
 import { HeroContent } from "../components/HeroSection/HeroContent";
-import { HeroBubblingProducts } from "../components/HeroSection/HeroBubblingProducts";
-import { HeroScrollCue } from "../components/HeroSection/HeroScrollCue";
 import { HeroTransformShowcase } from "../components/HeroSection/HeroTransformShowcase";
 import { HeroPromoBanner } from "../components/HeroSection/HeroPromoBanner";
 import { IMAGE_PAIRS } from "../../lib/constants/transformShowcase";
