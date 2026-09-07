@@ -3,7 +3,7 @@
 import { memo } from "react";
 import { Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Paragraph } from "@/features/ui/paragraph";
+import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { useStampGeneration } from "../../../lib/hooks/useStampSelectors";
 
@@ -34,13 +34,13 @@ function GenerationSectionComponent() {
       </div>
 
       {/* Status Text */}
-      <Paragraph
+      <Heading
         as="h3"
         variant="card"
         className="text-white mb-4 font-bold uppercase tracking-[0.3em]"
       >
         {t("status")}
-      </Paragraph>
+      </Heading>
 
       <Span variant="micro" className="text-white/40 mb-12">
         {t("estimate")}
