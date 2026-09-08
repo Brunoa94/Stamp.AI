@@ -28,7 +28,7 @@ import {
   useUpdatePaymentStatus,
 } from "@/queries/orderQueries";
 import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
-import { useClearCart } from "@/queries/cartQueries";
+import { useRemoveCartItems } from "@/queries/cartQueries";
 import { useUser } from "@/queries/authQueries";
 import { CheckoutStorageService } from "@/features/checkout/lib/services/checkoutStorageService";
 import { UserI } from "@/supabase/types";
@@ -93,7 +93,7 @@ function PayPalReturnContent() {
   const createPrintifyOrder = useCreatePrintifyOrder();
   const updateOrderStatus = useUpdateOrderStatus();
   const updatePaymentStatus = useUpdatePaymentStatus();
-  const clearCart = useClearCart();
+  const removeCartItems = useRemoveCartItems();
   const { data: user, isLoading: isUserLoading } = useUser();
 
   useEffect(() => {
@@ -208,7 +208,7 @@ function PayPalReturnContent() {
 
         // Record payment for recovery
         try {
-          const cart = await CartService.getCart(cartId);
+          const cart = await CartService.getCheckoutCart(cartId);
           await PaymentRecoveryService.recordPaymentForRecovery({
             paymentProvider: "paypal",
             paymentIntentId: token,
@@ -289,6 +289,7 @@ function PayPalReturnContent() {
         };
 
         let createdOrderId: string | null = null;
+        let orderedCartItemIds: string[] = [];
 
         // Run fulfillment pipeline with timeout
         const runFulfillmentPipeline = async () => {
@@ -296,7 +297,8 @@ function PayPalReturnContent() {
           // cartId is already validated above and available from checkoutData
 
           try {
-            const cart = await CartService.getCart(cartId);
+            const cart = await CartService.getCheckoutCart(cartId);
+            orderedCartItemIds = cart.cart_items.map((item) => item.id);
             createdOrderId =
               (await createOrderFromCart.mutateAsync({
                 user: user as UserI,
@@ -390,9 +392,9 @@ function PayPalReturnContent() {
             );
           }
 
-          // Stage 4: Clear cart
+          // Stage 4: Remove the ordered items from the cart (unselected items stay)
           try {
-            await clearCart.mutateAsync();
+            await removeCartItems.mutateAsync(orderedCartItemIds);
           } catch {
             // Non-blocking
           }

@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
+import { selectCheckoutCartItems } from "../_shared/cartSelection.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -86,8 +87,10 @@ serve(async (req) => {
     // Create order from cart snapshot
     console.log("📝 Creating order from recovered payment...");
 
-    // Calculate totals from cart snapshot
-    const cartItems = cart_snapshot.cart_items || cart_snapshot.items || [];
+    // Calculate totals from cart snapshot — only the items selected for checkout
+    const cartItems = selectCheckoutCartItems(
+      cart_snapshot.cart_items || cart_snapshot.items || []
+    );
     const subtotal = cartItems.reduce((sum: number, item: any) => {
       return sum + (item.price * item.quantity);
     }, 0);

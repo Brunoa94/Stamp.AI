@@ -20,6 +20,32 @@ export class CartServiceMapper {
   }
 
   /**
+   * Keep only the items selected for checkout (`cart_items.is_selected`).
+   * Items without the flag (legacy rows) count as selected.
+   */
+  static filterSelectedItems(items: CartItem[]): CartItem[] {
+    return items.filter((item) => item.is_selected !== false);
+  }
+
+  /**
+   * Build the cart that is actually being checked out: the same cart with
+   * only its selected items. Falls back to every item when nothing is
+   * selected so legacy carts keep working.
+   *
+   * Single source of truth for the checkout page, order creation,
+   * payment-recovery snapshots and post-payment cart cleanup.
+   */
+  static mapCartToCheckoutCart(cart: CartWithItems): CartWithItems {
+    const items = cart.cart_items ?? [];
+    const selectedItems = this.filterSelectedItems(items);
+
+    return {
+      ...cart,
+      cart_items: selectedItems.length > 0 ? selectedItems : items,
+    };
+  }
+
+  /**
    * Map cart items to cart summary
    */
   static mapItemsToCartSummary(items: CartItem[]): CartSummary {
