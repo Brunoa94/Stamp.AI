@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowLeft } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { buyCreditsTheme } from "@/theme/components";
 import { CreditSummary } from "../shared/CreditSummary";
@@ -21,6 +22,8 @@ export function CreditPaymentStep({
   onSuccess,
   onError,
 }: CreditPaymentStepProps) {
+  const t = useTranslations("buyCredits.payment");
+
   return (
     <div className={buyCreditsTheme.selectionStep.container}>
       <Button
@@ -30,7 +33,7 @@ export function CreditPaymentStep({
         className={buyCreditsTheme.paymentStep.backButton}
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to selection
+        {t("backButton")}
       </Button>
 
       <CreditSummary credits={credits} price={price} />

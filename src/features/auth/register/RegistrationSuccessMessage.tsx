@@ -1,26 +1,37 @@
 import { Button } from "@/features/ui/button";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
 import {
   DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/features/ui/dialog";
+import { useTranslations } from "next-intl";
 
 export function RegistrationSuccessMessage() {
+  const t = useTranslations("auth.register.success");
+
   return (
-    <DialogContent className="max-w-96">
-      <div className="flex flex-col gap-4 text-center">
+    <DialogContent className="max-w-md border-2 border-(--color-stamp-divider) bg-(--color-stamp-off-white) p-10">
+      <div className="flex flex-col gap-6 text-center">
         <DialogHeader>
-          <DialogTitle>Registration Successful!</DialogTitle>
+          <DialogTitle className="sr-only">{t("srTitle")}</DialogTitle>
+          <Heading
+            as="h2"
+            variant="card"
+            className="text-3xl tracking-tight text-(--color-stamp-chocolate)"
+          >
+            {t("title")}
+          </Heading>
         </DialogHeader>
-        <div className="space-y-4">
-          <p className="text-sm text-gray-600">
-            Your account has been created successfully. Please check your email
-            to verify your account before logging in.
-          </p>
+        <div className="space-y-6">
+          <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
+            {t("description")}
+          </Paragraph>
           <DialogClose asChild>
-            <Button variant="default" className="w-full">
-              Got it
+            <Button variant="primary" className="w-full">
+              {t("gotIt")}
             </Button>
           </DialogClose>
         </div>

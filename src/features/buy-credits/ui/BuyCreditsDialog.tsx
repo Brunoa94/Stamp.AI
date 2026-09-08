@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { Modal } from "@/features/ui/modal/Modal";
 import { useBuyCredits } from "../lib/useBuyCredits";
 import { CreditSelectionStep } from "./selection/CreditSelectionStep";
@@ -19,6 +20,7 @@ export function BuyCreditsDialog({
   onSuccess,
 }: BuyCreditsDialogProps) {
   const { handleError } = useErrorHandler();
+  const t = useTranslations("buyCredits.dialog");
 
   const {
     selectedPackage,
@@ -53,14 +55,14 @@ export function BuyCreditsDialog({
     [handleError],
   );
 
-  const title = step === "select" ? "Buy Credits" : "Complete Payment";
+  const title = step === "select" ? t("selectTitle") : t("paymentTitle");
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
       title={title}
-      description="Purchase credits to create more AI-powered designs"
+      description={t("description")}
       className="sm:max-w-xl max-h-[90vh] overflow-y-auto"
     >
       <div>

@@ -90,7 +90,7 @@ export interface GetProviderCatalogResponseI {
 }
 
 // Blueprint category types for curated lists
-export type ProductCategory = 'tshirt' | 'hoodie' | 'totebag' | 'mug';
+export type ProductCategory = 'tshirt' | 'hoodie' | 'totebag' | 'poster' | 'mug';
 
 export interface CuratedBlueprintI {
   id: number;

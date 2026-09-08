@@ -7,10 +7,16 @@ export async function GET(request: NextRequest) {
   const rawNext = requestUrl.searchParams.get('next') ?? '/stamp'
   const type = requestUrl.searchParams.get('type')
 
-  // Only allow same-site relative redirects. Reject absolute URLs and
-  // protocol-relative (`//host`) values to prevent an open redirect.
-  const next =
-    rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/stamp'
+  // Compare parsed origins: URL parsing normalizes backslashes and whitespace.
+  let next = new URL('/stamp', requestUrl)
+  try {
+    const candidate = new URL(rawNext, requestUrl)
+    if (rawNext.startsWith('/') && candidate.origin === requestUrl.origin) {
+      next = candidate
+    }
+  } catch {
+    // Invalid destinations use the default landing page.
+  }
 
   if (!code) {
     return NextResponse.redirect(new URL('/auth/auth-code-error', request.url))

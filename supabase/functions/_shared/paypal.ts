@@ -51,7 +51,8 @@ export async function getPayPalAccessToken(): Promise<string> {
 export async function paypalRequest<T = unknown>(
   endpoint: string,
   method: "GET" | "POST" | "PATCH" | "DELETE",
-  body?: Record<string, unknown>
+  body?: Record<string, unknown>,
+  requestId?: string,
 ): Promise<T> {
   const accessToken = await getPayPalAccessToken();
   const apiBase = getPayPalApiBase();
@@ -63,7 +64,7 @@ export async function paypalRequest<T = unknown>(
 
   // Add PayPal-Request-Id for idempotency on POST requests
   if (method === "POST" && body) {
-    headers["PayPal-Request-Id"] = crypto.randomUUID();
+    headers["PayPal-Request-Id"] = requestId || crypto.randomUUID();
   }
 
   const response = await fetch(`${apiBase}${endpoint}`, {
@@ -108,6 +109,7 @@ export interface CreatePayPalOrderParams {
 export interface PayPalOrderResponse {
   id: string;
   status: string;
+  purchase_units?: PayPalCaptureResponse["purchase_units"];
   links: Array<{
     href: string;
     rel: string;

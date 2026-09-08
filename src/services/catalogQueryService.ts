@@ -1,70 +1,69 @@
 /**
- * Catalog Query Service
- * Fast queries for product catalog browsing with immediate price lookups
+ * Catalog Query Service (Final Simplified Version)
+ * Queries for product catalog using blueprint_id as primary key
  */
 
 import { createClient } from "@/lib/supabase/client";
+import { ErrorClient } from "./errorClient";
 import type {
   CatalogProduct,
-  ProviderWithPricing,
-  VariantPrice,
-  CheapestProvider,
+  CatalogProductWithSeo,
+  ProductVariant,
 } from "@/types/catalog";
+
+// Re-export for existing consumers of this module's types
+export type { CatalogProduct, CatalogProductWithSeo, ProductVariant };
+
+export interface VariantPrice {
+  printifyVariantId: number;
+  color: string | null;
+  size: string | null;
+  priceCents: number;
+}
 
 export class CatalogQueryService {
   /**
-   * Get all products in catalog
+   * Get all active products
    */
-  static async getProducts(category?: string): Promise<CatalogProduct[]> {
+  static async getProducts(): Promise<CatalogProduct[]> {
     const supabase = createClient();
 
-    let query = supabase
+    const { data, error } = await supabase
       .from("catalog_products")
       .select("*")
       .eq("is_active", true)
-      .order("name");
-
-    if (category) {
-      query = query.eq("category_id", category);
-    }
-
-    const { data, error } = await query;
+      .order("display_title");
 
     if (error) {
-      console.error("Error fetching catalog products:", error);
-      throw error;
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Products" });
     }
 
     return data || [];
   }
 
   /**
-   * Get a single product by ID
+   * Get all active products with SEO data
    */
-  static async getProduct(productId: string): Promise<CatalogProduct | null> {
+  static async getProductsWithSeo(): Promise<CatalogProductWithSeo[]> {
     const supabase = createClient();
 
     const { data, error } = await supabase
       .from("catalog_products")
-      .select("*")
-      .eq("id", productId)
+      .select("*, product_seo(*)")
       .eq("is_active", true)
-      .single();
+      .order("display_title");
 
     if (error) {
-      console.error("Error fetching product:", error);
-      return null;
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Products With SEO" });
     }
 
-    return data;
+    return data || [];
   }
 
   /**
-   * Get a product by blueprint ID
+   * Get a single product by blueprint_id
    */
-  static async getProductByBlueprint(
-    blueprintId: number
-  ): Promise<CatalogProduct | null> {
+  static async getProduct(blueprintId: number): Promise<CatalogProduct | null> {
     const supabase = createClient();
 
     const { data, error } = await supabase
@@ -75,125 +74,98 @@ export class CatalogQueryService {
       .single();
 
     if (error) {
-      console.error("Error fetching product by blueprint:", error);
-      return null;
+      // PGRST116 = "not found" for .single() - return null instead of throwing
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product" });
     }
 
     return data;
   }
 
   /**
-   * Get providers for a product in a specific country
-   * Returns: Array of providers with pricing, sorted by total cost (cheapest first)
-   * Automatically falls back to nearby countries if no providers available in requested country
+   * Get a single active product with its SEO data (product_seo relation)
    */
-  static async getProvidersForProduct(
-    productId: string,
-    countryCode: string
-  ): Promise<ProviderWithPricing[]> {
+  static async getProductWithSeo(
+    blueprintId: number
+  ): Promise<CatalogProductWithSeo | null> {
     const supabase = createClient();
 
-    // Use RPC function with fallback logic (max shipping €6 / ~$6.50)
-    const { data, error } = await supabase.rpc("get_providers_for_product_with_fallback", {
-      p_product_id: productId,
-      p_country_code: countryCode,
-      p_max_shipping_cents: 650, // €6 / ~$6.50 USD
-    });
+    const { data, error } = await supabase
+      .from("catalog_products")
+      .select("*, product_seo(*)")
+      .eq("blueprint_id", blueprintId)
+      .eq("is_active", true)
+      .single();
 
     if (error) {
-      console.error("Error fetching providers:", error);
-      throw error;
+      // PGRST116 = "not found" for .single() - return null instead of throwing
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product With SEO" });
     }
 
-    return (
-      data?.map((item: any) => ({
-        id: item.provider_id,
-        name: item.provider_name,
-        description: null, // RPC doesn't return description
-        basePriceCents: item.base_price_cents,
-        currencyCode: item.currency_code,
-        shippingCostCents: item.shipping_cost_cents,
-        productionTimeDays: item.production_time_days,
-        totalCostCents: item.total_cost_cents,
-      })) || []
-    );
+    return data;
   }
 
   /**
-   * Get variant pricing for specific configuration
-   * Returns immediate price without API call
+   * Get variant price for specific color+size
    */
   static async getVariantPrice(
-    productId: string,
+    blueprintId: number,
     color: string,
-    size: string,
-    providerId: number,
-    countryCode: string
+    size: string
   ): Promise<VariantPrice | null> {
     const supabase = createClient();
 
     const { data, error } = await supabase
       .from("product_variants")
-      .select(
-        `
-        id,
-        color,
-        size,
-        title,
-        variant_pricing!inner (
-          price_cents,
-          cost_cents,
-          currency_code,
-          is_available
-        )
-      `
-      )
-      .eq("product_id", productId)
+      .select("printify_variant_id, color, size, price_cents")
+      .eq("blueprint_id", blueprintId)
       .eq("color", color)
       .eq("size", size)
-      .eq("variant_pricing.print_provider_id", providerId)
-      .eq("variant_pricing.country_code", countryCode)
-      .eq("variant_pricing.is_available", true)
+      .eq("is_available", true)
       .single();
 
     if (error) {
-      console.error("Error fetching variant price:", error);
-      return null;
+      // PGRST116 = "not found" for .single() - return null instead of throwing
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Variant Price" });
     }
 
-    if (!data || !data.variant_pricing || data.variant_pricing.length === 0) {
+    if (!data) {
       return null;
     }
 
     return {
-      variantId: data.id,
+      printifyVariantId: data.printify_variant_id,
       color: data.color,
       size: data.size,
-      title: data.title,
-      priceCents: data.variant_pricing[0].price_cents,
-      costCents: data.variant_pricing[0].cost_cents,
-      currencyCode: data.variant_pricing[0].currency_code,
+      priceCents: data.price_cents,
     };
   }
 
   /**
    * Get all available colors for a product
    */
-  static async getProductColors(productId: string): Promise<string[]> {
+  static async getProductColors(blueprintId: number): Promise<string[]> {
     const supabase = createClient();
 
     const { data, error } = await supabase
       .from("product_variants")
       .select("color")
-      .eq("product_id", productId)
+      .eq("blueprint_id", blueprintId)
+      .eq("is_available", true)
       .not("color", "is", null);
 
     if (error) {
-      console.error("Error fetching product colors:", error);
-      return [];
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product Colors" });
     }
 
-    // Get unique colors
     const uniqueColors = [...new Set(data?.map((v) => v.color!).filter(Boolean))];
     return uniqueColors;
   }
@@ -202,7 +174,7 @@ export class CatalogQueryService {
    * Get all available sizes for a product + color
    */
   static async getProductSizes(
-    productId: string,
+    blueprintId: number,
     color: string
   ): Promise<string[]> {
     const supabase = createClient();
@@ -210,89 +182,55 @@ export class CatalogQueryService {
     const { data, error } = await supabase
       .from("product_variants")
       .select("size")
-      .eq("product_id", productId)
+      .eq("blueprint_id", blueprintId)
       .eq("color", color)
+      .eq("is_available", true)
       .not("size", "is", null);
 
     if (error) {
-      console.error("Error fetching product sizes:", error);
-      return [];
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product Sizes" });
     }
 
-    return data?.map((v) => v.size!).filter(Boolean) || [];
+    // Sort sizes in standard order
+    const sizeOrder: Record<string, number> = {
+      XS: 1, S: 2, M: 3, L: 4, XL: 5, "2XL": 6, "3XL": 7, "4XL": 8, "5XL": 9,
+    };
+
+    const sizes = data?.map((v) => v.size!).filter(Boolean) || [];
+    return sizes.sort((a, b) => (sizeOrder[a] || 99) - (sizeOrder[b] || 99));
   }
 
   /**
    * Get all variants for a product
    */
-  static async getProductVariants(productId: string) {
+  static async getProductVariants(blueprintId: number): Promise<ProductVariant[]> {
     const supabase = createClient();
 
     const { data, error } = await supabase
       .from("product_variants")
       .select("*")
-      .eq("product_id", productId)
+      .eq("blueprint_id", blueprintId)
+      .eq("is_available", true)
       .order("color")
       .order("size");
 
     if (error) {
-      console.error("Error fetching product variants:", error);
-      return [];
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product Variants" });
     }
 
     return data || [];
   }
 
   /**
-   * Get cheapest provider for a specific product variant
+   * Check if a product has any available variants
    */
-  static async getCheapestProvider(
-    productId: string,
-    color: string,
-    size: string,
-    countryCode: string
-  ): Promise<CheapestProvider | null> {
-    const supabase = createClient();
-
-    // Use RPC function for complex query
-    const { data, error } = await supabase.rpc("get_cheapest_provider", {
-      p_product_id: productId,
-      p_color: color,
-      p_size: size,
-      p_country_code: countryCode,
-    });
-
-    if (error) {
-      console.error("Error fetching cheapest provider:", error);
-      return null;
-    }
-
-    if (!data || data.length === 0) {
-      return null;
-    }
-
-    return {
-      providerName: data[0].provider_name,
-      priceCents: data[0].price_cents,
-      shippingCostCents: data[0].shipping_cost_cents,
-      totalCents: data[0].total_cents,
-    };
-  }
-
-  /**
-   * Check if a product has variants available in a country
-   */
-  static async isProductAvailableInCountry(
-    productId: string,
-    countryCode: string
-  ): Promise<boolean> {
+  static async isProductAvailable(blueprintId: number): Promise<boolean> {
     const supabase = createClient();
 
     const { data, error } = await supabase
-      .from("product_provider_availability")
-      .select("id")
-      .eq("product_id", productId)
-      .eq("country_code", countryCode)
+      .from("product_variants")
+      .select("printify_variant_id")
+      .eq("blueprint_id", blueprintId)
       .eq("is_available", true)
       .limit(1)
       .single();
@@ -305,54 +243,91 @@ export class CatalogQueryService {
   }
 
   /**
-   * Get variant by ID with pricing for specific provider/country
+   * Check if a specific size is available
    */
-  static async getVariantById(
-    variantId: string,
-    providerId: number,
-    countryCode: string
-  ): Promise<VariantPrice | null> {
+  static async hasSizeAvailable(blueprintId: number, size: string): Promise<boolean> {
     const supabase = createClient();
 
     const { data, error } = await supabase
       .from("product_variants")
-      .select(
-        `
-        id,
-        color,
-        size,
-        title,
-        variant_pricing!inner (
-          price_cents,
-          cost_cents,
-          currency_code,
-          is_available
-        )
-      `
-      )
-      .eq("id", variantId)
-      .eq("variant_pricing.print_provider_id", providerId)
-      .eq("variant_pricing.country_code", countryCode)
-      .eq("variant_pricing.is_available", true)
+      .select("printify_variant_id")
+      .eq("blueprint_id", blueprintId)
+      .eq("size", size)
+      .eq("is_available", true)
+      .gt("price_cents", 0)
+      .limit(1)
       .single();
 
     if (error) {
-      console.error("Error fetching variant by ID:", error);
-      return null;
+      return false;
     }
 
-    if (!data || !data.variant_pricing || data.variant_pricing.length === 0) {
-      return null;
+    return !!data;
+  }
+
+  /**
+   * Get the Product of the Month (if any is set), including SEO data
+   */
+  static async getProductOfMonth(): Promise<CatalogProductWithSeo | null> {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("catalog_products")
+      .select("*, product_seo(*)")
+      .eq("is_active", true)
+      .eq("is_product_of_month", true)
+      .single();
+
+    if (error) {
+      // PGRST116 = "not found" for .single() - return null instead of throwing
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product of Month" });
     }
 
-    return {
-      variantId: data.id,
-      color: data.color,
-      size: data.size,
-      title: data.title,
-      priceCents: data.variant_pricing[0].price_cents,
-      costCents: data.variant_pricing[0].cost_cents,
-      currencyCode: data.variant_pricing[0].currency_code,
-    };
+    return data;
+  }
+
+  /**
+   * Get shipping cost for a product
+   */
+  static async getProductShipping(blueprintId: number): Promise<number> {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("catalog_products")
+      .select("shipping_cents")
+      .eq("blueprint_id", blueprintId)
+      .single();
+
+    if (error || !data) {
+      return 0;
+    }
+
+    return data.shipping_cents || 0;
+  }
+
+  /**
+   * Get the display price for a product (selling_price if set, otherwise min_price + shipping)
+   */
+  static async getDisplayPrice(blueprintId: number): Promise<number> {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("catalog_products")
+      .select("selling_price_cents, min_price_cents, shipping_cents")
+      .eq("blueprint_id", blueprintId)
+      .single();
+
+    if (error || !data) {
+      return 0;
+    }
+
+    if (data.selling_price_cents) {
+      return data.selling_price_cents;
+    }
+
+    return (data.min_price_cents || 0) + (data.shipping_cents || 0);
   }
 }

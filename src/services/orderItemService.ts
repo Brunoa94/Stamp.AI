@@ -13,59 +13,56 @@ export class OrderItemService {
    * Get all order items for a specific order
    */
   static async getOrderItems(orderId: string): Promise<OrderItemT[]> {
+    const supabase = this.getSupabase();
+    const { data, error } = await supabase
+      .from('order_items')
+      .select('*')
+      .eq('order_id', orderId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      throw ErrorClient.handleError({ error, service: "OrderItems", action: "Get Order Items" });
+    }
+
+    if (!data) {
+      return [];
+    }
+
     try {
-      const supabase = this.getSupabase();
-      const { data, error } = await supabase
-        .from('order_items')
-        .select('*')
-        .eq('order_id', orderId)
-        .order('created_at', { ascending: false });
-
-
-      if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
-      }
-
-      if (!data) {
-        throw new Error('No data returned from query');
-      }
-
-      // Validate response
-      const validatedData = z.array(OrderItemSchema).parse(data);
-
-      return validatedData as OrderItemT[];
-    } catch (error) {
-      throw ErrorClient.handleError({error, service: "Order Items", action: "Get Order Items"})
+      return z.array(OrderItemSchema).parse(data) as OrderItemT[];
+    } catch (validationError) {
+      throw ErrorClient.handleError({ error: validationError, service: "OrderItems", action: "Get Order Items" });
     }
   }
 
   /**
    * Get a single order item by ID
    */
-  static async getOrderItem(orderItemId: string): Promise<OrderItemT> {
+  static async getOrderItem(orderItemId: string): Promise<OrderItemT | null> {
+    const supabase = this.getSupabase();
+
+    const { data, error } = await supabase
+      .from('order_items')
+      .select('*')
+      .eq('id', orderItemId)
+      .single();
+
+    if (error) {
+      // PGRST116 = "not found" for .single()
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw ErrorClient.handleError({ error, service: "OrderItems", action: "Get Order Item" });
+    }
+
+    if (!data) {
+      return null;
+    }
+
     try {
-      const supabase = this.getSupabase();
-
-      const { data, error } = await supabase
-        .from('order_items')
-        .select('*')
-        .eq('id', orderItemId)
-        .single();
-
-      if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
-      }
-
-      if (!data) {
-        throw new Error(`Order item not found with id: ${orderItemId}`);
-      }
-
-      // Validate response
-      const validatedData = OrderItemSchema.parse(data);
-
-      return validatedData as OrderItemT;
-    } catch (error) {
-      throw ErrorClient.handleError({error, service: "Order Items", action: "Get Order Item"})
+      return OrderItemSchema.parse(data) as OrderItemT;
+    } catch (validationError) {
+      throw ErrorClient.handleError({ error: validationError, service: "OrderItems", action: "Get Order Item" });
     }
   }
 
@@ -73,29 +70,30 @@ export class OrderItemService {
    * Create a new order item
    */
   static async createOrderItem(payload: CreateOrderItemT): Promise<OrderItemT> {
+    const supabase = this.getSupabase();
+
+    const { data, error } = await supabase
+      .from('order_items')
+      .insert(payload)
+      .select()
+      .single();
+
+    if (error) {
+      throw ErrorClient.handleError({ error, service: "OrderItems", action: "Create Order Item" });
+    }
+
+    if (!data) {
+      throw ErrorClient.handleError({
+        error: new Error("No data returned after order item creation"),
+        service: "OrderItems",
+        action: "Create Order Item"
+      });
+    }
+
     try {
-      const supabase = this.getSupabase();
-
-      const { data, error } = await supabase
-        .from('order_items')
-        .insert(payload)
-        .select()
-        .single();
-
-      if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
-      }
-
-      if (!data) {
-        throw new Error('No data returned after order item creation');
-      }
-
-      // Validate response
-      const validatedData = OrderItemSchema.parse(data);
-
-      return validatedData as OrderItemT;
-    } catch (error) {
-      throw ErrorClient.handleError({error, service: "Order Items", action: "Create Order Item"})
+      return OrderItemSchema.parse(data) as OrderItemT;
+    } catch (validationError) {
+      throw ErrorClient.handleError({ error: validationError, service: "OrderItems", action: "Create Order Item" });
     }
   }
 
@@ -103,28 +101,29 @@ export class OrderItemService {
    * Create multiple order items
    */
   static async createOrderItems(payloads: CreateOrderItemT[]): Promise<OrderItemT[]> {
+    const supabase = this.getSupabase();
+
+    const { data, error } = await supabase
+      .from('order_items')
+      .insert(payloads)
+      .select();
+
+    if (error) {
+      throw ErrorClient.handleError({ error, service: "OrderItems", action: "Create Order Items" });
+    }
+
+    if (!data) {
+      throw ErrorClient.handleError({
+        error: new Error("No data returned after order items creation"),
+        service: "OrderItems",
+        action: "Create Order Items"
+      });
+    }
+
     try {
-      const supabase = this.getSupabase();
-
-      const { data, error } = await supabase
-        .from('order_items')
-        .insert(payloads)
-        .select();
-
-      if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
-      }
-
-      if (!data) {
-        throw new Error('No data returned after order items creation');
-      }
-
-      // Validate response
-      const validatedData = z.array(OrderItemSchema).parse(data);
-
-      return validatedData as OrderItemT[];
-    } catch (error) {
-      throw ErrorClient.handleError({error, service: "Order Items", action: "Create Order Items"})
+      return z.array(OrderItemSchema).parse(data) as OrderItemT[];
+    } catch (validationError) {
+      throw ErrorClient.handleError({ error: validationError, service: "OrderItems", action: "Create Order Items" });
     }
   }
 
@@ -135,30 +134,31 @@ export class OrderItemService {
     orderItemId: string,
     payload: UpdateOrderItemT
   ): Promise<OrderItemT> {
+    const supabase = this.getSupabase();
+
+    const { data, error } = await supabase
+      .from('order_items')
+      .update(payload)
+      .eq('id', orderItemId)
+      .select()
+      .single();
+
+    if (error) {
+      throw ErrorClient.handleError({ error, service: "OrderItems", action: "Update Order Item" });
+    }
+
+    if (!data) {
+      throw ErrorClient.handleError({
+        error: new Error(`Order item not found or update failed for id: ${orderItemId}`),
+        service: "OrderItems",
+        action: "Update Order Item"
+      });
+    }
+
     try {
-      const supabase = this.getSupabase();
-
-      const { data, error } = await supabase
-        .from('order_items')
-        .update(payload)
-        .eq('id', orderItemId)
-        .select()
-        .single();
-
-      if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
-      }
-
-      if (!data) {
-        throw new Error(`Order item not found or update failed for id: ${orderItemId}`);
-      }
-
-      // Validate response
-      const validatedData = OrderItemSchema.parse(data);
-
-      return validatedData as OrderItemT;
-    } catch (error) {
-      throw ErrorClient.handleError({error, service: "Order Items", action: "Update Order Item"})
+      return OrderItemSchema.parse(data) as OrderItemT;
+    } catch (validationError) {
+      throw ErrorClient.handleError({ error: validationError, service: "OrderItems", action: "Update Order Item" });
     }
   }
 
@@ -166,19 +166,15 @@ export class OrderItemService {
    * Delete an order item
    */
   static async deleteOrderItem(orderItemId: string): Promise<void> {
-    try {
-      const supabase = this.getSupabase();
+    const supabase = this.getSupabase();
 
-      const { error } = await supabase
-        .from('order_items')
-        .delete()
-        .eq('id', orderItemId);
+    const { error } = await supabase
+      .from('order_items')
+      .delete()
+      .eq('id', orderItemId);
 
-      if (error) {
-        throw new Error(`Supabase error: ${error.message}`);
-      }
-    } catch (error) {
-      throw ErrorClient.handleError({error, service: "Order Items", action: "Delete Order Item"})
+    if (error) {
+      throw ErrorClient.handleError({ error, service: "OrderItems", action: "Delete Order Item" });
     }
   }
 }

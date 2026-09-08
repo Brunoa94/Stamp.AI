@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { StripeService } from "@/services/stripeService";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 interface UseStripePaymentProps {
   amount: number;
@@ -24,10 +26,13 @@ export function useStripePayment({
   onSuccess,
   onError,
 }: UseStripePaymentProps): UseStripePaymentReturn {
+  const t = useTranslations("buyCredits.payment");
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Use showToast: false since this form shows inline errors
+  const { handleError } = useErrorHandler({ showToast: false });
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent) => {
@@ -45,13 +50,13 @@ export function useStripePayment({
         const { clientSecret } = await StripeService.createCreditPayment({
           amount,
           credits,
-          currency: "usd",
+          currency: "eur",
         });
 
         // Get card element for confirmation
         const cardElement = elements.getElement(CardElement);
         if (!cardElement) {
-          throw new Error("Card element not found");
+          throw new Error(t("cardElementNotFound"));
         }
 
         // Confirm payment with Stripe
@@ -70,15 +75,15 @@ export function useStripePayment({
           onSuccess();
         }
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Payment failed";
+        // Process error through handler for consistent error code extraction
+        const { message: errorMessage } = handleError(err);
         setError(errorMessage);
         onError(errorMessage);
       } finally {
         setLoading(false);
       }
     },
-    [stripe, elements, amount, credits, onSuccess, onError]
+    [stripe, elements, amount, credits, onSuccess, onError, t]
   );
 
   return {

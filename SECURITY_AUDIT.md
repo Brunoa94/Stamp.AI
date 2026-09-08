@@ -121,3 +121,43 @@ Legend: ✅ fixed in this change · 🔧 operational action required (owner) · 
 - 📐 **M6** Guest-cart isolation needs a signed per-session token; pure RLS cannot bind an anonymous row to one browser.
 - 📐 **M7** Add a `user_metadata` key allow-list if/when any authorization ever reads it.
 - 🔧 **L4** Prefer per-function `verify_jwt` config over the blanket `--no-verify-jwt` deploy once in-code guards are confirmed.
+
+
+## Review follow-up — 2026-09-08
+
+Merged `origin/dev` into the security branch and corrected the reviewed issues:
+
+- Validate Printify shop product IDs as 24-character hexadecimal strings.
+- Resolve callback destinations with the URL parser and require the same origin.
+- Verify provider-held PayPal ownership before capture; missing ownership fails closed.
+- Resolve refund payment IDs, amounts, and currencies through the owned order,
+  verify them with the provider, and require a cancelled order or a failed
+  confirmation without a manufacturing order. This endpoint only handles full
+  order refunds. Provider requests reuse a stable order-specific idempotency key.
+- Recovery loads the owned recovery record and requires provider-confirmed
+  payment and ownership, a completed PayPal capture, and matching currency.
+  Refunded payments and credit purchases cannot be recovered as merchandise.
+- Remove references to the deleted Stripe and fulfillment-status order columns.
+- Grant Stripe credits through one service-role-only database transaction with
+  a unique purchase reference, atomic balance increment, and payment accounting.
+  Failures propagate to Stripe for retry.
+
+Apply `20260908000000_fix_security_review.sql` before deploying the updated
+Stripe webhook. The original hardening migration is also corrected for fresh
+installs. Historical duplicate purchase references must be reconciled before
+creating the unique index; the migration does not delete accounting records.
+
+Validation:
+
+- Targeted security/payment tests: 69 passed.
+- Security Playwright suite: 12 passed.
+- Disposable PostgreSQL tests cover authenticated order updates, protected
+  columns, service-role grants, concurrent duplicate/distinct purchases, and
+  rollback/retry after an injected accounting failure.
+- Production build, TypeScript, and lint of the changed Next.js files passed.
+- The full Vitest suite has the same 10 failing tests and 4 failing integration
+  suites as an untouched `origin/dev` checkout; the additional security tests pass.
+- The changed refund/recovery/provider/credit-payment modules pass Deno checking.
+  Checking the whole Stripe webhook still reaches the existing invoice PDF
+  dependency error (`@pdf-lib/fontkit` declares no default export), also present
+  on `origin/dev`.

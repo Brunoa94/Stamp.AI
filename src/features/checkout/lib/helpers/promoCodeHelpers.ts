@@ -1,4 +1,4 @@
-import type { PromoCodeValidationResult } from "@/types/promocode";
+import type { PromoCodeValidationResult } from "@/schemas/promocode";
 
 /**
  * Calculate discount value from promo code validation result
@@ -14,13 +14,3 @@ export function getDiscountValue(
   return validationResult.appliedPromo.discountValue;
 }
 
-/**
- * Check if a promo code validation result is valid
- * @param validationResult - The result from promo code validation
- * @returns true if the promo code is valid and has been applied
- */
-export function isPromoCodeValid(
-  validationResult: PromoCodeValidationResult | null
-): boolean {
-  return Boolean(validationResult?.isValid && validationResult.appliedPromo);
-}

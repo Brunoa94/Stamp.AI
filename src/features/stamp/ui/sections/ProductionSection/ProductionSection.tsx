@@ -1,6 +1,8 @@
 "use client";
 
+import { memo } from "react";
 import { Box } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { useStampFinalization } from "../../../lib/hooks/useStampSelectors";
@@ -14,13 +16,14 @@ import { useStampFinalization } from "../../../lib/hooks/useStampSelectors";
  * Note: Progress and navigation are managed by useStampProductCreation hook
  */
 
-export function ProductionSection() {
+function ProductionSectionComponent() {
+  const t = useTranslations("stamp.production");
   const { productionProgress } = useStampFinalization();
 
   return (
     <section
       id="step-7"
-      className="h-full flex flex-col items-center justify-center p-24 bg-white text-center border-b border-(--color-stamp-divider)"
+      className="h-full overflow-y-auto flex flex-col items-center justify-center p-8 md:p-16 lg:p-24 bg-white text-center border-b border-(--color-stamp-divider)"
     >
       {/* Animated Loader */}
       <div className="relative mb-12">
@@ -34,13 +37,13 @@ export function ProductionSection() {
       <Heading
         as="h3"
         variant="card"
-        className="text-(--color-stamp-chocolate) mb-4 tracking-[0.5em]"
+        className="text-(--color-stamp-chocolate) mb-4 font-bold uppercase tracking-[0.3em]"
       >
-        Creating Your Product Mockup...
+        {t("status")}
       </Heading>
 
       <Span variant="micro" className="text-(--color-stamp-taupe) mb-12">
-        Est. 15 seconds...
+        {t("estimate")}
       </Span>
 
       {/* Progress Bar */}
@@ -55,3 +58,5 @@ export function ProductionSection() {
     </section>
   );
 }
+
+export const ProductionSection = memo(ProductionSectionComponent);

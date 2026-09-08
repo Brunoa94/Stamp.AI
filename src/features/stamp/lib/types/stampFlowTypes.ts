@@ -6,10 +6,46 @@
  */
 
 import type { ProductTypeIdType } from "./stampTypes";
+import type { PlacementParams } from "@/lib/printPlacement/types";
 
 export interface GeneratedResultType {
   imageUrl: string;
   enhancedPrompt: string;
+}
+
+/** Re-exported so stamp code has one import site for placement values. */
+export type PlacementParamsType = PlacementParams;
+
+/**
+ * Bounds for placement clamping (safe zone limits).
+ */
+export interface PlacementBounds {
+  minX: number;
+  maxX: number;
+  minY: number;
+  maxY: number;
+  minScale: number;
+  maxScale: number;
+}
+
+/**
+ * Per-print-position configuration chosen by the user in Step 6.
+ * `position` matches Printify placeholder positions ('front', 'back',
+ * 'neck', 'left_sleeve', 'right_sleeve').
+ */
+export interface PrintPositionConfigType {
+  position: string;
+  enabled: boolean;
+  placement: PlacementParamsType;
+  /** Extra cost in cents for printing this position (0 = included). */
+  additionalCost: number;
+}
+
+export interface MockupImageType {
+  src: string;
+  variant_ids: number[];
+  position: string;
+  is_default: boolean;
 }
 
 export interface StampFlowStateType {
@@ -51,6 +87,60 @@ export interface StampFlowStateType {
   setBlueprintId: (id: number | undefined) => void;
   printProviderId: number | undefined;
   setPrintProviderId: (id: number | undefined) => void;
+  selectedProductTitle: string | undefined;
+  setSelectedProductTitle: (title: string | undefined) => void;
+  selectedProductDescription: string | null | undefined;
+  setSelectedProductDescription: (description: string | null | undefined) => void;
+
+  // Print position / placement state (Step 6 design adjustment)
+  availablePrintPositions: string[];
+  setAvailablePrintPositions: (positions: string[]) => void;
+  printPositionConfigs: Record<string, PrintPositionConfigType>;
+  setPrintPositionConfig: (
+    position: string,
+    config: Partial<PrintPositionConfigType>,
+  ) => void;
+  togglePrintPosition: (position: string) => void;
+  /**
+   * Single-select: enable exactly this position, disable every other one and
+   * move the active edit position to it (apparel front OR back). Placements
+   * are preserved per position so switching back keeps prior adjustments.
+   */
+  selectPrintPosition: (position: string) => void;
+  activeEditPosition: string;
+  setActiveEditPosition: (position: string) => void;
+  resetPlacementForPosition: (position: string) => void;
+  /**
+   * Seed positions for the selected product: replaces the available list,
+   * creates a config per position (only the first one enabled) and remembers
+   * `defaultPlacement` so `resetPlacementForPosition` can restore it.
+   */
+  initializePrintPositions: (
+    positions: string[],
+    defaultPlacement: PlacementParamsType,
+    options?: {
+      /** Enable every position instead of only the first (socks: both legs). */
+      enableAll?: boolean;
+      /** Per-position placement overrides (socks: per-leg calibration). */
+      placements?: Record<string, PlacementParamsType>;
+      /** Blueprint these positions were seeded for (drives reset-on-change). */
+      blueprintId?: number;
+    },
+  ) => void;
+  /**
+   * Blueprint the placement state was last seeded for. Selecting a different
+   * product resets the adjustment state (see useDesignAdjustment).
+   */
+  placementSeededBlueprintId: number | undefined;
+  defaultPlacement: PlacementParamsType;
+
+  // Customization selection state
+  selectedColor: string | undefined;
+  setSelectedColor: (color: string | undefined) => void;
+  selectedSize: string | undefined;
+  setSelectedSize: (size: string | undefined) => void;
+  selectedPriceCents: number | undefined;
+  setSelectedPriceCents: (price: number | undefined) => void;
 
   // Created product state
   createdProductId: string | undefined;
@@ -59,6 +149,8 @@ export interface StampFlowStateType {
   setCreatedVariantId: (id: number | undefined) => void;
   mockupImageUrl: string | undefined;
   setMockupImageUrl: (url: string | undefined) => void;
+  mockupImages: MockupImageType[];
+  setMockupImages: (images: MockupImageType[]) => void;
 
   // Progress tracking
   generationProgress: number;
@@ -72,4 +164,6 @@ export interface StampFlowStateType {
 
   // Reset
   reset: () => void;
+  /** Reset product state while keeping the selected image for creating another product */
+  resetForNewProduct: () => void;
 }

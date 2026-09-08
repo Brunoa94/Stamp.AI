@@ -44,6 +44,8 @@ export const ErrorCodes = {
   PRINT_PROVIDER_ID_REQUIRED: () => new FunctionError(400, 'PRINT_PROVIDER_ID_REQUIRED', 'print_provider_id is required'),
   IMAGE_REQUIRED: () => new FunctionError(400, 'IMAGE_REQUIRED', 'At least one print area image is required'),
   INVALID_REQUEST_BODY: () => new FunctionError(400, 'INVALID_REQUEST_BODY', 'Invalid request body'),
+  INVALID_REQUEST: (message: string) => new FunctionError(400, 'INVALID_REQUEST', message),
+  INVALID_COLOR: (message: string) => new FunctionError(400, 'INVALID_COLOR', message),
 
   // Environment errors (500)
   PRINTIFY_TOKEN_MISSING: () => new FunctionError(500, 'PRINTIFY_TOKEN_MISSING', 'Missing PRINTIFY_API_TOKEN'),
@@ -106,6 +108,15 @@ export const ErrorCodes = {
   MOLLIE_PAYMENT_NOT_FOUND: () => new FunctionError(404, 'MOLLIE_PAYMENT_NOT_FOUND', 'Mollie payment not found'),
   MOLLIE_PAYMENT_FAILED: (details: string) => new FunctionError(400, 'MOLLIE_PAYMENT_FAILED', `Mollie payment failed: ${details}`),
   MOLLIE_PAYMENT_ID_REQUIRED: () => new FunctionError(400, 'MOLLIE_PAYMENT_ID_REQUIRED', 'Mollie payment ID is required'),
+
+  // Invoice errors
+  ORDER_ID_REQUIRED: () => new FunctionError(400, 'ORDER_ID_REQUIRED', 'order_id is required'),
+  INVOICE_ORDER_NOT_PAID: () => new FunctionError(400, 'INVOICE_ORDER_NOT_PAID', 'Invoices can only be generated for paid orders'),
+  INVOICE_GENERATION_FAILED: (details: string) => new FunctionError(500, 'INVOICE_GENERATION_FAILED', `Invoice generation failed: ${details}`),
+
+  // Authorization / resource errors
+  UNAUTHORIZED: (details: string) => new FunctionError(403, 'UNAUTHORIZED', details),
+  RESOURCE_NOT_FOUND: (details: string) => new FunctionError(404, 'RESOURCE_NOT_FOUND', details),
 
   // Generic errors
   INTERNAL_ERROR: () => new FunctionError(500, 'INTERNAL_ERROR', 'Internal server error'),

@@ -1,10 +1,12 @@
 "use client";
 
 import { LogIn, User } from "lucide-react";
-import { LoginForm } from "./LoginForm";
-import { Dialog, DialogTrigger } from "@/features/ui/dialog";
-import { Button } from "@/features/ui/button";
+import { useTranslations } from "next-intl";
 import { ReactNode } from "react";
+import { LoginForm } from "./LoginForm";
+import { AuthDialog } from "../components/AuthDialog";
+import { Button } from "@/features/ui/button";
+import { Span } from "@/features/ui/span";
 
 interface LoginProps {
   className?: string;
@@ -13,35 +15,39 @@ interface LoginProps {
 }
 
 export function Login({ className, children, variant = "default" }: LoginProps) {
+  const t = useTranslations("auth.login");
+
+  const defaultTrigger =
+    variant === "brutalist" ? (
+      <Button
+        variant="unstyled"
+        aria-label={t("openDialogAria")}
+        className={className}
+      >
+        <User className="w-5 h-5 text-purple group-hover:scale-110 transition-transform duration-300" />
+        <Span variant="default" className="btn-text text-xs font-bold uppercase tracking-widest text-purple group-hover:text-white">
+          {t("loginShort")}
+        </Span>
+      </Button>
+    ) : (
+      <Button
+        variant="outline"
+        aria-label={t("openDialogAria")}
+        className={className}
+      >
+        <LogIn className="mr-2 h-3 w-3" />
+        <Span variant="default" className="uppercase">{t("login")}</Span>
+      </Button>
+    );
+
   return (
-    <Dialog>
-      <DialogTrigger asChild suppressHydrationWarning>
-        {children ? (
-          <button aria-label="Open login dialog" className={className}>
-            {children}
-          </button>
-        ) : variant === "brutalist" ? (
-          <button
-            aria-label="Open login dialog"
-            className={className}
-          >
-            <User className="w-5 h-5 text-purple group-hover:scale-110 transition-transform duration-300" />
-            <span className="btn-text text-xs font-bold uppercase tracking-widest text-purple group-hover:text-white">
-              LOGIN
-            </span>
-          </button>
-        ) : (
-          <Button
-            variant="outline"
-            aria-label="Open login dialog"
-            className={className}
-          >
-            <LogIn className="mr-2 h-3 w-3" />
-            <span className="uppercase">Login</span>
-          </Button>
-        )}
-      </DialogTrigger>
-      <LoginForm />
-    </Dialog>
+    <AuthDialog
+      form={<LoginForm />}
+      triggerAriaLabel={t("openDialogAria")}
+      className={className}
+      defaultTrigger={defaultTrigger}
+    >
+      {children}
+    </AuthDialog>
   );
 }

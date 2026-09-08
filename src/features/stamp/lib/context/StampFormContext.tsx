@@ -8,20 +8,6 @@ import {
   StampFormDataType,
 } from "../schemas/stampFormSchema";
 
-// Re-export store and hooks for backward compatibility
-export { useStampFlowStore } from "../stores/stampFlowStore";
-export {
-  useStampStep,
-  useStampUpload,
-  useStampGeneration,
-  useStampSelectedImage,
-  useStampFinalization,
-} from "../hooks/useStampSelectors";
-
-// ============================================================================
-// PROVIDER COMPONENT - Lightweight wrapper for React Hook Form
-// ============================================================================
-
 interface StampFormProviderPropsType {
   children: ReactNode;
   defaultValues?: Partial<StampFormDataType>;
@@ -39,7 +25,6 @@ export function StampFormProvider({
     resolver: zodResolver(StampFormSchema),
     defaultValues: {
       currentStep: 0,
-      artStyle: "editorial",
       preservation: 50,
       isGenerating: false,
       isFinalizing: false,

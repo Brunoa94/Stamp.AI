@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useUser } from "@/hooks/useAuth";
-import { useUpdateProfile } from "./useUpdateProfile";
-import { toast } from "sonner";
+import { useUser } from "@/queries/authQueries";
+import { useUpdateProfile } from "@/queries/authQueries";
+import { useTranslations } from "next-intl";
 import { ShippingAddressSchema, type ShippingAddressT } from "@/schemas/checkout";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 function createEmptyAddress(email?: string): ShippingAddressT {
   return {
@@ -22,8 +23,10 @@ function createEmptyAddress(email?: string): ShippingAddressT {
 }
 
 export function useAddressForm() {
+  const t = useTranslations("profile.toasts");
   const { data: user } = useUser();
   const updateProfileMutation = useUpdateProfile();
+  const { handleError, handleSuccess } = useErrorHandler();
   
   const savedAddress = user?.user_metadata?.shipping_address as ShippingAddressT | undefined;
   const form = useForm<ShippingAddressT>({
@@ -50,12 +53,12 @@ export function useAddressForm() {
           },
         });
         setIsEditing(false);
-        toast.success("Address updated successfully!");
+        handleSuccess(t("addressUpdated"));
       } catch (error) {
-        toast.error("Failed to update address");
+        handleError(error);
       }
     },
-    [updateProfileMutation]
+    [updateProfileMutation, t]
   );
 
   const handleCancel = useCallback(() => {

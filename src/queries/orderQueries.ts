@@ -1,106 +1,25 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { OrderService } from "@/services/orderService";
-import { OrderItemService } from "@/services/orderItemService";
-import { CreateOrderT, UpdateOrderT } from "@/types/order";
 import { CartWithItems } from "@/types/cart";
-import { UserI } from "@/types/auth";
+import { UserI } from "../../supabase/types";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import type { ShippingAddressT } from "@/schemas/checkout";
 
 /**
- * Fetch a single order by ID
- */
-export function useOrder(orderId: string | null) {
-  return useQuery({
-    queryKey: ["orders", orderId],
-    queryFn: () => {
-      if (!orderId) {
-        throw new Error("Order ID is required");
-      }
-      return OrderService.getOrder(orderId);
-    },
-    enabled: !!orderId,
-  });
-}
-
-/**
  * Fetch orders for a specific user
+ *
+ * Orders should always show fresh data since users expect to see
+ * recent order updates immediately (e.g., after placing an order).
  */
 export function useOrders(userId?: string) {
   return useQuery({
     queryKey: ["orders", { userId }],
     queryFn: () => OrderService.getOrders(userId),
-  });
-}
-
-/**
- * Fetch order by order number
- */
-export function useOrderByNumber(orderNumber: string | null) {
-  return useQuery({
-    queryKey: ["orders", "number", orderNumber],
-    queryFn: () => {
-      if (!orderNumber) {
-        throw new Error("Order number is required");
-      }
-      return OrderService.getOrderByNumber(orderNumber);
-    },
-    enabled: !!orderNumber,
-  });
-}
-
-/**
- * Fetch order items for a specific order
- */
-export function useOrderItems(orderId: string | null) {
-  return useQuery({
-    queryKey: ["orders", orderId, "items"],
-    queryFn: () => {
-      if (!orderId) {
-        throw new Error("Order ID is required");
-      }
-      return OrderItemService.getOrderItems(orderId);
-    },
-    enabled: !!orderId,
-  });
-}
-
-/**
- * Create a new order
- */
-export function useCreateOrder() {
-  const queryClient = useQueryClient();
-  const { handleError } = useErrorHandler();
-
-  return useMutation({
-    mutationFn: (payload: CreateOrderT) => OrderService.createOrder(payload),
-    onSuccess: (data) => {
-      queryClient.setQueryData(["orders", data.id], data);
-      queryClient.invalidateQueries({ queryKey: ["orders"] });
-    },
-    onError: (error: Error) => {
-      handleError(error);
-    },
-  });
-}
-
-/**
- * Update an existing order
- */
-export function useUpdateOrder() {
-  const queryClient = useQueryClient();
-  const { handleError } = useErrorHandler();
-
-  return useMutation({
-    mutationFn: ({ orderId, payload }: { orderId: string; payload: UpdateOrderT }) =>
-      OrderService.updateOrder(orderId, payload),
-    onSuccess: (data, variables) => {
-      queryClient.setQueryData(["orders", variables.orderId], data);
-      queryClient.invalidateQueries({ queryKey: ["orders"] });
-    },
-    onError: (error: Error) => {
-      handleError(error);
-    },
+    enabled: Boolean(userId),
+    staleTime: 0, // Orders data is always considered stale
+    refetchOnMount: true, // Refetch when component mounts
+    refetchOnWindowFocus: true, // Refetch when user returns to tab
+    refetchInterval: 60_000, // Poll for live status while the tab is visible
   });
 }
 
@@ -145,25 +64,6 @@ export function useUpdatePaymentStatus() {
 }
 
 /**
- * Delete an order
- */
-export function useDeleteOrder() {
-  const queryClient = useQueryClient();
-  const { handleError } = useErrorHandler();
-
-  return useMutation({
-    mutationFn: (orderId: string) => OrderService.deleteOrder(orderId),
-    onSuccess: (_, orderId) => {
-      queryClient.removeQueries({ queryKey: ["orders", orderId] });
-      queryClient.invalidateQueries({ queryKey: ["orders"] });
-    },
-    onError: (error: Error) => {
-      handleError(error);
-    },
-  });
-}
-
-/**
  * Create order from cart (checkout flow)
  */
 export function useCreateOrderFromCart() {
@@ -179,6 +79,7 @@ export function useCreateOrderFromCart() {
       billingAddress,
       idempotencyKey,
       orderStatus,
+      paymentMethod,
     }: {
       user: UserI;
       cart: CartWithItems;
@@ -187,6 +88,7 @@ export function useCreateOrderFromCart() {
       billingAddress?: ShippingAddressT;
       idempotencyKey?: string;
       orderStatus?: string;
+      paymentMethod?: string;
     }) => {
       if (!user) {
         throw new Error("User not authenticated");
@@ -199,6 +101,7 @@ export function useCreateOrderFromCart() {
         billingAddress,
         idempotencyKey,
         orderStatus,
+        paymentMethod,
       });
     },
     onSuccess: (orderId) => {
@@ -215,5 +118,17 @@ export function useCreateOrderFromCart() {
     // CRITICAL: Do NOT retry order creation - duplicates can be created
     // Idempotency is handled at the database level via idempotency_key
     retry: false,
+  });
+}
+
+/**
+ * Fetch status history for an order (for tracking timeline)
+ */
+export function useOrderStatusHistory(orderId?: string) {
+  return useQuery({
+    queryKey: ["orderStatusHistory", orderId],
+    queryFn: () => OrderService.getOrderStatusHistory(orderId!),
+    enabled: Boolean(orderId),
+    staleTime: 30_000, // Status history doesn't change as frequently
   });
 }

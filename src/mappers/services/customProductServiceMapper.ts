@@ -1,8 +1,22 @@
-import type { CreateProductPayloadT, CreatedProductT, UploadImageRequestI } from "@/types/customProduct";
+import type { CreatedProductT, UploadImageRequestI } from "@/types/customProduct";
 
 export class CustomProductServiceMapper {
   private static isDataUrl(value: string): boolean {
     return value.startsWith("data:image/");
+  }
+
+  private static isRelativePath(value: string): boolean {
+    return value.startsWith("/") && !value.startsWith("//");
+  }
+
+  /**
+   * Convert relative path to absolute URL using window.location.origin
+   */
+  private static toAbsoluteUrl(relativePath: string): string {
+    if (typeof window !== "undefined") {
+      return `${window.location.origin}${relativePath}`;
+    }
+    return relativePath;
   }
 
   /**
@@ -16,8 +30,13 @@ export class CustomProductServiceMapper {
       };
     }
 
+    // Convert relative paths to absolute URLs
+    const absoluteUrl = this.isRelativePath(imageUrl)
+      ? this.toAbsoluteUrl(imageUrl)
+      : imageUrl;
+
     return {
-      image_url: imageUrl,
+      image_url: absoluteUrl,
       file_name: `design-${Date.now()}.png`,
     };
   }

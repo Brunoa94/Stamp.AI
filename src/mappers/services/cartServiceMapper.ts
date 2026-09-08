@@ -24,11 +24,11 @@ export class CartServiceMapper {
    */
   static mapItemsToCartSummary(items: CartItem[]): CartSummary {
     const subtotal = items.reduce((sum, item) => {
-      return sum + ((item.unit_price ?? 0) * item.quantity);
+      return sum + ((item.unit_price ?? 0) * (item.quantity ?? 1));
     }, 0);
 
     const itemCount = items.reduce((count, item) => {
-      return count + item.quantity;
+      return count + (item.quantity ?? 1);
     }, 0);
 
     return {
@@ -57,8 +57,13 @@ export class CartServiceMapper {
    * Calculate item total price
    */
   static calculateItemTotal(item: CartItem): number {
-    return (item.unit_price ?? 0) * item.quantity;
+    return (item.unit_price ?? 0) * (item.quantity ?? 1);
   }
+
+  /** Free shipping threshold in cents (€60 = 6000 cents) */
+  static FREE_SHIPPING_THRESHOLD_CENTS = 6000;
+  /** Shipping cost in cents (€4.99 = 499 cents) */
+  static SHIPPING_COST_CENTS = 499;
 
   /**
    * Calculate cart totals
@@ -69,12 +74,12 @@ export class CartServiceMapper {
     }, 0);
 
     const itemCount = items.reduce((count, item) => {
-      return count + item.quantity;
+      return count + (item.quantity ?? 1);
     }, 0);
 
-    // Future: Add tax and shipping calculations here
+    // Shipping: free for orders >= €60, otherwise €4.99
     const tax = 0;
-    const shipping = 0;
+    const shipping = subtotal >= this.FREE_SHIPPING_THRESHOLD_CENTS ? 0 : this.SHIPPING_COST_CENTS;
     const total = subtotal + tax + shipping;
 
     return {
@@ -112,7 +117,7 @@ export class CartServiceMapper {
       product_id: item.product_id ?? undefined,
       product_name: item.product_name,
       variant_id: item.variant_id ?? undefined,
-      quantity: item.quantity,
+      quantity: item.quantity ?? 1,
       unit_price: item.unit_price ?? 0,
       custom_image_url: item.custom_image_url ?? undefined,
     };

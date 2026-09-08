@@ -1,7 +1,7 @@
 import type { Database } from "@/types/database.types";
 import type { OrderWithItemsT, CreateOrderT } from "@/types/order";
 import type { CartItem } from "@/types/cart";
-import type { UserI } from "@/types/auth";
+import type { UserI } from "../../../supabase/types";
 import type { ShippingAddressT } from "@/schemas/checkout";
 
 type OrderRow = Database['public']['Tables']['orders']['Row'];
@@ -18,14 +18,15 @@ export class OrderServiceMapper {
   ): Array<Omit<Database['public']['Tables']['order_items']['Insert'], 'id' | 'created_at' | 'updated_at'>> {
     return cartItems.map(item => {
       const unitPrice = item.unit_price ?? 0;
+      const quantity = item.quantity ?? 1;
       return {
         order_id: orderId,
         product_id: item.product_id || null,
-        product_name: item.product_name,
+        product_name: item.product_name || 'Custom Product',
         variant_id: item.variant_id,
-        quantity: item.quantity,
+        quantity,
         unit_price: unitPrice,
-        total_price: unitPrice * item.quantity,
+        total_price: unitPrice * quantity,
         custom_image_url: item.custom_image_url || '',
         design_config: item.custom_image_url
           ? { reusable_image_url: item.custom_image_url }
@@ -52,7 +53,7 @@ export class OrderServiceMapper {
    */
   static calculateOrderTotals(items: CartItem[]) {
     const subtotal = items.reduce((sum, item) => {
-      return sum + ((item.unit_price ?? 0) * item.quantity);
+      return sum + ((item.unit_price ?? 0) * (item.quantity ?? 1));
     }, 0);
 
     // Future: Add tax and shipping calculations
@@ -98,7 +99,7 @@ export class OrderServiceMapper {
       shipping_cost: createOrder.shipping_cost,
       discount_amount: createOrder.discount_amount,
       total_amount: createOrder.total_amount,
-      currency: createOrder.currency || 'USD',
+      currency: createOrder.currency || 'EUR',
       status: 'pending',
       payment_status: 'pending',
     };
@@ -165,13 +166,14 @@ export class OrderServiceMapper {
    */
   static mapCartItemToOrderItem(cartItem: CartItem, orderId: string) {
     const unitPrice = cartItem.unit_price ?? 0;
-    const totalPrice = unitPrice * cartItem.quantity;
+    const quantity = cartItem.quantity ?? 1;
+    const totalPrice = unitPrice * quantity;
 
     return {
       order_id: orderId,
       product_id: cartItem.product_id || null,
       variant_id: cartItem.variant_id || null,
-      quantity: cartItem.quantity,
+      quantity,
       unit_price: unitPrice,
       total_price: totalPrice,
       custom_image_url: cartItem.custom_image_url || "",
@@ -203,7 +205,8 @@ export class OrderServiceMapper {
     discountAmount: number = 0,
     paymentStatus: string = "pending",
     orderStatus: string = "pending",
-    idempotencyKey?: string
+    idempotencyKey?: string,
+    paymentMethod?: string
   ): CreateOrderT & { idempotency_key?: string | null } {
     const fullName = [shippingAddress?.first_name, shippingAddress?.last_name]
       .filter(Boolean)
@@ -220,12 +223,13 @@ export class OrderServiceMapper {
       order_number: orderNumber,
       status: orderStatus,
       payment_status: paymentStatus,
+      payment_method: paymentMethod || null,
       subtotal: totals.subtotal,
       shipping_cost: totals.shipping_cost,
       tax_amount: totals.tax_amount,
       discount_amount: discountAmount,
       total_amount: totals.total_amount,
-      currency: "USD", // Default currency
+      currency: "EUR", // Default currency
       idempotency_key: idempotencyKey || null,
     };
   }

@@ -1,27 +1,40 @@
-import type { ShippingAddressI } from "@/types/api";
-import { profileTheme } from "@/theme";
+import type { ShippingAddressI } from "../../../../../../supabase/types";
+import { useTranslations } from "next-intl";
+import { Span } from "@/features/ui/span";
 
 interface AddressDisplayProps {
   address: ShippingAddressI;
 }
 
 export function AddressDisplay({ address }: AddressDisplayProps) {
+  const t = useTranslations("profile.addressDisplay");
+
   return (
-    <div className="space-y-2">
-      <p className="font-medium text-slate-900">
+    <div className="space-y-3 p-6 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream)">
+      <Span className="block text-sm font-bold uppercase tracking-wider text-(--color-stamp-chocolate)">
         {address.first_name} {address.last_name}
-      </p>
-      <p className="text-sm text-slate-600">{address.address1}</p>
-      {address.address2 && (
-        <p className="text-sm text-slate-600">{address.address2}</p>
-      )}
-      <p className="text-sm text-slate-600">
-        {address.city}, {address.region} {address.zip}
-      </p>
-      <p className="text-sm text-slate-600">{address.country}</p>
-      {address.phone && (
-        <p className="text-sm text-slate-600">Phone: {address.phone}</p>
-      )}
+      </Span>
+      <div className="space-y-1">
+        <Span className="block text-sm text-(--color-stamp-taupe)">
+          {address.address1}
+        </Span>
+        {address.address2 && (
+          <Span className="block text-sm text-(--color-stamp-taupe)">
+            {address.address2}
+          </Span>
+        )}
+        <Span className="block text-sm text-(--color-stamp-taupe)">
+          {address.city}, {address.region} {address.zip}
+        </Span>
+        <Span className="block text-sm text-(--color-stamp-taupe)">
+          {address.country}
+        </Span>
+        {address.phone && (
+          <Span className="block text-sm text-(--color-stamp-taupe)">
+            {t("phone", { phone: address.phone })}
+          </Span>
+        )}
+      </div>
     </div>
   );
 }

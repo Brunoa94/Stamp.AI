@@ -15,9 +15,8 @@ export async function GET(request: NextRequest) {
 
   const productId = request.nextUrl.searchParams.get("product_id");
 
-  // Printify product ids are numeric strings; reject anything else so the
-  // value can't be used to reshape the API path.
-  if (!productId || !/^\d+$/.test(productId)) {
+  // Shop product IDs are 24-character hex strings, unlike numeric blueprint IDs.
+  if (!productId || !/^[a-f0-9]{24}$/i.test(productId)) {
     return NextResponse.json({ error: "Invalid product_id" }, { status: 400 });
   }
 

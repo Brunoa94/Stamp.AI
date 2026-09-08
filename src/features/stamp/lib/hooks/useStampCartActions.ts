@@ -3,10 +3,14 @@
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import {
   useStampFinalization,
   useStampSelectedImage,
+  useStampCustomization,
+  useStampProductSelection,
 } from "./useStampSelectors";
+import { useStampFlowStore } from "../stores/stampFlowStore";
 import { useAddToCart } from "@/queries/cartQueries";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import {
@@ -14,6 +18,8 @@ import {
   logStampInfo,
   logStampWarn,
 } from "../helpers/stampLogger";
+import { AnalyticsService } from "@/services/analyticsService";
+import { mapAddToCartEvent } from "@/features/analytics/mappers/stampFlowMappers";
 
 /**
  * useStampCartActions
@@ -27,11 +33,14 @@ import {
  */
 
 export function useStampCartActions() {
+  const t = useTranslations("stamp.errors.cart");
   const router = useRouter();
   const { handleError, handleSuccess } = useErrorHandler();
 
-  const { createdProductId, createdVariantId } = useStampFinalization();
-  const { selectedImageUrl, enhancedPrompt } = useStampSelectedImage();
+  const { createdProductId, createdVariantId, mockupImageUrl } = useStampFinalization();
+  const { selectedImageUrl } = useStampSelectedImage();
+  const { selectedPriceCents } = useStampCustomization();
+  const { selectedProductTitle } = useStampProductSelection();
 
   const addToCartMutation = useAddToCart();
 
@@ -63,7 +72,7 @@ export function useStampCartActions() {
           createdVariantId,
         },
       });
-      toast.info("Product already in cart. Navigating...");
+      toast.info(t("alreadyInCart"));
 
       if (buyNow) {
         router.push("/checkout");
@@ -80,9 +89,7 @@ export function useStampCartActions() {
         event: "missing_created_product_id",
         metadata: { buyNow },
       });
-      handleError(
-        new Error("Please create a product first before adding to cart"),
-      );
+      handleError(new Error(t("noProduct")));
       return;
     }
 
@@ -96,32 +103,68 @@ export function useStampCartActions() {
           createdProductId,
         },
       });
-      handleError(
-        new Error(
-          "Product variant not found. Please try creating the product again.",
-        ),
-      );
+      handleError(new Error(t("noVariant")));
       return;
     }
 
     // Set idempotency lock
     isAddingRef.current = true;
 
-    const productName = enhancedPrompt || "Custom Design";
+    const productName = selectedProductTitle || "Custom Design";
 
-    // TODO: Get actual price from product data
-    // For now using default price in cents
-    const unitPrice = 80; // $0.80
+    // Use actual price from customization selection (in cents)
+    // Default to 1999 cents ($19.99) if no price selected
+    const unitPrice = selectedPriceCents ?? 1999;
+
+    // Build cart item payload
+    const cartItemPayload = {
+      product_id: createdProductId,
+      quantity: 1,
+      product_name: productName,
+      unit_price: unitPrice,
+      custom_image_url: mockupImageUrl || selectedImageUrl,
+      variant_id: createdVariantId.toString(),
+    };
+
+    // DEBUG: Log the exact payload being sent to cart
+    logStampInfo({
+      scope: "useStampCartActions",
+      event: "add_to_cart_payload",
+      metadata: {
+        buyNow,
+        payload: cartItemPayload,
+        rawValues: {
+          selectedProductTitle,
+          selectedPriceCents,
+          selectedImageUrl,
+          mockupImageUrl,
+          createdProductId,
+          createdVariantId,
+        },
+      },
+    });
+
+    // Validate critical fields before sending
+    if (!cartItemPayload.product_name) {
+      logStampError({
+        scope: "useStampCartActions",
+        event: "missing_product_name_in_payload",
+        error: new Error("product_name is missing from cart payload"),
+        metadata: { payload: cartItemPayload },
+      });
+    }
+
+    if (typeof cartItemPayload.unit_price !== "number" || cartItemPayload.unit_price <= 0) {
+      logStampError({
+        scope: "useStampCartActions",
+        event: "invalid_unit_price_in_payload",
+        error: new Error(`unit_price is invalid: ${cartItemPayload.unit_price}`),
+        metadata: { payload: cartItemPayload },
+      });
+    }
 
     try {
-      await addToCartMutation.mutateAsync({
-        product_id: createdProductId,
-        quantity: 1,
-        product_name: productName,
-        unit_price: unitPrice,
-        custom_image_url: selectedImageUrl,
-        variant_id: createdVariantId.toString(),
-      });
+      await addToCartMutation.mutateAsync(cartItemPayload);
 
       // Mark operation as completed for idempotency
       sessionStorage.setItem(cartOperationKey, "true");
@@ -136,7 +179,17 @@ export function useStampCartActions() {
         },
       });
 
-      handleSuccess("Added to cart!");
+      AnalyticsService.track(
+        "add_to_cart",
+        mapAddToCartEvent({
+          productId: createdProductId,
+          productName,
+          unitPriceCents: unitPrice,
+          variantId: createdVariantId,
+        })
+      );
+
+      handleSuccess(t("added"));
 
       // Navigate based on action
       if (buyNow) {
@@ -161,12 +214,128 @@ export function useStampCartActions() {
   };
 
   const handleBagIt = () => handleAddToCart(false);
-  const handleBuyNow = () => handleAddToCart(true);
+
+  const handleBagItAndCreateAnother = async () => {
+    // Idempotency check: Prevent duplicate cart additions
+    if (isAddingRef.current) {
+      logStampWarn({
+        scope: "useStampCartActions",
+        event: "duplicate_bag_and_create_another_ignored",
+      });
+      return;
+    }
+
+    // Check sessionStorage for completed operations (per product)
+    const cartOperationKey =
+      `stamp_cart_${createdProductId}_${createdVariantId}`;
+
+    if (sessionStorage.getItem(cartOperationKey) === "true") {
+      logStampInfo({
+        scope: "useStampCartActions",
+        event: "add_to_cart_already_completed_creating_another",
+        metadata: {
+          createdProductId,
+          createdVariantId,
+        },
+      });
+      toast.info(t("alreadyInCart"));
+      // Still allow creating another product
+      useStampFlowStore.getState().resetForNewProduct();
+      return;
+    }
+
+    // Validate product exists
+    if (!createdProductId) {
+      logStampWarn({
+        scope: "useStampCartActions",
+        event: "missing_created_product_id",
+      });
+      handleError(new Error(t("noProduct")));
+      return;
+    }
+
+    // Validate variant ID
+    if (!createdVariantId) {
+      logStampWarn({
+        scope: "useStampCartActions",
+        event: "missing_created_variant_id",
+        metadata: { createdProductId },
+      });
+      handleError(new Error(t("noVariant")));
+      return;
+    }
+
+    // Set idempotency lock
+    isAddingRef.current = true;
+
+    const productName = selectedProductTitle || "Custom Design";
+    const unitPrice = selectedPriceCents ?? 1999;
+
+    const cartItemPayload = {
+      product_id: createdProductId,
+      quantity: 1,
+      product_name: productName,
+      unit_price: unitPrice,
+      custom_image_url: mockupImageUrl || selectedImageUrl,
+      variant_id: createdVariantId.toString(),
+    };
+
+    logStampInfo({
+      scope: "useStampCartActions",
+      event: "bag_and_create_another_payload",
+      metadata: {
+        payload: cartItemPayload,
+      },
+    });
+
+    try {
+      await addToCartMutation.mutateAsync(cartItemPayload);
+
+      // Mark operation as completed for idempotency
+      sessionStorage.setItem(cartOperationKey, "true");
+
+      logStampInfo({
+        scope: "useStampCartActions",
+        event: "bag_and_create_another_succeeded",
+        metadata: {
+          createdProductId,
+          createdVariantId,
+        },
+      });
+
+      AnalyticsService.track(
+        "add_to_cart",
+        mapAddToCartEvent({
+          productId: createdProductId,
+          productName,
+          unitPriceCents: unitPrice,
+          variantId: createdVariantId,
+        })
+      );
+
+      handleSuccess(t("added"));
+
+      // Reset store for new product while keeping the selected image
+      useStampFlowStore.getState().resetForNewProduct();
+    } catch (error) {
+      logStampError({
+        scope: "useStampCartActions",
+        event: "bag_and_create_another_failed",
+        error,
+        metadata: {
+          createdProductId,
+          createdVariantId,
+        },
+      });
+    } finally {
+      isAddingRef.current = false;
+    }
+  };
 
   return {
     handleAddToCart,
     handleBagIt,
-    handleBuyNow,
+    handleBagItAndCreateAnother,
     isAddingToCart: addToCartMutation.isPending,
   };
 }

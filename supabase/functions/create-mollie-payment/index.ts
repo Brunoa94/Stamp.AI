@@ -71,6 +71,7 @@ serve(async (req) => {
       line_items,
       shipping_address,
       metadata,
+      method,
     }: MolliePaymentRequestI = parsedBody ?? {};
 
     // Validate request data
@@ -79,6 +80,13 @@ serve(async (req) => {
     // Get site URL for redirect URLs
     const siteUrl = Deno.env.get("SITE_URL") || "http://localhost:3000";
     const supabaseUrl = validateEnvVars.supabaseUrl();
+
+    // Mollie rejects webhook URLs it cannot reach, so skip it for local development
+    const isLocalSupabase =
+      supabaseUrl.includes("localhost") || supabaseUrl.includes("127.0.0.1");
+    const webhookUrl = isLocalSupabase
+      ? undefined
+      : `${supabaseUrl}/functions/v1/mollie-webhook`;
 
     const metadataOrderId =
       metadata && typeof metadata.order_id === "string" ? metadata.order_id : undefined;
@@ -102,7 +110,9 @@ serve(async (req) => {
       currency: currency.toUpperCase(),
       description: description || `Order for ${userEmail}`,
       redirectUrl: `${siteUrl}/checkout/mollie-return`,
+      webhookUrl,
       metadata: paymentMetadata,
+      method,
     });
 
     // Get the checkout URL from the response
@@ -114,18 +124,21 @@ serve(async (req) => {
 
     // Create payment_transactions record immediately with user_id
     // Webhook will later update this record to 'succeeded' or 'failed'
+    // CRITICAL: user_id must be set for RLS policy to allow later updates
+    // (linkPaymentTransactionToOrder requires auth.uid() = user_id)
     try {
       await supabaseRest(
         'payment_transactions',
         'POST',
         {
+          user_id: userId,
           payment_provider: 'mollie',
           mollie_payment_id: molliePayment.id,
           mollie_status: molliePayment.status,
           amount: validAmount,
           currency: currency.toLowerCase(),
           status: 'pending',
-          payment_method_type: molliePayment.method || null,
+          payment_method_type: molliePayment.method || method || null,
           metadata: paymentMetadata,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),

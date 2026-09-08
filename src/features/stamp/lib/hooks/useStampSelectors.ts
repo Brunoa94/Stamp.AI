@@ -9,13 +9,6 @@ import { useStampFlowStore } from "../stores/stampFlowStore";
  * Each property is subscribed independently to prevent unnecessary re-renders.
  */
 
-// Step state selectors
-export const useStampStep = () => {
-  const currentStep = useStampFlowStore((state) => state.currentStep);
-  const setCurrentStep = useStampFlowStore((state) => state.setCurrentStep);
-  return { currentStep, setCurrentStep };
-};
-
 // Generation state selectors
 export const useStampGeneration = () => {
   const isGenerating = useStampFlowStore((state) => state.isGenerating);
@@ -66,6 +59,8 @@ export const useStampFinalization = () => {
   const setMockupImageUrl = useStampFlowStore(
     (state) => state.setMockupImageUrl,
   );
+  const mockupImages = useStampFlowStore((state) => state.mockupImages);
+  const setMockupImages = useStampFlowStore((state) => state.setMockupImages);
   const productionProgress = useStampFlowStore(
     (state) => state.productionProgress,
   );
@@ -81,6 +76,8 @@ export const useStampFinalization = () => {
     setCreatedVariantId,
     mockupImageUrl,
     setMockupImageUrl,
+    mockupImages,
+    setMockupImages,
     productionProgress,
     setProductionProgress,
   };
@@ -131,6 +128,18 @@ export const useStampProductSelection = () => {
   const setPrintProviderId = useStampFlowStore(
     (state) => state.setPrintProviderId,
   );
+  const selectedProductTitle = useStampFlowStore(
+    (state) => state.selectedProductTitle,
+  );
+  const setSelectedProductTitle = useStampFlowStore(
+    (state) => state.setSelectedProductTitle,
+  );
+  const selectedProductDescription = useStampFlowStore(
+    (state) => state.selectedProductDescription,
+  );
+  const setSelectedProductDescription = useStampFlowStore(
+    (state) => state.setSelectedProductDescription,
+  );
   return {
     selectedProductType,
     setSelectedProductType,
@@ -138,33 +147,166 @@ export const useStampProductSelection = () => {
     setBlueprintId,
     printProviderId,
     setPrintProviderId,
+    selectedProductTitle,
+    setSelectedProductTitle,
+    selectedProductDescription,
+    setSelectedProductDescription,
   };
 };
 
-// Combined data selector for convenience
-export const useStampData = () => {
-  const currentStep = useStampFlowStore((state) => state.currentStep);
-  const uploadedImageUrl = useStampFlowStore(
-    (state) => state.uploadedImageUrl,
+// Customization selection state selectors
+export const useStampCustomization = () => {
+  const selectedColor = useStampFlowStore((state) => state.selectedColor);
+  const setSelectedColor = useStampFlowStore((state) => state.setSelectedColor);
+  const selectedSize = useStampFlowStore((state) => state.selectedSize);
+  const setSelectedSize = useStampFlowStore((state) => state.setSelectedSize);
+  const selectedPriceCents = useStampFlowStore(
+    (state) => state.selectedPriceCents,
   );
+  const setSelectedPriceCents = useStampFlowStore(
+    (state) => state.setSelectedPriceCents,
+  );
+  return {
+    selectedColor,
+    setSelectedColor,
+    selectedSize,
+    setSelectedSize,
+    selectedPriceCents,
+    setSelectedPriceCents,
+  };
+};
+
+// Print position state selectors
+export const useStampPrintPositions = () => {
+  const printPositionConfigs = useStampFlowStore(
+    (state) => state.printPositionConfigs,
+  );
+  const activeEditPosition = useStampFlowStore(
+    (state) => state.activeEditPosition,
+  );
+  return { printPositionConfigs, activeEditPosition };
+};
+
+// Reset store selector
+export const useStampReset = () => {
+  const reset = useStampFlowStore((state) => state.reset);
+  return { reset };
+};
+
+/**
+ * Step accessibility selector
+ *
+ * Determines which steps are accessible based on completion state.
+ * Users can only navigate to steps that have their prerequisites met.
+ */
+export const useStampStepAccessibility = () => {
+  const currentStep = useStampFlowStore((state) => state.currentStep);
   const generatedResults = useStampFlowStore(
     (state) => state.generatedResults,
   );
   const selectedImageUrl = useStampFlowStore(
     (state) => state.selectedImageUrl,
   );
-  const enhancedPrompt = useStampFlowStore((state) => state.enhancedPrompt);
+  const blueprintId = useStampFlowStore((state) => state.blueprintId);
+  const printProviderId = useStampFlowStore((state) => state.printProviderId);
+  const selectedColor = useStampFlowStore((state) => state.selectedColor);
   const createdProductId = useStampFlowStore(
     (state) => state.createdProductId,
   );
-  const mockupImageUrl = useStampFlowStore((state) => state.mockupImageUrl);
+
+  /**
+   * Returns the highest step that is currently accessible.
+   * Steps become accessible when their prerequisites are complete.
+   */
+  const getMaxAccessibleStep = (): number => {
+    // Step 0-2: Always accessible (hero, upload, synthesis)
+    // Step 3-4: Accessible once generation has results
+    if (generatedResults.length === 0) return 2;
+
+    // Step 5: Accessible once an image is selected
+    if (!selectedImageUrl) return 4;
+
+    // Step 6: Accessible once a product is selected
+    if (!blueprintId || !printProviderId) return 5;
+
+    // Step 7: Accessible once customization is done (color selected)
+    if (!selectedColor) return 6;
+
+    // Step 8: Accessible once product is created
+    if (!createdProductId) return 7;
+
+    // All steps accessible
+    return 8;
+  };
+
+  /**
+   * Check if a specific step is accessible
+   */
+  const isStepAccessible = (step: number): boolean => {
+    // Can always go back to current or previous steps
+    if (step <= currentStep) return true;
+
+    // Can only go forward up to max accessible step
+    return step <= getMaxAccessibleStep();
+  };
+
   return {
     currentStep,
-    uploadedImageUrl,
-    generatedResults,
-    selectedImageUrl,
-    enhancedPrompt,
-    createdProductId,
-    mockupImageUrl,
+    getMaxAccessibleStep,
+    isStepAccessible,
+  };
+};
+
+// Print position / placement selectors (Step 6 design adjustment)
+export const useStampPrintPlacement = () => {
+  const availablePrintPositions = useStampFlowStore(
+    (state) => state.availablePrintPositions,
+  );
+  const setAvailablePrintPositions = useStampFlowStore(
+    (state) => state.setAvailablePrintPositions,
+  );
+  const printPositionConfigs = useStampFlowStore(
+    (state) => state.printPositionConfigs,
+  );
+  const setPrintPositionConfig = useStampFlowStore(
+    (state) => state.setPrintPositionConfig,
+  );
+  const togglePrintPosition = useStampFlowStore(
+    (state) => state.togglePrintPosition,
+  );
+  const selectPrintPosition = useStampFlowStore(
+    (state) => state.selectPrintPosition,
+  );
+  const activeEditPosition = useStampFlowStore(
+    (state) => state.activeEditPosition,
+  );
+  const setActiveEditPosition = useStampFlowStore(
+    (state) => state.setActiveEditPosition,
+  );
+  const resetPlacementForPosition = useStampFlowStore(
+    (state) => state.resetPlacementForPosition,
+  );
+  const initializePrintPositions = useStampFlowStore(
+    (state) => state.initializePrintPositions,
+  );
+  const defaultPlacement = useStampFlowStore(
+    (state) => state.defaultPlacement,
+  );
+  const placementSeededBlueprintId = useStampFlowStore(
+    (state) => state.placementSeededBlueprintId,
+  );
+  return {
+    availablePrintPositions,
+    setAvailablePrintPositions,
+    printPositionConfigs,
+    setPrintPositionConfig,
+    togglePrintPosition,
+    selectPrintPosition,
+    activeEditPosition,
+    setActiveEditPosition,
+    resetPlacementForPosition,
+    initializePrintPositions,
+    defaultPlacement,
+    placementSeededBlueprintId,
   };
 };

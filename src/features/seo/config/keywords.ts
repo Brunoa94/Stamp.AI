@@ -1,0 +1,84 @@
+export const KEYWORDS = {
+  primary: [
+    "AI t-shirt design",
+    "custom AI apparel",
+    "AI t-shirt generator",
+    "print on demand",
+  ],
+  product: [
+    "custom t-shirts",
+    "custom hoodies",
+    "personalized apparel",
+    "heavyweight t-shirts",
+    "premium print quality",
+  ],
+  transactional: [
+    "design your own t-shirt",
+    "create custom t-shirt online",
+    "order custom apparel",
+    "buy custom t-shirts",
+  ],
+  informational: [
+    "how to design t-shirts with AI",
+    "AI clothing design",
+    "text to t-shirt",
+    "AI image to apparel",
+  ],
+  longTail: [
+    "AI generated t-shirt designs",
+    "custom heavyweight t-shirts online",
+    "made to order AI apparel",
+    "carbon neutral custom clothing",
+  ],
+} as const;
+
+export const PAGE_KEYWORDS = {
+  home: [
+    ...KEYWORDS.primary,
+    ...KEYWORDS.product,
+    "AI design generator",
+    "custom hoodies",
+  ],
+  stamp: [
+    "AI design studio",
+    "create custom t-shirt",
+    "text to t-shirt design",
+    "AI image to apparel",
+    "custom print maker",
+    "design t-shirt online",
+  ],
+  catalog: [
+    ...KEYWORDS.product,
+    "product catalog",
+    "custom apparel catalog",
+    "print on demand products",
+    "custom tote bags",
+    "custom mugs",
+    "custom posters",
+  ],
+  cart: ["shopping cart", "review order", "custom apparel checkout"],
+  checkout: ["secure checkout", "order confirmation", "safe payment"],
+  orders: ["order history", "track order", "order status", "my orders"],
+  dashboard: ["design dashboard", "my designs", "saved creations"],
+  profile: ["account settings", "user profile", "shipping address"],
+  faq: [
+    "custom apparel FAQ",
+    "AI t-shirt design questions",
+    "print on demand help",
+  ],
+  shipping: [
+    "custom apparel shipping",
+    "print on demand delivery times",
+    "worldwide shipping",
+    "order tracking",
+  ],
+  returns: [
+    "custom apparel returns",
+    "print on demand refund policy",
+    "30 day guarantee",
+  ],
+  terms: ["terms of service", "user agreement", "custom apparel terms"],
+  privacy: ["privacy policy", "GDPR", "data protection"],
+  cookies: ["cookie policy", "cookies", "analytics opt-out"],
+  security: ["data security", "secure checkout", "payment security"],
+} as const;

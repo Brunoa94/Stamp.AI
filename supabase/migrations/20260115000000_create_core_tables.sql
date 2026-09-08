@@ -5,7 +5,7 @@
 -- =====================================================
 
 -- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA extensions;
 
 -- =====================================================
 -- PROFILES TABLE
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS user_credits (
 -- CREDIT TRANSACTIONS TABLE
 -- =====================================================
 CREATE TABLE IF NOT EXISTS credit_transactions (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     transaction_type TEXT NOT NULL,
     amount INTEGER NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS credit_transactions (
 -- USER UPLOADS TABLE
 -- =====================================================
 CREATE TABLE IF NOT EXISTS user_uploads (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     original_image_url TEXT NOT NULL,
     storage_path TEXT NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS user_uploads (
 -- AI GENERATIONS TABLE
 -- =====================================================
 CREATE TABLE IF NOT EXISTS ai_generations (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     source_upload_id UUID REFERENCES user_uploads(id) ON DELETE SET NULL,
     prompt TEXT NOT NULL,
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS ai_generations (
 -- PRODUCT CATEGORIES TABLE
 -- =====================================================
 CREATE TABLE IF NOT EXISTS product_categories (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     name TEXT NOT NULL,
     slug TEXT NOT NULL UNIQUE,
     description TEXT,
@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS product_categories (
 -- PRODUCTS TABLE
 -- =====================================================
 CREATE TABLE IF NOT EXISTS products (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     name TEXT NOT NULL,
     slug TEXT NOT NULL UNIQUE,
     description TEXT,
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS products (
 -- PRODUCT IMAGES TABLE
 -- =====================================================
 CREATE TABLE IF NOT EXISTS product_images (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     product_id UUID REFERENCES products(id) ON DELETE CASCADE,
     variant_id TEXT,
     image_url TEXT NOT NULL,
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS product_images (
 -- USER DESIGNS TABLE
 -- =====================================================
 CREATE TABLE IF NOT EXISTS user_designs (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     product_id UUID REFERENCES products(id) ON DELETE SET NULL,
     base_image_id UUID REFERENCES user_uploads(id) ON DELETE SET NULL,
@@ -155,7 +155,7 @@ CREATE TABLE IF NOT EXISTS user_designs (
 -- CARTS TABLE
 -- =====================================================
 CREATE TABLE IF NOT EXISTS carts (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     session_id TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -166,7 +166,7 @@ CREATE TABLE IF NOT EXISTS carts (
 -- CART ITEMS TABLE
 -- =====================================================
 CREATE TABLE IF NOT EXISTS cart_items (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     cart_id UUID REFERENCES carts(id) ON DELETE CASCADE,
     product_id UUID REFERENCES products(id) ON DELETE SET NULL,
     design_id UUID REFERENCES user_designs(id) ON DELETE SET NULL,
@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS cart_items (
 -- ORDERS TABLE
 -- =====================================================
 CREATE TABLE IF NOT EXISTS orders (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
     order_number TEXT NOT NULL UNIQUE,
     status TEXT DEFAULT 'pending',
@@ -231,7 +231,7 @@ CREATE TABLE IF NOT EXISTS orders (
 -- ORDER ITEMS TABLE
 -- =====================================================
 CREATE TABLE IF NOT EXISTS order_items (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
     product_id UUID REFERENCES products(id) ON DELETE SET NULL,
     design_id UUID REFERENCES user_designs(id) ON DELETE SET NULL,

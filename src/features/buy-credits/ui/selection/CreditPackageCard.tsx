@@ -1,6 +1,7 @@
 "use client";
 
 import { Coins, Check, Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { cn } from "@/lib/utils";
 import { buyCreditsTheme } from "@/theme/components";
@@ -48,7 +49,7 @@ export function CreditPackageCard({
         </span>
       </div>
 
-      <span className={theme.price}>${pkg.price.toFixed(2)}</span>
+      <span className={theme.price}>€{pkg.price.toFixed(2)}</span>
 
       {isSelected && <SelectedCheckmark />}
     </Button>
@@ -56,10 +57,12 @@ export function CreditPackageCard({
 }
 
 function PopularBadge() {
+  const t = useTranslations("buyCredits.selection");
+
   return (
     <span className={buyCreditsTheme.popularBadge}>
       <Sparkles className="w-3 h-3" />
-      Popular
+      {t("popularBadge")}
     </span>
   );
 }

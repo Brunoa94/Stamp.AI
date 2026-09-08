@@ -67,12 +67,10 @@ test.describe("Security hardening", () => {
     });
   });
 
-  test.describe("best-provider", () => {
-    test("rejects missing params without leaking internals", async ({ request }) => {
+  test.describe("removed best-provider route", () => {
+    test("is no longer exposed after the catalog refactor", async ({ request }) => {
       const res = await request.post("/api/best-provider", { data: {} });
-      expect(res.status()).toBe(400);
-      const body = await res.json();
-      expect(body.error).toBeTruthy();
+      expect(res.status()).toBe(404);
     });
   });
 

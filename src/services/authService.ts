@@ -1,15 +1,18 @@
 import { createClient } from "@/lib/supabase/client";
-import type { LoginI, RegisterI, PasswordResetRequestI, UpdateProfileI } from "@/schemas/auth";
-import type { UserI, SessionI, AuthResponseI } from "@/types/auth";
-import { AuthServiceMapper } from "@/mappers/services";
+import type {
+  LoginI,
+  PasswordResetRequestI,
+  RegisterI,
+  UpdateProfileI,
+} from "@/schemas/auth";
+import type { AuthResponseI, SessionI, UserI } from "../../supabase/types";
+import { AuthServiceMapper } from "@/mappers/services/authServiceMapper";
 import {
-  SupabaseAuthResponseSchema,
-  GetUserResponseSchema,
   GetSessionResponseSchema,
+  GetUserResponseSchema,
+  SupabaseAuthResponseSchema,
   UpdateUserResponseSchema,
-} from "@/schemas/services";
-import { z } from "zod";
-import type { User, Session } from "@supabase/supabase-js";
+} from "@/schemas/services/authServiceSchemas";
 import { ErrorClient } from "./errorClient";
 
 class AuthService {
@@ -21,15 +24,24 @@ class AuthService {
    * Login user with email and password
    * Uses AuthServiceMapper to transform Supabase response
    */
-  static async login(credentials: LoginI): Promise<AuthResponseI> {
+  static async login(
+    credentials: LoginI,
+    captchaToken?: string,
+  ): Promise<AuthResponseI> {
     try {
-      const { data, error } = await AuthService.getSupabase().auth.signInWithPassword({
-        email: credentials.email,
-        password: credentials.password,
-      });
+      const { data, error } = await AuthService.getSupabase().auth
+        .signInWithPassword({
+          email: credentials.email,
+          password: credentials.password,
+          options: captchaToken ? { captchaToken } : undefined,
+        });
 
       if (error) {
-        throw ErrorClient.handleError({ error, service: "Auth", action: "Login" });
+        throw ErrorClient.handleError({
+          error,
+          service: "Auth",
+          action: "Login",
+        });
       }
 
       // Validate Supabase response
@@ -37,10 +49,14 @@ class AuthService {
 
       return AuthServiceMapper.mapSupabaseAuthToAuthResponse(
         data.user,
-        data.session
+        data.session,
       );
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Auth", action: "Login"});
+      throw ErrorClient.handleError({
+        error,
+        service: "Auth",
+        action: "Login",
+      });
     }
   }
 
@@ -62,7 +78,11 @@ class AuthService {
       });
 
       if (error) {
-        throw ErrorClient.handleError({ error, service: "Auth", action: "Register" });
+        throw ErrorClient.handleError({
+          error,
+          service: "Auth",
+          action: "Register",
+        });
       }
 
       // Validate Supabase response
@@ -71,10 +91,14 @@ class AuthService {
       return AuthServiceMapper.mapSupabaseAuthToAuthResponse(
         data.user,
         data.session,
-        "Registration successful. Please check your email to verify your account."
+        "Registration successful. Please check your email to verify your account.",
       );
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Auth", action: "Register"});
+      throw ErrorClient.handleError({
+        error,
+        service: "Auth",
+        action: "Register",
+      });
     }
   }
 
@@ -85,10 +109,18 @@ class AuthService {
     try {
       const { error } = await AuthService.getSupabase().auth.signOut();
       if (error) {
-        throw ErrorClient.handleError({ error, service: "Auth", action: "Logout" });
+        throw ErrorClient.handleError({
+          error,
+          service: "Auth",
+          action: "Logout",
+        });
       }
     } catch (error) {
-      throw ErrorClient.handleError({ error, service: "Auth", action: "Logout" });
+      throw ErrorClient.handleError({
+        error,
+        service: "Auth",
+        action: "Logout",
+      });
     }
   }
 
@@ -101,15 +133,33 @@ class AuthService {
       const { data, error } = await AuthService.getSupabase().auth.getSession();
 
       if (error) {
-        throw ErrorClient.handleError({ error, service: "Auth", action: "Get Session" });
+        // AuthSessionMissingError is expected when user is not logged in
+        // Return null instead of throwing an error
+        if (error.name === "AuthSessionMissingError") {
+          return null;
+        }
+        throw ErrorClient.handleError({
+          error,
+          service: "Auth",
+          action: "Get Session",
+        });
       }
 
       // Validate Supabase response
       GetSessionResponseSchema.parse(data);
 
-      return AuthServiceMapper.mapSupabaseSessionToSession(data.session) || null;
+      return AuthServiceMapper.mapSupabaseSessionToSession(data.session) ||
+        null;
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Auth", action: "Get Session"});
+      // Also handle AuthSessionMissingError if thrown directly
+      if (error instanceof Error && error.name === "AuthSessionMissingError") {
+        return null;
+      }
+      throw ErrorClient.handleError({
+        error,
+        service: "Auth",
+        action: "Get Session",
+      });
     }
   }
 
@@ -122,7 +172,16 @@ class AuthService {
       const { data, error } = await AuthService.getSupabase().auth.getUser();
 
       if (error) {
-        throw ErrorClient.handleError({ error, service: "Auth", action: "Get User" });
+        // AuthSessionMissingError is expected when user is not logged in
+        // Return null instead of throwing an error
+        if (error.name === "AuthSessionMissingError") {
+          return null;
+        }
+        throw ErrorClient.handleError({
+          error,
+          service: "Auth",
+          action: "Get User",
+        });
       }
 
       // Validate Supabase response
@@ -134,24 +193,44 @@ class AuthService {
 
       return AuthServiceMapper.mapSupabaseUserToUser(data.user);
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Auth", action: "Get User"});
+      // Also handle AuthSessionMissingError if thrown directly
+      if (error instanceof Error && error.name === "AuthSessionMissingError") {
+        return null;
+      }
+      throw ErrorClient.handleError({
+        error,
+        service: "Auth",
+        action: "Get User",
+      });
     }
   }
 
   /**
    * Request password reset
    */
-  static async requestPasswordReset(data: PasswordResetRequestI): Promise<void> {
+  static async requestPasswordReset(
+    data: PasswordResetRequestI,
+  ): Promise<void> {
     try {
-      const { error } = await AuthService.getSupabase().auth.resetPasswordForEmail(data.email, {
-        redirectTo: `${window.location.origin}/auth/callback?next=/reset-password&type=recovery`,
-      });
+      const { error } = await AuthService.getSupabase().auth
+        .resetPasswordForEmail(data.email, {
+          redirectTo:
+            `${window.location.origin}/auth/callback?next=/reset-password&type=recovery`,
+        });
 
       if (error) {
-        throw ErrorClient.handleError({ error, service: "Auth", action: "Request Password Reset" });
+        throw ErrorClient.handleError({
+          error,
+          service: "Auth",
+          action: "Request Password Reset",
+        });
       }
     } catch (error) {
-      throw ErrorClient.handleError({ error, service: "Auth", action: "Request Password Reset" });
+      throw ErrorClient.handleError({
+        error,
+        service: "Auth",
+        action: "Request Password Reset",
+      });
     }
   }
 
@@ -176,24 +255,37 @@ class AuthService {
         Object.assign(updateData, data.metadata);
       }
 
-      const { data: userData, error } = await AuthService.getSupabase().auth.updateUser({
-        data: updateData,
-      });
+      const { data: userData, error } = await AuthService.getSupabase().auth
+        .updateUser({
+          data: updateData,
+        });
 
       if (error) {
-        throw ErrorClient.handleError({ error, service: "Auth", action: "Update Profile" });
+        throw ErrorClient.handleError({
+          error,
+          service: "Auth",
+          action: "Update Profile",
+        });
       }
 
       // Validate Supabase response
       UpdateUserResponseSchema.parse(userData);
 
       if (!userData.user) {
-        throw ErrorClient.handleError({ error: new Error("Profile update failed"), service: "Auth", action: "Update Profile" });
+        throw ErrorClient.handleError({
+          error: new Error("Profile update failed"),
+          service: "Auth",
+          action: "Update Profile",
+        });
       }
 
       return AuthServiceMapper.mapSupabaseUserToUser(userData.user);
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Auth", action: "Update Profile"})
+      throw ErrorClient.handleError({
+        error,
+        service: "Auth",
+        action: "Update Profile",
+      });
     }
   }
 
@@ -203,15 +295,23 @@ class AuthService {
   static async resendEmailVerification(email: string): Promise<void> {
     try {
       const { error } = await AuthService.getSupabase().auth.resend({
-        type: 'signup',
+        type: "signup",
         email: email,
       });
 
       if (error) {
-        throw ErrorClient.handleError({ error, service: "Auth", action: "Resend Email Verification" });
+        throw ErrorClient.handleError({
+          error,
+          service: "Auth",
+          action: "Resend Email Verification",
+        });
       }
     } catch (error) {
-      throw ErrorClient.handleError({ error, service: "Auth", action: "Resend Email Verification" });
+      throw ErrorClient.handleError({
+        error,
+        service: "Auth",
+        action: "Resend Email Verification",
+      });
     }
   }
 
@@ -222,17 +322,25 @@ class AuthService {
   static async signInWithGoogle(): Promise<void> {
     try {
       const { error } = await AuthService.getSupabase().auth.signInWithOAuth({
-        provider: 'google',
+        provider: "google",
         options: {
           redirectTo: `${window.location.origin}/auth/callback?next=/stamp`,
         },
       });
 
       if (error) {
-        throw ErrorClient.handleError({ error, service: "Auth", action: "Sign In With Google" });
+        throw ErrorClient.handleError({
+          error,
+          service: "Auth",
+          action: "Sign In With Google",
+        });
       }
     } catch (error) {
-      throw ErrorClient.handleError({ error, service: "Auth", action: "Sign In With Google" });
+      throw ErrorClient.handleError({
+        error,
+        service: "Auth",
+        action: "Sign In With Google",
+      });
     }
   }
 
@@ -247,19 +355,31 @@ class AuthService {
       });
 
       if (error) {
-        throw ErrorClient.handleError({ error, service: "Auth", action: "Update Password" });
+        throw ErrorClient.handleError({
+          error,
+          service: "Auth",
+          action: "Update Password",
+        });
       }
 
       // Validate Supabase response
       UpdateUserResponseSchema.parse(data);
 
       if (!data.user) {
-        throw ErrorClient.handleError({ error: new Error("User data not returned"), service: "Auth", action: "Update Password" });
+        throw ErrorClient.handleError({
+          error: new Error("User data not returned"),
+          service: "Auth",
+          action: "Update Password",
+        });
       }
 
       return AuthServiceMapper.mapSupabaseUserToUser(data.user);
     } catch (error) {
-      throw ErrorClient.handleError({error, service: "Auth", action: "Update Password"})
+      throw ErrorClient.handleError({
+        error,
+        service: "Auth",
+        action: "Update Password",
+      });
     }
   }
 }

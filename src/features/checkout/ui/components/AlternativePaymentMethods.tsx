@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { CreditCard } from "lucide-react";
 
 import { Button } from "@/features/ui/button";
@@ -9,10 +10,11 @@ interface Props {
 }
 
 export function AlternativePaymentMethods({ onSelectMethod }: Props) {
+  const t = useTranslations("checkout.alternativeMethods");
   return (
     <div className={paymentErrorTheme.altMethodsBlock}>
       <p className={paymentErrorTheme.altMethodsLabel}>
-        Try Alternative Method
+        {t("title")}
       </p>
       <div className={paymentErrorTheme.altMethodsGrid}>
         <Button
@@ -20,27 +22,27 @@ export function AlternativePaymentMethods({ onSelectMethod }: Props) {
           variant="outline"
           className={paymentErrorTheme.altMethodBtn}
           onClick={() => onSelectMethod("paypal")}
-          aria-label="Pay with PayPal"
+          aria-label={t("paypalAria")}
         >
-          PayPal
+          {t("paypal")}
         </Button>
         <Button
           type="button"
           variant="outline"
           className={paymentErrorTheme.altMethodBtn}
           onClick={() => onSelectMethod("applepay")}
-          aria-label="Pay with Apple Pay"
+          aria-label={t("applePayAria")}
         >
-          Apple Pay
+          {t("applePay")}
         </Button>
         <Button
           type="button"
           variant="outline"
           className={paymentErrorTheme.altMethodBtn}
           onClick={() => onSelectMethod("stripe")}
-          aria-label="Pay with card"
+          aria-label={t("cardAria")}
         >
-          <CreditCard className="w-4 h-4" /> Card
+          <CreditCard className="w-4 h-4" /> {t("card")}
         </Button>
       </div>
     </div>

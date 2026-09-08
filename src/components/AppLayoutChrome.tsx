@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { BrutalistFooter } from "@/features/layout/brutalist/BrutalistFooter";
+import { StampFooter } from "@/features/stamp/ui/components/StampFooter/StampFooter";
 import { StampHeader } from "@/features/stamp/ui/components/StampHeader";
 
 interface AppLayoutChromeProps {
@@ -15,8 +15,8 @@ export function AppLayoutChrome({ children }: AppLayoutChromeProps) {
   return (
     <>
       <StampHeader />
-      <main className="pt-24 min-h-screen">{children}</main>
-      {!isStampRoute && <BrutalistFooter />}
+      <main className="min-h-screen">{children}</main>
+      {!isStampRoute && <StampFooter />}
     </>
   );
 }

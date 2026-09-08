@@ -1,18 +1,14 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --breakpoint-3xl: 1200px;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-poppins);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-heading);
-  --font-accent: "Zodiak", serif;
-  --font-display: "Cabinet Grotesk", sans-serif;
-  --font-anton: var(--font-anton);
-  --font-space: var(--font-space-grotesk);
+  --font-sans: var(--font-inter);
+  --font-heading: var(--font-sanchez);
+  --font-serif: var(--font-indie-flower);
   --color-purple: #9333ea;
   --color-cyan: #06b6d4;
   --color-orange: #fb923c;
@@ -167,24 +163,66 @@
   }
 
   .font-heading {
-    font-family: var(--font-heading);
-    letter-spacing: 0.05em;
+    font-family: var(--font-sanchez), var(--font-outfit), sans-serif;
+    letter-spacing: -0.01em;
+    font-weight: 600;
+    -webkit-text-stroke: 0.3px currentColor;
+  }
+
+  .font-body {
+    font-family: var(--font-inter), var(--font-poppins), sans-serif;
+    letter-spacing: -0.01em;
+    font-weight: 400;
+  }
+
+  .font-button {
+    font-family: var(--font-inter), var(--font-poppins), sans-serif;
+    font-weight: 600;
   }
 
   .font-accent {
     font-family: "Zodiak", serif;
   }
 
-  /* Glass card effect */
-  .glass-card {
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow:
-      0 25px 50px -12px rgba(0, 0, 0, 0.05),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+  .scroll-reveal {
+    opacity: 0;
+    transform: translateY(28px) scale(0.985);
+    filter: blur(2px);
+    transition:
+      opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      filter 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform, filter;
   }
+
+  .scroll-reveal--visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+
+  /* Process card reveal animation */
+  .process-card-reveal {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+    transition:
+      opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .process-card-reveal--mobile {
+    transform: translateY(30px) scale(0.95);
+    transition:
+      opacity 600ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .process-card-reveal--visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  /* Dead CSS removed: .glass-card - not used by any component */
 
   /* Auth button gradient hover effect */
   .btn-gradient:hover {
@@ -193,153 +231,9 @@
     box-shadow: 0 10px 20px -5px rgba(168, 85, 247, 0.3);
   }
 
-  .promo-carousel-track {
-    will-change: transform;
-  }
-
-  .promo-carousel-track--animated {
-    animation: promo-marquee var(--promo-carousel-duration, 34000ms) linear
-      infinite;
-  }
-
-  .promo-carousel-group:hover .promo-carousel-track {
-    animation-play-state: paused;
-  }
-
-  .section-header-enter {
-    opacity: 0;
-    transform: translateY(18px) scale(0.985);
-    filter: blur(1.5px);
-    will-change: transform, opacity, filter;
-  }
-
-  .section-header-enter.section-header-enter--active {
-    animation: section-header-enter-in 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
-
-  .section-header-title-enter {
-    opacity: 0;
-    transform: translateY(12px) scale(0.99);
-  }
-
-  .section-header-enter.section-header-enter--active
-    .section-header-title-enter {
-    animation: section-header-title-enter-in 980ms
-      cubic-bezier(0.22, 1, 0.36, 1) 180ms both;
-  }
-
-  .process-orbit-grain {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    opacity: 0.08;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
-  .process-orbit-card {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: clamp(34rem, 58vw, 68rem);
-    min-height: 560px;
-    margin-top: -280px;
-    margin-left: calc(clamp(34rem, 58vw, 68rem) / -2);
-    border-radius: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    background: linear-gradient(
-      160deg,
-      rgba(255, 255, 255, 0.12),
-      rgba(255, 255, 255, 0.03)
-    );
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
-    padding: 2.5rem;
-    overflow: hidden;
-    transform-style: preserve-3d;
-    will-change: transform, opacity, filter;
-    transition:
-      transform 620ms cubic-bezier(0.23, 1, 0.32, 1),
-      opacity 420ms ease,
-      filter 420ms ease,
-      border-color 320ms ease,
-      box-shadow 320ms ease;
-  }
-
-  .process-orbit-card:hover {
-    border-color: rgba(255, 255, 255, 0.28);
-    box-shadow: 0 38px 80px rgba(0, 0, 0, 0.58);
-  }
-
-  .process-orbit-card--active {
-    border-color: rgba(255, 255, 255, 0.72);
-    background: linear-gradient(
-      160deg,
-      rgba(255, 255, 255, 0.86),
-      rgba(255, 255, 255, 0.74)
-    );
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow:
-      0 44px 92px rgba(0, 0, 0, 0.45),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.48);
-  }
-
-  .process-orbit-color-block {
-    position: absolute;
-    inset: 0;
-    left: -12%;
-    width: 46%;
-    transform: skewX(-10deg);
-    opacity: 0.32;
-    filter: blur(86px);
-    transition:
-      transform 420ms ease,
-      opacity 420ms ease;
-    pointer-events: none;
-  }
-
-  .process-orbit-card:hover .process-orbit-color-block {
-    transform: skewX(-10deg) translateX(18px);
-    opacity: 0.52;
-  }
-
-  .process-orbit-giant-number {
-    position: absolute;
-    right: 0.2rem;
-    bottom: -1.6rem;
-    font-size: clamp(10rem, 16vw, 16rem);
-    line-height: 0.8;
-    letter-spacing: -0.07em;
-    opacity: 0.9;
-    pointer-events: none;
-    text-shadow: 0 0 28px rgba(0, 0, 0, 0.55);
-  }
-
-  .process-orbit-accent-bar {
-    height: 0.5rem;
-    width: 8rem;
-    border-radius: 9999px;
-    transition: width 460ms cubic-bezier(0.23, 1, 0.32, 1);
-  }
-
-  .process-orbit-card:hover .process-orbit-accent-bar {
-    width: 100%;
-  }
-
   /* ====================================
      BRUTALIST DESIGN SYSTEM UTILITIES
      ==================================== */
-
-  /* Font family utilities */
-  .font-anton {
-    font-family: var(--font-anton), sans-serif;
-  }
-
-  .font-space {
-    font-family: var(--font-space-grotesk), sans-serif;
-  }
 
   /* Grain overlay - fixed noise texture */
   .grain-overlay {
@@ -351,34 +245,9 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
   }
 
-  /* Animated logo dot */
-  .animated-dot {
-    display: inline-block;
-    width: 0.32em;
-    height: 0.32em;
-    border-radius: 50%;
-    background: conic-gradient(from 0deg, #9333ea, #06b6d4, #fb923c, #9333ea);
-    animation: dotPulse 2s ease-in-out infinite;
-    box-shadow:
-      0 0 20px rgba(147, 51, 234, 0.6),
-      0 0 40px rgba(147, 51, 234, 0.3),
-      inset 0 2px 4px rgba(255, 255, 255, 0.4);
-    vertical-align: baseline;
-    margin: 0 0.05em;
-    position: relative;
-    top: 0.12em;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
+  /* Dead CSS removed: .animated-dot - component deleted */
 
-  /* Synthesis section animations */
-  .synthesis-gradient-delayed {
-    animation-delay: -4s;
-  }
-
-  .synthesis-blob {
-    animation: floatBlob 40s ease-in-out infinite;
-    animation-delay: -2s;
-  }
+  /* Dead CSS removed: .synthesis-gradient-delayed, .synthesis-blob - not used by any component */
 
   /* Brutalist color utilities */
   .bg-concrete {
@@ -395,79 +264,6 @@
 
   .text-ink {
     color: #0a0a0a;
-  }
-}
-
-@keyframes section-header-enter-in {
-  0% {
-    opacity: 0;
-    transform: translateY(18px) scale(0.985);
-    filter: blur(1.5px);
-  }
-  60% {
-    opacity: 1;
-    transform: translateY(-2px) scale(1.002);
-    filter: blur(0);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
-}
-
-@keyframes section-header-title-enter-in {
-  0% {
-    opacity: 0;
-    transform: translateY(12px) scale(0.99);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes promo-marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .promo-carousel-track,
-  .promo-carousel-track--animated {
-    animation: none !important;
-    transform: none !important;
-  }
-
-  .section-header-enter,
-  .section-header-enter.section-header-enter--active {
-    animation: none !important;
-    transform: none !important;
-    opacity: 1 !important;
-    filter: none !important;
-  }
-
-  .section-header-title-enter,
-  .section-header-enter.section-header-enter--active
-    .section-header-title-enter {
-    animation: none !important;
-    transform: none !important;
-    opacity: 1 !important;
-  }
-
-  .process-orbit-card,
-  .process-orbit-color-block,
-  .process-orbit-accent-bar {
-    transition: none !important;
-    animation: none !important;
-  }
-
-  .process-orbit-card {
-    filter: none !important;
   }
 }
 
@@ -575,6 +371,16 @@
   }
 }
 
+@keyframes bounce-subtle {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(2deg);
+  }
+}
+
 @keyframes inspectionFloat {
   0%,
   100% {
@@ -614,15 +420,7 @@
   }
 }
 
-/* Glass card effect for orders page */
-.glass-card {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 2px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-  border-radius: 16px;
-}
+/* Dead CSS removed: .glass-card (duplicate) - not used by any component */
 
 /* Order row hover effect */
 .order-row:hover {
@@ -816,71 +614,6 @@
   }
 }
 
-/* Fluid Ink Drift Animations - Smooth floating movement */
-@keyframes drift-1 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  25% {
-    transform: translate(80px, -60px) scale(1.08);
-  }
-  50% {
-    transform: translate(40px, 40px) scale(0.95);
-  }
-  75% {
-    transform: translate(-60px, -20px) scale(1.05);
-  }
-}
-
-@keyframes drift-2 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  25% {
-    transform: translate(-70px, 50px) scale(1.1);
-  }
-  50% {
-    transform: translate(60px, -40px) scale(0.92);
-  }
-  75% {
-    transform: translate(-30px, 80px) scale(1.03);
-  }
-}
-
-@keyframes drift-3 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(90px, 30px) scale(1.06);
-  }
-  66% {
-    transform: translate(-50px, -70px) scale(0.94);
-  }
-}
-
-@keyframes drift-4 {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  20% {
-    transform: translate(-80px, -50px) scale(1.12);
-  }
-  40% {
-    transform: translate(50px, 60px) scale(0.9);
-  }
-  60% {
-    transform: translate(70px, -30px) scale(1.05);
-  }
-  80% {
-    transform: translate(-40px, 40px) scale(0.98);
-  }
-}
-
 /* Subtle background gradient shift */
 @keyframes subtle-gradient-shift {
   0%,
@@ -892,54 +625,9 @@
   }
 }
 
-/* Pulsing glow effect for blobs */
-@keyframes blob-pulse {
-  0%,
-  100% {
-    filter: blur(100px) saturate(1.2) brightness(1);
-    opacity: 0.7;
-  }
-  50% {
-    filter: blur(120px) saturate(1.5) brightness(1.1);
-    opacity: 0.85;
-  }
-}
+/* Dead CSS removed: @keyframes drift-1..4, blob-pulse - not used by any component */
 
-.animate-drift-1 {
-  animation:
-    drift-1 25s ease-in-out infinite,
-    blob-pulse 8s ease-in-out infinite;
-  animation-delay:
-    0s,
-    -2s;
-}
-
-.animate-drift-2 {
-  animation:
-    drift-2 30s ease-in-out infinite,
-    blob-pulse 10s ease-in-out infinite;
-  animation-delay:
-    -8s,
-    -4s;
-}
-
-.animate-drift-3 {
-  animation:
-    drift-3 28s ease-in-out infinite,
-    blob-pulse 9s ease-in-out infinite;
-  animation-delay:
-    -12s,
-    -3s;
-}
-
-.animate-drift-4 {
-  animation:
-    drift-4 22s ease-in-out infinite,
-    blob-pulse 7s ease-in-out infinite;
-  animation-delay:
-    -5s,
-    -1s;
-}
+/* Dead CSS removed: .animate-drift-1..4 - not used by any component */
 
 /* Payment Success Icon Animations */
 @keyframes icon-bounce {
@@ -1217,6 +905,55 @@
     animation: none !important;
     transition: none !important;
   }
+
+  .scroll-reveal,
+  .scroll-reveal--visible,
+  .process-card-reveal,
+  .process-card-reveal--mobile,
+  .process-card-reveal--visible {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .hero-decorative-circle,
+  .hero-title-animate,
+  .hero-title-animate--visible {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+
+/* ============================================
+   HERO SCROLL ANIMATIONS
+   ============================================ */
+
+/* Hero decorative circle - shrinks on scroll */
+.hero-decorative-circle {
+  will-change: transform, opacity;
+}
+
+/* Hero title blur-to-clear reveal animation */
+.hero-title-animate {
+  opacity: 0;
+  transform: translateY(24px) scale(0.96);
+  filter: blur(8px);
+  transition:
+    opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform, filter;
+}
+
+.hero-title-animate--visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
 }
 
 /* ============================================
@@ -1295,39 +1032,7 @@
   pointer-events: none;
 }
 
-.gradient-layer {
-  position: absolute;
-  inset: -50%;
-  background: conic-gradient(
-    from 0deg,
-    var(--purple),
-    var(--cyan),
-    var(--orange),
-    var(--purple)
-  );
-  opacity: 0.04;
-}
-
-/* Floating blobs */
-.blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(100px);
-  opacity: 0.15;
-}
-
-@keyframes floatBlob {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.1);
-  }
-  66% {
-    transform: translate(-20px, 40px) scale(0.9);
-  }
-}
+/* Dead CSS removed: .gradient-layer, .blob, @keyframes floatBlob - not used by any component */
 
 /* Sidebar progress line */
 .sidebar-progress-line {
@@ -1464,51 +1169,7 @@
   animation: dashboardGradientRotate 12s linear infinite;
 }
 
-/* Dashboard floating blobs */
-.dashboard-blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.12;
-  animation: dashboardFloatBlob 20s ease-in-out infinite;
-}
-
-.dashboard-blob.purple {
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, #9333ea 0%, transparent 70%);
-  top: 10%;
-  left: -5%;
-}
-
-.dashboard-blob.cyan {
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, #06b6d4 0%, transparent 70%);
-  top: 50%;
-  right: -10%;
-  animation-delay: -10s;
-}
-
-.dashboard-blob.orange {
-  width: 450px;
-  height: 450px;
-  background: radial-gradient(circle, #fb923c 0%, transparent 70%);
-  bottom: 10%;
-  left: 20%;
-  animation-delay: -5s;
-}
-
-/* Brutalist card base */
-.brutalist-card {
-  background: white;
-  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.brutalist-card:hover {
-  border-color: var(--color-ink);
-  box-shadow: 8px 8px 0px rgba(10, 10, 10, 0.02);
-}
+/* Dead CSS removed: .dashboard-blob, .brutalist-card - not used by any component */
 
 /* Progress bar fill */
 .dashboard-progress-bar {
@@ -1563,37 +1224,7 @@
    MODERN NAVBAR ANIMATIONS
    ==================================== */
 
-/* Navigation link underline effect */
-.nav-link-underline {
-  position: relative;
-}
-
-.nav-link-underline::after {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  right: 0;
-  width: 0%;
-  height: 2px;
-  background-color: var(--color-cyan);
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.nav-link-underline:hover::after {
-  width: 100%;
-}
-
-/* Gradient badge for STAMP IT button */
-.gradient-badge {
-  background: linear-gradient(135deg, #a855f7 0%, #fb923c 100%);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px -5px rgba(168, 85, 247, 0.3);
-}
-
-.gradient-badge:hover {
-  transform: scale(1.08) translateY(-2px);
-  box-shadow: 0 15px 30px -5px rgba(251, 146, 60, 0.5);
-}
+/* Dead CSS removed: .nav-link-underline - not used by any component */
 
 /* Action button refined styles */
 .action-btn-refined {
@@ -1607,40 +1238,7 @@
   color: white;
 }
 
-/* Glow effects for buttons */
-.btn-glow-cyan:hover {
-  box-shadow:
-    0 0 20px rgba(34, 211, 238, 0.4),
-    0 0 40px rgba(34, 211, 238, 0.1);
-  border-color: var(--color-cyan);
-}
-
-.btn-glow-purple:hover {
-  box-shadow:
-    0 0 20px rgba(168, 85, 247, 0.4),
-    0 0 40px rgba(168, 85, 247, 0.1);
-  border-color: var(--color-purple);
-}
-
-.btn-glow-orange:hover {
-  box-shadow:
-    0 0 20px rgba(251, 146, 60, 0.4),
-    0 0 40px rgba(251, 146, 60, 0.1);
-  border-color: var(--color-orange);
-}
-
-/* Icon glow effects */
-.icon-glow-cyan:hover iconify-icon {
-  filter: drop-shadow(0 0 8px var(--color-cyan));
-}
-
-.icon-glow-purple:hover iconify-icon {
-  filter: drop-shadow(0 0 8px var(--color-purple));
-}
-
-.icon-glow-orange:hover iconify-icon {
-  filter: drop-shadow(0 0 8px var(--color-orange));
-}
+/* Dead CSS removed: .btn-glow-*, .icon-glow-* - not used by any component */
 
 /* Button text slide animation */
 .btn-text {
@@ -1700,5 +1298,267 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+/* CTA Button Pulse Animation */
+@keyframes pulse-subtle {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow:
+      0 10px 25px -5px rgba(0, 0, 0, 0.1),
+      -15px -5px 40px -5px rgba(6, 182, 212, 0.15),
+      15px -5px 40px -5px rgba(251, 146, 60, 0.15),
+      0 5px 30px -5px rgba(147, 51, 234, 0.1);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow:
+      0 20px 40px -5px rgba(0, 0, 0, 0.2),
+      -25px -10px 60px 0px rgba(6, 182, 212, 0.6),
+      25px -10px 60px 0px rgba(251, 146, 60, 0.6),
+      0 10px 50px 0px rgba(147, 51, 234, 0.4);
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 1.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse-subtle {
+    animation: none;
+  }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Creative Gradient Border Button */
+.btn-gradient-border {
+  position: relative;
+  background: var(--color-stamp-off-white);
+  z-index: 1;
+}
+
+.btn-gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(
+    135deg,
+    rgba(6, 182, 212, 1) 0%,
+    rgba(147, 51, 234, 1) 50%,
+    rgba(251, 146, 60, 1) 100%
+  );
+  background-size: 300% 300%;
+  animation: gradient-shift 2s ease-in-out infinite;
+  z-index: -1;
+  border-radius: inherit;
+}
+
+.btn-gradient-border::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  background: var(--color-stamp-off-white);
+  z-index: -1;
+  border-radius: inherit;
+  transition: background 0.3s ease;
+}
+
+.btn-gradient-border:hover::after {
+  background: var(--color-stamp-cream);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-gradient-border::before {
+    animation: none;
+    background-position: 50% 50%;
+  }
+}
+
+/* ====================================
+   HOMEPAGE HERO - ENHANCED CONTRAST
+   ==================================== */
+
+/* Dead CSS removed: .hero-blur-blob, .hero-blob-*, @keyframes heroFloat - not used by any component */
+
+/* Gradient text for logo "AI" */
+/* Dead CSS removed: .logo-gradient-text - not used by any component */
+
+/* Stagger card effect */
+.hero-stagger-card {
+  box-shadow: 12px 12px 0px 0px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-stagger-card:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 16px 16px 0px 0px rgba(0, 0, 0, 0.2);
+}
+
+/* Dead CSS removed: .process-card-dark, .review-card-* - not used by any component */
+
+/* ====================================
+   HOMEPAGE SCROLL ANIMATIONS
+   ==================================== */
+
+/* Hero parallax elements */
+.hero-parallax-text {
+  transition: transform 0.1s linear;
+  will-change: transform;
+}
+
+.hero-parallax-image {
+  transition: transform 0.1s linear;
+  will-change: transform;
+}
+
+/* Scroll-triggered fade effects */
+.hero-scroll-fade {
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out;
+  will-change: opacity, transform;
+}
+
+/* Hero content that moves up on scroll */
+.hero-scroll-up {
+  transition:
+    transform 0.1s linear,
+    opacity 0.2s ease-out;
+  will-change: transform, opacity;
+}
+
+/* Hero image that scales and moves on scroll */
+.hero-scroll-scale {
+  transition: transform 0.1s linear;
+  will-change: transform;
+}
+
+/* Blur blobs parallax effect */
+.hero-blob-parallax {
+  transition: transform 0.15s linear;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-parallax-text,
+  .hero-parallax-image,
+  .hero-scroll-fade,
+  .hero-scroll-up,
+  .hero-scroll-scale,
+  .hero-blob-parallax {
+    transition: none;
+    transform: none !important;
+  }
+}
+
+/* ====================================
+   SECTION REVEAL VARIANTS
+   ==================================== */
+
+/* Base section reveal with scroll effects */
+.section-reveal-scroll {
+  will-change: opacity, transform, filter;
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Hidden state (before entering viewport) */
+.section-reveal-scroll--hidden {
+  opacity: 0;
+  transform: translateY(28px) scale(0.985);
+  filter: blur(2px);
+}
+
+/* Visible state (after entering viewport) */
+/* Note: opacity and transform are controlled via inline styles for scroll-based fade/parallax */
+.section-reveal-scroll--visible {
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-reveal-scroll,
+  .section-reveal-scroll--hidden,
+  .section-reveal-scroll--visible {
+    transition: none;
+    transform: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* ====================================
+   HERO BUBBLING PRODUCTS ANIMATION
+   GPU-accelerated transforms via CSS custom properties
+   ==================================== */
+
+.bubbling-product {
+  /* Hint to browser for compositor layer promotion */
+  will-change: transform, opacity;
+  /* Use GPU-accelerated properties only */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+
+  /*
+   * Animation driven by --bubble-progress (0 to 1) set on parent container.
+   * All calculations use CSS calc() for GPU acceleration without JS re-renders.
+   *
+   * Variables set per-element:
+   * --base-height: vertical travel distance (30-50)
+   * --appear-threshold: staggered appearance delay (0-0.05)
+   * --start-x: horizontal position (0-100%)
+   * --x-drift: pre-calculated drift amount
+   * --rotation: pre-calculated rotation amount
+   */
+
+  /* Calculate local progress accounting for stagger delay */
+  --local-progress: max(
+    0,
+    min(
+      1,
+      calc(
+        (var(--bubble-progress, 0) - var(--appear-threshold, 0)) /
+          max(0.001, 1 - var(--appear-threshold, 0))
+      )
+    )
+  );
+
+  /* Y offset: starts at 95% (below visible), rises to 0 */
+  --y-offset: calc((1 - var(--local-progress)) * 95);
+
+  /* Scale: 0.85 at start, 1.0 at full progress */
+  --scale-value: calc(0.85 + var(--local-progress) * 0.15);
+
+  /* Opacity: 0.3 at start, 1.0 at full progress */
+  --opacity-value: calc(0.3 + min(1, var(--local-progress) * 1.5) * 0.7);
+
+  /* Apply calculated values */
+  left: calc(var(--start-x, 50) * 1%);
+  bottom: calc((1 - var(--y-offset) / 100) * (var(--base-height, 40) + 10) * 1%);
+  transform: translateX(-50%) scale(var(--scale-value)) rotate(calc(var(--rotation, 0) * var(--local-progress) * 1deg));
+  opacity: var(--opacity-value);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubbling-product {
+    will-change: auto;
+    --local-progress: 1;
+    opacity: 1;
+    transform: translateX(-50%) scale(1) rotate(0deg);
   }
 }

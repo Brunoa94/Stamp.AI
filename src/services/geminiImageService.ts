@@ -1,70 +1,23 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import fs from "fs";
+import path from "path";
 
 interface GeminiImageGenerationResult {
   imageUrl: string;
   enhancedPrompt: string;
 }
 
+const MAX_IMAGE_SIZE_BYTES = 4 * 1024 * 1024; // 4MB
+
+// Use mock image for local development (uses public/zoe.png)
+const USE_MOCK_IMAGE = true;
+
 /**
  * Google Gemini Image Generation Service
  *
- * Uses the official @google/generative-ai SDK with available models:
- * - gemini-2.0-flash for image analysis
- * - gemini-2.5-flash-image for image generation
+ * Uses Gemini 2.5 Flash for prompt enhancement and image generation
  */
 export class GeminiImageService {
-  private static parseDataUrl(imageUrl: string): {
-    mimeType: string;
-    base64Data: string;
-  } {
-    const match = imageUrl.match(/^data:([^;]+);base64,(.+)$/);
-    if (!match) {
-      throw new Error("Invalid data URL format");
-    }
-
-    return {
-      mimeType: match[1],
-      base64Data: match[2],
-    };
-  }
-
-  private static async removeBackgroundFromDataUrl(
-    imageUrl: string,
-  ): Promise<string> {
-    const { mimeType, base64Data } = this.parseDataUrl(imageUrl);
-
-    const { removeBackground } = await import("@imgly/background-removal-node");
-
-    const sourceBuffer = Buffer.from(base64Data, "base64");
-    const normalizedMimeType = mimeType?.startsWith("image/")
-      ? mimeType
-      : "image/png";
-    const sourceBlob = new Blob([sourceBuffer], { type: normalizedMimeType });
-
-    let processedBlob: Blob;
-
-    try {
-      processedBlob = await removeBackground(sourceBlob, {
-        model: "small",
-        output: {
-          format: "image/png",
-          quality: 1,
-        },
-      });
-    } catch {
-      processedBlob = await removeBackground(imageUrl, {
-        model: "small",
-        output: {
-          format: "image/png",
-          quality: 1,
-        },
-      });
-    }
-
-    const processedBuffer = Buffer.from(await processedBlob.arrayBuffer());
-    return `data:image/png;base64,${processedBuffer.toString("base64")}`;
-  }
-
   private static getClient(): GoogleGenerativeAI {
     const apiKey = process.env.GOOGLE_GEMINI_API_KEY;
     if (!apiKey) {
@@ -74,116 +27,209 @@ export class GeminiImageService {
   }
 
   /**
+   * Preprocess image to ensure compatibility with Gemini API
+   * Uses sharp if available, otherwise returns base64 directly
+   */
+  private static async preprocessImage(
+    imageBuffer: ArrayBuffer,
+  ): Promise<{ base64: string; mimeType: string }> {
+    try {
+      // Try to use sharp for image processing
+      const sharp = (await import("sharp")).default;
+
+      let sharpInstance = sharp(Buffer.from(imageBuffer));
+      const metadata = await sharpInstance.metadata();
+      const width = metadata.width || 0;
+      const height = metadata.height || 0;
+      const MAX_IMAGE_DIMENSION = 2048;
+
+      if (width > MAX_IMAGE_DIMENSION || height > MAX_IMAGE_DIMENSION) {
+        sharpInstance = sharpInstance.resize(
+          MAX_IMAGE_DIMENSION,
+          MAX_IMAGE_DIMENSION,
+          {
+            fit: "inside",
+            withoutEnlargement: true,
+          },
+        );
+      }
+
+      let quality = 90;
+      let outputBuffer = await sharpInstance.jpeg({ quality }).toBuffer();
+
+      while (outputBuffer.byteLength > MAX_IMAGE_SIZE_BYTES && quality > 50) {
+        quality -= 10;
+        outputBuffer = await sharp(Buffer.from(imageBuffer))
+          .resize(MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION, {
+            fit: "inside",
+            withoutEnlargement: true,
+          })
+          .jpeg({ quality })
+          .toBuffer();
+      }
+
+      return {
+        base64: outputBuffer.toString("base64"),
+        mimeType: "image/jpeg",
+      };
+    } catch (error) {
+      // Fallback: convert ArrayBuffer to base64 without processing
+      console.warn("[GeminiImageService] Sharp not available, using raw image:", error);
+      const buffer = Buffer.from(imageBuffer);
+
+      // Detect mime type from magic bytes
+      let mimeType = "image/jpeg";
+      if (buffer[0] === 0x89 && buffer[1] === 0x50) {
+        mimeType = "image/png";
+      } else if (buffer[0] === 0x47 && buffer[1] === 0x49) {
+        mimeType = "image/gif";
+      }
+
+      return {
+        base64: buffer.toString("base64"),
+        mimeType,
+      };
+    }
+  }
+
+  /**
+   * Get preservation instruction based on level (0-100)
+   * 0 = low preservation (more creative freedom)
+   * 100 = high preservation (stay close to original)
+   */
+  private static getPreservationInstruction(preservation: number): string {
+    if (preservation >= 80) {
+      return "CRITICAL: Preserve the original image as closely as possible. Keep the exact pose, composition, colors, and details. Only apply minimal stylistic changes while maintaining the subject's identity and appearance exactly as shown.";
+    } else if (preservation >= 60) {
+      return "Preserve the main subject's key features, pose, and overall composition. You may enhance colors and add stylistic elements, but keep the subject recognizable and similar to the original.";
+    } else if (preservation >= 40) {
+      return "Use the original image as a reference. Keep the general subject and concept, but feel free to reinterpret the style, colors, and composition creatively.";
+    } else if (preservation >= 20) {
+      return "Take creative liberties with the design. Use the original image as loose inspiration only. You may significantly change the style, pose, and details while keeping the basic subject concept.";
+    } else {
+      return "Maximum creative freedom. Use the original image only as a starting concept. Feel free to completely reimagine the subject with a new style, composition, and artistic interpretation.";
+    }
+  }
+
+  /**
+   * Get background instruction based on removeBackground flag
+   */
+  private static getBackgroundInstruction(removeBackground: boolean): string {
+    if (removeBackground) {
+      return "- CRITICAL: Generate the subject completely isolated on a fully TRANSPARENT background (alpha channel = 0). NO shadows, NO gradients, NO environmental elements, NO floor reflections. The subject must have clean, crisp edges with transparency preserved. Output as PNG with alpha transparency.";
+    }
+    return "- Include the background as part of the design, keep environmental elements and context from the original image";
+  }
+
+  /**
+   * Generate a mock image for testing (uses zoe.png from public folder)
+   */
+  private static async generateMockImage(
+    prompt: string,
+    removeBackground: boolean,
+  ): Promise<GeminiImageGenerationResult> {
+    console.log("[MOCK] Using mock image instead of Gemini API");
+    console.log("[MOCK] Prompt:", prompt);
+    console.log("[MOCK] Remove background:", removeBackground);
+
+    // Read the mock image from public folder
+    const mockImagePath = path.join(process.cwd(), "public", "zoe.png");
+    const mockImageBuffer = fs.readFileSync(mockImagePath);
+    const mockImageBase64 = mockImageBuffer.toString("base64");
+    const imageUrl = `data:image/png;base64,${mockImageBase64}`;
+
+    const mockEnhancedPrompt =
+      `[MOCK] Enhanced prompt based on: "${prompt}" with removeBackground=${removeBackground}`;
+
+    return {
+      imageUrl,
+      enhancedPrompt: mockEnhancedPrompt,
+    };
+  }
+
+  /**
    * Generate an image using Google Gemini
-   *
-   * @param imageBuffer - The image file as ArrayBuffer
-   * @param mimeType - The MIME type of the image (e.g., "image/jpeg")
-   * @param prompt - The user's prompt describing the desired transformation
-   * @returns Object containing the generated image URL (base64 data URL) and enhanced prompt
+   * @param preservation - Level of preservation (0-100). Higher = stay closer to original image.
+   * @param removeBackground - Whether to isolate subject (true) or keep background (false).
    */
   static async generateImage(
     imageBuffer: ArrayBuffer,
-    mimeType: string,
+    _mimeType: string,
     prompt: string,
-    customizationInput?: {
-      selectedStyle?: string;
-      preservation?: number;
-    },
+    preservation: number = 50,
+    removeBackground: boolean = true,
   ): Promise<GeminiImageGenerationResult> {
+    // Use mock image for testing
+    if (USE_MOCK_IMAGE) {
+      return this.generateMockImage(prompt, removeBackground);
+    }
+
     const genAI = this.getClient();
-    const imageBase64 = Buffer.from(imageBuffer).toString("base64");
-    const styleLabel = (customizationInput?.selectedStyle ?? "N/A").trim();
-    const parsedPreservation = Number(customizationInput?.preservation ?? 80);
-    const preservation = Number.isFinite(parsedPreservation)
-      ? Math.min(100, Math.max(0, parsedPreservation))
-      : 80;
-    const preservationScaleRaw = preservation / 10;
-    const preservationScale = Number.isInteger(preservationScaleRaw)
-      ? `${preservationScaleRaw}`
-      : preservationScaleRaw.toFixed(1);
-    const selectedStyleContext =
-      styleLabel !== "N/A"
-        ? `Selected style: "${styleLabel}"\n`
-        : "";
+    const processedImage = await this.preprocessImage(imageBuffer);
+    const preservationInstruction = this.getPreservationInstruction(
+      preservation,
+    );
+    const backgroundInstruction = this.getBackgroundInstruction(
+      removeBackground,
+    );
 
-    // Step 1: Use Gemini 2.5 Flash to analyze image and generate enhanced prompt
-    console.log("Analyzing image with Gemini 2.5 Flash...");
-
-    const analysisModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    // Step 1: Analyze image and generate enhanced prompt
+    const analysisModel = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+    });
 
     const analysisResult = await analysisModel.generateContent([
       {
         inlineData: {
-          mimeType,
-          data: imageBase64,
+          mimeType: processedImage.mimeType,
+          data: processedImage.base64,
         },
       },
       {
-        text: `Analyze this image and create a detailed image generation prompt using the user's request and customization settings.
+        text:
+          `You are a graphic designer creating merchandise designs. Analyze this image and create an image generation prompt based on: "${prompt}".
 
-      User request: "${prompt.trim()}"
-      ${selectedStyleContext}      Preservation rule: "the original image must be preserved on a scale of ${preservationScale} to 10"
+Preservation Level (${preservation}/100): ${preservationInstruction}
 
-Your task:
-1. Identify key visual elements in the uploaded image (subject, colors, composition, style)
-      2. Transform these elements according to the user's requested style/theme.
-3. Create a detailed, vivid prompt that will generate a new image combining the original subject with the requested transformation
+Requirements:
+- Center the subject with balanced spacing (70-80% of canvas)
+- Use bold, high-contrast colors that work on fabric
+- Clean edges, well-defined shapes
+${backgroundInstruction}
 
-      Adapt the image to be well printable on a t-shirt. The original image must be preserved on a scale of ${preservationScale} to 10 and use the uploaded image as the base reference.
-      ${styleLabel !== "N/A" ? `Ensure the visual language strongly matches this style: ${styleLabel}.` : "Do not force any extra predefined style; follow only the user request."}
-
-Critical background rules (must be explicit in the prompt you output):
-- Background must be fully transparent (alpha), not white and not gray.
-- Do NOT include checkerboard, grid, tiles, pattern, texture, studio backdrop, or any scene background.
-- Output only the isolated subject/logo artwork, centered.
-- Clean silhouette edges for print production.
-
-Output ONLY the image generation prompt, nothing else. Make it descriptive, specific, and optimized for AI image generation.`,
+Output ONLY the prompt text, no explanations.`,
       },
     ]);
 
     const enhancedPrompt = analysisResult.response.text();
-
     if (!enhancedPrompt) {
-      throw new Error("Failed to generate enhanced prompt from Gemini analysis");
+      throw new Error("Failed to generate enhanced prompt");
     }
 
-    console.log("Enhanced prompt generated:", enhancedPrompt.substring(0, 100) + "...");
-
-    // Step 2: Generate new image using Gemini 2.5 Flash Image
-    console.log("Generating image with Gemini 2.5 Flash Image...");
-
+    // Step 2: Generate image
     const imageModel = genAI.getGenerativeModel({
       model: "gemini-2.5-flash-image",
     });
 
-    const generationPrompt = `${enhancedPrompt}\n\nNon-negotiable output constraints:\n- Return a PNG-style image with transparent alpha background.\n- No checkerboard/grid/pattern in the background.\n- No backdrop or environment; isolated subject only.\n- Keep clean cutout edges suitable for t-shirt printing.\n- The original image must be preserved on a scale of ${preservationScale} to 10.\n${styleLabel !== "N/A" ? `- Match the ${styleLabel} style direction.` : "- Keep style neutral unless requested by user prompt."}`;
+    const backgroundSuffix = removeBackground
+      ? "CRITICAL: Render the subject with a fully TRANSPARENT background (PNG with alpha channel). No shadows, no gradients, no floor reflections, no background elements whatsoever. The subject must be completely isolated with sharp, clean edges and full transparency around it. Output format must be PNG with alpha transparency preserved."
+      : "Include background and environmental context, print-ready artwork.";
 
     const imageResult = await imageModel.generateContent({
       contents: [
         {
           role: "user",
-          parts: [
-            {
-              text: generationPrompt,
-            },
-          ],
+          parts: [{ text: `${enhancedPrompt}\n\n${backgroundSuffix}` }],
         },
       ],
-      generationConfig: {
-        responseModalities: ["image", "text"],
-      } as any,
+      generationConfig: { responseModalities: ["image", "text"] } as any,
     });
 
-    // Extract the generated image from the response
-    const response = imageResult.response;
-    const parts = response.candidates?.[0]?.content?.parts;
-
-    if (!parts || parts.length === 0) {
+    const parts = imageResult.response.candidates?.[0]?.content?.parts;
+    if (!parts?.length) {
       throw new Error("No image generated from Gemini");
     }
 
-    // Find the image part in the response
     let generatedImageBase64: string | null = null;
     let generatedMimeType = "image/png";
 
@@ -199,27 +245,8 @@ Output ONLY the image generation prompt, nothing else. Make it descriptive, spec
       throw new Error("No image data found in Gemini response");
     }
 
-    if (!generatedMimeType.startsWith("image/")) {
-      generatedMimeType = "image/png";
-    }
-
     const imageUrl = `data:${generatedMimeType};base64,${generatedImageBase64}`;
 
-    let transparentImageUrl = imageUrl;
-
-    try {
-      console.log("Removing generated image background with IMG.LY...");
-      transparentImageUrl = await this.removeBackgroundFromDataUrl(imageUrl);
-    } catch (backgroundRemovalError) {
-      console.error("Background removal failed:", backgroundRemovalError);
-      throw new Error(
-        "Background removal failed. Please try generating again.",
-      );
-    }
-
-    return {
-      imageUrl: transparentImageUrl,
-      enhancedPrompt,
-    };
+    return { imageUrl, enhancedPrompt };
   }
 }

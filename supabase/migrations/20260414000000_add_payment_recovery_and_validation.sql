@@ -11,7 +11,7 @@
 -- Enables recovery from browser crashes, network failures, etc.
 
 CREATE TABLE IF NOT EXISTS payment_recovery (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
 
   -- Payment identification
   payment_provider TEXT NOT NULL CHECK (payment_provider IN ('stripe', 'paypal', 'mollie')),
@@ -75,7 +75,7 @@ COMMENT ON TABLE payment_recovery IS
 -- Tracks payment amount mismatches for security monitoring
 
 CREATE TABLE IF NOT EXISTS amount_validation_failures (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
 
   -- Payment details
   payment_provider TEXT NOT NULL,
@@ -120,7 +120,7 @@ COMMENT ON TABLE amount_validation_failures IS
 -- Tracks instances where test mode was requested in production
 
 CREATE TABLE IF NOT EXISTS test_mode_violations (
-  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
 
   -- Context
   violation_type TEXT NOT NULL CHECK (violation_type IN ('printify_order', 'payment_processing', 'other')),

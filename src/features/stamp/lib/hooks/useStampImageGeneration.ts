@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { useTranslations } from "next-intl";
 import { useStampNavigation } from "./useStampNavigation";
 import {
   useStampGeneration,
@@ -8,43 +9,52 @@ import {
   useStampUpload,
 } from "./useStampSelectors";
 import { useImageGeneration as useImageGenerationMutation } from "@/queries/imageGenerationQueries";
+import { useDeductCoin } from "@/queries/coinsQueries";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { logStampError, logStampWarn } from "../helpers/stampLogger";
+import { logStampError, logStampWarn, logStampInfo } from "../helpers/stampLogger";
 import { withTimeout } from "@/lib/promiseUtils";
+import { AnalyticsService } from "@/services/analyticsService";
+import {
+  mapGenerateCompleteEvent,
+  mapGenerateFailedEvent,
+} from "@/features/analytics/mappers/stampFlowMappers";
+import { addStoredImage } from "../services/generatedImagesStorage";
+import {
+  DEFAULT_SYNTHESIS_STYLE,
+  IMAGE_GENERATION_TIMEOUT_MS,
+} from "../constants/imageGeneration";
+import {
+  ImageGenerationTimeoutError,
+  resolveReferenceImageFile,
+  startSimulatedProgress,
+} from "../helpers/imageGenerationHelpers";
 
 /**
  * useStampImageGeneration
  *
- * Hook for handling AI image generation in Stamp.
- * Integrates with the existing ImageGenerationService.
+ * Hook for handling AI image generation in Stamp. Orchestrates the flow;
+ * file conversion, timeout error and progress simulation live in
+ * ../helpers/imageGenerationHelpers, config in ../constants/imageGeneration.
  *
  * Error Handling Pattern:
  * - Implements idempotency checks to prevent duplicate generation requests
  * - Uses timeout handling for long-running AI operations
  * - Provides clear user-facing error messages with recovery paths
+ *
+ * Coins Integration:
+ * - Deducts 1 coin before image generation
+ * - Aborts generation if coin deduction fails
  */
-
-const IMAGE_GENERATION_TIMEOUT_MS = 90_000; // 90 seconds for AI generation
-
-class ImageGenerationTimeoutError extends Error {
-  constructor(timeoutMs: number) {
-    super(
-      `Image generation timed out after ${
-        Math.round(timeoutMs / 1000)
-      } seconds. ` +
-        `Please try again with a simpler prompt or contact support.`,
-    );
-    this.name = "ImageGenerationTimeoutError";
-  }
-}
 
 interface GenerateImageParamsType {
   prompt: string;
-  artStyle: string;
   preservation: number;
+  removeBackground: boolean;
 }
 
 export function useStampImageGeneration() {
+  const t = useTranslations("stamp.errors.imageGeneration");
+  const tCoins = useTranslations("stamp.errors.coins");
   const { nextStep } = useStampNavigation();
   const { handleError } = useErrorHandler();
   const { uploadedImageUrl } = useStampUpload();
@@ -56,14 +66,15 @@ export function useStampImageGeneration() {
   const { setSelectedImageUrl, setEnhancedPrompt } = useStampSelectedImage();
 
   const generateMutation = useImageGenerationMutation();
+  const deductCoinMutation = useDeductCoin();
 
   // Idempotency: Track if generation is in progress to prevent duplicates
   const isGeneratingRef = useRef(false);
 
   const handleGenerate = async ({
     prompt,
-    artStyle,
     preservation,
+    removeBackground,
   }: GenerateImageParamsType) => {
     // Idempotency check: Prevent duplicate generation requests
     if (isGeneratingRef.current) {
@@ -76,7 +87,7 @@ export function useStampImageGeneration() {
 
     // Validate prompt
     if (!prompt || prompt.trim().length === 0) {
-      handleError(new Error("Please enter a description for your design"));
+      handleError(new Error(t("emptyPrompt")));
       return;
     }
 
@@ -90,54 +101,70 @@ export function useStampImageGeneration() {
     nextStep();
 
     // Simulate progress for better UX
-    const progressInterval = setInterval(() => {
-      setGenerationProgress((prev) => {
-        if (prev >= 90) {
-          clearInterval(progressInterval);
-          return 90;
-        }
-        return prev + 10;
-      });
-    }, 400);
+    const stopProgress = startSimulatedProgress(setGenerationProgress);
 
     try {
+      const imageFile = await resolveReferenceImageFile(uploadedImageUrl);
+
+      // Deduct coin before generation
+      logStampInfo({
+        scope: "useStampImageGeneration",
+        event: "deducting_coin_before_generation",
+      });
+
+      const coinDeducted = await deductCoinMutation.mutateAsync();
+
+      if (!coinDeducted) {
+        logStampWarn({
+          scope: "useStampImageGeneration",
+          event: "coin_deduction_failed_no_coins",
+        });
+        stopProgress();
+        setGenerationProgress(0);
+        handleError(new Error(tCoins("deductFailed")));
+        return;
+      }
+
+      logStampInfo({
+        scope: "useStampImageGeneration",
+        event: "coin_deducted_successfully",
+      });
+
       // Wrap mutation with timeout
       const result = await withTimeout(
         generateMutation.mutateAsync({
-          image: uploadedImageUrl ? new File([], "reference") : undefined,
+          image: imageFile,
           prompt,
-          selectedStyle: artStyle,
-          preservation: uploadedImageUrl ? preservation : undefined,
-        } as any),
+          selectedStyle: DEFAULT_SYNTHESIS_STYLE,
+          preservation,
+          removeBackground,
+        }),
         IMAGE_GENERATION_TIMEOUT_MS,
-        new ImageGenerationTimeoutError(IMAGE_GENERATION_TIMEOUT_MS),
+        new ImageGenerationTimeoutError(
+          t("timeout", {
+            seconds: Math.round(IMAGE_GENERATION_TIMEOUT_MS / 1000),
+          }),
+        ),
       );
 
-      clearInterval(progressInterval);
+      stopProgress();
       setGenerationProgress(100);
+
+      AnalyticsService.track(
+        "stamp_generate_complete",
+        mapGenerateCompleteEvent({
+          promptLength: prompt.length,
+          usedReferenceImage: Boolean(uploadedImageUrl),
+        })
+      );
 
       // Add result to history
       addGeneratedResult(result);
       setSelectedImageUrl(result.imageUrl);
       setEnhancedPrompt(result.enhancedPrompt);
 
-      // Save to localStorage for persistence
-      try {
-        const currentResults = JSON.parse(
-          localStorage.getItem("stamp:generated-history") || "[]",
-        );
-        const updatedResults = [result, ...currentResults].slice(0, 20);
-        localStorage.setItem(
-          "stamp:generated-history",
-          JSON.stringify(updatedResults),
-        );
-      } catch (storageError) {
-        logStampWarn({
-          scope: "useStampImageGeneration",
-          event: "generated_history_persist_failed",
-          error: storageError,
-        });
-      }
+      // Save to localStorage with 24h TTL
+      addStoredImage(result);
 
       // Auto-advance to results after a short delay
       setTimeout(() => {
@@ -146,8 +173,15 @@ export function useStampImageGeneration() {
 
       return result;
     } catch (error) {
-      clearInterval(progressInterval);
+      stopProgress();
       setGenerationProgress(0);
+
+      AnalyticsService.track(
+        "stamp_generate_failed",
+        mapGenerateFailedEvent({
+          reason: error instanceof ImageGenerationTimeoutError ? "timeout" : "error",
+        })
+      );
 
       if (error instanceof ImageGenerationTimeoutError) {
         logStampError({

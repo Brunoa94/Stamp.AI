@@ -30,9 +30,16 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_payment_transactions_paypal_order
   WHERE paypal_order_id IS NOT NULL;
 
 -- Step 6: Add constraint to ensure at least one payment ID exists
-ALTER TABLE payment_transactions
-  ADD CONSTRAINT chk_payment_id_exists
-  CHECK (stripe_payment_intent_id IS NOT NULL OR paypal_order_id IS NOT NULL);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'chk_payment_id_exists'
+  ) THEN
+    ALTER TABLE payment_transactions
+      ADD CONSTRAINT chk_payment_id_exists
+      CHECK (stripe_payment_intent_id IS NOT NULL OR paypal_order_id IS NOT NULL);
+  END IF;
+END $$;
 
 -- Step 7: Create index for payment provider queries
 CREATE INDEX IF NOT EXISTS idx_payment_transactions_provider
@@ -42,6 +49,13 @@ CREATE INDEX IF NOT EXISTS idx_payment_transactions_provider
 ALTER TABLE payment_transactions
   DROP CONSTRAINT IF EXISTS payment_transactions_status_check;
 
-ALTER TABLE payment_transactions
-  ADD CONSTRAINT payment_transactions_status_check
-  CHECK (status IN ('processing', 'succeeded', 'failed', 'canceled', 'refunded'));
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'payment_transactions_status_check'
+  ) THEN
+    ALTER TABLE payment_transactions
+      ADD CONSTRAINT payment_transactions_status_check
+      CHECK (status IN ('processing', 'succeeded', 'failed', 'canceled', 'refunded'));
+  END IF;
+END $$;

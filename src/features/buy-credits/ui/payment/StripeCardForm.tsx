@@ -1,6 +1,7 @@
 "use client";
 
 import { CardElement } from "@stripe/react-stripe-js";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { buyCreditsTheme } from "@/theme/components";
 import { STRIPE_CARD_ELEMENT_OPTIONS } from "@/constants/payment";
@@ -19,6 +20,7 @@ export function StripeCardForm({
   onSuccess,
   onError,
 }: StripeCardFormProps) {
+  const t = useTranslations("buyCredits.payment");
   const { loading, error, isReady, handleSubmit } = useStripePayment({
     amount,
     credits,
@@ -37,7 +39,7 @@ export function StripeCardForm({
         disabled={!isReady || loading}
         className={buyCreditsTheme.selectionStep.submitButton}
       >
-        {loading ? "Processing..." : `Pay $${amount.toFixed(2)}`}
+        {loading ? t("processing") : t("payButton", { amount: amount.toFixed(2) })}
       </Button>
     </form>
   );

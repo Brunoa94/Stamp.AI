@@ -4,7 +4,7 @@ import {
   CustomProductResponseSchema,
   CreatePrintifyOrderRequestSchema,
   PrintifyOrderResponseSchema
-} from "@/schemas/services";
+} from "@/schemas/services/printifyServiceSchemas";
 import { createClient } from "@/lib/supabase/client";
 import type {
     CreatePrintifyOrderRequest,

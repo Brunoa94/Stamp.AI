@@ -48,6 +48,7 @@ Color System
 **Format**: CSS custom properties using OKLCH color space
 
 **Examples**:
+
 - `--color-primary` - Primary brand color
 - `--color-background` - Page background
 - `--color-foreground` - Main text color
@@ -59,22 +60,36 @@ Color System
 
 ---
 
-### 2. Brand Colors
+### 2. Brand Colors (Stamp Palette)
 
-**Purpose**: Core brand identity colors used for marketing and branding
+**Purpose**: Core brand identity colors for the luxury brutalist Stamp aesthetic
 
 **Location**: `src/app/globals.css` (custom properties section)
 
-**Format**: Hex values or RGB
+**Format**: CSS custom properties
 
-**Examples**:
-- `--color-purple: #9333ea` (Primary brand)
-- `--color-cyan: #06b6d4` (Secondary brand)
-- `--color-orange: #fb923c` (Tertiary brand)
+**Primary Palette (Active)**:
 
-**When to use**: For brand-specific elements, gradients, special effects
+- `--color-stamp-chocolate` - Primary text/headings, luxurious brown
+- `--color-stamp-gold` - Primary accent, interactive elements
+- `--color-stamp-cream` - Section backgrounds, cards
+- `--color-stamp-off-white` - Page backgrounds
+- `--color-stamp-taupe` - Secondary text, muted elements
+- `--color-stamp-divider` - Borders and dividers
+- `--color-stamp-white` - Card backgrounds, content areas
 
-**Tag prefix**: `brand-`
+**Legacy Colors (Deprecated)**:
+
+- `--color-purple: #9333ea` - **DEPRECATED**: Not used in current design
+- `--color-cyan: #06b6d4` - **DEPRECATED**: Not used in current design
+- `--color-orange: #fb923c` - Tertiary accent (limited use)
+
+> **Note**: The purple/cyan gradient palette was used in an earlier design iteration.
+> All new components should use the stamp palette tokens instead.
+
+**When to use**: For all brand-specific elements, buttons, text, backgrounds
+
+**Tag prefix**: `brand-` or `stamp-`
 
 ---
 
@@ -82,11 +97,12 @@ Color System
 
 **Purpose**: T-shirt and fabric colors for product customization
 
-**Location**: `src/features/homepage-brutalist/lib/constants/colorSwatches.ts`
+**Location**: `src/features/homepage/lib/constants/colorSwatches.ts`
 
 **Format**: Hex values mapped to color names
 
 **Examples**:
+
 - `Black: #000000`
 - `Navy: #000080`
 - `Sport Grey: #8B8B8B`
@@ -102,6 +118,7 @@ Color System
 **Purpose**: Special-purpose colors for specific effects
 
 **Subcategories**:
+
 - **Gradients**: Multi-color gradients for animations and backgrounds
 - **Shadows**: Colors used in box-shadow and glow effects
 - **Glass Effects**: Translucent colors for glassmorphism
@@ -123,10 +140,14 @@ Color System
 --color-background
 --color-card-foreground
 
-/* Format: --color-{brand-name} */
---color-purple
---color-cyan
---color-ink
+/* Format: --color-stamp-{name} (Preferred for brand) */
+--color-stamp-chocolate
+--color-stamp-gold
+--color-stamp-cream
+
+/* Legacy (deprecated) */
+--color-purple /* Not used in current design */
+--color-cyan   /* Not used in current design */
 ```
 
 ### Tag Names
@@ -191,6 +212,7 @@ Examples:
 ### Step 1: Determine the Category
 
 Ask yourself:
+
 - Is this a semantic UI color? → **Design System Color**
 - Is this a core brand color? → **Brand Color**
 - Is this for product customization? → **Product Color**
@@ -198,12 +220,12 @@ Ask yourself:
 
 ### Step 2: Choose the Right Location
 
-| Category | Location | Format |
-|----------|----------|--------|
-| Design System | `src/app/globals.css` | CSS custom property (OKLCH) |
-| Brand | `src/app/globals.css` | CSS custom property (Hex/RGB) |
-| Product | `colorSwatches.ts` | TypeScript constant |
-| Utility | Context-specific file or `globals.css` | Varies |
+| Category      | Location                               | Format                        |
+| ------------- | -------------------------------------- | ----------------------------- |
+| Design System | `src/app/globals.css`                  | CSS custom property (OKLCH)   |
+| Brand         | `src/app/globals.css`                  | CSS custom property (Hex/RGB) |
+| Product       | `colorSwatches.ts`                     | TypeScript constant           |
+| Utility       | Context-specific file or `globals.css` | Varies                        |
 
 ### Step 3: Assign a Tag
 
@@ -240,9 +262,9 @@ const COLOR_HEX_MAP: Record<string, string> = {
 Create an entry in your color documentation:
 
 ```markdown
-| Tag | Color Name | Value | Usage |
-|-----|------------|-------|-------|
-| {tag} | {name} | {value} | {description} |
+| Tag   | Color Name | Value   | Usage         |
+| ----- | ---------- | ------- | ------------- |
+| {tag} | {name}     | {value} | {description} |
 ```
 
 ### Step 6: Test
@@ -259,6 +281,7 @@ Create an entry in your color documentation:
 ### In CSS/Tailwind
 
 **Preferred (Design System):**
+
 ```css
 /* Use Tailwind utilities */
 .element {
@@ -272,15 +295,18 @@ Create an entry in your color documentation:
 }
 ```
 
-**Brand Colors:**
+**Brand Colors (Stamp Palette):**
+
 ```css
 .element {
-  background: var(--color-purple);
-  background: linear-gradient(135deg, var(--color-purple), var(--color-cyan));
+  background: var(--color-stamp-cream);
+  color: var(--color-stamp-chocolate);
+  border-color: var(--color-stamp-gold);
 }
 ```
 
 **Avoid:**
+
 ```css
 /* ❌ DON'T: Hardcoded hex values */
 .element {
@@ -291,31 +317,35 @@ Create an entry in your color documentation:
 ### In TypeScript/TSX
 
 **Product Colors:**
+
 ```tsx
-import { getColorHex } from '@/features/homepage-brutalist/lib/constants/colorSwatches';
+import { getColorHex } from "@/features/homepage/lib/constants/colorSwatches";
 
-const bgColor = getColorHex('Navy');
+const bgColor = getColorHex("Navy");
 
-<div style={{ backgroundColor: bgColor }} />
+<div style={{ backgroundColor: bgColor }} />;
 ```
 
 **Design System Colors:**
+
 ```tsx
 // Use Tailwind classes
 <div className="bg-primary text-primary-foreground">
   Content
 </div>
 
-// Or inline CSS variables
-<div style={{ color: 'var(--color-cyan)' }}>
+// Or inline CSS variables (use stamp palette)
+<div style={{ color: 'var(--color-stamp-gold)' }}>
   Content
 </div>
 ```
 
 **Avoid:**
+
 ```tsx
-/* ❌ DON'T: Hardcoded values */
+/* ❌ DON'T: Hardcoded values or deprecated colors */
 <div style={{ backgroundColor: '#9333ea' }}>
+<div className="text-(--color-purple)"> /* Deprecated */
 ```
 
 ---
@@ -327,25 +357,25 @@ When documenting colors, use this markdown table format:
 ### For Standard Colors
 
 ```markdown
-| Tag | Color Name | Value | Usage |
-|-----|------------|-------|-------|
+| Tag      | Color Name | Value              | Usage                |
+| -------- | ---------- | ------------------ | -------------------- |
 | tag-name | Color Name | #HEX or oklch(...) | Description of usage |
 ```
 
 ### For Gradients
 
 ```markdown
-| Tag | Colors | Usage |
-|-----|--------|-------|
+| Tag           | Colors                      | Usage                         |
+| ------------- | --------------------------- | ----------------------------- |
 | gradient-name | #color1 → #color2 → #color3 | Description of gradient usage |
 ```
 
 ### For Effects
 
 ```markdown
-| Tag | Effect Type | Values | Usage |
-|-----|-------------|--------|-------|
-| shadow-name | Box Shadow | rgba(...) - rgba(...) | Description of effect |
+| Tag         | Effect Type | Values                | Usage                 |
+| ----------- | ----------- | --------------------- | --------------------- |
+| shadow-name | Box Shadow  | rgba(...) - rgba(...) | Description of effect |
 ```
 
 ---
@@ -381,14 +411,15 @@ When documenting colors, use this markdown table format:
 ### Examples
 
 **Good ✅:**
+
 ```tsx
 // Using design system
 <Button className="bg-primary text-primary-foreground">
   Click me
 </Button>
 
-// Using brand color
-<div className="text-[var(--color-purple)]">
+// Using brand color (stamp palette)
+<div className="text-(--color-stamp-gold)">
   Brand element
 </div>
 
@@ -397,6 +428,7 @@ const fabricColor = getColorHex(selectedFabric.color);
 ```
 
 **Bad ❌:**
+
 ```tsx
 // Hardcoded hex
 <Button className="bg-[#9333ea]">
@@ -421,9 +453,9 @@ const fabricColor = getColorHex(selectedFabric.color);
 ### Contrast Ratios (WCAG 2.1)
 
 | Level | Normal Text | Large Text | UI Components |
-|-------|-------------|------------|---------------|
-| AA | 4.5:1 | 3:1 | 3:1 |
-| AAA | 7:1 | 4.5:1 | Not specified |
+| ----- | ----------- | ---------- | ------------- |
+| AA    | 4.5:1       | 3:1        | 3:1           |
+| AAA   | 7:1         | 4.5:1      | Not specified |
 
 **Our target**: WCAG AA minimum, AAA where possible
 
@@ -436,6 +468,7 @@ const fabricColor = getColorHex(selectedFabric.color);
 ### Color Blindness Considerations
 
 Test your color combinations for:
+
 - Protanopia (red-blind)
 - Deuteranopia (green-blind)
 - Tritanopia (blue-blind)
@@ -468,13 +501,14 @@ Before committing color changes:
 
 - [README.md](../README.md) - Main project documentation with color rules
 - [globals.css](../src/app/globals.css) - Design system and brand color definitions
-- [colorSwatches.ts](../src/features/homepage-brutalist/lib/constants/colorSwatches.ts) - Product color utilities
+- [colorSwatches.ts](../src/features/homepage/lib/constants/colorSwatches.ts) - Product color utilities
 
 ---
 
 ## Questions or Issues?
 
 If you're unsure about:
+
 - Which category a color belongs to
 - How to name a color tag
 - Where to add a new color

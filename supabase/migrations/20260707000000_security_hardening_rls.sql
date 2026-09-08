@@ -48,10 +48,7 @@ BEGIN
   OR NEW.currency                IS DISTINCT FROM OLD.currency
   OR NEW.payment_status          IS DISTINCT FROM OLD.payment_status
   OR NEW.payment_method          IS DISTINCT FROM OLD.payment_method
-  OR NEW.stripe_payment_intent_id IS DISTINCT FROM OLD.stripe_payment_intent_id
-  OR NEW.stripe_customer_id      IS DISTINCT FROM OLD.stripe_customer_id
   OR NEW.status                  IS DISTINCT FROM OLD.status
-  OR NEW.fulfillment_status      IS DISTINCT FROM OLD.fulfillment_status
   OR NEW.promo_code              IS DISTINCT FROM OLD.promo_code
   OR NEW.promo_value             IS DISTINCT FROM OLD.promo_value
   THEN
@@ -85,7 +82,6 @@ BEGIN
   OR NEW.email              IS DISTINCT FROM OLD.email
   OR NEW.coins              IS DISTINCT FROM OLD.coins
   OR NEW.coins_reset_at     IS DISTINCT FROM OLD.coins_reset_at
-  OR NEW.stripe_customer_id IS DISTINCT FROM OLD.stripe_customer_id
   THEN
     RAISE EXCEPTION 'Not allowed to modify protected profile columns'
       USING ERRCODE = 'insufficient_privilege';

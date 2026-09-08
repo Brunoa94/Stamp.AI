@@ -1,8 +1,10 @@
+// REFACTOR: THIS FILE SHOULD BE BETTER DECOMPOSED IN ORDER TO FOLLOW THE PATTERNS OF THE PROJECT
 "use client";
 
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useStampNavigation } from "./useStampNavigation";
 import {
   useStampFinalization,
@@ -17,6 +19,11 @@ import {
   logStampWarn,
 } from "../helpers/stampLogger";
 import { withTimeout } from "@/lib/promiseUtils";
+import { getProductConfig } from "@/lib/printPlacement/config";
+import type {
+  MockupImageType,
+  PlacementParamsType,
+} from "../types/stampFlowTypes";
 
 /**
  * useStampProductCreation
@@ -33,13 +40,8 @@ import { withTimeout } from "@/lib/promiseUtils";
 const PRODUCT_CREATION_TIMEOUT_MS = 120_000; // 2 minutes
 
 class ProductCreationTimeoutError extends Error {
-  constructor(timeoutMs: number) {
-    super(
-      `Product creation timed out after ${
-        Math.round(timeoutMs / 1000)
-      } seconds. ` +
-        `Please try again or contact support if the issue persists.`,
-    );
+  constructor(message: string) {
+    super(message);
     this.name = "ProductCreationTimeoutError";
   }
 }
@@ -49,9 +51,14 @@ interface CreateProductParamsType {
   printProviderId: number;
   fabricColor: string;
   size: string;
+  /** User-selected print positions with placements (Step 6 adjustment). */
+  printPositions?: { position: string; placement: PlacementParamsType }[];
+  /** Scale value for idempotency key (to allow different scales for same product) */
+  scale?: number;
 }
 
 export function useStampProductCreation() {
+  const t = useTranslations("stamp.errors.productCreation");
   const router = useRouter();
   const { nextStep, goToStep } = useStampNavigation();
   const { handleError } = useErrorHandler();
@@ -62,6 +69,7 @@ export function useStampProductCreation() {
     setCreatedProductId,
     setCreatedVariantId,
     setMockupImageUrl,
+    setMockupImages,
     setProductionProgress,
   } = useStampFinalization();
 
@@ -76,6 +84,8 @@ export function useStampProductCreation() {
     printProviderId,
     fabricColor,
     size,
+    printPositions,
+    scale,
   }: CreateProductParamsType) => {
     // Idempotency check: Prevent duplicate operations
     if (isCreatingRef.current) {
@@ -87,14 +97,17 @@ export function useStampProductCreation() {
           printProviderId,
           fabricColor,
           size,
+          scale,
         },
       });
       return;
     }
 
     // Check sessionStorage for completed operations
+    // Include scale in the key to allow different scales for same product
+    const scaleKey = scale !== undefined ? `_scale${scale.toFixed(2)}` : "";
     const operationKey =
-      `stamp_product_${blueprintId}_${printProviderId}_${fabricColor}_${size}`;
+      `stamp_product_${blueprintId}_${printProviderId}_${fabricColor}_${size}${scaleKey}`;
     const completedKey = `${operationKey}_completed`;
 
     if (sessionStorage.getItem(completedKey) === "true") {
@@ -108,32 +121,32 @@ export function useStampProductCreation() {
           size,
         },
       });
-      toast.info("Product already created. Proceeding to review.");
+      toast.info(t("alreadyCreated"));
       nextStep();
       return;
     }
 
     // Validate required data
     if (!selectedImageUrl) {
-      handleError(new Error("Please generate a design first"));
+      handleError(new Error(t("noDesign")));
       goToStep(2);
       return;
     }
 
     if (!blueprintId || !printProviderId) {
-      handleError(new Error("Please select a product type"));
+      handleError(new Error(t("noProduct")));
       goToStep(5);
       return;
     }
 
-    if (!fabricColor || !size) {
-      handleError(new Error("Please select color and size"));
+    if (!size) {
+      handleError(new Error(t("noSize")));
       return;
     }
 
     // Validate authentication
     if (!user) {
-      handleError(new Error("You must be logged in to create a product"));
+      handleError(new Error(t("notLoggedIn")));
       router.push("/auth/login");
       return;
     }
@@ -143,6 +156,8 @@ export function useStampProductCreation() {
 
     setIsFinalizing(true);
     setProductionProgress(0);
+    // Clear previous mockup to prevent stale image flash on FinalReviewSection
+    setMockupImageUrl(undefined);
 
     // Navigate to production step
     nextStep();
@@ -171,9 +186,16 @@ export function useStampProductCreation() {
           customer_email: user.email || "",
           selected_color: fabricColor,
           selected_size: size,
+          ...(printPositions?.length
+            ? { print_positions: printPositions }
+            : {}),
         }),
         PRODUCT_CREATION_TIMEOUT_MS,
-        new ProductCreationTimeoutError(PRODUCT_CREATION_TIMEOUT_MS),
+        new ProductCreationTimeoutError(
+          t("timeout", {
+            seconds: Math.round(PRODUCT_CREATION_TIMEOUT_MS / 1000),
+          }),
+        ),
       );
 
       logStampInfo({
@@ -197,16 +219,93 @@ export function useStampProductCreation() {
       // Store product data
       setCreatedProductId(product.id);
 
-      // Store first variant ID for cart
-      if (product.variants && product.variants.length > 0) {
+      // Store variant ID for cart - prefer selected_variant_id (exact color/size match)
+      // Fall back to first variant only if selected_variant_id is not available
+      if (product.selected_variant_id) {
+        setCreatedVariantId(product.selected_variant_id);
+        logStampInfo({
+          scope: "useStampProductCreation",
+          event: "using_selected_variant_id",
+          metadata: {
+            selected_variant_id: product.selected_variant_id,
+            fabricColor,
+            size,
+          },
+        });
+      } else if (product.variants && product.variants.length > 0) {
+        // Fallback: use first variant (legacy behavior)
         const firstVariantId = product.variants[0].id;
         setCreatedVariantId(firstVariantId);
+        logStampWarn({
+          scope: "useStampProductCreation",
+          event: "fallback_to_first_variant",
+          metadata: {
+            firstVariantId,
+            fabricColor,
+            size,
+            note: "selected_variant_id not returned from server",
+          },
+        });
       }
 
-      // Store mockup image URL
+      const productMapper = (
+        { img }: {
+          img: {
+            src: string;
+            variant_ids?: number[];
+            position?: string;
+            is_default?: boolean;
+          };
+        },
+      ): MockupImageType =>
+        ({
+          src: img.src,
+          variant_ids: img.variant_ids || [],
+          position: img.position || "front",
+          is_default: img.is_default || false,
+        }) as MockupImageType;
+
+      // Store all mockup images for carousel
       if (product.images && product.images.length > 0) {
-        const mockupUrl = product.images[0].src;
-        setMockupImageUrl(mockupUrl);
+        const mappedImages = product.images.map((
+          img: {
+            src: string;
+            variant_ids?: number[];
+            position?: string;
+            is_default?: boolean;
+          },
+        ) => productMapper({ img }));
+
+        // Check if back printing is selected
+        const isBackPrintSelected = printPositions?.some(
+          (pos) => pos.position === 'back'
+        );
+
+        // Get the product config to check for backPrintDefaultImageIndex
+        const productConfig = getProductConfig(blueprintId);
+        const backImageIndex = productConfig.backPrintDefaultImageIndex;
+
+        // Determine primary image index based on print position
+        // If back print is selected and product has a backPrintDefaultImageIndex, use that
+        let primaryImageIndex = 0;
+        if (
+          isBackPrintSelected &&
+          backImageIndex !== undefined &&
+          backImageIndex < product.images.length
+        ) {
+          primaryImageIndex = backImageIndex;
+        }
+
+        // Reorder images so the primary image is first (for cart display and carousel)
+        const reorderedImages = [...mappedImages];
+        if (primaryImageIndex > 0) {
+          const [targetImage] = reorderedImages.splice(primaryImageIndex, 1);
+          reorderedImages.unshift(targetImage);
+        }
+
+        setMockupImages(reorderedImages);
+        // Set the primary mockup URL (first image in reordered array)
+        setMockupImageUrl(reorderedImages[0].src);
       }
 
       // Advance to final review after showing production animation

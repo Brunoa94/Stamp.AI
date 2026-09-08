@@ -1,10 +1,105 @@
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
+import { createServerClient } from "@supabase/ssr";
+import { type NextRequest, NextResponse } from "next/server";
+import { applySecurityHeaders } from "@/lib/security/headers";
+import { checkCombinedRateLimit } from "@/lib/security/rate-limiter/check";
+import {
+  RATE_LIMIT_CONFIGS,
+  type RateLimitType,
+} from "@/lib/security/rate-limiter/configs";
+import {
+  generateRequestId,
+  getRequestIdFromHeaders,
+  REQUEST_ID_HEADER,
+} from "@/lib/observability/requestId";
+
+/**
+ * Determine the rate limit type based on the request path
+ */
+function getRateLimitType(pathname: string): RateLimitType | null {
+  // Auth endpoints - strict rate limiting
+  if (pathname.startsWith("/auth") || pathname.startsWith("/api/auth")) {
+    return "auth";
+  }
+
+  // Password reset - very strict
+  if (pathname.includes("password") || pathname.includes("reset-password")) {
+    return "passwordReset";
+  }
+
+  // Image generation - expensive operation
+  if (pathname.startsWith("/api/generate-image")) {
+    return "imageGeneration";
+  }
+
+  // Payment endpoints
+  if (
+    pathname.startsWith("/api/paypal") ||
+    pathname.startsWith("/api/stripe") ||
+    pathname.includes("payment")
+  ) {
+    return "payment";
+  }
+
+  // Webhook endpoints (from payment providers)
+  if (pathname.includes("webhook")) {
+    return "webhook";
+  }
+
+  // Other API routes
+  if (pathname.startsWith("/api")) {
+    return "api";
+  }
+
+  // Don't rate limit static pages
+  return null;
+}
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // ── Request ID ──────────────────────────────────────────────────────────────
+  // Generate or extract request ID for correlation across the request lifecycle
+  const requestId = getRequestIdFromHeaders(request.headers) || generateRequestId();
+
+  // ── Rate Limiting ─────────────────────────────────────────────────────────────
+  const rateLimitType = getRateLimitType(pathname);
+  let rateLimitResult: ReturnType<typeof checkCombinedRateLimit> | null = null;
+
+  if (rateLimitType) {
+    const config = RATE_LIMIT_CONFIGS[rateLimitType];
+    rateLimitResult = checkCombinedRateLimit(request, pathname, config);
+
+    if (rateLimitResult.isLimited) {
+      const response = NextResponse.json(
+        {
+          error: config.message || "Too many requests",
+          retryAfter: rateLimitResult.retryAfter,
+        },
+        { status: 429 },
+      );
+
+      // Add rate limit headers
+      Object.entries(rateLimitResult.headers).forEach(
+        ([key, value]: [string, string]) => {
+          response.headers.set(key, value);
+        },
+      );
+
+      // Apply security headers even to rate-limited responses
+      applySecurityHeaders(response);
+      response.headers.set(REQUEST_ID_HEADER, requestId);
+
+      return response;
+    }
+  }
+
+  // ── Supabase Auth ─────────────────────────────────────────────────────────────
   let supabaseResponse = NextResponse.next({
     request,
-  })
+  });
+
+  // Add request ID to response headers for client-side correlation
+  supabaseResponse.headers.set(REQUEST_ID_HEADER, requestId);
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -12,20 +107,22 @@ export async function middleware(request: NextRequest) {
     {
       cookies: {
         getAll() {
-          return request.cookies.getAll()
+          return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          );
           supabaseResponse = NextResponse.next({
             request,
-          })
+          });
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
-          )
+          );
         },
       },
-    }
-  )
+    },
+  );
 
   // IMPORTANT: Avoid writing any logic between createServerClient and
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
@@ -33,30 +130,33 @@ export async function middleware(request: NextRequest) {
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
+  } = await supabase.auth.getUser();
 
   // Protected routes — server-side auth gate. The client-side <ProtectedRoute>
   // is UX only and is NOT a security control; these must be gated here before
   // any page data renders.
   const PROTECTED_PREFIXES = [
-    '/stamp',
-    '/orders',
-    '/profile',
-    '/cart',
-    '/checkout',
-    '/dashboard',
-  ]
-  const { pathname } = request.nextUrl
+    "/stamp",
+    "/orders",
+    "/profile",
+    "/cart",
+    "/checkout",
+    "/dashboard",
+  ];
   const isProtected = PROTECTED_PREFIXES.some(
     (p) => pathname === p || pathname.startsWith(`${p}/`)
-  )
+  );
 
   if (isProtected && !user) {
     // no user — redirect to the login/home page
-    const url = request.nextUrl.clone()
-    url.pathname = '/'
-    url.searchParams.set('redirectedFrom', pathname)
-    return NextResponse.redirect(url)
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    url.searchParams.set("redirectedFrom", pathname);
+    const response = NextResponse.redirect(url);
+    supabaseResponse.cookies.getAll().forEach((cookie) => response.cookies.set(cookie));
+    applySecurityHeaders(response);
+    response.headers.set(REQUEST_ID_HEADER, requestId);
+    return response;
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
@@ -72,7 +172,19 @@ export async function middleware(request: NextRequest) {
   // If this is not done, you may be causing the browser and server to go out
   // of sync and terminate the user's session prematurely!
 
-  return supabaseResponse
+  // ── Apply Security Headers ────────────────────────────────────────────────────
+  applySecurityHeaders(supabaseResponse);
+
+  // Add rate limit headers to successful responses (reuse earlier result to avoid double-counting)
+  if (rateLimitResult) {
+    Object.entries(rateLimitResult.headers).forEach(
+      ([key, value]: [string, string]) => {
+        supabaseResponse.headers.set(key, value);
+      },
+    );
+  }
+
+  return supabaseResponse;
 }
 
 export const config = {
@@ -84,6 +196,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
-}
+};

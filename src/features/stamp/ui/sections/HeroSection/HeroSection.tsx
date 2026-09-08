@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { HeroImage } from "./HeroImage";
 import { HeroContent } from "./HeroContent";
 
@@ -14,14 +15,16 @@ interface PropsI {
   onBegin: () => void;
 }
 
-export function HeroSection({ onBegin }: PropsI) {
+function HeroSectionComponent({ onBegin }: PropsI) {
   return (
     <section
       id="hero"
-      className="h-full grid grid-cols-1 lg:grid-cols-2 bg-white"
+      className="h-full overflow-y-auto grid grid-cols-1 lg:grid-cols-2 bg-white"
     >
       <HeroImage />
       <HeroContent onBegin={onBegin} />
     </section>
   );
 }
+
+export const HeroSection = memo(HeroSectionComponent);

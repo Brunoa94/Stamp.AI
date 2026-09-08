@@ -1,81 +1,119 @@
-import { ErrorCodeT } from '@/shared-types'
-import { ERROR_MESSAGES } from '@/constants/errorMessages'
-import { useCallback } from 'react'
-import { toast } from 'sonner'
+import { ErrorCodeT } from "@/shared-types";
+import { ERROR_CODES } from "@/constants/errorMessages";
+import { useCallback } from "react";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { captureError } from "@/lib/observability/errorCapture";
 
 export interface UseErrorHandlerOptionsI {
-  showToast?: boolean
-  customMessages?: Partial<Record<ErrorCodeT, string>>
+  showToast?: boolean;
+  customMessages?: Partial<Record<ErrorCodeT, string>>;
 }
 
+// Only codes in ERROR_CODES have a translation under `errors.<CODE>`.
+// Treating an arbitrary backend string as a code would render a missing
+// translation key to the user, so anything else must fall back.
+const isKnownErrorCode = (value: unknown): value is ErrorCodeT =>
+  typeof value === "string" && ERROR_CODES.includes(value as ErrorCodeT);
+
+const findEmbeddedErrorCode = (text: string): ErrorCodeT | undefined =>
+  ERROR_CODES.find((code) => text.includes(code));
+
 export const useErrorHandler = (options: UseErrorHandlerOptionsI = {}) => {
-  const { showToast = true, customMessages = {} } = options
+  const { showToast = true, customMessages = {} } = options;
+  const t = useTranslations("errors");
 
   const handleError = useCallback((error: any) => {
-    let errorCode: ErrorCodeT = 'UNKNOWN_ERROR'
-    let errorMessage = 'An unexpected error occurred'
+    let errorCode: ErrorCodeT = "UNKNOWN_ERROR";
+    // Fallback for plain Error objects: their own message, if any.
+    let rawMessage: string | null = null;
+    let hasCode = false;
 
-    // Extract error code from different error formats
-    if (error?.code) {
+    // Extract error code from different error formats. Each candidate field
+    // is only accepted when it is a known ErrorCodeT — backends also put
+    // free-text messages and third-party codes (Stripe, Postgres) in these
+    // fields, and those must not be looked up as translation keys.
+    if (isKnownErrorCode(error?.code)) {
       // Typed app error: { code: "ERROR_CODE" }
-      errorCode = error.code as ErrorCodeT
-    } else if (error?.error) {
+      errorCode = error.code;
+      hasCode = true;
+    } else if (isKnownErrorCode(error?.error)) {
       // Structured error object: { error: "ERROR_CODE" }
-      errorCode = error.error as ErrorCodeT
-    } else if (error?.response?.data?.error) {
+      errorCode = error.error;
+      hasCode = true;
+    } else if (isKnownErrorCode(error?.response?.data?.error)) {
       // Axios-style response: { response: { data: { error: "ERROR_CODE" } } }
-      errorCode = error.response.data.error as ErrorCodeT
+      errorCode = error.response.data.error;
+      hasCode = true;
     } else if (error?.message) {
-      errorMessage = error.message
+      rawMessage = error.message;
       // Backend error codes are embedded in the message by ErrorClient:
       // "Service - Action failed: HTTP 400: ERROR_CODE"
       // Scan the message for any known ErrorCodeT to surface the mapped UX message.
-      const knownCodes = Object.keys(ERROR_MESSAGES) as ErrorCodeT[]
-      const embedded = knownCodes.find(code => (error.message as string).includes(code))
+      const embedded = findEmbeddedErrorCode(error.message as string);
       if (embedded) {
-        errorCode = embedded
+        errorCode = embedded;
+        hasCode = true;
+      }
+    } else if (typeof error?.error === "string") {
+      // Structured error whose `error` field is a free-text message
+      rawMessage = error.error;
+      const embedded = findEmbeddedErrorCode(error.error);
+      if (embedded) {
+        errorCode = embedded;
+        hasCode = true;
       }
     }
 
-    // Get user-friendly message
-    // Only apply the mapped message when we have a real, specific error code.
-    // If errorCode is still 'UNKNOWN_ERROR' it means the error was a plain Error
-    // object (e.g. from ErrorClient) whose message was already extracted above —
-    // overwriting it with the generic fallback would discard that context.
-    if (errorCode !== 'UNKNOWN_ERROR' && ERROR_MESSAGES[errorCode]) {
-      errorMessage = customMessages[errorCode] || ERROR_MESSAGES[errorCode]
+    // Resolve the user-facing message. Prefer a caller override, then the
+    // translated message for a known code, then a plain Error's own message,
+    // and finally the generic fallback.
+    let errorMessage: string;
+    if (hasCode && errorCode !== "UNKNOWN_ERROR") {
+      errorMessage = customMessages[errorCode] || t(errorCode);
+    } else if (rawMessage) {
+      errorMessage = rawMessage;
+    } else {
+      errorMessage = t("UNKNOWN_ERROR");
     }
+
+    // Capture error to Sentry
+    captureError(error, {
+      errorCode,
+      service: "useErrorHandler",
+      metadata: { hasCode, rawMessage },
+    });
 
     // Show toast notification
     if (showToast) {
-      const toastMessage = errorCode && errorCode !== 'UNKNOWN_ERROR'
-        ? `${errorMessage} (Code: ${errorCode})`
+      const toastMessage = hasCode && errorCode !== "UNKNOWN_ERROR"
+        ? t("withCode", { message: errorMessage, code: errorCode })
         : errorMessage;
 
       toast.error(toastMessage, {
         duration: 5000,
-        position: 'top-right'
-      })
+        position: "bottom-right",
+      });
     }
 
     return {
       code: errorCode,
       message: errorMessage,
-      originalError: error
-    }
-  }, [showToast, customMessages])
+      originalError: error,
+    };
+  }, [showToast, customMessages, t]);
 
   const handleSuccess = useCallback((message: string) => {
     if (showToast) {
       toast.success(message, {
         duration: 3000,
-        position: 'top-right'
-      })
+        position: "bottom-right",
+      });
     }
-  }, [showToast])
+  }, [showToast]);
 
   return {
     handleError,
-    handleSuccess
-  }
-}
+    handleSuccess,
+  };
+};

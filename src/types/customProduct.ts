@@ -10,4 +10,4 @@ export type {
   CreateCustomProductRequestI,
   UploadImageRequestI,
   UploadImageResponseI,
-} from "@/types/api";
+} from "../../supabase/types";

@@ -1,17 +1,22 @@
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { StampPage as StampMainPage } from "@/features/stamp/ui/StampPage";
+import { generatePageMetadata } from "@/features/seo/metadata/pageMetadata";
+import { PAGE_KEYWORDS } from "@/features/seo/config/keywords";
 
-/**
- * /stamp Route
- *
- * Luxury theme stamp customization flow.
- * 8-stage synthesis protocol for bespoke product creation.
- */
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("stamp.metadata");
 
-export const metadata = {
-  title: "Stamp It | 8-Stage Synthesis Protocol",
-  description:
-    "An advanced neural protocol for aesthetic curation. Translate your identity into bespoke permanence through our 8-stage synthesis.",
-};
+  return generatePageMetadata({
+    title: t("title"),
+    description: t("description"),
+    path: "/stamp",
+    keywords: [...(t.raw("keywords") as string[]), ...PAGE_KEYWORDS.stamp],
+    openGraph: {
+      type: "website",
+    },
+  });
+}
 
 export default function StampPage() {
   return <StampMainPage />;

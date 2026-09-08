@@ -1,13 +1,17 @@
-import { Info, ArrowRight } from "lucide-react";
+"use client";
+
+import { useTranslations } from "next-intl";
+import { ArrowRight } from "lucide-react";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
-import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
+import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction";
 
 /**
  * ProductSelectionContent
  *
- * Left panel with description and continue button
+ * Left panel with description and continue button.
+ * On mobile, the button is shown in the sticky footer.
  */
 
 interface PropsI {
@@ -16,48 +20,51 @@ interface PropsI {
 }
 
 export function ProductSelectionContent({ canProceed, onContinue }: PropsI) {
-  return (
-    <div className="h-full p-12 lg:p-24 flex flex-col justify-between border-r border-(--color-stamp-divider)">
-      <div>
-        <Span variant="sm" className="text-(--color-stamp-taupe) mb-6">
-          Protocol 05 / Canvas
-        </Span>
+  const t = useTranslations("stamp.productSelection");
 
+  // Register action for mobile sticky footer (Step 5)
+  useRegisterMobileAction(5, {
+    action: onContinue,
+    label: t("continue"),
+    disabled: !canProceed,
+  });
+
+  return (
+    <div className="md:h-full p-6 pt-4 md:pt-30 pb-6 md:p-16 lg:pt-16 xl:p-24 xl:pt-24 flex flex-col md:justify-between border-r border-(--color-stamp-divider)">
+      <div>
         <Heading
           as="h2"
-          variant="title"
-          className="text-(--color-stamp-chocolate) mb-6"
+          variant="panelTitle"
+          className="text-(--color-stamp-chocolate) mb-4 md:mb-6"
         >
-          Select Your{" "}
-          <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
-            Canvas
-          </span>
+          {t.rich("title", {
+            accent: (chunks) => (
+              <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
+                {chunks}
+              </span>
+            ),
+          })}
         </Heading>
 
         <Paragraph
           variant="card"
-          className="text-(--color-stamp-taupe) mb-12 max-w-sm"
+          className="text-(--color-stamp-taupe) mb-4 md:mb-12"
         >
-          Translate digital permanence into physical form. Selected from our
-          curated catalog of premium textiles.
+          {t("description")}
         </Paragraph>
-
-        <div className="flex items-center gap-3 p-4 bg-(--color-stamp-cream)/40 border border-(--color-stamp-divider)">
-          <Info className="text-(--color-stamp-gold) w-5 h-5 shrink-0" />
-          <Span variant="micro" className="text-(--color-stamp-taupe)">
-            Pricing reflects global print provider rates
-          </Span>
-        </div>
       </div>
 
-      <Button
-        onClick={onContinue}
-        disabled={!canProceed}
-        className="w-full mt-12 bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        CONTINUE TO CUSTOMIZATION
-        <ArrowRight className="w-5 h-5" />
-      </Button>
+      {/* Button - hidden on mobile, shown in sticky footer */}
+      <div className="hidden md:block">
+        <Button
+          onClick={onContinue}
+          disabled={!canProceed}
+          className="w-full mt-2 md:mt-12 bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-3 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {t("continue")}
+          <ArrowRight className="w-5 h-5" />
+        </Button>
+      </div>
     </div>
   );
 }

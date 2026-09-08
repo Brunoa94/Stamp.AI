@@ -8,12 +8,13 @@ import type {
   RegisterI,
   UpdateProfileI,
 } from "@/schemas/auth";
-import { AuthResponseI, UserI } from "@/types/api";
+import { AuthResponseI, UserI } from "../../supabase/types";
 import { useRouter } from "next/navigation";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { AnalyticsService } from "@/services/analyticsService";
 
 // Query keys
-export const authKeys = {
+const authKeys = {
   all: ["auth"] as const,
   user: () => [...authKeys.all, "user"] as const,
   session: () => [...authKeys.all, "session"] as const,
@@ -30,18 +31,6 @@ export function useUser() {
   return useQuery({
     queryKey: authKeys.user(),
     queryFn: AuthService.getUser,
-    retry: false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-}
-
-/**
- * Get current session
- */
-export function useSession() {
-  return useQuery({
-    queryKey: authKeys.session(),
-    queryFn: AuthService.getSession,
     retry: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -71,16 +60,32 @@ export function useLogin() {
   const { handleError, handleSuccess } = useErrorHandler();
 
   return useMutation({
-    mutationFn: (credentials: LoginI): Promise<AuthResponseI> => {
-      return AuthService.login(credentials);
+    mutationFn: (
+      { credentials, captchaToken }: {
+        credentials: LoginI;
+        captchaToken?: string | null;
+      },
+    ): Promise<AuthResponseI> => {
+      return AuthService.login(credentials, captchaToken ?? undefined);
     },
     onSuccess: (data) => {
       queryClient.setQueryData(authKeys.user(), data.user);
       queryClient.setQueryData(authKeys.session(), data.session);
 
+      AnalyticsService.track("login", { method: "email" });
+
+      // Invalidate coins query so new user's coins are fetched
+      queryClient.invalidateQueries({ queryKey: ["coins"] });
+
       handleSuccess("Login successful - Welcome back!");
 
-      router.push("/stamp");
+      // Only navigate if not already on stamp page
+      if (typeof window !== "undefined" && !window.location.pathname.startsWith("/stamp")) {
+        router.push("/stamp");
+      } else {
+        // Force a refresh of the current page state
+        router.refresh();
+      }
     },
     onError: (error: Error) => {
       handleError(error);
@@ -99,6 +104,8 @@ export function useRegister() {
       return AuthService.register(userData);
     },
     onSuccess: (data) => {
+      AnalyticsService.track("sign_up", { method: "email" });
+
       handleSuccess(
         `Registration successful - ${
           data.message || "Please check your email to verify your account."
@@ -132,9 +139,11 @@ export function useLogout() {
       queryClient.invalidateQueries({ queryKey: authKeys.session() });
       queryClient.removeQueries({ queryKey: authKeys.all });
 
+      AnalyticsService.track("logout");
+
       handleSuccess("Logged out successfully");
 
-      router.push("/stamp");
+      router.push("/");
     },
     onError: (error: Error) => {
       handleError(error);
@@ -199,25 +208,6 @@ export function useUpdatePassword() {
       AuthService.updatePassword(newPassword),
     onSuccess: () => {
       handleSuccess("Password updated successfully");
-    },
-    onError: (error: Error) => {
-      handleError(error);
-    },
-  });
-}
-
-/**
- * Resend email verification
- */
-export function useResendEmailVerification() {
-  const { handleError, handleSuccess } = useErrorHandler();
-
-  return useMutation({
-    mutationFn: (email: string): Promise<void> => {
-      return AuthService.resendEmailVerification(email);
-    },
-    onSuccess: () => {
-      handleSuccess("Verification email sent - Please check your email.");
     },
     onError: (error: Error) => {
       handleError(error);

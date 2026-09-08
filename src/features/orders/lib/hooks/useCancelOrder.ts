@@ -2,18 +2,47 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { OrderWithItemsT } from "@/types/order";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { canCancelOrder } from "../utils/orderCancellation";
 
 import { OrderService } from "@/services/orderService";
 
+type CancelResults = {
+    cancelled_at_printify?: boolean;
+    refund_processed?: boolean;
+    refund_error?: string;
+};
+
 export function useCancelOrder() {
+    const t = useTranslations("orders.cancel");
     const [cancelModalOpen, setCancelModalOpen] = useState(false);
     const [orderToCancel, setOrderToCancel] = useState<OrderWithItemsT | null>(
         null,
     );
     const queryClient = useQueryClient();
     const { handleError } = useErrorHandler();
+
+    const buildCancellationDescription = (results?: CancelResults): string => {
+        const defaultMessage = t("defaultDescription");
+
+        if (!results) {
+            return defaultMessage;
+        }
+
+        const details: string[] = [];
+
+        if (results.cancelled_at_printify) {
+            details.push(t("cancelledAtPrintify"));
+        }
+        if (results.refund_processed) {
+            details.push(t("refundProcessed"));
+        } else if (results.refund_error) {
+            details.push(t("refundError"));
+        }
+
+        return details.length > 0 ? `${details.join(". ")}.` : defaultMessage;
+    };
 
     const { mutate: executeCancelOrder, isPending: isCancelling } = useMutation(
         {
@@ -24,36 +53,15 @@ export function useCancelOrder() {
                     queryKey: ["orders", orderId],
                 });
 
-                const { results } = data;
-                let description = "Your order has been cancelled.";
-
-                if (results) {
-                    const details: string[] = [];
-                    if (results.cancelled_at_printify) {
-                        details.push("Order cancelled at Printify");
-                    }
-                    if (results.refund_processed) {
-                        details.push("Refund processed successfully");
-                    } else if (results.refund_error) {
-                        details.push(
-                            "Note: Refund could not be processed automatically",
-                        );
-                    }
-
-                    if (details.length > 0) {
-                        description = `${details.join(". ")}.`;
-                    }
-                }
-
-                toast.success("Order cancelled", {
-                    description,
+                toast.success(t("toastTitle"), {
+                    description: buildCancellationDescription(data.results),
                 });
 
                 handleCloseCancelModal();
             },
             onError: (error: Error) => {
                 handleError(
-                    new Error(`Failed to cancel order: ${error.message}`),
+                    new Error(t("failedToCancel", { message: error.message })),
                 );
             },
         },
@@ -61,11 +69,7 @@ export function useCancelOrder() {
 
     const handleCancelOrder = (order: OrderWithItemsT) => {
         if (!canCancelOrder(order)) {
-            handleError(
-                new Error(
-                    "Order can no longer be cancelled. Orders can only be cancelled before entering In Production.",
-                ),
-            );
+            handleError(new Error(t("cannotCancel")));
             return;
         }
 
@@ -81,11 +85,7 @@ export function useCancelOrder() {
     const handleConfirmCancel = () => {
         if (!orderToCancel) return;
         if (!canCancelOrder(orderToCancel)) {
-            handleError(
-                new Error(
-                    "Order can no longer be cancelled. Orders can only be cancelled before entering In Production.",
-                ),
-            );
+            handleError(new Error(t("cannotCancel")));
             handleCloseCancelModal();
             return;
         }

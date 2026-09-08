@@ -1,11 +1,14 @@
 "use client";
 
+import { memo } from "react";
+import { useTranslations } from "next-intl";
 import { useStampCartActions } from "../../../lib/hooks/useStampCartActions";
 import {
   useStampFinalization,
-  useStampSelectedImage,
+  useStampProductSelection,
+  useStampCustomization,
 } from "../../../lib/hooks/useStampSelectors";
-import { MockupPreview } from "./MockupPreview";
+import { MockupCarousel } from "./MockupCarousel";
 import { ReviewDetails } from "./ReviewDetails";
 
 /**
@@ -13,31 +16,52 @@ import { ReviewDetails } from "./ReviewDetails";
  *
  * Step 8: Final product review and acquisition
  * Protocol 08 / Acquisition
+ *
+ * Note: mockupImages are pre-ordered in useStampProductCreation based on
+ * print position (back print first when selected). No reordering needed here.
  */
 
-export function FinalReviewSection() {
-  const { handleBagIt, handleBuyNow, isAddingToCart } = useStampCartActions();
-  const { mockupImageUrl } = useStampFinalization();
-  const { enhancedPrompt } = useStampSelectedImage();
+function FinalReviewSectionComponent() {
+  const t = useTranslations("stamp.finalReview");
+  const { handleBagIt, handleBagItAndCreateAnother, isAddingToCart } = useStampCartActions();
+  const { mockupImageUrl, mockupImages } = useStampFinalization();
+  const { selectedProductTitle, selectedProductType, selectedProductDescription } = useStampProductSelection();
+  const { selectedColor, selectedSize, selectedPriceCents } =
+    useStampCustomization();
 
-  const mockupUrl =
-    mockupImageUrl ||
+  const fallbackUrl =
     "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=2000&auto=format&fit=crop";
 
-  const productName = enhancedPrompt || "Premium T-Shirt";
+  const productName = selectedProductTitle || t("defaultProductName");
+
+  // Format price from cents to euros
+  const formattedPrice = selectedPriceCents
+    ? `€${(selectedPriceCents / 100).toFixed(2)}`
+    : "€0.00";
 
   return (
     <section
       id="step-8"
-      className="h-full grid grid-cols-1 lg:grid-cols-2 border-b border-(--color-stamp-divider)"
+      className="h-full overflow-y-auto grid grid-cols-1 md:grid-cols-2 border-b border-(--color-stamp-divider)"
     >
-      <MockupPreview mockupUrl={mockupUrl} />
+      <MockupCarousel
+        mockupImages={mockupImages}
+        fallbackUrl={mockupImageUrl || fallbackUrl}
+      />
       <ReviewDetails
+        mockupUrl={mockupImages[0]?.src || mockupImageUrl || fallbackUrl}
         productName={productName}
+        productDescription={selectedProductDescription}
+        productType={selectedProductType}
+        color={selectedColor}
+        size={selectedSize}
+        price={formattedPrice}
         isAddingToCart={isAddingToCart}
         onBagIt={handleBagIt}
-        onBuyNow={handleBuyNow}
+        onBagItAndCreateAnother={handleBagItAndCreateAnother}
       />
     </section>
   );
 }
+
+export const FinalReviewSection = memo(FinalReviewSectionComponent);

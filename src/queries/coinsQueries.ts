@@ -1,63 +1,74 @@
 "use client";
 
-import { useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { createClient } from "@/lib/supabase/client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { CoinsService, UserCoins } from "@/services/coinsService";
 import { useUser } from "@/queries/authQueries";
-import { CoinsService } from "@/services/coinsService";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
-// ─── Query keys ────────────────────────────────────────────────────────────────
-export const coinsKeys = {
+// Query keys
+const coinsKeys = {
   all: ["coins"] as const,
-  byUser: (userId: string) => [...coinsKeys.all, userId] as const,
+  user: (userId: string) => [...coinsKeys.all, userId] as const,
 };
 
-export function useCoins() {
+// ============================================
+// QUERIES (Read Operations)
+// ============================================
+
+/**
+ * Get current user's coins
+ * Enabled only when user is authenticated
+ * Refetches on window focus for real-time feel
+ */
+export function useUserCoins() {
   const { data: user } = useUser();
   const userId = user?.id;
-  const queryClient = useQueryClient();
 
-  // ── React Query fetch ────────────────────────────────────────────────────────
-  const { data: coins, isLoading, isError } = useQuery({
-    queryKey: coinsKeys.byUser(userId ?? ""),
-    queryFn: () => CoinsService.getCoins(userId!),
+  return useQuery<UserCoins>({
+    queryKey: coinsKeys.user(userId ?? ""),
+    queryFn: () => {
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
+      return CoinsService.getUserCoins(userId);
+    },
     enabled: !!userId,
-    staleTime: 30 * 1000, // 30 seconds — RPC keeps the source of truth
-    retry: 1,
+    staleTime: 10 * 1000, // 10 seconds - shorter to ensure fresher data
+    refetchOnWindowFocus: true,
+    refetchOnMount: "always", // Always refetch when component mounts
   });
+}
 
-  // ── Realtime subscription ────────────────────────────────────────────────────
-  useEffect(() => {
-    if (!userId || !queryClient) return;
+// ============================================
+// MUTATIONS (Write Operations)
+// ============================================
 
-    const supabase = createClient();
+/**
+ * Deduct one coin from user's balance
+ * Invalidates coins query on success
+ * Returns boolean indicating if deduction was successful
+ */
+export function useDeductCoin() {
+  const queryClient = useQueryClient();
+  const { data: user } = useUser();
+  const userId = user?.id;
+  const { handleError } = useErrorHandler();
 
-    const channel = supabase
-      .channel(`coins:${userId}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "profiles",
-          filter: `id=eq.${userId}`,
-        },
-        () => {
-          queryClient.invalidateQueries({
-            queryKey: coinsKeys.byUser(userId),
-          });
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [userId, queryClient]);
-
-  return {
-    coins: coins ?? null,
-    isLoading,
-    isError,
-  };
+  return useMutation({
+    mutationFn: async (): Promise<boolean> => {
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
+      return CoinsService.deductCoin(userId);
+    },
+    onSuccess: () => {
+      // Invalidate coins query to refetch updated balance
+      if (userId) {
+        queryClient.invalidateQueries({ queryKey: coinsKeys.user(userId) });
+      }
+    },
+    onError: (error: Error) => {
+      handleError(error);
+    },
+  });
 }

@@ -1,3 +1,6 @@
+-- Enable UUID extension in extensions schema (Supabase default)
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA extensions;
+
 -- Create payment transactions table
 CREATE TABLE IF NOT EXISTS payment_transactions (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

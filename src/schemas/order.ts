@@ -40,13 +40,15 @@ export const OrderSchema = z.object({
   currency: z.string().nullable(),
   payment_method: z.string().nullable(),
   printify_order_id: z.string().nullable(),
+  printify_status: z.string().nullable().optional(),
+  printify_synced_at: z.string().nullable().optional(),
   shipping_address: z.any().nullable(),
   billing_address: z.any().nullable(),
-  shipping_method: z.string().nullable(),
-  tracking_number: z.string().nullable(),
-  tracking_url: z.string().nullable(),
-  customer_notes: z.string().nullable(),
-  internal_notes: z.string().nullable(),
+  shipping_method: z.string().nullable().optional(),
+  tracking_number: z.string().nullable().optional(),
+  tracking_url: z.string().nullable().optional(),
+  customer_notes: z.string().nullable().optional(),
+  internal_notes: z.string().nullable().optional(),
   // Backward compatibility: older schemas had orders.product_id,
   // but current remote schema may omit this column.
   product_id: z.string().nullable().optional(),
@@ -88,12 +90,12 @@ export const OrderSchema = z.object({
  * Zod schema for orders with order items included
  */
 export const OrderWithItemsSchema = OrderSchema.extend({
-  order_items: z.array(OrderItemSchema),
-});
+  order_items: z.array(OrderItemSchema.passthrough()),
+}).passthrough();
 
 /**
  * Infer TypeScript types from Zod schemas
  */
-export type OrderItemSchemaT = z.infer<typeof OrderItemSchema>;
-export type OrderSchemaT = z.infer<typeof OrderSchema>;
-export type OrderWithItemsSchemaT = z.infer<typeof OrderWithItemsSchema>;
+type OrderItemSchemaT = z.infer<typeof OrderItemSchema>;
+type OrderSchemaT = z.infer<typeof OrderSchema>;
+type OrderWithItemsSchemaT = z.infer<typeof OrderWithItemsSchema>;

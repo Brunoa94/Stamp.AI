@@ -284,4 +284,13 @@ $$;
 
 
 
+COMMENT ON FUNCTION upsert_stripe_payment_transaction IS
+  'Atomically inserts or updates a Stripe payment transaction, preventing webhook/creation race conditions';
+COMMENT ON FUNCTION upsert_paypal_payment_transaction IS
+  'Atomically inserts or updates a PayPal payment transaction, preventing webhook/creation race conditions';
+COMMENT ON FUNCTION upsert_mollie_payment_transaction IS
+  'Atomically inserts or updates a Mollie payment transaction, preventing webhook/creation race conditions';
+COMMENT ON FUNCTION record_webhook_event_atomic IS
+  'Atomically records a webhook event, returning the existing row if already recorded (idempotent)';
+COMMENT ON FUNCTION is_webhook_event_processed IS
   'Checks if webhook event was already processed for idempotency';

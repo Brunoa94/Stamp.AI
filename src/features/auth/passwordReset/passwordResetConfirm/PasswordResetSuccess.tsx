@@ -1,31 +1,30 @@
 import { Button } from "@/features/ui/button";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
+import { CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export function PasswordResetSuccess() {
+  const t = useTranslations("auth.passwordReset.success");
+
   return (
-    <div className="text-center space-y-4">
-      <div className="text-green-600 mb-4">
-        <svg
-          className="w-16 h-16 mx-auto"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path
-            fillRule="evenodd"
-            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-            clipRule="evenodd"
-          />
-        </svg>
+    <div className="text-center space-y-6">
+      <div className="text-(--color-stamp-success) mb-4">
+        <CheckCircle className="w-16 h-16 mx-auto" strokeWidth={1.5} />
       </div>
-      <h3 className="text-lg font-medium text-gray-900">
-        Password Reset Successful!
-      </h3>
-      <p className="text-sm text-gray-600">
-        Your password has been reset successfully. You will be redirected to the
-        login page in 3 seconds.
-      </p>
-      <Button asChild className="mt-4">
-        <Link href="/">Go to Login</Link>
+      <Heading
+        as="h3"
+        variant="card"
+        className="text-2xl tracking-tight text-(--color-stamp-chocolate)"
+      >
+        {t("title")}
+      </Heading>
+      <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
+        {t("description")}
+      </Paragraph>
+      <Button asChild variant="primary" className="mt-4">
+        <Link href="/">{t("goToLogin")}</Link>
       </Button>
     </div>
   );

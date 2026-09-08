@@ -1,11 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
 import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
-import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { requireUser } from "../_shared/authGuard.ts";
-import { getPayPalOrder } from "../_shared/paypal.ts";
-import { getMolliePayment, isMolliePaymentPaid } from "../_shared/mollie.ts";
+import { verifyPaidPayment } from "../_shared/verifyPaidPayment.ts";
+import { requirePaymentCurrency } from "../_shared/paymentProof.ts";
 import { validatePaymentAmount } from "../_shared/amountValidator.ts";
 
 const corsHeaders = {
@@ -13,55 +11,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
 };
-
-/**
- * Verify with the payment provider that `payment_intent_id` was actually paid,
- * and return the amount charged (in the major currency unit). Throws if the
- * payment is missing/unpaid, or (for non-service callers) if it does not
- * belong to the authenticated user. This is what prevents an attacker from
- * fabricating a payment id to get free fulfillment.
- */
-async function verifyPaymentPaid(
-  provider: string,
-  paymentIntentId: string,
-  callerUserId: string | null,
-): Promise<number> {
-  if (provider === "stripe") {
-    const stripe = new Stripe(validateEnvVars.stripeSecretKey(), {
-      apiVersion: "2023-10-16",
-      httpClient: Stripe.createFetchHttpClient(),
-    });
-    const pi = await stripe.paymentIntents.retrieve(paymentIntentId);
-    if (pi.status !== "succeeded") {
-      throw new FunctionError(402, "PAYMENT_NOT_COMPLETED", "Payment not completed");
-    }
-    if (callerUserId && pi.metadata?.user_id && pi.metadata.user_id !== callerUserId) {
-      throw new FunctionError(403, "FORBIDDEN", "Payment does not belong to caller");
-    }
-    return pi.amount / 100;
-  }
-
-  if (provider === "paypal") {
-    const order = await getPayPalOrder(paymentIntentId);
-    if (order.status !== "COMPLETED" && order.status !== "APPROVED") {
-      throw new FunctionError(402, "PAYMENT_NOT_COMPLETED", "Payment not completed");
-    }
-    const unit = order.purchase_units?.[0];
-    const value = Number(unit?.amount?.value ?? unit?.payments?.captures?.[0]?.amount?.value);
-    return Number.isFinite(value) ? value : NaN;
-  }
-
-  if (provider === "mollie") {
-    const payment = await getMolliePayment(paymentIntentId);
-    if (!isMolliePaymentPaid(payment)) {
-      throw new FunctionError(402, "PAYMENT_NOT_COMPLETED", "Payment not completed");
-    }
-    const value = Number(payment?.amount?.value);
-    return Number.isFinite(value) ? value : NaN;
-  }
-
-  throw ErrorCodes.INVALID_REQUEST_BODY();
-}
 
 /**
  * Process Payment Recovery Edge Function
@@ -83,9 +32,6 @@ serve(async (req) => {
       recovery_id,
       payment_provider,
       payment_intent_id,
-      cart_snapshot,
-      shipping_address,
-      line_items,
     } = body;
 
     console.log("=== PROCESS PAYMENT RECOVERY ===");
@@ -95,24 +41,25 @@ serve(async (req) => {
       throw ErrorCodes.INVALID_REQUEST_BODY();
     }
 
-    if (!cart_snapshot || !shipping_address || !line_items) {
-      throw ErrorCodes.INVALID_REQUEST_BODY();
-    }
-
-    // CRITICAL: verify the payment actually succeeded with the provider before
-    // creating or fulfilling anything. Never trust a client-supplied payment
-    // id + cart snapshot as proof of payment.
-    const paidAmount = await verifyPaymentPaid(
-      payment_provider,
-      payment_intent_id,
-      auth.isServiceRole ? null : auth.userId,
+    const recoveryResult = await supabaseRest<Array<{
+      user_id: string;
+      currency: string;
+      cart_snapshot: { cart_items?: Array<Record<string, any>>; items?: Array<Record<string, any>>; shipping_cost?: number; discount?: number };
+      shipping_address: Record<string, unknown>;
+      line_items: Array<Record<string, unknown>>;
+    }>>(
+      `payment_recovery?id=eq.${encodeURIComponent(recovery_id)}&payment_provider=eq.${encodeURIComponent(payment_provider)}&payment_intent_id=eq.${encodeURIComponent(payment_intent_id)}&select=user_id,currency,cart_snapshot,shipping_address,line_items`, "GET",
     );
-
-    // The user the order is attributed to: for a real user, always themselves;
-    // service-role recovery may act on behalf of the snapshot's user.
-    const effectiveUserId = auth.isServiceRole
-      ? cart_snapshot.user_id
-      : auth.userId;
+    if (recoveryResult.error) throw new Error("Could not load recovery record");
+    const recovery = recoveryResult.data?.[0];
+    if (!recovery || (!auth.isServiceRole && recovery.user_id !== auth.userId)) {
+      throw new FunctionError(403, "FORBIDDEN", "Recovery record not found for this user");
+    }
+    const { cart_snapshot, shipping_address, line_items } = recovery;
+    if (!cart_snapshot || !shipping_address || !line_items?.length) throw ErrorCodes.INVALID_REQUEST_BODY();
+    const effectiveUserId = recovery.user_id;
+    const payment = await verifyPaidPayment(payment_provider, payment_intent_id, effectiveUserId);
+    requirePaymentCurrency(payment, recovery.currency);
 
     // Increment recovery attempt counter
     await supabaseRest("rpc/increment_recovery_attempt", "POST", {
@@ -122,28 +69,29 @@ serve(async (req) => {
 
     // Check if order already exists for this payment
     const idempotencyKey = `${payment_provider}_${payment_intent_id}`;
-    const existingOrderResult = await supabaseRest(
-      `rpc/get_order_by_idempotency_key`,
-      "POST",
-      {
-        p_idempotency_key: idempotencyKey,
-      }
+    const existingOrderResult = await supabaseRest<Array<{ id: string; user_id: string }>>(
+      `orders?idempotency_key=eq.${encodeURIComponent(idempotencyKey)}&select=id,user_id`, "GET",
     );
+    const existingOrder = existingOrderResult.data?.[0];
 
-    if (existingOrderResult.data) {
-      console.log("✅ Order already exists:", existingOrderResult.data.id);
+    if (existingOrderResult.error) throw new Error("Could not check existing order");
+    if (existingOrder) {
+      if (existingOrder.user_id !== effectiveUserId) {
+        throw new FunctionError(403, "FORBIDDEN", "Order belongs to another user");
+      }
+      console.log("✅ Order already exists:", existingOrder.id);
 
       // Mark as recovered
       await supabaseRest("rpc/mark_payment_recovered", "POST", {
         p_payment_intent_id: payment_intent_id,
         p_payment_provider: payment_provider,
-        p_order_id: existingOrderResult.data.id,
+        p_order_id: existingOrder.id,
       });
 
       return new Response(
         JSON.stringify({
           success: true,
-          order_id: existingOrderResult.data.id,
+          order_id: existingOrder.id,
           message: "Order already exists",
         }),
         {
@@ -168,8 +116,8 @@ serve(async (req) => {
     // The order total must match what the provider actually charged — reject
     // recovery of a snapshot whose price differs from the real payment.
     const amountCheck = validatePaymentAmount({
-      paymentAmount: paidAmount,
-      paymentCurrency: cart_snapshot.currency || "USD",
+      paymentAmount: payment.amount,
+      paymentCurrency: payment.currency,
       expectedTotal: totalAmount,
     });
     if (!amountCheck.isValid) {
@@ -194,11 +142,12 @@ serve(async (req) => {
       payment_status: "paid",
       status: "pending",
       payment_method: payment_provider,
+      currency: payment.currency,
       shipping_address: shipping_address,
       idempotency_key: idempotencyKey,
     };
 
-    const orderResult = await supabaseRest("orders", "POST", orderData);
+    const orderResult = await supabaseRest<Array<{ id: string }> | { id: string }>("orders", "POST", orderData, { prefer: "return=representation" });
 
     if (orderResult.error || !orderResult.data) {
       console.error("Failed to create order:", orderResult.error);
@@ -207,11 +156,11 @@ serve(async (req) => {
       await supabaseRest("rpc/increment_recovery_attempt", "POST", {
         p_payment_intent_id: payment_intent_id,
         p_payment_provider: payment_provider,
-        p_error: `Order creation failed: ${orderResult.error?.message || "Unknown error"}`,
+        p_error: "Order creation failed",
       });
 
       throw new Error(
-        `Failed to create order: ${orderResult.error?.message || "Unknown error"}`
+        "Failed to create order"
       );
     }
 

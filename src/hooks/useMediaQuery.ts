@@ -1,21 +1,31 @@
-import { useState, useEffect } from "react";
+"use client";
+
+import { useCallback, useSyncExternalStore } from "react";
 
 /**
- * Returns true when the media query matches, false otherwise.
- * Defaults to false during SSR (no window available) and updates
- * synchronously after the first client paint.
+ * useMediaQuery
+ *
+ * Subscribes to a CSS media query. Returns `fallback` on the server and in
+ * environments without matchMedia (e.g. jsdom), so components render a
+ * deterministic layout during SSR/tests and correct themselves on hydration.
  */
-export function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false);
+export function useMediaQuery(query: string, fallback = false): boolean {
+  const subscribe = useCallback(
+    (onChange: () => void) => {
+      if (typeof window === "undefined" || !window.matchMedia) {
+        return () => {};
+      }
+      const mql = window.matchMedia(query);
+      mql.addEventListener("change", onChange);
+      return () => mql.removeEventListener("change", onChange);
+    },
+    [query],
+  );
 
-  useEffect(() => {
-    const mql = window.matchMedia(query);
-    setMatches(mql.matches);
+  const getSnapshot = () =>
+    typeof window !== "undefined" && window.matchMedia
+      ? window.matchMedia(query).matches
+      : fallback;
 
-    const handler = (e: MediaQueryListEvent) => setMatches(e.matches);
-    mql.addEventListener("change", handler);
-    return () => mql.removeEventListener("change", handler);
-  }, [query]);
-
-  return matches;
+  return useSyncExternalStore(subscribe, getSnapshot, () => fallback);
 }

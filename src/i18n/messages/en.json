@@ -1,0 +1,2725 @@
+{
+  "home": {
+    "topBanner": {
+      "freeShipping": "Free shipping on orders over €{threshold}",
+      "returns": "{days}-day returns",
+      "securePayment": "Secure payment"
+    },
+    "paymentBanner": {
+      "securePayment": "Secure payment",
+      "freeShipping": "Free shipping on orders over €{threshold}",
+      "fastDelivery": "Fast delivery",
+      "returns": "{days}-day returns",
+      "trustedProviders": "Trusted payment providers"
+    },
+    "hero": {
+      "title": "tamp <accent>.ai</accent>",
+      "tagline": "From imagination to thing. Just describe it, we'll design it, and print it on premium products made to last.",
+      "ctaPrimary": "Start Creating",
+      "ctaSecondary": "View Catalog",
+      "freeCredits": "<signUp>Sign up</signUp> and get 5 free edits per day",
+      "productBadge": "Essential_Wht / 320GSM",
+      "scrollCue": "Scroll to Build",
+      "productImageAlt": "Heavyweight t-shirt with a custom print"
+    },
+    "meta": {
+      "title": "Design & Order Custom T-Shirts and Apparel | Stamp AI",
+      "description": "Turn your idea into a print-ready design in seconds and put it on heavyweight, made-to-order clothes. No minimums, no design skills needed. Start free today.",
+      "keywords": [
+        "custom AI t-shirt design",
+        "AI t-shirt generator",
+        "design your own t-shirt",
+        "print on demand apparel",
+        "AI design generator",
+        "custom hoodies",
+        "personalized t-shirts online",
+        "AI clothing design",
+        "custom apparel maker",
+        "text to t-shirt"
+      ]
+    },
+    "process": {
+      "title": "The",
+      "accent": "process",
+      "label": "How it works",
+      "footer": "Simple, from idea to doorstep.",
+      "stepCounter": "Step {current} of {total}",
+      "steps": {
+        "step-upload": {
+          "title": "Upload",
+          "description": "Start with a photo or a sketch you already have. No photo? Skip this and use words only."
+        },
+        "step-describe": {
+          "title": "Describe",
+          "description": "Type what you want in one or two simple sentences, like \"my dog as an astronaut\"."
+        },
+        "step-generate": {
+          "title": "Generate",
+          "description": "Press generate and give us a few seconds to draw up your design."
+        },
+        "step-results": {
+          "title": "Results",
+          "description": "Look at the designs you get back and pick your favorite. Not happy? Change a word and try again."
+        },
+        "step-product": {
+          "title": "Product",
+          "description": "Pick what to print it on: a tee, hoodie, mug, canvas or tote bag."
+        },
+        "step-customize": {
+          "title": "Customize",
+          "description": "Choose your size and color, and move the design to where you want it."
+        },
+        "step-create": {
+          "title": "Preview and add to bag",
+          "description": "See your design on the real product and add it to your bag. We print your piece and ship it to your door."
+        }
+      }
+    },
+    "products": {
+      "title": "The",
+      "accent": "essentials",
+      "label": "Our apparel",
+      "emptyState": "The catalog is temporarily unavailable — please check back soon",
+      "viewFullCatalog": "Browse all products"
+    },
+    "featured": {
+      "title": "Featured",
+      "accent": "pieces",
+      "label": "Featured pieces",
+      "scrollLeft": "Scroll left",
+      "scrollRight": "Scroll right",
+      "noImage": "No image",
+      "collectionLabel": "Our Collection",
+      "swipeHint": "Swipe to explore"
+    },
+    "manifesto": {
+      "title": "Design for <accent>everyone</accent>",
+      "quote": "Good design shouldn't need a design degree or a 500-unit minimum. Tell us what you want, and we'll help you make it — one piece at a time.",
+      "quoteAttribution": "— Stamp AI Manifesto",
+      "intro": "We built Stamp AI to close the gap between a good idea and a good product. You bring the idea; we take care of the artwork, the printing and the blanks, so anyone can make clothes worth keeping.",
+      "valuesToggle": "Our Values",
+      "values": {
+        "01": {
+          "title": "Made Simple",
+          "description": "Describe what you want in plain words and get print-ready art back. No software to learn."
+        },
+        "02": {
+          "title": "Built to Last",
+          "description": "Heavyweight blanks, 280 to 480 GSM, picked to survive years of wear and washing."
+        },
+        "03": {
+          "title": "On-Demand",
+          "description": "Everything is made to order, so there's no dead stock and far less waste."
+        },
+        "04": {
+          "title": "Global Logistics",
+          "description": "Carbon-neutral shipping to 180+ countries, tracked from our press to your door."
+        }
+      }
+    },
+    "cta": {
+      "heading": "Ready to stamp your <accent>vision</accent>?",
+      "lead": "Start with a few words and see your design in seconds. No minimum order and no commitment. Just make the thing you've been picturing.",
+      "ctaPrimary": "Start Creating",
+      "ctaSecondary": "Browse Catalog"
+    },
+    "promo": {
+      "brand-logo": {
+        "tagline": "Create your own logos, stamp your brand",
+        "accentWord": "brand",
+        "description": "Transform your ideas into professional logos. From fitness brands to luxury labels, bring your vision to life on premium merchandise.",
+        "cta": "Start Creating"
+      },
+      "memories": {
+        "tagline": "Stamp your best memories",
+        "accentWord": "memories",
+        "description": "Turn your cherished moments into lasting keepsakes. Family photos, couple portraits, and beloved pets - all printed on quality products.",
+        "cta": "Create Yours"
+      },
+      "special-moments": {
+        "tagline": "Design for special moments",
+        "accentWord": "special moments",
+        "description": "Celebrate life's milestones with custom merchandise. Perfect for birthdays, bachelor parties, sports achievements, and more.",
+        "cta": "Get Started"
+      }
+    },
+    "reviews": {
+      "title": "Social",
+      "accent": "proof",
+      "label": "Customer reviews",
+      "verifiedReviews": "{count, number} customer reviews",
+      "platformBreakdown": "Platform Breakdown",
+      "testimonials": {
+        "alex-chen": {
+          "author": "Alex Chen",
+          "role": "Creative Director",
+          "quote": "I fed it a rough sketch and got back something I'd actually frame. The tee it printed on is heavier than most blanks I've bought."
+        },
+        "jordan-ellis": {
+          "author": "Jordan Ellis",
+          "role": "Streetwear Designer",
+          "quote": "The 320 GSM tee is the best blank I've printed on, full stop, and the prints come out crisp every time."
+        },
+        "morgan-park": {
+          "author": "Morgan Park",
+          "role": "Independent Artist",
+          "quote": "I can't design to save my life, but I described what I wanted and it just got it. Showed up in six days."
+        },
+        "riley-santos": {
+          "author": "Riley Santos",
+          "role": "Brand Consultant",
+          "quote": "Made-to-order means I'm not sitting on inventory, and the print quality doesn't drift between batches."
+        }
+      }
+    },
+    "faq": {
+      "title": "Questions",
+      "accent": "answered",
+      "label": "Support Archive",
+      "stillHaveQuestions": "Still have questions?",
+      "items": {
+        "ai-synthesis": {
+          "question": "How does my idea become a design?",
+          "answer": "Type a few words, upload a sketch, or drop in a reference image, and our design studio turns it into artwork made to print straight onto fabric. Color, resolution and detail are handled for you, so the print holds up on the piece. No design experience needed."
+        },
+        "archival-quality": {
+          "question": "What makes your fabrics last so long?",
+          "answer": "We only use heavyweight blanks, 280 to 480 GSM. They're pre-shrunk and enzyme-washed so they keep their shape, and we print with water-based inks. Your piece holds its fit and color for years."
+        },
+        "production-shipping": {
+          "question": "How long does production and shipping take?",
+          "answer": "We start printing as soon as your order is confirmed. Printing takes 2 to 3 business days, then we inspect every piece by hand. Carbon-neutral shipping adds 3 to 4 more days, so most orders arrive within 5 to 7 business days. You can track it the whole way."
+        },
+        "sustainability": {
+          "question": "What are your sustainability practices?",
+          "answer": "We make everything to order, so nothing sits in a warehouse going to waste. We print with water-based inks, offset shipping through verified tree planting, and pack in recycled materials. We work to keep the footprint low at every step."
+        },
+        "samples": {
+          "question": "Can I order samples before bulk production?",
+          "answer": "Yes. Order a single piece first to check the fit, feel, and print quality. There's no minimum, and every piece is made on demand. Once you're happy, reorder the same design at any quantity. Orders of 25 or more get a volume discount."
+        },
+        "satisfaction": {
+          "question": "What if I'm not satisfied with my order?",
+          "answer": "You're covered by a 30-day guarantee. If the print, fabric, or fit isn't right, we'll replace it free or refund you in full, and we cover return shipping. Custom designs can't be resold, so we'd rather get it right the first time."
+        }
+      },
+      "contactSupport": "Contact Support"
+    },
+    "ratingStars": {
+      "ariaLabel": "Rated {rating} out of {total} stars"
+    },
+    "trustIndicators": {
+      "items": {
+        "aiPowered": "Custom Design",
+        "archivalQuality": "Premium Quality",
+        "instantDelivery": "Fast Delivery",
+        "fiveSevenDayDelivery": "5-7 Day Delivery",
+        "thirtyDayGuarantee": "30-Day Guarantee",
+        "carbonNeutral": "Carbon Neutral"
+      },
+      "subLabels": {
+        "generative": "Design Studio",
+        "heritage": "Built to Last",
+        "logistics": "Global Logistics"
+      }
+    },
+    "productCard": {
+      "noImage": "No image",
+      "discountBadge": "-{percent}%"
+    },
+    "guarantees": {
+      "title": "Shop with",
+      "accent": "confidence",
+      "label": "Trust & Security",
+      "paymentTitle": "Secure Payment",
+      "paymentDescription": "All transactions are encrypted and processed through trusted payment providers.",
+      "items": {
+        "returns": {
+          "title": "30-Day Guarantee",
+          "description": "Not satisfied? Return any item within 30 days for a full refund — we cover return shipping."
+        },
+        "refund": {
+          "title": "100% Money Back",
+          "description": "Not satisfied with your order? We'll refund every cent, no questions asked."
+        },
+        "securePayment": {
+          "title": "Secure Checkout",
+          "description": "Your payment info is protected with bank-level SSL encryption."
+        },
+        "freeShipping": {
+          "title": "Free Shipping",
+          "description": "Free carbon-neutral delivery on orders over €60."
+        }
+      }
+    },
+    "productOfMonth": {
+      "eyebrow": "This month's pick",
+      "title": "Product of the month",
+      "badge": "Pick of the month",
+      "cta": "Design yours now",
+      "noImage": "No image"
+    },
+    "story": {
+      "blocks": {
+        "design": {
+          "eyebrow": "Create",
+          "title": "Describe it. <accent>We'll design it.</accent>",
+          "body": "Type a few words, upload a photo, or start from a rough sketch. Seconds later you'll have clean, print-ready artwork in whatever style you're picturing.",
+          "cta": "Start creating",
+          "imageAlt": "The same portrait drawn in four different styles"
+        },
+        "quality": {
+          "eyebrow": "Quality",
+          "title": "Heavyweight blanks, <accent>built to last.</accent>",
+          "body": "We print on 280 to 480 GSM fabrics that are pre-shrunk and enzyme-washed, using water-based, eco-friendly inks. Your piece keeps its fit, color and print through years of wear and washing.",
+          "cta": "See the essentials",
+          "imageAlt": "Model wearing a heavyweight white t-shirt"
+        }
+      }
+    }
+  },
+  "catalog": {
+    "meta": {
+      "title": "Product Catalog",
+      "description": "Browse every product you can customize with AI on Stamp AI — t-shirts, hoodies, sweatshirts, tote bags, mugs, posters and more, organized by category with photos, prices and details.",
+      "keywords": [
+        "product catalog",
+        "browse products",
+        "custom products",
+        "all products"
+      ]
+    },
+    "title": "The",
+    "accent": "catalog",
+    "intro": "Every product in our collection, ready for your design. Browse by category, explore the photos and details, and take any of them into the studio.",
+    "emptyState": "The catalog is temporarily unavailable — please check back soon",
+    "categoryNavAria": "Product categories",
+    "allCategory": "All products",
+    "groups": {
+      "clothing": "Clothing",
+      "accessories": "Accessories & Goodies"
+    },
+    "showcase": {
+      "title": "Explore our best",
+      "subtitle": "Here are some of the most popular product categories in our catalog.",
+      "cardAria": "Browse {group}"
+    },
+    "backToShowcase": "Back to explore",
+    "section": {
+      "subtitle": "Handpicked {group} from our collection, ready for your design.",
+      "seeAll": "See all",
+      "seeAllAria": "See all {group}"
+    },
+    "toolbar": {
+      "filteringLabel": "Filters",
+      "clearFilters": "Clear filters",
+      "searchPlaceholder": "What are you looking for?",
+      "searchAria": "Search products",
+      "sortAria": "Sort products",
+      "sortOptions": {
+        "featured": "Featured",
+        "price-asc": "Price: low to high",
+        "price-desc": "Price: high to low",
+        "name-asc": "Name: A to Z"
+      }
+    },
+    "noResults": {
+      "title": "No products found",
+      "body": "Try a different search or clear the filters to see the full collection.",
+      "clearFilters": "Clear filters"
+    },
+    "card": {
+      "noImage": "No image",
+      "discountBadge": "-{percent}%",
+      "photoCount": "{count} photos",
+      "quickView": "Quick view",
+      "quickViewAria": "View {name} details"
+    },
+    "dialog": {
+      "noImage": "No image",
+      "photosLabel": "Product photos",
+      "photoAlt": "{name} — photo {number} of {total}",
+      "thumbnailAria": "Show photo {number}",
+      "colorsLabel": "Available colors",
+      "specsLabel": "Details",
+      "customizeCta": "Design yours"
+    },
+    "reviews": {
+      "label": "Reviews",
+      "comingSoon": "No reviews yet — customer reviews are coming soon."
+    }
+  },
+  "stamp": {
+    "synthesis": {
+      "eyebrow": "Choose a filter",
+      "showMore": "Show {count} more",
+      "showLess": "Show less",
+      "subtitle": "Tap a suggestion to start your prompt, then tweak it on the right.",
+      "applySuggestion": "Apply suggestion: {label} — {hint}",
+      "noFilter": {
+        "label": "No filter",
+        "hint": "Use original image without style changes",
+        "aria": "No filter — Use original image without style changes"
+      },
+      "protocol": "Step 02 / Describe",
+      "title": "Describe Your <accent>Design</accent>",
+      "generate": "STAMP IT!",
+      "generating": "GENERATING...",
+      "promptLabel": "Your Prompt",
+      "promptPlaceholder": "Be as detailed as you can: describe the changes, colors, textures, style, and mood you want...",
+      "promptAria": "Prompt input",
+      "counter": "{count} / {max}",
+      "preservationLabel": "Preservation",
+      "preservationTooltip": "Controls how much of the original image is kept. Lower values allow more creative changes, higher values preserve more of the original.",
+      "low": "LOW",
+      "high": "HIGH",
+      "preservationAria": "Preservation level slider",
+      "removeBackgroundLabel": "Remove Background",
+      "removeBackgroundTooltip": "Automatically removes the background from your generated design, leaving only the main subject.",
+      "removeBackgroundAria": "Toggle background removal",
+      "skipWithUploadedImage": "Proceed without editing my photo",
+      "skipWithCachedImages": "Proceed with previous photos"
+    },
+    "suggestions": {
+      "vibrant": {
+        "label": "Vibrant",
+        "hint": "Punchy saturated color",
+        "prompt": "Boost saturation for punchy, vivid color."
+      },
+      "monochrome": {
+        "label": "Monochrome",
+        "hint": "Rich black & white",
+        "prompt": "Convert to a rich black-and-white treatment."
+      },
+      "vintage": {
+        "label": "Vintage",
+        "hint": "Retro film look",
+        "prompt": "Apply a warm vintage, retro film look."
+      },
+      "minimal": {
+        "label": "Minimal",
+        "hint": "Clean & simple",
+        "prompt": "Simplify into a clean, minimalist composition."
+      },
+      "watercolor": {
+        "label": "Watercolor",
+        "hint": "Soft painted",
+        "prompt": "Reinterpret as a soft watercolor painting."
+      },
+      "line-art": {
+        "label": "Line Art",
+        "hint": "Inked linework",
+        "prompt": "Render as clean inked line art."
+      },
+      "pop-art": {
+        "label": "Pop Art",
+        "hint": "Bold comic style",
+        "prompt": "Transform into bold pop-art with halftone dots."
+      },
+      "cinematic": {
+        "label": "Cinematic",
+        "hint": "Dramatic film light",
+        "prompt": "Grade with cinematic, dramatic film lighting."
+      },
+      "neon": {
+        "label": "Neon",
+        "hint": "Glowing cyberpunk",
+        "prompt": "Bathe the composition in glowing neon, cyberpunk light."
+      },
+      "golden-hour": {
+        "label": "Golden Hour",
+        "hint": "Warm directional light",
+        "prompt": "Bathe the composition in soft, golden-hour light."
+      },
+      "high-contrast": {
+        "label": "High Contrast",
+        "hint": "Bold shadows",
+        "prompt": "Push dramatic high-contrast shadows and bright highlights."
+      },
+      "film-grain": {
+        "label": "Film Grain",
+        "hint": "Analog texture",
+        "prompt": "Overlay subtle analog film grain and texture."
+      },
+      "oil-paint": {
+        "label": "Oil Paint",
+        "hint": "Textured brushwork",
+        "prompt": "Reinterpret as a textured oil painting."
+      },
+      "render-3d": {
+        "label": "3D Render",
+        "hint": "Glossy dimensional",
+        "prompt": "Render as a glossy, dimensional 3D character."
+      },
+      "sketch": {
+        "label": "Sketch",
+        "hint": "Pencil hand-drawn",
+        "prompt": "Render as a hand-drawn pencil sketch."
+      }
+    },
+    "metadata": {
+      "title": "AI Design Studio — Create Your Print | Stamp AI",
+      "description": "Upload a photo or describe your idea, choose a style, and let AI make print-ready designs. Adjust the product and order in minutes.",
+      "keywords": [
+        "AI design studio",
+        "create custom t-shirt",
+        "text to t-shirt design",
+        "AI image to apparel",
+        "custom print maker"
+      ]
+    },
+    "header": {
+      "logoAria": "Return to Stamp homepage",
+      "brand": "STAMP IT",
+      "stampAria": "Start stamping process",
+      "stamp": "Stamp",
+      "catalog": "Catalog",
+      "profile": "Profile",
+      "profileAria": "View your profile",
+      "orders": "Orders",
+      "cart": "Cart",
+      "logoutAria": "Logout from your account",
+      "logout": "Logout",
+      "signIn": "Sign in",
+      "signUp": "Sign up",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "mainNavAria": "Main navigation",
+      "mobileNavAria": "Mobile navigation"
+    },
+    "nav": {
+      "eyebrow": "Your Progress",
+      "title": "8 Steps to Print",
+      "stepNavAria": "Step navigation",
+      "back": "BACK",
+      "backTo": "Go back to {step}",
+      "navigate": "Navigate to {title}",
+      "navigateLocked": "Navigate to {title} (locked)"
+    },
+    "steps": {
+      "hero": {
+        "title": "Entry",
+        "label": "Start Here"
+      },
+      "step-1": {
+        "title": "Upload",
+        "label": "Step 01 / Upload"
+      },
+      "step-2": {
+        "title": "Describe",
+        "label": "Step 02 / Describe"
+      },
+      "step-3": {
+        "title": "Process",
+        "label": "Step 03 / Generate"
+      },
+      "step-4": {
+        "title": "Results",
+        "label": "Step 04 / Results"
+      },
+      "step-5": {
+        "title": "Product",
+        "label": "Step 05 / Product"
+      },
+      "step-6": {
+        "title": "Custom",
+        "label": "Step 06 / Customize"
+      },
+      "step-7": {
+        "title": "Creation",
+        "label": "Step 07 / Create"
+      },
+      "step-8": {
+        "title": "Final",
+        "label": "Step 08 / Checkout"
+      }
+    },
+    "hero": {
+      "eyebrow": "Start Here",
+      "title": "Stamp <br></br><accent>It</accent>",
+      "description": "Turn a prompt or your own photo into a print-ready design. Eight quick steps from idea to finished product.",
+      "cta": "Begin Customization",
+      "ctaAria": "Begin customizing",
+      "imageAlt": "Fashion lifestyle"
+    },
+    "upload": {
+      "protocol": "Step 01 / Upload",
+      "title": "Upload <accent>Image</accent>",
+      "description": "Add an image to guide your design. It's optional — you can also start from just a text prompt.",
+      "next": "Next Step",
+      "skipUpload": "Skip Upload",
+      "proceedWithoutUpload": "Proceed with previous photos",
+      "dropzoneAria": "Upload image",
+      "dropzoneText": "Upload Image (Optional)",
+      "dropzoneHint": "10MB max, JPG/PNG/GIF only",
+      "fileSize": "{size} MB",
+      "removeAria": "Remove uploaded file",
+      "previewAlt": "Uploaded reference preview",
+      "replaceAria": "Replace uploaded image",
+      "replace": "REPLACE",
+      "inputAria": "File upload input"
+    },
+    "generation": {
+      "status": "Generating Your Design...",
+      "estimate": "Est. 10 seconds..."
+    },
+    "results": {
+      "protocol": "Step 04 / Results",
+      "title": "Your <accent>Creation</accent>",
+      "outputNumber": "Result #01",
+      "generated": "Generated {date}",
+      "savedToHistory": "Saved to history",
+      "appliedPrompt": "Applied Prompt",
+      "useProtocol": "USE THIS IMAGE",
+      "reSynthesize": "REPEAT",
+      "imageAlt": "Generated design result",
+      "previousCreations": "YOUR PREVIOUS CREATIONS",
+      "selectImage": "Select image {number}",
+      "galleryImageAlt": "Previously generated design {number}"
+    },
+    "productSelection": {
+      "protocol": "Step 05 / Product",
+      "title": "Select Your <accent>Product</accent>",
+      "description": "Pick what you want your design printed on. Everything's good quality and printed on demand.",
+      "pricingNote": "Pricing reflects global print provider rates",
+      "continue": "CONTINUE TO CUSTOMIZATION",
+      "selectAria": "Select {name}",
+      "selectedAria": "Selected {name}",
+      "removeAria": "Remove selected product",
+      "remove": "Remove",
+      "loadingAria": "Loading products",
+      "loadError": "Failed to load products",
+      "loadErrorHint": "Please refresh the page and try again.",
+      "empty": "No products available at this time.",
+      "apparel": "Apparel",
+      "moreOptions": "More Options",
+      "accessories": "Accessories",
+      "selectedBadge": "Selected",
+      "qualityNote": "Premium quality, printed on demand",
+      "customizeNext": "Customize colors and size in the next step",
+      "showMore": "Show {count} more",
+      "showLess": "Show less"
+    },
+    "customization": {
+      "protocol": "Step 06 / Customize",
+      "title": "Customize Your <accent>Product</accent>",
+      "previewTitle": "Preview & <accent>Placement</accent>",
+      "creating": "CREATING...",
+      "createProduct": "CREATE PRODUCT",
+      "continueToPreview": "CONTINUE TO PREVIEW",
+      "sizeLabel": "Size",
+      "colorLabel": "Color Swatches",
+      "colorLoading": "Loading colors...",
+      "colorSelectFirst": "Select a product first to load available colors.",
+      "colorNone": "No colors available for this product.",
+      "colorSelectionAria": "Color selection",
+      "colorSwatchAria": "Select {color} color",
+      "sizeSelectorLabel": "Size Selector",
+      "sizeSelectionAria": "Size selection",
+      "sizeAria": "Select size {size}",
+      "mockupPreview": "Mockup Preview"
+    },
+    "production": {
+      "status": "Creating Your Product Mockup...",
+      "estimate": "Est. 15 seconds..."
+    },
+    "finalReview": {
+      "protocol": "Step 08 / Checkout",
+      "title": {
+        "tshirt": "Ready to <accent>Wear</accent>",
+        "hoodie": "Ready to <accent>Wear</accent>",
+        "tote": "Ready to <accent>Carry</accent>",
+        "poster": "Ready to <accent>Display</accent>"
+      },
+      "defaultProductName": "Custom Product",
+      "mockupAlt": "Final product mockup",
+      "previewSealed": "Final preview",
+      "viewFullscreen": "Click to view fullscreen",
+      "fullscreenPreview": "Fullscreen product preview",
+      "closeFullscreen": "Close fullscreen view",
+      "pressEscToClose": "Press ESC or click anywhere to close",
+      "previousImage": "Previous mockup",
+      "nextImage": "Next mockup",
+      "goToImage": "Go to mockup",
+      "productDetails": "Color: {color} | Size: {size}",
+      "finalValuation": "Final Total",
+      "freeShipping": "Free shipping on every order",
+      "bagIt": "BAG IT",
+      "adding": "ADDING...",
+      "buyNow": "BUY NOW",
+      "processing": "PROCESSING...",
+      "bagItAndCreateAnother": "BAG IT & CREATE ANOTHER"
+    },
+    "errors": {
+      "imageGeneration": {
+        "emptyPrompt": "Please enter a description for your design",
+        "timeout": "Image generation timed out after {seconds} seconds. Please try again with a simpler prompt or contact support."
+      },
+      "productCreation": {
+        "alreadyCreated": "Product already created. Proceeding to review.",
+        "noDesign": "Please generate a design first",
+        "noProduct": "Please select a product type",
+        "noColorSize": "Please select color and size",
+        "noSize": "Please select a size",
+        "notLoggedIn": "You must be logged in to create a product",
+        "timeout": "Product creation timed out after {seconds} seconds. Please try again or contact support if the issue persists."
+      },
+      "cart": {
+        "alreadyInCart": "Product already in cart. Navigating...",
+        "noProduct": "Please create a product first before adding to cart",
+        "noVariant": "Product variant not found. Please try creating the product again.",
+        "added": "Added to cart!"
+      },
+      "upload": {
+        "invalidType": "Invalid file type. Please upload JPG, PNG, or GIF only.",
+        "tooLarge": "File too large. Maximum size is 10MB.",
+        "readFailed": "Failed to read file",
+        "uploadFailed": "Upload failed",
+        "uploaded": "Image uploaded successfully",
+        "removed": "Image removed"
+      },
+      "coins": {
+        "noCoins": "You're out of coins for today",
+        "noCoinsDescription": "Coins reset daily at midnight. You can still use your uploaded image directly.",
+        "notLoggedIn": "Login or register to continue",
+        "notLoggedInDescription": "Create an account to start designing",
+        "login": "Login",
+        "register": "Register",
+        "display": "{coins} Coins available",
+        "displayAria": "{coins} coins available",
+        "deductFailed": "Not enough coins to generate",
+        "skipGeneration": "Use My Image",
+        "usePreviousCreations": "Use Previous Creations",
+        "proceedWithUploadedImage": "Proceed without editing my photo",
+        "proceedWithCachedImages": "Proceed with previous generated photos"
+      }
+    },
+    "adjust": {
+      "positionsTitle": "Print Positions",
+      "positionsHelp": "Pick where your design gets printed.",
+      "adjustToggle": "Adjust placement",
+      "previewToggle": "Preview & placement",
+      "positionIncluded": "Included",
+      "positionExtraCost": "+{price}",
+      "positionToggleAria": "Toggle {position} print",
+      "position": {
+        "front": "Front",
+        "back": "Back",
+        "neck": "Neck",
+        "left_sleeve": "Left Sleeve",
+        "right_sleeve": "Right Sleeve",
+        "left_leg": "Left Sock",
+        "right_leg": "Right Sock"
+      },
+      "editingLabel": "Adjusting",
+      "editingSelectAria": "Choose which position to adjust",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "moveLeft": "Move left",
+      "moveRight": "Move right",
+      "center": "Center",
+      "horizontalLabel": "Horizontal",
+      "verticalLabel": "Vertical",
+      "horizontalAria": "Horizontal position",
+      "verticalAria": "Vertical position",
+      "sizeLabel": "Size",
+      "scaleDown": "Smaller",
+      "scaleUp": "Larger",
+      "scaleAria": "Design size",
+      "rotationLabel": "Rotation",
+      "rotationAria": "Rotate to {degrees} degrees",
+      "reset": "Reset",
+      "resetAria": "Reset placement for {position}",
+      "safeZoneWarning": "You've hit the edge of the safe print area.",
+      "previewAlt": "Your design placed on the product",
+      "printAreaLabel": "Print area",
+      "noImageTitle": "No design yet",
+      "noImageBody": "Generate and pick a design first, then adjust how it sits on the product.",
+      "extraCostSummary": "Extra print positions: {price}",
+      "positionsHelpSingle": "Pick which side your design gets printed on.",
+      "positionsGroupAria": "Print position",
+      "positionSelectAria": "Print on {position}",
+      "mockupNote": "Preview only. Final mockup shown in next step."
+    }
+  },
+  "cart": {
+    "content": {
+      "continueBrowsing": "Continue Browsing"
+    },
+    "header": {
+      "title": "Shopping <accent>bag</accent>"
+    },
+    "selection": {
+      "selectedCount": "{selected} of {total} selected",
+      "selectAll": "Select all ({count})",
+      "deselectAll": "Deselect all"
+    },
+    "mobileCta": {
+      "checkout": "Checkout · {total}",
+      "itemsSelected": "{count, plural, one {# item selected} other {# items selected}}",
+      "selectItems": "Select items to checkout"
+    },
+    "empty": {
+      "title": "Your bag's empty",
+      "subtitle": "Nothing in it yet.",
+      "cta": "Start Creating"
+    },
+    "itemCard": {
+      "customProduct": "Custom Product",
+      "standardVariant": "Standard",
+      "customDesignSynthesis": "Custom design",
+      "variant": "Variant",
+      "colorway": "Color",
+      "lineTotal": "Line Total",
+      "quantityGroupLabel": "Quantity for {productName}",
+      "decreaseQuantity": "Decrease quantity",
+      "increaseQuantity": "Increase quantity",
+      "remove": "Remove",
+      "selectItem": "Select {product} for checkout"
+    },
+    "loading": {
+      "label": "Loading cart"
+    },
+    "summary": {
+      "title": "Order <accent>Summary</accent>",
+      "subtotal": "Subtotal",
+      "shippingProtocol": "Shipping",
+      "free": "Free",
+      "taxLogistics": "Tax",
+      "taxNote": "Calculated at checkout",
+      "proceedToCheckout": "Checkout",
+      "estimatedArrival": "Estimated Arrival",
+      "arrivalWindow": "5-8 Business Days",
+      "secureTransactions": "Secure, encrypted checkout",
+      "total": "Total",
+      "currencyNote": "Currency: USD",
+      "noItemsSelected": "Select items from your bag to proceed to checkout.",
+      "itemsSelected": "{count, plural, one {# item selected} other {# items selected}}"
+    }
+  },
+  "buyCredits": {
+    "dialog": {
+      "selectTitle": "Buy Credits",
+      "paymentTitle": "Complete Payment",
+      "description": "Buy credits to make more designs from your prompts."
+    },
+    "selection": {
+      "packageLabel": "Select a Package",
+      "customLabel": "Or Enter Custom Amount",
+      "customPlaceholder": "Enter credits (min. {min})",
+      "customError": "You need at least {min} credits.",
+      "popularBadge": "Popular",
+      "continueButton": "Continue to Payment"
+    },
+    "summary": {
+      "credits": "{credits} Credits"
+    },
+    "payment": {
+      "backButton": "Back to selection",
+      "methodSelectorLabel": "Select payment method",
+      "processing": "Processing...",
+      "payButton": "Pay €{amount}",
+      "cardElementNotFound": "Card element not found",
+      "paymentFailed": "Payment failed",
+      "paypalComingSoon": "PayPal for credit purchases is coming soon.",
+      "paypalUseCard": "Please use a credit card for now."
+    }
+  },
+  "dashboard": {
+    "content": {
+      "errorTitle": "Dashboard unavailable",
+      "errorDescription": "We couldn't load your data.",
+      "retry": "Retry"
+    },
+    "header": {
+      "title": "Your <accent>studio</accent>",
+      "subtitle": "Welcome back, {name}. Here's where your work lives."
+    },
+    "profile": {
+      "label": "User profile",
+      "avatarAlt": "{name} avatar",
+      "verified": "Verified account",
+      "editProfile": "Edit profile"
+    },
+    "credits": {
+      "label": "Available credits",
+      "ofTotal": "of {total}",
+      "usageCapacity": "Usage capacity",
+      "percentSpent": "{percent}% spent",
+      "usageLabel": "Credits usage",
+      "buyMore": "Buy more credits"
+    },
+    "quickAccess": {
+      "label": "Quick access",
+      "links": {
+        "account": "Account",
+        "archive": "Archive"
+      }
+    },
+    "metrics": {
+      "ordersLabel": "Orders",
+      "ordersCaption": "Orders placed",
+      "ordersTarget": "Target",
+      "designsLabel": "Design storage",
+      "designsCaption": "Designs created",
+      "designsTarget": "Limit"
+    },
+    "metricCard": {
+      "progressLabel": "{label} progress"
+    },
+    "cta": {
+      "title": "Ready for your next <accent>design</accent>?",
+      "subtitle": "Type a prompt and go",
+      "cta": "Stamp it"
+    },
+    "recentOrders": {
+      "title": "Recent orders",
+      "recordsOnFile": "{count, plural, one {# record} other {# records}} on file",
+      "viewArchive": "View archive",
+      "emptyTitle": "No records found",
+      "emptyDescription": "Your first design is one prompt away",
+      "emptyCta": "Start creating",
+      "openDetails": "Open details for order {orderId}",
+      "productAlt": "Order product",
+      "customDesign": "Custom design"
+    },
+    "loading": {
+      "label": "Loading dashboard"
+    }
+  },
+  "profile": {
+    "header": {
+      "title": "Your <accent>profile</accent>",
+      "subtitle": "Manage your account settings"
+    },
+    "userInformation": {
+      "label": "Account",
+      "title": "Personal <accent>information</accent>",
+      "subtitle": "Update your personal details",
+      "edit": "EDIT",
+      "firstNameLabel": "First Name",
+      "lastNameLabel": "Last Name",
+      "emailLabel": "Email",
+      "emailNote": "Your email is locked and can't be changed.",
+      "saving": "SAVING...",
+      "saveChanges": "SAVE CHANGES",
+      "cancel": "CANCEL"
+    },
+    "passwordReset": {
+      "label": "Security",
+      "title": "Password & <accent>security</accent>",
+      "subtitle": "Change your password whenever you like.",
+      "changePassword": "CHANGE PASSWORD",
+      "hiddenNote": "We keep your password hidden. Hit \"Change Password\" to set a new one.",
+      "newPasswordLabel": "New Password",
+      "newPasswordPlaceholder": "Enter new password",
+      "newPasswordHint": "Password must be at least 6 characters",
+      "confirmPasswordLabel": "Confirm New Password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "confirmPasswordHint": "Re-enter your new password",
+      "updating": "UPDATING...",
+      "updatePassword": "UPDATE PASSWORD",
+      "cancel": "CANCEL"
+    },
+    "address": {
+      "label": "Shipping",
+      "title": "Shipping <accent>address</accent>",
+      "subtitleHasAddress": "Your default shipping address",
+      "subtitleNoAddress": "Add your shipping address",
+      "editAddress": "EDIT ADDRESS",
+      "addAddress": "ADD ADDRESS",
+      "emptyState": "No address saved yet. Add one to speed up checkout.",
+      "saving": "SAVING...",
+      "saveAddress": "SAVE ADDRESS",
+      "cancel": "CANCEL"
+    },
+    "addressForm": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address1": "Address Line 1",
+      "address1Placeholder": "Street address",
+      "address2": "Address Line 2 (Optional)",
+      "address2Placeholder": "Apartment, suite, unit, etc.",
+      "city": "City",
+      "region": "State/Region",
+      "zip": "ZIP/Postal Code",
+      "country": "Country"
+    },
+    "addressDisplay": {
+      "phone": "Phone: {phone}"
+    },
+    "addressSectionHeader": {
+      "title": "Shipping Address",
+      "subtitleHasAddress": "Manage your default shipping address",
+      "subtitleNoAddress": "Add a shipping address for faster checkout",
+      "edit": "Edit",
+      "addAddress": "Add Address"
+    },
+    "toasts": {
+      "passwordUpdated": "Password updated.",
+      "passwordUpdateFailed": "Couldn't update your password.",
+      "addressUpdated": "Address saved.",
+      "addressUpdateFailed": "Couldn't save your address.",
+      "profileUpdated": "Profile updated.",
+      "profileUpdateFailed": "Couldn't update your profile."
+    }
+  },
+  "common": {
+    "metadata": {
+      "title": "Stamp AI — Custom AI-Designed Clothes & Prints",
+      "description": "Create custom t-shirts and hoodies with AI. Type a prompt, get print-ready designs in seconds. Premium quality, made to order. Start free today.",
+      "keywords": [
+        "AI apparel design",
+        "custom t-shirt generator",
+        "AI t-shirt design",
+        "print on demand",
+        "custom hoodies",
+        "design your own clothes",
+        "AI clothing design",
+        "personalized t-shirts",
+        "heavyweight t-shirts",
+        "custom apparel online"
+      ]
+    },
+    "notFound": {
+      "ariaLabel": "Page not found",
+      "title": "We can't find that page",
+      "description": "The page you're looking for doesn't exist. Return home to create custom AI-designed apparel."
+    },
+    "tipBanner": {
+      "tip": "<strong>Tip:</strong> Name the style, colors, and mood. Try something like \"Anime style, like Naruto\"."
+    }
+  },
+  "layout": {
+    "stampFooter": {
+      "logoAlt": "Stamp.AI",
+      "mission": "Type an idea, get clothes worth wearing. Printed on demand and shipped to your door.",
+      "columns": {
+        "create": "Create",
+        "support": "Support",
+        "legal": "Legal",
+        "social": "Follow"
+      },
+      "links": {
+        "footer-studio": "Design Studio",
+        "footer-catalog": "Product Catalog",
+        "footer-cart": "Cart",
+        "footer-orders": "Your Orders",
+        "footer-faq": "FAQ",
+        "footer-shipping": "Shipping & Delivery",
+        "footer-returns": "Returns & Refunds",
+        "footer-contact": "Contact Us",
+        "footer-terms": "Terms of Service",
+        "footer-privacy": "Privacy Policy",
+        "footer-cookies": "Cookie Policy",
+        "footer-security": "Security",
+        "footer-instagram": "Instagram",
+        "footer-twitter": "X / Twitter",
+        "footer-tiktok": "TikTok",
+        "footer-linkedin": "LinkedIn"
+      },
+      "wordmark": "Stamp",
+      "copyright": "© {year} Stamp AI. All rights reserved.",
+      "tagline": "Made for people who make things"
+    }
+  },
+  "auth": {
+    "authCodeError": {
+      "title": "Something went wrong",
+      "description": "We couldn't process your sign-in request.",
+      "expiredNote": "The link may have expired, or it's already been used.",
+      "returnHome": "Return to Home",
+      "requestNewReset": "Request a new reset link"
+    },
+    "resetPasswordPage": {
+      "title": "Reset Password",
+      "description": "Pick a new password below."
+    },
+    "protectedRoute": {
+      "authenticating": "Authenticating",
+      "checkingSession": "Checking your session",
+      "redirecting": "Redirecting..."
+    },
+    "sessionDisplay": {
+      "loadingSession": "Loading your session",
+      "errorLoadingSession": "We couldn't load your session",
+      "noUserSession": "You're not signed in",
+      "sessionInformation": "Session Information",
+      "signingOut": "Signing out...",
+      "signOut": "Sign out",
+      "userInformation": "User Information",
+      "idLabel": "ID:",
+      "emailLabel": "Email:",
+      "firstNameLabel": "First Name:",
+      "lastNameLabel": "Last Name:",
+      "createdAtLabel": "Created At:",
+      "emailConfirmedLabel": "Email Confirmed:",
+      "lastSignInLabel": "Last Sign In:",
+      "sessionDetails": "Session Details",
+      "tokenTypeLabel": "Token Type:",
+      "expiresAtLabel": "Expires At:",
+      "expiresInLabel": "Expires In:",
+      "expiresInMinutes": "{minutes} minutes",
+      "rawSessionData": "Raw Session Data"
+    },
+    "google": {
+      "iconAlt": "Google",
+      "connecting": "Connecting...",
+      "continueWithGoogle": "Continue with Google"
+    },
+    "login": {
+      "openDialogAria": "Open login dialog",
+      "loginShort": "LOGIN",
+      "login": "Login",
+      "form": {
+        "srTitle": "Login",
+        "closeAria": "Close login modal",
+        "orContinueWithEmail": "or continue with email"
+      },
+      "fields": {
+        "emailLabel": "Email",
+        "emailPlaceholder": "name@company.com",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "••••••••",
+        "showPassword": "Show password",
+        "hidePassword": "Hide password"
+      },
+      "header": {
+        "label": "Welcome back",
+        "title": "Login"
+      },
+      "actions": {
+        "cancelAria": "Cancel",
+        "cancel": "Cancel",
+        "loginAria": "Login",
+        "loggingIn": "Logging in...",
+        "login": "Login"
+      },
+      "footer": {
+        "noAccount": "Don't have an account? <link>Create one now</link>"
+      }
+    },
+    "passwordReset": {
+      "inline": {
+        "forgotPassword": "Forgot password?"
+      },
+      "confirm": {
+        "newPassword": "New Password",
+        "confirmNewPassword": "Confirm New Password",
+        "resetting": "Resetting Password...",
+        "resetPassword": "Reset Password",
+        "invalidSessionError": "This reset link is invalid or has expired. Request a new one to continue.",
+        "successToast": "Your password is set. Sign in with it now."
+      },
+      "error": {
+        "title": "This link won't work",
+        "description": "This reset link is invalid or expired. Request a new one to continue.",
+        "backToHome": "Back to Home"
+      },
+      "success": {
+        "title": "Your password is set",
+        "description": "All done. We'll send you to the login page in 3 seconds.",
+        "goToLogin": "Go to Login"
+      },
+      "form": {
+        "prompt": "Enter your email and we'll send you a reset link.",
+        "emailPlaceholder": "Enter your email",
+        "sending": "Sending...",
+        "sendResetLink": "Send Reset Link",
+        "cancel": "Cancel"
+      },
+      "request": {
+        "forgotPassword": "Forgot password?",
+        "srTitle": "Reset Password",
+        "title": "Reset Password",
+        "description": "Enter your email and we'll send you a link to reset your password.",
+        "emailLabel": "Email",
+        "sendAria": "Send Reset Email",
+        "sending": "Sending...",
+        "send": "Send Reset Email",
+        "cancelAria": "Cancel",
+        "cancel": "Cancel",
+        "successToast": "Reset email sent. Check your inbox for the link."
+      },
+      "requestSuccess": {
+        "srTitle": "Reset Email Sent",
+        "title": "Check your inbox",
+        "description": "We sent a reset link to your email. Open it and follow the steps to set a new password.",
+        "gotIt": "Got it"
+      }
+    },
+    "register": {
+      "register": "Register",
+      "openDialogAria": "Open register dialog",
+      "signUp": "Sign Up",
+      "successToast": "Account created. Check your email to verify it.",
+      "form": {
+        "srTitle": "Create Account",
+        "closeAria": "Close register modal",
+        "orContinueWithEmail": "or continue with email"
+      },
+      "header": {
+        "label": "Create Account",
+        "title": "Sign Up",
+        "tagline": "Start turning your ideas into printed clothes."
+      },
+      "fields": {
+        "firstName": "First Name",
+        "firstNamePlaceholder": "John",
+        "lastName": "Last Name",
+        "lastNamePlaceholder": "Doe",
+        "emailLabel": "Email Address",
+        "emailPlaceholder": "name@company.com",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "••••••••",
+        "confirmPassword": "Confirm Password",
+        "confirmPasswordPlaceholder": "••••••••"
+      },
+      "actions": {
+        "cancelAria": "Cancel",
+        "cancel": "Cancel",
+        "createAccountAria": "Create Account",
+        "creating": "Creating...",
+        "signUp": "Sign Up"
+      },
+      "footer": {
+        "haveAccount": "Already have an account? <link>Log in</link>"
+      },
+      "success": {
+        "srTitle": "Registration Successful",
+        "title": "You're all set",
+        "description": "Your account is created. Check your email to verify it before you sign in.",
+        "gotIt": "Got it"
+      }
+    }
+  },
+  "ui": {
+    "navbar": {
+      "myOrders": "My Orders",
+      "stampIt": "Stamp It!",
+      "dashboard": "Dashboard",
+      "toggleTheme": "Toggle theme",
+      "viewProfile": "View profile",
+      "signOut": "Sign Out"
+    },
+    "pagination": {
+      "label": "pagination",
+      "previous": "Go to previous page",
+      "next": "Go to next page",
+      "morePages": "More pages"
+    },
+    "sheet": {
+      "close": "Close"
+    },
+    "dialog": {
+      "close": "Close"
+    },
+    "mobilePageHeader": {
+      "goBack": "Go back"
+    },
+    "footer": {
+      "mission": {
+        "heading": "Our Mission",
+        "body": "Turn a prompt or your own photo into a design, printed on quality clothes and shipped to your door."
+      },
+      "platform": {
+        "heading": "Platform",
+        "howItWorks": "How it Works",
+        "showcase": "Showcase",
+        "bulkPricing": "Bulk Pricing"
+      },
+      "company": {
+        "heading": "Company",
+        "aboutUs": "About Us",
+        "blog": "Blog",
+        "careers": "Careers"
+      },
+      "support": {
+        "heading": "Support",
+        "helpCenter": "Help Center",
+        "termsOfService": "Terms of Service",
+        "privacyPolicy": "Privacy Policy"
+      },
+      "copyright": "© {year} Stamp.AI Design Inc. Made for the Dreamers.",
+      "social": {
+        "twitter": "Twitter",
+        "instagram": "Instagram",
+        "linkedin": "LinkedIn"
+      }
+    },
+    "passwordInput": {
+      "required": "required",
+      "placeholder": "Enter password",
+      "show": "Show {label}",
+      "hide": "Hide {label}"
+    },
+    "themeToggle": {
+      "loadingTheme": "Loading theme",
+      "currentTheme": "Current theme: {theme}. Click to change theme.",
+      "toggleTheme": "Toggle theme",
+      "themes": {
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      }
+    },
+    "wordCountIndicator": {
+      "count": "{wordCount}/{limit} words",
+      "overLimit": "Keep it under {limit} words"
+    },
+    "collapsibleFilters": {
+      "toggle": "Filters",
+      "clear": "Clear Filters"
+    },
+    "filterHeader": {
+      "title": "Filter & Sort",
+      "countLabel": "types",
+      "count": "Showing {filteredCount} of {totalCount} {countLabel}"
+    },
+    "selectFormField": {
+      "required": "required",
+      "placeholder": "Select {label}"
+    },
+    "filterSelect": {
+      "placeholder": "Select an option"
+    },
+    "percentageRangeSlider": {
+      "less": "Less",
+      "more": "More"
+    },
+    "wizardContent": {
+      "next": "Continue",
+      "back": "Back"
+    }
+  },
+  "orders": {
+    "content": {
+      "errorTitle": "We couldn't load your orders",
+      "errorDescription": "Something went wrong. Give it another try.",
+      "retry": "Retry"
+    },
+    "header": {
+      "title": "Your <accent>orders</accent>"
+    },
+    "filterSummary": {
+      "totalSyntheses": "Total orders",
+      "protocolRecords": "Orders"
+    },
+    "loading": {
+      "ariaLabel": "Loading orders"
+    },
+    "gridSection": {
+      "ariaLabel": "Orders grid view"
+    },
+    "listSection": {
+      "ariaLabel": "Orders list view"
+    },
+    "empty": {
+      "ariaLabel": "Empty order archive",
+      "title": "No orders yet",
+      "description": "Try changing your filters, or start a new design",
+      "initiate": "Start a design"
+    },
+    "pagination": {
+      "showing": "Showing {start}-{end} of {total} orders",
+      "navAriaLabel": "Pagination",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "goToPage": "Go to page {page}"
+    },
+    "filterControls": {
+      "archiveFiltering": "Filters",
+      "clearArchive": "Clear filters",
+      "statusAriaLabel": "Filter by order status",
+      "timeAriaLabel": "Filter by date range",
+      "listViewAriaLabel": "Switch to list view",
+      "gridViewAriaLabel": "Switch to grid view",
+      "status": {
+        "allPlaceholder": "Status: All",
+        "delivered": "Delivered",
+        "shipped": "Shipped",
+        "processing": "Processing",
+        "cancelled": "Cancelled"
+      },
+      "time": {
+        "last30": "Last 30 Days",
+        "last90": "Last 90 Days",
+        "year2023": "Year 2023",
+        "allTime": "All Time"
+      }
+    },
+    "filterPills": {
+      "statusPill": "Status: {status}",
+      "clearFilter": "Clear {label} filter"
+    },
+    "cancel": {
+      "toastTitle": "Order cancelled",
+      "defaultDescription": "Your order has been cancelled.",
+      "cancelledAtPrintify": "Order cancelled at Printify",
+      "refundProcessed": "Refund processed successfully",
+      "refundError": "We couldn't process your refund automatically",
+      "failedToCancel": "Couldn't cancel your order: {message}",
+      "cannotCancel": "This order can't be cancelled anymore. You can only cancel before an order goes into production."
+    },
+    "cancelModal": {
+      "ariaLabel": "Cancel order confirmation",
+      "title": "Cancel this order?",
+      "description": "You can't undo this.",
+      "halting": "Cancelling…",
+      "haltSynthesis": "Cancel order",
+      "keepActive": "Keep order"
+    },
+    "detailsModal": {
+      "ariaLabel": "Order details",
+      "close": "Close details modal",
+      "recordDetails": "Order details",
+      "orderMeta": "Order #{orderNumber} • Placed {date}",
+      "protocolItems": "Items",
+      "itemAlt": "Order item",
+      "customProduct": "Custom Product",
+      "variantQty": "Variant: {variant} • Qty: {qty}",
+      "delivery": "Delivery",
+      "archiveClient": "Recipient",
+      "archiveAddress": "Shipping address",
+      "orderInfo": "Order Information",
+      "orderDate": "Order Date",
+      "paymentMethod": "Payment",
+      "shippedDate": "Shipped",
+      "deliveredDate": "Delivered",
+      "trackingNumber": "Tracking",
+      "valuation": "Summary",
+      "subtotal": "Subtotal",
+      "shippingCost": "Shipping",
+      "discount": "Discount",
+      "total": "Total",
+      "standard": "Standard",
+      "invoice": {
+        "preparing": "Preparing invoice…",
+        "download": "Download invoice"
+      },
+      "trackingNumber": "Tracking number",
+      "trackShipment": "Track shipment"
+    },
+    "timeline": {
+      "title": "Order timeline"
+    },
+    "listItem": {
+      "openDetails": "Open details for order {order}",
+      "productAlt": "Order product",
+      "productFallback": "Custom product",
+      "creationDate": "Ordered",
+      "configuration": "Shipping",
+      "standard": "Standard",
+      "quantity": "Quantity",
+      "unit": "{count} unit",
+      "protocolValue": "Total",
+      "viewBlueprint": "View design",
+      "trackProtocol": "Track order",
+      "haltOrder": "Cancel order",
+      "reorder": "Reorder",
+      "trackShipment": "Track shipment"
+    },
+    "gridItem": {
+      "openDetails": "Open details for order {order}",
+      "productAlt": "Order product",
+      "productFallback": "Custom product",
+      "archiveLine": "Ordered {date} • {address}",
+      "archiveAddress": "Shipping address",
+      "standard": "Standard",
+      "qty": "Qty. {count}",
+      "track": "Track",
+      "options": "Options",
+      "reorder": "Reorder"
+    },
+    "statusBadge": {
+      "processing": "Processing",
+      "preparing": "Preparing",
+      "inProduction": "In production",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "hasIssues": "Needs attention"
+    }
+  },
+  "checkout": {
+    "header": {
+      "title": "Check <accent>out</accent>",
+      "subtitle": "Complete your order"
+    },
+    "billing": {
+      "title": "Billing Address",
+      "subtitle": "Enter your billing information"
+    },
+    "shipping": {
+      "title": "Shipping Address",
+      "subtitle": "Enter where you want your order shipped",
+      "toggleLabel": "Ship to a different address"
+    },
+    "testMode": {
+      "label": "Test Mode · use predefined payment methods"
+    },
+    "notFound": {
+      "title": "Cart Not Found",
+      "description": "We couldn't find your cart. Please return and add items again.",
+      "backToCart": "Back to Cart"
+    },
+    "loading": {
+      "loadingAria": "Loading checkout"
+    },
+    "addressForm": {
+      "selectCountryPlaceholder": "Select country",
+      "fields": {
+        "first_name": "First Name",
+        "last_name": "Last Name",
+        "email": "Email",
+        "phone": "Phone",
+        "address1": "Address Line 1",
+        "address2": "Address Line 2",
+        "city": "City",
+        "region": "State/Region",
+        "zip": "ZIP/Postal Code",
+        "country": "Country"
+      }
+    },
+    "payment": {
+      "title": "Payment Method",
+      "subtitle": "Pick how you want to pay",
+      "paypalNotice": "We'll send you to PayPal to pay securely.",
+      "idealNotice": "We'll send you to your bank via iDEAL to pay securely.",
+      "selectMethodAria": "Select payment method",
+      "comingSoon": "Coming Soon"
+    },
+    "testCards": {
+      "selectorLabel": "Test Card Type",
+      "selectorPlaceholder": "Select test card type",
+      "groups": {
+        "successful": {
+          "label": "Successful Payments"
+        },
+        "declined": {
+          "label": "Declined Payments"
+        },
+        "threeDSecure": {
+          "label": "3D Secure"
+        }
+      },
+      "options": {
+        "visa": "Visa (pm_card_visa)",
+        "visa_debit": "Visa Debit (pm_card_visa_debit)",
+        "mastercard": "Mastercard (pm_card_mastercard)",
+        "amex": "American Express (pm_card_amex)",
+        "discover": "Discover (pm_card_discover)",
+        "declined": "Generic Decline",
+        "insufficient_funds": "Insufficient Funds",
+        "expired": "Expired Card",
+        "processing_error": "Processing Error",
+        "threeDSecure": "3D Secure Required"
+      }
+    },
+    "promoCode": {
+      "label": "Promo Code",
+      "removeAria": "Remove promo code",
+      "placeholder": "ENTER CODE",
+      "inputAria": "Promo code",
+      "applying": "…",
+      "apply": "Apply"
+    },
+    "priceBreakdown": {
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "free": "Free",
+      "discount": "Discount",
+      "total": "Total"
+    },
+    "summary": {
+      "title": "Order <accent>Summary</accent>",
+      "secureNote": "Secure encrypted transactions"
+    },
+    "cartItems": {
+      "listAria": "Order items",
+      "defaultProductName": "Custom Product",
+      "standardVariant": "Standard variant",
+      "standard": "Standard",
+      "imageAlt": "{name} — {variant}",
+      "qty": "Qty {quantity}"
+    },
+    "stripeButton": {
+      "processing": "Processing…",
+      "pay": "Pay €{amount}"
+    },
+    "paypalButton": {
+      "redirecting": "Redirecting to PayPal…"
+    },
+    "idealButton": {
+      "redirecting": "Redirecting to iDEAL…"
+    },
+    "alternativeMethods": {
+      "title": "Try Alternative Method",
+      "paypal": "PayPal",
+      "paypalAria": "Pay with PayPal",
+      "applePay": "Apple Pay",
+      "applePayAria": "Pay with Apple Pay",
+      "card": "Card",
+      "cardAria": "Pay with card"
+    },
+    "success": {
+      "defaultEstimatedDelivery": "7–10 business days",
+      "ariaLabel": "Payment confirmation",
+      "title": "Order Confirmed",
+      "description": "Your order's in. We're printing it right now.",
+      "orderNumber": "Order Number",
+      "estimatedDelivery": "Estimated Delivery",
+      "totalPaid": "Total Paid",
+      "statusLabel": "Status",
+      "statusProcessing": "Processing",
+      "trackOrder": "Track Your Order",
+      "createAnother": "Create Another Order",
+      "confirmationEmail": "A confirmation email has been sent to {email}"
+    },
+    "paymentError": {
+      "reasonMessageFallback": "Your payment didn't go through. Try again, or pick another way to pay.",
+      "titlePostPayment": "Order Processing Issue",
+      "titleDefault": "Payment Failed",
+      "subtitlePostPayment": "Your payment went through, but something went wrong setting up your order. We've been notified and we'll sort it out shortly.",
+      "subtitleDefault": "Your payment didn't go through. Your design is saved, so you can try again whenever you're ready.",
+      "ariaLabel": "Payment failed",
+      "reasonFallback": "Reason",
+      "orderNumber": "Order Number",
+      "amountDue": "Amount Due",
+      "attemptedOn": "Attempted On",
+      "statusLabel": "Status",
+      "statusFallback": "Failed",
+      "retryPayment": "Retry Payment",
+      "cancelGoToDashboard": "Cancel & Go to Dashboard",
+      "contactSupport": "Need help? Contact Support"
+    },
+    "recoveryBanner": {
+      "recoverFailed": "Failed to recover payment: {error}",
+      "unknownError": "Unknown error",
+      "recoverFailedContactSupport": "Failed to recover payment. Please contact support.",
+      "title": "Incomplete Order Found",
+      "body": "We found a successful {providerName} payment for <amount>{currency} {amountValue}</amount> that wasn't completed. Want to finish this order now?",
+      "completing": "Completing Order...",
+      "complete": "Complete Order",
+      "dismiss": "Dismiss",
+      "paymentIdLine": "Payment ID: {id} • {date}"
+    },
+    "paymentForm": {
+      "stripeNotReady": "Stripe is not ready yet. Please wait a moment and try again.",
+      "formNotReady": "Payment form is not ready. Please refresh the page and try again.",
+      "cardElementNotFound": "We couldn't load the card form. Please refresh the page and try again.",
+      "paymentFailed": "Your payment could not be processed. Please try again.",
+      "statusProcessing": "Your payment is still being processed. Please wait a few minutes and check your orders before trying again.",
+      "statusRequiresPaymentMethod": "Your payment was not completed. Please try again or use a different payment method.",
+      "statusRequiresAction": "Your payment needs additional verification. Please try again and complete the verification step.",
+      "statusCanceled": "The payment was canceled and you have not been charged. Please try again when you're ready.",
+      "statusUnknown": "We couldn't confirm your payment. Please try again, or contact support if you were charged."
+    },
+    "pricing": {
+      "invalidPromoCode": "Invalid promo code",
+      "validationFailed": "Failed to validate promo code",
+      "enterPromoCode": "Please enter a promo code",
+      "cartTotalInvalid": "Cart total must be greater than 0"
+    },
+    "returns": {
+      "stripe": {
+        "errorNoPaymentInfo": "Payment information not found. Please try again from the checkout page.",
+        "errorCheckoutDataExpired": "Checkout data expired or not found. Please try again from the checkout page.",
+        "errorMustBeLoggedIn": "You must be logged in to complete your order. Please log in and try again.",
+        "errorCartNotFound": "Cart information not found. Your payment was processed but we couldn't create your order. Please contact support with payment ID: {paymentId}",
+        "orderCreationFailedRefund": "Order creation failed. A full refund has been initiated.",
+        "orderFulfillmentFailedRefund": "Order fulfillment failed. A full refund has been initiated.",
+        "errorFallback": "We couldn't finish processing your payment. If you were charged, your payment is safe — please contact support and we'll sort it out.",
+        "completingTitle": "Completing Your Payment",
+        "processingTitle": "Processing Payment",
+        "completingMessage": "Please wait while we finish your Stripe payment...",
+        "processingMessage": "Please wait while we check your payment with Stripe...",
+        "processingAria": "Processing payment",
+        "errorAria": "Error",
+        "somethingWentWrongTitle": "Something Went Wrong",
+        "somethingWentWrongMessage": "We couldn't process your Stripe payment. Please try again or contact support.",
+        "returnToCheckout": "Return to Checkout",
+        "goToDashboard": "Go to Dashboard",
+        "totalPaid": "Paid via Stripe",
+        "estimatedDelivery": "7–10 business days",
+        "declinedStatus": "Declined",
+        "paymentDeclinedTitle": "Payment declined",
+        "paymentDeclinedMessage": "We couldn't process your Stripe payment. Try again or use a different payment method."
+      },
+      "paypal": {
+        "errorCheckoutDataExpired": "Checkout data expired or not found. Please try again from the checkout page.",
+        "errorMustBeLoggedIn": "You must be logged in to complete your order. Please log in and try again.",
+        "declinedFallback": "Your payment was declined. Try again with a different payment method.",
+        "captureFailed": "We couldn't complete your PayPal payment. Please try again or use a different payment method.",
+        "errorCartNotFound": "Cart information not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: {paymentId}",
+        "errorAmountNotFound": "Order amount not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: {paymentId}",
+        "orderCreationFailedRefund": "Order creation failed. A full refund has been initiated.",
+        "orderFulfillmentFailedRefund": "Order fulfillment failed. A full refund has been initiated.",
+        "errorFallback": "We couldn't finish processing your PayPal payment. If you were charged, your payment is safe — please contact support and we'll sort it out.",
+        "capturingTitle": "Completing Your Payment",
+        "processingTitle": "Processing Payment",
+        "capturingMessage": "Please wait while we finish your PayPal payment...",
+        "processingMessage": "Please wait while we check your payment with PayPal...",
+        "processingAria": "Processing payment",
+        "errorAria": "Error",
+        "somethingWentWrongTitle": "Something Went Wrong",
+        "somethingWentWrongMessage": "We couldn't process your PayPal payment. Please try again or contact support.",
+        "returnToCheckout": "Return to Checkout",
+        "goToDashboard": "Go to Dashboard",
+        "totalPaid": "Paid via PayPal",
+        "estimatedDelivery": "7–10 business days",
+        "cancelledStatus": "Cancelled",
+        "paymentCancelledTitle": "Payment cancelled",
+        "paymentCancelledMessage": "You cancelled the PayPal payment. No charges have been made to your account.",
+        "declinedStatus": "Declined",
+        "paymentDeclinedTitle": "Payment declined",
+        "paymentDeclinedMessage": "We couldn't process your PayPal payment. Try again or use a different payment method."
+      },
+      "mollie": {
+        "errorNoPaymentInfo": "No payment information found. If you completed a payment, please contact support with your payment details.",
+        "errorMustBeLoggedIn": "You must be logged in to complete your order. Please log in and contact support with payment ID: {paymentId}",
+        "errorCartNotFound": "Cart information not found. Please contact support with payment ID: {paymentId}",
+        "errorMissingContext": "We couldn't find your checkout details to finish creating your order.",
+        "errorNoOrderItems": "We couldn't find the items for your order.",
+        "errorCannotCreateOrderNoCart": "Cannot create order: cart information not found. A full refund has been initiated and will appear within 3–5 business days.",
+        "errorCannotCreateOrderNotLoggedIn": "Cannot create order: you must be logged in to complete checkout. A full refund has been initiated and will appear within 3–5 business days.",
+        "orderCreationReasonFallback": "Order creation failed after retry attempts.",
+        "orderFulfillmentReasonFallback": "Order fulfillment failed.",
+        "reasonWithRefund": "{reason} A full refund has been initiated and will appear within 3–5 business days.",
+        "errorOrderIdNotReturned": "Order creation failed to return order ID. A full refund has been initiated and will appear within 3–5 business days.",
+        "errorVerifyFallback": "We couldn't verify your payment status",
+        "errorUnknownStatus": "We couldn't determine the status of your payment. If you were charged, your payment has been recorded and our team will process your order automatically. If you need help, contact support with payment ID: {paymentId}",
+        "errorRecorded": "{message}. Your payment has been recorded (ID: {paymentId}). Our team will process your order automatically. You will receive an email confirmation within 24 hours. If you need immediate assistance, please contact support with your payment ID.",
+        "unknownPaymentId": "unknown",
+        "verifyingAria": "Verifying payment",
+        "verifyingTitle": "Verifying Payment",
+        "verifyingMessage": "Please wait while we confirm your payment with Mollie...",
+        "totalPaid": "Paid via Mollie",
+        "estimatedDelivery": "7–10 business days",
+        "reasonCanceled": "You canceled the payment. No charges have been made.",
+        "reasonExpired": "Your payment session has expired. Please try again.",
+        "reasonDefault": "Sorry, your payment didn't go through. Try again or use a different payment method.",
+        "canceledStatus": "Canceled",
+        "failedStatus": "Failed",
+        "paymentStatusTitle": "Payment status",
+        "pendingAria": "Payment pending",
+        "pendingTitle": "Payment Pending",
+        "pendingMessage": "Your payment is being processed. This may take a few moments. You will receive an email confirmation once your payment is complete.",
+        "viewOrders": "View Orders",
+        "goToDashboard": "Go to Dashboard",
+        "errorAria": "Error",
+        "somethingWentWrongTitle": "Something Went Wrong",
+        "somethingWentWrongMessage": "We couldn't check your payment status. Please contact support if you believe your payment was successful.",
+        "returnToCheckout": "Return to Checkout"
+      }
+    }
+  },
+  "validation": {
+    "emailRequired": "Please enter your email",
+    "emailInvalid": "That email doesn't look right",
+    "passwordMin": "Use at least 6 characters",
+    "passwordsNoMatch": "Those passwords don't match",
+    "urlInvalid": "That URL doesn't look right",
+    "firstNameEmpty": "Please enter your first name",
+    "lastNameEmpty": "Please enter your last name",
+    "firstNameRequired": "Please enter your first name",
+    "countryRequired": "Please pick your country",
+    "countryInvalid": "Please pick a country from the list",
+    "addressRequired": "Please enter your address",
+    "cityRequired": "Please enter your city",
+    "zipRequired": "Please enter your ZIP or postal code",
+    "shippingRequiredWhenEnabled": "Please add a shipping address",
+    "quantityMin": "Pick at least 1",
+    "promptMax": "Keep your prompt under 500 characters"
+  },
+  "errors": {
+    "withCode": "{message} (Code: {code})",
+    "BLUEPRINT_ID_REQUIRED": "Blueprint ID is required",
+    "PRINT_PROVIDER_ID_REQUIRED": "Print provider ID is required",
+    "IMAGE_REQUIRED": "At least one image is required",
+    "EMAIL_REQUIRED": "Email address is required",
+    "PASSWORD_REQUIRED": "Password is required",
+    "INVALID_EMAIL_FORMAT": "Please enter a valid email address",
+    "PASSWORD_TOO_SHORT": "Password must be at least 8 characters",
+    "AMOUNT_REQUIRED": "Amount is required",
+    "INVALID_AMOUNT": "Amount must be a positive number",
+    "INVALID_REQUEST_BODY": "Invalid request data",
+    "IMAGE_URL_OR_BASE64_REQUIRED": "Image URL or base64 data is required",
+    "NO_LINE_ITEMS": "No items found for this order",
+    "MISSING_SHIPPING_ADDRESS": "Shipping address is required",
+    "WEBHOOK_SIGNATURE_MISSING": "Invalid webhook signature",
+    "MISSING_REQUIRED_FIELDS": "Please fill in the required fields",
+    "PAYPAL_ORDER_ID_REQUIRED": "PayPal order ID is required",
+    "MOLLIE_PAYMENT_ID_REQUIRED": "Mollie payment ID is required",
+    "CREDITS_REQUIRED": "Credits amount is required",
+    "INVALID_CREDITS": "Credits must be at least 10",
+    "INVALID_CREDENTIALS": "Invalid email or password",
+    "EMAIL_NOT_CONFIRMED": "Please verify your email address before signing in",
+    "INVALID_TOKEN": "Your session has expired. Please sign in again",
+    "WEBHOOK_SIGNATURE_INVALID": "Invalid webhook signature",
+    "PAYPAL_WEBHOOK_SIGNATURE_INVALID": "Invalid PayPal webhook signature",
+    "USER_NOT_FOUND": "We couldn't find that account",
+    "PAYPAL_ORDER_NOT_FOUND": "PayPal order not found",
+    "MOLLIE_PAYMENT_NOT_FOUND": "Mollie payment not found",
+    "EMAIL_ALREADY_REGISTERED": "This email address is already registered",
+    "PRINTIFY_TOKEN_MISSING": "Print service configuration error",
+    "PRINTIFY_SHOP_ID_MISSING": "Print shop configuration error",
+    "STRIPE_SECRET_KEY_MISSING": "Payment service configuration error",
+    "STRIPE_WEBHOOK_SECRET_MISSING": "Webhook configuration error",
+    "SUPABASE_URL_MISSING": "Database configuration error",
+    "SUPABASE_SERVICE_ROLE_KEY_MISSING": "Database authentication error",
+    "PAYPAL_CLIENT_ID_MISSING": "PayPal configuration error",
+    "PAYPAL_CLIENT_SECRET_MISSING": "PayPal configuration error",
+    "PAYPAL_WEBHOOK_ID_MISSING": "PayPal webhook configuration error",
+    "MOLLIE_API_KEY_MISSING": "Mollie configuration error",
+    "DATABASE_ERROR": "Database operation failed",
+    "NO_VARIANTS_AVAILABLE": "No product variants available for this blueprint",
+    "NO_PRODUCTS_IN_SHOP": "No products available. Please create a product first",
+    "PRINTIFY_API_ERROR": "Print service error. Please try again",
+    "PRINTIFY_ORDER_API_ERROR": "Order creation failed. Please try again",
+    "IMAGE_UPLOAD_API_ERROR": "Image upload failed. Please try again",
+    "STRIPE_API_ERROR": "Payment processing error. Please try again",
+    "AUTH_REGISTRATION_FAILED": "Registration failed. Please try again",
+    "AUTH_LOGIN_FAILED": "Login failed. Please try again",
+    "PASSWORD_RESET_FAILED": "Password reset failed. Please try again",
+    "CUSTOM_PRODUCT_CREATION_FAILED": "Failed to create custom product. Please try again",
+    "TSHIRT_PRODUCTS_FETCH_FAILED": "Failed to load t-shirt products. Please try again",
+    "PAYPAL_API_ERROR": "PayPal service error. Please try again",
+    "PAYPAL_CAPTURE_FAILED": "PayPal payment capture failed. Please try again",
+    "MOLLIE_API_ERROR": "Mollie service error. Please try again",
+    "MOLLIE_PAYMENT_FAILED": "Mollie payment failed. Please try again",
+    "INTERNAL_ERROR": "Something went wrong on our end. Please try again",
+    "UNKNOWN_ERROR": "Something went wrong. Please try again"
+  },
+  "trust": {
+    "bar": {
+      "secureCheckout": "Secure checkout",
+      "guarantee": "30-day guarantee",
+      "madeToOrder": "Made to order",
+      "carbonNeutral": "Carbon-neutral shipping"
+    },
+    "payment": {
+      "title": "Your payment is safe",
+      "body": "Payments run through Stripe, PayPal and Mollie. We never see or store your card details.",
+      "accept": "We accept",
+      "sslSecured": "Secure Checkout",
+      "comingSoon": "Soon",
+      "securePayment": "Secure Payment",
+      "noCardStored": "Card details never stored",
+      "encryptedTransmission": "Encrypted connection"
+    },
+    "guarantee": {
+      "title": "30-day guarantee",
+      "body": "If the print, fabric, or fit isn't right, we'll replace it or refund you. Return shipping is on us."
+    },
+    "socialProof": {
+      "ordersFulfilled": "{count} orders fulfilled"
+    },
+    "reviews": {
+      "ariaLabel": "Rated {rating} out of {total} stars",
+      "reviewCount": "{count} reviews",
+      "basedOn": "Based on {count} reviews",
+      "verified": "Verified reviews"
+    },
+    "verification": {
+      "verified": "Verified",
+      "secure": "Secure",
+      "siteVerified": "Protected checkout",
+      "encryption": "Encrypted connection"
+    },
+    "reviewCta": {
+      "enjoyedExperience": "Enjoyed your experience?",
+      "leaveReview": "Leave a Review",
+      "rateUs": "Rate us on",
+      "poweredBy": "Powered by"
+    }
+  },
+  "legal": {
+    "common": {
+      "updated": "Last updated",
+      "onThisPage": "On this page",
+      "backToTop": "Back to top",
+      "questionsHeading": "Still need help?",
+      "questionsBody": "If anything on this page is unclear, email us and a person will get back to you within one business day.",
+      "questionsCta": "Email support"
+    },
+    "terms": {
+      "meta": {
+        "title": "Terms of Service",
+        "description": "The terms that govern your use of Stamp AI, including account rules, design ownership, credits, production and returns.",
+        "keywords": [
+          "terms of service",
+          "terms and conditions",
+          "user agreement"
+        ]
+      },
+      "title": "Terms of",
+      "accent": "service",
+      "label": "Legal",
+      "intro": "These terms are the agreement between you and {legalName} for everything you do on Stamp AI: generating designs, buying credits, and ordering the clothes we print for you. We have tried to keep them readable. Where something matters to your rights, it is called out plainly.",
+      "sections": {
+        "about-these-terms": {
+          "heading": "1. About these terms",
+          "body": [
+            "By creating an account, buying credits, or placing an order on Stamp AI, you agree to these Terms of Service. If you do not agree with them, please do not use the service.",
+            "These terms work together with our Privacy Policy, Cookie Policy, Shipping & Delivery policy, and Returns & Refunds policy. Together they form the whole agreement between us.",
+            "If you are agreeing to these terms on behalf of a company or other organisation, you confirm that you are authorised to bind that organisation, and “you” in these terms means that organisation."
+          ]
+        },
+        "who-we-are": {
+          "heading": "2. Who we are",
+          "body": [
+            "Stamp AI is operated by {legalName}, registered at {address}. Our company registration number is {registration} and our VAT number is {vat}.",
+            "You can reach us at {supportEmail} for anything relating to your account or your order."
+          ]
+        },
+        "eligibility-accounts": {
+          "heading": "3. Eligibility and your account",
+          "body": [
+            "You must be at least 18 years old, or the age of majority where you live, to buy from Stamp AI. If you are between 16 and 18 you may use the service only with the involvement of a parent or guardian who accepts these terms on your behalf.",
+            "You are responsible for keeping your login details secure and for everything that happens under your account. Tell us straight away at {supportEmail} if you think someone else has access to it.",
+            "Please keep your account details accurate. We rely on your email address to send order confirmations and delivery updates, and on your shipping address to get your order to the right place."
+          ]
+        },
+        "credits-and-payment": {
+          "heading": "4. Credits, prices and payment",
+          "body": [
+            "Generating designs uses credits. Credits are bought in advance, are tied to your account, and are not a payment instrument — they hold no cash value, earn no interest, and cannot be transferred to another person or exchanged for cash.",
+            "Prices for products and credits are shown before you confirm, in the currency displayed at checkout, and include applicable taxes where we are required to show them. Shipping costs are shown separately at checkout before payment.",
+            "Payments are handled by our payment providers. We never see or store your full card details — see our Security page for how that works.",
+            "We try hard to keep pricing accurate. If a product or credit pack is listed at an obviously incorrect price because of a technical error, we may cancel the affected order and refund you in full rather than fulfil it at that price."
+          ],
+          "bullets": [
+            "Credits are consumed when a generation runs, including when you are not happy with the result.",
+            "Unused credits stay on your account and do not expire while your account is open.",
+            "If a generation fails because of a fault on our side, we return the credits it consumed."
+          ]
+        },
+        "creating-designs": {
+          "heading": "5. Generating designs",
+          "body": [
+            "Stamp AI turns your prompts, sketches and reference images into print-ready artwork using automated systems. Output is generated, not curated — results vary, and two identical prompts can produce different artwork.",
+            "Because generation is automated, we cannot promise that any particular result will match what you pictured, be unique to you, or be free of similarity to other work. Review your design carefully before you order it printed.",
+            "We may apply automated safety filtering to prompts and outputs. A prompt that is blocked does not mean an accusation — filters are imperfect — but repeated attempts to defeat them may lead to suspension under section 15."
+          ]
+        },
+        "your-content-and-licence": {
+          "heading": "6. What you upload",
+          "body": [
+            "You keep ownership of everything you upload — prompts, sketches, photos and reference images. We call this your content.",
+            "You confirm that you have the right to upload your content and to have it printed, and that doing so does not infringe anyone else's copyright, trade mark, or right to their own name and likeness.",
+            "You give us a licence to use your content only for the purpose of running the service: generating your designs, producing your order, providing support, and keeping records we are legally required to keep. This licence is worldwide and royalty-free because our production and hosting partners operate in several countries, and it ends when you delete the content or close your account, apart from copies we must retain by law.",
+            "We do not sell your content, and we do not use your designs in our marketing without asking you first."
+          ]
+        },
+        "ownership-of-designs": {
+          "heading": "7. Who owns the finished design",
+          "body": [
+            "As between you and us, the design generated from your prompt is yours to use, including commercially — you can print it, sell items carrying it, and use it in your own branding.",
+            "Be aware of a limit that is not ours to set: in many countries, including across the EU and in the United States, purely machine-generated artwork may not attract copyright protection at all. That means we cannot guarantee you an enforceable copyright in a generated design, and you may not be able to stop someone else using something similar. If exclusivity matters to your business, take your own legal advice.",
+            "We do not claim ownership of your designs and we will not resell them."
+          ]
+        },
+        "prohibited-designs": {
+          "heading": "8. What you may not create or order",
+          "body": [
+            "Print-on-demand only works if we refuse some jobs. You may not use Stamp AI to generate, order, or distribute anything in the list below, and we may reject or cancel an order at any point before dispatch if it falls into it."
+          ],
+          "bullets": [
+            "Content that infringes someone else's copyright, trade mark, or design right — including brand logos, sports club badges, band artwork, and film or game characters.",
+            "A real person's name, face, signature or likeness without their permission.",
+            "Sexual content involving minors, or any content that sexualises a person under 18, in any style.",
+            "Content that incites violence or hatred against people because of race, ethnicity, national origin, religion, disability, sex, gender identity or sexual orientation.",
+            "Content promoting terrorism, mass violence, or serious self-harm.",
+            "Content designed to deceive — counterfeit goods, forged official documents, or false claims of endorsement.",
+            "Content that is unlawful where it is produced or where it is being shipped."
+          ]
+        },
+        "production-and-shipping": {
+          "heading": "9. Production and delivery",
+          "body": [
+            "Every item is made to order. Production begins once your order is confirmed, which is why the window for changes is short — see section 10.",
+            "Delivery estimates are estimates, not guarantees. Production times, shipping times, costs, customs and duties are set out in full in our Shipping & Delivery policy.",
+            "Because items are printed individually, small variations in print placement and colour between one item and the next are normal and are not defects.",
+            "Risk in the goods passes to you on delivery. If you are ordering as a business rather than a consumer, risk passes when we hand the goods to the carrier."
+          ]
+        },
+        "cancellations-returns": {
+          "heading": "10. Changes, cancellations and returns",
+          "body": [
+            "You can change or cancel an order only before it enters production. Once printing has started we cannot stop it, because the item exists only for you.",
+            "Our 30-day guarantee, the EU right of withdrawal and its carve-out for custom-made goods, and the process for damaged or incorrect items are all set out in our Returns & Refunds policy. Nothing in these terms removes the statutory rights you have as a consumer."
+          ]
+        },
+        "service-availability": {
+          "heading": "11. Availability of the service",
+          "body": [
+            "We aim to keep Stamp AI running continuously, but we do not promise uninterrupted availability. We may take the service down for maintenance, and parts of it depend on third parties whose availability we do not control.",
+            "We may change, add or remove features. If a change materially reduces something you have already paid for, we will tell you and offer a refund of the affected amount."
+          ]
+        },
+        "our-ip": {
+          "heading": "12. Our intellectual property",
+          "body": [
+            "The Stamp AI name, logo, site design, software and underlying models belong to us or our licensors. Nothing in these terms transfers those rights to you.",
+            "You may not copy our software, reverse-engineer the service, scrape it at scale, or use automated systems to place orders or generate designs outside the normal interface."
+          ]
+        },
+        "liability": {
+          "heading": "13. Our liability",
+          "body": [
+            "Nothing in these terms limits our liability for death or personal injury caused by our negligence, for fraud, or for anything else that cannot lawfully be limited — including your mandatory rights as a consumer.",
+            "Subject to that, our total liability to you for any claim connected to an order is limited to the amount you paid for that order, and for any claim connected to credits, to the amount you paid for the credits in question.",
+            "We are not liable for indirect or consequential loss, for lost profits or lost business, or for losses arising because a generated design turned out not to be protectable or not to be unique."
+          ]
+        },
+        "indemnity": {
+          "heading": "14. Your responsibility for what you print",
+          "body": [
+            "You are responsible for the content you ask us to print. If a third party brings a claim against us because something you ordered infringed their rights or broke the rules in section 8, you agree to cover the reasonable costs and damages we incur as a result.",
+            "This does not apply where the claim arises from something we did wrong independently of your instructions."
+          ]
+        },
+        "suspension-termination": {
+          "heading": "15. Suspension and closing your account",
+          "body": [
+            "You can close your account at any time from your profile. Closing it does not automatically refund unused credits, but you can ask us and we will deal with the request fairly.",
+            "We may suspend or close an account that breaks these terms, in particular section 8, or where we are legally required to. Where it is safe and lawful to do so, we will tell you why and give you a chance to respond.",
+            "If we close your account without cause, we will refund your unused credits."
+          ]
+        },
+        "changes-to-terms": {
+          "heading": "16. Changes to these terms",
+          "body": [
+            "We may update these terms as the service changes. The date at the top of this page always shows the current version.",
+            "If a change materially affects your rights, we will give you reasonable notice by email or in the app before it takes effect. The terms that apply to an order are the ones in force when you placed it."
+          ]
+        },
+        "governing-law": {
+          "heading": "17. Governing law and disputes",
+          "body": [
+            "These terms are governed by {jurisdiction} law, and disputes will be heard by {courts}.",
+            "If you are a consumer resident in the EU, this does not deprive you of the protection of the mandatory consumer law of the country you live in, and you may also bring proceedings in your local courts.",
+            "Please contact us first at {supportEmail} — most problems are quicker to fix directly. EU consumers may also use the European Commission's online dispute resolution platform."
+          ]
+        },
+        "contact": {
+          "heading": "18. Contact",
+          "body": [
+            "Questions about these terms can go to {supportEmail}, or by post to {legalName}, {address}."
+          ]
+        }
+      }
+    },
+    "privacy": {
+      "meta": {
+        "title": "Privacy Policy",
+        "description": "How Stamp AI collects, uses and protects your personal data under the GDPR, including your prompts, orders and payment information.",
+        "keywords": [
+          "privacy policy",
+          "GDPR",
+          "data protection",
+          "personal data"
+        ]
+      },
+      "title": "Privacy",
+      "accent": "policy",
+      "label": "Legal",
+      "intro": "This policy explains what personal data Stamp AI collects, why we collect it, who we share it with, and the control you have over it. It is written to meet the EU General Data Protection Regulation (GDPR), and it applies wherever you are.",
+      "sections": {
+        "controller": {
+          "heading": "1. Who is responsible for your data",
+          "body": [
+            "{legalName}, registered at {address}, is the data controller for the personal data described in this policy. That means we decide why and how it is processed, and we are accountable for it.",
+            "For any privacy question or request, contact {privacyEmail}."
+          ]
+        },
+        "data-we-collect": {
+          "heading": "2. What we collect",
+          "body": [
+            "We collect only what we need to run the service. That falls into a few groups:"
+          ],
+          "bullets": [
+            "Account data — your email address, your name if you give it, and authentication data. If you sign in with Google we receive your email address, name and profile picture from Google, not your Google password.",
+            "Design data — the prompts you write, images you upload, and the designs generated from them.",
+            "Order data — what you ordered, size and colour, your shipping and billing address, phone number if given for delivery, order history and delivery status.",
+            "Payment data — the amount, currency, payment method type and the outcome of the transaction. Your full card number never reaches our systems; it goes directly to our payment providers.",
+            "Support data — the messages you send us and our replies.",
+            "Technical data — IP address, browser and device type, pages viewed, and error diagnostics. Some of this is collected through cookies; see our Cookie Policy."
+          ]
+        },
+        "how-we-use": {
+          "heading": "3. Why we use it, and our lawful basis",
+          "body": [
+            "Under the GDPR we must have a lawful basis for each purpose. Ours are:"
+          ],
+          "bullets": [
+            "To create and run your account, generate your designs, take payment and deliver your order — because it is necessary to perform our contract with you.",
+            "To provide customer support and handle returns — performance of our contract, and our legitimate interest in resolving problems.",
+            "To keep the service secure, prevent fraud and abuse, and enforce our terms — our legitimate interest in protecting the service and its users.",
+            "To measure how the site is used and improve it — our legitimate interest in understanding and improving the service, and your consent where the law requires it for the underlying cookies.",
+            "To send marketing email — your consent. Every marketing email has an unsubscribe link, and unsubscribing never affects your orders.",
+            "To keep accounting, tax and consumer-law records — compliance with our legal obligations."
+          ]
+        },
+        "ai-prompts-and-designs": {
+          "heading": "4. Your prompts and generated designs",
+          "body": [
+            "Your prompts and uploads are sent to the AI systems that generate your artwork. This is necessary to deliver what you asked for.",
+            "We do not sell your prompts or designs, and we do not publish them.",
+            "Please avoid putting personal details about yourself or anyone else into a prompt — names, addresses, health information — as prompts are processed and stored as part of your design history.",
+            "Uploading a photograph of another person means processing their personal data. Please only do that if you have their agreement."
+          ]
+        },
+        "sharing-processors": {
+          "heading": "5. Who we share it with",
+          "body": [
+            "We share personal data only with service providers who process it on our instructions under a data processing agreement, and only as far as they need it. We do not sell personal data to anyone."
+          ],
+          "bullets": [
+            "Hosting, database and authentication providers, which store your account, design and order records.",
+            "Payment providers, which process your payment and carry out fraud and sanctions checks as their own controllers.",
+            "Print and fulfilment partners, which receive your design, item details and shipping address in order to produce and send your order.",
+            "Carriers, which receive your name, address and contact details to make the delivery.",
+            "Error monitoring and analytics providers, which receive technical and usage data.",
+            "Email providers, which send your transactional and, if you opted in, marketing email.",
+            "Professional advisers, and public authorities where the law requires it."
+          ]
+        },
+        "international-transfers": {
+          "heading": "6. Transfers outside the EEA",
+          "body": [
+            "Some of our providers operate outside the European Economic Area, including in the United States. When personal data is transferred there, we rely on the European Commission's Standard Contractual Clauses, or on an adequacy decision where one applies, together with additional safeguards where they are needed.",
+            "You can ask us at {privacyEmail} for details of the safeguards in place for a specific transfer."
+          ]
+        },
+        "retention": {
+          "heading": "7. How long we keep it",
+          "body": [
+            "We keep personal data only as long as we have a reason to:"
+          ],
+          "bullets": [
+            "Account and design data — while your account is open, and deleted within 30 days of you closing it.",
+            "Order and transaction records — seven years from the order, because tax and accounting law requires it. This applies even after you close your account.",
+            "Support conversations — three years, so we can handle repeat or related issues.",
+            "Security and access logs — up to 12 months.",
+            "Analytics data — up to 14 months.",
+            "Marketing consent records — until you withdraw consent, plus a short period to prove the withdrawal was honoured."
+          ]
+        },
+        "your-rights": {
+          "heading": "8. Your rights",
+          "body": [
+            "Under the GDPR you have the following rights over your personal data. They are free to use, and we will respond within one month."
+          ],
+          "bullets": [
+            "Access — get a copy of the personal data we hold about you.",
+            "Rectification — have inaccurate or incomplete data corrected.",
+            "Erasure — have your data deleted where we no longer need it, subject to records we must keep by law.",
+            "Restriction — ask us to pause processing while a dispute about accuracy or legitimate interests is resolved.",
+            "Portability — receive the data you gave us in a structured, machine-readable format, or have it sent to another provider.",
+            "Objection — object to processing based on legitimate interests, and object to direct marketing at any time, which we will always honour.",
+            "Withdraw consent — at any time, without affecting processing that already happened.",
+            "Automated decisions — we do not make decisions with legal or similarly significant effects about you by automated means alone."
+          ]
+        },
+        "cookies": {
+          "heading": "9. Cookies",
+          "body": [
+            "We use a small number of cookies, some strictly necessary and some that need your consent. What each one does and how to turn it off is set out in our Cookie Policy."
+          ]
+        },
+        "security": {
+          "heading": "10. How we protect it",
+          "body": [
+            "We use encryption in transit and at rest, strict access controls, and continuous monitoring. Our Security page describes the specific measures.",
+            "No system is perfectly secure. If a breach ever affects your rights and freedoms, we will notify the supervisory authority within 72 hours and tell you directly where the risk to you is high."
+          ]
+        },
+        "children": {
+          "heading": "11. Children",
+          "body": [
+            "Stamp AI is not intended for children. We do not knowingly collect personal data from anyone under 16. If you believe a child has given us their data, contact {privacyEmail} and we will delete it."
+          ]
+        },
+        "changes": {
+          "heading": "12. Changes to this policy",
+          "body": [
+            "We will update this policy when our practices change. The date at the top of the page shows the current version, and we will notify you by email before any change that materially affects your rights takes effect."
+          ]
+        },
+        "contact-complaints": {
+          "heading": "13. Contact and complaints",
+          "body": [
+            "To exercise a right or ask a question, email {privacyEmail} or write to {legalName}, {address}.",
+            "If you are not satisfied with our response, you can complain to your national data protection authority. In the Netherlands that is the Autoriteit Persoonsgegevens; if you live elsewhere in the EU you can complain to the authority where you live or work."
+          ]
+        }
+      }
+    },
+    "cookies": {
+      "meta": {
+        "title": "Cookie Policy",
+        "description": "Which cookies Stamp AI uses, what each one does, how long it lasts, and how to control or refuse them.",
+        "keywords": ["cookie policy", "cookies", "tracking", "consent"]
+      },
+      "title": "Cookie",
+      "accent": "policy",
+      "label": "Legal",
+      "intro": "We use a small number of cookies — some the site cannot work without, and some that only run if you agree. This page lists them all and tells you how to turn off the optional ones.",
+      "sections": {
+        "what-are-cookies": {
+          "heading": "1. What cookies are",
+          "body": [
+            "Cookies are small text files a site stores on your device so it can recognise you between page loads. Related technologies such as local storage do much the same thing, and everything on this page applies to those too.",
+            "A cookie is a first-party cookie when it is set by Stamp AI, and a third-party cookie when it is set by another company whose service we use."
+          ]
+        },
+        "why-we-use": {
+          "heading": "2. Why we use them",
+          "body": [
+            "We use cookies to keep you signed in, to remember what is in your cart, to keep the checkout secure, and — only with your agreement — to understand which parts of the site people actually use.",
+            "We do not use cookies to build advertising profiles, and we do not sell what they tell us."
+          ]
+        },
+        "strictly-necessary": {
+          "heading": "3. Strictly necessary cookies",
+          "body": [
+            "These make the site work. They are set without asking, because the service cannot be delivered without them, and you cannot switch them off from within the site."
+          ],
+          "bullets": [
+            "Authentication — keeps you signed in and refreshes your session. Expires when your session ends or after a short renewal window.",
+            "Cart — remembers the items you have added so they are still there when you return. Persists for up to 30 days.",
+            "Security — protects forms and checkout against cross-site request forgery. Expires with your session."
+          ]
+        },
+        "analytics": {
+          "heading": "4. Analytics cookies",
+          "body": [
+            "We use Google Analytics 4 to count visits, see which pages get used, and find where people get stuck. IP addresses are truncated before storage, and we do not use these cookies to identify you personally or to build advertising profiles.",
+            "They persist for up to 14 months. Section 7 explains how to block them, and Google also provides a browser add-on that opts you out of Google Analytics on every site."
+          ]
+        },
+        "preference": {
+          "heading": "5. Preference cookies",
+          "body": [
+            "These remember choices you have made — such as light or dark appearance — so the site looks the way you left it. They hold a setting, nothing more, and persist for up to 12 months."
+          ]
+        },
+        "third-party": {
+          "heading": "6. Cookies set by others",
+          "body": [
+            "Some cookies come from services we rely on rather than from us directly:"
+          ],
+          "bullets": [
+            "Payment providers set cookies during checkout to complete your payment and detect fraud. These are necessary for the transaction.",
+            "Google Analytics sets analytics cookies, and only after you consent.",
+            "If you sign in with Google, Google sets cookies as part of the sign-in flow."
+          ]
+        },
+        "managing-cookies": {
+          "heading": "7. How to control cookies",
+          "body": [
+            "Every major browser lets you block or delete cookies through its settings, usually under Privacy, both site by site and globally. Blocking strictly necessary cookies will stop you from signing in or completing checkout.",
+            "To opt out of Google Analytics specifically, install Google's opt-out browser add-on, or block third-party cookies for this site in your browser.",
+            "If you want us to delete data already collected through analytics cookies, email {privacyEmail} and we will handle it as an erasure request under the GDPR."
+          ]
+        },
+        "changes": {
+          "heading": "8. Changes to this policy",
+          "body": [
+            "When we add or remove a cookie we update this page. The date at the top shows the current version."
+          ]
+        },
+        "contact": {
+          "heading": "9. Contact",
+          "body": ["Questions about cookies can go to {privacyEmail}."]
+        }
+      }
+    },
+    "security": {
+      "meta": {
+        "title": "Security",
+        "description": "How Stamp AI protects your account, your designs and your payment data — encryption, access control, monitoring and responsible disclosure.",
+        "keywords": [
+          "security",
+          "data security",
+          "encryption",
+          "PCI DSS",
+          "vulnerability disclosure"
+        ]
+      },
+      "title": "Security",
+      "accent": "at stamp",
+      "label": "Trust",
+      "intro": "You are trusting us with your designs, your address and your payment. This page sets out what we actually do to protect them, in enough detail to be useful rather than reassuring.",
+      "sections": {
+        "our-approach": {
+          "heading": "1. Our approach",
+          "body": [
+            "We build on the principle of least privilege: every system, every service and every person gets the narrowest access that lets them do their job, and nothing more.",
+            "We would rather hold less data than defend more of it, so we collect only what the service needs and delete it when the reason for holding it ends."
+          ]
+        },
+        "encryption": {
+          "heading": "2. Encryption",
+          "body": [
+            "All traffic between your browser and Stamp AI runs over TLS 1.2 or higher. HTTP requests are redirected to HTTPS, and we send HTTP Strict Transport Security so your browser refuses to connect any other way.",
+            "Data at rest — your account, designs and order records — is encrypted with AES-256 on managed infrastructure. Backups are encrypted with the same standard."
+          ]
+        },
+        "authentication-access": {
+          "heading": "3. Accounts and access control",
+          "body": [
+            "Authentication is handled by a managed identity provider. Passwords are never stored in plain text; they are hashed with a slow, salted algorithm designed for the purpose.",
+            "You can sign in with Google instead of a password, in which case we never handle a password at all.",
+            "Every database query runs under row-level security, so a request can only ever reach the rows belonging to the authenticated user. This is enforced at the database, not in application code, which means a bug in our code cannot expose another user's data.",
+            "Staff access to production is restricted to the few people who need it, requires multi-factor authentication, and is logged."
+          ]
+        },
+        "payment-security": {
+          "heading": "4. Payment security",
+          "body": [
+            "We never see your card number. Card details are entered into fields hosted by our PCI DSS Level 1 certified payment providers and go straight to them; our servers receive only a token and the result of the transaction.",
+            "This means a compromise of Stamp AI could not expose your card details, because they were never on our systems.",
+            "3-D Secure and Strong Customer Authentication are applied where your bank or the law requires it."
+          ]
+        },
+        "infrastructure": {
+          "heading": "5. Infrastructure",
+          "body": [
+            "Stamp AI runs on managed cloud infrastructure with data hosted in the EU. Our providers hold ISO 27001 and SOC 2 Type II certification and are responsible for physical security, network isolation and patching at the platform layer.",
+            "Production, staging and development are fully separated, and production data is never copied into development environments.",
+            "Secrets and API keys are held in a managed secret store, never in source control, and are rotated when someone with access leaves."
+          ]
+        },
+        "application-hardening": {
+          "heading": "6. Application hardening",
+          "body": [
+            "The application ships a set of security headers on every response, including a Content Security Policy that restricts where scripts may load from, X-Frame-Options to prevent clickjacking, X-Content-Type-Options, and a strict Referrer-Policy.",
+            "Requests are rate limited to blunt brute-force attempts and abuse of the generation endpoints.",
+            "All input is validated against a schema at the API boundary before it reaches business logic, and database access uses parameterised queries throughout.",
+            "Dependencies are scanned automatically for known vulnerabilities, and security patches are applied on a priority basis."
+          ]
+        },
+        "monitoring-logging": {
+          "heading": "7. Monitoring and logging",
+          "body": [
+            "Errors and anomalies are captured by an application monitoring service, with personal data scrubbed before events are sent.",
+            "Authentication events, administrative actions and access to sensitive endpoints are logged and retained so that unusual activity can be investigated after the fact."
+          ]
+        },
+        "availability-backups": {
+          "heading": "8. Backups and continuity",
+          "body": [
+            "Databases are backed up automatically with point-in-time recovery. Backups are encrypted, held in a separate location, and restores are tested periodically — an untested backup is not a backup."
+          ]
+        },
+        "vendor-security": {
+          "heading": "9. Our suppliers",
+          "body": [
+            "We review the security posture of every provider that touches personal data before we adopt it, and we have a data processing agreement in place with each one.",
+            "Where a provider operates outside the EEA, transfers are covered by Standard Contractual Clauses — see our Privacy Policy."
+          ]
+        },
+        "incident-response": {
+          "heading": "10. If something goes wrong",
+          "body": [
+            "We have a defined process for detecting, containing and investigating security incidents.",
+            "If a personal data breach affects your rights and freedoms, we will notify the relevant supervisory authority within 72 hours of becoming aware of it, and we will tell you directly, without undue delay, where the risk to you is high.",
+            "After any significant incident we carry out a review and publish what we changed as a result."
+          ]
+        },
+        "your-role": {
+          "heading": "11. What you can do",
+          "body": ["The strongest account security depends partly on you:"],
+          "bullets": [
+            "Use a long, unique password, or sign in with Google.",
+            "Never reuse your Stamp AI password anywhere else.",
+            "Be sceptical of emails asking for your password — we will never ask for it.",
+            "Sign out on shared devices, and tell us at {securityEmail} if you see activity you do not recognise."
+          ]
+        },
+        "vulnerability-disclosure": {
+          "heading": "12. Reporting a vulnerability",
+          "body": [
+            "If you have found a security issue, please tell us at {securityEmail}. Include enough detail to reproduce it, and give us a reasonable period to fix it before disclosing it publicly.",
+            "We will acknowledge your report within three business days and keep you informed while we work on it. We will not pursue legal action against researchers who act in good faith, stay within the scope of their own test accounts, and avoid degrading the service or accessing other people's data."
+          ]
+        }
+      }
+    },
+    "shipping": {
+      "meta": {
+        "title": "Shipping & Delivery",
+        "description": "Production and delivery times, shipping costs, tracking, customs and duties for Stamp AI orders shipped worldwide.",
+        "keywords": [
+          "shipping",
+          "delivery",
+          "shipping times",
+          "tracking",
+          "customs"
+        ]
+      },
+      "title": "Shipping &",
+      "accent": "delivery",
+      "label": "Support",
+      "intro": "Everything on Stamp AI is printed after you order it, so delivery has two parts: the time to make your item, and the time to get it to you. Here is what to expect from both.",
+      "sections": {
+        "how-fulfilment-works": {
+          "heading": "1. How fulfilment works",
+          "body": [
+            "Nothing sits in a warehouse waiting for a buyer. When your order is confirmed we send it to the print facility closest to your delivery address, where it is printed, inspected by hand and packed.",
+            "Printing locally is why nothing goes to waste, and it also keeps the last leg of the journey short."
+          ]
+        },
+        "production-times": {
+          "heading": "2. Production time",
+          "body": [
+            "Production takes 2 to 3 business days for most items. Every piece is checked by hand before it is packed, and anything that fails inspection is reprinted rather than sent.",
+            "Orders with several items may be produced at different facilities and arrive in separate parcels at no extra cost to you.",
+            "Production can run longer during peak periods such as late November and December. We flag this at checkout when it applies."
+          ]
+        },
+        "shipping-times": {
+          "heading": "3. Delivery time",
+          "body": [
+            "Once your parcel leaves the facility, typical transit times are:"
+          ],
+          "bullets": [
+            "Netherlands and Belgium — 1 to 2 business days.",
+            "Rest of the EU — 2 to 4 business days.",
+            "United Kingdom and Switzerland — 3 to 5 business days.",
+            "United States and Canada — 3 to 5 business days.",
+            "Rest of the world — 6 to 12 business days."
+          ]
+        },
+        "total-time": {
+          "heading": "4. Total time to your door",
+          "body": [
+            "Adding production to transit, most orders arrive within 5 to 7 business days of being confirmed.",
+            "Business days exclude weekends and public holidays in the country of production. Delivery estimates are estimates, not guaranteed dates."
+          ]
+        },
+        "shipping-costs": {
+          "heading": "5. Shipping costs",
+          "body": [
+            "Shipping is calculated from the delivery address and the size of the order, and is always shown at checkout before you pay. There are no charges added after payment.",
+            "Where a free shipping threshold applies, it is shown in your cart as you approach it."
+          ]
+        },
+        "where-we-ship": {
+          "heading": "6. Where we ship",
+          "body": [
+            "We ship worldwide. A small number of destinations are excluded where carriers do not deliver or where sanctions apply; if yours is one of them, checkout will tell you before you pay.",
+            "We cannot deliver to PO boxes for all carriers, and we cannot ship to freight forwarders."
+          ]
+        },
+        "tracking": {
+          "heading": "7. Tracking your order",
+          "body": [
+            "You will get a confirmation email when you order, and a second email with a tracking link when your parcel is dispatched. Your order history in your account shows the same status.",
+            "Tracking can take up to 24 hours to show its first scan after dispatch. That gap is normal and does not mean anything has gone wrong."
+          ]
+        },
+        "customs-duties": {
+          "heading": "8. Customs, duties and taxes",
+          "body": [
+            "Orders delivered within the EU carry no additional customs charges.",
+            "For deliveries outside the EU, import duties, taxes and customs handling fees may be charged by your country on arrival. These are set by your customs authority, not by us, and they are your responsibility as the importer.",
+            "We are required to declare the full value of the goods on the customs form and cannot mark an order as a gift or declare a lower value.",
+            "If a parcel is refused at customs and returned to us, we will refund the item price minus the outbound and return shipping costs."
+          ]
+        },
+        "delays": {
+          "heading": "9. Delays",
+          "body": [
+            "Most delays come from customs clearance, carrier backlogs, severe weather or an incomplete address.",
+            "If your parcel has not moved for seven business days, contact us at {supportEmail} and we will open an investigation with the carrier."
+          ]
+        },
+        "wrong-address": {
+          "heading": "10. Incorrect addresses",
+          "body": [
+            "Please check your address before confirming. We can correct it only before the order enters production — email {supportEmail} straight away if you spot a mistake.",
+            "If a parcel is returned to us because the address was wrong or incomplete, we will reship it once you have paid the new shipping cost, or refund the item price minus shipping.",
+            "If a parcel is returned because it was unclaimed after the carrier's attempts, the same applies."
+          ]
+        },
+        "lost-damaged": {
+          "heading": "11. Lost or damaged in transit",
+          "body": [
+            "If tracking shows delivered but the parcel has not arrived, check with neighbours and your building's reception first, then contact us within 14 days and we will investigate with the carrier.",
+            "If your item arrives damaged, send us a photo of the item and the packaging within 30 days and we will replace it free of charge. See our Returns & Refunds policy for how that works."
+          ]
+        },
+        "sustainability": {
+          "heading": "12. Packaging and emissions",
+          "body": [
+            "We pack in recycled and recyclable materials, with no unnecessary plastic.",
+            "Shipping emissions are offset through verified programmes, and printing on demand near the delivery address keeps both transport distance and overproduction down."
+          ]
+        },
+        "contact": {
+          "heading": "13. Contact",
+          "body": [
+            "Any question about a delivery can go to {supportEmail} with your order number, and we will come back to you within one business day."
+          ]
+        }
+      }
+    },
+    "returns": {
+      "meta": {
+        "title": "Returns & Refunds",
+        "description": "Stamp AI's 30-day guarantee, how to return or exchange an item, refund timing, and your EU right of withdrawal on custom-made goods.",
+        "keywords": [
+          "returns",
+          "refunds",
+          "exchange",
+          "right of withdrawal",
+          "guarantee"
+        ]
+      },
+      "title": "Returns &",
+      "accent": "refunds",
+      "label": "Support",
+      "intro": "Every item is made for one person, so we would rather get it right than take it back. When we do not get it right, this is what happens — and we cover the return shipping.",
+      "sections": {
+        "our-guarantee": {
+          "heading": "1. Our 30-day guarantee",
+          "body": [
+            "If the print, the fabric or the fit is not right, tell us within 30 days of delivery and we will replace the item free of charge or refund you in full. You choose which.",
+            "We cover return shipping on any claim under this guarantee. You will not be out of pocket for a problem we caused.",
+            "In many cases we will not ask for the item back at all. If we do, we send you a prepaid label."
+          ]
+        },
+        "what-is-covered": {
+          "heading": "2. What the guarantee covers",
+          "body": [
+            "The guarantee is about our work, not about a change of mind:"
+          ],
+          "bullets": [
+            "Print defects — cracking, fading, misalignment, or colour clearly different from the design you approved.",
+            "Fabric faults — holes, loose seams, or a garment that does not match its stated size chart.",
+            "The wrong item, size or colour arriving.",
+            "Damage in transit.",
+            "An item that never arrived."
+          ]
+        },
+        "not-covered": {
+          "heading": "3. What it does not cover",
+          "body": [
+            "Some things are outside it, and it is fairer to say so up front:"
+          ],
+          "bullets": [
+            "Ordering the wrong size when the item matches the size chart — see exchanges in section 8.",
+            "Not liking a design you approved before printing. Please review your design carefully at checkout.",
+            "Small variations in print placement or colour between individual items, which are inherent to printing on demand.",
+            "Normal wear, or damage from washing against the care instructions.",
+            "Claims made more than 30 days after delivery, unless your statutory rights give you longer."
+          ]
+        },
+        "custom-items": {
+          "heading": "4. Why custom items are different",
+          "body": [
+            "Your item did not exist until you ordered it, and it cannot be resold to anyone else. That is why the ordinary right to return an unwanted item does not apply here in the way it would to something off a shelf.",
+            "Our 30-day guarantee is our answer to that: it is broader than the law requires on custom goods, and it puts the cost of any fault on us."
+          ]
+        },
+        "eu-right-of-withdrawal": {
+          "heading": "5. EU right of withdrawal",
+          "body": [
+            "EU consumers normally have 14 days to withdraw from a distance purchase without giving a reason. Article 16(c) of the Consumer Rights Directive excludes goods made to the consumer's specification or clearly personalised, which is what every Stamp AI item is. By confirming your order you acknowledge that this exclusion applies once production has started.",
+            "Before production starts, you may cancel for any reason and receive a full refund — see section 10.",
+            "This exclusion does not touch your statutory rights where an item is faulty, not as described, or does not match the design you approved. Those rights last two years from delivery under EU law, and nothing in this policy limits them."
+          ]
+        },
+        "how-to-start": {
+          "heading": "6. How to start a claim",
+          "body": [
+            "Email {supportEmail} within 30 days of delivery with your order number and, where the problem is visible, a photo of the item and its packaging. A photo usually lets us resolve it on the first reply.",
+            "We respond within one business day, and most claims are settled the same day.",
+            "Please do not send anything back before contacting us — unrequested returns cannot be tracked to your order."
+          ]
+        },
+        "return-shipping": {
+          "heading": "7. Return shipping",
+          "body": [
+            "For any valid claim under the guarantee, we pay return shipping and send you a prepaid label.",
+            "Where we ask for the item back, please send it within 14 days of receiving the label."
+          ]
+        },
+        "exchanges": {
+          "heading": "8. Exchanges and sizing",
+          "body": [
+            "If an item matches its size chart but does not fit you, we will produce a replacement in a different size at 50% of the item price — covering the cost of making a second item without charging you twice.",
+            "If the item does not match the size chart, that is a fault and the guarantee applies in full at no cost to you.",
+            "Check the size chart on the product page before ordering; our garments are heavyweight and can fit differently from what you are used to."
+          ]
+        },
+        "refund-timing": {
+          "heading": "9. Refund timing",
+          "body": [
+            "Approved refunds are issued within 3 business days to the original payment method.",
+            "How quickly it appears depends on your bank: cards typically take 5 to 10 business days, and PayPal or iDEAL usually 1 to 3.",
+            "We refund the item price and the original shipping cost when the whole order was faulty. Where only part of an order was faulty, we refund that part."
+          ]
+        },
+        "cancelling-an-order": {
+          "heading": "10. Cancelling before production",
+          "body": [
+            "You can cancel for a full refund any time before your order enters production, which is usually a short window after you confirm it.",
+            "Email {supportEmail} with your order number as soon as you can. If printing has already started we cannot stop it, because the item exists only for you."
+          ]
+        },
+        "credits-refunds": {
+          "heading": "11. Credits",
+          "body": [
+            "Credits pay for generating designs, and a generation that ran has used real computing resources, so credits are not generally refundable once spent.",
+            "If a generation fails because of a fault on our side, we return the credits automatically. If that has not happened, tell us and we will fix it.",
+            "Unused credits do not expire while your account is open. If you want to close your account with credits remaining, contact us and we will deal with it fairly."
+          ]
+        },
+        "contact": {
+          "heading": "12. Contact",
+          "body": [
+            "Email {supportEmail} with your order number. If you are not satisfied with how we handled a claim, say so in your reply and it will be reviewed by someone else."
+          ]
+        }
+      }
+    }
+  },
+  "faq": {
+    "meta": {
+      "title": "Frequently Asked Questions",
+      "description": "Answers about designing with AI, ordering, credits, sizing, shipping times, returns and account management on Stamp AI.",
+      "keywords": ["FAQ", "help", "questions", "support", "how it works"]
+    },
+    "title": "Frequently asked",
+    "accent": "questions",
+    "label": "Support",
+    "intro": "Answers to what people ask us most, grouped by topic. If yours is not here, email us and a person will reply.",
+    "stillHaveQuestions": "Still have questions?",
+    "contactSupport": "Email support",
+    "categories": {
+      "design-ai": {
+        "heading": "Designing with AI"
+      },
+      "ordering": {
+        "heading": "Ordering and credits"
+      },
+      "products-sizing": {
+        "heading": "Products and sizing"
+      },
+      "shipping": {
+        "heading": "Shipping and delivery"
+      },
+      "returns": {
+        "heading": "Returns and refunds"
+      },
+      "account": {
+        "heading": "Your account"
+      }
+    },
+    "items": {
+      "prompt-tips": {
+        "question": "How do I write a prompt that gives a good result?",
+        "answer": "Be specific about subject, style and composition, and say what you do not want. “A line-drawn mountain range, single weight, centred, no colour, no text” beats “mountains” every time. Mentioning a medium — woodcut, risograph, technical drawing — tends to give cleaner output than naming an artist."
+      },
+      "upload-own-art": {
+        "question": "Can I upload my own artwork instead of using a prompt?",
+        "answer": "Yes. Upload a sketch, photo or finished file and we will prepare it for print. You can also upload a reference image and use a prompt to push it in a direction. You need the rights to whatever you upload."
+      },
+      "design-ownership": {
+        "question": "Do I own the design the AI creates?",
+        "answer": "As between you and us, yes — including for commercial use. One honest caveat: in many countries purely machine-generated artwork may not attract copyright protection at all, so we cannot promise you an enforceable exclusive right in it. Our Terms of Service explain this in full."
+      },
+      "not-happy-with-design": {
+        "question": "What if I do not like what the AI generates?",
+        "answer": "Generate again with an adjusted prompt. Each run uses credits, including runs you do not like, because the computing happens either way. Nothing is printed until you approve a design, so an unwanted generation never costs you a garment."
+      },
+      "prohibited-content": {
+        "question": "Are there designs you will not print?",
+        "answer": "Yes. We will not print other people's trade marks or copyrighted characters, a real person's likeness without permission, sexual content involving minors, or content inciting violence or hatred. Section 8 of our Terms of Service has the full list."
+      },
+      "what-are-credits": {
+        "question": "What are credits and how do they work?",
+        "answer": "Credits pay for generating designs. You buy them in advance, they sit on your account, and one is consumed each time a generation runs. Printing and shipping are paid separately when you order an item."
+      },
+      "credits-expire": {
+        "question": "Do credits expire?",
+        "answer": "No. Unused credits stay on your account for as long as it is open. They cannot be transferred to another account or exchanged for cash."
+      },
+      "payment-methods": {
+        "question": "Which payment methods can I use?",
+        "answer": "Visa, Mastercard and American Express, plus PayPal, iDEAL, Apple Pay and Google Pay. Your card details go straight to our payment provider and never touch our servers."
+      },
+      "change-order": {
+        "question": "Can I change or cancel my order?",
+        "answer": "Only before it enters production, which is a short window after you confirm. Email support with your order number as soon as possible. Once printing has started we cannot stop it, because the item exists only for you."
+      },
+      "bulk-orders": {
+        "question": "Can I order in bulk?",
+        "answer": "Yes, there is no maximum. Orders of 25 items or more get a volume discount, applied automatically in your cart. There is no minimum either — a single item is a perfectly normal order."
+      },
+      "product-range": {
+        "question": "What can I get my design printed on?",
+        "answer": "T-shirts, hoodies, sweatshirts and caps, in a range of colours. Each product page lists the exact blank, its weight and its composition."
+      },
+      "sizing": {
+        "question": "How do I choose the right size?",
+        "answer": "Use the size chart on the product page rather than the size you usually wear. Our blanks are heavyweight and cut differently from high-street sizing. The chart gives flat measurements, so compare them against a garment you already own."
+      },
+      "print-durability": {
+        "question": "How long will the print last?",
+        "answer": "We print with water-based inks that bond into the fabric rather than sitting on top of it, so the print does not crack or peel. Wash inside out at 30°C and skip the tumble dryer and it will outlast the garment."
+      },
+      "care-instructions": {
+        "question": "How should I wash it?",
+        "answer": "Inside out, at 30°C or cooler, with similar colours. No bleach, and do not iron directly on the print. Line dry where you can. Every garment carries the same instructions on its care label."
+      },
+      "where-printed": {
+        "question": "Where are the items printed?",
+        "answer": "At the print facility closest to your delivery address, which keeps transport short and delivery fast. A multi-item order may be produced at more than one facility and arrive in separate parcels at no extra cost."
+      },
+      "shipping-cost": {
+        "question": "How much is shipping?",
+        "answer": "It depends on your address and the size of your order, and it is always shown at checkout before you pay. Nothing is added afterwards. Full details are on our Shipping & Delivery page."
+      },
+      "customs": {
+        "question": "Will I pay customs or import duty?",
+        "answer": "Not within the EU. Outside it, your country may charge import duty and taxes on arrival, set by your customs authority rather than by us. We are legally required to declare the full value of the goods."
+      },
+      "track-order": {
+        "question": "How do I track my order?",
+        "answer": "You get a tracking link by email when your parcel is dispatched, and your order history shows the same status. The first carrier scan can take up to 24 hours to appear — that gap is normal."
+      },
+      "return-window": {
+        "question": "Can I return something?",
+        "answer": "If the print, fabric or fit is not right, tell us within 30 days and we will replace it free or refund you in full, with return shipping covered. Because every item is made for one person, a simple change of mind is not covered once production has started."
+      },
+      "wrong-size-ordered": {
+        "question": "I ordered the wrong size. What now?",
+        "answer": "If the item matches its size chart, we will produce a replacement in the right size at 50% of the item price. If it does not match the chart, that is our fault and we replace it at no cost."
+      },
+      "refund-time": {
+        "question": "How long does a refund take?",
+        "answer": "We issue approved refunds within 3 business days to the original payment method. Cards typically show it in 5 to 10 business days; PayPal and iDEAL usually 1 to 3."
+      },
+      "delete-account": {
+        "question": "How do I delete my account?",
+        "answer": "From your profile. We delete your account and design data within 30 days. Order and transaction records are kept for seven years because tax law requires it — our Privacy Policy explains what is kept and why."
+      },
+      "data-privacy": {
+        "question": "What do you do with my prompts and designs?",
+        "answer": "We use them to generate your artwork, produce your order and provide support. We do not sell them, publish them, or use your designs in our marketing without asking you first."
+      },
+      "contact-human": {
+        "question": "How do I reach a person?",
+        "answer": "Email us with your order number if you have one. We reply within one business day, and a person reads every message."
+      }
+    }
+  }
+}

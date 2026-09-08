@@ -18,7 +18,7 @@ const CreditErrors = {
 
 // Server-side price per credit (in cents). The charge is derived from this and
 // the requested credit count — never trusted from a separate client `amount`.
-const CREDIT_PRICE_CENTS = parseInt(Deno.env.get('CREDIT_PRICE_CENTS') || '10', 10)
+const CREDIT_PRICE_CENTS = Number(Deno.env.get('CREDIT_PRICE_CENTS') || '10')
 
 interface CreateCreditPaymentRequest {
   amount: number
@@ -85,7 +85,7 @@ async function verifyAuth(authHeader: string | null): Promise<{ userId: string; 
  */
 function validateCredits(credits?: number): number {
   if (!credits) throw CreditErrors.CREDITS_REQUIRED()
-  if (typeof credits !== 'number' || credits < 10) {
+  if (!Number.isSafeInteger(credits) || credits < 10) {
     throw CreditErrors.INVALID_CREDITS()
   }
   return credits
@@ -120,7 +120,16 @@ serve(async (req) => {
     // Derive the charge amount server-side from the credit count. Never trust
     // a client-supplied `amount` (that would let a user pay $0.10 for any
     // number of credits). If the client sent an amount, it must match.
+    if (!Number.isSafeInteger(CREDIT_PRICE_CENTS) || CREDIT_PRICE_CENTS <= 0) {
+      throw new Error('Invalid credit price configuration')
+    }
+    if (typeof currency !== 'string' || currency.toLowerCase() !== 'usd' || userId === 'service-role') {
+      throw ErrorCodes.INVALID_REQUEST_BODY()
+    }
     const amountCents = validCredits * CREDIT_PRICE_CENTS
+    if (!Number.isSafeInteger(amountCents) || amountCents > 99999999) {
+      throw CreditErrors.INVALID_CREDITS()
+    }
     const validAmount = amountCents / 100
     if (typeof amount === 'number' && Math.round(amount * 100) !== amountCents) {
       throw CreditErrors.AMOUNT_MISMATCH()

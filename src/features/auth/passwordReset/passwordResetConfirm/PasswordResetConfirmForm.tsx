@@ -5,6 +5,9 @@ import { PasswordResetSuccess } from "./PasswordResetSuccess";
 import { PasswordResetError } from "./PasswordResetError";
 import { FormField } from "@/features/ui/form-field";
 import { Button } from "@/features/ui/button";
+import { Lock } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useValidationMessage } from "@/hooks/useValidationMessage";
 
 export function PasswordResetConfirmForm() {
   const {
@@ -16,6 +19,8 @@ export function PasswordResetConfirmForm() {
     isError,
     errors,
   } = usePasswordResetConfirmForm();
+  const t = useTranslations("auth.passwordReset.confirm");
+  const ve = useValidationMessage();
 
   if (isSuccess) {
     return <PasswordResetSuccess />;
@@ -27,26 +32,30 @@ export function PasswordResetConfirmForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="space-y-4">
+      <div className="space-y-6">
         <FormField
           id="password"
-          label="New Password"
+          label={t("newPassword")}
           type="password"
-          error={errors.password?.message}
+          error={ve(errors.password?.message)}
           register={register("password")}
+          variant="stamp-auth"
+          leadingIcon={<Lock className="h-5 w-5" />}
         />
 
         <FormField
           id="confirmPassword"
-          label="Confirm New Password"
+          label={t("confirmNewPassword")}
           type="password"
-          error={errors.confirmPassword?.message}
+          error={ve(errors.confirmPassword?.message)}
           register={register("confirmPassword")}
+          variant="stamp-auth"
+          leadingIcon={<Lock className="h-5 w-5" />}
         />
       </div>
 
-      <Button type="submit" disabled={isPending} className="w-full">
-        {isPending ? "Resetting Password..." : "Reset Password"}
+      <Button type="submit" disabled={isPending} variant="primary" className="w-full">
+        {isPending ? t("resetting") : t("resetPassword")}
       </Button>
     </form>
   );

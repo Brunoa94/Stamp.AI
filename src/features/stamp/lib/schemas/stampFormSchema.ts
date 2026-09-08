@@ -15,12 +15,11 @@ export const StampFormSchema = z.object({
   uploadedImageUrl: z.string().optional(),
 
   // Synthesis inputs
+  // `message` is an i18n key under the `validation` namespace, translated at
+  // the form render site via next-intl (useTranslations).
   prompt: z
     .string()
-    .max(500, "Prompt must be 500 characters or less")
-    .optional(),
-  artStyle: z
-    .enum(["editorial", "classic", "avant-garde", "abstract"])
+    .max(500, "promptMax")
     .optional(),
   preservation: z.number().min(0).max(100).optional(),
 

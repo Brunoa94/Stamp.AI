@@ -16,14 +16,14 @@ export interface CancelOrderResponseI {
 
 
 import { createClient } from "@/lib/supabase/client";
-import { CreateOrderT, OrderT, UpdateOrderT, OrderWithItemsT } from "../types/order";
+import { CreateOrderT, OrderT, UpdateOrderT, OrderWithItemsT, OrderStatusHistoryT } from "../types/order";
 import { OrderWithItemsSchema, OrderSchema } from "@/schemas/order";
-import { OrderServiceMapper } from "@/mappers/services";
+import { OrderServiceMapper } from "@/mappers/services/orderServiceMapper";
 import { z } from "zod";
 import { CartItem, CartT, CartWithItems } from "@/types/cart";
 import { CartService } from "./cartService";
 import { OrderItemService } from "./orderItemService";
-import { UserI } from "@/types/auth";
+import { UserI } from "../../supabase/types";
 import { ErrorClient } from "./errorClient";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import { RefundService } from "./refundService";
@@ -65,9 +65,16 @@ export class OrderService {
       }
 
       // Validate response with Zod schema
-      const validatedData = z.array(OrderWithItemsSchema).parse(data);
+      try {
+        const validatedData = z.array(OrderWithItemsSchema).parse(data);
 
-      return validatedData as OrderWithItemsT[];
+        return validatedData as unknown as OrderWithItemsT[];
+      } catch (zodError: any) {
+        console.error("❌ Zod validation failed for orders");
+        console.error("Error details:", zodError.errors || zodError.message);
+        console.error("📦 First order data sample:", JSON.stringify(data[0], null, 2));
+        throw zodError;
+      }
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Order", action: "Get Orders"})
     }
@@ -101,9 +108,32 @@ export class OrderService {
       // Validate response with Zod schema
       const validatedData = OrderWithItemsSchema.parse(data);
 
-      return validatedData as OrderWithItemsT;
+      return validatedData as unknown as OrderWithItemsT;
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Order", action: "Get Order"})
+    }
+  }
+
+  /**
+   * Get status history for an order (for tracking timeline)
+   */
+  static async getOrderStatusHistory(orderId: string): Promise<OrderStatusHistoryT[]> {
+    try {
+      const supabase = this.getSupabase();
+
+      const { data, error } = await supabase
+        .from('order_status_history')
+        .select('*')
+        .eq('order_id', orderId)
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        throw ErrorClient.handleError({ error, service: "Order", action: "Get Status History" });
+      }
+
+      return (data ?? []) as OrderStatusHistoryT[];
+    } catch (error) {
+      throw ErrorClient.handleError({ error, service: "Order", action: "Get Status History" });
     }
   }
 
@@ -135,7 +165,7 @@ export class OrderService {
       // Validate response with Zod schema
       const validatedData = OrderWithItemsSchema.parse(data);
 
-      return validatedData as OrderWithItemsT;
+      return validatedData as unknown as OrderWithItemsT;
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Order", action: "Get Order By Number"})
     }
@@ -372,6 +402,7 @@ export class OrderService {
     billingAddress,
     idempotencyKey,
     orderStatus,
+    paymentMethod,
   }: {
     user: UserI;
     cart: CartWithItems;
@@ -380,6 +411,7 @@ export class OrderService {
     billingAddress?: ShippingAddressT;
     idempotencyKey?: string;
     orderStatus?: string;
+    paymentMethod?: string;
   }) {
     try {
       // CRITICAL: Check idempotency key to prevent duplicate orders
@@ -410,7 +442,8 @@ export class OrderService {
         0, // discount amount
         paymentStatus,
         finalOrderStatus,
-        idempotencyKey
+        idempotencyKey,
+        paymentMethod
       );
 
       // Create order from cart
@@ -511,30 +544,42 @@ export class OrderService {
     } = await supabase.auth.getSession();
 
     if (!session) {
-      throw new Error("Not authenticated");
+      throw ErrorClient.handleError({
+        error: new Error("Not authenticated"),
+        service: "Order",
+        action: "Cancel Order"
+      });
     }
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/cancel-order`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          order_id: orderId,
-          cancellation_reason: "Cancelled by customer",
-        }),
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/cancel-order`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            order_id: orderId,
+            cancellation_reason: "Cancelled by customer",
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw ErrorClient.handleError({
+          error: { error: data.error || data.message || "Failed to cancel order" },
+          service: "Order",
+          action: "Cancel Order"
+        });
       }
-    );
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to cancel order");
+      return data;
+    } catch (error) {
+      throw ErrorClient.handleError({ error, service: "Order", action: "Cancel Order" });
     }
-
-    return data;
   }
 }

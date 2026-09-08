@@ -1,26 +1,17 @@
 "use client";
 
 import { Button } from "@/features/ui/button";
+import { profileInputStyles } from "@/features/ui/form-field";
 import { Input } from "@/features/ui/input";
 import { Label } from "@/features/ui/label";
-import { User, Save, X } from "lucide-react";
+import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
 import { useUserInformation } from "@/features/profile/lib/hooks/useUserInformation";
-
-// Static field configuration outside component for performance
-const formFields = [
-  {
-    id: "first_name",
-    label: "First Name",
-    key: "firstName" as const,
-  },
-  {
-    id: "last_name",
-    label: "Last Name",
-    key: "lastName" as const,
-  },
-] as const;
+import { useTranslations } from "next-intl";
+import { ProfileCard } from "../components/ProfileCard";
 
 export function UserInformationSection() {
+  const t = useTranslations("profile.userInformation");
   const {
     isEditing,
     firstName,
@@ -34,108 +25,106 @@ export function UserInformationSection() {
     setLastName,
   } = useUserInformation();
 
-  const fieldSetters = {
-    firstName: setFirstName,
-    lastName: setLastName,
-  } as const;
-
-  const fieldValues = {
-    firstName,
-    lastName,
-  } as const;
-
   return (
-    <section className="bg-white border border-ink/10 p-8 lg:p-12 shadow-[0_2px_15px_rgba(0,0,0,0.02)]">
-      {/* Section Header */}
-      <div className="flex justify-between items-start mb-8">
-        <div className="flex gap-5">
-          <div className="w-14 h-14 bg-white shadow-sm border border-slate-100 rounded-2xl flex items-center justify-center text-slate-500">
-            <User className="w-6 h-6" />
-          </div>
-          <div>
-            <h2 className="text-xl font-anton uppercase tracking-tight text-ink leading-tight mb-1">
-              PERSONAL INFORMATION
-            </h2>
-            <p className="text-slate-500 text-sm">Update your personal details</p>
-          </div>
-        </div>
-        {!isEditing && (
-          <Button
-            onClick={handleStartEditing}
-            variant="brutalist-ghost"
-            className="text-[10px]"
-          >
-            EDIT
-          </Button>
-        )}
-      </div>
-
+    <ProfileCard
+      label={t("label")}
+      title={t.rich("title", {
+        accent: (chunks) => (
+          <Span variant="serif" className="text-(--color-stamp-taupe)">
+            {chunks}
+          </Span>
+        ),
+      })}
+      subtitle={t("subtitle")}
+      editLabel={t("edit")}
+      onEdit={handleStartEditing}
+      showEditButton={!isEditing}
+    >
       {/* Form Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {formFields.map(({ id, label, key }) => (
-          <div key={id} className="space-y-2">
-            <Label
-              htmlFor={id}
-              className="text-[10px] font-bold uppercase tracking-widest text-slate-400"
-            >
-              {label}
+      <div className="space-y-6 md:space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <div className="space-y-2">
+            <Label htmlFor="first_name">
+              <Span
+                variant="sm"
+                className="text-(--color-stamp-chocolate)"
+              >
+                {t("firstNameLabel")}
+              </Span>
             </Label>
             <Input
               type="text"
-              id={id}
-              value={fieldValues[key]}
-              onChange={(e) => fieldSetters[key](e.target.value)}
+              id="first_name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
               readOnly={!isEditing}
-              className="w-full bg-white border border-ink/10 p-4 font-space uppercase placeholder:opacity-10 focus:border-brandCyan focus:ring-4 focus:ring-brandCyan/10 outline-none transition-all"
+              className={isEditing ? profileInputStyles.editable : profileInputStyles.readonly}
             />
           </div>
-        ))}
 
-        <div className="md:col-span-2 space-y-2">
-          <Label
-            htmlFor="email"
-            className="text-[10px] font-bold uppercase tracking-widest text-slate-400"
-          >
-            Email
+          <div className="space-y-2">
+            <Label htmlFor="last_name">
+              <Span
+                variant="sm"
+                className="text-(--color-stamp-chocolate)"
+              >
+                {t("lastNameLabel")}
+              </Span>
+            </Label>
+            <Input
+              type="text"
+              id="last_name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              readOnly={!isEditing}
+              className={isEditing ? profileInputStyles.editable : profileInputStyles.readonly}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="email">
+            <Span
+              variant="sm"
+              className="text-(--color-stamp-chocolate)"
+            >
+              {t("emailLabel")}
+            </Span>
           </Label>
           <Input
             type="email"
             id="email"
             value={email}
             readOnly
-            className="w-full bg-concrete/30 border border-ink/10 p-4 font-space uppercase outline-none"
+            className={profileInputStyles.readonly}
           />
-          <p className="text-[11px] text-slate-400 font-medium italic">
-            Email cannot be changed for security reasons
-          </p>
+          <Paragraph variant="xs" className="text-(--color-stamp-taupe) italic">
+            {t("emailNote")}
+          </Paragraph>
         </div>
       </div>
 
       {/* Action Buttons */}
       {isEditing && (
-        <div className="flex flex-col sm:flex-row items-center gap-3 pt-8 mt-8 border-t border-slate-200/50">
+        <div className="flex flex-col sm:flex-row items-center gap-4 pt-8 mt-8 border-t border-(--color-stamp-divider)">
           <Button
             type="button"
             onClick={handleSave}
             disabled={isLoading}
-            variant="brutalist-primary"
-            className="w-full sm:w-auto group"
+            className="w-full sm:w-auto bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-4 text-xs font-bold tracking-[0.15em] uppercase disabled:opacity-50"
           >
-            <Save className="w-4 h-4 mr-2" />
-            {isLoading ? "SAVING..." : "SAVE CHANGES"}
+            {isLoading ? t("saving") : t("saveChanges")}
           </Button>
           <Button
             type="button"
             onClick={handleCancel}
-            variant="brutalist-ghost"
             disabled={isLoading}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto border-2 border-(--color-stamp-divider) bg-transparent text-(--color-stamp-chocolate) hover:border-(--color-stamp-chocolate) transition-all duration-300 px-8 py-4 text-xs font-bold tracking-[0.15em] uppercase"
           >
-            <X className="w-4 h-4 mr-2" />
-            CANCEL
+            {t("cancel")}
           </Button>
         </div>
       )}
-    </section>
+    </ProfileCard>
   );
 }

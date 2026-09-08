@@ -4,18 +4,6 @@
  */
 
 /**
- * Check if Mollie is enabled via environment variable
- */
-export const MOLLIE_ENABLED = process.env.NEXT_PUBLIC_MOLLIE_ENABLED === "true";
-
-/**
- * Check if Mollie is configured and enabled
- */
-export const isMollieConfigured = (): boolean => {
-  return MOLLIE_ENABLED;
-};
-
-/**
  * Mollie payment status types (for client-side use)
  */
 export type MolliePaymentStatus =

@@ -11,7 +11,7 @@ import { z } from "zod";
 /**
  * Schema for print area information
  */
-export const PrintAreaSchema = z.object({
+const PrintAreaSchema = z.object({
   position: z.string(),
   width: z.number().positive(),
   height: z.number().positive(),
@@ -20,7 +20,7 @@ export const PrintAreaSchema = z.object({
 /**
  * Schema for catalog blueprint
  */
-export const CatalogBlueprintSchema = z.object({
+const CatalogBlueprintSchema = z.object({
   id: z.number().int().positive(),
   title: z.string(),
   description: z.string(),

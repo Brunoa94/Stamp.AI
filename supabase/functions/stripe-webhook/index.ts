@@ -1,8 +1,86 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { delay } from 'https://deno.land/std@0.168.0/async/delay.ts'
 import Stripe from 'https://esm.sh/stripe@16.12.0?target=deno'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
+import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts"
+
+/**
+ * Wait for order to be created with idempotency key, then generate invoice.
+ * This handles the race condition where webhook fires before frontend creates the order.
+ */
+async function waitForOrderAndGenerateInvoice(
+  paymentIntentId: string,
+  maxAttempts = 6,
+  delayMs = 5000
+): Promise<void> {
+  const idempotencyKey = `stripe_${paymentIntentId}`
+  console.log(`🔄 Starting invoice generation retry loop for idempotency_key: ${idempotencyKey}`)
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    // Wait before checking (except first attempt)
+    if (attempt > 1) {
+      await delay(delayMs)
+    }
+
+    console.log(`📋 Attempt ${attempt}/${maxAttempts}: Checking for order with idempotency_key...`)
+
+    // Query orders directly by idempotency_key
+    const orderResult = await supabaseRest<Array<{ id: string }>>(
+      `orders?idempotency_key=eq.${idempotencyKey}&select=id`,
+      'GET'
+    )
+
+    const orderId = orderResult.data?.[0]?.id
+
+    if (orderId) {
+      console.log(`✅ Found order ${orderId} on attempt ${attempt}`)
+
+      // Link payment_transactions to order_id
+      const linkResult = await supabaseRest(
+        `payment_transactions?stripe_payment_intent_id=eq.${idempotencyKey.replace('stripe_', '')}`,
+        'PATCH',
+        {
+          order_id: orderId,
+          updated_at: new Date().toISOString(),
+        }
+      )
+
+      if (linkResult.error) {
+        console.error('Failed to link payment transaction to order:', linkResult.error)
+      } else {
+        console.log(`✅ Payment transaction linked to order: ${orderId}`)
+      }
+
+      // Update order payment_status to paid
+      const updateResult = await supabaseRest(
+        `orders?id=eq.${orderId}`,
+        'PATCH',
+        {
+          payment_status: 'paid',
+          payment_method: 'stripe',
+          updated_at: new Date().toISOString(),
+        }
+      )
+
+      if (updateResult.error) {
+        console.error('Failed to update order payment_status:', updateResult.error)
+      } else {
+        console.log(`✅ Order ${orderId} payment_status updated to: paid`)
+
+        // Generate the invoice
+        await tryGenerateInvoiceForOrder(orderId)
+      }
+
+      return
+    }
+
+    console.log(`⏳ No order found yet, attempt ${attempt}/${maxAttempts}`)
+  }
+
+  console.warn(`⚠️ No order found after ${maxAttempts} attempts for idempotency_key: ${idempotencyKey}`)
+}
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -16,6 +94,7 @@ interface StripePaymentIntentI {
   id: string;
   customer: string | null;
   amount: number;
+  amount_received: number;
   currency: string;
   livemode: boolean;
   payment_method_types?: string[];
@@ -26,136 +105,29 @@ interface StripePaymentIntentI {
 }
 
 // Server-side price per credit (in cents). Must match create-credit-payment.
-const CREDIT_PRICE_CENTS = parseInt(Deno.env.get('CREDIT_PRICE_CENTS') || '10', 10)
+const CREDIT_PRICE_CENTS = Number(Deno.env.get('CREDIT_PRICE_CENTS') || '10')
 
 /**
  * Handle credit purchase - update user credits and create transaction record
  */
 async function handleCreditPurchase(paymentIntent: StripePaymentIntentI) {
   const userId = paymentIntent.metadata?.user_id
-  const amountPaid = paymentIntent.amount / 100
-
-  // Derive credits from the amount Stripe actually charged (a signature-
-  // verified value), NOT from client-supplied metadata. This prevents a user
-  // from paying for 10 credits but requesting 1,000,000 in metadata.
-  const creditsToAdd = Math.floor(paymentIntent.amount / CREDIT_PRICE_CENTS)
-
-  if (!userId || userId === 'service-role') {
-    console.error('Invalid user_id for credit purchase:', userId)
-    return
+  if (!userId || userId === 'service-role' || !Number.isSafeInteger(CREDIT_PRICE_CENTS) || CREDIT_PRICE_CENTS <= 0) {
+    throw new Error('Invalid credit purchase identity or price')
   }
-
-  if (creditsToAdd <= 0) {
-    console.error('Invalid credits amount:', creditsToAdd)
-    return
-  }
-
-  // Idempotency: Stripe delivers webhooks at-least-once. If we already recorded
-  // a credit_transaction for this payment intent, do not grant again.
-  const existing = await supabaseRest<Array<{ id: string }>>(
-    `credit_transactions?reference_id=eq.${encodeURIComponent(paymentIntent.id)}&transaction_type=eq.purchase&select=id`,
-    'GET'
-  )
-  if (Array.isArray(existing.data) && existing.data.length > 0) {
-    console.log('Credit purchase already processed for', paymentIntent.id, '- skipping')
-    return
-  }
-
-  console.log(`Adding ${creditsToAdd} credits to user ${userId}`)
-
-  // Get current user credits
-  const currentCreditsResult = await supabaseRest(
-    `user_credits?user_id=eq.${userId}&select=credits`,
-    'GET'
-  )
-
-  let currentCredits = 0
-  let userExists = false
-
-  if (currentCreditsResult.data && currentCreditsResult.data.length > 0) {
-    currentCredits = currentCreditsResult.data[0].credits || 0
-    userExists = true
-  }
-
-  const newBalance = currentCredits + creditsToAdd
-
-  // Update or insert user credits
-  if (userExists) {
-    const updateResult = await supabaseRest(
-      `user_credits?user_id=eq.${userId}`,
-      'PATCH',
-      {
-        credits: newBalance,
-        updated_at: new Date().toISOString()
-      }
-    )
-
-    if (updateResult.error) {
-      console.error('Failed to update user credits:', updateResult.error)
-      return
-    }
-  } else {
-    const insertResult = await supabaseRest(
-      'user_credits',
-      'POST',
-      {
-        user_id: userId,
-        credits: newBalance,
-        updated_at: new Date().toISOString()
-      }
-    )
-
-    if (insertResult.error) {
-      console.error('Failed to insert user credits:', insertResult.error)
-      return
-    }
-  }
-
-  console.log(`Updated user ${userId} credits: ${currentCredits} -> ${newBalance}`)
-
-  // Create credit transaction record
-  const transactionResult = await supabaseRest(
-    'credit_transactions',
-    'POST',
-    {
-      user_id: userId,
-      amount: creditsToAdd,
-      balance_after: newBalance,
-      transaction_type: 'purchase',
-      description: `Purchased ${creditsToAdd} credits for $${amountPaid.toFixed(2)}`,
-      reference_id: paymentIntent.id,
-      created_at: new Date().toISOString()
-    }
-  )
-
-  if (transactionResult.error) {
-    console.error('Failed to create credit transaction:', transactionResult.error)
-  } else {
-    console.log('Credit transaction recorded:', transactionResult.data)
-  }
-
-  // Also record in payment_transactions for consistency
-  await supabaseRest(
-    'payment_transactions',
-    'POST',
-    {
-      user_id: userId,
-      stripe_payment_intent_id: paymentIntent.id,
-      stripe_customer_id: paymentIntent.customer,
-      amount: amountPaid,
-      currency: paymentIntent.currency,
-      status: 'succeeded',
-      payment_method_type: paymentIntent.payment_method_types?.[0],
-      metadata: {
-        ...paymentIntent.metadata,
-        type: 'credit_purchase'
-      },
-      updated_at: new Date().toISOString()
-    },
-    { prefer: 'resolution=merge-duplicates' }
-  )
-
-  console.log('Credit purchase completed successfully')
+  // Claim the payment, increment the balance, and record payment accounting in
+  // one transaction. Errors propagate so Stripe retries instead of losing credits.
+  const result = await supabaseRest('rpc/grant_stripe_purchase_credits', 'POST', {
+    p_payment_intent_id: paymentIntent.id,
+    p_user_id: userId,
+    p_amount_cents: paymentIntent.amount_received,
+    p_credit_price_cents: CREDIT_PRICE_CENTS,
+    p_currency: paymentIntent.currency,
+    p_customer_id: paymentIntent.customer,
+    p_payment_method_type: paymentIntent.payment_method_types?.[0] || 'card',
+    p_metadata: paymentIntent.metadata || {},
+  })
+  if (result.error) throw new Error('Failed to grant purchase credits')
 }
 
 serve(async (req) => {
@@ -214,6 +186,7 @@ serve(async (req) => {
         // CRITICAL: Use atomic UPSERT to prevent race conditions
         // Handles case where webhook arrives before create-payment-intent
         const userId = paymentIntent.metadata?.user_id
+        const orderId = paymentIntent.metadata?.order_id
 
         const upsertResult = await supabaseRest(
           'rpc/upsert_stripe_payment_transaction',
@@ -226,7 +199,8 @@ serve(async (req) => {
             p_currency: paymentIntent.currency,
             p_status: 'succeeded',
             p_payment_method_type: paymentIntent.payment_method_types?.[0] || 'card',
-            p_metadata: paymentIntent.metadata || {}
+            p_metadata: paymentIntent.metadata || {},
+            p_order_id: orderId || null
           }
         )
 
@@ -245,7 +219,7 @@ serve(async (req) => {
         // If orderId not in metadata, try to get it from payment_transactions.order_id column
         // (set by client-side after order creation)
         if (!dbOrderId) {
-          const txResult = await supabaseRest(
+          const txResult = await supabaseRest<Array<{ order_id: string | null }>>(
             `payment_transactions?stripe_payment_intent_id=eq.${paymentIntent.id}&select=order_id`,
             'GET'
           )
@@ -256,6 +230,22 @@ serve(async (req) => {
         }
 
         if (dbOrderId) {
+          // Update payment_transactions with order_id (in case it wasn't in metadata)
+          const linkResult = await supabaseRest(
+            `payment_transactions?stripe_payment_intent_id=eq.${paymentIntent.id}`,
+            'PATCH',
+            {
+              order_id: dbOrderId,
+              updated_at: new Date().toISOString(),
+            }
+          )
+
+          if (linkResult.error) {
+            console.error('Failed to link payment transaction to order:', linkResult.error)
+          } else {
+            console.log(`✅ Payment transaction linked to order: ${dbOrderId}`)
+          }
+
           const orderResult = await supabaseRest(
             `orders?id=eq.${dbOrderId}`,
             'PATCH',
@@ -270,7 +260,21 @@ serve(async (req) => {
             console.error('Failed to update order payment_status:', orderResult.error)
           } else {
             console.log(`✅ Order ${dbOrderId} payment_status updated to: paid`)
+
+            // Issue the invoice now that the order is paid (idempotent, non-blocking)
+            await tryGenerateInvoiceForOrder(dbOrderId)
           }
+        } else {
+          // No order_id yet - frontend hasn't created the order
+          // Start retry loop in background (non-blocking)
+          console.log('⏳ No order_id found immediately, starting retry loop...')
+
+          // Use EdgeRuntime.waitUntil if available, otherwise run inline
+          // This keeps the webhook response fast while retrying in background
+          const retryPromise = waitForOrderAndGenerateInvoice(paymentIntent.id)
+
+          // Wait for the retry to complete (webhook can take up to 30s)
+          await retryPromise
         }
 
         // Check if this is a test payment
@@ -309,7 +313,7 @@ serve(async (req) => {
 
           // If orderId not in metadata, try to get it from payment_transactions.order_id column
           if (!dbOrderId) {
-            const txResult = await supabaseRest(
+            const txResult = await supabaseRest<Array<{ order_id: string | null }>>(
               `payment_transactions?stripe_payment_intent_id=eq.${paymentIntent.id}&select=order_id`,
               'GET'
             )

@@ -1,21 +1,27 @@
 import { Star } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
+import { formatSizeForDisplay } from "../../../lib/helpers/sizeDisplayMapper";
 
 /**
  * ProductSummary
  *
- * Product details card with name, specs, and price
+ * Product details card with name, specs, description, and price
  */
 
 interface PropsI {
   productName: string;
+  productDescription?: string | null;
   color?: string;
   size?: string;
   price: string;
 }
 
-export function ProductSummary({ productName, color, size, price }: PropsI) {
+export function ProductSummary({ productName, productDescription, color, size, price }: PropsI) {
+  const t = useTranslations("stamp.finalReview");
+
   return (
     <div className="p-6 border border-(--color-stamp-divider)">
       <div className="flex justify-between items-start mb-4">
@@ -30,18 +36,26 @@ export function ProductSummary({ productName, color, size, price }: PropsI) {
       </div>
       <Span
         variant="micro"
-        className="text-(--color-stamp-taupe) block mb-8"
+        className="text-(--color-stamp-taupe) block mb-2"
       >
-        Color: {color || "Black"} | Size: {size || "M"}
+        {t("productDetails", { color: color || "Black", size: formatSizeForDisplay(size || "M") })}
       </Span>
-      <div className="flex justify-between items-baseline pt-6 border-t border-(--color-stamp-divider)">
+      {productDescription && (
+        <Paragraph
+          variant="sm"
+          className="text-(--color-stamp-chocolate)/60 line-clamp-2 mb-4 md:mb-6"
+        >
+          {productDescription}
+        </Paragraph>
+      )}
+      <div className="flex flex-wrap justify-between items-baseline gap-x-4 gap-y-2 pt-4 md:pt-6 border-t border-(--color-stamp-divider)">
         <Span variant="sm" className="text-(--color-stamp-chocolate)">
-          Final Valuation
+          {t("finalValuation")}
         </Span>
         <Heading
           as="h3"
           variant="section"
-          className="text-(--color-stamp-chocolate)"
+          className="text-(--color-stamp-chocolate) text-5xl lg:text-4xl xl:text-5xl 2xl:text-6xl"
         >
           {price}
         </Heading>

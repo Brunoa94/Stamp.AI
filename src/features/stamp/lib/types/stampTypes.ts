@@ -8,29 +8,27 @@ import type { LucideIcon } from "lucide-react";
  */
 
 // Step navigation types
+// Display strings (title, label) are translated via `stamp.steps.<id>`.
 export type StampStepType = {
   id: string;
   number: string;
-  title: string;
-  label: string;
 };
 
-// Art style options
-export type ArtStyleIdType =
-  | "editorial"
-  | "classic"
-  | "avant-garde"
-  | "abstract";
-
-export type ArtStyleType = {
-  id: ArtStyleIdType;
-  label: string;
+// Edit suggestion tiles (Synthesis left-panel grid)
+export type EditSuggestionType = {
+  /**
+   * Stable identifier. Also the i18n key: display strings (label, hint,
+   * prompt) live under `stamp.suggestions.<id>` in the message catalog.
+   */
+  id: string;
+  /** Path to a representative thumbnail image (public/). */
+  image: string;
 };
 
 // Product types
 export type ProductTypeIdType = "tshirt" | "hoodie" | "tote" | "poster";
 
-export type ProductTypeInfoType = {
+type ProductTypeInfoType = {
   id: ProductTypeIdType;
   blueprintIds: number[];
   name: string;
@@ -40,28 +38,53 @@ export type ProductTypeInfoType = {
 };
 
 // Color types
-export type FabricColorType = {
+type FabricColorType = {
   name: string;
   hex: string;
   label: string;
 };
 
-// Size types
-export type SizeType = "XS" | "S" | "M" | "L" | "XL" | "XXL";
+// Size types - extended to support all Printify sizes including accessories
+// Note: API returns these values; use formatSizeForDisplay() for UI display
+export type SizeType =
+  | "XS"
+  | "S"
+  | "M"
+  | "L"
+  | "XL"
+  | "XXL"
+  | "2XL"
+  | "3XL"
+  | "4XL"
+  | "5XL"
+  | "One Size"
+  // Poster/print sizes (inches - displayed as cm in UI)
+  | "8×10"
+  | "12×16"
+  | "12×18"
+  | "16×20"
+  | "18×24"
+  | "24×36"
+  // Mug sizes (oz - displayed as cl in UI)
+  | "11oz"
+  | "15oz"
+  // Tote bag sizes (inches - displayed as cm in UI)
+  | "13×13"
+  | "15×15"
+  | "16×16"
+  | "18×18"
+  // Generic string for dynamic API sizes
+  | (string & {});
 
-// Presentation-layer catalog product (mapped from CatalogProduct + ProviderWithPricing)
+// Presentation-layer catalog product (mapped from CatalogProduct)
 export type CatalogProductMappedType = {
-  id: string;
-  name: string;
-  imageUrl: string;
   blueprintId: number;
+  name: string;
+  description: string | null;
+  /** Raw Printify description (may contain HTML) for spec extraction */
+  printifyDescription: string | null;
+  imageUrl: string;
   printProviderId: number;
   price: number;
-  providerName: string | undefined;
-  availabilityStatus:
-    | "in_stock"
-    | "out_of_stock"
-    | "discontinued"
-    | "temporarily_unavailable"
-    | undefined;
+  providerName: string;
 };

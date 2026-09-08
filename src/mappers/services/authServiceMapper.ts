@@ -1,5 +1,5 @@
 import type { User as SupabaseUser, Session as SupabaseSession } from "@supabase/supabase-js";
-import type { UserI, SessionI, AuthResponseI } from "@/types/auth";
+import type { UserI, SessionI, AuthResponseI } from "../../../supabase/types";
 
 export class AuthServiceMapper {
   /**

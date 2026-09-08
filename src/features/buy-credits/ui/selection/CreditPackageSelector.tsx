@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Label } from "@/features/ui/label";
 import { buyCreditsTheme } from "@/theme/components";
 import { CREDIT_PACKAGES } from "@/constants/credits";
@@ -14,9 +15,11 @@ export function CreditPackageSelector({
   selectedPackage,
   onSelect,
 }: CreditPackageSelectorProps) {
+  const t = useTranslations("buyCredits.selection");
+
   return (
     <div>
-      <Label className={buyCreditsTheme.sectionLabel}>Select a Package</Label>
+      <Label className={buyCreditsTheme.sectionLabel}>{t("packageLabel")}</Label>
       <div className={buyCreditsTheme.packageSelector.grid}>
         {CREDIT_PACKAGES.map((pkg) => (
           <CreditPackageCard
