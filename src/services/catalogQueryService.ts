@@ -4,29 +4,15 @@
  */
 
 import { createClient } from "@/lib/supabase/client";
+import { ErrorClient } from "./errorClient";
+import type {
+  CatalogProduct,
+  CatalogProductWithSeo,
+  ProductVariant,
+} from "@/types/catalog";
 
-export interface CatalogProduct {
-  blueprint_id: number;
-  display_title: string;
-  base_image_url: string | null;
-  min_price_cents: number;
-  shipping_cents: number;
-  is_active: boolean;
-  print_provider_id: number; // Printify print provider ID (default 99)
-  selling_price_cents: number | null;
-  original_price_cents: number | null;
-  is_on_sale: boolean;
-  last_synced_at: string | null;
-}
-
-export interface ProductVariant {
-  blueprint_id: number;
-  printify_variant_id: number;
-  color: string | null;
-  size: string | null;
-  price_cents: number;
-  is_available: boolean;
-}
+// Re-export for existing consumers of this module's types
+export type { CatalogProduct, CatalogProductWithSeo, ProductVariant };
 
 export interface VariantPrice {
   printifyVariantId: number;
@@ -49,8 +35,26 @@ export class CatalogQueryService {
       .order("display_title");
 
     if (error) {
-      console.error("Error fetching catalog products:", error);
-      throw error;
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Products" });
+    }
+
+    return data || [];
+  }
+
+  /**
+   * Get all active products with SEO data
+   */
+  static async getProductsWithSeo(): Promise<CatalogProductWithSeo[]> {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("catalog_products")
+      .select("*, product_seo(*)")
+      .eq("is_active", true)
+      .order("display_title");
+
+    if (error) {
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Products With SEO" });
     }
 
     return data || [];
@@ -70,8 +74,37 @@ export class CatalogQueryService {
       .single();
 
     if (error) {
-      console.error("Error fetching product:", error);
-      return null;
+      // PGRST116 = "not found" for .single() - return null instead of throwing
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product" });
+    }
+
+    return data;
+  }
+
+  /**
+   * Get a single active product with its SEO data (product_seo relation)
+   */
+  static async getProductWithSeo(
+    blueprintId: number
+  ): Promise<CatalogProductWithSeo | null> {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("catalog_products")
+      .select("*, product_seo(*)")
+      .eq("blueprint_id", blueprintId)
+      .eq("is_active", true)
+      .single();
+
+    if (error) {
+      // PGRST116 = "not found" for .single() - return null instead of throwing
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product With SEO" });
     }
 
     return data;
@@ -96,8 +129,15 @@ export class CatalogQueryService {
       .eq("is_available", true)
       .single();
 
-    if (error || !data) {
-      console.error("Error fetching variant price:", error);
+    if (error) {
+      // PGRST116 = "not found" for .single() - return null instead of throwing
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Variant Price" });
+    }
+
+    if (!data) {
       return null;
     }
 
@@ -123,8 +163,7 @@ export class CatalogQueryService {
       .not("color", "is", null);
 
     if (error) {
-      console.error("Error fetching product colors:", error);
-      return [];
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product Colors" });
     }
 
     const uniqueColors = [...new Set(data?.map((v) => v.color!).filter(Boolean))];
@@ -149,8 +188,7 @@ export class CatalogQueryService {
       .not("size", "is", null);
 
     if (error) {
-      console.error("Error fetching product sizes:", error);
-      return [];
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product Sizes" });
     }
 
     // Sort sizes in standard order
@@ -177,8 +215,7 @@ export class CatalogQueryService {
       .order("size");
 
     if (error) {
-      console.error("Error fetching product variants:", error);
-      return [];
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product Variants" });
     }
 
     return data || [];
@@ -226,6 +263,30 @@ export class CatalogQueryService {
     }
 
     return !!data;
+  }
+
+  /**
+   * Get the Product of the Month (if any is set), including SEO data
+   */
+  static async getProductOfMonth(): Promise<CatalogProductWithSeo | null> {
+    const supabase = createClient();
+
+    const { data, error } = await supabase
+      .from("catalog_products")
+      .select("*, product_seo(*)")
+      .eq("is_active", true)
+      .eq("is_product_of_month", true)
+      .single();
+
+    if (error) {
+      // PGRST116 = "not found" for .single() - return null instead of throwing
+      if (error.code === "PGRST116") {
+        return null;
+      }
+      throw ErrorClient.handleError({ error, service: "Catalog", action: "Get Product of Month" });
+    }
+
+    return data;
   }
 
   /**

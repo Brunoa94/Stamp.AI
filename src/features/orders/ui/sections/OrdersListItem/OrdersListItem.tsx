@@ -1,7 +1,7 @@
 import { canCancelOrder } from "../../../lib/utils/orderCancellation";
 import type { OrderWithItemsT } from "@/types/order";
 import { getFirstOrderItem } from "../../../lib/helpers/orderPresentation";
-import { toDisplayStatus } from "../../../lib/helpers/statusPresentation";
+import { getOrderDisplayStatus } from "../../../lib/helpers/statusPresentation";
 import { OrdersListItemImage } from "./OrdersListItemImage";
 import { OrdersListItemContent } from "./OrdersListItemContent";
 import { OrdersListItemActions } from "./OrdersListItemActions";
@@ -20,7 +20,7 @@ export function OrdersListItem({
   onReorder,
 }: PropsI) {
   const firstItem = getFirstOrderItem(order);
-  const displayedStatus = toDisplayStatus(order.status);
+  const displayedStatus = getOrderDisplayStatus(order);
   const canCancel = canCancelOrder(order);
 
   return (

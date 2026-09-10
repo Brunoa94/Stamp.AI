@@ -5,6 +5,10 @@ import { ShippingAddressT } from "@/schemas/checkout";
 import { mapShippingAddressToBillingDetails } from "@/mappers/mapShippingAddressToBillingDetails";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 import { useCreatePaymentIntent } from "@/queries/stripeQueries";
+import { getStripeIntentStatusMessage } from "@/features/checkout/lib/helpers/getStripeIntentStatusMessage";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { AnalyticsService } from "@/services/analyticsService";
+import { mapAddPaymentInfoEvent } from "@/features/analytics/mappers/ecommerceMappers";
 
 interface UsePaymentFormProps {
   amount: number;
@@ -44,6 +48,8 @@ export function usePaymentForm({
   const [selectedTestMethod, setSelectedTestMethod] = useState<string>("visa");
   const isTestMode = testMode === true;
   const createPaymentIntent = useCreatePaymentIntent();
+  // Use showToast: false since this form shows inline errors
+  const { handleError } = useErrorHandler({ showToast: false });
 
   const processPayment = async () => {
     if (!stripe) {
@@ -66,7 +72,7 @@ export function usePaymentForm({
     try {
       const requestBody: any = {
         amount: amount,
-        currency: "usd",
+        currency: "eur",
         line_items: lineItems,
         shipping_address: shippingAddress,
         // Note: order_id is NOT set here because the order doesn't exist yet.
@@ -104,6 +110,12 @@ export function usePaymentForm({
         throw new Error(t("cardElementNotFound"));
       }
 
+      // Track add_payment_info before confirming payment
+      AnalyticsService.track(
+        "add_payment_info",
+        mapAddPaymentInfoEvent({ lineItems, amount })
+      );
+
       const { error: confirmError, paymentIntent } =
         await stripe.confirmCardPayment(clientSecret, {
           payment_method: {
@@ -118,10 +130,14 @@ export function usePaymentForm({
 
       if (paymentIntent?.status === "succeeded") {
         onSuccess?.(paymentIntent, lineItems);
+      } else {
+        // Every non-successful backend status must surface a user-friendly
+        // message instead of silently doing nothing.
+        throw new Error(getStripeIntentStatusMessage(paymentIntent?.status, t));
       }
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : t("paymentFailed");
+      // Process error through handler for consistent error code extraction
+      const { message: errorMessage } = handleError(err);
       setError(errorMessage);
       onError?.(errorMessage);
     } finally {

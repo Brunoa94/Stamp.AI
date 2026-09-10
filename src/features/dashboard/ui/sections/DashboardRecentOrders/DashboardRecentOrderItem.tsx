@@ -13,8 +13,8 @@ import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import type { OrderWithItemsT } from "@/types/order";
 import {
+  getOrderDisplayStatus,
   getStatusBadgeClass,
-  toDisplayStatus,
 } from "@/features/orders/lib/helpers/statusPresentation";
 import { formatOrderId } from "../../../lib/helpers/formatOrderId";
 import { formatOrderDate } from "../../../lib/utils/formatOrderDate";
@@ -30,8 +30,9 @@ export function DashboardRecentOrderItem({
   onOpenDetails,
 }: DashboardRecentOrderItemPropsI) {
   const t = useTranslations("dashboard.recentOrders");
+  const tStatus = useTranslations("orders.statusBadge");
   const firstItem = order.order_items[0];
-  const displayedStatus = toDisplayStatus(order.status);
+  const displayedStatus = getOrderDisplayStatus(order);
 
   return (
     <li>
@@ -78,7 +79,7 @@ export function DashboardRecentOrderItem({
           unstyled
           className={`status-badge ${getStatusBadgeClass(displayedStatus)}`}
         >
-          {displayedStatus}
+          {tStatus(displayedStatus)}
         </Span>
 
         <ChevronRight className="h-4 w-4 flex-none text-(--color-stamp-taupe) transition-transform duration-300 group-hover:translate-x-1" />

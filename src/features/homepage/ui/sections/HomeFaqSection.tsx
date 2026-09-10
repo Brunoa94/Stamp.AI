@@ -5,12 +5,12 @@
  * zero JS) with a contact support CTA.
  */
 
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
+import { LEGAL_ENTITY } from "@/features/legal/lib/constants/legalEntity";
 import { HOME_FAQS } from "../../lib/constants/homepageContent";
 import { HomeSectionHeader } from "../components/HomeSectionHeader";
 import { SectionReveal } from "../components/SectionReveal";
@@ -19,12 +19,21 @@ export function HomeFaqSection() {
   const t = useTranslations("home.faq");
 
   return (
-    <section id="faq" className="px-6 py-24 lg:px-12 xl:px-24">
-      <SectionReveal className="mx-auto max-w-screen-2xl" parallax fadeOnScroll>
+    <section id="faq" className="relative px-6 py-24 lg:px-12 xl:px-24 overflow-hidden">
+      {/* Decorative gold accent lines */}
+      <div className="absolute top-12 left-6 lg:left-12 xl:left-24 w-32 h-1 bg-(--color-stamp-gold)/40 rounded-full" aria-hidden="true" />
+      <div className="absolute top-12 right-6 lg:right-12 xl:right-24 w-32 h-1 bg-(--color-stamp-gold)/40 rounded-full" aria-hidden="true" />
+
+      {/* Decorative corner frames */}
+      <div className="absolute top-8 left-6 lg:left-12 xl:left-24 w-16 h-16 border-t-2 border-l-2 border-(--color-stamp-gold)/25 rounded-tl-lg" aria-hidden="true" />
+      <div className="absolute top-8 right-6 lg:right-12 xl:right-24 w-16 h-16 border-t-2 border-r-2 border-(--color-stamp-gold)/25 rounded-tr-lg" aria-hidden="true" />
+
+      <SectionReveal className="relative mx-auto max-w-screen-2xl" parallax fadeOnScroll>
         <HomeSectionHeader
           title={t("title")}
           accent={t("accent")}
           label={t("label")}
+          className="mb-16"
         />
 
         <div className="space-y-4">
@@ -56,7 +65,9 @@ export function HomeFaqSection() {
             {t("stillHaveQuestions")}
           </Paragraph>
           <Button asChild variant="primary">
-            <Link href="/contact">{t("contactSupport")}</Link>
+            <a href={`mailto:${LEGAL_ENTITY.supportEmail}`}>
+              {t("contactSupport")}
+            </a>
           </Button>
         </div>
       </SectionReveal>

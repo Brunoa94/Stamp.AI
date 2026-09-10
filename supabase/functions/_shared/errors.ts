@@ -44,6 +44,8 @@ export const ErrorCodes = {
   PRINT_PROVIDER_ID_REQUIRED: () => new FunctionError(400, 'PRINT_PROVIDER_ID_REQUIRED', 'print_provider_id is required'),
   IMAGE_REQUIRED: () => new FunctionError(400, 'IMAGE_REQUIRED', 'At least one print area image is required'),
   INVALID_REQUEST_BODY: () => new FunctionError(400, 'INVALID_REQUEST_BODY', 'Invalid request body'),
+  INVALID_REQUEST: (message: string) => new FunctionError(400, 'INVALID_REQUEST', message),
+  INVALID_COLOR: (message: string) => new FunctionError(400, 'INVALID_COLOR', message),
 
   // Environment errors (500)
   PRINTIFY_TOKEN_MISSING: () => new FunctionError(500, 'PRINTIFY_TOKEN_MISSING', 'Missing PRINTIFY_API_TOKEN'),

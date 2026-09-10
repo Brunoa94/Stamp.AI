@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { capturePayPalOrder, PayPalCaptureError } from "@/lib/paypal-server";
+import { capturePayPalOrder, getPayPalOrder, PayPalCaptureError } from "@/lib/paypal-server";
 import { PayPalCaptureMapper } from "./paypalCaptureMapper";
+import { captureError } from "@/lib/observability/errorCapture";
 
 export const runtime = "nodejs";
 
@@ -19,24 +20,33 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      // `error` is shown to the user in the payment alert — keep it friendly
+      return NextResponse.json(
+        { error: "Your session has expired. Please log in and try again." },
+        { status: 401 }
+      );
     }
 
     const body: CaptureOrderRequest = await request.json();
     const { orderId, payerId } = body;
 
-    if (!orderId) {
-      return NextResponse.json({ error: "Order ID is required" }, { status: 400 });
+    if (typeof orderId !== "string" || !/^[A-Z0-9]+$/i.test(orderId)) {
+      return NextResponse.json(
+        { error: "We couldn't find your payment details. Please try again from the checkout page." },
+        { status: 400 }
+      );
     }
 
-    console.log("Capturing PayPal order:", orderId);
+    // Verify provider-held ownership before performing any financial operation.
+    const order = await getPayPalOrder(orderId);
+    const units = order.purchase_units;
+    if (!units?.length || units.some((unit) =>
+      PayPalCaptureMapper.parseCustomId(unit.custom_id).userId !== user.id
+    )) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
-    // Capture the PayPal order
     const captureResult = await capturePayPalOrder(orderId);
-
-    // Extract capture details using mapper
-    const { customId } = PayPalCaptureMapper.extractCaptureDetails(captureResult);
-    const { metadata, userId } = PayPalCaptureMapper.parseCustomId(customId);
 
     // CRITICAL: Use atomic stored procedure to update payment + order together
     // This prevents scenario where payment succeeds but order stays pending
@@ -73,7 +83,10 @@ export async function POST(request: NextRequest) {
     const successResponse = PayPalCaptureMapper.mapToSuccessResponse(captureResult);
     return NextResponse.json(successResponse);
   } catch (error) {
-    console.error("Error capturing PayPal order:", error);
+    captureError(error, {
+      service: "PayPalAPI",
+      action: "captureOrder",
+    });
 
     // Handle PayPalCaptureError with user-friendly message
     if (error instanceof PayPalCaptureError) {
@@ -88,9 +101,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Never surface raw internal errors (database, network) to the user —
+    // the details are already captured above for debugging.
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Failed to capture PayPal order",
+        error:
+          "We couldn't complete your PayPal payment. If you were charged, please contact support.",
       },
       { status: 500 }
     );

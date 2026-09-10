@@ -1,6 +1,6 @@
 import type { OrderWithItemsT } from "@/types/order";
 import { getFirstOrderItem } from "../../../lib/helpers/orderPresentation";
-import { toDisplayStatus } from "../../../lib/helpers/statusPresentation";
+import { getOrderDisplayStatus } from "../../../lib/helpers/statusPresentation";
 import { OrdersGridItemIndex } from "./OrdersGridItemIndex";
 import { OrdersGridItemStatusBadge } from "./OrdersGridItemStatusBadge";
 import { OrdersGridItemImage } from "./OrdersGridItemImage";
@@ -22,7 +22,7 @@ export function OrdersGridItem({
   onReorder,
 }: PropsI) {
   const firstItem = getFirstOrderItem(order);
-  const displayedStatus = toDisplayStatus(order.status);
+  const displayedStatus = getOrderDisplayStatus(order);
 
   return (
     <article className="group relative overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover)">

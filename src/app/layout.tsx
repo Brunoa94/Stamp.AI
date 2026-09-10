@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bebas_Neue, Poppins, Outfit } from "next/font/google";
+import { Bebas_Neue, Poppins, Outfit, Sanchez, Indie_Flower, Inter } from "next/font/google";
 import "./globals.css";
 import "./globals-stamp.css";
 
@@ -17,6 +17,10 @@ import { BRAND_COLORS } from "@/features/seo/config/site";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { AppLayoutChrome } from "@/components/AppLayoutChrome";
+import { GoogleAnalytics } from "@/features/analytics/GoogleAnalytics";
+import { AnalyticsPageViewTracker } from "@/features/analytics/AnalyticsPageViewTracker";
+import { GlobalErrorBoundary } from "@/components/ErrorBoundary/GlobalErrorBoundary";
+import { WebVitalsReporter } from "@/components/WebVitalsReporter";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -38,6 +42,30 @@ const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700"],
+  display: "swap",
+  preload: true,
+});
+
+const sanchez = Sanchez({
+  variable: "--font-sanchez",
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+  preload: true,
+});
+
+const indieFlower = Indie_Flower({
+  variable: "--font-indie-flower",
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+  preload: true,
+});
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
   preload: true,
 });
@@ -65,27 +93,32 @@ export default async function RootLayout({
   return (
     <html lang="en" className="light scheme-light" suppressHydrationWarning>
       <body
-        className={`${poppins.variable} ${bebasNeue.variable} ${outfit.variable} antialiased`}
+        className={`${poppins.variable} ${bebasNeue.variable} ${outfit.variable} ${sanchez.variable} ${indieFlower.variable} ${inter.variable} antialiased`}
       >
+        <GoogleAnalytics />
+        <AnalyticsPageViewTracker />
         <StructuredData data={organizationSchema()} />
         <StructuredData data={webSiteSchema()} />
         <GrainOverlay />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider>
-            <SupabaseAuthProvider>
-              <QueryProvider>
-                <ScrollToTop />
-                <AppLayoutChrome>{children}</AppLayoutChrome>
-                <Toaster
-                  position="bottom-right"
-                  offset={24}
-                  gap={12}
-                  toastOptions={{
-                    unstyled: true,
-                  }}
-                />
-              </QueryProvider>
-            </SupabaseAuthProvider>
+            <WebVitalsReporter />
+            <GlobalErrorBoundary>
+              <SupabaseAuthProvider>
+                <QueryProvider>
+                  <ScrollToTop />
+                  <AppLayoutChrome>{children}</AppLayoutChrome>
+                  <Toaster
+                    position="bottom-right"
+                    offset={24}
+                    gap={12}
+                    toastOptions={{
+                      unstyled: true,
+                    }}
+                  />
+                </QueryProvider>
+              </SupabaseAuthProvider>
+            </GlobalErrorBoundary>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

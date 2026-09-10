@@ -22,7 +22,7 @@ export function CreditSummary({ credits, price }: CreditSummaryProps) {
             {t("credits", { credits: credits.toLocaleString() })}
           </span>
         </div>
-        <span className={theme.priceValue}>${price.toFixed(2)}</span>
+        <span className={theme.priceValue}>€{price.toFixed(2)}</span>
       </div>
     </div>
   );

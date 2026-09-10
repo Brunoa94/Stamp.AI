@@ -1,6 +1,5 @@
-
+import { memo } from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { STAMP_STEPS } from "../../lib/constants/stampSteps";
@@ -12,11 +11,12 @@ import { useStampStepAccessibility } from "../../lib/hooks/useStampSelectors";
  *
  * Fixed sidebar navigation for the Stamp flow.
  * Displays progress through the 8-stage synthesis protocol.
+ * Step indicators show progress (navigation is via BackButton component).
  */
 
-export function NavigationSidebar() {
+function NavigationSidebarComponent() {
   const t = useTranslations("stamp");
-  const { currentStep, goToStep } = useStampNavigation();
+  const { currentStep } = useStampNavigation();
   const { isStepAccessible } = useStampStepAccessibility();
 
   return (
@@ -32,42 +32,36 @@ export function NavigationSidebar() {
         </Heading>
       </div>
 
-      {/* Navigation Links */}
+      {/* Step Indicators (display only, navigation via BackButton) */}
       <nav className="space-y-6 flex-1" aria-label={t("nav.stepNavAria")}>
         {STAMP_STEPS.map((step, index) => {
           const stepNumber = index;
           const isActive =
             stepNumber === currentStep ||
             (stepNumber === 0 && currentStep === 0);
-          const isAccessible = isStepAccessible(stepNumber);
+          const isCompleted = isStepAccessible(stepNumber) && stepNumber < currentStep;
           const stepTitle = t(`steps.${step.id}.title`);
 
           return (
-            <Button
+            <div
               key={step.id}
-              variant="ghost"
-              onClick={() => isAccessible && goToStep(stepNumber)}
-              disabled={!isAccessible}
-              className={`flex items-center justify-start gap-4 group transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] w-full text-left h-auto p-0 rounded-none hover:bg-transparent ${
+              className={`flex items-center justify-start gap-4 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                 isActive
                   ? "opacity-100 -translate-x-2"
-                  : isAccessible
-                    ? "opacity-30 hover:opacity-60"
-                    : "opacity-15 cursor-not-allowed"
+                  : isCompleted
+                    ? "opacity-50"
+                    : "opacity-15"
               }`}
               aria-current={isActive ? "step" : undefined}
-              aria-label={
-                isAccessible
-                  ? t("nav.navigate", { title: stepTitle })
-                  : t("nav.navigateLocked", { title: stepTitle })
-              }
             >
               {/* Dot Indicator */}
               <div
                 className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
                   isActive
                     ? "bg-(--color-stamp-gold) shadow-[0_0_15px_var(--color-stamp-gold)]"
-                    : "bg-(--color-stamp-divider)"
+                    : isCompleted
+                      ? "bg-(--color-stamp-chocolate)"
+                      : "bg-(--color-stamp-divider)"
                 }`}
               />
 
@@ -77,10 +71,12 @@ export function NavigationSidebar() {
                   ? stepTitle
                   : `${step.number} ${stepTitle}`}
               </Span>
-            </Button>
+            </div>
           );
         })}
       </nav>
     </aside>
   );
 }
+
+export const NavigationSidebar = memo(NavigationSidebarComponent);

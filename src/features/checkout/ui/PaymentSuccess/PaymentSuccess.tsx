@@ -6,6 +6,7 @@ import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
+import { TrustpilotReviewButton } from "@/features/ui/trust/TrustpilotReviewButton";
 import { PaymentResultDetailsGrid } from "../components/PaymentResultDetailsGrid";
 import type { PaymentSuccessDetailsI } from "@/types/payment";
 
@@ -23,7 +24,7 @@ const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
   const confirmationEmail = details?.confirmationEmail;
 
   return (
-    <div className="min-h-screen flex justify-center pt-32 lg:pt-40 px-6 bg-(--color-stamp-cream)">
+    <div className="min-h-screen flex justify-center pt-20 px-6 bg-(--color-stamp-cream)">
       <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
         <section
           className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
@@ -72,26 +73,24 @@ const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
 
           {/* CTAs */}
           <div className="flex flex-col gap-4">
-            <Button
-              asChild
-              className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-chocolate)/90"
-            >
+            <Button asChild variant="primary" className="w-full">
               <Link href="/orders">{t("trackOrder")}</Link>
             </Button>
-            <Button
-              variant="outline"
-              onClick={onCreateAnother}
-              className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase border-(--color-stamp-divider) text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
-            >
+            <Button variant="secondary" onClick={onCreateAnother} className="w-full">
               {t("createAnother")}
             </Button>
+          </div>
+
+          {/* Trustpilot review CTA */}
+          <div className="mt-8 pt-8 border-t border-(--color-stamp-divider)">
+            <TrustpilotReviewButton variant="prominent" />
           </div>
 
           {/* Confirmation email note */}
           {confirmationEmail && (
             <Span
               variant="micro"
-              className="block mt-12 text-(--color-stamp-taupe)"
+              className="block mt-8 text-(--color-stamp-taupe)"
             >
               {t("confirmationEmail", { email: confirmationEmail })}
             </Span>

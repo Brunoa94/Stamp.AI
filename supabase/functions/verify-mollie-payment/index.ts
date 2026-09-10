@@ -48,29 +48,44 @@ serve(async (req) => {
           ? (metadata.orderId as string)
           : undefined;
 
-    // Fallback sync: upsert payment transaction from verification endpoint
-    // This ensures order/payment statuses are updated even when webhook is delayed/unavailable.
-    const txResult = await supabaseRest(
-      "payment_transactions?on_conflict=mollie_payment_id",
+    // Sync payment transaction status using atomic RPC (same as webhook)
+    // This ensures the status is updated even when webhook is delayed/unavailable.
+    // Use the RPC function for reliable upsert behavior.
+    const upsertResult = await supabaseRest(
+      "rpc/upsert_mollie_payment_transaction",
       "POST",
       {
-        user_id: userId,
-        order_id: orderId,
-        payment_provider: "mollie",
-        mollie_payment_id: payment.id,
-        mollie_status: payment.status,
-        amount: parseFloat(payment.amount.value),
-        currency: payment.amount.currency.toLowerCase(),
-        status: internalStatus,
-        payment_method_type: payment.method || "unknown",
-        metadata,
-        updated_at: new Date().toISOString(),
-      },
-      { prefer: "resolution=merge-duplicates" }
+        p_mollie_payment_id: payment.id,
+        p_user_id: userId || null,
+        p_order_id: orderId || null,
+        p_amount: parseFloat(payment.amount.value),
+        p_currency: payment.amount.currency.toLowerCase(),
+        p_status: internalStatus,
+        p_metadata: metadata,
+      }
     );
 
-    if (txResult.error) {
-      console.error("Failed to sync payment_transactions from verify endpoint:", txResult.error);
+    if (upsertResult.error) {
+      console.error("Failed to upsert payment_transactions from verify endpoint:", upsertResult.error);
+
+      // Fallback: try direct PATCH to update existing transaction
+      const patchResult = await supabaseRest(
+        `payment_transactions?mollie_payment_id=eq.${payment.id}`,
+        "PATCH",
+        {
+          mollie_status: payment.status,
+          status: internalStatus,
+          updated_at: new Date().toISOString(),
+        }
+      );
+
+      if (patchResult.error) {
+        console.error("Fallback PATCH also failed:", patchResult.error);
+      } else {
+        console.log("✅ Payment transaction updated via fallback PATCH");
+      }
+    } else {
+      console.log("✅ Payment transaction upserted:", payment.id, "status:", internalStatus);
     }
 
     if (orderId) {

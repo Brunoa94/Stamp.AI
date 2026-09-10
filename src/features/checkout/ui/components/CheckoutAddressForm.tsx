@@ -20,7 +20,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/features/ui/select";
-import { shippingFormConfig, type FieldRow } from "@/constants/shippingFormConfig";
+import {
+  shippingFormConfig,
+  type FieldRow,
+} from "@/constants/shippingFormConfig";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 
 interface CheckoutAddressFormPropsI {
@@ -28,12 +31,7 @@ interface CheckoutAddressFormPropsI {
   config?: FieldRow[];
 }
 
-const LABEL_CLASS =
-  "text-base font-bold uppercase tracking-[0.2em] text-(--color-stamp-taupe)";
-const INPUT_CLASS =
-  "h-12 rounded-none border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 text-xl uppercase tracking-[0.05em] text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/40 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20";
-const ERROR_CLASS =
-  "text-[11px] font-bold uppercase tracking-[0.15em] text-(--color-stamp-error)";
+// Consistent with stamp-auth styling from login forms
 
 export function CheckoutAddressForm({
   fieldPrefix,
@@ -62,10 +60,13 @@ export function CheckoutAddressForm({
 
             return (
               <div key={field.id} className="space-y-2">
-                <Label htmlFor={fieldName} className={LABEL_CLASS}>
+                <Label htmlFor={fieldName}>
                   {t(`fields.${field.id}`)}
                   {field.required && (
-                    <span className="text-(--color-stamp-gold)" aria-hidden="true">
+                    <span
+                      className="text-(--color-stamp-gold)"
+                      aria-hidden="true"
+                    >
                       *
                     </span>
                   )}
@@ -78,9 +79,11 @@ export function CheckoutAddressForm({
                   >
                     <SelectTrigger
                       id={fieldName}
-                      className="h-12 rounded-none border-(--color-stamp-divider) bg-(--color-stamp-white) text-xl uppercase tracking-[0.05em] text-(--color-stamp-chocolate) focus:ring-2 focus:ring-(--color-stamp-gold)/30"
+                      className="h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) focus:ring-2 focus:ring-(--color-stamp-gold)/20 focus:border-(--color-stamp-gold)"
                     >
-                      <SelectValue placeholder={t("selectCountryPlaceholder")} />
+                      <SelectValue
+                        placeholder={t("selectCountryPlaceholder")}
+                      />
                     </SelectTrigger>
                     <SelectContent>
                       {field.options.map((option) => (
@@ -96,13 +99,12 @@ export function CheckoutAddressForm({
                     type={field.type || "text"}
                     aria-invalid={!!error}
                     aria-describedby={error ? `${fieldName}-error` : undefined}
-                    className={INPUT_CLASS}
                     {...register(fieldName)}
                   />
                 )}
 
                 {error && (
-                  <p id={`${fieldName}-error`} role="alert" className={ERROR_CLASS}>
+                  <p id={`${fieldName}-error`} role="alert">
                     {ve(error.message)}
                   </p>
                 )}

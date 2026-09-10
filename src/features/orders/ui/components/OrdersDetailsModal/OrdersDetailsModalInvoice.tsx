@@ -33,7 +33,7 @@ export function OrdersDetailsModalInvoice({ order }: PropsI) {
         onClick={handleDownload}
         disabled={isLoading}
         variant="ghost"
-        className="h-auto w-full justify-center gap-2 rounded-none border border-(--color-stamp-divider) px-4 py-3 text-[10px] font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate) hover:bg-(--color-stamp-cream)/60 hover:text-(--color-stamp-chocolate)"
+        className="h-auto w-full justify-center gap-2 border-2 border-(--color-stamp-divider) px-4 py-3 font-semibold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:bg-(--color-stamp-cream)/60 hover:border-(--color-stamp-chocolate) hover:shadow-md"
       >
         {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin" />

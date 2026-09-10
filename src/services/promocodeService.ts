@@ -5,6 +5,7 @@ import {
   PromoCodeT,
   PromoCodeSchema,
 } from "@/schemas/promocode";
+import { ErrorClient } from "./errorClient";
 
 export class PromoCodeService {
   private static getSupabase() {
@@ -19,7 +20,11 @@ export class PromoCodeService {
       .select("promocode_id, code, type, value, created_at")
       .order("created_at", { ascending: false });
 
-    if (error || !data) {
+    if (error) {
+      throw ErrorClient.handleError({ error, service: "PromoCode", action: "Get Available Promo Codes" });
+    }
+
+    if (!data) {
       return [];
     }
 
@@ -59,7 +64,20 @@ export class PromoCodeService {
       .eq("code", normalizedCode)
       .single();
 
-    if (error || !data) {
+    if (error) {
+      // PGRST116 = "not found" for .single() - this means invalid code, not an error
+      if (error.code === "PGRST116") {
+        return {
+          isValid: false,
+          message: "Invalid promo code.",
+          appliedPromo: null,
+        };
+      }
+      // Actual database error
+      throw ErrorClient.handleError({ error, service: "PromoCode", action: "Validate Promo Code" });
+    }
+
+    if (!data) {
       return {
         isValid: false,
         message: "Invalid promo code.",

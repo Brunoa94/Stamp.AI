@@ -1,11 +1,14 @@
 import { SITE_URL } from "../config/site";
 import type { FaqEntry } from "./types";
 
-export function faqPageSchema(entries: FaqEntry[]) {
+export function faqPageSchema(
+  entries: FaqEntry[],
+  id: string = `${SITE_URL}/#faq`
+) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "@id": `${SITE_URL}/#faq`,
+    "@id": id,
     mainEntity: entries.map(({ question, answer }) => ({
       "@type": "Question",
       name: question,

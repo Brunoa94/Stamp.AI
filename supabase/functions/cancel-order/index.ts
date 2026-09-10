@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
+import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -32,6 +33,7 @@ interface PaymentTransactionI {
   mollie_payment_id: string | null;
   amount: number;
   currency: string | null;
+  status: string;
 }
 
 const CANCELLABLE_ORDER_STATUSES = new Set(["", "created", "pending", "confirmed"]);
@@ -44,6 +46,11 @@ function canCancelOrder(status: string | null): boolean {
   const orderStatus = normalizeStatus(status);
   if (orderStatus === "cancelled" || orderStatus === "canceled") return false;
   return CANCELLABLE_ORDER_STATUSES.has(orderStatus);
+}
+
+function isAlreadyCancelled(status: string | null): boolean {
+  const orderStatus = normalizeStatus(status);
+  return orderStatus === "cancelled" || orderStatus === "canceled";
 }
 
 /**
@@ -97,15 +104,52 @@ serve(async (req) => {
       throw ErrorCodes.UNAUTHORIZED("You do not have permission to cancel this order");
     }
 
-    // Check if order can be cancelled
+    // Check if order is already cancelled - return success with refund status
+    if (isAlreadyCancelled(order.status)) {
+      console.log("Order is already cancelled, checking refund status...");
+
+      // Check if refund was processed
+      const refundResult = await supabaseRest<PaymentTransactionI[]>(
+        `payment_transactions?order_id=eq.${order_id}&select=payment_provider,stripe_payment_intent_id,paypal_capture_id,mollie_payment_id,amount,currency,status`,
+        "GET"
+      );
+
+      const hasRefund = refundResult.data?.some(tx => tx.status === "refunded");
+      const hasPaidTransaction = refundResult.data?.some(tx => tx.status === "succeeded");
+
+      console.log("Refund status check:", {
+        hasRefund,
+        hasPaidTransaction,
+        transactions: refundResult.data?.length || 0,
+      });
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: "Order is already cancelled",
+          already_cancelled: true,
+          results: {
+            order_id,
+            cancelled_at_printify: true, // Assume it was cancelled if order is cancelled
+            database_updated: true,
+            refund_processed: hasRefund,
+            refund_pending: hasPaidTransaction && !hasRefund,
+          },
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Check if order can be cancelled (not in production/shipped)
     if (!canCancelOrder(order.status)) {
       return new Response(
         JSON.stringify({
           success: false,
           message: "Order cannot be cancelled",
-          reason: order.status === "cancelled"
-            ? "Order is already cancelled"
-            : "Orders can only be cancelled before entering production",
+          reason: "Orders can only be cancelled before entering production",
         }),
         {
           status: 400,
@@ -149,20 +193,26 @@ serve(async (req) => {
           console.warn("⚠️ Failed to cancel at Printify:", printifyData);
           results.printify_error = printifyData.errors?.reason || "Unknown error";
 
-          // If Printify says order cannot be cancelled, stop here
+          // Check if Printify says order status doesn't allow cancellation
+          // This could mean: already cancelled, in production, or shipped
           if (printifyData.errors?.reason?.includes("status")) {
-            return new Response(
-              JSON.stringify({
-                success: false,
-                message: "Order cannot be cancelled at Printify",
-                reason: "Order is already in production or shipped",
-                error: printifyData.errors?.reason,
-              }),
-              {
-                status: 400,
-                headers: { ...corsHeaders, "Content-Type": "application/json" },
-              }
-            );
+            // Check if the order is already cancelled at Printify (code 8501 with status message)
+            // In this case, we should continue with our database update and refund
+            const isAlreadyCancelledAtPrintify =
+              printifyData.errors?.reason?.toLowerCase().includes("does not allow cancellation") ||
+              printifyData.errors?.reason?.toLowerCase().includes("already cancelled");
+
+            if (isAlreadyCancelledAtPrintify) {
+              console.log("⚠️ Order may already be cancelled at Printify, continuing with database update...");
+              results.cancelled_at_printify = true; // Treat as cancelled
+              results.printify_note = "Order was already cancelled or in non-cancellable state at Printify";
+            } else {
+              // Only block if it's truly in production/shipped (not just already cancelled)
+              // Check the actual Printify order status before blocking
+              console.log("⚠️ Printify cancellation blocked, but continuing with local cancellation and refund...");
+              results.printify_blocked = true;
+              // Don't return error - continue with database update and refund
+            }
           }
         }
       } catch (printifyError) {
@@ -195,6 +245,9 @@ serve(async (req) => {
 
     console.log("✅ Order status updated to cancelled");
     results.database_updated = true;
+
+    // Insert status history for cancellation
+    await insertOrderStatusHistory(order_id, "cancelled", "cancellation");
 
     // Step 3: Process refund if payment was successful
     // NOTE: We check payment_transactions directly instead of relying on orders.payment_method

@@ -16,12 +16,16 @@ import type { CartItem } from "@/types/cart";
 
 interface CartItemCardPropsI {
   item: CartItem;
+  isSelected: boolean;
+  onToggleSelection: (itemId: string) => void;
   onUpdateQuantity: (itemId: string, quantity: number) => void;
   onRemove: (itemId: string) => void;
 }
 
 export function CartItemCard({
   item,
+  isSelected,
+  onToggleSelection,
   onUpdateQuantity,
   onRemove,
 }: CartItemCardPropsI) {
@@ -30,8 +34,50 @@ export function CartItemCard({
     item.product_name || item.product?.name || t("customProduct");
 
   return (
-    <article className="cart-item border border-(--color-stamp-divider) bg-(--color-stamp-white) p-4 font-heading transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover) md:p-8 lg:p-10">
+    <article
+      className={`cart-item border bg-(--color-stamp-white) p-4 font-heading transition-all duration-500 hover:-translate-y-1 hover:shadow-(--shadow-stamp-card-hover) md:p-8 lg:p-10 ${
+        isSelected
+          ? "border-(--color-stamp-gold)"
+          : "border-(--color-stamp-divider) hover:border-(--color-stamp-gold)"
+      }`}
+    >
       <div className="flex flex-col items-start gap-4 md:flex-row md:gap-10">
+        {/* Selection checkbox */}
+        <div className="flex items-center self-center md:self-start md:pt-2">
+          <label className="relative flex cursor-pointer items-center">
+            <input
+              type="checkbox"
+              checked={isSelected}
+              onChange={() => onToggleSelection(item.id)}
+              className="peer sr-only"
+              aria-label={t("selectItem", { product: productName })}
+            />
+            <div
+              className={`flex h-6 w-6 items-center justify-center border-2 transition-all duration-200 ${
+                isSelected
+                  ? "border-(--color-stamp-gold) bg-(--color-stamp-gold)"
+                  : "border-(--color-stamp-chocolate-light) bg-(--color-stamp-white) hover:border-(--color-stamp-gold)"
+              }`}
+            >
+              {isSelected && (
+                <svg
+                  className="h-4 w-4 text-(--color-stamp-white)"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={3}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              )}
+            </div>
+          </label>
+        </div>
+
         <CartItemCardImage
           imageUrl={item.custom_image_url}
           productName={productName}

@@ -14,6 +14,9 @@ import { PAYMENT_ICONS } from "../../lib/constants/paymentIcons";
 export function HomePaymentMethods() {
   const t = useTranslations("home.guarantees");
 
+  // Filter out iDEAL since it's not live yet (parity with FooterPaymentIcons)
+  const activePaymentIcons = PAYMENT_ICONS.filter((icon) => icon.id !== "ideal");
+
   return (
     <div className="mt-16 flex flex-col items-center">
       <div className="mb-6 flex items-center gap-2">
@@ -27,7 +30,7 @@ export function HomePaymentMethods() {
       </div>
 
       <div className="mb-6 flex flex-wrap items-center justify-center gap-3">
-        {PAYMENT_ICONS.map((payment) => (
+        {activePaymentIcons.map((payment) => (
           <div
             key={payment.id}
             className="flex h-14 items-center justify-center rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 transition-colors duration-300 hover:border-(--color-stamp-gold)"

@@ -1,10 +1,11 @@
 /**
  * Payment Method Icons
  *
- * SVG icons for payment providers displayed in the payment methods section.
- * Clean, recognizable brand icons for Visa, Mastercard, Amex, PayPal, Apple Pay, and Google Pay.
+ * Image-based icons for payment providers displayed in the payment methods section.
+ * Uses actual brand images from /public/payment-options/ for accurate representation.
  */
 
+import Image from "next/image";
 import type { ReactNode } from "react";
 
 interface PaymentIcon {
@@ -18,124 +19,65 @@ export const PAYMENT_ICONS: PaymentIcon[] = [
     id: "visa",
     label: "Visa",
     icon: (
-      <svg viewBox="0 0 750 471" className="h-8 w-14" aria-label="Visa">
-        <rect width="750" height="471" rx="40" fill="#1A1F71" />
-        <path
-          d="M278.2 334.2h-49.4l30.9-188.8h49.4zm209.8-184.3c-9.8-3.8-25.2-7.9-44.4-7.9-48.9 0-83.4 25.6-83.6 62.3-.3 27.1 24.6 42.2 43.4 51.2 19.3 9.2 25.8 15.1 25.7 23.4-.1 12.6-15.4 18.4-29.7 18.4-19.8 0-30.4-2.9-46.7-9.9l-6.4-3-7 42.5c11.6 5.3 33 9.9 55.2 10.1 52 0 85.8-25.3 86.2-64.5.2-21.5-13-37.8-41.5-51.3-17.3-8.7-27.9-14.5-27.8-23.4 0-7.8 9-16.2 28.4-16.2 16.2-.3 28 3.4 37.1 7.2l4.5 2.2zm63.9-4.5h-38.2c-11.8 0-20.7 3.4-25.9 15.7l-73.4 172.9h52l10.4-28.3h63.5l6 28.3h45.9zm-54.7 116.8l19.6-52.3 4.2-11.3 3.4 10.2 11.4 53.4zm-256.4-116.8l-48.5 128.8-5.2-26.1c-9-30.1-37.1-62.7-68.5-79l44.4 165h52.4l77.9-188.7z"
-          fill="#fff"
-        />
-        <path
-          d="M146.9 145.4h-79.9l-.6 3.6c62.1 15.6 103.2 53.4 120.3 98.7l-17.3-87c-3-11.7-11.6-15-22.5-15.3z"
-          fill="#F9A533"
-        />
-      </svg>
+      <Image
+        src="/payment-options/visa.png"
+        alt="Visa"
+        width={56}
+        height={32}
+        className="h-6 w-auto object-contain"
+      />
     ),
   },
   {
     id: "mastercard",
     label: "Mastercard",
     icon: (
-      <svg viewBox="0 0 750 471" className="h-8 w-14" aria-label="Mastercard">
-        <rect width="750" height="471" rx="40" fill="#fff" />
-        <circle cx="299" cy="235" r="140" fill="#EB001B" />
-        <circle cx="451" cy="235" r="140" fill="#F79E1B" />
-        <path
-          d="M375 130c-36.3 29.3-59.6 74-59.6 124s23.3 94.7 59.6 124c36.3-29.3 59.6-74 59.6-124s-23.3-94.7-59.6-124z"
-          fill="#FF5F00"
-        />
-      </svg>
+      <Image
+        src="/payment-options/mastercard.webp"
+        alt="Mastercard"
+        width={56}
+        height={32}
+        className="h-10 w-auto object-contain"
+      />
     ),
   },
   {
     id: "amex",
     label: "American Express",
     icon: (
-      <svg
-        viewBox="0 0 750 471"
-        className="h-8 w-14"
-        aria-label="American Express"
-      >
-        <rect width="750" height="471" rx="40" fill="#006FCF" />
-        <path d="M0 235h750" stroke="#fff" strokeWidth="0" fill="none" />
-        <text
-          x="375"
-          y="260"
-          textAnchor="middle"
-          fill="#fff"
-          fontSize="120"
-          fontFamily="Arial, sans-serif"
-          fontWeight="bold"
-        >
-          AMEX
-        </text>
-      </svg>
+      <Image
+        src="/payment-options/amex.png"
+        alt="American Express"
+        width={56}
+        height={32}
+        className="h-10 w-auto object-contain"
+      />
     ),
   },
   {
     id: "paypal",
     label: "PayPal",
     icon: (
-      <svg viewBox="0 0 750 471" className="h-8 w-14" aria-label="PayPal">
-        <rect width="750" height="471" rx="40" fill="#fff" />
-        <path
-          d="M306.9 145.3h-96.2c-6.6 0-12.2 4.8-13.2 11.3l-39 245.5c-.8 4.9 3 9.3 8 9.3h46c6.6 0 12.2-4.8 13.2-11.3l10.5-66.3c1-6.5 6.6-11.3 13.2-11.3h30.4c63.4 0 100-30.7 109.5-91.5 4.3-26.6.2-47.5-12.2-62.1-13.6-16.1-37.7-24.6-70.2-24.6z"
-          fill="#003087"
-        />
-        <path
-          d="M447.9 145.3h-96.2c-6.6 0-12.2 4.8-13.2 11.3l-39 245.5c-.8 4.9 3 9.3 8 9.3h49.4c4.6 0 8.5-3.3 9.2-7.9l11.1-70c1-6.5 6.6-11.3 13.2-11.3h30.4c63.4 0 100-30.7 109.5-91.5 4.3-26.6.2-47.5-12.2-62.1-13.6-16.1-37.7-23.3-70.2-23.3z"
-          fill="#009CDE"
-        />
-      </svg>
+      <Image
+        src="/payment-options/paypal.png"
+        alt="PayPal"
+        width={56}
+        height={32}
+        className="h-10 w-auto object-contain"
+      />
     ),
   },
   {
-    id: "applepay",
-    label: "Apple Pay",
+    id: "ideal",
+    label: "iDEAL",
     icon: (
-      <svg viewBox="0 0 750 471" className="h-8 w-14" aria-label="Apple Pay">
-        <rect width="750" height="471" rx="40" fill="#000" />
-        <path
-          d="M237.1 181.4c-9.5 11.2-24.6 20-39.3 18.7-1.9-15.1 5.5-31.1 14.1-41 9.5-11.4 25.6-19.6 38.8-20.2 1.6 15.6-4.6 30.9-13.6 42.5zm13.4 21.5c-21.7-1.3-40.2 12.4-50.5 12.4s-26.2-11.7-43.2-11.4c-22.2.3-42.8 13-54.2 33-23.2 40.2-6 99.7 16.5 132.4 11 16.1 24.2 34.2 41.5 33.6 16.6-.7 22.9-10.8 43-10.8s25.8 10.8 43.4 10.5c17.9-.3 29.3-16.4 40.3-32.5 12.5-18.6 17.6-36.6 17.9-37.6-.4-.2-34.4-13.3-34.8-52.7-.3-32.9 26.8-48.7 28-49.5-15.3-22.7-39.2-25.2-47.6-25.8l-.3-.6zm157.9-44.4v235h36.5v-80.4h50.5c46.2 0 78.6-31.7 78.6-77.5s-31.7-77.1-77.1-77.1zm36.5 31h42c31.7 0 49.8 16.9 49.8 46.6 0 29.7-18.1 46.7-49.9 46.7h-41.9zm188.2 206.2c22.9 0 44.1-11.6 53.8-30h.7v28.2h33.8V274c0-33.9-27.1-55.8-68.8-55.8-38.6 0-67.4 22.3-68.4 52.9h32.9c2.7-14.6 16.4-24.2 34.1-24.2 22 0 34.4 10.3 34.4 29.2v12.8l-45 2.7c-41.9 2.5-64.5 19.6-64.5 49.2 0 30 23.2 49.8 57 49.8zm9.8-27.3c-19.2 0-31.4-9.2-31.4-23.3 0-14.6 11.7-23.1 34.1-24.4l40.1-2.5v13.1c0 21.5-18.2 37.1-42.8 37.1zm115.9 82.3c35.6 0 52.3-13.6 66.9-54.8l64.2-179.7h-37.3l-43 135.3h-.7l-43-135.3h-38.4l61.9 171.3-3.3 10.4c-5.6 17.7-14.6 24.5-30.7 24.5-2.9 0-8.4-.3-10.7-.6v28.3c2.1.5 11.2.6 14.1.6z"
-          fill="#fff"
-        />
-      </svg>
-    ),
-  },
-  {
-    id: "googlepay",
-    label: "Google Pay",
-    icon: (
-      <svg viewBox="0 0 750 471" className="h-8 w-14" aria-label="Google Pay">
-        <rect width="750" height="471" rx="40" fill="#fff" />
-        <path
-          d="M358.2 235.5v67.7h-21.6v-167.5h57.3c13.8 0 25.5 4.5 35.2 13.5 9.9 9 14.8 20 14.8 33.1 0 13.4-4.9 24.5-14.8 33.4-9.6 8.9-21.3 13.3-35.2 13.3h-35.7zm0-79.1v58.4h36.3c8.1 0 14.9-2.7 20.3-8 5.5-5.4 8.3-11.9 8.3-19.5 0-7.5-2.8-13.9-8.3-19.2-5.3-5.5-12.1-8.3-20.3-8.3h-36.3z"
-          fill="#5F6368"
-        />
-        <path
-          d="M487.6 193.7c15.9 0 28.4 4.3 37.6 12.8 9.2 8.5 13.8 20.2 13.8 35.1v71h-20.6v-16h-.9c-8.9 13.1-20.7 19.7-35.4 19.7-12.5 0-23-3.7-31.4-11.1-8.4-7.4-12.6-16.7-12.6-27.9 0-11.8 4.5-21.2 13.4-28.2 9-7 21-10.5 36-10.5 12.8 0 23.4 2.4 31.6 7.1v-5c0-9-3.4-16.5-10.2-22.6-6.8-6.1-14.8-9.2-24-9.2-13.9 0-24.9 5.9-33 17.7l-19-11.9c12-17.3 29.9-26 53.7-26zm-27.7 91.7c0 6.8 2.8 12.4 8.5 16.9 5.6 4.5 12.2 6.7 19.7 6.7 10.7 0 20-4 27.8-11.9 7.8-7.9 11.7-17.2 11.7-27.9-6.6-5.4-15.8-8.1-27.5-8.1-8.5 0-15.7 2.1-21.4 6.4-5.8 4.4-8.8 9.6-8.8 17.9z"
-          fill="#5F6368"
-        />
-        <path
-          d="M641.8 196.8l-72.3 166.4h-22.2l26.9-58.2-47.6-108.2h23.4l34.1 82.2h.5l33.2-82.2z"
-          fill="#5F6368"
-        />
-        <path
-          d="M292.2 235.3c0-5.8-.5-11.4-1.4-16.8h-94.6v31.8h54.1c-2.3 12.5-9.4 23.1-20 30.2v25h32.3c18.9-17.5 29.6-43.3 29.6-70.2z"
-          fill="#4285F4"
-        />
-        <path
-          d="M196.2 311.3c27.1 0 49.8-9 66.4-24.3l-32.3-25c-9 6-20.5 9.6-34.1 9.6-26.2 0-48.4-17.7-56.4-41.5H106v25.8c16.4 32.5 50 55.4 90.2 55.4z"
-          fill="#34A853"
-        />
-        <path
-          d="M139.8 230c-2-6-3.2-12.4-3.2-19s1.2-13 3.2-19v-25.8H106c-7.3 14.4-11.4 30.7-11.4 47.8s4.1 33.4 11.4 47.8z"
-          fill="#FBBC04"
-        />
-        <path
-          d="M196.2 150.5c14.8 0 28 5.1 38.5 15.1l28.8-28.8c-17.4-16.2-40.2-26.2-67.3-26.2-40.2 0-73.8 22.9-90.2 55.4l33.8 25.8c8-23.8 30.2-41.3 56.4-41.3z"
-          fill="#EA4335"
-        />
-      </svg>
+      <Image
+        src="/payment-options/ideal.webp"
+        alt="iDEAL"
+        width={56}
+        height={32}
+        className="h-10 w-auto object-contain"
+      />
     ),
   },
 ];

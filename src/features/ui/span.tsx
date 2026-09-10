@@ -20,13 +20,13 @@ import { cn } from "@/lib/utils";
  */
 
 const spanVariants = {
-  sm: "font-heading text-base font-semibold uppercase tracking-wide",
-  default: "font-heading text-sm font-semibold uppercase tracking-wide",
-  micro: "font-heading text-xs font-medium uppercase tracking-wide",
-  label: "font-heading text-[10px] font-bold uppercase tracking-[0.3em]",
-  meta: "font-heading text-[10px] font-bold uppercase tracking-[0.2em]",
-  badge: "font-heading text-[10px] font-bold uppercase tracking-[0.15em]",
-  value: "font-heading text-xs md:text-sm font-bold uppercase tracking-[0.15em]",
+  sm: "font-body text-base font-semibold uppercase tracking-wide",
+  default: "font-body text-sm font-semibold uppercase tracking-wide",
+  micro: "font-body text-xs font-medium uppercase tracking-wide",
+  label: "font-body text-sm font-bold uppercase tracking-[0.3em]",
+  meta: "font-body text-xs md:text-sm font-bold uppercase tracking-[0.2em]",
+  badge: "font-body text-xs font-bold uppercase tracking-[0.15em]",
+  value: "font-body text-sm md:text-base font-bold uppercase tracking-[0.15em]",
   metric: "font-(family-name:--font-bebas-neue) text-7xl md:text-8xl uppercase tracking-tighter",
   serif: "font-serif italic lowercase font-light",
 } as const;

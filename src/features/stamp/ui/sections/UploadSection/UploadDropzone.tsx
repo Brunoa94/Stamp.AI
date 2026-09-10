@@ -22,7 +22,7 @@ export function UploadDropzone({ onClick, uploadError }: PropsI) {
     <Button
       variant="ghost"
       onClick={onClick}
-      className="w-full h-full rounded-none border-2 border-dashed border-(--color-stamp-divider) hover:border-(--color-stamp-gold) hover:bg-transparent transition-colors duration-500 flex flex-col items-center justify-center p-12 cursor-pointer group min-h-100"
+      className="w-full h-full rounded-none border-2 border-dashed border-(--color-stamp-divider) hover:border-(--color-stamp-gold) hover:bg-transparent transition-colors duration-500 flex flex-col items-center justify-center p-8 md:p-12 cursor-pointer group min-h-56 md:min-h-100"
       aria-label={t("dropzoneAria")}
     >
       <div className="text-center group-hover:scale-105 transition-transform duration-500">

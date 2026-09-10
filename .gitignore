@@ -15,6 +15,7 @@
 /test-results
 /playwright-report
 /.playwright
+/playwright/.auth/
 
 # next.js
 /.next/
@@ -42,3 +43,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+!.env.example
+# Sentry Config File
+.env.sentry-build-plugin

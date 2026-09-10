@@ -17,6 +17,11 @@ import { PaymentRecoveryService } from "@/services/paymentRecoveryService";
 import type { CreatePrintifyOrderRequest } from "@/types/printifyOrder";
 import { validatePrintifyLineItem } from "@/types/printifyOrder";
 import { mapShippingAddressToPrintifyAddress } from "@/mappers/mapShippingAddressToPrintifyAddress";
+import { captureError } from "@/lib/observability/errorCapture";
+import {
+  UserFacingError,
+  getUserFacingMessage,
+} from "@/features/checkout/lib/errors/UserFacingError";
 import {
   useCreateOrderFromCart,
   useUpdateOrderStatus,
@@ -38,7 +43,7 @@ type PageStatus =
 
 const PAYPAL_PIPELINE_TIMEOUT_MS = 120_000; // 2 minutes
 
-class PayPalPipelineTimeoutError extends Error {
+class PayPalPipelineTimeoutError extends UserFacingError {
   constructor(timeoutMs: number) {
     super(
       `Order processing timed out after ${Math.round(timeoutMs / 1000)} seconds. ` +
@@ -166,7 +171,8 @@ function PayPalReturnContent() {
             return;
           }
 
-          throw new Error(captureData.error || t("captureFailed"));
+          // The capture API returns vetted, user-friendly messages in `error`
+          throw new UserFacingError(captureData.error || t("captureFailed"));
         }
 
         setCaptureId(captureData.captureId);
@@ -219,7 +225,11 @@ function PayPalReturnContent() {
             },
           });
         } catch (recoveryError) {
-          console.error("Payment recovery recording failed:", recoveryError);
+          captureError(recoveryError, {
+            service: "PayPalReturn",
+            action: "recordPaymentForRecovery",
+            metadata: { token },
+          });
         }
 
         // Check for existing order
@@ -247,12 +257,13 @@ function PayPalReturnContent() {
                 reason,
                 paypalCaptureId: captureData.captureId,
               });
-
-              console.log(`✅ Refund triggered for order ${refundOrderId}`);
             }
           } catch (refundError) {
-            console.error("❌ Refund initiation failed:", refundError);
-            // Log to refund_failures table via RefundService
+            captureError(refundError, {
+              service: "PayPalReturn",
+              action: "triggerRefund",
+              metadata: { token, amount, reason },
+            });
           }
         };
 
@@ -268,12 +279,12 @@ function PayPalReturnContent() {
             // Do NOT change payment_status - payment has been successfully captured
             // The payment_transactions table will track refund status
             // Keeping payment_status as "paid" accurately reflects that payment was captured
-            console.log(`✅ Order ${orderId} marked as ${failureStatus}`);
           } catch (updateError) {
-            console.error(
-              `❌ Failed to mark order ${orderId} as ${failureStatus}:`,
-              updateError,
-            );
+            captureError(updateError, {
+              service: "PayPalReturn",
+              action: "markOrderFailed",
+              metadata: { orderId, failureStatus },
+            });
           }
         };
 
@@ -294,6 +305,7 @@ function PayPalReturnContent() {
                 shippingAddress,
                 billingAddress,
                 idempotencyKey,
+                paymentMethod: "paypal",
               })) ?? null;
 
             if (createdOrderId) {
@@ -305,12 +317,12 @@ function PayPalReturnContent() {
             }
           } catch (orderError) {
             await triggerRefund("Order creation failed");
-            throw new Error(t("orderCreationFailedRefund"));
+            throw new UserFacingError(t("orderCreationFailedRefund"));
           }
 
           if (!createdOrderId) {
             await triggerRefund("Order ID not returned");
-            throw new Error(t("orderCreationFailedRefund"));
+            throw new UserFacingError(t("orderCreationFailedRefund"));
           }
 
           // Get order number
@@ -348,7 +360,11 @@ function PayPalReturnContent() {
               });
             }
           } catch (printifyError) {
-            console.error("❌ Printify order creation failed:", printifyError);
+            captureError(printifyError, {
+              service: "PayPalReturn",
+              action: "createPrintifyOrder",
+              metadata: { token, createdOrderId },
+            });
 
             if (createdOrderId) {
               // Mark order as failed BEFORE triggering refund
@@ -359,14 +375,10 @@ function PayPalReturnContent() {
               // Trigger refund with real order ID
               await triggerRefund("Printify fulfillment failed");
             } else {
-              // No order created yet, trigger refund with temp ID
-              console.warn(
-                "⚠️ No order ID available, triggering refund with temp ID",
-              );
               await triggerRefund("Order creation failed before Printify");
             }
 
-            throw new Error(t("orderFulfillmentFailedRefund"));
+            throw new UserFacingError(t("orderFulfillmentFailedRefund"));
           }
 
           // Stage 3: Mark payment recovered
@@ -394,7 +406,10 @@ function PayPalReturnContent() {
         } catch (pipelineError) {
           if (pipelineError instanceof PayPalPipelineTimeoutError) {
             if (createdOrderId) {
-              await markOrderFailed(createdOrderId, "fulfillment_failed");
+              await markOrderFailed(
+                createdOrderId,
+                "unsuccessful_confirmation",
+              );
             }
             await triggerRefund("PayPal checkout pipeline timed out");
           }
@@ -407,7 +422,11 @@ function PayPalReturnContent() {
         CheckoutStorageService.clearPayPalCheckoutData();
         setStatus("success");
       } catch (err) {
-        console.error("PayPal return error:", err);
+        captureError(err, {
+          service: "PayPalReturn",
+          action: "processPayPalReturn",
+          metadata: { token: searchParams.get("token") },
+        });
 
         const currentToken = searchParams.get("token");
         if (currentToken) {
@@ -415,9 +434,7 @@ function PayPalReturnContent() {
         }
 
         setStatus("error");
-        setErrorMessage(
-          err instanceof Error ? err.message : t("errorFallback"),
-        );
+        setErrorMessage(getUserFacingMessage(err, t("errorFallback")));
       }
     };
 
@@ -429,13 +446,13 @@ function PayPalReturnContent() {
   };
 
   const handleCreateAnother = () => {
-    router.push("/dashboard");
+    router.push("/stamp");
   };
 
   // Loading state
   if (status === "loading" || status === "capturing") {
     return (
-      <div className="min-h-screen flex justify-center pt-32 lg:pt-40 px-6 bg-(--color-stamp-cream)">
+      <div className="min-h-screen flex justify-center pt-20 px-6 bg-(--color-stamp-cream)">
         <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
           <section
             className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
@@ -454,7 +471,7 @@ function PayPalReturnContent() {
             <Heading
               as="h1"
               variant="card"
-              className="text-(--color-stamp-chocolate) mb-4"
+              className="font-body text-3xl md:text-4xl font-semibold tracking-tight text-(--color-stamp-chocolate) mb-4"
             >
               {status === "capturing"
                 ? t("capturingTitle")
@@ -462,7 +479,7 @@ function PayPalReturnContent() {
             </Heading>
             <Paragraph
               variant="sm"
-              className="text-(--color-stamp-taupe) max-w-sm mx-auto"
+              className="font-body text-(--color-stamp-taupe) max-w-sm mx-auto"
             >
               {status === "capturing"
                 ? t("capturingMessage")
@@ -538,7 +555,7 @@ function PayPalReturnContent() {
 
   // Error state
   return (
-    <div className="min-h-screen flex justify-center pt-32 lg:pt-40 px-6 bg-(--color-stamp-cream)">
+    <div className="min-h-screen flex justify-center pt-20 px-6 bg-(--color-stamp-cream)">
       <div className="w-full max-w-xl animate-in fade-in slide-in-from-bottom-8 duration-700">
         <section
           className="bg-(--color-stamp-white) border border-(--color-stamp-divider) p-12 md:p-16 text-center relative overflow-hidden"
@@ -570,15 +587,12 @@ function PayPalReturnContent() {
           <div className="flex flex-col gap-4">
             <Button
               onClick={handleRetryPayment}
-              className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-chocolate)/90"
+              variant="primary"
+              className="w-full"
             >
               {t("returnToCheckout")}
             </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="w-full py-5 h-auto font-heading text-xs tracking-widest uppercase border-(--color-stamp-divider) text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
-            >
+            <Button asChild variant="secondary" className="w-full">
               <Link href="/dashboard">{t("goToDashboard")}</Link>
             </Button>
           </div>

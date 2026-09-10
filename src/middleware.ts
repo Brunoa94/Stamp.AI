@@ -5,6 +5,11 @@ import {
   RATE_LIMIT_CONFIGS,
   type RateLimitType,
 } from "@/lib/security/rate-limiter/configs";
+import {
+  generateRequestId,
+  getRequestIdFromHeaders,
+  REQUEST_ID_HEADER,
+} from "@/lib/observability/requestId";
 
 /**
  * Determine the rate limit type based on the request path
@@ -51,6 +56,10 @@ function getRateLimitType(pathname: string): RateLimitType | null {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // ── Request ID ──────────────────────────────────────────────────────────────
+  // Generate or extract request ID for correlation across the request lifecycle
+  const requestId = getRequestIdFromHeaders(request.headers) || generateRequestId();
+
   // ── Rate Limiting ─────────────────────────────────────────────────────────────
   const rateLimitType = getRateLimitType(pathname);
   let rateLimitResult: ReturnType<typeof checkCombinedRateLimit> | null = null;
@@ -75,6 +84,9 @@ export async function middleware(request: NextRequest) {
         },
       );
 
+      // Add request ID for correlation
+      response.headers.set(REQUEST_ID_HEADER, requestId);
+
       return response;
     }
   }
@@ -83,6 +95,9 @@ export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   });
+
+  // Add request ID to response headers for client-side correlation
+  supabaseResponse.headers.set(REQUEST_ID_HEADER, requestId);
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -115,12 +130,30 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protected routes
-  if (request.nextUrl.pathname.startsWith("/stamp") && !user) {
-    // no user, potentially respond by redirecting the user to the login page
+  // Protected routes — server-side auth gate. The client-side <ProtectedRoute>
+  // is UX only and is NOT a security control; these must be gated here before
+  // any page data renders.
+  const PROTECTED_PREFIXES = [
+    "/stamp",
+    "/orders",
+    "/profile",
+    "/cart",
+    "/checkout",
+    "/dashboard",
+  ];
+  const isProtected = PROTECTED_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`)
+  );
+
+  if (isProtected && !user) {
+    // no user — redirect to the login/home page
     const url = request.nextUrl.clone();
     url.pathname = "/";
-    return NextResponse.redirect(url);
+    url.searchParams.set("redirectedFrom", pathname);
+    const response = NextResponse.redirect(url);
+    supabaseResponse.cookies.getAll().forEach((cookie) => response.cookies.set(cookie));
+    response.headers.set(REQUEST_ID_HEADER, requestId);
+    return response;
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're

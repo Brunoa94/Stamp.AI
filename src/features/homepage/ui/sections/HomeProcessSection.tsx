@@ -1,88 +1,26 @@
 /**
  * HomeProcessSection
  *
- * "The Process" — six protocol steps as luxury cards with oversized
- * gold step numbers that reveal sequentially when entering viewport.
+ * "The Process" — Brevo-style scroll-driven sticky carousel.
+ * Text content on left, imagery on right. Each step sticks while scrolling.
  */
 
 "use client";
 
-import { useTranslations } from "next-intl";
-import { Span } from "@/features/ui/span";
-import {
-  HOME_PROCESS_STEPS,
-  PROCESS_STAGGER_DELAY_MS,
-} from "../../lib/constants/homepageContent";
-import { HomeSectionHeader } from "../components/HomeSectionHeader";
-import { HomeProcessCard } from "../components/HomeProcessCard";
-import { SectionReveal } from "../components/SectionReveal";
-import { useStaggeredReveal } from "@/hooks/useStaggeredReveal";
+import { ProcessStickyCarousel } from "../components/ProcessTimeline/ProcessStickyCarousel";
 
 export function HomeProcessSection() {
-  const t = useTranslations("home.process");
-
-  const { containerRef, isItemVisible } = useStaggeredReveal({
-    itemCount: HOME_PROCESS_STEPS.length,
-    staggerDelay: PROCESS_STAGGER_DELAY_MS,
-    threshold: 0.2,
-    rootMargin: "0px 0px -10% 0px",
-  });
-
   return (
-    <section
-      id="process"
-      className="bg-(--color-stamp-cream) px-6 py-24 lg:px-12 xl:px-24"
-    >
-      <SectionReveal className="mx-auto max-w-screen-2xl" parallax fadeOnScroll>
-        <HomeSectionHeader
-          title={t("title")}
-          accent={t("accent")}
-          label={t("label")}
-        />
+    <section id="process" className="relative bg-(--color-stamp-cream) overflow-x-clip">
+      {/* Decorative gold accent lines */}
+      <div className="absolute top-12 left-6 lg:left-12 xl:left-24 w-28 h-1 bg-(--color-stamp-gold)/40 rounded-full z-10" aria-hidden="true" />
+      <div className="absolute top-12 right-6 lg:right-12 xl:right-24 w-28 h-1 bg-(--color-stamp-gold)/40 rounded-full z-10" aria-hidden="true" />
 
-        {/* Cards container - ref for staggered reveal */}
-        <div ref={containerRef}>
-          {/* Mobile: Horizontal carousel */}
-          <div className="-mx-6 overflow-x-auto px-6 scrollbar-hide sm:hidden">
-            <div className="flex w-max gap-4 pb-4">
-              {HOME_PROCESS_STEPS.map((step, index) => (
-                <HomeProcessCard
-                  key={step.id}
-                  id={step.id}
-                  number={step.number}
-                  title={t(`steps.${step.id}.title`)}
-                  description={t(`steps.${step.id}.description`)}
-                  index={index}
-                  isVisible={isItemVisible(index)}
-                  variant="mobile"
-                />
-              ))}
-            </div>
-          </div>
+      {/* Decorative corner frames */}
+      <div className="absolute top-8 left-6 lg:left-12 xl:left-24 w-16 h-16 border-t-2 border-l-2 border-(--color-stamp-gold)/25 rounded-tl-lg z-10" aria-hidden="true" />
+      <div className="absolute top-8 right-6 lg:right-12 xl:right-24 w-16 h-16 border-t-2 border-r-2 border-(--color-stamp-gold)/25 rounded-tr-lg z-10" aria-hidden="true" />
 
-          {/* Desktop: Grid layout */}
-          <div className="hidden sm:grid grid-cols-2 gap-8 lg:grid-cols-3">
-            {HOME_PROCESS_STEPS.map((step, index) => (
-              <HomeProcessCard
-                key={step.id}
-                id={step.id}
-                number={step.number}
-                title={t(`steps.${step.id}.title`)}
-                description={t(`steps.${step.id}.description`)}
-                index={index}
-                isVisible={isItemVisible(index)}
-                variant="desktop"
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-16 flex justify-center">
-          <Span variant="sm" className="text-(--color-stamp-taupe)/40">
-            {t("footer")}
-          </Span>
-        </div>
-      </SectionReveal>
+      <ProcessStickyCarousel />
     </section>
   );
 }

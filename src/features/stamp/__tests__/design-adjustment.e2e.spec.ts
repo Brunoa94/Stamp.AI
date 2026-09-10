@@ -1,0 +1,123 @@
+import { expect, test } from "@playwright/test";
+
+/**
+ * Design Adjustment Panel (Step 6) E2E
+ *
+ * Requires an authenticated session (see playwright auth.setup) and drives
+ * the stamp flow to Step 6 with a generated design and a selected t-shirt.
+ */
+
+async function goToCustomizationStep(page: import("@playwright/test").Page) {
+  await page.goto("/stamp");
+
+  // Hero -> Step 1: Click begin customization CTA
+  await page.getByRole("button", { name: /begin customiz/i }).click();
+
+  // Step 1 -> Step 2: Skip upload (no image uploaded)
+  await page.getByRole("button", { name: /skip upload/i }).click();
+
+  // Step 2 -> 3: seed a prompt and generate
+  await page.getByRole("textbox", { name: /prompt input/i }).fill(
+    "Minimal line drawing of a mountain",
+  );
+  await page.getByRole("button", { name: /stamp it/i }).click();
+
+  // Step 4: pick the first result (generation can take a while)
+  await page.getByRole("button", { name: /use this image/i }).first().click({
+    timeout: 180_000,
+  });
+
+  // Step 5: pick the first product
+  await page.locator("#step-5").getByRole("button").first().click();
+
+  await expect(page.locator("#step-6")).toBeVisible();
+}
+
+test.describe("Design Adjustment Panel", () => {
+  test.beforeEach(async ({ page }) => {
+    await goToCustomizationStep(page);
+  });
+
+  test("shows the available print positions for the selected product", async ({ page }) => {
+    await expect(
+      page.getByRole("radio", { name: /print on front/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("radio", { name: /print on back/i }),
+    ).toBeVisible();
+  });
+
+  test("switches between front and back printing (single-select)", async ({ page }) => {
+    const front = page.getByRole("radio", { name: /print on front/i });
+    const back = page.getByRole("radio", { name: /print on back/i });
+    await expect(front).toHaveAttribute("aria-checked", "true");
+
+    await back.click();
+    await expect(back).toHaveAttribute("aria-checked", "true");
+    await expect(front).toHaveAttribute("aria-checked", "false");
+    await page.screenshot({ path: "test-results/position-back-selected.png" });
+
+    await front.click();
+    await expect(front).toHaveAttribute("aria-checked", "true");
+    await expect(back).toHaveAttribute("aria-checked", "false");
+  });
+
+  test("shows the back silhouette while the back is selected", async ({ page }) => {
+    const silhouette = page.getByTestId("product-silhouette");
+    await expect(silhouette).toHaveAttribute("data-silhouette-key", "apparel");
+
+    await page.getByRole("radio", { name: /print on back/i }).click();
+    await expect(silhouette).toHaveAttribute(
+      "data-silhouette-key",
+      "apparel-back",
+    );
+  });
+
+  test("updates the preview when adjusting placement", async ({ page }) => {
+    const overlay = page.getByTestId("design-overlay");
+    const before = await overlay.evaluate((el) => el.style.top);
+
+    await page.getByRole("button", { name: /move up/i }).click();
+
+    const after = await overlay.evaluate((el) => el.style.top);
+    expect(after).not.toBe(before);
+    await page.screenshot({ path: "test-results/placement-adjusted.png" });
+  });
+
+  test("prevents placement outside the safe zone", async ({ page }) => {
+    const moveUp = page.getByRole("button", { name: /move up/i });
+    for (let i = 0; i < 10; i += 1) {
+      await moveUp.click();
+    }
+    await expect(page.getByText(/safe print area/i)).toBeVisible();
+  });
+
+  test("resets placement to the default", async ({ page }) => {
+    const overlay = page.getByTestId("design-overlay");
+    const initial = await overlay.evaluate((el) => el.style.top);
+
+    await page.getByRole("button", { name: /move up/i }).click();
+    await page.getByRole("button", { name: /reset placement/i }).click();
+
+    const after = await overlay.evaluate((el) => el.style.top);
+    expect(after).toBe(initial);
+  });
+
+  test("creates the product with a back print", async ({ page }) => {
+    await page.getByRole("radio", { name: /print on back/i }).click();
+    await page.getByRole("button", { name: /move up/i }).click();
+
+    await page.getByRole("button", { name: /create product/i }).click();
+
+    await expect(page.locator("#step-7")).toBeVisible();
+    await expect(page.locator("#step-8")).toBeVisible({ timeout: 130_000 });
+  });
+
+  test("adjustment controls are labelled for assistive tech", async ({ page }) => {
+    for (const name of [/move up/i, /move down/i, /move left/i, /move right/i]) {
+      await expect(page.getByRole("button", { name })).toHaveAttribute(
+        "aria-label",
+      );
+    }
+  });
+});

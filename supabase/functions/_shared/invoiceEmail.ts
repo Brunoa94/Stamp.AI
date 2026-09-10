@@ -1,14 +1,22 @@
 import { encodeBase64 } from "jsr:@std/encoding@1/base64";
+import { sendInvoiceEmailBrevo } from "./brevoEmail.ts";
 
 /**
- * Invoice email delivery via Resend (https://resend.com).
+ * Invoice email delivery.
  *
- * Optional integration — when RESEND_API_KEY is not configured, sending is
+ * Providers (in priority order):
+ *   1. Brevo (BREVO_API_KEY) — recommended
+ *   2. Resend (RESEND_API_KEY) — fallback/legacy
+ *
+ * Optional integration — when no API key is configured, sending is
  * skipped silently so invoice generation never depends on email delivery.
  *
  * Secrets:
- *   RESEND_API_KEY      Resend API key (omit to disable email)
- *   INVOICE_FROM_EMAIL  sender, e.g. "Stamp.AI <invoices@stamp.ai>"
+ *   BREVO_API_KEY       Brevo API key (preferred)
+ *   BREVO_FROM_EMAIL    sender email for Brevo
+ *   BREVO_FROM_NAME     sender name for Brevo (falls back to INVOICE_SELLER_NAME)
+ *   RESEND_API_KEY      Resend API key (fallback, omit to disable)
+ *   INVOICE_FROM_EMAIL  sender for Resend, e.g. "Stamp.AI <invoices@stamp.ai>"
  */
 
 // Base64-encode attachment bytes for Resend
@@ -25,13 +33,11 @@ export interface SendInvoiceEmailParamsI {
 }
 
 /**
- * Send the invoice email with the PDF attached.
- * Returns true when the email was sent, false when skipped or failed.
+ * Send invoice email via Resend (legacy fallback).
  */
-export async function sendInvoiceEmail(params: SendInvoiceEmailParamsI): Promise<boolean> {
+async function sendViaResend(params: SendInvoiceEmailParamsI): Promise<boolean> {
   const apiKey = Deno.env.get("RESEND_API_KEY");
   if (!apiKey) {
-    console.log("RESEND_API_KEY not configured, skipping invoice email");
     return false;
   }
 
@@ -59,14 +65,37 @@ export async function sendInvoiceEmail(params: SendInvoiceEmailParamsI): Promise
     });
 
     if (!response.ok) {
-      console.error("Failed to send invoice email:", response.status, await response.text());
+      console.error("Failed to send invoice email via Resend:", response.status, await response.text());
       return false;
     }
 
-    console.log(`✅ Invoice email sent to ${params.to}`);
+    console.log(`✅ Invoice email sent via Resend to ${params.to}`);
     return true;
   } catch (error) {
-    console.error("Exception sending invoice email:", error);
+    console.error("Exception sending invoice email via Resend:", error);
     return false;
   }
+}
+
+/**
+ * Send the invoice email with the PDF attached.
+ * Tries Brevo first, falls back to Resend if Brevo is not configured.
+ * Returns true when the email was sent, false when skipped or failed.
+ */
+export async function sendInvoiceEmail(params: SendInvoiceEmailParamsI): Promise<boolean> {
+  const brevoKey = Deno.env.get("BREVO_API_KEY");
+  const resendKey = Deno.env.get("RESEND_API_KEY");
+
+  // Try Brevo first (preferred)
+  if (brevoKey) {
+    return sendInvoiceEmailBrevo(params);
+  }
+
+  // Fallback to Resend
+  if (resendKey) {
+    return sendViaResend(params);
+  }
+
+  console.log("No email provider configured (BREVO_API_KEY or RESEND_API_KEY), skipping invoice email");
+  return false;
 }

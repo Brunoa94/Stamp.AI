@@ -1,16 +1,22 @@
 "use client";
 
-import { useMemo } from "react";
-import { useCatalogProducts } from "@/queries/catalogQueries";
-import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
+import { useMemo, memo, useEffect, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCatalogProductsWithSeo } from "@/queries/catalogQueries";
+import { resolveProductDescription } from "@/lib/seo/productDescription";
+import { PrintifyService } from "@/services/printifyService";
+import { useStampNavigationActions } from "../../../lib/hooks/useStampNavigation";
 import {
   useStampProductSelection,
   useStampCustomization,
 } from "../../../lib/hooks/useStampSelectors";
 import { isClothingProduct } from "../../../lib/helpers/productCategoryDetector";
+import { FALLBACK_PRODUCT_PRICE_CENTS } from "../../../lib/constants/productPricing";
 import { ProductGrid } from "./ProductGrid";
 import { ProductSelectionContent } from "./ProductSelectionContent";
 import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
+import { AnalyticsService } from "@/services/analyticsService";
+import { mapSelectItemEvent } from "@/features/analytics/mappers/stampFlowMappers";
 
 /**
  * ProductSelectionSection
@@ -23,22 +29,23 @@ import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
  */
 
 const EXCLUDED_BLUEPRINT_IDS = new Set([12]);
-const FALLBACK_PRICE = 25.0;
+const FALLBACK_PRICE = FALLBACK_PRODUCT_PRICE_CENTS / 100;
 
-export function ProductSelectionSection() {
-  const { nextStep } = useStampNavigation();
+function ProductSelectionSectionComponent() {
+  const { nextStep } = useStampNavigationActions();
   const {
     blueprintId,
     printProviderId,
     setBlueprintId,
     setPrintProviderId,
     setSelectedProductTitle,
+    setSelectedProductDescription,
   } = useStampProductSelection();
   const { setSelectedPriceCents } = useStampCustomization();
   const canProceedToCustomization =
     blueprintId !== undefined && printProviderId !== undefined;
 
-  const { data: rawProducts = [], isLoading, isError } = useCatalogProducts();
+  const { data: rawProducts = [], isLoading, isError } = useCatalogProductsWithSeo();
 
   const visibleProducts = useMemo(
     () =>
@@ -64,6 +71,8 @@ export function ProductSelectionSection() {
         return {
           blueprintId: product.blueprint_id,
           name: product.display_title,
+          description: resolveProductDescription(product.product_seo),
+          printifyDescription: product.product_seo?.printify_description ?? null,
           imageUrl: product.base_image_url ?? "",
           printProviderId: product.print_provider_id,
           price,
@@ -92,18 +101,67 @@ export function ProductSelectionSection() {
     return { clothingProducts: clothing, accessoryProducts: accessories };
   }, [catalogProducts]);
 
+  // Prefetch variants (colors & sizes) for all products when grid loads
+  // Use a ref to track which products have been prefetched to avoid duplicate requests
+  const queryClient = useQueryClient();
+  const prefetchedRef = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (catalogProducts.length === 0) return;
+
+    catalogProducts.forEach((product) => {
+      const cacheKey = `${product.blueprintId}-${product.printProviderId}`;
+
+      // Skip if already prefetched in this session
+      if (prefetchedRef.current.has(cacheKey)) return;
+
+      const queryKey = [
+        "products",
+        "blueprint-variants",
+        product.blueprintId,
+        product.printProviderId,
+      ];
+
+      // Only prefetch if not already in cache
+      const existingData = queryClient.getQueryData(queryKey);
+      if (!existingData) {
+        prefetchedRef.current.add(cacheKey);
+        queryClient.prefetchQuery({
+          queryKey,
+          queryFn: () =>
+            PrintifyService.getBlueprintVariants(
+              product.blueprintId,
+              product.printProviderId
+            ),
+          staleTime: 1000 * 60 * 10, // 10 minutes
+        });
+      }
+    });
+  }, [catalogProducts, queryClient]);
+
   const handleProductSelect = (product: CatalogProductMappedType) => {
     setBlueprintId(product.blueprintId);
     setPrintProviderId(product.printProviderId);
     setSelectedProductTitle(product.name);
+    setSelectedProductDescription(product.description);
     // Store price in cents (product.price is in dollars)
     setSelectedPriceCents(Math.round(product.price * 100));
+
+    AnalyticsService.track(
+      "select_item",
+      mapSelectItemEvent({
+        blueprintId: product.blueprintId,
+        productName: product.name,
+        price: product.price,
+      })
+    );
   };
 
   const handleClearSelection = () => {
     setBlueprintId(undefined);
     setPrintProviderId(undefined);
     setSelectedProductTitle(undefined);
+    setSelectedProductDescription(undefined);
     setSelectedPriceCents(undefined);
   };
 
@@ -116,7 +174,7 @@ export function ProductSelectionSection() {
   return (
     <section
       id="step-5"
-      className="h-full min-h-0 overflow-y-auto grid grid-cols-1 lg:grid-cols-2 border-b border-(--color-stamp-divider)"
+      className="h-full min-h-0 overflow-hidden flex flex-col md:grid md:grid-cols-2 border-b border-(--color-stamp-divider)"
     >
       <ProductSelectionContent
         canProceed={canProceedToCustomization}
@@ -135,3 +193,5 @@ export function ProductSelectionSection() {
     </section>
   );
 }
+
+export const ProductSelectionSection = memo(ProductSelectionSectionComponent);

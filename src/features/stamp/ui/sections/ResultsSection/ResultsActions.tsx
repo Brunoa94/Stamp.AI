@@ -1,10 +1,14 @@
+"use client";
+
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
+import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction";
 
 /**
  * ResultsActions
  *
- * Action buttons for using design or re-synthesizing
+ * Action buttons for using design or re-synthesizing.
+ * On mobile, the primary action is shown in the sticky footer.
  */
 
 interface PropsI {
@@ -20,21 +24,41 @@ export function ResultsActions({
 }: PropsI) {
   const t = useTranslations("stamp.results");
 
+  // Register primary action for mobile sticky footer (Step 4)
+  useRegisterMobileAction(4, {
+    action: onUseProtocol,
+    label: t("useProtocol"),
+    disabled: !canProceed,
+  });
+
   return (
-    <div className="flex gap-6">
-      <Button
-        onClick={onUseProtocol}
-        disabled={!canProceed}
-        className="flex-1 bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase"
-      >
-        {t("useProtocol")}
-      </Button>
-      <Button
-        onClick={onReSynthesize}
-        className="flex-1 bg-transparent text-(--color-stamp-chocolate) border border-(--color-stamp-divider) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase"
-      >
-        {t("reSynthesize")}
-      </Button>
+    <div className="pb-28 md:pb-0">
+      {/* Desktop: show both buttons side by side */}
+      <div className="hidden md:flex gap-4 md:gap-6">
+        <Button
+          onClick={onUseProtocol}
+          disabled={!canProceed}
+          className="flex-1 bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-4 md:px-8 py-4 md:py-6 text-xs font-bold tracking-[0.2em] uppercase"
+        >
+          {t("useProtocol")}
+        </Button>
+        <Button
+          onClick={onReSynthesize}
+          className="flex-1 bg-transparent text-(--color-stamp-chocolate) border border-(--color-stamp-divider) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 px-4 md:px-8 py-4 md:py-6 text-xs font-bold tracking-[0.2em] uppercase"
+        >
+          {t("reSynthesize")}
+        </Button>
+      </div>
+
+      {/* Mobile: only show re-synthesize button (primary is in footer) */}
+      <div className="md:hidden">
+        <Button
+          onClick={onReSynthesize}
+          className="w-full bg-transparent text-(--color-stamp-chocolate) border border-(--color-stamp-divider) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 px-4 py-4 text-xs font-bold tracking-[0.2em] uppercase"
+        >
+          {t("reSynthesize")}
+        </Button>
+      </div>
     </div>
   );
 }

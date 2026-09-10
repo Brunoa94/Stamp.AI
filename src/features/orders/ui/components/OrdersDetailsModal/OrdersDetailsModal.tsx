@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { ShoppingBag, X } from "lucide-react";
 import { formatOrderDate } from "../../../lib/utils/formatOrderDate";
 import { formatPrice } from "../../../lib/utils/formatPrice";
+import { Anchor } from "@/features/ui/anchor";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
@@ -15,10 +16,11 @@ import {
   getFirstOrderItem,
 } from "../../../lib/helpers/orderPresentation";
 import {
+  getOrderDisplayStatus,
   getStatusBadgeClass,
-  toDisplayStatus,
 } from "../../../lib/helpers/statusPresentation";
 import { OrdersDetailsModalInvoice } from "./OrdersDetailsModalInvoice";
+import { OrderStatusTimeline } from "./OrderStatusTimeline";
 
 interface PropsI {
   order: OrderWithItemsT;
@@ -27,10 +29,11 @@ interface PropsI {
 
 export function OrdersDetailsModal({ order, onClose }: PropsI) {
   const t = useTranslations("orders.detailsModal");
+  const tStatus = useTranslations("orders.statusBadge");
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const firstItem = getFirstOrderItem(order);
-  const displayedStatus = toDisplayStatus(order.status);
+  const displayedStatus = getOrderDisplayStatus(order);
 
   useModalFocusTrap({
     isOpen: true,
@@ -69,7 +72,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
             variant="badge"
             className={`inline-flex rounded-full px-3 py-1 ${getStatusBadgeClass(displayedStatus)}`}
           >
-            {displayedStatus}
+            {tStatus(displayedStatus)}
           </Span>
           <Heading
             as="h3"
@@ -78,7 +81,10 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
           >
             {t("recordDetails")}
           </Heading>
-          <Span variant="meta" className="mt-1 block text-(--color-stamp-taupe)">
+          <Span
+            variant="meta"
+            className="mt-1 block text-(--color-stamp-taupe)"
+          >
             {t("orderMeta", {
               orderNumber:
                 order.order_number || order.id.slice(0, 13).toUpperCase(),
@@ -144,13 +150,149 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
               >
                 {t("delivery")}
               </Span>
-              <Paragraph variant="xs" className="font-bold text-(--color-stamp-chocolate)">
+              <Paragraph
+                variant="sm"
+                className="font-bold text-(--color-stamp-chocolate)"
+              >
                 {order.customer_name || t("archiveClient")}
               </Paragraph>
-              <Paragraph variant="xs" className="text-(--color-stamp-taupe)">
+              <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
                 {getAddressSummary(order) || t("archiveAddress")}
               </Paragraph>
+              {order.tracking_number && (
+                <Paragraph
+                  variant="xs"
+                  className="mt-2 text-(--color-stamp-taupe)"
+                >
+                  {t("trackingNumber")}:{" "}
+                  {order.tracking_url ? (
+                    <Anchor
+                      href={order.tracking_url}
+                      variant="bold"
+                      className="text-(--color-stamp-gold)"
+                    >
+                      {order.tracking_number}
+                    </Anchor>
+                  ) : (
+                    <Span
+                      variant="value"
+                      className="text-(--color-stamp-chocolate)"
+                    >
+                      {order.tracking_number}
+                    </Span>
+                  )}
+                </Paragraph>
+              )}
+              {order.customer_email && (
+                <Paragraph
+                  variant="sm"
+                  className="mt-1 text-(--color-stamp-taupe)"
+                >
+                  {order.customer_email}
+                </Paragraph>
+              )}
+              {order.customer_phone && (
+                <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
+                  {order.customer_phone}
+                </Paragraph>
+              )}
             </section>
+
+            <section>
+              <Span
+                variant="label"
+                className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold)"
+              >
+                {t("orderInfo")}
+              </Span>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Span variant="micro" className="text-(--color-stamp-taupe)">
+                    {t("orderDate")}
+                  </Span>
+                  <Paragraph
+                    variant="sm"
+                    className="font-semibold text-(--color-stamp-chocolate)"
+                  >
+                    {formatOrderDate(order.created_at)}
+                  </Paragraph>
+                </div>
+                {order.payment_method && (
+                  <div>
+                    <Span
+                      variant="micro"
+                      className="text-(--color-stamp-taupe)"
+                    >
+                      {t("paymentMethod")}
+                    </Span>
+                    <Paragraph
+                      variant="sm"
+                      className="font-semibold text-(--color-stamp-chocolate)"
+                    >
+                      {order.payment_method}
+                    </Paragraph>
+                  </div>
+                )}
+                {order.shipped_at && (
+                  <div>
+                    <Span
+                      variant="micro"
+                      className="text-(--color-stamp-taupe)"
+                    >
+                      {t("shippedDate")}
+                    </Span>
+                    <Paragraph
+                      variant="sm"
+                      className="font-semibold text-(--color-stamp-chocolate)"
+                    >
+                      {formatOrderDate(order.shipped_at)}
+                    </Paragraph>
+                  </div>
+                )}
+                {order.delivered_at && (
+                  <div>
+                    <Span
+                      variant="micro"
+                      className="text-(--color-stamp-taupe)"
+                    >
+                      {t("deliveredDate")}
+                    </Span>
+                    <Paragraph
+                      variant="sm"
+                      className="font-semibold text-(--color-stamp-chocolate)"
+                    >
+                      {formatOrderDate(order.delivered_at)}
+                    </Paragraph>
+                  </div>
+                )}
+              </div>
+              {order.tracking_number && (
+                <div className="mt-4">
+                  <Span variant="micro" className="text-(--color-stamp-taupe)">
+                    {t("trackingNumber")}
+                  </Span>
+                  {order.tracking_url ? (
+                    <a
+                      href={order.tracking_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block font-body text-base font-semibold text-(--color-stamp-gold) underline hover:text-(--color-stamp-chocolate)"
+                    >
+                      {order.tracking_number}
+                    </a>
+                  ) : (
+                    <Paragraph
+                      variant="sm"
+                      className="font-semibold text-(--color-stamp-chocolate)"
+                    >
+                      {order.tracking_number}
+                    </Paragraph>
+                  )}
+                </div>
+              )}
+            </section>
+
+            <OrderStatusTimeline orderId={order.id} />
           </div>
 
           <aside className="self-start border border-(--color-stamp-divider) bg-(--color-stamp-cream)/40 p-6">
@@ -160,7 +302,50 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
             >
               {t("valuation")}
             </Span>
-            <div className="flex items-center justify-between border-t border-(--color-stamp-divider) pt-4">
+            <div className="space-y-2">
+              {order.subtotal != null && (
+                <div className="flex items-center justify-between">
+                  <Span variant="micro" className="text-(--color-stamp-taupe)">
+                    {t("subtotal")}
+                  </Span>
+                  <Span
+                    variant="value"
+                    className="text-(--color-stamp-chocolate)"
+                  >
+                    {formatPrice(order.subtotal)}
+                  </Span>
+                </div>
+              )}
+              {order.shipping_cost != null && order.shipping_cost > 0 && (
+                <div className="flex items-center justify-between">
+                  <Span variant="micro" className="text-(--color-stamp-taupe)">
+                    {t("shippingCost")}
+                  </Span>
+                  <Span
+                    variant="value"
+                    className="text-(--color-stamp-chocolate)"
+                  >
+                    {formatPrice(order.shipping_cost)}
+                  </Span>
+                </div>
+              )}
+              {order.discount_amount != null && order.discount_amount > 0 && (
+                <div className="flex items-center justify-between">
+                  <Span variant="micro" className="text-(--color-stamp-taupe)">
+                    {t("discount")}
+                    {order.promo_code && (
+                      <span className="ml-1 text-(--color-stamp-gold)">
+                        ({order.promo_code})
+                      </span>
+                    )}
+                  </Span>
+                  <Span variant="value" className="text-green-600">
+                    -{formatPrice(order.discount_amount)}
+                  </Span>
+                </div>
+              )}
+            </div>
+            <div className="mt-4 flex items-center justify-between border-t border-(--color-stamp-divider) pt-4">
               <Span variant="meta" className="text-(--color-stamp-chocolate)">
                 {t("total")}
               </Span>

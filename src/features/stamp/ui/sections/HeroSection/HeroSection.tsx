@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { HeroImage } from "./HeroImage";
 import { HeroContent } from "./HeroContent";
 
@@ -14,7 +15,7 @@ interface PropsI {
   onBegin: () => void;
 }
 
-export function HeroSection({ onBegin }: PropsI) {
+function HeroSectionComponent({ onBegin }: PropsI) {
   return (
     <section
       id="hero"
@@ -25,3 +26,5 @@ export function HeroSection({ onBegin }: PropsI) {
     </section>
   );
 }
+
+export const HeroSection = memo(HeroSectionComponent);

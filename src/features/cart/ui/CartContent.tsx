@@ -8,6 +8,7 @@
 
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -19,6 +20,9 @@ import { CartItemCard } from "./sections/CartItemCard/CartItemCard";
 import { CartOrderSummary } from "./sections/CartOrderSummary/CartOrderSummary";
 import { CartEmptySection } from "./sections/CartEmptySection";
 import { CartLoadingSection } from "./sections/CartLoadingSection";
+import { CartSelectionHeader } from "./components/CartSelectionHeader";
+import { AnalyticsService } from "@/services/analyticsService";
+import { mapViewCartEvent } from "@/features/analytics/mappers/ecommerceMappers";
 
 export function CartContent() {
   const t = useTranslations("cart.content");
@@ -30,7 +34,28 @@ export function CartContent() {
     updateQuantity,
     removeItem,
     checkout,
+    selectedItemIds,
+    selectedCount,
+    allSelected,
+    someSelected,
+    toggleItemSelection,
+    selectAllItems,
+    deselectAllItems,
+    selectedTotals,
+    canCheckout,
   } = useCart();
+
+  // Track view_cart once when cart is loaded with items
+  const hasTrackedViewCart = useRef(false);
+  useEffect(() => {
+    if (!isLoading && cart && cart.cart_items.length > 0 && !hasTrackedViewCart.current) {
+      hasTrackedViewCart.current = true;
+      AnalyticsService.track(
+        "view_cart",
+        mapViewCartEvent({ items: cart.cart_items, value: total })
+      );
+    }
+  }, [isLoading, cart, total]);
 
   if (isLoading) {
     return (
@@ -54,10 +79,22 @@ export function CartContent() {
         <CartHeader itemCount={itemCount} />
 
         <div className="space-y-8 xl:col-span-8">
+          {/* Selection header */}
+          <CartSelectionHeader
+            totalCount={cart.cart_items.length}
+            selectedCount={selectedCount}
+            allSelected={allSelected}
+            someSelected={someSelected}
+            onSelectAll={selectAllItems}
+            onDeselectAll={deselectAllItems}
+          />
+
           {cart.cart_items.map((item) => (
             <CartItemCard
               key={item.id}
               item={item}
+              isSelected={selectedItemIds.has(item.id)}
+              onToggleSelection={toggleItemSelection}
               onUpdateQuantity={updateQuantity}
               onRemove={removeItem}
             />
@@ -73,11 +110,22 @@ export function CartContent() {
         </div>
 
         <div className="xl:col-span-4">
-          <CartOrderSummary cart={cart} onCheckout={checkout} />
+          <CartOrderSummary
+            cart={cart}
+            selectedTotals={selectedTotals}
+            selectedCount={selectedCount}
+            onCheckout={checkout}
+            canCheckout={canCheckout}
+          />
         </div>
       </CartLayout>
 
-      <CartMobileCta total={total} onCheckout={checkout} />
+      <CartMobileCta
+        total={selectedTotals.total}
+        onCheckout={checkout}
+        canCheckout={canCheckout}
+        selectedCount={selectedCount}
+      />
     </>
   );
 }

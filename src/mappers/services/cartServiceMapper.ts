@@ -60,6 +60,11 @@ export class CartServiceMapper {
     return (item.unit_price ?? 0) * (item.quantity ?? 1);
   }
 
+  /** Free shipping threshold in cents (€60 = 6000 cents) */
+  static FREE_SHIPPING_THRESHOLD_CENTS = 6000;
+  /** Shipping cost in cents (€4.99 = 499 cents) */
+  static SHIPPING_COST_CENTS = 499;
+
   /**
    * Calculate cart totals
    */
@@ -72,9 +77,9 @@ export class CartServiceMapper {
       return count + (item.quantity ?? 1);
     }, 0);
 
-    // Future: Add tax and shipping calculations here
+    // Shipping: free for orders >= €60, otherwise €4.99
     const tax = 0;
-    const shipping = 0;
+    const shipping = subtotal >= this.FREE_SHIPPING_THRESHOLD_CENTS ? 0 : this.SHIPPING_COST_CENTS;
     const total = subtotal + tax + shipping;
 
     return {

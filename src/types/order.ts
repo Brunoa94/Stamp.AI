@@ -15,6 +15,15 @@ export interface OrderWithItemsT extends OrderT {
 export type OrderStatusFilterT = "all" | "pending" | "waiting_confirmation" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled" | "unsuccessful_confirmation"
 export type OrderTimeframeFilterT = "last-30" | "last-90" | "2023" | "all-time"
 
+export interface OrderStatusHistoryT {
+  id: string;
+  order_id: string;
+  status: string;
+  printify_status: string | null;
+  source: string;
+  created_at: string;
+}
+
 export interface Address {
   address1?: string;
   address2?: string;

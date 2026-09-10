@@ -17,6 +17,8 @@ import { usePaymentForm } from "@/features/checkout/ui/PaymentForm/usePaymentFor
 import type { ShippingAddressT } from "@/schemas/checkout";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 import type { StripePaymentIntentResultT } from "../../../lib/types/payment";
+import { AnalyticsService } from "@/services/analyticsService";
+import { mapPurchaseEvent } from "@/features/analytics/mappers/ecommerceMappers";
 
 interface CheckoutStripeButtonPropsI {
   amount: number;
@@ -58,6 +60,15 @@ export function CheckoutStripeButton({
         JSON.stringify(checkoutData),
       );
 
+      AnalyticsService.track(
+        "purchase",
+        mapPurchaseEvent({
+          transactionId: paymentIntent.id,
+          lineItems: processedLineItems,
+          amount,
+        })
+      );
+
       const params = new URLSearchParams({
         payment_intent: paymentIntent.id,
         payment_intent_client_secret: paymentIntent.client_secret || "",
@@ -89,7 +100,7 @@ export function CheckoutStripeButton({
         onClick={(event) => handleSubmit(event as unknown as React.FormEvent)}
         disabled={disabled || loading}
         variant="primary"
-        className="w-full font-heading"
+        className="w-full"
       >
         {loading
           ? t("processing")

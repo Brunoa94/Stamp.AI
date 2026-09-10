@@ -152,3 +152,31 @@ export function getBorderColor(hex: string): string {
   const luminance = calculateLuminance(rgb);
   return luminance > LUMINANCE_THRESHOLD ? DARK_BORDER : LIGHT_BORDER;
 }
+
+/**
+ * Filter colors to only show White and Black if both are available.
+ * Otherwise returns all available colors.
+ * Uses single-pass optimization with early exit.
+ */
+export function filterDisplayColors(colors: string[]): string[] {
+  if (!colors || colors.length === 0) return [];
+
+  let white: string | null = null;
+  let black: string | null = null;
+
+  for (const c of colors) {
+    const lower = c.toLowerCase();
+    if (lower === "white") white = c;
+    else if (lower === "black") black = c;
+    // Early exit if both found
+    if (white && black) break;
+  }
+
+  // Return only White and Black if both available, preserving original casing
+  if (white && black) {
+    return [white, black];
+  }
+
+  // Return all available colors if both White and Black aren't available
+  return colors;
+}

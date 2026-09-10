@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
 import { StripeService } from "@/services/stripeService";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 interface UseStripePaymentProps {
   amount: number;
@@ -30,6 +31,8 @@ export function useStripePayment({
   const elements = useElements();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Use showToast: false since this form shows inline errors
+  const { handleError } = useErrorHandler({ showToast: false });
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent) => {
@@ -47,7 +50,7 @@ export function useStripePayment({
         const { clientSecret } = await StripeService.createCreditPayment({
           amount,
           credits,
-          currency: "usd",
+          currency: "eur",
         });
 
         // Get card element for confirmation
@@ -72,8 +75,8 @@ export function useStripePayment({
           onSuccess();
         }
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : t("paymentFailed");
+        // Process error through handler for consistent error code extraction
+        const { message: errorMessage } = handleError(err);
         setError(errorMessage);
         onError(errorMessage);
       } finally {

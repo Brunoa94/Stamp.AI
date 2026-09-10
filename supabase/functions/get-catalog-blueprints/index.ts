@@ -12,8 +12,8 @@ const corsHeaders = {
 // Blueprint IDs that support front/back printing (validated via API)
 const FRONT_BACK_BLUEPRINT_IDS = [49, 145, 157, 553]
 
-// Preferred print provider (will fallback to first available if not found)
-const PREFERRED_PRINT_PROVIDER_ID = 99
+// Default print provider (Printify Choice)
+const DEFAULT_PRINT_PROVIDER_ID = 99
 
 interface BlueprintInfo {
   id: number
@@ -71,7 +71,7 @@ serve(async (req) => {
             headers: { 'Authorization': `Bearer ${PRINTIFY_API_TOKEN}` },
           }
         )
-        
+
         if (!blueprintResponse.ok) {
           console.log(`Blueprint ${blueprintId} not found, skipping`)
           continue
@@ -88,13 +88,13 @@ serve(async (req) => {
         }
 
         // Check if preferred provider is available, otherwise use first available
-        const preferredProvider = providers.find((p: any) => p.id === PREFERRED_PRINT_PROVIDER_ID)
+        const preferredProvider = providers.find((p: any) => p.id === DEFAULT_PRINT_PROVIDER_ID)
         const selectedProviderId = preferredProvider
-          ? PREFERRED_PRINT_PROVIDER_ID
+          ? DEFAULT_PRINT_PROVIDER_ID
           : providers[0].id
 
         if (!preferredProvider) {
-          console.log(`  Preferred provider ${PREFERRED_PRINT_PROVIDER_ID} not available, using ${providers[0].title} (${providers[0].id})`)
+          console.log(`  Preferred provider ${DEFAULT_PRINT_PROVIDER_ID} not available, using ${providers[0].title} (${providers[0].id})`)
         }
 
         // Get variants with placeholders to find print areas

@@ -1,6 +1,8 @@
 import { notFoundTheme } from "@/theme/components";
 import { HelpCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Heading } from "@/features/ui/heading";
+import { Span } from "@/features/ui/span";
 
 export default function NotFound() {
   const t = useTranslations("common.notFound");
@@ -9,15 +11,17 @@ export default function NotFound() {
     <section className={notFoundTheme.page} aria-label={t("ariaLabel")}>
       <div className={notFoundTheme.wrapper}>
         <div className={notFoundTheme.titleRow}>
-          <span className={notFoundTheme.titleIconWrap} aria-hidden="true">
+          <Span variant="default" className={notFoundTheme.titleIconWrap} aria-hidden="true">
             <HelpCircle className={notFoundTheme.titleIcon} />
-          </span>
-          <h1 className={notFoundTheme.title}>{t("title")}</h1>
+          </Span>
+          <Heading as="h1" variant="title" className={notFoundTheme.title}>
+            {t("title")}
+          </Heading>
         </div>
 
         <div className={notFoundTheme.numberWrap}>
-          <span className={notFoundTheme.numberGlow}>404</span>
-          <span className={notFoundTheme.numberMain}>404</span>
+          <Span variant="default" className={notFoundTheme.numberGlow}>404</Span>
+          <Span variant="default" className={notFoundTheme.numberMain}>404</Span>
         </div>
       </div>
     </section>

@@ -5,7 +5,7 @@
  * Used for grouping products in the UI and determining appropriate sizes.
  */
 
-type ProductCategory =
+export type ProductCategory =
   | "tshirt"
   | "hoodie"
   | "sweatshirt"
@@ -21,7 +21,7 @@ type ProductCategory =
   | "pillow"
   | "other";
 
-type ProductGroup = "clothing" | "accessories";
+export type ProductGroup = "clothing" | "accessories";
 
 /**
  * Keywords to detect product category from title
@@ -30,12 +30,14 @@ type ProductGroup = "clothing" | "accessories";
 const CATEGORY_KEYWORDS: Record<ProductCategory, string[]> = {
   tshirt: [
     "unisex t-shirt",
+    "kids t-shirt",
     "t-shirt",
     "tshirt",
     "tee shirt",
     "classic tee",
     "premium tee",
     "cotton tee",
+    "heavy cotton",
     "crew neck",
   ],
   hoodie: [
@@ -112,6 +114,7 @@ const CATEGORY_KEYWORDS: Record<ProductCategory, string[]> = {
   pillow: [
     "throw pillow",
     "faux linen pillow",
+    "pillowcase",
     "pillow",
     "cushion",
   ],
@@ -132,7 +135,7 @@ const CLOTHING_CATEGORIES: Set<ProductCategory> = new Set([
 /**
  * Detect product category from display title
  */
-function detectProductCategory(displayTitle: string): ProductCategory {
+export function detectProductCategory(displayTitle: string): ProductCategory {
   const titleLower = displayTitle.toLowerCase();
 
   // Check each category's keywords
@@ -152,7 +155,7 @@ function detectProductCategory(displayTitle: string): ProductCategory {
 /**
  * Get product group (clothing vs accessories) from category
  */
-function getProductGroup(category: ProductCategory): ProductGroup {
+export function getProductGroup(category: ProductCategory): ProductGroup {
   return CLOTHING_CATEGORIES.has(category) ? "clothing" : "accessories";
 }
 
@@ -211,4 +214,30 @@ function getExpectedSizeType(category: ProductCategory): ExpectedSizeType {
 function detectExpectedSizeType(displayTitle: string): ExpectedSizeType {
   const category = detectProductCategory(displayTitle);
   return getExpectedSizeType(category);
+}
+
+/**
+ * Categories that should NOT show color selection
+ * These products only come in one color (e.g., white mugs, white socks)
+ */
+const NO_COLOR_SELECTION_CATEGORIES: Set<ProductCategory> = new Set([
+  "mug",
+  "socks",
+  "pillow",
+  "canvas",
+  "poster",
+]);
+
+/**
+ * Check if a product should show color selection based on its title
+ * Returns false for products that only come in one color (mugs, socks, etc.)
+ * Returns false if title is empty/unknown (safer default - wait for title to load)
+ */
+export function shouldShowColorSelection(displayTitle: string): boolean {
+  // If no title provided, default to hiding colors (safer - wait for data to load)
+  if (!displayTitle || displayTitle.trim() === "") {
+    return false;
+  }
+  const category = detectProductCategory(displayTitle);
+  return !NO_COLOR_SELECTION_CATEGORIES.has(category);
 }

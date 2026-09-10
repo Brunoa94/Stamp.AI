@@ -13,26 +13,48 @@ import {
 import { CustomProductServiceMapper } from "@/mappers/services/customProductServiceMapper";
 import { ProductService } from "./productService";
 import { ErrorClient } from "./errorClient";
+import { getProductConfig } from "@/lib/printPlacement/config";
+import { createClient } from "@/lib/supabase/client";
 
 export class CustomProductService {
   private static getSupabaseConfig() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     // Do not throw here; caller will fall back to relative functions URLs when
     // environment variables are not present (e.g. during Playwright tests).
-    return { supabaseUrl, supabaseAnonKey };
+    return { supabaseUrl };
+  }
+
+  /**
+   * Get the current user's access token for authenticated Edge Function calls.
+   * The Edge Functions require a real user JWT, not the anon key.
+   */
+  private static async getAccessToken(): Promise<string | null> {
+    try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      return session?.access_token ?? null;
+    } catch {
+      return null;
+    }
   }
 
   /**
    * Upload image to Printify
    * Uses CustomProductServiceMapper to create upload request
+   * Returns image ID, preview URL, and dimensions for auto-placement
    */
   static async uploadImage(
     imageUrl: string,
-  ): Promise<{ id: string; previewUrl: string }> {
+  ): Promise<{ id: string; previewUrl: string; width: number; height: number }> {
     try {
-      const { supabaseUrl, supabaseAnonKey } = this.getSupabaseConfig();
+      const { supabaseUrl } = this.getSupabaseConfig();
+
+      // Get user's access token for authenticated Edge Function call
+      const accessToken = await this.getAccessToken();
+      if (!accessToken) {
+        throw new Error("Authentication required. Please log in to upload images.");
+      }
 
       // Use mapper to create upload request payload
       const payload = CustomProductServiceMapper.mapImageUrlToUploadRequest(imageUrl);
@@ -44,8 +66,10 @@ export class CustomProductService {
         ? `${supabaseUrl}/functions/v1/upload-printify-image`
         : `/functions/v1/upload-printify-image`;
 
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (supabaseAnonKey) headers["Authorization"] = `Bearer ${supabaseAnonKey}`;
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+      };
 
       const response = await fetch(fetchUrl, {
         method: "POST",
@@ -74,6 +98,8 @@ export class CustomProductService {
       return {
         id: validatedData.image.id,
         previewUrl: validatedData.image.preview_url,
+        width: validatedData.image.width,
+        height: validatedData.image.height,
       };
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Custom Product", action: "Upload Image"})
@@ -87,7 +113,13 @@ export class CustomProductService {
     payload: CreateProductPayloadT
   ): Promise<CreatedProductT> {
     try {
-      const { supabaseUrl, supabaseAnonKey } = this.getSupabaseConfig();
+      const { supabaseUrl } = this.getSupabaseConfig();
+
+      // Get user's access token for authenticated Edge Function call
+      const accessToken = await this.getAccessToken();
+      if (!accessToken) {
+        throw new Error("Authentication required. Please log in to create products.");
+      }
 
       // Validate input payload
       const validatedInput = CreateProductPayloadSchema.parse(payload);
@@ -95,19 +127,53 @@ export class CustomProductService {
       // Step 1: Upload image to Printify
       const uploadedImage = await this.uploadImage(validatedInput.image_url);
 
-      // Step 2: Create custom product
+      // Build print areas from the user's selected positions (Step 6 design
+      // adjustment). The same uploaded image is used for every position.
+      // Falls back to auto-placed front print when no positions were chosen.
+      const printAreas: Record<string, string> = {};
+      const placements: Record<
+        string,
+        { x: number; y: number; scale: number; angle: number }
+      > = {};
+
+      if (validatedInput.print_positions?.length) {
+        for (const { position, placement } of validatedInput.print_positions) {
+          printAreas[position] = uploadedImage.id;
+          placements[position] = placement;
+        }
+      } else {
+        // Get product config to determine the correct print positions
+        // Some products (like socks) don't have a 'front' position
+        const productConfig = getProductConfig(validatedInput.blueprint_id);
+        const positions = productConfig.positions;
+
+        // For products with placement disabled (mugs, socks), use all positions
+        // For others, use just the default position
+        if (productConfig.disablePlacementAdjustment) {
+          for (const position of positions) {
+            printAreas[position] = uploadedImage.id;
+          }
+        } else {
+          const defaultPosition = productConfig.defaultPosition || positions[0] || 'front';
+          printAreas[defaultPosition] = uploadedImage.id;
+        }
+      }
+
+      // Step 2: Create custom product with image dimensions for auto-placement
       const productPayload: CreateCustomProductRequestI = {
         blueprint_id: validatedInput.blueprint_id,
         print_provider_id: validatedInput.print_provider_id,
-        print_areas: {
-          front: uploadedImage.id,
-        },
+        print_areas: printAreas,
+        ...(Object.keys(placements).length > 0 ? { placements } : {}),
         title: validatedInput.title || `Custom Design ${Date.now()}`,
         description: validatedInput.description || "Custom designed product",
         user_id: validatedInput.user_id,
         customer_email: validatedInput.customer_email,
         selected_color: validatedInput.selected_color,
         selected_size: validatedInput.selected_size,
+        // Pass image dimensions for auto-placement calculation
+        image_width: uploadedImage.width,
+        image_height: uploadedImage.height,
       };
 
       // Validate product payload
@@ -117,8 +183,10 @@ export class CustomProductService {
         ? `${supabaseUrl}/functions/v1/create-custom-product`
         : `/functions/v1/create-custom-product`;
 
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (supabaseAnonKey) headers["Authorization"] = `Bearer ${supabaseAnonKey}`;
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+      };
 
       const response = await fetch(fetchUrl, {
         method: "POST",
@@ -154,7 +222,7 @@ export class CustomProductService {
           printifyProduct,
           validatedInput.blueprint_id,
           validatedInput.print_provider_id,
-          { front: uploadedImage.id }, // Store the print areas
+          printAreas, // Store the print areas
           validatedInput.user_id
         );
 

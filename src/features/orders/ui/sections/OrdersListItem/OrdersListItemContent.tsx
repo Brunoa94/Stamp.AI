@@ -19,6 +19,7 @@ export function OrdersListItemContent({
   displayedStatus,
 }: PropsI) {
   const t = useTranslations("orders.listItem");
+  const tStatus = useTranslations("orders.statusBadge");
 
   return (
     <div className="flex-1">
@@ -35,7 +36,7 @@ export function OrdersListItemContent({
           variant="badge"
           className={`status-badge ${getStatusBadgeClass(displayedStatus)}`}
         >
-          {displayedStatus}
+          {tStatus(displayedStatus)}
         </Span>
       </div>
 

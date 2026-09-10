@@ -10,6 +10,11 @@ import type { CartWithItems } from "@/types/cart";
 import type { CheckoutFormData } from "../context/CheckoutFormContext";
 import type { PromoCodeValidationResult } from "@/schemas/promocode";
 
+/** Free shipping threshold in euros */
+const FREE_SHIPPING_THRESHOLD = 60;
+/** Shipping cost in euros for orders below threshold */
+const SHIPPING_COST = 4.99;
+
 interface UseCheckoutPricingParams {
   cart: CartWithItems | null;
 }
@@ -26,10 +31,36 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
 
   const promoCode = watch("promoCode");
 
+  // Calculate subtotal from cart items (in cents)
+  const subtotalInCents = (() => {
+    if (!cart?.cart_items) return 0;
+    return cart.cart_items.reduce((sum, item) => {
+      return sum + ((item.unit_price ?? 0) * (item.quantity ?? 1));
+    }, 0);
+  })();
+
+  // Convert cents to euros for display and calculations
+  const subtotal = subtotalInCents / 100;
+
+  // Discount from applied promo code (in euros)
+  const discount = getDiscountValue(appliedPromo);
+
+  // Calculate subtotal after discount for shipping calculation
+  const subtotalAfterDiscount = subtotal - discount;
+
+  // Shipping: free for orders >= €60 (after discount), otherwise €4.99
+  const shipping = subtotalAfterDiscount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
+
+  // Total = subtotal + shipping - discount (all in euros)
+  const total = subtotal + shipping - discount;
+
+  // Total in cents for payment processing
+  const totalInCents = Math.round(total * 100);
+
   // React Query mutation for promo code validation
   const validatePromoCodeMutation = useMutation({
-    mutationFn: ({ code, subtotal }: { code: string; subtotal: number }) =>
-      CheckoutPromoCodeService.validateAndApply(code, subtotal),
+    mutationFn: ({ code, subtotalValue }: { code: string; subtotalValue: number }) =>
+      CheckoutPromoCodeService.validateAndApply(code, subtotalValue),
     onSuccess: (result) => {
       if (result.isValid && result.appliedPromo) {
         setAppliedPromo(result);
@@ -57,26 +88,6 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
     },
   });
 
-  // Calculate subtotal from cart items (in cents)
-  const subtotalInCents = (() => {
-    if (!cart?.cart_items) return 0;
-    return cart.cart_items.reduce((sum, item) => {
-      return sum + ((item.unit_price ?? 0) * (item.quantity ?? 1));
-    }, 0);
-  })();
-
-  // Convert cents to dollars for display
-  const subtotal = subtotalInCents / 100;
-
-  // Shipping is always free (Standard only)
-  const shipping = 0;
-
-  // Discount from applied promo code (already in dollars)
-  const discount = getDiscountValue(appliedPromo);
-
-  // Total = subtotal + shipping - discount (all in dollars)
-  const total = subtotal + shipping - discount;
-
   // Apply promo code
   const applyPromoCode = async (code: string) => {
     if (!code.trim()) {
@@ -87,7 +98,7 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
     setPromoError(null);
     await validatePromoCodeMutation.mutateAsync({
       code: code.trim(),
-      subtotal,
+      subtotalValue: subtotal,
     });
   };
 
@@ -102,6 +113,7 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
     shipping,
     discount,
     total,
+    totalInCents,
     promoCode,
     appliedPromo,
     promoError,

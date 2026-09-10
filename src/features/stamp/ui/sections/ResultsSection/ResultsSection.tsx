@@ -1,10 +1,16 @@
 "use client";
 
+import { memo, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
-import { useStampSelectedImage } from "../../../lib/hooks/useStampSelectors";
+import { useStampNavigationActions } from "../../../lib/hooks/useStampNavigation";
+import {
+  useStampSelectedImage,
+  useStampGeneration,
+} from "../../../lib/hooks/useStampSelectors";
+import { useLoadCachedImages } from "../../../lib/hooks/useLoadCachedImages";
 import { ResultsImage } from "./ResultsImage";
 import { ResultsActions } from "./ResultsActions";
+import { ResultsGallery } from "./ResultsGallery";
 import { Heading } from "@/features/ui/heading";
 
 /**
@@ -12,13 +18,35 @@ import { Heading } from "@/features/ui/heading";
  *
  * Step 4: Display generated results
  * Protocol 04 / Output
+ *
+ * Shows the currently selected image and a gallery of previously
+ * generated images (cached in localStorage with 24h TTL).
  */
 
-export function ResultsSection() {
+function ResultsSectionComponent() {
   const t = useTranslations("stamp.results");
-  const { nextStep, goToStep } = useStampNavigation();
-  const { selectedImageUrl, enhancedPrompt } = useStampSelectedImage();
+  const { nextStep, goToStep } = useStampNavigationActions();
+  const { selectedImageUrl, setSelectedImageUrl, setEnhancedPrompt } =
+    useStampSelectedImage();
+  const { generatedResults } = useStampGeneration();
   const canProceedToProduct = Boolean(selectedImageUrl);
+
+  // Load cached images from localStorage on mount
+  useLoadCachedImages();
+
+  // Auto-select first image if none selected and we have results
+  useEffect(() => {
+    if (!selectedImageUrl && generatedResults.length > 0) {
+      const firstResult = generatedResults[0];
+      setSelectedImageUrl(firstResult.imageUrl);
+      setEnhancedPrompt(firstResult.enhancedPrompt);
+    }
+  }, [
+    selectedImageUrl,
+    generatedResults,
+    setSelectedImageUrl,
+    setEnhancedPrompt,
+  ]);
 
   const handleUseProtocol = () => {
     nextStep();
@@ -28,26 +56,26 @@ export function ResultsSection() {
     goToStep(2);
   };
 
+  const handleSelectImage = (imageUrl: string, enhancedPrompt: string) => {
+    setSelectedImageUrl(imageUrl);
+    setEnhancedPrompt(enhancedPrompt);
+  };
+
   const displayImageUrl =
     selectedImageUrl ||
     "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1974&auto=format&fit=crop";
 
-  const currentDate = new Date().toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-
   return (
     <section
       id="step-4"
-      className="h-full overflow-y-auto flex flex-col items-center justify-center p-8 md:p-16 lg:p-24 bg-(--color-stamp-off-white) border-b border-(--color-stamp-divider)"
+      className="h-full overflow-y-auto flex flex-col items-center p-6 pt-16 md:p-10 md:pt-16 lg:p-16 lg:pt-16 xl:p-24 xl:pt-24 bg-(--color-stamp-off-white) border-b border-(--color-stamp-divider)"
     >
-      <div className="max-w-2xl w-full">
+      {/* my-auto (not justify-center) so tall content scrolls instead of clipping at the top */}
+      <div className="max-w-3xl w-full my-auto">
         <Heading
           as="h2"
-          variant="title"
-          className="text-(--color-stamp-chocolate) mb-6"
+          variant="panelTitle"
+          className="text-(--color-stamp-chocolate) mb-4 md:mb-6"
         >
           {t.rich("title", {
             accent: (chunks) => (
@@ -58,6 +86,11 @@ export function ResultsSection() {
           })}
         </Heading>
         <ResultsImage imageUrl={displayImageUrl} />
+        <ResultsGallery
+          results={generatedResults}
+          selectedImageUrl={selectedImageUrl}
+          onSelectImage={handleSelectImage}
+        />
         <ResultsActions
           canProceed={canProceedToProduct}
           onUseProtocol={handleUseProtocol}
@@ -67,3 +100,5 @@ export function ResultsSection() {
     </section>
   );
 }
+
+export const ResultsSection = memo(ResultsSectionComponent);

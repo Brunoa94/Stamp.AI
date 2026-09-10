@@ -1,4 +1,7 @@
-import type { IProductCreateForm, IImageGenerationResult } from "@/schemas/productCreateSchema";
+import type {
+  IImageGenerationResult,
+  IProductCreateForm,
+} from "@/schemas/productCreateSchema";
 
 interface ImageGenerationResponse {
   success: boolean;
@@ -10,6 +13,7 @@ interface ImageGenerationResponse {
 export interface ImageGenerationRequestPayload extends IProductCreateForm {
   selectedStyle?: string;
   preservation?: number;
+  removeBackground?: boolean;
 }
 
 export class ImageGenerationServiceMapper {
@@ -29,13 +33,19 @@ export class ImageGenerationServiceMapper {
       formData.append("preservation", String(data.preservation));
     }
 
+    if (typeof data.removeBackground === "boolean") {
+      formData.append("removeBackground", String(data.removeBackground));
+    }
+
     return formData;
   }
 
   /**
    * Map API response to IImageGenerationResult
    */
-  static mapResponseToResult(response: ImageGenerationResponse): IImageGenerationResult {
+  static mapResponseToResult(
+    response: ImageGenerationResponse,
+  ): IImageGenerationResult {
     return {
       imageUrl: response.imageUrl,
       enhancedPrompt: response.enhancedPrompt,
