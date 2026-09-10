@@ -1,11 +1,27 @@
 import { NextRequest } from "next/server";
 
-/** Basic IPv4 / IPv6 shape check — rejects garbage/injected values. */
+/**
+ * Validates IPv4 and IPv6 address formats.
+ * Rejects garbage/injected values to prevent rate-limit bucket manipulation.
+ */
 function isValidIp(value: string): boolean {
+  // IPv4: strict octet validation (0-255 in each position)
   const ipv4 =
     /^(25[0-5]|2[0-4]\d|1?\d?\d)(\.(25[0-5]|2[0-4]\d|1?\d?\d)){3}$/;
-  const ipv6 = /^[0-9a-fA-F:]+$/; // permissive; only used after trust gating
-  return ipv4.test(value) || (value.includes(":") && ipv6.test(value));
+
+  // IPv6: validate using URL parser (Edge-runtime compatible)
+  // Wrapping in brackets and parsing as URL host is a reliable cross-platform approach
+  if (value.includes(":")) {
+    try {
+      // URL constructor validates the bracketed IPv6 format
+      new URL(`http://[${value}]`);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  return ipv4.test(value);
 }
 
 /**

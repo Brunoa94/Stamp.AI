@@ -15,12 +15,16 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
  * XSS defense; this CSP is defense-in-depth for resource loading + framing.
  * `connect-src` includes www.google.com for reCAPTCHA's verification beacon.
  */
+/**
+ * Note: Fonts are self-hosted via next/font/google (served from /_next),
+ * so external Google Fonts domains are not required in style-src/font-src.
+ */
 const ContentSecurityPolicy = `
   default-src 'self';
   script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.paypal.com https://www.google.com https://www.gstatic.com;
-  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  style-src 'self' 'unsafe-inline';
   img-src 'self' data: blob: https://images.printify.com https://images-api.printify.com https://pfy-prod-image-storage.s3.us-east-2.amazonaws.com https://oaidalleapiprodscus.blob.core.windows.net https://placehold.co https://images.unsplash.com https://picsum.photos https://*.supabase.co;
-  font-src 'self' data: https://fonts.gstatic.com;
+  font-src 'self' data:;
   connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://api.paypal.com https://api.sandbox.paypal.com https://api.mollie.com https://www.google.com;
   frame-src 'self' https://js.stripe.com https://www.paypal.com https://www.google.com;
   frame-ancestors 'self';
