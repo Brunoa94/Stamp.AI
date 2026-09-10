@@ -1,6 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
-import { applySecurityHeaders } from "@/lib/security/headers";
 import { checkCombinedRateLimit } from "@/lib/security/rate-limiter/check";
 import {
   RATE_LIMIT_CONFIGS,
@@ -85,8 +84,7 @@ export async function middleware(request: NextRequest) {
         },
       );
 
-      // Apply security headers even to rate-limited responses
-      applySecurityHeaders(response);
+      // Add request ID for correlation
       response.headers.set(REQUEST_ID_HEADER, requestId);
 
       return response;
@@ -154,7 +152,6 @@ export async function middleware(request: NextRequest) {
     url.searchParams.set("redirectedFrom", pathname);
     const response = NextResponse.redirect(url);
     supabaseResponse.cookies.getAll().forEach((cookie) => response.cookies.set(cookie));
-    applySecurityHeaders(response);
     response.headers.set(REQUEST_ID_HEADER, requestId);
     return response;
   }
@@ -172,8 +169,9 @@ export async function middleware(request: NextRequest) {
   // If this is not done, you may be causing the browser and server to go out
   // of sync and terminate the user's session prematurely!
 
-  // ── Apply Security Headers ────────────────────────────────────────────────────
-  applySecurityHeaders(supabaseResponse);
+  // Security headers (CSP, HSTS, etc.) are applied centrally in next.config.ts
+  // (`headers()`), which covers every route without per-request cost. Keeping
+  // them in one place avoids the two definitions drifting apart.
 
   // Add rate limit headers to successful responses (reuse earlier result to avoid double-counting)
   if (rateLimitResult) {

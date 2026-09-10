@@ -5,16 +5,26 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 /**
- * Content Security Policy for static assets
- * This complements the middleware CSP for dynamic routes
+ * Content Security Policy.
+ *
+ * SINGLE SOURCE OF TRUTH for all security headers — applied here (statically,
+ * to every route) rather than also in middleware, so the two can't drift.
+ *
+ * `script-src` intentionally uses 'unsafe-inline' (no nonce): the app relies on
+ * static/ISR rendering (e.g. the homepage's `revalidate`), which is
+ * incompatible with per-request nonces. React's output escaping is the primary
+ * XSS defense; this CSP is defense-in-depth for resource loading + framing.
+ *
+ * Note: Fonts are self-hosted via next/font/google (served from /_next),
+ * so external Google Fonts domains are not required in style-src/font-src.
  */
 const ContentSecurityPolicy = `
   default-src 'self';
   script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.paypal.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://googletagmanager.com;
-  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  style-src 'self' 'unsafe-inline';
   img-src 'self' data: blob: https://images.printify.com https://images-api.printify.com https://pfy-prod-image-storage.s3.us-east-2.amazonaws.com https://oaidalleapiprodscus.blob.core.windows.net https://placehold.co https://images.unsplash.com https://picsum.photos https://*.supabase.co https://www.googletagmanager.com https://api.dicebear.com;
-  font-src 'self' data: https://fonts.gstatic.com;
-  connect-src 'self' https://*.supabase.co https://api.stripe.com https://api.paypal.com https://api.sandbox.paypal.com https://api.mollie.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://*.google-analytics.com;
+  font-src 'self' data:;
+  connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://api.paypal.com https://api.sandbox.paypal.com https://api.mollie.com https://www.google.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://*.google-analytics.com;
   frame-src 'self' https://js.stripe.com https://www.paypal.com https://www.google.com;
   frame-ancestors 'none';
   form-action 'self';
@@ -54,6 +64,15 @@ const securityHeaders = [
   {
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+  },
+  // Cross-origin isolation
+  {
+    key: "Cross-Origin-Opener-Policy",
+    value: "same-origin",
+  },
+  {
+    key: "Cross-Origin-Resource-Policy",
+    value: "same-origin",
   },
   {
     key: "Content-Security-Policy",
