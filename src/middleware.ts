@@ -132,12 +132,31 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Protected routes
-  if (request.nextUrl.pathname.startsWith("/stamp") && !user) {
-    // no user, potentially respond by redirecting the user to the login page
+  // Protected routes — server-side auth gate. The client-side <ProtectedRoute>
+  // is UX only and is NOT a security control; these must be gated here before
+  // any page data renders.
+  const PROTECTED_PREFIXES = [
+    "/stamp",
+    "/orders",
+    "/profile",
+    "/cart",
+    "/checkout",
+    "/dashboard",
+  ];
+  const isProtected = PROTECTED_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`)
+  );
+
+  if (isProtected && !user) {
+    // no user — redirect to the login/home page
     const url = request.nextUrl.clone();
     url.pathname = "/";
-    return NextResponse.redirect(url);
+    url.searchParams.set("redirectedFrom", pathname);
+    const response = NextResponse.redirect(url);
+    supabaseResponse.cookies.getAll().forEach((cookie) => response.cookies.set(cookie));
+    applySecurityHeaders(response);
+    response.headers.set(REQUEST_ID_HEADER, requestId);
+    return response;
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're

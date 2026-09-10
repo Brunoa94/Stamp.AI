@@ -13,6 +13,7 @@ import {
   validateColorForBlueprint,
 } from "../_shared/colorValidation.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { requireUser } from "../_shared/authGuard.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -33,6 +34,8 @@ serve(async (req) => {
   }
 
   try {
+    await requireUser(req.headers.get('authorization'));
+
     const {
       blueprint_id,
       print_provider_id,

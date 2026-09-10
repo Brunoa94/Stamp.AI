@@ -29,7 +29,31 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // Server-side auth gate. Client-side <ProtectedRoute> is UX only and is not a
+  // security control — these routes must be gated before any page data renders.
+  const PROTECTED_PREFIXES = [
+    "/stamp",
+    "/orders",
+    "/profile",
+    "/cart",
+    "/checkout",
+    "/dashboard",
+  ];
+  const { pathname } = request.nextUrl;
+  const isProtected = PROTECTED_PREFIXES.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`),
+  );
+
+  if (isProtected && !user) {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/";
+    redirectUrl.searchParams.set("redirectedFrom", pathname);
+    return NextResponse.redirect(redirectUrl);
+  }
 
   return supabaseResponse;
 }

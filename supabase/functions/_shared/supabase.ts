@@ -65,7 +65,7 @@ export interface SupabaseRestOptionsI {
 export async function supabaseRest<T = unknown>(
   endpoint: string,
   method: string,
-  body?: Record<string, unknown>,
+  body?: Record<string, unknown> | Array<Record<string, unknown>>,
   options?: SupabaseRestOptionsI
 ): Promise<SupabaseRestResponseI<T>> {
   const supabaseUrl = validateEnvVars.supabaseUrl();

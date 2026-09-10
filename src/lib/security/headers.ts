@@ -101,7 +101,7 @@ export function generateCSP(_nonce?: string): string {
       "'self'",
       ...TRUSTED_DOMAINS.frames,
     ],
-    "frame-ancestors": ["'self'"],
+    "frame-ancestors": ["'none'"],
     "form-action": ["'self'"],
     "base-uri": ["'self'"],
     "object-src": ["'none'"],
@@ -121,7 +121,7 @@ export function generateCSP(_nonce?: string): string {
  */
 export const SECURITY_HEADERS: Record<string, string> = {
   // Prevent clickjacking attacks
-  "X-Frame-Options": "SAMEORIGIN",
+  "X-Frame-Options": "DENY",
 
   // Prevent MIME type sniffing
   "X-Content-Type-Options": "nosniff",

@@ -16,7 +16,7 @@ const ContentSecurityPolicy = `
   font-src 'self' data: https://fonts.gstatic.com;
   connect-src 'self' https://*.supabase.co https://api.stripe.com https://api.paypal.com https://api.sandbox.paypal.com https://api.mollie.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://*.google-analytics.com;
   frame-src 'self' https://js.stripe.com https://www.paypal.com https://www.google.com;
-  frame-ancestors 'self';
+  frame-ancestors 'none';
   form-action 'self';
   base-uri 'self';
   object-src 'none';
@@ -37,7 +37,7 @@ const securityHeaders = [
   },
   {
     key: "X-Frame-Options",
-    value: "SAMEORIGIN",
+    value: "DENY",
   },
   {
     key: "X-Content-Type-Options",

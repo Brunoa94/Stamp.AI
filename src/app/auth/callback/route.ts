@@ -4,15 +4,26 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
-  const next = requestUrl.searchParams.get('next') ?? '/stamp'
+  const rawNext = requestUrl.searchParams.get('next') ?? '/stamp'
   const type = requestUrl.searchParams.get('type')
+
+  // Compare parsed origins: URL parsing normalizes backslashes and whitespace.
+  let next = new URL('/stamp', requestUrl)
+  try {
+    const candidate = new URL(rawNext, requestUrl)
+    if (rawNext.startsWith('/') && candidate.origin === requestUrl.origin) {
+      next = candidate
+    }
+  } catch {
+    // Invalid destinations use the default landing page.
+  }
 
   if (!code) {
     return NextResponse.redirect(new URL('/auth/auth-code-error', request.url))
   }
 
   // Create a response object that we can modify
-  let response = NextResponse.next({
+  const response = NextResponse.next({
     request,
   })
 
