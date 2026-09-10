@@ -34,8 +34,6 @@ serve(async (req) => {
       payment_intent_id,
     } = body;
 
-    console.log("=== PROCESS PAYMENT RECOVERY ===");
-
     // Validate required fields
     if (!recovery_id || !payment_provider || !payment_intent_id) {
       throw ErrorCodes.INVALID_REQUEST_BODY();
@@ -79,7 +77,6 @@ serve(async (req) => {
       if (existingOrder.user_id !== effectiveUserId) {
         throw new FunctionError(403, "FORBIDDEN", "Order belongs to another user");
       }
-      console.log("✅ Order already exists:", existingOrder.id);
 
       // Mark as recovered
       await supabaseRest("rpc/mark_payment_recovered", "POST", {
@@ -101,7 +98,6 @@ serve(async (req) => {
     }
 
     // Create order from cart snapshot
-    console.log("📝 Creating order from recovered payment...");
 
     // Calculate totals from cart snapshot
     const cartItems = cart_snapshot.cart_items || cart_snapshot.items || [];
@@ -150,8 +146,6 @@ serve(async (req) => {
     const orderResult = await supabaseRest<Array<{ id: string }> | { id: string }>("orders", "POST", orderData, { prefer: "return=representation" });
 
     if (orderResult.error || !orderResult.data) {
-      console.error("Failed to create order:", orderResult.error);
-
       // Record error in recovery record
       await supabaseRest("rpc/increment_recovery_attempt", "POST", {
         p_payment_intent_id: payment_intent_id,
@@ -168,8 +162,6 @@ serve(async (req) => {
       ? orderResult.data[0].id
       : orderResult.data.id;
 
-    console.log("✅ Order created:", orderId);
-
     // Create order items
     const orderItems = cartItems.map((item: any) => ({
       order_id: orderId,
@@ -184,10 +176,8 @@ serve(async (req) => {
     }));
 
     await supabaseRest("order_items", "POST", orderItems);
-    console.log("✅ Order items created");
 
     // Create Printify order
-    console.log("🚀 Creating Printify order...");
 
     const printifyResponse = await fetch(
       `${Deno.env.get("SUPABASE_URL")}/functions/v1/create-printify-order`,
@@ -213,7 +203,6 @@ serve(async (req) => {
 
     if (!printifyResponse.ok) {
       const errorText = await printifyResponse.text();
-      console.error("Printify order creation failed:", errorText);
 
       // Order exists but Printify failed - create reconciliation alert
       await supabaseRest("order_status_reconciliation", "POST", {
@@ -243,8 +232,6 @@ serve(async (req) => {
       );
     }
 
-    console.log("✅ Printify order created");
-
     // Update order status to confirmed
     await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
       status: "confirmed",
@@ -258,8 +245,6 @@ serve(async (req) => {
       p_order_id: orderId,
     });
 
-    console.log("✅ Payment recovery completed successfully");
-
     return new Response(
       JSON.stringify({
         success: true,
@@ -271,7 +256,6 @@ serve(async (req) => {
       }
     );
   } catch (error) {
-    console.error("Payment recovery error:", error);
     return handleError(error, corsHeaders);
   }
 });
