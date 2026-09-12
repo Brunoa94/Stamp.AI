@@ -1,5 +1,5 @@
 import { FormField } from "@/features/ui/form-field";
-import { Mail, Lock, User } from "lucide-react";
+import { Mail, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import type { RegisterI } from "@/schemas/auth";
@@ -54,32 +54,6 @@ export function RegisterCredentialsFields({
         variant="stamp-auth"
         leadingIcon={<Mail className="h-5 w-5" />}
       />
-
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <FormField
-          id="password"
-          label={t("passwordLabel")}
-          type="password"
-          placeholder={t("passwordPlaceholder")}
-          required
-          error={ve(errors.password?.message)}
-          register={register("password")}
-          variant="stamp-auth"
-          leadingIcon={<Lock className="h-5 w-5" />}
-        />
-
-        <FormField
-          id="confirmPassword"
-          label={t("confirmPassword")}
-          type="password"
-          placeholder={t("confirmPasswordPlaceholder")}
-          required
-          error={ve(errors.confirmPassword?.message)}
-          register={register("confirmPassword")}
-          variant="stamp-auth"
-          leadingIcon={<Lock className="h-5 w-5" />}
-        />
-      </div>
     </div>
   );
 }

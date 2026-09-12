@@ -79,13 +79,16 @@ class AuthService {
    * Server route creates the account and emails a confirmation link; the
    * account stays inactive (no session) until the link is clicked
    */
-  static async register(userData: RegisterI): Promise<AuthResponseI> {
+  static async register(
+    userData: RegisterI,
+    captchaToken?: string | null,
+  ): Promise<AuthResponseI> {
     try {
       const body: SignupRequestI = {
         email: userData.email,
-        password: userData.password,
         firstName: userData.firstName,
         lastName: userData.lastName,
+        captchaToken,
       };
 
       const response = await fetch("/api/auth/signup", {
@@ -291,12 +294,15 @@ class AuthService {
    * Resend email verification
    * Server route re-issues the confirmation link and emails it via Brevo
    */
-  static async resendEmailVerification(email: string): Promise<void> {
+  static async resendEmailVerification(
+    email: string,
+    captchaToken?: string | null,
+  ): Promise<void> {
     try {
       const response = await fetch("/api/auth/resend-confirmation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, captchaToken }),
       });
 
       if (!response.ok) {

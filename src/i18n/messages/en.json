@@ -1045,7 +1045,7 @@
       "register": "Register",
       "openDialogAria": "Open register dialog",
       "signUp": "Sign Up",
-      "successToast": "Account created. Check your email to verify it.",
+      "successToast": "Check your email to verify your address and set your password.",
       "form": {
         "srTitle": "Create Account",
         "closeAria": "Close register modal",
@@ -1081,7 +1081,7 @@
       "success": {
         "srTitle": "Registration Successful",
         "title": "You're all set",
-        "description": "Your account is created. Check your email to verify it before you sign in.",
+        "description": "Check your email to verify your address, then choose your password.",
         "gotIt": "Got it"
       }
     }
@@ -1638,6 +1638,7 @@
     "INVALID_CREDITS": "Credits must be at least 10",
     "INVALID_CREDENTIALS": "Invalid email or password",
     "EMAIL_NOT_CONFIRMED": "Please verify your email address before signing in",
+    "CAPTCHA_VERIFICATION_FAILED": "Security verification failed. Please try again",
     "INVALID_TOKEN": "Your session has expired. Please sign in again",
     "WEBHOOK_SIGNATURE_INVALID": "Invalid webhook signature",
     "PAYPAL_WEBHOOK_SIGNATURE_INVALID": "Invalid PayPal webhook signature",

@@ -1,12 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { randomBytes } from "node:crypto";
 import { captureError } from "@/lib/observability/errorCapture";
-import { ResendConfirmationSchema } from "@/schemas/auth";
+import {
+  ResendConfirmationSchema,
+  UnconfirmedAuthUserSchema,
+} from "@/schemas/auth";
 import { sendBrevoEmail } from "@/lib/email/brevo";
 import {
   buildConfirmationEmailHtml,
   CONFIRMATION_EMAIL_SUBJECT,
 } from "@/lib/email/confirmationEmailTemplate";
+import { SITE_URL } from "@/features/seo/config/site";
+import type { Database } from "@/types/database.types";
+import { verifyCaptchaForAction } from "@/lib/security/captcha/verify";
+import { CAPTCHA_ACTIONS } from "@/lib/security/captcha/constants";
+import { isAuthEmailRequestAllowed } from "@/lib/security/authEmailProtection";
 
 export const runtime = "nodejs";
 
@@ -44,22 +53,67 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+    const captchaRequired = process.env.NODE_ENV === "production" ||
+      Boolean(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) ||
+      Boolean(process.env.RECAPTCHA_SECRET_KEY);
+
+    if (captchaRequired) {
+      const captcha = await verifyCaptchaForAction(
+        parsed.data.captchaToken ?? "",
+        CAPTCHA_ACTIONS.REGISTER,
+      );
+      if (!captcha.success) {
+        return NextResponse.json(
+          { error: "CAPTCHA_VERIFICATION_FAILED" },
+          { status: 403 },
+        );
+      }
+    }
+
+    const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseServiceKey, {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
-    // A magic-link token proves email ownership, so verifying it also
-    // confirms the account. It only exists for already-registered users.
+    if (!(await isAuthEmailRequestAllowed(
+      supabaseAdmin,
+      request,
+      "resend-confirmation",
+      parsed.data.email,
+    ))) {
+      return NextResponse.json(
+        { error: "Too many authentication attempts" },
+        { status: 429 },
+      );
+    }
+
+    // This restricted RPC avoids listing the entire auth user directory and
+    // returns no information for unknown or already-confirmed addresses.
+    const { data: existingData, error: lookupError } = await supabaseAdmin.rpc(
+      "find_unconfirmed_auth_user",
+      { p_email: parsed.data.email },
+    );
+    if (lookupError) throw lookupError;
+
+    const existingResult = UnconfirmedAuthUserSchema.safeParse(existingData);
+    const existingUser = existingResult.success ? existingResult.data : null;
+
+    if (!existingUser) {
+      return NextResponse.json(GENERIC_SUCCESS);
+    }
+
+    // Neutralize any password chosen during a malicious pre-registration.
+    const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+      existingUser.id,
+      { password: randomBytes(48).toString("base64url") },
+    );
+    if (updateError) throw updateError;
+
     const { data, error } = await supabaseAdmin.auth.admin.generateLink({
       type: "magiclink",
       email: parsed.data.email,
     });
 
-    // Unknown or already-confirmed emails get the same response as real
-    // sends so this endpoint cannot be used to probe registered emails.
-    if (error || data.user?.email_confirmed_at) {
-      return NextResponse.json(GENERIC_SUCCESS);
-    }
+    if (error) throw error;
 
     const tokenHash = data.properties?.hashed_token;
 
@@ -67,16 +121,19 @@ export async function POST(request: NextRequest) {
       throw new Error("Confirmation link generation returned no token");
     }
 
-    const confirmUrl = new URL("/auth/confirm", request.nextUrl.origin);
+    const confirmUrl = new URL("/auth/confirm", SITE_URL);
     confirmUrl.searchParams.set("token_hash", tokenHash);
-    confirmUrl.searchParams.set("type", "magiclink");
-    confirmUrl.searchParams.set("next", "/stamp");
+    confirmUrl.searchParams.set(
+      "type",
+      data.properties.verification_type,
+    );
+    confirmUrl.searchParams.set("next", "/reset-password?onboarding=true");
 
     const sent = await sendBrevoEmail({
       to: parsed.data.email,
       subject: CONFIRMATION_EMAIL_SUBJECT,
       htmlContent: buildConfirmationEmailHtml({
-        firstName: data.user?.user_metadata?.first_name,
+        firstName: existingUser.first_name ?? undefined,
         confirmUrl: confirmUrl.toString(),
       }),
     });

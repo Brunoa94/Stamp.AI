@@ -1,12 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { randomBytes } from "node:crypto";
 import { captureError } from "@/lib/observability/errorCapture";
-import { SignupRequestSchema } from "@/schemas/auth";
+import {
+  SignupRequestSchema,
+  UnconfirmedAuthUserSchema,
+} from "@/schemas/auth";
 import { sendBrevoEmail } from "@/lib/email/brevo";
 import {
   buildConfirmationEmailHtml,
   CONFIRMATION_EMAIL_SUBJECT,
 } from "@/lib/email/confirmationEmailTemplate";
+import { SITE_URL } from "@/features/seo/config/site";
+import type { Database } from "@/types/database.types";
+import { verifyCaptchaForAction } from "@/lib/security/captcha/verify";
+import { CAPTCHA_ACTIONS } from "@/lib/security/captcha/constants";
+import { isAuthEmailRequestAllowed } from "@/lib/security/authEmailProtection";
 
 export const runtime = "nodejs";
 
@@ -38,18 +47,71 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+    const captchaRequired = process.env.NODE_ENV === "production" ||
+      Boolean(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) ||
+      Boolean(process.env.RECAPTCHA_SECRET_KEY);
+
+    if (captchaRequired) {
+      const captcha = await verifyCaptchaForAction(
+        parsed.data.captchaToken ?? "",
+        CAPTCHA_ACTIONS.REGISTER,
+      );
+      if (!captcha.success) {
+        return NextResponse.json(
+          { error: "CAPTCHA_VERIFICATION_FAILED" },
+          { status: 403 },
+        );
+      }
+    }
+
+    const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseServiceKey, {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
-    const { email, password, firstName, lastName } = parsed.data;
+    const { email, firstName, lastName } = parsed.data;
+
+    if (!(await isAuthEmailRequestAllowed(
+      supabaseAdmin,
+      request,
+      "signup",
+      email,
+    ))) {
+      return NextResponse.json(
+        { error: "Too many authentication attempts" },
+        { status: 429 },
+      );
+    }
+
+    const { data: existingData, error: lookupError } = await supabaseAdmin.rpc(
+      "find_unconfirmed_auth_user",
+      { p_email: email },
+    );
+    if (lookupError) throw lookupError;
+
+    const existingResult = UnconfirmedAuthUserSchema.safeParse(existingData);
+    const existingUser = existingResult.success ? existingResult.data : null;
+    const temporaryPassword = randomBytes(48).toString("base64url");
+
+    // If someone pre-registered this address, invalidate the attacker-known
+    // password before issuing a fresh ownership challenge.
+    if (existingUser) {
+      const { error: updateError } = await supabaseAdmin.auth.admin
+        .updateUserById(existingUser.id, {
+          password: temporaryPassword,
+          user_metadata: {
+            first_name: firstName,
+            last_name: lastName,
+          },
+        });
+      if (updateError) throw updateError;
+    }
 
     // Creates the user unconfirmed and returns a one-time confirmation
     // token; for an existing unconfirmed user it re-issues the token.
     const { data, error } = await supabaseAdmin.auth.admin.generateLink({
       type: "signup",
       email,
-      password,
+      password: temporaryPassword,
       options: {
         data: {
           first_name: firstName,
@@ -59,11 +121,16 @@ export async function POST(request: NextRequest) {
     });
 
     if (error) {
-      if (error.message?.toLowerCase().includes("already")) {
-        return NextResponse.json(
-          { error: "EMAIL_ALREADY_REGISTERED" },
-          { status: 409 },
-        );
+      if (
+        error.code === "email_exists" ||
+        error.code === "user_already_exists" ||
+        error.message?.toLowerCase().includes("already")
+      ) {
+        return NextResponse.json({
+          success: true,
+          message:
+            "Registration successful. Please check your email to confirm your account.",
+        });
       }
       throw error;
     }
@@ -74,10 +141,10 @@ export async function POST(request: NextRequest) {
       throw new Error("Signup link generation returned no token");
     }
 
-    const confirmUrl = new URL("/auth/confirm", request.nextUrl.origin);
+    const confirmUrl = new URL("/auth/confirm", SITE_URL);
     confirmUrl.searchParams.set("token_hash", tokenHash);
     confirmUrl.searchParams.set("type", "signup");
-    confirmUrl.searchParams.set("next", "/stamp");
+    confirmUrl.searchParams.set("next", "/reset-password?onboarding=true");
 
     const sent = await sendBrevoEmail({
       to: email,

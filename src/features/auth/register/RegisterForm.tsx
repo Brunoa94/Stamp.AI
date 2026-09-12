@@ -13,8 +13,15 @@ import { RegisterLoginFooter } from "./components/RegisterLoginFooter";
 import { GoogleSignInButton } from "../components/GoogleSignInButton";
 
 export function RegisterForm() {
-  const { register, handleSubmit, onSubmit, isPending, errors, isSuccess } =
-    useRegisterForm();
+  const {
+    register,
+    handleSubmit,
+    onSubmit,
+    isPending,
+    isSuccess,
+    isCaptchaReady,
+    errors,
+  } = useRegisterForm();
   const t = useTranslations("auth.register.form");
 
   if (isSuccess) {
@@ -65,7 +72,10 @@ export function RegisterForm() {
             </p>
           )}
 
-          <RegisterFormActions isPending={isPending} />
+          <RegisterFormActions
+            isPending={isPending}
+            isCaptchaReady={isCaptchaReady}
+          />
         </form>
 
         <RegisterLoginFooter />

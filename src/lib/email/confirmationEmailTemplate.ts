@@ -41,7 +41,8 @@ export function buildConfirmationEmailHtml(
             <tr>
               <td style="padding-bottom: 24px; font-size: 16px; line-height: 1.6;">
                 Welcome to Stamp.AI. Confirm your email address to activate your
-                account and start turning your ideas into printed clothes.
+                account. After confirming, you'll securely choose your password
+                and can start turning your ideas into printed clothes.
               </td>
             </tr>
             <tr>

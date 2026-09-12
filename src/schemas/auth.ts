@@ -12,27 +12,29 @@ export const LoginSchema = z.object({
 // Register schema
 export const RegisterSchema = z.object({
   email: z.string().min(1, "emailRequired").email("emailInvalid"),
-  password: z.string().min(6, "passwordMin"),
-  confirmPassword: z.string(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "passwordsNoMatch",
-  path: ["confirmPassword"],
 });
 
-// Signup API request schema (server-side; no confirmPassword — the form
-// already validates the match client-side via RegisterSchema)
+// Signup starts email verification. The password is chosen only after the
+// email owner follows the confirmation link.
 export const SignupRequestSchema = z.object({
   email: z.string().min(1, "emailRequired").email("emailInvalid"),
-  password: z.string().min(6, "passwordMin"),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
+  captchaToken: z.string().min(1).nullable().optional(),
 });
 
 // Resend confirmation API request schema
 export const ResendConfirmationSchema = z.object({
   email: z.string().min(1, "emailRequired").email("emailInvalid"),
+  captchaToken: z.string().min(1).nullable().optional(),
+});
+
+export const UnconfirmedAuthUserSchema = z.object({
+  id: z.string().uuid(),
+  email: z.string().email(),
+  first_name: z.string().nullable(),
 });
 
 // Password reset request schema

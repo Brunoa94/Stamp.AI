@@ -65,15 +65,14 @@ export async function sendBrevoEmail(
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Brevo email error:", response.status, errorText);
+      // Provider bodies can echo recipient or message data; keep PII and
+      // confirmation links out of application logs.
+      console.error("Brevo email request failed", { status: response.status });
       return false;
     }
 
     const result = await response.json();
-    console.log(
-      `✅ Email sent via Brevo (messageId: ${result.messageId}) to ${params.to}`,
-    );
+    console.log("Email sent via Brevo", { messageId: result.messageId });
     return true;
   } catch (error) {
     console.error("Exception sending email via Brevo:", error);

@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import type { EmailOtpType } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
+import { SITE_URL } from '@/features/seo/config/site'
 
 const ALLOWED_OTP_TYPES: EmailOtpType[] = ['signup', 'magiclink', 'email']
 
@@ -23,13 +24,12 @@ export async function GET(request: NextRequest) {
   const next = sanitizeNextPath(requestUrl.searchParams.get('next'))
 
   if (!tokenHash || !isAllowedOtpType(type)) {
-    return NextResponse.redirect(new URL('/auth/auth-code-error', request.url))
+    return NextResponse.redirect(new URL('/auth/auth-code-error', SITE_URL))
   }
 
-  // Create a response object that we can modify
-  const response = NextResponse.next({
-    request,
-  })
+  // Supabase writes its cookies directly to the final response so all cookie
+  // attributes (expiry, SameSite, Secure, and path) survive the redirect.
+  const response = NextResponse.redirect(new URL(next, SITE_URL))
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -62,18 +62,12 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Email confirmation error:', error)
-      return NextResponse.redirect(new URL('/auth/auth-code-error', request.url))
+      return NextResponse.redirect(new URL('/auth/auth-code-error', SITE_URL))
     }
 
-    // Create redirect response and copy cookies from the original response
-    const redirectResponse = NextResponse.redirect(new URL(next, request.url))
-    response.cookies.getAll().forEach((cookie) => {
-      redirectResponse.cookies.set(cookie.name, cookie.value)
-    })
-
-    return redirectResponse
+    return response
   } catch (err) {
     console.error('Email confirmation error:', err)
-    return NextResponse.redirect(new URL('/auth/auth-code-error', request.url))
+    return NextResponse.redirect(new URL('/auth/auth-code-error', SITE_URL))
   }
 }
