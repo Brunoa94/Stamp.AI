@@ -14,7 +14,7 @@ import { LoginSignupFooter } from "./components/LoginSignupFooter";
 import { GoogleSignInButton } from "../components/GoogleSignInButton";
 
 export function LoginForm() {
-  const { register, handleSubmit, onSubmit, isPending, errors } =
+  const { register, handleSubmit, onSubmit, isPending, isCaptchaReady, errors } =
     useLoginForm();
   const t = useTranslations("auth.login.form");
 
@@ -66,7 +66,7 @@ export function LoginForm() {
             </Paragraph>
           )}
 
-          <LoginFormActions isPending={isPending} />
+          <LoginFormActions isPending={isPending} isCaptchaReady={isCaptchaReady} />
         </form>
 
         <LoginSignupFooter />

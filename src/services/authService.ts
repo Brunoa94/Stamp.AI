@@ -1,8 +1,10 @@
 import { createClient } from "@/lib/supabase/client";
 import type {
   LoginI,
+  LoginRequestI,
   PasswordResetRequestI,
   RegisterI,
+  SignupRequestI,
   UpdateProfileI,
 } from "@/schemas/auth";
 import type { AuthResponseI, SessionI, UserI } from "../../supabase/types";
@@ -13,7 +15,7 @@ import {
   SupabaseAuthResponseSchema,
   UpdateUserResponseSchema,
 } from "@/schemas/services/authServiceSchemas";
-import { ErrorClient } from "./errorClient";
+import { AppError, ErrorClient } from "./errorClient";
 
 class AuthService {
   private static getSupabase() {
@@ -22,35 +24,55 @@ class AuthService {
 
   /**
    * Login user with email and password
-   * Uses AuthServiceMapper to transform Supabase response
+   * Server route verifies CAPTCHA and rate limits before authenticating
    */
   static async login(
     credentials: LoginI,
-    captchaToken?: string,
+    captchaToken?: string | null,
   ): Promise<AuthResponseI> {
     try {
-      const { data, error } = await AuthService.getSupabase().auth
-        .signInWithPassword({
-          email: credentials.email,
-          password: credentials.password,
-          options: captchaToken ? { captchaToken } : undefined,
-        });
+      const body: LoginRequestI = {
+        email: credentials.email,
+        password: credentials.password,
+        captchaToken,
+      };
 
-      if (error) {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
         throw ErrorClient.handleError({
-          error,
+          error: result,
           service: "Auth",
           action: "Login",
         });
       }
 
-      // Validate Supabase response
-      SupabaseAuthResponseSchema.parse(data);
+      // Set the session on the client after successful API login
+      const { error: setSessionError } = await AuthService.getSupabase().auth
+        .setSession({
+          access_token: result.session.accessToken,
+          refresh_token: result.session.refreshToken,
+        });
 
-      return AuthServiceMapper.mapSupabaseAuthToAuthResponse(
-        data.user,
-        data.session,
-      );
+      if (setSessionError) {
+        throw ErrorClient.handleError({
+          error: setSessionError,
+          service: "Auth",
+          action: "Login",
+        });
+      }
+
+      return {
+        success: true,
+        user: result.user,
+        session: result.session,
+      };
     } catch (error) {
       throw ErrorClient.handleError({
         error,
@@ -62,37 +84,42 @@ class AuthService {
 
   /**
    * Register new user
-   * Uses AuthServiceMapper to transform Supabase response
+   * Server route creates the account and emails a confirmation link; the
+   * account stays inactive (no session) until the link is clicked
    */
-  static async register(userData: RegisterI): Promise<AuthResponseI> {
+  static async register(
+    userData: RegisterI,
+    captchaToken?: string | null,
+  ): Promise<AuthResponseI> {
     try {
-      const { data, error } = await AuthService.getSupabase().auth.signUp({
+      const body: SignupRequestI = {
         email: userData.email,
-        password: userData.password,
-        options: {
-          data: {
-            first_name: userData.firstName,
-            last_name: userData.lastName,
-          },
-        },
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        captchaToken,
+      };
+
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
       });
 
-      if (error) {
+      const result = await response.json();
+
+      if (!response.ok) {
         throw ErrorClient.handleError({
-          error,
+          error: result,
           service: "Auth",
           action: "Register",
         });
       }
 
-      // Validate Supabase response
-      SupabaseAuthResponseSchema.parse(data);
-
-      return AuthServiceMapper.mapSupabaseAuthToAuthResponse(
-        data.user,
-        data.session,
-        "Registration successful. Please check your email to verify your account.",
-      );
+      return {
+        success: true,
+        message: result.message ??
+          "Registration successful. Please check your email to confirm your account.",
+      };
     } catch (error) {
       throw ErrorClient.handleError({
         error,
@@ -291,17 +318,23 @@ class AuthService {
 
   /**
    * Resend email verification
+   * Server route re-issues the confirmation link and emails it via Brevo
    */
-  static async resendEmailVerification(email: string): Promise<void> {
+  static async resendEmailVerification(
+    email: string,
+    captchaToken?: string | null,
+  ): Promise<void> {
     try {
-      const { error } = await AuthService.getSupabase().auth.resend({
-        type: "signup",
-        email: email,
+      const response = await fetch("/api/auth/resend-confirmation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, captchaToken }),
       });
 
-      if (error) {
+      if (!response.ok) {
+        const result = await response.json();
         throw ErrorClient.handleError({
-          error,
+          error: result,
           service: "Auth",
           action: "Resend Email Verification",
         });

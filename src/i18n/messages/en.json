@@ -1154,7 +1154,7 @@
       "register": "Register",
       "openDialogAria": "Open register dialog",
       "signUp": "Sign Up",
-      "successToast": "Account created. Check your email to verify it.",
+      "successToast": "Check your email to verify your address and set your password.",
       "form": {
         "srTitle": "Create Account",
         "closeAria": "Close register modal",
@@ -1190,9 +1190,19 @@
       "success": {
         "srTitle": "Registration Successful",
         "title": "You're all set",
-        "description": "Your account is created. Check your email to verify it before you sign in.",
+        "description": "Check your email to verify your address, then choose your password.",
         "gotIt": "Got it"
       }
+    },
+    "checkEmail": {
+      "title": "Check your email",
+      "description": "We sent a confirmation link to your email address.",
+      "instructions": "Click the link in the email to activate your account and set your password.",
+      "resendButton": "Resend confirmation email",
+      "resending": "Sending...",
+      "resendSuccess": "Email sent! Check your inbox.",
+      "backToLogin": "Back to Login",
+      "spamNote": "Didn't get the email? Check your spam folder."
     }
   },
   "ui": {
@@ -1757,6 +1767,7 @@
     "INVALID_CREDITS": "Credits must be at least 10",
     "INVALID_CREDENTIALS": "Invalid email or password",
     "EMAIL_NOT_CONFIRMED": "Please verify your email address before signing in",
+    "CAPTCHA_VERIFICATION_FAILED": "Security verification failed. Please try again",
     "INVALID_TOKEN": "Your session has expired. Please sign in again",
     "WEBHOOK_SIGNATURE_INVALID": "Invalid webhook signature",
     "PAYPAL_WEBHOOK_SIGNATURE_INVALID": "Invalid PayPal webhook signature",
@@ -1790,6 +1801,7 @@
     "PAYPAL_CAPTURE_FAILED": "PayPal payment capture failed. Please try again",
     "MOLLIE_API_ERROR": "Mollie service error. Please try again",
     "MOLLIE_PAYMENT_FAILED": "Mollie payment failed. Please try again",
+    "CONFIRMATION_EMAIL_SEND_FAILED": "We couldn't send the confirmation email. Please try again in a moment",
     "INTERNAL_ERROR": "Something went wrong on our end. Please try again",
     "UNKNOWN_ERROR": "Something went wrong. Please try again"
   },

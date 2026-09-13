@@ -1303,6 +1303,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      consume_auth_email_rate_limit: {
+        Args: {
+          p_identifier_hash: string
+          p_max_requests: number
+          p_scope: string
+          p_window_seconds: number
+        }
+        Returns: boolean
+      }
+      find_unconfirmed_auth_user: {
+        Args: { p_email: string }
+        Returns: Json
+      }
       atomic_mollie_payment_capture: {
         Args: {
           p_amount: number

@@ -1,7 +1,6 @@
 "use client";
 
 import { useRegisterForm } from "./useRegisterForm";
-import { RegistrationSuccessMessage } from "./RegistrationSuccessMessage";
 import { DialogContent, DialogTitle, DialogClose } from "@/features/ui/dialog";
 import { Button } from "@/features/ui/button";
 import { X } from "lucide-react";
@@ -13,13 +12,15 @@ import { RegisterLoginFooter } from "./components/RegisterLoginFooter";
 import { GoogleSignInButton } from "../components/GoogleSignInButton";
 
 export function RegisterForm() {
-  const { register, handleSubmit, onSubmit, isPending, errors, isSuccess } =
-    useRegisterForm();
+  const {
+    register,
+    handleSubmit,
+    onSubmit,
+    isPending,
+    isCaptchaReady,
+    errors,
+  } = useRegisterForm();
   const t = useTranslations("auth.register.form");
-
-  if (isSuccess) {
-    return <RegistrationSuccessMessage />;
-  }
 
   return (
     <DialogContent
@@ -65,7 +66,10 @@ export function RegisterForm() {
             </p>
           )}
 
-          <RegisterFormActions isPending={isPending} />
+          <RegisterFormActions
+            isPending={isPending}
+            isCaptchaReady={isCaptchaReady}
+          />
         </form>
 
         <RegisterLoginFooter />
