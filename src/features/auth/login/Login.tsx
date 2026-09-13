@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 import { LoginForm } from "./LoginForm";
 import { AuthDialog } from "../components/AuthDialog";
 import { Button } from "@/features/ui/button";
+import { Span } from "@/features/ui/span";
 
 interface LoginProps {
   className?: string;
@@ -18,12 +19,16 @@ export function Login({ className, children, variant = "default" }: LoginProps) 
 
   const defaultTrigger =
     variant === "brutalist" ? (
-      <button aria-label={t("openDialogAria")} className={className}>
+      <Button
+        variant="unstyled"
+        aria-label={t("openDialogAria")}
+        className={className}
+      >
         <User className="w-5 h-5 text-purple group-hover:scale-110 transition-transform duration-300" />
-        <span className="btn-text text-xs font-bold uppercase tracking-widest text-purple group-hover:text-white">
+        <Span variant="default" className="btn-text text-xs font-bold uppercase tracking-widest text-purple group-hover:text-white">
           {t("loginShort")}
-        </span>
-      </button>
+        </Span>
+      </Button>
     ) : (
       <Button
         variant="outline"
@@ -31,7 +36,7 @@ export function Login({ className, children, variant = "default" }: LoginProps) 
         className={className}
       >
         <LogIn className="mr-2 h-3 w-3" />
-        <span className="uppercase">{t("login")}</span>
+        <Span variant="default" className="uppercase">{t("login")}</Span>
       </Button>
     );
 

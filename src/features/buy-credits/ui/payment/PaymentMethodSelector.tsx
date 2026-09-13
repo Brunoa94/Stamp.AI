@@ -6,7 +6,7 @@ import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
 import { cn } from "@/lib/utils";
 import { checkoutTheme } from "@/theme/components";
-import { PAYMENT_METHODS, type PaymentMethodId, type PaymentMethodOption } from "@/constants/payment";
+import { CREDIT_PAYMENT_METHODS, type PaymentMethodId, type PaymentMethodOption } from "@/constants/payment";
 
 interface PaymentMethodSelectorProps {
   selected: PaymentMethodId;
@@ -28,7 +28,7 @@ export function PaymentMethodSelector({
       aria-label={t("methodSelectorLabel")}
       className={theme.container}
     >
-      {PAYMENT_METHODS.map((method) => (
+      {CREDIT_PAYMENT_METHODS.map((method) => (
         <PaymentMethodButton
           key={method.id}
           method={method}

@@ -14,6 +14,7 @@ import { HOME_PROCESS_STEPS } from "../../../lib/constants/homepageContent";
 import { PROCESS_STEP_IMAGES } from "../../../lib/constants/processStepImages";
 import { HomeSectionHeader } from "../HomeSectionHeader";
 import { ProcessStepper } from "./ProcessStepper";
+import { ProcessAnimatedButton } from "./ProcessAnimatedButton";
 import { ProcessDesktopImage } from "./ProcessDesktopImage";
 import { ProcessMobileCard } from "./ProcessMobileCard";
 import { ProcessDesktopText } from "./ProcessDesktopText";
@@ -105,7 +106,7 @@ export function ProcessStickyCarousel() {
         <div className="flex-1 flex items-start mt-4 lg:mt-12">
           <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-30 max-w-8xl mx-auto px-6 md:px-12 lg:px-16">
             {/* Left side - Desktop image with slide animation */}
-            <div className="hidden lg:flex items-center relative w-72 xl:w-80 h-96 xl:h-105 mt-10">
+            <div className="hidden lg:flex items-center relative w-125 xl:w-150 h-125 xl:h-150 mt-10 flex-[0.5]">
               {HOME_PROCESS_STEPS.map((step, index) => {
                 const animation = computeDesktopImageAnimation(
                   index,
@@ -129,7 +130,7 @@ export function ProcessStickyCarousel() {
             </div>
 
             {/* Right side - Text content with crossfade */}
-            <div className="w-full flex-1 max-w-2xl">
+            <div className="w-full flex-[0.5] max-w-2xl">
               {/* Mobile: Combined image and text with slide animations */}
               <div className="lg:hidden relative h-120 sm:h-130 overflow-visible">
                 {HOME_PROCESS_STEPS.map((step, index) => {
@@ -184,6 +185,14 @@ export function ProcessStickyCarousel() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Animated CTA button at bottom */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
+          <ProcessAnimatedButton
+            activeStepIndex={activeStepIndex}
+            stepProgress={stepProgress}
+          />
         </div>
       </div>
     </div>

@@ -11,16 +11,13 @@ import { Span } from "@/features/ui/span";
  * (Stripe / PayPal, no card details stored) and displays security badges.
  */
 
-// All Stripe-supported: Visa/Mastercard/Amex card networks, plus PayPal and
-// iDEAL as Stripe payment methods. iDEAL isn't wired up yet, so it is flagged
-// `comingSoon` rather than presented as live — a trust panel must not imply a
-// checkout path that doesn't work. Drop the flag when the integration ships.
+// Visa/Mastercard/Amex card networks via Stripe, PayPal, and iDEAL via Mollie.
 const PAYMENT_METHODS: { label: string; comingSoon?: boolean }[] = [
   { label: "Visa" },
   { label: "Mastercard" },
   { label: "Amex" },
   { label: "PayPal" },
-  { label: "iDEAL", comingSoon: true },
+  { label: "iDEAL" },
 ];
 
 interface SecureCheckoutNoticeProps {

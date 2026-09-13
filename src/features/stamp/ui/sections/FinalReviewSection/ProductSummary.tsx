@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
+import { formatSizeForDisplay } from "../../../lib/helpers/sizeDisplayMapper";
 
 /**
  * ProductSummary
@@ -37,7 +38,7 @@ export function ProductSummary({ productName, productDescription, color, size, p
         variant="micro"
         className="text-(--color-stamp-taupe) block mb-2"
       >
-        {t("productDetails", { color: color || "Black", size: size || "M" })}
+        {t("productDetails", { color: color || "Black", size: formatSizeForDisplay(size || "M") })}
       </Span>
       {productDescription && (
         <Paragraph

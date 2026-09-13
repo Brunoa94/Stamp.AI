@@ -5,6 +5,7 @@ import { ShippingAddressT } from "@/schemas/checkout";
 import { mapShippingAddressToBillingDetails } from "@/mappers/mapShippingAddressToBillingDetails";
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 import { useCreatePaymentIntent } from "@/queries/stripeQueries";
+import { getStripeIntentStatusMessage } from "@/features/checkout/lib/helpers/getStripeIntentStatusMessage";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { AnalyticsService } from "@/services/analyticsService";
 import { mapAddPaymentInfoEvent } from "@/features/analytics/mappers/ecommerceMappers";
@@ -129,6 +130,10 @@ export function usePaymentForm({
 
       if (paymentIntent?.status === "succeeded") {
         onSuccess?.(paymentIntent, lineItems);
+      } else {
+        // Every non-successful backend status must surface a user-friendly
+        // message instead of silently doing nothing.
+        throw new Error(getStripeIntentStatusMessage(paymentIntent?.status, t));
       }
     } catch (err) {
       // Process error through handler for consistent error code extraction

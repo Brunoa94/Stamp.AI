@@ -12,6 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
@@ -25,6 +26,7 @@ interface HomeProductCardPropsI {
 
 export function HomeProductCard({ product, index }: HomeProductCardPropsI) {
   const t = useTranslations("home.productCard");
+  const prefersReducedMotion = useReducedMotion();
   const { ref, isVisible } = useIntersectionObserver<HTMLAnchorElement>({
     threshold: 0.1,
     triggerOnce: true,
@@ -33,16 +35,21 @@ export function HomeProductCard({ product, index }: HomeProductCardPropsI) {
   // Stagger delay: each card animates 100ms after the previous
   const staggerDelay = index * 100;
 
+  // When reduced motion is preferred, skip animations entirely
+  const animationStyle = prefersReducedMotion
+    ? { opacity: 1 }
+    : {
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? "translateX(0)" : "translateX(100px)",
+        transition: `opacity 0.6s ease-out ${staggerDelay}ms, transform 0.6s ease-out ${staggerDelay}ms`,
+      };
+
   return (
     <Link
       ref={ref}
       href={product.href}
       className="group block"
-      style={{
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? "translateX(0)" : "translateX(100px)",
-        transition: `opacity 0.6s ease-out ${staggerDelay}ms, transform 0.6s ease-out ${staggerDelay}ms`,
-      }}
+      style={animationStyle}
     >
       <div className="relative mb-3 sm:mb-5 aspect-square sm:aspect-3/4 overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all duration-500 group-hover:-translate-y-1 group-hover:border-(--color-stamp-gold) group-hover:shadow-(--shadow-stamp-card-hover)">
         {product.imageUrl ? (

@@ -37,7 +37,7 @@ function ProductionSectionComponent() {
       <Heading
         as="h3"
         variant="card"
-        className="text-(--color-stamp-chocolate) mb-4 tracking-[0.5em]"
+        className="text-(--color-stamp-chocolate) mb-4 font-bold uppercase tracking-[0.3em]"
       >
         {t("status")}
       </Heading>

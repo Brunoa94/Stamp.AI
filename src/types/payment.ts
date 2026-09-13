@@ -4,9 +4,9 @@ import type { MolliePaymentStatus } from "@/lib/mollie";
 
 /**
  * Payment method selection type
- * Used to toggle between Stripe (credit card) and PayPal payment methods
+ * Used to toggle between Stripe (credit card), PayPal, and iDEAL (via Mollie) payment methods
  */
-export type PaymentMethodT = "stripe" | "paypal";
+export type PaymentMethodT = "stripe" | "paypal" | "ideal";
 
 /**
  * Legacy payment method type including Mollie
@@ -193,6 +193,8 @@ export interface CreateMolliePaymentPayloadI {
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
   testMode?: boolean;
+  /** Pin the payment to a specific Mollie method (e.g. "ideal") instead of showing the method chooser */
+  method?: string;
 }
 
 /**
@@ -239,5 +241,11 @@ export const PAYMENT_METHOD_OPTIONS: PaymentMethodOptionI[] = [
     label: "PayPal",
     icon: "paypal",
     description: "Pay with PayPal, Venmo, or Pay Later",
+  },
+  {
+    id: "ideal",
+    label: "iDEAL",
+    icon: "ideal",
+    description: "Pay directly with your Dutch bank",
   },
 ];

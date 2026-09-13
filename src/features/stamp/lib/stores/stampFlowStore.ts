@@ -146,12 +146,21 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
     }
 
     try {
-      set((state) => ({
-        generatedResults: [result, ...state.generatedResults].slice(
-          0,
-          MAX_GENERATED_RESULTS,
-        ),
-      }));
+      set((state) => {
+        // Check for duplicates - avoid adding the same imageUrl twice
+        const isDuplicate = state.generatedResults.some(
+          (existing) => existing.imageUrl === result.imageUrl,
+        );
+        if (isDuplicate) {
+          return state;
+        }
+        return {
+          generatedResults: [result, ...state.generatedResults].slice(
+            0,
+            MAX_GENERATED_RESULTS,
+          ),
+        };
+      });
     } catch (error) {
       logStampError({
         scope: "stampFlowStore",

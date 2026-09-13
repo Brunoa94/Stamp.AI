@@ -2,9 +2,11 @@
  * Trust Items
  *
  * Trust indicators displayed in the hero promo banner.
+ * Values are derived from the shared trust metrics constants.
  */
 
-import { Lock, type LucideIcon, Shield, Star, Truck } from "lucide-react";
+import { Lock, type LucideIcon, Shield, Truck } from "lucide-react";
+import { TRUST_GUARANTEE_METRICS } from "@/shared/constants/trustMetrics";
 
 export interface TrustItem {
   icon: LucideIcon;
@@ -15,13 +17,13 @@ export interface TrustItem {
 export const TRUST_ITEMS: TrustItem[] = [
   {
     icon: Shield,
-    label: "30-Day",
+    label: `${TRUST_GUARANTEE_METRICS.guaranteeDays}-Day`,
     sublabel: "Money Back",
   },
   {
     icon: Truck,
     label: "Free Shipping",
-    sublabel: "Orders €60+",
+    sublabel: `Orders €${TRUST_GUARANTEE_METRICS.freeShippingThreshold}+`,
   },
   {
     icon: Lock,

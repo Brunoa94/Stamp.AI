@@ -283,16 +283,18 @@ export const PRODUCT_CONFIGS: Record<number, ProductConfig> = {
     anchorY: 0.5,
   },
 
-  // Pillows - all-over print
+  // Pillows - print area is 4650x2325 (front+back horizontal layout)
+  // Front panel is LEFT HALF, server auto-calculates x=0.25, y=0.5, scale~0.96
   229: {
     blueprintId: 229,
     name: 'Spun Polyester Square Pillowcase',
     category: 'pillow',
     positions: ['front'],
     defaultPosition: 'front',
-    safeZone: DEFAULT_SAFE_ZONE,
+    safeZone: { top: 0.02, bottom: 0.02, left: 0.02, right: 0.02 },
     minDpi: 150,
     anchorY: 0.5,
+    scaleOnly: true,
   },
 };
 

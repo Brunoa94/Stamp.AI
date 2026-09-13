@@ -6,6 +6,7 @@
 
 import type { ProductWithPricing } from "@/lib/supabase/server-cache";
 import { resolveProductDescription } from "@/lib/seo/productDescription";
+import { resolveDisplayPrice } from "@/lib/pricing";
 import { SITE_URL } from "../config/site";
 import type { ProductData } from "../schemas/types";
 
@@ -16,30 +17,31 @@ import type { ProductData } from "../schemas/types";
  */
 export function mapProductToSchemaData(
   product: ProductWithPricing,
-  fallbackDescription: string
+  fallbackDescription: string,
+  url: string = `${SITE_URL}/stamp`
 ): ProductData {
   const description =
     resolveProductDescription(product.product_seo) ?? fallbackDescription;
 
-  const priceCents =
-    product.selling_price_cents ?? product.totalPriceCents;
+  const price = resolveDisplayPrice(product, { useFallback: false });
 
   return {
     name: product.display_title,
     description,
     image: product.base_image_url ?? "",
-    price: priceCents > 0 ? priceCents / 100 : undefined,
+    price: price > 0 ? price : undefined,
     priceCurrency: "EUR",
     availability: "InStock",
-    url: `${SITE_URL}/stamp`,
+    url,
   };
 }
 
 export function mapProductsToSchemaData(
   products: ProductWithPricing[],
-  fallbackDescription: string
+  fallbackDescription: string,
+  url?: string
 ): ProductData[] {
   return products.map((product) =>
-    mapProductToSchemaData(product, fallbackDescription)
+    mapProductToSchemaData(product, fallbackDescription, url)
   );
 }

@@ -1,8 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { ErrorCodes, handleError } from "../_shared/errors.ts";
+import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, validateRequest, verifyAuth } from "../_shared/validators.ts";
 import { createPayPalOrder } from "../_shared/paypal.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
+import { validatePricingAgainstDatabase, type LineItemForPricingI } from "../_shared/serverPriceService.ts";
 import type { PayPalOrderRequestI, PayPalOrderResponseI } from "../../types/index.ts";
 
 const corsHeaders = {
@@ -25,18 +26,48 @@ serve(async (req) => {
     const authHeader = req.headers.get("authorization");
     const { userId, userEmail } = await verifyAuth(authHeader);
 
-    console.log("Authenticated user:", userId);
-
     const {
       amount,
       currency = "usd",
       line_items,
       shipping_address,
+      shipping_cost_cents = 0,
+      discount_cents = 0,
       metadata,
-    }: PayPalOrderRequestI = await req.json();
+    }: PayPalOrderRequestI & { shipping_cost_cents?: number; discount_cents?: number } = await req.json();
 
     // Validate request data
     const validAmount = validateRequest.amount(amount);
+
+    // SERVER-SIDE PRICE VALIDATION (C4 - Amount Tampering Prevention)
+    if (line_items && Array.isArray(line_items) && line_items.length > 0) {
+      const itemsForPricing: LineItemForPricingI[] = line_items
+        .filter((item: Record<string, unknown>) => item.blueprint_id && item.printify_variant_id)
+        .map((item: Record<string, unknown>) => ({
+          blueprint_id: Number(item.blueprint_id),
+          printify_variant_id: Number(item.printify_variant_id),
+          quantity: Number(item.quantity) || 1,
+        }));
+
+      if (itemsForPricing.length > 0) {
+        const clientTotalCents = Math.round(validAmount * 100);
+        const validation = await validatePricingAgainstDatabase({
+          lineItems: itemsForPricing,
+          clientSubtotalCents: clientTotalCents - shipping_cost_cents + discount_cents,
+          shippingCostCents: shipping_cost_cents,
+          discountCents: discount_cents,
+          clientTotalCents,
+        });
+
+        if (!validation.isValid) {
+          throw new FunctionError(
+            400,
+            "PRICE_MISMATCH",
+            validation.errorMessage || "Server-side price validation failed"
+          );
+        }
+      }
+    }
 
     if (shipping_address) {
       if (!shipping_address.zip?.trim()) {
@@ -107,10 +138,8 @@ serve(async (req) => {
         },
         { prefer: 'resolution=merge-duplicates' }
       )
-      console.log('✅ Payment transaction record created:', paypalOrder.id)
-    } catch (dbError) {
-      // Log error but don't fail the request - webhook can still process it
-      console.error('Failed to create payment_transactions record:', dbError)
+    } catch {
+      // Transaction record is best-effort; webhook can still process it
     }
 
     const response: PayPalOrderResponseI = {
@@ -119,14 +148,11 @@ serve(async (req) => {
       approvalUrl: approvalLink?.href,
     };
 
-    console.log("PayPal order created:", paypalOrder.id);
-
     return new Response(JSON.stringify(response), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
-    console.error("Error creating PayPal order:", error);
     return handleError(error, corsHeaders);
   }
 });

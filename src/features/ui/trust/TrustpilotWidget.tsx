@@ -5,6 +5,10 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Span } from "@/features/ui/span";
 import { Paragraph } from "@/features/ui/paragraph";
+import {
+  TRUST_REVIEW_METRICS,
+  TRUSTPILOT_CONFIG,
+} from "@/shared/constants/trustMetrics";
 
 /**
  * TrustpilotWidget
@@ -23,10 +27,10 @@ interface TrustpilotWidgetProps {
 
 export function TrustpilotWidget({
   className,
-  rating = 4.8,
-  reviewCount = 2847,
+  rating = TRUST_REVIEW_METRICS.overallRating,
+  reviewCount = TRUST_REVIEW_METRICS.totalReviews,
   variant = "default",
-  trustpilotUrl = "https://www.trustpilot.com/review/stamp.ai",
+  trustpilotUrl = TRUSTPILOT_CONFIG.reviewUrl,
 }: TrustpilotWidgetProps) {
   const t = useTranslations("trust.reviews");
 

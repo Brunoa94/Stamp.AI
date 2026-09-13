@@ -10,19 +10,21 @@ import { expect, test } from "@playwright/test";
 async function goToCustomizationStep(page: import("@playwright/test").Page) {
   await page.goto("/stamp");
 
-  // Step 1 -> 2: skip upload, start from a prompt
-  await page.getByRole("button", { name: /begin customizing/i }).click();
-  await page.getByRole("button", { name: /next step/i }).click();
+  // Hero -> Step 1: Click begin customization CTA
+  await page.getByRole("button", { name: /begin customiz/i }).click();
+
+  // Step 1 -> Step 2: Skip upload (no image uploaded)
+  await page.getByRole("button", { name: /skip upload/i }).click();
 
   // Step 2 -> 3: seed a prompt and generate
   await page.getByRole("textbox", { name: /prompt input/i }).fill(
     "Minimal line drawing of a mountain",
   );
-  await page.getByRole("button", { name: /generate/i }).click();
+  await page.getByRole("button", { name: /stamp it/i }).click();
 
   // Step 4: pick the first result (generation can take a while)
-  await page.getByRole("button", { name: /use this prompt/i }).first().click({
-    timeout: 120_000,
+  await page.getByRole("button", { name: /use this image/i }).first().click({
+    timeout: 180_000,
   });
 
   // Step 5: pick the first product

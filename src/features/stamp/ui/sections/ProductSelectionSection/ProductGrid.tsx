@@ -93,10 +93,10 @@ export function ProductGrid({
   );
 
   return (
-    <div className="flex-1 md:flex-none md:h-full min-h-0 overflow-y-auto bg-(--color-stamp-cream)/20 pb-40 md:pb-0">
+    <div className="flex-1 md:h-full min-h-0 overflow-y-auto overflow-x-hidden bg-(--color-stamp-cream)/20 pb-40 md:pb-0">
       {isLoading && (
         <div
-          className="h-full flex items-center justify-center"
+          className="h-full w-full flex items-center justify-center"
           aria-busy="true"
           aria-label={t("loadingAria")}
         >
@@ -114,7 +114,7 @@ export function ProductGrid({
       {isError && (
         <div
           role="alert"
-          className="h-full flex flex-col items-center justify-center p-12 text-center"
+          className="h-full w-full flex flex-col items-center justify-center p-12 text-center"
         >
           <Span variant="micro" className="text-red-500 mb-2">
             {t("loadError")}
@@ -128,7 +128,7 @@ export function ProductGrid({
       {!isLoading && !isError && !hasProducts && (
         <div
           role="status"
-          className="h-full flex items-center justify-center p-12 text-center"
+          className="h-full w-full flex items-center justify-center p-12 text-center"
         >
           <Span variant="micro" className="text-(--color-stamp-taupe)">
             {t("empty")}
@@ -137,7 +137,7 @@ export function ProductGrid({
       )}
 
       {!isLoading && !isError && hasProducts && (
-        <div className="p-4 lg:p-6">
+        <div className="w-full p-4 lg:p-6">
           {/* When a product is selected, show only that product */}
           {selectedProduct ? (
             <div className="grid grid-cols-1 gap-4">

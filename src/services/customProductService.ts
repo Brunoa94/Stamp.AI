@@ -14,15 +14,29 @@ import { CustomProductServiceMapper } from "@/mappers/services/customProductServ
 import { ProductService } from "./productService";
 import { ErrorClient } from "./errorClient";
 import { getProductConfig } from "@/lib/printPlacement/config";
+import { createClient } from "@/lib/supabase/client";
 
 export class CustomProductService {
   private static getSupabaseConfig() {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
     // Do not throw here; caller will fall back to relative functions URLs when
     // environment variables are not present (e.g. during Playwright tests).
-    return { supabaseUrl, supabaseAnonKey };
+    return { supabaseUrl };
+  }
+
+  /**
+   * Get the current user's access token for authenticated Edge Function calls.
+   * The Edge Functions require a real user JWT, not the anon key.
+   */
+  private static async getAccessToken(): Promise<string | null> {
+    try {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      return session?.access_token ?? null;
+    } catch {
+      return null;
+    }
   }
 
   /**
@@ -34,7 +48,13 @@ export class CustomProductService {
     imageUrl: string,
   ): Promise<{ id: string; previewUrl: string; width: number; height: number }> {
     try {
-      const { supabaseUrl, supabaseAnonKey } = this.getSupabaseConfig();
+      const { supabaseUrl } = this.getSupabaseConfig();
+
+      // Get user's access token for authenticated Edge Function call
+      const accessToken = await this.getAccessToken();
+      if (!accessToken) {
+        throw new Error("Authentication required. Please log in to upload images.");
+      }
 
       // Use mapper to create upload request payload
       const payload = CustomProductServiceMapper.mapImageUrlToUploadRequest(imageUrl);
@@ -46,8 +66,10 @@ export class CustomProductService {
         ? `${supabaseUrl}/functions/v1/upload-printify-image`
         : `/functions/v1/upload-printify-image`;
 
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (supabaseAnonKey) headers["Authorization"] = `Bearer ${supabaseAnonKey}`;
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+      };
 
       const response = await fetch(fetchUrl, {
         method: "POST",
@@ -91,7 +113,13 @@ export class CustomProductService {
     payload: CreateProductPayloadT
   ): Promise<CreatedProductT> {
     try {
-      const { supabaseUrl, supabaseAnonKey } = this.getSupabaseConfig();
+      const { supabaseUrl } = this.getSupabaseConfig();
+
+      // Get user's access token for authenticated Edge Function call
+      const accessToken = await this.getAccessToken();
+      if (!accessToken) {
+        throw new Error("Authentication required. Please log in to create products.");
+      }
 
       // Validate input payload
       const validatedInput = CreateProductPayloadSchema.parse(payload);
@@ -155,8 +183,10 @@ export class CustomProductService {
         ? `${supabaseUrl}/functions/v1/create-custom-product`
         : `/functions/v1/create-custom-product`;
 
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (supabaseAnonKey) headers["Authorization"] = `Bearer ${supabaseAnonKey}`;
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+      };
 
       const response = await fetch(fetchUrl, {
         method: "POST",

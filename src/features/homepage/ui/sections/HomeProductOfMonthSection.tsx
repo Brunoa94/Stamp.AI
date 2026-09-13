@@ -35,17 +35,36 @@ export function HomeProductOfMonthSection() {
     ? product.selling_price_cents / 100
     : (product.min_price_cents + product.shipping_cents) / 100;
 
-  const originalPrice = product.is_on_sale && product.original_price_cents
-    ? product.original_price_cents / 100
-    : null;
+  const originalPrice =
+    product.is_on_sale && product.original_price_cents
+      ? product.original_price_cents / 100
+      : null;
 
   return (
-    <section className="bg-(--color-stamp-gold) px-6 py-20 lg:px-12 xl:px-24">
-      <SectionReveal className="mx-auto max-w-6xl" fadeOnScroll>
+    <section className="relative bg-(--color-stamp-gold) px-6 py-24 lg:px-12 xl:px-24 lg:py-32 overflow-hidden">
+      {/* Decorative background text */}
+      <div
+        className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/4 text-[16rem] lg:text-[22rem] font-heading font-bold leading-none select-none pointer-events-none text-(--color-stamp-chocolate)/5"
+        aria-hidden="true"
+      >
+        TOP
+      </div>
+
+      {/* Decorative corner frames */}
+      <div className="absolute top-8 left-6 lg:left-12 xl:left-24 w-20 h-20 border-t-2 border-l-2 border-(--color-stamp-chocolate)/20 rounded-tl-lg" aria-hidden="true" />
+      <div className="absolute bottom-8 right-6 lg:right-12 xl:right-24 w-20 h-20 border-b-2 border-r-2 border-(--color-stamp-chocolate)/20 rounded-br-lg" aria-hidden="true" />
+
+      <SectionReveal className="relative mx-auto max-w-6xl" fadeOnScroll>
         <div className="flex flex-col items-center gap-10 md:flex-row md:items-center md:gap-16">
           {/* Left Column - Product Image */}
           <div className="relative w-full max-w-sm shrink-0 md:w-80 lg:w-96">
-            <div className="relative aspect-square overflow-hidden border-2 border-(--color-stamp-chocolate)/20 bg-(--color-stamp-white) shadow-xl">
+            {/* Gold corner accents on image */}
+            <div className="absolute -top-3 -left-3 w-10 h-10 border-t-2 border-l-2 border-(--color-stamp-chocolate)/40 rounded-tl-md z-10" />
+            <div className="absolute -top-3 -right-3 w-10 h-10 border-t-2 border-r-2 border-(--color-stamp-chocolate)/40 rounded-tr-md z-10" />
+            <div className="absolute -bottom-3 -left-3 w-10 h-10 border-b-2 border-l-2 border-(--color-stamp-chocolate)/40 rounded-bl-md z-10" />
+            <div className="absolute -bottom-3 -right-3 w-10 h-10 border-b-2 border-r-2 border-(--color-stamp-chocolate)/40 rounded-br-md z-10" />
+
+            <div className="relative aspect-square overflow-hidden rounded-md border-2 border-(--color-stamp-chocolate)/20 bg-(--color-stamp-white) shadow-xl">
               {product.base_image_url ? (
                 <Image
                   src={product.base_image_url}
@@ -72,16 +91,6 @@ export function HomeProductOfMonthSection() {
 
           {/* Right Column - Content */}
           <div className="flex flex-1 flex-col items-center text-center md:items-start md:text-left">
-            <div className="mb-6 flex items-center gap-3">
-              <div className="h-1 w-10 bg-(--color-stamp-chocolate)" />
-              <Span
-                variant="micro"
-                className="uppercase tracking-widest text-(--color-stamp-chocolate)"
-              >
-                {t("eyebrow")}
-              </Span>
-            </div>
-
             <Heading
               as="h2"
               variant="section"
@@ -107,18 +116,25 @@ export function HomeProductOfMonthSection() {
               </Paragraph>
             )}
 
-            <div className="mb-8 inline-flex items-baseline gap-3 border-2 border-(--color-stamp-chocolate)/30 bg-(--color-stamp-chocolate)/10 px-6 py-3">
+            <div className="mb-8 inline-flex items-baseline gap-3 rounded-md border-2 border-(--color-stamp-chocolate)/30 bg-(--color-stamp-chocolate)/10 px-6 py-3 shadow-md">
               <Span variant="default" className="text-3xl font-medium text-(--color-stamp-chocolate)">
                 €{price.toFixed(2)}
               </Span>
               {originalPrice && (
-                <Span variant="sm" className="text-(--color-stamp-chocolate)/60 line-through">
+                <Span
+                  variant="sm"
+                  className="text-(--color-stamp-chocolate)/60 line-through"
+                >
                   €{originalPrice.toFixed(2)}
                 </Span>
               )}
             </div>
 
-            <Button asChild variant="cta" className="group bg-(--color-stamp-chocolate) text-(--color-stamp-cream) hover:bg-(--color-stamp-chocolate)/90">
+            <Button
+              asChild
+              variant="cta"
+              className="group bg-(--color-stamp-chocolate) text-(--color-stamp-cream) hover:bg-(--color-stamp-chocolate)/90"
+            >
               <Link href="/stamp">
                 {t("cta")}
                 <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-2" />

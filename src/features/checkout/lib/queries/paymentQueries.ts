@@ -29,3 +29,28 @@ export function usePreparePayPalPayment() {
     },
   });
 }
+
+interface PrepareIdealPaymentParams {
+  formData: CheckoutFormData;
+  cart: CartWithItems;
+  cartId: string | null;
+  amount: number;
+}
+
+/**
+ * Mutation hook for preparing an iDEAL payment (via Mollie)
+ * Creates the Mollie payment and stores checkout data for the return page
+ */
+export function usePrepareIdealPayment() {
+  const { handleError } = useErrorHandler();
+
+  return useMutation({
+    mutationKey: ["payment", "prepare-ideal"],
+    mutationFn: ({ formData, cart, cartId, amount }: PrepareIdealPaymentParams) =>
+      PaymentService.prepareIdealPayment(formData, cart, cartId, amount),
+    retry: false, // Don't retry payment operations
+    onError: (error: Error) => {
+      handleError(error);
+    },
+  });
+}

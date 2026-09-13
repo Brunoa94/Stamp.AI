@@ -5,7 +5,6 @@
  * inside the luxury brutalist section card.
  */
 
-
 import { useTranslations } from "next-intl";
 import { CheckoutAddressForm } from "../components/CheckoutAddressForm";
 import { CheckoutSectionCard } from "../components/CheckoutSectionCard";
@@ -14,10 +13,7 @@ export function CheckoutBillingSection() {
   const t = useTranslations("checkout.billing");
 
   return (
-    <CheckoutSectionCard
-      title={t("title")}
-      subtitle={t("subtitle")}
-    >
+    <CheckoutSectionCard title={t("title")}>
       <CheckoutAddressForm fieldPrefix="billing" />
     </CheckoutSectionCard>
   );

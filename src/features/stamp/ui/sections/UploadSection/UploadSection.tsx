@@ -6,6 +6,7 @@ import { Input } from "@/features/ui/input";
 import { useStampNavigationActions } from "../../../lib/hooks/useStampNavigation";
 import { useStampUpload } from "../../../lib/hooks/useStampSelectors";
 import { useStampImageUpload } from "../../../lib/hooks/useStampImageUpload";
+import { useSkipGeneration } from "../../../lib/hooks/useSkipGeneration";
 import { UploadDropzone } from "./UploadDropzone";
 import { UploadPreview } from "./UploadPreview";
 import { UploadContent } from "./UploadContent";
@@ -24,6 +25,7 @@ function UploadSectionComponent() {
   const { nextStep } = useStampNavigationActions();
   const { uploadedImageUrl } = useStampUpload();
   const { uploadImage, removeImage, uploadError } = useStampImageUpload();
+  const { handleSkipGeneration, hasCachedImages } = useSkipGeneration();
 
   const [fileName, setFileName] = useState<string>("");
   const [fileSize, setFileSize] = useState<string>("");
@@ -95,10 +97,12 @@ function UploadSectionComponent() {
       {/* Right Panel: Content */}
       <UploadContent
         hasUploadedImage={Boolean(uploadedImageUrl)}
+        hasCachedImages={hasCachedImages}
         fileName={fileName}
         fileSize={fileSize}
         onRemoveFile={handleRemove}
         onNext={nextStep}
+        onSkipWithCached={handleSkipGeneration}
       />
     </section>
   );

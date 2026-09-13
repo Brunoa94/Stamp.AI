@@ -5,6 +5,7 @@
 
 import type { ProductWithPricing } from "@/lib/supabase/server-cache";
 import { resolveProductDescription } from "@/lib/seo/productDescription";
+import { resolveDisplayPrice } from "@/lib/pricing";
 import { getDisplayTitle } from "../constants/productDisplayTitles";
 
 export interface ProductCardData {
@@ -33,11 +34,7 @@ function mapProductToCard(product: ProductWithPricing): ProductCardData {
     blueprintId: product.blueprint_id,
     name: displayTitle,
     description: resolveProductDescription(product.product_seo),
-    price: product.selling_price_cents
-      ? product.selling_price_cents / 100
-      : product.totalPriceCents > 0
-        ? product.totalPriceCents / 100
-        : 0,
+    price: resolveDisplayPrice(product, { useFallback: false }),
     originalPrice: product.original_price_cents
       ? product.original_price_cents / 100
       : undefined,

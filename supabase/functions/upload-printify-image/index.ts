@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { ErrorCodes, handleError } from "../_shared/errors.ts"
+import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
+import { requireUser } from "../_shared/authGuard.ts"
 
 // Environment variables will be validated when needed
 
@@ -10,6 +11,28 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
+// SSRF hardening: only allow forwarding image URLs from trusted hosts to Printify
+function isAllowedImageUrl(u: string): boolean {
+  let parsed: URL
+  try {
+    parsed = new URL(u)
+  } catch {
+    return false
+  }
+
+  if (parsed.protocol !== 'https:') {
+    return false
+  }
+
+  const host = parsed.hostname.toLowerCase()
+  return (
+    host.endsWith('.supabase.co') ||
+    host === 'images.printify.com' ||
+    host === 'images-api.printify.com' ||
+    host.endsWith('.amazonaws.com')
+  )
+}
+
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -17,11 +40,17 @@ serve(async (req) => {
   }
 
   try {
-    const { 
+    const auth = await requireUser(req.headers.get('authorization'))
+
+    const {
       image_url,      // URL of the image to upload
       image_base64,   // OR base64 encoded image
       file_name = 'design.png',
     } = await req.json()
+
+    if (image_url && !isAllowedImageUrl(image_url)) {
+      throw new FunctionError(400, "INVALID_IMAGE_URL", "image_url host not allowed")
+    }
 
     console.log('=== UPLOAD PRINTIFY IMAGE ===')
     console.log('Image URL:', image_url)

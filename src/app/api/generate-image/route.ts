@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { captureError } from "@/lib/observability/errorCapture";
-import { GeminiImageService } from "@/services/geminiImageService";
+import { OpenAIImageService } from "@/services/openaiImageService";
 
 export const runtime = "nodejs";
 
@@ -110,14 +110,14 @@ export async function POST(request: NextRequest) {
       console.log(`Detected MIME type from magic bytes: ${mimeType}`);
     }
 
-    // ── Generate image using Gemini (2.5 Flash + 2.5 Flash Image) ──────────────
-    console.log("Generating image with Gemini");
+    // ── Generate image using OpenAI (GPT-4o + GPT Image 1) ──────────────────────
+    console.log("Generating image with OpenAI");
     console.log("Original prompt:", prompt);
     console.log("Preservation level:", preservation);
     console.log("Remove background:", removeBackground);
     console.log("Image file:", image.name, "MIME type:", mimeType);
 
-    const result = await GeminiImageService.generateImage(
+    const result = await OpenAIImageService.generateImage(
       imageBuffer,
       mimeType,
       prompt,
@@ -132,16 +132,36 @@ export async function POST(request: NextRequest) {
       originalPrompt: prompt
     });
 
-  } catch (error: any) {
-    captureError(error, {
+  } catch (error: unknown) {
+    const err = error instanceof Error ? error : new Error(String(error));
+
+    captureError(err, {
       service: "ImageGeneration",
       action: "generateImage",
     });
 
+    console.error("[generate-image] Error:", err.message, err.stack);
+
+    // Return user-friendly error messages
+    let userMessage = "We couldn't generate your image right now. Please try again in a moment.";
+
+    if (err.message?.includes("API key")) {
+      userMessage = "Image generation service is temporarily unavailable. Please try again later.";
+    } else if (err.message?.includes("sharp") || err.message?.includes("libvips")) {
+      userMessage = "Image processing is temporarily unavailable. Please try again later.";
+    } else if (err.message?.includes("background-removal")) {
+      userMessage = "Image processing is temporarily unavailable. Please try again later.";
+    } else if (err.message?.includes("OPENAI_API_KEY")) {
+      userMessage = "Image generation service is not configured. Please contact support.";
+    } else if (err.message?.includes("moderation_blocked")) {
+      userMessage = "Your image or prompt was blocked by content moderation. Please try a different image or prompt.";
+    }
+
     return NextResponse.json(
       {
-        error: "Failed to generate image",
-        details: error.message || "Unknown error"
+        error: userMessage,
+        // Only include technical details in development
+        ...(process.env.NODE_ENV !== "production" && { details: err.message })
       },
       { status: 500 }
     );

@@ -17,7 +17,7 @@ import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
  * Allows user to clear the selection.
  */
 
-const COLLAPSED_HEIGHT = 80;
+const COLLAPSED_HEIGHT = 90;
 
 function ExpandableSpecsList({ specs }: { specs: string[] }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -26,7 +26,7 @@ function ExpandableSpecsList({ specs }: { specs: string[] }) {
     <div className="w-full max-w-xs mt-4 pt-4 border-t border-(--color-stamp-divider)">
       <div
         className="relative overflow-hidden transition-all duration-300 ease-in-out"
-        style={{ maxHeight: isExpanded ? `${specs.length * 28}px` : `${COLLAPSED_HEIGHT}px` }}
+        style={{ maxHeight: isExpanded ? `${specs.length * 32}px` : `${COLLAPSED_HEIGHT}px` }}
       >
         <List className="text-left w-full space-y-1.5">
           {specs.map((spec, index) => (
@@ -34,7 +34,7 @@ function ExpandableSpecsList({ specs }: { specs: string[] }) {
               <Span
                 variant="micro"
                 unstyled
-                className="font-heading text-[11px] font-normal normal-case tracking-normal leading-relaxed text-(--color-stamp-taupe)"
+                className="font-heading text-[13px] font-normal normal-case tracking-normal leading-relaxed text-(--color-stamp-taupe)"
               >
                 {spec}
               </Span>
@@ -46,10 +46,10 @@ function ExpandableSpecsList({ specs }: { specs: string[] }) {
         )}
       </div>
       {specs.length > 3 && (
-        <button
-          type="button"
+        <Button
+          variant="stamp-expand"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center justify-center gap-1 w-full mt-2 py-1 text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-colors cursor-pointer"
+          className="mt-2"
         >
           {isExpanded ? (
             <>
@@ -62,7 +62,7 @@ function ExpandableSpecsList({ specs }: { specs: string[] }) {
               <ChevronDown className="w-3 h-3" />
             </>
           )}
-        </button>
+        </Button>
       )}
     </div>
   );

@@ -98,8 +98,8 @@ const ALLOWED_COLORS: Record<string, string[]> = {
   apparel: ["black", "white"],
   // Mugs - typically white only
   mug: ["white"],
-  // Tote bags - Black only (no user selection)
-  tote: ["black"],
+  // Tote bags - Black, White, or Natural
+  tote: ["black", "white", "natural"],
   // Canvas/Poster - white only (no user selection)
   canvas: ["white"],
   // Socks - white base for all-over print
@@ -222,15 +222,15 @@ export function validateColorForBlueprint(
       };
     }
 
-    // For categories that require color selection (apparel), default to first allowed
-    if (category === "apparel") {
+    // For categories that require color selection (apparel, tote), default to first allowed
+    if (category === "apparel" || category === "tote") {
       const defaultColor = allowedColors[0];
       console.log(
         `📋 No color provided for ${category}, defaulting to "${defaultColor}"`
       );
       return {
         valid: true,
-        normalizedColor: defaultColor,
+        normalizedColor: defaultColor.charAt(0).toUpperCase() + defaultColor.slice(1),
         category,
       };
     }

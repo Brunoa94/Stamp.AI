@@ -57,10 +57,6 @@ export default async function Home() {
       text: tProcess("step-describe.description"),
     },
     {
-      name: tProcess("step-generate.title"),
-      text: tProcess("step-generate.description"),
-    },
-    {
       name: tProcess("step-results.title"),
       text: tProcess("step-results.description"),
     },
@@ -75,10 +71,6 @@ export default async function Home() {
     {
       name: tProcess("step-create.title"),
       text: tProcess("step-create.description"),
-    },
-    {
-      name: tProcess("step-checkout.title"),
-      text: tProcess("step-checkout.description"),
     },
   ];
 

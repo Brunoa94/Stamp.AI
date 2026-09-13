@@ -23,6 +23,7 @@ export class MollieService {
     lineItems,
     shippingAddress,
     testMode = false,
+    method,
   }: CreateMolliePaymentPayloadI): Promise<CreateMolliePaymentResponseI> {
     try {
       const headers = await getAuthenticatedHeaders("Mollie");
@@ -36,6 +37,7 @@ export class MollieService {
             description,
             line_items: lineItems,
             shipping_address: shippingAddress,
+            method,
             metadata: {
               order_id: `order_${Date.now()}`,
               test_mode: testMode,

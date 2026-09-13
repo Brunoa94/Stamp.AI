@@ -187,6 +187,7 @@ export interface MolliePaymentRequestI {
   line_items?: any[]
   shipping_address?: ShippingAddressI
   metadata?: Record<string, any>
+  method?: string
 }
 
 export interface MolliePaymentResponseI {

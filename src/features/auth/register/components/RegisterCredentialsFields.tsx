@@ -19,29 +19,27 @@ export function RegisterCredentialsFields({
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <FormField
-          id="firstName"
-          label={t("firstName")}
-          placeholder={t("firstNamePlaceholder")}
-          required
-          error={ve(errors.firstName?.message)}
-          register={register("firstName")}
-          variant="stamp-auth"
-          leadingIcon={<User className="h-5 w-5" />}
-        />
+      <FormField
+        id="firstName"
+        label={t("firstName")}
+        placeholder={t("firstNamePlaceholder")}
+        required
+        error={ve(errors.firstName?.message)}
+        register={register("firstName")}
+        variant="stamp-auth"
+        leadingIcon={<User className="h-5 w-5" />}
+      />
 
-        <FormField
-          id="lastName"
-          label={t("lastName")}
-          placeholder={t("lastNamePlaceholder")}
-          required
-          error={ve(errors.lastName?.message)}
-          register={register("lastName")}
-          variant="stamp-auth"
-          leadingIcon={<User className="h-5 w-5" />}
-        />
-      </div>
+      <FormField
+        id="lastName"
+        label={t("lastName")}
+        placeholder={t("lastNamePlaceholder")}
+        required
+        error={ve(errors.lastName?.message)}
+        register={register("lastName")}
+        variant="stamp-auth"
+        leadingIcon={<User className="h-5 w-5" />}
+      />
 
       <FormField
         id="email"

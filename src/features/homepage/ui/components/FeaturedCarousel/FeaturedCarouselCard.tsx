@@ -11,6 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
@@ -26,6 +27,7 @@ export function FeaturedCarouselCard({
   index,
 }: FeaturedCarouselCardProps) {
   const t = useTranslations("home.featured");
+  const prefersReducedMotion = useReducedMotion();
   const { ref, isVisible } = useIntersectionObserver<HTMLAnchorElement>({
     threshold: 0.1,
     triggerOnce: true,
@@ -34,16 +36,21 @@ export function FeaturedCarouselCard({
   // Stagger delay: each card animates 100ms after the previous
   const staggerDelay = index * 100;
 
+  // When reduced motion is preferred, skip animations entirely
+  const animationStyle = prefersReducedMotion
+    ? { opacity: 1 }
+    : {
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? "translateX(0)" : "translateX(100px)",
+        transition: `opacity 0.6s ease-out ${staggerDelay}ms, transform 0.6s ease-out ${staggerDelay}ms`,
+      };
+
   return (
     <Link
       ref={ref}
       href={product.href}
       className="group block w-72 shrink-0 sm:w-80"
-      style={{
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? "translateX(0)" : "translateX(100px)",
-        transition: `opacity 0.6s ease-out ${staggerDelay}ms, transform 0.6s ease-out ${staggerDelay}ms`,
-      }}
+      style={animationStyle}
     >
       <div className="relative border-2 border-(--color-stamp-divider) bg-linear-to-br from-(--color-stamp-cream) to-(--color-stamp-off-white) p-3 shadow-[inset_0_0_0_1px_var(--color-stamp-taupe)/20,0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-500 group-hover:-translate-y-1">
         <div className="pointer-events-none absolute inset-2 border border-(--color-stamp-taupe)/30" />

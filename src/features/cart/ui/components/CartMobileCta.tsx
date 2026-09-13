@@ -7,7 +7,7 @@
 
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { formatPrice } from "../../lib/utils/formatPrice";
@@ -39,9 +39,10 @@ export function CartMobileCta({
         <Button
           onClick={onCheckout}
           variant="primary"
-          className="group w-full font-heading"
+          className="group w-full"
           disabled={!canCheckout}
         >
+          <Lock className="h-4 w-4" aria-hidden="true" />
           <span>
             {canCheckout
               ? t("checkout", { total: formattedTotal })

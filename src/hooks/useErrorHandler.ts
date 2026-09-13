@@ -10,6 +10,15 @@ export interface UseErrorHandlerOptionsI {
   customMessages?: Partial<Record<ErrorCodeT, string>>;
 }
 
+// Only codes in ERROR_CODES have a translation under `errors.<CODE>`.
+// Treating an arbitrary backend string as a code would render a missing
+// translation key to the user, so anything else must fall back.
+const isKnownErrorCode = (value: unknown): value is ErrorCodeT =>
+  typeof value === "string" && ERROR_CODES.includes(value as ErrorCodeT);
+
+const findEmbeddedErrorCode = (text: string): ErrorCodeT | undefined =>
+  ERROR_CODES.find((code) => text.includes(code));
+
 export const useErrorHandler = (options: UseErrorHandlerOptionsI = {}) => {
   const { showToast = true, customMessages = {} } = options;
   const t = useTranslations("errors");
@@ -20,27 +29,36 @@ export const useErrorHandler = (options: UseErrorHandlerOptionsI = {}) => {
     let rawMessage: string | null = null;
     let hasCode = false;
 
-    // Extract error code from different error formats
-    if (error?.code) {
+    // Extract error code from different error formats. Each candidate field
+    // is only accepted when it is a known ErrorCodeT — backends also put
+    // free-text messages and third-party codes (Stripe, Postgres) in these
+    // fields, and those must not be looked up as translation keys.
+    if (isKnownErrorCode(error?.code)) {
       // Typed app error: { code: "ERROR_CODE" }
-      errorCode = error.code as ErrorCodeT;
+      errorCode = error.code;
       hasCode = true;
-    } else if (error?.error) {
+    } else if (isKnownErrorCode(error?.error)) {
       // Structured error object: { error: "ERROR_CODE" }
-      errorCode = error.error as ErrorCodeT;
+      errorCode = error.error;
       hasCode = true;
-    } else if (error?.response?.data?.error) {
+    } else if (isKnownErrorCode(error?.response?.data?.error)) {
       // Axios-style response: { response: { data: { error: "ERROR_CODE" } } }
-      errorCode = error.response.data.error as ErrorCodeT;
+      errorCode = error.response.data.error;
       hasCode = true;
     } else if (error?.message) {
       rawMessage = error.message;
       // Backend error codes are embedded in the message by ErrorClient:
       // "Service - Action failed: HTTP 400: ERROR_CODE"
       // Scan the message for any known ErrorCodeT to surface the mapped UX message.
-      const embedded = ERROR_CODES.find((code) =>
-        (error.message as string).includes(code)
-      );
+      const embedded = findEmbeddedErrorCode(error.message as string);
+      if (embedded) {
+        errorCode = embedded;
+        hasCode = true;
+      }
+    } else if (typeof error?.error === "string") {
+      // Structured error whose `error` field is a free-text message
+      rawMessage = error.error;
+      const embedded = findEmbeddedErrorCode(error.error);
       if (embedded) {
         errorCode = embedded;
         hasCode = true;
