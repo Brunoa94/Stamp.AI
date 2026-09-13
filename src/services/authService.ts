@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import type {
   LoginI,
+  LoginRequestI,
   PasswordResetRequestI,
   RegisterI,
   SignupRequestI,
@@ -23,48 +24,55 @@ class AuthService {
 
   /**
    * Login user with email and password
-   * Uses AuthServiceMapper to transform Supabase response
+   * Server route verifies CAPTCHA and rate limits before authenticating
    */
   static async login(
     credentials: LoginI,
-    captchaToken?: string,
+    captchaToken?: string | null,
   ): Promise<AuthResponseI> {
     try {
-      const { data, error } = await AuthService.getSupabase().auth
-        .signInWithPassword({
-          email: credentials.email,
-          password: credentials.password,
-          options: captchaToken ? { captchaToken } : undefined,
-        });
+      const body: LoginRequestI = {
+        email: credentials.email,
+        password: credentials.password,
+        captchaToken,
+      };
 
-      if (error) {
-        // Supabase's own confirmation gate uses a lowercase code that the
-        // error handler can't translate — map it to our error code
-        const mappedError = error.code === "email_not_confirmed"
-          ? new AppError("EMAIL_NOT_CONFIRMED", "EMAIL_NOT_CONFIRMED")
-          : error;
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
 
+      const result = await response.json();
+
+      if (!response.ok) {
         throw ErrorClient.handleError({
-          error: mappedError,
+          error: result,
           service: "Auth",
           action: "Login",
         });
       }
 
-      // Validate Supabase response
-      SupabaseAuthResponseSchema.parse(data);
+      // Set the session on the client after successful API login
+      const { error: setSessionError } = await AuthService.getSupabase().auth
+        .setSession({
+          access_token: result.session.accessToken,
+          refresh_token: result.session.refreshToken,
+        });
 
-      // Supabase only rejects unconfirmed sign-ins when "Confirm email" is
-      // enabled server-side, so enforce activation here as well
-      if (!data.user?.email_confirmed_at) {
-        await AuthService.getSupabase().auth.signOut();
-        throw new AppError("EMAIL_NOT_CONFIRMED", "EMAIL_NOT_CONFIRMED");
+      if (setSessionError) {
+        throw ErrorClient.handleError({
+          error: setSessionError,
+          service: "Auth",
+          action: "Login",
+        });
       }
 
-      return AuthServiceMapper.mapSupabaseAuthToAuthResponse(
-        data.user,
-        data.session,
-      );
+      return {
+        success: true,
+        user: result.user,
+        session: result.session,
+      };
     } catch (error) {
       throw ErrorClient.handleError({
         error,

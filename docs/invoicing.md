@@ -19,13 +19,12 @@ payment provider.
    `_shared/invoiceAssets.ts`, and Inter (latin subset) is embedded from
    `_shared/invoiceFonts.ts` — non-embedded standard fonts render the euro
    sign with a broken advance width in macOS Preview/Quick Look.
-3. **Email** — if an email provider is configured, the invoice is emailed to
-   the customer (HTML body from `_shared/invoiceTemplate.ts`, PDF attached).
+3. **Email** — if Brevo is configured, the invoice is emailed to the customer
+   (HTML body from `_shared/invoiceTemplate.ts`, PDF attached).
    The email header logo is loaded from `{SITE_URL}/assets/logo-stamp.png`,
    so the `SITE_URL` secret (already used by the payment functions) must
    point at the deployed site for the image to resolve.
    Sent at most once (`emailed_at`). Skipped silently when not configured.
-   Supports **Brevo** (preferred) and **Resend** (fallback).
 4. **Triggers** — invoice generation runs best-effort (never fails the
    payment flow) from every place an order is marked paid:
    `stripe-webhook`, `paypal-webhook`, `capture-paypal-order`.
@@ -69,17 +68,12 @@ payment provider.
    | `INVOICE_SELLER_VAT_ID` | VAT/tax registration number |
    | `INVOICE_FROM_EMAIL` | Sender email (used by both providers) |
 
-   **Email Provider - Brevo (recommended):**
+   **Email Provider - Brevo:**
    | Secret | Purpose |
    | --- | --- |
    | `BREVO_API_KEY` | Brevo API key (get from https://app.brevo.com/settings/keys/api) |
    | `BREVO_FROM_EMAIL` | Sender email (falls back to `INVOICE_FROM_EMAIL`) |
    | `BREVO_FROM_NAME` | Sender name (falls back to `INVOICE_SELLER_NAME`) |
-
-   **Email Provider - Resend (fallback):**
-   | Secret | Purpose |
-   | --- | --- |
-   | `RESEND_API_KEY` | Resend API key (only used if `BREVO_API_KEY` not set) |
 
    **Configuring Supabase secrets:**
    ```bash

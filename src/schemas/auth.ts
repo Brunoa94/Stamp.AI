@@ -3,10 +3,17 @@ import { z } from "zod";
 // Zod `message` values are i18n keys under the `validation` namespace; they
 // are translated at the form render site via next-intl (useTranslations).
 
-// Login schema
+// Login schema (client-side form validation)
 export const LoginSchema = z.object({
   email: z.string().min(1, "emailRequired").email("emailInvalid"),
   password: z.string().min(6, "passwordMin"),
+});
+
+// Login API request schema (server-side validation)
+export const LoginRequestSchema = z.object({
+  email: z.string().min(1, "emailRequired").email("emailInvalid"),
+  password: z.string().min(6, "passwordMin"),
+  captchaToken: z.string().min(1).nullable().optional(),
 });
 
 // Register schema
@@ -70,6 +77,7 @@ export const UpdatePasswordSchema = z.object({
 
 // Export inferred types
 export type LoginI = z.infer<typeof LoginSchema>;
+export type LoginRequestI = z.infer<typeof LoginRequestSchema>;
 export type RegisterI = z.infer<typeof RegisterSchema>;
 export type SignupRequestI = z.infer<typeof SignupRequestSchema>;
 export type PasswordResetRequestI = z.infer<typeof PasswordResetRequestSchema>;

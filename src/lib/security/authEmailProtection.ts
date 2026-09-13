@@ -32,7 +32,7 @@ async function consumeLimit(
 export async function isAuthEmailRequestAllowed(
   supabase: SupabaseClient<Database>,
   request: NextRequest,
-  scope: "signup" | "resend-confirmation",
+  scope: "signup" | "resend-confirmation" | "login",
   email: string,
 ): Promise<boolean> {
   const ipAllowed = await consumeLimit(

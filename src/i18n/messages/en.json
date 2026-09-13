@@ -1193,6 +1193,16 @@
         "description": "Check your email to verify your address, then choose your password.",
         "gotIt": "Got it"
       }
+    },
+    "checkEmail": {
+      "title": "Check your email",
+      "description": "We sent a confirmation link to your email address.",
+      "instructions": "Click the link in the email to activate your account and set your password.",
+      "resendButton": "Resend confirmation email",
+      "resending": "Sending...",
+      "resendSuccess": "Email sent! Check your inbox.",
+      "backToLogin": "Back to Login",
+      "spamNote": "Didn't get the email? Check your spam folder."
     }
   },
   "ui": {

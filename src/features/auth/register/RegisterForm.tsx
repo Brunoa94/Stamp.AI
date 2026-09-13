@@ -1,7 +1,6 @@
 "use client";
 
 import { useRegisterForm } from "./useRegisterForm";
-import { RegistrationSuccessMessage } from "./RegistrationSuccessMessage";
 import { DialogContent, DialogTitle, DialogClose } from "@/features/ui/dialog";
 import { Button } from "@/features/ui/button";
 import { X } from "lucide-react";
@@ -18,15 +17,10 @@ export function RegisterForm() {
     handleSubmit,
     onSubmit,
     isPending,
-    isSuccess,
     isCaptchaReady,
     errors,
   } = useRegisterForm();
   const t = useTranslations("auth.register.form");
-
-  if (isSuccess) {
-    return <RegistrationSuccessMessage />;
-  }
 
   return (
     <DialogContent
