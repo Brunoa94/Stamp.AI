@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { selectCheckoutCartItems } from "../../../supabase/functions/_shared/cartSelection";
+import {
+  getSnapshotItemUnitPrice,
+  selectCheckoutCartItems,
+} from "../../../supabase/functions/_shared/cartSelection";
 
 /**
  * process-payment-recovery rebuilds an order from the cart snapshot stored
@@ -22,13 +25,13 @@ describe("selectCheckoutCartItems", () => {
     ]);
   });
 
-  it("falls back to all items when none is selected", () => {
+  it("returns an empty array when none is selected", () => {
     const items = [
       { id: "a", is_selected: false },
       { id: "b", is_selected: false },
     ];
 
-    expect(selectCheckoutCartItems(items)).toHaveLength(2);
+    expect(selectCheckoutCartItems(items)).toEqual([]);
   });
 
   it("returns an empty array for an empty snapshot", () => {
@@ -37,5 +40,15 @@ describe("selectCheckoutCartItems", () => {
 
   it("returns an empty array for a missing snapshot", () => {
     expect(selectCheckoutCartItems(undefined)).toEqual([]);
+  });
+});
+
+describe("getSnapshotItemUnitPrice", () => {
+  it("uses the unit_price field from current cart snapshots", () => {
+    expect(getSnapshotItemUnitPrice({ unit_price: 2500 })).toBe(2500);
+  });
+
+  it("supports the price field from legacy recovery snapshots", () => {
+    expect(getSnapshotItemUnitPrice({ price: 2500 })).toBe(2500);
   });
 });

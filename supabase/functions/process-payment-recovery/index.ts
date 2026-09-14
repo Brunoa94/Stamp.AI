@@ -2,7 +2,10 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
-import { selectCheckoutCartItems } from "../_shared/cartSelection.ts";
+import {
+  getSnapshotItemUnitPrice,
+  selectCheckoutCartItems,
+} from "../_shared/cartSelection.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -91,8 +94,12 @@ serve(async (req) => {
     const cartItems = selectCheckoutCartItems(
       cart_snapshot.cart_items || cart_snapshot.items || []
     );
+    if (cartItems.length === 0) {
+      throw new Error("Cannot recover an order without selected cart items");
+    }
     const subtotal = cartItems.reduce((sum: number, item: any) => {
-      return sum + (item.price * item.quantity);
+      const unitPrice = getSnapshotItemUnitPrice(item);
+      return sum + (unitPrice * (item.quantity ?? 1));
     }, 0);
 
     const shippingCost = cart_snapshot.shipping_cost || 0;
@@ -141,17 +148,24 @@ serve(async (req) => {
     console.log("✅ Order created:", orderId);
 
     // Create order items
-    const orderItems = cartItems.map((item: any) => ({
-      order_id: orderId,
-      product_id: item.product_id || item.id,
-      product_name: item.product_name || item.name || "Product",
-      variant_id: item.variant_id,
-      quantity: item.quantity,
-      price: item.price,
-      total: item.price * item.quantity,
-      printify_product_id: item.printify_product_id,
-      printify_blueprint_id: item.printify_blueprint_id,
-    }));
+    const orderItems = cartItems.map((item: any) => {
+      const unitPrice = getSnapshotItemUnitPrice(item);
+      const quantity = item.quantity ?? 1;
+
+      return {
+        order_id: orderId,
+        product_id: item.product_id || item.id,
+        product_name: item.product_name || item.name || "Product",
+        variant_id: item.variant_id,
+        quantity,
+        unit_price: unitPrice,
+        total_price: unitPrice * quantity,
+        custom_image_url: item.custom_image_url || "",
+        design_config: item.custom_image_url
+          ? { reusable_image_url: item.custom_image_url }
+          : null,
+      };
+    });
 
     await supabaseRest("order_items", "POST", orderItems);
     console.log("✅ Order items created");

@@ -471,23 +471,15 @@ describe("OrderService Edge Cases", () => {
         cart_items: [], // Empty!
       };
 
-      mockSupabase.single.mockResolvedValueOnce({
-        data: {
-          id: "order_123",
-          order_number: "ORD-123",
-        },
-        error: null,
-      });
+      await expect(
+        OrderService.createOrderFromCart({
+          user: user as any,
+          cart: emptyCart as any,
+          paymentStatus: "paid",
+        }),
+      ).rejects.toThrow("Cannot create an order without selected cart items");
 
-      // Should still create order but with 0 items
-      const orderId = await OrderService.createOrderFromCart({
-        user: user as any,
-        cart: emptyCart as any,
-        paymentStatus: "paid",
-      });
-
-      // This is potentially a bug - should we allow empty orders?
-      expect(orderId).toBe("order_123");
+      expect(mockSupabase.insert).not.toHaveBeenCalled();
     });
   });
 
@@ -580,6 +572,26 @@ describe("OrderService Edge Cases", () => {
       // item_1 (2 × 2500) + item_3 (3 × 1500) = 9500; item_2 excluded
       expect(orderPayload.subtotal).toBe(9500);
       expect(orderPayload.total_amount).toBe(9500);
+    });
+
+    it("rejects an order when no cart items are selected", async () => {
+      const emptySelectionCart = {
+        ...cart,
+        cart_items: cart.cart_items.map((item) => ({
+          ...item,
+          is_selected: false,
+        })),
+      };
+
+      await expect(
+        OrderService.createOrderFromCart({
+          user,
+          cart: emptySelectionCart,
+          paymentStatus: "paid",
+        }),
+      ).rejects.toThrow("Cannot create an order without selected cart items");
+
+      expect(mockSupabase.insert).not.toHaveBeenCalled();
     });
   });
 });

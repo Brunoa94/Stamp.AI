@@ -29,8 +29,8 @@ export class CartServiceMapper {
 
   /**
    * Build the cart that is actually being checked out: the same cart with
-   * only its selected items. Falls back to every item when nothing is
-   * selected so legacy carts keep working.
+   * only its selected items. An empty selection remains empty so checkout
+   * can never silently turn "buy nothing" into "buy everything".
    *
    * Single source of truth for the checkout page, order creation,
    * payment-recovery snapshots and post-payment cart cleanup.
@@ -41,7 +41,7 @@ export class CartServiceMapper {
 
     return {
       ...cart,
-      cart_items: selectedItems.length > 0 ? selectedItems : items,
+      cart_items: selectedItems,
     };
   }
 

@@ -1,6 +1,7 @@
 import type { PrintifyLineItem } from "@/types/printifyOrder";
 import type { ShippingAddressT } from "@/schemas/checkout";
 import type { PaymentMethodT } from "@/types/payment";
+import type { CartWithItems } from "@/types/cart";
 
 export interface MollieCheckoutSessionData {
   paymentId: string | null;
@@ -8,6 +9,7 @@ export interface MollieCheckoutSessionData {
   shippingAddress: string | null;
   cartId: string | null;
   orderAmount: string | null;
+  cartSnapshot: string | null;
 }
 
 export interface CheckoutData {
@@ -19,6 +21,8 @@ export interface CheckoutData {
   paymentMethod: PaymentMethodT;
   promoCode?: string;
   amount?: number; // Total amount for the order
+  /** Present for new checkouts; optional while pre-deployment sessions expire. */
+  cartSnapshot?: CartWithItems;
   timestamp: number;
 }
 
@@ -46,6 +50,7 @@ export class CheckoutStorageService {
     SHIPPING_ADDRESS: "mollie_shipping_address",
     CART_ID: "mollie_cart_id",
     ORDER_AMOUNT: "mollie_order_amount",
+    CART_SNAPSHOT: "mollie_cart_snapshot",
   } as const;
 
   private static readonly EXPIRATION_TIME = 60 * 60 * 1000; // 1 hour in milliseconds
@@ -176,6 +181,12 @@ export class CheckoutStorageService {
           String(data.amount),
         );
       }
+      if (data.cartSnapshot) {
+        sessionStorage.setItem(
+          this.MOLLIE_SESSION_KEYS.CART_SNAPSHOT,
+          JSON.stringify(data.cartSnapshot),
+        );
+      }
     } catch (error) {
       console.error("Failed to save Mollie checkout data:", error);
     }
@@ -200,14 +211,25 @@ export class CheckoutStorageService {
       const orderAmount = sessionStorage.getItem(
         this.MOLLIE_SESSION_KEYS.ORDER_AMOUNT,
       );
+      const cartSnapshot = sessionStorage.getItem(
+        this.MOLLIE_SESSION_KEYS.CART_SNAPSHOT,
+      );
 
       if (
-        !paymentId && !lineItems && !shippingAddress && !cartId && !orderAmount
+        !paymentId && !lineItems && !shippingAddress && !cartId && !orderAmount &&
+        !cartSnapshot
       ) {
         return null;
       }
 
-      return { paymentId, lineItems, shippingAddress, cartId, orderAmount };
+      return {
+        paymentId,
+        lineItems,
+        shippingAddress,
+        cartId,
+        orderAmount,
+        cartSnapshot,
+      };
     } catch {
       return null;
     }

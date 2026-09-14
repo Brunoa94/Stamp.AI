@@ -14,7 +14,10 @@ import { OrderService } from "@/services/orderService";
 import { CartService } from "@/services/cartService";
 import { RefundService } from "@/services/refundService";
 import { PaymentRecoveryService } from "@/services/paymentRecoveryService";
-import type { CreatePrintifyOrderRequest } from "@/types/printifyOrder";
+import type {
+  CreatePrintifyOrderRequest,
+  PrintifyLineItem,
+} from "@/types/printifyOrder";
 import { validatePrintifyLineItem } from "@/types/printifyOrder";
 import { mapShippingAddressToPrintifyAddress } from "@/mappers/mapShippingAddressToPrintifyAddress";
 import { captureError } from "@/lib/observability/errorCapture";
@@ -31,6 +34,8 @@ import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
 import { useRemoveCartItems } from "@/queries/cartQueries";
 import { useUser } from "@/queries/authQueries";
 import { UserI } from "@/supabase/types";
+import type { CartWithItems } from "@/types/cart";
+import type { ShippingAddressT } from "@/schemas/checkout";
 
 type PageStatus = "loading" | "processing" | "success" | "failed" | "error";
 
@@ -65,10 +70,11 @@ async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 export interface StripeCheckoutData {
   paymentIntentId: string;
   amount: number;
-  lineItems: any[];
-  shippingAddress: any;
-  billing: any;
+  lineItems: PrintifyLineItem[];
+  shippingAddress: ShippingAddressT;
+  billing: ShippingAddressT;
   cartId: string | null;
+  cartSnapshot?: CartWithItems;
   timestamp: number;
 }
 
@@ -181,6 +187,7 @@ function StripeReturnContent() {
           shippingAddress,
           amount,
           cartId,
+          cartSnapshot: storedCartSnapshot,
           billing: billingAddress,
         } = checkoutData;
         const validatedLineItems = lineItems.map((item, index) =>
@@ -197,16 +204,20 @@ function StripeReturnContent() {
           return;
         }
 
+        // New checkouts carry an immutable snapshot. The live-cart fallback
+        // only supports sessions that were already in flight at deployment.
+        const cartSnapshot =
+          storedCartSnapshot ?? (await CartService.getCheckoutCart(cartId));
+
         // Record payment for recovery
         try {
-          const cart = await CartService.getCheckoutCart(cartId);
           await PaymentRecoveryService.recordPaymentForRecovery({
             paymentProvider: "stripe",
             paymentIntentId: paymentIntent,
             paymentStatus: "succeeded",
             amount,
             currency: "USD",
-            cartSnapshot: cart,
+            cartSnapshot,
             shippingAddress,
             lineItems: validatedLineItems,
             metadata: {
@@ -281,18 +292,18 @@ function StripeReturnContent() {
         };
 
         let createdOrderId: string | null = null;
-        let orderedCartItemIds: string[] = [];
+        const orderedCartItemIds = cartSnapshot.cart_items.map(
+          (item) => item.id,
+        );
 
         // Run fulfillment pipeline with timeout
         const runFulfillmentPipeline = async () => {
           // Stage 1: Create DB order
           try {
-            const cart = await CartService.getCheckoutCart(cartId);
-            orderedCartItemIds = cart.cart_items.map((item) => item.id);
             createdOrderId =
               (await createOrderFromCart.mutateAsync({
                 user: user as UserI,
-                cart,
+                cart: cartSnapshot,
                 paymentStatus: "paid",
                 shippingAddress,
                 billingAddress,

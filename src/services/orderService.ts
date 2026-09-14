@@ -426,6 +426,9 @@ export class OrderService {
 
       // Only the items selected for checkout belong to the order (and its invoice)
       const checkoutCart = CartServiceMapper.mapCartToCheckoutCart(cart);
+      if (checkoutCart.cart_items.length === 0) {
+        throw new Error("Cannot create an order without selected cart items");
+      }
 
       // Use mapper to generate unique order number
       const orderNumber = OrderServiceMapper.generateOrderNumber();

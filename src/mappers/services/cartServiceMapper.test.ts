@@ -92,15 +92,15 @@ describe("CartServiceMapper.mapCartToCheckoutCart", () => {
     expect(cart.cart_items).toHaveLength(2);
   });
 
-  it("falls back to every item when no item is selected (backwards compatibility)", () => {
+  it("keeps the checkout empty when no item is selected", () => {
     const cart = createCart([
       createCartItem("a", false),
       createCartItem("b", false),
     ]);
 
-    expect(
-      CartServiceMapper.mapCartToCheckoutCart(cart).cart_items,
-    ).toHaveLength(2);
+    expect(CartServiceMapper.mapCartToCheckoutCart(cart).cart_items).toEqual(
+      [],
+    );
   });
 
   it("keeps an empty cart empty", () => {

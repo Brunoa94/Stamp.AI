@@ -97,8 +97,10 @@ export function CheckoutSummarySection({
           <Elements stripe={stripePromise}>
             <CheckoutStripeButton
               amount={totalInCents}
+              cart={cart}
               lineItems={lineItems}
               shippingAddress={paymentShippingAddress}
+              billingAddress={billingAddress}
               cartId={cartId}
               testMode={testMode}
               selectedTestMethod={selectedTestMethod}
