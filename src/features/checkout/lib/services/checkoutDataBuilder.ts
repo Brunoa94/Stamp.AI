@@ -15,6 +15,10 @@ import type { CheckoutData } from "./checkoutStorageService";
  * - Transform cart items to Printify line items
  */
 export class CheckoutDataBuilder {
+  static createCartSnapshot(cart: CartWithItems): CartWithItems {
+    return structuredClone(cart);
+  }
+
   /**
    * Determine the shipping address to use
    * If user selected separate shipping address, use that
@@ -53,6 +57,9 @@ export class CheckoutDataBuilder {
       paymentMethod: formData.paymentMethod,
       promoCode: formData.promoCode,
       amount,
+      // Freeze the exact rows being purchased. The live cart may change in
+      // another tab while the customer is at the payment provider.
+      cartSnapshot: this.createCartSnapshot(cart),
       timestamp: Date.now(),
     };
 
