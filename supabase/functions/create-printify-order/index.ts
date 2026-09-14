@@ -30,7 +30,6 @@ async function verifyAuth(authHeader: string | null): Promise<{ userId: string; 
 
   // Check if it's the service role key (server-to-server calls)
   if (serviceRoleKey && token === serviceRoleKey) {
-    console.log('Authenticated with service role key')
     return {
       userId: 'service-role',
       userEmail: 'service@system.internal',
@@ -46,7 +45,6 @@ async function verifyAuth(authHeader: string | null): Promise<{ userId: string; 
   })
 
   if (!response.ok) {
-    console.error('Auth verification failed:', response.status, response.statusText)
     throw ErrorCodes.INVALID_TOKEN()
   }
 
@@ -56,7 +54,6 @@ async function verifyAuth(authHeader: string | null): Promise<{ userId: string; 
     throw ErrorCodes.INVALID_TOKEN()
   }
 
-  console.log('Authenticated user:', user.id)
   return {
     userId: user.id,
     userEmail: user.email || '',
@@ -88,8 +85,6 @@ serve(async (req) => {
     const authHeader = req.headers.get('authorization')
     const { userId, userEmail } = await verifyAuth(authHeader)
 
-    console.log('Authenticated as:', userId)
-
     const requestBody = await req.json()
 
     const {
@@ -108,6 +103,21 @@ serve(async (req) => {
       discount, // For amount validation
     } = requestBody
 
+    // ✅ SECURITY: a normal end user may only fulfill THEIR OWN order. Without
+    // this, any authenticated user could pass another user's order_id and mark
+    // it paid/confirmed. Service-role callers (server-to-server, recovery) are
+    // trusted to act on any order.
+    const requestedOrderId = metadata?.order_id
+    if (userId !== 'service-role' && requestedOrderId) {
+      const ownership = await supabaseRest<Array<{ id: string }>>(
+        `orders?id=eq.${encodeURIComponent(String(requestedOrderId))}&user_id=eq.${encodeURIComponent(userId)}&select=id`,
+        'GET',
+      )
+      if (!Array.isArray(ownership.data) || ownership.data.length === 0) {
+        throw ErrorCodes.INVALID_REQUEST_BODY()
+      }
+    }
+
     // ✅ CRITICAL FIX #1: Enforce test mode based on environment
     const testModeValidation = validateAndEnforceTestMode(is_test, 'Printify order creation');
     const enforcedTestMode = testModeValidation.testMode;
@@ -123,25 +133,12 @@ serve(async (req) => {
       });
 
       if (!amountValidation.isValid) {
-        console.error('❌ AMOUNT VALIDATION FAILED:', amountValidation.errorMessage);
         throw ErrorCodes.INVALID_REQUEST_BODY();
       }
-
-      console.log(`✅ Amount validation passed: ${payment_currency || 'USD'} ${payment_amount}`);
     }
 
     // Use shipping_address if address_to is not provided
     let finalAddressTo = address_to || shipping_address
-
-    console.log('=== CREATE PRINTIFY ORDER ===')
-    console.log('🔍 FULL REQUEST BODY:', JSON.stringify(requestBody, null, 2))
-    console.log('📦 Line items received:', JSON.stringify(line_items, null, 2))
-    console.log('📍 Shipping address:', JSON.stringify(finalAddressTo, null, 2))
-    console.log('🧪 Is test (client):', is_test)
-    console.log('🧪 Is test (enforced):', enforcedTestMode)
-    console.log('📝 Use sample order:', use_sample_order)
-    console.log('🔄 Auto cancel:', auto_cancel)
-    console.log('ℹ️  Metadata:', JSON.stringify(metadata, null, 2))
 
     // Validate Printify configuration
     const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken()
@@ -149,7 +146,6 @@ serve(async (req) => {
 
     // If no line items and not requesting a sample order, skip
     if ((!line_items || line_items.length === 0) && !use_sample_order) {
-      console.log('No line items provided, skipping order creation')
       return new Response(
         JSON.stringify({ success: true, message: 'No line items to process', skipped: true }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -158,15 +154,12 @@ serve(async (req) => {
 
     // Use test address if none provided
     if (!finalAddressTo || !finalAddressTo.address1) {
-      console.log('Using test shipping address')
       finalAddressTo = TEST_SHIPPING_ADDRESS
     }
 
     const externalId = `${enforcedTestMode ? 'test-' : ''}order-${Date.now()}`
 
-    // First, we need to get a real product from the shop to create an order
-    // Fetch products from Printify
-    console.log('Fetching products from Printify shop...')
+    // Fetch products from Printify to verify they exist
     const productsResponse = await fetch(
       `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/products.json`,
       {
@@ -175,30 +168,23 @@ serve(async (req) => {
         },
       }
     )
-    
+
     const productsData = await productsResponse.json()
-    console.log('Products response:', JSON.stringify(productsData, null, 2))
 
     let formattedLineItems = []
 
     if (line_items && line_items.length > 0) {
       // Use provided line items with print_areas support
       formattedLineItems = await Promise.all(line_items.map(async (item: any, index: number) => {
-        console.log(`Processing line item ${index}:`, JSON.stringify(item, null, 2))
-
         // CRITICAL VALIDATION: Printify API requires blueprint_id when print_provider_id is present
         if (item.print_provider_id && !item.blueprint_id) {
-          console.error(`❌ Line item ${index} has print_provider_id but missing blueprint_id - INVALID!`)
           throw ErrorCodes.PRINTIFY_ORDER_API_ERROR(
             `Line item ${index}: blueprint_id is required when print_provider_id is present`
           )
         }
 
         // If we have a product_id, we're ordering an EXISTING product
-        // For existing products, we should NOT include print_provider_id or blueprint_id
         if (item.product_id) {
-          console.log(`✅ Line item ${index}: Ordering existing product: ${item.product_id}`)
-
           // Verify the product exists in Printify before creating order
           try {
             const productCheckResponse = await fetch(
@@ -210,37 +196,30 @@ serve(async (req) => {
 
             if (!productCheckResponse.ok) {
               if (productCheckResponse.status === 404) {
-                console.error(`❌ Product ${item.product_id} not found in Printify shop`)
                 throw ErrorCodes.PRINTIFY_ORDER_API_ERROR(
                   `Product ${item.product_id} no longer exists in Printify. Please recreate the product.`
                 )
               }
               throw new Error(`Failed to verify product: ${productCheckResponse.status}`)
             }
-
-            console.log(`✅ Product ${item.product_id} verified in Printify`)
           } catch (verifyError: any) {
             if (verifyError.errorId) {
-              throw verifyError // Re-throw ErrorCodes errors
+              throw verifyError
             }
             throw ErrorCodes.PRINTIFY_ORDER_API_ERROR(
               `Failed to verify product ${item.product_id}: ${verifyError.message}`
             )
           }
 
-          const lineItem: any = {
+          return {
             product_id: item.product_id,
             variant_id: item.variant_id,
             quantity: item.quantity || 1,
           }
-          // Ensure we don't accidentally include blueprint fields for existing products
-          return lineItem
         }
 
         // If we have a blueprint_id, we're CREATING a product with the order (on-the-fly)
-        // For this, we need: print_provider_id, blueprint_id, variant_id, print_areas
         if (item.blueprint_id) {
-          console.log(`✅ Line item ${index}: Creating product on-the-fly with blueprint: ${item.blueprint_id}`)
           const printProviderId = item.print_provider_id || 99 // Default to Printify Choice
 
           const lineItem: any = {
@@ -250,32 +229,25 @@ serve(async (req) => {
             quantity: item.quantity || 1,
           }
 
-          // Add print_areas for the design
           if (item.print_areas) {
             lineItem.print_areas = item.print_areas
           }
 
-          // Add print_details if provided
           if (item.print_details) {
             lineItem.print_details = item.print_details
           }
 
-          console.log(`✅ Line item ${index}: Built custom product:`, lineItem)
           return lineItem
         }
 
         // Fallback: if we have SKU, use that
         if (item.sku) {
-          console.log(`✅ Line item ${index}: Ordering by SKU: ${item.sku}`)
           return {
             sku: item.sku,
             quantity: item.quantity || 1,
           }
         }
 
-        // If nothing matches, this is an error - don't send invalid data to Printify
-        console.error(`❌ Line item ${index}: Invalid format - no product_id, blueprint_id, or sku`)
-        console.error(`Item data:`, item)
         throw ErrorCodes.PRINTIFY_ORDER_API_ERROR(
           `Line item ${index}: must have either product_id, blueprint_id, or sku`
         )
@@ -284,16 +256,12 @@ serve(async (req) => {
       // Use first available product for sample order
       const firstProduct = productsData.data[0]
       const firstVariant = firstProduct.variants?.find((v: any) => v.is_enabled) || firstProduct.variants?.[0]
-      
+
       if (firstProduct && firstVariant) {
-        console.log(`Using product: ${firstProduct.title} (${firstProduct.id})`)
-        console.log(`Using variant: ${firstVariant.id}`)
-        // ✅ IMPORTANT: When using product_id, do NOT include print_provider_id or blueprint_id
         formattedLineItems = [{
           product_id: firstProduct.id,
           variant_id: firstVariant.id,
           quantity: 1,
-          // print_provider_id: REMOVED - not allowed with product_id
         }]
       } else {
         throw ErrorCodes.NO_PRODUCTS_IN_SHOP()
@@ -330,8 +298,6 @@ serve(async (req) => {
       },
     }
 
-    console.log('Sending order to Printify:', JSON.stringify(orderPayload, null, 2))
-
     // Create order in Printify
     const response = await fetch(
       `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/orders.json`,
@@ -347,20 +313,11 @@ serve(async (req) => {
 
     const data = await response.json()
 
-    console.log('Printify API response status:', response.status)
-    console.log('Printify API response:', JSON.stringify(data, null, 2))
-
     if (!response.ok) {
-      console.error('Printify API error:', data)
-
       // Update order status to "unsuccessful_confirmation" if we have an order_id
       const orderId = metadata?.order_id
-      console.log('📋 Metadata:', JSON.stringify(metadata, null, 2))
-      console.log('🔍 Order ID from metadata:', orderId)
-
       if (orderId) {
         try {
-          console.log(`🔄 Updating order ${orderId} status to unsuccessful_confirmation...`)
           const statusUpdateResult = await supabaseRest(
             'rpc/update_order_payment_status_atomic',
             'POST',
@@ -370,35 +327,20 @@ serve(async (req) => {
               p_order_status: 'unsuccessful_confirmation',
             }
           )
-
-          console.log('📊 Status update result:', JSON.stringify(statusUpdateResult, null, 2))
-
-          if (statusUpdateResult.error) {
-            console.error(`❌ Failed to update order ${orderId} status to unsuccessful_confirmation:`, statusUpdateResult.error)
-          } else {
-            console.log(`✅ Order ${orderId} status updated to unsuccessful_confirmation`)
+          if (!statusUpdateResult.error) {
             await insertOrderStatusHistory(orderId, 'unsuccessful_confirmation', 'order_creation')
           }
-        } catch (updateError) {
-          console.error('❌ Exception updating order status:', updateError)
+        } catch {
+          // Status update is best-effort
         }
-      } else {
-        console.warn('⚠️ No order_id in metadata, cannot update order status to unsuccessful_confirmation')
       }
-
       throw ErrorCodes.PRINTIFY_ORDER_API_ERROR(JSON.stringify(data))
     }
 
-    console.log(`✅ ${enforcedTestMode ? 'TEST' : 'PRODUCTION'} order created:`, data.id)
-
     // Update order status to "confirmed" if we have an order_id
     const orderId = metadata?.order_id
-    console.log('📋 Metadata:', JSON.stringify(metadata, null, 2))
-    console.log('🔍 Order ID from metadata:', orderId)
-
     if (orderId) {
       try {
-        console.log(`🔄 Updating order ${orderId} status to confirmed...`)
         const statusUpdateResult = await supabaseRest(
           'rpc/update_order_payment_status_atomic',
           'POST',
@@ -408,26 +350,17 @@ serve(async (req) => {
             p_order_status: 'confirmed',
           }
         )
-
-        console.log('📊 Status update result:', JSON.stringify(statusUpdateResult, null, 2))
-
-        if (statusUpdateResult.error) {
-          console.error(`❌ Failed to update order ${orderId} status to confirmed:`, statusUpdateResult.error)
-        } else {
-          console.log(`✅ Order ${orderId} status updated to confirmed`)
+        if (!statusUpdateResult.error) {
           await insertOrderStatusHistory(orderId, 'confirmed', 'order_creation')
         }
-      } catch (updateError) {
-        console.error('❌ Exception updating order status:', updateError)
+      } catch {
+        // Status update is best-effort
       }
-    } else {
-      console.warn('⚠️ No order_id in metadata, cannot update order status')
     }
 
     // Auto-cancel order if requested (useful for testing)
     let cancelResult = null
     if (auto_cancel) {
-      console.log('🔄 Auto-canceling order:', data.id)
       try {
         const cancelResponse = await fetch(
           `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/orders/${data.id}/cancel.json`,
@@ -443,14 +376,11 @@ serve(async (req) => {
         const cancelData = await cancelResponse.json()
 
         if (cancelResponse.ok) {
-          console.log('✅ Order auto-canceled successfully')
           cancelResult = { success: true, canceled: true, status: cancelData.status }
         } else {
-          console.warn('⚠️ Failed to auto-cancel order:', cancelData)
           cancelResult = { success: false, error: cancelData.errors?.reason || 'Unknown error' }
         }
       } catch (cancelError: any) {
-        console.error('❌ Error auto-canceling order:', cancelError)
         cancelResult = { success: false, error: cancelError?.message || 'Unknown error' }
       }
     }
@@ -464,7 +394,6 @@ serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {
-    console.error('Error creating Printify order:', error)
     return handleError(error, corsHeaders)
   }
 })
