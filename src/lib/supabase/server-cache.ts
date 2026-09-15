@@ -85,6 +85,15 @@ export interface ProductWithPricing extends CatalogProductWithSeo {
 export const getCachedAllProductsWithPricing = unstable_cache(
   async (): Promise<ProductWithPricing[]> => {
     const products = await getCachedProducts();
+
+    // Nothing to price (or getCachedProducts already degraded to [] because
+    // the service client is unavailable, e.g. a CI build without secrets).
+    // Skip the service client so the page renders its empty state instead
+    // of failing the static prerender.
+    if (products.length === 0) {
+      return [];
+    }
+
     const supabase = createServiceClient();
 
     const productsWithPricing = await Promise.all(
