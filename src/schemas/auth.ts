@@ -3,16 +3,21 @@ import { z } from "zod";
 // Zod `message` values are i18n keys under the `validation` namespace; they
 // are translated at the form render site via next-intl (useTranslations).
 
+// Minimum length for a NEW password; mirrors minimum_password_length in
+// supabase/config.toml. Login only checks presence so accounts created under
+// the previous minimum can still sign in (and rotate their password).
+export const PASSWORD_MIN_LENGTH = 8;
+
 // Login schema (client-side form validation)
 export const LoginSchema = z.object({
   email: z.string().min(1, "emailRequired").email("emailInvalid"),
-  password: z.string().min(6, "passwordMin"),
+  password: z.string().min(1, "passwordRequired"),
 });
 
 // Login API request schema (server-side validation)
 export const LoginRequestSchema = z.object({
   email: z.string().min(1, "emailRequired").email("emailInvalid"),
-  password: z.string().min(6, "passwordMin"),
+  password: z.string().min(1, "passwordRequired"),
   captchaToken: z.string().min(1).nullable().optional(),
 });
 
@@ -51,7 +56,7 @@ const PasswordResetRequestSchema = z.object({
 
 // Password reset confirm schema
 export const PasswordResetConfirmSchema = z.object({
-  password: z.string().min(6, "passwordMin"),
+  password: z.string().min(PASSWORD_MIN_LENGTH, "passwordMin"),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "passwordsNoMatch",
@@ -68,7 +73,7 @@ const UpdateProfileSchema = z.object({
 
 // Update password schema
 export const UpdatePasswordSchema = z.object({
-  password: z.string().min(6, "passwordMin"),
+  password: z.string().min(PASSWORD_MIN_LENGTH, "passwordMin"),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "passwordsNoMatch",

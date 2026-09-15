@@ -1732,7 +1732,8 @@
   "validation": {
     "emailRequired": "Please enter your email",
     "emailInvalid": "That email doesn't look right",
-    "passwordMin": "Use at least 6 characters",
+    "passwordRequired": "Please enter your password",
+    "passwordMin": "Use at least 8 characters",
     "passwordsNoMatch": "Those passwords don't match",
     "urlInvalid": "That URL doesn't look right",
     "firstNameEmpty": "Please enter your first name",
