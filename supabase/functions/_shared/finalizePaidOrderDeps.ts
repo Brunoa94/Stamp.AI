@@ -244,6 +244,30 @@ export async function finalizeOrderFromPaymentRecords(
   }
 }
 
+/**
+ * Webhook helper: the order id for a paid payment, minting the order from the
+ * stored context when the browser never finalized. Never throws and never
+ * waits; a failure leaves the payment in `payment_recovery` and is logged.
+ */
+export async function ensureOrderForPaidPayment(input: FinalizeFromRecordsInputI): Promise<string | null> {
+  try {
+    const result = await finalizeOrderFromPaymentRecords(input);
+    if (!result) {
+      console.warn(`⏳ No order context stored for ${input.provider} payment ${input.paymentId}; left for recovery`);
+      return null;
+    }
+    console.log(
+      result.created
+        ? `✅ Order ${result.orderId} minted from stored payment context`
+        : `✅ Order ${result.orderId} already exists for ${input.provider} payment ${input.paymentId}`,
+    );
+    return result.orderId;
+  } catch (error) {
+    console.error(`❌ Could not finalize order for ${input.provider} payment ${input.paymentId}:`, error);
+    return null;
+  }
+}
+
 /** Keep the paid-but-orderless payment visible to the recovery flow. */
 async function leaveRecoveryRow(
   input: FinalizeFromRecordsInputI,

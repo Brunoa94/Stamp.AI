@@ -4,6 +4,8 @@ import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { getMolliePayment, mapMollieStatusToInternal, isMolliePaymentPaid } from "../_shared/mollie.ts";
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
+import { buildIdempotencyKey } from "../_shared/paymentReference.ts";
+import { ensureOrderForPaidPayment, findOrderByIdempotencyKey } from "../_shared/finalizePaidOrderDeps.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -184,6 +186,21 @@ serve(async (req) => {
     if (isPaid) {
       console.log("Payment is paid, processing order...");
 
+      // The order may have been minted by finalize-order (idempotency key);
+      // otherwise mint it now from the stored payment context — never wait
+      // for the browser.
+      if (!orderId) {
+        orderId = (await findOrderByIdempotencyKey(buildIdempotencyKey("mollie", payment.id)).catch(() => null))?.id;
+      }
+      if (!orderId) {
+        orderId = await ensureOrderForPaidPayment({
+          provider: "mollie",
+          paymentId: payment.id,
+          providerMetadata: metadata,
+          charged: { amount: parseFloat(payment.amount.value), currency: payment.amount.currency },
+        }) ?? undefined;
+      }
+
       // Update order payment_status if we have an order_id
       if (orderId) {
         // ✅ Update payment_status to "paid"
@@ -209,10 +226,9 @@ serve(async (req) => {
         }
       }
 
-      // ⚠️ NOTE: For Mollie (redirect-based flow), Printify order creation is handled client-side
-      // in mollie-return page. The webhook only updates payment status.
-      // This prevents duplicate order creation since both webhook and client would try to create it.
-      console.log("✅ Mollie webhook completed. Client-side will handle Printify order creation.");
+      // ⚠️ NOTE: Printify fulfilment is triggered by the mollie-return page
+      // (create-printify-order validates against the stored paid order).
+      console.log("✅ Mollie webhook completed.");
     } else if (payment.status === "failed" || payment.status === "canceled" || payment.status === "expired") {
       // Update payment_status if payment failed
       // NOTE: Webhooks should ONLY update payment_status, NEVER order status
