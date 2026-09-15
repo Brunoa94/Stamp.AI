@@ -123,3 +123,41 @@ Supabase is unreachable or RLS/config is broken.
 | `SENTRY_AUTH_TOKEN` | Vercel build | Source map upload (`withSentryConfig`) |
 | `SENTRY_DSN` | Supabase secrets | Edge functions DSN |
 | `SENTRY_ENVIRONMENT`, `SENTRY_RELEASE` | Supabase secrets | Optional overrides |
+| `BREVO_API_KEY`, `BREVO_FROM_EMAIL`, `BREVO_FROM_NAME` | Supabase secrets | Transactional email (below) |
+| `SUPPORT_EMAIL`, `SITE_URL` | Supabase secrets | Support address and link origin used in customer emails |
+| `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS`, `SMTP_ADMIN_EMAIL`, `SMTP_SENDER_NAME` | `supabase/config.toml` env | Supabase Auth SMTP (`[auth.email.smtp]`) |
+
+## Transactional email
+
+Customer emails are sent from edge functions through the Brevo HTTP API
+(`supabase/functions/_shared/brevoEmail.ts`). Configuration is resolved by the
+pure, tested `resolveBrevoConfig` (`_shared/emailConfig.ts`):
+
+- **production** (`SENTRY_ENVIRONMENT`/`DENO_ENV`/`ENVIRONMENT` = `production`,
+  or a `*.supabase.co` `SUPABASE_URL`): a missing `BREVO_API_KEY` or sender
+  throws `EmailNotConfiguredError`. Callers catch it, log
+  `EMAIL NOT SENT` and report it to Sentry, so a misconfigured project shows up
+  as an error instead of customers silently receiving nothing.
+- **elsewhere**: sending is skipped with a `console.warn` naming the missing
+  variable and the subject.
+
+| Email | Sent from | Idempotency |
+| --- | --- | --- |
+| Invoice (PDF) | `_shared/invoice.ts` after an order is paid | `invoices` row |
+| Order confirmation | `stripe-webhook`, `paypal-webhook`, `mollie-webhook` right after `payment_status = 'paid'` (`trySendOrderConfirmationEmail`) | `orders.confirmation_email_sent_at`, claimed with `PATCH … WHERE … IS NULL AND payment_status = 'paid'` |
+| Shipping notification | `sync-printify-orders` when a tracking number first appears (`trySendShippingNotificationEmail`) | `orders.shipping_email_sent_at`, same atomic claim |
+
+Both order emails (`_shared/orderEmails.ts`) never throw: a failure is logged,
+reported to Sentry with `extra.order_id`, and the claim is released so the next
+webhook/cron run retries. A failed email therefore never fails a payment
+webhook. Templates are pure (`orderConfirmationEmail.ts`,
+`shippingNotificationEmail.ts`, `emailFormatting.ts`) and covered by
+`src/tests/edge-functions/orderEmails.test.ts` and `emailConfig.test.ts`.
+
+Set the secrets with `supabase secrets set BREVO_API_KEY=… BREVO_FROM_EMAIL=…
+SUPPORT_EMAIL=… SITE_URL=https://<production-domain>`.
+
+Supabase Auth emails (sign-up confirmation, password reset) use the Brevo
+SMTP relay configured in `supabase/config.toml` `[auth.email.smtp]`; all
+values are `env(SMTP_*)` so the CLI reads them from the environment when
+running `supabase start` or `supabase config push`.
