@@ -1,137 +1,123 @@
 # Production Readiness Audit
 
-**Date:** 2026-09-08
-**Branch audited:** `dev` at `2185b9a`
+**Original audit:** 2026-09-08 against `dev` at `2185b9a`
+**Re-verified:** 2026-09-15 against `dev` at `559affe` (61 commits later, including the merged `fixing_security` PR #17, the email-confirmation PR #75 and the CSP fixes PR #42)
 **Scope:** Security & auth, payments, operations & CI/CD, testing, observability, reliability, legal/compliance, dependencies, SEO.
 
-This document consolidates a full read-through of the codebase, the Supabase migrations and edge functions, and the results of running `vitest`, `tsc`, `eslint`, and `npm audit` on a clean checkout. Every finding cites the file and line where it was observed. Items are grouped by severity, and a suggested order of work is at the end.
+Every finding carries a status from the re-verification:
+
+- **OPEN** — unchanged since the original audit
+- **PARTIAL** — materially improved, but a residual gap remains (described under "Remaining")
+- **FIXED** — verified closed; kept for the record
+
+Items are grouped by original severity. A suggested order of work, updated for what is left, is at the end.
 
 ---
 
 ## Executive summary
 
-The product is feature-complete for an MVP but **is not yet safe to take real payments**. The blockers fall into three groups:
+The `fixing_security` work has landed and closed most of the *authentication* gaps: refunds, payment recovery, the PayPal webhook, the credit purchase path, the SSRF proxy, the Printify token leak, the open redirect and route protection are all fixed. The product is **still not safe to take real payments**, for a smaller set of reasons:
 
-1. **Payment integrity.** Order totals, payment status, and credit amounts are all trusted from the browser. Several edge functions that move money have no authentication. The PayPal webhook signature check is a stub whose result is ignored.
-2. **Delivery pipeline.** There is no CI, no deploy pipeline, no staging environment, and the build is currently broken (`openai` package missing). Migrations and edge functions are pushed by hand to a single hardcoded production project.
-3. **EU legal compliance.** Google Analytics fires without cookie consent, the legal pages render bracketed placeholders for the company's registered address / KvK / VAT, and the FAQ promises an account-deletion feature that does not exist.
+1. **Orders are still minted by the browser.** The UPDATE hole on `orders` is closed by a trigger, but the INSERT path is unguarded: the client still inserts `payment_status = "paid"` with client-computed totals, and both webhooks still poll for that row. `payment_transactions` still has no `WITH CHECK`. Server-side pricing now exists but can be bypassed by omitting `blueprint_id`, and discounts/shipping are still taken from the request body.
+2. **Delivery pipeline is unchanged.** No CI, no deploy pipeline, no staging, build still broken (`openai` not installed), tests still red.
+3. **EU legal compliance is unchanged.** No cookie consent, placeholder entity data, no account deletion, invoices with zero tax.
 
-**Key fact:** a security-hardening commit that fixes the majority of the security findings already exists — `9f19a05c` ("Security hardening: fix critical auth, payment, SSRF and RLS issues") on branch `fixing_security`. It was never merged. `dev` is now 304 commits past its base, so it must be re-applied rather than merged, but the design work is done. See [Appendix A](#appendix-a-the-unmerged-fixing_security-branch).
+**One regression:** the Playwright session file is tracked again at `src/playwright/.auth/user.json` and the `.gitignore` rule does not cover that path (H9).
 
-### Current state of the toolchain (clean checkout, 2026-09-08)
+### Toolchain state
 
-| Check | Result |
-|---|---|
-| `npx vitest run` | 8 files failed, 61 passed · 10 tests failed, 909 passed |
-| `npx tsc --noEmit --incremental false` | 1 error: `Cannot find module 'openai'` |
-| `npx eslint .` | 873 errors, 541 warnings |
-| `npm audit --omit=dev` | 12 vulnerabilities: 1 critical, 8 high, 2 moderate, 1 low |
-| `.github/workflows/` | 1 workflow (Claude bot only); no lint/test/build/deploy |
+| Check | 2026-09-08 | 2026-09-15 |
+|---|---|---|
+| `npx vitest run` | 8 files / 10 tests failed, 909 passed | 9 files / 15 tests failed, 76 files passed |
+| `npx tsc --noEmit --incremental false` | 1 error: `Cannot find module 'openai'` | same (declared in `package.json:54`, absent from `node_modules`) |
+| `npx eslint .` | 873 errors, 541 warnings | 866 errors, 541 warnings |
+| `npm audit --omit=dev` | 12 vulns: 1 critical, 8 high | 11 vulns: 2 critical (`tar`, `sharp`), 6 high, 2 moderate, 1 low |
+| `.github/workflows/` | Claude bot only | Claude bot only |
+
+### Status at a glance
+
+| | FIXED | PARTIAL | OPEN |
+|---|---|---|---|
+| Critical (C1–C18) | C2 C3 C4 C5 C8 C9 | C1 C6 C7 C10 C13 | C11 C12 C14 C15 C16 C17 C18 |
+| High (H1–H15) | H1 H2 | H4 H5 H6 H7 H8 H13 H14 H15 | H3 H9 H10 H11 H12 |
+| Medium (M1–M12) | M4 M6 | M2 M3 M7 M8 M9 | M1 M5 M10 M11 M12 |
 
 ---
 
-## CRITICAL — fix before any real customer pays
+## CRITICAL
 
 ### Payment integrity
 
-#### C1. Client declares its own orders "paid"; RLS lets it stick
-- `src/services/orderService.ts:400` — `createOrderFromCart({ paymentStatus = "paid", ... })`. Totals are computed client-side at `:429` via `OrderServiceMapper.calculateOrderTotals` and inserted with the **browser** Supabase client (`:224-225`).
-- `supabase/migrations/20260115000000_create_core_tables.sql:426` — `orders` INSERT policy is `WITH CHECK (auth.uid() = user_id)` with no column guard.
-- `supabase/migrations/20260701000000_add_orders_update_policy.sql:12-16` — users may UPDATE **any column** of their own orders, including `payment_status`, `total_amount`, `status`.
+#### C1. Client declares its own orders "paid" — PARTIAL
+- **Fixed:** `supabase/migrations/20260707000000_security_hardening_rls.sql:32-67` adds `enforce_orders_protected_columns()` as a `BEFORE UPDATE` trigger blocking non-service-role changes to `total_amount`, `payment_status`, `status`, promo fields (re-issued in `20260908000000_fix_security_review.sql:3-32`).
+- **Remaining:** there is no `BEFORE INSERT` guard. The only INSERT policy is still `WITH CHECK (auth.uid() = user_id)` (`20260115000000_create_core_tables.sql:426`). `src/services/orderService.ts:398-457` still defaults `paymentStatus = "paid"` (`:401`), computes totals client-side (`:437`) and inserts with the browser client (`:220-227`), called from `StripeReturnClient.tsx:304-311`, `PaypalReturnClient.tsx:308`, `MollieReturnClient.tsx:443`. The new `verifyPaidPayment` helper is used only by `process-refund` and `process-payment-recovery`, not on this path.
 
-**Impact:** an authenticated user can create or flip an order to `paid` + `confirmed` with `total_amount: 0` and never pay. Fulfillment triggers off order state.
+**Impact:** an authenticated user can still *create* a `paid`/`confirmed` order with `total_amount: 0` and never pay.
 
-#### C2. `process-refund` has no authentication and no ownership check
-- `supabase/functions/process-refund/index.ts:140-158` — handler goes from `req.json()` straight to issuing a real Stripe/PayPal/Mollie refund. No `verifyAuth`, no `order.user_id` check.
-- Deployed with `--no-verify-jwt` (`package.json` → `supabase:deploy`).
+#### C2. `process-refund` unauthenticated — FIXED
+- `supabase/functions/process-refund/index.ts:143` `requireUser`; ownership check `:163-165`; `authorizeRefund` (`process-refund/authorization.ts:41-71`) re-checks caller/order/payment linkage, eligibility, amount, currency; payment re-verified against the provider at `:188-193`.
 
-**Impact:** anyone with an `order_id` + payment reference can trigger refunds.
+#### C3. `process-payment-recovery` unauthenticated — FIXED
+- `index.ts:34` requires a user; `user_id`, `cart_snapshot`, `shipping_address`, `line_items` are loaded from the `payment_recovery` row (`:48-63`) with ownership check (`:59-61`); payment verified with the provider (`:65`) and the recovered total must equal the amount charged (`:126-137`).
 
-#### C3. `process-payment-recovery` has no auth and mints paid orders from a client snapshot
-- `supabase/functions/process-payment-recovery/index.ts:23-110` — no auth. `user_id`, `cart_snapshot`, totals, and `payment_status: "paid"` (`:110`) all come from the request body and are written with the service-role key.
+#### C4. PayPal webhook signature stub — FIXED
+- `_shared/paypal.ts:240-301` pins the cert URL host, requires `PAYPAL_WEBHOOK_ID`, calls `/v1/notifications/verify-webhook-signature`, fails closed. `paypal-webhook/index.ts:86-93` returns 401 on failure.
 
-#### C4. PayPal webhook signature verification is a stub, and its result is ignored
-- `supabase/functions/_shared/paypal.ts:212-231` — returns `true` if three headers merely exist. Contains `// TODO: Implement full signature verification`.
-- `supabase/functions/paypal-webhook/index.ts:83-88` — `if (!isValid) { console.warn(...) }` then **continues processing**.
+#### C5. Free credits via independent `amount`/`credits` — FIXED
+- `create-credit-payment/index.ts:21,129,134-136` computes `credits * CREDIT_PRICE_CENTS` server-side and rejects a mismatched client amount. `stripe-webhook/index.ts:113-131` calls `grant_stripe_purchase_credits`, which recomputes credits from `amount_received` (`20260908000000_fix_security_review.sql:66-69`).
 
-**Impact:** any unauthenticated caller can forge `PAYMENT.CAPTURE.COMPLETED` and mark orders paid.
+#### C6. Payment-intent amounts client-controlled — PARTIAL
+- **Fixed:** `create-payment-intent/index.ts:95-123`, `create-paypal-order/index.ts:42-70`, `create-mollie-payment/index.ts:60-88` call `validatePricingAgainstDatabase` (`_shared/serverPriceService.ts:84-88`, source of truth `product_variants.price_cents`).
+- **Remaining:**
+  - Validation is skipped entirely when `line_items` is absent or no item carries `blueprint_id` / `printify_variant_id` (`create-payment-intent/index.ts:96-105`).
+  - `shipping_cost_cents` and `discount_cents` come from the request body and are added to the "server" total (`serverPriceService.ts:174-179`); an inflated discount passes.
+  - `src/app/api/paypal/create-order/route.ts:34-54` still uses the raw client `amount`.
+  - `create-printify-order/index.ts:125-138` still validates the body against itself via `_shared/amountValidator.ts:57-63`, which returns `isValid: true` with no pricing data (`:70-78`).
 
-#### C5. Free credits: `create-credit-payment` trusts `amount` and `credits` independently
-- `supabase/functions/create-credit-payment/index.ts:105-135` — client sends both. `validateCredits` only enforces `credits >= 10` (`:81-87`); `amount` only has to be `> 0` (`_shared/validators.ts:118-126`).
-- `supabase/functions/stripe-webhook/index.ts:111` — webhook grants credits verbatim from PaymentIntent metadata.
-
-**Impact:** pay €0.01, receive 1,000,000 credits.
-
-#### C6. Every payment-intent amount is client-controlled
-- Stripe: `supabase/functions/create-payment-intent/index.ts:86-107` — `amount` from `req.json()`, only `> 0` validated, never recomputed from cart/catalog.
-- PayPal: `src/app/api/paypal/create-order/route.ts:31-36` — same.
-- Mollie: `supabase/functions/create-mollie-payment/index.ts:62+` — same.
-- The "server-side amount validation" in `supabase/functions/create-printify-order/index.ts:113-127` calls `validatePaymentAmount({ paymentAmount, subtotal, shippingCost, discount })` where **all four values come from the same request body** (`_shared/amountValidator.ts:37-58`). It returns `isValid: true` when data is absent (`:70-78`).
-
-#### C7. Order creation is browser-driven; webhooks poll for it
-- `supabase/functions/stripe-webhook/index.ts:13-83` and `paypal-webhook/index.ts:13-67` poll for up to 30 s (`maxAttempts=6, delayMs=5000`) waiting for the **browser** to create the order, blocking the webhook response (`stripe-webhook/index.ts:362-365`).
-
-**Impact:** if the tab closes after payment, money is captured with no order. Root cause is C1: order creation should be server/webhook-driven.
+#### C7. Browser-driven order creation; webhooks poll — OPEN
+- `stripe-webhook/index.ts:13-16,21-82,274` and `paypal-webhook/index.ts:15-16,21-66` still poll up to 30 s (`maxAttempts=6, delayMs=5000`) for the browser to create the order. Root cause is C1.
 
 ### Other security
 
-#### C8. Printify API token shipped under a `NEXT_PUBLIC_` name
-- `src/services/apiClient.ts:7` — `Authorization: Bearer ${process.env.NEXT_PUBLIC_PRINTIFY_API_TOKEN}`.
-- `.env` contains a real token under that name. `apiClient.ts` currently has **no importers** so it is not bundled today, but the variable and the file are one import away from leaking full Printify account access (orders, customer PII, cancellations).
+#### C8. Printify token under `NEXT_PUBLIC_` — FIXED
+- `src/services/apiClient.ts:9-12` holds no secret; no `NEXT_PUBLIC_PRINTIFY_*` in `src/`, `next.config.ts` or `.env.example`. `.env.example:11-13` declares server-only `PRINTIFY_API_TOKEN`. **Token rotation cannot be verified from the repo — confirm it was done.**
 
-**Action:** rotate the token, delete `apiClient.ts`, remove the `NEXT_PUBLIC_PRINTIFY_*` vars.
+#### C9. Unauthenticated SSRF — FIXED
+- `src/app/api/fetch-remote-image/route.ts:39-83` requires a user, allowlists hosts, rejects non-HTTPS / IP literals / internal names, `redirect: "error"`, `image/*` content-type check, 15 MB cap. `upload-printify-image/index.ts:43,51-53` requires a user and allowlists `image_url` hosts.
 
-#### C9. Unauthenticated SSRF in `/api/fetch-remote-image`
-- `src/app/api/fetch-remote-image/route.ts:3-34` — arbitrary `?url=` is fetched and proxied back verbatim. No scheme/host allowlist, no auth. Reaches cloud metadata endpoints and internal services.
-- Same class: `supabase/functions/upload-printify-image/index.ts:19-47` — no auth, arbitrary `image_url` handed to Printify with the API token.
-
-#### C10. `deduct_coin` is `SECURITY DEFINER` with a caller-supplied `user_id`
-- `supabase/migrations/20260314000000_add_coins_and_deduct_coin_rpc.sql:20-24` — no `auth.uid()` check. Any authenticated user can drain any other user's coin balance.
-- Related: the server-side deduction in `src/app/api/generate-image/route.ts:22-40` is **commented out**. The only deduction happens in the browser (`src/features/stamp/lib/hooks/useStampImageGeneration.ts:115`), so calling the route directly gives **unmetered AI generation**.
+#### C10. `deduct_coin` trusts caller `user_id` — PARTIAL
+- **Fixed:** `20260707000000_security_hardening_rls.sql:125-144,176-177` rejects non-service-role callers whose `auth.uid()` differs from `user_id`; revoked from `PUBLIC, anon`.
+- **Remaining:** server-side deduction in `src/app/api/generate-image/route.ts:21-39` is **still commented out**. The only deduction is client-side (`src/services/coinsService.ts:64-80`). Calling the route directly still gives unmetered AI generation.
 
 ### Delivery pipeline
 
-#### C11. There is no CI
-- `.github/workflows/claude.yml` is the only workflow. It triggers on issue comments / PR reviews to run the Claude bot. Nothing runs lint, typecheck, `vitest`, Playwright, or `next build` on push or PR. Nothing gates merges.
-- The bot prompt at `claude.yml:63` references "CI failures" that cannot occur.
+#### C11. No CI — OPEN
+- `.github/workflows/claude.yml` remains the only workflow (on-demand `@claude` responder). Nothing runs lint, typecheck, `vitest`, Playwright or `next build`.
 
-#### C12. No deploy pipeline, no environment separation
-- No `vercel.json`, no deploy workflow, no staging config. `supabase/config.toml` is local-dev only.
-- `package.json` → `supabase:setup` is `supabase link --project-ref timbqoxngnhoetbofdiq && supabase db push` — a **hardcoded production project ref** deployed from a laptop.
-- `supabase:deploy` is `functions deploy --no-verify-jwt` — deploys all 22 functions with JWT verification disabled.
+#### C12. No deploy pipeline / environment separation — OPEN
+- No `vercel.json`, no deploy workflow. `package.json:18` still hardcodes `--project-ref timbqoxngnhoetbofdiq`; `package.json:22` still `functions deploy --no-verify-jwt`.
 
-#### C13. The build is broken
-- `src/services/openaiImageService.ts:1` imports `openai`. It is declared in `package.json:50` (`^7.5.0`) but **not present in `node_modules`**. `tsc` fails; `/api/generate-image` cannot compile. A clean `npm ci && next build` has not been run since `package.json` last changed.
-- 873 ESLint errors on a clean checkout. The rules in `eslint.config.mjs` (no barrel exports, no raw HTML outside `src/features/ui`, no `any`) are unenforced.
+#### C13. Build broken — PARTIAL
+- `openai@^7.5.0` is declared (`package.json:54`) and imported by `src/services/openaiImageService.ts:1`, but `node_modules/openai` (and `@google/genai`) are absent, so `tsc` fails. A clean `npm ci && next build` is still needed to prove the build. 866 ESLint errors; `eslint.config.mjs` has no `no-console`, unused vars are `warn`.
 
-#### C14. `npm test` cannot pass outside a developer machine
-- `vitest.config.ts:9` includes `src/**/*.{test,spec}.{ts,tsx}`, which pulls in `src/tests/integration/*` — four suites that hit a **live Supabase project** via `src/tests/integration/setup-auth.ts`. They fail to load without credentials. There is no `test:unit` / `test:integration` split.
-- Currently failing: `AuthDialog.test.tsx` (4), `CatalogPageContent.test.tsx` (2), `analyticsService.test.ts` (1), `coinsService.test.ts` (3), plus the four integration suites failing to load.
+#### C14. `npm test` cannot pass outside a developer machine — OPEN
+- `vitest.config.ts:9` still sweeps in `src/tests/integration/*` (4 live-Supabase suites). `package.json:14-15` still only `test` / `test:watch`. See Appendix B for the current failures.
 
 ### Legal / compliance (EU shop)
 
-#### C15. No cookie consent; GA fires unconditionally
-- `src/features/analytics/GoogleAnalytics.tsx:24-32` injects gtag.js and calls `gtag('config', …)` whenever `NEXT_PUBLIC_GA_MEASUREMENT_ID` is set. No Consent Mode v2, no banner, no opt-in gate. A repo-wide search for `consent` / `analytics_storage` / `ad_storage` finds only a type union.
-- `/cookies` and `/privacy` promise opt-out (`src/i18n/messages/en.json:2227`).
+#### C15. No cookie consent; GA fires unconditionally — OPEN
+- `src/features/analytics/GoogleAnalytics.tsx:10-32` unchanged; rendered unguarded in `src/app/layout.tsx:98`. No consent component or `gtag('consent', …)` anywhere in `src/`.
+- Now directly contradicted by published copy: `src/i18n/messages/en.json:2230` says GA cookies are set "only after you consent".
 
-**Impact:** ePrivacy / GDPR violation for a Dutch/EU shop.
+#### C16. Legal entity placeholders — OPEN
+- `src/features/legal/lib/constants/legalEntity.ts:18-21` still bracketed placeholders for address / KvK / VAT, rendered on `/terms`, `/privacy`, `/cookies`, `/security`.
+- `src/features/seo/config/business.ts:6,18` still `"Stamp AI Design Inc."` / `addressCountry: "US"` vs `"Stamp AI B.V."` in `legalEntity.ts`. The file's own TODO (`:5-15`) acknowledges the conflict. Also tracked as P0 in `docs/DESIGN_TRUSTWORTHINESS_PLAN.md:24-28`.
 
-#### C16. Legal entity data ships as visible placeholders
-- `src/features/legal/lib/constants/legalEntity.ts:17-20`:
-  ```
-  address: "[registered address — pending legal review]",
-  registration: "[KvK number — pending legal review]",
-  vat: "[VAT number — pending legal review]",
-  ```
-  These render literally on `/terms`, `/privacy`, `/cookies`, `/security`.
-- `src/features/seo/config/business.ts:6,18` declares `legalName: "Stamp AI Design Inc."` / `addressCountry: "US"` in the Organization JSON-LD, while the legal pages assume a Dutch B.V. The two public statements contradict each other. (Already noted in `docs/DESIGN_TRUSTWORTHINESS_PLAN.md:26`.)
+#### C17. No GDPR account deletion or export — OPEN
+- FAQ still promises it (`en.json:2724-2725`). `src/features/profile/ui/ProfileContent.tsx:12-14` renders only UserInformation / PasswordReset / Address. No delete/anonymise RPC in migrations, no edge function, no export.
 
-#### C17. No GDPR account deletion or data export
-- FAQ (`src/i18n/messages/en.json:2711-2713`): *"How do I delete my account? From your profile."*
-- `src/features/profile/ui/sections/` contains only `AddressSection`, `PasswordResetSection`, `UserInformationSection`. No delete-account UI, RPC, or edge function. No data export.
-
-#### C18. Invoices are legally wrong out of the box
-- Per `docs/invoicing.md` "Known caveats": `OrderServiceMapper.calculateOrderTotals` hardcodes tax and shipping to `0`, so every invoice prints `Tax: 0.00`. `order_items.unit_price` / `total_price` have an unreconciled dollars-vs-cents mismatch. The doc also states the invoicing migration/functions/secrets are "not yet applied".
+#### C18. Invoices legally wrong — OPEN
+- `src/mappers/services/orderServiceMapper.ts:59-63` still `taxRate = 0`, `shippingCost = 0`. `docs/invoicing.md:44` still "Setup (not yet applied)"; `:92-101` keeps both caveats (zero tax, dollars-vs-cents on `order_items`).
 
 ---
 
@@ -139,197 +125,160 @@ The product is feature-complete for an MVP but **is not yet safe to take real pa
 
 ### Security
 
-#### H1. No server-side route protection for authenticated pages
-- `src/middleware.ts:135-142` guards **only** `/stamp`. `/dashboard`, `/profile`, `/orders`, `/checkout`, `/cart` are thin server shells delegating to client components wrapped in `src/features/auth/ProtectedRoute.tsx:26-30` — a `useEffect` + `router.push`. That is a UX redirect, not a control. Data safety rests entirely on RLS, which has the gaps above.
+#### H1. No server-side route protection — FIXED
+- `src/middleware.ts:141-164` guards `/stamp`, `/orders`, `/profile`, `/cart`, `/checkout`, `/dashboard` and redirects with `redirectedFrom`. `ProtectedRoute` is explicitly demoted to UX (`:138-140`).
 
-#### H2. Open redirect and cookie-attribute loss in the auth callback
-- `src/app/auth/callback/route.ts:7,51` — `next` is unvalidated; `//evil.com` resolves to an external host.
-- `:55-57` copies cookies with `redirectResponse.cookies.set(name, value)` — **dropping `options`**, so `HttpOnly`, `Secure`, `SameSite`, `Max-Age` are lost on the freshly minted session cookies.
+#### H2. Open redirect + cookie-attribute loss in auth callback — FIXED
+- `src/app/auth/callback/route.ts:11-19` requires a leading `/` and matching origin; `:39-45` passes cookie `options` through. New `src/app/auth/confirm/route.ts:6-18,26-53` has an equivalent sanitizer, an OTP-type allowlist, and writes cookies directly on the redirect response.
 
-#### H3. `payment_transactions` UPDATE policy has no `WITH CHECK`
-- `supabase/migrations/20260715000000_add_payment_transactions_update_policy.sql:10-11` — `FOR UPDATE USING (auth.uid() = user_id)` only. A user can rewrite `amount`, `status → succeeded`, `order_id`, and reassign `user_id`.
+#### H3. `payment_transactions` UPDATE has no `WITH CHECK` — OPEN
+- `20260715000000_add_payment_transactions_update_policy.sql:10-11` unchanged; no later migration or protected-column trigger touches the table. A user can still rewrite `amount`, `status`, `order_id`, `user_id` on their own rows.
 
-#### H4. Service-role key on unauthenticated, user-reachable Next.js routes
-- `src/app/api/sync-blueprint/route.ts:25,40` — no auth; forwards the **service-role key** to an edge function for any anonymous POST.
-- `src/app/api/get-blueprint-variants/route.ts:16,25` — service-role client, no auth (read-only but bypasses RLS).
-- `src/app/api/fetch-custom-product/route.ts:5-36` — no auth, exposes arbitrary Printify products; `catch(e){ throw e }` rethrows into the framework handler.
+#### H4. Service-role key on unauthenticated Next routes — PARTIAL
+- **Fixed:** `src/app/api/fetch-custom-product/route.ts:7-21,43-45` requires a user, validates `product_id`, returns a generic 502.
+- **Remaining:** `src/app/api/sync-blueprint/route.ts:12-47` and `src/app/api/get-blueprint-variants/route.ts:4-25` are still fully unauthenticated and use `SUPABASE_SERVICE_ROLE_KEY`.
 
-#### H5. Edge functions deployed with `--no-verify-jwt` and lacking in-function auth
-- `supabase/config.toml:386,397,403` set `verify_jwt = false`; `package.json` deploy script disables it globally.
-- Functions with **zero** auth check in-handler: `process-refund`, `process-payment-recovery`, `upload-printify-image`, `create-custom-product` (takes `user_id` from body, `index.ts:53`), `sync-blueprint`, `sync-cheapest-providers`, `get-blueprint-variants`, `get-catalog-blueprints`. All also set `Access-Control-Allow-Origin: *`.
+#### H5. Edge functions without auth; `--no-verify-jwt` — PARTIAL
+- **Fixed:** `_shared/authGuard.ts` (rejects the anon key, constant-time compare, `requireServiceRoleOrCron`). `requireUser` now on `create-custom-product`, `process-refund`, `process-payment-recovery`, `upload-printify-image`; `verifyAuth` on `cancel-order`, `create-mollie-payment`, `create-paypal-order`, `generate-invoice`, `sync-printify-orders`, `verify-mollie-payment`, `capture-paypal-order`, `create-credit-payment`, `create-payment-intent`, `create-printify-order`. Stripe and PayPal webhooks are signature-verified.
+- **Remaining:** still zero auth in `sync-blueprint/index.ts:43-50`, `get-blueprint-variants/index.ts:26-33`, `get-catalog-blueprints/index.ts:49-58`, `sync-cheapest-providers/index.ts:191-203` (the two sync jobs also hold the service-role key). `mollie-webhook` has no signature check (mitigated by re-fetching from Mollie). Deploy still `--no-verify-jwt` (`package.json:22`); `supabase/config.toml:385-403` `verify_jwt = false`. **All 21 functions still send `Access-Control-Allow-Origin: *`**; `ALLOWED_ORIGINS` exists in `.env.example:35` but nothing consumes it.
 
-#### H6. Credit grants are not idempotent
-- `supabase/functions/stripe-webhook/index.ts:109-219` — `handleCreditPurchase` does read-modify-write on `user_credits` with no check against `reference_id` / prior `credit_transactions`. Stripe retries `payment_intent.succeeded` on non-2xx or timeout; each redelivery re-adds credits. The Stripe path also has no `webhook_events` idempotency guard (PayPal and Mollie do: `paypal-webhook/index.ts:96-121`, `mollie-webhook/index.ts:60-71`).
+#### H6. Credit grants not idempotent — PARTIAL
+- **Fixed:** unique index `credit_purchase_reference_unique` on `credit_transactions(reference_id)` plus claim-first `ON CONFLICT DO NOTHING` in `grant_stripe_purchase_credits` (`20260908000000_fix_security_review.sql:36-38,73-85`).
+- **Remaining:** `stripe-webhook/index.ts` still never calls `record_webhook_event_atomic`; non-credit Stripe events are reprocessed on every retry.
 
-#### H7. CAPTCHA is decorative
-- `src/lib/security/captcha/verify.ts` (`verifyCaptcha`, `verifyCaptchaForAction`) is never imported outside its own test. The client obtains a token (`src/features/auth/login/useLoginForm.ts:24`) and passes it to `signInWithPassword` (`src/services/authService.ts:36`), but `[auth.captcha]` is commented out in `supabase/config.toml`, so Supabase does not check it either.
+#### H7. CAPTCHA decorative — PARTIAL
+- **Fixed:** `verifyCaptchaForAction` enforced in `src/app/api/auth/login/route.ts:45-56`, `signup/route.ts:54-65`, `resend-confirmation/route.ts:60-66`.
+- **Remaining:** `supabase/config.toml:191-193` `[auth.captcha]` still commented out, so Supabase-native flows (password reset, OTP) are uncovered. Captcha is a silent no-op in non-production without keys.
 
-#### H8. Rate limiter is per-instance memory and mostly misses auth
-- `src/lib/security/rate-limiter/store.ts:11` — a module-level `Map`; the file's own comment (`:6-9`) concedes it is per-replica on serverless.
-- `src/middleware.ts:71` calls `checkCombinedRateLimit` with no `userId`, so only the IP bucket applies. The path mapping (`:19-58`) only covers `/auth*`, not the direct Supabase GoTrue calls the browser actually makes for login.
+#### H8. Rate limiter per-instance and thin on auth — PARTIAL
+- **Fixed:** `getRateLimitType` (`src/middleware.ts:17-56`) now covers `/api/auth`, password paths, `/api/generate-image`, payments, webhooks and a generic `/api` bucket. Auth email routes have a DB-backed limiter (`src/lib/security/authEmailProtection.ts:7-52`, `consume_auth_email_rate_limit` in `20260910000000_harden_auth_email_flows.sql:3-16`).
+- **Remaining:** `store.ts:11` is still a per-process `Map`; `middleware.ts:74` still passes no `userId`.
 
-#### H9. Session JWTs in git history
-- `playwright/.auth/user.json` was committed across 10+ commits (e.g. `git show f500677:playwright/.auth/user.json`) before being gitignored in `89ebd55`. Rotate the test account; consider a history rewrite.
+#### H9. Session JWTs in git — OPEN, REGRESSED
+- `git ls-files` returns **`src/playwright/.auth/user.json`** (3.7 KB, contains a `sb-…-auth-token` cookie with an access token). `.gitignore:18` is `/playwright/.auth/` — root-anchored, so it does not match the new location. Still present in history (`5e9d46c7`, `f5006775`, `9f19a05c`, …).
+
+**Action:** `git rm --cached src/playwright/.auth/user.json`, change the ignore rule to `**/playwright/.auth/`, rotate the test account.
 
 ### Reliability / observability
 
-#### H10. No timeouts, retries, or `maxDuration` on the AI image path
-- `src/app/api/generate-image/route.ts:6` sets `runtime = "nodejs"` but no `export const maxDuration`. On Vercel this caps at the plan default, far below generation + `sharp` + background removal.
-- No `AbortSignal` / `AbortController` anywhere in `src/app/api` or `src/services`. No retry/backoff in `geminiImageService.ts` or `openaiImageService.ts`. The only retry logic in the app is `src/services/refundService.ts:26-45`.
-- No file-size or MIME allowlist server-side: `image.size` is only checked for `0` (`route.ts:67`). The 10 MB / type limit in `src/features/stamp/lib/hooks/useStampImageUpload.ts:20-21` is **client-only**. Whole buffers are passed to `sharp` (`geminiImageService.ts:38-58`). `route.ts:141-146` echoes `error.message` to the client in non-production.
+#### H10. No timeouts / retries / limits on the AI image path — OPEN
+- `src/app/api/generate-image/route.ts`: no `maxDuration` (`:6` only `runtime`), no `AbortController`, size checked only for zero (`:67,83`), MIME sniffed but not allowlisted (unknown defaults to `image/jpeg`, `:108`), `err.message` still echoed in non-production (`:164`). No retry logic in `geminiImageService.ts` or `openaiImageService.ts`. Improved: errors mapped to user-friendly messages and routed through `captureError` (`:138-158`).
 
-#### H11. No route-level `error.tsx` or `loading.tsx`
-- Only `src/app/global-error.tsx` and `src/app/not-found.tsx` exist. Every server-component throw in `/checkout`, `/cart`, `/orders`, `/stamp`, `/catalog` escalates to the full-page global boundary. No streaming loading states. `src/components/ErrorBoundary/ErrorBoundary.tsx` exists but is not used at feature level.
+#### H11. No route-level `error.tsx` / `loading.tsx` — OPEN
+- Still only `src/app/global-error.tsx` and `not-found.tsx`.
 
-#### H12. Supabase edge functions are completely uninstrumented
-- `grep -rln "Sentry" supabase/functions` → no matches. All 22 functions — including `stripe-webhook` (46 `console.*` calls), `paypal-webhook` (33), `process-refund`, `create-printify-order` — log only to `console`. No structured logging, error aggregation, or alerting. **A failed webhook is a silently lost order.**
-- `supabase/functions/_shared/testModeSafeguard.ts:70` — `// TODO: Send alert to monitoring system`.
+#### H12. Edge functions uninstrumented — OPEN
+- No `Sentry` reference in `supabase/functions`. `stripe-webhook` 37 `console.*`, `paypal-webhook` 33. `_shared/testModeSafeguard.ts:70` TODO unchanged. **A failed webhook is still a silently lost order.**
 
-#### H13. Duplicate, conflicting Sentry client configs; the wrong one is live
-- `sentry.client.config.ts` (tracesSampleRate `0.1`, session replay, `maskAllText`) is **imported by nothing**.
-- Next 16 loads `src/instrumentation-client.ts`, which sets `tracesSampleRate: 1` (100% of traces) with **no replay and no PII masking**.
-- Across all four Sentry files: no `environment`, no `release`, no `beforeSend`, no enable/disable gate. Localhost errors pollute production issues. DSN is hardcoded in every file rather than env-driven. `dataCollection.userInfo` / `httpBodies` are left at defaults, so customer PII and request bodies flow to Sentry, in tension with the privacy policy.
+#### H13. Duplicate Sentry configs; wrong one live — PARTIAL
+- **Fixed:** server/edge wired via `src/instrumentation.ts:5,9` at 10 % traces; `sentry.client.config.ts:20-29` now has replay with masking.
+- **Remaining:** `sentry.client.config.ts` is still dead — Next 16 loads `src/instrumentation-client.ts`, which has `tracesSampleRate: 1` (`:11`), no replay, no masking. No `environment`, `release` or `beforeSend` in any of the five files; DSN hardcoded in all four init sites.
 
-#### H14. Transactional email covers invoices only, and fails silently
-- `supabase/functions/_shared/brevoEmail.ts:36-40` — if `BREVO_API_KEY` is unset it `console.log`s and returns success.
-- No order confirmation, shipping/tracking, or payment-failure emails.
-- `supabase/config.toml:213-219` — production SMTP block is commented out, so Supabase's rate-limited default sender is used for auth mail.
+#### H14. Transactional email — PARTIAL
+- **Fixed:** signup / resend confirmation emails via `src/lib/email/brevo.ts` + `confirmationEmailTemplate.ts`; missing key logs `console.error` (`brevo.ts:31-34`).
+- **Remaining:** edge-side `_shared/brevoEmail.ts:38-41` still returns silently when `BREVO_API_KEY` is unset. No order confirmation or shipping/tracking email. `supabase/config.toml:213-216` SMTP still commented out.
 
-#### H15. Zero test coverage on the money paths
-- `src/features/checkout/**`, `src/features/cart/**`, `src/features/buy-credits/**` — **0 test files**.
-- No tests for `stripeService`, `paypalService`, `mollieService`, `cartService`, `paymentRecoveryService`, `promocodeService`, `invoiceService`, `authService`.
-- Of 22 edge functions only 4 have shims in `src/tests/edge-functions/`. `stripe-webhook`, `paypal-webhook`, `mollie-webhook`, `capture-paypal-order`, `process-refund`, `create-printify-order` are entirely untested.
-- `orderService.test.ts`, `refundService.test.ts`, `printifyService.test.ts` largely *document* gaps rather than assert behaviour (e.g. `orderService.test.ts:148` "EXPECTED SOLUTION: Implement retry logic with exponential backoff").
+#### H15. Test coverage on the money paths — PARTIAL
+- **Added since audit:** `cartService.test.ts`, `cartServiceMapper.test.ts`, `cartQueries.test.tsx`, `checkoutDataBuilder.test.ts`, `src/tests/payment-security.test.ts` (proof verification + refund authorization), `src/tests/security-review.test.ts`, `paypal-server.test.ts`, 5 edge-function shims, `tests/security_database_test.py`.
+- **Remaining:** no tests for `stripeService`, `paypalService`, `mollieService`, `paymentRecoveryService`, `promocodeService`, `invoiceService`, `authService`; nothing under `src/features/cart` or `src/features/buy-credits`; the webhook handlers themselves are untested. `payment-security.test.ts` exercises re-implemented local helpers rather than the shipped modules.
 
 ---
 
 ## MEDIUM
 
-#### M1. Promo codes table is world-readable and codes never expire
-- `supabase/migrations/20260402000000_add_promocodes_support.sql:20-23` — `FOR SELECT USING (true)`. Anyone can harvest every code and discount.
-- No `expires_at`, `max_uses`, or `used_count` columns; `src/app/api/validate-promocode/route.ts:38-42` checks none. (Positive: discount is clamped at `:72`.)
+#### M1. Promo codes world-readable, never expire — OPEN
+- `20260402000000_add_promocodes_support.sql:3-9,20-23` unchanged (`FOR SELECT USING (true)`, no `expires_at` / `max_uses`). `validate-promocode/route.ts:38-42` checks none; discount clamp at `:72` remains the only guard.
 
-#### M2. Token and PII in edge-function logs
-- `supabase/functions/_shared/validators.ts:194-202` logs failed-auth response bodies and a token preview; `create-mollie-payment/index.ts:44-58` logs JWT prefixes/suffixes; `sync-cheapest-providers/index.ts:203` logs the first 20 chars of the Printify token.
+#### M2. Token / PII in edge logs — PARTIAL
+- **Fixed:** `_shared/validators.ts:190-204` logs only status and user id; `create-mollie-payment` has no `console.log`.
+- **Remaining:** `sync-cheapest-providers/index.ts:203` still logs the first 20 chars of the Printify token.
 
-#### M3. CSP allows `'unsafe-inline'` scripts and is defined twice
-- `next.config.ts:13` and `src/lib/security/headers.ts:66-70`. Documented as intentional but it removes most of the CSP's XSS value.
-- The two definitions have already drifted (`next.config.ts:15` includes `api.dicebear.com`; `headers.ts:21-30` does not). Middleware runs last and wins.
+#### M3. CSP `'unsafe-inline'` and defined twice — PARTIAL
+- **Fixed:** `src/lib/security/headers.ts` deleted; `next.config.ts:15-33` is the single source.
+- **Remaining:** `script-src` still `'unsafe-inline'` (`next.config.ts:18`), documented as intentional because nonces conflict with ISR/static rendering.
 
-#### M4. `/api/revalidate` reads an env var that does not exist
-- Route checks `REVALIDATION_SECRET` (`src/app/api/revalidate/route.ts:22,29`); `.env` defines `REVALIDATE_SECRET`. Fails closed with a 500, but cache revalidation from edge functions is silently broken. `:50-55` echoes raw error messages.
+#### M4. `/api/revalidate` env-var name mismatch — FIXED (with a note)
+- `REVALIDATION_SECRET` is now consistent across `route.ts:22,29`, `.env.example:32` and scripts; errors no longer echoed (`:51-54`). **Note:** nothing under `supabase/` calls the endpoint any more, so cron catalog syncs never bust the Next cache. Secret still travels in the query string (`:20`).
 
-#### M5. Weak auth defaults in `supabase/config.toml`
-- `minimum_password_length = 6`, `enable_confirmations = false`, `[auth.captcha]` disabled, `site_url = "http://127.0.0.1:3000"`. If pushed to the linked project these become production settings.
+#### M5. Weak auth defaults in `supabase/config.toml` — OPEN
+- `:169` `minimum_password_length = 6`, `:203` `enable_confirmations = false`, `:191-193` captcha commented out, `:148` localhost `site_url`. Mitigation: the app now bypasses Supabase's own signup via `src/app/api/auth/signup/route.ts` and blocks unconfirmed logins (`login/route.ts:83-87,111-116`), but this file still governs any `db reset` / self-hosted deploy.
 
-#### M6. Catalog tables with permissive `FOR ALL USING (true)` policies
-- `20260713000000_final_catalog_cleanup.sql:295-310`, `20260813000001_add_product_seo_table.sql:49-52`. Verify the `TO` role. If not restricted to `service_role`, anonymous clients can rewrite catalog pricing, which feeds the (client-trusted) checkout totals.
+#### M6. Catalog `FOR ALL USING (true)` policies — FIXED (as written)
+- `20260713000000_final_catalog_cleanup.sql:293-310` and `20260813000001_add_product_seo_table.sql:47-52` scope `FOR ALL` `TO service_role`; public is read-only.
 
-#### M7. Dependency hygiene
-- Both `@google/genai@^2.18.0` and `@google/generative-ai@^0.24.1` are dependencies; only the **deprecated** `@google/generative-ai` is imported (`geminiImageService.ts:1`).
-- `supabase` CLI (`^2.92.1`) is a runtime dependency, shipping a ~40 MB binary into production installs.
-- `@ai-hero/sandcastle` plus committed `.sandcastle/` and `.superdesign/` scratch directories.
-- `overrides: { "sharp": "^0.35.3" }` is a blunt force-resolution combined with `serverExternalPackages` and a dynamic `import("sharp")`; a native-binary mismatch surfaces only at runtime.
-- `@imgly/background-removal-node` drags in vulnerable `zod<=3.22.2` and `lodash`.
-- `npm audit --omit=dev`: critical `tar`; high `next` (request smuggling in rewrites, unbounded `next/image` disk cache), `ws`, `nanoid`, `postcss`, `fast-uri`, `browserslist`.
-- Stale `tsconfig.tsbuildinfo` (Aug 21) produces phantom typecheck errors locally.
+#### M7. Dependency hygiene — PARTIAL
+- **Fixed:** `@imgly/background-removal-node` removed.
+- **Remaining:** both `@google/genai` and `@google/generative-ai` declared (`package.json:26-27`), only the deprecated one imported; `supabase` CLI still in `dependencies` (`:57`); `@ai-hero/sandcastle` plus 13 committed files under `.sandcastle/` / `.superdesign/`; `overrides.sharp` still present; `npm audit --omit=dev` 11 vulns (critical `tar`, `sharp`; high `next`, `ws`, `nanoid`, `postcss`, `fast-uri`, `browserslist`).
 
-#### M8. Nothing consumes the health endpoint or watches the cron jobs
-- `src/app/api/health/route.ts` is a well-designed probe (DB latency, memory, 503 semantics) but no uptime monitor is configured. No Sentry/Vercel cron monitors for the 7 `pg_cron` jobs. A silently failing `sync-printify-orders` or `process-payment-recovery` would go unnoticed.
+#### M8. Nothing consumes the health endpoint or watches cron — PARTIAL
+- `/api/health` is solid. Still no uptime monitor, no Sentry cron check-ins, no `vercel.json` crons.
 
-#### M9. Team backlog and inconsistencies
-- `MISSING_STEPS.md` still lists "Improve the homepage design" and "Additional pages, for legal and stuff" as open.
-- iDEAL is marked done, but `docs/DESIGN_TRUSTWORTHINESS_PLAN.md:41` documents that checkout still shows it disabled/"Soon" (`CheckoutPaymentMethods.tsx:120-142`) while `HomePaymentMethods.tsx:31` advertises it.
+#### M9. Backlog and iDEAL inconsistency — PARTIAL
+- **Fixed:** iDEAL is live in checkout (`CheckoutIdealButton.tsx:17,36,42` → Mollie `checkoutUrl`); no "Soon" strings remain.
+- **Remaining (inverted):** `HomePaymentMethods.tsx:17-18` filters iDEAL *out* ("not live yet") while `PaymentMethodsBanner.tsx:65` shows it. `MISSING_STEPS.md` still lists homepage design and legal pages as open.
 
-#### M10. Analytics plan vs reality
-- `docs/ANALYTICS_TRACKING_PLAN.md` is largely implemented (`analyticsService.ts`, `useAnalytics.ts`, mappers, page-view tracker, button `trackingId`). One of its tests currently fails. There is no server-side / Measurement Protocol `purchase` event, so purchases confirmed by webhook rather than in-browser will be under-reported.
+#### M10. No server-side purchase analytics — OPEN
+- No Measurement Protocol / `mp/collect` usage in `supabase/functions` or `src/app/api`. Redirect-based (PayPal/Mollie) purchases remain under-reported.
 
-#### M11. SEO / images
-- `src/app/sitemap.ts` emits static routes only; no product/catalog detail pages.
-- `next.config.ts:78-108` `images.remotePatterns` and the CSP `img-src` still allow `picsum.photos`, `placehold.co`, `images.unsplash.com`, the unused DALL·E CDN, and a wildcard `*.supabase.co`. No `formats` / `deviceSizes` / `minimumCacheTTL` tuning.
+#### M11. SEO / images — OPEN
+- `src/app/sitemap.ts:8-15` static routes only. `next.config.ts:99-132` still allows `picsum.photos`, the DALL·E CDN, `*.supabase.co`, `placehold.co`, `images.unsplash.com`.
 
-#### M12. i18n
-- Single locale (`en`) with 1,940 message keys and no hardcoded UI strings found. Locale routing is deliberately absent (`src/i18n/request.ts`). Fine for launch, but a Dutch storefront will want `nl` before marketing spend.
+#### M12. Single locale — OPEN
+- Only `en.json`; `src/i18n/request.ts:13-21` hardcodes `en`. Fine for launch.
 
 ---
 
 ## What is already solid (preserve this)
 
-- **Stripe webhook signature verification is correct and fails closed** — `stripe-webhook/index.ts:247-256` uses `constructEventAsync` with `SubtleCryptoProvider`; a missing signature throws.
-- **Mollie webhook uses the right pattern** — ignores the payload and re-fetches from Mollie (`mollie-webhook/index.ts:74`).
-- **`.env` is not tracked and never was**; `.gitignore` covers `.env*`.
-- **Ownership checks where present are correct** — `cancel-order/index.ts:103`, `generate-invoice/index.ts:62`, `sync-printify-orders/index.ts:187`.
-- **Atomic RPCs** for payment capture, refund, cancellation, and PayPal webhook idempotency (`atomic_paypal_payment_capture`, `process_refund_atomic`, `upsert_stripe_payment_transaction`, `record_webhook_event_atomic`).
-- **Error responses never leak internals** in the PayPal capture route (`capture-order/route.ts:100-110`) or edge functions (`_shared/errors.ts:29-39`).
-- **Idempotency keys on orders** with fail-closed semantics (`orderService.ts:206-213`).
-- **Invoice storage bucket is private** with an owner-scoped policy (`20260709000000_add_invoices.sql:108-115`).
-- **Cron jobs use Supabase Vault** for the service-role key (`20260818100000_fix_all_cron_jobs_use_vault.sql`).
-- **RLS is enabled on all ~33 surviving tables.**
-- **`src/lib/observability/`** is well-built and tested: structured JSON logger, provider-agnostic `errorCapture`, request-ID correlation through middleware, `webVitals`.
-- **Security headers** in `next.config.ts` are comprehensive: CSP, HSTS with preload, `nosniff`, `Permissions-Policy`, `frame-ancestors`, `object-src 'none'`; `X-XSS-Protection: 0` is the correct modern value.
-- **Sentry ingests to the EU region** with `tunnelRoute` and `automaticVercelMonitors` configured.
-- **Legal copy is real and substantial** (~38K characters across Terms, Privacy, Security, Shipping, Returns). Only the entity constants are placeholders.
-- **`/api/health`** is a correct probe with latency thresholds and 503 semantics.
-- **909 passing unit tests** with strong coverage of stamp-editor internals, SEO mappers, catalog mappers, and `src/lib/security/*`.
-- **Playwright config is production-grade** (`forbidOnly` in CI, retries, traces, storageState auth, desktop + mobile projects, 12 e2e specs). It just never runs automatically.
-- **Migration discipline** — 60+ timestamped migrations with a README.
-- **`docs/DESIGN_TRUSTWORTHINESS_PLAN.md` and `docs/invoicing.md`** are unusually honest about their own defects.
+Everything listed in the original audit still holds, plus the following landed since:
+
+- **`_shared/authGuard.ts`** — rejects the anon key, constant-time secret compare, cron/service-role guard.
+- **`_shared/serverPriceService.ts`** — catalog-sourced pricing for Stripe, PayPal and Mollie intents.
+- **`_shared/verifyPaidPayment.ts` / `paymentProof.ts`** — provider-side proof before refunds and recovery.
+- **Real PayPal webhook signature verification**, failing closed.
+- **`enforce_orders_protected_columns` trigger** and `deduct_coin` ownership check (`20260707000000`, `20260908000000`).
+- **Idempotent credit grants** via unique `reference_id`.
+- **Server-side route guards** in middleware for all six authenticated prefixes.
+- **Email confirmation flow** with DB-backed per-IP and per-email rate limits and CAPTCHA on login/signup/resend.
+- **SSRF allowlists** on both image-fetch paths.
+- **Single CSP source** in `next.config.ts`.
+- **`.env.example`** committed; `SECURITY_AUDIT.md` documents the hardening work.
+
+Unchanged from the original list: Stripe signature verification fails closed; Mollie webhook re-fetches from Mollie; `.env` never tracked; ownership checks in `cancel-order` / `generate-invoice` / `sync-printify-orders`; atomic RPCs for capture/refund/cancel; idempotency keys on orders; private invoices bucket; Vault-backed cron secrets; RLS on all tables; `src/lib/observability/*`; security headers; EU-region Sentry with tunnel; substantial legal copy; `/api/health`; Playwright config; migration discipline.
 
 ---
 
-## Suggested order of work
+## Suggested order of work (updated)
 
-1. **Re-apply the `fixing_security` work onto `dev`** (see Appendix A). It addresses C1, C4, C5, C8, C9, H1, H2, H5 and more.
-2. **Add CI** — a GitHub Actions workflow running `eslint`, `tsc --noEmit`, `vitest run` (unit only), and `next build` on every PR. Split integration tests into a separate script gated on credentials. Fix the `openai` dependency and the 10 failing tests first so the pipeline starts green.
-3. **Move order creation and amount computation server-side**, driven by webhooks. Recompute totals from catalog + cart in the payment-intent functions. Add column-guard triggers on `orders`, `WITH CHECK` on `payment_transactions`, and `auth.uid()` checks in `deduct_coin`. Re-enable server-side coin deduction in `generate-image`.
-4. **Auth-guard every edge function** that lacks it; drop `--no-verify-jwt` from the default deploy script; add `webhook_events` idempotency to the Stripe path.
-5. **Rotate secrets**: Printify token, Playwright test account, anything exposed via `playwright/.auth/user.json`.
-6. **Fix observability**: delete the dead `sentry.client.config.ts` or make `instrumentation-client.ts` match it; set `environment`, `release`, sample rates, PII masking; instrument edge functions with Sentry Deno SDK; register cron monitors.
-7. **Legal**: cookie consent banner with Consent Mode v2, real entity data in `legalEntity.ts` reconciled with `business.ts`, account deletion + data export, invoice tax handling.
-8. **Reliability**: `error.tsx` / `loading.tsx` per route group, `maxDuration` + timeouts + server-side size/MIME validation on `generate-image`, order confirmation and shipping emails, production SMTP.
-9. **Staging environment** and a deploy pipeline for Supabase migrations and edge functions.
-10. **Hygiene**: remove the duplicate Google SDK, move `supabase` to devDependencies, delete `.sandcastle` / `.superdesign` / `apiClient.ts`, prune placeholder image hosts, resolve `npm audit`.
+1. **Immediate hygiene (an hour):** untrack `src/playwright/.auth/user.json`, fix the ignore rule to `**/playwright/.auth/`, rotate the test account (H9). Confirm the Printify token was rotated (C8). Remove the token-preview log in `sync-cheapest-providers` (M2).
+2. **Finish order integrity (the remaining payment blocker):** move order creation into the webhooks (or a service-role edge function that verifies the payment first) and drop the client `insert` with `paymentStatus: "paid"`; add a `BEFORE INSERT` guard on `orders` so non-service-role inserts cannot set `payment_status`/`total_amount`; add `WITH CHECK` to `payment_transactions`; remove the webhook polling (C1, C7, H3).
+3. **Close the pricing gaps:** reject intents whose items lack catalog ids instead of skipping validation; compute shipping and discount server-side; price the Next PayPal route and `create-printify-order` from the catalog (C6). Re-enable server-side coin deduction in `generate-image` (C10).
+4. **Auth-guard the last four edge functions** and the two service-role Next routes; add `webhook_events` idempotency to the Stripe path; replace `Access-Control-Allow-Origin: *` with an `ALLOWED_ORIGINS` helper; drop `--no-verify-jwt` from the default deploy script (H4, H5, H6).
+5. **CI:** GitHub Actions running `eslint`, `tsc --noEmit`, unit `vitest`, `next build` on every PR. Run `npm ci` to fix `openai`, split integration tests behind a `test:integration` script, fix the 15 failing tests so the pipeline starts green (C11, C13, C14).
+6. **Legal:** cookie consent banner with Consent Mode v2 (the cookie policy already claims consent gating); real entity data reconciled between `legalEntity.ts` and `business.ts`; account deletion + export; invoice tax handling (C15–C18).
+7. **Observability:** delete or wire `sentry.client.config.ts`, fix `instrumentation-client.ts` sample rate and masking, add `environment` / `release`; Sentry Deno SDK in edge functions, starting with the webhooks; cron monitors and an uptime check on `/api/health` (H12, H13, M8).
+8. **Reliability:** `error.tsx` / `loading.tsx` per route group; `maxDuration`, timeouts, size cap and MIME allowlist on `generate-image`; order-confirmation and shipping emails; production SMTP (H10, H11, H14).
+9. **Staging environment** and a deploy pipeline for migrations and edge functions; harden `supabase/config.toml` defaults (C12, M5).
+10. **Cleanup:** duplicate Google SDK, `supabase` to devDependencies, `.sandcastle` / `.superdesign`, placeholder image hosts, promo-code expiry and RLS, `npm audit`, iDEAL homepage parity (M1, M7, M9, M11).
 
 ---
 
-## Appendix A: the unmerged `fixing_security` branch
+## Appendix A: the `fixing_security` branch (historical)
+
+The original audit noted that commit `9f19a05c` ("Security hardening: fix critical auth, payment, SSRF and RLS issues") on `fixing_security` had never been merged. It has since landed on `dev` via PR #17 (`74db685`), followed by `79fa1d9` ("add server-side price validation and remove PII logging") and the `20260908000000_fix_security_review.sql` migration. The FIXED and PARTIAL statuses above reflect that work. This appendix is kept only so earlier references to it resolve.
+
+## Appendix B: failing tests on `dev` (2026-09-15)
 
 ```
-$ git log --oneline -1 origin/fixing_security
-9f19a05 Security hardening: fix critical auth, payment, SSRF and RLS issues
-
-$ git merge-base --is-ancestor 9f19a05c HEAD ; echo $?
-1   # NOT an ancestor of dev
-
-$ git rev-list --count 9f19a05c..HEAD
-304  # commits on dev since the branch point
-```
-
-Files touched by that commit include:
-
-- `SECURITY_AUDIT.md` (the original findings)
-- `supabase/functions/_shared/authGuard.ts` (shared auth guard for edge functions)
-- `supabase/functions/_shared/paypal.ts` (real PayPal signature verification)
-- `supabase/migrations/20260707000000_security_hardening_rls.sql` (RLS column guards)
-- `src/app/api/fetch-remote-image/route.ts` (SSRF allowlist)
-- `src/app/auth/callback/route.ts` (open-redirect fix)
-- `src/middleware.ts` (server-side route guards)
-- `src/services/apiClient.ts` (removal of `NEXT_PUBLIC_` token)
-- `src/tests/e2e/security.e2e.spec.ts`
-- Auth guards added to `process-refund`, `process-payment-recovery`, `upload-printify-image`, `create-custom-product`, `create-credit-payment`, `stripe-webhook`, `paypal-webhook`, and others.
-- Removal of `playwright/.auth/user.json` from the tree and `.env.example` added.
-
-Because `dev` has diverged by 304 commits (several of the touched functions have since been renamed or removed), the practical approach is to cherry-pick or hand-port each fix rather than merge the branch.
-
-## Appendix B: failing tests on `dev` (2026-09-08)
-
-```
-FAIL src/features/auth/components/__tests__/AuthDialog.test.tsx            (4 tests)
-FAIL src/features/catalog/ui/__tests__/CatalogPageContent.test.tsx        (2 tests)
+FAIL src/features/auth/components/__tests__/AuthDialog.test.tsx               (4 tests)
+FAIL src/features/catalog/ui/__tests__/CatalogPageContent.test.tsx           (2 tests)
+FAIL src/services/__tests__/customProductService.printAreas.test.ts          (5 tests)  ← new since 09-08
 FAIL src/services/analyticsService.test.ts > should not call gtag in development
-FAIL src/services/coinsService.test.ts                                    (3 tests)
-FAIL src/tests/integration/coins.integration.test.ts                      [suite failed to load]
-FAIL src/tests/integration/database-direct.integration.test.ts            [suite failed to load]
-FAIL src/tests/integration/order-creation.integration.test.ts             [suite failed to load]
-FAIL src/tests/integration/schema-verification.integration.test.ts        [suite failed to load]
+FAIL src/services/coinsService.test.ts                                       (3 tests)
+FAIL src/tests/integration/coins.integration.test.ts                         [suite failed to load]
+FAIL src/tests/integration/database-direct.integration.test.ts               [suite failed to load]
+FAIL src/tests/integration/order-creation.integration.test.ts                [suite failed to load]
+FAIL src/tests/integration/schema-verification.integration.test.ts           [suite failed to load]
+
+Test Files  9 failed | 76 passed (85)
 ```
