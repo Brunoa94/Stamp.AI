@@ -5,20 +5,18 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { describeIntegration } from './setup-auth';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
-}
+// Created lazily so a missing env skips the suite instead of failing at import.
+const supabase = createClient(supabaseUrl || 'http://localhost', supabaseAnonKey || 'anon');
 
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
-describe('Database Schema Verification', () => {
+describeIntegration('Database Schema Verification', () => {
   async function getTableColumns(tableName: string): Promise<string[]> {
     const { data, error } = await supabase
-      .from('information_schema.columns' as any)
+      .from('information_schema.columns')
       .select('column_name')
       .eq('table_name', tableName);
 
@@ -29,14 +27,14 @@ describe('Database Schema Verification', () => {
       });
 
       if (rawData) {
-        return rawData.map((row: any) => row.column_name);
+        return rawData.map((row: { column_name: string }) => row.column_name);
       }
 
       console.error(`Failed to get columns for ${tableName}:`, error);
       return [];
     }
 
-    return data.map((row: any) => row.column_name);
+    return data.map((row: { column_name: string }) => row.column_name);
   }
 
   test('orders table should have all required columns', async () => {
@@ -66,7 +64,7 @@ describe('Database Schema Verification', () => {
 
     // Query directly via SQL
     const { data, error } = await supabase
-      .from('orders' as any)
+      .from('orders')
       .select('*')
       .limit(0);
 

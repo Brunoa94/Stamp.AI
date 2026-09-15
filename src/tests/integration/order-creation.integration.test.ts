@@ -3,13 +3,17 @@
  * Tests the actual database flow with real Supabase connection
  */
 
-import { getAuthenticatedClient } from './setup-auth';
+import {
+  describeIntegration,
+  getAuthenticatedClient,
+  type AuthenticatedClient,
+} from './setup-auth';
 import { OrderService } from '@/services/orderService';
 import type { UserI } from '../../../supabase/types';
 import type { ShippingAddressT } from '@/schemas/checkout';
 
-describe('Order Creation Integration Tests', () => {
-  let supabase: any;
+describeIntegration('Order Creation Integration Tests', () => {
+  let supabase: AuthenticatedClient['supabase'];
   let testUserId: string;
   let testCartId: string;
   let createdOrderId: string | null = null;
