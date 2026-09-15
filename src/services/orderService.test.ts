@@ -3,6 +3,7 @@ import { OrderService } from "./orderService";
 import { createClient } from "@/lib/supabase/client";
 import type { CartWithItems } from "@/types/cart";
 import type { UserI } from "../../supabase/types";
+import type { ShippingAddressT } from "@/schemas/checkout";
 
 // Mock Supabase client
 vi.mock("@/lib/supabase/client", () => ({
@@ -31,6 +32,18 @@ describe("OrderService Edge Cases", () => {
       single: vi.fn(),
       maybeSingle: vi.fn(),
       order: vi.fn().mockReturnThis(),
+      auth: {
+        getSession: vi.fn().mockResolvedValue({
+          data: { session: { access_token: "test_token" } },
+          error: null,
+        }),
+      },
+      functions: {
+        invoke: vi.fn().mockResolvedValue({
+          data: { success: true, order_id: "order_123", order_number: "ORD-123", created: true, total_cents: 2999 },
+          error: null,
+        }),
+      },
     };
 
     vi.mocked(createClient).mockReturnValue(mockSupabase as any);
@@ -391,111 +404,14 @@ describe("OrderService Edge Cases", () => {
 
   /**
    * ========================================================================
-   * EDGE CASE: Cart to Order Conversion Issues
+   * createOrderFromCart: orders are minted by finalize-order, never inserted
+   * by the browser. The service only sends what was bought and the payment
+   * reference; totals, payment status and idempotency are decided server-side.
    * ========================================================================
    */
 
-  describe("createOrderFromCart Edge Cases", () => {
-    /**
-     * PROBLEM: Cart items deleted or modified between cart fetch and order creation
-     *
-     * EXPECTED SOLUTION: Use transaction or snapshot isolation to ensure consistency
-     *
-     * IMPACT: Order created with wrong items or prices
-     */
-    it("should handle cart items being modified during order creation", async () => {
-      const user = { id: "user_123", email: "test@example.com" };
-      const cart = {
-        id: "cart_123",
-        user_id: "user_123",
-        created_at: new Date().toISOString(),
-        cart_items: [
-          {
-            id: "item_1",
-            product_id: "prod_123",
-            quantity: 2,
-            unit_price: 5000, // $50.00 in cents
-          },
-        ],
-      };
-
-      // Mock order creation: insert().select().single() returns order
-      mockSupabase.single.mockResolvedValueOnce({
-        data: {
-          id: "order_123",
-          order_number: "ORD-123",
-        },
-        error: null,
-      });
-
-      // Mock order items creation: insert().select() returns items
-      // Use select mock for the second call (order items don't use single())
-      const originalSelect = mockSupabase.select;
-      let selectCallCount = 0;
-      mockSupabase.select.mockImplementation(() => {
-        selectCallCount++;
-        if (selectCallCount === 1) {
-          // First select (order creation) - continue chain to single()
-          return mockSupabase;
-        }
-        // Second select (order items) - return final result directly
-        return Promise.resolve({ data: [], error: null });
-      });
-
-      const orderId = await OrderService.createOrderFromCart({
-        user: user as any,
-        cart: cart as any,
-        paymentStatus: "paid",
-      });
-
-      expect(orderId).toBe("order_123");
-
-      // Restore original select mock
-      mockSupabase.select = originalSelect;
-    });
-
-    /**
-     * PROBLEM: Empty cart passed to createOrderFromCart
-     * Should this create an order or fail?
-     *
-     * EXPECTED SOLUTION: Fail early with clear error message
-     *
-     * IMPACT: Empty orders in database, billing issues
-     */
-    it("should reject empty cart", async () => {
-      const user = { id: "user_123", email: "test@example.com" };
-      const emptyCart = {
-        id: "cart_123",
-        user_id: "user_123",
-        created_at: new Date().toISOString(),
-        cart_items: [], // Empty!
-      };
-
-      await expect(
-        OrderService.createOrderFromCart({
-          user: user as any,
-          cart: emptyCart as any,
-          paymentStatus: "paid",
-        }),
-      ).rejects.toThrow("Cannot create an order without selected cart items");
-
-      expect(mockSupabase.insert).not.toHaveBeenCalled();
-    });
-  });
-
-  /**
-   * ========================================================================
-   * REGRESSION: Partial cart checkout
-   * ========================================================================
-   * When the user only selects part of the cart, the order (and the invoice
-   * generated from its order_items) must contain the selected items only.
-   */
-
-  describe("createOrderFromCart with partially selected cart", () => {
-    const user = {
-      id: "user_123",
-      email: "test@example.com",
-    } as unknown as UserI;
+  describe("createOrderFromCart", () => {
+    const user = { id: "user_123", email: "test@example.com" } as unknown as UserI;
     const cart = {
       id: "cart_123",
       user_id: "user_123",
@@ -504,94 +420,148 @@ describe("OrderService Edge Cases", () => {
         {
           id: "item_1",
           product_id: "prod_1",
+          product_name: "Tee",
+          variant_id: "4012",
           quantity: 2,
           unit_price: 2500,
+          printify_blueprint_id: 145,
           is_selected: true,
         },
         {
           id: "item_2",
           product_id: "prod_2",
+          variant_id: "4013",
           quantity: 1,
           unit_price: 5000,
+          printify_blueprint_id: 145,
           is_selected: false, // NOT selected for checkout
         },
         {
           id: "item_3",
           product_id: "prod_3",
+          variant_id: "7000",
           quantity: 3,
           unit_price: 1500,
           is_selected: true,
+          product: { id: "p3", name: "Mug", slug: "mug", base_price: 1500, blueprint_id: 68 },
         },
       ],
     } as unknown as CartWithItems;
+    const shippingAddress = { first_name: "Jane", last_name: "Doe", address1: "Main 1" } as unknown as ShippingAddressT;
 
-    beforeEach(() => {
-      mockSupabase.single.mockResolvedValueOnce({
-        data: { id: "order_123", order_number: "ORD-123" },
+    it("invokes finalize-order with the payment reference and returns the order id", async () => {
+      const orderId = await OrderService.createOrderFromCart({
+        user,
+        cart,
+        paymentStatus: "paid",
+        shippingAddress,
+        idempotencyKey: "stripe_pi_123",
+        paymentMethod: "stripe",
+      });
+
+      expect(orderId).toBe("order_123");
+      expect(mockSupabase.insert).not.toHaveBeenCalled();
+      expect(mockSupabase.functions.invoke).toHaveBeenCalledWith(
+        "finalize-order",
+        expect.objectContaining({
+          body: expect.objectContaining({
+            provider: "stripe",
+            payment_id: "pi_123",
+            shipping_address: shippingAddress,
+            billing_address: null,
+          }),
+          headers: expect.objectContaining({ Authorization: "Bearer test_token" }),
+        }),
+      );
+    });
+
+    it("sends only the selected cart items, without prices", async () => {
+      await OrderService.createOrderFromCart({ user, cart, idempotencyKey: "paypal_8AB" });
+
+      const body = mockSupabase.functions.invoke.mock.calls[0][1].body;
+      expect(body.cart_items.map((item: { product_id: string }) => item.product_id)).toEqual(["prod_1", "prod_3"]);
+      expect(body.cart_items[0]).toEqual({
+        id: "item_1",
+        product_id: "prod_1",
+        product_name: "Tee",
+        variant_id: "4012",
+        variant_name: null,
+        quantity: 2,
+        custom_image_url: null,
+        printify_blueprint_id: 145,
+        is_selected: true,
+      });
+      expect(body.cart_items[1].printify_blueprint_id).toBe(68); // from the product relation
+      expect(body).not.toHaveProperty("subtotal");
+      expect(body).not.toHaveProperty("total_amount");
+      expect(JSON.stringify(body)).not.toContain("unit_price");
+    });
+
+    it("returns the existing order id when the payment was already finalized", async () => {
+      mockSupabase.functions.invoke.mockResolvedValueOnce({
+        data: { success: true, order_id: "order_existing", order_number: "ORD-1", created: false, total_cents: null },
         error: null,
       });
 
-      let selectCallCount = 0;
-      mockSupabase.select.mockImplementation(() => {
-        selectCallCount++;
-        if (selectCallCount === 1) {
-          return mockSupabase;
-        }
-        return Promise.resolve({ data: [], error: null });
-      });
+      await expect(
+        OrderService.createOrderFromCart({ user, cart, idempotencyKey: "stripe_pi_123" }),
+      ).resolves.toBe("order_existing");
     });
 
-    it("creates order items only for the selected cart items", async () => {
-      await OrderService.createOrderFromCart({
-        user,
-        cart,
-        paymentStatus: "paid",
-      });
-
-      // insert #1 = order, insert #2 = order items
-      expect(mockSupabase.insert).toHaveBeenCalledTimes(2);
-      const orderItems: Array<{ product_id: string }> =
-        mockSupabase.insert.mock.calls[1][0];
-
-      expect(orderItems).toHaveLength(2);
-      expect(orderItems.map((item) => item.product_id)).toEqual([
-        "prod_1",
-        "prod_3",
-      ]);
+    it("rejects an order without a payment reference", async () => {
+      await expect(OrderService.createOrderFromCart({ user, cart })).rejects.toThrow(/payment reference/);
+      await expect(
+        OrderService.createOrderFromCart({ user, cart, idempotencyKey: "not-a-key" }),
+      ).rejects.toThrow(/payment reference/);
+      expect(mockSupabase.functions.invoke).not.toHaveBeenCalled();
     });
 
-    it("computes order totals from the selected cart items only", async () => {
-      await OrderService.createOrderFromCart({
-        user,
-        cart,
-        paymentStatus: "paid",
-      });
-
-      const orderPayload = mockSupabase.insert.mock.calls[0][0];
-
-      // item_1 (2 × 2500) + item_3 (3 × 1500) = 9500; item_2 excluded
-      expect(orderPayload.subtotal).toBe(9500);
-      expect(orderPayload.total_amount).toBe(9500);
+    it("rejects a payment method that contradicts the payment reference", async () => {
+      await expect(
+        OrderService.createOrderFromCart({ user, cart, idempotencyKey: "stripe_pi_123", paymentMethod: "paypal" }),
+      ).rejects.toThrow(/does not match/);
+      expect(mockSupabase.functions.invoke).not.toHaveBeenCalled();
     });
 
     it("rejects an order when no cart items are selected", async () => {
       const emptySelectionCart = {
         ...cart,
-        cart_items: cart.cart_items.map((item) => ({
-          ...item,
-          is_selected: false,
-        })),
+        cart_items: cart.cart_items.map((item) => ({ ...item, is_selected: false })),
       };
 
       await expect(
-        OrderService.createOrderFromCart({
-          user,
-          cart: emptySelectionCart,
-          paymentStatus: "paid",
-        }),
+        OrderService.createOrderFromCart({ user, cart: emptySelectionCart, idempotencyKey: "stripe_pi_123" }),
       ).rejects.toThrow("Cannot create an order without selected cart items");
+      expect(mockSupabase.functions.invoke).not.toHaveBeenCalled();
+    });
 
-      expect(mockSupabase.insert).not.toHaveBeenCalled();
+    it("rejects an empty cart", async () => {
+      await expect(
+        OrderService.createOrderFromCart({ user, cart: { ...cart, cart_items: [] }, idempotencyKey: "stripe_pi_123" }),
+      ).rejects.toThrow("Cannot create an order without selected cart items");
+    });
+
+    it("surfaces the finalize-order error code (e.g. amount mismatch)", async () => {
+      mockSupabase.functions.invoke.mockResolvedValueOnce({
+        data: null,
+        error: {
+          name: "FunctionsHttpError",
+          message: "Edge Function returned a non-2xx status code",
+          context: { json: async () => ({ error: "AMOUNT_MISMATCH" }) },
+        },
+      });
+
+      await expect(
+        OrderService.createOrderFromCart({ user, cart, idempotencyKey: "stripe_pi_123" }),
+      ).rejects.toThrow(/AMOUNT_MISMATCH/);
+    });
+
+    it("fails when finalize-order returns no order id", async () => {
+      mockSupabase.functions.invoke.mockResolvedValueOnce({ data: { success: true }, error: null });
+
+      await expect(
+        OrderService.createOrderFromCart({ user, cart, idempotencyKey: "stripe_pi_123" }),
+      ).rejects.toThrow(/did not return an order id/);
     });
   });
 });

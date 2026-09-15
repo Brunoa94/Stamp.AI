@@ -1,86 +1,16 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { delay } from 'https://deno.land/std@0.168.0/async/delay.ts'
 import Stripe from 'https://esm.sh/stripe@16.12.0?target=deno'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts"
-
-/**
- * Wait for order to be created with idempotency key, then generate invoice.
- * This handles the race condition where webhook fires before frontend creates the order.
- */
-async function waitForOrderAndGenerateInvoice(
-  paymentIntentId: string,
-  maxAttempts = 6,
-  delayMs = 5000
-): Promise<void> {
-  const idempotencyKey = `stripe_${paymentIntentId}`
-  console.log(`🔄 Starting invoice generation retry loop for idempotency_key: ${idempotencyKey}`)
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    // Wait before checking (except first attempt)
-    if (attempt > 1) {
-      await delay(delayMs)
-    }
-
-    console.log(`📋 Attempt ${attempt}/${maxAttempts}: Checking for order with idempotency_key...`)
-
-    // Query orders directly by idempotency_key
-    const orderResult = await supabaseRest<Array<{ id: string }>>(
-      `orders?idempotency_key=eq.${idempotencyKey}&select=id`,
-      'GET'
-    )
-
-    const orderId = orderResult.data?.[0]?.id
-
-    if (orderId) {
-      console.log(`✅ Found order ${orderId} on attempt ${attempt}`)
-
-      // Link payment_transactions to order_id
-      const linkResult = await supabaseRest(
-        `payment_transactions?stripe_payment_intent_id=eq.${idempotencyKey.replace('stripe_', '')}`,
-        'PATCH',
-        {
-          order_id: orderId,
-          updated_at: new Date().toISOString(),
-        }
-      )
-
-      if (linkResult.error) {
-        console.error('Failed to link payment transaction to order:', linkResult.error)
-      } else {
-        console.log(`✅ Payment transaction linked to order: ${orderId}`)
-      }
-
-      // Update order payment_status to paid
-      const updateResult = await supabaseRest(
-        `orders?id=eq.${orderId}`,
-        'PATCH',
-        {
-          payment_status: 'paid',
-          payment_method: 'stripe',
-          updated_at: new Date().toISOString(),
-        }
-      )
-
-      if (updateResult.error) {
-        console.error('Failed to update order payment_status:', updateResult.error)
-      } else {
-        console.log(`✅ Order ${orderId} payment_status updated to: paid`)
-
-        // Generate the invoice
-        await tryGenerateInvoiceForOrder(orderId)
-      }
-
-      return
-    }
-
-    console.log(`⏳ No order found yet, attempt ${attempt}/${maxAttempts}`)
-  }
-
-  console.warn(`⚠️ No order found after ${maxAttempts} attempts for idempotency_key: ${idempotencyKey}`)
-}
+import { claimWebhookEvent } from "../_shared/webhookEvents.ts"
+import { buildIdempotencyKey } from "../_shared/paymentReference.ts"
+import {
+  ensureOrderForPaidPayment,
+  findOrderByIdempotencyKey,
+  loadPaymentTransaction,
+} from "../_shared/finalizePaidOrderDeps.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -169,6 +99,18 @@ serve(async (req) => {
 
     console.log('Webhook event type:', event.type)
 
+    // Atomic idempotency: record the event and skip duplicate deliveries in
+    // one step (same pattern as paypal-webhook). Stripe retries events that
+    // did not get a 2xx, so re-deliveries are expected.
+    const claim = await claimWebhookEvent('stripe', event.id, event.type, event)
+    if (claim.duplicate) {
+      console.log(`✅ Stripe webhook ${event.id} already processed, skipping`)
+      return new Response(
+        JSON.stringify({ received: true, skipped: true, reason: 'already_processed' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 },
+      )
+    }
+
     switch (event.type) {
       case 'payment_intent.succeeded': {
         console.log('Handling payment_intent.succeeded')
@@ -184,9 +126,12 @@ serve(async (req) => {
         }
 
         // CRITICAL: Use atomic UPSERT to prevent race conditions
-        // Handles case where webhook arrives before create-payment-intent
+        // Handles case where webhook arrives before create-payment-intent.
+        // Keep the structured metadata written at intent creation (line
+        // items, address) — Stripe only echoes back string values.
         const userId = paymentIntent.metadata?.user_id
         const orderId = paymentIntent.metadata?.order_id
+        const storedTransaction = await loadPaymentTransaction('stripe', paymentIntent.id).catch(() => null)
 
         const upsertResult = await supabaseRest(
           'rpc/upsert_stripe_payment_transaction',
@@ -199,7 +144,7 @@ serve(async (req) => {
             p_currency: paymentIntent.currency,
             p_status: 'succeeded',
             p_payment_method_type: paymentIntent.payment_method_types?.[0] || 'card',
-            p_metadata: paymentIntent.metadata || {},
+            p_metadata: { ...(paymentIntent.metadata || {}), ...(storedTransaction?.metadata || {}) },
             p_order_id: orderId || null
           }
         )
@@ -211,22 +156,23 @@ serve(async (req) => {
 
         console.log('✅ Payment transaction upserted atomically:', paymentIntent.id)
 
-        // Update order payment_status to "paid"
+        // Resolve the order for this payment: metadata, the transaction link,
+        // or the order minted by finalize-order (idempotency key). When none
+        // exists yet, mint it now from the stored payment context — never
+        // wait for the browser.
         // NOTE: Webhooks should ONLY update payment_status, NEVER order status
         // Order status is managed by the fulfillment service to prevent race conditions
-        let dbOrderId = paymentIntent.metadata?.order_id
-
-        // If orderId not in metadata, try to get it from payment_transactions.order_id column
-        // (set by client-side after order creation)
+        let dbOrderId: string | null | undefined = orderId || storedTransaction?.order_id
         if (!dbOrderId) {
-          const txResult = await supabaseRest<Array<{ order_id: string | null }>>(
-            `payment_transactions?stripe_payment_intent_id=eq.${paymentIntent.id}&select=order_id`,
-            'GET'
-          )
-          dbOrderId = txResult.data?.[0]?.order_id
-          if (dbOrderId) {
-            console.log(`✅ Found order_id in payment_transactions: ${dbOrderId}`)
-          }
+          dbOrderId = (await findOrderByIdempotencyKey(buildIdempotencyKey('stripe', paymentIntent.id)).catch(() => null))?.id
+        }
+        if (!dbOrderId) {
+          dbOrderId = await ensureOrderForPaidPayment({
+            provider: 'stripe',
+            paymentId: paymentIntent.id,
+            providerMetadata: paymentIntent.metadata,
+            charged: { amount: paymentIntent.amount_received / 100, currency: paymentIntent.currency },
+          })
         }
 
         if (dbOrderId) {
@@ -265,16 +211,7 @@ serve(async (req) => {
             await tryGenerateInvoiceForOrder(dbOrderId)
           }
         } else {
-          // No order_id yet - frontend hasn't created the order
-          // Start retry loop in background (non-blocking)
-          console.log('⏳ No order_id found immediately, starting retry loop...')
-
-          // Use EdgeRuntime.waitUntil if available, otherwise run inline
-          // This keeps the webhook response fast while retrying in background
-          const retryPromise = waitForOrderAndGenerateInvoice(paymentIntent.id)
-
-          // Wait for the retry to complete (webhook can take up to 30s)
-          await retryPromise
+          console.warn(`⚠️ Payment ${paymentIntent.id} succeeded but no order could be created; left in payment_recovery`)
         }
 
         // Check if this is a test payment

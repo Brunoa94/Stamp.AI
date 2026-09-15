@@ -27,7 +27,9 @@ payment provider.
    Sent at most once (`emailed_at`). Skipped silently when not configured.
 4. **Triggers** — invoice generation runs best-effort (never fails the
    payment flow) from every place an order is marked paid:
-   `stripe-webhook`, `paypal-webhook`, `capture-paypal-order`.
+   `finalize-order` (the only path that mints a paid order), `stripe-webhook`,
+   `paypal-webhook`, `mollie-webhook`, `capture-paypal-order` and
+   `process-payment-recovery`.
 5. **On demand** — the `generate-invoice` edge function lets the order's
    owner generate/fetch the invoice and returns a signed download URL. The
    whole pipeline is idempotent, so webhook and on-demand generation can
@@ -89,13 +91,32 @@ payment provider.
    supabase secrets set INVOICE_SELLER_VAT_ID=PT123456789
    ```
 
+## Amounts and units
+
+Orders are minted server-side by the `finalize-order` edge function
+(`_shared/finalizePaidOrder.ts`): every line item is repriced from
+`product_variants.price_cents`, the promo discount comes from the `promocodes`
+table and shipping/VAT from `_shared/orderTotals.ts`, and the total must equal
+the amount the provider actually charged. The browser never writes order
+amounts.
+
+- All `orders.*` money columns and `order_items.unit_price`/`total_price` hold
+  **integer cents**, as the `order_items` column types (`INTEGER`, migration
+  `20260627130000`) dictate. `payment_transactions.amount` is the provider
+  amount in major units (`DECIMAL(10,2)`).
+- VAT is **tax-inclusive**: `orders.tax_amount` (and the invoice `tax_amount`)
+  is the VAT portion contained in the total, never added on top. The rate
+  defaults to 21 % and is configured with `ORDER_VAT_RATE_BPS` (basis points),
+  shipping with `ORDER_SHIPPING_COST_CENTS` / `ORDER_FREE_SHIPPING_THRESHOLD_CENTS`,
+  and the store currency with `ORDER_CURRENCY` (default `EUR`). The same
+  variables are read by the Next.js API routes (`process.env`).
+
 ## Known caveats
 
-- `OrderServiceMapper.calculateOrderTotals` still hardcodes tax and shipping
-  to 0, so invoices show `Tax: 0.00` (the template prints a "No tax has been
-  charged" note). Real VAT/shipping calculation should land before invoices
-  are used for accounting in tax-registered jurisdictions.
-- `order_items.unit_price`/`total_price` have a dollars-vs-cents history
-  (migration `20260627130000` re-typed them as cents, while the app writes
-  dollars). Invoices snapshot the values as stored; reconcile the units
-  before relying on line-item amounts.
+- Orders created before `finalize-order` shipped were written by the browser;
+  their `order_items` amounts follow whatever the client sent at the time
+  (the app has written cents since `20260627130000`, earlier rows may be
+  dollars or NULL). Invoices snapshot the values as stored, so reconcile
+  historical rows before relying on their line-item amounts.
+- The invoice template prints a "No tax has been charged" note whenever
+  `tax_amount` is 0, which is only correct with `ORDER_VAT_RATE_BPS=0`.

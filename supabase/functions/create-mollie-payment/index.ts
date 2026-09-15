@@ -3,7 +3,11 @@ import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, validateRequest, verifyAuth } from "../_shared/validators.ts";
 import { createMolliePayment } from "../_shared/mollie.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
-import { validatePricingAgainstDatabase, type LineItemForPricingI } from "../_shared/serverPriceService.ts";
+import { validatePricingAgainstDatabase } from "../_shared/serverPriceService.ts";
+import { parseLineItemsForPricing } from "../_shared/lineItemsForPricing.ts";
+import { majorUnitsToCents, toPricingMetadata } from "../_shared/orderTotals.ts";
+import { getOrderTotalsConfig } from "../_shared/orderTotalsEnv.ts";
+import { normalizePromoCode } from "../_shared/promoDiscount.ts";
 import type { MolliePaymentRequestI, MolliePaymentResponseI } from "../../types/index.ts";
 
 const corsHeaders = {
@@ -31,7 +35,7 @@ serve(async (req) => {
       rawBody = null;
     }
 
-    let parsedBody: any = null;
+    let parsedBody: (MolliePaymentRequestI & { promo_code?: string }) | null = null;
     try {
       parsedBody = rawBody ? JSON.parse(rawBody) : {};
     } catch {
@@ -48,44 +52,32 @@ serve(async (req) => {
       order_id,
       line_items,
       shipping_address,
-      shipping_cost_cents = 0,
-      discount_cents = 0,
+      promo_code,
       metadata,
       method,
-    }: MolliePaymentRequestI & { shipping_cost_cents?: number; discount_cents?: number } = parsedBody ?? {};
+    }: MolliePaymentRequestI & { promo_code?: string } = parsedBody ?? {};
 
     // Validate request data
     const validAmount = validateRequest.amount(amount);
 
-    // SERVER-SIDE PRICE VALIDATION (C4 - Amount Tampering Prevention)
-    if (line_items && Array.isArray(line_items) && line_items.length > 0) {
-      const itemsForPricing: LineItemForPricingI[] = line_items
-        .filter((item: Record<string, unknown>) => item.blueprint_id && item.printify_variant_id)
-        .map((item: Record<string, unknown>) => ({
-          blueprint_id: Number(item.blueprint_id),
-          printify_variant_id: Number(item.printify_variant_id),
-          quantity: Number(item.quantity) || 1,
-        }));
-
-      if (itemsForPricing.length > 0) {
-        const clientTotalCents = Math.round(validAmount * 100);
-        const validation = await validatePricingAgainstDatabase({
-          lineItems: itemsForPricing,
-          clientSubtotalCents: clientTotalCents - shipping_cost_cents + discount_cents,
-          shippingCostCents: shipping_cost_cents,
-          discountCents: discount_cents,
-          clientTotalCents,
-        });
-
-        if (!validation.isValid) {
-          throw new FunctionError(
-            400,
-            "PRICE_MISMATCH",
-            validation.errorMessage || "Server-side price validation failed"
-          );
-        }
-      }
+    // SERVER-SIDE PRICE VALIDATION (C4/C6 - Amount Tampering Prevention)
+    // Every line item is repriced from the catalog and shipping, VAT and the
+    // promo discount are computed server-side. Requests whose items cannot be
+    // priced are rejected, never skipped; client-sent shipping/discount values
+    // are ignored.
+    const parsedLineItems = parseLineItemsForPricing(line_items);
+    if (parsedLineItems.errors.length > 0) {
+      throw new FunctionError(400, "INVALID_LINE_ITEMS", parsedLineItems.errors.join("; "));
     }
+    const promoCode = normalizePromoCode(promo_code ?? metadata?.promoCode ?? metadata?.promo_code);
+    const priced = await validatePricingAgainstDatabase({
+      lineItems: parsedLineItems.items,
+      promoCode,
+      clientTotalCents: majorUnitsToCents(validAmount),
+      currency,
+      config: getOrderTotalsConfig(),
+    });
+    const pricingMetadata = toPricingMetadata(priced.totals, promoCode);
 
     // Get site URL for redirect URLs
     const siteUrl = Deno.env.get("SITE_URL") || "http://localhost:3000";
@@ -105,6 +97,7 @@ serve(async (req) => {
     // Build metadata to store with payment
     const paymentMetadata = {
       ...metadata,
+      ...pricingMetadata,
       ...(resolvedOrderId ? { order_id: resolvedOrderId } : {}),
       user_id: userId,
       user_email: userEmail,
@@ -113,8 +106,11 @@ serve(async (req) => {
     };
 
     // Create Mollie payment
+    // Server-computed total (validated against the client amount above)
+    const serverAmount = priced.totals.total_cents / 100;
+
     const molliePayment = await createMolliePayment({
-      amount: validAmount,
+      amount: serverAmount,
       currency: currency.toUpperCase(),
       description: description || `Order for ${userEmail}`,
       redirectUrl: `${siteUrl}/checkout/mollie-return`,
@@ -143,7 +139,7 @@ serve(async (req) => {
           payment_provider: 'mollie',
           mollie_payment_id: molliePayment.id,
           mollie_status: molliePayment.status,
-          amount: validAmount,
+          amount: serverAmount,
           currency: currency.toLowerCase(),
           status: 'pending',
           payment_method_type: molliePayment.method || method || null,

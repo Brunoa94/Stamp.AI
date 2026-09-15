@@ -1,91 +1,57 @@
 /**
  * Server-Side Price Service
  *
- * CRITICAL SECURITY: This service fetches prices from the database,
- * NOT from client-provided data. Use this to validate order totals
- * and prevent price tampering attacks (C4).
+ * CRITICAL SECURITY: prices come from the database, never from the client.
+ * Every line item is repriced from `product_variants.price_cents`, the promo
+ * discount is derived from the `promocodes` table and shipping/VAT come from
+ * server configuration (`orderTotals.ts`). Client-supplied amounts are only
+ * ever COMPARED against the result, never used.
  *
- * All prices are stored and returned in CENTS to avoid floating point issues.
+ * All amounts are integer cents.
  */
 
+import { FunctionError } from "./errors.ts";
 import { supabaseRest } from "./supabase.ts";
+import {
+  priceLineItems,
+  type CatalogProductNameI,
+  type CatalogVariantPriceI,
+  type LineItemForPricingI,
+  type ServerPricingResultI,
+} from "./lineItemsForPricing.ts";
+import {
+  calculateOrderTotals,
+  reconcileClientTotalCents,
+  type OrderTotalsConfigI,
+  type OrderTotalsI,
+} from "./orderTotals.ts";
+import { calculatePromoDiscountCents } from "./promoDiscount.ts";
+import { fetchPromoCodeRule, type PromoCodeRowI } from "./promoCodes.ts";
 
-export interface LineItemForPricingI {
-  blueprint_id: number;
-  printify_variant_id: number;
-  quantity: number;
-}
-
-export interface PricedLineItemI extends LineItemForPricingI {
-  unit_price_cents: number;
-  total_cents: number;
-  product_name?: string;
-}
-
-export interface ServerPricingResultI {
-  success: boolean;
-  subtotal_cents: number;
-  items: PricedLineItemI[];
-  errors: string[];
-}
-
-interface ProductVariantRowI {
-  blueprint_id: number;
-  printify_variant_id: number;
-  price_cents: number;
-  color: string;
-  size: string;
-}
-
-interface CatalogProductRowI {
-  blueprint_id: number;
-  display_title: string;
-}
 
 /**
- * Fetch authoritative prices from the database for given line items.
- * Returns pricing calculated server-side, not from client data.
- *
- * @param lineItems - Array of items with blueprint_id, printify_variant_id, quantity
- * @returns Pricing result with server-computed totals
+ * Fetch authoritative prices from the database for the given line items.
  */
 export async function computeServerSidePricing(
-  lineItems: LineItemForPricingI[]
+  lineItems: LineItemForPricingI[],
 ): Promise<ServerPricingResultI> {
-  const errors: string[] = [];
-  const pricedItems: PricedLineItemI[] = [];
-
   if (!lineItems || lineItems.length === 0) {
-    return {
-      success: false,
-      subtotal_cents: 0,
-      items: [],
-      errors: ["No line items provided"],
-    };
+    return { success: false, subtotal_cents: 0, items: [], errors: ["No line items provided"] };
   }
 
-  // Extract unique blueprint IDs and variant IDs
   const blueprintIds = [...new Set(lineItems.map((item) => item.blueprint_id))];
   const variantIds = [...new Set(lineItems.map((item) => item.printify_variant_id))];
 
-  // Fetch product names for display
-  const productsResult = await supabaseRest<CatalogProductRowI[]>(
-    `catalog_products?blueprint_id=in.(${blueprintIds.join(",")})&select=blueprint_id,display_title`,
-    "GET"
-  );
-
-  const productMap = new Map<number, string>();
-  if (productsResult.data) {
-    for (const product of productsResult.data) {
-      productMap.set(product.blueprint_id, product.display_title);
-    }
-  }
-
-  // Fetch variant prices from database - THIS IS THE SOURCE OF TRUTH
-  const variantsResult = await supabaseRest<ProductVariantRowI[]>(
-    `product_variants?blueprint_id=in.(${blueprintIds.join(",")})&printify_variant_id=in.(${variantIds.join(",")})&select=blueprint_id,printify_variant_id,price_cents,color,size`,
-    "GET"
-  );
+  const [productsResult, variantsResult] = await Promise.all([
+    supabaseRest<CatalogProductNameI[]>(
+      `catalog_products?blueprint_id=in.(${blueprintIds.join(",")})&select=blueprint_id,display_title`,
+      "GET",
+    ),
+    supabaseRest<CatalogVariantPriceI[]>(
+      `product_variants?blueprint_id=in.(${blueprintIds.join(",")})&printify_variant_id=in.(${variantIds.join(",")})&select=blueprint_id,printify_variant_id,price_cents`,
+      "GET",
+    ),
+  ]);
 
   if (variantsResult.error || !variantsResult.data) {
     return {
@@ -96,122 +62,79 @@ export async function computeServerSidePricing(
     };
   }
 
-  // Build lookup map: "blueprint_id:variant_id" -> price_cents
-  const priceMap = new Map<string, number>();
-  for (const variant of variantsResult.data) {
-    const key = `${variant.blueprint_id}:${variant.printify_variant_id}`;
-    priceMap.set(key, variant.price_cents);
-  }
-
-  // Price each line item using database prices
-  let subtotalCents = 0;
-
-  for (const item of lineItems) {
-    const key = `${item.blueprint_id}:${item.printify_variant_id}`;
-    const unitPriceCents = priceMap.get(key);
-
-    if (unitPriceCents === undefined) {
-      errors.push(
-        `Price not found for blueprint ${item.blueprint_id}, variant ${item.printify_variant_id}`
-      );
-      continue;
-    }
-
-    if (item.quantity <= 0 || !Number.isInteger(item.quantity)) {
-      errors.push(`Invalid quantity for variant ${item.printify_variant_id}`);
-      continue;
-    }
-
-    const totalCents = unitPriceCents * item.quantity;
-    subtotalCents += totalCents;
-
-    pricedItems.push({
-      ...item,
-      unit_price_cents: unitPriceCents,
-      total_cents: totalCents,
-      product_name: productMap.get(item.blueprint_id),
-    });
-  }
-
-  return {
-    success: errors.length === 0,
-    subtotal_cents: subtotalCents,
-    items: pricedItems,
-    errors,
-  };
+  return priceLineItems(lineItems, variantsResult.data, productsResult.data ?? []);
 }
 
-export interface ValidatePricingInputI {
+export interface ServerOrderPricingI {
+  pricing: ServerPricingResultI;
+  promo: PromoCodeRowI | null;
+  totals: OrderTotalsI;
+}
+
+export interface PriceOrderInputI {
   lineItems: LineItemForPricingI[];
-  clientSubtotalCents: number;
-  shippingCostCents?: number;
-  discountCents?: number;
-  clientTotalCents: number;
-}
-
-export interface ValidatePricingResultI {
-  isValid: boolean;
-  serverSubtotalCents: number;
-  serverTotalCents: number;
-  clientTotalCents: number;
-  differenceCents: number;
-  errorMessage?: string;
+  /** Normalised promo code (see `normalizePromoCode`) or null. */
+  promoCode: string | null;
+  config: OrderTotalsConfigI;
 }
 
 /**
- * Validate that client-provided total matches server-computed total.
- * This is the main defense against price tampering.
- *
- * @param input - Client totals and line items to validate
- * @returns Validation result
+ * Price a whole order server-side: catalog unit prices, promo discount,
+ * shipping and VAT. Throws when any item cannot be priced or the promo code
+ * does not exist.
+ */
+export async function priceOrderFromCatalog({
+  lineItems,
+  promoCode,
+  config,
+}: PriceOrderInputI): Promise<ServerOrderPricingI> {
+  const pricing = await computeServerSidePricing(lineItems);
+  if (!pricing.success) {
+    throw new FunctionError(400, "PRICING_FAILED", `Server pricing failed: ${pricing.errors.join(", ")}`);
+  }
+
+  const promo = promoCode ? await fetchPromoCodeRule(promoCode) : null;
+  if (promoCode && !promo) {
+    throw new FunctionError(400, "INVALID_PROMO_CODE", "Promo code not found");
+  }
+
+  const totals = calculateOrderTotals({
+    subtotalCents: pricing.subtotal_cents,
+    discountCents: calculatePromoDiscountCents(promo, pricing.subtotal_cents),
+    config,
+  });
+
+  return { pricing, promo, totals };
+}
+
+export interface ValidatePricingInputI extends PriceOrderInputI {
+  clientTotalCents: number;
+  /** Currency the client wants to pay in; must be the store currency. */
+  currency: string;
+}
+
+/**
+ * Price the order server-side and require the client's claimed total to match
+ * exactly. This is the main defense against price tampering before a payment
+ * intent is created with the provider.
  */
 export async function validatePricingAgainstDatabase(
-  input: ValidatePricingInputI
-): Promise<ValidatePricingResultI> {
-  const {
-    lineItems,
-    clientTotalCents,
-    shippingCostCents = 0,
-    discountCents = 0,
-  } = input;
-
-  // Compute server-side pricing
-  const pricing = await computeServerSidePricing(lineItems);
-
-  if (!pricing.success) {
-    return {
-      isValid: false,
-      serverSubtotalCents: 0,
-      serverTotalCents: 0,
-      clientTotalCents,
-      differenceCents: clientTotalCents,
-      errorMessage: `Server pricing failed: ${pricing.errors.join(", ")}`,
-    };
+  input: ValidatePricingInputI,
+): Promise<ServerOrderPricingI> {
+  if (typeof input.currency !== "string" || input.currency.toUpperCase() !== input.config.currency) {
+    throw new FunctionError(400, "CURRENCY_MISMATCH", `Payments must be made in ${input.config.currency}`);
   }
 
-  const serverTotalCents =
-    pricing.subtotal_cents + shippingCostCents - discountCents;
+  const priced = await priceOrderFromCatalog(input);
+  const reconciliation = reconcileClientTotalCents(priced.totals, input.clientTotalCents);
 
-  // Allow 1 cent tolerance for rounding
-  const differenceCents = Math.abs(serverTotalCents - clientTotalCents);
-  const isValid = differenceCents <= 1;
-
-  if (!isValid) {
-    return {
-      isValid: false,
-      serverSubtotalCents: pricing.subtotal_cents,
-      serverTotalCents,
-      clientTotalCents,
-      differenceCents,
-      errorMessage: `Price mismatch: server computed ${serverTotalCents} cents, client sent ${clientTotalCents} cents (difference: ${differenceCents} cents)`,
-    };
+  if (!reconciliation.ok) {
+    throw new FunctionError(
+      400,
+      "PRICE_MISMATCH",
+      `Price mismatch: server computed ${priced.totals.total_cents} cents, client sent ${input.clientTotalCents} cents (difference: ${reconciliation.differenceCents} cents)`,
+    );
   }
 
-  return {
-    isValid: true,
-    serverSubtotalCents: pricing.subtotal_cents,
-    serverTotalCents,
-    clientTotalCents,
-    differenceCents,
-  };
+  return priced;
 }

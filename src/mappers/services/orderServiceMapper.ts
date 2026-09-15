@@ -1,8 +1,8 @@
 import type { Database } from "@/types/database.types";
 import type { OrderWithItemsT, CreateOrderT } from "@/types/order";
 import type { CartItem } from "@/types/cart";
-import type { UserI } from "../../../supabase/types";
-import type { ShippingAddressT } from "@/schemas/checkout";
+import type { FinalizeOrderCartItemT } from "@/types/finalizeOrder";
+import { calculateOrderTotals as calculateServerOrderTotals } from "../../../supabase/functions/_shared/orderTotals";
 
 type OrderRow = Database['public']['Tables']['orders']['Row'];
 type OrderInsert = Database['public']['Tables']['orders']['Insert'];
@@ -49,24 +49,29 @@ export class OrderServiceMapper {
   }
 
   /**
-   * Calculate order totals from items
+   * Calculate order totals from items (all amounts in cents).
+   *
+   * DISPLAY ONLY. Orders are minted server-side by the `finalize-order` edge
+   * function, which reprices every item from the catalog and applies the same
+   * shared rules (`_shared/orderTotals.ts`), so this mapper can never disagree
+   * with the server about shipping or VAT.
    */
-  static calculateOrderTotals(items: CartItem[]) {
+  static calculateOrderTotals(items: CartItem[], discountAmount: number = 0) {
     const subtotal = items.reduce((sum, item) => {
       return sum + ((item.unit_price ?? 0) * (item.quantity ?? 1));
     }, 0);
 
-    // Future: Add tax and shipping calculations
-    const taxRate = 0; // 0% for now
-    const taxAmount = subtotal * taxRate;
-    const shippingCost = 0; // Free shipping for now
-    const totalAmount = subtotal + taxAmount + shippingCost;
+    const totals = calculateServerOrderTotals({
+      subtotalCents: subtotal,
+      discountCents: discountAmount,
+    });
 
     return {
-      subtotal,
-      tax_amount: taxAmount,
-      shipping_cost: shippingCost,
-      total_amount: totalAmount,
+      subtotal: totals.subtotal_cents,
+      tax_amount: totals.tax_cents,
+      shipping_cost: totals.shipping_cents,
+      discount_amount: totals.discount_cents,
+      total_amount: totals.total_cents,
     };
   }
 
@@ -92,8 +97,8 @@ export class OrderServiceMapper {
       customer_email: createOrder.customer_email,
       customer_name: createOrder.customer_name,
       customer_phone: createOrder.customer_phone,
-      shipping_address: createOrder.shipping_address as any,
-      billing_address: createOrder.billing_address as any,
+      shipping_address: createOrder.shipping_address as OrderInsert["shipping_address"],
+      billing_address: createOrder.billing_address as OrderInsert["billing_address"],
       subtotal: createOrder.subtotal,
       tax_amount: createOrder.tax_amount,
       shipping_cost: createOrder.shipping_cost,
@@ -189,48 +194,21 @@ export class OrderServiceMapper {
   }
 
   /**
-   * Map user and totals to create order payload
+   * Cart items as sent to the `finalize-order` edge function. Only identity
+   * and display fields are sent: the server reprices every item from the
+   * catalog, so client prices never reach the order.
    */
-  static mapUserAndTotalsToCreateOrder(
-    user: UserI,
-    orderNumber: string,
-    totals: {
-      subtotal: number;
-      tax_amount: number;
-      shipping_cost: number;
-      total_amount: number;
-    },
-    shippingAddress?: ShippingAddressT,
-    billingAddress?: ShippingAddressT,
-    discountAmount: number = 0,
-    paymentStatus: string = "pending",
-    orderStatus: string = "pending",
-    idempotencyKey?: string,
-    paymentMethod?: string
-  ): CreateOrderT & { idempotency_key?: string | null } {
-    const fullName = [shippingAddress?.first_name, shippingAddress?.last_name]
-      .filter(Boolean)
-      .join(" ")
-      .trim();
-
-    return {
-      user_id: user.id,
-      customer_email: shippingAddress?.email || user.email || "",
-      customer_name: fullName || null,
-      customer_phone: shippingAddress?.phone || null,
-      shipping_address: shippingAddress || null,
-      billing_address: billingAddress || shippingAddress || null, // Use billing if provided, fallback to shipping
-      order_number: orderNumber,
-      status: orderStatus,
-      payment_status: paymentStatus,
-      payment_method: paymentMethod || null,
-      subtotal: totals.subtotal,
-      shipping_cost: totals.shipping_cost,
-      tax_amount: totals.tax_amount,
-      discount_amount: discountAmount,
-      total_amount: totals.total_amount,
-      currency: "EUR", // Default currency
-      idempotency_key: idempotencyKey || null,
-    };
+  static mapCartItemsToFinalizeOrderItems(items: CartItem[]): FinalizeOrderCartItemT[] {
+    return items.map((item) => ({
+      id: item.id,
+      product_id: item.product_id ?? null,
+      product_name: item.product_name ?? item.product?.name ?? null,
+      variant_id: item.variant_id ?? null,
+      variant_name: item.variant_name ?? item.variant?.name ?? null,
+      quantity: item.quantity ?? 1,
+      custom_image_url: item.custom_image_url ?? null,
+      printify_blueprint_id: item.printify_blueprint_id ?? item.product?.blueprint_id ?? null,
+      is_selected: item.is_selected,
+    }));
   }
 }

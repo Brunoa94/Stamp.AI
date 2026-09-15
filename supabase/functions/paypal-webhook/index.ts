@@ -1,70 +1,16 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { delay } from "https://deno.land/std@0.168.0/async/delay.ts";
 import { handleError } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { verifyPayPalWebhook } from "../_shared/paypal.ts";
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
-
-/**
- * Wait for order to be created with idempotency key, then generate invoice.
- * This handles the race condition where webhook fires before frontend creates the order.
- */
-async function waitForOrderAndGenerateInvoice(
-  paypalOrderId: string,
-  maxAttempts = 6,
-  delayMs = 5000
-): Promise<void> {
-  const idempotencyKey = `paypal_${paypalOrderId}`;
-  console.log(`🔄 Starting invoice generation retry loop for idempotency_key: ${idempotencyKey}`);
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    // Wait before checking (except first attempt)
-    if (attempt > 1) {
-      await delay(delayMs);
-    }
-
-    console.log(`📋 Attempt ${attempt}/${maxAttempts}: Checking for order with idempotency_key...`);
-
-    // Query orders directly by idempotency_key
-    const orderResult = await supabaseRest(
-      `orders?idempotency_key=eq.${idempotencyKey}&select=id`,
-      "GET"
-    );
-
-    const orderId = orderResult.data?.[0]?.id;
-
-    if (orderId) {
-      console.log(`✅ Found order ${orderId} on attempt ${attempt}`);
-
-      // Update order payment_status to paid
-      const updateResult = await supabaseRest(
-        `orders?id=eq.${orderId}`,
-        "PATCH",
-        {
-          payment_status: "paid",
-          payment_method: "paypal",
-          updated_at: new Date().toISOString(),
-        }
-      );
-
-      if (updateResult.error) {
-        console.error("Failed to update order payment_status:", updateResult.error);
-      } else {
-        console.log(`✅ Order ${orderId} payment_status updated to: paid`);
-
-        // Generate the invoice
-        await tryGenerateInvoiceForOrder(orderId);
-      }
-
-      return;
-    }
-
-    console.log(`⏳ No order found yet, attempt ${attempt}/${maxAttempts}`);
-  }
-
-  console.warn(`⚠️ No order found after ${maxAttempts} attempts for idempotency_key: ${idempotencyKey}`);
-}
+import { claimWebhookEvent } from "../_shared/webhookEvents.ts";
+import { buildIdempotencyKey } from "../_shared/paymentReference.ts";
+import {
+  ensureOrderForPaidPayment,
+  findOrderByIdempotencyKey,
+  loadPaymentTransaction,
+} from "../_shared/finalizePaidOrderDeps.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -102,31 +48,13 @@ serve(async (req) => {
     const eventId = event.id || `${event.event_type}_${event.resource?.id}`;
 
     // Atomic: Record event and check if it was already processed in one operation
-    const eventRecordResult = await supabaseRest(
-      "rpc/record_webhook_event_atomic",
-      "POST",
-      {
-        p_provider: "paypal",
-        p_event_id: eventId,
-        p_event_type: event.event_type,
-        p_payload: event,
-      }
-    );
-
-    // If the function returned an existing event (created_at is old), skip processing
-    if (eventRecordResult.data && eventRecordResult.data.created_at) {
-      const createdAt = new Date(eventRecordResult.data.created_at);
-      const now = new Date();
-      const ageInSeconds = (now.getTime() - createdAt.getTime()) / 1000;
-
-      // If event was created more than 5 seconds ago, it's a duplicate
-      if (ageInSeconds > 5) {
-        console.log(`✅ PayPal webhook ${eventId} already processed ${ageInSeconds.toFixed(0)}s ago, skipping`);
-        return new Response(
-          JSON.stringify({ received: true, skipped: true, reason: "already_processed" }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
-        );
-      }
+    const claim = await claimWebhookEvent("paypal", eventId, event.event_type, event);
+    if (claim.duplicate) {
+      console.log(`✅ PayPal webhook ${eventId} already processed, skipping`);
+      return new Response(
+        JSON.stringify({ received: true, skipped: true, reason: "already_processed" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      );
     }
 
     switch (event.event_type) {
@@ -148,10 +76,12 @@ serve(async (req) => {
 
         if (orderId) {
           // CRITICAL: Use atomic UPSERT to handle race conditions
-          // Extract metadata from capture if available
+          // Extract metadata from capture if available; keep the structured
+          // metadata written at order creation (address, line items) since
+          // custom_id only carries a subset.
           const customId = capture.custom_id ? JSON.parse(capture.custom_id) : {};
           const userId = customId.user_id;
-          const dbOrderId = customId.order_id;
+          const storedTransaction = await loadPaymentTransaction("paypal", orderId).catch(() => null);
 
           const upsertResult = await supabaseRest(
             "rpc/upsert_paypal_payment_transaction",
@@ -159,12 +89,12 @@ serve(async (req) => {
             {
               p_paypal_order_id: orderId,
               p_user_id: userId || null,
-              p_order_id: dbOrderId || null,
+              p_order_id: customId.order_id || null,
               p_amount: parseFloat(capture.amount.value),
               p_currency: capture.amount.currency_code.toLowerCase(),
               p_status: "succeeded",
               p_paypal_capture_id: capture.id,
-              p_metadata: customId,
+              p_metadata: { ...customId, ...(storedTransaction?.metadata || {}) },
             }
           );
 
@@ -173,12 +103,26 @@ serve(async (req) => {
           } else {
             console.log("✅ Payment transaction upserted atomically:", orderId);
 
-            // Update order payment_status if order_id exists
-            if (dbOrderId || upsertResult.data?.order_id) {
-              const finalOrderId = dbOrderId || upsertResult.data?.order_id;
-              // ✅ Update payment_status to "paid"
-              // NOTE: Webhooks should ONLY update payment_status, NEVER order status
-              // Order status is managed by the fulfillment service to prevent race conditions
+            // Resolve the order: custom_id, the transaction link, the order
+            // minted by finalize-order, or mint it now from the stored payment
+            // context — never wait for the browser.
+            // NOTE: Webhooks should ONLY update payment_status, NEVER order status
+            // Order status is managed by the fulfillment service to prevent race conditions
+            let finalOrderId: string | null | undefined =
+              customId.order_id || upsertResult.data?.order_id || storedTransaction?.order_id;
+            if (!finalOrderId) {
+              finalOrderId = (await findOrderByIdempotencyKey(buildIdempotencyKey("paypal", orderId)).catch(() => null))?.id;
+            }
+            if (!finalOrderId) {
+              finalOrderId = await ensureOrderForPaidPayment({
+                provider: "paypal",
+                paymentId: orderId,
+                providerMetadata: customId,
+                charged: { amount: parseFloat(capture.amount.value), currency: capture.amount.currency_code },
+              });
+            }
+
+            if (finalOrderId) {
               const orderResult = await supabaseRest(
                 `orders?id=eq.${finalOrderId}`,
                 "PATCH",
@@ -198,10 +142,7 @@ serve(async (req) => {
                 await tryGenerateInvoiceForOrder(finalOrderId);
               }
             } else {
-              // No order_id yet - frontend hasn't created the order
-              // Start retry loop to wait for order creation
-              console.log("⏳ No order_id found immediately, starting retry loop...");
-              await waitForOrderAndGenerateInvoice(orderId);
+              console.warn(`⚠️ PayPal payment ${orderId} captured but no order could be created; left in payment_recovery`);
             }
           }
         }
