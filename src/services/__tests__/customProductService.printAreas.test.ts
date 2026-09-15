@@ -10,6 +10,18 @@ import { CustomProductService } from "../customProductService";
  *   placement.
  */
 
+// The service requires a signed-in user's JWT for the edge-function calls.
+vi.mock("@/lib/supabase/client", () => ({
+  createClient: () => ({
+    auth: {
+      getSession: vi.fn().mockResolvedValue({
+        data: { session: { access_token: "test-access-token" } },
+        error: null,
+      }),
+    },
+  }),
+}));
+
 vi.mock("@/services/productService", () => ({
   ProductService: {
     mapPrintifyProductToInput: vi.fn().mockReturnValue({}),
