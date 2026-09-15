@@ -2,19 +2,13 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
-import { useUserCoins, useDeductCoin } from "./coinsQueries";
+import { useUserCoins } from "./coinsQueries";
 import { CoinsService } from "@/services/coinsService";
 import { useUser } from "@/queries/authQueries";
 
 // Mock dependencies
 vi.mock("@/services/coinsService");
 vi.mock("@/queries/authQueries");
-vi.mock("@/hooks/useErrorHandler", () => ({
-  useErrorHandler: () => ({
-    handleError: vi.fn(),
-    handleSuccess: vi.fn(),
-  }),
-}));
 
 /**
  * ========================================================================
@@ -27,9 +21,19 @@ describe("coinsQueries", () => {
   let queryClient: QueryClient;
 
   const createWrapper = () => {
-    return ({ children }: { children: ReactNode }) => (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    );
+    function Wrapper({ children }: { children: ReactNode }) {
+      return (
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      );
+    }
+    return Wrapper;
+  };
+
+  const mockUser = (data: { id: string; email?: string } | null) => {
+    vi.mocked(useUser).mockReturnValue({
+      data,
+      isLoading: false,
+    } as unknown as ReturnType<typeof useUser>);
   };
 
   beforeEach(() => {
@@ -55,10 +59,7 @@ describe("coinsQueries", () => {
 
   describe("useUserCoins", () => {
     it("should fetch coins when user is authenticated", async () => {
-      vi.mocked(useUser).mockReturnValue({
-        data: { id: "user-123", email: "test@example.com" },
-        isLoading: false,
-      } as any);
+      mockUser({ id: "user-123", email: "test@example.com" });
 
       vi.mocked(CoinsService.getUserCoins).mockResolvedValueOnce({
         coins: 5,
@@ -81,10 +82,7 @@ describe("coinsQueries", () => {
     });
 
     it("should not fetch when user is not authenticated", async () => {
-      vi.mocked(useUser).mockReturnValue({
-        data: null,
-        isLoading: false,
-      } as any);
+      mockUser(null);
 
       const { result } = renderHook(() => useUserCoins(), {
         wrapper: createWrapper(),
@@ -96,10 +94,7 @@ describe("coinsQueries", () => {
     });
 
     it("should handle loading state", async () => {
-      vi.mocked(useUser).mockReturnValue({
-        data: { id: "user-123" },
-        isLoading: false,
-      } as any);
+      mockUser({ id: "user-123" });
 
       // Don't resolve immediately
       vi.mocked(CoinsService.getUserCoins).mockImplementation(
@@ -114,10 +109,7 @@ describe("coinsQueries", () => {
     });
 
     it("should handle error state", async () => {
-      vi.mocked(useUser).mockReturnValue({
-        data: { id: "user-123" },
-        isLoading: false,
-      } as any);
+      mockUser({ id: "user-123" });
 
       vi.mocked(CoinsService.getUserCoins).mockRejectedValueOnce(
         new Error("Failed to fetch coins")
@@ -132,102 +124,6 @@ describe("coinsQueries", () => {
       });
 
       expect(result.current.error?.message).toContain("Failed to fetch coins");
-    });
-  });
-
-  /**
-   * ========================================================================
-   * useDeductCoin Tests
-   * ========================================================================
-   */
-
-  describe("useDeductCoin", () => {
-    it("should call deduct_coin RPC and return true on success", async () => {
-      vi.mocked(useUser).mockReturnValue({
-        data: { id: "user-123" },
-        isLoading: false,
-      } as any);
-
-      vi.mocked(CoinsService.deductCoin).mockResolvedValueOnce(true);
-
-      const { result } = renderHook(() => useDeductCoin(), {
-        wrapper: createWrapper(),
-      });
-
-      const deductResult = await result.current.mutateAsync();
-
-      expect(deductResult).toBe(true);
-      expect(CoinsService.deductCoin).toHaveBeenCalledWith("user-123");
-    });
-
-    it("should return false when no coins available", async () => {
-      vi.mocked(useUser).mockReturnValue({
-        data: { id: "user-123" },
-        isLoading: false,
-      } as any);
-
-      vi.mocked(CoinsService.deductCoin).mockResolvedValueOnce(false);
-
-      const { result } = renderHook(() => useDeductCoin(), {
-        wrapper: createWrapper(),
-      });
-
-      const deductResult = await result.current.mutateAsync();
-
-      expect(deductResult).toBe(false);
-    });
-
-    it("should throw error when user is not authenticated", async () => {
-      vi.mocked(useUser).mockReturnValue({
-        data: null,
-        isLoading: false,
-      } as any);
-
-      const { result } = renderHook(() => useDeductCoin(), {
-        wrapper: createWrapper(),
-      });
-
-      await expect(result.current.mutateAsync()).rejects.toThrow(
-        "User not authenticated"
-      );
-    });
-
-    it("should handle mutation errors", async () => {
-      vi.mocked(useUser).mockReturnValue({
-        data: { id: "user-123" },
-        isLoading: false,
-      } as any);
-
-      vi.mocked(CoinsService.deductCoin).mockRejectedValueOnce(
-        new Error("RPC failed")
-      );
-
-      const { result } = renderHook(() => useDeductCoin(), {
-        wrapper: createWrapper(),
-      });
-
-      await expect(result.current.mutateAsync()).rejects.toThrow("RPC failed");
-    });
-
-    it("should invalidate coins query on success", async () => {
-      vi.mocked(useUser).mockReturnValue({
-        data: { id: "user-123" },
-        isLoading: false,
-      } as any);
-
-      vi.mocked(CoinsService.deductCoin).mockResolvedValueOnce(true);
-
-      const invalidateQueriesSpy = vi.spyOn(queryClient, "invalidateQueries");
-
-      const { result } = renderHook(() => useDeductCoin(), {
-        wrapper: createWrapper(),
-      });
-
-      await result.current.mutateAsync();
-
-      expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-        queryKey: ["coins", "user-123"],
-      });
     });
   });
 });

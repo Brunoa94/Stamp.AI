@@ -1,9 +1,8 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { CoinsService, UserCoins } from "@/services/coinsService";
 import { useUser } from "@/queries/authQueries";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 // Query keys
 export const coinsKeys = {
@@ -39,36 +38,6 @@ export function useUserCoins() {
   });
 }
 
-// ============================================
-// MUTATIONS (Write Operations)
-// ============================================
-
-/**
- * Deduct one coin from user's balance
- * Invalidates coins query on success
- * Returns boolean indicating if deduction was successful
- */
-export function useDeductCoin() {
-  const queryClient = useQueryClient();
-  const { data: user } = useUser();
-  const userId = user?.id;
-  const { handleError } = useErrorHandler();
-
-  return useMutation({
-    mutationFn: async (): Promise<boolean> => {
-      if (!userId) {
-        throw new Error("User not authenticated");
-      }
-      return CoinsService.deductCoin(userId);
-    },
-    onSuccess: () => {
-      // Invalidate coins query to refetch updated balance
-      if (userId) {
-        queryClient.invalidateQueries({ queryKey: coinsKeys.user(userId) });
-      }
-    },
-    onError: (error: Error) => {
-      handleError(error);
-    },
-  });
-}
+// Coins are spent server-side only: /api/generate-image calls deduct_coin as
+// the caller (and refund_coin on failure). Consumers invalidate coinsKeys.all
+// after such a request; there is deliberately no client-side deduct mutation.
