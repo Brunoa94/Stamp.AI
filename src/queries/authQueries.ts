@@ -100,8 +100,13 @@ export function useRegister() {
   const { handleError, handleSuccess } = useErrorHandler();
 
   return useMutation({
-    mutationFn: (userData: RegisterI): Promise<AuthResponseI> => {
-      return AuthService.register(userData);
+    mutationFn: (
+      { userData, captchaToken }: {
+        userData: RegisterI;
+        captchaToken?: string | null;
+      },
+    ): Promise<AuthResponseI> => {
+      return AuthService.register(userData, captchaToken);
     },
     onSuccess: (data) => {
       AnalyticsService.track("sign_up", { method: "email" });

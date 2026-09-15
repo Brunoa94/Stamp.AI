@@ -12,6 +12,7 @@ import PaymentSuccess from "@/features/checkout/ui/PaymentSuccess/PaymentSuccess
 import PaymentError from "@/features/checkout/ui/components/PaymentError";
 import { OrderService } from "@/services/orderService";
 import { CartService } from "@/services/cartService";
+import { CartServiceMapper } from "@/mappers/services/cartServiceMapper";
 import { RefundService } from "@/services/refundService";
 import { PaymentRecoveryService } from "@/services/paymentRecoveryService";
 import { InvoiceService } from "@/services/invoiceService";
@@ -28,6 +29,7 @@ import {
 } from "@/lib/mollie";
 import type { MolliePaymentStatus } from "@/lib/mollie";
 import type { ShippingAddressT } from "@/schemas/checkout";
+import type { CartWithItems } from "@/types/cart";
 import { captureError } from "@/lib/observability/errorCapture";
 import {
   UserFacingError,
@@ -40,7 +42,7 @@ import {
   useUpdatePaymentStatus,
 } from "@/queries/orderQueries";
 import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
-import { useClearCart } from "@/queries/cartQueries";
+import { useRemoveCartItems } from "@/queries/cartQueries";
 import { useVerifyMolliePayment } from "@/queries/mollieQueries";
 import { useUser } from "@/queries/authQueries";
 import { UserI } from "@/supabase/types";
@@ -102,7 +104,7 @@ function MollieReturnContent() {
   const createPrintifyOrder = useCreatePrintifyOrder();
   const updateOrderStatus = useUpdateOrderStatus();
   const updatePaymentStatus = useUpdatePaymentStatus();
-  const clearCart = useClearCart();
+  const removeCartItems = useRemoveCartItems();
   const verifyMolliePayment = useVerifyMolliePayment();
   const { data: user, isLoading: isUserLoading } = useUser();
 
@@ -133,9 +135,15 @@ function MollieReturnContent() {
         let storedShippingAddress = stored?.shippingAddress ?? null;
         let storedCartId = stored?.cartId ?? null;
         let storedOrderAmount = stored?.orderAmount ?? null;
+        let storedCartSnapshot = stored?.cartSnapshot ?? null;
 
         // ✅ CRITICAL FIX: If sessionStorage is empty, try to recover from database
-        if (!storedPaymentId || !storedLineItems || !storedShippingAddress) {
+        if (
+          !storedPaymentId ||
+          !storedLineItems ||
+          !storedShippingAddress ||
+          !storedCartSnapshot
+        ) {
           console.log(
             "⚠️ SessionStorage empty, attempting database recovery...",
           );
@@ -160,6 +168,9 @@ function MollieReturnContent() {
                 mollieRecovery.shipping_address,
               );
               storedOrderAmount = String(mollieRecovery.amount);
+              storedCartSnapshot = JSON.stringify(
+                mollieRecovery.cart_snapshot,
+              );
 
               if (mollieRecovery.cart_snapshot?.id) {
                 storedCartId = mollieRecovery.cart_snapshot.id;
@@ -241,8 +252,23 @@ function MollieReturnContent() {
         const parsedShippingAddress = JSON.parse(
           storedShippingAddress,
         ) as ShippingAddressT;
+        // The live-cart fallback only supports sessions that were already in
+        // flight before immutable snapshots were introduced.
+        // Legacy recovery snapshots include unselected rows. Normalize once
+        // so recovery records, order creation and cleanup use the same items.
+        const cartSnapshot = CartServiceMapper.mapCartToCheckoutCart(
+          storedCartSnapshot
+            ? (JSON.parse(storedCartSnapshot) as CartWithItems)
+            : await CartService.getCheckoutCart(storedCartId),
+        );
 
         if (!Array.isArray(parsedLineItems) || parsedLineItems.length === 0) {
+          throw new UserFacingError(t("errorNoOrderItems"));
+        }
+        if (
+          !Array.isArray(cartSnapshot.cart_items) ||
+          cartSnapshot.cart_items.length === 0
+        ) {
           throw new UserFacingError(t("errorNoOrderItems"));
         }
 
@@ -260,14 +286,13 @@ function MollieReturnContent() {
         // If verification fails, this allows payment to be recovered later
         if (storedCartId && user) {
           try {
-            const cart = await CartService.getCart(storedCartId);
             await PaymentRecoveryService.recordPaymentForRecovery({
               paymentProvider: "mollie",
               paymentIntentId: storedPaymentId,
               paymentStatus: "pending", // Will be updated by webhook
               amount: orderAmount,
               currency: "EUR",
-              cartSnapshot: cart,
+              cartSnapshot,
               shippingAddress: parsedShippingAddress,
               lineItems: validatedLineItems,
               metadata: { idempotency_key: idempotencyKey },
@@ -362,14 +387,13 @@ function MollieReturnContent() {
           // Update status to "succeeded" now that we confirmed payment
           if (storedCartId && user) {
             try {
-              const cart = await CartService.getCart(storedCartId);
               await PaymentRecoveryService.recordPaymentForRecovery({
                 paymentProvider: "mollie",
                 paymentIntentId: storedPaymentId,
                 paymentStatus: "succeeded",
                 amount: orderAmount,
                 currency: "EUR",
-                cartSnapshot: cart,
+                cartSnapshot,
                 shippingAddress: parsedShippingAddress,
                 lineItems: validatedLineItems,
                 metadata: { idempotency_key: idempotencyKey },
@@ -385,6 +409,9 @@ function MollieReturnContent() {
           }
 
           let createdOrderId: string | null = null;
+          const orderedCartItemIds = cartSnapshot.cart_items.map(
+            (item) => item.id,
+          );
 
           // ── Pipeline wrapped in timeout (same as handlePaymentSuccess) ──
 
@@ -411,12 +438,11 @@ function MollieReturnContent() {
             }
 
             try {
-              const cart = await CartService.getCart(storedCartId);
               console.log("📝 Creating order from cart...");
               createdOrderId =
                 (await createOrderFromCart.mutateAsync({
                   user: user as UserI,
-                  cart,
+                  cart: cartSnapshot,
                   paymentStatus: "paid",
                   shippingAddress: parsedShippingAddress,
                   idempotencyKey,
@@ -566,15 +592,16 @@ function MollieReturnContent() {
             }
 
             // ── Stage 5: Cart cleanup (non-blocking) ──
+            // Only the ordered items leave the cart; unselected items stay.
             if (storedCartId) {
               try {
-                await clearCart.mutateAsync();
-                console.log("✅ Cart cleared successfully");
+                await removeCartItems.mutateAsync(orderedCartItemIds);
+                console.log("✅ Ordered items removed from cart");
               } catch (cartError) {
                 captureError(cartError, {
                   service: "MollieReturn",
-                  action: "clearCart",
-                  metadata: { storedCartId },
+                  action: "removeCartItems",
+                  metadata: { storedCartId, orderedCartItemIds },
                 });
               }
             }

@@ -149,6 +149,16 @@ export class CartService {
   }
 
   /**
+   * Get the cart as it is being checked out: only the items the user
+   * selected on the cart page (`is_selected`). Use this for order creation,
+   * payment-recovery snapshots and post-payment cleanup.
+   */
+  static async getCheckoutCart(cartId: string): Promise<CartWithItems> {
+    const cart = await this.getCart(cartId);
+    return CartServiceMapper.mapCartToCheckoutCart(cart);
+  }
+
+  /**
    * Add item to cart
    * Returns CartItem with full product and variant information
    */
@@ -315,6 +325,37 @@ export class CartService {
         error,
         service: "Cart",
         action: "Remove Cart Item",
+      });
+    }
+  }
+
+  /**
+   * Remove a specific set of items from the cart (e.g. the items that were
+   * just ordered). Unlike clearCart, untouched items stay in the cart.
+   */
+  static async removeCartItems(itemIds: string[]): Promise<void> {
+    if (itemIds.length === 0) return;
+
+    try {
+      const supabase = this.getSupabase();
+
+      const { error } = await supabase
+        .from("cart_items")
+        .delete()
+        .in("id", itemIds);
+
+      if (error) {
+        throw ErrorClient.handleError({
+          error,
+          service: "Cart",
+          action: "Remove Cart Items",
+        });
+      }
+    } catch (error) {
+      throw ErrorClient.handleError({
+        error,
+        service: "Cart",
+        action: "Remove Cart Items",
       });
     }
   }

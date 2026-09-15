@@ -5,34 +5,26 @@ import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { paypalRequest } from "../_shared/paypal.ts";
 import { mollieRequest } from "../_shared/mollie.ts";
+import { requireUser } from "../_shared/authGuard.ts";
+import { FunctionError } from "../_shared/errors.ts";
+import { authorizeRefund, type RefundRequest, type RefundOrder, type RefundPayment } from "./authorization.ts";
+import { verifyPaidPayment } from "../_shared/verifyPaidPayment.ts";
+import { requirePaymentCurrency } from "../_shared/paymentProof.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-type PaymentProvider = "stripe" | "paypal" | "mollie";
-
-interface RefundRequestI {
-  order_id: string;
-  payment_provider: PaymentProvider;
-  amount?: number;
-  currency?: string;
-  reason?: string;
-  // Provider-specific payment identifiers
-  stripe_payment_intent_id?: string;
-  paypal_capture_id?: string;
-  mollie_payment_id?: string;
-}
-
 /**
  * Idempotency guard — check whether this order already has a refund record.
  */
 async function isAlreadyRefunded(orderId: string): Promise<boolean> {
   const result = await supabaseRest<unknown[]>(
-    `payment_transactions?order_id=eq.${orderId}&status=eq.refunded`,
+    `payment_transactions?order_id=eq.${encodeURIComponent(orderId)}&status=eq.refunded`,
     "GET"
   );
+  if (result.error) throw new Error("Could not verify refund status");
   return Array.isArray(result.data) && result.data.length > 0;
 }
 
@@ -41,12 +33,13 @@ async function isAlreadyRefunded(orderId: string): Promise<boolean> {
  */
 async function refundStripe(
   stripePaymentIntentId: string,
+  orderId: string,
   amount?: number,
   reason?: string
 ): Promise<string> {
   const stripeSecretKey = validateEnvVars.stripeSecretKey();
   const stripe = new Stripe(stripeSecretKey, {
-    apiVersion: "2023-10-16",
+    apiVersion: "2024-06-20",
     httpClient: Stripe.createFetchHttpClient(),
   });
 
@@ -65,7 +58,7 @@ async function refundStripe(
   }
 
   try {
-    const refund = await stripe.refunds.create(refundParams as Parameters<typeof stripe.refunds.create>[0]);
+    const refund = await stripe.refunds.create(refundParams as Parameters<typeof stripe.refunds.create>[0], { idempotencyKey: `order-refund-${orderId}` });
     return refund.id;
   } catch (error: unknown) {
     // Handle idempotency: if charge already refunded, get existing refund ID
@@ -73,16 +66,14 @@ async function refundStripe(
       console.log(`Charge already refunded for payment intent ${stripePaymentIntentId}, fetching existing refund...`);
 
       // Get the payment intent to find the refund ID
-      const paymentIntent = await stripe.paymentIntents.retrieve(stripePaymentIntentId);
-      const existingRefund = paymentIntent.charges?.data?.[0]?.refunds?.data?.[0];
+      const existingRefund = (await stripe.refunds.list({ payment_intent: stripePaymentIntentId, limit: 1 })).data[0];
 
-      if (existingRefund?.id) {
+      if (existingRefund?.id && existingRefund.status === "succeeded" && existingRefund.amount === Math.round((amount || 0) * 100)) {
         console.log(`Found existing refund: ${existingRefund.id}`);
         return existingRefund.id;
       }
 
-      // Fallback: return a generated ID to indicate already refunded
-      return `already_refunded_${stripePaymentIntentId}`;
+      throw new Error("Could not reconcile the existing refund");
     }
 
     // Re-throw other errors
@@ -95,6 +86,7 @@ async function refundStripe(
  */
 async function refundPayPal(
   captureId: string,
+  orderId: string,
   amount?: number,
   currency = "USD"
 ): Promise<string> {
@@ -110,7 +102,8 @@ async function refundPayPal(
   const result = await paypalRequest<{ id: string }>(
     `/v2/payments/captures/${captureId}/refund`,
     "POST",
-    body
+    body,
+    orderId,
   );
 
   return result.id;
@@ -121,6 +114,7 @@ async function refundPayPal(
  */
 async function refundMollie(
   molliePaymentId: string,
+  orderId: string,
   amount: number,
   currency = "EUR"
 ): Promise<string> {
@@ -132,7 +126,8 @@ async function refundMollie(
         currency: currency.toUpperCase(),
         value: amount.toFixed(2),
       },
-    }
+    },
+    orderId,
   );
 
   return result.id;
@@ -144,26 +139,29 @@ serve(async (req) => {
   }
 
   try {
-    const body: RefundRequestI = await req.json();
+    // Require an authenticated caller (or service-role for automated recovery).
+    const auth = await requireUser(req.headers.get("authorization"));
 
-    const {
-      order_id,
-      payment_provider,
-      amount,
-      currency,
-      reason = "Order creation failed after successful payment",
-      stripe_payment_intent_id,
-      paypal_capture_id,
-      mollie_payment_id,
-    } = body;
+    const body: RefundRequest = await req.json();
+
+    const { order_id, payment_provider, reason = "Order creation failed after successful payment" } = body;
 
     // Validate required fields
-    if (!order_id || !payment_provider) {
+    if (typeof order_id !== "string" || !/^[a-f0-9-]{36}$/i.test(order_id) || !payment_provider) {
       throw ErrorCodes.INVALID_REQUEST_BODY();
     }
 
     if (!["stripe", "paypal", "mollie"].includes(payment_provider)) {
       throw ErrorCodes.INVALID_REQUEST_BODY();
+    }
+
+    const orderResult = await supabaseRest<RefundOrder[]>(
+      `orders?id=eq.${encodeURIComponent(order_id)}&select=id,user_id,status,payment_status,printify_order_id,currency`, "GET",
+    );
+    if (orderResult.error) throw new Error("Could not load order");
+    const order = orderResult.data?.[0];
+    if (!order || (!auth.isServiceRole && order.user_id !== auth.userId)) {
+      throw new FunctionError(403, "FORBIDDEN", "Order not found for this user");
     }
 
     // Idempotency check — never refund the same order twice
@@ -176,39 +174,35 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Processing ${payment_provider} refund for order ${order_id}`);
+    // Resolve the payment through the owned order, never through a request ID.
+    const result = await supabaseRest<RefundPayment[]>(
+      `payment_transactions?order_id=eq.${encodeURIComponent(order_id)}&payment_provider=eq.${payment_provider}&status=eq.succeeded&select=*`, "GET",
+    );
+    if (result.error) throw new Error("Could not load payment");
+    if (result.data?.length !== 1) {
+      throw new FunctionError(409, "MISSING_PAYMENT", "Expected one successful order payment");
+    }
+    const { providerId, verificationId, amount, currency } = authorizeRefund(body, order, result.data[0], auth);
+    // Permit a completed full refund when replaying the same idempotent provider
+    // request after a database/network failure. Recovery never enables this.
+    const paid = await verifyPaidPayment(payment_provider, verificationId, order.user_id, true);
+    requirePaymentCurrency(paid, currency);
+    if (Math.round(paid.amount * 100) !== Math.round(amount * 100) ||
+      (payment_provider === "paypal" && paid.captureId !== providerId)) {
+      throw new FunctionError(409, "PAYMENT_MISMATCH", "Provider payment does not match order payment");
+    }
 
     let refundId: string;
-
     switch (payment_provider) {
-      case "stripe": {
-        if (!stripe_payment_intent_id) {
-          throw ErrorCodes.INVALID_REQUEST_BODY();
-        }
-        refundId = await refundStripe(stripe_payment_intent_id, amount, reason);
+      case "stripe":
+        refundId = await refundStripe(providerId, order_id, amount, reason);
         break;
-      }
-
-      case "paypal": {
-        if (!paypal_capture_id) {
-          throw ErrorCodes.INVALID_REQUEST_BODY();
-        }
-        refundId = await refundPayPal(paypal_capture_id, amount, currency);
+      case "paypal":
+        refundId = await refundPayPal(providerId, order_id, amount, currency);
         break;
-      }
-
-      case "mollie": {
-        if (!mollie_payment_id) {
-          throw ErrorCodes.INVALID_REQUEST_BODY();
-        }
-        // Mollie refunds require an explicit amount
-        if (amount === undefined) {
-          throw ErrorCodes.INVALID_REQUEST_BODY();
-        }
-        refundId = await refundMollie(mollie_payment_id, amount, currency);
+      case "mollie":
+        refundId = await refundMollie(providerId, order_id, amount, currency);
         break;
-      }
-
       default:
         throw ErrorCodes.INVALID_REQUEST_BODY();
     }
@@ -233,7 +227,7 @@ serve(async (req) => {
 
     if (atomicResult.error) {
       console.error("Atomic refund operation failed:", atomicResult.error);
-      throw new Error(`Failed to update database: ${atomicResult.error.message}`);
+      throw new Error("Failed to record refund in database");
     }
 
     console.log("✅ Atomic refund operation completed:", atomicResult.data);

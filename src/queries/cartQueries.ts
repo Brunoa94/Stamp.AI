@@ -223,31 +223,16 @@ export function useUpdateCartItemsSelection() {
 }
 
 /**
- * Clear all items from cart.
- * Supports both authenticated users (via userId) and guests (via sessionId).
+ * Remove a specific set of items from the cart.
+ * Used after a successful payment to drop only the items that were ordered,
+ * so a partial checkout leaves the unselected items in the cart.
  */
-export function useClearCart() {
+export function useRemoveCartItems() {
   const queryClient = useQueryClient();
-  const { data: user } = useUser();
-  const userId = user?.id;
-  const userEmail = user?.email;
   const { handleError } = useErrorHandler();
 
   return useMutation({
-    mutationFn: async () => {
-      const sessionId = GuestProductStorageService.getSessionId();
-
-      if (!userId && !sessionId) {
-        throw new Error("No user ID or session ID available");
-      }
-
-      const cart = await CartService.getOrCreateCart(
-        userId || undefined,
-        userId ? undefined : sessionId || undefined,
-        userEmail,
-      );
-      return await CartService.clearCart(cart.id);
-    },
+    mutationFn: (itemIds: string[]) => CartService.removeCartItems(itemIds),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },

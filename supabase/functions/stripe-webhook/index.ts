@@ -27,7 +27,7 @@ async function waitForOrderAndGenerateInvoice(
     console.log(`📋 Attempt ${attempt}/${maxAttempts}: Checking for order with idempotency_key...`)
 
     // Query orders directly by idempotency_key
-    const orderResult = await supabaseRest(
+    const orderResult = await supabaseRest<Array<{ id: string }>>(
       `orders?idempotency_key=eq.${idempotencyKey}&select=id`,
       'GET'
     )
@@ -94,6 +94,7 @@ interface StripePaymentIntentI {
   id: string;
   customer: string | null;
   amount: number;
+  amount_received: number;
   currency: string;
   livemode: boolean;
   payment_method_types?: string[];
@@ -103,119 +104,30 @@ interface StripePaymentIntentI {
   metadata?: Record<string, string>;
 }
 
+// Server-side price per credit (in cents). Must match create-credit-payment.
+const CREDIT_PRICE_CENTS = Number(Deno.env.get('CREDIT_PRICE_CENTS') || '10')
+
 /**
  * Handle credit purchase - update user credits and create transaction record
  */
 async function handleCreditPurchase(paymentIntent: StripePaymentIntentI) {
   const userId = paymentIntent.metadata?.user_id
-  const creditsToAdd = parseInt(paymentIntent.metadata?.credits || '0', 10)
-  const amountPaid = paymentIntent.amount / 100
-
-  if (!userId || userId === 'service-role') {
-    console.error('Invalid user_id for credit purchase:', userId)
-    return
+  if (!userId || userId === 'service-role' || !Number.isSafeInteger(CREDIT_PRICE_CENTS) || CREDIT_PRICE_CENTS <= 0) {
+    throw new Error('Invalid credit purchase identity or price')
   }
-
-  if (creditsToAdd <= 0) {
-    console.error('Invalid credits amount:', creditsToAdd)
-    return
-  }
-
-  console.log(`Adding ${creditsToAdd} credits to user ${userId}`)
-
-  // Get current user credits
-  const currentCreditsResult = await supabaseRest(
-    `user_credits?user_id=eq.${userId}&select=credits`,
-    'GET'
-  )
-
-  let currentCredits = 0
-  let userExists = false
-
-  if (currentCreditsResult.data && currentCreditsResult.data.length > 0) {
-    currentCredits = currentCreditsResult.data[0].credits || 0
-    userExists = true
-  }
-
-  const newBalance = currentCredits + creditsToAdd
-
-  // Update or insert user credits
-  if (userExists) {
-    const updateResult = await supabaseRest(
-      `user_credits?user_id=eq.${userId}`,
-      'PATCH',
-      {
-        credits: newBalance,
-        updated_at: new Date().toISOString()
-      }
-    )
-
-    if (updateResult.error) {
-      console.error('Failed to update user credits:', updateResult.error)
-      return
-    }
-  } else {
-    const insertResult = await supabaseRest(
-      'user_credits',
-      'POST',
-      {
-        user_id: userId,
-        credits: newBalance,
-        updated_at: new Date().toISOString()
-      }
-    )
-
-    if (insertResult.error) {
-      console.error('Failed to insert user credits:', insertResult.error)
-      return
-    }
-  }
-
-  console.log(`Updated user ${userId} credits: ${currentCredits} -> ${newBalance}`)
-
-  // Create credit transaction record
-  const transactionResult = await supabaseRest(
-    'credit_transactions',
-    'POST',
-    {
-      user_id: userId,
-      amount: creditsToAdd,
-      balance_after: newBalance,
-      transaction_type: 'purchase',
-      description: `Purchased ${creditsToAdd} credits for $${amountPaid.toFixed(2)}`,
-      reference_id: paymentIntent.id,
-      created_at: new Date().toISOString()
-    }
-  )
-
-  if (transactionResult.error) {
-    console.error('Failed to create credit transaction:', transactionResult.error)
-  } else {
-    console.log('Credit transaction recorded:', transactionResult.data)
-  }
-
-  // Also record in payment_transactions for consistency
-  await supabaseRest(
-    'payment_transactions',
-    'POST',
-    {
-      user_id: userId,
-      stripe_payment_intent_id: paymentIntent.id,
-      stripe_customer_id: paymentIntent.customer,
-      amount: amountPaid,
-      currency: paymentIntent.currency,
-      status: 'succeeded',
-      payment_method_type: paymentIntent.payment_method_types?.[0],
-      metadata: {
-        ...paymentIntent.metadata,
-        type: 'credit_purchase'
-      },
-      updated_at: new Date().toISOString()
-    },
-    { prefer: 'resolution=merge-duplicates' }
-  )
-
-  console.log('Credit purchase completed successfully')
+  // Claim the payment, increment the balance, and record payment accounting in
+  // one transaction. Errors propagate so Stripe retries instead of losing credits.
+  const result = await supabaseRest('rpc/grant_stripe_purchase_credits', 'POST', {
+    p_payment_intent_id: paymentIntent.id,
+    p_user_id: userId,
+    p_amount_cents: paymentIntent.amount_received,
+    p_credit_price_cents: CREDIT_PRICE_CENTS,
+    p_currency: paymentIntent.currency,
+    p_customer_id: paymentIntent.customer,
+    p_payment_method_type: paymentIntent.payment_method_types?.[0] || 'card',
+    p_metadata: paymentIntent.metadata || {},
+  })
+  if (result.error) throw new Error('Failed to grant purchase credits')
 }
 
 serve(async (req) => {
@@ -307,7 +219,7 @@ serve(async (req) => {
         // If orderId not in metadata, try to get it from payment_transactions.order_id column
         // (set by client-side after order creation)
         if (!dbOrderId) {
-          const txResult = await supabaseRest(
+          const txResult = await supabaseRest<Array<{ order_id: string | null }>>(
             `payment_transactions?stripe_payment_intent_id=eq.${paymentIntent.id}&select=order_id`,
             'GET'
           )
@@ -401,7 +313,7 @@ serve(async (req) => {
 
           // If orderId not in metadata, try to get it from payment_transactions.order_id column
           if (!dbOrderId) {
-            const txResult = await supabaseRest(
+            const txResult = await supabaseRest<Array<{ order_id: string | null }>>(
               `payment_transactions?stripe_payment_intent_id=eq.${paymentIntent.id}&select=order_id`,
               'GET'
             )
