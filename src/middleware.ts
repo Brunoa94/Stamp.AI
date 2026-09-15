@@ -20,6 +20,11 @@ function getRateLimitType(pathname: string): RateLimitType | null {
     return "auth";
   }
 
+  // Account export / deletion - destructive and password-checking, treat as auth
+  if (pathname.startsWith("/api/account")) {
+    return "auth";
+  }
+
   // Password reset - very strict
   if (pathname.includes("password") || pathname.includes("reset-password")) {
     return "passwordReset";

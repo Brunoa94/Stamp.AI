@@ -1,9 +1,10 @@
 import { SITE_URL } from "../config/site";
 import { SOCIAL_PROFILES } from "../config/social";
 import { BUSINESS_INFO } from "../config/business";
+import { omitNullish } from "../lib/omitNullish";
 
 export function organizationSchema() {
-  return {
+  return omitNullish({
     "@context": "https://schema.org",
     "@type": "Organization",
     "@id": `${SITE_URL}/#organization`,
@@ -24,9 +25,11 @@ export function organizationSchema() {
     email: BUSINESS_INFO.email,
     sameAs: Object.values(SOCIAL_PROFILES),
     address: BUSINESS_INFO.address,
+    vatID: BUSINESS_INFO.vatID,
+    taxID: BUSINESS_INFO.taxID,
     areaServed: BUSINESS_INFO.areaServed,
     priceRange: BUSINESS_INFO.priceRange,
     currenciesAccepted: BUSINESS_INFO.currenciesAccepted,
     paymentAccepted: BUSINESS_INFO.paymentAccepted,
-  };
+  });
 }

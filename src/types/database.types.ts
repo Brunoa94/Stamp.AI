@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_deletions: {
+        Row: {
+          deleted_at: string
+          id: string
+          invoices_anonymised: number
+          orders_anonymised: number
+          payments_anonymised: number
+          reason: string | null
+          user_id_hash: string
+        }
+        Insert: {
+          deleted_at?: string
+          id?: string
+          invoices_anonymised?: number
+          orders_anonymised?: number
+          payments_anonymised?: number
+          reason?: string | null
+          user_id_hash: string
+        }
+        Update: {
+          deleted_at?: string
+          id?: string
+          invoices_anonymised?: number
+          orders_anonymised?: number
+          payments_anonymised?: number
+          reason?: string | null
+          user_id_hash?: string
+        }
+        Relationships: []
+      }
       ai_generations: {
         Row: {
           ai_model: string | null
@@ -1394,6 +1424,8 @@ export type Database = {
         Returns: string
       }
       deduct_coin: { Args: { user_id: string }; Returns: boolean }
+      delete_own_account: { Args: { p_reason?: string }; Returns: Json }
+      export_own_data: { Args: never; Returns: Json }
       get_available_colors: {
         Args: { p_blueprint_id: number }
         Returns: string[]
