@@ -7,9 +7,13 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll, afterEach } from "vitest";
-import { getAuthenticatedClient, AuthenticatedClient } from "./setup-auth";
+import {
+  describeIntegration,
+  getAuthenticatedClient,
+  AuthenticatedClient,
+} from "./setup-auth";
 
-describe("Coins Integration", () => {
+describeIntegration("Coins Integration", () => {
   let auth: AuthenticatedClient;
   let testUserId: string;
 

@@ -3,22 +3,47 @@
  * Gets JWT token from actual user login
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { describe } from 'vitest';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
-}
+/** True when the live-Supabase credentials the integration suites need are present. */
+export const hasIntegrationEnv = Boolean(supabaseUrl && supabaseAnonKey);
+
+const SKIP_MESSAGE =
+  '[integration] Skipping: NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are not set. ' +
+  'Point them at a Supabase project to run the integration suites (npm run test:integration).';
+
+let warned = false;
+
+/**
+ * `describe` for suites that need a live Supabase. When the env is missing
+ * the suite is skipped (reported as skipped, not failed) with one clear
+ * message instead of throwing at import time.
+ */
+export const describeIntegration: typeof describe = ((...args: Parameters<typeof describe>) => {
+  if (hasIntegrationEnv) {
+    return describe(...args);
+  }
+  if (!warned) {
+    warned = true;
+    console.warn(SKIP_MESSAGE);
+  }
+  return describe.skip(...args);
+}) as typeof describe;
 
 export interface AuthenticatedClient {
-  supabase: ReturnType<typeof createClient<any>>;
+  supabase: SupabaseClient;
   userId: string;
   accessToken: string;
 }
 
 export async function getAuthenticatedClient(): Promise<AuthenticatedClient> {
+  if (!hasIntegrationEnv) {
+    throw new Error(SKIP_MESSAGE);
+  }
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
   // Sign in with real user credentials

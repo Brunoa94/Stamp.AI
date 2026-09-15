@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl } from "@/tests/utils/renderWithIntl";
@@ -13,7 +13,15 @@ import { DialogContent, DialogTitle } from "@/features/ui/dialog";
  *
  * The `form` is a DialogContent (as RegisterForm/LoginForm are), so Radix
  * gates its visibility on the dialog's open state.
+ *
+ * AuthDialog reads the current user (to auto-close on login) via useUser,
+ * which needs a QueryClient; the hook is stubbed to "signed out" here since
+ * these tests only cover the trigger/open wiring.
  */
+
+vi.mock("@/queries/authQueries", () => ({
+  useUser: () => ({ data: null, isLoading: false }),
+}));
 
 const FORM = (
   <DialogContent>

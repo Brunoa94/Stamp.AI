@@ -3,10 +3,14 @@
  * Tests database operations directly without service layer
  */
 
-import { getAuthenticatedClient } from './setup-auth';
+import {
+  describeIntegration,
+  getAuthenticatedClient,
+  type AuthenticatedClient,
+} from './setup-auth';
 
-describe('Direct Database Operations', () => {
-  let supabase: any;
+describeIntegration('Direct Database Operations', () => {
+  let supabase: AuthenticatedClient['supabase'];
   let testUserId: string;
   let testCartId: string;
   let testOrderId: string | null = null;

@@ -46,24 +46,34 @@ describe("CatalogPageContent", () => {
     expect(screen.getByText(messages.catalog.intro)).toBeInTheDocument();
   });
 
-  it("renders one section per group with its products", () => {
+  it("shows the group showcase instead of product sections while browsing all", () => {
     renderWithIntl(<CatalogPageContent sections={SECTIONS} />);
 
     expect(
       screen.getByRole("heading", {
         level: 2,
+        name: messages.catalog.showcase.title,
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {
+        name: `Browse ${messages.catalog.groups.clothing}`,
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", {
+        name: `Browse ${messages.catalog.groups.accessories}`,
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", {
+        level: 2,
         name: messages.catalog.groups.clothing,
       })
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
     expect(
-      screen.getByRole("heading", {
-        level: 2,
-        name: messages.catalog.groups.accessories,
-      })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { level: 3, name: "Ceramic Mug" })
-    ).toBeInTheDocument();
+      screen.queryByRole("heading", { level: 3, name: "Ceramic Mug" })
+    ).not.toBeInTheDocument();
   });
 
   it("renders the group filter with all products selected", () => {
@@ -182,8 +192,15 @@ describe("CatalogPageContent", () => {
       })
     );
 
+    // Clearing filters returns to the "browse all" showcase view
     expect(
-      screen.getByRole("heading", { level: 3, name: "Ceramic Mug" })
+      screen.queryByText(messages.catalog.noResults.title)
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", {
+        level: 2,
+        name: messages.catalog.showcase.title,
+      })
     ).toBeInTheDocument();
   });
 
