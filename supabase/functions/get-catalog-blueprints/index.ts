@@ -1,13 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
+import { corsHeadersFor } from '../_shared/cors.ts'
 
 const PRINTIFY_API_TOKEN = Deno.env.get('PRINTIFY_API_TOKEN')
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-}
 
 // Blueprint IDs that support front/back printing (validated via API)
 const FRONT_BACK_BLUEPRINT_IDS = [49, 145, 157, 553]
@@ -47,6 +42,7 @@ async function getAvailableProviders(blueprintId: number): Promise<any[]> {
 }
 
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req, { methods: 'POST, GET, OPTIONS' })
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders })

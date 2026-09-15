@@ -5,6 +5,7 @@ import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts"
+import { corsHeadersFor } from '../_shared/cors.ts'
 
 /**
  * Wait for order to be created with idempotency key, then generate invoice.
@@ -82,11 +83,6 @@ async function waitForOrderAndGenerateInvoice(
   console.warn(`⚠️ No order found after ${maxAttempts} attempts for idempotency_key: ${idempotencyKey}`)
 }
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, stripe-signature',
-}
-
 /**
  * Stripe Payment Intent interface for webhook handling
  */
@@ -131,6 +127,7 @@ async function handleCreditPurchase(paymentIntent: StripePaymentIntentI) {
 }
 
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req, { extraAllowedHeaders: ['stripe-signature'] })
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }

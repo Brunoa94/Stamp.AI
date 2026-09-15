@@ -2,12 +2,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import Stripe from 'https://esm.sh/stripe@16.12.0?target=deno'
 import { ErrorCodes, handleError, FunctionError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-}
+import { corsHeadersFor } from '../_shared/cors.ts'
 
 // Credit-specific error codes
 const CreditErrors = {
@@ -92,6 +87,7 @@ function validateCredits(credits?: number): number {
 }
 
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req)
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, {

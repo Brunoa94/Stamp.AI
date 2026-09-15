@@ -10,13 +10,8 @@ import { requireUser } from "../_shared/authGuard.ts";
 import { verifyPaidPayment } from "../_shared/verifyPaidPayment.ts";
 import { requirePaymentCurrency } from "../_shared/paymentProof.ts";
 import { validatePaymentAmount } from "../_shared/amountValidator.ts";
+import { corsHeadersFor } from "../_shared/cors.ts";
 
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
 
 /**
  * Process Payment Recovery Edge Function
@@ -25,6 +20,7 @@ const corsHeaders = {
  * due to browser crashes, network failures, etc.
  */
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req);
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }

@@ -10,11 +10,7 @@ import { FunctionError } from "../_shared/errors.ts";
 import { authorizeRefund, type RefundRequest, type RefundOrder, type RefundPayment } from "./authorization.ts";
 import { verifyPaidPayment } from "../_shared/verifyPaidPayment.ts";
 import { requirePaymentCurrency } from "../_shared/paymentProof.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { corsHeadersFor } from "../_shared/cors.ts";
 
 /**
  * Idempotency guard — check whether this order already has a refund record.
@@ -134,6 +130,7 @@ async function refundMollie(
 }
 
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req);
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
