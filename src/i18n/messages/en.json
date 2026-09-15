@@ -1769,6 +1769,7 @@
     "EMAIL_NOT_CONFIRMED": "Please verify your email address before signing in",
     "CAPTCHA_VERIFICATION_FAILED": "Security verification failed. Please try again",
     "INVALID_TOKEN": "Your session has expired. Please sign in again",
+    "INSUFFICIENT_COINS": "Not enough coins to generate. Coins reset daily at midnight",
     "WEBHOOK_SIGNATURE_INVALID": "Invalid webhook signature",
     "PAYPAL_WEBHOOK_SIGNATURE_INVALID": "Invalid PayPal webhook signature",
     "USER_NOT_FOUND": "We couldn't find that account",

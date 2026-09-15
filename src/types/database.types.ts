@@ -1538,6 +1538,7 @@ export type Database = {
         }
         Returns: string
       }
+      refund_coin: { Args: { p_user_id: string }; Returns: boolean }
       record_webhook_event: {
         Args: {
           p_event_id: string

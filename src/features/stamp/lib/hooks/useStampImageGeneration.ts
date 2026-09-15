@@ -9,9 +9,10 @@ import {
   useStampUpload,
 } from "./useStampSelectors";
 import { useImageGeneration as useImageGenerationMutation } from "@/queries/imageGenerationQueries";
-import { useDeductCoin } from "@/queries/coinsQueries";
+import { useQueryClient } from "@tanstack/react-query";
+import { coinsKeys } from "@/queries/coinsQueries";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { logStampError, logStampWarn, logStampInfo } from "../helpers/stampLogger";
+import { logStampError, logStampWarn } from "../helpers/stampLogger";
 import { withTimeout } from "@/lib/promiseUtils";
 import { AnalyticsService } from "@/services/analyticsService";
 import {
@@ -42,8 +43,10 @@ import {
  * - Provides clear user-facing error messages with recovery paths
  *
  * Coins Integration:
- * - Deducts 1 coin before image generation
- * - Aborts generation if coin deduction fails
+ * - The coin is deducted server-side by /api/generate-image (and refunded
+ *   there if generation fails); a 402 INSUFFICIENT_COINS is surfaced through
+ *   the mutation's error handler.
+ * - The cached balance is refreshed after every attempt.
  */
 
 interface GenerateImageParamsType {
@@ -54,7 +57,6 @@ interface GenerateImageParamsType {
 
 export function useStampImageGeneration() {
   const t = useTranslations("stamp.errors.imageGeneration");
-  const tCoins = useTranslations("stamp.errors.coins");
   const { nextStep } = useStampNavigation();
   const { handleError } = useErrorHandler();
   const { uploadedImageUrl } = useStampUpload();
@@ -66,7 +68,7 @@ export function useStampImageGeneration() {
   const { setSelectedImageUrl, setEnhancedPrompt } = useStampSelectedImage();
 
   const generateMutation = useImageGenerationMutation();
-  const deductCoinMutation = useDeductCoin();
+  const queryClient = useQueryClient();
 
   // Idempotency: Track if generation is in progress to prevent duplicates
   const isGeneratingRef = useRef(false);
@@ -106,31 +108,7 @@ export function useStampImageGeneration() {
     try {
       const imageFile = await resolveReferenceImageFile(uploadedImageUrl);
 
-      // Deduct coin before generation
-      logStampInfo({
-        scope: "useStampImageGeneration",
-        event: "deducting_coin_before_generation",
-      });
-
-      const coinDeducted = await deductCoinMutation.mutateAsync();
-
-      if (!coinDeducted) {
-        logStampWarn({
-          scope: "useStampImageGeneration",
-          event: "coin_deduction_failed_no_coins",
-        });
-        stopProgress();
-        setGenerationProgress(0);
-        handleError(new Error(tCoins("deductFailed")));
-        return;
-      }
-
-      logStampInfo({
-        scope: "useStampImageGeneration",
-        event: "coin_deducted_successfully",
-      });
-
-      // Wrap mutation with timeout
+      // Wrap mutation with timeout (the API route charges the coin)
       const result = await withTimeout(
         generateMutation.mutateAsync({
           image: imageFile,
@@ -203,6 +181,8 @@ export function useStampImageGeneration() {
 
       throw error;
     } finally {
+      // Balance changed server-side (deduction, or refund on failure)
+      queryClient.invalidateQueries({ queryKey: coinsKeys.all });
       setIsGenerating(false);
       isGeneratingRef.current = false;
     }

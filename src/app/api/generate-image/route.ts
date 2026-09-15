@@ -1,9 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/service";
 import { captureError } from "@/lib/observability/errorCapture";
 import { OpenAIImageService } from "@/services/openaiImageService";
 
 export const runtime = "nodejs";
+
+async function refundCoin(userId: string): Promise<void> {
+  try {
+    const { error } = await createServiceClient().rpc("refund_coin", {
+      p_user_id: userId,
+    });
+    if (error) {
+      throw new Error(error.message);
+    }
+  } catch (refundError) {
+    // Never mask the original generation error; record the failed refund.
+    captureError(refundError, {
+      service: "ImageGeneration",
+      action: "refundCoin",
+    });
+    console.error("[generate-image] refund_coin failed for user", userId);
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,27 +36,6 @@ export async function POST(request: NextRequest) {
         { status: 401 },
       );
     }
-
-    // // ── Coin deduction ──────────────────────────────────────────────────────────
-    // const { data: hasCoin, error: rpcError } = await supabase.rpc(
-    //   "deduct_coin",
-    //   { user_id: user.id },
-    // );
-
-    // if (rpcError) {
-    //   console.error("deduct_coin RPC error:", rpcError.message);
-    //   return NextResponse.json(
-    //     { error: "Failed to process coin deduction" },
-    //     { status: 500 },
-    //   );
-    // }
-
-    // if (!hasCoin) {
-    //   return NextResponse.json(
-    //     { error: "Not enough coins" },
-    //     { status: 402 },
-    //   );
-    // }
 
     const formData = await request.formData();
     const prompt = formData.get("prompt") as string;
@@ -72,11 +70,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Read the image bytes
-    const imageBytes = await image.bytes();
-    const imageBuffer = imageBytes.buffer.slice(
-      imageBytes.byteOffset,
-      imageBytes.byteOffset + imageBytes.byteLength
-    );
+    const imageBuffer = await image.arrayBuffer();
 
     console.log("Image buffer size:", imageBuffer.byteLength);
 
@@ -117,13 +111,42 @@ export async function POST(request: NextRequest) {
     console.log("Remove background:", removeBackground);
     console.log("Image file:", image.name, "MIME type:", mimeType);
 
-    const result = await OpenAIImageService.generateImage(
-      imageBuffer,
-      mimeType,
-      prompt,
-      preservation,
-      removeBackground
-    );
+    // ── Coin deduction (server-side, before any paid work) ─────────────────────
+    // deduct_coin runs as the caller: the RPC only allows a user to deduct
+    // their own coins and is atomic (row lock + daily reset).
+    const { data: hasCoin, error: rpcError } = await supabase.rpc("deduct_coin", {
+      user_id: user.id,
+    });
+
+    if (rpcError) {
+      console.error("[generate-image] deduct_coin failed:", rpcError.message);
+      return NextResponse.json(
+        { error: "Failed to process coin deduction" },
+        { status: 500 },
+      );
+    }
+
+    if (!hasCoin) {
+      return NextResponse.json(
+        { error: "INSUFFICIENT_COINS" },
+        { status: 402 },
+      );
+    }
+
+    let result: Awaited<ReturnType<typeof OpenAIImageService.generateImage>>;
+    try {
+      result = await OpenAIImageService.generateImage(
+        imageBuffer,
+        mimeType,
+        prompt,
+        preservation,
+        removeBackground
+      );
+    } catch (generationError) {
+      // The user paid for nothing: give the coin back (service role only).
+      await refundCoin(user.id);
+      throw generationError;
+    }
 
     return NextResponse.json({
       success: true,

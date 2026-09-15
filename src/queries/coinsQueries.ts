@@ -6,7 +6,7 @@ import { useUser } from "@/queries/authQueries";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 // Query keys
-const coinsKeys = {
+export const coinsKeys = {
   all: ["coins"] as const,
   user: (userId: string) => [...coinsKeys.all, userId] as const,
 };
