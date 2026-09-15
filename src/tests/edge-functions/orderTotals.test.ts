@@ -6,6 +6,7 @@ import {
   calculateOrderTotals,
   calculateShippingCents,
   reconcileChargedAmount,
+  reconcileClientTotalCents,
   resolveOrderTotalsConfig,
 } from "../../../supabase/functions/_shared/orderTotals";
 
@@ -159,5 +160,16 @@ describe("reconcileChargedAmount", () => {
   it("rejects a zero-total order", () => {
     const empty = calculateOrderTotals({ subtotalCents: 0, discountCents: 0 });
     expect(reconcileChargedAmount(empty, { amount: 0, currency: "EUR" }, "EUR").ok).toBe(false);
+  });
+});
+
+describe("reconcileClientTotalCents", () => {
+  const totals = calculateOrderTotals({ subtotalCents: 2500, discountCents: 0 });
+  it("accepts an exact match", () => {
+    expect(reconcileClientTotalCents(totals, 2999)).toEqual({ ok: true, differenceCents: 0 });
+  });
+  it("rejects any difference", () => {
+    expect(reconcileClientTotalCents(totals, 2998)).toMatchObject({ ok: false, differenceCents: 1 });
+    expect(reconcileClientTotalCents(totals, 299900)).toMatchObject({ ok: false });
   });
 });

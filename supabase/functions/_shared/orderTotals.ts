@@ -168,3 +168,46 @@ export function reconcileChargedAmount(
   }
   return { ok: true, differenceCents: 0 };
 }
+
+/**
+ * Compare the total a client claims it will pay with the server total. Used
+ * before a payment intent is created so a tampered amount never reaches the
+ * provider.
+ */
+export function reconcileClientTotalCents(
+  totals: OrderTotalsI,
+  clientTotalCents: number,
+): ChargeReconciliationI {
+  const differenceCents = Math.abs(Math.round(clientTotalCents) - totals.total_cents);
+  if (totals.total_cents <= 0) {
+    return { ok: false, differenceCents, reason: "EMPTY_ORDER" };
+  }
+  return differenceCents === 0
+    ? { ok: true, differenceCents: 0 }
+    : { ok: false, differenceCents, reason: "AMOUNT_MISMATCH" };
+}
+
+export interface PricingMetadataI {
+  promo_code: string | null;
+  subtotal_cents: number;
+  discount_cents: number;
+  shipping_cents: number;
+  tax_cents: number;
+  total_cents: number;
+}
+
+/**
+ * Server-computed pricing snapshot stored alongside a payment (provider
+ * metadata and payment_transactions.metadata) so later steps can finalize the
+ * order with the same promo code and audit the amount charged.
+ */
+export function toPricingMetadata(totals: OrderTotalsI, promoCode: string | null): PricingMetadataI {
+  return {
+    promo_code: promoCode,
+    subtotal_cents: totals.subtotal_cents,
+    discount_cents: totals.discount_cents,
+    shipping_cents: totals.shipping_cents,
+    tax_cents: totals.tax_cents,
+    total_cents: totals.total_cents,
+  };
+}

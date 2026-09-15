@@ -3,7 +3,11 @@ import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
 import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
-import { validatePricingAgainstDatabase, type LineItemForPricingI } from "../_shared/serverPriceService.ts";
+import { validatePricingAgainstDatabase } from "../_shared/serverPriceService.ts";
+import { parseLineItemsForPricing } from "../_shared/lineItemsForPricing.ts";
+import { majorUnitsToCents, toPricingMetadata } from "../_shared/orderTotals.ts";
+import { getOrderTotalsConfig } from "../_shared/orderTotalsEnv.ts";
+import { normalizePromoCode } from "../_shared/promoDiscount.ts";
 import type { PaymentIntentResponseI } from "../../types/index.ts";
 
 const corsHeaders = {
@@ -61,6 +65,13 @@ async function verifyAuth(
   };
 }
 
+/** Stripe metadata values must be strings. */
+function stripeMetadataStrings(values: Record<string, string | number | null>): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(values).map(([key, value]) => [key, value === null ? "" : String(value)]),
+  );
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -80,8 +91,7 @@ serve(async (req) => {
       currency = "usd",
       line_items,
       shipping_address,
-      shipping_cost_cents = 0,
-      discount_cents = 0,
+      promo_code,
       metadata,
       payment_method, // Optional: for testing with pm_card_visa, etc.
       confirm = false, // Optional: auto-confirm payment (for testing)
@@ -91,36 +101,23 @@ serve(async (req) => {
     const stripeSecretKey = validateEnvVars.stripeSecretKey();
     const validAmount = validateRequest.amount(amount);
 
-    // SERVER-SIDE PRICE VALIDATION (C4 - Amount Tampering Prevention)
-    // If line_items contain blueprint_id and printify_variant_id, validate against DB prices
-    if (line_items && Array.isArray(line_items) && line_items.length > 0) {
-      const itemsForPricing: LineItemForPricingI[] = line_items
-        .filter((item: Record<string, unknown>) => item.blueprint_id && item.printify_variant_id)
-        .map((item: Record<string, unknown>) => ({
-          blueprint_id: Number(item.blueprint_id),
-          printify_variant_id: Number(item.printify_variant_id),
-          quantity: Number(item.quantity) || 1,
-        }));
-
-      if (itemsForPricing.length > 0) {
-        const clientTotalCents = Math.round(validAmount * 100);
-        const validation = await validatePricingAgainstDatabase({
-          lineItems: itemsForPricing,
-          clientSubtotalCents: clientTotalCents - shipping_cost_cents + discount_cents,
-          shippingCostCents: shipping_cost_cents,
-          discountCents: discount_cents,
-          clientTotalCents,
-        });
-
-        if (!validation.isValid) {
-          throw new FunctionError(
-            400,
-            "PRICE_MISMATCH",
-            validation.errorMessage || "Server-side price validation failed"
-          );
-        }
-      }
+    // SERVER-SIDE PRICE VALIDATION (C4/C6 - Amount Tampering Prevention)
+    // Every line item is repriced from the catalog and shipping, VAT and the
+    // promo discount are computed server-side. Requests whose items cannot be
+    // priced are rejected, never skipped; client-sent shipping/discount values
+    // are ignored.
+    const parsedLineItems = parseLineItemsForPricing(line_items);
+    if (parsedLineItems.errors.length > 0) {
+      throw new FunctionError(400, "INVALID_LINE_ITEMS", parsedLineItems.errors.join("; "));
     }
+    const promoCode = normalizePromoCode(promo_code ?? metadata?.promoCode ?? metadata?.promo_code);
+    const priced = await validatePricingAgainstDatabase({
+      lineItems: parsedLineItems.items,
+      promoCode,
+      clientTotalCents: majorUnitsToCents(validAmount),
+      config: getOrderTotalsConfig(),
+    });
+    const pricingMetadata = toPricingMetadata(priced.totals, promoCode);
 
     const stripe = new Stripe(stripeSecretKey, {
       apiVersion: "2023-10-16",
@@ -128,11 +125,12 @@ serve(async (req) => {
     });
 
     // Build payment intent options
-    const paymentIntentOptions: any = {
-      amount: Math.round(validAmount * 100), // Convert to cents
+    const paymentIntentOptions: Stripe.PaymentIntentCreateParams = {
+      amount: priced.totals.total_cents, // server-computed total (validated against the client amount)
       currency: currency,
       metadata: {
         ...metadata,
+        ...stripeMetadataStrings(pricingMetadata),
         user_id: userId,
         user_email: userEmail,
         line_items: JSON.stringify(line_items),
@@ -158,9 +156,9 @@ serve(async (req) => {
     let paymentIntent;
     try {
       paymentIntent = await stripe.paymentIntents.create(paymentIntentOptions);
-    } catch (stripeError: any) {
+    } catch (stripeError: unknown) {
       throw ErrorCodes.STRIPE_API_ERROR(
-        stripeError.message || JSON.stringify(stripeError),
+        stripeError instanceof Error ? stripeError.message : JSON.stringify(stripeError),
       );
     }
 
@@ -175,12 +173,13 @@ serve(async (req) => {
           payment_provider: "stripe",
           stripe_payment_intent_id: paymentIntent.id,
           stripe_customer_id: paymentIntent.customer,
-          amount: validAmount,
+          amount: priced.totals.total_cents / 100,
           currency: currency.toLowerCase(),
           status: "pending",
           payment_method_type: payment_method ? "card" : null,
           metadata: {
             ...metadata,
+            ...pricingMetadata,
             user_id: userId,
             user_email: userEmail,
             line_items: line_items,
