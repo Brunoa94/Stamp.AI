@@ -10,6 +10,7 @@ import { FunctionError } from "../_shared/errors.ts";
 import { authorizeRefund, type RefundRequest, type RefundOrder, type RefundPayment } from "./authorization.ts";
 import { verifyPaidPayment } from "../_shared/verifyPaidPayment.ts";
 import { requirePaymentCurrency } from "../_shared/paymentProof.ts";
+import { withErrorReporting } from "../_shared/sentry.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -133,7 +134,7 @@ async function refundMollie(
   return result.id;
 }
 
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -240,4 +241,4 @@ serve(async (req) => {
     console.error("Refund processing error:", error);
     return handleError(error, corsHeaders);
   }
-});
+}, { functionName: "process-refund" }));

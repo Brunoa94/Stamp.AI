@@ -5,6 +5,7 @@ import { createMolliePayment } from "../_shared/mollie.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { validatePricingAgainstDatabase, type LineItemForPricingI } from "../_shared/serverPriceService.ts";
 import type { MolliePaymentRequestI, MolliePaymentResponseI } from "../../types/index.ts";
+import { withErrorReporting } from "../_shared/sentry.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,7 +13,7 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -170,4 +171,4 @@ serve(async (req) => {
   } catch (error) {
     return handleError(error, corsHeaders);
   }
-});
+}, { functionName: "create-mollie-payment" }));

@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { requireUser } from "../_shared/authGuard.ts"
+import { withErrorReporting } from "../_shared/sentry.ts"
 
 // Environment variables will be validated when needed
 
@@ -33,7 +34,7 @@ function isAllowedImageUrl(u: string): boolean {
   )
 }
 
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders })
@@ -120,4 +121,4 @@ serve(async (req) => {
     console.error('Error uploading image:', error)
     return handleError(error, corsHeaders)
   }
-})
+}, { functionName: "upload-printify-image" }))

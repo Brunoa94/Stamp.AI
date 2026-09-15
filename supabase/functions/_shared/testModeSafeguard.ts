@@ -5,6 +5,8 @@
  * ensuring real customers receive real products.
  */
 
+import { captureMessage } from './sentry.ts';
+
 /**
  * Determine if the current environment is production
  *
@@ -67,12 +69,9 @@ export function enforceTestMode(
       console.error('   FORCING: is_test = false');
       console.error('   This prevents real customers from receiving test orders!');
 
-      // TODO: Send alert to monitoring system
-      // await sendAlert({
-      //   severity: 'critical',
-      //   message: 'Test mode requested in production',
-      //   context,
-      // });
+      captureMessage('Test mode requested in production', 'fatal', {
+        extra: { context, requestedTestMode: clientTestMode },
+      });
     }
 
     // Always force false in production

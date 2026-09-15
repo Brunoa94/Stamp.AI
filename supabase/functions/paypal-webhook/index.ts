@@ -5,6 +5,8 @@ import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { verifyPayPalWebhook } from "../_shared/paypal.ts";
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
+import { withErrorReporting } from "../_shared/sentry.ts";
+import { trySendOrderConfirmationEmail } from "../_shared/orderEmails.ts";
 
 /**
  * Wait for order to be created with idempotency key, then generate invoice.
@@ -55,6 +57,8 @@ async function waitForOrderAndGenerateInvoice(
 
         // Generate the invoice
         await tryGenerateInvoiceForOrder(orderId);
+        // Customer confirmation email (idempotent, never fails the webhook)
+        await trySendOrderConfirmationEmail(orderId);
       }
 
       return;
@@ -72,7 +76,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, paypal-transmission-id, paypal-transmission-time, paypal-transmission-sig, paypal-cert-url, paypal-auth-algo",
 };
 
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -196,6 +200,8 @@ serve(async (req) => {
 
                 // Issue the invoice now that the order is paid (idempotent, non-blocking)
                 await tryGenerateInvoiceForOrder(finalOrderId);
+                // Customer confirmation email (idempotent, never fails the webhook)
+                await trySendOrderConfirmationEmail(finalOrderId);
               }
             } else {
               // No order_id yet - frontend hasn't created the order
@@ -375,4 +381,4 @@ serve(async (req) => {
     console.error("PayPal webhook error:", error);
     return handleError(error, corsHeaders);
   }
-});
+}, { functionName: "paypal-webhook" }));

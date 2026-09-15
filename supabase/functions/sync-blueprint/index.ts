@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { buildProductSeoRow } from "../_shared/productSeo.ts"
+import { withErrorReporting } from "../_shared/sentry.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -40,7 +41,7 @@ interface VariantData {
  * - blueprint_id: number (required)
  * - print_provider_id: number (optional, uses stored value from DB if not provided)
  */
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders })
@@ -235,4 +236,4 @@ serve(async (req) => {
     console.error('Error syncing blueprint:', error)
     return handleError(error, corsHeaders)
   }
-})
+}, { functionName: "sync-blueprint" }))

@@ -12,6 +12,9 @@ import type {
   PrintifyOrderI,
   SyncOrderRowI,
 } from "./mapping.ts";
+import { withErrorReporting } from "../_shared/sentry.ts";
+import { trySendShippingNotificationEmail } from "../_shared/orderEmails.ts";
+import { isFirstTrackingAppearance } from "../_shared/shippingNotificationEmail.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -156,6 +159,16 @@ async function syncOrder(
 
   await persistOrderUpdate(dbOrder.id, update, nowIso, dbOrder.status);
 
+  // Tell the customer the order shipped the first time a tracking number
+  // appears. Idempotent (orders.shipping_email_sent_at) and never throws.
+  if (update?.tracking_number && isFirstTrackingAppearance(dbOrder.tracking_number, update)) {
+    await trySendShippingNotificationEmail(dbOrder.id, {
+      trackingNumber: update.tracking_number,
+      trackingUrl: update.tracking_url ?? dbOrder.tracking_url,
+      carrier: printifyOrder.shipments?.[0]?.carrier ?? null,
+    });
+  }
+
   if (update) {
     console.log(`Order ${dbOrder.id} updated:`, update);
   }
@@ -175,7 +188,7 @@ async function syncOrder(
  * printify_order_id, reads their current state from the Printify API and
  * updates status, printify_status and tracking fields when they changed.
  */
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
@@ -271,4 +284,4 @@ serve(async (req) => {
     console.error("Error syncing Printify orders:", error);
     return handleError(error, corsHeaders);
   }
-});
+}, { functionName: "sync-printify-orders" }));

@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars } from "../_shared/validators.ts"
+import { withErrorReporting } from "../_shared/sentry.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -188,7 +189,7 @@ async function findCheapestShippingProvider(
  * - min_price_cents: Minimum variant price from cheapest provider
  * - shipping_cents: Shipping cost to Netherlands from cheapest provider
  */
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders })
@@ -344,4 +345,4 @@ serve(async (req) => {
     console.error('Error syncing cheapest providers:', error)
     return handleError(error, corsHeaders)
   }
-})
+}, { functionName: "sync-cheapest-providers" }))

@@ -5,6 +5,7 @@ import { validateAndEnforceTestMode } from "../_shared/testModeSafeguard.ts"
 import { validatePaymentAmount } from "../_shared/amountValidator.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
 import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts"
+import { withErrorReporting } from "../_shared/sentry.ts"
 
 // Environment variables will be validated when needed
 
@@ -74,7 +75,7 @@ const TEST_SHIPPING_ADDRESS = {
   zip: '94105',
 }
 
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders })
@@ -396,4 +397,4 @@ serve(async (req) => {
   } catch (error) {
     return handleError(error, corsHeaders)
   }
-})
+}, { functionName: "create-printify-order" }))

@@ -5,6 +5,7 @@ import { supabaseRest } from "../_shared/supabase.ts";
 import { getMolliePayment, isMolliePaymentPaid, mapMollieStatusToInternal } from "../_shared/mollie.ts";
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
 import type { MollieVerifyRequestI, MollieVerifyResponseI } from "../../types/index.ts";
+import { withErrorReporting } from "../_shared/sentry.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,7 +13,7 @@ const corsHeaders = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -138,4 +139,4 @@ serve(async (req) => {
     console.error("Error verifying Mollie payment:", error);
     return handleError(error, corsHeaders);
   }
-});
+}, { functionName: "verify-mollie-payment" }));

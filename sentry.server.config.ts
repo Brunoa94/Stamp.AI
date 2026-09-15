@@ -1,22 +1,19 @@
-// This file configures the initialization of Sentry on the server.
-// The config you add here will be used whenever the server handles a request.
+// Sentry initialisation for the Node.js server runtime (API routes, RSC).
+// Loaded from src/instrumentation.ts. Shared options (DSN, environment,
+// release, sampling, PII scrubbing) live in src/lib/observability/sentryConfig.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
+import { buildSentryBaseOptions } from "@/lib/observability/sentryConfig";
 
 Sentry.init({
-  dsn: "https://f81c92c4cb15a656c494024072bfa61c@o4511877228527616.ingest.de.sentry.io/4511877243469904",
+  ...buildSentryBaseOptions({
+    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    vercelEnv: process.env.VERCEL_ENV || process.env.NEXT_PUBLIC_VERCEL_ENV,
+    nodeEnv: process.env.NODE_ENV,
+    commitSha: process.env.VERCEL_GIT_COMMIT_SHA || process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
+    tracesSampleRate: process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE,
+  }),
 
-  // Sample 10% of traces in production to reduce costs while maintaining visibility
-  tracesSampleRate: 0.1,
-
-  // Enable logs to be sent to Sentry
   enableLogs: true,
-
-  dataCollection: {
-    // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:
-    // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#dataCollection
-    // userInfo: false,
-    // httpBodies: [],
-  },
 });

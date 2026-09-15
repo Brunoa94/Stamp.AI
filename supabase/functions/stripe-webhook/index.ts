@@ -5,6 +5,8 @@ import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts"
+import { withErrorReporting } from '../_shared/sentry.ts'
+import { trySendOrderConfirmationEmail } from '../_shared/orderEmails.ts'
 
 /**
  * Wait for order to be created with idempotency key, then generate invoice.
@@ -71,6 +73,8 @@ async function waitForOrderAndGenerateInvoice(
 
         // Generate the invoice
         await tryGenerateInvoiceForOrder(orderId)
+        // Customer confirmation email (idempotent, never fails the webhook)
+        await trySendOrderConfirmationEmail(orderId)
       }
 
       return
@@ -130,7 +134,7 @@ async function handleCreditPurchase(paymentIntent: StripePaymentIntentI) {
   if (result.error) throw new Error('Failed to grant purchase credits')
 }
 
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -263,6 +267,8 @@ serve(async (req) => {
 
             // Issue the invoice now that the order is paid (idempotent, non-blocking)
             await tryGenerateInvoiceForOrder(dbOrderId)
+            // Customer confirmation email (idempotent, never fails the webhook)
+            await trySendOrderConfirmationEmail(dbOrderId)
           }
         } else {
           // No order_id yet - frontend hasn't created the order
@@ -399,4 +405,4 @@ serve(async (req) => {
     console.error('Webhook error:', err)
     return handleError(err, corsHeaders)
   }
-})
+}, { functionName: 'stripe-webhook' }))

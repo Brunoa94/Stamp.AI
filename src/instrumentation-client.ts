@@ -1,23 +1,36 @@
-// This file configures the initialization of Sentry on the client.
-// The added config here will be used whenever a users loads a page in their browser.
+// Sentry browser initialisation. Next.js 16 loads this file on the client;
+// it is the ONLY client-side Sentry config (sentry.client.config.ts was
+// removed — it was never loaded).
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
+import { buildSentryBaseOptions } from "@/lib/observability/sentryConfig";
 
+// NEXT_PUBLIC_* values are inlined at build time; access them literally.
 Sentry.init({
-  dsn: "https://f81c92c4cb15a656c494024072bfa61c@o4511877228527616.ingest.de.sentry.io/4511877243469904",
+  ...buildSentryBaseOptions({
+    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    vercelEnv: process.env.NEXT_PUBLIC_VERCEL_ENV,
+    nodeEnv: process.env.NODE_ENV,
+    commitSha: process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA,
+    tracesSampleRate: process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE,
+  }),
 
-  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
-  // Enable logs to be sent to Sentry
   enableLogs: true,
+  debug: false,
 
-  dataCollection: {
-    // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:
-    // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#dataCollection
-    // userInfo: false,
-    // httpBodies: [],
-  },
+  // Session Replay: always on errors, 10% of healthy sessions. Text is masked
+  // and media blocked so replays never contain customer data.
+  replaysOnErrorSampleRate: 1.0,
+  replaysSessionSampleRate: 0.1,
+
+  integrations: [
+    Sentry.replayIntegration({
+      maskAllText: true,
+      blockAllMedia: true,
+    }),
+    Sentry.browserTracingIntegration(),
+  ],
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

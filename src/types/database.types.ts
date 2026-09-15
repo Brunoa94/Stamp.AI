@@ -554,6 +554,7 @@ export type Database = {
           billing_address: Json | null
           cancellation_reason: string | null
           cancelled_at: string | null
+          confirmation_email_sent_at: string | null
           created_at: string | null
           currency: string | null
           customer_email: string
@@ -576,6 +577,7 @@ export type Database = {
           shipped_at: string | null
           shipping_address: Json | null
           shipping_cost: number | null
+          shipping_email_sent_at: string | null
           status: string | null
           subtotal: number | null
           tax_amount: number | null
@@ -589,6 +591,7 @@ export type Database = {
           billing_address?: Json | null
           cancellation_reason?: string | null
           cancelled_at?: string | null
+          confirmation_email_sent_at?: string | null
           created_at?: string | null
           currency?: string | null
           customer_email: string
@@ -611,6 +614,7 @@ export type Database = {
           shipped_at?: string | null
           shipping_address?: Json | null
           shipping_cost?: number | null
+          shipping_email_sent_at?: string | null
           status?: string | null
           subtotal?: number | null
           tax_amount?: number | null
@@ -624,6 +628,7 @@ export type Database = {
           billing_address?: Json | null
           cancellation_reason?: string | null
           cancelled_at?: string | null
+          confirmation_email_sent_at?: string | null
           created_at?: string | null
           currency?: string | null
           customer_email?: string
@@ -646,6 +651,7 @@ export type Database = {
           shipped_at?: string | null
           shipping_address?: Json | null
           shipping_cost?: number | null
+          shipping_email_sent_at?: string | null
           status?: string | null
           subtotal?: number | null
           tax_amount?: number | null
