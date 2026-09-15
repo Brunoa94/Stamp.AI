@@ -3,6 +3,7 @@ import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { createInvoiceSignedUrl, ensureInvoiceForOrder } from "../_shared/invoice.ts";
+import { withErrorReporting } from "../_shared/sentry.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -28,7 +29,7 @@ interface OrderOwnershipI {
  * Callable by the order's owner (user JWT) or server-side (service role) —
  * webhooks use the shared helper directly instead of this endpoint.
  */
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
@@ -88,4 +89,4 @@ serve(async (req) => {
     console.error("Generate invoice error:", err);
     return handleError(err, corsHeaders);
   }
-});
+}, { functionName: "generate-invoice" }));

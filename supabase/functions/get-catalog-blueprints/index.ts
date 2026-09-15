@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
+import { withErrorReporting } from "../_shared/sentry.ts"
 
 const PRINTIFY_API_TOKEN = Deno.env.get('PRINTIFY_API_TOKEN')
 
@@ -46,7 +47,7 @@ async function getAvailableProviders(blueprintId: number): Promise<any[]> {
   }
 }
 
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders })
@@ -201,4 +202,4 @@ serve(async (req) => {
     console.error('Error fetching catalog blueprints:', error)
     return handleError(error, corsHeaders)
   }
-})
+}, { functionName: "get-catalog-blueprints" }))

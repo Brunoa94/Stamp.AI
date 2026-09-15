@@ -14,6 +14,7 @@ import {
 } from "../_shared/colorValidation.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { requireUser } from "../_shared/authGuard.ts";
+import { withErrorReporting } from "../_shared/sentry.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -27,7 +28,7 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
@@ -471,4 +472,4 @@ serve(async (req) => {
     console.error("Error creating custom product:", error);
     return handleError(error, corsHeaders);
   }
-});
+}, { functionName: "create-custom-product" }));

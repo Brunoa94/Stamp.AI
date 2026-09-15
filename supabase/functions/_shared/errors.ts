@@ -25,10 +25,40 @@ export const createErrorResponse = (error: ApiError, corsHeaders: Record<string,
   );
 };
 
+export type ErrorReporterT = (error: unknown) => void;
+
+let errorReporter: ErrorReporterT | null = null;
+
+/**
+ * Register the reporter handleError forwards server-side failures to.
+ * Set by `initSentry()` in _shared/sentry.ts; kept as an injected hook so
+ * this module stays free of Deno/SDK imports and unit-testable.
+ */
+export const setErrorReporter = (reporter: ErrorReporterT | null): void => {
+  errorReporter = reporter;
+};
+
+const reportServerError = (error: unknown): void => {
+  if (!errorReporter) return;
+  try {
+    errorReporter(error);
+  } catch (reportingError) {
+    console.error('Error reporter failed:', reportingError);
+  }
+};
+
+/**
+ * Convert any thrown value into the function's error response.
+ * Client errors (4xx FunctionErrors) are expected and not reported; 5xx
+ * FunctionErrors and unexpected throwables are forwarded to the reporter.
+ */
 export const handleError = (error: unknown, corsHeaders: Record<string, string>) => {
   if (error instanceof FunctionError) {
+    if (error.status >= 500) reportServerError(error);
     return createErrorResponse({ status: error.status, message: error.errorId }, corsHeaders);
   }
+
+  reportServerError(error);
 
   if (error instanceof Error) {
     return createErrorResponse({ status: 500, message: 'INTERNAL_ERROR' }, corsHeaders);

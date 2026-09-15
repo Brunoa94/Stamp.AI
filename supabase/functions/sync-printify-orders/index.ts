@@ -12,6 +12,7 @@ import type {
   PrintifyOrderI,
   SyncOrderRowI,
 } from "./mapping.ts";
+import { withErrorReporting } from "../_shared/sentry.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -175,7 +176,7 @@ async function syncOrder(
  * printify_order_id, reads their current state from the Printify API and
  * updates status, printify_status and tracking fields when they changed.
  */
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
   }
@@ -271,4 +272,4 @@ serve(async (req) => {
     console.error("Error syncing Printify orders:", error);
     return handleError(error, corsHeaders);
   }
-});
+}, { functionName: "sync-printify-orders" }));

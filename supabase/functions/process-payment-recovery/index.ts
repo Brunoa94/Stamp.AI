@@ -10,6 +10,7 @@ import { requireUser } from "../_shared/authGuard.ts";
 import { verifyPaidPayment } from "../_shared/verifyPaidPayment.ts";
 import { requirePaymentCurrency } from "../_shared/paymentProof.ts";
 import { validatePaymentAmount } from "../_shared/amountValidator.ts";
+import { withErrorReporting } from "../_shared/sentry.ts";
 
 
 const corsHeaders = {
@@ -24,7 +25,7 @@ const corsHeaders = {
  * Completes order creation for payments that succeeded but weren't finalized
  * due to browser crashes, network failures, etc.
  */
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -277,4 +278,4 @@ serve(async (req) => {
   } catch (error) {
     return handleError(error, corsHeaders);
   }
-});
+}, { functionName: "process-payment-recovery" }));

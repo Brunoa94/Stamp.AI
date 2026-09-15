@@ -4,13 +4,14 @@ import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { getMolliePayment, mapMollieStatusToInternal, isMolliePaymentPaid } from "../_shared/mollie.ts";
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
+import { captureException, withErrorReporting } from "../_shared/sentry.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -237,10 +238,11 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error("Mollie webhook error:", error);
+    captureException(error, { functionName: "mollie-webhook", request: req });
     // Still return 200 to prevent Mollie from retrying
     return new Response(JSON.stringify({ received: true, error: "Processing error" }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   }
-});
+}, { functionName: "mollie-webhook" }));

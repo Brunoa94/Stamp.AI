@@ -4,6 +4,7 @@ import { validateEnvVars } from "../_shared/validators.ts";
 import { capturePayPalOrder } from "../_shared/paypal.ts";
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
 import type { PayPalCaptureRequestI, PayPalCaptureResponseI } from "../../types/index.ts";
+import { withErrorReporting } from "../_shared/sentry.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -99,7 +100,7 @@ async function verifyAuth(authHeader: string | null): Promise<{ userId: string; 
   };
 }
 
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -260,4 +261,4 @@ serve(async (req) => {
     console.error("Error capturing PayPal order:", error);
     return handleError(error, corsHeaders);
   }
-});
+}, { functionName: "capture-paypal-order" }));

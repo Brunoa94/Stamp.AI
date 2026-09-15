@@ -3,6 +3,7 @@ import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts";
+import { withErrorReporting } from "../_shared/sentry.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -62,7 +63,7 @@ function isAlreadyCancelled(status: string | null): boolean {
  * 3. Updates order status to "cancelled" in database
  * 4. Processes refund if payment_status is "paid"
  */
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -340,4 +341,4 @@ serve(async (req) => {
     console.error("Error cancelling order:", error);
     return handleError(error, corsHeaders);
   }
-});
+}, { functionName: "cancel-order" }));

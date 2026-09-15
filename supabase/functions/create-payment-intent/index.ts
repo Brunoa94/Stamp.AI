@@ -5,6 +5,7 @@ import { validateEnvVars, validateRequest } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { validatePricingAgainstDatabase, type LineItemForPricingI } from "../_shared/serverPriceService.ts";
 import type { PaymentIntentResponseI } from "../../types/index.ts";
+import { withErrorReporting } from "../_shared/sentry.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -61,7 +62,7 @@ async function verifyAuth(
   };
 }
 
-serve(async (req) => {
+serve(withErrorReporting(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -211,4 +212,4 @@ serve(async (req) => {
   } catch (error) {
     return handleError(error, corsHeaders);
   }
-});
+}, { functionName: "create-payment-intent" }));
