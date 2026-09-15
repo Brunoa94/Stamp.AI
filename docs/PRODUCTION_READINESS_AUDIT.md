@@ -44,6 +44,58 @@ The `fixing_security` work has landed and closed most of the *authentication* ga
 
 ---
 
+## Fix PRs and what is still missing (2026-09-15)
+
+Five backend PRs against `dev` implement the fixes for the findings below. **None is merged yet**, and none has been deployed to Supabase; the statuses in the sections that follow describe `dev` *before* these PRs.
+
+| PR | Branch | Findings addressed | Suggested merge order |
+|---|---|---|---|
+| #93 | `fix/delivery-pipeline` | C11, C13, C14, all 15 failing unit tests | 1 — gives every later PR a CI run |
+| #94 | `fix/legal-compliance` | C15 (backend), C16 (backend), C17 | 2 |
+| #96 | `fix/security-hardening` | C10, H4, H5, H8, H9, M1, M2, M5 | 3 |
+| #95 | `fix/reliability-observability` | H10, H12, H13, H14, M8 | 4 |
+| #97 | `fix/payment-integrity` | C1, C6, C7, C18, H3, H6 | 5 — touches the same webhooks as #95 and #96; expect small additive conflicts |
+
+### Still missing after those PRs merge
+
+**Needs a human decision or information nobody in the repo has**
+
+- **C16 real legal entity data.** `legalEntity.ts` still carries `null` for registered address, KvK and VAT. #94 only removes the contradiction with `business.ts` and stops the placeholders reaching JSON-LD. Blocked on legal.
+- **C17 invoice scrubbing on account deletion.** #94 anonymises customer data on issued invoices and deletes the PDFs. Whether Dutch invoice law (Wet OB art. 35a) permits this needs a legal answer; the alternative is a one-line change described in `docs/GDPR.md`.
+- **Secret rotation.** The Playwright test account token is still in git history (#96 untracks the file; a history rewrite is optional). Printify token rotation for C8 cannot be confirmed from the repo.
+- **C12 staging environment and deploy pipeline.** Not started. Needs a second Supabase project and Vercel environment; `supabase:setup` still hardcodes the production project ref.
+- **M12 Dutch locale.** Deliberately not started.
+
+**Frontend work (out of scope of the backend PRs)**
+
+- **C15 cookie banner.** #94 gates GA behind a consent cookie and sends Consent Mode v2 defaults, but no banner writes that cookie. Until it exists, GA never loads. Spec in `docs/GDPR.md` (`buildConsentCookieString`, `CONSENT_UPDATED_EVENT`).
+- **C17 profile UI.** Delete-account and export-data buttons calling `POST /api/account/delete` (with the `DELETE MY ACCOUNT` phrase, password re-entry, and 409 open-orders handling) and `POST /api/account/export`. The FAQ's "from your profile" is false until this ships.
+- **H11 `error.tsx` / `loading.tsx`** per route group. Not started.
+- **Return-client cleanup after #97.** `StripeReturnClient`, `PaypalReturnClient`, `MollieReturnClient` still call the now no-op `linkPaymentTransactionToOrder` and pass `paymentStatus`/`orderStatus` the server ignores; `useCreateOrderFromCart` callers should surface the new `AMOUNT_MISMATCH`, `PAYMENT_NOT_COMPLETED`, `INVALID_ORDER_SOURCE` codes.
+- **M9 iDEAL parity.** `HomePaymentMethods.tsx` still filters iDEAL out while `PaymentMethodsBanner.tsx` shows it; checkout has it live.
+
+**Verification that could not happen locally (no Deno, no Supabase CLI)**
+
+- Seven new migrations (`20260915000000`, `…10`, `…11`, `…20`, `…21`, `…30`, `…31`) are unapplied and untested against Postgres. Apply on staging first; then regenerate `src/types/database.types.ts` (#94 hand-wrote its entries).
+- Edge function handlers (`finalize-order`, the reworked webhooks, `process-payment-recovery`, Sentry Deno SDK wiring, email senders) were checked by reading and through the pure `_shared` modules only. Run `supabase functions serve` and a full Stripe, PayPal and Mollie checkout on staging with the tab closed after payment.
+- `supabase/config.toml` changes (#96 auth defaults, #95 SMTP) take effect only after `supabase config push` with `NEXT_PUBLIC_SITE_URL`, `AUTH_ADDITIONAL_REDIRECT_URL` and `SMTP_*` set.
+- New environment variables must exist before deploy: `ALLOWED_ORIGINS`, `ADMIN_API_SECRET`, `SENTRY_DSN`, `NEXT_PUBLIC_SENTRY_DSN`, `BREVO_*`, `SUPPORT_EMAIL`, `ORDER_VAT_RATE` and related `ORDER_*` pricing config, `SMTP_*`. All are listed in `.env.example` on the respective branches.
+
+**Findings that remain PARTIAL even with every PR merged**
+
+- **C6** shipping is a server constant, not carrier-computed; fine for free shipping, revisit when shipping is charged.
+- **H5** GoTrue-level JWT verification stays off for every function by design (the project uses publishable/secret keys, pg_cron and server routes); authorization is enforced in-function. CAPTCHA in GoTrue stays off because the app uses reCAPTCHA v3, which GoTrue does not support; password reset therefore has no CAPTCHA.
+- **H8** the rate-limit store is still per-instance memory; a shared store (Upstash/Redis or Postgres) is needed for multi-replica deployments.
+- **H15** the webhook handlers themselves, and `stripeService`, `paypalService`, `mollieService`, `promocodeService`, `invoiceService`, `authService` still have no dedicated tests.
+- **M3** `'unsafe-inline'` remains in `script-src` by design.
+- **M7** `npm audit` still reports 11 vulnerabilities; duplicate Google SDK and `supabase` CLI in `dependencies` untouched.
+- **M10** no server-side purchase analytics event.
+- **M11** sitemap is static and placeholder image hosts remain allowed.
+- **Pre-existing Mollie bug** found during #95: the first upsert branch in `mollie-webhook` sets `payment_status = 'paid'` regardless of `isPaid`. Not fixed in any PR.
+- **ESLint backlog** of ~866 errors; #93 makes full-repo lint non-blocking and lints only changed files strictly.
+
+---
+
 ## CRITICAL
 
 ### Payment integrity
