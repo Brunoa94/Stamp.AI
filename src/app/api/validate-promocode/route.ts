@@ -1,86 +1,58 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/service";
 import { captureError } from "@/lib/observability/errorCapture";
-import type { PromoCodeValidationResult, PromoCodeT } from "@/schemas/promocode";
+import { evaluatePromocode } from "@/lib/promocodes/evaluatePromocode";
+import type { PromoCodeValidationResult } from "@/schemas/promocode";
 
 export const runtime = "nodejs";
 
 interface ValidatePromoCodeRequest {
-  code: string;
-  subtotal: number;
+  code?: unknown;
+  subtotal?: unknown;
 }
 
-export async function POST(request: NextRequest): Promise<NextResponse<PromoCodeValidationResult>> {
+function rejected(message: string): NextResponse<PromoCodeValidationResult> {
+  return NextResponse.json({ isValid: false, message, appliedPromo: null });
+}
+
+/**
+ * Validates a promo code for the checkout summary.
+ *
+ * The promocodes table is readable by the service role only, so this route
+ * reads it with the service client and applies the business rules from
+ * evaluatePromocode (active, not expired, under its usage limit). Messages
+ * are `checkout.pricing` catalog keys.
+ */
+export async function POST(
+  request: NextRequest,
+): Promise<NextResponse<PromoCodeValidationResult>> {
   try {
-    const body: ValidatePromoCodeRequest = await request.json();
-    const { code, subtotal } = body;
+    const body = (await request.json()) as ValidatePromoCodeRequest;
 
-    const normalizedCode = (code ?? "").trim().toUpperCase();
-
+    const normalizedCode =
+      typeof body.code === "string" ? body.code.trim().toUpperCase() : "";
     if (!normalizedCode) {
-      return NextResponse.json({
-        isValid: false,
-        message: "Please enter a promo code.",
-        appliedPromo: null,
-      });
+      return rejected("enterPromoCode");
     }
 
-    if (typeof subtotal !== "number" || subtotal <= 0) {
-      return NextResponse.json({
-        isValid: false,
-        message: "Your cart total must be greater than 0.",
-        appliedPromo: null,
-      });
+    const subtotal = body.subtotal;
+    if (typeof subtotal !== "number" || !Number.isFinite(subtotal) || subtotal <= 0) {
+      return rejected("cartTotalInvalid");
     }
 
-    const supabase = await createClient();
-
-    const { data, error } = await supabase
+    const { data, error } = await createServiceClient()
       .from("promocodes")
-      .select("promocode_id, code, type, value, created_at")
+      .select("*")
       .eq("code", normalizedCode)
-      .single();
+      .maybeSingle();
 
     if (error) {
-      // PGRST116 = "not found" for .single() - this means invalid code, not an error
-      if (error.code === "PGRST116") {
-        return NextResponse.json({
-          isValid: false,
-          message: "Invalid promo code.",
-          appliedPromo: null,
-        });
-      }
       throw error;
     }
 
-    if (!data) {
-      return NextResponse.json({
-        isValid: false,
-        message: "Invalid promo code.",
-        appliedPromo: null,
-      });
-    }
-
-    const promo = data as PromoCodeT;
-
-    const discountRaw =
-      promo.type === "percentage"
-        ? subtotal * (promo.value / 100)
-        : promo.value;
-
-    // Clamp discount: prevent negative and prevent exceeding subtotal
-    const discountValue = Math.max(0, Math.min(discountRaw, subtotal));
-
-    return NextResponse.json({
-      isValid: true,
-      message: "Promo code applied.",
-      appliedPromo: {
-        code: promo.code,
-        type: promo.type,
-        value: promo.value,
-        discountValue,
-      },
-    });
+    return NextResponse.json(
+      evaluatePromocode(data, { subtotal, now: new Date() }),
+    );
   } catch (error) {
     captureError(error, {
       service: "PromoCodeAPI",
@@ -88,12 +60,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<PromoCode
     });
 
     return NextResponse.json(
-      {
-        isValid: false,
-        message: "Failed to validate promo code.",
-        appliedPromo: null,
-      },
-      { status: 500 }
+      { isValid: false, message: "validationFailed", appliedPromo: null },
+      { status: 500 },
     );
   }
 }

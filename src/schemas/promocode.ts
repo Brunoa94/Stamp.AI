@@ -9,6 +9,10 @@ export const PromoCodeSchema = z.object({
   type: z.enum(["percentage", "numeric"]),
   value: z.number(),
   created_at: z.string().nullable(),
+  expires_at: z.string().nullable().optional(),
+  max_uses: z.number().nullable().optional(),
+  used_count: z.number().optional(),
+  is_active: z.boolean().optional(),
 });
 
 /**

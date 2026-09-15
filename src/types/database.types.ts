@@ -1046,22 +1046,34 @@ export type Database = {
         Row: {
           code: string
           created_at: string | null
+          expires_at: string | null
+          is_active: boolean
+          max_uses: number | null
           promocode_id: string
           type: string
+          used_count: number
           value: number
         }
         Insert: {
           code: string
           created_at?: string | null
+          expires_at?: string | null
+          is_active?: boolean
+          max_uses?: number | null
           promocode_id?: string
           type: string
+          used_count?: number
           value: number
         }
         Update: {
           code?: string
           created_at?: string | null
+          expires_at?: string | null
+          is_active?: boolean
+          max_uses?: number | null
           promocode_id?: string
           type?: string
+          used_count?: number
           value?: number
         }
         Relationships: []
@@ -1537,6 +1549,20 @@ export type Database = {
           p_user_id: string
         }
         Returns: string
+      }
+      redeem_promocode: {
+        Args: { p_code: string }
+        Returns: {
+          code: string
+          created_at: string | null
+          expires_at: string | null
+          is_active: boolean
+          max_uses: number | null
+          promocode_id: string
+          type: string
+          used_count: number
+          value: number
+        }[]
       }
       refund_coin: { Args: { p_user_id: string }; Returns: boolean }
       record_webhook_event: {
