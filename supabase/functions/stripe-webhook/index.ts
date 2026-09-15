@@ -6,6 +6,7 @@ import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts"
 import { withErrorReporting } from '../_shared/sentry.ts'
+import { trySendOrderConfirmationEmail } from '../_shared/orderEmails.ts'
 
 /**
  * Wait for order to be created with idempotency key, then generate invoice.
@@ -72,6 +73,8 @@ async function waitForOrderAndGenerateInvoice(
 
         // Generate the invoice
         await tryGenerateInvoiceForOrder(orderId)
+        // Customer confirmation email (idempotent, never fails the webhook)
+        await trySendOrderConfirmationEmail(orderId)
       }
 
       return
@@ -264,6 +267,8 @@ serve(withErrorReporting(async (req) => {
 
             // Issue the invoice now that the order is paid (idempotent, non-blocking)
             await tryGenerateInvoiceForOrder(dbOrderId)
+            // Customer confirmation email (idempotent, never fails the webhook)
+            await trySendOrderConfirmationEmail(dbOrderId)
           }
         } else {
           // No order_id yet - frontend hasn't created the order

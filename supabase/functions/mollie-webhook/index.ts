@@ -5,6 +5,7 @@ import { supabaseRest } from "../_shared/supabase.ts";
 import { getMolliePayment, mapMollieStatusToInternal, isMolliePaymentPaid } from "../_shared/mollie.ts";
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
 import { captureException, withErrorReporting } from "../_shared/sentry.ts";
+import { trySendOrderConfirmationEmail } from "../_shared/orderEmails.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -207,6 +208,8 @@ serve(withErrorReporting(async (req) => {
 
           // Issue the invoice now that the order is paid (idempotent, non-blocking)
           await tryGenerateInvoiceForOrder(orderId);
+          // Customer confirmation email (idempotent, never fails the webhook)
+          await trySendOrderConfirmationEmail(orderId);
         }
       }
 

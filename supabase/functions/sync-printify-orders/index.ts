@@ -13,6 +13,8 @@ import type {
   SyncOrderRowI,
 } from "./mapping.ts";
 import { withErrorReporting } from "../_shared/sentry.ts";
+import { trySendShippingNotificationEmail } from "../_shared/orderEmails.ts";
+import { isFirstTrackingAppearance } from "../_shared/shippingNotificationEmail.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -156,6 +158,16 @@ async function syncOrder(
   }
 
   await persistOrderUpdate(dbOrder.id, update, nowIso, dbOrder.status);
+
+  // Tell the customer the order shipped the first time a tracking number
+  // appears. Idempotent (orders.shipping_email_sent_at) and never throws.
+  if (update?.tracking_number && isFirstTrackingAppearance(dbOrder.tracking_number, update)) {
+    await trySendShippingNotificationEmail(dbOrder.id, {
+      trackingNumber: update.tracking_number,
+      trackingUrl: update.tracking_url ?? dbOrder.tracking_url,
+      carrier: printifyOrder.shipments?.[0]?.carrier ?? null,
+    });
+  }
 
   if (update) {
     console.log(`Order ${dbOrder.id} updated:`, update);
