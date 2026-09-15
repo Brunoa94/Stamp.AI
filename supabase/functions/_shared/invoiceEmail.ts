@@ -1,10 +1,13 @@
 import { sendInvoiceEmailBrevo } from "./brevoEmail.ts";
+import { EmailNotConfiguredError } from "./emailConfig.ts";
+import { captureException } from "./sentry.ts";
 
 /**
  * Invoice email delivery via Brevo.
  *
- * Optional integration — when no API key is configured, sending is
- * skipped silently so invoice generation never depends on email delivery.
+ * Configuration is resolved by brevoEmail.ts: in production a missing
+ * BREVO_API_KEY / sender is reported to Sentry (invoice generation itself
+ * must never fail over email delivery); elsewhere it is skipped with a warning.
  *
  * Secrets:
  *   BREVO_API_KEY       Brevo API key (required to send)
@@ -25,12 +28,14 @@ export interface SendInvoiceEmailParamsI {
  * Returns true when the email was sent, false when skipped or failed.
  */
 export async function sendInvoiceEmail(params: SendInvoiceEmailParamsI): Promise<boolean> {
-  const brevoKey = Deno.env.get("BREVO_API_KEY");
-
-  if (!brevoKey) {
-    console.log("BREVO_API_KEY not configured, skipping invoice email");
-    return false;
+  try {
+    return await sendInvoiceEmailBrevo(params);
+  } catch (error) {
+    if (error instanceof EmailNotConfiguredError) {
+      console.error(`❌ Invoice email not sent: ${error.message}`);
+      captureException(error, { extra: { subject: params.subject } });
+      return false;
+    }
+    throw error;
   }
-
-  return sendInvoiceEmailBrevo(params);
 }
