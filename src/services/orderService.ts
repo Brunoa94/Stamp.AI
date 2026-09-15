@@ -23,10 +23,12 @@ import { CartServiceMapper } from "@/mappers/services/cartServiceMapper";
 import { z } from "zod";
 import { CartItem, CartT, CartWithItems } from "@/types/cart";
 import { CartService } from "./cartService";
-import { OrderItemService } from "./orderItemService";
 import { UserI } from "../../supabase/types";
 import { ErrorClient } from "./errorClient";
+import { getAuthenticatedHeaders } from "./authHelpers";
 import type { ShippingAddressT } from "@/schemas/checkout";
+import type { FinalizeOrderRequestT, FinalizeOrderResponseT } from "@/types/finalizeOrder";
+import { parseIdempotencyKey } from "../../supabase/functions/_shared/paymentReference";
 import { RefundService } from "./refundService";
 import { PaymentProviderT } from "../../supabase/types";
 export class OrderService {
@@ -345,8 +347,12 @@ export class OrderService {
   }
 
   /**
-   * Link a payment transaction to an order
-   * Updates payment_transactions.order_id after order creation
+   * Link a payment transaction to an order.
+   *
+   * @deprecated No longer needed: `finalize-order` records the payment
+   * transaction with its `order_id` server-side, and `payment_transactions`
+   * money/link columns are protected from client updates. Kept as a no-op so
+   * the checkout return pages keep working until they are cleaned up.
    */
   static async linkPaymentTransactionToOrder({
     paymentProvider,
@@ -357,52 +363,29 @@ export class OrderService {
     paymentIntentId: string;
     orderId: string;
   }): Promise<void> {
-    try {
-      const supabase = this.getSupabase();
-
-      // Build the query based on payment provider
-      let query = supabase
-        .from('payment_transactions')
-        .update({ order_id: orderId, updated_at: new Date().toISOString() });
-
-      // Add provider-specific filter
-      switch (paymentProvider) {
-        case 'stripe':
-          query = query.eq('stripe_payment_intent_id', paymentIntentId);
-          break;
-        case 'paypal':
-          query = query.eq('paypal_order_id', paymentIntentId);
-          break;
-        case 'mollie':
-          query = query.eq('mollie_payment_id', paymentIntentId);
-          break;
-        default:
-          throw new Error(`Unsupported payment provider: ${paymentProvider}`);
-      }
-
-      const { error } = await query;
-
-      if (error) {
-        console.error(`Failed to link payment transaction to order:`, error);
-        // Don't throw - this is non-critical, webhook can still use metadata fallback
-      } else {
-        console.log(`✅ Linked payment transaction (${paymentProvider}:${paymentIntentId}) to order ${orderId}`);
-      }
-    } catch (error) {
-      console.error('Exception linking payment transaction to order:', error);
-      // Non-blocking error - webhook has fallback
-    }
+    console.log(
+      `ℹ️ Payment transaction (${paymentProvider}:${paymentIntentId}) is linked to order ${orderId} by finalize-order`,
+    );
   }
 
-
+  /**
+   * Create the order for a completed payment.
+   *
+   * The browser never inserts orders: the `finalize-order` edge function
+   * verifies the payment with the provider, reprices every item from the
+   * catalog, checks the total against the amount charged and inserts the paid
+   * order with the service role. `idempotencyKey` (`${provider}_${paymentId}`)
+   * identifies the payment; repeated calls return the same order id.
+   *
+   * `paymentStatus` and `orderStatus` are accepted for backwards
+   * compatibility with the checkout return pages but are decided server-side.
+   */
   static async createOrderFromCart({
     user,
     cart,
-    paymentStatus = "paid",
     shippingAddress,
     billingAddress,
     idempotencyKey,
-    orderStatus,
     paymentMethod,
   }: {
     user: UserI;
@@ -413,15 +396,14 @@ export class OrderService {
     idempotencyKey?: string;
     orderStatus?: string;
     paymentMethod?: string;
-  }) {
+  }): Promise<string> {
     try {
-      // CRITICAL: Check idempotency key to prevent duplicate orders
-      if (idempotencyKey) {
-        const existingOrder = await this.getOrderByIdempotencyKey(idempotencyKey);
-        if (existingOrder) {
-          console.log(`⚠️ Order already exists with idempotency key: ${idempotencyKey}, returning existing order: ${existingOrder.id}`);
-          return existingOrder.id;
-        }
+      const payment = parseIdempotencyKey(idempotencyKey);
+      if (!payment) {
+        throw new Error("A payment reference (idempotency key) is required to create an order");
+      }
+      if (paymentMethod && paymentMethod !== payment.provider) {
+        throw new Error(`Payment method ${paymentMethod} does not match payment reference ${idempotencyKey}`);
       }
 
       // Only the items selected for checkout belong to the order (and its invoice)
@@ -430,48 +412,60 @@ export class OrderService {
         throw new Error("Cannot create an order without selected cart items");
       }
 
-      // Use mapper to generate unique order number
-      const orderNumber = OrderServiceMapper.generateOrderNumber();
+      const body: FinalizeOrderRequestT = {
+        provider: payment.provider,
+        payment_id: payment.paymentId,
+        cart_items: OrderServiceMapper.mapCartItemsToFinalizeOrderItems(checkoutCart.cart_items),
+        shipping_address: shippingAddress ?? null,
+        billing_address: billingAddress ?? null,
+      };
 
-      // Use mapper to calculate order totals
-      const totals = OrderServiceMapper.calculateOrderTotals(checkoutCart.cart_items);
-
-      // Derive order status: use provided or default logic
-      const finalOrderStatus = orderStatus ?? (paymentStatus === "paid" ? "confirmed" : "pending");
-
-      // Use mapper to create order payload
-      const orderPayload = OrderServiceMapper.mapUserAndTotalsToCreateOrder(
-        user,
-        orderNumber,
-        totals,
-        shippingAddress,
-        billingAddress,
-        0, // discount amount
-        paymentStatus,
-        finalOrderStatus,
-        idempotencyKey,
-        paymentMethod
+      const headers = await getAuthenticatedHeaders("Order");
+      const { data, error } = await this.getSupabase().functions.invoke<FinalizeOrderResponseT>(
+        "finalize-order",
+        { body, headers },
       );
 
-      // Create order from cart
-      const newOrder = await this.createOrder(orderPayload);
-
-      console.log("✅ Order created from cart:", newOrder.id);
-
-      // Create order items from cart items using mapper
-      if (checkoutCart.cart_items.length > 0) {
-        const orderItems = checkoutCart.cart_items.map((cartItem) =>
-          OrderServiceMapper.mapCartItemToOrderItem(cartItem, newOrder.id)
-        );
-
-        await OrderItemService.createOrderItems(orderItems);
-        console.log("✅ Order items created:", orderItems.length);
+      if (error) {
+        throw ErrorClient.handleError({
+          error: await this.readFunctionError(error),
+          service: "Order",
+          action: "Finalize Order",
+        });
       }
 
-      return newOrder.id;
+      if (!data?.order_id) {
+        throw new Error("finalize-order did not return an order id");
+      }
+
+      console.log(
+        data.created
+          ? `✅ Order ${data.order_id} finalized for ${user.id}`
+          : `⚠️ Order already exists for ${idempotencyKey}, returning existing order: ${data.order_id}`,
+      );
+
+      return data.order_id;
     } catch (error) {
       throw ErrorClient.handleError({ error, service: "Order", action: "Create Order From Cart" });
     }
+  }
+
+  /**
+   * Edge functions answer errors as `{ error: "<CODE>" }`; surface the code so
+   * callers (and observability) see AMOUNT_MISMATCH rather than a bare 4xx.
+   */
+  private static async readFunctionError(error: unknown): Promise<unknown> {
+    const context = (error as { context?: { json?: () => Promise<unknown> } }).context;
+    if (!context?.json) return error;
+    try {
+      const payload = (await context.json()) as { error?: unknown };
+      if (typeof payload?.error === "string") {
+        return { error: payload.error };
+      }
+    } catch {
+      // Fall through to the raw error
+    }
+    return error;
   }
 
   /**

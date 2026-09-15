@@ -1,8 +1,7 @@
 import type { Database } from "@/types/database.types";
 import type { OrderWithItemsT, CreateOrderT } from "@/types/order";
 import type { CartItem } from "@/types/cart";
-import type { UserI } from "../../../supabase/types";
-import type { ShippingAddressT } from "@/schemas/checkout";
+import type { FinalizeOrderCartItemT } from "@/types/finalizeOrder";
 import { calculateOrderTotals as calculateServerOrderTotals } from "../../../supabase/functions/_shared/orderTotals";
 
 type OrderRow = Database['public']['Tables']['orders']['Row'];
@@ -195,48 +194,21 @@ export class OrderServiceMapper {
   }
 
   /**
-   * Map user and totals to create order payload
+   * Cart items as sent to the `finalize-order` edge function. Only identity
+   * and display fields are sent: the server reprices every item from the
+   * catalog, so client prices never reach the order.
    */
-  static mapUserAndTotalsToCreateOrder(
-    user: UserI,
-    orderNumber: string,
-    totals: {
-      subtotal: number;
-      tax_amount: number;
-      shipping_cost: number;
-      total_amount: number;
-    },
-    shippingAddress?: ShippingAddressT,
-    billingAddress?: ShippingAddressT,
-    discountAmount: number = 0,
-    paymentStatus: string = "pending",
-    orderStatus: string = "pending",
-    idempotencyKey?: string,
-    paymentMethod?: string
-  ): CreateOrderT & { idempotency_key?: string | null } {
-    const fullName = [shippingAddress?.first_name, shippingAddress?.last_name]
-      .filter(Boolean)
-      .join(" ")
-      .trim();
-
-    return {
-      user_id: user.id,
-      customer_email: shippingAddress?.email || user.email || "",
-      customer_name: fullName || null,
-      customer_phone: shippingAddress?.phone || null,
-      shipping_address: shippingAddress || null,
-      billing_address: billingAddress || shippingAddress || null, // Use billing if provided, fallback to shipping
-      order_number: orderNumber,
-      status: orderStatus,
-      payment_status: paymentStatus,
-      payment_method: paymentMethod || null,
-      subtotal: totals.subtotal,
-      shipping_cost: totals.shipping_cost,
-      tax_amount: totals.tax_amount,
-      discount_amount: discountAmount,
-      total_amount: totals.total_amount,
-      currency: "EUR", // Default currency
-      idempotency_key: idempotencyKey || null,
-    };
+  static mapCartItemsToFinalizeOrderItems(items: CartItem[]): FinalizeOrderCartItemT[] {
+    return items.map((item) => ({
+      id: item.id,
+      product_id: item.product_id ?? null,
+      product_name: item.product_name ?? item.product?.name ?? null,
+      variant_id: item.variant_id ?? null,
+      variant_name: item.variant_name ?? item.variant?.name ?? null,
+      quantity: item.quantity ?? 1,
+      custom_image_url: item.custom_image_url ?? null,
+      printify_blueprint_id: item.printify_blueprint_id ?? item.product?.blueprint_id ?? null,
+      is_selected: item.is_selected,
+    }));
   }
 }
