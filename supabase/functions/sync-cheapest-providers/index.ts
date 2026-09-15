@@ -200,7 +200,6 @@ serve(async (req) => {
 
     // Validate environment variables
     const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken()
-    console.log(`Printify token preview: ${PRINTIFY_API_TOKEN.slice(0, 20)}...`)
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
