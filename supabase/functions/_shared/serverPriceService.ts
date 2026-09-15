@@ -109,6 +109,8 @@ export async function priceOrderFromCatalog({
 
 export interface ValidatePricingInputI extends PriceOrderInputI {
   clientTotalCents: number;
+  /** Currency the client wants to pay in; must be the store currency. */
+  currency: string;
 }
 
 /**
@@ -119,6 +121,10 @@ export interface ValidatePricingInputI extends PriceOrderInputI {
 export async function validatePricingAgainstDatabase(
   input: ValidatePricingInputI,
 ): Promise<ServerOrderPricingI> {
+  if (typeof input.currency !== "string" || input.currency.toUpperCase() !== input.config.currency) {
+    throw new FunctionError(400, "CURRENCY_MISMATCH", `Payments must be made in ${input.config.currency}`);
+  }
+
   const priced = await priceOrderFromCatalog(input);
   const reconciliation = reconcileClientTotalCents(priced.totals, input.clientTotalCents);
 

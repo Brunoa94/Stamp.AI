@@ -20,6 +20,7 @@ describe("resolveOrderTotalsConfig", () => {
   it("uses the NL defaults when no env is provided", () => {
     expect(resolveOrderTotalsConfig({})).toEqual(DEFAULT_ORDER_TOTALS_CONFIG);
     expect(DEFAULT_ORDER_TOTALS_CONFIG).toEqual({
+      currency: "EUR",
       vatRateBasisPoints: 2100,
       shippingCostCents: 499,
       freeShippingThresholdCents: 6000,
@@ -29,11 +30,13 @@ describe("resolveOrderTotalsConfig", () => {
   it("reads overrides from the environment", () => {
     expect(
       resolveOrderTotalsConfig({
+        ORDER_CURRENCY: "usd",
         ORDER_VAT_RATE_BPS: "900",
         ORDER_SHIPPING_COST_CENTS: "350",
         ORDER_FREE_SHIPPING_THRESHOLD_CENTS: "10000",
       }),
     ).toEqual({
+      currency: "USD",
       vatRateBasisPoints: 900,
       shippingCostCents: 350,
       freeShippingThresholdCents: 10000,
@@ -42,6 +45,10 @@ describe("resolveOrderTotalsConfig", () => {
 
   it.each(["abc", "-1", "1.5", ""])("ignores invalid override %j", (value) => {
     expect(resolveOrderTotalsConfig({ ORDER_VAT_RATE_BPS: value }).vatRateBasisPoints).toBe(2100);
+  });
+
+  it.each(["EU", "euro", ""])("ignores invalid currency %j", (value) => {
+    expect(resolveOrderTotalsConfig({ ORDER_CURRENCY: value }).currency).toBe("EUR");
   });
 });
 
@@ -126,7 +133,7 @@ describe("calculateOrderTotals", () => {
     const totals = calculateOrderTotals({
       subtotalCents: 1000,
       discountCents: 0,
-      config: { vatRateBasisPoints: 0, shippingCostCents: 100, freeShippingThresholdCents: 5000 },
+      config: { currency: "EUR", vatRateBasisPoints: 0, shippingCostCents: 100, freeShippingThresholdCents: 5000 },
     });
     expect(totals).toMatchObject({ shipping_cents: 100, tax_cents: 0, total_cents: 1100 });
   });

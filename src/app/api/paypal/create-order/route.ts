@@ -97,10 +97,11 @@ async function priceOrderServerSide(
     promo = { type: data.type, value: Number(data.value) };
   }
 
+  const config = resolveOrderTotalsConfig(process.env);
   const totals = calculateOrderTotals({
     subtotalCents: pricing.subtotal_cents,
     discountCents: calculatePromoDiscountCents(promo, pricing.subtotal_cents),
-    config: resolveOrderTotalsConfig(process.env),
+    config,
   });
 
   const reconciliation = reconcileClientTotalCents(totals, majorUnitsToCents(body.amount));
@@ -111,7 +112,7 @@ async function priceOrderServerSide(
     );
   }
 
-  return { totals, pricingMetadata: toPricingMetadata(totals, promoCode) };
+  return { totals, currency: config.currency, pricingMetadata: toPricingMetadata(totals, promoCode) };
 }
 
 export async function POST(request: NextRequest) {
@@ -140,7 +141,7 @@ export async function POST(request: NextRequest) {
     }
 
     // SERVER-SIDE PRICE VALIDATION: never charge the raw client amount
-    const { totals, pricingMetadata } = await priceOrderServerSide(supabase, body);
+    const { totals, currency, pricingMetadata } = await priceOrderServerSide(supabase, body);
     const serverAmount = totals.total_cents / 100;
 
     // Build custom_id with metadata for webhook processing
@@ -154,7 +155,7 @@ export async function POST(request: NextRequest) {
 
     const paypalOrder = await createPayPalOrder({
       amount: serverAmount,
-      currency: "EUR",
+      currency,
       description: `Order for ${user.email}`,
       customId,
       shippingAddress: shippingAddress
@@ -184,7 +185,7 @@ export async function POST(request: NextRequest) {
           payment_provider: "paypal",
           paypal_order_id: paypalOrder.id,
           amount: serverAmount,
-          currency: "eur",
+          currency: currency.toLowerCase(),
           status: "pending",
           metadata: {
             ...pricingMetadata,

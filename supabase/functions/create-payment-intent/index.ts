@@ -115,6 +115,7 @@ serve(async (req) => {
       lineItems: parsedLineItems.items,
       promoCode,
       clientTotalCents: majorUnitsToCents(validAmount),
+      currency,
       config: getOrderTotalsConfig(),
     });
     const pricingMetadata = toPricingMetadata(priced.totals, promoCode);

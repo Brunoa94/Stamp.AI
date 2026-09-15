@@ -18,6 +18,8 @@
  */
 
 export interface OrderTotalsConfigI {
+  /** ISO 4217 currency the catalog is priced in; payments in any other currency are rejected. */
+  currency: string;
   /** VAT rate in basis points (2100 = 21%). */
   vatRateBasisPoints: number;
   /** Flat shipping fee in cents charged below the free-shipping threshold. */
@@ -51,12 +53,13 @@ export interface ChargeReconciliationI {
 
 /** Defaults for the Netherlands: 21% VAT, EUR 4.99 shipping, free from EUR 60. */
 export const DEFAULT_ORDER_TOTALS_CONFIG: OrderTotalsConfigI = {
+  currency: "EUR",
   vatRateBasisPoints: 2100,
   shippingCostCents: 499,
   freeShippingThresholdCents: 6000,
 };
 
-const ENV_KEYS: Record<keyof OrderTotalsConfigI, string> = {
+const ENV_KEYS: Record<Exclude<keyof OrderTotalsConfigI, "currency">, string> = {
   vatRateBasisPoints: "ORDER_VAT_RATE_BPS",
   shippingCostCents: "ORDER_SHIPPING_COST_CENTS",
   freeShippingThresholdCents: "ORDER_FREE_SHIPPING_THRESHOLD_CENTS",
@@ -81,10 +84,12 @@ export function resolveOrderTotalsConfig(
   env: Record<string, string | undefined>,
 ): OrderTotalsConfigI {
   const config = { ...DEFAULT_ORDER_TOTALS_CONFIG };
-  for (const key of Object.keys(ENV_KEYS) as Array<keyof OrderTotalsConfigI>) {
+  for (const key of Object.keys(ENV_KEYS) as Array<keyof typeof ENV_KEYS>) {
     const override = parseNonNegativeInteger(env[ENV_KEYS[key]]);
     if (override !== null) config[key] = override;
   }
+  const currency = env.ORDER_CURRENCY?.trim().toUpperCase();
+  if (currency && /^[A-Z]{3}$/.test(currency)) config.currency = currency;
   return config;
 }
 
