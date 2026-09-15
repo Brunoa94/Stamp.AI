@@ -2,9 +2,14 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars } from "../_shared/validators.ts"
 import { validateAndEnforceTestMode } from "../_shared/testModeSafeguard.ts"
-import { validatePaymentAmount } from "../_shared/amountValidator.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
 import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts"
+import {
+  assertLineItemsMatchOrder,
+  assertOrderFulfillable,
+  type StoredOrderForFulfillmentI,
+  type StoredOrderItemForFulfillmentI,
+} from "../_shared/fulfillmentGuard.ts"
 
 // Environment variables will be validated when needed
 
@@ -96,46 +101,44 @@ serve(async (req) => {
       metadata,
       use_sample_order = false, // Flag to create a sample order for testing
       auto_cancel = false, // Flag to automatically cancel order after creation (for testing)
-      payment_amount, // For amount validation
-      payment_currency, // For amount validation
-      subtotal, // For amount validation
-      shipping_cost, // For amount validation
-      discount, // For amount validation
     } = requestBody
 
-    // ✅ SECURITY: a normal end user may only fulfill THEIR OWN order. Without
-    // this, any authenticated user could pass another user's order_id and mark
-    // it paid/confirmed. Service-role callers (server-to-server, recovery) are
-    // trusted to act on any order.
+    // ✅ SECURITY: fulfilment is validated against the order the server
+    // already verified and stored (finalize-order), never against client
+    // amounts. A normal end user must reference THEIR OWN paid order; the
+    // service role (recovery) may act on any paid order. Either way the order
+    // must not already be fulfilled and the line items must be exactly what
+    // was paid for.
     const requestedOrderId = metadata?.order_id
-    if (userId !== 'service-role' && requestedOrderId) {
-      const ownership = await supabaseRest<Array<{ id: string }>>(
-        `orders?id=eq.${encodeURIComponent(String(requestedOrderId))}&user_id=eq.${encodeURIComponent(userId)}&select=id`,
-        'GET',
-      )
-      if (!Array.isArray(ownership.data) || ownership.data.length === 0) {
+    const isServiceRole = userId === 'service-role'
+    if (!isServiceRole && !requestedOrderId) {
+      throw ErrorCodes.INVALID_REQUEST('metadata.order_id is required')
+    }
+    if (requestedOrderId) {
+      const orderId = encodeURIComponent(String(requestedOrderId))
+      const [orderResult, itemsResult] = await Promise.all([
+        supabaseRest<StoredOrderForFulfillmentI[]>(
+          `orders?id=eq.${orderId}&select=id,user_id,payment_status,status,printify_order_id&limit=1`,
+          'GET',
+        ),
+        supabaseRest<StoredOrderItemForFulfillmentI[]>(
+          `order_items?order_id=eq.${orderId}&select=variant_id,quantity`,
+          'GET',
+        ),
+      ])
+      const storedOrder = orderResult.data?.[0]
+      if (orderResult.error || itemsResult.error || !storedOrder) {
         throw ErrorCodes.INVALID_REQUEST_BODY()
+      }
+      assertOrderFulfillable(storedOrder, { userId, isServiceRole })
+      if (!use_sample_order) {
+        assertLineItemsMatchOrder(Array.isArray(line_items) ? line_items : [], itemsResult.data ?? [])
       }
     }
 
     // ✅ CRITICAL FIX #1: Enforce test mode based on environment
     const testModeValidation = validateAndEnforceTestMode(is_test, 'Printify order creation');
     const enforcedTestMode = testModeValidation.testMode;
-
-    // ✅ CRITICAL FIX #2: Validate payment amount if provided
-    if (payment_amount !== undefined) {
-      const amountValidation = validatePaymentAmount({
-        paymentAmount: payment_amount,
-        paymentCurrency: payment_currency || 'USD',
-        subtotal,
-        shippingCost: shipping_cost,
-        discount,
-      });
-
-      if (!amountValidation.isValid) {
-        throw ErrorCodes.INVALID_REQUEST_BODY();
-      }
-    }
 
     // Use shipping_address if address_to is not provided
     let finalAddressTo = address_to || shipping_address
