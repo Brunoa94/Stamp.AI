@@ -9,7 +9,9 @@ const MAX_QUEUE_SIZE = 50;
 /**
  * Centralized GA4 analytics service.
  *
- * - In development, events are logged to the console instead of being sent.
+ * - In development, events are also logged to the console for debugging.
+ *   They are still forwarded when a measurement id is configured (GA is
+ *   simply not mounted locally when NEXT_PUBLIC_GA_MEASUREMENT_ID is unset).
  * - Events fired before gtag.js has loaded are queued and flushed once it is
  *   available (flush is attempted on every track call and by the GA script's
  *   onLoad callback).
