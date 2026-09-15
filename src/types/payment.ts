@@ -122,6 +122,7 @@ export interface CreateCreditPaymentResponseI {
  * Payload for creating a Stripe Payment Intent for checkout
  */
 export interface CreatePaymentIntentPayloadI {
+  /** Checkout total in cents. StripeService converts it for the edge API. */
   amount: number;
   currency?: string;
   line_items: PrintifyLineItem[];

@@ -75,7 +75,9 @@ export class StripeService {
       const { data, error } = await this.getSupabase().functions.invoke(
         "create-payment-intent",
         {
-          body: payload,
+          // Checkout uses cents; the edge function accepts currency units and
+          // converts them to Stripe's cents when creating the PaymentIntent.
+          body: { ...payload, amount: payload.amount / 100 },
           headers,
         }
       );
