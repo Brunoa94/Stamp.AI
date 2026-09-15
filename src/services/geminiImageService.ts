@@ -1,11 +1,16 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI, type GenerationConfig } from "@google/generative-ai";
 import fs from "fs";
 import path from "path";
+import { withRetry } from "@/lib/withRetry";
+import type { ImageGenerationOptionsI } from "./openaiImageService";
 
 interface GeminiImageGenerationResult {
   imageUrl: string;
   enhancedPrompt: string;
 }
+
+/** Retries per provider call on 429/5xx/network errors (see withRetry). */
+const PROVIDER_RETRIES = 2;
 
 const MAX_IMAGE_SIZE_BYTES = 4 * 1024 * 1024; // 4MB
 
@@ -151,6 +156,7 @@ export class GeminiImageService {
    * Generate an image using Google Gemini
    * @param preservation - Level of preservation (0-100). Higher = stay closer to original image.
    * @param removeBackground - Whether to isolate subject (true) or keep background (false).
+   * @param options - Deadline signal; both provider calls abort when it fires
    */
   static async generateImage(
     imageBuffer: ArrayBuffer,
@@ -158,7 +164,9 @@ export class GeminiImageService {
     prompt: string,
     preservation: number = 50,
     removeBackground: boolean = true,
+    options: ImageGenerationOptionsI = {},
   ): Promise<GeminiImageGenerationResult> {
+    const { signal } = options;
     // Use mock image for testing
     if (USE_MOCK_IMAGE) {
       return this.generateMockImage(prompt, removeBackground);
@@ -178,16 +186,19 @@ export class GeminiImageService {
       model: "gemini-2.5-flash",
     });
 
-    const analysisResult = await analysisModel.generateContent([
-      {
-        inlineData: {
-          mimeType: processedImage.mimeType,
-          data: processedImage.base64,
-        },
-      },
-      {
-        text:
-          `You are a graphic designer creating merchandise designs. Analyze this image and create an image generation prompt based on: "${prompt}".
+    const analysisResult = await withRetry(
+      () =>
+        analysisModel.generateContent(
+          [
+            {
+              inlineData: {
+                mimeType: processedImage.mimeType,
+                data: processedImage.base64,
+              },
+            },
+            {
+              text:
+                `You are a graphic designer creating merchandise designs. Analyze this image and create an image generation prompt based on: "${prompt}".
 
 Preservation Level (${preservation}/100): ${preservationInstruction}
 
@@ -198,8 +209,12 @@ Requirements:
 ${backgroundInstruction}
 
 Output ONLY the prompt text, no explanations.`,
-      },
-    ]);
+            },
+          ],
+          { signal },
+        ),
+      { retries: PROVIDER_RETRIES, signal },
+    );
 
     const enhancedPrompt = analysisResult.response.text();
     if (!enhancedPrompt) {
@@ -215,15 +230,27 @@ Output ONLY the prompt text, no explanations.`,
       ? "CRITICAL: Render the subject with a fully TRANSPARENT background (PNG with alpha channel). No shadows, no gradients, no floor reflections, no background elements whatsoever. The subject must be completely isolated with sharp, clean edges and full transparency around it. Output format must be PNG with alpha transparency preserved."
       : "Include background and environmental context, print-ready artwork.";
 
-    const imageResult = await imageModel.generateContent({
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: `${enhancedPrompt}\n\n${backgroundSuffix}` }],
-        },
-      ],
-      generationConfig: { responseModalities: ["image", "text"] } as any,
-    });
+    // responseModalities is not yet part of the SDK's GenerationConfig type
+    const generationConfig = {
+      responseModalities: ["image", "text"],
+    } as unknown as GenerationConfig;
+
+    const imageResult = await withRetry(
+      () =>
+        imageModel.generateContent(
+          {
+            contents: [
+              {
+                role: "user",
+                parts: [{ text: `${enhancedPrompt}\n\n${backgroundSuffix}` }],
+              },
+            ],
+            generationConfig,
+          },
+          { signal },
+        ),
+      { retries: PROVIDER_RETRIES, signal },
+    );
 
     const parts = imageResult.response.candidates?.[0]?.content?.parts;
     if (!parts?.length) {

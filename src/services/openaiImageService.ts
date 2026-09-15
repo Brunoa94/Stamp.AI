@@ -1,11 +1,20 @@
 import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
+import { withRetry } from "@/lib/withRetry";
 
 interface OpenAIImageGenerationResult {
   imageUrl: string;
   enhancedPrompt: string;
 }
+
+export interface ImageGenerationOptionsI {
+  /** Overall deadline for the whole pipeline (analysis + generation + retries). */
+  signal?: AbortSignal;
+}
+
+/** Retries per provider call on 429/5xx/network errors (see withRetry). */
+const PROVIDER_RETRIES = 2;
 
 // Use mock image for local development (uses public/zoe.png)
 const USE_MOCK_IMAGE = process.env.NODE_ENV === "development";
@@ -22,7 +31,9 @@ export class OpenAIImageService {
     if (!apiKey) {
       throw new Error("OPENAI_API_KEY environment variable is not set");
     }
-    return new OpenAI({ apiKey });
+    // Retries are handled by withRetry so backoff is consistent and honours
+    // the request deadline; disable the SDK's own retry loop.
+    return new OpenAI({ apiKey, maxRetries: 0 });
   }
 
   /**
@@ -85,6 +96,7 @@ export class OpenAIImageService {
    * @param prompt - The user's prompt for image generation
    * @param preservation - Level of preservation (0-100). Higher = stay closer to original image.
    * @param removeBackground - Whether to generate with transparent background
+   * @param options - Deadline signal; both provider calls abort when it fires
    */
   static async generateImage(
     imageBuffer: ArrayBuffer,
@@ -92,7 +104,9 @@ export class OpenAIImageService {
     prompt: string,
     preservation: number = 50,
     removeBackground: boolean = true,
+    options: ImageGenerationOptionsI = {},
   ): Promise<OpenAIImageGenerationResult> {
+    const { signal } = options;
     // Use mock image for local development
     if (USE_MOCK_IMAGE) {
       return this.generateMockImage(prompt, removeBackground);
@@ -108,7 +122,7 @@ export class OpenAIImageService {
     const backgroundInstruction = this.getBackgroundInstruction(removeBackground);
 
     // Step 1: Use GPT-4o to analyze the image and create an enhanced prompt
-    const visionResponse = await client.chat.completions.create({
+    const visionRequest: OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming = {
       model: "gpt-4o",
       messages: [
         {
@@ -138,7 +152,12 @@ Output ONLY the prompt text, no explanations.`,
         },
       ],
       max_tokens: 500,
-    });
+    };
+
+    const visionResponse = await withRetry(
+      () => client.chat.completions.create(visionRequest, { signal }),
+      { retries: PROVIDER_RETRIES, signal },
+    );
 
     const enhancedPrompt = visionResponse.choices[0]?.message?.content;
 
@@ -147,7 +166,7 @@ Output ONLY the prompt text, no explanations.`,
     }
 
     // Step 2: Generate image using GPT Image 1 Mini (lowest cost) with optional transparency
-    const imageResponse = await client.images.generate({
+    const imageRequest = {
       model: "gpt-image-1-mini",
       prompt: enhancedPrompt,
       size: "1024x1024",
@@ -161,7 +180,12 @@ Output ONLY the prompt text, no explanations.`,
         : {
             output_format: "png",
           }),
-    } as Parameters<typeof client.images.generate>[0]);
+    } as OpenAI.Images.ImageGenerateParamsNonStreaming;
+
+    const imageResponse = await withRetry(
+      () => client.images.generate(imageRequest, { signal }),
+      { retries: PROVIDER_RETRIES, signal },
+    );
 
     // Handle potential streaming response
     if (!("data" in imageResponse) || !imageResponse.data) {
@@ -180,7 +204,13 @@ Output ONLY the prompt text, no explanations.`,
       imageUrl = `data:image/png;base64,${generatedImageData.b64_json}`;
     } else if ("url" in generatedImageData && generatedImageData.url) {
       // Fallback for URL response (fetch and convert to base64)
-      const response = await fetch(generatedImageData.url);
+      const response = await withRetry(
+        () => fetch(generatedImageData.url as string, { signal }),
+        { retries: PROVIDER_RETRIES, signal },
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to download generated image (${response.status})`);
+      }
       const buffer = await response.arrayBuffer();
       const base64 = Buffer.from(buffer).toString("base64");
       imageUrl = `data:image/png;base64,${base64}`;
