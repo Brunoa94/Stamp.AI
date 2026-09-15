@@ -5,6 +5,7 @@ import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { LegalSection } from "./LegalSection";
 import { LEGAL_ENTITY } from "../lib/constants/legalEntity";
+import { LEGAL_ENTITY_DISPLAY } from "../lib/helpers/legalEntityDisplay";
 import {
   LEGAL_LAST_UPDATED,
   type LegalPageKeyType,
@@ -17,7 +18,8 @@ import type { LegalSectionMessagesType, LegalSectionType } from "../types/legal"
  * Shared renderer for all legal/policy pages (terms, privacy, cookies,
  * security, shipping, returns). Section order and copy come from the
  * `legal.<pageKey>` message namespace; entity details ({legalName},
- * {supportEmail}, …) are interpolated from LEGAL_ENTITY.
+ * {supportEmail}, …) are interpolated from LEGAL_ENTITY_DISPLAY, which
+ * renders not-yet-provided entity fields as visible placeholders.
  *
  * Rendered inside AppLayoutChrome's <main>, so it accounts for the fixed
  * h-24 header with top padding but renders no chrome of its own.
@@ -41,12 +43,12 @@ export function LegalDocument({ pageKey }: PropsI) {
   const sections: LegalSectionType[] = Object.entries(rawSections).map(
     ([id, raw]) => ({
       id,
-      heading: t(`sections.${id}.heading`, LEGAL_ENTITY),
+      heading: t(`sections.${id}.heading`, LEGAL_ENTITY_DISPLAY),
       body: raw.body.map((_, i) =>
-        t(`sections.${id}.body.${i}`, LEGAL_ENTITY)
+        t(`sections.${id}.body.${i}`, LEGAL_ENTITY_DISPLAY)
       ),
       bullets: raw.bullets?.map((_, i) =>
-        t(`sections.${id}.bullets.${i}`, LEGAL_ENTITY)
+        t(`sections.${id}.bullets.${i}`, LEGAL_ENTITY_DISPLAY)
       ),
     })
   );
@@ -75,7 +77,7 @@ export function LegalDocument({ pageKey }: PropsI) {
           variant="lead"
           className="mb-16 text-(--color-stamp-chocolate)/80"
         >
-          {t("intro", LEGAL_ENTITY)}
+          {t("intro", LEGAL_ENTITY_DISPLAY)}
         </Paragraph>
 
         <div className="space-y-12">
