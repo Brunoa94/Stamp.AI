@@ -3,6 +3,7 @@ import type { OrderWithItemsT, CreateOrderT } from "@/types/order";
 import type { CartItem } from "@/types/cart";
 import type { UserI } from "../../../supabase/types";
 import type { ShippingAddressT } from "@/schemas/checkout";
+import { calculateOrderTotals as calculateServerOrderTotals } from "../../../supabase/functions/_shared/orderTotals";
 
 type OrderRow = Database['public']['Tables']['orders']['Row'];
 type OrderInsert = Database['public']['Tables']['orders']['Insert'];
@@ -49,24 +50,29 @@ export class OrderServiceMapper {
   }
 
   /**
-   * Calculate order totals from items
+   * Calculate order totals from items (all amounts in cents).
+   *
+   * DISPLAY ONLY. Orders are minted server-side by the `finalize-order` edge
+   * function, which reprices every item from the catalog and applies the same
+   * shared rules (`_shared/orderTotals.ts`), so this mapper can never disagree
+   * with the server about shipping or VAT.
    */
-  static calculateOrderTotals(items: CartItem[]) {
+  static calculateOrderTotals(items: CartItem[], discountAmount: number = 0) {
     const subtotal = items.reduce((sum, item) => {
       return sum + ((item.unit_price ?? 0) * (item.quantity ?? 1));
     }, 0);
 
-    // Future: Add tax and shipping calculations
-    const taxRate = 0; // 0% for now
-    const taxAmount = subtotal * taxRate;
-    const shippingCost = 0; // Free shipping for now
-    const totalAmount = subtotal + taxAmount + shippingCost;
+    const totals = calculateServerOrderTotals({
+      subtotalCents: subtotal,
+      discountCents: discountAmount,
+    });
 
     return {
-      subtotal,
-      tax_amount: taxAmount,
-      shipping_cost: shippingCost,
-      total_amount: totalAmount,
+      subtotal: totals.subtotal_cents,
+      tax_amount: totals.tax_cents,
+      shipping_cost: totals.shipping_cents,
+      discount_amount: totals.discount_cents,
+      total_amount: totals.total_cents,
     };
   }
 
@@ -92,8 +98,8 @@ export class OrderServiceMapper {
       customer_email: createOrder.customer_email,
       customer_name: createOrder.customer_name,
       customer_phone: createOrder.customer_phone,
-      shipping_address: createOrder.shipping_address as any,
-      billing_address: createOrder.billing_address as any,
+      shipping_address: createOrder.shipping_address as OrderInsert["shipping_address"],
+      billing_address: createOrder.billing_address as OrderInsert["billing_address"],
       subtotal: createOrder.subtotal,
       tax_amount: createOrder.tax_amount,
       shipping_cost: createOrder.shipping_cost,
