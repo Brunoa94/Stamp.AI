@@ -5,15 +5,10 @@ import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { CheckoutPromoCodeService } from "../services/promoCodeService";
-import { getDiscountValue } from "../helpers/promoCodeHelpers";
+import { computeCheckoutTotals } from "../helpers/checkoutTotals";
 import type { CartWithItems } from "@/types/cart";
 import type { CheckoutFormData } from "../context/CheckoutFormContext";
 import type { PromoCodeValidationResult } from "@/schemas/promocode";
-
-/** Free shipping threshold in euros */
-const FREE_SHIPPING_THRESHOLD = 60;
-/** Shipping cost in euros for orders below threshold */
-const SHIPPING_COST = 4.99;
 
 interface UseCheckoutPricingParams {
   cart: CartWithItems | null;
@@ -39,23 +34,11 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
     }, 0);
   })();
 
-  // Convert cents to euros for display and calculations
-  const subtotal = subtotalInCents / 100;
-
-  // Discount from applied promo code (in euros)
-  const discount = getDiscountValue(appliedPromo);
-
-  // Calculate subtotal after discount for shipping calculation
-  const subtotalAfterDiscount = subtotal - discount;
-
-  // Shipping: free for orders >= €60 (after discount), otherwise €4.99
-  const shipping = subtotalAfterDiscount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
-
-  // Total = subtotal + shipping - discount (all in euros)
-  const total = subtotal + shipping - discount;
-
-  // Total in cents for payment processing
-  const totalInCents = Math.round(total * 100);
+  // Money rows in euros (totalInCents for payment processing), with the
+  // applied promo folded in — including fixed_total codes like
+  // REDUCE_TOTAL that set the final all-inclusive total.
+  const { subtotal, shipping, discount, total, totalInCents } =
+    computeCheckoutTotals(subtotalInCents, appliedPromo);
 
   // React Query mutation for promo code validation
   const validatePromoCodeMutation = useMutation({

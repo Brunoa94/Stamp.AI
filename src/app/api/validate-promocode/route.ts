@@ -63,10 +63,15 @@ export async function POST(request: NextRequest): Promise<NextResponse<PromoCode
 
     const promo = data as PromoCodeT;
 
+    // "fixed_total" sets the final order total to promo.value, so the
+    // discount is whatever remains above it; the checkout pricing hook
+    // recomputes the exact amount including shipping.
     const discountRaw =
       promo.type === "percentage"
         ? subtotal * (promo.value / 100)
-        : promo.value;
+        : promo.type === "fixed_total"
+          ? subtotal - promo.value
+          : promo.value;
 
     // Clamp discount: prevent negative and prevent exceeding subtotal
     const discountValue = Math.max(0, Math.min(discountRaw, subtotal));

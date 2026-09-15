@@ -1,12 +1,16 @@
 import { z } from "zod";
 
 /**
- * Zod schema for a promo code record from the database
+ * Zod schema for a promo code record from the database.
+ *
+ * Types: "percentage" takes value% off the subtotal, "numeric" takes a
+ * fixed value (euros) off, and "fixed_total" sets the final
+ * all-inclusive order total (shipping included) to value euros.
  */
 export const PromoCodeSchema = z.object({
   promocode_id: z.string(),
   code: z.string(),
-  type: z.enum(["percentage", "numeric"]),
+  type: z.enum(["percentage", "numeric", "fixed_total"]),
   value: z.number(),
   created_at: z.string().nullable(),
 });
@@ -16,7 +20,7 @@ export const PromoCodeSchema = z.object({
  */
 const AppliedPromoCodeSchema = z.object({
   code: z.string(),
-  type: z.enum(["percentage", "numeric"]),
+  type: z.enum(["percentage", "numeric", "fixed_total"]),
   value: z.number(),
   discountValue: z.number(),
 });
