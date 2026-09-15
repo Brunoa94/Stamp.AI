@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
+import { requireUser } from '../_shared/authGuard.ts'
 
 const PRINTIFY_API_TOKEN = Deno.env.get('PRINTIFY_API_TOKEN')
 
@@ -49,6 +50,10 @@ serve(async (req) => {
   }
 
   try {
+    // Fans out ~12 Printify API calls per request with the shop token:
+    // signed-in users (or server-to-server calls) only, never the anon key.
+    await requireUser(req.headers.get('authorization'))
+
     console.log('=== GET CATALOG BLUEPRINTS ===')
 
     if (!PRINTIFY_API_TOKEN) {

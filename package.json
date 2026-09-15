@@ -21,7 +21,7 @@
     "supabase:lint": "cd supabase && deno lint",
     "supabase:format": "cd supabase && deno fmt",
     "supabase:check": "cd supabase && deno check functions/**/*.ts",
-    "supabase:deploy": "supabase functions deploy --no-verify-jwt",
+    "supabase:deploy": "supabase functions deploy",
     "supabase:deploy:function": "supabase functions deploy",
     "supabase:migrate": "supabase db push"
   },

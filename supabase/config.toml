@@ -381,16 +381,51 @@ s3_access_key = "env(S3_ACCESS_KEY)"
 # Configures AWS_SECRET_ACCESS_KEY for S3 bucket
 s3_secret_key = "env(S3_SECRET_KEY)"
 
-[functions.stripe-webhook]
+# =============================================================================
+# Edge functions
+# =============================================================================
+# verify_jwt is DISABLED for every function, deliberately and explicitly:
+#
+# - This project uses the new Supabase API keys (sb_publishable_... /
+#   sb_secret_...). They are not JWTs, so the gateway check would reject every
+#   server-to-server call that authenticates with the secret key: pg_cron jobs
+#   (vault 'service_role_key'), Next.js API routes, and function-to-function
+#   calls in _shared/invoice.ts.
+# - Provider webhooks (Stripe, PayPal, Mollie) carry no Supabase JWT at all;
+#   they are authenticated by signature / re-fetch from the provider.
+# - The gateway check is not authorization anyway: the public anon key
+#   satisfies it.
+#
+# Authorization is therefore enforced INSIDE each function with
+# _shared/authGuard.ts (requireUser / requireServiceRoleOrCron). Every new
+# function must call one of them. `npm run supabase:deploy` no longer passes
+# --no-verify-jwt; this file is the single source of truth.
+
+[functions.cancel-order]
 enabled = true
 verify_jwt = false
-import_map = "./functions/stripe-webhook/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
-entrypoint = "./functions/stripe-webhook/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/stripe-webhook/*.html" ]
+entrypoint = "./functions/cancel-order/index.ts"
+
+[functions.capture-paypal-order]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/capture-paypal-order/index.ts"
+
+[functions.create-credit-payment]
+enabled = true
+verify_jwt = false
+import_map = "./functions/create-credit-payment/deno.json"
+entrypoint = "./functions/create-credit-payment/index.ts"
+
+[functions.create-custom-product]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/create-custom-product/index.ts"
+
+[functions.create-mollie-payment]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/create-mollie-payment/index.ts"
 
 [functions.create-payment-intent]
 enabled = true
@@ -398,14 +433,80 @@ verify_jwt = false
 import_map = "./functions/create-payment-intent/deno.json"
 entrypoint = "./functions/create-payment-intent/index.ts"
 
+[functions.create-paypal-order]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/create-paypal-order/index.ts"
+
 [functions.create-printify-order]
 enabled = true
 verify_jwt = false
 import_map = "./functions/create-printify-order/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/create-printify-order/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/create-printify-order/*.html" ]
 
+[functions.generate-invoice]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/generate-invoice/index.ts"
+
+[functions.get-blueprint-variants]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/get-blueprint-variants/index.ts"
+
+[functions.get-catalog-blueprints]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/get-catalog-blueprints/index.ts"
+
+[functions.mollie-webhook]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/mollie-webhook/index.ts"
+
+[functions.paypal-webhook]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/paypal-webhook/index.ts"
+
+[functions.process-payment-recovery]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/process-payment-recovery/index.ts"
+
+[functions.process-refund]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/process-refund/index.ts"
+
+[functions.stripe-webhook]
+enabled = true
+verify_jwt = false
+import_map = "./functions/stripe-webhook/deno.json"
+entrypoint = "./functions/stripe-webhook/index.ts"
+
+[functions.sync-blueprint]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/sync-blueprint/index.ts"
+
+[functions.sync-cheapest-providers]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/sync-cheapest-providers/index.ts"
+
+[functions.sync-printify-orders]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/sync-printify-orders/index.ts"
+
+[functions.upload-printify-image]
+enabled = true
+verify_jwt = false
+import_map = "./functions/upload-printify-image/deno.json"
+entrypoint = "./functions/upload-printify-image/index.ts"
+
+[functions.verify-mollie-payment]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/verify-mollie-payment/index.ts"

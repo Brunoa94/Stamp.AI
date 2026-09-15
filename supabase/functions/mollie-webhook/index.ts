@@ -5,6 +5,7 @@ import { supabaseRest } from "../_shared/supabase.ts";
 import { getMolliePayment, mapMollieStatusToInternal, isMolliePaymentPaid } from "../_shared/mollie.ts";
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import { isValidMolliePaymentId } from "../_shared/molliePaymentId.ts";
 
 serve(async (req) => {
   const corsHeaders = corsHeadersFor(req);
@@ -42,9 +43,14 @@ serve(async (req) => {
       }
     }
 
-    if (!paymentId) {
-      console.error("No payment ID in webhook");
-      return new Response(JSON.stringify({ error: "No payment ID" }), {
+    // Mollie webhooks carry no signature by design. The body is treated only
+    // as a hint: nothing below trusts it beyond the payment id, and the id
+    // must be well-formed because it is interpolated into the Mollie API path
+    // and stored as the webhook event id. All payment facts are re-fetched
+    // from Mollie with our API key.
+    if (!isValidMolliePaymentId(paymentId)) {
+      console.error("Mollie webhook rejected: missing or malformed payment id");
+      return new Response(JSON.stringify({ error: "Invalid payment ID" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
       });

@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars } from "../_shared/validators.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
+import { requireServiceRoleOrCron } from '../_shared/authGuard.ts'
 
 interface ProviderInfo {
   id: number
@@ -191,6 +192,10 @@ serve(async (req) => {
   }
 
   try {
+    // Scheduled job (pg_cron with the service-role key). Rewrites provider
+    // and pricing data for the whole catalog, so reject every other caller.
+    requireServiceRoleOrCron(req)
+
     console.log('=== SYNC CHEAPEST PROVIDERS ===')
     console.log('Finding cheapest print providers for Netherlands...')
 

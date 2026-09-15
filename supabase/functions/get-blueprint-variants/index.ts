@@ -3,6 +3,7 @@ import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { parseVariantColorSize } from "../_shared/colorValidation.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
+import { requireUser } from '../_shared/authGuard.ts'
 
 // Environment variables will be validated when needed
 
@@ -26,8 +27,12 @@ serve(async (req) => {
   }
 
   try {
+    // Proxies the Printify catalog API with the shop token: signed-in users
+    // (or server-to-server calls) only, never the anon key.
+    await requireUser(req.headers.get('authorization'))
+
     const { blueprint_id, print_provider_id } = await req.json()
-    
+
     console.log('=== GET BLUEPRINT VARIANTS ===')
     console.log('Blueprint ID:', blueprint_id)
 

@@ -4,6 +4,7 @@ import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { buildProductSeoRow } from "../_shared/productSeo.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
+import { requireServiceRoleOrCron } from '../_shared/authGuard.ts'
 
 interface BlueprintData {
   id: number
@@ -43,6 +44,10 @@ serve(async (req) => {
   }
 
   try {
+    // Writes the catalog with the service role: only privileged callers
+    // (service-role key or CRON_SECRET) may trigger it.
+    requireServiceRoleOrCron(req)
+
     const { blueprint_id, print_provider_id } = await req.json()
 
     console.log('=== SYNC BLUEPRINT ===')
