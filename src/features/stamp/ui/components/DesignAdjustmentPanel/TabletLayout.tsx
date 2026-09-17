@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { Disclosure } from "../Disclosure/Disclosure";
+import { Disclosure } from "../disclosure/Disclosure";
 
 /**
  * TabletLayout
