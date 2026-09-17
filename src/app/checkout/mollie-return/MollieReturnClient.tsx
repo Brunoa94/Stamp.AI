@@ -10,26 +10,26 @@ import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import PaymentSuccess from "@/features/checkout/ui/PaymentSuccess/PaymentSuccess";
 import PaymentError from "@/features/checkout/ui/components/PaymentError";
-import { OrderService } from "@/services/orderService";
-import { CartService } from "@/services/cartService";
-import { CartServiceMapper } from "@/mappers/services/cartServiceMapper";
-import { RefundService } from "@/services/refundService";
-import { PaymentRecoveryService } from "@/services/paymentRecoveryService";
-import { InvoiceService } from "@/services/invoiceService";
+import { OrderService } from "@/shared/services/orderService";
+import { CartService } from "@/shared/services/cartService";
+import { CartServiceMapper } from "@/shared/mappers/services/cartServiceMapper";
+import { RefundService } from "@/shared/services/refundService";
+import { PaymentRecoveryService } from "@/shared/services/paymentRecoveryService";
+import { InvoiceService } from "@/shared/services/invoiceService";
 import type {
   CreatePrintifyOrderRequest,
   PrintifyLineItem,
-} from "@/types/printifyOrder";
-import { validatePrintifyLineItem } from "@/types/printifyOrder";
-import { mapShippingAddressToPrintifyAddress } from "@/mappers/mapShippingAddressToPrintifyAddress";
+} from "@/shared/types/printifyOrder";
+import { validatePrintifyLineItem } from "@/shared/types/printifyOrder";
+import { mapShippingAddressToPrintifyAddress } from "@/shared/mappers/mapShippingAddressToPrintifyAddress";
 import {
   isMolliePaymentPaid,
   isMolliePaymentFailed,
   isMolliePaymentPending,
 } from "@/lib/mollie";
 import type { MolliePaymentStatus } from "@/lib/mollie";
-import type { ShippingAddressT } from "@/schemas/checkout";
-import type { CartWithItems } from "@/types/cart";
+import type { ShippingAddressT } from "@/shared/schemas/checkout";
+import type { CartWithItems } from "@/shared/types/cart";
 import { captureError } from "@/lib/observability/errorCapture";
 import {
   UserFacingError,
@@ -40,11 +40,11 @@ import {
   useCreateOrderFromCart,
   useUpdateOrderStatus,
   useUpdatePaymentStatus,
-} from "@/queries/orderQueries";
-import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
-import { useRemoveCartItems } from "@/queries/cartQueries";
-import { useVerifyMolliePayment } from "@/queries/mollieQueries";
-import { useUser } from "@/queries/authQueries";
+} from "@/shared/queries/orderQueries";
+import { useCreatePrintifyOrder } from "@/shared/queries/printifyOrderQueries";
+import { useRemoveCartItems } from "@/shared/queries/cartQueries";
+import { useVerifyMolliePayment } from "@/shared/queries/mollieQueries";
+import { useUser } from "@/shared/queries/authQueries";
 import { UserI } from "@/supabase/types";
 
 type PageStatus = "loading" | "success" | "failed" | "pending" | "error";
@@ -168,9 +168,7 @@ function MollieReturnContent() {
                 mollieRecovery.shipping_address,
               );
               storedOrderAmount = String(mollieRecovery.amount);
-              storedCartSnapshot = JSON.stringify(
-                mollieRecovery.cart_snapshot,
-              );
+              storedCartSnapshot = JSON.stringify(mollieRecovery.cart_snapshot);
 
               if (mollieRecovery.cart_snapshot?.id) {
                 storedCartId = mollieRecovery.cart_snapshot.id;

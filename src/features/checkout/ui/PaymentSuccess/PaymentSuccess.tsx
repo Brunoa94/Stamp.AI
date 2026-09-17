@@ -8,7 +8,7 @@ import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { TrustpilotReviewButton } from "@/features/ui/trust/TrustpilotReviewButton";
 import { PaymentResultDetailsGrid } from "../components/PaymentResultDetailsGrid";
-import type { PaymentSuccessDetailsI } from "@/types/payment";
+import type { PaymentSuccessDetailsI } from "@/shared/types/payment";
 
 interface Props {
   details: PaymentSuccessDetailsI | null;

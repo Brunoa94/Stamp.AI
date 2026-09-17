@@ -6,9 +6,9 @@ import { useFormContext } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { CheckoutPromoCodeService } from "../services/promoCodeService";
 import { getDiscountValue } from "../helpers/promoCodeHelpers";
-import type { CartWithItems } from "@/types/cart";
+import type { CartWithItems } from "@/shared/types/cart";
 import type { CheckoutFormData } from "../context/CheckoutFormContext";
-import type { PromoCodeValidationResult } from "@/schemas/promocode";
+import type { PromoCodeValidationResult } from "@/shared/schemas/promocode";
 
 /** Free shipping threshold in euros */
 const FREE_SHIPPING_THRESHOLD = 60;
@@ -49,7 +49,9 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
   const subtotalAfterDiscount = subtotal - discount;
 
   // Shipping: free for orders >= €60 (after discount), otherwise €4.99
-  const shipping = subtotalAfterDiscount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
+  const shipping = subtotalAfterDiscount >= FREE_SHIPPING_THRESHOLD
+    ? 0
+    : SHIPPING_COST;
 
   // Total = subtotal + shipping - discount (all in euros)
   const total = subtotal + shipping - discount;
@@ -59,8 +61,9 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
 
   // React Query mutation for promo code validation
   const validatePromoCodeMutation = useMutation({
-    mutationFn: ({ code, subtotalValue }: { code: string; subtotalValue: number }) =>
-      CheckoutPromoCodeService.validateAndApply(code, subtotalValue),
+    mutationFn: (
+      { code, subtotalValue }: { code: string; subtotalValue: number },
+    ) => CheckoutPromoCodeService.validateAndApply(code, subtotalValue),
     onSuccess: (result) => {
       if (result.isValid && result.appliedPromo) {
         setAppliedPromo(result);
@@ -72,10 +75,8 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
         // former, pass the latter through untouched.
         setPromoError(
           result.message
-            ? t.has(result.message)
-              ? t(result.message)
-              : result.message
-            : t("invalidPromoCode")
+            ? t.has(result.message) ? t(result.message) : result.message
+            : t("invalidPromoCode"),
         );
       }
     },

@@ -1,8 +1,8 @@
 import { useReducer } from "react";
 import { useTranslations } from "next-intl";
-import { useUpdatePassword } from "@/queries/authQueries";
-import { UpdatePasswordSchema } from "@/schemas/auth";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { useUpdatePassword } from "@/shared/queries/authQueries";
+import { UpdatePasswordSchema } from "@/shared/schemas/auth";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 
 interface PasswordResetState {
   isEditing: boolean;
@@ -25,7 +25,7 @@ const initialState: PasswordResetState = {
 
 function passwordResetReducer(
   state: PasswordResetState,
-  action: PasswordResetAction
+  action: PasswordResetAction,
 ): PasswordResetState {
   switch (action.type) {
     case "START_EDITING":
@@ -105,7 +105,8 @@ export function usePasswordReset() {
     dispatch({ type: "SET_CONFIRM_PASSWORD", payload: password });
   };
 
-  const canSubmit = state.newPassword.trim() !== "" && state.confirmPassword.trim() !== "";
+  const canSubmit = state.newPassword.trim() !== "" &&
+    state.confirmPassword.trim() !== "";
 
   return {
     // State

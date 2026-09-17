@@ -2,11 +2,11 @@
 
 import { useState, useCallback, ChangeEvent, memo } from "react";
 import { useStampImageGeneration } from "../../../lib/hooks/useStampImageGeneration";
-import { useUser } from "@/queries/authQueries";
-import { useUserCoins } from "@/queries/coinsQueries";
+import { useUser } from "@/shared/queries/authQueries";
+import { useUserCoins } from "@/shared/queries/coinsQueries";
 import { SynthesisVisual } from "./SynthesisVisual";
 import { SynthesisForm } from "./SynthesisForm";
-import { AnalyticsService } from "@/services/analyticsService";
+import { AnalyticsService } from "@/shared/services/analyticsService";
 import { mapGenerateStartEvent } from "@/features/analytics/mappers/stampFlowMappers";
 
 /**
@@ -59,7 +59,7 @@ function SynthesisSectionComponent() {
   const handleGenerate = useCallback(async () => {
     AnalyticsService.track(
       "stamp_generate_start",
-      mapGenerateStartEvent({ promptLength: prompt.length, preservation })
+      mapGenerateStartEvent({ promptLength: prompt.length, preservation }),
     );
 
     await generateImage({

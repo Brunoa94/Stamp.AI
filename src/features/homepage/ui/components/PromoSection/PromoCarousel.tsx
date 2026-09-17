@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import type { PromoImageType } from "../../../lib/constants/promoSections";
 import { PROMO_CAROUSEL_DISPLAY_MS } from "../../../lib/constants/promoSections";
 

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { normalizeOrderStatus } from "../helpers/normalizeOrderStatus";
-import type { OrderWithItemsT } from "@/types/order";
+import type { OrderWithItemsT } from "@/shared/types/order";
 import { isWithinTimeframe } from "../helpers/timeframeFilters";
 import { toDisplayStatus } from "../helpers/statusPresentation";
 import type {

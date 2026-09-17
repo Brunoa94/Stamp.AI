@@ -1,4 +1,4 @@
-import type { ShippingAddressT } from "@/schemas/checkout";
+import type { ShippingAddressT } from "@/shared/schemas/checkout";
 
 /**
  * Test billing data for auto-filling checkout form during development

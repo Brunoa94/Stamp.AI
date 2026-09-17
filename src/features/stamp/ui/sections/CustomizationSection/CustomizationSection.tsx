@@ -1,14 +1,17 @@
 "use client";
 
 import { memo, useState, useCallback } from "react";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { CustomizationPreview } from "./CustomizationPreview";
 import { CustomizationControls } from "./CustomizationControls";
 import { useCustomizationData } from "../../../lib/hooks/useCustomizationData";
 import { useCustomizationEffects } from "../../../lib/hooks/useCustomizationEffects";
 import { useCustomizationHandlers } from "../../../lib/hooks/useCustomizationHandlers";
-import { AnalyticsService } from "@/services/analyticsService";
-import { mapColorSelectEvent, mapSizeSelectEvent } from "@/features/analytics/mappers/stampFlowMappers";
+import { AnalyticsService } from "@/shared/services/analyticsService";
+import {
+  mapColorSelectEvent,
+  mapSizeSelectEvent,
+} from "@/features/analytics/mappers/stampFlowMappers";
 
 /**
  * CustomizationSection
@@ -29,7 +32,8 @@ type MobileSubStep = "customize" | "preview";
 
 function CustomizationSectionComponent() {
   const isMdUp = useMediaQuery("(min-width: 768px)", true);
-  const [mobileSubStep, setMobileSubStep] = useState<MobileSubStep>("customize");
+  const [mobileSubStep, setMobileSubStep] =
+    useState<MobileSubStep>("customize");
 
   const {
     blueprintId,
@@ -70,11 +74,11 @@ function CustomizationSectionComponent() {
     (color: string) => {
       AnalyticsService.track(
         "color_select",
-        mapColorSelectEvent({ color, productId: blueprintId })
+        mapColorSelectEvent({ color, productId: blueprintId }),
       );
       setSelectedColor(color);
     },
-    [blueprintId, setSelectedColor]
+    [blueprintId, setSelectedColor],
   );
 
   // Track size selection
@@ -82,11 +86,11 @@ function CustomizationSectionComponent() {
     (size: string) => {
       AnalyticsService.track(
         "size_select",
-        mapSizeSelectEvent({ size, productId: blueprintId })
+        mapSizeSelectEvent({ size, productId: blueprintId }),
       );
       setSelectedSize(size);
     },
-    [blueprintId, setSelectedSize]
+    [blueprintId, setSelectedSize],
   );
 
   // Mobile: navigate to preview sub-step

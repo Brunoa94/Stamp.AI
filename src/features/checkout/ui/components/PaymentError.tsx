@@ -11,7 +11,7 @@ import { Span } from "@/features/ui/span";
 import type {
   PaymentAlternativeMethodT,
   PaymentErrorDetailsI,
-} from "@/types/payment";
+} from "@/shared/types/payment";
 
 interface Props {
   details: PaymentErrorDetailsI | null;

@@ -1,4 +1,4 @@
-import type { OrderWithItemsT } from "@/types/order";
+import type { OrderWithItemsT } from "@/shared/types/order";
 
 export type OrdersPaginationType = {
   page: number;

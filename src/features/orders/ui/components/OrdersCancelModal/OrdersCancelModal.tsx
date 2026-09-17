@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useTranslations } from "next-intl";
-import { useModalFocusTrap } from "@/hooks/useModalFocusTrap";
-import type { OrderWithItemsT } from "@/types/order";
+import { useModalFocusTrap } from "@/shared/hooks/useModalFocusTrap";
+import type { OrderWithItemsT } from "@/shared/types/order";
 import { OrdersCancelModalIcon } from "./OrdersCancelModalIcon";
 import { OrdersCancelModalHeader } from "./OrdersCancelModalHeader";
 import { OrdersCancelModalActions } from "./OrdersCancelModalActions";

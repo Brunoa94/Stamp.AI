@@ -7,7 +7,7 @@ import { Label } from "@/features/ui/label";
 import { Input } from "@/features/ui/input";
 import { cn } from "@/lib/utils";
 import { buyCreditsTheme } from "@/theme/components";
-import { MIN_CUSTOM_CREDITS, PRICE_PER_CREDIT } from "@/constants/credits";
+import { MIN_CUSTOM_CREDITS, PRICE_PER_CREDIT } from "@/shared/constants/credits";
 
 interface CustomCreditInputProps {
   value: string;

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useBlueprintVariants } from "@/queries/productQueries";
+import { useBlueprintVariants } from "@/shared/queries/productQueries";
 import {
   useStampCustomization,
   useStampProductSelection,

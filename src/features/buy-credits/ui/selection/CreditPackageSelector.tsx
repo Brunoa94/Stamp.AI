@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Label } from "@/features/ui/label";
 import { buyCreditsTheme } from "@/theme/components";
-import { CREDIT_PACKAGES } from "@/constants/credits";
+import { CREDIT_PACKAGES } from "@/shared/constants/credits";
 import { CreditPackageCard } from "./CreditPackageCard";
 
 interface CreditPackageSelectorProps {

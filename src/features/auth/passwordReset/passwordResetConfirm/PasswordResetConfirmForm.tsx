@@ -7,7 +7,7 @@ import { FormField } from "@/features/ui/form-field";
 import { Button } from "@/features/ui/button";
 import { Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useValidationMessage } from "@/hooks/useValidationMessage";
+import { useValidationMessage } from "@/shared/hooks/useValidationMessage";
 
 export function PasswordResetConfirmForm() {
   const {
@@ -54,7 +54,12 @@ export function PasswordResetConfirmForm() {
         />
       </div>
 
-      <Button type="submit" disabled={isPending} variant="primary" className="w-full">
+      <Button
+        type="submit"
+        disabled={isPending}
+        variant="primary"
+        className="w-full"
+      >
         {isPending ? t("resetting") : t("resetPassword")}
       </Button>
     </form>

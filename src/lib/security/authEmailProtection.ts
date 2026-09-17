@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "@/types/database.types";
+import type { Database } from "@/shared/types/database.types";
 import { getClientIdentifier } from "@/lib/security/rate-limiter/utils";
 import type { NextRequest } from "next/server";
 

@@ -63,6 +63,34 @@ export function checkRateLimit(
   };
 }
 
+function withHeaders(result: RateLimitResult, limit: number): CombinedRateLimitResult {
+  const headers = createRateLimitHeaders(result.remaining, result.resetTime, limit);
+  if (result.isLimited) {
+    headers["Retry-After"] = result.retryAfter.toString();
+  }
+  return { ...result, headers };
+}
+
+/**
+ * Per-user rate limit. Keyed by the authenticated user id (bucket
+ * `user:<endpoint>`) and allowed twice the IP limit, so it only bites when a
+ * single account spreads requests across many IPs. Safe to call after the
+ * session has been resolved, independently of the IP check.
+ */
+export function checkUserRateLimit(
+  userId: string,
+  endpoint: string,
+  config: RateLimitConfig
+): CombinedRateLimitResult {
+  const userLimit = config.maxRequests * 2;
+  const userResult = checkRateLimit(userId, `user:${endpoint}`, {
+    ...config,
+    maxRequests: userLimit,
+  });
+
+  return withHeaders(userResult, userLimit);
+}
+
 /**
  * Combined rate limiter that checks both IP and user-based limits
  */
@@ -76,46 +104,23 @@ export function checkCombinedRateLimit(
 
   const ipResult = checkRateLimit(clientIp, `ip:${endpoint}`, config);
 
-  if (ipResult.isLimited) {
-    return {
-      ...ipResult,
-      headers: {
-        ...createRateLimitHeaders(ipResult.remaining, ipResult.resetTime, config.maxRequests),
-        "Retry-After": ipResult.retryAfter.toString(),
-      },
-    };
+  if (ipResult.isLimited || !userId) {
+    return withHeaders(ipResult, config.maxRequests);
   }
 
-  if (userId) {
-    const userConfig = {
-      ...config,
-      maxRequests: config.maxRequests * 2,
-    };
-    const userResult = checkRateLimit(userId, `user:${endpoint}`, userConfig);
+  const userResult = checkUserRateLimit(userId, endpoint, config);
 
-    if (userResult.isLimited) {
-      return {
-        ...userResult,
-        headers: {
-          ...createRateLimitHeaders(userResult.remaining, userResult.resetTime, userConfig.maxRequests),
-          "Retry-After": userResult.retryAfter.toString(),
-        },
-      };
-    }
-
-    const remaining = Math.min(ipResult.remaining, userResult.remaining);
-    return {
-      isLimited: false,
-      remaining,
-      resetTime: Math.min(ipResult.resetTime, userResult.resetTime),
-      retryAfter: 0,
-      headers: createRateLimitHeaders(remaining, ipResult.resetTime, config.maxRequests),
-    };
+  if (userResult.isLimited) {
+    return userResult;
   }
 
+  const remaining = Math.min(ipResult.remaining, userResult.remaining);
   return {
-    ...ipResult,
-    headers: createRateLimitHeaders(ipResult.remaining, ipResult.resetTime, config.maxRequests),
+    isLimited: false,
+    remaining,
+    resetTime: Math.min(ipResult.resetTime, userResult.resetTime),
+    retryAfter: 0,
+    headers: createRateLimitHeaders(remaining, ipResult.resetTime, config.maxRequests),
   };
 }
 

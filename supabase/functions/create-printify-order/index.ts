@@ -5,14 +5,9 @@ import { validateAndEnforceTestMode } from "../_shared/testModeSafeguard.ts"
 import { validatePaymentAmount } from "../_shared/amountValidator.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
 import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts"
+import { corsHeadersFor } from '../_shared/cors.ts'
 
 // Environment variables will be validated when needed
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-}
 
 /**
  * Verify authentication - accepts both user JWT tokens and service role key
@@ -75,6 +70,7 @@ const TEST_SHIPPING_ADDRESS = {
 }
 
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req)
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders })

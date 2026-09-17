@@ -10,7 +10,7 @@ import {
   validatePrintifyLineItem,
   PrintifyLineItem,
   CreatePrintifyOrderRequest,
-} from "@/types/printifyOrder";
+} from "@/shared/types/printifyOrder";
 
 /**
  * Helper to validate multiple line items (simulates batch validation)

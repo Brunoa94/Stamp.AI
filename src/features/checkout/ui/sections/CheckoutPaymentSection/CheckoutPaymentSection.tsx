@@ -15,7 +15,7 @@ import { SecureCheckoutNotice } from "@/features/ui/trust/SecureCheckoutNotice";
 import { PaymentSecurityBadge } from "@/features/ui/trust/PaymentSecurityBadge";
 import { Paragraph } from "@/features/ui/paragraph";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
-import type { PaymentMethodT } from "@/types/payment";
+import type { PaymentMethodT } from "@/shared/types/payment";
 
 interface CheckoutPaymentSectionPropsI {
   testMode: boolean;

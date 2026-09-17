@@ -7,9 +7,9 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Login } from "@/features/auth/login/Login";
 import { Register } from "@/features/auth/register/Register";
-import { useUser, useLogout } from "@/queries/authQueries";
+import { useUser, useLogout } from "@/shared/queries/authQueries";
 import { Menu, X } from "lucide-react";
-import { useScrolled } from "@/hooks/useScrolled";
+import { useScrolled } from "@/shared/hooks/useScrolled";
 
 /**
  * StampHeader

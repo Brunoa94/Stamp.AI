@@ -3,12 +3,7 @@ import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { createInvoiceSignedUrl, ensureInvoiceForOrder } from "../_shared/invoice.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+import { corsHeadersFor } from "../_shared/cors.ts";
 
 interface GenerateInvoiceRequestI {
   order_id: string;
@@ -29,6 +24,7 @@ interface OrderOwnershipI {
  * webhooks use the shared helper directly instead of this endpoint.
  */
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
   }

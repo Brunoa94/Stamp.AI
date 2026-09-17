@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import { PaymentService } from "../services/paymentService";
 import type { CheckoutFormData } from "../context/CheckoutFormContext";
-import type { CartWithItems } from "@/types/cart";
+import type { CartWithItems } from "@/shared/types/cart";
 
 interface PreparePayPalPaymentParams {
   formData: CheckoutFormData;
@@ -10,7 +10,6 @@ interface PreparePayPalPaymentParams {
   cartId: string | null;
   amount: number;
 }
-
 
 /**
  * Mutation hook for preparing PayPal payment
@@ -21,8 +20,9 @@ export function usePreparePayPalPayment() {
 
   return useMutation({
     mutationKey: ["payment", "prepare-paypal"],
-    mutationFn: ({ formData, cart, cartId, amount }: PreparePayPalPaymentParams) =>
-      PaymentService.preparePayPalPayment(formData, cart, cartId, amount),
+    mutationFn: (
+      { formData, cart, cartId, amount }: PreparePayPalPaymentParams,
+    ) => PaymentService.preparePayPalPayment(formData, cart, cartId, amount),
     retry: false, // Don't retry payment operations
     onError: (error: Error) => {
       handleError(error);
@@ -46,8 +46,9 @@ export function usePrepareIdealPayment() {
 
   return useMutation({
     mutationKey: ["payment", "prepare-ideal"],
-    mutationFn: ({ formData, cart, cartId, amount }: PrepareIdealPaymentParams) =>
-      PaymentService.prepareIdealPayment(formData, cart, cartId, amount),
+    mutationFn: (
+      { formData, cart, cartId, amount }: PrepareIdealPaymentParams,
+    ) => PaymentService.prepareIdealPayment(formData, cart, cartId, amount),
     retry: false, // Don't retry payment operations
     onError: (error: Error) => {
       handleError(error);

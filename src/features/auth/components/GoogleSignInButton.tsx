@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
-import { useGoogleSignIn } from "@/queries/authQueries";
+import { useGoogleSignIn } from "@/shared/queries/authQueries";
 
 interface GoogleSignInButtonProps {
   className?: string;

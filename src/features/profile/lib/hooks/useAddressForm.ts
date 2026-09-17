@@ -1,11 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useUser } from "@/queries/authQueries";
-import { useUpdateProfile } from "@/queries/authQueries";
+import { useUser } from "@/shared/queries/authQueries";
+import { useUpdateProfile } from "@/shared/queries/authQueries";
 import { useTranslations } from "next-intl";
-import { ShippingAddressSchema, type ShippingAddressT } from "@/schemas/checkout";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
+import {
+  ShippingAddressSchema,
+  type ShippingAddressT,
+} from "@/shared/schemas/checkout";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 
 function createEmptyAddress(email?: string): ShippingAddressT {
   return {
@@ -27,8 +30,10 @@ export function useAddressForm() {
   const { data: user } = useUser();
   const updateProfileMutation = useUpdateProfile();
   const { handleError, handleSuccess } = useErrorHandler();
-  
-  const savedAddress = user?.user_metadata?.shipping_address as ShippingAddressT | undefined;
+
+  const savedAddress = user?.user_metadata?.shipping_address as
+    | ShippingAddressT
+    | undefined;
   const form = useForm<ShippingAddressT>({
     resolver: zodResolver(ShippingAddressSchema),
     defaultValues: savedAddress || createEmptyAddress(user?.email),
@@ -58,7 +63,7 @@ export function useAddressForm() {
         handleError(error);
       }
     },
-    [updateProfileMutation, t]
+    [updateProfileMutation, t],
   );
 
   const handleCancel = useCallback(() => {

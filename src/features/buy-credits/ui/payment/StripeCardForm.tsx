@@ -4,7 +4,7 @@ import { CardElement } from "@stripe/react-stripe-js";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { buyCreditsTheme } from "@/theme/components";
-import { STRIPE_CARD_ELEMENT_OPTIONS } from "@/constants/payment";
+import { STRIPE_CARD_ELEMENT_OPTIONS } from "@/shared/constants/payment";
 import { useStripePayment } from "./useStripePayment";
 
 interface StripeCardFormProps {

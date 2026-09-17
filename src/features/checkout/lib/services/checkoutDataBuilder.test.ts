@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { CheckoutDataBuilder } from "./checkoutDataBuilder";
 import type { CheckoutFormData } from "../context/CheckoutFormContext";
-import type { CartWithItems } from "@/types/cart";
+import type { CartWithItems } from "@/shared/types/cart";
 
 describe("CheckoutDataBuilder", () => {
   it("freezes the exact checkout cart for use after the payment redirect", () => {

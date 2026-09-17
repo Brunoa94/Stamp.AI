@@ -9,8 +9,8 @@
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { CHECKOUT_PAYMENT_METHODS } from "@/constants/payment";
-import type { PaymentMethodT } from "@/types/payment";
+import { CHECKOUT_PAYMENT_METHODS } from "@/shared/constants/payment";
+import type { PaymentMethodT } from "@/shared/types/payment";
 
 interface CheckoutPaymentMethodsPropsI {
   selectedMethod: PaymentMethodT;

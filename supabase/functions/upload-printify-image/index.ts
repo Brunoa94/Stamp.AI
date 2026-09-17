@@ -2,14 +2,9 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { requireUser } from "../_shared/authGuard.ts"
+import { corsHeadersFor } from '../_shared/cors.ts'
 
 // Environment variables will be validated when needed
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-}
 
 // SSRF hardening: only allow forwarding image URLs from trusted hosts to Printify
 function isAllowedImageUrl(u: string): boolean {
@@ -34,6 +29,7 @@ function isAllowedImageUrl(u: string): boolean {
 }
 
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req)
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders })

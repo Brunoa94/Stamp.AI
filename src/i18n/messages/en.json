@@ -1629,6 +1629,9 @@
     },
     "pricing": {
       "invalidPromoCode": "Invalid promo code",
+      "promoCodeExpired": "This promo code has expired",
+      "promoCodeLimitReached": "This promo code has reached its usage limit",
+      "promoCodeApplied": "Promo code applied",
       "validationFailed": "Failed to validate promo code",
       "enterPromoCode": "Please enter a promo code",
       "cartTotalInvalid": "Cart total must be greater than 0"
@@ -1729,7 +1732,8 @@
   "validation": {
     "emailRequired": "Please enter your email",
     "emailInvalid": "That email doesn't look right",
-    "passwordMin": "Use at least 6 characters",
+    "passwordRequired": "Please enter your password",
+    "passwordMin": "Use at least 8 characters",
     "passwordsNoMatch": "Those passwords don't match",
     "urlInvalid": "That URL doesn't look right",
     "firstNameEmpty": "Please enter your first name",
@@ -1769,6 +1773,7 @@
     "EMAIL_NOT_CONFIRMED": "Please verify your email address before signing in",
     "CAPTCHA_VERIFICATION_FAILED": "Security verification failed. Please try again",
     "INVALID_TOKEN": "Your session has expired. Please sign in again",
+    "INSUFFICIENT_COINS": "Not enough coins to generate. Coins reset daily at midnight",
     "WEBHOOK_SIGNATURE_INVALID": "Invalid webhook signature",
     "PAYPAL_WEBHOOK_SIGNATURE_INVALID": "Invalid PayPal webhook signature",
     "USER_NOT_FOUND": "We couldn't find that account",

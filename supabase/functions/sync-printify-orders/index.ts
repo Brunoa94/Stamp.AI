@@ -12,12 +12,7 @@ import type {
   PrintifyOrderI,
   SyncOrderRowI,
 } from "./mapping.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+import { corsHeadersFor } from "../_shared/cors.ts";
 
 const BATCH_SIZE = 100;
 const CONCURRENCY = 5;
@@ -176,6 +171,7 @@ async function syncOrder(
  * updates status, printify_status and tracking fields when they changed.
  */
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
   }

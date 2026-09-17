@@ -1,4 +1,4 @@
-import type { OrderStatusFilterT } from "@/types/order";
+import type { OrderStatusFilterT } from "@/shared/types/order";
 
 export type OrdersStatusFilterType = OrderStatusFilterT;
 export type OrdersTimeFilterType = "30" | "90" | "2023" | "all";

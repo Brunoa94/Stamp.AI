@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { captureError } from "@/lib/observability/errorCapture";
-import { LoginRequestSchema } from "@/schemas/auth";
-import type { Database } from "@/types/database.types";
+import { LoginRequestSchema } from "@/shared/schemas/auth";
+import type { Database } from "@/shared/types/database.types";
 import { verifyCaptchaForAction } from "@/lib/security/captcha/verify";
 import { CAPTCHA_ACTIONS } from "@/lib/security/captcha/constants";
 import { isAuthEmailRequestAllowed } from "@/lib/security/authEmailProtection";
@@ -37,8 +37,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const captchaRequired =
-      process.env.NODE_ENV === "production" ||
+    const captchaRequired = process.env.NODE_ENV === "production" ||
       Boolean(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) ||
       Boolean(process.env.RECAPTCHA_SECRET_KEY);
 

@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { formatPrice } from "@/lib/formatPrice";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { useDesignAdjustment } from "../../../lib/hooks/useDesignAdjustment";
 import { useStampCustomization } from "../../../lib/hooks/useStampSelectors";
 import { getCanvasOrientation } from "@/lib/printPlacement/config";
@@ -69,10 +69,12 @@ export function DesignAdjustmentPanel({
   if (!productConfig || !activeConfig) return null;
 
   // Determine canvas orientation from selected size
-  const isCanvasOrPoster = productConfig.category === "canvas" || productConfig.category === "poster";
-  const orientation = isCanvasOrPoster && selectedSize
-    ? getCanvasOrientation(selectedSize)
-    : undefined;
+  const isCanvasOrPoster =
+    productConfig.category === "canvas" || productConfig.category === "poster";
+  const orientation =
+    isCanvasOrPoster && selectedSize
+      ? getCanvasOrientation(selectedSize)
+      : undefined;
 
   const supportsAdjustment = !productConfig.disablePlacementAdjustment;
 

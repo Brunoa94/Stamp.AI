@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { OrderWithItemsT } from "@/types/order";
+import type { OrderWithItemsT } from "@/shared/types/order";
 import { ORDERS_ITEMS_PER_PAGE } from "../constants/pagination";
 import type { OrdersPaginationType } from "../types/pagination";
 

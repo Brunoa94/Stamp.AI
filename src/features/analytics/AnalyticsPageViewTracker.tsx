@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { AnalyticsService } from "@/services/analyticsService";
+import { AnalyticsService } from "@/shared/services/analyticsService";
 
 /** Tracks a GA4 page_view on every client-side route change. */
 export function AnalyticsPageViewTracker() {

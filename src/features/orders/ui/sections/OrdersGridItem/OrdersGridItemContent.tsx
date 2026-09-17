@@ -5,7 +5,7 @@ import { formatPrice } from "../../../lib/utils/formatPrice";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
-import type { OrderWithItemsT } from "@/types/order";
+import type { OrderWithItemsT } from "@/shared/types/order";
 import type { getFirstOrderItem } from "../../../lib/helpers/orderPresentation";
 import { getAddressSummary } from "../../../lib/helpers/orderPresentation";
 

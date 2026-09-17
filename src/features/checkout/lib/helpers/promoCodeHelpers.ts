@@ -1,4 +1,4 @@
-import type { PromoCodeValidationResult } from "@/schemas/promocode";
+import type { PromoCodeValidationResult } from "@/shared/schemas/promocode";
 
 /**
  * Calculate discount value from promo code validation result
@@ -6,11 +6,10 @@ import type { PromoCodeValidationResult } from "@/schemas/promocode";
  * @returns The discount value in dollars
  */
 export function getDiscountValue(
-  validationResult: PromoCodeValidationResult | null
+  validationResult: PromoCodeValidationResult | null,
 ): number {
   if (!validationResult?.isValid || !validationResult.appliedPromo) {
     return 0;
   }
   return validationResult.appliedPromo.discountValue;
 }
-

@@ -10,8 +10,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useIntersectionObserver } from "@/shared/hooks/useIntersectionObserver";
+import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";

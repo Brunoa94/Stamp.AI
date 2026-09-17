@@ -8,10 +8,10 @@ import { Paragraph } from "@/features/ui/paragraph";
 import { Mail } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useCaptcha } from "@/hooks/useCaptcha";
+import { useCaptcha } from "@/shared/hooks/useCaptcha";
 import { CAPTCHA_ACTIONS } from "@/lib/security/captcha/constants";
-import { AuthService } from "@/services/authService";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { AuthService } from "@/shared/services/authService";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 
 function maskEmail(email: string): string {
   const [local, domain] = email.split("@");

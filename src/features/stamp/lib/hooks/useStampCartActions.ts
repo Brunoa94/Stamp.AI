@@ -5,20 +5,20 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import {
-  useStampFinalization,
-  useStampSelectedImage,
   useStampCustomization,
+  useStampFinalization,
   useStampProductSelection,
+  useStampSelectedImage,
 } from "./useStampSelectors";
 import { useStampFlowStore } from "../stores/stampFlowStore";
-import { useAddToCart } from "@/queries/cartQueries";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { useAddToCart } from "@/shared/queries/cartQueries";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import {
   logStampError,
   logStampInfo,
   logStampWarn,
 } from "../helpers/stampLogger";
-import { AnalyticsService } from "@/services/analyticsService";
+import { AnalyticsService } from "@/shared/services/analyticsService";
 import { mapAddToCartEvent } from "@/features/analytics/mappers/stampFlowMappers";
 
 /**
@@ -37,7 +37,8 @@ export function useStampCartActions() {
   const router = useRouter();
   const { handleError, handleSuccess } = useErrorHandler();
 
-  const { createdProductId, createdVariantId, mockupImageUrl } = useStampFinalization();
+  const { createdProductId, createdVariantId, mockupImageUrl } =
+    useStampFinalization();
   const { selectedImageUrl } = useStampSelectedImage();
   const { selectedPriceCents } = useStampCustomization();
   const { selectedProductTitle } = useStampProductSelection();
@@ -154,11 +155,16 @@ export function useStampCartActions() {
       });
     }
 
-    if (typeof cartItemPayload.unit_price !== "number" || cartItemPayload.unit_price <= 0) {
+    if (
+      typeof cartItemPayload.unit_price !== "number" ||
+      cartItemPayload.unit_price <= 0
+    ) {
       logStampError({
         scope: "useStampCartActions",
         event: "invalid_unit_price_in_payload",
-        error: new Error(`unit_price is invalid: ${cartItemPayload.unit_price}`),
+        error: new Error(
+          `unit_price is invalid: ${cartItemPayload.unit_price}`,
+        ),
         metadata: { payload: cartItemPayload },
       });
     }
@@ -186,7 +192,7 @@ export function useStampCartActions() {
           productName,
           unitPriceCents: unitPrice,
           variantId: createdVariantId,
-        })
+        }),
       );
 
       handleSuccess(t("added"));
@@ -310,7 +316,7 @@ export function useStampCartActions() {
           productName,
           unitPriceCents: unitPrice,
           variantId: createdVariantId,
-        })
+        }),
       );
 
       handleSuccess(t("added"));

@@ -8,8 +8,8 @@ import { Minus, Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
-import type { CartItem } from "@/types/cart";
-import { AnalyticsService } from "@/services/analyticsService";
+import type { CartItem } from "@/shared/types/cart";
+import { AnalyticsService } from "@/shared/services/analyticsService";
 
 const MIN_QUANTITY = 1;
 const MAX_QUANTITY = 99;

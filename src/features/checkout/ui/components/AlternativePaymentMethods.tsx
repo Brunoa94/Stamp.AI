@@ -3,7 +3,7 @@ import { CreditCard } from "lucide-react";
 
 import { Button } from "@/features/ui/button";
 import { paymentErrorTheme } from "@/theme/components";
-import type { PaymentAlternativeMethodT } from "@/types/payment";
+import type { PaymentAlternativeMethodT } from "@/shared/types/payment";
 
 interface Props {
   onSelectMethod: (method: PaymentAlternativeMethodT) => void;

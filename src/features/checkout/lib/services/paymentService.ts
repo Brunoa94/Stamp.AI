@@ -1,10 +1,10 @@
-import { ErrorClient } from "@/services/errorClient";
-import { StripeService } from "@/services/stripeService";
-import { PayPalService } from "@/services/paypalService";
-import { MollieService } from "@/services/mollieService";
+import { ErrorClient } from "@/shared/services/errorClient";
+import { StripeService } from "@/shared/services/stripeService";
+import { PayPalService } from "@/shared/services/paypalService";
+import { MollieService } from "@/shared/services/mollieService";
 import type { CheckoutFormData } from "../context/CheckoutFormContext";
-import type { CartWithItems } from "@/types/cart";
-import type { CreatePaymentIntentPayloadI } from "@/types/payment";
+import type { CartWithItems } from "@/shared/types/cart";
+import type { CreatePaymentIntentPayloadI } from "@/shared/types/payment";
 import { CheckoutDataBuilder } from "./checkoutDataBuilder";
 import { CheckoutStorageService } from "./checkoutStorageService";
 
@@ -27,7 +27,7 @@ export class PaymentService {
     formData: CheckoutFormData,
     cart: CartWithItems,
     cartId: string | null,
-    amount: number
+    amount: number,
   ) {
     try {
       // Validate cart
@@ -44,7 +44,7 @@ export class PaymentService {
         formData,
         cart,
         cartId,
-        amount
+        amount,
       );
 
       // Store checkout data for payment processing
@@ -88,7 +88,7 @@ export class PaymentService {
     formData: CheckoutFormData,
     cart: CartWithItems,
     cartId: string | null,
-    amount: number
+    amount: number,
   ) {
     try {
       // Validate cart
@@ -105,7 +105,7 @@ export class PaymentService {
         formData,
         cart,
         cartId,
-        amount
+        amount,
       );
 
       // Create PayPal order through PayPalService
@@ -151,7 +151,7 @@ export class PaymentService {
     formData: CheckoutFormData,
     cart: CartWithItems,
     cartId: string | null,
-    amount: number
+    amount: number,
   ) {
     try {
       // Validate cart
@@ -168,7 +168,7 @@ export class PaymentService {
         formData,
         cart,
         cartId,
-        amount
+        amount,
       );
 
       // Create Mollie payment pinned to iDEAL (EUR only)
@@ -208,7 +208,10 @@ export class PaymentService {
   /**
    * Validate payment form data
    */
-  static validatePaymentData(formData: CheckoutFormData, cart: CartWithItems | null) {
+  static validatePaymentData(
+    formData: CheckoutFormData,
+    cart: CartWithItems | null,
+  ) {
     if (!cart) {
       return { isValid: false, error: "Cart not found" };
     }

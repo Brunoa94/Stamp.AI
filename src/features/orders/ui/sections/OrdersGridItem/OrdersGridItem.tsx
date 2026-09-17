@@ -1,4 +1,4 @@
-import type { OrderWithItemsT } from "@/types/order";
+import type { OrderWithItemsT } from "@/shared/types/order";
 import { getFirstOrderItem } from "../../../lib/helpers/orderPresentation";
 import { getOrderDisplayStatus } from "../../../lib/helpers/statusPresentation";
 import { OrdersGridItemIndex } from "./OrdersGridItemIndex";

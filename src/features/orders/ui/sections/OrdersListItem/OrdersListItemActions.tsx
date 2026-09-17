@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
-import type { OrderWithItemsT } from "@/types/order";
+import type { OrderWithItemsT } from "@/shared/types/order";
 
 interface PropsI {
   order: OrderWithItemsT;

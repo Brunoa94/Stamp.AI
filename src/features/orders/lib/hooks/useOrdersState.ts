@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import type { OrderWithItemsT } from "@/types/order";
+import type { OrderWithItemsT } from "@/shared/types/order";
 import { ORDERS_DEFAULT_TIME_FILTER } from "../constants/filters";
 import { getStatusFilterLabel } from "../helpers/statusPresentation";
 import { useFilterLoading } from "./useFilterLoading";

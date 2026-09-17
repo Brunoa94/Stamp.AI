@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useStampUpload } from "./useStampSelectors";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import {
   logStampError,
   logStampInfo,
@@ -104,7 +104,9 @@ export function useStampImageUpload() {
         reader.readAsDataURL(file);
       });
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : t("uploadFailed");
+      const errorMsg = error instanceof Error
+        ? error.message
+        : t("uploadFailed");
       setUploadError(errorMsg);
       logStampError({
         scope: "useStampImageUpload",

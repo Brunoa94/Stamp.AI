@@ -14,12 +14,12 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Paragraph } from "@/features/ui/paragraph";
 import { usePaymentForm } from "@/features/checkout/ui/PaymentForm/usePaymentForm";
-import type { ShippingAddressT } from "@/schemas/checkout";
-import type { PrintifyLineItem } from "@/types/printifyOrder";
+import type { ShippingAddressT } from "@/shared/schemas/checkout";
+import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
 import type { StripePaymentIntentResultT } from "../../../lib/types/payment";
-import { AnalyticsService } from "@/services/analyticsService";
+import { AnalyticsService } from "@/shared/services/analyticsService";
 import { mapPurchaseEvent } from "@/features/analytics/mappers/ecommerceMappers";
-import type { CartWithItems } from "@/types/cart";
+import type { CartWithItems } from "@/shared/types/cart";
 import { CheckoutDataBuilder } from "@/features/checkout/lib/services/checkoutDataBuilder";
 
 interface CheckoutStripeButtonPropsI {
@@ -76,7 +76,7 @@ export function CheckoutStripeButton({
           transactionId: paymentIntent.id,
           lineItems: processedLineItems,
           amount,
-        })
+        }),
       );
 
       const params = new URLSearchParams({

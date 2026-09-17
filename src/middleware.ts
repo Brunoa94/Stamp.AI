@@ -1,6 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
-import { checkCombinedRateLimit } from "@/lib/security/rate-limiter/check";
+import {
+  checkCombinedRateLimit,
+  checkUserRateLimit,
+} from "@/lib/security/rate-limiter/check";
 import {
   RATE_LIMIT_CONFIGS,
   type RateLimitType,
@@ -53,6 +56,27 @@ function getRateLimitType(pathname: string): RateLimitType | null {
   return null;
 }
 
+function rateLimitedResponse(
+  result: ReturnType<typeof checkCombinedRateLimit>,
+  message: string | undefined,
+  requestId: string,
+): NextResponse {
+  const response = NextResponse.json(
+    {
+      error: message || "Too many requests",
+      retryAfter: result.retryAfter,
+    },
+    { status: 429 },
+  );
+
+  Object.entries(result.headers).forEach(([key, value]: [string, string]) => {
+    response.headers.set(key, value);
+  });
+  response.headers.set(REQUEST_ID_HEADER, requestId);
+
+  return response;
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -60,34 +84,19 @@ export async function middleware(request: NextRequest) {
   // Generate or extract request ID for correlation across the request lifecycle
   const requestId = getRequestIdFromHeaders(request.headers) || generateRequestId();
 
-  // ── Rate Limiting ─────────────────────────────────────────────────────────────
+  // ── Rate Limiting (IP bucket) ─────────────────────────────────────────────────
+  // Runs before the session lookup so a flood is rejected without spending a
+  // Supabase Auth round-trip per request. The per-user bucket is applied
+  // further down, once the session has been resolved for route protection.
   const rateLimitType = getRateLimitType(pathname);
+  const rateLimitConfig = rateLimitType ? RATE_LIMIT_CONFIGS[rateLimitType] : null;
   let rateLimitResult: ReturnType<typeof checkCombinedRateLimit> | null = null;
 
-  if (rateLimitType) {
-    const config = RATE_LIMIT_CONFIGS[rateLimitType];
-    rateLimitResult = checkCombinedRateLimit(request, pathname, config);
+  if (rateLimitConfig) {
+    rateLimitResult = checkCombinedRateLimit(request, pathname, rateLimitConfig);
 
     if (rateLimitResult.isLimited) {
-      const response = NextResponse.json(
-        {
-          error: config.message || "Too many requests",
-          retryAfter: rateLimitResult.retryAfter,
-        },
-        { status: 429 },
-      );
-
-      // Add rate limit headers
-      Object.entries(rateLimitResult.headers).forEach(
-        ([key, value]: [string, string]) => {
-          response.headers.set(key, value);
-        },
-      );
-
-      // Add request ID for correlation
-      response.headers.set(REQUEST_ID_HEADER, requestId);
-
-      return response;
+      return rateLimitedResponse(rateLimitResult, rateLimitConfig.message, requestId);
     }
   }
 
@@ -129,6 +138,23 @@ export async function middleware(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  // ── Rate Limiting (per-user bucket) ──────────────────────────────────────────
+  // Reuses the session resolved above; no second Supabase call. Catches one
+  // account spreading requests across many IPs.
+  if (rateLimitConfig && rateLimitResult && user) {
+    const userResult = checkUserRateLimit(user.id, pathname, rateLimitConfig);
+
+    if (userResult.isLimited) {
+      const response = rateLimitedResponse(userResult, rateLimitConfig.message, requestId);
+      supabaseResponse.cookies.getAll().forEach((cookie) => response.cookies.set(cookie));
+      return response;
+    }
+
+    if (userResult.remaining < rateLimitResult.remaining) {
+      rateLimitResult = userResult;
+    }
+  }
 
   // Protected routes — server-side auth gate. The client-side <ProtectedRoute>
   // is UX only and is NOT a security control; these must be gated here before

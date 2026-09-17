@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Elements } from "@stripe/react-stripe-js";
 import { stripePromise } from "@/lib/stripe";
-import { type PaymentMethodId } from "@/constants/payment";
+import { type PaymentMethodId } from "@/shared/constants/payment";
 import { PaymentMethodSelector } from "./PaymentMethodSelector";
 import { StripeCardForm } from "./StripeCardForm";
 import { PayPalPlaceholder } from "./PayPalPlaceholder";

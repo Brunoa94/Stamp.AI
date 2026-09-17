@@ -1,8 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
-import { useScrollProgress } from "@/hooks/useScrollProgress";
+import { useIntersectionObserver } from "@/shared/hooks/useIntersectionObserver";
+import { useScrollProgress } from "@/shared/hooks/useScrollProgress";
 import {
   getParallaxTransform,
   getFadeOpacity,
@@ -48,7 +48,9 @@ export function SectionReveal({
   const { progress } = useScrollProgress(ref, hasScrollEffects && isVisible);
 
   // Calculate scroll-based styles
-  const scrollTransform = parallax ? getParallaxTransform(progress, parallaxFactor) : undefined;
+  const scrollTransform = parallax
+    ? getParallaxTransform(progress, parallaxFactor)
+    : undefined;
   const scrollOpacity = fadeOnScroll ? getFadeOpacity(progress) : undefined;
 
   // Render with scroll effects (CSS variants + dynamic inline styles for parallax/fade)
@@ -63,12 +65,16 @@ export function SectionReveal({
         style={{
           transitionDelay: `${delayMs}ms`,
           opacity: isVisible ? visibleOpacity : 0,
-          transform: isVisible ? visibleTransform : "translateY(28px) scale(0.985)",
+          transform: isVisible
+            ? visibleTransform
+            : "translateY(28px) scale(0.985)",
         }}
         className={cn(
           "section-reveal-scroll",
-          isVisible ? "section-reveal-scroll--visible" : "section-reveal-scroll--hidden",
-          className
+          isVisible
+            ? "section-reveal-scroll--visible"
+            : "section-reveal-scroll--hidden",
+          className,
         )}
       >
         {children}
@@ -81,7 +87,11 @@ export function SectionReveal({
     <div
       ref={ref}
       style={{ transitionDelay: `${delayMs}ms` }}
-      className={cn("scroll-reveal", isVisible && "scroll-reveal--visible", className)}
+      className={cn(
+        "scroll-reveal",
+        isVisible && "scroll-reveal--visible",
+        className,
+      )}
     >
       {children}
     </div>

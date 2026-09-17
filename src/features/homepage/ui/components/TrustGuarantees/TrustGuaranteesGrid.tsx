@@ -7,7 +7,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useStaggeredReveal } from "@/hooks/useStaggeredReveal";
+import { useStaggeredReveal } from "@/shared/hooks/useStaggeredReveal";
 import {
   HOME_TRUST_GUARANTEES,
   TRUST_GUARANTEES_STAGGER_DELAY_MS,

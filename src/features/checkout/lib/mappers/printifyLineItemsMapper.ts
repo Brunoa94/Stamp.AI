@@ -1,4 +1,4 @@
-import type { PrintifyLineItem } from "@/types/printifyOrder";
+import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
 
 /**
  * Convert cart items to Printify line items format

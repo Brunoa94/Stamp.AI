@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { Span } from "@/features/ui/span";
-import { useOrderStatusHistory } from "@/queries/orderQueries";
+import { useOrderStatusHistory } from "@/shared/queries/orderQueries";
 import { TimelineEntry } from "./TimelineEntry";
 
 interface PropsI {
