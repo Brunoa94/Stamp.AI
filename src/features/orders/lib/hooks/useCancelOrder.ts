@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { OrderWithItemsT } from "@/types/order";
+import { OrderWithItemsT } from "@/shared/types/order";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import { canCancelOrder } from "../utils/orderCancellation";
 
-import { OrderService } from "@/services/orderService";
+import { OrderService } from "@/shared/services/orderService";
 
 type CancelResults = {
     cancelled_at_printify?: boolean;

@@ -145,9 +145,19 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-site_url = "http://127.0.0.1:3000"
+# Taken from the app's NEXT_PUBLIC_SITE_URL so confirmation / reset emails
+# link to the deployed site rather than a hard-coded localhost.
+site_url = "env(NEXT_PUBLIC_SITE_URL)"
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://127.0.0.1:3000"]
+# The app redirects to <origin>/auth/callback?next=... (authService), so each
+# entry needs a /** glob. env() substitution only applies when the whole value
+# is env(VAR), so the deployed origin's glob is its own variable rather than
+# NEXT_PUBLIC_SITE_URL + "/**".
+additional_redirect_urls = [
+  "http://localhost:3000/**",
+  "http://127.0.0.1:3000/**",
+  "env(AUTH_ADDITIONAL_REDIRECT_URL)",
+]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to the local API URL (http://127.0.0.1:<port>/auth/v1).
@@ -166,7 +176,8 @@ enable_anonymous_sign_ins = false
 # Allow/disallow testing manual linking of accounts
 enable_manual_linking = false
 # Passwords shorter than this value will be rejected as weak. Minimum 6, recommended 8 or more.
-minimum_password_length = 6
+# Kept in step with PasswordResetConfirmSchema / UpdatePasswordSchema in src/schemas/auth.ts.
+minimum_password_length = 8
 # Passwords that do not meet the following requirements will be rejected as weak. Supported values
 # are: `letters_digits`, `lower_upper_letters_digits`, `lower_upper_letters_digits_symbols`
 password_requirements = ""
@@ -188,10 +199,18 @@ token_verifications = 30
 web3 = 30
 
 # Configure one of the supported captcha providers: `hcaptcha`, `turnstile`.
+#
+# DELIBERATELY NOT ENABLED. GoTrue only supports hCaptcha and Turnstile, while
+# this app protects login / signup / resend with Google reCAPTCHA v3 verified
+# server-side in the Next.js API routes (RECAPTCHA_SECRET_KEY, see
+# src/lib/security/captcha/verify.ts). Turning this on would make GoTrue demand
+# an hCaptcha/Turnstile token on every auth call the routes make with the
+# service key and break sign-in. Enable only after migrating the frontend to
+# one of the supported providers; the secret must then come from an env var.
 # [auth.captcha]
 # enabled = true
-# provider = "hcaptcha"
-# secret = ""
+# provider = "turnstile"
+# secret = "env(CAPTCHA_SECRET_KEY)"
 
 [auth.email]
 # Allow/disallow new user signups via email to your project.
@@ -200,7 +219,9 @@ enable_signup = true
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
-enable_confirmations = false
+# The app already enforces this (login route rejects EMAIL_NOT_CONFIRMED and
+# signup issues a confirmation link); this makes GoTrue enforce it too.
+enable_confirmations = true
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
 secure_password_change = false
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
@@ -381,16 +402,51 @@ s3_access_key = "env(S3_ACCESS_KEY)"
 # Configures AWS_SECRET_ACCESS_KEY for S3 bucket
 s3_secret_key = "env(S3_SECRET_KEY)"
 
-[functions.stripe-webhook]
+# =============================================================================
+# Edge functions
+# =============================================================================
+# verify_jwt is DISABLED for every function, deliberately and explicitly:
+#
+# - This project uses the new Supabase API keys (sb_publishable_... /
+#   sb_secret_...). They are not JWTs, so the gateway check would reject every
+#   server-to-server call that authenticates with the secret key: pg_cron jobs
+#   (vault 'service_role_key'), Next.js API routes, and function-to-function
+#   calls in _shared/invoice.ts.
+# - Provider webhooks (Stripe, PayPal, Mollie) carry no Supabase JWT at all;
+#   they are authenticated by signature / re-fetch from the provider.
+# - The gateway check is not authorization anyway: the public anon key
+#   satisfies it.
+#
+# Authorization is therefore enforced INSIDE each function with
+# _shared/authGuard.ts (requireUser / requireServiceRoleOrCron). Every new
+# function must call one of them. `npm run supabase:deploy` no longer passes
+# --no-verify-jwt; this file is the single source of truth.
+
+[functions.cancel-order]
 enabled = true
 verify_jwt = false
-import_map = "./functions/stripe-webhook/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
-entrypoint = "./functions/stripe-webhook/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/stripe-webhook/*.html" ]
+entrypoint = "./functions/cancel-order/index.ts"
+
+[functions.capture-paypal-order]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/capture-paypal-order/index.ts"
+
+[functions.create-credit-payment]
+enabled = true
+verify_jwt = false
+import_map = "./functions/create-credit-payment/deno.json"
+entrypoint = "./functions/create-credit-payment/index.ts"
+
+[functions.create-custom-product]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/create-custom-product/index.ts"
+
+[functions.create-mollie-payment]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/create-mollie-payment/index.ts"
 
 [functions.create-payment-intent]
 enabled = true
@@ -398,14 +454,80 @@ verify_jwt = false
 import_map = "./functions/create-payment-intent/deno.json"
 entrypoint = "./functions/create-payment-intent/index.ts"
 
+[functions.create-paypal-order]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/create-paypal-order/index.ts"
+
 [functions.create-printify-order]
 enabled = true
 verify_jwt = false
 import_map = "./functions/create-printify-order/deno.json"
-# Uncomment to specify a custom file path to the entrypoint.
-# Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
 entrypoint = "./functions/create-printify-order/index.ts"
-# Specifies static files to be bundled with the function. Supports glob patterns.
-# For example, if you want to serve static HTML pages in your function:
-# static_files = [ "./functions/create-printify-order/*.html" ]
 
+[functions.generate-invoice]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/generate-invoice/index.ts"
+
+[functions.get-blueprint-variants]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/get-blueprint-variants/index.ts"
+
+[functions.get-catalog-blueprints]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/get-catalog-blueprints/index.ts"
+
+[functions.mollie-webhook]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/mollie-webhook/index.ts"
+
+[functions.paypal-webhook]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/paypal-webhook/index.ts"
+
+[functions.process-payment-recovery]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/process-payment-recovery/index.ts"
+
+[functions.process-refund]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/process-refund/index.ts"
+
+[functions.stripe-webhook]
+enabled = true
+verify_jwt = false
+import_map = "./functions/stripe-webhook/deno.json"
+entrypoint = "./functions/stripe-webhook/index.ts"
+
+[functions.sync-blueprint]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/sync-blueprint/index.ts"
+
+[functions.sync-cheapest-providers]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/sync-cheapest-providers/index.ts"
+
+[functions.sync-printify-orders]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/sync-printify-orders/index.ts"
+
+[functions.upload-printify-image]
+enabled = true
+verify_jwt = false
+import_map = "./functions/upload-printify-image/deno.json"
+entrypoint = "./functions/upload-printify-image/index.ts"
+
+[functions.verify-mollie-payment]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/verify-mollie-payment/index.ts"

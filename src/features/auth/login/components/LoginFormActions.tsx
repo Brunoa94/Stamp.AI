@@ -4,9 +4,10 @@ import { DialogClose } from "@/features/ui/dialog";
 
 interface PropsI {
   isPending: boolean;
+  isCaptchaReady: boolean;
 }
 
-export function LoginFormActions({ isPending }: PropsI) {
+export function LoginFormActions({ isPending, isCaptchaReady }: PropsI) {
   const t = useTranslations("auth.login.actions");
 
   return (
@@ -20,7 +21,7 @@ export function LoginFormActions({ isPending }: PropsI) {
       <Button
         aria-label={t("loginAria")}
         type="submit"
-        disabled={isPending}
+        disabled={isPending || !isCaptchaReady}
         variant="primary"
       >
         {isPending ? t("loggingIn") : t("login")}

@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createPayPalOrder } from "@/lib/paypal-server";
 import { captureError } from "@/lib/observability/errorCapture";
-import type { ShippingAddressT } from "@/schemas/checkout";
-import type { PrintifyLineItem } from "@/types/printifyOrder";
+import type { ShippingAddressT } from "@/shared/schemas/checkout";
+import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
 
 export const runtime = "nodejs";
 
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     if (!returnUrl || !cancelUrl) {
       return NextResponse.json(
         { error: "Return and cancel URLs are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -57,22 +57,24 @@ export async function POST(request: NextRequest) {
       customId,
       shippingAddress: shippingAddress
         ? {
-            firstName: shippingAddress.first_name,
-            lastName: shippingAddress.last_name,
-            address1: shippingAddress.address1,
-            address2: shippingAddress.address2,
-            city: shippingAddress.city,
-            region: shippingAddress.region,
-            zip: shippingAddress.zip?.trim() || "",
-            country: shippingAddress.country,
-          }
+          firstName: shippingAddress.first_name,
+          lastName: shippingAddress.last_name,
+          address1: shippingAddress.address1,
+          address2: shippingAddress.address2,
+          city: shippingAddress.city,
+          region: shippingAddress.region,
+          zip: shippingAddress.zip?.trim() || "",
+          country: shippingAddress.country,
+        }
         : undefined,
       returnUrl,
       cancelUrl,
     });
 
     // Find approval URL
-    const approvalLink = paypalOrder.links?.find((link) => link.rel === "approve");
+    const approvalLink = paypalOrder.links?.find((link) =>
+      link.rel === "approve"
+    );
 
     // Store payment transaction in database for tracking
     try {
@@ -92,7 +94,7 @@ export async function POST(request: NextRequest) {
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
-        { onConflict: "paypal_order_id" }
+        { onConflict: "paypal_order_id" },
       );
       console.log("Payment transaction record created:", paypalOrder.id);
     } catch (dbError) {
@@ -114,10 +116,8 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(
-      {
-        error: error instanceof Error ? error.message : "Failed to create PayPal order",
-      },
-      { status: 500 }
+      { error: "Failed to create PayPal order" },
+      { status: 500 },
     );
   }
 }

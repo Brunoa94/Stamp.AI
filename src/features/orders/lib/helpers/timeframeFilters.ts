@@ -1,4 +1,4 @@
-import type { OrderTimeframeFilterT } from "@/types/order";
+import type { OrderTimeframeFilterT } from "@/shared/types/order";
 import type { OrdersTimeFilterType } from "../types/filters";
 
 

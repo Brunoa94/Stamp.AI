@@ -1,6 +1,16 @@
-import type { PrintifyLineItem } from "@/types/printifyOrder";
-import type { ShippingAddressT } from "@/schemas/checkout";
-import type { PaymentMethodT } from "@/types/payment";
+import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
+import type { ShippingAddressT } from "@/shared/schemas/checkout";
+import type { PaymentMethodT } from "@/shared/types/payment";
+import type { CartWithItems } from "@/shared/types/cart";
+
+export interface MollieCheckoutSessionData {
+  paymentId: string | null;
+  lineItems: string | null;
+  shippingAddress: string | null;
+  cartId: string | null;
+  orderAmount: string | null;
+  cartSnapshot: string | null;
+}
 
 export interface CheckoutData {
   billing: ShippingAddressT;
@@ -11,6 +21,8 @@ export interface CheckoutData {
   paymentMethod: PaymentMethodT;
   promoCode?: string;
   amount?: number; // Total amount for the order
+  /** Present for new checkouts; optional while pre-deployment sessions expire. */
+  cartSnapshot?: CartWithItems;
   timestamp: number;
 }
 
@@ -38,6 +50,7 @@ export class CheckoutStorageService {
     SHIPPING_ADDRESS: "mollie_shipping_address",
     CART_ID: "mollie_cart_id",
     ORDER_AMOUNT: "mollie_order_amount",
+    CART_SNAPSHOT: "mollie_cart_snapshot",
   } as const;
 
   private static readonly EXPIRATION_TIME = 60 * 60 * 1000; // 1 hour in milliseconds
@@ -153,11 +166,11 @@ export class CheckoutStorageService {
       sessionStorage.setItem(this.MOLLIE_SESSION_KEYS.PAYMENT_ID, paymentId);
       sessionStorage.setItem(
         this.MOLLIE_SESSION_KEYS.LINE_ITEMS,
-        JSON.stringify(data.lineItems)
+        JSON.stringify(data.lineItems),
       );
       sessionStorage.setItem(
         this.MOLLIE_SESSION_KEYS.SHIPPING_ADDRESS,
-        JSON.stringify(data.shippingAddress)
+        JSON.stringify(data.shippingAddress),
       );
       if (data.cartId) {
         sessionStorage.setItem(this.MOLLIE_SESSION_KEYS.CART_ID, data.cartId);
@@ -165,11 +178,61 @@ export class CheckoutStorageService {
       if (data.amount !== undefined) {
         sessionStorage.setItem(
           this.MOLLIE_SESSION_KEYS.ORDER_AMOUNT,
-          String(data.amount)
+          String(data.amount),
+        );
+      }
+      if (data.cartSnapshot) {
+        sessionStorage.setItem(
+          this.MOLLIE_SESSION_KEYS.CART_SNAPSHOT,
+          JSON.stringify(data.cartSnapshot),
         );
       }
     } catch (error) {
       console.error("Failed to save Mollie checkout data:", error);
+    }
+  }
+
+  /**
+   * Retrieve Mollie checkout data from sessionStorage.
+   * Returns null if all keys are absent (e.g. after a clear or on SSR).
+   */
+  static getMollieCheckoutData(): MollieCheckoutSessionData | null {
+    try {
+      const paymentId = sessionStorage.getItem(
+        this.MOLLIE_SESSION_KEYS.PAYMENT_ID,
+      );
+      const lineItems = sessionStorage.getItem(
+        this.MOLLIE_SESSION_KEYS.LINE_ITEMS,
+      );
+      const shippingAddress = sessionStorage.getItem(
+        this.MOLLIE_SESSION_KEYS.SHIPPING_ADDRESS,
+      );
+      const cartId = sessionStorage.getItem(this.MOLLIE_SESSION_KEYS.CART_ID);
+      const orderAmount = sessionStorage.getItem(
+        this.MOLLIE_SESSION_KEYS.ORDER_AMOUNT,
+      );
+      const cartSnapshot = sessionStorage.getItem(
+        this.MOLLIE_SESSION_KEYS.CART_SNAPSHOT,
+      );
+
+      if (
+        !paymentId && !lineItems && !shippingAddress && !cartId &&
+        !orderAmount &&
+        !cartSnapshot
+      ) {
+        return null;
+      }
+
+      return {
+        paymentId,
+        lineItems,
+        shippingAddress,
+        cartId,
+        orderAmount,
+        cartSnapshot,
+      };
+    } catch {
+      return null;
     }
   }
 

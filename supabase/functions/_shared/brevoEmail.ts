@@ -81,7 +81,7 @@ export async function sendBrevoEmail(params: SendBrevoEmailParams): Promise<bool
     }
 
     const result = await response.json();
-    console.log(`✅ Email sent via Brevo (messageId: ${result.messageId}) to ${params.to}`);
+    console.log(`✅ Email sent via Brevo (messageId: ${result.messageId})`);
     return true;
   } catch (error) {
     console.error("Exception sending email via Brevo:", error);

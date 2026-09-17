@@ -1,8 +1,8 @@
 import { useReducer, useEffect } from "react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { useUser } from "@/queries/authQueries";
-import { useUpdateProfile } from "@/queries/authQueries";
+import { useUser } from "@/shared/queries/authQueries";
+import { useUpdateProfile } from "@/shared/queries/authQueries";
 
 interface UserInformationState {
   isEditing: boolean;

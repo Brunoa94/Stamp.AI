@@ -1,5 +1,5 @@
 import { canCancelOrder } from "../../../lib/utils/orderCancellation";
-import type { OrderWithItemsT } from "@/types/order";
+import type { OrderWithItemsT } from "@/shared/types/order";
 import { getFirstOrderItem } from "../../../lib/helpers/orderPresentation";
 import { getOrderDisplayStatus } from "../../../lib/helpers/statusPresentation";
 import { OrdersListItemImage } from "./OrdersListItemImage";

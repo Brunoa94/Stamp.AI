@@ -2,12 +2,8 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars } from "../_shared/validators.ts"
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-}
+import { corsHeadersFor } from '../_shared/cors.ts'
+import { requireServiceRoleOrCron } from '../_shared/authGuard.ts'
 
 interface ProviderInfo {
   id: number
@@ -189,18 +185,22 @@ async function findCheapestShippingProvider(
  * - shipping_cents: Shipping cost to Netherlands from cheapest provider
  */
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req, { methods: 'POST, GET, OPTIONS' })
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders })
   }
 
   try {
+    // Scheduled job (pg_cron with the service-role key). Rewrites provider
+    // and pricing data for the whole catalog, so reject every other caller.
+    requireServiceRoleOrCron(req)
+
     console.log('=== SYNC CHEAPEST PROVIDERS ===')
     console.log('Finding cheapest print providers for Netherlands...')
 
     // Validate environment variables
     const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken()
-    console.log(`Printify token preview: ${PRINTIFY_API_TOKEN.slice(0, 20)}...`)
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 

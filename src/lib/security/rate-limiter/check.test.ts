@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { checkRateLimit } from "./check";
+import { NextRequest } from "next/server";
+import {
+    checkCombinedRateLimit,
+    checkRateLimit,
+    checkUserRateLimit,
+} from "./check";
 import { clearEntry } from "./store";
 import type { RateLimitConfig } from "./types";
 
@@ -92,5 +97,67 @@ describe("checkRateLimit", () => {
         expect(checkRateLimit("ip-b", ENDPOINT, TEST_CONFIG).isLimited).toBe(
             false,
         );
+    });
+});
+
+describe("checkUserRateLimit", () => {
+    const USER = "user-123";
+    const USER_ENDPOINT = "/api/generate-image";
+
+    beforeEach(() => {
+        clearEntry(`user:${USER_ENDPOINT}:${USER}`);
+    });
+
+    it("keys the bucket by user id and allows twice the IP limit", () => {
+        for (let i = 0; i < TEST_CONFIG.maxRequests * 2; i++) {
+            expect(
+                checkUserRateLimit(USER, USER_ENDPOINT, TEST_CONFIG).isLimited,
+            ).toBe(false);
+        }
+        const blocked = checkUserRateLimit(USER, USER_ENDPOINT, TEST_CONFIG);
+        expect(blocked.isLimited).toBe(true);
+        expect(blocked.headers["Retry-After"]).toBeDefined();
+        expect(blocked.headers["X-RateLimit-Limit"]).toBe(
+            String(TEST_CONFIG.maxRequests * 2),
+        );
+    });
+
+    it("does not consume the IP bucket", () => {
+        clearEntry(`ip:${USER_ENDPOINT}:unknown`);
+        checkUserRateLimit(USER, USER_ENDPOINT, TEST_CONFIG);
+
+        const request = new NextRequest(`https://stamp.ai${USER_ENDPOINT}`);
+        const ipResult = checkCombinedRateLimit(request, USER_ENDPOINT, TEST_CONFIG);
+        expect(ipResult.remaining).toBe(TEST_CONFIG.maxRequests - 1);
+    });
+});
+
+describe("checkCombinedRateLimit with a user id", () => {
+    const USER = "user-456";
+    const USER_ENDPOINT = "/api/combined";
+
+    beforeEach(() => {
+        clearEntry(`user:${USER_ENDPOINT}:${USER}`);
+        clearEntry(`ip:${USER_ENDPOINT}:unknown`);
+    });
+
+    it("limits a user who spreads requests beyond the user bucket", () => {
+        const request = new NextRequest(`https://stamp.ai${USER_ENDPOINT}`);
+        const userConfig = { maxRequests: 2, windowMs: 60_000 };
+
+        // IP bucket would allow 2, user bucket allows 4. Reset the IP bucket
+        // between calls to isolate the user bucket.
+        for (let i = 0; i < 4; i++) {
+            clearEntry(`ip:${USER_ENDPOINT}:unknown`);
+            expect(
+                checkCombinedRateLimit(request, USER_ENDPOINT, userConfig, USER)
+                    .isLimited,
+            ).toBe(false);
+        }
+        clearEntry(`ip:${USER_ENDPOINT}:unknown`);
+        expect(
+            checkCombinedRateLimit(request, USER_ENDPOINT, userConfig, USER)
+                .isLimited,
+        ).toBe(true);
     });
 });

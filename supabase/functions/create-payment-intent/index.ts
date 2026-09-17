@@ -1,16 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
-import { ErrorCodes, handleError } from "../_shared/errors.ts";
+import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
+import { validatePricingAgainstDatabase, type LineItemForPricingI } from "../_shared/serverPriceService.ts";
 import type { PaymentIntentResponseI } from "../../types/index.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+import { corsHeadersFor } from "../_shared/cors.ts";
 
 /**
  * Verify authentication - accepts both user JWT tokens and service role key
@@ -30,7 +25,6 @@ async function verifyAuth(
 
   // Check if it's the service role key (server-to-server calls)
   if (serviceRoleKey && token === serviceRoleKey) {
-    console.log("Authenticated with service role key");
     return {
       userId: "service-role",
       userEmail: "service@system.internal",
@@ -46,11 +40,6 @@ async function verifyAuth(
   });
 
   if (!response.ok) {
-    console.error(
-      "Auth verification failed:",
-      response.status,
-      response.statusText,
-    );
     throw ErrorCodes.INVALID_TOKEN();
   }
 
@@ -60,7 +49,6 @@ async function verifyAuth(
     throw ErrorCodes.INVALID_TOKEN();
   }
 
-  console.log("Authenticated user:", user.id);
   return {
     userId: user.id,
     userEmail: user.email || "",
@@ -68,6 +56,7 @@ async function verifyAuth(
 }
 
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req);
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, {
@@ -81,13 +70,13 @@ serve(async (req) => {
     const authHeader = req.headers.get("authorization");
     const { userId, userEmail } = await verifyAuth(authHeader);
 
-    console.log("Authenticated user:", userId);
-
     const {
       amount,
       currency = "usd",
       line_items,
       shipping_address,
+      shipping_cost_cents = 0,
+      discount_cents = 0,
       metadata,
       payment_method, // Optional: for testing with pm_card_visa, etc.
       confirm = false, // Optional: auto-confirm payment (for testing)
@@ -96,6 +85,37 @@ serve(async (req) => {
     // Validate environment variables and request data
     const stripeSecretKey = validateEnvVars.stripeSecretKey();
     const validAmount = validateRequest.amount(amount);
+
+    // SERVER-SIDE PRICE VALIDATION (C4 - Amount Tampering Prevention)
+    // If line_items contain blueprint_id and printify_variant_id, validate against DB prices
+    if (line_items && Array.isArray(line_items) && line_items.length > 0) {
+      const itemsForPricing: LineItemForPricingI[] = line_items
+        .filter((item: Record<string, unknown>) => item.blueprint_id && item.printify_variant_id)
+        .map((item: Record<string, unknown>) => ({
+          blueprint_id: Number(item.blueprint_id),
+          printify_variant_id: Number(item.printify_variant_id),
+          quantity: Number(item.quantity) || 1,
+        }));
+
+      if (itemsForPricing.length > 0) {
+        const clientTotalCents = Math.round(validAmount * 100);
+        const validation = await validatePricingAgainstDatabase({
+          lineItems: itemsForPricing,
+          clientSubtotalCents: clientTotalCents - shipping_cost_cents + discount_cents,
+          shippingCostCents: shipping_cost_cents,
+          discountCents: discount_cents,
+          clientTotalCents,
+        });
+
+        if (!validation.isValid) {
+          throw new FunctionError(
+            400,
+            "PRICE_MISMATCH",
+            validation.errorMessage || "Server-side price validation failed"
+          );
+        }
+      }
+    }
 
     const stripe = new Stripe(stripeSecretKey, {
       apiVersion: "2023-10-16",
@@ -166,10 +186,8 @@ serve(async (req) => {
         },
         { prefer: "resolution=merge-duplicates" },
       );
-      console.log("✅ Payment transaction record created:", paymentIntent.id);
-    } catch (dbError) {
-      // Log error but don't fail the request - webhook can still process it
-      console.error("Failed to create payment_transactions record:", dbError);
+    } catch {
+      // Transaction record creation is best-effort; webhook can still process it
     }
 
     const response: PaymentIntentResponseI = {
@@ -186,7 +204,6 @@ serve(async (req) => {
       },
     );
   } catch (error) {
-    console.error("Error creating payment intent:", error);
     return handleError(error, corsHeaders);
   }
 });

@@ -10,13 +10,13 @@ import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import PaymentSuccess from "@/features/checkout/ui/PaymentSuccess/PaymentSuccess";
 import PaymentError from "@/features/checkout/ui/components/PaymentError";
-import { OrderService } from "@/services/orderService";
-import { CartService } from "@/services/cartService";
-import { RefundService } from "@/services/refundService";
-import { PaymentRecoveryService } from "@/services/paymentRecoveryService";
-import type { CreatePrintifyOrderRequest } from "@/types/printifyOrder";
-import { validatePrintifyLineItem } from "@/types/printifyOrder";
-import { mapShippingAddressToPrintifyAddress } from "@/mappers/mapShippingAddressToPrintifyAddress";
+import { OrderService } from "@/shared/services/orderService";
+import { CartService } from "@/shared/services/cartService";
+import { RefundService } from "@/shared/services/refundService";
+import { PaymentRecoveryService } from "@/shared/services/paymentRecoveryService";
+import type { CreatePrintifyOrderRequest } from "@/shared/types/printifyOrder";
+import { validatePrintifyLineItem } from "@/shared/types/printifyOrder";
+import { mapShippingAddressToPrintifyAddress } from "@/shared/mappers/mapShippingAddressToPrintifyAddress";
 import { captureError } from "@/lib/observability/errorCapture";
 import {
   UserFacingError,
@@ -26,10 +26,10 @@ import {
   useCreateOrderFromCart,
   useUpdateOrderStatus,
   useUpdatePaymentStatus,
-} from "@/queries/orderQueries";
-import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
-import { useClearCart } from "@/queries/cartQueries";
-import { useUser } from "@/queries/authQueries";
+} from "@/shared/queries/orderQueries";
+import { useCreatePrintifyOrder } from "@/shared/queries/printifyOrderQueries";
+import { useRemoveCartItems } from "@/shared/queries/cartQueries";
+import { useUser } from "@/shared/queries/authQueries";
 import { CheckoutStorageService } from "@/features/checkout/lib/services/checkoutStorageService";
 import { UserI } from "@/supabase/types";
 
@@ -93,7 +93,7 @@ function PayPalReturnContent() {
   const createPrintifyOrder = useCreatePrintifyOrder();
   const updateOrderStatus = useUpdateOrderStatus();
   const updatePaymentStatus = useUpdatePaymentStatus();
-  const clearCart = useClearCart();
+  const removeCartItems = useRemoveCartItems();
   const { data: user, isLoading: isUserLoading } = useUser();
 
   useEffect(() => {
@@ -184,6 +184,7 @@ function PayPalReturnContent() {
           billing: billingAddress,
           amount,
           cartId,
+          cartSnapshot: storedCartSnapshot,
         } = checkoutData;
         const validatedLineItems = lineItems.map((item, index) =>
           validatePrintifyLineItem(item, index),
@@ -199,6 +200,11 @@ function PayPalReturnContent() {
           return;
         }
 
+        // New checkouts carry an immutable snapshot. The live-cart fallback
+        // only supports sessions that were already in flight at deployment.
+        const cartSnapshot =
+          storedCartSnapshot ?? (await CartService.getCheckoutCart(cartId));
+
         if (!amount) {
           CheckoutStorageService.clearPayPalCheckoutData();
           setStatus("error");
@@ -208,14 +214,13 @@ function PayPalReturnContent() {
 
         // Record payment for recovery
         try {
-          const cart = await CartService.getCart(cartId);
           await PaymentRecoveryService.recordPaymentForRecovery({
             paymentProvider: "paypal",
             paymentIntentId: token,
             paymentStatus: "succeeded",
             amount,
             currency: "USD",
-            cartSnapshot: cart,
+            cartSnapshot,
             shippingAddress,
             lineItems: validatedLineItems,
             metadata: {
@@ -289,6 +294,9 @@ function PayPalReturnContent() {
         };
 
         let createdOrderId: string | null = null;
+        const orderedCartItemIds = cartSnapshot.cart_items.map(
+          (item) => item.id,
+        );
 
         // Run fulfillment pipeline with timeout
         const runFulfillmentPipeline = async () => {
@@ -296,11 +304,10 @@ function PayPalReturnContent() {
           // cartId is already validated above and available from checkoutData
 
           try {
-            const cart = await CartService.getCart(cartId);
             createdOrderId =
               (await createOrderFromCart.mutateAsync({
                 user: user as UserI,
-                cart,
+                cart: cartSnapshot,
                 paymentStatus: "paid",
                 shippingAddress,
                 billingAddress,
@@ -390,9 +397,9 @@ function PayPalReturnContent() {
             );
           }
 
-          // Stage 4: Clear cart
+          // Stage 4: Remove the ordered items from the cart (unselected items stay)
           try {
-            await clearCart.mutateAsync();
+            await removeCartItems.mutateAsync(orderedCartItemIds);
           } catch {
             // Non-blocking
           }

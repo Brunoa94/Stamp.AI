@@ -10,7 +10,7 @@ import { useSkipGeneration } from "../../../lib/hooks/useSkipGeneration";
 import { UploadDropzone } from "./UploadDropzone";
 import { UploadPreview } from "./UploadPreview";
 import { UploadContent } from "./UploadContent";
-import { AnalyticsService } from "@/services/analyticsService";
+import { AnalyticsService } from "@/shared/services/analyticsService";
 import { mapImageUploadEvent } from "@/features/analytics/mappers/stampFlowMappers";
 
 /**
@@ -46,7 +46,7 @@ function UploadSectionComponent() {
         mapImageUploadEvent({
           fileType: file.type,
           fileSizeKb: Math.round(file.size / 1024),
-        })
+        }),
       );
     }
   };

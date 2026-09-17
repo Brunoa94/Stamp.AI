@@ -8,22 +8,26 @@
 
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Paragraph } from "@/features/ui/paragraph";
 import { usePaymentForm } from "@/features/checkout/ui/PaymentForm/usePaymentForm";
-import type { ShippingAddressT } from "@/schemas/checkout";
-import type { PrintifyLineItem } from "@/types/printifyOrder";
+import type { ShippingAddressT } from "@/shared/schemas/checkout";
+import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
 import type { StripePaymentIntentResultT } from "../../../lib/types/payment";
-import { AnalyticsService } from "@/services/analyticsService";
+import { AnalyticsService } from "@/shared/services/analyticsService";
 import { mapPurchaseEvent } from "@/features/analytics/mappers/ecommerceMappers";
+import type { CartWithItems } from "@/shared/types/cart";
+import { CheckoutDataBuilder } from "@/features/checkout/lib/services/checkoutDataBuilder";
 
 interface CheckoutStripeButtonPropsI {
   amount: number;
+  cart: CartWithItems;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
+  billingAddress: ShippingAddressT;
   cartId?: string;
   testMode?: boolean;
   selectedTestMethod?: string;
@@ -32,8 +36,10 @@ interface CheckoutStripeButtonPropsI {
 
 export function CheckoutStripeButton({
   amount,
+  cart,
   lineItems,
   shippingAddress,
+  billingAddress,
   cartId,
   testMode = false,
   selectedTestMethod = "visa",
@@ -41,6 +47,7 @@ export function CheckoutStripeButton({
 }: CheckoutStripeButtonPropsI) {
   const t = useTranslations("checkout.stripeButton");
   const router = useRouter();
+  const cartSnapshot = useRef<CartWithItems | null>(null);
 
   const handleSuccess = useCallback(
     (
@@ -52,7 +59,10 @@ export function CheckoutStripeButton({
         amount,
         lineItems: processedLineItems,
         shippingAddress,
+        billing: billingAddress,
         cartId: cartId || null,
+        cartSnapshot:
+          cartSnapshot.current ?? CheckoutDataBuilder.createCartSnapshot(cart),
         timestamp: Date.now(),
       };
       localStorage.setItem(
@@ -66,7 +76,7 @@ export function CheckoutStripeButton({
           transactionId: paymentIntent.id,
           lineItems: processedLineItems,
           amount,
-        })
+        }),
       );
 
       const params = new URLSearchParams({
@@ -75,7 +85,7 @@ export function CheckoutStripeButton({
       });
       router.push(`/checkout/stripe-return?${params.toString()}`);
     },
-    [router, amount, shippingAddress, cartId],
+    [router, amount, shippingAddress, billingAddress, cartId, cart],
   );
 
   const { loading, error, handleSubmit, setSelectedTestMethod } =
@@ -87,6 +97,13 @@ export function CheckoutStripeButton({
       onSuccess: handleSuccess,
     });
 
+  const handlePaymentSubmit = (event: React.FormEvent) => {
+    // Freeze the cart immediately before payment creation. It must survive a
+    // possible 3DS redirect and must not follow later live-cart changes.
+    cartSnapshot.current = CheckoutDataBuilder.createCartSnapshot(cart);
+    return handleSubmit(event);
+  };
+
   useEffect(() => {
     if (testMode && selectedTestMethod) {
       setSelectedTestMethod(selectedTestMethod);
@@ -97,7 +114,9 @@ export function CheckoutStripeButton({
     <>
       <Button
         type="button"
-        onClick={(event) => handleSubmit(event as unknown as React.FormEvent)}
+        onClick={(event) =>
+          handlePaymentSubmit(event as unknown as React.FormEvent)
+        }
         disabled={disabled || loading}
         variant="primary"
         className="w-full"

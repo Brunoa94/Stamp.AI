@@ -9,8 +9,8 @@ import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
-import { useModalFocusTrap } from "@/hooks/useModalFocusTrap";
-import type { OrderWithItemsT } from "@/types/order";
+import { useModalFocusTrap } from "@/shared/hooks/useModalFocusTrap";
+import type { OrderWithItemsT } from "@/shared/types/order";
 import {
   getAddressSummary,
   getFirstOrderItem,

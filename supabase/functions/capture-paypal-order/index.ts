@@ -4,12 +4,7 @@ import { validateEnvVars } from "../_shared/validators.ts";
 import { capturePayPalOrder } from "../_shared/paypal.ts";
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
 import type { PayPalCaptureRequestI, PayPalCaptureResponseI } from "../../types/index.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+import { corsHeadersFor } from "../_shared/cors.ts";
 
 /**
  * Helper to call Supabase REST API directly without the client library
@@ -100,6 +95,7 @@ async function verifyAuth(authHeader: string | null): Promise<{ userId: string; 
 }
 
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req);
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, {

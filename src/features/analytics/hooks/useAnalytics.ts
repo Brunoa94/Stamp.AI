@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import { AnalyticsService } from "@/services/analyticsService";
+import { AnalyticsService } from "@/shared/services/analyticsService";
 import type {
   AnalyticsEventNameT,
   AnalyticsEventParamsT,

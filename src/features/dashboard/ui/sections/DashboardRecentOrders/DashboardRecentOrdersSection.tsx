@@ -10,7 +10,7 @@ import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
-import type { OrderWithItemsT } from "@/types/order";
+import type { OrderWithItemsT } from "@/shared/types/order";
 import { DashboardRecentOrderItem } from "./DashboardRecentOrderItem";
 import { DashboardRecentOrdersEmpty } from "./DashboardRecentOrdersEmpty";
 

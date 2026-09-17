@@ -5,7 +5,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
-import { AnalyticsService } from "@/services/analyticsService";
+import { AnalyticsService } from "@/shared/services/analyticsService";
 import type { AnalyticsEventNameT } from "@/features/analytics/types/analyticsTypes";
 
 const buttonVariants = cva(

@@ -10,7 +10,8 @@ const MOLLIE_API_URL = "https://api.mollie.com/v2";
 export async function mollieRequest<T = unknown>(
   endpoint: string,
   method: "GET" | "POST" | "PATCH" | "DELETE",
-  body?: Record<string, unknown>
+  body?: Record<string, unknown>,
+  idempotencyKey?: string,
 ): Promise<T> {
   const apiKey = validateEnvVars.mollieApiKey();
 
@@ -18,6 +19,7 @@ export async function mollieRequest<T = unknown>(
     Authorization: `Bearer ${apiKey}`,
     "Content-Type": "application/json",
   };
+  if (method === "POST" && idempotencyKey) headers["Idempotency-Key"] = idempotencyKey;
 
   const response = await fetch(`${MOLLIE_API_URL}${endpoint}`, {
     method,

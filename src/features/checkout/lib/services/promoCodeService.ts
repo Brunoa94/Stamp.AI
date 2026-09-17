@@ -1,5 +1,5 @@
-import { ErrorClient } from "@/services/errorClient";
-import type { PromoCodeValidationResult } from "@/schemas/promocode";
+import { ErrorClient } from "@/shared/services/errorClient";
+import type { PromoCodeValidationResult } from "@/shared/schemas/promocode";
 
 /**
  * CheckoutPromoCodeService
@@ -20,7 +20,7 @@ export class CheckoutPromoCodeService {
    */
   static async validateAndApply(
     code: string,
-    subtotal: number
+    subtotal: number,
   ): Promise<PromoCodeValidationResult> {
     try {
       // Validate input client-side first for fast feedback

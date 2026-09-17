@@ -7,7 +7,7 @@ import type {
 } from "../types/stampFlowTypes";
 import { STAMP_TOTAL_STEPS } from "../constants/stampSteps";
 import { logStampError, logStampWarn } from "../helpers/stampLogger";
-import { AnalyticsService } from "@/services/analyticsService";
+import { AnalyticsService } from "@/shared/services/analyticsService";
 import { mapStepChangeEvent } from "@/features/analytics/mappers/stampFlowMappers";
 
 /**
@@ -108,7 +108,7 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
     if (step !== previousStep) {
       AnalyticsService.track(
         "step_change",
-        mapStepChangeEvent({ fromStep: previousStep, toStep: step })
+        mapStepChangeEvent({ fromStep: previousStep, toStep: step }),
       );
     }
 
@@ -185,7 +185,8 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
   setBlueprintId: (id) => set({ blueprintId: id }),
   setPrintProviderId: (id) => set({ printProviderId: id }),
   setSelectedProductTitle: (title) => set({ selectedProductTitle: title }),
-  setSelectedProductDescription: (description) => set({ selectedProductDescription: description }),
+  setSelectedProductDescription: (description) =>
+    set({ selectedProductDescription: description }),
 
   // Print position / placement state
   setAvailablePrintPositions: (positions) =>
@@ -268,7 +269,9 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
         configs[position] = {
           position,
           enabled: options?.enableAll ? true : index === 0,
-          placement: { ...(options?.placements?.[position] ?? defaultPlacement) },
+          placement: {
+            ...(options?.placements?.[position] ?? defaultPlacement),
+          },
           additionalCost: 0,
         };
       });
@@ -362,4 +365,3 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
     }
   },
 }));
-

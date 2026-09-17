@@ -1,4 +1,4 @@
-import { OrderWithItemsT } from "@/types/order";
+import { OrderWithItemsT } from "@/shared/types/order";
 import { normalizeOrderStatus } from "../helpers/normalizeOrderStatus";
 
 type CancellableOrderStatusType = "" | "created" | "pending" | "confirmed";

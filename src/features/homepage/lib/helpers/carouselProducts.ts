@@ -5,7 +5,7 @@
  */
 
 import type { CarouselProductData } from "../types/carousel";
-import type { ProductSeo } from "@/types/catalog";
+import type { ProductSeo } from "@/shared/types/catalog";
 import { resolveProductDescription } from "@/lib/seo/productDescription";
 import { FEATURED_CAROUSEL_EXCLUDED_BLUEPRINTS } from "../constants/homepageContent";
 

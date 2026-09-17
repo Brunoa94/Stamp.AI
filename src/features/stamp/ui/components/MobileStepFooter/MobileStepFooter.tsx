@@ -3,7 +3,7 @@
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { STAMP_STEPS } from "../../../lib/constants/stampSteps";
 import { useStampNavigation } from "../../../lib/hooks/useStampNavigation";
 import { useMobileStepAction } from "../../../lib/hooks/useMobileStepAction";

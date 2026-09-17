@@ -6,7 +6,7 @@ import { Modal } from "@/features/ui/modal/Modal";
 import { useBuyCredits } from "../lib/useBuyCredits";
 import { CreditSelectionStep } from "./selection/CreditSelectionStep";
 import { CreditPaymentStep } from "./payment/CreditPaymentStep";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 
 interface BuyCreditsDialogProps {
   isOpen: boolean;

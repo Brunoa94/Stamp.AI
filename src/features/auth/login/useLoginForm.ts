@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type LoginI, LoginSchema } from "@/schemas/auth";
-import { useLogin } from "@/queries/authQueries";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { useCaptcha } from "@/hooks/useCaptcha";
+import { type LoginI, LoginSchema } from "@/shared/schemas/auth";
+import { useLogin } from "@/shared/queries/authQueries";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { useCaptcha } from "@/shared/hooks/useCaptcha";
 import { CAPTCHA_ACTIONS } from "@/lib/security/captcha/constants";
 
 export function useLoginForm() {

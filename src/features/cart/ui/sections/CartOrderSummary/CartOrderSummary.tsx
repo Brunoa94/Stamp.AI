@@ -9,7 +9,7 @@
 
 import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
-import type { CartWithItems } from "@/types/cart";
+import type { CartWithItems } from "@/shared/types/cart";
 import { CartOrderSummaryBreakdown } from "./CartOrderSummaryBreakdown";
 import { CartOrderSummaryFooter } from "./CartOrderSummaryFooter";
 

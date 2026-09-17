@@ -2,14 +2,10 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { parseVariantColorSize } from "../_shared/colorValidation.ts"
+import { corsHeadersFor } from '../_shared/cors.ts'
+import { requireUser } from '../_shared/authGuard.ts'
 
 // Environment variables will be validated when needed
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-}
 
 // Default print provider (Printify Choice)
 const DEFAULT_PRINT_PROVIDER_ID = 99
@@ -24,14 +20,19 @@ interface VariantInfo {
 }
 
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req, { methods: 'POST, GET, OPTIONS' })
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { status: 204, headers: corsHeaders })
   }
 
   try {
+    // Proxies the Printify catalog API with the shop token: signed-in users
+    // (or server-to-server calls) only, never the anon key.
+    await requireUser(req.headers.get('authorization'))
+
     const { blueprint_id, print_provider_id } = await req.json()
-    
+
     console.log('=== GET BLUEPRINT VARIANTS ===')
     console.log('Blueprint ID:', blueprint_id)
 

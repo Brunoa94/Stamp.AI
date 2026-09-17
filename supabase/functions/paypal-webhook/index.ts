@@ -5,6 +5,7 @@ import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { verifyPayPalWebhook } from "../_shared/paypal.ts";
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
+import { corsHeadersFor } from "../_shared/cors.ts";
 
 /**
  * Wait for order to be created with idempotency key, then generate invoice.
@@ -66,27 +67,28 @@ async function waitForOrderAndGenerateInvoice(
   console.warn(`⚠️ No order found after ${maxAttempts} attempts for idempotency_key: ${idempotencyKey}`);
 }
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, paypal-transmission-id, paypal-transmission-time, paypal-transmission-sig, paypal-cert-url, paypal-auth-algo",
-};
-
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req, { extraAllowedHeaders: ["paypal-transmission-id", "paypal-transmission-time", "paypal-transmission-sig", "paypal-cert-url", "paypal-auth-algo"] });
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
   try {
     const body = await req.text();
-    const event = JSON.parse(body);
 
-    // Verify webhook signature (basic validation for now)
+    // Verify the webhook signature with PayPal BEFORE trusting any of the
+    // payload. Reject forged events outright — never fulfill on an unverified
+    // "payment succeeded" notification.
     const isValid = await verifyPayPalWebhook(req.headers, body);
     if (!isValid) {
-      console.warn("PayPal webhook signature validation failed");
-      // Continue processing in sandbox mode, but log the warning
+      console.warn("PayPal webhook signature validation failed — rejecting");
+      return new Response(
+        JSON.stringify({ error: "INVALID_WEBHOOK_SIGNATURE" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
+
+    const event = JSON.parse(body);
 
     console.log("PayPal webhook event:", event.event_type);
     console.log("Resource ID:", event.resource?.id);

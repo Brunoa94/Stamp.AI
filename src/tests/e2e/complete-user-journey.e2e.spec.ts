@@ -20,7 +20,7 @@
 
 import { test, expect, Page } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@/types/database.types";
+import type { Database } from "@/shared/types/database.types";
 import path from "path";
 import fs from "fs";
 

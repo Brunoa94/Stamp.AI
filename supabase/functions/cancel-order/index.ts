@@ -3,12 +3,7 @@ import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
-};
+import { corsHeadersFor } from "../_shared/cors.ts";
 
 interface CancelOrderRequestI {
   order_id: string;
@@ -63,6 +58,7 @@ function isAlreadyCancelled(status: string | null): boolean {
  * 4. Processes refund if payment_status is "paid"
  */
 serve(async (req) => {
+  const corsHeaders = corsHeadersFor(req);
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, {

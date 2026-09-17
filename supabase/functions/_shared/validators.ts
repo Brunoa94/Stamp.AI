@@ -189,17 +189,9 @@ export async function verifyAuth(authHeader: string | null): Promise<VerifiedAut
     },
   });
 
-  // Temporary debug logging to help diagnose invalid JWT issues. Remove
-  // these logs once the issue is resolved.
   if (!response.ok) {
-    let bodyText: string | undefined
-    try {
-      bodyText = await response.text()
-    } catch (e) {
-      bodyText = undefined
-    }
-    console.error("Auth verification failed:", response.status, response.statusText, bodyText ? `responseBody=${bodyText}` : "")
-    console.error("Token preview:", token ? `${token.slice(0,8)}...${token.slice(-8)}` : "<no-token>")
+    // Do not log token material or response bodies (may contain PII).
+    console.error("Auth verification failed:", response.status);
     throw ErrorCodes.INVALID_TOKEN();
   }
 

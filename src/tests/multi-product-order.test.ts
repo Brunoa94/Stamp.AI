@@ -6,8 +6,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { OrderServiceMapper } from "@/mappers/services/orderServiceMapper";
-import type { CartItem, CartWithItems } from "@/types/cart";
+import { OrderServiceMapper } from "@/shared/mappers/services/orderServiceMapper";
+import type { CartItem, CartWithItems } from "@/shared/types/cart";
 
 /**
  * ============================================================================

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { mapProductsToCards } from "../productCardMapper";
 import type { ProductWithPricing } from "@/lib/supabase/server-cache";
-import type { ProductSeo } from "@/types/catalog";
+import type { ProductSeo } from "@/shared/types/catalog";
 
 function buildSeo(overrides: Partial<ProductSeo> = {}): ProductSeo {
   return {

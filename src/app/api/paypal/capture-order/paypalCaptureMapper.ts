@@ -1,5 +1,5 @@
 import type { PayPalCaptureResponse } from "@/lib/paypal-server";
-import type { Database } from "@/types/database.types";
+import type { Database } from "@/shared/types/database.types";
 
 type PaymentTransactionUpdate = Database['public']['Tables']['payment_transactions']['Update'];
 

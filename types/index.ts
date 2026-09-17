@@ -24,7 +24,10 @@ export type ErrorCodeT =
 	// Authentication errors (401)
 	| 'INVALID_CREDENTIALS'
 	| 'EMAIL_NOT_CONFIRMED'
+	| 'CAPTCHA_VERIFICATION_FAILED'
 	| 'INVALID_TOKEN'
+	// Payment required (402)
+	| 'INSUFFICIENT_COINS'
 	| 'WEBHOOK_SIGNATURE_INVALID'
 	| 'PAYPAL_WEBHOOK_SIGNATURE_INVALID'
 	// Not found errors (404)
@@ -61,6 +64,7 @@ export type ErrorCodeT =
 	| 'PAYPAL_CAPTURE_FAILED'
 	| 'MOLLIE_API_ERROR'
 	| 'MOLLIE_PAYMENT_FAILED'
+	| 'CONFIRMATION_EMAIL_SEND_FAILED'
 	// Generic errors
 	| 'INTERNAL_ERROR'
 	| 'UNKNOWN_ERROR';

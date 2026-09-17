@@ -2,9 +2,9 @@
 
 import { useMemo, memo, useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCatalogProductsWithSeo } from "@/queries/catalogQueries";
+import { useCatalogProductsWithSeo } from "@/shared/queries/catalogQueries";
 import { resolveProductDescription } from "@/lib/seo/productDescription";
-import { PrintifyService } from "@/services/printifyService";
+import { PrintifyService } from "@/shared/services/printifyService";
 import { useStampNavigationActions } from "../../../lib/hooks/useStampNavigation";
 import {
   useStampProductSelection,
@@ -15,7 +15,7 @@ import { FALLBACK_PRODUCT_PRICE_CENTS } from "../../../lib/constants/productPric
 import { ProductGrid } from "./ProductGrid";
 import { ProductSelectionContent } from "./ProductSelectionContent";
 import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
-import { AnalyticsService } from "@/services/analyticsService";
+import { AnalyticsService } from "@/shared/services/analyticsService";
 import { mapSelectItemEvent } from "@/features/analytics/mappers/stampFlowMappers";
 
 /**
@@ -45,7 +45,11 @@ function ProductSelectionSectionComponent() {
   const canProceedToCustomization =
     blueprintId !== undefined && printProviderId !== undefined;
 
-  const { data: rawProducts = [], isLoading, isError } = useCatalogProductsWithSeo();
+  const {
+    data: rawProducts = [],
+    isLoading,
+    isError,
+  } = useCatalogProductsWithSeo();
 
   const visibleProducts = useMemo(
     () =>
@@ -72,7 +76,8 @@ function ProductSelectionSectionComponent() {
           blueprintId: product.blueprint_id,
           name: product.display_title,
           description: resolveProductDescription(product.product_seo),
-          printifyDescription: product.product_seo?.printify_description ?? null,
+          printifyDescription:
+            product.product_seo?.printify_description ?? null,
           imageUrl: product.base_image_url ?? "",
           printProviderId: product.print_provider_id,
           price,
@@ -131,7 +136,7 @@ function ProductSelectionSectionComponent() {
           queryFn: () =>
             PrintifyService.getBlueprintVariants(
               product.blueprintId,
-              product.printProviderId
+              product.printProviderId,
             ),
           staleTime: 1000 * 60 * 10, // 10 minutes
         });
@@ -153,7 +158,7 @@ function ProductSelectionSectionComponent() {
         blueprintId: product.blueprintId,
         productName: product.name,
         price: product.price,
-      })
+      }),
     );
   };
 

@@ -22,7 +22,7 @@ import { CheckoutShippingToggle } from "./sections/CheckoutShippingToggle";
 import { CheckoutShippingSection } from "./sections/CheckoutShippingSection";
 import { CheckoutPaymentSection } from "./sections/CheckoutPaymentSection/CheckoutPaymentSection";
 import { CheckoutSummarySection } from "./sections/CheckoutSummarySection/CheckoutSummarySection";
-import type { CartWithItems } from "@/types/cart";
+import type { CartWithItems } from "@/shared/types/cart";
 
 export function CheckoutContent() {
   const { cartId, cart, isLoading, error } = useCheckoutCart();

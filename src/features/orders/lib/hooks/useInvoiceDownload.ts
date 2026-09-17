@@ -1,6 +1,6 @@
-import { useState, useCallback } from "react";
-import { useGenerateInvoice, useOrderInvoice } from "@/queries/invoiceQueries";
-import { InvoiceService } from "@/services/invoiceService";
+import { useCallback, useState } from "react";
+import { useGenerateInvoice, useOrderInvoice } from "@/shared/queries/invoiceQueries";
+import { InvoiceService } from "@/shared/services/invoiceService";
 
 interface UseInvoiceDownloadOptions {
   orderId: string;

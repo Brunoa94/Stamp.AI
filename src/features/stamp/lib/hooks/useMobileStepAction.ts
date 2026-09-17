@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from "react";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { useMobileStepActionStore } from "../stores/mobileStepActionStore";
 import { useStampNavigation } from "./useStampNavigation";
 
@@ -81,7 +81,14 @@ export function useRegisterMobileAction(
     };
     // Only re-register when label changes (action ref is stable)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMobile, stepIndex, config.label, memoizedAction, registerAction, unregisterAction]);
+  }, [
+    isMobile,
+    stepIndex,
+    config.label,
+    memoizedAction,
+    registerAction,
+    unregisterAction,
+  ]);
 
   // Update disabled/loading state separately (more frequent updates, mobile only)
   useEffect(() => {

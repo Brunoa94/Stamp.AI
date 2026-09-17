@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { cn } from "@/lib/utils";
 import { buyCreditsTheme } from "@/theme/components";
-import type { CreditPackage } from "@/constants/credits";
+import type { CreditPackage } from "@/shared/constants/credits";
 
 interface CreditPackageCardProps {
   package: CreditPackage;

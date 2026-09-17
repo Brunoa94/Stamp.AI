@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import type { OrderWithItemsT } from "@/types/order";
+import type { OrderWithItemsT } from "@/shared/types/order";
 import { OrdersListItem } from "./OrdersListItem/OrdersListItem";
 
 interface PropsI {

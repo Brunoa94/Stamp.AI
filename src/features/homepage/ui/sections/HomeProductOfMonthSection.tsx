@@ -16,7 +16,7 @@ import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
-import { useProductOfMonth } from "@/queries/catalogQueries";
+import { useProductOfMonth } from "@/shared/queries/catalogQueries";
 import { resolveProductDescription } from "@/lib/seo/productDescription";
 import { SectionReveal } from "../components/SectionReveal";
 

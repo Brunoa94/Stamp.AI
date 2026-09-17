@@ -15,9 +15,9 @@ import { cn } from "@/lib/utils";
  */
 
 const anchorVariants = {
-  default: "font-body font-normal underline underline-offset-2 hover:opacity-80 transition-opacity",
-  subtle: "font-body font-normal no-underline hover:underline underline-offset-2 transition-all",
-  bold: "font-body font-bold underline underline-offset-2 hover:opacity-80 transition-opacity",
+  default: "font-heading font-bold underline underline-offset-2 hover:opacity-80 transition-opacity",
+  subtle: "font-heading font-bold no-underline hover:underline underline-offset-2 transition-all",
+  bold: "font-heading font-bold underline underline-offset-2 hover:opacity-80 transition-opacity",
 } as const;
 
 type AnchorVariant = keyof typeof anchorVariants;

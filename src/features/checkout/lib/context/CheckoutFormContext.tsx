@@ -3,7 +3,10 @@
 import { createContext, ReactNode, useContext, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CheckoutFormSchema, type CheckoutFormDataT } from "@/schemas/checkout";
+import {
+  CheckoutFormSchema,
+  type CheckoutFormDataT,
+} from "@/shared/schemas/checkout";
 import { TEST_BILLING_DATA } from "../constants/testData";
 
 // Re-export type for convenience
@@ -13,7 +16,9 @@ interface CheckoutFormContextValue {
   cartId: string | null;
 }
 
-const CheckoutFormContext = createContext<CheckoutFormContextValue | null>(null);
+const CheckoutFormContext = createContext<CheckoutFormContextValue | null>(
+  null,
+);
 
 interface CheckoutFormProviderProps {
   children: ReactNode;
@@ -53,4 +58,3 @@ export function CheckoutFormProvider({
     </CheckoutFormContext.Provider>
   );
 }
-

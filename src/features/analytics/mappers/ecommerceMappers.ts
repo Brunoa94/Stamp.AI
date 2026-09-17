@@ -1,5 +1,5 @@
-import type { CartItem } from "@/types/cart";
-import type { PrintifyLineItem } from "@/types/printifyOrder";
+import type { CartItem } from "@/shared/types/cart";
+import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
 import type { AnalyticsItemT, AnalyticsEventParamsT } from "../types/analyticsTypes";
 
 /**

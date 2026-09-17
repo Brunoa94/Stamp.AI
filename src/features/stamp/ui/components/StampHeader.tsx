@@ -6,9 +6,10 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Login } from "@/features/auth/login/Login";
-import { useUser, useLogout } from "@/queries/authQueries";
+import { Register } from "@/features/auth/register/Register";
+import { useUser, useLogout } from "@/shared/queries/authQueries";
 import { Menu, X } from "lucide-react";
-import { useScrolled } from "@/hooks/useScrolled";
+import { useScrolled } from "@/shared/hooks/useScrolled";
 
 /**
  * StampHeader
@@ -106,7 +107,10 @@ export function StampHeader() {
               {t("logout")}
             </Button>
           ) : (
-            <Login className={linkClass}>{t("login")}</Login>
+            <>
+              <Login className={linkClass}>{t("signIn")}</Login>
+              <Register className={linkClass}>{t("signUp")}</Register>
+            </>
           )}
         </nav>
 
@@ -192,9 +196,14 @@ export function StampHeader() {
               {t("logout")}
             </Button>
           ) : (
-            <Login className={`${linkClass} py-3 text-left`}>
-              {t("login")}
-            </Login>
+            <>
+              <Login className={`${linkClass} py-3 text-left`}>
+                {t("signIn")}
+              </Login>
+              <Register className={`${linkClass} py-3 text-left`}>
+                {t("signUp")}
+              </Register>
+            </>
           )}
         </nav>
       </div>

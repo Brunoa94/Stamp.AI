@@ -14,7 +14,7 @@ import { LoginSignupFooter } from "./components/LoginSignupFooter";
 import { GoogleSignInButton } from "../components/GoogleSignInButton";
 
 export function LoginForm() {
-  const { register, handleSubmit, onSubmit, isPending, errors } =
+  const { register, handleSubmit, onSubmit, isPending, isCaptchaReady, errors } =
     useLoginForm();
   const t = useTranslations("auth.login.form");
 
@@ -44,7 +44,10 @@ export function LoginForm() {
 
         <div className="relative flex items-center my-8">
           <div className="grow border-t border-(--color-stamp-divider)" />
-          <Span variant="default" className="shrink mx-4 text-xs font-bold text-(--color-stamp-gold) uppercase tracking-[0.2em]">
+          <Span
+            variant="default"
+            className="shrink mx-4 text-xs font-bold text-(--color-stamp-gold) uppercase tracking-[0.2em]"
+          >
             {t("orContinueWithEmail")}
           </Span>
           <div className="grow border-t border-(--color-stamp-divider)" />
@@ -63,7 +66,7 @@ export function LoginForm() {
             </Paragraph>
           )}
 
-          <LoginFormActions isPending={isPending} />
+          <LoginFormActions isPending={isPending} isCaptchaReady={isCaptchaReady} />
         </form>
 
         <LoginSignupFooter />

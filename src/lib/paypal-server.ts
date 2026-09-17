@@ -152,6 +152,7 @@ export interface CreatePayPalOrderParams {
 export interface PayPalOrderResponse {
   id: string;
   status: string;
+  purchase_units?: Array<{ custom_id?: string }>;
   links: Array<{
     href: string;
     rel: string;
