@@ -37,13 +37,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const captchaRequired = process.env.NODE_ENV === "production" ||
-      Boolean(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) ||
+    // Only require CAPTCHA when both keys are configured
+    const captchaConfigured =
+      Boolean(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) &&
       Boolean(process.env.RECAPTCHA_SECRET_KEY);
 
-    if (captchaRequired) {
+    if (captchaConfigured && parsed.data.captchaToken) {
       const captcha = await verifyCaptchaForAction(
-        parsed.data.captchaToken ?? "",
+        parsed.data.captchaToken,
         CAPTCHA_ACTIONS.LOGIN,
       );
       if (!captcha.success) {
