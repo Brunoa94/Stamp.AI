@@ -6,7 +6,7 @@
  * admin-edited meta_description must win over the Printify source.
  */
 
-import type { ProductSeo } from "@/types/catalog";
+import type { ProductSeo } from "@/shared/types/catalog";
 
 const HTML_ENTITIES: Record<string, string> = {
   "&amp;": "&",

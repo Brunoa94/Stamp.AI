@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useAnalytics } from "@/features/analytics/hooks/useAnalytics";
-import { AnalyticsService } from "@/services/analyticsService";
+import { AnalyticsService } from "@/shared/services/analyticsService";
 
 describe("useAnalytics", () => {
   afterEach(() => {

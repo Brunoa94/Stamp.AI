@@ -3,7 +3,7 @@
 import { ReactNode, useState, useEffect, useRef } from "react";
 import { Button } from "@/features/ui/button";
 import { Dialog, DialogTrigger } from "@/features/ui/dialog";
-import { useUser } from "@/queries/authQueries";
+import { useUser } from "@/shared/queries/authQueries";
 
 /**
  * AuthDialog

@@ -2,18 +2,15 @@ import { FormField } from "@/features/ui/form-field";
 import { Mail, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
-import type { RegisterI } from "@/schemas/auth";
-import { useValidationMessage } from "@/hooks/useValidationMessage";
+import type { RegisterI } from "@/shared/schemas/auth";
+import { useValidationMessage } from "@/shared/hooks/useValidationMessage";
 
 interface PropsI {
   register: UseFormRegister<RegisterI>;
   errors: FieldErrors<RegisterI>;
 }
 
-export function RegisterCredentialsFields({
-  register,
-  errors,
-}: PropsI) {
+export function RegisterCredentialsFields({ register, errors }: PropsI) {
   const t = useTranslations("auth.register.fields");
   const ve = useValidationMessage();
 

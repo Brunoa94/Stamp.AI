@@ -18,36 +18,36 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams("payment_id=tr_legacy"),
 }));
 vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key }));
-vi.mock("@/queries/authQueries", () => ({
+vi.mock("@/shared/queries/authQueries", () => ({
   useUser: () => ({ data: { id: "user_1" }, isLoading: false }),
 }));
-vi.mock("@/queries/orderQueries", () => ({
+vi.mock("@/shared/queries/orderQueries", () => ({
   useCreateOrderFromCart: () => ({ mutateAsync: mocks.createOrder }),
   useUpdateOrderStatus: () => ({ mutateAsync: vi.fn() }),
   useUpdatePaymentStatus: () => ({ mutateAsync: vi.fn() }),
 }));
-vi.mock("@/queries/cartQueries", () => ({
+vi.mock("@/shared/queries/cartQueries", () => ({
   useRemoveCartItems: () => ({ mutateAsync: mocks.removeCartItems }),
 }));
-vi.mock("@/queries/mollieQueries", () => ({
+vi.mock("@/shared/queries/mollieQueries", () => ({
   useVerifyMolliePayment: () => ({ mutateAsync: mocks.verifyPayment }),
 }));
-vi.mock("@/queries/printifyOrderQueries", () => ({
+vi.mock("@/shared/queries/printifyOrderQueries", () => ({
   useCreatePrintifyOrder: () => ({ mutateAsync: mocks.createPrintifyOrder }),
 }));
-vi.mock("@/services/paymentRecoveryService", () => ({
+vi.mock("@/shared/services/paymentRecoveryService", () => ({
   PaymentRecoveryService: mocks,
 }));
-vi.mock("@/services/orderService", () => ({
+vi.mock("@/shared/services/orderService", () => ({
   OrderService: {
     getOrderByIdempotencyKey: vi.fn().mockResolvedValue(null),
     linkPaymentTransactionToOrder: vi.fn(),
     getOrder: vi.fn().mockResolvedValue({ order_number: "ORD-1" }),
   },
 }));
-vi.mock("@/services/cartService", () => ({ CartService: {} }));
-vi.mock("@/services/refundService", () => ({ RefundService: {} }));
-vi.mock("@/services/invoiceService", () => ({
+vi.mock("@/shared/services/cartService", () => ({ CartService: {} }));
+vi.mock("@/shared/services/refundService", () => ({ RefundService: {} }));
+vi.mock("@/shared/services/invoiceService", () => ({
   InvoiceService: { generateInvoice: vi.fn() },
 }));
 vi.mock("@/lib/observability/errorCapture", () => ({ captureError: vi.fn() }));

@@ -1,6 +1,6 @@
 "use client";
 
-import { useIsAuthenticated } from "@/queries/authQueries";
+import { useIsAuthenticated } from "@/shared/queries/authQueries";
 import { useRouter } from "next/navigation";
 import { useEffect, ReactNode } from "react";
 import { Loader2 } from "lucide-react";

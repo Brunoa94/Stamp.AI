@@ -9,7 +9,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ShoppingBag } from "lucide-react";
 import { Span } from "@/features/ui/span";
-import type { CartWithItems } from "@/types/cart";
+import type { CartWithItems } from "@/shared/types/cart";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface CheckoutCartItemsPropsI {

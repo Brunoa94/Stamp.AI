@@ -8,13 +8,13 @@ import {
   useStampSelectedImage,
   useStampUpload,
 } from "./useStampSelectors";
-import { useImageGeneration as useImageGenerationMutation } from "@/queries/imageGenerationQueries";
+import { useImageGeneration as useImageGenerationMutation } from "@/shared/queries/imageGenerationQueries";
 import { useQueryClient } from "@tanstack/react-query";
-import { coinsKeys } from "@/queries/coinsQueries";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { coinsKeys } from "@/shared/queries/coinsQueries";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import { logStampError, logStampWarn } from "../helpers/stampLogger";
 import { withTimeout } from "@/lib/promiseUtils";
-import { AnalyticsService } from "@/services/analyticsService";
+import { AnalyticsService } from "@/shared/services/analyticsService";
 import {
   mapGenerateCompleteEvent,
   mapGenerateFailedEvent,
@@ -133,7 +133,7 @@ export function useStampImageGeneration() {
         mapGenerateCompleteEvent({
           promptLength: prompt.length,
           usedReferenceImage: Boolean(uploadedImageUrl),
-        })
+        }),
       );
 
       // Add result to history
@@ -157,8 +157,10 @@ export function useStampImageGeneration() {
       AnalyticsService.track(
         "stamp_generate_failed",
         mapGenerateFailedEvent({
-          reason: error instanceof ImageGenerationTimeoutError ? "timeout" : "error",
-        })
+          reason: error instanceof ImageGenerationTimeoutError
+            ? "timeout"
+            : "error",
+        }),
       );
 
       if (error instanceof ImageGenerationTimeoutError) {

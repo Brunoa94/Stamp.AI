@@ -1,6 +1,6 @@
 import { Check, Circle } from "lucide-react";
 import { Span } from "@/features/ui/span";
-import type { OrderStatusHistoryT } from "@/types/order";
+import type { OrderStatusHistoryT } from "@/shared/types/order";
 import {
   toDisplayStatus,
   getStatusBadgeClass,

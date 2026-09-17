@@ -9,7 +9,7 @@
  */
 
 import { useTranslations } from "next-intl";
-import { useValidationMessage } from "@/hooks/useValidationMessage";
+import { useValidationMessage } from "@/shared/hooks/useValidationMessage";
 import { useFormContext } from "react-hook-form";
 import { Input } from "@/features/ui/input";
 import { Label } from "@/features/ui/label";
@@ -23,7 +23,7 @@ import {
 import {
   shippingFormConfig,
   type FieldRow,
-} from "@/constants/shippingFormConfig";
+} from "@/shared/constants/shippingFormConfig";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 
 interface CheckoutAddressFormPropsI {

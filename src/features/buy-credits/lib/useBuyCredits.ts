@@ -6,7 +6,7 @@ import {
   PRICE_PER_CREDIT,
   MIN_CUSTOM_CREDITS,
   DEFAULT_SELECTED_PACKAGE,
-} from "@/constants/credits";
+} from "@/shared/constants/credits";
 
 export type BuyCreditsStep = "select" | "payment";
 

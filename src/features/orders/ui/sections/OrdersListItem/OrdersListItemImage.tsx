@@ -2,7 +2,7 @@ import Image from "next/image";
 import { ShoppingBag } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
-import type { OrderWithItemsT } from "@/types/order";
+import type { OrderWithItemsT } from "@/shared/types/order";
 import type { getFirstOrderItem } from "../../../lib/helpers/orderPresentation";
 
 interface PropsI {

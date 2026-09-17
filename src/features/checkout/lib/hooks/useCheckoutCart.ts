@@ -14,9 +14,9 @@
 
 import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { useCartById } from "@/queries/cartQueries";
-import { CartServiceMapper } from "@/mappers/services/cartServiceMapper";
-import type { CartWithItems } from "@/types/cart";
+import { useCartById } from "@/shared/queries/cartQueries";
+import { CartServiceMapper } from "@/shared/mappers/services/cartServiceMapper";
+import type { CartWithItems } from "@/shared/types/cart";
 
 export function useCheckoutCart() {
   const searchParams = useSearchParams();

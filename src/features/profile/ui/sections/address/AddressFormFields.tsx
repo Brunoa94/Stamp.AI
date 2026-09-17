@@ -1,8 +1,8 @@
 import type { UseFormReturn } from "react-hook-form";
-import type { ShippingAddressT } from "@/schemas/checkout";
+import type { ShippingAddressT } from "@/shared/schemas/checkout";
 import { FormField } from "@/features/ui/form-field";
 import { useTranslations } from "next-intl";
-import { useValidationMessage } from "@/hooks/useValidationMessage";
+import { useValidationMessage } from "@/shared/hooks/useValidationMessage";
 
 interface AddressFormFieldsProps {
   form: UseFormReturn<ShippingAddressT>;

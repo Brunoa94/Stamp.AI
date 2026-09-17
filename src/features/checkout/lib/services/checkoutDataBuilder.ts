@@ -1,7 +1,7 @@
 import type { CheckoutFormData } from "../context/CheckoutFormContext";
-import type { CartWithItems } from "@/types/cart";
-import type { PrintifyLineItem } from "@/types/printifyOrder";
-import type { ShippingAddressT } from "@/schemas/checkout";
+import type { CartWithItems } from "@/shared/types/cart";
+import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
+import type { ShippingAddressT } from "@/shared/schemas/checkout";
 import { buildPrintifyLineItems } from "../mappers/printifyLineItemsMapper";
 import type { CheckoutData } from "./checkoutStorageService";
 
@@ -24,7 +24,9 @@ export class CheckoutDataBuilder {
    * If user selected separate shipping address, use that
    * Otherwise, use billing address as shipping address
    */
-  static determineShippingAddress(formData: CheckoutFormData): ShippingAddressT {
+  static determineShippingAddress(
+    formData: CheckoutFormData,
+  ): ShippingAddressT {
     if (formData.useShippingAddress && formData.shipping) {
       return formData.shipping;
     }
@@ -39,10 +41,12 @@ export class CheckoutDataBuilder {
     formData: CheckoutFormData,
     cart: CartWithItems,
     cartId: string | null,
-    amount?: number
+    amount?: number,
   ): CheckoutData {
     // Transform cart items to Printify line items
-    const lineItems: PrintifyLineItem[] = buildPrintifyLineItems(cart.cart_items);
+    const lineItems: PrintifyLineItem[] = buildPrintifyLineItems(
+      cart.cart_items,
+    );
 
     // Determine shipping address
     const shippingAddress = this.determineShippingAddress(formData);

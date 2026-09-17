@@ -8,7 +8,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { useIntersectionObserver } from "@/shared/hooks/useIntersectionObserver";
 import { cn } from "@/lib/utils";
 
 interface HeroAnimatedTitleProps {
@@ -51,7 +51,7 @@ export function HeroAnimatedTitle({
       className={cn(
         "hero-title-animate",
         isVisible && "hero-title-animate--visible",
-        className
+        className,
       )}
     >
       {children}

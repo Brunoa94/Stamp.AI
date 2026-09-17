@@ -1,6 +1,6 @@
 import { normalizeOrderStatus } from "./normalizeOrderStatus";
 import type { OrdersStatusFilterType } from "../types/filters";
-import type { OrderT } from "@/types/order";
+import type { OrderT } from "@/shared/types/order";
 
 export type OrderDisplayStatusT =
   | "processing"

@@ -17,10 +17,10 @@ import {
   useRemoveCartItem,
   useUpdateCartItem,
   useUpdateCartItemsSelection,
-} from "@/queries/cartQueries";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { CartServiceMapper } from "@/mappers/services/cartServiceMapper";
-import { AnalyticsService } from "@/services/analyticsService";
+} from "@/shared/queries/cartQueries";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { CartServiceMapper } from "@/shared/mappers/services/cartServiceMapper";
+import { AnalyticsService } from "@/shared/services/analyticsService";
 import { mapBeginCheckoutEvent } from "@/features/analytics/mappers/ecommerceMappers";
 
 export function useCart() {

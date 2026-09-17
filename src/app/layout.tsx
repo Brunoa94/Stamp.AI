@@ -14,13 +14,13 @@ import { organizationSchema } from "@/features/seo/schemas/organization";
 import { webSiteSchema } from "@/features/seo/schemas/website";
 import { generateRootMetadata } from "@/features/seo/metadata/rootMetadata";
 import { BRAND_COLORS } from "@/features/seo/config/site";
-import { ScrollToTop } from "@/components/ScrollToTop";
+import { ScrollToTop } from "@/shared/ui/ScrollToTop";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import { AppLayoutChrome } from "@/components/AppLayoutChrome";
+import { AppLayoutChrome } from "@/shared/ui/AppLayoutChrome";
 import { GoogleAnalytics } from "@/features/analytics/GoogleAnalytics";
 import { AnalyticsPageViewTracker } from "@/features/analytics/AnalyticsPageViewTracker";
-import { GlobalErrorBoundary } from "@/components/ErrorBoundary/GlobalErrorBoundary";
-import { WebVitalsReporter } from "@/components/WebVitalsReporter";
+import { GlobalErrorBoundary } from "@/shared/ui/ErrorBoundary/GlobalErrorBoundary";
+import { WebVitalsReporter } from "@/shared/ui/WebVitalsReporter";
 
 const poppins = Poppins({
   variable: "--font-poppins",

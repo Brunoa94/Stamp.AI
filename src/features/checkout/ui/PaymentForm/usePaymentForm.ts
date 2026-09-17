@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
-import { ShippingAddressT } from "@/schemas/checkout";
-import { mapShippingAddressToBillingDetails } from "@/mappers/mapShippingAddressToBillingDetails";
-import type { PrintifyLineItem } from "@/types/printifyOrder";
-import { useCreatePaymentIntent } from "@/queries/stripeQueries";
+import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import { ShippingAddressT } from "@/shared/schemas/checkout";
+import { mapShippingAddressToBillingDetails } from "@/shared/mappers/mapShippingAddressToBillingDetails";
+import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
+import { useCreatePaymentIntent } from "@/shared/queries/stripeQueries";
 import { getStripeIntentStatusMessage } from "@/features/checkout/lib/helpers/getStripeIntentStatusMessage";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { AnalyticsService } from "@/services/analyticsService";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { AnalyticsService } from "@/shared/services/analyticsService";
 import { mapAddPaymentInfoEvent } from "@/features/analytics/mappers/ecommerceMappers";
 
 interface UsePaymentFormProps {
@@ -81,10 +81,9 @@ export function usePaymentForm({
       };
 
       if (isTestMode) {
-        const testPaymentMethod =
-          TEST_PAYMENT_METHODS[
-            selectedTestMethod as keyof typeof TEST_PAYMENT_METHODS
-          ];
+        const testPaymentMethod = TEST_PAYMENT_METHODS[
+          selectedTestMethod as keyof typeof TEST_PAYMENT_METHODS
+        ];
         requestBody.payment_method = testPaymentMethod;
         requestBody.confirm = true;
       }
@@ -100,7 +99,7 @@ export function usePaymentForm({
             status: "succeeded",
             client_secret: clientSecret,
           },
-          lineItems
+          lineItems,
         );
         return;
       }
@@ -113,14 +112,16 @@ export function usePaymentForm({
       // Track add_payment_info before confirming payment
       AnalyticsService.track(
         "add_payment_info",
-        mapAddPaymentInfoEvent({ lineItems, amount })
+        mapAddPaymentInfoEvent({ lineItems, amount }),
       );
 
-      const { error: confirmError, paymentIntent } =
-        await stripe.confirmCardPayment(clientSecret, {
+      const { error: confirmError, paymentIntent } = await stripe
+        .confirmCardPayment(clientSecret, {
           payment_method: {
             card: cardElement,
-            billing_details: mapShippingAddressToBillingDetails(shippingAddress),
+            billing_details: mapShippingAddressToBillingDetails(
+              shippingAddress,
+            ),
           },
         });
 

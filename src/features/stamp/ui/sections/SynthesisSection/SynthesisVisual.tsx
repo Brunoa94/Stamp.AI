@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { useTranslations } from "next-intl";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { STAMP_EDIT_SUGGESTIONS } from "../../../lib/constants/stampProducts";
 import { ExpandablePicker } from "../../components/ExpandablePicker/ExpandablePicker";
 import { SuggestionCard } from "./SuggestionCard";

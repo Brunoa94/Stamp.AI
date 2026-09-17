@@ -11,8 +11,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
-import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { useIntersectionObserver } from "@/shared/hooks/useIntersectionObserver";
+import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
@@ -76,7 +76,10 @@ export function HomeProductCard({ product, index }: HomeProductCardPropsI) {
 
         {product.discountPercent && product.discountPercent > 0 && (
           <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-(--color-stamp-gold) px-1.5 py-0.5 sm:px-2.5 sm:py-1">
-            <Span variant="micro" className="font-medium text-(--color-stamp-white)">
+            <Span
+              variant="micro"
+              className="font-medium text-(--color-stamp-white)"
+            >
               {t("discountBadge", { percent: product.discountPercent })}
             </Span>
           </div>

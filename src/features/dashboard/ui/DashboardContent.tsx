@@ -17,7 +17,7 @@ import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { PaymentRecoveryBanner } from "@/features/checkout/ui/components/PaymentRecoveryBanner";
-import type { OrderWithItemsT } from "@/types/order";
+import type { OrderWithItemsT } from "@/shared/types/order";
 import { useDashboard } from "../lib/hooks/useDashboard";
 import { DashboardLayout } from "./components/DashboardLayout";
 import { DashboardHeader } from "./components/DashboardHeader";

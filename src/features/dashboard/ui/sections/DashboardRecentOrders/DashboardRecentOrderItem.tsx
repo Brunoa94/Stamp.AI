@@ -11,7 +11,7 @@ import { ChevronRight, ShoppingBag } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
-import type { OrderWithItemsT } from "@/types/order";
+import type { OrderWithItemsT } from "@/shared/types/order";
 import {
   getOrderDisplayStatus,
   getStatusBadgeClass,

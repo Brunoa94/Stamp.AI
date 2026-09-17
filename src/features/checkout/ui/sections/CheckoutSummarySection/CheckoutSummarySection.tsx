@@ -20,7 +20,7 @@ import { CheckoutStripeButton } from "./CheckoutStripeButton";
 import { CheckoutPayPalButton } from "./CheckoutPayPalButton";
 import { CheckoutIdealButton } from "./CheckoutIdealButton";
 import { VerifiedSecureBadge } from "@/features/ui/trust/VerifiedSecureBadge";
-import type { CartWithItems } from "@/types/cart";
+import type { CartWithItems } from "@/shared/types/cart";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 
 interface CheckoutSummarySectionPropsI {

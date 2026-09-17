@@ -12,7 +12,7 @@ import { useTranslations } from "next-intl";
 import { CartItemCardImage } from "./CartItemCardImage";
 import { CartItemCardContent } from "./CartItemCardContent";
 import { CartItemCardActions } from "./CartItemCardActions";
-import type { CartItem } from "@/types/cart";
+import type { CartItem } from "@/shared/types/cart";
 
 interface CartItemCardPropsI {
   item: CartItem;

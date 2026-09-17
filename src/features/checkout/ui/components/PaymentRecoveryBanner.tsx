@@ -4,8 +4,8 @@ import React from "react";
 import { useTranslations } from "next-intl";
 import { AlertCircle, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { Button } from "@/features/ui/button";
-import { usePaymentRecovery } from "@/queries/paymentRecoveryQueries";
-import type { PaymentRecoveryRecordI } from "@/services/paymentRecoveryService";
+import { usePaymentRecovery } from "@/shared/queries/paymentRecoveryQueries";
+import type { PaymentRecoveryRecordI } from "@/shared/services/paymentRecoveryService";
 
 interface PaymentRecoveryBannerProps {
   onRecoveryComplete?: (orderId: string) => void;
@@ -46,9 +46,7 @@ export function PaymentRecoveryBanner({
         console.log("✅ Order recovered:", result.orderId);
         onRecoveryComplete?.(result.orderId);
       } else {
-        alert(
-          t("recoverFailed", { error: result.error || t("unknownError") }),
-        );
+        alert(t("recoverFailed", { error: result.error || t("unknownError") }));
       }
     } catch (error) {
       console.error("Recovery error:", error);

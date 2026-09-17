@@ -7,7 +7,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { unstable_cache } from "next/cache";
-import type { CatalogProductWithSeo } from "@/types/catalog";
+import type { CatalogProductWithSeo } from "@/shared/types/catalog";
 
 /**
  * Create a service role Supabase client (no cookies, no auth)

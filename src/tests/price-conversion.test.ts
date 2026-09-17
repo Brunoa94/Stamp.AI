@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { mapCreateProductToCartInput } from '@/mappers/createProductToCartMapper';
+import { mapCreateProductToCartInput } from '@/shared/mappers/createProductToCartMapper';
 
 describe('Price Conversion', () => {
   describe('mapCreateProductToCartInput', () => {

@@ -6,7 +6,7 @@ import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
 import { cn } from "@/lib/utils";
 import { checkoutTheme } from "@/theme/components";
-import { CREDIT_PAYMENT_METHODS, type PaymentMethodId, type PaymentMethodOption } from "@/constants/payment";
+import { CREDIT_PAYMENT_METHODS, type PaymentMethodId, type PaymentMethodOption } from "@/shared/constants/payment";
 
 interface PaymentMethodSelectorProps {
   selected: PaymentMethodId;

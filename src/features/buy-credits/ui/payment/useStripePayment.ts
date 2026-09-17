@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js";
-import { StripeService } from "@/services/stripeService";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import { StripeService } from "@/shared/services/stripeService";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 
 interface UseStripePaymentProps {
   amount: number;
@@ -60,8 +60,8 @@ export function useStripePayment({
         }
 
         // Confirm payment with Stripe
-        const { error: confirmError, paymentIntent } =
-          await stripe.confirmCardPayment(clientSecret, {
+        const { error: confirmError, paymentIntent } = await stripe
+          .confirmCardPayment(clientSecret, {
             payment_method: {
               card: cardElement,
             },
@@ -83,7 +83,7 @@ export function useStripePayment({
         setLoading(false);
       }
     },
-    [stripe, elements, amount, credits, onSuccess, onError, t]
+    [stripe, elements, amount, credits, onSuccess, onError, t],
   );
 
   return {

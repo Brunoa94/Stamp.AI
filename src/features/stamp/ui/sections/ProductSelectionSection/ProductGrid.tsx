@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { Paragraph } from "@/features/ui/paragraph";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { Disclosure } from "../../components/Disclosure/Disclosure";
 import { ExpandablePicker } from "../../components/ExpandablePicker/ExpandablePicker";
 import { ProductCard } from "./ProductCard";

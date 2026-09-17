@@ -10,13 +10,13 @@ import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import PaymentSuccess from "@/features/checkout/ui/PaymentSuccess/PaymentSuccess";
 import PaymentError from "@/features/checkout/ui/components/PaymentError";
-import { OrderService } from "@/services/orderService";
-import { CartService } from "@/services/cartService";
-import { RefundService } from "@/services/refundService";
-import { PaymentRecoveryService } from "@/services/paymentRecoveryService";
-import type { CreatePrintifyOrderRequest } from "@/types/printifyOrder";
-import { validatePrintifyLineItem } from "@/types/printifyOrder";
-import { mapShippingAddressToPrintifyAddress } from "@/mappers/mapShippingAddressToPrintifyAddress";
+import { OrderService } from "@/shared/services/orderService";
+import { CartService } from "@/shared/services/cartService";
+import { RefundService } from "@/shared/services/refundService";
+import { PaymentRecoveryService } from "@/shared/services/paymentRecoveryService";
+import type { CreatePrintifyOrderRequest } from "@/shared/types/printifyOrder";
+import { validatePrintifyLineItem } from "@/shared/types/printifyOrder";
+import { mapShippingAddressToPrintifyAddress } from "@/shared/mappers/mapShippingAddressToPrintifyAddress";
 import { captureError } from "@/lib/observability/errorCapture";
 import {
   UserFacingError,
@@ -26,10 +26,10 @@ import {
   useCreateOrderFromCart,
   useUpdateOrderStatus,
   useUpdatePaymentStatus,
-} from "@/queries/orderQueries";
-import { useCreatePrintifyOrder } from "@/queries/printifyOrderQueries";
-import { useRemoveCartItems } from "@/queries/cartQueries";
-import { useUser } from "@/queries/authQueries";
+} from "@/shared/queries/orderQueries";
+import { useCreatePrintifyOrder } from "@/shared/queries/printifyOrderQueries";
+import { useRemoveCartItems } from "@/shared/queries/cartQueries";
+import { useUser } from "@/shared/queries/authQueries";
 import { CheckoutStorageService } from "@/features/checkout/lib/services/checkoutStorageService";
 import { UserI } from "@/supabase/types";
 

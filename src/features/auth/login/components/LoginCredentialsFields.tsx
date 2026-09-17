@@ -8,8 +8,8 @@ import { Input } from "@/features/ui/input";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
-import type { LoginI } from "@/schemas/auth";
-import { useValidationMessage } from "@/hooks/useValidationMessage";
+import type { LoginI } from "@/shared/schemas/auth";
+import { useValidationMessage } from "@/shared/hooks/useValidationMessage";
 import { InlinePasswordReset } from "../../passwordReset/InlinePasswordReset";
 
 interface PropsI {
@@ -42,7 +42,11 @@ export function LoginCredentialsFields({ register, errors }: PropsI) {
             <Span variant="default" className="text-(--color-stamp-chocolate)">
               {t("passwordLabel")}
             </Span>
-            <Span variant="default" className="text-(--color-stamp-gold) ml-1" aria-hidden="true">
+            <Span
+              variant="default"
+              className="text-(--color-stamp-gold) ml-1"
+              aria-hidden="true"
+            >
               *
             </Span>
           </Label>
@@ -69,7 +73,9 @@ export function LoginCredentialsFields({ register, errors }: PropsI) {
                 type="button"
                 variant="ghost"
                 size="icon"
-                aria-label={showPassword ? t("hidePassword") : t("showPassword")}
+                aria-label={
+                  showPassword ? t("hidePassword") : t("showPassword")
+                }
                 className="h-7 w-7 text-(--color-stamp-taupe) hover:text-(--color-stamp-chocolate) hover:bg-transparent transition-colors"
                 onClick={() => setShowPassword((prev) => !prev)}
               >

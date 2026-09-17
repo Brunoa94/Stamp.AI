@@ -1,7 +1,7 @@
-import type { PrintifyLineItem } from "@/types/printifyOrder";
-import type { ShippingAddressT } from "@/schemas/checkout";
-import type { PaymentMethodT } from "@/types/payment";
-import type { CartWithItems } from "@/types/cart";
+import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
+import type { ShippingAddressT } from "@/shared/schemas/checkout";
+import type { PaymentMethodT } from "@/shared/types/payment";
+import type { CartWithItems } from "@/shared/types/cart";
 
 export interface MollieCheckoutSessionData {
   paymentId: string | null;
@@ -216,7 +216,8 @@ export class CheckoutStorageService {
       );
 
       if (
-        !paymentId && !lineItems && !shippingAddress && !cartId && !orderAmount &&
+        !paymentId && !lineItems && !shippingAddress && !cartId &&
+        !orderAmount &&
         !cartSnapshot
       ) {
         return null;

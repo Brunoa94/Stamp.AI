@@ -20,7 +20,7 @@ vi.mock("@/lib/supabase/service", () => ({
   createServiceClient: () => ({ rpc: mocks.serviceRpc }),
 }));
 
-vi.mock("@/services/openaiImageService", () => ({
+vi.mock("@/shared/services/openaiImageService", () => ({
   OpenAIImageService: { generateImage: mocks.generateImage },
 }));
 

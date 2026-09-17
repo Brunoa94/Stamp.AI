@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Coins } from "lucide-react";
-import { useUserCoins } from "@/queries/coinsQueries";
+import { useUserCoins } from "@/shared/queries/coinsQueries";
 import { cn } from "@/lib/utils";
 import { Span } from "@/features/ui/span";
 

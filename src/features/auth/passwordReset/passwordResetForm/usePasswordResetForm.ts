@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { usePasswordResetRequest } from "@/queries/authQueries";
+import { usePasswordResetRequest } from "@/shared/queries/authQueries";
 
 interface UsePasswordResetFormProps {
   onClose: () => void;

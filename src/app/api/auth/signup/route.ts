@@ -5,14 +5,14 @@ import { captureError } from "@/lib/observability/errorCapture";
 import {
   SignupRequestSchema,
   UnconfirmedAuthUserSchema,
-} from "@/schemas/auth";
+} from "@/shared/schemas/auth";
 import { sendBrevoEmail } from "@/lib/email/brevo";
 import {
   buildConfirmationEmailHtml,
   CONFIRMATION_EMAIL_SUBJECT,
 } from "@/lib/email/confirmationEmailTemplate";
 import { SITE_URL } from "@/features/seo/config/site";
-import type { Database } from "@/types/database.types";
+import type { Database } from "@/shared/types/database.types";
 import { verifyCaptchaForAction } from "@/lib/security/captcha/verify";
 import { CAPTCHA_ACTIONS } from "@/lib/security/captcha/constants";
 import { isAuthEmailRequestAllowed } from "@/lib/security/authEmailProtection";
@@ -64,18 +64,24 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseServiceKey, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    });
+    const supabaseAdmin = createClient<Database>(
+      supabaseUrl,
+      supabaseServiceKey,
+      {
+        auth: { autoRefreshToken: false, persistSession: false },
+      },
+    );
 
     const { email, firstName, lastName } = parsed.data;
 
-    if (!(await isAuthEmailRequestAllowed(
-      supabaseAdmin,
-      request,
-      "signup",
-      email,
-    ))) {
+    if (
+      !(await isAuthEmailRequestAllowed(
+        supabaseAdmin,
+        request,
+        "signup",
+        email,
+      ))
+    ) {
       return NextResponse.json(
         { error: "Too many authentication attempts" },
         { status: 429 },

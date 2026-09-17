@@ -1,4 +1,4 @@
-import type { OrderWithItemsT } from "@/types/order";
+import type { OrderWithItemsT } from "@/shared/types/order";
 
 export function getFirstOrderItem(order: OrderWithItemsT) {
   return order.order_items?.[0];

@@ -4,9 +4,9 @@
  */
 
 import { getAuthenticatedClient } from './setup-auth';
-import { OrderService } from '@/services/orderService';
+import { OrderService } from '@/shared/services/orderService';
 import type { UserI } from '../../../supabase/types';
-import type { ShippingAddressT } from '@/schemas/checkout';
+import type { ShippingAddressT } from '@/shared/schemas/checkout';
 
 describe('Order Creation Integration Tests', () => {
   let supabase: any;

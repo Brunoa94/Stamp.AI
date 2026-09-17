@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "@/types/database.types";
+import type { Database } from "@/shared/types/database.types";
 import { isAuthEmailRequestAllowed } from "./authEmailProtection";
 
 describe("isAuthEmailRequestAllowed", () => {

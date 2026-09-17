@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Paragraph } from "@/features/ui/paragraph";
 import { useInvoiceDownload } from "@/features/orders/lib/hooks/useInvoiceDownload";
-import type { OrderWithItemsT } from "@/types/order";
+import type { OrderWithItemsT } from "@/shared/types/order";
 
 interface PropsI {
   order: OrderWithItemsT;

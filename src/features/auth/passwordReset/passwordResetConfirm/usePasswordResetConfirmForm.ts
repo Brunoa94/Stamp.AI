@@ -1,11 +1,14 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PasswordResetConfirmSchema, type PasswordResetConfirmI } from "@/schemas/auth";
+import {
+  type PasswordResetConfirmI,
+  PasswordResetConfirmSchema,
+} from "@/shared/schemas/auth";
 import { createClient } from "@/lib/supabase/client";
-import { useState, useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 
 export function usePasswordResetConfirmForm() {
   const router = useRouter();
@@ -27,12 +30,12 @@ export function usePasswordResetConfirmForm() {
 
   // Check if we have valid reset tokens on mount
   useEffect(() => {
-    const error = searchParams.get('error');
-    const errorDescription = searchParams.get('error_description');
+    const error = searchParams.get("error");
+    const errorDescription = searchParams.get("error_description");
 
     // If there's an error in the URL, show error state
     if (error) {
-      console.error('Password reset error:', error, errorDescription);
+      console.error("Password reset error:", error, errorDescription);
       setIsError(true);
     }
   }, [searchParams]);
@@ -53,7 +56,8 @@ export function usePasswordResetConfirmForm() {
 
     try {
       // Get current session to verify user is authenticated from reset link
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      const { data: sessionData, error: sessionError } = await supabase.auth
+        .getSession();
 
       if (sessionError || !sessionData?.session) {
         throw new Error(t("invalidSessionError"));
@@ -70,7 +74,6 @@ export function usePasswordResetConfirmForm() {
 
       setIsSuccess(true);
       handleSuccess(t("successToast"));
-
     } catch (error) {
       handleError(error);
       setIsError(true);

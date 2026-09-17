@@ -10,9 +10,9 @@ import {
   useStampFinalization,
   useStampSelectedImage,
 } from "./useStampSelectors";
-import { useCreateCustomProduct } from "@/queries/productQueries";
-import { useUser } from "@/queries/authQueries";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { useCreateCustomProduct } from "@/shared/queries/productQueries";
+import { useUser } from "@/shared/queries/authQueries";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import {
   logStampError,
   logStampInfo,
@@ -278,7 +278,7 @@ export function useStampProductCreation() {
 
         // Check if back printing is selected
         const isBackPrintSelected = printPositions?.some(
-          (pos) => pos.position === 'back'
+          (pos) => pos.position === "back",
         );
 
         // Get the product config to check for backPrintDefaultImageIndex

@@ -1,7 +1,7 @@
 "use client";
 
-import { useUser } from "@/queries/authQueries";
-import { useOrders } from "@/queries/orderQueries";
+import { useUser } from "@/shared/queries/authQueries";
+import { useOrders } from "@/shared/queries/orderQueries";
 import { RECENT_ORDERS_LIMIT } from "../constants/dashboard";
 
 /**

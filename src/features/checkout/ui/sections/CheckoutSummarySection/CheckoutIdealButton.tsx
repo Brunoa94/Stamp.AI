@@ -13,10 +13,10 @@ import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { Landmark, Loader2 } from "lucide-react";
 import { Button } from "@/features/ui/button";
-import { PAYMENT_CONFIRM_METHOD_UI } from "@/constants/payment";
+import { PAYMENT_CONFIRM_METHOD_UI } from "@/shared/constants/payment";
 import { usePrepareIdealPayment } from "@/features/checkout/lib/queries/paymentQueries";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
-import type { CartWithItems } from "@/types/cart";
+import type { CartWithItems } from "@/shared/types/cart";
 
 interface CheckoutIdealButtonPropsI {
   cart: CartWithItems;

@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { CoinsDisplay } from "./CoinsDisplay";
-import { useUserCoins } from "@/queries/coinsQueries";
+import { useUserCoins } from "@/shared/queries/coinsQueries";
 
 // Mock dependencies
-vi.mock("@/queries/coinsQueries");
+vi.mock("@/shared/queries/coinsQueries");
 
 // Mock next-intl
 vi.mock("next-intl", () => ({

@@ -3,10 +3,10 @@
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type RegisterI, RegisterSchema } from "@/schemas/auth";
-import { useRegister } from "@/queries/authQueries";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { useCaptcha } from "@/hooks/useCaptcha";
+import { type RegisterI, RegisterSchema } from "@/shared/schemas/auth";
+import { useRegister } from "@/shared/queries/authQueries";
+import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { useCaptcha } from "@/shared/hooks/useCaptcha";
 import { CAPTCHA_ACTIONS } from "@/lib/security/captcha/constants";
 
 export function useRegisterForm() {

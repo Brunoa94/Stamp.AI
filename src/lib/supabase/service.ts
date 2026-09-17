@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@/types/database.types";
+import type { Database } from "@/shared/types/database.types";
 
 /**
  * Service-role Supabase client for server-only code paths (API routes,

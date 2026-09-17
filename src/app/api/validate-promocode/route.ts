@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { captureError } from "@/lib/observability/errorCapture";
 import { evaluatePromocode } from "@/lib/promocodes/evaluatePromocode";
-import type { PromoCodeValidationResult } from "@/schemas/promocode";
+import type { PromoCodeValidationResult } from "@/shared/schemas/promocode";
 
 export const runtime = "nodejs";
 
@@ -29,14 +29,18 @@ export async function POST(
   try {
     const body = (await request.json()) as ValidatePromoCodeRequest;
 
-    const normalizedCode =
-      typeof body.code === "string" ? body.code.trim().toUpperCase() : "";
+    const normalizedCode = typeof body.code === "string"
+      ? body.code.trim().toUpperCase()
+      : "";
     if (!normalizedCode) {
       return rejected("enterPromoCode");
     }
 
     const subtotal = body.subtotal;
-    if (typeof subtotal !== "number" || !Number.isFinite(subtotal) || subtotal <= 0) {
+    if (
+      typeof subtotal !== "number" || !Number.isFinite(subtotal) ||
+      subtotal <= 0
+    ) {
       return rejected("cartTotalInvalid");
     }
 

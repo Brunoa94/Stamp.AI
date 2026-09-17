@@ -1,5 +1,5 @@
-import type { Database } from "@/types/database.types";
-import type { PromoCodeValidationResult } from "@/schemas/promocode";
+import type { Database } from "@/shared/types/database.types";
+import type { PromoCodeValidationResult } from "@/shared/schemas/promocode";
 
 /**
  * Pure promo-code business rules shared by the validation API route.
@@ -19,7 +19,8 @@ function rejected(message: string): PromoCodeValidationResult {
 }
 
 function isExpired(row: PromocodeRowT, now: Date): boolean {
-  return row.expires_at !== null && new Date(row.expires_at).getTime() <= now.getTime();
+  return row.expires_at !== null &&
+    new Date(row.expires_at).getTime() <= now.getTime();
 }
 
 function isExhausted(row: PromocodeRowT): boolean {
@@ -34,7 +35,9 @@ export function evaluatePromocode(
   row: PromocodeRowT | null,
   { subtotal, now }: EvaluatePromocodeOptionsI,
 ): PromoCodeValidationResult {
-  if (typeof subtotal !== "number" || !Number.isFinite(subtotal) || subtotal <= 0) {
+  if (
+    typeof subtotal !== "number" || !Number.isFinite(subtotal) || subtotal <= 0
+  ) {
     return rejected("cartTotalInvalid");
   }
   if (!row || !row.is_active || !isPromoType(row.type)) {
@@ -47,8 +50,9 @@ export function evaluatePromocode(
     return rejected("promoCodeLimitReached");
   }
 
-  const discountRaw =
-    row.type === "percentage" ? subtotal * (row.value / 100) : row.value;
+  const discountRaw = row.type === "percentage"
+    ? subtotal * (row.value / 100)
+    : row.value;
   const discountValue = Math.max(0, Math.min(discountRaw, subtotal));
 
   return {
