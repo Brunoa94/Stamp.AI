@@ -1,0 +1,3 @@
+REPRODUCED: catalog basket 3000 cents accepts unverified discount 2950 cents and total 50 cents
+REPRODUCED: actual fulfillment handler creates provider order without order ID, payment ID or payment amount
+REPRODUCED: actual cancellation handler requests refund after provider explicitly rejects cancellation
