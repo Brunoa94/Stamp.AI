@@ -7,10 +7,21 @@ import { POST as capture } from "@/app/api/paypal/capture-order/route";
 
 const mocks = vi.hoisted(() => ({
   getUser: vi.fn(), exchange: vi.fn(), getOrder: vi.fn(), capture: vi.fn(), rpc: vi.fn(),
+  productLookup: vi.fn(), serviceUpdate: vi.fn(),
 }));
+// User (cookie) client: only reads the caller's own rows.
 vi.mock("@/lib/supabase/server", () => ({ createClient: () => ({
-  auth: { getUser: mocks.getUser }, rpc: mocks.rpc,
-  from: () => ({ update: () => ({ eq: vi.fn() }) }),
+  auth: { getUser: mocks.getUser },
+  rpc: vi.fn(() => { throw new Error("privileged RPC must not use the user client"); }),
+  from: (table: string) => ({
+    select: () => ({ eq: () => ({ eq: () => ({ maybeSingle: () => mocks.productLookup(table) }) }) }),
+    update: () => { throw new Error("user client must not update payment rows"); },
+  }),
+}) }));
+// Service client: used only after the provider ownership check passed.
+vi.mock("@/lib/supabase/service", () => ({ createServiceClient: () => ({
+  rpc: mocks.rpc,
+  from: () => ({ update: (payload: unknown) => ({ eq: () => ({ eq: () => mocks.serviceUpdate(payload) }) }) }),
 }) }));
 vi.mock("@supabase/ssr", () => ({ createServerClient: () => ({
   auth: { exchangeCodeForSession: mocks.exchange },
@@ -26,6 +37,8 @@ beforeEach(() => {
   mocks.getUser.mockResolvedValue({ data: { user: { id: "owner" } } });
   mocks.exchange.mockResolvedValue({ error: null });
   mocks.rpc.mockResolvedValue({ data: {}, error: null });
+  mocks.productLookup.mockResolvedValue({ data: { id: "product-row" }, error: null });
+  mocks.serviceUpdate.mockResolvedValue({ error: null });
 });
 
 describe("Product lookup", () => {
@@ -36,6 +49,16 @@ describe("Product lookup", () => {
       const response = await fetchProduct(new NextRequest(`https://stamp.test/api/fetch-custom-product?product_id=${id}`));
       expect(response.status).toBe(200);
       expect(fetch.mock.calls[0][0]).toContain(`/products/${id}.json`);
+    } finally { fetch.mockRestore(); }
+  });
+  it("refuses a product the caller does not own without touching Printify", async () => {
+    const id = "5d39b159e7c48c000728c89f";
+    mocks.productLookup.mockResolvedValue({ data: null, error: null });
+    const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("{}"));
+    try {
+      const response = await fetchProduct(new NextRequest(`https://stamp.test/api/fetch-custom-product?product_id=${id}`));
+      expect(response.status).toBe(404);
+      expect(fetch).not.toHaveBeenCalled();
     } finally { fetch.mockRestore(); }
   });
   it.each(["123", "../orders", "5d39b159e7c48c000728c89f/../../orders", ""])("rejects invalid ID %s", async (id) => {

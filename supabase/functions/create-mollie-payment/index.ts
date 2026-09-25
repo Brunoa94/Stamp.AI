@@ -1,9 +1,13 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
+import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, validateRequest, verifyAuth } from "../_shared/validators.ts";
 import { createMolliePayment } from "../_shared/mollie.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
-import { validatePricingAgainstDatabase, type LineItemForPricingI } from "../_shared/serverPriceService.ts";
+import {
+  priceOrderRequest,
+  pricingMetadata,
+  sanitizeClientMetadata,
+} from "../_shared/serverPriceService.ts";
 import type { MolliePaymentRequestI, MolliePaymentResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
 
@@ -41,47 +45,32 @@ serve(async (req) => {
       amount,
       currency = "EUR",
       description,
-      order_id,
       line_items,
       shipping_address,
-      shipping_cost_cents = 0,
-      discount_cents = 0,
+      shipping_cost_cents,
+      discount_cents,
+      promo_code,
       metadata,
       method,
-    }: MolliePaymentRequestI & { shipping_cost_cents?: number; discount_cents?: number } = parsedBody ?? {};
+    }: MolliePaymentRequestI & {
+      shipping_cost_cents?: number;
+      discount_cents?: number;
+      promo_code?: string;
+    } = parsedBody ?? {};
 
-    // Validate request data
-    const validAmount = validateRequest.amount(amount);
+    // `amount` is the client's intended total in major currency units (e.g. euros).
+    const clientAmount = validateRequest.amount(amount);
 
-    // SERVER-SIDE PRICE VALIDATION (C4 - Amount Tampering Prevention)
-    if (line_items && Array.isArray(line_items) && line_items.length > 0) {
-      const itemsForPricing: LineItemForPricingI[] = line_items
-        .filter((item: Record<string, unknown>) => item.blueprint_id && item.printify_variant_id)
-        .map((item: Record<string, unknown>) => ({
-          blueprint_id: Number(item.blueprint_id),
-          printify_variant_id: Number(item.printify_variant_id),
-          quantity: Number(item.quantity) || 1,
-        }));
-
-      if (itemsForPricing.length > 0) {
-        const clientTotalCents = Math.round(validAmount * 100);
-        const validation = await validatePricingAgainstDatabase({
-          lineItems: itemsForPricing,
-          clientSubtotalCents: clientTotalCents - shipping_cost_cents + discount_cents,
-          shippingCostCents: shipping_cost_cents,
-          discountCents: discount_cents,
-          clientTotalCents,
-        });
-
-        if (!validation.isValid) {
-          throw new FunctionError(
-            400,
-            "PRICE_MISMATCH",
-            validation.errorMessage || "Server-side price validation failed"
-          );
-        }
-      }
-    }
+    // SERVER-SIDE PRICING (SEC-06): the server total is what gets charged;
+    // the client amount only has to agree with it (else PRICE_MISMATCH).
+    const pricing = await priceOrderRequest({
+      line_items,
+      promo_code,
+      shipping_cost_cents,
+      discount_cents,
+      clientTotalCents: Math.round(clientAmount * 100),
+    });
+    const chargeAmount = pricing.total_cents / 100;
 
     // Get site URL for redirect URLs
     const siteUrl = Deno.env.get("SITE_URL") || "http://localhost:3000";
@@ -94,14 +83,12 @@ serve(async (req) => {
       ? undefined
       : `${supabaseUrl}/functions/v1/mollie-webhook`;
 
-    const metadataOrderId =
-      metadata && typeof metadata.order_id === "string" ? metadata.order_id : undefined;
-    const resolvedOrderId = order_id ?? metadataOrderId;
-
-    // Build metadata to store with payment
+    // Build metadata to store with payment. The client-supplied `order_id`
+    // (request body or metadata) is deliberately dropped: the DB order is
+    // created after payment and linked via payment_transactions.order_id.
     const paymentMetadata = {
-      ...metadata,
-      ...(resolvedOrderId ? { order_id: resolvedOrderId } : {}),
+      ...sanitizeClientMetadata(metadata),
+      ...pricingMetadata(pricing),
       user_id: userId,
       user_email: userEmail,
       line_items: line_items,
@@ -110,7 +97,7 @@ serve(async (req) => {
 
     // Create Mollie payment
     const molliePayment = await createMolliePayment({
-      amount: validAmount,
+      amount: chargeAmount,
       currency: currency.toUpperCase(),
       description: description || `Order for ${userEmail}`,
       redirectUrl: `${siteUrl}/checkout/mollie-return`,
@@ -139,7 +126,7 @@ serve(async (req) => {
           payment_provider: 'mollie',
           mollie_payment_id: molliePayment.id,
           mollie_status: molliePayment.status,
-          amount: validAmount,
+          amount: chargeAmount,
           currency: currency.toLowerCase(),
           status: 'pending',
           payment_method_type: molliePayment.method || method || null,

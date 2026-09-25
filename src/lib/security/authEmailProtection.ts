@@ -5,8 +5,8 @@ import { getClientIdentifier } from "@/lib/security/rate-limiter/utils";
 import type { NextRequest } from "next/server";
 
 const RATE_LIMIT_WINDOW_SECONDS = 60 * 60;
-const IP_LIMIT = 10;
-const EMAIL_LIMIT = 3;
+const IP_LIMIT = 50;
+const EMAIL_LIMIT = 10;
 
 function hashIdentifier(value: string): string {
   return createHash("sha256").update(value).digest("hex");

@@ -29,6 +29,7 @@ interface CheckoutStripeButtonPropsI {
   shippingAddress: ShippingAddressT;
   billingAddress: ShippingAddressT;
   cartId?: string;
+  promoCode?: string;
   testMode?: boolean;
   selectedTestMethod?: string;
   disabled?: boolean;
@@ -41,6 +42,7 @@ export function CheckoutStripeButton({
   shippingAddress,
   billingAddress,
   cartId,
+  promoCode,
   testMode = false,
   selectedTestMethod = "visa",
   disabled = false,
@@ -93,6 +95,7 @@ export function CheckoutStripeButton({
       amount,
       lineItems,
       shippingAddress,
+      promoCode,
       testMode,
       onSuccess: handleSuccess,
     });

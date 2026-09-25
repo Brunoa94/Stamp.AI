@@ -4,6 +4,7 @@ import { validateEnvVars, verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import { PENDING_PRINTIFY_ORDER_ID } from "../_shared/orderFulfillment.ts";
 
 interface CancelOrderRequestI {
   order_id: string;
@@ -31,7 +32,30 @@ interface PaymentTransactionI {
   status: string;
 }
 
+interface PrintifyCancelResponseI {
+  status?: string;
+  code?: number | string;
+  message?: string;
+  errors?: { reason?: string; code?: number | string };
+}
+
 const CANCELLABLE_ORDER_STATUSES = new Set(["", "created", "pending", "confirmed"]);
+
+/** Extract the human readable rejection reason from a Printify cancel response. */
+function getPrintifyCancelReason(data: PrintifyCancelResponseI | null | undefined): string {
+  const reason = data?.errors?.reason ?? data?.message;
+  return typeof reason === "string" ? reason : "";
+}
+
+/**
+ * Only an explicit "already cancelled" answer from Printify may be treated as
+ * cancelled. "Status does not allow cancellation" means the order is in
+ * production or shipped and must NOT be cancelled or refunded locally.
+ */
+function isAlreadyCancelledAtPrintify(reason: string): boolean {
+  const normalized = reason.toLowerCase();
+  return normalized.includes("already cancelled") || normalized.includes("already canceled");
+}
 
 function normalizeStatus(value: string | null | undefined): string {
   return (value ?? "").toLowerCase().replace(/[_-]/g, "").trim();
@@ -161,15 +185,26 @@ serve(async (req) => {
       refund_processed: false,
     };
 
-    // Step 1: Cancel at Printify if printify_order_id exists
+    // Step 1: Cancel at Printify if printify_order_id exists.
+    // The local cancellation and the refund only proceed when Printify has
+    // confirmed the cancellation (or the order is already cancelled there).
+    // Otherwise the customer would be refunded for an order that is still
+    // being produced and shipped.
+    if (order.printify_order_id === PENDING_PRINTIFY_ORDER_ID) {
+      console.warn("Printify fulfillment in progress for order, refusing cancellation:", order_id);
+      throw ErrorCodes.ORDER_NOT_CANCELLABLE();
+    }
+
     if (order.printify_order_id) {
       console.log("Cancelling order at Printify:", order.printify_order_id);
 
-      try {
-        const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken();
-        const PRINTIFY_SHOP_ID = validateEnvVars.printifyShopId();
+      const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken();
+      const PRINTIFY_SHOP_ID = validateEnvVars.printifyShopId();
 
-        const printifyResponse = await fetch(
+      let printifyResponse: Response;
+      let printifyData: PrintifyCancelResponseI;
+      try {
+        printifyResponse = await fetch(
           `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/orders/${order.printify_order_id}/cancel.json`,
           {
             method: "POST",
@@ -179,42 +214,40 @@ serve(async (req) => {
             },
           }
         );
-
-        const printifyData = await printifyResponse.json();
-
-        if (printifyResponse.ok) {
-          console.log("✅ Order cancelled at Printify");
-          results.cancelled_at_printify = true;
-        } else {
-          console.warn("⚠️ Failed to cancel at Printify:", printifyData);
-          results.printify_error = printifyData.errors?.reason || "Unknown error";
-
-          // Check if Printify says order status doesn't allow cancellation
-          // This could mean: already cancelled, in production, or shipped
-          if (printifyData.errors?.reason?.includes("status")) {
-            // Check if the order is already cancelled at Printify (code 8501 with status message)
-            // In this case, we should continue with our database update and refund
-            const isAlreadyCancelledAtPrintify =
-              printifyData.errors?.reason?.toLowerCase().includes("does not allow cancellation") ||
-              printifyData.errors?.reason?.toLowerCase().includes("already cancelled");
-
-            if (isAlreadyCancelledAtPrintify) {
-              console.log("⚠️ Order may already be cancelled at Printify, continuing with database update...");
-              results.cancelled_at_printify = true; // Treat as cancelled
-              results.printify_note = "Order was already cancelled or in non-cancellable state at Printify";
-            } else {
-              // Only block if it's truly in production/shipped (not just already cancelled)
-              // Check the actual Printify order status before blocking
-              console.log("⚠️ Printify cancellation blocked, but continuing with local cancellation and refund...");
-              results.printify_blocked = true;
-              // Don't return error - continue with database update and refund
-            }
-          }
-        }
+        const rawBody = await printifyResponse.text();
+        printifyData = rawBody ? JSON.parse(rawBody) : {};
       } catch (printifyError) {
-        console.error("Error cancelling at Printify:", printifyError);
-        results.printify_error = String(printifyError);
-        // Continue with database update even if Printify fails
+        console.error("Printify cancellation request failed:", {
+          order_id,
+          printify_order_id: order.printify_order_id,
+          error: String(printifyError),
+        });
+        throw ErrorCodes.ORDER_NOT_CANCELLABLE();
+      }
+
+      const printifyReason = getPrintifyCancelReason(printifyData);
+
+      if (printifyResponse.ok && !printifyData.errors) {
+        console.log("✅ Order cancelled at Printify");
+        results.cancelled_at_printify = true;
+      } else if (isAlreadyCancelledAtPrintify(printifyReason)) {
+        console.log("Order already cancelled at Printify, continuing with local cancellation:", {
+          order_id,
+          printify_order_id: order.printify_order_id,
+          reason: printifyReason,
+        });
+        results.cancelled_at_printify = true;
+        results.printify_note = "Order was already cancelled at Printify";
+      } else {
+        console.error("Printify rejected cancellation:", {
+          order_id,
+          printify_order_id: order.printify_order_id,
+          status: printifyResponse.status,
+          code: printifyData.code ?? printifyData.errors?.code ?? null,
+          reason: printifyReason || "Unknown error",
+          response: printifyData,
+        });
+        throw ErrorCodes.ORDER_NOT_CANCELLABLE();
       }
     } else {
       console.log("No printify_order_id, skipping Printify cancellation");

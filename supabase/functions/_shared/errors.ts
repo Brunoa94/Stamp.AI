@@ -66,6 +66,11 @@ export const ErrorCodes = {
   NO_LINE_ITEMS: () => new FunctionError(400, 'NO_LINE_ITEMS', 'No line items provided for order'),
   MISSING_SHIPPING_ADDRESS: () => new FunctionError(400, 'MISSING_SHIPPING_ADDRESS', 'Shipping address is required'),
   PRINTIFY_ORDER_API_ERROR: (details: string) => new FunctionError(502, 'PRINTIFY_ORDER_API_ERROR', `Printify order API error: ${details}`),
+  ORDER_LINE_ITEMS_MISMATCH: () => new FunctionError(400, 'ORDER_LINE_ITEMS_MISMATCH', 'Line items do not match the items of the paid order'),
+  ORDER_AMOUNT_MISMATCH: () => new FunctionError(400, 'ORDER_AMOUNT_MISMATCH', 'Payment amount does not match the order total'),
+  ORDER_FULFILLMENT_IN_PROGRESS: () => new FunctionError(409, 'ORDER_FULFILLMENT_IN_PROGRESS', 'Order is already fulfilled or being fulfilled'),
+  PAYMENT_ALREADY_USED: () => new FunctionError(409, 'PAYMENT_ALREADY_USED', 'Payment is already linked to a different order'),
+  ORDER_NOT_CANCELLABLE: () => new FunctionError(409, 'ORDER_NOT_CANCELLABLE', 'Order could not be cancelled at the fulfillment provider. Please contact support.'),
 
   // Image upload errors
   IMAGE_URL_OR_BASE64_REQUIRED: () => new FunctionError(400, 'IMAGE_URL_OR_BASE64_REQUIRED', 'Either image_url or image_base64 is required'),

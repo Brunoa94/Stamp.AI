@@ -6,6 +6,7 @@ import { getMolliePayment, isMolliePaymentPaid, mapMollieStatusToInternal } from
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
 import type { MollieVerifyRequestI, MollieVerifyResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import { isValidMolliePaymentId } from "../_shared/molliePaymentId.ts";
 
 serve(async (req) => {
   const corsHeaders = corsHeadersFor(req);
@@ -20,11 +21,12 @@ serve(async (req) => {
   try {
     // Verify authentication
     const authHeader = req.headers.get("authorization");
-    await verifyAuth(authHeader);
+    const { userId: callerId } = await verifyAuth(authHeader);
 
     const { paymentId }: MollieVerifyRequestI = await req.json();
 
-    if (!paymentId) {
+    // The id is interpolated into the Mollie API path; reject malformed ids.
+    if (!isValidMolliePaymentId(paymentId)) {
       throw ErrorCodes.MOLLIE_PAYMENT_ID_REQUIRED();
     }
 
@@ -43,6 +45,19 @@ serve(async (req) => {
         : typeof metadata.orderId === "string"
           ? (metadata.orderId as string)
           : undefined;
+
+    // Ownership check: the payment must have been created for the caller.
+    // Respond exactly as if the payment did not exist so a caller cannot probe
+    // whether an arbitrary payment id is real.
+    const isServiceCall = callerId === "service-role";
+    if (!isServiceCall && (!userId || userId !== callerId)) {
+      console.warn("Mollie payment does not belong to the authenticated user:", paymentId);
+      throw ErrorCodes.MOLLIE_PAYMENT_NOT_FOUND();
+    }
+
+    // Every orders write below is scoped to the payment owner so a payment
+    // can never flip another user's order.
+    const ownerFilter = userId ? `&user_id=eq.${userId}` : "";
 
     // Sync payment transaction status using atomic RPC (same as webhook)
     // This ensures the status is updated even when webhook is delayed/unavailable.
@@ -84,9 +99,9 @@ serve(async (req) => {
       console.log("✅ Payment transaction upserted:", payment.id, "status:", internalStatus);
     }
 
-    if (orderId) {
+    if (orderId && userId) {
       if (payment.status === "paid") {
-        const orderResult = await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
+        const orderResult = await supabaseRest(`orders?id=eq.${orderId}${ownerFilter}`, "PATCH", {
           status: "processing",
           payment_status: "paid",
           payment_method: "mollie",
@@ -104,7 +119,7 @@ serve(async (req) => {
         payment.status === "canceled" ||
         payment.status === "expired"
       ) {
-        const orderResult = await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
+        const orderResult = await supabaseRest(`orders?id=eq.${orderId}${ownerFilter}`, "PATCH", {
           status: "cancelled",
           payment_status: internalStatus,
           updated_at: new Date().toISOString(),
@@ -116,12 +131,16 @@ serve(async (req) => {
       }
     }
 
-    const response: MollieVerifyResponseI = {
+    // Return only what the client needs; never echo the raw metadata blob
+    // (it carries line items, shipping address, and other PII).
+    const response: MollieVerifyResponseI & { orderId?: string; amount: string; currency: string } = {
       success: true,
       paymentId: payment.id,
       status: payment.status,
       isPaid: isMolliePaymentPaid(payment.status),
-      metadata: payment.metadata || undefined,
+      orderId,
+      amount: payment.amount.value,
+      currency: payment.amount.currency,
     };
 
     console.log("Payment status:", payment.status, "isPaid:", response.isPaid);

@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
-import { capturePayPalOrder } from "../_shared/paypal.ts";
+import { capturePayPalOrder, getPayPalOrder } from "../_shared/paypal.ts";
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
 import type { PayPalCaptureRequestI, PayPalCaptureResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
@@ -107,15 +107,60 @@ serve(async (req) => {
   try {
     // Verify authentication
     const authHeader = req.headers.get("authorization");
-    await verifyAuth(authHeader);
+    const { userId: callerId } = await verifyAuth(authHeader);
 
     const { orderId, payerId }: PayPalCaptureRequestI = await req.json();
 
-    if (!orderId) {
+    // PayPal order ids are alphanumeric; the id is interpolated into the
+    // PayPal API path, so reject anything else before it is used.
+    if (!orderId || typeof orderId !== "string" || !/^[A-Z0-9]+$/i.test(orderId)) {
       throw ErrorCodes.PAYPAL_ORDER_ID_REQUIRED();
     }
 
     console.log("Capturing PayPal order:", orderId);
+
+    // Fetch the order BEFORE capturing and require that every purchase unit
+    // was created for the authenticated user. Without this, any signed-in
+    // user could capture (and get credited for) someone else's PayPal order.
+    const paypalOrder = await getPayPalOrder(orderId);
+    const purchaseUnits = paypalOrder.purchase_units || [];
+
+    // Parse custom_id to get metadata and line items
+    let metadata: Record<string, unknown> = {};
+    let lineItems: unknown[] = [];
+    let userId: string | undefined;
+    let userEmail: string | undefined;
+
+    try {
+      const customData = JSON.parse(purchaseUnits[0]?.custom_id || "{}");
+      metadata = customData;
+      lineItems = customData.line_items || [];
+      userId = typeof customData.user_id === "string" ? customData.user_id : undefined;
+      userEmail = customData.user_email;
+    } catch (e) {
+      console.warn("Could not parse custom_id:", e);
+    }
+
+    const isServiceCall = callerId === "service-role";
+    const ownsEveryPurchaseUnit =
+      purchaseUnits.length > 0 &&
+      purchaseUnits.every((unit) => {
+        try {
+          const customData = JSON.parse(unit.custom_id || "{}");
+          return typeof customData.user_id === "string" && customData.user_id === callerId;
+        } catch {
+          return false;
+        }
+      });
+
+    if (!isServiceCall && !ownsEveryPurchaseUnit) {
+      console.warn("PayPal order does not belong to the authenticated user:", orderId);
+      throw ErrorCodes.UNAUTHORIZED("PayPal order does not belong to the authenticated user");
+    }
+
+    if (!userId) {
+      throw ErrorCodes.UNAUTHORIZED("PayPal order has no owner");
+    }
 
     // Capture the PayPal order
     const captureResult = await capturePayPalOrder(orderId);
@@ -169,22 +214,6 @@ serve(async (req) => {
     const capture = captureResult.purchase_units?.[0]?.payments?.captures?.[0];
     const payer = captureResult.payer;
 
-    // Parse custom_id to get metadata and line items
-    let metadata: Record<string, unknown> = {};
-    let lineItems: unknown[] = [];
-    let userId: string | undefined;
-    let userEmail: string | undefined;
-
-    try {
-      const customData = JSON.parse(captureResult.purchase_units?.[0]?.custom_id || "{}");
-      metadata = customData;
-      lineItems = customData.line_items || [];
-      userId = customData.user_id;
-      userEmail = customData.user_email;
-    } catch (e) {
-      console.warn("Could not parse custom_id:", e);
-    }
-
     // Save payment to database
     const result = await supabaseRest(
       "payment_transactions",
@@ -212,14 +241,19 @@ serve(async (req) => {
       console.log("Payment saved to database");
     }
 
-    // Update order payment_status to "paid"
-    const dbOrderId = metadata.order_id;
+    // Update order payment_status to "paid" — scoped to the order owner so a
+    // PayPal order can never flip someone else's order to paid.
+    const dbOrderId = typeof metadata.order_id === "string" ? metadata.order_id : undefined;
     if (dbOrderId) {
-      const orderResult = await supabaseRest(`orders?id=eq.${dbOrderId}`, "PATCH", {
-        payment_status: "paid",
-        payment_method: "paypal",
-        updated_at: new Date().toISOString(),
-      });
+      const orderResult = await supabaseRest(
+        `orders?id=eq.${dbOrderId}&user_id=eq.${userId}`,
+        "PATCH",
+        {
+          payment_status: "paid",
+          payment_method: "paypal",
+          updated_at: new Date().toISOString(),
+        }
+      );
 
       if (orderResult.error) {
         console.error("Failed to update order payment_status:", orderResult.error);
@@ -239,11 +273,13 @@ serve(async (req) => {
     // - Duplicate logic with main flow
     // - No automatic refund on Printify failure
 
-    const response: PayPalCaptureResponseI = {
+    // Minimal response: no payer email/address is returned to the client.
+    const response: PayPalCaptureResponseI & { amount?: string; currency?: string } = {
       success: true,
       captureId: capture?.id || orderId,
       status: captureResult.status,
-      payerEmail: payer?.email_address,
+      amount: capture?.amount?.value,
+      currency: capture?.amount?.currency_code,
     };
 
     console.log("PayPal order captured successfully:", orderId);

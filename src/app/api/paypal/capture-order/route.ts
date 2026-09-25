@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/service";
 import { capturePayPalOrder, getPayPalOrder, PayPalCaptureError } from "@/lib/paypal-server";
 import { PayPalCaptureMapper } from "./paypalCaptureMapper";
 import { captureError } from "@/lib/observability/errorCapture";
@@ -48,11 +49,16 @@ export async function POST(request: NextRequest) {
 
     const captureResult = await capturePayPalOrder(orderId);
 
+    // Ownership was verified against PayPal above, so the privileged capture
+    // RPC (service-role only since the security audit migration) runs with the
+    // service client. The user's client must never be able to call it.
+    const serviceClient = createServiceClient();
+
     // CRITICAL: Use atomic stored procedure to update payment + order together
     // This prevents scenario where payment succeeds but order stays pending
     try {
       const atomicParams = PayPalCaptureMapper.mapToAtomicCaptureParams(captureResult, orderId);
-      const { data: atomicResult, error: atomicError } = await supabase.rpc(
+      const { data: atomicResult, error: atomicError } = await serviceClient.rpc(
         "atomic_paypal_payment_capture",
         atomicParams
       );
@@ -66,10 +72,11 @@ export async function POST(request: NextRequest) {
 
       // Update additional payer info (non-critical, separate transaction OK)
       const payerUpdate = PayPalCaptureMapper.mapPayerInfoToUpdate(captureResult, payerId);
-      await supabase
+      await serviceClient
         .from("payment_transactions")
         .update(payerUpdate)
-        .eq("paypal_order_id", orderId);
+        .eq("paypal_order_id", orderId)
+        .eq("user_id", user.id);
 
     } catch (dbError) {
       console.error("Database update error:", dbError);

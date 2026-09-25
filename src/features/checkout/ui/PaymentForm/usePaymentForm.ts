@@ -5,15 +5,19 @@ import { ShippingAddressT } from "@/shared/schemas/checkout";
 import { mapShippingAddressToBillingDetails } from "@/shared/mappers/mapShippingAddressToBillingDetails";
 import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
 import { useCreatePaymentIntent } from "@/shared/queries/stripeQueries";
+import type { CreatePaymentIntentPayloadI } from "@/shared/types/payment";
 import { getStripeIntentStatusMessage } from "@/features/checkout/lib/helpers/getStripeIntentStatusMessage";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import { AnalyticsService } from "@/shared/services/analyticsService";
 import { mapAddPaymentInfoEvent } from "@/features/analytics/mappers/ecommerceMappers";
 
 interface UsePaymentFormProps {
+  /** Total in cents */
   amount: number;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
+  /** Applied promo code (server derives the discount from it) */
+  promoCode?: string;
   testMode?: boolean;
   onSuccess?: (paymentIntent: any, lineItems: PrintifyLineItem[]) => void;
   onError?: (error: string) => void;
@@ -36,6 +40,7 @@ export function usePaymentForm({
   amount,
   lineItems,
   shippingAddress,
+  promoCode,
   testMode = false,
   onSuccess,
   onError,
@@ -70,11 +75,14 @@ export function usePaymentForm({
     setError(null);
 
     try {
-      const requestBody: any = {
-        amount: amount,
+      const requestBody: CreatePaymentIntentPayloadI = {
+        // The edge function expects major currency units and recomputes the
+        // total server-side; this value only has to agree with it.
+        amount: amount / 100,
         currency: "eur",
         line_items: lineItems,
         shipping_address: shippingAddress,
+        promo_code: promoCode || undefined,
         // Note: order_id is NOT set here because the order doesn't exist yet.
         // The order is created after payment succeeds, then linkPaymentTransactionToOrder
         // sets payment_transactions.order_id which the webhook uses to find the order.

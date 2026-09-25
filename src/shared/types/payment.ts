@@ -122,10 +122,13 @@ export interface CreateCreditPaymentResponseI {
  * Payload for creating a Stripe Payment Intent for checkout
  */
 export interface CreatePaymentIntentPayloadI {
+  /** Client's intended total in major currency units (e.g. euros); the server recomputes and must agree */
   amount: number;
   currency?: string;
   line_items: PrintifyLineItem[];
   shipping_address: ShippingAddressT;
+  /** Applied promo code; the server derives the discount from it */
+  promo_code?: string;
   metadata?: Record<string, unknown>;
   payment_method?: string;
   confirm?: boolean;
@@ -148,9 +151,12 @@ export interface CreatePaymentIntentResponseI {
  * Payload for creating a PayPal order
  */
 export interface CreatePayPalOrderPayloadI {
+  /** Client's intended total in major currency units (euros) */
   amount: number;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
+  /** Applied promo code; the server derives the discount from it */
+  promoCode?: string;
   testMode?: boolean;
 }
 
@@ -187,11 +193,14 @@ export interface CapturePayPalOrderResponseI {
  * Payload for creating a Mollie payment
  */
 export interface CreateMolliePaymentPayloadI {
+  /** Client's intended total in major currency units (euros) */
   amount: number;
   currency?: string;
   description?: string;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
+  /** Applied promo code; the server derives the discount from it */
+  promoCode?: string;
   testMode?: boolean;
   /** Pin the payment to a specific Mollie method (e.g. "ideal") instead of showing the method chooser */
   method?: string;

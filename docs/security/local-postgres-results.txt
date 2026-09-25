@@ -1,0 +1,319 @@
+CREATE ROLE
+CREATE ROLE
+CREATE ROLE
+CREATE SCHEMA
+CREATE SCHEMA
+CREATE TABLE
+CREATE FUNCTION
+CREATE FUNCTION
+GRANT
+ALTER DEFAULT PRIVILEGES
+CREATE EXTENSION
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+psql:/tmp/imaginary-security-repro.sql:358: NOTICE:  policy "Users can view their own profile" for relation "profiles" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:360: NOTICE:  policy "Users can update their own profile" for relation "profiles" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:362: NOTICE:  policy "Service role can access all profiles" for relation "profiles" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:366: NOTICE:  policy "Users can view their own credits" for relation "user_credits" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:368: NOTICE:  policy "Service role can manage all credits" for relation "user_credits" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:372: NOTICE:  policy "Users can view their own transactions" for relation "credit_transactions" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:374: NOTICE:  policy "Service role can manage all transactions" for relation "credit_transactions" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:378: NOTICE:  policy "Users can view their own uploads" for relation "user_uploads" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:380: NOTICE:  policy "Users can insert their own uploads" for relation "user_uploads" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:382: NOTICE:  policy "Users can delete their own uploads" for relation "user_uploads" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:386: NOTICE:  policy "Users can view their own generations" for relation "ai_generations" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:388: NOTICE:  policy "Users can insert their own generations" for relation "ai_generations" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:390: NOTICE:  policy "Users can update their own generations" for relation "ai_generations" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:392: NOTICE:  policy "Service role can access all generations" for relation "ai_generations" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:396: NOTICE:  policy "Anyone can view active categories" for relation "product_categories" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:398: NOTICE:  policy "Service role can manage categories" for relation "product_categories" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:402: NOTICE:  policy "Anyone can view active products" for relation "products" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:404: NOTICE:  policy "Service role can manage products" for relation "products" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:408: NOTICE:  policy "Anyone can view product images" for relation "product_images" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:410: NOTICE:  policy "Service role can manage product images" for relation "product_images" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:414: NOTICE:  policy "Users can view their own designs" for relation "user_designs" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:416: NOTICE:  policy "Users can insert their own designs" for relation "user_designs" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:418: NOTICE:  policy "Users can update their own designs" for relation "user_designs" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:420: NOTICE:  policy "Users can delete their own designs" for relation "user_designs" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:424: NOTICE:  policy "Users can view their own cart" for relation "carts" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:426: NOTICE:  policy "Users can manage their own cart" for relation "carts" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:430: NOTICE:  policy "Users can manage their cart items" for relation "cart_items" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:436: NOTICE:  policy "Users can view their own orders" for relation "orders" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:438: NOTICE:  policy "Users can insert their own orders" for relation "orders" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:440: NOTICE:  policy "Service role can manage all orders" for relation "orders" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:444: NOTICE:  policy "Users can view their order items" for relation "order_items" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:448: NOTICE:  policy "Service role can manage all order items" for relation "order_items" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+psql:/tmp/imaginary-security-repro.sql:507: NOTICE:  extension "uuid-ossp" already exists, skipping
+CREATE EXTENSION
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+ALTER TABLE
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+DROP POLICY
+DROP POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+DROP POLICY
+CREATE POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:675: NOTICE:  policy "Authenticated users can insert products" for relation "products" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:681: NOTICE:  policy "Authenticated users can update products" for relation "products" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/tmp/imaginary-security-repro.sql:718: NOTICE:  policy "Users can update their own orders" for relation "orders" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+COMMENT
+CREATE FUNCTION
+CREATE FUNCTION
+psql:/tmp/imaginary-security-repro.sql:791: NOTICE:  trigger "trg_orders_protected_columns" for relation "orders" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+CREATE FUNCTION
+psql:/tmp/imaginary-security-repro.sql:822: NOTICE:  trigger "trg_profiles_protected_columns" for relation "profiles" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+DROP POLICY
+CREATE POLICY
+DROP POLICY
+CREATE POLICY
+CREATE FUNCTION
+REVOKE
+GRANT
+CREATE POLICY
+ALTER TABLE
+COMMENT
+CREATE FUNCTION
+GRANT
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE TABLE
+ALTER TABLE
+CREATE FUNCTION
+INSERT 0 2
+INSERT 0 3
+INSERT 0 3
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+SET
+SET
+       check_name        | count 
+-------------------------+-------
+ ANON_CART_ROWS_EXPECT_3 |     3
+(1 row)
+
+          check_name          | count 
+------------------------------+-------
+ ANON_CART_ITEM_ROWS_EXPECT_2 |     2
+(1 row)
+
+UPDATE 1
+         check_name         | count 
+----------------------------+-------
+ ANON_PAYMENT_ROWS_EXPECT_0 |     0
+(1 row)
+
+                                                             atomic_stripe_payment_capture                                                              
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+ {"success" : true, "payment_id" : "037dd1aa-f887-45d4-9e00-5ec449c5534e", "order_id" : "20000000-0000-0000-0000-000000000002", "status" : "succeeded"}
+(1 row)
+
+         check_name         |                  payload                  
+----------------------------+-------------------------------------------
+ ANON_READS_WEBHOOK_PAYLOAD | {"payer_email": "victim@example.invalid"}
+(1 row)
+
+ update_cart_items_selection 
+-----------------------------
+ 
+(1 row)
+
+RESET
+DO
+SET
+  anonymous_reassigned_payment_owner  
+--------------------------------------
+ 00000000-0000-0000-0000-000000000001
+(1 row)
+
+RESET
+SET
+SET
+SET
+UPDATE 1
+INSERT 0 1
+UPDATE 0
+       check_name       | order_number | payment_status |  status   
+------------------------+--------------+----------------+-----------
+ AUTH_FORGED_PAID_ORDER | TEST-FORGED  | paid           | cancelled
+(1 row)
+
+RESET
+DO
+SET
+SET
+UPDATE 1
+       check_name       | amount | status 
+------------------------+--------+--------
+ AUTH_PAYMENT_TAMPERING | 999.00 | failed
+(1 row)
+
+RESET
+         result          
+-------------------------
+ TARGETED_REPRO_COMPLETE
+(1 row)
+

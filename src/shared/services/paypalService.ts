@@ -17,6 +17,7 @@ export class PayPalService {
     amount,
     lineItems,
     shippingAddress,
+    promoCode,
     testMode = false,
   }: CreatePayPalOrderPayloadI): Promise<CreatePayPalOrderResponseI> {
     try {
@@ -30,8 +31,10 @@ export class PayPalService {
             currency: "eur",
             line_items: lineItems,
             shipping_address: shippingAddress,
+            promo_code: promoCode || undefined,
+            // No order_id here: the order is created after payment and linked
+            // via payment_transactions.order_id.
             metadata: {
-              order_id: `order_${Date.now()}`,
               test_mode: testMode,
             },
           },

@@ -71,9 +71,15 @@ export const CreatePrintifyOrderRequestSchema = z.object({
   shipping_address: ShippingAddressSchema.optional(),
   address_to: ShippingAddressSchema.optional(),
   is_test: z.boolean().optional(),
-  metadata: z.record(z.string(), z.any()).optional(),
-  use_sample_order: z.boolean().optional(),
-  auto_cancel: z.boolean().optional(),
+  // The edge function only fulfills an owned, paid DB order: it needs the
+  // order id plus the provider payment reference to verify the payment.
+  metadata: z
+    .object({
+      order_id: z.string().uuid("order_id must be a UUID"),
+      payment_intent_id: z.string().min(1, "payment_intent_id is required"),
+      provider: z.enum(["stripe", "paypal", "mollie"]),
+    })
+    .passthrough(),
 });
 
 /**

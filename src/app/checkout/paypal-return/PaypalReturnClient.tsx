@@ -32,6 +32,7 @@ import { useRemoveCartItems } from "@/shared/queries/cartQueries";
 import { useUser } from "@/shared/queries/authQueries";
 import { CheckoutStorageService } from "@/features/checkout/lib/services/checkoutStorageService";
 import { UserI } from "@/supabase/types";
+import { isFulfillmentAlreadyClaimed } from "@/shared/lib/helpers/fulfillmentErrors";
 
 type PageStatus =
   | "loading"
@@ -357,21 +358,21 @@ function PayPalReturnContent() {
           };
 
           try {
-            const printifyResult =
-              await createPrintifyOrder.mutateAsync(printifyPayload);
-            const printifyOrderId = printifyResult?.order?.id;
-
-            if (printifyOrderId && createdOrderId) {
-              await OrderService.updateOrder(createdOrderId, {
-                printify_order_id: printifyOrderId,
-              });
-            }
+            // The edge function persists printify_order_id itself; the column
+            // is server-owned and can no longer be written from the browser.
+            await createPrintifyOrder.mutateAsync(printifyPayload);
           } catch (printifyError) {
             captureError(printifyError, {
               service: "PayPalReturn",
               action: "createPrintifyOrder",
               metadata: { token, createdOrderId },
             });
+
+            if (isFulfillmentAlreadyClaimed(printifyError)) {
+              // A concurrent/duplicate submission already claimed this order:
+              // it is being fulfilled, so refunding here would be wrong.
+              return;
+            }
 
             if (createdOrderId) {
               // Mark order as failed BEFORE triggering refund

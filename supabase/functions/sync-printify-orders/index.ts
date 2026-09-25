@@ -192,6 +192,8 @@ serve(async (req) => {
     const ordersResult = await supabaseRest<SyncOrderRowI[]>(
       "orders?status=in.(waiting_confirmation,confirmed,processing,shipped)" +
         "&printify_order_id=not.is.null" +
+        // 'pending' is the in-progress fulfillment claim, not a Printify id
+        "&printify_order_id=neq.pending" +
         "&select=id,status,printify_status,printify_order_id,tracking_number,tracking_url,shipped_at,delivered_at" +
         "&order=printify_synced_at.asc.nullsfirst" +
         `&limit=${BATCH_SIZE}`,

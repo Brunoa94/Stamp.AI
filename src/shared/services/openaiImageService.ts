@@ -7,6 +7,14 @@ interface OpenAIImageGenerationResult {
   enhancedPrompt: string;
 }
 
+interface OpenAIImageGenerationOptionsI {
+  /** Aborts every upstream call (vision, generation, URL fallback fetch). */
+  signal?: AbortSignal;
+}
+
+// Per-request safety net when the caller passes no signal.
+const DEFAULT_REQUEST_TIMEOUT_MS = 60_000;
+
 // Use mock image for local development (uses public/zoe.png)
 const USE_MOCK_IMAGE = process.env.NODE_ENV === "development";
 
@@ -22,7 +30,7 @@ export class OpenAIImageService {
     if (!apiKey) {
       throw new Error("OPENAI_API_KEY environment variable is not set");
     }
-    return new OpenAI({ apiKey });
+    return new OpenAI({ apiKey, timeout: DEFAULT_REQUEST_TIMEOUT_MS, maxRetries: 1 });
   }
 
   /**
@@ -85,6 +93,7 @@ export class OpenAIImageService {
    * @param prompt - The user's prompt for image generation
    * @param preservation - Level of preservation (0-100). Higher = stay closer to original image.
    * @param removeBackground - Whether to generate with transparent background
+   * @param options - Optional AbortSignal to bound the total upstream time
    */
   static async generateImage(
     imageBuffer: ArrayBuffer,
@@ -92,7 +101,9 @@ export class OpenAIImageService {
     prompt: string,
     preservation: number = 50,
     removeBackground: boolean = true,
+    options: OpenAIImageGenerationOptionsI = {},
   ): Promise<OpenAIImageGenerationResult> {
+    const { signal } = options;
     // Use mock image for local development
     if (USE_MOCK_IMAGE) {
       return this.generateMockImage(prompt, removeBackground);
@@ -138,7 +149,7 @@ Output ONLY the prompt text, no explanations.`,
         },
       ],
       max_tokens: 500,
-    });
+    }, { signal });
 
     const enhancedPrompt = visionResponse.choices[0]?.message?.content;
 
@@ -161,7 +172,7 @@ Output ONLY the prompt text, no explanations.`,
         : {
             output_format: "png",
           }),
-    } as Parameters<typeof client.images.generate>[0]);
+    } as Parameters<typeof client.images.generate>[0], { signal });
 
     // Handle potential streaming response
     if (!("data" in imageResponse) || !imageResponse.data) {
@@ -180,7 +191,7 @@ Output ONLY the prompt text, no explanations.`,
       imageUrl = `data:image/png;base64,${generatedImageData.b64_json}`;
     } else if ("url" in generatedImageData && generatedImageData.url) {
       // Fallback for URL response (fetch and convert to base64)
-      const response = await fetch(generatedImageData.url);
+      const response = await fetch(generatedImageData.url, { signal });
       const buffer = await response.arrayBuffer();
       const base64 = Buffer.from(buffer).toString("base64");
       imageUrl = `data:image/png;base64,${base64}`;

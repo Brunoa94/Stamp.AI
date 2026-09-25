@@ -1,0 +1,137 @@
+[
+  {
+    "file": "supabase/migrations/20260314000000_add_coins_and_deduct_coin_rpc.sql",
+    "line": 20,
+    "name": "deduct_coin"
+  },
+  {
+    "file": "supabase/migrations/20260412000000_add_idempotency_and_refund_failures.sql",
+    "line": 172,
+    "name": "get_order_by_idempotency_key"
+  },
+  {
+    "file": "supabase/migrations/20260412000000_add_idempotency_and_refund_failures.sql",
+    "line": 187,
+    "name": "create_refund_failure_alert"
+  },
+  {
+    "file": "supabase/migrations/20260621000003_add_daily_catalog_sync_cron.sql",
+    "line": 13,
+    "name": "public.trigger_catalog_sync"
+  },
+  {
+    "file": "supabase/migrations/20260625000001_add_atomic_payment_capture.sql",
+    "line": 12,
+    "name": "atomic_paypal_payment_capture"
+  },
+  {
+    "file": "supabase/migrations/20260625000001_add_atomic_payment_capture.sql",
+    "line": 82,
+    "name": "atomic_stripe_payment_capture"
+  },
+  {
+    "file": "supabase/migrations/20260625000001_add_atomic_payment_capture.sql",
+    "line": 147,
+    "name": "atomic_mollie_payment_capture"
+  },
+  {
+    "file": "supabase/migrations/20260625000002_add_payment_upsert_functions.sql",
+    "line": 12,
+    "name": "upsert_stripe_payment_transaction"
+  },
+  {
+    "file": "supabase/migrations/20260625000002_add_payment_upsert_functions.sql",
+    "line": 75,
+    "name": "upsert_paypal_payment_transaction"
+  },
+  {
+    "file": "supabase/migrations/20260625000002_add_payment_upsert_functions.sql",
+    "line": 148,
+    "name": "upsert_mollie_payment_transaction"
+  },
+  {
+    "file": "supabase/migrations/20260625000002_add_payment_upsert_functions.sql",
+    "line": 209,
+    "name": "record_webhook_event_atomic"
+  },
+  {
+    "file": "supabase/migrations/20260625000002_add_payment_upsert_functions.sql",
+    "line": 258,
+    "name": "is_webhook_event_processed"
+  },
+  {
+    "file": "supabase/migrations/20260625000003_add_cart_item_upsert_function.sql",
+    "line": 12,
+    "name": "upsert_cart_item"
+  },
+  {
+    "file": "supabase/migrations/20260707000000_security_hardening_rls.sql",
+    "line": 125,
+    "name": "deduct_coin"
+  },
+  {
+    "file": "supabase/migrations/20260709000000_add_invoices.sql",
+    "line": 123,
+    "name": "create_invoice_for_order"
+  },
+  {
+    "file": "supabase/migrations/20260714000001_fix_upsert_cart_item_params.sql",
+    "line": 8,
+    "name": "public.upsert_cart_item"
+  },
+  {
+    "file": "supabase/migrations/20260714000008_add_order_id_to_stripe_upsert.sql",
+    "line": 15,
+    "name": "upsert_stripe_payment_transaction"
+  },
+  {
+    "file": "supabase/migrations/20260804000000_fix_cart_items_image_index.sql",
+    "line": 82,
+    "name": "public.upsert_cart_item"
+  },
+  {
+    "file": "supabase/migrations/20260807000000_add_get_user_coins_rpc.sql",
+    "line": 15,
+    "name": "get_user_coins"
+  },
+  {
+    "file": "supabase/migrations/20260810000000_add_is_selected_to_cart_items.sql",
+    "line": 12,
+    "name": "update_cart_items_selection"
+  },
+  {
+    "file": "supabase/migrations/20260818000000_fix_cron_jobs_use_db_settings.sql",
+    "line": 86,
+    "name": "public.trigger_catalog_sync"
+  },
+  {
+    "file": "supabase/migrations/20260818100000_fix_all_cron_jobs_use_vault.sql",
+    "line": 86,
+    "name": "public.trigger_catalog_sync"
+  },
+  {
+    "file": "supabase/migrations/20260908000000_fix_security_review.sql",
+    "line": 40,
+    "name": "public.grant_stripe_purchase_credits"
+  },
+  {
+    "file": "supabase/migrations/20260910000000_harden_auth_email_flows.sql",
+    "line": 16,
+    "name": "public.consume_auth_email_rate_limit"
+  },
+  {
+    "file": "supabase/migrations/20260910000000_harden_auth_email_flows.sql",
+    "line": 61,
+    "name": "public.find_unconfirmed_auth_user"
+  },
+  {
+    "file": "supabase/migrations/20260915000010_add_refund_coin_rpc.sql",
+    "line": 12,
+    "name": "refund_coin"
+  },
+  {
+    "file": "supabase/migrations/20260915000011_harden_promocodes.sql",
+    "line": 43,
+    "name": "redeem_promocode"
+  }
+]

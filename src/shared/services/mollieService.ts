@@ -22,6 +22,7 @@ export class MollieService {
     description,
     lineItems,
     shippingAddress,
+    promoCode,
     testMode = false,
     method,
   }: CreateMolliePaymentPayloadI): Promise<CreateMolliePaymentResponseI> {
@@ -38,8 +39,10 @@ export class MollieService {
             line_items: lineItems,
             shipping_address: shippingAddress,
             method,
+            promo_code: promoCode || undefined,
+            // No order_id here: the order is created after payment and linked
+            // via payment_transactions.order_id.
             metadata: {
-              order_id: `order_${Date.now()}`,
               test_mode: testMode,
             },
           },
@@ -100,7 +103,6 @@ export class MollieService {
         paymentId: data.paymentId,
         status: data.status,
         isPaid: data.isPaid,
-        metadata: data.metadata,
       };
     } catch (error) {
       throw ErrorClient.handleError({
