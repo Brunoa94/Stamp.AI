@@ -47,12 +47,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Only require CAPTCHA when both keys are configured
-    const captchaConfigured =
-      Boolean(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) &&
-      Boolean(process.env.RECAPTCHA_SECRET_KEY);
+    // CAPTCHA is enforced whenever the server secret is configured. A missing
+    // token must fail closed: otherwise a client can skip the check by simply
+    // omitting the field.
+    const captchaConfigured = Boolean(process.env.RECAPTCHA_SECRET_KEY);
 
-    if (captchaConfigured && parsed.data.captchaToken) {
+    if (captchaConfigured) {
+      if (!parsed.data.captchaToken) {
+        return NextResponse.json(
+          { error: "CAPTCHA_REQUIRED" },
+          { status: 403 },
+        );
+      }
       const captcha = await verifyCaptchaForAction(
         parsed.data.captchaToken,
         CAPTCHA_ACTIONS.REGISTER,

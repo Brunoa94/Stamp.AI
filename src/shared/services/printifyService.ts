@@ -14,8 +14,11 @@ import {
     BlueprintVariantsResponse,
     ProductCustomizationService,
 } from "./productCustomizationService";
-import { ErrorClient } from "./errorClient";
+import { AppError, ErrorClient } from "./errorClient";
 import { TshirtType } from "@/shared/types/product";
+import { FunctionsHttpError } from "@supabase/supabase-js";
+import { ERROR_CODES } from "@/shared/constants/errorMessages";
+import type { ErrorCodeT } from "@/shared-types";
 
 export class PrintifyService {
     private static getSupabaseConfig() {
@@ -57,6 +60,27 @@ export class PrintifyService {
             blueprintId,
             printProviderId || 99,
         );
+    }
+
+    /**
+     * Extract the `{ error: "<CODE>" }` body from a failed
+     * `supabase.functions.invoke` call. Returns undefined when the body is
+     * not available or the code is unknown to the frontend.
+     */
+    private static async readFunctionErrorCode(
+        error: unknown,
+    ): Promise<ErrorCodeT | undefined> {
+        if (!(error instanceof FunctionsHttpError)) return undefined;
+        try {
+            const body = await error.context.clone().json();
+            const code = body?.error;
+            return typeof code === "string" &&
+                    ERROR_CODES.includes(code as ErrorCodeT)
+                ? (code as ErrorCodeT)
+                : undefined;
+        } catch {
+            return undefined;
+        }
     }
 
     /**
@@ -134,8 +158,13 @@ export class PrintifyService {
 
             if (error) {
                 console.error("Printify order creation error:", error);
-                throw new Error(
-                    error.message || "Failed to create Printify order",
+                // The edge function answers `{ error: "<CODE>" }` on failure.
+                // Surface that code so callers can distinguish a duplicate
+                // fulfillment attempt (409) from a real failure.
+                const code = await PrintifyService.readFunctionErrorCode(error);
+                throw new AppError(
+                    code ?? error.message ?? "Failed to create Printify order",
+                    code,
                 );
             }
 

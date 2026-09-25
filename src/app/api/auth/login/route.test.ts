@@ -51,11 +51,22 @@ describe("POST /api/auth/login", () => {
     mocks.verifyCaptchaForAction.mockResolvedValue({ success: true });
   });
 
+  it("rejects login when CAPTCHA is configured and no token is sent", async () => {
+    process.env.RECAPTCHA_SECRET_KEY = "secret";
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(403);
+    expect(await response.json()).toEqual({ error: "CAPTCHA_REQUIRED" });
+    expect(mocks.verifyCaptchaForAction).not.toHaveBeenCalled();
+    expect(mocks.signInWithPassword).not.toHaveBeenCalled();
+  });
+
   it("rejects login when server-side CAPTCHA verification fails", async () => {
     process.env.RECAPTCHA_SECRET_KEY = "secret";
     mocks.verifyCaptchaForAction.mockResolvedValue({ success: false });
 
-    const response = await POST(request());
+    const response = await POST(request({ captchaToken: "token" }));
 
     expect(response.status).toBe(403);
     expect(await response.json()).toEqual({

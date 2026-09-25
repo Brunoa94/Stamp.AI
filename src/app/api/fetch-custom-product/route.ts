@@ -20,6 +20,23 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid product_id" }, { status: 400 });
   }
 
+  // Ownership: only the creator of a custom product may fetch it through the
+  // privileged merchant token. RLS on `products` already limits the lookup to
+  // the caller's own rows; the explicit user_id filter keeps the intent clear.
+  const { data: ownedProduct, error: lookupError } = await supabase
+    .from("products")
+    .select("id")
+    .eq("printify_product_id", productId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (lookupError) {
+    return NextResponse.json({ error: "Failed to fetch product" }, { status: 502 });
+  }
+  if (!ownedProduct) {
+    return NextResponse.json({ error: "Product not found" }, { status: 404 });
+  }
+
   try {
     const res = await fetch(
       `https://api.printify.com/v1/shops/${process.env.PRINTIFY_SHOP_ID}/products/${encodeURIComponent(productId)}.json`,

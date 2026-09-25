@@ -13,11 +13,13 @@ import { corsHeadersFor } from '../_shared/cors.ts'
  */
 async function waitForOrderAndGenerateInvoice(
   paymentIntentId: string,
+  userId: string | undefined,
   maxAttempts = 6,
   delayMs = 5000
 ): Promise<void> {
   const idempotencyKey = `stripe_${paymentIntentId}`
   console.log(`🔄 Starting invoice generation retry loop for idempotency_key: ${idempotencyKey}`)
+  const ownerFilter = userId ? `&user_id=eq.${userId}` : ''
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     // Wait before checking (except first attempt)
@@ -27,9 +29,9 @@ async function waitForOrderAndGenerateInvoice(
 
     console.log(`📋 Attempt ${attempt}/${maxAttempts}: Checking for order with idempotency_key...`)
 
-    // Query orders directly by idempotency_key
+    // Query orders directly by idempotency_key (scoped to the paying user)
     const orderResult = await supabaseRest<Array<{ id: string }>>(
-      `orders?idempotency_key=eq.${idempotencyKey}&select=id`,
+      `orders?idempotency_key=eq.${idempotencyKey}${ownerFilter}&select=id`,
       'GET'
     )
 
@@ -54,25 +56,29 @@ async function waitForOrderAndGenerateInvoice(
         console.log(`✅ Payment transaction linked to order: ${orderId}`)
       }
 
-      // Update order payment_status to paid
-      const updateResult = await supabaseRest(
-        `orders?id=eq.${orderId}`,
+      // Update order payment_status to paid (scoped to the paying user)
+      const updateResult = await supabaseRest<Array<{ id: string }>>(
+        `orders?id=eq.${orderId}${ownerFilter}`,
         'PATCH',
         {
           payment_status: 'paid',
           payment_method: 'stripe',
           updated_at: new Date().toISOString(),
-        }
+        },
+        { prefer: 'return=representation' }
       )
 
       if (updateResult.error) {
-        console.error('Failed to update order payment_status:', updateResult.error)
-      } else {
-        console.log(`✅ Order ${orderId} payment_status updated to: paid`)
-
-        // Generate the invoice
-        await tryGenerateInvoiceForOrder(orderId)
+        throw new Error(`Failed to update order ${orderId} payment_status: ${JSON.stringify(updateResult.error)}`)
       }
+      if (Array.isArray(updateResult.data) && updateResult.data.length === 0) {
+        throw new Error(`Order ${orderId} not found for user ${userId}; payment_status not updated`)
+      }
+
+      console.log(`✅ Order ${orderId} payment_status updated to: paid`)
+
+      // Generate the invoice
+      await tryGenerateInvoiceForOrder(orderId)
 
       return
     }
@@ -202,11 +208,19 @@ serve(async (req) => {
         )
 
         if (upsertResult.error) {
+          // Surface as 500 so Stripe retries instead of silently losing the payment.
           console.error('❌ Upsert error:', upsertResult.error)
-          break
+          throw new Error('Failed to upsert payment transaction')
         }
 
         console.log('✅ Payment transaction upserted atomically:', paymentIntent.id)
+
+        // Every orders write below is scoped to the paying user so a payment
+        // can never flip another user's order to paid.
+        const ownerFilter = userId ? `&user_id=eq.${userId}` : ''
+        if (!userId) {
+          console.error('⚠️ payment_intent.succeeded without metadata.user_id; order update will be unscoped:', paymentIntent.id)
+        }
 
         // Update order payment_status to "paid"
         // NOTE: Webhooks should ONLY update payment_status, NEVER order status
@@ -243,24 +257,31 @@ serve(async (req) => {
             console.log(`✅ Payment transaction linked to order: ${dbOrderId}`)
           }
 
-          const orderResult = await supabaseRest(
-            `orders?id=eq.${dbOrderId}`,
+          const orderResult = await supabaseRest<Array<{ id: string }>>(
+            `orders?id=eq.${dbOrderId}${ownerFilter}`,
             'PATCH',
             {
               payment_status: 'paid',
               payment_method: 'stripe',
               updated_at: new Date().toISOString(),
-            }
+            },
+            { prefer: 'return=representation' }
           )
 
           if (orderResult.error) {
+            // Critical: surface as 500 so Stripe retries the event.
             console.error('Failed to update order payment_status:', orderResult.error)
-          } else {
-            console.log(`✅ Order ${dbOrderId} payment_status updated to: paid`)
-
-            // Issue the invoice now that the order is paid (idempotent, non-blocking)
-            await tryGenerateInvoiceForOrder(dbOrderId)
+            throw new Error('Failed to update order payment_status')
           }
+          if (Array.isArray(orderResult.data) && orderResult.data.length === 0) {
+            console.error(`Order ${dbOrderId} not found for user ${userId}; payment_status not updated`)
+            throw new Error('Order not found for paying user')
+          }
+
+          console.log(`✅ Order ${dbOrderId} payment_status updated to: paid`)
+
+          // Issue the invoice now that the order is paid (idempotent, non-blocking)
+          await tryGenerateInvoiceForOrder(dbOrderId)
         } else {
           // No order_id yet - frontend hasn't created the order
           // Start retry loop in background (non-blocking)
@@ -268,7 +289,7 @@ serve(async (req) => {
 
           // Use EdgeRuntime.waitUntil if available, otherwise run inline
           // This keeps the webhook response fast while retrying in background
-          const retryPromise = waitForOrderAndGenerateInvoice(paymentIntent.id)
+          const retryPromise = waitForOrderAndGenerateInvoice(paymentIntent.id, userId)
 
           // Wait for the retry to complete (webhook can take up to 30s)
           await retryPromise
@@ -321,8 +342,9 @@ serve(async (req) => {
           }
 
           if (dbOrderId) {
+            const failedUserId = paymentIntent.metadata?.user_id
             const orderResult = await supabaseRest(
-              `orders?id=eq.${dbOrderId}`,
+              `orders?id=eq.${dbOrderId}${failedUserId ? `&user_id=eq.${failedUserId}` : ''}`,
               'PATCH',
               {
                 payment_status: 'failed',

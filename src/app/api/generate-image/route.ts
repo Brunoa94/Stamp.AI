@@ -5,6 +5,57 @@ import { captureError } from "@/lib/observability/errorCapture";
 import { OpenAIImageService } from "@/shared/services/openaiImageService";
 
 export const runtime = "nodejs";
+// Two sequential OpenAI calls (vision + image generation). 60s is within the
+// default limit of every Vercel plan; raise together with OPENAI_TIMEOUT_MS if
+// the deploy target allows more.
+export const maxDuration = 60;
+
+// Mirrors the client-side MAX_FILE_SIZE in useStampImageUpload.
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10MB
+// Headroom for multipart framing and the small text fields.
+const MAX_REQUEST_BYTES = MAX_IMAGE_BYTES + 64 * 1024;
+const MAX_PROMPT_LENGTH = 2000;
+// Leave a few seconds under maxDuration so the client gets a real error
+// (and the coin is refunded) instead of a platform timeout.
+const OPENAI_TIMEOUT_MS = 55_000;
+
+type AcceptedImageMimeType = "image/png" | "image/jpeg" | "image/webp" | "image/gif";
+
+/**
+ * Detect the image type from its magic bytes. The client-supplied `File.type`
+ * is never trusted — the bytes are what gets forwarded to OpenAI.
+ * Returns null for anything that is not a supported raster image.
+ */
+function detectImageMimeType(bytes: Uint8Array): AcceptedImageMimeType | null {
+  if (bytes.length < 12) return null;
+
+  if (bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+    return "image/jpeg";
+  }
+  if (
+    bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e &&
+    bytes[3] === 0x47 && bytes[4] === 0x0d && bytes[5] === 0x0a &&
+    bytes[6] === 0x1a && bytes[7] === 0x0a
+  ) {
+    return "image/png";
+  }
+  if (
+    bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 &&
+    bytes[3] === 0x46 && bytes[8] === 0x57 && bytes[9] === 0x45 &&
+    bytes[10] === 0x42 && bytes[11] === 0x50
+  ) {
+    return "image/webp";
+  }
+  // GIF87a / GIF89a — accepted because the upload UI allows .gif files.
+  if (
+    bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46 &&
+    bytes[3] === 0x38 && (bytes[4] === 0x37 || bytes[4] === 0x39) &&
+    bytes[5] === 0x61
+  ) {
+    return "image/gif";
+  }
+  return null;
+}
 
 async function refundCoin(userId: string): Promise<void> {
   try {
@@ -37,14 +88,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // ── Request size guard (before the multipart body is parsed) ──────────────
+    const contentLength = Number(request.headers.get("content-length"));
+    if (Number.isFinite(contentLength) && contentLength > MAX_REQUEST_BYTES) {
+      return NextResponse.json(
+        { error: "Image must be 10MB or smaller" },
+        { status: 413 },
+      );
+    }
+
     const formData = await request.formData();
-    const prompt = formData.get("prompt") as string;
-    const image = formData.get("image") as File;
+    const promptField = formData.get("prompt");
+    const imageField = formData.get("image");
     const preservationStr = formData.get("preservation") as string;
     const preservation = preservationStr ? parseInt(preservationStr, 10) : 50;
     const removeBackgroundStr = formData.get("removeBackground") as string;
     const removeBackground = removeBackgroundStr !== "false";
 
+    const prompt = typeof promptField === "string" ? promptField.trim() : "";
     if (!prompt) {
       return NextResponse.json(
         { error: "Prompt is required" },
@@ -52,19 +113,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!image) {
+    if (prompt.length > MAX_PROMPT_LENGTH) {
+      return NextResponse.json(
+        { error: `Prompt must be ${MAX_PROMPT_LENGTH} characters or fewer` },
+        { status: 400 },
+      );
+    }
+
+    if (!(imageField instanceof File)) {
       return NextResponse.json(
         { error: "Image is required" },
         { status: 400 },
       );
     }
-
-    // ── Read image data ────────────────────────────────────────────────────────
-    console.log("Image info:", {
-      name: image.name,
-      type: image.type,
-      size: image.size,
-    });
+    const image = imageField;
 
     if (image.size === 0) {
       return NextResponse.json(
@@ -73,10 +135,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Read the image bytes
-    const imageBuffer = await image.arrayBuffer();
+    if (image.size > MAX_IMAGE_BYTES) {
+      return NextResponse.json(
+        { error: "Image must be 10MB or smaller" },
+        { status: 413 },
+      );
+    }
 
-    console.log("Image buffer size:", imageBuffer.byteLength);
+    // ── Read image data ────────────────────────────────────────────────────────
+    const imageBuffer = await image.arrayBuffer();
 
     if (imageBuffer.byteLength === 0) {
       return NextResponse.json(
@@ -85,48 +152,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ── Determine correct MIME type ────────────────────────────────────────────
-    let mimeType = image.type;
-
-    // If MIME type is missing or generic, detect from file signature (magic bytes)
-    if (!mimeType || mimeType === "application/octet-stream") {
-      const uint8Array = new Uint8Array(imageBuffer).slice(0, 12);
-
-      if (
-        uint8Array[0] === 0xFF && uint8Array[1] === 0xD8 &&
-        uint8Array[2] === 0xFF
-      ) {
-        mimeType = "image/jpeg";
-      } else if (
-        uint8Array[0] === 0x89 && uint8Array[1] === 0x50 &&
-        uint8Array[2] === 0x4E && uint8Array[3] === 0x47
-      ) {
-        mimeType = "image/png";
-      } else if (
-        uint8Array[0] === 0x47 && uint8Array[1] === 0x49 &&
-        uint8Array[2] === 0x46
-      ) {
-        mimeType = "image/gif";
-      } else if (
-        uint8Array[0] === 0x52 && uint8Array[1] === 0x49 &&
-        uint8Array[2] === 0x46 && uint8Array[3] === 0x46 &&
-        uint8Array[8] === 0x57 && uint8Array[9] === 0x45 &&
-        uint8Array[10] === 0x42 && uint8Array[11] === 0x50
-      ) {
-        mimeType = "image/webp";
-      } else {
-        // Default to JPEG if we can't detect
-        mimeType = "image/jpeg";
-      }
-      console.log(`Detected MIME type from magic bytes: ${mimeType}`);
+    if (imageBuffer.byteLength > MAX_IMAGE_BYTES) {
+      return NextResponse.json(
+        { error: "Image must be 10MB or smaller" },
+        { status: 413 },
+      );
     }
 
-    // ── Generate image using OpenAI (GPT-4o + GPT Image 1) ──────────────────────
-    console.log("Generating image with OpenAI");
-    console.log("Original prompt:", prompt);
-    console.log("Preservation level:", preservation);
-    console.log("Remove background:", removeBackground);
-    console.log("Image file:", image.name, "MIME type:", mimeType);
+    // ── Determine MIME type from the bytes (never from the client) ────────────
+    const mimeType = detectImageMimeType(
+      new Uint8Array(imageBuffer, 0, Math.min(12, imageBuffer.byteLength)),
+    );
+
+    if (!mimeType) {
+      return NextResponse.json(
+        { error: "Unsupported image type. Please upload a PNG, JPEG, WebP or GIF." },
+        { status: 400 },
+      );
+    }
+
+    // Never log the raw prompt or the client-supplied filename.
+    console.log("[generate-image] request", {
+      userId: user.id,
+      mimeType,
+      imageBytes: imageBuffer.byteLength,
+      promptLength: prompt.length,
+      preservation,
+      removeBackground,
+    });
 
     // ── Coin deduction (server-side, before any paid work) ─────────────────────
     // deduct_coin runs as the caller: the RPC only allows a user to deduct
@@ -161,6 +214,7 @@ export async function POST(request: NextRequest) {
         prompt,
         preservation,
         removeBackground,
+        { signal: AbortSignal.timeout(OPENAI_TIMEOUT_MS) },
       );
     } catch (generationError) {
       // The user paid for nothing: give the coin back (service role only).
@@ -188,7 +242,10 @@ export async function POST(request: NextRequest) {
     let userMessage =
       "We couldn't generate your image right now. Please try again in a moment.";
 
-    if (err.message?.includes("API key")) {
+    if (err.name === "AbortError" || err.name === "TimeoutError") {
+      userMessage =
+        "Image generation took too long. Please try again in a moment.";
+    } else if (err.message?.includes("API key")) {
       userMessage =
         "Image generation service is temporarily unavailable. Please try again later.";
     } else if (

@@ -13,11 +13,13 @@ import { corsHeadersFor } from "../_shared/cors.ts";
  */
 async function waitForOrderAndGenerateInvoice(
   paypalOrderId: string,
+  userId: string | undefined,
   maxAttempts = 6,
   delayMs = 5000
 ): Promise<void> {
   const idempotencyKey = `paypal_${paypalOrderId}`;
   console.log(`🔄 Starting invoice generation retry loop for idempotency_key: ${idempotencyKey}`);
+  const ownerFilter = userId ? `&user_id=eq.${userId}` : "";
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     // Wait before checking (except first attempt)
@@ -27,9 +29,9 @@ async function waitForOrderAndGenerateInvoice(
 
     console.log(`📋 Attempt ${attempt}/${maxAttempts}: Checking for order with idempotency_key...`);
 
-    // Query orders directly by idempotency_key
-    const orderResult = await supabaseRest(
-      `orders?idempotency_key=eq.${idempotencyKey}&select=id`,
+    // Query orders directly by idempotency_key (scoped to the paying user)
+    const orderResult = await supabaseRest<Array<{ id: string }>>(
+      `orders?idempotency_key=eq.${idempotencyKey}${ownerFilter}&select=id`,
       "GET"
     );
 
@@ -38,9 +40,9 @@ async function waitForOrderAndGenerateInvoice(
     if (orderId) {
       console.log(`✅ Found order ${orderId} on attempt ${attempt}`);
 
-      // Update order payment_status to paid
+      // Update order payment_status to paid (scoped to the paying user)
       const updateResult = await supabaseRest(
-        `orders?id=eq.${orderId}`,
+        `orders?id=eq.${orderId}${ownerFilter}`,
         "PATCH",
         {
           payment_status: "paid",
@@ -146,8 +148,11 @@ serve(async (req) => {
           // CRITICAL: Use atomic UPSERT to handle race conditions
           // Extract metadata from capture if available
           const customId = capture.custom_id ? JSON.parse(capture.custom_id) : {};
-          const userId = customId.user_id;
+          const userId: string | undefined =
+            typeof customId.user_id === "string" ? customId.user_id : undefined;
           const dbOrderId = customId.order_id;
+          // Scope orders writes to the paying user when custom_id carries one.
+          const ownerFilter = userId ? `&user_id=eq.${userId}` : "";
 
           const upsertResult = await supabaseRest(
             "rpc/upsert_paypal_payment_transaction",
@@ -176,7 +181,7 @@ serve(async (req) => {
               // NOTE: Webhooks should ONLY update payment_status, NEVER order status
               // Order status is managed by the fulfillment service to prevent race conditions
               const orderResult = await supabaseRest(
-                `orders?id=eq.${finalOrderId}`,
+                `orders?id=eq.${finalOrderId}${ownerFilter}`,
                 "PATCH",
                 {
                   payment_status: "paid",
@@ -197,7 +202,7 @@ serve(async (req) => {
               // No order_id yet - frontend hasn't created the order
               // Start retry loop to wait for order creation
               console.log("⏳ No order_id found immediately, starting retry loop...");
-              await waitForOrderAndGenerateInvoice(orderId);
+              await waitForOrderAndGenerateInvoice(orderId, userId);
             }
           }
         }

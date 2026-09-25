@@ -60,6 +60,8 @@ export function CheckoutSummarySection({
     useShippingAddress && shippingAddress ? shippingAddress : billingAddress;
   const lineItems = buildPrintifyLineItems(cart.cart_items);
   const disablePayment = !isFormValid || total <= 0;
+  // Only a successfully validated code is sent to the payment functions
+  const appliedPromoCode = appliedPromo?.isValid ? watch("promoCode") : undefined;
 
   return (
     <div className="sticky top-32 border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 lg:p-10">
@@ -79,7 +81,7 @@ export function CheckoutSummarySection({
         <CheckoutPromoCode
           onApply={applyPromoCode}
           onClear={clearPromoCode}
-          appliedCode={appliedPromo?.isValid ? watch("promoCode") : undefined}
+          appliedCode={appliedPromoCode}
           error={promoError}
           isApplying={isApplyingPromo}
         />
@@ -102,6 +104,7 @@ export function CheckoutSummarySection({
               shippingAddress={paymentShippingAddress}
               billingAddress={billingAddress}
               cartId={cartId}
+              promoCode={appliedPromoCode}
               testMode={testMode}
               selectedTestMethod={selectedTestMethod}
               disabled={disablePayment}

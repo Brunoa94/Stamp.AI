@@ -58,26 +58,30 @@ serve(async (req) => {
 
     console.log("Mollie webhook received for payment:", paymentId);
 
+    // Fetch payment details from Mollie FIRST. Mollie sends one webhook per
+    // status transition (open -> paid, ...), so the idempotency key must
+    // include the fetched status; keying on the payment id alone would let
+    // the first (e.g. "open") webhook permanently suppress the later "paid".
+    const payment = await getMolliePayment(paymentId);
+    console.log("Payment status:", payment.status);
+
+    const webhookEventId = `${paymentId}:${payment.status}`;
+
     // ✅ CRITICAL FIX: Idempotency check
-    // Prevent duplicate webhook processing
-    // Check if this webhook was already processed
+    // Prevent duplicate webhook processing for the same (payment, status)
     const isProcessed = await supabaseRest(
       "rpc/is_webhook_processed",
       "POST",
-      { p_provider: "mollie", p_event_id: paymentId }
+      { p_provider: "mollie", p_event_id: webhookEventId }
     );
 
     if (isProcessed.data === true) {
-      console.log(`✅ Mollie webhook ${paymentId} already processed, skipping`);
+      console.log(`✅ Mollie webhook ${webhookEventId} already processed, skipping`);
       return new Response(
         JSON.stringify({ received: true, skipped: true, reason: "already_processed" }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
       );
     }
-
-    // Fetch payment details from Mollie
-    const payment = await getMolliePayment(paymentId);
-    console.log("Payment status:", payment.status);
 
     // Record this webhook as being processed
     await supabaseRest(
@@ -85,7 +89,7 @@ serve(async (req) => {
       "POST",
       {
         p_provider: "mollie",
-        p_event_id: paymentId,
+        p_event_id: webhookEventId,
         p_event_type: `payment.${payment.status}`,
         p_payload: payment,
       }
@@ -105,7 +109,7 @@ serve(async (req) => {
     if (payment.metadata) {
       metadata = payment.metadata as Record<string, unknown>;
       lineItems = (metadata.line_items as unknown[]) || [];
-      userId = metadata.user_id as string | undefined;
+      userId = typeof metadata.user_id === "string" ? metadata.user_id : undefined;
       orderId =
         typeof metadata.order_id === "string"
           ? metadata.order_id
@@ -126,7 +130,7 @@ serve(async (req) => {
       console.warn(`⚠️ Invalid order_id format: ${orderId}`);
     }
 
-    const upsertResult = await supabaseRest(
+    const upsertResult = await supabaseRest<{ order_id?: string | null }>(
       "rpc/upsert_mollie_payment_transaction",
       "POST",
       {
@@ -141,59 +145,46 @@ serve(async (req) => {
     );
 
     if (upsertResult.error) {
+      // Surface as 500 (below) so Mollie retries instead of losing the payment.
       console.error("❌ Upsert error:", upsertResult.error);
-    } else {
-      console.log("✅ Payment transaction upserted atomically:", payment.id);
-
-      // Update order payment_status if order_id is valid
-      if (safeOrderId || upsertResult.data?.order_id) {
-        const finalOrderId = safeOrderId || upsertResult.data?.order_id;
-        const orderUpdateResult = await supabaseRest(
-          `orders?id=eq.${finalOrderId}`,
-          "PATCH",
-          {
-            payment_status: "paid",
-            payment_method: "mollie",
-            updated_at: new Date().toISOString(),
-          }
-        );
-        if (orderUpdateResult.error) {
-          console.error(`Failed to update order ${finalOrderId} payment_status:`, orderUpdateResult.error);
-        } else {
-          console.log(`✅ Order ${finalOrderId} payment_status updated to: paid`);
-
-          // Issue the invoice now that the order is paid (idempotent, non-blocking)
-          await tryGenerateInvoiceForOrder(finalOrderId);
-        }
-      } else {
-        console.warn("⚠️ No valid order_id found, skipping payment_status update.");
-      }
+      throw new Error("Failed to upsert payment transaction");
     }
 
-    // If orderId not in metadata, try to get it from payment_transactions.order_id column
-    // (set by client-side after order creation)
-    if (!orderId) {
-      const txResult = await supabaseRest(
+    console.log("✅ Payment transaction upserted atomically:", payment.id);
+
+    // Resolve the order id: metadata first, then the row returned by the
+    // upsert, then the payment_transactions.order_id column (set by the
+    // client after order creation).
+    let finalOrderId: string | undefined = safeOrderId || upsertResult.data?.order_id || undefined;
+
+    if (!finalOrderId) {
+      const txResult = await supabaseRest<Array<{ order_id: string | null }>>(
         `payment_transactions?mollie_payment_id=eq.${payment.id}&select=order_id`,
         "GET"
       );
-      orderId = txResult.data?.[0]?.order_id;
-      if (orderId) {
-        console.log(`✅ Found order_id in payment_transactions: ${orderId}`);
+      finalOrderId = txResult.data?.[0]?.order_id || undefined;
+      if (finalOrderId) {
+        console.log(`✅ Found order_id in payment_transactions: ${finalOrderId}`);
       }
     }
 
-    // If payment is successful, update order and create Printify order
+    // Every orders write is scoped to the paying user so a payment can never
+    // flip another user's order. Without a user_id we do not touch orders.
+    const ownerFilter = userId ? `&user_id=eq.${userId}` : "";
+    if (finalOrderId && !userId) {
+      console.error("⚠️ Mollie payment has no metadata.user_id; skipping order update:", payment.id);
+    }
+
+    // If payment is successful, update order payment_status
     if (isPaid) {
       console.log("Payment is paid, processing order...");
 
-      // Update order payment_status if we have an order_id
-      if (orderId) {
+      if (finalOrderId && userId) {
         // ✅ Update payment_status to "paid"
         // NOTE: Webhooks should ONLY update payment_status, NEVER order status
         // Order status is managed by the fulfillment service to prevent race conditions
         const orderUpdateResult = await supabaseRest(
-          `orders?id=eq.${orderId}`,
+          `orders?id=eq.${finalOrderId}${ownerFilter}`,
           "PATCH",
           {
             payment_status: "paid",
@@ -203,13 +194,16 @@ serve(async (req) => {
         );
 
         if (orderUpdateResult.error) {
-          console.error(`Failed to update order ${orderId} payment_status:`, orderUpdateResult.error);
-        } else {
-          console.log(`✅ Order ${orderId} payment_status updated to: paid`);
-
-          // Issue the invoice now that the order is paid (idempotent, non-blocking)
-          await tryGenerateInvoiceForOrder(orderId);
+          console.error(`Failed to update order ${finalOrderId} payment_status:`, orderUpdateResult.error);
+          throw new Error("Failed to update order payment_status");
         }
+
+        console.log(`✅ Order ${finalOrderId} payment_status updated to: paid`);
+
+        // Issue the invoice now that the order is paid (idempotent, non-blocking)
+        await tryGenerateInvoiceForOrder(finalOrderId);
+      } else if (!finalOrderId) {
+        console.warn("⚠️ No valid order_id found, skipping payment_status update.");
       }
 
       // ⚠️ NOTE: For Mollie (redirect-based flow), Printify order creation is handled client-side
@@ -219,31 +213,32 @@ serve(async (req) => {
     } else if (payment.status === "failed" || payment.status === "canceled" || payment.status === "expired") {
       // Update payment_status if payment failed
       // NOTE: Webhooks should ONLY update payment_status, NEVER order status
-      if (orderId) {
-        const orderUpdateResult = await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
+      if (finalOrderId && userId) {
+        const orderUpdateResult = await supabaseRest(`orders?id=eq.${finalOrderId}${ownerFilter}`, "PATCH", {
           payment_status: internalStatus,
           updated_at: new Date().toISOString(),
         });
 
         if (orderUpdateResult.error) {
-          console.error(`Failed to update order ${orderId}:`, orderUpdateResult.error);
+          console.error(`Failed to update order ${finalOrderId}:`, orderUpdateResult.error);
         } else {
-          console.log(`Order ${orderId} payment_status updated to: ${internalStatus}`);
+          console.log(`Order ${finalOrderId} payment_status updated to: ${internalStatus}`);
         }
       }
     }
 
-    // Always return 200 to acknowledge webhook receipt
     return new Response(JSON.stringify({ received: true }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
+    // Return a non-2xx so Mollie retries the webhook (it retries on non-2xx).
+    // The payment id was already validated above, so this only covers
+    // genuine internal failures (Mollie API, database, ...).
     console.error("Mollie webhook error:", error);
-    // Still return 200 to prevent Mollie from retrying
-    return new Response(JSON.stringify({ received: true, error: "Processing error" }), {
+    return new Response(JSON.stringify({ received: false, error: "Processing error" }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
+      status: 500,
     });
   }
 });

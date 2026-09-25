@@ -16,7 +16,7 @@
  *
  * Environment variables required:
  *   - GOOGLE_GEMINI_API_KEY
- *   - PRINTIFY_API_TOKEN (or NEXT_PUBLIC_PRINTIFY_API_TOKEN)
+ *   - PRINTIFY_API_TOKEN
  *   - PRINTIFY_SHOP_ID (or NEXT_PUBLIC_PRINTIFY_SHOP_ID)
  */
 
@@ -356,7 +356,7 @@ Examples:
 
 function validateEnv() {
   const geminiKey = process.env.GOOGLE_GEMINI_API_KEY; // Not required for now (Gemini commented out)
-  const printifyToken = process.env.PRINTIFY_API_TOKEN || process.env.NEXT_PUBLIC_PRINTIFY_API_TOKEN;
+  const printifyToken = process.env.PRINTIFY_API_TOKEN;
   const printifyShopId = process.env.PRINTIFY_SHOP_ID || process.env.NEXT_PUBLIC_PRINTIFY_SHOP_ID;
 
   const missing = [];

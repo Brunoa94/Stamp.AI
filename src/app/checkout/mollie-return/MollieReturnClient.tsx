@@ -46,6 +46,7 @@ import { useRemoveCartItems } from "@/shared/queries/cartQueries";
 import { useVerifyMolliePayment } from "@/shared/queries/mollieQueries";
 import { useUser } from "@/shared/queries/authQueries";
 import { UserI } from "@/supabase/types";
+import { isFulfillmentAlreadyClaimed } from "@/shared/lib/helpers/fulfillmentErrors";
 
 type PageStatus = "loading" | "success" | "failed" | "pending" | "error";
 
@@ -512,32 +513,20 @@ function MollieReturnContent() {
             };
 
             try {
-              const printifyResult =
-                await createPrintifyOrder.mutateAsync(printifyPayload);
+              // The edge function persists printify_order_id itself; the
+              // column is server-owned and cannot be written from the browser.
+              await createPrintifyOrder.mutateAsync(printifyPayload);
               console.log("✅ Printify order created successfully");
               console.log(
                 "✅ Order status updated to 'confirmed' by create-printify-order function",
               );
-
-              // Persist the Printify order ID back to the DB order row
-              const printifyOrderId = printifyResult?.order?.id;
-              if (printifyOrderId && createdOrderId) {
-                try {
-                  await OrderService.updateOrder(createdOrderId, {
-                    printify_order_id: printifyOrderId,
-                  });
-                  console.log(
-                    `✅ Saved printify_order_id ${printifyOrderId} to order ${createdOrderId}`,
-                  );
-                } catch (updateErr) {
-                  captureError(updateErr, {
-                    service: "MollieReturn",
-                    action: "savePrintifyOrderId",
-                    metadata: { printifyOrderId, createdOrderId },
-                  });
-                }
-              }
             } catch (printifyError) {
+              if (isFulfillmentAlreadyClaimed(printifyError)) {
+                // A concurrent/duplicate submission already claimed this
+                // order: it is being fulfilled, so refunding would be wrong.
+                console.warn("Order fulfillment already in progress; skipping refund");
+                return;
+              }
               console.error(
                 "❌ Printify order creation failed. Initiating refund...",
               );

@@ -21,7 +21,7 @@ interface UseCheckoutPricingParams {
 
 export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
   const t = useTranslations("checkout.pricing");
-  const { watch } = useFormContext<CheckoutFormData>();
+  const { watch, setValue } = useFormContext<CheckoutFormData>();
   const [appliedPromo, setAppliedPromo] = useState<
     PromoCodeValidationResult | null
   >(
@@ -68,8 +68,12 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
       if (result.isValid && result.appliedPromo) {
         setAppliedPromo(result);
         setPromoError(null);
+        // The form's promoCode is what gets sent to the payment functions,
+        // so it must only ever hold a code the server accepted.
+        setValue("promoCode", result.appliedPromo.code);
       } else {
         setAppliedPromo(null);
+        setValue("promoCode", undefined);
         // result.message may be one of our own catalog keys (from
         // CheckoutPromoCodeService) or a raw backend message — translate the
         // former, pass the latter through untouched.
@@ -82,6 +86,7 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
     },
     onError: (error) => {
       setAppliedPromo(null);
+      setValue("promoCode", undefined);
       const errorMessage = error instanceof Error
         ? error.message
         : t("validationFailed");
@@ -107,6 +112,7 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
   const clearPromoCode = () => {
     setAppliedPromo(null);
     setPromoError(null);
+    setValue("promoCode", undefined);
   };
 
   return {

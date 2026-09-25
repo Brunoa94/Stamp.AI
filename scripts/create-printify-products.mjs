@@ -19,7 +19,7 @@
  *   node scripts/create-printify-products.mjs --list-products
  *
  * Environment variables required:
- *   - PRINTIFY_API_TOKEN (or NEXT_PUBLIC_PRINTIFY_API_TOKEN)
+ *   - PRINTIFY_API_TOKEN
  *   - PRINTIFY_SHOP_ID (or NEXT_PUBLIC_PRINTIFY_SHOP_ID)
  */
 
@@ -440,7 +440,7 @@ Environment Variables:
 }
 
 function validateEnv() {
-  const printifyToken = process.env.PRINTIFY_API_TOKEN || process.env.NEXT_PUBLIC_PRINTIFY_API_TOKEN;
+  const printifyToken = process.env.PRINTIFY_API_TOKEN;
   const printifyShopId = process.env.PRINTIFY_SHOP_ID || process.env.NEXT_PUBLIC_PRINTIFY_SHOP_ID;
 
   const missing = [];

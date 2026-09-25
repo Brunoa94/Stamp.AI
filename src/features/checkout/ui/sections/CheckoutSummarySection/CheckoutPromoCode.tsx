@@ -8,13 +8,11 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { useFormContext } from "react-hook-form";
 import { Tag, X } from "lucide-react";
 import { Input } from "@/features/ui/input";
 import { Button } from "@/features/ui/button";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
-import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 
 interface CheckoutPromoCodePropsI {
   onApply: (code: string) => Promise<void>;
@@ -32,18 +30,17 @@ export function CheckoutPromoCode({
   isApplying = false,
 }: CheckoutPromoCodePropsI) {
   const t = useTranslations("checkout.promoCode");
-  const { setValue } = useFormContext<CheckoutFormData>();
   const [inputValue, setInputValue] = useState("");
 
+  // The form's promoCode value is owned by useCheckoutPricing, which only
+  // stores codes the server validated.
   const handleApply = async () => {
     if (!inputValue.trim()) return;
     await onApply(inputValue.trim());
-    setValue("promoCode", inputValue.trim());
   };
 
   const handleClear = () => {
     setInputValue("");
-    setValue("promoCode", undefined);
     onClear();
   };
 

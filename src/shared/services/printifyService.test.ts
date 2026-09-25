@@ -665,6 +665,11 @@ describe("PrintifyService Edge Cases", () => {
           city: "Los Angeles",
           zip: "90001",
         },
+        metadata: {
+          order_id: "11111111-1111-4111-8111-111111111111",
+          payment_intent_id: "pi_test",
+          provider: "stripe",
+        },
         is_test: true, // BUG: Test mode in production!
       };
 
@@ -717,6 +722,11 @@ describe("PrintifyService Edge Cases", () => {
           address1: "123 Main St",
           city: "Los Angeles",
           zip: "90001",
+        },
+        metadata: {
+          order_id: "11111111-1111-4111-8111-111111111111",
+          payment_intent_id: "pi_test",
+          provider: "stripe",
         },
       };
 

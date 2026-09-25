@@ -60,13 +60,12 @@ export interface CreatePrintifyOrderRequest {
   shipping_address?: PrintifyShippingAddress;
   address_to?: PrintifyShippingAddress;
   is_test?: boolean;
-  metadata?: {
-    order_id?: string;
-    payment_intent_id?: string;
-    [key: string]: any;
+  metadata: {
+    order_id: string;
+    payment_intent_id: string;
+    provider: "stripe" | "paypal" | "mollie";
+    [key: string]: unknown;
   };
-  use_sample_order?: boolean;
-  auto_cancel?: boolean;
 }
 
 export interface PrintifyOrderResponse {

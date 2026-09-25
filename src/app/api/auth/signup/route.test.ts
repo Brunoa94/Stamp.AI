@@ -40,13 +40,14 @@ vi.mock("@/lib/observability/errorCapture", () => ({
 
 import { POST } from "./route";
 
-function request() {
+function request(body: Record<string, unknown> = {}) {
   return new NextRequest("https://attacker.example/api/auth/signup", {
     method: "POST",
     body: JSON.stringify({
       email: "user@example.com",
       firstName: "Test",
       lastName: "User",
+      ...body,
     }),
     headers: { "content-type": "application/json" },
   });
@@ -86,11 +87,22 @@ describe("POST /api/auth/signup", () => {
     expect(mocks.generateLink).not.toHaveBeenCalled();
   });
 
+  it("rejects signup when CAPTCHA is configured and no token is sent", async () => {
+    process.env.RECAPTCHA_SECRET_KEY = "secret";
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(403);
+    expect(await response.json()).toEqual({ error: "CAPTCHA_REQUIRED" });
+    expect(mocks.verifyCaptchaForAction).not.toHaveBeenCalled();
+    expect(mocks.generateLink).not.toHaveBeenCalled();
+  });
+
   it("rejects signup when server-side CAPTCHA verification fails", async () => {
     process.env.RECAPTCHA_SECRET_KEY = "secret";
     mocks.verifyCaptchaForAction.mockResolvedValue({ success: false });
 
-    const response = await POST(request());
+    const response = await POST(request({ captchaToken: "token" }));
 
     expect(response.status).toBe(403);
     expect(await response.json()).toEqual({

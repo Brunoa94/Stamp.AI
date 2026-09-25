@@ -52,10 +52,12 @@ export class PaymentService {
 
       // Build payment intent payload
       const payload: CreatePaymentIntentPayloadI = {
-        amount,
+        // Edge function expects major currency units
+        amount: amount / 100,
         currency: "eur",
         line_items: checkoutData.lineItems,
         shipping_address: checkoutData.shippingAddress,
+        promo_code: formData.promoCode || undefined,
         metadata: {
           paymentMethod: formData.paymentMethod,
           promoCode: formData.promoCode || undefined,
@@ -115,6 +117,7 @@ export class PaymentService {
         amount: amountInEuros,
         lineItems: checkoutData.lineItems,
         shippingAddress: checkoutData.shippingAddress,
+        promoCode: formData.promoCode || undefined,
       });
 
       // Store checkout data for return page
@@ -178,6 +181,7 @@ export class PaymentService {
         method: "ideal",
         lineItems: checkoutData.lineItems,
         shippingAddress: checkoutData.shippingAddress,
+        promoCode: formData.promoCode || undefined,
       });
 
       // Store checkout data for the mollie-return page
