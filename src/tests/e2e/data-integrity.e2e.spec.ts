@@ -17,28 +17,36 @@ const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 // Helper to generate test UUIDs
 const generateTestId = () => crypto.randomUUID();
+// payment_transactions.user_id / orders.user_id reference auth.users, so
+// throwaway rows must not carry a made-up user id.
+const NO_USER = null;
+// Carts created by these tests (uuid ids), removed in afterEach.
+const createdCartIds: string[] = [];
 
 // Clean up test data after each test
 test.afterEach(async () => {
   // Clean up test orders, payments, cart items created during tests
-  await supabaseAdmin.from('cart_items').delete().like('cart_id', 'test-%');
-  await supabaseAdmin.from('carts').delete().like('id', 'test-%');
+  if (createdCartIds.length) {
+    await supabaseAdmin.from('cart_items').delete().in('cart_id', createdCartIds);
+    await supabaseAdmin.from('carts').delete().in('id', createdCartIds);
+    createdCartIds.length = 0;
+  }
   await supabaseAdmin.from('payment_transactions').delete().like('stripe_payment_intent_id', 'pi_test%');
   await supabaseAdmin.from('payment_transactions').delete().like('paypal_order_id', 'paypal_test%');
   await supabaseAdmin.from('orders').delete().like('idempotency_key', 'test_%');
+  await supabaseAdmin.from('orders').delete().like('order_number', 'ORD-ATOMIC-%');
 });
 
 test.describe('Database Constraints', () => {
 
   test('should prevent duplicate Stripe payment intents', async () => {
-    const testUserId = generateTestId();
     const testPaymentIntentId = 'pi_test_duplicate_' + Date.now();
 
     // Insert first payment
     const { data: first, error: firstError } = await supabaseAdmin
       .from('payment_transactions')
       .insert({
-        user_id: testUserId,
+        user_id: NO_USER,
         payment_provider: 'stripe',
         stripe_payment_intent_id: testPaymentIntentId,
         amount: 100,
@@ -56,7 +64,7 @@ test.describe('Database Constraints', () => {
     const { data: duplicate, error: duplicateError } = await supabaseAdmin
       .from('payment_transactions')
       .insert({
-        user_id: testUserId,
+        user_id: NO_USER,
         payment_provider: 'stripe',
         stripe_payment_intent_id: testPaymentIntentId,
         amount: 200,
@@ -76,14 +84,13 @@ test.describe('Database Constraints', () => {
   });
 
   test('should prevent duplicate PayPal orders', async () => {
-    const testUserId = generateTestId();
     const testPayPalOrderId = 'paypal_test_duplicate_' + Date.now();
 
     // Insert first payment
     const { error: firstError } = await supabaseAdmin
       .from('payment_transactions')
       .insert({
-        user_id: testUserId,
+        user_id: NO_USER,
         payment_provider: 'paypal',
         paypal_order_id: testPayPalOrderId,
         amount: 100,
@@ -98,7 +105,7 @@ test.describe('Database Constraints', () => {
     const { error: duplicateError } = await supabaseAdmin
       .from('payment_transactions')
       .insert({
-        user_id: testUserId,
+        user_id: NO_USER,
         payment_provider: 'paypal',
         paypal_order_id: testPayPalOrderId,
         amount: 200,
@@ -115,18 +122,18 @@ test.describe('Database Constraints', () => {
   });
 
   test('should prevent duplicate order idempotency keys', async () => {
-    const testUserId = generateTestId();
     const testIdempotencyKey = 'test_idempotency_' + Date.now();
 
     // Insert first order
     const { error: firstError } = await supabaseAdmin
       .from('orders')
       .insert({
-        user_id: testUserId,
+        user_id: NO_USER,
         order_number: 'ORD-TEST-001',
+        customer_email: 'e2e@example.com',
         idempotency_key: testIdempotencyKey,
         subtotal: 100,
-        total: 100,
+        total_amount: 100,
         payment_status: 'pending',
         status: 'pending',
       });
@@ -137,11 +144,12 @@ test.describe('Database Constraints', () => {
     const { error: duplicateError } = await supabaseAdmin
       .from('orders')
       .insert({
-        user_id: testUserId,
+        user_id: NO_USER,
         order_number: 'ORD-TEST-002',
+        customer_email: 'e2e@example.com',
         idempotency_key: testIdempotencyKey,
         subtotal: 200,
-        total: 200,
+        total_amount: 200,
         payment_status: 'pending',
         status: 'pending',
       });
@@ -157,24 +165,26 @@ test.describe('Database Constraints', () => {
 test.describe('Atomic Payment Capture', () => {
 
   test('should atomically update payment and order for PayPal', async () => {
-    const testUserId = generateTestId();
     const testOrderId = generateTestId();
     const testPayPalOrderId = 'paypal_test_atomic_' + Date.now();
 
     // Create order
-    await supabaseAdmin.from('orders').insert({
+    const { error: orderInsertError } = await supabaseAdmin.from('orders').insert({
       id: testOrderId,
-      user_id: testUserId,
-      order_number: 'ORD-ATOMIC-001',
+      user_id: NO_USER,
+      order_number: `ORD-ATOMIC-${Date.now()}`,
+      customer_email: 'e2e@example.com',
       subtotal: 100,
-      total: 100,
+      total_amount: 100,
+      currency: 'usd',
       payment_status: 'pending',
-      order_status: 'pending',
+      status: 'pending',
     });
+    expect(orderInsertError, orderInsertError?.message).toBeNull();
 
     // Create payment transaction
-    await supabaseAdmin.from('payment_transactions').insert({
-      user_id: testUserId,
+    const { error: paymentInsertError } = await supabaseAdmin.from('payment_transactions').insert({
+      user_id: NO_USER,
       order_id: testOrderId,
       payment_provider: 'paypal',
       paypal_order_id: testPayPalOrderId,
@@ -182,6 +192,7 @@ test.describe('Atomic Payment Capture', () => {
       currency: 'usd',
       status: 'pending',
     });
+    expect(paymentInsertError, paymentInsertError?.message).toBeNull();
 
     // Call atomic capture function
     const { data: result, error } = await supabaseAdmin.rpc(
@@ -190,7 +201,8 @@ test.describe('Atomic Payment Capture', () => {
         p_paypal_order_id: testPayPalOrderId,
         p_paypal_capture_id: 'CAPTURE-123',
         p_amount: 100,
-        p_currency: 'USD',
+        p_currency: 'usd',
+        p_captured_at: new Date().toISOString(),
       }
     );
 
@@ -221,7 +233,6 @@ test.describe('Atomic Payment Capture', () => {
   });
 
   test('should rollback on payment capture failure', async () => {
-    const testUserId = generateTestId();
     const invalidOrderId = 'invalid_order_that_does_not_exist';
 
     // Try to capture non-existent payment
@@ -231,7 +242,8 @@ test.describe('Atomic Payment Capture', () => {
         p_paypal_order_id: invalidOrderId,
         p_paypal_capture_id: 'CAPTURE-456',
         p_amount: 100,
-        p_currency: 'USD',
+        p_currency: 'usd',
+        p_captured_at: new Date().toISOString(),
       }
     );
 
@@ -255,7 +267,6 @@ test.describe('Atomic Payment Capture', () => {
 test.describe('Webhook UPSERT Functions', () => {
 
   test('should upsert Stripe payment transaction', async () => {
-    const testUserId = generateTestId();
     const testPaymentIntentId = 'pi_test_upsert_' + Date.now();
 
     // First UPSERT (INSERT)
@@ -263,7 +274,7 @@ test.describe('Webhook UPSERT Functions', () => {
       'upsert_stripe_payment_transaction',
       {
         p_stripe_payment_intent_id: testPaymentIntentId,
-        p_user_id: testUserId,
+        p_user_id: NO_USER,
         p_stripe_customer_id: 'cus_test',
         p_amount: 100,
         p_currency: 'usd',
@@ -282,7 +293,7 @@ test.describe('Webhook UPSERT Functions', () => {
       'upsert_stripe_payment_transaction',
       {
         p_stripe_payment_intent_id: testPaymentIntentId,
-        p_user_id: testUserId,
+        p_user_id: NO_USER,
         p_stripe_customer_id: 'cus_test',
         p_amount: 100,
         p_currency: 'usd',
@@ -310,14 +321,13 @@ test.describe('Webhook UPSERT Functions', () => {
   });
 
   test('should handle concurrent webhook UPSERTs', async () => {
-    const testUserId = generateTestId();
     const testPaymentIntentId = 'pi_test_concurrent_' + Date.now();
 
     // Simulate concurrent webhooks
     const results = await Promise.all([
       supabaseAdmin.rpc('upsert_stripe_payment_transaction', {
         p_stripe_payment_intent_id: testPaymentIntentId,
-        p_user_id: testUserId,
+        p_user_id: NO_USER,
         p_stripe_customer_id: 'cus_test',
         p_amount: 100,
         p_currency: 'usd',
@@ -327,7 +337,7 @@ test.describe('Webhook UPSERT Functions', () => {
       }),
       supabaseAdmin.rpc('upsert_stripe_payment_transaction', {
         p_stripe_payment_intent_id: testPaymentIntentId,
-        p_user_id: testUserId,
+        p_user_id: NO_USER,
         p_stripe_customer_id: 'cus_test',
         p_amount: 100,
         p_currency: 'usd',
@@ -356,15 +366,17 @@ test.describe('Webhook UPSERT Functions', () => {
 test.describe('Cart Item UPSERT', () => {
 
   test('should upsert cart item and increment quantity', async () => {
-    const testCartId = 'test-cart-' + Date.now();
+    const testCartId = generateTestId();
+    createdCartIds.push(testCartId);
     const testProductId = generateTestId();
     const testVariantId = generateTestId();
 
     // Create cart
-    await supabaseAdmin.from('carts').insert({
+    const { error: cartError } = await supabaseAdmin.from('carts').insert({
       id: testCartId,
       session_id: 'test-session',
     });
+    expect(cartError, cartError?.message).toBeNull();
 
     // First add (INSERT)
     const { data: first, error: firstError } = await supabaseAdmin.rpc(
@@ -374,8 +386,10 @@ test.describe('Cart Item UPSERT', () => {
         p_product_id: testProductId,
         p_variant_id: testVariantId,
         p_quantity: 2,
+        p_product_name: 'E2E upsert product',
+        p_unit_price: 50,
         p_custom_image_url: null,
-        p_selling_price: 50,
+        p_custom_image_public_id: null,
       }
     );
 
@@ -391,8 +405,10 @@ test.describe('Cart Item UPSERT', () => {
         p_product_id: testProductId,
         p_variant_id: testVariantId,
         p_quantity: 3,
+        p_product_name: 'E2E upsert product',
+        p_unit_price: 50,
         p_custom_image_url: null,
-        p_selling_price: 50,
+        p_custom_image_public_id: null,
       }
     );
 
@@ -413,7 +429,8 @@ test.describe('Cart Item UPSERT', () => {
   });
 
   test('should handle concurrent cart item additions', async () => {
-    const testCartId = 'test-cart-concurrent-' + Date.now();
+    const testCartId = generateTestId();
+    createdCartIds.push(testCartId);
     const testProductId = generateTestId();
     const testVariantId = generateTestId();
 
@@ -430,24 +447,30 @@ test.describe('Cart Item UPSERT', () => {
         p_product_id: testProductId,
         p_variant_id: testVariantId,
         p_quantity: 1,
+        p_product_name: 'E2E upsert product',
+        p_unit_price: 50,
         p_custom_image_url: null,
-        p_selling_price: 50,
+        p_custom_image_public_id: null,
       }),
       supabaseAdmin.rpc('upsert_cart_item', {
         p_cart_id: testCartId,
         p_product_id: testProductId,
         p_variant_id: testVariantId,
         p_quantity: 1,
+        p_product_name: 'E2E upsert product',
+        p_unit_price: 50,
         p_custom_image_url: null,
-        p_selling_price: 50,
+        p_custom_image_public_id: null,
       }),
       supabaseAdmin.rpc('upsert_cart_item', {
         p_cart_id: testCartId,
         p_product_id: testProductId,
         p_variant_id: testVariantId,
         p_quantity: 1,
+        p_product_name: 'E2E upsert product',
+        p_unit_price: 50,
         p_custom_image_url: null,
-        p_selling_price: 50,
+        p_custom_image_public_id: null,
       }),
     ]);
 

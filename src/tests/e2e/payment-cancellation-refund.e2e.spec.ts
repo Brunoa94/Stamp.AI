@@ -168,6 +168,10 @@ test.describe('Cancellation refund flow', () => {
       p_refund_id: refundId,
       p_reason: 'customer_request',
       p_payment_provider: 'stripe',
+      // Pass the optional args explicitly, as process-refund does; otherwise a
+      // database still carrying the legacy 4-arg overload cannot resolve the call.
+      p_amount: 30,
+      p_currency: 'usd',
     });
 
     expect(error, error?.message).toBeNull();
@@ -201,6 +205,8 @@ test.describe('Cancellation refund flow', () => {
       p_refund_id: `re_test_${stamp()}`,
       p_reason: 'customer_request',
       p_payment_provider: 'stripe',
+      p_amount: 30,
+      p_currency: 'usd',
     });
 
     expect(error, error?.message).toBeNull();
