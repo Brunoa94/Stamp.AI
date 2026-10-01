@@ -19,10 +19,12 @@ test.describe('Order Creation E2E', () => {
     supabase = createClient(supabaseUrl, supabaseAnonKey);
 
     // Sign in
-    const { data: authData, error } = await supabase.auth.signInWithPassword({
-      email: 'bruno.afonso94@hotmail.com',
-      password: 'Bruno-afonso94',
-    });
+    const email = process.env.TEST_USER_EMAIL;
+    const password = process.env.TEST_USER_PASSWORD;
+    if (!email || !password) {
+      throw new Error('TEST_USER_EMAIL and TEST_USER_PASSWORD must be set');
+    }
+    const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) throw error;
     testUserId = authData.user!.id;
