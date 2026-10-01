@@ -29,6 +29,7 @@ export class StripeService {
             amount: payload.amount,
             credits: payload.credits,
             currency: payload.currency || "eur",
+            test_mode: payload.testMode === true,
           },
           headers,
         }

@@ -48,9 +48,11 @@ TEST_USER_EMAIL=test@example.com
 TEST_USER_PASSWORD=your_test_password
 
 # Payment Provider Test Credentials
-# Stripe (use test mode keys)
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-STRIPE_SECRET_KEY=sk_test_...
+# Stripe: the checkout test toggle and E2E flows send `test_mode: true`,
+# which makes the edge functions use the *_TEST_* credential set.
+NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLE_KEY=pk_test_...
+STRIPE_TEST_SECRET_KEY=sk_test_...
+STRIPE_TEST_WEBHOOK_SECRET=whsec_...
 
 # PayPal (sandbox credentials)
 NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_sandbox_client_id
@@ -107,7 +109,13 @@ Or use the Supabase dashboard to create a test user.
 
 #### Stripe
 1. Get test API keys from https://dashboard.stripe.com/test/apikeys
-2. Use test card: `4242 4242 4242 4242`
+2. Set them as `STRIPE_TEST_SECRET_KEY` / `NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLE_KEY`
+   (edge function secrets via `supabase secrets set`, Next.js via `.env.test.local`)
+3. In the Stripe **test** dashboard, register the webhook endpoint
+   `https://<test-project>.supabase.co/functions/v1/stripe-webhook?mode=test`
+   and store its signing secret as `STRIPE_TEST_WEBHOOK_SECRET`.
+   The live dashboard keeps the same URL without `?mode=test`.
+4. Use test card: `4242 4242 4242 4242`
 
 #### PayPal
 1. Create a sandbox account at https://developer.paypal.com/

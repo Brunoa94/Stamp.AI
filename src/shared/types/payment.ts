@@ -108,6 +108,8 @@ export interface CreateCreditPaymentPayloadI {
   amount: number;
   credits: number;
   currency?: string;
+  /** Use Stripe Test Mode credentials on the server */
+  testMode?: boolean;
 }
 
 /**
@@ -129,6 +131,8 @@ export interface CreatePaymentIntentPayloadI {
   metadata?: Record<string, unknown>;
   payment_method?: string;
   confirm?: boolean;
+  /** Use Stripe Test Mode credentials on the server */
+  test_mode?: boolean;
 }
 
 /**
