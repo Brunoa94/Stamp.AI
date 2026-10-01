@@ -111,11 +111,13 @@ Or use the Supabase dashboard to create a test user.
 1. Get test API keys from https://dashboard.stripe.com/test/apikeys
 2. Set them as `STRIPE_TEST_SECRET_KEY` / `NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLE_KEY`
    (edge function secrets via `supabase secrets set`, Next.js via `.env.test.local`)
-3. In the Stripe **test** dashboard, register the webhook endpoint
+3. Deploy the edge functions to the test project with `npm run supabase:deploy:test`
+   and set the secrets there: `supabase secrets set --project-ref tgccxydchvujhrqyzqao STRIPE_TEST_SECRET_KEY=... STRIPE_TEST_WEBHOOK_SECRET=...`
+4. In the Stripe **test** dashboard, register the webhook endpoint
    `https://<test-project>.supabase.co/functions/v1/stripe-webhook?mode=test`
    and store its signing secret as `STRIPE_TEST_WEBHOOK_SECRET`.
    The live dashboard keeps the same URL without `?mode=test`.
-4. Use test card: `4242 4242 4242 4242`
+5. Use test card: `4242 4242 4242 4242`
 
 #### PayPal
 1. Create a sandbox account at https://developer.paypal.com/
