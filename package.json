@@ -23,7 +23,14 @@
     "supabase:check": "cd supabase && deno check functions/**/*.ts",
     "supabase:deploy": "supabase functions deploy",
     "supabase:deploy:function": "supabase functions deploy",
-    "supabase:migrate": "supabase db push"
+    "supabase:migrate": "supabase db push",
+    "test:acceptance": "node scripts/acceptance/run.mjs",
+    "test:acceptance:preflight": "node scripts/acceptance/preflight.mjs",
+    "test:acceptance:contracts": "node --test tests/acceptance/contracts/*.test.mjs",
+    "test:acceptance:cleanup": "node scripts/acceptance/cleanup.mjs",
+    "test:acceptance:list": "playwright test --config=playwright.acceptance.config.mjs --list",
+    "test:acceptance:unit": "vitest run src/shared/services/acceptanceImageMock.test.ts src/tests/acceptance-test-environment.test.ts src/features/stamp/lib/services/generatedImagesStorage.acceptance.test.ts",
+    "test:acceptance:coverage": "node scripts/acceptance/coverage.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.18.0",
@@ -71,8 +78,10 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
+    "imapflow": "^2.1.2",
     "jsdom": "^29.0.2",
     "knip": "^6.27.0",
+    "mailparser": "^3.9.31",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.3"

@@ -17,11 +17,13 @@ import type { GeneratedResultType } from "../types/stampFlowTypes";
  * Hook for skipping AI generation when user has no coins.
  * Allows two skip scenarios with priority:
  *
- * Priority 1 (highest): Use the uploaded image directly → step 5 (product selection)
+ * Priority 1 (highest): Use the uploaded image directly → step 4 (results)
  * Priority 2: Use previously cached images from localStorage (24h TTL) → step 4 (results)
  *
- * This priority ensures users can always proceed with their freshly uploaded image,
- * even if they have previously generated images cached.
+ * Both scenarios navigate to step 4 (results) so users can see their design
+ * before proceeding to product selection. This priority ensures users can
+ * always proceed with their freshly uploaded image, even if they have
+ * previously generated images cached.
  */
 export function useSkipGeneration() {
   const { uploadedImageUrl } = useStampUpload();
@@ -71,10 +73,10 @@ export function useSkipGeneration() {
       setSelectedImageUrl(uploadedImageUrl);
       setEnhancedPrompt(placeholderResult.enhancedPrompt);
 
-      // Navigate directly to product selection (step 5)
+      // Navigate to results section (step 4) to show the uploaded design
       // Steps: 0=hero, 1=upload, 2=synthesis, 3=generation, 4=results, 5=product-selection
       // Use setCurrentStep directly to bypass accessibility checks (we just set the data)
-      setCurrentStep(5);
+      setCurrentStep(4);
 
       logStampInfo({
         scope: "useSkipGeneration",

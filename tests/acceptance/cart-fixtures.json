@@ -1,0 +1,5 @@
+[
+  { "product_name": "Acceptance A", "product_id": "6aad1e880e82f615b1067d11", "variant_id": "109391", "unit_price": 1999, "quantity": 2 },
+  { "product_name": "Acceptance B", "product_id": "6ab4348b866b2286a104179f", "variant_id": "41629", "unit_price": 2501, "quantity": 1 },
+  { "product_name": "Acceptance C", "product_id": "6ab438b166034728170590f6", "variant_id": "62327", "unit_price": 1200, "quantity": 1 }
+]

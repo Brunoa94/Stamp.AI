@@ -35,16 +35,23 @@ export function useCart() {
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(
     new Set(),
   );
+  // Track if initial selection has been applied (prevents re-selecting after deselect all)
+  const [hasInitializedSelection, setHasInitializedSelection] = useState(false);
 
   // Memoize all cart item IDs to avoid repeated mapping
   const allCartItemIds = cart?.cart_items?.map((item) => item.id) ?? [];
 
   // Auto-select all items when cart loads for the first time
   useEffect(() => {
-    if (allCartItemIds.length > 0 && selectedItemIds.size === 0) {
+    if (
+      allCartItemIds.length > 0 &&
+      selectedItemIds.size === 0 &&
+      !hasInitializedSelection
+    ) {
       setSelectedItemIds(new Set(allCartItemIds));
+      setHasInitializedSelection(true);
     }
-  }, [allCartItemIds]);
+  }, [allCartItemIds, hasInitializedSelection]);
 
   // Clean up selection when items are removed from cart
   useEffect(() => {

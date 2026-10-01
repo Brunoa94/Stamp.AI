@@ -1,0 +1,52 @@
+# Copy missing entries to ignored .env.test; never copy production values.
+NEXT_PUBLIC_SUPABASE_URL=https://tgccxydchvujhrqyzqao.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+TEST_USER_EMAIL=test@sandcastle.dev
+TEST_USER_PASSWORD=
+TEST_USER_ID=a1b2c3d4-e5f6-7890-abcd-ef1234567890
+
+# Server-only provider token. Do not put this token in a NEXT_PUBLIC variable.
+PRINTIFY_API_TOKEN=
+PRINTIFY_SHOP_ID=25847763
+# Set only after verifying shop approval is manual and no production auto-submit.
+TEST_PRINTIFY_MANUAL_APPROVAL=
+TEST_PRINTIFY_PRODUCT_ID=
+TEST_PRINTIFY_VARIANT_ID=
+TEST_PRODUCT_NAME=
+TEST_SOCK_PRODUCT_NAME=
+TEST_MUG_PRODUCT_NAME=
+TEST_CART_FIXTURES_PATH=.acceptance/cart-fixtures.json
+# Set to the exact test Supabase URL after checking deployed Edge secrets/config.
+TEST_EDGE_ENVIRONMENT_VERIFIED=
+
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+PAYPAL_MODE=sandbox
+PAYPAL_CLIENT_ID=
+PAYPAL_CLIENT_SECRET=
+NEXT_PUBLIC_PAYPAL_CLIENT_ID=
+PAYPAL_WEBHOOK_ID=
+PAYPAL_TEST_EMAIL=
+PAYPAL_TEST_PASSWORD=
+MOLLIE_API_KEY=
+
+# Dedicated GA4 test property only; measurement ID and numeric property ID differ.
+NEXT_PUBLIC_GA_MEASUREMENT_ID=
+TEST_GA_PROPERTY_CONFIRMED=
+TEST_GA_PROPERTY_ID=
+TEST_GA_READ_ACCESS_TOKEN=
+
+# Real email delivery and a controlled inbox; {id} is replaced with a run UUID.
+BREVO_API_KEY=
+TEST_EMAIL_TEMPLATE=
+TEST_IMAP_HOST=
+TEST_IMAP_PORT=993
+TEST_IMAP_USER=
+TEST_IMAP_PASSWORD=
+TEST_IMAP_FOLDER=INBOX
+TEST_GOOGLE_EMAIL=
+TEST_GOOGLE_PASSWORD=
+
+# No AI credentials. The runner enables the deterministic server adapter.

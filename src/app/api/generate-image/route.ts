@@ -45,88 +45,92 @@ export async function POST(request: NextRequest) {
     const removeBackgroundStr = formData.get("removeBackground") as string;
     const removeBackground = removeBackgroundStr !== "false";
 
-    if (!prompt) {
+    // Validate prompt: must exist, not be whitespace-only, and be within length limits
+    const MAX_PROMPT_LENGTH = 500;
+    if (!prompt || prompt.trim().length === 0) {
       return NextResponse.json(
-        { error: "Prompt is required" },
+        { error: "Prompt is required and cannot be empty" },
         { status: 400 },
       );
     }
 
-    if (!image) {
+    if (prompt.length > MAX_PROMPT_LENGTH) {
       return NextResponse.json(
-        { error: "Image is required" },
+        { error: `Prompt exceeds maximum length of ${MAX_PROMPT_LENGTH} characters` },
         { status: 400 },
       );
     }
 
-    // ── Read image data ────────────────────────────────────────────────────────
-    console.log("Image info:", {
-      name: image.name,
-      type: image.type,
-      size: image.size,
-    });
+    // ── Read image data (optional - prompt-only generation is supported) ────────
+    let imageBuffer: ArrayBuffer | null = null;
+    let mimeType: string | null = null;
 
-    if (image.size === 0) {
-      return NextResponse.json(
-        { error: "Image file is empty" },
-        { status: 400 },
-      );
-    }
+    if (image && image.size > 0) {
+      console.log("Image info:", {
+        name: image.name,
+        type: image.type,
+        size: image.size,
+      });
 
-    // Read the image bytes
-    const imageBuffer = await image.arrayBuffer();
+      // Read the image bytes
+      imageBuffer = await image.arrayBuffer();
 
-    console.log("Image buffer size:", imageBuffer.byteLength);
+      console.log("Image buffer size:", imageBuffer.byteLength);
 
-    if (imageBuffer.byteLength === 0) {
-      return NextResponse.json(
-        { error: "Failed to read image data" },
-        { status: 400 },
-      );
-    }
-
-    // ── Determine correct MIME type ────────────────────────────────────────────
-    let mimeType = image.type;
-
-    // If MIME type is missing or generic, detect from file signature (magic bytes)
-    if (!mimeType || mimeType === "application/octet-stream") {
-      const uint8Array = new Uint8Array(imageBuffer).slice(0, 12);
-
-      if (
-        uint8Array[0] === 0xFF && uint8Array[1] === 0xD8 &&
-        uint8Array[2] === 0xFF
-      ) {
-        mimeType = "image/jpeg";
-      } else if (
-        uint8Array[0] === 0x89 && uint8Array[1] === 0x50 &&
-        uint8Array[2] === 0x4E && uint8Array[3] === 0x47
-      ) {
-        mimeType = "image/png";
-      } else if (
-        uint8Array[0] === 0x47 && uint8Array[1] === 0x49 &&
-        uint8Array[2] === 0x46
-      ) {
-        mimeType = "image/gif";
-      } else if (
-        uint8Array[0] === 0x52 && uint8Array[1] === 0x49 &&
-        uint8Array[2] === 0x46 && uint8Array[3] === 0x46 &&
-        uint8Array[8] === 0x57 && uint8Array[9] === 0x45 &&
-        uint8Array[10] === 0x42 && uint8Array[11] === 0x50
-      ) {
-        mimeType = "image/webp";
-      } else {
-        // Default to JPEG if we can't detect
-        mimeType = "image/jpeg";
+      if (imageBuffer.byteLength === 0) {
+        return NextResponse.json(
+          { error: "Failed to read image data" },
+          { status: 400 },
+        );
       }
-      console.log(`Detected MIME type from magic bytes: ${mimeType}`);
+
+      // Determine correct MIME type
+      mimeType = image.type;
+
+      // If MIME type is missing or generic, detect from file signature (magic bytes)
+      if (!mimeType || mimeType === "application/octet-stream") {
+        const uint8Array = new Uint8Array(imageBuffer).slice(0, 12);
+
+        if (
+          uint8Array[0] === 0xFF && uint8Array[1] === 0xD8 &&
+          uint8Array[2] === 0xFF
+        ) {
+          mimeType = "image/jpeg";
+        } else if (
+          uint8Array[0] === 0x89 && uint8Array[1] === 0x50 &&
+          uint8Array[2] === 0x4E && uint8Array[3] === 0x47
+        ) {
+          mimeType = "image/png";
+        } else if (
+          uint8Array[0] === 0x47 && uint8Array[1] === 0x49 &&
+          uint8Array[2] === 0x46
+        ) {
+          mimeType = "image/gif";
+        } else if (
+          uint8Array[0] === 0x52 && uint8Array[1] === 0x49 &&
+          uint8Array[2] === 0x46 && uint8Array[3] === 0x46 &&
+          uint8Array[8] === 0x57 && uint8Array[9] === 0x45 &&
+          uint8Array[10] === 0x42 && uint8Array[11] === 0x50
+        ) {
+          mimeType = "image/webp";
+        } else {
+          // Default to JPEG if we can't detect
+          mimeType = "image/jpeg";
+        }
+        console.log(`Detected MIME type from magic bytes: ${mimeType}`);
+      }
     }
 
     // ── Generate image using OpenAI (GPT-4o + GPT Image 1) ──────────────────────
+    const hasReferenceImage = imageBuffer !== null && mimeType !== null;
     console.log("Generating image with OpenAI");
     console.log("Original prompt:", prompt);
     console.log("Preservation level:", preservation);
     console.log("Remove background:", removeBackground);
-    console.log("Image file:", image.name, "MIME type:", mimeType);
+    console.log("Has reference image:", hasReferenceImage);
+    if (hasReferenceImage && image) {
+      console.log("Image file:", image.name, "MIME type:", mimeType);
+    }
 
     // ── Coin deduction (server-side, before any paid work) ─────────────────────
     // deduct_coin runs as the caller: the RPC only allows a user to deduct
@@ -155,13 +159,22 @@ export async function POST(request: NextRequest) {
 
     let result: Awaited<ReturnType<typeof OpenAIImageService.generateImage>>;
     try {
-      result = await OpenAIImageService.generateImage(
-        imageBuffer,
-        mimeType,
-        prompt,
-        preservation,
-        removeBackground,
-      );
+      if (hasReferenceImage) {
+        // Generate with reference image (uses vision + image generation)
+        result = await OpenAIImageService.generateImage(
+          imageBuffer!,
+          mimeType!,
+          prompt,
+          preservation,
+          removeBackground,
+        );
+      } else {
+        // Generate from prompt only (direct image generation)
+        result = await OpenAIImageService.generateFromPrompt(
+          prompt,
+          removeBackground,
+        );
+      }
     } catch (generationError) {
       // The user paid for nothing: give the coin back (service role only).
       await refundCoin(user.id);

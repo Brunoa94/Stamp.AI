@@ -672,6 +672,7 @@
       },
       "upload": {
         "invalidType": "Invalid file type. Please upload JPG, PNG, or GIF only.",
+        "invalidImage": "This file could not be read as an image. Please upload a valid image file.",
         "tooLarge": "File too large. Maximum size is 10MB.",
         "readFailed": "Failed to read file",
         "uploadFailed": "Upload failed",

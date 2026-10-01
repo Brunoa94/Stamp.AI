@@ -1,0 +1,5 @@
+[
+  { "product_name": "Acceptance A", "product_id": "REPLACE_WITH_REAL_TEST_SHOP_PRODUCT_A", "variant_id": "REPLACE_WITH_ENABLED_VARIANT", "unit_price": 1999, "quantity": 2 },
+  { "product_name": "Acceptance B", "product_id": "REPLACE_WITH_REAL_TEST_SHOP_PRODUCT_B", "variant_id": "REPLACE_WITH_ENABLED_VARIANT", "unit_price": 2501, "quantity": 1 },
+  { "product_name": "Acceptance C", "product_id": "REPLACE_WITH_REAL_TEST_SHOP_PRODUCT_C", "variant_id": "REPLACE_WITH_ENABLED_VARIANT", "unit_price": 1200, "quantity": 1 }
+]

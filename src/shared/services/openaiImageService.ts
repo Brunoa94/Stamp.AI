@@ -1,3 +1,4 @@
+import { acceptanceImageMock } from "./acceptanceImageMock";
 import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
@@ -93,6 +94,9 @@ export class OpenAIImageService {
     preservation: number = 50,
     removeBackground: boolean = true,
   ): Promise<OpenAIImageGenerationResult> {
+    const acceptanceResult = await acceptanceImageMock(prompt);
+    if (acceptanceResult) return acceptanceResult;
+
     // Use mock image for local development
     if (USE_MOCK_IMAGE) {
       return this.generateMockImage(prompt, removeBackground);
@@ -147,6 +151,81 @@ Output ONLY the prompt text, no explanations.`,
     }
 
     // Step 2: Generate image using GPT Image 1 Mini (lowest cost) with optional transparency
+    const imageResponse = await client.images.generate({
+      model: "gpt-image-1-mini",
+      prompt: enhancedPrompt,
+      size: "1024x1024",
+      quality: "low",
+      n: 1,
+      ...(removeBackground
+        ? {
+            background: "transparent",
+            output_format: "png",
+          }
+        : {
+            output_format: "png",
+          }),
+    } as Parameters<typeof client.images.generate>[0]);
+
+    // Handle potential streaming response
+    if (!("data" in imageResponse) || !imageResponse.data) {
+      throw new Error("Unexpected response format from OpenAI");
+    }
+
+    const generatedImageData = imageResponse.data[0];
+
+    if (!generatedImageData) {
+      throw new Error("Failed to generate image");
+    }
+
+    // GPT Image models return base64 data in b64_json
+    let imageUrl: string;
+    if ("b64_json" in generatedImageData && generatedImageData.b64_json) {
+      imageUrl = `data:image/png;base64,${generatedImageData.b64_json}`;
+    } else if ("url" in generatedImageData && generatedImageData.url) {
+      // Fallback for URL response (fetch and convert to base64)
+      const response = await fetch(generatedImageData.url);
+      const buffer = await response.arrayBuffer();
+      const base64 = Buffer.from(buffer).toString("base64");
+      imageUrl = `data:image/png;base64,${base64}`;
+    } else {
+      throw new Error("No image data found in OpenAI response");
+    }
+
+    return { imageUrl, enhancedPrompt };
+  }
+
+  /**
+   * Generate an image from a text prompt only (no reference image)
+   * Uses direct image generation without the vision analysis step.
+   * @param prompt - The user's prompt for image generation
+   * @param removeBackground - Whether to generate with transparent background
+   */
+  static async generateFromPrompt(
+    prompt: string,
+    removeBackground: boolean = true,
+  ): Promise<OpenAIImageGenerationResult> {
+    const acceptanceResult = await acceptanceImageMock(prompt);
+    if (acceptanceResult) return acceptanceResult;
+
+    // Use mock image for local development
+    if (USE_MOCK_IMAGE) {
+      return this.generateMockImage(prompt, removeBackground);
+    }
+
+    const client = this.getClient();
+    const backgroundInstruction = this.getBackgroundInstruction(removeBackground);
+
+    // Build a merchandise-optimized prompt
+    const enhancedPrompt = `Create a merchandise design based on: "${prompt}".
+
+Requirements:
+- Center the subject with balanced spacing (70-80% of canvas)
+- Use bold, high-contrast colors that work on fabric
+- Clean edges, well-defined shapes
+- ${backgroundInstruction}`;
+
+    // Generate image using GPT Image 1 Mini (lowest cost) with optional transparency
     const imageResponse = await client.images.generate({
       model: "gpt-image-1-mini",
       prompt: enhancedPrompt,
