@@ -21,6 +21,15 @@ Tests the full application flow:
    - Mollie (test mode)
 9. **Order Confirmation** - Verify order created successfully
 
+### Stripe Test-Mode Flag
+**File**: [stripe-test-mode.e2e.spec.ts](./stripe-test-mode.e2e.spec.ts)
+
+Seeds a cart, checks out with the test toggle on, and verifies the `test_mode`
+flag reaches `create-payment-intent`, the payment row records `stripe_mode: test`,
+and the Stripe webhook marks the payment succeeded and the order paid.
+Run against the test project: `NODE_ENV=test npx playwright test src/tests/e2e/stripe-test-mode.e2e.spec.ts`
+(add `--no-deps` to reuse the saved login; the login route allows 3 logins per hour per email).
+
 ### Data Integrity Tests
 **File**: [data-integrity.e2e.spec.ts](./data-integrity.e2e.spec.ts)
 
@@ -48,9 +57,11 @@ TEST_USER_EMAIL=test@example.com
 TEST_USER_PASSWORD=your_test_password
 
 # Payment Provider Test Credentials
-# Stripe (use test mode keys)
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-STRIPE_SECRET_KEY=sk_test_...
+# Stripe: the checkout test toggle and E2E flows send `test_mode: true`,
+# which makes the edge functions use the *_TEST_* credential set.
+NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLE_KEY=pk_test_...
+STRIPE_TEST_SECRET_KEY=sk_test_...
+STRIPE_TEST_WEBHOOK_SECRET=whsec_...
 
 # PayPal (sandbox credentials)
 NEXT_PUBLIC_PAYPAL_CLIENT_ID=your_sandbox_client_id
@@ -107,7 +118,15 @@ Or use the Supabase dashboard to create a test user.
 
 #### Stripe
 1. Get test API keys from https://dashboard.stripe.com/test/apikeys
-2. Use test card: `4242 4242 4242 4242`
+2. Set them as `STRIPE_TEST_SECRET_KEY` / `NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLE_KEY`
+   (edge function secrets via `supabase secrets set`, Next.js via `.env.test.local`)
+3. Deploy the edge functions to the test project with `npm run supabase:deploy:test`
+   and set the secrets there: `supabase secrets set --project-ref tgccxydchvujhrqyzqao STRIPE_TEST_SECRET_KEY=... STRIPE_TEST_WEBHOOK_SECRET=...`
+4. In the Stripe **test** dashboard, register the webhook endpoint
+   `https://<test-project>.supabase.co/functions/v1/stripe-webhook?mode=test`
+   and store its signing secret as `STRIPE_TEST_WEBHOOK_SECRET`.
+   The live dashboard keeps the same URL without `?mode=test`.
+5. Use test card: `4242 4242 4242 4242`
 
 #### PayPal
 1. Create a sandbox account at https://developer.paypal.com/

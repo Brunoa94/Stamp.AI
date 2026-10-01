@@ -1,7 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
 import { handleError, ErrorCodes } from "../_shared/errors.ts";
-import { validateEnvVars } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { paypalRequest } from "../_shared/paypal.ts";
 import { mollieRequest } from "../_shared/mollie.ts";
@@ -9,6 +7,7 @@ import { requireUser } from "../_shared/authGuard.ts";
 import { FunctionError } from "../_shared/errors.ts";
 import { authorizeRefund, type RefundRequest, type RefundOrder, type RefundPayment } from "./authorization.ts";
 import { verifyPaidPayment } from "../_shared/verifyPaidPayment.ts";
+import { createStripeClient, resolveStripeModeForPaymentIntent } from "../_shared/stripeConfig.ts";
 import { requirePaymentCurrency } from "../_shared/paymentProof.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
 
@@ -33,11 +32,9 @@ async function refundStripe(
   amount?: number,
   reason?: string
 ): Promise<string> {
-  const stripeSecretKey = validateEnvVars.stripeSecretKey();
-  const stripe = new Stripe(stripeSecretKey, {
-    apiVersion: "2024-06-20",
-    httpClient: Stripe.createFetchHttpClient(),
-  });
+  // Refund with the same credential set the payment was created under.
+  const stripeMode = await resolveStripeModeForPaymentIntent(stripePaymentIntentId);
+  const stripe = createStripeClient(stripeMode, "2024-06-20");
 
   const refundParams: Record<string, unknown> = {
     payment_intent: stripePaymentIntentId,

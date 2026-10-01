@@ -73,6 +73,9 @@ export const ErrorCodes = {
 
   // Webhook errors
   STRIPE_WEBHOOK_SECRET_MISSING: () => new FunctionError(500, 'STRIPE_WEBHOOK_SECRET_MISSING', 'Missing STRIPE_WEBHOOK_SECRET'),
+  STRIPE_TEST_SECRET_KEY_MISSING: () => new FunctionError(400, 'STRIPE_TEST_SECRET_KEY_MISSING', 'Stripe test mode requested but STRIPE_TEST_SECRET_KEY is not configured'),
+  STRIPE_TEST_WEBHOOK_SECRET_MISSING: () => new FunctionError(400, 'STRIPE_TEST_WEBHOOK_SECRET_MISSING', 'Stripe test mode requested but STRIPE_TEST_WEBHOOK_SECRET is not configured'),
+  STRIPE_MODE_MISMATCH: (mode: string, livemode: boolean) => new FunctionError(400, 'STRIPE_MODE_MISMATCH', `Webhook endpoint mode "${mode}" does not match event livemode=${livemode}`),
   WEBHOOK_SIGNATURE_MISSING: () => new FunctionError(400, 'WEBHOOK_SIGNATURE_MISSING', 'Missing Stripe signature header'),
   WEBHOOK_SIGNATURE_INVALID: (details: string) => new FunctionError(400, 'WEBHOOK_SIGNATURE_INVALID', `Invalid webhook signature: ${details}`),
   SUPABASE_URL_MISSING: () => new FunctionError(500, 'SUPABASE_URL_MISSING', 'Missing SUPABASE_URL'),
