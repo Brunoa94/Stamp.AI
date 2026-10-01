@@ -10,6 +10,7 @@ import {
   assertStripeLivemode,
   getStripeSecretKey,
   getStripeWebhookSecret,
+  isStripeTestKey,
   resolveStripeMode,
   resolveStripeModeForPaymentIntent,
   stripeModeFromMetadata,
@@ -69,11 +70,18 @@ describe("Stripe mode selection", () => {
     expect(() => getStripeWebhookSecret("test")).toThrow(/STRIPE_TEST_WEBHOOK_SECRET/);
   });
 
-  it("rejects events whose livemode does not match the endpoint mode", () => {
-    expect(() => assertStripeLivemode("live", true)).not.toThrow();
-    expect(() => assertStripeLivemode("test", false)).not.toThrow();
-    expect(() => assertStripeLivemode("live", false)).toThrow(/mode/);
-    expect(() => assertStripeLivemode("test", true)).toThrow(/mode/);
+  it("rejects events whose livemode does not match the key type", () => {
+    expect(() => assertStripeLivemode("sk_live_abc", true)).not.toThrow();
+    expect(() => assertStripeLivemode("sk_test_abc", false)).not.toThrow();
+    expect(() => assertStripeLivemode("rk_test_abc", false)).not.toThrow();
+    expect(() => assertStripeLivemode("sk_live_abc", false)).toThrow(/mode/);
+    expect(() => assertStripeLivemode("sk_test_abc", true)).toThrow(/mode/);
+  });
+
+  it("identifies test keys by prefix", () => {
+    expect(isStripeTestKey("sk_test_abc")).toBe(true);
+    expect(isStripeTestKey("rk_test_abc")).toBe(true);
+    expect(isStripeTestKey("sk_live_abc")).toBe(false);
   });
 
   it("resolves a stored payment's mode from its payment_transactions row", async () => {

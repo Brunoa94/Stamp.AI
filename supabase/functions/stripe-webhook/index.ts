@@ -6,6 +6,7 @@ import { validateRequest } from "../_shared/validators.ts"
 import {
   assertStripeLivemode,
   createStripeClient,
+  getStripeSecretKey,
   getStripeWebhookSecret,
   stripeModeFromUrl,
 } from "../_shared/stripeConfig.ts"
@@ -153,6 +154,7 @@ serve(async (req) => {
     // Validate webhook signature and environment variables
     const validSignature = validateRequest.webhookSignature(signature)
     const webhookSecret = getStripeWebhookSecret(stripeMode)
+    const stripeSecretKey = getStripeSecretKey(stripeMode)
     const stripe = createStripeClient(stripeMode, '2023-10-16')
 
     let event
@@ -168,8 +170,8 @@ serve(async (req) => {
       throw ErrorCodes.WEBHOOK_SIGNATURE_INVALID(stripeError.message)
     }
 
-    // A test event must never be processed by the live endpoint (or vice versa).
-    assertStripeLivemode(stripeMode, event.livemode)
+    // A test event must never be processed with a live key (or vice versa).
+    assertStripeLivemode(stripeSecretKey, event.livemode)
 
     console.log('Webhook event type:', event.type)
 
