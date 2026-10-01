@@ -2,7 +2,13 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { delay } from 'https://deno.land/std@0.168.0/async/delay.ts'
 import Stripe from 'https://esm.sh/stripe@16.12.0?target=deno'
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
-import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
+import { validateRequest } from "../_shared/validators.ts"
+import {
+  assertStripeLivemode,
+  createStripeClient,
+  getStripeWebhookSecret,
+  stripeModeFromUrl,
+} from "../_shared/stripeConfig.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
 import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
@@ -132,24 +138,22 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
-  console.log('Request received')
-  
+  // The endpoint registered in the Stripe TEST dashboard carries `?mode=test`
+  // and is verified with the test signing secret; the live endpoint has no
+  // parameter and uses the live secret. See _shared/stripeConfig.ts.
+  const stripeMode = stripeModeFromUrl(req.url)
+  console.log(`Request received (stripe mode: ${stripeMode})`)
+
   const signature = req.headers.get('stripe-signature')
   const body = await req.text()
-
-  // Validate webhook signature and environment variables
-  const validSignature = validateRequest.webhookSignature(signature)
-  const stripeSecretKey = validateEnvVars.stripeSecretKey()
-
-  const stripe = new Stripe(stripeSecretKey, {
-    apiVersion: '2023-10-16',
-    httpClient: Stripe.createFetchHttpClient(),
-  })
 
   const cryptoProvider = Stripe.createSubtleCryptoProvider()
 
   try {
-    const webhookSecret = validateEnvVars.stripeWebhookSecret()
+    // Validate webhook signature and environment variables
+    const validSignature = validateRequest.webhookSignature(signature)
+    const webhookSecret = getStripeWebhookSecret(stripeMode)
+    const stripe = createStripeClient(stripeMode, '2023-10-16')
 
     let event
     try {
@@ -163,6 +167,9 @@ serve(async (req) => {
     } catch (stripeError: any) {
       throw ErrorCodes.WEBHOOK_SIGNATURE_INVALID(stripeError.message)
     }
+
+    // A test event must never be processed by the live endpoint (or vice versa).
+    assertStripeLivemode(stripeMode, event.livemode)
 
     console.log('Webhook event type:', event.type)
 
