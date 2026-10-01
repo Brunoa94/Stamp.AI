@@ -21,6 +21,15 @@ Tests the full application flow:
    - Mollie (test mode)
 9. **Order Confirmation** - Verify order created successfully
 
+### Stripe Test-Mode Flag
+**File**: [stripe-test-mode.e2e.spec.ts](./stripe-test-mode.e2e.spec.ts)
+
+Seeds a cart, checks out with the test toggle on, and verifies the `test_mode`
+flag reaches `create-payment-intent`, the payment row records `stripe_mode: test`,
+and the Stripe webhook marks the payment succeeded and the order paid.
+Run against the test project: `NODE_ENV=test npx playwright test src/tests/e2e/stripe-test-mode.e2e.spec.ts`
+(add `--no-deps` to reuse the saved login; the login route allows 3 logins per hour per email).
+
 ### Data Integrity Tests
 **File**: [data-integrity.e2e.spec.ts](./data-integrity.e2e.spec.ts)
 
