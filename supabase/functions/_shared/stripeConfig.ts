@@ -68,15 +68,23 @@ export function getStripeWebhookSecret(mode: StripeModeT): string {
   return secret;
 }
 
+/** Stripe test keys are `sk_test_…` / `rk_test_…`; everything else is live. */
+export function isStripeTestKey(secretKey: string): boolean {
+  return /^[sr]k_test_/.test(secretKey);
+}
+
 /**
- * Verified Stripe events carry `livemode`. A mismatch means the event was
- * signed with the right secret but delivered to the wrong endpoint mode,
- * which must never be processed.
+ * Verified Stripe events carry `livemode`. It must agree with the kind of
+ * secret key the selected credential set holds: a test key only ever sees
+ * test events and a live key only live events. Checking the key rather
+ * than the endpoint mode lets a project whose "live" variables hold test
+ * keys (the test Supabase project) keep processing test events on the
+ * plain endpoint, while a production project still rejects test events.
  */
-export function assertStripeLivemode(mode: StripeModeT, livemode: boolean): void {
-  const expectedLivemode = mode === "live";
+export function assertStripeLivemode(secretKey: string, livemode: boolean): void {
+  const expectedLivemode = !isStripeTestKey(secretKey);
   if (livemode !== expectedLivemode) {
-    throw ErrorCodes.STRIPE_MODE_MISMATCH(mode, livemode);
+    throw ErrorCodes.STRIPE_MODE_MISMATCH(expectedLivemode ? "live" : "test", livemode);
   }
 }
 
