@@ -53,8 +53,13 @@ export const test = base.extend({
       const call = /\/rest\/v1\/rpc\/|\/functions\/v1\/|\/api\//.test(url.pathname);
       if (response.status() < 400 && !call) return;
       let body = '';
-      if (response.status() >= 400) { try { body = (await response.text()).slice(0, 2000); } catch { body = '<unreadable>'; } }
-      failures.push(`${response.request().method()} ${url.pathname}${url.search} -> ${response.status()}${body ? `\n${body}` : ''}`);
+      let sent = '';
+      if (response.status() >= 400) {
+        try { body = (await response.text()).slice(0, 2000); } catch { body = '<unreadable>'; }
+        // Redact anything that looks like a secret/token before attaching.
+        sent = (response.request().postData() ?? '').replace(/(sk_(?:test|live)_|whsec_|eyJ)[A-Za-z0-9._-]+/g, '$1<redacted>').slice(0, 2000);
+      }
+      failures.push(`${response.request().method()} ${url.pathname}${url.search} -> ${response.status()}${sent ? `\nrequest: ${sent}` : ''}${body ? `\nresponse: ${body}` : ''}`);
     });
     context.on('console', message => {
       if (['error', 'warning'].includes(message.type()) && !/Failed to load resource|upstream image/.test(message.text())) {

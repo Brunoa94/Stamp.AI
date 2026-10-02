@@ -33,6 +33,16 @@ the Stripe single-item purchase pass; the remaining groups are still being run w
 | PAY-01 | `orders.payment_provider` was never written (return pages passed only `paymentMethod`). | Provider threaded through hook → service → mapper. |
 | PAY-01 / ORDER-01 | Orders created from the cart recorded `shipping_cost 0` and a total excluding the €4.99 the customer paid. | `calculateOrderTotals` applies the cart's shipping rule. |
 
+### PayPal orders rejected for long emails or multi-item carts
+
+- **Symptom**: `create-paypal-order` returned 502 `PAYPAL_API_ERROR` for the acceptance accounts
+  (`acceptance-<uuid>@sandcastle.dev`) while succeeding for `test@sandcastle.dev`.
+- **Cause**: the function serialised `{metadata, user_id, user_email, line_items}` into PayPal's
+  `purchase_units[].custom_id`, which PayPal caps at **255 characters** (verified: 255 ok, 256 rejected).
+  A longer email or a second line item pushes it over, so real customers can hit this too.
+- **Fix**: `custom_id` now carries only `user_id` / `order_id` / `test_mode`; `capture-paypal-order` merges
+  the full context from the `payment_transactions` row stored at order creation.
+
 ## 3. Harness / fixture problems fixed
 
 - Cart fixtures referenced Printify products that no longer exist; regenerated from live shop products.
@@ -63,9 +73,12 @@ the Stripe single-item purchase pass; the remaining groups are still being run w
 2. **Missing credentials** in `.env.test.local` (tests skipped): `MOLLIE_API_KEY` (Mollie purchases),
    `TEST_GA_PROPERTY_ID` + `TEST_GA_READ_ACCESS_TOKEN` (GA-01 ingestion), `BREVO_API_KEY` +
    `TEST_EMAIL_TEMPLATE` + `TEST_IMAP_*` (AUTH-01/03/07), `TEST_GOOGLE_EMAIL/PASSWORD` (AUTH-06).
-3. **Env file values** to update locally: product names above, `TEST_PRINTIFY_PRODUCT_ID=6a9c5a973a288b0c610ede80`,
+3. **PayPal buyer credentials**: `PAYPAL_TEST_PASSWORD` in `.env.test.local` currently contains the
+   same value as `PAYPAL_TEST_EMAIL`; the sandbox buyer's real password is required for PAY-01 PayPal
+   purchases (the harness logs into the PayPal sandbox UI). Until fixed those two tests are skipped.
+4. **Env file values** to update locally: product names above, `TEST_PRINTIFY_PRODUCT_ID=6a9c5a973a288b0c610ede80`,
    `TEST_PRINTIFY_VARIANT_ID=103599`, `STRIPE_WEBHOOK_SECRET` = the test project's endpoint secret.
-4. Deploy edge functions to the test project after merging (`npm run supabase:deploy:test`).
+5. Deploy edge functions to the test project after merging (`npm run supabase:deploy:test`).
 
 ## 5. Other observations
 
