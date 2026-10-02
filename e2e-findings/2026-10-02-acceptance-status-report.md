@@ -78,6 +78,31 @@ Ordered by impact.
 5. Decide the **white-only color policy** is really wanted for totes and notebooks (the scenario document asked for it; the code previously allowed black/natural totes). The change is in the branch; revert that commit if the policy is wrong.
 6. Optional hardening seen along the way: `CREDIT_PRICE_CENTS` (default 10) does not match `CREDIT_PACKAGES` prices (100 credits = €9.99), so credit purchases would be rejected by the server's amount check; the customization step offers apparel sizes when a product has no size options.
 
+## 3b. Moving to another machine (nothing is lost if you carry three things)
+
+Everything that matters is on the remote branch `fix/acceptance-suite-env` (PR #111): code and harness fixes,
+both findings documents, regenerated fixtures, new specs. The test project holds the deployed functions, the
+corrected catalog data and the secrets independently of any machine.
+
+Local-only items to copy over (all gitignored):
+
+1. `.claude/worktrees/acceptance-tests/.env.test.local` — contains the corrected product names, Printify ids,
+   the test webhook secret and `TEST_PERSONAL_TOKEN`. Treat it as a secrets file.
+2. `.claude/worktrees/acceptance-tests/.acceptance/` — ledger of test accounts and Printify orders. Currently
+   fully reconciled (0 active accounts, 0 open orders), so it can be discarded; keep it only for history.
+3. Claude memory notes under `~/.claude/projects/-Users-bruno-afonso-Desktop-Stamp-AI/memory/`
+   (`stamp-acceptance-suite.md`, `stamp-e2e-test-project.md`, `MEMORY.md`) — convenience only; §4 repeats the
+   essential gotchas.
+
+On the new machine: clone, `git checkout fix/acceptance-suite-env`, `npm ci`, `npx playwright install chromium`,
+put `.env.test.local` in the repo root, then follow §4. The saved Playwright login state and the `.next` cache
+rebuild themselves. For deploys pass `SUPABASE_ACCESS_TOKEN="$TEST_PERSONAL_TOKEN"` (the stored CLI login lacks
+write rights on the test project).
+
+Unrelated but local-only: the main checkout on the original machine (`dev`) still holds **uncommitted** fixes from
+the first task of this session — the CAPTCHA bypass fix in the three auth routes and tests, and the
+`Disclosure` import casing fix. Commit or stash them before leaving that machine.
+
 ## 4. Hand-off — next agent
 
 **Where things are**
