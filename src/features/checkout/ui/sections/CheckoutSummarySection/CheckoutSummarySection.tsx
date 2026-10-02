@@ -102,6 +102,9 @@ export function CheckoutSummarySection({
               shippingAddress={paymentShippingAddress}
               billingAddress={billingAddress}
               cartId={cartId}
+              subtotalCents={Math.round(subtotal * 100)}
+              shippingCents={Math.round(shipping * 100)}
+              discountCents={Math.round(discount * 100)}
               testMode={testMode}
               selectedTestMethod={selectedTestMethod}
               disabled={disablePayment}

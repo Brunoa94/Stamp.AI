@@ -29,6 +29,12 @@ interface CheckoutStripeButtonPropsI {
   shippingAddress: ShippingAddressT;
   billingAddress: ShippingAddressT;
   cartId?: string;
+  /** Merchandise subtotal in cents (for analytics). */
+  subtotalCents?: number;
+  /** Shipping in cents (for analytics). */
+  shippingCents?: number;
+  /** Discount in cents (for analytics). */
+  discountCents?: number;
   testMode?: boolean;
   selectedTestMethod?: string;
   disabled?: boolean;
@@ -41,6 +47,9 @@ export function CheckoutStripeButton({
   shippingAddress,
   billingAddress,
   cartId,
+  subtotalCents,
+  shippingCents,
+  discountCents,
   testMode = false,
   selectedTestMethod = "visa",
   disabled = false,
@@ -76,6 +85,9 @@ export function CheckoutStripeButton({
           transactionId: paymentIntent.id,
           lineItems: processedLineItems,
           amount,
+          merchandiseCents: subtotalCents,
+          shippingCents,
+          discountCents,
         }),
       );
 
@@ -85,7 +97,7 @@ export function CheckoutStripeButton({
       });
       router.push(`/checkout/stripe-return?${params.toString()}`);
     },
-    [router, amount, shippingAddress, billingAddress, cartId, cart],
+    [router, amount, shippingAddress, billingAddress, cartId, cart, subtotalCents, shippingCents, discountCents],
   );
 
   const { loading, error, handleSubmit, setSelectedTestMethod } =

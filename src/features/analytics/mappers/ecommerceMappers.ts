@@ -96,21 +96,35 @@ export function mapAddPaymentInfoEvent(params: AddPaymentInfoParams): AnalyticsE
 export interface PurchaseParams {
   transactionId: string;
   lineItems: PrintifyLineItem[];
+  /** Amount charged, in cents (merchandise + shipping - discount). */
   amount: number;
+  /** Merchandise subtotal before shipping, in cents. Defaults to `amount`. */
+  merchandiseCents?: number;
+  /** Shipping charged, in cents. */
+  shippingCents?: number;
+  /** Discount applied, in cents. */
+  discountCents?: number;
   paymentMethod?: string;
 }
 
+/**
+ * GA4 `purchase`: `value` is the merchandise amount after discounts; shipping
+ * is reported in its own parameter (GA4 ecommerce guidance, scenario GA-05).
+ */
 export function mapPurchaseEvent(params: PurchaseParams): AnalyticsEventParamsT {
   const totalQuantity = params.lineItems.reduce(
     (sum, item) => sum + item.quantity,
     0
   );
-  const pricePerItem = totalQuantity > 0 ? (params.amount / 100) / totalQuantity : 0;
+  const merchandiseCents = params.merchandiseCents ?? params.amount;
+  const valueCents = merchandiseCents - (params.discountCents ?? 0);
+  const pricePerItem = totalQuantity > 0 ? (merchandiseCents / 100) / totalQuantity : 0;
 
   return {
     transaction_id: params.transactionId,
     currency: "EUR",
-    value: params.amount / 100,
+    value: Math.round(valueCents) / 100,
+    shipping: Math.round(params.shippingCents ?? 0) / 100,
     payment_method: params.paymentMethod ?? "stripe",
     items: params.lineItems.map((lineItem, index) => ({
       item_id:
