@@ -30,8 +30,17 @@ const BASE_ALLOWED_HEADERS = [
 
 const DEFAULT_METHODS = "POST, OPTIONS";
 
-/** Used when ALLOWED_ORIGINS is unset so local development keeps working. */
-const LOCAL_DEV_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000"];
+/**
+ * Used when ALLOWED_ORIGINS is unset so local development keeps working.
+ * Port 3107 is the dedicated acceptance-suite app server
+ * (scripts/acceptance/server.mjs); production always sets ALLOWED_ORIGINS.
+ */
+const LOCAL_DEV_ORIGINS = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "http://localhost:3107",
+  "http://127.0.0.1:3107",
+];
 
 /**
  * Normalise an origin for comparison: lower-case scheme/host, no trailing
