@@ -9,7 +9,7 @@ export async function observeAnalytics(page, env) {
   page.on('request', request => {
     const url = new URL(request.url());
     if (!/(^|\.)google-analytics\.com$/.test(url.hostname) || !url.pathname.endsWith('/collect')) return;
-    const lines = request.postData()?.split('\n') ?? [''];
+    const lines = request.postData()?.split(/\r?\n/) ?? [''];
     const batch = [];
     requests.set(request, batch);
     for (const line of lines) {

@@ -57,7 +57,8 @@ export function CartContent() {
       hasTrackedViewCart.current = true;
       AnalyticsService.track(
         "view_cart",
-        mapViewCartEvent({ items: cart.cart_items, value: total }),
+        // `total` is in cents; GA4 expects the value in currency units.
+        mapViewCartEvent({ items: cart.cart_items, value: total / 100 }),
       );
     }
   }, [isLoading, cart, total]);
