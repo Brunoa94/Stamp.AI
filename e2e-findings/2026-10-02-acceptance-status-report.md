@@ -35,6 +35,14 @@ Severity order:
 
 CORS default for port 3107; fixtures regenerated from live shop products; CRLF-safe GA payload parsing; hydration-tolerant checkbox helper; fulfillment wait before asserting; Printify page size 50; cancellation waits for `pending`/`cost-calculation` to clear; 90 s client timeout for edge-function calls; 5-minute server start; `api-diagnostics` attachment (API calls, failed request/response bodies, console errors) on every failing test; several spec assertions aligned with the app's conventions (money in cents, `#`-prefixed order numbers, `left_leg`/`right_leg`, printed placeholders only, RPC parameter names).
 
+### Deployments made (test project only)
+
+All edge functions were deployed to the **test** project `tgccxydchvujhrqyzqao` via `npm run supabase:deploy:test`
+after the CORS fix, then individually as fixes landed: `stripe-webhook`, `create-custom-product`,
+`create-paypal-order`, `capture-paypal-order`, `cancel-order` (twice), `create-payment-intent`. The test project
+therefore runs the branch's current function code. **Nothing was deployed to production**
+(`timbqoxngnhoetbofdiq`), and no database migration was applied anywhere (requires `db push` with the DB password).
+
 ### Test-project data corrected (test DB only)
 
 Catalog providers for Ceramic Mug EU (441 → provider 30) and Spun Polyester Pillowcase (229 → 10); blueprints 462/534/558 deactivated (not in Printify); journal retitled "Spiral Journal Notebook EU"; `STRIPE_TEST_*` secrets set; exhausted auth rate-limit rows cleared.
