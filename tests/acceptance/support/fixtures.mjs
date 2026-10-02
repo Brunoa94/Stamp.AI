@@ -42,6 +42,30 @@ export const test = base.extend({
     await provide();
     expect(forbidden, 'No production database or real AI requests').toEqual([]);
   }, { auto: true }],
+  // Failed API calls and console errors are attached to failing tests so a
+  // product failure can be diagnosed from the report alone.
+  apiDiagnostics: [async ({ context }, provide, testInfo) => {
+    const failures = [];
+    context.on('response', async response => {
+      const url = new URL(response.url());
+      const api = url.hostname.endsWith('.supabase.co') || (url.hostname === 'localhost' && url.pathname.startsWith('/api/'));
+      if (!api) return;
+      const call = /\/rest\/v1\/rpc\/|\/functions\/v1\/|\/api\//.test(url.pathname);
+      if (response.status() < 400 && !call) return;
+      let body = '';
+      if (response.status() >= 400) { try { body = (await response.text()).slice(0, 2000); } catch { body = '<unreadable>'; } }
+      failures.push(`${response.request().method()} ${url.pathname}${url.search} -> ${response.status()}${body ? `\n${body}` : ''}`);
+    });
+    context.on('console', message => {
+      if (['error', 'warning'].includes(message.type()) && !/Failed to load resource|upstream image/.test(message.text())) {
+        failures.push(`console.${message.type()}: ${message.text().slice(0, 1500)}`);
+      }
+    });
+    await provide();
+    if (testInfo.status !== testInfo.expectedStatus && failures.length) {
+      await testInfo.attach('api-diagnostics', { body: failures.join('\n\n'), contentType: 'text/plain' });
+    }
+  }, { auto: true }],
   suppliedUser: async ({ context, env }, provide) => {
     const credentials = { email: env.TEST_USER_EMAIL, password: env.TEST_USER_PASSWORD };
     const db = client(env);
