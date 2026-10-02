@@ -47,11 +47,19 @@ export async function setCheckbox(control, checked) {
   // the controlled input, so re-press a few times instead of waiting 15s once.
   // Keep trying for up to ~10s: a cold dev page can take several seconds to
   // hydrate, and every press before that is reverted.
+  // A press before hydration flips the native input momentarily and React then
+  // restores the controlled value, so only accept a state that holds across
+  // two reads 600ms apart.
+  const settled = async () => {
+    if (await control.isChecked() !== checked) return false;
+    await control.page().waitForTimeout(600);
+    return await control.isChecked() === checked;
+  };
   for (let attempt = 0; attempt < 20; attempt++) {
-    if (await control.isChecked() === checked) break;
+    if (await settled()) break;
     await control.focus();
     await control.press('Space');
-    await control.page().waitForTimeout(500);
+    await control.page().waitForTimeout(400);
   }
   await expect(control).toBeChecked({ checked });
 }
