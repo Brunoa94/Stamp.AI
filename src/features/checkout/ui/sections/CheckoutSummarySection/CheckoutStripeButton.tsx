@@ -35,6 +35,8 @@ interface CheckoutStripeButtonPropsI {
   shippingCents?: number;
   /** Discount in cents (for analytics). */
   discountCents?: number;
+  /** Applied promotion code (server re-validates it). */
+  promoCode?: string;
   testMode?: boolean;
   selectedTestMethod?: string;
   disabled?: boolean;
@@ -50,6 +52,7 @@ export function CheckoutStripeButton({
   subtotalCents,
   shippingCents,
   discountCents,
+  promoCode,
   testMode = false,
   selectedTestMethod = "visa",
   disabled = false,
@@ -106,6 +109,7 @@ export function CheckoutStripeButton({
       lineItems,
       shippingAddress,
       testMode,
+      promoCode,
       onSuccess: handleSuccess,
     });
 

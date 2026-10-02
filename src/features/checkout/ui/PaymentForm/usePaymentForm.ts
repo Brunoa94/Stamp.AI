@@ -16,6 +16,8 @@ interface UsePaymentFormProps {
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
   testMode?: boolean;
+  /** Applied promotion code, sent for server-side price verification */
+  promoCode?: string;
   onSuccess?: (paymentIntent: any, lineItems: PrintifyLineItem[]) => void;
   onError?: (error: string) => void;
 }
@@ -38,6 +40,7 @@ export function usePaymentForm({
   lineItems,
   shippingAddress,
   testMode = false,
+  promoCode,
   onSuccess,
   onError,
 }: UsePaymentFormProps) {
@@ -80,6 +83,7 @@ export function usePaymentForm({
         shipping_address: shippingAddress,
         // Selects the Stripe credential set (live vs test) on the server.
         test_mode: isTestMode,
+        ...(promoCode ? { promo_code: promoCode } : {}),
         // Note: order_id is NOT set here because the order doesn't exist yet.
         // The order is created after payment succeeds, then linkPaymentTransactionToOrder
         // sets payment_transactions.order_id which the webhook uses to find the order.

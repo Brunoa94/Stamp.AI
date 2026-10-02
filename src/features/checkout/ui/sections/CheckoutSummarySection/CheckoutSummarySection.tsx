@@ -105,6 +105,7 @@ export function CheckoutSummarySection({
               subtotalCents={Math.round(subtotal * 100)}
               shippingCents={Math.round(shipping * 100)}
               discountCents={Math.round(discount * 100)}
+              promoCode={appliedPromo?.isValid ? watch("promoCode") : undefined}
               testMode={testMode}
               selectedTestMethod={selectedTestMethod}
               disabled={disablePayment}

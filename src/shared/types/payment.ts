@@ -133,6 +133,8 @@ export interface CreatePaymentIntentPayloadI {
   confirm?: boolean;
   /** Use Stripe Test Mode credentials on the server */
   test_mode?: boolean;
+  /** Applied promotion code; the server re-validates it when checking the amount */
+  promo_code?: string;
 }
 
 /**
