@@ -130,3 +130,27 @@ Drop entries from `--grep-invert` as Bruno's actions land. Read failures from `.
 - Login rate limits: the acceptance server raises them via env; if a run was started without it, clear `auth_email_rate_limits` on the test DB.
 - Money: everything in the app is in cents (`formatPrice` divides by 100); edge payment functions take euros.
 - The harness Supabase client times out at 15 s except for `/functions/v1/` calls (90 s).
+
+## 5. Continuation — cloud session (2026-10-02, later)
+
+Picked up on a fresh cloud container (repo root, no worktree). Outcome:
+
+- **Live suite could not run here**: the container's network policy denies `tgccxydchvujhrqyzqao.supabase.co`,
+  `api.printify.com`, `api.stripe.com` and `api-m.sandbox.paypal.com` (proxy answers 403 to CONNECT). Every
+  Playwright spec needs at least the Supabase host, so PAY-09/PAY-10 and the mobile project remain unverified.
+  To run from a cloud session, add those hosts to the environment's allowed domains (Network access → Custom).
+- **Offline checks green**: `test:acceptance:contracts` 20/20, `test:acceptance:unit` 14/14 (after `npm ci`).
+- **`.env.test.local`** was recreated locally (gitignored) from the uploaded copy with the §3.3 corrections
+  applied. The uploaded copy still lacks `MOLLIE_API_KEY`, `TEST_GA_PROPERTY_ID`/`TEST_GA_READ_ACCESS_TOKEN`,
+  `BREVO_API_KEY`/`TEST_EMAIL_TEMPLATE`/`TEST_IMAP_*`, `TEST_GOOGLE_EMAIL/PASSWORD` and `TEST_PERSONAL_TOKEN`,
+  and `PAYPAL_TEST_PASSWORD` still equals the email, so the §3 exclusions all still apply.
+- **PAY-09 made independent of the live-slot webhook secret**: it replayed the Stripe event to the plain
+  `stripe-webhook` endpoint signed with the local `STRIPE_WEBHOOK_SECRET`, which only passes if that value equals
+  the project's live-slot secret (otherwise `WEBHOOK_SIGNATURE_INVALID`). It now replays to
+  `stripe-webhook?mode=test` signed with `STRIPE_TEST_WEBHOOK_SECRET` (set on the test project, §1) and falls back
+  to the old route when that key is absent. Event `livemode=false` matches the `sk_test_` key in either slot, so
+  `assertStripeLivemode` passes.
+- **PAY-10 ×3 reviewed statically against the deployed code**: forged Stripe → 400 `WEBHOOK_SIGNATURE_MISSING`;
+  forged PayPal → 401 (missing transmission headers); forged Mollie `tr_forged` → 200 acknowledgement after the
+  Mollie lookup fails, with no DB write. All satisfy the spec (`!= 404`, `< 500`, order stays pending). Still
+  needs a live run to confirm.
