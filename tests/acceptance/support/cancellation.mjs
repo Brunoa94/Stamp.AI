@@ -3,7 +3,7 @@ import { setTimeout as delay } from 'node:timers/promises';
 const CANCELED = new Set(['canceled', 'cancelled']);
 
 /**
- * Printify keeps a freshly created order in `pending` for a short while and
+ * Printify keeps a freshly created order in `pending` / `cost-calculation` for a short while and
  * rejects cancellation until it reaches `on-hold`. Wait for a cancellable
  * state (bounded) before spending the cancellation budget.
  */
@@ -13,7 +13,7 @@ async function waitUntilCancellable(read, sleep, evidence, maxPolls = 40) {
   let status = 'unverified';
   for (let poll = 0; poll < maxPolls; poll++) {
     try { status = (await read()).status; } catch { status = 'unverified'; }
-    if (status !== 'pending') return status;
+    if (!['pending', 'cost-calculation'].includes(status)) return status;
     await sleep(3000);
   }
   evidence.push({ phase: 'wait', status, note: 'still pending after wait budget' });

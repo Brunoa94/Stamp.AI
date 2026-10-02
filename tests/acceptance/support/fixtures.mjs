@@ -11,7 +11,9 @@ import { PrintifyOrders } from './printify.mjs';
 export function client(env, privileged = false) {
   return createClient(env.NEXT_PUBLIC_SUPABASE_URL, required(env, privileged ? 'SUPABASE_SERVICE_ROLE_KEY' : 'NEXT_PUBLIC_SUPABASE_ANON_KEY'), {
     auth: { persistSession: false, autoRefreshToken: false },
-    global: { fetch: (url, options) => fetch(url, { ...options, signal: AbortSignal.timeout(15000) }) },
+    // Edge functions that cancel/refund wait for Printify to leave its
+    // transitional states (~20s); plain database calls stay on a short leash.
+    global: { fetch: (url, options) => fetch(url, { ...options, signal: AbortSignal.timeout(String(url).includes('/functions/v1/') ? 90000 : 15000) }) },
   });
 }
 export function unwrap(result, operation) {

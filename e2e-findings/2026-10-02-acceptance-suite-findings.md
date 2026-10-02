@@ -30,6 +30,7 @@ the Stripe single-item purchase pass; the remaining groups are still being run w
 | RES-03, AUTH-04, AUTH-02 | Middleware rate limits (auth 5/15 min, image generation 10/min) and the login route's database limits (3/email/h, 10/IP/h) are exhausted by one machine driving the suite. | Limits are env-overridable; the acceptance app server raises them. Production defaults unchanged. |
 | AUTH-05 | The login ↔ register switches ("Create one now" / "Log in") had no accessible name matching "create account" / "login". | Explicit `aria-label`s. |
 | CUSTOM-03 (6 cases) | White-only policy not implemented: mugs/socks/pillows/canvas showed no swatch, totes offered several colors, journals were not recognised as notebooks, "Pillow Case" was detected as a phone case. | Single white swatch for the six categories; longest-keyword category detection; notebook category; server + client color validation allow only white for totes and notebooks. |
+| ORDER-04 | `cancel-order` reported success even when Printify rejected the cancellation (a new Printify order spends ~10 s in `pending` and ~6 s in `cost-calculation` before it can be cancelled); the local order was marked cancelled while production continued. | The function retries with backoff while Printify is in a transitional state, verifies the remote status, and answers 409 `PRINTIFY_CANCELLATION_PENDING` instead of a false success if it still cannot cancel. |
 | PAY-01 | `orders.payment_provider` was never written (return pages passed only `paymentMethod`). | Provider threaded through hook → service → mapper. |
 | PAY-01 / ORDER-01 | Orders created from the cart recorded `shipping_cost 0` and a total excluding the €4.99 the customer paid. | `calculateOrderTotals` applies the cart's shipping rule. |
 
@@ -57,6 +58,7 @@ the Stripe single-item purchase pass; the remaining groups are still being run w
   Printify order to be recorded. Order money columns are asserted in cents (the app convention).
 - Printify order reconciliation paged with `limit=100`, which Printify rejects (max 50); every creation
   intent ended "cleanup failed" and blocked the next run's preflight.
+- Harness Supabase client aborted every request after 15 s, shorter than a verified Printify cancellation; edge-function calls now get 90 s.
 - Printify keeps a new order in `pending` for a short period and rejects cancellation until it is `on-hold`;
   the cancel helper retried four times within seconds and reported otherwise-green purchases as failed in
   teardown (the shipping address, Damrak 1 / Amsterdam / 1012LG / NL, was valid). It now waits for a
