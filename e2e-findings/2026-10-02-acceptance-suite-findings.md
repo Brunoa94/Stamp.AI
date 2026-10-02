@@ -47,6 +47,10 @@ the Stripe single-item purchase pass; the remaining groups are still being run w
   Printify order to be recorded. Order money columns are asserted in cents (the app convention).
 - Printify order reconciliation paged with `limit=100`, which Printify rejects (max 50); every creation
   intent ended "cleanup failed" and blocked the next run's preflight.
+- Printify keeps a new order in `pending` for a short period and rejects cancellation until it is `on-hold`;
+  the cancel helper retried four times within seconds and reported otherwise-green purchases as failed in
+  teardown (the shipping address, Damrak 1 / Amsterdam / 1012LG / NL, was valid). It now waits for a
+  cancellable state first.
 - Web server start timeout raised to 5 minutes (first compile after code changes exceeded 2 minutes).
 - Failing tests now attach `api-diagnostics` (API calls, failed responses, console warnings/errors).
 
