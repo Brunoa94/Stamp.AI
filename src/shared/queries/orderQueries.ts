@@ -81,6 +81,7 @@ export function useCreateOrderFromCart() {
       idempotencyKey,
       orderStatus,
       paymentMethod,
+      paymentProvider,
     }: {
       user: UserI;
       cart: CartWithItems;
@@ -90,6 +91,7 @@ export function useCreateOrderFromCart() {
       idempotencyKey?: string;
       orderStatus?: string;
       paymentMethod?: string;
+      paymentProvider?: "stripe" | "paypal" | "mollie";
     }) => {
       if (!user) {
         throw new Error("User not authenticated");
@@ -103,6 +105,7 @@ export function useCreateOrderFromCart() {
         idempotencyKey,
         orderStatus,
         paymentMethod,
+        paymentProvider,
       });
     },
     onSuccess: (orderId) => {

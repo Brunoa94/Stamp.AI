@@ -309,6 +309,7 @@ function StripeReturnContent() {
                 billingAddress,
                 idempotencyKey,
                 paymentMethod: "stripe",
+                paymentProvider: "stripe",
               })) ?? null;
 
             if (createdOrderId) {

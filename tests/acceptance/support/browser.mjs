@@ -43,9 +43,13 @@ export async function assertNoHorizontalOverflow(page) {
 // Styled checkboxes conceal the native input behind a visible label. Keyboard
 // activation exercises the accessible control without forcing pointer events.
 export async function setCheckbox(control, checked) {
-  if (await control.isChecked() !== checked) {
+  // A keypress that lands before hydration attaches the handler is reverted by
+  // the controlled input, so re-press a few times instead of waiting 15s once.
+  for (let attempt = 0; attempt < 4; attempt++) {
+    if (await control.isChecked() === checked) break;
     await control.focus();
     await control.press('Space');
+    await control.page().waitForTimeout(400);
   }
   await expect(control).toBeChecked({ checked });
 }

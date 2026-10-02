@@ -445,6 +445,7 @@ function MollieReturnContent() {
                   shippingAddress: parsedShippingAddress,
                   idempotencyKey,
                   paymentMethod: "mollie",
+                  paymentProvider: "mollie",
                 })) ?? null;
               console.log("✅ Order and order items created in database");
 
