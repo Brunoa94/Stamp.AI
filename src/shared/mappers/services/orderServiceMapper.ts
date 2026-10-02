@@ -187,8 +187,10 @@ export class OrderServiceMapper {
       unit_price: unitPrice,
       total_price: totalPrice,
       custom_image_url: cartItem.custom_image_url || "",
-      product_name: cartItem.product?.name || "Custom Product",
-      variant_name: cartItem.variant?.name || null,
+      // The cart query returns the row's own names; the joined product/variant
+      // objects are only present on richer cart shapes.
+      product_name: cartItem.product_name || cartItem.product?.name || "Custom Product",
+      variant_name: cartItem.variant_name || cartItem.variant?.name || null,
       design_config: cartItem.custom_image_url
         ? {
           custom_image_url: cartItem.custom_image_url,
