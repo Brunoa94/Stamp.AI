@@ -80,7 +80,19 @@ the Stripe single-item purchase pass; the remaining groups are still being run w
    `TEST_PRINTIFY_VARIANT_ID=103599`, `STRIPE_WEBHOOK_SECRET` = the test project's endpoint secret.
 5. Deploy edge functions to the test project after merging (`npm run supabase:deploy:test`).
 
+### Test catalog data (test project only)
+
+The seeded `catalog_products` rows did not match Printify: Ceramic Mug EU (441) and the Spun Polyester
+Pillowcase (229) pointed at print provider 99, which Printify does not offer for them (correct: 30 and 10),
+so the variants API returned nothing, the UI fell back to apparel sizes ("M") and product creation failed with
+`NO_VARIANTS_AVAILABLE` (CUSTOM-06). Blueprints 462, 534 and 558 do not exist in Printify at all and were
+deactivated. Corrected directly in the test database on 2026-10-02; production syncs its catalog from Printify.
+
 ## 5. Other observations
+
+- When the variants API returns no sizes, the customization step offers apparel sizes (S–XL) for any product,
+  which sends a meaningless `selected_size` for mugs/pillows. Harmless once providers are correct, but worth
+  hiding sizes for non-apparel categories.
 
 - `create-credit-payment` derives the charge from `CREDIT_PRICE_CENTS` (default 10) while
   `CREDIT_PACKAGES` prices 100 credits at €9.99; the server's amount check will reject these unless
