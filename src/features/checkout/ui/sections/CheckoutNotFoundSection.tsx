@@ -12,8 +12,17 @@ import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 
-export function CheckoutNotFoundSection() {
-  const t = useTranslations("checkout.notFound");
+interface PropsI {
+  /**
+   * "missing": the cart cannot be resolved at all.
+   * "empty": the cart exists but nothing in it is selected for checkout, so
+   * there is nothing to pay for (stale selection, deselect-all, etc.).
+   */
+  variant?: "missing" | "empty";
+}
+
+export function CheckoutNotFoundSection({ variant = "missing" }: PropsI) {
+  const t = useTranslations(variant === "empty" ? "checkout.emptySelection" : "checkout.notFound");
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-(--color-stamp-off-white) px-6 text-(--color-stamp-chocolate)">

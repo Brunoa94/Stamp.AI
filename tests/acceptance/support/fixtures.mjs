@@ -11,7 +11,9 @@ import { PrintifyOrders } from './printify.mjs';
 export function client(env, privileged = false) {
   return createClient(env.NEXT_PUBLIC_SUPABASE_URL, required(env, privileged ? 'SUPABASE_SERVICE_ROLE_KEY' : 'NEXT_PUBLIC_SUPABASE_ANON_KEY'), {
     auth: { persistSession: false, autoRefreshToken: false },
-    global: { fetch: (url, options) => fetch(url, { ...options, signal: AbortSignal.timeout(15000) }) },
+    // Edge functions that cancel/refund wait for Printify to leave its
+    // transitional states (~20s); plain database calls stay on a short leash.
+    global: { fetch: (url, options) => fetch(url, { ...options, signal: AbortSignal.timeout(String(url).includes('/functions/v1/') ? 90000 : 15000) }) },
   });
 }
 export function unwrap(result, operation) {
@@ -41,6 +43,35 @@ export const test = base.extend({
     });
     await provide();
     expect(forbidden, 'No production database or real AI requests').toEqual([]);
+  }, { auto: true }],
+  // Failed API calls and console errors are attached to failing tests so a
+  // product failure can be diagnosed from the report alone.
+  apiDiagnostics: [async ({ context }, provide, testInfo) => {
+    const failures = [];
+    context.on('response', async response => {
+      const url = new URL(response.url());
+      const api = url.hostname.endsWith('.supabase.co') || (url.hostname === 'localhost' && url.pathname.startsWith('/api/'));
+      if (!api) return;
+      const call = /\/rest\/v1\/rpc\/|\/functions\/v1\/|\/api\//.test(url.pathname);
+      if (response.status() < 400 && !call) return;
+      let body = '';
+      let sent = '';
+      if (response.status() >= 400) {
+        try { body = (await response.text()).slice(0, 2000); } catch { body = '<unreadable>'; }
+        // Redact anything that looks like a secret/token before attaching.
+        sent = (response.request().postData() ?? '').replace(/(sk_(?:test|live)_|whsec_|eyJ)[A-Za-z0-9._-]+/g, '$1<redacted>').slice(0, 2000);
+      }
+      failures.push(`${response.request().method()} ${url.pathname}${url.search} -> ${response.status()}${sent ? `\nrequest: ${sent}` : ''}${body ? `\nresponse: ${body}` : ''}`);
+    });
+    context.on('console', message => {
+      if (['error', 'warning'].includes(message.type()) && !/Failed to load resource|upstream image/.test(message.text())) {
+        failures.push(`console.${message.type()}: ${message.text().slice(0, 1500)}`);
+      }
+    });
+    await provide();
+    if (testInfo.status !== testInfo.expectedStatus && failures.length) {
+      await testInfo.attach('api-diagnostics', { body: failures.join('\n\n'), contentType: 'text/plain' });
+    }
   }, { auto: true }],
   suppliedUser: async ({ context, env }, provide) => {
     const credentials = { email: env.TEST_USER_EMAIL, password: env.TEST_USER_PASSWORD };

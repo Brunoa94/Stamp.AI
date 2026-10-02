@@ -58,15 +58,18 @@ export async function pay(page, env, provider, { decline = false, doubleSubmit =
 }
 export async function verifyPurchase(account, expected, provider) {
   let order;
+  // The webhook marks the order paid first; the return page records the
+  // Printify order a few seconds later. Wait for both before asserting.
   await expect.poll(async () => {
     const rows = unwrap(await account.db.from('orders').select('*,order_items(*)').eq('user_id', account.id), 'Read purchased orders');
     expect(rows.length).toBeLessThanOrEqual(1);
     order = rows[0];
-    return order?.payment_status;
-  }, { timeout: 90000 }).toBe('paid');
+    return order?.payment_status === 'paid' && Boolean(order?.printify_order_id) ? 'paid+fulfilled' : order?.payment_status;
+  }, { timeout: 120000 }).toBe('paid+fulfilled');
   expect(order.payment_provider).toBe(provider);
   expect(order.currency.toUpperCase()).toBe('EUR');
-  expect(Math.round(Number(order.total_amount) * 100)).toBe(expected.totalCents);
+  // orders.* money columns hold cents, like order_items.unit_price (see src/lib/formatPrice.ts).
+  expect(Math.round(Number(order.total_amount))).toBe(expected.totalCents);
   const project = rows => rows.map(i => ({ product: i.product_id, variant: String(i.variant_id), quantity: i.quantity, unitPrice: i.unit_price })).sort((a, b) => a.product.localeCompare(b.product));
   expect(project(order.order_items)).toEqual(project(expected.selected));
   expect(order.printify_order_id).toBeTruthy();

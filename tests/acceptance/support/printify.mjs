@@ -53,7 +53,8 @@ export class PrintifyOrders {
     const found = [];
     let page = 1;
     for (;;) {
-      const data = await this.request(`orders.json?page=${page}&limit=100`);
+      // Printify caps the orders page size at 50 (limit=100 is rejected with 400).
+      const data = await this.request(`orders.json?page=${page}&limit=50`);
       for (const order of data.data ?? []) {
         if (order.external_id === record.externalId || order.metadata?.shop_order_id === record.externalId || (record.applicationOrderId && (order.label === record.applicationOrderId || order.metadata?.shop_order_label === record.applicationOrderId))) found.push(order.id);
       }

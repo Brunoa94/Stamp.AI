@@ -54,12 +54,18 @@ test('ORDER-06 invoice download is a real PDF with an exact stable order snapsho
   expect(invoice.order_number).toBe(order.order_number);
   expect(invoice.customer_email).toBe(account.email);
   expect(invoice.currency.toUpperCase()).toBe('EUR');
-  expect(Math.round(Number(invoice.total_amount) * 100)).toBe(expected.totalCents);
-  expect(invoice.line_items.map(i => [i.product_name, i.quantity]).sort()).toEqual(expected.selected.map(i => [i.product_name, i.quantity]).sort());
+  // Invoice money columns hold cents, like orders.* (see src/lib/formatPrice.ts).
+  expect(Math.round(Number(invoice.total_amount))).toBe(expected.totalCents);
+  expect(invoice.line_items.map(i => [i.product_name ?? i.name, i.quantity]).sort()).toEqual(expected.selected.map(i => [i.product_name, i.quantity]).sort());
 });
 test('PAY-09 duplicate authentic Stripe events cannot duplicate payment, order or fulfillment', async ({ page, account, env }) => {
   test.setTimeout(240000);
-  const secret = required(env, 'STRIPE_WEBHOOK_SECRET');
+  // Replay through the Stripe test-mode endpoint (`?mode=test`, verified with
+  // STRIPE_TEST_WEBHOOK_SECRET) so the signature does not depend on which value
+  // the project's live-slot STRIPE_WEBHOOK_SECRET holds.
+  const testSecret = env.STRIPE_TEST_WEBHOOK_SECRET;
+  const secret = testSecret || required(env, 'STRIPE_WEBHOOK_SECRET');
+  const webhookUrl = `${env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/stripe-webhook${testSecret ? '?mode=test' : ''}`;
   const { order, payment } = await buy(page, account, env);
   let event;
   await expect.poll(async () => {
@@ -72,7 +78,7 @@ test('PAY-09 duplicate authentic Stripe events cannot duplicate payment, order o
   for (let attempt = 0; attempt < 2; attempt++) {
     const timestamp = Math.floor(Date.now() / 1000);
     const signature = createHmac('sha256', secret).update(`${timestamp}.${body}`).digest('hex');
-    const response = await fetch(`${env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/stripe-webhook`, {
+    const response = await fetch(webhookUrl, {
       method: 'POST', signal: AbortSignal.timeout(15000), body,
       headers: { 'Content-Type': 'application/json', 'stripe-signature': `t=${timestamp},v1=${signature}` },
     });

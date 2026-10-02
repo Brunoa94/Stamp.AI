@@ -37,6 +37,8 @@ interface PropsI {
   isAuthLoading: boolean;
   hasCoins: boolean;
   isCoinsLoading: boolean;
+  /** Balance fetch failed: distinct from a confirmed zero balance. */
+  isCoinsError: boolean;
   onPromptChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onPreservationChange: (value: number) => void;
   onRemoveBackgroundChange: (value: boolean) => void;
@@ -53,6 +55,7 @@ export function SynthesisForm({
   isAuthLoading,
   hasCoins,
   isCoinsLoading,
+  isCoinsError,
   onPromptChange,
   onPreservationChange,
   onRemoveBackgroundChange,
@@ -64,9 +67,11 @@ export function SynthesisForm({
 
   // Determine overlay state (only show after loading is complete)
   const showLoginOverlay = !isAuthLoading && !isAuthenticated;
+  // An unknown balance (fetch failed) is neither "no coins" nor permission to
+  // generate; CoinsDisplay shows the error and a retry instead.
   const showNoCoinsOverlay =
-    !isAuthLoading && isAuthenticated && !isCoinsLoading && !hasCoins;
-  const canGenerate = isAuthenticated && hasCoins;
+    !isAuthLoading && isAuthenticated && !isCoinsLoading && !isCoinsError && !hasCoins;
+  const canGenerate = isAuthenticated && hasCoins && !isCoinsError;
 
   // Register action for mobile sticky footer (Step 2)
   useRegisterMobileAction(2, {

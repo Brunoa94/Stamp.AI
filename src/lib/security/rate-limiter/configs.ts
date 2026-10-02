@@ -3,10 +3,20 @@ import type { RateLimitConfig } from "./types";
 /**
  * Predefined rate limit configurations for different endpoint types
  */
+/**
+ * Optional per-environment overrides. Production leaves these unset; the
+ * acceptance suite's dedicated app server raises them because one machine
+ * drives hundreds of logins and generations through a single IP.
+ */
+function envLimit(name: string, fallback: number): number {
+  const value = Number(process.env[name]);
+  return Number.isInteger(value) && value > 0 ? value : fallback;
+}
+
 export const RATE_LIMIT_CONFIGS: Record<string, RateLimitConfig> = {
   // Strict limits for authentication endpoints (prevent brute force)
   auth: {
-    maxRequests: 5,
+    maxRequests: envLimit("RATE_LIMIT_AUTH_MAX", 5),
     windowMs: 15 * 60 * 1000, // 15 minutes
     message: "Too many authentication attempts. Please try again later.",
   },
@@ -27,7 +37,7 @@ export const RATE_LIMIT_CONFIGS: Record<string, RateLimitConfig> = {
 
   // Image generation (expensive operation)
   imageGeneration: {
-    maxRequests: 10,
+    maxRequests: envLimit("RATE_LIMIT_IMAGE_GENERATION_MAX", 10),
     windowMs: 60 * 1000, // 1 minute
     message: "Too many image generation requests. Please wait before trying again.",
   },

@@ -176,7 +176,7 @@ export interface AddToCartParams {
 
 export function mapAddToCartEvent(params: AddToCartParams): AnalyticsEventParamsT {
   return {
-    currency: "USD",
+    currency: "EUR",
     value: params.unitPriceCents / 100,
     items: [
       {

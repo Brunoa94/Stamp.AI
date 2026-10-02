@@ -19,6 +19,6 @@ export default defineConfig({
   ],
   webServer: {
     command: 'node scripts/acceptance/server.mjs', url: 'http://localhost:3107/robots.txt',
-    reuseExistingServer: false, timeout: 120000,
+    reuseExistingServer: false, timeout: 300000, // first dev compile after code changes can exceed 2 minutes
   },
 });

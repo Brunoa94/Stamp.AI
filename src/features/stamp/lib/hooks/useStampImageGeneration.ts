@@ -1,4 +1,5 @@
 "use client";
+import { useStampFlowStore } from "../stores/stampFlowStore";
 
 import { useRef } from "react";
 import { useTranslations } from "next-intl";
@@ -144,9 +145,11 @@ export function useStampImageGeneration() {
       // Save to localStorage with 24h TTL
       addStoredImage(result);
 
-      // Auto-advance to results after a short delay
+      // Auto-advance to results after a short delay, unless the flow has
+      // already left the generation step.
       setTimeout(() => {
-        nextStep();
+        const { currentStep, setCurrentStep } = useStampFlowStore.getState();
+        if (currentStep === 3) setCurrentStep(4);
       }, 800);
 
       return result;

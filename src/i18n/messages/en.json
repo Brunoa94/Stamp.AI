@@ -688,6 +688,8 @@
         "register": "Register",
         "display": "{coins} Coins available",
         "displayAria": "{coins} coins available",
+        "loadFailed": "Couldn't load your coins.",
+        "retry": "Try again",
         "deductFailed": "Not enough coins to generate",
         "skipGeneration": "Use My Image",
         "usePreviousCreations": "Use Previous Creations",
@@ -1099,7 +1101,8 @@
         "login": "Login"
       },
       "footer": {
-        "noAccount": "Don't have an account? <link>Create one now</link>"
+        "noAccount": "Don't have an account? <link>Create one now</link>",
+        "createAccountAria": "Create account"
       }
     },
     "passwordReset": {
@@ -1186,7 +1189,8 @@
         "signUp": "Sign Up"
       },
       "footer": {
-        "haveAccount": "Already have an account? <link>Log in</link>"
+        "haveAccount": "Already have an account? <link>Log in</link>",
+        "loginAria": "Login"
       },
       "success": {
         "srTitle": "Registration Successful",
@@ -1474,6 +1478,11 @@
     "notFound": {
       "title": "Cart Not Found",
       "description": "We couldn't find your cart. Please return and add items again.",
+      "backToCart": "Back to Cart"
+    },
+    "emptySelection": {
+      "title": "Nothing selected to check out",
+      "description": "Your bag is empty or no items are selected. Select items in your bag to continue.",
       "backToCart": "Back to Cart"
     },
     "loading": {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { BackButton } from "./components/BackButton/BackButton";
 import { MobileStepFooter } from "./components/MobileStepFooter/MobileStepFooter";
 import { NavigationSidebar } from "./components/NavigationSidebar";
@@ -14,6 +14,7 @@ import { ProductionSection } from "./sections/ProductionSection/ProductionSectio
 import { FinalReviewSection } from "./sections/FinalReviewSection/FinalReviewSection";
 import { ProductSelectionSection } from "./sections/ProductSelectionSection/ProductSelectionSection";
 import { useStampNavigation } from "../lib/hooks/useStampNavigation";
+import { StampSlide } from "./components/StampSlide";
 
 /**
  * StampCanvas
@@ -31,43 +32,76 @@ export function StampCanvas() {
 
   const activeSlide = Math.max(0, Math.min(currentStep, 8));
 
+  // Each step is its own full-height, independently scrollable slide. When the
+  // flow returns to an earlier step (e.g. "Bag it & create another"), that
+  // slide may still be scrolled from the previous visit, hiding its top.
+  // The overflow-hidden track can still be scrolled programmatically (focus,
+  // scrollIntoView), which would offset every slide by a full step.
+  const trackRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+    if (trackRef.current) trackRef.current.scrollTop = 0;
+    document.getElementById(`step-${activeSlide}`)?.scrollTo({ top: 0 });
+  }, [activeSlide]);
+
   return (
     <div className="fixed inset-0 bg-(--color-stamp-off-white)">
       {/* Back Button (Top Left) */}
       <BackButton />
 
       {/* Main protocol canvas aligned with the submitted layout */}
-      <main className="absolute inset-x-0 top-24 bottom-0 overflow-hidden lg:mr-68">
+      <main
+        ref={trackRef}
+        className="absolute inset-x-0 top-24 bottom-0 overflow-hidden lg:mr-68"
+      >
         <div
           className="h-full transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
           style={{ transform: `translate3d(0, -${activeSlide * 100}%, 0)` }}
         >
           {/* Hero Section */}
-          <HeroSection onBegin={handleBegin} />
+          <StampSlide index={0} activeSlide={activeSlide}>
+            <HeroSection onBegin={handleBegin} />
+          </StampSlide>
 
           {/* Step 1: Upload */}
-          <UploadSection />
+          <StampSlide index={1} activeSlide={activeSlide}>
+            <UploadSection />
+          </StampSlide>
 
           {/* Step 2: Synthesis */}
-          <SynthesisSection />
+          <StampSlide index={2} activeSlide={activeSlide}>
+            <SynthesisSection />
+          </StampSlide>
 
           {/* Step 3: Generation */}
-          <GenerationSection />
+          <StampSlide index={3} activeSlide={activeSlide}>
+            <GenerationSection />
+          </StampSlide>
 
           {/* Step 4: Results */}
-          <ResultsSection />
+          <StampSlide index={4} activeSlide={activeSlide}>
+            <ResultsSection />
+          </StampSlide>
 
           {/* Step 5: Product Selection */}
-          <ProductSelectionSection />
+          <StampSlide index={5} activeSlide={activeSlide}>
+            <ProductSelectionSection />
+          </StampSlide>
 
           {/* Step 6: Customization */}
-          <CustomizationSection />
+          <StampSlide index={6} activeSlide={activeSlide}>
+            <CustomizationSection />
+          </StampSlide>
 
           {/* Step 7: Production */}
-          <ProductionSection />
+          <StampSlide index={7} activeSlide={activeSlide}>
+            <ProductionSection />
+          </StampSlide>
 
           {/* Step 8: Final Review */}
-          <FinalReviewSection />
+          <StampSlide index={8} activeSlide={activeSlide}>
+            <FinalReviewSection />
+          </StampSlide>
         </div>
       </main>
 

@@ -511,6 +511,7 @@ export class OrderService {
     idempotencyKey,
     orderStatus,
     paymentMethod,
+    paymentProvider,
   }: {
     user: UserI;
     cart: CartWithItems;
@@ -520,6 +521,7 @@ export class OrderService {
     idempotencyKey?: string;
     orderStatus?: string;
     paymentMethod?: string;
+    paymentProvider?: PaymentProviderT;
   }) {
     try {
       // CRITICAL: Check idempotency key to prevent duplicate orders
@@ -565,6 +567,7 @@ export class OrderService {
         finalOrderStatus,
         idempotencyKey,
         paymentMethod,
+        paymentProvider,
       );
 
       // Create order from cart

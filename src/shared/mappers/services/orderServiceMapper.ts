@@ -3,6 +3,7 @@ import type { CreateOrderT, OrderWithItemsT } from "@/shared/types/order";
 import type { CartItem } from "@/shared/types/cart";
 import type { UserI } from "../../../../supabase/types";
 import type { ShippingAddressT } from "@/shared/schemas/checkout";
+import { CartServiceMapper } from "./cartServiceMapper";
 
 type OrderRow = Database["public"]["Tables"]["orders"]["Row"];
 type OrderInsert = Database["public"]["Tables"]["orders"]["Insert"];
@@ -61,10 +62,14 @@ export class OrderServiceMapper {
       return sum + ((item.unit_price ?? 0) * (item.quantity ?? 1));
     }, 0);
 
-    // Future: Add tax and shipping calculations
     const taxRate = 0; // 0% for now
     const taxAmount = subtotal * taxRate;
-    const shippingCost = 0; // Free shipping for now
+    // Same shipping rule the cart and checkout charge the customer with
+    // (free from the threshold, flat rate below it). All values are cents.
+    const shippingCost =
+      subtotal >= CartServiceMapper.FREE_SHIPPING_THRESHOLD_CENTS
+        ? 0
+        : CartServiceMapper.SHIPPING_COST_CENTS;
     const totalAmount = subtotal + taxAmount + shippingCost;
 
     return {
@@ -182,8 +187,10 @@ export class OrderServiceMapper {
       unit_price: unitPrice,
       total_price: totalPrice,
       custom_image_url: cartItem.custom_image_url || "",
-      product_name: cartItem.product?.name || "Custom Product",
-      variant_name: cartItem.variant?.name || null,
+      // The cart query returns the row's own names; the joined product/variant
+      // objects are only present on richer cart shapes.
+      product_name: cartItem.product_name || cartItem.product?.name || "Custom Product",
+      variant_name: cartItem.variant_name || cartItem.variant?.name || null,
       design_config: cartItem.custom_image_url
         ? {
           custom_image_url: cartItem.custom_image_url,
@@ -212,6 +219,7 @@ export class OrderServiceMapper {
     orderStatus: string = "pending",
     idempotencyKey?: string,
     paymentMethod?: string,
+    paymentProvider?: string,
   ): CreateOrderT & { idempotency_key?: string | null } {
     const fullName = [shippingAddress?.first_name, shippingAddress?.last_name]
       .filter(Boolean)
@@ -229,6 +237,7 @@ export class OrderServiceMapper {
       status: orderStatus,
       payment_status: paymentStatus,
       payment_method: paymentMethod || null,
+      payment_provider: paymentProvider || paymentMethod || null,
       subtotal: totals.subtotal,
       shipping_cost: totals.shipping_cost,
       tax_amount: totals.tax_amount,

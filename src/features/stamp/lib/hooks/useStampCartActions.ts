@@ -343,5 +343,7 @@ export function useStampCartActions() {
     handleBagIt,
     handleBagItAndCreateAnother,
     isAddingToCart: addToCartMutation.isPending,
+    // A product can only be bagged once creation has stored its ids.
+    canAddToCart: Boolean(createdProductId && createdVariantId),
   };
 }

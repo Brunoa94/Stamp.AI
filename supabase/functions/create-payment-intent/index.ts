@@ -1,8 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
 import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
+import {
+  STRIPE_MODE_METADATA_KEY,
+  createStripeClient,
+  resolveStripeMode,
+} from "../_shared/stripeConfig.ts";
 import { validatePricingAgainstDatabase, type LineItemForPricingI } from "../_shared/serverPriceService.ts";
 import type { PaymentIntentResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
@@ -55,6 +59,68 @@ async function verifyAuth(
   };
 }
 
+const FREE_SHIPPING_THRESHOLD_CENTS = 6000;
+const SHIPPING_COST_CENTS = 499;
+
+interface OwnedCartItemI {
+  product_id: string | null;
+  variant_id: string | null;
+  unit_price: number | null;
+}
+
+/**
+ * Server-side total for existing-product line items: unit prices come from the
+ * caller's own cart rows (matched on product + variant), shipping follows the
+ * store rule, and a discount is only granted for a promo code that validates
+ * against the promocodes table. All values are cents.
+ */
+async function expectedTotalCentsFromCart(
+  userId: string,
+  items: Array<Record<string, unknown>>,
+  promoCode?: unknown,
+): Promise<number> {
+  const owned = await supabaseRest<OwnedCartItemI[]>(
+    `cart_items?select=product_id,variant_id,unit_price,carts!inner(user_id)&carts.user_id=eq.${encodeURIComponent(userId)}`,
+    "GET",
+  );
+  if (owned.error) throw new FunctionError(500, "CART_LOOKUP_FAILED", "Could not verify cart prices");
+  const rows = owned.data ?? [];
+
+  let subtotal = 0;
+  for (const item of items) {
+    const productId = String(item.product_id);
+    const variantId = item.variant_id === undefined || item.variant_id === null ? null : String(item.variant_id);
+    const quantity = Number(item.quantity) || 1;
+    const row = rows.find((r) =>
+      r.product_id === productId && (variantId === null || r.variant_id === null || String(r.variant_id) === variantId)
+    );
+    if (!row || row.unit_price === null) {
+      throw new FunctionError(400, "PRICE_MISMATCH", `No priced cart item for product ${productId}`);
+    }
+    subtotal += Math.round(Number(row.unit_price)) * quantity;
+  }
+
+  let discount = 0;
+  if (typeof promoCode === "string" && promoCode.trim()) {
+    const code = promoCode.trim().toUpperCase();
+    const promo = await supabaseRest<Array<{ type: string; value: number; is_active?: boolean; expires_at?: string | null; max_uses?: number | null; used_count?: number | null }>>(
+      `promocodes?code=eq.${encodeURIComponent(code)}&select=*&limit=1`,
+      "GET",
+    );
+    const row = promo.data?.[0];
+    const usable = row && row.is_active !== false &&
+      (!row.expires_at || new Date(row.expires_at) > new Date()) &&
+      (row.max_uses === null || row.max_uses === undefined || (row.used_count ?? 0) < row.max_uses);
+    if (!usable) throw new FunctionError(400, "INVALID_PROMO_CODE", "Promotion is not valid");
+    const raw = row.type === "percentage" ? Math.round(subtotal * (Number(row.value) / 100)) : Math.round(Number(row.value) * 100);
+    discount = Math.max(0, Math.min(raw, subtotal));
+  }
+
+  const afterDiscount = subtotal - discount;
+  const shipping = afterDiscount >= FREE_SHIPPING_THRESHOLD_CENTS ? 0 : SHIPPING_COST_CENTS;
+  return afterDiscount + shipping;
+}
+
 serve(async (req) => {
   const corsHeaders = corsHeadersFor(req);
   // Handle CORS preflight requests
@@ -80,10 +146,14 @@ serve(async (req) => {
       metadata,
       payment_method, // Optional: for testing with pm_card_visa, etc.
       confirm = false, // Optional: auto-confirm payment (for testing)
+      test_mode = false, // Optional: use Stripe Test Mode credentials
+      promo_code, // Optional: applied promotion, re-validated server-side
     } = await req.json();
 
-    // Validate environment variables and request data
-    const stripeSecretKey = validateEnvVars.stripeSecretKey();
+    // Pick the credential set up-front so a misconfigured test request
+    // fails before any pricing work is done.
+    const stripeMode = resolveStripeMode(test_mode);
+    const stripe = createStripeClient(stripeMode, "2023-10-16");
     const validAmount = validateRequest.amount(amount);
 
     // SERVER-SIDE PRICE VALIDATION (C4 - Amount Tampering Prevention)
@@ -115,12 +185,23 @@ serve(async (req) => {
           );
         }
       }
-    }
 
-    const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: "2023-10-16",
-      httpClient: Stripe.createFetchHttpClient(),
-    });
+      // Existing-product line items (product_id) are priced from the caller's
+      // own cart rows, never from the request, so a tampered `amount` is rejected.
+      const productItems = line_items.filter(
+        (item: Record<string, unknown>) => item.product_id && !item.blueprint_id,
+      );
+      if (productItems.length > 0 && userId !== "service-role") {
+        const expectedCents = await expectedTotalCentsFromCart(userId, productItems, promo_code);
+        const clientTotalCents = Math.round(validAmount * 100);
+        if (Math.abs(expectedCents - clientTotalCents) > 1) {
+          console.error(
+            `❌ PRICE_MISMATCH: client ${clientTotalCents} cents, server ${expectedCents} cents for user ${userId}`,
+          );
+          throw new FunctionError(400, "PRICE_MISMATCH", "Payment amount does not match the cart");
+        }
+      }
+    }
 
     // Build payment intent options
     const paymentIntentOptions: any = {
@@ -132,6 +213,7 @@ serve(async (req) => {
         user_email: userEmail,
         line_items: JSON.stringify(line_items),
         shipping_address: JSON.stringify(shipping_address),
+        [STRIPE_MODE_METADATA_KEY]: stripeMode,
       },
     };
 
@@ -180,6 +262,7 @@ serve(async (req) => {
             user_email: userEmail,
             line_items: line_items,
             shipping_address: shipping_address,
+            [STRIPE_MODE_METADATA_KEY]: stripeMode,
           },
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),

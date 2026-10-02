@@ -74,13 +74,18 @@ serve(async (req) => {
       }
     }
 
-    // Build custom_id with metadata for webhook processing
+    // PayPal caps purchase_units[].custom_id at 255 characters, so it only
+    // carries the identifiers the webhook/capture need to find their records.
+    // The full context (email, line items, metadata) lives in the
+    // payment_transactions row created below, keyed by the PayPal order id.
     const customId = JSON.stringify({
-      ...metadata,
       user_id: userId,
-      user_email: userEmail,
-      line_items: line_items,
+      ...(metadata?.order_id ? { order_id: metadata.order_id } : {}),
+      ...(metadata?.test_mode !== undefined ? { test_mode: metadata.test_mode } : {}),
     });
+    if (customId.length > 255) {
+      throw new FunctionError(400, "INVALID_REQUEST_BODY", "Order reference too long for PayPal custom_id");
+    }
 
     // Get site URL for return/cancel URLs
     const siteUrl = Deno.env.get("SITE_URL") || "http://localhost:3000";

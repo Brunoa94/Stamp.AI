@@ -16,9 +16,16 @@ test('GEN-04 no filter removes old guidance', async ({ page, account }) => {
   await describeDesign(page);
   await page.locator('textarea').fill('My fox');
   await page.getByRole('button', { name: /apply suggestion: vibrant/i }).filter({ visible: true }).click();
-  await expect(page.locator('textarea')).not.toHaveValue('My fox');
   await page.getByRole('button', { name: /^no filter/i }).filter({ visible: true }).click();
-  await expect(page.locator('textarea')).toHaveValue('My fox');
+  // Filter guidance is merged into the prompt at submission (see GEN-03), so the
+  // requirement is checked on the request: no guidance may remain after "No filter".
+  const sent = page.waitForRequest(r => r.url().endsWith('/api/generate-image') && r.method() === 'POST');
+  await page.getByRole('button', { name: /stamp it/i }).filter({ visible: true }).click();
+  const request = await sent;
+  const form = await new Request(request.url(), { method: 'POST', headers: request.headers(), body: request.postDataBuffer() }).formData();
+  const prompt = String(form.get('prompt'));
+  expect(prompt.trim()).toBe('My fox');
+  expect(prompt).not.toMatch(/vibrant|style:/i);
 });
 test('GEN-08 whitespace with no design cannot advance or generate', async ({ page, account }) => {
   await enterUpload(page);
@@ -41,7 +48,7 @@ test('GEN-12 client timeout stops loading without inventing a refund', async ({ 
 });
 test('GEN-13 expired daily allowance resets once under concurrent reads', async ({ account }) => {
   unwrap(await account.admin.from('profiles').update({ coins: 0, coins_reset_at: '2000-01-01' }).eq('id', account.id), 'Seed expired allowance');
-  const responses = await Promise.all([account.db.rpc('get_user_coins', { user_id: account.id }), account.db.rpc('get_user_coins', { user_id: account.id })]);
+  const responses = await Promise.all([account.db.rpc('get_user_coins', { p_user_id: account.id }), account.db.rpc('get_user_coins', { p_user_id: account.id })]);
   for (const response of responses) expect(response.error).toBeNull();
   expect(unwrap(await account.db.from('profiles').select('coins').eq('id', account.id).single(), 'Read reset allowance').coins).toBe(5);
   const deductions = await Promise.all([account.db.rpc('deduct_coin', { user_id: account.id }), account.db.rpc('deduct_coin', { user_id: account.id })]);

@@ -41,7 +41,8 @@ test('GA-05 GA-06 purchase sends once with EUR value and stable transaction ID',
   expect(event['ep.transaction_id']).toBeTruthy();
   await page.reload();
   await page.goto('/orders');
-  await expect(page.getByText(order.order_number, { exact: true })).toBeVisible();
+  // The orders page prefixes the number with "#"; match the number itself.
+  await expect(page.getByText(order.order_number)).toBeVisible();
   expect(ga.events.filter(e => e.en === 'purchase')).toHaveLength(1);
   ga.assertPrivate();
 });

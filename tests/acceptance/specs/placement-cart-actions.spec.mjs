@@ -29,13 +29,15 @@ for (const edge of ['min', 'middle', 'max']) {
   });
 }
 test('CUSTOM-05 socks create both leg print areas without overwriting either', async ({ page, account, env }) => {
+  // Printify names the sock positions left_leg / right_leg (catalog blueprint 496, provider 26).
   test.setTimeout(240000);
   await customize(page, env, required(env, 'TEST_SOCK_PRODUCT_NAME'));
   const { request, body } = await createProduct(page);
-  expect(Object.keys(request.print_areas).sort()).toEqual(['left', 'right']);
+  expect(Object.keys(request.print_areas).sort()).toEqual(['left_leg', 'right_leg']);
   const product = await account.orders.request(`products/${body.product.id}.json`);
-  const positions = new Set(product.print_areas.flatMap(a => a.placeholders).map(p => p.position));
-  expect([...positions].sort()).toEqual(['left', 'right']);
+  // Printify lists every placeholder the blueprint offers (e.g. an empty 'all'); only printed ones matter.
+  const positions = new Set(product.print_areas.flatMap(a => a.placeholders).filter(p => p.images.length > 0).map(p => p.position));
+  expect([...positions].sort()).toEqual(['left_leg', 'right_leg']);
 });
 test('CUSTOM-06 automatic mug placement does not send generic client placements', async ({ page, account, env }) => {
   test.setTimeout(240000);

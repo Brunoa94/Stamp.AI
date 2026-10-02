@@ -31,14 +31,14 @@ describe("parseAllowedOrigins", () => {
   });
 
   it("falls back to local development origins when the list is empty", () => {
-    expect(parseAllowedOrigins(undefined)).toEqual([
+    const localDev = [
       "http://localhost:3000",
       "http://127.0.0.1:3000",
-    ]);
-    expect(parseAllowedOrigins("")).toEqual([
-      "http://localhost:3000",
-      "http://127.0.0.1:3000",
-    ]);
+      "http://localhost:3107",
+      "http://127.0.0.1:3107",
+    ];
+    expect(parseAllowedOrigins(undefined)).toEqual(localDev);
+    expect(parseAllowedOrigins("")).toEqual(localDev);
   });
 });
 

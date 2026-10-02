@@ -326,10 +326,11 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
   resetForNewProduct: () => {
     try {
       set((state) => ({
-        // Keep the selected image and enhanced prompt
-        selectedImageUrl: state.selectedImageUrl,
+        // Keep generated results as reusable history, but do not preselect an
+        // image or carry an upload into the next product (BAG-02).
+        uploadedImageUrl: null,
+        selectedImageUrl: undefined,
         enhancedPrompt: state.enhancedPrompt,
-        // Keep generated results for reference
         generatedResults: state.generatedResults,
         // Reset product selection
         selectedProductType: "tshirt" as const,
@@ -353,8 +354,8 @@ export const useStampFlowStore = create<StampFlowStateType>((set) => ({
         mockupImages: [],
         // Reset progress
         productionProgress: 0,
-        // Navigate to product selection step (step 5)
-        currentStep: 5,
+        // Start the next product from the first (upload) step
+        currentStep: 1,
       }));
     } catch (error) {
       logStampError({

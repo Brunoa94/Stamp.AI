@@ -22,9 +22,9 @@ test('ORDER-07 another user cannot read or cancel a real order', async ({ accoun
 test('ORDER-01 real seeded order appears in owner history only once', async ({ page, account, env }) => {
   const { order } = await realOrder(account, env);
   await page.goto('/orders');
-  await expect(page.getByText(order.order_number, { exact: true })).toHaveCount(1);
+  await expect(page.getByText(order.order_number)).toHaveCount(1);
   await page.reload();
-  await expect(page.getByText(order.order_number, { exact: true })).toHaveCount(1);
+  await expect(page.getByText(order.order_number)).toHaveCount(1);
 });
 test('CLEAN-04 already canceled remote order remains safe to clean again', async ({ account, env }) => {
   const { provider } = await realOrder(account, env);

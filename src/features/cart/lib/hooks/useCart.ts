@@ -137,7 +137,8 @@ export function useCart() {
       "begin_checkout",
       mapBeginCheckoutEvent({
         items: selectedItems,
-        value: totals.subtotal + totals.shipping,
+        // Cart totals are in cents; GA4 expects the value in currency units.
+        value: (totals.subtotal + totals.shipping) / 100,
       }),
     );
 

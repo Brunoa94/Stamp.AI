@@ -1,6 +1,5 @@
-import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
-import { validateEnvVars } from "./validators.ts";
 import { FunctionError } from "./errors.ts";
+import { createStripeClient, resolveStripeModeForPaymentIntent } from "./stripeConfig.ts";
 import { getPayPalOrder } from "./paypal.ts";
 import { getMolliePayment } from "./mollie.ts";
 import { verifyStripePayment, verifyPayPalPayment, verifyMolliePayment, type PaidPayment } from "./paymentProof.ts";
@@ -10,10 +9,9 @@ export async function verifyPaidPayment(provider: string, paymentId: string, use
     throw new FunctionError(400, "INVALID_PAYMENT_ID", "Invalid provider payment ID");
   }
   if (provider === "stripe") {
-    const stripe = new Stripe(validateEnvVars.stripeSecretKey(), {
-      apiVersion: "2024-06-20",
-      httpClient: Stripe.createFetchHttpClient(),
-    });
+    // The mode is read from our own payment record, never from the caller.
+    const stripeMode = await resolveStripeModeForPaymentIntent(paymentId);
+    const stripe = createStripeClient(stripeMode, "2024-06-20");
     const payment = await stripe.paymentIntents.retrieve(paymentId);
     // A refunded charge can still have a succeeded PaymentIntent.
     const chargeId = typeof payment.latest_charge === "string" ? payment.latest_charge : payment.latest_charge?.id;

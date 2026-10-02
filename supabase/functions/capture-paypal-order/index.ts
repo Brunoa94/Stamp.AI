@@ -185,6 +185,20 @@ serve(async (req) => {
       console.warn("Could not parse custom_id:", e);
     }
 
+    // custom_id only carries identifiers (PayPal caps it at 255 chars); the
+    // full context was stored on the pending payment row at order creation.
+    const pendingRow = await supabaseRest(
+      `payment_transactions?paypal_order_id=eq.${encodeURIComponent(orderId)}&select=user_id,metadata&limit=1`,
+      "GET",
+    );
+    const stored = (pendingRow.data as Array<{ user_id: string | null; metadata: Record<string, unknown> | null }> | null)?.[0];
+    if (stored) {
+      metadata = { ...(stored.metadata ?? {}), ...metadata };
+      if (!lineItems.length && Array.isArray(stored.metadata?.line_items)) lineItems = stored.metadata.line_items as unknown[];
+      userId = userId ?? stored.user_id ?? undefined;
+      userEmail = userEmail ?? (stored.metadata?.user_email as string | undefined);
+    }
+
     // Save payment to database
     const result = await supabaseRest(
       "payment_transactions",

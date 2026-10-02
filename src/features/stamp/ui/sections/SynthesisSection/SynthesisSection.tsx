@@ -32,7 +32,7 @@ function SynthesisSectionComponent() {
 
   // Auth and coins state
   const { data: user, isLoading: isAuthLoading } = useUser();
-  const { data: coinsData, isLoading: isCoinsLoading } = useUserCoins();
+  const { data: coinsData, isLoading: isCoinsLoading, isError: isCoinsError } = useUserCoins();
 
   const isAuthenticated = !!user;
   const coins = coinsData?.coins ?? 0;
@@ -100,6 +100,7 @@ function SynthesisSectionComponent() {
         isAuthLoading={isAuthLoading}
         hasCoins={hasCoins}
         isCoinsLoading={isCoinsLoading}
+        isCoinsError={isCoinsError}
         onPromptChange={handlePromptChange}
         onPreservationChange={setPreservation}
         onRemoveBackgroundChange={setRemoveBackground}

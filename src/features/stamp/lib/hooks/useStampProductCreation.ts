@@ -1,6 +1,8 @@
 // REFACTOR: THIS FILE SHOULD BE BETTER DECOMPOSED IN ORDER TO FOLLOW THE PATTERNS OF THE PROJECT
 "use client";
 
+import { useStampFlowStore } from "../stores/stampFlowStore";
+
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -308,9 +310,11 @@ export function useStampProductCreation() {
         setMockupImageUrl(reorderedImages[0].src);
       }
 
-      // Advance to final review after showing production animation
+      // Advance to final review after showing production animation, unless
+      // the flow has already moved on (e.g. "Bag it & create another" reset it).
       setTimeout(() => {
-        nextStep();
+        const { currentStep, setCurrentStep } = useStampFlowStore.getState();
+        if (currentStep === 7) setCurrentStep(8);
       }, 1500);
 
       return product;

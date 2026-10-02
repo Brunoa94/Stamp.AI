@@ -23,6 +23,7 @@ interface PropsI {
   size?: string;
   price: string;
   isAddingToCart: boolean;
+  canAddToCart: boolean;
   onBagIt: () => void;
   onBagItAndCreateAnother: () => void;
 }
@@ -36,6 +37,7 @@ export function ReviewDetails({
   size,
   price,
   isAddingToCart,
+  canAddToCart,
   onBagIt,
   onBagItAndCreateAnother,
 }: PropsI) {
@@ -84,6 +86,7 @@ export function ReviewDetails({
 
       <ReviewActions
         isAddingToCart={isAddingToCart}
+        canAddToCart={canAddToCart}
         onBagIt={onBagIt}
         onBagItAndCreateAnother={onBagItAndCreateAnother}
       />

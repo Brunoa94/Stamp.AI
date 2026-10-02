@@ -5,6 +5,7 @@ import { ShippingAddressT } from "@/shared/schemas/checkout";
 import { mapShippingAddressToBillingDetails } from "@/shared/mappers/mapShippingAddressToBillingDetails";
 import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
 import { useCreatePaymentIntent } from "@/shared/queries/stripeQueries";
+import type { CreatePaymentIntentPayloadI } from "@/shared/types/payment";
 import { getStripeIntentStatusMessage } from "@/features/checkout/lib/helpers/getStripeIntentStatusMessage";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import { AnalyticsService } from "@/shared/services/analyticsService";
@@ -15,6 +16,8 @@ interface UsePaymentFormProps {
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
   testMode?: boolean;
+  /** Applied promotion code, sent for server-side price verification */
+  promoCode?: string;
   onSuccess?: (paymentIntent: any, lineItems: PrintifyLineItem[]) => void;
   onError?: (error: string) => void;
 }
@@ -37,6 +40,7 @@ export function usePaymentForm({
   lineItems,
   shippingAddress,
   testMode = false,
+  promoCode,
   onSuccess,
   onError,
 }: UsePaymentFormProps) {
@@ -70,11 +74,16 @@ export function usePaymentForm({
     setError(null);
 
     try {
-      const requestBody: any = {
-        amount: amount,
+      const requestBody: CreatePaymentIntentPayloadI = {
+        // `amount` is held in cents for display; create-payment-intent expects
+        // major units (euros) and converts to cents itself.
+        amount: amount / 100,
         currency: "eur",
         line_items: lineItems,
         shipping_address: shippingAddress,
+        // Selects the Stripe credential set (live vs test) on the server.
+        test_mode: isTestMode,
+        ...(promoCode ? { promo_code: promoCode } : {}),
         // Note: order_id is NOT set here because the order doesn't exist yet.
         // The order is created after payment succeeds, then linkPaymentTransactionToOrder
         // sets payment_transactions.order_id which the webhook uses to find the order.

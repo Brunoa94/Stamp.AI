@@ -19,6 +19,7 @@ export type ProductCategory =
   | "hat"
   | "socks"
   | "pillow"
+  | "notebook"
   | "other";
 
 export type ProductGroup = "clothing" | "accessories";
@@ -105,6 +106,13 @@ const CATEGORY_KEYWORDS: Record<ProductCategory, string[]> = {
     "cap",
     "hat",
   ],
+  notebook: [
+    "spiral journal",
+    "spiral notebook",
+    "notebook",
+    "journal",
+    "notepad",
+  ],
   socks: [
     "crew socks",
     "sublimation socks",
@@ -117,6 +125,7 @@ const CATEGORY_KEYWORDS: Record<ProductCategory, string[]> = {
     "pillowcase",
     "pillow",
     "cushion",
+    "pillow case",
   ],
   other: [],
 };
@@ -138,18 +147,21 @@ const CLOTHING_CATEGORIES: Set<ProductCategory> = new Set([
 export function detectProductCategory(displayTitle: string): ProductCategory {
   const titleLower = displayTitle.toLowerCase();
 
-  // Check each category's keywords
+  // Prefer the most specific (longest) keyword across all categories, so a
+  // "Pillow Case" is a pillow rather than a phone "case" and a "Canvas Tote
+  // Bag" is a tote rather than a canvas print.
+  let best: { category: ProductCategory; length: number } | null = null;
   for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
     if (category === "other") continue;
 
     for (const keyword of keywords) {
-      if (titleLower.includes(keyword)) {
-        return category as ProductCategory;
+      if (titleLower.includes(keyword) && (!best || keyword.length > best.length)) {
+        best = { category: category as ProductCategory, length: keyword.length };
       }
     }
   }
 
-  return "other";
+  return best?.category ?? "other";
 }
 
 /**
@@ -229,8 +241,30 @@ const NO_COLOR_SELECTION_CATEGORIES: Set<ProductCategory> = new Set([
 ]);
 
 /**
- * Check if a product should show color selection based on its title
- * Returns false for products that only come in one color (mugs, socks, etc.)
+ * Categories sold in white only (acceptance policy CUSTOM-03): the UI offers a
+ * single white swatch and the server rejects any other color.
+ */
+const WHITE_ONLY_CATEGORIES: Set<ProductCategory> = new Set([
+  "mug",
+  "canvas",
+  "notebook",
+  "pillow",
+  "socks",
+  "totebag",
+]);
+
+/** The color offered for white-only categories. */
+export const WHITE_ONLY_COLOR = "White";
+
+export function isWhiteOnlyCategory(displayTitle: string): boolean {
+  if (!displayTitle || displayTitle.trim() === "") return false;
+  return WHITE_ONLY_CATEGORIES.has(detectProductCategory(displayTitle));
+}
+
+/**
+ * Check if a product should show color selection based on its title.
+ * White-only categories still show their single white swatch so the choice is
+ * explicit; categories without any color option (posters) show none.
  * Returns false if title is empty/unknown (safer default - wait for title to load)
  */
 export function shouldShowColorSelection(displayTitle: string): boolean {
@@ -239,5 +273,6 @@ export function shouldShowColorSelection(displayTitle: string): boolean {
     return false;
   }
   const category = detectProductCategory(displayTitle);
+  if (WHITE_ONLY_CATEGORIES.has(category)) return true;
   return !NO_COLOR_SELECTION_CATEGORIES.has(category);
 }
