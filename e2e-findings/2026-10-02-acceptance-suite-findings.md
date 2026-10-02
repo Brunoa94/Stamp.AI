@@ -5,6 +5,15 @@ test project `tgccxydchvujhrqyzqao` with `npm run test:acceptance -- --project=d
 Fixes live on `fix/acceptance-suite-env`. Status at time of writing: the first 70 desktop tests and
 the Stripe single-item purchase pass; the remaining groups are still being run with stop-on-first-failure.
 
+## 0. Status snapshot (updated as the run progresses)
+
+| Area | Result |
+|---|---|
+| Desktop project | 168 tests; 91 passed in sequence before the last fixes, run in progress from the top with stop-on-first-failure |
+| Stamp flow (`stamp.spec.mjs`) | 21 / 21 pass |
+| Skipped pending your actions (§4) | 14 tests: CHECK-05 ×2, CHECK-06 ×3 (migration); PayPal ×2 (buyer password); Mollie ×2 (API key); AUTH-01/03/07 (email); AUTH-06 (Google); GA-01 ingestion (GA read access) |
+| Mobile project | 168 tests, not yet run after the fixes |
+
 ## 1. Critical product bug: Stripe charged 100× the displayed total
 
 - **Symptom**: a €44.97 cart created PaymentIntent `pi_3UM4v0…` for **449 700 cents (€4 497.00)**; a
