@@ -35,6 +35,12 @@ export function CheckoutContent() {
     return <CheckoutNotFoundSection />;
   }
 
+  // Only selected items are purchasable; with none selected there is nothing
+  // to pay for and no payment control may be offered (CART-09 / CHECK-08).
+  if (cart.cart_items.length === 0) {
+    return <CheckoutNotFoundSection variant="empty" />;
+  }
+
   return (
     <CheckoutFormProvider cartId={cartId}>
       <CheckoutForm cart={cart} />

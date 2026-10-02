@@ -1480,6 +1480,11 @@
       "description": "We couldn't find your cart. Please return and add items again.",
       "backToCart": "Back to Cart"
     },
+    "emptySelection": {
+      "title": "Nothing selected to check out",
+      "description": "Your bag is empty or no items are selected. Select items in your bag to continue.",
+      "backToCart": "Back to Cart"
+    },
     "loading": {
       "loadingAria": "Loading checkout"
     },
