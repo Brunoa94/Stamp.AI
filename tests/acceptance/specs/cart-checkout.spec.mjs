@@ -28,9 +28,14 @@ test('CART-02 selected subset only appears in checkout with exact total', async 
 test('CART-03 select and deselect all update every item', async ({ page, account }) => {
   await seedCart(account);
   await page.goto('/cart');
-  await setCheckbox(page.getByRole('checkbox', { name: /deselect all/i }), false);
+  // The master checkbox relabels itself ("Deselect all" <-> "Select all (n)")
+  // as its state changes, so match the stable part of both names.
+  const master = page.getByRole('checkbox', { name: /select all/i });
+  await expect(master).toHaveAccessibleName(/^deselect all/i);
+  await setCheckbox(master, false);
   for (const item of ITEMS) await expect(itemCard(page, item.product_name).getByRole('checkbox')).not.toBeChecked();
-  await setCheckbox(page.getByRole('checkbox', { name: /select all/i }), true);
+  await expect(master).toHaveAccessibleName(/^select all/i);
+  await setCheckbox(master, true);
   for (const item of ITEMS) await expect(itemCard(page, item.product_name).getByRole('checkbox')).toBeChecked();
 });
 test('CART-04 quantities persist in the real database after reload', async ({ page, account }) => {

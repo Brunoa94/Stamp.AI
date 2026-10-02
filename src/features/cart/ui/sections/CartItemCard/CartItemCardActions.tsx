@@ -45,7 +45,7 @@ export function CartItemCardActions({
   const handleRemove = () => {
     const unitPrice = (item.unit_price ?? 0) / 100;
     AnalyticsService.track("remove_from_cart", {
-      currency: "USD",
+      currency: "EUR",
       value: unitPrice * quantity,
       items: [
         {

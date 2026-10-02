@@ -27,7 +27,10 @@ export async function observeAnalytics(page, env) {
   return {
     events,
     async wait(name) {
-      await expect.poll(() => events.filter(e => e.en === name && e.transportStatus >= 200 && e.transportStatus < 300).length, { timeout: 30000 }).toBeGreaterThan(0);
+      await expect.poll(
+        () => events.filter(e => e.en === name && e.transportStatus >= 200 && e.transportStatus < 300).length,
+        { timeout: 30000, message: () => `No delivered "${name}" event. Observed: ${events.map(e => `${e.en}:${e.transportStatus ?? 'pending'}`).join(', ') || 'none'}` },
+      ).toBeGreaterThan(0);
       const selected = events.filter(e => e.en === name);
       for (const event of selected) {
         expect(event.tid).toBe(measurementId);
