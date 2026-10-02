@@ -688,6 +688,8 @@
         "register": "Register",
         "display": "{coins} Coins available",
         "displayAria": "{coins} coins available",
+        "loadFailed": "Couldn't load your coins.",
+        "retry": "Try again",
         "deductFailed": "Not enough coins to generate",
         "skipGeneration": "Use My Image",
         "usePreviousCreations": "Use Previous Creations",

@@ -5,6 +5,7 @@ import { Coins } from "lucide-react";
 import { useUserCoins } from "@/shared/queries/coinsQueries";
 import { cn } from "@/lib/utils";
 import { Span } from "@/features/ui/span";
+import { Button } from "@/features/ui/button";
 
 interface CoinsDisplayProps {
   className?: string;
@@ -19,9 +20,35 @@ interface CoinsDisplayProps {
  */
 export function CoinsDisplay({ className }: CoinsDisplayProps) {
   const t = useTranslations("stamp.errors.coins");
-  const { data, isLoading } = useUserCoins();
+  const { data, isLoading, isError, refetch, isFetching } = useUserCoins();
 
   const coins = data?.coins ?? 0;
+
+  // A failed balance fetch must never read as a confirmed zero balance.
+  if (isError) {
+    return (
+      <div
+        role="alert"
+        className={cn("flex items-center gap-2", className)}
+        data-testid="coins-display-error"
+      >
+        <Coins className="h-4 w-4 text-(--color-stamp-error)" />
+        <Span variant="label" className="text-(--color-stamp-error)">
+          {t("loadFailed")}
+        </Span>
+        <Button
+          type="button"
+          variant="link"
+          size="sm"
+          className="h-auto p-0 text-xs font-bold uppercase tracking-widest"
+          onClick={() => refetch()}
+          disabled={isFetching}
+        >
+          {t("retry")}
+        </Button>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

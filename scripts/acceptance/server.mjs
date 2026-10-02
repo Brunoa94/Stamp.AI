@@ -11,7 +11,9 @@ for (const file of ['.env', '.env.local', '.env.development', '.env.development.
   if (existsSync(file)) for (const key of Object.keys(parseEnv(readFileSync(file, 'utf8')))) env[key] = '';
 }
 Object.assign(env, testEnv, {
-  STAMP_ACCEPTANCE_TESTS: '1', NEXT_PUBLIC_SITE_URL: 'http://localhost:3107', OPENAI_API_KEY: '', GEMINI_API_KEY: '', GOOGLE_API_KEY: '', GOOGLE_GEMINI_API_KEY: '',
+  STAMP_ACCEPTANCE_TESTS: '1', NEXT_PUBLIC_SITE_URL: 'http://localhost:3107',
+  // One machine drives the whole suite through a single IP.
+  RATE_LIMIT_AUTH_MAX: '1000', RATE_LIMIT_IMAGE_GENERATION_MAX: '1000', OPENAI_API_KEY: '', GEMINI_API_KEY: '', GOOGLE_API_KEY: '', GOOGLE_GEMINI_API_KEY: '',
   NEXT_PUBLIC_PRINTIFY_API_TOKEN: '', NODE_ENV: 'development', NEXT_TELEMETRY_DISABLED: '1',
 });
 

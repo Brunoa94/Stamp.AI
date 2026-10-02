@@ -14,6 +14,7 @@ import { ProductionSection } from "./sections/ProductionSection/ProductionSectio
 import { FinalReviewSection } from "./sections/FinalReviewSection/FinalReviewSection";
 import { ProductSelectionSection } from "./sections/ProductSelectionSection/ProductSelectionSection";
 import { useStampNavigation } from "../lib/hooks/useStampNavigation";
+import { StampSlide } from "./components/StampSlide";
 
 /**
  * StampCanvas
@@ -58,31 +59,49 @@ export function StampCanvas() {
           style={{ transform: `translate3d(0, -${activeSlide * 100}%, 0)` }}
         >
           {/* Hero Section */}
-          <HeroSection onBegin={handleBegin} />
+          <StampSlide index={0} activeSlide={activeSlide}>
+            <HeroSection onBegin={handleBegin} />
+          </StampSlide>
 
           {/* Step 1: Upload */}
-          <UploadSection />
+          <StampSlide index={1} activeSlide={activeSlide}>
+            <UploadSection />
+          </StampSlide>
 
           {/* Step 2: Synthesis */}
-          <SynthesisSection />
+          <StampSlide index={2} activeSlide={activeSlide}>
+            <SynthesisSection />
+          </StampSlide>
 
           {/* Step 3: Generation */}
-          <GenerationSection />
+          <StampSlide index={3} activeSlide={activeSlide}>
+            <GenerationSection />
+          </StampSlide>
 
           {/* Step 4: Results */}
-          <ResultsSection />
+          <StampSlide index={4} activeSlide={activeSlide}>
+            <ResultsSection />
+          </StampSlide>
 
           {/* Step 5: Product Selection */}
-          <ProductSelectionSection />
+          <StampSlide index={5} activeSlide={activeSlide}>
+            <ProductSelectionSection />
+          </StampSlide>
 
           {/* Step 6: Customization */}
-          <CustomizationSection />
+          <StampSlide index={6} activeSlide={activeSlide}>
+            <CustomizationSection />
+          </StampSlide>
 
           {/* Step 7: Production */}
-          <ProductionSection />
+          <StampSlide index={7} activeSlide={activeSlide}>
+            <ProductionSection />
+          </StampSlide>
 
           {/* Step 8: Final Review */}
-          <FinalReviewSection />
+          <StampSlide index={8} activeSlide={activeSlide}>
+            <FinalReviewSection />
+          </StampSlide>
         </div>
       </main>
 
