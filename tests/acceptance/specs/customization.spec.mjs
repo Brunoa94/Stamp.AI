@@ -24,7 +24,8 @@ test('BAG-02 create another returns to first upload step', async ({ page, accoun
   await customize(page, env); await createProduct(page);
   await page.getByRole('button', { name: /bag it.*create another/i }).filter({ visible: true }).click();
   await expect(page.locator('[aria-current="step"]')).toContainText(/upload/i);
-  await expect(page.getByRole('heading', { name: /upload image/i })).toBeInViewport({ ratio: 0.5 });
+  const uploadHeading = page.getByRole('heading', { name: /upload image/i });
+  await expect(uploadHeading).toBeInViewport({ ratio: 0.5 });
   const carts = unwrap(await account.db.from('carts').select('cart_items(*)').eq('user_id', account.id).single(), 'Read cart');
   expect(carts.cart_items).toHaveLength(1);
 });

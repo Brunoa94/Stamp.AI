@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { BackButton } from "./components/BackButton/BackButton";
 import { MobileStepFooter } from "./components/MobileStepFooter/MobileStepFooter";
 import { NavigationSidebar } from "./components/NavigationSidebar";
@@ -31,13 +31,28 @@ export function StampCanvas() {
 
   const activeSlide = Math.max(0, Math.min(currentStep, 8));
 
+  // Each step is its own full-height, independently scrollable slide. When the
+  // flow returns to an earlier step (e.g. "Bag it & create another"), that
+  // slide may still be scrolled from the previous visit, hiding its top.
+  // The overflow-hidden track can still be scrolled programmatically (focus,
+  // scrollIntoView), which would offset every slide by a full step.
+  const trackRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+    if (trackRef.current) trackRef.current.scrollTop = 0;
+    document.getElementById(`step-${activeSlide}`)?.scrollTo({ top: 0 });
+  }, [activeSlide]);
+
   return (
     <div className="fixed inset-0 bg-(--color-stamp-off-white)">
       {/* Back Button (Top Left) */}
       <BackButton />
 
       {/* Main protocol canvas aligned with the submitted layout */}
-      <main className="absolute inset-x-0 top-24 bottom-0 overflow-hidden lg:mr-68">
+      <main
+        ref={trackRef}
+        className="absolute inset-x-0 top-24 bottom-0 overflow-hidden lg:mr-68"
+      >
         <div
           className="h-full transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
           style={{ transform: `translate3d(0, -${activeSlide * 100}%, 0)` }}

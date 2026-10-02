@@ -127,7 +127,7 @@ describe("useSkipGeneration", () => {
   });
 
   describe("handleSkipGeneration priority logic", () => {
-    it("should navigate to step 5 when hasUploadedImage=true (highest priority)", () => {
+    it("should navigate to step 4 (Results) when hasUploadedImage=true (highest priority)", () => {
       useStampFlowStore.setState({
         uploadedImageUrl: "https://example.com/uploaded.jpg",
       });
@@ -139,11 +139,11 @@ describe("useSkipGeneration", () => {
       });
 
       const state = useStampFlowStore.getState();
-      expect(state.currentStep).toBe(5);
+      expect(state.currentStep).toBe(4);
       expect(state.selectedImageUrl).toBe("https://example.com/uploaded.jpg");
     });
 
-    it("should navigate to step 5 when hasUploadedImage=true even if cached images exist (priority test)", () => {
+    it("should navigate to step 4 (Results) when hasUploadedImage=true even if cached images exist (priority test)", () => {
       useStampFlowStore.setState({
         uploadedImageUrl: "https://example.com/uploaded.jpg",
       });
@@ -162,7 +162,7 @@ describe("useSkipGeneration", () => {
       });
 
       const state = useStampFlowStore.getState();
-      expect(state.currentStep).toBe(5);
+      expect(state.currentStep).toBe(4);
       expect(state.selectedImageUrl).toBe("https://example.com/uploaded.jpg");
       // Should NOT use the cached image
       expect(state.selectedImageUrl).not.toBe("https://example.com/cached.jpg");
