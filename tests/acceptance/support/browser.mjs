@@ -45,11 +45,13 @@ export async function assertNoHorizontalOverflow(page) {
 export async function setCheckbox(control, checked) {
   // A keypress that lands before hydration attaches the handler is reverted by
   // the controlled input, so re-press a few times instead of waiting 15s once.
-  for (let attempt = 0; attempt < 4; attempt++) {
+  // Keep trying for up to ~10s: a cold dev page can take several seconds to
+  // hydrate, and every press before that is reverted.
+  for (let attempt = 0; attempt < 20; attempt++) {
     if (await control.isChecked() === checked) break;
     await control.focus();
     await control.press('Space');
-    await control.page().waitForTimeout(400);
+    await control.page().waitForTimeout(500);
   }
   await expect(control).toBeChecked({ checked });
 }
