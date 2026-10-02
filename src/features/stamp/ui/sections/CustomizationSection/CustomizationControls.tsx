@@ -93,8 +93,9 @@ export function CustomizationControls({
       </Heading>
 
       <div className="space-y-6 md:space-y-12 mb-8 md:mb-12">
-        {/* Only show color swatches if there are multiple colors to choose from */}
-        {colors.length > 1 && (
+        {/* Show the swatches whenever the product has a color choice, including
+            the single explicit White of white-only categories (CUSTOM-03). */}
+        {colors.length > 0 && (
           <ColorSwatches
             colors={colors}
             selectedColor={selectedColor}

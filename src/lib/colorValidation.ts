@@ -15,7 +15,7 @@ const ALLOWED_COLORS: Record<string, string[]> = {
   // Mugs - typically white only
   mug: ["white"],
   // Tote bags - Black, White, or Natural
-  tote: ["black", "white", "natural"],
+  tote: ["white"],
   // Canvas/Poster - no color restrictions (print on white canvas)
   canvas: [],
   // Socks - white base for all-over print
@@ -23,7 +23,7 @@ const ALLOWED_COLORS: Record<string, string[]> = {
   // Poster - no color restrictions
   poster: [],
   // Notebooks - no color restrictions (cover print)
-  notebook: [],
+  notebook: ["white"],
   // Pillows - no color restrictions (all-over print)
   pillow: [],
 };

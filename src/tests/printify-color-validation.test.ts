@@ -207,45 +207,28 @@ describe("Color Validation for Printify Products", () => {
   });
 
   describe("Tote Bag Products", () => {
+    // Policy (CUSTOM-03): totes are sold in white only.
     const toteBlueprints = [553, 1389];
-
-    it.each(toteBlueprints)(
-      "should allow Black for tote blueprint %i",
-      (blueprintId) => {
-        const category = getCategoryForBlueprint(blueprintId);
-        expect(category).toBe("tote");
-
-        const result = validateColorForProduct("Black", "tote");
-        expect(result.valid).toBe(true);
-      }
-    );
 
     it.each(toteBlueprints)(
       "should allow White for tote blueprint %i",
       (blueprintId) => {
+        expect(getCategoryForBlueprint(blueprintId)).toBe("tote");
         const result = validateColorForProduct("White", "tote");
         expect(result.valid).toBe(true);
       }
     );
 
-    it.each(toteBlueprints)(
-      "should allow Natural for tote blueprint %i",
-      (blueprintId) => {
-        const result = validateColorForProduct("Natural", "tote");
-        expect(result.valid).toBe(true);
+    it("should reject every non-white color for tote bags", () => {
+      for (const color of ["Black", "Natural", "Red", "Blue"]) {
+        expect(validateColorForProduct(color, "tote").valid).toBe(false);
       }
-    );
-
-    it("should reject colors not in allowed list", () => {
-      expect(validateColorForProduct("Red", "tote").valid).toBe(false);
-      expect(validateColorForProduct("Blue", "tote").valid).toBe(false);
     });
 
-    it("should default to Black when no color provided for tote bags", () => {
-      // Server-side validation defaults to first allowed color (Black) when none provided
+    it("should default to White when no color provided for tote bags", () => {
       const result = validateColorForBlueprint(null, 553); // Tote blueprint
       expect(result.valid).toBe(true);
-      expect(result.normalizedColor).toBe("Black");
+      expect(result.normalizedColor).toBe("White");
     });
   });
 
@@ -453,9 +436,9 @@ describe("Integration: Color Selection in Cart Items", () => {
       },
       {
         product_id: "prod_4",
-        blueprint_id: 553, // Tote
-        variant_name: "Natural",
-        color: "Natural",
+        blueprint_id: 553, // Tote (white only)
+        variant_name: "White",
+        color: "White",
       },
     ];
 

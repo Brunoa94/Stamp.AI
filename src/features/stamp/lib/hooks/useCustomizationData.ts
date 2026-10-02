@@ -12,7 +12,11 @@ import {
   STAMP_SIZES,
 } from "../constants/stampColors";
 import { filterDisplayColors } from "@/features/homepage/lib/constants/colorSwatches";
-import { shouldShowColorSelection } from "../helpers/productCategoryDetector";
+import {
+  WHITE_ONLY_COLOR,
+  isWhiteOnlyCategory,
+  shouldShowColorSelection,
+} from "../helpers/productCategoryDetector";
 import type { SizeType } from "../types/stampTypes";
 
 /**
@@ -41,11 +45,18 @@ export function useCustomizationData() {
   // Filter colors to only show White and Black if both are available
   // Otherwise show all available colors
   // For products that don't support color selection, return empty array
+  const whiteOnly = isWhiteOnlyCategory(selectedProductTitle || "");
   const availableColors = useMemo(() => {
     if (!showColors) return [];
     const allColors = (variants?.colors || []).filter(Boolean);
+    if (whiteOnly) {
+      // Policy: these categories are sold in white only. Prefer the catalog's
+      // own spelling when it lists white; otherwise offer the canonical name.
+      const white = allColors.find((c) => c.toLowerCase() === "white");
+      return [white ?? WHITE_ONLY_COLOR];
+    }
     return filterDisplayColors(allColors);
-  }, [variants?.colors, showColors]);
+  }, [variants?.colors, showColors, whiteOnly]);
 
   // Get available sizes from variants API, sorted properly
   // Falls back to standard apparel sizes if API doesn't return sizes
