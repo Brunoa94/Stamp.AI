@@ -1101,7 +1101,8 @@
         "login": "Login"
       },
       "footer": {
-        "noAccount": "Don't have an account? <link>Create one now</link>"
+        "noAccount": "Don't have an account? <link>Create one now</link>",
+        "createAccountAria": "Create account"
       }
     },
     "passwordReset": {
@@ -1188,7 +1189,8 @@
         "signUp": "Sign Up"
       },
       "footer": {
-        "haveAccount": "Already have an account? <link>Log in</link>"
+        "haveAccount": "Already have an account? <link>Log in</link>",
+        "loginAria": "Login"
       },
       "success": {
         "srTitle": "Registration Successful",

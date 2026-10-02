@@ -5,8 +5,18 @@ import { getClientIdentifier } from "@/lib/security/rate-limiter/utils";
 import type { NextRequest } from "next/server";
 
 const RATE_LIMIT_WINDOW_SECONDS = 60 * 60;
-const IP_LIMIT = 10;
-const EMAIL_LIMIT = 3;
+
+/**
+ * Production keeps the defaults. The acceptance suite's dedicated app server
+ * raises them (AUTH_EMAIL_RATE_LIMIT_IP_MAX / AUTH_EMAIL_RATE_LIMIT_EMAIL_MAX)
+ * because one machine and one test identity log in many times per run.
+ */
+function envLimit(name: string, fallback: number): number {
+  const value = Number(process.env[name]);
+  return Number.isInteger(value) && value > 0 ? value : fallback;
+}
+const IP_LIMIT = envLimit("AUTH_EMAIL_RATE_LIMIT_IP_MAX", 10);
+const EMAIL_LIMIT = envLimit("AUTH_EMAIL_RATE_LIMIT_EMAIL_MAX", 3);
 
 function hashIdentifier(value: string): string {
   return createHash("sha256").update(value).digest("hex");
