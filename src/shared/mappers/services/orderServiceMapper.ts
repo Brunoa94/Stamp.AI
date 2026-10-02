@@ -3,6 +3,7 @@ import type { CreateOrderT, OrderWithItemsT } from "@/shared/types/order";
 import type { CartItem } from "@/shared/types/cart";
 import type { UserI } from "../../../../supabase/types";
 import type { ShippingAddressT } from "@/shared/schemas/checkout";
+import { CartServiceMapper } from "./cartServiceMapper";
 
 type OrderRow = Database["public"]["Tables"]["orders"]["Row"];
 type OrderInsert = Database["public"]["Tables"]["orders"]["Insert"];
@@ -61,10 +62,14 @@ export class OrderServiceMapper {
       return sum + ((item.unit_price ?? 0) * (item.quantity ?? 1));
     }, 0);
 
-    // Future: Add tax and shipping calculations
     const taxRate = 0; // 0% for now
     const taxAmount = subtotal * taxRate;
-    const shippingCost = 0; // Free shipping for now
+    // Same shipping rule the cart and checkout charge the customer with
+    // (free from the threshold, flat rate below it). All values are cents.
+    const shippingCost =
+      subtotal >= CartServiceMapper.FREE_SHIPPING_THRESHOLD_CENTS
+        ? 0
+        : CartServiceMapper.SHIPPING_COST_CENTS;
     const totalAmount = subtotal + taxAmount + shippingCost;
 
     return {

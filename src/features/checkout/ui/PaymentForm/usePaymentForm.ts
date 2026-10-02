@@ -72,7 +72,9 @@ export function usePaymentForm({
 
     try {
       const requestBody: CreatePaymentIntentPayloadI = {
-        amount: amount,
+        // `amount` is held in cents for display; create-payment-intent expects
+        // major units (euros) and converts to cents itself.
+        amount: amount / 100,
         currency: "eur",
         line_items: lineItems,
         shipping_address: shippingAddress,
