@@ -102,6 +102,9 @@ deactivated. Corrected directly in the test database on 2026-10-02; production s
 
 ## 5. Other observations
 
+- Flake observed once: CUSTOM-04 (max placement) timed out waiting 90 s for `create-custom-product` although
+  Printify had created the product; six immediate reruns passed in ~10 s each. Latency spike, no code change.
+
 - When the variants API returns no sizes, the customization step offers apparel sizes (S–XL) for any product,
   which sends a meaningless `selected_size` for mugs/pillows. Harmless once providers are correct, but worth
   hiding sizes for non-apparel categories.
