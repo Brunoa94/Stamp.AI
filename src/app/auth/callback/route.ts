@@ -61,6 +61,18 @@ export async function GET(request: NextRequest) {
       ? new URL('/reset-password', request.url)
       : new URL(next, request.url)
 
+    // A completed OAuth exchange is the real "login" moment for providers such
+    // as Google. Flag it on the redirect so the client reports the analytics
+    // event exactly once (see SupabaseAuthProvider), never on the button click.
+    if (type !== 'recovery') {
+      const { data: { user } } = await supabase.auth.getUser()
+      const provider = user?.app_metadata?.provider
+      if (provider && provider !== 'email') {
+        redirectUrl.searchParams.set('auth_event', 'login')
+        redirectUrl.searchParams.set('auth_method', provider)
+      }
+    }
+
     // Create redirect response and copy cookies from the original response
     const redirectResponse = NextResponse.redirect(redirectUrl)
     response.cookies.getAll().forEach((cookie) => {
