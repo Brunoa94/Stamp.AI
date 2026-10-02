@@ -22,8 +22,9 @@ async function waitUntilCancellable(read, sleep, evidence, maxPolls = 40) {
 
 export async function cancelWithRetry({ cancel, read, sleep = delay }) {
   const evidence = [];
-  const initial = await waitUntilCancellable(read, sleep, evidence);
-  if (CANCELED.has(initial)) return { attempts: 0, evidence: [{ phase: 'wait', status: initial }] };
+  // Always issue at least one cancel and verify remotely, even if the read
+  // already says canceled: verification, not local state, is the evidence.
+  await waitUntilCancellable(read, sleep, evidence);
   for (let attempt = 1; attempt <= 4; attempt++) {
     let mutation = 'accepted';
     try { await cancel(); } catch { mutation = 'rejected-or-unreachable'; }
