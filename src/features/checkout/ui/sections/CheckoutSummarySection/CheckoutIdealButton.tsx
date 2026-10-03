@@ -22,6 +22,8 @@ interface CheckoutIdealButtonPropsI {
   cart: CartWithItems;
   cartId: string | null;
   amount: number;
+  shippingCostCents: number;
+  discountCents: number;
   disabled?: boolean;
 }
 
@@ -29,6 +31,8 @@ export function CheckoutIdealButton({
   cart,
   cartId,
   amount,
+  shippingCostCents,
+  discountCents,
   disabled = false,
 }: CheckoutIdealButtonPropsI) {
   const t = useTranslations("checkout.idealButton");
@@ -44,6 +48,8 @@ export function CheckoutIdealButton({
         cart,
         cartId,
         amount,
+        shippingCostCents,
+        discountCents,
       });
       window.location.href = checkoutUrl;
     } catch (error) {

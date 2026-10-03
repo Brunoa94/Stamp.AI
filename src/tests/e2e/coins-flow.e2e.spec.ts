@@ -14,9 +14,13 @@ test.describe("Complete Coins User Journey", () => {
    * which is tested separately in integration tests.
    */
 
-  test("authenticated user sees coins display and can access generate form", async ({ page }) => {
+  test("authenticated user sees coins display and can access generate form", async ({ page, isMobile }) => {
     // 1. Visit stamp page
     await page.goto("/stamp");
+    if (isMobile) {
+      await page.getByRole("button", { name: /begin customiz/i }).click();
+      await page.getByRole("button", { name: /skip upload/i }).click();
+    }
 
     // 2. Navigate to synthesis section
     await page.locator("#step-2").scrollIntoViewIfNeeded();
@@ -25,7 +29,7 @@ test.describe("Complete Coins User Journey", () => {
     await page.waitForTimeout(2000);
 
     // 4. Verify coins display is visible
-    const coinsDisplay = page.getByTestId("coins-display");
+    const coinsDisplay = page.locator('[data-testid="coins-display"]:visible').first();
     await expect(coinsDisplay).toBeVisible({ timeout: 10000 });
 
     // 5. Verify no overlay is blocking the form
@@ -51,15 +55,15 @@ test.describe("Complete Coins User Journey", () => {
     await page.goto("/stamp");
     await page.locator("#step-2").scrollIntoViewIfNeeded();
 
-    const coinsDisplay = page.getByTestId("coins-display");
+    const coinsDisplay = page.locator('[data-testid="coins-display"]:visible').first();
     await expect(coinsDisplay).toBeVisible({ timeout: 10000 });
 
     // Verify format is "X / 5" where X is 0-5
     const coinsText = await coinsDisplay.textContent();
-    expect(coinsText).toMatch(/\d+\s*\/\s*5/);
+    expect(coinsText).toMatch(/\d+ Coins available/);
 
     // Verify "Daily coins" label is present
-    expect(coinsText).toContain("Daily coins");
+    expect(coinsText).toContain("Coins available");
   });
 
   test("synthesis form maintains state after navigation", async ({ page }) => {
@@ -96,46 +100,10 @@ test.describe("Complete Coins User Journey", () => {
   test.describe("Unauthenticated user journey", () => {
     test.use({ storageState: { cookies: [], origins: [] } });
 
-    test("unauthenticated user is blocked from generating", async ({ page }) => {
-      // 1. Visit stamp page
+    test("stamp route redirects to the homepage", async ({ page }) => {
       await page.goto("/stamp");
-
-      // 2. Navigate to synthesis section
-      await page.locator("#step-2").scrollIntoViewIfNeeded();
-
-      // 3. Verify login overlay is shown
-      const loginOverlay = page.getByTestId("coins-overlay-login");
-      await expect(loginOverlay).toBeVisible({ timeout: 10000 });
-
-      // 4. Verify generate button is not accessible (behind overlay)
-      const generateButton = page.getByRole("button", { name: /stamp it|generate/i });
-
-      // Button might be disabled or hidden behind overlay
-      if (await generateButton.isVisible()) {
-        await expect(generateButton).toBeDisabled();
-      }
-
-      // 5. Verify prompt input is not accessible (behind overlay)
-      // The input should be behind the overlay, so interaction should be blocked
-      const overlay = page.getByTestId("coins-overlay-login");
-      await expect(overlay).toBeVisible();
-    });
-
-    test("login flow redirects properly", async ({ page }) => {
-      await page.goto("/stamp");
-      await page.locator("#step-2").scrollIntoViewIfNeeded();
-
-      // Wait for overlay
-      await expect(page.getByTestId("coins-overlay-login")).toBeVisible({ timeout: 10000 });
-
-      // Click login
-      await page.getByRole("button", { name: /login/i }).click();
-
-      // Should be on login page
-      await expect(page).toHaveURL(/\/auth\/login/);
-
-      // Verify login form elements are present
-      await expect(page.getByLabel(/email/i)).toBeVisible();
+      await expect(page).toHaveURL(/\/\?redirectedFrom=%2Fstamp$/);
+      await expect(page.locator("#step-2")).toHaveCount(0);
     });
   });
 
@@ -149,7 +117,7 @@ test.describe("Complete Coins User Journey", () => {
     await page.goto("/stamp");
     await page.locator("#step-2").scrollIntoViewIfNeeded();
 
-    const coinsDisplay = page.getByTestId("coins-display");
+    const coinsDisplay = page.locator('[data-testid="coins-display"]:visible').first();
     await expect(coinsDisplay).toBeVisible({ timeout: 10000 });
 
     // Check for aria-label
@@ -172,26 +140,9 @@ test.describe("Complete Coins User Journey", () => {
       await page.goto("/stamp");
       await page.locator("#step-2").scrollIntoViewIfNeeded();
 
-      const coinsDisplay = page.getByTestId("coins-display");
+      const coinsDisplay = page.locator('[data-testid="coins-display"]:visible').first();
       await expect(coinsDisplay).toBeVisible({ timeout: 10000 });
     });
 
-    test("overlay covers form on tablet", async ({ page }) => {
-      // Set tablet viewport
-      await page.setViewportSize({ width: 768, height: 1024 });
-
-      // Use unauthenticated state
-      await page.context().clearCookies();
-      await page.goto("/stamp");
-      await page.locator("#step-2").scrollIntoViewIfNeeded();
-
-      const loginOverlay = page.getByTestId("coins-overlay-login");
-      await expect(loginOverlay).toBeVisible({ timeout: 10000 });
-
-      // Verify overlay has proper positioning
-      const overlayBox = await loginOverlay.boundingBox();
-      expect(overlayBox).toBeTruthy();
-      expect(overlayBox!.width).toBeGreaterThan(200);
-    });
   });
 });

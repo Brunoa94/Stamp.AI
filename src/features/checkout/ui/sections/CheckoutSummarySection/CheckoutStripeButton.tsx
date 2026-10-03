@@ -24,6 +24,8 @@ import { CheckoutDataBuilder } from "@/features/checkout/lib/services/checkoutDa
 
 interface CheckoutStripeButtonPropsI {
   amount: number;
+  shippingCostCents: number;
+  discountCents: number;
   cart: CartWithItems;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
@@ -36,6 +38,8 @@ interface CheckoutStripeButtonPropsI {
 
 export function CheckoutStripeButton({
   amount,
+  shippingCostCents,
+  discountCents,
   cart,
   lineItems,
   shippingAddress,
@@ -91,6 +95,8 @@ export function CheckoutStripeButton({
   const { loading, error, handleSubmit, setSelectedTestMethod } =
     usePaymentForm({
       amount,
+      shippingCostCents,
+      discountCents,
       lineItems,
       shippingAddress,
       testMode,

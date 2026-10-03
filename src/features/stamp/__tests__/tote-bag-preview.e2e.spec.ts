@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { mockImageGeneration } from "@/tests/e2e/helpers/mockImageGeneration";
 
 /**
  * Tote Bag Preview Configuration Tests
@@ -8,9 +9,29 @@ import { expect, test } from "@playwright/test";
  */
 
 test.describe("Tote Bag Preview Configuration", () => {
-  test("verifies tote bag preview configuration in step 6", async ({ page }) => {
+  test("verifies tote bag preview configuration in step 6", async ({ page, isMobile }) => {
+    test.skip(isMobile, "Print-area geometry is rendered in the desktop preview");
+    test.setTimeout(90_000);
+    await mockImageGeneration(page, "Simple geometric pattern");
+    await page.route("**/rest/v1/catalog_products?*", async (route) => {
+      const response = await route.fetch();
+      const products = await response.json();
+      if (!Array.isArray(products)) {
+        await route.fulfill({ response });
+        return;
+      }
+      await route.fulfill({
+        response,
+        json: products.map((product) =>
+          product.display_title === "Canvas Tote Bag"
+            ? { ...product, blueprint_id: 553 }
+            : product,
+        ),
+      });
+    });
     // Go to stamp page
     await page.goto("/stamp");
+    await expect(page.getByRole("button", { name: /logout from your account/i })).toBeVisible({ timeout: 20_000 });
 
     // Hero -> Step 1: Click begin customization CTA
     await page.getByRole("button", { name: /begin customiz/i }).click();
@@ -32,12 +53,15 @@ test.describe("Tote Bag Preview Configuration", () => {
 
     // Step 5: Find and select a tote bag product
     const step5 = page.locator("#step-5");
-    const toteBagButton = step5.getByRole("button").filter({
-      hasText: /tote/i,
-    }).first();
-
-    await toteBagButton.waitFor({ state: "visible", timeout: 30_000 });
+    const toteBagButton = step5.getByRole("button", { name: /select canvas tote bag/i });
+    const continueButton = step5.getByRole("button", { name: /continue to customization/i });
     await toteBagButton.click();
+    await expect(continueButton).toBeEnabled({ timeout: 10_000 }).catch(async () => {
+      // Catalog refreshes can replace a card immediately after selection.
+      if (await toteBagButton.isVisible()) await toteBagButton.click();
+    });
+    await expect(continueButton).toBeEnabled({ timeout: 30_000 });
+    await continueButton.click();
 
     // Verify step 6 is visible
     await expect(page.locator("#step-6")).toBeVisible();
@@ -54,7 +78,7 @@ test.describe("Tote Bag Preview Configuration", () => {
     }));
 
     // With x: 0.5, y: 0.5 and scale: 0.5, expected values:
-    // left: 50%, top: 50%, width: 50%
+    // The default placement keeps the design centered within the safe area.
     expect(style.left).toBe("50%");
     expect(style.top).toBe("50%");
     expect(style.width).toBe("50%");

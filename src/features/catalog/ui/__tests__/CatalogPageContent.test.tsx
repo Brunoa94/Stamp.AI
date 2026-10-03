@@ -46,23 +46,18 @@ describe("CatalogPageContent", () => {
     expect(screen.getByText(messages.catalog.intro)).toBeInTheDocument();
   });
 
-  it("renders one section per group with its products", () => {
+  it("renders the showcase groups when browsing all products", () => {
     renderWithIntl(<CatalogPageContent sections={SECTIONS} />);
 
     expect(
-      screen.getByRole("heading", {
-        level: 2,
-        name: messages.catalog.groups.clothing,
+      screen.getByRole("button", {
+        name: `Browse ${messages.catalog.groups.clothing}`,
       })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", {
-        level: 2,
-        name: messages.catalog.groups.accessories,
+      screen.getByRole("button", {
+        name: `Browse ${messages.catalog.groups.accessories}`,
       })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { level: 3, name: "Ceramic Mug" })
     ).toBeInTheDocument();
   });
 
@@ -182,9 +177,10 @@ describe("CatalogPageContent", () => {
       })
     );
 
-    expect(
-      screen.getByRole("heading", { level: 3, name: "Ceramic Mug" })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", {
+      level: 2,
+      name: messages.catalog.showcase.title,
+    })).toBeInTheDocument();
   });
 
   it("renders the empty state when there are no sections", () => {

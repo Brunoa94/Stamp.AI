@@ -3,17 +3,19 @@
  * Gets JWT token from actual user login
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const testEmail = process.env.TEST_USER_EMAIL;
+const testPassword = process.env.TEST_USER_PASSWORD;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+if (!supabaseUrl || !supabaseAnonKey || !testEmail || !testPassword) {
+  throw new Error('Missing test Supabase URL, anon key, or test user credentials');
 }
 
 export interface AuthenticatedClient {
-  supabase: ReturnType<typeof createClient<any>>;
+  supabase: SupabaseClient;
   userId: string;
   accessToken: string;
 }
@@ -23,8 +25,8 @@ export async function getAuthenticatedClient(): Promise<AuthenticatedClient> {
 
   // Sign in with real user credentials
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: 'bruno.afonso94@hotmail.com',
-    password: 'Bruno-afonso94',
+    email: testEmail!,
+    password: testPassword!,
   });
 
   if (error) {

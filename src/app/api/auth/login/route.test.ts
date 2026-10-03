@@ -52,10 +52,11 @@ describe("POST /api/auth/login", () => {
   });
 
   it("rejects login when server-side CAPTCHA verification fails", async () => {
+    process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY = "site";
     process.env.RECAPTCHA_SECRET_KEY = "secret";
     mocks.verifyCaptchaForAction.mockResolvedValue({ success: false });
 
-    const response = await POST(request());
+    const response = await POST(request({ captchaToken: "test-token" }));
 
     expect(response.status).toBe(403);
     expect(await response.json()).toEqual({

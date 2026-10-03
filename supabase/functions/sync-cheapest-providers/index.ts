@@ -4,6 +4,7 @@ import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { validateEnvVars } from "../_shared/validators.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
 import { requireServiceRoleOrCron } from '../_shared/authGuard.ts'
+import { fetchPrintify } from "../_shared/fetchWithTimeout.ts"
 
 interface ProviderInfo {
   id: number
@@ -82,9 +83,9 @@ async function getProviderShipping(
   apiToken: string
 ): Promise<{ providerId: number; providerName: string; shippingCents: number } | null> {
   try {
-    const shippingResponse = await fetch(
-      `https://api.printify.com/v1/catalog/blueprints/${blueprintId}/print_providers/${provider.id}/shipping.json`,
-      { headers: { 'Authorization': `Bearer ${apiToken}` } }
+    const shippingResponse = await fetchPrintify(
+      `/v1/catalog/blueprints/${blueprintId}/print_providers/${provider.id}/shipping.json`,
+      apiToken
     )
 
     if (!shippingResponse.ok) {
@@ -122,12 +123,10 @@ async function findCheapestShippingProvider(
   currentMinPrice: number,
   apiToken: string
 ): Promise<{ cheapest: ProviderPricing; allProviders: ProviderPricing[] } | null> {
-  const url = `https://api.printify.com/v1/catalog/blueprints/${blueprintId}/print_providers.json`
-  console.log(`  Fetching providers from: ${url}`)
+  const url = `/v1/catalog/blueprints/${blueprintId}/print_providers.json`
+  console.log(`  Fetching providers from: https://api.printify.com${url}`)
 
-  const providersResponse = await fetch(url, {
-    headers: { 'Authorization': `Bearer ${apiToken}` }
-  })
+  const providersResponse = await fetchPrintify(url, apiToken)
 
   if (!providersResponse.ok) {
     const errorText = await providersResponse.text()

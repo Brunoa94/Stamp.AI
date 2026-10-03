@@ -7,6 +7,12 @@ import { getAuthenticatedClient } from './setup-auth';
 import { OrderService } from '@/shared/services/orderService';
 import type { UserI } from '../../../supabase/types';
 import type { ShippingAddressT } from '@/shared/schemas/checkout';
+import { vi } from 'vitest';
+
+const integrationSupabase = vi.hoisted(() => ({ client: null as any }));
+vi.mock('@/lib/supabase/client', () => ({
+  createClient: () => integrationSupabase.client,
+}));
 
 describe('Order Creation Integration Tests', () => {
   let supabase: any;
@@ -17,7 +23,7 @@ describe('Order Creation Integration Tests', () => {
   // Use actual test user from .env
   const testUser: UserI = {
     id: '', // Will be set in beforeAll
-    email: 'bruno.afonso94@hotmail.com',
+    email: process.env.TEST_USER_EMAIL || '',
     user_metadata: {
       full_name: 'Bruno Afonso',
     },
@@ -53,6 +59,7 @@ describe('Order Creation Integration Tests', () => {
     // Get authenticated client with JWT token
     const auth = await getAuthenticatedClient();
     supabase = auth.supabase;
+    integrationSupabase.client = auth.supabase;
     testUserId = auth.userId;
     testUser.id = testUserId;
 

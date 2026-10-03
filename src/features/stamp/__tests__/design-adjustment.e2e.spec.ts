@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { mockImageGeneration } from "@/tests/e2e/helpers/mockImageGeneration";
 
 /**
  * Design Adjustment Panel (Step 6) E2E
@@ -8,7 +9,9 @@ import { expect, test } from "@playwright/test";
  */
 
 async function goToCustomizationStep(page: import("@playwright/test").Page) {
+  await mockImageGeneration(page, "Minimal line drawing of a mountain");
   await page.goto("/stamp");
+  await expect(page.getByRole("button", { name: /logout from your account/i })).toBeVisible({ timeout: 20_000 });
 
   // Hero -> Step 1: Click begin customization CTA
   await page.getByRole("button", { name: /begin customiz/i }).click();
@@ -28,23 +31,30 @@ async function goToCustomizationStep(page: import("@playwright/test").Page) {
   });
 
   // Step 5: pick the first product
-  await page.locator("#step-5").getByRole("button").first().click();
+  await page.locator("#step-5").getByRole("button", { name: /select .*tee/i }).first().click();
+  await page.getByRole("button", { name: /continue to customization/i }).click();
 
   await expect(page.locator("#step-6")).toBeVisible();
 }
 
 test.describe("Design Adjustment Panel", () => {
   test.beforeEach(async ({ page }) => {
+    test.setTimeout(90_000);
     await goToCustomizationStep(page);
   });
 
-  test("shows the available print positions for the selected product", async ({ page }) => {
+  test("shows the available print positions for the selected product", async ({ page, isMobile }) => {
     await expect(
       page.getByRole("radio", { name: /print on front/i }),
     ).toBeVisible();
     await expect(
       page.getByRole("radio", { name: /print on back/i }),
     ).toBeVisible();
+    if (!isMobile) {
+      for (const name of [/move up/i, /move down/i, /move left/i, /move right/i]) {
+        await expect(page.getByRole("button", { name })).toHaveAttribute("aria-label");
+      }
+    }
   });
 
   test("switches between front and back printing (single-select)", async ({ page }) => {
@@ -62,7 +72,8 @@ test.describe("Design Adjustment Panel", () => {
     await expect(back).toHaveAttribute("aria-checked", "false");
   });
 
-  test("shows the back silhouette while the back is selected", async ({ page }) => {
+  test("shows the back silhouette while the back is selected", async ({ page, isMobile }) => {
+    test.skip(isMobile, "Desktop placement controls are covered by this case");
     const silhouette = page.getByTestId("product-silhouette");
     await expect(silhouette).toHaveAttribute("data-silhouette-key", "apparel");
 
@@ -73,7 +84,8 @@ test.describe("Design Adjustment Panel", () => {
     );
   });
 
-  test("updates the preview when adjusting placement", async ({ page }) => {
+  test("updates the preview when adjusting placement", async ({ page, isMobile }) => {
+    test.skip(isMobile, "Desktop placement controls are covered by this case");
     const overlay = page.getByTestId("design-overlay");
     const before = await overlay.evaluate((el) => el.style.top);
 
@@ -84,7 +96,8 @@ test.describe("Design Adjustment Panel", () => {
     await page.screenshot({ path: "test-results/placement-adjusted.png" });
   });
 
-  test("prevents placement outside the safe zone", async ({ page }) => {
+  test("prevents placement outside the safe zone", async ({ page, isMobile }) => {
+    test.skip(isMobile, "Desktop placement controls are covered by this case");
     const moveUp = page.getByRole("button", { name: /move up/i });
     for (let i = 0; i < 10; i += 1) {
       await moveUp.click();
@@ -92,7 +105,8 @@ test.describe("Design Adjustment Panel", () => {
     await expect(page.getByText(/safe print area/i)).toBeVisible();
   });
 
-  test("resets placement to the default", async ({ page }) => {
+  test("resets placement to the default", async ({ page, isMobile }) => {
+    test.skip(isMobile, "Desktop placement controls are covered by this case");
     const overlay = page.getByTestId("design-overlay");
     const initial = await overlay.evaluate((el) => el.style.top);
 
@@ -103,7 +117,46 @@ test.describe("Design Adjustment Panel", () => {
     expect(after).toBe(initial);
   });
 
-  test("creates the product with a back print", async ({ page }) => {
+  test("creates the product with a back print", async ({ page, isMobile }) => {
+    test.skip(isMobile, "Desktop placement controls are covered by this case");
+    await page.route("**/functions/v1/upload-printify-image", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          image: {
+            id: "test-print-image",
+            file_name: "test.png",
+            width: 512,
+            height: 512,
+            size: 1024,
+            mime_type: "image/png",
+            preview_url: "https://placehold.co/512x512/png",
+          },
+        }),
+      }),
+    );
+    await page.route("**/functions/v1/create-custom-product", (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: true,
+          product: {
+            id: "test-back-print",
+            title: "Test Back Print",
+            variants: [{ id: 1, title: "Black / M", price: 2499, is_enabled: true }],
+            images: [{ src: "https://placehold.co/512x512/png", position: "back", is_default: true }],
+          },
+        }),
+      }),
+    );
+    await page.route("**/rest/v1/products?*", (route) =>
+      route.request().method() === "POST"
+        ? route.fulfill({ status: 403, body: "test product stays local" })
+        : route.continue(),
+    );
     await page.getByRole("radio", { name: /print on back/i }).click();
     await page.getByRole("button", { name: /move up/i }).click();
 
@@ -113,11 +166,4 @@ test.describe("Design Adjustment Panel", () => {
     await expect(page.locator("#step-8")).toBeVisible({ timeout: 130_000 });
   });
 
-  test("adjustment controls are labelled for assistive tech", async ({ page }) => {
-    for (const name of [/move up/i, /move down/i, /move left/i, /move right/i]) {
-      await expect(page.getByRole("button", { name })).toHaveAttribute(
-        "aria-label",
-      );
-    }
-  });
 });

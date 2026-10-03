@@ -13,6 +13,8 @@ import { mapAddPaymentInfoEvent } from "@/features/analytics/mappers/ecommerceMa
 
 interface UsePaymentFormProps {
   amount: number;
+  shippingCostCents: number;
+  discountCents: number;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
   testMode?: boolean;
@@ -35,6 +37,8 @@ const TEST_PAYMENT_METHODS = {
 
 export function usePaymentForm({
   amount,
+  shippingCostCents,
+  discountCents,
   lineItems,
   shippingAddress,
   testMode = false,
@@ -72,7 +76,9 @@ export function usePaymentForm({
 
     try {
       const requestBody: CreatePaymentIntentPayloadI = {
-        amount: amount,
+        amount: amount / 100,
+        shipping_cost_cents: shippingCostCents,
+        discount_cents: discountCents,
         currency: "eur",
         line_items: lineItems,
         shipping_address: shippingAddress,

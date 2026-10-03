@@ -3,6 +3,7 @@ import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { requireUser } from "../_shared/authGuard.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
+import { fetchPrintify } from "../_shared/fetchWithTimeout.ts"
 
 // Environment variables will be validated when needed
 
@@ -73,16 +74,15 @@ serve(async (req) => {
 
     console.log('Uploading image to Printify...')
 
-    const response = await fetch(
-      'https://api.printify.com/v1/uploads/images.json',
+    // Image uploads can take longer, use 30 second timeout
+    const response = await fetchPrintify(
+      '/v1/uploads/images.json',
+      PRINTIFY_API_TOKEN,
       {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${PRINTIFY_API_TOKEN}`,
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(uploadPayload),
-      }
+      },
+      30_000 // 30 second timeout for image uploads
     )
 
     const data = await response.json()

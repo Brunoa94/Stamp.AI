@@ -13,6 +13,7 @@ import type {
   SyncOrderRowI,
 } from "./mapping.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import { fetchPrintify } from "../_shared/fetchWithTimeout.ts";
 
 const BATCH_SIZE = 100;
 const CONCURRENCY = 5;
@@ -89,14 +90,9 @@ async function syncOrder(
 ): Promise<SyncOutcomeI> {
   const nowIso = new Date().toISOString();
 
-  const response = await fetch(
-    `https://api.printify.com/v1/shops/${printifyShopId}/orders/${dbOrder.printify_order_id}.json`,
-    {
-      headers: {
-        Authorization: `Bearer ${printifyToken}`,
-        "Content-Type": "application/json",
-      },
-    }
+  const response = await fetchPrintify(
+    `/v1/shops/${printifyShopId}/orders/${dbOrder.printify_order_id}.json`,
+    printifyToken
   );
 
   if (response.status === 429 || response.status >= 500) {
