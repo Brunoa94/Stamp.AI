@@ -9,7 +9,7 @@
 "use client";
 
 import { Elements, CardElement } from "@stripe/react-stripe-js";
-import { stripePromise } from "@/lib/stripe";
+import { getStripePromise } from "@/lib/stripe";
 import { buildCardElementOptions } from "../../../lib/helpers/stripeCardOptions";
 import { CheckoutTestCardSelector } from "./CheckoutTestCardSelector";
 
@@ -25,7 +25,7 @@ export function CheckoutStripeCardForm({
   onTestMethodChange,
 }: CheckoutStripeCardFormPropsI) {
   return (
-    <Elements stripe={stripePromise}>
+    <Elements stripe={getStripePromise(testMode)}>
       <div className="mt-6">
         {testMode ? (
           <CheckoutTestCardSelector

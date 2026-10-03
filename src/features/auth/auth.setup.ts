@@ -10,12 +10,14 @@
  */
 import { test as setup, expect } from "@playwright/test";
 import path from "path";
+import { existsSync } from "fs";
+import { createClient } from "@supabase/supabase-js";
 
 // Resolve relative to the repo root, not the source file location.
 // auth.setup.ts is at src/features/auth/auth.setup.ts → root is 3 levels up.
 const AUTH_FILE = path.resolve(__dirname, "../../../playwright/.auth/user.json");
 
-setup("authenticate", async ({ page }) => {
+setup("authenticate", async ({ browser, page }) => {
   const email = process.env.TEST_USER_EMAIL;
   const password = process.env.TEST_USER_PASSWORD;
 
@@ -26,53 +28,49 @@ setup("authenticate", async ({ page }) => {
     );
   }
 
-  await page.goto("/");
-
-  // Check if already authenticated
-  const isAlreadyAuth = await page
-    .getByRole("button", { name: /logout|sign out/i })
-    .isVisible({ timeout: 5_000 })
-    .catch(() => false);
-
-  if (isAlreadyAuth) {
-    console.log("User already authenticated, skipping login flow.");
-  } else {
-    // Need to login
-    const openLoginButton = page
-      .getByRole("button", { name: /open login dialog|login/i })
-      .first();
-    await openLoginButton.click();
-
-    const loginDialog = page.getByRole("dialog").first();
-    await loginDialog.getByLabel(/email/i).fill(email ?? "");
-    await loginDialog.locator("#password").fill(password ?? "");
-    await loginDialog.getByRole("button", { name: /^login$/i }).click();
-
-    const signOutButton = page.getByRole("button", { name: /sign out|logout/i });
-    const loginError = loginDialog.getByRole("alert");
-
-    const authResult = await Promise.race([
-      signOutButton
-        .waitFor({ state: "visible", timeout: 20_000 })
-        .then(() => "success" as const),
-      loginError
-        .waitFor({ state: "visible", timeout: 20_000 })
-        .then(() => "error" as const),
-    ]).catch(() => "timeout" as const);
-
-    if (authResult !== "success") {
-      const errorText = (await loginError.textContent())?.trim();
-      throw new Error(
-        errorText
-          ? `E2E login failed: ${errorText}`
-          : "E2E login failed: unable to authenticate with provided test credentials.",
-      );
+  // Reuse a still-valid session so repeated local runs do not consume the
+  // server's login rate limit.
+  if (existsSync(AUTH_FILE)) {
+    const savedContext = await browser.newContext({ storageState: AUTH_FILE });
+    try {
+      const savedPage = await savedContext.newPage();
+      await savedPage.goto("/orders");
+      if (new URL(savedPage.url()).pathname === "/orders") {
+        await savedContext.storageState({ path: AUTH_FILE });
+        return;
+      }
+    } finally {
+      await savedContext.close();
     }
   }
 
-  // Validate authenticated session by checking for logout button presence
-  const logoutButton = page.getByRole("button", { name: /logout|sign out/i });
-  await expect(logoutButton).toBeVisible({ timeout: 5_000 });
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error("E2E authentication requires test Supabase URL and anon key.");
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: email!,
+    password: password!,
+  });
+  if (error || !data.session) {
+    throw new Error(`E2E login failed: ${error?.message ?? "no session returned"}`);
+  }
+
+  const projectRef = new URL(supabaseUrl).hostname.split(".")[0];
+  const baseURL = process.env.BASE_URL ?? "http://localhost:3000";
+  await page.context().addCookies([{
+    name: `sb-${projectRef}-auth-token`,
+    value: `base64-${Buffer.from(JSON.stringify(data.session)).toString("base64url")}`,
+    url: baseURL,
+    sameSite: "Lax",
+  }]);
+  await page.goto("/orders");
+  await expect(page).toHaveURL(/\/orders(?:\?|$)/);
 
   await page.context().storageState({ path: AUTH_FILE });
 });

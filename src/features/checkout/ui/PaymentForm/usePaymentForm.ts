@@ -5,6 +5,7 @@ import { ShippingAddressT } from "@/shared/schemas/checkout";
 import { mapShippingAddressToBillingDetails } from "@/shared/mappers/mapShippingAddressToBillingDetails";
 import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
 import { useCreatePaymentIntent } from "@/shared/queries/stripeQueries";
+import type { CreatePaymentIntentPayloadI } from "@/shared/types/payment";
 import { getStripeIntentStatusMessage } from "@/features/checkout/lib/helpers/getStripeIntentStatusMessage";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import { AnalyticsService } from "@/shared/services/analyticsService";
@@ -12,6 +13,8 @@ import { mapAddPaymentInfoEvent } from "@/features/analytics/mappers/ecommerceMa
 
 interface UsePaymentFormProps {
   amount: number;
+  shippingCostCents: number;
+  discountCents: number;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
   testMode?: boolean;
@@ -34,6 +37,8 @@ const TEST_PAYMENT_METHODS = {
 
 export function usePaymentForm({
   amount,
+  shippingCostCents,
+  discountCents,
   lineItems,
   shippingAddress,
   testMode = false,
@@ -70,11 +75,15 @@ export function usePaymentForm({
     setError(null);
 
     try {
-      const requestBody: any = {
-        amount: amount,
+      const requestBody: CreatePaymentIntentPayloadI = {
+        amount: amount / 100,
+        shipping_cost_cents: shippingCostCents,
+        discount_cents: discountCents,
         currency: "eur",
         line_items: lineItems,
         shipping_address: shippingAddress,
+        // Selects the Stripe credential set (live vs test) on the server.
+        test_mode: isTestMode,
         // Note: order_id is NOT set here because the order doesn't exist yet.
         // The order is created after payment succeeds, then linkPaymentTransactionToOrder
         // sets payment_transactions.order_id which the webhook uses to find the order.

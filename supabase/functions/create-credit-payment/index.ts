@@ -1,8 +1,13 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import Stripe from 'https://esm.sh/stripe@16.12.0?target=deno'
+import type Stripe from 'https://esm.sh/stripe@16.12.0?target=deno'
 import { ErrorCodes, handleError, FunctionError } from "../_shared/errors.ts"
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
+import {
+  STRIPE_MODE_METADATA_KEY,
+  createStripeClient,
+  resolveStripeMode,
+} from "../_shared/stripeConfig.ts"
 
 // Credit-specific error codes
 const CreditErrors = {
@@ -19,6 +24,8 @@ interface CreateCreditPaymentRequest {
   amount: number
   credits: number
   currency?: string
+  /** Use Stripe Test Mode credentials instead of live ones */
+  test_mode?: boolean
 }
 
 interface CreditPaymentResponse {
@@ -107,10 +114,13 @@ serve(async (req) => {
       amount,
       credits,
       currency = 'usd',
+      test_mode = false,
     }: CreateCreditPaymentRequest = await req.json()
 
-    // Validate environment variables and request data
-    const stripeSecretKey = validateEnvVars.stripeSecretKey()
+    // Pick the credential set up-front so a misconfigured test request
+    // fails before any pricing work is done.
+    const stripeMode = resolveStripeMode(test_mode)
+    const stripe = createStripeClient(stripeMode, '2023-10-16')
     const validCredits = validateCredits(credits)
 
     // Derive the charge amount server-side from the credit count. Never trust
@@ -131,11 +141,6 @@ serve(async (req) => {
       throw CreditErrors.AMOUNT_MISMATCH()
     }
 
-    const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: '2023-10-16',
-      httpClient: Stripe.createFetchHttpClient(),
-    })
-
     // Build payment intent options for credit purchase
     const paymentIntentOptions: Stripe.PaymentIntentCreateParams = {
       amount: Math.round(validAmount * 100), // Convert to cents
@@ -149,6 +154,7 @@ serve(async (req) => {
         user_email: userEmail,
         credits: validCredits.toString(),
         amount_usd: validAmount.toString(),
+        [STRIPE_MODE_METADATA_KEY]: stripeMode,
       },
     }
 

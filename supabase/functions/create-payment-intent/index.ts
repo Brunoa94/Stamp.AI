@@ -1,8 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@16.12.0?target=deno";
 import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, validateRequest } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
+import {
+  STRIPE_MODE_METADATA_KEY,
+  createStripeClient,
+  resolveStripeMode,
+} from "../_shared/stripeConfig.ts";
 import { validatePricingAgainstDatabase, type LineItemForPricingI } from "../_shared/serverPriceService.ts";
 import type { PaymentIntentResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
@@ -80,10 +84,13 @@ serve(async (req) => {
       metadata,
       payment_method, // Optional: for testing with pm_card_visa, etc.
       confirm = false, // Optional: auto-confirm payment (for testing)
+      test_mode = false, // Optional: use Stripe Test Mode credentials
     } = await req.json();
 
-    // Validate environment variables and request data
-    const stripeSecretKey = validateEnvVars.stripeSecretKey();
+    // Pick the credential set up-front so a misconfigured test request
+    // fails before any pricing work is done.
+    const stripeMode = resolveStripeMode(test_mode);
+    const stripe = createStripeClient(stripeMode, "2023-10-16");
     const validAmount = validateRequest.amount(amount);
 
     // SERVER-SIDE PRICE VALIDATION (C4 - Amount Tampering Prevention)
@@ -117,11 +124,6 @@ serve(async (req) => {
       }
     }
 
-    const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: "2023-10-16",
-      httpClient: Stripe.createFetchHttpClient(),
-    });
-
     // Build payment intent options
     const paymentIntentOptions: any = {
       amount: Math.round(validAmount * 100), // Convert to cents
@@ -132,6 +134,7 @@ serve(async (req) => {
         user_email: userEmail,
         line_items: JSON.stringify(line_items),
         shipping_address: JSON.stringify(shipping_address),
+        [STRIPE_MODE_METADATA_KEY]: stripeMode,
       },
     };
 
@@ -180,6 +183,7 @@ serve(async (req) => {
             user_email: userEmail,
             line_items: line_items,
             shipping_address: shipping_address,
+            [STRIPE_MODE_METADATA_KEY]: stripeMode,
           },
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),

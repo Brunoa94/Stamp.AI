@@ -9,7 +9,7 @@
 
 import { useFormContext } from "react-hook-form";
 import { Elements } from "@stripe/react-stripe-js";
-import { stripePromise } from "@/lib/stripe";
+import { getStripePromise } from "@/lib/stripe";
 import { Heading } from "@/features/ui/heading";
 import { useCheckoutPricing } from "@/features/checkout/lib/hooks/useCheckoutPricing";
 import { buildPrintifyLineItems } from "@/features/checkout/lib/mappers/printifyLineItemsMapper";
@@ -94,9 +94,11 @@ export function CheckoutSummarySection({
         />
 
         {paymentMethod === "stripe" && paymentShippingAddress && (
-          <Elements stripe={stripePromise}>
+          <Elements stripe={getStripePromise(testMode)}>
             <CheckoutStripeButton
               amount={totalInCents}
+              shippingCostCents={Math.round(shipping * 100)}
+              discountCents={Math.round(discount * 100)}
               cart={cart}
               lineItems={lineItems}
               shippingAddress={paymentShippingAddress}
@@ -114,6 +116,8 @@ export function CheckoutSummarySection({
             cart={cart}
             cartId={cartId ?? null}
             amount={totalInCents}
+            shippingCostCents={Math.round(shipping * 100)}
+            discountCents={Math.round(discount * 100)}
             disabled={disablePayment}
           />
         )}
@@ -122,7 +126,9 @@ export function CheckoutSummarySection({
           <CheckoutIdealButton
             cart={cart}
             cartId={cartId ?? null}
-            amount={total}
+            amount={totalInCents}
+            shippingCostCents={Math.round(shipping * 100)}
+            discountCents={Math.round(discount * 100)}
             disabled={disablePayment}
           />
         )}

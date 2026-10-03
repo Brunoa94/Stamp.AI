@@ -22,6 +22,8 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+test.describe.configure({ mode: 'serial' });
+test.skip(({ isMobile }) => isMobile, 'Database payment invariants run once');
 
 const uid = () => crypto.randomUUID();
 const stamp = () => `${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
@@ -168,6 +170,8 @@ test.describe('Cancellation refund flow', () => {
       p_refund_id: refundId,
       p_reason: 'customer_request',
       p_payment_provider: 'stripe',
+      p_amount: 30,
+      p_currency: 'usd',
     });
 
     expect(error, error?.message).toBeNull();
@@ -201,6 +205,8 @@ test.describe('Cancellation refund flow', () => {
       p_refund_id: `re_test_${stamp()}`,
       p_reason: 'customer_request',
       p_payment_provider: 'stripe',
+      p_amount: 30,
+      p_currency: 'usd',
     });
 
     expect(error, error?.message).toBeNull();

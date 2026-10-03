@@ -15,6 +15,7 @@ import {
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { requireUser } from "../_shared/authGuard.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import { fetchPrintify } from "../_shared/fetchWithTimeout.ts";
 
 // Initialize Supabase
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -91,11 +92,9 @@ serve(async (req) => {
     );
 
     // Get print provider variants
-    const variantsResponse = await fetch(
-      `https://api.printify.com/v1/catalog/blueprints/${finalBlueprintId}/print_providers/${finalPrintProviderId}/variants.json`,
-      {
-        headers: { "Authorization": `Bearer ${PRINTIFY_API_TOKEN}` },
-      },
+    const variantsResponse = await fetchPrintify(
+      `/v1/catalog/blueprints/${finalBlueprintId}/print_providers/${finalPrintProviderId}/variants.json`,
+      PRINTIFY_API_TOKEN
     );
     const variantsData = await variantsResponse.json();
 
@@ -360,16 +359,13 @@ serve(async (req) => {
     };
 
     // Create Printify product
-    const createResponse = await fetch(
-      `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/products.json`,
+    const createResponse = await fetchPrintify(
+      `/v1/shops/${PRINTIFY_SHOP_ID}/products.json`,
+      PRINTIFY_API_TOKEN,
       {
         method: "POST",
-        headers: {
-          "Authorization": `Bearer ${PRINTIFY_API_TOKEN}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(productPayload),
-      },
+      }
     );
 
     const productData = await createResponse.json();

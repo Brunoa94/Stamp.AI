@@ -47,8 +47,8 @@ describe("CoinsService", () => {
         coins_reset_at: "2026-08-04",
       };
 
-      mockSupabase.single.mockResolvedValueOnce({
-        data: mockProfile,
+      mockSupabase.rpc.mockResolvedValueOnce({
+        data: [mockProfile],
         error: null,
       });
 
@@ -58,14 +58,14 @@ describe("CoinsService", () => {
         coins: 3,
         coinsResetAt: "2026-08-04",
       });
-      expect(mockSupabase.from).toHaveBeenCalledWith("profiles");
-      expect(mockSupabase.select).toHaveBeenCalledWith("coins, coins_reset_at");
-      expect(mockSupabase.eq).toHaveBeenCalledWith("id", "user-123");
+      expect(mockSupabase.rpc).toHaveBeenCalledWith("get_user_coins", {
+        p_user_id: "user-123",
+      });
     });
 
     it("should throw error when profile not found", async () => {
-      mockSupabase.single.mockResolvedValueOnce({
-        data: null,
+      mockSupabase.rpc.mockResolvedValueOnce({
+        data: [],
         error: null,
       });
 
@@ -75,7 +75,7 @@ describe("CoinsService", () => {
     });
 
     it("should throw error when database query fails", async () => {
-      mockSupabase.single.mockResolvedValueOnce({
+      mockSupabase.rpc.mockResolvedValueOnce({
         data: null,
         error: {
           code: "PGRST116",
@@ -87,7 +87,7 @@ describe("CoinsService", () => {
     });
 
     it("should handle database connection errors", async () => {
-      mockSupabase.single.mockRejectedValueOnce(new Error("Connection timeout"));
+      mockSupabase.rpc.mockRejectedValueOnce(new Error("Connection timeout"));
 
       await expect(CoinsService.getUserCoins("user-123")).rejects.toThrow(
         /Connection timeout/

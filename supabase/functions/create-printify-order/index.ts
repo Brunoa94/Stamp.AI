@@ -6,6 +6,7 @@ import { validatePaymentAmount } from "../_shared/amountValidator.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
 import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
+import { fetchPrintify } from "../_shared/fetchWithTimeout.ts"
 
 // Environment variables will be validated when needed
 
@@ -156,13 +157,9 @@ serve(async (req) => {
     const externalId = `${enforcedTestMode ? 'test-' : ''}order-${Date.now()}`
 
     // Fetch products from Printify to verify they exist
-    const productsResponse = await fetch(
-      `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/products.json`,
-      {
-        headers: {
-          'Authorization': `Bearer ${PRINTIFY_API_TOKEN}`,
-        },
-      }
+    const productsResponse = await fetchPrintify(
+      `/v1/shops/${PRINTIFY_SHOP_ID}/products.json`,
+      PRINTIFY_API_TOKEN
     )
 
     const productsData = await productsResponse.json()
@@ -183,11 +180,9 @@ serve(async (req) => {
         if (item.product_id) {
           // Verify the product exists in Printify before creating order
           try {
-            const productCheckResponse = await fetch(
-              `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/products/${item.product_id}.json`,
-              {
-                headers: { 'Authorization': `Bearer ${PRINTIFY_API_TOKEN}` },
-              }
+            const productCheckResponse = await fetchPrintify(
+              `/v1/shops/${PRINTIFY_SHOP_ID}/products/${item.product_id}.json`,
+              PRINTIFY_API_TOKEN
             )
 
             if (!productCheckResponse.ok) {
@@ -295,14 +290,11 @@ serve(async (req) => {
     }
 
     // Create order in Printify
-    const response = await fetch(
-      `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/orders.json`,
+    const response = await fetchPrintify(
+      `/v1/shops/${PRINTIFY_SHOP_ID}/orders.json`,
+      PRINTIFY_API_TOKEN,
       {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${PRINTIFY_API_TOKEN}`,
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(orderPayload),
       }
     )
@@ -358,15 +350,10 @@ serve(async (req) => {
     let cancelResult = null
     if (auto_cancel) {
       try {
-        const cancelResponse = await fetch(
-          `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/orders/${data.id}/cancel.json`,
-          {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${PRINTIFY_API_TOKEN}`,
-              'Content-Type': 'application/json',
-            },
-          }
+        const cancelResponse = await fetchPrintify(
+          `/v1/shops/${PRINTIFY_SHOP_ID}/orders/${data.id}/cancel.json`,
+          PRINTIFY_API_TOKEN,
+          { method: 'POST' }
         )
 
         const cancelData = await cancelResponse.json()

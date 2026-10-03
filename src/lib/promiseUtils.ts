@@ -5,6 +5,40 @@
  */
 
 /**
+ * Fetch with AbortController-based timeout.
+ * Use this for external API calls that need timeout handling.
+ *
+ * @param url - The URL to fetch
+ * @param options - Standard fetch options (method, headers, body, etc.)
+ * @param timeoutMs - Timeout in milliseconds (default: 15000)
+ * @returns Promise<Response>
+ * @throws Error if the request times out
+ */
+export async function fetchWithTimeout(
+  url: string,
+  options: RequestInit = {},
+  timeoutMs = 15_000
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    return response;
+  } catch (error: unknown) {
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new Error(`Request to ${url} timed out after ${timeoutMs}ms`);
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+/**
  * Wraps a promise with a timeout that will reject if the operation takes too long
  *
  * @param promise - The promise to wrap

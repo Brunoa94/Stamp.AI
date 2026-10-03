@@ -1,9 +1,13 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl } from "@/tests/utils/renderWithIntl";
 import { AuthDialog } from "../AuthDialog";
 import { DialogContent, DialogTitle } from "@/features/ui/dialog";
+
+vi.mock("@/shared/queries/authQueries", () => ({
+  useUser: () => ({ data: null }),
+}));
 
 /**
  * Behavior test for the shared auth dialog shell: it must render the default

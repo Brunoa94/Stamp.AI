@@ -15,6 +15,7 @@ import {
   getAddressSummary,
   getFirstOrderItem,
 } from "../../../lib/helpers/orderPresentation";
+import { getOrderImageSrc } from "../../../lib/helpers/orderImage";
 import {
   getOrderDisplayStatus,
   getStatusBadgeClass,
@@ -33,6 +34,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const firstItem = getFirstOrderItem(order);
+  const imageSrc = getOrderImageSrc(firstItem?.custom_image_url);
   const displayedStatus = getOrderDisplayStatus(order);
 
   useModalFocusTrap({
@@ -104,9 +106,9 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
               </Span>
               <div className="flex items-center gap-4 border border-(--color-stamp-divider) bg-(--color-stamp-cream)/20 p-4">
                 <div className="relative h-16 w-16 flex-none bg-(--color-stamp-cream)">
-                  {firstItem?.custom_image_url ? (
+                  {imageSrc ? (
                     <Image
-                      src={firstItem.custom_image_url}
+                      src={imageSrc}
                       alt={firstItem.product_name || t("itemAlt")}
                       fill
                       sizes="64px"

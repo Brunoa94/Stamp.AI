@@ -4,6 +4,7 @@ import { validateEnvVars, verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import { fetchPrintify } from "../_shared/fetchWithTimeout.ts";
 
 interface CancelOrderRequestI {
   order_id: string;
@@ -169,15 +170,10 @@ serve(async (req) => {
         const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken();
         const PRINTIFY_SHOP_ID = validateEnvVars.printifyShopId();
 
-        const printifyResponse = await fetch(
-          `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/orders/${order.printify_order_id}/cancel.json`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${PRINTIFY_API_TOKEN}`,
-              "Content-Type": "application/json",
-            },
-          }
+        const printifyResponse = await fetchPrintify(
+          `/v1/shops/${PRINTIFY_SHOP_ID}/orders/${order.printify_order_id}/cancel.json`,
+          PRINTIFY_API_TOKEN,
+          { method: "POST" }
         );
 
         const printifyData = await printifyResponse.json();
@@ -236,7 +232,7 @@ serve(async (req) => {
 
     if (updateResult.error) {
       console.error("Failed to update order status:", updateResult.error);
-      throw new Error(`Failed to update order status: ${updateResult.error.message}`);
+      throw new Error(`Failed to update order status: ${JSON.stringify(updateResult.error)}`);
     }
 
     console.log("✅ Order status updated to cancelled");
