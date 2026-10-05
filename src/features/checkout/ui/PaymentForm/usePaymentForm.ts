@@ -57,7 +57,7 @@ export function usePaymentForm({
   const { handleError } = useErrorHandler({ showToast: false });
 
   const processPayment = async () => {
-    if (!stripe) {
+    if (!stripe && !isTestMode) {
       const notReadyMessage = t("stripeNotReady");
       setError(notReadyMessage);
       onError?.(notReadyMessage);
@@ -124,7 +124,7 @@ export function usePaymentForm({
         mapAddPaymentInfoEvent({ lineItems, amount }),
       );
 
-      const { error: confirmError, paymentIntent } = await stripe
+      const { error: confirmError, paymentIntent } = await stripe!
         .confirmCardPayment(clientSecret, {
           payment_method: {
             card: cardElement,

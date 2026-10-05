@@ -2,7 +2,7 @@
 
 Generated with `npm run test:acceptance:coverage`. A reference means one or more assertions exist; it does **not** prove every subcase in the scenario is implemented or passing. See [execution status and remaining work](README.md).
 
-121 scenario IDs; 109 referenced by automated specifications.
+124 scenario IDs; 112 referenced by automated specifications.
 
 | Scenario | Specification references |
 | --- | --- |
@@ -21,6 +21,7 @@ Generated with `npm run test:acceptance:coverage`. A reference means one or more
 | CAT-01 | [history-catalog.spec.mjs](../../tests/acceptance/specs/history-catalog.spec.mjs) |
 | CAT-02 | [history-catalog.spec.mjs](../../tests/acceptance/specs/history-catalog.spec.mjs) |
 | CAT-03 | [history-catalog.spec.mjs](../../tests/acceptance/specs/history-catalog.spec.mjs) |
+| CAT-04 | [catalog-products.spec.mjs](../../tests/acceptance/specs/catalog-products.spec.mjs) |
 | FLOW-01 | [stamp.spec.mjs](../../tests/acceptance/specs/stamp.spec.mjs) |
 | FLOW-02 | [recovery-quality.spec.mjs](../../tests/acceptance/specs/recovery-quality.spec.mjs) |
 | FLOW-03 | [recovery-quality.spec.mjs](../../tests/acceptance/specs/recovery-quality.spec.mjs) |
@@ -60,6 +61,7 @@ Generated with `npm run test:acceptance:coverage`. A reference means one or more
 | CUSTOM-05 | [placement-cart-actions.spec.mjs](../../tests/acceptance/specs/placement-cart-actions.spec.mjs) |
 | CUSTOM-06 | [placement-cart-actions.spec.mjs](../../tests/acceptance/specs/placement-cart-actions.spec.mjs) |
 | CUSTOM-07 | **Not automated** |
+| CUSTOM-08 | [catalog-products.spec.mjs](../../tests/acceptance/specs/catalog-products.spec.mjs) |
 | CREATE-01 | [customization.spec.mjs](../../tests/acceptance/specs/customization.spec.mjs) |
 | CREATE-02 | [customization.spec.mjs](../../tests/acceptance/specs/customization.spec.mjs) |
 | CREATE-03 | [placement-cart-actions.spec.mjs](../../tests/acceptance/specs/placement-cart-actions.spec.mjs) |
@@ -103,6 +105,7 @@ Generated with `npm run test:acceptance:coverage`. A reference means one or more
 | ORDER-05 | [settlement.spec.mjs](../../tests/acceptance/specs/settlement.spec.mjs) |
 | ORDER-06 | [settlement.spec.mjs](../../tests/acceptance/specs/settlement.spec.mjs) |
 | ORDER-07 | [printify-orders.spec.mjs](../../tests/acceptance/specs/printify-orders.spec.mjs) |
+| ORDER-08 | [catalog-products.spec.mjs](../../tests/acceptance/specs/catalog-products.spec.mjs) |
 | UX-01 | [recovery-quality.spec.mjs](../../tests/acceptance/specs/recovery-quality.spec.mjs) |
 | UX-02 | [navigation-auth.spec.mjs](../../tests/acceptance/specs/navigation-auth.spec.mjs), [recovery-quality.spec.mjs](../../tests/acceptance/specs/recovery-quality.spec.mjs) |
 | UX-03 | [recovery-quality.spec.mjs](../../tests/acceptance/specs/recovery-quality.spec.mjs) |

@@ -1,20 +1,29 @@
 import { mkdirSync, readFileSync, readdirSync, writeFileSync, renameSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { required, SHOP_ID } from './environment.mjs';
-import { cancelWithRetry } from './cancellation.mjs';
+import { cancelWithRetry, waitForCancelableStatus } from './cancellation.mjs';
 
 export const LEDGER_DIR = '.acceptance/printify';
+const TERMINAL_STATES = new Set(['canceled', 'not-created']);
 export class PrintifyOrders {
   constructor(env, owner) { this.env = env; this.owner = owner; }
   async request(path, method = 'GET', body) {
     if (path.includes('send_to_production') || path.includes('express.json')) throw new Error('Production submission forbidden in acceptance tests');
-    const response = await fetch(`https://api.printify.com/v1/shops/${SHOP_ID}/${path}`, {
-      method, signal: AbortSignal.timeout(10000),
-      headers: { Authorization: `Bearer ${required(this.env, 'PRINTIFY_API_TOKEN')}`, 'Content-Type': 'application/json', 'User-Agent': 'StampAI-Acceptance' },
-      ...(body ? { body: JSON.stringify(body) } : {}),
-    });
-    if (!response.ok) throw new Error(`Printify ${method} failed (${response.status})`);
-    return response.json();
+    const attempts = method === 'GET' ? 3 : 1;
+    for (let attempt = 1; attempt <= attempts; attempt++) {
+      try {
+        const response = await fetch(`https://api.printify.com/v1/shops/${SHOP_ID}/${path}`, {
+          method, signal: AbortSignal.timeout(15000),
+          headers: { Authorization: `Bearer ${required(this.env, 'PRINTIFY_API_TOKEN')}`, 'Content-Type': 'application/json', 'User-Agent': 'StampAI-Acceptance' },
+          ...(body ? { body: JSON.stringify(body) } : {}),
+        });
+        if (response.ok) return response.json();
+        if (attempt === attempts || ![429, 500, 502, 503, 504].includes(response.status)) throw new Error(`Printify ${method} failed (${response.status})`);
+      } catch (error) {
+        if (attempt === attempts || !['AbortError', 'TimeoutError'].includes(error.name)) throw error;
+      }
+      await new Promise(resolve => setTimeout(resolve, attempt * 500));
+    }
   }
   save(record) {
     mkdirSync(LEDGER_DIR, { recursive: true });
@@ -51,12 +60,20 @@ export class PrintifyOrders {
   async reconcile(record) {
     if (record.orderId) return [record.orderId];
     const found = [];
+    const createdAt = Date.parse(record.createdAt);
     let page = 1;
     for (;;) {
-      const data = await this.request(`orders.json?page=${page}&limit=100`);
+      const data = await this.request(`orders.json?page=${page}&limit=10`);
       for (const order of data.data ?? []) {
-        if (order.external_id === record.externalId || order.metadata?.shop_order_id === record.externalId || (record.applicationOrderId && (order.label === record.applicationOrderId || order.metadata?.shop_order_label === record.applicationOrderId))) found.push(order.id);
+        const orderCreatedAt = Date.parse(order.created_at);
+        if (Number.isFinite(createdAt) && Number.isFinite(orderCreatedAt) && orderCreatedAt < createdAt - 120000) continue;
+        // Printify omits metadata from list responses; read candidates before
+        // concluding that an ambiguous POST did not create an order.
+        const detail = order.metadata ? order : await this.request(`orders/${encodeURIComponent(order.id)}.json`);
+        if (detail.external_id === record.externalId || detail.metadata?.shop_order_id === record.externalId || (record.applicationOrderId && (detail.label === record.applicationOrderId || detail.metadata?.shop_order_label === record.applicationOrderId))) found.push(order.id);
       }
+      const oldest = data.data?.at(-1);
+      if (Number.isFinite(createdAt) && oldest && Date.parse(oldest.created_at) < createdAt - 120000) break;
       if (!data.next_page_url && page >= (data.last_page ?? 1)) break;
       if (++page > 1000) throw new Error('Order reconciliation pagination limit exceeded');
     }
@@ -69,10 +86,10 @@ export class PrintifyOrders {
     const records = this.records();
     const outcomes = new Map();
     if (!recoverFailed) for (const record of records) {
-      if (record.state === 'canceled') continue;
+      if (TERMINAL_STATES.has(record.state)) continue;
       for (const result of record.cancellations ?? []) if (result.failed) outcomes.set(result.id, result);
     }
-    for (const record of records.filter(r => r.state !== 'canceled')) {
+    for (const record of records.filter(r => !TERMINAL_STATES.has(r.state))) {
       if (record.state === 'cleanup-failed' && !recoverFailed) {
         failures.push(`${record.externalId}: previous cleanup failed; automatic retry budget exhausted. Use the explicit recovery command.`);
         continue;
@@ -88,6 +105,7 @@ export class PrintifyOrders {
           try {
             const previous = outcomes.get(id);
             if (previous?.failed) throw Object.assign(new Error('Previous cancellation budget exhausted'), previous);
+            if (!previous) await waitForCancelableStatus({ read: () => this.request(`orders/${encodeURIComponent(id)}.json`) });
             const evidence = previous ?? await cancelWithRetry({
               cancel: () => this.request(`orders/${encodeURIComponent(id)}/cancel.json`, 'POST'),
               read: () => this.request(`orders/${encodeURIComponent(id)}.json`),

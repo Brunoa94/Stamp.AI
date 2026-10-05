@@ -48,9 +48,9 @@ for (const credentials of [
 test('AUTH-05 forms switch without stale passwords', async ({ page }) => {
   const dialog = await openLogin(page);
   await dialog.locator('input[type="password"]').fill('DoNotRetain!123');
-  await dialog.getByRole('button', { name: /create account|sign up/i }).click();
+  await page.getByRole('button', { name: /create one now/i }).click();
   await expect(dialog.locator('input[type="password"]')).toHaveCount(0);
-  await dialog.getByRole('button', { name: /login|sign in/i }).click();
+  await page.getByRole('dialog', { name: /create account/i }).getByRole('button', { name: /log in/i }).click();
   await expect(dialog.locator('input[type="password"]')).toHaveValue('');
 });
 for (const route of ['/orders', '/dashboard']) {

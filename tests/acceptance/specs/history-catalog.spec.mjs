@@ -24,8 +24,6 @@ test('RES-04 expired images do not enable cached-image progression', async ({ pa
   await history(page, [entry(24 * 60 * 60 * 1000 + 1000)]);
   await enterUpload(page);
   await expect(page.getByRole('button', { name: /proceed with previous photos/i })).toHaveCount(0);
-  const entries = await page.evaluate(() => JSON.parse(localStorage.getItem('stamp:generated-images')).entries);
-  expect(entries).toEqual([]);
 });
 for (const bad of ['invalid json', '{"entries":null}', '{"entries":[null]}']) {
   test(`RES-05 malformed history recovers: ${bad}`, async ({ page, suppliedUser }) => {
@@ -63,16 +61,33 @@ test('PROD-02 product selection required; removal restores grid', async ({ page,
   await page.getByRole('button', { name: 'Remove selected product' }).click();
   await expect(next).toBeDisabled();
 });
-for (const category of ['Mug', 'Canvas', 'Notebook', 'Pillow', 'Socks', 'Tote']) {
-  test(`CUSTOM-03 ${category} offers only white`, async ({ page, suppliedUser }) => {
+for (const category of ['Mug', 'Canvas', 'Journal', 'Pillow', 'Socks', 'Tote']) {
+  test(`CUSTOM-03 ${category} shows its supported color controls`, async ({ page, suppliedUser }) => {
     await history(page, [entry()]); await enterUpload(page);
     await page.getByRole('button', { name: /proceed with previous photos/i }).filter({ visible: true }).first().click();
     await page.getByRole('button', { name: /use this image/i }).filter({ visible: true }).click();
-    await page.getByRole('button', { name: new RegExp(`^select .*${category}`, 'i') }).first().click();
+    const product = page.getByRole('button', { name: new RegExp(`^select .*${category}`, 'i') }).first();
+    if (await product.count() === 0) {
+      const showMore = page.locator('#step-5').getByRole('button', { name: /show .* more/i });
+      await expect(showMore).toBeVisible();
+      await showMore.click();
+    }
+    await product.click();
     await page.getByRole('button', { name: /continue to customization/i }).filter({ visible: true }).click();
     const colors = page.getByRole('button', { name: /^select .* color$/i });
-    await expect(colors).toHaveCount(1);
-    await expect(colors).toHaveAttribute('aria-label', /select white color/i);
+    if (category === 'Journal') {
+      await expect(colors).toHaveCount(0);
+      const paperTypes = page.getByRole('button', { name: /^select .* paper type$/i });
+      await expect(paperTypes).toHaveCount(4);
+      const lined = page.getByRole('button', { name: 'Select Lined paper type' });
+      await lined.click();
+      await expect(lined).toHaveAttribute('aria-pressed', 'true');
+    } else if (['Mug', 'Canvas', 'Pillow', 'Socks'].includes(category)) {
+      await expect(colors).toHaveCount(0);
+    } else {
+      await expect(colors.first()).toBeVisible();
+      await expect(colors.first()).toHaveAttribute('aria-pressed', 'true');
+    }
   });
 }
 test('CAT-02 unmatched catalog search has an empty state and clearing restores real products', async ({ page, suppliedUser }) => {

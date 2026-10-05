@@ -11,7 +11,7 @@ for (const file of ['.env', '.env.local', '.env.development', '.env.development.
   if (existsSync(file)) for (const key of Object.keys(parseEnv(readFileSync(file, 'utf8')))) env[key] = '';
 }
 Object.assign(env, testEnv, {
-  STAMP_ACCEPTANCE_TESTS: '1', NEXT_PUBLIC_SITE_URL: 'http://localhost:3107', OPENAI_API_KEY: '', GEMINI_API_KEY: '', GOOGLE_API_KEY: '', GOOGLE_GEMINI_API_KEY: '',
+  STAMP_ACCEPTANCE_TESTS: '1', NEXT_PUBLIC_STAMP_ACCEPTANCE_TESTS: '1', NEXT_PUBLIC_SITE_URL: 'http://localhost:3107', OPENAI_API_KEY: '', GEMINI_API_KEY: '', GOOGLE_API_KEY: '', GOOGLE_GEMINI_API_KEY: '',
   NEXT_PUBLIC_PRINTIFY_API_TOKEN: '', NODE_ENV: 'development', NEXT_TELEMETRY_DISABLED: '1',
 });
 
@@ -101,7 +101,7 @@ async function startNextServer(webhookSecret) {
     serverEnv.STRIPE_WEBHOOK_SECRET = webhookSecret;
   }
 
-  nextProcess = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'dev', '--port', '3107'], { env: serverEnv, stdio: 'inherit' });
+  nextProcess = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'dev', '--webpack', '--port', '3107'], { env: serverEnv, stdio: 'inherit' });
 
   nextProcess.on('exit', code => { process.exitCode = code ?? 1; });
   return nextProcess;

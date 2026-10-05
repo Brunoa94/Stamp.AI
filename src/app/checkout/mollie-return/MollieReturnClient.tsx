@@ -445,6 +445,9 @@ function MollieReturnContent() {
                   shippingAddress: parsedShippingAddress,
                   idempotencyKey,
                   paymentMethod: "mollie",
+                  paymentAmountCents: orderAmount,
+                  shippingCostCents: stored?.shippingCostCents ? Number(stored.shippingCostCents) : undefined,
+                  discountCents: stored?.discountCents ? Number(stored.discountCents) : undefined,
                 })) ?? null;
               console.log("✅ Order and order items created in database");
 

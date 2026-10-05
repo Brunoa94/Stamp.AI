@@ -18,6 +18,8 @@ TEST_SOCK_PRODUCT_NAME=
 TEST_MUG_PRODUCT_NAME=
 TEST_CART_FIXTURES_PATH=.acceptance/cart-fixtures.json
 # Set to the exact test Supabase URL after checking deployed Edge secrets/config.
+# The test Supabase Edge project also needs APP_ENV=test and SITE_URL=http://localhost:3107
+# so browser CORS and PayPal sandbox return URLs target the acceptance server.
 TEST_EDGE_ENVIRONMENT_VERIFIED=
 
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
@@ -32,14 +34,13 @@ PAYPAL_TEST_EMAIL=
 PAYPAL_TEST_PASSWORD=
 MOLLIE_API_KEY=
 
-# Dedicated GA4 test property only; measurement ID and numeric property ID differ.
+# Dedicated GA4 test property only. Tests check events are sent, not ingested.
 NEXT_PUBLIC_GA_MEASUREMENT_ID=
 TEST_GA_PROPERTY_CONFIRMED=
-TEST_GA_PROPERTY_ID=
-TEST_GA_READ_ACCESS_TOKEN=
 
 # Real email delivery and a controlled inbox; {id} is replaced with a run UUID.
 BREVO_API_KEY=
+BREVO_FROM_EMAIL=
 TEST_EMAIL_TEMPLATE=
 TEST_IMAP_HOST=
 TEST_IMAP_PORT=993

@@ -15,15 +15,18 @@ export function client(env, privileged = false) {
   });
 }
 export function unwrap(result, operation) {
-  if (result.error) throw new Error(`${operation} failed (${result.error.code ?? result.error.status})`);
+  if (result.error) {
+    const cause = [result.error.code, result.error.status, result.error.context?.status, result.error.message].filter(Boolean).join(' / ') || 'unknown';
+    throw new Error(`${operation} failed (${cause}): ${JSON.stringify(result.data ?? null)}`);
+  }
   return result.data;
 }
-export async function setBrowserSession(context, env, credentials) {
+export async function setBrowserSession(context, env, session) {
   const jar = new Map();
   const auth = createServerClient(env.NEXT_PUBLIC_SUPABASE_URL, env.NEXT_PUBLIC_SUPABASE_ANON_KEY, {
     cookies: { getAll: () => [...jar].map(([name, value]) => ({ name, value })), setAll: values => values.forEach(({ name, value }) => jar.set(name, value)) },
   });
-  const data = unwrap(await auth.auth.signInWithPassword(credentials), 'Browser session login');
+  const data = unwrap(await auth.auth.setSession({ access_token: session.access_token, refresh_token: session.refresh_token }), 'Browser session setup');
   await context.addCookies([...jar].map(([name, value]) => ({ name, value, domain: 'localhost', path: '/', sameSite: 'Lax' })));
   return data.user.id;
 }
@@ -47,7 +50,7 @@ export const test = base.extend({
     const db = client(env);
     const data = unwrap(await db.auth.signInWithPassword(credentials), 'Supplied account login');
     expect(data.user.id).toBe(env.TEST_USER_ID);
-    expect(await setBrowserSession(context, env, credentials)).toBe(env.TEST_USER_ID);
+    expect(await setBrowserSession(context, env, data.session)).toBe(env.TEST_USER_ID);
     await provide({ db, id: data.user.id, credentials });
   },
   account: [async ({ context, env }, provide, testInfo) => {
@@ -73,8 +76,8 @@ export const test = base.extend({
     });
     let functionalFinished = false;
     try {
-      unwrap(await db.auth.signInWithPassword({ email, password }), 'Isolated user login');
-      await setBrowserSession(context, env, { email, password });
+      const session = unwrap(await db.auth.signInWithPassword({ email, password }), 'Isolated user login').session;
+      await setBrowserSession(context, env, session);
       unwrap(await admin.from('profiles').upsert({ id: user.id, email }, { onConflict: 'id', ignoreDuplicates: true }), 'Seed isolated user profile');
       const coins = async value => unwrap(await admin.from('profiles').update({ coins: value, coins_reset_at: new Date().toISOString().slice(0, 10) }).eq('id', user.id).select().single(), 'Seed coin balance');
       await coins(5);

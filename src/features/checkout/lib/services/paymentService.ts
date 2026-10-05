@@ -48,6 +48,8 @@ export class PaymentService {
         cartId,
         amount,
       );
+      checkoutData.shippingCostCents = shippingCostCents;
+      checkoutData.discountCents = discountCents;
 
       // Store checkout data for payment processing
       CheckoutStorageService.saveStripeCheckoutData(checkoutData);
@@ -113,6 +115,8 @@ export class PaymentService {
         cartId,
         amount,
       );
+      checkoutData.shippingCostCents = shippingCostCents;
+      checkoutData.discountCents = discountCents;
 
       // Create PayPal order through PayPalService
       // PayPal expects amount in euros (full currency units), not cents
@@ -180,6 +184,8 @@ export class PaymentService {
         cartId,
         amount,
       );
+      checkoutData.shippingCostCents = shippingCostCents;
+      checkoutData.discountCents = discountCents;
 
       // Create Mollie payment pinned to iDEAL (EUR only)
       const { paymentId, checkoutUrl } = await MollieService.createPayment({

@@ -35,7 +35,8 @@ export function useCreatePrintifyOrder() {
     mutationFn: (payload: CreatePrintifyOrderRequest) =>
       PrintifyService.createPrintifyOrder(payload),
 
-    retry: 3,
+    // A retry can create another physical Printify order after a lost response.
+    retry: false,
 
     onSuccess: (data) => {
       console.log("✅ Printify order created successfully:", data);

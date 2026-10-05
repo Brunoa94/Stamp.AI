@@ -2,6 +2,7 @@
 /* eslint @typescript-eslint/no-unused-vars: ["warn", {"argsIgnorePattern": "^(suppliedUser|account)$"}] */
 import { test, expect, unwrap, client } from '../support/fixtures.mjs';
 import { realOrder } from '../support/orders.mjs';
+import { waitForCancelableStatus } from '../support/cancellation.mjs';
 
 test('CLEAN-01 real Printify order is linked to the database and canceled in teardown', async ({ account, env }) => {
   const { order, provider, variantId } = await realOrder(account, env);
@@ -22,9 +23,9 @@ test('ORDER-07 another user cannot read or cancel a real order', async ({ accoun
 test('ORDER-01 real seeded order appears in owner history only once', async ({ page, account, env }) => {
   const { order } = await realOrder(account, env);
   await page.goto('/orders');
-  await expect(page.getByText(order.order_number, { exact: true })).toHaveCount(1);
+  await expect(page.getByText(`#${order.order_number}`, { exact: true })).toHaveCount(1);
   await page.reload();
-  await expect(page.getByText(order.order_number, { exact: true })).toHaveCount(1);
+  await expect(page.getByText(`#${order.order_number}`, { exact: true })).toHaveCount(1);
 });
 test('CLEAN-04 already canceled remote order remains safe to clean again', async ({ account, env }) => {
   const { provider } = await realOrder(account, env);
@@ -34,6 +35,7 @@ test('CLEAN-04 already canceled remote order remains safe to clean again', async
 });
 test('ORDER-04 owner cancellation is remotely verified and repeated requests are idempotent', async ({ account, env }) => {
   const { order, provider } = await realOrder(account, env);
+  await waitForCancelableStatus({ read: () => account.orders.request(`orders/${provider.id}.json`) });
   for (let attempt = 0; attempt < 2; attempt++) {
     const result = unwrap(await account.db.functions.invoke('cancel-order', { body: { order_id: order.id, cancellation_reason: 'Acceptance test' } }), 'Owner cancellation');
     expect(result.success).toBe(true);

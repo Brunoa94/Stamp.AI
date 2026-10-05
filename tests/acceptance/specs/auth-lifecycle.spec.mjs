@@ -16,10 +16,13 @@ async function findUser(admin, email) {
 async function signup(page, env, email) {
   required(env, 'BREVO_API_KEY'); required(env, 'TEST_IMAP_HOST');
   const dialog = await openLogin(page);
-  await dialog.getByRole('button', { name: /create account|sign up/i }).click();
-  await dialog.getByLabel(/email/i).fill(email);
+  await dialog.getByRole('button', { name: /create one now/i }).click();
+  const registration = page.getByRole('dialog', { name: /create account/i });
+  await registration.getByRole('textbox', { name: /first name/i }).fill('Acceptance');
+  await registration.getByRole('textbox', { name: /last name/i }).fill('Test');
+  await registration.getByRole('textbox', { name: /name@company\.com/i }).fill(email);
   const response = page.waitForResponse(r => r.url().endsWith('/api/auth/signup'));
-  await dialog.getByRole('button', { name: /create account|sign up/i }).click();
+  await registration.getByRole('button', { name: /create account/i }).click();
   expect((await response).status()).toBe(200);
   await expect(page).toHaveURL(/\/auth\/check-email/);
 }

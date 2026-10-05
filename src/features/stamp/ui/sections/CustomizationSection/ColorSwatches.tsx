@@ -7,15 +7,19 @@ import {
   getColorHex,
 } from "@/features/homepage/lib/constants/colorSwatches";
 import { getColorClass } from "@/helpers/colors/colorMapping";
+import type { VariantOptionKindType } from "../../../lib/helpers/productCategoryDetector";
+import { PaperTypeOptions } from "./PaperTypeOptions";
 
 /**
  * ColorSwatches
  *
- * Color selection component with swatches
+ * Color selection component with swatches. Notebooks reuse it for their
+ * paper type (Blank, Lined, ...), shown as labelled options instead of swatches.
  */
 
 interface PropsI {
   colors: string[];
+  optionKind?: VariantOptionKindType;
   selectedColor?: string;
   isLoading: boolean;
   hasProduct: boolean;
@@ -24,17 +28,19 @@ interface PropsI {
 
 export function ColorSwatches({
   colors,
+  optionKind = "color",
   selectedColor,
   isLoading,
   hasProduct,
   onSelectColor,
 }: PropsI) {
   const t = useTranslations("stamp.customization");
+  const isPaperType = optionKind === "paperType";
 
   return (
     <div>
       <Label className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe) block mb-6">
-        {t("colorLabel")}
+        {isPaperType ? t("paperTypeLabel") : t("colorLabel")}
       </Label>
       {isLoading ? (
         <Span variant="micro" className="text-(--color-stamp-taupe)">
@@ -48,6 +54,12 @@ export function ColorSwatches({
         <Span variant="micro" className="text-(--color-stamp-taupe)">
           {t("colorNone")}
         </Span>
+      ) : isPaperType ? (
+        <PaperTypeOptions
+          paperTypes={colors}
+          selectedPaperType={selectedColor}
+          onSelectPaperType={onSelectColor}
+        />
       ) : (
         <div
           className="flex gap-4"

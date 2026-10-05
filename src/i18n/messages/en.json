@@ -614,6 +614,9 @@
       "colorNone": "No colors available for this product.",
       "colorSelectionAria": "Color selection",
       "colorSwatchAria": "Select {color} color",
+      "paperTypeLabel": "Paper Type",
+      "paperTypeSelectionAria": "Paper type selection",
+      "paperTypeAria": "Select {type} paper type",
       "sizeSelectorLabel": "Size Selector",
       "sizeSelectionAria": "Size selection",
       "sizeAria": "Select size {size}",
@@ -680,6 +683,9 @@
         "removed": "Image removed"
       },
       "coins": {
+        "loadFailed": "Unable to load your coins",
+        "loadFailedDescription": "Please try again before generating a design.",
+        "retry": "Try again",
         "noCoins": "You're out of coins for today",
         "noCoinsDescription": "Coins reset daily at midnight. You can still use your uploaded image directly.",
         "notLoggedIn": "Login or register to continue",

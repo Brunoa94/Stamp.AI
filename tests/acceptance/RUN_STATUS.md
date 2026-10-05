@@ -1,4 +1,48 @@
-# Execution evidence — September 30, 2026
+# Execution evidence
+
+## Status — October 5, 2026 (round 21)
+
+Full suite against the test Supabase project (`tgccxydchvujhrqyzqao`), the Printify test shop, Stripe test mode and mocked AI, on the webpack dev server. Every test runs in the `desktop` and `mobile` projects.
+
+| Result | Count |
+| --- | --- |
+| Runs passed first time | 349 of 354 (177 tests × 2 projects) |
+| Failed in the sweep, passed on re-run | 5 |
+| Excluded on purpose | 9 tests |
+
+Command: `playwright test --config=playwright.acceptance.config.mjs --grep-invert "Google|GOOGLE|google|AUTH-01 real email confirmation|AUTH-03 repeated signup|AUTH-07 reset via a delivered recovery email|PAY-01 PAY-02 ORDER-01 mollie|PAY-01 PAY-02 ORDER-01 paypal"`
+
+**Excluded:** Google sign-in (AUTH-06 ×2), PayPal and Mollie purchases (PAY-01/PAY-02/ORDER-01 ×4), and the delivered-email tests AUTH-01, AUTH-03, AUTH-07. `MOLLIE_API_KEY` is not set locally.
+
+**Re-run passes:** three consecutive desktop runs (ORDER-08 socks, CUSTOM-08 and ORDER-08 hoodie) stalled on a click, an unanswered `create-custom-product` request and a Supabase timeout during cleanup; mobile CUSTOM-08 and ORDER-08 Spiral Journal received `500 INTERNAL_ERROR` from `create-custom-product` once. All five passed on re-run on both projects. The 500 is unexplained; check the function logs if it recurs.
+
+Also green: 1,233 unit tests (`vitest run`) and 22 harness contracts (`test:acceptance:contracts`).
+
+### Catalog now mirrors production
+
+- `tests/acceptance/catalog-snapshot.json` holds production's `catalog_products` (12 rows, 9 active) and `product_variants` (481 rows). `scripts/acceptance/sync-catalog.mjs` applies it to the test project (dry run by default, `--apply`, `--prune`). CAT-04 fails when the two drift.
+- `TEST_PRODUCT_NAME`, `TEST_SOCK_PRODUCT_NAME` and `TEST_MUG_PRODUCT_NAME` now name production products: Unisex Softstyle T-Shirt, Sublimation Crew Socks (EU), Ceramic Mug (EU).
+- New per-product coverage in `catalog-products.spec.mjs`: CUSTOM-08 creates every active product in Printify; ORDER-08 buys every active product with Stripe and verifies the Printify order's product, blueprint and enabled variant. Teardown cancels each order.
+
+### Defects found and fixed
+
+| Defect | Fix | Deployed |
+| --- | --- | --- |
+| Orders for the T-shirt, Kids Tee, AOP tote and canvas reached Printify with a disabled variant (e.g. Charcoal S instead of the chosen White M). Variant titles put size first, the match failed and the code fell back to the blueprint's first variant. | `create-custom-product` matches title parts in any order and only selects enabled variants; the client fallback picks the first enabled variant. ORDER-08 asserts the ordered variant is enabled. | Test project: yes. Production: pending. |
+| "Spun Polyester Square Pillowcase" was detected as a phone case and showed its sizes as color swatches. | Removed the bare `"case"` keyword; unit test covers every production title. | App deploy pending. |
+| Spiral Notebook (blueprint 515) was active but no longer exists in Printify. | Deactivated; Spiral Journal (EU), blueprint 475, activated in both databases. | Yes. |
+| Test project ran an older `create-custom-product` that rejected the journal with `400 INVALID_REQUEST`. | Redeployed. | Yes. |
+
+**Product decision:** notebooks offer their paper type (Blank, Dotgrid, Lined, Task) as a "Paper Type" choice instead of color swatches; the chosen paper reaches the Printify order (CUSTOM-03 Journal, ORDER-08). Recorded in `docs/TEST_SCENARIOS.md`.
+
+**Suite changes:** GA-01 ingestion proof removed with `TEST_GA_PROPERTY_ID` and `TEST_GA_READ_ACCESS_TOKEN`; GA tests check that events are sent with a 2xx response, not that GA ingested them. `createProduct` failures now report the edge function's error body and request. The `useSkipGeneration` unit test now expects Results (step 4), matching the GEN-06 fix.
+
+**Open items:**
+- Deploy `create-custom-product` and the app to production.
+- Created Printify products are never deleted; the test shop accumulates them.
+- PayPal, Mollie, Google sign-in and delivered-email tests have not been run in this round.
+
+## Earlier record — September 30, 2026
 
 This is a record of selected runs against the real parallel database, with mocked AI. It is not a full-suite pass. No Printify orders or payment captures were created in these runs.
 

@@ -61,6 +61,8 @@ export function CheckoutStripeButton({
       const checkoutData = {
         paymentIntentId: paymentIntent.id,
         amount,
+        shippingCostCents,
+        discountCents,
         lineItems: processedLineItems,
         shippingAddress,
         billing: billingAddress,
@@ -89,7 +91,7 @@ export function CheckoutStripeButton({
       });
       router.push(`/checkout/stripe-return?${params.toString()}`);
     },
-    [router, amount, shippingAddress, billingAddress, cartId, cart],
+    [router, amount, shippingCostCents, discountCents, shippingAddress, billingAddress, cartId, cart],
   );
 
   const { loading, error, handleSubmit, setSelectedTestMethod } =

@@ -89,7 +89,14 @@ export async function middleware(request: NextRequest) {
   // Supabase Auth round-trip per request. The per-user bucket is applied
   // further down, once the session has been resolved for route protection.
   const rateLimitType = getRateLimitType(pathname);
-  const rateLimitConfig = rateLimitType ? RATE_LIMIT_CONFIGS[rateLimitType] : null;
+  const acceptanceEnvironment = process.env.STAMP_ACCEPTANCE_TESTS === "1" &&
+    process.env.NEXT_PUBLIC_SUPABASE_URL === "https://tgccxydchvujhrqyzqao.supabase.co" &&
+    request.nextUrl.hostname === "localhost" && request.nextUrl.port === "3107";
+  const rateLimitConfig = rateLimitType
+    ? acceptanceEnvironment
+      ? { ...RATE_LIMIT_CONFIGS[rateLimitType], maxRequests: 1000 }
+      : RATE_LIMIT_CONFIGS[rateLimitType]
+    : null;
   let rateLimitResult: ReturnType<typeof checkCombinedRateLimit> | null = null;
 
   if (rateLimitConfig) {

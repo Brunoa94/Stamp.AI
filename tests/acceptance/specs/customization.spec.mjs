@@ -19,12 +19,12 @@ test('CUSTOM-02 CREATE-01 BAG-01 created product/variant reaches persisted cart'
   await page.reload();
   await expect(page.getByRole('article').filter({ hasText: env.TEST_PRODUCT_NAME })).toHaveCount(1);
 });
-test('BAG-02 create another returns to first upload step', async ({ page, account, env }) => {
+test('BAG-02 create another returns to product selection with the image retained', async ({ page, account, env }) => {
   test.setTimeout(240000);
   await customize(page, env); await createProduct(page);
   await page.getByRole('button', { name: /bag it.*create another/i }).filter({ visible: true }).click();
-  await expect(page.locator('[aria-current="step"]')).toContainText(/upload/i);
-  await expect(page.getByRole('heading', { name: /upload image/i })).toBeInViewport({ ratio: 0.5 });
+  await expect(page.locator('[aria-current="step"]')).toContainText(/product/i);
+  await expect(page.getByRole('heading', { name: /select your product/i })).toBeVisible();
   const carts = unwrap(await account.db.from('carts').select('cart_items(*)').eq('user_id', account.id).single(), 'Read cart');
   expect(carts.cart_items).toHaveLength(1);
 });
@@ -35,6 +35,6 @@ test('CREATE-02 failed product creation keeps a recoverable design', async ({ pa
   if (await preview.count()) await preview.click();
   await page.getByRole('button', { name: /^create product$/i }).filter({ visible: true }).click();
   await expect(page.getByText(/error|failed|couldn.t/i).filter({ visible: true }).first()).toBeVisible();
-  await expect(page.getByRole('button', { name: /^bag it$/i })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /^create product$/i }).filter({ visible: true })).toBeEnabled();
   expect(unwrap(await account.db.from('products').select('id').eq('user_id', account.id), 'No falsely created product')).toEqual([]);
 });

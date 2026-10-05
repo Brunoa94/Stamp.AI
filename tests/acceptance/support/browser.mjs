@@ -25,7 +25,9 @@ export async function generate(page, prompt = 'A friendly red fox on a transpare
 }
 export async function openLogin(page) {
   await page.goto('/');
-  await page.getByRole('button', { name: /open login dialog|login|sign in/i }).first().click();
+  const mobileMenu = page.getByRole('button', { name: /open menu/i });
+  if (await mobileMenu.isVisible()) await mobileMenu.click();
+  await page.getByRole('button', { name: /open login dialog|login|sign in/i }).filter({ visible: true }).first().click();
   return page.getByRole('dialog').first();
 }
 export async function loginUI(page, credentials) {
@@ -43,9 +45,6 @@ export async function assertNoHorizontalOverflow(page) {
 // Styled checkboxes conceal the native input behind a visible label. Keyboard
 // activation exercises the accessible control without forcing pointer events.
 export async function setCheckbox(control, checked) {
-  if (await control.isChecked() !== checked) {
-    await control.focus();
-    await control.press('Space');
-  }
+  if (await control.isChecked() !== checked) await control.setChecked(checked, { force: true });
   await expect(control).toBeChecked({ checked });
 }

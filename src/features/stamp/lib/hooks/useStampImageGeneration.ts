@@ -57,10 +57,11 @@ interface GenerateImageParamsType {
 
 export function useStampImageGeneration() {
   const t = useTranslations("stamp.errors.imageGeneration");
-  const { nextStep } = useStampNavigation();
+  const { nextStep, goToStep } = useStampNavigation();
   const { handleError } = useErrorHandler();
   const { uploadedImageUrl } = useStampUpload();
   const {
+    isGenerating,
     setIsGenerating,
     addGeneratedResult,
     setGenerationProgress,
@@ -153,6 +154,7 @@ export function useStampImageGeneration() {
     } catch (error) {
       stopProgress();
       setGenerationProgress(0);
+      goToStep(2);
 
       AnalyticsService.track(
         "stamp_generate_failed",
@@ -192,6 +194,6 @@ export function useStampImageGeneration() {
 
   return {
     handleGenerate,
-    isGenerating: generateMutation.isPending,
+    isGenerating,
   };
 }

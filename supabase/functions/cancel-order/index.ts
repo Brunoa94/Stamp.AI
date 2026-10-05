@@ -185,32 +185,25 @@ serve(async (req) => {
           console.warn("⚠️ Failed to cancel at Printify:", printifyData);
           results.printify_error = printifyData.errors?.reason || "Unknown error";
 
-          // Check if Printify says order status doesn't allow cancellation
-          // This could mean: already cancelled, in production, or shipped
-          if (printifyData.errors?.reason?.includes("status")) {
-            // Check if the order is already cancelled at Printify (code 8501 with status message)
-            // In this case, we should continue with our database update and refund
-            const isAlreadyCancelledAtPrintify =
-              printifyData.errors?.reason?.toLowerCase().includes("does not allow cancellation") ||
-              printifyData.errors?.reason?.toLowerCase().includes("already cancelled");
-
-            if (isAlreadyCancelledAtPrintify) {
-              console.log("⚠️ Order may already be cancelled at Printify, continuing with database update...");
-              results.cancelled_at_printify = true; // Treat as cancelled
-              results.printify_note = "Order was already cancelled or in non-cancellable state at Printify";
-            } else {
-              // Only block if it's truly in production/shipped (not just already cancelled)
-              // Check the actual Printify order status before blocking
-              console.log("⚠️ Printify cancellation blocked, but continuing with local cancellation and refund...");
-              results.printify_blocked = true;
-              // Don't return error - continue with database update and refund
-            }
+          const remoteResponse = await fetchPrintify(
+            `/v1/shops/${PRINTIFY_SHOP_ID}/orders/${order.printify_order_id}.json`,
+            PRINTIFY_API_TOKEN,
+            { method: "GET" }
+          );
+          if (remoteResponse.ok) {
+            const remoteOrder = await remoteResponse.json();
+            results.cancelled_at_printify = ["canceled", "cancelled"].includes(remoteOrder.status);
           }
         }
       } catch (printifyError) {
         console.error("Error cancelling at Printify:", printifyError);
         results.printify_error = String(printifyError);
-        // Continue with database update even if Printify fails
+      }
+      if (!results.cancelled_at_printify) {
+        return new Response(
+          JSON.stringify({ success: false, message: "Printify cancellation could not be verified", results }),
+          { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
       }
     } else {
       console.log("No printify_order_id, skipping Printify cancellation");

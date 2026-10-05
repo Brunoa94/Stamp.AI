@@ -3,6 +3,7 @@ import { test, expect, unwrap } from '../support/fixtures.mjs';
 import { purchaseSetup, pay, verifyPurchase } from '../support/purchase.mjs';
 import { verifyProviderPayment } from '../support/provider-payment.mjs';
 import { required } from '../support/environment.mjs';
+import { waitForCancelableStatus } from '../support/cancellation.mjs';
 
 async function stripeGet(env, path) {
   const response = await fetch(`https://api.stripe.com/v1/${path}`, { headers: { Authorization: `Bearer ${required(env, 'STRIPE_SECRET_KEY')}` }, signal: AbortSignal.timeout(15000) });
@@ -19,6 +20,7 @@ async function buy(page, account, env) {
 test('ORDER-05 Stripe cancellation refunds captured funds exactly once', async ({ page, account, env }) => {
   test.setTimeout(240000);
   const { expected, order, payment } = await buy(page, account, env);
+  await waitForCancelableStatus({ read: () => account.orders.request(`orders/${order.printify_order_id}.json`) });
   for (let attempt = 0; attempt < 2; attempt++) {
     expect(unwrap(await account.db.functions.invoke('cancel-order', { body: { order_id: order.id, cancellation_reason: 'Acceptance refund' } }), 'Cancel paid order').success).toBe(true);
   }
@@ -54,7 +56,8 @@ test('ORDER-06 invoice download is a real PDF with an exact stable order snapsho
   expect(invoice.order_number).toBe(order.order_number);
   expect(invoice.customer_email).toBe(account.email);
   expect(invoice.currency.toUpperCase()).toBe('EUR');
-  expect(Math.round(Number(invoice.total_amount) * 100)).toBe(expected.totalCents);
+  expect(Number(invoice.total_amount)).toBe(expected.totalCents);
+  expect(Number(invoice.shipping_cost)).toBe(499);
   expect(invoice.line_items.map(i => [i.product_name, i.quantity]).sort()).toEqual(expected.selected.map(i => [i.product_name, i.quantity]).sort());
 });
 test('PAY-09 duplicate authentic Stripe events cannot duplicate payment, order or fulfillment', async ({ page, account, env }) => {

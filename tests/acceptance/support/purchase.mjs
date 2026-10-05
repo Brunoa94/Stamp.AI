@@ -42,11 +42,17 @@ export async function pay(page, env, provider, { decline = false, doubleSubmit =
     await page.waitForURL(/sandbox\.paypal\.com/);
     expect(new URL(page.url()).hostname.endsWith('sandbox.paypal.com')).toBe(true);
     await page.locator('#email').fill(env.PAYPAL_TEST_EMAIL);
-    const next = page.getByRole('button', { name: /^next$/i });
+    const next = page.getByRole('button', { name: /^(next|volgende|seguinte)$/i });
     if (await next.isVisible()) await next.click();
     await page.locator('#password').fill(env.PAYPAL_TEST_PASSWORD);
-    await page.getByRole('button', { name: /log in/i }).click();
-    await page.getByRole('button', { name: /complete purchase|agree.*pay|pay now/i }).click();
+    await page.getByRole('button', { name: /log in|inloggen|aanmelden|iniciar sess[aã]o|entrar/i }).click();
+    const capture = page.waitForResponse(response => response.url().includes('/api/paypal/capture-order') && response.request().method() === 'POST', { timeout: 60000 });
+    await page.getByRole('button', { name: /complete purchase|agree.*pay|pay now|betalen|aankoop|concluir compra/i }).click();
+    const captureResponse = await capture;
+    if (!captureResponse.ok()) {
+      const failure = await captureResponse.json().catch(() => ({}));
+      throw new Error(`PayPal sandbox capture failed (${captureResponse.status()}${failure.code ? ` ${failure.code}` : ''})`);
+    }
     return;
   }
   required(env, 'MOLLIE_API_KEY');
@@ -62,11 +68,17 @@ export async function verifyPurchase(account, expected, provider) {
     const rows = unwrap(await account.db.from('orders').select('*,order_items(*)').eq('user_id', account.id), 'Read purchased orders');
     expect(rows.length).toBeLessThanOrEqual(1);
     order = rows[0];
-    return order?.payment_status;
-  }, { timeout: 90000 }).toBe('paid');
+    return order && {
+      payment: order.payment_status,
+      provider: order.payment_provider,
+      printify: Boolean(order.printify_order_id),
+      status: order.status,
+    };
+  }, { timeout: provider === 'paypal' ? 135000 : 90000 }).toEqual({ payment: 'paid', provider, printify: true, status: 'confirmed' });
   expect(order.payment_provider).toBe(provider);
   expect(order.currency.toUpperCase()).toBe('EUR');
-  expect(Math.round(Number(order.total_amount) * 100)).toBe(expected.totalCents);
+  expect(Number(order.total_amount)).toBe(expected.totalCents);
+  expect(Number(order.shipping_cost)).toBe(499);
   const project = rows => rows.map(i => ({ product: i.product_id, variant: String(i.variant_id), quantity: i.quantity, unitPrice: i.unit_price })).sort((a, b) => a.product.localeCompare(b.product));
   expect(project(order.order_items)).toEqual(project(expected.selected));
   expect(order.printify_order_id).toBeTruthy();
@@ -75,7 +87,10 @@ export async function verifyPurchase(account, expected, provider) {
   const identity = rows => rows.map(i => ({ product: i.product_id, variant: Number(i.variant_id), quantity: i.quantity })).sort((a, b) => a.product.localeCompare(b.product));
   expect(identity(remote.line_items)).toEqual(identity(expected.selected));
   expect(remote.line_items.every(i => !i.sent_to_production_at)).toBe(true);
-  const remaining = unwrap(await account.db.from('cart_items').select('id').eq('cart_id', expected.cart.id), 'Verify purchased subset cleanup');
-  expect(remaining.map(r => r.id).sort()).toEqual(expected.cart.items.filter(i => !expected.selected.some(s => s.id === i.id)).map(i => i.id).sort());
+  const expectedRemaining = expected.cart.items.filter(i => !expected.selected.some(s => s.id === i.id)).map(i => i.id).sort();
+  await expect.poll(async () => {
+    const remaining = unwrap(await account.db.from('cart_items').select('id').eq('cart_id', expected.cart.id), 'Verify purchased subset cleanup');
+    return remaining.map(r => r.id).sort();
+  }, { timeout: 30000 }).toEqual(expectedRemaining);
   return order;
 }

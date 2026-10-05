@@ -10,6 +10,23 @@ for (const provider of ['stripe', 'paypal', 'mollie']) {
     test(`PAY-01 PAY-02 ORDER-01 ${provider} ${subset ? 'selected subset' : 'single item'} real purchase`, async ({ page, account, env }) => {
       test.setTimeout(240000);
       const expected = await purchaseSetup(page, account, env, subset);
+      if (process.env.ACCEPTANCE_DEBUG_PRINTIFY === '1') {
+        page.on('request', request => {
+          if (request.url().includes('/create-printify-order')) console.log('Printify create request started');
+          if (request.url().includes('/api/paypal/capture-order')) console.log('PayPal capture request started');
+        });
+        page.on('requestfailed', request => {
+          if (request.url().includes('/create-printify-order')) console.log('Printify create request failed:', request.failure()?.errorText);
+          if (request.url().includes('/api/paypal/capture-order')) console.log('PayPal capture request failed:', request.failure()?.errorText);
+          if (new URL(request.url()).hostname.endsWith('.supabase.co')) console.log('Test Supabase request failed:', new URL(request.url()).pathname, request.failure()?.errorText);
+        });
+        page.on('response', async response => {
+          if (response.url().includes('/api/paypal/capture-order')) console.log('PayPal capture response:', response.status());
+          if (!response.url().includes('/create-printify-order')) return;
+          const body = await response.json().catch(() => ({}));
+          console.log('Printify create response:', response.status(), JSON.stringify({ code: body.code, error: body.error, message: body.message }));
+        });
+      }
       await pay(page, env, provider);
       const order = await verifyPurchase(account, expected, provider);
       await verifyProviderPayment(account, env, order, expected);
@@ -37,11 +54,11 @@ test('GA-05 GA-06 purchase sends once with EUR value and stable transaction ID',
   const order = await verifyPurchase(account, expected, 'stripe');
   const [event] = await ga.wait('purchase');
   expect(event.cu ?? event['ep.currency']).toBe('EUR');
-  expect(Number(event['epn.value'])).toBe(51.98);
+  expect(Number(event['epn.value'])).toBe(expected.totalCents / 100);
   expect(event['ep.transaction_id']).toBeTruthy();
   await page.reload();
   await page.goto('/orders');
-  await expect(page.getByText(order.order_number, { exact: true })).toBeVisible();
+  await expect(page.getByText(`#${order.order_number}`, { exact: true })).toBeVisible();
   expect(ga.events.filter(e => e.en === 'purchase')).toHaveLength(1);
   ga.assertPrivate();
 });

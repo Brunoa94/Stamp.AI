@@ -61,6 +61,20 @@ describe("AnalyticsService", () => {
       });
     });
 
+    it("sends events from the acceptance server in development", () => {
+      vi.stubEnv("NODE_ENV", "development");
+      vi.stubEnv("NEXT_PUBLIC_STAMP_ACCEPTANCE_TESTS", "1");
+      vi.stubEnv("NEXT_PUBLIC_GA_MEASUREMENT_ID", TEST_MEASUREMENT_ID);
+      const gtagMock = vi.fn();
+      window.gtag = gtagMock;
+
+      AnalyticsService.track("page_view", { page_path: "/" });
+
+      expect(gtagMock).toHaveBeenCalledWith("event", "page_view", {
+        page_path: "/",
+      });
+    });
+
     it("should not send events when no measurement id is configured", () => {
       vi.stubEnv("NODE_ENV", "production");
       vi.stubEnv("NEXT_PUBLIC_GA_MEASUREMENT_ID", "");

@@ -32,10 +32,13 @@ test('CUSTOM-05 socks create both leg print areas without overwriting either', a
   test.setTimeout(240000);
   await customize(page, env, required(env, 'TEST_SOCK_PRODUCT_NAME'));
   const { request, body } = await createProduct(page);
-  expect(Object.keys(request.print_areas).sort()).toEqual(['left', 'right']);
+  expect(Object.keys(request.print_areas).sort()).toEqual(['left_leg', 'right_leg']);
   const product = await account.orders.request(`products/${body.product.id}.json`);
   const positions = new Set(product.print_areas.flatMap(a => a.placeholders).map(p => p.position));
-  expect([...positions].sort()).toEqual(['left', 'right']);
+  for (const position of ['left_leg', 'right_leg']) {
+    expect(positions.has(position)).toBe(true);
+    expect(product.print_areas.flatMap(a => a.placeholders).find(p => p.position === position)?.images.length).toBeGreaterThan(0);
+  }
 });
 test('CUSTOM-06 automatic mug placement does not send generic client placements', async ({ page, account, env }) => {
   test.setTimeout(240000);
@@ -69,8 +72,9 @@ test('CREATE-03 duplicate create request resolves to one product', async ({ page
   const preview = page.getByRole('button', { name: /^continue to preview$/i }).filter({ visible: true });
   if (await preview.count()) await preview.click();
   const requests = [];
-  page.on('request', request => { if (request.url().endsWith('/create-custom-product') && request.method() === 'POST') requests.push(request); });
+  page.on('request', request => { if (request.url().includes('/create-custom-product') && request.method() === 'POST') requests.push(request); });
   await page.getByRole('button', { name: /^create product$/i }).filter({ visible: true }).dblclick();
+  await expect(page.locator('[aria-current="step"]')).toContainText(/final/i, { timeout: 90000 });
   await expect(page.getByRole('button', { name: /^bag it$/i }).filter({ visible: true })).toBeEnabled({ timeout: 90000 });
   expect(requests).toHaveLength(1);
   const products = unwrap(await account.db.from('products').select('id').eq('user_id', account.id), 'Verify created product count');

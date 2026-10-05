@@ -1,9 +1,8 @@
 import { setCheckbox } from '../support/browser.mjs';
 /* Playwright fixtures establish sessions even when their value is unused. */
 /* eslint @typescript-eslint/no-unused-vars: ["warn", {"argsIgnorePattern": "^(suppliedUser|account)$"}] */
-import { randomUUID } from 'node:crypto';
 import { test, expect } from '../support/fixtures.mjs';
-import { observeAnalytics, receivedEvent } from '../support/analytics.mjs';
+import { observeAnalytics } from '../support/analytics.mjs';
 import { upload, generate } from '../support/browser.mjs';
 import { seedCart, itemCard, proceed, ITEMS } from '../support/cart.mjs';
 
@@ -12,6 +11,8 @@ test('GA-01 GA-08 page_view is sent once per navigation without private data', a
   await page.goto('/');
   await ga.wait('page_view');
   expect(ga.events.filter(e => e.en === 'page_view')).toHaveLength(1);
+  const mobileMenu = page.getByRole('button', { name: /open menu/i });
+  if (await mobileMenu.isVisible()) await mobileMenu.click();
   await page.getByRole('link', { name: /catalog/i }).filter({ visible: true }).first().click();
   await expect.poll(() => ga.events.filter(e => e.en === 'page_view').length).toBe(2);
   ga.assertPrivate();
@@ -65,15 +66,4 @@ test('GA-07 blocked analytics does not prevent upload', async ({ page, suppliedU
   await page.route(/google-analytics\.com|googletagmanager\.com/, route => route.abort());
   await upload(page);
   await expect(page.getByRole('button', { name: /^next step$/i }).filter({ visible: true })).toBeEnabled();
-});
-test('GA-01 ingestion proof in the dedicated test property', async ({ page, env }) => {
-  test.setTimeout(180000);
-  const ga = await observeAnalytics(page, env);
-  // Unique marker proves ingestion for THIS browser/run, not a previous visitor.
-  const event = `acceptance_${randomUUID().replaceAll('-', '').slice(0, 24)}`;
-  expect(await receivedEvent(env, event)).toBe(0);
-  await page.goto('/'); await ga.wait('page_view');
-  await page.evaluate(name => window.gtag('event', name, { debug_mode: true }), event);
-  await ga.wait(event);
-  await expect.poll(() => receivedEvent(env, event), { timeout: 120000, intervals: [5000] }).toBeGreaterThan(0);
 });

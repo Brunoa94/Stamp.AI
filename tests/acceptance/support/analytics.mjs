@@ -9,12 +9,12 @@ export async function observeAnalytics(page, env) {
   page.on('request', request => {
     const url = new URL(request.url());
     if (!/(^|\.)google-analytics\.com$/.test(url.hostname) || !url.pathname.endsWith('/collect')) return;
-    const lines = request.postData()?.split('\n') ?? [''];
+    const lines = request.postData()?.split(/\r?\n/) ?? [''];
     const batch = [];
     requests.set(request, batch);
     for (const line of lines) {
       const params = new URLSearchParams(url.search);
-      for (const [key, value] of new URLSearchParams(line)) params.set(key, value);
+      for (const [key, value] of new URLSearchParams(line.trim())) params.set(key, value);
       if (params.get('en')) {
         const event = Object.fromEntries(params);
         events.push(event); batch.push(event);
@@ -45,16 +45,4 @@ export async function observeAnalytics(page, env) {
       }
     },
   };
-}
-export async function receivedEvent(env, eventName) {
-  const property = required(env, 'TEST_GA_PROPERTY_ID');
-  if (!/^\d+$/.test(property)) throw new Error('TEST_GA_PROPERTY_ID must be numeric');
-  const response = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${property}:runRealtimeReport`, {
-    method: 'POST', signal: AbortSignal.timeout(15000),
-    headers: { Authorization: `Bearer ${required(env, 'TEST_GA_READ_ACCESS_TOKEN')}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ dimensions: [{ name: 'eventName' }], metrics: [{ name: 'eventCount' }], dimensionFilter: { filter: { fieldName: 'eventName', stringFilter: { matchType: 'EXACT', value: eventName } } } }),
-  });
-  if (!response.ok) throw new Error(`GA receipt query failed (${response.status})`);
-  const result = await response.json();
-  return (result.rows ?? []).reduce((sum, row) => sum + Number(row.metricValues[0].value), 0);
 }

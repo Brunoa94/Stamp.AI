@@ -12,7 +12,10 @@ import {
   STAMP_SIZES,
 } from "../constants/stampColors";
 import { filterDisplayColors } from "@/features/homepage/lib/constants/colorSwatches";
-import { shouldShowColorSelection } from "../helpers/productCategoryDetector";
+import {
+  getVariantOptionKind,
+  shouldShowColorSelection,
+} from "../helpers/productCategoryDetector";
 import type { SizeType } from "../types/stampTypes";
 
 /**
@@ -37,6 +40,7 @@ export function useCustomizationData() {
   // Check if this product type should show color selection
   // Products like mugs, socks, pillows only have one color
   const showColors = shouldShowColorSelection(selectedProductTitle || "");
+  const colorOptionKind = getVariantOptionKind(selectedProductTitle || "");
 
   // Filter colors to only show White and Black if both are available
   // Otherwise show all available colors
@@ -100,6 +104,7 @@ export function useCustomizationData() {
     printProviderId,
     // Colors
     availableColors,
+    colorOptionKind,
     selectedColor,
     effectiveSelectedColor,
     setSelectedColor,

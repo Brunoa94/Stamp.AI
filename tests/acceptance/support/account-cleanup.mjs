@@ -1,7 +1,10 @@
 // Called only after every known remote order has verified cancellation.
 export async function cleanAccountData(admin, id) {
   const checked = (result, operation) => {
-    if (result.error) throw new Error(`${operation} failed (${result.error.code ?? result.error.status}); account ledger retained`);
+    if (result.error) {
+      const cause = [result.error.code, result.error.status, result.error.message].filter(Boolean).join(' / ') || 'unknown';
+      throw new Error(`${operation} failed (${cause}); account ledger retained`);
+    }
     return result.data;
   };
   const orders = checked(await admin.from('orders').select('id').eq('user_id', id), 'Order cleanup discovery').map(r => r.id);
@@ -23,5 +26,8 @@ export async function cleanAccountData(admin, id) {
     if (result.error?.code === 'PGRST205') console.warn(`Test schema missing optional audit table: ${table}`);
     else checked(result, `${table} cleanup`);
   }
-  checked(await admin.auth.admin.deleteUser(id), 'Isolated user cleanup');
+  const deletedUser = await admin.auth.admin.deleteUser(id);
+  // Recovery can resume after a prior run deleted the user but stopped before
+  // marking the durable account ledger complete.
+  if (deletedUser.error?.code !== 'user_not_found') checked(deletedUser, 'Isolated user cleanup');
 }

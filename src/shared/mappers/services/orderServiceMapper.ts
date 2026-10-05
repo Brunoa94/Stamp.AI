@@ -97,8 +97,8 @@ export class OrderServiceMapper {
       customer_email: createOrder.customer_email,
       customer_name: createOrder.customer_name,
       customer_phone: createOrder.customer_phone,
-      shipping_address: createOrder.shipping_address as any,
-      billing_address: createOrder.billing_address as any,
+      shipping_address: createOrder.shipping_address as OrderInsert["shipping_address"],
+      billing_address: createOrder.billing_address as OrderInsert["billing_address"],
       subtotal: createOrder.subtotal,
       tax_amount: createOrder.tax_amount,
       shipping_cost: createOrder.shipping_cost,
@@ -182,7 +182,7 @@ export class OrderServiceMapper {
       unit_price: unitPrice,
       total_price: totalPrice,
       custom_image_url: cartItem.custom_image_url || "",
-      product_name: cartItem.product?.name || "Custom Product",
+      product_name: cartItem.product_name || cartItem.product?.name || "Custom Product",
       variant_name: cartItem.variant?.name || null,
       design_config: cartItem.custom_image_url
         ? {
@@ -229,6 +229,7 @@ export class OrderServiceMapper {
       status: orderStatus,
       payment_status: paymentStatus,
       payment_method: paymentMethod || null,
+      payment_provider: paymentMethod && ["stripe", "paypal", "mollie"].includes(paymentMethod) ? paymentMethod : null,
       subtotal: totals.subtotal,
       shipping_cost: totals.shipping_cost,
       tax_amount: totals.tax_amount,

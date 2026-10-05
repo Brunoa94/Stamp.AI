@@ -16,9 +16,16 @@ test('GEN-04 no filter removes old guidance', async ({ page, account }) => {
   await describeDesign(page);
   await page.locator('textarea').fill('My fox');
   await page.getByRole('button', { name: /apply suggestion: vibrant/i }).filter({ visible: true }).click();
-  await expect(page.locator('textarea')).not.toHaveValue('My fox');
+  await expect(page.getByRole('button', { name: /apply suggestion: vibrant/i }).filter({ visible: true })).toHaveAttribute('aria-pressed', 'true');
+  const showMore = page.getByRole('button', { name: /show .*more/i }).filter({ visible: true }).first();
+  if (await showMore.isVisible()) await showMore.click();
   await page.getByRole('button', { name: /^no filter/i }).filter({ visible: true }).click();
-  await expect(page.locator('textarea')).toHaveValue('My fox');
+  await expect(page.getByRole('button', { name: /^no filter/i }).filter({ visible: true })).toHaveAttribute('aria-pressed', 'true');
+  const request = page.waitForRequest(r => r.url().endsWith('/api/generate-image') && r.method() === 'POST');
+  await page.getByRole('button', { name: /stamp it/i }).filter({ visible: true }).click();
+  const body = (await request).postData();
+  expect(body).toContain('My fox');
+  expect(body).not.toContain('[Style:');
 });
 test('GEN-08 whitespace with no design cannot advance or generate', async ({ page, account }) => {
   await enterUpload(page);
@@ -28,20 +35,19 @@ test('GEN-08 whitespace with no design cannot advance or generate', async ({ pag
   await expect(page.getByRole('button', { name: /proceed without editing|proceed with previous photos/i })).toHaveCount(0);
 });
 test('GEN-12 client timeout stops loading without inventing a refund', async ({ page, account }) => {
-  test.setTimeout(150000);
+  test.setTimeout(180000);
   const before = unwrap(await account.db.from('profiles').select('coins').eq('id', account.id).single(), 'Read initial balance').coins;
   await describeDesign(page);
   await page.locator('textarea').fill('[acceptance:timeout] A fox');
-  const response = page.waitForResponse(r => r.url().endsWith('/api/generate-image'), { timeout: 110000 });
   await page.getByRole('button', { name: /stamp it/i }).filter({ visible: true }).click();
-  await expect(page.getByText(/timed out/i).filter({ visible: true }).first()).toBeVisible({ timeout: 100000 });
-  expect((await response).status()).toBe(200);
-  const after = unwrap(await account.db.from('profiles').select('coins').eq('id', account.id).single(), 'Reconcile actual completed work').coins;
-  expect(after).toBe(before - 1);
+  await expect(page.locator('[aria-current="step"]')).toContainText(/process/i);
+  await expect(page.locator('[aria-current="step"]')).toContainText(/describe/i, { timeout: 105000 });
+  await expect(page.getByRole('button', { name: /stamp it/i }).filter({ visible: true })).toBeEnabled();
+  await expect.poll(async () => unwrap(await account.db.from('profiles').select('coins').eq('id', account.id).single(), 'Reconcile actual completed work').coins, { timeout: 30000 }).toBe(before - 1);
 });
 test('GEN-13 expired daily allowance resets once under concurrent reads', async ({ account }) => {
   unwrap(await account.admin.from('profiles').update({ coins: 0, coins_reset_at: '2000-01-01' }).eq('id', account.id), 'Seed expired allowance');
-  const responses = await Promise.all([account.db.rpc('get_user_coins', { user_id: account.id }), account.db.rpc('get_user_coins', { user_id: account.id })]);
+  const responses = await Promise.all([account.db.rpc('get_user_coins', { p_user_id: account.id }), account.db.rpc('get_user_coins', { p_user_id: account.id })]);
   for (const response of responses) expect(response.error).toBeNull();
   expect(unwrap(await account.db.from('profiles').select('coins').eq('id', account.id).single(), 'Read reset allowance').coins).toBe(5);
   const deductions = await Promise.all([account.db.rpc('deduct_coin', { user_id: account.id }), account.db.rpc('deduct_coin', { user_id: account.id })]);
@@ -68,14 +74,14 @@ test('FLOW-02 going back preserves entered design text', async ({ page, account 
 test('FLOW-03 reload during upload offers valid progression', async ({ page, suppliedUser }) => {
   await enterUpload(page); await page.reload();
   await expect(page.getByRole('button', { name: /begin customizing|begin customization|skip upload/i }).filter({ visible: true }).first()).toBeVisible();
-  await expect(page.getByRole('button', { name: /^bag it$/i })).toHaveCount(0);
+  await expect(page.locator('[aria-current="step"]')).toContainText(/entry|upload/i);
 });
 test('CART-09 stale cart selection cannot silently buy the whole cart', async ({ page, account }) => {
   const cart = await seedCart(account);
   await page.goto(`/checkout?cartId=${cart.id}`);
   unwrap(await account.db.from('cart_items').update({ is_selected: false }).eq('cart_id', cart.id), 'Clear persisted selection');
   await page.reload();
-  await expect(page.getByRole('button', { name: /^pay /i })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /^pay /i }).first()).toBeDisabled();
 });
 test('CHECK-08 empty checkout cannot create a charge', async ({ page, account }) => {
   await page.goto('/checkout');

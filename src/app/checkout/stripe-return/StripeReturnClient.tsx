@@ -70,6 +70,8 @@ async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 export interface StripeCheckoutData {
   paymentIntentId: string;
   amount: number;
+  shippingCostCents?: number;
+  discountCents?: number;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
   billing: ShippingAddressT;
@@ -309,6 +311,9 @@ function StripeReturnContent() {
                 billingAddress,
                 idempotencyKey,
                 paymentMethod: "stripe",
+                paymentAmountCents: amount,
+                shippingCostCents: checkoutData.shippingCostCents,
+                discountCents: checkoutData.discountCents,
               })) ?? null;
 
             if (createdOrderId) {

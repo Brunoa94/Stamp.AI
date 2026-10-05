@@ -38,7 +38,7 @@ export class AnalyticsService {
     if (!this.isBrowser()) return;
 
     // Always log in development for debugging
-    if (this.isDevelopment()) {
+    if (this.isDevelopment() && process.env.NEXT_PUBLIC_STAMP_ACCEPTANCE_TESTS !== "1") {
       console.info("[analytics]", name, params ?? {});
       return;
     }

@@ -19,7 +19,7 @@ import { CheckoutPriceBreakdown } from "./CheckoutPriceBreakdown";
 import { CheckoutStripeButton } from "./CheckoutStripeButton";
 import { CheckoutPayPalButton } from "./CheckoutPayPalButton";
 import { CheckoutIdealButton } from "./CheckoutIdealButton";
-import { VerifiedSecureBadge } from "@/features/ui/trust/VerifiedSecureBadge";
+import { Span } from "@/features/ui/span";
 import type { CartWithItems } from "@/shared/types/cart";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 
@@ -59,7 +59,7 @@ export function CheckoutSummarySection({
   const paymentShippingAddress =
     useShippingAddress && shippingAddress ? shippingAddress : billingAddress;
   const lineItems = buildPrintifyLineItems(cart.cart_items);
-  const disablePayment = !isFormValid || total <= 0;
+  const disablePayment = !isFormValid || cart.cart_items.length === 0 || total <= 0;
 
   return (
     <div className="sticky top-32 border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 lg:p-10">
@@ -68,7 +68,7 @@ export function CheckoutSummarySection({
         unstyled
         className="mb-8 font-heading text-2xl md:text-3xl font-bold uppercase tracking-tight"
       >
-        Order <span className="text-(--color-stamp-gold)">Summary</span>
+        Order <Span className="text-(--color-stamp-gold)">Summary</Span>
       </Heading>
 
       <div className="space-y-6">

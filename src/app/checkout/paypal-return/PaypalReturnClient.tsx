@@ -313,6 +313,9 @@ function PayPalReturnContent() {
                 billingAddress,
                 idempotencyKey,
                 paymentMethod: "paypal",
+                paymentAmountCents: amount,
+                shippingCostCents: checkoutData.shippingCostCents,
+                discountCents: checkoutData.discountCents,
               })) ?? null;
 
             if (createdOrderId) {
