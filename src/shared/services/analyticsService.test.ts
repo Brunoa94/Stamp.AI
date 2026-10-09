@@ -44,7 +44,7 @@ describe("AnalyticsService", () => {
       expect(gtagMock).toHaveBeenCalledWith("event", "logout", {});
     });
 
-    it("should not call gtag in development, logging to console instead", () => {
+    it("should log to console in development and still forward to gtag", () => {
       vi.stubEnv("NODE_ENV", "development");
       vi.stubEnv("NEXT_PUBLIC_GA_MEASUREMENT_ID", TEST_MEASUREMENT_ID);
       const gtagMock = vi.fn();
@@ -55,8 +55,10 @@ describe("AnalyticsService", () => {
 
       AnalyticsService.track("add_to_cart", { value: 19.99 });
 
-      expect(gtagMock).not.toHaveBeenCalled();
       expect(consoleSpy).toHaveBeenCalledWith("[analytics]", "add_to_cart", {
+        value: 19.99,
+      });
+      expect(gtagMock).toHaveBeenCalledWith("event", "add_to_cart", {
         value: 19.99,
       });
     });

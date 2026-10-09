@@ -17,7 +17,15 @@ vi.mock("@/shared/queries/authQueries", () => ({
  *
  * The `form` is a DialogContent (as RegisterForm/LoginForm are), so Radix
  * gates its visibility on the dialog's open state.
+ *
+ * AuthDialog reads the current user (to auto-close on login) via useUser,
+ * which needs a QueryClient; the hook is stubbed to "signed out" here since
+ * these tests only cover the trigger/open wiring.
  */
+
+vi.mock("@/queries/authQueries", () => ({
+  useUser: () => ({ data: null, isLoading: false }),
+}));
 
 const FORM = (
   <DialogContent>

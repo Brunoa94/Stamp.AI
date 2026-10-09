@@ -3,16 +3,38 @@
  * Gets JWT token from actual user login
  */
 
+import { describe } from 'vitest';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const testEmail = process.env.TEST_USER_EMAIL;
-const testPassword = process.env.TEST_USER_PASSWORD;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '';
+const testEmail = process.env.TEST_USER_EMAIL ?? '';
+const testPassword = process.env.TEST_USER_PASSWORD ?? '';
 
-if (!supabaseUrl || !supabaseAnonKey || !testEmail || !testPassword) {
-  throw new Error('Missing test Supabase URL, anon key, or test user credentials');
-}
+/** True when the live-Supabase credentials the integration suites need are present. */
+export const hasIntegrationEnv = Boolean(supabaseUrl && supabaseAnonKey && testEmail && testPassword);
+
+const SKIP_MESSAGE =
+  '[integration] Skipping: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, TEST_USER_EMAIL and TEST_USER_PASSWORD must all be set. ' +
+  'Point them at a Supabase project to run the integration suites (npm run test:integration).';
+
+let warned = false;
+
+/**
+ * `describe` for suites that need a live Supabase. When the env is missing
+ * the suite is skipped (reported as skipped, not failed) with one clear
+ * message instead of throwing at import time.
+ */
+export const describeIntegration: typeof describe = ((...args: Parameters<typeof describe>) => {
+  if (hasIntegrationEnv) {
+    return describe(...args);
+  }
+  if (!warned) {
+    warned = true;
+    console.warn(SKIP_MESSAGE);
+  }
+  return describe.skip(...args);
+}) as typeof describe;
 
 export interface AuthenticatedClient {
   supabase: SupabaseClient;
@@ -21,12 +43,15 @@ export interface AuthenticatedClient {
 }
 
 export async function getAuthenticatedClient(): Promise<AuthenticatedClient> {
+  if (!hasIntegrationEnv) {
+    throw new Error(SKIP_MESSAGE);
+  }
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
   // Sign in with real user credentials
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: testEmail!,
-    password: testPassword!,
+    email: testEmail,
+    password: testPassword,
   });
 
   if (error) {

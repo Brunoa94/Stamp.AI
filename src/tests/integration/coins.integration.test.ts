@@ -7,21 +7,27 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll, afterEach } from "vitest";
-import { getAuthenticatedClient, AuthenticatedClient } from "./setup-auth";
-import { createClient } from "@supabase/supabase-js";
+import {
+  describeIntegration,
+  getAuthenticatedClient,
+  AuthenticatedClient,
+} from "./setup-auth";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-describe("Coins Integration", () => {
+describeIntegration("Coins Integration", () => {
   let auth: AuthenticatedClient;
   let testUserId: string;
-  const admin = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { autoRefreshToken: false, persistSession: false } },
-  );
+  let admin: SupabaseClient;
   let originalCoins: number;
   let originalResetAt: string;
 
   beforeAll(async () => {
+    // Created here, not at collection time, so the suite can skip cleanly without credentials.
+    admin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { autoRefreshToken: false, persistSession: false } },
+    );
     auth = await getAuthenticatedClient();
     testUserId = auth.userId;
     const { data: profile, error } = await admin.from("profiles")

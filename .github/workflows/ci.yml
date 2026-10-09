@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [dev, main]
+
+# One run per branch/PR: a new push cancels the previous in-flight run.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: 22
+  NEXT_TELEMETRY_DISABLED: 1
+
+jobs:
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit --incremental false
+
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      # Integration suites (*.integration.test.ts) need a live Supabase and are
+      # deliberately not run here; see `npm run test:integration`.
+      - run: npm run test:unit
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      # Placeholder PUBLIC values only, so `next build` can inline them.
+      # These are not secrets and never reach a deployment; Vercel injects
+      # the real values at deploy time. Server-only secrets (Stripe, Printify,
+      # OpenAI, PayPal, service role) are read at request time, not at build.
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**', 'next.config.ts') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
+      - run: npm run build
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # Full history so the changed-files step can diff against the base.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+
+      # Full-repo lint. NON-BLOCKING for now: the repo carries a backlog of
+      # ~866 pre-existing ESLint errors. Once that backlog is cleared, remove
+      # `continue-on-error` so this step gates merges like the others.
+      - name: ESLint (whole repo, advisory until backlog is cleared)
+        continue-on-error: true
+        run: npx eslint .
+
+      # Blocking lint on the files this PR/push actually touched, so new
+      # violations cannot land while the backlog above is being worked down.
+      - name: ESLint (changed files, blocking)
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          if [ -n "$BASE_REF" ]; then
+            git fetch --no-tags origin "$BASE_REF"
+            BASE="$(git merge-base "origin/$BASE_REF" HEAD)"
+          elif [ -n "$BEFORE_SHA" ] && [ "$BEFORE_SHA" != "0000000000000000000000000000000000000000" ] \
+               && git cat-file -e "$BEFORE_SHA^{commit}" 2>/dev/null; then
+            BASE="$BEFORE_SHA"
+          else
+            BASE="$(git rev-parse HEAD~1)"
+          fi
+          echo "Diffing against $BASE"
+          mapfile -t FILES < <(git diff --name-only --diff-filter=ACMR "$BASE" HEAD -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs')
+          if [ "${#FILES[@]}" -eq 0 ]; then
+            echo "No lintable files changed."
+            exit 0
+          fi
+          printf '%s\n' "${FILES[@]}"
+          npx eslint --no-warn-ignored "${FILES[@]}"
