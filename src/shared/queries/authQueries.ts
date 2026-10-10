@@ -12,6 +12,10 @@ import { AuthResponseI, UserI } from "../../../supabase/types";
 import { useRouter } from "next/navigation";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import { AnalyticsService } from "@/shared/services/analyticsService";
+import {
+  getSafeRedirectPath,
+  REDIRECTED_FROM_PARAM,
+} from "@/features/auth/lib/helpers/redirectTarget";
 
 // Query keys
 const authKeys = {
@@ -79,12 +83,25 @@ export function useLogin() {
 
       handleSuccess("Login successful - Welcome back!");
 
-      // Only navigate if not already on stamp page
-      if (
+      // Continue to the protected page the guest was bounced from, if any;
+      // otherwise go to the studio unless the user is already there.
+      // A full navigation is required: while the visitor was a guest the
+      // router prefetched protected links and cached the middleware's
+      // redirect to "/", and a client-side push can replay that redirect.
+      const redirectTarget =
+        typeof window !== "undefined"
+          ? getSafeRedirectPath(
+              new URLSearchParams(window.location.search).get(REDIRECTED_FROM_PARAM),
+            )
+          : null;
+
+      if (redirectTarget) {
+        window.location.assign(redirectTarget);
+      } else if (
         typeof window !== "undefined" &&
         !window.location.pathname.startsWith("/stamp")
       ) {
-        router.push("/stamp");
+        window.location.assign("/stamp");
       } else {
         // Force a refresh of the current page state
         router.refresh();
