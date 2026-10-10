@@ -2,8 +2,11 @@ name: CI
 
 on:
   pull_request:
+    # ready_for_review so a draft PR to main picks up the acceptance job once it is marked ready.
+    types: [opened, synchronize, reopened, ready_for_review]
   push:
     branches: [dev, main]
+  workflow_dispatch:
 
 # One run per branch/PR: a new push cancels the previous in-flight run.
 concurrency:
@@ -43,6 +46,7 @@ jobs:
       # Integration suites (*.integration.test.ts) need a live Supabase and are
       # deliberately not run here; see `npm run test:integration`.
       - run: npm run test:unit
+      - run: npm run test:acceptance:contracts
 
   build:
     name: Build
@@ -116,3 +120,71 @@ jobs:
           fi
           printf '%s\n' "${FILES[@]}"
           npx eslint --no-warn-ignored "${FILES[@]}"
+
+  # Gate for merging into main: the full acceptance suite against the test
+  # Supabase project, the Printify test shop and Stripe test mode
+  # (see tests/acceptance/README.md). Only runs on non-draft PRs targeting
+  # main (or a manual dispatch), after the cheaper jobs have passed.
+  acceptance:
+    name: Acceptance suite
+    needs: [typecheck, unit-tests, build]
+    # Secrets are not available to pull requests from forks.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+       github.base_ref == 'main' &&
+       !github.event.pull_request.draft &&
+       github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    # Every run shares the test database and the Printify test shop: queue runs, never overlap them.
+    concurrency:
+      group: acceptance-test-environment
+      cancel-in-progress: false
+    env:
+      # Excluded until their credentials exist in CI: Google sign-in, delivered email, PayPal and Mollie purchases.
+      ACCEPTANCE_EXCLUDE: "Google|GOOGLE|google|AUTH-01 real email confirmation|AUTH-03 repeated signup|AUTH-07 reset via a delivered recovery email|PAY-01 PAY-02 ORDER-01 mollie|PAY-01 PAY-02 ORDER-01 paypal"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+
+      - name: Install Stripe CLI
+        run: |
+          curl -fsSL https://packages.stripe.dev/api/security/keypair/stripe-cli-gpg/public | gpg --dearmor | sudo tee /usr/share/keyrings/stripe.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/stripe.gpg] https://packages.stripe.dev/stripe-cli-debian-local stable main" | sudo tee /etc/apt/sources.list.d/stripe.list
+          sudo apt-get update -q && sudo apt-get install -y -q stripe
+
+      - name: Write test environment
+        env:
+          ACCEPTANCE_ENV_FILE: ${{ secrets.ACCEPTANCE_ENV_FILE }}
+        run: |
+          if [ -z "$ACCEPTANCE_ENV_FILE" ]; then echo "::error::Repository secret ACCEPTANCE_ENV_FILE is missing"; exit 1; fi
+          printf '%s\n' "$ACCEPTANCE_ENV_FILE" > .env.test.local
+
+      - name: Show catalog differences from production (CAT-04 fails on drift)
+        run: node scripts/acceptance/sync-catalog.mjs
+
+      - name: Run acceptance suite
+        run: npm run test:acceptance -- --grep-invert "$ACCEPTANCE_EXCLUDE"
+
+      - name: Upload report and cleanup ledgers
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acceptance-${{ github.run_id }}
+          path: |
+            .acceptance/report
+            .acceptance/results
+            .acceptance/accounts
+            .acceptance/printify
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Remove test environment
+        if: always()
+        run: rm -f .env.test.local
