@@ -6,6 +6,18 @@ export async function enterUpload(page) {
   await page.getByRole('button', { name: /begin customizing|begin customization/i }).click();
   await expect(page.getByRole('heading', { name: /upload image/i })).toBeVisible();
 }
+// The dev server can paint /catalog before React hydrates, so an early click
+// on a showcase card is dropped; retry until the product grid appears.
+export async function browseCatalogGroup(page) {
+  const products = page.getByRole('button', { name: /^view .+ details$/i });
+  await expect(async () => {
+    if (!(await products.first().isVisible())) {
+      await page.getByRole('button', { name: /^browse /i }).first().click({ timeout: 2000 });
+    }
+    await expect(products.first()).toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: 30000 });
+  return products;
+}
 export async function upload(page, image = IMAGE) {
   await enterUpload(page);
   await page.getByLabel('File upload input').setInputFiles(image);

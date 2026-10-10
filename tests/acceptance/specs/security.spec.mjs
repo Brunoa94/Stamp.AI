@@ -3,9 +3,10 @@
 import { test, expect, client, unwrap } from '../support/fixtures.mjs';
 import { seedCart } from '../support/cart.mjs';
 
+// The dev server compiles API routes on demand; a cold compile can exceed actionTimeout.
 for (const path of ['/api/auth/signup', '/api/auth/resend-confirmation']) {
   test(`AUTH-02 malformed email rejected by ${path}`, async ({ request }) => {
-    expect((await request.post(path, { data: { email: 'not-an-email' } })).status()).toBe(400);
+    expect((await request.post(path, { data: { email: 'not-an-email' }, timeout: 60000 })).status()).toBe(400);
   });
 }
 for (const functionName of ['create-printify-order', 'cancel-order', 'process-refund', 'create-payment-intent', 'create-mollie-payment', 'capture-paypal-order', 'generate-invoice']) {

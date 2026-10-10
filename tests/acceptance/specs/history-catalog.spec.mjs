@@ -2,7 +2,7 @@
 /* eslint @typescript-eslint/no-unused-vars: ["warn", {"argsIgnorePattern": "^(suppliedUser|account)$"}] */
 import { readFileSync } from 'node:fs';
 import { test, expect, unwrap } from '../support/fixtures.mjs';
-import { enterUpload, IMAGE, describeDesign } from '../support/browser.mjs';
+import { enterUpload, IMAGE, describeDesign, browseCatalogGroup } from '../support/browser.mjs';
 const png = `data:image/png;base64,${readFileSync(IMAGE).toString('base64')}`;
 async function history(page, entries) {
   await page.addInitScript(value => localStorage.setItem('stamp:generated-images', JSON.stringify({ entries: value })), entries);
@@ -92,9 +92,7 @@ for (const category of ['Mug', 'Canvas', 'Journal', 'Pillow', 'Socks', 'Tote']) 
 }
 test('CAT-02 unmatched catalog search has an empty state and clearing restores real products', async ({ page, suppliedUser }) => {
   await page.goto('/catalog');
-  await page.getByRole('button', { name: /^browse /i }).first().click();
-  const products = page.getByRole('button', { name: /^view .+ details$/i });
-  await expect(products.first()).toBeVisible();
+  const products = await browseCatalogGroup(page);
   const count = await products.count();
   await page.getByRole('searchbox').fill('acceptance-no-match-7f599643');
   await expect(products).toHaveCount(0);
@@ -106,8 +104,8 @@ test('CAT-02 unmatched catalog search has an empty state and clearing restores r
 });
 test('CAT-03 catalog quick-view customization opens the design studio', async ({ page, suppliedUser }) => {
   await page.goto('/catalog');
-  await page.getByRole('button', { name: /^browse /i }).first().click();
-  await page.getByRole('button', { name: /^view .+ details$/i }).first().click();
+  const products = await browseCatalogGroup(page);
+  await products.first().click();
   const dialog = page.getByRole('dialog');
   await expect(dialog.getByRole('heading')).toBeVisible();
   await dialog.getByRole('link', { name: /customize|create|stamp|design/i }).click();
