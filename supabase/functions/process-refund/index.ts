@@ -220,6 +220,15 @@ serve(async (req) => {
     );
 
     if (atomicResult.error) {
+      // A concurrent request for the same order got the same idempotent
+      // provider refund and recorded it first.
+      if (await isAlreadyRefunded(order_id)) {
+        console.log(`Refund for order ${order_id} was recorded by a concurrent request.`);
+        return new Response(
+          JSON.stringify({ success: true, skipped: true, reason: "already_refunded" }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
       console.error("Atomic refund operation failed:", atomicResult.error);
       throw new Error("Failed to record refund in database");
     }
