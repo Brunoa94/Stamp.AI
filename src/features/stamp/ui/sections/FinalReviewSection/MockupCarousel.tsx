@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useCallback, useEffect, useMemo, useRef, memo } from "react";
+import { useState, useCallback, useEffect, useMemo, memo } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { X, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import type { MockupImageType } from "../../../lib/types/stampFlowTypes";
 import { getPreloadIndices } from "../../../lib/utils/carouselUtils";
+import { Button } from "@/features/ui/button";
+import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
 
 /**
  * MockupCarousel
@@ -27,7 +30,7 @@ const FullscreenModal = memo(function FullscreenModal({
   onPrev,
   onNext,
   currentIndex,
-  loadedImages,
+  isCurrentLoaded,
   onImageLoad,
   t,
 }: {
@@ -37,8 +40,8 @@ const FullscreenModal = memo(function FullscreenModal({
   onPrev: () => void;
   onNext: () => void;
   currentIndex: number;
-  loadedImages: Set<number>;
-  onImageLoad: (index: number) => void;
+  isCurrentLoaded: boolean;
+  onImageLoad: (src: string) => void;
   t: (key: string) => string;
 }) {
   // Only render images within the preload buffer
@@ -79,8 +82,9 @@ const FullscreenModal = memo(function FullscreenModal({
       aria-label={t("fullscreenPreview")}
     >
       {/* Close button */}
-      <button
+      <Button
         type="button"
+        variant="unstyled"
         onClick={onClose}
         className={`absolute top-6 right-6 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 ${
           isAnimating ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
@@ -88,13 +92,14 @@ const FullscreenModal = memo(function FullscreenModal({
         aria-label={t("closeFullscreen")}
       >
         <X className="w-6 h-6" />
-      </button>
+      </Button>
 
       {/* Navigation arrows */}
       {images.length > 1 && (
         <>
-          <button
+          <Button
             type="button"
+            variant="unstyled"
             onClick={handlePrevClick}
             className={`absolute left-6 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 ${
               isAnimating ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
@@ -102,9 +107,10 @@ const FullscreenModal = memo(function FullscreenModal({
             aria-label={t("previousImage")}
           >
             <ChevronLeft className="w-6 h-6" />
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="unstyled"
             onClick={handleNextClick}
             className={`absolute right-6 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 ${
               isAnimating ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4"
@@ -112,7 +118,7 @@ const FullscreenModal = memo(function FullscreenModal({
             aria-label={t("nextImage")}
           >
             <ChevronRight className="w-6 h-6" />
-          </button>
+          </Button>
         </>
       )}
 
@@ -124,7 +130,7 @@ const FullscreenModal = memo(function FullscreenModal({
         onClick={handleContainerClick}
       >
         {/* Loading spinner */}
-        {!loadedImages.has(currentIndex) && (
+        {!isCurrentLoaded && (
           <div className="absolute inset-0 flex items-center justify-center z-10">
             <Loader2 className="w-12 h-12 animate-spin text-white/40" />
           </div>
@@ -139,11 +145,11 @@ const FullscreenModal = memo(function FullscreenModal({
               fill
               unoptimized
               className={`object-contain transition-opacity duration-200 ${
-                index === currentIndex && loadedImages.has(index) ? "opacity-100" : "opacity-0"
+                index === currentIndex && isCurrentLoaded ? "opacity-100" : "opacity-0"
               }`}
               sizes="90vw"
               priority
-              onLoad={() => onImageLoad(index)}
+              onLoad={() => onImageLoad(img.src)}
             />
           ) : null
         )}
@@ -156,11 +162,11 @@ const FullscreenModal = memo(function FullscreenModal({
         }`}
       >
         {images.length > 1 && (
-          <p className="text-white/80 text-sm font-medium">
+          <Paragraph unstyled className="text-white/80 text-sm font-medium">
             {currentIndex + 1} / {images.length}
-          </p>
+          </Paragraph>
         )}
-        <p className="text-white/60 text-sm">{t("pressEscToClose")}</p>
+        <Paragraph unstyled className="text-white/60 text-sm">{t("pressEscToClose")}</Paragraph>
       </div>
     </div>,
     document.body
@@ -172,28 +178,6 @@ function MockupCarouselComponent({ mockupImages, fallbackUrl }: PropsI) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-
-  // Track loaded indices in a ref to avoid re-renders for off-screen preloads.
-  // Only track whether the *current* image is loaded as state (to show/hide spinner).
-  const loadedRef = useRef<Set<number>>(new Set());
-  const [isCurrentLoaded, setIsCurrentLoaded] = useState(false);
-  const currentIndexRef = useRef(currentIndex);
-  currentIndexRef.current = currentIndex;
-
-  const handleImageLoad = useCallback((index: number) => {
-    loadedRef.current.add(index);
-    // Only trigger a state update when the visible image finishes loading.
-    if (index === currentIndexRef.current) {
-      setIsCurrentLoaded(true);
-    }
-  }, []);
-
-  // Handler for direct index navigation (dots)
-  const goToIndex = useCallback((index: number) => {
-    setCurrentIndex(index);
-    setIsCurrentLoaded(loadedRef.current.has(index));
-  }, []);
 
   // Memoize images array to prevent recreating on every render
   const images = useMemo(
@@ -206,7 +190,24 @@ function MockupCarouselComponent({ mockupImages, fallbackUrl }: PropsI) {
     [mockupImages, fallbackUrl]
   );
 
+  // Loaded images are tracked by src, so a new image set (e.g. real mockups
+  // replacing the fallback) starts unloaded without an explicit reset.
+  const [loadedSrcs, setLoadedSrcs] = useState<ReadonlySet<string>>(() => new Set());
+
+  const handleImageLoad = useCallback((src: string) => {
+    setLoadedSrcs((prev) => (prev.has(src) ? prev : new Set(prev).add(src)));
+  }, []);
+
+  // Go back to the first image when the image set changes.
+  const firstImageSrc = images[0]?.src ?? null;
+  const [prevFirstImageSrc, setPrevFirstImageSrc] = useState(firstImageSrc);
+  if (firstImageSrc !== prevFirstImageSrc) {
+    setPrevFirstImageSrc(firstImageSrc);
+    setCurrentIndex(0);
+  }
+
   const currentImage = images[currentIndex]?.src || fallbackUrl || "";
+  const isCurrentLoaded = loadedSrcs.has(images[currentIndex]?.src ?? "");
 
   // Only render images within the preload buffer for performance
   const preloadIndices = useMemo(
@@ -214,35 +215,12 @@ function MockupCarouselComponent({ mockupImages, fallbackUrl }: PropsI) {
     [currentIndex, images.length]
   );
 
-  // Reset loaded state when the image set changes (e.g., real mockups replace the fallback).
-  // Without this, isCurrentLoaded stays true from the previous image and the spinner
-  // never shows for the first real image.
-  const firstImageSrc = images[0]?.src ?? null;
-  useEffect(() => {
-    loadedRef.current = new Set();
-    setCurrentIndex(0);
-    setIsCurrentLoaded(false);
-  }, [firstImageSrc]);
-
-  // Ensure we're on client side for portal
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   const goToPrev = useCallback(() => {
-    setCurrentIndex((prev) => {
-      const next = prev === 0 ? images.length - 1 : prev - 1;
-      setIsCurrentLoaded(loadedRef.current.has(next));
-      return next;
-    });
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   }, [images.length]);
 
   const goToNext = useCallback(() => {
-    setCurrentIndex((prev) => {
-      const next = prev === images.length - 1 ? 0 : prev + 1;
-      setIsCurrentLoaded(loadedRef.current.has(next));
-      return next;
-    });
+    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   }, [images.length]);
 
   const openFullscreen = useCallback(() => {
@@ -292,8 +270,9 @@ function MockupCarouselComponent({ mockupImages, fallbackUrl }: PropsI) {
     <>
       <div className="hidden md:flex p-6 md:p-8 md:pt-16 lg:p-12 lg:pt-16 flex-col items-center justify-center bg-(--color-stamp-divider)/5 border-r border-(--color-stamp-divider)">
         {/* Main image */}
-        <button
+        <Button
           type="button"
+          variant="unstyled"
           onClick={openFullscreen}
           className="w-full max-w-[min(36rem,52vh)] bg-white p-6 shadow-2xl relative rotate-1 group hover:rotate-0 transition-all duration-1000 cursor-zoom-in hover:shadow-3xl hover:scale-[1.02]"
           aria-label={t("viewFullscreen")}
@@ -318,38 +297,40 @@ function MockupCarouselComponent({ mockupImages, fallbackUrl }: PropsI) {
                     index === currentIndex && isCurrentLoaded ? "opacity-100" : "opacity-0"
                   }`}
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 576px, 672px"
-                  onLoad={() => handleImageLoad(index)}
+                  onLoad={() => handleImageLoad(img.src)}
                 />
               ) : null
             )}
           </div>
           <div className="absolute top-10 left-10">
-            <span className="px-3 py-1 bg-white/80 backdrop-blur-sm border border-(--color-stamp-divider) text-[8px] font-bold uppercase tracking-widest">
+            <Span unstyled className="px-3 py-1 bg-white/80 backdrop-blur-sm border border-(--color-stamp-divider) text-[8px] font-bold uppercase tracking-widest">
               {t("previewSealed")}
-            </span>
+            </Span>
           </div>
-        </button>
+        </Button>
 
         {/* Carousel navigation */}
         {images.length > 1 && (
           <div className="mt-6 flex items-center gap-4">
-            <button
+            <Button
               type="button"
+              variant="unstyled"
               onClick={goToPrev}
               className="p-2 rounded-full border border-(--color-stamp-divider) hover:bg-(--color-stamp-divider)/10 transition-colors"
               aria-label={t("previousImage")}
             >
               <ChevronLeft className="w-5 h-5" />
-            </button>
+            </Button>
 
             {/* Thumbnail dots - only show if reasonable number of images */}
             {images.length <= 10 ? (
               <div className="flex gap-2">
                 {images.map((_, index) => (
-                  <button
+                  <Button
                     key={index}
                     type="button"
-                    onClick={() => goToIndex(index)}
+                    variant="unstyled"
+                    onClick={() => setCurrentIndex(index)}
                     className={`w-2 h-2 rounded-full transition-all ${
                       index === currentIndex
                         ? "bg-(--color-stamp-black) scale-125"
@@ -360,32 +341,33 @@ function MockupCarouselComponent({ mockupImages, fallbackUrl }: PropsI) {
                 ))}
               </div>
             ) : (
-              <span className="text-sm font-medium text-(--color-stamp-black) min-w-16 text-center">
+              <Span unstyled className="text-sm font-medium text-(--color-stamp-black) min-w-16 text-center">
                 {currentIndex + 1} / {images.length}
-              </span>
+              </Span>
             )}
 
-            <button
+            <Button
               type="button"
+              variant="unstyled"
               onClick={goToNext}
               className="p-2 rounded-full border border-(--color-stamp-divider) hover:bg-(--color-stamp-divider)/10 transition-colors"
               aria-label={t("nextImage")}
             >
               <ChevronRight className="w-5 h-5" />
-            </button>
+            </Button>
           </div>
         )}
 
         {/* Image counter - only show separately when using dots */}
         {images.length > 1 && images.length <= 10 && (
-          <p className="mt-3 text-sm text-(--color-stamp-muted)">
+          <Paragraph unstyled className="mt-3 text-sm text-(--color-stamp-muted)">
             {currentIndex + 1} / {images.length}
-          </p>
+          </Paragraph>
         )}
       </div>
 
       {/* Fullscreen Modal */}
-      {isMounted && isFullscreen && (
+      {isFullscreen && (
         <FullscreenModal
           images={images}
           isAnimating={isAnimating}
@@ -393,7 +375,7 @@ function MockupCarouselComponent({ mockupImages, fallbackUrl }: PropsI) {
           onPrev={goToPrev}
           onNext={goToNext}
           currentIndex={currentIndex}
-          loadedImages={loadedRef.current}
+          isCurrentLoaded={isCurrentLoaded}
           onImageLoad={handleImageLoad}
           t={t}
         />

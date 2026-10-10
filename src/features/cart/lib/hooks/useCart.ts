@@ -10,7 +10,7 @@
 
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   useCartSummary,
@@ -31,69 +31,58 @@ export function useCart() {
   const { itemCount, cart, isLoading, error } = useCartSummary();
   const { handleError } = useErrorHandler();
 
-  // Selection state - track selected item IDs
-  const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(
-    new Set(),
+  const cartItems = cart?.cart_items;
+  const allCartItemIds = useMemo(
+    () => cartItems?.map((item) => item.id) ?? [],
+    [cartItems],
   );
-  // Track if initial selection has been applied (prevents re-selecting after deselect all)
-  const [hasInitializedSelection, setHasInitializedSelection] = useState(false);
 
-  // Memoize all cart item IDs to avoid repeated mapping
-  const allCartItemIds = cart?.cart_items?.map((item) => item.id) ?? [];
+  // The user's explicit selection. `null` until they first change it, which
+  // means "everything in the cart" — so all items are selected when the cart
+  // first loads, while items added after a manual change are not.
+  const [chosenItemIds, setChosenItemIds] = useState<ReadonlySet<string> | null>(
+    null,
+  );
 
-  // Auto-select all items when cart loads for the first time
-  useEffect(() => {
-    if (
-      allCartItemIds.length > 0 &&
-      selectedItemIds.size === 0 &&
-      !hasInitializedSelection
-    ) {
-      setSelectedItemIds(new Set(allCartItemIds));
-      setHasInitializedSelection(true);
-    }
-  }, [allCartItemIds, hasInitializedSelection]);
-
-  // Clean up selection when items are removed from cart
-  useEffect(() => {
-    if (allCartItemIds.length > 0) {
-      const validIds = new Set(allCartItemIds);
-      setSelectedItemIds((prev) => {
-        const cleaned = new Set([...prev].filter((id) => validIds.has(id)));
-        return cleaned.size !== prev.size ? cleaned : prev;
-      });
-    }
-  }, [allCartItemIds]);
+  // Effective selection, limited to items still in the cart.
+  const selectedItemIds = useMemo(() => {
+    if (chosenItemIds === null) return new Set(allCartItemIds);
+    return new Set(allCartItemIds.filter((id) => chosenItemIds.has(id)));
+  }, [allCartItemIds, chosenItemIds]);
 
   if (error) handleError(error);
 
   // Selection handlers
-  const toggleItemSelection = useCallback((itemId: string) => {
-    setSelectedItemIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(itemId)) {
-        next.delete(itemId);
-      } else {
-        next.add(itemId);
-      }
-      return next;
-    });
-  }, []);
+  const toggleItemSelection = useCallback(
+    (itemId: string) => {
+      setChosenItemIds((prev) => {
+        const next = new Set(prev ?? allCartItemIds);
+        if (next.has(itemId)) {
+          next.delete(itemId);
+        } else {
+          next.add(itemId);
+        }
+        return next;
+      });
+    },
+    [allCartItemIds],
+  );
 
   const selectAllItems = useCallback(() => {
     if (allCartItemIds.length > 0) {
-      setSelectedItemIds(new Set(allCartItemIds));
+      setChosenItemIds(new Set(allCartItemIds));
     }
   }, [allCartItemIds]);
 
   const deselectAllItems = useCallback(() => {
-    setSelectedItemIds(new Set());
+    setChosenItemIds(new Set());
   }, []);
 
   // Derived selection state
   const selectedItems = useMemo(() => {
-    if (!cart?.cart_items) return [];
-    return cart.cart_items.filter((item) => selectedItemIds.has(item.id));
-  }, [cart?.cart_items, selectedItemIds]);
+    if (!cartItems) return [];
+    return cartItems.filter((item) => selectedItemIds.has(item.id));
+  }, [cartItems, selectedItemIds]);
 
   const selectedCount = selectedItems.length;
   const allSelected = Boolean(

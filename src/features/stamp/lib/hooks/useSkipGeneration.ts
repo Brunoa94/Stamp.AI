@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useStampFlowStore } from "../stores/stampFlowStore";
 import {
   useStampGeneration,
@@ -34,20 +34,11 @@ export function useSkipGeneration() {
   // This is intentional - skip is a special case where we populate data AND navigate
   const setCurrentStep = useStampFlowStore((state) => state.setCurrentStep);
 
-  // Check for cached images - initialize with stored images to avoid flash
-  const [cachedImages, setCachedImages] = useState<GeneratedResultType[]>(() => {
-    // Initialize with stored images (runs once on mount, client-side only)
+  // Cached images, read once from storage on mount (client-side only)
+  const [cachedImages] = useState<GeneratedResultType[]>(() => {
     if (typeof window === "undefined") return [];
     return getStoredImages();
   });
-
-  // Re-check for cached images periodically in case they were added elsewhere
-  useEffect(() => {
-    const images = getStoredImages();
-    if (images.length !== cachedImages.length) {
-      setCachedImages(images);
-    }
-  }, [cachedImages.length]);
 
   const hasCachedImages = cachedImages.length > 0;
 
