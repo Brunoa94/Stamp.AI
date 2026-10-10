@@ -65,6 +65,8 @@ export default defineConfig({
   webServer: {
     // Use dev:test to load .env.test.local for the test Supabase project
     command: "npm run dev:test -- --webpack",
+    // Keep webpack output out of `.next`, which the Turbopack dev server owns
+    env: { NEXT_DIST_DIR: ".next-webpack" },
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,

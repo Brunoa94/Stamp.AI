@@ -17,6 +17,10 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
  *
  * Note: Fonts are self-hosted via next/font/google (served from /_next),
  * so external Google Fonts domains are not required in style-src/font-src.
+ *
+ * `upgrade-insecure-requests` is omitted in development: the dev server is
+ * plain http, and the browser would upgrade middleware redirects (e.g. the
+ * auth gate on /stamp) to https://localhost, breaking client navigation.
  */
 const ContentSecurityPolicy = `
   default-src 'self';
@@ -31,7 +35,7 @@ const ContentSecurityPolicy = `
   form-action 'self';
   base-uri 'self';
   object-src 'none';
-  upgrade-insecure-requests;
+  ${process.env.NODE_ENV === "development" ? "" : "upgrade-insecure-requests;"}
 `.replace(/\n/g, " ").trim();
 
 /**
@@ -82,6 +86,11 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // The webpack dev servers used by the e2e/acceptance suites build into their
+  // own directory. Sharing `.next/dev` with the default Turbopack dev server
+  // leaves stale webpack artifacts that make Turbopack hang compiling /stamp.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
+
   // External packages that use native binaries - needed for Vercel serverless
   serverExternalPackages: ["sharp"],
 

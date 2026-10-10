@@ -12,7 +12,7 @@ for (const file of ['.env', '.env.local', '.env.development', '.env.development.
 }
 Object.assign(env, testEnv, {
   STAMP_ACCEPTANCE_TESTS: '1', NEXT_PUBLIC_STAMP_ACCEPTANCE_TESTS: '1', NEXT_PUBLIC_SITE_URL: 'http://localhost:3107', OPENAI_API_KEY: '', GEMINI_API_KEY: '', GOOGLE_API_KEY: '', GOOGLE_GEMINI_API_KEY: '',
-  NEXT_PUBLIC_PRINTIFY_API_TOKEN: '', NODE_ENV: 'development', NEXT_TELEMETRY_DISABLED: '1',
+  NEXT_PUBLIC_PRINTIFY_API_TOKEN: '', NODE_ENV: 'development', NEXT_TELEMETRY_DISABLED: '1', NEXT_DIST_DIR: '.next-webpack',
 });
 
 // Start Stripe CLI webhook listener if available and payment tests are enabled
