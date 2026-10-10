@@ -1,5 +1,28 @@
 # Execution evidence
 
+## Server-side checkout pricing — October 10, 2026
+
+Payments are now priced on the server (`catalog_products.selling_price_cents`, server promo rules, server shipping). Both migrations and the four changed Edge Functions were applied to the test project `tgccxydchvujhrqyzqao` only.
+
+**Before the fix (red):** the deployed `create-payment-intent` accepted a €0.50 PaymentIntent for a €44.97 cart, and another with no line items at all. All 9 new `price-integrity.spec.mjs` tests failed on desktop against the old deployment.
+
+**After the fix:**
+
+| Run | Result |
+| --- | --- |
+| `price-integrity.spec.mjs`, desktop + mobile | 18 of 18 passed |
+| Checkout/payment/order regression, desktop (interrupted at test 85; see below) | 67 passed; Stripe purchases PAY-01 (single, subset), PAY-03, PAY-05, PAY-07 and GA-05/06 all passed |
+| Rerun of every test that failed in that regression, desktop | 15 of 18 passed |
+| Unit tests | 1,259 of 1,259 |
+
+The three remaining failures are the known orders-page defects already on `dev` (Processing filter; double-click cancellation; concurrent cancellations). In the concurrent test the money assertions pass: one Stripe refund for the exact captured amount.
+
+The regression run was interrupted by the operator (the web server was stopped by mistake); cleanup ran and every account and Printify ledger record is terminal. ORDER-08 first failed because its own `expected` lacked the new `shippingCents` (harness, fixed) and because four products had no selling price; after prices were set on the test database (€24.99 each) all nine ORDER-08 purchases passed.
+
+**Defect found and fixed during the run:** the Stripe and PayPal webhook upserts replaced `payment_transactions.metadata` on success, erasing the server-priced items, so fulfilment refused paid orders. Migration `20261010130000` makes them merge metadata (server keys win). CHECK-09 now asserts the promo order is fulfilled.
+
+**Open:** `catalog-snapshot.json` still has no selling price for those four products, so CAT-04 fails until the snapshot is updated to production's values.
+
 ## Orders page — October 10, 2026
 
 `orders-page.spec.mjs` (ORDER-01, -02, -04, -05, -07, -09, -10, -11) ran on its own against the test Supabase project (`tgccxydchvujhrqyzqao`), the Printify test shop and Stripe test mode, on desktop and mobile.
