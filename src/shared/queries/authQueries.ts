@@ -76,8 +76,6 @@ export function useLogin() {
       queryClient.setQueryData(authKeys.user(), data.user);
       queryClient.setQueryData(authKeys.session(), data.session);
 
-      AnalyticsService.track("login", { method: "email" });
-
       // Invalidate coins query so new user's coins are fetched
       queryClient.invalidateQueries({ queryKey: ["coins"] });
 
@@ -95,14 +93,19 @@ export function useLogin() {
             )
           : null;
 
+      // A full navigation would drop the in-flight analytics hit, so those
+      // branches hand the login event to the next page.
       if (redirectTarget) {
+        AnalyticsService.trackAfterNavigation("login", { method: "email" });
         window.location.assign(redirectTarget);
       } else if (
         typeof window !== "undefined" &&
         !window.location.pathname.startsWith("/stamp")
       ) {
+        AnalyticsService.trackAfterNavigation("login", { method: "email" });
         window.location.assign("/stamp");
       } else {
+        AnalyticsService.track("login", { method: "email" });
         // Force a refresh of the current page state
         router.refresh();
       }

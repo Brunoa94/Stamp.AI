@@ -14,7 +14,7 @@ function makeOrder(
 
 describe("toDisplayStatus", () => {
   it.each([
-    ["pending", "pending"],
+    ["pending", "processing"],
     ["waiting_confirmation", "processing"],
     ["confirmed", "processing"],
     ["processing", "processing"],
