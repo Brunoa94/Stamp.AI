@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import PaypalReturnClient from "./PaypalReturnClient";
+import { Suspense } from "react";
+import { PayPalReturnSection } from "@/features/checkout/ui/sections/PaymentReturn/PayPalReturnSection";
 
 /**
  * /checkout/paypal-return Route - PayPal Payment Return
@@ -18,5 +19,10 @@ export const metadata: Metadata = {
 };
 
 export default function PaypalReturnPage() {
-  return <PaypalReturnClient />;
+  // useSearchParams() requires a Suspense boundary for static prerendering
+  return (
+    <Suspense fallback={null}>
+      <PayPalReturnSection />
+    </Suspense>
+  );
 }

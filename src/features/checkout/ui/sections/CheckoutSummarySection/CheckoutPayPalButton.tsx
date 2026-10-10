@@ -23,6 +23,8 @@ interface CheckoutPayPalButtonPropsI {
   cart: CartWithItems;
   cartId: string | null;
   amount: number;
+  shippingCostCents: number;
+  discountCents: number;
   disabled?: boolean;
 }
 
@@ -30,6 +32,8 @@ export function CheckoutPayPalButton({
   cart,
   cartId,
   amount,
+  shippingCostCents,
+  discountCents,
   disabled = false,
 }: CheckoutPayPalButtonPropsI) {
   const t = useTranslations("checkout.paypalButton");
@@ -45,6 +49,8 @@ export function CheckoutPayPalButton({
         cart,
         cartId,
         amount,
+        shippingCostCents,
+        discountCents,
       });
       window.location.href = approvalUrl;
     } catch (error) {

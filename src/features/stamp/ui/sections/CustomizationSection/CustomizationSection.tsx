@@ -39,6 +39,7 @@ function CustomizationSectionComponent() {
     blueprintId,
     printProviderId,
     availableColors,
+    colorOptionKind,
     selectedColor,
     effectiveSelectedColor,
     setSelectedColor,
@@ -108,6 +109,7 @@ function CustomizationSectionComponent() {
         <CustomizationPreview />
         <CustomizationControls
           colors={availableColors}
+          colorOptionKind={colorOptionKind}
           selectedColor={selectedColor}
           sizes={availableSizes}
           selectedSize={effectiveSelectedSize}
@@ -132,6 +134,7 @@ function CustomizationSectionComponent() {
       {mobileSubStep === "customize" ? (
         <CustomizationControls
           colors={availableColors}
+          colorOptionKind={colorOptionKind}
           selectedColor={selectedColor}
           sizes={availableSizes}
           selectedSize={effectiveSelectedSize}

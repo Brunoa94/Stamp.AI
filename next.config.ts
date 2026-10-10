@@ -17,20 +17,25 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
  *
  * Note: Fonts are self-hosted via next/font/google (served from /_next),
  * so external Google Fonts domains are not required in style-src/font-src.
+ *
+ * `upgrade-insecure-requests` is omitted in development: the dev server is
+ * plain http, and the browser would upgrade middleware redirects (e.g. the
+ * auth gate on /stamp) to https://localhost, breaking client navigation.
  */
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.paypal.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://googletagmanager.com;
+  script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === "development" ? "'unsafe-eval'" : ""} https://js.stripe.com https://www.paypal.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://googletagmanager.com;
   style-src 'self' 'unsafe-inline';
   img-src 'self' data: blob: https://images.printify.com https://images-api.printify.com https://pfy-prod-image-storage.s3.us-east-2.amazonaws.com https://oaidalleapiprodscus.blob.core.windows.net https://placehold.co https://images.unsplash.com https://picsum.photos https://*.supabase.co https://www.googletagmanager.com https://api.dicebear.com;
   font-src 'self' data:;
+  worker-src 'self' blob:;
   connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://api.paypal.com https://api.sandbox.paypal.com https://api.mollie.com https://www.google.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://*.google-analytics.com;
   frame-src 'self' https://js.stripe.com https://www.paypal.com https://www.google.com;
   frame-ancestors 'none';
   form-action 'self';
   base-uri 'self';
   object-src 'none';
-  upgrade-insecure-requests;
+  ${process.env.NODE_ENV === "development" ? "" : "upgrade-insecure-requests;"}
 `.replace(/\n/g, " ").trim();
 
 /**
@@ -81,6 +86,11 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // The webpack dev servers used by the e2e/acceptance suites build into their
+  // own directory. Sharing `.next/dev` with the default Turbopack dev server
+  // leaves stale webpack artifacts that make Turbopack hang compiling /stamp.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
+
   // External packages that use native binaries - needed for Vercel serverless
   serverExternalPackages: ["sharp"],
 

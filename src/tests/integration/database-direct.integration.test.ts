@@ -3,10 +3,14 @@
  * Tests database operations directly without service layer
  */
 
-import { getAuthenticatedClient } from './setup-auth';
+import {
+  describeIntegration,
+  getAuthenticatedClient,
+  type AuthenticatedClient,
+} from './setup-auth';
 
-describe('Direct Database Operations', () => {
-  let supabase: any;
+describeIntegration('Direct Database Operations', () => {
+  let supabase: AuthenticatedClient['supabase'];
   let testUserId: string;
   let testCartId: string;
   let testOrderId: string | null = null;
@@ -70,7 +74,7 @@ describe('Direct Database Operations', () => {
       .insert({
         user_id: testUserId,
         order_number: `TEST-${Date.now()}`,
-        customer_email: 'bruno.afonso94@hotmail.com',
+        customer_email: process.env.TEST_USER_EMAIL!,
         customer_name: 'Bruno Afonso',
         customer_phone: '+1 555-0123',
         billing_address: {
@@ -155,6 +159,7 @@ describe('Direct Database Operations', () => {
         product_name: cartItem.product_name,
         variant_id: cartItem.variant_id,
         variant_name: cartItem.variant_name,
+        custom_image_url: 'https://images.printify.com/test-order-item.png',
         quantity: cartItem.quantity,
         unit_price: cartItem.unit_price,
         total_price: cartItem.unit_price * cartItem.quantity,

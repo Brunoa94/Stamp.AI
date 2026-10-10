@@ -7,24 +7,42 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll, afterEach } from "vitest";
-import { getAuthenticatedClient, AuthenticatedClient } from "./setup-auth";
+import {
+  describeIntegration,
+  getAuthenticatedClient,
+  AuthenticatedClient,
+} from "./setup-auth";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-describe("Coins Integration", () => {
+describeIntegration("Coins Integration", () => {
   let auth: AuthenticatedClient;
   let testUserId: string;
+  let admin: SupabaseClient;
+  let originalCoins: number;
+  let originalResetAt: string;
 
   beforeAll(async () => {
+    // Created here, not at collection time, so the suite can skip cleanly without credentials.
+    admin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { autoRefreshToken: false, persistSession: false } },
+    );
     auth = await getAuthenticatedClient();
     testUserId = auth.userId;
+    const { data: profile, error } = await admin.from("profiles")
+      .select("coins, coins_reset_at").eq("id", testUserId).single();
+    if (error || !profile) throw error || new Error("Test profile not found");
+    originalCoins = profile.coins;
+    originalResetAt = profile.coins_reset_at;
     console.log("✅ Test user ID:", testUserId);
   });
 
   afterAll(async () => {
-    // Reset test user coins to 5 for clean state
-    const today = new Date().toISOString().split("T")[0];
-    const { error } = await auth.supabase
+    // Restore the test user's original balance and reset date.
+    const { error } = await admin
       .from("profiles")
-      .update({ coins: 5, coins_reset_at: today })
+      .update({ coins: originalCoins, coins_reset_at: originalResetAt })
       .eq("id", testUserId);
 
     if (error) {
@@ -37,7 +55,7 @@ describe("Coins Integration", () => {
   afterEach(async () => {
     // Reset coins to 5 between tests for isolation
     const today = new Date().toISOString().split("T")[0];
-    await auth.supabase
+    await admin
       .from("profiles")
       .update({ coins: 5, coins_reset_at: today })
       .eq("id", testUserId);
@@ -52,7 +70,7 @@ describe("Coins Integration", () => {
   describe("deduct_coin RPC", () => {
     it("should deduct coin and return true when coins > 0", async () => {
       // Set coins to 5
-      await auth.supabase
+      await admin
         .from("profiles")
         .update({ coins: 5 })
         .eq("id", testUserId);
@@ -78,7 +96,7 @@ describe("Coins Integration", () => {
 
     it("should return false when coins = 0", async () => {
       // Set coins to 0
-      await auth.supabase
+      await admin
         .from("profiles")
         .update({ coins: 0 })
         .eq("id", testUserId);
@@ -107,7 +125,7 @@ describe("Coins Integration", () => {
       yesterday.setDate(yesterday.getDate() - 1);
       const yesterdayStr = yesterday.toISOString().split("T")[0];
 
-      await auth.supabase.from("profiles").update({
+      await admin.from("profiles").update({
         coins: 0,
         coins_reset_at: yesterdayStr,
       }).eq("id", testUserId);
@@ -136,7 +154,7 @@ describe("Coins Integration", () => {
 
     it("should handle concurrent deduction attempts safely", async () => {
       // Set coins to 2
-      await auth.supabase
+      await admin
         .from("profiles")
         .update({ coins: 2 })
         .eq("id", testUserId);
@@ -168,7 +186,7 @@ describe("Coins Integration", () => {
 
     it("should deduct multiple times sequentially until 0", async () => {
       // Set coins to 3
-      await auth.supabase
+      await admin
         .from("profiles")
         .update({ coins: 3 })
         .eq("id", testUserId);
@@ -237,7 +255,7 @@ describe("Coins Integration", () => {
       // Note: This test depends on database constraints being set up
       // If no constraint exists, this test documents the current behavior
       if (error) {
-        expect(error.message).toContain("constraint");
+        expect(error.message).toMatch(/constraint|protected profile columns/);
       } else {
         // If no error, verify what happened
         const { data: profile } = await auth.supabase
@@ -261,7 +279,7 @@ describe("Coins Integration", () => {
   describe("Get User Coins", () => {
     it("should return current coins for user", async () => {
       // Set known state
-      await auth.supabase
+      await admin
         .from("profiles")
         .update({ coins: 3 })
         .eq("id", testUserId);

@@ -10,6 +10,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 test.describe('Order Creation E2E', () => {
+  test.skip(({ isMobile }) => isMobile, 'Database order integrity runs once');
   let supabase: ReturnType<typeof createClient>;
   let testUserId: string;
   let testOrderId: string | null = null;
@@ -20,8 +21,8 @@ test.describe('Order Creation E2E', () => {
 
     // Sign in
     const { data: authData, error } = await supabase.auth.signInWithPassword({
-      email: 'bruno.afonso94@hotmail.com',
-      password: 'Bruno-afonso94',
+      email: process.env.TEST_USER_EMAIL!,
+      password: process.env.TEST_USER_PASSWORD!,
     });
 
     if (error) throw error;

@@ -1,7 +1,7 @@
 import React from "react";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { cleanup, render, waitFor } from "@testing-library/react";
-import MollieReturnClient from "./MollieReturnClient";
+import { MollieReturnSection } from "./MollieReturnSection";
 
 const mocks = vi.hoisted(() => ({
   getPendingRecoveries: vi.fn(),
@@ -24,7 +24,6 @@ vi.mock("@/shared/queries/authQueries", () => ({
 vi.mock("@/shared/queries/orderQueries", () => ({
   useCreateOrderFromCart: () => ({ mutateAsync: mocks.createOrder }),
   useUpdateOrderStatus: () => ({ mutateAsync: vi.fn() }),
-  useUpdatePaymentStatus: () => ({ mutateAsync: vi.fn() }),
 }));
 vi.mock("@/shared/queries/cartQueries", () => ({
   useRemoveCartItems: () => ({ mutateAsync: mocks.removeCartItems }),
@@ -75,29 +74,56 @@ afterEach(() => {
 });
 
 it("preserves unselected cart items when recovering a legacy full-cart snapshot", async () => {
-  const selected = { id: "selected", is_selected: true, quantity: 1, unit_price: 2500 };
-  const unselected = { id: "unselected", is_selected: false, quantity: 1, unit_price: 5000 };
-  const snapshot = { id: "cart_1", user_id: "user_1", cart_items: [selected, unselected] };
-  mocks.getPendingRecoveries.mockResolvedValue([{
-    payment_provider: "mollie",
-    payment_intent_id: "tr_legacy",
-    amount: 2500,
-    cart_snapshot: snapshot,
-    line_items: [{ product_id: "product_1", variant_id: 1, quantity: 1 }],
-    shipping_address: {
-      first_name: "Ada", last_name: "Lovelace", email: "ada@example.com",
-      country: "NL", address1: "Dam 1", city: "Amsterdam", zip: "1012JS",
+  const selected = {
+    id: "selected",
+    is_selected: true,
+    quantity: 1,
+    unit_price: 2500,
+  };
+  const unselected = {
+    id: "unselected",
+    is_selected: false,
+    quantity: 1,
+    unit_price: 5000,
+  };
+  const snapshot = {
+    id: "cart_1",
+    user_id: "user_1",
+    cart_items: [selected, unselected],
+  };
+  mocks.getPendingRecoveries.mockResolvedValue([
+    {
+      payment_provider: "mollie",
+      payment_intent_id: "tr_legacy",
+      amount: 2500,
+      cart_snapshot: snapshot,
+      line_items: [{ product_id: "product_1", variant_id: 1, quantity: 1 }],
+      shipping_address: {
+        first_name: "Ada",
+        last_name: "Lovelace",
+        email: "ada@example.com",
+        country: "NL",
+        address1: "Dam 1",
+        city: "Amsterdam",
+        zip: "1012JS",
+      },
     },
-  }]);
+  ]);
 
-  render(<MollieReturnClient />);
+  render(<MollieReturnSection />);
 
-  await waitFor(() => expect(mocks.removeCartItems).toHaveBeenCalledWith(["selected"]));
-  expect(mocks.createOrder).toHaveBeenCalledWith(expect.objectContaining({
-    cart: expect.objectContaining({ cart_items: [selected] }),
-  }));
-  expect(mocks.recordPaymentForRecovery).toHaveBeenCalledWith(expect.objectContaining({
-    cartSnapshot: expect.objectContaining({ cart_items: [selected] }),
-  }));
+  await waitFor(() =>
+    expect(mocks.removeCartItems).toHaveBeenCalledWith(["selected"]),
+  );
+  expect(mocks.createOrder).toHaveBeenCalledWith(
+    expect.objectContaining({
+      cart: expect.objectContaining({ cart_items: [selected] }),
+    }),
+  );
+  expect(mocks.recordPaymentForRecovery).toHaveBeenCalledWith(
+    expect.objectContaining({
+      cartSnapshot: expect.objectContaining({ cart_items: [selected] }),
+    }),
+  );
   expect(snapshot.cart_items).toEqual([selected, unselected]);
 });

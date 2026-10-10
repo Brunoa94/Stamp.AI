@@ -67,7 +67,7 @@ export function Disclosure({
         >
           {label}
         </Span>
-        <span className="flex min-w-0 items-center gap-2">
+        <Span unstyled className="flex min-w-0 items-center gap-2">
           {value && (
             <Span
               variant="micro"
@@ -83,7 +83,7 @@ export function Disclosure({
               isOpen && "rotate-180",
             )}
           />
-        </span>
+        </Span>
       </Button>
       {isOpen && (
         <div

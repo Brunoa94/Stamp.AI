@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import type { OrderWithItemsT } from "@/shared/types/order";
 import type { getFirstOrderItem } from "../../../lib/helpers/orderPresentation";
+import { getOrderImageSrc } from "../../../lib/helpers/orderImage";
 
 interface PropsI {
   order: OrderWithItemsT;
@@ -17,6 +18,7 @@ export function OrdersListItemImage({
   onOpenDetails,
 }: PropsI) {
   const t = useTranslations("orders.listItem");
+  const imageSrc = getOrderImageSrc(firstItem?.custom_image_url);
 
   return (
     <Button
@@ -25,9 +27,9 @@ export function OrdersListItemImage({
       className="relative h-32 w-full flex-none overflow-hidden bg-(--color-stamp-cream) lg:w-32"
       aria-label={t("openDetails", { order: order.order_number || order.id })}
     >
-      {firstItem?.custom_image_url ? (
+      {imageSrc ? (
         <Image
-          src={firstItem.custom_image_url}
+          src={imageSrc}
           alt={firstItem.product_name || t("productAlt")}
           fill
           sizes="128px"

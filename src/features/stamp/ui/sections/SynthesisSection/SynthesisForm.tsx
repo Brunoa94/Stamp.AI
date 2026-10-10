@@ -2,6 +2,7 @@
 
 import { ChangeEvent } from "react";
 import { useTranslations } from "next-intl";
+import { AlertCircle } from "lucide-react";
 import { Heading } from "@/features/ui/heading";
 import { Button } from "@/features/ui/button";
 import { Checkbox } from "@/features/ui/checkbox";
@@ -11,6 +12,7 @@ import { InfoTooltip } from "@/features/ui/info-tooltip";
 import { PromptInput } from "./PromptInput";
 import { PreservationSlider } from "./PreservationSlider";
 import { CoinsOverlay } from "../../components/CoinsOverlay/CoinsOverlay";
+import { CoinsOverlayShell } from "../../components/CoinsOverlay/CoinsOverlayShell";
 import { CoinsDisplay } from "../../components/CoinsDisplay";
 import { useSkipGeneration } from "../../../lib/hooks/useSkipGeneration";
 import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction";
@@ -37,6 +39,8 @@ interface PropsI {
   isAuthLoading: boolean;
   hasCoins: boolean;
   isCoinsLoading: boolean;
+  isCoinsError: boolean;
+  onRetryCoins: () => void;
   onPromptChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
   onPreservationChange: (value: number) => void;
   onRemoveBackgroundChange: (value: boolean) => void;
@@ -53,20 +57,23 @@ export function SynthesisForm({
   isAuthLoading,
   hasCoins,
   isCoinsLoading,
+  isCoinsError,
+  onRetryCoins,
   onPromptChange,
   onPreservationChange,
   onRemoveBackgroundChange,
   onGenerate,
 }: PropsI) {
   const t = useTranslations("stamp.synthesis");
+  const tCoins = useTranslations("stamp.errors.coins");
   const { handleSkipGeneration, canSkip, hasCachedImages, hasUploadedImage } =
     useSkipGeneration();
 
   // Determine overlay state (only show after loading is complete)
   const showLoginOverlay = !isAuthLoading && !isAuthenticated;
   const showNoCoinsOverlay =
-    !isAuthLoading && isAuthenticated && !isCoinsLoading && !hasCoins;
-  const canGenerate = isAuthenticated && hasCoins;
+    !isAuthLoading && isAuthenticated && !isCoinsLoading && !isCoinsError && !hasCoins;
+  const canGenerate = isAuthenticated && !isCoinsError && hasCoins;
 
   // Register action for mobile sticky footer (Step 2)
   useRegisterMobileAction(2, {
@@ -125,7 +132,7 @@ export function SynthesisForm({
 
       {/* Generate Button with Coins Display - hidden on mobile */}
       <div className="hidden md:block space-y-4">
-        {isAuthenticated && <CoinsDisplay className="justify-end" />}
+        {isAuthenticated && !isCoinsError && <CoinsDisplay className="justify-end" />}
         <Button
           onClick={onGenerate}
           disabled={isGenerating || !prompt.trim() || !canGenerate}
@@ -149,14 +156,34 @@ export function SynthesisForm({
       </div>
 
       {/* Mobile: show coins display above sticky footer */}
-      {isAuthenticated && (
+      {isAuthenticated && !isCoinsError && (
         <div className="md:hidden mb-4">
           <CoinsDisplay className="justify-center" />
         </div>
       )}
+      {canSkip && !showNoCoinsOverlay && (
+        <Button
+          variant="ghost"
+          onClick={handleSkipGeneration}
+          className="md:hidden mb-4 w-full text-(--color-stamp-taupe)"
+        >
+          {hasUploadedImage ? t("skipWithUploadedImage") : t("skipWithCachedImages")}
+        </Button>
+      )}
 
       {/* Overlays */}
       {showLoginOverlay && <CoinsOverlay variant="not-logged-in" />}
+      {!isAuthLoading && isAuthenticated && isCoinsError && (
+        <CoinsOverlayShell
+          testId="coins-overlay-load-error"
+          icon={<AlertCircle className="h-8 w-8 text-(--color-stamp-error)" />}
+          iconClassName="bg-(--color-stamp-error)/10"
+          title={tCoins("loadFailed")}
+          description={tCoins("loadFailedDescription")}
+        >
+          <Button variant="primary-compact" onClick={onRetryCoins}>{tCoins("retry")}</Button>
+        </CoinsOverlayShell>
+      )}
       {showNoCoinsOverlay && (
         <CoinsOverlay
           variant="no-coins"

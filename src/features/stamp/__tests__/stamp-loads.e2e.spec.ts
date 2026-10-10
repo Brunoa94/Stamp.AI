@@ -1,7 +1,6 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("Stamp - Page Load Test", () => {
-  test.use({ storageState: { cookies: [], origins: [] } });
 
   test("should load page successfully without infinite loop", async ({page,}) => {
     // Track console errors
@@ -49,8 +48,14 @@ test.describe("Stamp - Page Load Test", () => {
     expect(headerCount).toBeLessThanOrEqual(2);
   });
 
-  test("should have proper navigation", async ({ page }) => {
+  test("should have proper navigation", async ({ page, isMobile }) => {
     await page.goto("/stamp");
+
+    if (isMobile) {
+      await expect(page.getByRole("button", { name: /open menu/i })).toBeVisible();
+      await expect(page.getByRole("button", { name: /begin customiz/i })).toBeVisible();
+      return;
+    }
 
     // Check sidebar exists
     const sidebar = page.locator("aside, nav").filter({

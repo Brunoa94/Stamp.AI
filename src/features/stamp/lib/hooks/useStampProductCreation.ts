@@ -233,8 +233,9 @@ export function useStampProductCreation() {
           },
         });
       } else if (product.variants && product.variants.length > 0) {
-        // Fallback: use first variant (legacy behavior)
-        const firstVariantId = product.variants[0].id;
+        // Fallback: first enabled variant. The list holds every blueprint
+        // variant, and a disabled one would be fulfilled in the wrong color/size.
+        const firstVariantId = (product.variants.find((variant) => variant.is_enabled) ?? product.variants[0]).id;
         setCreatedVariantId(firstVariantId);
         logStampWarn({
           scope: "useStampProductCreation",
