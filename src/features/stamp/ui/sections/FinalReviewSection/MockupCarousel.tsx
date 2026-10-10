@@ -318,7 +318,6 @@ function MockupCarouselComponent({ mockupImages, fallbackUrl }: PropsI) {
                     index === currentIndex && isCurrentLoaded ? "opacity-100" : "opacity-0"
                   }`}
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 576px, 672px"
-                  priority
                   onLoad={() => handleImageLoad(index)}
                 />
               ) : null

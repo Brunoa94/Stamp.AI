@@ -30,7 +30,7 @@ function FinalReviewSectionComponent() {
     useStampCustomization();
 
   const fallbackUrl =
-    "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=2000&auto=format&fit=crop";
+    "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1200&auto=format&fit=crop";
 
   const productName = selectedProductTitle || t("defaultProductName");
 
