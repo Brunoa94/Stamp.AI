@@ -1,5 +1,28 @@
 # Execution evidence
 
+## Orders page — October 10, 2026
+
+`orders-page.spec.mjs` (ORDER-01, -02, -04, -05, -07, -09, -10, -11) ran on its own against the test Supabase project (`tgccxydchvujhrqyzqao`), the Printify test shop and Stripe test mode, on desktop and mobile.
+
+Command: `npm run test:acceptance -- orders-page`
+
+| Result | Count |
+| --- | --- |
+| Passed | 35 of 40 |
+| Failed (product defects below) | 4 |
+| Skipped on purpose | 1: grid view on mobile, where the view toggle is not rendered |
+
+Passing includes the real flows: an unpaid order cancelled from the page is cancelled in the database and at Printify (fresh provider read) with no refund; a paid Stripe order cancelled from the page is cancelled at Printify and refunded once for the full amount at Stripe, in `refunds` and in `payment_transactions`. Teardown cancelled all six Printify ledger records.
+
+Four tests inject a fault in the browser instead of using a real one: the orders fetch (500), the status-history fetch (500), `cancel-order` (409) and a held orders request for the loading state. They test the UI's handling only.
+
+**Confirmed failures (product, not harness):**
+
+| Scenario | Observed | Expected |
+| --- | --- | --- |
+| ORDER-02 processing filter | A `pending` order shows a "Processing" badge but is dropped by the Processing filter: the filter compares `toDisplayStatus(status)`, which returns `pending`. | Every order whose badge reads Processing is listed under the Processing filter. |
+| ORDER-04 double-click confirm | Double-clicking "Cancel order" in the confirmation sends two `cancel-order` requests and shows two success toasts. | One cancellation request and one `cancelled` history entry. |
+
 ## Status — October 5, 2026 (round 21)
 
 Full suite against the test Supabase project (`tgccxydchvujhrqyzqao`), the Printify test shop, Stripe test mode and mocked AI, on the webpack dev server. Every test runs in the `desktop` and `mobile` projects.
