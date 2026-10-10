@@ -88,9 +88,9 @@ export function CustomizationControls({
       >
         {t.rich("title", {
           accent: (chunks) => (
-            <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
+            <Span variant="serif" className="text-(--color-stamp-taupe)">
               {chunks}
-            </span>
+            </Span>
           ),
         })}
       </Heading>

@@ -336,9 +336,9 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
                   <Span variant="micro" className="text-(--color-stamp-taupe)">
                     {t("discount")}
                     {order.promo_code && (
-                      <span className="ml-1 text-(--color-stamp-gold)">
+                      <Span unstyled className="ml-1 text-(--color-stamp-gold)">
                         ({order.promo_code})
-                      </span>
+                      </Span>
                     )}
                   </Span>
                   <Span variant="value" className="text-green-600">

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from "vitest";
 import { CoinsService } from "./coinsService";
 import { createClient } from "@/lib/supabase/client";
 
@@ -16,7 +16,7 @@ vi.mock("@/lib/supabase/client", () => ({
  */
 
 describe("CoinsService", () => {
-  let mockSupabase: any;
+  let mockSupabase: Record<"from" | "select" | "eq" | "single" | "rpc", Mock>;
 
   beforeEach(() => {
     mockSupabase = {
@@ -27,7 +27,9 @@ describe("CoinsService", () => {
       rpc: vi.fn(),
     };
 
-    vi.mocked(createClient).mockReturnValue(mockSupabase as any);
+    vi.mocked(createClient).mockReturnValue(
+      mockSupabase as unknown as ReturnType<typeof createClient>,
+    );
   });
 
   afterEach(() => {

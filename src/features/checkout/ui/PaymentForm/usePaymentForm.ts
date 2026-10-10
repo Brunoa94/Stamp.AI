@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import type { PaymentIntent } from "@stripe/stripe-js";
 import { ShippingAddressT } from "@/shared/schemas/checkout";
 import { mapShippingAddressToBillingDetails } from "@/shared/mappers/mapShippingAddressToBillingDetails";
 import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
@@ -18,7 +19,10 @@ interface UsePaymentFormProps {
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
   testMode?: boolean;
-  onSuccess?: (paymentIntent: any, lineItems: PrintifyLineItem[]) => void;
+  onSuccess?: (
+    paymentIntent: Pick<PaymentIntent, "id" | "status" | "client_secret">,
+    lineItems: PrintifyLineItem[],
+  ) => void;
   onError?: (error: string) => void;
 }
 

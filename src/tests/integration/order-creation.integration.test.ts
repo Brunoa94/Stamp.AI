@@ -13,7 +13,9 @@ import type { UserI } from '../../../supabase/types';
 import type { ShippingAddressT } from '@/shared/schemas/checkout';
 import { vi } from 'vitest';
 
-const integrationSupabase = vi.hoisted(() => ({ client: null as any }));
+const integrationSupabase = vi.hoisted(() => ({
+  client: null as AuthenticatedClient['supabase'] | null,
+}));
 vi.mock('@/lib/supabase/client', () => ({
   createClient: () => integrationSupabase.client,
 }));
