@@ -117,3 +117,18 @@ export function formatDate(iso) {
 export async function expectOrders(page, numbers) {
   await expect.poll(() => visibleOrderNumbers(page)).toEqual(numbers);
 }
+
+/** Calls an Edge Function as the signed-in user, exactly as a crafted client request would. */
+export async function callFunction(env, db, name, body) {
+  const { data: { session } } = await db.auth.getSession();
+  if (!session) throw new Error('No session for direct function call');
+  const response = await fetch(`${env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/${name}`, {
+    method: 'POST', body: JSON.stringify(body), signal: AbortSignal.timeout(60000),
+    headers: { Authorization: `Bearer ${session.access_token}`, apikey: env.NEXT_PUBLIC_SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+  });
+  return { status: response.status, body: await response.json().catch(() => null) };
+}
+
+export async function readRefunds(account, orderId) {
+  return unwrap(await account.admin.from('refunds').select('*').eq('order_id', orderId), 'Read refunds');
+}

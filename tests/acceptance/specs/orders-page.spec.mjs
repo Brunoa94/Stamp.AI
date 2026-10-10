@@ -1,6 +1,6 @@
 /* Playwright fixtures establish sessions even when their value is unused. */
 /* eslint @typescript-eslint/no-unused-vars: ["warn", {"argsIgnorePattern": "^account$"}] */
-import { test, expect, unwrap } from '../support/fixtures.mjs';
+import { test, expect, unwrap, client } from '../support/fixtures.mjs';
 import { assertNoHorizontalOverflow } from '../support/browser.mjs';
 import { realOrder } from '../support/orders.mjs';
 import { waitForCancelableStatus } from '../support/cancellation.mjs';
@@ -10,7 +10,7 @@ import { required } from '../support/environment.mjs';
 import {
   seedOrders, tShirt, isOrdersListRequest, gotoOrders, loadingState, emptyState, errorState, orderCard, detailsDialog,
   cancelDialog, toast, visibleOrderNumbers, expectOrders, expectTotal, chooseFilter, openCancelDialog, recordCancellations,
-  fulfillFunction, readOrder, readHistory, formatDate,
+  fulfillFunction, readOrder, readHistory, formatDate, callFunction, readRefunds,
 } from '../support/orders-page.mjs';
 
 const TRACKING_HOST = 'https://tracking.example.test';
@@ -509,5 +509,137 @@ test.describe('cancel order', () => {
     await expect(toast(page, 'success').filter({ hasText: 'Order cancelled' })).toBeVisible();
     await expect(orderCard(page, order.order_number).getByText('Cancelled', { exact: true })).toBeVisible();
     expect((await readOrder(account, order.id)).status).toBe('cancelled');
+  });
+});
+
+async function buyWithStripe(page, account, env) {
+  const expected = await purchaseSetup(page, account, env);
+  await pay(page, env, 'stripe');
+  const order = await verifyPurchase(account, expected, 'stripe');
+  const payment = await verifyProviderPayment(account, env, order, expected);
+  return { expected, order, payment };
+}
+
+async function otherUser(env) {
+  const db = client(env);
+  unwrap(await db.auth.signInWithPassword({ email: env.TEST_USER_EMAIL, password: env.TEST_USER_PASSWORD }), 'Other account login');
+  return db;
+}
+
+test.describe('already cancelled orders and duplicate refunds', () => {
+  test('ORDER-04 a cancelled order offers no cancellation and a direct request changes nothing', async ({ page, account, env }) => {
+    const cancelledAt = new Date(Date.now() - 86400000).toISOString();
+    const [order] = await seedOrders(account.admin, account, [{
+      status: 'cancelled', cancelled_at: cancelledAt, cancellation_reason: 'Original cancellation', items: [tShirt()],
+      history: [{ status: 'cancelled', source: 'cancellation', created_at: cancelledAt }],
+    }]);
+    await gotoOrders(page);
+    const card = orderCard(page, order.order_number);
+    await expect(card.getByText('Cancelled', { exact: true })).toBeVisible();
+    await expect(card.getByRole('button', { name: 'Cancel order', exact: true })).toHaveCount(0);
+    await expect(card.getByRole('button', { name: 'Reorder', exact: true })).toBeVisible();
+
+    // A crafted request bypassing the hidden button is answered idempotently.
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const result = await callFunction(env, account.db, 'cancel-order', { order_id: order.id, cancellation_reason: 'Replayed cancellation' });
+      expect(result.status).toBe(200);
+      expect(result.body).toMatchObject({ success: true, already_cancelled: true, results: { refund_processed: false } });
+    }
+    const row = await readOrder(account, order.id);
+    expect(row).toMatchObject({ status: 'cancelled', cancellation_reason: 'Original cancellation', payment_status: 'pending' });
+    expect(new Date(row.cancelled_at).toISOString()).toBe(cancelledAt);
+    expect(await readHistory(account, order.id)).toEqual([{ status: 'cancelled', source: 'cancellation' }]);
+    expect(await readRefunds(account, order.id)).toEqual([]);
+  });
+
+  test('ORDER-04 cancelling from a stale page after the order was already cancelled is harmless', async ({ page, account, env }) => {
+    const [order] = await seedOrders(account.admin, account, [{ status: 'pending', items: [tShirt()] }]);
+    await gotoOrders(page);
+    // Cancelled elsewhere (another tab or device) after this page loaded.
+    expect((await callFunction(env, account.db, 'cancel-order', { order_id: order.id, cancellation_reason: 'Cancelled in another tab' })).body.success).toBe(true);
+    const cancellations = recordCancellations(page);
+    const dialog = await openCancelDialog(page, order.order_number);
+    await dialog.getByRole('button', { name: 'Cancel order', exact: true }).click();
+    await expect(toast(page, 'success').filter({ hasText: 'Order cancelled' }).first()).toBeVisible();
+    await expect(toast(page, 'error')).toHaveCount(0);
+    await expect(orderCard(page, order.order_number).getByText('Cancelled', { exact: true })).toBeVisible();
+    expect(cancellations).toHaveLength(1);
+
+    const row = await readOrder(account, order.id);
+    expect(row).toMatchObject({ status: 'cancelled', cancellation_reason: 'Cancelled in another tab' });
+    expect(await readHistory(account, order.id)).toEqual([{ status: 'cancelled', source: 'cancellation' }]);
+    expect(await readRefunds(account, order.id)).toEqual([]);
+  });
+
+  test('ORDER-05 ORDER-07 a paid order cannot be refunded without cancelling it', async ({ page, account, env }) => {
+    test.setTimeout(360000);
+    const { order, payment } = await buyWithStripe(page, account, env);
+    const refundRequest = { order_id: order.id, payment_provider: 'stripe' };
+
+    // The owner cannot make the order refund-eligible by editing it.
+    const tamper = await account.db.from('orders').update({ status: 'cancelled' }).eq('id', order.id);
+    expect(tamper.error).not.toBeNull();
+    const tamperPayment = await account.db.from('orders').update({ payment_status: 'refunded' }).eq('id', order.id);
+    expect(tamperPayment.error).not.toBeNull();
+
+    const direct = await callFunction(env, account.db, 'process-refund', refundRequest);
+    expect(direct.status).toBe(409);
+    expect(direct.body.error).toBe('REFUND_NOT_ELIGIBLE');
+    const inflated = await callFunction(env, account.db, 'process-refund', { ...refundRequest, amount: (payment.amount_received / 100) * 2 });
+    expect([400, 409]).toContain(inflated.status);
+    const foreign = await callFunction(env, await otherUser(env), 'process-refund', refundRequest);
+    expect(foreign.status).toBe(403);
+
+    expect((await stripeGet(env, `refunds?payment_intent=${payment.id}`)).data).toEqual([]);
+    expect(await readOrder(account, order.id)).toMatchObject({ status: 'confirmed', payment_status: 'paid' });
+    expect(await readRefunds(account, order.id)).toEqual([]);
+  });
+
+  test('ORDER-04 ORDER-05 concurrent, repeated and crafted cancellations refund a paid order exactly once', async ({ page, account, env }, testInfo) => {
+    test.setTimeout(420000);
+    const { expected, order, payment } = await buyWithStripe(page, account, env);
+    await waitForCancelableStatus({ read: () => account.orders.request(`orders/${order.printify_order_id}.json`) });
+    const refundRequest = { order_id: order.id, payment_provider: 'stripe' };
+
+    // Two tabs and a crafted client race the same order.
+    const burst = await Promise.all([
+      callFunction(env, account.db, 'cancel-order', { order_id: order.id, cancellation_reason: 'Race A' }),
+      callFunction(env, account.db, 'cancel-order', { order_id: order.id, cancellation_reason: 'Race B' }),
+      callFunction(env, account.db, 'cancel-order', { order_id: order.id, cancellation_reason: 'Race C' }),
+      callFunction(env, account.db, 'process-refund', refundRequest),
+    ]);
+    // Replays once everything has settled.
+    const replays = [
+      await callFunction(env, account.db, 'cancel-order', { order_id: order.id, cancellation_reason: 'Replay' }),
+      await callFunction(env, account.db, 'process-refund', refundRequest),
+      await callFunction(env, account.db, 'process-refund', { ...refundRequest, amount: (expected.totalCents / 100) * 2 }),
+      await callFunction(env, await otherUser(env), 'process-refund', refundRequest),
+    ];
+    await testInfo.attach('cancellation-responses', { body: JSON.stringify({ burst, replays }, null, 2), contentType: 'application/json' });
+    expect(burst.filter(r => r.body?.success && r.body.results?.cancelled_at_printify).length).toBeGreaterThanOrEqual(1);
+    expect(replays[0].body).toMatchObject({ success: true, already_cancelled: true, results: { refund_processed: true } });
+    expect(replays[3].status).toBe(403);
+
+    // Provider truth: one refund for exactly the captured amount.
+    await expect.poll(async () => (await stripeGet(env, `charges/${payment.latest_charge}`)).amount_refunded, { timeout: 60000 }).toBe(expected.totalCents);
+    const refunds = await stripeGet(env, `refunds?payment_intent=${payment.id}`);
+    expect(refunds.data).toHaveLength(1);
+    expect(refunds.data[0]).toMatchObject({ status: 'succeeded', amount: expected.totalCents });
+    expect((await account.orders.request(`orders/${order.printify_order_id}.json`)).status).toBe('canceled');
+
+    const recorded = await readRefunds(account, order.id);
+    expect(recorded).toHaveLength(1);
+    expect(recorded[0]).toMatchObject({ provider_refund_id: refunds.data[0].id, status: 'completed' });
+    expect(await readOrder(account, order.id)).toMatchObject({ status: 'cancelled', payment_status: 'refunded' });
+
+    await gotoOrders(page);
+    const card = orderCard(page, order.order_number);
+    await expect(card.getByText('Cancelled', { exact: true })).toBeVisible();
+    await expect(card.getByRole('button', { name: 'Cancel order', exact: true })).toHaveCount(0);
+
+    // Every caller that got a success must not be told the refund failed when it succeeded.
+    const misreported = burst.filter(r => r.body?.success && r.body.results?.refund_error);
+    expect.soft(misreported, 'A racing cancellation reported a refund failure for a refunded order').toEqual([]);
+    expect.soft((await readHistory(account, order.id)).filter(h => h.status === 'cancelled'), 'Cancellation recorded once').toHaveLength(1);
   });
 });
