@@ -2,7 +2,7 @@
 
 Generated with `npm run test:acceptance:coverage`. A reference means one or more assertions exist; it does **not** prove every subcase in the scenario is implemented or passing. See [execution status and remaining work](README.md).
 
-127 scenario IDs; 115 referenced by automated specifications.
+129 scenario IDs; 118 referenced by automated specifications.
 
 | Scenario | Specification references |
 | --- | --- |
@@ -83,8 +83,9 @@ Generated with `npm run test:acceptance:coverage`. A reference means one or more
 | CHECK-03 | [recovery-quality.spec.mjs](../../tests/acceptance/specs/recovery-quality.spec.mjs) |
 | CHECK-04 | [cart-checkout.spec.mjs](../../tests/acceptance/specs/cart-checkout.spec.mjs) |
 | CHECK-05 | [promotions-address.spec.mjs](../../tests/acceptance/specs/promotions-address.spec.mjs) |
-| CHECK-06 | [promotions-address.spec.mjs](../../tests/acceptance/specs/promotions-address.spec.mjs) |
-| CHECK-07 | [promotions-address.spec.mjs](../../tests/acceptance/specs/promotions-address.spec.mjs) |
+| CHECK-06 | [price-integrity.spec.mjs](../../tests/acceptance/specs/price-integrity.spec.mjs), [promotions-address.spec.mjs](../../tests/acceptance/specs/promotions-address.spec.mjs) |
+| CHECK-07 | [price-integrity.spec.mjs](../../tests/acceptance/specs/price-integrity.spec.mjs), [promotions-address.spec.mjs](../../tests/acceptance/specs/promotions-address.spec.mjs) |
+| CHECK-09 | [price-integrity.spec.mjs](../../tests/acceptance/specs/price-integrity.spec.mjs) |
 | CHECK-08 | [cart-checkout.spec.mjs](../../tests/acceptance/specs/cart-checkout.spec.mjs), [recovery-quality.spec.mjs](../../tests/acceptance/specs/recovery-quality.spec.mjs) |
 | PAY-01 | [payments.spec.mjs](../../tests/acceptance/specs/payments.spec.mjs) |
 | PAY-02 | [payments.spec.mjs](../../tests/acceptance/specs/payments.spec.mjs) |
@@ -95,12 +96,13 @@ Generated with `npm run test:acceptance:coverage`. A reference means one or more
 | PAY-07 | [payments.spec.mjs](../../tests/acceptance/specs/payments.spec.mjs) |
 | PAY-08 | **Not automated** |
 | PAY-09 | [settlement.spec.mjs](../../tests/acceptance/specs/settlement.spec.mjs) |
-| PAY-10 | [webhook-integrity.spec.mjs](../../tests/acceptance/specs/webhook-integrity.spec.mjs) |
+| PAY-10 | [price-integrity.spec.mjs](../../tests/acceptance/specs/price-integrity.spec.mjs), [webhook-integrity.spec.mjs](../../tests/acceptance/specs/webhook-integrity.spec.mjs) |
 | PAY-11 | **Not automated** |
 | PAY-12 | **Not automated** |
+| PAY-13 | [price-integrity.spec.mjs](../../tests/acceptance/specs/price-integrity.spec.mjs) |
 | ORDER-01 | [orders-page.spec.mjs](../../tests/acceptance/specs/orders-page.spec.mjs), [payments.spec.mjs](../../tests/acceptance/specs/payments.spec.mjs), [printify-orders.spec.mjs](../../tests/acceptance/specs/printify-orders.spec.mjs) |
 | ORDER-02 | [orders-page.spec.mjs](../../tests/acceptance/specs/orders-page.spec.mjs), [recovery-quality.spec.mjs](../../tests/acceptance/specs/recovery-quality.spec.mjs) |
-| ORDER-03 | **Not automated** |
+| ORDER-03 | [price-integrity.spec.mjs](../../tests/acceptance/specs/price-integrity.spec.mjs) |
 | ORDER-04 | [orders-page.spec.mjs](../../tests/acceptance/specs/orders-page.spec.mjs), [printify-orders.spec.mjs](../../tests/acceptance/specs/printify-orders.spec.mjs) |
 | ORDER-05 | [orders-page.spec.mjs](../../tests/acceptance/specs/orders-page.spec.mjs), [settlement.spec.mjs](../../tests/acceptance/specs/settlement.spec.mjs) |
 | ORDER-06 | [settlement.spec.mjs](../../tests/acceptance/specs/settlement.spec.mjs) |

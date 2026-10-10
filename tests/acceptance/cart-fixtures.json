@@ -1,23 +1,23 @@
 [
   {
     "product_name": "Acceptance A",
-    "product_id": "6ac25f8de766fb5d890a1c57",
-    "variant_id": "62327",
+    "product_id": "6aca6e52e171cd696c011d76",
+    "variant_id": "42518",
     "unit_price": 1999,
     "quantity": 2
   },
   {
     "product_name": "Acceptance B",
-    "product_id": "6ac25f80c496bf3c0909d0a9",
-    "variant_id": "66447",
-    "unit_price": 2501,
+    "product_id": "6aca74077e00a6f93b045fc6",
+    "variant_id": "38177",
+    "unit_price": 2499,
     "quantity": 1
   },
   {
     "product_name": "Acceptance C",
-    "product_id": "6abfc13056a0cdf9e8037723",
-    "variant_id": "62327",
-    "unit_price": 1200,
+    "product_id": "6aca6e40ef5ca08581007e82",
+    "variant_id": "42518",
+    "unit_price": 1999,
     "quantity": 1
   }
 ]

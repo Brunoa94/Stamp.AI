@@ -38,7 +38,10 @@ for (const product of activeCatalogProducts()) {
     await fillAddress(page, account.email);
     await pay(page, env, 'stripe');
     // Teardown cancels the Printify order registered here.
-    const order = await verifyPurchase(account, { cart: { id: cart.id, items: cart.cart_items }, selected: cart.cart_items, totalCents: item.unit_price * item.quantity + 499 }, 'stripe');
+    // Shipping is €4.99 below a €60 subtotal and free from €60.
+    const subtotalCents = item.unit_price * item.quantity;
+    const shippingCents = subtotalCents >= 6000 ? 0 : 499;
+    const order = await verifyPurchase(account, { cart: { id: cart.id, items: cart.cart_items }, selected: cart.cart_items, totalCents: subtotalCents + shippingCents, shippingCents }, 'stripe');
     const remote = await account.orders.request(`orders/${order.printify_order_id}.json`);
     const [line] = remote.line_items;
     expect(line.product_id).toBe(body.product.id);

@@ -6,11 +6,17 @@ import { GET as callback } from "@/app/auth/callback/route";
 import { POST as capture } from "@/app/api/paypal/capture-order/route";
 
 const mocks = vi.hoisted(() => ({
-  getUser: vi.fn(), exchange: vi.fn(), getOrder: vi.fn(), capture: vi.fn(), rpc: vi.fn(),
+  getUser: vi.fn(), exchange: vi.fn(), getOrder: vi.fn(), capture: vi.fn(), rpc: vi.fn(), transaction: vi.fn(),
 }));
 vi.mock("@/lib/supabase/server", () => ({ createClient: () => ({
-  auth: { getUser: mocks.getUser }, rpc: mocks.rpc,
-  from: () => ({ update: () => ({ eq: vi.fn() }) }),
+  auth: { getUser: mocks.getUser },
+}) }));
+vi.mock("@/lib/supabase/service", () => ({ createServiceClient: () => ({
+  rpc: mocks.rpc,
+  from: () => ({
+    select: () => ({ eq: () => ({ eq: () => ({ maybeSingle: mocks.transaction }) }) }),
+    update: () => ({ eq: vi.fn() }),
+  }),
 }) }));
 vi.mock("@supabase/ssr", () => ({ createServerClient: () => ({
   auth: { exchangeCodeForSession: mocks.exchange },
@@ -26,6 +32,7 @@ beforeEach(() => {
   mocks.getUser.mockResolvedValue({ data: { user: { id: "owner" } } });
   mocks.exchange.mockResolvedValue({ error: null });
   mocks.rpc.mockResolvedValue({ data: {}, error: null });
+  mocks.transaction.mockResolvedValue({ data: { metadata: { total_cents: 1000 } }, error: null });
 });
 
 describe("Product lookup", () => {
@@ -71,11 +78,29 @@ describe("PayPal capture ownership", () => {
     expect((await capture(request())).status).toBe(403);
     expect(mocks.capture).not.toHaveBeenCalled();
   });
-  it("captures an owned order only after checking the provider", async () => {
-    const purchase_units = [{ custom_id: JSON.stringify({ user_id: "owner" }), payments: { captures: [{ id: "CAPTURE1", amount: { value: "10.00", currency_code: "USD" } }] } }];
+  const ownedUnit = (value: string, currency_code = "EUR") => ({
+    custom_id: JSON.stringify({ user_id: "owner" }),
+    amount: { value, currency_code },
+    payments: { captures: [{ id: "CAPTURE1", amount: { value, currency_code } }] },
+  });
+  it("captures an owned order only after checking the provider and the server total", async () => {
+    const purchase_units = [ownedUnit("10.00")];
     mocks.getOrder.mockResolvedValue({ purchase_units });
     mocks.capture.mockResolvedValue({ status: "COMPLETED", purchase_units });
     expect((await capture(request())).status).toBe(200);
     expect(mocks.getOrder.mock.invocationCallOrder[0]).toBeLessThan(mocks.capture.mock.invocationCallOrder[0]);
+  });
+  it.each([
+    ["an amount below the server total", [ownedUnit("0.50")], { metadata: { total_cents: 1000 } }],
+    ["another currency", [ownedUnit("10.00", "USD")], { metadata: { total_cents: 1000 } }],
+    ["several purchase units", [ownedUnit("5.00"), ownedUnit("5.00")], { metadata: { total_cents: 1000 } }],
+    ["no server-created transaction", [ownedUnit("10.00")], null],
+    ["a transaction without server pricing", [ownedUnit("10.00")], { metadata: { line_items: [] } }],
+  ])("refuses %s before capture", async (_name, purchase_units, transaction) => {
+    mocks.getOrder.mockResolvedValue({ purchase_units });
+    mocks.transaction.mockResolvedValue({ data: transaction, error: null });
+    expect((await capture(request())).status).toBe(409);
+    expect(mocks.capture).not.toHaveBeenCalled();
+    expect(mocks.rpc).not.toHaveBeenCalled();
   });
 });

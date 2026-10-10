@@ -9,17 +9,20 @@ export async function purchaseSetup(page, account, env, subset = true) {
   if (env.TEST_PRINTIFY_MANUAL_APPROVAL !== 'confirmed') throw new Error('Verify Printify manual approval before purchase tests');
   if (env.TEST_EDGE_ENVIRONMENT_VERIFIED !== env.NEXT_PUBLIC_SUPABASE_URL) throw new Error('Verify deployed Edge Functions use the parallel DB, APP_ENV=test, sandbox payments and authorized Printify shop; then set TEST_EDGE_ENVIRONMENT_VERIFIED to the test URL');
   const fixtures = JSON.parse(readFileSync(required(env, 'TEST_CART_FIXTURES_PATH'), 'utf8'));
-  expect(fixtures.map(i => [i.unit_price, i.quantity])).toEqual([[1999, 2], [2501, 1], [1200, 1]]);
+  expect(fixtures.map(i => [i.unit_price, i.quantity])).toEqual([[1999, 2], [2499, 1], [1999, 1]]);
   for (const fixture of fixtures) {
     const product = await account.orders.request(`products/${encodeURIComponent(fixture.product_id)}.json`);
     expect(product.variants.some(v => v.id === Number(fixture.variant_id) && v.is_enabled)).toBe(true);
+    // The server charges the catalog selling price, so the fixture must match it.
+    const catalog = unwrap(await account.admin.from('catalog_products').select('selling_price_cents').eq('blueprint_id', product.blueprint_id).single(), 'Read fixture selling price');
+    expect(catalog.selling_price_cents, `${fixture.product_name} selling price`).toBe(fixture.unit_price);
   }
   const cart = await seedCart(account, subset ? fixtures : [fixtures[0]]);
   await page.goto('/cart');
   if (subset) await setCheckbox(itemCard(page, fixtures[1].product_name).getByRole('checkbox'), false);
   await proceed(page);
   await fillAddress(page, account.email);
-  return { cart, selected: subset ? [cart.items[0], cart.items[2]] : cart.items, totalCents: subset ? 5697 : 4497 };
+  return { cart, selected: subset ? [cart.items[0], cart.items[2]] : cart.items, totalCents: subset ? 6496 : 4497, shippingCents: 499 };
 }
 export async function pay(page, env, provider, { decline = false, doubleSubmit = false } = {}) {
   if (provider === 'stripe') {
@@ -78,7 +81,7 @@ export async function verifyPurchase(account, expected, provider) {
   expect(order.payment_provider).toBe(provider);
   expect(order.currency.toUpperCase()).toBe('EUR');
   expect(Number(order.total_amount)).toBe(expected.totalCents);
-  expect(Number(order.shipping_cost)).toBe(499);
+  expect(Number(order.shipping_cost)).toBe(expected.shippingCents);
   const project = rows => rows.map(i => ({ product: i.product_id, variant: String(i.variant_id), quantity: i.quantity, unitPrice: i.unit_price })).sort((a, b) => a.product.localeCompare(b.product));
   expect(project(order.order_items)).toEqual(project(expected.selected));
   expect(order.printify_order_id).toBeTruthy();

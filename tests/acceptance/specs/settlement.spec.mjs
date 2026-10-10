@@ -57,7 +57,7 @@ test('ORDER-06 invoice download is a real PDF with an exact stable order snapsho
   expect(invoice.customer_email).toBe(account.email);
   expect(invoice.currency.toUpperCase()).toBe('EUR');
   expect(Number(invoice.total_amount)).toBe(expected.totalCents);
-  expect(Number(invoice.shipping_cost)).toBe(499);
+  expect(Number(invoice.shipping_cost)).toBe(expected.shippingCents);
   expect(invoice.line_items.map(i => [i.product_name, i.quantity]).sort()).toEqual(expected.selected.map(i => [i.product_name, i.quantity]).sort());
 });
 test('PAY-09 duplicate authentic Stripe events cannot duplicate payment, order or fulfillment', async ({ page, account, env }) => {

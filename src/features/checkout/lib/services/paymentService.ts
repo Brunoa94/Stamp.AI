@@ -30,6 +30,7 @@ export class PaymentService {
     amount: number,
     shippingCostCents = 0,
     discountCents = 0,
+    promoCode?: string,
   ) {
     try {
       // Validate cart
@@ -58,8 +59,7 @@ export class PaymentService {
       const payload: CreatePaymentIntentPayloadI = {
         amount: amount / 100,
         currency: "eur",
-        shipping_cost_cents: shippingCostCents,
-        discount_cents: discountCents,
+        promo_code: promoCode,
         line_items: checkoutData.lineItems,
         shipping_address: checkoutData.shippingAddress,
         metadata: {
@@ -97,6 +97,7 @@ export class PaymentService {
     amount: number,
     shippingCostCents: number,
     discountCents: number,
+    promoCode?: string,
   ) {
     try {
       // Validate cart
@@ -123,8 +124,7 @@ export class PaymentService {
       const amountInEuros = amount / 100;
       const { orderId, approvalUrl } = await PayPalService.createOrder({
         amount: amountInEuros,
-        shippingCostCents,
-        discountCents,
+        promoCode,
         lineItems: checkoutData.lineItems,
         shippingAddress: checkoutData.shippingAddress,
       });
@@ -166,6 +166,7 @@ export class PaymentService {
     amount: number,
     shippingCostCents: number,
     discountCents: number,
+    promoCode?: string,
   ) {
     try {
       // Validate cart
@@ -190,8 +191,7 @@ export class PaymentService {
       // Create Mollie payment pinned to iDEAL (EUR only)
       const { paymentId, checkoutUrl } = await MollieService.createPayment({
         amount: amount / 100,
-        shippingCostCents,
-        discountCents,
+        promoCode,
         currency: "EUR",
         method: "ideal",
         lineItems: checkoutData.lineItems,
