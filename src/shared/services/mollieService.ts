@@ -18,8 +18,7 @@ export class MollieService {
    */
   static async createPayment({
     amount,
-    shippingCostCents,
-    discountCents,
+    promoCode,
     currency = "EUR",
     description,
     lineItems,
@@ -35,8 +34,7 @@ export class MollieService {
         {
           body: {
             amount,
-            shipping_cost_cents: shippingCostCents,
-            discount_cents: discountCents,
+            promo_code: promoCode,
             currency,
             description,
             line_items: lineItems,

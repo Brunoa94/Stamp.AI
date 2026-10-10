@@ -59,6 +59,10 @@ export function CheckoutSummarySection({
   const paymentShippingAddress =
     useShippingAddress && shippingAddress ? shippingAddress : billingAddress;
   const lineItems = buildPrintifyLineItems(cart.cart_items);
+  // Only a validated, applied code reaches payment; the server re-checks it.
+  const appliedPromoCode = appliedPromo?.isValid
+    ? appliedPromo.appliedPromo?.code
+    : undefined;
   const disablePayment = !isFormValid || cart.cart_items.length === 0 || total <= 0;
 
   return (
@@ -99,6 +103,7 @@ export function CheckoutSummarySection({
               amount={totalInCents}
               shippingCostCents={Math.round(shipping * 100)}
               discountCents={Math.round(discount * 100)}
+              promoCode={appliedPromoCode}
               cart={cart}
               lineItems={lineItems}
               shippingAddress={paymentShippingAddress}
@@ -118,6 +123,7 @@ export function CheckoutSummarySection({
             amount={totalInCents}
             shippingCostCents={Math.round(shipping * 100)}
             discountCents={Math.round(discount * 100)}
+              promoCode={appliedPromoCode}
             disabled={disablePayment}
           />
         )}
@@ -129,6 +135,7 @@ export function CheckoutSummarySection({
             amount={totalInCents}
             shippingCostCents={Math.round(shipping * 100)}
             discountCents={Math.round(discount * 100)}
+              promoCode={appliedPromoCode}
             disabled={disablePayment}
           />
         )}

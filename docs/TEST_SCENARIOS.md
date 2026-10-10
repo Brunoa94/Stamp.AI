@@ -223,6 +223,7 @@ For async checks, wait for the correlated operation to reach its expected state 
 | CHECK-05 | P0 U/I/B | Apply/remove valid fixed and percentage discounts, including rounding and a discount crossing the shipping threshold. | Exactly one intended discount is applied; total and shipping recalculate consistently; discount cannot produce a negative payable amount or exceed its configured scope. |
 | CHECK-06 | P1 B/I | Submit invalid, expired, not-yet-active, exhausted, or ineligible promotions; change cart after applying; race final allowed redemption. | Clear feedback; eligibility/limits are revalidated server-side; stale discount is removed or corrected; concurrent purchases cannot exceed redemption rules. |
 | CHECK-07 | P0 B/I | Inspect test checkout defaults and complete real-address fixture overrides; submit tampered amount/currency/discount values directly. | Test placeholder addresses do not silently replace the user's data; server/provider use the authorized cart, currency, discount, and amount. |
+| CHECK-09 | P0 B/I | Pay with a promo code that has a usage limit; replay the successful payment event; reuse the code at checkout and through a crafted payment request. | The code is redeemed exactly once per successful payment (never at payment creation); a replayed success does not redeem again; an exhausted code is refused by the checkout and by every payment function. |
 | CHECK-08 | P1 B | Switch payment method repeatedly; visit checkout with empty/missing cart and with an expired session. | Only the selected method is active; no stale provider widget submits; invalid context offers recovery and cannot create a charge. |
 
 ## Payments and asynchronous confirmation
@@ -243,6 +244,7 @@ Run PAY-01–08 separately for Stripe, PayPal, and iDEAL through Mollie where ap
 | PAY-10 | P0 I | Forge/replay events or mismatch provider amount, currency, merchant context, payment ownership, or order reference. | Provider authenticity and authoritative payment details are checked by the relevant provider mechanism; mismatches cause no paid transition or fulfillment. |
 | PAY-11 | P0 I/B | Succeed payment, then fail order persistence or Printify submission; run recovery/retry. | Paid-but-unfulfilled condition remains visible and traceable; recovery uses the existing payment; no duplicate charge/order; supported compensation/refund path records its actual outcome. |
 | PAY-12 | P0 I | Fail midway through order/item/transaction persistence. | Atomic operation rolls back or leaves an explicit recoverable state; no apparent successful order with missing items, inconsistent totals, or orphan transaction. |
+| PAY-13 | P0 I | As the owner, insert or edit payment transactions, call the payment-capture RPCs, link one payment to a second or foreign order, and request fulfilment of items that were not paid for. | Payment rows are written by the server only; the owner can link a payment once, to their own order; capture RPCs are server-only; fulfilment is refused unless the items exactly match the server-priced, paid checkout. |
 
 ## Orders, fulfillment, cancellation, and invoices
 

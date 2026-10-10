@@ -15,8 +15,7 @@ export class PayPalService {
 
   static async createOrder({
     amount,
-    shippingCostCents,
-    discountCents,
+    promoCode,
     lineItems,
     shippingAddress,
     testMode = false,
@@ -29,8 +28,7 @@ export class PayPalService {
         {
           body: {
             amount,
-            shipping_cost_cents: shippingCostCents,
-            discount_cents: discountCents,
+            promo_code: promoCode,
             currency: "eur",
             line_items: lineItems,
             shipping_address: shippingAddress,

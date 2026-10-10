@@ -11,6 +11,7 @@ interface PreparePayPalPaymentParams {
   amount: number;
   shippingCostCents: number;
   discountCents: number;
+  promoCode?: string;
 }
 
 /**
@@ -23,8 +24,8 @@ export function usePreparePayPalPayment() {
   return useMutation({
     mutationKey: ["payment", "prepare-paypal"],
     mutationFn: (
-      { formData, cart, cartId, amount, shippingCostCents, discountCents }: PreparePayPalPaymentParams,
-    ) => PaymentService.preparePayPalPayment(formData, cart, cartId, amount, shippingCostCents, discountCents),
+      { formData, cart, cartId, amount, shippingCostCents, discountCents, promoCode }: PreparePayPalPaymentParams,
+    ) => PaymentService.preparePayPalPayment(formData, cart, cartId, amount, shippingCostCents, discountCents, promoCode),
     retry: false, // Don't retry payment operations
     onError: (error: Error) => {
       handleError(error);
@@ -39,6 +40,7 @@ interface PrepareIdealPaymentParams {
   amount: number;
   shippingCostCents: number;
   discountCents: number;
+  promoCode?: string;
 }
 
 /**
@@ -51,8 +53,8 @@ export function usePrepareIdealPayment() {
   return useMutation({
     mutationKey: ["payment", "prepare-ideal"],
     mutationFn: (
-      { formData, cart, cartId, amount, shippingCostCents, discountCents }: PrepareIdealPaymentParams,
-    ) => PaymentService.prepareIdealPayment(formData, cart, cartId, amount, shippingCostCents, discountCents),
+      { formData, cart, cartId, amount, shippingCostCents, discountCents, promoCode }: PrepareIdealPaymentParams,
+    ) => PaymentService.prepareIdealPayment(formData, cart, cartId, amount, shippingCostCents, discountCents, promoCode),
     retry: false, // Don't retry payment operations
     onError: (error: Error) => {
       handleError(error);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/service";
 import { capturePayPalOrder, getPayPalOrder, PayPalCaptureError } from "@/lib/paypal-server";
 import { PayPalCaptureMapper } from "./paypalCaptureMapper";
 import { captureError } from "@/lib/observability/errorCapture";
@@ -46,13 +47,34 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    // custom_id alone is not proof: orders can be created in the browser with
+    // the public client ID. Only capture an order our server priced for this
+    // user, and only for exactly that amount.
+    const service = createServiceClient();
+    const { data: transaction, error: transactionError } = await service
+      .from("payment_transactions")
+      .select("metadata")
+      .eq("paypal_order_id", orderId)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (transactionError) {
+      throw transactionError;
+    }
+    const serverTotalCents = PayPalCaptureMapper.getServerTotalCents(transaction?.metadata);
+    if (serverTotalCents === null || !PayPalCaptureMapper.matchesServerTotal(units, serverTotalCents)) {
+      return NextResponse.json(
+        { error: "We couldn't verify this payment. Please try again from the checkout page." },
+        { status: 409 }
+      );
+    }
+
     const captureResult = await capturePayPalOrder(orderId);
 
     // CRITICAL: Use atomic stored procedure to update payment + order together
     // This prevents scenario where payment succeeds but order stays pending
     try {
       const atomicParams = PayPalCaptureMapper.mapToAtomicCaptureParams(captureResult, orderId);
-      const { data: atomicResult, error: atomicError } = await supabase.rpc(
+      const { data: atomicResult, error: atomicError } = await service.rpc(
         "atomic_paypal_payment_capture",
         atomicParams
       );
@@ -66,7 +88,7 @@ export async function POST(request: NextRequest) {
 
       // Update additional payer info (non-critical, separate transaction OK)
       const payerUpdate = PayPalCaptureMapper.mapPayerInfoToUpdate(captureResult, payerId);
-      await supabase
+      await service
         .from("payment_transactions")
         .update(payerUpdate)
         .eq("paypal_order_id", orderId);

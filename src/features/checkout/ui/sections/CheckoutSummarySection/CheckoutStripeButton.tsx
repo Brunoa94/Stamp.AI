@@ -26,6 +26,8 @@ interface CheckoutStripeButtonPropsI {
   amount: number;
   shippingCostCents: number;
   discountCents: number;
+  /** Applied promo code, re-validated by the payment function. */
+  promoCode?: string;
   cart: CartWithItems;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
@@ -40,6 +42,7 @@ export function CheckoutStripeButton({
   amount,
   shippingCostCents,
   discountCents,
+  promoCode,
   cart,
   lineItems,
   shippingAddress,
@@ -97,8 +100,7 @@ export function CheckoutStripeButton({
   const { loading, error, handleSubmit, setSelectedTestMethod } =
     usePaymentForm({
       amount,
-      shippingCostCents,
-      discountCents,
+      promoCode,
       lineItems,
       shippingAddress,
       testMode,

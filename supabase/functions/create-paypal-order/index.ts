@@ -3,7 +3,7 @@ import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, validateRequest, verifyAuth } from "../_shared/validators.ts";
 import { createPayPalOrder } from "../_shared/paypal.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
-import { validatePricingAgainstDatabase, type LineItemForPricingI } from "../_shared/serverPriceService.ts";
+import { priceCheckout, pricingMetadata, requireClientTotal } from "../_shared/checkoutPricing.ts";
 import type { PayPalOrderRequestI, PayPalOrderResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
 
@@ -27,43 +27,21 @@ serve(async (req) => {
       currency = "usd",
       line_items,
       shipping_address,
-      shipping_cost_cents = 0,
-      discount_cents = 0,
+      promo_code,
       metadata,
-    }: PayPalOrderRequestI & { shipping_cost_cents?: number; discount_cents?: number } = await req.json();
+    }: PayPalOrderRequestI & { promo_code?: string } = await req.json();
 
     // Validate request data
     const validAmount = validateRequest.amount(amount);
 
-    // SERVER-SIDE PRICE VALIDATION (C4 - Amount Tampering Prevention)
-    if (line_items && Array.isArray(line_items) && line_items.length > 0) {
-      const itemsForPricing: LineItemForPricingI[] = line_items
-        .filter((item: Record<string, unknown>) => item.blueprint_id && item.printify_variant_id)
-        .map((item: Record<string, unknown>) => ({
-          blueprint_id: Number(item.blueprint_id),
-          printify_variant_id: Number(item.printify_variant_id),
-          quantity: Number(item.quantity) || 1,
-        }));
-
-      if (itemsForPricing.length > 0) {
-        const clientTotalCents = Math.round(validAmount * 100);
-        const validation = await validatePricingAgainstDatabase({
-          lineItems: itemsForPricing,
-          clientSubtotalCents: clientTotalCents - shipping_cost_cents + discount_cents,
-          shippingCostCents: shipping_cost_cents,
-          discountCents: discount_cents,
-          clientTotalCents,
-        });
-
-        if (!validation.isValid) {
-          throw new FunctionError(
-            400,
-            "PRICE_MISMATCH",
-            validation.errorMessage || "Server-side price validation failed"
-          );
-        }
-      }
+    // SERVER-SIDE PRICING (C4 - Amount Tampering Prevention)
+    // The charged amount comes from catalog prices, the promo code and the
+    // shipping rule. The client total must agree; it never sets the price.
+    if (String(currency).toLowerCase() !== "eur") {
+      throw new FunctionError(400, "INVALID_CURRENCY", "Checkout is priced in EUR");
     }
+    const pricing = await priceCheckout({ lineItems: line_items, promoCode: promo_code });
+    requireClientTotal(pricing, Math.round(validAmount * 100));
 
     if (shipping_address) {
       if (!shipping_address.zip?.trim()) {
@@ -87,8 +65,8 @@ serve(async (req) => {
 
     // Create PayPal order
     const paypalOrder = await createPayPalOrder({
-      amount: validAmount,
-      currency: currency.toUpperCase(),
+      amount: pricing.totalCents / 100,
+      currency: "EUR",
       description: `Order for ${userEmail}`,
       customId: customId,
       shippingAddress: shipping_address
@@ -110,32 +88,32 @@ serve(async (req) => {
     // Find approval URL
     const approvalLink = paypalOrder.links?.find((link) => link.rel === "approve");
 
-    // Create payment_transactions record immediately with user_id
-    // Webhook will later update this record to 'succeeded' or 'failed'
-    try {
-      await supabaseRest(
-        'payment_transactions',
-        'POST',
-        {
+    // The transaction row carries the server pricing that capture and
+    // fulfilment verify against, so the checkout cannot continue without it.
+    const transaction = await supabaseRest(
+      'payment_transactions',
+      'POST',
+      {
+        user_id: userId,
+        payment_provider: 'paypal',
+        paypal_order_id: paypalOrder.id,
+        amount: pricing.totalCents / 100,
+        currency: 'eur',
+        status: 'pending',
+        metadata: {
+          ...metadata,
           user_id: userId,
-          payment_provider: 'paypal',
-          paypal_order_id: paypalOrder.id,
-          amount: validAmount,
-          currency: currency.toLowerCase(),
-          status: 'pending',
-          metadata: {
-            ...metadata,
-            user_id: userId,
-            user_email: userEmail,
-            line_items: line_items,
-          },
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
+          user_email: userEmail,
+          line_items: line_items,
+          ...pricingMetadata(pricing),
         },
-        { prefer: 'resolution=merge-duplicates' }
-      )
-    } catch {
-      // Transaction record is best-effort; webhook can still process it
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+      { prefer: 'resolution=merge-duplicates' }
+    );
+    if (transaction.error) {
+      throw new Error('Could not record the payment transaction');
     }
 
     const response: PayPalOrderResponseI = {
