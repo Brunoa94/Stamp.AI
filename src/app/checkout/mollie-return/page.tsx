@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import MollieReturnClient from "./MollieReturnClient";
+import { Suspense } from "react";
+import { MollieReturnSection } from "@/features/checkout/ui/sections/PaymentReturn/MollieReturnSection";
 
 /**
  * /checkout/mollie-return Route - Mollie Payment Return
@@ -18,5 +19,10 @@ export const metadata: Metadata = {
 };
 
 export default function MollieReturnPage() {
-  return <MollieReturnClient />;
+  // useSearchParams() requires a Suspense boundary for static prerendering
+  return (
+    <Suspense fallback={null}>
+      <MollieReturnSection />
+    </Suspense>
+  );
 }
