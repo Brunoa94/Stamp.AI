@@ -11,13 +11,17 @@
     "**/*.test.ts",
     "src/types/**",
     "supabase/types/**",
-    "playwright.config.ts"
+    "playwright.config.ts",
+    "supabase/functions/**"
   ],
   "ignoreDependencies": [
     "tailwindcss",
     "@ai-hero/sandcastle",
     "@testing-library/react",
-    "@testing-library/user-event"
+    "@testing-library/user-event",
+    "sharp",
+    "imapflow",
+    "mailparser"
   ],
   "next": {
     "entry": [
