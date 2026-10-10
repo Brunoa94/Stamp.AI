@@ -12,6 +12,7 @@
     "start": "next start",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
+    "knip": "knip",
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts --no-file-parallelism",

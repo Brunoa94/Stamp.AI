@@ -121,6 +121,23 @@ jobs:
           printf '%s\n' "${FILES[@]}"
           npx eslint --no-warn-ignored "${FILES[@]}"
 
+  knip:
+    name: Knip (unused files, exports and dependencies)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      # NON-BLOCKING for now: the repo carries a backlog of ~158 knip findings.
+      # Once that backlog is cleared, remove `continue-on-error` so this step
+      # gates merges like the others.
+      - name: Knip (advisory until backlog is cleared)
+        continue-on-error: true
+        run: npm run knip
+
   # Gate for merging into main: the full acceptance suite against the test
   # Supabase project, the Printify test shop and Stripe test mode
   # (see tests/acceptance/README.md). Only runs on non-draft PRs targeting
