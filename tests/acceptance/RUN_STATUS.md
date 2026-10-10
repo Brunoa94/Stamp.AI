@@ -1,5 +1,40 @@
 # Execution evidence
 
+## Orders page — October 10, 2026
+
+`orders-page.spec.mjs` (ORDER-01, -02, -04, -05, -07, -09, -10, -11) ran on its own against the test Supabase project (`tgccxydchvujhrqyzqao`), the Printify test shop and Stripe test mode, on desktop and mobile.
+
+Command: `npm run test:acceptance -- orders-page`
+
+| Result | Count |
+| --- | --- |
+| Passed | 35 of 40 (first run; see duplicate refunds below for 8 more) |
+| Failed (product defects below) | 4 |
+| Skipped on purpose | 1: grid view on mobile, where the view toggle is not rendered |
+
+Passing includes the real flows: an unpaid order cancelled from the page is cancelled in the database and at Printify (fresh provider read) with no refund; a paid Stripe order cancelled from the page is cancelled at Printify and refunded once for the full amount at Stripe, in `refunds` and in `payment_transactions`. Teardown cancelled all six Printify ledger records.
+
+Four tests inject a fault in the browser instead of using a real one: the orders fetch (500), the status-history fetch (500), `cancel-order` (409) and a held orders request for the loading state. They test the UI's handling only.
+
+**Confirmed failures (product, not harness):**
+
+| Scenario | Observed | Expected |
+| --- | --- | --- |
+| ORDER-02 processing filter | A `pending` order shows a "Processing" badge but is dropped by the Processing filter: the filter compares `toDisplayStatus(status)`, which returns `pending`. | Every order whose badge reads Processing is listed under the Processing filter. |
+| ORDER-04 double-click confirm | Double-clicking "Cancel order" in the confirmation sends two `cancel-order` requests and shows two success toasts. | One cancellation request and one `cancelled` history entry. |
+| ORDER-04/05 concurrent cancellations | Three simultaneous `cancel-order` calls on a paid order all run the full cancellation (three Printify cancel calls, three `cancelled` history entries). Two of them return `refund_error: "Unknown error"` / `refund_processed: false`, although the order was refunded once. The losing refund hits the one-completed-refund-per-order index. | Cancellation runs once; every caller is told the refund succeeded. |
+
+### Duplicate refunds — October 10, 2026
+
+Four more tests (desktop and mobile) check cancelled orders and duplicate refunds:
+
+- A cancelled order offers no cancel action; direct `cancel-order` replays return `already_cancelled` and change nothing. **Passed.**
+- Cancelling from a stale page after another tab already cancelled is harmless: one history entry, no refund. **Passed.**
+- A paid order cannot be refunded without cancelling it: user edits to `status`/`payment_status` are rejected, direct `process-refund` returns `REFUND_NOT_ELIGIBLE`, an inflated amount is rejected, another user gets 403, and Stripe has no refunds. **Passed.**
+- Concurrent, repeated and crafted cancellations of a paid order: Stripe has exactly one refund for exactly the captured amount, with one `refunds` row and `payment_status = refunded`; replays and another user are rejected. **Money assertions passed; the test fails on the concurrent-cancellation defect above.**
+
+No path to a second refund was found. The guards are the cancelled-and-paid eligibility check, the already-refunded check, the per-order provider idempotency key (`order-refund-<id>` for Stripe, the order ID for PayPal and Mollie) and the unique completed refund per order. Stripe's idempotency key expires after 24 hours, so later replays are caught by the database checks and the `charge_already_refunded` reconciliation. Teardown cancelled all 22 Printify ledger records.
+
 ## Status — October 5, 2026 (round 21)
 
 Full suite against the test Supabase project (`tgccxydchvujhrqyzqao`), the Printify test shop, Stripe test mode and mocked AI, on the webpack dev server. Every test runs in the `desktop` and `mobile` projects.
