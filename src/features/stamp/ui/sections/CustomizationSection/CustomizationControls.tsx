@@ -11,6 +11,7 @@ import { PrintPositionSelector } from "../../components/PrintPositionSelector/Pr
 import { useDesignAdjustment } from "../../../lib/hooks/useDesignAdjustment";
 import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction";
 import type { SizeType } from "../../../lib/types/stampTypes";
+import type { VariantOptionKindType } from "../../../lib/helpers/productCategoryDetector";
 import { formatSizeForDisplay } from "../../../lib/helpers/sizeDisplayMapper";
 
 /**
@@ -24,6 +25,7 @@ import { formatSizeForDisplay } from "../../../lib/helpers/sizeDisplayMapper";
 
 interface PropsI {
   colors: string[];
+  colorOptionKind?: VariantOptionKindType;
   selectedColor?: string;
   sizes: SizeType[];
   selectedSize: SizeType;
@@ -41,6 +43,7 @@ interface PropsI {
 
 export function CustomizationControls({
   colors,
+  colorOptionKind = "color",
   selectedColor,
   sizes,
   selectedSize,
@@ -85,9 +88,9 @@ export function CustomizationControls({
       >
         {t.rich("title", {
           accent: (chunks) => (
-            <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
+            <Span variant="serif" className="text-(--color-stamp-taupe)">
               {chunks}
-            </span>
+            </Span>
           ),
         })}
       </Heading>
@@ -97,6 +100,7 @@ export function CustomizationControls({
         {colors.length > 1 && (
           <ColorSwatches
             colors={colors}
+            optionKind={colorOptionKind}
             selectedColor={selectedColor}
             isLoading={isLoadingColors}
             hasProduct={hasProduct}

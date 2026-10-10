@@ -9,6 +9,8 @@ export interface MollieCheckoutSessionData {
   shippingAddress: string | null;
   cartId: string | null;
   orderAmount: string | null;
+  shippingCostCents: string | null;
+  discountCents: string | null;
   cartSnapshot: string | null;
 }
 
@@ -21,6 +23,8 @@ export interface CheckoutData {
   paymentMethod: PaymentMethodT;
   promoCode?: string;
   amount?: number; // Total amount for the order
+  shippingCostCents?: number;
+  discountCents?: number;
   /** Present for new checkouts; optional while pre-deployment sessions expire. */
   cartSnapshot?: CartWithItems;
   timestamp: number;
@@ -50,6 +54,8 @@ export class CheckoutStorageService {
     SHIPPING_ADDRESS: "mollie_shipping_address",
     CART_ID: "mollie_cart_id",
     ORDER_AMOUNT: "mollie_order_amount",
+    SHIPPING_COST_CENTS: "mollie_shipping_cost_cents",
+    DISCOUNT_CENTS: "mollie_discount_cents",
     CART_SNAPSHOT: "mollie_cart_snapshot",
   } as const;
 
@@ -181,6 +187,8 @@ export class CheckoutStorageService {
           String(data.amount),
         );
       }
+      if (data.shippingCostCents !== undefined) sessionStorage.setItem(this.MOLLIE_SESSION_KEYS.SHIPPING_COST_CENTS, String(data.shippingCostCents));
+      if (data.discountCents !== undefined) sessionStorage.setItem(this.MOLLIE_SESSION_KEYS.DISCOUNT_CENTS, String(data.discountCents));
       if (data.cartSnapshot) {
         sessionStorage.setItem(
           this.MOLLIE_SESSION_KEYS.CART_SNAPSHOT,
@@ -211,6 +219,8 @@ export class CheckoutStorageService {
       const orderAmount = sessionStorage.getItem(
         this.MOLLIE_SESSION_KEYS.ORDER_AMOUNT,
       );
+      const shippingCostCents = sessionStorage.getItem(this.MOLLIE_SESSION_KEYS.SHIPPING_COST_CENTS);
+      const discountCents = sessionStorage.getItem(this.MOLLIE_SESSION_KEYS.DISCOUNT_CENTS);
       const cartSnapshot = sessionStorage.getItem(
         this.MOLLIE_SESSION_KEYS.CART_SNAPSHOT,
       );
@@ -229,6 +239,8 @@ export class CheckoutStorageService {
         shippingAddress,
         cartId,
         orderAmount,
+        shippingCostCents,
+        discountCents,
         cartSnapshot,
       };
     } catch {

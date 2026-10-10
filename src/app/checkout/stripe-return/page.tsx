@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import StripeReturnClient from "./StripeReturnClient";
+import { Suspense } from "react";
+import { StripeReturnSection } from "@/features/checkout/ui/sections/PaymentReturn/StripeReturnSection";
 
 /**
  * /checkout/stripe-return Route - Stripe Payment Return
@@ -18,5 +19,10 @@ export const metadata: Metadata = {
 };
 
 export default function StripeReturnPage() {
-  return <StripeReturnClient />;
+  // useSearchParams() requires a Suspense boundary for static prerendering
+  return (
+    <Suspense fallback={null}>
+      <StripeReturnSection />
+    </Suspense>
+  );
 }

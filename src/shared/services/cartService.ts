@@ -47,6 +47,9 @@ export class CartService {
       }
 
       const { data: existingCart, error: fetchError } = await query
+        .eq("status", "active")
+        .order("created_at", { ascending: false })
+        .limit(1)
         .maybeSingle();
 
       if (fetchError) {

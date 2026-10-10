@@ -20,21 +20,43 @@ const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const TEST_USER_ID = process.env.TEST_USER_ID!;
 const PRINTIFY_API_TOKEN = process.env.PRINTIFY_API_TOKEN!;
 const PRINTIFY_SHOP_ID = process.env.PRINTIFY_SHOP_ID!;
+let seededVariant: { blueprintId: number; variantId: number } | null = null;
 
 /**
  * Checkout line items reference an existing Printify product by its product
  * id (the cart query does not join `products`), so pick a real product with
  * an enabled variant from the test shop.
  */
-async function pickPrintifyProduct(): Promise<{ productId: string; variantId: number; title: string; variantTitle: string }> {
+async function pickPrintifyProduct(): Promise<{ productId: string; variantId: number; title: string; variantTitle: string; priceCents: number }> {
   const res = await fetch(`https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/products.json?limit=10`, {
     headers: { Authorization: `Bearer ${PRINTIFY_API_TOKEN}` },
   });
   expect(res.ok, `Printify products list: ${res.status}`).toBe(true);
-  const json = (await res.json()) as { data: Array<{ id: string; title: string; variants: Array<{ id: number; title: string; is_enabled: boolean; is_available: boolean }> }> };
+  const json = (await res.json()) as { data: Array<{ id: string; blueprint_id: number; title: string; variants: Array<{ id: number; title: string; price: number; is_enabled: boolean; is_available: boolean }> }> };
   for (const product of json.data) {
-    const variant = product.variants.find((v) => v.is_enabled && v.is_available);
-    if (variant) return { productId: product.id, variantId: variant.id, title: product.title, variantTitle: variant.title };
+    const { data: catalogProduct } = await admin.from("catalog_products")
+      .select("blueprint_id").eq("blueprint_id", product.blueprint_id).maybeSingle();
+    if (!catalogProduct) continue;
+    for (const variant of product.variants.filter((v) => v.is_enabled && v.is_available)) {
+      const { data: price } = await admin.from("product_variants")
+        .select("price_cents")
+        .eq("blueprint_id", product.blueprint_id)
+        .eq("printify_variant_id", variant.id)
+        .maybeSingle();
+      const priceCents = price?.price_cents ?? variant.price;
+      if (!Number.isInteger(priceCents) || priceCents <= 0) continue;
+      if (!price) {
+        const { error } = await admin.from("product_variants").insert({
+          blueprint_id: product.blueprint_id,
+          printify_variant_id: variant.id,
+          price_cents: priceCents,
+          is_available: true,
+        });
+        expect(error, error?.message).toBeNull();
+        seededVariant = { blueprintId: product.blueprint_id, variantId: variant.id };
+      }
+      return { productId: product.id, variantId: variant.id, title: product.title, variantTitle: variant.title, priceCents };
+    }
   }
   throw new Error("No Printify product with an enabled variant in the test shop");
 }
@@ -60,10 +82,17 @@ async function poll<T>(
 }
 
 test.describe("Stripe test-mode flag", () => {
+  test.skip(({ isMobile }) => isMobile, "Stripe payment integration runs once on desktop");
   let cartId: string | null = null;
   let paymentIntentId: string | null = null;
 
   test.afterAll(async () => {
+    if (seededVariant) {
+      await admin.from("product_variants").delete()
+        .eq("blueprint_id", seededVariant.blueprintId)
+        .eq("printify_variant_id", seededVariant.variantId);
+      seededVariant = null;
+    }
     if (paymentIntentId) {
       const idempotencyKey = `stripe_${paymentIntentId}`;
       const { data: orders } = await admin
@@ -105,7 +134,7 @@ test.describe("Stripe test-mode flag", () => {
       variant_id: String(printify.variantId),
       variant_name: printify.variantTitle,
       quantity: 1,
-      unit_price: 1999,
+      unit_price: printify.priceCents,
       is_selected: true,
     });
     expect(itemError, itemError?.message).toBeNull();

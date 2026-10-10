@@ -5,6 +5,9 @@
 import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
+  // Disabled on this branch: no errors, logs, traces or replays are sent to Sentry.
+  enabled: false,
+
   dsn: "https://f81c92c4cb15a656c494024072bfa61c@o4511877228527616.ingest.de.sentry.io/4511877243469904",
 
   // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.

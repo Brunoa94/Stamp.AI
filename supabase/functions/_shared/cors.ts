@@ -116,9 +116,15 @@ export function corsHeadersFor(
   req: Request,
   options: CorsOptionsI = {},
 ): Record<string, string> {
+  const deno = (globalThis as { Deno?: DenoEnvLikeI }).Deno;
+  const isDedicatedTestProject = deno?.env.get("APP_ENV") === "test" &&
+    deno?.env.get("SUPABASE_URL") === "https://tgccxydchvujhrqyzqao.supabase.co";
+  const allowedOrigins = readAllowedOriginsEnv();
   return buildCorsHeaders(
     req.headers.get("origin"),
-    readAllowedOriginsEnv(),
+    isDedicatedTestProject
+      ? `${allowedOrigins ?? ""},http://localhost:3107,http://127.0.0.1:3107`
+      : allowedOrigins,
     options,
   );
 }

@@ -6,6 +6,7 @@ import { validatePaymentAmount } from "../_shared/amountValidator.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
 import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
+import { fetchPrintify } from "../_shared/fetchWithTimeout.ts"
 
 // Environment variables will be validated when needed
 
@@ -155,17 +156,17 @@ serve(async (req) => {
 
     const externalId = `${enforcedTestMode ? 'test-' : ''}order-${Date.now()}`
 
-    // Fetch products from Printify to verify they exist
-    const productsResponse = await fetch(
-      `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/products.json`,
-      {
-        headers: {
-          'Authorization': `Bearer ${PRINTIFY_API_TOKEN}`,
-        },
-      }
-    )
-
-    const productsData = await productsResponse.json()
+    // Listing the whole shop is only needed to choose a sample product.
+    // Checkout verifies each requested product directly below.
+    let productsData: { data?: Array<{ id: string; variants?: Array<{ id: number; is_enabled: boolean }> }> } = {}
+    if (use_sample_order && (!line_items || line_items.length === 0)) {
+      const productsResponse = await fetchPrintify(
+        `/v1/shops/${PRINTIFY_SHOP_ID}/products.json`,
+        PRINTIFY_API_TOKEN
+      )
+      if (!productsResponse.ok) throw ErrorCodes.PRINTIFY_ORDER_API_ERROR(`Could not list sample products (${productsResponse.status})`)
+      productsData = await productsResponse.json()
+    }
 
     let formattedLineItems = []
 
@@ -183,11 +184,9 @@ serve(async (req) => {
         if (item.product_id) {
           // Verify the product exists in Printify before creating order
           try {
-            const productCheckResponse = await fetch(
-              `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/products/${item.product_id}.json`,
-              {
-                headers: { 'Authorization': `Bearer ${PRINTIFY_API_TOKEN}` },
-              }
+            const productCheckResponse = await fetchPrintify(
+              `/v1/shops/${PRINTIFY_SHOP_ID}/products/${item.product_id}.json`,
+              PRINTIFY_API_TOKEN
             )
 
             if (!productCheckResponse.ok) {
@@ -295,14 +294,11 @@ serve(async (req) => {
     }
 
     // Create order in Printify
-    const response = await fetch(
-      `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/orders.json`,
+    const response = await fetchPrintify(
+      `/v1/shops/${PRINTIFY_SHOP_ID}/orders.json`,
+      PRINTIFY_API_TOKEN,
       {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${PRINTIFY_API_TOKEN}`,
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(orderPayload),
       }
     )
@@ -333,40 +329,50 @@ serve(async (req) => {
       throw ErrorCodes.PRINTIFY_ORDER_API_ERROR(JSON.stringify(data))
     }
 
-    // Update order status to "confirmed" if we have an order_id
+    // Persist the provider order before confirming fulfillment. The browser can
+    // leave the return page, so it cannot be the only writer of this link.
     const orderId = metadata?.order_id
     if (orderId) {
-      try {
-        const statusUpdateResult = await supabaseRest(
-          'rpc/update_order_payment_status_atomic',
-          'POST',
-          {
-            p_order_id: orderId,
-            p_payment_status: 'paid',
-            p_order_status: 'confirmed',
-          }
-        )
-        if (!statusUpdateResult.error) {
-          await insertOrderStatusHistory(orderId, 'confirmed', 'order_creation')
-        }
-      } catch {
-        // Status update is best-effort
+      if (!data?.id || typeof data.id !== 'string') {
+        throw ErrorCodes.PRINTIFY_ORDER_API_ERROR('Printify did not return an order ID')
       }
+      const provider = metadata?.provider || metadata?.payment_provider
+      const orderUpdate: Record<string, string> = { printify_order_id: data.id }
+      if (['stripe', 'paypal', 'mollie'].includes(provider)) {
+        orderUpdate.payment_provider = provider
+      }
+      const linkResult = await supabaseRest(
+        `orders?id=eq.${encodeURIComponent(String(orderId))}`,
+        'PATCH',
+        orderUpdate,
+        { prefer: 'return=representation' },
+      )
+      if (linkResult.error || !Array.isArray(linkResult.data) || linkResult.data.length !== 1) {
+        throw ErrorCodes.PRINTIFY_ORDER_API_ERROR(`Printify order ${data.id} was created but could not be linked to application order ${orderId}`)
+      }
+      const statusUpdateResult = await supabaseRest(
+        'rpc/update_order_payment_status_atomic',
+        'POST',
+        {
+          p_order_id: orderId,
+          p_payment_status: 'paid',
+          p_order_status: 'confirmed',
+        }
+      )
+      if (statusUpdateResult.error) {
+        throw ErrorCodes.PRINTIFY_ORDER_API_ERROR(`Printify order ${data.id} was linked, but application order ${orderId} could not be confirmed`)
+      }
+      await insertOrderStatusHistory(orderId, 'confirmed', 'order_creation')
     }
 
     // Auto-cancel order if requested (useful for testing)
     let cancelResult = null
     if (auto_cancel) {
       try {
-        const cancelResponse = await fetch(
-          `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/orders/${data.id}/cancel.json`,
-          {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${PRINTIFY_API_TOKEN}`,
-              'Content-Type': 'application/json',
-            },
-          }
+        const cancelResponse = await fetchPrintify(
+          `/v1/shops/${PRINTIFY_SHOP_ID}/orders/${data.id}/cancel.json`,
+          PRINTIFY_API_TOKEN,
+          { method: 'POST' }
         )
 
         const cancelData = await cancelResponse.json()

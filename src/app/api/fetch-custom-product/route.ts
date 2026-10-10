@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { fetchWithTimeout } from "@/lib/promiseUtils";
 
 const PRINTIFY_TOKEN = process.env.PRINTIFY_API_TOKEN;
+const PRINTIFY_TIMEOUT_MS = 20_000; // 20 second timeout for Printify API
 
 export async function GET(request: NextRequest) {
   // Require authentication — this route uses the privileged Printify token.
@@ -21,7 +23,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const res = await fetch(
+    const res = await fetchWithTimeout(
       `https://api.printify.com/v1/shops/${process.env.PRINTIFY_SHOP_ID}/products/${encodeURIComponent(productId)}.json`,
       {
         headers: {
@@ -29,6 +31,7 @@ export async function GET(request: NextRequest) {
           "Content-Type": "application/json",
         },
       },
+      PRINTIFY_TIMEOUT_MS
     );
 
     if (!res.ok) {

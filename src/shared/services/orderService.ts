@@ -82,9 +82,9 @@ export class OrderService {
         const validatedData = z.array(OrderWithItemsSchema).parse(data);
 
         return validatedData as unknown as OrderWithItemsT[];
-      } catch (zodError: any) {
+      } catch (zodError) {
         console.error("❌ Zod validation failed for orders");
-        console.error("Error details:", zodError.errors || zodError.message);
+        console.error("Error details:", zodError instanceof Error ? zodError.message : String(zodError));
         console.error(
           "📦 First order data sample:",
           JSON.stringify(data[0], null, 2),
@@ -511,6 +511,9 @@ export class OrderService {
     idempotencyKey,
     orderStatus,
     paymentMethod,
+    paymentAmountCents,
+    shippingCostCents,
+    discountCents,
   }: {
     user: UserI;
     cart: CartWithItems;
@@ -520,6 +523,9 @@ export class OrderService {
     idempotencyKey?: string;
     orderStatus?: string;
     paymentMethod?: string;
+    paymentAmountCents?: number;
+    shippingCostCents?: number;
+    discountCents?: number;
   }) {
     try {
       // CRITICAL: Check idempotency key to prevent duplicate orders
@@ -548,6 +554,16 @@ export class OrderService {
       const totals = OrderServiceMapper.calculateOrderTotals(
         checkoutCart.cart_items,
       );
+      const shipping = shippingCostCents ?? Math.max(0, (paymentAmountCents ?? totals.subtotal) - totals.subtotal);
+      const discount = discountCents ?? Math.max(0, totals.subtotal + shipping - (paymentAmountCents ?? totals.subtotal + shipping));
+      if (![shipping, discount].every(value => Number.isSafeInteger(value) && value >= 0)) {
+        throw new Error("Invalid checkout shipping or discount amount");
+      }
+      totals.shipping_cost = shipping;
+      totals.total_amount = totals.subtotal + shipping - discount;
+      if (paymentAmountCents !== undefined && totals.total_amount !== paymentAmountCents) {
+        throw new Error("Captured payment does not match the order total");
+      }
 
       // Derive order status: use provided or default logic
       const finalOrderStatus = orderStatus ??
@@ -560,7 +576,7 @@ export class OrderService {
         totals,
         shippingAddress,
         billingAddress,
-        0, // discount amount
+        discount,
         paymentStatus,
         finalOrderStatus,
         idempotencyKey,

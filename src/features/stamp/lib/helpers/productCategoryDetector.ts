@@ -19,6 +19,7 @@ export type ProductCategory =
   | "hat"
   | "socks"
   | "pillow"
+  | "notebook"
   | "other";
 
 export type ProductGroup = "clothing" | "accessories";
@@ -94,7 +95,6 @@ const CATEGORY_KEYWORDS: Record<ProductCategory, string[]> = {
     "phone case",
     "iphone case",
     "samsung case",
-    "case",
   ],
   hat: [
     "baseball cap",
@@ -117,6 +117,11 @@ const CATEGORY_KEYWORDS: Record<ProductCategory, string[]> = {
     "pillowcase",
     "pillow",
     "cushion",
+  ],
+  notebook: [
+    "spiral journal",
+    "journal",
+    "notebook",
   ],
   other: [],
 };
@@ -240,4 +245,14 @@ export function shouldShowColorSelection(displayTitle: string): boolean {
   }
   const category = detectProductCategory(displayTitle);
   return !NO_COLOR_SELECTION_CATEGORIES.has(category);
+}
+
+export type VariantOptionKindType = "color" | "paperType";
+
+/**
+ * Which choice a product's color-type variants represent: notebooks vary by
+ * paper (Blank, Lined, ...), everything else by color.
+ */
+export function getVariantOptionKind(displayTitle: string): VariantOptionKindType {
+  return detectProductCategory(displayTitle) === "notebook" ? "paperType" : "color";
 }

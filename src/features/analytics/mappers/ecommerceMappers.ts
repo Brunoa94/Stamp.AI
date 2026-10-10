@@ -43,7 +43,7 @@ export interface ViewCartParams {
 
 export function mapViewCartEvent(params: ViewCartParams): AnalyticsEventParamsT {
   return {
-    currency: "USD",
+    currency: "EUR",
     value: params.value,
     items: mapCartItemsToAnalyticsItems(params.items),
   };
@@ -60,7 +60,7 @@ export interface BeginCheckoutParams {
 
 export function mapBeginCheckoutEvent(params: BeginCheckoutParams): AnalyticsEventParamsT {
   return {
-    currency: "USD",
+    currency: "EUR",
     value: params.value,
     items: mapCartItemsToAnalyticsItems(params.items),
   };
@@ -78,7 +78,7 @@ export interface AddPaymentInfoParams {
 
 export function mapAddPaymentInfoEvent(params: AddPaymentInfoParams): AnalyticsEventParamsT {
   return {
-    currency: "USD",
+    currency: "EUR",
     value: params.amount / 100,
     payment_type: params.paymentType ?? "card",
     items: params.lineItems.map((item, index) => ({
@@ -109,7 +109,7 @@ export function mapPurchaseEvent(params: PurchaseParams): AnalyticsEventParamsT 
 
   return {
     transaction_id: params.transactionId,
-    currency: "USD",
+    currency: "EUR",
     value: params.amount / 100,
     payment_method: params.paymentMethod ?? "stripe",
     items: params.lineItems.map((lineItem, index) => ({

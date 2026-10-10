@@ -114,6 +114,7 @@ export default async function RootLayout({
                     gap={12}
                     toastOptions={{
                       unstyled: true,
+                      classNames: { success: "!pointer-events-none" },
                     }}
                   />
                 </QueryProvider>

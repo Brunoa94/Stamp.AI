@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, ChangeEvent, memo } from "react";
+import { useTranslations } from "next-intl";
 import { useStampImageGeneration } from "../../../lib/hooks/useStampImageGeneration";
 import { useUser } from "@/shared/queries/authQueries";
 import { useUserCoins } from "@/shared/queries/coinsQueries";
@@ -8,6 +9,7 @@ import { SynthesisVisual } from "./SynthesisVisual";
 import { SynthesisForm } from "./SynthesisForm";
 import { AnalyticsService } from "@/shared/services/analyticsService";
 import { mapGenerateStartEvent } from "@/features/analytics/mappers/stampFlowMappers";
+import { NO_FILTER_ID } from "./NoFilterCard";
 
 /**
  * SynthesisSection
@@ -26,10 +28,11 @@ const MAX_PROMPT_LENGTH = 500;
 function SynthesisSectionComponent() {
   const { handleGenerate: generateImage, isGenerating } =
     useStampImageGeneration();
+  const tSuggestions = useTranslations("stamp.suggestions");
 
   // Auth and coins state
   const { data: user, isLoading: isAuthLoading } = useUser();
-  const { data: coinsData, isLoading: isCoinsLoading } = useUserCoins();
+  const { data: coinsData, isLoading: isCoinsLoading, isError: isCoinsError, refetch: refetchCoins } = useUserCoins();
 
   const isAuthenticated = !!user;
   const coins = coinsData?.coins ?? 0;
@@ -57,17 +60,26 @@ function SynthesisSectionComponent() {
   }, []);
 
   const handleGenerate = useCallback(async () => {
+    // Build the final prompt by combining user input with filter guidance
+    let finalPrompt = prompt;
+    if (selectedSuggestionId && selectedSuggestionId !== NO_FILTER_ID) {
+      // Get the suggestion's prompt guidance from translations
+      const filterGuidance = tSuggestions(`${selectedSuggestionId}.prompt`);
+      // Combine: user prompt + filter guidance
+      finalPrompt = `${prompt.trim()} [Style: ${tSuggestions(`${selectedSuggestionId}.label`)} - ${filterGuidance}]`;
+    }
+
     AnalyticsService.track(
       "stamp_generate_start",
-      mapGenerateStartEvent({ promptLength: prompt.length, preservation }),
+      mapGenerateStartEvent({ promptLength: finalPrompt.length, preservation }),
     );
 
     await generateImage({
-      prompt,
+      prompt: finalPrompt,
       preservation,
       removeBackground,
     });
-  }, [generateImage, prompt, preservation, removeBackground]);
+  }, [generateImage, prompt, preservation, removeBackground, selectedSuggestionId, tSuggestions]);
 
   return (
     <section
@@ -88,6 +100,8 @@ function SynthesisSectionComponent() {
         isAuthLoading={isAuthLoading}
         hasCoins={hasCoins}
         isCoinsLoading={isCoinsLoading}
+        isCoinsError={isCoinsError}
+        onRetryCoins={() => { void refetchCoins(); }}
         onPromptChange={handlePromptChange}
         onPreservationChange={setPreservation}
         onRemoveBackgroundChange={setRemoveBackground}

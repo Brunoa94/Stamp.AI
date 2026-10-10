@@ -125,6 +125,8 @@ export interface CreateCreditPaymentResponseI {
  */
 export interface CreatePaymentIntentPayloadI {
   amount: number;
+  shipping_cost_cents?: number;
+  discount_cents?: number;
   currency?: string;
   line_items: PrintifyLineItem[];
   shipping_address: ShippingAddressT;
@@ -153,6 +155,8 @@ export interface CreatePaymentIntentResponseI {
  */
 export interface CreatePayPalOrderPayloadI {
   amount: number;
+  shippingCostCents?: number;
+  discountCents?: number;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
   testMode?: boolean;
@@ -192,6 +196,8 @@ export interface CapturePayPalOrderResponseI {
  */
 export interface CreateMolliePaymentPayloadI {
   amount: number;
+  shippingCostCents?: number;
+  discountCents?: number;
   currency?: string;
   description?: string;
   lineItems: PrintifyLineItem[];

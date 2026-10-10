@@ -9,6 +9,8 @@ interface PreparePayPalPaymentParams {
   cart: CartWithItems;
   cartId: string | null;
   amount: number;
+  shippingCostCents: number;
+  discountCents: number;
 }
 
 /**
@@ -21,8 +23,8 @@ export function usePreparePayPalPayment() {
   return useMutation({
     mutationKey: ["payment", "prepare-paypal"],
     mutationFn: (
-      { formData, cart, cartId, amount }: PreparePayPalPaymentParams,
-    ) => PaymentService.preparePayPalPayment(formData, cart, cartId, amount),
+      { formData, cart, cartId, amount, shippingCostCents, discountCents }: PreparePayPalPaymentParams,
+    ) => PaymentService.preparePayPalPayment(formData, cart, cartId, amount, shippingCostCents, discountCents),
     retry: false, // Don't retry payment operations
     onError: (error: Error) => {
       handleError(error);
@@ -35,6 +37,8 @@ interface PrepareIdealPaymentParams {
   cart: CartWithItems;
   cartId: string | null;
   amount: number;
+  shippingCostCents: number;
+  discountCents: number;
 }
 
 /**
@@ -47,8 +51,8 @@ export function usePrepareIdealPayment() {
   return useMutation({
     mutationKey: ["payment", "prepare-ideal"],
     mutationFn: (
-      { formData, cart, cartId, amount }: PrepareIdealPaymentParams,
-    ) => PaymentService.prepareIdealPayment(formData, cart, cartId, amount),
+      { formData, cart, cartId, amount, shippingCostCents, discountCents }: PrepareIdealPaymentParams,
+    ) => PaymentService.prepareIdealPayment(formData, cart, cartId, amount, shippingCostCents, discountCents),
     retry: false, // Don't retry payment operations
     onError: (error: Error) => {
       handleError(error);

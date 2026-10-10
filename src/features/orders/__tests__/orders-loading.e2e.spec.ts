@@ -8,7 +8,7 @@ test.describe("Orders Loading", () => {
     await page.goto("/orders", { waitUntil: "networkidle" });
 
     // Verify the page loaded with the filter section visible
-    await expect(page.locator("text=Archive Filtering")).toBeVisible({
+    await expect(page.getByText("Filters", { exact: true })).toBeVisible({
       timeout: 5000,
     });
 
@@ -18,13 +18,11 @@ test.describe("Orders Loading", () => {
     await expect(timeframeFilter).toBeVisible({ timeout: 5000 });
 
     // Verify status filter is present with correct default
-    const statusFilter = page
-      .locator("button:has-text('All Statuses')")
-      .first();
+    const statusFilter = page.getByRole("combobox", { name: "Filter by order status" });
     await expect(statusFilter).toBeVisible({ timeout: 5000 });
 
-    // Verify Total Syntheses header is visible (shows component rendered)
-    await expect(page.locator("text=Total Syntheses")).toBeVisible({
+    // Verify the order count header is visible (shows component rendered)
+    await expect(page.getByText("Total orders", { exact: true })).toBeVisible({
       timeout: 5000,
     });
 
@@ -57,14 +55,14 @@ test.describe("Orders Loading", () => {
     await page.goto("/orders", { waitUntil: "networkidle" });
 
     // Verify core filter controls exist
-    await expect(page.locator("text=Archive Filtering")).toBeVisible({
+    await expect(page.getByText("Filters", { exact: true })).toBeVisible({
       timeout: 5000,
     });
 
-    // Verify "Clear Archive" button exists
+    // Verify "Clear filters" button exists
     const clearButton = page
       .locator("button")
-      .filter({ hasText: "Clear Archive" })
+      .filter({ hasText: "Clear filters" })
       .first();
     await expect(clearButton).toBeVisible({ timeout: 5000 });
 

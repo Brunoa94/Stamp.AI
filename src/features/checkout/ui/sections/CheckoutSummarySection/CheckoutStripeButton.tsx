@@ -24,6 +24,8 @@ import { CheckoutDataBuilder } from "@/features/checkout/lib/services/checkoutDa
 
 interface CheckoutStripeButtonPropsI {
   amount: number;
+  shippingCostCents: number;
+  discountCents: number;
   cart: CartWithItems;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
@@ -36,6 +38,8 @@ interface CheckoutStripeButtonPropsI {
 
 export function CheckoutStripeButton({
   amount,
+  shippingCostCents,
+  discountCents,
   cart,
   lineItems,
   shippingAddress,
@@ -57,6 +61,8 @@ export function CheckoutStripeButton({
       const checkoutData = {
         paymentIntentId: paymentIntent.id,
         amount,
+        shippingCostCents,
+        discountCents,
         lineItems: processedLineItems,
         shippingAddress,
         billing: billingAddress,
@@ -85,12 +91,14 @@ export function CheckoutStripeButton({
       });
       router.push(`/checkout/stripe-return?${params.toString()}`);
     },
-    [router, amount, shippingAddress, billingAddress, cartId, cart],
+    [router, amount, shippingCostCents, discountCents, shippingAddress, billingAddress, cartId, cart],
   );
 
   const { loading, error, handleSubmit, setSelectedTestMethod } =
     usePaymentForm({
       amount,
+      shippingCostCents,
+      discountCents,
       lineItems,
       shippingAddress,
       testMode,

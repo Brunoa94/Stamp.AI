@@ -28,6 +28,8 @@ export class PaymentService {
     cart: CartWithItems,
     cartId: string | null,
     amount: number,
+    shippingCostCents = 0,
+    discountCents = 0,
   ) {
     try {
       // Validate cart
@@ -46,14 +48,18 @@ export class PaymentService {
         cartId,
         amount,
       );
+      checkoutData.shippingCostCents = shippingCostCents;
+      checkoutData.discountCents = discountCents;
 
       // Store checkout data for payment processing
       CheckoutStorageService.saveStripeCheckoutData(checkoutData);
 
       // Build payment intent payload
       const payload: CreatePaymentIntentPayloadI = {
-        amount,
+        amount: amount / 100,
         currency: "eur",
+        shipping_cost_cents: shippingCostCents,
+        discount_cents: discountCents,
         line_items: checkoutData.lineItems,
         shipping_address: checkoutData.shippingAddress,
         metadata: {
@@ -89,6 +95,8 @@ export class PaymentService {
     cart: CartWithItems,
     cartId: string | null,
     amount: number,
+    shippingCostCents: number,
+    discountCents: number,
   ) {
     try {
       // Validate cart
@@ -107,12 +115,16 @@ export class PaymentService {
         cartId,
         amount,
       );
+      checkoutData.shippingCostCents = shippingCostCents;
+      checkoutData.discountCents = discountCents;
 
       // Create PayPal order through PayPalService
       // PayPal expects amount in euros (full currency units), not cents
       const amountInEuros = amount / 100;
       const { orderId, approvalUrl } = await PayPalService.createOrder({
         amount: amountInEuros,
+        shippingCostCents,
+        discountCents,
         lineItems: checkoutData.lineItems,
         shippingAddress: checkoutData.shippingAddress,
       });
@@ -152,6 +164,8 @@ export class PaymentService {
     cart: CartWithItems,
     cartId: string | null,
     amount: number,
+    shippingCostCents: number,
+    discountCents: number,
   ) {
     try {
       // Validate cart
@@ -170,10 +184,14 @@ export class PaymentService {
         cartId,
         amount,
       );
+      checkoutData.shippingCostCents = shippingCostCents;
+      checkoutData.discountCents = discountCents;
 
       // Create Mollie payment pinned to iDEAL (EUR only)
       const { paymentId, checkoutUrl } = await MollieService.createPayment({
-        amount,
+        amount: amount / 100,
+        shippingCostCents,
+        discountCents,
         currency: "EUR",
         method: "ideal",
         lineItems: checkoutData.lineItems,

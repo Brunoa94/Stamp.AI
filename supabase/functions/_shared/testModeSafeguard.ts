@@ -24,6 +24,15 @@ export function isProductionEnvironment(): boolean {
     return true;
   }
 
+  // Explicitly provisioned parallel test project. A production-mode Next build
+  // does not imply production data. IS_PRODUCTION above always takes precedence.
+  if (
+    Deno.env.get('APP_ENV') === 'test' &&
+    supabaseUrl === 'https://tgccxydchvujhrqyzqao.supabase.co'
+  ) {
+    return false;
+  }
+
   // Check environment variables
   if (denoEnv === 'production' || nodeEnv === 'production') {
     return true;

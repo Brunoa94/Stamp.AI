@@ -15,6 +15,7 @@ import {
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { requireUser } from "../_shared/authGuard.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import { fetchPrintify } from "../_shared/fetchWithTimeout.ts";
 
 // Initialize Supabase
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -91,11 +92,9 @@ serve(async (req) => {
     );
 
     // Get print provider variants
-    const variantsResponse = await fetch(
-      `https://api.printify.com/v1/catalog/blueprints/${finalBlueprintId}/print_providers/${finalPrintProviderId}/variants.json`,
-      {
-        headers: { "Authorization": `Bearer ${PRINTIFY_API_TOKEN}` },
-      },
+    const variantsResponse = await fetchPrintify(
+      `/v1/catalog/blueprints/${finalBlueprintId}/print_providers/${finalPrintProviderId}/variants.json`,
+      PRINTIFY_API_TOKEN
     );
     const variantsData = await variantsResponse.json();
 
@@ -360,16 +359,13 @@ serve(async (req) => {
     };
 
     // Create Printify product
-    const createResponse = await fetch(
-      `https://api.printify.com/v1/shops/${PRINTIFY_SHOP_ID}/products.json`,
+    const createResponse = await fetchPrintify(
+      `/v1/shops/${PRINTIFY_SHOP_ID}/products.json`,
+      PRINTIFY_API_TOKEN,
       {
         method: "POST",
-        headers: {
-          "Authorization": `Bearer ${PRINTIFY_API_TOKEN}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(productPayload),
-      },
+      }
     );
 
     const productData = await createResponse.json();
@@ -410,15 +406,24 @@ serve(async (req) => {
     // This ensures the cart gets the correct variant, not just the first one
     let selectedVariantId: number | null = null;
     if (productData.variants && productData.variants.length > 0) {
-      // Try to find exact match for color AND size
-      const exactMatch = productData.variants.find((v: any) => {
+      // The product response lists every blueprint variant; only enabled ones
+      // can be fulfilled as the user's choice.
+      const enabledVariants = productData.variants.filter((v: any) => v.is_enabled);
+      // Product titles put size or color first depending on the blueprint
+      // ("M / White", "White / M"), so match title parts in any order.
+      const titleParts = (v: any): string[] =>
+        (v.title || "").split(" / ").map((part: string) => part.trim().toLowerCase());
+      const exactMatch = enabledVariants.find((v: any) => {
         const { color: variantColor, size: variantSize } =
           parseVariantColorSize(v);
+        const parts = titleParts(v);
 
         const colorMatches = !validatedColor ||
-          variantColor?.toLowerCase() === validatedColor.toLowerCase();
+          variantColor?.toLowerCase() === validatedColor.toLowerCase() ||
+          parts.includes(validatedColor.toLowerCase());
         const sizeMatches = !selected_size ||
-          variantSize?.toLowerCase() === selected_size.toLowerCase();
+          variantSize?.toLowerCase() === selected_size.toLowerCase() ||
+          parts.includes(selected_size.toLowerCase());
 
         return colorMatches && sizeMatches;
       });
@@ -428,12 +433,14 @@ serve(async (req) => {
         console.log(
           `✅ Found exact variant match: ${selectedVariantId} (${exactMatch.title})`,
         );
-      } else {
-        // Fallback to first variant (shouldn't happen if validation worked)
-        selectedVariantId = productData.variants[0].id;
+      } else if (enabledVariants.length > 0) {
+        selectedVariantId = enabledVariants[0].id;
         console.warn(
-          `⚠️ No exact variant match found, using first variant: ${selectedVariantId}`,
+          `⚠️ No exact variant match found, using first enabled variant: ${selectedVariantId}`,
         );
+      } else {
+        console.error("❌ Created product has no enabled variants");
+        throw ErrorCodes.NO_VARIANTS_AVAILABLE();
       }
     }
 

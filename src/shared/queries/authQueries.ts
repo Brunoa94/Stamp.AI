@@ -57,7 +57,7 @@ export function useIsAuthenticated() {
 export function useLogin() {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { handleError, handleSuccess } = useErrorHandler();
+  const { handleSuccess } = useErrorHandler();
 
   return useMutation({
     mutationFn: (
@@ -89,9 +89,6 @@ export function useLogin() {
         // Force a refresh of the current page state
         router.refresh();
       }
-    },
-    onError: (error: Error) => {
-      handleError(error);
     },
   });
 }

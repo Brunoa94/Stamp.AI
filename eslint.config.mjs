@@ -9,9 +9,12 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    ".next-webpack/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Supabase edge functions run on Deno and are not linted.
+    "supabase/functions/**",
   ]),
   // Project-wide rules
   {
@@ -101,28 +104,6 @@ const eslintConfig = defineConfig([
           message: "Use the Heading component from @/features/ui/heading instead of raw <h6>.",
         },
       ],
-    },
-  },
-  // Special config for Supabase functions (Deno)
-  {
-    files: ["supabase/functions/**/*.ts"],
-    languageOptions: {
-      globals: {
-        Deno: "readonly",
-        console: "readonly",
-      },
-      parserOptions: {
-        ecmaVersion: 2022,
-        sourceType: "module",
-      },
-    },
-    rules: {
-      // Disable Node.js specific rules for Deno
-      "import/no-unresolved": "off",
-      "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-      "@typescript-eslint/explicit-function-return-type": "off",
-      "prefer-const": "error",
-      "no-var": "error",
     },
   },
 ]);

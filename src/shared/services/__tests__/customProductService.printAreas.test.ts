@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CustomProductService } from "../customProductService";
 
+vi.mock("@/lib/supabase/client", () => ({
+  createClient: () => ({
+    auth: { getSession: async () => ({ data: { session: { access_token: "test-token" } } }) },
+  }),
+}));
+
 /**
  * Verifies the payload the client sends to the create-custom-product edge
  * function — the client half of the socks IMAGE_REQUIRED regression:

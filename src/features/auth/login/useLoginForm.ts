@@ -16,6 +16,7 @@ export function useLoginForm() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<LoginI>({
     resolver: zodResolver(LoginSchema),
@@ -26,7 +27,7 @@ export function useLoginForm() {
       const captchaToken = await getCaptchaToken();
       await loginMutation.mutateAsync({ credentials: data, captchaToken });
     } catch (error) {
-      handleError(error);
+      setError("root", { message: handleError(error).message });
     }
   };
 

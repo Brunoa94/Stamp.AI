@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
+import type { PaymentIntent } from "@stripe/stripe-js";
 import { ShippingAddressT } from "@/shared/schemas/checkout";
 import { mapShippingAddressToBillingDetails } from "@/shared/mappers/mapShippingAddressToBillingDetails";
 import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
@@ -13,10 +14,15 @@ import { mapAddPaymentInfoEvent } from "@/features/analytics/mappers/ecommerceMa
 
 interface UsePaymentFormProps {
   amount: number;
+  shippingCostCents: number;
+  discountCents: number;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
   testMode?: boolean;
-  onSuccess?: (paymentIntent: any, lineItems: PrintifyLineItem[]) => void;
+  onSuccess?: (
+    paymentIntent: Pick<PaymentIntent, "id" | "status" | "client_secret">,
+    lineItems: PrintifyLineItem[],
+  ) => void;
   onError?: (error: string) => void;
 }
 
@@ -35,6 +41,8 @@ const TEST_PAYMENT_METHODS = {
 
 export function usePaymentForm({
   amount,
+  shippingCostCents,
+  discountCents,
   lineItems,
   shippingAddress,
   testMode = false,
@@ -53,7 +61,7 @@ export function usePaymentForm({
   const { handleError } = useErrorHandler({ showToast: false });
 
   const processPayment = async () => {
-    if (!stripe) {
+    if (!stripe && !isTestMode) {
       const notReadyMessage = t("stripeNotReady");
       setError(notReadyMessage);
       onError?.(notReadyMessage);
@@ -72,7 +80,9 @@ export function usePaymentForm({
 
     try {
       const requestBody: CreatePaymentIntentPayloadI = {
-        amount: amount,
+        amount: amount / 100,
+        shipping_cost_cents: shippingCostCents,
+        discount_cents: discountCents,
         currency: "eur",
         line_items: lineItems,
         shipping_address: shippingAddress,
@@ -118,7 +128,7 @@ export function usePaymentForm({
         mapAddPaymentInfoEvent({ lineItems, amount }),
       );
 
-      const { error: confirmError, paymentIntent } = await stripe
+      const { error: confirmError, paymentIntent } = await stripe!
         .confirmCardPayment(clientSecret, {
           payment_method: {
             card: cardElement,
