@@ -4,8 +4,10 @@ on:
   pull_request:
     # ready_for_review so a draft PR to main picks up the acceptance job once it is marked ready.
     types: [opened, synchronize, reopened, ready_for_review]
+  # Only main: changes reach dev through pull requests, which already run CI,
+  # so a push trigger on dev would duplicate every check on the dev → main PR.
   push:
-    branches: [dev, main]
+    branches: [main]
   workflow_dispatch:
 
 # One run per branch/PR: a new push cancels the previous in-flight run.
