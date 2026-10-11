@@ -8,6 +8,7 @@ import {
   createStripeClient,
   resolveStripeMode,
 } from "../_shared/stripeConfig.ts"
+import "../_shared/sentry.ts";
 
 // Credit-specific error codes
 const CreditErrors = {

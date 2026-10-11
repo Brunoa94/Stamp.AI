@@ -4,6 +4,7 @@ import { validateEnvVars } from "../_shared/validators.ts";
 import { capturePayPalOrder, getPayPalOrder } from "../_shared/paypal.ts";
 import type { PayPalCaptureRequestI, PayPalCaptureResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import "../_shared/sentry.ts";
 
 /**
  * Helper to call Supabase REST API directly without the client library

@@ -4,6 +4,7 @@ import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { parseVariantColorSize } from "../_shared/colorValidation.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
 import { requireUser } from '../_shared/authGuard.ts'
+import "../_shared/sentry.ts";
 
 // Environment variables will be validated when needed
 

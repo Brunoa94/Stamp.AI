@@ -16,6 +16,7 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 import { requireUser } from "../_shared/authGuard.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
 import { fetchPrintify } from "../_shared/fetchWithTimeout.ts";
+import "../_shared/sentry.ts";
 
 // Initialize Supabase
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;

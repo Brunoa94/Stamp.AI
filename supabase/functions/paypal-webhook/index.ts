@@ -6,6 +6,7 @@ import { verifyPayPalWebhook } from "../_shared/paypal.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
 import { claimWebhookEvent, releaseWebhookEvent } from "../_shared/webhookEvents.ts";
 import { settlePaidOrder } from "../_shared/paidOrderSettlement.ts";
+import "../_shared/sentry.ts";
 
 serve(async (req) => {
   const corsHeaders = corsHeadersFor(req, { extraAllowedHeaders: ["paypal-transmission-id", "paypal-transmission-time", "paypal-transmission-sig", "paypal-cert-url", "paypal-auth-algo"] });

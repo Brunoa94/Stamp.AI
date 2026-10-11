@@ -14,6 +14,7 @@ import type {
 } from "./mapping.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
 import { fetchPrintify } from "../_shared/fetchWithTimeout.ts";
+import { withCronMonitor } from "../_shared/sentry.ts";
 
 const BATCH_SIZE = 100;
 const CONCURRENCY = 5;
@@ -166,7 +167,8 @@ async function syncOrder(
  * printify_order_id, reads their current state from the Printify API and
  * updates status, printify_status and tracking fields when they changed.
  */
-serve(async (req) => {
+// pg_cron runs this function; each run is a Sentry Cron check-in.
+serve((req) => withCronMonitor("sync-printify-orders", async () => {
   const corsHeaders = corsHeadersFor(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
@@ -263,4 +265,4 @@ serve(async (req) => {
     console.error("Error syncing Printify orders:", error);
     return handleError(error, corsHeaders);
   }
-});
+}));

@@ -4,6 +4,7 @@ import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { requireUser } from "../_shared/authGuard.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
 import { fetchPrintify } from "../_shared/fetchWithTimeout.ts"
+import "../_shared/sentry.ts";
 
 // Environment variables will be validated when needed
 

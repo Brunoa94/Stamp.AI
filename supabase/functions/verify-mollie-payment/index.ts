@@ -5,6 +5,7 @@ import { supabaseRest } from "../_shared/supabase.ts";
 import { getMolliePayment, isMolliePaymentPaid, mapMollieStatusToInternal } from "../_shared/mollie.ts";
 import type { MollieVerifyRequestI, MollieVerifyResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import "../_shared/sentry.ts";
 
 serve(async (req) => {
   const corsHeaders = corsHeadersFor(req);

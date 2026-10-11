@@ -1,26 +1,9 @@
-// This file configures the initialization of Sentry for edge features (middleware, edge routes, and so on).
-// The config you add here will be used whenever one of the edge features is loaded.
-// Note that this config is unrelated to the Vercel Edge Runtime and is also required when running locally.
+// Sentry for edge features (middleware, edge routes). Unrelated to the
+// Vercel Edge Runtime and also required when running locally. Options are
+// shared with the other runtimes; Sentry is off unless NEXT_PUBLIC_SENTRY_DSN is set.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
+import { buildSentryOptions } from "@/lib/observability/sentryConfig";
 
-Sentry.init({
-  // Disabled on this branch: no errors, logs, traces or replays are sent to Sentry.
-  enabled: false,
-
-  dsn: "https://f81c92c4cb15a656c494024072bfa61c@o4511877228527616.ingest.de.sentry.io/4511877243469904",
-
-  // Sample 10% of traces in production to reduce costs while maintaining visibility
-  tracesSampleRate: 0.1,
-
-  // Enable logs to be sent to Sentry
-  enableLogs: true,
-
-  dataCollection: {
-    // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:
-    // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#dataCollection
-    // userInfo: false,
-    // httpBodies: [],
-  },
-});
+Sentry.init(buildSentryOptions());

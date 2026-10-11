@@ -12,6 +12,7 @@ import {
 import { withoutOrderId } from "../_shared/checkoutPricingRules.ts";
 import type { MolliePaymentRequestI, MolliePaymentResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import "../_shared/sentry.ts";
 
 serve(async (req) => {
   const corsHeaders = corsHeadersFor(req);

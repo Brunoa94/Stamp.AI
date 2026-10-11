@@ -8,6 +8,7 @@ import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
 import { fetchPrintify } from "../_shared/fetchWithTimeout.ts"
 import { matchesPricedItems, normalizeLineItems, type PricedItemRecordI } from "../_shared/checkoutPricingRules.ts"
+import "../_shared/sentry.ts";
 
 // Environment variables will be validated when needed
 

@@ -16,6 +16,7 @@ import {
 import { withoutOrderId } from "../_shared/checkoutPricingRules.ts";
 import type { PaymentIntentResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import "../_shared/sentry.ts";
 
 /**
  * Verify authentication - accepts both user JWT tokens and service role key

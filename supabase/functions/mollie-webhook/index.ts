@@ -1,11 +1,13 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { FunctionError } from "../_shared/errors.ts";
+import { reportError } from "../_shared/errorReporting.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { getMolliePayment, mapMollieStatusToInternal, isMolliePaymentPaid } from "../_shared/mollie.ts";
 import { claimWebhookEvent, releaseWebhookEvent } from "../_shared/webhookEvents.ts";
 import { settlePaidOrder } from "../_shared/paidOrderSettlement.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
 import { isValidMolliePaymentId } from "../_shared/molliePaymentId.ts";
+import "../_shared/sentry.ts";
 
 serve(async (req) => {
   const corsHeaders = corsHeadersFor(req);
@@ -144,6 +146,7 @@ serve(async (req) => {
     return acknowledge();
   } catch (error) {
     console.error("Mollie webhook error:", error);
+    reportError(error, { functionName: "mollie-webhook" });
     // A 500 makes Mollie retry the delivery later.
     return new Response(JSON.stringify({ error: "PROCESSING_ERROR" }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

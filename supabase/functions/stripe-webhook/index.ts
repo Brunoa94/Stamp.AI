@@ -13,6 +13,7 @@ import { supabaseRest } from "../_shared/supabase.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
 import { claimWebhookEvent, releaseWebhookEvent } from '../_shared/webhookEvents.ts'
 import { settlePaidOrder } from '../_shared/paidOrderSettlement.ts'
+import "../_shared/sentry.ts";
 
 /**
  * Stripe Payment Intent interface for webhook handling

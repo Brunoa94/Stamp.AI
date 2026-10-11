@@ -4,6 +4,7 @@ import { requireUser } from "../_shared/authGuard.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
 import { finalizePaidOrder } from "../_shared/finalizePaidOrder.ts";
 import { isPaymentProvider } from "../_shared/orderFinalizationRules.ts";
+import "../_shared/sentry.ts";
 
 /**
  * Creates (or returns) the paid order for a completed checkout payment.

@@ -10,6 +10,7 @@ import { verifyPaidPayment } from "../_shared/verifyPaidPayment.ts";
 import { createStripeClient, resolveStripeModeForPaymentIntent } from "../_shared/stripeConfig.ts";
 import { requirePaymentCurrency } from "../_shared/paymentProof.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import "../_shared/sentry.ts";
 
 /**
  * Idempotency guard — check whether this order already has a refund record.
