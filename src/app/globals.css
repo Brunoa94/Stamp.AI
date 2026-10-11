@@ -163,7 +163,7 @@
   }
 
   .font-heading {
-    font-family: var(--font-sanchez), var(--font-outfit), sans-serif;
+    font-family: var(--font-sanchez), sans-serif;
     letter-spacing: -0.01em;
     font-weight: 600;
     -webkit-text-stroke: 0.3px currentColor;

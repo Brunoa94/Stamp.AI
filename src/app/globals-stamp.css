@@ -98,10 +98,6 @@
    STAMP LUXURY THEME UTILITIES
    ========================================== */
 
-.font-outfit {
-  font-family: var(--font-outfit), sans-serif;
-}
-
 .font-playfair {
   font-family: var(--font-indie-flower), var(--font-playfair), serif;
 }
