@@ -91,6 +91,17 @@ const nextConfig: NextConfig = {
   // leaves stale webpack artifacts that make Turbopack hang compiling /stamp.
   distDir: process.env.NEXT_DIST_DIR || ".next",
 
+  // The acceptance suite runs every spec on desktop, then again on mobile,
+  // against a webpack dev server. By default it disposes routes idle for 60s,
+  // so mobile tests recompile /checkout and /api/generate-image mid-test and
+  // blow past their 15s waits. Keep every compiled route in memory instead.
+  ...(process.env.STAMP_ACCEPTANCE_TESTS === "1" && {
+    onDemandEntries: {
+      maxInactiveAge: 24 * 60 * 60 * 1000,
+      pagesBufferLength: 1000,
+    },
+  }),
+
   // External packages that use native binaries - needed for Vercel serverless
   serverExternalPackages: ["sharp"],
 
