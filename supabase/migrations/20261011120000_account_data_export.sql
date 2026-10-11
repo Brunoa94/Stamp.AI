@@ -61,15 +61,15 @@ BEGIN
         to_jsonb(o) || jsonb_build_object(
           'items', (
             SELECT COALESCE(jsonb_agg(to_jsonb(oi) ORDER BY oi.created_at), '[]'::jsonb)
-            FROM public.order_items oi WHERE oi.order_id = o.id
+            FROM public.order_items oi WHERE oi.order_id::text = o.id::text
           ),
           'status_history', (
             SELECT COALESCE(jsonb_agg(to_jsonb(h) ORDER BY h.created_at), '[]'::jsonb)
-            FROM public.order_status_history h WHERE h.order_id = o.id
+            FROM public.order_status_history h WHERE h.order_id::text = o.id::text
           ),
           'refunds', (
             SELECT COALESCE(jsonb_agg(to_jsonb(r) ORDER BY r.refunded_at), '[]'::jsonb)
-            FROM public.refunds r WHERE r.order_id = o.id
+            FROM public.refunds r WHERE r.order_id::text = o.id::text
           )
         ) ORDER BY o.created_at
       ), '[]'::jsonb)
@@ -81,7 +81,7 @@ BEGIN
       SELECT COALESCE(jsonb_agg(to_jsonb(pt) ORDER BY pt.created_at), '[]'::jsonb)
       FROM public.payment_transactions pt
       WHERE pt.user_id = v_uid
-         OR pt.order_id IN (SELECT id FROM public.orders WHERE user_id = v_uid)
+         OR pt.order_id::text IN (SELECT id::text FROM public.orders WHERE user_id = v_uid)
     ),
 
     'payment_recovery', (
@@ -96,7 +96,7 @@ BEGIN
       SELECT COALESCE(jsonb_agg((to_jsonb(i) - 'pdf_bucket' - 'pdf_path') ORDER BY i.issued_at), '[]'::jsonb)
       FROM public.invoices i
       WHERE i.user_id = v_uid
-         OR i.order_id IN (SELECT id FROM public.orders WHERE user_id = v_uid)
+         OR i.order_id::text IN (SELECT id::text FROM public.orders WHERE user_id = v_uid)
     ),
 
     'carts', (

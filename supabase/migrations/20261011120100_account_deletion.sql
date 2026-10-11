@@ -78,6 +78,8 @@ DECLARE
   v_open_orders JSONB;
   v_pending_recoveries INTEGER;
   v_unresolved_refunds INTEGER;
+  -- order_id is uuid on some tables and text on others (refund_failures,
+  -- payment_transactions), so ids are compared as text.
   v_order_ids UUID[];
   v_invoice_pdfs JSONB;
   v_orders_count INTEGER := 0;
@@ -121,7 +123,7 @@ BEGIN
 
   SELECT count(*) INTO v_unresolved_refunds
   FROM public.refund_failures rf
-  WHERE rf.order_id IN (SELECT id FROM public.orders WHERE user_id = v_uid)
+  WHERE rf.order_id::text IN (SELECT id::text FROM public.orders WHERE user_id = v_uid)
     AND rf.resolved_at IS NULL
     AND COALESCE(rf.status, '') NOT IN ('resolved', 'refunded_manually');
 
@@ -147,7 +149,7 @@ BEGIN
          )), '[]'::jsonb)
   INTO v_invoice_pdfs
   FROM public.invoices i
-  WHERE (i.user_id = v_uid OR i.order_id = ANY(v_order_ids))
+  WHERE (i.user_id = v_uid OR i.order_id::text = ANY(v_order_ids::text[]))
     AND i.pdf_path IS NOT NULL;
 
   -- ---------------------------------------------------
@@ -156,7 +158,7 @@ BEGIN
   UPDATE public.order_items
   SET custom_image_url = c_tombstone_image,
       design_config = NULL
-  WHERE order_id = ANY(v_order_ids);
+  WHERE order_id::text = ANY(v_order_ids::text[]);
 
   UPDATE public.orders
   SET user_id = NULL,
@@ -176,7 +178,7 @@ BEGIN
       customer_name = NULL,
       billing_address = NULL,
       shipping_address = NULL
-  WHERE user_id = v_uid OR order_id = ANY(v_order_ids);
+  WHERE user_id = v_uid OR order_id::text = ANY(v_order_ids::text[]);
   GET DIAGNOSTICS v_invoices_count = ROW_COUNT;
 
   UPDATE public.payment_transactions
@@ -186,7 +188,7 @@ BEGIN
       stripe_customer_id = NULL,
       payment_method_details = NULL,
       metadata = NULL
-  WHERE user_id = v_uid OR order_id = ANY(v_order_ids);
+  WHERE user_id = v_uid OR order_id::text = ANY(v_order_ids::text[]);
   GET DIAGNOSTICS v_payments_count = ROW_COUNT;
 
   UPDATE public.payment_recovery
@@ -199,11 +201,11 @@ BEGIN
       metadata = NULL
   WHERE user_id = v_uid
      OR (v_email IS NOT NULL AND lower(user_email) = lower(v_email))
-     OR order_id = ANY(v_order_ids);
+     OR order_id::text = ANY(v_order_ids::text[]);
 
   UPDATE public.refunds
   SET metadata = NULL
-  WHERE order_id = ANY(v_order_ids);
+  WHERE order_id::text = ANY(v_order_ids::text[]);
 
   -- ---------------------------------------------------
   -- Delete personal data with no retention duty
