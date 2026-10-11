@@ -3,6 +3,7 @@
 import { readFileSync } from 'node:fs';
 import { test, expect, unwrap } from '../support/fixtures.mjs';
 import { enterUpload, IMAGE, describeDesign, browseCatalogGroup } from '../support/browser.mjs';
+import { selectProduct } from '../support/customization.mjs';
 const png = `data:image/png;base64,${readFileSync(IMAGE).toString('base64')}`;
 async function history(page, entries) {
   await page.addInitScript(value => localStorage.setItem('stamp:generated-images', JSON.stringify({ entries: value })), entries);
@@ -67,12 +68,7 @@ for (const category of ['Mug', 'Canvas', 'Journal', 'Pillow', 'Socks', 'Tote']) 
     await page.getByRole('button', { name: /proceed with previous photos/i }).filter({ visible: true }).first().click();
     await page.getByRole('button', { name: /use this image/i }).filter({ visible: true }).click();
     const product = page.getByRole('button', { name: new RegExp(`^select .*${category}`, 'i') }).first();
-    if (await product.count() === 0) {
-      const showMore = page.locator('#step-5').getByRole('button', { name: /show .* more/i });
-      await expect(showMore).toBeVisible();
-      await showMore.click();
-    }
-    await product.click();
+    await selectProduct(page, product);
     await page.getByRole('button', { name: /continue to customization/i }).filter({ visible: true }).click();
     const colors = page.getByRole('button', { name: /^select .* color$/i });
     if (category === 'Journal') {

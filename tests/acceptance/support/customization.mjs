@@ -2,15 +2,19 @@ import { expect } from '@playwright/test';
 import { generate } from './browser.mjs';
 import { required } from './environment.mjs';
 
+// The product grid renders after the step transition; wait for it before
+// deciding whether the product sits behind "Show more", or the check races it.
+export async function selectProduct(page, product) {
+  const showMore = page.locator('#step-5').getByRole('button', { name: /show .* more/i });
+  await expect(product.or(showMore).first()).toBeVisible();
+  if (!(await product.isVisible())) await showMore.click();
+  await product.click();
+}
 export async function customize(page, env, productName) {
   expect((await generate(page)).status()).toBe(200);
   await page.getByRole('button', { name: /use this image/i }).filter({ visible: true }).click();
   const name = productName || required(env, 'TEST_PRODUCT_NAME');
-  const product = page.locator('#step-5').getByRole('button', { name: `Select ${name}`, exact: true });
-  if (await product.count() === 0) {
-    await page.locator('#step-5').getByRole('button', { name: /show .* more/i }).click();
-  }
-  await product.click();
+  await selectProduct(page, page.locator('#step-5').getByRole('button', { name: `Select ${name}`, exact: true }));
   await page.getByRole('button', { name: /continue to customization/i }).filter({ visible: true }).click();
   await expect(page.getByRole('heading', { name: /customize your product/i })).toBeVisible();
 }
