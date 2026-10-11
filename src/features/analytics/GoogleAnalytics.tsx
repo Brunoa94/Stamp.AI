@@ -4,10 +4,21 @@ import { useEffect } from "react";
 import Script from "next/script";
 import { AnalyticsService } from "@/shared/services/analyticsService";
 import { useAnalyticsConsent } from "./lib/hooks/useAnalyticsConsent";
-import { buildGtagConsent } from "./lib/helpers/consent";
+import {
+  buildGtagConsent,
+  readConsent,
+  type AnalyticsConsentType,
+} from "./lib/helpers/consent";
 import type { GtagFunctionT } from "./types/analyticsTypes";
 
-/** Defines window.gtag (a dataLayer queue) with Consent Mode defaulting to denied. */
+/** The consent state last handed to gtag, so only real changes are pushed. */
+let appliedConsent: AnalyticsConsentType | null = null;
+
+/**
+ * Defines window.gtag (a dataLayer queue). The Consent Mode default is the
+ * visitor's stored decision, or denied when there is none: page views queued
+ * during hydration must not be sent as denied and then again as granted.
+ */
 function initGtag(measurementId: string): void {
   if (typeof window.gtag === "function") return;
   const dataLayer = (window.dataLayer = window.dataLayer || []);
@@ -17,7 +28,8 @@ function initGtag(measurementId: string): void {
     dataLayer.push(arguments);
   };
   window.gtag = gtag;
-  gtag("consent", "default", buildGtagConsent("denied"));
+  appliedConsent = readConsent() ?? "denied";
+  gtag("consent", "default", buildGtagConsent(appliedConsent));
   gtag("js", new Date());
   gtag("config", measurementId, { send_page_view: false });
 }
@@ -40,7 +52,8 @@ export function GoogleAnalytics() {
   useEffect(() => {
     if (!measurementId) return;
     initGtag(measurementId);
-    if (consent === "granted" || consent === "denied") {
+    if ((consent === "granted" || consent === "denied") && consent !== appliedConsent) {
+      appliedConsent = consent;
       window.gtag?.("consent", "update", buildGtagConsent(consent));
     }
   }, [measurementId, consent]);

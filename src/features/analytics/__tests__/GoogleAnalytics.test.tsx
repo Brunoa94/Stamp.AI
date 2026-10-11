@@ -34,6 +34,17 @@ describe("GoogleAnalytics", () => {
     expect(updates.at(-1)?.[2]).toMatchObject({ analytics_storage: "granted" });
   });
 
+  it("starts from a stored grant so queued page views are never sent as denied (GA-01)", () => {
+    writeConsent("granted");
+    const { queryByTestId } = render(<GoogleAnalytics />);
+
+    const entries = window.dataLayer!.map((entry) => Array.from(entry as ArrayLike<unknown>));
+    expect(entries[0]).toEqual(["consent", "default", expect.objectContaining({ analytics_storage: "granted" })]);
+    // No denied -> granted switch, which makes gtag send a page view twice.
+    expect(entries.filter(([command, mode]) => command === "consent" && mode === "update")).toEqual([]);
+    expect(queryByTestId("gtag-js")).not.toBeNull();
+  });
+
   it("renders nothing without a measurement id", () => {
     vi.stubEnv("NEXT_PUBLIC_GA_MEASUREMENT_ID", "");
     render(<GoogleAnalytics />);
