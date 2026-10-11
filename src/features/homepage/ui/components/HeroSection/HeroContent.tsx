@@ -18,6 +18,10 @@ import { HeroAnimatedTitle } from "./HeroAnimatedTitle";
 import { HeroSecurityBadge } from "@/features/ui/trust/HeroSecurityBadge";
 import { OrdersFulfilledCounter } from "@/features/ui/trust/OrdersFulfilledCounter";
 import { TrustpilotWidget } from "@/features/ui/trust/TrustpilotWidget";
+import {
+  TRUST_ORDER_METRICS,
+  TRUST_SOCIAL_PROOF_ENABLED,
+} from "@/shared/constants/trustMetrics";
 import Image from "next/image";
 
 export function HeroContent() {
@@ -104,8 +108,15 @@ export function HeroContent() {
       {/* Trust signals - above fold */}
       <div className="mt-5 sm:mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-4">
         <HeroSecurityBadge />
-        <OrdersFulfilledCounter variant="default" count={10000} />
-        <TrustpilotWidget variant="compact" />
+        {TRUST_SOCIAL_PROOF_ENABLED && (
+          <>
+            <OrdersFulfilledCounter
+              variant="default"
+              count={TRUST_ORDER_METRICS.ordersFulfilled}
+            />
+            <TrustpilotWidget variant="compact" />
+          </>
+        )}
       </div>
     </div>
   );

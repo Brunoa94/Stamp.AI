@@ -20,6 +20,7 @@ import { HomeProcessSection } from "./sections/HomeProcessSection";
 import { HomeTrustGuaranteesSection } from "./sections/HomeTrustGuaranteesSection";
 import { HomeCtaSection } from "./sections/HomeCtaSection";
 import { HomeReviewsSection } from "./sections/HomeReviewsSection";
+import { TRUST_SOCIAL_PROOF_ENABLED } from "@/shared/constants/trustMetrics";
 import { HomeFaqSection } from "./sections/HomeFaqSection";
 import { HomeStorySection } from "./sections/HomeStorySection";
 import { HomeProductOfMonthSection } from "./sections/HomeProductOfMonthSection";
@@ -61,7 +62,7 @@ export function HomepageContent({
       />
       <HomeTrustGuaranteesSection />
       <HomeCtaSection />
-      <HomeReviewsSection />
+      {TRUST_SOCIAL_PROOF_ENABLED && <HomeReviewsSection />}
       <HomeFaqSection />
     </div>
   );
