@@ -18,6 +18,8 @@ interface UsePaymentFormProps {
   promoCode?: string;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
+  /** Cart being bought; lets the payment webhook name the order items. */
+  cartId?: string | null;
   testMode?: boolean;
   onSuccess?: (
     paymentIntent: Pick<PaymentIntent, "id" | "status" | "client_secret">,
@@ -44,6 +46,7 @@ export function usePaymentForm({
   promoCode,
   lineItems,
   shippingAddress,
+  cartId,
   testMode = false,
   onSuccess,
   onError,
@@ -86,9 +89,10 @@ export function usePaymentForm({
         shipping_address: shippingAddress,
         // Selects the Stripe credential set (live vs test) on the server.
         test_mode: isTestMode,
-        // Note: order_id is NOT set here because the order doesn't exist yet.
-        // The order is created after payment succeeds, then linkPaymentTransactionToOrder
-        // sets payment_transactions.order_id which the webhook uses to find the order.
+        // The order does not exist yet: it is created on the server from this
+        // payment, by the return page or by the webhook, whichever is first.
+        // The webhook reads the item names from this cart.
+        ...(cartId ? { metadata: { cartId } } : {}),
       };
 
       if (isTestMode) {
