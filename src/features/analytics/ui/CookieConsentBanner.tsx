@@ -43,7 +43,7 @@ export function CookieConsentBanner() {
     <section
       role="region"
       aria-label={t("title")}
-      className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-xl rounded-md border border-(--color-stamp-divider) bg-(--color-stamp-cream) p-6 shadow-lg md:left-6 md:right-auto"
+      className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-xl rounded-md border border-(--color-stamp-divider) bg-(--color-stamp-cream) p-4 sm:p-6 shadow-lg md:left-6 md:right-auto"
     >
       <Span as="div" variant="label" className="text-(--color-stamp-taupe)">
         {t("title")}
@@ -57,7 +57,7 @@ export function CookieConsentBanner() {
           {t("policyLink")}
         </Link>
       </Paragraph>
-      <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+      <div className="mt-3 flex flex-wrap gap-2">
         <Button ref={acceptRef} variant="primary-compact" onClick={() => decide("granted")}>
           {t("accept")}
         </Button>

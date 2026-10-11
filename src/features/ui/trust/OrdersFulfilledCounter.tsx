@@ -18,10 +18,12 @@ interface OrdersFulfilledCounterProps {
 
 export function OrdersFulfilledCounter({
   className,
-  count = 10000,
+  count,
   variant = "default",
 }: OrdersFulfilledCounterProps) {
   const t = useTranslations("trust.socialProof");
+
+  if (count === undefined || count <= 0) return null;
 
   // Format number with K suffix for thousands
   const formatCount = (num: number): string => {

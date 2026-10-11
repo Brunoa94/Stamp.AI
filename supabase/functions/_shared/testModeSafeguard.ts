@@ -1,3 +1,4 @@
+import { FunctionError } from "./errors.ts";
 /**
  * Test Mode Production Safeguard
  *
@@ -50,8 +51,8 @@ export function isProductionEnvironment(): boolean {
  * Validate and enforce test mode settings
  *
  * In production:
- * - Forces is_test = false
- * - Logs critical warning if client sent is_test = true
+ * - Rejects requests for test mode
+ * - Never silently turns a test request into production work
  * - Returns corrected value
  *
  * In non-production:
@@ -70,18 +71,7 @@ export function enforceTestMode(
 
   if (isProd) {
     if (clientTestMode === true) {
-      console.error('🚨 CRITICAL: Test mode requested in PRODUCTION environment!');
-      console.error(`   Context: ${context}`);
-      console.error('   Client requested: is_test = true');
-      console.error('   FORCING: is_test = false');
-      console.error('   This prevents real customers from receiving test orders!');
-
-      // TODO: Send alert to monitoring system
-      // await sendAlert({
-      //   severity: 'critical',
-      //   message: 'Test mode requested in production',
-      //   context,
-      // });
+      throw new FunctionError(400, "TEST_MODE_NOT_ALLOWED", "Test orders are not allowed in production");
     }
 
     // Always force false in production

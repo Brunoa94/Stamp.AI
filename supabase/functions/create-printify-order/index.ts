@@ -91,7 +91,7 @@ serve(async (req) => {
       shipping_method,
       shipping_address,
       address_to,
-      is_test = true, // Default to test mode for safety; client must explicitly set false for production
+      is_test = false, // Explicit test mode is accepted only on the isolated test environment
       metadata,
       use_sample_order = false, // Flag to create a sample order for testing
       auto_cancel = false, // Flag to automatically cancel order after creation (for testing)
@@ -101,19 +101,22 @@ serve(async (req) => {
     // this, any authenticated user could pass another user's order_id and mark
     // it paid/confirmed. Service-role callers (server-to-server, recovery) are
     // trusted to act on any order.
+    let finalAddressTo = address_to || shipping_address
     const requestedOrderId = metadata?.order_id
     if (userId !== 'service-role') {
       if (!requestedOrderId) {
         throw ErrorCodes.INVALID_REQUEST_BODY()
       }
-      const ownership = await supabaseRest<Array<{ id: string; payment_status: string | null; printify_order_id: string | null }>>(
-        `orders?id=eq.${encodeURIComponent(String(requestedOrderId))}&user_id=eq.${encodeURIComponent(userId)}&select=id,payment_status,printify_order_id`,
+      const ownership = await supabaseRest<Array<{ id: string; payment_status: string | null; printify_order_id: string | null; shipping_address: Record<string, unknown> | null }>>(
+        `orders?id=eq.${encodeURIComponent(String(requestedOrderId))}&user_id=eq.${encodeURIComponent(userId)}&select=id,payment_status,printify_order_id,shipping_address`,
         'GET',
       )
       if (!Array.isArray(ownership.data) || ownership.data.length === 0) {
         throw ErrorCodes.INVALID_REQUEST_BODY()
       }
       const [ownedOrder] = ownership.data
+      if (use_sample_order || auto_cancel || !ownedOrder.shipping_address) throw ErrorCodes.INVALID_REQUEST_BODY()
+      finalAddressTo = ownedOrder.shipping_address
       if (ownedOrder.printify_order_id) {
         throw new FunctionError(409, 'ALREADY_FULFILLED', 'The order was already sent to Printify')
       }
@@ -127,7 +130,7 @@ serve(async (req) => {
         'GET',
       )
       const paid = (payments.data ?? []).filter((payment) =>
-        !['failed', 'canceled', 'refunded'].includes(payment.status) && Array.isArray(payment.metadata?.priced_items)
+        payment.status === 'succeeded' && Array.isArray(payment.metadata?.priced_items)
       )
       if (!requested || paid.length !== 1 || !matchesPricedItems(requested, paid[0].metadata!.priced_items!)) {
         throw new FunctionError(409, 'ITEMS_NOT_PAID', 'Requested items do not match the paid checkout')
@@ -143,8 +146,6 @@ serve(async (req) => {
     const enforcedTestMode = testModeValidation.testMode;
 
     // Use shipping_address if address_to is not provided
-    let finalAddressTo = address_to || shipping_address
-
     // Validate Printify configuration
     const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken()
     const PRINTIFY_SHOP_ID = validateEnvVars.printifyShopId()

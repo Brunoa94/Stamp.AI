@@ -111,9 +111,9 @@ async function linkTransaction(transactionId: string, orderId: string): Promise<
   const result = await supabaseRest(
     `payment_transactions?id=eq.${transactionId}`,
     "PATCH",
-    { order_id: orderId, updated_at: new Date().toISOString() },
+    { order_id: orderId, status: "succeeded", updated_at: new Date().toISOString() },
   );
-  if (result.error) console.error("Could not link payment transaction to order", { transactionId, orderId });
+  if (result.error) throw new Error("Could not persist verified payment state");
 }
 
 function existing(order: OrderRefI): FinalizedOrderI {

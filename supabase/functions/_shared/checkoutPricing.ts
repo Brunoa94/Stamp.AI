@@ -56,7 +56,14 @@ function rejectLineItems(message: string): never {
 }
 
 /** Existing Printify products are priced through their blueprint. */
-async function resolveProductBlueprint(item: Extract<CheckoutLineItemT, { kind: "product" }>): Promise<number> {
+async function resolveProductBlueprint(item: Extract<CheckoutLineItemT, { kind: "product" }>, userId: string): Promise<number> {
+  const ownership = await supabaseRest<Array<{ user_id: string | null }>>(
+    `products?printify_product_id=eq.${encodeURIComponent(item.productId)}&select=user_id`, "GET",
+  );
+  if (ownership.error) throw new Error("Could not verify product ownership");
+  if (ownership.data?.some((product) => product.user_id !== null && product.user_id !== userId)) {
+    throw new FunctionError(404, "PRODUCT_NOT_FOUND", "Product not found");
+  }
   const response = await fetchPrintify(
     `/v1/shops/${validateEnvVars.printifyShopId()}/products/${encodeURIComponent(item.productId)}.json`,
     validateEnvVars.printifyToken(),
@@ -82,7 +89,7 @@ async function loadPromo(code: string): Promise<PromoRowI | null> {
 }
 
 export async function priceCheckout(
-  { lineItems, promoCode }: { lineItems: unknown; promoCode?: unknown },
+  { lineItems, promoCode, userId }: { lineItems: unknown; promoCode?: unknown; userId: string },
 ): Promise<CheckoutPricingI> {
   const normalized = normalizeLineItems(lineItems);
   if (!normalized) rejectLineItems("Every line item needs a product, a variant and a quantity from 1 to 99");
@@ -91,7 +98,7 @@ export async function priceCheckout(
   for (const item of normalized) {
     items.push(item.kind === "blueprint"
       ? { blueprintId: item.blueprintId, variantId: item.variantId, quantity: item.quantity }
-      : { blueprintId: await resolveProductBlueprint(item), variantId: item.variantId, quantity: item.quantity, productId: item.productId });
+      : { blueprintId: await resolveProductBlueprint(item, userId), variantId: item.variantId, quantity: item.quantity, productId: item.productId });
   }
 
   const blueprintIds = [...new Set(items.map((item) => item.blueprintId))];
