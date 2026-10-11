@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { OrderWithItemsT } from "@/shared/types/order";
 import { toast } from "sonner";
@@ -20,6 +20,9 @@ export function useCancelOrder() {
     const [orderToCancel, setOrderToCancel] = useState<OrderWithItemsT | null>(
         null,
     );
+    // Set synchronously so a double-click cannot send a second request
+    // before React re-renders with isPending.
+    const cancellingRef = useRef(false);
     const queryClient = useQueryClient();
     const { handleError } = useErrorHandler();
 
@@ -59,6 +62,9 @@ export function useCancelOrder() {
 
                 handleCloseCancelModal();
             },
+            onSettled: () => {
+                cancellingRef.current = false;
+            },
             onError: (error: Error) => {
                 handleError(
                     new Error(t("failedToCancel", { message: error.message })),
@@ -83,13 +89,14 @@ export function useCancelOrder() {
     };
 
     const handleConfirmCancel = () => {
-        if (!orderToCancel) return;
+        if (!orderToCancel || cancellingRef.current) return;
         if (!canCancelOrder(orderToCancel)) {
             handleError(new Error(t("cannotCancel")));
             handleCloseCancelModal();
             return;
         }
 
+        cancellingRef.current = true;
         executeCancelOrder(orderToCancel.id);
     };
 

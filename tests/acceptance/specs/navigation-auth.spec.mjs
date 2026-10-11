@@ -59,6 +59,43 @@ for (const route of ['/orders', '/dashboard']) {
     await expect(page).toHaveURL(/\/\?redirectedFrom=/);
   });
 }
+async function signInFromPrompt(page, env) {
+  const dialog = page.getByRole('dialog').first();
+  await expect(dialog.locator('input[type="password"]')).toBeVisible();
+  await dialog.getByLabel(/email/i).fill(env.TEST_USER_EMAIL);
+  await dialog.locator('input[type="password"]').fill(env.TEST_USER_PASSWORD);
+  await dialog.getByRole('button', { name: /^login$|^sign in$/i }).click();
+}
+test('AUTH-08 guest Stamp click prompts login and continues to the studio after sign-in', async ({ page, isMobile, env }) => {
+  await page.goto('/');
+  const openStamp = async () => {
+    if (isMobile) await page.getByRole('button', { name: /open menu/i }).click();
+    await page.getByRole('link', { name: /^stamp$|^start stamping process$/i }).filter({ visible: true }).first().click();
+  };
+  await openStamp();
+  await expect(page).toHaveURL(/\/\?redirectedFrom=%2Fstamp$/);
+  await expect(page.getByRole('dialog').locator('input[type="password"]')).toBeVisible();
+  // Dismissing clears the bounce, so a second click prompts again instead of doing nothing.
+  await page.keyboard.press('Escape');
+  await expect(page).toHaveURL(/\/$/);
+  await openStamp();
+  await signInFromPrompt(page, env);
+  await expect(page).toHaveURL(/\/stamp$/, { timeout: 30000 });
+});
+test('AUTH-08 guest deep link to orders returns there after sign-in', async ({ page, env }) => {
+  await page.goto('/orders');
+  await expect(page).toHaveURL(/\/\?redirectedFrom=%2Forders$/);
+  await signInFromPrompt(page, env);
+  await expect(page).toHaveURL(/\/orders$/, { timeout: 30000 });
+});
+for (const target of ['//evil.example', 'https://evil.example/stamp']) {
+  test(`AUTH-09 redirectedFrom ${target} neither prompts nor leaves the site`, async ({ page }) => {
+    await page.goto(`/?redirectedFrom=${encodeURIComponent(target)}`);
+    await expect(page.getByRole('main')).toBeVisible();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    expect(new URL(page.url()).host).toBe('localhost:3107');
+  });
+}
 for (const url of ['/api/fetch-custom-product?id=unknown', '/api/fetch-remote-image?url=http://127.0.0.1']) {
   test(`SEC-02 unauthenticated ${url.split('?')[0]} is protected`, async ({ request }) => {
     expect([401, 403]).toContain((await request.get(url)).status());

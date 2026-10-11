@@ -50,6 +50,67 @@ function isAlreadyCancelled(status: string | null): boolean {
 }
 
 /**
+ * Whether a refund for the order is recorded, polling briefly so a refund
+ * still being recorded by a concurrent request is seen.
+ */
+async function waitForRecordedRefund(order_id: string, attempts = 5): Promise<boolean> {
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    const result = await supabaseRest<PaymentTransactionI[]>(
+      `payment_transactions?order_id=eq.${order_id}&status=eq.refunded&select=status`,
+      "GET"
+    );
+    if (result.data && result.data.length > 0) return true;
+    if (attempt < attempts - 1) await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+  return false;
+}
+
+/**
+ * Success response for an order that is already cancelled, reporting the
+ * refund state recorded in payment_transactions.
+ */
+async function alreadyCancelledResponse(
+  order_id: string,
+  corsHeaders: Record<string, string>,
+): Promise<Response> {
+  console.log("Order is already cancelled, checking refund status...");
+
+  // Check if refund was processed
+  const refundResult = await supabaseRest<PaymentTransactionI[]>(
+    `payment_transactions?order_id=eq.${order_id}&select=payment_provider,stripe_payment_intent_id,paypal_capture_id,mollie_payment_id,amount,currency,status`,
+    "GET"
+  );
+
+  const hasRefund = refundResult.data?.some(tx => tx.status === "refunded");
+  const hasPaidTransaction = refundResult.data?.some(tx => tx.status === "succeeded");
+
+  console.log("Refund status check:", {
+    hasRefund,
+    hasPaidTransaction,
+    transactions: refundResult.data?.length || 0,
+  });
+
+  return new Response(
+    JSON.stringify({
+      success: true,
+      message: "Order is already cancelled",
+      already_cancelled: true,
+      results: {
+        order_id,
+        cancelled_at_printify: true, // Assume it was cancelled if order is cancelled
+        database_updated: true,
+        refund_processed: hasRefund,
+        refund_pending: hasPaidTransaction && !hasRefund,
+      },
+    }),
+    {
+      status: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    }
+  );
+}
+
+/**
  * Cancel an order
  *
  * This function:
@@ -103,41 +164,7 @@ serve(async (req) => {
 
     // Check if order is already cancelled - return success with refund status
     if (isAlreadyCancelled(order.status)) {
-      console.log("Order is already cancelled, checking refund status...");
-
-      // Check if refund was processed
-      const refundResult = await supabaseRest<PaymentTransactionI[]>(
-        `payment_transactions?order_id=eq.${order_id}&select=payment_provider,stripe_payment_intent_id,paypal_capture_id,mollie_payment_id,amount,currency,status`,
-        "GET"
-      );
-
-      const hasRefund = refundResult.data?.some(tx => tx.status === "refunded");
-      const hasPaidTransaction = refundResult.data?.some(tx => tx.status === "succeeded");
-
-      console.log("Refund status check:", {
-        hasRefund,
-        hasPaidTransaction,
-        transactions: refundResult.data?.length || 0,
-      });
-
-      return new Response(
-        JSON.stringify({
-          success: true,
-          message: "Order is already cancelled",
-          already_cancelled: true,
-          results: {
-            order_id,
-            cancelled_at_printify: true, // Assume it was cancelled if order is cancelled
-            database_updated: true,
-            refund_processed: hasRefund,
-            refund_pending: hasPaidTransaction && !hasRefund,
-          },
-        }),
-        {
-          status: 200,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return await alreadyCancelledResponse(order_id, corsHeaders);
     }
 
     // Check if order can be cancelled (not in production/shipped)
@@ -212,20 +239,28 @@ serve(async (req) => {
     // Step 2: Update order status in database
     console.log("Updating order status to cancelled in database");
 
-    const updateResult = await supabaseRest(
-      `orders?id=eq.${order_id}`,
+    // The update only matches an order that is not cancelled yet, so when
+    // requests race exactly one of them records the cancellation and refunds.
+    const updateResult = await supabaseRest<Array<{ id: string }>>(
+      `orders?id=eq.${order_id}&or=(status.is.null,status.not.in.(cancelled,canceled))&select=id`,
       "PATCH",
       {
         status: "cancelled",
         cancelled_at: new Date().toISOString(),
         cancellation_reason: cancellation_reason || "Cancelled by customer",
         updated_at: new Date().toISOString(),
-      }
+      },
+      { prefer: "return=representation" }
     );
 
     if (updateResult.error) {
       console.error("Failed to update order status:", updateResult.error);
       throw new Error(`Failed to update order status: ${JSON.stringify(updateResult.error)}`);
+    }
+
+    if (!updateResult.data || updateResult.data.length === 0) {
+      console.log("Order was cancelled by a concurrent request");
+      return await alreadyCancelledResponse(order_id, corsHeaders);
     }
 
     console.log("✅ Order status updated to cancelled");
@@ -296,11 +331,19 @@ serve(async (req) => {
           results.refund_id = refundData.refundId;
         } else {
           console.error("Failed to process refund:", refundData);
-          results.refund_error = refundData.message || "Unknown error";
+          results.refund_error = refundData.message || refundData.error || "Unknown error";
         }
       } catch (refundError) {
         console.error("Error processing refund:", refundError);
         results.refund_error = String(refundError);
+      }
+
+      // A concurrent refund request for this order (another tab, or a direct
+      // process-refund call) may have refunded it while ours failed.
+      if (results.refund_error && await waitForRecordedRefund(order.id)) {
+        console.log("Refund was processed by a concurrent request");
+        delete results.refund_error;
+        results.refund_processed = true;
       }
     } else {
       console.log("No successful payment transaction found, skipping refund");

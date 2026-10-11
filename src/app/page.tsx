@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { HomepageContent } from "@/features/homepage/ui/HomepageContent";
+import { LoginRedirectPrompt } from "@/features/auth/components/LoginRedirectPrompt";
 import { getCachedProductsWithPricing } from "@/lib/supabase/server-cache";
 import { StructuredData } from "@/features/seo/StructuredData";
 import { faqPageSchema } from "@/features/seo/schemas/faq";
@@ -83,6 +85,10 @@ export default async function Home() {
         <StructuredData key={entry.name} data={productSchema(entry)} />
       ))}
       <HomepageContent productsWithPricing={productsWithPricing} />
+      {/* useSearchParams() requires a Suspense boundary for static prerendering */}
+      <Suspense fallback={null}>
+        <LoginRedirectPrompt />
+      </Suspense>
     </>
   );
 }

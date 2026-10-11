@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { ErrorCodes, handleError } from "../_shared/errors.ts"
+import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts"
 import { validateEnvVars } from "../_shared/validators.ts"
 import { validateAndEnforceTestMode } from "../_shared/testModeSafeguard.ts"
 import { validatePaymentAmount } from "../_shared/amountValidator.ts"
@@ -7,6 +7,7 @@ import { supabaseRest } from "../_shared/supabase.ts"
 import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
 import { fetchPrintify } from "../_shared/fetchWithTimeout.ts"
+import { matchesPricedItems, normalizeLineItems, type PricedItemRecordI } from "../_shared/checkoutPricingRules.ts"
 
 // Environment variables will be validated when needed
 
@@ -105,13 +106,31 @@ serve(async (req) => {
     // it paid/confirmed. Service-role callers (server-to-server, recovery) are
     // trusted to act on any order.
     const requestedOrderId = metadata?.order_id
-    if (userId !== 'service-role' && requestedOrderId) {
+    if (userId !== 'service-role') {
+      if (!requestedOrderId) {
+        throw ErrorCodes.INVALID_REQUEST_BODY()
+      }
       const ownership = await supabaseRest<Array<{ id: string }>>(
         `orders?id=eq.${encodeURIComponent(String(requestedOrderId))}&user_id=eq.${encodeURIComponent(userId)}&select=id`,
         'GET',
       )
       if (!Array.isArray(ownership.data) || ownership.data.length === 0) {
         throw ErrorCodes.INVALID_REQUEST_BODY()
+      }
+
+      // ✅ SECURITY: fulfil only what was priced and charged. The payment
+      // functions store the server-priced items on the transaction linked to
+      // this order; any other set of items is refused before Printify is called.
+      const requested = normalizeLineItems(line_items)
+      const payments = await supabaseRest<Array<{ status: string; metadata: { priced_items?: PricedItemRecordI[] } | null }>>(
+        `payment_transactions?order_id=eq.${encodeURIComponent(String(requestedOrderId))}&user_id=eq.${encodeURIComponent(userId)}&select=status,metadata`,
+        'GET',
+      )
+      const paid = (payments.data ?? []).filter((payment) =>
+        !['failed', 'canceled', 'refunded'].includes(payment.status) && Array.isArray(payment.metadata?.priced_items)
+      )
+      if (!requested || paid.length !== 1 || !matchesPricedItems(requested, paid[0].metadata!.priced_items!)) {
+        throw new FunctionError(409, 'ITEMS_NOT_PAID', 'Requested items do not match the paid checkout')
       }
     }
 

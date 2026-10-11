@@ -5,6 +5,7 @@ import type {
 } from "@/features/analytics/types/analyticsTypes";
 
 const MAX_QUEUE_SIZE = 50;
+const PENDING_NAVIGATION_EVENTS_KEY = "analytics_pending_navigation_events";
 
 /**
  * Centralized GA4 analytics service.
@@ -53,6 +54,50 @@ export class AnalyticsService {
     this.flush();
   }
 
+  /**
+   * Track an event that is immediately followed by a full page navigation.
+   *
+   * GA batches hits and only flushes them on unload, where the request is
+   * lost, so the event is stored and sent by the next page instead.
+   */
+  static trackAfterNavigation(
+    name: AnalyticsEventNameT,
+    params?: AnalyticsEventParamsT,
+  ): void {
+    if (!this.isBrowser() || !this.isConfigured()) {
+      this.track(name, params);
+      return;
+    }
+
+    try {
+      const pending = this.readPendingNavigationEvents();
+      pending.push({ name, params });
+      window.sessionStorage.setItem(
+        PENDING_NAVIGATION_EVENTS_KEY,
+        JSON.stringify(pending.slice(-MAX_QUEUE_SIZE)),
+      );
+    } catch {
+      this.track(name, params);
+    }
+  }
+
+  private static readPendingNavigationEvents(): QueuedAnalyticsEventT[] {
+    const stored = window.sessionStorage.getItem(PENDING_NAVIGATION_EVENTS_KEY);
+    return stored ? (JSON.parse(stored) as QueuedAnalyticsEventT[]) : [];
+  }
+
+  /** Move events stored before a navigation into the send queue. */
+  private static takePendingNavigationEvents(): void {
+    try {
+      const pending = this.readPendingNavigationEvents();
+      if (pending.length === 0) return;
+      window.sessionStorage.removeItem(PENDING_NAVIGATION_EVENTS_KEY);
+      this.queue.push(...pending);
+    } catch {
+      // Storage unavailable: nothing was stored.
+    }
+  }
+
   /** Track a page view (used by the route-change tracker). */
   static pageView(path: string): void {
     this.track("page_view", { page_path: path });
@@ -62,6 +107,7 @@ export class AnalyticsService {
   static flush(): void {
     if (!this.isBrowser() || typeof window.gtag !== "function") return;
 
+    this.takePendingNavigationEvents();
     const pending = this.queue;
     this.queue = [];
     for (const event of pending) {
@@ -72,5 +118,10 @@ export class AnalyticsService {
   /** Test-only helper to reset internal state between test cases. */
   static resetForTesting(): void {
     this.queue = [];
+    try {
+      window.sessionStorage.removeItem(PENDING_NAVIGATION_EVENTS_KEY);
+    } catch {
+      // Storage unavailable.
+    }
   }
 }

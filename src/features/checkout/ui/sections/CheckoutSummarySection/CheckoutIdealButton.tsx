@@ -24,6 +24,8 @@ interface CheckoutIdealButtonPropsI {
   amount: number;
   shippingCostCents: number;
   discountCents: number;
+  /** Applied promo code, re-validated by the payment function. */
+  promoCode?: string;
   disabled?: boolean;
 }
 
@@ -33,6 +35,7 @@ export function CheckoutIdealButton({
   amount,
   shippingCostCents,
   discountCents,
+  promoCode,
   disabled = false,
 }: CheckoutIdealButtonPropsI) {
   const t = useTranslations("checkout.idealButton");
@@ -50,6 +53,7 @@ export function CheckoutIdealButton({
         amount,
         shippingCostCents,
         discountCents,
+        promoCode,
       });
       window.location.href = checkoutUrl;
     } catch (error) {

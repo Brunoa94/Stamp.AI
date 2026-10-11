@@ -7,7 +7,12 @@ import {
   createStripeClient,
   resolveStripeMode,
 } from "../_shared/stripeConfig.ts";
-import { validatePricingAgainstDatabase, type LineItemForPricingI } from "../_shared/serverPriceService.ts";
+import {
+  priceCheckout,
+  pricingMetadata,
+  providerPricingMetadata,
+  requireClientTotal,
+} from "../_shared/checkoutPricing.ts";
 import type { PaymentIntentResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
 
@@ -79,8 +84,7 @@ serve(async (req) => {
       currency = "usd",
       line_items,
       shipping_address,
-      shipping_cost_cents = 0,
-      discount_cents = 0,
+      promo_code,
       metadata,
       payment_method, // Optional: for testing with pm_card_visa, etc.
       confirm = false, // Optional: auto-confirm payment (for testing)
@@ -93,43 +97,22 @@ serve(async (req) => {
     const stripe = createStripeClient(stripeMode, "2023-10-16");
     const validAmount = validateRequest.amount(amount);
 
-    // SERVER-SIDE PRICE VALIDATION (C4 - Amount Tampering Prevention)
-    // If line_items contain blueprint_id and printify_variant_id, validate against DB prices
-    if (line_items && Array.isArray(line_items) && line_items.length > 0) {
-      const itemsForPricing: LineItemForPricingI[] = line_items
-        .filter((item: Record<string, unknown>) => item.blueprint_id && item.printify_variant_id)
-        .map((item: Record<string, unknown>) => ({
-          blueprint_id: Number(item.blueprint_id),
-          printify_variant_id: Number(item.printify_variant_id),
-          quantity: Number(item.quantity) || 1,
-        }));
-
-      if (itemsForPricing.length > 0) {
-        const clientTotalCents = Math.round(validAmount * 100);
-        const validation = await validatePricingAgainstDatabase({
-          lineItems: itemsForPricing,
-          clientSubtotalCents: clientTotalCents - shipping_cost_cents + discount_cents,
-          shippingCostCents: shipping_cost_cents,
-          discountCents: discount_cents,
-          clientTotalCents,
-        });
-
-        if (!validation.isValid) {
-          throw new FunctionError(
-            400,
-            "PRICE_MISMATCH",
-            validation.errorMessage || "Server-side price validation failed"
-          );
-        }
-      }
+    // SERVER-SIDE PRICING (C4 - Amount Tampering Prevention)
+    // The charged amount comes from catalog prices, the promo code and the
+    // shipping rule. The client total must agree; it never sets the price.
+    if (String(currency).toLowerCase() !== "eur") {
+      throw new FunctionError(400, "INVALID_CURRENCY", "Checkout is priced in EUR");
     }
+    const pricing = await priceCheckout({ lineItems: line_items, promoCode: promo_code });
+    requireClientTotal(pricing, Math.round(validAmount * 100));
 
     // Build payment intent options
     const paymentIntentOptions: any = {
-      amount: Math.round(validAmount * 100), // Convert to cents
-      currency: currency,
+      amount: pricing.totalCents,
+      currency: "eur",
       metadata: {
         ...metadata,
+        ...providerPricingMetadata(pricing),
         user_id: userId,
         user_email: userEmail,
         line_items: JSON.stringify(line_items),
@@ -162,36 +145,37 @@ serve(async (req) => {
       );
     }
 
-    // Create payment_transactions record immediately with user_id
-    // Webhook will later update this record to 'succeeded' or 'failed'
-    try {
-      await supabaseRest(
-        "payment_transactions",
-        "POST",
-        {
+    // The transaction row carries the server pricing that fulfilment and
+    // promo redemption verify against, so the checkout cannot continue
+    // without it. Without a client secret the intent is never confirmed.
+    const transaction = await supabaseRest(
+      "payment_transactions",
+      "POST",
+      {
+        user_id: userId,
+        payment_provider: "stripe",
+        stripe_payment_intent_id: paymentIntent.id,
+        stripe_customer_id: paymentIntent.customer,
+        amount: pricing.totalCents / 100,
+        currency: "eur",
+        status: "pending",
+        payment_method_type: payment_method ? "card" : null,
+        metadata: {
+          ...metadata,
           user_id: userId,
-          payment_provider: "stripe",
-          stripe_payment_intent_id: paymentIntent.id,
-          stripe_customer_id: paymentIntent.customer,
-          amount: validAmount,
-          currency: currency.toLowerCase(),
-          status: "pending",
-          payment_method_type: payment_method ? "card" : null,
-          metadata: {
-            ...metadata,
-            user_id: userId,
-            user_email: userEmail,
-            line_items: line_items,
-            shipping_address: shipping_address,
-            [STRIPE_MODE_METADATA_KEY]: stripeMode,
-          },
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
+          user_email: userEmail,
+          line_items: line_items,
+          shipping_address: shipping_address,
+          [STRIPE_MODE_METADATA_KEY]: stripeMode,
+          ...pricingMetadata(pricing),
         },
-        { prefer: "resolution=merge-duplicates" },
-      );
-    } catch {
-      // Transaction record creation is best-effort; webhook can still process it
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      },
+      { prefer: "resolution=merge-duplicates" },
+    );
+    if (transaction.error) {
+      throw new Error("Could not record the payment transaction");
     }
 
     const response: PaymentIntentResponseI = {

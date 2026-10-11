@@ -165,6 +165,45 @@ describe("AnalyticsService", () => {
     });
   });
 
+  describe("trackAfterNavigation", () => {
+    it("should not send the event before the navigation", () => {
+      enableProductionMode();
+      const gtagMock = vi.fn();
+      window.gtag = gtagMock;
+
+      AnalyticsService.trackAfterNavigation("login", { method: "email" });
+
+      expect(gtagMock).not.toHaveBeenCalled();
+    });
+
+    it("should send the stored event once from the next page", () => {
+      enableProductionMode();
+      AnalyticsService.trackAfterNavigation("login", { method: "email" });
+
+      // The next page loads with an empty in-memory queue.
+      const gtagMock = vi.fn();
+      window.gtag = gtagMock;
+      AnalyticsService.pageView("/stamp");
+      AnalyticsService.flush();
+
+      const loginCalls = gtagMock.mock.calls.filter(([, name]) => name === "login");
+      expect(loginCalls).toEqual([["event", "login", { method: "email" }]]);
+    });
+
+    it("should track immediately when session storage is unavailable", () => {
+      enableProductionMode();
+      const gtagMock = vi.fn();
+      window.gtag = gtagMock;
+      vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+        throw new Error("blocked");
+      });
+
+      AnalyticsService.trackAfterNavigation("login", { method: "email" });
+
+      expect(gtagMock).toHaveBeenCalledWith("event", "login", { method: "email" });
+    });
+  });
+
   describe("pageView", () => {
     it("should track a page_view event with the given path", () => {
       enableProductionMode();

@@ -1,4 +1,4 @@
-import type { PayPalCaptureResponse } from "@/lib/paypal-server";
+import type { PayPalCaptureResponse, PayPalOrderResponse } from "@/lib/paypal-server";
 import type { Database } from "@/shared/types/database.types";
 
 type PaymentTransactionUpdate = Database['public']['Tables']['payment_transactions']['Update'];
@@ -33,6 +33,27 @@ export class PayPalCaptureMapper {
   /**
    * Map PayPal capture response to atomic payment capture parameters
    */
+  /**
+   * The server-priced total the payment functions stored on the transaction,
+   * or null when the transaction was not created by our server.
+   */
+  static getServerTotalCents(metadata: unknown): number | null {
+    const total = (metadata as { total_cents?: unknown } | null)?.total_cents;
+    return typeof total === "number" && Number.isSafeInteger(total) && total > 0
+      ? total
+      : null;
+  }
+
+  /** True when the PayPal order charges exactly the server total, in EUR. */
+  static matchesServerTotal(
+    units: NonNullable<PayPalOrderResponse["purchase_units"]>,
+    totalCents: number,
+  ): boolean {
+    return units.length === 1 &&
+      units[0].amount?.currency_code === "EUR" &&
+      Math.round(Number(units[0].amount.value) * 100) === totalCents;
+  }
+
   static mapToAtomicCaptureParams(
     captureResult: PayPalCaptureResponse,
     orderId: string

@@ -25,6 +25,8 @@ interface CheckoutPayPalButtonPropsI {
   amount: number;
   shippingCostCents: number;
   discountCents: number;
+  /** Applied promo code, re-validated by the payment function. */
+  promoCode?: string;
   disabled?: boolean;
 }
 
@@ -34,6 +36,7 @@ export function CheckoutPayPalButton({
   amount,
   shippingCostCents,
   discountCents,
+  promoCode,
   disabled = false,
 }: CheckoutPayPalButtonPropsI) {
   const t = useTranslations("checkout.paypalButton");
@@ -51,6 +54,7 @@ export function CheckoutPayPalButton({
         amount,
         shippingCostCents,
         discountCents,
+        promoCode,
       });
       window.location.href = approvalUrl;
     } catch (error) {

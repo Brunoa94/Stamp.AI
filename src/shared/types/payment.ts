@@ -125,8 +125,8 @@ export interface CreateCreditPaymentResponseI {
  */
 export interface CreatePaymentIntentPayloadI {
   amount: number;
-  shipping_cost_cents?: number;
-  discount_cents?: number;
+  /** Applied promo code; the server recomputes the discount from it. */
+  promo_code?: string;
   currency?: string;
   line_items: PrintifyLineItem[];
   shipping_address: ShippingAddressT;
@@ -155,8 +155,8 @@ export interface CreatePaymentIntentResponseI {
  */
 export interface CreatePayPalOrderPayloadI {
   amount: number;
-  shippingCostCents?: number;
-  discountCents?: number;
+  /** Applied promo code; the server recomputes the discount from it. */
+  promoCode?: string;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
   testMode?: boolean;
@@ -196,8 +196,8 @@ export interface CapturePayPalOrderResponseI {
  */
 export interface CreateMolliePaymentPayloadI {
   amount: number;
-  shippingCostCents?: number;
-  discountCents?: number;
+  /** Applied promo code; the server recomputes the discount from it. */
+  promoCode?: string;
   currency?: string;
   description?: string;
   lineItems: PrintifyLineItem[];

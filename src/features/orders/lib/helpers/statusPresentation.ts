@@ -66,6 +66,7 @@ export function toDisplayStatus(status: string | null | undefined): string {
   const normalized = normalizeOrderStatus(status);
   if (!normalized) return "processing";
 
+  if (normalized === "pending") return "processing";
   if (normalized === "waitingconfirmation") return "processing";
   if (normalized === "unsuccessfulconfirmation") return "cancelled";
   if (normalized === "confirmed") return "processing";
