@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts"
 import { validateEnvVars } from "../_shared/validators.ts"
 import { validateAndEnforceTestMode } from "../_shared/testModeSafeguard.ts"
-import { validatePaymentAmount } from "../_shared/amountValidator.ts"
+import { claimOrderFulfillment, releaseOrderFulfillment } from "../_shared/fulfillmentClaim.ts"
 import { supabaseRest } from "../_shared/supabase.ts"
 import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
@@ -94,11 +94,6 @@ serve(async (req) => {
       metadata,
       use_sample_order = false, // Flag to create a sample order for testing
       auto_cancel = false, // Flag to automatically cancel order after creation (for testing)
-      payment_amount, // For amount validation
-      payment_currency, // For amount validation
-      subtotal, // For amount validation
-      shipping_cost, // For amount validation
-      discount, // For amount validation
     } = requestBody
 
     // ✅ SECURITY: a normal end user may only fulfill THEIR OWN order. Without
@@ -110,12 +105,16 @@ serve(async (req) => {
       if (!requestedOrderId) {
         throw ErrorCodes.INVALID_REQUEST_BODY()
       }
-      const ownership = await supabaseRest<Array<{ id: string }>>(
-        `orders?id=eq.${encodeURIComponent(String(requestedOrderId))}&user_id=eq.${encodeURIComponent(userId)}&select=id`,
+      const ownership = await supabaseRest<Array<{ id: string; payment_status: string | null; printify_order_id: string | null }>>(
+        `orders?id=eq.${encodeURIComponent(String(requestedOrderId))}&user_id=eq.${encodeURIComponent(userId)}&select=id,payment_status,printify_order_id`,
         'GET',
       )
       if (!Array.isArray(ownership.data) || ownership.data.length === 0) {
         throw ErrorCodes.INVALID_REQUEST_BODY()
+      }
+      const [ownedOrder] = ownership.data
+      if (ownedOrder.printify_order_id) {
+        throw new FunctionError(409, 'ALREADY_FULFILLED', 'The order was already sent to Printify')
       }
 
       // ✅ SECURITY: fulfil only what was priced and charged. The payment
@@ -132,26 +131,15 @@ serve(async (req) => {
       if (!requested || paid.length !== 1 || !matchesPricedItems(requested, paid[0].metadata!.priced_items!)) {
         throw new FunctionError(409, 'ITEMS_NOT_PAID', 'Requested items do not match the paid checkout')
       }
+      // Only an order the server recorded as paid (finalize-order, webhooks) is fulfilled.
+      if (ownedOrder.payment_status !== 'paid') {
+        throw new FunctionError(409, 'ORDER_NOT_PAID', 'The order has not been paid')
+      }
     }
 
     // ✅ CRITICAL FIX #1: Enforce test mode based on environment
     const testModeValidation = validateAndEnforceTestMode(is_test, 'Printify order creation');
     const enforcedTestMode = testModeValidation.testMode;
-
-    // ✅ CRITICAL FIX #2: Validate payment amount if provided
-    if (payment_amount !== undefined) {
-      const amountValidation = validatePaymentAmount({
-        paymentAmount: payment_amount,
-        paymentCurrency: payment_currency || 'USD',
-        subtotal,
-        shippingCost: shipping_cost,
-        discount,
-      });
-
-      if (!amountValidation.isValid) {
-        throw ErrorCodes.INVALID_REQUEST_BODY();
-      }
-    }
 
     // Use shipping_address if address_to is not provided
     let finalAddressTo = address_to || shipping_address
@@ -312,7 +300,12 @@ serve(async (req) => {
       },
     }
 
-    // Create order in Printify
+    // One Printify order per application order, even under concurrent requests.
+    const claimedOrderId = metadata?.order_id ? String(metadata.order_id) : null
+    if (claimedOrderId) await claimOrderFulfillment(claimedOrderId)
+
+    // Create order in Printify. If this throws (e.g. a timeout) the outcome is
+    // unknown, so the claim is kept: a retry must not create a second order.
     const response = await fetchPrintify(
       `/v1/shops/${PRINTIFY_SHOP_ID}/orders.json`,
       PRINTIFY_API_TOKEN,
@@ -325,6 +318,7 @@ serve(async (req) => {
     const data = await response.json()
 
     if (!response.ok) {
+      if (claimedOrderId) await releaseOrderFulfillment(claimedOrderId)
       // Update order status to "unsuccessful_confirmation" if we have an order_id
       const orderId = metadata?.order_id
       if (orderId) {

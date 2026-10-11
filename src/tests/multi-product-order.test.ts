@@ -5,8 +5,7 @@
  * Tests cover cart selection, order creation, Printify submission, and order display.
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { OrderServiceMapper } from "@/shared/mappers/services/orderServiceMapper";
+import { describe, it, expect } from "vitest";
 import type { CartItem, CartWithItems } from "@/shared/types/cart";
 
 /**
@@ -44,174 +43,6 @@ const createMockCart = (items: CartItem[]): CartWithItems => ({
 /**
  * ============================================================================
  * ORDER SERVICE MAPPER TESTS - Multiple Products
- * ============================================================================
- */
-
-describe("OrderServiceMapper - Multi-Product Orders", () => {
-  describe("calculateOrderTotals", () => {
-    it("should calculate totals for single item (in cents)", () => {
-      const items = [createMockCartItem({ quantity: 1, unit_price: 2500 })];
-
-      const totals = OrderServiceMapper.calculateOrderTotals(items);
-
-      expect(totals.subtotal).toBe(2500); // 2500 cents = $25.00
-      expect(totals.total_amount).toBeGreaterThanOrEqual(2500);
-    });
-
-    it("should calculate totals for multiple items with different prices", () => {
-      const items = [
-        createMockCartItem({ quantity: 2, unit_price: 2500 }), // 5000 cents
-        createMockCartItem({ quantity: 1, unit_price: 1500 }), // 1500 cents
-        createMockCartItem({ quantity: 3, unit_price: 1000 }), // 3000 cents
-      ];
-
-      const totals = OrderServiceMapper.calculateOrderTotals(items);
-
-      // Total: 5000 + 1500 + 3000 = 9500 cents = $95.00
-      expect(totals.subtotal).toBe(9500);
-    });
-
-    it("should handle empty cart items array", () => {
-      const totals = OrderServiceMapper.calculateOrderTotals([]);
-
-      expect(totals.subtotal).toBe(0);
-      expect(totals.total_amount).toBe(0);
-    });
-
-    it("should handle items with zero quantity", () => {
-      const items = [
-        createMockCartItem({ quantity: 0, unit_price: 2500 }),
-        createMockCartItem({ quantity: 2, unit_price: 1500 }),
-      ];
-
-      const totals = OrderServiceMapper.calculateOrderTotals(items);
-
-      expect(totals.subtotal).toBe(3000); // 1500 * 2 = 3000 cents
-    });
-
-    it("should handle large quantities correctly", () => {
-      const items = [
-        createMockCartItem({ quantity: 100, unit_price: 2500 }), // 250000 cents
-      ];
-
-      const totals = OrderServiceMapper.calculateOrderTotals(items);
-
-      expect(totals.subtotal).toBe(250000); // 250000 cents = $2500.00
-    });
-
-    it("should handle items with cents correctly", () => {
-      const items = [
-        createMockCartItem({ quantity: 3, unit_price: 999 }), // 2997 cents
-      ];
-
-      const totals = OrderServiceMapper.calculateOrderTotals(items);
-
-      // 999 cents * 3 = 2997 cents
-      expect(totals.subtotal).toBe(2997);
-    });
-  });
-
-  describe("mapCartItemToOrderItem", () => {
-    it("should map single cart item to order item correctly (prices in cents)", () => {
-      const cartItem = createMockCartItem({
-        product_id: "prod_tshirt",
-        variant_id: "var_medium",
-        quantity: 2,
-        unit_price: 2500,
-        product_name: "Custom T-Shirt",
-        variant_name: "Medium / Black",
-        custom_image_url: "https://example.com/design.png",
-      });
-
-      const orderItem = OrderServiceMapper.mapCartItemToOrderItem(
-        cartItem,
-        "order_123"
-      );
-
-      expect(orderItem.order_id).toBe("order_123");
-      expect(orderItem.product_id).toBe("prod_tshirt");
-      expect(orderItem.variant_id).toBe("var_medium");
-      expect(orderItem.quantity).toBe(2);
-      expect(orderItem.unit_price).toBe(2500); // Cents preserved
-      expect(orderItem.total_price).toBe(5000); // quantity * unit_price in cents
-      expect(orderItem.custom_image_url).toBe("https://example.com/design.png");
-    });
-
-    it("should map multiple cart items to order items", () => {
-      const cartItems = [
-        createMockCartItem({
-          product_id: "prod_tshirt",
-          quantity: 2,
-          unit_price: 2500,
-        }),
-        createMockCartItem({
-          product_id: "prod_mug",
-          quantity: 1,
-          unit_price: 1500,
-        }),
-        createMockCartItem({
-          product_id: "prod_poster",
-          quantity: 3,
-          unit_price: 2000,
-        }),
-      ];
-
-      const orderItems = cartItems.map((item) =>
-        OrderServiceMapper.mapCartItemToOrderItem(item, "order_456")
-      );
-
-      expect(orderItems).toHaveLength(3);
-      expect(orderItems[0].product_id).toBe("prod_tshirt");
-      expect(orderItems[1].product_id).toBe("prod_mug");
-      expect(orderItems[2].product_id).toBe("prod_poster");
-
-      // Verify all linked to same order
-      orderItems.forEach((item) => {
-        expect(item.order_id).toBe("order_456");
-      });
-    });
-
-    it("should preserve custom_image_url for each item", () => {
-      const cartItems = [
-        createMockCartItem({
-          custom_image_url: "https://example.com/design1.png",
-        }),
-        createMockCartItem({
-          custom_image_url: "https://example.com/design2.png",
-        }),
-      ];
-
-      const orderItems = cartItems.map((item) =>
-        OrderServiceMapper.mapCartItemToOrderItem(item, "order_789")
-      );
-
-      expect(orderItems[0].custom_image_url).toBe(
-        "https://example.com/design1.png"
-      );
-      expect(orderItems[1].custom_image_url).toBe(
-        "https://example.com/design2.png"
-      );
-    });
-
-    it("should handle items without custom_image_url", () => {
-      const cartItem = createMockCartItem({
-        custom_image_url: undefined,
-      });
-
-      const orderItem = OrderServiceMapper.mapCartItemToOrderItem(
-        cartItem,
-        "order_123"
-      );
-
-      // Mapper defaults to empty string when custom_image_url is undefined
-      expect(orderItem.custom_image_url).toBe("");
-    });
-  });
-});
-
-/**
- * ============================================================================
- * CART SELECTION TESTS - Multiple Items
  * ============================================================================
  */
 
@@ -266,30 +97,6 @@ describe("Cart Multi-Item Selection", () => {
       expect(selectedItems).toHaveLength(2);
       expect(selectedItems[0].id).toBe("item_1");
       expect(selectedItems[1].id).toBe("item_3");
-    });
-
-    it("should recalculate totals when selection changes (in cents)", () => {
-      const items = [
-        createMockCartItem({ id: "item_1", quantity: 1, unit_price: 2500 }),
-        createMockCartItem({ id: "item_2", quantity: 1, unit_price: 1500 }),
-        createMockCartItem({ id: "item_3", quantity: 1, unit_price: 2000 }),
-      ];
-
-      // All selected: 2500 + 1500 + 2000 = 6000 cents
-      const allSelected = OrderServiceMapper.calculateOrderTotals(items);
-      expect(allSelected.subtotal).toBe(6000);
-
-      // Only first two selected: 2500 + 1500 = 4000 cents
-      const partialSelection = OrderServiceMapper.calculateOrderTotals(
-        items.slice(0, 2)
-      );
-      expect(partialSelection.subtotal).toBe(4000);
-
-      // Only last item selected: 2000 cents
-      const singleSelection = OrderServiceMapper.calculateOrderTotals([
-        items[2],
-      ]);
-      expect(singleSelection.subtotal).toBe(2000);
     });
 
     it("should prevent checkout with no items selected", () => {
@@ -488,7 +295,7 @@ describe("Printify Line Items - Multi-Product", () => {
       };
 
       const hasRequiredFields = !!(
-        (invalidLineItem as any).blueprint_id &&
+        (invalidLineItem as { blueprint_id?: unknown }).blueprint_id &&
         invalidLineItem.print_provider_id &&
         invalidLineItem.variant_id
       );
@@ -695,23 +502,6 @@ describe("Order Display - Multiple Items", () => {
  */
 
 describe("Multi-Product Order Edge Cases", () => {
-  describe("Maximum Items Limit", () => {
-    it("should handle orders with many items (10+)", () => {
-      const items = Array.from({ length: 15 }, (_, i) =>
-        createMockCartItem({
-          id: `item_${i}`,
-          product_name: `Product ${i + 1}`,
-          unit_price: 1000 + i * 100, // Varying prices
-        })
-      );
-
-      const totals = OrderServiceMapper.calculateOrderTotals(items);
-
-      expect(items).toHaveLength(15);
-      expect(totals.subtotal).toBeGreaterThan(0);
-    });
-  });
-
   describe("Same Product Different Variants", () => {
     it("should handle same product with different size/color selections", () => {
       const items = [
@@ -780,27 +570,6 @@ describe("Multi-Product Order Edge Cases", () => {
 
       expect(fulfilledCount).toBe(1);
       expect(pendingCount).toBe(1);
-    });
-  });
-
-  describe("Price Consistency", () => {
-    it("should maintain price consistency between cart and order", () => {
-      const cartItems = [
-        createMockCartItem({ quantity: 2, unit_price: 2500 }),
-        createMockCartItem({ quantity: 1, unit_price: 1500 }),
-      ];
-
-      const cartTotal = OrderServiceMapper.calculateOrderTotals(cartItems);
-
-      const orderItems = cartItems.map((item) =>
-        OrderServiceMapper.mapCartItemToOrderItem(item, "order_123")
-      );
-      const orderItemsTotal = orderItems.reduce(
-        (sum, item) => sum + item.total_price,
-        0
-      );
-
-      expect(orderItemsTotal).toBe(cartTotal.subtotal);
     });
   });
 });

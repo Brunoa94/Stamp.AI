@@ -159,6 +159,8 @@ export interface CreatePayPalOrderPayloadI {
   promoCode?: string;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
+  /** Cart being bought; lets a webhook name the products if the customer never returns. */
+  cartId?: string | null;
   testMode?: boolean;
 }
 
@@ -202,6 +204,8 @@ export interface CreateMolliePaymentPayloadI {
   description?: string;
   lineItems: PrintifyLineItem[];
   shippingAddress: ShippingAddressT;
+  /** Cart being bought; lets a webhook name the products if the customer never returns. */
+  cartId?: string | null;
   testMode?: boolean;
   /** Pin the payment to a specific Mollie method (e.g. "ideal") instead of showing the method chooser */
   method?: string;

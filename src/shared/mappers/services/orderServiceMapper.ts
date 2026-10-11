@@ -54,37 +54,6 @@ export class OrderServiceMapper {
   }
 
   /**
-   * Calculate order totals from items
-   */
-  static calculateOrderTotals(items: CartItem[]) {
-    const subtotal = items.reduce((sum, item) => {
-      return sum + ((item.unit_price ?? 0) * (item.quantity ?? 1));
-    }, 0);
-
-    // Future: Add tax and shipping calculations
-    const taxRate = 0; // 0% for now
-    const taxAmount = subtotal * taxRate;
-    const shippingCost = 0; // Free shipping for now
-    const totalAmount = subtotal + taxAmount + shippingCost;
-
-    return {
-      subtotal,
-      tax_amount: taxAmount,
-      shipping_cost: shippingCost,
-      total_amount: totalAmount,
-    };
-  }
-
-  /**
-   * Generate unique order number
-   */
-  static generateOrderNumber(): string {
-    const timestamp = Date.now();
-    const random = Math.floor(Math.random() * 1000).toString().padStart(3, "0");
-    return `ORD-${timestamp}-${random}`;
-  }
-
-  /**
    * Map CreateOrderT to OrderInsert
    */
   static mapCreateOrderToInsert(
@@ -167,76 +136,19 @@ export class OrderServiceMapper {
   }
 
   /**
-   * Map cart item to order item insert format
+   * Identity and display fields of the selected cart rows sent to
+   * finalize-order. Prices are deliberately left out: the server uses the
+   * pricing stored with the payment.
    */
-  static mapCartItemToOrderItem(cartItem: CartItem, orderId: string) {
-    const unitPrice = cartItem.unit_price ?? 0;
-    const quantity = cartItem.quantity ?? 1;
-    const totalPrice = unitPrice * quantity;
-
-    return {
-      order_id: orderId,
-      product_id: cartItem.product_id || null,
-      variant_id: cartItem.variant_id || null,
-      quantity,
-      unit_price: unitPrice,
-      total_price: totalPrice,
-      custom_image_url: cartItem.custom_image_url || "",
-      product_name: cartItem.product_name || cartItem.product?.name || "Custom Product",
-      variant_name: cartItem.variant?.name || null,
-      design_config: cartItem.custom_image_url
-        ? {
-          custom_image_url: cartItem.custom_image_url,
-          reusable_image_url: cartItem.custom_image_url,
-        }
-        : null,
-    };
-  }
-
-  /**
-   * Map user and totals to create order payload
-   */
-  static mapUserAndTotalsToCreateOrder(
-    user: UserI,
-    orderNumber: string,
-    totals: {
-      subtotal: number;
-      tax_amount: number;
-      shipping_cost: number;
-      total_amount: number;
-    },
-    shippingAddress?: ShippingAddressT,
-    billingAddress?: ShippingAddressT,
-    discountAmount: number = 0,
-    paymentStatus: string = "pending",
-    orderStatus: string = "pending",
-    idempotencyKey?: string,
-    paymentMethod?: string,
-  ): CreateOrderT & { idempotency_key?: string | null } {
-    const fullName = [shippingAddress?.first_name, shippingAddress?.last_name]
-      .filter(Boolean)
-      .join(" ")
-      .trim();
-
-    return {
-      user_id: user.id,
-      customer_email: shippingAddress?.email || user.email || "",
-      customer_name: fullName || null,
-      customer_phone: shippingAddress?.phone || null,
-      shipping_address: shippingAddress || null,
-      billing_address: billingAddress || shippingAddress || null, // Use billing if provided, fallback to shipping
-      order_number: orderNumber,
-      status: orderStatus,
-      payment_status: paymentStatus,
-      payment_method: paymentMethod || null,
-      payment_provider: paymentMethod && ["stripe", "paypal", "mollie"].includes(paymentMethod) ? paymentMethod : null,
-      subtotal: totals.subtotal,
-      shipping_cost: totals.shipping_cost,
-      tax_amount: totals.tax_amount,
-      discount_amount: discountAmount,
-      total_amount: totals.total_amount,
-      currency: "EUR", // Default currency
-      idempotency_key: idempotencyKey || null,
-    };
+  static mapCartItemsToFinalizeItems(cartItems: CartItem[]) {
+    return cartItems.map((item) => ({
+      id: item.id,
+      product_id: item.product_id || null,
+      variant_id: item.variant_id || null,
+      quantity: item.quantity ?? 1,
+      product_name: item.product_name || item.product?.name || null,
+      variant_name: item.variant_name || item.variant?.name || null,
+      custom_image_url: item.custom_image_url || null,
+    }));
   }
 }

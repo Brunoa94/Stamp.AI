@@ -1,4 +1,7 @@
 import { Database } from "./database.types";
+import type { CartWithItems } from "./cart";
+import type { ShippingAddressT } from "@/shared/schemas/checkout";
+import type { PaymentProviderT } from "../../../supabase/types";
 
 export type CreateOrderT = Database['public']['Tables']['orders']['Insert']
 export type OrderT = Database['public']['Tables']['orders']['Row']
@@ -31,4 +34,12 @@ export interface Address {
   region?: string;
   zip?: string;
   country?: string;
+}
+/** What the checkout return pages send to finalize-order; prices come from the server. */
+export interface CreateOrderFromCartInputT {
+  provider: PaymentProviderT;
+  paymentId: string;
+  cart: CartWithItems;
+  shippingAddress?: ShippingAddressT;
+  billingAddress?: ShippingAddressT;
 }
