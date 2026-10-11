@@ -10,6 +10,7 @@ import { Span } from "@/features/ui/span";
 import { SOCIAL_PROFILES } from "@/features/seo/config/social";
 import { LEGAL_ENTITY } from "@/features/legal/lib/constants/legalEntity";
 import { FooterPaymentIcons } from "@/features/ui/trust/FooterPaymentIcons";
+import { CookieSettingsButton } from "@/features/analytics/ui/CookieSettingsButton";
 import {
   FooterLinkColumn,
   type FooterColumnKeyType,
@@ -130,6 +131,7 @@ export function StampFooter() {
           <Span variant="micro" className="text-(--color-stamp-chocolate)/50">
             {t("copyright", { year })}
           </Span>
+          <CookieSettingsButton />
           <Span variant="micro" className="text-(--color-stamp-chocolate)/50">
             {t("tagline")}
           </Span>

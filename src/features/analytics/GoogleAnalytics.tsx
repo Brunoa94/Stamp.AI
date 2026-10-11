@@ -1,7 +1,33 @@
+"use client";
+
+import { useEffect } from "react";
 import Script from "next/script";
+import { AnalyticsService } from "@/shared/services/analyticsService";
+import { useAnalyticsConsent } from "./lib/hooks/useAnalyticsConsent";
+import { buildGtagConsent } from "./lib/helpers/consent";
+import type { GtagFunctionT } from "./types/analyticsTypes";
+
+/** Defines window.gtag (a dataLayer queue) with Consent Mode defaulting to denied. */
+function initGtag(measurementId: string): void {
+  if (typeof window.gtag === "function") return;
+  const dataLayer = (window.dataLayer = window.dataLayer || []);
+  const gtag: GtagFunctionT = function gtag() {
+    // gtag.js expects the arguments object itself.
+    // eslint-disable-next-line prefer-rest-params
+    dataLayer.push(arguments);
+  };
+  window.gtag = gtag;
+  gtag("consent", "default", buildGtagConsent("denied"));
+  gtag("js", new Date());
+  gtag("config", measurementId, { send_page_view: false });
+}
 
 /**
- * Loads gtag.js and defines window.gtag. Renders nothing when
+ * Google Analytics, gated on the visitor's consent (Consent Mode v2).
+ *
+ * window.gtag always exists, so events queue in the dataLayer, but gtag.js
+ * itself is only loaded once analytics consent is granted: without consent
+ * nothing is sent to Google. Renders nothing when
  * NEXT_PUBLIC_GA_MEASUREMENT_ID is not set (e.g. local development).
  *
  * `send_page_view` is disabled because page views are tracked on route
@@ -9,26 +35,25 @@ import Script from "next/script";
  */
 export function GoogleAnalytics() {
   const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  const consent = useAnalyticsConsent();
 
-  if (!measurementId) {
+  useEffect(() => {
+    if (!measurementId) return;
+    initGtag(measurementId);
+    if (consent === "granted" || consent === "denied") {
+      window.gtag?.("consent", "update", buildGtagConsent(consent));
+    }
+  }, [measurementId, consent]);
+
+  if (!measurementId || consent !== "granted") {
     return null;
   }
 
   return (
-    <>
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
-        strategy="afterInteractive"
-      />
-      <Script id="google-analytics-init" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          window.gtag = gtag;
-          gtag('js', new Date());
-          gtag('config', '${measurementId}', { send_page_view: false });
-        `}
-      </Script>
-    </>
+    <Script
+      src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
+      strategy="afterInteractive"
+      onLoad={() => AnalyticsService.flush()}
+    />
   );
 }

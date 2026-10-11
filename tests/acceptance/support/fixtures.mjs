@@ -45,6 +45,19 @@ export const test = base.extend({
     await provide();
     expect(forbidden, 'No production database or real AI requests').toEqual([]);
   }, { auto: true }],
+  // The scenarios run as a visitor who accepted analytics (GA-08 consent
+  // policy): the decision is stored before any page script runs, so the
+  // consent banner never covers controls and GA collection is enabled.
+  analyticsConsent: [async ({ context }, provide) => {
+    await context.addInitScript(() => {
+      try {
+        window.localStorage.setItem('stamp_consent', JSON.stringify({ analytics: 'granted', version: 1, updatedAt: new Date().toISOString() }));
+      } catch {
+        // Storage unavailable (e.g. about:blank): nothing to record.
+      }
+    });
+    await provide();
+  }, { auto: true }],
   suppliedUser: async ({ context, env }, provide) => {
     const credentials = { email: env.TEST_USER_EMAIL, password: env.TEST_USER_PASSWORD };
     const db = client(env);
