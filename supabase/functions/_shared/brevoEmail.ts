@@ -1,10 +1,13 @@
 import { encodeBase64 } from "jsr:@std/encoding@1/base64";
+import { resolveBrevoConfig } from "./emailConfig.ts";
+import { reportError } from "./errorReporting.ts";
 
 /**
  * Email delivery via Brevo (formerly Sendinblue) HTTP API.
  *
- * Optional integration — when BREVO_API_KEY is not configured, sending is
- * skipped silently so invoice generation never depends on email delivery.
+ * Outside production a missing BREVO_API_KEY disables email. In production a
+ * missing key or sender is reported (Sentry) instead of being skipped
+ * silently; callers still never fail because of email delivery.
  *
  * Secrets:
  *   BREVO_API_KEY         Brevo API key (omit to disable email)
@@ -25,6 +28,8 @@ export interface SendBrevoEmailParams {
   to: string;
   subject: string;
   htmlContent: string;
+  /** Plain-text alternative for clients that do not render HTML. */
+  textContent?: string;
   attachments?: BrevoEmailAttachment[];
 }
 
@@ -33,21 +38,18 @@ export interface SendBrevoEmailParams {
  * Returns true when the email was sent, false when skipped or failed.
  */
 export async function sendBrevoEmail(params: SendBrevoEmailParams): Promise<boolean> {
-  const apiKey = Deno.env.get("BREVO_API_KEY");
-
-  if (!apiKey) {
+  const config = resolveBrevoConfig(Deno.env.toObject());
+  if (config.status === "disabled") {
     console.log("BREVO_API_KEY not configured, skipping email");
     return false;
   }
-
-  const fromEmail = Deno.env.get("BREVO_FROM_EMAIL") || Deno.env.get("INVOICE_FROM_EMAIL");
-  const fromName =
-    Deno.env.get("BREVO_FROM_NAME") || Deno.env.get("INVOICE_SELLER_NAME") || "Stamp.AI";
-
-  if (!fromEmail) {
-    console.error("BREVO_FROM_EMAIL or INVOICE_FROM_EMAIL must be configured");
+  if (config.status === "misconfigured") {
+    const error = new Error(`Transactional email is not configured: missing ${config.missing.join(", ")}`);
+    console.error(error.message);
+    reportError(error, { subject: params.subject });
     return false;
   }
+  const { apiKey, fromEmail, fromName } = config;
 
   const payload: Record<string, unknown> = {
     sender: {
@@ -57,6 +59,7 @@ export async function sendBrevoEmail(params: SendBrevoEmailParams): Promise<bool
     to: [{ email: params.to }],
     subject: params.subject,
     htmlContent: params.htmlContent,
+    ...(params.textContent ? { textContent: params.textContent } : {}),
   };
 
   if (params.attachments && params.attachments.length > 0) {

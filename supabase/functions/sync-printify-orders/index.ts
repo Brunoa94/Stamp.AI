@@ -3,6 +3,7 @@ import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts";
+import { sendShippingNotificationEmail } from "../_shared/orderEmails.ts";
 import {
   REVIEW_STATUSES,
   mapPrintifyToOrderUpdate,
@@ -147,6 +148,11 @@ async function syncOrder(
   }
 
   await persistOrderUpdate(dbOrder.id, update, nowIso, dbOrder.status);
+
+  // The first tracking number means the order has shipped: tell the customer.
+  if (update?.tracking_number && !dbOrder.tracking_number) {
+    await sendShippingNotificationEmail(dbOrder.id);
+  }
 
   if (update) {
     console.log(`Order ${dbOrder.id} updated:`, update);

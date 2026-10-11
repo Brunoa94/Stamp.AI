@@ -7,6 +7,7 @@
 import { supabaseRest } from "./supabase.ts";
 import { tryGenerateInvoiceForOrder } from "./invoice.ts";
 import { ensureOrderForPayment } from "./finalizePaidOrder.ts";
+import { sendOrderConfirmationEmail } from "./orderEmails.ts";
 import { orderIdempotencyKey, type PaymentProviderT } from "./orderFinalizationRules.ts";
 
 interface OrderOwnerRowI {
@@ -26,6 +27,12 @@ async function findSettledOrder(provider: PaymentProviderT, paymentId: string): 
   return result.data?.[0] ?? null;
 }
 
+/** Invoice and confirmation email: both idempotent and never failing the webhook. */
+async function afterPaid(orderId: string): Promise<void> {
+  await tryGenerateInvoiceForOrder(orderId);
+  await sendOrderConfirmationEmail(orderId);
+}
+
 /**
  * Returns the paid order id, or null when no order can be built from the
  * payment (logged by ensureOrderForPayment). Infrastructure errors throw so
@@ -35,7 +42,7 @@ export async function settlePaidOrder(provider: PaymentProviderT, paymentId: str
   const existing = await findSettledOrder(provider, paymentId);
   if (!existing) {
     const minted = await ensureOrderForPayment(provider, paymentId);
-    if (minted) await tryGenerateInvoiceForOrder(minted.orderId);
+    if (minted) await afterPaid(minted.orderId);
     return minted?.orderId ?? null;
   }
 
@@ -47,6 +54,6 @@ export async function settlePaidOrder(provider: PaymentProviderT, paymentId: str
     { payment_status: "paid", payment_method: provider, updated_at: new Date().toISOString() },
   );
   if (update.error) throw new Error("Could not mark the order paid");
-  await tryGenerateInvoiceForOrder(existing.id);
+  await afterPaid(existing.id);
   return existing.id;
 }

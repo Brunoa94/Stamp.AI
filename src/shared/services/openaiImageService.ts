@@ -23,7 +23,9 @@ export class OpenAIImageService {
     if (!apiKey) {
       throw new Error("OPENAI_API_KEY environment variable is not set");
     }
-    return new OpenAI({ apiKey });
+    // Transient failures (429, 5xx, connection errors) are retried with
+    // backoff by the SDK; a single request may not hang the route.
+    return new OpenAI({ apiKey, maxRetries: 2, timeout: 60_000 });
   }
 
   /**

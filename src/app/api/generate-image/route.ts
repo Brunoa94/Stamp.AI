@@ -3,8 +3,25 @@ import { createClient } from "@/lib/supabase/server";
 import { createServiceClient } from "@/lib/supabase/service";
 import { captureError } from "@/lib/observability/errorCapture";
 import { OpenAIImageService } from "@/shared/services/openaiImageService";
+import { withTimeout } from "@/lib/promiseUtils";
+import {
+  detectImageMimeType,
+  MAX_REFERENCE_IMAGE_BYTES,
+} from "@/lib/images/imageUpload";
 
 export const runtime = "nodejs";
+// Vision + image generation (with the SDK's retries) can take over a minute.
+export const maxDuration = 120;
+
+/** Generation is abandoned (and the coin refunded) after this long. */
+const GENERATION_DEADLINE_MS = 100_000;
+
+class GenerationTimeoutError extends Error {
+  constructor() {
+    super("Image generation timed out");
+    this.name = "GenerationTimeoutError";
+  }
+}
 
 async function refundCoin(userId: string): Promise<void> {
   try {
@@ -66,17 +83,14 @@ export async function POST(request: NextRequest) {
     let mimeType: string | null = null;
 
     if (image && image.size > 0) {
-      console.log("Image info:", {
-        name: image.name,
-        type: image.type,
-        size: image.size,
-      });
+      if (image.size > MAX_REFERENCE_IMAGE_BYTES) {
+        return NextResponse.json(
+          { error: "The image is too large. Please upload an image under 10 MB." },
+          { status: 413 },
+        );
+      }
 
-      // Read the image bytes
       imageBuffer = await image.arrayBuffer();
-
-      console.log("Image buffer size:", imageBuffer.byteLength);
-
       if (imageBuffer.byteLength === 0) {
         return NextResponse.json(
           { error: "Failed to read image data" },
@@ -84,47 +98,19 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Determine correct MIME type
-      mimeType = image.type;
-
-      // If MIME type is missing or generic, detect from file signature (magic bytes)
-      if (!mimeType || mimeType === "application/octet-stream") {
-        const uint8Array = new Uint8Array(imageBuffer).slice(0, 12);
-
-        if (
-          uint8Array[0] === 0xFF && uint8Array[1] === 0xD8 &&
-          uint8Array[2] === 0xFF
-        ) {
-          mimeType = "image/jpeg";
-        } else if (
-          uint8Array[0] === 0x89 && uint8Array[1] === 0x50 &&
-          uint8Array[2] === 0x4E && uint8Array[3] === 0x47
-        ) {
-          mimeType = "image/png";
-        } else if (
-          uint8Array[0] === 0x47 && uint8Array[1] === 0x49 &&
-          uint8Array[2] === 0x46
-        ) {
-          mimeType = "image/gif";
-        } else if (
-          uint8Array[0] === 0x52 && uint8Array[1] === 0x49 &&
-          uint8Array[2] === 0x46 && uint8Array[3] === 0x46 &&
-          uint8Array[8] === 0x57 && uint8Array[9] === 0x45 &&
-          uint8Array[10] === 0x42 && uint8Array[11] === 0x50
-        ) {
-          mimeType = "image/webp";
-        } else {
-          // Default to JPEG if we can't detect
-          mimeType = "image/jpeg";
-        }
-        console.log(`Detected MIME type from magic bytes: ${mimeType}`);
+      // The bytes decide the type; the declared MIME type is not trusted.
+      mimeType = detectImageMimeType(new Uint8Array(imageBuffer, 0, Math.min(12, imageBuffer.byteLength)));
+      if (!mimeType) {
+        return NextResponse.json(
+          { error: "Unsupported image format. Please upload a PNG, JPEG or WebP image." },
+          { status: 415 },
+        );
       }
     }
 
     // ── Generate image using OpenAI (GPT-4o + GPT Image 1) ──────────────────────
     const hasReferenceImage = imageBuffer !== null && mimeType !== null;
     console.log("Generating image with OpenAI");
-    console.log("Original prompt:", prompt);
     console.log("Preservation level:", preservation);
     console.log("Remove background:", removeBackground);
     console.log("Has reference image:", hasReferenceImage);
@@ -159,22 +145,18 @@ export async function POST(request: NextRequest) {
 
     let result: Awaited<ReturnType<typeof OpenAIImageService.generateImage>>;
     try {
-      if (hasReferenceImage) {
-        // Generate with reference image (uses vision + image generation)
-        result = await OpenAIImageService.generateImage(
-          imageBuffer!,
-          mimeType!,
-          prompt,
-          preservation,
-          removeBackground,
-        );
-      } else {
-        // Generate from prompt only (direct image generation)
-        result = await OpenAIImageService.generateFromPrompt(
-          prompt,
-          removeBackground,
-        );
-      }
+      const generation = hasReferenceImage
+        ? // Generate with reference image (uses vision + image generation)
+          OpenAIImageService.generateImage(
+            imageBuffer!,
+            mimeType!,
+            prompt,
+            preservation,
+            removeBackground,
+          )
+        : // Generate from prompt only (direct image generation)
+          OpenAIImageService.generateFromPrompt(prompt, removeBackground);
+      result = await withTimeout(generation, GENERATION_DEADLINE_MS, new GenerationTimeoutError());
     } catch (generationError) {
       // The user paid for nothing: give the coin back (service role only).
       await refundCoin(user.id);
@@ -197,7 +179,20 @@ export async function POST(request: NextRequest) {
 
     console.error("[generate-image] Error:", err.message, err.stack);
 
-    // Return user-friendly error messages
+    if (err instanceof GenerationTimeoutError) {
+      return NextResponse.json(
+        { error: "Image generation is taking too long. Your coin was refunded; please try again." },
+        { status: 504 },
+      );
+    }
+    if (err.message?.includes("moderation_blocked")) {
+      return NextResponse.json(
+        { error: "Your image or prompt was blocked by content moderation. Please try a different image or prompt." },
+        { status: 422 },
+      );
+    }
+
+    // Return user-friendly error messages; provider errors are never echoed.
     let userMessage =
       "We couldn't generate your image right now. Please try again in a moment.";
 
@@ -215,9 +210,6 @@ export async function POST(request: NextRequest) {
     } else if (err.message?.includes("OPENAI_API_KEY")) {
       userMessage =
         "Image generation service is not configured. Please contact support.";
-    } else if (err.message?.includes("moderation_blocked")) {
-      userMessage =
-        "Your image or prompt was blocked by content moderation. Please try a different image or prompt.";
     }
 
     return NextResponse.json(
