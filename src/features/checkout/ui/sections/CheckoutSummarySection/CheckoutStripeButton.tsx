@@ -103,6 +103,7 @@ export function CheckoutStripeButton({
       promoCode,
       lineItems,
       shippingAddress,
+      cartId: cartId || null,
       testMode,
       onSuccess: handleSuccess,
     });

@@ -123,12 +123,41 @@ describe("POST /api/generate-image", () => {
 
     const response = await POST(request());
 
-    expect(response.status).toBe(500);
+    expect(response.status).toBe(422);
     expect(mocks.serviceRpc).toHaveBeenCalledWith("refund_coin", {
       p_user_id: "user-1",
     });
     const body = await response.json();
     expect(body.error).toMatch(/content moderation/);
+  });
+
+  it("rejects an image whose bytes are not PNG, JPEG or WebP before charging", async () => {
+    const svg = new File([new TextEncoder().encode("<svg xmlns='x'/>")], "ref.png", { type: "image/png" });
+
+    const response = await POST(request({ image: svg }));
+
+    expect(response.status).toBe(415);
+    expect(mocks.userRpc).not.toHaveBeenCalled();
+  });
+
+  it("rejects an image over 10 MB before charging", async () => {
+    const big = new File([PNG_MAGIC, new Uint8Array(10 * 1024 * 1024)], "big.png", { type: "image/png" });
+
+    const response = await POST(request({ image: big }));
+
+    expect(response.status).toBe(413);
+    expect(mocks.userRpc).not.toHaveBeenCalled();
+  });
+
+  it("never echoes provider error details in production", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    mocks.generateImage.mockRejectedValue(new Error("upstream secret detail"));
+
+    const response = await POST(request());
+
+    expect(response.status).toBe(500);
+    expect(JSON.stringify(await response.json())).not.toContain("secret detail");
+    vi.unstubAllEnvs();
   });
 
   it("still returns the generation error when the refund itself fails", async () => {

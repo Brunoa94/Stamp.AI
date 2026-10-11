@@ -2745,5 +2745,13 @@
         "answer": "Email us with your order number if you have one. We reply within one business day, and a person reads every message."
       }
     }
+  },
+  "cookieConsent": {
+    "title": "Cookies & analytics",
+    "body": "We use essential cookies to run the shop. With your permission we also use Google Analytics to understand how the site is used; ads and ad personalisation are never enabled. You can change your choice any time under Cookie settings.",
+    "policyLink": "Read the Cookie Policy",
+    "accept": "Accept analytics",
+    "reject": "Essential only",
+    "settings": "Cookie settings"
   }
 }

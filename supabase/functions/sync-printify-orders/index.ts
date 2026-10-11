@@ -3,6 +3,7 @@ import { ErrorCodes, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts";
+import { sendShippingNotificationEmail } from "../_shared/orderEmails.ts";
 import {
   REVIEW_STATUSES,
   mapPrintifyToOrderUpdate,
@@ -14,6 +15,7 @@ import type {
 } from "./mapping.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
 import { fetchPrintify } from "../_shared/fetchWithTimeout.ts";
+import { withCronMonitor } from "../_shared/sentry.ts";
 
 const BATCH_SIZE = 100;
 const CONCURRENCY = 5;
@@ -147,6 +149,11 @@ async function syncOrder(
 
   await persistOrderUpdate(dbOrder.id, update, nowIso, dbOrder.status);
 
+  // The first tracking number means the order has shipped: tell the customer.
+  if (update?.tracking_number && !dbOrder.tracking_number) {
+    await sendShippingNotificationEmail(dbOrder.id);
+  }
+
   if (update) {
     console.log(`Order ${dbOrder.id} updated:`, update);
   }
@@ -166,7 +173,8 @@ async function syncOrder(
  * printify_order_id, reads their current state from the Printify API and
  * updates status, printify_status and tracking fields when they changed.
  */
-serve(async (req) => {
+// pg_cron runs this function; each run is a Sentry Cron check-in.
+serve((req) => withCronMonitor("sync-printify-orders", async () => {
   const corsHeaders = corsHeadersFor(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders });
@@ -263,4 +271,4 @@ serve(async (req) => {
     console.error("Error syncing Printify orders:", error);
     return handleError(error, corsHeaders);
   }
-});
+}));

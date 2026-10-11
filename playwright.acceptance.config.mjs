@@ -3,6 +3,9 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests/acceptance/specs', testMatch: '**/*.spec.mjs',
   fullyParallel: false, workers: 1, retries: 0, forbidOnly: true,
+  // Stop at the first failure; the wrapper's cleanup still runs afterwards.
+  // Pass --max-failures=0 for a full run that reports every failure.
+  maxFailures: 1,
   timeout: 90000, expect: { timeout: 15000 },
   outputDir: '.acceptance/results',
   reporter: [['list'], ['html', { outputFolder: '.acceptance/report', open: 'never' }]],

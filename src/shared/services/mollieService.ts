@@ -23,6 +23,7 @@ export class MollieService {
     description,
     lineItems,
     shippingAddress,
+    cartId,
     testMode = false,
     method,
   }: CreateMolliePaymentPayloadI): Promise<CreateMolliePaymentResponseI> {
@@ -41,8 +42,8 @@ export class MollieService {
             shipping_address: shippingAddress,
             method,
             metadata: {
-              order_id: `order_${Date.now()}`,
               test_mode: testMode,
+              ...(cartId ? { cartId } : {}),
             },
           },
           headers,

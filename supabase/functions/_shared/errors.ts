@@ -1,3 +1,5 @@
+import { reportError } from "./errorReporting.ts";
+
 export interface ApiError {
   status: number;
   message: string;
@@ -26,6 +28,11 @@ export const createErrorResponse = (error: ApiError, corsHeaders: Record<string,
 };
 
 export const handleError = (error: unknown, corsHeaders: Record<string, string>) => {
+  // Client errors are expected; server errors and unknown failures are reported.
+  if (!(error instanceof FunctionError) || error.status >= 500) {
+    reportError(error, error instanceof FunctionError ? { errorId: error.errorId } : undefined);
+  }
+
   if (error instanceof FunctionError) {
     return createErrorResponse({ status: error.status, message: error.errorId }, corsHeaders);
   }

@@ -12,6 +12,10 @@ import type {
 } from "../types/paymentReturn";
 import { recordPaymentRecoverySafely } from "./paymentReturnRecoveryService";
 import { refundPaymentSafely } from "./paymentReturnRefundService";
+import {
+  isAlreadyFulfilledError,
+  needsFulfillment,
+} from "../helpers/orderFulfillmentState";
 import { captureError } from "@/lib/observability/errorCapture";
 import { withTimeout } from "@/lib/promiseUtils";
 import { mapShippingAddressToPrintifyAddress } from "@/shared/mappers/mapShippingAddressToPrintifyAddress";
@@ -35,9 +39,12 @@ export async function fulfillPaidOrder(
   const service = PAYMENT_RETURN_SERVICE_NAME[provider];
   const idempotencyKey = `${provider}_${paymentId}`;
 
+  // A finished (or failed and refunded) checkout is never run again. A paid
+  // order that is not yet with Printify — e.g. minted by the payment webhook
+  // before this page loaded — still needs fulfilment.
   const existingOrder =
     await OrderService.getOrderByIdempotencyKey(idempotencyKey);
-  if (existingOrder) {
+  if (existingOrder && !needsFulfillment(existingOrder)) {
     return { orderNumber: existingOrder.order_number ?? null };
   }
 
@@ -85,27 +92,15 @@ export async function fulfillPaidOrder(
 
   const createOrder = async (): Promise<string> => {
     try {
+      // The server reprices from the stored payment and links the transaction.
       createdOrderId =
         (await deps.createOrderFromCart({
-          user: request.user,
+          provider,
+          paymentId,
           cart: request.cartSnapshot,
-          paymentStatus: "paid",
           shippingAddress: request.shippingAddress,
           billingAddress: request.billingAddress,
-          idempotencyKey,
-          paymentMethod: provider,
-          paymentAmountCents: request.amount,
-          shippingCostCents: request.shippingCostCents,
-          discountCents: request.discountCents,
         })) ?? null;
-
-      if (createdOrderId) {
-        await OrderService.linkPaymentTransactionToOrder({
-          paymentProvider: provider,
-          paymentIntentId: paymentId,
-          orderId: createdOrderId,
-        });
-      }
     } catch (orderError) {
       captureError(orderError, { service, action: "createOrder" });
       await refund("Order creation failed");
@@ -137,10 +132,9 @@ export async function fulfillPaidOrder(
   };
 
   const createPrintifyOrder = async (orderId: string) => {
-    let printifyOrderId: string | undefined;
-
     try {
-      const printifyResult = await deps.createPrintifyOrder({
+      // create-printify-order stores the Printify order on our order itself.
+      await deps.createPrintifyOrder({
         line_items: request.lineItems,
         shipping_address: mapShippingAddressToPrintifyAddress(
           request.shippingAddress,
@@ -153,8 +147,10 @@ export async function fulfillPaidOrder(
           ...request.metadata,
         },
       });
-      printifyOrderId = printifyResult?.order?.id;
     } catch (printifyError) {
+      // Another tab or a retry already sent this order to Printify: the
+      // customer got what they paid for, so nothing is refunded.
+      if (isAlreadyFulfilledError(printifyError)) return;
       captureError(printifyError, {
         service,
         action: "createPrintifyOrder",
@@ -166,20 +162,6 @@ export async function fulfillPaidOrder(
       throw new UserFacingError(
         request.messages.fulfillmentFailed(printifyError),
       );
-    }
-
-    // The Printify order exists from here on, so failures must not refund.
-    if (!printifyOrderId) return;
-    try {
-      await OrderService.updateOrder(orderId, {
-        printify_order_id: printifyOrderId,
-      });
-    } catch (updateError) {
-      captureError(updateError, {
-        service,
-        action: "savePrintifyOrderId",
-        metadata: { printifyOrderId, orderId },
-      });
     }
   };
 

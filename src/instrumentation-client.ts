@@ -1,26 +1,20 @@
-// This file configures the initialization of Sentry on the client.
-// The added config here will be used whenever a users loads a page in their browser.
+// Sentry in the browser. This is the only client-side init (Next.js loads
+// instrumentation-client.ts); options are shared with the server and edge
+// runtimes, and Sentry is off unless NEXT_PUBLIC_SENTRY_DSN is set.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
+import { buildSentryOptions } from "@/lib/observability/sentryConfig";
 
 Sentry.init({
-  // Disabled on this branch: no errors, logs, traces or replays are sent to Sentry.
-  enabled: false,
-
-  dsn: "https://f81c92c4cb15a656c494024072bfa61c@o4511877228527616.ingest.de.sentry.io/4511877243469904",
-
-  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
-  // Enable logs to be sent to Sentry
-  enableLogs: true,
-
-  dataCollection: {
-    // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:
-    // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#dataCollection
-    // userInfo: false,
-    // httpBodies: [],
-  },
+  ...buildSentryOptions(),
+  // Session Replay records only masked text and no media.
+  replaysOnErrorSampleRate: 1.0,
+  replaysSessionSampleRate: 0.1,
+  integrations: [
+    Sentry.replayIntegration({ maskAllText: true, blockAllMedia: true }),
+    Sentry.browserTracingIntegration(),
+  ],
 });
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

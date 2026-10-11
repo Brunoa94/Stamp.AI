@@ -8,7 +8,6 @@ import type {
 
 const mocks = vi.hoisted(() => ({
   getOrderByIdempotencyKey: vi.fn(),
-  linkPaymentTransactionToOrder: vi.fn(),
   getOrder: vi.fn(),
   updateOrder: vi.fn(),
   processRefund: vi.fn(),
@@ -66,7 +65,12 @@ beforeEach(() => {
 
 describe("fulfillPaidOrder", () => {
   it("returns the existing order without creating a duplicate", async () => {
-    mocks.getOrderByIdempotencyKey.mockResolvedValue({ order_number: "ORD-9" });
+    mocks.getOrderByIdempotencyKey.mockResolvedValue({
+      order_number: "ORD-9",
+      payment_status: "paid",
+      status: "confirmed",
+      printify_order_id: "printify_9",
+    });
     const deps = buildDeps();
 
     await expect(fulfillPaidOrder(deps, buildRequest())).resolves.toEqual({
@@ -82,9 +86,15 @@ describe("fulfillPaidOrder", () => {
     await expect(
       fulfillPaidOrder(deps, buildRequest({ generateInvoice: true })),
     ).resolves.toEqual({ orderNumber: "ORD-1" });
-    expect(mocks.updateOrder).toHaveBeenCalledWith("order_1", {
-      printify_order_id: "printify_1",
+    expect(deps.createOrderFromCart).toHaveBeenCalledWith({
+      provider: "mollie",
+      paymentId: "tr_1",
+      cart: expect.objectContaining({ id: "cart_1" }),
+      shippingAddress: {},
+      billingAddress: undefined,
     });
+    // create-printify-order links the Printify order server-side.
+    expect(mocks.updateOrder).not.toHaveBeenCalled();
     expect(mocks.markPaymentRecovered).toHaveBeenCalledWith(
       "tr_1",
       "mollie",
@@ -116,12 +126,30 @@ describe("fulfillPaidOrder", () => {
     );
   });
 
-  it("does not refund when only saving the Printify order ID fails", async () => {
-    mocks.updateOrder.mockRejectedValue(new Error("db down"));
+  it("fulfils a paid order the webhook created before the return page", async () => {
+    mocks.getOrderByIdempotencyKey.mockResolvedValue({
+      order_number: "ORD-7",
+      payment_status: "paid",
+      status: "confirmed",
+      printify_order_id: null,
+    });
+    const deps = buildDeps();
 
-    await expect(
-      fulfillPaidOrder(buildDeps(), buildRequest()),
-    ).resolves.toEqual({ orderNumber: "ORD-1" });
+    await fulfillPaidOrder(deps, buildRequest());
+    expect(deps.createOrderFromCart).toHaveBeenCalled();
+    expect(deps.createPrintifyOrder).toHaveBeenCalled();
+  });
+
+  it("does not refund when the order was already sent to Printify", async () => {
+    const deps = buildDeps();
+    vi.mocked(deps.createPrintifyOrder).mockRejectedValue(
+      Object.assign(new Error("dup"), { code: "ALREADY_FULFILLED" }),
+    );
+
+    await expect(fulfillPaidOrder(deps, buildRequest())).resolves.toEqual({
+      orderNumber: "ORD-1",
+    });
+    expect(deps.updateOrderStatus).not.toHaveBeenCalled();
     expect(mocks.processRefund).not.toHaveBeenCalled();
   });
 

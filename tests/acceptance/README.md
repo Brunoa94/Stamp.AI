@@ -22,7 +22,7 @@ npm run test:acceptance -- --grep 'callback cannot redirect|upload is optional|u
 
 Run one project with `npm run test:acceptance -- --project=desktop`. Optional Firefox/WebKit/mobile Safari projects use `ACCEPTANCE_CROSS_BROWSER=1 npm run test:acceptance`; install `firefox webkit` first. Mobile projects emulate devices; physical-device acceptance remains a separate check.
 
-Always use the wrapper for execution: it performs preflight and final cleanup even when Playwright fails. Direct Playwright invocation is for discovery only. Tests run serially with no automatic test retries. The dedicated app listens on port 3107 and refuses reuse of another server. Reports and durable cleanup ledgers live under ignored `.acceptance/`; treat them as private operational records.
+Always use the wrapper for execution: it performs preflight and final cleanup even when Playwright fails. Direct Playwright invocation is for discovery only. Tests run serially with no automatic test retries and stop at the first failure (pass `--max-failures=0` to run everything). The dedicated app listens on port 3107 and refuses reuse of another server. Reports and durable cleanup ledgers live under ignored `.acceptance/`; treat them as private operational records.
 
 ## Environment setup
 

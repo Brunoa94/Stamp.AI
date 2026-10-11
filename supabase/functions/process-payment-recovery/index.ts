@@ -1,23 +1,20 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
-import {
-  getSnapshotItemUnitPrice,
-  selectCheckoutCartItems,
-} from "../_shared/cartSelection.ts";
-
+import { selectCheckoutCartItems } from "../_shared/cartSelection.ts";
 import { requireUser } from "../_shared/authGuard.ts";
-import { verifyPaidPayment } from "../_shared/verifyPaidPayment.ts";
-import { requirePaymentCurrency } from "../_shared/paymentProof.ts";
-import { validatePaymentAmount } from "../_shared/amountValidator.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
-
+import { finalizePaidOrder } from "../_shared/finalizePaidOrder.ts";
+import { isPaymentProvider } from "../_shared/orderFinalizationRules.ts";
+import "../_shared/sentry.ts";
 
 /**
  * Process Payment Recovery Edge Function
  *
  * Completes order creation for payments that succeeded but weren't finalized
- * due to browser crashes, network failures, etc.
+ * due to browser crashes, network failures, etc. The order is built by the
+ * shared finalization from the server pricing stored with the payment (the
+ * snapshot only names the items), then sent to Printify if it is not yet.
  */
 serve(async (req) => {
   const corsHeaders = corsHeadersFor(req);
@@ -37,7 +34,7 @@ serve(async (req) => {
     } = body;
 
     // Validate required fields
-    if (!recovery_id || !payment_provider || !payment_intent_id) {
+    if (!recovery_id || !isPaymentProvider(payment_provider) || typeof payment_intent_id !== "string") {
       throw ErrorCodes.INVALID_REQUEST_BODY();
     }
 
@@ -57,9 +54,6 @@ serve(async (req) => {
     }
     const { cart_snapshot, shipping_address, line_items } = recovery;
     if (!cart_snapshot || !shipping_address || !line_items?.length) throw ErrorCodes.INVALID_REQUEST_BODY();
-    const effectiveUserId = recovery.user_id;
-    const payment = await verifyPaidPayment(payment_provider, payment_intent_id, effectiveUserId);
-    requirePaymentCurrency(payment, recovery.currency);
 
     // Increment recovery attempt counter
     await supabaseRest("rpc/increment_recovery_attempt", "POST", {
@@ -67,30 +61,44 @@ serve(async (req) => {
       p_payment_provider: payment_provider,
     });
 
-    // Check if order already exists for this payment
-    const idempotencyKey = `${payment_provider}_${payment_intent_id}`;
-    const existingOrderResult = await supabaseRest<Array<{ id: string; user_id: string }>>(
-      `orders?idempotency_key=eq.${encodeURIComponent(idempotencyKey)}&select=id,user_id`, "GET",
+    const cartItems = selectCheckoutCartItems(cart_snapshot.cart_items || cart_snapshot.items || []);
+    if (cartItems.length === 0) {
+      throw new Error("Cannot recover an order without selected cart items");
+    }
+
+    let order;
+    try {
+      order = await finalizePaidOrder({
+        provider: payment_provider,
+        paymentId: payment_intent_id,
+        callerUserId: recovery.user_id,
+        cartItems,
+        shippingAddress: shipping_address,
+      });
+    } catch (finalizeError) {
+      await supabaseRest("rpc/increment_recovery_attempt", "POST", {
+        p_payment_intent_id: payment_intent_id,
+        p_payment_provider: payment_provider,
+        p_error: finalizeError instanceof FunctionError ? finalizeError.errorId : "Order creation failed",
+      });
+      throw finalizeError;
+    }
+    const orderId = order.orderId;
+
+    const fulfilledResult = await supabaseRest<Array<{ printify_order_id: string | null }>>(
+      `orders?id=eq.${orderId}&select=printify_order_id`, "GET",
     );
-    const existingOrder = existingOrderResult.data?.[0];
-
-    if (existingOrderResult.error) throw new Error("Could not check existing order");
-    if (existingOrder) {
-      if (existingOrder.user_id !== effectiveUserId) {
-        throw new FunctionError(403, "FORBIDDEN", "Order belongs to another user");
-      }
-
-      // Mark as recovered
+    if (fulfilledResult.data?.[0]?.printify_order_id) {
       await supabaseRest("rpc/mark_payment_recovered", "POST", {
         p_payment_intent_id: payment_intent_id,
         p_payment_provider: payment_provider,
-        p_order_id: existingOrder.id,
+        p_order_id: orderId,
       });
 
       return new Response(
         JSON.stringify({
           success: true,
-          order_id: existingOrder.id,
+          order_id: orderId,
           message: "Order already exists",
         }),
         {
@@ -98,99 +106,6 @@ serve(async (req) => {
         }
       );
     }
-
-    // Create order from cart snapshot
-
-    // Calculate totals from cart snapshot — only the items selected for checkout
-    const cartItems = selectCheckoutCartItems(
-      cart_snapshot.cart_items || cart_snapshot.items || []
-    );
-    if (cartItems.length === 0) {
-      throw new Error("Cannot recover an order without selected cart items");
-    }
-    const subtotal = cartItems.reduce((sum: number, item: any) => {
-      const unitPrice = getSnapshotItemUnitPrice(item);
-      return sum + (unitPrice * (item.quantity ?? 1));
-    }, 0);
-
-    const shippingCost = cart_snapshot.shipping_cost || 0;
-    const discount = cart_snapshot.discount || 0;
-    const totalAmount = subtotal + shippingCost - discount;
-
-    // The order total must match what the provider actually charged — reject
-    // recovery of a snapshot whose price differs from the real payment.
-    const amountCheck = validatePaymentAmount({
-      paymentAmount: payment.amount,
-      paymentCurrency: payment.currency,
-      expectedTotal: totalAmount,
-    });
-    if (!amountCheck.isValid) {
-      throw new FunctionError(
-        400,
-        "AMOUNT_MISMATCH",
-        "Recovered cart total does not match the amount paid",
-      );
-    }
-
-    // Generate order number
-    const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-
-    // Create order
-    const orderData = {
-      user_id: effectiveUserId,
-      order_number: orderNumber,
-      subtotal,
-      shipping_cost: shippingCost,
-      discount_amount: discount,
-      total_amount: totalAmount,
-      payment_status: "paid",
-      status: "pending",
-      payment_method: payment_provider,
-      currency: payment.currency,
-      shipping_address: shipping_address,
-      idempotency_key: idempotencyKey,
-    };
-
-    const orderResult = await supabaseRest<Array<{ id: string }> | { id: string }>("orders", "POST", orderData, { prefer: "return=representation" });
-
-    if (orderResult.error || !orderResult.data) {
-      // Record error in recovery record
-      await supabaseRest("rpc/increment_recovery_attempt", "POST", {
-        p_payment_intent_id: payment_intent_id,
-        p_payment_provider: payment_provider,
-        p_error: "Order creation failed",
-      });
-
-      throw new Error(
-        "Failed to create order"
-      );
-    }
-
-    const orderId = Array.isArray(orderResult.data)
-      ? orderResult.data[0].id
-      : orderResult.data.id;
-
-    // Create order items
-    const orderItems = cartItems.map((item: any) => {
-      const unitPrice = getSnapshotItemUnitPrice(item);
-      const quantity = item.quantity ?? 1;
-
-      return {
-        order_id: orderId,
-        product_id: item.product_id || item.id,
-        product_name: item.product_name || item.name || "Product",
-        variant_id: item.variant_id,
-        quantity,
-        unit_price: unitPrice,
-        total_price: unitPrice * quantity,
-        custom_image_url: item.custom_image_url || "",
-        design_config: item.custom_image_url
-          ? { reusable_image_url: item.custom_image_url }
-          : null,
-      };
-    });
-
-    await supabaseRest("order_items", "POST", orderItems);
 
     // Create Printify order
 
@@ -216,8 +131,9 @@ serve(async (req) => {
       }
     );
 
-    if (!printifyResponse.ok) {
-      const errorText = await printifyResponse.text();
+    const errorText = printifyResponse.ok ? "" : await printifyResponse.text();
+    // ALREADY_FULFILLED: a concurrent checkout sent the order meanwhile.
+    if (!printifyResponse.ok && !errorText.includes("ALREADY_FULFILLED")) {
 
       // Order exists but Printify failed - create reconciliation alert
       await supabaseRest("order_status_reconciliation", "POST", {
@@ -246,12 +162,6 @@ serve(async (req) => {
         }
       );
     }
-
-    // Update order status to confirmed
-    await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
-      status: "confirmed",
-      updated_at: new Date().toISOString(),
-    });
 
     // Mark payment as recovered
     await supabaseRest("rpc/mark_payment_recovered", "POST", {

@@ -1,10 +1,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { ErrorCodes, handleError } from "../_shared/errors.ts";
+import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
 import { validateEnvVars } from "../_shared/validators.ts";
-import { capturePayPalOrder } from "../_shared/paypal.ts";
-import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
+import { capturePayPalOrder, getPayPalOrder } from "../_shared/paypal.ts";
 import type { PayPalCaptureRequestI, PayPalCaptureResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import "../_shared/sentry.ts";
 
 /**
  * Helper to call Supabase REST API directly without the client library
@@ -107,12 +107,35 @@ serve(async (req) => {
   try {
     // Verify authentication
     const authHeader = req.headers.get("authorization");
-    await verifyAuth(authHeader);
+    const caller = await verifyAuth(authHeader);
 
     const { orderId, payerId }: PayPalCaptureRequestI = await req.json();
 
-    if (!orderId) {
+    if (!orderId || typeof orderId !== "string" || !/^[A-Za-z0-9-]{1,64}$/.test(orderId)) {
       throw ErrorCodes.PAYPAL_ORDER_ID_REQUIRED();
+    }
+
+    // Before any money moves: the PayPal order must belong to the caller and
+    // be one our server created and priced, for exactly that total.
+    const approved = await getPayPalOrder(orderId);
+    const unit = approved.purchase_units?.[0];
+    let ownerId: unknown;
+    try {
+      ownerId = JSON.parse(unit?.custom_id || "{}").user_id;
+    } catch {
+      ownerId = undefined;
+    }
+    if (typeof ownerId !== "string" || (caller.userId !== "service-role" && ownerId !== caller.userId)) {
+      throw new FunctionError(403, "FORBIDDEN", "Payment does not belong to this user");
+    }
+    const transactionResult = await supabaseRest(
+      `payment_transactions?paypal_order_id=eq.${encodeURIComponent(orderId)}&user_id=eq.${encodeURIComponent(ownerId)}&select=metadata`,
+      "GET",
+    );
+    const totalCents = transactionResult.data?.[0]?.metadata?.total_cents;
+    if (typeof totalCents !== "number" || approved.purchase_units?.length !== 1 ||
+      unit?.amount?.currency_code !== "EUR" || Math.round(Number(unit.amount.value) * 100) !== totalCents) {
+      throw new FunctionError(409, "PAYMENT_NOT_FOUND", "No matching checkout payment for this PayPal order");
     }
 
     console.log("Capturing PayPal order:", orderId);
@@ -185,50 +208,26 @@ serve(async (req) => {
       console.warn("Could not parse custom_id:", e);
     }
 
-    // Save payment to database
+    // Record the capture on our transaction. Its metadata holds the server
+    // pricing and is left untouched; the order is settled by the webhook and
+    // finalize-order, never from client metadata.
     const result = await supabaseRest(
-      "payment_transactions",
-      "POST",
+      `payment_transactions?paypal_order_id=eq.${encodeURIComponent(orderId)}&user_id=eq.${encodeURIComponent(ownerId)}`,
+      "PATCH",
       {
-        user_id: userId,
-        payment_provider: "paypal",
-        paypal_order_id: orderId,
         paypal_capture_id: capture?.id,
         paypal_payer_id: payer?.payer_id || payerId,
         paypal_payer_email: payer?.email_address,
-        amount: parseFloat(capture?.amount?.value || "0"),
-        currency: capture?.amount?.currency_code?.toLowerCase() || "usd",
         status: "succeeded",
         payment_method_type: "paypal",
-        metadata: metadata,
         updated_at: new Date().toISOString(),
       },
-      { prefer: "resolution=merge-duplicates" }
     );
 
     if (result.error) {
-      console.error("Database insert error:", result.error);
+      console.error("Database update error:", result.error);
     } else {
       console.log("Payment saved to database");
-    }
-
-    // Update order payment_status to "paid"
-    const dbOrderId = metadata.order_id;
-    if (dbOrderId) {
-      const orderResult = await supabaseRest(`orders?id=eq.${dbOrderId}`, "PATCH", {
-        payment_status: "paid",
-        payment_method: "paypal",
-        updated_at: new Date().toISOString(),
-      });
-
-      if (orderResult.error) {
-        console.error("Failed to update order payment_status:", orderResult.error);
-      } else {
-        console.log(`Order ${dbOrderId} payment_status updated to: paid`);
-
-        // Issue the invoice now that the order is paid (idempotent, non-blocking)
-        await tryGenerateInvoiceForOrder(dbOrderId);
-      }
     }
 
     // ✅ CRITICAL FIX: Removed automatic Printify order creation

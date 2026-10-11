@@ -127,6 +127,7 @@ export class PaymentService {
         promoCode,
         lineItems: checkoutData.lineItems,
         shippingAddress: checkoutData.shippingAddress,
+        cartId,
       });
 
       // Store checkout data for return page
@@ -196,6 +197,7 @@ export class PaymentService {
         method: "ideal",
         lineItems: checkoutData.lineItems,
         shippingAddress: checkoutData.shippingAddress,
+        cartId,
       });
 
       // Store checkout data for the mollie-return page

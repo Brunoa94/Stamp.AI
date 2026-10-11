@@ -166,3 +166,13 @@ export function matchesPricedItems(requested: CheckoutLineItemT[], priced: Price
   })));
   return requestedKey === pricedKey;
 }
+
+/**
+ * Client checkout metadata minus any order id: orders are linked to payments
+ * server-side, so a client-chosen order id must never reach a webhook.
+ */
+export function withoutOrderId(metadata: unknown): Record<string, unknown> {
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) return {};
+  const { order_id: _orderId, orderId: _camelOrderId, ...rest } = metadata as Record<string, unknown>;
+  return rest;
+}

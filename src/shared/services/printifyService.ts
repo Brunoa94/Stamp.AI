@@ -14,7 +14,9 @@ import {
     BlueprintVariantsResponse,
     ProductCustomizationService,
 } from "./productCustomizationService";
-import { ErrorClient } from "./errorClient";
+import { AppError, ErrorClient } from "./errorClient";
+import { readFunctionErrorCode } from "@/lib/functionErrorCode";
+import type { ErrorCodeT } from "@/shared-types";
 import { TshirtType } from "@/shared/types/product";
 
 export class PrintifyService {
@@ -134,8 +136,10 @@ export class PrintifyService {
 
             if (error) {
                 console.error("Printify order creation error:", error);
-                throw new Error(
-                    error.message || "Failed to create Printify order",
+                const code = await readFunctionErrorCode(error);
+                throw new AppError(
+                    code ?? error.message ?? "Failed to create Printify order",
+                    (code ?? undefined) as ErrorCodeT | undefined,
                 );
             }
 

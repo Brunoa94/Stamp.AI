@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { OrderService } from "@/shared/services/orderService";
-import { CartWithItems } from "@/shared/types/cart";
+import type { CreateOrderFromCartInputT } from "@/shared/types/order";
 import { UserI } from "../../../supabase/types";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import type { ShippingAddressT } from "@/shared/schemas/checkout";
@@ -72,48 +72,8 @@ export function useCreateOrderFromCart() {
   const { handleError } = useErrorHandler();
 
   return useMutation({
-    mutationFn: async ({
-      user,
-      cart,
-      paymentStatus = "paid",
-      shippingAddress,
-      billingAddress,
-      idempotencyKey,
-      orderStatus,
-      paymentMethod,
-      paymentAmountCents,
-      shippingCostCents,
-      discountCents,
-    }: {
-      user: UserI;
-      cart: CartWithItems;
-      paymentStatus?: string;
-      shippingAddress?: ShippingAddressT;
-      billingAddress?: ShippingAddressT;
-      idempotencyKey?: string;
-      orderStatus?: string;
-      paymentMethod?: string;
-      paymentAmountCents?: number;
-      shippingCostCents?: number;
-      discountCents?: number;
-    }) => {
-      if (!user) {
-        throw new Error("User not authenticated");
-      }
-      return await OrderService.createOrderFromCart({
-        cart,
-        user,
-        paymentStatus,
-        shippingAddress,
-        billingAddress,
-        idempotencyKey,
-        orderStatus,
-        paymentMethod,
-        paymentAmountCents,
-        shippingCostCents,
-        discountCents,
-      });
-    },
+    mutationFn: (input: CreateOrderFromCartInputT) =>
+      OrderService.createOrderFromCart(input),
     onSuccess: (orderId) => {
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       queryClient.invalidateQueries({ queryKey: ["cart"] });

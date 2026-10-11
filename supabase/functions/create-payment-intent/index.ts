@@ -13,8 +13,10 @@ import {
   providerPricingMetadata,
   requireClientTotal,
 } from "../_shared/checkoutPricing.ts";
+import { withoutOrderId } from "../_shared/checkoutPricingRules.ts";
 import type { PaymentIntentResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import "../_shared/sentry.ts";
 
 /**
  * Verify authentication - accepts both user JWT tokens and service role key
@@ -111,7 +113,7 @@ serve(async (req) => {
       amount: pricing.totalCents,
       currency: "eur",
       metadata: {
-        ...metadata,
+        ...withoutOrderId(metadata),
         ...providerPricingMetadata(pricing),
         user_id: userId,
         user_email: userEmail,
@@ -161,7 +163,7 @@ serve(async (req) => {
         status: "pending",
         payment_method_type: payment_method ? "card" : null,
         metadata: {
-          ...metadata,
+          ...withoutOrderId(metadata),
           user_id: userId,
           user_email: userEmail,
           line_items: line_items,

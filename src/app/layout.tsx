@@ -19,6 +19,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import { AppLayoutChrome } from "@/shared/ui/AppLayoutChrome";
 import { GoogleAnalytics } from "@/features/analytics/GoogleAnalytics";
 import { AnalyticsPageViewTracker } from "@/features/analytics/AnalyticsPageViewTracker";
+import { CookieConsentBanner } from "@/features/analytics/ui/CookieConsentBanner";
 import { GlobalErrorBoundary } from "@/shared/ui/ErrorBoundary/GlobalErrorBoundary";
 import { WebVitalsReporter } from "@/shared/ui/WebVitalsReporter";
 
@@ -100,6 +101,7 @@ export default async function RootLayout({
                 <QueryProvider>
                   <ScrollToTop />
                   <AppLayoutChrome>{children}</AppLayoutChrome>
+                  <CookieConsentBanner />
                   <Toaster
                     position="bottom-right"
                     offset={24}
