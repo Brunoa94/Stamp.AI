@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bebas_Neue, Poppins, Outfit, Sanchez, Indie_Flower, Inter } from "next/font/google";
+import { Bebas_Neue, Poppins, Sanchez, Indie_Flower, Inter } from "next/font/google";
 import "./globals.css";
 import "./globals-stamp.css";
 
@@ -34,14 +34,6 @@ const bebasNeue = Bebas_Neue({
   weight: "400",
   variable: "--font-bebas-neue",
   subsets: ["latin"],
-  display: "swap",
-  preload: true,
-});
-
-const outfit = Outfit({
-  variable: "--font-outfit",
-  subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700"],
   display: "swap",
   preload: true,
 });
@@ -93,7 +85,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className="light scheme-light" suppressHydrationWarning>
       <body
-        className={`${poppins.variable} ${bebasNeue.variable} ${outfit.variable} ${sanchez.variable} ${indieFlower.variable} ${inter.variable} antialiased`}
+        className={`${poppins.variable} ${bebasNeue.variable} ${sanchez.variable} ${indieFlower.variable} ${inter.variable} antialiased`}
       >
         <GoogleAnalytics />
         <AnalyticsPageViewTracker />
