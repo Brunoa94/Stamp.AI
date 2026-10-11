@@ -1,9 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { ErrorCodes, handleError } from "../_shared/errors.ts";
-import { validateEnvVars, verifyAuth } from "../_shared/validators.ts";
+import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
+import { verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { getMolliePayment, isMolliePaymentPaid, mapMollieStatusToInternal } from "../_shared/mollie.ts";
-import { tryGenerateInvoiceForOrder } from "../_shared/invoice.ts";
 import type { MollieVerifyRequestI, MollieVerifyResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
 
@@ -20,7 +19,7 @@ serve(async (req) => {
   try {
     // Verify authentication
     const authHeader = req.headers.get("authorization");
-    await verifyAuth(authHeader);
+    const caller = await verifyAuth(authHeader);
 
     const { paymentId }: MollieVerifyRequestI = await req.json();
 
@@ -34,26 +33,23 @@ serve(async (req) => {
     const payment = await getMolliePayment(paymentId);
     const internalStatus = mapMollieStatusToInternal(payment.status);
 
-    // Parse metadata for DB synchronization
+    // Only the customer who paid may read or sync this payment.
     const metadata = (payment.metadata as Record<string, unknown> | null) || {};
     const userId = typeof metadata.user_id === "string" ? metadata.user_id : undefined;
-    const orderId =
-      typeof metadata.order_id === "string"
-        ? metadata.order_id
-        : typeof metadata.orderId === "string"
-          ? (metadata.orderId as string)
-          : undefined;
+    if (caller.userId !== "service-role" && (!userId || userId !== caller.userId)) {
+      throw new FunctionError(403, "FORBIDDEN", "Payment does not belong to this user");
+    }
 
     // Sync payment transaction status using atomic RPC (same as webhook)
     // This ensures the status is updated even when webhook is delayed/unavailable.
-    // Use the RPC function for reliable upsert behavior.
+    // Orders are settled by the webhook and finalize-order, never from here.
     const upsertResult = await supabaseRest(
       "rpc/upsert_mollie_payment_transaction",
       "POST",
       {
         p_mollie_payment_id: payment.id,
-        p_user_id: userId || null,
-        p_order_id: orderId || null,
+        p_user_id: userId,
+        p_order_id: null,
         p_amount: parseFloat(payment.amount.value),
         p_currency: payment.amount.currency.toLowerCase(),
         p_status: internalStatus,
@@ -84,44 +80,11 @@ serve(async (req) => {
       console.log("✅ Payment transaction upserted:", payment.id, "status:", internalStatus);
     }
 
-    if (orderId) {
-      if (payment.status === "paid") {
-        const orderResult = await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
-          status: "processing",
-          payment_status: "paid",
-          payment_method: "mollie",
-          updated_at: new Date().toISOString(),
-        });
-
-        if (orderResult.error) {
-          console.error(`Failed to update order ${orderId} from verify endpoint:`, orderResult.error);
-        } else {
-          // Issue the invoice now that the order is paid (idempotent, non-blocking)
-          await tryGenerateInvoiceForOrder(orderId);
-        }
-      } else if (
-        payment.status === "failed" ||
-        payment.status === "canceled" ||
-        payment.status === "expired"
-      ) {
-        const orderResult = await supabaseRest(`orders?id=eq.${orderId}`, "PATCH", {
-          status: "cancelled",
-          payment_status: internalStatus,
-          updated_at: new Date().toISOString(),
-        });
-
-        if (orderResult.error) {
-          console.error(`Failed to update order ${orderId} from verify endpoint:`, orderResult.error);
-        }
-      }
-    }
-
     const response: MollieVerifyResponseI = {
       success: true,
       paymentId: payment.id,
       status: payment.status,
       isPaid: isMolliePaymentPaid(payment.status),
-      metadata: payment.metadata || undefined,
     };
 
     console.log("Payment status:", payment.status, "isPaid:", response.isPaid);

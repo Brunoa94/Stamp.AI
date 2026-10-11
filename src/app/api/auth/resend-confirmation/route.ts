@@ -14,6 +14,7 @@ import {
 import { SITE_URL } from "@/features/seo/config/site";
 import type { Database } from "@/shared/types/database.types";
 import { verifyCaptchaForAction } from "@/lib/security/captcha/verify";
+import { captchaDecision } from "@/lib/security/captcha/policy";
 import { CAPTCHA_ACTIONS } from "@/lib/security/captcha/constants";
 import { isAuthEmailRequestAllowed } from "@/lib/security/authEmailProtection";
 
@@ -53,12 +54,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Only require CAPTCHA when both keys are configured
-    const captchaConfigured =
-      Boolean(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) &&
-      Boolean(process.env.RECAPTCHA_SECRET_KEY);
+    const captchaCheck = captchaDecision(parsed.data.captchaToken);
+    if (captchaCheck === "reject") {
+      return NextResponse.json(
+        { error: "CAPTCHA_VERIFICATION_FAILED" },
+        { status: 403 },
+      );
+    }
 
-    if (captchaConfigured && parsed.data.captchaToken) {
+    if (captchaCheck === "verify" && parsed.data.captchaToken) {
       const captcha = await verifyCaptchaForAction(
         parsed.data.captchaToken,
         CAPTCHA_ACTIONS.REGISTER,

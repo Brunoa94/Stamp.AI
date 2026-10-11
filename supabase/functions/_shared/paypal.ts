@@ -193,6 +193,7 @@ export interface PayPalCaptureResponse {
       }>;
     };
     custom_id?: string;
+    amount?: { currency_code: string; value: string };
   }>;
 }
 

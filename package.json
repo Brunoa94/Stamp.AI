@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "overrides": {
-    "sharp": "^0.35.3"
+    "sharp": "^0.35.4"
   },
   "scripts": {
     "dev": "next dev",
@@ -56,7 +56,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.562.0",
-    "next": "^16.1.6",
+    "next": "^16.3.6",
     "next-intl": "^4.13.2",
     "next-themes": "^0.4.6",
     "openai": "^7.5.0",
@@ -64,7 +64,7 @@
     "react-dom": "19.2.3",
     "react-hook-form": "^7.70.0",
     "react-icons": "^5.6.0",
-    "sharp": "^0.35.3",
+    "sharp": "^0.35.5",
     "sonner": "^2.0.7",
     "supabase": "^2.92.1",
     "tailwind-merge": "^3.4.0",
@@ -84,7 +84,7 @@
     "dotenv": "^18.0.5",
     "env-cmd": "^11.0.0",
     "eslint": "^9",
-    "eslint-config-next": "16.1.1",
+    "eslint-config-next": "^16.3.6",
     "imapflow": "^2.1.2",
     "jsdom": "^29.0.2",
     "knip": "^6.27.0",

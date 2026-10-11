@@ -29,6 +29,11 @@ function isAllowedImageUrl(u: string): boolean {
   )
 }
 
+// ~15 MB of image data once decoded.
+const MAX_IMAGE_BASE64_LENGTH = 20 * 1024 * 1024
+const MAX_IMAGE_URL_LENGTH = 2048
+const SAFE_FILE_NAME = /^[A-Za-z0-9._-]{1,100}\.(png|jpe?g|webp)$/i
+
 serve(async (req) => {
   const corsHeaders = corsHeadersFor(req)
   // Handle CORS preflight
@@ -45,21 +50,26 @@ serve(async (req) => {
       file_name = 'design.png',
     } = await req.json()
 
-    if (image_url && !isAllowedImageUrl(image_url)) {
+    if (image_url && (typeof image_url !== 'string' || image_url.length > MAX_IMAGE_URL_LENGTH || !isAllowedImageUrl(image_url))) {
       throw new FunctionError(400, "INVALID_IMAGE_URL", "image_url host not allowed")
     }
+    if (image_base64 !== undefined && (typeof image_base64 !== 'string' || image_base64.length > MAX_IMAGE_BASE64_LENGTH)) {
+      throw new FunctionError(413, "IMAGE_TOO_LARGE", "image_base64 exceeds the upload limit")
+    }
+    // Printify shows the name in the merchant dashboard; never pass arbitrary input through.
+    const safeFileName = typeof file_name === 'string' && SAFE_FILE_NAME.test(file_name) ? file_name : 'design.png'
 
     console.log('=== UPLOAD PRINTIFY IMAGE ===')
     console.log('Image URL:', image_url)
     console.log('Has base64:', !!image_base64)
-    console.log('File name:', file_name)
+    console.log('File name:', safeFileName)
 
     // Validate environment variables and request data
     const PRINTIFY_API_TOKEN = validateEnvVars.printifyToken()
     validateRequest.imageUpload(image_url, image_base64)
 
     let uploadPayload: any = {
-      file_name: file_name,
+      file_name: safeFileName,
     }
 
     if (image_url) {
