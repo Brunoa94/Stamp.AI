@@ -15,22 +15,19 @@ export interface CancelOrderResponseI {
 
 import { createClient } from "@/lib/supabase/client";
 import {
+  CreateOrderFromCartInputT,
   CreateOrderT,
   OrderStatusHistoryT,
   OrderT,
   OrderWithItemsT,
   UpdateOrderT,
 } from "../types/order";
-import { OrderSchema, OrderWithItemsSchema } from "@/shared/schemas/order";
+import { OrderWithItemsSchema } from "@/shared/schemas/order";
 import { OrderServiceMapper } from "@/shared/mappers/services/orderServiceMapper";
 import { CartServiceMapper } from "@/shared/mappers/services/cartServiceMapper";
 import { z } from "zod";
-import { CartItem, CartT, CartWithItems } from "@/shared/types/cart";
-import { CartService } from "./cartService";
-import { OrderItemService } from "./orderItemService";
-import { UserI } from "../../../supabase/types";
 import { ErrorClient } from "./errorClient";
-import type { ShippingAddressT } from "@/shared/schemas/checkout";
+import { readFunctionErrorCode } from "@/lib/functionErrorCode";
 import { RefundService } from "./refundService";
 import { PaymentProviderT } from "../../../supabase/types";
 export class OrderService {
@@ -451,154 +448,48 @@ export class OrderService {
   }
 
   /**
-   * Link a payment transaction to an order
-   * Updates payment_transactions.order_id after order creation
+   * Create (or reuse) the paid order for a completed checkout payment.
+   *
+   * The order is minted server-side by the finalize-order Edge Function from
+   * the pricing stored with the payment; the browser only names the payment,
+   * the selected cart rows and the addresses. Returns the order id.
    */
-  static async linkPaymentTransactionToOrder({
-    paymentProvider,
-    paymentIntentId,
-    orderId,
-  }: {
-    paymentProvider: PaymentProviderT;
-    paymentIntentId: string;
-    orderId: string;
-  }): Promise<void> {
-    try {
-      const supabase = this.getSupabase();
-
-      // Build the query based on payment provider
-      let query = supabase
-        .from("payment_transactions")
-        .update({ order_id: orderId, updated_at: new Date().toISOString() });
-
-      // Add provider-specific filter
-      switch (paymentProvider) {
-        case "stripe":
-          query = query.eq("stripe_payment_intent_id", paymentIntentId);
-          break;
-        case "paypal":
-          query = query.eq("paypal_order_id", paymentIntentId);
-          break;
-        case "mollie":
-          query = query.eq("mollie_payment_id", paymentIntentId);
-          break;
-        default:
-          throw new Error(`Unsupported payment provider: ${paymentProvider}`);
-      }
-
-      const { error } = await query;
-
-      if (error) {
-        console.error(`Failed to link payment transaction to order:`, error);
-        // Don't throw - this is non-critical, webhook can still use metadata fallback
-      } else {
-        console.log(
-          `✅ Linked payment transaction (${paymentProvider}:${paymentIntentId}) to order ${orderId}`,
-        );
-      }
-    } catch (error) {
-      console.error("Exception linking payment transaction to order:", error);
-      // Non-blocking error - webhook has fallback
-    }
-  }
-
   static async createOrderFromCart({
-    user,
+    provider,
+    paymentId,
     cart,
-    paymentStatus = "paid",
     shippingAddress,
     billingAddress,
-    idempotencyKey,
-    orderStatus,
-    paymentMethod,
-    paymentAmountCents,
-    shippingCostCents,
-    discountCents,
-  }: {
-    user: UserI;
-    cart: CartWithItems;
-    paymentStatus?: string;
-    shippingAddress?: ShippingAddressT;
-    billingAddress?: ShippingAddressT;
-    idempotencyKey?: string;
-    orderStatus?: string;
-    paymentMethod?: string;
-    paymentAmountCents?: number;
-    shippingCostCents?: number;
-    discountCents?: number;
-  }) {
+  }: CreateOrderFromCartInputT): Promise<string> {
     try {
-      // CRITICAL: Check idempotency key to prevent duplicate orders
-      if (idempotencyKey) {
-        const existingOrder = await this.getOrderByIdempotencyKey(
-          idempotencyKey,
-        );
-        if (existingOrder) {
-          console.log(
-            `⚠️ Order already exists with idempotency key: ${idempotencyKey}, returning existing order: ${existingOrder.id}`,
-          );
-          return existingOrder.id;
-        }
-      }
-
       // Only the items selected for checkout belong to the order (and its invoice)
       const checkoutCart = CartServiceMapper.mapCartToCheckoutCart(cart);
       if (checkoutCart.cart_items.length === 0) {
         throw new Error("Cannot create an order without selected cart items");
       }
 
-      // Use mapper to generate unique order number
-      const orderNumber = OrderServiceMapper.generateOrderNumber();
+      const { data, error } = await this.getSupabase().functions.invoke<{
+        order_id?: string;
+      }>("finalize-order", {
+        body: {
+          provider,
+          payment_id: paymentId,
+          cart_items: OrderServiceMapper.mapCartItemsToFinalizeItems(
+            checkoutCart.cart_items,
+          ),
+          shipping_address: shippingAddress,
+          billing_address: billingAddress,
+        },
+      });
 
-      // Use mapper to calculate order totals
-      const totals = OrderServiceMapper.calculateOrderTotals(
-        checkoutCart.cart_items,
-      );
-      const shipping = shippingCostCents ?? Math.max(0, (paymentAmountCents ?? totals.subtotal) - totals.subtotal);
-      const discount = discountCents ?? Math.max(0, totals.subtotal + shipping - (paymentAmountCents ?? totals.subtotal + shipping));
-      if (![shipping, discount].every(value => Number.isSafeInteger(value) && value >= 0)) {
-        throw new Error("Invalid checkout shipping or discount amount");
+      if (error) {
+        const code = await readFunctionErrorCode(error);
+        throw new Error(code ?? error.message ?? "Failed to create the order");
       }
-      totals.shipping_cost = shipping;
-      totals.total_amount = totals.subtotal + shipping - discount;
-      if (paymentAmountCents !== undefined && totals.total_amount !== paymentAmountCents) {
-        throw new Error("Captured payment does not match the order total");
+      if (!data?.order_id) {
+        throw new Error("The order service did not return an order");
       }
-
-      // Derive order status: use provided or default logic
-      const finalOrderStatus = orderStatus ??
-        (paymentStatus === "paid" ? "confirmed" : "pending");
-
-      // Use mapper to create order payload
-      const orderPayload = OrderServiceMapper.mapUserAndTotalsToCreateOrder(
-        user,
-        orderNumber,
-        totals,
-        shippingAddress,
-        billingAddress,
-        discount,
-        paymentStatus,
-        finalOrderStatus,
-        idempotencyKey,
-        paymentMethod,
-      );
-
-      // Create order from cart
-      const newOrder = await this.createOrder(orderPayload);
-
-      console.log("✅ Order created from cart:", newOrder.id);
-
-      // Create order items from cart items using mapper
-      if (checkoutCart.cart_items.length > 0) {
-        const orderItems = checkoutCart.cart_items.map((cartItem) =>
-          OrderServiceMapper.mapCartItemToOrderItem(cartItem, newOrder.id)
-        );
-
-        await OrderItemService.createOrderItems(orderItems);
-        console.log("✅ Order items created:", orderItems.length);
-      }
-
-      return newOrder.id;
+      return data.order_id;
     } catch (error) {
       throw ErrorClient.handleError({
         error,

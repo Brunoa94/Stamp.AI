@@ -5,6 +5,7 @@ import { validateEnvVars } from "../_shared/validators.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
 import { requireServiceRoleOrCron } from '../_shared/authGuard.ts'
 import { fetchPrintify } from "../_shared/fetchWithTimeout.ts"
+import { withCronMonitor } from "../_shared/sentry.ts";
 
 interface ProviderInfo {
   id: number
@@ -183,7 +184,8 @@ async function findCheapestShippingProvider(
  * - min_price_cents: Minimum variant price from cheapest provider
  * - shipping_cents: Shipping cost to Netherlands from cheapest provider
  */
-serve(async (req) => {
+// pg_cron runs this function; each run is a Sentry Cron check-in.
+serve((req) => withCronMonitor("sync-cheapest-providers", async () => {
   const corsHeaders = corsHeadersFor(req, { methods: 'POST, GET, OPTIONS' })
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -343,4 +345,4 @@ serve(async (req) => {
     console.error('Error syncing cheapest providers:', error)
     return handleError(error, corsHeaders)
   }
-})
+}));

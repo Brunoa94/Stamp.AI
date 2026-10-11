@@ -18,6 +18,7 @@ export class PayPalService {
     promoCode,
     lineItems,
     shippingAddress,
+    cartId,
     testMode = false,
   }: CreatePayPalOrderPayloadI): Promise<CreatePayPalOrderResponseI> {
     try {
@@ -33,8 +34,8 @@ export class PayPalService {
             line_items: lineItems,
             shipping_address: shippingAddress,
             metadata: {
-              order_id: `order_${Date.now()}`,
               test_mode: testMode,
+              ...(cartId ? { cartId } : {}),
             },
           },
           headers,

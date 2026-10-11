@@ -4,6 +4,7 @@ import { verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { createInvoiceSignedUrl, ensureInvoiceForOrder } from "../_shared/invoice.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import "../_shared/sentry.ts";
 
 interface GenerateInvoiceRequestI {
   order_id: string;

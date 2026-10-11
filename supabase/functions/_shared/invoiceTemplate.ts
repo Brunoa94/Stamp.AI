@@ -190,7 +190,8 @@ export function renderInvoiceHtml(invoice: InvoiceRowI, seller: SellerInfoI): st
   const optionalTotals = [
     invoice.discount_amount > 0 ? totalRow("Discount", -invoice.discount_amount) : "",
     totalRow("Shipping", invoice.shipping_cost),
-    totalRow("Tax", invoice.tax_amount),
+    // Prices are VAT-inclusive: the VAT is shown, not added to the total.
+    totalRow("VAT included", invoice.tax_amount),
   ].join("");
 
   return `<!DOCTYPE html>

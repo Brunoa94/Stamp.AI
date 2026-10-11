@@ -1,5 +1,6 @@
 import type { MolliePaymentStatus } from "@/lib/mollie";
 import type { CartWithItems } from "@/shared/types/cart";
+import type { CreateOrderFromCartInputT } from "@/shared/types/order";
 import type {
   CreatePrintifyOrderRequest,
   PrintifyLineItem,
@@ -46,24 +47,9 @@ export type PaymentReturnTranslatorT = (
   values?: Record<string, string | number>,
 ) => string;
 
-export interface CreateOrderFromCartInputI {
-  user: UserI;
-  cart: CartWithItems;
-  paymentStatus?: string;
-  shippingAddress?: ShippingAddressT;
-  billingAddress?: ShippingAddressT;
-  idempotencyKey?: string;
-  paymentMethod?: string;
-  paymentAmountCents?: number;
-  shippingCostCents?: number;
-  discountCents?: number;
-}
-
 /** React Query mutations the fulfillment pipeline runs through. */
 export interface OrderFulfillmentDepsI {
-  createOrderFromCart: (
-    input: CreateOrderFromCartInputI,
-  ) => Promise<string | null | undefined>;
+  createOrderFromCart: (input: CreateOrderFromCartInputT) => Promise<string>;
   createPrintifyOrder: (
     payload: CreatePrintifyOrderRequest,
   ) => Promise<PrintifyOrderResponse>;

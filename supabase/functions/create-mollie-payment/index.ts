@@ -9,8 +9,10 @@ import {
   providerPricingMetadata,
   requireClientTotal,
 } from "../_shared/checkoutPricing.ts";
+import { withoutOrderId } from "../_shared/checkoutPricingRules.ts";
 import type { MolliePaymentRequestI, MolliePaymentResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import "../_shared/sentry.ts";
 
 serve(async (req) => {
   const corsHeaders = corsHeadersFor(req);
@@ -46,7 +48,6 @@ serve(async (req) => {
       amount,
       currency = "EUR",
       description,
-      order_id,
       line_items,
       shipping_address,
       promo_code,
@@ -77,14 +78,11 @@ serve(async (req) => {
       ? undefined
       : `${supabaseUrl}/functions/v1/mollie-webhook`;
 
-    const metadataOrderId =
-      metadata && typeof metadata.order_id === "string" ? metadata.order_id : undefined;
-    const resolvedOrderId = order_id ?? metadataOrderId;
 
     // Build metadata to store with payment
     const paymentMetadata = {
-      ...metadata,
-      ...(resolvedOrderId ? { order_id: resolvedOrderId } : {}),
+      // Orders are linked server-side; a client-supplied order id is never stored.
+      ...withoutOrderId(metadata),
       user_id: userId,
       user_email: userEmail,
       line_items: line_items,

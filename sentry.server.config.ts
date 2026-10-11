@@ -1,25 +1,9 @@
-// This file configures the initialization of Sentry on the server.
-// The config you add here will be used whenever the server handles a request.
+// Sentry for the Node.js server runtime. Options (DSN, environment, PII
+// scrubbing) are shared with the browser and edge runtimes; Sentry is off
+// unless NEXT_PUBLIC_SENTRY_DSN is set.
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
+import { buildSentryOptions } from "@/lib/observability/sentryConfig";
 
-Sentry.init({
-  // Disabled on this branch: no errors, logs, traces or replays are sent to Sentry.
-  enabled: false,
-
-  dsn: "https://f81c92c4cb15a656c494024072bfa61c@o4511877228527616.ingest.de.sentry.io/4511877243469904",
-
-  // Sample 10% of traces in production to reduce costs while maintaining visibility
-  tracesSampleRate: 0.1,
-
-  // Enable logs to be sent to Sentry
-  enableLogs: true,
-
-  dataCollection: {
-    // To disable sending user data and HTTP bodies, uncomment the lines below. For more info visit:
-    // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#dataCollection
-    // userInfo: false,
-    // httpBodies: [],
-  },
-});
+Sentry.init(buildSentryOptions());

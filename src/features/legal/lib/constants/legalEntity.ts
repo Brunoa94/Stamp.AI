@@ -8,19 +8,26 @@
  *      KvK registration number and VAT number.
  *   2. Create the privacy@ and security@ mailboxes, or keep routing both
  *      through support@ and update the addresses here.
- *   3. Reconcile with src/features/seo/config/business.ts, which currently
- *      declares "Stamp AI Design Inc." / addressCountry "US" and feeds the
- *      Organization JSON-LD in the root layout. The legal pages assume an
- *      EU/Netherlands entity; the two must not contradict each other.
+ *
+ * src/features/seo/config/business.ts derives the Organization JSON-LD from
+ * these values, so search engines and the legal pages name the same entity.
+ * Bracketed placeholders are left out of the JSON-LD until they are filled.
  */
 export const LEGAL_ENTITY = {
   legalName: "Stamp AI B.V.",
   address: "[registered address — pending legal review]",
   registration: "[KvK number — pending legal review]",
   vat: "[VAT number — pending legal review]",
+  /** ISO 3166-1 alpha-2 country of registration. */
+  country: "NL",
   jurisdiction: "Dutch",
   courts: "the competent courts of the Netherlands",
   supportEmail: "support@stamp.ai",
   privacyEmail: "support@stamp.ai",
   securityEmail: "support@stamp.ai",
 } as const;
+
+/** True for a value still waiting on legal review (a "[...]" placeholder). */
+export function isPendingLegalValue(value: string): boolean {
+  return value.startsWith("[");
+}

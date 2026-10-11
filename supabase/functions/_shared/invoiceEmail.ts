@@ -3,8 +3,8 @@ import { sendInvoiceEmailBrevo } from "./brevoEmail.ts";
 /**
  * Invoice email delivery via Brevo.
  *
- * Optional integration — when no API key is configured, sending is
- * skipped silently so invoice generation never depends on email delivery.
+ * Email delivery never blocks invoice generation; a missing configuration is
+ * reported in production and skipped elsewhere (see emailConfig.ts).
  *
  * Secrets:
  *   BREVO_API_KEY       Brevo API key (required to send)
@@ -25,12 +25,6 @@ export interface SendInvoiceEmailParamsI {
  * Returns true when the email was sent, false when skipped or failed.
  */
 export async function sendInvoiceEmail(params: SendInvoiceEmailParamsI): Promise<boolean> {
-  const brevoKey = Deno.env.get("BREVO_API_KEY");
-
-  if (!brevoKey) {
-    console.log("BREVO_API_KEY not configured, skipping invoice email");
-    return false;
-  }
-
+  // Configuration (and reporting a missing one) is handled by sendBrevoEmail.
   return sendInvoiceEmailBrevo(params);
 }

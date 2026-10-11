@@ -9,6 +9,11 @@ export function organizationSchema() {
     "@id": `${SITE_URL}/#organization`,
     name: BUSINESS_INFO.name,
     legalName: BUSINESS_INFO.legalName,
+    // Omitted (undefined is dropped by JSON.stringify) until legal review fills them.
+    vatID: BUSINESS_INFO.vatID,
+    ...(BUSINESS_INFO.registration
+      ? { identifier: { "@type": "PropertyValue", propertyID: "KvK", value: BUSINESS_INFO.registration } }
+      : {}),
     url: SITE_URL,
     logo: {
       "@type": "ImageObject",

@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { ErrorCodes, handleError } from "../_shared/errors.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
 import { requireUser } from '../_shared/authGuard.ts'
+import "../_shared/sentry.ts";
 
 const PRINTIFY_API_TOKEN = Deno.env.get('PRINTIFY_API_TOKEN')
 

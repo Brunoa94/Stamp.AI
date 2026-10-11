@@ -5,6 +5,7 @@ import { validateEnvVars, validateRequest } from "../_shared/validators.ts"
 import { buildProductSeoRow } from "../_shared/productSeo.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
 import { requireServiceRoleOrCron } from '../_shared/authGuard.ts'
+import "../_shared/sentry.ts";
 
 interface BlueprintData {
   id: number

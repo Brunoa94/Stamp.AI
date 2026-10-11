@@ -4,8 +4,10 @@ import { validateEnvVars, validateRequest, verifyAuth } from "../_shared/validat
 import { createPayPalOrder } from "../_shared/paypal.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { priceCheckout, pricingMetadata, requireClientTotal } from "../_shared/checkoutPricing.ts";
+import { withoutOrderId } from "../_shared/checkoutPricingRules.ts";
 import type { PayPalOrderRequestI, PayPalOrderResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
+import "../_shared/sentry.ts";
 
 serve(async (req) => {
   const corsHeaders = corsHeadersFor(req);
@@ -53,8 +55,10 @@ serve(async (req) => {
     }
 
     // Build custom_id with metadata for webhook processing
+    // custom_id is length-limited by PayPal; the cart id lives on our transaction only.
+    const { cartId: _cartId, ...customMetadata } = withoutOrderId(metadata);
     const customId = JSON.stringify({
-      ...metadata,
+      ...customMetadata,
       user_id: userId,
       user_email: userEmail,
       line_items: line_items,
@@ -101,10 +105,11 @@ serve(async (req) => {
         currency: 'eur',
         status: 'pending',
         metadata: {
-          ...metadata,
+          ...withoutOrderId(metadata),
           user_id: userId,
           user_email: userEmail,
           line_items: line_items,
+          shipping_address: shipping_address,
           ...pricingMetadata(pricing),
         },
         created_at: new Date().toISOString(),

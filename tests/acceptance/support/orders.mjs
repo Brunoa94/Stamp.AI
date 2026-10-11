@@ -14,7 +14,9 @@ export async function realOrder(account, env, quantities = [1]) {
     shipping_method: 1,
     address_to: { first_name: 'Acceptance', last_name: 'Test', email: account.email, phone: '+31600000000', country: 'NL', region: '', address1: 'Damrak 1', address2: '', city: 'Amsterdam', zip: '1012LG' },
   });
-  const order = unwrap(await account.db.from('orders').insert({
+  // Linking a Printify order is server-owned (customers cannot set
+  // printify_order_id), so the fixture seeds the row like the server does.
+  const order = unwrap(await account.admin.from('orders').insert({
     user_id: account.id, customer_email: account.email, order_number: `acceptance-${randomUUID()}`,
     printify_order_id: provider.id, status: 'pending', payment_status: 'pending', currency: 'EUR',
   }).select().single(), 'Persist linked real order');

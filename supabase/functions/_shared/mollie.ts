@@ -30,6 +30,11 @@ export async function mollieRequest<T = unknown>(
   const data = await response.json();
 
   if (!response.ok) {
+    // A lookup Mollie rejects (unknown or malformed id) is not retryable;
+    // auth (401) and rate limit (429) problems are.
+    if (method === "GET" && response.status >= 400 && response.status < 500 && ![401, 429].includes(response.status)) {
+      throw ErrorCodes.MOLLIE_PAYMENT_NOT_FOUND();
+    }
     const errorMessage = data.detail || data.title || JSON.stringify(data);
     console.error("Mollie API error:", data);
     throw ErrorCodes.MOLLIE_API_ERROR(errorMessage);

@@ -224,7 +224,8 @@ export async function renderInvoicePdf(invoice: InvoiceRowI, seller: SellerInfoI
     ["Subtotal", invoice.subtotal],
     ...(invoice.discount_amount > 0 ? [["Discount", -invoice.discount_amount] as [string, number]] : []),
     ["Shipping", invoice.shipping_cost],
-    ["Tax", invoice.tax_amount],
+    // Prices are VAT-inclusive: the VAT is shown, not added to the total.
+    ["VAT included", invoice.tax_amount],
   ];
   const totalsLabelX = rightEdge - 210;
   ensureSpace(ctx, totals.length * 18 + 110);

@@ -5,6 +5,7 @@ import { supabaseRest } from "../_shared/supabase.ts";
 import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
 import { fetchPrintify } from "../_shared/fetchWithTimeout.ts";
+import "../_shared/sentry.ts";
 
 interface CancelOrderRequestI {
   order_id: string;
