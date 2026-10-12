@@ -1,3 +1,4 @@
+import { ProductPrice } from "@/shared/ui/ProductPrice";
 /**
  * CheckoutCartItems
  *
@@ -5,12 +6,12 @@
  * luxury brutalist system with a custom scrollbar.
  */
 
+import { Paragraph } from "@/features/ui/paragraph";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ShoppingBag } from "lucide-react";
 import { Span } from "@/features/ui/span";
 import type { CartWithItems } from "@/shared/types/cart";
-import { formatPrice } from "../../../lib/utils/formatPrice";
 
 interface CheckoutCartItemsPropsI {
   items: CartWithItems["cart_items"];
@@ -52,9 +53,9 @@ export function CheckoutCartItems({ items }: CheckoutCartItemsPropsI) {
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="truncate text-lg font-bold uppercase tracking-[0.15em] text-(--color-stamp-chocolate)">
+              <Paragraph unstyled className="truncate text-lg font-bold uppercase tracking-[0.15em] text-(--color-stamp-chocolate)">
                 {name}
-              </p>
+              </Paragraph>
               <Span unstyled className="mt-1 block text-lg text-(--color-stamp-taupe)">
                 {item.variant?.name || t("standard")}
               </Span>
@@ -62,9 +63,9 @@ export function CheckoutCartItems({ items }: CheckoutCartItemsPropsI) {
                 <Span unstyled className="text-lg text-(--color-stamp-taupe)">
                   {t("qty", { quantity })}
                 </Span>
-                <span className="text-2xl font-bold tabular-nums text-(--color-stamp-chocolate)">
-                  {formatPrice(lineTotal / 100)}
-                </span>
+                <Span unstyled className="text-2xl font-bold tabular-nums text-(--color-stamp-chocolate)">
+                  <ProductPrice priceCents={lineTotal} regularPriceCents={item.regular_price_cents != null ? item.regular_price_cents * quantity : undefined} />
+                </Span>
               </div>
             </div>
           </li>

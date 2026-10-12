@@ -2755,5 +2755,17 @@
     "accept": "Accept analytics",
     "reject": "Essential only",
     "settings": "Cookie settings"
+  },
+  "promotions": {
+    "banner": "Celebrate our launch — discover launch offers",
+    "cta": "Shop launch offers",
+    "title": "Launch offers",
+    "regularPrice": "Regular price",
+    "promotionalPrice": "Promotional price",
+    "currentPrice": "Current price",
+    "pricingLoading": "Updating prices…",
+    "pricingUnavailable": "Prices could not be updated. Please try again.",
+    "pricingChanged": "Prices have changed. Review your updated total, then select Pay again.",
+    "retry": "Update prices"
   }
 }

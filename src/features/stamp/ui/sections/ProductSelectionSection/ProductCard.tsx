@@ -1,3 +1,4 @@
+import { ProductPrice } from "@/shared/ui/ProductPrice";
 
 import Image from "next/image";
 import { CheckCircle } from "lucide-react";
@@ -71,7 +72,7 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
           variant="sm"
           className="text-(--color-stamp-taupe)"
         >
-          €{product.price.toFixed(2)}
+          <ProductPrice priceCents={Math.round(product.price * 100)} regularPriceCents={product.originalPrice ? Math.round(product.originalPrice * 100) : undefined} />
         </Span>
       </div>
     </Button>

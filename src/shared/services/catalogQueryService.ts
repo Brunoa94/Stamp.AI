@@ -316,13 +316,15 @@ export class CatalogQueryService {
 
     const { data, error } = await supabase
       .from("catalog_products")
-      .select("selling_price_cents, min_price_cents, shipping_cents")
+      .select("promotional_price, selling_price_cents, min_price_cents, shipping_cents")
       .eq("blueprint_id", blueprintId)
       .single();
 
     if (error || !data) {
       return 0;
     }
+
+    if (data.promotional_price != null) return data.promotional_price;
 
     if (data.selling_price_cents) {
       return data.selling_price_cents;

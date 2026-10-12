@@ -8,6 +8,8 @@
 
 "use client";
 
+import { resolveDisplayPrice, resolveSaleDisplay } from "@/lib/pricing";
+import { ProductPrice } from "@/shared/ui/ProductPrice";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -31,14 +33,9 @@ export function HomeProductOfMonthSection() {
 
   const description = resolveProductDescription(product.product_seo);
 
-  const price = product.selling_price_cents
-    ? product.selling_price_cents / 100
-    : (product.min_price_cents + product.shipping_cents) / 100;
-
-  const originalPrice =
-    product.is_on_sale && product.original_price_cents
-      ? product.original_price_cents / 100
-      : null;
+  const price = resolveDisplayPrice({ ...product,
+    totalPriceCents: product.min_price_cents + product.shipping_cents });
+  const { originalPrice } = resolveSaleDisplay(product);
 
   return (
     <section className="relative bg-(--color-stamp-gold) px-6 py-24 lg:px-12 xl:px-24 lg:py-32 overflow-hidden">
@@ -117,17 +114,7 @@ export function HomeProductOfMonthSection() {
             )}
 
             <div className="mb-8 inline-flex items-baseline gap-3 rounded-md border-2 border-(--color-stamp-chocolate)/30 bg-(--color-stamp-chocolate)/10 px-6 py-3 shadow-md">
-              <Span variant="default" className="text-3xl font-medium text-(--color-stamp-chocolate)">
-                €{price.toFixed(2)}
-              </Span>
-              {originalPrice && (
-                <Span
-                  variant="sm"
-                  className="text-(--color-stamp-chocolate)/60 line-through"
-                >
-                  €{originalPrice.toFixed(2)}
-                </Span>
-              )}
+              <ProductPrice priceCents={Math.round(price * 100)} regularPriceCents={originalPrice ? Math.round(originalPrice * 100) : undefined} className="text-3xl font-medium" />
             </div>
 
             <Button

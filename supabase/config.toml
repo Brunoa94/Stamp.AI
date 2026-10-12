@@ -536,3 +536,8 @@ entrypoint = "./functions/upload-printify-image/index.ts"
 enabled = true
 verify_jwt = false
 entrypoint = "./functions/verify-mollie-payment/index.ts"
+
+[functions.checkout-quote]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/checkout-quote/index.ts"

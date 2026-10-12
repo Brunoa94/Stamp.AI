@@ -86,5 +86,6 @@ export type CatalogProductMappedType = {
   imageUrl: string;
   printProviderId: number;
   price: number;
+  originalPrice?: number;
   providerName: string;
 };

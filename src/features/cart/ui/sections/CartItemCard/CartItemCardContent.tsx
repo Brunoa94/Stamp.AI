@@ -1,3 +1,4 @@
+import { ProductPrice } from "@/shared/ui/ProductPrice";
 /**
  * CartItemCardContent
  *
@@ -7,7 +8,6 @@
 
 import { Heading } from "@/features/ui/heading";
 import type { CartItem } from "@/shared/types/cart";
-import { formatPrice } from "../../../lib/utils/formatPrice";
 import { CartItemCardSpecs } from "./CartItemCardSpecs";
 
 interface CartItemCardContentPropsI {
@@ -37,7 +37,7 @@ export function CartItemCardContent({ item }: CartItemCardContentPropsI) {
           variant="priceCompact"
           className="whitespace-nowrap text-(--color-stamp-gold)"
         >
-          {formatPrice(unitPrice)}
+          <ProductPrice priceCents={unitPrice} regularPriceCents={item.regular_price_cents} />
         </Heading>
       </div>
 

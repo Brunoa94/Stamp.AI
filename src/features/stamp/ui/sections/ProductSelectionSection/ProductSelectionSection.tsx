@@ -68,7 +68,7 @@ function ProductSelectionSectionComponent() {
         const baseCents = product.min_price_cents || 0;
         const shippingCents = product.shipping_cents || 0;
         const totalCents =
-          product.selling_price_cents ??
+          product.promotional_price ?? product.selling_price_cents ??
           (baseCents > 0 ? baseCents + shippingCents : 0);
         const price = totalCents > 0 ? totalCents / 100 : FALLBACK_PRICE;
 
@@ -81,6 +81,8 @@ function ProductSelectionSectionComponent() {
           imageUrl: product.base_image_url ?? "",
           printProviderId: product.print_provider_id,
           price,
+          originalPrice: product.promotional_price != null && product.selling_price_cents
+            ? product.selling_price_cents / 100 : undefined,
           providerName:
             product.print_provider_id === 99
               ? "Printify Choice"

@@ -1,3 +1,4 @@
+import { LaunchPromotionBanner } from "@/features/homepage/ui/components/LaunchPromotionBanner";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { StructuredData } from "@/features/seo/StructuredData";
@@ -58,7 +59,8 @@ export default async function CatalogPage() {
       <StructuredData
         data={itemListSchema(tMeta("title"), productSchemaEntries)}
       />
-      <CatalogPageContent sections={sections} />
+      {productsWithPricing.some((p) => p.promotional_price != null) && <LaunchPromotionBanner />}
+      <CatalogPageContent sections={sections} belowPromotion={productsWithPricing.some((p) => p.promotional_price != null)} />
     </>
   );
 }

@@ -117,7 +117,7 @@ export const getCachedAllProductsWithPricing = unstable_cache(
         // filtered out below instead of showing a shipping-only price.
         const baseCents = product.min_price_cents || 0;
         const totalPriceCents =
-          product.selling_price_cents ??
+          product.promotional_price ?? product.selling_price_cents ??
           (baseCents > 0 ? baseCents + (product.shipping_cents || 0) : 0);
 
         return {

@@ -20,6 +20,8 @@ export interface CatalogProduct {
   print_provider_id: number; // Printify print provider ID (default 99)
   // Admin overrides (editable)
   selling_price_cents: number | null;
+  /** Promotional unit price in EUR cents. */
+  promotional_price?: number | null;
   original_price_cents: number | null;
   is_on_sale: boolean;
   discount_percent: number | null; // e.g., 20 for 20% off

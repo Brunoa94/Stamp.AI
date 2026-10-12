@@ -38,8 +38,8 @@ export async function POST(request: NextRequest) {
 
   try {
     // Revalidate the cache for this tag
-    // Next.js 16 requires cache config as second parameter
-    revalidateTag(tag, {})
+    // Price/campaign changes must be visible on the next request, without stale content.
+    revalidateTag(tag, { expire: 0 })
 
     return NextResponse.json({
       revalidated: true,

@@ -27,6 +27,8 @@ interface CheckoutIdealButtonPropsI {
   /** Applied promo code, re-validated by the payment function. */
   promoCode?: string;
   disabled?: boolean;
+  beforePayment?: () => Promise<boolean>;
+  onPaymentError?: () => Promise<void>;
 }
 
 export function CheckoutIdealButton({
@@ -37,6 +39,8 @@ export function CheckoutIdealButton({
   discountCents,
   promoCode,
   disabled = false,
+  beforePayment,
+  onPaymentError,
 }: CheckoutIdealButtonPropsI) {
   const t = useTranslations("checkout.idealButton");
   const { getValues } = useFormContext<CheckoutFormData>();
@@ -45,6 +49,7 @@ export function CheckoutIdealButton({
   const handleClick = async () => {
     if (disabled || isPending) return;
     try {
+      if (beforePayment && !await beforePayment()) return;
       const formData = getValues();
       const { checkoutUrl } = await prepareIdeal({
         formData,
@@ -57,6 +62,7 @@ export function CheckoutIdealButton({
       });
       window.location.href = checkoutUrl;
     } catch (error) {
+      await onPaymentError?.();
       // Error surfaced via the mutation's shared error handler.
       console.error("iDEAL checkout error:", error);
     }

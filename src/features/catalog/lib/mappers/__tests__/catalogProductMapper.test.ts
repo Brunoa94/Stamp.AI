@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { filterCatalogSections } from "../../helpers/filterCatalogSections";
 import { mapProductsToCatalogDisplay } from "../catalogProductMapper";
 import type { ProductWithPricing } from "@/lib/supabase/server-cache";
 
@@ -106,4 +107,19 @@ describe("mapProductsToCatalogDisplay", () => {
     expect(product.description).toBe("A heavyweight classic tee.");
     expect(product.specs).toEqual(["100% cotton"]);
   });
+});
+
+it("derives launch sale styling from the promotional and regular prices", () => {
+  const [product] = mapProductsToCatalogDisplay([buildProduct({ promotional_price: 2000, selling_price_cents: 3000,
+    is_on_sale: false, original_price_cents: 9000, discount_percent: 80 })]);
+  expect(product).toMatchObject({ price: 20, originalPrice: 30, isOnSale: true, discountPercent: 33 });
+});
+
+it("sorts the catalog by effective promotional prices", () => {
+  const products = mapProductsToCatalogDisplay([
+    buildProduct({ blueprint_id: 6, selling_price_cents: 4000, promotional_price: 1500 }),
+    buildProduct({ blueprint_id: 145, selling_price_cents: 2000, promotional_price: null }),
+  ]);
+  const [section] = filterCatalogSections([{ group: "clothing", products }], { group: "all", query: "", sort: "price-asc" });
+  expect(section.products.map((product) => product.blueprintId)).toEqual([6, 145]);
 });

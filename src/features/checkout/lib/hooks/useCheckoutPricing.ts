@@ -1,11 +1,11 @@
 "use client";
 
+import { useCartPricing } from "@/shared/hooks/useCartPricing";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { CheckoutPromoCodeService } from "../services/promoCodeService";
-import { getDiscountValue } from "../helpers/promoCodeHelpers";
 import type { CartWithItems } from "@/shared/types/cart";
 import type { CheckoutFormData } from "../context/CheckoutFormContext";
 import type { PromoCodeValidationResult } from "@/shared/schemas/promocode";
@@ -30,11 +30,14 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
   const [promoError, setPromoError] = useState<string | null>(null);
 
   const promoCode = watch("promoCode");
+  const appliedCode = appliedPromo?.isValid ? appliedPromo.appliedPromo?.code : undefined;
+  const pricing = useCartPricing(cart, appliedCode);
+  const quotedCart = pricing.cart;
 
   // Calculate subtotal from cart items (in cents)
   const subtotalInCents = (() => {
-    if (!cart?.cart_items) return 0;
-    return cart.cart_items.reduce((sum, item) => {
+    if (!quotedCart?.cart_items) return 0;
+    return quotedCart.cart_items.reduce((sum, item) => {
       return sum + ((item.unit_price ?? 0) * (item.quantity ?? 1));
     }, 0);
   })();
@@ -43,18 +46,17 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
   const subtotal = subtotalInCents / 100;
 
   // Discount from applied promo code (in euros)
-  const discount = getDiscountValue(appliedPromo);
+  const discount = (pricing.data?.discountCents ?? 0) / 100;
 
   // Calculate subtotal after discount for shipping calculation
   const subtotalAfterDiscount = subtotal - discount;
 
   // Shipping: free for orders >= €60 (after discount), otherwise €4.99
-  const shipping = subtotalAfterDiscount >= FREE_SHIPPING_THRESHOLD
-    ? 0
-    : SHIPPING_COST;
+  const shipping = pricing.data ? pricing.data.shippingCents / 100
+    : subtotalAfterDiscount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
 
   // Total = subtotal + shipping - discount (all in euros)
-  const total = subtotal + shipping - discount;
+  const total = pricing.data ? pricing.data.totalCents / 100 : subtotal + shipping - discount;
 
   // Total in cents for payment processing
   const totalInCents = Math.round(total * 100);
@@ -110,6 +112,11 @@ export function useCheckoutPricing({ cart }: UseCheckoutPricingParams) {
   };
 
   return {
+    quotedCart,
+    quote: pricing.data,
+    isPricing: pricing.isPricing,
+    pricingUnavailable: pricing.pricingUnavailable,
+    refreshPricing: pricing.refetch,
     subtotal,
     shipping,
     discount,

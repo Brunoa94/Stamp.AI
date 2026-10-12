@@ -13,7 +13,7 @@ import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { TRUST_GUARANTEE_METRICS } from "@/shared/constants/trustMetrics";
 
-export function TopTrustBanner() {
+export function TopTrustBanner({ belowPromotion = false }: { belowPromotion?: boolean }) {
   const t = useTranslations("home.topBanner");
 
   const trustItems = [
@@ -34,7 +34,7 @@ export function TopTrustBanner() {
   ];
 
   return (
-    <div className="relative w-full bg-(--color-stamp-chocolate) py-2.5 mt-26">
+    <div className={`relative w-full bg-(--color-stamp-chocolate) py-2.5 ${belowPromotion ? "" : "mt-26"}`}>
       <div className="mx-auto flex max-w-7xl items-center justify-center gap-8 px-4 sm:gap-12 md:gap-16 lg:gap-24">
         {trustItems.map((item, index) => (
           <div key={index} className="flex items-center gap-2">

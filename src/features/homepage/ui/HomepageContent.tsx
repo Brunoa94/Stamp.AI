@@ -12,6 +12,8 @@
 
 import type { ProductWithPricing } from "@/lib/supabase/server-cache";
 import { mapProductsToCards } from "../lib/mappers/productCardMapper";
+import { HomeLaunchOffersSection } from "./sections/HomeLaunchOffersSection";
+import { LaunchPromotionBanner } from "./components/LaunchPromotionBanner";
 import { TopTrustBanner } from "./components/TopTrustBanner";
 import { PaymentMethodsBanner } from "./components/PaymentMethodsBanner";
 import { HomeHeroSection } from "./sections/HomeHeroSection";
@@ -32,11 +34,14 @@ export function HomepageContent({
   productsWithPricing,
 }: HomepageContentPropsI) {
   const products = mapProductsToCards(productsWithPricing);
+  const hasOffers = products.some((product) => product.isPromotional);
   return (
     <div className="overflow-x-clip">
-      <TopTrustBanner />
+      {hasOffers && <LaunchPromotionBanner />}
+      <TopTrustBanner belowPromotion={hasOffers} />
       <HomeHeroSection />
       <PaymentMethodsBanner />
+      <HomeLaunchOffersSection products={products} />
       <HomeProductsSection products={products} />
       <HomeStorySection blockIds={["design"]} background="chocolate" />
       <HomePromoSection

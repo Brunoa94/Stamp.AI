@@ -198,6 +198,7 @@ export type Database = {
           min_price_cents: number | null
           original_price_cents: number | null
           print_provider_id: number
+          promotional_price: number | null
           selling_price_cents: number | null
           shipping_cents: number | null
           updated_at: string | null
@@ -216,6 +217,7 @@ export type Database = {
           min_price_cents?: number | null
           original_price_cents?: number | null
           print_provider_id?: number
+          promotional_price?: number | null
           selling_price_cents?: number | null
           shipping_cents?: number | null
           updated_at?: string | null
@@ -234,6 +236,7 @@ export type Database = {
           min_price_cents?: number | null
           original_price_cents?: number | null
           print_provider_id?: number
+          promotional_price?: number | null
           selling_price_cents?: number | null
           shipping_cents?: number | null
           updated_at?: string | null
