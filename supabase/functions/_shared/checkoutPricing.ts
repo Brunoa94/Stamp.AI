@@ -2,8 +2,8 @@
  * Server-side checkout pricing.
  *
  * The amount a payment provider charges is decided here, never by the
- * client: every line item is priced from catalog_products.selling_price_cents,
- * the discount is recomputed from the promo code, and shipping follows the
+ * client: every line item uses catalog_products.promotional_price when set, otherwise
+ * selling_price_cents. The discount is recomputed from the promo code, and shipping follows the
  * free-shipping rule. The client's total is only accepted when it matches.
  */
 
@@ -26,6 +26,7 @@ export interface PricedCheckoutItemI {
   variantId: number;
   quantity: number;
   unitPriceCents: number;
+  regularPriceCents?: number;
   productId?: string;
 }
 
@@ -37,6 +38,7 @@ export interface CheckoutPricingI extends CheckoutTotalsT {
 interface CatalogPriceRowI {
   blueprint_id: number;
   selling_price_cents: number | null;
+  promotional_price: number | null;
   is_active: boolean | null;
 }
 
@@ -56,7 +58,14 @@ function rejectLineItems(message: string): never {
 }
 
 /** Existing Printify products are priced through their blueprint. */
-async function resolveProductBlueprint(item: Extract<CheckoutLineItemT, { kind: "product" }>): Promise<number> {
+async function resolveProductBlueprint(item: Extract<CheckoutLineItemT, { kind: "product" }>, userId: string): Promise<number> {
+  const ownership = await supabaseRest<Array<{ user_id: string | null }>>(
+    `products?printify_product_id=eq.${encodeURIComponent(item.productId)}&select=user_id`, "GET",
+  );
+  if (ownership.error) throw new Error("Could not verify product ownership");
+  if (ownership.data?.some((product) => product.user_id !== null && product.user_id !== userId)) {
+    throw new FunctionError(404, "PRODUCT_NOT_FOUND", "Product not found");
+  }
   const response = await fetchPrintify(
     `/v1/shops/${validateEnvVars.printifyShopId()}/products/${encodeURIComponent(item.productId)}.json`,
     validateEnvVars.printifyToken(),
@@ -82,28 +91,30 @@ async function loadPromo(code: string): Promise<PromoRowI | null> {
 }
 
 export async function priceCheckout(
-  { lineItems, promoCode }: { lineItems: unknown; promoCode?: unknown },
+  { lineItems, promoCode, userId }: { lineItems: unknown; promoCode?: unknown; userId: string },
 ): Promise<CheckoutPricingI> {
   const normalized = normalizeLineItems(lineItems);
   if (!normalized) rejectLineItems("Every line item needs a product, a variant and a quantity from 1 to 99");
 
-  const items: Array<Omit<PricedCheckoutItemI, "unitPriceCents">> = [];
+  const items: Array<Omit<PricedCheckoutItemI, "unitPriceCents" | "regularPriceCents">> = [];
   for (const item of normalized) {
     items.push(item.kind === "blueprint"
       ? { blueprintId: item.blueprintId, variantId: item.variantId, quantity: item.quantity }
-      : { blueprintId: await resolveProductBlueprint(item), variantId: item.variantId, quantity: item.quantity, productId: item.productId });
+      : { blueprintId: await resolveProductBlueprint(item, userId), variantId: item.variantId, quantity: item.quantity, productId: item.productId });
   }
 
   const blueprintIds = [...new Set(items.map((item) => item.blueprintId))];
   const catalog = await supabaseRest<CatalogPriceRowI[]>(
-    `catalog_products?blueprint_id=in.(${blueprintIds.join(",")})&select=blueprint_id,selling_price_cents,is_active`,
+    `catalog_products?blueprint_id=in.(${blueprintIds.join(",")})&select=blueprint_id,selling_price_cents,promotional_price,is_active`,
     "GET",
   );
   if (catalog.error || !catalog.data) throw new Error("Could not load catalog prices");
   const prices = new Map<number, number>();
+  const regularPrices = new Map<number, number>();
   for (const row of catalog.data) {
     if (row.is_active && typeof row.selling_price_cents === "number" && row.selling_price_cents > 0) {
-      prices.set(row.blueprint_id, row.selling_price_cents);
+      prices.set(row.blueprint_id, row.promotional_price ?? row.selling_price_cents);
+      regularPrices.set(row.blueprint_id, row.selling_price_cents);
     }
   }
   const unpriced = blueprintIds.filter((id) => !prices.has(id));
@@ -130,7 +141,11 @@ export async function priceCheckout(
     }
   }
 
-  const priced = items.map((item) => ({ ...item, unitPriceCents: prices.get(item.blueprintId)! }));
+  const priced = items.map((item) => ({
+    ...item,
+    unitPriceCents: prices.get(item.blueprintId)!,
+    regularPriceCents: regularPrices.get(item.blueprintId)!,
+  }));
   const subtotalCents = priced.reduce((sum, item) => sum + item.unitPriceCents * item.quantity, 0);
 
   const code = typeof promoCode === "string" ? promoCode.trim().toUpperCase() : "";

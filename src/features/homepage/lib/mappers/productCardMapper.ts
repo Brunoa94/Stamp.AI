@@ -5,7 +5,7 @@
 
 import type { ProductWithPricing } from "@/lib/supabase/server-cache";
 import { resolveProductDescription } from "@/lib/seo/productDescription";
-import { resolveDisplayPrice } from "@/lib/pricing";
+import { resolveDisplayPrice, resolveSaleDisplay } from "@/lib/pricing";
 import { getDisplayTitle } from "../constants/productDisplayTitles";
 
 export interface ProductCardData {
@@ -15,6 +15,7 @@ export interface ProductCardData {
   price: number;
   originalPrice?: number;
   isOnSale: boolean;
+  isPromotional?: boolean;
   discountPercent?: number; // e.g., 20 for 20% off
   specs: string;
   label: string;
@@ -35,11 +36,7 @@ function mapProductToCard(product: ProductWithPricing): ProductCardData {
     name: displayTitle,
     description: resolveProductDescription(product.product_seo),
     price: resolveDisplayPrice(product, { useFallback: false }),
-    originalPrice: product.original_price_cents
-      ? product.original_price_cents / 100
-      : undefined,
-    isOnSale: product.is_on_sale || false,
-    discountPercent: product.discount_percent ?? undefined,
+    ...resolveSaleDisplay(product),
     specs: "", // No specs for featured products
     label: displayTitle.replace(/\s+/g, "_").toUpperCase(),
     imageUrl: product.base_image_url || "",

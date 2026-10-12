@@ -198,6 +198,7 @@ export type Database = {
           min_price_cents: number | null
           original_price_cents: number | null
           print_provider_id: number
+          promotional_price: number | null
           selling_price_cents: number | null
           shipping_cents: number | null
           updated_at: string | null
@@ -216,6 +217,7 @@ export type Database = {
           min_price_cents?: number | null
           original_price_cents?: number | null
           print_provider_id?: number
+          promotional_price?: number | null
           selling_price_cents?: number | null
           shipping_cents?: number | null
           updated_at?: string | null
@@ -234,6 +236,7 @@ export type Database = {
           min_price_cents?: number | null
           original_price_cents?: number | null
           print_provider_id?: number
+          promotional_price?: number | null
           selling_price_cents?: number | null
           shipping_cents?: number | null
           updated_at?: string | null
@@ -1315,6 +1318,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      spend_generation_credit: { Args: { p_user_id: string }; Returns: string | null };
+      refund_generation_credit: { Args: { p_debit_id: string }; Returns: boolean };
       consume_auth_email_rate_limit: {
         Args: {
           p_identifier_hash: string

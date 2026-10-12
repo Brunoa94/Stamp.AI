@@ -36,6 +36,8 @@ interface CheckoutStripeButtonPropsI {
   testMode?: boolean;
   selectedTestMethod?: string;
   disabled?: boolean;
+  beforePayment?: () => Promise<boolean>;
+  onPaymentError?: () => Promise<void>;
 }
 
 export function CheckoutStripeButton({
@@ -51,6 +53,8 @@ export function CheckoutStripeButton({
   testMode = false,
   selectedTestMethod = "visa",
   disabled = false,
+  beforePayment,
+  onPaymentError,
 }: CheckoutStripeButtonPropsI) {
   const t = useTranslations("checkout.stripeButton");
   const router = useRouter();
@@ -106,9 +110,12 @@ export function CheckoutStripeButton({
       cartId: cartId || null,
       testMode,
       onSuccess: handleSuccess,
+      onError: () => { void onPaymentError?.(); },
     });
 
-  const handlePaymentSubmit = (event: React.FormEvent) => {
+  const handlePaymentSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (disabled || loading || (beforePayment && !await beforePayment())) return;
     // Freeze the cart immediately before payment creation. It must survive a
     // possible 3DS redirect and must not follow later live-cart changes.
     cartSnapshot.current = CheckoutDataBuilder.createCartSnapshot(cart);

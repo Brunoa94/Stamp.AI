@@ -7,6 +7,10 @@
  * the restyled variant (same underlying payment hook).
  */
 
+import { useRef, useState } from "react";
+import { Paragraph } from "@/features/ui/paragraph";
+import { Button } from "@/features/ui/button";
+import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { Elements } from "@stripe/react-stripe-js";
 import { getStripePromise } from "@/lib/stripe";
@@ -36,6 +40,9 @@ export function CheckoutSummarySection({
   testMode = false,
   selectedTestMethod = "visa",
 }: CheckoutSummarySectionPropsI) {
+  const tPromo = useTranslations("promotions");
+  const [priceChanged, setPriceChanged] = useState(false);
+  const verifying = useRef(false);
   const { watch, formState } = useFormContext<CheckoutFormData>();
   const paymentMethod = watch("paymentMethod");
   const billingAddress = watch("billing");
@@ -44,6 +51,11 @@ export function CheckoutSummarySection({
   const isFormValid = formState.isValid;
 
   const {
+    quotedCart,
+    quote,
+    isPricing,
+    pricingUnavailable,
+    refreshPricing,
     subtotal,
     shipping,
     discount,
@@ -58,12 +70,34 @@ export function CheckoutSummarySection({
 
   const paymentShippingAddress =
     useShippingAddress && shippingAddress ? shippingAddress : billingAddress;
-  const lineItems = buildPrintifyLineItems(cart.cart_items);
+  const effectiveCart = quotedCart ?? cart;
+  const lineItems = buildPrintifyLineItems(effectiveCart.cart_items);
   // Only a validated, applied code reaches payment; the server re-checks it.
   const appliedPromoCode = appliedPromo?.isValid
     ? appliedPromo.appliedPromo?.code
     : undefined;
-  const disablePayment = !isFormValid || cart.cart_items.length === 0 || total <= 0;
+  const disablePayment = !isFormValid || cart.cart_items.length === 0 || total <= 0 || isPricing || pricingUnavailable || isApplyingPromo;
+
+  const beforePayment = async () => {
+    if (disablePayment || verifying.current) return false;
+    verifying.current = true;
+    try {
+      const refreshed = await refreshPricing();
+      if (refreshed.error || !refreshed.data) return false;
+      const changed = !quote || refreshed.data.totalCents !== quote.totalCents ||
+        refreshed.data.discountCents !== quote.discountCents ||
+        refreshed.data.shippingCents !== quote.shippingCents ||
+        JSON.stringify(refreshed.data.items) !== JSON.stringify(quote.items);
+      setPriceChanged(changed);
+      return !changed;
+    } finally { verifying.current = false; }
+  };
+  const paymentError = async () => {
+    // A price change between the quote and provider creation stays fail-closed.
+    const refreshed = await refreshPricing();
+    if (refreshed.data && quote && (refreshed.data.totalCents !== quote.totalCents ||
+      JSON.stringify(refreshed.data.items) !== JSON.stringify(quote.items))) setPriceChanged(true);
+  };
 
   return (
     <div className="sticky top-32 border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 lg:p-10">
@@ -76,7 +110,13 @@ export function CheckoutSummarySection({
       </Heading>
 
       <div className="space-y-6">
-        <CheckoutCartItems items={cart.cart_items} />
+        <CheckoutCartItems items={effectiveCart.cart_items} />
+        {isPricing && <Paragraph unstyled role="status">{tPromo("pricingLoading")}</Paragraph>}
+        {!isPricing && pricingUnavailable && <div role="alert">
+          <Paragraph unstyled>{tPromo("pricingUnavailable")}</Paragraph>
+          <Button variant="link" type="button" className="underline" onClick={() => void refreshPricing()}>{tPromo("retry")}</Button>
+        </div>}
+        {priceChanged && <Paragraph unstyled role="status">{tPromo("pricingChanged")}</Paragraph>}
 
         <div className="h-px bg-(--color-stamp-divider)" />
 
@@ -104,7 +144,7 @@ export function CheckoutSummarySection({
               shippingCostCents={Math.round(shipping * 100)}
               discountCents={Math.round(discount * 100)}
               promoCode={appliedPromoCode}
-              cart={cart}
+              cart={effectiveCart}
               lineItems={lineItems}
               shippingAddress={paymentShippingAddress}
               billingAddress={billingAddress}
@@ -112,31 +152,37 @@ export function CheckoutSummarySection({
               testMode={testMode}
               selectedTestMethod={selectedTestMethod}
               disabled={disablePayment}
+              beforePayment={beforePayment}
+              onPaymentError={paymentError}
             />
           </Elements>
         )}
 
         {paymentMethod === "paypal" && paymentShippingAddress && (
           <CheckoutPayPalButton
-            cart={cart}
+            cart={effectiveCart}
             cartId={cartId ?? null}
             amount={totalInCents}
             shippingCostCents={Math.round(shipping * 100)}
             discountCents={Math.round(discount * 100)}
               promoCode={appliedPromoCode}
             disabled={disablePayment}
+              beforePayment={beforePayment}
+              onPaymentError={paymentError}
           />
         )}
 
         {paymentMethod === "ideal" && paymentShippingAddress && (
           <CheckoutIdealButton
-            cart={cart}
+            cart={effectiveCart}
             cartId={cartId ?? null}
             amount={totalInCents}
             shippingCostCents={Math.round(shipping * 100)}
             discountCents={Math.round(discount * 100)}
               promoCode={appliedPromoCode}
             disabled={disablePayment}
+              beforePayment={beforePayment}
+              onPaymentError={paymentError}
           />
         )}
       </div>

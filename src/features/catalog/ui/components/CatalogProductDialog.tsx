@@ -1,5 +1,7 @@
 "use client";
 
+import { ProductPrice } from "@/shared/ui/ProductPrice";
+
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
@@ -54,24 +56,7 @@ export function CatalogProductDialog({ product, isOpen, onClose }: PropsI) {
 
           <div className="flex flex-col gap-6">
             <div className="flex items-baseline gap-3">
-              {product.isOnSale && product.originalPrice && (
-                <Span
-                  variant="micro"
-                  className="text-(--color-stamp-taupe) line-through"
-                >
-                  €{product.originalPrice.toFixed(2)}
-                </Span>
-              )}
-              <Span
-                variant="value"
-                className={
-                  product.isOnSale
-                    ? "text-(--color-stamp-gold)"
-                    : "text-(--color-stamp-chocolate)"
-                }
-              >
-                €{product.price.toFixed(2)}
-              </Span>
+              <ProductPrice priceCents={Math.round(product.price * 100)} regularPriceCents={product.isOnSale && product.originalPrice ? Math.round(product.originalPrice * 100) : undefined} />
             </div>
 
             {product.availableColors.length > 0 && (

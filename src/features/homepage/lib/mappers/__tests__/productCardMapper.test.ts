@@ -112,3 +112,9 @@ describe("mapProductsToCards", () => {
     expect(card.imageUrl).toBe("");
   });
 });
+
+it("derives launch sale styling from the promotional and regular prices", () => {
+  const [product] = mapProductsToCards([buildProduct({ promotional_price: 2000, selling_price_cents: 3000,
+    is_on_sale: false, original_price_cents: 9000, discount_percent: 80 })]);
+  expect(product).toMatchObject({ price: 20, originalPrice: 30, isOnSale: true, discountPercent: 33 });
+});

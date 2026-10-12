@@ -107,3 +107,8 @@ describe("mapProductsToSchemaData", () => {
     expect(data[1].name).toBe("T-Shirt");
   });
 });
+
+it("advertises the promotional price in SEO offers", () => {
+  const product = mapProductToSchemaData(buildProduct({ promotional_price: 1999, selling_price_cents: 3000 }), FALLBACK);
+  expect(product.price).toBe(19.99);
+});

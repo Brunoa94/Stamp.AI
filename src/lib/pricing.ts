@@ -14,6 +14,7 @@
 export const FALLBACK_PRODUCT_PRICE_CENTS = 2500;
 
 interface ProductPriceSource {
+  promotional_price?: number | null;
   selling_price_cents?: number | null;
   totalPriceCents?: number;
 }
@@ -21,7 +22,7 @@ interface ProductPriceSource {
 /**
  * Resolve the display price from a product's price sources.
  *
- * Priority: selling_price_cents (admin override) → totalPriceCents (computed) → fallback
+ * Priority: promotional_price → selling_price_cents (admin override) → totalPriceCents (computed) → fallback
  *
  * @param product - Object containing price fields
  * @param options - Configuration options
@@ -34,7 +35,7 @@ export function resolveDisplayPriceCents(
 ): number {
   const { useFallback = true } = options;
 
-  const priceCents = product.selling_price_cents || product.totalPriceCents;
+  const priceCents = product.promotional_price ?? (product.selling_price_cents || product.totalPriceCents);
 
   if (priceCents && priceCents > 0) {
     return priceCents;
@@ -55,4 +56,23 @@ export function resolveDisplayPrice(
   options: { useFallback?: boolean } = {}
 ): number {
   return resolveDisplayPriceCents(product, options) / 100;
+}
+
+/** Sale presentation uses the real regular selling price for new promotions. */
+export function resolveSaleDisplay(product: ProductPriceSource & {
+  original_price_cents?: number | null;
+  is_on_sale?: boolean;
+  discount_percent?: number | null;
+}) {
+  const isPromotional = product.promotional_price != null && product.promotional_price > 0;
+  const regular = product.selling_price_cents;
+  return {
+    isPromotional,
+    isOnSale: isPromotional || product.is_on_sale || false,
+    originalPrice: isPromotional && regular ? regular / 100
+      : product.original_price_cents ? product.original_price_cents / 100 : undefined,
+    discountPercent: isPromotional && regular
+      ? Math.round((1 - product.promotional_price! / regular) * 100)
+      : product.discount_percent ?? undefined,
+  };
 }

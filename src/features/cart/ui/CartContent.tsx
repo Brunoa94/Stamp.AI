@@ -11,6 +11,8 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { Paragraph } from "@/features/ui/paragraph";
+import { Button } from "@/features/ui/button";
 import { useTranslations } from "next-intl";
 import { useCart } from "../lib/hooks/useCart";
 import { CartLayout } from "./components/CartLayout";
@@ -26,6 +28,7 @@ import { mapViewCartEvent } from "@/features/analytics/mappers/ecommerceMappers"
 
 export function CartContent() {
   const t = useTranslations("cart.content");
+  const tPromo = useTranslations("promotions");
   const {
     cart,
     itemCount,
@@ -43,6 +46,8 @@ export function CartContent() {
     deselectAllItems,
     selectedTotals,
     canCheckout,
+    pricingError,
+    retryPricing,
   } = useCart();
 
   // Track view_cart once when cart is loaded with items
@@ -82,6 +87,10 @@ export function CartContent() {
     <>
       <CartLayout>
         <CartHeader itemCount={itemCount} />
+        {pricingError && <div role="alert" className="col-span-full p-4">
+          <Paragraph unstyled>{tPromo("pricingUnavailable")}</Paragraph>
+          <Button variant="link" type="button" className="underline" onClick={() => void retryPricing()}>{tPromo("retry")}</Button>
+        </div>}
 
         <div className="space-y-8 xl:col-span-8">
           {/* Selection header */}

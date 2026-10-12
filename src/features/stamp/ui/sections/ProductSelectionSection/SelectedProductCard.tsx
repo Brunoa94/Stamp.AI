@@ -1,3 +1,4 @@
+import { ProductPrice } from "@/shared/ui/ProductPrice";
 
 import { useMemo, useState } from "react";
 import Image from "next/image";
@@ -128,7 +129,7 @@ export function SelectedProductCard({ product, onClearSelection }: PropsI) {
         </Heading>
 
         <Span variant="sm" className="text-(--color-stamp-chocolate) text-xl mb-4">
-          €{product.price.toFixed(2)}
+          <ProductPrice priceCents={Math.round(product.price * 100)} regularPriceCents={product.originalPrice ? Math.round(product.originalPrice * 100) : undefined} />
         </Span>
 
         {/* Product specs list with fixed height and expand option */}

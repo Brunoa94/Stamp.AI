@@ -11,6 +11,8 @@ export type UpdateCartItemT = Database['public']['Tables']['cart_items']['Update
 
 // Primary cart item type with relations (use this in components and business logic)
 export interface CartItem extends CartItemRow {
+  /** Live quote presentation only; never used to finalize a paid order. */
+  regular_price_cents?: number;
   product?: {
     id: string;
     name: string;
@@ -18,7 +20,7 @@ export interface CartItem extends CartItemRow {
     base_price: number;
     blueprint_id?: number | null;
     print_provider_id?: number | null;
-    print_areas?: any | null;
+    print_areas?: Record<string, unknown[]> | null;
   };
   variant?: {
     id: string;

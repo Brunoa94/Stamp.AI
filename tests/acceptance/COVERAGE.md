@@ -42,7 +42,7 @@ Generated with `npm run test:acceptance:coverage`. A reference means one or more
 | GEN-09 | [stamp.spec.mjs](../../tests/acceptance/specs/stamp.spec.mjs) |
 | GEN-10 | [security.spec.mjs](../../tests/acceptance/specs/security.spec.mjs), [stamp.spec.mjs](../../tests/acceptance/specs/stamp.spec.mjs) |
 | GEN-11 | [security.spec.mjs](../../tests/acceptance/specs/security.spec.mjs), [stamp.spec.mjs](../../tests/acceptance/specs/stamp.spec.mjs) |
-| GEN-12 | [recovery-quality.spec.mjs](../../tests/acceptance/specs/recovery-quality.spec.mjs) |
+| GEN-12 | [recovery-quality.spec.mjs](../../tests/acceptance/specs/recovery-quality.spec.mjs), [security.spec.mjs](../../tests/acceptance/specs/security.spec.mjs) |
 | GEN-13 | [recovery-quality.spec.mjs](../../tests/acceptance/specs/recovery-quality.spec.mjs) |
 | GEN-14 | [recovery-quality.spec.mjs](../../tests/acceptance/specs/recovery-quality.spec.mjs) |
 | RES-01 | [stamp.spec.mjs](../../tests/acceptance/specs/stamp.spec.mjs) |

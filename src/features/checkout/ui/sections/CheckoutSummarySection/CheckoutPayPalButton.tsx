@@ -28,6 +28,8 @@ interface CheckoutPayPalButtonPropsI {
   /** Applied promo code, re-validated by the payment function. */
   promoCode?: string;
   disabled?: boolean;
+  beforePayment?: () => Promise<boolean>;
+  onPaymentError?: () => Promise<void>;
 }
 
 export function CheckoutPayPalButton({
@@ -38,6 +40,8 @@ export function CheckoutPayPalButton({
   discountCents,
   promoCode,
   disabled = false,
+  beforePayment,
+  onPaymentError,
 }: CheckoutPayPalButtonPropsI) {
   const t = useTranslations("checkout.paypalButton");
   const { getValues } = useFormContext<CheckoutFormData>();
@@ -46,6 +50,7 @@ export function CheckoutPayPalButton({
   const handleClick = async () => {
     if (disabled || isPending) return;
     try {
+      if (beforePayment && !await beforePayment()) return;
       const formData = getValues();
       const { approvalUrl } = await preparePayPal({
         formData,
@@ -58,6 +63,7 @@ export function CheckoutPayPalButton({
       });
       window.location.href = approvalUrl;
     } catch (error) {
+      await onPaymentError?.();
       // Error surfaced via the mutation's shared error handler.
       console.error("PayPal checkout error:", error);
     }

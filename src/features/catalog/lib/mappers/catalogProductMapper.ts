@@ -9,7 +9,7 @@ import {
   resolveProductDescription,
   extractProductSpecs,
 } from "@/lib/seo/productDescription";
-import { resolveDisplayPrice } from "@/lib/pricing";
+import { resolveDisplayPrice, resolveSaleDisplay } from "@/lib/pricing";
 import { detectProductCategory } from "@/features/stamp/lib/helpers/productCategoryDetector";
 import { getDisplayTitle } from "@/features/homepage/lib/constants/productDisplayTitles";
 import type { CatalogDisplayProductType } from "../types/catalogPageTypes";
@@ -36,11 +36,7 @@ function mapProductToCatalogDisplay(
     description: resolveProductDescription(product.product_seo),
     specs: extractProductSpecs(product.product_seo),
     price: resolveDisplayPrice(product),
-    originalPrice: product.original_price_cents
-      ? product.original_price_cents / 100
-      : undefined,
-    isOnSale: product.is_on_sale || false,
-    discountPercent: product.discount_percent ?? undefined,
+    ...resolveSaleDisplay(product),
     imageUrls: resolveImageUrls(product),
     availableColors: product.availableColors || [],
   };

@@ -31,9 +31,10 @@ import { CatalogShowcaseSection } from "./sections/CatalogShowcaseSection";
 
 interface PropsI {
   sections: CatalogCategorySectionType[];
+  belowPromotion?: boolean;
 }
 
-export function CatalogPageContent({ sections }: PropsI) {
+export function CatalogPageContent({ sections, belowPromotion = false }: PropsI) {
   const t = useTranslations("catalog");
   const groupSections = groupCatalogSections(sections);
   const filters = useCatalogFilters(groupSections);
@@ -59,7 +60,7 @@ export function CatalogPageContent({ sections }: PropsI) {
   }, [filters]);
 
   return (
-    <article className="px-6 pt-40 pb-24 lg:px-12 xl:px-24">
+    <article className={`px-6 ${belowPromotion ? "pt-12" : "pt-40"} pb-24 lg:px-12 xl:px-24`}>
       <div className="mx-auto max-w-screen-2xl">
         <header className="mb-12 space-y-4">
           <div className="h-1.5 w-20 bg-(--color-stamp-gold)" />

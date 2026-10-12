@@ -5,7 +5,6 @@ import { useIntersectionObserver } from "@/shared/hooks/useIntersectionObserver"
 import { useScrollProgress } from "@/shared/hooks/useScrollProgress";
 import {
   getParallaxTransform,
-  getFadeOpacity,
 } from "../../lib/helpers/scrollEffects";
 
 interface SectionRevealProps {
@@ -51,7 +50,8 @@ export function SectionReveal({
   const scrollTransform = parallax
     ? getParallaxTransform(progress, parallaxFactor)
     : undefined;
-  const scrollOpacity = fadeOnScroll ? getFadeOpacity(progress) : undefined;
+  // Revealed copy remains opaque; scrolling must not reduce its contrast.
+  const scrollOpacity = fadeOnScroll ? 1 : undefined;
 
   // Render with scroll effects (CSS variants + dynamic inline styles for parallax/fade)
   if (hasScrollEffects) {

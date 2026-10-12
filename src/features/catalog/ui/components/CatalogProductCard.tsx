@@ -1,5 +1,7 @@
 "use client";
 
+import { ProductPrice } from "@/shared/ui/ProductPrice";
+
 import { useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
@@ -120,7 +122,7 @@ export function CatalogProductCard({ product }: PropsI) {
                   : "text-(--color-stamp-chocolate)"
               }`}
             >
-              €{product.price.toFixed(2)}
+              <ProductPrice priceCents={Math.round(product.price * 100)} regularPriceCents={product.isOnSale && product.originalPrice ? Math.round(product.originalPrice * 100) : undefined} />
             </Span>
           </div>
 

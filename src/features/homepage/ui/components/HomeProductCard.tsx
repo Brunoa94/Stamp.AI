@@ -8,6 +8,8 @@
 
 "use client";
 
+import { ProductPrice } from "@/shared/ui/ProductPrice";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -95,24 +97,8 @@ export function HomeProductCard({ product, index }: HomeProductCardPropsI) {
           {product.name}
         </Heading>
         <div className="flex flex-col items-end gap-0.5 shrink-0">
-          {product.isOnSale && product.originalPrice && (
-            <Span
-              variant="micro"
-              className="text-(--color-stamp-taupe) line-through text-[10px] sm:text-xs"
-            >
-              €{product.originalPrice.toFixed(2)}
-            </Span>
-          )}
-          <Span
-            variant="sm"
-            className={`text-xs sm:text-sm ${
-              product.isOnSale
-                ? "text-(--color-stamp-gold)"
-                : "text-(--color-stamp-chocolate)"
-            }`}
-          >
-            €{product.price.toFixed(2)}
-          </Span>
+          <ProductPrice priceCents={Math.round(product.price * 100)}
+              regularPriceCents={product.isOnSale && product.originalPrice ? Math.round(product.originalPrice * 100) : undefined} />
         </div>
       </div>
 

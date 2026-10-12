@@ -11,6 +11,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { useCartPricing } from "@/shared/hooks/useCartPricing";
 import { useRouter } from "next/navigation";
 import {
   useCartSummary,
@@ -28,7 +29,10 @@ export function useCart() {
   const updateCartItem = useUpdateCartItem();
   const removeCartItem = useRemoveCartItem();
   const updateCartItemsSelection = useUpdateCartItemsSelection();
-  const { itemCount, cart, isLoading, error } = useCartSummary();
+  const { itemCount, cart: storedCart, isLoading: cartLoading, error } = useCartSummary();
+  const pricing = useCartPricing(storedCart);
+  const cart = pricing.cart;
+  const isLoading = cartLoading || pricing.isPricing;
   const { handleError } = useErrorHandler();
 
   const cartItems = cart?.cart_items;
@@ -114,7 +118,11 @@ export function useCart() {
   };
 
   const checkout = async () => {
-    if (!cart || selectedItems.length === 0) return;
+    if (!cart || selectedItems.length === 0 || pricing.isPricing) return;
+    if (!pricing.pricingUnavailable) {
+      const refreshed = await pricing.refetch();
+      if (refreshed.error) return;
+    }
 
     await updateCartItemsSelection.mutateAsync({
       cartId: cart.id,
@@ -139,7 +147,7 @@ export function useCart() {
   const total = totals ? totals.subtotal + totals.shipping : 0;
 
   // Can only checkout if at least one item is selected
-  const canCheckout = selectedCount > 0;
+  const canCheckout = selectedCount > 0 && !pricing.isPricing && !pricing.error;
 
   return {
     cart,
@@ -160,5 +168,7 @@ export function useCart() {
     deselectAllItems,
     selectedTotals,
     canCheckout,
+    pricingError: pricing.error,
+    retryPricing: pricing.refetch,
   };
 }

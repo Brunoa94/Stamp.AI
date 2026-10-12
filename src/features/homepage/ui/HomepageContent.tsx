@@ -12,6 +12,8 @@
 
 import type { ProductWithPricing } from "@/lib/supabase/server-cache";
 import { mapProductsToCards } from "../lib/mappers/productCardMapper";
+import { HomeLaunchOffersSection } from "./sections/HomeLaunchOffersSection";
+import { LaunchPromotionBanner } from "./components/LaunchPromotionBanner";
 import { TopTrustBanner } from "./components/TopTrustBanner";
 import { PaymentMethodsBanner } from "./components/PaymentMethodsBanner";
 import { HomeHeroSection } from "./sections/HomeHeroSection";
@@ -19,7 +21,6 @@ import { HomeProductsSection } from "./sections/HomeProductsSection";
 import { HomeProcessSection } from "./sections/HomeProcessSection";
 import { HomeTrustGuaranteesSection } from "./sections/HomeTrustGuaranteesSection";
 import { HomeCtaSection } from "./sections/HomeCtaSection";
-import { HomeReviewsSection } from "./sections/HomeReviewsSection";
 import { HomeFaqSection } from "./sections/HomeFaqSection";
 import { HomeStorySection } from "./sections/HomeStorySection";
 import { HomeProductOfMonthSection } from "./sections/HomeProductOfMonthSection";
@@ -33,11 +34,14 @@ export function HomepageContent({
   productsWithPricing,
 }: HomepageContentPropsI) {
   const products = mapProductsToCards(productsWithPricing);
+  const hasOffers = products.some((product) => product.isPromotional);
   return (
-    <div>
-      <TopTrustBanner />
+    <div className="overflow-x-clip">
+      {hasOffers && <LaunchPromotionBanner />}
+      <TopTrustBanner belowPromotion={hasOffers} />
       <HomeHeroSection />
       <PaymentMethodsBanner />
+      <HomeLaunchOffersSection products={products} />
       <HomeProductsSection products={products} />
       <HomeStorySection blockIds={["design"]} background="chocolate" />
       <HomePromoSection
@@ -46,22 +50,21 @@ export function HomepageContent({
         contentPosition="right"
       />
       <HomeProductOfMonthSection />
-      <HomePromoSection
+      <div className="hidden md:block"><HomePromoSection
         variant="memories"
         background="white"
         contentPosition="right"
-      />
+      /></div>
       {/* <HomeStorySection blockIds={["quality"]} background="white" /> */}
 
       <HomeProcessSection />
-      <HomePromoSection
+      <div className="hidden md:block"><HomePromoSection
         variant="special-moments"
         background="chocolate"
         contentPosition="left"
-      />
+      /></div>
       <HomeTrustGuaranteesSection />
       <HomeCtaSection />
-      <HomeReviewsSection />
       <HomeFaqSection />
     </div>
   );

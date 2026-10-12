@@ -854,7 +854,9 @@
       "usageCapacity": "Usage capacity",
       "percentSpent": "{percent}% spent",
       "usageLabel": "Credits usage",
-      "buyMore": "Buy more credits"
+      "buyMore": "Buy more credits",
+      "allowance": "Includes your remaining daily free edits and purchased credits. Daily free edits replenish each day.",
+      "retry": "Retry balance"
     },
     "quickAccess": {
       "label": "Quick access",
@@ -867,8 +869,8 @@
       "ordersLabel": "Orders",
       "ordersCaption": "Orders placed",
       "ordersTarget": "Target",
-      "designsLabel": "Design storage",
-      "designsCaption": "Designs created",
+      "designsLabel": "Custom products",
+      "designsCaption": "Products created in your account",
       "designsTarget": "Limit"
     },
     "metricCard": {
@@ -2299,7 +2301,7 @@
           "body": [
             "Authentication is handled by a managed identity provider. Passwords are never stored in plain text; they are hashed with a slow, salted algorithm designed for the purpose.",
             "You can sign in with Google instead of a password, in which case we never handle a password at all.",
-            "Every database query runs under row-level security, so a request can only ever reach the rows belonging to the authenticated user. This is enforced at the database, not in application code, which means a bug in our code cannot expose another user's data.",
+            "Customer database access uses row-level security to restrict records to their owner. Server operations use privileged credentials and must check ownership and authorization separately before reading or changing customer data.",
             "Staff access to production is restricted to the few people who need it, requires multi-factor authentication, and is logged."
           ]
         },
@@ -2748,10 +2750,22 @@
   },
   "cookieConsent": {
     "title": "Cookies & analytics",
-    "body": "We use essential cookies to run the shop. With your permission we also use Google Analytics to understand how the site is used; ads and ad personalisation are never enabled. You can change your choice any time under Cookie settings.",
+    "body": "We use essential cookies to run the shop. Allow optional analytics to help us understand site usage. You can change your choice in Cookie settings.",
     "policyLink": "Read the Cookie Policy",
     "accept": "Accept analytics",
     "reject": "Essential only",
     "settings": "Cookie settings"
+  },
+  "promotions": {
+    "banner": "Celebrate our launch — discover launch offers",
+    "cta": "Shop launch offers",
+    "title": "Launch offers",
+    "regularPrice": "Regular price",
+    "promotionalPrice": "Promotional price",
+    "currentPrice": "Current price",
+    "pricingLoading": "Updating prices…",
+    "pricingUnavailable": "Prices could not be updated. Please try again.",
+    "pricingChanged": "Prices have changed. Review your updated total, then select Pay again.",
+    "retry": "Update prices"
   }
 }
