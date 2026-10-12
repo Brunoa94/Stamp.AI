@@ -12,7 +12,7 @@ export const profileInputStyles = {
   editable:
     "h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20",
   readonly:
-    "h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) outline-none cursor-not-allowed opacity-60",
+    "h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) outline-none cursor-default",
   password:
     "h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20",
 };
@@ -70,7 +70,7 @@ const variantStyles: Record<
     labelVariant: "sm" as const,
     labelColor: "text-(--color-stamp-chocolate)",
     input:
-      "h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) outline-none cursor-not-allowed opacity-60",
+      "h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) outline-none cursor-default",
   },
   "stamp-auth": {
     container: "space-y-2",

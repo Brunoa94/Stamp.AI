@@ -40,7 +40,7 @@ async function seedPromo(account, fields) {
 }
 
 async function transactionsOf(account) {
-  return unwrap(await account.admin.from('payment_transactions').select('id,stripe_payment_intent_id,paypal_order_id,mollie_payment_id,amount,status,metadata').eq('user_id', account.id), 'Read payment transactions');
+  return unwrap(await account.admin.from('payment_transactions').select('id,order_id,stripe_payment_intent_id,paypal_order_id,mollie_payment_id,amount,status,metadata').eq('user_id', account.id), 'Read payment transactions');
 }
 
 test.describe('server-side checkout pricing', () => {
@@ -169,6 +169,8 @@ test.describe('payment transaction integrity', () => {
   async function ownOrder(account) {
     return unwrap(await account.db.from('orders').insert({
       user_id: account.id, customer_email: account.email, order_number: `acceptance-${randomUUID()}`, status: 'pending', payment_status: 'pending', currency: 'EUR',
+      // Fulfilment refuses unshippable orders before it checks what was paid.
+      shipping_address: { first_name: 'Acceptance', last_name: 'Buyer', address1: 'Damrak 1', city: 'Amsterdam', zip: '1012LG', country: 'NL' },
     }).select().single(), 'Create own order');
   }
 
@@ -188,16 +190,14 @@ test.describe('payment transaction integrity', () => {
       user_id: env.TEST_USER_ID, customer_email: env.TEST_USER_EMAIL, order_number: `acceptance-${randomUUID()}`, status: 'pending', payment_status: 'pending', currency: 'EUR',
     }).select().single(), 'Create foreign order');
     try {
-      expect((await account.db.from('payment_transactions').update({ order_id: foreignOrder.id }).eq('id', transaction.id)).error, 'Cannot link to another user’s order').not.toBeNull();
-
-      const first = await ownOrder(account);
-      unwrap(await account.db.from('payment_transactions').update({ order_id: first.id, updated_at: new Date().toISOString() }).eq('id', transaction.id), 'Owner links payment to own order');
-      unwrap(await account.db.from('payment_transactions').update({ order_id: first.id }).eq('id', transaction.id), 'Repeating the same link is allowed');
-      const second = await ownOrder(account);
-      expect((await account.db.from('payment_transactions').update({ order_id: second.id }).eq('id', transaction.id)).error, 'One payment cannot pay for a second order').not.toBeNull();
+      // finalize-order links payments server-side; browsers cannot link one even to their own order.
+      const own = await ownOrder(account);
+      for (const [order, label] of [[foreignOrder, 'another user’s order'], [own, 'their own order']]) {
+        expect((await account.db.from('payment_transactions').update({ order_id: order.id }).eq('id', transaction.id)).error, `Cannot link to ${label}`).not.toBeNull();
+      }
 
       const row = unwrap(await account.admin.from('payment_transactions').select('order_id,status,amount,metadata').eq('id', transaction.id).single(), 'Read transaction');
-      expect(row).toMatchObject({ order_id: first.id, status: transaction.status, metadata: transaction.metadata });
+      expect(row).toMatchObject({ order_id: transaction.order_id, status: transaction.status, metadata: transaction.metadata });
       expect(Number(row.amount)).toBe(Number(transaction.amount));
     } finally {
       unwrap(await account.admin.from('orders').delete().eq('id', foreignOrder.id), 'Remove foreign order');
@@ -216,7 +216,8 @@ test.describe('payment transaction integrity', () => {
   test('PAY-13 ORDER-03 fulfilment refuses items that were not paid for', async ({ account, env }) => {
     const { item, transaction } = await pricedPayment(account, env, 2);
     const order = await ownOrder(account);
-    unwrap(await account.db.from('payment_transactions').update({ order_id: order.id }).eq('id', transaction.id), 'Link payment to order');
+    // Stand in for finalize-order, the only writer allowed to link a payment.
+    unwrap(await account.admin.from('payment_transactions').update({ order_id: order.id }).eq('id', transaction.id), 'Link payment to order');
     const other = await catalogItem(account, 1525);
 
     for (const [name, body] of [

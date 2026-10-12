@@ -8,27 +8,9 @@ import "../_shared/sentry.ts";
 
 // Environment variables will be validated when needed
 
-// SSRF hardening: only allow forwarding image URLs from trusted hosts to Printify
-function isAllowedImageUrl(u: string): boolean {
-  let parsed: URL
-  try {
-    parsed = new URL(u)
-  } catch {
-    return false
-  }
-
-  if (parsed.protocol !== 'https:') {
-    return false
-  }
-
-  const host = parsed.hostname.toLowerCase()
-  return (
-    host.endsWith('.supabase.co') ||
-    host === 'images.printify.com' ||
-    host === 'images-api.printify.com' ||
-    host.endsWith('.amazonaws.com')
-  )
-}
+import { isAllowedImageSource } from "../_shared/imageSourceRules.ts";
+import { supabaseRest } from "../_shared/supabase.ts";
+import { enforceOperationLimit } from "../_shared/operationLimit.ts";
 
 // ~15 MB of image data once decoded.
 const MAX_IMAGE_BASE64_LENGTH = 20 * 1024 * 1024
@@ -44,6 +26,7 @@ serve(async (req) => {
 
   try {
     const auth = await requireUser(req.headers.get('authorization'))
+    if (!auth.isServiceRole) await enforceOperationLimit(auth.userId, "image-upload", 60, 60)
 
     const {
       image_url,      // URL of the image to upload
@@ -51,7 +34,7 @@ serve(async (req) => {
       file_name = 'design.png',
     } = await req.json()
 
-    if (image_url && (typeof image_url !== 'string' || image_url.length > MAX_IMAGE_URL_LENGTH || !isAllowedImageUrl(image_url))) {
+    if (image_url && (typeof image_url !== 'string' || image_url.length > MAX_IMAGE_URL_LENGTH || !isAllowedImageSource(image_url, validateEnvVars.supabaseUrl()))) {
       throw new FunctionError(400, "INVALID_IMAGE_URL", "image_url host not allowed")
     }
     if (image_base64 !== undefined && (typeof image_base64 !== 'string' || image_base64.length > MAX_IMAGE_BASE64_LENGTH)) {
@@ -106,6 +89,13 @@ serve(async (req) => {
     }
 
     console.log('✅ Image uploaded successfully:', data.id)
+
+    if (!auth.isServiceRole) {
+      const registered = await supabaseRest("printify_image_owners", "POST", {
+        image_id: data.id, user_id: auth.userId,
+      }, { prefer: "resolution=ignore-duplicates" });
+      if (registered.error) throw ErrorCodes.INVALID_REQUEST_BODY();
+    }
 
     // Return the image details needed for creating orders
     return new Response(

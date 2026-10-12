@@ -54,49 +54,17 @@ export class ProductService {
     try {
       const supabase = this.getSupabase();
 
-      // Use mapper to convert input to database insert format
+      // The creation endpoint records ownership with its privileged server identity.
+      // Browser writes cannot prove ownership of a supplied Printify ID.
       const productData = ProductServiceMapper.mapInputToProductInsert(input);
-
-      // If supabase client is not available (test environment only),
-      // return a mock product row so tests can continue
-      if (!supabase) {
-        const mockRow = this.createMockProductRow(input, productData);
-        console.log('✅ (mock) Saved Printify product to database:', mockRow.id);
-        return mockRow;
+      if (supabase) {
+        const { data: owned, error } = await supabase.from("products").select("*")
+          .eq("printify_product_id", input.printifyProductId).eq("user_id", input.userId).single();
+        if (error || !owned) throw error ?? new Error("Product ownership could not be verified");
+        return owned;
       }
 
-      // Check if product already exists with this Printify ID
-      const { data: existingProduct } = await supabase
-        .from('products')
-        .select('*')
-        .eq('printify_product_id', input.printifyProductId)
-        .maybeSingle();
-
-      if (existingProduct) {
-        console.log('✅ Product already exists in database:', existingProduct.id);
-        return existingProduct;
-      }
-
-      const { data, error } = await supabase
-        .from('products')
-        .insert(productData)
-        .select()
-        .single();
-
-      if (error) {
-        throw ErrorClient.handleError({ error, service: "Product", action: "Save Printify Product" });
-      }
-
-      if (!data) {
-        throw ErrorClient.handleError({
-          error: new Error("No data returned after product creation"),
-          service: "Product",
-          action: "Save Printify Product"
-        });
-      }
-
-      console.log('✅ Saved Printify product to database:', data.id);
-      return data;
+      return this.createMockProductRow(input, productData);
     } catch (error) {
       throw ErrorClient.handleError({error, service: "Product", action: "Save Printify Product"})
     }
@@ -168,7 +136,7 @@ export class ProductService {
     printifyProduct: CreatedProductT,
     blueprintId: number,
     printProviderId: number,
-    printAreas: Record<string, any>,
+    printAreas: SavePrintifyProductInput["printAreas"],
     userId: string
   ): SavePrintifyProductInput {
     return ProductServiceMapper.mapPrintifyProductToInput(

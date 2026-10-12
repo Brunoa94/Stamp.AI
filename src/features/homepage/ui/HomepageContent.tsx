@@ -19,7 +19,6 @@ import { HomeProductsSection } from "./sections/HomeProductsSection";
 import { HomeProcessSection } from "./sections/HomeProcessSection";
 import { HomeTrustGuaranteesSection } from "./sections/HomeTrustGuaranteesSection";
 import { HomeCtaSection } from "./sections/HomeCtaSection";
-import { HomeReviewsSection } from "./sections/HomeReviewsSection";
 import { HomeFaqSection } from "./sections/HomeFaqSection";
 import { HomeStorySection } from "./sections/HomeStorySection";
 import { HomeProductOfMonthSection } from "./sections/HomeProductOfMonthSection";
@@ -34,7 +33,7 @@ export function HomepageContent({
 }: HomepageContentPropsI) {
   const products = mapProductsToCards(productsWithPricing);
   return (
-    <div>
+    <div className="overflow-x-clip">
       <TopTrustBanner />
       <HomeHeroSection />
       <PaymentMethodsBanner />
@@ -46,22 +45,21 @@ export function HomepageContent({
         contentPosition="right"
       />
       <HomeProductOfMonthSection />
-      <HomePromoSection
+      <div className="hidden md:block"><HomePromoSection
         variant="memories"
         background="white"
         contentPosition="right"
-      />
+      /></div>
       {/* <HomeStorySection blockIds={["quality"]} background="white" /> */}
 
       <HomeProcessSection />
-      <HomePromoSection
+      <div className="hidden md:block"><HomePromoSection
         variant="special-moments"
         background="chocolate"
         contentPosition="left"
-      />
+      /></div>
       <HomeTrustGuaranteesSection />
       <HomeCtaSection />
-      <HomeReviewsSection />
       <HomeFaqSection />
     </div>
   );

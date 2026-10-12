@@ -1,9 +1,8 @@
 /**
  * When a request must pass CAPTCHA verification.
  *
- * CAPTCHA only runs when both reCAPTCHA keys are configured. With
- * CAPTCHA_REQUIRED=true a configured CAPTCHA also fails closed: a request
- * without a token is rejected instead of skipping verification.
+ * CAPTCHA only runs when both reCAPTCHA keys are configured. A configured CAPTCHA always fails closed when a token is absent.
+ * CAPTCHA_REQUIRED=true also rejects missing server configuration.
  */
 export type CaptchaDecisionT = "skip" | "verify" | "reject";
 
@@ -12,7 +11,7 @@ export function captchaDecision(
   env: Record<string, string | undefined> = process.env,
 ): CaptchaDecisionT {
   const configured = Boolean(env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) && Boolean(env.RECAPTCHA_SECRET_KEY);
-  if (!configured) return "skip";
+  if (!configured) return env.CAPTCHA_REQUIRED === "true" ? "reject" : "skip";
   if (token) return "verify";
-  return env.CAPTCHA_REQUIRED === "true" ? "reject" : "skip";
+  return "reject";
 }

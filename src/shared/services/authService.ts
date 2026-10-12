@@ -1,3 +1,4 @@
+import { clearPrivateBrowserState } from "./privateBrowserState";
 import { createClient } from "@/lib/supabase/client";
 import type {
   LoginI,
@@ -12,10 +13,9 @@ import { AuthServiceMapper } from "@/shared/mappers/services/authServiceMapper";
 import {
   GetSessionResponseSchema,
   GetUserResponseSchema,
-  SupabaseAuthResponseSchema,
   UpdateUserResponseSchema,
 } from "@/shared/schemas/services/authServiceSchemas";
-import { AppError, ErrorClient } from "./errorClient";
+import { ErrorClient } from "./errorClient";
 
 class AuthService {
   private static getSupabase() {
@@ -135,6 +135,7 @@ class AuthService {
   static async logout(): Promise<void> {
     try {
       const { error } = await AuthService.getSupabase().auth.signOut();
+      if (!error) clearPrivateBrowserState();
       if (error) {
         throw ErrorClient.handleError({
           error,
@@ -267,7 +268,7 @@ class AuthService {
    */
   static async updateProfile(data: UpdateProfileI): Promise<UserI> {
     try {
-      const updateData: Record<string, any> = {};
+      const updateData: Record<string, unknown> = {};
 
       if (data.firstName !== undefined) {
         updateData.first_name = data.firstName;

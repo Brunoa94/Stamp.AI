@@ -23,10 +23,10 @@ class GenerationTimeoutError extends Error {
   }
 }
 
-async function refundCoin(userId: string): Promise<void> {
+async function refundCoin(debitId: string): Promise<void> {
   try {
-    const { error } = await createServiceClient().rpc("refund_coin", {
-      p_user_id: userId,
+    const { error } = await createServiceClient().rpc("refund_generation_credit", {
+      p_debit_id: debitId,
     });
     if (error) {
       throw new Error(error.message);
@@ -37,7 +37,7 @@ async function refundCoin(userId: string): Promise<void> {
       service: "ImageGeneration",
       action: "refundCoin",
     });
-    console.error("[generate-image] refund_coin failed for user", userId);
+    console.error("[generate-image] generation credit refund failed", debitId);
   }
 }
 
@@ -118,16 +118,14 @@ export async function POST(request: NextRequest) {
       console.log("Image file:", image.name, "MIME type:", mimeType);
     }
 
-    // ── Coin deduction (server-side, before any paid work) ─────────────────────
-    // deduct_coin runs as the caller: the RPC only allows a user to deduct
-    // their own coins and is atomic (row lock + daily reset).
-    const { data: hasCoin, error: rpcError } = await supabase.rpc(
-      "deduct_coin",
-      {
-        user_id: user.id,
-      },
+    // Service-only receipt: spend daily allowance first, then purchased credits.
+    const { data: debitId, error: rpcError } = await createServiceClient().rpc(
+      "spend_generation_credit", { p_user_id: user.id },
     );
 
+    if (rpcError?.code === "PT429") {
+      return NextResponse.json({ error: "Too many generation requests" }, { status: 429 });
+    }
     if (rpcError) {
       console.error("[generate-image] deduct_coin failed:", rpcError.message);
       return NextResponse.json(
@@ -136,7 +134,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!hasCoin) {
+    if (!debitId) {
       return NextResponse.json(
         { error: "INSUFFICIENT_COINS" },
         { status: 402 },
@@ -159,7 +157,7 @@ export async function POST(request: NextRequest) {
       result = await withTimeout(generation, GENERATION_DEADLINE_MS, new GenerationTimeoutError());
     } catch (generationError) {
       // The user paid for nothing: give the coin back (service role only).
-      await refundCoin(user.id);
+      await refundCoin(debitId);
       throw generationError;
     }
 

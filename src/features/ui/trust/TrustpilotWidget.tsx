@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import { Span } from "@/features/ui/span";
 import { Paragraph } from "@/features/ui/paragraph";
 import {
-  TRUST_REVIEW_METRICS,
   TRUSTPILOT_CONFIG,
 } from "@/shared/constants/trustMetrics";
 
@@ -27,12 +26,13 @@ interface TrustpilotWidgetProps {
 
 export function TrustpilotWidget({
   className,
-  rating = TRUST_REVIEW_METRICS.overallRating,
-  reviewCount = TRUST_REVIEW_METRICS.totalReviews,
+  rating,
+  reviewCount,
   variant = "default",
   trustpilotUrl = TRUSTPILOT_CONFIG.reviewUrl,
 }: TrustpilotWidgetProps) {
   const t = useTranslations("trust.reviews");
+  if (rating === undefined || reviewCount === undefined || reviewCount <= 0) return null;
 
   const renderStars = (size: "sm" | "md" = "md") => {
     const starSize = size === "sm" ? "h-3 w-3" : "h-4 w-4";

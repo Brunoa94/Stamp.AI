@@ -55,7 +55,7 @@ describe("POST /api/generate-image", () => {
     vi.spyOn(console, "error").mockImplementation(() => {});
     mocks.getUser.mockResolvedValue({ data: { user: { id: "user-1" } } });
     mocks.userRpc.mockResolvedValue({ data: true, error: null });
-    mocks.serviceRpc.mockResolvedValue({ data: true, error: null });
+    mocks.serviceRpc.mockResolvedValue({ data: "debit-1", error: null });
     mocks.generateImage.mockResolvedValue({
       imageUrl: "https://cdn/img.png",
       enhancedPrompt: "enhanced",
@@ -79,17 +79,17 @@ describe("POST /api/generate-image", () => {
     expect(mocks.userRpc).not.toHaveBeenCalled();
   });
 
-  it("deducts a coin as the caller before generating", async () => {
+  it("reserves a server credit receipt before generating", async () => {
     const response = await POST(request());
 
     expect(response.status).toBe(200);
-    expect(mocks.userRpc).toHaveBeenCalledWith("deduct_coin", {
-      user_id: "user-1",
+    expect(mocks.serviceRpc).toHaveBeenCalledWith("spend_generation_credit", {
+      p_user_id: "user-1",
     });
-    expect(mocks.userRpc.mock.invocationCallOrder[0]).toBeLessThan(
+    expect(mocks.serviceRpc.mock.invocationCallOrder[0]).toBeLessThan(
       mocks.generateImage.mock.invocationCallOrder[0],
     );
-    expect(mocks.serviceRpc).not.toHaveBeenCalled();
+    expect(mocks.userRpc).not.toHaveBeenCalled();
     expect(await response.json()).toMatchObject({
       success: true,
       imageUrl: "https://cdn/img.png",
@@ -97,7 +97,7 @@ describe("POST /api/generate-image", () => {
   });
 
   it("returns 402 INSUFFICIENT_COINS and does not generate when balance is empty", async () => {
-    mocks.userRpc.mockResolvedValue({ data: false, error: null });
+    mocks.serviceRpc.mockResolvedValue({ data: null, error: null });
 
     const response = await POST(request());
 
@@ -107,7 +107,7 @@ describe("POST /api/generate-image", () => {
   });
 
   it("returns 500 when the deduction RPC errors", async () => {
-    mocks.userRpc.mockResolvedValue({
+    mocks.serviceRpc.mockResolvedValueOnce({
       data: null,
       error: { message: "boom" },
     });
@@ -124,8 +124,8 @@ describe("POST /api/generate-image", () => {
     const response = await POST(request());
 
     expect(response.status).toBe(422);
-    expect(mocks.serviceRpc).toHaveBeenCalledWith("refund_coin", {
-      p_user_id: "user-1",
+    expect(mocks.serviceRpc).toHaveBeenCalledWith("refund_generation_credit", {
+      p_debit_id: "debit-1",
     });
     const body = await response.json();
     expect(body.error).toMatch(/content moderation/);
@@ -162,7 +162,7 @@ describe("POST /api/generate-image", () => {
 
   it("still returns the generation error when the refund itself fails", async () => {
     mocks.generateImage.mockRejectedValue(new Error("upstream down"));
-    mocks.serviceRpc.mockResolvedValue({
+    mocks.serviceRpc.mockResolvedValueOnce({ data: "debit-1", error: null }).mockResolvedValueOnce({
       data: null,
       error: { message: "refund failed" },
     });
@@ -170,6 +170,6 @@ describe("POST /api/generate-image", () => {
     const response = await POST(request());
 
     expect(response.status).toBe(500);
-    expect(mocks.serviceRpc).toHaveBeenCalledTimes(1);
+    expect(mocks.serviceRpc).toHaveBeenCalledTimes(2);
   });
 });

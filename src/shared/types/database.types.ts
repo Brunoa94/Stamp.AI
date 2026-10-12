@@ -1315,6 +1315,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      spend_generation_credit: { Args: { p_user_id: string }; Returns: string | null };
+      refund_generation_credit: { Args: { p_debit_id: string }; Returns: boolean };
       consume_auth_email_rate_limit: {
         Args: {
           p_identifier_hash: string
