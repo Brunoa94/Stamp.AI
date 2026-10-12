@@ -40,7 +40,7 @@ async function seedPromo(account, fields) {
 }
 
 async function transactionsOf(account) {
-  return unwrap(await account.admin.from('payment_transactions').select('id,stripe_payment_intent_id,paypal_order_id,mollie_payment_id,amount,status,metadata').eq('user_id', account.id), 'Read payment transactions');
+  return unwrap(await account.admin.from('payment_transactions').select('id,order_id,stripe_payment_intent_id,paypal_order_id,mollie_payment_id,amount,status,metadata').eq('user_id', account.id), 'Read payment transactions');
 }
 
 test.describe('server-side checkout pricing', () => {
@@ -169,6 +169,8 @@ test.describe('payment transaction integrity', () => {
   async function ownOrder(account) {
     return unwrap(await account.db.from('orders').insert({
       user_id: account.id, customer_email: account.email, order_number: `acceptance-${randomUUID()}`, status: 'pending', payment_status: 'pending', currency: 'EUR',
+      // Fulfilment refuses unshippable orders before it checks what was paid.
+      shipping_address: { first_name: 'Acceptance', last_name: 'Buyer', address1: 'Damrak 1', city: 'Amsterdam', zip: '1012LG', country: 'NL' },
     }).select().single(), 'Create own order');
   }
 
