@@ -1,45 +1,33 @@
-/**
- * DashboardMetricsSection
- *
- * Two-up metric grid: orders placed (live count) and designs created
- * (placeholder until a designs query exists).
- */
-
+"use client";
 import { useTranslations } from "next-intl";
+import { useQuery } from "@tanstack/react-query";
 import { Box, TrendingUp } from "lucide-react";
-import {
-  DESIGNS_PLACEHOLDER,
-  ORDERS_TARGET,
-} from "../../lib/constants/dashboard";
-import { DashboardMetricCard } from "./DashboardMetricCard";
+import { createClient } from "@/lib/supabase/client";
+import { useUser } from "@/shared/queries/authQueries";
+import { Span } from "@/features/ui/span";
+import { DashboardCard } from "../components/DashboardCard";
 
-interface DashboardMetricsSectionPropsI {
-  ordersPlaced: number;
-}
-
-export function DashboardMetricsSection({
-  ordersPlaced,
-}: DashboardMetricsSectionPropsI) {
+export function DashboardMetricsSection({ ordersPlaced }: { ordersPlaced: number }) {
   const t = useTranslations("dashboard.metrics");
-
+  const { data: user } = useUser();
+  const { data: designs, isError, isLoading } = useQuery({
+    queryKey: ["dashboard-products", user?.id], enabled: Boolean(user?.id),
+    queryFn: async () => {
+      const { count, error } = await createClient().from("products").select("id", { count: "exact", head: true }).eq("user_id", user!.id);
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-      <DashboardMetricCard
-        label={t("ordersLabel")}
-        icon={<TrendingUp className="h-4 w-4 text-(--color-stamp-taupe)" />}
-        value={ordersPlaced}
-        valueCaption={t("ordersCaption")}
-        target={ORDERS_TARGET}
-        targetCaption={t("ordersTarget")}
-      />
-      <DashboardMetricCard
-        label={t("designsLabel")}
-        icon={<Box className="h-4 w-4 text-(--color-stamp-taupe)" />}
-        value={DESIGNS_PLACEHOLDER.created}
-        valueCaption={t("designsCaption")}
-        target={DESIGNS_PLACEHOLDER.limit}
-        targetCaption={t("designsTarget")}
-      />
+      <DashboardCard label={t("ordersLabel")} icon={<TrendingUp className="h-4 w-4 text-(--color-stamp-taupe)" />}>
+        <Span as="p" variant="metric">{ordersPlaced.toLocaleString()}</Span>
+        <Span as="p" variant="micro" className="mt-2 text-(--color-stamp-taupe)">{t("ordersCaption")}</Span>
+      </DashboardCard>
+      <DashboardCard label={t("designsLabel")} icon={<Box className="h-4 w-4 text-(--color-stamp-taupe)" />}>
+        <Span as="p" variant="metric">{isError || isLoading ? "—" : designs?.toLocaleString() ?? "—"}</Span>
+        <Span as="p" variant="micro" className="mt-2 text-(--color-stamp-taupe)">{t("designsCaption")}</Span>
+      </DashboardCard>
     </div>
   );
 }

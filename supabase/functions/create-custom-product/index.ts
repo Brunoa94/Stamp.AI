@@ -13,6 +13,7 @@ import {
   validateColorForBlueprint,
 } from "../_shared/colorValidation.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
+import { enforceOperationLimit } from "../_shared/operationLimit.ts";
 import { requireUser } from "../_shared/authGuard.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
 import { fetchPrintify } from "../_shared/fetchWithTimeout.ts";
@@ -31,7 +32,9 @@ serve(async (req) => {
   }
 
   try {
-    await requireUser(req.headers.get('authorization'));
+    const caller = await requireUser(req.headers.get('authorization'));
+    if (caller.isServiceRole) throw ErrorCodes.INVALID_REQUEST_BODY();
+    await enforceOperationLimit(caller.userId, "product-create", 20, 60);
 
     const {
       blueprint_id,
@@ -154,6 +157,13 @@ serve(async (req) => {
     if (Object.keys(requestedAreas).length === 0) {
       console.error("❌ IMAGE_REQUIRED: No valid print areas found");
       throw ErrorCodes.IMAGE_REQUIRED();
+    }
+
+    const imageIds = [...new Set(Object.values(requestedAreas))];
+    const { data: ownedImages, error: imageOwnershipError } = await supabase
+      .from("printify_image_owners").select("image_id").eq("user_id", caller.userId).in("image_id", imageIds);
+    if (imageOwnershipError || imageIds.some(id => !ownedImages?.some(image => image.image_id === id))) {
+      throw ErrorCodes.INVALID_REQUEST_BODY();
     }
 
     // Filter variants by selected color and size if provided
@@ -377,6 +387,19 @@ serve(async (req) => {
     }
 
     console.log("✅ Product created:", productData.id);
+
+    // Register ownership using the authenticated identity, never a body user_id.
+    const { error: ownershipError } = await supabase.from("products").insert({
+      printify_product_id: productData.id,
+      name: productData.title,
+      description: productData.description,
+      blueprint_id: finalBlueprintId,
+      print_provider_id: finalPrintProviderId,
+      print_areas: requestedAreas,
+      user_id: caller.userId,
+      is_active: true,
+    });
+    if (ownershipError) throw ErrorCodes.INVALID_REQUEST_BODY();
 
     // Transform image URLs to use the front camera view — but only when the
     // design actually prints on the front. For positions like sock legs

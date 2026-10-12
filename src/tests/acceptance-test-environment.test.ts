@@ -14,10 +14,10 @@ describe('ENV-02 explicit hosted test environment never disables production prot
   it.each(['https://timbqoxngnhoetbofdiq.supabase.co', 'https://unknown.supabase.co'])('does not whitelist %s using APP_ENV alone', (url) => {
     environment({ APP_ENV: 'test', SUPABASE_URL: url });
     expect(isProductionEnvironment()).toBe(true);
-    expect(enforceTestMode(true)).toBe(false);
+    expect(() => enforceTestMode(true)).toThrow("Test orders are not allowed in production");
   });
   it('explicit production declaration wins over test configuration', () => {
     environment({ APP_ENV: 'test', SUPABASE_URL: 'https://tgccxydchvujhrqyzqao.supabase.co', IS_PRODUCTION: 'true' });
-    expect(enforceTestMode(true)).toBe(false);
+    expect(() => enforceTestMode(true)).toThrow("Test orders are not allowed in production");
   });
 });

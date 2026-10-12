@@ -22,6 +22,19 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid product_id" }, { status: 400 });
   }
 
+  const { data: ownedProduct, error: ownershipError } = await supabase
+    .from("products")
+    .select("id")
+    .eq("printify_product_id", productId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (ownershipError) {
+    return NextResponse.json({ error: "Failed to verify product ownership" }, { status: 503 });
+  }
+  if (!ownedProduct) {
+    return NextResponse.json({ error: "Product not found" }, { status: 404 });
+  }
+
   try {
     const res = await fetchWithTimeout(
       `https://api.printify.com/v1/shops/${process.env.PRINTIFY_SHOP_ID}/products/${encodeURIComponent(productId)}.json`,

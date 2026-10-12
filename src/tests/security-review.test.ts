@@ -6,10 +6,11 @@ import { GET as callback } from "@/app/auth/callback/route";
 import { POST as capture } from "@/app/api/paypal/capture-order/route";
 
 const mocks = vi.hoisted(() => ({
-  getUser: vi.fn(), exchange: vi.fn(), getOrder: vi.fn(), capture: vi.fn(), rpc: vi.fn(), transaction: vi.fn(),
+  getUser: vi.fn(), exchange: vi.fn(), getOrder: vi.fn(), capture: vi.fn(), rpc: vi.fn(), transaction: vi.fn(), ownedProduct: vi.fn(),
 }));
 vi.mock("@/lib/supabase/server", () => ({ createClient: () => ({
   auth: { getUser: mocks.getUser },
+  from: () => ({ select: () => ({ eq: () => ({ eq: () => ({ maybeSingle: mocks.ownedProduct }) }) }) }),
 }) }));
 vi.mock("@/lib/supabase/service", () => ({ createServiceClient: () => ({
   rpc: mocks.rpc,
@@ -32,10 +33,21 @@ beforeEach(() => {
   mocks.getUser.mockResolvedValue({ data: { user: { id: "owner" } } });
   mocks.exchange.mockResolvedValue({ error: null });
   mocks.rpc.mockResolvedValue({ data: {}, error: null });
+  mocks.ownedProduct.mockResolvedValue({ data: { id: "owned-product" }, error: null });
   mocks.transaction.mockResolvedValue({ data: { metadata: { total_cents: 1000 } }, error: null });
 });
 
 describe("Product lookup", () => {
+  it("denies foreign or unknown shop products before using the provider token", async () => {
+    mocks.ownedProduct.mockResolvedValue({ data: null, error: null });
+    const fetch = vi.spyOn(globalThis, "fetch");
+    try {
+      const response = await fetchProduct(new NextRequest("https://stamp.test/api/fetch-custom-product?product_id=5d39b159e7c48c000728c89f"));
+      expect(response.status).toBe(404);
+      expect(fetch).not.toHaveBeenCalled();
+    } finally { fetch.mockRestore(); }
+  });
+
   it("fetches a valid Printify shop product", async () => {
     const id = "5d39b159e7c48c000728c89f";
     const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(JSON.stringify({ id })));
