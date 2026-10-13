@@ -142,10 +142,9 @@ test.describe("Stripe test-mode flag", () => {
     // ── Checkout page ────────────────────────────────────────────────────
     await page.goto(`/checkout?cartId=${cartId}`);
 
-    const testToggle = page.locator("#testMode");
-    await expect(testToggle).toBeVisible({ timeout: 20_000 });
-    await testToggle.click();
-    await expect(testToggle).toHaveAttribute("data-state", "checked");
+    // Checkout is always in test mode; the toggle is hidden.
+    await expect(page.locator("#testMode")).toHaveCount(0);
+    await expect(page.getByRole("textbox", { name: /^first name/i }).first()).toBeVisible({ timeout: 20_000 });
 
     // The billing form is pre-filled from the profile; only fill what is empty.
     const fields: Array<[RegExp, string]> = [

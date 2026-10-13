@@ -2,7 +2,7 @@
  * CheckoutContent
  *
  * Container for the luxury brutalist checkout page. Resolves the cart, wires
- * the shared CheckoutFormProvider, and owns the (styled) test-mode state.
+ * the shared CheckoutFormProvider, and owns the test-mode setting.
  * All business logic — pricing, payment, form validation — is reused from
  * the existing checkout feature.
  */
@@ -12,9 +12,9 @@
 import { useState } from "react";
 import { CheckoutFormProvider } from "@/features/checkout/lib/context/CheckoutFormContext";
 import { useCheckoutCart } from "../lib/hooks/useCheckoutCart";
+import { CHECKOUT_TEST_MODE } from "../lib/constants/checkoutMode";
 import { CheckoutLayout } from "./components/CheckoutLayout";
 import { CheckoutHeader } from "./components/CheckoutHeader";
-import { CheckoutTestModeToggle } from "./components/CheckoutTestModeToggle";
 import { CheckoutLoadingSection } from "./sections/CheckoutLoadingSection";
 import { CheckoutNotFoundSection } from "./sections/CheckoutNotFoundSection";
 import { CheckoutBillingSection } from "./sections/CheckoutBillingSection";
@@ -43,7 +43,7 @@ export function CheckoutContent() {
 }
 
 function CheckoutForm({ cart }: { cart: CartWithItems }) {
-  const [testMode, setTestMode] = useState(false);
+  const testMode = CHECKOUT_TEST_MODE;
   const [selectedTestMethod, setSelectedTestMethod] = useState("visa");
 
   return (
@@ -51,10 +51,6 @@ function CheckoutForm({ cart }: { cart: CartWithItems }) {
       header={<CheckoutHeader />}
       forms={
         <>
-          <CheckoutTestModeToggle
-            testMode={testMode}
-            onTestModeChange={setTestMode}
-          />
           <CheckoutBillingSection />
           <CheckoutShippingToggle />
           <CheckoutShippingSection />
