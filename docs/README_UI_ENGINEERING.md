@@ -17,22 +17,6 @@ Build production-quality user interfaces that are accessible, performant, and vi
 - Adding interactivity or state management
 - Fixing visual or UX issues
 
-## Component Architecture
-
-### File Structure
-
-Colocate everything related to a component:
-
-```
-src/components/
-  TaskList/
-    TaskList.tsx          # Component implementation
-    TaskList.test.tsx     # Tests
-    TaskList.stories.tsx  # Storybook stories (if using)
-    use-task-list.ts      # Custom hook (if complex state)
-    types.ts              # Component-specific types (if needed)
-```
-
 ### Component Patterns
 
 **Prefer composition over configuration:**
