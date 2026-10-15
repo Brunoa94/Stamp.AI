@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
-import { buyCreditsTheme } from "@/theme/components";
 import { CreditPackageSelector } from "./CreditPackageSelector";
 import { CustomCreditInput } from "./CustomCreditInput";
 import { CreditSummary } from "../shared/CreditSummary";
@@ -32,11 +31,10 @@ export function CreditSelectionStep({
   onCustomCreditsChange,
   onContinue,
 }: CreditSelectionStepProps) {
-  const theme = buyCreditsTheme.selectionStep;
   const t = useTranslations("buyCredits.selection");
 
   return (
-    <div className={theme.container}>
+    <div className="space-y-6">
       <CreditPackageSelector
         selectedPackage={selectedPackage}
         onSelect={onSelectPackage}
@@ -57,7 +55,7 @@ export function CreditSelectionStep({
         type="button"
         onClick={onContinue}
         disabled={!canProceed}
-        className={theme.submitButton}
+        variant="gradient"
       >
         {t("continueButton")}
       </Button>

@@ -3,7 +3,6 @@
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
-import { buyCreditsTheme } from "@/theme/components";
 import { CreditSummary } from "../shared/CreditSummary";
 import { CreditPaymentForm } from "./CreditPaymentForm";
 
@@ -25,12 +24,11 @@ export function CreditPaymentStep({
   const t = useTranslations("buyCredits.payment");
 
   return (
-    <div className={buyCreditsTheme.selectionStep.container}>
+    <div className="space-y-6">
       <Button
         type="button"
-        variant="ghost"
+        variant="back-link"
         onClick={onBack}
-        className={buyCreditsTheme.paymentStep.backButton}
       >
         <ArrowLeft className="w-4 h-4" />
         {t("backButton")}

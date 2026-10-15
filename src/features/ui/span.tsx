@@ -17,6 +17,13 @@ import { cn } from "@/lib/utils";
  * - value      Data values — xs→sm, tracking-[0.15em]
  * - metric     Large metric display — 6xl-7xl, Anton font
  * - serif      Serif-italic accent word inside headings — inherits size from parent
+ * - giant      Oversized numerals (404 page) — 8xl→240px, heading font
+ * - caption    Option descriptions — xs, inherits font
+ * - price      Inline prices in option cards — sm, medium weight, inherits font
+ * - pill       Floating "popular" badges — 10px, bold, tracking-wider
+ * - strong     Emphasised inline label — heading font, bold, inherits size
+ * - credits    Credit amount in package cards — 2xl, heading font, bold
+ * - total      Order/summary total — xl, heading font, bold
  */
 
 const spanVariants = {
@@ -29,6 +36,13 @@ const spanVariants = {
   value: "font-body text-sm md:text-base font-bold uppercase tracking-[0.15em]",
   metric: "font-(family-name:--font-bebas-neue) text-7xl md:text-8xl uppercase tracking-tighter",
   serif: "font-serif italic lowercase font-light",
+  caption: "text-xs",
+  price: "text-sm font-medium",
+  pill: "text-[10px] font-bold uppercase tracking-wider",
+  strong: "font-heading font-bold",
+  credits: "font-heading text-2xl font-bold",
+  total: "font-heading text-xl font-bold",
+  giant: "font-heading text-8xl sm:text-[180px] md:text-[240px] font-semibold uppercase tracking-wide leading-none",
 } as const;
 
 type SpanVariant = keyof typeof spanVariants;

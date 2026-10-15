@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { animations } from "@/theme/animations";
 import { Paragraph } from "@/features/ui/paragraph";
 
 interface ProtectedRouteProps {
@@ -34,7 +33,7 @@ export function ProtectedRoute({
       fallback || (
         <div className="flex min-h-screen items-center justify-center px-4">
           <div
-            className={`w-full max-w-md rounded-2xl border border-white/40 bg-white/70 p-10 text-center shadow-[0_12px_32px_rgba(26,35,64,0.12)] backdrop-blur-xl transform-gpu ${animations.fadeIn}`}
+            className="w-full max-w-md rounded-2xl border border-white/40 bg-white/70 p-10 text-center shadow-[0_12px_32px_rgba(26,35,64,0.12)] backdrop-blur-xl transform-gpu animate-[fadeIn_0.6s_ease-out]"
             role="status"
             aria-live="polite"
             aria-label={t("authenticating")}
