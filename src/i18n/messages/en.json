@@ -12,9 +12,147 @@
       "returns": "{days}-day returns",
       "trustedProviders": "Trusted payment providers"
     },
+    "flowPreview": {
+      "railTitle": "8 Steps to Print",
+      "windowLabel": "Animated preview of the Stamp.ai creation flow",
+      "stepTag": "Step {number} / {name}",
+      "steps": {
+        "upload": {
+          "rail": "Upload",
+          "tag": "Upload"
+        },
+        "describe": {
+          "rail": "Describe",
+          "tag": "Describe"
+        },
+        "process": {
+          "rail": "Process",
+          "tag": "Process"
+        },
+        "results": {
+          "rail": "Results",
+          "tag": "Results"
+        },
+        "product": {
+          "rail": "Product",
+          "tag": "Product"
+        },
+        "customize": {
+          "rail": "Custom",
+          "tag": "Customize"
+        },
+        "creation": {
+          "rail": "Creation",
+          "tag": "Creation"
+        },
+        "final": {
+          "rail": "Final",
+          "tag": "Final"
+        }
+      },
+      "upload": {
+        "title": "Upload <accent>image</accent>",
+        "description": "Add an image to guide your design. It's optional, you can also start from just a text prompt.",
+        "dropTitle": "Upload Image (Optional)",
+        "dropHint": "10MB max, JPG/PNG/GIF only",
+        "fileName": "my-dog.jpg",
+        "fileSize": "0.10 MB",
+        "skip": "Skip upload",
+        "next": "Next step"
+      },
+      "describe": {
+        "title": "Describe Your<br></br><accent>design</accent>",
+        "promptLabel": "Your prompt",
+        "prompt": "Make my dog a superhero sticker with a red cape, bold outlines and warm colors",
+        "charCount": "{count} / {max}",
+        "preservation": "Preservation",
+        "low": "Low",
+        "high": "High",
+        "removeBackground": "Remove background",
+        "coins": "5 coins available",
+        "submit": "Stamp it!"
+      },
+      "process": {
+        "title": "Generating your design…",
+        "eta": "Est. 10 seconds…"
+      },
+      "results": {
+        "title": "Your <accent>creation</accent>",
+        "previous": "Your previous creations",
+        "use": "Use this image",
+        "repeat": "Repeat"
+      },
+      "product": {
+        "title": "Select Your<br></br><accent>product</accent>",
+        "description": "Pick what you want your design printed on. Everything's good quality and printed on demand.",
+        "category": "Apparel (3)",
+        "selected": "Selected",
+        "continue": "Continue to customization →",
+        "names": {
+          "kidsTee": "Kids Heavy Cotton™ Tee",
+          "hoodie": "Unisex Fleece Hoodie",
+          "softTee": "Unisex Softstyle T-Shirt",
+          "mug": "Ceramic Mug (EU)"
+        },
+        "prices": {
+          "kidsTee": "€19.99",
+          "hoodie": "€49.99",
+          "softTee": "€24.99",
+          "mug": "€24.99"
+        }
+      },
+      "customize": {
+        "title": "Customize<br></br>Your <accent>product</accent>",
+        "printPositions": "Print positions",
+        "front": "Front",
+        "back": "Back",
+        "included": "Included",
+        "size": "Size",
+        "sizePct": "{value}%",
+        "rotation": "Rotation",
+        "rotationValue": "{value}°",
+        "colors": "Color swatches",
+        "sizeSelector": "Size selector",
+        "sizeValue": "M",
+        "create": "Create product"
+      },
+      "creation": {
+        "title": "Creating your product mockup…",
+        "eta": "Est. 15 seconds…"
+      },
+      "final": {
+        "title": "Ready to<br></br><accent>wear</accent>",
+        "badge": "Final preview",
+        "productName": "Kids Heavy Cotton™ Tee",
+        "variant": "Color: White | Size: M",
+        "total": "Final total",
+        "price": "€19.99",
+        "counter": "1 / 10",
+        "bag": "Bag it",
+        "bagAnother": "+ Bag it & create another"
+      },
+      "toasts": {
+        "uploaded": "Image uploaded successfully",
+        "bagged": "Added to cart!"
+      }
+    },
     "hero": {
-      "title": "tamp <accent>.ai</accent>",
-      "tagline": "From imagination to thing. Just describe it, we'll design it, and print it on premium products made to last.",
+      "brand": "tamp <accent>.ai</accent>",
+      "brandLabel": "Stamp.ai",
+      "headline": "From imagination<br></br>to <word></word>",
+      "rotatingWords": {
+        "thing": "thing",
+        "tees": "tees",
+        "totes": "totes",
+        "mugs": "mugs",
+        "hoodies": "hoodies"
+      },
+      "tagline": "Just describe it, we'll design it, and print it on premium products made to last.",
+      "upload": {
+        "title": "Upload a photo to start",
+        "hint": "Optional · JPG, PNG or GIF up to 10MB",
+        "step": "step 01"
+      },
       "ctaPrimary": "Start Creating",
       "ctaSecondary": "View Catalog",
       "freeCredits": "<signUp>Sign up</signUp> and get 5 free edits per day",

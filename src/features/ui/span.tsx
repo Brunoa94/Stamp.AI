@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
  * - value      Data values — xs→sm, tracking-[0.15em]
  * - metric     Large metric display — 6xl-7xl, Anton font
  * - serif      Serif-italic accent word inside headings — inherits size from parent
+ * - script     Upright handwritten accent word inside headings — inherits size from parent
  * - giant      Oversized numerals (404 page) — 8xl→240px, heading font
  * - caption    Option descriptions — xs, inherits font
  * - price      Inline prices in option cards — sm, medium weight, inherits font
@@ -36,6 +37,7 @@ const spanVariants = {
   value: "font-body text-sm md:text-base font-bold uppercase tracking-[0.15em]",
   metric: "font-(family-name:--font-bebas-neue) text-7xl md:text-8xl uppercase tracking-tighter",
   serif: "font-serif italic lowercase font-light",
+  script: "font-serif font-normal",
   caption: "text-xs",
   price: "text-sm font-medium",
   pill: "text-[10px] font-bold uppercase tracking-wider",

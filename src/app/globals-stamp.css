@@ -72,6 +72,12 @@
     color-mix(in srgb, var(--color-stamp-chocolate) 30%, transparent); /* [tag: shadow-stamp-modal] Modal elevation */
   --shadow-stamp-modal-error: 0 50px 100px
     color-mix(in srgb, var(--color-stamp-error) 20%, transparent); /* [tag: shadow-stamp-modal-error] Destructive modal elevation */
+
+  /* Homepage flow preview backdrops [tag: flow-art-*] — surfaces behind the demo
+     illustrations (the illustrations themselves are SVGs in public/assets/flow-preview) */
+  --color-flow-art-backdrop-sage: #c5cbc0; /* [tag: flow-art-backdrop-sage] Apparel card backdrop */
+  --color-flow-art-backdrop-sand: #e9e4db; /* [tag: flow-art-backdrop-sand] Accessory card backdrop */
+  --color-flow-art-mockup-backdrop: #f3efe8; /* [tag: flow-art-mockup-backdrop] Final mockup backdrop */
 }
 
 /* ==========================================

@@ -3,8 +3,10 @@
 /**
  * HeroContent
  *
- * Hero section text content with animated title, tagline, and CTAs.
- * Designed to be sticky at the top while products bubble up below.
+ * Hero copy: Stamp.ai wordmark, headline with a rotating handwritten product word,
+ * tagline, the upload card that opens the creator, CTAs, the free-credits
+ * line and trust signals. Centered when stacked; left-aligned beside the
+ * flow demo on xl+.
  */
 
 import Link from "next/link";
@@ -15,52 +17,43 @@ import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { HeroAnimatedTitle } from "./HeroAnimatedTitle";
+import { HeroBrandLockup } from "./HeroBrandLockup";
+import { HeroRotatingWord } from "./HeroRotatingWord";
+import { HeroUploadCard } from "./HeroUploadCard";
 import { HeroSecurityBadge } from "@/features/ui/trust/HeroSecurityBadge";
 import { OrdersFulfilledCounter } from "@/features/ui/trust/OrdersFulfilledCounter";
 import { TrustpilotWidget } from "@/features/ui/trust/TrustpilotWidget";
-import Image from "next/image";
 
 export function HeroContent() {
   const t = useTranslations("home.hero");
 
   return (
-    <div className="bg-(--color-stamp-off-white)/95 backdrop-blur-sm rounded-3xl sm:p-8 flex justify-center flex-col items-center">
-      <div className="flex items-center">
-        <Image
-          src="/logo.png"
-          alt="Stamp.AI"
-          width={96}
-          height={96}
-          className="object-contain mb-8"
-          priority
-        />
-        <HeroAnimatedTitle>
-          <Heading
-            as="h1"
-            variant="title"
-            className="mb-6 text-5xl text-(--color-stamp-chocolate) sm:text-6xl md:text-7xl lg:text-8xl"
-          >
-            {t.rich("title", {
-              accent: (chunks) => (
-                <Span
-                  variant="serif"
-                  className="relative inline-block text-5xl text-(--color-stamp-taupe) sm:text-6xl md:text-7xl lg:text-8xl -ml-4 lg:-ml-8 pt-2"
-                >
-                  {chunks}
-                </Span>
-              ),
-            })}
-          </Heading>
-        </HeroAnimatedTitle>
-      </div>
+    <div className="flex flex-col items-center gap-6 text-center sm:gap-7 xl:items-start xl:text-left">
+      <HeroBrandLockup />
+
+      <HeroAnimatedTitle>
+        <Heading
+          as="h1"
+          variant="title"
+          className="text-3xl leading-none text-(--color-stamp-chocolate) sm:text-4xl md:text-5xl lg:text-6xl xl:text-4xl 2xl:text-6xl"
+        >
+          {t.rich("headline", {
+            br: () => <br />,
+            word: () => <HeroRotatingWord />,
+          })}
+        </Heading>
+      </HeroAnimatedTitle>
+
       <Paragraph
         variant="heroTagline"
-        className="mx-auto mb-6 sm:mb-8 text-(--color-stamp-chocolate)/80"
+        className="max-w-xl text-(--color-stamp-chocolate)/80 xl:text-2xl"
       >
         {t("tagline")}
       </Paragraph>
 
-      <div className="flex flex-col justify-center gap-3 sm:flex-row items-center">
+      <HeroUploadCard />
+
+      <div className="flex flex-col items-center gap-3 sm:flex-row">
         <Button asChild variant="cta" className="group">
           <Link href="/stamp">
             {t("ctaPrimary")}
@@ -84,13 +77,13 @@ export function HeroContent() {
       <Span
         as="p"
         variant="serif"
-        className="mt-6 sm:mt-12 text-center text-2xl text-(--color-stamp-taupe) sm:text-3xl lg:text-4xl"
+        className="text-2xl text-(--color-stamp-taupe) sm:text-3xl"
       >
         {t.rich("freeCredits", {
           signUp: (chunks) => (
             <Button
               variant="link"
-              className="inline p-0 h-auto font-serif italic lowercase text-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)! sm:text-3xl lg:text-4xl font-bold"
+              className="inline p-0 h-auto font-serif italic lowercase text-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)! sm:text-3xl font-bold"
               onClick={() => {
                 document.dispatchEvent(new CustomEvent("open-auth-modal"));
               }}
@@ -102,7 +95,7 @@ export function HeroContent() {
       </Span>
 
       {/* Trust signals - above fold */}
-      <div className="mt-5 sm:mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-4">
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 xl:justify-start">
         <HeroSecurityBadge />
         <OrdersFulfilledCounter variant="default" />
         <TrustpilotWidget variant="compact" />

@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
  * - panelTitle     Split-panel h2 — fluid size that fits a half-width grid column (Sanchez)
  * - panelTitleCompact Compact panel h2 — smaller fluid size for profile cards (Sanchez)
  * - card           Card / step h3 — 3xl→4xl (Sanchez)
+ * - preview        Mock app screen title in the homepage flow preview — 4xl→5xl, tight (Sanchez)
  * - cardCompact    Compact card title — xl (Sanchez)
  * - question       FAQ summary — 2xl→3xl (Sanchez)
  * - item           Product name / testimonial author — xl→2xl (Inter)
@@ -46,6 +47,7 @@ const headingVariants = {
   panelTitleCompact:
     "font-heading font-normal text-3xl md:text-4xl tracking-tight leading-none",
   card: "font-heading font-normal text-3xl md:text-4xl tracking-tight leading-tight",
+  preview: "font-heading font-normal text-4xl sm:text-5xl tracking-tight leading-none",
   cardCompact: "font-heading font-normal text-xl tracking-tight leading-tight",
   question:
     "font-heading font-normal text-2xl md:text-3xl tracking-tight leading-tight",

@@ -4,6 +4,14 @@
 
 @theme inline {
   --breakpoint-3xl: 1200px;
+  /* Micro type for scaled-down mock UI (homepage flow preview, pills) */
+  --text-4xs: 0.5rem;
+  --text-3xs: 0.5625rem;
+  --text-2xs: 0.625rem;
+  /* Wide letter-spacing for mock button labels */
+  --tracking-ultra: 0.2em;
+  /* Quick settle, used by headline word swaps and pop-in animations */
+  --ease-snap: cubic-bezier(0.2, 0.8, 0.2, 1);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
@@ -1135,6 +1143,88 @@
 
 .animate-spin-slow {
   animation: spin-slow 8s linear infinite;
+}
+
+/* Homepage flow preview (animated creation-flow demo) */
+@keyframes flow-pop {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes flow-toast {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes flow-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes flow-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-stamp-gold) 55%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 7px color-mix(in srgb, var(--color-stamp-gold) 0%, transparent);
+  }
+}
+
+.animate-flow-fade {
+  animation: fadeIn 0.4s ease both;
+}
+
+.animate-flow-pop {
+  animation: flow-pop 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.animate-flow-toast {
+  animation: flow-toast 0.35s ease both;
+}
+
+.animate-flow-blink {
+  animation: flow-blink 1s steps(1) infinite;
+}
+
+.animate-flow-pulse {
+  animation: flow-pulse 1.6s ease-in-out infinite;
+}
+
+/* Homepage hero photo ribbon */
+@keyframes hero-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-hero-marquee {
+  animation: hero-marquee 80s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-showcase *,
+  .hero-showcase *::before,
+  .hero-showcase *::after,
+  .flow-preview *,
+  .flow-preview *::before,
+  .flow-preview *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 /* ====================================
