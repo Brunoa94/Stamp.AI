@@ -57,7 +57,7 @@ export function CheckEmailContent() {
     <div className="min-h-screen flex items-center justify-center bg-(--color-stamp-cream) px-4">
       <div className="w-full max-w-md border-2 border-(--color-stamp-divider) bg-(--color-stamp-off-white) p-10 shadow-(--shadow-stamp-modal)">
         <div className="text-center space-y-6">
-          <div className="text-(--color-stamp-gold) mb-4">
+          <div className="text-(--color-stamp-gold-text) mb-4">
             <Mail className="w-16 h-16 mx-auto" strokeWidth={1.5} />
           </div>
 

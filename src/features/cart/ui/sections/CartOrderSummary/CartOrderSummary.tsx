@@ -45,7 +45,7 @@ export function CartOrderSummary({
       >
         {t.rich("title", {
           accent: (chunks) => (
-            <span className="text-(--color-stamp-gold)">{chunks}</span>
+            <span className="text-(--color-stamp-gold-text)">{chunks}</span>
           ),
         })}
       </Heading>

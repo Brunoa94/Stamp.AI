@@ -1215,13 +1215,44 @@
   animation: hero-marquee 80s linear infinite;
 }
 
+/* Navbar "Stamp it!" CTA: idles, then presses down like a rubber stamp and springs back */
+@keyframes stamp-press {
+  0%,
+  78%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  84% {
+    transform: scale(0.9) rotate(-3deg);
+  }
+  90% {
+    transform: scale(1.05) rotate(1deg);
+  }
+  95% {
+    transform: scale(0.98) rotate(0deg);
+  }
+}
+
+.animate-stamp-press {
+  animation: stamp-press 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-stamp-press {
+    animation: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-showcase *,
   .hero-showcase *::before,
   .hero-showcase *::after,
   .flow-preview *,
   .flow-preview *::before,
-  .flow-preview *::after {
+  .flow-preview *::after,
+  .product-marquee *,
+  .product-marquee *::before,
+  .product-marquee *::after {
     animation: none !important;
     transition: none !important;
   }

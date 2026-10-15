@@ -26,7 +26,7 @@ interface PropsI {
 }
 
 const linkClass =
-  "text-xs font-semibold uppercase tracking-[0.15em] text-(--color-stamp-chocolate)/60 transition-colors hover:text-(--color-stamp-gold) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-gold)";
+  "text-xs font-semibold uppercase tracking-[0.15em] text-(--color-stamp-taupe) transition-colors hover:text-(--color-stamp-gold) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-gold)";
 
 export function FooterLinkColumn({ columnKey, links, t }: PropsI) {
   return (

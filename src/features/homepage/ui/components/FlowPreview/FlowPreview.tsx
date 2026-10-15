@@ -4,9 +4,8 @@
  * FlowPreview
  *
  * Animated walkthrough of the creation flow: a mock browser window that plays
- * all eight steps (upload → final) on a loop, with a compact step list under
- * it that tracks and jumps between them. Pauses off-screen; holds still for
- * reduced motion.
+ * all eight steps (upload → final) on a loop. Pauses off-screen; holds still
+ * for reduced motion.
  */
 
 import { useTranslations } from "next-intl";
@@ -18,7 +17,6 @@ import { getFlowFrame } from "@/features/homepage/lib/helpers/flowPreviewFrame";
 import { useFlowPreviewTimeline } from "@/features/homepage/lib/hooks/useFlowPreviewTimeline";
 import { FlowPreviewWindow } from "./Window/FlowPreviewWindow";
 import { FlowPreviewStage } from "./Window/FlowPreviewStage";
-import { FlowPreviewRail } from "./Rail/FlowPreviewRail";
 
 interface PropsI {
   className?: string;
@@ -32,7 +30,7 @@ export function FlowPreview({ className }: PropsI) {
     threshold: 0.2,
     triggerOnce: false,
   });
-  const { stepIndex, tick, goToStep } = useFlowPreviewTimeline({
+  const { stepIndex, tick } = useFlowPreviewTimeline({
     promptLength: prompt.length,
     isPlaying: isVisible,
     isStatic: isReducedMotion,
@@ -44,18 +42,17 @@ export function FlowPreview({ className }: PropsI) {
   return (
     <div
       ref={ref}
-      className={cn(
-        "flow-preview flex flex-col items-center gap-5",
-        className,
-      )}
+      className={cn("flow-preview flex flex-col items-center gap-5", className)}
     >
       <FlowPreviewWindow
         label={t("windowLabel")}
-        stepTag={t("stepTag", { number: step.number, name: t(`steps.${step.id}.tag`) })}
+        stepTag={t("stepTag", {
+          number: step.number,
+          name: t(`steps.${step.id}.tag`),
+        })}
       >
         <FlowPreviewStage stepId={step.id} frame={frame} prompt={prompt} />
       </FlowPreviewWindow>
-      <FlowPreviewRail activeStepIndex={stepIndex} onSelectStep={goToStep} />
     </div>
   );
 }

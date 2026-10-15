@@ -35,7 +35,7 @@ export function CartItemCardContent({ item }: CartItemCardContentPropsI) {
         <Heading
           as="span"
           variant="priceCompact"
-          className="whitespace-nowrap text-(--color-stamp-gold)"
+          className="whitespace-nowrap text-(--color-stamp-gold-text)"
         >
           {formatPrice(unitPrice)}
         </Heading>

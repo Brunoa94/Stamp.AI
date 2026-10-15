@@ -18,7 +18,7 @@ export function RegisterLoginFooter() {
                 <DialogTrigger asChild>
                   <Button
                     variant="link"
-                    className="h-auto p-0 font-bold text-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) hover:underline ml-1"
+                    className="h-auto p-0 font-bold text-(--color-stamp-gold-text) hover:text-(--color-stamp-chocolate) hover:underline ml-1"
                   >
                     {chunks}
                   </Button>

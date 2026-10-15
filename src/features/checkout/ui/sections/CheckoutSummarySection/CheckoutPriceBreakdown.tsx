@@ -78,7 +78,7 @@ export function CheckoutPriceBreakdown({
         <Span variant="sm" className="text-xl font-bold text-(--color-stamp-chocolate)">
           {t("total")}
         </Span>
-        <Heading as="span" unstyled className="font-body text-2xl md:text-3xl font-bold text-(--color-stamp-gold)">
+        <Heading as="span" unstyled className="font-body text-2xl md:text-3xl font-bold text-(--color-stamp-gold-text)">
           {formatPrice(total)}
         </Heading>
       </div>

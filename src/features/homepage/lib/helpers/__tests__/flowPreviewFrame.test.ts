@@ -1,11 +1,13 @@
 import { describe, it, expect } from "vitest";
 import {
   getFlowFrame,
+  getFlowStepIndex,
   getNextPosition,
   getRailStatus,
   getStepDurationTicks,
 } from "../flowPreviewFrame";
-import { FLOW_CUES, FLOW_STEPS } from "../../constants/flowPreview";
+import { FLOW_CUES, FLOW_STEPS, PROCESS_STEP_FLOW_STEP_IDS } from "../../constants/flowPreview";
+import { HOME_PROCESS_STEPS } from "../../constants/homepageContent";
 
 const PROMPT_LENGTH = 40;
 const stepIndexOf = (id: string) => FLOW_STEPS.findIndex((step) => step.id === id);
@@ -91,5 +93,21 @@ describe("getRailStatus", () => {
     expect(getRailStatus(results - 1, results)).toBe("done");
     expect(getRailStatus(results, results)).toBe("active");
     expect(getRailStatus(results + 1, results)).toBe("upcoming");
+  });
+});
+
+describe("getFlowStepIndex", () => {
+  it("finds each step's position in the timeline", () => {
+    FLOW_STEPS.forEach((step, index) => {
+      expect(getFlowStepIndex(step.id)).toBe(index);
+    });
+  });
+});
+
+describe("PROCESS_STEP_FLOW_STEP_IDS", () => {
+  it("maps every process step to a demo screen", () => {
+    HOME_PROCESS_STEPS.forEach((step) => {
+      expect(getFlowStepIndex(PROCESS_STEP_FLOW_STEP_IDS[step.id])).toBeGreaterThanOrEqual(0);
+    });
   });
 });

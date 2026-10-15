@@ -12,7 +12,7 @@ const dotClasses: Record<FlowRailStatusType, string> = {
 const labelClasses: Record<FlowRailStatusType, string> = {
   active: "font-semibold text-(--color-stamp-chocolate)",
   done: "text-(--color-stamp-taupe)",
-  upcoming: "text-(--color-stamp-chocolate)/60",
+  upcoming: "text-(--color-stamp-taupe)",
 };
 
 interface PropsI {

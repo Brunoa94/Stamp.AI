@@ -29,7 +29,7 @@ export function OrderStatusTimeline({ orderId }: PropsI) {
     <section className="mt-8">
       <Span
         variant="label"
-        className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold)"
+        className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold-text)"
       >
         {tTimeline("title")}
       </Span>

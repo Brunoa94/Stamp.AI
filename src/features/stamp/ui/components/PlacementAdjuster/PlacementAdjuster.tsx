@@ -140,7 +140,7 @@ export function PlacementAdjuster({
             className="flex items-center gap-2 text-(--color-stamp-taupe)"
           >
             <TriangleAlert
-              className="h-3.5 w-3.5 text-(--color-stamp-gold)"
+              className="h-3.5 w-3.5 text-(--color-stamp-gold-text)"
               aria-hidden="true"
             />
             <Span variant="micro" className="text-[9px]">

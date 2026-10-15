@@ -65,7 +65,12 @@ export function PromoSectionContent({
       {/* Luxury section label with number */}
       {sectionNumber && (
         <div className="flex items-center gap-3">
-          <span className="text-sm font-bold tracking-[0.3em] text-(--color-stamp-gold) uppercase">
+          <span
+            className={cn(
+              "text-sm font-bold tracking-[0.3em] uppercase",
+              inverted ? "text-(--color-stamp-gold)" : "text-(--color-stamp-gold-text)",
+            )}
+          >
             {sectionNumber}
           </span>
           <div className="w-8 h-px bg-(--color-stamp-gold)/60" />
@@ -93,7 +98,7 @@ export function PromoSectionContent({
           className={cn(
             "max-w-md leading-relaxed",
             inverted
-              ? "text-(--color-stamp-taupe)"
+              ? "text-(--color-stamp-taupe-light)"
               : "text-(--color-stamp-chocolate)/70",
             align === "center" && "mx-auto",
           )}

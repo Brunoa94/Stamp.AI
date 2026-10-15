@@ -32,7 +32,7 @@ export function FlowDescribeStep({ prompt, typedCount, isPromptComplete }: Props
         {prompt.slice(0, typedCount)}
         <Span unstyled className="animate-flow-blink ml-px inline-block h-4 w-0.5 -mb-0.5 bg-(--color-stamp-chocolate)" />
       </div>
-      <Span unstyled className="self-end text-2xs text-(--color-stamp-chocolate)/60">
+      <Span unstyled className="self-end text-2xs text-(--color-stamp-taupe)">
         {t("charCount", { count: typedCount, max: FLOW_PROMPT_MAX_CHARS })}
       </Span>
 
@@ -40,7 +40,7 @@ export function FlowDescribeStep({ prompt, typedCount, isPromptComplete }: Props
         {t("preservation")}
         <Info className="size-3.5 text-(--color-stamp-taupe)" />
       </FlowLabel>
-      <div className="flex items-center gap-3 text-2xs uppercase text-(--color-stamp-chocolate)/60">
+      <div className="flex items-center gap-3 text-2xs uppercase text-(--color-stamp-taupe)">
         {t("low")}
         <FlowSliderTrack knobPct={50} />
         {t("high")}
@@ -53,7 +53,7 @@ export function FlowDescribeStep({ prompt, typedCount, isPromptComplete }: Props
         {t("removeBackground")}
       </FlowLabel>
       <Span unstyled className="flex items-center gap-1.5 self-end text-2xs uppercase text-(--color-stamp-chocolate)/80">
-        <Coins className="size-3.5 text-(--color-stamp-gold)" />
+        <Coins className="size-3.5 text-(--color-stamp-gold-text)" />
         {t("coins")}
       </Span>
 

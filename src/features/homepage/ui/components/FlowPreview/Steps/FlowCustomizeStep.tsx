@@ -41,11 +41,11 @@ export function FlowCustomizeStep({ printSize, rotationIndex }: PropsI) {
         <div className="hidden gap-1.5 sm:flex">
           <Span unstyled className={cn("flex flex-1 flex-col px-2 py-1.5 text-2xs uppercase", selectedBoxClassName)}>
             {t("front")}
-            <Span unstyled className="text-4xs text-(--color-stamp-chocolate)/60">{t("included")}</Span>
+            <Span unstyled className="text-4xs text-(--color-stamp-taupe)">{t("included")}</Span>
           </Span>
           <Span unstyled className={cn("flex flex-1 flex-col px-2 py-1.5 text-2xs uppercase", boxClassName)}>
             {t("back")}
-            <Span unstyled className="text-4xs text-(--color-stamp-chocolate)/60">{t("included")}</Span>
+            <Span unstyled className="text-4xs text-(--color-stamp-taupe)">{t("included")}</Span>
           </Span>
         </div>
 

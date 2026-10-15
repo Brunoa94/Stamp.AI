@@ -68,7 +68,7 @@ const buttonVariants = cva(
         "stamp-filter-ghost":
           "h-10 bg-transparent px-4 font-bold text-sm uppercase tracking-wider text-(--color-stamp-taupe) hover:bg-transparent hover:text-(--color-stamp-gold)",
         "stamp-expand":
-          "h-auto w-full justify-center gap-1 py-1.5 text-xs font-semibold uppercase tracking-wider text-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) hover:bg-(--color-stamp-gold)/10",
+          "h-auto w-full justify-center gap-1 py-1.5 text-xs font-semibold uppercase tracking-wider text-(--color-stamp-gold-text) hover:text-(--color-stamp-chocolate) hover:bg-(--color-stamp-gold)/10",
         "option-card":
           "h-auto rounded-xl border-2 border-slate-200 bg-background shadow-sm transition-all duration-200 hover:shadow-md not-aria-pressed:not-aria-checked:hover:border-slate-300 not-aria-pressed:not-aria-checked:hover:bg-slate-50 aria-pressed:border-[#7C3AED] aria-pressed:bg-[#7C3AED]/5 aria-checked:border-[#7C3AED] aria-checked:bg-[#7C3AED]/5",
         gradient:

@@ -52,7 +52,7 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
         {/* Selection indicator */}
         {isSelected && (
           <div className="absolute top-3 right-3 z-10">
-            <CheckCircle className="text-(--color-stamp-gold) w-6 h-6" />
+            <CheckCircle className="text-(--color-stamp-gold-text) w-6 h-6" />
           </div>
         )}
       </div>

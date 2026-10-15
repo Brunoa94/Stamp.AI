@@ -34,7 +34,7 @@ export function TrustGuaranteeCard({
       )}
     >
       <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-(--color-stamp-gold)/10 transition-colors duration-300 group-hover:bg-(--color-stamp-gold)/20">
-        {Icon && <Icon className="h-6 w-6 text-(--color-stamp-gold)" />}
+        {Icon && <Icon className="h-6 w-6 text-(--color-stamp-gold-text)" />}
       </div>
       <Heading
         as="h3"

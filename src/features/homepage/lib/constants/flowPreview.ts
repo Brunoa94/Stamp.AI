@@ -3,6 +3,7 @@ import type {
   FlowArtIdType,
   FlowPrintSizeType,
   FlowProductType,
+  FlowStepIdType,
   FlowStepType,
 } from "@/features/homepage/lib/types/flowPreview";
 
@@ -65,4 +66,17 @@ export const FLOW_ART_ASSETS: Record<FlowArtIdType, FlowArtAssetType> = {
   mug: { src: "/assets/flow-preview/mug.svg", width: 320, height: 300 },
   pup: { src: "/assets/flow-preview/pup.svg", width: 100, height: 100 },
   pupPhoto: { src: "/assets/flow-preview/pup-photo.svg", width: 120, height: 120 },
+};
+
+/**
+ * The demo screen shown, in its starting state, for each "The Process" step
+ * (keyed by HOME_PROCESS_STEPS id)
+ */
+export const PROCESS_STEP_FLOW_STEP_IDS: Record<string, FlowStepIdType> = {
+  "step-upload": "upload",
+  "step-describe": "describe",
+  "step-results": "results",
+  "step-product": "product",
+  "step-customize": "customize",
+  "step-create": "final",
 };

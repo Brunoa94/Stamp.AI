@@ -15,7 +15,7 @@ const TONE_CLASSES: Record<PaymentResultToneT, { bar: string; icon: string }> =
     },
     pending: {
       bar: "bg-(--color-stamp-gold)",
-      icon: "bg-(--color-stamp-gold)/10 text-(--color-stamp-gold)",
+      icon: "bg-(--color-stamp-gold)/10 text-(--color-stamp-gold-text)",
     },
   };
 

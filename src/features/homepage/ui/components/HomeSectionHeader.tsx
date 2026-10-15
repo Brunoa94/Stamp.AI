@@ -44,7 +44,7 @@ export function HomeSectionHeader({
               variant="serif"
               className={
                 inverted
-                  ? "text-(--color-stamp-gold)"
+                  ? "text-(--color-stamp-gold-text)"
                   : "text-(--color-stamp-taupe)"
               }
             >

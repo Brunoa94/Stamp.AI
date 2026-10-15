@@ -48,7 +48,7 @@ export function RegisterForm() {
 
         <div className="relative flex items-center my-10">
           <div className="grow border-t border-(--color-stamp-divider)" />
-          <span className="shrink mx-4 text-lg font-bold text-(--color-stamp-gold) uppercase tracking-[0.2em]">
+          <span className="shrink mx-4 text-lg font-bold text-(--color-stamp-gold-text) uppercase tracking-[0.2em]">
             {t("orContinueWithEmail")}
           </span>
           <div className="grow border-t border-(--color-stamp-divider)" />

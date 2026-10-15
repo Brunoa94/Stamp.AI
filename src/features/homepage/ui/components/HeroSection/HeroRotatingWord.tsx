@@ -51,7 +51,7 @@ export function HeroRotatingWord() {
           {`${t(id)}.`}
         </Span>
       ))}
-      <PencilUnderline key={activeIndex} delay={200} className="-bottom-2 text-(--color-stamp-gold)" />
+      <PencilUnderline key={activeIndex} delay={200} className="-bottom-2 text-(--color-stamp-gold-text)" />
     </Span>
   );
 }

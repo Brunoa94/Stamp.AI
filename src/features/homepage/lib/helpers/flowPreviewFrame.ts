@@ -12,6 +12,11 @@ import type {
   FlowToastType,
 } from "@/features/homepage/lib/types/flowPreview";
 
+/** Position of a step in FLOW_STEPS */
+export function getFlowStepIndex(stepId: FlowStepIdType): number {
+  return FLOW_STEPS.findIndex((step) => step.id === stepId);
+}
+
 /** How many ticks a step stays on screen; the describe step waits for the prompt to be typed */
 export function getStepDurationTicks(stepIndex: number, promptLength: number): number {
   const step = FLOW_STEPS[stepIndex];

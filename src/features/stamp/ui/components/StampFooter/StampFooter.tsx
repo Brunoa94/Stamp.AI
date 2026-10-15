@@ -88,7 +88,7 @@ export function StampFooter() {
             <div className="h-1.5 w-20 bg-(--color-stamp-gold)" />
             <Paragraph
               variant="sm"
-              className="max-w-xs text-(--color-stamp-chocolate)/60"
+              className="max-w-xs text-(--color-stamp-taupe)"
             >
               {t("mission")}
             </Paragraph>
@@ -128,11 +128,11 @@ export function StampFooter() {
 
         {/* Bottom bar */}
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <Span variant="micro" className="text-(--color-stamp-chocolate)/50">
+          <Span variant="micro" className="text-(--color-stamp-taupe)">
             {t("copyright", { year })}
           </Span>
           <CookieSettingsButton />
-          <Span variant="micro" className="text-(--color-stamp-chocolate)/50">
+          <Span variant="micro" className="text-(--color-stamp-taupe)">
             {t("tagline")}
           </Span>
         </div>

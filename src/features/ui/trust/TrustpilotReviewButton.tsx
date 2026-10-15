@@ -45,7 +45,7 @@ export function TrustpilotReviewButton({
             {t("leaveReview")}
           </a>
         </Button>
-        <Span variant="micro" className="text-[9px] text-(--color-stamp-chocolate)/40">
+        <Span variant="micro" className="text-[9px] text-(--color-stamp-taupe)">
           {t("poweredBy")} <span className="font-bold text-[#00b67a]">Trustpilot</span>
         </Span>
       </div>

@@ -35,7 +35,7 @@ export function PaymentResultDetailsGrid({
       case "pending":
         return {
           dot: "bg-(--color-stamp-gold) animate-pulse",
-          text: "text-(--color-stamp-gold)",
+          text: "text-(--color-stamp-gold-text)",
         };
     }
   };

@@ -54,7 +54,7 @@ export function CheckoutPaymentMethods({
               className={cn(
                 "h-6 w-6 shrink-0",
                 isSelected
-                  ? "text-(--color-stamp-gold)"
+                  ? "text-(--color-stamp-gold-text)"
                   : "text-(--color-stamp-taupe)",
               )}
               aria-hidden="true"

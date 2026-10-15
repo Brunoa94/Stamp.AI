@@ -50,7 +50,7 @@ export function NoCoinsOverlay({
   return (
     <CoinsOverlayShell
       testId="coins-overlay-no-coins"
-      icon={<Coins className="h-8 w-8 text-(--color-stamp-gold)" />}
+      icon={<Coins className="h-8 w-8 text-(--color-stamp-gold-text)" />}
       iconClassName="bg-(--color-stamp-gold)/20"
       title={t("noCoins")}
       description={t("noCoinsDescription")}

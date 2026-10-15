@@ -35,6 +35,10 @@ export function StampHeader() {
   const linkClass =
     "font-semibold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-all duration-300";
 
+  // Mirrors the hero upload card so the nav CTA reads as the same "start here" action
+  const stampCtaClass =
+    "group inline-flex items-center justify-center rounded-lg border-3 border-dashed border-(--color-stamp-gold) bg-(--color-stamp-gold)/10 text-lg leading-none font-bold uppercase tracking-wider text-(--color-stamp-chocolate) shadow-lg ring-4 ring-(--color-stamp-gold)/20 transition-all duration-300 animate-stamp-press hover:animate-none hover:-translate-y-0.5 hover:border-solid hover:bg-(--color-stamp-white) hover:shadow-xl hover:ring-(--color-stamp-gold)/35 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-(--color-stamp-gold)/50";
+
   return (
     <>
       <header
@@ -62,7 +66,7 @@ export function StampHeader() {
         <div className="flex-none hidden lg:block">
           <Link
             href="/stamp"
-            className="inline-flex items-center justify-center rounded-md px-16 py-5 text-sm font-bold uppercase tracking-wider bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg transition-all duration-300"
+            className={`${stampCtaClass} px-8 py-3`}
             aria-label={t("stampAria")}
           >
             {t("stamp")}
@@ -144,7 +148,7 @@ export function StampHeader() {
           <Link
             href="/stamp"
             onClick={() => setMobileMenuOpen(false)}
-            className="inline-flex items-center justify-center rounded-md w-full mb-2 px-4 py-3 font-bold text-sm uppercase tracking-wider bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg transition-all duration-300"
+            className={`${stampCtaClass} w-full mb-4 px-4 py-2.5`}
             aria-label={t("stampAria")}
           >
             {t("stamp")}

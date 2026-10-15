@@ -100,7 +100,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
             <section>
               <Span
                 variant="label"
-                className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold)"
+                className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold-text)"
               >
                 {t("protocolItems")}
               </Span>
@@ -148,7 +148,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
             <section>
               <Span
                 variant="label"
-                className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold)"
+                className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold-text)"
               >
                 {t("delivery")}
               </Span>
@@ -171,7 +171,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
                     <Anchor
                       href={order.tracking_url}
                       variant="bold"
-                      className="text-(--color-stamp-gold)"
+                      className="text-(--color-stamp-gold-text)"
                     >
                       {order.tracking_number}
                     </Anchor>
@@ -203,7 +203,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
             <section>
               <Span
                 variant="label"
-                className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold)"
+                className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold-text)"
               >
                 {t("orderInfo")}
               </Span>
@@ -278,7 +278,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
                       href={order.tracking_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block font-body text-base font-semibold text-(--color-stamp-gold) underline hover:text-(--color-stamp-chocolate)"
+                      className="block font-body text-base font-semibold text-(--color-stamp-gold-text) underline hover:text-(--color-stamp-chocolate)"
                     >
                       {order.tracking_number}
                     </a>
@@ -300,7 +300,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
           <aside className="self-start border border-(--color-stamp-divider) bg-(--color-stamp-cream)/40 p-6">
             <Span
               variant="label"
-              className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold)"
+              className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold-text)"
             >
               {t("valuation")}
             </Span>
@@ -336,7 +336,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
                   <Span variant="micro" className="text-(--color-stamp-taupe)">
                     {t("discount")}
                     {order.promo_code && (
-                      <Span unstyled className="ml-1 text-(--color-stamp-gold)">
+                      <Span unstyled className="ml-1 text-(--color-stamp-gold-text)">
                         ({order.promo_code})
                       </Span>
                     )}
@@ -354,7 +354,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
               <Heading
                 as="h5"
                 variant="priceCompact"
-                className="text-(--color-stamp-gold)"
+                className="text-(--color-stamp-gold-text)"
               >
                 {formatPrice(order.total_amount)}
               </Heading>

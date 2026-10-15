@@ -41,7 +41,7 @@ export function SecureCheckoutNotice({ className }: SecureCheckoutNoticeProps) {
         </div>
         <div className="flex flex-col">
           <div className="flex items-center gap-2 text-(--color-stamp-chocolate)">
-            <Lock className="h-3.5 w-3.5 text-(--color-stamp-gold)" aria-hidden="true" />
+            <Lock className="h-3.5 w-3.5 text-(--color-stamp-gold-text)" aria-hidden="true" />
             <Span variant="sm" className="font-bold">{t("title")}</Span>
           </div>
           <Paragraph variant="xs" className="text-(--color-stamp-taupe)">

@@ -64,7 +64,7 @@ export function CheckoutAddressForm({
                   {t(`fields.${field.id}`)}
                   {field.required && (
                     <span
-                      className="text-(--color-stamp-gold)"
+                      className="text-(--color-stamp-gold-text)"
                       aria-hidden="true"
                     >
                       *

@@ -23,6 +23,7 @@ import { HomeFaqSection } from "./sections/HomeFaqSection";
 import { HomeStorySection } from "./sections/HomeStorySection";
 import { HomeProductOfMonthSection } from "./sections/HomeProductOfMonthSection";
 import { HomePromoSection } from "./sections/HomePromoSection";
+import { HomeProductMarqueeSection } from "./sections/HomeProductMarqueeSection";
 
 interface HomepageContentPropsI {
   productsWithPricing: ProductWithPricing[];
@@ -44,6 +45,7 @@ export function HomepageContent({
         background="cream"
         contentPosition="right"
       />
+      <HomeProductMarqueeSection />
       <HomeProductOfMonthSection />
       <div className="hidden md:block"><HomePromoSection
         variant="memories"

@@ -24,8 +24,10 @@
 
   /* Stamp Luxury Theme Colors */
   --color-stamp-taupe: #795944; /* [tag: brand-stamp-taupe] Warm taupe accent */
+  --color-stamp-taupe-light: #c4a08a; /* [tag: brand-stamp-taupe-light] Taupe text on chocolate surfaces */
   --color-stamp-chocolate: #3d2817; /* [tag: brand-stamp-chocolate] Primary dark brown */
   --color-stamp-gold: #b9932f; /* [tag: brand-stamp-gold] Metallic gold accent */
+  --color-stamp-gold-text: #82631b; /* [tag: brand-stamp-gold-text] Gold text on light surfaces */
   --color-stamp-cream: #faf6f1; /* [tag: brand-stamp-cream] Soft cream background */
   --color-stamp-off-white: #fefefe; /* [tag: brand-stamp-off-white] Near white surface */
   --color-stamp-divider: rgba(
@@ -195,18 +197,4 @@
 
 [data-sonner-toast] button[data-cancel]:hover {
   color: var(--color-stamp-chocolate);
-}
-
-/* Functional muted text stays readable; keep translucent colors for decoration. */
-[class~="text-(--color-stamp-chocolate)/40"],
-[class~="text-(--color-stamp-chocolate)/50"],
-[class~="text-(--color-stamp-chocolate)/60"] {
-  color: var(--color-stamp-taupe);
-}
-[class~="text-(--color-stamp-gold)"] {
-  color: #82631b;
-}
-[class~="bg-(--color-stamp-chocolate)"] [class~="text-(--color-stamp-taupe)"],
-[class~="bg-(--color-stamp-chocolate)"] [class~="text-(--color-stamp-gold)"] {
-  color: var(--color-stamp-cream);
 }

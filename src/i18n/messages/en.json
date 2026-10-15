@@ -150,11 +150,9 @@
       "tagline": "Just describe it, we'll design it, and print it on premium products made to last.",
       "upload": {
         "title": "Upload a photo to start",
-        "hint": "Optional · JPG, PNG or GIF up to 10MB",
+        "hint": "…and edit it with a prompt in the next step",
         "step": "step 01"
       },
-      "ctaPrimary": "Start Creating",
-      "ctaSecondary": "View Catalog",
       "freeCredits": "<signUp>Sign up</signUp> and get 5 free edits per day",
       "productBadge": "Essential_Wht / 320GSM",
       "scrollCue": "Scroll to Build",
@@ -390,6 +388,15 @@
         }
       }
     },
+    "productMarquee": {
+      "items": {
+        "fleeceHoodies": "Fleece hoodies",
+        "ceramicMugs": "Ceramic mugs",
+        "accessories": "Accessories",
+        "kidsTees": "Kids tees",
+        "softstyleTees": "Softstyle tees"
+      }
+    },
     "productOfMonth": {
       "eyebrow": "This month's pick",
       "title": "Product of the month",
@@ -610,7 +617,7 @@
       "logoAria": "Return to Stamp homepage",
       "brand": "STAMP IT",
       "stampAria": "Start stamping process",
-      "stamp": "Stamp",
+      "stamp": "Stamp it!",
       "catalog": "Catalog",
       "profile": "Profile",
       "profileAria": "View your profile",

@@ -20,7 +20,7 @@ export function HeroScrollCue() {
       </Span>
       <ArrowDown
         aria-hidden
-        className="h-4 w-4 animate-bounce text-(--color-stamp-gold)"
+        className="h-4 w-4 animate-bounce text-(--color-stamp-gold-text)"
       />
     </div>
   );
