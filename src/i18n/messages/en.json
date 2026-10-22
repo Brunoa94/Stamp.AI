@@ -157,7 +157,7 @@
       "productBadge": "Essential tee · White · 320 GSM",
       "scrollCue": "Scroll to explore",
       "productImageAlt": "Heavyweight t-shirt with a custom print",
-      "flowIntro": "You're {count} steps away from creating your <accent>dream product.</accent>",
+      "flowIntro": "You're {count} steps away from creating your\u00a0<accent>dream product.</accent>",
       "flowBenefits": {
         "noSkills": { "title": "No design skills", "hint": "Just describe it" },
         "preview": { "title": "Preview first", "hint": "Before you order" },

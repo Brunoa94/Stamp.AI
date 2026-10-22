@@ -11,7 +11,9 @@ import { PencilUnderline } from "./PencilUnderline";
  *
  * Headline above the creation-flow demo on the hero's off-white side:
  * "You're 8 steps away from creating your dream product." The step count
- * comes from the demo's own steps so the two never disagree.
+ * comes from the demo's own steps so the two never disagree. A non-breaking
+ * space in the copy keeps the accent on the same line as "your", and balanced
+ * wrapping stops it from being left alone on a line.
  */
 export function HeroFlowIntro() {
   const t = useTranslations("home.hero");
@@ -20,14 +22,20 @@ export function HeroFlowIntro() {
     <Heading
       as="h2"
       variant="preview"
-      className="max-w-160 text-(--color-stamp-chocolate) sm:text-5xl xl:text-4xl 2xl:text-5xl"
+      className="max-w-160 text-balance text-(--color-stamp-chocolate) sm:text-5xl xl:text-4xl"
     >
       {t.rich("flowIntro", {
         count: FLOW_STEPS.length,
         accent: (chunks) => (
-          <Span variant="script" className="relative inline-block text-(--color-stamp-gold-text)">
+          <Span
+            variant="script"
+            className="relative inline-block text-(--color-stamp-gold-text)"
+          >
             {chunks}
-            <PencilUnderline delay={900} className="-bottom-2 text-(--color-stamp-gold)" />
+            <PencilUnderline
+              delay={900}
+              className="-bottom-2 text-(--color-stamp-gold)"
+            />
           </Span>
         ),
       })}
