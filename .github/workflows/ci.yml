@@ -10,10 +10,12 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# One run per branch/PR: a new push cancels the previous in-flight run.
+# One run per branch/PR: a new push cancels the previous in-flight run, except on
+# runs that include the acceptance suite. Cancelling one mid-test skips its cleanup
+# and leaves Printify orders and test accounts behind, so a new push queues instead.
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name != 'workflow_dispatch' && (github.base_ref != 'main' || github.event.pull_request.draft) }}
 
 permissions:
   contents: read
@@ -140,12 +142,11 @@ jobs:
         continue-on-error: true
         run: npm run knip
 
-  # Gate for merging into main: the full acceptance suite against the test
-  # Supabase project, the Printify test shop and Stripe test mode
-  # (see tests/acceptance/README.md). Only runs on non-draft PRs targeting
+  # Gate for merging into main: the full acceptance suite, split into groups that
+  # run in parallel (see acceptance.yml). Only runs on non-draft PRs targeting
   # main (or a manual dispatch), after the cheaper jobs have passed.
-  acceptance:
-    name: Acceptance suite
+  acceptance-groups:
+    name: Acceptance
     needs: [typecheck, unit-tests, build]
     # Secrets are not available to pull requests from forks.
     if: >-
@@ -154,75 +155,23 @@ jobs:
        github.base_ref == 'main' &&
        !github.event.pull_request.draft &&
        github.event.pull_request.head.repo.full_name == github.repository)
-    runs-on: ubuntu-latest
-    timeout-minutes: 150
-    # Every run shares the test database and the Printify test shop: queue runs, never overlap them.
+    # Every run shares the test database and the Printify test shop: queue whole runs
+    # (deploy plus every group), never overlap them.
     concurrency:
       group: acceptance-test-environment
       cancel-in-progress: false
-    env:
-      # Excluded until their credentials exist in CI: Google sign-in, delivered email, PayPal and Mollie purchases.
-      ACCEPTANCE_EXCLUDE: "Google|GOOGLE|google|AUTH-01 real email confirmation|AUTH-03 repeated signup|AUTH-07 reset via a delivered recovery email|PAY-01 PAY-02 ORDER-01 mollie|PAY-01 PAY-02 ORDER-01 paypal"
+    uses: ./.github/workflows/acceptance.yml
+    secrets: inherit
+
+  # The required status check: one stable name over the parallel groups.
+  acceptance:
+    name: Acceptance suite
+    needs: acceptance-groups
+    if: always() && needs.acceptance-groups.result != 'skipped'
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium
-
-      - name: Install Stripe CLI
-        run: |
-          curl -fsSL https://packages.stripe.dev/api/security/keypair/stripe-cli-gpg/public | gpg --dearmor | sudo tee /usr/share/keyrings/stripe.gpg > /dev/null
-          echo "deb [signed-by=/usr/share/keyrings/stripe.gpg] https://packages.stripe.dev/stripe-cli-debian-local stable main" | sudo tee /etc/apt/sources.list.d/stripe.list
-          sudo apt-get update -q && sudo apt-get install -y -q stripe
-
-      - name: Write test environment
+      - name: Require every acceptance group to pass
         env:
-          ACCEPTANCE_ENV_FILE: ${{ secrets.ACCEPTANCE_ENV_FILE }}
+          RESULT: ${{ needs.acceptance-groups.result }}
         run: |
-          if [ -z "$ACCEPTANCE_ENV_FILE" ]; then echo "::error::Repository secret ACCEPTANCE_ENV_FILE is missing"; exit 1; fi
-          printf '%s\n' "$ACCEPTANCE_ENV_FILE" > .env.test.local
-
-      # The suite exercises the deployed test project, so bring its schema and
-      # Edge Functions up to this branch first. Only the test project ref is
-      # ever targeted here; production is deployed separately.
-      - name: Deploy migrations and Edge Functions to the test project
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_TEST_DB_PASSWORD }}
-          SUPABASE_TEST_PROJECT_REF: tgccxydchvujhrqyzqao
-        run: |
-          set -euo pipefail
-          if [ -z "$SUPABASE_ACCESS_TOKEN" ] || [ -z "$SUPABASE_DB_PASSWORD" ]; then
-            echo "::error::Repository secrets SUPABASE_ACCESS_TOKEN and SUPABASE_TEST_DB_PASSWORD are required to deploy the test project"
-            exit 1
-          fi
-          npx supabase link --project-ref "$SUPABASE_TEST_PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
-          npx supabase migration list --password "$SUPABASE_DB_PASSWORD"
-          npx supabase db push --include-all --yes --password "$SUPABASE_DB_PASSWORD"
-          npx supabase functions deploy --project-ref "$SUPABASE_TEST_PROJECT_REF" --use-api
-
-      - name: Show catalog differences from production (CAT-04 fails on drift)
-        run: node scripts/acceptance/sync-catalog.mjs
-
-      - name: Run acceptance suite
-        run: npm run test:acceptance -- --grep-invert "$ACCEPTANCE_EXCLUDE"
-
-      - name: Upload report and cleanup ledgers
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: acceptance-${{ github.run_id }}
-          path: |
-            .acceptance/report
-            .acceptance/results
-            .acceptance/accounts
-            .acceptance/printify
-          retention-days: 14
-          if-no-files-found: ignore
-
-      - name: Remove test environment
-        if: always()
-        run: rm -f .env.test.local
+          if [ "$RESULT" != success ]; then echo "::error::Acceptance groups finished with: $RESULT"; exit 1; fi

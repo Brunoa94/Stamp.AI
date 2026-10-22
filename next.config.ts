@@ -95,7 +95,9 @@ const nextConfig: NextConfig = {
   // against a webpack dev server. By default it disposes routes idle for 60s,
   // so mobile tests recompile /checkout and /api/generate-image mid-test and
   // blow past their 15s waits. Keep every compiled route in memory instead.
+  // The dev indicator is hidden too: it sits over page controls the suite clicks.
   ...(process.env.STAMP_ACCEPTANCE_TESTS === "1" && {
+    devIndicators: false,
     onDemandEntries: {
       maxInactiveAge: 24 * 60 * 60 * 1000,
       pagesBufferLength: 1000,
