@@ -4,9 +4,10 @@
  * First screen of the homepage, sized to the space left under the navbar and
  * trust strip: brand kicker, headline, tagline and upload card over the
  * diagonal photo backdrop, with the "8 steps away" headline, the animated
- * creation-flow demo and its benefit banners on the off-white side (xl+ only — stacked screens keep
- * just the copy so it fits).
- * Below it, a ribbon of product photos and the promo banner.
+ * creation-flow demo and its benefit banners on the off-white side (xl+ only —
+ * stacked screens keep just the copy so it fits). Below it, a ribbon of
+ * product photos (shown from the first render, no scroll reveal) and the
+ * promo banner.
  */
 
 import { SectionReveal } from "../components/SectionReveal";
@@ -35,7 +36,7 @@ export function HomeHeroSection() {
               delayMs={300}
               className="hidden xl:block xl:w-150 xl:shrink-0 2xl:w-160"
             >
-              <div className="flex flex-col gap-5 2xl:gap-6">
+              <div className="flex flex-col gap-5 2xl:gap-6 xl:ml-8">
                 <HeroFlowIntro />
                 <FlowPreview />
                 <HeroFlowBenefits />
@@ -46,9 +47,9 @@ export function HomeHeroSection() {
       </div>
 
       {/* Real work drifting by: lifestyle shots and photo → product pairs */}
-      <SectionReveal delayMs={500} className="mt-10">
+      <div className="mt-10">
         <HeroPhotoRibbon />
-      </SectionReveal>
+      </div>
 
       {/* Promotional banner */}
       <HeroPromoBanner />
