@@ -1,9 +1,10 @@
 /**
  * CheckoutTestModeToggle
  *
- * Developer test-mode switch, restyled to the luxury brutalist system so it
- * reads as part of the design rather than a bolted-on dev control. When on,
- * the Stripe card form swaps to predefined test payment methods.
+ * Read-only test-mode indicator, styled to the luxury brutalist system. The
+ * checkbox stays checked and disabled while CHECKOUT_TEST_MODE is on, so
+ * shoppers can see the card form uses predefined test payment methods but
+ * cannot switch modes.
  */
 
 "use client";
@@ -15,13 +16,9 @@ import { Label } from "@/features/ui/label";
 
 interface CheckoutTestModePropsI {
   testMode: boolean;
-  onTestModeChange: (value: boolean) => void;
 }
 
-export function CheckoutTestModeToggle({
-  testMode,
-  onTestModeChange,
-}: CheckoutTestModePropsI) {
+export function CheckoutTestModeToggle({ testMode }: CheckoutTestModePropsI) {
   const t = useTranslations("checkout.testMode");
   return (
     <div className="flex items-center gap-3 border border-dashed border-(--color-stamp-warning)/40 bg-(--color-stamp-warning)/5 px-6 py-4">
@@ -32,12 +29,12 @@ export function CheckoutTestModeToggle({
       <Checkbox
         id="testMode"
         checked={testMode}
-        onCheckedChange={(checked) => onTestModeChange(checked === true)}
+        disabled
         className="rounded-none border-(--color-stamp-warning)/50 focus-visible:ring-(--color-stamp-warning) data-[state=checked]:border-(--color-stamp-warning) data-[state=checked]:bg-(--color-stamp-warning) data-[state=checked]:text-(--color-stamp-white)"
       />
       <Label
         htmlFor="testMode"
-        className="cursor-pointer text-base font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate)"
+        className="text-base font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate)"
       >
         {t("label")}
       </Label>
