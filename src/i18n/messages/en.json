@@ -648,6 +648,9 @@
       "navigate": "Navigate to {title}",
       "navigateLocked": "Navigate to {title} (locked)"
     },
+    "common": {
+      "loading": "Loading..."
+    },
     "steps": {
       "hero": {
         "title": "Entry",
