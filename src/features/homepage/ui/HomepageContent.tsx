@@ -19,6 +19,8 @@ import { HomeProductsSection } from "./sections/HomeProductsSection";
 import { HomeProcessSection } from "./sections/HomeProcessSection";
 import { HomeTrustGuaranteesSection } from "./sections/HomeTrustGuaranteesSection";
 import { HomeCtaSection } from "./sections/HomeCtaSection";
+import { HomeReviewsSection } from "./sections/HomeReviewsSection";
+import { TRUST_SOCIAL_PROOF_ENABLED } from "@/shared/constants/trustMetrics";
 import { HomeFaqSection } from "./sections/HomeFaqSection";
 import { HomeStorySection } from "./sections/HomeStorySection";
 import { HomeProductOfMonthSection } from "./sections/HomeProductOfMonthSection";
@@ -47,21 +49,26 @@ export function HomepageContent({
       />
       <HomeProductMarqueeSection />
       <HomeProductOfMonthSection />
-      <div className="hidden md:block"><HomePromoSection
-        variant="memories"
-        background="white"
-        contentPosition="right"
-      /></div>
+      <div className="hidden md:block">
+        <HomePromoSection
+          variant="memories"
+          background="white"
+          contentPosition="right"
+        />
+      </div>
       {/* <HomeStorySection blockIds={["quality"]} background="white" /> */}
 
       <HomeProcessSection />
-      <div className="hidden md:block"><HomePromoSection
-        variant="special-moments"
-        background="chocolate"
-        contentPosition="left"
-      /></div>
+      <div className="hidden md:block">
+        <HomePromoSection
+          variant="special-moments"
+          background="chocolate"
+          contentPosition="left"
+        />
+      </div>
       <HomeTrustGuaranteesSection />
       <HomeCtaSection />
+      {TRUST_SOCIAL_PROOF_ENABLED && <HomeReviewsSection />}
       <HomeFaqSection />
     </div>
   );

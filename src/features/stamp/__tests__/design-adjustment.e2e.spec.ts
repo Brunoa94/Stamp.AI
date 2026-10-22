@@ -13,8 +13,8 @@ async function goToCustomizationStep(page: import("@playwright/test").Page) {
   await page.goto("/stamp");
   await expect(page.getByRole("button", { name: /logout from your account/i })).toBeVisible({ timeout: 20_000 });
 
-  // Hero -> Step 1: Click begin customization CTA
-  await page.getByRole("button", { name: /begin customiz/i }).click();
+  // Hero -> Step 1: Click the start creating CTA
+  await page.getByRole("button", { name: /start creating your design/i }).click();
 
   // Step 1 -> Step 2: Skip upload (no image uploaded)
   await page.getByRole("button", { name: /skip upload/i }).click();
@@ -26,7 +26,7 @@ async function goToCustomizationStep(page: import("@playwright/test").Page) {
   await page.getByRole("button", { name: /stamp it/i }).click();
 
   // Step 4: pick the first result (generation can take a while)
-  await page.getByRole("button", { name: /use this image/i }).first().click({
+  await page.getByRole("button", { name: /use this design/i }).first().click({
     timeout: 180_000,
   });
 

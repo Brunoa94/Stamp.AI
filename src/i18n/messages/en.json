@@ -147,28 +147,30 @@
         "mugs": "mugs",
         "hoodies": "hoodies"
       },
-      "tagline": "Just describe it, we'll design it, and print it on premium products made to last.",
+      "tagline": "Upload a photo or describe an idea — we'll design it and print it on heavyweight pieces made to last.",
       "upload": {
         "title": "Upload a photo to start",
         "hint": "…and edit it with a prompt in the next step",
         "step": "step 01"
       },
       "freeCredits": "<signUp>Sign up</signUp> and get 5 free edits per day",
-      "productBadge": "Essential_Wht / 320GSM",
-      "scrollCue": "Scroll to Build",
+      "productBadge": "Essential tee · White · 320 GSM",
+      "scrollCue": "Scroll to explore",
       "productImageAlt": "Heavyweight t-shirt with a custom print",
-    "flowIntro": "You're {count} steps away from creating your <accent>dream product.</accent>",
-    "flowBenefits": {
-      "noSkills": { "title": "No design skills", "hint": "Just describe it" },
-      "preview": { "title": "Preview first", "hint": "Before you order" },
-      "onDemand": { "title": "Made to order", "hint": "Printed just for you" }
-    }
+      "flowIntro": "You're {count} steps away from creating your <accent>dream product.</accent>",
+      "flowBenefits": {
+        "noSkills": { "title": "No design skills", "hint": "Just describe it" },
+        "preview": { "title": "Preview first", "hint": "Before you order" },
+        "onDemand": { "title": "Made to order", "hint": "Printed just for you" }
+      }
     },
     "meta": {
       "title": "Design & Order Custom T-Shirts and Apparel | Stamp AI",
-      "description": "Turn your idea into a print-ready design in seconds and put it on heavyweight, made-to-order clothes. No minimums, no design skills needed. Start free today.",
+      "description": "Turn a photo or an idea into a print-ready design in seconds and put it on heavyweight, made-to-order clothes. No minimums, no design skills needed. Start free today.",
       "keywords": [
         "custom AI t-shirt design",
+        "custom t-shirt from photo",
+        "photo to t-shirt AI",
         "AI t-shirt generator",
         "design your own t-shirt",
         "print on demand apparel",
@@ -255,14 +257,14 @@
         },
         "04": {
           "title": "Global Logistics",
-          "description": "Carbon-neutral shipping to 180+ countries, tracked from our press to your door."
+          "description": "Tracked shipping to 180+ countries, from our press to your door."
         }
       }
     },
     "cta": {
       "heading": "Ready to stamp your <accent>vision</accent>?",
-      "lead": "Start with a few words and see your design in seconds. No minimum order and no commitment. Just make the thing you've been picturing.",
-      "ctaPrimary": "Start Creating",
+      "lead": "Start with a photo or a few words and see your design in seconds. No minimum order and no commitment. Just make the thing you've been picturing.",
+      "ctaPrimary": "Start creating",
       "ctaSecondary": "Browse Catalog"
     },
     "promo": {
@@ -270,19 +272,19 @@
         "tagline": "Create your own logos, stamp your brand",
         "accentWord": "brand",
         "description": "Transform your ideas into professional logos. From fitness brands to luxury labels, bring your vision to life on premium merchandise.",
-        "cta": "Start Creating"
+        "cta": "Start creating"
       },
       "memories": {
         "tagline": "Stamp your best memories",
         "accentWord": "memories",
         "description": "Turn your cherished moments into lasting keepsakes. Family photos, couple portraits, and beloved pets - all printed on quality products.",
-        "cta": "Create Yours"
+        "cta": "Start creating"
       },
       "special-moments": {
         "tagline": "Design for special moments",
         "accentWord": "special moments",
         "description": "Celebrate life's milestones with custom merchandise. Perfect for birthdays, bachelor parties, sports achievements, and more.",
-        "cta": "Get Started"
+        "cta": "Start creating"
       }
     },
     "reviews": {
@@ -317,12 +319,12 @@
     "faq": {
       "title": "Questions",
       "accent": "answered",
-      "label": "Support Archive",
+      "label": "FAQ",
       "stillHaveQuestions": "Still have questions?",
       "items": {
         "ai-synthesis": {
           "question": "How does my idea become a design?",
-          "answer": "Type a few words, upload a sketch, or drop in a reference image, and our design studio turns it into artwork made to print straight onto fabric. Color, resolution and detail are handled for you, so the print holds up on the piece. No design experience needed."
+          "answer": "Upload a photo you love, start from a sketch, or type a few words, and our design studio turns it into artwork made to print straight onto fabric. Color, resolution, and detail are handled for you, so the print holds up on the piece. No design experience needed."
         },
         "archival-quality": {
           "question": "What makes your fabrics last so long?",
@@ -330,11 +332,11 @@
         },
         "production-shipping": {
           "question": "How long does production and shipping take?",
-          "answer": "We start printing as soon as your order is confirmed. Printing takes 2 to 3 business days, then we inspect every piece by hand. Carbon-neutral shipping adds 3 to 4 more days, so most orders arrive within 5 to 7 business days. You can track it the whole way."
+          "answer": "We start printing as soon as your order is confirmed. Printing takes 2 to 3 business days, then we inspect every piece by hand. Shipping adds 3 to 4 more days, so most orders arrive within 5 to 7 business days. You can track it the whole way."
         },
         "sustainability": {
           "question": "What are your sustainability practices?",
-          "answer": "We make everything to order, so nothing sits in a warehouse going to waste. We print with water-based inks, offset shipping through verified tree planting, and pack in recycled materials. We work to keep the footprint low at every step."
+          "answer": "We make everything to order, so nothing sits in a warehouse going to waste. We print with water-based inks and pack in recycled materials, and we keep working to lower our footprint at every step."
         },
         "samples": {
           "question": "Can I order samples before bulk production?",
@@ -356,8 +358,7 @@
         "archivalQuality": "Premium Quality",
         "instantDelivery": "Fast Delivery",
         "fiveSevenDayDelivery": "5-7 Day Delivery",
-        "thirtyDayGuarantee": "30-Day Guarantee",
-        "carbonNeutral": "Carbon Neutral"
+        "thirtyDayGuarantee": "30-Day Guarantee"
       },
       "subLabels": {
         "generative": "Design Studio",
@@ -378,11 +379,11 @@
       "items": {
         "returns": {
           "title": "30-Day Guarantee",
-          "description": "Not satisfied? Return any item within 30 days for a full refund — we cover return shipping."
+          "description": "If the print, fabric, or fit isn't right, tell us within 30 days. We'll replace it or refund you in full, and cover return shipping."
         },
         "refund": {
-          "title": "100% Money Back",
-          "description": "Not satisfied with your order? We'll refund every cent, no questions asked."
+          "title": "Replace or refund",
+          "description": "When something's wrong with your order, you choose: a free replacement or a full refund."
         },
         "securePayment": {
           "title": "Secure Checkout",
@@ -390,7 +391,7 @@
         },
         "freeShipping": {
           "title": "Free Shipping",
-          "description": "Free carbon-neutral delivery on orders over €60."
+          "description": "Free tracked delivery on orders over €60."
         }
       }
     },
@@ -415,7 +416,7 @@
         "design": {
           "eyebrow": "Create",
           "title": "Describe it. <accent>We'll design it.</accent>",
-          "body": "Type a few words, upload a photo, or start from a rough sketch. Seconds later you'll have clean, print-ready artwork in whatever style you're picturing.",
+          "body": "Upload a photo, start from a rough sketch, or type a few words. Seconds later you'll have clean, print-ready artwork in whatever style you're picturing.",
           "cta": "Start creating",
           "imageAlt": "The same portrait drawn in four different styles"
         },
@@ -514,8 +515,8 @@
       },
       "protocol": "Step 02 / Describe",
       "title": "Describe Your <accent>Design</accent>",
-      "generate": "STAMP IT!",
-      "generating": "GENERATING...",
+      "generate": "Stamp it!",
+      "generating": "Generating...",
       "promptLabel": "Your Prompt",
       "promptPlaceholder": "Be as detailed as you can: describe the changes, colors, textures, style, and mood you want...",
       "promptAria": "Prompt input",
@@ -621,14 +622,14 @@
     },
     "header": {
       "logoAria": "Return to Stamp homepage",
-      "brand": "STAMP IT",
+      "brand": "Stamp it",
       "stampAria": "Start stamping process",
       "stamp": "Stamp it!",
       "catalog": "Catalog",
       "profile": "Profile",
       "profileAria": "View your profile",
       "orders": "Orders",
-      "cart": "Cart",
+      "cart": "Bag",
       "logoutAria": "Logout from your account",
       "logout": "Logout",
       "signIn": "Sign in",
@@ -642,7 +643,7 @@
       "eyebrow": "Your Progress",
       "title": "8 Steps to Print",
       "stepNavAria": "Step navigation",
-      "back": "BACK",
+      "back": "Back",
       "backTo": "Go back to {step}",
       "navigate": "Navigate to {title}",
       "navigateLocked": "Navigate to {title} (locked)"
@@ -688,41 +689,41 @@
     "hero": {
       "eyebrow": "Start Here",
       "title": "Stamp <br></br><accent>It</accent>",
-      "description": "Turn a prompt or your own photo into a print-ready design. Eight quick steps from idea to finished product.",
-      "cta": "Begin Customization",
-      "ctaAria": "Begin customizing",
+      "description": "Turn your own photo — or just an idea — into a print-ready design. Eight quick steps from idea to finished product.",
+      "cta": "Start creating",
+      "ctaAria": "Start creating your design",
       "imageAlt": "Fashion lifestyle"
     },
     "upload": {
       "protocol": "Step 01 / Upload",
       "title": "Upload <accent>Image</accent>",
-      "description": "Add an image to guide your design. It's optional — you can also start from just a text prompt.",
+      "description": "Start with a photo you love — a pet, a person, a place. No photo? Skip this step and describe your idea instead.",
       "next": "Next Step",
       "skipUpload": "Skip Upload",
       "proceedWithoutUpload": "Proceed with previous photos",
       "dropzoneAria": "Upload image",
-      "dropzoneText": "Upload Image (Optional)",
+      "dropzoneText": "Upload a photo (optional)",
       "dropzoneHint": "10MB max, JPG/PNG/GIF only",
       "fileSize": "{size} MB",
       "removeAria": "Remove uploaded file",
       "previewAlt": "Uploaded reference preview",
       "replaceAria": "Replace uploaded image",
-      "replace": "REPLACE",
+      "replace": "Replace",
       "inputAria": "File upload input"
     },
     "generation": {
-      "status": "Generating Your Design...",
+      "status": "Generating your design...",
       "estimate": "Est. 10 seconds..."
     },
     "results": {
       "protocol": "Step 04 / Results",
       "title": "Your <accent>Creation</accent>",
-      "outputNumber": "Result #01",
+      "outputNumber": "Your design",
       "generated": "Generated {date}",
       "savedToHistory": "Saved to history",
       "appliedPrompt": "Applied Prompt",
-      "useProtocol": "USE THIS IMAGE",
-      "reSynthesize": "REPEAT",
+      "useProtocol": "Use this design",
+      "reSynthesize": "Try again",
       "imageAlt": "Generated design result",
       "previousCreations": "YOUR PREVIOUS CREATIONS",
       "selectImage": "Select image {number}",
@@ -733,7 +734,7 @@
       "title": "Select Your <accent>Product</accent>",
       "description": "Pick what you want your design printed on. Everything's good quality and printed on demand.",
       "pricingNote": "Pricing reflects global print provider rates",
-      "continue": "CONTINUE TO CUSTOMIZATION",
+      "continue": "Continue to customization",
       "selectAria": "Select {name}",
       "selectedAria": "Selected {name}",
       "removeAria": "Remove selected product",
@@ -755,9 +756,9 @@
       "protocol": "Step 06 / Customize",
       "title": "Customize Your <accent>Product</accent>",
       "previewTitle": "Preview & <accent>Placement</accent>",
-      "creating": "CREATING...",
-      "createProduct": "CREATE PRODUCT",
-      "continueToPreview": "CONTINUE TO PREVIEW",
+      "creating": "Creating...",
+      "createProduct": "Create product",
+      "continueToPreview": "Continue to preview",
       "sizeLabel": "Size",
       "colorLabel": "Color Swatches",
       "colorLoading": "Loading colors...",
@@ -798,11 +799,11 @@
       "productDetails": "Color: {color} | Size: {size}",
       "finalValuation": "Final Total",
       "freeShipping": "Free shipping on every order",
-      "bagIt": "BAG IT",
+      "bagIt": "Add to bag",
       "adding": "ADDING...",
       "buyNow": "BUY NOW",
       "processing": "PROCESSING...",
-      "bagItAndCreateAnother": "BAG IT & CREATE ANOTHER"
+      "bagItAndCreateAnother": "Add to bag & create another"
     },
     "errors": {
       "imageGeneration": {
@@ -819,10 +820,10 @@
         "timeout": "Product creation timed out after {seconds} seconds. Please try again or contact support if the issue persists."
       },
       "cart": {
-        "alreadyInCart": "Product already in cart. Navigating...",
-        "noProduct": "Please create a product first before adding to cart",
+        "alreadyInCart": "Already in your bag. Taking you there...",
+        "noProduct": "Please create a product before adding it to your bag",
         "noVariant": "Product variant not found. Please try creating the product again.",
-        "added": "Added to cart!"
+        "added": "Added to your bag."
       },
       "upload": {
         "invalidType": "Invalid file type. Please upload JPG, PNG, or GIF only.",
@@ -920,7 +921,7 @@
     "empty": {
       "title": "Your bag's empty",
       "subtitle": "Nothing in it yet.",
-      "cta": "Start Creating"
+      "cta": "Start creating"
     },
     "itemCard": {
       "customProduct": "Custom Product",
@@ -936,7 +937,7 @@
       "selectItem": "Select {product} for checkout"
     },
     "loading": {
-      "label": "Loading cart"
+      "label": "Loading your bag"
     },
     "summary": {
       "title": "Order <accent>Summary</accent>",
@@ -1165,7 +1166,7 @@
       "links": {
         "footer-studio": "Design Studio",
         "footer-catalog": "Product Catalog",
-        "footer-cart": "Cart",
+        "footer-cart": "Bag",
         "footer-orders": "Your Orders",
         "footer-faq": "FAQ",
         "footer-shipping": "Shipping & Delivery",
@@ -1368,7 +1369,7 @@
   "ui": {
     "navbar": {
       "myOrders": "My Orders",
-      "stampIt": "Stamp It!",
+      "stampIt": "Stamp it!",
       "dashboard": "Dashboard",
       "toggleTheme": "Toggle theme",
       "viewProfile": "View profile",
@@ -1631,9 +1632,9 @@
       "label": "Test Mode · use predefined payment methods"
     },
     "notFound": {
-      "title": "Cart Not Found",
-      "description": "We couldn't find your cart. Please return and add items again.",
-      "backToCart": "Back to Cart"
+      "title": "Bag not found",
+      "description": "We couldn't find your bag. Please go back and add your items again.",
+      "backToCart": "Back to bag"
     },
     "loading": {
       "loadingAria": "Loading checkout"
@@ -1794,14 +1795,14 @@
       "promoCodeApplied": "Promo code applied",
       "validationFailed": "Failed to validate promo code",
       "enterPromoCode": "Please enter a promo code",
-      "cartTotalInvalid": "Cart total must be greater than 0"
+      "cartTotalInvalid": "Bag total must be greater than 0"
     },
     "returns": {
       "stripe": {
         "errorNoPaymentInfo": "Payment information not found. Please try again from the checkout page.",
         "errorCheckoutDataExpired": "Checkout data expired or not found. Please try again from the checkout page.",
         "errorMustBeLoggedIn": "You must be logged in to complete your order. Please log in and try again.",
-        "errorCartNotFound": "Cart information not found. Your payment was processed but we couldn't create your order. Please contact support with payment ID: {paymentId}",
+        "errorCartNotFound": "We couldn't find your bag details. Your payment was processed but we couldn't create your order. Please contact support with payment ID: {paymentId}",
         "orderCreationFailedRefund": "Order creation failed. A full refund has been initiated.",
         "orderFulfillmentFailedRefund": "Order fulfillment failed. A full refund has been initiated.",
         "errorFallback": "We couldn't finish processing your payment. If you were charged, your payment is safe — please contact support and we'll sort it out.",
@@ -1826,7 +1827,7 @@
         "errorMustBeLoggedIn": "You must be logged in to complete your order. Please log in and try again.",
         "declinedFallback": "Your payment was declined. Try again with a different payment method.",
         "captureFailed": "We couldn't complete your PayPal payment. Please try again or use a different payment method.",
-        "errorCartNotFound": "Cart information not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: {paymentId}",
+        "errorCartNotFound": "We couldn't find your bag details. Your payment was captured but we couldn't create your order. Please contact support with payment ID: {paymentId}",
         "errorAmountNotFound": "Order amount not found. Your payment was captured but we couldn't create your order. Please contact support with payment ID: {paymentId}",
         "orderCreationFailedRefund": "Order creation failed. A full refund has been initiated.",
         "orderFulfillmentFailedRefund": "Order fulfillment failed. A full refund has been initiated.",
@@ -1853,10 +1854,10 @@
       "mollie": {
         "errorNoPaymentInfo": "No payment information found. If you completed a payment, please contact support with your payment details.",
         "errorMustBeLoggedIn": "You must be logged in to complete your order. Please log in and contact support with payment ID: {paymentId}",
-        "errorCartNotFound": "Cart information not found. Please contact support with payment ID: {paymentId}",
+        "errorCartNotFound": "We couldn't find your bag details. Please contact support with payment ID: {paymentId}",
         "errorMissingContext": "We couldn't find your checkout details to finish creating your order.",
         "errorNoOrderItems": "We couldn't find the items for your order.",
-        "errorCannotCreateOrderNoCart": "Cannot create order: cart information not found. A full refund has been initiated and will appear within 3–5 business days.",
+        "errorCannotCreateOrderNoCart": "We couldn't create your order because your bag details were missing. A full refund has been started and will appear within 3–5 business days.",
         "errorCannotCreateOrderNotLoggedIn": "Cannot create order: you must be logged in to complete checkout. A full refund has been initiated and will appear within 3–5 business days.",
         "orderCreationReasonFallback": "Order creation failed after retry attempts.",
         "orderFulfillmentReasonFallback": "Order fulfillment failed.",
@@ -1974,8 +1975,7 @@
     "bar": {
       "secureCheckout": "Secure checkout",
       "guarantee": "30-day guarantee",
-      "madeToOrder": "Made to order",
-      "carbonNeutral": "Carbon-neutral shipping"
+      "madeToOrder": "Made to order"
     },
     "payment": {
       "title": "Your payment is safe",
@@ -2839,7 +2839,7 @@
       },
       "bulk-orders": {
         "question": "Can I order in bulk?",
-        "answer": "Yes, there is no maximum. Orders of 25 items or more get a volume discount, applied automatically in your cart. There is no minimum either — a single item is a perfectly normal order."
+        "answer": "Yes, there is no maximum. Orders of 25 items or more get a volume discount, applied automatically in your bag. There is no minimum either — a single item is a perfectly normal order."
       },
       "product-range": {
         "question": "What can I get my design printed on?",

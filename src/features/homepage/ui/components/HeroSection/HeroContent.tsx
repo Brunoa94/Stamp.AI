@@ -7,8 +7,9 @@
  * tagline, the upload card that opens the creator, the free-credits
  * line and trust signals. Light ink over the photo backdrop, with the
  * headline as the largest element and the wordmark as a smaller kicker above
- * it; the trust row sits on its own off-white pill. Centered when stacked;
- * left-aligned beside the flow demo on xl+.
+ * it; the trust row sits on its own off-white pill and only renders while
+ * real social proof is enabled (TRUST_SOCIAL_PROOF_ENABLED). Centered when
+ * stacked; left-aligned beside the flow demo on xl+.
  */
 
 import { useTranslations } from "next-intl";
@@ -22,6 +23,10 @@ import { HeroRotatingWord } from "./HeroRotatingWord";
 import { HeroUploadCard } from "./HeroUploadCard";
 import { OrdersFulfilledCounter } from "@/features/ui/trust/OrdersFulfilledCounter";
 import { TrustpilotWidget } from "@/features/ui/trust/TrustpilotWidget";
+import {
+  TRUST_ORDER_METRICS,
+  TRUST_SOCIAL_PROOF_ENABLED,
+} from "@/shared/constants/trustMetrics";
 
 export function HeroContent() {
   const t = useTranslations("home.hero");
@@ -73,11 +78,16 @@ export function HeroContent() {
         })}
       </Span>
 
-      {/* Trust signals - above fold */}
-      <div className="flex flex-wrap items-center justify-center gap-2 rounded-full bg-(--color-stamp-off-white)/95 px-4 py-2 shadow-lg text-shadow-none empty:hidden sm:gap-4">
-        <OrdersFulfilledCounter variant="default" />
-        <TrustpilotWidget variant="compact" />
-      </div>
+      {/* Trust signals - above fold, real social proof only */}
+      {TRUST_SOCIAL_PROOF_ENABLED && (
+        <div className="flex flex-wrap items-center justify-center gap-2 rounded-full bg-(--color-stamp-off-white)/95 px-4 py-2 shadow-lg text-shadow-none empty:hidden sm:gap-4">
+          <OrdersFulfilledCounter
+            variant="default"
+            count={TRUST_ORDER_METRICS.ordersFulfilled}
+          />
+          <TrustpilotWidget variant="compact" />
+        </div>
+      )}
     </div>
   );
 }
