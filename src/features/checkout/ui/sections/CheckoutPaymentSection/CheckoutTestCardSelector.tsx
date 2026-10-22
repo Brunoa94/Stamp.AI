@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/features/ui/select";
 import { Span } from "@/features/ui/span";
+import { Label } from "@/features/ui/label";
 import { TEST_CARD_GROUPS } from "../../../lib/constants/testCards";
 
 interface CheckoutTestCardSelectorPropsI {
@@ -32,11 +33,11 @@ export function CheckoutTestCardSelector({
   const t = useTranslations("checkout.testCards");
   return (
     <div className="space-y-3">
-      <label htmlFor="test-card-select">
+      <Label htmlFor="test-card-select">
         <Span variant="micro" className="text-(--color-stamp-taupe)">
           {t("selectorLabel")}
         </Span>
-      </label>
+      </Label>
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger
           id="test-card-select"

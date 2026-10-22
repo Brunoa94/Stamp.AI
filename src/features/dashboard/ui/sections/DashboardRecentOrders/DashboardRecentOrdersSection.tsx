@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Heading } from "@/features/ui/heading";
+import { List } from "@/features/ui/list";
 import { Span } from "@/features/ui/span";
 import type { OrderWithItemsT } from "@/shared/types/order";
 import { DashboardRecentOrderItem } from "./DashboardRecentOrderItem";
@@ -50,7 +51,7 @@ export function DashboardRecentOrdersSection({
       {orders.length === 0 ? (
         <DashboardRecentOrdersEmpty />
       ) : (
-        <ul className="divide-y divide-(--color-stamp-divider)">
+        <List className="divide-y divide-(--color-stamp-divider)">
           {orders.map((order) => (
             <DashboardRecentOrderItem
               key={order.id}
@@ -58,7 +59,7 @@ export function DashboardRecentOrdersSection({
               onOpenDetails={onOpenDetails}
             />
           ))}
-        </ul>
+        </List>
       )}
     </section>
   );

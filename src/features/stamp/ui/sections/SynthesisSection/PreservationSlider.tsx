@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import { Label } from "@/features/ui/label";
 import { Span } from "@/features/ui/span";
 import { InfoTooltip } from "@/features/ui/info-tooltip";
+import { Slider } from "@/features/ui/slider";
 
 /**
  * PreservationSlider
@@ -35,14 +36,13 @@ export function PreservationSlider({ value, onChange }: PropsI) {
         >
           {t("low")}
         </Span>
-        <input
+        <Slider
           id="preservation"
-          type="range"
           min="0"
           max="100"
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="flex-1 h-px bg-(--color-stamp-divider) appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-(--color-stamp-gold) [&::-webkit-slider-thumb]:rounded-full"
+          className="flex-1"
           aria-label={t("preservationAria")}
         />
         <Span
