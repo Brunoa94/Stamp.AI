@@ -1,18 +1,17 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { parseEnv } from 'node:util';
 import { spawn } from 'node:child_process';
-import http from 'node:http';
-import net from 'node:net';
 import { createServerClient } from '@supabase/ssr';
 import { loadEnvironment } from '../../tests/acceptance/support/environment.mjs';
 
 const PORT = 3107;
 // CI starts every acceptance group on a cold dev server, and the first page of a
 // group can take longer to compile than the tests wait. With ACCEPTANCE_WARM_UP=1,
-// Next listens on an internal port, the pages the specs visit are loaded once, and
-// only then does PORT open (forwarding to Next), so Playwright starts on a warm server.
+// next-server.mjs runs Next configured for PORT but listening only on WARM_UP_PORT;
+// the pages the specs visit are loaded there, and only then does the same Next
+// instance open PORT, so Playwright starts on a warm server.
 const WARM_UP = process.env.ACCEPTANCE_WARM_UP === '1';
-const NEXT_PORT = WARM_UP ? 3117 : PORT;
+const WARM_UP_PORT = 3117;
 const WARM_UP_ROUTES = ['/', '/catalog', '/stamp', '/cart', '/checkout', '/orders', '/profile', '/reset-password', '/acceptance-warm-up-not-found'];
 // Playwright waits 120s for PORT; leave room for the slowest Next boot.
 const WARM_UP_BUDGET_MS = 85000;
@@ -115,21 +114,26 @@ async function startNextServer(webhookSecret) {
     serverEnv.STRIPE_WEBHOOK_SECRET = webhookSecret;
   }
 
-  nextProcess = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'dev', '--webpack', '--port', String(NEXT_PORT)], { env: serverEnv, stdio: 'inherit' });
+  nextProcess = WARM_UP
+    ? spawn(process.execPath, ['scripts/acceptance/next-server.mjs'], {
+      env: { ...serverEnv, ACCEPTANCE_PUBLIC_PORT: String(PORT), ACCEPTANCE_WARM_UP_PORT: String(WARM_UP_PORT) },
+      stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
+    })
+    : spawn(process.execPath, ['node_modules/next/dist/bin/next', 'dev', '--webpack', '--port', String(PORT)], { env: serverEnv, stdio: 'inherit' });
 
-  nextProcess.on('exit', code => {
-    process.exitCode = code ?? 1;
-    proxyServer?.close();
-  });
+  nextProcess.on('exit', code => { process.exitCode = code ?? 1; });
   return nextProcess;
 }
 
-async function waitForNext(deadline) {
-  while (Date.now() < deadline) {
-    const ready = await fetch(`http://localhost:${NEXT_PORT}/robots.txt`, { signal: AbortSignal.timeout(5000) }).then(r => r.ok, () => false);
-    if (ready) return;
-    await new Promise(resolve => setTimeout(resolve, 500));
-  }
+// Resolves with the next IPC message from next-server.mjs, or null once the deadline passes.
+function nextMessage(deadline) {
+  return new Promise(resolve => {
+    const timer = setTimeout(() => resolve(null), Math.max(0, deadline - Date.now()));
+    nextProcess.once('message', message => {
+      clearTimeout(timer);
+      resolve(message);
+    });
+  });
 }
 
 // Session cookies for the supplied test user, so protected pages render instead of redirecting.
@@ -159,7 +163,7 @@ async function warmUp(deadline) {
         break;
       }
       const started = Date.now();
-      await page.goto(`http://localhost:${NEXT_PORT}${route}`, { waitUntil: 'load', timeout: remaining })
+      await page.goto(`http://localhost:${WARM_UP_PORT}${route}`, { waitUntil: 'load', timeout: remaining })
         .then(() => page.waitForLoadState('networkidle', { timeout: Math.max(1000, Math.min(10000, deadline - Date.now())) }))
         .catch(error => console.warn(`[Warm-up] ${route}: ${error.message.split('\n')[0]}`));
       console.warn(`[Warm-up] ${route} ready in ${Date.now() - started}ms`);
@@ -169,36 +173,9 @@ async function warmUp(deadline) {
   }
 }
 
-// Forwards PORT to Next unchanged (Host header included), WebSocket upgrades too.
-let proxyServer = null;
-function forwardPort() {
-  proxyServer = http.createServer((req, res) => {
-    const upstream = http.request({ host: '127.0.0.1', port: NEXT_PORT, method: req.method, path: req.url, headers: req.headers }, response => {
-      res.writeHead(response.statusCode, response.statusMessage, response.rawHeaders);
-      response.pipe(res);
-    });
-    upstream.on('error', () => (res.headersSent ? res.destroy() : res.writeHead(502).end()));
-    req.pipe(upstream);
-  });
-  proxyServer.on('upgrade', (req, socket, head) => {
-    const upstream = net.connect(NEXT_PORT, '127.0.0.1', () => {
-      const headerLines = [];
-      for (let i = 0; i < req.rawHeaders.length; i += 2) headerLines.push(`${req.rawHeaders[i]}: ${req.rawHeaders[i + 1]}`);
-      upstream.write(`${req.method} ${req.url} HTTP/${req.httpVersion}\r\n${headerLines.join('\r\n')}\r\n\r\n`);
-      upstream.write(head);
-      socket.pipe(upstream).pipe(socket);
-    });
-    const close = () => { socket.destroy(); upstream.destroy(); };
-    upstream.on('error', close);
-    socket.on('error', close);
-  });
-  proxyServer.listen(PORT);
-}
-
 function cleanup(signal) {
   if (stripeProcess) stripeProcess.kill(signal);
   if (nextProcess) nextProcess.kill(signal);
-  proxyServer?.close();
 }
 
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => cleanup(signal));
@@ -211,10 +188,16 @@ for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => cleanup(sig
   await startNextServer(testEnv.STRIPE_WEBHOOK_SECRET || null);
 
   if (WARM_UP) {
-    await waitForNext(deadline);
-    await warmUp(deadline).catch(error => console.warn(`[Warm-up] Skipped the rest: ${error.message}`));
-    forwardPort();
-    console.warn(`[Warm-up] Serving http://localhost:${PORT}`);
+    if (await nextMessage(deadline) === 'warm-up') {
+      await warmUp(deadline).catch(error => console.warn(`[Warm-up] Skipped the rest: ${error.message}`));
+    } else {
+      console.warn('[Warm-up] Next was not ready in time; serving cold');
+    }
+    if (nextProcess.connected) {
+      nextProcess.send('serve');
+      await nextMessage(Date.now() + 30000);
+      console.warn(`[Warm-up] Serving http://localhost:${PORT}`);
+    }
   }
 
   // Note: Stripe webhooks are handled by the deployed Supabase Edge Function
