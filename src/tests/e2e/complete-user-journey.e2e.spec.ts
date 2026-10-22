@@ -63,14 +63,14 @@ test("creates a design, adds it to the cart, and reaches checkout", async ({
 
     await page.goto("/stamp");
     await expect(page.getByRole("button", { name: /logout from your account/i })).toBeVisible({ timeout: 20_000 });
-    await page.getByRole("button", { name: /start creating your design/i }).click();
+    await page.getByRole("button", { name: /begin customizing/i }).click();
     await page.getByRole("button", { name: /skip upload/i }).click();
     await page
       .getByRole("textbox", { name: /prompt input/i })
       .fill("Minimal line drawing of a mountain");
     await page.getByRole("button", { name: /stamp it/i }).click();
     await page
-      .getByRole("button", { name: /use this design/i })
+      .getByRole("button", { name: /use this image/i })
       .first()
       .click({ timeout: 180_000 });
     await page
@@ -90,8 +90,8 @@ test("creates a design, adds it to the cart, and reaches checkout", async ({
     await expect(
       page.getByRole("heading", { name: "Ready to Wear" }),
     ).toBeVisible({ timeout: 20_000 });
-    await expect(page.getByRole("button", { name: /^add to bag$/i })).toBeEnabled();
-    await page.getByRole("button", { name: /^add to bag$/i }).click();
+    await expect(page.getByRole("button", { name: /^bag it$/i })).toBeEnabled();
+    await page.getByRole("button", { name: /^bag it$/i }).click();
     await expect(page).toHaveURL(/\/cart$/, { timeout: 20_000 });
     await expect(
       page.getByText("Unisex Heavy Cotton Tee").first(),

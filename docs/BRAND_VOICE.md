@@ -60,7 +60,7 @@ never the hero — the customer's photo or idea is.
 
 | Rule | Choice |
 | --- | --- |
-| Button and link labels | Sentence case, verb first ("Start creating", "Use this design"). Write strings in sentence case even where CSS displays them uppercase. |
+| Button and link labels | Sentence case, verb first ("Start creating", "Bag it"). Write strings in sentence case even where CSS displays them uppercase. |
 | Main call to action | "Start creating" (product cards may use "Design yours") |
 | Oxford comma | Yes ("fit, feel, and print quality") |
 | Contractions | Yes |

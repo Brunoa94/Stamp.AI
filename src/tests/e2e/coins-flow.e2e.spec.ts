@@ -18,7 +18,7 @@ test.describe("Complete Coins User Journey", () => {
     // 1. Visit stamp page
     await page.goto("/stamp");
     if (isMobile) {
-      await page.getByRole("button", { name: /start creating your design/i }).click();
+      await page.getByRole("button", { name: /begin customizing/i }).click();
       await page.getByRole("button", { name: /skip upload/i }).click();
     }
 

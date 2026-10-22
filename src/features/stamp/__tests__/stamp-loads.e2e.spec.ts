@@ -53,7 +53,7 @@ test.describe("Stamp - Page Load Test", () => {
 
     if (isMobile) {
       await expect(page.getByRole("button", { name: /open menu/i })).toBeVisible();
-      await expect(page.getByRole("button", { name: /start creating your design/i })).toBeVisible();
+      await expect(page.getByRole("button", { name: /begin customizing/i })).toBeVisible();
       return;
     }
 

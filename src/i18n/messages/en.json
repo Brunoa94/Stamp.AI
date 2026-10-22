@@ -691,7 +691,7 @@
       "title": "Stamp <br></br><accent>It</accent>",
       "description": "Turn your own photo — or just an idea — into a print-ready design. Eight quick steps from idea to finished product.",
       "cta": "Start creating",
-      "ctaAria": "Start creating your design",
+      "ctaAria": "Start creating: begin customizing your design",
       "imageAlt": "Fashion lifestyle"
     },
     "upload": {
@@ -722,8 +722,8 @@
       "generated": "Generated {date}",
       "savedToHistory": "Saved to history",
       "appliedPrompt": "Applied Prompt",
-      "useProtocol": "Use this design",
-      "reSynthesize": "Try again",
+      "useProtocol": "Use this image",
+      "reSynthesize": "Repeat",
       "imageAlt": "Generated design result",
       "previousCreations": "YOUR PREVIOUS CREATIONS",
       "selectImage": "Select image {number}",
@@ -799,11 +799,11 @@
       "productDetails": "Color: {color} | Size: {size}",
       "finalValuation": "Final Total",
       "freeShipping": "Free shipping on every order",
-      "bagIt": "Add to bag",
+      "bagIt": "Bag it",
       "adding": "ADDING...",
       "buyNow": "BUY NOW",
       "processing": "PROCESSING...",
-      "bagItAndCreateAnother": "Add to bag & create another"
+      "bagItAndCreateAnother": "Bag it & create another"
     },
     "errors": {
       "imageGeneration": {
@@ -1629,7 +1629,7 @@
       "toggleLabel": "Ship to a different address"
     },
     "testMode": {
-      "label": "Test Mode · use predefined payment methods"
+      "label": "Test mode · use predefined payment methods"
     },
     "notFound": {
       "title": "Bag not found",

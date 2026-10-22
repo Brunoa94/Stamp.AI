@@ -61,7 +61,7 @@ test.describe("Stamp Coins Flow", () => {
     test("should have Generate button enabled when user has coins and prompt", async ({ page, isMobile }) => {
       await page.goto("/stamp");
       if (isMobile) {
-        await page.getByRole("button", { name: /start creating your design/i }).click();
+        await page.getByRole("button", { name: /begin customizing/i }).click();
         await page.getByRole("button", { name: /skip upload/i }).click();
       }
       await page.locator("#step-2").scrollIntoViewIfNeeded();
@@ -81,7 +81,7 @@ test.describe("Stamp Coins Flow", () => {
     test("should disable Generate button when prompt is empty", async ({ page, isMobile }) => {
       await page.goto("/stamp");
       if (isMobile) {
-        await page.getByRole("button", { name: /start creating your design/i }).click();
+        await page.getByRole("button", { name: /begin customizing/i }).click();
         await page.getByRole("button", { name: /skip upload/i }).click();
       }
       await page.locator("#step-2").scrollIntoViewIfNeeded();

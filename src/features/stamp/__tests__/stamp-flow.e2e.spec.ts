@@ -6,7 +6,7 @@ test.describe("Stamp Flow E2E", () => {
     await page.goto("/stamp");
     await expect(page.getByRole("button", { name: /logout from your account/i })).toBeVisible({ timeout: 20_000 });
     await expect(
-      page.getByRole("button", { name: /start creating your design/i }),
+      page.getByRole("button", { name: /begin customizing/i }),
     ).toBeVisible();
   });
 
@@ -32,7 +32,7 @@ test.describe("Stamp Flow E2E", () => {
   test("moves from entry through optional upload to the prompt", async ({
     page,
   }) => {
-    await page.getByRole("button", { name: /start creating your design/i }).click();
+    await page.getByRole("button", { name: /begin customizing/i }).click();
     await expect(page.locator("#step-1")).toBeInViewport();
     await expect(page.locator('input[type="file"]')).toBeAttached();
     await page.getByRole("button", { name: /skip upload/i }).click();
@@ -43,7 +43,7 @@ test.describe("Stamp Flow E2E", () => {
     page,
     isMobile,
   }) => {
-    await page.getByRole("button", { name: /start creating your design/i }).click();
+    await page.getByRole("button", { name: /begin customizing/i }).click();
     await page.locator('#step-1 input[type="file"]').setInputFiles({
       name: "acceptance-image.png",
       mimeType: "image/png",
@@ -64,7 +64,7 @@ test.describe("Stamp Flow E2E", () => {
 
   test("requires a prompt before generation", async ({ page, isMobile }) => {
     if (isMobile) {
-      await page.getByRole("button", { name: /start creating your design/i }).click();
+      await page.getByRole("button", { name: /begin customizing/i }).click();
       await page.getByRole("button", { name: /skip upload/i }).click();
     }
     const prompt = page.getByRole("textbox", { name: /prompt input/i });
@@ -98,7 +98,7 @@ test.describe("Stamp Flow E2E", () => {
     );
     await expect(page.locator("#step-4")).toContainText("Your Creation");
     await expect(
-      page.locator("#step-4").getByRole("button", { name: /use this design/i }),
+      page.locator("#step-4").getByRole("button", { name: /use this image/i }),
     ).toBeDisabled();
   });
 
@@ -151,14 +151,14 @@ test.describe("Stamp Flow E2E", () => {
     const review = page.locator("#step-8");
     await expect(review).toContainText("Ready to Wear");
     await expect(
-      review.getByRole("button", { name: /^add to bag$/i }),
+      review.getByRole("button", { name: /^bag it$/i }),
     ).toBeVisible();
   });
 
   test("keeps the wizard available at a mobile viewport", async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     await expect(page.locator("#hero")).toBeVisible();
-    await page.getByRole("button", { name: /start creating your design/i }).click();
+    await page.getByRole("button", { name: /begin customizing/i }).click();
     await expect(page.locator("#step-1")).toBeInViewport();
   });
 });
