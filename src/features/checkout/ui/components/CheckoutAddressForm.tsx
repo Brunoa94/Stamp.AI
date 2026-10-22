@@ -25,6 +25,8 @@ import {
   type FieldRow,
 } from "@/shared/constants/shippingFormConfig";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
+import { Span } from "@/features/ui/span";
+import { Paragraph } from "@/features/ui/paragraph";
 
 interface CheckoutAddressFormPropsI {
   fieldPrefix: "billing" | "shipping";
@@ -63,12 +65,13 @@ export function CheckoutAddressForm({
                 <Label htmlFor={fieldName}>
                   {t(`fields.${field.id}`)}
                   {field.required && (
-                    <span
+                    <Span
+                      unstyled
                       className="text-(--color-stamp-gold-text)"
                       aria-hidden="true"
                     >
                       *
-                    </span>
+                    </Span>
                   )}
                 </Label>
 
@@ -104,9 +107,9 @@ export function CheckoutAddressForm({
                 )}
 
                 {error && (
-                  <p id={`${fieldName}-error`} role="alert">
+                  <Paragraph unstyled id={`${fieldName}-error`} role="alert">
                     {ve(error.message)}
-                  </p>
+                  </Paragraph>
                 )}
               </div>
             );

@@ -119,9 +119,10 @@ export function StampHeader() {
         </nav>
 
         {/* Mobile/tablet hamburger (below lg) */}
-        <button
+        <Button
+          variant="unstyled"
           onClick={() => setMobileMenuOpen((v) => !v)}
-          className="lg:hidden flex-none p-2 -mr-2 text-(--color-stamp-chocolate)"
+          className="lg:hidden flex-none p-2 -mr-2 text-(--color-stamp-chocolate) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) focus-visible:ring-offset-2"
           aria-label={mobileMenuOpen ? t("closeMenu") : t("openMenu")}
           aria-expanded={mobileMenuOpen}
         >
@@ -130,7 +131,7 @@ export function StampHeader() {
           ) : (
             <Menu className="w-6 h-6" />
           )}
-        </button>
+        </Button>
       </header>
 
       {/* Mobile/tablet drawer (below lg) */}

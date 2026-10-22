@@ -62,7 +62,7 @@ export function CartSelectionHeader({
       <Button
         variant="unstyled"
         onClick={allSelected ? onDeselectAll : onSelectAll}
-        className="text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-taupe) transition-colors hover:text-(--color-stamp-gold)"
+        className="text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-taupe) transition-colors hover:text-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) focus-visible:ring-offset-2"
       >
         {allSelected ? t("deselectAll") : t("selectAll", { count: totalCount })}
       </Button>

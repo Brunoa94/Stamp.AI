@@ -65,14 +65,15 @@ export function PromoSectionContent({
       {/* Luxury section label with number */}
       {sectionNumber && (
         <div className="flex items-center gap-3">
-          <span
+          <Span
+            unstyled
             className={cn(
               "text-sm font-bold tracking-[0.3em] uppercase",
               inverted ? "text-(--color-stamp-gold)" : "text-(--color-stamp-gold-text)",
             )}
           >
             {sectionNumber}
-          </span>
+          </Span>
           <div className="w-8 h-px bg-(--color-stamp-gold)/60" />
         </div>
       )}

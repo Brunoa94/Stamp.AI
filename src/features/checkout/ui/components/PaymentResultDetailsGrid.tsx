@@ -52,7 +52,8 @@ export function PaymentResultDetailsGrid({
           <Span variant="micro" className="text-(--color-stamp-taupe)">
             {item.label}
           </Span>
-          <span
+          <Span
+            unstyled
             className={clsx(
               "font-heading text-base uppercase tracking-wide",
               item.valueMuted
@@ -61,7 +62,7 @@ export function PaymentResultDetailsGrid({
             )}
           >
             {item.value}
-          </span>
+          </Span>
         </div>
       ))}
 
@@ -70,18 +71,20 @@ export function PaymentResultDetailsGrid({
           {statusLabel}
         </Span>
         <div className="flex items-center gap-2">
-          <span
+          <Span
+            unstyled
             className={clsx("w-2 h-2 rounded-full", statusColors.dot)}
             aria-hidden="true"
           />
-          <span
+          <Span
+            unstyled
             className={clsx(
               "font-heading text-lg uppercase tracking-wide font-bold",
               statusColors.text
             )}
           >
             {statusValue}
-          </span>
+          </Span>
         </div>
       </div>
     </div>

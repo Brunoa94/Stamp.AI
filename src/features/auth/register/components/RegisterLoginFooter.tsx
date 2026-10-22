@@ -3,6 +3,7 @@ import { Dialog, DialogTrigger } from "@/features/ui/dialog";
 import { Button } from "@/features/ui/button";
 import { useTranslations } from "next-intl";
 import { LoginForm } from "../../login/LoginForm";
+import { Paragraph } from "@/features/ui/paragraph";
 
 export function RegisterLoginFooter() {
   const t = useTranslations("auth.register.footer");
@@ -10,7 +11,7 @@ export function RegisterLoginFooter() {
   return (
     <div className="mt-12 text-center">
       <div className="mb-8 h-px w-full bg-(--color-stamp-divider)" />
-      <p className="text-lg font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
+      <Paragraph unstyled className="text-lg font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
         {t.rich("haveAccount", {
           link: (chunks) => (
             <Dialog>
@@ -28,7 +29,7 @@ export function RegisterLoginFooter() {
             </Dialog>
           ),
         })}
-      </p>
+      </Paragraph>
     </div>
   );
 }
