@@ -1215,6 +1215,57 @@
   animation: hero-marquee 80s linear infinite;
 }
 
+/* Hero backdrop: editorial photo cut on a diagonal with a gold seam (xl+);
+   full-bleed under a darker scrim when the hero stacks. The scrim is darkest
+   behind the copy column so light text keeps AA contrast over the photo. */
+@keyframes hero-kenburns {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.08) translate(-1.5%, -1%);
+  }
+}
+
+.hero-backdrop__photo-img {
+  transform-origin: left center;
+  animation: hero-kenburns 26s ease-in-out infinite alternate;
+}
+
+.hero-backdrop__scrim {
+  background: color-mix(in srgb, var(--color-stamp-chocolate) 74%, transparent);
+}
+
+.hero-copy {
+  text-shadow: 0 2px 14px color-mix(in srgb, var(--color-stamp-chocolate) 70%, transparent);
+}
+
+@media (min-width: 80rem) {
+  .hero-backdrop__photo {
+    clip-path: polygon(0 0, 58% 0, 38% 100%, 0 100%);
+  }
+
+  .hero-backdrop__scrim {
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-stamp-chocolate) 84%, transparent) 0%,
+      color-mix(in srgb, var(--color-stamp-chocolate) 70%, transparent) 30%,
+      color-mix(in srgb, var(--color-stamp-chocolate) 20%, transparent) 48%,
+      transparent 58%
+    );
+  }
+
+  .hero-backdrop__seam {
+    clip-path: polygon(58% 0, 58.4% 0, 38.4% 100%, 38% 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-backdrop__photo-img {
+    animation: none;
+  }
+}
+
 /* Navbar "Stamp it!" CTA: idles, then presses down like a rubber stamp and springs back */
 @keyframes stamp-press {
   0%,

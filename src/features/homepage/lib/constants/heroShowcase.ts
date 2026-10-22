@@ -1,4 +1,8 @@
-import type { HeroRotatingWordIdType } from "@/features/homepage/lib/types/heroShowcase";
+import { Eye, PackageCheck, WandSparkles } from "lucide-react";
+import type {
+  HeroFlowBenefitType,
+  HeroRotatingWordIdType,
+} from "@/features/homepage/lib/types/heroShowcase";
 
 /** Products out in the world, for the first ribbon row */
 export const HERO_RIBBON_LIFESTYLE: readonly string[] = [
@@ -54,4 +58,11 @@ export const HERO_ROTATING_WORD_IDS: readonly HeroRotatingWordIdType[] = [
   "totes",
   "mugs",
   "hoodies",
+];
+
+/** Banners under the flow demo: what the eight steps spare the visitor */
+export const HERO_FLOW_BENEFITS: readonly HeroFlowBenefitType[] = [
+  { id: "noSkills", icon: WandSparkles },
+  { id: "preview", icon: Eye },
+  { id: "onDemand", icon: PackageCheck },
 ];

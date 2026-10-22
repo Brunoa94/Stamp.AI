@@ -156,7 +156,13 @@
       "freeCredits": "<signUp>Sign up</signUp> and get 5 free edits per day",
       "productBadge": "Essential_Wht / 320GSM",
       "scrollCue": "Scroll to Build",
-      "productImageAlt": "Heavyweight t-shirt with a custom print"
+      "productImageAlt": "Heavyweight t-shirt with a custom print",
+    "flowIntro": "You're {count} steps away from creating your <accent>dream product.</accent>",
+    "flowBenefits": {
+      "noSkills": { "title": "No design skills", "hint": "Just describe it" },
+      "preview": { "title": "Preview first", "hint": "Before you order" },
+      "onDemand": { "title": "Made to order", "hint": "Printed just for you" }
+    }
     },
     "meta": {
       "title": "Design & Order Custom T-Shirts and Apparel | Stamp AI",

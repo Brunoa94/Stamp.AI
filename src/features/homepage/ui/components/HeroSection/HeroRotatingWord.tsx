@@ -34,7 +34,7 @@ export function HeroRotatingWord() {
   const activeIndex = useCycleIndex(total, HERO_ROTATING_WORD_INTERVAL_MS, isReducedMotion);
 
   return (
-    <Span variant="script" className="relative inline-grid normal-case text-(--color-stamp-taupe)">
+    <Span variant="script" className="relative inline-grid justify-items-center normal-case text-(--color-stamp-gold-light) xl:justify-items-start">
       <Span unstyled className="sr-only">
         {`${t(HERO_ROTATING_WORD_IDS[0])}.`}
       </Span>
@@ -51,7 +51,7 @@ export function HeroRotatingWord() {
           {`${t(id)}.`}
         </Span>
       ))}
-      <PencilUnderline key={activeIndex} delay={200} className="-bottom-2 text-(--color-stamp-gold-text)" />
+      <PencilUnderline key={activeIndex} delay={200} className="-bottom-2 text-(--color-stamp-gold-light)" />
     </Span>
   );
 }
