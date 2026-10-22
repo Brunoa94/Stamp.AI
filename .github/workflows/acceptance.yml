@@ -115,6 +115,8 @@ jobs:
         env:
           PROJECT: ${{ matrix.project }}
           SPECS: ${{ matrix.specs }}
+          # Each group starts its own dev server: load the app once before the first test.
+          ACCEPTANCE_WARM_UP: 1
         run: |
           read -ra specs <<< "$SPECS"
           npm run test:acceptance -- --project="$PROJECT" --grep-invert "$ACCEPTANCE_EXCLUDE" "${specs[@]}"
