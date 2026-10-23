@@ -79,8 +79,10 @@ jobs:
     # Generous: a timeout kills the job before its Printify and account cleanup finishes.
     timeout-minutes: 60
     strategy:
-      # A failing group must not cancel the others mid-run: cancelling skips their cleanup.
-      fail-fast: false
+      # The first failing group cancels the others, so the run fails without waiting
+      # for every group. A cancelled group finishes its cleanup in "Recover after
+      # cancellation" below, from the ledgers its tests left on disk.
+      fail-fast: true
       # Every group uses the same Printify test shop. While all ten ran at once, Printify
       # sometimes took over a minute to create a product and create-custom-product timed
       # out. Jobs start in matrix order (see ci-groups.mjs), so the Printify-heavy catalog
@@ -125,6 +127,13 @@ jobs:
         run: |
           read -ra specs <<< "$SPECS"
           npm run test:acceptance -- --project="$PROJECT" --grep-invert "$ACCEPTANCE_EXCLUDE" "${specs[@]}"
+
+      # Cancelling a job gives the running step about 10s before it is killed, which can
+      # cut the wrapper's teardown short. Cancel the group's Printify orders and remove its
+      # test accounts from the ledgers instead.
+      - name: Recover after cancellation
+        if: cancelled()
+        run: npm run test:acceptance:cleanup
 
       - name: Upload report and cleanup ledgers
         if: always()
