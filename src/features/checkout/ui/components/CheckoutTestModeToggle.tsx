@@ -2,7 +2,7 @@
  * CheckoutTestModeToggle
  *
  * Read-only test-mode indicator, styled to the luxury brutalist system. The
- * checkbox stays checked and disabled while CHECKOUT_TEST_MODE is on, so
+ * checkbox stays checked and disabled while NEXT_PUBLIC_CHECKOUT_TEST_MODE is on, so
  * shoppers can see the card form uses predefined test payment methods but
  * cannot switch modes.
  */
