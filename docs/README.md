@@ -122,7 +122,8 @@ export function ProcessStickyCarousel() {
 
 ```
 // ✅ GOOD: Separate files for each component
-src/features/homepage/ui/components/ProcessTimeline/
+src/features/homepage/ui/sections/HomeProcessSection/
+├── HomeProcessSection.tsx       # Section entry point
 ├── ProcessStickyCarousel.tsx    # Main carousel component
 ├── ProcessStepper.tsx           # Stepper dots component
 ├── ProcessStepCard.tsx          # Individual step card
@@ -292,6 +293,9 @@ This project follows the **Feature-Sliced Design** pattern for scalable and main
    - Components organized in subfolders by purpose
    - No helper functions, constants, or types directly in component folders
 
+   - `ui/sections/<SectionName>/` holds one page section: `<SectionName>.tsx` plus every component only that section uses (see `src/features/stamp/ui/sections/`)
+   - `ui/components/` holds only components shared by two or more sections (or imported by other features). When a component is used by a single section, it lives in that section's folder
+
 2. **`lib/` folder**: Contains ALL non-component code
    - `helpers/` - Pure functions for computations (e.g., animation calculations)
    - `constants/` - Static data and configuration
@@ -305,7 +309,7 @@ This project follows the **Feature-Sliced Design** pattern for scalable and main
 
 ```
 // ❌ BAD: Helper file inside component folder
-src/features/homepage/ui/components/ProcessTimeline/
+src/features/homepage/ui/sections/HomeProcessSection/
 ├── ProcessStickyCarousel.tsx
 ├── ProcessStepper.tsx
 └── processAnimationHelpers.ts   # Wrong location!
@@ -314,11 +318,12 @@ src/features/homepage/ui/components/ProcessTimeline/
 #### Good Example
 
 ```
-// ✅ GOOD: Helper in lib/helpers, components in ui/components
+// ✅ GOOD: Helper in lib/helpers, components in their section folder
 src/features/homepage/
 ├── ui/
-│   └── components/
-│       └── ProcessTimeline/
+│   └── sections/
+│       └── HomeProcessSection/
+│           ├── HomeProcessSection.tsx
 │           ├── ProcessStickyCarousel.tsx
 │           └── ProcessStepper.tsx
 └── lib/
