@@ -1,9 +1,17 @@
 import { expect } from '@playwright/test';
 import { resolve } from 'node:path';
 export const IMAGE = resolve('src/tests/fixtures/test-image.png');
+// The upload section is in the page before "Start creating" is clicked, so its heading
+// proves nothing. Only the current step shows the click landed: a click before React
+// hydrates /stamp is dropped, and a file chosen then never shows a preview. Retry it.
 export async function enterUpload(page) {
   await page.goto('/stamp');
-  await page.getByRole('button', { name: /begin customizing|begin customization/i }).click();
+  const start = page.getByRole('button', { name: /begin customizing|begin customization/i });
+  const currentStep = page.locator('[aria-current="step"]');
+  await expect(async () => {
+    if (!/upload/i.test(await currentStep.textContent() ?? '')) await start.click({ timeout: 2000 });
+    await expect(currentStep).toContainText(/upload/i, { timeout: 2000 });
+  }).toPass({ timeout: 30000 });
   await expect(page.getByRole('heading', { name: /upload image/i })).toBeVisible();
 }
 // The dev server can paint /catalog before React hydrates, so an early click
