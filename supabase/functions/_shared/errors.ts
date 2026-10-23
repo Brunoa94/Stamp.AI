@@ -61,6 +61,7 @@ export const ErrorCodes = {
   // External API errors (502)
   NO_VARIANTS_AVAILABLE: () => new FunctionError(502, 'NO_VARIANTS_AVAILABLE', 'No variants available for the specified blueprint and provider'),
   PRINTIFY_API_ERROR: (details: string) => new FunctionError(502, 'PRINTIFY_API_ERROR', `Printify API error: ${details}`),
+  PRINTIFY_TIMEOUT: () => new FunctionError(504, 'PRINTIFY_TIMEOUT', 'Printify did not respond in time'),
 
   // Stripe errors
   STRIPE_SECRET_KEY_MISSING: () => new FunctionError(500, 'STRIPE_SECRET_KEY_MISSING', 'Missing STRIPE_SECRET_KEY'),
