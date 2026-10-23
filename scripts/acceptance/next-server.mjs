@@ -10,23 +10,29 @@ const warmUpPort = Number(process.env.ACCEPTANCE_WARM_UP_PORT);
 const app = next({ dev: true, webpack: true, hostname: 'localhost', port: publicPort });
 await app.prepare();
 const handle = app.getRequestHandler();
-const upgrade = app.getUpgradeHandler();
+
+// One server for both ports. On its first request Next attaches its HMR WebSocket handler
+// to that request's server, once; app.getUpgradeHandler() does nothing in dev. A second
+// server would never answer the HMR handshake, and in dev the pages it serves never hydrate.
+const server = http.createServer((req, res) => handle(req, res));
 
 function listen(port) {
   return new Promise((resolve, reject) => {
-    const server = http.createServer((req, res) => handle(req, res));
-    server.on('upgrade', (req, socket, head) => upgrade(req, socket, head));
     server.once('error', reject);
-    server.listen(port, () => resolve(server));
+    server.listen(port, () => {
+      server.off('error', reject);
+      resolve();
+    });
   });
 }
 
-const warmUpServer = await listen(warmUpPort);
+await listen(warmUpPort);
 process.on('message', async message => {
   if (message !== 'serve') return;
+  const closed = new Promise(resolve => server.close(resolve));
+  server.closeAllConnections();
+  await closed;
   await listen(publicPort);
-  warmUpServer.close();
-  warmUpServer.closeAllConnections();
   process.send('serving');
 });
 process.send('warm-up');
