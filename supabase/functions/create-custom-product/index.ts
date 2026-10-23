@@ -16,8 +16,10 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 import { enforceOperationLimit } from "../_shared/operationLimit.ts";
 import { requireUser } from "../_shared/authGuard.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
-import { fetchPrintify } from "../_shared/fetchWithTimeout.ts";
+import { FetchTimeoutError, fetchPrintify } from "../_shared/fetchWithTimeout.ts";
 import "../_shared/sentry.ts";
+
+const PRINTIFY_CREATE_PRODUCT_TIMEOUT_MS = 60_000;
 
 // Initialize Supabase
 const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
@@ -369,15 +371,21 @@ serve(async (req) => {
       ],
     };
 
-    // Create Printify product
+    // Create Printify product. Printify can answer this request long after it
+    // has created the product (more than 20s under concurrent load), so allow
+    // 60s. A timed-out request may still have created the product: never retry.
     const createResponse = await fetchPrintify(
       `/v1/shops/${PRINTIFY_SHOP_ID}/products.json`,
       PRINTIFY_API_TOKEN,
       {
         method: "POST",
         body: JSON.stringify(productPayload),
-      }
-    );
+      },
+      PRINTIFY_CREATE_PRODUCT_TIMEOUT_MS,
+    ).catch((error) => {
+      if (error instanceof FetchTimeoutError) throw ErrorCodes.PRINTIFY_TIMEOUT();
+      throw error;
+    });
 
     const productData = await createResponse.json();
 
