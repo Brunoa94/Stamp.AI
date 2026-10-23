@@ -2,22 +2,15 @@
 
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
-import { cn } from "@/lib/utils";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import {
   HERO_ROTATING_WORD_IDS,
   HERO_ROTATING_WORD_INTERVAL_MS,
 } from "@/features/homepage/lib/constants/heroShowcase";
+import { heroRotatingWordVariants } from "@/features/homepage/lib/variants/heroRotatingWordVariants";
 import { getRotatingWordState } from "@/features/homepage/lib/helpers/heroShowcase";
 import { useCycleIndex } from "@/features/homepage/lib/hooks/useCycleIndex";
-import type { HeroRotatingWordStateType } from "@/features/homepage/lib/types/heroShowcase";
 import { PencilUnderline } from "./PencilUnderline";
-
-const stateClasses: Record<HeroRotatingWordStateType, string> = {
-  active: "translate-y-0 opacity-100 blur-none",
-  leaving: "-translate-y-1/2 opacity-0 blur-sm",
-  waiting: "translate-y-1/2 opacity-0 blur-sm",
-};
 
 /**
  * HeroRotatingWord
@@ -43,10 +36,9 @@ export function HeroRotatingWord() {
           key={id}
           unstyled
           aria-hidden="true"
-          className={cn(
-            "col-start-1 row-start-1 whitespace-nowrap transition-all duration-500 ease-snap",
-            stateClasses[getRotatingWordState(index, activeIndex, total)],
-          )}
+          className={heroRotatingWordVariants({
+            state: getRotatingWordState(index, activeIndex, total),
+          })}
         >
           {`${t(id)}.`}
         </Span>

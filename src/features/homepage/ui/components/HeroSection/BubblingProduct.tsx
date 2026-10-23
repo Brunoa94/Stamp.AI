@@ -14,15 +14,9 @@
  */
 
 import Image from "next/image";
-import { cn } from "@/lib/utils";
 import { useMemo } from "react";
+import { bubblingProductVariants } from "@/features/homepage/lib/variants/bubblingProductVariants";
 import { type HeroBubblingProductType } from "../../../lib/constants/homepageContent";
-
-const SIZE_CLASSES = {
-  sm: "w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40",
-  md: "w-36 h-36 sm:w-44 sm:h-44 md:w-52 md:h-52",
-  lg: "w-44 h-44 sm:w-56 sm:h-56 md:w-64 md:h-64",
-};
 
 interface PropsI {
   product: HeroBubblingProductType;
@@ -64,10 +58,7 @@ export function BubblingProduct({ product, index }: PropsI) {
 
   return (
     <div
-      className={cn(
-        "bubbling-product absolute pointer-events-none",
-        SIZE_CLASSES[product.size]
-      )}
+      className={bubblingProductVariants({ size: product.size })}
       style={cssVars}
     >
       <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-lg bg-(--color-stamp-off-white)/90 backdrop-blur-sm">

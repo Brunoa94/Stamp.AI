@@ -3,16 +3,9 @@
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { cn } from "@/lib/utils";
+import { flowProductBackdropVariants } from "@/features/homepage/lib/variants/flowProductCardVariants";
 import { FlowArtImage } from "../Mock/FlowArtImage";
-import type {
-  FlowProductBackdropType,
-  FlowProductType,
-} from "@/features/homepage/lib/types/flowPreview";
-
-const backdropClasses: Record<FlowProductBackdropType, string> = {
-  sage: "bg-(--color-flow-art-backdrop-sage)",
-  sand: "bg-(--color-flow-art-backdrop-sand)",
-};
+import type { FlowProductType } from "@/features/homepage/lib/types/flowPreview";
 
 interface PropsI {
   product: FlowProductType;
@@ -45,7 +38,7 @@ export function FlowProductCard({ product, isSelected }: PropsI) {
           {t("selected")}
         </Span>
       )}
-      <div className={cn("flex h-24 items-center justify-center sm:h-30", backdropClasses[product.backdrop])}>
+      <div className={flowProductBackdropVariants({ backdrop: product.backdrop })}>
         <FlowArtImage art={product.art} className="w-20 sm:w-24" />
       </div>
       <div className="flex flex-col gap-0.5 p-2 text-center">

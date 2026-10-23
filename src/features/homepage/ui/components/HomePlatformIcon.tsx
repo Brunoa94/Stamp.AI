@@ -20,11 +20,11 @@ interface HomePlatformIconProps {
 
 export function HomePlatformIcon({
   platform,
-  className = "h-4 w-4",
+  className,
 }: HomePlatformIconProps) {
   const src = PLATFORM_ICON_SRC[platform];
 
   if (!src) return null;
 
-  return <Image src={src} alt="" aria-hidden width={16} height={16} className={className} />;
+  return <Image src={src} alt="" aria-hidden width={16} height={16} className={className ?? "h-4 w-4"} />;
 }

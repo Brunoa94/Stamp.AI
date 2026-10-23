@@ -15,6 +15,7 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
+import { expandablePickerGridVariants } from "@/features/stamp/lib/variants/expandablePickerVariants";
 
 /**
  * ExpandablePicker
@@ -47,7 +48,7 @@ interface PropsI {
   /** Number of grid columns (default: 2) */
   columns?: 2 | 3 | 4;
   /** Gap between grid items (default: 3 = gap-3) */
-  gap?: number;
+  gap?: 2 | 3 | 4;
   /** Optional header to render above the grid */
   header?: ReactNode;
   /** Optional className for the container */
@@ -106,15 +107,6 @@ export function ExpandablePicker({
     };
   }, [expanded, handleScroll]);
 
-  // Grid column classes
-  const gridColsClass =
-    columns === 2
-      ? "grid-cols-2"
-      : columns === 3
-        ? "grid-cols-3"
-        : "grid-cols-4";
-  const gapClass = `gap-${gap}`;
-
   // Format label with count placeholder
   const formatLabel = (label: string, count: number) =>
     label.replace("{count}", String(count));
@@ -124,7 +116,7 @@ export function ExpandablePicker({
     return (
       <div ref={containerRef} className={className}>
         {header}
-        <div className={cn("grid", gridColsClass, gapClass)}>{children}</div>
+        <div className={expandablePickerGridVariants({ columns, gap })}>{children}</div>
       </div>
     );
   }
@@ -135,14 +127,14 @@ export function ExpandablePicker({
 
       <div className="relative">
         {/* Initial items - always visible */}
-        <div className={cn("grid", gridColsClass, gapClass)}>
+        <div className={expandablePickerGridVariants({ columns, gap })}>
           {visibleChildren}
         </div>
 
         {/* Expanded overlay with remaining items */}
         {expanded && (
           <div className="absolute left-0 right-0 top-full z-10 bg-white pt-3 shadow-lg border-x border-b border-(--color-stamp-divider) pb-40 md:pb-0">
-            <div className={cn("grid", gridColsClass, gapClass, "px-0")}>
+            <div className={cn(expandablePickerGridVariants({ columns, gap }), "px-0")}>
               {hiddenChildren}
             </div>
 

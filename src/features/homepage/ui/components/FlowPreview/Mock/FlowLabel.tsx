@@ -1,11 +1,7 @@
 import { Span } from "@/features/ui/span";
 import { cn } from "@/lib/utils";
+import { flowLabelVariants } from "@/features/homepage/lib/variants/flowLabelVariants";
 import type { FlowLabelSizeType } from "@/features/homepage/lib/types/flowPreview";
-
-const sizeClasses: Record<FlowLabelSizeType, string> = {
-  sm: "text-3xs",
-  md: "text-2xs",
-};
 
 interface PropsI {
   size?: FlowLabelSizeType;
@@ -20,14 +16,7 @@ interface PropsI {
  */
 export function FlowLabel({ size = "md", className, children }: PropsI) {
   return (
-    <Span
-      unstyled
-      className={cn(
-        "font-body font-bold uppercase tracking-widest text-(--color-stamp-chocolate)/80",
-        sizeClasses[size],
-        className,
-      )}
-    >
+    <Span unstyled className={cn(flowLabelVariants({ size }), className)}>
       {children}
     </Span>
   );

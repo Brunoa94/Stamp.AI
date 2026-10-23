@@ -11,6 +11,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { processAnimatedButtonVariants } from "@/features/homepage/lib/variants/processAnimatedButtonVariants";
 import { HOME_PROCESS_STEPS } from "@/features/homepage/lib/constants/homepageContent";
 
 const TOTAL_BLOCKS = HOME_PROCESS_STEPS.length;
@@ -67,27 +68,22 @@ export function ProcessAnimatedButton({
     </>
   );
 
-  const baseClasses = cn(
-    "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-md",
-    "h-auto px-12 py-6 md:px-16 md:py-7",
-    "bg-(--color-stamp-chocolate) shadow-md",
-    "transition-all duration-300",
-    isComplete
-      ? "cursor-pointer hover:shadow-lg active:scale-[0.98]"
-      : "cursor-not-allowed opacity-70",
-    className,
-  );
-
   if (isComplete) {
     return (
-      <Link href="/stamp" className={baseClasses}>
+      <Link
+        href="/stamp"
+        className={cn(processAnimatedButtonVariants({ complete: true }), className)}
+      >
         {buttonContent}
       </Link>
     );
   }
 
   return (
-    <div className={baseClasses} aria-disabled="true">
+    <div
+      className={cn(processAnimatedButtonVariants({ complete: false }), className)}
+      aria-disabled="true"
+    >
       {buttonContent}
     </div>
   );
