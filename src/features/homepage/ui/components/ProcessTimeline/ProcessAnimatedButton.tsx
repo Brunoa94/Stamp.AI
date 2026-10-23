@@ -11,6 +11,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Span } from "@/features/ui/span";
 import { processAnimatedButtonVariants } from "@/features/homepage/lib/variants/processAnimatedButtonVariants";
 import { HOME_PROCESS_STEPS } from "@/features/homepage/lib/constants/homepageContent";
 
@@ -45,7 +46,8 @@ export function ProcessAnimatedButton({
       />
 
       {/* Button content */}
-      <span
+      <Span
+        unstyled
         className={cn(
           "relative z-10 font-semibold text-base md:text-lg uppercase tracking-wider",
           "transition-colors duration-300",
@@ -55,7 +57,7 @@ export function ProcessAnimatedButton({
         )}
       >
         Start creating, stamp it!
-      </span>
+      </Span>
       <ArrowRight
         className={cn(
           "relative z-10 h-5 w-5 md:h-6 md:w-6 transition-all duration-300",

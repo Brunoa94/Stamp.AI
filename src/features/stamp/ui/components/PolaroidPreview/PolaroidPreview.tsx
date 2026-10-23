@@ -133,16 +133,10 @@ export function PolaroidPreview({
 }: PropsI) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(true);
-  }, [imageUrl]);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  // Loading is derived from which URL last finished loading, so a new
+  // imageUrl shows the spinner again without resetting state in an effect.
+  const [loadedUrl, setLoadedUrl] = useState<string | null>(null);
+  const isLoading = loadedUrl !== imageUrl;
 
   const openFullscreen = useCallback(() => {
     setIsFullscreen(true);
@@ -180,8 +174,9 @@ export function PolaroidPreview({
 
   return (
     <>
-      <button
+      <Button
         type="button"
+        variant="unstyled"
         onClick={openFullscreen}
         className={cn(polaroidContainerVariants({ size }), className)}
         aria-label={fullscreenLabel}
@@ -203,7 +198,7 @@ export function PolaroidPreview({
             unoptimized
             className={`object-cover transition-opacity duration-200 ${isLoading ? "opacity-0" : "opacity-100"}`}
             sizes="320px"
-            onLoad={() => setIsLoading(false)}
+            onLoad={() => setLoadedUrl(imageUrl)}
           />
         </div>
         <div className={polaroidBadgeVariants({ size })}>
@@ -214,9 +209,10 @@ export function PolaroidPreview({
             {badgeText}
           </Span>
         </div>
-      </button>
+      </Button>
 
-      {isMounted && isFullscreen && (
+      {/* isFullscreen only turns on from a click, so document.body exists by then */}
+      {isFullscreen && (
         <FullscreenModal
           imageUrl={imageUrl}
           alt={alt}
