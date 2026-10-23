@@ -35,12 +35,20 @@ const designSystemElements = [
   { elements: ["img"], component: "Image", from: "next/image" },
 ];
 
-const rawElementRules = designSystemElements.flatMap(({ elements, component, from }) =>
-  elements.map((element) => ({
-    selector: `JSXOpeningElement[name.name='${element}']`,
-    message: `Use the ${component} component from ${from} instead of raw <${element}>.`,
-  })),
-);
+const rawElementRules = [
+  ...designSystemElements.flatMap(({ elements, component, from }) =>
+    elements.map((element) => ({
+      selector: `JSXOpeningElement[name.name='${element}']`,
+      message: `Use the ${component} component from ${from} instead of raw <${element}>.`,
+    })),
+  ),
+  // (mirrors "SVGs are always assets" in docs/README.md → Components → Component Guidelines)
+  {
+    selector: "JSXOpeningElement[name.name='svg']",
+    message:
+      "Save the SVG as a file under public/assets/ and render it with Image from next/image instead of inline <svg>.",
+  },
+];
 
 const eslintConfig = defineConfig([
   ...nextVitals,

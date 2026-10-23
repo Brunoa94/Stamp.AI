@@ -17,6 +17,7 @@ export function PositionGlyph({ position }: PropsI) {
   const mirrored = position === "right_leg";
 
   return (
+    // eslint-disable-next-line no-restricted-syntax -- glyph paths come from config, use currentColor and can be mirrored
     <svg
       viewBox="0 0 24 24"
       aria-hidden="true"

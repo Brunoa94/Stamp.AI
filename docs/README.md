@@ -84,6 +84,18 @@ All components must adhere to these three principles:
   - The design system doesn't have a suitable component (rare)
   - External/dynamic image URLs that can't be optimized
 
+- **SVGs are always assets**: Never write inline `<svg>` markup in components. Save every SVG as a file under `public/assets/` (grouped by feature, e.g. `public/assets/flow-preview/`, `public/assets/platforms/`) and render it with `<Image>` from `next/image`. Enforced by ESLint (`no-restricted-syntax`).
+
+  ```tsx
+  // ❌ Bad
+  <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21..." /></svg>
+
+  // ✅ Good
+  <Image src="/assets/platforms/trustpilot.svg" alt="" aria-hidden width={16} height={16} />
+  ```
+
+  **Exception**: Inline `<svg>` is allowed only when the markup must react at runtime: animated paths (e.g. stroke-dash drawing), `currentColor`/theme-token strokes, or shapes generated from props/config. Add a `// eslint-disable-next-line no-restricted-syntax -- <reason>` directive explaining why.
+
 - **Styling approach**:
   - Prefer component `variants` for styling.
   - Only add custom styles when absolutely necessary for specific use cases.

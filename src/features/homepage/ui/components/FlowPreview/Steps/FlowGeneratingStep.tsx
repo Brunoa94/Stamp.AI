@@ -49,6 +49,7 @@ export function FlowGeneratingStep({ tone, icon: Icon, title, eta, progressPct }
       )}
     >
       <div className="relative size-18">
+        {/* eslint-disable-next-line no-restricted-syntax -- ring stroke follows the tone via currentColor and theme tokens */}
         <svg viewBox="0 0 72 72" className="absolute inset-0 animate-spin [animation-duration:1.4s]">
           <circle cx="36" cy="36" r="33" fill="none" strokeWidth="2" className={cn("stroke-current", classes.icon)} opacity=".25" />
           <path
