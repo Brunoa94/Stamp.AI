@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 320">
+  <!-- T-shirt blank with the dashed printable area on the chest (homepage flow preview) -->
+  <path d="M112 28 L62 48 L20 112 L66 138 L82 116 L82 300 H258 L258 116 L274 138 L320 112 L278 48 L228 28 C216 58 124 58 112 28 Z" fill="#ffffff" stroke="#dcd3c6" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M112 28 C124 58 216 58 228 28" fill="none" stroke="#e8e1d6" stroke-width="6"/>
+  <rect x="112" y="78" width="116" height="140" fill="none" stroke="#c9bfb3" stroke-width="2" stroke-dasharray="5 5"/>
+</svg>

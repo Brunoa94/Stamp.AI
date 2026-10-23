@@ -21,8 +21,8 @@ export function FooterPaymentIcons({ className }: FooterPaymentIconsProps) {
   return (
     <div className={cn("flex flex-col gap-3", className)}>
       <div className="flex items-center gap-2">
-        <Lock className="h-3 w-3 text-(--color-stamp-gold)" aria-hidden="true" />
-        <Span variant="micro" className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-chocolate)/60">
+        <Lock className="h-3 w-3 text-(--color-stamp-gold-text)" aria-hidden="true" />
+        <Span variant="micro" className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
           {t("securePayment")}
         </Span>
       </div>
@@ -38,7 +38,7 @@ export function FooterPaymentIcons({ className }: FooterPaymentIconsProps) {
           </div>
         ))}
       </div>
-      <Span variant="micro" className="text-[9px] text-(--color-stamp-chocolate)/40">
+      <Span variant="micro" className="text-[9px] text-(--color-stamp-taupe)">
         {t("sslSecured")}
       </Span>
     </div>

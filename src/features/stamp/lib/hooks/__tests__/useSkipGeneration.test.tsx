@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { act, renderHook } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 import { useSkipGeneration } from "../useSkipGeneration";
 import { useStampFlowStore } from "../../stores/stampFlowStore";
 import * as generatedImagesStorage from "../../services/generatedImagesStorage";
@@ -63,6 +64,22 @@ describe("useSkipGeneration", () => {
       const { result } = renderHook(() => useSkipGeneration());
 
       expect(result.current.hasCachedImages).toBe(true);
+    });
+
+    it("should report no cached images in server HTML, even when localStorage has some", () => {
+      vi.mocked(generatedImagesStorage.getStoredImages).mockReturnValue([
+        {
+          imageUrl: "https://example.com/cached.jpg",
+          enhancedPrompt: "test prompt",
+          timestamp: Date.now(),
+        },
+      ]);
+      function CachedImagesProbe() {
+        return <>{String(useSkipGeneration().hasCachedImages)}</>;
+      }
+
+      // The server cannot read localStorage; hydration must start from the same value.
+      expect(renderToString(<CachedImagesProbe />)).toBe("false");
     });
 
     it("should detect hasCachedImages=false when localStorage is empty", () => {

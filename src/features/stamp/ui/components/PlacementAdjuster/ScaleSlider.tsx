@@ -6,6 +6,7 @@ import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
 import { Slider } from "@/features/ui/slider";
 import { Span } from "@/features/ui/span";
+import { placementControlButtonVariants } from "@/features/stamp/lib/variants/placementControlButtonVariants";
 import type { PlacementBounds } from "../../../lib/types/stampFlowTypes";
 import { ADJUST_STEP } from "../../../lib/hooks/useDesignAdjustment";
 
@@ -21,9 +22,6 @@ interface PropsI {
   onScaleChange: (scale: number) => void;
   disabled?: boolean;
 }
-
-const STEP_BUTTON_CLASS =
-  "h-9 w-9 rounded-none border border-(--color-stamp-divider) p-0 text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)";
 
 export function ScaleSlider({
   scale,
@@ -44,7 +42,7 @@ export function ScaleSlider({
       <div className="flex items-center gap-3">
         <Button
           variant="ghost"
-          className={STEP_BUTTON_CLASS}
+          className={placementControlButtonVariants()}
           aria-label={t("scaleDown")}
           disabled={disabled}
           onClick={() => onScaleChange(scale - ADJUST_STEP)}
@@ -64,7 +62,7 @@ export function ScaleSlider({
         />
         <Button
           variant="ghost"
-          className={STEP_BUTTON_CLASS}
+          className={placementControlButtonVariants()}
           aria-label={t("scaleUp")}
           disabled={disabled}
           onClick={() => onScaleChange(scale + ADJUST_STEP)}

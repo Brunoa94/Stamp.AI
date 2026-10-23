@@ -26,7 +26,7 @@ export function PaymentSecurityBadge({
     return (
       <div
         className={cn(
-          "flex items-center gap-3 text-(--color-stamp-chocolate)/60",
+          "flex items-center gap-3 text-(--color-stamp-taupe)",
           className
         )}
       >
@@ -81,7 +81,7 @@ export function PaymentSecurityBadge({
         </div>
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
-            <Lock className="h-3 w-3 text-(--color-stamp-gold)" aria-hidden="true" />
+            <Lock className="h-3 w-3 text-(--color-stamp-gold-text)" aria-hidden="true" />
             <Span variant="sm" className="font-bold text-(--color-stamp-chocolate)">
               {t("securePayment")}
             </Span>

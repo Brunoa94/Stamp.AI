@@ -32,7 +32,7 @@ export function ProductSummary({ productName, productDescription, color, size, p
         >
           {productName}
         </Heading>
-        <Star className="text-(--color-stamp-gold) w-5 h-5" />
+        <Star className="text-(--color-stamp-gold-text) w-5 h-5" />
       </div>
       <Span
         variant="micro"
@@ -43,7 +43,7 @@ export function ProductSummary({ productName, productDescription, color, size, p
       {productDescription && (
         <Paragraph
           variant="sm"
-          className="text-(--color-stamp-chocolate)/60 line-clamp-2 mb-4 md:mb-6"
+          className="text-(--color-stamp-taupe) line-clamp-2 mb-4 md:mb-6"
         >
           {productDescription}
         </Paragraph>

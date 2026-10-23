@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { useStampFlowStore } from "../stores/stampFlowStore";
 import {
   useStampGeneration,
@@ -10,6 +10,8 @@ import {
 import { logStampInfo, logStampWarn } from "../helpers/stampLogger";
 import { getStoredImages } from "../services/generatedImagesStorage";
 import type { GeneratedResultType } from "../types/stampFlowTypes";
+
+const subscribeToNothing = () => () => {};
 
 /**
  * useSkipGeneration
@@ -34,11 +36,18 @@ export function useSkipGeneration() {
   // This is intentional - skip is a special case where we populate data AND navigate
   const setCurrentStep = useStampFlowStore((state) => state.setCurrentStep);
 
-  // Cached images, read once from storage on mount (client-side only)
-  const [cachedImages] = useState<GeneratedResultType[]>(() => {
-    if (typeof window === "undefined") return [];
-    return getStoredImages();
-  });
+  // Cached images live in localStorage, which the server cannot see. Read them
+  // only after hydration: the first client render must match the server HTML
+  // (no cached images), or React discards and rebuilds the upload section.
+  const isHydrated = useSyncExternalStore(
+    subscribeToNothing,
+    () => true,
+    () => false,
+  );
+  const cachedImages = useMemo<GeneratedResultType[]>(
+    () => (isHydrated ? getStoredImages() : []),
+    [isHydrated],
+  );
 
   const hasCachedImages = cachedImages.length > 0;
 

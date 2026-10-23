@@ -33,8 +33,8 @@ test.describe("Tote Bag Preview Configuration", () => {
     await page.goto("/stamp");
     await expect(page.getByRole("button", { name: /logout from your account/i })).toBeVisible({ timeout: 20_000 });
 
-    // Hero -> Step 1: Click begin customization CTA
-    await page.getByRole("button", { name: /begin customiz/i }).click();
+    // Hero -> Step 1: Click the begin customizing CTA
+    await page.getByRole("button", { name: /begin customizing/i }).click();
 
     // Step 1 -> Step 2: Skip upload (no image uploaded)
     await page.getByRole("button", { name: /skip upload/i }).click();

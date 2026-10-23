@@ -35,7 +35,7 @@ export function VerifiedSecureBadge({
           <Span variant="micro" className="text-[9px] font-bold uppercase tracking-wider text-(--color-stamp-success)">
             {t("verified")}
           </Span>
-          <Span variant="micro" className="text-[8px] tracking-wider text-(--color-stamp-chocolate)/50">
+          <Span variant="micro" className="text-[8px] tracking-wider text-(--color-stamp-taupe)">
             {t("secure")}
           </Span>
         </div>
@@ -62,13 +62,13 @@ export function VerifiedSecureBadge({
           <Span variant="sm" className="font-bold uppercase tracking-wider text-(--color-stamp-success)">
             {t("verified")} {t("secure")}
           </Span>
-          <Span variant="micro" className="text-[9px] tracking-wider text-(--color-stamp-chocolate)/50">
+          <Span variant="micro" className="text-[9px] tracking-wider text-(--color-stamp-taupe)">
             {t("siteVerified")}
           </Span>
         </div>
         <div className="flex items-center gap-1.5 border-t border-(--color-stamp-divider) pt-2">
-          <Lock className="h-3 w-3 text-(--color-stamp-gold)" aria-hidden="true" />
-          <Span variant="micro" className="text-[9px] tracking-wider text-(--color-stamp-chocolate)/60">
+          <Lock className="h-3 w-3 text-(--color-stamp-gold-text)" aria-hidden="true" />
+          <Span variant="micro" className="text-[9px] tracking-wider text-(--color-stamp-taupe)">
             {t("encryption")}
           </Span>
         </div>
@@ -97,8 +97,8 @@ export function VerifiedSecureBadge({
           </Span>
         </div>
         <div className="flex items-center gap-1">
-          <Lock className="h-2.5 w-2.5 text-(--color-stamp-gold)" aria-hidden="true" />
-          <Span variant="micro" className="text-[8px] tracking-wider text-(--color-stamp-chocolate)/50">
+          <Lock className="h-2.5 w-2.5 text-(--color-stamp-gold-text)" aria-hidden="true" />
+          <Span variant="micro" className="text-[8px] tracking-wider text-(--color-stamp-taupe)">
             {t("encryption")}
           </Span>
         </div>

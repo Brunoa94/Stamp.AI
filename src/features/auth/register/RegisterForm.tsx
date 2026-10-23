@@ -10,6 +10,8 @@ import { RegisterCredentialsFields } from "./components/RegisterCredentialsField
 import { RegisterFormActions } from "./components/RegisterFormActions";
 import { RegisterLoginFooter } from "./components/RegisterLoginFooter";
 import { GoogleSignInButton } from "../components/GoogleSignInButton";
+import { Span } from "@/features/ui/span";
+import { Paragraph } from "@/features/ui/paragraph";
 
 export function RegisterForm() {
   const {
@@ -48,9 +50,9 @@ export function RegisterForm() {
 
         <div className="relative flex items-center my-10">
           <div className="grow border-t border-(--color-stamp-divider)" />
-          <span className="shrink mx-4 text-lg font-bold text-(--color-stamp-gold) uppercase tracking-[0.2em]">
+          <Span unstyled className="shrink mx-4 text-lg font-bold text-(--color-stamp-gold-text) uppercase tracking-[0.2em]">
             {t("orContinueWithEmail")}
-          </span>
+          </Span>
           <div className="grow border-t border-(--color-stamp-divider)" />
         </div>
 
@@ -58,12 +60,13 @@ export function RegisterForm() {
           <RegisterCredentialsFields register={register} errors={errors} />
 
           {errors.root?.message && (
-            <p
+            <Paragraph
+              unstyled
               role="alert"
               className="text-lg font-bold uppercase tracking-widest text-(--color-stamp-error)"
             >
               {errors.root.message}
-            </p>
+            </Paragraph>
           )}
 
           <RegisterFormActions

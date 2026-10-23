@@ -105,7 +105,7 @@ export function FormField({
             {label}
           </Span>
           {required && (
-            <span className={variant === "stamp-auth" || variant === "profile" || variant === "profile-readonly" ? "text-(--color-stamp-gold) ml-1" : "text-red-500 ml-1"} aria-hidden="true">
+            <span className={variant === "stamp-auth" || variant === "profile" || variant === "profile-readonly" ? "text-(--color-stamp-gold-text) ml-1" : "text-red-500 ml-1"} aria-hidden="true">
               *
             </span>
           )}
@@ -114,7 +114,7 @@ export function FormField({
         <Label htmlFor={id} className={styles.labelColor}>
           {label}
           {required && (
-            <span className={variant === "stamp-auth" || variant === "profile" || variant === "profile-readonly" ? "text-(--color-stamp-gold)" : "text-red-500"} aria-hidden="true">
+            <span className={variant === "stamp-auth" || variant === "profile" || variant === "profile-readonly" ? "text-(--color-stamp-gold-text)" : "text-red-500"} aria-hidden="true">
               {" "}
               *
             </span>

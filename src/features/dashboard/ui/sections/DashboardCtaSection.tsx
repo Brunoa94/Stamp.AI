@@ -35,7 +35,7 @@ export function DashboardCtaSection() {
             ),
           })}
         </Heading>
-        <Span as="p" variant="default" className="text-(--color-stamp-taupe)">
+        <Span as="p" variant="default" className="text-(--color-stamp-taupe-light)">
           {t("subtitle")}
         </Span>
         <Button asChild variant="cta-gold" className="group">

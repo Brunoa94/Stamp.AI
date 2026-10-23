@@ -11,6 +11,8 @@ import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CHECKOUT_PAYMENT_METHODS } from "@/shared/constants/payment";
 import type { PaymentMethodT } from "@/shared/types/payment";
+import { Span } from "@/features/ui/span";
+import { Button } from "@/features/ui/button";
 
 interface CheckoutPaymentMethodsPropsI {
   selectedMethod: PaymentMethodT;
@@ -34,7 +36,8 @@ export function CheckoutPaymentMethods({
       {CHECKOUT_PAYMENT_METHODS.map((method) => {
         const isSelected = selectedMethod === method.id;
         return (
-          <button
+          <Button
+            variant="unstyled"
             key={method.id}
             type="button"
             role="radio"
@@ -54,28 +57,29 @@ export function CheckoutPaymentMethods({
               className={cn(
                 "h-6 w-6 shrink-0",
                 isSelected
-                  ? "text-(--color-stamp-gold)"
+                  ? "text-(--color-stamp-gold-text)"
                   : "text-(--color-stamp-taupe)",
               )}
               aria-hidden="true"
             />
-            <span className="flex flex-col">
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate)">
+            <Span unstyled className="flex flex-col">
+              <Span unstyled className="text-[11px] font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate)">
                 {method.label}
-              </span>
-              <span className="text-[10px] uppercase tracking-[0.15em] text-(--color-stamp-taupe)">
+              </Span>
+              <Span unstyled className="text-[10px] uppercase tracking-[0.15em] text-(--color-stamp-taupe)">
                 {method.description}
-              </span>
-            </span>
+              </Span>
+            </Span>
             {isSelected && (
-              <span
+              <Span
+                unstyled
                 className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-(--color-stamp-gold) text-(--color-stamp-white)"
                 aria-hidden="true"
               >
                 <Check className="h-3 w-3" />
-              </span>
+              </Span>
             )}
-          </button>
+          </Button>
         );
       })}
     </div>

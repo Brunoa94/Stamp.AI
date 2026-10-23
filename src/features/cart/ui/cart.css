@@ -30,6 +30,14 @@
   border-radius: 9999px;
 }
 
+/* The fixed mobile checkout bar (below xl) covers the bottom of the viewport.
+   Keep controls that are scrolled or tabbed into view above it. */
+@media (width < 80rem) {
+  html:has([data-cart-mobile-cta]) {
+    scroll-padding-bottom: 8rem;
+  }
+}
+
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .cart-item,

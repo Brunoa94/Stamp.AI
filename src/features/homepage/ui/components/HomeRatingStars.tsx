@@ -31,7 +31,7 @@ export function HomeRatingStars({ rating, className }: HomeRatingStarsPropsI) {
           aria-hidden
           className={
             idx < filled
-              ? "h-4 w-4 fill-(--color-stamp-gold) text-(--color-stamp-gold)"
+              ? "h-4 w-4 fill-(--color-stamp-gold) text-(--color-stamp-gold-text)"
               : "h-4 w-4 text-(--color-stamp-divider)"
           }
         />

@@ -17,6 +17,8 @@ import { cn } from "@/lib/utils";
  * - card        Process / FAQ responsive body — lg→xl, relaxed leading
  * - faq         FAQ answer — lg→xl, loose leading
  * - quote       Testimonial quote — xl→2xl, italic, relaxed leading
+ * - caption     Inline helper/error text — xs, inherits font
+ * - eyebrow     Small uppercase group label — 10px, bold, tracking-widest
  */
 
 const paragraphVariants = {
@@ -30,6 +32,8 @@ const paragraphVariants = {
   card: "font-body text-lg md:text-xl font-normal tracking-normal leading-relaxed",
   faq: "font-body text-lg md:text-xl font-normal tracking-normal leading-relaxed",
   quote: "font-body text-xl md:text-2xl font-normal italic tracking-normal leading-relaxed",
+  caption: "text-xs",
+  eyebrow: "text-[10px] font-bold uppercase tracking-widest",
 } as const;
 
 type ParagraphVariant = keyof typeof paragraphVariants;

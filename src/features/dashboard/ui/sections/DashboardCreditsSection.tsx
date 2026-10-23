@@ -19,7 +19,7 @@ export function DashboardCreditsSection() {
   const { data, isLoading, isError, refetch } = useUserCoins();
   const queryClient = useQueryClient();
   return (
-    <DashboardCard label={t("label")} icon={<Coins className="h-4 w-4 text-(--color-stamp-gold)" />}>
+    <DashboardCard label={t("label")} icon={<Coins className="h-4 w-4 text-(--color-stamp-gold-text)" />}>
       <Span as="p" variant="metric" className="text-(--color-stamp-chocolate)" aria-live="polite">
         {isLoading || isError ? "—" : data?.coins.toLocaleString() ?? "—"}
       </Span>

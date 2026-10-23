@@ -37,11 +37,11 @@ export function OrdersFulfilledCounter({
     return (
       <div
         className={cn(
-          "inline-flex items-center gap-1.5 text-(--color-stamp-chocolate)/60",
+          "inline-flex items-center gap-1.5 text-(--color-stamp-taupe)",
           className
         )}
       >
-        <Package className="h-3 w-3 text-(--color-stamp-gold)" aria-hidden="true" />
+        <Package className="h-3 w-3 text-(--color-stamp-gold-text)" aria-hidden="true" />
         <Span variant="micro" className="text-[10px] tracking-wider">
           {t("ordersFulfilled", { count: formatCount(count) })}
         </Span>
@@ -58,7 +58,7 @@ export function OrdersFulfilledCounter({
         )}
       >
         <div className="flex h-6 w-6 items-center justify-center rounded-full bg-(--color-stamp-gold)/10">
-          <Package className="h-3.5 w-3.5 text-(--color-stamp-gold)" aria-hidden="true" />
+          <Package className="h-3.5 w-3.5 text-(--color-stamp-gold-text)" aria-hidden="true" />
         </div>
         <Span variant="sm" className="font-medium">
           {t("ordersFulfilled", { count: formatCount(count) })}
@@ -75,7 +75,7 @@ export function OrdersFulfilledCounter({
       )}
     >
       <div className="flex h-5 w-5 items-center justify-center rounded-full bg-(--color-stamp-gold)/10">
-        <Package className="h-3 w-3 text-(--color-stamp-gold)" aria-hidden="true" />
+        <Package className="h-3 w-3 text-(--color-stamp-gold-text)" aria-hidden="true" />
       </div>
       <Span variant="micro" className="text-[10px] font-bold tracking-wider text-(--color-stamp-chocolate)">
         {t("ordersFulfilled", { count: formatCount(count) })}

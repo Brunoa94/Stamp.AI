@@ -8,6 +8,7 @@ At the beginning of each session, read the documentation in the `docs/` folder t
 - `docs/README_UI_ENGINEERING.md` - UI component guidelines
 - `docs/README_PERFORMANCE.md` - Performance best practices
 - `docs/COLOR_PALETTE_GUIDELINES.md` - Color system
+- `docs/BRAND_VOICE.md` - Brand voice, terminology, and claims to avoid in customer-facing copy
 
 ## Pre-Commit Validation
 

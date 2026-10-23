@@ -24,8 +24,11 @@
 
   /* Stamp Luxury Theme Colors */
   --color-stamp-taupe: #795944; /* [tag: brand-stamp-taupe] Warm taupe accent */
+  --color-stamp-taupe-light: #c4a08a; /* [tag: brand-stamp-taupe-light] Taupe text on chocolate surfaces */
   --color-stamp-chocolate: #3d2817; /* [tag: brand-stamp-chocolate] Primary dark brown */
   --color-stamp-gold: #b9932f; /* [tag: brand-stamp-gold] Metallic gold accent */
+  --color-stamp-gold-text: #82631b; /* [tag: brand-stamp-gold-text] Gold text on light surfaces */
+  --color-stamp-gold-light: #ecce78; /* [tag: brand-stamp-gold-light] Gold text on dark surfaces and photo scrims */
   --color-stamp-cream: #faf6f1; /* [tag: brand-stamp-cream] Soft cream background */
   --color-stamp-off-white: #fefefe; /* [tag: brand-stamp-off-white] Near white surface */
   --color-stamp-divider: rgba(
@@ -72,6 +75,12 @@
     color-mix(in srgb, var(--color-stamp-chocolate) 30%, transparent); /* [tag: shadow-stamp-modal] Modal elevation */
   --shadow-stamp-modal-error: 0 50px 100px
     color-mix(in srgb, var(--color-stamp-error) 20%, transparent); /* [tag: shadow-stamp-modal-error] Destructive modal elevation */
+
+  /* Homepage flow preview backdrops [tag: flow-art-*] — surfaces behind the demo
+     illustrations (the illustrations themselves are SVGs in public/assets/flow-preview) */
+  --color-flow-art-backdrop-sage: #c5cbc0; /* [tag: flow-art-backdrop-sage] Apparel card backdrop */
+  --color-flow-art-backdrop-sand: #e9e4db; /* [tag: flow-art-backdrop-sand] Accessory card backdrop */
+  --color-flow-art-mockup-backdrop: #f3efe8; /* [tag: flow-art-mockup-backdrop] Final mockup backdrop */
 }
 
 /* ==========================================
@@ -189,18 +198,4 @@
 
 [data-sonner-toast] button[data-cancel]:hover {
   color: var(--color-stamp-chocolate);
-}
-
-/* Functional muted text stays readable; keep translucent colors for decoration. */
-[class~="text-(--color-stamp-chocolate)/40"],
-[class~="text-(--color-stamp-chocolate)/50"],
-[class~="text-(--color-stamp-chocolate)/60"] {
-  color: var(--color-stamp-taupe);
-}
-[class~="text-(--color-stamp-gold)"] {
-  color: #82631b;
-}
-[class~="bg-(--color-stamp-chocolate)"] [class~="text-(--color-stamp-taupe)"],
-[class~="bg-(--color-stamp-chocolate)"] [class~="text-(--color-stamp-gold)"] {
-  color: var(--color-stamp-cream);
 }

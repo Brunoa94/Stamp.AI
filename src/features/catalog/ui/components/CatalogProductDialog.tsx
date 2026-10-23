@@ -66,7 +66,7 @@ export function CatalogProductDialog({ product, isOpen, onClose }: PropsI) {
                 variant="value"
                 className={
                   product.isOnSale
-                    ? "text-(--color-stamp-gold)"
+                    ? "text-(--color-stamp-gold-text)"
                     : "text-(--color-stamp-chocolate)"
                 }
               >

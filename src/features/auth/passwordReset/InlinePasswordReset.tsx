@@ -32,7 +32,7 @@ export function InlinePasswordReset({ className }: PropsI) {
         >
           <Span
             variant="default"
-            className="text-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) hover:underline"
+            className="text-(--color-stamp-gold-text) hover:text-(--color-stamp-chocolate) hover:underline"
           >
             {t("forgotPassword")}
           </Span>

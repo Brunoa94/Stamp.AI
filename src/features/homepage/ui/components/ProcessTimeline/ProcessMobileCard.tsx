@@ -1,38 +1,33 @@
 /**
  * ProcessMobileCard
  *
- * Mobile card showing both image and text content for a process step.
+ * Mobile card showing both the flow-demo screen and text content for a process step.
  */
 
-import Image from "next/image";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import type { HomeProcessStepType } from "../../../lib/constants/homepageContent";
-import type { ProcessStepImageType } from "../../../lib/constants/processStepImages";
+import { ProcessFlowSnapshot } from "./ProcessFlowSnapshot";
 
 interface ProcessMobileCardPropsI {
   step: HomeProcessStepType;
-  imageData: ProcessStepImageType | undefined;
   title: string;
   description: string;
   translateY: number;
   opacity: number;
   scale: number;
   isActive: boolean;
-  isPriority: boolean;
 }
 
 export function ProcessMobileCard({
   step,
-  imageData,
   title,
   description,
   translateY,
   opacity,
   scale,
   isActive,
-  isPriority,
 }: ProcessMobileCardPropsI) {
   return (
     <div
@@ -44,18 +39,13 @@ export function ProcessMobileCard({
         transition: "transform 0.15s ease-out, opacity 0.15s ease-out",
       }}
     >
-      {/* Mobile image */}
-      <div className="mb-3 flex items-center justify-center w-full max-w-sm sm:max-w-md">
-        {imageData && (
-          <Image
-            src={imageData.src}
-            alt={imageData.alt}
-            width={500}
-            height={500}
-            className="w-auto h-auto max-w-full max-h-80 rounded-lg"
-            priority={isPriority}
-          />
-        )}
+      {/* Mobile flow-demo screen, scaled down from its native size; the box height matches the scaled window */}
+      <div className="mb-3 flex h-74 w-full justify-center sm:h-89">
+        <ProcessFlowSnapshot
+          step={step}
+          label={description}
+          className="origin-top scale-50 sm:scale-60"
+        />
       </div>
 
       {/* Mobile text content */}

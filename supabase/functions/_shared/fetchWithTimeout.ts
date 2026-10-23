@@ -79,3 +79,49 @@ export async function fetchPrintify(
     timeoutMs
   );
 }
+
+// Rate-limit and server-error answers that are worth asking again for.
+const RETRYABLE_PRINTIFY_STATUSES = new Set([429, 500, 502, 503, 504]);
+const MAX_RETRY_AFTER_MS = 5_000;
+
+/**
+ * fetchPrintify for idempotent GETs (catalog lookups): retries 429 and 5xx
+ * answers with exponential backoff, honouring Retry-After up to 5s. Returns
+ * the last response, so callers must still check `response.ok`.
+ *
+ * Never use this for writes: a failed product create may still have created
+ * the product.
+ *
+ * @param endpoint - Printify API endpoint (e.g., "/v1/catalog/blueprints.json")
+ * @param token - Printify API token
+ * @param attempts - Total attempts including the first (default: 3)
+ * @param baseDelayMs - Delay before the first retry, doubled each time (default: 500)
+ * @returns Promise<Response>
+ */
+export async function fetchPrintifyRead(
+  endpoint: string,
+  token: string,
+  attempts = 3,
+  baseDelayMs = 500
+): Promise<Response> {
+  for (let attempt = 1; ; attempt++) {
+    const response = await fetchPrintify(endpoint, token);
+    if (
+      response.ok ||
+      !RETRYABLE_PRINTIFY_STATUSES.has(response.status) ||
+      attempt >= attempts
+    ) {
+      return response;
+    }
+
+    await response.body?.cancel();
+    const retryAfterSeconds = Number(response.headers.get("retry-after"));
+    const delayMs = retryAfterSeconds > 0
+      ? Math.min(retryAfterSeconds * 1000, MAX_RETRY_AFTER_MS)
+      : baseDelayMs * 2 ** (attempt - 1);
+    console.warn(
+      `⚠️ Printify ${endpoint} answered ${response.status}, retrying in ${delayMs}ms (attempt ${attempt}/${attempts})`
+    );
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+}

@@ -107,7 +107,7 @@ export function HomeProductCard({ product, index }: HomeProductCardPropsI) {
             variant="sm"
             className={`text-xs sm:text-sm ${
               product.isOnSale
-                ? "text-(--color-stamp-gold)"
+                ? "text-(--color-stamp-gold-text)"
                 : "text-(--color-stamp-chocolate)"
             }`}
           >

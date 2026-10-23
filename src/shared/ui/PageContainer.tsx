@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
-import { containerTheme } from "@/theme/components";
 
 interface PropsI {
   children: ReactNode;
@@ -21,8 +20,7 @@ export function PageContainer({ children, className }: PropsI) {
   return (
     <div
       className={cn(
-        containerTheme.pageContent,
-        "[&>*:first-child]:mt-0 [&>*:first-child]:mb-0",
+        "w-full relative z-10 [&>*:first-child]:mt-0 [&>*:first-child]:mb-0",
         className,
       )}
     >

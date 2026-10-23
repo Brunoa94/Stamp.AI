@@ -73,7 +73,7 @@ export function ErrorFallback({ error, errorId, onRetry }: ErrorFallbackProps) {
                 <strong>{error.name}:</strong> {error.message}
               </pre>
               {error.stack && (
-                <pre className="mt-4 text-xs text-(--color-stamp-taupe) font-mono whitespace-pre-wrap">
+                <pre className="mt-4 text-xs text-(--color-stamp-taupe-light) font-mono whitespace-pre-wrap">
                   {error.stack}
                 </pre>
               )}

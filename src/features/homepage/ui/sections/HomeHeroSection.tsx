@@ -1,63 +1,54 @@
-"use client";
-
 /**
  * HomeHeroSection
  *
- * Hero section with title and CTA prominently displayed at the top,
- * photo-to-print transform showcases on either side,
- * and product images that bubble up from the bottom driven by scroll/wheel.
+ * First screen of the homepage, sized to the space left under the navbar and
+ * trust strip: brand kicker, headline, tagline and upload card over the
+ * diagonal photo backdrop, with the "8 steps away" headline, the animated
+ * creation-flow demo and its benefit banners on the off-white side (xl+ only —
+ * stacked screens keep just the copy so it fits). Below it, a ribbon of
+ * product photos (shown from the first render, no scroll reveal) and the
+ * promo banner.
  */
 
-import { useEffect, useState } from "react";
 import { SectionReveal } from "../components/SectionReveal";
+import { HeroBackdrop } from "../components/HeroSection/HeroBackdrop";
 import { HeroContent } from "../components/HeroSection/HeroContent";
-import { HeroTransformShowcase } from "../components/HeroSection/HeroTransformShowcase";
 import { HeroPromoBanner } from "../components/HeroSection/HeroPromoBanner";
-import { IMAGE_PAIRS } from "../../lib/constants/transformShowcase";
+import { FlowPreview } from "../components/FlowPreview/FlowPreview";
+import { HeroFlowIntro } from "../components/HeroSection/HeroFlowIntro";
+import { HeroFlowBenefits } from "../components/HeroSection/HeroFlowBenefits";
+import { HeroPhotoRibbon } from "../components/HeroSection/HeroPhotoRibbon";
 
 export function HomeHeroSection() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  useEffect(() => {
-    const intervalId = setTimeout(() => {
-      setCurrentIndex((prev) => (prev + 1) % IMAGE_PAIRS.length);
-    }, 3000);
-
-    return () => clearTimeout(intervalId);
-  }, [currentIndex]);
-
   return (
-    <section className="relative h-screen overflow-hidden bg-(--color-stamp-off-white)">
-      {/* Title and CTA with transform showcases on sides */}
-      {/* pt-32 sm:pt-36 accounts for fixed header (h-24) + trust banner (~40px) */}
-      <div className="relative z-20 px-6 pt-32 sm:pt-20 pb-8 lg:px-12 xl:px-24">
-        <div className="mx-auto">
-          <div className="flex items-end justify-center">
-            <div className="hidden 3xl:block shrink-0 mb-0">
-              <SectionReveal delayMs={200}>
-                <HeroTransformShowcase
-                  position="left"
-                  currentIndex={currentIndex}
-                />
-              </SectionReveal>
-            </div>
+    <section className="relative overflow-hidden bg-(--color-stamp-off-white) pb-10">
+      {/* 7.5rem = navbar + trust strip above the hero */}
+      <div className="relative flex min-h-[calc(100svh-7.5rem)] items-center overflow-hidden border-b border-(--color-stamp-divider) xl:h-[calc(100svh-7.5rem)] xl:min-h-176">
+        <HeroBackdrop />
 
-            {/* Center content */}
-            <SectionReveal className="max-w-5xl text-center w-full">
+        <div className="relative z-20 w-full px-6 py-16 sm:py-20 lg:px-12 xl:py-10">
+          <div className="mx-auto flex max-w-screen-2xl items-center justify-center gap-12 xl:justify-between">
+            <SectionReveal className="w-full max-w-2xl xl:min-w-0 xl:max-w-xl xl:flex-1 2xl:max-w-2xl">
               <HeroContent />
             </SectionReveal>
 
-            {/* Right showcase - hidden below 1200px */}
-            <div className="hidden min-[1200px]:block shrink-0 mb-0">
-              <SectionReveal delayMs={400}>
-                <HeroTransformShowcase
-                  position="right"
-                  currentIndex={currentIndex}
-                />
-              </SectionReveal>
-            </div>
+            <SectionReveal
+              delayMs={300}
+              className="hidden xl:block xl:w-150 xl:shrink-0 2xl:w-160"
+            >
+              <div className="flex flex-col gap-5 2xl:gap-6 xl:ml-8">
+                <HeroFlowIntro />
+                <FlowPreview />
+                <HeroFlowBenefits />
+              </div>
+            </SectionReveal>
           </div>
         </div>
+      </div>
+
+      {/* Real work drifting by: lifestyle shots and photo → product pairs */}
+      <div className="mt-10">
+        <HeroPhotoRibbon />
       </div>
 
       {/* Promotional banner */}

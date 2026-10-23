@@ -58,7 +58,7 @@ export function PositionCard({
       <Span
         className={
           isSelected
-            ? "text-(--color-stamp-gold)"
+            ? "text-(--color-stamp-gold-text)"
             : "text-(--color-stamp-taupe)/70"
         }
       >

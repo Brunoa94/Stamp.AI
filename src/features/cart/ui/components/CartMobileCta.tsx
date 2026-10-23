@@ -10,6 +10,8 @@
 import { ArrowRight, Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
+import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
 import { formatPrice } from "../../lib/utils/formatPrice";
 
 interface CartMobileCtaPropsI {
@@ -29,12 +31,15 @@ export function CartMobileCta({
   const formattedTotal = formatPrice(total);
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-(--color-stamp-divider) bg-(--color-stamp-white) p-4 xl:hidden">
+    <div
+      data-cart-mobile-cta
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-(--color-stamp-divider) bg-(--color-stamp-white) p-4 xl:hidden"
+    >
       <div className="flex flex-col gap-2">
         {selectedCount !== undefined && selectedCount > 0 && (
-          <p className="text-center text-xs font-bold uppercase tracking-[0.15em] text-(--color-stamp-taupe)">
+          <Paragraph unstyled className="text-center text-xs font-bold uppercase tracking-[0.15em] text-(--color-stamp-taupe)">
             {t("itemsSelected", { count: selectedCount })}
-          </p>
+          </Paragraph>
         )}
         <Button
           onClick={onCheckout}
@@ -43,11 +48,11 @@ export function CartMobileCta({
           disabled={!canCheckout}
         >
           <Lock className="h-4 w-4" aria-hidden="true" />
-          <span>
+          <Span unstyled>
             {canCheckout
               ? t("checkout", { total: formattedTotal })
               : t("selectItems")}
-          </span>
+          </Span>
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
         </Button>
       </div>

@@ -3,7 +3,6 @@
 import { CardElement } from "@stripe/react-stripe-js";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
-import { buyCreditsTheme } from "@/theme/components";
 import { STRIPE_CARD_ELEMENT_OPTIONS } from "@/shared/constants/payment";
 import { useStripePayment } from "./useStripePayment";
 
@@ -37,7 +36,7 @@ export function StripeCardForm({
       <Button
         type="submit"
         disabled={!isReady || loading}
-        className={buyCreditsTheme.selectionStep.submitButton}
+        variant="gradient"
       >
         {loading ? t("processing") : t("payButton", { amount: amount.toFixed(2) })}
       </Button>

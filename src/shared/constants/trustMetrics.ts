@@ -9,6 +9,17 @@
  */
 
 /**
+ * Whether review, rating and order-count social proof is shown.
+ *
+ * Keep this false until the figures below come from real, verifiable
+ * customer data. Showing invented reviews or counts is prohibited under
+ * EU consumer law (Directive 2005/29/EC, as amended) and the US FTC rule
+ * on fake reviews. The post-purchase review request stays enabled so real
+ * reviews can be collected.
+ */
+export const TRUST_SOCIAL_PROOF_ENABLED = false;
+
+/**
  * Review and rating metrics
  * Used by: TrustpilotWidget, HOME_RATING_SUMMARY, ReviewsRatingSummary
  */
