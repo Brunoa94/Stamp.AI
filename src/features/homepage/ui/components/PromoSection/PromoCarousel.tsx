@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Button } from "@/features/ui/button";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import type { PromoImageType } from "../../../lib/constants/promoSections";
 import { PROMO_CAROUSEL_DISPLAY_MS } from "../../../lib/constants/promoSections";
@@ -77,11 +78,13 @@ export function PromoCarousel({
       {/* Progress indicator bar */}
       <div className="mt-4 flex gap-1.5 justify-center">
         {gridImages.map((_, index) => (
-          <button
+          <Button
             key={index}
+            type="button"
+            variant="unstyled"
             onClick={() => setActiveIndex(index)}
             className={cn(
-              "h-1 rounded-full transition-all duration-300",
+              "h-1 rounded-full transition-all duration-300 focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) focus-visible:ring-offset-2",
               index === activeIndex % gridImages.length
                 ? "w-6 bg-(--color-stamp-gold)"
                 : "w-2 bg-(--color-stamp-chocolate)/20 hover:bg-(--color-stamp-chocolate)/40",

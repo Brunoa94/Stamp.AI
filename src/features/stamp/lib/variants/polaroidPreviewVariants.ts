@@ -1,7 +1,7 @@
 import { cva } from "class-variance-authority";
 
 export const polaroidContainerVariants = cva(
-  "w-full bg-white shadow-xl relative rotate-1 group hover:rotate-0 transition-all duration-500 cursor-zoom-in",
+  "block w-full bg-white shadow-xl relative rotate-1 group hover:rotate-0 transition-all duration-500 cursor-zoom-in focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) focus-visible:ring-offset-2",
   {
     variants: {
       size: {
