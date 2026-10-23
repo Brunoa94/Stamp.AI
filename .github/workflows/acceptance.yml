@@ -81,6 +81,11 @@ jobs:
     strategy:
       # A failing group must not cancel the others mid-run: cancelling skips their cleanup.
       fail-fast: false
+      # Every group uses the same Printify test shop. While all ten ran at once, Printify
+      # sometimes took over a minute to create a product and create-custom-product timed
+      # out. Jobs start in matrix order (see ci-groups.mjs), so the Printify-heavy catalog
+      # and studio groups normally do not overlap.
+      max-parallel: 4
       matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
     steps:
       # "Re-run failed jobs" reuses the earlier deploy, and another PR may have deployed since.
