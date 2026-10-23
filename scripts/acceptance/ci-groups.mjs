@@ -6,12 +6,15 @@ import { appendFileSync, readdirSync } from 'node:fs';
 // removes its own account), so groups only share the deployed test project, which
 // the workflow deploys once before any group starts.
 // Balanced by measured desktop minutes (CI run 38232090113); mobile is similar.
+// The workflow runs at most four jobs at once and starts them in this order. Catalog and
+// studio create the most Printify products, so catalog goes first and studio last: the
+// lighter groups run in between, and studio starts once catalog has finished.
 const GROUPS = {
   catalog: ['catalog-products'], // 7.5
   orders: ['orders-page', 'payments', 'webhook-integrity'], // 6.5
-  studio: ['recovery-quality', 'placement-cart-actions', 'customization', 'auth-lifecycle'], // 6.3
   checkout: ['price-integrity', 'settlement', 'cart-checkout', 'printify-orders', 'promotions-address', 'security'], // 6.1
   browse: ['navigation-auth', 'history-catalog', 'analytics', 'stamp'], // 5.7
+  studio: ['recovery-quality', 'placement-cart-actions', 'customization', 'auth-lifecycle'], // 6.3
 };
 const SPECS = 'tests/acceptance/specs';
 
@@ -43,7 +46,8 @@ const walk = suite => {
 };
 report.suites.forEach(walk);
 
-const include = report.config.projects.flatMap(({ name: project }) => Object.entries(GROUPS).flatMap(([group, specs]) => {
+// Group by group, both projects each, in GROUPS order.
+const include = Object.entries(GROUPS).flatMap(([group, specs]) => report.config.projects.flatMap(({ name: project }) => {
   const files = specs.filter(spec => runnable.has(`${project} ${spec}.spec.mjs`)).map(spec => `${SPECS}/${spec}.spec.mjs`);
   return files.length ? [{ project, group, specs: files.join(' ') }] : [];
 }));
