@@ -16,7 +16,11 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 import { enforceOperationLimit } from "../_shared/operationLimit.ts";
 import { requireUser } from "../_shared/authGuard.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
-import { FetchTimeoutError, fetchPrintify } from "../_shared/fetchWithTimeout.ts";
+import {
+  FetchTimeoutError,
+  fetchPrintify,
+  fetchPrintifyRead,
+} from "../_shared/fetchWithTimeout.ts";
 import "../_shared/sentry.ts";
 
 const PRINTIFY_CREATE_PRODUCT_TIMEOUT_MS = 60_000;
@@ -97,11 +101,23 @@ serve(async (req) => {
       `✅ Color validated: "${selected_color}" -> "${validatedColor}" (category: ${colorValidation.category})`,
     );
 
-    // Get print provider variants
-    const variantsResponse = await fetchPrintify(
+    // Get print provider variants. A rate-limited or failed lookup has no
+    // variants in its body, so report it as a Printify error, not as a
+    // blueprint without variants.
+    const variantsResponse = await fetchPrintifyRead(
       `/v1/catalog/blueprints/${finalBlueprintId}/print_providers/${finalPrintProviderId}/variants.json`,
       PRINTIFY_API_TOKEN
     );
+    if (!variantsResponse.ok) {
+      const details = await variantsResponse.text();
+      console.error(
+        `❌ Variants lookup failed (${variantsResponse.status}):`,
+        details,
+      );
+      throw ErrorCodes.PRINTIFY_API_ERROR(
+        `variants lookup ${variantsResponse.status}: ${details}`,
+      );
+    }
     const variantsData = await variantsResponse.json();
 
     const availableVariants = variantsData.variants || [];

@@ -84,8 +84,29 @@ All components must adhere to these three principles:
   - The design system doesn't have a suitable component (rare)
   - External/dynamic image URLs that can't be optimized
 
+- **SVGs are always assets**: Never write inline `<svg>` markup in components. Save every SVG as a file under `public/assets/` (grouped by feature, e.g. `public/assets/flow-preview/`, `public/assets/platforms/`) and render it with `<Image>` from `next/image`. Enforced by ESLint (`no-restricted-syntax`).
+
+  ```tsx
+  // ❌ Bad
+  <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21..." /></svg>
+
+  // ✅ Good
+  <Image src="/assets/platforms/trustpilot.svg" alt="" aria-hidden width={16} height={16} />
+  ```
+
+  **Exception**: Inline `<svg>` is allowed only when the markup must react at runtime: animated paths (e.g. stroke-dash drawing), `currentColor`/theme-token strokes, or shapes generated from props/config. Add a `// eslint-disable-next-line no-restricted-syntax -- <reason>` directive explaining why.
+
 - **Styling approach**:
   - Prefer component `variants` for styling.
+  - **No styling outside the returned JSX in `.tsx` files.** Class-string constants, tone/size lookup maps and helpers that return classes go in a `cva` file under the feature's `lib/variants/` (e.g. `src/features/homepage/lib/variants/flowMockButtonVariants.ts`); one-off classes stay inline in `className`. Enforced by ESLint (`no-restricted-syntax`); `src/features/ui/**` is exempt.
+
+  ```tsx
+  // ❌ Bad — class map in the component file
+  const toneClasses = { dark: "bg-(--color-stamp-chocolate)", gold: "bg-(--color-stamp-gold)" };
+
+  // ✅ Good — cva in lib/variants/, called from the JSX
+  <Span className={cn(flowMockButtonVariants({ tone }), className)} />
+  ```
   - Only add custom styles when absolutely necessary for specific use cases.
   - **Avoid inline styles** - use Tailwind classes instead. Only use inline `style` attributes for dynamic values that cannot be expressed with Tailwind (e.g., animation delays, dynamic widths from state).
 - **Avoid premature optimization**: Only use `useCallback`, `useMemo`, `React.memo` for heavy computations or proven performance bottlenecks.

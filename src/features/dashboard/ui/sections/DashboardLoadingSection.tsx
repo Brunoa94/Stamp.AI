@@ -5,9 +5,8 @@
  */
 
 import { useTranslations } from "next-intl";
-
-const SHIMMER_CLASS =
-  "border border-(--color-stamp-divider) bg-linear-to-r from-(--color-stamp-cream) via-(--color-stamp-divider) to-(--color-stamp-cream) bg-size-[200%_100%] animate-[dashboard-shimmer_1.5s_linear_infinite]";
+import { cn } from "@/lib/utils";
+import { dashboardShimmerVariants } from "@/features/dashboard/lib/variants/dashboardShimmerVariants";
 
 export function DashboardLoadingSection() {
   const t = useTranslations("dashboard.loading");
@@ -20,17 +19,17 @@ export function DashboardLoadingSection() {
       className="grid grid-cols-1 gap-8 xl:grid-cols-12"
     >
       <div className="flex flex-col gap-8 xl:col-span-4">
-        <div className={`h-64 w-full ${SHIMMER_CLASS}`} />
-        <div className={`h-72 w-full ${SHIMMER_CLASS}`} />
-        <div className={`h-48 w-full ${SHIMMER_CLASS}`} />
+        <div className={cn("h-64", dashboardShimmerVariants())} />
+        <div className={cn("h-72", dashboardShimmerVariants())} />
+        <div className={cn("h-48", dashboardShimmerVariants())} />
       </div>
       <div className="flex flex-col gap-8 xl:col-span-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-          <div className={`h-64 w-full ${SHIMMER_CLASS}`} />
-          <div className={`h-64 w-full ${SHIMMER_CLASS}`} />
+          <div className={cn("h-64", dashboardShimmerVariants())} />
+          <div className={cn("h-64", dashboardShimmerVariants())} />
         </div>
-        <div className={`h-56 w-full ${SHIMMER_CLASS}`} />
-        <div className={`h-96 w-full ${SHIMMER_CLASS}`} />
+        <div className={cn("h-56", dashboardShimmerVariants())} />
+        <div className={cn("h-96", dashboardShimmerVariants())} />
       </div>
     </div>
   );

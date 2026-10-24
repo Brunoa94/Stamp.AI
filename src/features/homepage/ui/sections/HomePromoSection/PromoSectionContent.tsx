@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
+import { promoSectionContentVariants } from "@/features/homepage/lib/variants/promoSectionContentVariants";
 
 interface PropsI {
   tagline: string;
@@ -54,14 +55,8 @@ export function PromoSectionContent({
     );
   };
 
-  const alignmentClasses = {
-    left: "text-left items-start",
-    center: "text-center items-center",
-    right: "text-right items-end",
-  };
-
   return (
-    <div className={cn("flex flex-col gap-5", alignmentClasses[align])}>
+    <div className={promoSectionContentVariants({ align })}>
       {/* Luxury section label with number */}
       {sectionNumber && (
         <div className="flex items-center gap-3">

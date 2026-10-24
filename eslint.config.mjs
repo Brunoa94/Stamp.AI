@@ -35,12 +35,44 @@ const designSystemElements = [
   { elements: ["img"], component: "Image", from: "next/image" },
 ];
 
-const rawElementRules = designSystemElements.flatMap(({ elements, component, from }) =>
-  elements.map((element) => ({
-    selector: `JSXOpeningElement[name.name='${element}']`,
-    message: `Use the ${component} component from ${from} instead of raw <${element}>.`,
-  })),
-);
+const rawElementRules = [
+  ...designSystemElements.flatMap(({ elements, component, from }) =>
+    elements.map((element) => ({
+      selector: `JSXOpeningElement[name.name='${element}']`,
+      message: `Use the ${component} component from ${from} instead of raw <${element}>.`,
+    })),
+  ),
+  // (mirrors "SVGs are always assets" in docs/README.md → Components → Component Guidelines)
+  {
+    selector: "JSXOpeningElement[name.name='svg']",
+    message:
+      "Save the SVG as a file under public/assets/ and render it with Image from next/image instead of inline <svg>.",
+  },
+];
+
+// Styling lives in variants (cva in a .ts file) or inline in the returned JSX —
+// never in class-string constants, lookup maps or helpers inside a .tsx file.
+// A string counts as styling when it carries a Tailwind utility token; strings
+// inside a JSX attribute (className="…", className={cn(…)}) are allowed.
+// (mirrors "Styling approach" in docs/README.md → Components → Component Guidelines)
+const tailwindTokenPattern =
+  "(^|\\s)!?([a-z0-9-]+:)*-?(bg|text|border|rounded|p[xytrbl]?|m[xytrbl]?|gap|space-[xy]|w|h|min-[wh]|max-[wh]|size|flex|grid|items|justify|self|font|tracking|leading|shadow|opacity|z|top|left|right|bottom|inset|translate-[xy]|rotate|scale|duration|transition|ring|outline|fill|stroke|overflow|cursor|aspect|object|origin|blur|backdrop)-[^\\s]";
+const styleOutsideJsxMessage =
+  "Keep styling out of constants and helpers in .tsx files. Move class maps to a cva variants file under lib/variants/, or inline the classes in the returned JSX.";
+const styleOutsideJsxRules = [
+  {
+    selector: `Literal[value=/${tailwindTokenPattern}/]:not(JSXAttribute Literal):not(ImportDeclaration Literal)`,
+    message: styleOutsideJsxMessage,
+  },
+  {
+    selector: `TemplateElement[value.raw=/${tailwindTokenPattern}/]:not(JSXAttribute TemplateElement)`,
+    message: styleOutsideJsxMessage,
+  },
+  {
+    selector: "CallExpression[callee.name='cva']",
+    message: "Define cva variants in a .ts file under lib/variants/, not in a component file.",
+  },
+];
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -89,7 +121,12 @@ const eslintConfig = defineConfig([
       "src/**/*.test.tsx",
     ],
     rules: {
-      "no-restricted-syntax": ["error", ...barrelExportRules, ...rawElementRules],
+      "no-restricted-syntax": [
+        "error",
+        ...barrelExportRules,
+        ...rawElementRules,
+        ...styleOutsideJsxRules,
+      ],
     },
   },
 ]);

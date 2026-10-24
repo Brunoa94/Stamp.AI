@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
+import { placementPreviewVariants } from "@/features/stamp/lib/variants/placementPreviewVariants";
 import type { SafeZone } from "@/lib/printPlacement/types";
 import type { PlacementParamsType } from "../../../lib/types/stampFlowTypes";
 import type { CategoryType, OrientationType } from "../../../lib/config/silhouetteConfig";
@@ -46,20 +47,14 @@ export function PlacementPreview({
     scale: placement.scale * scaleMultiplier,
   };
 
-  // Determine aspect ratio class based on orientation for canvas/poster
+  // Only canvas/poster frames follow the orientation; everything else is portrait
   const isCanvasOrPoster = productCategory === "canvas" || productCategory === "poster";
-  const aspectClass = isCanvasOrPoster
-    ? orientation === "horizontal"
-      ? "aspect-6/5"
-      : orientation === "square"
-        ? "aspect-square"
-        : "aspect-5/6"
-    : "aspect-5/6";
+  const frameOrientation = isCanvasOrPoster ? orientation : undefined;
 
   return (
     <div
       data-testid="placement-preview"
-      className={`relative mx-auto w-full max-w-sm ${aspectClass}`}
+      className={placementPreviewVariants({ orientation: frameOrientation })}
     >
       <ProductSilhouette
         category={productCategory}

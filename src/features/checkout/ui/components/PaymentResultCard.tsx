@@ -1,23 +1,11 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import {
+  paymentResultBarVariants,
+  paymentResultIconVariants,
+} from "@/features/checkout/lib/variants/paymentResultVariants";
 
 type PaymentResultToneT = "success" | "error" | "pending";
-
-const TONE_CLASSES: Record<PaymentResultToneT, { bar: string; icon: string }> =
-  {
-    success: {
-      bar: "bg-(--color-stamp-success)",
-      icon: "bg-(--color-stamp-success)/10 text-(--color-stamp-success)",
-    },
-    error: {
-      bar: "bg-(--color-stamp-error)",
-      icon: "bg-(--color-stamp-error)/10 text-(--color-stamp-error)",
-    },
-    pending: {
-      bar: "bg-(--color-stamp-gold)",
-      icon: "bg-(--color-stamp-gold)/10 text-(--color-stamp-gold-text)",
-    },
-  };
 
 interface Props {
   ariaLabel: string;
@@ -34,8 +22,6 @@ export function PaymentResultCard({
   children,
   className,
 }: Props) {
-  const toneClasses = TONE_CLASSES[tone];
-
   return (
     <div
       className={cn(
@@ -50,16 +36,13 @@ export function PaymentResultCard({
         >
           {/* Top accent bar */}
           <div
-            className={cn("absolute top-0 left-0 w-full h-1", toneClasses.bar)}
+            className={paymentResultBarVariants({ tone })}
             aria-hidden="true"
           />
 
           {/* Status icon */}
           <div
-            className={cn(
-              "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-10",
-              toneClasses.icon,
-            )}
+            className={paymentResultIconVariants({ tone })}
             aria-hidden="true"
           >
             {icon}

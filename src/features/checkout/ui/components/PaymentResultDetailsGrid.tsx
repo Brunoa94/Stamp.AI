@@ -1,5 +1,9 @@
 import clsx from "clsx";
 import { Span } from "@/features/ui/span";
+import {
+  paymentResultStatusDotVariants,
+  paymentResultStatusTextVariants,
+} from "@/features/checkout/lib/variants/paymentResultVariants";
 
 interface PaymentResultGridItemI {
   label: string;
@@ -20,28 +24,6 @@ export function PaymentResultDetailsGrid({
   statusValue,
   statusVariant = "success",
 }: Props) {
-  const getStatusColors = () => {
-    switch (statusVariant) {
-      case "success":
-        return {
-          dot: "bg-(--color-stamp-success) animate-pulse",
-          text: "text-(--color-stamp-success)",
-        };
-      case "error":
-        return {
-          dot: "bg-(--color-stamp-error)",
-          text: "text-(--color-stamp-error)",
-        };
-      case "pending":
-        return {
-          dot: "bg-(--color-stamp-gold) animate-pulse",
-          text: "text-(--color-stamp-gold-text)",
-        };
-    }
-  };
-
-  const statusColors = getStatusColors();
-
   return (
     <div
       className="grid grid-cols-2 gap-8 text-left border-y border-(--color-stamp-divider) py-8 mb-12"
@@ -73,15 +55,12 @@ export function PaymentResultDetailsGrid({
         <div className="flex items-center gap-2">
           <Span
             unstyled
-            className={clsx("w-2 h-2 rounded-full", statusColors.dot)}
+            className={paymentResultStatusDotVariants({ tone: statusVariant })}
             aria-hidden="true"
           />
           <Span
             unstyled
-            className={clsx(
-              "font-heading text-lg uppercase tracking-wide font-bold",
-              statusColors.text
-            )}
+            className={paymentResultStatusTextVariants({ tone: statusVariant })}
           >
             {statusValue}
           </Span>

@@ -4,6 +4,7 @@ import { ChevronDown, Minus, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { cn } from "@/lib/utils";
+import { flowBoxVariants } from "@/features/homepage/lib/variants/flowBoxVariants";
 import { getColorHex } from "@/features/homepage/lib/constants/colorSwatches";
 import {
   FLOW_ROTATIONS_DEG,
@@ -21,9 +22,6 @@ interface PropsI {
   rotationIndex: number;
 }
 
-const boxClassName = "border border-(--color-stamp-chocolate)/10";
-const selectedBoxClassName = "border-2 border-(--color-stamp-gold)";
-
 /**
  * FlowCustomizeStep
  *
@@ -39,11 +37,11 @@ export function FlowCustomizeStep({ printSize, rotationIndex }: PropsI) {
       <div className="flex min-w-0 flex-1 flex-col gap-2.5">
         <FlowLabel size="sm" className="hidden sm:block">{t("printPositions")}</FlowLabel>
         <div className="hidden gap-1.5 sm:flex">
-          <Span unstyled className={cn("flex flex-1 flex-col px-2 py-1.5 text-2xs uppercase", selectedBoxClassName)}>
+          <Span unstyled className={cn("flex flex-1 flex-col px-2 py-1.5 text-2xs uppercase", flowBoxVariants({ selected: true }))}>
             {t("front")}
             <Span unstyled className="text-4xs text-(--color-stamp-taupe)">{t("included")}</Span>
           </Span>
-          <Span unstyled className={cn("flex flex-1 flex-col px-2 py-1.5 text-2xs uppercase", boxClassName)}>
+          <Span unstyled className={cn("flex flex-1 flex-col px-2 py-1.5 text-2xs uppercase", flowBoxVariants())}>
             {t("back")}
             <Span unstyled className="text-4xs text-(--color-stamp-taupe)">{t("included")}</Span>
           </Span>
@@ -61,11 +59,11 @@ export function FlowCustomizeStep({ printSize, rotationIndex }: PropsI) {
 
         <FlowLabel size="sm" className="hidden sm:block">{t("size")}</FlowLabel>
         <div className="hidden items-center gap-2 text-2xs text-(--color-stamp-chocolate)/80 sm:flex">
-          <Span unstyled className={cn("flex size-4.5 items-center justify-center", boxClassName)}>
+          <Span unstyled className={cn("flex size-4.5 items-center justify-center", flowBoxVariants())}>
             <Minus className="size-2.5" />
           </Span>
           <FlowSliderTrack knobPct={printSize.knobPct} />
-          <Span unstyled className={cn("flex size-4.5 items-center justify-center", boxClassName)}>
+          <Span unstyled className={cn("flex size-4.5 items-center justify-center", flowBoxVariants())}>
             <Plus className="size-2.5" />
           </Span>
           {t("sizePct", { value: printSize.pct })}
@@ -77,7 +75,7 @@ export function FlowCustomizeStep({ printSize, rotationIndex }: PropsI) {
             <Span
               key={deg}
               unstyled
-              className={cn("px-2 py-1 text-2xs", index === rotationIndex ? selectedBoxClassName : boxClassName)}
+              className={cn("px-2 py-1 text-2xs", flowBoxVariants({ selected: index === rotationIndex }))}
             >
               {t("rotationValue", { value: deg })}
             </Span>
@@ -94,14 +92,14 @@ export function FlowCustomizeStep({ printSize, rotationIndex }: PropsI) {
               key={color}
               className={cn(
                 "size-6 rounded-full",
-                index === 0 ? "border-2 border-(--color-stamp-gold)" : "border border-(--color-stamp-chocolate)/10",
+                flowBoxVariants({ selected: index === 0 }),
               )}
               style={{ backgroundColor: getColorHex(color) }}
             />
           ))}
         </div>
         <FlowLabel size="sm">{t("sizeSelector")}</FlowLabel>
-        <div className={cn("flex items-center justify-between bg-(--color-stamp-white) px-2.5 py-2 text-xs", boxClassName)}>
+        <div className={cn("flex items-center justify-between bg-(--color-stamp-white) px-2.5 py-2 text-xs", flowBoxVariants())}>
           {t("sizeValue")}
           <ChevronDown className="size-3 text-(--color-stamp-chocolate)/80" />
         </div>

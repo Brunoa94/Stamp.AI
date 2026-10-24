@@ -11,6 +11,8 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Span } from "@/features/ui/span";
+import { processAnimatedButtonVariants } from "@/features/homepage/lib/variants/processAnimatedButtonVariants";
 import { HOME_PROCESS_STEPS } from "@/features/homepage/lib/constants/homepageContent";
 
 const TOTAL_BLOCKS = HOME_PROCESS_STEPS.length;
@@ -44,7 +46,8 @@ export function ProcessAnimatedButton({
       />
 
       {/* Button content */}
-      <span
+      <Span
+        unstyled
         className={cn(
           "relative z-10 font-semibold text-base md:text-lg uppercase tracking-wider",
           "transition-colors duration-300",
@@ -54,7 +57,7 @@ export function ProcessAnimatedButton({
         )}
       >
         Start creating, stamp it!
-      </span>
+      </Span>
       <ArrowRight
         className={cn(
           "relative z-10 h-5 w-5 md:h-6 md:w-6 transition-all duration-300",
@@ -67,27 +70,22 @@ export function ProcessAnimatedButton({
     </>
   );
 
-  const baseClasses = cn(
-    "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-md",
-    "h-auto px-12 py-6 md:px-16 md:py-7",
-    "bg-(--color-stamp-chocolate) shadow-md",
-    "transition-all duration-300",
-    isComplete
-      ? "cursor-pointer hover:shadow-lg active:scale-[0.98]"
-      : "cursor-not-allowed opacity-70",
-    className,
-  );
-
   if (isComplete) {
     return (
-      <Link href="/stamp" className={baseClasses}>
+      <Link
+        href="/stamp"
+        className={cn(processAnimatedButtonVariants({ complete: true }), className)}
+      >
         {buttonContent}
       </Link>
     );
   }
 
   return (
-    <div className={baseClasses} aria-disabled="true">
+    <div
+      className={cn(processAnimatedButtonVariants({ complete: false }), className)}
+      aria-disabled="true"
+    >
       {buttonContent}
     </div>
   );
