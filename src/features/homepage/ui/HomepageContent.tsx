@@ -6,26 +6,24 @@
  * Client-side orchestrator for the luxury homepage: maps the server-fetched
  * products and composes all sections. Navbar and footer come from the root
  * layout chrome — not re-added here.
- *
- * Manages bubbling animation progress state to coordinate TopTrustBanner fade.
  */
 
 import type { ProductWithPricing } from "@/lib/supabase/server-cache";
 import { mapProductsToCards } from "../lib/mappers/productCardMapper";
-import { TopTrustBanner } from "./components/TopTrustBanner";
-import { PaymentMethodsBanner } from "./components/PaymentMethodsBanner";
-import { HomeHeroSection } from "./sections/HomeHeroSection";
-import { HomeProductsSection } from "./sections/HomeProductsSection";
-import { HomeProcessSection } from "./sections/HomeProcessSection";
-import { HomeTrustGuaranteesSection } from "./sections/HomeTrustGuaranteesSection";
-import { HomeCtaSection } from "./sections/HomeCtaSection";
-import { HomeReviewsSection } from "./sections/HomeReviewsSection";
+import { TopTrustBanner } from "./sections/TopTrustBanner/TopTrustBanner";
+import { PaymentMethodsBanner } from "./sections/PaymentMethodsBanner/PaymentMethodsBanner";
+import { HomeHeroSection } from "./sections/HomeHeroSection/HomeHeroSection";
+import { HomeProductsSection } from "./sections/HomeProductsSection/HomeProductsSection";
+import { HomeProcessSection } from "./sections/HomeProcessSection/HomeProcessSection";
+import { HomeTrustGuaranteesSection } from "./sections/HomeTrustGuaranteesSection/HomeTrustGuaranteesSection";
+import { HomeCtaSection } from "./sections/HomeCtaSection/HomeCtaSection";
+import { HomeReviewsSection } from "./sections/HomeReviewsSection/HomeReviewsSection";
 import { TRUST_SOCIAL_PROOF_ENABLED } from "@/shared/constants/trustMetrics";
-import { HomeFaqSection } from "./sections/HomeFaqSection";
-import { HomeStorySection } from "./sections/HomeStorySection";
-import { HomeProductOfMonthSection } from "./sections/HomeProductOfMonthSection";
-import { HomePromoSection } from "./sections/HomePromoSection";
-import { HomeProductMarqueeSection } from "./sections/HomeProductMarqueeSection";
+import { HomeFaqSection } from "./sections/HomeFaqSection/HomeFaqSection";
+import { HomeStorySection } from "./sections/HomeStorySection/HomeStorySection";
+import { HomeProductOfMonthSection } from "./sections/HomeProductOfMonthSection/HomeProductOfMonthSection";
+import { HomePromoSection } from "./sections/HomePromoSection/HomePromoSection";
+import { HomeProductMarqueeSection } from "./sections/HomeProductMarqueeSection/HomeProductMarqueeSection";
 
 interface HomepageContentPropsI {
   productsWithPricing: ProductWithPricing[];
