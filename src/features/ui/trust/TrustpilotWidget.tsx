@@ -47,9 +47,9 @@ export function TrustpilotWidget({
             className={cn(
               starSize,
               i < fullStars
-                ? "fill-(--color-stamp-gold) text-(--color-stamp-gold)"
+                ? "fill-(--color-stamp-gold) text-(--color-stamp-gold-text)"
                 : i === fullStars && hasHalfStar
-                  ? "fill-(--color-stamp-gold)/50 text-(--color-stamp-gold)"
+                  ? "fill-(--color-stamp-gold)/50 text-(--color-stamp-gold-text)"
                   : "fill-(--color-stamp-divider) text-(--color-stamp-divider)"
             )}
             aria-hidden="true"

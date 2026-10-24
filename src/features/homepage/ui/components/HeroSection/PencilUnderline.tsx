@@ -26,6 +26,7 @@ export function PencilUnderline({ className, delay = 800 }: PencilUnderlineProps
   }, [delay]);
 
   return (
+    // eslint-disable-next-line no-restricted-syntax -- paths animate their stroke-dashoffset from state
     <svg
       viewBox="0 0 120 50"
       fill="none"

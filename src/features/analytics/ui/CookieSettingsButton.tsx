@@ -12,7 +12,7 @@ export function CookieSettingsButton() {
     <Button
       variant="unstyled"
       onClick={() => window.dispatchEvent(new Event(CONSENT_OPEN_EVENT))}
-      className="cursor-pointer text-xs font-semibold uppercase tracking-[0.15em] text-(--color-stamp-chocolate)/50 transition-colors hover:text-(--color-stamp-gold) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-gold)"
+      className="cursor-pointer text-xs font-semibold uppercase tracking-[0.15em] text-(--color-stamp-taupe) transition-colors hover:text-(--color-stamp-gold) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-gold)"
     >
       {t("settings")}
     </Button>

@@ -12,6 +12,8 @@ import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
 import { Slider } from "@/features/ui/slider";
 import { Span } from "@/features/ui/span";
+import { cn } from "@/lib/utils";
+import { placementControlButtonVariants } from "@/features/stamp/lib/variants/placementControlButtonVariants";
 import type { PlacementBounds, PlacementParamsType } from "../../../lib/types/stampFlowTypes";
 import { ADJUST_STEP } from "../../../lib/hooks/useDesignAdjustment";
 
@@ -31,9 +33,6 @@ interface PropsI {
   disabled?: boolean;
 }
 
-const ARROW_BUTTON_CLASS =
-  "h-9 w-9 rounded-none border border-(--color-stamp-divider) p-0 text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)";
-
 export function PositionControls({
   placement,
   bounds,
@@ -49,7 +48,7 @@ export function PositionControls({
       <div className="flex items-center gap-2">
         <Button
           variant="ghost"
-          className={ARROW_BUTTON_CLASS}
+          className={placementControlButtonVariants()}
           aria-label={t("moveLeft")}
           disabled={disabled}
           onClick={() => onNudge(-ADJUST_STEP, 0)}
@@ -58,7 +57,7 @@ export function PositionControls({
         </Button>
         <Button
           variant="ghost"
-          className={ARROW_BUTTON_CLASS}
+          className={placementControlButtonVariants()}
           aria-label={t("moveUp")}
           disabled={disabled}
           onClick={() => onNudge(0, -ADJUST_STEP)}
@@ -67,7 +66,7 @@ export function PositionControls({
         </Button>
         <Button
           variant="ghost"
-          className={ARROW_BUTTON_CLASS}
+          className={placementControlButtonVariants()}
           aria-label={t("moveDown")}
           disabled={disabled}
           onClick={() => onNudge(0, ADJUST_STEP)}
@@ -76,7 +75,7 @@ export function PositionControls({
         </Button>
         <Button
           variant="ghost"
-          className={ARROW_BUTTON_CLASS}
+          className={placementControlButtonVariants()}
           aria-label={t("moveRight")}
           disabled={disabled}
           onClick={() => onNudge(ADJUST_STEP, 0)}
@@ -85,7 +84,7 @@ export function PositionControls({
         </Button>
         <Button
           variant="ghost"
-          className={`${ARROW_BUTTON_CLASS} ml-2 w-auto gap-2 px-3`}
+          className={cn(placementControlButtonVariants(), "ml-2 w-auto gap-2 px-3")}
           aria-label={t("center")}
           disabled={disabled}
           onClick={onCenter}

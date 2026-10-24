@@ -4,18 +4,17 @@
  * ProcessStickyCarousel
  *
  * Brevo-style scroll-driven sticky carousel that cycles through process steps.
- * Image on the left slides up/down, text on the right crossfades.
+ * The matching flow-demo screen on the left slides up/down, text on the right crossfades.
  * Includes a sticky stepper at the bottom showing current progress.
  */
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { HOME_PROCESS_STEPS } from "../../../lib/constants/homepageContent";
-import { PROCESS_STEP_IMAGES } from "../../../lib/constants/processStepImages";
 import { HomeSectionHeader } from "../HomeSectionHeader";
 import { ProcessStepper } from "./ProcessStepper";
 import { ProcessAnimatedButton } from "./ProcessAnimatedButton";
-import { ProcessDesktopImage } from "./ProcessDesktopImage";
+import { ProcessDesktopPreview } from "./ProcessDesktopPreview";
 import { ProcessMobileCard } from "./ProcessMobileCard";
 import { ProcessDesktopText } from "./ProcessDesktopText";
 import {
@@ -105,25 +104,22 @@ export function ProcessStickyCarousel() {
         {/* Content - centered in remaining space */}
         <div className="flex-1 flex items-start mt-4 lg:mt-12">
           <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-30 max-w-8xl mx-auto px-6 md:px-12 lg:px-16">
-            {/* Left side - Desktop image with slide animation */}
-            <div className="hidden lg:flex items-center relative w-125 xl:w-150 h-125 xl:h-150 mt-10 flex-[0.5]">
+            {/* Left side - Desktop flow-demo screen with slide animation */}
+            <div className="hidden lg:flex items-center relative w-125 xl:w-150 h-125 xl:h-150 mt-6 flex-[0.5]">
               {HOME_PROCESS_STEPS.map((step, index) => {
                 const animation = computeDesktopImageAnimation(
                   index,
                   activeStepIndex,
                   stepProgress,
                 );
-                const imageData = PROCESS_STEP_IMAGES[step.id];
-
                 return (
-                  <ProcessDesktopImage
+                  <ProcessDesktopPreview
                     key={step.id}
                     step={step}
-                    imageData={imageData}
+                    label={t(`steps.${step.id}.description`)}
                     translateY={animation.translateY}
                     opacity={animation.opacity}
                     zIndex={animation.zIndex}
-                    isPriority={index === 0}
                   />
                 );
               })}
@@ -131,8 +127,8 @@ export function ProcessStickyCarousel() {
 
             {/* Right side - Text content with crossfade */}
             <div className="w-full flex-[0.5] max-w-2xl">
-              {/* Mobile: Combined image and text with slide animations */}
-              <div className="lg:hidden relative h-120 sm:h-130 overflow-visible">
+              {/* Mobile: Combined flow-demo screen and text with slide animations */}
+              <div className="lg:hidden relative h-124 sm:h-136 overflow-visible">
                 {HOME_PROCESS_STEPS.map((step, index) => {
                   const animation = computeMobileCardAnimation(
                     index,
@@ -141,20 +137,16 @@ export function ProcessStickyCarousel() {
                   );
                   if (!animation.isVisible) return null;
 
-                  const imageData = PROCESS_STEP_IMAGES[step.id];
-
                   return (
                     <ProcessMobileCard
                       key={step.id}
                       step={step}
-                      imageData={imageData}
                       title={t(`steps.${step.id}.title`)}
                       description={t(`steps.${step.id}.description`)}
                       translateY={animation.translateY}
                       opacity={animation.opacity}
                       scale={animation.scale}
                       isActive={animation.isActive}
-                      isPriority={index === 0}
                     />
                   );
                 })}

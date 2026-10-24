@@ -10,6 +10,11 @@ import { Register } from "@/features/auth/register/Register";
 import { useUser, useLogout } from "@/shared/queries/authQueries";
 import { Menu, X } from "lucide-react";
 import { useScrolled } from "@/shared/hooks/useScrolled";
+import { cn } from "@/lib/utils";
+import {
+  stampNavCtaVariants,
+  stampNavLinkVariants,
+} from "@/features/stamp/lib/variants/stampNavVariants";
 
 /**
  * StampHeader
@@ -31,9 +36,6 @@ export function StampHeader() {
     logoutMutation.mutate();
     setMobileMenuOpen(false);
   };
-
-  const linkClass =
-    "font-semibold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-all duration-300";
 
   return (
     <>
@@ -62,7 +64,7 @@ export function StampHeader() {
         <div className="flex-none hidden lg:block">
           <Link
             href="/stamp"
-            className="inline-flex items-center justify-center rounded-md px-16 py-5 text-sm font-bold uppercase tracking-wider bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg transition-all duration-300"
+            className={cn(stampNavCtaVariants(), "px-8 py-3")}
             aria-label={t("stampAria")}
           >
             {t("stamp")}
@@ -74,21 +76,21 @@ export function StampHeader() {
           className="flex-1 hidden lg:flex justify-end gap-8 lg:gap-10 items-center"
           aria-label={t("mainNavAria")}
         >
-          <Link href="/catalog" className={linkClass}>
+          <Link href="/catalog" className={stampNavLinkVariants()}>
             {t("catalog")}
           </Link>
 
           {user && (
             <>
-              <Link href="/orders" className={linkClass}>
+              <Link href="/orders" className={stampNavLinkVariants()}>
                 {t("orders")}
               </Link>
-              <Link href="/cart" className={linkClass}>
+              <Link href="/cart" className={stampNavLinkVariants()}>
                 {t("cart")}
               </Link>
               <Link
                 href="/profile"
-                className={linkClass}
+                className={stampNavLinkVariants()}
                 aria-label={t("profileAria")}
               >
                 {t("profile")}
@@ -101,23 +103,24 @@ export function StampHeader() {
               variant="ghost"
               onClick={handleLogout}
               disabled={logoutMutation.isPending}
-              className={`${linkClass} hover:bg-transparent`}
+              className={cn(stampNavLinkVariants(), "hover:bg-transparent")}
               aria-label={t("logoutAria")}
             >
               {t("logout")}
             </Button>
           ) : (
             <>
-              <Login className={linkClass}>{t("signIn")}</Login>
-              <Register className={linkClass}>{t("signUp")}</Register>
+              <Login className={stampNavLinkVariants()}>{t("signIn")}</Login>
+              <Register className={stampNavLinkVariants()}>{t("signUp")}</Register>
             </>
           )}
         </nav>
 
         {/* Mobile/tablet hamburger (below lg) */}
-        <button
+        <Button
+          variant="unstyled"
           onClick={() => setMobileMenuOpen((v) => !v)}
-          className="lg:hidden flex-none p-2 -mr-2 text-(--color-stamp-chocolate)"
+          className="lg:hidden flex-none p-2 -mr-2 text-(--color-stamp-chocolate) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) focus-visible:ring-offset-2"
           aria-label={mobileMenuOpen ? t("closeMenu") : t("openMenu")}
           aria-expanded={mobileMenuOpen}
         >
@@ -126,7 +129,7 @@ export function StampHeader() {
           ) : (
             <Menu className="w-6 h-6" />
           )}
-        </button>
+        </Button>
       </header>
 
       {/* Mobile/tablet drawer (below lg) */}
@@ -144,7 +147,7 @@ export function StampHeader() {
           <Link
             href="/stamp"
             onClick={() => setMobileMenuOpen(false)}
-            className="inline-flex items-center justify-center rounded-md w-full mb-2 px-4 py-3 font-bold text-sm uppercase tracking-wider bg-(--color-stamp-chocolate) text-(--color-stamp-white) hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) active:scale-[0.98] shadow-md hover:shadow-lg transition-all duration-300"
+            className={cn(stampNavCtaVariants(), "w-full mb-4 px-4 py-2.5")}
             aria-label={t("stampAria")}
           >
             {t("stamp")}
@@ -153,7 +156,7 @@ export function StampHeader() {
           <Link
             href="/catalog"
             onClick={() => setMobileMenuOpen(false)}
-            className={`${linkClass} py-3`}
+            className={cn(stampNavLinkVariants(), "py-3")}
           >
             {t("catalog")}
           </Link>
@@ -163,21 +166,21 @@ export function StampHeader() {
               <Link
                 href="/orders"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`${linkClass} py-3`}
+                className={cn(stampNavLinkVariants(), "py-3")}
               >
                 {t("orders")}
               </Link>
               <Link
                 href="/cart"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`${linkClass} py-3`}
+                className={cn(stampNavLinkVariants(), "py-3")}
               >
                 {t("cart")}
               </Link>
               <Link
                 href="/profile"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`${linkClass} py-3`}
+                className={cn(stampNavLinkVariants(), "py-3")}
                 aria-label={t("profileAria")}
               >
                 {t("profile")}
@@ -197,10 +200,10 @@ export function StampHeader() {
             </Button>
           ) : (
             <>
-              <Login className={`${linkClass} py-3 text-left`}>
+              <Login className={cn(stampNavLinkVariants(), "py-3 text-left")}>
                 {t("signIn")}
               </Login>
-              <Register className={`${linkClass} py-3 text-left`}>
+              <Register className={cn(stampNavLinkVariants(), "py-3 text-left")}>
                 {t("signUp")}
               </Register>
             </>

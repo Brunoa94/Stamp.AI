@@ -50,7 +50,7 @@ export function CoinsDisplay({ className }: CoinsDisplayProps) {
       <Coins
         className={cn(
           "h-4 w-4 transition-colors",
-          coins === 0 ? "text-(--color-stamp-taupe)" : "text-(--color-stamp-gold)"
+          coins === 0 ? "text-(--color-stamp-taupe)" : "text-(--color-stamp-gold-text)"
         )}
       />
       <Span variant="label" className="text-(--color-stamp-taupe)">

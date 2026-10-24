@@ -20,7 +20,7 @@ export function HomePaymentMethods() {
   return (
     <div className="mt-16 flex flex-col items-center">
       <div className="mb-6 flex items-center gap-2">
-        <Lock className="h-4 w-4 text-(--color-stamp-gold)" />
+        <Lock className="h-4 w-4 text-(--color-stamp-gold-text)" />
         <Span
           variant="micro"
           className="uppercase tracking-widest text-(--color-stamp-chocolate)"

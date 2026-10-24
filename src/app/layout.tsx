@@ -88,6 +88,12 @@ export default async function RootLayout({
       <body
         className={`${poppins.variable} ${bebasNeue.variable} ${sanchez.variable} ${indieFlower.variable} ${inter.variable} antialiased`}
       >
+        {/* The acceptance suite runs against `next dev`, whose error badge grows
+            over the bottom-left of the page once any error is logged and
+            swallows clicks meant for the controls underneath. */}
+        {process.env.NEXT_PUBLIC_STAMP_ACCEPTANCE_TESTS === "1" && (
+          <style>{"nextjs-portal { display: none !important; }"}</style>
+        )}
         <GoogleAnalytics />
         <AnalyticsPageViewTracker />
         <StructuredData data={organizationSchema()} />

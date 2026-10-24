@@ -72,7 +72,7 @@ export function CheckoutSummarySection({
         unstyled
         className="mb-8 font-heading text-2xl md:text-3xl font-bold uppercase tracking-tight"
       >
-        Order <Span className="text-(--color-stamp-gold)">Summary</Span>
+        Order <Span className="text-(--color-stamp-gold-text)">Summary</Span>
       </Heading>
 
       <div className="space-y-6">

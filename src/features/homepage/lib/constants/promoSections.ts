@@ -10,7 +10,7 @@ export interface PromoImageType {
   alt: string;
 }
 
-/** Animation timing (mirrors HeroTransformShowcase) */
+/** Animation timing */
 export const PROMO_CAROUSEL_DISPLAY_MS = 3500;
 
 /** Brand & Logo section images */

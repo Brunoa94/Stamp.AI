@@ -1,56 +1,32 @@
 /**
  * TopTrustBanner
  *
- * Dark banner fixed right below the navbar displaying key trust indicators.
+ * Dark banner right below the navbar displaying key trust indicators.
  * Similar to AboutYou's top banner with shipping, returns, and payment info.
- * Fixed position at top-24 (below the h-24 header).
+ * Sits in the page flow under the h-24 header. Its labels fall in from the
+ * top one after another whenever the banner scrolls into view.
  */
 
 "use client";
 
-import { Truck, RefreshCcw, Lock } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { Span } from "@/features/ui/span";
-import { TRUST_GUARANTEE_METRICS } from "@/shared/constants/trustMetrics";
+import { useIntersectionObserver } from "@/shared/hooks/useIntersectionObserver";
+import { TopTrustBannerItems } from "./TopTrustBannerItems";
+
+/** Ignore the strip behind the fixed h-24 header when checking visibility */
+const HEADER_ROOT_MARGIN = "-96px 0px 0px 0px";
 
 export function TopTrustBanner() {
-  const t = useTranslations("home.topBanner");
-
-  const trustItems = [
-    {
-      icon: Truck,
-      text: t("freeShipping", {
-        threshold: TRUST_GUARANTEE_METRICS.freeShippingThreshold,
-      }),
-    },
-    {
-      icon: RefreshCcw,
-      text: t("returns", { days: TRUST_GUARANTEE_METRICS.guaranteeDays }),
-    },
-    {
-      icon: Lock,
-      text: t("securePayment"),
-    },
-  ];
+  const { ref, isVisible } = useIntersectionObserver<HTMLDivElement>({
+    rootMargin: HEADER_ROOT_MARGIN,
+    triggerOnce: false,
+  });
 
   return (
-    <div className="relative w-full bg-(--color-stamp-chocolate) py-2.5 mt-26">
-      <div className="mx-auto flex max-w-7xl items-center justify-center gap-8 px-4 sm:gap-12 md:gap-16 lg:gap-24">
-        {trustItems.map((item, index) => (
-          <div key={index} className="flex items-center gap-2">
-            <item.icon
-              className="h-4 w-4 text-(--color-stamp-gold)"
-              strokeWidth={2}
-            />
-            <Span
-              variant="micro"
-              className="font-semibold uppercase tracking-widest text-(--color-stamp-white)"
-            >
-              {item.text}
-            </Span>
-          </div>
-        ))}
-      </div>
+    <div
+      ref={ref}
+      className="relative w-full overflow-hidden bg-(--color-stamp-chocolate) py-2.5 mt-26"
+    >
+      <TopTrustBannerItems isDropped={isVisible} />
     </div>
   );
 }

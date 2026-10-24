@@ -33,7 +33,7 @@ export function TimelineEntry({ entry, isLast, t }: PropsI) {
             <Check className="h-2.5 w-2.5 text-(--color-stamp-white)" />
           </div>
         ) : isLast ? (
-          <Circle className="h-4 w-4 fill-(--color-stamp-gold) text-(--color-stamp-gold)" />
+          <Circle className="h-4 w-4 fill-(--color-stamp-gold) text-(--color-stamp-gold-text)" />
         ) : (
           <div className="h-2 w-2 rounded-full bg-(--color-stamp-taupe)" />
         )}

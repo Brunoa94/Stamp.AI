@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { List } from "@/features/ui/list";
 import { Span } from "@/features/ui/span";
+import { stampFooterLinkVariants } from "@/features/stamp/lib/variants/stampNavVariants";
 
 /**
  * FooterLinkColumn
@@ -25,9 +26,6 @@ interface PropsI {
   t: ReturnType<typeof useTranslations<"layout.stampFooter">>;
 }
 
-const linkClass =
-  "text-xs font-semibold uppercase tracking-[0.15em] text-(--color-stamp-chocolate)/60 transition-colors hover:text-(--color-stamp-gold) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-gold)";
-
 export function FooterLinkColumn({ columnKey, links, t }: PropsI) {
   return (
     <nav aria-label={t(`columns.${columnKey}`)}>
@@ -42,12 +40,12 @@ export function FooterLinkColumn({ columnKey, links, t }: PropsI) {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={linkClass}
+                className={stampFooterLinkVariants()}
               >
                 {t(`links.${link.id}`)}
               </a>
             ) : (
-              <Link href={link.href} className={linkClass}>
+              <Link href={link.href} className={stampFooterLinkVariants()}>
                 {t(`links.${link.id}`)}
               </Link>
             )}

@@ -28,7 +28,7 @@ export const KEYWORDS = {
     "AI generated t-shirt designs",
     "custom heavyweight t-shirts online",
     "made to order AI apparel",
-    "carbon neutral custom clothing",
+    "custom t-shirt from photo",
   ],
 } as const;
 

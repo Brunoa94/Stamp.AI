@@ -25,7 +25,7 @@ export function HeroSecurityBadge({
     return (
       <div
         className={cn(
-          "inline-flex items-center gap-1.5 text-(--color-stamp-chocolate)/60",
+          "inline-flex items-center gap-1.5 text-(--color-stamp-taupe)",
           className
         )}
       >

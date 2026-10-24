@@ -63,7 +63,7 @@ test("creates a design, adds it to the cart, and reaches checkout", async ({
 
     await page.goto("/stamp");
     await expect(page.getByRole("button", { name: /logout from your account/i })).toBeVisible({ timeout: 20_000 });
-    await page.getByRole("button", { name: /begin customiz/i }).click();
+    await page.getByRole("button", { name: /begin customizing/i }).click();
     await page.getByRole("button", { name: /skip upload/i }).click();
     await page
       .getByRole("textbox", { name: /prompt input/i })

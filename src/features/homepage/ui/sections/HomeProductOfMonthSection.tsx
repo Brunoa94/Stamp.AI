@@ -123,7 +123,7 @@ export function HomeProductOfMonthSection() {
               {originalPrice && (
                 <Span
                   variant="sm"
-                  className="text-(--color-stamp-chocolate)/60 line-through"
+                  className="text-(--color-stamp-taupe) line-through"
                 >
                   €{originalPrice.toFixed(2)}
                 </Span>

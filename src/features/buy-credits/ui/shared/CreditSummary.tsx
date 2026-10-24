@@ -2,7 +2,7 @@
 
 import { Coins } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { buyCreditsTheme } from "@/theme/components";
+import { Span } from "@/features/ui/span";
 
 interface CreditSummaryProps {
   credits: number;
@@ -10,19 +10,18 @@ interface CreditSummaryProps {
 }
 
 export function CreditSummary({ credits, price }: CreditSummaryProps) {
-  const theme = buyCreditsTheme.summary;
   const t = useTranslations("buyCredits.summary");
 
   return (
-    <div className={theme.container}>
-      <div className={theme.row}>
-        <div className={theme.creditsWrap}>
-          <Coins className={theme.creditsIcon} />
-          <span className={theme.creditsLabel}>
+    <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <Coins className="w-5 h-5 text-[#FF8C42]" />
+          <Span variant="strong" className="text-slate-900">
             {t("credits", { credits: credits.toLocaleString() })}
-          </span>
+          </Span>
         </div>
-        <span className={theme.priceValue}>€{price.toFixed(2)}</span>
+        <Span variant="total" className="text-slate-900">€{price.toFixed(2)}</Span>
       </div>
     </div>
   );

@@ -5,8 +5,9 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
 import { Input } from "@/features/ui/input";
+import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
 import { cn } from "@/lib/utils";
-import { buyCreditsTheme } from "@/theme/components";
 import { MIN_CUSTOM_CREDITS, PRICE_PER_CREDIT } from "@/shared/constants/credits";
 
 interface CustomCreditInputProps {
@@ -23,7 +24,6 @@ export function CustomCreditInput({
   onFocus,
 }: CustomCreditInputProps) {
   const t = useTranslations("buyCredits.selection");
-  const theme = buyCreditsTheme.customInput;
   const numericValue = parseInt(value) || 0;
   const price = numericValue * PRICE_PER_CREDIT;
   const showPrice = isSelected && numericValue >= MIN_CUSTOM_CREDITS;
@@ -31,17 +31,15 @@ export function CustomCreditInput({
 
   return (
     <div>
-      <Label className={buyCreditsTheme.sectionLabel}>{t("customLabel")}</Label>
+      <Label variant="section" className="mb-3 text-slate-500">{t("customLabel")}</Label>
       <Button
         type="button"
-        variant="outline"
+        variant="option-card"
         onClick={onFocus}
-        className={cn(
-          theme.container,
-          isSelected ? theme.containerSelected : theme.containerUnselected
-        )}
+        aria-pressed={isSelected}
+        className="w-full min-h-18 p-4 text-left"
       >
-        <div className={theme.row}>
+        <div className="flex items-center gap-3">
           <CreditIcon isSelected={isSelected} />
           <div className="flex-1">
             <Input
@@ -55,13 +53,13 @@ export function CustomCreditInput({
             />
           </div>
           {showPrice && (
-            <span className={theme.price}>€{price.toFixed(2)}</span>
+            <Span variant="price" className="text-slate-600">€{price.toFixed(2)}</Span>
           )}
         </div>
         {showError && (
-          <p className={theme.error}>
+          <Paragraph variant="caption" className="text-red-500 mt-2">
             {t("customError", { min: MIN_CUSTOM_CREDITS })}
-          </p>
+          </Paragraph>
         )}
       </Button>
     </div>
@@ -69,21 +67,17 @@ export function CustomCreditInput({
 }
 
 function CreditIcon({ isSelected }: { isSelected: boolean }) {
-  const theme = buyCreditsTheme.customInput;
-
   return (
     <div
       className={cn(
-        theme.iconBox,
-        isSelected ? theme.iconBoxSelected : theme.iconBoxUnselected
+        "w-10 h-10 rounded-lg flex items-center justify-center",
+        isSelected ? "bg-[#7C3AED]/10" : "bg-slate-100"
       )}
     >
       <Coins
         className={cn(
           "w-5 h-5",
-          isSelected
-            ? buyCreditsTheme.packageCard.creditsIconSelected
-            : buyCreditsTheme.packageCard.creditsIconUnselected
+          isSelected ? "text-[#FF8C42]" : "text-slate-400"
         )}
       />
     </div>

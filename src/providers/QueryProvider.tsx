@@ -41,7 +41,10 @@ export function QueryProvider({ children }: QueryProviderProps) {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* Its floating button would cover the bottom-right of pages under acceptance test. */}
+      {process.env.NEXT_PUBLIC_STAMP_ACCEPTANCE_TESTS !== "1" && (
+        <ReactQueryDevtools initialIsOpen={false} />
+      )}
     </QueryClientProvider>
   );
 }

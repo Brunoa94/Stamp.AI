@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
+import { List } from "@/features/ui/list";
 import { Span } from "@/features/ui/span";
 import { useOrderStatusHistory } from "@/shared/queries/orderQueries";
 import { TimelineEntry } from "./TimelineEntry";
@@ -29,7 +30,7 @@ export function OrderStatusTimeline({ orderId }: PropsI) {
     <section className="mt-8">
       <Span
         variant="label"
-        className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold)"
+        className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold-text)"
       >
         {tTimeline("title")}
       </Span>
@@ -37,7 +38,7 @@ export function OrderStatusTimeline({ orderId }: PropsI) {
         {/* Vertical line */}
         <div className="absolute left-[7px] top-2 bottom-2 w-px bg-(--color-stamp-divider)" />
 
-        <ul className="space-y-4">
+        <List className="space-y-4">
           {history.map((entry, index) => (
             <TimelineEntry
               key={entry.id}
@@ -46,7 +47,7 @@ export function OrderStatusTimeline({ orderId }: PropsI) {
               t={t}
             />
           ))}
-        </ul>
+        </List>
       </div>
     </section>
   );

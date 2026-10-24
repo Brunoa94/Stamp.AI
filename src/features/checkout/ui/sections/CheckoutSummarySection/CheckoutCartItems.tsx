@@ -8,6 +8,8 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { ShoppingBag } from "lucide-react";
+import { List } from "@/features/ui/list";
+import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import type { CartWithItems } from "@/shared/types/cart";
 import { formatPrice } from "../../../lib/utils/formatPrice";
@@ -19,7 +21,7 @@ interface CheckoutCartItemsPropsI {
 export function CheckoutCartItems({ items }: CheckoutCartItemsPropsI) {
   const t = useTranslations("checkout.cartItems");
   return (
-    <ul
+    <List
       aria-label={t("listAria")}
       className="checkout-scrollbar max-h-80 space-y-3 overflow-y-auto"
     >
@@ -52,9 +54,9 @@ export function CheckoutCartItems({ items }: CheckoutCartItemsPropsI) {
             </div>
 
             <div className="min-w-0 flex-1">
-              <p className="truncate text-lg font-bold uppercase tracking-[0.15em] text-(--color-stamp-chocolate)">
+              <Paragraph unstyled className="truncate text-lg font-bold uppercase tracking-[0.15em] text-(--color-stamp-chocolate)">
                 {name}
-              </p>
+              </Paragraph>
               <Span unstyled className="mt-1 block text-lg text-(--color-stamp-taupe)">
                 {item.variant?.name || t("standard")}
               </Span>
@@ -62,14 +64,14 @@ export function CheckoutCartItems({ items }: CheckoutCartItemsPropsI) {
                 <Span unstyled className="text-lg text-(--color-stamp-taupe)">
                   {t("qty", { quantity })}
                 </Span>
-                <span className="text-2xl font-bold tabular-nums text-(--color-stamp-chocolate)">
+                <Span unstyled className="text-2xl font-bold tabular-nums text-(--color-stamp-chocolate)">
                   {formatPrice(lineTotal / 100)}
-                </span>
+                </Span>
               </div>
             </div>
           </li>
         );
       })}
-    </ul>
+    </List>
   );
 }

@@ -116,7 +116,7 @@ export function CatalogProductCard({ product }: PropsI) {
               variant="sm"
               className={`shrink-0 text-xs sm:text-sm ${
                 product.isOnSale
-                  ? "text-(--color-stamp-gold)"
+                  ? "text-(--color-stamp-gold-text)"
                   : "text-(--color-stamp-chocolate)"
               }`}
             >

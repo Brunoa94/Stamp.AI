@@ -57,7 +57,7 @@ export function DashboardMetricCard({
           <Span variant="micro" className="text-(--color-stamp-taupe)">
             {targetCaption} {target.toLocaleString()}
           </Span>
-          <Span variant="micro" className="text-(--color-stamp-gold)">
+          <Span variant="micro" className="text-(--color-stamp-gold-text)">
             {percent}%
           </Span>
         </div>

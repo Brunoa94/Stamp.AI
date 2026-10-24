@@ -44,7 +44,7 @@ export function LoginCredentialsFields({ register, errors }: PropsI) {
             </Span>
             <Span
               variant="default"
-              className="text-(--color-stamp-gold) ml-1"
+              className="text-(--color-stamp-gold-text) ml-1"
               aria-hidden="true"
             >
               *

@@ -12,6 +12,8 @@ import { Heading } from "@/features/ui/heading";
 import type { CartWithItems } from "@/shared/types/cart";
 import { CartOrderSummaryBreakdown } from "./CartOrderSummaryBreakdown";
 import { CartOrderSummaryFooter } from "./CartOrderSummaryFooter";
+import { Span } from "@/features/ui/span";
+import { Paragraph } from "@/features/ui/paragraph";
 
 interface SelectedTotalsI {
   subtotal: number;
@@ -45,20 +47,20 @@ export function CartOrderSummary({
       >
         {t.rich("title", {
           accent: (chunks) => (
-            <span className="text-(--color-stamp-gold)">{chunks}</span>
+            <Span unstyled className="text-(--color-stamp-gold-text)">{chunks}</Span>
           ),
         })}
       </Heading>
 
       {selectedCount === 0 ? (
-        <p className="mb-8 text-sm text-(--color-stamp-taupe)">
+        <Paragraph unstyled className="mb-8 text-sm text-(--color-stamp-taupe)">
           {t("noItemsSelected")}
-        </p>
+        </Paragraph>
       ) : (
         <>
-          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-taupe)">
+          <Paragraph unstyled className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-taupe)">
             {t("itemsSelected", { count: selectedCount })}
-          </p>
+          </Paragraph>
           <CartOrderSummaryBreakdown
             subtotal={selectedTotals.subtotal}
             shipping={selectedTotals.shipping}

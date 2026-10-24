@@ -33,6 +33,7 @@ export function ProductSilhouette({
   const config = SILHOUETTE_CONFIGS[configKey] || SILHOUETTE_CONFIGS.apparel;
 
   return (
+    // eslint-disable-next-line no-restricted-syntax -- shapes are generated from silhouetteConfig and themed with CSS tokens
     <svg
       viewBox={config.viewBox}
       className="h-full w-full"

@@ -6,6 +6,13 @@ import Image from "next/image";
 import { X, Loader2 } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
+import { cn } from "@/lib/utils";
+import {
+  polaroidBadgeVariants,
+  polaroidContainerVariants,
+  polaroidImageVariants,
+  polaroidSpinnerVariants,
+} from "@/features/stamp/lib/variants/polaroidPreviewVariants";
 
 /**
  * PolaroidPreview
@@ -114,27 +121,6 @@ function FullscreenModal({
   );
 }
 
-const sizeClasses = {
-  sm: {
-    container: "max-w-xs p-4",
-    image: "mb-4",
-    badge: "top-6 left-6 px-2 py-0.5 text-[7px]",
-    spinner: "w-6 h-6",
-  },
-  md: {
-    container: "max-w-md p-6",
-    image: "mb-6",
-    badge: "top-10 left-10 px-3 py-1 text-[8px]",
-    spinner: "w-8 h-8",
-  },
-  lg: {
-    container: "max-w-lg p-8",
-    image: "mb-8",
-    badge: "top-12 left-12 px-4 py-1.5 text-[9px]",
-    spinner: "w-10 h-10",
-  },
-};
-
 export function PolaroidPreview({
   imageUrl,
   alt,
@@ -147,18 +133,10 @@ export function PolaroidPreview({
 }: PropsI) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  const classes = sizeClasses[size];
-
-  useEffect(() => {
-    setIsLoading(true);
-  }, [imageUrl]);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  // Loading is derived from which URL last finished loading, so a new
+  // imageUrl shows the spinner again without resetting state in an effect.
+  const [loadedUrl, setLoadedUrl] = useState<string | null>(null);
+  const isLoading = loadedUrl !== imageUrl;
 
   const openFullscreen = useCallback(() => {
     setIsFullscreen(true);
@@ -196,19 +174,20 @@ export function PolaroidPreview({
 
   return (
     <>
-      <button
+      <Button
         type="button"
+        variant="unstyled"
         onClick={openFullscreen}
-        className={`w-full bg-white ${classes.container} shadow-xl relative rotate-1 group hover:rotate-0 transition-all duration-500 cursor-zoom-in ${className ?? ""}`}
+        className={cn(polaroidContainerVariants({ size }), className)}
         aria-label={fullscreenLabel}
       >
         <div
-          className={`aspect-square bg-(--color-stamp-cream) flex items-center justify-center overflow-hidden ${classes.image} relative`}
+          className={polaroidImageVariants({ size })}
         >
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-(--color-stamp-cream) z-10">
               <Loader2
-                className={`${classes.spinner} animate-spin text-(--color-stamp-taupe)/40`}
+                className={polaroidSpinnerVariants({ size })}
               />
             </div>
           )}
@@ -219,10 +198,10 @@ export function PolaroidPreview({
             unoptimized
             className={`object-cover transition-opacity duration-200 ${isLoading ? "opacity-0" : "opacity-100"}`}
             sizes="320px"
-            onLoad={() => setIsLoading(false)}
+            onLoad={() => setLoadedUrl(imageUrl)}
           />
         </div>
-        <div className={`absolute ${classes.badge}`}>
+        <div className={polaroidBadgeVariants({ size })}>
           <Span
             variant="badge"
             className="bg-white/80 backdrop-blur-sm border border-(--color-stamp-divider)"
@@ -230,9 +209,10 @@ export function PolaroidPreview({
             {badgeText}
           </Span>
         </div>
-      </button>
+      </Button>
 
-      {isMounted && isFullscreen && (
+      {/* isFullscreen only turns on from a click, so document.body exists by then */}
+      {isFullscreen && (
         <FullscreenModal
           imageUrl={imageUrl}
           alt={alt}

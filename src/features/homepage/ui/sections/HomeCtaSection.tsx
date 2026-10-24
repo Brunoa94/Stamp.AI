@@ -54,7 +54,7 @@ export function HomeCtaSection() {
 
           <Paragraph
             variant="lead"
-            className="mb-14 max-w-2xl text-(--color-stamp-taupe)"
+            className="mb-14 max-w-2xl text-(--color-stamp-taupe-light)"
           >
             {t("lead")}
           </Paragraph>

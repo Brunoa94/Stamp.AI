@@ -63,7 +63,7 @@ export function OrdersGridItemContent({
       <Heading
         as="h4"
         variant="priceCompact"
-        className="mb-4 text-(--color-stamp-gold)"
+        className="mb-4 text-(--color-stamp-gold-text)"
       >
         {formatPrice(order.total_amount)}
       </Heading>

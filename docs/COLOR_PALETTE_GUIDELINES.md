@@ -71,10 +71,13 @@ Color System
 **Primary Palette (Active)**:
 
 - `--color-stamp-chocolate` - Primary text/headings, luxurious brown
-- `--color-stamp-gold` - Primary accent, interactive elements
+- `--color-stamp-gold` - Primary accent, interactive elements; gold text on chocolate surfaces
+- `--color-stamp-gold-text` - Gold text on light surfaces (brand gold fails contrast there)
+- `--color-stamp-gold-light` - Gold text on dark surfaces and photo scrims (brand gold fails contrast there too)
 - `--color-stamp-cream` - Section backgrounds, cards
 - `--color-stamp-off-white` - Page backgrounds
-- `--color-stamp-taupe` - Secondary text, muted elements
+- `--color-stamp-taupe` - Secondary text, muted elements on light surfaces
+- `--color-stamp-taupe-light` - Secondary text on chocolate surfaces
 - `--color-stamp-divider` - Borders and dividers
 - `--color-stamp-white` - Card backgrounds, content areas
 

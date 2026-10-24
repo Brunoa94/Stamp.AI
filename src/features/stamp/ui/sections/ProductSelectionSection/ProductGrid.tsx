@@ -7,6 +7,7 @@ import { ExpandablePicker } from "../../components/ExpandablePicker/ExpandablePi
 import { ProductCard } from "./ProductCard";
 import { SelectedProductCard } from "./SelectedProductCard";
 import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
+import { cn } from "@/lib/utils";
 
 /**
  * ProductGrid
@@ -137,7 +138,12 @@ export function ProductGrid({
       )}
 
       {!isLoading && !isError && hasProducts && (
-        <div className="w-full p-4 lg:p-6">
+        <div
+          className={cn(
+            "w-full p-4 lg:p-6",
+            selectedProduct ? " flex flex-col justify-center h-full" : "",
+          )}
+        >
           {/* When a product is selected, show only that product */}
           {selectedProduct ? (
             <div className="grid grid-cols-1 gap-4">

@@ -16,7 +16,7 @@ interface CartOrderSummaryRowPropsI {
 export function CartOrderSummaryRow({
   label,
   value,
-  valueClassName = "font-body text-base font-bold tabular-nums",
+  valueClassName,
 }: CartOrderSummaryRowPropsI) {
   return (
     <div className="flex items-center justify-between">
@@ -26,7 +26,10 @@ export function CartOrderSummaryRow({
         </Span>
       </dt>
       <dd>
-        <Span unstyled className={valueClassName}>
+        <Span
+          unstyled
+          className={valueClassName ?? "font-body text-base font-bold tabular-nums"}
+        >
           {value}
         </Span>
       </dd>

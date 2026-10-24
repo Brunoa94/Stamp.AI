@@ -11,7 +11,7 @@ import { TRUST_ITEMS } from "@/features/homepage/lib/constants/trustItems";
 export function HeroPromoBanner() {
   return (
     <div className="relative z-10 px-4 sm:px-6 lg:px-12">
-      <div className="mx-auto max-w-4xl mt-30">
+      <div className="mx-auto max-w-4xl mt-12 xl:mt-16">
         {/* Trust items row */}
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-10">
           {TRUST_ITEMS.map((item, index) => (

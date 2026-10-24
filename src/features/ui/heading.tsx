@@ -14,9 +14,11 @@ import { cn } from "@/lib/utils";
  * - cta            CTA section h2 — large fluid viewport-relative title (Sanchez)
  * - section        Section header h2 — 5xl→7xl (Sanchez)
  * - title          Interior section h2 — fixed responsive scale 6xl→8xl (Sanchez)
+ * - spaced         Wide-tracked uppercase title (404 page) — 4xl→6xl (Sanchez)
  * - panelTitle     Split-panel h2 — fluid size that fits a half-width grid column (Sanchez)
  * - panelTitleCompact Compact panel h2 — smaller fluid size for profile cards (Sanchez)
  * - card           Card / step h3 — 3xl→4xl (Sanchez)
+ * - preview        Mock app screen title in the homepage flow preview — 4xl→5xl, tight (Sanchez)
  * - cardCompact    Compact card title — xl (Sanchez)
  * - question       FAQ summary — 2xl→3xl (Sanchez)
  * - item           Product name / testimonial author — xl→2xl (Inter)
@@ -38,11 +40,14 @@ const headingVariants = {
     "font-heading font-normal text-2xl md:text-5xl lg:text-7xl tracking-tight leading-none",
   title:
     "font-heading font-normal text-6xl md:text-7xl lg:text-8xl tracking-tight leading-none",
+  spaced:
+    "font-heading font-normal text-4xl md:text-6xl tracking-[0.25em] leading-none uppercase",
   panelTitle:
     "font-heading font-normal text-[clamp(1.875rem,9vw,3.75rem)] md:text-[clamp(2.5rem,4.75vw,6rem)] tracking-tight leading-none",
   panelTitleCompact:
     "font-heading font-normal text-3xl md:text-4xl tracking-tight leading-none",
   card: "font-heading font-normal text-3xl md:text-4xl tracking-tight leading-tight",
+  preview: "font-heading font-normal text-4xl sm:text-5xl tracking-tight leading-none",
   cardCompact: "font-heading font-normal text-xl tracking-tight leading-tight",
   question:
     "font-heading font-normal text-2xl md:text-3xl tracking-tight leading-tight",

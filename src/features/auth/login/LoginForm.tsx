@@ -46,7 +46,7 @@ export function LoginForm() {
           <div className="grow border-t border-(--color-stamp-divider)" />
           <Span
             variant="default"
-            className="shrink mx-4 text-xs font-bold text-(--color-stamp-gold) uppercase tracking-[0.2em]"
+            className="shrink mx-4 text-xs font-bold text-(--color-stamp-gold-text) uppercase tracking-[0.2em]"
           >
             {t("orContinueWithEmail")}
           </Span>

@@ -126,7 +126,7 @@ export function ProcessTimeline() {
             {/* Step counter */}
             <Span
               variant="micro"
-              className="text-(--color-stamp-chocolate)/40 tabular-nums"
+              className="text-(--color-stamp-taupe) tabular-nums"
             >
               {String(activeStepIndex + 1).padStart(2, "0")} /{" "}
               {String(totalSteps).padStart(2, "0")}

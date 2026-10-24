@@ -46,7 +46,7 @@ export function StoryBlockContent({
         variant="body"
         className={cn(
           "mb-8 max-w-xl text-base md:text-lg lg:text-xl leading-relaxed",
-          inverted ? "text-(--color-stamp-taupe)" : "text-(--color-stamp-taupe)"
+          inverted ? "text-(--color-stamp-taupe-light)" : "text-(--color-stamp-taupe)"
         )}
       >
         {body}

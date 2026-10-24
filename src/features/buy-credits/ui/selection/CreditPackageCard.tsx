@@ -3,8 +3,8 @@
 import { Coins, Check, Sparkles } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
+import { Span } from "@/features/ui/span";
 import { cn } from "@/lib/utils";
-import { buyCreditsTheme } from "@/theme/components";
 import type { CreditPackage } from "@/shared/constants/credits";
 
 interface CreditPackageCardProps {
@@ -18,38 +18,32 @@ export function CreditPackageCard({
   isSelected,
   onSelect,
 }: CreditPackageCardProps) {
-  const theme = buyCreditsTheme.packageCard;
-
   return (
     <Button
       type="button"
-      variant="outline"
+      variant="option-card"
       onClick={() => onSelect(pkg.credits)}
-      className={cn(
-        theme.base,
-        isSelected ? theme.selected : theme.unselected
-      )}
+      aria-pressed={isSelected}
+      className="relative w-full min-h-26 flex flex-col items-center justify-center p-4"
     >
       {pkg.popular && <PopularBadge />}
 
-      <div className={theme.creditsRow}>
+      <div className="flex items-center gap-1.5 mb-1">
         <Coins
           className={cn(
-            theme.creditsIcon,
-            isSelected ? theme.creditsIconSelected : theme.creditsIconUnselected
+            "w-5 h-5",
+            isSelected ? "text-[#FF8C42]" : "text-slate-400"
           )}
         />
-        <span
-          className={cn(
-            theme.creditsValue,
-            isSelected ? theme.creditsValueSelected : theme.creditsValueUnselected
-          )}
+        <Span
+          variant="credits"
+          className={isSelected ? "text-slate-900" : "text-slate-700"}
         >
           {pkg.credits}
-        </span>
+        </Span>
       </div>
 
-      <span className={theme.price}>€{pkg.price.toFixed(2)}</span>
+      <Span variant="price" className="text-slate-500">€{pkg.price.toFixed(2)}</Span>
 
       {isSelected && <SelectedCheckmark />}
     </Button>
@@ -60,17 +54,17 @@ function PopularBadge() {
   const t = useTranslations("buyCredits.selection");
 
   return (
-    <span className={buyCreditsTheme.popularBadge}>
+    <Span variant="pill" className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-linear-to-r from-[#7C3AED] to-[#06B6D4] text-white rounded-full flex items-center gap-1">
       <Sparkles className="w-3 h-3" />
       {t("popularBadge")}
-    </span>
+    </Span>
   );
 }
 
 function SelectedCheckmark() {
   return (
-    <span className={buyCreditsTheme.selectedCheckmark}>
+    <Span unstyled className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#7C3AED] text-white flex items-center justify-center">
       <Check className="w-3 h-3" />
-    </span>
+    </Span>
   );
 }

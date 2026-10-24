@@ -109,7 +109,7 @@ export function FeaturedCarouselCard({
           {product.description && (
             <Paragraph
               variant="sm"
-              className="mt-2 line-clamp-2 text-(--color-stamp-chocolate)/60"
+              className="mt-2 line-clamp-2 text-(--color-stamp-taupe)"
             >
               {product.description}
             </Paragraph>
