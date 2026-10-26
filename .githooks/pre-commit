@@ -1,0 +1,27 @@
+#!/bin/sh
+# Git pre-commit hook: nothing that breaks the lint rules or the types gets committed.
+# Installed by `npm install` (the "prepare" script points core.hooksPath at .githooks).
+# Mirrors the blocking CI checks: ESLint on the changed files, then a full typecheck.
+set -e
+
+STAGED_LIST="$(mktemp)"
+trap 'rm -f "$STAGED_LIST"' EXIT
+git diff --cached --name-only --diff-filter=ACMR -z -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' > "$STAGED_LIST"
+
+if [ -s "$STAGED_LIST" ]; then
+  echo "pre-commit: linting staged files…"
+  xargs -0 npx eslint --no-warn-ignored < "$STAGED_LIST"
+
+  echo "pre-commit: typechecking…"
+  npx tsc --noEmit
+fi
+
+# Unit tests that import the staged source files (the test-driven-development skill's verify step)
+SRC_LIST="$(mktemp)"
+trap 'rm -f "$STAGED_LIST" "$SRC_LIST"' EXIT
+git diff --cached --name-only --diff-filter=ACMR -z -- 'src/*.ts' 'src/*.tsx' > "$SRC_LIST"
+
+if [ -s "$SRC_LIST" ]; then
+  echo "pre-commit: running related unit tests…"
+  xargs -0 npx vitest related --run --passWithNoTests < "$SRC_LIST"
+fi

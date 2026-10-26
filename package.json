@@ -10,9 +10,11 @@
     "dev:test": "env-cmd -f .env.test.local next dev",
     "build": "next build",
     "start": "next start",
+    "prepare": "git config core.hooksPath .githooks || true",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "knip": "knip",
+    "fallow": "fallow dupes",
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.ts --no-file-parallelism",
@@ -35,7 +37,8 @@
     "test:acceptance:cleanup": "node scripts/acceptance/cleanup.mjs",
     "test:acceptance:list": "playwright test --config=playwright.acceptance.config.mjs --list",
     "test:acceptance:unit": "vitest run src/shared/services/acceptanceImageMock.test.ts src/tests/acceptance-test-environment.test.ts src/features/stamp/lib/services/generatedImagesStorage.acceptance.test.ts",
-    "test:acceptance:coverage": "node scripts/acceptance/coverage.mjs"
+    "test:acceptance:coverage": "node scripts/acceptance/coverage.mjs",
+    "test:hooks": "node --test .claude/hooks/tests/*.test.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.18.0",
@@ -85,6 +88,7 @@
     "env-cmd": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "^16.4.0",
+    "fallow": "^3.36.0",
     "imapflow": "^2.1.2",
     "jsdom": "^29.0.2",
     "knip": "^6.27.0",

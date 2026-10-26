@@ -51,3 +51,6 @@ next-env.d.ts
 
 # Acceptance run evidence and durable provider cleanup ledger
 /.acceptance/
+
+# Claude Code worktrees (agent checkouts of other branches)
+/.claude/worktrees/

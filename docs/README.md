@@ -9,6 +9,8 @@ This documentation defines the architectural patterns, coding standards, and bes
 - [Architecture & Folder Structure](#architecture--folder-structure)
 - [Performance Optimization](#performance-optimization)
 - [Error Handling](#error-handling)
+- [Guardrails](#guardrails)
+- [Skills](#skills)
 - [General Guidelines](#general-guidelines)
 
 ---
@@ -22,8 +24,9 @@ This documentation defines the architectural patterns, coding standards, and bes
 - **Type organization**:
   - Feature-specific types: `src/features/[feature-name]/types/`
   - Shared types: `src/types/` or `src/shared/types/`
-- **Naming convention**: All type names must include the `Type` suffix.
-  - Example: `UserType`, `ProductType`, `ConfigType`
+- **Naming convention**: All type names end with a `T` suffix.
+  - Example: `UserT`, `ProductT`, `PaymentReturnStatusT`
+  - Older types still use a `Type` suffix (`FlowStepType`); rename them to `T` when you touch them.
 
 ### Interface Definitions
 
@@ -41,7 +44,7 @@ interface PropsI {
 }
 
 // Shared type
-type UserType = {
+type UserT = {
   id: string;
   name: string;
   email: string;
@@ -295,7 +298,7 @@ This project follows the **Feature-Sliced Design** pattern for scalable and main
   ├── ui/              # UI components only
   │   ├── sections/    # Page sections
   │   └── components/  # Reusable components
-  ├── lib/             # Non-component code
+  ├── lib/             # Non-component code (public API, with ui/components/)
   │   ├── helpers/     # Helper functions
   │   ├── constants/   # Constants and static data
   │   ├── types/       # Feature-specific types
@@ -303,8 +306,9 @@ This project follows the **Feature-Sliced Design** pattern for scalable and main
   │   ├── mappers/     # Data transformation functions
   │   ├── services/    # Business logic services
   │   └── utils/       # Utility functions
-  └── index.ts         # Public API (optional)
   ```
+
+  There is no `index.ts` (barrel exports are banned); see [Slice boundaries](#slice-boundaries) for what other slices may import.
 
 ### Separation of Concerns in Folders
 
@@ -357,8 +361,10 @@ src/features/homepage/
 The project is organized into three primary layers:
 
 1. **UI Layer** (`src/features/*/ui/`) - Presentational components
-2. **Queries Layer** (`src/queries/`) - Data fetching and caching logic
-3. **Services Layer** (`src/services/`) - Business logic and external integrations
+2. **Queries Layer** (`src/shared/queries/`, plus feature hooks in `src/features/*/lib/hooks/`) - Data fetching and caching logic
+3. **Services Layer** (`src/shared/services/`, plus feature services in `src/features/*/lib/services/`) - Business logic and external integrations
+
+**No data fetching in UI components.** Components under `ui/` (and `src/features/ui`, `src/shared/ui`) never call `fetch`, Supabase, `useQuery`/`useMutation`, AI SDKs or API services directly. They get data from a hook in `lib/hooks/` or `src/shared/queries/` and render it. `analyticsService` is the one allowed service import. Enforced by ESLint (`no-restricted-imports`, `no-restricted-globals`).
 
 ### File Organization
 
@@ -366,6 +372,34 @@ The project is organized into three primary layers:
 - Share common utilities in `src/shared/`.
 - Follow consistent naming conventions across features.
 - **Never place helper functions, constants, or types inside `ui/` folders.**
+
+### Slice boundaries
+
+Layers, top to bottom. A file imports its own layer or a lower one, never a higher one:
+
+| Layer    | Folders                                                                                      |
+| -------- | -------------------------------------------------------------------------------------------- |
+| app      | `src/app`, `src/providers`, files at the `src/` root (middleware, instrumentation)           |
+| features | `src/features/<slice>` (every slice except `ui`)                                             |
+| shared   | `src/features/ui` (design system), `src/shared`, `src/lib`, `src/helpers`, `src/i18n`, `src/types` |
+
+Between feature slices, only the **public API** may be imported: `<slice>/lib/**` and `<slice>/ui/components/**`. Everything else (`ui/sections/**`, files at the slice root, ad-hoc folders like `auth/login/`) is internal. If another slice needs it, move it into `lib/` or `ui/components/`, or into `src/shared/` when several slices use it.
+
+```ts
+// ❌ BAD: shared code depending on a feature (wrong direction)
+// src/shared/queries/authQueries.ts
+import { getSafeRedirectPath } from "@/features/auth/lib/helpers/redirectTarget";
+
+// ❌ BAD: reaching into another slice's internals
+// src/features/stamp/ui/components/StampHeader.tsx
+import { Login } from "@/features/auth/login/Login";
+
+// ✅ GOOD: another slice's public API
+// src/features/cart/ui/sections/CartItemCard/CartItemCardSpecs.tsx
+import { formatVariantForDisplay } from "@/features/stamp/lib/helpers/sizeDisplayMapper";
+```
+
+Test files are exempt. The rule lives in `eslint-rules/sliceBoundaries.mjs` and runs both as an ESLint rule and as a Claude Code hook that rejects edits adding a violation (existing violations in a file don't block unrelated edits).
 
 ---
 
@@ -377,245 +411,67 @@ The project is organized into three primary layers:
   - Preventing unnecessary re-renders in large lists
 - **Avoid premature optimization** - Measure first, optimize second.
 
+The full measure → identify → fix → verify workflow is the `performance-optimization` skill (see [Skills](#skills)).
+
 ---
 
 ## Error Handling
 
-### Core Principles
+- Catch errors at boundaries; only `UserFacingError` messages reach the user verbatim.
+- Every error state gives the user a way forward (retry, another method, support with the payment ID).
+- Idempotency is enforced on the server (idempotency key + database constraint), never only in the browser.
+- Log with the structured logger in `src/lib/observability/logger.ts`, not `console.log`.
 
-- All error handling must follow the project's **ErrorHandling** implementation.
-- Errors should be caught at appropriate boundaries.
-- User-facing errors must provide clear, actionable messages.
-- Always provide recovery paths for users when errors occur.
+Payment states, idempotency, timeouts, refunds/recovery and logging are in the `error-handling` skill (see [Skills](#skills)).
 
-### Error Handling Patterns
+---
 
-#### 1. **Payment & Transaction Errors**
+## Guardrails
 
-For payment processing, implement comprehensive error states with recovery mechanisms:
+These patterns are enforced by tools, so neither people nor agents can drift from them.
 
-**Required Error States:**
-- `loading` - Initial state, verifying data
-- `processing` - Payment being processed
-- `success` - Transaction completed successfully
-- `failed` - Retryable failure (declined card, insufficient funds)
-- `error` - Non-retryable system error
-- `cancelled` - User cancelled the transaction
+**ESLint** (`eslint.config.mjs`)
+- Design-system components instead of raw HTML elements; no inline `<svg>`; styling in cva variants or inline JSX
+- Design tokens only: no arbitrary color classes (`bg-[#7C3AED]`), no hex literals in components, no arbitrary spacing (`p-[13px]`)
+- Accessibility: jsx-a11y recommended rules
+- No data fetching in UI components (see [Core Architecture Layers](#core-architecture-layers))
+- [Slice boundaries](#slice-boundaries)
+- No barrel exports
 
-**Example Pattern** (from payment return pages):
+**Git pre-commit hook** (`.githooks/pre-commit`, installed by `npm install`): ESLint on the staged files, `tsc --noEmit`, then `vitest related` on the staged `src/` files. A commit that breaks a rule, the types or a related unit test is rejected.
 
-```typescript
-type PageStatus = "loading" | "processing" | "success" | "failed" | "error" | "cancelled";
+**Claude Code hooks** (`.claude/hooks/`, registered in `.claude/settings.json`, tested by `npm run test:hooks`)
+- `protect-acceptance-tests.mjs`: editing acceptance tests needs approval (also from the shell)
+- `guard-dangerous-commands.mjs`: `rm -rf`, `git push --force`, `git reset --hard`, installing new dependencies, changes to the remote Supabase project (`db push`, `db reset --linked`, `functions deploy|delete`, `secrets set|unset`, `migration repair`) and `psql` against a non-local host need approval. Looks inside `bash -c` and `npx`.
+- `enforce-slice-boundaries.mjs`: edits that add a slice-boundary violation are rejected
+- `block-shell-source-writes.mjs`: shell commands that write `src/` source code (`sed -i`, heredocs, `tee`, `cp`, `mv` from outside `src/`) are rejected; source is edited with Edit/Write/MultiEdit so the two hooks above and below see it. Renames inside `src/` and shell writes to tests, styles and docs are fine.
+- `enforce-test-first.mjs`: an Edit/Write that changes the behavior of gated source code is rejected until a **covering** test has been written or changed in the same session (also from the shell), and Claude is sent to the `test-driven-development` skill
+- `enforce-tdd-on-commit.mjs`: a `git commit` (including `-a`/`--all`) that changes the behavior of gated source code without changing a covering test is rejected and sent back to the `test-driven-development` skill; a `No-Tests-Reason:` line in the message asks a human instead
 
-const [status, setStatus] = useState<PageStatus>("loading");
-const [errorMessage, setErrorMessage] = useState<string | null>(null);
+What the two TDD hooks gate:
 
-// Handle different error types
-if (captureData.code === "INSTRUMENT_DECLINED" || captureData.isRetryable) {
-  setStatus("failed"); // Retryable - show "Try Again" option
-  setErrorMessage(captureData.error || "Your payment method was declined.");
-} else {
-  setStatus("error"); // Non-retryable - show support contact
-  setErrorMessage("Failed to process payment. Please contact support.");
-}
-```
+- **Gated**: logic under `src/`: hooks, helpers, services, queries, mappers, API routes, middleware, providers.
+- **Not gated**: tests; presentational code (`ui/` folders, the design system `src/features/ui` and `src/shared/ui`, `src/app` pages and layouts, `.tsx` components elsewhere in a slice outside `lib/`); `lib/variants/` (styling); `constants/` (static data); types. Acceptance tests, lint and `tsc` cover these.
+- **Not a behavior change**: edits that only touch import/re-export statements, comments or formatting (moving a module and updating its imports, documenting, reformatting).
 
-**User-Facing Error UI:**
-- Display clear error reason
-- Provide actionable next steps
-- Show alternative payment methods for failed payments
-- Include support contact information for system errors
+A test **covers** a source file when it imports it, directly or through other modules (including a module that doesn't exist yet: the red step for a new file), or has the same base name (`total.ts` ↔ `total.test.ts`), or sits in the source's folder, a `__tests__` folder there, or an ancestor folder at slice/module depth or deeper (`src/features/<slice>/__tests__/` covers the whole slice; `src/__tests__/` covers nothing). See `isBehaviorFile` and `isRelatedTest` in `.claude/hooks/tdd-files.mjs`, `test-imports.mjs` and `behavior-change.mjs`.
 
-#### 2. **Idempotency & Race Condition Prevention**
+**Cleanup** (run before verifying): `npm run knip` for unused files, exports and dependencies; `npm run fallow` for duplicated code. Fallow fails CI once duplication passes the ratchet in `.fallowrc.jsonc`. Lower the threshold as clones get removed.
 
-Always implement idempotency checks to prevent duplicate operations:
+---
 
-```typescript
-// Check if operation already completed
-const finalizationDoneKey = `operation_finalized_${uniqueId}`;
-const finalizationLockKey = `operation_finalizing_${uniqueId}`;
+## Skills
 
-if (sessionStorage.getItem(finalizationDoneKey) === "true") {
-  setStatus("success");
-  return;
-}
+Task-specific guidance lives in Claude Code skills under `.claude/skills/`. Claude loads a skill when the task matches its description; people can read the `SKILL.md` files directly.
 
-if (sessionStorage.getItem(finalizationLockKey) === "true") {
-  return; // Already processing
-}
+| Skill                      | Use it for                                                                                   |
+| -------------------------- | -------------------------------------------------------------------------------------------- |
+| `frontend-ui-engineering`  | Components, layouts, state, accessibility, responsive design, loading/error/empty states. Its `references/color-palette.md` is the color system. |
+| `performance-optimization` | Measuring and fixing slow pages, interactions and API routes; Core Web Vitals                |
+| `test-driven-development`  | Implementing logic, fixing bugs or changing behavior: red-green-refactor, reproduce bugs with a failing test first |
+| `error-handling`           | Payments, checkout, fulfillment, refunds, external APIs: error states, idempotency, timeouts, recovery, logging |
 
-sessionStorage.setItem(finalizationLockKey, "true");
-
-try {
-  // Perform operation
-  await processOperation();
-
-  sessionStorage.setItem(finalizationDoneKey, "true");
-  sessionStorage.removeItem(finalizationLockKey);
-} catch (error) {
-  sessionStorage.removeItem(finalizationLockKey);
-  throw error;
-}
-```
-
-#### 3. **Timeout Handling**
-
-Implement timeouts for long-running operations with proper cleanup:
-
-```typescript
-class PipelineTimeoutError extends Error {
-  constructor(timeoutMs: number) {
-    super(
-      `Operation timed out after ${Math.round(timeoutMs / 1000)} seconds. ` +
-      `Please contact support if the issue persists.`
-    );
-    this.name = "PipelineTimeoutError";
-  }
-}
-
-async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
-  let timeoutId: ReturnType<typeof setTimeout>;
-
-  const timeout = new Promise<never>((_, reject) => {
-    timeoutId = setTimeout(
-      () => reject(new PipelineTimeoutError(ms)),
-      ms
-    );
-  });
-
-  return Promise.race([promise, timeout]).finally(() =>
-    clearTimeout(timeoutId)
-  );
-}
-
-// Usage
-try {
-  await withTimeout(longRunningOperation(), 120_000); // 2 minutes
-} catch (error) {
-  if (error instanceof PipelineTimeoutError) {
-    // Handle timeout specifically
-    await triggerCleanup();
-  }
-  throw error;
-}
-```
-
-#### 4. **Graceful Degradation & Recovery**
-
-When operations fail, implement recovery mechanisms:
-
-```typescript
-const triggerRefund = async (reason: string) => {
-  try {
-    await RefundService.processRefund({
-      orderId: orderId || `temp_${transactionId}`,
-      paymentProvider: "stripe",
-      amount,
-      reason,
-    });
-    console.log(`✅ Refund triggered`);
-  } catch (refundError) {
-    console.error("❌ Refund initiation failed:", refundError);
-    // Log to failure tracking system
-  }
-};
-
-const markOrderFailed = async (orderId: string, status: string) => {
-  try {
-    await updateOrderStatus({ orderId, status });
-    console.log(`✅ Order marked as ${status}`);
-  } catch (updateError) {
-    console.error(`❌ Failed to update order:`, updateError);
-  }
-};
-
-// Use in error scenarios
-try {
-  await createPrintifyOrder();
-} catch (error) {
-  await markOrderFailed(orderId, "unsuccessful_confirmation");
-  await triggerRefund("Fulfillment failed");
-  throw new Error("Order fulfillment failed. A full refund has been initiated.");
-}
-```
-
-#### 5. **Data Validation Errors**
-
-Validate critical data early and provide clear error messages:
-
-```typescript
-// Validate required data
-if (!cartId) {
-  setStatus("error");
-  setErrorMessage(
-    "Cart information not found. Your payment was captured but we couldn't create your order. " +
-    "Please contact support with payment ID: " + paymentIntentId
-  );
-  return;
-}
-
-if (!user) {
-  setStatus("error");
-  setErrorMessage(
-    "You must be logged in to complete your order. Please log in and try again."
-  );
-  return;
-}
-```
-
-### Logging System Pattern
-
-When implementing logging in features, follow this structured approach:
-
-1. **Create feature-specific loggers** with consistent context prefixes
-2. **Use three log levels**:
-   - `logError()` - For exceptions and critical failures
-   - `logWarning()` - For recoverable issues or unexpected states
-   - `logInfo()` - For debugging and tracing execution flow
-3. **Always include**:
-   - Context (function/component name)
-   - Relevant data for debugging
-   - Structured additional info as objects
-
-**Example** (from stamp-brutalist feature):
-
-```typescript
-// lib/helpers/logger.ts
-export function logStampError(
-  context: string,
-  error: unknown,
-  additionalInfo?: Record<string, unknown>,
-): void {
-  const errorMessage = error instanceof Error ? error.message : String(error);
-  console.error(`[Stamp Flow - ${context}]`, {
-    error: errorMessage,
-    stack: error instanceof Error ? error.stack : undefined,
-    ...additionalInfo,
-  });
-}
-
-// Usage in components/hooks
-logStampError("handleCreateProduct", error, {
-  blueprintId: formData.blueprintId,
-  userId: user?.id,
-});
-```
-
-**Reference**: See [`src/features/stamp-brutalist/lib/helpers/logger.ts`](../src/features/stamp-brutalist/lib/helpers/logger.ts) for complete implementation.
-
-### Error Handling Checklist
-
-When implementing error handling, ensure:
-
-- ✅ All possible error states are defined and handled
-- ✅ User-facing errors provide clear, actionable messages
-- ✅ Recovery mechanisms are in place (retry, refund, rollback)
-- ✅ Idempotency is implemented for critical operations
-- ✅ Timeouts are set for long-running operations
-- ✅ Errors are logged with sufficient context for debugging
-- ✅ Race conditions are prevented with proper locks
-- ✅ Cleanup operations run in finally blocks
-- ✅ Users have clear paths forward (retry, contact support, go back)
+Rules that must always hold are not left to skills: they are lint rules or hooks (see [Guardrails](#guardrails)).
 
 ---
 

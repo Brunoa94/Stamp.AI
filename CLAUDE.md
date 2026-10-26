@@ -1,15 +1,15 @@
 # Claude Code Instructions
 
-## Session Start
+## Project Patterns
 
-At the beginning of each session, read the documentation in the `docs/` folder to understand the project patterns:
+Core patterns, types, components, architecture and guardrails (imported, so it is always loaded):
 
-- `docs/README.md` - Core patterns, types, components, architecture, error handling
-- `docs/README_UI_ENGINEERING.md` - UI component guidelines
-- `docs/README_PERFORMANCE.md` - Performance best practices
-- `docs/COLOR_PALETTE_GUIDELINES.md` - Color system
-- `docs/BRAND_VOICE.md` - Brand voice, terminology, and claims to avoid in customer-facing copy
+@docs/README.md
+
+Task-specific guidance is in skills under `.claude/skills/` (listed in `docs/README.md` → Skills). Before editing code under `src/`, load `test-driven-development` and write the failing test first.
 
 ## Pre-Commit Validation
 
 Before committing any code, verify it follows the patterns documented in `docs/`. If code violates these patterns, refactor it before committing.
+
+The git pre-commit hook and the Claude Code hooks enforce these rules; `docs/README.md` → Guardrails lists every one. Fix the code when a check fails. Never bypass the hook with `--no-verify`.
