@@ -1,0 +1,52 @@
+/**
+ * Catalog Feature Styles
+ * View transition animations for the catalog's <ViewTransition> boundaries.
+ * Class names come from lib/constants/catalogViewTransitions.ts; the
+ * ::view-transition-* pseudo-elements cannot be styled with Tailwind.
+ */
+
+/* Showcase ↔ filtered results: old panel lifts away, new one rises in */
+::view-transition-old(.catalog-panel-exit) {
+  animation: catalog-panel-out 200ms ease-in both;
+}
+
+::view-transition-new(.catalog-panel-enter) {
+  animation: catalog-panel-in 450ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+}
+
+@keyframes catalog-panel-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes catalog-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+/* Product card cover ↔ quick-view dialog image */
+::view-transition-group(.catalog-product-morph) {
+  animation-duration: 400ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The card is 3:4 and the dialog image square: crop instead of stretching */
+::view-transition-old(.catalog-product-morph),
+::view-transition-new(.catalog-product-morph) {
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(.catalog-product-morph),
+  ::view-transition-old(.catalog-panel-exit),
+  ::view-transition-new(.catalog-panel-enter),
+  ::view-transition-old(.catalog-product-morph),
+  ::view-transition-new(.catalog-product-morph) {
+    animation: none;
+  }
+}

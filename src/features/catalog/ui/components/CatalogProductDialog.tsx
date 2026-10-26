@@ -23,20 +23,34 @@ import { CatalogProductReviews } from "./CatalogProductReviews";
  * Quick-view dialog for a catalog product: Printify photo gallery,
  * SEO description and specs, price, available colors, the reviews
  * placeholder, and a CTA into the design studio.
+ *
+ * Mounted only while open (the card renders it conditionally) and portalled
+ * straight into body, so the content mounts in the same Transition commit
+ * as the open state. A Radix Dialog kept mounted while closed would reveal
+ * its content a commit later, and the card → gallery image morph could
+ * never pair.
  */
 
 interface PropsI {
   product: CatalogDisplayProductType;
-  isOpen: boolean;
+  /** Shared element name the main gallery image takes over from the card cover. */
+  transitionName: string;
   onClose: () => void;
 }
 
-export function CatalogProductDialog({ product, isOpen, onClose }: PropsI) {
+export function CatalogProductDialog({
+  product,
+  transitionName,
+  onClose,
+}: PropsI) {
   const t = useTranslations("catalog.dialog");
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto rounded-none border border-(--color-stamp-divider) bg-(--color-stamp-off-white) p-6 sm:max-w-3xl md:p-8">
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent
+        portalContainer={document.body}
+        className="max-h-[85vh] overflow-y-auto rounded-none border border-(--color-stamp-divider) bg-(--color-stamp-off-white) p-6 sm:max-w-3xl md:p-8"
+      >
         <DialogHeader>
           <DialogTitle className="font-heading text-2xl font-normal uppercase tracking-tight text-(--color-stamp-chocolate)">
             {product.name}
@@ -50,6 +64,7 @@ export function CatalogProductDialog({ product, isOpen, onClose }: PropsI) {
           <CatalogProductGallery
             name={product.name}
             imageUrls={product.imageUrls}
+            transitionName={transitionName}
           />
 
           <div className="flex flex-col gap-6">

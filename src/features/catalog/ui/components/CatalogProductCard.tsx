@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { startTransition, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
@@ -8,6 +8,11 @@ import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { ColorSwatches } from "@/features/homepage/ui/components/ColorSwatches";
+import { SharedElementTransition } from "@/shared/ui/SharedElementTransition";
+import {
+  CATALOG_PRODUCT_MORPH,
+  getCatalogProductTransitionName,
+} from "../../lib/constants/catalogViewTransitions";
 import type { CatalogDisplayProductType } from "../../lib/types/catalogPageTypes";
 import { CatalogProductDialog } from "./CatalogProductDialog";
 
@@ -19,7 +24,8 @@ import { CatalogProductDialog } from "./CatalogProductDialog";
  * but acting as a button that opens the quick-view dialog. Hovering
  * swaps to the second gallery photo and reveals a quick-view bar.
  * Uses Button variant="unstyled" for card-sized trigger with block
- * layout and left-aligned text.
+ * layout and left-aligned text. Opening and closing run in a Transition
+ * so the cover photo morphs into the dialog's main image and back.
  */
 
 interface PropsI {
@@ -32,26 +38,33 @@ export function CatalogProductCard({ product }: PropsI) {
 
   const coverImageUrl = product.imageUrls[0];
   const hoverImageUrl = product.imageUrls[1];
+  const transitionName = getCatalogProductTransitionName(product.blueprintId);
 
   return (
     <>
       <Button
         type="button"
         variant="unstyled"
-        onClick={() => setIsDialogOpen(true)}
+        onClick={() => startTransition(() => setIsDialogOpen(true))}
         aria-label={t("quickViewAria", { name: product.name })}
         className="group flex h-full w-full flex-col text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--color-stamp-gold)"
       >
         <div className="relative mb-3 sm:mb-5 aspect-square sm:aspect-3/4 overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all duration-500 group-hover:-translate-y-1 group-hover:border-(--color-stamp-gold) group-hover:shadow-(--shadow-stamp-card-hover)">
           {coverImageUrl ? (
             <>
-              <Image
-                src={coverImageUrl}
-                alt={product.name}
-                fill
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
-                className="object-cover grayscale transition-all duration-700 group-hover:scale-[1.02] group-hover:grayscale-0"
-              />
+              <SharedElementTransition
+                name={transitionName}
+                isActive={!isDialogOpen}
+                share={CATALOG_PRODUCT_MORPH}
+              >
+                <Image
+                  src={coverImageUrl}
+                  alt={product.name}
+                  fill
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
+                  className="object-cover grayscale transition-all duration-700 group-hover:scale-[1.02] group-hover:grayscale-0"
+                />
+              </SharedElementTransition>
               {hoverImageUrl && (
                 <Image
                   src={hoverImageUrl}
@@ -133,11 +146,13 @@ export function CatalogProductCard({ product }: PropsI) {
         </div>
       </Button>
 
-      <CatalogProductDialog
-        product={product}
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-      />
+      {isDialogOpen && (
+        <CatalogProductDialog
+          product={product}
+          transitionName={transitionName}
+          onClose={() => startTransition(() => setIsDialogOpen(false))}
+        />
+      )}
     </>
   );
 }

@@ -7,6 +7,11 @@ import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
+import { ViewTransition } from "@/shared/ui/ViewTransition";
+import {
+  CATALOG_PANEL_ENTER,
+  CATALOG_PANEL_EXIT,
+} from "../lib/constants/catalogViewTransitions";
 import { groupCatalogSections } from "../lib/helpers/groupCatalogSections";
 import { useCatalogFilters } from "../lib/hooks/useCatalogFilters";
 import type {
@@ -17,6 +22,7 @@ import { CatalogEmptyResults } from "./components/CatalogEmptyResults";
 import { CatalogToolbar } from "./components/CatalogToolbar";
 import { CatalogGroupSection } from "./sections/CatalogGroupSection";
 import { CatalogShowcaseSection } from "./sections/CatalogShowcaseSection";
+import "./catalog.css";
 
 /**
  * CatalogPageContent
@@ -26,7 +32,8 @@ import { CatalogShowcaseSection } from "./sections/CatalogShowcaseSection";
  * showcase, and one product section per group (clothing, accessories).
  * While browsing the full catalog each section previews its first row
  * with a "See all" action; filtering runs client-side over the cached
- * sections.
+ * sections. The showcase and the filtered results swap through
+ * <ViewTransition> enter/exit animations (see catalog.css).
  */
 
 interface PropsI {
@@ -38,8 +45,6 @@ export function CatalogPageContent({ sections }: PropsI) {
   const groupSections = groupCatalogSections(sections);
   const filters = useCatalogFilters(groupSections);
   const resultsRef = useRef<HTMLDivElement>(null);
-
-  const isBrowsingAll = filters.group === "all" && filters.query.trim() === "";
 
   const handleGroupSelect = useCallback(
     (group: CatalogGroupFilterType) => {
@@ -103,56 +108,57 @@ export function CatalogPageContent({ sections }: PropsI) {
               onClearFilters={filters.clearFilters}
             />
 
-            <div
-              className={`mt-16 transition-all duration-500 ease-out ${
-                isBrowsingAll
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-4 absolute pointer-events-none"
-              }`}
-            >
-              {isBrowsingAll && (
-                <CatalogShowcaseSection
-                  sections={groupSections}
-                  onGroupSelect={handleGroupSelect}
-                />
-              )}
-            </div>
-
-            <div
-              ref={resultsRef}
-              className={`scroll-mt-32 transition-all duration-500 ease-out ${
-                !isBrowsingAll
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-4 absolute pointer-events-none"
-              }`}
-            >
-              {!isBrowsingAll && (
-                <>
-                  <div className="mt-16 mb-8">
-                    <Button
-                      type="button"
-                      variant="ghost-stamp"
-                      onClick={handleBackToShowcase}
-                      className="gap-2 px-0 py-2 text-sm"
-                    >
-                      <ArrowLeft className="h-4 w-4" />
-                      {t("backToShowcase")}
-                    </Button>
+            <div ref={resultsRef} className="mt-16 scroll-mt-32">
+              {filters.isBrowsingAll ? (
+                <ViewTransition
+                  key="showcase"
+                  enter={CATALOG_PANEL_ENTER}
+                  exit={CATALOG_PANEL_EXIT}
+                  default="none"
+                >
+                  <div>
+                    <CatalogShowcaseSection
+                      sections={groupSections}
+                      onGroupSelect={handleGroupSelect}
+                    />
                   </div>
-
-                  {filters.filteredSections.length === 0 ? (
-                    <CatalogEmptyResults onClearFilters={filters.clearFilters} />
-                  ) : (
-                    <div className="space-y-24">
-                      {filters.filteredSections.map((section) => (
-                        <CatalogGroupSection
-                          key={section.group}
-                          section={section}
-                        />
-                      ))}
+                </ViewTransition>
+              ) : (
+                <ViewTransition
+                  key="results"
+                  enter={CATALOG_PANEL_ENTER}
+                  exit={CATALOG_PANEL_EXIT}
+                  default="none"
+                >
+                  <div>
+                    <div className="mb-8">
+                      <Button
+                        type="button"
+                        variant="ghost-stamp"
+                        onClick={handleBackToShowcase}
+                        className="gap-2 px-0 py-2 text-sm"
+                      >
+                        <ArrowLeft className="h-4 w-4" />
+                        {t("backToShowcase")}
+                      </Button>
                     </div>
-                  )}
-                </>
+
+                    {filters.filteredSections.length === 0 ? (
+                      <CatalogEmptyResults
+                        onClearFilters={filters.clearFilters}
+                      />
+                    ) : (
+                      <div className="space-y-24">
+                        {filters.filteredSections.map((section) => (
+                          <CatalogGroupSection
+                            key={section.group}
+                            section={section}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </ViewTransition>
               )}
             </div>
           </>
