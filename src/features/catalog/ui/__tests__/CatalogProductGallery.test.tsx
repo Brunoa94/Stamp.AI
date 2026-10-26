@@ -10,10 +10,12 @@ const IMAGE_URLS = [
   "https://images.printify.com/3.jpg",
 ];
 
+const TRANSITION_PROPS = { transitionName: "catalog-product-6" };
+
 describe("CatalogProductGallery", () => {
   it("renders the first photo with one thumbnail per image", () => {
     renderWithIntl(
-      <CatalogProductGallery name="Classic Tee" imageUrls={IMAGE_URLS} />
+      <CatalogProductGallery {...TRANSITION_PROPS} name="Classic Tee" imageUrls={IMAGE_URLS} />
     );
 
     expect(
@@ -27,7 +29,7 @@ describe("CatalogProductGallery", () => {
 
   it("switches the main photo when a thumbnail is clicked", () => {
     renderWithIntl(
-      <CatalogProductGallery name="Classic Tee" imageUrls={IMAGE_URLS} />
+      <CatalogProductGallery {...TRANSITION_PROPS} name="Classic Tee" imageUrls={IMAGE_URLS} />
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Show photo 2" }));
@@ -42,14 +44,14 @@ describe("CatalogProductGallery", () => {
 
   it("hides the thumbnail strip for a single photo", () => {
     renderWithIntl(
-      <CatalogProductGallery name="Classic Tee" imageUrls={[IMAGE_URLS[0]]} />
+      <CatalogProductGallery {...TRANSITION_PROPS} name="Classic Tee" imageUrls={[IMAGE_URLS[0]]} />
     );
 
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
 
   it("shows a no-image placeholder when there are no photos", () => {
-    renderWithIntl(<CatalogProductGallery name="Classic Tee" imageUrls={[]} />);
+    renderWithIntl(<CatalogProductGallery {...TRANSITION_PROPS} name="Classic Tee" imageUrls={[]} />);
 
     expect(screen.getByRole("status")).toHaveTextContent(
       messages.catalog.dialog.noImage

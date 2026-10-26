@@ -51,13 +51,20 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
+  portalContainer,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean
+  /**
+   * Portal target. Without one, Radix mounts the portal a commit after
+   * opening; pass `document.body` when the content must mount in the same
+   * commit as the open state (e.g. a <ViewTransition> shared-element morph).
+   */
+  portalContainer?: HTMLElement
 }) {
   const t = useTranslations("ui.dialog")
   return (
-    <DialogPortal data-slot="dialog-portal">
+    <DialogPortal data-slot="dialog-portal" container={portalContainer}>
       <DialogOverlay />
       <DialogPrimitive.Content
         data-slot="dialog-content"
