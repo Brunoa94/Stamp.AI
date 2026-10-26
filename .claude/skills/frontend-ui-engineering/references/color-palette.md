@@ -1,6 +1,6 @@
 # Color Palette Organization Guidelines
 
-This document provides the rules and guidelines for organizing colors in the Imaginary Builder AI project. All developers must follow these guidelines when working with colors.
+Reference for the `frontend-ui-engineering` skill: how colors are organized in this project. Read it before choosing or adding a color.
 
 ---
 
@@ -64,7 +64,7 @@ Color System
 
 **Purpose**: Core brand identity colors for the luxury brutalist Stamp aesthetic
 
-**Location**: `src/app/globals.css` (custom properties section)
+**Location**: `src/app/globals-stamp.css`
 
 **Format**: CSS custom properties
 
@@ -226,7 +226,7 @@ Ask yourself:
 | Category      | Location                               | Format                        |
 | ------------- | -------------------------------------- | ----------------------------- |
 | Design System | `src/app/globals.css`                  | CSS custom property (OKLCH)   |
-| Brand         | `src/app/globals.css`                  | CSS custom property (Hex/RGB) |
+| Brand         | `src/app/globals-stamp.css`            | CSS custom property (Hex/RGB) |
 | Product       | `colorSwatches.ts`                     | TypeScript constant           |
 | Utility       | Context-specific file or `globals.css` | Varies                        |
 
@@ -502,9 +502,10 @@ Before committing color changes:
 
 ## Related Files
 
-- [README.md](../README.md) - Main project documentation with color rules
-- [globals.css](../src/app/globals.css) - Design system and brand color definitions
-- [colorSwatches.ts](../src/features/homepage/lib/constants/colorSwatches.ts) - Product color utilities
+- `src/app/globals.css` - Design system color definitions
+- `src/app/globals-stamp.css` - Stamp brand palette definitions
+- `src/features/homepage/lib/constants/colorSwatches.ts` - Product color utilities
+- `eslint.config.mjs` (`tokenRules`, `hexColorRules`) - The lint rules that reject hardcoded colors
 
 ---
 

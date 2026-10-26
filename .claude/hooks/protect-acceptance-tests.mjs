@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // PreToolUse hook: acceptance tests are the spec, so any edit to them needs
 // explicit human approval. Covers file-editing tools and shell commands that write.
+import { pathToFileURL } from 'node:url';
 
 const ACCEPTANCE_PATH = /(^|[\/\s'"])tests\/acceptance\/|\.acceptance\.test\.[cm]?[jt]sx?\b|playwright\.acceptance\.config\./;
 
@@ -14,7 +15,7 @@ const REASON = (target) =>
   'by making the test agree with broken code. Approve only if you deliberately want the spec changed; ' +
   'otherwise reject and ask Claude to fix the application code instead.';
 
-function decide(input) {
+export function decide(input) {
   const toolInput = input.tool_input ?? {};
 
   if (input.tool_name === 'Bash') {
@@ -27,19 +28,21 @@ function decide(input) {
   return ACCEPTANCE_PATH.test(filePath) ? REASON(filePath) : null;
 }
 
-let raw = '';
-process.stdin.on('data', (chunk) => (raw += chunk));
-process.stdin.on('end', () => {
-  const reason = decide(JSON.parse(raw));
-  if (!reason) process.exit(0);
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  let raw = '';
+  process.stdin.on('data', (chunk) => (raw += chunk));
+  process.stdin.on('end', () => {
+    const reason = decide(JSON.parse(raw));
+    if (!reason) process.exit(0);
 
-  process.stdout.write(
-    JSON.stringify({
-      hookSpecificOutput: {
-        hookEventName: 'PreToolUse',
-        permissionDecision: 'ask',
-        permissionDecisionReason: reason,
-      },
-    })
-  );
-});
+    process.stdout.write(
+      JSON.stringify({
+        hookSpecificOutput: {
+          hookEventName: 'PreToolUse',
+          permissionDecision: 'ask',
+          permissionDecisionReason: reason,
+        },
+      })
+    );
+  });
+}
