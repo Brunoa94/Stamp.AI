@@ -38,6 +38,12 @@ describe("useErrorHandler.handleError", () => {
     );
   });
 
+  it("shows the translated decline message for a declined payment", () => {
+    expect(resolveMessage(new AppError("Stripe - Create Payment Intent failed: PAYMENT_DECLINED", "PAYMENT_DECLINED"))).toBe(
+      "translated:PAYMENT_DECLINED",
+    );
+  });
+
   it("finds a known error code embedded in a service message", () => {
     expect(resolveMessage(new Error("AuthService - Login failed: HTTP 400: INVALID_CREDENTIALS"))).toBe(
       "translated:INVALID_CREDENTIALS",

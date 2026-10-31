@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/client";
-import { ErrorClient } from "./errorClient";
+import { AppError, ErrorClient } from "./errorClient";
 import { getAuthenticatedHeaders } from "./authHelpers";
+import { readFunctionErrorCode } from "@/lib/functionErrorCode";
+import type { ErrorCodeT } from "@/shared-types";
 import type {
   CreateCreditPaymentPayloadI,
   CreateCreditPaymentResponseI,
@@ -82,11 +84,11 @@ export class StripeService {
       );
 
       if (error) {
-        throw ErrorClient.handleError({
-          error,
-          service: "Stripe",
-          action: "Create Payment Intent"
-        });
+        const code = await readFunctionErrorCode(error);
+        throw new AppError(
+          code ?? error.message,
+          (code ?? undefined) as ErrorCodeT | undefined,
+        );
       }
 
       if (!data?.clientSecret || !data?.paymentIntentId) {

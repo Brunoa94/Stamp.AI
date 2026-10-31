@@ -68,6 +68,7 @@ export const ErrorCodes = {
   AMOUNT_REQUIRED: () => new FunctionError(400, 'AMOUNT_REQUIRED', 'amount is required'),
   INVALID_AMOUNT: () => new FunctionError(400, 'INVALID_AMOUNT', 'amount must be a positive number'),
   STRIPE_API_ERROR: (details: string) => new FunctionError(502, 'STRIPE_API_ERROR', `Stripe API error: ${details}`),
+  PAYMENT_DECLINED: (details: string) => new FunctionError(402, 'PAYMENT_DECLINED', `Card declined: ${details}`),
 
   // Printify Order errors
   NO_PRODUCTS_IN_SHOP: () => new FunctionError(400, 'NO_PRODUCTS_IN_SHOP', 'No products available in your Printify shop. Please create a product first.'),

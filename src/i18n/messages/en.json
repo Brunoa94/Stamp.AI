@@ -1961,6 +1961,7 @@
     "PRINTIFY_ORDER_API_ERROR": "Order creation failed. Please try again",
     "IMAGE_UPLOAD_API_ERROR": "Image upload failed. Please try again",
     "STRIPE_API_ERROR": "Payment processing error. Please try again",
+    "PAYMENT_DECLINED": "Your card was declined. Please try another card or payment method",
     "AUTH_REGISTRATION_FAILED": "Registration failed. Please try again",
     "AUTH_LOGIN_FAILED": "Login failed. Please try again",
     "PASSWORD_RESET_FAILED": "Password reset failed. Please try again",
