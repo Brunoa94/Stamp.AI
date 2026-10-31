@@ -27,6 +27,7 @@ Task-specific guidance lives in Claude Code skills under `.claude/skills/`. Clau
 | `error-handling`           | Anything that can fail, from a component's async action to an API route: user-facing messages, pending states, error boundaries, logging. Its `references/payments.md` covers payments, orders and refunds: return states, idempotency, timeouts, recovery. |
 | `seo`                      | Routes, page metadata, canonical/noindex, sitemap and robots, JSON-LD, heading structure: how the `src/features/seo` slice is used |
 | `review-frontend`          | `/review-frontend [changes \| pr <n> \| feature <slice>]`: runs the reviewer agents below on one scope and merges their findings |
+| `plan-feature`             | `/plan-feature [idea]`, manual only: reads the code, interviews you in up to 3 rounds, and writes a step-by-step, test-first plan to `docs/plans/`. Delete the plan when the feature merges. |
 
 Rules that must always hold are not left to docs or skills: they are lint rules or hooks (see [guardrails.md](guardrails.md)).
 
@@ -45,5 +46,5 @@ When a reviewer keeps reporting the same mechanical issue, turn it into a lint r
 ## Contributing
 
 - Follow the established patterns in existing features and keep features consistent with Feature-Sliced Design.
-- Update the topic file a change affects instead of adding a new markdown file per change. A new topic gets its own file in `.claude/rules/` (with a `paths:` header) or `docs/`, plus a row in the table above.
+- Update the topic file a change affects instead of adding a new markdown file per change. A new topic gets its own file in `.claude/rules/` (with a `paths:` header) or `docs/`, plus a row in the table above. The one exception is `docs/plans/`: `/plan-feature` writes one plan per feature there, and the plan is deleted once the feature merges.
 - Document significant architectural decisions.
