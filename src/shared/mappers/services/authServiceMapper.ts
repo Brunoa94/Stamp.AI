@@ -15,6 +15,7 @@ export class AuthServiceMapper {
       updated_at: supabaseUser.updated_at,
       user_metadata: supabaseUser.user_metadata,
       app_metadata: supabaseUser.app_metadata,
+      is_anonymous: supabaseUser.is_anonymous ?? false,
     };
   }
 

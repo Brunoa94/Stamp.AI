@@ -12,10 +12,11 @@ import { AuthResponseI, UserI } from "../../../supabase/types";
 import { useRouter } from "next/navigation";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import { AnalyticsService } from "@/shared/services/analyticsService";
+import { isRegisteredUser } from "@/shared/helpers/authIdentity";
 import {
   getSafeRedirectPath,
   REDIRECTED_FROM_PARAM,
-} from "@/features/auth/lib/helpers/redirectTarget";
+} from "@/shared/helpers/redirectTarget";
 
 // Query keys
 const authKeys = {
@@ -41,12 +42,13 @@ export function useUser() {
 }
 
 /**
- * Check if user is authenticated
+ * Check if user is registered. Guests with an anonymous session count as
+ * logged out.
  */
 export function useIsAuthenticated() {
   const { data: user, isLoading } = useUser();
   return {
-    isAuthenticated: !!user,
+    isAuthenticated: isRegisteredUser(user),
     isLoading,
   };
 }

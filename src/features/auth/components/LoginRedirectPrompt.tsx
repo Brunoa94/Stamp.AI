@@ -7,7 +7,7 @@ import { LoginForm } from "../login/LoginForm";
 import {
   getSafeRedirectPath,
   REDIRECTED_FROM_PARAM,
-} from "../lib/helpers/redirectTarget";
+} from "@/shared/helpers/redirectTarget";
 
 /**
  * Opens the login dialog when the middleware has bounced a guest off a
