@@ -178,6 +178,24 @@ const eslintConfig = defineConfig([
     plugins: { "slice-boundaries": sliceBoundaries },
     rules: { "slice-boundaries/slice-boundaries": "error" },
   },
+  // Error toasts go through useErrorHandler, which shows only translated codes and
+  // UserFacingError messages; a direct toast.error(error.message) leaks technical text.
+  // (mirrors "Principles" in .claude/skills/error-handling/SKILL.md)
+  {
+    files: ["src/**/*.ts", "src/**/*.tsx"],
+    ignores: ["src/shared/hooks/useErrorHandler.ts", "src/**/__tests__/**", "src/**/*.test.ts", "src/**/*.test.tsx"],
+    rules: {
+      "no-restricted-properties": [
+        "error",
+        {
+          object: "toast",
+          property: "error",
+          message:
+            "Show errors through handleError from @/shared/hooks/useErrorHandler. Throw a UserFacingError (@/shared/errors/UserFacingError) for a message meant for the user.",
+        },
+      ],
+    },
+  },
   // Accessibility: jsx-a11y's recommended rules
   {
     files: ["src/**/*.tsx"],

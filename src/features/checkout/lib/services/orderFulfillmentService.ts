@@ -4,7 +4,7 @@ import {
   PAYMENT_RETURN_SERVICE_NAME,
 } from "../constants/paymentReturn";
 import { PaymentPipelineTimeoutError } from "../errors/PaymentPipelineTimeoutError";
-import { UserFacingError } from "../errors/UserFacingError";
+import { UserFacingError } from "@/shared/errors/UserFacingError";
 import type {
   OrderFulfillmentDepsI,
   OrderFulfillmentRequestI,

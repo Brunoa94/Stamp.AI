@@ -435,6 +435,7 @@ These patterns are enforced by tools, so neither people nor agents can drift fro
 - Design tokens only: no arbitrary color classes (`bg-[#7C3AED]`), no hex literals in components, no arbitrary spacing (`p-[13px]`)
 - Accessibility: jsx-a11y recommended rules
 - No data fetching in UI components (see [Core Architecture Layers](#core-architecture-layers))
+- No direct `toast.error`: errors reach the user through `useErrorHandler` (see [Error Handling](#error-handling))
 - [Slice boundaries](#slice-boundaries)
 - No barrel exports
 

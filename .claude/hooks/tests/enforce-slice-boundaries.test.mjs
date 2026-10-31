@@ -43,3 +43,8 @@ test("exempts test files and ignores non-code files", () => {
   assert.equal(decide(write("src/shared/queries/q.test.ts", 'import { x } from "@/features/auth/lib/a";'), ROOT), null);
   assert.equal(decide(write("docs/README.md", 'import { x } from "@/features/auth/login/Login";'), ROOT), null);
 });
+
+test("allows aliases that resolve outside src/ (@/shared-types, @/supabase/*)", () => {
+  const content = 'import { ErrorCodeT } from "@/shared-types";\nimport { T } from "@/supabase/types/database";';
+  assert.equal(decide(write("src/shared/hooks/useErrorHandler.ts", content), ROOT), null);
+});

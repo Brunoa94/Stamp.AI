@@ -30,8 +30,12 @@ function isTestFile(srcPath) {
   return /(^|\/)(__tests__|tests)\//.test(srcPath) || /\.(test|spec)\.[cm]?[jt]sx?$/.test(srcPath);
 }
 
+// tsconfig path aliases that point outside src/ (root types/, supabase/), shared with the edge functions.
+const OUTSIDE_SRC_ALIASES = /^@\/(shared-types$|supabase\/)/;
+
 /** Resolves an import specifier to a src-relative path, or null for packages and paths outside src/. */
 function resolveSpecifier(specifier, fromSrcPath) {
+  if (OUTSIDE_SRC_ALIASES.test(specifier)) return null;
   if (specifier.startsWith("@/")) return `${SRC}/${specifier.slice(2)}`;
   if (specifier.startsWith(".")) {
     const resolved = path.posix.normalize(path.posix.join(path.posix.dirname(fromSrcPath), specifier));

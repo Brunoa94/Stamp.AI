@@ -2,7 +2,7 @@ import { PAYMENT_RETURN_SERVICE_NAME } from "../constants/paymentReturn";
 import {
   UserFacingError,
   getUserFacingMessage,
-} from "../errors/UserFacingError";
+} from "@/shared/errors/UserFacingError";
 import type {
   PaymentReturnContextI,
   PayPalReturnStateI,

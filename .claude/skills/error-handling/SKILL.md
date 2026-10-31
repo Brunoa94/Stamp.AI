@@ -12,9 +12,23 @@ Every failure has three audiences: the user (a clear message and a way forward),
 ## Principles
 
 - Catch errors at boundaries (route handlers, services that orchestrate a pipeline, page-level hooks), not around every call.
-- Only messages wrapped in `UserFacingError` (`src/features/checkout/lib/errors/UserFacingError.ts`) reach the user verbatim. Everything else falls back to a generic translated message; technical messages (database, fetch, JSON) never reach an alert.
+- Only messages wrapped in `UserFacingError` (`src/shared/errors/UserFacingError.ts`) reach the user verbatim. Everything else falls back to a generic translated message; technical messages (database, fetch, JSON) never reach an alert.
 - Every error state gives the user a way forward: retry, another payment method, contact support (with the payment ID), or go back.
 - Cleanup runs in `finally` blocks.
+
+## Where Errors Go
+
+Use the app's error plumbing instead of handling errors by hand:
+
+| Where                                         | Use                                                    | It does                                                                                   |
+| --------------------------------------------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| Services (`lib/services/`, `src/shared/services/`) | `throw ErrorClient.handleError({ error, service, action })` (`src/shared/services/errorClient.ts`) | Reports to Sentry and rethrows an `AppError` carrying service/action context and the error code |
+| Client hooks, queries, mutations              | `handleError(error)` from `useErrorHandler` (`src/shared/hooks/useErrorHandler.ts`) | Shows the translated message for a known `ErrorCodeT`, a `UserFacingError`'s message, or the generic message; toasts it and reports to Sentry |
+| Render errors                                 | `<ErrorBoundary componentName="…">` (`src/shared/ui/ErrorBoundary/`) around risky subtrees | Reports and shows a retryable fallback; `GlobalErrorBoundary` already wraps the app in `src/app/layout.tsx` |
+| API routes, edge boundaries                   | `captureError(error, { service, action })` (`src/lib/observability/errorCapture.ts`) | Reports to Sentry; the route then returns an error code the client can translate |
+
+- A message for the user is either an `ErrorCodeT` (add it to `ERROR_CODES` and `errors.<CODE>` in the message catalog) or a `UserFacingError(t("…"))`. A plain `new Error(t("…"))` passed to `handleError` shows the generic message.
+- Never call `toast.error` directly; `handleError` is the only error toast. Enforced by ESLint (`no-restricted-properties`).
 
 ## Payment Return States
 
@@ -114,7 +128,8 @@ logger.error("Printify order failed", {
 - A new money-moving operation without an idempotency key and a database constraint
 - Idempotency that only exists in `sessionStorage` or React state
 - `catch (e) {}` or a catch that logs and continues as if the operation succeeded
-- `error.message` from a service shown directly to the user
+- `error.message` from a service shown directly to the user (`toast.error(error.message)`, `setError(error.message)`)
+- `handleError(new Error(t("…")))`: use `new UserFacingError(t("…"))`, or the user sees the generic message
 - Recovery code (refund, mark failed) that can throw and hide the original error
 
 ## Verification

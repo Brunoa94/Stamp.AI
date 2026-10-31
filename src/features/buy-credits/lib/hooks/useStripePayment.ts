@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { StripeService } from "@/shared/services/stripeService";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { UserFacingError } from "@/shared/errors/UserFacingError";
 
 interface UseStripePaymentProps {
   amount: number;
@@ -56,7 +57,7 @@ export function useStripePayment({
         // Get card element for confirmation
         const cardElement = elements.getElement(CardElement);
         if (!cardElement) {
-          throw new Error(t("cardElementNotFound"));
+          throw new UserFacingError(t("cardElementNotFound"));
         }
 
         // Confirm payment with Stripe
@@ -68,7 +69,8 @@ export function useStripePayment({
           });
 
         if (confirmError) {
-          throw new Error(confirmError.message);
+          // Stripe's confirmation messages ("Your card was declined.") are written for the customer.
+          throw new UserFacingError(confirmError.message ?? "");
         }
 
         if (paymentIntent?.status === "succeeded") {

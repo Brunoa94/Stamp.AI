@@ -1,4 +1,4 @@
-import { UserFacingError } from "./UserFacingError";
+import { UserFacingError } from "@/shared/errors/UserFacingError";
 
 /** Thrown when the post-payment fulfillment pipeline exceeds its time budget. */
 export class PaymentPipelineTimeoutError extends UserFacingError {
