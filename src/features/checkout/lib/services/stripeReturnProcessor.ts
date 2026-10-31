@@ -1,5 +1,5 @@
 import { PAYMENT_RETURN_SERVICE_NAME } from "../constants/paymentReturn";
-import { getUserFacingMessage } from "../errors/UserFacingError";
+import { getUserFacingMessage } from "@/shared/errors/UserFacingError";
 import type {
   PaymentReturnContextI,
   PaymentReturnStateI,

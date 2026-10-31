@@ -1,4 +1,4 @@
-import { getUserFacingMessage } from "../errors/UserFacingError";
+import { getUserFacingMessage } from "@/shared/errors/UserFacingError";
 import type {
   OrderFulfillmentMessagesI,
   PaymentReturnTranslatorT,

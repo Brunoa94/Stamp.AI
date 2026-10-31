@@ -18,7 +18,7 @@ import type { ShippingAddressT } from "@/shared/schemas/checkout";
 import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
 import type { StripePaymentIntentResultT } from "../../../lib/types/payment";
 import { AnalyticsService } from "@/shared/services/analyticsService";
-import { mapPurchaseEvent } from "@/features/analytics/mappers/ecommerceMappers";
+import { mapPurchaseEvent } from "@/features/analytics/lib/mappers/ecommerceMappers";
 import type { CartWithItems } from "@/shared/types/cart";
 import { CheckoutDataBuilder } from "@/features/checkout/lib/services/checkoutDataBuilder";
 

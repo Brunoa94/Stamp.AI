@@ -1,5 +1,5 @@
 import { PAYMENT_RETURN_SERVICE_NAME } from "../constants/paymentReturn";
-import { UserFacingError } from "../errors/UserFacingError";
+import { UserFacingError } from "@/shared/errors/UserFacingError";
 import type { PaymentReturnTranslatorT } from "../types/paymentReturn";
 import {
   CheckoutStorageService,

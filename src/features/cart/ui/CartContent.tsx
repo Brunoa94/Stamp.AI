@@ -22,7 +22,7 @@ import { CartEmptySection } from "./sections/CartEmptySection";
 import { CartLoadingSection } from "./sections/CartLoadingSection";
 import { CartSelectionHeader } from "./components/CartSelectionHeader";
 import { AnalyticsService } from "@/shared/services/analyticsService";
-import { mapViewCartEvent } from "@/features/analytics/mappers/ecommerceMappers";
+import { mapViewCartEvent } from "@/features/analytics/lib/mappers/ecommerceMappers";
 
 export function CartContent() {
   const t = useTranslations("cart.content");

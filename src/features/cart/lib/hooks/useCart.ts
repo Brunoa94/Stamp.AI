@@ -21,7 +21,7 @@ import {
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import { CartServiceMapper } from "@/shared/mappers/services/cartServiceMapper";
 import { AnalyticsService } from "@/shared/services/analyticsService";
-import { mapBeginCheckoutEvent } from "@/features/analytics/mappers/ecommerceMappers";
+import { mapBeginCheckoutEvent } from "@/features/analytics/lib/mappers/ecommerceMappers";
 
 export function useCart() {
   const router = useRouter();

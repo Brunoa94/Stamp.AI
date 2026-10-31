@@ -1,15 +1,17 @@
 # Claude Code Instructions
 
-## Session Start
+Docs index: `docs/README.md`. Every enforced rule: `docs/guardrails.md`.
 
-At the beginning of each session, read the documentation in the `docs/` folder to understand the project patterns:
+## Where things live
 
-- `docs/README.md` - Core patterns, types, components, architecture, error handling
-- `docs/README_UI_ENGINEERING.md` - UI component guidelines
-- `docs/README_PERFORMANCE.md` - Performance best practices
-- `docs/COLOR_PALETTE_GUIDELINES.md` - Color system
-- `docs/BRAND_VOICE.md` - Brand voice, terminology, and claims to avoid in customer-facing copy
+- `.claude/rules/`: conventions, loaded when you read a matching file: `components.md` (`src/**/*.tsx`), `architecture.md` (`src/**`), `types.md` (`src/**/*.{ts,tsx}`). Read the relevant one before planning a change you haven't opened files for yet.
+- `.claude/skills/`: task workflows, loaded by their descriptions.
+- `.claude/hooks/`: guardrails registered in `.claude/settings.json`. Change a hook together with its test in `hooks/tests/` and run `npm run test:hooks`.
+
+## Workflow
+
+Before editing code under `src/`, load the `test-driven-development` skill and write the failing test first (the hooks reject edits otherwise). Update the existing doc a change affects instead of adding a markdown file per change. Before opening a PR, run `/review-frontend changes`.
 
 ## Pre-Commit Validation
 
-Before committing any code, verify it follows the patterns documented in `docs/`. If code violates these patterns, refactor it before committing.
+Run `npm run knip` and `npm run fallow`, then check the change against `.claude/rules/`. ESLint, the pre-commit hook and the Claude Code hooks enforce the rest. Fix the code when a check fails; never use `--no-verify`.

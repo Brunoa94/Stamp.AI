@@ -51,6 +51,8 @@ jobs:
       # deliberately not run here; see `npm run test:integration`.
       - run: npm run test:unit
       - run: npm run test:acceptance:contracts
+      # Claude Code guardrail hooks (every hook in .claude/hooks has a test in .claude/hooks/tests).
+      - run: npm run test:hooks
 
   build:
     name: Build
@@ -141,6 +143,19 @@ jobs:
       - name: Knip (advisory until backlog is cleared)
         continue-on-error: true
         run: npm run knip
+
+  fallow:
+    name: Fallow (duplicated code)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      # Blocking: fails when duplication grows past the ratchet in .fallowrc.jsonc.
+      - run: npm run fallow
 
   # Gate for merging into main: the full acceptance suite, split into groups that
   # run in parallel (see acceptance.yml). Only runs on non-draft PRs targeting

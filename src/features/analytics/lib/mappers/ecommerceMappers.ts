@@ -1,6 +1,6 @@
 import type { CartItem } from "@/shared/types/cart";
 import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
-import type { AnalyticsItemT, AnalyticsEventParamsT } from "../types/analyticsTypes";
+import type { AnalyticsItemT, AnalyticsEventParamsT } from "../../types/analyticsTypes";
 
 /**
  * E-commerce Analytics Mappers
