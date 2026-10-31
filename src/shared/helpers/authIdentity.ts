@@ -5,8 +5,8 @@ type AuthIdentityT = { id: string; is_anonymous?: boolean };
  * anonymous (guest) session. Guests with an anonymous session can create
  * products and pay, but are treated as logged out everywhere else.
  */
-export function isRegisteredUser(
-  user: AuthIdentityT | null | undefined,
-): boolean {
+export function isRegisteredUser<UserT extends AuthIdentityT>(
+  user: UserT | null | undefined,
+): user is UserT {
   return !!user && !user.is_anonymous;
 }

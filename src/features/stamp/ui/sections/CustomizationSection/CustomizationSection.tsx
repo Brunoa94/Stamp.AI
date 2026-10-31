@@ -11,7 +11,7 @@ import { AnalyticsService } from "@/shared/services/analyticsService";
 import {
   mapColorSelectEvent,
   mapSizeSelectEvent,
-} from "@/features/analytics/mappers/stampFlowMappers";
+} from "@/features/analytics/lib/mappers/stampFlowMappers";
 
 /**
  * CustomizationSection

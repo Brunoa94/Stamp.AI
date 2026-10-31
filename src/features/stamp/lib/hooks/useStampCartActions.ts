@@ -19,7 +19,7 @@ import {
   logStampWarn,
 } from "../helpers/stampLogger";
 import { AnalyticsService } from "@/shared/services/analyticsService";
-import { mapAddToCartEvent } from "@/features/analytics/mappers/stampFlowMappers";
+import { mapAddToCartEvent } from "@/features/analytics/lib/mappers/stampFlowMappers";
 
 /**
  * useStampCartActions

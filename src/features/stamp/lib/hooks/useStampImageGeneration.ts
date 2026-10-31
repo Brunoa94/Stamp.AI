@@ -18,7 +18,7 @@ import { AnalyticsService } from "@/shared/services/analyticsService";
 import {
   mapGenerateCompleteEvent,
   mapGenerateFailedEvent,
-} from "@/features/analytics/mappers/stampFlowMappers";
+} from "@/features/analytics/lib/mappers/stampFlowMappers";
 import { addStoredImage } from "../services/generatedImagesStorage";
 import {
   DEFAULT_SYNTHESIS_STYLE,

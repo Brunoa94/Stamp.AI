@@ -1,12 +1,18 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "@/i18n/messages/en.json";
 import { renderWithIntl } from "@/tests/utils/renderWithIntl";
 import { AuthDialog } from "../AuthDialog";
 import { DialogContent, DialogTitle } from "@/features/ui/dialog";
 
+const mockCurrentUser = vi.hoisted(() => ({
+  value: null as { id: string; is_anonymous?: boolean } | null,
+}));
+
 vi.mock("@/shared/queries/authQueries", () => ({
-  useUser: () => ({ data: null }),
+  useUser: () => ({ data: mockCurrentUser.value }),
 }));
 
 /**
@@ -88,5 +94,36 @@ describe("AuthDialog", () => {
     );
     await user.click(screen.getByRole("button", { name: "Open" }));
     expect(await screen.findByTestId("auth-form")).toBeInTheDocument();
+  });
+
+  describe("for a guest with an anonymous session", () => {
+    afterEach(() => {
+      mockCurrentUser.value = null;
+    });
+
+    it("stays open when the anonymous user is refetched while open", async () => {
+      mockCurrentUser.value = { id: "anon-1", is_anonymous: true };
+      const user = userEvent.setup();
+      const dialog = () => (
+        <AuthDialog
+          form={FORM}
+          triggerAriaLabel="Open"
+          defaultTrigger={<button type="button">Open</button>}
+        />
+      );
+      const { rerender } = renderWithIntl(dialog());
+
+      await user.click(screen.getByRole("button", { name: "Open" }));
+      await screen.findByTestId("auth-form");
+      // React Query refetches the user (on window focus, for example)
+      mockCurrentUser.value = { id: "anon-1", is_anonymous: true };
+      rerender(
+        <NextIntlClientProvider locale="en" messages={messages}>
+          {dialog()}
+        </NextIntlClientProvider>,
+      );
+
+      expect(screen.getByTestId("auth-form")).toBeInTheDocument();
+    });
   });
 });

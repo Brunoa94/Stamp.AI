@@ -3,8 +3,8 @@
 import { LogIn, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ReactNode } from "react";
-import { LoginForm } from "./LoginForm";
-import { AuthDialog } from "../components/AuthDialog";
+import { LoginForm } from "../../login/LoginForm";
+import { AuthDialog } from "../../components/AuthDialog";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 

@@ -1,10 +1,9 @@
 "use client";
 
-import { useMemo, memo, useEffect, useRef } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMemo, memo } from "react";
 import { useCatalogProductsWithSeo } from "@/shared/queries/catalogQueries";
+import { usePrefetchBlueprintVariants } from "@/shared/queries/productQueries";
 import { resolveProductDescription } from "@/lib/seo/productDescription";
-import { PrintifyService } from "@/shared/services/printifyService";
 import { useStampNavigationActions } from "../../../lib/hooks/useStampNavigation";
 import {
   useStampProductSelection,
@@ -16,7 +15,7 @@ import { ProductGrid } from "./ProductGrid";
 import { ProductSelectionContent } from "./ProductSelectionContent";
 import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
 import { AnalyticsService } from "@/shared/services/analyticsService";
-import { mapSelectItemEvent } from "@/features/analytics/mappers/stampFlowMappers";
+import { mapSelectItemEvent } from "@/features/analytics/lib/mappers/stampFlowMappers";
 
 /**
  * ProductSelectionSection
@@ -107,42 +106,7 @@ function ProductSelectionSectionComponent() {
   }, [catalogProducts]);
 
   // Prefetch variants (colors & sizes) for all products when grid loads
-  // Use a ref to track which products have been prefetched to avoid duplicate requests
-  const queryClient = useQueryClient();
-  const prefetchedRef = useRef<Set<string>>(new Set());
-
-  useEffect(() => {
-    if (catalogProducts.length === 0) return;
-
-    catalogProducts.forEach((product) => {
-      const cacheKey = `${product.blueprintId}-${product.printProviderId}`;
-
-      // Skip if already prefetched in this session
-      if (prefetchedRef.current.has(cacheKey)) return;
-
-      const queryKey = [
-        "products",
-        "blueprint-variants",
-        product.blueprintId,
-        product.printProviderId,
-      ];
-
-      // Only prefetch if not already in cache
-      const existingData = queryClient.getQueryData(queryKey);
-      if (!existingData) {
-        prefetchedRef.current.add(cacheKey);
-        queryClient.prefetchQuery({
-          queryKey,
-          queryFn: () =>
-            PrintifyService.getBlueprintVariants(
-              product.blueprintId,
-              product.printProviderId,
-            ),
-          staleTime: 1000 * 60 * 10, // 10 minutes
-        });
-      }
-    });
-  }, [catalogProducts, queryClient]);
+  usePrefetchBlueprintVariants(catalogProducts);
 
   const handleProductSelect = (product: CatalogProductMappedType) => {
     setBlueprintId(product.blueprintId);
