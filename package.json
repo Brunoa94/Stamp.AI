@@ -76,6 +76,7 @@
   },
   "devDependencies": {
     "@ai-hero/sandcastle": "^0.8.0",
+    "@imgly/background-removal-node": "^1.4.5",
     "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
