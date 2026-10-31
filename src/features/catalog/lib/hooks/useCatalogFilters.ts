@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { startTransition, useDeferredValue, useState } from "react";
 import type {
   CatalogGroupFilterType,
   CatalogGroupSectionType,
@@ -19,22 +19,33 @@ import {
  * and sort order, plus the derived filtered group sections and result
  * count. The product list is small (one cached page), so filtering
  * runs on every render without memoization.
+ *
+ * Group changes and clearing run in a Transition, and results read a
+ * deferred copy of the query, so the showcase ↔ results swap animates
+ * through <ViewTransition> while the search input stays urgent.
  */
 
 export function useCatalogFilters(sections: CatalogGroupSectionType[]) {
-  const [group, setGroup] = useState<CatalogGroupFilterType>("all");
+  const [group, setGroupState] = useState<CatalogGroupFilterType>("all");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<CatalogSortOptionType>(DEFAULT_CATALOG_SORT);
+  const deferredQuery = useDeferredValue(query);
 
   const filteredSections = filterCatalogSections(sections, {
     group,
-    query,
+    query: deferredQuery,
     sort,
   });
 
+  const setGroup = (nextGroup: CatalogGroupFilterType) => {
+    startTransition(() => setGroupState(nextGroup));
+  };
+
   const clearFilters = () => {
-    setGroup("all");
-    setQuery("");
+    startTransition(() => {
+      setGroupState("all");
+      setQuery("");
+    });
   };
 
   return {
@@ -45,6 +56,7 @@ export function useCatalogFilters(sections: CatalogGroupSectionType[]) {
     setQuery,
     setSort,
     filteredSections,
+    isBrowsingAll: group === "all" && deferredQuery.trim() === "",
     resultCount: countCatalogProducts(filteredSections),
     clearFilters,
   };
