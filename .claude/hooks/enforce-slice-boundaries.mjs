@@ -29,7 +29,7 @@ export function decide(input, rootDir = process.cwd()) {
   return (
     `Feature-sliced boundary violation in ${filePath}:\n` +
     introduced.map((violation) => `- ${violation.message}`).join("\n") +
-    "\nSee docs/README.md → Slice boundaries."
+    "\nSee .claude/rules/architecture.md → Slice boundaries."
   );
 }
 

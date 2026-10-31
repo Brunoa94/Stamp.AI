@@ -4,12 +4,12 @@ import path from "node:path";
 
 const TEST = /(\.(test|spec)\.[cm]?[jt]sx?$)|(\/__tests__\/)/;
 const SOURCE = /^src\/.+\.(ts|tsx|js|jsx|mjs)$/;
-// Presentational code: logic lives in lib/ (docs/README.md → Separation of Concerns), so ui/
+// Presentational code: logic lives in lib/ (.claude/rules/architecture.md → UI vs non-UI), so ui/
 // folders, the design system, app pages/layouts and components elsewhere in a slice render;
 // acceptance tests cover them. cva variants are styling.
 const PRESENTATIONAL =
   /^src\/(features\/[^/]+\/ui\/|features\/ui\/|shared\/ui\/|app\/.+\.tsx$|features\/[^/]+\/(?!lib\/).+\.tsx$)|\/lib\/variants\//;
-// Static data and configuration (docs/README.md → lib/constants).
+// Static data and configuration (.claude/rules/architecture.md → Feature-Sliced Design).
 const STATIC_DATA = /\/constants\//;
 // Types have no runtime behavior; tsc checks them.
 const TYPES = /(^|\/)types\/|\.types\.ts$|\.d\.ts$/;

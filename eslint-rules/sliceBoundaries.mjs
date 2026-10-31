@@ -1,6 +1,6 @@
 // Feature-sliced boundaries, shared by the ESLint rule below and the
 // .claude/hooks/enforce-slice-boundaries.mjs agent hook, so both enforce the same thing.
-// (mirrors "Slice boundaries" in docs/README.md → Architecture & Folder Structure)
+// (mirrors "Slice boundaries" in .claude/rules/architecture.md)
 //
 // Layers, top to bottom. A file may import its own layer or a lower one, never a higher one:
 //   3 app       src/app, src/providers, src root files (middleware, instrumentation)

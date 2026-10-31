@@ -21,7 +21,7 @@ const barrelExportRules = [
 ];
 
 // Raw HTML elements that have a design-system replacement
-// (mirrors the table in docs/README.md → Components → Component Guidelines)
+// (mirrors the table in .claude/rules/components.md → Use the design system)
 const designSystemElements = [
   { elements: ["h1", "h2", "h3", "h4", "h5", "h6"], component: "Heading", from: "@/features/ui/heading" },
   { elements: ["p"], component: "Paragraph", from: "@/features/ui/paragraph" },
@@ -47,7 +47,7 @@ const rawElementRules = [
       message: `Use the ${component} component from ${from} instead of raw <${element}>.`,
     })),
   ),
-  // (mirrors "SVGs are always assets" in docs/README.md → Components → Component Guidelines)
+  // (mirrors "SVGs are assets" in .claude/rules/components.md)
   {
     selector: "JSXOpeningElement[name.name='svg']",
     message:
@@ -59,7 +59,7 @@ const rawElementRules = [
 // never in class-string constants, lookup maps or helpers inside a .tsx file.
 // A string counts as styling when it carries a Tailwind utility token; strings
 // inside a JSX attribute (className="…", className={cn(…)}) are allowed.
-// (mirrors "Styling approach" in docs/README.md → Components → Component Guidelines)
+// (mirrors "Styling" in .claude/rules/components.md)
 const tailwindTokenPattern =
   "(^|\\s)!?([a-z0-9-]+:)*-?(bg|text|border|rounded|p[xytrbl]?|m[xytrbl]?|gap|space-[xy]|w|h|min-[wh]|max-[wh]|size|flex|grid|items|justify|self|font|tracking|leading|shadow|opacity|z|top|left|right|bottom|inset|translate-[xy]|rotate|scale|duration|transition|ring|outline|fill|stroke|overflow|cursor|aspect|object|origin|blur|backdrop)-[^\\s]";
 const styleOutsideJsxMessage =
@@ -109,7 +109,7 @@ const hexColorRules = [
 
 // UI components render data; they never fetch it. Data comes in through hooks from
 // lib/hooks or the query hooks in src/shared/queries.
-// (mirrors "Core Architecture Layers" in docs/README.md → Architecture & Folder Structure)
+// (mirrors "Layers" in .claude/rules/architecture.md)
 const noDataFetchingMessage =
   "No data fetching in UI components. Fetch in a hook (lib/hooks or src/shared/queries) and pass the data in.";
 const noDataFetchingRules = {
