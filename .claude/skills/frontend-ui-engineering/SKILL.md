@@ -146,7 +146,7 @@ Move focus when content changes: into a dialog when it opens (trap it there), ba
 Never show a blank screen. Every data-driven view handles all three:
 
 - **Loading:** a skeleton shaped like the content (`CartLoadingSection`, `OrdersLoadingSection`) with `aria-busy="true"` — not a spinner for content.
-- **Error:** what happened, in calm blame-free copy, plus a way forward (retry button calling `refetch`).
+- **Error:** what happened, in calm blame-free copy, plus a way forward (retry button calling `refetch`). How errors from async actions reach the user (`handleError`, `UserFacingError`, pending state) is in the `error-handling` skill.
 - **Empty:** `role="status"`, what this space is for, and the next action (see `OrdersEmptySection` for the layout).
 
 ## Responsive Design

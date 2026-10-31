@@ -6,7 +6,7 @@ The architectural patterns, coding standards and guardrails for this project. Ea
 
 | Topic | File | What it covers |
 | ----- | ---- | -------------- |
-| Core rules | [CLAUDE.md](../CLAUDE.md) | The short list that applies to every change |
+| Entry point | [CLAUDE.md](../CLAUDE.md) | Map of `.claude/` (rules, skills, hooks), TDD workflow, pre-commit steps |
 | Components | [.claude/rules/components.md](../.claude/rules/components.md) | SRP, DRY, atomicity, one component per file, no logic in JSX loops, design system, SVGs, styling |
 | Architecture | [.claude/rules/architecture.md](../.claude/rules/architecture.md) | Feature-Sliced Design, `ui/` vs `lib/`, layers, slice boundaries, no barrels |
 | Types | [.claude/rules/types.md](../.claude/rules/types.md) | Typing, database-derived types, `T`/`PropsI` naming |
@@ -24,9 +24,23 @@ Task-specific guidance lives in Claude Code skills under `.claude/skills/`. Clau
 | `accessibility`            | Designing or reviewing interactive components to WCAG 2.2 AA: roles, names, keyboard, focus, live announcements, motion, contrast, a11y tests |
 | `performance-optimization` | Measuring and fixing slow pages, interactions and API routes; Core Web Vitals                |
 | `test-driven-development`  | Implementing logic, fixing bugs or changing behavior: red-green-refactor, reproduce bugs with a failing test first |
-| `error-handling`           | Payments, checkout, fulfillment, refunds, external APIs: error states, idempotency, timeouts, recovery, logging |
+| `error-handling`           | Anything that can fail, from a component's async action to an API route: user-facing messages, pending states, error boundaries, logging. Its `references/payments.md` covers payments, orders and refunds: return states, idempotency, timeouts, recovery. |
+| `seo`                      | Routes, page metadata, canonical/noindex, sitemap and robots, JSON-LD, heading structure: how the `src/features/seo` slice is used |
+| `review-frontend`          | `/review-frontend [changes \| pr <n> \| feature <slice>]`: runs the reviewer agents below on one scope and merges their findings |
 
 Rules that must always hold are not left to docs or skills: they are lint rules or hooks (see [guardrails.md](guardrails.md)).
+
+## Agents
+
+Read-only reviewer subagents live in `.claude/agents/`. Each one preloads the skills it reviews against, so the standard has a single source. They report findings and never edit code. `/review-frontend` launches them in parallel and merges their reports; fixes happen in the main session, where the TDD hooks apply.
+
+| Agent | Reviews against | Checks |
+| ----- | --------------- | ------ |
+| `qa-reviewer` | `test-driven-development`, `error-handling`, `accessibility`, `frontend-ui-engineering` | Runs eslint, related unit tests, knip and fallow on the scope; missing tests, unhandled states, error handling, a11y gaps lint can't see |
+| `seo-reviewer` | `seo` | Route registration, metadata, noindex, sitemap/robots, one `h1`, alt text, JSON-LD |
+| `perf-reviewer` | `performance-optimization` | Client boundaries, heavy imports, images/LCP, query bounds and waterfalls, memoization; `next build` route sizes when the scope touches a render path |
+
+When a reviewer keeps reporting the same mechanical issue, turn it into a lint rule or hook instead.
 
 ## Contributing
 

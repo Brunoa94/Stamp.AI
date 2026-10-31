@@ -1,23 +1,17 @@
 # Claude Code Instructions
 
-Docs index: `docs/README.md`. Detailed rules load automatically from `.claude/rules/` when you touch matching files (`components.md` for `.tsx`, `architecture.md` and `types.md` for `src/`). Read the relevant one before planning a change you haven't opened files for yet.
+Docs index: `docs/README.md`. Every enforced rule: `docs/guardrails.md`.
 
-## Core rules
+## Where things live
 
-- **Components**: Single Responsibility, DRY, atomic. One exported component per `.tsx` file; no complex logic inside `.map()` callbacks (move it to `lib/helpers/`). Props drilled more than 3 levels move to context (read-only, never setters) or a Zustand store (when children write the state); ask before introducing either.
-- **Design system**: use `@/features/ui/*` components instead of raw HTML, `next/image` for images and SVG assets (no inline `<svg>`), cva variants in `lib/variants/` for styling, design tokens only.
-- **Feature-Sliced Design**: `src/features/<slice>/ui/` holds only components; all other code goes in `lib/`. Imports go app → features → shared, never upward. Other slices may import only `<slice>/lib/**` and `<slice>/ui/components/**`. No barrel `index.ts` files.
-- **No data fetching in UI**: components get data from hooks in `lib/hooks/` or `src/shared/queries/`.
-- **Types**: everything typed; types end in `T`, single-component props interfaces are `PropsI`; database-shaped types derive from the generated database types.
-- **Errors**: only `UserFacingError` messages reach the user; surface errors through `useErrorHandler`; log with `src/lib/observability/logger.ts`, not `console.log`. Load the `error-handling` skill before writing code that can fail: payments, checkout, fulfillment, refunds, AI generation, external APIs, timeouts, retries, idempotency.
-- **Clean code**: no premature memoization; update existing docs instead of adding a markdown file per change.
+- `.claude/rules/`: conventions, loaded when you read a matching file: `components.md` (`src/**/*.tsx`), `architecture.md` (`src/**`), `types.md` (`src/**/*.{ts,tsx}`). Read the relevant one before planning a change you haven't opened files for yet.
+- `.claude/skills/`: task workflows, loaded by their descriptions.
+- `.claude/hooks/`: guardrails registered in `.claude/settings.json`. Change a hook together with its test in `hooks/tests/` and run `npm run test:hooks`.
 
 ## Workflow
 
-Before editing code under `src/`, load the `test-driven-development` skill and write the failing test first. Other skills (`frontend-ui-engineering`, `accessibility`, `error-handling`, `performance-optimization`) are listed in `docs/README.md` → Skills.
+Before editing code under `src/`, load the `test-driven-development` skill and write the failing test first (the hooks reject edits otherwise). Update the existing doc a change affects instead of adding a markdown file per change. Before opening a PR, run `/review-frontend changes`.
 
 ## Pre-Commit Validation
 
-Before committing, verify the code follows these rules and the files in `.claude/rules/`; refactor it if not. Run `npm run knip` and `npm run fallow` before verifying.
-
-ESLint, the git pre-commit hook and the Claude Code hooks enforce most rules; `docs/guardrails.md` lists every one. Fix the code when a check fails. Never bypass the hook with `--no-verify`.
+Run `npm run knip` and `npm run fallow`, then check the change against `.claude/rules/`. ESLint, the pre-commit hook and the Claude Code hooks enforce the rest. Fix the code when a check fails; never use `--no-verify`.
