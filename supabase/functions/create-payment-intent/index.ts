@@ -1,7 +1,7 @@
-import { enforceOperationLimit } from "../_shared/operationLimit.ts";
+import { enforceCallerLimits, OPERATION_LIMITS } from "../_shared/operationLimit.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
-import { validateEnvVars, validateRequest } from "../_shared/validators.ts";
+import { validateRequest, verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import {
   STRIPE_MODE_METADATA_KEY,
@@ -19,54 +19,6 @@ import type { PaymentIntentResponseI } from "../../types/index.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
 import "../_shared/sentry.ts";
 
-/**
- * Verify authentication - accepts both user JWT tokens and service role key
- * Returns user info if available, or service identifier if using service role
- */
-async function verifyAuth(
-  authHeader: string | null,
-): Promise<{ userId: string; userEmail: string }> {
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    throw ErrorCodes.INVALID_TOKEN();
-  }
-
-  const token = authHeader.replace("Bearer ", "");
-  const supabaseUrl = validateEnvVars.supabaseUrl();
-  const supabaseAnonKey = validateEnvVars.supabaseAnonKey();
-  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-
-  // Check if it's the service role key (server-to-server calls)
-  if (serviceRoleKey && token === serviceRoleKey) {
-    return {
-      userId: "service-role",
-      userEmail: "service@system.internal",
-    };
-  }
-
-  // Otherwise, validate as user JWT token
-  const response = await fetch(`${supabaseUrl}/auth/v1/user`, {
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "apikey": supabaseAnonKey,
-    },
-  });
-
-  if (!response.ok) {
-    throw ErrorCodes.INVALID_TOKEN();
-  }
-
-  const user = await response.json();
-
-  if (!user || !user.id) {
-    throw ErrorCodes.INVALID_TOKEN();
-  }
-
-  return {
-    userId: user.id,
-    userEmail: user.email || "",
-  };
-}
-
 serve(async (req) => {
   const corsHeaders = corsHeadersFor(req);
   // Handle CORS preflight requests
@@ -80,7 +32,7 @@ serve(async (req) => {
   try {
     // Verify authentication
     const authHeader = req.headers.get("authorization");
-    const { userId, userEmail } = await verifyAuth(authHeader);
+    const { userId, userEmail, isAnonymous } = await verifyAuth(authHeader);
 
     const {
       amount,
@@ -107,7 +59,7 @@ serve(async (req) => {
       throw new FunctionError(400, "INVALID_CURRENCY", "Checkout is priced in EUR");
     }
     if (userId === "service-role") throw ErrorCodes.INVALID_REQUEST_BODY();
-    await enforceOperationLimit(userId, "payment-create", 30, 60);
+    await enforceCallerLimits({ userId, isAnonymous }, req, "payment-create", OPERATION_LIMITS["payment-create"]);
     const pricing = await priceCheckout({ lineItems: line_items, promoCode: promo_code, userId });
     requireClientTotal(pricing, Math.round(validAmount * 100));
 

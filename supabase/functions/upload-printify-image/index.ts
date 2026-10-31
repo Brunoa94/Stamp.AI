@@ -10,7 +10,7 @@ import "../_shared/sentry.ts";
 
 import { isAllowedImageSource } from "../_shared/imageSourceRules.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
-import { enforceOperationLimit } from "../_shared/operationLimit.ts";
+import { enforceCallerLimits, OPERATION_LIMITS } from "../_shared/operationLimit.ts";
 
 // ~15 MB of image data once decoded.
 const MAX_IMAGE_BASE64_LENGTH = 20 * 1024 * 1024
@@ -26,7 +26,7 @@ serve(async (req) => {
 
   try {
     const auth = await requireUser(req.headers.get('authorization'))
-    if (!auth.isServiceRole) await enforceOperationLimit(auth.userId, "image-upload", 60, 60)
+    if (!auth.isServiceRole) await enforceCallerLimits(auth, req, "image-upload", OPERATION_LIMITS["image-upload"])
 
     const {
       image_url,      // URL of the image to upload

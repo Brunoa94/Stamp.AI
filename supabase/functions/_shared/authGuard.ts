@@ -16,12 +16,15 @@ export interface AuthedUser {
   userEmail: string;
   /** true when the caller presented the service-role key (server-to-server). */
   isServiceRole: boolean;
+  /** true for a guest's Supabase anonymous session (no email, no account). */
+  isAnonymous: boolean;
 }
 
 const SERVICE_IDENTITY: AuthedUser = {
   userId: "service-role",
   userEmail: "service@system.internal",
   isServiceRole: true,
+  isAnonymous: false,
 };
 
 function extractBearer(authHeader: string | null): string {
@@ -74,7 +77,22 @@ export async function requireUser(authHeader: string | null): Promise<AuthedUser
     throw ErrorCodes.INVALID_TOKEN();
   }
 
-  return { userId: user.id, userEmail: user.email || "", isServiceRole: false };
+  return {
+    userId: user.id,
+    userEmail: user.email || "",
+    isServiceRole: false,
+    isAnonymous: user.is_anonymous === true,
+  };
+}
+
+/**
+ * The caller's IP from the first `x-forwarded-for` entry, set by the Supabase
+ * gateway. Falls back to a single shared "unknown" value so a missing header
+ * never skips a per-IP limit.
+ */
+export function clientIp(req: Request): string {
+  const first = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return first || "unknown";
 }
 
 /**

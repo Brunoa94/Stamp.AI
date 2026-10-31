@@ -156,6 +156,8 @@ export const extractBearerToken = (authHeader?: string | null): string => {
 export interface VerifiedAuthResultI {
   userId: string;
   userEmail: string;
+  /** true for a guest's Supabase anonymous session (no email, no account). */
+  isAnonymous: boolean;
 }
 
 /**
@@ -178,6 +180,7 @@ export async function verifyAuth(authHeader: string | null): Promise<VerifiedAut
     return {
       userId: "service-role",
       userEmail: "service@system.internal",
+      isAnonymous: false,
     };
   }
 
@@ -205,5 +208,6 @@ export async function verifyAuth(authHeader: string | null): Promise<VerifiedAut
   return {
     userId: user.id,
     userEmail: user.email || "",
+    isAnonymous: user.is_anonymous === true,
   };
 }
