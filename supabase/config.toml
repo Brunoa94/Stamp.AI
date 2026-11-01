@@ -432,6 +432,11 @@ enabled = true
 verify_jwt = false
 entrypoint = "./functions/capture-paypal-order/index.ts"
 
+[functions.claim-guest-products]
+enabled = true
+verify_jwt = false
+entrypoint = "./functions/claim-guest-products/index.ts"
+
 [functions.create-credit-payment]
 enabled = true
 verify_jwt = false
