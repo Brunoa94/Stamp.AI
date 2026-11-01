@@ -8,7 +8,7 @@
 
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
@@ -21,6 +21,8 @@ import { AnalyticsService } from "@/shared/services/analyticsService";
 import { mapPurchaseEvent } from "@/features/analytics/lib/mappers/ecommerceMappers";
 import type { CartWithItems } from "@/shared/types/cart";
 import { CheckoutDataBuilder } from "@/features/checkout/lib/services/checkoutDataBuilder";
+import { usePersistGuestCart } from "@/features/checkout/lib/hooks/usePersistGuestCart";
+import { isLocalCart } from "@/shared/mappers/localCartMapper";
 
 interface CheckoutStripeButtonPropsI {
   amount: number;
@@ -55,6 +57,10 @@ export function CheckoutStripeButton({
   const t = useTranslations("checkout.stripeButton");
   const router = useRouter();
   const cartSnapshot = useRef<CartWithItems | null>(null);
+  // The cart this payment is for: a guest's database cart once it is saved.
+  const paymentCartId = useRef<string | null>(cartId || null);
+  const { persistGuestCart } = usePersistGuestCart();
+  const [isPreparingCart, setIsPreparingCart] = useState(false);
 
   const handleSuccess = useCallback(
     (
@@ -69,7 +75,7 @@ export function CheckoutStripeButton({
         lineItems: processedLineItems,
         shippingAddress,
         billing: billingAddress,
-        cartId: cartId || null,
+        cartId: paymentCartId.current,
         cartSnapshot:
           cartSnapshot.current ?? CheckoutDataBuilder.createCartSnapshot(cart),
         timestamp: Date.now(),
@@ -94,7 +100,7 @@ export function CheckoutStripeButton({
       });
       router.push(`/checkout/stripe-return?${params.toString()}`);
     },
-    [router, amount, shippingCostCents, discountCents, shippingAddress, billingAddress, cartId, cart],
+    [router, amount, shippingCostCents, discountCents, shippingAddress, billingAddress, cart],
   );
 
   const { loading, error, handleSubmit, setSelectedTestMethod } =
@@ -108,11 +114,28 @@ export function CheckoutStripeButton({
       onSuccess: handleSuccess,
     });
 
-  const handlePaymentSubmit = (event: React.FormEvent) => {
+  const handlePaymentSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    let paymentCart = cart;
+    paymentCartId.current = cartId || null;
+
+    // A guest pays for a database copy of their local cart.
+    if (isLocalCart(cart)) {
+      setIsPreparingCart(true);
+      try {
+        paymentCart = await persistGuestCart();
+      } catch {
+        return; // usePersistGuestCart already told the guest
+      } finally {
+        setIsPreparingCart(false);
+      }
+      paymentCartId.current = paymentCart.id;
+    }
+
     // Freeze the cart immediately before payment creation. It must survive a
     // possible 3DS redirect and must not follow later live-cart changes.
-    cartSnapshot.current = CheckoutDataBuilder.createCartSnapshot(cart);
-    return handleSubmit(event);
+    cartSnapshot.current = CheckoutDataBuilder.createCartSnapshot(paymentCart);
+    return handleSubmit(event, { cartId: paymentCartId.current });
   };
 
   useEffect(() => {
@@ -128,11 +151,11 @@ export function CheckoutStripeButton({
         onClick={(event) =>
           handlePaymentSubmit(event as unknown as React.FormEvent)
         }
-        disabled={disabled || loading}
+        disabled={disabled || loading || isPreparingCart}
         variant="primary"
         className="w-full"
       >
-        {loading
+        {loading || isPreparingCart
           ? t("processing")
           : t("pay", { amount: (amount / 100).toFixed(2) })}
       </Button>

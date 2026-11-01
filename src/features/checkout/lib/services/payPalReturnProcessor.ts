@@ -15,6 +15,7 @@ import {
 } from "./payPalCaptureService";
 import { PaymentFinalizationLockService } from "./paymentFinalizationLockService";
 import { fulfillStoredCheckout } from "./storedCheckoutFulfillmentService";
+import { removePaidGuestCartItems } from "./guestCartCleanupService";
 import { captureError } from "@/lib/observability/errorCapture";
 
 interface PayPalReturnParamsI {
@@ -96,6 +97,7 @@ export async function processPayPalReturn(
 
     PaymentFinalizationLockService.markFinalized("paypal", token);
     CheckoutStorageService.clearPayPalCheckoutData();
+    removePaidGuestCartItems(user);
     update({ status: "success", orderNumber });
   } catch (error) {
     captureError(error, {

@@ -13,6 +13,8 @@ import {
   updateCartItemSchema,
 } from "@/shared/schemas/cart";
 import { CartServiceMapper } from "@/shared/mappers/services/cartServiceMapper";
+import { mapLocalCartItemToAddToCartInput } from "@/shared/mappers/localCartMapper";
+import type { LocalCartItemT } from "./localCartStorageService";
 import { ErrorClient } from "./errorClient";
 
 export class CartService {
@@ -443,6 +445,31 @@ export class CartService {
         action: "Update Cart Items Selection",
       });
     }
+  }
+
+  /**
+   * Copy a guest's local cart into the user's database cart, so the payment
+   * functions and return pages work on a real cart. Creates the cart on the
+   * first payment and replaces its items (and selection) on later ones.
+   */
+  static async saveCartFromLocalItems(
+    userId: string,
+    items: LocalCartItemT[],
+  ): Promise<CartWithItems> {
+    const cart = await this.getOrCreateCart(userId);
+    await this.clearCart(cart.id);
+
+    const selectedItemIds: string[] = [];
+    for (const item of items) {
+      const row = await this.addToCart(
+        cart.id,
+        mapLocalCartItemToAddToCartInput(item),
+      );
+      if (item.isSelected) selectedItemIds.push(row.id);
+    }
+    await this.updateCartItemsSelection(cart.id, selectedItemIds);
+
+    return this.getCart(cart.id);
   }
 
   /**

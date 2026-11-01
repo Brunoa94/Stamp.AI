@@ -1618,6 +1618,9 @@
     }
   },
   "checkout": {
+    "errors": {
+      "guestCartPersist": "We couldn't prepare your bag for payment. Please try again."
+    },
     "header": {
       "title": "Check <accent>out</accent>",
       "subtitle": "Complete your order"
