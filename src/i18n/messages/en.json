@@ -1190,6 +1190,9 @@
     }
   },
   "auth": {
+    "errors": {
+      "guestClaim": "We couldn't move the items in your bag to your account. They're still in your bag; please refresh to try again."
+    },
     "authCodeError": {
       "title": "Something went wrong",
       "description": "We couldn't process your sign-in request.",
@@ -1231,7 +1234,8 @@
     "google": {
       "iconAlt": "Google",
       "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "continueWithGoogle": "Continue with Google",
+      "redirecting": "This Google account already has a Stamp account. Taking you to Google to sign in…"
     },
     "login": {
       "openDialogAria": "Open login dialog",

@@ -16,6 +16,7 @@ import {
   UpdateUserResponseSchema,
 } from "@/shared/schemas/services/authServiceSchemas";
 import { ErrorClient } from "./errorClient";
+import type { PendingGuestClaimT } from "./guestClaimStorageService";
 
 class AuthService {
   private static getSupabase() {
@@ -256,6 +257,85 @@ class AuthService {
         error,
         service: "Auth",
         action: "Sign In As Guest",
+      });
+    }
+  }
+
+  /**
+   * The current session when it is a guest's anonymous one, else null.
+   */
+  static async getAnonymousSession(): Promise<PendingGuestClaimT | null> {
+    const { data } = await AuthService.getSupabase().auth.getSession();
+    const session = data.session;
+    if (!session?.user.is_anonymous) return null;
+    return { accessToken: session.access_token, userId: session.user.id };
+  }
+
+  /**
+   * Move a guest's products and uploaded images to the logged-in account.
+   * The edge function verifies both the caller and the guest token.
+   */
+  static async claimGuestProducts(anonymousAccessToken: string): Promise<void> {
+    try {
+      const { data } = await AuthService.getSupabase().auth.getSession();
+      if (!data.session) throw new Error("Not authenticated");
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/claim-guest-products`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${data.session.access_token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ anonymousAccessToken }),
+        },
+      );
+
+      if (!response.ok) {
+        const result = await response.json().catch(() => ({}));
+        throw ErrorClient.handleError({
+          error: { error: result.error || "Failed to claim guest products" },
+          service: "Auth",
+          action: "Claim Guest Products",
+        });
+      }
+    } catch (error) {
+      throw ErrorClient.handleError({
+        error,
+        service: "Auth",
+        action: "Claim Guest Products",
+      });
+    }
+  }
+
+  /**
+   * Turn the guest's anonymous user into their Google account, so the uid
+   * (and the products and cart it owns) stays the same. Redirects to Google.
+   * If that Google account already belongs to a user, the callback falls
+   * back to a normal Google sign-in.
+   */
+  static async linkGoogleIdentity(): Promise<void> {
+    try {
+      const { error } = await AuthService.getSupabase().auth.linkIdentity({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=/stamp`,
+        },
+      });
+
+      if (error) {
+        throw ErrorClient.handleError({
+          error,
+          service: "Auth",
+          action: "Link Google Identity",
+        });
+      }
+    } catch (error) {
+      throw ErrorClient.handleError({
+        error,
+        service: "Auth",
+        action: "Link Google Identity",
       });
     }
   }

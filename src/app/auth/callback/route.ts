@@ -19,6 +19,13 @@ export async function GET(request: NextRequest) {
   }
 
   if (!code) {
+    // A guest tried to link a Google account that already belongs to a user:
+    // sign in to that account instead (their guest bag is merged afterwards).
+    if (requestUrl.searchParams.get('error_code') === 'identity_already_exists') {
+      const fallback = new URL('/auth/google-sign-in', request.url)
+      fallback.searchParams.set('next', next.pathname)
+      return NextResponse.redirect(fallback)
+    }
     return NextResponse.redirect(new URL('/auth/auth-code-error', request.url))
   }
 

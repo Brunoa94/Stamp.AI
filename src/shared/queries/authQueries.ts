@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import { AnalyticsService } from "@/shared/services/analyticsService";
 import { isRegisteredUser } from "@/shared/helpers/authIdentity";
+import { GuestClaimStorageService } from "@/shared/services/guestClaimStorageService";
 import {
   getSafeRedirectPath,
   REDIRECTED_FROM_PARAM,
@@ -73,6 +74,19 @@ export function useEnsureGuestSession() {
   }, [queryClient]);
 }
 
+/**
+ * Before a guest leaves their anonymous session (login, sign-up, Google),
+ * remember it so the products and bag it owns can be merged into the
+ * account once a registered session appears (see useMergeGuestCart).
+ * Returns whether the visitor was a guest.
+ */
+async function rememberGuestSession(): Promise<boolean> {
+  const anonymousSession = await AuthService.getAnonymousSession();
+  if (!anonymousSession) return false;
+  GuestClaimStorageService.save(anonymousSession);
+  return true;
+}
+
 // ============================================
 // MUTATIONS (Write Operations)
 // ============================================
@@ -86,12 +100,13 @@ export function useLogin() {
   const { handleSuccess } = useErrorHandler();
 
   return useMutation({
-    mutationFn: (
+    mutationFn: async (
       { credentials, captchaToken }: {
         credentials: LoginI;
         captchaToken?: string | null;
       },
     ): Promise<AuthResponseI> => {
+      await rememberGuestSession();
       return AuthService.login(credentials, captchaToken ?? undefined);
     },
     onSuccess: (data) => {
@@ -142,12 +157,14 @@ export function useRegister() {
   const { handleError, handleSuccess } = useErrorHandler();
 
   return useMutation({
-    mutationFn: (
+    mutationFn: async (
       { userData, captchaToken }: {
         userData: RegisterI;
         captchaToken?: string | null;
       },
     ): Promise<AuthResponseI> => {
+      // The account only gets a session once the confirmation link is opened.
+      await rememberGuestSession();
       return AuthService.register(userData, captchaToken);
     },
     onSuccess: (data) => {
@@ -263,13 +280,18 @@ export function useUpdatePassword() {
 }
 
 /**
- * Sign in with Google OAuth
+ * Sign in with Google OAuth. A guest links Google to their anonymous user,
+ * so it keeps their products and cart; if that Google account already
+ * exists, the auth callback falls back to a normal Google sign-in.
  */
 export function useGoogleSignIn() {
   const { handleError } = useErrorHandler();
 
   return useMutation({
-    mutationFn: (): Promise<void> => {
+    mutationFn: async (): Promise<void> => {
+      if (await rememberGuestSession()) {
+        return AuthService.linkGoogleIdentity();
+      }
       return AuthService.signInWithGoogle();
     },
     onError: (error: Error) => {

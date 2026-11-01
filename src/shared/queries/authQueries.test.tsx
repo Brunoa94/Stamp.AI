@@ -2,7 +2,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
-import { useEnsureGuestSession, useIsAuthenticated } from "./authQueries";
+import {
+  useEnsureGuestSession,
+  useGoogleSignIn,
+  useIsAuthenticated,
+  useLogin,
+  useRegister,
+} from "./authQueries";
+import { GuestClaimStorageService } from "@/shared/services/guestClaimStorageService";
 import { AuthService } from "@/shared/services/authService";
 
 vi.mock("@/shared/services/authService");
@@ -91,6 +98,71 @@ describe("authQueries", () => {
       expect(user).toEqual(anonymousUser);
       expect(AuthService.signInAsGuest).toHaveBeenCalledTimes(1);
       expect(queryClient.getQueryData(["auth", "user"])).toEqual(anonymousUser);
+    });
+  });
+
+  describe("leaving a guest session", () => {
+    const anonymousSession = { accessToken: "guest-jwt", userId: "anon-1" };
+
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    it("useLogin remembers the anonymous session before signing in", async () => {
+      vi.mocked(AuthService.getAnonymousSession).mockResolvedValue(anonymousSession);
+      vi.mocked(AuthService.login).mockImplementation(async () => {
+        expect(GuestClaimStorageService.read()).toEqual(anonymousSession);
+        return { success: true, user: undefined, session: undefined };
+      });
+      const { result } = renderHook(() => useLogin(), { wrapper });
+
+      await result.current.mutateAsync({ credentials: { email: "a@b.c", password: "secret123" } });
+
+      expect(AuthService.login).toHaveBeenCalledTimes(1);
+      expect(GuestClaimStorageService.read()).toEqual(anonymousSession);
+    });
+
+    it("useLogin does not remember anything for a visitor without a guest session", async () => {
+      vi.mocked(AuthService.getAnonymousSession).mockResolvedValue(null);
+      vi.mocked(AuthService.login).mockResolvedValue({ success: true });
+      const { result } = renderHook(() => useLogin(), { wrapper });
+
+      await result.current.mutateAsync({ credentials: { email: "a@b.c", password: "secret123" } });
+
+      expect(GuestClaimStorageService.read()).toBeNull();
+    });
+
+    it("useRegister remembers the anonymous session for when the account is confirmed", async () => {
+      vi.mocked(AuthService.getAnonymousSession).mockResolvedValue(anonymousSession);
+      vi.mocked(AuthService.register).mockResolvedValue({ success: true });
+      const { result } = renderHook(() => useRegister(), { wrapper });
+
+      await result.current.mutateAsync({
+        userData: { email: "a@b.c", firstName: "A", lastName: "B" } as never,
+      });
+
+      expect(GuestClaimStorageService.read()).toEqual(anonymousSession);
+    });
+
+    it("useGoogleSignIn links Google to an anonymous user instead of signing in", async () => {
+      vi.mocked(AuthService.getAnonymousSession).mockResolvedValue(anonymousSession);
+      const { result } = renderHook(() => useGoogleSignIn(), { wrapper });
+
+      await result.current.mutateAsync();
+
+      expect(AuthService.linkGoogleIdentity).toHaveBeenCalledTimes(1);
+      expect(AuthService.signInWithGoogle).not.toHaveBeenCalled();
+      expect(GuestClaimStorageService.read()).toEqual(anonymousSession);
+    });
+
+    it("useGoogleSignIn signs in with Google when there is no guest session", async () => {
+      vi.mocked(AuthService.getAnonymousSession).mockResolvedValue(null);
+      const { result } = renderHook(() => useGoogleSignIn(), { wrapper });
+
+      await result.current.mutateAsync();
+
+      expect(AuthService.signInWithGoogle).toHaveBeenCalledTimes(1);
+      expect(AuthService.linkGoogleIdentity).not.toHaveBeenCalled();
     });
   });
 });
