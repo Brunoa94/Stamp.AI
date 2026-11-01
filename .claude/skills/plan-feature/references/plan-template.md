@@ -35,6 +35,17 @@
 | `src/features/<slice>/ui/sections/<Section>/<Section>.tsx` (new) | <...> |
 | `src/i18n/messages/en.json` | <New keys under `<namespace>`> |
 
+## Start
+
+Work in a separate worktree branched from `dev`, never on the branch checked out in the main checkout:
+
+```bash
+git fetch origin
+git worktree add .claude/worktrees/<feature-slug> -b feat/<feature-slug> origin/dev
+cp <the gitignored .env* files in the repo root> .claude/worktrees/<feature-slug>/
+cd .claude/worktrees/<feature-slug> && npm install
+```
+
 ## Steps
 
 ### 1. <Short name>
@@ -52,6 +63,10 @@
 ## Acceptance tests
 
 <!-- New files under tests/acceptance/ proposed by this plan, or "None". They are the protected spec: creating them needs the user's approval. -->
+
+## Finish
+
+After the last step and the acceptance tests pass, run `/review-frontend changes` and fix what it reports, then push `feat/<feature-slug>` and open a pull request against `dev` (not `main`). Delete this plan file in that pull request. After it merges, remove the worktree from the main checkout with `git worktree remove .claude/worktrees/<feature-slug>`.
 
 ## Open questions
 

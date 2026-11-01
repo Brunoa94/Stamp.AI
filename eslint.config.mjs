@@ -150,6 +150,9 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Supabase edge functions run on Deno and are not linted.
     "supabase/functions/**",
+    // Third-party skills installed from skills-lock.json are vendored, not linted.
+    ".agents/**",
+    ".claude/skills/clarity/**",
   ]),
   // Project-wide rules
   {

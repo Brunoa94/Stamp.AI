@@ -12,7 +12,9 @@
     "src/types/**",
     "supabase/types/**",
     "playwright.config.ts",
-    "supabase/functions/**"
+    "supabase/functions/**",
+    ".agents/**",
+    ".claude/**"
   ],
   "ignoreDependencies": [
     "tailwindcss",

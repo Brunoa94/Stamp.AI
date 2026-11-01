@@ -66,3 +66,10 @@ describe("useErrorHandler.handleError", () => {
     expect(resolveMessage({ message: "Failed to fetch" })).toBe("translated:UNKNOWN_ERROR");
   });
 });
+
+describe("errors.UNKNOWN_ERROR copy", () => {
+  it("tells the user that an error happened, not only that something went wrong", async () => {
+    const { default: en } = await import("@/i18n/messages/en.json");
+    expect(en.errors.UNKNOWN_ERROR).toMatch(/error|failed|couldn.t/i);
+  });
+});

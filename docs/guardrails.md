@@ -21,9 +21,9 @@ These patterns are enforced by tools, so neither people nor agents can drift fro
 In `.claude/hooks/`, registered in `.claude/settings.json`, tested by `npm run test:hooks`.
 
 - `protect-acceptance-tests.mjs`: editing acceptance tests needs approval (also from the shell)
-- `guard-dangerous-commands.mjs`: `rm -rf`, `git push --force`, `git reset --hard`, installing new dependencies, changes to the remote Supabase project (`db push`, `db reset --linked`, `functions deploy|delete`, `secrets set|unset`, `migration repair`) and `psql` against a non-local host need approval. Looks inside `bash -c` and `npx`.
+- `guard-dangerous-commands.mjs`: `rm -rf`, `git push --force`, `git reset --hard`, installing new dependencies, changes to the remote Supabase project (`db push`, `db reset --linked`, `functions deploy|delete`, `secrets set|unset`, `migration repair`) and `psql` against a non-local host need approval. Looks inside `bash -c` and `npx`. Off in auto mode.
 - `enforce-slice-boundaries.mjs`: edits that add a slice-boundary violation are rejected (existing violations in a file don't block unrelated edits)
-- `block-shell-source-writes.mjs`: shell commands that write `src/` source code (`sed -i`, heredocs, `tee`, `cp`, `mv` from outside `src/`) are rejected; source is edited with Edit/Write/MultiEdit so the hooks above and below see it. Renames inside `src/` and shell writes to tests, styles and docs are fine.
+- `block-shell-source-writes.mjs`: shell commands that write `src/` source code (`sed -i`, heredocs, `tee`, `cp`, `mv` from outside `src/`) are rejected; source is edited with Edit/Write/MultiEdit so the hooks above and below see it. Renames inside `src/` and shell writes to tests, styles and docs are fine. Off in auto mode.
 - `enforce-test-first.mjs`: an Edit/Write that changes the behavior of gated source code is rejected until a **covering** test has been written or changed in the same session (also from the shell), and Claude is sent to the `test-driven-development` skill
 - `enforce-tdd-on-commit.mjs`: a `git commit` (including `-a`/`--all`) that changes the behavior of gated source code without changing a covering test is rejected and sent back to the `test-driven-development` skill; a `No-Tests-Reason:` line in the message asks a human instead
 

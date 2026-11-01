@@ -3,6 +3,7 @@
   // Generated, vendored and tooling output that isn't ours to deduplicate.
   "ignorePatterns": [
     ".claude/**",
+    ".agents/**",
     "src/types/database.types.ts",
     "src/shared/types/database.types.ts",
     "database.types.ts",
