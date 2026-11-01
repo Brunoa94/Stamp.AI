@@ -22,8 +22,9 @@ const OWNER_ANONYMOUS_KEY = "stamp:storage-owner-anonymous";
 /**
  * Called on every auth state change. Clears private state when the browser
  * changes hands (sign-out, a first sign-in, or a different user), except
- * when a guest's anonymous session becomes a registered account: that is the
- * same person, and their local cart must survive until it is merged.
+ * when a visitor starts a guest session or a guest's anonymous session
+ * becomes a registered account: that is the same person, and their local
+ * cart must survive until it is paid for or merged.
  */
 export function syncPrivateBrowserStateOwner(
   event: string,
@@ -34,10 +35,13 @@ export function syncPrivateBrowserStateOwner(
     const previousWasGuest = window.localStorage.getItem(OWNER_ANONYMOUS_KEY) === "1";
     const nextOwner = user?.id ?? null;
     const guestLoggedIn = previousWasGuest && !!user && !user.is_anonymous;
+    // A visitor without a session who starts a guest session is still the
+    // same visitor: their bag must survive the anonymous sign-in at payment.
+    const guestSessionStarted = !previousOwner && !!user?.is_anonymous;
 
     const ownerChanged = (nextOwner && !previousOwner) ||
       (previousOwner && previousOwner !== nextOwner);
-    if (event === "SIGNED_OUT" || (ownerChanged && !guestLoggedIn)) {
+    if (event === "SIGNED_OUT" || (ownerChanged && !guestLoggedIn && !guestSessionStarted)) {
       clearPrivateBrowserState();
     }
 

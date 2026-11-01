@@ -29,6 +29,22 @@ describe("syncPrivateBrowserStateOwner", () => {
     expect(localStorage.getItem("local_cart")).toBe("items");
   });
 
+  it("keeps the local cart when a visitor without a session starts a guest session", () => {
+    seedCart();
+
+    syncPrivateBrowserStateOwner("SIGNED_IN", GUEST);
+
+    expect(localStorage.getItem("local_cart")).toBe("items");
+  });
+
+  it("clears private state when an account signs in on a browser with no owner", () => {
+    seedCart();
+
+    syncPrivateBrowserStateOwner("SIGNED_IN", ACCOUNT);
+
+    expect(localStorage.getItem("local_cart")).toBeNull();
+  });
+
   it("keeps the cart while the same guest's token refreshes", () => {
     syncPrivateBrowserStateOwner("SIGNED_IN", GUEST);
     seedCart();
