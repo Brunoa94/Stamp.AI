@@ -20,6 +20,7 @@ import {
 } from "@/shared/queries/cartQueries";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import { CartServiceMapper } from "@/shared/mappers/services/cartServiceMapper";
+import { isLocalCart } from "@/shared/mappers/localCartMapper";
 import { AnalyticsService } from "@/shared/services/analyticsService";
 import { mapBeginCheckoutEvent } from "@/features/analytics/lib/mappers/ecommerceMappers";
 
@@ -130,7 +131,8 @@ export function useCart() {
       }),
     );
 
-    router.push(`/checkout?cartId=${cart.id}`);
+    // A guest's local cart has no database id; checkout reads it directly.
+    router.push(isLocalCart(cart) ? "/checkout" : `/checkout?cartId=${cart.id}`);
   };
 
   const totals = cart
