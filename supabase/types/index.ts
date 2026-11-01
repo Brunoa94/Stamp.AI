@@ -7,7 +7,7 @@ export * from './success'
 // API Response Types
 // =============================================================================
 
-export interface ApiResponseI<T = any> {
+export interface ApiResponseI<T = unknown> {
   success: boolean
   data?: T
   error?: string
@@ -31,14 +31,15 @@ export interface UserI {
   created_at: string
   updated_at?: string
   user_metadata?: UserMetadataI
-  app_metadata?: Record<string, any>
+  app_metadata?: Record<string, unknown>
+  is_anonymous?: boolean
 }
 
 export interface UserMetadataI {
   first_name?: string
   last_name?: string
   avatar_url?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface SessionI {
@@ -63,7 +64,7 @@ export interface RegisterRequestI {
   password: string
   first_name?: string
   last_name?: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export interface LoginRequestI {
@@ -88,7 +89,7 @@ export interface UpdateProfileRequestI {
   first_name?: string
   last_name?: string
   avatar_url?: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export interface RefreshRequestI {
@@ -127,9 +128,9 @@ export interface PaymentTransactionI {
   currency: string
   status: PaymentStatusT
   payment_method_type?: string
-  payment_method_details?: Record<string, any>
+  payment_method_details?: Record<string, unknown>
   error_message?: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
   created_at: string
   updated_at: string
 }
@@ -138,9 +139,9 @@ export interface PaymentTransactionI {
 export interface CreatePaymentIntentRequestI {
   amount: number
   currency?: string
-  line_items?: any[]
+  line_items?: unknown[]
   shipping_address?: ShippingAddressI
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
   payment_method?: string
   confirm?: boolean
 }
@@ -155,9 +156,9 @@ export interface PaymentIntentResponseI {
 export interface PayPalOrderRequestI {
   amount: number
   currency?: string
-  line_items?: any[]
+  line_items?: unknown[]
   shipping_address?: ShippingAddressI
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export interface PayPalOrderResponseI {
@@ -184,9 +185,9 @@ export interface MolliePaymentRequestI {
   currency?: string
   description?: string
   order_id?: string
-  line_items?: any[]
+  line_items?: unknown[]
   shipping_address?: ShippingAddressI
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
   method?: string
 }
 
@@ -205,7 +206,7 @@ export interface MollieVerifyResponseI {
   paymentId: string
   status: 'open' | 'canceled' | 'pending' | 'authorized' | 'expired' | 'failed' | 'paid'
   isPaid: boolean
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 // =============================================================================
@@ -251,7 +252,6 @@ export interface CreateCustomProductRequestI {
   description?: string
   variants?: number[]
   user_id: string
-  customer_email: string
   selected_color?: string | null
   selected_size?: string | null
   // Image dimensions for auto-placement calculation
@@ -269,7 +269,7 @@ export interface ProductVariantI {
   options?: {
     color?: string
     size?: string
-    [key: string]: any
+    [key: string]: unknown
   }
 }
 
@@ -284,7 +284,7 @@ export interface ProductI {
     is_default: boolean
   }[]
   variants: ProductVariantI[]
-  print_areas?: any
+  print_areas?: unknown
   blueprint_id?: number
   print_provider_id?: number
 }
@@ -315,7 +315,7 @@ export interface OrderLineItemI {
   variant_id: number
   quantity: number
   print_areas?: PrintAreaI
-  print_details?: any
+  print_details?: unknown
   sku?: string
 }
 
@@ -325,7 +325,7 @@ export interface CreatePrintifyOrderRequestI {
   shipping_address?: ShippingAddressI
   address_to?: ShippingAddressI
   is_test?: boolean
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
   use_sample_order?: boolean
 }
 

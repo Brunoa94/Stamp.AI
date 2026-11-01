@@ -819,7 +819,7 @@
         "noProduct": "Please select a product type",
         "noColorSize": "Please select color and size",
         "noSize": "Please select a size",
-        "notLoggedIn": "You must be logged in to create a product",
+        "guestSession": "We couldn't start your session. Please try again in a moment.",
         "timeout": "Product creation timed out after {seconds} seconds. Please try again or contact support if the issue persists."
       },
       "cart": {
@@ -1190,6 +1190,10 @@
     }
   },
   "auth": {
+    "errors": {
+      "guestClaim": "We couldn't move the items in your bag to your account. They're still in your bag; please refresh to try again.",
+      "guestClaimExpired": "Your guest session expired before you signed in, so the items in your bag couldn't be moved to your account. Please add them again."
+    },
     "authCodeError": {
       "title": "Something went wrong",
       "description": "We couldn't process your sign-in request.",
@@ -1231,7 +1235,8 @@
     "google": {
       "iconAlt": "Google",
       "connecting": "Connecting...",
-      "continueWithGoogle": "Continue with Google"
+      "continueWithGoogle": "Continue with Google",
+      "redirecting": "This Google account already has a Stamp account. Taking you to Google to sign in…"
     },
     "login": {
       "openDialogAria": "Open login dialog",
@@ -1618,6 +1623,9 @@
     }
   },
   "checkout": {
+    "errors": {
+      "guestCartPersist": "We couldn't prepare your bag for payment. Please try again."
+    },
     "header": {
       "title": "Check <accent>out</accent>",
       "subtitle": "Complete your order"

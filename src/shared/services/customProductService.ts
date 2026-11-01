@@ -181,7 +181,6 @@ export class CustomProductService {
         title: validatedInput.title || `Custom Design ${Date.now()}`,
         description: validatedInput.description || "Custom designed product",
         user_id: validatedInput.user_id,
-        customer_email: validatedInput.customer_email,
         selected_color: validatedInput.selected_color,
         selected_size: validatedInput.selected_size,
         // Pass image dimensions for auto-placement calculation

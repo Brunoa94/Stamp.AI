@@ -4,6 +4,7 @@ import { createServiceClient } from "@/lib/supabase/service";
 import { captureError } from "@/lib/observability/errorCapture";
 import { OpenAIImageService } from "@/shared/services/openaiImageService";
 import { withTimeout } from "@/lib/promiseUtils";
+import { isRegisteredUser } from "@/shared/helpers/authIdentity";
 import {
   detectImageMimeType,
   MAX_REFERENCE_IMAGE_BYTES,
@@ -47,7 +48,9 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user) {
+    // Generation is for registered users only; guests (anonymous sessions)
+    // can upload their own image but not generate.
+    if (!isRegisteredUser(user)) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 },

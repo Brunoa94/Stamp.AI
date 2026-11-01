@@ -13,6 +13,7 @@ import {
 } from "./mollieReturnContextService";
 import { PaymentFinalizationLockService } from "./paymentFinalizationLockService";
 import { recordPaymentRecoverySafely } from "./paymentReturnRecoveryService";
+import { removePaidGuestCartItems } from "./guestCartCleanupService";
 import {
   isMolliePaymentFailed,
   isMolliePaymentPaid,
@@ -97,6 +98,7 @@ export async function processMollieReturn(
 
       PaymentFinalizationLockService.markFinalized("mollie", paymentId);
       CheckoutStorageService.clearMollieCheckoutData();
+      removePaidGuestCartItems(user);
       update({ status: "success", orderNumber });
       return;
     }

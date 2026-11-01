@@ -15,6 +15,9 @@ import { Landmark, Loader2 } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { PAYMENT_CONFIRM_METHOD_UI } from "@/shared/constants/payment";
 import { usePrepareIdealPayment } from "@/features/checkout/lib/queries/paymentQueries";
+import { usePersistGuestCart } from "@/features/checkout/lib/hooks/usePersistGuestCart";
+import { useSinglePaymentAttempt } from "@/features/checkout/lib/hooks/useSinglePaymentAttempt";
+import { isLocalCart } from "@/shared/mappers/localCartMapper";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 import type { CartWithItems } from "@/shared/types/cart";
 
@@ -41,15 +44,27 @@ export function CheckoutIdealButton({
   const t = useTranslations("checkout.idealButton");
   const { getValues } = useFormContext<CheckoutFormData>();
   const { mutateAsync: prepareIdeal, isPending } = usePrepareIdealPayment();
+  const { persistGuestCart, isPending: isPreparingCart } = usePersistGuestCart();
+  const isBusy = isPending || isPreparingCart;
+  const runPaymentAttempt = useSinglePaymentAttempt();
 
-  const handleClick = async () => {
-    if (disabled || isPending) return;
+  const handleClick = () => {
+    if (disabled || isBusy) return;
+    return runPaymentAttempt(startPayment);
+  };
+
+  const startPayment = async () => {
     try {
       const formData = getValues();
+      // A guest pays for a database copy of their local cart.
+      let paymentCart = cart;
+      if (isLocalCart(cart)) {
+        paymentCart = await persistGuestCart();
+      }
       const { checkoutUrl } = await prepareIdeal({
         formData,
-        cart,
-        cartId,
+        cart: paymentCart,
+        cartId: isLocalCart(cart) ? paymentCart.id : cartId,
         amount,
         shippingCostCents,
         discountCents,
@@ -57,7 +72,7 @@ export function CheckoutIdealButton({
       });
       window.location.href = checkoutUrl;
     } catch (error) {
-      // Error surfaced via the mutation's shared error handler.
+      // Error surfaced via the mutation's (or the guest cart save's) shared error handler.
       console.error("iDEAL checkout error:", error);
     }
   };
@@ -66,16 +81,16 @@ export function CheckoutIdealButton({
     <Button
       type="button"
       onClick={handleClick}
-      disabled={disabled || isPending}
+      disabled={disabled || isBusy}
       variant="primary"
       className="w-full"
     >
-      {isPending ? (
+      {isBusy ? (
         <Loader2 className="h-4 w-4 animate-spin" />
       ) : (
         <Landmark className="h-4 w-4" />
       )}
-      {isPending
+      {isBusy
         ? t("redirecting")
         : PAYMENT_CONFIRM_METHOD_UI.ideal.labelDesktop}
     </Button>

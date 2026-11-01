@@ -108,5 +108,73 @@ export const test = base.extend({
       if (!functionalFinished) testInfo.annotations.push({ type: 'cleanup', description: 'Cleanup completed after failed setup or test' });
     }
   }, { timeout: 600000 }],
+  // A visitor without an account. Every identity the run creates for them (the
+  // anonymous users the browser signs in, or an account they log in to) is
+  // ledgered as soon as it exists and cleaned up like an isolated account.
+  guest: [async ({ context, env }, provide, testInfo) => {
+    const admin = client(env, true);
+    const trackers = new Map();
+    let current = null;
+    const track = id => {
+      if (!trackers.has(id)) {
+        registerAccount(id);
+        trackers.set(id, new PrintifyOrders(env, id));
+      }
+      current = id;
+    };
+    await context.route('**/auth/v1/signup*', async route => {
+      const response = await route.fetch();
+      const body = await response.json().catch(() => null);
+      const id = body?.user?.id ?? body?.id;
+      if (id) track(id);
+      await route.fulfill({ response });
+    });
+    await context.route('**/functions/v1/create-printify-order', async route => {
+      if (env.TEST_PRINTIFY_MANUAL_APPROVAL !== 'confirmed' || env.TEST_EDGE_ENVIRONMENT_VERIFIED !== env.NEXT_PUBLIC_SUPABASE_URL) {
+        await route.abort();
+        return;
+      }
+      const orderId = route.request().postDataJSON()?.metadata?.order_id;
+      if (!orderId || !current) { await route.abort(); return; }
+      trackers.get(current).registerApplicationIntent(orderId);
+      await route.fallback();
+    });
+    try {
+      await provide({
+        admin,
+        /** Anonymous and account identities created so far, oldest first. */
+        ids: () => [...trackers.keys()],
+        orders: id => trackers.get(id),
+        /** Starts an anonymous session in the browser without going through the studio. */
+        async signIn() {
+          const db = client(env);
+          const data = unwrap(await db.auth.signInAnonymously(), 'Anonymous guest sign-in');
+          track(data.user.id);
+          await setBrowserSession(context, env, data.session);
+          return { id: data.user.id, db };
+        },
+        /** A confirmed account the guest can log in to; it is not signed in yet. */
+        async createAccount() {
+          const id = randomUUID();
+          const email = `acceptance-${id}@sandcastle.dev`;
+          const password = `Acceptance!${randomUUID()}`;
+          const user = unwrap(await admin.auth.admin.createUser({ email, password, email_confirm: true }), 'Guest account creation').user;
+          track(user.id);
+          unwrap(await admin.from('profiles').upsert({ id: user.id, email }, { onConflict: 'id', ignoreDuplicates: true }), 'Seed guest account profile');
+          return { id: user.id, email, password };
+        },
+      });
+    } finally {
+      for (const [id, orders] of trackers) {
+        await discoverAndCancel({
+          discover: async () => unwrap(await admin.from('orders').select('id,printify_order_id').eq('user_id', id), 'Guest order cleanup discovery'),
+          register: orderId => orders.register(orderId), cancel: () => orders.cleanup(),
+        });
+        await testInfo.attach(`printify-cleanup-${id}`, { body: Buffer.from(JSON.stringify(orders.records())), contentType: 'application/json' });
+        await cleanAccountData(admin, id);
+        completeAccount(id);
+      }
+    }
+  }, { timeout: 600000 }],
 });
 export { expect };

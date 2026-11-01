@@ -3,11 +3,12 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Dialog } from "@/features/ui/dialog";
 import { useUser } from "@/shared/queries/authQueries";
+import { isRegisteredUser } from "@/shared/helpers/authIdentity";
 import { LoginForm } from "../login/LoginForm";
 import {
   getSafeRedirectPath,
   REDIRECTED_FROM_PARAM,
-} from "../lib/helpers/redirectTarget";
+} from "@/shared/helpers/redirectTarget";
 
 /**
  * Opens the login dialog when the middleware has bounced a guest off a
@@ -21,7 +22,8 @@ export function LoginRedirectPrompt() {
   const router = useRouter();
   const { data: user, isLoading } = useUser();
   const target = getSafeRedirectPath(searchParams.get(REDIRECTED_FROM_PARAM));
-  const isOpen = Boolean(target) && !isLoading && !user;
+  // A guest's anonymous session counts as logged out.
+  const isOpen = Boolean(target) && !isLoading && !isRegisteredUser(user);
 
   const handleOpenChange = (open: boolean) => {
     if (open) return;

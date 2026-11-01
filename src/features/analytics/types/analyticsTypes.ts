@@ -11,6 +11,10 @@ export type AnalyticsEventNameT =
   | "begin_checkout"
   | "add_payment_info"
   | "purchase"
+  // Guest checkout (no account)
+  | "guest_add_to_cart"
+  | "guest_checkout_started"
+  | "guest_payment_started"
   // Stamp flow
   | "stamp_image_upload"
   | "stamp_generate_start"

@@ -19,7 +19,7 @@
           },
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/enforce-tdd-on-commit.mjs"
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/remove-new-tests-before-commit.mjs"
           },
           {
             "type": "command",

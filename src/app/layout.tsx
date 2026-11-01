@@ -7,6 +7,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { Toaster } from "sonner";
 import { SupabaseAuthProvider } from "@/providers/SupabaseAuthProvider";
+import { GuestCartMerger } from "@/features/auth/ui/components/GuestCartMerger";
 import { QueryProvider } from "@/providers/QueryProvider";
 import { GrainOverlay } from "@/features/layout/brutalist/GrainOverlay";
 import { StructuredData } from "@/features/seo/StructuredData";
@@ -105,6 +106,7 @@ export default async function RootLayout({
             <GlobalErrorBoundary>
               <SupabaseAuthProvider>
                 <QueryProvider>
+                  <GuestCartMerger />
                   <ScrollToTop />
                   <AppLayoutChrome>{children}</AppLayoutChrome>
                   <CookieConsentBanner />

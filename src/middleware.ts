@@ -13,6 +13,7 @@ import {
   getRequestIdFromHeaders,
   REQUEST_ID_HEADER,
 } from "@/lib/observability/requestId";
+import { isRegisteredUser } from "@/shared/helpers/authIdentity";
 
 /**
  * Determine the rate limit type based on the request path
@@ -170,21 +171,19 @@ export async function middleware(request: NextRequest) {
 
   // Protected routes — server-side auth gate. The client-side <ProtectedRoute>
   // is UX only and is NOT a security control; these must be gated here before
-  // any page data renders.
+  // any page data renders. /stamp, /cart and /checkout are open to guests.
   const PROTECTED_PREFIXES = [
-    "/stamp",
     "/orders",
     "/profile",
-    "/cart",
-    "/checkout",
     "/dashboard",
   ];
   const isProtected = PROTECTED_PREFIXES.some(
     (p) => pathname === p || pathname.startsWith(`${p}/`)
   );
 
-  if (isProtected && !user) {
-    // no user — redirect to the login/home page
+  // A guest's anonymous session counts as logged out here.
+  if (isProtected && !isRegisteredUser(user)) {
+    // no registered user — redirect to the login/home page
     const url = request.nextUrl.clone();
     url.pathname = "/";
     url.searchParams.set("redirectedFrom", pathname);

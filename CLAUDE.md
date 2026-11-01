@@ -10,7 +10,7 @@ Docs index: `docs/README.md`. Every enforced rule: `docs/guardrails.md`.
 
 ## Workflow
 
-Before editing code under `src/`, load the `test-driven-development` skill and write the failing test first (the hooks reject edits otherwise). Update the existing doc a change affects instead of adding a markdown file per change. Before opening a PR, run `/review-frontend changes`.
+Before editing code under `src/`, load the `test-driven-development` skill and write the failing test first (the hooks reject edits otherwise). Before committing or pushing, delete the unit tests the feature added (the skill's "Before Committing" section; a hook rejects new unit tests under `src/`). Update the existing doc a change affects instead of adding a markdown file per change. Before opening a PR, run `/review-frontend changes`.
 
 ## Pre-Commit Validation
 
