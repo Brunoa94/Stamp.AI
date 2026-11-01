@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fulfillPaidOrder } from "./orderFulfillmentService";
-import { UserFacingError } from "../errors/UserFacingError";
+import { UserFacingError } from "@/shared/errors/UserFacingError";
 import type {
   OrderFulfillmentDepsI,
   OrderFulfillmentRequestI,

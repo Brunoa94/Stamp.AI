@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { captureError } from "@/lib/observability/errorCapture";
+import { UserFacingError } from "@/shared/errors/UserFacingError";
 
 export interface UseErrorHandlerOptionsI {
   showToast?: boolean;
@@ -23,9 +24,16 @@ export const useErrorHandler = (options: UseErrorHandlerOptionsI = {}) => {
   const { showToast = true, customMessages = {} } = options;
   const t = useTranslations("errors");
 
-  const handleError = useCallback((error: any) => {
+  const handleError = useCallback((error: unknown) => {
+    // The shapes errors arrive in; every field is checked before use.
+    const shape = (error ?? {}) as {
+      code?: unknown;
+      error?: unknown;
+      message?: unknown;
+      response?: { data?: { error?: unknown } };
+    };
     let errorCode: ErrorCodeT = "UNKNOWN_ERROR";
-    // Fallback for plain Error objects: their own message, if any.
+    // Kept for observability only: never shown to the user.
     let rawMessage: string | null = null;
     let hasCode = false;
 
@@ -33,32 +41,32 @@ export const useErrorHandler = (options: UseErrorHandlerOptionsI = {}) => {
     // is only accepted when it is a known ErrorCodeT — backends also put
     // free-text messages and third-party codes (Stripe, Postgres) in these
     // fields, and those must not be looked up as translation keys.
-    if (isKnownErrorCode(error?.code)) {
+    if (isKnownErrorCode(shape.code)) {
       // Typed app error: { code: "ERROR_CODE" }
-      errorCode = error.code;
+      errorCode = shape.code;
       hasCode = true;
-    } else if (isKnownErrorCode(error?.error)) {
+    } else if (isKnownErrorCode(shape.error)) {
       // Structured error object: { error: "ERROR_CODE" }
-      errorCode = error.error;
+      errorCode = shape.error;
       hasCode = true;
-    } else if (isKnownErrorCode(error?.response?.data?.error)) {
+    } else if (isKnownErrorCode(shape.response?.data?.error)) {
       // Axios-style response: { response: { data: { error: "ERROR_CODE" } } }
-      errorCode = error.response.data.error;
+      errorCode = shape.response.data.error;
       hasCode = true;
-    } else if (error?.message) {
-      rawMessage = error.message;
+    } else if (typeof shape.message === "string" && shape.message) {
+      rawMessage = shape.message;
       // Backend error codes are embedded in the message by ErrorClient:
       // "Service - Action failed: HTTP 400: ERROR_CODE"
       // Scan the message for any known ErrorCodeT to surface the mapped UX message.
-      const embedded = findEmbeddedErrorCode(error.message as string);
+      const embedded = findEmbeddedErrorCode(shape.message);
       if (embedded) {
         errorCode = embedded;
         hasCode = true;
       }
-    } else if (typeof error?.error === "string") {
+    } else if (typeof shape.error === "string") {
       // Structured error whose `error` field is a free-text message
-      rawMessage = error.error;
-      const embedded = findEmbeddedErrorCode(error.error);
+      rawMessage = shape.error;
+      const embedded = findEmbeddedErrorCode(shape.error);
       if (embedded) {
         errorCode = embedded;
         hasCode = true;
@@ -66,13 +74,14 @@ export const useErrorHandler = (options: UseErrorHandlerOptionsI = {}) => {
     }
 
     // Resolve the user-facing message. Prefer a caller override, then the
-    // translated message for a known code, then a plain Error's own message,
-    // and finally the generic fallback.
+    // translated message for a known code, then a UserFacingError's own
+    // message, and finally the generic fallback. Any other message is
+    // technical (database, fetch, ErrorClient context) and never shown.
     let errorMessage: string;
     if (hasCode && errorCode !== "UNKNOWN_ERROR") {
       errorMessage = customMessages[errorCode] || t(errorCode);
-    } else if (rawMessage) {
-      errorMessage = rawMessage;
+    } else if (error instanceof UserFacingError && error.message) {
+      errorMessage = error.message;
     } else {
       errorMessage = t("UNKNOWN_ERROR");
     }

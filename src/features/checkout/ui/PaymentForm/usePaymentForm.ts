@@ -9,8 +9,9 @@ import { useCreatePaymentIntent } from "@/shared/queries/stripeQueries";
 import type { CreatePaymentIntentPayloadI } from "@/shared/types/payment";
 import { getStripeIntentStatusMessage } from "@/features/checkout/lib/helpers/getStripeIntentStatusMessage";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { UserFacingError } from "@/shared/errors/UserFacingError";
 import { AnalyticsService } from "@/shared/services/analyticsService";
-import { mapAddPaymentInfoEvent } from "@/features/analytics/mappers/ecommerceMappers";
+import { mapAddPaymentInfoEvent } from "@/features/analytics/lib/mappers/ecommerceMappers";
 
 interface UsePaymentFormProps {
   amount: number;
@@ -121,7 +122,7 @@ export function usePaymentForm({
 
       const cardElement = elements!.getElement(CardElement);
       if (!cardElement) {
-        throw new Error(t("cardElementNotFound"));
+        throw new UserFacingError(t("cardElementNotFound"));
       }
 
       // Track add_payment_info before confirming payment
@@ -141,7 +142,8 @@ export function usePaymentForm({
         });
 
       if (confirmError) {
-        throw new Error(confirmError.message);
+        // Stripe's confirmation messages ("Your card was declined.") are written for the customer.
+        throw new UserFacingError(confirmError.message ?? "");
       }
 
       if (paymentIntent?.status === "succeeded") {
@@ -149,7 +151,7 @@ export function usePaymentForm({
       } else {
         // Every non-successful backend status must surface a user-friendly
         // message instead of silently doing nothing.
-        throw new Error(getStripeIntentStatusMessage(paymentIntent?.status, t));
+        throw new UserFacingError(getStripeIntentStatusMessage(paymentIntent?.status, t));
       }
     } catch (err) {
       // Process error through handler for consistent error code extraction

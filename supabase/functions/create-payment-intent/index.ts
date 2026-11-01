@@ -145,9 +145,12 @@ serve(async (req) => {
     try {
       paymentIntent = await stripe.paymentIntents.create(paymentIntentOptions);
     } catch (stripeError: any) {
-      throw ErrorCodes.STRIPE_API_ERROR(
-        stripeError.message || JSON.stringify(stripeError),
-      );
+      const details = stripeError.message || JSON.stringify(stripeError);
+      // Confirming a test payment method on create raises card declines here.
+      if (stripeError.type === "StripeCardError") {
+        throw ErrorCodes.PAYMENT_DECLINED(details);
+      }
+      throw ErrorCodes.STRIPE_API_ERROR(details);
     }
 
     // The transaction row carries the server pricing that fulfilment and

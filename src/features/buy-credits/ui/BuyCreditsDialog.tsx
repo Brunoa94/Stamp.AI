@@ -7,6 +7,7 @@ import { useBuyCredits } from "../lib/useBuyCredits";
 import { CreditSelectionStep } from "./selection/CreditSelectionStep";
 import { CreditPaymentStep } from "./payment/CreditPaymentStep";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { UserFacingError } from "@/shared/errors/UserFacingError";
 
 interface BuyCreditsDialogProps {
   isOpen: boolean;
@@ -50,7 +51,8 @@ export function BuyCreditsDialog({
 
   const handlePaymentError = useCallback(
     (error: string) => {
-      handleError(new Error(error));
+      // Already resolved for display by useStripePayment's handleError.
+      handleError(new UserFacingError(error));
     },
     [handleError],
   );
