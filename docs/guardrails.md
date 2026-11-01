@@ -25,7 +25,7 @@ In `.claude/hooks/`, registered in `.claude/settings.json`, tested by `npm run t
 - `enforce-slice-boundaries.mjs`: edits that add a slice-boundary violation are rejected (existing violations in a file don't block unrelated edits)
 - `block-shell-source-writes.mjs`: shell commands that write `src/` source code (`sed -i`, heredocs, `tee`, `cp`, `mv` from outside `src/`) are rejected; source is edited with Edit/Write/MultiEdit so the hooks above and below see it. Renames inside `src/` and shell writes to tests, styles and docs are fine. Off in auto mode.
 - `enforce-test-first.mjs`: an Edit/Write that changes the behavior of gated source code is rejected until a **covering** test has been written or changed in the same session (also from the shell), and Claude is sent to the `test-driven-development` skill
-- `enforce-tdd-on-commit.mjs`: a `git commit` (including `-a`/`--all`) that changes the behavior of gated source code without changing a covering test is rejected and sent back to the `test-driven-development` skill; a `No-Tests-Reason:` line in the message asks a human instead
+- `remove-new-tests-before-commit.mjs`: unit tests written during a feature's TDD loop are not committed. A `git commit` whose index adds a unit test under `src/`, or a `git push` whose unpushed commits add one, is rejected with the tests to delete. Changes to existing tests, hook tests and acceptance specs are allowed.
 
 ### What the TDD hooks gate
 
