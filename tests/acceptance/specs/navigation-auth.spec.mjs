@@ -66,21 +66,13 @@ async function signInFromPrompt(page, env) {
   await dialog.locator('input[type="password"]').fill(env.TEST_USER_PASSWORD);
   await dialog.getByRole('button', { name: /^login$|^sign in$/i }).click();
 }
-test('AUTH-08 guest Stamp click prompts login and continues to the studio after sign-in', async ({ page, isMobile, env }) => {
+test('AUTH-08 guest Stamp click opens the studio with no login prompt', async ({ page, isMobile }) => {
   await page.goto('/');
-  const openStamp = async () => {
-    if (isMobile) await page.getByRole('button', { name: /open menu/i }).click();
-    await page.getByRole('link', { name: /^stamp$|^start stamping process$/i }).filter({ visible: true }).first().click();
-  };
-  await openStamp();
-  await expect(page).toHaveURL(/\/\?redirectedFrom=%2Fstamp$/);
-  await expect(page.getByRole('dialog').locator('input[type="password"]')).toBeVisible();
-  // Dismissing clears the bounce, so a second click prompts again instead of doing nothing.
-  await page.keyboard.press('Escape');
-  await expect(page).toHaveURL(/\/$/);
-  await openStamp();
-  await signInFromPrompt(page, env);
-  await expect(page).toHaveURL(/\/stamp$/, { timeout: 30000 });
+  if (isMobile) await page.getByRole('button', { name: /open menu/i }).click();
+  await page.getByRole('link', { name: /^stamp$|^start stamping process$/i }).filter({ visible: true }).first().click();
+  await expect(page).toHaveURL(/\/stamp$/);
+  await expect(page.getByRole('main')).toBeVisible();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
 });
 test('AUTH-08 guest deep link to orders returns there after sign-in', async ({ page, env }) => {
   await page.goto('/orders');
