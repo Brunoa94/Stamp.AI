@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AuthService } from "@/shared/services/authService";
 import type {
@@ -51,6 +52,25 @@ export function useIsAuthenticated() {
     isAuthenticated: isRegisteredUser(user),
     isLoading,
   };
+}
+
+/**
+ * Returns a function that resolves to the current user, starting an
+ * anonymous (guest) session first when there is none. Call it just before
+ * the first server call that needs an identity, so visitors who only browse
+ * never create an auth user.
+ */
+export function useEnsureGuestSession() {
+  const queryClient = useQueryClient();
+
+  return useCallback(async (): Promise<UserI> => {
+    const current = await AuthService.getUser();
+    if (current) return current;
+
+    const guest = await AuthService.signInAsGuest();
+    queryClient.setQueryData(authKeys.user(), guest);
+    return guest;
+  }, [queryClient]);
 }
 
 // ============================================

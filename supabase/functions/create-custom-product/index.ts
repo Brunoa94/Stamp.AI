@@ -60,7 +60,6 @@ serve(async (req) => {
       image_height,
       // Order-related fields from client
       user_id,
-      customer_email,
     } = await req.json();
 
     console.log("=== CREATE CUSTOM PRODUCT ===");

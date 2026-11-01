@@ -12,6 +12,10 @@ import {
 } from "./useStampSelectors";
 import { useStampFlowStore } from "../stores/stampFlowStore";
 import { useAddToCart } from "@/shared/queries/cartQueries";
+import { useUser } from "@/shared/queries/authQueries";
+import { isRegisteredUser } from "@/shared/helpers/authIdentity";
+import { LocalCartStorageService } from "@/shared/services/localCartStorageService";
+import type { AddToCartInput } from "@/shared/types/cart";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import {
   logStampError,
@@ -41,12 +45,45 @@ export function useStampCartActions() {
     useStampFinalization();
   const { selectedImageUrl } = useStampSelectedImage();
   const { selectedPriceCents } = useStampCustomization();
-  const { selectedProductTitle } = useStampProductSelection();
+  const { selectedProductTitle, blueprintId, printProviderId } =
+    useStampProductSelection();
 
   const addToCartMutation = useAddToCart();
+  const { data: user } = useUser();
 
   // Idempotency: Track if add to cart is in progress to prevent duplicates
   const isAddingRef = useRef(false);
+
+  /**
+   * Guests (no session or an anonymous one) keep their cart in localStorage;
+   * registered users add to their database cart.
+   */
+  const addItemToCart = async (payload: AddToCartInput) => {
+    if (isRegisteredUser(user)) {
+      await addToCartMutation.mutateAsync(payload);
+      return;
+    }
+
+    LocalCartStorageService.addItem({
+      productId: payload.product_id ?? "",
+      variantId: payload.variant_id ?? "",
+      productName: payload.product_name ?? "Custom Design",
+      unitPrice: payload.unit_price,
+      quantity: payload.quantity,
+      customImageUrl: payload.custom_image_url ?? null,
+      blueprintId: blueprintId ?? null,
+      printProviderId: printProviderId ?? null,
+    });
+    AnalyticsService.track(
+      "guest_add_to_cart",
+      mapAddToCartEvent({
+        productId: payload.product_id ?? "",
+        productName: payload.product_name ?? "Custom Design",
+        unitPriceCents: payload.unit_price,
+        variantId: Number(payload.variant_id),
+      }),
+    );
+  };
 
   const handleAddToCart = async (buyNow: boolean = false) => {
     // Idempotency check: Prevent duplicate cart additions
@@ -170,7 +207,7 @@ export function useStampCartActions() {
     }
 
     try {
-      await addToCartMutation.mutateAsync(cartItemPayload);
+      await addItemToCart(cartItemPayload);
 
       // Mark operation as completed for idempotency
       sessionStorage.setItem(cartOperationKey, "true");
@@ -295,7 +332,7 @@ export function useStampCartActions() {
     });
 
     try {
-      await addToCartMutation.mutateAsync(cartItemPayload);
+      await addItemToCart(cartItemPayload);
 
       // Mark operation as completed for idempotency
       sessionStorage.setItem(cartOperationKey, "true");

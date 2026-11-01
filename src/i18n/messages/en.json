@@ -819,7 +819,7 @@
         "noProduct": "Please select a product type",
         "noColorSize": "Please select color and size",
         "noSize": "Please select a size",
-        "notLoggedIn": "You must be logged in to create a product",
+        "guestSession": "We couldn't start your session. Please try again in a moment.",
         "timeout": "Product creation timed out after {seconds} seconds. Please try again or contact support if the issue persists."
       },
       "cart": {

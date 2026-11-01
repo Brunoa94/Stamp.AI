@@ -252,7 +252,6 @@ export interface CreateCustomProductRequestI {
   description?: string
   variants?: number[]
   user_id: string
-  customer_email: string
   selected_color?: string | null
   selected_size?: string | null
   // Image dimensions for auto-placement calculation

@@ -2,7 +2,6 @@
 "use client";
 
 import { useRef } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useStampNavigation } from "./useStampNavigation";
@@ -11,7 +10,7 @@ import {
   useStampSelectedImage,
 } from "./useStampSelectors";
 import { useCreateCustomProduct } from "@/shared/queries/productQueries";
-import { useUser } from "@/shared/queries/authQueries";
+import { useEnsureGuestSession } from "@/shared/queries/authQueries";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import {
   logStampError,
@@ -59,7 +58,6 @@ interface CreateProductParamsType {
 
 export function useStampProductCreation() {
   const t = useTranslations("stamp.errors.productCreation");
-  const router = useRouter();
   const { nextStep, goToStep } = useStampNavigation();
   const { handleError } = useErrorHandler();
 
@@ -74,7 +72,7 @@ export function useStampProductCreation() {
   } = useStampFinalization();
 
   const createProductMutation = useCreateCustomProduct();
-  const { data: user } = useUser();
+  const ensureGuestSession = useEnsureGuestSession();
 
   // Idempotency: Track if creation is in progress to prevent duplicates
   const isCreatingRef = useRef(false);
@@ -144,15 +142,25 @@ export function useStampProductCreation() {
       return;
     }
 
-    // Validate authentication
-    if (!user) {
-      handleError(new Error(t("notLoggedIn")));
-      router.push("/auth/login");
-      return;
-    }
-
     // Set idempotency lock
     isCreatingRef.current = true;
+
+    // Product creation is the first server call that needs an identity, so a
+    // guest's anonymous session starts here (not on upload or browsing).
+    let owner: { id: string };
+    try {
+      owner = await ensureGuestSession();
+    } catch (error) {
+      logStampError({
+        scope: "useStampProductCreation",
+        event: "guest_session_failed",
+        error,
+        metadata: { blueprintId, printProviderId },
+      });
+      handleError(new Error(t("guestSession")));
+      isCreatingRef.current = false;
+      return;
+    }
 
     setIsFinalizing(true);
     setProductionProgress(0);
@@ -182,8 +190,7 @@ export function useStampProductCreation() {
           image_url: selectedImageUrl,
           title: enhancedPrompt || "Custom Design",
           description: enhancedPrompt || "AI-generated custom design",
-          user_id: user.id,
-          customer_email: user.email || "",
+          user_id: owner.id,
           selected_color: fabricColor,
           selected_size: size,
           ...(printPositions?.length

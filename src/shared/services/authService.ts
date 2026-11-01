@@ -234,6 +234,33 @@ class AuthService {
   }
 
   /**
+   * Start an anonymous (guest) session, so a visitor without an account gets
+   * a real auth.uid() for creating products and paying.
+   */
+  static async signInAsGuest(): Promise<UserI> {
+    try {
+      const { data, error } = await AuthService.getSupabase().auth
+        .signInAnonymously();
+
+      if (error || !data.user) {
+        throw ErrorClient.handleError({
+          error: error ?? new Error("Anonymous sign-in returned no user"),
+          service: "Auth",
+          action: "Sign In As Guest",
+        });
+      }
+
+      return AuthServiceMapper.mapSupabaseUserToUser(data.user);
+    } catch (error) {
+      throw ErrorClient.handleError({
+        error,
+        service: "Auth",
+        action: "Sign In As Guest",
+      });
+    }
+  }
+
+  /**
    * Request password reset
    */
   static async requestPasswordReset(
