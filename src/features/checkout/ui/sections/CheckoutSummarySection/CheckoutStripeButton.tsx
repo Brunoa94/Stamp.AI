@@ -22,6 +22,7 @@ import { mapPurchaseEvent } from "@/features/analytics/lib/mappers/ecommerceMapp
 import type { CartWithItems } from "@/shared/types/cart";
 import { CheckoutDataBuilder } from "@/features/checkout/lib/services/checkoutDataBuilder";
 import { usePersistGuestCart } from "@/features/checkout/lib/hooks/usePersistGuestCart";
+import { useSinglePaymentAttempt } from "@/features/checkout/lib/hooks/useSinglePaymentAttempt";
 import { isLocalCart } from "@/shared/mappers/localCartMapper";
 
 interface CheckoutStripeButtonPropsI {
@@ -61,6 +62,7 @@ export function CheckoutStripeButton({
   const paymentCartId = useRef<string | null>(cartId || null);
   const { persistGuestCart } = usePersistGuestCart();
   const [isPreparingCart, setIsPreparingCart] = useState(false);
+  const runPaymentAttempt = useSinglePaymentAttempt();
 
   const handleSuccess = useCallback(
     (
@@ -114,28 +116,30 @@ export function CheckoutStripeButton({
       onSuccess: handleSuccess,
     });
 
-  const handlePaymentSubmit = async (event: React.FormEvent) => {
+  const handlePaymentSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    let paymentCart = cart;
-    paymentCartId.current = cartId || null;
+    return runPaymentAttempt(async () => {
+      let paymentCart = cart;
+      paymentCartId.current = cartId || null;
 
-    // A guest pays for a database copy of their local cart.
-    if (isLocalCart(cart)) {
-      setIsPreparingCart(true);
-      try {
-        paymentCart = await persistGuestCart();
-      } catch {
-        return; // usePersistGuestCart already told the guest
-      } finally {
-        setIsPreparingCart(false);
+      // A guest pays for a database copy of their local cart.
+      if (isLocalCart(cart)) {
+        setIsPreparingCart(true);
+        try {
+          paymentCart = await persistGuestCart();
+        } catch {
+          return; // usePersistGuestCart already told the guest
+        } finally {
+          setIsPreparingCart(false);
+        }
+        paymentCartId.current = paymentCart.id;
       }
-      paymentCartId.current = paymentCart.id;
-    }
 
-    // Freeze the cart immediately before payment creation. It must survive a
-    // possible 3DS redirect and must not follow later live-cart changes.
-    cartSnapshot.current = CheckoutDataBuilder.createCartSnapshot(paymentCart);
-    return handleSubmit(event, { cartId: paymentCartId.current });
+      // Freeze the cart immediately before payment creation. It must survive a
+      // possible 3DS redirect and must not follow later live-cart changes.
+      cartSnapshot.current = CheckoutDataBuilder.createCartSnapshot(paymentCart);
+      return handleSubmit(event, { cartId: paymentCartId.current });
+    });
   };
 
   useEffect(() => {

@@ -17,6 +17,7 @@ import { Button } from "@/features/ui/button";
 import { PAYMENT_CONFIRM_METHOD_UI } from "@/shared/constants/payment";
 import { usePrepareIdealPayment } from "@/features/checkout/lib/queries/paymentQueries";
 import { usePersistGuestCart } from "@/features/checkout/lib/hooks/usePersistGuestCart";
+import { useSinglePaymentAttempt } from "@/features/checkout/lib/hooks/useSinglePaymentAttempt";
 import { isLocalCart } from "@/shared/mappers/localCartMapper";
 import type { CheckoutFormData } from "@/features/checkout/lib/context/CheckoutFormContext";
 import type { CartWithItems } from "@/shared/types/cart";
@@ -47,9 +48,14 @@ export function CheckoutIdealButton({
   const { persistGuestCart } = usePersistGuestCart();
   const [isPreparingCart, setIsPreparingCart] = useState(false);
   const isBusy = isPending || isPreparingCart;
+  const runPaymentAttempt = useSinglePaymentAttempt();
 
-  const handleClick = async () => {
+  const handleClick = () => {
     if (disabled || isBusy) return;
+    return runPaymentAttempt(startPayment);
+  };
+
+  const startPayment = async () => {
     try {
       const formData = getValues();
       // A guest pays for a database copy of their local cart.
