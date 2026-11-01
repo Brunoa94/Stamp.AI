@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useStampProductCreation } from "../useStampProductCreation";
+import { UserFacingError } from "@/shared/errors/UserFacingError";
 
 const mocks = vi.hoisted(() => ({
   push: vi.fn(),
@@ -110,9 +111,10 @@ describe("useStampProductCreation for a guest", () => {
 
     await result.current.handleCreateProduct(PARAMS);
 
-    expect(mocks.handleError).toHaveBeenCalledWith(
-      expect.objectContaining({ message: "guestSession" }),
-    );
+    const shown = mocks.handleError.mock.calls[0][0];
+    // A UserFacingError, so the error handler shows this message instead of the generic one.
+    expect(shown).toBeInstanceOf(UserFacingError);
+    expect(shown.message).toBe("guestSession");
     expect(mocks.mutateAsync).not.toHaveBeenCalled();
     expect(mocks.nextStep).not.toHaveBeenCalled();
   });

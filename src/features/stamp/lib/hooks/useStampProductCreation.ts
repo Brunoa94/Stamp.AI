@@ -12,6 +12,7 @@ import {
 import { useCreateCustomProduct } from "@/shared/queries/productQueries";
 import { useEnsureGuestSession } from "@/shared/queries/authQueries";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { UserFacingError } from "@/shared/errors/UserFacingError";
 import {
   logStampError,
   logStampInfo,
@@ -157,7 +158,7 @@ export function useStampProductCreation() {
         error,
         metadata: { blueprintId, printProviderId },
       });
-      handleError(new Error(t("guestSession")));
+      handleError(new UserFacingError(t("guestSession")));
       isCreatingRef.current = false;
       return;
     }
