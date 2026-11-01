@@ -2,13 +2,14 @@
 // PreToolUse hook: src/ source code is written with Edit/Write/MultiEdit, never from the shell
 // (sed -i, heredocs, tee, cp…). The test-first and slice-boundary hooks only see those tools,
 // so a shell write would skip both. Tests, styles, docs and files outside src/ are not affected.
+// Off in auto mode.
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { shellWriteTargets } from "./shell-writes.mjs";
 import { isBehaviorFile } from "./tdd-files.mjs";
 
 export function decide(input, rootDir = process.env.CLAUDE_PROJECT_DIR ?? process.cwd()) {
-  if (input.tool_name !== "Bash") return null;
+  if (input.tool_name !== "Bash" || input.permission_mode === "auto") return null;
   const command = input.tool_input?.command ?? "";
   const cwd = input.cwd ?? rootDir;
 

@@ -34,3 +34,9 @@ test("allows renames and reads", () => {
 test("ignores tools other than Bash", () => {
   assert.equal(decide({ tool_name: "Edit", tool_input: { file_path: "src/a.ts" } }, ROOT), null);
 });
+
+test("stands aside in auto mode", () => {
+  const command = "sed -i '' 's/a/b/' src/features/cart/lib/total.ts";
+  assert.equal(decide({ ...bash(command), permission_mode: "auto" }, ROOT), null);
+  assert.notEqual(decide({ ...bash(command), permission_mode: "acceptEdits" }, ROOT), null);
+});

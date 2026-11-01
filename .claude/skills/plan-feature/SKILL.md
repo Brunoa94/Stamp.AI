@@ -64,9 +64,10 @@ Rules for the content:
 - **Small steps.** Each step is one red-green-refactor cycle a session can finish and verify on its own. Order them so the app builds after each one: types and helpers, then services and hooks, then UI, then the route.
 - **Only what's specific to this feature.** Leave out anything the skills, rules and hooks already cover while implementing: which skill to load, loading/error/empty states, accessibility, SEO, the TDD loop, the pre-commit checks. Write down a convention only when this feature departs from it, or when the interview settled something it leaves open (for example a specific error message or an empty-state design).
 - **No code.** Signatures and type shapes are fine when they remove ambiguity; implementations are not.
+- **Worktree and pull request.** Fill in the template's Start and Finish sections with the plan's slug: implementation happens in `.claude/worktrees/<feature-slug>` on a `feat/<feature-slug>` branch from `origin/dev`, and ends with a pull request against `dev`. In Start, list the gitignored `.env*` files that exist in the repo root by name (`.env.example` is tracked and needs no copy).
 
 ## 5. Hand off
 
-Show the path to the plan, the step count and the open questions. Then ask: "Start implementing step 1?" Do nothing more until the user answers.
+Show the path to the plan, the step count and the open questions. Then ask: "Create the worktree and start implementing step 1?" Do nothing more until the user answers.
 
-When the feature is merged, delete its plan file in the same PR or the next one. Plans are working documents, not docs.
+Delete the plan file in the feature's pull request to `dev` (the plan's Finish section says so). Plans are working documents, not docs.
