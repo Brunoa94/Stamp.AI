@@ -8,7 +8,7 @@
 
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
@@ -60,8 +60,7 @@ export function CheckoutStripeButton({
   const cartSnapshot = useRef<CartWithItems | null>(null);
   // The cart this payment is for: a guest's database cart once it is saved.
   const paymentCartId = useRef<string | null>(cartId || null);
-  const { persistGuestCart } = usePersistGuestCart();
-  const [isPreparingCart, setIsPreparingCart] = useState(false);
+  const { persistGuestCart, isPending: isPreparingCart } = usePersistGuestCart();
   const runPaymentAttempt = useSinglePaymentAttempt();
 
   const handleSuccess = useCallback(
@@ -124,13 +123,10 @@ export function CheckoutStripeButton({
 
       // A guest pays for a database copy of their local cart.
       if (isLocalCart(cart)) {
-        setIsPreparingCart(true);
         try {
           paymentCart = await persistGuestCart();
         } catch {
           return; // usePersistGuestCart already told the guest
-        } finally {
-          setIsPreparingCart(false);
         }
         paymentCartId.current = paymentCart.id;
       }

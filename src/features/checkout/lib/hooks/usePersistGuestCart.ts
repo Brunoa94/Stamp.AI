@@ -10,7 +10,7 @@
 
 "use client";
 
-import { useCallback, useRef } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useEnsureGuestSession } from "@/shared/queries/authQueries";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
@@ -26,38 +26,23 @@ export function usePersistGuestCart() {
   const t = useTranslations("checkout.errors");
   const ensureGuestSession = useEnsureGuestSession();
   const { handleError } = useErrorHandler();
-  const inFlight = useRef<Promise<CartWithItems> | null>(null);
 
-  /** Resolves to the database cart's checkout view (only the selected items); its id is the cartId. */
-  const persistGuestCart = useCallback((): Promise<CartWithItems> => {
-    // A second click while saving reuses the running save.
-    if (inFlight.current) return inFlight.current;
+  const { mutateAsync, isPending } = useMutation({
+    /** Resolves to the database cart's checkout view (only the selected items); its id is the cartId. */
+    mutationFn: async (): Promise<CartWithItems> => {
+      const guest = await ensureGuestSession();
+      const saved = await CartService.saveCartFromLocalItems(guest.id, LocalCartStorageService.getItems());
 
-    const run = (async () => {
-      try {
-        const guest = await ensureGuestSession();
-        const saved = await CartService.saveCartFromLocalItems(
-          guest.id,
-          LocalCartStorageService.getItems(),
-        );
-        const checkoutCart = CartServiceMapper.mapCartToCheckoutCart(saved);
-        AnalyticsService.track("guest_payment_started", {
-          items: checkoutCart.cart_items.length,
-        });
-        return checkoutCart;
-      } catch (error) {
-        captureError(error, { service: "Checkout", action: "persistGuestCart" });
-        const failure = new UserFacingError(t("guestCartPersist"));
-        handleError(failure);
-        throw failure;
-      } finally {
-        inFlight.current = null;
-      }
-    })();
+      return CartServiceMapper.mapCartToCheckoutCart(saved);
+    },
+    onSuccess: (checkoutCart) => {
+      AnalyticsService.track("guest_payment_started", { items: checkoutCart.cart_items.length });
+    },
+    onError: (error: Error) => {
+      captureError(error, { service: "Checkout", action: "persistGuestCart" });
+      handleError(new UserFacingError(t("guestCartPersist")));
+    },
+  });
 
-    inFlight.current = run;
-    return run;
-  }, [ensureGuestSession, handleError, t]);
-
-  return { persistGuestCart };
+  return { persistGuestCart: () => mutateAsync(), isPending };
 }

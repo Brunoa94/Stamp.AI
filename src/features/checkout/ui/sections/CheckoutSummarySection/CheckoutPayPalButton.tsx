@@ -9,7 +9,6 @@
 
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { FaPaypal } from "react-icons/fa";
@@ -46,8 +45,7 @@ export function CheckoutPayPalButton({
   const t = useTranslations("checkout.paypalButton");
   const { getValues } = useFormContext<CheckoutFormData>();
   const { mutateAsync: preparePayPal, isPending } = usePreparePayPalPayment();
-  const { persistGuestCart } = usePersistGuestCart();
-  const [isPreparingCart, setIsPreparingCart] = useState(false);
+  const { persistGuestCart, isPending: isPreparingCart } = usePersistGuestCart();
   const isBusy = isPending || isPreparingCart;
   const runPaymentAttempt = useSinglePaymentAttempt();
 
@@ -62,12 +60,7 @@ export function CheckoutPayPalButton({
       // A guest pays for a database copy of their local cart.
       let paymentCart = cart;
       if (isLocalCart(cart)) {
-        setIsPreparingCart(true);
-        try {
-          paymentCart = await persistGuestCart();
-        } finally {
-          setIsPreparingCart(false);
-        }
+        paymentCart = await persistGuestCart();
       }
       const { approvalUrl } = await preparePayPal({
         formData,

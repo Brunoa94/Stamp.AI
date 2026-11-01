@@ -9,7 +9,6 @@
 
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
 import { Landmark, Loader2 } from "lucide-react";
@@ -45,8 +44,7 @@ export function CheckoutIdealButton({
   const t = useTranslations("checkout.idealButton");
   const { getValues } = useFormContext<CheckoutFormData>();
   const { mutateAsync: prepareIdeal, isPending } = usePrepareIdealPayment();
-  const { persistGuestCart } = usePersistGuestCart();
-  const [isPreparingCart, setIsPreparingCart] = useState(false);
+  const { persistGuestCart, isPending: isPreparingCart } = usePersistGuestCart();
   const isBusy = isPending || isPreparingCart;
   const runPaymentAttempt = useSinglePaymentAttempt();
 
@@ -61,12 +59,7 @@ export function CheckoutIdealButton({
       // A guest pays for a database copy of their local cart.
       let paymentCart = cart;
       if (isLocalCart(cart)) {
-        setIsPreparingCart(true);
-        try {
-          paymentCart = await persistGuestCart();
-        } finally {
-          setIsPreparingCart(false);
-        }
+        paymentCart = await persistGuestCart();
       }
       const { checkoutUrl } = await prepareIdeal({
         formData,

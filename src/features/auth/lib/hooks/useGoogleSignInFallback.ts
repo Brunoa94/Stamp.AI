@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { AuthService } from "@/shared/services/authService";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 
@@ -11,11 +12,18 @@ import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
  */
 export function useGoogleSignInFallback(): void {
   const { handleError } = useErrorHandler();
-  const started = useRef(false);
+  const { mutate: signInWithGoogle, isIdle } = useMutation({
+    mutationFn: () => AuthService.signInWithGoogle(),
+    // A second start (Strict Mode) waits for the first redirect instead of racing it.
+    scope: { id: "google-sign-in-fallback" },
+    onError: (error: Error) => {
+      handleError(error);
+    },
+  });
 
   useEffect(() => {
-    if (started.current) return;
-    started.current = true;
-    AuthService.signInWithGoogle().catch((error: unknown) => handleError(error));
-  }, [handleError]);
+    if (!isIdle) return;
+
+    signInWithGoogle();
+  }, [isIdle, signInWithGoogle]);
 }

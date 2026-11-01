@@ -1,46 +1,24 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { useTranslations } from "next-intl";
-import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useUser } from "@/shared/queries/authQueries";
-import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import { isRegisteredUser } from "@/shared/helpers/authIdentity";
-import {
-  hasGuestCartToMerge,
-  mergeGuestCartIntoAccount,
-} from "@/shared/services/guestCartMergeService";
-import { UserFacingError } from "@/shared/errors/UserFacingError";
-import { GuestClaimExpiredError } from "@/shared/errors/GuestClaimExpiredError";
-import { captureError } from "@/lib/observability/errorCapture";
+import { hasGuestCartToMerge } from "@/shared/services/guestCartMergeService";
+import { useMergeGuestCartMutation } from "./useMergeGuestCartMutation";
 
 /**
  * Once a registered session appears (email login, a confirmed sign-up or the
  * Google callback), moves the guest's products and local cart into the
- * account. Mounted once for the whole app.
+ * account. Mounted once for the whole app; one attempt per page load (a
+ * failed merge is retried on refresh).
  */
 export function useMergeGuestCart(): void {
-  const t = useTranslations("auth.errors");
   const { data: user } = useUser();
-  const queryClient = useQueryClient();
-  const { handleError } = useErrorHandler();
-  const isMerging = useRef(false);
+  const { mutate: mergeGuestCart, isIdle } = useMergeGuestCartMutation();
 
   useEffect(() => {
-    if (!isRegisteredUser(user) || isMerging.current || !hasGuestCartToMerge()) {
-      return;
-    }
+    if (!isRegisteredUser(user) || !isIdle || !hasGuestCartToMerge()) return;
 
-    isMerging.current = true;
-    mergeGuestCartIntoAccount(user)
-      .then(() => queryClient.invalidateQueries({ queryKey: ["cart"] }))
-      .catch((error: unknown) => {
-        captureError(error, { service: "Auth", action: "mergeGuestCart" });
-        const message = error instanceof GuestClaimExpiredError ? "guestClaimExpired" : "guestClaim";
-        handleError(new UserFacingError(t(message)));
-      })
-      .finally(() => {
-        isMerging.current = false;
-      });
-  }, [user, queryClient, handleError, t]);
+    mergeGuestCart(user);
+  }, [user, isIdle, mergeGuestCart]);
 }
