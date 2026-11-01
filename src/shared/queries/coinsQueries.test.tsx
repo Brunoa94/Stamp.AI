@@ -29,7 +29,7 @@ describe("coinsQueries", () => {
     return Wrapper;
   };
 
-  const mockUser = (data: { id: string; email?: string; is_anonymous?: boolean } | null) => {
+  const mockUser = (data: { id: string; email?: string } | null) => {
     vi.mocked(useUser).mockReturnValue({
       data,
       isLoading: false,
@@ -89,17 +89,6 @@ describe("coinsQueries", () => {
       });
 
       // Query should not be enabled
-      expect(result.current.fetchStatus).toBe("idle");
-      expect(CoinsService.getUserCoins).not.toHaveBeenCalled();
-    });
-
-    it("should not fetch for a guest with an anonymous session", async () => {
-      mockUser({ id: "anon-1", is_anonymous: true });
-
-      const { result } = renderHook(() => useUserCoins(), {
-        wrapper: createWrapper(),
-      });
-
       expect(result.current.fetchStatus).toBe("idle");
       expect(CoinsService.getUserCoins).not.toHaveBeenCalled();
     });

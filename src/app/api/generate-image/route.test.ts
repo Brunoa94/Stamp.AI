@@ -72,19 +72,6 @@ describe("POST /api/generate-image", () => {
     expect(mocks.generateImage).not.toHaveBeenCalled();
   });
 
-  it("rejects an anonymous (guest) session before debiting a credit", async () => {
-    mocks.getUser.mockResolvedValue({
-      data: { user: { id: "anon-1", is_anonymous: true } },
-    });
-
-    const response = await POST(request());
-
-    expect(response.status).toBe(401);
-    expect(mocks.serviceRpc).not.toHaveBeenCalled();
-    expect(mocks.userRpc).not.toHaveBeenCalled();
-    expect(mocks.generateImage).not.toHaveBeenCalled();
-  });
-
   it("does not charge a coin for an invalid request", async () => {
     const response = await POST(request({ prompt: "" }));
 

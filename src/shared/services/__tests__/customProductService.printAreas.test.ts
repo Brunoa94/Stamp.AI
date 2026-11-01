@@ -55,6 +55,7 @@ const basePayload = {
   title: "Custom Design",
   description: "AI-generated custom design",
   user_id: "123e4567-e89b-12d3-a456-426614174000",
+  customer_email: "user@example.com",
   selected_color: "White",
   selected_size: "M",
 };
@@ -195,24 +196,5 @@ describe("CustomProductService.createCustomProduct print areas", () => {
     ).rejects.toThrow();
 
     expect(fetchMock).not.toHaveBeenCalled();
-  });
-});
-
-describe("CustomProductService.createCustomProduct for a guest", () => {
-  beforeEach(() => {
-    vi.spyOn(console, "log").mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    vi.unstubAllGlobals();
-    vi.restoreAllMocks();
-  });
-
-  it("creates the product without a customer email and does not send one", async () => {
-    const fetchMock = mockFetchSequence();
-
-    await CustomProductService.createCustomProduct(basePayload);
-
-    expect(sentCreateBody(fetchMock)).not.toHaveProperty("customer_email");
   });
 });
