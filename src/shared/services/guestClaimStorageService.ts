@@ -11,12 +11,15 @@
 export type PendingGuestClaimT = {
   /** The anonymous session's access token, proof of the guest identity. */
   accessToken: string;
+  /** Who owns the guest's products: the anonymous user, or the account once claimed. */
   userId: string;
+  /** When the access token expires (ms); it can no longer claim after that. */
+  expiresAt: number;
 };
 
 const PENDING_CLAIM_KEY = "stamp:pending-guest-claim";
-/** Anonymous access tokens expire after an hour (auth.jwt_expiry). */
-const CLAIM_LIFETIME_MS = 60 * 60 * 1000;
+/** The record lives as long as the local cart it belongs to. */
+const RECORD_LIFETIME_MS = 7 * 24 * 60 * 60 * 1000;
 
 export class GuestClaimStorageService {
   static save(claim: PendingGuestClaimT): void {
@@ -36,15 +39,21 @@ export class GuestClaimStorageService {
       if (
         typeof data.accessToken !== "string" ||
         typeof data.userId !== "string" ||
+        typeof data.expiresAt !== "number" ||
         typeof data.savedAt !== "number" ||
-        Date.now() - data.savedAt > CLAIM_LIFETIME_MS
+        Date.now() - data.savedAt > RECORD_LIFETIME_MS
       ) {
         return null;
       }
-      return { accessToken: data.accessToken, userId: data.userId };
+      return { accessToken: data.accessToken, userId: data.userId, expiresAt: data.expiresAt };
     } catch {
       return null;
     }
+  }
+
+  /** True while the guest's token can still prove the identity to claim. */
+  static isClaimable(claim: PendingGuestClaimT): boolean {
+    return Date.now() < claim.expiresAt;
   }
 
   static clear(): void {

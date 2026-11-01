@@ -58,10 +58,16 @@ describe("AuthService guest identity", () => {
     vi.unstubAllGlobals();
   });
 
-  it("returns the anonymous session's token and user id", async () => {
+  it("returns the anonymous session's token, user id and token expiry", async () => {
     mockAuth({
       getSession: vi.fn().mockResolvedValue({
-        data: { session: { access_token: "guest-jwt", user: { id: "anon-1", is_anonymous: true } } },
+        data: {
+          session: {
+            access_token: "guest-jwt",
+            expires_at: 1_793_530_000,
+            user: { id: "anon-1", is_anonymous: true },
+          },
+        },
         error: null,
       }),
     });
@@ -69,6 +75,7 @@ describe("AuthService guest identity", () => {
     await expect(AuthService.getAnonymousSession()).resolves.toEqual({
       accessToken: "guest-jwt",
       userId: "anon-1",
+      expiresAt: 1_793_530_000_000,
     });
   });
 

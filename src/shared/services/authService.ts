@@ -268,7 +268,11 @@ class AuthService {
     const { data } = await AuthService.getSupabase().auth.getSession();
     const session = data.session;
     if (!session?.user.is_anonymous) return null;
-    return { accessToken: session.access_token, userId: session.user.id };
+    return {
+      accessToken: session.access_token,
+      userId: session.user.id,
+      expiresAt: (session.expires_at ?? 0) * 1000,
+    };
   }
 
   /**

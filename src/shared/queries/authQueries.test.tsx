@@ -102,7 +102,7 @@ describe("authQueries", () => {
   });
 
   describe("leaving a guest session", () => {
-    const anonymousSession = { accessToken: "guest-jwt", userId: "anon-1" };
+    const anonymousSession = { accessToken: "guest-jwt", userId: "anon-1", expiresAt: Date.now() + 3_600_000 };
 
     beforeEach(() => {
       localStorage.clear();

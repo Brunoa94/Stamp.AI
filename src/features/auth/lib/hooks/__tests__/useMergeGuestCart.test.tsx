@@ -51,7 +51,7 @@ describe("useMergeGuestCart", () => {
     queryClient = new QueryClient();
     accountCart = [];
     addLocalItem("prod-1");
-    GuestClaimStorageService.save({ accessToken: "guest-jwt", userId: "anon-1" });
+    GuestClaimStorageService.save({ accessToken: "guest-jwt", userId: "anon-1", expiresAt: Date.now() + 3_600_000 });
     vi.spyOn(AuthService, "claimGuestProducts").mockResolvedValue(undefined);
     vi.spyOn(CartService, "getOrCreateCart").mockResolvedValue({ id: "cart-1" } as CartT);
     vi.spyOn(CartService, "addToCart").mockImplementation(async (_cartId, input) => {
@@ -87,6 +87,20 @@ describe("useMergeGuestCart", () => {
       ),
     );
     expect(LocalCartStorageService.getItems()).toHaveLength(1);
+    expect(accountCart).toEqual([]);
+  });
+
+  it("shows guestClaimExpired when the guest's products can no longer be claimed", async () => {
+    mocks.user = { id: "user-1", email: "a@b.c", is_anonymous: false };
+    GuestClaimStorageService.save({ accessToken: "guest-jwt", userId: "anon-1", expiresAt: Date.now() - 1000 });
+
+    renderHook(() => useMergeGuestCart(), { wrapper });
+
+    await waitFor(() =>
+      expect(mocks.handleError).toHaveBeenCalledWith(
+        expect.objectContaining({ message: "guestClaimExpired" }),
+      ),
+    );
     expect(accountCart).toEqual([]);
   });
 

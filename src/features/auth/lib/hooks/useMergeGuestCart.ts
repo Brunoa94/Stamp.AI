@@ -11,6 +11,7 @@ import {
   mergeGuestCartIntoAccount,
 } from "@/shared/services/guestCartMergeService";
 import { UserFacingError } from "@/shared/errors/UserFacingError";
+import { GuestClaimExpiredError } from "@/shared/errors/GuestClaimExpiredError";
 import { captureError } from "@/lib/observability/errorCapture";
 
 /**
@@ -35,7 +36,8 @@ export function useMergeGuestCart(): void {
       .then(() => queryClient.invalidateQueries({ queryKey: ["cart"] }))
       .catch((error: unknown) => {
         captureError(error, { service: "Auth", action: "mergeGuestCart" });
-        handleError(new UserFacingError(t("guestClaim")));
+        const message = error instanceof GuestClaimExpiredError ? "guestClaimExpired" : "guestClaim";
+        handleError(new UserFacingError(t(message)));
       })
       .finally(() => {
         isMerging.current = false;

@@ -1191,7 +1191,8 @@
   },
   "auth": {
     "errors": {
-      "guestClaim": "We couldn't move the items in your bag to your account. They're still in your bag; please refresh to try again."
+      "guestClaim": "We couldn't move the items in your bag to your account. They're still in your bag; please refresh to try again.",
+      "guestClaimExpired": "Your guest session expired before you signed in, so the items in your bag couldn't be moved to your account. Please add them again."
     },
     "authCodeError": {
       "title": "Something went wrong",
