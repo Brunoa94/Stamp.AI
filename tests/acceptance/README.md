@@ -24,6 +24,21 @@ Run one project with `npm run test:acceptance -- --project=desktop`. Optional Fi
 
 Always use the wrapper for execution: it performs preflight and final cleanup even when Playwright fails. Direct Playwright invocation is for discovery only. Tests run serially with no automatic test retries and stop at the first failure (pass `--max-failures=0` to run everything). The dedicated app listens on port 3107 and refuses reuse of another server. Reports and durable cleanup ledgers live under ignored `.acceptance/`; treat them as private operational records.
 
+## Offline tier (local Supabase)
+
+Specs that need only the database, auth and the AI adapter can run against a local Supabase stack instead of the hosted test project. They need no credentials and make no network calls outside the machine. Docker must be running.
+
+```sh
+npm run test:acceptance:local:setup   # start the stack, rebuild the schema, seed user + catalog
+npm run test:acceptance:local -- navigation-auth stamp security history-catalog
+```
+
+Setup resets the local database each time. It applies `supabase/migrations` with `psql`, because the Supabase CLI's runner cannot replay this history. It runs `20260620120000` after the migration that creates its tables, and it tolerates three known errors: the `payment_transactions.order_id` text → uuid foreign key, and drops of `payment_webhook_events` and `products_provider`, which no migration creates. It then creates the supplied user and profile, mirrors `catalog-snapshot.json` and writes credentials to `.acceptance/local/local.env`.
+
+With `ACCEPTANCE_LOCAL=1` the harness reads only that file. It accepts only `http://127.0.0.1:54321` with local anon/service-role keys, and it refuses provider credentials (Stripe, Mollie, PayPal, Printify, Brevo, GA). The browser guard blocks every hosted Supabase project, including the test project. Ledgers live in `.acceptance/local/`, so local accounts never reach hosted recovery. The app allows the local origin in its CSP and image hosts only when `STAMP_ACCEPTANCE_TESTS=1` and the database is local.
+
+On the first run (desktop), 84 of 87 tests in those four specs passed in about three minutes. The three failures are SEC-02 for `create-payment-intent`, `create-mollie-payment` and `capture-paypal-order`. Locally they return 503 because they import `supabase/types`, which the local edge runtime does not mount (only `supabase/functions/` is), so the worker never boots. The hosted deploy bundles that folder. Specs that create Printify products, take payments or send email still need the hosted environment below.
+
 ## Environment setup
 
 - **Supabase:** supply a service-role key belonging to the parallel project. The production key is deliberately rejected. Apply the project's reviewed migrations and deploy Edge Functions explicitly to this test project; existing root `supabase:setup` links production and must not be used for this suite. Configure Edge secrets for the test database, `APP_ENV=test`, sandbox payment providers and shop `25847763`. Only then set `TEST_EDGE_ENVIRONMENT_VERIFIED` to the exact test URL. Local `.env.test` does not configure deployed functions. Enable password and Google auth as needed; allow `http://localhost:3107` confirmation/recovery/OAuth redirects. Supply controlled Google credentials for the OAuth test; challenges are reported as failures, never bypassed.
