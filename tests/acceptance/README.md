@@ -30,7 +30,7 @@ Specs that need only the database, auth and the AI adapter can run against a loc
 
 ```sh
 npm run test:acceptance:local:setup   # start the stack, rebuild the schema, seed user + catalog
-npm run test:acceptance:local -- navigation-auth stamp security history-catalog
+npm run test:acceptance:local -- tests/acceptance/specs/{navigation-auth,stamp,security,history-catalog}.spec.mjs
 ```
 
 Setup resets the local database each time. It applies `supabase/migrations` with `psql`, because the Supabase CLI's runner cannot replay this history. It runs `20260620120000` after the migration that creates its tables, and it tolerates three known errors: the `payment_transactions.order_id` text → uuid foreign key, and drops of `payment_webhook_events` and `products_provider`, which no migration creates. It then creates the supplied user and profile, mirrors `catalog-snapshot.json` and writes credentials to `.acceptance/local/local.env`.

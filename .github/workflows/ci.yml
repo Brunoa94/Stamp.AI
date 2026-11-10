@@ -204,7 +204,13 @@ jobs:
       matrix:
         project: [desktop, mobile]
     env:
-      OFFLINE_SPECS: navigation-auth stamp security history-catalog
+      # Full paths: Playwright matches each argument case-insensitively against the
+      # absolute path, and a bare "stamp" matches every spec under /work/Stamp.AI/.
+      OFFLINE_SPECS: >-
+        tests/acceptance/specs/navigation-auth.spec.mjs
+        tests/acceptance/specs/stamp.spec.mjs
+        tests/acceptance/specs/security.spec.mjs
+        tests/acceptance/specs/history-catalog.spec.mjs
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
