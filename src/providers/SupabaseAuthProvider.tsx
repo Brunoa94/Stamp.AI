@@ -2,7 +2,7 @@
 
 import { createContext, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { clearPrivateBrowserState } from "@/shared/services/privateBrowserState";
+import { syncPrivateBrowserStateOwner } from "@/shared/services/privateBrowserState";
 import type { User, Session } from "@supabase/supabase-js";
 
 interface SupabaseAuthContextI {
@@ -38,16 +38,8 @@ export function SupabaseAuthProvider({
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      try {
-        const previousOwner = window.localStorage.getItem("stamp:storage-owner");
-        const nextOwner = session?.user.id ?? null;
-        if (_event === "SIGNED_OUT" || (nextOwner && !previousOwner) || (previousOwner && previousOwner !== nextOwner)) {
-          clearPrivateBrowserState();
-        }
-        if (nextOwner) window.localStorage.setItem("stamp:storage-owner", nextOwner);
-        else window.localStorage.removeItem("stamp:storage-owner");
-      } catch { /* Storage may be unavailable. */ }
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      syncPrivateBrowserStateOwner(event, session?.user ?? null);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);

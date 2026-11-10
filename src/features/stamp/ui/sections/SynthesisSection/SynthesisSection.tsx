@@ -4,11 +4,12 @@ import { useState, useCallback, ChangeEvent, memo } from "react";
 import { useTranslations } from "next-intl";
 import { useStampImageGeneration } from "../../../lib/hooks/useStampImageGeneration";
 import { useUser } from "@/shared/queries/authQueries";
+import { isRegisteredUser } from "@/shared/helpers/authIdentity";
 import { useUserCoins } from "@/shared/queries/coinsQueries";
 import { SynthesisVisual } from "./SynthesisVisual";
 import { SynthesisForm } from "./SynthesisForm";
 import { AnalyticsService } from "@/shared/services/analyticsService";
-import { mapGenerateStartEvent } from "@/features/analytics/mappers/stampFlowMappers";
+import { mapGenerateStartEvent } from "@/features/analytics/lib/mappers/stampFlowMappers";
 import { NO_FILTER_ID } from "./NoFilterCard";
 
 /**
@@ -34,7 +35,7 @@ function SynthesisSectionComponent() {
   const { data: user, isLoading: isAuthLoading } = useUser();
   const { data: coinsData, isLoading: isCoinsLoading, isError: isCoinsError, refetch: refetchCoins } = useUserCoins();
 
-  const isAuthenticated = !!user;
+  const isAuthenticated = isRegisteredUser(user);
   const coins = coinsData?.coins ?? 0;
   const hasCoins = coins > 0;
 

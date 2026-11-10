@@ -3,9 +3,10 @@
 import { UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ReactNode } from "react";
-import { RegisterForm } from "./RegisterForm";
-import { AuthDialog } from "../components/AuthDialog";
+import { RegisterForm } from "../../register/RegisterForm";
+import { AuthDialog } from "../../components/AuthDialog";
 import { Button } from "@/features/ui/button";
+import { Span } from "@/features/ui/span";
 
 interface RegisterProps {
   className?: string;
@@ -27,7 +28,7 @@ export function Register({ className, children }: RegisterProps) {
           className={className}
         >
           <UserPlus className="mr-2 h-3 w-3" />
-          <span className="uppercase">{t("register")}</span>
+          <Span unstyled className="uppercase">{t("register")}</Span>
         </Button>
       }
     >

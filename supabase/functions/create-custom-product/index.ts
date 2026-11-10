@@ -13,7 +13,7 @@ import {
   validateColorForBlueprint,
 } from "../_shared/colorValidation.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
-import { enforceOperationLimit } from "../_shared/operationLimit.ts";
+import { enforceCallerLimits, OPERATION_LIMITS } from "../_shared/operationLimit.ts";
 import { requireUser } from "../_shared/authGuard.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
 import {
@@ -40,7 +40,7 @@ serve(async (req) => {
   try {
     const caller = await requireUser(req.headers.get('authorization'));
     if (caller.isServiceRole) throw ErrorCodes.INVALID_REQUEST_BODY();
-    await enforceOperationLimit(caller.userId, "product-create", 20, 60);
+    await enforceCallerLimits(caller, req, "product-create", OPERATION_LIMITS["product-create"]);
 
     const {
       blueprint_id,
@@ -60,7 +60,6 @@ serve(async (req) => {
       image_height,
       // Order-related fields from client
       user_id,
-      customer_email,
     } = await req.json();
 
     console.log("=== CREATE CUSTOM PRODUCT ===");

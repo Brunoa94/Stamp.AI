@@ -1,4 +1,5 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PrintifyService } from "@/shared/services/printifyService";
 import { CustomProductService } from "@/shared/services/customProductService";
 import { CreatedProductT, CreateProductPayloadT } from "@/shared/types/customProduct";
@@ -25,6 +26,35 @@ export function useBlueprintVariants(
     staleTime: 1000 * 60 * 10, // 10 minutes
     retry: 2,
   });
+}
+
+/**
+ * Prefetch variants (colors & sizes) for every product in a grid, so opening
+ * one is instant. Each product is prefetched at most once per mount and only
+ * when its variants are not cached yet.
+ */
+export function usePrefetchBlueprintVariants(
+  products: ReadonlyArray<{ blueprintId: number; printProviderId: number }>,
+) {
+  const queryClient = useQueryClient();
+  const prefetchedRef = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    for (const { blueprintId, printProviderId } of products) {
+      const cacheKey = `${blueprintId}-${printProviderId}`;
+      if (prefetchedRef.current.has(cacheKey)) continue;
+
+      const queryKey = ["products", "blueprint-variants", blueprintId, printProviderId];
+      if (queryClient.getQueryData(queryKey)) continue;
+
+      prefetchedRef.current.add(cacheKey);
+      void queryClient.prefetchQuery({
+        queryKey,
+        queryFn: () => PrintifyService.getBlueprintVariants(blueprintId, printProviderId),
+        staleTime: 1000 * 60 * 10, // 10 minutes
+      });
+    }
+  }, [products, queryClient]);
 }
 
 /**

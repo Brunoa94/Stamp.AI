@@ -29,7 +29,6 @@ export const CreateProductPayloadSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   user_id: z.string().uuid("User ID must be a valid UUID"),
-  customer_email: z.string().email("Customer email must be a valid email"),
   selected_color: z.string().nullable().optional(),
   selected_size: z.string().nullable().optional(),
   // Optional user-adjusted print positions (Step 6 design adjustment).
@@ -120,7 +119,6 @@ export const CreateCustomProductRequestSchema = z.object({
   title: z.string(),
   description: z.string(),
   user_id: z.string(),
-  customer_email: z.string(),
   selected_color: z.string().nullable().optional(),
   selected_size: z.string().nullable().optional(),
   // Image dimensions for auto-placement calculation

@@ -4,6 +4,7 @@ import { ReactNode, useState, useEffect, useRef } from "react";
 import { Button } from "@/features/ui/button";
 import { Dialog, DialogTrigger } from "@/features/ui/dialog";
 import { useUser } from "@/shared/queries/authQueries";
+import { isRegisteredUser } from "@/shared/helpers/authIdentity";
 
 /**
  * AuthDialog
@@ -37,15 +38,17 @@ export function AuthDialog({
 }: PropsI) {
   const [open, setOpen] = useState(false);
   const { data: user } = useUser();
+  const isRegistered = isRegisteredUser(user);
   const wasOpenRef = useRef(false);
 
-  // Auto-close dialog when user becomes authenticated
+  // Auto-close dialog when the user logs in. A guest's anonymous session
+  // does not count, so the dialog stays open for them.
   useEffect(() => {
-    if (wasOpenRef.current && user) {
+    if (wasOpenRef.current && isRegistered) {
       setOpen(false);
     }
     wasOpenRef.current = open;
-  }, [user, open]);
+  }, [isRegistered, open]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

@@ -63,7 +63,7 @@ export function usePaymentForm({
   // Use showToast: false since this form shows inline errors
   const { handleError } = useErrorHandler({ showToast: false });
 
-  const processPayment = async () => {
+  const processPayment = async (paymentCartId: string | null | undefined) => {
     if (!stripe && !isTestMode) {
       const notReadyMessage = t("stripeNotReady");
       setError(notReadyMessage);
@@ -93,7 +93,7 @@ export function usePaymentForm({
         // The order does not exist yet: it is created on the server from this
         // payment, by the return page or by the webhook, whichever is first.
         // The webhook reads the item names from this cart.
-        ...(cartId ? { metadata: { cartId } } : {}),
+        ...(paymentCartId ? { metadata: { cartId: paymentCartId } } : {}),
       };
 
       if (isTestMode) {
@@ -163,9 +163,16 @@ export function usePaymentForm({
     }
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  /**
+   * `options.cartId` overrides the `cartId` prop for this payment: a guest's
+   * database cart only exists once it was saved just before paying.
+   */
+  const handleSubmit = async (
+    event: React.FormEvent,
+    options?: { cartId?: string | null },
+  ) => {
     event.preventDefault();
-    await processPayment();
+    await processPayment(options?.cartId !== undefined ? options.cartId : cartId);
   };
 
   return {

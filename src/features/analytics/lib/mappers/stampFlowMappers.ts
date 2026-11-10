@@ -1,4 +1,4 @@
-import type { AnalyticsEventParamsT } from "../types/analyticsTypes";
+import type { AnalyticsEventParamsT } from "../../types/analyticsTypes";
 
 /**
  * Stamp Flow Analytics Mappers

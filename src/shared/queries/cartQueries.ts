@@ -1,68 +1,79 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CartService } from "@/shared/services/cartService";
 import { AddToCartInput, UpdateCartItemInput } from "@/shared/types/cart";
 import { useUser } from "@/shared/queries/authQueries";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
-import { GuestProductStorageService } from "@/features/checkout/lib/services/guestProductStorageService";
+import { isRegisteredUser } from "@/shared/helpers/authIdentity";
+import {
+  LOCAL_CART_UPDATED_EVENT,
+  LocalCartStorageService,
+  type LocalCartItemT,
+} from "@/shared/services/localCartStorageService";
+import {
+  LOCAL_CART_ID,
+  mapLocalCartToCartWithItems,
+} from "@/shared/mappers/localCartMapper";
+import { CartServiceMapper } from "@/shared/mappers/services/cartServiceMapper";
 
 /**
- * Hook to safely get session ID only on client-side.
- * Returns null on server and during initial hydration to prevent mismatches.
- * Also returns isHydrated to track hydration state.
+ * A guest's local cart (localStorage), kept in sync with changes from this
+ * tab and other tabs. `null` until hydrated, so the server render and the
+ * first client render agree.
  */
-function useSessionId() {
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [isHydrated, setIsHydrated] = useState(false);
+export function useLocalCartItems(): LocalCartItemT[] | null {
+  const [items, setItems] = useState<LocalCartItemT[] | null>(null);
 
   useEffect(() => {
-    // Only access sessionStorage after hydration is complete
-    setSessionId(GuestProductStorageService.getSessionId());
-    setIsHydrated(true);
+    const read = () => setItems(LocalCartStorageService.getItems());
+    read();
+    window.addEventListener(LOCAL_CART_UPDATED_EVENT, read);
+    window.addEventListener("storage", read);
+    return () => {
+      window.removeEventListener(LOCAL_CART_UPDATED_EVENT, read);
+      window.removeEventListener("storage", read);
+    };
   }, []);
 
-  return { sessionId, isHydrated };
+  return items;
 }
 
 /**
- * Hook to get or create cart for current user/session.
- * Supports both authenticated users (via userId) and guests (via sessionId).
+ * The current cart. Registered users get their database cart; guests (no
+ * session or an anonymous one) always get the local cart, even when an
+ * earlier payment attempt left a database cart behind.
  */
 function useCart() {
   const { data: user, isLoading: isUserLoading } = useUser();
-  const userId = user?.id;
-  const userEmail = user?.email;
-  // Get session ID safely (null on server, populated after hydration)
-  const { sessionId, isHydrated } = useSessionId();
+  const isRegistered = isRegisteredUser(user);
+  const userId = isRegistered ? user.id : undefined;
+  const userEmail = isRegistered ? user.email : undefined;
+  const localItems = useLocalCartItems();
 
   const query = useQuery({
-    queryKey: ["cart", { userId, sessionId }],
+    queryKey: ["cart", { userId }],
     queryFn: async () => {
-      // Support both authenticated and guest users
-      if (!userId && !sessionId) {
-        throw new Error("No user ID or session ID available");
-      }
-      // Get or create cart (prefers userId if available)
-      const cart = await CartService.getOrCreateCart(
-        userId || undefined,
-        userId ? undefined : sessionId || undefined,
-        userEmail,
-      );
-      // Get cart with items
+      const cart = await CartService.getOrCreateCart(userId, undefined, userEmail);
       return CartService.getCart(cart.id);
     },
-    enabled: !!(userId || sessionId), // Run when either exists
+    enabled: !!userId,
     retry: 1,
     refetchOnMount: "always",
     staleTime: 0,
   });
 
-  // Include hydration state in loading - always show loading until hydrated
-  // This prevents hydration mismatch between server (no sessionId) and client (has sessionId)
-  return {
-    ...query,
-    isLoading: !isHydrated || isUserLoading || query.isLoading,
-  };
+  const localCart = useMemo(
+    () => (localItems ? mapLocalCartToCartWithItems(localItems) : undefined),
+    [localItems],
+  );
+
+  if (isUserLoading) {
+    return { data: undefined, isLoading: true, error: null };
+  }
+  if (!isRegistered) {
+    return { data: localCart, isLoading: localItems === null, error: null };
+  }
+  return { data: query.data, isLoading: query.isLoading, error: query.error };
 }
 
 /**
@@ -88,88 +99,59 @@ export function useCartSummary() {
   return {
     cart,
     isLoading,
-    ...CartService.calculateCartSummary(cart),
+    ...CartServiceMapper.mapItemsToCartSummary(cart?.cart_items ?? []),
     error,
   };
 }
 
 /**
- * Add item to cart.
- * Supports both authenticated users (via userId) and guests (via sessionId).
+ * Add item to a registered user's database cart. Guests add to the local
+ * cart instead (LocalCartStorageService).
  */
 export function useAddToCart() {
   const queryClient = useQueryClient();
   const { data: user } = useUser();
-  const userId = user?.id;
-  const userEmail = user?.email;
   const { handleError } = useErrorHandler();
 
   return useMutation({
     mutationFn: async (item: AddToCartInput) => {
-      // Get session ID for guests
-      const sessionId = GuestProductStorageService.getSessionId();
-
-      // DEBUG: Log the item received by the mutation
-      console.log("[useAddToCart] Mutation called with item:", {
-        item,
-        userId,
-        sessionId,
-        hasProductName: "product_name" in item,
-        hasUnitPrice: "unit_price" in item,
-        productNameValue: item.product_name,
-        unitPriceValue: item.unit_price,
-        allKeys: Object.keys(item),
-      });
-
-      // Support both authenticated and guest users
-      if (!userId && !sessionId) {
-        throw new Error("No user ID or session ID available");
+      if (!isRegisteredUser(user)) {
+        throw new Error("Only registered users have a database cart");
       }
 
-      // Get or create cart (prefers userId if available)
-      const cart = await CartService.getOrCreateCart(
-        userId || undefined,
-        userId ? undefined : sessionId || undefined,
-        userEmail,
-      );
-
-      // DEBUG: Log before calling CartService
-      console.log("[useAddToCart] Calling CartService.addToCart with:", {
-        cartId: cart.id,
-        item,
-      });
-
+      const cart = await CartService.getOrCreateCart(user.id, undefined, user.email);
       return await CartService.addToCart(cart.id, item);
     },
-    onSuccess: (data) => {
-      // DEBUG: Log successful result
-      console.log("[useAddToCart] Success, returned data:", data);
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: (error: Error) => {
-      // DEBUG: Log error details
-      console.error("[useAddToCart] Error:", error);
       handleError(error);
     },
   });
 }
 
 /**
- * Update cart item
+ * Update cart item (the local cart item for guests)
  */
 export function useUpdateCartItem() {
   const queryClient = useQueryClient();
+  const { data: user } = useUser();
   const { handleError } = useErrorHandler();
 
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       itemId,
       update,
     }: {
       itemId: string;
       update: UpdateCartItemInput;
     }) => {
-      return CartService.updateCartItem(itemId, update);
+      if (!isRegisteredUser(user)) {
+        LocalCartStorageService.updateQuantity(itemId, update.quantity);
+        return;
+      }
+      await CartService.updateCartItem(itemId, update);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
@@ -181,15 +163,20 @@ export function useUpdateCartItem() {
 }
 
 /**
- * Remove item from cart
+ * Remove item from cart (from the local cart for guests)
  */
 export function useRemoveCartItem() {
   const queryClient = useQueryClient();
+  const { data: user } = useUser();
   const { handleError } = useErrorHandler();
 
   return useMutation({
-    mutationFn: (itemId: string) => {
-      return CartService.removeCartItem(itemId);
+    mutationFn: async (itemId: string) => {
+      if (!isRegisteredUser(user)) {
+        LocalCartStorageService.removeItem(itemId);
+        return;
+      }
+      await CartService.removeCartItem(itemId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
@@ -201,20 +188,25 @@ export function useRemoveCartItem() {
 }
 
 /**
- * Update cart items selection (persist which items are selected for checkout)
+ * Update cart items selection (persist which items are selected for checkout).
+ * The local cart keeps its selection in localStorage.
  */
 export function useUpdateCartItemsSelection() {
   const { handleError } = useErrorHandler();
 
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       cartId,
       selectedItemIds,
     }: {
       cartId: string;
       selectedItemIds: string[];
     }) => {
-      return CartService.updateCartItemsSelection(cartId, selectedItemIds);
+      if (cartId === LOCAL_CART_ID) {
+        LocalCartStorageService.setSelection(selectedItemIds);
+        return;
+      }
+      await CartService.updateCartItemsSelection(cartId, selectedItemIds);
     },
     onError: (error: Error) => {
       handleError(error);

@@ -34,6 +34,7 @@ export interface UserI {
   updated_at?: string
   user_metadata?: UserMetadataI
   app_metadata?: Record<string, unknown>
+  is_anonymous?: boolean
 }
 
 export interface UserMetadataI {
@@ -253,7 +254,6 @@ export interface CreateCustomProductRequestI {
   description?: string
   variants?: number[]
   user_id: string
-  customer_email: string
   selected_color?: string | null
   selected_size?: string | null
   // Image dimensions for auto-placement calculation

@@ -36,8 +36,8 @@ export function StampCanvas() {
       {/* Back Button (Top Left) */}
       <BackButton />
 
-      {/* Main protocol canvas aligned with the submitted layout */}
-      <main className="absolute inset-x-0 top-24 bottom-0 overflow-hidden lg:mr-68">
+      {/* Protocol canvas aligned with the submitted layout; AppLayoutChrome provides <main> */}
+      <div className="absolute inset-x-0 top-24 bottom-0 overflow-hidden lg:mr-68">
         <div
           className="h-full transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
           style={{ transform: `translate3d(0, -${activeSlide * 100}%, 0)` }}
@@ -69,7 +69,7 @@ export function StampCanvas() {
           {/* Step 8: Final Review */}
           <FinalReviewSection />
         </div>
-      </main>
+      </div>
 
       {/* Sidebar Navigation (Desktop Only) */}
       <NavigationSidebar />

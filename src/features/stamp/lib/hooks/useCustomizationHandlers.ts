@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { AnalyticsService } from "@/shared/services/analyticsService";
-import { mapCreateProductEvent } from "@/features/analytics/mappers/stampFlowMappers";
+import { mapCreateProductEvent } from "@/features/analytics/lib/mappers/stampFlowMappers";
 import { useStampFlowStore } from "../stores/stampFlowStore";
 import { buildPrintPositionsPayload } from "./useDesignAdjustment";
 import { getProductConfig } from "@/lib/printPlacement/config";

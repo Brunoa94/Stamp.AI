@@ -8,6 +8,7 @@ import { CheckoutStorageService } from "./checkoutStorageService";
 import { claimPaymentFinalization } from "./claimPaymentFinalization";
 import { PaymentFinalizationLockService } from "./paymentFinalizationLockService";
 import { fulfillStoredCheckout } from "./storedCheckoutFulfillmentService";
+import { removePaidGuestCartItems } from "./guestCartCleanupService";
 import { captureError } from "@/lib/observability/errorCapture";
 
 /** Finalize a Stripe payment the customer was redirected back from. */
@@ -56,6 +57,7 @@ export async function processStripeReturn(
 
     PaymentFinalizationLockService.markFinalized("stripe", paymentIntentId);
     CheckoutStorageService.clearStripeCheckoutData();
+    removePaidGuestCartItems(user);
     update({ status: "success", orderNumber });
   } catch (error) {
     captureError(error, {

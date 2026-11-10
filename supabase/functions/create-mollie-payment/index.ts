@@ -1,4 +1,4 @@
-import { enforceOperationLimit } from "../_shared/operationLimit.ts";
+import { enforceCallerLimits, OPERATION_LIMITS } from "../_shared/operationLimit.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, validateRequest, verifyAuth } from "../_shared/validators.ts";
@@ -43,7 +43,7 @@ serve(async (req) => {
     }
 
     // Verify authentication
-    const { userId, userEmail } = await verifyAuth(authHeader);
+    const { userId, userEmail, isAnonymous } = await verifyAuth(authHeader);
 
     const {
       amount,
@@ -66,7 +66,7 @@ serve(async (req) => {
       throw new FunctionError(400, "INVALID_CURRENCY", "Checkout is priced in EUR");
     }
     if (userId === "service-role") throw ErrorCodes.INVALID_REQUEST_BODY();
-    await enforceOperationLimit(userId, "payment-create", 30, 60);
+    await enforceCallerLimits({ userId, isAnonymous }, req, "payment-create", OPERATION_LIMITS["payment-create"]);
     const pricing = await priceCheckout({ lineItems: line_items, promoCode: promo_code, userId });
     requireClientTotal(pricing, Math.round(validAmount * 100));
 

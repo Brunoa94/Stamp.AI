@@ -1,14 +1,15 @@
 "use client";
 
-import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
+import { Suspense } from "react";
 import { CheckoutContent } from "@/features/checkout/ui/CheckoutContent";
 import { CheckoutLoadingSection } from "@/features/checkout/ui/sections/CheckoutLoadingSection";
 import "@/features/checkout/ui/checkout.css";
 
 export default function CheckoutPageClient() {
+  // useSearchParams() requires a Suspense boundary for static prerendering
   return (
-    <ProtectedRoute fallback={<CheckoutLoadingSection />}>
+    <Suspense fallback={<CheckoutLoadingSection />}>
       <CheckoutContent />
-    </ProtectedRoute>
+    </Suspense>
   );
 }
