@@ -2,9 +2,9 @@ import { cleanAccountData } from './account-cleanup.mjs';
 import { discoverAndCancel } from './recovery.mjs';
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { createClient } from '@supabase/supabase-js';
-import { required } from './environment.mjs';
+import { required, STATE_DIR } from './environment.mjs';
 import { PrintifyOrders } from './printify.mjs';
-const directory = '.acceptance/accounts';
+const directory = `${STATE_DIR}/accounts`;
 export function registerAccount(id) {
   mkdirSync(directory, { recursive: true });
   writeFileSync(`${directory}/${id}.json`, JSON.stringify({ id, state: 'active' }), { mode: 0o600, flush: true });

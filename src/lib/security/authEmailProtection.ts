@@ -2,13 +2,14 @@ import { createHash } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/shared/types/database.types";
 import { getClientIdentifier } from "@/lib/security/rate-limiter/utils";
+import { isAcceptanceDatabaseUrl } from "@/lib/security/acceptanceDatabase";
 import type { NextRequest } from "next/server";
 
 const RATE_LIMIT_WINDOW_SECONDS = 60 * 60;
 const IP_LIMIT = 10;
 const EMAIL_LIMIT = 3;
 const ACCEPTANCE_ENVIRONMENT = process.env.STAMP_ACCEPTANCE_TESTS === "1" &&
-  process.env.NEXT_PUBLIC_SUPABASE_URL === "https://tgccxydchvujhrqyzqao.supabase.co";
+  isAcceptanceDatabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
 
 function hashIdentifier(value: string): string {
   return createHash("sha256").update(value).digest("hex");

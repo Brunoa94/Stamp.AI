@@ -393,6 +393,16 @@ After completing any implementation:
 - [ ] Bug fixes include a reproduction test that failed before the fix
 - [ ] Test names describe the behavior being verified
 - [ ] No tests were skipped or disabled
-- [ ] Coverage hasn't decreased (if tracked)
+
+## Before Committing: Remove the Feature's Unit Tests
+
+In this repository the unit tests written during a feature's TDD loop are scaffolding: they drive the implementation and prove it works, then they are removed before the code is committed or pushed. Once Verification above passes:
+
+1. **Delete the unit test files the feature added** under `src/` (`*.test.*`, `*.spec.*`, `__tests__/`). `git diff --name-only --diff-filter=A <base>...` and `git status` list them.
+2. **Revert the test cases the feature added to existing test files.** Keep only the edits an existing test needed because the feature intentionally changed the behavior it checks.
+3. **Run `npm run test:unit`**: the existing suite must still pass without the removed tests.
+4. Commit. The pre-commit hook still runs `vitest related` on the existing tests.
+
+Hook tests (`.claude/hooks/tests/`) and acceptance specs (`tests/acceptance/`) are not unit tests and stay. The `remove-new-tests-before-commit` hook rejects a commit or push that adds a unit test under `src/` (`docs/guardrails.md`).
 
 **Note:** Run each test command after a change that could affect the result. After a clean run, don't repeat the same command unless the code has changed since — re-running on unchanged code adds no confidence.

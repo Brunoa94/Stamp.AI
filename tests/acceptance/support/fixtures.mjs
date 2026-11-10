@@ -5,7 +5,7 @@ import { test as base, expect } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
 import { randomUUID } from 'node:crypto';
-import { loadEnvironment, required, TEST_PROJECT } from './environment.mjs';
+import { loadEnvironment, required, TEST_PROJECT, LOCAL } from './environment.mjs';
 import { PrintifyOrders } from './printify.mjs';
 
 export function client(env, privileged = false) {
@@ -37,7 +37,8 @@ export const test = base.extend({
     const forbidden = [];
     await context.route('**/*', async route => {
       const url = new URL(route.request().url());
-      const otherDatabase = url.hostname.endsWith('.supabase.co') && url.hostname !== `${TEST_PROJECT}.supabase.co`;
+      // Local mode allows no hosted project at all, not even the test project.
+      const otherDatabase = url.hostname.endsWith('.supabase.co') && (LOCAL || url.hostname !== `${TEST_PROJECT}.supabase.co`);
       const ai = /(^|\.)(openai\.com|generativelanguage\.googleapis\.com|api\.anthropic\.com)$/.test(url.hostname);
       if (otherDatabase || ai) { forbidden.push(`${url.hostname}${url.pathname}`); await route.abort(); }
       else await route.continue();

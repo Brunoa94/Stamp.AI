@@ -28,7 +28,8 @@ Do not run acceptance tests (`test:acceptance*`), integration tests, e2e tests, 
 
 Read every file in scope. Using the preloaded skills as the standard, look for:
 
-- **Missing tests**: new or changed behavior in `lib/` (helpers, mappers, services, hooks) with no test that would fail without it. Name the behavior and the test file it belongs in.
+- **Missing tests**: a feature's new unit tests are removed before committing (test-driven-development skill, "Before Committing"), so don't flag committed feature code for having no test. Flag an *existing* test that the change made wrong (still asserting the old behavior, or now passing for the wrong reason).
+- **Conventions**: new or changed code that solves a problem differently from how the codebase already solves it. Check it against `.claude/rules/` and against two or three files of the same kind (another hook in `lib/hooks/`, another query in `shared/queries/`), and name the established pattern and the file that shows it. For example, a write done with a promise chain in `useEffect` instead of a `useMutation` (rules → [Hooks and side effects](../rules/architecture.md#hooks-and-side-effects)).
 - **Unhandled states**: async UI without loading, error or empty states; disabled/pending states on actions that can be retried or double-submitted.
 - **Error handling**: errors shown to users that aren't `UserFacingError`; errors not surfaced through `useErrorHandler`; `console.*` instead of the logger; swallowed errors.
 - **Accessibility** the linter can't see: missing accessible names on custom controls, focus not moved or restored around dialogs and step changes, keyboard traps, status changes not announced.
