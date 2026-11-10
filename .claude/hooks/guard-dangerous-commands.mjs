@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // PreToolUse hook: shell commands that destroy work or change the dependency tree need
-// explicit human approval, even when a permission rule would otherwise allow them.
+// explicit human approval, even when a permission rule would otherwise allow them. Off in auto
+// mode, where the auto-mode classifier reviews commands instead.
 import { pathToFileURL } from "node:url";
 
 // Each check gets the words of one command segment (split on ;, &&, ||, |, newlines).
@@ -98,7 +99,7 @@ function segments(command) {
 }
 
 export function decide(input) {
-  if (input.tool_name !== "Bash") return null;
+  if (input.tool_name !== "Bash" || input.permission_mode === "auto") return null;
   const command = input.tool_input?.command ?? "";
   const matched = new Set();
   for (const words of segments(command)) {

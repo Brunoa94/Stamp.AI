@@ -1,7 +1,9 @@
 // Shared types for both Supabase functions and frontend
 
-// Export success types
-export * from './success'
+// Export success types. The explicit extension lets Deno, and the local Edge
+// runtime that mounts only resolvable imports, find the file; type-only keeps
+// it valid for the frontend's tsc, which disallows .ts import extensions.
+export type * from './success.ts'
 
 // =============================================================================
 // API Response Types

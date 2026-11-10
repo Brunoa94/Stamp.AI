@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
+import { isAcceptanceDatabaseUrl } from "@/lib/security/acceptanceDatabase";
 import {
   checkCombinedRateLimit,
   checkUserRateLimit,
@@ -96,7 +97,7 @@ export async function middleware(request: NextRequest) {
   // further down, once the session has been resolved for route protection.
   const rateLimitType = getRateLimitType(pathname);
   const acceptanceEnvironment = process.env.STAMP_ACCEPTANCE_TESTS === "1" &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL === "https://tgccxydchvujhrqyzqao.supabase.co" &&
+    isAcceptanceDatabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
     request.nextUrl.hostname === "localhost" && request.nextUrl.port === "3107";
   const rateLimitConfig = rateLimitType
     ? acceptanceEnvironment

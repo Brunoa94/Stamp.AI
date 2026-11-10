@@ -66,3 +66,8 @@ test("leaves ordinary commands alone", () => {
 test("ignores tools other than Bash", () => {
   assert.equal(decide({ tool_name: "Write", tool_input: { file_path: "rm -rf" } }), null);
 });
+
+test("stands aside in auto mode, where the auto-mode classifier reviews commands", () => {
+  assert.equal(decide({ ...bash("rm -rf node_modules"), permission_mode: "auto" }), null);
+  assert.notEqual(decide({ ...bash("rm -rf node_modules"), permission_mode: "default" }), null);
+});
