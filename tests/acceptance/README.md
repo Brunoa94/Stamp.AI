@@ -26,7 +26,7 @@ Always use the wrapper for execution: it performs preflight and final cleanup ev
 
 ## Offline tier (local Supabase)
 
-Specs that need only the database, auth and the AI adapter can run against a local Supabase stack instead of the hosted test project. They need no credentials and make no network calls outside the machine. Docker must be running.
+Specs that need only the database, auth and the AI adapter can run against a local Supabase stack instead of the hosted test project. They need no credentials and call no hosted service API; only public assets such as catalog images from Printify's CDN load from the internet. Docker must be running.
 
 ```sh
 npm run test:acceptance:local:setup   # start the stack, rebuild the schema, seed user + catalog
@@ -37,7 +37,9 @@ Setup resets the local database each time. It applies `supabase/migrations` with
 
 With `ACCEPTANCE_LOCAL=1` the harness reads only that file. It accepts only `http://127.0.0.1:54321` with local anon/service-role keys, and it refuses provider credentials (Stripe, Mollie, PayPal, Printify, Brevo, GA). The browser guard blocks every hosted Supabase project, including the test project. Ledgers live in `.acceptance/local/`, so local accounts never reach hosted recovery. The app allows the local origin in its CSP and image hosts only when `STAMP_ACCEPTANCE_TESTS=1` and the database is local.
 
-On the first run (desktop), 84 of 87 tests in those four specs passed in about three minutes. The three failures are SEC-02 for `create-payment-intent`, `create-mollie-payment` and `capture-paypal-order`. Locally they return 503 because they import `supabase/types`, which the local edge runtime does not mount (only `supabase/functions/` is), so the worker never boots. The hosted deploy bundles that folder. Specs that create Printify products, take payments or send email still need the hosted environment below.
+The stack serves the Edge Functions too. When it starts, the local runtime mounts `supabase/functions/` plus the files they import from outside it, so those imports need explicit extensions (`supabase/types/index.ts` re-exports `./success.ts`). After changing such an import, run `supabase stop` before setup so the mounts are rebuilt.
+
+All 174 tests in those four specs pass on desktop and mobile in about five minutes. CI runs them in the `acceptance-offline` job of `ci.yml` on every pull request, forks and drafts included, in addition to the hosted groups. Specs that create Printify products, take payments or send email still need the hosted environment below.
 
 ## Environment setup
 

@@ -55,8 +55,13 @@ function migrationOrder() {
   return files.flatMap(file => deferred.has(file) ? [] : [file, ...Object.keys(RUN_AFTER).filter(late => RUN_AFTER[late] === file)]);
 }
 
+// Services no spec uses; skipping them saves image pulls on CI runners.
+const UNUSED_SERVICES = 'studio,postgres-meta,logflare,vector,imgproxy';
+
 console.log('Starting the local Supabase stack...');
-if (!localStatus()) supabase(['start'], { stdio: ['ignore', 'ignore', 'inherit'] });
+// The Edge runtime mounts the files functions import outside supabase/functions
+// when the stack starts; restart it (supabase stop) after changing those imports.
+if (!localStatus()) supabase(['start', '-x', UNUSED_SERVICES], { stdio: ['ignore', 'ignore', 'inherit'] });
 const status = localStatus();
 if (status?.API_URL !== LOCAL_URL) throw new Error(`Local Supabase API is ${status?.API_URL}, expected ${LOCAL_URL}`);
 
