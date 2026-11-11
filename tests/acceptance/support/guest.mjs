@@ -79,12 +79,21 @@ export async function goToCheckout(page, email) {
  * guest's database cart is written and no payment is made.
  */
 export async function startStripePaymentWithoutPaying(page) {
-  await page.route('**/functions/v1/create-payment-intent', route => route.abort());
+  // Unroute only once the abort has finished: unrouting while the handler runs
+  // passes the same request on to the network guard, which then fails with
+  // "Route is already handled!".
+  let markAborted;
+  const aborted = new Promise(resolve => { markAborted = resolve; });
+  await page.route('**/functions/v1/create-payment-intent', async route => {
+    await route.abort();
+    markAborted();
+  });
   const attempted = page.waitForRequest(r => r.url().includes('/functions/v1/create-payment-intent'), { timeout: 60000 });
   await page.getByRole('radio', { name: /credit|card|stripe/i }).click();
   await page.getByRole('checkbox', { name: /test mode/i }).check();
   await page.getByRole('button', { name: /^pay /i }).click();
   await attempted;
+  await aborted;
   await page.unroute('**/functions/v1/create-payment-intent');
 }
 

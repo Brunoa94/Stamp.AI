@@ -39,7 +39,7 @@ With `ACCEPTANCE_LOCAL=1` the harness reads only that file. It accepts only `htt
 
 The stack serves the Edge Functions too. When it starts, the local runtime mounts `supabase/functions/` plus the files they import from outside it, so those imports need explicit extensions (`supabase/types/index.ts` re-exports `./success.ts`). After changing such an import, run `supabase stop` before setup so the mounts are rebuilt.
 
-All 174 tests in those four specs pass on desktop and mobile in about five minutes. CI runs them in the `acceptance-offline` job of `ci.yml` on every pull request, forks and drafts included, in addition to the hosted groups. Specs that create Printify products, take payments or send email still need the hosted environment below.
+All 174 tests in those four specs pass on desktop and mobile in about five minutes. CI runs them in the `acceptance-offline` job of `ci.yml` on every pull request, forks and drafts included, except the dev → main one, which runs the full hosted suite. Specs that create Printify products, take payments or send email still need the hosted environment below.
 
 ## Environment setup
 

@@ -194,8 +194,10 @@ jobs:
   # The database-only specs against a local Supabase stack on the runner (see
   # "Offline tier" in tests/acceptance/README.md). No secrets and no shared test
   # environment, so it runs on every PR, drafts and forks included, and needs no queue.
+  # Skipped on the dev → main PR, where the full acceptance suite runs the same specs.
   acceptance-offline:
     name: Acceptance offline · ${{ matrix.project }}
+    if: ${{ !(github.event_name == 'pull_request' && github.head_ref == 'dev' && github.base_ref == 'main') }}
     needs: [typecheck, unit-tests]
     runs-on: ubuntu-latest
     timeout-minutes: 30
