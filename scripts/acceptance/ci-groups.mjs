@@ -13,7 +13,7 @@ const GROUPS = {
   catalog: ['catalog-products'], // 7.5
   orders: ['orders-page', 'payments', 'webhook-integrity'], // 6.5
   checkout: ['price-integrity', 'settlement', 'cart-checkout', 'printify-orders', 'promotions-address', 'security'], // 6.1
-  browse: ['navigation-auth', 'history-catalog', 'analytics', 'stamp'], // 5.7
+  browse: ['navigation-auth', 'history-catalog', 'analytics', 'stamp', 'guest-checkout'], // 5.7 before guest-checkout
   studio: ['recovery-quality', 'placement-cart-actions', 'customization', 'auth-lifecycle'], // 6.3
 };
 const SPECS = 'tests/acceptance/specs';
