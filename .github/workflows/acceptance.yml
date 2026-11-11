@@ -75,8 +75,7 @@ jobs:
   group:
     name: ${{ matrix.project }} · ${{ matrix.group }}
     needs: prepare
-    # Pinned: Playwright 1.58 cannot install Chromium on Ubuntu 26.04 (ubuntu-latest since Oct 2026).
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     # Generous: a timeout kills the job before its Printify and account cleanup finishes.
     timeout-minutes: 60
     strategy:
