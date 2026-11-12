@@ -114,8 +114,8 @@ export async function cancelIdealPayment(page, env) {
  * A guest's own design: upload, skip AI editing, create a real product and
  * bag it. Product creation starts the anonymous session.
  */
-export async function createGuestProduct(page, env) {
-  await describeDesign(page);
+export async function createGuestProduct(page, env, options) {
+  await describeDesign(page, options);
   await page.getByRole('button', { name: /proceed without editing|use.*photo|skip.*editing/i }).filter({ visible: true }).click();
   await page.getByRole('button', { name: /use this image/i }).filter({ visible: true }).click();
   const name = required(env, 'TEST_PRODUCT_NAME');

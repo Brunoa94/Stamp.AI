@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { test, expect, unwrap } from '../support/fixtures.mjs';
-import { IMAGE, describeDesign, loginUI } from '../support/browser.mjs';
+import { IMAGE, describeDesign, loginUI, logoutUI, openStampClientSide } from '../support/browser.mjs';
 import { ITEMS, itemCard, proceed, fillAddress } from '../support/cart.mjs';
 import { pay } from '../support/purchase.mjs';
 import {
@@ -167,4 +167,79 @@ test('GUEST-08 a guest who logs in keeps their product in the bag and can pay fo
   }, { timeout: 90000 }).toEqual({ payment: 'paid', printify: true });
   guest.orders(account.id).register(order.printify_order_id);
   expect(failures.join(' ')).not.toMatch(/PRODUCT_NOT_FOUND/);
+});
+
+test('GUEST-09 a guest product joins the account bag on login and stays there after logging out and in again', async ({ page, guest, env }) => {
+  test.setTimeout(360000);
+  const account = await guest.createAccount();
+  const cart = unwrap(await guest.admin.from('carts').insert({ user_id: account.id, user_email: account.email }).select().single(), 'Create the account cart');
+  unwrap(await guest.admin.from('cart_items').insert({
+    cart_id: cart.id, product_id: crypto.randomUUID(), variant_id: '90000', custom_image_url: '/zoe.png',
+    is_selected: true, product_name: 'Earlier account item', unit_price: 1999, quantity: 1,
+  }), 'Seed the account bag');
+
+  // Login ends with a full navigation to /stamp; leaving earlier would drop the new session.
+  const loggedIn = async () => {
+    await expect(page).toHaveURL(/\/stamp/, { timeout: 30000 });
+    await expect(page.getByRole('button', { name: /logout|sign out/i }).filter({ visible: true }).first()).toBeVisible();
+  };
+
+  await createGuestProduct(page, env);
+  const [guestItem] = await readLocalCart(page);
+  const accountLines = async () => databaseLines(
+    unwrap(await guest.admin.from('cart_items').select('*,carts!inner(user_id,status)').eq('carts.user_id', account.id).eq('carts.status', 'active'), 'Read account bag'),
+  );
+  const expected = databaseLines([
+    { product_id: guestItem.productId, variant_id: guestItem.variantId, quantity: 1 },
+    { product_id: (await accountLines())[0].product, variant_id: '90000', quantity: 1 },
+  ]);
+
+  expect((await loginUI(page, account)).status()).toBe(200);
+  await loggedIn();
+  await expect.poll(accountLines, { timeout: 30000 }).toEqual(expected);
+  await page.goto('/cart');
+  await expect(page.getByRole('article')).toHaveCount(2);
+
+  await logoutUI(page);
+  expect(await accountLines()).toEqual(expected);
+
+  expect((await loginUI(page, account)).status()).toBe(200);
+  await loggedIn();
+  await page.goto('/cart');
+  await expect(page.getByRole('article')).toHaveCount(2);
+  expect(await accountLines()).toEqual(expected);
+});
+
+test('GUEST-10 without a page reload, a guest who logs out, bags another product and logs in again gets it merged', async ({ page, guest, env }) => {
+  test.setTimeout(480000);
+  const account = await guest.createAccount();
+  const accountProducts = async () => unwrap(
+    await guest.admin.from('cart_items').select('product_id,carts!inner(user_id,status)').eq('carts.user_id', account.id).eq('carts.status', 'active'),
+    'Read account bag',
+  ).map(row => row.product_id).sort();
+  // Logging in on /stamp only refreshes the page; this proves nothing reloaded it.
+  const loginOnStamp = async () => {
+    await openStampClientSide(page);
+    expect((await loginUI(page, account, { reload: false })).status()).toBe(200);
+    await expect(page.getByRole('button', { name: /logout|sign out/i }).filter({ visible: true }).first()).toBeVisible();
+  };
+
+  await createGuestProduct(page, env);
+  await page.evaluate(() => { window.__acceptanceSamePageLoad = true; });
+  const [first] = await readLocalCart(page);
+  await loginOnStamp();
+  await expect.poll(accountProducts, { timeout: 30000 }).toEqual([first.productId]);
+
+  await logoutUI(page, { reload: false });
+  // Product creation skips a blueprint/colour/size this tab already created,
+  // whatever the design; this test is about the merge, so start a new design.
+  await page.evaluate(() => Object.keys(sessionStorage).filter(k => k.startsWith('stamp_product_')).forEach(k => sessionStorage.removeItem(k)));
+  await createGuestProduct(page, env, { reload: false });
+  const [second] = await readLocalCart(page);
+  expect(second.productId).not.toBe(first.productId);
+  await loginOnStamp();
+
+  await expect.poll(accountProducts, { timeout: 30000 }).toEqual([first.productId, second.productId].sort());
+  await expect.poll(() => readLocalCart(page), { timeout: 30000 }).toEqual([]);
+  expect(await page.evaluate(() => window.__acceptanceSamePageLoad)).toBe(true);
 });

@@ -168,6 +168,8 @@ Changing these specs needs the user's approval (`protect-acceptance-tests.mjs`):
   - `GUEST-06`: a second payment after a cancel reuses the anonymous user's database cart, which then holds exactly the current local items. No second cart is created.
   - `GUEST-07`: after a successful guest payment, the order's `customer_email` is the email entered in the checkout address form and `/cart` is empty.
   - `GUEST-08`: a guest who adds a product and then logs in with email sees the product in their cart and can pay for it.
+  - `GUEST-09`: a guest product joins an account cart that already has items; after logging out and in again the account cart still holds both.
+  - `GUEST-10`: in one page load, a guest who logs in on `/stamp`, logs out, bags another product and logs in again gets the second product merged too.
 
 ## Finish
 
