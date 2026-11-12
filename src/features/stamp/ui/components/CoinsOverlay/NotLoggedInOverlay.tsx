@@ -7,15 +7,27 @@ import { Span } from "@/features/ui/span";
 import { Login } from "@/features/auth/ui/components/Login";
 import { Register } from "@/features/auth/ui/components/Register";
 import { CoinsOverlayShell } from "./CoinsOverlayShell";
+import { OverlaySkipButton } from "./OverlaySkipButton";
 
 /**
  * NotLoggedInOverlay
  *
  * Shown when an unauthenticated user tries to generate: prompts to log in
- * or register via the auth dialogs.
+ * or register via the auth dialogs. Guests can still skip generation and
+ * continue with their own photo or earlier creations.
  */
 
-export function NotLoggedInOverlay() {
+interface PropsI {
+  onSkip?: () => void;
+  hasCachedImages?: boolean;
+  hasUploadedImage?: boolean;
+}
+
+export function NotLoggedInOverlay({
+  onSkip,
+  hasCachedImages,
+  hasUploadedImage,
+}: PropsI) {
   const t = useTranslations("stamp.errors.coins");
 
   return (
@@ -44,6 +56,11 @@ export function NotLoggedInOverlay() {
           </Button>
         </Register>
       </div>
+      <OverlaySkipButton
+        onSkip={onSkip}
+        hasCachedImages={hasCachedImages}
+        hasUploadedImage={hasUploadedImage}
+      />
     </CoinsOverlayShell>
   );
 }

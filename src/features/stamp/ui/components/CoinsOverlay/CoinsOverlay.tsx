@@ -7,7 +7,8 @@ import { NoCoinsOverlay } from "./NoCoinsOverlay";
  * CoinsOverlay
  *
  * Overlay shown when the user cannot generate:
- * - "not-logged-in": needs to authenticate (opens modal dialogs)
+ * - "not-logged-in": needs to authenticate (opens modal dialogs), with the
+ *   same skip option
  * - "no-coins": exhausted daily coins (with skip option)
  *
  * Thin dispatcher — the variants live in NotLoggedInOverlay / NoCoinsOverlay
@@ -28,7 +29,13 @@ export function CoinsOverlay({
   hasUploadedImage,
 }: CoinsOverlayProps) {
   if (variant === "not-logged-in") {
-    return <NotLoggedInOverlay />;
+    return (
+      <NotLoggedInOverlay
+        onSkip={onSkip}
+        hasCachedImages={hasCachedImages}
+        hasUploadedImage={hasUploadedImage}
+      />
+    );
   }
   return (
     <NoCoinsOverlay
