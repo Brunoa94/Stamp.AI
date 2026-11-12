@@ -16,7 +16,7 @@ export function CreditSummary({ credits, price }: CreditSummaryProps) {
     <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <Coins className="w-5 h-5 text-[#FF8C42]" />
+          <Coins className="w-5 h-5 text-brand-orange" />
           <Span variant="strong" className="text-slate-900">
             {t("credits", { credits: credits.toLocaleString() })}
           </Span>

@@ -6,7 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 import { AnalyticsService } from "@/shared/services/analyticsService";
-import type { AnalyticsEventNameT } from "@/features/analytics/types/analyticsTypes";
+import type { AnalyticsEventNameT } from "@/shared/types/analytics";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-button transition-all duration-300 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
@@ -70,9 +70,9 @@ const buttonVariants = cva(
         "stamp-expand":
           "h-auto w-full justify-center gap-1 py-1.5 text-xs font-semibold uppercase tracking-wider text-(--color-stamp-gold-text) hover:text-(--color-stamp-chocolate) hover:bg-(--color-stamp-gold)/10",
         "option-card":
-          "h-auto rounded-xl border-2 border-slate-200 bg-background shadow-sm transition-all duration-200 hover:shadow-md not-aria-pressed:not-aria-checked:hover:border-slate-300 not-aria-pressed:not-aria-checked:hover:bg-slate-50 aria-pressed:border-[#7C3AED] aria-pressed:bg-[#7C3AED]/5 aria-checked:border-[#7C3AED] aria-checked:bg-[#7C3AED]/5",
+          "h-auto rounded-xl border-2 border-slate-200 bg-background shadow-sm transition-all duration-200 hover:shadow-md not-aria-pressed:not-aria-checked:hover:border-slate-300 not-aria-pressed:not-aria-checked:hover:bg-slate-50 aria-pressed:border-brand-violet aria-pressed:bg-brand-violet/5 aria-checked:border-brand-violet aria-checked:bg-brand-violet/5",
         gradient:
-          "h-12 w-full rounded-xl bg-linear-to-r from-[#7C3AED] to-[#06B6D4] font-heading font-bold uppercase tracking-widest text-white shadow-md transition-opacity hover:opacity-90 hover:shadow-lg",
+          "h-12 w-full rounded-xl bg-linear-to-r from-brand-violet to-cyan font-heading font-bold uppercase tracking-widest text-white shadow-md transition-opacity hover:opacity-90 hover:shadow-lg",
         "payment-pill":
           "alt-payment-pill gap-1 border-2 border-(--color-stamp-divider) bg-white/50 py-3 font-heading text-xs uppercase tracking-wide shadow-sm hover:bg-accent hover:text-accent-foreground hover:shadow-md dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         "back-link":

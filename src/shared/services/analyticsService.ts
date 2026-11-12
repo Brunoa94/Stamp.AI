@@ -2,7 +2,7 @@ import type {
   AnalyticsEventNameT,
   AnalyticsEventParamsT,
   QueuedAnalyticsEventT,
-} from "@/features/analytics/types/analyticsTypes";
+} from "@/shared/types/analytics";
 
 const MAX_QUEUE_SIZE = 50;
 const PENDING_NAVIGATION_EVENTS_KEY = "analytics_pending_navigation_events";

@@ -71,13 +71,13 @@ function CreditIcon({ isSelected }: { isSelected: boolean }) {
     <div
       className={cn(
         "w-10 h-10 rounded-lg flex items-center justify-center",
-        isSelected ? "bg-[#7C3AED]/10" : "bg-slate-100"
+        isSelected ? "bg-brand-violet/10" : "bg-slate-100"
       )}
     >
       <Coins
         className={cn(
           "w-5 h-5",
-          isSelected ? "text-[#FF8C42]" : "text-slate-400"
+          isSelected ? "text-brand-orange" : "text-slate-400"
         )}
       />
     </div>

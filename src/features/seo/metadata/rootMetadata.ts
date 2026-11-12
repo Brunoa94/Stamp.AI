@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { SITE_URL, SITE_NAME, BRAND_COLORS } from "../config/site";
-import { OG_IMAGE, TWITTER_CONFIG, TWITTER_IMAGE } from "../config/social";
+import { OG_IMAGE, TWITTER_CONFIG, TWITTER_IMAGE } from "../lib/constants/social";
 import { PAGE_KEYWORDS } from "../config/keywords";
 import { VERIFICATION, APPLE_CONFIG } from "../config/platform";
 import { titleTemplate } from "./title";

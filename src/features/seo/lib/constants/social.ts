@@ -1,4 +1,4 @@
-import { SITE_URL, SITE_NAME } from "./site";
+import { SITE_URL, SITE_NAME } from "../../config/site";
 
 export const SOCIAL_PROFILES = {
   twitter: "https://twitter.com/stampai",

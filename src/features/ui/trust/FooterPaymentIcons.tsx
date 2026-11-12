@@ -2,7 +2,7 @@ import { Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Span } from "@/features/ui/span";
-import { PAYMENT_ICONS } from "@/features/homepage/lib/constants/paymentIcons";
+import { PAYMENT_ICONS } from "@/shared/constants/paymentIcons";
 
 /**
  * FooterPaymentIcons

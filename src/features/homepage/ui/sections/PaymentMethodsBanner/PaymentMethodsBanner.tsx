@@ -9,7 +9,7 @@
 import { Truck, RefreshCcw, Lock, Clock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
-import { PAYMENT_ICONS } from "../../../lib/constants/paymentIcons";
+import { PAYMENT_ICONS } from "@/shared/constants/paymentIcons";
 import { TRUST_GUARANTEE_METRICS } from "@/shared/constants/trustMetrics";
 
 export function PaymentMethodsBanner() {

@@ -7,10 +7,10 @@ import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Separator } from "@/features/ui/separator";
 import { Span } from "@/features/ui/span";
-import { SOCIAL_PROFILES } from "@/features/seo/config/social";
+import { SOCIAL_PROFILES } from "@/features/seo/lib/constants/social";
 import { LEGAL_ENTITY } from "@/features/legal/lib/constants/legalEntity";
 import { FooterPaymentIcons } from "@/features/ui/trust/FooterPaymentIcons";
-import { CookieSettingsButton } from "@/features/analytics/ui/CookieSettingsButton";
+import { CookieSettingsButton } from "@/features/analytics/ui/components/CookieSettingsButton";
 import {
   FooterLinkColumn,
   type FooterColumnKeyType,

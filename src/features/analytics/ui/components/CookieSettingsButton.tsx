@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
-import { CONSENT_OPEN_EVENT } from "../lib/constants/consent";
+import { CONSENT_OPEN_EVENT } from "../../lib/constants/consent";
 
 /** Re-opens the consent banner so the visitor can change or withdraw consent. */
 export function CookieSettingsButton() {

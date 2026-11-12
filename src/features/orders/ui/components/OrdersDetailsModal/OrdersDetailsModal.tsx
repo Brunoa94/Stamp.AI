@@ -46,17 +46,24 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
 
   return (
     <div
-      className="fixed inset-0 z-100 flex items-center justify-center bg-(--color-stamp-chocolate)/30 p-6 backdrop-blur-sm"
+      className="fixed inset-0 z-100 flex items-center justify-center p-6"
       role="dialog"
       aria-modal="true"
       aria-label={t("ariaLabel")}
-      onClick={onClose}
     >
+      {/* Clicking outside closes; keyboard users close with Escape or the close button. */}
+      <Button
+        type="button"
+        variant="unstyled"
+        tabIndex={-1}
+        aria-hidden="true"
+        onClick={onClose}
+        className="absolute inset-0 cursor-default bg-(--color-stamp-chocolate)/30 backdrop-blur-sm"
+      />
       <div
         ref={dialogRef}
         tabIndex={-1}
         className="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 shadow-(--shadow-stamp-modal) md:p-12"
-        onClick={(event) => event.stopPropagation()}
       >
         <Button
           ref={closeButtonRef}

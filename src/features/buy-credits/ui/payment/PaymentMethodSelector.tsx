@@ -66,7 +66,7 @@ function PaymentMethodButton({
       <method.Icon
         className={cn(
           "w-6 h-6 shrink-0",
-          isSelected ? "text-[#7C3AED]" : "text-slate-400"
+          isSelected ? "text-brand-violet" : "text-slate-400"
         )}
       />
       <div className="flex flex-col text-left">
@@ -76,7 +76,7 @@ function PaymentMethodButton({
         <Span variant="caption" className="text-slate-500">{method.description}</Span>
       </div>
       {isSelected && (
-        <Span unstyled className="ml-auto w-5 h-5 rounded-full bg-[#7C3AED] text-white text-xs flex items-center justify-center" aria-hidden="true">
+        <Span unstyled className="ml-auto w-5 h-5 rounded-full bg-brand-violet text-white text-xs flex items-center justify-center" aria-hidden="true">
           <Check className="w-3 h-3" />
         </Span>
       )}

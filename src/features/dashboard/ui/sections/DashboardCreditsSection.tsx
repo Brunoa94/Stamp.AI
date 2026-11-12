@@ -11,7 +11,7 @@ import { Paragraph } from "@/features/ui/paragraph";
 import { useUserCoins, coinsKeys } from "@/shared/queries/coinsQueries";
 import { DashboardCard } from "../components/DashboardCard";
 
-const BuyCreditsDialog = dynamic(() => import("@/features/buy-credits/ui/BuyCreditsDialog").then(mod => mod.BuyCreditsDialog), { ssr: false });
+const BuyCreditsDialog = dynamic(() => import("@/features/buy-credits/ui/components/BuyCreditsDialog").then(mod => mod.BuyCreditsDialog), { ssr: false });
 
 export function DashboardCreditsSection() {
   const t = useTranslations("dashboard.credits");

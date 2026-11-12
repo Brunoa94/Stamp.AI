@@ -5,7 +5,7 @@ import { AnalyticsService } from "@/shared/services/analyticsService";
 import type {
   AnalyticsEventNameT,
   AnalyticsEventParamsT,
-} from "@/features/analytics/types/analyticsTypes";
+} from "@/shared/types/analytics";
 
 /** Component-level access to the analytics service with stable callbacks. */
 export function useAnalytics() {

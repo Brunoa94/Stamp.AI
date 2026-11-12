@@ -1,5 +1,5 @@
 import { SITE_URL } from "../config/site";
-import { SOCIAL_PROFILES } from "../config/social";
+import { SOCIAL_PROFILES } from "../lib/constants/social";
 import { BUSINESS_INFO } from "../config/business";
 
 export function organizationSchema() {
