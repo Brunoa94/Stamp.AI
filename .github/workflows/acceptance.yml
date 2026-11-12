@@ -12,8 +12,9 @@ permissions:
 env:
   NODE_VERSION: 22
   NEXT_TELEMETRY_DISABLED: 1
-  # Excluded until their credentials exist in CI: Google sign-in, delivered email, PayPal and Mollie purchases.
-  ACCEPTANCE_EXCLUDE: "Google|GOOGLE|google|AUTH-01 real email confirmation|AUTH-03 repeated signup|AUTH-07 reset via a delivered recovery email|PAY-01 PAY-02 ORDER-01 mollie|PAY-01 PAY-02 ORDER-01 paypal"
+  # Excluded until their credentials exist in CI: Google sign-in, delivered email, PayPal and Mollie purchases
+  # (GUEST-04 to GUEST-06 cancel a Mollie iDEAL payment).
+  ACCEPTANCE_EXCLUDE: "Google|GOOGLE|google|AUTH-01 real email confirmation|AUTH-03 repeated signup|AUTH-07 reset via a delivered recovery email|PAY-01 PAY-02 ORDER-01 mollie|PAY-01 PAY-02 ORDER-01 paypal|GUEST-04|GUEST-05|GUEST-06"
 
 jobs:
   # Deploys once, before any group starts: concurrent deploys from every group would race.
