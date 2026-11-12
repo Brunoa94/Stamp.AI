@@ -5,9 +5,10 @@ import Image from "next/image";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
-import { Login } from "@/features/auth/login/Login";
-import { Register } from "@/features/auth/register/Register";
+import { Login } from "@/features/auth/ui/components/Login";
+import { Register } from "@/features/auth/ui/components/Register";
 import { useUser, useLogout } from "@/shared/queries/authQueries";
+import { isRegisteredUser } from "@/shared/helpers/authIdentity";
 import { Menu, X } from "lucide-react";
 import { useScrolled } from "@/shared/hooks/useScrolled";
 import { cn } from "@/lib/utils";
@@ -28,6 +29,8 @@ import {
 export function StampHeader() {
   const t = useTranslations("stamp.header");
   const { data: user } = useUser();
+  // Guests with an anonymous session see the logged-out header.
+  const isRegistered = isRegisteredUser(user);
   const logoutMutation = useLogout();
   const isScrolled = useScrolled(24);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -80,13 +83,14 @@ export function StampHeader() {
             {t("catalog")}
           </Link>
 
-          {user && (
+          <Link href="/cart" className={stampNavLinkVariants()}>
+            {t("cart")}
+          </Link>
+
+          {isRegistered && (
             <>
               <Link href="/orders" className={stampNavLinkVariants()}>
                 {t("orders")}
-              </Link>
-              <Link href="/cart" className={stampNavLinkVariants()}>
-                {t("cart")}
               </Link>
               <Link
                 href="/profile"
@@ -98,7 +102,7 @@ export function StampHeader() {
             </>
           )}
 
-          {user ? (
+          {isRegistered ? (
             <Button
               variant="ghost"
               onClick={handleLogout}
@@ -161,7 +165,15 @@ export function StampHeader() {
             {t("catalog")}
           </Link>
 
-          {user && (
+          <Link
+            href="/cart"
+            onClick={() => setMobileMenuOpen(false)}
+            className={cn(stampNavLinkVariants(), "py-3")}
+          >
+            {t("cart")}
+          </Link>
+
+          {isRegistered && (
             <>
               <Link
                 href="/orders"
@@ -169,13 +181,6 @@ export function StampHeader() {
                 className={cn(stampNavLinkVariants(), "py-3")}
               >
                 {t("orders")}
-              </Link>
-              <Link
-                href="/cart"
-                onClick={() => setMobileMenuOpen(false)}
-                className={cn(stampNavLinkVariants(), "py-3")}
-              >
-                {t("cart")}
               </Link>
               <Link
                 href="/profile"
@@ -188,7 +193,7 @@ export function StampHeader() {
             </>
           )}
 
-          {user ? (
+          {isRegistered ? (
             <Button
               variant="ghost"
               onClick={handleLogout}

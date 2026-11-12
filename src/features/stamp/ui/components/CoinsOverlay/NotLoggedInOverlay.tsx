@@ -3,18 +3,31 @@
 import { useTranslations } from "next-intl";
 import { LogIn, UserPlus } from "lucide-react";
 import { Button } from "@/features/ui/button";
-import { Login } from "@/features/auth/login/Login";
-import { Register } from "@/features/auth/register/Register";
+import { Span } from "@/features/ui/span";
+import { Login } from "@/features/auth/ui/components/Login";
+import { Register } from "@/features/auth/ui/components/Register";
 import { CoinsOverlayShell } from "./CoinsOverlayShell";
+import { OverlaySkipButton } from "./OverlaySkipButton";
 
 /**
  * NotLoggedInOverlay
  *
  * Shown when an unauthenticated user tries to generate: prompts to log in
- * or register via the auth dialogs.
+ * or register via the auth dialogs. Guests can still skip generation and
+ * continue with their own photo or earlier creations.
  */
 
-export function NotLoggedInOverlay() {
+interface PropsI {
+  onSkip?: () => void;
+  hasCachedImages?: boolean;
+  hasUploadedImage?: boolean;
+}
+
+export function NotLoggedInOverlay({
+  onSkip,
+  hasCachedImages,
+  hasUploadedImage,
+}: PropsI) {
   const t = useTranslations("stamp.errors.coins");
 
   return (
@@ -28,21 +41,26 @@ export function NotLoggedInOverlay() {
       <div className="flex gap-3">
         <Login>
           <Button variant="primary-compact" className="gap-2" asChild>
-            <span>
+            <Span unstyled>
               <LogIn className="h-4 w-4" />
               {t("login")}
-            </span>
+            </Span>
           </Button>
         </Login>
         <Register>
           <Button variant="secondary-compact" className="gap-2" asChild>
-            <span>
+            <Span unstyled>
               <UserPlus className="h-4 w-4" />
               {t("register")}
-            </span>
+            </Span>
           </Button>
         </Register>
       </div>
+      <OverlaySkipButton
+        onSkip={onSkip}
+        hasCachedImages={hasCachedImages}
+        hasUploadedImage={hasUploadedImage}
+      />
     </CoinsOverlayShell>
   );
 }

@@ -1,9 +1,9 @@
 import { mkdirSync, readFileSync, readdirSync, writeFileSync, renameSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
-import { required, SHOP_ID } from './environment.mjs';
+import { required, SHOP_ID, STATE_DIR } from './environment.mjs';
 import { cancelWithRetry, waitForCancelableStatus } from './cancellation.mjs';
 
-export const LEDGER_DIR = '.acceptance/printify';
+export const LEDGER_DIR = `${STATE_DIR}/printify`;
 const TERMINAL_STATES = new Set(['canceled', 'not-created']);
 export class PrintifyOrders {
   constructor(env, owner) { this.env = env; this.owner = owner; }

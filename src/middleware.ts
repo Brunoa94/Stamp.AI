@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
+import { isAcceptanceDatabaseUrl } from "@/lib/security/acceptanceDatabase";
 import {
   checkCombinedRateLimit,
   checkUserRateLimit,
@@ -13,6 +14,7 @@ import {
   getRequestIdFromHeaders,
   REQUEST_ID_HEADER,
 } from "@/lib/observability/requestId";
+import { isRegisteredUser } from "@/shared/helpers/authIdentity";
 
 /**
  * Determine the rate limit type based on the request path
@@ -95,7 +97,7 @@ export async function middleware(request: NextRequest) {
   // further down, once the session has been resolved for route protection.
   const rateLimitType = getRateLimitType(pathname);
   const acceptanceEnvironment = process.env.STAMP_ACCEPTANCE_TESTS === "1" &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL === "https://tgccxydchvujhrqyzqao.supabase.co" &&
+    isAcceptanceDatabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
     request.nextUrl.hostname === "localhost" && request.nextUrl.port === "3107";
   const rateLimitConfig = rateLimitType
     ? acceptanceEnvironment
@@ -170,21 +172,19 @@ export async function middleware(request: NextRequest) {
 
   // Protected routes — server-side auth gate. The client-side <ProtectedRoute>
   // is UX only and is NOT a security control; these must be gated here before
-  // any page data renders.
+  // any page data renders. /stamp, /cart and /checkout are open to guests.
   const PROTECTED_PREFIXES = [
-    "/stamp",
     "/orders",
     "/profile",
-    "/cart",
-    "/checkout",
     "/dashboard",
   ];
   const isProtected = PROTECTED_PREFIXES.some(
     (p) => pathname === p || pathname.startsWith(`${p}/`)
   );
 
-  if (isProtected && !user) {
-    // no user — redirect to the login/home page
+  // A guest's anonymous session counts as logged out here.
+  if (isProtected && !isRegisteredUser(user)) {
+    // no registered user — redirect to the login/home page
     const url = request.nextUrl.clone();
     url.pathname = "/";
     url.searchParams.set("redirectedFrom", pathname);

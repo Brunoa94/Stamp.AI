@@ -190,3 +190,54 @@ jobs:
           RESULT: ${{ needs.acceptance-groups.result }}
         run: |
           if [ "$RESULT" != success ]; then echo "::error::Acceptance groups finished with: $RESULT"; exit 1; fi
+
+  # The database-only specs against a local Supabase stack on the runner (see
+  # "Offline tier" in tests/acceptance/README.md). No secrets and no shared test
+  # environment, so it runs on every PR, drafts and forks included, and needs no queue.
+  # Skipped on the dev → main PR, where the full acceptance suite runs the same specs.
+  acceptance-offline:
+    name: Acceptance offline · ${{ matrix.project }}
+    if: ${{ !(github.event_name == 'pull_request' && github.head_ref == 'dev' && github.base_ref == 'main') }}
+    needs: [typecheck, unit-tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [desktop, mobile]
+    env:
+      # Full paths: Playwright matches each argument case-insensitively against the
+      # absolute path, and a bare "stamp" matches every spec under /work/Stamp.AI/.
+      OFFLINE_SPECS: >-
+        tests/acceptance/specs/navigation-auth.spec.mjs
+        tests/acceptance/specs/stamp.spec.mjs
+        tests/acceptance/specs/security.spec.mjs
+        tests/acceptance/specs/history-catalog.spec.mjs
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Start local Supabase and seed it
+        run: npm run test:acceptance:local:setup
+      - name: Run offline acceptance specs
+        env:
+          PROJECT: ${{ matrix.project }}
+          # A cold dev server: load the app once before the first test.
+          ACCEPTANCE_WARM_UP: 1
+        run: |
+          read -ra specs <<< "$OFFLINE_SPECS"
+          npm run test:acceptance:local -- --project="$PROJECT" "${specs[@]}"
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: acceptance-offline-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.project }}
+          path: |
+            .acceptance/report
+            .acceptance/results
+          retention-days: 14
+          if-no-files-found: ignore

@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { CoinsService, UserCoins } from "@/shared/services/coinsService";
 import { useUser } from "@/shared/queries/authQueries";
+import { isRegisteredUser } from "@/shared/helpers/authIdentity";
 
 // Query keys
 export const coinsKeys = {
@@ -21,7 +22,8 @@ export const coinsKeys = {
  */
 export function useUserCoins() {
   const { data: user } = useUser();
-  const userId = user?.id;
+  // Guests (anonymous sessions) have no coins: generation is for accounts.
+  const userId = isRegisteredUser(user) ? user.id : undefined;
 
   return useQuery<UserCoins>({
     queryKey: coinsKeys.user(userId ?? ""),

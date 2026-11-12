@@ -23,7 +23,7 @@ import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction"
  * Right panel form with all synthesis controls
  *
  * Coins Integration:
- * - Shows login overlay if not authenticated
+ * - Shows login overlay if not authenticated (with skip option)
  * - Shows no coins overlay if coins depleted (with skip option)
  * - Displays coins count near Generate button
  * - Disables Generate button if no coins or not authenticated
@@ -74,6 +74,8 @@ export function SynthesisForm({
   const showNoCoinsOverlay =
     !isAuthLoading && isAuthenticated && !isCoinsLoading && !isCoinsError && !hasCoins;
   const canGenerate = isAuthenticated && !isCoinsError && hasCoins;
+  // Both overlays cover the form and carry their own skip button.
+  const showInlineSkip = canSkip && !showLoginOverlay && !showNoCoinsOverlay;
 
   // Register action for mobile sticky footer (Step 2)
   useRegisterMobileAction(2, {
@@ -142,7 +144,7 @@ export function SynthesisForm({
         </Button>
 
         {/* Skip generation option - shown when user can proceed without AI */}
-        {canSkip && !showNoCoinsOverlay && (
+        {showInlineSkip && (
           <Button
             variant="ghost"
             onClick={handleSkipGeneration}
@@ -161,7 +163,7 @@ export function SynthesisForm({
           <CoinsDisplay className="justify-center" />
         </div>
       )}
-      {canSkip && !showNoCoinsOverlay && (
+      {showInlineSkip && (
         <Button
           variant="ghost"
           onClick={handleSkipGeneration}
@@ -172,7 +174,14 @@ export function SynthesisForm({
       )}
 
       {/* Overlays */}
-      {showLoginOverlay && <CoinsOverlay variant="not-logged-in" />}
+      {showLoginOverlay && (
+        <CoinsOverlay
+          variant="not-logged-in"
+          onSkip={canSkip ? handleSkipGeneration : undefined}
+          hasCachedImages={hasCachedImages}
+          hasUploadedImage={hasUploadedImage}
+        />
+      )}
       {!isAuthLoading && isAuthenticated && isCoinsError && (
         <CoinsOverlayShell
           testId="coins-overlay-load-error"

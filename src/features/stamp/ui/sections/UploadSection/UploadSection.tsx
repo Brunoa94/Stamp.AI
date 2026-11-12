@@ -11,7 +11,7 @@ import { UploadDropzone } from "./UploadDropzone";
 import { UploadPreview } from "./UploadPreview";
 import { UploadContent } from "./UploadContent";
 import { AnalyticsService } from "@/shared/services/analyticsService";
-import { mapImageUploadEvent } from "@/features/analytics/mappers/stampFlowMappers";
+import { mapImageUploadEvent } from "@/features/analytics/lib/mappers/stampFlowMappers";
 
 /**
  * UploadSection

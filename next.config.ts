@@ -22,14 +22,23 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
  * plain http, and the browser would upgrade middleware redirects (e.g. the
  * auth gate on /stamp) to https://localhost, breaking client navigation.
  */
+// The offline acceptance tier runs against the local Supabase stack
+// (scripts/acceptance/local-supabase.mjs); only then is it allowed.
+const LOCAL_ACCEPTANCE_DATABASE = "http://127.0.0.1:54321";
+const isLocalAcceptance = process.env.STAMP_ACCEPTANCE_TESTS === "1" &&
+  process.env.NEXT_PUBLIC_SUPABASE_URL === LOCAL_ACCEPTANCE_DATABASE;
+const localDatabaseSources = isLocalAcceptance
+  ? `${LOCAL_ACCEPTANCE_DATABASE} ws://127.0.0.1:54321`
+  : "";
+
 const ContentSecurityPolicy = `
   default-src 'self';
   script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === "development" ? "'unsafe-eval'" : ""} https://js.stripe.com https://www.paypal.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://googletagmanager.com;
   style-src 'self' 'unsafe-inline';
-  img-src 'self' data: blob: https://images.printify.com https://images-api.printify.com https://pfy-prod-image-storage.s3.us-east-2.amazonaws.com https://oaidalleapiprodscus.blob.core.windows.net https://placehold.co https://images.unsplash.com https://picsum.photos https://*.supabase.co https://www.googletagmanager.com https://api.dicebear.com;
+  img-src 'self' data: blob: https://images.printify.com https://images-api.printify.com https://pfy-prod-image-storage.s3.us-east-2.amazonaws.com https://oaidalleapiprodscus.blob.core.windows.net https://placehold.co https://images.unsplash.com https://picsum.photos https://*.supabase.co https://www.googletagmanager.com https://api.dicebear.com ${localDatabaseSources};
   font-src 'self' data:;
   worker-src 'self' blob:;
-  connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://api.paypal.com https://api.sandbox.paypal.com https://api.mollie.com https://www.google.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://*.google-analytics.com;
+  connect-src 'self' https://*.supabase.co wss://*.supabase.co ${localDatabaseSources} https://api.stripe.com https://api.paypal.com https://api.sandbox.paypal.com https://api.mollie.com https://www.google.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://*.google-analytics.com;
   frame-src 'self' https://js.stripe.com https://www.paypal.com https://www.google.com;
   frame-ancestors 'none';
   form-action 'self';
@@ -119,6 +128,7 @@ const nextConfig: NextConfig = {
   },
 
   images: {
+    ...(isLocalAcceptance && { dangerouslyAllowLocalIP: true }),
     remotePatterns: [
       {
         protocol: "https",
@@ -152,6 +162,9 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      ...(isLocalAcceptance
+        ? [{ protocol: "http" as const, hostname: "127.0.0.1", port: "54321" }]
+        : []),
     ],
   },
 };

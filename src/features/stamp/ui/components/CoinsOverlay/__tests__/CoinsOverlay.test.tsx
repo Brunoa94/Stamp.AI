@@ -16,13 +16,13 @@ import { CoinsOverlay } from "../CoinsOverlay";
  * dialog-open behavior is AuthDialog's test, not this one.
  */
 
-vi.mock("@/features/auth/login/Login", () => ({
+vi.mock("@/features/auth/ui/components/Login", () => ({
   Login: ({ children }: { children?: React.ReactNode }) => (
     <div data-testid="login-dialog">{children}</div>
   ),
 }));
 
-vi.mock("@/features/auth/register/Register", () => ({
+vi.mock("@/features/auth/ui/components/Register", () => ({
   Register: ({ children }: { children?: React.ReactNode }) => (
     <div data-testid="register-dialog">{children}</div>
   ),

@@ -19,7 +19,8 @@ const SupabaseUserMetadataSchema = z.object({
  */
 const SupabaseUserSchema = z.object({
   id: z.string(),
-  email: z.string().email().optional(),
+  // Anonymous (guest) users come back with an empty email.
+  email: z.union([z.string().email(), z.literal("")]).optional(),
   user_metadata: SupabaseUserMetadataSchema.optional(),
   app_metadata: z.record(z.string(), z.any()).optional(),
   aud: z.string().optional(),

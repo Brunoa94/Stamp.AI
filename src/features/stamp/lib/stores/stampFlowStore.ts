@@ -8,7 +8,7 @@ import type {
 import { STAMP_TOTAL_STEPS } from "../constants/stampSteps";
 import { logStampError, logStampWarn } from "../helpers/stampLogger";
 import { AnalyticsService } from "@/shared/services/analyticsService";
-import { mapStepChangeEvent } from "@/features/analytics/mappers/stampFlowMappers";
+import { mapStepChangeEvent } from "@/features/analytics/lib/mappers/stampFlowMappers";
 
 /**
  * Stamp Flow Store

@@ -3,7 +3,7 @@ import { ErrorCodes, FunctionError, handleError } from "../_shared/errors.ts";
 import { validateEnvVars, validateRequest, verifyAuth } from "../_shared/validators.ts";
 import { createPayPalOrder } from "../_shared/paypal.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
-import { enforceOperationLimit } from "../_shared/operationLimit.ts";
+import { enforceCallerLimits, OPERATION_LIMITS } from "../_shared/operationLimit.ts";
 import { priceCheckout, pricingMetadata, requireClientTotal } from "../_shared/checkoutPricing.ts";
 import { withoutOrderId } from "../_shared/checkoutPricingRules.ts";
 import type { PayPalOrderRequestI, PayPalOrderResponseI } from "../../types/index.ts";
@@ -23,7 +23,7 @@ serve(async (req) => {
   try {
     // Verify authentication
     const authHeader = req.headers.get("authorization");
-    const { userId, userEmail } = await verifyAuth(authHeader);
+    const { userId, userEmail, isAnonymous } = await verifyAuth(authHeader);
 
     const {
       amount,
@@ -44,7 +44,7 @@ serve(async (req) => {
       throw new FunctionError(400, "INVALID_CURRENCY", "Checkout is priced in EUR");
     }
     if (userId === "service-role") throw ErrorCodes.INVALID_REQUEST_BODY();
-    await enforceOperationLimit(userId, "payment-create", 30, 60);
+    await enforceCallerLimits({ userId, isAnonymous }, req, "payment-create", OPERATION_LIMITS["payment-create"]);
     const pricing = await priceCheckout({ lineItems: line_items, promoCode: promo_code, userId });
     requireClientTotal(pricing, Math.round(validAmount * 100));
 
