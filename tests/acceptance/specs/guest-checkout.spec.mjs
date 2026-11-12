@@ -120,6 +120,8 @@ test('GUEST-07 a paid guest order uses the checkout email and empties the bag', 
 
   await pay(page, env, 'stripe');
 
+  // pay() only clicks Pay: the app starts the anonymous session after that.
+  await expect.poll(() => guest.ids().length, { timeout: 30000 }).toBeGreaterThan(0);
   const guestId = anonymousId(guest);
   let order;
   await expect.poll(async () => {
