@@ -4,6 +4,7 @@ import { OrderWithItemsT } from "@/shared/types/order";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { UserFacingError } from "@/shared/errors/UserFacingError";
 import { canCancelOrder } from "../utils/orderCancellation";
 
 import { OrderService } from "@/shared/services/orderService";
@@ -67,7 +68,7 @@ export function useCancelOrder() {
             },
             onError: (error: Error) => {
                 handleError(
-                    new Error(t("failedToCancel", { message: error.message })),
+                    new UserFacingError(t("failedToCancel", { message: error.message })),
                 );
             },
         },
@@ -75,7 +76,7 @@ export function useCancelOrder() {
 
     const handleCancelOrder = (order: OrderWithItemsT) => {
         if (!canCancelOrder(order)) {
-            handleError(new Error(t("cannotCancel")));
+            handleError(new UserFacingError(t("cannotCancel")));
             return;
         }
 
@@ -91,7 +92,7 @@ export function useCancelOrder() {
     const handleConfirmCancel = () => {
         if (!orderToCancel || cancellingRef.current) return;
         if (!canCancelOrder(orderToCancel)) {
-            handleError(new Error(t("cannotCancel")));
+            handleError(new UserFacingError(t("cannotCancel")));
             handleCloseCancelModal();
             return;
         }

@@ -6,7 +6,9 @@
  * ticker shown while the AI request runs.
  */
 
-export class ImageGenerationTimeoutError extends Error {
+import { UserFacingError } from "@/shared/errors/UserFacingError";
+
+export class ImageGenerationTimeoutError extends UserFacingError {
   constructor(message: string) {
     super(message);
     this.name = "ImageGenerationTimeoutError";

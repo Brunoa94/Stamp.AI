@@ -14,9 +14,13 @@ import { useStampFlowStore } from "../stores/stampFlowStore";
 import { useAddToCart } from "@/shared/queries/cartQueries";
 import { useUser } from "@/shared/queries/authQueries";
 import { isRegisteredUser } from "@/shared/helpers/authIdentity";
-import { LocalCartStorageService } from "@/shared/services/localCartStorageService";
+import {
+  LocalCartStorageError,
+  LocalCartStorageService,
+} from "@/shared/services/localCartStorageService";
 import type { AddToCartInput } from "@/shared/types/cart";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { UserFacingError } from "@/shared/errors/UserFacingError";
 import {
   logStampError,
   logStampInfo,
@@ -64,16 +68,23 @@ export function useStampCartActions() {
       return;
     }
 
-    LocalCartStorageService.addItem({
-      productId: payload.product_id ?? "",
-      variantId: payload.variant_id ?? "",
-      productName: payload.product_name ?? "Custom Design",
-      unitPrice: payload.unit_price,
-      quantity: payload.quantity,
-      customImageUrl: payload.custom_image_url ?? null,
-      blueprintId: blueprintId ?? null,
-      printProviderId: printProviderId ?? null,
-    });
+    try {
+      LocalCartStorageService.addItem({
+        productId: payload.product_id ?? "",
+        variantId: payload.variant_id ?? "",
+        productName: payload.product_name ?? "Custom Design",
+        unitPrice: payload.unit_price,
+        quantity: payload.quantity,
+        customImageUrl: payload.custom_image_url ?? null,
+        blueprintId: blueprintId ?? null,
+        printProviderId: printProviderId ?? null,
+      });
+    } catch (error) {
+      if (error instanceof LocalCartStorageError) {
+        throw new UserFacingError(t("storageUnavailable"), { cause: error });
+      }
+      throw error;
+    }
     AnalyticsService.track(
       "guest_add_to_cart",
       mapAddToCartEvent({
@@ -127,7 +138,7 @@ export function useStampCartActions() {
         event: "missing_created_product_id",
         metadata: { buyNow },
       });
-      handleError(new Error(t("noProduct")));
+      handleError(new UserFacingError(t("noProduct")));
       return;
     }
 
@@ -141,7 +152,7 @@ export function useStampCartActions() {
           createdProductId,
         },
       });
-      handleError(new Error(t("noVariant")));
+      handleError(new UserFacingError(t("noVariant")));
       return;
     }
 
@@ -251,6 +262,8 @@ export function useStampCartActions() {
           createdVariantId,
         },
       });
+      // The database cart's mutation reports its own errors.
+      if (error instanceof UserFacingError) handleError(error);
     } finally {
       isAddingRef.current = false;
     }
@@ -293,7 +306,7 @@ export function useStampCartActions() {
         scope: "useStampCartActions",
         event: "missing_created_product_id",
       });
-      handleError(new Error(t("noProduct")));
+      handleError(new UserFacingError(t("noProduct")));
       return;
     }
 
@@ -304,7 +317,7 @@ export function useStampCartActions() {
         event: "missing_created_variant_id",
         metadata: { createdProductId },
       });
-      handleError(new Error(t("noVariant")));
+      handleError(new UserFacingError(t("noVariant")));
       return;
     }
 
@@ -370,6 +383,8 @@ export function useStampCartActions() {
           createdVariantId,
         },
       });
+      // The database cart's mutation reports its own errors.
+      if (error instanceof UserFacingError) handleError(error);
     } finally {
       isAddingRef.current = false;
     }

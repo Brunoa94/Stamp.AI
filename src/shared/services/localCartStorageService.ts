@@ -26,9 +26,14 @@ export type LocalCartItemT = {
   isSelected: boolean;
   /** Timestamp when added to local cart */
   createdAt: number;
+  /**
+   * The account this item was copied into at login. Its product now belongs
+   * to that account, so checking it out needs that login.
+   */
+  mergedInto?: string;
 };
 
-export type NewLocalCartItemT = Omit<LocalCartItemT, "id" | "createdAt" | "isSelected">;
+export type NewLocalCartItemT = Omit<LocalCartItemT, "id" | "createdAt" | "isSelected" | "mergedInto">;
 
 type LocalCartDataT = {
   items: LocalCartItemT[];
@@ -65,7 +70,9 @@ function emitUpdated(): void {
   window.dispatchEvent(new Event(LOCAL_CART_UPDATED_EVENT));
 }
 
-function writeItems(items: LocalCartItemT[]): void {
+/** Saves the cart; false when storage is full or blocked (private mode) and nothing was kept. */
+function writeItems(items: LocalCartItemT[]): boolean {
+  let saved = true;
   try {
     if (items.length > 0) {
       const data: LocalCartDataT = { items, timestamp: Date.now() };
@@ -73,11 +80,19 @@ function writeItems(items: LocalCartItemT[]): void {
     } else {
       localStorage.removeItem(LOCAL_CART_KEY);
     }
-  } catch (error) {
-    // Storage full or blocked (private mode): the cart cannot be kept.
-    console.error("Failed to save local cart:", error);
+  } catch {
+    saved = false;
   }
   emitUpdated();
+  return saved;
+}
+
+/** The browser refused to store the bag, so the item was not added. */
+export class LocalCartStorageError extends Error {
+  constructor() {
+    super("The local cart could not be saved");
+    this.name = "LocalCartStorageError";
+  }
 }
 
 export class LocalCartStorageService {
@@ -95,28 +110,30 @@ export class LocalCartStorageService {
     return data.items;
   }
 
-  /** Adds an item, or adds to the quantity of the same product and variant. */
+  /**
+   * Adds an item, or adds to the quantity of the same product and variant.
+   * Throws LocalCartStorageError when the browser cannot store the bag.
+   */
   static addItem(item: NewLocalCartItemT): void {
     if (!isBrowser()) return;
 
     const items = this.getItems();
+    // A merged line belongs to an account; a new add starts its own line.
     const existing = items.find(
-      (i) => i.productId === item.productId && i.variantId === item.variantId,
+      (i) =>
+        i.productId === item.productId && i.variantId === item.variantId && !i.mergedInto,
     );
 
-    if (existing) {
-      writeItems(
-        items.map((i) =>
-          i === existing ? { ...i, quantity: i.quantity + item.quantity } : i
-        ),
-      );
-      return;
-    }
+    const next = existing
+      ? items.map((i) =>
+        i === existing ? { ...i, quantity: i.quantity + item.quantity } : i
+      )
+      : [
+        ...items,
+        { ...item, id: crypto.randomUUID(), isSelected: true, createdAt: Date.now() },
+      ];
 
-    writeItems([
-      ...items,
-      { ...item, id: crypto.randomUUID(), isSelected: true, createdAt: Date.now() },
-    ]);
+    if (!writeItems(next)) throw new LocalCartStorageError();
   }
 
   static updateQuantity(itemId: string, quantity: number): void {
@@ -140,10 +157,51 @@ export class LocalCartStorageService {
     );
   }
 
+  /** True when any of these items was copied into an account (and needs that login). */
+  static hasMergedItem(itemIds: readonly string[]): boolean {
+    const ids = new Set(itemIds);
+    return this.getItems().some((item) => ids.has(item.id) && Boolean(item.mergedInto));
+  }
+
+  /** Records that these items were copied into an account's cart. */
+  static markMerged(itemIds: readonly string[], accountId: string): void {
+    if (!isBrowser()) return;
+    const merged = new Set(itemIds);
+    writeItems(
+      this.getItems().map((item) =>
+        merged.has(item.id) ? { ...item, mergedInto: accountId } : item
+      ),
+    );
+  }
+
   /** Drops the items that were selected for checkout (after they were paid for). */
   static removeSelectedItems(): void {
     if (!isBrowser()) return;
     writeItems(this.getItems().filter((item) => !item.isSelected));
+  }
+
+  /**
+   * Takes the paid quantities out of the bag once a payment is confirmed.
+   * Matches by product and variant, so items bagged after the payment
+   * started (in this tab or another) stay.
+   */
+  static removePaidItems(
+    paid: readonly { productId: string; variantId: string; quantity: number }[],
+  ): void {
+    if (!isBrowser()) return;
+    const remaining = new Map(
+      paid.map((line) => [`${line.productId}:${line.variantId}`, line.quantity]),
+    );
+    writeItems(
+      this.getItems()
+        .map((item) => {
+          const key = `${item.productId}:${item.variantId}`;
+          const paidQuantity = remaining.get(key) ?? 0;
+          remaining.delete(key);
+          return { ...item, quantity: item.quantity - paidQuantity };
+        })
+        .filter((item) => item.quantity > 0),
+    );
   }
 
   static clear(): void {

@@ -165,8 +165,8 @@
       }
     },
     "meta": {
-      "title": "Design & Order Custom T-Shirts and Apparel | Stamp AI",
-      "description": "Turn a photo or an idea into a print-ready design in seconds and put it on heavyweight, made-to-order clothes. No minimums, no design skills needed. Start free today.",
+      "title": "Design & Order Custom T-Shirts and Apparel",
+      "description": "Turn a photo or an idea into a print-ready design and put it on heavyweight, made-to-order clothes. No minimums, no design skills needed. Start free today.",
       "keywords": [
         "custom AI t-shirt design",
         "custom t-shirt from photo",
@@ -610,7 +610,7 @@
       }
     },
     "metadata": {
-      "title": "AI Design Studio — Create Your Print | Stamp AI",
+      "title": "AI Design Studio — Create Your Print",
       "description": "Upload a photo or describe your idea, choose a style, and let AI make print-ready designs. Adjust the product and order in minutes.",
       "keywords": [
         "AI design studio",
@@ -826,6 +826,7 @@
         "alreadyInCart": "Already in your bag. Taking you there...",
         "noProduct": "Please create a product before adding it to your bag",
         "noVariant": "Product variant not found. Please try creating the product again.",
+        "storageUnavailable": "Your browser couldn't save your bag. Turn off private browsing or free up site storage, or log in to keep your bag in your account.",
         "added": "Added to your bag."
       },
       "upload": {
@@ -906,7 +907,8 @@
   },
   "cart": {
     "content": {
-      "continueBrowsing": "Continue Browsing"
+      "continueBrowsing": "Continue Browsing",
+      "loginForSavedItems": "Some of these items are saved to your account. Log in to check them out, or unselect them to continue as a guest."
     },
     "header": {
       "title": "Shopping <accent>bag</accent>"
@@ -1236,7 +1238,14 @@
       "iconAlt": "Google",
       "connecting": "Connecting...",
       "continueWithGoogle": "Continue with Google",
-      "redirecting": "This Google account already has a Stamp account. Taking you to Google to sign in…"
+      "redirecting": "This Google account already has a Stamp account. Taking you to Google to sign in…",
+      "failed": "We couldn't reach Google. Check your connection and try again.",
+      "retry": "Try again",
+      "backHome": "Back to home",
+      "meta": {
+        "title": "Signing in with Google",
+        "description": "Redirecting you to Google to sign in to your account."
+      }
     },
     "login": {
       "openDialogAria": "Open login dialog",

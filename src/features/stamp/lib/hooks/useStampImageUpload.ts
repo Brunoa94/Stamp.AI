@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useStampUpload } from "./useStampSelectors";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { UserFacingError } from "@/shared/errors/UserFacingError";
 import {
   logStampError,
   logStampInfo,
@@ -63,7 +64,7 @@ export function useStampImageUpload() {
             fileName: file.name,
           },
         });
-        handleError(new Error(error));
+        handleError(new UserFacingError(error));
         return null;
       }
 
@@ -79,7 +80,7 @@ export function useStampImageUpload() {
             fileSize: file.size,
           },
         });
-        handleError(new Error(error));
+        handleError(new UserFacingError(error));
         return null;
       }
 
@@ -96,7 +97,7 @@ export function useStampImageUpload() {
             maxFileSize: MAX_FILE_SIZE,
           },
         });
-        handleError(new Error(error));
+        handleError(new UserFacingError(error));
         return null;
       }
 
@@ -121,7 +122,7 @@ export function useStampImageUpload() {
                 fileType: file.type,
               },
             });
-            handleError(new Error(error));
+            handleError(new UserFacingError(error));
             setIsUploading(false);
             resolve(null);
             return;
@@ -153,7 +154,7 @@ export function useStampImageUpload() {
               fileType: file.type,
             },
           });
-          handleError(new Error(error));
+          handleError(new UserFacingError(error));
           reject(new Error(error));
         };
 

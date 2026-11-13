@@ -3,6 +3,7 @@
 import { createContext, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { syncPrivateBrowserStateOwner } from "@/shared/services/privateBrowserState";
+import { GuestClaimStorageService } from "@/shared/services/guestClaimStorageService";
 import type { User, Session } from "@supabase/supabase-js";
 
 interface SupabaseAuthContextI {
@@ -40,6 +41,16 @@ export function SupabaseAuthProvider({
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       syncPrivateBrowserStateOwner(event, session?.user ?? null);
+      // A guest who registered keeps their anonymous session until the
+      // confirmation link is opened; the saved claim follows its refreshes.
+      if (event === "TOKEN_REFRESHED" && session?.user.is_anonymous) {
+        GuestClaimStorageService.updateTokens({
+          accessToken: session.access_token,
+          refreshToken: session.refresh_token,
+          userId: session.user.id,
+          expiresAt: (session.expires_at ?? 0) * 1000,
+        });
+      }
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);

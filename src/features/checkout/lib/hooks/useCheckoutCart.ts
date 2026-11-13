@@ -14,7 +14,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCartById, useLocalCartItems } from "@/shared/queries/cartQueries";
 import { useUser } from "@/shared/queries/authQueries";
 import { isRegisteredUser } from "@/shared/helpers/authIdentity";
@@ -24,6 +24,7 @@ import { AnalyticsService } from "@/shared/services/analyticsService";
 import type { CartWithItems } from "@/shared/types/cart";
 
 export function useCheckoutCart() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const cartId = searchParams.get("cartId");
   const { data: user, isLoading: isUserLoading } = useUser();
@@ -39,7 +40,14 @@ export function useCheckoutCart() {
     return CartServiceMapper.mapCartToCheckoutCart(cart);
   }, [isGuestCheckout, localItems, dbCart]);
 
-  const isLoading = isUserLoading ||
+  // A guest who logs in on /checkout has no database cart id yet: their bag
+  // is being merged into the account cart, which /cart shows.
+  const needsAccountCart = !isUserLoading && !cartId && isRegisteredUser(user);
+  useEffect(() => {
+    if (needsAccountCart) router.replace("/cart");
+  }, [needsAccountCart, router]);
+
+  const isLoading = isUserLoading || needsAccountCart ||
     (isGuestCheckout ? localItems === null : isDbCartLoading);
 
   // Fire once per visit, when the guest's cart has been read.

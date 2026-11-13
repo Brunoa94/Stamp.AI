@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useUser } from "@/shared/queries/authQueries";
 import { isRegisteredUser } from "@/shared/helpers/authIdentity";
-import { hasGuestCartToMerge } from "@/shared/services/guestCartMergeService";
+import { hasGuestCartToMerge } from "@/shared/services/guestClaimStorageService";
 import { useMergeGuestCartMutation } from "./useMergeGuestCartMutation";
 
 /**

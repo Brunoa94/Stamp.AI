@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
 import { GoogleSignInRedirect } from "@/features/auth/ui/components/GoogleSignInRedirect";
+import { generatePageMetadata } from "@/features/seo/metadata/pageMetadata";
+import { ROUTE_SEO } from "@/features/seo/config/routes";
 
 /**
  * /auth/google-sign-in Route - Google sign-in fallback
@@ -9,15 +13,23 @@ import { GoogleSignInRedirect } from "@/features/auth/ui/components/GoogleSignIn
  * SEO: noindex (utility page)
  */
 
-export const metadata: Metadata = {
-  title: "Signing in with Google",
-  description: "Redirecting you to Google to sign in to your account.",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("auth.google.meta");
+
+  return generatePageMetadata({
+    title: t("title"),
+    description: t("description"),
+    path: ROUTE_SEO.googleSignIn.path,
+    noindex: true,
+  });
+}
 
 export default function GoogleSignInPage() {
-  return <GoogleSignInRedirect />;
+  // The redirect reads `next` with useSearchParams(), which needs a Suspense
+  // boundary for static prerendering.
+  return (
+    <Suspense fallback={null}>
+      <GoogleSignInRedirect />
+    </Suspense>
+  );
 }

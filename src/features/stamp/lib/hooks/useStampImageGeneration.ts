@@ -12,6 +12,7 @@ import { useImageGeneration as useImageGenerationMutation } from "@/shared/queri
 import { useQueryClient } from "@tanstack/react-query";
 import { coinsKeys } from "@/shared/queries/coinsQueries";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { UserFacingError } from "@/shared/errors/UserFacingError";
 import { logStampError, logStampWarn } from "../helpers/stampLogger";
 import { withTimeout } from "@/lib/promiseUtils";
 import { AnalyticsService } from "@/shared/services/analyticsService";
@@ -90,7 +91,7 @@ export function useStampImageGeneration() {
 
     // Validate prompt
     if (!prompt || prompt.trim().length === 0) {
-      handleError(new Error(t("emptyPrompt")));
+      handleError(new UserFacingError(t("emptyPrompt")));
       return;
     }
 

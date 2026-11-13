@@ -151,7 +151,8 @@ test('GUEST-08 a guest who logs in keeps their product in the bag and can pay fo
 
   await expect.poll(async () => unwrap(await guest.admin.from('products').select('user_id').eq('printify_product_id', productId), 'Read claimed product').map(r => r.user_id), { timeout: 30000 })
     .toEqual([account.id]);
-  await expect.poll(() => readLocalCart(page), { timeout: 30000 }).toEqual([]);
+  // The merge copies the bag: the browser keeps it, marked as saved to the account.
+  await expect.poll(async () => (await readLocalCart(page)).map(item => item.mergedInto), { timeout: 30000 }).toEqual([account.id]);
   await page.goto('/cart');
   await expect(page.getByRole('article')).toHaveCount(1);
 
@@ -206,9 +207,25 @@ test('GUEST-09 a guest product joins the account bag on login and stays there af
   await logoutUI(page);
   expect(await accountLines()).toEqual(expected);
 
-  expect((await loginUI(page, account)).status()).toBe(200);
-  await loggedIn();
+  // Logged out, the guest bag still holds the product, now saved to the account:
+  // checking it out asks for the login instead of a guest payment.
   await page.goto('/cart');
+  await expect(itemCard(page, guestItem.productName)).toBeVisible();
+  await expect(page.getByRole('article')).toHaveCount(1);
+  await page.getByRole('button', { name: /checkout|proceed/i }).filter({ visible: true }).first().click();
+  const dialog = page.getByRole('dialog').first();
+  await expect(dialog.getByLabel(/email/i)).toBeVisible();
+  await expect(page).toHaveURL(/\/cart\?redirectedFrom=/);
+
+  await dialog.getByLabel(/email/i).fill(account.email);
+  await dialog.locator('input[type="password"]').fill(account.password);
+  const login = page.waitForResponse(r => r.url().includes('/api/auth/login'));
+  await dialog.getByRole('button', { name: /^login$|^sign in$/i }).click();
+  expect((await login).status()).toBe(200);
+
+  // Back on /cart, logged in: the account bag, with nothing added twice.
+  await expect(page).toHaveURL(/\/cart$/, { timeout: 30000 });
+  await expect(page.getByRole('button', { name: /logout|sign out/i }).filter({ visible: true }).first()).toBeVisible();
   await expect(page.getByRole('article')).toHaveCount(2);
   expect(await accountLines()).toEqual(expected);
 });
@@ -238,11 +255,13 @@ test('GUEST-10 without a page reload, a guest who logs out, bags another product
   // whatever the design; this test is about the merge, so start a new design.
   await page.evaluate(() => Object.keys(sessionStorage).filter(k => k.startsWith('stamp_product_')).forEach(k => sessionStorage.removeItem(k)));
   await createGuestProduct(page, env, { reload: false });
-  const [second] = await readLocalCart(page);
+  // The first product stays in the bag after logout, marked as saved to the account.
+  const second = (await readLocalCart(page)).find(item => !item.mergedInto);
   expect(second.productId).not.toBe(first.productId);
   await loginOnStamp();
 
   await expect.poll(accountProducts, { timeout: 30000 }).toEqual([first.productId, second.productId].sort());
-  await expect.poll(() => readLocalCart(page), { timeout: 30000 }).toEqual([]);
+  await expect.poll(async () => (await readLocalCart(page)).map(item => [item.productId, item.mergedInto]).sort(), { timeout: 30000 })
+    .toEqual([[first.productId, account.id], [second.productId, account.id]].sort());
   expect(await page.evaluate(() => window.__acceptanceSamePageLoad)).toBe(true);
 });

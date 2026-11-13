@@ -26,7 +26,7 @@ export function ProductSummary({ productName, productDescription, color, size, p
     <div className="p-6 border border-(--color-stamp-divider)">
       <div className="flex justify-between items-start mb-4">
         <Heading
-          as="h4"
+          as="h3"
           variant="item"
           className="text-(--color-stamp-chocolate)"
         >
@@ -52,13 +52,13 @@ export function ProductSummary({ productName, productDescription, color, size, p
         <Span variant="sm" className="text-(--color-stamp-chocolate)">
           {t("finalValuation")}
         </Span>
-        <Heading
-          as="h3"
-          variant="section"
-          className="text-(--color-stamp-chocolate) text-5xl lg:text-4xl xl:text-5xl 2xl:text-6xl"
+        {/* The price is a value, not a section: same look, no heading role. */}
+        <Span
+          unstyled
+          className="font-heading font-normal tracking-tight leading-none text-(--color-stamp-chocolate) text-5xl lg:text-4xl xl:text-5xl 2xl:text-6xl"
         >
           {price}
-        </Heading>
+        </Span>
       </div>
     </div>
   );

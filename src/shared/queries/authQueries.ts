@@ -282,17 +282,22 @@ export function useUpdatePassword() {
 /**
  * Sign in with Google OAuth. A guest links Google to their anonymous user,
  * so it keeps their products and cart; if that Google account already
- * exists, the auth callback falls back to a normal Google sign-in.
+ * exists, the auth callback falls back to a normal Google sign-in. Google
+ * returns to the protected page the visitor was bounced from, or else to
+ * the page they signed in on.
  */
 export function useGoogleSignIn() {
   const { handleError } = useErrorHandler();
 
   return useMutation({
     mutationFn: async (): Promise<void> => {
+      const next = getSafeRedirectPath(
+        new URLSearchParams(window.location.search).get(REDIRECTED_FROM_PARAM),
+      ) ?? window.location.pathname;
       if (await rememberGuestSession()) {
-        return AuthService.linkGoogleIdentity();
+        return AuthService.linkGoogleIdentity(next);
       }
-      return AuthService.signInWithGoogle();
+      return AuthService.signInWithGoogle(next);
     },
     onError: (error: Error) => {
       handleError(error);
