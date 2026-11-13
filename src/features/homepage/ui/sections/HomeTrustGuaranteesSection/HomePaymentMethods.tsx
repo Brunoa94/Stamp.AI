@@ -9,7 +9,7 @@ import { Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
-import { PAYMENT_ICONS } from "../../../lib/constants/paymentIcons";
+import { PAYMENT_ICONS } from "@/shared/constants/paymentIcons";
 
 export function HomePaymentMethods() {
   const t = useTranslations("home.guarantees");

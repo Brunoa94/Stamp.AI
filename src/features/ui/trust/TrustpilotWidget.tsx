@@ -98,7 +98,7 @@ export function TrustpilotWidget({
         <div className="h-6 w-px bg-(--color-stamp-divider)" />
         <Span
           variant="micro"
-          className="text-[10px] font-bold tracking-wider text-[#00b67a]"
+          className="text-[10px] font-bold tracking-wider text-trustpilot"
         >
           Trustpilot
         </Span>
@@ -131,7 +131,7 @@ export function TrustpilotWidget({
         <div className="flex flex-col items-end">
           <Span
             variant="micro"
-            className="text-[11px] font-bold tracking-wider text-[#00b67a]"
+            className="text-[11px] font-bold tracking-wider text-trustpilot"
           >
             Trustpilot
           </Span>

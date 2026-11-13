@@ -3,9 +3,9 @@
 import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { Modal } from "@/features/ui/modal/Modal";
-import { useBuyCredits } from "../lib/useBuyCredits";
-import { CreditSelectionStep } from "./selection/CreditSelectionStep";
-import { CreditPaymentStep } from "./payment/CreditPaymentStep";
+import { useBuyCredits } from "../../lib/useBuyCredits";
+import { CreditSelectionStep } from "../selection/CreditSelectionStep";
+import { CreditPaymentStep } from "../payment/CreditPaymentStep";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import { UserFacingError } from "@/shared/errors/UserFacingError";
 

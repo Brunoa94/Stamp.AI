@@ -9,7 +9,7 @@ import {
   readConsent,
   type AnalyticsConsentType,
 } from "./lib/helpers/consent";
-import type { GtagFunctionT } from "./types/analyticsTypes";
+import type { GtagFunctionT } from "@/shared/types/analytics";
 
 /** The consent state last handed to gtag, so only real changes are pushed. */
 let appliedConsent: AnalyticsConsentType | null = null;

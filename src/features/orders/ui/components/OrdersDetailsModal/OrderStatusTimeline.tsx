@@ -36,7 +36,7 @@ export function OrderStatusTimeline({ orderId }: PropsI) {
       </Span>
       <div className="relative pl-6">
         {/* Vertical line */}
-        <div className="absolute left-[7px] top-2 bottom-2 w-px bg-(--color-stamp-divider)" />
+        <div className="absolute left-1.75 top-2 bottom-2 w-px bg-(--color-stamp-divider)" />
 
         <List className="space-y-4">
           {history.map((entry, index) => (

@@ -54,7 +54,7 @@ export function SecureCheckoutNotice({ className }: SecureCheckoutNoticeProps) {
       <div className="flex items-center gap-3 border-t border-(--color-stamp-divider) pt-4">
         <Span
           variant="micro"
-          className="border border-(--color-stamp-divider) bg-(--color-stamp-white) px-2.5 py-1 text-[10px] font-bold tracking-wider text-[#635BFF]"
+          className="border border-(--color-stamp-divider) bg-(--color-stamp-white) px-2.5 py-1 text-[10px] font-bold tracking-wider text-stripe"
         >
           Stripe
         </Span>

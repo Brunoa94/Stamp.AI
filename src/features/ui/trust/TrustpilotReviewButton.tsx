@@ -34,7 +34,7 @@ export function TrustpilotReviewButton({
         </Span>
         <Button
           asChild
-          className="w-full py-5 h-auto text-xs tracking-widest uppercase bg-[#00b67a] text-white hover:bg-[#00a06a]"
+          className="w-full py-5 h-auto text-xs tracking-widest uppercase bg-trustpilot text-white hover:bg-trustpilot-hover"
         >
           <a
             href={trustpilotUrl}
@@ -46,7 +46,7 @@ export function TrustpilotReviewButton({
           </a>
         </Button>
         <Span variant="micro" className="text-[9px] text-(--color-stamp-taupe)">
-          {t("poweredBy")} <span className="font-bold text-[#00b67a]">Trustpilot</span>
+          {t("poweredBy")} <span className="font-bold text-trustpilot">Trustpilot</span>
         </Span>
       </div>
     );
@@ -58,15 +58,15 @@ export function TrustpilotReviewButton({
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        "inline-flex items-center gap-2 px-4 py-2 border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all hover:border-[#00b67a]",
+        "inline-flex items-center gap-2 px-4 py-2 border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all hover:border-trustpilot",
         className
       )}
     >
-      <Star className="h-4 w-4 fill-[#00b67a] text-[#00b67a]" aria-hidden="true" />
+      <Star className="h-4 w-4 fill-trustpilot text-trustpilot" aria-hidden="true" />
       <Span variant="micro" className="text-[10px] font-bold tracking-wider text-(--color-stamp-chocolate)">
         {t("rateUs")}
       </Span>
-      <Span variant="micro" className="text-[10px] tracking-wider text-[#00b67a]">
+      <Span variant="micro" className="text-[10px] tracking-wider text-trustpilot">
         Trustpilot
       </Span>
     </a>

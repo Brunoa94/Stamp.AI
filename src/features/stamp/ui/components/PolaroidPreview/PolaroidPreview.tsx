@@ -66,13 +66,21 @@ function FullscreenModal({
 
   return createPortal(
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center transition-all duration-300 ease-out ${
-        isAnimating ? "bg-black/90" : "bg-black/0"
-      }`}
-      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center"
       role="dialog"
       aria-modal="true"
     >
+      {/* Clicking outside closes; keyboard users close with Escape or the close button. */}
+      <Button
+        type="button"
+        variant="unstyled"
+        tabIndex={-1}
+        aria-hidden="true"
+        onClick={onClose}
+        className={`absolute inset-0 cursor-default transition-all duration-300 ease-out ${
+          isAnimating ? "bg-black/90" : "bg-black/0"
+        }`}
+      />
       <Button
         variant="ghost"
         size="icon"
@@ -89,7 +97,6 @@ function FullscreenModal({
         className={`relative w-[90vw] h-[90vh] max-w-5xl transition-all duration-300 ease-out ${
           isAnimating ? "opacity-100 scale-100" : "opacity-0 scale-75"
         }`}
-        onClick={(e) => e.stopPropagation()}
       >
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center z-10">

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { SITE_NAME, ALTERNATE_LANGUAGES } from "../config/site";
-import { OG_IMAGE, TWITTER_CONFIG, TWITTER_IMAGE } from "../config/social";
+import { OG_IMAGE, TWITTER_CONFIG, TWITTER_IMAGE } from "../lib/constants/social";
 import { optimizeDescription } from "./description";
 import { getCanonicalUrl, shouldNoindex } from "./url";
 import type { PageMetadataOptions } from "./types";

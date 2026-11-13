@@ -3,7 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { beforeEach, describe, expect, it } from "vitest";
 import messages from "@/i18n/messages/en.json";
 import { CookieConsentBanner } from "../CookieConsentBanner";
-import { CookieSettingsButton } from "../CookieSettingsButton";
+import { CookieSettingsButton } from "../components/CookieSettingsButton";
 import { readConsent } from "../../lib/helpers/consent";
 
 function renderBanner() {

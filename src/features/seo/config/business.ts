@@ -1,5 +1,5 @@
 import { SITE_URL, SITE_NAME } from "./site";
-import { SOCIAL_PROFILES } from "./social";
+import { SOCIAL_PROFILES } from "../lib/constants/social";
 import {
   isPendingLegalValue,
   LEGAL_ENTITY,

@@ -38,12 +38,12 @@ export function ProtectedRoute({
             aria-live="polite"
             aria-label={t("authenticating")}
           >
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-[#7B5CF5]/10 text-[#7B5CF5]">
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-brand-lavender/10 text-brand-lavender">
               <Loader2 className="h-8 w-8 animate-[spin_1.35s_linear_infinite]" />
             </div>
 
             <div>
-              <Paragraph variant="body" className="text-base font-semibold font-heading uppercase tracking-wide text-[#1A2340]">
+              <Paragraph variant="body" className="text-base font-semibold font-heading uppercase tracking-wide text-brand-navy">
                 {t("authenticating")}
               </Paragraph>
               <Paragraph variant="sm" className="mt-1 text-slate-500">

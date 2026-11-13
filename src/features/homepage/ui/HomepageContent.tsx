@@ -8,7 +8,6 @@
  * layout chrome — not re-added here.
  */
 
-import type { ProductWithPricing } from "@/lib/supabase/server-cache";
 import { mapProductsToCards } from "../lib/mappers/productCardMapper";
 import { TopTrustBanner } from "./sections/TopTrustBanner/TopTrustBanner";
 import { PaymentMethodsBanner } from "./sections/PaymentMethodsBanner/PaymentMethodsBanner";
@@ -26,7 +25,7 @@ import { HomePromoSection } from "./sections/HomePromoSection/HomePromoSection";
 import { HomeProductMarqueeSection } from "./sections/HomeProductMarqueeSection/HomeProductMarqueeSection";
 
 interface HomepageContentPropsI {
-  productsWithPricing: ProductWithPricing[];
+  productsWithPricing: Parameters<typeof mapProductsToCards>[0];
 }
 
 export function HomepageContent({
