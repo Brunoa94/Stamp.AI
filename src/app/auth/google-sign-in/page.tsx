@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { GoogleSignInRedirect } from "@/features/auth/ui/components/GoogleSignInRedirect";
 import { generatePageMetadata } from "@/features/seo/metadata/pageMetadata";
@@ -24,5 +25,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function GoogleSignInPage() {
-  return <GoogleSignInRedirect />;
+  // The redirect reads `next` with useSearchParams(), which needs a Suspense
+  // boundary for static prerendering.
+  return (
+    <Suspense fallback={null}>
+      <GoogleSignInRedirect />
+    </Suspense>
+  );
 }
