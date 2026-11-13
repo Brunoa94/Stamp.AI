@@ -145,6 +145,9 @@ test('GUEST-08 a guest who logs in keeps their product in the bag and can pay fo
   const account = await guest.createAccount();
 
   expect((await loginUI(page, account)).status()).toBe(200);
+  // Login ends with a full navigation to /stamp; reading localStorage before it lands fails.
+  await expect(page).toHaveURL(/\/stamp/, { timeout: 30000 });
+  await expect(page.getByRole('button', { name: /logout|sign out/i }).filter({ visible: true }).first()).toBeVisible();
 
   await expect.poll(async () => unwrap(await guest.admin.from('products').select('user_id').eq('printify_product_id', productId), 'Read claimed product').map(r => r.user_id), { timeout: 30000 })
     .toEqual([account.id]);
