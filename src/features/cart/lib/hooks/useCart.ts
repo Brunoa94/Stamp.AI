@@ -12,6 +12,10 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { LocalCartStorageService } from "@/shared/services/localCartStorageService";
+import { REDIRECTED_FROM_PARAM } from "@/shared/helpers/redirectTarget";
 import {
   useCartSummary,
   useRemoveCartItem,
@@ -25,6 +29,7 @@ import { AnalyticsService } from "@/shared/services/analyticsService";
 import { mapBeginCheckoutEvent } from "@/features/analytics/lib/mappers/ecommerceMappers";
 
 export function useCart() {
+  const t = useTranslations("cart.content");
   const router = useRouter();
   const updateCartItem = useUpdateCartItem();
   const removeCartItem = useRemoveCartItem();
@@ -116,6 +121,14 @@ export function useCart() {
 
   const checkout = async () => {
     if (!cart || selectedItems.length === 0) return;
+
+    // Items copied into an account at an earlier login belong to it now:
+    // open the login dialog here, and come back to /cart once logged in.
+    if (isLocalCart(cart) && LocalCartStorageService.hasMergedItem([...selectedItemIds])) {
+      toast.info(t("loginForSavedItems"));
+      router.replace(`/cart?${REDIRECTED_FROM_PARAM}=/cart`);
+      return;
+    }
 
     await updateCartItemsSelection.mutateAsync({
       cartId: cart.id,

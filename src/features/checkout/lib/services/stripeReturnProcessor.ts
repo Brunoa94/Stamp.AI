@@ -57,7 +57,7 @@ export async function processStripeReturn(
 
     PaymentFinalizationLockService.markFinalized("stripe", paymentIntentId);
     CheckoutStorageService.clearStripeCheckoutData();
-    removePaidGuestCartItems(user);
+    removePaidGuestCartItems(user, checkoutData.cartSnapshot?.cart_items);
     update({ status: "success", orderNumber });
   } catch (error) {
     captureError(error, {

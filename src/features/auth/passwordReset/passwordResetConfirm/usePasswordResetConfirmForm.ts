@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { UserFacingError } from "@/shared/errors/UserFacingError";
 
 export function usePasswordResetConfirmForm() {
   const router = useRouter();
@@ -28,17 +29,9 @@ export function usePasswordResetConfirmForm() {
     resolver: zodResolver(PasswordResetConfirmSchema),
   });
 
-  // Check if we have valid reset tokens on mount
-  useEffect(() => {
-    const error = searchParams.get("error");
-    const errorDescription = searchParams.get("error_description");
-
-    // If there's an error in the URL, show error state
-    if (error) {
-      console.error("Password reset error:", error, errorDescription);
-      setIsError(true);
-    }
-  }, [searchParams]);
+  // A reset link that came back with an error (expired, already used) shows
+  // the error state straight away.
+  const hasLinkError = Boolean(searchParams.get("error"));
 
   // Handle redirect after successful password reset
   useEffect(() => {
@@ -60,7 +53,7 @@ export function usePasswordResetConfirmForm() {
         .getSession();
 
       if (sessionError || !sessionData?.session) {
-        throw new Error(t("invalidSessionError"));
+        throw new UserFacingError(t("invalidSessionError"));
       }
 
       // Update the password
@@ -88,7 +81,7 @@ export function usePasswordResetConfirmForm() {
     onSubmit,
     isPending,
     isSuccess,
-    isError,
+    isError: isError || hasLinkError,
     errors,
   };
 }

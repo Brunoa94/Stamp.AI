@@ -19,19 +19,29 @@ import { LocalCartStorageService } from "@/shared/services/localCartStorageServi
 import { AnalyticsService } from "@/shared/services/analyticsService";
 import { CartServiceMapper } from "@/shared/mappers/services/cartServiceMapper";
 import { UserFacingError } from "@/shared/errors/UserFacingError";
-import { captureError } from "@/lib/observability/errorCapture";
 import type { CartWithItems } from "@/shared/types/cart";
 
 export function usePersistGuestCart() {
   const t = useTranslations("checkout.errors");
+  const tCart = useTranslations("cart.content");
   const ensureGuestSession = useEnsureGuestSession();
   const { handleError } = useErrorHandler();
 
   const { mutateAsync, isPending } = useMutation({
     /** Resolves to the database cart's checkout view (only the selected items); its id is the cartId. */
     mutationFn: async (): Promise<CartWithItems> => {
+      const items = LocalCartStorageService.getItems();
+      // Items copied into an account belong to it: a guest can't pay for them.
+      const selectedIds = items.filter((item) => item.isSelected).map((item) => item.id);
+      if (LocalCartStorageService.hasMergedItem(selectedIds)) {
+        throw new UserFacingError(tCart("loginForSavedItems"));
+      }
+
       const guest = await ensureGuestSession();
-      const saved = await CartService.saveCartFromLocalItems(guest.id, LocalCartStorageService.getItems());
+      const saved = await CartService.saveCartFromLocalItems(
+        guest.id,
+        items.filter((item) => !item.mergedInto),
+      );
 
       return CartServiceMapper.mapCartToCheckoutCart(saved);
     },
@@ -39,8 +49,12 @@ export function usePersistGuestCart() {
       AnalyticsService.track("guest_payment_started", { items: checkoutCart.cart_items.length });
     },
     onError: (error: Error) => {
-      captureError(error, { service: "Checkout", action: "persistGuestCart" });
-      handleError(new UserFacingError(t("guestCartPersist")));
+      if (error instanceof UserFacingError) {
+        handleError(error);
+        return;
+      }
+      // handleError reports to Sentry; the cause keeps the original stack.
+      handleError(new UserFacingError(t("guestCartPersist"), { cause: error }));
     },
   });
 

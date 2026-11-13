@@ -451,6 +451,8 @@ export class CartService {
    * Copy a guest's local cart into the user's database cart, so the payment
    * functions and return pages work on a real cart. Creates the cart on the
    * first payment and replaces its items (and selection) on later ones.
+   * The emptied cart gets the whole bag in one insert: the local cart has one
+   * line per product and variant, so nothing needs the upsert's increment.
    */
   static async saveCartFromLocalItems(
     userId: string,
@@ -459,15 +461,29 @@ export class CartService {
     const cart = await this.getOrCreateCart(userId);
     await this.clearCart(cart.id);
 
-    const selectedItemIds: string[] = [];
-    for (const item of items) {
-      const row = await this.addToCart(
-        cart.id,
-        mapLocalCartItemToAddToCartInput(item),
-      );
-      if (item.isSelected) selectedItemIds.push(row.id);
+    if (items.length > 0) {
+      const rows = items.map((item) => {
+        const input = addToCartSchema.parse(mapLocalCartItemToAddToCartInput(item));
+        return {
+          cart_id: cart.id,
+          product_id: input.product_id || null,
+          variant_id: input.variant_id,
+          quantity: input.quantity,
+          custom_image_url: input.custom_image_url || null,
+          product_name: input.product_name || "Product",
+          unit_price: input.unit_price,
+          is_selected: item.isSelected,
+        };
+      });
+      const { error } = await this.getSupabase().from("cart_items").insert(rows);
+      if (error) {
+        throw ErrorClient.handleError({
+          error,
+          service: "Cart",
+          action: "Save Cart From Local Items",
+        });
+      }
     }
-    await this.updateCartItemsSelection(cart.id, selectedItemIds);
 
     return this.getCart(cart.id);
   }

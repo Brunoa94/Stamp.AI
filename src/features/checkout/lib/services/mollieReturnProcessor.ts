@@ -98,7 +98,7 @@ export async function processMollieReturn(
 
       PaymentFinalizationLockService.markFinalized("mollie", paymentId);
       CheckoutStorageService.clearMollieCheckoutData();
-      removePaidGuestCartItems(user);
+      removePaidGuestCartItems(user, context.cartSnapshot.cart_items);
       update({ status: "success", orderNumber });
       return;
     }

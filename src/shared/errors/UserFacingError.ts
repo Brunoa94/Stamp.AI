@@ -6,11 +6,12 @@
  * services (database, fetch, JSON parsing) with technical messages that
  * must never reach an alert. Wrapping the intentional ones in this class
  * lets catch blocks distinguish the two and fall back to a generic
- * translated message for everything else.
+ * translated message for everything else. Pass the technical error as
+ * `cause` so error reporting keeps its stack.
  */
 export class UserFacingError extends Error {
-  constructor(message: string) {
-    super(message);
+  constructor(message: string, options?: ErrorOptions) {
+    super(message, options);
     this.name = "UserFacingError";
   }
 }

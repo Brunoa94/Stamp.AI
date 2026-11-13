@@ -1,9 +1,13 @@
-/** Clear account-specific state without removing the visitor's consent choices. */
+/**
+ * Clear account-specific state without removing the visitor's consent
+ * choices. The guest bag (local_cart) stays: it is the visitor's own, and
+ * items already copied into an account need a login before checkout.
+ */
 export function clearPrivateBrowserState(): void {
   if (typeof window === "undefined") return;
   const keys = [
     "stamp:generated-images", "stripe_checkout_data", "paypal_checkout_data",
-    "guest_products", "local_cart", "guest_session_id", "stamp:pending-guest-claim",
+    "guest_products", "guest_session_id", "stamp:pending-guest-claim",
   ];
   for (const key of keys) {
     try { window.localStorage.removeItem(key); } catch { /* Storage can be unavailable. */ }
@@ -23,8 +27,8 @@ const OWNER_ANONYMOUS_KEY = "stamp:storage-owner-anonymous";
  * Called on every auth state change. Clears private state when the browser
  * changes hands (sign-out, a first sign-in, or a different user), except
  * when a visitor starts a guest session or a guest's anonymous session
- * becomes a registered account: that is the same person, and their local
- * cart must survive until it is paid for or merged.
+ * becomes a registered account: that is the same person. The guest bag
+ * is never cleared here (see clearPrivateBrowserState).
  */
 export function syncPrivateBrowserStateOwner(
   event: string,

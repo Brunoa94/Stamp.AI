@@ -17,6 +17,7 @@ import {
 } from "@/shared/schemas/services/authServiceSchemas";
 import { ErrorClient } from "./errorClient";
 import type { PendingGuestClaimT } from "./guestClaimStorageService";
+import { GuestClaimExpiredError } from "@/shared/errors/GuestClaimExpiredError";
 
 class AuthService {
   private static getSupabase() {
@@ -270,8 +271,43 @@ class AuthService {
     if (!session?.user.is_anonymous) return null;
     return {
       accessToken: session.access_token,
+      refreshToken: session.refresh_token,
       userId: session.user.id,
       expiresAt: (session.expires_at ?? 0) * 1000,
+    };
+  }
+
+  /**
+   * Exchange a guest's saved refresh token for a new anonymous access token.
+   * Calls the auth API directly: the browser client would replace the
+   * account session that just signed in.
+   */
+  static async refreshAnonymousSession(refreshToken: string): Promise<PendingGuestClaimT> {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`,
+      {
+        method: "POST",
+        headers: {
+          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      },
+    );
+    const data = await response.json().catch(() => null) as {
+      access_token?: string;
+      refresh_token?: string;
+      expires_at?: number;
+      user?: { id?: string; is_anonymous?: boolean };
+    } | null;
+    if (!response.ok || !data?.access_token || !data.user?.id || !data.user.is_anonymous) {
+      throw new GuestClaimExpiredError();
+    }
+    return {
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token,
+      userId: data.user.id,
+      expiresAt: (data.expires_at ?? 0) * 1000,
     };
   }
 
@@ -317,14 +353,15 @@ class AuthService {
    * Turn the guest's anonymous user into their Google account, so the uid
    * (and the products and cart it owns) stays the same. Redirects to Google.
    * If that Google account already belongs to a user, the callback falls
-   * back to a normal Google sign-in.
+   * back to a normal Google sign-in. `next` is the page to return to; the
+   * callback only follows same-origin paths.
    */
-  static async linkGoogleIdentity(): Promise<void> {
+  static async linkGoogleIdentity(next = "/stamp"): Promise<void> {
     try {
       const { error } = await AuthService.getSupabase().auth.linkIdentity({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/stamp`,
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
         },
       });
 
@@ -462,14 +499,15 @@ class AuthService {
 
   /**
    * Sign in with Google OAuth
-   * Redirects to Google for authentication
+   * Redirects to Google for authentication, then back to `next` (a
+   * same-origin path, checked by the callback).
    */
-  static async signInWithGoogle(): Promise<void> {
+  static async signInWithGoogle(next = "/stamp"): Promise<void> {
     try {
       const { error } = await AuthService.getSupabase().auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/stamp`,
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
         },
       });
 

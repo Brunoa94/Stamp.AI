@@ -59,6 +59,12 @@ export const ROUTE_SEO = {
     changefreq: "yearly" as const,
     index: false,
   },
+  googleSignIn: {
+    path: "/auth/google-sign-in",
+    priority: 0.1,
+    changefreq: "yearly" as const,
+    index: false,
+  },
   faq: {
     path: "/faq",
     priority: 0.7,

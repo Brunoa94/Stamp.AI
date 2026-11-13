@@ -97,7 +97,7 @@ export async function processPayPalReturn(
 
     PaymentFinalizationLockService.markFinalized("paypal", token);
     CheckoutStorageService.clearPayPalCheckoutData();
-    removePaidGuestCartItems(user);
+    removePaidGuestCartItems(user, checkoutData.cartSnapshot?.cart_items);
     update({ status: "success", orderNumber });
   } catch (error) {
     captureError(error, {

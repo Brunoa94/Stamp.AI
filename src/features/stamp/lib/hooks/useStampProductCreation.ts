@@ -39,7 +39,7 @@ import type {
 
 const PRODUCT_CREATION_TIMEOUT_MS = 120_000; // 2 minutes
 
-class ProductCreationTimeoutError extends Error {
+class ProductCreationTimeoutError extends UserFacingError {
   constructor(message: string) {
     super(message);
     this.name = "ProductCreationTimeoutError";
@@ -127,19 +127,19 @@ export function useStampProductCreation() {
 
     // Validate required data
     if (!selectedImageUrl) {
-      handleError(new Error(t("noDesign")));
+      handleError(new UserFacingError(t("noDesign")));
       goToStep(2);
       return;
     }
 
     if (!blueprintId || !printProviderId) {
-      handleError(new Error(t("noProduct")));
+      handleError(new UserFacingError(t("noProduct")));
       goToStep(5);
       return;
     }
 
     if (!size) {
-      handleError(new Error(t("noSize")));
+      handleError(new UserFacingError(t("noSize")));
       return;
     }
 
