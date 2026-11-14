@@ -157,7 +157,6 @@ function ProductSelectionSectionComponent() {
         isError={isError}
         onProductSelect={handleProductSelect}
         onClearSelection={handleClearSelection}
-        isProductSelected={isSelected}
       />
     </section>
   );

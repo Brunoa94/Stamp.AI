@@ -17,16 +17,17 @@ import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
  * Allows user to clear the selection.
  */
 
-const COLLAPSED_HEIGHT = 90;
+const COLLAPSED_HEIGHT = 112;
+const SPEC_ROW_HEIGHT = 36;
 
 function ExpandableSpecsList({ specs }: { specs: string[] }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="w-full max-w-xs mt-4 pt-4 border-t border-(--color-stamp-divider)">
+    <div className="w-full mt-5 pt-5 border-t border-(--color-stamp-divider)">
       <div
         className="relative overflow-hidden transition-all duration-300 ease-in-out"
-        style={{ maxHeight: isExpanded ? `${specs.length * 32}px` : `${COLLAPSED_HEIGHT}px` }}
+        style={{ maxHeight: isExpanded ? `${specs.length * SPEC_ROW_HEIGHT}px` : `${COLLAPSED_HEIGHT}px` }}
       >
         <List className="text-left w-full space-y-1.5">
           {specs.map((spec, index) => (
@@ -34,7 +35,7 @@ function ExpandableSpecsList({ specs }: { specs: string[] }) {
               <Span
                 variant="micro"
                 unstyled
-                className="font-heading text-[13px] font-normal normal-case tracking-normal leading-relaxed text-(--color-stamp-taupe)"
+                className="font-heading text-sm md:text-base font-normal normal-case tracking-normal leading-relaxed text-(--color-stamp-taupe)"
               >
                 {spec}
               </Span>
@@ -82,7 +83,7 @@ export function SelectedProductCard({ product, onClearSelection }: PropsI) {
 
   return (
     <div
-      className="relative overflow-hidden rounded-none whitespace-normal wrap-break-word min-h-80 sm:min-h-96 md:min-h-105 lg:min-h-120 xl:min-h-130 p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center text-center border-2 border-(--color-stamp-gold) bg-(--color-stamp-gold)/5"
+      className="relative overflow-hidden rounded-lg whitespace-normal wrap-break-word min-h-80 sm:min-h-96 md:min-h-105 lg:min-h-120 xl:min-h-130 p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center text-center border-2 border-(--color-stamp-gold) bg-(--color-stamp-gold)/5 md:bg-(--color-stamp-cream)"
       aria-label={t("selectedAria", { name: product.name })}
     >
       {/* Selected badge */}
@@ -101,40 +102,42 @@ export function SelectedProductCard({ product, onClearSelection }: PropsI) {
         {t("remove")}
       </Button>
 
-      {/* Larger image container */}
-      <div className="relative z-10 w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 xl:w-96 xl:h-96 mb-6 overflow-hidden">
-        <div className="relative w-full h-full">
-          {product.imageUrl ? (
-            <Image
-              src={product.imageUrl}
-              alt={product.name}
-              fill
-              className="object-contain"
-              sizes="(max-width: 640px) 224px, (max-width: 768px) 256px, (max-width: 1024px) 288px, (max-width: 1280px) 320px, 384px"
-            />
-          ) : (
-            <div className="w-full h-full bg-(--color-stamp-cream)" />
+      {/* Image and details share one column, so the details match the image's width */}
+      <div className="relative z-10 flex w-56 flex-col items-center sm:w-64 md:w-72 lg:w-80 xl:w-96">
+        <div className="relative w-full aspect-square mb-6 overflow-hidden">
+          <div className="relative w-full h-full">
+            {product.imageUrl ? (
+              <Image
+                src={product.imageUrl}
+                alt={product.name}
+                fill
+                className="object-contain"
+                sizes="(max-width: 640px) 224px, (max-width: 768px) 256px, (max-width: 1024px) 288px, (max-width: 1280px) 320px, 384px"
+              />
+            ) : (
+              <div className="w-full h-full bg-(--color-stamp-cream)" />
+            )}
+          </div>
+        </div>
+
+        <div className="flex w-full flex-col items-center">
+          <Heading
+            as="h4"
+            variant="item"
+            className="text-(--color-stamp-chocolate) mb-2 text-center leading-tight overflow-hidden line-clamp-2 flex items-center justify-center text-xl md:text-2xl w-full max-w-full wrap-break-word"
+          >
+            {product.name}
+          </Heading>
+
+          <Span variant="sm" className="text-(--color-stamp-chocolate) text-2xl mb-2">
+            €{product.price.toFixed(2)}
+          </Span>
+
+          {/* Product specs list with fixed height and expand option */}
+          {specs.length > 0 && (
+            <ExpandableSpecsList specs={specs} />
           )}
         </div>
-      </div>
-
-      <div className="relative z-10 flex flex-col items-center max-w-sm">
-        <Heading
-          as="h4"
-          variant="item"
-          className="text-(--color-stamp-chocolate) mb-2 text-center leading-tight overflow-hidden line-clamp-2 flex items-center justify-center text-lg md:text-xl w-full max-w-full wrap-break-word px-2"
-        >
-          {product.name}
-        </Heading>
-
-        <Span variant="sm" className="text-(--color-stamp-chocolate) text-xl mb-4">
-          €{product.price.toFixed(2)}
-        </Span>
-
-        {/* Product specs list with fixed height and expand option */}
-        {specs.length > 0 && (
-          <ExpandableSpecsList specs={specs} />
-        )}
       </div>
     </div>
   );

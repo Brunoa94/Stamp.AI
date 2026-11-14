@@ -8,13 +8,17 @@ import { buildSentryOptions } from "@/lib/observability/sentryConfig";
 
 Sentry.init({
   ...buildSentryOptions(),
-  // Session Replay records only masked text and no media.
   replaysOnErrorSampleRate: 1.0,
   replaysSessionSampleRate: 0.1,
-  integrations: [
-    Sentry.replayIntegration({ maskAllText: true, blockAllMedia: true }),
-    Sentry.browserTracingIntegration(),
-  ],
+  integrations: [Sentry.browserTracingIntegration()],
 });
+
+// Session Replay loads after start, outside every route's first-load JS.
+// An error thrown before it arrives is still reported, just without a replay.
+if (Sentry.getClient()) {
+  void import("@/lib/observability/sentryReplay").then(({ createReplayIntegration }) => {
+    Sentry.addIntegration(createReplayIntegration());
+  });
+}
 
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;

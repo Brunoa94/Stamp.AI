@@ -3,12 +3,14 @@ import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
 import { Span } from "@/features/ui/span";
 import {
+  DEFAULT_COLOR,
   getBorderColor,
   getColorHex,
 } from "@/features/homepage/lib/constants/colorSwatches";
 import { getColorClass } from "@/helpers/colors/colorMapping";
 import type { VariantOptionKindType } from "../../../lib/helpers/productCategoryDetector";
 import { PaperTypeOptions } from "./PaperTypeOptions";
+import { SplitToneText } from "../../components/SplitToneText";
 
 /**
  * ColorSwatches
@@ -39,20 +41,22 @@ export function ColorSwatches({
 
   return (
     <div>
-      <Label className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe) block mb-6">
-        {isPaperType ? t("paperTypeLabel") : t("colorLabel")}
+      <Label className="text-[10px] font-bold uppercase tracking-widest block mb-6">
+        <SplitToneText tone="muted">
+          {isPaperType ? t("paperTypeLabel") : t("colorLabel")}
+        </SplitToneText>
       </Label>
       {isLoading ? (
-        <Span variant="micro" className="text-(--color-stamp-taupe)">
-          {t("colorLoading")}
+        <Span variant="micro">
+          <SplitToneText tone="muted">{t("colorLoading")}</SplitToneText>
         </Span>
       ) : !hasProduct ? (
-        <Span variant="micro" className="text-(--color-stamp-taupe)">
-          {t("colorSelectFirst")}
+        <Span variant="micro">
+          <SplitToneText tone="muted">{t("colorSelectFirst")}</SplitToneText>
         </Span>
       ) : colors.length === 0 ? (
-        <Span variant="micro" className="text-(--color-stamp-taupe)">
-          {t("colorNone")}
+        <Span variant="micro">
+          <SplitToneText tone="muted">{t("colorNone")}</SplitToneText>
         </Span>
       ) : isPaperType ? (
         <PaperTypeOptions
@@ -71,13 +75,13 @@ export function ColorSwatches({
             const colorHex = getColorHex(colorName);
             const borderColor = getBorderColor(colorHex);
             const colorClass = getColorClass(colorName);
-            const isFallbackHex = colorHex.toLowerCase() === "#cccccc";
+            const isFallbackHex = colorHex.toLowerCase() === DEFAULT_COLOR.toLowerCase();
             return (
               <Button
                 key={colorName}
                 variant="ghost"
                 onClick={() => onSelectColor(colorName)}
-                className={`w-10 h-10 rounded-full p-0 transition-all duration-300 ${
+                className={`w-10 h-10 rounded-full p-0 ring-2 ring-white transition-all duration-300 ${
                   isActive
                     ? "border-2 border-(--color-stamp-gold) scale-110 shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:bg-transparent"
                     : "border-2 border-transparent hover:bg-transparent"

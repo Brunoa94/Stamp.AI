@@ -141,7 +141,6 @@
       "brandLabel": "Stamp.ai",
       "headline": "From imagination<br></br>to <word></word>",
       "rotatingWords": {
-        "thing": "thing",
         "tees": "tees",
         "totes": "totes",
         "mugs": "mugs",
@@ -753,7 +752,9 @@
       "qualityNote": "Premium quality, printed on demand",
       "customizeNext": "Customize colors and size in the next step",
       "showMore": "Show {count} more",
-      "showLess": "Show less"
+      "showLess": "Show less",
+      "sectionPickerAria": "Product type",
+      "sectionCount": "{count, plural, one {# product} other {# products}}"
     },
     "customization": {
       "protocol": "Step 06 / Customize",
@@ -2006,7 +2007,21 @@
       "comingSoon": "Soon",
       "securePayment": "Secure Payment",
       "noCardStored": "Card details never stored",
-      "encryptedTransmission": "Encrypted connection"
+      "encryptedTransmission": "Encrypted connection",
+      "assurances": {
+        "encrypted": {
+          "title": "Encrypted end to end",
+          "body": "Your details travel over a secure, encrypted connection."
+        },
+        "noCard": {
+          "title": "We never see your card",
+          "body": "Card details go straight to the payment provider."
+        },
+        "guarantee": {
+          "title": "30-day guarantee",
+          "body": "Not right? We replace it or refund you."
+        }
+      }
     },
     "guarantee": {
       "title": "30-day guarantee",

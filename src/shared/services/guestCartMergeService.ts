@@ -15,7 +15,10 @@ type AccountT = { id: string; email?: string };
  * (unless Google was linked to the same user), then copy their local cart
  * into the account's database cart. The local cart keeps the items, marked
  * with the account (mergedInto): they stay visible after logout, need that
- * login to be checked out, and are not copied again on the next login. If
+ * login to be checked out, and are not copied again on the next login.
+ * Each load of the account's cart drops or lowers them to match it
+ * (LocalCartStorageService.syncMergedItems), so a line removed or paid for
+ * while logged in does not come back in the logged-out bag. If
  * the claim fails nothing is moved, and the local cart and pending claim
  * stay for another try. If the products can no longer be claimed, the
  * unmerged items are dropped: nobody could pay for products it does not own.

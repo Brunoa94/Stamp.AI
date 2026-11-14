@@ -66,7 +66,8 @@ const COLOR_KEYWORD_HEX_MAP: Record<string, string> = {
   ivory: "#FFFFF0",
 };
 
-const DEFAULT_COLOR = COLOR_HEX_MAP.DEFAULT;
+/** Grey shown for a colour name with no known swatch */
+export const DEFAULT_COLOR = COLOR_HEX_MAP.DEFAULT;
 const DARK_BORDER = "#000000";
 const LIGHT_BORDER = "#FFFFFF";
 const LUMINANCE_THRESHOLD = 0.5;

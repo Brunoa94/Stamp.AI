@@ -10,14 +10,23 @@ export function OrdersFilterSummary({ total }: PropsI) {
 
   return (
     <div className="shrink-0 sm:text-right">
-      <Span variant="label" className="text-(--color-stamp-taupe)">
+      <Span
+        variant="label"
+        className="text-(--color-stamp-taupe-light) xl:text-(--color-stamp-taupe)"
+      >
         {t("totalSyntheses")}
       </Span>
       <div className="flex items-baseline gap-2 sm:justify-end">
-        <Span variant="metric" className="text-(--color-stamp-chocolate)">
+        <Span
+          variant="metric"
+          className="text-(--color-stamp-off-white) xl:text-(--color-stamp-chocolate)"
+        >
           {total}
         </Span>
-        <Span variant="sm" className="text-(--color-stamp-chocolate)">
+        <Span
+          variant="sm"
+          className="text-(--color-stamp-off-white) xl:text-(--color-stamp-chocolate)"
+        >
           {t("protocolRecords")}
         </Span>
       </div>

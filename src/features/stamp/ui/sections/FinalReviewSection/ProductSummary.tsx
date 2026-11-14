@@ -23,7 +23,7 @@ export function ProductSummary({ productName, productDescription, color, size, p
   const t = useTranslations("stamp.finalReview");
 
   return (
-    <div className="p-6 border border-(--color-stamp-divider)">
+    <div className="p-6 border border-(--color-stamp-divider) bg-white">
       <div className="flex justify-between items-start mb-4">
         <Heading
           as="h3"

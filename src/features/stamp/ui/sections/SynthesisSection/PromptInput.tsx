@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { Label } from "@/features/ui/label";
 import { Textarea } from "@/features/ui/textarea";
 import { Span } from "@/features/ui/span";
+import { SplitToneText } from "../../components/SplitToneText";
 
 /**
  * PromptInput
@@ -23,25 +24,24 @@ export function PromptInput({ value, onChange, maxLength }: PropsI) {
     <div>
       <Label
         htmlFor="prompt-input"
-        className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe) block mb-4"
+        className="text-[10px] font-bold uppercase tracking-widest block mb-4"
       >
-        {t("promptLabel")}
+        <SplitToneText tone="muted">{t("promptLabel")}</SplitToneText>
       </Label>
       <Textarea
         id="prompt-input"
         value={value}
         onChange={onChange}
         maxLength={maxLength}
-        className="w-full h-24 resize-none bg-transparent border-b border-(--color-stamp-divider) focus:border-(--color-stamp-gold) focus:bg-(--color-stamp-gold)/5 transition-all px-2 py-3 text-sm"
+        className="w-full h-24 resize-none bg-transparent md:bg-white border-b border-(--color-stamp-divider) focus:border-(--color-stamp-gold) focus:bg-(--color-stamp-gold)/5 transition-all px-2 py-3 text-sm"
         placeholder={t("promptPlaceholder")}
         aria-label={t("promptAria")}
       />
       <div className="flex justify-end mt-2">
-        <Span
-          variant="micro"
-          className="text-(--color-stamp-taupe)/40"
-        >
-          {t("counter", { count: value.length, max: maxLength })}
+        <Span variant="micro">
+          <SplitToneText tone="muted">
+            {t("counter", { count: value.length, max: maxLength })}
+          </SplitToneText>
         </Span>
       </div>
     </div>
