@@ -1,4 +1,5 @@
 import { Heading } from "@/features/ui/heading";
+import { Span } from "@/features/ui/span";
 import { useTranslations } from "next-intl";
 import { OrdersFilterSummary } from "../sections/OrdersFilterSection/OrdersFilterSummary";
 
@@ -11,18 +12,18 @@ export function OrdersHeader({ total }: PropsI) {
 
   return (
     <header className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-      <div className="space-y-4">
+      <div className="hero-copy space-y-4">
         <div className="h-1.5 w-20 bg-(--color-stamp-gold)" />
         <Heading
           as="h1"
           variant="title"
-          className="text-(--color-stamp-chocolate)"
+          className="text-(--color-stamp-off-white)"
         >
           {t.rich("title", {
             accent: (chunks) => (
-              <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
+              <Span variant="serif" className="text-(--color-stamp-gold-light)">
                 {chunks}
-              </span>
+              </Span>
             ),
           })}
         </Heading>

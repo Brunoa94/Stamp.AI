@@ -64,7 +64,7 @@ export function CartContent() {
 
   if (isLoading) {
     return (
-      <CartLayout>
+      <CartLayout header={<CartHeader itemCount={itemCount} />}>
         <CartLoadingSection />
       </CartLayout>
     );
@@ -72,7 +72,7 @@ export function CartContent() {
 
   if (!cart || cart.cart_items.length === 0) {
     return (
-      <CartLayout>
+      <CartLayout header={<CartHeader itemCount={itemCount} />}>
         <CartEmptySection />
       </CartLayout>
     );
@@ -80,8 +80,7 @@ export function CartContent() {
 
   return (
     <>
-      <CartLayout>
-        <CartHeader itemCount={itemCount} />
+      <CartLayout header={<CartHeader itemCount={itemCount} />}>
 
         <div className="space-y-8 xl:col-span-8">
           {/* Selection header */}

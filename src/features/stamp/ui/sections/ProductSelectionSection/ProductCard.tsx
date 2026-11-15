@@ -27,7 +27,7 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
     <Button
       variant="ghost"
       onClick={() => onSelect(product)}
-      className={`group relative overflow-hidden rounded-none whitespace-normal h-auto p-0 flex flex-col items-center text-center border-(--color-stamp-divider) hover:bg-(--color-stamp-gold)/5 transition-all duration-300 ${
+      className={`group relative overflow-hidden rounded-lg whitespace-normal h-auto p-0 flex flex-col items-center text-center border-(--color-stamp-divider) hover:bg-(--color-stamp-gold)/5 transition-all duration-300 ${
         isSelected
           ? "border-2 border-(--color-stamp-gold) bg-(--color-stamp-gold)/5"
           : "border bg-white"
@@ -36,7 +36,7 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
       aria-label={t("selectAria", { name: product.name })}
     >
       {/* Image container - fills most of the card */}
-      <div className="relative w-full aspect-square overflow-hidden bg-(--color-stamp-cream)/30">
+      <div className="relative w-full aspect-square overflow-hidden bg-(--color-stamp-cream)/30 md:bg-(--color-stamp-cream)">
         {product.imageUrl ? (
           <Image
             src={product.imageUrl}

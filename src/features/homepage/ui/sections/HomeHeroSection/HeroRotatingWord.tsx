@@ -16,7 +16,7 @@ import { PencilUnderline } from "./PencilUnderline";
  * HeroRotatingWord
  *
  * The handwritten last word of the hero headline. It cycles through products
- * ("thing", "tees", "totes"…), each sliding up into place with a fresh pencil
+ * ("tees", "totes", "mugs"…), each sliding up into place with a fresh pencil
  * underline. All words share one grid cell so the line never reflows.
  * Screen readers hear only the first word.
  */

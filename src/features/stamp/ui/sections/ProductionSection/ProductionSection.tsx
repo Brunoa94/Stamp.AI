@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { useStampFinalization } from "../../../lib/hooks/useStampSelectors";
+import { SplitToneText } from "../../components/SplitToneText";
 
 /**
  * ProductionSection
@@ -23,7 +24,7 @@ function ProductionSectionComponent() {
   return (
     <section
       id="step-7"
-      className="h-full overflow-y-auto flex flex-col items-center justify-center p-8 md:p-16 lg:p-24 bg-white text-center border-b border-(--color-stamp-divider)"
+      className="h-full overflow-y-auto flex flex-col items-center justify-center p-8 md:p-16 lg:p-24 bg-white md:bg-transparent text-center border-b border-(--color-stamp-divider)"
     >
       {/* Animated Loader */}
       <div className="relative mb-12">
@@ -37,13 +38,13 @@ function ProductionSectionComponent() {
       <Heading
         as="h3"
         variant="card"
-        className="text-(--color-stamp-chocolate) mb-4 font-bold uppercase tracking-[0.3em]"
+        className="mb-4 font-bold uppercase tracking-[0.3em]"
       >
-        {t("status")}
+        <SplitToneText>{t("status")}</SplitToneText>
       </Heading>
 
-      <Span variant="micro" className="text-(--color-stamp-taupe) mb-12">
-        {t("estimate")}
+      <Span variant="micro" className="mb-12">
+        <SplitToneText tone="muted">{t("estimate")}</SplitToneText>
       </Span>
 
       {/* Progress Bar */}

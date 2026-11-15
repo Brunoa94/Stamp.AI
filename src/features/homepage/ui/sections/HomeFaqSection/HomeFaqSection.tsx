@@ -43,7 +43,7 @@ export function HomeFaqSection() {
               className="group border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-colors duration-300 open:border-(--color-stamp-gold) hover:border-(--color-stamp-gold)"
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-6 p-6 lg:p-8 [&::-webkit-details-marker]:hidden">
-                <Heading as="h3" variant="question">
+                <Heading as="h3" variant="faqQuestion">
                   {t(`items.${faq.id}.question`)}
                 </Heading>
                 <ChevronRight

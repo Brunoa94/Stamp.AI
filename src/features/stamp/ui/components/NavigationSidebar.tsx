@@ -5,6 +5,12 @@ import { Span } from "@/features/ui/span";
 import { STAMP_STEPS } from "../../lib/constants/stampSteps";
 import { useStampNavigation } from "../../lib/hooks/useStampNavigation";
 import { useStampStepAccessibility } from "../../lib/hooks/useStampSelectors";
+import { isStampBackdropVisible } from "../../lib/helpers/stampBackdropHelpers";
+import {
+  stampSidebarDotVariants,
+  stampSidebarTextVariants,
+  stampSidebarVariants,
+} from "../../lib/variants/stampSidebarVariants";
 
 /**
  * NavigationSidebar
@@ -12,21 +18,26 @@ import { useStampStepAccessibility } from "../../lib/hooks/useStampSelectors";
  * Fixed sidebar navigation for the Stamp flow.
  * Displays progress through the 8-stage synthesis protocol.
  * Step indicators show progress (navigation is via BackButton component).
+ * Off-white on the hero step; from step 01 transparent over the canvas
+ * backdrop photo, with light copy. Done and upcoming labels sit at 80% so
+ * they keep AA contrast on both (the current step stands out by its gold
+ * dot, full opacity and shift); done vs upcoming shows in the dot colour.
  */
 
 function NavigationSidebarComponent() {
   const t = useTranslations("stamp");
   const { currentStep } = useStampNavigation();
   const { isStepAccessible } = useStampStepAccessibility();
+  const onPhoto = isStampBackdropVisible(currentStep);
 
   return (
-    <aside className="hidden lg:flex flex-col py-32 px-10 w-68 h-full fixed right-0 top-24 bg-(--color-stamp-off-white) border-l border-(--color-stamp-divider) z-40">
+    <aside className={stampSidebarVariants({ onPhoto })}>
       {/* Header */}
       <div className="mb-16">
         <Heading
           as="h4"
           variant="question"
-          className="text-(--color-stamp-chocolate)"
+          className={stampSidebarTextVariants({ onPhoto })}
         >
           {t("nav.title")}
         </Heading>
@@ -46,27 +57,20 @@ function NavigationSidebarComponent() {
             <div
               key={step.id}
               className={`flex items-center justify-start gap-4 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                isActive
-                  ? "opacity-100 -translate-x-2"
-                  : isCompleted
-                    ? "opacity-50"
-                    : "opacity-15"
+                isActive ? "opacity-100 -translate-x-2" : "opacity-80"
               }`}
               aria-current={isActive ? "step" : undefined}
             >
               {/* Dot Indicator */}
               <div
-                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
-                  isActive
-                    ? "bg-(--color-stamp-gold) shadow-[0_0_15px_var(--color-stamp-gold)]"
-                    : isCompleted
-                      ? "bg-(--color-stamp-chocolate)"
-                      : "bg-(--color-stamp-divider)"
-                }`}
+                className={stampSidebarDotVariants({
+                  state: isActive ? "active" : isCompleted ? "completed" : "upcoming",
+                  onPhoto,
+                })}
               />
 
               {/* Step Label */}
-              <Span variant="micro" className="text-(--color-stamp-chocolate)">
+              <Span variant="micro" className={stampSidebarTextVariants({ onPhoto })}>
                 {step.number === "00"
                   ? stepTitle
                   : `${step.number} ${stepTitle}`}

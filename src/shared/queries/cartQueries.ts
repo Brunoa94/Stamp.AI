@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CartService } from "@/shared/services/cartService";
-import { AddToCartInput, UpdateCartItemInput } from "@/shared/types/cart";
+import { AddToCartInput, CartWithItems, UpdateCartItemInput } from "@/shared/types/cart";
 import { useUser } from "@/shared/queries/authQueries";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import { isRegisteredUser } from "@/shared/helpers/authIdentity";
@@ -53,14 +53,24 @@ function useCart() {
   const query = useQuery({
     queryKey: ["cart", { userId }],
     queryFn: async () => {
+      // Kept with the cart: lines merged after this moment may be missing from it
+      const fetchedAt = Date.now();
       const cart = await CartService.getOrCreateCart(userId, undefined, userEmail);
-      return CartService.getCart(cart.id);
+      return { cart: await CartService.getCart(cart.id), fetchedAt };
     },
     enabled: !!userId,
     retry: 1,
     refetchOnMount: "always",
     staleTime: 0,
   });
+
+  // The bag shown after logout mirrors what this account still has
+  const { mutate: syncMergedBag } = useSyncMergedBag();
+  useEffect(() => {
+    if (!userId || !query.data?.cart) return;
+
+    syncMergedBag({ accountId: userId, ...query.data });
+  }, [userId, query.data, syncMergedBag]);
 
   const localCart = useMemo(
     () => (localItems ? mapLocalCartToCartWithItems(localItems) : undefined),
@@ -73,7 +83,41 @@ function useCart() {
   if (!isRegistered) {
     return { data: localCart, isLoading: localItems === null, error: null };
   }
-  return { data: query.data, isLoading: query.isLoading, error: query.error };
+  return { data: query.data?.cart, isLoading: query.isLoading, error: query.error };
+}
+
+/**
+ * Brings the bag lines copied into an account (at an earlier login) in line
+ * with the account's cart as fetched at `fetchedAt`, so a line removed or
+ * paid for while logged in doesn't come back after logout.
+ */
+function useSyncMergedBag() {
+  const { handleError } = useErrorHandler();
+
+  return useMutation({
+    mutationFn: async ({
+      accountId,
+      cart,
+      fetchedAt,
+    }: {
+      accountId: string;
+      cart: CartWithItems;
+      fetchedAt: number;
+    }) => {
+      LocalCartStorageService.syncMergedItems(
+        accountId,
+        cart.cart_items.map((item) => ({
+          productId: item.product_id ?? "",
+          variantId: String(item.variant_id),
+          quantity: item.quantity ?? 1,
+        })),
+        fetchedAt,
+      );
+    },
+    onError: (error: Error) => {
+      handleError(error);
+    },
+  });
 }
 
 /**

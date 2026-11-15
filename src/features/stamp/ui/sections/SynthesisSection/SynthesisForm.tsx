@@ -7,7 +7,6 @@ import { Heading } from "@/features/ui/heading";
 import { Button } from "@/features/ui/button";
 import { Checkbox } from "@/features/ui/checkbox";
 import { Label } from "@/features/ui/label";
-import { Span } from "@/features/ui/span";
 import { InfoTooltip } from "@/features/ui/info-tooltip";
 import { PromptInput } from "./PromptInput";
 import { PreservationSlider } from "./PreservationSlider";
@@ -16,6 +15,7 @@ import { CoinsOverlayShell } from "../../components/CoinsOverlay/CoinsOverlayShe
 import { CoinsDisplay } from "../../components/CoinsDisplay";
 import { useSkipGeneration } from "../../../lib/hooks/useSkipGeneration";
 import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction";
+import { SplitToneText } from "../../components/SplitToneText";
 
 /**
  * SynthesisForm
@@ -86,19 +86,20 @@ export function SynthesisForm({
   });
 
   return (
-    <div className="relative p-6 pb-36 md:pb-6 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-white">
-      <Heading
-        as="h2"
-        variant="panelTitle"
-        className="text-(--color-stamp-chocolate) mb-4 md:mb-6"
-      >
-        {t.rich("title", {
-          accent: (chunks) => (
-            <Span variant="serif" className="text-(--color-stamp-taupe)">
-              {chunks}
-            </Span>
-          ),
-        })}
+    <div className="relative p-6 pb-36 md:pb-6 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-white md:bg-transparent">
+      <Heading as="h2" variant="panelTitle" className="mb-4 md:mb-6">
+        <SplitToneText className="block pb-2 -mb-2">
+          {t.rich("title", {
+            accent: (chunks) => (
+              <SplitToneText
+                tone="accent"
+                className="inline-block pb-4 -mb-4 pr-2 -mr-2 font-serif italic lowercase font-light"
+              >
+                {chunks}
+              </SplitToneText>
+            ),
+          })}
+        </SplitToneText>
       </Heading>
 
       {/* Form Fields */}
@@ -120,21 +121,26 @@ export function SynthesisForm({
               onRemoveBackgroundChange(checked === true)
             }
             aria-label={t("removeBackgroundAria")}
-            className="data-[state=checked]:bg-(--color-stamp-gold) data-[state=checked]:border-(--color-stamp-gold)"
+            className="bg-white data-[state=checked]:bg-(--color-stamp-gold) data-[state=checked]:border-(--color-stamp-gold)"
           />
           <Label
             htmlFor="removeBackground"
-            className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe) cursor-pointer"
+            className="text-[10px] font-bold uppercase tracking-widest cursor-pointer"
           >
-            {t("removeBackgroundLabel")}
+            <SplitToneText tone="muted">{t("removeBackgroundLabel")}</SplitToneText>
           </Label>
-          <InfoTooltip content={t("removeBackgroundTooltip")} />
+          <InfoTooltip
+            content={t("removeBackgroundTooltip")}
+            className="rounded-full bg-white p-0.5"
+          />
         </div>
       </div>
 
       {/* Generate Button with Coins Display - hidden on mobile */}
       <div className="hidden md:block space-y-4">
-        {isAuthenticated && !isCoinsError && <CoinsDisplay className="justify-end" />}
+        {isAuthenticated && !isCoinsError && (
+          <CoinsDisplay className="ml-auto w-fit justify-end rounded-full bg-white px-3 py-1.5" />
+        )}
         <Button
           onClick={onGenerate}
           disabled={isGenerating || !prompt.trim() || !canGenerate}
@@ -148,11 +154,13 @@ export function SynthesisForm({
           <Button
             variant="ghost"
             onClick={handleSkipGeneration}
-            className="w-full text-(--color-stamp-taupe) hover:text-(--color-stamp-chocolate) text-xs font-medium tracking-wide"
+            className="w-full text-xs font-medium tracking-wide hover:underline"
           >
-            {hasUploadedImage
-              ? t("skipWithUploadedImage")
-              : t("skipWithCachedImages")}
+            <SplitToneText tone="muted">
+              {hasUploadedImage
+                ? t("skipWithUploadedImage")
+                : t("skipWithCachedImages")}
+            </SplitToneText>
           </Button>
         )}
       </div>

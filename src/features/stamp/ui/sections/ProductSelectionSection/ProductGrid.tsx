@@ -1,27 +1,25 @@
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { Paragraph } from "@/features/ui/paragraph";
-import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
-import { Disclosure } from "../../components/Disclosure/Disclosure";
-import { ExpandablePicker } from "../../components/ExpandablePicker/ExpandablePicker";
+import { buildProductSections } from "../../../lib/helpers/productSectionHelpers";
 import { ProductCard } from "./ProductCard";
+import { ProductSectionPicker } from "./ProductSectionPicker";
 import { SelectedProductCard } from "./SelectedProductCard";
-import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
-import { cn } from "@/lib/utils";
+import type {
+  CatalogProductMappedType,
+  ProductSectionIdT,
+} from "../../../lib/types/stampTypes";
+import { SplitToneText } from "../../components/SplitToneText";
 
 /**
  * ProductGrid
  *
- * Manages the grid layout of products and handles loading/error/empty states.
- * Products are grouped into clothing (apparel) and accessories.
- *
- * On mobile (<md): uses ExpandablePicker with "Show more" overlay pattern
- * On tablet (md to lg): uses collapsible Disclosure components
- * On desktop (lg+): shows products directly without collapsing
+ * The product step's right panel. It opens with the section picker
+ * (apparel, accessories), then the products of the chosen section. Once a
+ * product is picked, only that product is shown. Handles the loading,
+ * error and empty states.
  */
-
-// Number of products to show initially on mobile before expanding
-const MOBILE_INITIAL_COUNT = 4;
 
 interface PropsI {
   clothingProducts: CatalogProductMappedType[];
@@ -31,40 +29,6 @@ interface PropsI {
   isError: boolean;
   onProductSelect: (product: CatalogProductMappedType) => void;
   onClearSelection: () => void;
-  isProductSelected: (product: CatalogProductMappedType) => boolean;
-}
-
-function ProductCardItem({
-  product,
-  isProductSelected,
-  onClearSelection,
-  onProductSelect,
-}: {
-  product: CatalogProductMappedType;
-  isProductSelected: (product: CatalogProductMappedType) => boolean;
-  onClearSelection: () => void;
-  onProductSelect: (product: CatalogProductMappedType) => void;
-}) {
-  const selected = isProductSelected(product);
-
-  if (selected) {
-    return (
-      <SelectedProductCard
-        key={product.blueprintId}
-        product={product}
-        onClearSelection={onClearSelection}
-      />
-    );
-  }
-
-  return (
-    <ProductCard
-      key={product.blueprintId}
-      product={product}
-      isSelected={selected}
-      onSelect={onProductSelect}
-    />
-  );
 }
 
 export function ProductGrid({
@@ -75,26 +39,16 @@ export function ProductGrid({
   isError,
   onProductSelect,
   onClearSelection,
-  isProductSelected,
 }: PropsI) {
   const t = useTranslations("stamp.productSelection");
-  const isMdUp = useMediaQuery("(min-width: 768px)", true);
-  const isLgUp = useMediaQuery("(min-width: 1024px)", true);
-  const allProducts = [...clothingProducts, ...accessoryProducts];
-  const hasProducts = allProducts.length > 0;
-
-  // Header for mobile ExpandablePicker
-  const mobileHeader = (
-    <Span
-      variant="micro"
-      className="block mb-3 text-(--color-stamp-taupe) tracking-widest"
-    >
-      {t("apparel")} & {t("accessories")} ({allProducts.length})
-    </Span>
-  );
+  const [chosenSectionId, setChosenSectionId] = useState<ProductSectionIdT>("apparel");
+  const sections = buildProductSections(clothingProducts, accessoryProducts);
+  // Falls back to the first section when the chosen one has no products
+  const activeSection =
+    sections.find((section) => section.id === chosenSectionId) ?? sections[0];
 
   return (
-    <div className="flex-1 md:h-full min-h-0 overflow-y-auto overflow-x-hidden bg-(--color-stamp-cream)/20 pb-40 md:pb-0">
+    <div className="flex-1 md:h-full min-h-0 overflow-y-auto overflow-x-hidden bg-(--color-stamp-cream)/20 md:bg-transparent pb-40 md:pb-0">
       {isLoading && (
         <div
           className="h-full w-full flex items-center justify-center"
@@ -120,156 +74,50 @@ export function ProductGrid({
           <Span variant="micro" className="text-red-500 mb-2">
             {t("loadError")}
           </Span>
-          <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
-            {t("loadErrorHint")}
+          <Paragraph variant="sm">
+            <SplitToneText tone="muted">{t("loadErrorHint")}</SplitToneText>
           </Paragraph>
         </div>
       )}
 
-      {!isLoading && !isError && !hasProducts && (
+      {!isLoading && !isError && !activeSection && (
         <div
           role="status"
           className="h-full w-full flex items-center justify-center p-12 text-center"
         >
-          <Span variant="micro" className="text-(--color-stamp-taupe)">
-            {t("empty")}
+          <Span variant="micro">
+            <SplitToneText tone="muted">{t("empty")}</SplitToneText>
           </Span>
         </div>
       )}
 
-      {!isLoading && !isError && hasProducts && (
-        <div
-          className={cn(
-            "w-full p-4 lg:p-6",
-            selectedProduct ? " flex flex-col justify-center h-full" : "",
-          )}
-        >
-          {/* When a product is selected, show only that product */}
-          {selectedProduct ? (
-            <div className="grid grid-cols-1 gap-4">
-              <ProductCardItem
-                product={selectedProduct}
-                isProductSelected={isProductSelected}
-                onClearSelection={onClearSelection}
-                onProductSelect={onProductSelect}
-              />
-            </div>
-          ) : isLgUp ? (
-            /* Desktop (lg+): show products directly without Disclosure */
-            <div className="space-y-6">
-              {/* Clothing Section */}
-              {clothingProducts.length > 0 && (
-                <div>
-                  <Span
-                    variant="micro"
-                    className="block mb-3 text-(--color-stamp-taupe) tracking-widest"
-                  >
-                    {t("apparel")} ({clothingProducts.length})
-                  </Span>
-                  <div className="grid grid-cols-2 gap-3">
-                    {clothingProducts.map((product) => (
-                      <ProductCardItem
-                        key={product.blueprintId}
-                        product={product}
-                        isProductSelected={isProductSelected}
-                        onClearSelection={onClearSelection}
-                        onProductSelect={onProductSelect}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Accessories Section */}
-              {accessoryProducts.length > 0 && (
-                <div>
-                  <Span
-                    variant="micro"
-                    className="block mb-3 text-(--color-stamp-taupe) tracking-widest"
-                  >
-                    {t("accessories")} ({accessoryProducts.length})
-                  </Span>
-                  <div className="grid grid-cols-2 gap-3">
-                    {accessoryProducts.map((product) => (
-                      <ProductCardItem
-                        key={product.blueprintId}
-                        product={product}
-                        isProductSelected={isProductSelected}
-                        onClearSelection={onClearSelection}
-                        onProductSelect={onProductSelect}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          ) : isMdUp ? (
-            /* Tablet (md to lg): use Disclosure for collapsible sections */
-            <div className="space-y-4">
-              {/* Clothing Section */}
-              {clothingProducts.length > 0 && (
-                <Disclosure
-                  key="apparel-tablet"
-                  label={t("apparel")}
-                  value={String(clothingProducts.length)}
-                  defaultOpen
-                >
-                  <div className="grid grid-cols-2 gap-3">
-                    {clothingProducts.map((product) => (
-                      <ProductCardItem
-                        key={product.blueprintId}
-                        product={product}
-                        isProductSelected={isProductSelected}
-                        onClearSelection={onClearSelection}
-                        onProductSelect={onProductSelect}
-                      />
-                    ))}
-                  </div>
-                </Disclosure>
-              )}
-
-              {/* Accessories Section */}
-              {accessoryProducts.length > 0 && (
-                <Disclosure
-                  label={t("accessories")}
-                  value={String(accessoryProducts.length)}
-                >
-                  <div className="grid grid-cols-2 gap-3">
-                    {accessoryProducts.map((product) => (
-                      <ProductCardItem
-                        key={product.blueprintId}
-                        product={product}
-                        isProductSelected={isProductSelected}
-                        onClearSelection={onClearSelection}
-                        onProductSelect={onProductSelect}
-                      />
-                    ))}
-                  </div>
-                </Disclosure>
-              )}
-            </div>
-          ) : (
-            /* Mobile (<md): use ExpandablePicker with overlay pattern */
-            <ExpandablePicker
-              initialCount={MOBILE_INITIAL_COUNT}
-              showMoreLabel={t("showMore", { count: "{count}" })}
-              showLessLabel={t("showLess")}
-              columns={2}
-              gap={3}
-              header={mobileHeader}
-            >
-              {allProducts.map((product) => (
-                <ProductCardItem
+      {!isLoading && !isError && activeSection && (
+        selectedProduct ? (
+          <div className="w-full h-full p-4 lg:p-6 flex flex-col justify-center">
+            <SelectedProductCard
+              product={selectedProduct}
+              onClearSelection={onClearSelection}
+            />
+          </div>
+        ) : (
+          <div className="w-full p-4 lg:p-6 space-y-5">
+            <ProductSectionPicker
+              sections={sections}
+              activeSectionId={activeSection.id}
+              onSectionChange={setChosenSectionId}
+            />
+            <div className="grid grid-cols-2 gap-3">
+              {activeSection.products.map((product) => (
+                <ProductCard
                   key={product.blueprintId}
                   product={product}
-                  isProductSelected={isProductSelected}
-                  onClearSelection={onClearSelection}
-                  onProductSelect={onProductSelect}
+                  isSelected={false}
+                  onSelect={onProductSelect}
                 />
               ))}
-            </ExpandablePicker>
-          )}
-        </div>
+            </div>
+          </div>
+        )
       )}
     </div>
   );

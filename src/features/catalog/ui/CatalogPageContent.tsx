@@ -17,6 +17,7 @@ import { CatalogEmptyResults } from "./components/CatalogEmptyResults";
 import { CatalogToolbar } from "./components/CatalogToolbar";
 import { CatalogGroupSection } from "./sections/CatalogGroupSection";
 import { CatalogShowcaseSection } from "./sections/CatalogShowcaseSection";
+import { PageHeaderBand } from "@/shared/ui/PageHeaderBand";
 
 /**
  * CatalogPageContent
@@ -59,21 +60,32 @@ export function CatalogPageContent({ sections }: PropsI) {
   }, [filters]);
 
   return (
-    <article className="px-6 pt-40 pb-24 lg:px-12 xl:px-24">
-      <div className="mx-auto max-w-screen-2xl">
-        <header className="mb-12 space-y-4">
+    <article className="pt-24">
+      {/* Header band: diagonal photo on the right, as on the Shopping bag page */}
+      <PageHeaderBand
+        src="/backdrops/kid-forest.jpg"
+        imageClassName="object-[center_30%]"
+        mirrored
+      >
+        <header className="space-y-4 text-shadow-lg xl:text-shadow-none">
           <div className="h-1.5 w-20 bg-(--color-stamp-gold)" />
           <Heading
             as="h1"
             variant="title"
-            className="text-(--color-stamp-chocolate)"
+            className="text-(--color-stamp-off-white) xl:text-(--color-stamp-chocolate)"
           >
             {t("title")}{" "}
-            <Span variant="serif" className="text-(--color-stamp-taupe)">
+            <Span
+              variant="serif"
+              className="text-(--color-stamp-gold-light) xl:text-(--color-stamp-taupe)"
+            >
               {t("accent")}
             </Span>
           </Heading>
         </header>
+      </PageHeaderBand>
+
+      <div className="mx-auto max-w-screen-2xl px-6 pt-12 pb-24 lg:px-12 xl:px-24">
 
         <Paragraph
           variant="lead"

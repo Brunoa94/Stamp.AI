@@ -3,11 +3,12 @@ import { generate } from './browser.mjs';
 import { required } from './environment.mjs';
 
 // The product grid renders after the step transition; wait for it before
-// deciding whether the product sits behind "Show more", or the check races it.
+// deciding whether the product sits in the other section (the grid opens on
+// Apparel), or the check races it.
 export async function selectProduct(page, product) {
-  const showMore = page.locator('#step-5').getByRole('button', { name: /show .* more/i });
-  await expect(product.or(showMore).first()).toBeVisible();
-  if (!(await product.isVisible())) await showMore.click();
+  const picker = page.locator('#step-5').getByRole('group', { name: 'Product type' });
+  await expect(product.or(picker).first()).toBeVisible();
+  if (!(await product.isVisible())) await picker.getByRole('button', { pressed: false }).first().click();
   await product.click();
 }
 export async function customize(page, env, productName) {

@@ -1,15 +1,16 @@
 /**
  * CheckoutPaymentMethods
  *
- * Payment-method radio group restyled to the luxury brutalist system.
- * Reuses the shared PAYMENT_METHODS constant; selection state lives in the
- * checkout form context.
+ * Payment-method radio group restyled to the luxury brutalist system: one
+ * row per method with a radio mark, its name and the full-colour logos of
+ * the brands it accepts. Selection state lives in the checkout form context.
  */
 
 import { useTranslations } from "next-intl";
-import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CHECKOUT_PAYMENT_METHODS } from "@/shared/constants/payment";
+import { PAYMENT_METHOD_LOGOS } from "@/shared/constants/paymentLogos";
+import { PaymentLogo } from "@/features/ui/trust/PaymentLogo";
 import type { PaymentMethodT } from "@/shared/types/payment";
 import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
@@ -30,7 +31,7 @@ export function CheckoutPaymentMethods({
     <div
       role="radiogroup"
       aria-label={t("selectMethodAria")}
-      className="flex flex-col gap-4 sm:flex-row"
+      className="flex flex-col gap-3"
       data-disabled={disabled || undefined}
     >
       {CHECKOUT_PAYMENT_METHODS.map((method) => {
@@ -45,7 +46,7 @@ export function CheckoutPaymentMethods({
             disabled={disabled}
             onClick={() => onMethodChange(method.id)}
             className={cn(
-              "flex flex-1 items-center gap-3 border p-5 text-left transition-all duration-300",
+              "flex w-full items-center gap-4 border px-4 py-4 text-left transition-all duration-300 sm:px-5",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) focus-visible:ring-offset-2",
               "disabled:cursor-not-allowed disabled:opacity-50",
               isSelected
@@ -53,32 +54,30 @@ export function CheckoutPaymentMethods({
                 : "border-(--color-stamp-divider) bg-(--color-stamp-white) hover:border-(--color-stamp-chocolate)",
             )}
           >
-            <method.Icon
-              className={cn(
-                "h-6 w-6 shrink-0",
-                isSelected
-                  ? "text-(--color-stamp-gold-text)"
-                  : "text-(--color-stamp-taupe)",
-              )}
+            <Span
+              unstyled
               aria-hidden="true"
-            />
-            <Span unstyled className="flex flex-col">
-              <Span unstyled className="text-[11px] font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate)">
+              className={cn(
+                "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+                isSelected ? "border-(--color-stamp-gold)" : "border-(--color-stamp-divider)",
+              )}
+            >
+              {isSelected && <Span unstyled className="h-2.5 w-2.5 rounded-full bg-(--color-stamp-gold)" />}
+            </Span>
+            <Span unstyled className="flex min-w-0 flex-1 flex-col gap-0.5">
+              <Span unstyled className="text-[11px] font-bold uppercase tracking-ultra text-(--color-stamp-chocolate)">
                 {method.label}
               </Span>
-              <Span unstyled className="text-[10px] uppercase tracking-[0.15em] text-(--color-stamp-taupe)">
+              <Span unstyled className="text-2xs uppercase tracking-[0.15em] text-(--color-stamp-taupe)">
                 {method.description}
               </Span>
             </Span>
-            {isSelected && (
-              <Span
-                unstyled
-                className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-(--color-stamp-gold) text-(--color-stamp-white)"
-                aria-hidden="true"
-              >
-                <Check className="h-3 w-3" />
-              </Span>
-            )}
+            {/* The description already names the brands for screen readers */}
+            <Span unstyled aria-hidden="true" className="flex shrink-0 items-center gap-1.5">
+              {PAYMENT_METHOD_LOGOS[method.id].map((logoId) => (
+                <PaymentLogo key={logoId} id={logoId} />
+              ))}
+            </Span>
           </Button>
         );
       })}

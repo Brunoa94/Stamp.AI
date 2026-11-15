@@ -9,6 +9,7 @@ import {
 } from "@/features/ui/select";
 import type { SizeType } from "../../../lib/types/stampTypes";
 import { formatSizeForDisplay } from "../../../lib/helpers/sizeDisplayMapper";
+import { SplitToneText } from "../../components/SplitToneText";
 
 /**
  * SizeSelector
@@ -33,9 +34,9 @@ export function SizeSelector({
     <div>
       <Label
         htmlFor="size-select"
-        className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe) block mb-3"
+        className="text-[10px] font-bold uppercase tracking-widest block mb-3"
       >
-        {t("sizeSelectorLabel")}
+        <SplitToneText tone="muted">{t("sizeSelectorLabel")}</SplitToneText>
       </Label>
       <Select
         value={selectedSize}

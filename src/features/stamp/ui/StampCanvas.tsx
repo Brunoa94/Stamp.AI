@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { BackButton } from "./components/BackButton/BackButton";
 import { MobileStepFooter } from "./components/MobileStepFooter/MobileStepFooter";
 import { NavigationSidebar } from "./components/NavigationSidebar";
+import { StampBackdrop } from "./components/StampBackdrop";
 import { HeroSection } from "./sections/HeroSection/HeroSection";
 import { UploadSection } from "./sections/UploadSection/UploadSection";
 import { SynthesisSection } from "./sections/SynthesisSection/SynthesisSection";
@@ -14,6 +15,8 @@ import { ProductionSection } from "./sections/ProductionSection/ProductionSectio
 import { FinalReviewSection } from "./sections/FinalReviewSection/FinalReviewSection";
 import { ProductSelectionSection } from "./sections/ProductSelectionSection/ProductSelectionSection";
 import { useStampNavigation } from "../lib/hooks/useStampNavigation";
+import { isStampBackdropVisible } from "../lib/helpers/stampBackdropHelpers";
+import { cn } from "@/lib/utils";
 
 /**
  * StampCanvas
@@ -33,12 +36,23 @@ export function StampCanvas() {
 
   return (
     <div className="fixed inset-0 bg-(--color-stamp-off-white)">
+      {/* Phase photo: a strip above the steps below md; from md behind the sidebar and half the right column */}
+      <StampBackdrop currentStep={activeSlide} />
+
       {/* Back Button (Top Left) */}
       <BackButton />
 
       {/* Protocol canvas aligned with the submitted layout; AppLayoutChrome provides <main> */}
-      <div className="absolute inset-x-0 top-24 bottom-0 overflow-hidden lg:mr-68">
+      {/* Below md the canvas starts under the backdrop strip, or right under the header on step 00 where the strip is hidden */}
+      <div
+        className={cn(
+          "absolute inset-x-0 bottom-0 overflow-hidden md:top-24 lg:mr-68",
+          isStampBackdropVisible(activeSlide) ? "top-56" : "top-24",
+        )}
+      >
+        {/* data-stamp-slider: SplitToneText follows this slide (useStampSplitTone) */}
         <div
+          data-stamp-slider=""
           className="h-full transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
           style={{ transform: `translate3d(0, -${activeSlide * 100}%, 0)` }}
         >

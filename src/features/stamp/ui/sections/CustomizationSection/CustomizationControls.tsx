@@ -13,6 +13,7 @@ import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction"
 import type { SizeType } from "../../../lib/types/stampTypes";
 import type { VariantOptionKindType } from "../../../lib/helpers/productCategoryDetector";
 import { formatSizeForDisplay } from "../../../lib/helpers/sizeDisplayMapper";
+import { SplitToneText } from "../../components/SplitToneText";
 
 /**
  * CustomizationControls
@@ -80,19 +81,20 @@ export function CustomizationControls({
   });
 
   return (
-    <div className="p-6 pt-24 pb-28 md:pb-6 md:p-10 md:pt-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-white">
-      <Heading
-        as="h2"
-        variant="panelTitle"
-        className="text-(--color-stamp-chocolate) mb-4 md:mb-6"
-      >
-        {t.rich("title", {
-          accent: (chunks) => (
-            <Span variant="serif" className="text-(--color-stamp-taupe)">
-              {chunks}
-            </Span>
-          ),
-        })}
+    <div className="p-6 pt-24 pb-28 md:pb-6 md:p-10 md:pt-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-white md:bg-transparent">
+      <Heading as="h2" variant="panelTitle" className="mb-4 md:mb-6">
+        <SplitToneText className="block pb-2 -mb-2">
+          {t.rich("title", {
+            accent: (chunks) => (
+              <SplitToneText
+                tone="accent"
+                className="inline-block pb-4 -mb-4 pr-2 -mr-2 font-serif italic lowercase font-light"
+              >
+                {chunks}
+              </SplitToneText>
+            ),
+          })}
+        </SplitToneText>
       </Heading>
 
       <div className="space-y-6 md:space-y-12 mb-8 md:mb-12">
@@ -119,12 +121,12 @@ export function CustomizationControls({
           <div>
             <Span
               variant="micro"
-              className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe) block mb-2"
+              className="text-[10px] font-bold uppercase tracking-widest block mb-2"
             >
-              {t("sizeLabel")}
+              <SplitToneText tone="muted">{t("sizeLabel")}</SplitToneText>
             </Span>
-            <Span variant="sm" className="text-(--color-stamp-chocolate)">
-              {formatSizeForDisplay(sizes[0])}
+            <Span variant="sm">
+              <SplitToneText>{formatSizeForDisplay(sizes[0])}</SplitToneText>
             </Span>
           </div>
         ) : null}

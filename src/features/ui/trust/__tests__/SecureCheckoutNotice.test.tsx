@@ -6,8 +6,8 @@ import { SecureCheckoutNotice } from "../SecureCheckoutNotice";
 describe("SecureCheckoutNotice", () => {
   it("lists the supported payment methods", () => {
     renderWithIntl(<SecureCheckoutNotice />);
-    for (const method of ["Visa", "Mastercard", "Amex", "PayPal", "iDEAL"]) {
-      expect(screen.getByText(method)).toBeInTheDocument();
+    for (const method of ["Visa", "Mastercard", "American Express", "PayPal", "iDEAL"]) {
+      expect(screen.getByRole("img", { name: method })).toBeInTheDocument();
     }
   });
 
