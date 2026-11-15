@@ -4,7 +4,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Dialog } from "@/features/ui/dialog";
 import { useUser } from "@/shared/queries/authQueries";
 import { isRegisteredUser } from "@/shared/helpers/authIdentity";
-import { LoginForm } from "../login/LoginForm";
+import { LazyLoginForm } from "./LazyLoginForm";
 import {
   getSafeRedirectPath,
   REDIRECTED_FROM_PARAM,
@@ -35,7 +35,7 @@ export function LoginRedirectPrompt() {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      {isOpen && <LoginForm />}
+      {isOpen && <LazyLoginForm />}
     </Dialog>
   );
 }
