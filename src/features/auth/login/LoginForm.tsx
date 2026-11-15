@@ -1,10 +1,6 @@
 "use client";
 
-import { DialogContent, DialogTitle, DialogClose } from "@/features/ui/dialog";
-import { Button } from "@/features/ui/button";
-import { Span } from "@/features/ui/span";
 import { Paragraph } from "@/features/ui/paragraph";
-import { X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useLoginForm } from "./useLoginForm";
 import { LoginDialogHeader } from "./components/LoginDialogHeader";
@@ -12,6 +8,9 @@ import { LoginCredentialsFields } from "./components/LoginCredentialsFields";
 import { LoginFormActions } from "./components/LoginFormActions";
 import { LoginSignupFooter } from "./components/LoginSignupFooter";
 import { GoogleSignInButton } from "../components/GoogleSignInButton";
+import { AuthDialogFrame } from "../components/AuthDialogFrame";
+import { AuthBrandPanel } from "../components/AuthBrandPanel";
+import { AuthEmailDivider } from "../components/AuthEmailDivider";
 
 export function LoginForm() {
   const { register, handleSubmit, onSubmit, isPending, isCaptchaReady, errors } =
@@ -19,58 +18,34 @@ export function LoginForm() {
   const t = useTranslations("auth.login.form");
 
   return (
-    <DialogContent
-      showCloseButton={false}
-      className="max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none sm:max-w-137.5"
+    <AuthDialogFrame
+      srTitle={t("srTitle")}
+      closeAria={t("closeAria")}
+      panel={<AuthBrandPanel namespace="auth.login.panel" />}
     >
-      <DialogTitle className="sr-only">{t("srTitle")}</DialogTitle>
-      <div className="relative overflow-hidden border-2 border-(--color-stamp-divider) bg-(--color-stamp-off-white) px-10 pt-12 pb-10 shadow-(--shadow-stamp-modal)">
-        {/* Close button */}
-        <DialogClose asChild>
-          <Button
-            type="button"
-            variant="stamp-close"
-            size="icon"
-            aria-label={t("closeAria")}
-            className="absolute top-8 right-8 z-20"
+      <LoginDialogHeader />
+
+      <GoogleSignInButton />
+
+      <AuthEmailDivider label={t("orContinueWithEmail")} />
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <LoginCredentialsFields register={register} errors={errors} />
+
+        {errors.root?.message && (
+          <Paragraph
+            variant="xs"
+            role="alert"
+            className="font-bold uppercase tracking-widest text-(--color-stamp-error)"
           >
-            <X className="h-5 w-5" />
-          </Button>
-        </DialogClose>
+            {errors.root.message}
+          </Paragraph>
+        )}
 
-        <LoginDialogHeader />
+        <LoginFormActions isPending={isPending} isCaptchaReady={isCaptchaReady} />
+      </form>
 
-        <GoogleSignInButton />
-
-        <div className="relative flex items-center my-8">
-          <div className="grow border-t border-(--color-stamp-divider)" />
-          <Span
-            variant="default"
-            className="shrink mx-4 text-xs font-bold text-(--color-stamp-gold-text) uppercase tracking-[0.2em]"
-          >
-            {t("orContinueWithEmail")}
-          </Span>
-          <div className="grow border-t border-(--color-stamp-divider)" />
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <LoginCredentialsFields register={register} errors={errors} />
-
-          {errors.root?.message && (
-            <Paragraph
-              variant="xs"
-              role="alert"
-              className="font-bold uppercase tracking-widest text-(--color-stamp-error)"
-            >
-              {errors.root.message}
-            </Paragraph>
-          )}
-
-          <LoginFormActions isPending={isPending} isCaptchaReady={isCaptchaReady} />
-        </form>
-
-        <LoginSignupFooter />
-      </div>
-    </DialogContent>
+      <LoginSignupFooter />
+    </AuthDialogFrame>
   );
 }

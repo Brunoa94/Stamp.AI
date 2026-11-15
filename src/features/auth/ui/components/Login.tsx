@@ -3,7 +3,7 @@
 import { LogIn, User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ReactNode } from "react";
-import { LoginForm } from "../../login/LoginForm";
+import { LazyLoginForm } from "../../components/LazyLoginForm";
 import { AuthDialog } from "../../components/AuthDialog";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
@@ -42,7 +42,7 @@ export function Login({ className, children, variant = "default" }: LoginProps) 
 
   return (
     <AuthDialog
-      form={<LoginForm />}
+      form={<LazyLoginForm />}
       triggerAriaLabel={t("openDialogAria")}
       className={className}
       defaultTrigger={defaultTrigger}

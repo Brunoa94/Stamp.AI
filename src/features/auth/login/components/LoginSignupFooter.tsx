@@ -3,15 +3,15 @@ import { Dialog, DialogTrigger } from "@/features/ui/dialog";
 import { Button } from "@/features/ui/button";
 import { Paragraph } from "@/features/ui/paragraph";
 import { useTranslations } from "next-intl";
-import { RegisterForm } from "../../register/RegisterForm";
+import { LazyRegisterForm } from "../../components/LazyRegisterForm";
 
 export function LoginSignupFooter() {
   const t = useTranslations("auth.login.footer");
 
   return (
-    <div className="mt-12 text-center">
+    <div className="mt-10 text-center">
       <div className="mb-8 h-px w-full bg-(--color-stamp-divider)" />
-      <Paragraph variant="body" className="text-lg font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
+      <Paragraph variant="body" className="text-sm font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
         {t.rich("noAccount", {
           link: (chunks) => (
             <Dialog>
@@ -25,7 +25,7 @@ export function LoginSignupFooter() {
                   </Button>
                 </DialogTrigger>
               </DialogClose>
-              <RegisterForm />
+              <LazyRegisterForm />
             </Dialog>
           ),
         })}

@@ -51,8 +51,12 @@ test.describe("Tote Bag Preview Configuration", () => {
       timeout: 180_000,
     });
 
-    // Step 5: Find and select a tote bag product
+    // Step 5: Switch to accessories, then select a tote bag product
     const step5 = page.locator("#step-5");
+    await step5
+      .getByRole("group", { name: "Product type" })
+      .getByRole("button", { name: /accessories/i })
+      .click();
     const toteBagButton = step5.getByRole("button", { name: /select canvas tote bag/i });
     const continueButton = step5.getByRole("button", { name: /continue to customization/i });
     await toteBagButton.click();

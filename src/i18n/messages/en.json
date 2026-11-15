@@ -1278,6 +1278,16 @@
       },
       "footer": {
         "noAccount": "Don't have an account? <link>Create one now</link>"
+      },
+      "panel": {
+        "eyebrow": "Members' atelier",
+        "heading": "Welcome back to your <accent>studio</accent>",
+        "lead": "Your designs, credits and orders are waiting where you left them.",
+        "perks": {
+          "designs": "Every design you've generated",
+          "orders": "Order history and live tracking",
+          "checkout": "Faster checkout, details saved"
+        }
       }
     },
     "passwordReset": {
@@ -1365,6 +1375,16 @@
       },
       "footer": {
         "haveAccount": "Already have an account? <link>Log in</link>"
+      },
+      "panel": {
+        "eyebrow": "Join the atelier",
+        "heading": "Your ideas, <accent>stamped</accent> on fabric",
+        "lead": "Create an account to design with AI and have it printed on premium apparel.",
+        "perks": {
+          "generate": "Generate original designs with AI",
+          "print": "Printed on premium garments",
+          "ship": "Shipped straight to your door"
+        }
       },
       "success": {
         "srTitle": "Registration Successful",
