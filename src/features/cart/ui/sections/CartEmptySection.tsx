@@ -29,8 +29,9 @@ export function CartEmptySection() {
         />
       </div>
 
+      {/* The page's h1 is CartHeader's, in the band above */}
       <Heading
-        as="h1"
+        as="h2"
         variant="question"
         className="mb-4 text-(--color-stamp-chocolate)"
       >

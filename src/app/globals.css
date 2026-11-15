@@ -1226,9 +1226,36 @@
   animation: hero-marquee 80s linear infinite;
 }
 
-/* Hero backdrop: editorial photo cut on a diagonal with a gold seam (xl+);
-   full-bleed under a darker scrim when the hero stacks. The scrim is darkest
-   behind the copy column so light text keeps AA contrast over the photo. */
+/* Diagonal backdrop: editorial photo cut on a diagonal with a gold seam (xl+);
+   full-bleed under a darker scrim when the layout stacks. The scrim is darkest
+   behind the copy column so light text keeps AA contrast over the photo.
+   The cut and the scrim stops are variables so each page tunes them in one
+   place: the homepage hero uses the defaults, `--band` the short page header
+   on Orders and Profile, `--mirrored` the same band flipped (Shopping bag,
+   Catalog). */
+.diagonal-backdrop {
+  --diagonal-cut-top: 58%;
+  --diagonal-cut-bottom: 38%;
+  --diagonal-scrim-mid: 30%;
+  --diagonal-scrim-soft: 48%;
+}
+
+.diagonal-backdrop--band {
+  --diagonal-cut-top: 64%;
+  --diagonal-cut-bottom: 48%;
+  --diagonal-scrim-mid: 44%;
+  --diagonal-scrim-soft: 56%;
+}
+
+/* Mirrored band (Shopping bag, Catalog): the photo sits on the right with the
+   same slant, and the title stays on the off-white on the left from xl. No
+   copy sits on the photo there, so its scrim is lighter. */
+.diagonal-backdrop--mirrored {
+  --diagonal-cut-top: 60%;
+  --diagonal-cut-bottom: 44%;
+  --diagonal-photo-width: calc(100% - var(--diagonal-cut-bottom));
+}
+
 @keyframes hero-kenburns {
   0% {
     transform: scale(1);
@@ -1238,12 +1265,12 @@
   }
 }
 
-.hero-backdrop__photo-img {
+.diagonal-backdrop__photo-img {
   transform-origin: left center;
   animation: hero-kenburns 26s ease-in-out infinite alternate;
 }
 
-.hero-backdrop__scrim {
+.diagonal-backdrop__scrim {
   background: color-mix(in srgb, var(--color-stamp-chocolate) 74%, transparent);
 }
 
@@ -1252,27 +1279,72 @@
 }
 
 @media (min-width: 80rem) {
-  .hero-backdrop__photo {
-    clip-path: polygon(0 0, 58% 0, 38% 100%, 0 100%);
+  .diagonal-backdrop__photo {
+    clip-path: polygon(0 0, var(--diagonal-cut-top) 0, var(--diagonal-cut-bottom) 100%, 0 100%);
   }
 
-  .hero-backdrop__scrim {
+  .diagonal-backdrop__scrim {
     background: linear-gradient(
       90deg,
       color-mix(in srgb, var(--color-stamp-chocolate) 84%, transparent) 0%,
-      color-mix(in srgb, var(--color-stamp-chocolate) 70%, transparent) 30%,
-      color-mix(in srgb, var(--color-stamp-chocolate) 20%, transparent) 48%,
-      transparent 58%
+      color-mix(in srgb, var(--color-stamp-chocolate) 70%, transparent) var(--diagonal-scrim-mid),
+      color-mix(in srgb, var(--color-stamp-chocolate) 20%, transparent) var(--diagonal-scrim-soft),
+      transparent var(--diagonal-cut-top)
     );
   }
 
-  .hero-backdrop__seam {
-    clip-path: polygon(58% 0, 58.4% 0, 38.4% 100%, 38% 100%);
+  .diagonal-backdrop__seam {
+    clip-path: polygon(
+      var(--diagonal-cut-top) 0,
+      calc(var(--diagonal-cut-top) + 0.4%) 0,
+      calc(var(--diagonal-cut-bottom) + 0.4%) 100%,
+      var(--diagonal-cut-bottom) 100%
+    );
+  }
+}
+
+/* Stamp canvas backdrop: a clean diagonal edge, no gold seam and no fade.
+   Below md it's a short strip above the steps with a diagonal bottom edge;
+   from md it's anchored to the right, under the "8 Steps to Print" sidebar,
+   with one chocolate scrim for the whole photo, and its edge (same slant as
+   the homepage hero cut) runs through the middle of the steps' right column.
+   The edge position is mirrored in STAMP_BACKDROP_EDGE (stampBackdrops.ts),
+   which the Upload step's split-tone text uses to switch colour on it. */
+.stamp-backdrop__photo {
+  clip-path: polygon(0 0, 100% 0, 100% 66%, 0 96%);
+}
+
+.stamp-backdrop__scrim {
+  background: color-mix(in srgb, var(--color-stamp-chocolate) 74%, transparent);
+}
+
+@media (min-width: 48rem) {
+  .stamp-backdrop__photo {
+    clip-path: polygon(70% 0, 100% 0, 100% 100%, 60% 100%);
+  }
+}
+
+@media (min-width: 80rem) {
+  .diagonal-backdrop--mirrored .diagonal-backdrop__photo {
+    clip-path: polygon(var(--diagonal-cut-top) 0, 100% 0, 100% 100%, var(--diagonal-cut-bottom) 100%);
+  }
+
+  .diagonal-backdrop--mirrored .diagonal-backdrop__scrim {
+    background: color-mix(in srgb, var(--color-stamp-chocolate) 45%, transparent);
+  }
+
+  .diagonal-backdrop--mirrored .diagonal-backdrop__seam {
+    clip-path: polygon(
+      calc(var(--diagonal-cut-top) - 0.4%) 0,
+      var(--diagonal-cut-top) 0,
+      var(--diagonal-cut-bottom) 100%,
+      calc(var(--diagonal-cut-bottom) - 0.4%) 100%
+    );
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-backdrop__photo-img {
+  .diagonal-backdrop__photo-img {
     animation: none;
   }
 }

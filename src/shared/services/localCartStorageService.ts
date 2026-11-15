@@ -31,9 +31,17 @@ export type LocalCartItemT = {
    * to that account, so checking it out needs that login.
    */
   mergedInto?: string;
+  /** When it was copied (ms); a cart fetched before then may not have it yet. */
+  mergedAt?: number;
 };
 
-export type NewLocalCartItemT = Omit<LocalCartItemT, "id" | "createdAt" | "isSelected" | "mergedInto">;
+export type NewLocalCartItemT = Omit<
+  LocalCartItemT,
+  "id" | "createdAt" | "isSelected" | "mergedInto" | "mergedAt"
+>;
+
+/** A line of an account's database cart, matched to local lines by product and variant. */
+export type AccountCartLineT = Pick<LocalCartItemT, "productId" | "variantId" | "quantity">;
 
 type LocalCartDataT = {
   items: LocalCartItemT[];
@@ -169,9 +177,42 @@ export class LocalCartStorageService {
     const merged = new Set(itemIds);
     writeItems(
       this.getItems().map((item) =>
-        merged.has(item.id) ? { ...item, mergedInto: accountId } : item
+        merged.has(item.id) ? { ...item, mergedInto: accountId, mergedAt: Date.now() } : item
       ),
     );
+  }
+
+  /**
+   * Keeps the lines copied into this account in step with its cart, as
+   * fetched at `fetchedAt`: a line the account removed or paid for is
+   * dropped, and a lowered quantity is lowered here too. Otherwise the bag
+   * would show it after logout while no login could check it out. Lines
+   * merged after the fetch started are left alone (the merge may still run).
+   */
+  static syncMergedItems(
+    accountId: string,
+    accountLines: readonly AccountCartLineT[],
+    fetchedAt: number,
+  ): void {
+    if (!isBrowser()) return;
+    const items = this.getItems();
+    const quantities = new Map(
+      accountLines.map((line) => [`${line.productId}:${line.variantId}`, line.quantity]),
+    );
+    const isSynced = (item: LocalCartItemT) =>
+      item.mergedInto === accountId && (item.mergedAt ?? 0) < fetchedAt;
+
+    const next = items
+      .map((item) => {
+        if (!isSynced(item)) return item;
+        const accountQuantity = quantities.get(`${item.productId}:${item.variantId}`) ?? 0;
+        return { ...item, quantity: Math.min(item.quantity, accountQuantity) };
+      })
+      .filter((item) => item.quantity > 0);
+
+    const changed = next.length !== items.length ||
+      next.some((item, index) => item.quantity !== items[index].quantity);
+    if (changed) writeItems(next);
   }
 
   /** Drops the items that were selected for checkout (after they were paid for). */

@@ -10,4 +10,9 @@ describe("SecureCheckoutNotice", () => {
       expect(screen.getByRole("img", { name: method })).toBeInTheDocument();
     }
   });
+
+  it("presents all payment methods as live (no coming-soon tags)", () => {
+    renderWithIntl(<SecureCheckoutNotice />);
+    expect(screen.queryByText("Soon")).not.toBeInTheDocument();
+  });
 });

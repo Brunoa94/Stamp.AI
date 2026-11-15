@@ -1,13 +1,14 @@
 /**
  * OrdersLayout
  *
- * Page shell for the luxury brutalist checkout:
- * - Off-white surface, heading font family, chocolate text
- * - Two-column layout: forms (left) and sticky order summary (right)
+ * Page shell for the orders page:
+ * - Header band: the shared diagonal photo backdrop behind the title
+ * - Off-white surface with chocolate text for the filters and orders below
  */
 
 import { PropsWithChildren, ReactNode } from "react";
 import { PageContainer } from "@/shared/ui/PageContainer";
+import { PageHeaderBand } from "@/shared/ui/PageHeaderBand";
 
 interface OrdersLayoutPropsI extends PropsWithChildren {
   header: ReactNode;
@@ -16,10 +17,12 @@ interface OrdersLayoutPropsI extends PropsWithChildren {
 export function OrdersLayout({ header, children }: OrdersLayoutPropsI) {
   return (
     <div className="min-h-screen bg-(--color-stamp-off-white) text-(--color-stamp-chocolate) pt-24">
+      <PageHeaderBand src="/backdrops/hoodie-milan.jpg" imageClassName="object-[center_30%]">
+        {header}
+      </PageHeaderBand>
       <div className="px-6 pb-24 pt-12 lg:px-12 xl:px-24">
         <PageContainer className="mx-auto max-w-screen-2xl">
-          {header}
-          <div className="mt-4 gap-12 lg:gap-16">{children}</div>
+          {children}
         </PageContainer>
       </div>
     </div>

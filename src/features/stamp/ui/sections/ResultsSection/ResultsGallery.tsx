@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import type { GeneratedResultType } from "../../../lib/types/stampFlowTypes";
+import { SplitToneText } from "../../components/SplitToneText";
 
 /**
  * ResultsGallery
@@ -33,8 +34,8 @@ export function ResultsGallery({
 
   return (
     <div className="mb-6 w-full max-w-[min(100%,45vh)] md:max-w-[min(100%,50vh)] lg:max-w-[min(100%,55vh)] mx-auto">
-      <Span variant="micro" className="text-(--color-stamp-taupe) mb-2 block">
-        {t("previousCreations")}
+      <Span variant="micro" className="mb-2 block">
+        <SplitToneText tone="muted">{t("previousCreations")}</SplitToneText>
       </Span>
       <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-(--color-stamp-divider) scrollbar-track-transparent">
         {results.map((result, index) => {

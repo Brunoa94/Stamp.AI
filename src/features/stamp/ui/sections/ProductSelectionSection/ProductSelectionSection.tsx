@@ -9,7 +9,7 @@ import {
   useStampProductSelection,
   useStampCustomization,
 } from "../../../lib/hooks/useStampSelectors";
-import { groupStampProducts } from "../../../lib/helpers/groupStampProducts";
+import { isClothingProduct } from "../../../lib/helpers/productCategoryDetector";
 import { FALLBACK_PRODUCT_PRICE_CENTS } from "../../../lib/constants/productPricing";
 import { ProductGrid } from "./ProductGrid";
 import { ProductSelectionContent } from "./ProductSelectionContent";
@@ -89,8 +89,21 @@ function ProductSelectionSectionComponent() {
     [visibleProducts],
   );
 
-  // Group products into clothing (apparel) and accessories for the selector
-  const productSections = groupStampProducts(catalogProducts);
+  // Group products into clothing (apparel) and accessories based on display title
+  const { clothingProducts, accessoryProducts } = useMemo(() => {
+    const clothing: CatalogProductMappedType[] = [];
+    const accessories: CatalogProductMappedType[] = [];
+
+    for (const product of catalogProducts) {
+      if (isClothingProduct(product.name)) {
+        clothing.push(product);
+      } else {
+        accessories.push(product);
+      }
+    }
+
+    return { clothingProducts: clothing, accessoryProducts: accessories };
+  }, [catalogProducts]);
 
   // Prefetch variants (colors & sizes) for all products when grid loads
   usePrefetchBlueprintVariants(catalogProducts);
@@ -137,7 +150,8 @@ function ProductSelectionSectionComponent() {
         onContinue={nextStep}
       />
       <ProductGrid
-        sections={productSections}
+        clothingProducts={clothingProducts}
+        accessoryProducts={accessoryProducts}
         selectedProduct={selectedProduct}
         isLoading={isLoading}
         isError={isError}

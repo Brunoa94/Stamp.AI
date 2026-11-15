@@ -3,6 +3,7 @@ import { Label } from "@/features/ui/label";
 import { Span } from "@/features/ui/span";
 import { InfoTooltip } from "@/features/ui/info-tooltip";
 import { Slider } from "@/features/ui/slider";
+import { SplitToneText } from "../../components/SplitToneText";
 
 /**
  * PreservationSlider
@@ -23,13 +24,17 @@ export function PreservationSlider({ value, onChange }: PropsI) {
       <div className="flex items-center gap-2 mb-4">
         <Label
           htmlFor="preservation"
-          className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe)"
+          className="text-[10px] font-bold uppercase tracking-widest"
         >
-          {t("preservationLabel")}
+          <SplitToneText tone="muted">{t("preservationLabel")}</SplitToneText>
         </Label>
-        <InfoTooltip content={t("preservationTooltip")} />
+        <InfoTooltip
+          content={t("preservationTooltip")}
+          className="rounded-full bg-white p-0.5"
+        />
       </div>
-      <div className="flex items-center gap-4">
+      {/* White fill from md so the track and labels read on the backdrop photo */}
+      <div className="flex items-center gap-4 md:bg-white md:px-3 md:py-2">
         <Span
           variant="micro"
           className="text-(--color-stamp-taupe)/40"

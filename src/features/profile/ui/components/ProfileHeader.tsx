@@ -15,21 +15,21 @@ export function ProfileHeader() {
   const t = useTranslations("profile.header");
 
   return (
-    <header>
+    <header className="hero-copy">
       <Heading
         as="h1"
         variant="panelTitle"
-        className="text-(--color-stamp-chocolate) mb-4"
+        className="text-(--color-stamp-off-white) mb-4"
       >
         {t.rich("title", {
           accent: (chunks) => (
-            <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
+            <Span variant="serif" className="text-(--color-stamp-gold-light)">
               {chunks}
-            </span>
+            </Span>
           ),
         })}
       </Heading>
-      <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
+      <Paragraph variant="sm" className="text-(--color-stamp-cream)">
         {t("subtitle")}
       </Paragraph>
     </header>

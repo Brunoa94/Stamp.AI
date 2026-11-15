@@ -6,6 +6,7 @@ import { Paragraph } from "@/features/ui/paragraph";
 import { Button } from "@/features/ui/button";
 import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction";
 import { UploadInfo } from "./UploadInfo";
+import { SplitToneText } from "../../components/SplitToneText";
 
 /**
  * UploadContent
@@ -77,25 +78,26 @@ export function UploadContent({
 
   return (
     <div className="p-6 pb-28 md:pb-6 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center">
-      <Heading
-        as="h2"
-        variant="panelTitle"
-        className="text-(--color-stamp-chocolate) mb-4 md:mb-6"
-      >
-        {t.rich("title", {
-          accent: (chunks) => (
-            <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
-              {chunks}
-            </span>
-          ),
-        })}
+      {/* Title and description switch to light colours where they cross onto the backdrop photo */}
+      <Heading as="h2" variant="panelTitle" className="mb-4 md:mb-6">
+        <SplitToneText className="block pb-2 -mb-2">
+          {t.rich("title", {
+            accent: (chunks) => (
+              <SplitToneText
+                tone="accent"
+                className="inline-block pb-4 -mb-4 pr-2 -mr-2 font-serif italic lowercase font-light"
+              >
+                {chunks}
+              </SplitToneText>
+            ),
+          })}
+        </SplitToneText>
       </Heading>
 
-      <Paragraph
-        variant="card"
-        className="text-(--color-stamp-taupe) mb-6 md:mb-10 max-w-sm"
-      >
-        {t("description")}
+      <Paragraph variant="card" className="mb-6 md:mb-10 max-w-sm">
+        <SplitToneText tone="muted" className="block">
+          {t("description")}
+        </SplitToneText>
       </Paragraph>
 
       {/* File Info Row */}

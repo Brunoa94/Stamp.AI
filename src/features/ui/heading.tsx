@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
  * - preview        Mock app screen title in the homepage flow preview — 4xl→5xl, tight (Sanchez)
  * - cardCompact    Compact card title — xl (Sanchez)
  * - question       FAQ summary — 2xl→3xl (Sanchez)
+ * - faqQuestion    Homepage FAQ card question — xl→2xl (Inter, like the body)
  * - item           Product name / testimonial author — xl→2xl (Inter)
  * - itemCompact    Compact product name — base (Inter)
  * - price          Large price display — 2xl (Inter)
@@ -51,6 +52,7 @@ const headingVariants = {
   cardCompact: "font-heading font-normal text-xl tracking-tight leading-tight",
   question:
     "font-heading font-normal text-2xl md:text-3xl tracking-tight leading-tight",
+  faqQuestion: "font-body font-semibold text-xl md:text-2xl tracking-tight leading-snug",
   item: "font-body font-semibold text-xl md:text-2xl tracking-tight",
   itemCompact: "font-body font-semibold text-lg md:text-xl tracking-tight",
   price: "font-body font-bold text-xl md:text-2xl tracking-tight",

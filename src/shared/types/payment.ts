@@ -16,18 +16,6 @@ export type PaymentMethodT = "stripe" | "paypal" | "ideal";
 export type LegacyPaymentMethodT = "stripe" | "paypal" | "mollie";
 
 /**
- * Brand logo of a payment network or provider (Visa, PayPal, iDEAL...),
- * served from /public/payment-options. width/height carry the aspect ratio.
- */
-export type PaymentLogoT = {
-  id: string;
-  label: string;
-  src: string;
-  width: number;
-  height: number;
-};
-
-/**
  * Payment method option for UI display
  */
 export interface PaymentMethodOptionI {

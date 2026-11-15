@@ -44,7 +44,7 @@ export function ResultsActions({
         </Button>
         <Button
           onClick={onReSynthesize}
-          className="flex-1 bg-transparent text-(--color-stamp-chocolate) border border-(--color-stamp-divider) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 px-4 md:px-8 py-4 md:py-6 text-xs font-bold tracking-[0.2em] uppercase"
+          className="flex-1 bg-white text-(--color-stamp-chocolate) border border-(--color-stamp-divider) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 px-4 md:px-8 py-4 md:py-6 text-xs font-bold tracking-[0.2em] uppercase"
         >
           {t("reSynthesize")}
         </Button>

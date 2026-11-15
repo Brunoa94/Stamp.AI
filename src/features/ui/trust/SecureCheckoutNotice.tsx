@@ -1,5 +1,4 @@
-import { BadgeCheck, CreditCard, Lock, ShieldCheck } from "lucide-react";
-import { useId } from "react";
+import { CreditCard, Lock, RotateCcw, ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Heading } from "@/features/ui/heading";
@@ -12,11 +11,16 @@ import { PaymentLogo } from "./PaymentLogo";
 /**
  * SecureCheckoutNotice
  *
- * Payment-trust panel for the checkout, in the luxury card treatment: a
- * chocolate shield seal with the headline, three plain assurances about how
- * the payment is handled, and a cream "we accept" strip with the full-colour
- * logos of every method we take (cards via Stripe, PayPal, iDEAL via Mollie).
+ * Payment-trust panel for the checkout: a shield header stating how payment
+ * is handled, three short assurances (encryption, no stored card, the
+ * guarantee) and the full-colour logos of every accepted brand.
  */
+
+const ASSURANCES = [
+  { id: "encrypted", Icon: Lock },
+  { id: "noCard", Icon: CreditCard },
+  { id: "guarantee", Icon: RotateCcw },
+] as const;
 
 interface SecureCheckoutNoticeProps {
   className?: string;
@@ -24,74 +28,58 @@ interface SecureCheckoutNoticeProps {
 
 export function SecureCheckoutNotice({ className }: SecureCheckoutNoticeProps) {
   const t = useTranslations("trust.payment");
-  const titleId = useId();
 
   return (
-    <section
-      aria-labelledby={titleId}
+    <div
       className={cn(
-        "relative overflow-hidden border-2 border-(--color-stamp-chocolate)/15 bg-(--color-stamp-white) shadow-(--shadow-stamp-card)",
+        "border border-(--color-stamp-divider) border-l-4 border-l-(--color-stamp-success) bg-(--color-stamp-white)",
         className
       )}
     >
-      <div className="h-1 w-full bg-(--color-stamp-gold)" aria-hidden="true" />
-
-      <div className="flex flex-col gap-6 p-5 sm:p-6">
-        {/* Seal + headline */}
-        <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center bg-(--color-stamp-chocolate)">
-            <ShieldCheck className="h-6 w-6 text-(--color-stamp-gold-light)" aria-hidden="true" />
-          </div>
-          <div className="flex flex-col gap-1">
-            <Heading
-              as="h3"
-              variant="cardCompact"
-              className="text-(--color-stamp-chocolate)"
-            >
-              <span id={titleId}>{t("title")}</span>
-            </Heading>
-            <Paragraph variant="xs" className="text-(--color-stamp-taupe)">
-              {t("body")}
-            </Paragraph>
-          </div>
+      <div className="flex items-start gap-4 p-5">
+        <Span
+          unstyled
+          aria-hidden="true"
+          className="flex h-11 w-11 shrink-0 items-center justify-center bg-(--color-stamp-success) text-(--color-stamp-white)"
+        >
+          <ShieldCheck className="h-6 w-6" />
+        </Span>
+        <div className="flex flex-col gap-1">
+          <Heading as="h3" variant="cardCompact" className="text-(--color-stamp-chocolate)">
+            {t("title")}
+          </Heading>
+          <Paragraph variant="xs" className="text-(--color-stamp-taupe)">
+            {t("body")}
+          </Paragraph>
         </div>
-
-        {/* Assurances */}
-        <List className="grid gap-3 border-t border-(--color-stamp-divider) pt-5 sm:grid-cols-3">
-          <li className="flex items-center gap-2.5">
-            <Lock className="h-4 w-4 shrink-0 text-(--color-stamp-success)" aria-hidden="true" />
-            <Span variant="micro" className="font-bold text-(--color-stamp-chocolate)">
-              {t("encryptedTransmission")}
-            </Span>
-          </li>
-          <li className="flex items-center gap-2.5">
-            <CreditCard className="h-4 w-4 shrink-0 text-(--color-stamp-success)" aria-hidden="true" />
-            <Span variant="micro" className="font-bold text-(--color-stamp-chocolate)">
-              {t("noCardStored")}
-            </Span>
-          </li>
-          <li className="flex items-center gap-2.5">
-            <BadgeCheck className="h-4 w-4 shrink-0 text-(--color-stamp-success)" aria-hidden="true" />
-            <Span variant="micro" className="font-bold text-(--color-stamp-chocolate)">
-              {t("pciCompliant")}
-            </Span>
-          </li>
-        </List>
       </div>
 
-      {/* Accepted methods */}
-      <div className="flex flex-col gap-3 border-t border-(--color-stamp-divider) bg-(--color-stamp-cream) px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <Span variant="micro" className="font-bold tracking-[0.2em] text-(--color-stamp-taupe)">
+      <List className="grid gap-px border-y border-(--color-stamp-divider) bg-(--color-stamp-divider) sm:grid-cols-3">
+        {ASSURANCES.map(({ id, Icon }) => (
+          <li key={id} className="flex items-start gap-3 bg-(--color-stamp-cream)/40 p-4">
+            <Icon className="mt-0.5 h-4 w-4 shrink-0 text-(--color-stamp-success)" aria-hidden="true" />
+            <div className="flex flex-col gap-0.5">
+              <Span variant="sm" className="font-bold text-(--color-stamp-chocolate)">
+                {t(`assurances.${id}.title`)}
+              </Span>
+              <Paragraph variant="xs" className="text-(--color-stamp-taupe)">
+                {t(`assurances.${id}.body`)}
+              </Paragraph>
+            </div>
+          </li>
+        ))}
+      </List>
+
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-5 py-4">
+        <Span variant="micro" className="text-(--color-stamp-taupe)">
           {t("accept")}
         </Span>
-        <List className="flex flex-wrap items-center gap-2">
-          {ACCEPTED_PAYMENT_LOGOS.map((logo) => (
-            <li key={logo.id}>
-              <PaymentLogo logo={logo} />
-            </li>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {ACCEPTED_PAYMENT_LOGOS.map((logoId) => (
+            <PaymentLogo key={logoId} id={logoId} />
           ))}
-        </List>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }

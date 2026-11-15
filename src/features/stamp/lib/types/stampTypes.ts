@@ -88,3 +88,25 @@ export type CatalogProductMappedType = {
   price: number;
   providerName: string;
 };
+
+export type ProductSectionIdT = "apparel" | "accessories";
+
+// One option of the product step's section picker and the products it shows
+export type ProductSectionT = {
+  id: ProductSectionIdT;
+  products: CatalogProductMappedType[];
+  /** First product photo in the section, for its picker card */
+  imageUrl: string | null;
+};
+
+// Canvas backdrop photo, shown from `fromStep` until the next photo's phase
+export type StampBackdropPhotoT = {
+  src: string;
+  fromStep: number;
+};
+
+// Colour of a text element against the canvas backdrop's diagonal edge
+export type StampSplitToneT =
+  | { kind: "base" }
+  | { kind: "photo" }
+  | { kind: "split"; angleDeg: number; stopPct: number };

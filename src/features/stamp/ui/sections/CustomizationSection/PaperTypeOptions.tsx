@@ -32,7 +32,7 @@ export function PaperTypeOptions({
           key={paperType}
           variant="ghost"
           onClick={() => onSelectPaperType(paperType)}
-          className={`px-4 py-2 h-auto rounded-none border text-xs font-medium uppercase tracking-widest transition-colors duration-300 hover:bg-transparent ${
+          className={`px-4 py-2 h-auto rounded-none border bg-white hover:bg-white text-xs font-medium uppercase tracking-widest transition-colors duration-300 ${
             selectedPaperType === paperType
               ? "border-(--color-stamp-gold) text-(--color-stamp-chocolate)"
               : "border-(--color-stamp-divider) text-(--color-stamp-taupe)"

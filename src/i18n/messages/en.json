@@ -745,17 +745,16 @@
       "loadError": "Failed to load products",
       "loadErrorHint": "Please refresh the page and try again.",
       "empty": "No products available at this time.",
+      "apparel": "Apparel",
       "moreOptions": "More Options",
+      "accessories": "Accessories",
       "selectedBadge": "Selected",
       "qualityNote": "Premium quality, printed on demand",
       "customizeNext": "Customize colors and size in the next step",
-      "seeMore": "See more",
-      "seeLess": "See less",
-      "groupLabel": "Product category",
-      "groups": {
-        "clothing": "Apparel ({count})",
-        "accessories": "Accessories ({count})"
-      }
+      "showMore": "Show {count} more",
+      "showLess": "Show less",
+      "sectionPickerAria": "Product type",
+      "sectionCount": "{count, plural, one {# product} other {# products}}"
     },
     "customization": {
       "protocol": "Step 06 / Customize",
@@ -2025,10 +2024,24 @@
       "body": "Payments run through Stripe, PayPal and Mollie. We never see or store your card details.",
       "accept": "We accept",
       "sslSecured": "Secure Checkout",
+      "comingSoon": "Soon",
       "securePayment": "Secure Payment",
       "noCardStored": "Card details never stored",
       "encryptedTransmission": "Encrypted connection",
-      "pciCompliant": "PCI DSS certified processors"
+      "assurances": {
+        "encrypted": {
+          "title": "Encrypted end to end",
+          "body": "Your details travel over a secure, encrypted connection."
+        },
+        "noCard": {
+          "title": "We never see your card",
+          "body": "Card details go straight to the payment provider."
+        },
+        "guarantee": {
+          "title": "30-day guarantee",
+          "body": "Not right? We replace it or refund you."
+        }
+      }
     },
     "guarantee": {
       "title": "30-day guarantee",
