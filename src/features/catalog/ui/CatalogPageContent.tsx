@@ -63,8 +63,8 @@ export function CatalogPageContent({ sections }: PropsI) {
     <article className="pt-24">
       {/* Header band: diagonal photo on the right, as on the Shopping bag page */}
       <PageHeaderBand
-        src="/backdrops/kid-forest.jpg"
-        imageClassName="object-[center_30%]"
+        src="/backdrops/tee-skatepark.jpg"
+        imageClassName="object-[center_25%]"
         mirrored
       >
         <header className="space-y-4 text-shadow-lg xl:text-shadow-none">
