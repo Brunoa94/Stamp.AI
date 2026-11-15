@@ -26,7 +26,14 @@ export async function cleanAccountData(admin, id) {
     if (result.error?.code === 'PGRST205') console.warn(`Test schema missing optional audit table: ${table}`);
     else checked(result, `${table} cleanup`);
   }
-  const deletedUser = await admin.auth.admin.deleteUser(id);
+  // The page is still open during fixture teardown, and its coin refetch
+  // (get_user_coins locks the profile row) can race the cascading delete;
+  // Auth then answers 500 "Database error deleting user". Retry those.
+  let deletedUser = await admin.auth.admin.deleteUser(id);
+  for (let attempt = 1; attempt <= 3 && deletedUser.error?.status >= 500; attempt++) {
+    await new Promise(resolve => setTimeout(resolve, attempt * 1000));
+    deletedUser = await admin.auth.admin.deleteUser(id);
+  }
   // Recovery can resume after a prior run deleted the user but stopped before
   // marking the durable account ledger complete.
   if (deletedUser.error?.code !== 'user_not_found') checked(deletedUser, 'Isolated user cleanup');

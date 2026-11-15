@@ -22,8 +22,8 @@ export function CartLayout({ header, children }: CartLayoutPropsI) {
   return (
     <div className="min-h-screen bg-(--color-stamp-off-white) text-(--color-stamp-chocolate) pt-24">
       <PageHeaderBand
-        src="/backdrops/mug-window.jpg"
-        imageClassName="object-[center_30%]"
+        src="/backdrops/mug-kitchen.jpg"
+        imageClassName="object-[center_40%]"
         mirrored
       >
         {header}

@@ -28,6 +28,7 @@ Task-specific guidance lives in Claude Code skills under `.claude/skills/`. Clau
 | `seo`                      | Routes, page metadata, canonical/noindex, sitemap and robots, JSON-LD, heading structure: how the `src/features/seo` slice is used |
 | `review-frontend`          | `/review-frontend [changes \| pr <n> \| feature <slice>]`: runs the reviewer agents below on one scope and merges their findings |
 | `plan-feature`             | `/plan-feature [idea]`, manual only: reads the code, interviews you in up to 3 rounds, and writes a step-by-step, test-first plan to `docs/plans/`. The plan is built in a `.claude/worktrees/<slug>` worktree on a `feat/<slug>` branch from `dev` and ends with a pull request to `dev`, which also deletes the plan. |
+| `principle-redesign-from-first-principles` | A new requirement that contradicts an assumption the design is built on: redesign as if it had been there from the start, propagate it through types, docs and examples, deliver it incrementally. Not for additive features. |
 
 Rules that must always hold are not left to docs or skills: they are lint rules or hooks (see [guardrails.md](guardrails.md)).
 
@@ -39,7 +40,7 @@ Read-only reviewer subagents live in `.claude/agents/`. Each one preloads the sk
 | ----- | --------------- | ------ |
 | `qa-reviewer` | `test-driven-development`, `error-handling`, `accessibility`, `frontend-ui-engineering` | Runs eslint, related unit tests, knip and fallow on the scope; missing tests, unhandled states, error handling, a11y gaps lint can't see |
 | `seo-reviewer` | `seo` | Route registration, metadata, noindex, sitemap/robots, one `h1`, alt text, JSON-LD |
-| `perf-reviewer` | `performance-optimization` | Client boundaries, heavy imports, images/LCP, query bounds and waterfalls, memoization; `next build` route sizes when the scope touches a render path |
+| `perf-reviewer` | `performance-optimization` | Client boundaries, heavy imports, images/LCP, query bounds and waterfalls, memoization; `next build` route sizes and Chrome DevTools traces of the production build (LCP, CLS, TBT, INP) when the scope touches a render path |
 
 When a reviewer keeps reporting the same mechanical issue, turn it into a lint rule or hook instead.
 
