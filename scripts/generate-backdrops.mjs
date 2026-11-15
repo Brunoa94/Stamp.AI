@@ -22,7 +22,8 @@
  *   --products <list>    Comma-separated subset: hoodie,kid-tshirt,mug,tote,canvas
  *   --concepts <list>    Run hand-written briefs instead of random ones:
  *                        sports-brand,morning-coffee,football-team,luxury-hoodie,luxury-tote,
- *                        gym-hoodie-back,streetwear-tee,photo-canvas
+ *                        gym-hoodie-back,streetwear-tee,photo-canvas,orders-unboxing,
+ *                        profile-tote
  *   --seed <n>           Seed for the random picks; same seed, same prompts
  *   --model <id>         OpenAI image model (default gpt-image-2)
  *   --quality <q>        low | medium | high (default high)
@@ -425,6 +426,36 @@ const CONCEPTS = {
       'an outdoor concrete skate park at golden hour, graffiti-free smooth grey bowls, palm trees and a low city skyline behind, long warm shadows',
     camera: 'Shot on a 35mm lens at chest height, three-quarter body, the logo sharp and centred in the frame',
     grade: 'Warm Kodak Portra 400 film tones with a slight 1990s skate-magazine grain',
+  },
+  // public/backdrops/orders-unboxing.jpg is this image cropped to its left 1300px, so the
+  // print clears the title in the /orders header band on desktop.
+  'orders-unboxing': {
+    product: 'hoodie',
+    size: '1536x1024',
+    artwork:
+      'a large custom gouache portrait of a golden retriever lying in a meadow of wildflowers, warm saturated colours, soft painterly edges, centred on the chest and about 28 cm wide',
+    subject:
+      'a woman in her late 20s with wavy chestnut hair and a cream knit top, holding the hoodie up by its shoulders in front of her chest with both hands, the printed front facing the camera, looking down at it with a delighted smile; an opened kraft-paper shipping box with tissue paper on the table in front of her',
+    setting:
+      'a bright, calm living room with a pale plaster wall and a softly blurred window. The LEFT HALF of the frame is empty, uncluttered out-of-focus plaster wall with soft window light and no objects, reserved for a headline',
+    camera:
+      'Wide landscape shot on a 35mm lens from a few metres back. The woman, hoodie and box all sit between 55% and 85% of the frame width from the left; the centre of the printed artwork is at about 65% of the frame width and in the vertical middle of the frame; her face is in the upper third. Nothing important in the left 50% or the right 12% of the frame',
+    grade: 'Soft even daylight from a large window, warm natural colours, gentle editorial grade',
+  },
+  // public/backdrops/profile-sofia-tote.jpg is this image cropped to its left 1450px, so the
+  // print clears the title in the /profile header band on desktop.
+  'profile-tote': {
+    product: 'tote',
+    size: '1536x1024',
+    artwork:
+      'a vibrant personalised retro illustration of a young woman riding a bicycle with a basket full of flowers down a sunny Lisbon street with a yellow tram, flat warm colours in tangerine, teal and cream, with the name "SOFIA" hand-lettered in a bold rounded script beneath, filling the centre of the front panel',
+    subject:
+      'a woman in her early 30s with a dark curly bob and gold hoops, wearing a white linen shirt, standing and holding the tote up in front of her chest by both handles to show it off, the printed front facing the camera, smiling proudly',
+    setting:
+      'a bright, calm entrance hall with a warm off-white limewashed wall and soft daylight. The LEFT HALF of the frame is empty, uncluttered out-of-focus wall with no objects, reserved for a headline',
+    camera:
+      'Wide landscape shot on a 35mm lens from a few metres back. The woman and the tote sit between 55% and 85% of the frame width from the left; the printed artwork is in the vertical middle of the frame; her face is in the upper third. Nothing important in the left 50% or the right 12% of the frame',
+    grade: 'Soft even daylight, warm natural colours, gentle editorial grade',
   },
   'photo-canvas': {
     product: 'canvas',

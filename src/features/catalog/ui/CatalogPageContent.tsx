@@ -64,7 +64,7 @@ export function CatalogPageContent({ sections }: PropsI) {
       {/* Header band: diagonal photo on the right, as on the Shopping bag page */}
       <PageHeaderBand
         src="/backdrops/tee-skatepark.jpg"
-        imageClassName="object-[center_25%]"
+        imageClassName="object-[center_42%]"
         mirrored
       >
         <header className="space-y-4 text-shadow-lg xl:text-shadow-none">
