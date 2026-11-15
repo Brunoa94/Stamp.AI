@@ -1,16 +1,19 @@
 import type { StampBackdropPhotoT } from "../types/stampTypes";
 
 /**
- * Stamp canvas backdrop photos, one per phase of the flow.
- * Each photo shows from `fromStep` until the next one's phase starts;
- * moving into a new phase crossfades to its photo.
+ * Stamp canvas backdrop photos, one per step of the flow (00 hero has its own).
+ * Each photo shows from `fromStep` until the next one starts;
+ * moving to a new step crossfades to its photo.
  */
 export const STAMP_BACKDROP_PHOTOS: StampBackdropPhotoT[] = [
-  { src: "/home/hero-backdrop.jpg", fromStep: 0 }, // 01 upload (same photo as the homepage hero; 00 hero has its own)
-  { src: "/backdrops/hoodie-underground.jpg", fromStep: 2 }, // 02 synthesis, 03 generation
-  { src: "/backdrops/hoodie-track.jpg", fromStep: 4 }, // 04 results, 05 product
+  { src: "/backdrops/mug-window.jpg", fromStep: 0 }, // 01 upload
+  { src: "/backdrops/hoodie-underground.jpg", fromStep: 2 }, // 02 synthesis
+  { src: "/backdrops/kid-forest.jpg", fromStep: 3 }, // 03 generation
+  { src: "/backdrops/hoodie-track.jpg", fromStep: 4 }, // 04 results
+  { src: "/backdrops/coat-cathedral.jpg", fromStep: 5 }, // 05 product
   { src: "/backdrops/hoodie-gym.jpg", fromStep: 6 }, // 06 customize
-  { src: "/backdrops/canvas-living-room.jpg", fromStep: 7 }, // 07 production, 08 review
+  { src: "/backdrops/hoodie-milan.jpg", fromStep: 7 }, // 07 production
+  { src: "/backdrops/canvas-living-room.jpg", fromStep: 8 }, // 08 review
 ];
 
 /**
