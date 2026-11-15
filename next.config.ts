@@ -95,6 +95,10 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  experimental: {
+    agentUpgrade: "security",
+  },
+
   // The webpack dev servers used by the e2e/acceptance suites build into their
   // own directory. Sharing `.next/dev` with the default Turbopack dev server
   // leaves stale webpack artifacts that make Turbopack hang compiling /stamp.
