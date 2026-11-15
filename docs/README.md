@@ -39,7 +39,7 @@ Read-only reviewer subagents live in `.claude/agents/`. Each one preloads the sk
 | ----- | --------------- | ------ |
 | `qa-reviewer` | `test-driven-development`, `error-handling`, `accessibility`, `frontend-ui-engineering` | Runs eslint, related unit tests, knip and fallow on the scope; missing tests, unhandled states, error handling, a11y gaps lint can't see |
 | `seo-reviewer` | `seo` | Route registration, metadata, noindex, sitemap/robots, one `h1`, alt text, JSON-LD |
-| `perf-reviewer` | `performance-optimization` | Client boundaries, heavy imports, images/LCP, query bounds and waterfalls, memoization; `next build` route sizes when the scope touches a render path |
+| `perf-reviewer` | `performance-optimization` | Client boundaries, heavy imports, images/LCP, query bounds and waterfalls, memoization; `next build` route sizes and Chrome DevTools traces of the production build (LCP, CLS, TBT, INP) when the scope touches a render path |
 
 When a reviewer keeps reporting the same mechanical issue, turn it into a lint rule or hook instead.
 

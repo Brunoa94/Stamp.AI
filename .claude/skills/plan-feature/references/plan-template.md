@@ -66,7 +66,7 @@ cd .claude/worktrees/<feature-slug> && npm install
 
 ## Finish
 
-After the last step and the acceptance tests pass, run `/review-frontend changes` and fix what it reports, then push `feat/<feature-slug>` and open a pull request against `dev` (not `main`). Delete this plan file in that pull request. After it merges, remove the worktree from the main checkout with `git worktree remove .claude/worktrees/<feature-slug>`.
+After the last step and the acceptance tests pass, run `/review-frontend changes` and fix what it reports, then push `feat/<feature-slug>` and open a pull request against `dev` (not `main`). Delete this plan file in that pull request. Once the pull request is open, go back to the main checkout and remove the worktree: `git -C .claude/worktrees/<feature-slug> status` must be clean, then `git worktree remove .claude/worktrees/<feature-slug>`.
 
 ## Open questions
 

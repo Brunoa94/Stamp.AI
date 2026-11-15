@@ -41,7 +41,7 @@ Measure before optimizing. Performance work without measurement is guessing, and
 
 Use both kinds of data:
 
-- **Synthetic:** Lighthouse and the DevTools Performance tab (or a Chrome DevTools MCP performance trace). Controlled and reproducible; best for isolating an issue. Always measure a production build (`npm run build && npm run start`) — `next dev` is not representative.
+- **Synthetic:** Lighthouse and the DevTools Performance tab (or a Chrome DevTools MCP performance trace: the `chrome-devtools` server is registered in `.mcp.json`). Controlled and reproducible; best for isolating an issue. Always measure a production build (`npm run build && npm run start`) — `next dev` is not representative.
 - **Real users:** Core Web Vitals are already captured by `src/shared/ui/WebVitalsReporter.tsx` → `src/lib/observability/webVitals.ts` and sent to Sentry. Check Sentry before and after a fix to confirm users actually got faster.
 
 **Backend:** Sentry performance traces (sampling via `NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE`), Supabase query performance in the dashboard, and `console.time` around a suspect call for a quick check.
