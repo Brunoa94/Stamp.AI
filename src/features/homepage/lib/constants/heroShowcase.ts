@@ -53,7 +53,6 @@ export const HERO_ROTATING_WORD_INTERVAL_MS = 2200;
 
 /** Headline words in order; the first is what screen readers hear */
 export const HERO_ROTATING_WORD_IDS: readonly HeroRotatingWordIdType[] = [
-  "thing",
   "tees",
   "totes",
   "mugs",

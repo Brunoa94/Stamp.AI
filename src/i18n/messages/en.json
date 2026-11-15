@@ -141,7 +141,6 @@
       "brandLabel": "Stamp.ai",
       "headline": "From imagination<br></br>to <word></word>",
       "rotatingWords": {
-        "thing": "thing",
         "tees": "tees",
         "totes": "totes",
         "mugs": "mugs",
@@ -746,14 +745,17 @@
       "loadError": "Failed to load products",
       "loadErrorHint": "Please refresh the page and try again.",
       "empty": "No products available at this time.",
-      "apparel": "Apparel",
       "moreOptions": "More Options",
-      "accessories": "Accessories",
       "selectedBadge": "Selected",
       "qualityNote": "Premium quality, printed on demand",
       "customizeNext": "Customize colors and size in the next step",
-      "showMore": "Show {count} more",
-      "showLess": "Show less"
+      "seeMore": "See more",
+      "seeLess": "See less",
+      "groupLabel": "Product category",
+      "groups": {
+        "clothing": "Apparel ({count})",
+        "accessories": "Accessories ({count})"
+      }
     },
     "customization": {
       "protocol": "Step 06 / Customize",
@@ -1277,6 +1279,16 @@
       },
       "footer": {
         "noAccount": "Don't have an account? <link>Create one now</link>"
+      },
+      "panel": {
+        "eyebrow": "Members' atelier",
+        "heading": "Welcome back to your <accent>studio</accent>",
+        "lead": "Your designs, credits and orders are waiting where you left them.",
+        "perks": {
+          "designs": "Every design you've generated",
+          "orders": "Order history and live tracking",
+          "checkout": "Faster checkout, details saved"
+        }
       }
     },
     "passwordReset": {
@@ -1364,6 +1376,16 @@
       },
       "footer": {
         "haveAccount": "Already have an account? <link>Log in</link>"
+      },
+      "panel": {
+        "eyebrow": "Join the atelier",
+        "heading": "Your ideas, <accent>stamped</accent> on fabric",
+        "lead": "Create an account to design with AI and have it printed on premium apparel.",
+        "perks": {
+          "generate": "Generate original designs with AI",
+          "print": "Printed on premium garments",
+          "ship": "Shipped straight to your door"
+        }
       },
       "success": {
         "srTitle": "Registration Successful",
@@ -2003,10 +2025,10 @@
       "body": "Payments run through Stripe, PayPal and Mollie. We never see or store your card details.",
       "accept": "We accept",
       "sslSecured": "Secure Checkout",
-      "comingSoon": "Soon",
       "securePayment": "Secure Payment",
       "noCardStored": "Card details never stored",
-      "encryptedTransmission": "Encrypted connection"
+      "encryptedTransmission": "Encrypted connection",
+      "pciCompliant": "PCI DSS certified processors"
     },
     "guarantee": {
       "title": "30-day guarantee",

@@ -3,7 +3,7 @@
 import { UserPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { ReactNode } from "react";
-import { RegisterForm } from "../../register/RegisterForm";
+import { LazyRegisterForm } from "../../components/LazyRegisterForm";
 import { AuthDialog } from "../../components/AuthDialog";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
@@ -18,7 +18,7 @@ export function Register({ className, children }: RegisterProps) {
 
   return (
     <AuthDialog
-      form={<RegisterForm />}
+      form={<LazyRegisterForm />}
       triggerAriaLabel={t("openDialogAria")}
       className={className}
       defaultTrigger={

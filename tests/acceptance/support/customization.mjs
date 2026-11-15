@@ -3,11 +3,22 @@ import { generate } from './browser.mjs';
 import { required } from './environment.mjs';
 
 // The product grid renders after the step transition; wait for it before
-// deciding whether the product sits behind "Show more", or the check races it.
+// deciding whether the product sits in another category, or the check races it.
 export async function selectProduct(page, product) {
-  const showMore = page.locator('#step-5').getByRole('button', { name: /show .* more/i });
-  await expect(product.or(showMore).first()).toBeVisible();
-  if (!(await product.isVisible())) await showMore.click();
+  const category = page.locator('#step-5').getByRole('combobox', { name: /product category/i });
+  await expect(product.or(category).first()).toBeVisible();
+  if (!(await product.isVisible())) {
+    // Try each category until the product shows. Options are picked by index,
+    // since Radix only marks an option selected once it has focus.
+    await category.click();
+    await expect(page.getByRole('option').first()).toBeVisible();
+    const count = await page.getByRole('option').count();
+    await page.keyboard.press('Escape');
+    for (let i = 0; i < count && !(await product.isVisible()); i++) {
+      await category.click();
+      await page.getByRole('option').nth(i).click();
+    }
+  }
   await product.click();
 }
 export async function customize(page, env, productName) {

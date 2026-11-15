@@ -2,7 +2,8 @@
  * HomeFaqSection
  *
  * FAQ accordion built on native <details>/<summary> (keyboard accessible,
- * zero JS) with a contact support CTA.
+ * zero JS) with a contact support CTA. Questions use the body font, like
+ * their answers.
  */
 
 import { useTranslations } from "next-intl";
@@ -43,7 +44,11 @@ export function HomeFaqSection() {
               className="group border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-colors duration-300 open:border-(--color-stamp-gold) hover:border-(--color-stamp-gold)"
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-6 p-6 lg:p-8 [&::-webkit-details-marker]:hidden">
-                <Heading as="h3" variant="question">
+                <Heading
+                  as="h3"
+                  variant="item"
+                  className="leading-snug text-(--color-stamp-chocolate)"
+                >
                   {t(`items.${faq.id}.question`)}
                 </Heading>
                 <ChevronRight
