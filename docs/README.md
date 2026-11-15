@@ -28,6 +28,7 @@ Task-specific guidance lives in Claude Code skills under `.claude/skills/`. Clau
 | `seo`                      | Routes, page metadata, canonical/noindex, sitemap and robots, JSON-LD, heading structure: how the `src/features/seo` slice is used |
 | `review-frontend`          | `/review-frontend [changes \| pr <n> \| feature <slice>]`: runs the reviewer agents below on one scope and merges their findings |
 | `plan-feature`             | `/plan-feature [idea]`, manual only: reads the code, interviews you in up to 3 rounds, and writes a step-by-step, test-first plan to `docs/plans/`. The plan is built in a `.claude/worktrees/<slug>` worktree on a `feat/<slug>` branch from `dev` and ends with a pull request to `dev`, which also deletes the plan. |
+| `principle-redesign-from-first-principles` | A new requirement that contradicts an assumption the design is built on: redesign as if it had been there from the start, propagate it through types, docs and examples, deliver it incrementally. Not for additive features. |
 
 Rules that must always hold are not left to docs or skills: they are lint rules or hooks (see [guardrails.md](guardrails.md)).
 
