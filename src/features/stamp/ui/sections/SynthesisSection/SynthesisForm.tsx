@@ -25,7 +25,7 @@ import { SplitToneText } from "../../components/SplitToneText";
  * Coins Integration:
  * - Shows login overlay if not authenticated (with skip option)
  * - Shows no coins overlay if coins depleted (with skip option)
- * - Displays coins count near Generate button
+ * - Displays coins count above the title
  * - Disables Generate button if no coins or not authenticated
  */
 
@@ -87,6 +87,9 @@ export function SynthesisForm({
 
   return (
     <div className="relative p-6 pb-36 md:pb-6 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-white md:bg-transparent">
+      {isAuthenticated && !isCoinsError && (
+        <CoinsDisplay className="mb-4 w-fit rounded-full bg-white px-3 py-1.5 md:mb-6" />
+      )}
       <Heading as="h2" variant="panelTitle" className="mb-4 md:mb-6">
         <SplitToneText className="block pb-2 -mb-2">
           {t.rich("title", {
@@ -136,11 +139,8 @@ export function SynthesisForm({
         </div>
       </div>
 
-      {/* Generate Button with Coins Display - hidden on mobile */}
+      {/* Generate Button - hidden on mobile */}
       <div className="hidden md:block space-y-4">
-        {isAuthenticated && !isCoinsError && (
-          <CoinsDisplay className="ml-auto w-fit justify-end rounded-full bg-white px-3 py-1.5" />
-        )}
         <Button
           onClick={onGenerate}
           disabled={isGenerating || !prompt.trim() || !canGenerate}
@@ -165,12 +165,6 @@ export function SynthesisForm({
         )}
       </div>
 
-      {/* Mobile: show coins display above sticky footer */}
-      {isAuthenticated && !isCoinsError && (
-        <div className="md:hidden mb-4">
-          <CoinsDisplay className="justify-center" />
-        </div>
-      )}
       {showInlineSkip && (
         <Button
           variant="ghost"

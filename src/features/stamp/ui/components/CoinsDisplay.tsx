@@ -15,7 +15,7 @@ interface CoinsDisplayProps {
  *
  * Shows the user's current coin balance (e.g., "3 Coins available").
  * Displays a skeleton loader while fetching.
- * Positioned near the Generate button in SynthesisSection.
+ * Shown above the title in SynthesisSection.
  */
 export function CoinsDisplay({ className }: CoinsDisplayProps) {
   const t = useTranslations("stamp.errors.coins");
