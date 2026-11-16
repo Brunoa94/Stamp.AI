@@ -1,11 +1,13 @@
-import { DialogClose } from "@/features/ui/dialog";
-import { Dialog, DialogTrigger } from "@/features/ui/dialog";
 import { Button } from "@/features/ui/button";
 import { useTranslations } from "next-intl";
-import { LazyLoginForm } from "../../components/LazyLoginForm";
 import { Paragraph } from "@/features/ui/paragraph";
 
-export function RegisterLoginFooter() {
+interface PropsI {
+  /** Swaps the open dialog to the Login form. */
+  onSwitchToLogin: () => void;
+}
+
+export function RegisterLoginFooter({ onSwitchToLogin }: PropsI) {
   const t = useTranslations("auth.register.footer");
 
   return (
@@ -14,19 +16,14 @@ export function RegisterLoginFooter() {
       <Paragraph unstyled className="text-sm font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
         {t.rich("haveAccount", {
           link: (chunks) => (
-            <Dialog>
-              <DialogClose asChild>
-                <DialogTrigger asChild>
-                  <Button
-                    variant="link"
-                    className="h-auto p-0 font-bold text-(--color-stamp-gold-text) hover:text-(--color-stamp-chocolate) hover:underline ml-1"
-                  >
-                    {chunks}
-                  </Button>
-                </DialogTrigger>
-              </DialogClose>
-              <LazyLoginForm />
-            </Dialog>
+            <Button
+              type="button"
+              variant="link"
+              onClick={onSwitchToLogin}
+              className="ml-1 h-auto p-0 font-[family-name:inherit] text-base font-bold uppercase tracking-widest text-(--color-stamp-gold-text) hover:text-(--color-stamp-chocolate) hover:underline"
+            >
+              {chunks}
+            </Button>
           ),
         })}
       </Paragraph>

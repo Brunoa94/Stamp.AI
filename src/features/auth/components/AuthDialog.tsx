@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState, useEffect, useRef } from "react";
+import { Fragment, ReactNode, useState, useEffect, useRef } from "react";
 import { Button } from "@/features/ui/button";
 import { Dialog, DialogTrigger } from "@/features/ui/dialog";
 import { useUser } from "@/shared/queries/authQueries";
@@ -14,7 +14,9 @@ import { isRegisteredUser } from "@/shared/helpers/authIdentity";
  * Login and Register compose this instead of each recreating the
  * Dialog + DialogTrigger wiring.
  *
- * Auto-closes when authentication state changes (user logs in).
+ * Auto-closes when authentication state changes (user logs in). The form
+ * remounts on every open, so it starts on its first view again after the
+ * user switched between Login and Sign Up and closed the dialog.
  */
 
 interface PropsI {
@@ -37,6 +39,7 @@ export function AuthDialog({
   className,
 }: PropsI) {
   const [open, setOpen] = useState(false);
+  const [openCount, setOpenCount] = useState(0);
   const { data: user } = useUser();
   const isRegistered = isRegisteredUser(user);
   const wasOpenRef = useRef(false);
@@ -50,8 +53,13 @@ export function AuthDialog({
     wasOpenRef.current = open;
   }, [isRegistered, open]);
 
+  const handleOpenChange = (next: boolean) => {
+    if (next) setOpenCount((count) => count + 1);
+    setOpen(next);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild suppressHydrationWarning>
         {children ? (
           // Uses unstyled variant for triggers whose appearance is fully
@@ -68,7 +76,7 @@ export function AuthDialog({
           defaultTrigger
         )}
       </DialogTrigger>
-      {form}
+      <Fragment key={openCount}>{form}</Fragment>
     </Dialog>
   );
 }
