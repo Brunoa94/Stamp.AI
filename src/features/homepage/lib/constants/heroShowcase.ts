@@ -19,17 +19,24 @@ export const HERO_RIBBON_LIFESTYLE: readonly string[] = [
   "/promo-sections/brand-logo/luxury-brand.png",
 ];
 
+const INSPIRATION = "/products-images/inspiration";
+
 /** Finished product shots, for the second ribbon row */
 export const HERO_RIBBON_PRODUCTS: readonly string[] = [
   "/home/1-b.png",
+  `${INSPIRATION}/kid-tshirt-drawing.webp`,
   "/products-images/tote/tote-b-printed.png",
   "/home/4-b.png",
+  `${INSPIRATION}/mug-couple-cartoon.webp`,
   "/products-images/kid t-shirt/kid-t-shirt-a-printed.png",
   "/home/5-b.png",
+  `${INSPIRATION}/tote-botanical.webp`,
   "/products-images/tote/tote-c-printed.png",
   "/home/2-b.png",
+  `${INSPIRATION}/hoodie-pet-portrait.webp`,
   "/products-images/kid t-shirt/kid-t-shirt-b-printed.png",
   "/home/6-b.png",
+  `${INSPIRATION}/canvas-pet-renaissance.webp`,
   "/products-images/tote/tote-a-printed.png",
   "/home/3-b.png",
 ];

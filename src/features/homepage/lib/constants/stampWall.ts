@@ -46,6 +46,21 @@ const HERO_STAMP_WALL_TILES: readonly StampWallTileT[] = [
   { id: "hoodie-l", src: `${WALL}/hoodie-l-front.webp` },
   { id: "canvas-e", src: `${WALL}/canvas-e-side.webp` },
   { id: "tote-g", src: `${WALL}/tote-g-front.webp` },
+  { id: "mug-pet-portrait", src: `${WALL}/mug-pet-portrait.webp` },
+  { id: "kid-tshirt-drawing", src: `${WALL}/kid-tshirt-drawing.webp` },
+  { id: "tote-botanical", src: `${WALL}/tote-botanical.webp` },
+  { id: "hoodie-pet-portrait", src: `${WALL}/hoodie-pet-portrait.webp` },
+  { id: "canvas-pet-renaissance", src: `${WALL}/canvas-pet-renaissance.webp` },
+  { id: "mug-couple-cartoon", src: `${WALL}/mug-couple-cartoon.webp` },
+  { id: "kid-tshirt-birthday", src: `${WALL}/kid-tshirt-birthday.webp` },
+  { id: "tote-pet-line-art", src: `${WALL}/tote-pet-line-art.webp` },
+  { id: "hoodie-couple", src: `${WALL}/hoodie-couple.webp` },
+  { id: "canvas-family", src: `${WALL}/canvas-family.webp` },
+  { id: "mug-watercolor-cat", src: `${WALL}/mug-watercolor-cat.webp` },
+  { id: "kid-tshirt-space", src: `${WALL}/kid-tshirt-space.webp` },
+  { id: "tote-beach-quote", src: `${WALL}/tote-beach-quote.webp` },
+  { id: "hoodie-mountain", src: `${WALL}/hoodie-mountain.webp` },
+  { id: "canvas-wedding", src: `${WALL}/canvas-wedding.webp` },
 ];
 
 /**
