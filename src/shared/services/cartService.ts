@@ -154,6 +154,40 @@ export class CartService {
   }
 
   /**
+   * Total quantity in the user's active cart, for the header badge. Reads
+   * only `quantity` and never creates a cart (unlike `getOrCreateCart`), so
+   * it is safe to call on every page.
+   */
+  static async getActiveCartItemCount(userId: string): Promise<number> {
+    try {
+      const { data, error } = await this.getSupabase()
+        .from("carts")
+        .select("id, cart_items ( quantity )")
+        .eq("user_id", userId)
+        .eq("status", "active")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        throw ErrorClient.handleError({
+          error,
+          service: "Cart",
+          action: "Get Active Cart Item Count",
+        });
+      }
+
+      return CartServiceMapper.sumItemQuantities(data?.cart_items ?? []);
+    } catch (error) {
+      throw ErrorClient.handleError({
+        error,
+        service: "Cart",
+        action: "Get Active Cart Item Count",
+      });
+    }
+  }
+
+  /**
    * Get the cart as it is being checked out: only the items the user
    * selected on the cart page (`is_selected`). Use this for order creation,
    * payment-recovery snapshots and post-payment cleanup.

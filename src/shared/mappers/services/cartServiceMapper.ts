@@ -45,6 +45,11 @@ export class CartServiceMapper {
     };
   }
 
+  /** Total units across cart lines; a line with no quantity counts as one. */
+  static sumItemQuantities(items: { quantity?: number | null }[]): number {
+    return items.reduce((count, item) => count + (item.quantity ?? 1), 0);
+  }
+
   /**
    * Map cart items to cart summary
    */
@@ -53,9 +58,7 @@ export class CartServiceMapper {
       return sum + ((item.unit_price ?? 0) * (item.quantity ?? 1));
     }, 0);
 
-    const itemCount = items.reduce((count, item) => {
-      return count + (item.quantity ?? 1);
-    }, 0);
+    const itemCount = this.sumItemQuantities(items);
 
     return {
       subtotal,
@@ -69,8 +72,8 @@ export class CartServiceMapper {
    */
   static mapCartItemRowToCartItem(
     item: CartItemRow,
-    product?: any,
-    variant?: any
+    product?: CartItem["product"],
+    variant?: CartItem["variant"]
   ): CartItem {
     return {
       ...item,
@@ -99,9 +102,7 @@ export class CartServiceMapper {
       return sum + this.calculateItemTotal(item);
     }, 0);
 
-    const itemCount = items.reduce((count, item) => {
-      return count + (item.quantity ?? 1);
-    }, 0);
+    const itemCount = this.sumItemQuantities(items);
 
     // Shipping: free for orders >= €60, otherwise €4.99
     const tax = 0;

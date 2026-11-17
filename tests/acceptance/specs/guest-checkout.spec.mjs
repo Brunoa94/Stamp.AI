@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { test, expect, unwrap } from '../support/fixtures.mjs';
-import { IMAGE, describeDesign, loginUI, logoutUI, openStampClientSide } from '../support/browser.mjs';
+import { IMAGE, describeDesign, expectSignedIn, loginUI, logoutUI, openStampClientSide } from '../support/browser.mjs';
 import { ITEMS, itemCard, proceed, fillAddress } from '../support/cart.mjs';
 import { pay } from '../support/purchase.mjs';
 import {
@@ -147,7 +147,7 @@ test('GUEST-08 a guest who logs in keeps their product in the bag and can pay fo
   expect((await loginUI(page, account)).status()).toBe(200);
   // Login ends with a full navigation to /stamp; reading localStorage before it lands fails.
   await expect(page).toHaveURL(/\/stamp/, { timeout: 30000 });
-  await expect(page.getByRole('button', { name: /logout|sign out/i }).filter({ visible: true }).first()).toBeVisible();
+  await expectSignedIn(page);
 
   await expect.poll(async () => unwrap(await guest.admin.from('products').select('user_id').eq('printify_product_id', productId), 'Read claimed product').map(r => r.user_id), { timeout: 30000 })
     .toEqual([account.id]);
@@ -185,7 +185,7 @@ test('GUEST-09 a guest product joins the account bag on login and stays there af
   // Login ends with a full navigation to /stamp; leaving earlier would drop the new session.
   const loggedIn = async () => {
     await expect(page).toHaveURL(/\/stamp/, { timeout: 30000 });
-    await expect(page.getByRole('button', { name: /logout|sign out/i }).filter({ visible: true }).first()).toBeVisible();
+    await expectSignedIn(page);
   };
 
   await createGuestProduct(page, env);
@@ -225,7 +225,7 @@ test('GUEST-09 a guest product joins the account bag on login and stays there af
 
   // Back on /cart, logged in: the account bag, with nothing added twice.
   await expect(page).toHaveURL(/\/cart$/, { timeout: 30000 });
-  await expect(page.getByRole('button', { name: /logout|sign out/i }).filter({ visible: true }).first()).toBeVisible();
+  await expectSignedIn(page);
   await expect(page.getByRole('article')).toHaveCount(2);
   expect(await accountLines()).toEqual(expected);
 });
@@ -241,7 +241,7 @@ test('GUEST-10 without a page reload, a guest who logs out, bags another product
   const loginOnStamp = async () => {
     await openStampClientSide(page);
     expect((await loginUI(page, account, { reload: false })).status()).toBe(200);
-    await expect(page.getByRole('button', { name: /logout|sign out/i }).filter({ visible: true }).first()).toBeVisible();
+    await expectSignedIn(page);
   };
 
   await createGuestProduct(page, env);

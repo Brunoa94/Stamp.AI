@@ -52,6 +52,20 @@ export async function generate(page, prompt = 'A friendly red fox on a transpare
   await page.getByRole('button', { name: /stamp it/i }).filter({ visible: true }).click();
   return response;
 }
+/**
+ * Asserts a header account button is shown. Below `lg` account controls live
+ * in the mobile menu, so it is opened for the check and closed again after.
+ */
+export async function expectAccountControl(page, name) {
+  const openMenu = page.getByRole('button', { name: /open menu/i });
+  const isMobileMenu = await openMenu.isVisible();
+  if (isMobileMenu) await openMenu.click();
+  await expect(page.getByRole('button', { name }).filter({ visible: true }).first()).toBeVisible();
+  if (isMobileMenu) await page.getByRole('button', { name: /close menu/i }).click();
+}
+export async function expectSignedIn(page) {
+  await expectAccountControl(page, /logout|sign out/i);
+}
 export async function openLogin(page, { reload = true } = {}) {
   if (reload) await page.goto('/');
   const mobileMenu = page.getByRole('button', { name: /open menu/i });
@@ -65,7 +79,7 @@ export async function logoutUI(page, { reload = true } = {}) {
   if (await mobileMenu.isVisible()) await mobileMenu.click();
   await page.getByRole('button', { name: /logout|sign out/i }).filter({ visible: true }).first().click();
   // The button flips at once; the redirect home follows the finished sign-out.
-  await expect(page.getByRole('button', { name: /open login dialog|login|sign in/i }).filter({ visible: true }).first()).toBeVisible();
+  await expectAccountControl(page, /open login dialog|login|sign in/i);
   await expect(page.getByText(/logged out successfully/i).first()).toBeVisible();
   await expect(page).toHaveURL(/\/$/);
 }

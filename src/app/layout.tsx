@@ -17,7 +17,7 @@ import { generateRootMetadata } from "@/features/seo/metadata/rootMetadata";
 import { BRAND_COLORS } from "@/features/seo/config/site";
 import { ScrollToTop } from "@/shared/ui/ScrollToTop";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import { AppLayoutChrome } from "@/shared/ui/AppLayoutChrome";
+import { AppLayoutChrome } from "./AppLayoutChrome";
 import { GoogleAnalytics } from "@/features/analytics/GoogleAnalytics";
 import { AnalyticsPageViewTracker } from "@/features/analytics/AnalyticsPageViewTracker";
 import { CookieConsentBanner } from "@/features/analytics/ui/CookieConsentBanner";

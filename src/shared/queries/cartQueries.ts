@@ -87,6 +87,32 @@ function useCart() {
 }
 
 /**
+ * Number of units in the bag, for the global header badge. `null` while the
+ * count is unknown (loading or failed). Guests count their local bag;
+ * registered users get a light, read-only query that never creates a cart.
+ * Its key sits under `["cart"]`, so the cart mutations refresh it.
+ */
+export function useCartItemCount(): number | null {
+  const { data: user, isLoading: isUserLoading } = useUser();
+  const isRegistered = isRegisteredUser(user);
+  const userId = isRegistered ? user.id : undefined;
+  const localItems = useLocalCartItems();
+
+  const query = useQuery({
+    queryKey: ["cart", "count", { userId }],
+    queryFn: () => CartService.getActiveCartItemCount(userId!),
+    enabled: !!userId,
+    staleTime: 30_000,
+  });
+
+  if (isUserLoading) return null;
+  if (!isRegistered) {
+    return localItems ? CartServiceMapper.sumItemQuantities(localItems) : null;
+  }
+  return query.data ?? null;
+}
+
+/**
  * Brings the bag lines copied into an account (at an earlier login) in line
  * with the account's cart as fetched at `fetchedAt`, so a line removed or
  * paid for while logged in doesn't come back after logout.

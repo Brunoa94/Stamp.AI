@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { test, expect, client, unwrap } from '../support/fixtures.mjs';
-import { openLogin, loginUI } from '../support/browser.mjs';
+import { expectSignedIn, openLogin, loginUI } from '../support/browser.mjs';
 import { required } from '../support/environment.mjs';
 import { waitForEmailLink } from '../support/mailbox.mjs';
 import { observeAnalytics } from '../support/analytics.mjs';
@@ -119,7 +119,7 @@ test('AUTH-06 Google sign-in completes for the controlled test account', async (
   const consent = page.getByRole('button', { name: /^continue$|^allow$/i });
   if (await consent.isVisible()) await consent.click();
   await page.waitForURL(/localhost:3107/);
-  await expect(page.getByRole('button', { name: /logout|sign out/i }).first()).toBeVisible();
+  await expectSignedIn(page);
   // Google challenge or anti-automation rejection is a failed/blocked integration, not bypassed.
 });
 test('AUTH-06 GA-02 canceled Google flow does not send a success login event', async ({ page, env }) => {

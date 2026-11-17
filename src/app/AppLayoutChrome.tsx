@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { StampFooter } from "@/features/stamp/ui/components/StampFooter/StampFooter";
-import { StampHeader } from "@/features/stamp/ui/components/StampHeader";
+import { StampHeader } from "@/features/stamp/ui/components/StampHeader/StampHeader";
 
 interface AppLayoutChromeProps {
   children: React.ReactNode;

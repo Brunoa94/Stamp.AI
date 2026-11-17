@@ -1,7 +1,7 @@
 /* Playwright fixtures establish sessions even when their value is unused. */
 /* eslint @typescript-eslint/no-unused-vars: ["warn", {"argsIgnorePattern": "^(suppliedUser|account)$"}] */
 import { test, expect, client, unwrap } from '../support/fixtures.mjs';
-import { openLogin, loginUI, assertNoHorizontalOverflow } from '../support/browser.mjs';
+import { expectSignedIn, openLogin, loginUI, assertNoHorizontalOverflow } from '../support/browser.mjs';
 
 for (const route of ['/', '/catalog', '/privacy', '/terms', '/returns', '/cookies']) {
   test(`HOME-01 HOME-03 ${route} renders usable content`, async ({ page }) => {
@@ -30,7 +30,7 @@ test('AUTH-04 supplied credentials establish the exact account', async ({ page, 
   expect((await loginUI(page, { email: env.TEST_USER_EMAIL, password: env.TEST_USER_PASSWORD })).status()).toBe(200);
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.reload();
-  await expect(page.getByRole('button', { name: /logout|sign out/i }).first()).toBeVisible();
+  await expectSignedIn(page);
   const db = client(env);
   const data = unwrap(await db.auth.signInWithPassword({ email: env.TEST_USER_EMAIL, password: env.TEST_USER_PASSWORD }), 'Identity check');
   expect(data.user.id).toBe(env.TEST_USER_ID);
