@@ -18,7 +18,7 @@ interface ProfileLayoutProps extends PropsWithChildren {
 export function ProfileLayout({ header, children }: ProfileLayoutProps) {
   return (
     <div className="min-h-screen bg-(--color-stamp-off-white) text-(--color-stamp-chocolate) pt-24">
-      <PageHeaderBand src="/backdrops/coat-cathedral.jpg" imageClassName="object-[center_15%]">
+      <PageHeaderBand src="/backdrops/profile-sofia-tote.jpg" imageClassName="object-[center_88%]">
         {header}
       </PageHeaderBand>
       <div className="px-6 pb-24 pt-12 lg:px-12 xl:px-24">

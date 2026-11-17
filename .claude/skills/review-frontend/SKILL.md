@@ -56,7 +56,7 @@ Then, for every mode:
 | `seo-reviewer` | `src/app/**`, `src/features/seo/**`, `src/i18n/messages/**`, or any `.tsx` under a `ui/` folder (headings and alt text live in components) |
 | `perf-reviewer` | any `.tsx`, or anything under `lib/hooks/`, `src/shared/queries/` or `src/app/**` |
 
-Perf **measures** (runs `next build`) when the scope includes a `page.tsx`, a `layout.tsx` or a `"use client"` file, unless `--no-measure` was passed.
+Perf **measures** (runs `next build`, then serves that build on a free localhost port and profiles the routes in scope with Chrome DevTools traces) when the scope includes a `page.tsx`, a `layout.tsx` or a `"use client"` file, unless `--no-measure` was passed.
 
 Tell the user in one line which reviewers you're launching and why any were skipped.
 
