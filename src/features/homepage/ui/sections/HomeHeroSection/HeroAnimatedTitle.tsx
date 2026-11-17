@@ -1,14 +1,15 @@
 /**
  * HeroAnimatedTitle
  *
- * Wrapper that applies blur-to-clear scale-in animation to title on load,
- * and fades out the title as the user scrolls down.
+ * Wrapper that scales the title in on load and fades it out as the user
+ * scrolls down. The entrance is a CSS animation that starts on first paint
+ * (`.hero-title-animate`), so the headline, the page's LCP element, doesn't
+ * wait for hydration to appear.
  */
 
 "use client";
 
 import { useEffect, useState } from "react";
-import { useIntersectionObserver } from "@/shared/hooks/useIntersectionObserver";
 import { cn } from "@/lib/utils";
 
 interface HeroAnimatedTitleProps {
@@ -20,11 +21,6 @@ export function HeroAnimatedTitle({
   children,
   className,
 }: HeroAnimatedTitleProps) {
-  const { ref, isVisible } = useIntersectionObserver<HTMLDivElement>({
-    threshold: 0.3,
-    triggerOnce: true,
-  });
-
   const [scrollOpacity, setScrollOpacity] = useState(1);
   const [scrollBlur, setScrollBlur] = useState(0);
 
@@ -43,16 +39,11 @@ export function HeroAnimatedTitle({
 
   return (
     <div
-      ref={ref}
       style={{
-        opacity: isVisible ? scrollOpacity : 0,
-        filter: isVisible ? `blur(${scrollBlur}px)` : "blur(8px)",
+        opacity: scrollOpacity,
+        filter: `blur(${scrollBlur}px)`,
       }}
-      className={cn(
-        "hero-title-animate",
-        isVisible && "hero-title-animate--visible",
-        className,
-      )}
+      className={cn("hero-title-animate", className)}
     >
       {children}
     </div>

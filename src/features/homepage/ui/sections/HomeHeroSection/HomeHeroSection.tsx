@@ -3,14 +3,15 @@
  *
  * First screen of the homepage, sized to the space left under the navbar and
  * trust strip: brand kicker, headline, tagline and upload card over the
- * diagonal photo backdrop, with the "8 steps away" headline, the animated
+ * diagonal stamp-wall backdrop, with the "8 steps away" headline, the animated
  * creation-flow demo and its benefit banners on the off-white side (xl+ only —
  * stacked screens keep just the copy so it fits). Below it, a ribbon of
  * product photos (shown from the first render, no scroll reveal) and the
- * promo banner.
+ * promo banner. The copy and the demo enter with a CSS animation that starts
+ * on first paint (`.hero-enter`), not a JS scroll reveal, so the headline
+ * (the LCP element) doesn't wait for hydration.
  */
 
-import { SectionReveal } from "../../components/SectionReveal";
 import { HeroBackdrop } from "./HeroBackdrop";
 import { HeroContent } from "./HeroContent";
 import { HeroPromoBanner } from "./HeroPromoBanner";
@@ -28,20 +29,17 @@ export function HomeHeroSection() {
 
         <div className="relative z-20 w-full px-6 py-16 sm:py-20 lg:px-12 xl:py-10">
           <div className="mx-auto flex max-w-screen-2xl items-center justify-center gap-12 xl:justify-between">
-            <SectionReveal className="w-full max-w-2xl xl:min-w-0 xl:max-w-xl xl:flex-1 2xl:max-w-2xl">
+            <div className="hero-enter w-full max-w-2xl xl:min-w-0 xl:max-w-xl xl:flex-1 2xl:max-w-2xl">
               <HeroContent />
-            </SectionReveal>
+            </div>
 
-            <SectionReveal
-              delayMs={300}
-              className="hidden xl:block xl:w-150 xl:shrink-0 2xl:w-160"
-            >
+            <div className="hero-enter hero-enter--late hidden xl:block xl:w-150 xl:shrink-0 2xl:w-160">
               <div className="flex flex-col gap-5 2xl:gap-6 xl:ml-8">
                 <HeroFlowIntro />
                 <FlowPreview />
                 <HeroFlowBenefits />
               </div>
-            </SectionReveal>
+            </div>
           </div>
         </div>
       </div>

@@ -40,7 +40,7 @@ export function AuthBrandPanel({ namespace }: PropsI) {
 
       <div className="relative flex h-full flex-col">
         <Image
-          src="/logo.png"
+          src="/logo-white-leather.webp"
           alt=""
           aria-hidden
           width={56}

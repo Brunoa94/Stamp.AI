@@ -12,7 +12,12 @@ import { AuthDialogFrame } from "../components/AuthDialogFrame";
 import { AuthBrandPanel } from "../components/AuthBrandPanel";
 import { AuthEmailDivider } from "../components/AuthEmailDivider";
 
-export function LoginForm() {
+interface PropsI {
+  /** Swaps the open dialog to the Sign Up form. */
+  onSwitchToRegister: () => void;
+}
+
+export function LoginForm({ onSwitchToRegister }: PropsI) {
   const { register, handleSubmit, onSubmit, isPending, isCaptchaReady, errors } =
     useLoginForm();
   const t = useTranslations("auth.login.form");
@@ -45,7 +50,7 @@ export function LoginForm() {
         <LoginFormActions isPending={isPending} isCaptchaReady={isCaptchaReady} />
       </form>
 
-      <LoginSignupFooter />
+      <LoginSignupFooter onSwitchToRegister={onSwitchToRegister} />
     </AuthDialogFrame>
   );
 }

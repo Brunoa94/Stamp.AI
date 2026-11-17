@@ -3,29 +3,36 @@ import type { StampBackdropPhotoT } from "../types/stampTypes";
 /**
  * Stamp canvas backdrop photos, one per step of the flow (00 hero has its own).
  * Each photo shows from `fromStep` until the next one starts;
- * moving to a new step crossfades to its photo.
+ * moving to a new step crossfades to its photo. From lg only the slice
+ * right of the edge shows, so `focus` keeps the photo's customized product
+ * inside that slice.
  */
 export const STAMP_BACKDROP_PHOTOS: StampBackdropPhotoT[] = [
-  { src: "/backdrops/mug-window.jpg", fromStep: 0 }, // 01 upload
-  { src: "/backdrops/hoodie-underground.jpg", fromStep: 2 }, // 02 synthesis
-  { src: "/backdrops/kid-forest.jpg", fromStep: 3 }, // 03 generation
-  { src: "/backdrops/hoodie-track.jpg", fromStep: 4 }, // 04 results
-  { src: "/backdrops/coat-cathedral.jpg", fromStep: 5 }, // 05 product
-  { src: "/backdrops/hoodie-gym.jpg", fromStep: 6 }, // 06 customize
-  { src: "/backdrops/hoodie-milan.jpg", fromStep: 7 }, // 07 production
-  { src: "/backdrops/canvas-living-room.jpg", fromStep: 8 }, // 08 review
+  { src: "/backdrops/mug-window.jpg", fromStep: 0, focus: "65% 0%" }, // 01 upload: the mug
+  { src: "/backdrops/hoodie-underground.jpg", fromStep: 2, focus: "45% 0%" }, // 02 synthesis: the hoodie print
+  { src: "/backdrops/kid-forest.jpg", fromStep: 3, focus: "54% 0%" }, // 03 generation: the dino tee
+  { src: "/backdrops/hoodie-track.jpg", fromStep: 4, focus: "62% 0%" }, // 04 results: the hoodie logo
+  { src: "/backdrops/coat-cathedral.jpg", fromStep: 5, focus: "78% 0%" }, // 05 product: the tote
+  { src: "/backdrops/hoodie-gym.jpg", fromStep: 6, focus: "50% 0%" }, // 06 customize: the back print
+  { src: "/backdrops/hoodie-milan.jpg", fromStep: 7, focus: "48% 0%" }, // 07 production: the tiger print
+  { src: "/backdrops/canvas-living-room.jpg", fromStep: 8, focus: "64% 0%" }, // 08 review: the canvas
 ];
 
 /**
- * Where the canvas backdrop's diagonal edge sits from md up, as fractions of
- * the viewport width at the top and bottom of the canvas (below the 96px
- * header). Keep in sync with `.stamp-backdrop__photo` in globals.css.
+ * Where the canvas backdrop's diagonal edge sits from md up, at the top and
+ * bottom of the canvas (below the 96px header). From md it runs from 70% to
+ * 60% of the viewport width; from lg it starts on the steps sidebar's left
+ * border and slants `slant` of the viewport width to the left by the bottom.
+ * Keep in sync with `.stamp-backdrop__photo` in globals.css.
  */
 export const STAMP_BACKDROP_EDGE = {
   topX: 0.7,
   bottomX: 0.6,
   canvasTopPx: 96,
   minViewportWidthPx: 768,
+  sidebarWidthPx: 17 * 13.6, // sidebar w-68 (17rem) at the 13.6px root font size
+  sidebarMinViewportWidthPx: 1024,
+  slant: 0.1,
 };
 
 /**
@@ -38,4 +45,8 @@ export const STAMP_SPLIT_TONES = {
   title: { base: "var(--color-stamp-chocolate)", photo: "var(--color-stamp-off-white)" },
   accent: { base: "var(--color-stamp-taupe)", photo: "var(--color-stamp-gold-light)" },
   muted: { base: "var(--color-stamp-taupe)", photo: "var(--color-stamp-cream)" },
+  faint: {
+    base: "color-mix(in srgb, var(--color-stamp-taupe) 40%, transparent)",
+    photo: "var(--color-stamp-white)",
+  },
 } as const;

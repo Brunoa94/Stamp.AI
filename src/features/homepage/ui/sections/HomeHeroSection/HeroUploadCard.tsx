@@ -20,7 +20,10 @@ export function HeroUploadCard() {
       className="group flex w-full max-w-xl items-center gap-5 rounded-lg border-3 border-dashed border-(--color-stamp-gold) bg-(--color-stamp-cream)/95 p-5 text-left shadow-lg text-shadow-none ring-6 ring-(--color-stamp-gold)/20 transition-all duration-300 hover:-translate-y-1 hover:border-solid hover:bg-(--color-stamp-white) hover:shadow-xl hover:ring-(--color-stamp-gold)/35 focus-visible:outline-none focus-visible:ring-(--color-stamp-gold)/50 sm:p-6"
     >
       <Span unstyled className="flex size-16 shrink-0 items-center justify-center rounded-md bg-(--color-stamp-gold) transition-colors duration-300 group-hover:bg-(--color-stamp-chocolate)">
-        <ImagePlus className="size-7 animate-[float_3s_ease-in-out_infinite] text-(--color-stamp-chocolate) transition-colors duration-300 group-hover:text-(--color-stamp-white)" />
+        {/* The float runs on this wrapper: an animated <svg> transform repaints every frame, an HTML one stays on the compositor */}
+        <Span unstyled className="flex animate-[float_3s_ease-in-out_infinite]">
+          <ImagePlus className="size-7 text-(--color-stamp-chocolate) transition-colors duration-300 group-hover:text-(--color-stamp-white)" />
+        </Span>
       </Span>
       <Span unstyled className="flex min-w-0 flex-1 flex-col gap-1">
         <Span unstyled className="font-body text-lg font-bold text-(--color-stamp-chocolate) sm:text-xl">
