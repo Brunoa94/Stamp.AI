@@ -938,8 +938,8 @@
   }
 
   .hero-decorative-circle,
-  .hero-title-animate,
-  .hero-title-animate--visible {
+  .hero-enter,
+  .hero-title-animate {
     animation: none !important;
     transition: none !important;
     opacity: 1 !important;
@@ -958,21 +958,35 @@
 }
 
 /* Hero title blur-to-clear reveal animation */
-.hero-title-animate {
-  opacity: 0;
-  transform: translateY(24px) scale(0.96);
-  filter: blur(8px);
-  transition:
-    opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
-    transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
-    filter 900ms cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: opacity, transform, filter;
+/* Homepage hero entrance: CSS animations that run on first paint, so the copy
+   (and the headline, the LCP element) never waits for hydration. They start
+   at 1% opacity, not 0: Chrome skips fully transparent elements as LCP
+   candidates, which would push LCP to the end of the animation. Transform and
+   opacity only, so they stay on the compositor. */
+@keyframes hero-enter {
+  from {
+    opacity: 0.01;
+    transform: translateY(1.75rem) scale(0.985);
+  }
 }
 
-.hero-title-animate--visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
+.hero-enter {
+  animation: hero-enter 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-enter--late {
+  animation-delay: 300ms;
+}
+
+@keyframes hero-title-enter {
+  from {
+    opacity: 0.01;
+    transform: translateY(24px) scale(0.96);
+  }
+}
+
+.hero-title-animate {
+  animation: hero-title-enter 900ms cubic-bezier(0.22, 1, 0.36, 1) 150ms both;
 }
 
 /* ============================================
@@ -1332,6 +1346,176 @@
   }
 }
 
+/* Stamp entry panel (StampEntryPanel, lg+): the entry step's left half of the
+   canvas, drawn over the canvas and under the sidebar. Leaving step 00 its
+   scene fades and slides right while the panel's clip wipes across the
+   incoming step on a slant into the canvas backdrop's exact polygon (above),
+   then fades out to reveal step 01's photo beneath. Going back plays the
+   sweep in reverse. Animations pause while away. */
+.stamp-entry-panel {
+  clip-path: polygon(calc(100% - 17rem) 0, 100% 0, 100% 100%, calc(90% - 17rem) 100%);
+  opacity: 0;
+  transition:
+    clip-path 900ms cubic-bezier(0.76, 0, 0.24, 1),
+    opacity 400ms ease 900ms;
+}
+
+.stamp-entry-panel--active {
+  clip-path: polygon(0 0, calc(50% - 8.5rem) 0, calc(50% - 8.5rem) 100%, 0 100%);
+  opacity: 1;
+  transition:
+    clip-path 900ms cubic-bezier(0.76, 0, 0.24, 1),
+    opacity 0s;
+}
+
+.stamp-entry-panel__scene {
+  width: calc(50% - 8.5rem);
+  opacity: 0;
+  transform: translateX(20%);
+  transition:
+    opacity 400ms ease,
+    transform 600ms cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.stamp-entry-panel--active .stamp-entry-panel__scene {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 500ms ease 500ms,
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1) 400ms;
+}
+
+.stamp-entry-panel:not(.stamp-entry-panel--active) * {
+  animation-play-state: paused;
+}
+
+/* Stamp scan (StampScan): three columns of shop products drift down through a
+   gold print line across the middle. The blank layer fills the scene; the
+   printed layer, with identical columns and timing, only shows below the
+   line, so every product comes out of the line printed. The blank half sits
+   under a chocolate wash so the printed half reads as the finished goods. */
+.stamp-scan {
+  --scan-line: 46%;
+  --scan-gap: 0.75rem;
+}
+
+.stamp-scan__layer {
+  gap: var(--scan-gap);
+  padding-inline: var(--scan-gap);
+}
+
+.stamp-scan__layer--blank::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--color-stamp-chocolate) 38%, transparent);
+}
+
+.stamp-scan__layer--printed {
+  clip-path: inset(var(--scan-line) 0 0 0);
+}
+
+/* Columns start at different heights so products never cross the line in rows */
+.stamp-scan__column-track:nth-child(2) {
+  margin-top: -18%;
+}
+
+.stamp-scan__column-track:nth-child(3) {
+  margin-top: -9%;
+}
+
+@keyframes stamp-scan-drift {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.stamp-scan__column {
+  animation: stamp-scan-drift 40s linear infinite;
+  will-change: transform;
+}
+
+.stamp-scan__copy {
+  gap: var(--scan-gap);
+  padding-bottom: var(--scan-gap);
+}
+
+/* The print head: a gold hairline with a glow, brightest where it prints */
+@keyframes stamp-scan-glow {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.stamp-scan__head {
+  top: var(--scan-line);
+  height: 2px;
+  background: var(--color-stamp-gold-light);
+  box-shadow:
+    0 0 0.75rem var(--color-stamp-gold-light),
+    0 0 2.5rem var(--color-stamp-gold);
+}
+
+.stamp-scan__head::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  height: 5rem;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-stamp-gold-light) 30%, transparent),
+    transparent
+  );
+  animation: stamp-scan-glow 2.4s ease-in-out infinite;
+}
+
+.stamp-scan__label {
+  left: 2rem;
+  padding: 0.35em 0.9em;
+}
+
+.stamp-scan__label--blank {
+  bottom: calc(100% - var(--scan-line) + 0.75rem);
+}
+
+.stamp-scan__label--printed {
+  top: calc(var(--scan-line) + 0.75rem);
+}
+
+/* Gold print registration marks in the four corners */
+.stamp-scan__marks {
+  --mark: 1.5rem;
+  inset: 1.25rem;
+  opacity: 0.8;
+  background:
+    linear-gradient(var(--color-stamp-gold), var(--color-stamp-gold)) top left / var(--mark) 2px no-repeat,
+    linear-gradient(var(--color-stamp-gold), var(--color-stamp-gold)) top left / 2px var(--mark) no-repeat,
+    linear-gradient(var(--color-stamp-gold), var(--color-stamp-gold)) top right / var(--mark) 2px no-repeat,
+    linear-gradient(var(--color-stamp-gold), var(--color-stamp-gold)) top right / 2px var(--mark) no-repeat,
+    linear-gradient(var(--color-stamp-gold), var(--color-stamp-gold)) bottom left / var(--mark) 2px no-repeat,
+    linear-gradient(var(--color-stamp-gold), var(--color-stamp-gold)) bottom left / 2px var(--mark) no-repeat,
+    linear-gradient(var(--color-stamp-gold), var(--color-stamp-gold)) bottom right / var(--mark) 2px no-repeat,
+    linear-gradient(var(--color-stamp-gold), var(--color-stamp-gold)) bottom right / 2px var(--mark) no-repeat;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp-entry-panel,
+  .stamp-entry-panel--active,
+  .stamp-entry-panel__scene,
+  .stamp-entry-panel--active .stamp-entry-panel__scene {
+    transition: none;
+  }
+
+  .stamp-scan__column,
+  .stamp-scan__head::after {
+    animation: none;
+  }
+}
+
 @media (min-width: 80rem) {
   .diagonal-backdrop--mirrored .diagonal-backdrop__photo {
     clip-path: polygon(var(--diagonal-cut-top) 0, 100% 0, 100% 100%, var(--diagonal-cut-bottom) 100%);
@@ -1361,8 +1545,11 @@
    postage stamps on a plane tilted with the diagonal cut, each column drifting
    on its own loop, a few stamps turning from the customer's photo to the
    printed product. Static under reduced motion. */
+/* content-visibility skips rendering, and with it the drift and flips, once
+   the hero has scrolled out of view */
 .stamp-wall {
   perspective: 1800px;
+  content-visibility: auto;
 }
 
 /* Oversized so the tilted plane still covers every corner; the columns start
@@ -1396,8 +1583,13 @@
   margin-top: 6rem;
 }
 
-/* Perforated edge: a cream frame whose border is punched with round holes */
 .stamp-wall__stamp {
+  backface-visibility: hidden;
+}
+
+/* Postage-stamp perforation (homepage hero stamp wall): a cream frame whose
+   border is punched with round holes */
+.postage-perforation {
   --stamp-hole: 0.3rem;
   padding: calc(2.6 * var(--stamp-hole));
   background:
@@ -1406,7 +1598,6 @@
       calc(3 * var(--stamp-hole)) calc(3 * var(--stamp-hole)),
     linear-gradient(var(--color-stamp-cream) 0 0) no-repeat 50% /
       calc(100% - 3 * var(--stamp-hole)) calc(100% - 3 * var(--stamp-hole));
-  backface-visibility: hidden;
 }
 
 /* Warm the white-studio mockups so the wall sits in the chocolate palette */

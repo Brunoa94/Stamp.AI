@@ -13,13 +13,13 @@ interface PropsI {
  *
  * A perforated cream postage stamp framing one product photo, optionally
  * cancelled with the gold Stamp.ai postmark. The perforation is a CSS mask
- * (globals.css, `.stamp-wall__stamp`).
+ * (globals.css, `.postage-perforation`).
  */
 export function HeroStampFace({ src, isBack = false, hasPostmark = false }: PropsI) {
   return (
     <div
       className={cn(
-        "stamp-wall__stamp relative w-36 shrink-0 sm:w-40 xl:w-44",
+        "stamp-wall__stamp postage-perforation relative w-36 shrink-0 sm:w-40 xl:w-44",
         isBack && "stamp-wall__stamp--back absolute inset-0",
       )}
     >
