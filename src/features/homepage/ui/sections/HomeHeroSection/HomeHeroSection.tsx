@@ -3,7 +3,7 @@
  *
  * First screen of the homepage, sized to the space left under the navbar and
  * trust strip: brand kicker, headline, tagline and upload card over the
- * diagonal photo backdrop, with the "8 steps away" headline, the animated
+ * diagonal stamp-wall backdrop, with the "8 steps away" headline, the animated
  * creation-flow demo and its benefit banners on the off-white side (xl+ only —
  * stacked screens keep just the copy so it fits). Below it, a ribbon of
  * product photos (shown from the first render, no scroll reveal) and the
