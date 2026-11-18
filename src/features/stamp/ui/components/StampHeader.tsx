@@ -70,7 +70,7 @@ export function StampHeader() {
         </div>
 
         {/* Center CTA (lg+) */}
-        <div className="flex-none hidden lg:block">
+        <div className="flex-none hidden lg:block mx-6">
           <Link
             href="/stamp"
             className={cn(stampNavCtaVariants(), "px-8 py-3")}
@@ -82,16 +82,17 @@ export function StampHeader() {
 
         {/* Navigation Links (lg+) */}
         <nav
-          className="flex-1 hidden lg:flex justify-end gap-5 xl:gap-6 items-center"
+          className="flex-1 hidden lg:flex justify-end gap-4 xl:gap-6 items-center"
           aria-label={t("mainNavAria")}
         >
           <StampNavIconLink href="/catalog" icon={LayoutGrid} label={t("catalog")} />
 
           {isRegistered && (
-            <StampNavIconLink href="/orders" icon={Package} label={t("orders")} />
+            <StampNavIconLink href="/orders" icon={Package} label={t("orders")} compact />
           )}
 
           <div className="flex items-center gap-1">
+            <LanguageSwitcher className="mr-2" />
             {isRegistered && (
               <StampNavIconLink href="/profile" icon={UserRound} label={t("profile")} iconOnly />
             )}
@@ -114,8 +115,6 @@ export function StampHeader() {
               <Register className={stampNavSignUpVariants()}>{t("signUp")}</Register>
             </>
           )}
-
-          <LanguageSwitcher />
         </nav>
 
         {/* Mobile/tablet hamburger (below lg) */}

@@ -11,19 +11,33 @@ interface PropsI {
   label: string;
   /** Hide the label visually; it stays the link's accessible name. */
   iconOnly?: boolean;
+  /** Show only the icon below `xl`, where the full nav is too wide. */
+  compact?: boolean;
 }
 
 /** Desktop header link: icon plus label, or a round icon-only button. */
-export function StampNavIconLink({ href, icon: Icon, label, iconOnly = false }: PropsI) {
+export function StampNavIconLink({
+  href,
+  icon: Icon,
+  label,
+  iconOnly = false,
+  compact = false,
+}: PropsI) {
+  const labelHidden = iconOnly || compact;
+
   return (
     <Link
       href={href}
-      aria-label={iconOnly ? label : undefined}
-      title={iconOnly ? label : undefined}
+      aria-label={labelHidden ? label : undefined}
+      title={labelHidden ? label : undefined}
       className={stampNavIconLinkVariants({ iconOnly })}
     >
       <Icon className="size-5" strokeWidth={1.75} aria-hidden />
-      {!iconOnly && <Span unstyled>{label}</Span>}
+      {!iconOnly && (
+        <Span unstyled className={compact ? "hidden xl:inline" : undefined}>
+          {label}
+        </Span>
+      )}
     </Link>
   );
 }
