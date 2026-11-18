@@ -1,8 +1,33 @@
 import { cva } from "class-variance-authority";
 
+const focusRing =
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-gold)";
+
 /** Text link in the Stamp header nav and mobile drawer. */
 export const stampNavLinkVariants = cva(
   "font-semibold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-all duration-300",
+);
+
+/**
+ * Desktop header link with a leading icon. `iconOnly` makes it a round icon
+ * button (the bag), whose name then comes from its aria-label.
+ */
+export const stampNavIconLinkVariants = cva(
+  `inline-flex items-center rounded-md text-(--color-stamp-chocolate) transition-colors duration-300 hover:text-(--color-stamp-gold) ${focusRing}`,
+  {
+    variants: {
+      iconOnly: {
+        true: "size-10 justify-center hover:bg-(--color-stamp-chocolate)/5",
+        false: "gap-2 py-2 text-sm font-semibold uppercase tracking-wider",
+      },
+    },
+    defaultVariants: { iconOnly: false },
+  },
+);
+
+/** "Sign up" trigger in the desktop header: the solid gold primary action. */
+export const stampNavSignUpVariants = cva(
+  `inline-flex h-10 items-center rounded-md bg-(--color-stamp-gold) px-5 text-sm font-semibold uppercase tracking-wider text-(--color-stamp-chocolate) shadow-sm transition-colors duration-300 hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) active:scale-[0.98] ${focusRing}`,
 );
 
 /** "Start stamping" CTA; mirrors the hero upload card so it reads as the same action. */
