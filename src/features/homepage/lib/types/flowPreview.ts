@@ -50,7 +50,7 @@ export type FlowProductIdType = "kidsTee" | "hoodie" | "softTee" | "mug";
 
 export type FlowProductArtType = "tee" | "hoodie" | "mug";
 
-/** Illustration assets under public/assets/flow-preview */
+/** Illustration assets under assets/flow-preview on the static-assets CDN */
 export type FlowArtIdType = FlowProductArtType | "teePrintArea" | "pup" | "pupPhoto";
 
 export type FlowArtAssetType = {

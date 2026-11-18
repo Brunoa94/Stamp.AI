@@ -11,6 +11,7 @@ import { SOCIAL_PROFILES } from "@/features/seo/lib/constants/social";
 import { LEGAL_ENTITY } from "@/features/legal/lib/constants/legalEntity";
 import { FooterPaymentIcons } from "@/features/ui/trust/FooterPaymentIcons";
 import { CookieSettingsButton } from "@/features/analytics/ui/components/CookieSettingsButton";
+import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 import {
   FooterLinkColumn,
   type FooterColumnKeyType,
@@ -78,7 +79,7 @@ export function StampFooter() {
           <div className="col-span-2 space-y-6">
             <Link href="/" className="inline-block">
               <Image
-                src="/assets/brand/logo.png"
+                src={staticAssetUrl("/assets/brand/logo.png")}
                 alt={t("logoAlt")}
                 width={280}
                 height={80}

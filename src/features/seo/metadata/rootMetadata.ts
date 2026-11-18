@@ -4,6 +4,7 @@ import { OG_IMAGE, TWITTER_CONFIG, TWITTER_IMAGE } from "../lib/constants/social
 import { PAGE_KEYWORDS } from "../config/keywords";
 import { VERIFICATION, APPLE_CONFIG } from "../config/platform";
 import { titleTemplate } from "./title";
+import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 
 export function generateRootMetadata(): Metadata {
   return {
@@ -40,9 +41,8 @@ export function generateRootMetadata(): Metadata {
     },
     icons: {
       icon: "/favicon.ico",
-      apple: "/apple-touch-icon.png",
+      apple: staticAssetUrl("/apple-touch-icon.png"),
     },
-    manifest: "/manifest.json",
     category: "shopping",
     openGraph: {
       type: "website",

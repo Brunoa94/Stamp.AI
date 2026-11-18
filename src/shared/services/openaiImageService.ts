@@ -1,14 +1,13 @@
 import { acceptanceImageMock } from "./acceptanceImageMock";
 import OpenAI from "openai";
-import fs from "fs";
-import path from "path";
+import { loadMockImageDataUrl } from "./mockImage";
 
 interface OpenAIImageGenerationResult {
   imageUrl: string;
   enhancedPrompt: string;
 }
 
-// Use mock image for local development (uses public/zoe.png)
+// Use mock image for local development (zoe.png from the static-assets CDN)
 const USE_MOCK_IMAGE = process.env.NODE_ENV === "development";
 
 /**
@@ -58,20 +57,17 @@ export class OpenAIImageService {
   }
 
   /**
-   * Generate a mock image for local development (uses public/zoe.png)
+   * Generate a mock image for local development (zoe.png from the static-assets CDN)
    */
-  private static generateMockImage(
+  private static async generateMockImage(
     prompt: string,
     removeBackground: boolean,
-  ): OpenAIImageGenerationResult {
+  ): Promise<OpenAIImageGenerationResult> {
     console.log("[MOCK] Using mock image instead of OpenAI API");
     console.log("[MOCK] Prompt:", prompt);
     console.log("[MOCK] Remove background:", removeBackground);
 
-    const mockImagePath = path.join(process.cwd(), "public", "zoe.png");
-    const mockImageBuffer = fs.readFileSync(mockImagePath);
-    const mockImageBase64 = mockImageBuffer.toString("base64");
-    const imageUrl = `data:image/png;base64,${mockImageBase64}`;
+    const imageUrl = await loadMockImageDataUrl();
 
     const mockEnhancedPrompt = `[MOCK] Enhanced prompt based on: "${prompt}" with removeBackground=${removeBackground}`;
 

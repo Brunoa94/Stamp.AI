@@ -13,7 +13,7 @@ interface PropsI {
  * FlowArtImage
  *
  * Decorative illustration inside the flow demo (product blanks, sample dog),
- * loaded from public/assets/flow-preview.
+ * loaded from assets/flow-preview on the static-assets CDN.
  */
 export function FlowArtImage({ art, className }: PropsI) {
   const { src, width, height } = FLOW_ART_ASSETS[art];

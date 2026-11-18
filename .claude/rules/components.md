@@ -85,16 +85,20 @@ Use components from `@/features/ui/` instead of raw HTML elements. Enforced by E
 
 Raw HTML is fine only when building a design-system component, when the design system has no suitable component (rare), or for external/dynamic image URLs that can't be optimized.
 
+## Static images live on the CDN
+
+`public/` holds no images. Static images (photos, logos, SVGs) are served from the public `static-assets` bucket in Supabase Storage. Reference one with `staticAssetUrl("/<path>")` from `@/shared/helpers/staticAssetUrl`. It resolves to the bucket of the current `NEXT_PUBLIC_SUPABASE_URL`, so the test project serves its own copy, or to `NEXT_PUBLIC_STATIC_ASSETS_URL` when that is set. To add or replace an image, push it with `node scripts/push-static-assets.mjs --target test --source-dir <dir>`, then mirror it to production with `--target prod --from test` (usage in the script's header).
+
 ## SVGs are assets
 
-Never write inline `<svg>` markup. Save the SVG under `public/assets/<feature>/` and render it with `<Image>` from `next/image`. Enforced by ESLint (`no-restricted-syntax`).
+Never write inline `<svg>` markup. Push the SVG to the CDN under `assets/<feature>/` and render it with `<Image>` from `next/image`. Enforced by ESLint (`no-restricted-syntax`).
 
 ```tsx
 // ❌ Bad
 <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21..." /></svg>
 
 // ✅ Good
-<Image src="/assets/platforms/trustpilot.svg" alt="" aria-hidden width={16} height={16} />
+<Image src={staticAssetUrl("/assets/platforms/trustpilot.svg")} alt="" aria-hidden width={16} height={16} />
 ```
 
 Inline `<svg>` is allowed only when the markup must react at runtime (animated paths, `currentColor`/theme-token strokes, shapes generated from props). Add `// eslint-disable-next-line no-restricted-syntax -- <reason>`.

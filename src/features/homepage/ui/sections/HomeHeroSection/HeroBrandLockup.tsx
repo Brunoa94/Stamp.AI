@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
+import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 
 /**
  * HeroBrandLockup
@@ -19,7 +20,7 @@ export function HeroBrandLockup() {
   return (
     <div role="img" aria-label={t("brandLabel")} className="flex items-center">
       <Image
-        src="/logo.png"
+        src={staticAssetUrl("/logo.png")}
         alt=""
         width={88}
         height={92}

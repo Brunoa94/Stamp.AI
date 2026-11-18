@@ -5,7 +5,7 @@ import { describeDesign } from './browser.mjs';
 import { selectProduct, createProduct } from './customization.mjs';
 import { required } from './environment.mjs';
 import { unwrap } from './fixtures.mjs';
-import { proceed, fillAddress } from './cart.mjs';
+import { FIXTURE_IMAGE_URL, proceed, fillAddress } from './cart.mjs';
 
 // The guest bag lives in localStorage under this key (LocalCartStorageService).
 const LOCAL_CART_KEY = 'local_cart';
@@ -19,7 +19,7 @@ function toLocalItems(items) {
     productName: item.product_name,
     unitPrice: item.unit_price,
     quantity: item.quantity,
-    customImageUrl: '/zoe.png',
+    customImageUrl: FIXTURE_IMAGE_URL,
     blueprintId: null,
     printProviderId: null,
     isSelected: true,

@@ -2,7 +2,7 @@
  * Sample designs for scripts/create-sample-products.mjs
  *
  * `id` is "<prefix>-<letter>" and continues the lettering already used in each
- * folder of public/products-images (e.g. tote had a–c, so the first new one is tote-d).
+ * folder of products-images/ on the static-assets CDN (e.g. tote had a–c, so the first new one is tote-d).
  * All brands and characters are fictional.
  * `position` sets the print position (default: the product's first, usually front).
  */
@@ -16,7 +16,7 @@ const FULL_BLEED = 'Full bleed, no border, no text, no watermark. High resolutio
 /** Printify product and variant settings per output folder */
 const PRODUCT_BY_FOLDER = {
   hoodie: { productKey: 'hoodie' },
-  'kid t-shirt': { productKey: 'tshirt-kids' },
+  'kid-t-shirt': { productKey: 'tshirt-kids' },
   // The mug print area wraps all the way around; cap the width so the design stays on the visible front
   mug: { productKey: 'mug', maxScale: 0.42 },
   // Canvas has no colors; use the square sizes (14", 24", 32") to match the 1:1 artwork
@@ -46,7 +46,7 @@ export const DESIGNS = [
     removeBackground: true,
     prompt: `A realistic photograph of a tabby cat wearing a small red knitted scarf, sitting and looking at the camera, soft studio lighting, isolated subject. ${PRINT_READY}`,
   }),
-  design('kid-t-shirt-c', 'kid t-shirt', {
+  design('kid-t-shirt-c', 'kid-t-shirt', {
     title: 'Astronaut Fox Kids Tee',
     kind: 'Kids illustration',
     prompt: `A flat, kid-friendly vector-style illustration of a cute orange fox in a white space suit floating among a ringed planet and stars, with the hand-lettered text "Dream Big, Little One" above it. Warm, friendly colors. ${PRINT_READY}`,
@@ -73,7 +73,7 @@ export const DESIGNS = [
     kind: 'Illustration',
     prompt: `A retro outdoor badge illustration: layered mountains under a striped orange and mustard sunset inside a circle, pine trees in front, with the text "Wander More" in a bold vintage font curved below. Limited palette of navy, orange and cream. ${PRINT_READY}`,
   }),
-  design('kid-t-shirt-d', 'kid t-shirt', {
+  design('kid-t-shirt-d', 'kid-t-shirt', {
     title: 'Roller Skating Unicorn Kids Tee',
     kind: 'Kids illustration',
     prompt: `A cheerful cartoon unicorn with a pastel rainbow mane zooming on pink roller skates, little speed lines and sparkles behind it, with the playful hand-lettered text "Roll With It" above. Bright pastel colors. ${PRINT_READY}`,
@@ -99,7 +99,7 @@ export const DESIGNS = [
     removeBackground: true,
     prompt: `A realistic photograph of a French bulldog wearing a bright yellow raincoat, sitting and looking at the camera with a curious head tilt, soft studio lighting, isolated subject. ${PRINT_READY}`,
   }),
-  design('kid-t-shirt-e', 'kid t-shirt', {
+  design('kid-t-shirt-e', 'kid-t-shirt', {
     title: 'Little Explorer Bear Kids Tee',
     kind: 'Kids illustration',
     prompt: `A cute flat illustration of a small brown bear cub with a green backpack and binoculars, standing next to a signpost and a little tent, with the rounded hand-lettered text "Little Explorer" above. Earthy greens and browns. ${PRINT_READY}`,
@@ -124,7 +124,7 @@ export const DESIGNS = [
     kind: 'Small-business logo',
     prompt: `A sporty badge logo for a fictional running club called "Harbor Run Club": a circular emblem with a lighthouse, waves and a running shoe wing, "EST. 2024" at the bottom, bold collegiate lettering. Navy and red. ${PRINT_READY}`,
   }),
-  design('kid-t-shirt-f', 'kid t-shirt', {
+  design('kid-t-shirt-f', 'kid-t-shirt', {
     title: 'Golden Puppy Kids Tee',
     kind: 'Pet photo',
     removeBackground: true,
@@ -150,7 +150,7 @@ export const DESIGNS = [
     kind: 'Illustration',
     prompt: `A fun cartoon of a smiling takeaway coffee cup wearing sunglasses and lounging, little steam swirls above, with the bold rounded text "Coffee & Chill" below. Bold outlines, warm brown, teal and cream. ${PRINT_READY}`,
   }),
-  design('kid-t-shirt-g', 'kid t-shirt', {
+  design('kid-t-shirt-g', 'kid-t-shirt', {
     title: 'Super Sister Kids Tee',
     kind: 'Kids illustration',
     prompt: `An original cartoon of a little girl superhero with a purple cape and a star on her chest, flying with one fist forward among clouds, with the comic-style text "Super Sister" above. No existing superhero logos. Bright purple, yellow and sky blue. ${PRINT_READY}`,
@@ -179,7 +179,7 @@ export const DESIGNS = [
     position: 'front',
     prompt: `A geometric line-art illustration of a wolf howling at a full moon above pine trees, inside a circle, with the text "Stay Wild" in a clean uppercase font below. Charcoal and slate blue. ${PRINT_READY}`,
   }),
-  design('kid-t-shirt-h', 'kid t-shirt', {
+  design('kid-t-shirt-h', 'kid-t-shirt', {
     title: 'Splash Time Elephant Kids Tee',
     kind: 'Kids illustration',
     position: 'front',
@@ -206,7 +206,7 @@ export const DESIGNS = [
     position: 'back',
     prompt: `A bold vintage tattoo-style illustration of a roaring tiger head surrounded by peonies, with a ribbon banner reading "Fearless" underneath. Large back-print composition, tall layout. Orange, black, red and cream. ${PRINT_READY}`,
   }),
-  design('kid-t-shirt-i', 'kid t-shirt', {
+  design('kid-t-shirt-i', 'kid-t-shirt', {
     title: 'Cool Penguin Back Print Kids Tee',
     kind: 'Kids illustration',
     position: 'back',
@@ -234,7 +234,7 @@ export const DESIGNS = [
     removeBackground: true,
     prompt: `A realistic photograph of a Siberian husky with striking blue eyes sitting and looking at the camera, soft studio lighting, isolated subject. ${PRINT_READY}`,
   }),
-  design('kid-t-shirt-j', 'kid t-shirt', {
+  design('kid-t-shirt-j', 'kid-t-shirt', {
     title: 'Wise Little Owl Kids Tee',
     kind: 'Kids illustration',
     position: 'front',
@@ -261,7 +261,7 @@ export const DESIGNS = [
     position: 'back',
     prompt: `A vintage outdoor-style illustration of a bald eagle with wings spread wide soaring over snowy mountain peaks and pine forest, with the text "Free Spirit" in a bold retro font below. Large back-print composition. Navy, brown, gold and cream. ${PRINT_READY}`,
   }),
-  design('kid-t-shirt-k', 'kid t-shirt', {
+  design('kid-t-shirt-k', 'kid-t-shirt', {
     title: 'Rock On Octopus Back Print Kids Tee',
     kind: 'Kids illustration',
     position: 'back',
@@ -283,7 +283,7 @@ export const DESIGNS = [
     prompt: `A cheerful retro illustration of a smiling bumblebee flying over a honeycomb pattern and a few daisies, with the hand-lettered text "Bee Kind" above. Honey yellow, black and white. ${PRINT_READY}`,
   }),
 
-  // Fourth batch: personal memories turned into art (like public/promo-sections/memories),
+  // Fourth batch: personal memories turned into art (like promo-sections/memories on the CDN),
   // alternating products and front/back on hoodie and kids tee
   design('hoodie-j', 'hoodie', {
     title: 'Ferris Wheel Couple Sketch Hoodie',
@@ -291,7 +291,7 @@ export const DESIGNS = [
     position: 'front',
     prompt: `A colored-pencil drawing of a young couple hugging and smiling in a sunny park with a ferris wheel and trees behind them, visible pencil strokes, soft vignette that fades out to the edges (no rectangular background). ${PRINT_READY}`,
   }),
-  design('kid-t-shirt-l', 'kid t-shirt', {
+  design('kid-t-shirt-l', 'kid-t-shirt', {
     title: 'Girl and Her Dog Kids Tee',
     kind: 'Memory art',
     position: 'front',
@@ -318,7 +318,7 @@ export const DESIGNS = [
     position: 'back',
     prompt: `A playful cartoon portrait of a black labrador wearing a plain red superhero cape and mask (no logos or emblems), standing proudly with the cape flowing, a few comic-style action lines behind it. Large back-print composition. ${PRINT_READY}`,
   }),
-  design('kid-t-shirt-m', 'kid t-shirt', {
+  design('kid-t-shirt-m', 'kid-t-shirt', {
     title: 'Sibling Hug Anime Back Print Kids Tee',
     kind: 'Memory art',
     position: 'back',
@@ -345,7 +345,7 @@ export const DESIGNS = [
     position: 'front',
     prompt: `A watercolor portrait of a young woman cuddling her orange cat against her cheek, both eyes closed and content, soft splashes of color that fade out to the edges. ${PRINT_READY}`,
   }),
-  design('kid-t-shirt-n', 'kid t-shirt', {
+  design('kid-t-shirt-n', 'kid-t-shirt', {
     title: 'Best Summer Ever Camping Kids Tee',
     kind: 'Memory art',
     position: 'front',

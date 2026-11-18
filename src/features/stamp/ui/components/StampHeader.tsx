@@ -9,6 +9,7 @@ import { Login } from "@/features/auth/ui/components/Login";
 import { Register } from "@/features/auth/ui/components/Register";
 import { useUser, useLogout } from "@/shared/queries/authQueries";
 import { isRegisteredUser } from "@/shared/helpers/authIdentity";
+import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 import { Menu, X } from "lucide-react";
 import { useScrolled } from "@/shared/hooks/useScrolled";
 import { cn } from "@/lib/utils";
@@ -53,7 +54,7 @@ export function StampHeader() {
         <div className="flex-1">
           <Link href="/" className="block" aria-label={t("logoAria")}>
             <Image
-              src="/logo.png"
+              src={staticAssetUrl("/logo.png")}
               alt="Stamp.AI"
               width={64}
               height={64}

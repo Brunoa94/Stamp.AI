@@ -9,7 +9,7 @@ import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { parseEnv } from 'node:util';
 import { createClient } from '@supabase/supabase-js';
-import { LOCAL_ENV_FILE, LOCAL_URL, validateLocalEnvironment } from '../../tests/acceptance/support/environment.mjs';
+import { LOCAL_ENV_FILE, LOCAL_URL, TEST_URL, validateLocalEnvironment } from '../../tests/acceptance/support/environment.mjs';
 
 const MIGRATIONS = 'supabase/migrations';
 // The CLI's own migration runner cannot replay this history (its statement
@@ -88,6 +88,9 @@ const env = validateLocalEnvironment({
   TEST_USER_EMAIL: SUPPLIED_USER_EMAIL,
   TEST_USER_PASSWORD: password,
   TEST_USER_ID: created.data.user.id,
+  // The local stack has no static-assets bucket; the site's static images are
+  // read (public, no credentials) from the hosted test project's CDN bucket.
+  NEXT_PUBLIC_STATIC_ASSETS_URL: `${TEST_URL}/storage/v1/object/public/static-assets`,
 });
 mkdirSync('.acceptance/local', { recursive: true });
 writeFileSync(LOCAL_ENV_FILE, Object.entries(env).map(([key, value]) => `${key}=${value}`).join('\n') + '\n', { mode: 0o600 });

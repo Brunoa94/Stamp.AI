@@ -1,10 +1,11 @@
 import { buildStampWallColumns } from "@/features/homepage/lib/helpers/stampWall";
 import type { StampWallTileT } from "@/features/homepage/lib/types/stampWall";
+import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 
-const WALL = "/home/stamp-wall";
+const WALL = staticAssetUrl("/home/stamp-wall");
 
 /**
- * Every product on the hero wall (320px crops of public/products-images), with
+ * Every product on the hero wall (320px crops of products-images on the static-assets CDN), with
  * product lines interleaved so the round-robin deal mixes them. Tiles with a
  * `flipSrc` turn over from the customer's photo or logo to the printed product.
  */
