@@ -1,7 +1,8 @@
-import { SITE_URL, SITE_NAME } from "../config/site";
+import { SITE_URL, SITE_NAME, DEFAULT_LOCALE } from "../config/site";
 import { BUSINESS_INFO } from "../config/business";
 
-export function webSiteSchema() {
+/** `inLanguage` is the BCP 47 tag of the language the site was rendered in */
+export function webSiteSchema(inLanguage: string = DEFAULT_LOCALE) {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -20,6 +21,6 @@ export function webSiteSchema() {
       },
       "query-input": "required name=search_term_string",
     },
-    inLanguage: "en-US",
+    inLanguage,
   };
 }

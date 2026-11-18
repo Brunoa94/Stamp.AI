@@ -1,4 +1,4 @@
-import { SITE_URL } from "../config/site";
+import { DEFAULT_LOCALE, SITE_URL } from "../config/site";
 import type { WebPageData } from "./types";
 
 export function webPageSchema(data: WebPageData) {
@@ -17,6 +17,6 @@ export function webPageSchema(data: WebPageData) {
     },
     ...(data.datePublished && { datePublished: data.datePublished }),
     ...(data.dateModified && { dateModified: data.dateModified }),
-    inLanguage: "en-US",
+    inLanguage: data.inLanguage ?? DEFAULT_LOCALE,
   };
 }

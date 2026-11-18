@@ -66,7 +66,7 @@ export function OrdersGridSection({ orders }: PropsI) {
 }
 ```
 
-**Copy comes from `next-intl`.** Customer-facing strings live in `src/i18n/messages/en.json` and are read with `useTranslations`; never hardcode them in components.
+**Copy comes from `next-intl`.** Customer-facing strings live in `src/i18n/messages/` (`en.json`, `pt.json`, `nl.json`) and are read with `useTranslations`; never hardcode them in components. Add a new key to all three files: a key missing from `pt.json` or `nl.json` falls back to English (`src/i18n/request.ts`), which is a safety net, not a translation. Dates and numbers are formatted with the visitor's locale (`useLocale()`), never a hardcoded `"en-US"`.
 
 ## State Management
 

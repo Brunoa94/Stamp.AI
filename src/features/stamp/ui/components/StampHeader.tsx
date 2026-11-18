@@ -12,6 +12,7 @@ import { isRegisteredUser } from "@/shared/helpers/authIdentity";
 import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 import { Menu, X } from "lucide-react";
 import { useScrolled } from "@/shared/hooks/useScrolled";
+import { LanguageSwitcher } from "@/shared/ui/LanguageSwitcher";
 import { cn } from "@/lib/utils";
 import {
   stampNavCtaVariants,
@@ -119,6 +120,8 @@ export function StampHeader() {
               <Register className={stampNavLinkVariants()}>{t("signUp")}</Register>
             </>
           )}
+
+          <LanguageSwitcher />
         </nav>
 
         {/* Mobile/tablet hamburger (below lg) */}
@@ -214,6 +217,8 @@ export function StampHeader() {
               </Register>
             </>
           )}
+
+          {mobileMenuOpen && <LanguageSwitcher className="mt-3 self-start" />}
         </nav>
       </div>
     </>

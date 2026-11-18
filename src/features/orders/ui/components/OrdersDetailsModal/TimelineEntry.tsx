@@ -1,4 +1,5 @@
 import { Check, Circle } from "lucide-react";
+import { useLocale } from "next-intl";
 import { Span } from "@/features/ui/span";
 import type { OrderStatusHistoryT } from "@/shared/types/order";
 import {
@@ -15,6 +16,7 @@ interface PropsI {
 }
 
 export function TimelineEntry({ entry, isLast, t }: PropsI) {
+  const locale = useLocale();
   const displayStatus = toDisplayStatus(entry.status);
   const isTerminal = displayStatus === "delivered" || displayStatus === "cancelled";
 
@@ -51,7 +53,7 @@ export function TimelineEntry({ entry, isLast, t }: PropsI) {
           variant="meta"
           className="mt-1 block text-(--color-stamp-taupe)"
         >
-          {formatTimestamp(entry.created_at)}
+          {formatTimestamp(entry.created_at, locale)}
         </Span>
       </div>
     </li>

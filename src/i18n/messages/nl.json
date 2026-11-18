@@ -1,0 +1,2992 @@
+{
+  "home": {
+    "topBanner": {
+      "freeShipping": "Gratis verzending bij bestellingen boven € {threshold}",
+      "returns": "{days} dagen retourneren",
+      "securePayment": "Veilig betalen"
+    },
+    "paymentBanner": {
+      "securePayment": "Veilig betalen",
+      "freeShipping": "Gratis verzending bij bestellingen boven € {threshold}",
+      "fastDelivery": "Snelle levering",
+      "returns": "{days} dagen retourneren",
+      "trustedProviders": "Betrouwbare betaalproviders"
+    },
+    "flowPreview": {
+      "railTitle": "8 stappen tot print",
+      "windowLabel": "Geanimeerde preview van het ontwerpproces van Stamp.ai",
+      "stepTag": "Stap {number} / {name}",
+      "steps": {
+        "upload": {
+          "rail": "Uploaden",
+          "tag": "Uploaden"
+        },
+        "describe": {
+          "rail": "Beschrijven",
+          "tag": "Beschrijven"
+        },
+        "process": {
+          "rail": "Verwerken",
+          "tag": "Verwerken"
+        },
+        "results": {
+          "rail": "Resultaten",
+          "tag": "Resultaten"
+        },
+        "product": {
+          "rail": "Product",
+          "tag": "Product"
+        },
+        "customize": {
+          "rail": "Aanpassen",
+          "tag": "Aanpassen"
+        },
+        "creation": {
+          "rail": "Maken",
+          "tag": "Maken"
+        },
+        "final": {
+          "rail": "Klaar",
+          "tag": "Klaar"
+        }
+      },
+      "upload": {
+        "title": "Upload een <accent>afbeelding</accent>",
+        "description": "Voeg een afbeelding toe als basis voor je ontwerp. Dat is optioneel: je kunt ook alleen met een tekstprompt beginnen.",
+        "dropTitle": "Afbeelding uploaden (optioneel)",
+        "dropHint": "Max. 10 MB, alleen JPG/PNG/GIF",
+        "fileName": "mijn-hond.jpg",
+        "fileSize": "0,10 MB",
+        "skip": "Upload overslaan",
+        "next": "Volgende stap"
+      },
+      "describe": {
+        "title": "Beschrijf je<br></br><accent>ontwerp</accent>",
+        "promptLabel": "Je prompt",
+        "prompt": "Maak van mijn hond een superheldensticker met een rode cape, dikke lijnen en warme kleuren",
+        "charCount": "{count} / {max}",
+        "preservation": "Behoud",
+        "low": "Laag",
+        "high": "Hoog",
+        "removeBackground": "Achtergrond verwijderen",
+        "coins": "5 munten beschikbaar",
+        "submit": "Stamp it!"
+      },
+      "process": {
+        "title": "Je ontwerp wordt gegenereerd…",
+        "eta": "Ca. 10 seconden…"
+      },
+      "results": {
+        "title": "Jouw <accent>creatie</accent>",
+        "previous": "Je eerdere creaties",
+        "use": "Deze afbeelding gebruiken",
+        "repeat": "Herhalen"
+      },
+      "product": {
+        "title": "Kies je<br></br><accent>product</accent>",
+        "description": "Kies waarop je je ontwerp wilt laten printen. Alles is van goede kwaliteit en wordt op bestelling geprint.",
+        "category": "Kleding (3)",
+        "selected": "Geselecteerd",
+        "continue": "Verder naar aanpassen →",
+        "names": {
+          "kidsTee": "Kinder-T-shirt Heavy Cotton™",
+          "hoodie": "Unisex fleece hoodie",
+          "softTee": "Unisex Softstyle T-shirt",
+          "mug": "Keramische mok (EU)"
+        },
+        "prices": {
+          "kidsTee": "€ 19,99",
+          "hoodie": "€ 49,99",
+          "softTee": "€ 24,99",
+          "mug": "€ 24,99"
+        }
+      },
+      "customize": {
+        "title": "Pas je<br></br><accent>product</accent> aan",
+        "printPositions": "Printposities",
+        "front": "Voorkant",
+        "back": "Achterkant",
+        "included": "Inbegrepen",
+        "size": "Grootte",
+        "sizePct": "{value}%",
+        "rotation": "Rotatie",
+        "rotationValue": "{value}°",
+        "colors": "Kleurstalen",
+        "sizeSelector": "Maatkeuze",
+        "sizeValue": "M",
+        "create": "Product maken"
+      },
+      "creation": {
+        "title": "Je productmockup wordt gemaakt…",
+        "eta": "Ca. 15 seconden…"
+      },
+      "final": {
+        "title": "Klaar om te<br></br><accent>dragen</accent>",
+        "badge": "Eindpreview",
+        "productName": "Kinder-T-shirt Heavy Cotton™",
+        "variant": "Kleur: Wit | Maat: M",
+        "total": "Totaalbedrag",
+        "price": "€ 19,99",
+        "counter": "1 / 10",
+        "bag": "In je tas",
+        "bagAnother": "+ In je tas en nog een maken"
+      },
+      "toasts": {
+        "uploaded": "Afbeelding geüpload",
+        "bagged": "Toegevoegd aan je tas!"
+      }
+    },
+    "hero": {
+      "brand": "tamp <accent>.ai</accent>",
+      "brandLabel": "Stamp.ai",
+      "headline": "Van verbeelding<br></br>tot <word></word>",
+      "rotatingWords": {
+        "tees": "T-shirts",
+        "totes": "totebags",
+        "mugs": "mokken",
+        "hoodies": "hoodies"
+      },
+      "tagline": "Upload een foto of beschrijf een idee — wij ontwerpen het en printen het op zware kledingstukken die lang meegaan.",
+      "upload": {
+        "title": "Upload een foto om te beginnen",
+        "hint": "…en bewerk hem in de volgende stap met een prompt",
+        "step": "stap 01"
+      },
+      "freeCredits": "<signUp>Meld je aan</signUp> en krijg elke dag 5 gratis bewerkingen",
+      "productBadge": "Essential T-shirt · Wit · 320 GSM",
+      "scrollCue": "Scroll om te ontdekken",
+      "productImageAlt": "Zwaar T-shirt met een eigen print",
+      "flowIntro": "Je bent {count} stappen verwijderd van je <accent>droomproduct.</accent>",
+      "flowBenefits": {
+        "noSkills": {
+          "title": "Geen ontwerpervaring nodig",
+          "hint": "Beschrijf het gewoon"
+        },
+        "preview": {
+          "title": "Eerst een preview",
+          "hint": "Voordat je bestelt"
+        },
+        "onDemand": {
+          "title": "Op bestelling gemaakt",
+          "hint": "Speciaal voor jou geprint"
+        }
+      }
+    },
+    "meta": {
+      "title": "Ontwerp en bestel eigen T-shirts en kleding",
+      "description": "Maak van een foto of idee een printklaar ontwerp en zet het op zware, op bestelling gemaakte kleding. Geen minimum, geen ontwerpervaring nodig. Begin vandaag gratis.",
+      "keywords": [
+        "eigen T-shirt ontwerpen met AI",
+        "T-shirt van eigen foto",
+        "foto naar T-shirt AI",
+        "AI T-shirt generator",
+        "ontwerp je eigen T-shirt",
+        "print on demand kleding",
+        "AI ontwerpgenerator",
+        "gepersonaliseerde hoodies",
+        "gepersonaliseerde T-shirts online",
+        "AI kledingontwerp",
+        "eigen kleding maken",
+        "tekst naar T-shirt"
+      ]
+    },
+    "process": {
+      "title": "Het",
+      "accent": "proces",
+      "label": "Hoe het werkt",
+      "footer": "Eenvoudig, van idee tot voor je deur.",
+      "stepCounter": "Stap {current} van {total}",
+      "steps": {
+        "step-upload": {
+          "title": "Uploaden",
+          "description": "Begin met een foto of schets die je al hebt. Geen foto? Sla deze stap over en gebruik alleen woorden."
+        },
+        "step-describe": {
+          "title": "Beschrijven",
+          "description": "Typ in een of twee eenvoudige zinnen wat je wilt, zoals \"mijn hond als astronaut\"."
+        },
+        "step-generate": {
+          "title": "Genereren",
+          "description": "Klik op genereren en geef ons een paar seconden om je ontwerp te maken."
+        },
+        "step-results": {
+          "title": "Resultaten",
+          "description": "Bekijk de ontwerpen die je terugkrijgt en kies je favoriet. Niet tevreden? Verander een woord en probeer het opnieuw."
+        },
+        "step-product": {
+          "title": "Product",
+          "description": "Kies waarop je het wilt printen: een T-shirt, hoodie, mok, canvas of totebag."
+        },
+        "step-customize": {
+          "title": "Aanpassen",
+          "description": "Kies je maat en kleur en zet het ontwerp waar je het wilt hebben."
+        },
+        "step-create": {
+          "title": "Bekijken en in je tas",
+          "description": "Bekijk je ontwerp op het echte product en voeg het toe aan je tas. Wij printen je stuk en bezorgen het bij je thuis."
+        }
+      }
+    },
+    "products": {
+      "title": "De",
+      "accent": "essentials",
+      "label": "Onze kleding",
+      "emptyState": "De catalogus is tijdelijk niet beschikbaar — kom snel terug",
+      "viewFullCatalog": "Alle producten bekijken"
+    },
+    "featured": {
+      "title": "Uitgelichte",
+      "accent": "stukken",
+      "label": "Uitgelichte stukken",
+      "scrollLeft": "Naar links scrollen",
+      "scrollRight": "Naar rechts scrollen",
+      "noImage": "Geen afbeelding",
+      "collectionLabel": "Onze collectie",
+      "swipeHint": "Swipe om te ontdekken"
+    },
+    "manifesto": {
+      "title": "Ontwerpen voor <accent>iedereen</accent>",
+      "quote": "Goed ontwerp zou geen ontwerpdiploma of minimale afname van 500 stuks moeten vereisen. Vertel ons wat je wilt en we helpen je het te maken — stuk voor stuk.",
+      "quoteAttribution": "— Het Stamp AI-manifest",
+      "intro": "We hebben Stamp AI gebouwd om de kloof tussen een goed idee en een goed product te dichten. Jij brengt het idee; wij zorgen voor het artwork, het printen en de kleding, zodat iedereen kleding kan maken die het bewaren waard is.",
+      "valuesToggle": "Onze waarden",
+      "values": {
+        "01": {
+          "title": "Eenvoudig",
+          "description": "Beschrijf in gewone woorden wat je wilt en krijg printklaar artwork terug. Geen software om te leren."
+        },
+        "02": {
+          "title": "Gemaakt om lang mee te gaan",
+          "description": "Zware kleding van 280 tot 480 GSM, gekozen om jaren dragen en wassen te doorstaan."
+        },
+        "03": {
+          "title": "Op bestelling",
+          "description": "Alles wordt op bestelling gemaakt, dus geen onverkochte voorraad en veel minder verspilling."
+        },
+        "04": {
+          "title": "Wereldwijde logistiek",
+          "description": "Verzending met tracking naar meer dan 180 landen, van onze pers tot aan je deur."
+        }
+      }
+    },
+    "cta": {
+      "heading": "Klaar om je <accent>visie</accent> te stempelen?",
+      "lead": "Begin met een foto of een paar woorden en zie je ontwerp binnen enkele seconden. Geen minimale bestelling en geen verplichtingen. Maak gewoon wat je al voor je zag.",
+      "ctaPrimary": "Begin met ontwerpen",
+      "ctaSecondary": "Catalogus bekijken"
+    },
+    "promo": {
+      "brand-logo": {
+        "tagline": "Maak je eigen logo's, stempel je merk",
+        "accentWord": "merk",
+        "description": "Maak van je ideeën professionele logo's. Van fitnessmerken tot luxelabels: breng je visie tot leven op premium merchandise.",
+        "cta": "Begin met ontwerpen"
+      },
+      "memories": {
+        "tagline": "Stempel je mooiste herinneringen",
+        "accentWord": "herinneringen",
+        "description": "Maak van je dierbaarste momenten blijvende aandenkens. Familiefoto's, portretten van stellen en geliefde huisdieren — allemaal geprint op kwaliteitsproducten.",
+        "cta": "Begin met ontwerpen"
+      },
+      "special-moments": {
+        "tagline": "Ontwerpen voor speciale momenten",
+        "accentWord": "speciale momenten",
+        "description": "Vier de mijlpalen in het leven met eigen merchandise. Perfect voor verjaardagen, vrijgezellenfeesten, sportprestaties en meer.",
+        "cta": "Begin met ontwerpen"
+      }
+    },
+    "reviews": {
+      "title": "Wat klanten",
+      "accent": "zeggen",
+      "label": "Klantreviews",
+      "verifiedReviews": "{count, number} klantreviews",
+      "platformBreakdown": "Per platform",
+      "testimonials": {
+        "alex-chen": {
+          "author": "Alex Chen",
+          "role": "Creatief directeur",
+          "quote": "Ik gaf het een ruwe schets en kreeg iets terug dat ik echt zou inlijsten. Het T-shirt waarop het geprint is, is zwaarder dan de meeste die ik heb gekocht."
+        },
+        "jordan-ellis": {
+          "author": "Jordan Ellis",
+          "role": "Streetwear-ontwerper",
+          "quote": "Het T-shirt van 320 GSM is het beste shirt waarop ik ooit heb geprint, punt, en de prints zijn elke keer scherp."
+        },
+        "morgan-park": {
+          "author": "Morgan Park",
+          "role": "Onafhankelijk kunstenaar",
+          "quote": "Ik kan echt niet ontwerpen, maar ik beschreef wat ik wilde en het snapte het meteen. Binnen zes dagen in huis."
+        },
+        "riley-santos": {
+          "author": "Riley Santos",
+          "role": "Merkconsultant",
+          "quote": "Omdat alles op bestelling wordt gemaakt, zit ik niet met voorraad, en de printkwaliteit verschilt niet tussen batches."
+        }
+      }
+    },
+    "faq": {
+      "title": "Vragen",
+      "accent": "beantwoord",
+      "label": "Veelgestelde vragen",
+      "stillHaveQuestions": "Nog vragen?",
+      "items": {
+        "ai-synthesis": {
+          "question": "Hoe wordt mijn idee een ontwerp?",
+          "answer": "Upload een foto die je mooi vindt, begin met een schets of typ een paar woorden, en onze ontwerpstudio maakt er artwork van dat direct op stof geprint kan worden. Kleur, resolutie en detail worden voor je geregeld, zodat de print er op het kledingstuk goed uitziet. Geen ontwerpervaring nodig."
+        },
+        "archival-quality": {
+          "question": "Waarom gaan jullie stoffen zo lang mee?",
+          "answer": "We gebruiken alleen zware kleding van 280 tot 480 GSM. Die is voorgekrompen en enzymgewassen, zodat ze haar vorm houdt, en we printen met inkt op waterbasis. Je kledingstuk behoudt jarenlang pasvorm en kleur."
+        },
+        "production-shipping": {
+          "question": "Hoe lang duren productie en verzending?",
+          "answer": "We beginnen met printen zodra je bestelling is bevestigd. Printen duurt 2 tot 3 werkdagen, daarna controleren we elk stuk met de hand. Verzending duurt nog 3 tot 4 dagen, dus de meeste bestellingen komen binnen 5 tot 7 werkdagen aan. Je kunt je bestelling de hele weg volgen."
+        },
+        "sustainability": {
+          "question": "Hoe gaan jullie om met duurzaamheid?",
+          "answer": "We maken alles op bestelling, dus er ligt niets in een magazijn te verspillen. We printen met inkt op waterbasis, verpakken in gerecyclede materialen en blijven werken aan een kleinere voetafdruk in elke stap."
+        },
+        "samples": {
+          "question": "Kan ik samples bestellen voordat ik grote aantallen bestel?",
+          "answer": "Ja. Bestel eerst één stuk om de pasvorm, het gevoel en de printkwaliteit te controleren. Er is geen minimum en elk stuk wordt op bestelling gemaakt. Ben je tevreden, bestel hetzelfde ontwerp dan opnieuw in elk gewenst aantal. Bij 25 stuks of meer krijg je staffelkorting."
+        },
+        "satisfaction": {
+          "question": "Wat als ik niet tevreden ben met mijn bestelling?",
+          "answer": "Je hebt 30 dagen garantie. Klopt de print, de stof of de pasvorm niet, dan vervangen we het gratis of krijg je je geld volledig terug, en wij betalen de retourverzending. Eigen ontwerpen kunnen niet worden doorverkocht, dus we doen het liever meteen goed."
+        }
+      },
+      "contactSupport": "Contact opnemen"
+    },
+    "ratingStars": {
+      "ariaLabel": "Beoordeeld met {rating} van {total} sterren"
+    },
+    "trustIndicators": {
+      "items": {
+        "aiPowered": "Eigen ontwerp",
+        "archivalQuality": "Premium kwaliteit",
+        "instantDelivery": "Snelle levering",
+        "fiveSevenDayDelivery": "Levering in 5-7 dagen",
+        "thirtyDayGuarantee": "30 dagen garantie"
+      },
+      "subLabels": {
+        "generative": "Ontwerpstudio",
+        "heritage": "Gemaakt om lang mee te gaan",
+        "logistics": "Wereldwijde logistiek"
+      }
+    },
+    "productCard": {
+      "noImage": "Geen afbeelding",
+      "discountBadge": "-{percent}%"
+    },
+    "guarantees": {
+      "title": "Winkel met",
+      "accent": "vertrouwen",
+      "label": "Vertrouwen & veiligheid",
+      "paymentTitle": "Veilig betalen",
+      "paymentDescription": "Alle transacties zijn versleuteld en worden verwerkt door betrouwbare betaalproviders.",
+      "items": {
+        "returns": {
+          "title": "30 dagen garantie",
+          "description": "Klopt de print, de stof of de pasvorm niet, laat het ons dan binnen 30 dagen weten. We vervangen het of je krijgt je geld volledig terug, en wij betalen de retourverzending."
+        },
+        "refund": {
+          "title": "Vervanging of terugbetaling",
+          "description": "Is er iets mis met je bestelling, dan kies jij: gratis vervanging of volledige terugbetaling."
+        },
+        "securePayment": {
+          "title": "Veilig afrekenen",
+          "description": "Je betaalgegevens zijn beschermd met SSL-versleuteling op bankniveau."
+        },
+        "freeShipping": {
+          "title": "Gratis verzending",
+          "description": "Gratis levering met tracking bij bestellingen boven € 60."
+        }
+      }
+    },
+    "productMarquee": {
+      "items": {
+        "fleeceHoodies": "Fleece hoodies",
+        "ceramicMugs": "Keramische mokken",
+        "accessories": "Accessoires",
+        "kidsTees": "Kinder-T-shirts",
+        "softstyleTees": "Softstyle T-shirts"
+      }
+    },
+    "productOfMonth": {
+      "eyebrow": "De keuze van deze maand",
+      "title": "Product van de maand",
+      "badge": "Keuze van de maand",
+      "cta": "Ontwerp de jouwe nu",
+      "noImage": "Geen afbeelding"
+    },
+    "story": {
+      "blocks": {
+        "design": {
+          "eyebrow": "Ontwerpen",
+          "title": "Beschrijf het. <accent>Wij ontwerpen het.</accent>",
+          "body": "Upload een foto, begin met een ruwe schets of typ een paar woorden. Een paar seconden later heb je strak, printklaar artwork in de stijl die je voor ogen hebt.",
+          "cta": "Begin met ontwerpen",
+          "imageAlt": "Hetzelfde portret in vier verschillende stijlen getekend"
+        },
+        "quality": {
+          "eyebrow": "Kwaliteit",
+          "title": "Zware kleding, <accent>gemaakt om lang mee te gaan.</accent>",
+          "body": "We printen op stoffen van 280 tot 480 GSM die voorgekrompen en enzymgewassen zijn, met milieuvriendelijke inkt op waterbasis. Je kledingstuk behoudt pasvorm, kleur en print, ook na jaren dragen en wassen.",
+          "cta": "Bekijk de essentials",
+          "imageAlt": "Model in een zwaar wit T-shirt"
+        }
+      }
+    }
+  },
+  "catalog": {
+    "meta": {
+      "title": "Productcatalogus",
+      "description": "Bekijk alle producten die je met AI kunt personaliseren bij Stamp AI — T-shirts, hoodies, sweaters, totebags, mokken, posters en meer, per categorie met foto's, prijzen en details.",
+      "keywords": [
+        "productcatalogus",
+        "producten bekijken",
+        "gepersonaliseerde producten",
+        "alle producten"
+      ]
+    },
+    "title": "De",
+    "accent": "catalogus",
+    "intro": "Elk product uit onze collectie, klaar voor jouw ontwerp. Blader per categorie, bekijk de foto's en details en neem elk product mee naar de studio.",
+    "emptyState": "De catalogus is tijdelijk niet beschikbaar — kom snel terug",
+    "categoryNavAria": "Productcategorieën",
+    "allCategory": "Alle producten",
+    "groups": {
+      "clothing": "Kleding",
+      "accessories": "Accessoires & Cadeaus"
+    },
+    "showcase": {
+      "title": "Ontdek ons beste werk",
+      "subtitle": "Dit zijn enkele van de populairste productcategorieën in onze catalogus.",
+      "cardAria": "Bekijk {group}"
+    },
+    "backToShowcase": "Terug naar ontdekken",
+    "section": {
+      "subtitle": "Zorgvuldig gekozen {group} uit onze collectie, klaar voor jouw ontwerp.",
+      "seeAll": "Alles bekijken",
+      "seeAllAria": "Alle {group} bekijken"
+    },
+    "toolbar": {
+      "filteringLabel": "Filters",
+      "clearFilters": "Filters wissen",
+      "searchPlaceholder": "Waar ben je naar op zoek?",
+      "searchAria": "Producten zoeken",
+      "sortAria": "Producten sorteren",
+      "sortOptions": {
+        "featured": "Uitgelicht",
+        "price-asc": "Prijs: laag naar hoog",
+        "price-desc": "Prijs: hoog naar laag",
+        "name-asc": "Naam: A tot Z"
+      }
+    },
+    "noResults": {
+      "title": "Geen producten gevonden",
+      "body": "Probeer een andere zoekopdracht of wis de filters om de hele collectie te zien.",
+      "clearFilters": "Filters wissen"
+    },
+    "card": {
+      "noImage": "Geen afbeelding",
+      "discountBadge": "-{percent}%",
+      "photoCount": "{count} foto's",
+      "quickView": "Snel bekijken",
+      "quickViewAria": "Details van {name} bekijken"
+    },
+    "dialog": {
+      "noImage": "Geen afbeelding",
+      "photosLabel": "Productfoto's",
+      "photoAlt": "{name} — foto {number} van {total}",
+      "thumbnailAria": "Foto {number} tonen",
+      "colorsLabel": "Beschikbare kleuren",
+      "specsLabel": "Details",
+      "customizeCta": "Ontwerp de jouwe"
+    },
+    "reviews": {
+      "label": "Reviews",
+      "comingSoon": "Nog geen reviews — klantreviews komen binnenkort."
+    }
+  },
+  "stamp": {
+    "synthesis": {
+      "eyebrow": "Kies een filter",
+      "showMore": "Nog {count} tonen",
+      "showLess": "Minder tonen",
+      "subtitle": "Tik op een suggestie om je prompt te beginnen en pas hem rechts aan.",
+      "applySuggestion": "Suggestie toepassen: {label} — {hint}",
+      "noFilter": {
+        "label": "Geen filter",
+        "hint": "Originele afbeelding gebruiken zonder stijlwijzigingen",
+        "aria": "Geen filter — Originele afbeelding gebruiken zonder stijlwijzigingen"
+      },
+      "protocol": "Stap 02 / Beschrijven",
+      "title": "Beschrijf je <accent>ontwerp</accent>",
+      "generate": "Stamp it!",
+      "generating": "Bezig met genereren...",
+      "promptLabel": "Je prompt",
+      "promptPlaceholder": "Wees zo gedetailleerd mogelijk: beschrijf de wijzigingen, kleuren, texturen, stijl en sfeer die je wilt...",
+      "promptAria": "Invoerveld voor prompt",
+      "counter": "{count} / {max}",
+      "preservationLabel": "Behoud",
+      "preservationTooltip": "Bepaalt hoeveel van de originele afbeelding behouden blijft. Lagere waarden geven meer creatieve vrijheid, hogere waarden behouden meer van het origineel.",
+      "low": "LAAG",
+      "high": "HOOG",
+      "preservationAria": "Schuifregelaar voor behoud",
+      "removeBackgroundLabel": "Achtergrond verwijderen",
+      "removeBackgroundTooltip": "Verwijdert automatisch de achtergrond van je gegenereerde ontwerp, zodat alleen het hoofdonderwerp overblijft.",
+      "removeBackgroundAria": "Achtergrond verwijderen aan- of uitzetten",
+      "skipWithUploadedImage": "Doorgaan zonder mijn foto te bewerken",
+      "skipWithCachedImages": "Doorgaan met eerdere foto's"
+    },
+    "suggestions": {
+      "vibrant": {
+        "label": "Levendig",
+        "hint": "Krachtige, verzadigde kleur",
+        "prompt": "Verhoog de verzadiging voor krachtige, levendige kleuren."
+      },
+      "monochrome": {
+        "label": "Monochroom",
+        "hint": "Rijk zwart-wit",
+        "prompt": "Zet om naar een rijk zwart-wit."
+      },
+      "vintage": {
+        "label": "Vintage",
+        "hint": "Retro filmlook",
+        "prompt": "Geef het een warme vintage, retro filmlook."
+      },
+      "minimal": {
+        "label": "Minimalistisch",
+        "hint": "Strak & eenvoudig",
+        "prompt": "Vereenvoudig tot een strakke, minimalistische compositie."
+      },
+      "watercolor": {
+        "label": "Aquarel",
+        "hint": "Zacht geschilderd",
+        "prompt": "Herinterpreteer als een zacht aquarelschilderij."
+      },
+      "line-art": {
+        "label": "Lijntekening",
+        "hint": "Inktlijnen",
+        "prompt": "Teken als een strakke lijntekening in inkt."
+      },
+      "pop-art": {
+        "label": "Pop-art",
+        "hint": "Gedurfde stripstijl",
+        "prompt": "Maak er gedurfde pop-art van met rasterpunten."
+      },
+      "cinematic": {
+        "label": "Filmisch",
+        "hint": "Dramatisch filmlicht",
+        "prompt": "Geef het filmische, dramatische belichting."
+      },
+      "neon": {
+        "label": "Neon",
+        "hint": "Gloeiende cyberpunk",
+        "prompt": "Baad de compositie in gloeiend neon-, cyberpunklicht."
+      },
+      "golden-hour": {
+        "label": "Gouden uur",
+        "hint": "Warm, gericht licht",
+        "prompt": "Baad de compositie in zacht licht van het gouden uur."
+      },
+      "high-contrast": {
+        "label": "Hoog contrast",
+        "hint": "Diepe schaduwen",
+        "prompt": "Zet in op dramatische schaduwen met hoog contrast en heldere hooglichten."
+      },
+      "film-grain": {
+        "label": "Filmkorrel",
+        "hint": "Analoge textuur",
+        "prompt": "Voeg subtiele analoge filmkorrel en textuur toe."
+      },
+      "oil-paint": {
+        "label": "Olieverf",
+        "hint": "Penseelstreken met textuur",
+        "prompt": "Herinterpreteer als een olieverfschilderij met textuur."
+      },
+      "render-3d": {
+        "label": "3D-render",
+        "hint": "Glanzend en ruimtelijk",
+        "prompt": "Maak er een glanzend, ruimtelijk 3D-personage van."
+      },
+      "sketch": {
+        "label": "Schets",
+        "hint": "Met potlood getekend",
+        "prompt": "Teken als een handgemaakte potloodschets."
+      }
+    },
+    "metadata": {
+      "title": "AI-ontwerpstudio — Maak je eigen print",
+      "description": "Upload een foto of beschrijf je idee, kies een stijl en laat AI printklare ontwerpen maken. Pas het product aan en bestel binnen enkele minuten.",
+      "keywords": [
+        "AI-ontwerpstudio",
+        "eigen T-shirt maken",
+        "tekst naar T-shirtontwerp",
+        "AI-afbeelding naar kleding",
+        "eigen print maken"
+      ]
+    },
+    "header": {
+      "logoAria": "Terug naar de homepage van Stamp",
+      "brand": "Stamp it",
+      "stampAria": "Begin met ontwerpen",
+      "stamp": "Stamp it!",
+      "catalog": "Catalogus",
+      "profile": "Profiel",
+      "profileAria": "Je profiel bekijken",
+      "orders": "Bestellingen",
+      "cart": "Tas",
+      "logoutAria": "Uitloggen uit je account",
+      "logout": "Uitloggen",
+      "signIn": "Inloggen",
+      "signUp": "Aanmelden",
+      "openMenu": "Menu openen",
+      "closeMenu": "Menu sluiten",
+      "mainNavAria": "Hoofdnavigatie",
+      "mobileNavAria": "Mobiele navigatie"
+    },
+    "nav": {
+      "eyebrow": "Je voortgang",
+      "title": "8 stappen tot print",
+      "stepNavAria": "Stapnavigatie",
+      "back": "Terug",
+      "backTo": "Terug naar {step}",
+      "navigate": "Naar {title}",
+      "navigateLocked": "Naar {title} (vergrendeld)"
+    },
+    "common": {
+      "loading": "Laden..."
+    },
+    "steps": {
+      "hero": {
+        "title": "Start",
+        "label": "Begin hier"
+      },
+      "step-1": {
+        "title": "Uploaden",
+        "label": "Stap 01 / Uploaden"
+      },
+      "step-2": {
+        "title": "Beschrijven",
+        "label": "Stap 02 / Beschrijven"
+      },
+      "step-3": {
+        "title": "Verwerken",
+        "label": "Stap 03 / Genereren"
+      },
+      "step-4": {
+        "title": "Resultaten",
+        "label": "Stap 04 / Resultaten"
+      },
+      "step-5": {
+        "title": "Product",
+        "label": "Stap 05 / Product"
+      },
+      "step-6": {
+        "title": "Aanpassen",
+        "label": "Stap 06 / Aanpassen"
+      },
+      "step-7": {
+        "title": "Maken",
+        "label": "Stap 07 / Maken"
+      },
+      "step-8": {
+        "title": "Klaar",
+        "label": "Stap 08 / Afrekenen"
+      }
+    },
+    "hero": {
+      "eyebrow": "Begin hier",
+      "title": "Stamp <br></br><accent>It</accent>",
+      "description": "Maak van je eigen foto — of gewoon een idee — een printklaar ontwerp. Acht snelle stappen van idee tot eindproduct.",
+      "cta": "Begin met ontwerpen",
+      "ctaAria": "Begin met ontwerpen: start met het personaliseren van je ontwerp",
+      "imageAlt": "Mode en lifestyle"
+    },
+    "upload": {
+      "protocol": "Stap 01 / Uploaden",
+      "title": "Upload een <accent>afbeelding</accent>",
+      "description": "Begin met een foto waar je van houdt — een huisdier, een persoon, een plek. Geen foto? Sla deze stap over en beschrijf je idee.",
+      "next": "Volgende stap",
+      "skipUpload": "Upload overslaan",
+      "proceedWithoutUpload": "Doorgaan met eerdere foto's",
+      "dropzoneAria": "Afbeelding uploaden",
+      "dropzoneText": "Upload een foto (optioneel)",
+      "dropzoneHint": "Max. 10 MB, alleen JPG/PNG/GIF",
+      "fileSize": "{size} MB",
+      "removeAria": "Geüpload bestand verwijderen",
+      "previewAlt": "Preview van de geüploade referentie",
+      "replaceAria": "Geüploade afbeelding vervangen",
+      "replace": "Vervangen",
+      "inputAria": "Invoerveld voor bestandsupload"
+    },
+    "generation": {
+      "status": "Je ontwerp wordt gegenereerd...",
+      "estimate": "Ca. 10 seconden..."
+    },
+    "results": {
+      "protocol": "Stap 04 / Resultaten",
+      "title": "Jouw <accent>creatie</accent>",
+      "outputNumber": "Je ontwerp",
+      "generated": "Gegenereerd op {date}",
+      "savedToHistory": "Opgeslagen in geschiedenis",
+      "appliedPrompt": "Gebruikte prompt",
+      "useProtocol": "Deze afbeelding gebruiken",
+      "reSynthesize": "Herhalen",
+      "imageAlt": "Resultaat van het gegenereerde ontwerp",
+      "previousCreations": "JE EERDERE CREATIES",
+      "selectImage": "Afbeelding {number} selecteren",
+      "galleryImageAlt": "Eerder gegenereerd ontwerp {number}"
+    },
+    "productSelection": {
+      "protocol": "Stap 05 / Product",
+      "title": "Kies je <accent>product</accent>",
+      "description": "Kies waarop je je ontwerp wilt laten printen. Alles is van goede kwaliteit en wordt op bestelling geprint.",
+      "pricingNote": "Prijzen volgen de wereldwijde tarieven van printproviders",
+      "continue": "Verder naar aanpassen",
+      "selectAria": "{name} selecteren",
+      "selectedAria": "{name} geselecteerd",
+      "removeAria": "Geselecteerd product verwijderen",
+      "remove": "Verwijderen",
+      "loadingAria": "Producten worden geladen",
+      "loadError": "Producten laden mislukt",
+      "loadErrorHint": "Vernieuw de pagina en probeer het opnieuw.",
+      "empty": "Er zijn momenteel geen producten beschikbaar.",
+      "apparel": "Kleding",
+      "moreOptions": "Meer opties",
+      "accessories": "Accessoires",
+      "selectedBadge": "Geselecteerd",
+      "qualityNote": "Premium kwaliteit, op bestelling geprint",
+      "customizeNext": "Pas kleuren en maat aan in de volgende stap",
+      "showMore": "Nog {count} tonen",
+      "showLess": "Minder tonen",
+      "sectionPickerAria": "Producttype",
+      "sectionCount": "{count, plural, one {# product} other {# producten}}"
+    },
+    "customization": {
+      "protocol": "Stap 06 / Aanpassen",
+      "title": "Pas je <accent>product</accent> aan",
+      "previewTitle": "Preview & <accent>plaatsing</accent>",
+      "creating": "Bezig met maken...",
+      "createProduct": "Product maken",
+      "continueToPreview": "Verder naar preview",
+      "sizeLabel": "Maat",
+      "colorLabel": "Kleurstalen",
+      "colorLoading": "Kleuren laden...",
+      "colorSelectFirst": "Kies eerst een product om de beschikbare kleuren te laden.",
+      "colorNone": "Geen kleuren beschikbaar voor dit product.",
+      "colorSelectionAria": "Kleurkeuze",
+      "colorSwatchAria": "Kleur {color} selecteren",
+      "paperTypeLabel": "Papiersoort",
+      "paperTypeSelectionAria": "Keuze papiersoort",
+      "paperTypeAria": "Papiersoort {type} selecteren",
+      "sizeSelectorLabel": "Maatkeuze",
+      "sizeSelectionAria": "Maatkeuze",
+      "sizeAria": "Maat {size} selecteren",
+      "mockupPreview": "Mockup-preview"
+    },
+    "production": {
+      "status": "Je productmockup wordt gemaakt...",
+      "estimate": "Ca. 15 seconden..."
+    },
+    "finalReview": {
+      "protocol": "Stap 08 / Afrekenen",
+      "title": {
+        "tshirt": "Klaar om te <accent>dragen</accent>",
+        "hoodie": "Klaar om te <accent>dragen</accent>",
+        "tote": "Klaar om <accent>mee te nemen</accent>",
+        "poster": "Klaar om <accent>op te hangen</accent>"
+      },
+      "defaultProductName": "Gepersonaliseerd product",
+      "mockupAlt": "Mockup van het eindproduct",
+      "previewSealed": "Eindpreview",
+      "viewFullscreen": "Klik om op volledig scherm te bekijken",
+      "fullscreenPreview": "Productpreview op volledig scherm",
+      "closeFullscreen": "Volledig scherm sluiten",
+      "pressEscToClose": "Druk op ESC of klik ergens om te sluiten",
+      "previousImage": "Vorige mockup",
+      "nextImage": "Volgende mockup",
+      "goToImage": "Naar mockup",
+      "productDetails": "Kleur: {color} | Maat: {size}",
+      "finalValuation": "Totaalbedrag",
+      "freeShipping": "Gratis verzending bij elke bestelling",
+      "bagIt": "In je tas",
+      "adding": "TOEVOEGEN...",
+      "buyNow": "NU KOPEN",
+      "processing": "VERWERKEN...",
+      "bagItAndCreateAnother": "In je tas en nog een maken"
+    },
+    "errors": {
+      "imageGeneration": {
+        "emptyPrompt": "Vul een beschrijving in voor je ontwerp",
+        "timeout": "Het genereren van de afbeelding duurde langer dan {seconds} seconden. Probeer het opnieuw met een eenvoudigere prompt of neem contact op met support."
+      },
+      "productCreation": {
+        "alreadyCreated": "Product is al gemaakt. Je gaat verder naar het overzicht.",
+        "noDesign": "Genereer eerst een ontwerp",
+        "noProduct": "Kies een producttype",
+        "noColorSize": "Kies een kleur en maat",
+        "noSize": "Kies een maat",
+        "guestSession": "We konden je sessie niet starten. Probeer het zo meteen opnieuw.",
+        "timeout": "Het maken van het product duurde langer dan {seconds} seconden. Probeer het opnieuw of neem contact op met support als het probleem blijft."
+      },
+      "cart": {
+        "alreadyInCart": "Zit al in je tas. We brengen je erheen...",
+        "noProduct": "Maak een product voordat je het aan je tas toevoegt",
+        "noVariant": "Productvariant niet gevonden. Probeer het product opnieuw te maken.",
+        "storageUnavailable": "Je browser kon je tas niet opslaan. Zet privénavigatie uit of maak opslagruimte vrij, of log in om je tas in je account te bewaren.",
+        "added": "Toegevoegd aan je tas."
+      },
+      "upload": {
+        "invalidType": "Ongeldig bestandstype. Upload alleen JPG, PNG of GIF.",
+        "invalidImage": "Dit bestand kon niet als afbeelding worden gelezen. Upload een geldig afbeeldingsbestand.",
+        "tooLarge": "Bestand te groot. De maximale grootte is 10 MB.",
+        "readFailed": "Bestand lezen mislukt",
+        "uploadFailed": "Uploaden mislukt",
+        "uploaded": "Afbeelding geüpload",
+        "removed": "Afbeelding verwijderd"
+      },
+      "coins": {
+        "loadFailed": "Je munten konden niet worden geladen",
+        "loadFailedDescription": "Probeer het opnieuw voordat je een ontwerp genereert.",
+        "retry": "Opnieuw proberen",
+        "noCoins": "Je munten voor vandaag zijn op",
+        "noCoinsDescription": "Munten worden elke dag om middernacht aangevuld. Je kunt je geüploade afbeelding nog steeds direct gebruiken.",
+        "notLoggedIn": "Log in of registreer om verder te gaan",
+        "notLoggedInDescription": "Maak een account aan om te beginnen met ontwerpen",
+        "login": "Inloggen",
+        "register": "Registreren",
+        "display": "{coins} munten beschikbaar",
+        "displayAria": "{coins} munten beschikbaar",
+        "deductFailed": "Niet genoeg munten om te genereren",
+        "skipGeneration": "Mijn afbeelding gebruiken",
+        "usePreviousCreations": "Eerdere creaties gebruiken",
+        "proceedWithUploadedImage": "Doorgaan zonder mijn foto te bewerken",
+        "proceedWithCachedImages": "Doorgaan met eerder gegenereerde foto's"
+      }
+    },
+    "adjust": {
+      "positionsTitle": "Printposities",
+      "positionsHelp": "Kies waar je ontwerp wordt geprint.",
+      "adjustToggle": "Plaatsing aanpassen",
+      "previewToggle": "Preview & plaatsing",
+      "positionIncluded": "Inbegrepen",
+      "positionExtraCost": "+{price}",
+      "positionToggleAria": "Print op {position} aan- of uitzetten",
+      "position": {
+        "front": "Voorkant",
+        "back": "Achterkant",
+        "neck": "Nek",
+        "left_sleeve": "Linkermouw",
+        "right_sleeve": "Rechtermouw",
+        "left_leg": "Linkersok",
+        "right_leg": "Rechtersok"
+      },
+      "editingLabel": "Aanpassen",
+      "editingSelectAria": "Kies welke positie je wilt aanpassen",
+      "moveUp": "Omhoog",
+      "moveDown": "Omlaag",
+      "moveLeft": "Naar links",
+      "moveRight": "Naar rechts",
+      "center": "Centreren",
+      "horizontalLabel": "Horizontaal",
+      "verticalLabel": "Verticaal",
+      "horizontalAria": "Horizontale positie",
+      "verticalAria": "Verticale positie",
+      "sizeLabel": "Grootte",
+      "scaleDown": "Kleiner",
+      "scaleUp": "Groter",
+      "scaleAria": "Grootte van het ontwerp",
+      "rotationLabel": "Rotatie",
+      "rotationAria": "Draaien naar {degrees} graden",
+      "reset": "Herstellen",
+      "resetAria": "Plaatsing voor {position} herstellen",
+      "safeZoneWarning": "Je hebt de rand van het veilige printgebied bereikt.",
+      "previewAlt": "Je ontwerp op het product geplaatst",
+      "printAreaLabel": "Printgebied",
+      "noImageTitle": "Nog geen ontwerp",
+      "noImageBody": "Genereer en kies eerst een ontwerp en pas daarna aan hoe het op het product staat.",
+      "extraCostSummary": "Extra printposities: {price}",
+      "positionsHelpSingle": "Kies aan welke kant je ontwerp wordt geprint.",
+      "positionsGroupAria": "Printpositie",
+      "positionSelectAria": "Printen op {position}",
+      "mockupNote": "Alleen een preview. De definitieve mockup zie je in de volgende stap."
+    }
+  },
+  "cart": {
+    "content": {
+      "continueBrowsing": "Verder bekijken",
+      "loginForSavedItems": "Sommige van deze artikelen zijn opgeslagen in je account. Log in om ze af te rekenen, of deselecteer ze om als gast verder te gaan."
+    },
+    "header": {
+      "title": "Je <accent>tas</accent>"
+    },
+    "selection": {
+      "selectedCount": "{selected} van {total} geselecteerd",
+      "selectAll": "Alles selecteren ({count})",
+      "deselectAll": "Alles deselecteren"
+    },
+    "mobileCta": {
+      "checkout": "Afrekenen · {total}",
+      "itemsSelected": "{count, plural, one {# artikel geselecteerd} other {# artikelen geselecteerd}}",
+      "selectItems": "Selecteer artikelen om af te rekenen"
+    },
+    "empty": {
+      "title": "Je tas is leeg",
+      "subtitle": "Er zit nog niets in.",
+      "cta": "Begin met ontwerpen"
+    },
+    "itemCard": {
+      "customProduct": "Gepersonaliseerd product",
+      "standardVariant": "Standaard",
+      "customDesignSynthesis": "Eigen ontwerp",
+      "variant": "Variant",
+      "colorway": "Kleur",
+      "lineTotal": "Regeltotaal",
+      "quantityGroupLabel": "Aantal voor {productName}",
+      "decreaseQuantity": "Aantal verlagen",
+      "increaseQuantity": "Aantal verhogen",
+      "remove": "Verwijderen",
+      "selectItem": "{product} selecteren om af te rekenen"
+    },
+    "loading": {
+      "label": "Je tas wordt geladen"
+    },
+    "summary": {
+      "title": "Je <accent>bestelling</accent>",
+      "subtotal": "Subtotaal",
+      "shippingProtocol": "Verzending",
+      "free": "Gratis",
+      "taxLogistics": "Btw",
+      "taxNote": "Berekend bij het afrekenen",
+      "proceedToCheckout": "Afrekenen",
+      "estimatedArrival": "Verwachte levering",
+      "arrivalWindow": "5-8 werkdagen",
+      "secureTransactions": "Veilig, versleuteld afrekenen",
+      "total": "Totaal",
+      "currencyNote": "Valuta: USD",
+      "noItemsSelected": "Selecteer artikelen uit je tas om af te rekenen.",
+      "itemsSelected": "{count, plural, one {# artikel geselecteerd} other {# artikelen geselecteerd}}"
+    }
+  },
+  "buyCredits": {
+    "dialog": {
+      "selectTitle": "Credits kopen",
+      "paymentTitle": "Betaling afronden",
+      "description": "Koop credits om meer ontwerpen te maken met je prompts."
+    },
+    "selection": {
+      "packageLabel": "Kies een pakket",
+      "customLabel": "Of vul zelf een aantal in",
+      "customPlaceholder": "Aantal credits (min. {min})",
+      "customError": "Je hebt minstens {min} credits nodig.",
+      "popularBadge": "Populair",
+      "continueButton": "Verder naar betalen"
+    },
+    "summary": {
+      "credits": "{credits} credits"
+    },
+    "payment": {
+      "backButton": "Terug naar selectie",
+      "methodSelectorLabel": "Kies een betaalmethode",
+      "processing": "Bezig met verwerken...",
+      "payButton": "Betaal € {amount}",
+      "cardElementNotFound": "Kaartelement niet gevonden",
+      "paymentFailed": "Betaling mislukt",
+      "paypalComingSoon": "PayPal voor het kopen van credits komt binnenkort.",
+      "paypalUseCard": "Gebruik voorlopig een creditcard."
+    }
+  },
+  "dashboard": {
+    "content": {
+      "errorTitle": "Dashboard niet beschikbaar",
+      "errorDescription": "We konden je gegevens niet laden.",
+      "retry": "Opnieuw proberen"
+    },
+    "header": {
+      "title": "Jouw <accent>studio</accent>",
+      "subtitle": "Welkom terug, {name}. Hier staat al je werk."
+    },
+    "profile": {
+      "label": "Gebruikersprofiel",
+      "avatarAlt": "Avatar van {name}",
+      "verified": "Geverifieerd account",
+      "editProfile": "Profiel bewerken"
+    },
+    "credits": {
+      "label": "Beschikbare credits",
+      "ofTotal": "van {total}",
+      "usageCapacity": "Gebruikscapaciteit",
+      "percentSpent": "{percent}% gebruikt",
+      "usageLabel": "Creditgebruik",
+      "buyMore": "Meer credits kopen",
+      "allowance": "Inclusief je resterende gratis dagelijkse bewerkingen en gekochte credits. Gratis bewerkingen worden elke dag aangevuld.",
+      "retry": "Saldo opnieuw laden"
+    },
+    "quickAccess": {
+      "label": "Snelle toegang",
+      "links": {
+        "account": "Account",
+        "archive": "Archief"
+      }
+    },
+    "metrics": {
+      "ordersLabel": "Bestellingen",
+      "ordersCaption": "Geplaatste bestellingen",
+      "ordersTarget": "Doel",
+      "designsLabel": "Eigen producten",
+      "designsCaption": "Producten gemaakt in je account",
+      "designsTarget": "Limiet"
+    },
+    "metricCard": {
+      "progressLabel": "Voortgang {label}"
+    },
+    "cta": {
+      "title": "Klaar voor je volgende <accent>ontwerp</accent>?",
+      "subtitle": "Typ een prompt en ga",
+      "cta": "Stamp it"
+    },
+    "recentOrders": {
+      "title": "Recente bestellingen",
+      "recordsOnFile": "{count, plural, one {# record} other {# records}} opgeslagen",
+      "viewArchive": "Archief bekijken",
+      "emptyTitle": "Geen records gevonden",
+      "emptyDescription": "Je eerste ontwerp is maar één prompt verwijderd",
+      "emptyCta": "Begin met ontwerpen",
+      "openDetails": "Details van bestelling {orderId} openen",
+      "productAlt": "Product van bestelling",
+      "customDesign": "Eigen ontwerp"
+    },
+    "loading": {
+      "label": "Dashboard wordt geladen"
+    }
+  },
+  "profile": {
+    "header": {
+      "title": "Je <accent>profiel</accent>",
+      "subtitle": "Beheer je accountinstellingen"
+    },
+    "userInformation": {
+      "label": "Account",
+      "title": "Persoonlijke <accent>gegevens</accent>",
+      "subtitle": "Werk je persoonlijke gegevens bij",
+      "edit": "BEWERKEN",
+      "firstNameLabel": "Voornaam",
+      "lastNameLabel": "Achternaam",
+      "emailLabel": "E-mail",
+      "emailNote": "Je e-mailadres is vergrendeld en kan niet worden gewijzigd.",
+      "saving": "OPSLAAN...",
+      "saveChanges": "WIJZIGINGEN OPSLAAN",
+      "cancel": "ANNULEREN"
+    },
+    "passwordReset": {
+      "label": "Beveiliging",
+      "title": "Wachtwoord & <accent>beveiliging</accent>",
+      "subtitle": "Wijzig je wachtwoord wanneer je maar wilt.",
+      "changePassword": "WACHTWOORD WIJZIGEN",
+      "hiddenNote": "We houden je wachtwoord verborgen. Klik op \"Wachtwoord wijzigen\" om een nieuw wachtwoord in te stellen.",
+      "newPasswordLabel": "Nieuw wachtwoord",
+      "newPasswordPlaceholder": "Voer een nieuw wachtwoord in",
+      "newPasswordHint": "Het wachtwoord moet minstens 6 tekens hebben",
+      "confirmPasswordLabel": "Bevestig nieuw wachtwoord",
+      "confirmPasswordPlaceholder": "Bevestig het nieuwe wachtwoord",
+      "confirmPasswordHint": "Voer je nieuwe wachtwoord opnieuw in",
+      "updating": "BIJWERKEN...",
+      "updatePassword": "WACHTWOORD BIJWERKEN",
+      "cancel": "ANNULEREN"
+    },
+    "address": {
+      "label": "Verzending",
+      "title": "Verzend<accent>adres</accent>",
+      "subtitleHasAddress": "Je standaard verzendadres",
+      "subtitleNoAddress": "Voeg je verzendadres toe",
+      "editAddress": "ADRES BEWERKEN",
+      "addAddress": "ADRES TOEVOEGEN",
+      "emptyState": "Nog geen adres opgeslagen. Voeg er een toe om sneller af te rekenen.",
+      "saving": "OPSLAAN...",
+      "saveAddress": "ADRES OPSLAAN",
+      "cancel": "ANNULEREN"
+    },
+    "addressForm": {
+      "firstName": "Voornaam",
+      "lastName": "Achternaam",
+      "email": "E-mail",
+      "phone": "Telefoon",
+      "address1": "Adresregel 1",
+      "address1Placeholder": "Straat en huisnummer",
+      "address2": "Adresregel 2 (optioneel)",
+      "address2Placeholder": "Appartement, toevoeging, enz.",
+      "city": "Plaats",
+      "region": "Provincie/Regio",
+      "zip": "Postcode",
+      "country": "Land"
+    },
+    "addressDisplay": {
+      "phone": "Telefoon: {phone}"
+    },
+    "addressSectionHeader": {
+      "title": "Verzendadres",
+      "subtitleHasAddress": "Beheer je standaard verzendadres",
+      "subtitleNoAddress": "Voeg een verzendadres toe om sneller af te rekenen",
+      "edit": "Bewerken",
+      "addAddress": "Adres toevoegen"
+    },
+    "toasts": {
+      "passwordUpdated": "Wachtwoord bijgewerkt.",
+      "passwordUpdateFailed": "Je wachtwoord kon niet worden bijgewerkt.",
+      "addressUpdated": "Adres opgeslagen.",
+      "addressUpdateFailed": "Je adres kon niet worden opgeslagen.",
+      "profileUpdated": "Profiel bijgewerkt.",
+      "profileUpdateFailed": "Je profiel kon niet worden bijgewerkt."
+    }
+  },
+  "common": {
+    "metadata": {
+      "title": "Stamp AI — Gepersonaliseerde kleding en prints, ontworpen met AI",
+      "description": "Maak je eigen T-shirts en hoodies met AI. Typ een prompt en krijg binnen enkele seconden printklare ontwerpen. Premium kwaliteit, op bestelling gemaakt. Begin vandaag gratis.",
+      "keywords": [
+        "kleding ontwerpen met AI",
+        "eigen T-shirt generator",
+        "T-shirt ontwerpen met AI",
+        "print on demand",
+        "gepersonaliseerde hoodies",
+        "ontwerp je eigen kleding",
+        "AI kledingontwerp",
+        "gepersonaliseerde T-shirts",
+        "zware T-shirts",
+        "eigen kleding online"
+      ]
+    },
+    "notFound": {
+      "ariaLabel": "Pagina niet gevonden",
+      "title": "We kunnen die pagina niet vinden",
+      "description": "De pagina die je zoekt bestaat niet. Ga terug naar de homepage om kleding met een eigen AI-ontwerp te maken."
+    },
+    "tipBanner": {
+      "tip": "<strong>Tip:</strong> Noem de stijl, kleuren en sfeer. Probeer bijvoorbeeld \"Animestijl, zoals Naruto\"."
+    }
+  },
+  "layout": {
+    "stampFooter": {
+      "logoAlt": "Stamp.AI",
+      "mission": "Typ een idee en krijg kleding die je echt wilt dragen. Op bestelling geprint en bij je thuisbezorgd.",
+      "columns": {
+        "create": "Ontwerpen",
+        "support": "Hulp",
+        "legal": "Juridisch",
+        "social": "Volg ons"
+      },
+      "links": {
+        "footer-studio": "Ontwerpstudio",
+        "footer-catalog": "Productcatalogus",
+        "footer-cart": "Tas",
+        "footer-orders": "Je bestellingen",
+        "footer-faq": "Veelgestelde vragen",
+        "footer-shipping": "Verzending & levering",
+        "footer-returns": "Retouren & terugbetalingen",
+        "footer-contact": "Contact",
+        "footer-terms": "Algemene voorwaarden",
+        "footer-privacy": "Privacybeleid",
+        "footer-cookies": "Cookiebeleid",
+        "footer-security": "Beveiliging",
+        "footer-instagram": "Instagram",
+        "footer-twitter": "X / Twitter",
+        "footer-tiktok": "TikTok",
+        "footer-linkedin": "LinkedIn"
+      },
+      "wordmark": "Stamp",
+      "copyright": "© {year} Stamp AI. Alle rechten voorbehouden.",
+      "tagline": "Gemaakt voor mensen die dingen maken"
+    },
+    "languageSwitcher": {
+      "label": "Taal"
+    }
+  },
+  "auth": {
+    "errors": {
+      "guestClaim": "We konden de artikelen in je tas niet naar je account verplaatsen. Ze zitten nog in je tas; vernieuw de pagina om het opnieuw te proberen.",
+      "guestClaimExpired": "Je gastsessie is verlopen voordat je inlogde, dus de artikelen in je tas konden niet naar je account worden verplaatst. Voeg ze opnieuw toe."
+    },
+    "authCodeError": {
+      "title": "Er ging iets mis",
+      "description": "We konden je inlogverzoek niet verwerken.",
+      "expiredNote": "De link is mogelijk verlopen of al gebruikt.",
+      "returnHome": "Terug naar home",
+      "requestNewReset": "Nieuwe resetlink aanvragen"
+    },
+    "resetPasswordPage": {
+      "title": "Wachtwoord opnieuw instellen",
+      "description": "Kies hieronder een nieuw wachtwoord."
+    },
+    "protectedRoute": {
+      "authenticating": "Bezig met verifiëren",
+      "checkingSession": "Je sessie wordt gecontroleerd",
+      "redirecting": "Bezig met doorsturen..."
+    },
+    "sessionDisplay": {
+      "loadingSession": "Je sessie wordt geladen",
+      "errorLoadingSession": "We konden je sessie niet laden",
+      "noUserSession": "Je bent niet ingelogd",
+      "sessionInformation": "Sessie-informatie",
+      "signingOut": "Bezig met uitloggen...",
+      "signOut": "Uitloggen",
+      "userInformation": "Gebruikersinformatie",
+      "idLabel": "ID:",
+      "emailLabel": "E-mail:",
+      "firstNameLabel": "Voornaam:",
+      "lastNameLabel": "Achternaam:",
+      "createdAtLabel": "Aangemaakt op:",
+      "emailConfirmedLabel": "E-mail bevestigd:",
+      "lastSignInLabel": "Laatst ingelogd:",
+      "sessionDetails": "Sessiedetails",
+      "tokenTypeLabel": "Tokentype:",
+      "expiresAtLabel": "Verloopt op:",
+      "expiresInLabel": "Verloopt over:",
+      "expiresInMinutes": "{minutes} minuten",
+      "rawSessionData": "Ruwe sessiegegevens"
+    },
+    "google": {
+      "iconAlt": "Google",
+      "connecting": "Verbinden...",
+      "continueWithGoogle": "Doorgaan met Google",
+      "redirecting": "Dit Google-account heeft al een Stamp-account. We sturen je naar Google om in te loggen…",
+      "failed": "We konden Google niet bereiken. Controleer je verbinding en probeer het opnieuw.",
+      "retry": "Opnieuw proberen",
+      "backHome": "Terug naar home",
+      "meta": {
+        "title": "Inloggen met Google",
+        "description": "We sturen je door naar Google om in te loggen op je account."
+      }
+    },
+    "login": {
+      "openDialogAria": "Inlogvenster openen",
+      "loginShort": "INLOGGEN",
+      "login": "Inloggen",
+      "form": {
+        "srTitle": "Inloggen",
+        "closeAria": "Inlogvenster sluiten",
+        "orContinueWithEmail": "of ga verder met e-mail"
+      },
+      "fields": {
+        "emailLabel": "E-mail",
+        "emailPlaceholder": "naam@bedrijf.nl",
+        "passwordLabel": "Wachtwoord",
+        "passwordPlaceholder": "••••••••",
+        "showPassword": "Wachtwoord tonen",
+        "hidePassword": "Wachtwoord verbergen"
+      },
+      "header": {
+        "label": "Welkom terug",
+        "title": "Inloggen"
+      },
+      "actions": {
+        "cancelAria": "Annuleren",
+        "cancel": "Annuleren",
+        "loginAria": "Inloggen",
+        "loggingIn": "Bezig met inloggen...",
+        "login": "Inloggen"
+      },
+      "footer": {
+        "noAccount": "Nog geen account? <link>Maak er nu een aan</link>"
+      },
+      "panel": {
+        "eyebrow": "Atelier voor leden",
+        "heading": "Welkom terug in je <accent>studio</accent>",
+        "lead": "Je ontwerpen, credits en bestellingen staan klaar waar je ze hebt achtergelaten.",
+        "perks": {
+          "designs": "Elk ontwerp dat je hebt gegenereerd",
+          "orders": "Bestelgeschiedenis en live tracking",
+          "checkout": "Sneller afrekenen, gegevens opgeslagen"
+        }
+      }
+    },
+    "passwordReset": {
+      "inline": {
+        "forgotPassword": "Wachtwoord vergeten?"
+      },
+      "confirm": {
+        "newPassword": "Nieuw wachtwoord",
+        "confirmNewPassword": "Bevestig nieuw wachtwoord",
+        "resetting": "Wachtwoord wordt ingesteld...",
+        "resetPassword": "Wachtwoord instellen",
+        "invalidSessionError": "Deze resetlink is ongeldig of verlopen. Vraag een nieuwe aan om verder te gaan.",
+        "successToast": "Je wachtwoord is ingesteld. Log er nu mee in."
+      },
+      "error": {
+        "title": "Deze link werkt niet",
+        "description": "Deze resetlink is ongeldig of verlopen. Vraag een nieuwe aan om verder te gaan.",
+        "backToHome": "Terug naar home"
+      },
+      "success": {
+        "title": "Je wachtwoord is ingesteld",
+        "description": "Helemaal klaar. Over 3 seconden sturen we je naar de inlogpagina.",
+        "goToLogin": "Naar inloggen"
+      },
+      "form": {
+        "prompt": "Vul je e-mailadres in en we sturen je een resetlink.",
+        "emailPlaceholder": "Vul je e-mailadres in",
+        "sending": "Verzenden...",
+        "sendResetLink": "Resetlink versturen",
+        "cancel": "Annuleren"
+      },
+      "request": {
+        "forgotPassword": "Wachtwoord vergeten?",
+        "srTitle": "Wachtwoord opnieuw instellen",
+        "title": "Wachtwoord opnieuw instellen",
+        "description": "Vul je e-mailadres in en we sturen je een link om je wachtwoord opnieuw in te stellen.",
+        "emailLabel": "E-mail",
+        "sendAria": "Reset-e-mail versturen",
+        "sending": "Verzenden...",
+        "send": "Reset-e-mail versturen",
+        "cancelAria": "Annuleren",
+        "cancel": "Annuleren",
+        "successToast": "Reset-e-mail verstuurd. Kijk in je inbox voor de link."
+      },
+      "requestSuccess": {
+        "srTitle": "Reset-e-mail verstuurd",
+        "title": "Kijk in je inbox",
+        "description": "We hebben een resetlink naar je e-mailadres gestuurd. Open de mail en volg de stappen om een nieuw wachtwoord in te stellen.",
+        "gotIt": "Begrepen"
+      }
+    },
+    "register": {
+      "register": "Registreren",
+      "openDialogAria": "Registratievenster openen",
+      "signUp": "Aanmelden",
+      "successToast": "Kijk in je e-mail om je adres te bevestigen en je wachtwoord in te stellen.",
+      "form": {
+        "srTitle": "Account aanmaken",
+        "closeAria": "Registratievenster sluiten",
+        "orContinueWithEmail": "of ga verder met e-mail"
+      },
+      "header": {
+        "label": "Account aanmaken",
+        "title": "Aanmelden",
+        "tagline": "Maak van je ideeën geprinte kleding."
+      },
+      "fields": {
+        "firstName": "Voornaam",
+        "firstNamePlaceholder": "Jan",
+        "lastName": "Achternaam",
+        "lastNamePlaceholder": "Jansen",
+        "emailLabel": "E-mailadres",
+        "emailPlaceholder": "naam@bedrijf.nl",
+        "passwordLabel": "Wachtwoord",
+        "passwordPlaceholder": "••••••••",
+        "confirmPassword": "Bevestig wachtwoord",
+        "confirmPasswordPlaceholder": "••••••••"
+      },
+      "actions": {
+        "cancelAria": "Annuleren",
+        "cancel": "Annuleren",
+        "createAccountAria": "Account aanmaken",
+        "creating": "Bezig met aanmaken...",
+        "signUp": "Aanmelden"
+      },
+      "footer": {
+        "haveAccount": "Heb je al een account? <link>Inloggen</link>"
+      },
+      "panel": {
+        "eyebrow": "Word lid van het atelier",
+        "heading": "Jouw ideeën, <accent>gestempeld</accent> op stof",
+        "lead": "Maak een account aan om met AI te ontwerpen en het te laten printen op premium kleding.",
+        "perks": {
+          "generate": "Genereer originele ontwerpen met AI",
+          "print": "Geprint op premium kledingstukken",
+          "ship": "Rechtstreeks bij je thuisbezorgd"
+        }
+      },
+      "success": {
+        "srTitle": "Registratie gelukt",
+        "title": "Alles is klaar",
+        "description": "Kijk in je e-mail om je adres te bevestigen en kies daarna je wachtwoord.",
+        "gotIt": "Begrepen"
+      }
+    },
+    "checkEmail": {
+      "title": "Kijk in je e-mail",
+      "description": "We hebben een bevestigingslink naar je e-mailadres gestuurd.",
+      "instructions": "Klik op de link in de e-mail om je account te activeren en je wachtwoord in te stellen.",
+      "resendButton": "Bevestigingsmail opnieuw versturen",
+      "resending": "Verzenden...",
+      "resendSuccess": "E-mail verstuurd! Kijk in je inbox.",
+      "backToLogin": "Terug naar inloggen",
+      "spamNote": "Geen e-mail ontvangen? Kijk in je spammap."
+    }
+  },
+  "ui": {
+    "navbar": {
+      "myOrders": "Mijn bestellingen",
+      "stampIt": "Stamp it!",
+      "dashboard": "Dashboard",
+      "toggleTheme": "Thema wisselen",
+      "viewProfile": "Profiel bekijken",
+      "signOut": "Uitloggen"
+    },
+    "pagination": {
+      "label": "paginering",
+      "previous": "Naar vorige pagina",
+      "next": "Naar volgende pagina",
+      "morePages": "Meer pagina's"
+    },
+    "sheet": {
+      "close": "Sluiten"
+    },
+    "dialog": {
+      "close": "Sluiten"
+    },
+    "mobilePageHeader": {
+      "goBack": "Terug"
+    },
+    "footer": {
+      "mission": {
+        "heading": "Onze missie",
+        "body": "Van een prompt of je eigen foto een ontwerp maken, geprint op kwaliteitskleding en bij je thuisbezorgd."
+      },
+      "platform": {
+        "heading": "Platform",
+        "howItWorks": "Hoe het werkt",
+        "showcase": "Showcase",
+        "bulkPricing": "Staffelprijzen"
+      },
+      "company": {
+        "heading": "Bedrijf",
+        "aboutUs": "Over ons",
+        "blog": "Blog",
+        "careers": "Vacatures"
+      },
+      "support": {
+        "heading": "Hulp",
+        "helpCenter": "Helpcentrum",
+        "termsOfService": "Algemene voorwaarden",
+        "privacyPolicy": "Privacybeleid"
+      },
+      "copyright": "© {year} Stamp.AI Design Inc. Gemaakt voor dromers.",
+      "social": {
+        "twitter": "Twitter",
+        "instagram": "Instagram",
+        "linkedin": "LinkedIn"
+      }
+    },
+    "passwordInput": {
+      "required": "verplicht",
+      "placeholder": "Voer wachtwoord in",
+      "show": "{label} tonen",
+      "hide": "{label} verbergen"
+    },
+    "themeToggle": {
+      "loadingTheme": "Thema wordt geladen",
+      "currentTheme": "Huidig thema: {theme}. Klik om het thema te wijzigen.",
+      "toggleTheme": "Thema wisselen",
+      "themes": {
+        "light": "Licht",
+        "dark": "Donker",
+        "system": "Systeem"
+      }
+    },
+    "wordCountIndicator": {
+      "count": "{wordCount}/{limit} woorden",
+      "overLimit": "Houd het onder de {limit} woorden"
+    },
+    "collapsibleFilters": {
+      "toggle": "Filters",
+      "clear": "Filters wissen"
+    },
+    "filterHeader": {
+      "title": "Filteren & sorteren",
+      "countLabel": "soorten",
+      "count": "{filteredCount} van {totalCount} {countLabel} getoond"
+    },
+    "selectFormField": {
+      "required": "verplicht",
+      "placeholder": "Selecteer {label}"
+    },
+    "filterSelect": {
+      "placeholder": "Selecteer een optie"
+    },
+    "percentageRangeSlider": {
+      "less": "Minder",
+      "more": "Meer"
+    },
+    "wizardContent": {
+      "next": "Doorgaan",
+      "back": "Terug"
+    }
+  },
+  "orders": {
+    "content": {
+      "errorTitle": "We konden je bestellingen niet laden",
+      "errorDescription": "Er ging iets mis. Probeer het nog eens.",
+      "retry": "Opnieuw proberen"
+    },
+    "header": {
+      "title": "Je <accent>bestellingen</accent>"
+    },
+    "filterSummary": {
+      "totalSyntheses": "Totaal aantal bestellingen",
+      "protocolRecords": "Bestellingen"
+    },
+    "loading": {
+      "ariaLabel": "Bestellingen worden geladen"
+    },
+    "gridSection": {
+      "ariaLabel": "Rasterweergave van bestellingen"
+    },
+    "listSection": {
+      "ariaLabel": "Lijstweergave van bestellingen"
+    },
+    "empty": {
+      "ariaLabel": "Leeg bestelarchief",
+      "title": "Nog geen bestellingen",
+      "description": "Pas je filters aan of begin een nieuw ontwerp",
+      "initiate": "Begin een ontwerp"
+    },
+    "pagination": {
+      "showing": "{start}-{end} van {total} bestellingen",
+      "navAriaLabel": "Paginering",
+      "previousPage": "Vorige pagina",
+      "nextPage": "Volgende pagina",
+      "goToPage": "Naar pagina {page}"
+    },
+    "filterControls": {
+      "archiveFiltering": "Filters",
+      "clearArchive": "Filters wissen",
+      "statusAriaLabel": "Filteren op bestelstatus",
+      "timeAriaLabel": "Filteren op periode",
+      "listViewAriaLabel": "Naar lijstweergave",
+      "gridViewAriaLabel": "Naar rasterweergave",
+      "status": {
+        "allPlaceholder": "Status: Alle",
+        "delivered": "Bezorgd",
+        "shipped": "Verzonden",
+        "processing": "In behandeling",
+        "cancelled": "Geannuleerd"
+      },
+      "time": {
+        "last30": "Afgelopen 30 dagen",
+        "last90": "Afgelopen 90 dagen",
+        "year2023": "Jaar 2023",
+        "allTime": "Altijd"
+      }
+    },
+    "filterPills": {
+      "statusPill": "Status: {status}",
+      "clearFilter": "Filter {label} wissen"
+    },
+    "cancel": {
+      "toastTitle": "Bestelling geannuleerd",
+      "defaultDescription": "Je bestelling is geannuleerd.",
+      "cancelledAtPrintify": "Bestelling geannuleerd bij Printify",
+      "refundProcessed": "Terugbetaling verwerkt",
+      "refundError": "We konden je terugbetaling niet automatisch verwerken",
+      "failedToCancel": "Je bestelling kon niet worden geannuleerd: {message}",
+      "cannotCancel": "Deze bestelling kan niet meer worden geannuleerd. Annuleren kan alleen voordat een bestelling in productie gaat."
+    },
+    "cancelModal": {
+      "ariaLabel": "Annulering van bestelling bevestigen",
+      "title": "Deze bestelling annuleren?",
+      "description": "Dit kun je niet ongedaan maken.",
+      "halting": "Bezig met annuleren…",
+      "haltSynthesis": "Bestelling annuleren",
+      "keepActive": "Bestelling behouden"
+    },
+    "detailsModal": {
+      "ariaLabel": "Bestelgegevens",
+      "close": "Bestelgegevens sluiten",
+      "recordDetails": "Bestelgegevens",
+      "orderMeta": "Bestelling #{orderNumber} • Geplaatst op {date}",
+      "protocolItems": "Artikelen",
+      "itemAlt": "Artikel uit bestelling",
+      "customProduct": "Gepersonaliseerd product",
+      "variantQty": "Variant: {variant} • Aantal: {qty}",
+      "delivery": "Levering",
+      "archiveClient": "Ontvanger",
+      "archiveAddress": "Verzendadres",
+      "orderInfo": "Bestelinformatie",
+      "orderDate": "Besteldatum",
+      "paymentMethod": "Betaling",
+      "shippedDate": "Verzonden",
+      "deliveredDate": "Bezorgd",
+      "trackingNumber": "Trackingnummer",
+      "valuation": "Overzicht",
+      "subtotal": "Subtotaal",
+      "shippingCost": "Verzending",
+      "discount": "Korting",
+      "total": "Totaal",
+      "standard": "Standaard",
+      "invoice": {
+        "preparing": "Factuur wordt voorbereid…",
+        "download": "Factuur downloaden"
+      },
+      "trackShipment": "Zending volgen"
+    },
+    "timeline": {
+      "title": "Tijdlijn van de bestelling"
+    },
+    "listItem": {
+      "openDetails": "Details van bestelling {order} openen",
+      "productAlt": "Product van bestelling",
+      "productFallback": "Gepersonaliseerd product",
+      "creationDate": "Besteld",
+      "configuration": "Verzending",
+      "standard": "Standaard",
+      "quantity": "Aantal",
+      "unit": "{count} stuk",
+      "protocolValue": "Totaal",
+      "viewBlueprint": "Ontwerp bekijken",
+      "trackProtocol": "Bestelling volgen",
+      "haltOrder": "Bestelling annuleren",
+      "reorder": "Opnieuw bestellen",
+      "trackShipment": "Zending volgen"
+    },
+    "gridItem": {
+      "openDetails": "Details van bestelling {order} openen",
+      "productAlt": "Product van bestelling",
+      "productFallback": "Gepersonaliseerd product",
+      "archiveLine": "Besteld op {date} • {address}",
+      "archiveAddress": "Verzendadres",
+      "standard": "Standaard",
+      "qty": "Aantal {count}",
+      "track": "Volgen",
+      "options": "Opties",
+      "reorder": "Opnieuw bestellen"
+    },
+    "statusBadge": {
+      "processing": "In behandeling",
+      "preparing": "Wordt voorbereid",
+      "inProduction": "In productie",
+      "shipped": "Verzonden",
+      "delivered": "Bezorgd",
+      "cancelled": "Geannuleerd",
+      "hasIssues": "Actie vereist"
+    }
+  },
+  "checkout": {
+    "errors": {
+      "guestCartPersist": "We konden je tas niet klaarmaken voor betaling. Probeer het opnieuw."
+    },
+    "header": {
+      "title": "Af<accent>rekenen</accent>",
+      "subtitle": "Rond je bestelling af"
+    },
+    "billing": {
+      "title": "Factuuradres",
+      "subtitle": "Vul je factuurgegevens in"
+    },
+    "shipping": {
+      "title": "Verzendadres",
+      "subtitle": "Vul in waar je bestelling naartoe moet",
+      "toggleLabel": "Naar een ander adres verzenden"
+    },
+    "testMode": {
+      "label": "Testmodus · gebruik vooraf ingestelde betaalmethoden"
+    },
+    "notFound": {
+      "title": "Tas niet gevonden",
+      "description": "We konden je tas niet vinden. Ga terug en voeg je artikelen opnieuw toe.",
+      "backToCart": "Terug naar tas"
+    },
+    "loading": {
+      "loadingAria": "Afrekenen wordt geladen"
+    },
+    "addressForm": {
+      "selectCountryPlaceholder": "Kies een land",
+      "fields": {
+        "first_name": "Voornaam",
+        "last_name": "Achternaam",
+        "email": "E-mail",
+        "phone": "Telefoon",
+        "address1": "Adresregel 1",
+        "address2": "Adresregel 2",
+        "city": "Plaats",
+        "region": "Provincie/Regio",
+        "zip": "Postcode",
+        "country": "Land"
+      }
+    },
+    "payment": {
+      "title": "Betaalmethode",
+      "subtitle": "Kies hoe je wilt betalen",
+      "paypalNotice": "We sturen je door naar PayPal om veilig te betalen.",
+      "idealNotice": "We sturen je via iDEAL door naar je bank om veilig te betalen.",
+      "selectMethodAria": "Betaalmethode kiezen",
+      "comingSoon": "Binnenkort"
+    },
+    "testCards": {
+      "selectorLabel": "Type testkaart",
+      "selectorPlaceholder": "Kies een type testkaart",
+      "groups": {
+        "successful": {
+          "label": "Geslaagde betalingen"
+        },
+        "declined": {
+          "label": "Geweigerde betalingen"
+        },
+        "threeDSecure": {
+          "label": "3D Secure"
+        }
+      },
+      "options": {
+        "visa": "Visa (pm_card_visa)",
+        "visa_debit": "Visa Debit (pm_card_visa_debit)",
+        "mastercard": "Mastercard (pm_card_mastercard)",
+        "amex": "American Express (pm_card_amex)",
+        "discover": "Discover (pm_card_discover)",
+        "declined": "Algemene weigering",
+        "insufficient_funds": "Onvoldoende saldo",
+        "expired": "Verlopen kaart",
+        "processing_error": "Verwerkingsfout",
+        "threeDSecure": "3D Secure vereist"
+      }
+    },
+    "promoCode": {
+      "label": "Kortingscode",
+      "removeAria": "Kortingscode verwijderen",
+      "placeholder": "VOER CODE IN",
+      "inputAria": "Kortingscode",
+      "applying": "…",
+      "apply": "Toepassen"
+    },
+    "priceBreakdown": {
+      "subtotal": "Subtotaal",
+      "shipping": "Verzending",
+      "free": "Gratis",
+      "discount": "Korting",
+      "total": "Totaal"
+    },
+    "summary": {
+      "title": "Je <accent>bestelling</accent>",
+      "secureNote": "Veilige, versleutelde transacties"
+    },
+    "cartItems": {
+      "listAria": "Artikelen in bestelling",
+      "defaultProductName": "Gepersonaliseerd product",
+      "standardVariant": "Standaardvariant",
+      "standard": "Standaard",
+      "imageAlt": "{name} — {variant}",
+      "qty": "Aantal {quantity}"
+    },
+    "stripeButton": {
+      "processing": "Bezig met verwerken…",
+      "pay": "Betaal € {amount}"
+    },
+    "paypalButton": {
+      "redirecting": "Doorsturen naar PayPal…"
+    },
+    "idealButton": {
+      "redirecting": "Doorsturen naar iDEAL…"
+    },
+    "alternativeMethods": {
+      "title": "Probeer een andere methode",
+      "paypal": "PayPal",
+      "paypalAria": "Betalen met PayPal",
+      "applePay": "Apple Pay",
+      "applePayAria": "Betalen met Apple Pay",
+      "card": "Kaart",
+      "cardAria": "Betalen met kaart"
+    },
+    "success": {
+      "defaultEstimatedDelivery": "7–10 werkdagen",
+      "ariaLabel": "Betalingsbevestiging",
+      "title": "Bestelling bevestigd",
+      "description": "Je bestelling is binnen. We zijn hem nu aan het printen.",
+      "orderNumber": "Bestelnummer",
+      "estimatedDelivery": "Verwachte levering",
+      "totalPaid": "Totaal betaald",
+      "statusLabel": "Status",
+      "statusProcessing": "In behandeling",
+      "trackOrder": "Volg je bestelling",
+      "createAnother": "Nog een bestelling maken",
+      "confirmationEmail": "Er is een bevestigingsmail gestuurd naar {email}"
+    },
+    "paymentError": {
+      "reasonMessageFallback": "Je betaling is niet gelukt. Probeer het opnieuw of kies een andere manier van betalen.",
+      "titlePostPayment": "Probleem bij het verwerken van je bestelling",
+      "titleDefault": "Betaling mislukt",
+      "subtitlePostPayment": "Je betaling is gelukt, maar er ging iets mis bij het aanmaken van je bestelling. We zijn op de hoogte gebracht en lossen het snel op.",
+      "subtitleDefault": "Je betaling is niet gelukt. Je ontwerp is opgeslagen, dus je kunt het opnieuw proberen wanneer je wilt.",
+      "ariaLabel": "Betaling mislukt",
+      "reasonFallback": "Reden",
+      "orderNumber": "Bestelnummer",
+      "amountDue": "Te betalen bedrag",
+      "attemptedOn": "Geprobeerd op",
+      "statusLabel": "Status",
+      "statusFallback": "Mislukt",
+      "retryPayment": "Opnieuw betalen",
+      "cancelGoToDashboard": "Annuleren en naar dashboard",
+      "contactSupport": "Hulp nodig? Neem contact op met support"
+    },
+    "recoveryBanner": {
+      "recoverFailed": "Betaling herstellen mislukt: {error}",
+      "unknownError": "Onbekende fout",
+      "recoverFailedContactSupport": "Betaling herstellen mislukt. Neem contact op met support.",
+      "title": "Onvoltooide bestelling gevonden",
+      "body": "We hebben een geslaagde {providerName}-betaling van <amount>{currency} {amountValue}</amount> gevonden die niet is afgerond. Wil je deze bestelling nu afronden?",
+      "completing": "Bestelling wordt afgerond...",
+      "complete": "Bestelling afronden",
+      "dismiss": "Negeren",
+      "paymentIdLine": "Betaal-ID: {id} • {date}"
+    },
+    "paymentForm": {
+      "stripeNotReady": "Stripe is nog niet klaar. Wacht even en probeer het opnieuw.",
+      "formNotReady": "Het betaalformulier is niet klaar. Vernieuw de pagina en probeer het opnieuw.",
+      "cardElementNotFound": "We konden het kaartformulier niet laden. Vernieuw de pagina en probeer het opnieuw.",
+      "paymentFailed": "Je betaling kon niet worden verwerkt. Probeer het opnieuw.",
+      "statusProcessing": "Je betaling wordt nog verwerkt. Wacht een paar minuten en bekijk je bestellingen voordat je het opnieuw probeert.",
+      "statusRequiresPaymentMethod": "Je betaling is niet afgerond. Probeer het opnieuw of gebruik een andere betaalmethode.",
+      "statusRequiresAction": "Je betaling heeft extra verificatie nodig. Probeer het opnieuw en rond de verificatiestap af.",
+      "statusCanceled": "De betaling is geannuleerd en er is niets afgeschreven. Probeer het opnieuw wanneer je zover bent.",
+      "statusUnknown": "We konden je betaling niet bevestigen. Probeer het opnieuw, of neem contact op met support als er wel geld is afgeschreven."
+    },
+    "pricing": {
+      "invalidPromoCode": "Ongeldige kortingscode",
+      "promoCodeExpired": "Deze kortingscode is verlopen",
+      "promoCodeLimitReached": "Deze kortingscode heeft het maximale aantal keer gebruik bereikt",
+      "promoCodeApplied": "Kortingscode toegepast",
+      "validationFailed": "Kortingscode controleren mislukt",
+      "enterPromoCode": "Vul een kortingscode in",
+      "cartTotalInvalid": "Het totaal van je tas moet hoger zijn dan 0"
+    },
+    "returns": {
+      "stripe": {
+        "errorNoPaymentInfo": "Betaalgegevens niet gevonden. Probeer het opnieuw vanaf de afrekenpagina.",
+        "errorCheckoutDataExpired": "Afrekengegevens verlopen of niet gevonden. Probeer het opnieuw vanaf de afrekenpagina.",
+        "errorMustBeLoggedIn": "Je moet ingelogd zijn om je bestelling af te ronden. Log in en probeer het opnieuw.",
+        "errorCartNotFound": "De gegevens van je tas ontbreken. Je betaling is verwerkt, maar we konden je bestelling niet aanmaken. Neem contact op met support en vermeld betaal-ID: {paymentId}",
+        "orderCreationFailedRefund": "Bestelling aanmaken mislukt. Er is een volledige terugbetaling gestart.",
+        "orderFulfillmentFailedRefund": "Bestelling uitvoeren mislukt. Er is een volledige terugbetaling gestart.",
+        "errorFallback": "We konden het verwerken van je betaling niet afronden. Als er geld is afgeschreven, is je betaling veilig — neem contact op met support en we lossen het op.",
+        "completingTitle": "Je betaling wordt afgerond",
+        "processingTitle": "Betaling wordt verwerkt",
+        "completingMessage": "Even geduld terwijl we je Stripe-betaling afronden...",
+        "processingMessage": "Even geduld terwijl we je betaling bij Stripe controleren...",
+        "processingAria": "Betaling wordt verwerkt",
+        "errorAria": "Fout",
+        "somethingWentWrongTitle": "Er ging iets mis",
+        "somethingWentWrongMessage": "We konden je Stripe-betaling niet verwerken. Probeer het opnieuw of neem contact op met support.",
+        "returnToCheckout": "Terug naar afrekenen",
+        "goToDashboard": "Naar dashboard",
+        "totalPaid": "Betaald via Stripe",
+        "estimatedDelivery": "7–10 werkdagen",
+        "declinedStatus": "Geweigerd",
+        "paymentDeclinedTitle": "Betaling geweigerd",
+        "paymentDeclinedMessage": "We konden je Stripe-betaling niet verwerken. Probeer het opnieuw of gebruik een andere betaalmethode."
+      },
+      "paypal": {
+        "errorCheckoutDataExpired": "Afrekengegevens verlopen of niet gevonden. Probeer het opnieuw vanaf de afrekenpagina.",
+        "errorMustBeLoggedIn": "Je moet ingelogd zijn om je bestelling af te ronden. Log in en probeer het opnieuw.",
+        "declinedFallback": "Je betaling is geweigerd. Probeer het opnieuw met een andere betaalmethode.",
+        "captureFailed": "We konden je PayPal-betaling niet afronden. Probeer het opnieuw of gebruik een andere betaalmethode.",
+        "errorCartNotFound": "De gegevens van je tas ontbreken. Je betaling is geïncasseerd, maar we konden je bestelling niet aanmaken. Neem contact op met support en vermeld betaal-ID: {paymentId}",
+        "errorAmountNotFound": "Bestelbedrag niet gevonden. Je betaling is geïncasseerd, maar we konden je bestelling niet aanmaken. Neem contact op met support en vermeld betaal-ID: {paymentId}",
+        "orderCreationFailedRefund": "Bestelling aanmaken mislukt. Er is een volledige terugbetaling gestart.",
+        "orderFulfillmentFailedRefund": "Bestelling uitvoeren mislukt. Er is een volledige terugbetaling gestart.",
+        "errorFallback": "We konden het verwerken van je PayPal-betaling niet afronden. Als er geld is afgeschreven, is je betaling veilig — neem contact op met support en we lossen het op.",
+        "capturingTitle": "Je betaling wordt afgerond",
+        "processingTitle": "Betaling wordt verwerkt",
+        "capturingMessage": "Even geduld terwijl we je PayPal-betaling afronden...",
+        "processingMessage": "Even geduld terwijl we je betaling bij PayPal controleren...",
+        "processingAria": "Betaling wordt verwerkt",
+        "errorAria": "Fout",
+        "somethingWentWrongTitle": "Er ging iets mis",
+        "somethingWentWrongMessage": "We konden je PayPal-betaling niet verwerken. Probeer het opnieuw of neem contact op met support.",
+        "returnToCheckout": "Terug naar afrekenen",
+        "goToDashboard": "Naar dashboard",
+        "totalPaid": "Betaald via PayPal",
+        "estimatedDelivery": "7–10 werkdagen",
+        "cancelledStatus": "Geannuleerd",
+        "paymentCancelledTitle": "Betaling geannuleerd",
+        "paymentCancelledMessage": "Je hebt de PayPal-betaling geannuleerd. Er is niets van je rekening afgeschreven.",
+        "declinedStatus": "Geweigerd",
+        "paymentDeclinedTitle": "Betaling geweigerd",
+        "paymentDeclinedMessage": "We konden je PayPal-betaling niet verwerken. Probeer het opnieuw of gebruik een andere betaalmethode."
+      },
+      "mollie": {
+        "errorNoPaymentInfo": "Geen betaalgegevens gevonden. Heb je een betaling gedaan, neem dan contact op met support en vermeld je betaalgegevens.",
+        "errorMustBeLoggedIn": "Je moet ingelogd zijn om je bestelling af te ronden. Log in en neem contact op met support met betaal-ID: {paymentId}",
+        "errorCartNotFound": "De gegevens van je tas ontbreken. Neem contact op met support en vermeld betaal-ID: {paymentId}",
+        "errorMissingContext": "We konden je afrekengegevens niet vinden om je bestelling af te ronden.",
+        "errorNoOrderItems": "We konden de artikelen van je bestelling niet vinden.",
+        "errorCannotCreateOrderNoCart": "We konden je bestelling niet aanmaken omdat de gegevens van je tas ontbraken. Er is een volledige terugbetaling gestart, die binnen 3–5 werkdagen zichtbaar is.",
+        "errorCannotCreateOrderNotLoggedIn": "Bestelling kan niet worden aangemaakt: je moet ingelogd zijn om af te rekenen. Er is een volledige terugbetaling gestart, die binnen 3–5 werkdagen zichtbaar is.",
+        "orderCreationReasonFallback": "Bestelling aanmaken mislukt na meerdere pogingen.",
+        "orderFulfillmentReasonFallback": "Bestelling uitvoeren mislukt.",
+        "reasonWithRefund": "{reason} Er is een volledige terugbetaling gestart, die binnen 3–5 werkdagen zichtbaar is.",
+        "errorOrderIdNotReturned": "Bij het aanmaken van de bestelling is geen bestel-ID teruggegeven. Er is een volledige terugbetaling gestart, die binnen 3–5 werkdagen zichtbaar is.",
+        "errorVerifyFallback": "We konden de status van je betaling niet controleren",
+        "errorUnknownStatus": "We konden de status van je betaling niet bepalen. Als er geld is afgeschreven, is je betaling geregistreerd en verwerkt ons team je bestelling automatisch. Hulp nodig? Neem contact op met support en vermeld betaal-ID: {paymentId}",
+        "errorRecorded": "{message}. Je betaling is geregistreerd (ID: {paymentId}). Ons team verwerkt je bestelling automatisch. Je ontvangt binnen 24 uur een bevestigingsmail. Heb je direct hulp nodig, neem dan contact op met support en vermeld je betaal-ID.",
+        "unknownPaymentId": "onbekend",
+        "verifyingAria": "Betaling wordt gecontroleerd",
+        "verifyingTitle": "Betaling wordt gecontroleerd",
+        "verifyingMessage": "Even geduld terwijl we je betaling bij Mollie bevestigen...",
+        "totalPaid": "Betaald via Mollie",
+        "estimatedDelivery": "7–10 werkdagen",
+        "reasonCanceled": "Je hebt de betaling geannuleerd. Er is niets afgeschreven.",
+        "reasonExpired": "Je betaalsessie is verlopen. Probeer het opnieuw.",
+        "reasonDefault": "Helaas is je betaling niet gelukt. Probeer het opnieuw of gebruik een andere betaalmethode.",
+        "canceledStatus": "Geannuleerd",
+        "failedStatus": "Mislukt",
+        "paymentStatusTitle": "Betaalstatus",
+        "pendingAria": "Betaling in behandeling",
+        "pendingTitle": "Betaling in behandeling",
+        "pendingMessage": "Je betaling wordt verwerkt. Dit kan even duren. Je ontvangt een bevestigingsmail zodra je betaling is afgerond.",
+        "viewOrders": "Bestellingen bekijken",
+        "goToDashboard": "Naar dashboard",
+        "errorAria": "Fout",
+        "somethingWentWrongTitle": "Er ging iets mis",
+        "somethingWentWrongMessage": "We konden de status van je betaling niet controleren. Neem contact op met support als je denkt dat je betaling is gelukt.",
+        "returnToCheckout": "Terug naar afrekenen"
+      }
+    }
+  },
+  "validation": {
+    "emailRequired": "Vul je e-mailadres in",
+    "emailInvalid": "Dat e-mailadres lijkt niet te kloppen",
+    "passwordRequired": "Vul je wachtwoord in",
+    "passwordMin": "Gebruik minstens 8 tekens",
+    "passwordsNoMatch": "De wachtwoorden komen niet overeen",
+    "urlInvalid": "Die URL lijkt niet te kloppen",
+    "firstNameEmpty": "Vul je voornaam in",
+    "lastNameEmpty": "Vul je achternaam in",
+    "firstNameRequired": "Vul je voornaam in",
+    "countryRequired": "Kies je land",
+    "countryInvalid": "Kies een land uit de lijst",
+    "addressRequired": "Vul je adres in",
+    "cityRequired": "Vul je woonplaats in",
+    "zipRequired": "Vul je postcode in",
+    "shippingRequiredWhenEnabled": "Voeg een verzendadres toe",
+    "quantityMin": "Kies minstens 1",
+    "promptMax": "Houd je prompt onder de 500 tekens"
+  },
+  "errors": {
+    "withCode": "{message} (Code: {code})",
+    "BLUEPRINT_ID_REQUIRED": "Blueprint-ID is verplicht",
+    "PRINT_PROVIDER_ID_REQUIRED": "ID van de printprovider is verplicht",
+    "IMAGE_REQUIRED": "Er is minstens één afbeelding nodig",
+    "EMAIL_REQUIRED": "E-mailadres is verplicht",
+    "PASSWORD_REQUIRED": "Wachtwoord is verplicht",
+    "INVALID_EMAIL_FORMAT": "Vul een geldig e-mailadres in",
+    "PASSWORD_TOO_SHORT": "Het wachtwoord moet minstens 8 tekens hebben",
+    "AMOUNT_REQUIRED": "Bedrag is verplicht",
+    "INVALID_AMOUNT": "Het bedrag moet een positief getal zijn",
+    "INVALID_REQUEST_BODY": "Ongeldige aanvraaggegevens",
+    "IMAGE_URL_OR_BASE64_REQUIRED": "Een afbeeldings-URL of base64-gegevens zijn verplicht",
+    "NO_LINE_ITEMS": "Geen artikelen gevonden voor deze bestelling",
+    "MISSING_SHIPPING_ADDRESS": "Verzendadres is verplicht",
+    "WEBHOOK_SIGNATURE_MISSING": "Ongeldige webhook-handtekening",
+    "MISSING_REQUIRED_FIELDS": "Vul de verplichte velden in",
+    "PAYPAL_ORDER_ID_REQUIRED": "PayPal-bestel-ID is verplicht",
+    "MOLLIE_PAYMENT_ID_REQUIRED": "Mollie-betaal-ID is verplicht",
+    "CREDITS_REQUIRED": "Aantal credits is verplicht",
+    "INVALID_CREDITS": "Het aantal credits moet minstens 10 zijn",
+    "INVALID_CREDENTIALS": "Ongeldig e-mailadres of wachtwoord",
+    "EMAIL_NOT_CONFIRMED": "Bevestig je e-mailadres voordat je inlogt",
+    "CAPTCHA_VERIFICATION_FAILED": "Beveiligingscontrole mislukt. Probeer het opnieuw",
+    "INVALID_TOKEN": "Je sessie is verlopen. Log opnieuw in",
+    "INSUFFICIENT_COINS": "Niet genoeg munten om te genereren. Munten worden elke dag om middernacht aangevuld",
+    "WEBHOOK_SIGNATURE_INVALID": "Ongeldige webhook-handtekening",
+    "PAYPAL_WEBHOOK_SIGNATURE_INVALID": "Ongeldige PayPal-webhook-handtekening",
+    "USER_NOT_FOUND": "We konden dat account niet vinden",
+    "PAYPAL_ORDER_NOT_FOUND": "PayPal-bestelling niet gevonden",
+    "MOLLIE_PAYMENT_NOT_FOUND": "Mollie-betaling niet gevonden",
+    "EMAIL_ALREADY_REGISTERED": "Dit e-mailadres is al geregistreerd",
+    "PRINTIFY_TOKEN_MISSING": "Configuratiefout van de printservice",
+    "PRINTIFY_SHOP_ID_MISSING": "Configuratiefout van de printshop",
+    "STRIPE_SECRET_KEY_MISSING": "Configuratiefout van de betaalservice",
+    "STRIPE_WEBHOOK_SECRET_MISSING": "Configuratiefout van de webhook",
+    "SUPABASE_URL_MISSING": "Configuratiefout van de database",
+    "SUPABASE_SERVICE_ROLE_KEY_MISSING": "Authenticatiefout van de database",
+    "PAYPAL_CLIENT_ID_MISSING": "Configuratiefout van PayPal",
+    "PAYPAL_CLIENT_SECRET_MISSING": "Configuratiefout van PayPal",
+    "PAYPAL_WEBHOOK_ID_MISSING": "Configuratiefout van de PayPal-webhook",
+    "MOLLIE_API_KEY_MISSING": "Configuratiefout van Mollie",
+    "DATABASE_ERROR": "Databasebewerking mislukt",
+    "NO_VARIANTS_AVAILABLE": "Geen productvarianten beschikbaar voor deze blueprint",
+    "NO_PRODUCTS_IN_SHOP": "Geen producten beschikbaar. Maak eerst een product aan",
+    "PRINTIFY_API_ERROR": "Fout bij de printservice. Probeer het opnieuw",
+    "PRINTIFY_ORDER_API_ERROR": "Bestelling aanmaken mislukt. Probeer het opnieuw",
+    "IMAGE_UPLOAD_API_ERROR": "Afbeelding uploaden mislukt. Probeer het opnieuw",
+    "STRIPE_API_ERROR": "Fout bij het verwerken van de betaling. Probeer het opnieuw",
+    "PAYMENT_DECLINED": "Je kaart is geweigerd. Probeer een andere kaart of betaalmethode",
+    "AUTH_REGISTRATION_FAILED": "Registratie mislukt. Probeer het opnieuw",
+    "AUTH_LOGIN_FAILED": "Inloggen mislukt. Probeer het opnieuw",
+    "PASSWORD_RESET_FAILED": "Wachtwoord opnieuw instellen mislukt. Probeer het opnieuw",
+    "CUSTOM_PRODUCT_CREATION_FAILED": "Gepersonaliseerd product aanmaken mislukt. Probeer het opnieuw",
+    "TSHIRT_PRODUCTS_FETCH_FAILED": "T-shirts laden mislukt. Probeer het opnieuw",
+    "PAYPAL_API_ERROR": "Fout bij de PayPal-service. Probeer het opnieuw",
+    "PAYPAL_CAPTURE_FAILED": "PayPal-betaling incasseren mislukt. Probeer het opnieuw",
+    "MOLLIE_API_ERROR": "Fout bij de Mollie-service. Probeer het opnieuw",
+    "MOLLIE_PAYMENT_FAILED": "Mollie-betaling mislukt. Probeer het opnieuw",
+    "CONFIRMATION_EMAIL_SEND_FAILED": "We konden de bevestigingsmail niet versturen. Probeer het zo meteen opnieuw",
+    "INTERNAL_ERROR": "Er ging bij ons iets mis. Probeer het opnieuw",
+    "UNKNOWN_ERROR": "Er is een onverwachte fout opgetreden. Probeer het opnieuw"
+  },
+  "trust": {
+    "bar": {
+      "secureCheckout": "Veilig afrekenen",
+      "guarantee": "30 dagen garantie",
+      "madeToOrder": "Op bestelling gemaakt"
+    },
+    "payment": {
+      "title": "Je betaling is veilig",
+      "body": "Betalingen lopen via Stripe, PayPal en Mollie. Wij zien of bewaren je kaartgegevens nooit.",
+      "accept": "Wij accepteren",
+      "sslSecured": "Veilig afrekenen",
+      "comingSoon": "Binnenkort",
+      "securePayment": "Veilig betalen",
+      "noCardStored": "Kaartgegevens worden nooit opgeslagen",
+      "encryptedTransmission": "Versleutelde verbinding",
+      "assurances": {
+        "encrypted": {
+          "title": "Volledig versleuteld",
+          "body": "Je gegevens gaan via een veilige, versleutelde verbinding."
+        },
+        "noCard": {
+          "title": "Wij zien je kaart nooit",
+          "body": "Kaartgegevens gaan rechtstreeks naar de betaalprovider."
+        },
+        "guarantee": {
+          "title": "30 dagen garantie",
+          "body": "Niet goed? Dan vervangen we het of krijg je je geld terug."
+        }
+      }
+    },
+    "guarantee": {
+      "title": "30 dagen garantie",
+      "body": "Klopt de print, de stof of de pasvorm niet, dan vervangen we het of krijg je je geld terug. De retourverzending is voor onze rekening."
+    },
+    "socialProof": {
+      "ordersFulfilled": "{count} bestellingen geleverd"
+    },
+    "reviews": {
+      "ariaLabel": "Beoordeeld met {rating} van {total} sterren",
+      "reviewCount": "{count} reviews",
+      "basedOn": "Gebaseerd op {count} reviews",
+      "verified": "Geverifieerde reviews"
+    },
+    "verification": {
+      "verified": "Geverifieerd",
+      "secure": "Veilig",
+      "siteVerified": "Beveiligd afrekenen",
+      "encryption": "Versleutelde verbinding"
+    },
+    "reviewCta": {
+      "enjoyedExperience": "Tevreden over je ervaring?",
+      "leaveReview": "Schrijf een review",
+      "rateUs": "Beoordeel ons op",
+      "poweredBy": "Mogelijk gemaakt door"
+    }
+  },
+  "legal": {
+    "common": {
+      "updated": "Laatst bijgewerkt",
+      "onThisPage": "Op deze pagina",
+      "backToTop": "Terug naar boven",
+      "questionsHeading": "Nog hulp nodig?",
+      "questionsBody": "Is iets op deze pagina niet duidelijk? Mail ons en een mens neemt binnen één werkdag contact met je op.",
+      "questionsCta": "Mail support"
+    },
+    "terms": {
+      "meta": {
+        "title": "Algemene voorwaarden",
+        "description": "De voorwaarden voor je gebruik van Stamp AI, inclusief accountregels, eigendom van ontwerpen, credits, productie en retouren.",
+        "keywords": [
+          "algemene voorwaarden",
+          "gebruiksvoorwaarden",
+          "gebruikersovereenkomst"
+        ]
+      },
+      "title": "Algemene",
+      "accent": "voorwaarden",
+      "label": "Juridisch",
+      "intro": "Deze voorwaarden vormen de overeenkomst tussen jou en {legalName} voor alles wat je op Stamp AI doet: ontwerpen genereren, credits kopen en de kleding bestellen die we voor je printen. We hebben geprobeerd ze leesbaar te houden. Waar iets belangrijk is voor je rechten, staat het er duidelijk.",
+      "sections": {
+        "about-these-terms": {
+          "heading": "1. Over deze voorwaarden",
+          "body": [
+            "Door een account aan te maken, credits te kopen of een bestelling te plaatsen op Stamp AI, ga je akkoord met deze algemene voorwaarden. Ben je het er niet mee eens, gebruik de dienst dan niet.",
+            "Deze voorwaarden gelden samen met ons privacybeleid, cookiebeleid, beleid voor verzending & levering en beleid voor retouren & terugbetalingen. Samen vormen ze de volledige overeenkomst tussen ons.",
+            "Ga je namens een bedrijf of andere organisatie akkoord met deze voorwaarden, dan bevestig je dat je bevoegd bent die organisatie te binden, en betekent “jij” in deze voorwaarden die organisatie."
+          ]
+        },
+        "who-we-are": {
+          "heading": "2. Wie we zijn",
+          "body": [
+            "Stamp AI wordt beheerd door {legalName}, gevestigd op {address}. Ons inschrijvingsnummer is {registration} en ons btw-nummer is {vat}.",
+            "Je kunt ons bereiken via {supportEmail} voor alles wat met je account of bestelling te maken heeft."
+          ]
+        },
+        "eligibility-accounts": {
+          "heading": "3. Wie mag meedoen en je account",
+          "body": [
+            "Je moet minstens 18 jaar oud zijn, of meerderjarig volgens de wet in je woonland, om bij Stamp AI te kopen. Ben je tussen de 16 en 18, dan mag je de dienst alleen gebruiken met betrokkenheid van een ouder of voogd die deze voorwaarden namens jou accepteert.",
+            "Je bent zelf verantwoordelijk voor het veilig houden van je inloggegevens en voor alles wat er onder je account gebeurt. Laat het ons direct weten via {supportEmail} als je denkt dat iemand anders toegang heeft.",
+            "Houd je accountgegevens juist. We gebruiken je e-mailadres om bestelbevestigingen en leveringsupdates te sturen, en je verzendadres om je bestelling op de juiste plek te krijgen."
+          ]
+        },
+        "credits-and-payment": {
+          "heading": "4. Credits, prijzen en betaling",
+          "body": [
+            "Voor het genereren van ontwerpen gebruik je credits. Credits koop je vooraf, ze zijn gekoppeld aan je account en ze zijn geen betaalmiddel — ze hebben geen geldwaarde, leveren geen rente op en kunnen niet aan een ander worden overgedragen of worden ingewisseld voor geld.",
+            "Prijzen van producten en credits worden getoond voordat je bevestigt, in de valuta die bij het afrekenen staat, inclusief de belastingen die we verplicht moeten tonen. Verzendkosten worden bij het afrekenen apart getoond, vóór de betaling.",
+            "Betalingen worden afgehandeld door onze betaalproviders. Wij zien of bewaren nooit je volledige kaartgegevens — op onze pagina Beveiliging lees je hoe dat werkt.",
+            "We doen ons best om prijzen juist te houden. Staat een product of creditpakket door een technische fout voor een duidelijk onjuiste prijs vermeld, dan kunnen we de betreffende bestelling annuleren en je volledig terugbetalen in plaats van haar tegen die prijs te leveren."
+          ],
+          "bullets": [
+            "Credits worden verbruikt wanneer een generatie wordt uitgevoerd, ook als je niet tevreden bent met het resultaat.",
+            "Ongebruikte credits blijven op je account staan en verlopen niet zolang je account open is.",
+            "Mislukt een generatie door een fout aan onze kant, dan krijg je de verbruikte credits terug."
+          ]
+        },
+        "creating-designs": {
+          "heading": "5. Ontwerpen genereren",
+          "body": [
+            "Stamp AI zet je prompts, schetsen en referentieafbeeldingen met geautomatiseerde systemen om in printklaar artwork. Het resultaat wordt gegenereerd, niet geselecteerd — resultaten verschillen, en twee identieke prompts kunnen ander artwork opleveren.",
+            "Omdat het genereren geautomatiseerd is, kunnen we niet beloven dat een bepaald resultaat overeenkomt met wat je voor ogen had, uniek voor jou is of geen gelijkenis vertoont met ander werk. Controleer je ontwerp zorgvuldig voordat je het laat printen.",
+            "We kunnen automatische veiligheidsfilters toepassen op prompts en resultaten. Een geblokkeerde prompt is geen beschuldiging — filters zijn niet perfect — maar herhaalde pogingen om ze te omzeilen kunnen leiden tot schorsing op grond van artikel 15."
+          ]
+        },
+        "your-content-and-licence": {
+          "heading": "6. Wat je uploadt",
+          "body": [
+            "Je blijft eigenaar van alles wat je uploadt — prompts, schetsen, foto's en referentieafbeeldingen. Dat noemen we jouw content.",
+            "Je bevestigt dat je het recht hebt om je content te uploaden en te laten printen, en dat je daarmee geen inbreuk maakt op iemands auteursrecht, merkrecht of recht op naam en beeltenis.",
+            "Je geeft ons een licentie om je content alleen te gebruiken voor het draaien van de dienst: je ontwerpen genereren, je bestelling maken, je helpen en de gegevens bewaren die we wettelijk moeten bewaren. Deze licentie is wereldwijd en royaltyvrij omdat onze productie- en hostingpartners in meerdere landen werken, en eindigt wanneer je de content verwijdert of je account sluit, behalve voor kopieën die we wettelijk moeten bewaren.",
+            "We verkopen je content niet en gebruiken je ontwerpen niet in onze marketing zonder het je eerst te vragen."
+          ]
+        },
+        "ownership-of-designs": {
+          "heading": "7. Van wie is het uiteindelijke ontwerp",
+          "body": [
+            "Tussen jou en ons is het ontwerp dat uit je prompt is gegenereerd van jou om te gebruiken, ook commercieel — je mag het printen, artikelen ermee verkopen en het in je eigen merk gebruiken.",
+            "Houd rekening met een grens die wij niet bepalen: in veel landen, waaronder de hele EU en de Verenigde Staten, is volledig door een machine gegenereerd werk mogelijk helemaal niet auteursrechtelijk beschermd. Daardoor kunnen we je geen afdwingbaar auteursrecht op een gegenereerd ontwerp garanderen, en kun je iemand anders mogelijk niet tegenhouden iets vergelijkbaars te gebruiken. Is exclusiviteit belangrijk voor je bedrijf, win dan zelf juridisch advies in.",
+            "We claimen geen eigendom van je ontwerpen en verkopen ze niet door."
+          ]
+        },
+        "prohibited-designs": {
+          "heading": "8. Wat je niet mag maken of bestellen",
+          "body": [
+            "Print on demand werkt alleen als we sommige opdrachten weigeren. Je mag Stamp AI niet gebruiken om iets uit de onderstaande lijst te genereren, te bestellen of te verspreiden, en we kunnen een bestelling die daaronder valt op elk moment vóór verzending weigeren of annuleren."
+          ],
+          "bullets": [
+            "Content die inbreuk maakt op het auteursrecht, merkrecht of modelrecht van een ander — waaronder merklogo's, clubemblemen, bandartwork en personages uit films of games.",
+            "De naam, het gezicht, de handtekening of de beeltenis van een echt persoon zonder diens toestemming.",
+            "Seksuele content met minderjarigen, of content die een persoon jonger dan 18 seksualiseert, in welke stijl dan ook.",
+            "Content die aanzet tot geweld of haat tegen mensen vanwege ras, etniciteit, nationale afkomst, religie, handicap, geslacht, genderidentiteit of seksuele geaardheid.",
+            "Content die terrorisme, massaal geweld of ernstige zelfbeschadiging promoot.",
+            "Content die bedoeld is om te misleiden — namaakproducten, vervalste officiële documenten of valse claims van goedkeuring.",
+            "Content die onwettig is waar ze wordt gemaakt of waar ze naartoe wordt verzonden."
+          ]
+        },
+        "production-and-shipping": {
+          "heading": "9. Productie en levering",
+          "body": [
+            "Elk artikel wordt op bestelling gemaakt. De productie begint zodra je bestelling is bevestigd; daarom is de periode voor wijzigingen kort — zie artikel 10.",
+            "Levertijden zijn schattingen, geen garanties. Productietijden, verzendtijden, kosten, douane en invoerrechten staan volledig beschreven in ons beleid voor verzending & levering.",
+            "Omdat artikelen afzonderlijk worden geprint, zijn kleine verschillen in printplaatsing en kleur tussen artikelen normaal en geen gebrek.",
+            "Het risico voor de goederen gaat bij levering op jou over. Bestel je als bedrijf en niet als consument, dan gaat het risico over wanneer wij de goederen aan de vervoerder overdragen."
+          ]
+        },
+        "cancellations-returns": {
+          "heading": "10. Wijzigingen, annuleringen en retouren",
+          "body": [
+            "Je kunt een bestelling alleen wijzigen of annuleren voordat hij in productie gaat. Zodra het printen is begonnen, kunnen we het niet meer stoppen, omdat het artikel alleen voor jou bestaat.",
+            "Onze garantie van 30 dagen, het Europese herroepingsrecht en de uitzondering daarop voor gepersonaliseerde producten, en de procedure voor beschadigde of verkeerde artikelen staan in ons beleid voor retouren & terugbetalingen. Niets in deze voorwaarden neemt de wettelijke rechten weg die je als consument hebt."
+          ]
+        },
+        "service-availability": {
+          "heading": "11. Beschikbaarheid van de dienst",
+          "body": [
+            "We streven ernaar Stamp AI altijd beschikbaar te houden, maar beloven geen ononderbroken beschikbaarheid. We kunnen de dienst voor onderhoud offline halen, en delen ervan zijn afhankelijk van derden over wier beschikbaarheid we geen controle hebben.",
+            "We kunnen functies wijzigen, toevoegen of verwijderen. Vermindert een wijziging iets waarvoor je al hebt betaald aanzienlijk, dan laten we het je weten en bieden we terugbetaling van het betreffende bedrag aan."
+          ]
+        },
+        "our-ip": {
+          "heading": "12. Ons intellectueel eigendom",
+          "body": [
+            "De naam Stamp AI, het logo, het ontwerp van de site, de software en de onderliggende modellen zijn van ons of onze licentiegevers. Niets in deze voorwaarden draagt die rechten aan jou over.",
+            "Je mag onze software niet kopiëren, de dienst niet reverse-engineeren, niet op grote schaal scrapen en geen geautomatiseerde systemen gebruiken om buiten de normale interface bestellingen te plaatsen of ontwerpen te genereren."
+          ]
+        },
+        "liability": {
+          "heading": "13. Onze aansprakelijkheid",
+          "body": [
+            "Niets in deze voorwaarden beperkt onze aansprakelijkheid voor overlijden of letsel door onze nalatigheid, voor fraude, of voor iets anders dat wettelijk niet kan worden beperkt — inclusief je dwingende rechten als consument.",
+            "Met inachtneming daarvan is onze totale aansprakelijkheid tegenover jou voor een claim in verband met een bestelling beperkt tot het bedrag dat je voor die bestelling hebt betaald, en voor een claim in verband met credits tot het bedrag dat je voor de betreffende credits hebt betaald.",
+            "We zijn niet aansprakelijk voor indirecte schade of gevolgschade, voor gederfde winst of omzet, of voor verlies doordat een gegenereerd ontwerp niet beschermd kon worden of niet uniek bleek te zijn."
+          ]
+        },
+        "indemnity": {
+          "heading": "14. Jouw verantwoordelijkheid voor wat je laat printen",
+          "body": [
+            "Je bent verantwoordelijk voor de content die je ons vraagt te printen. Stelt een derde een claim tegen ons in omdat iets wat je hebt besteld inbreuk maakte op diens rechten of de regels in artikel 8 overtrad, dan vergoed je de redelijke kosten en schade die wij daardoor lijden.",
+            "Dit geldt niet als de claim voortkomt uit iets wat wij, los van jouw instructies, verkeerd hebben gedaan."
+          ]
+        },
+        "suspension-termination": {
+          "heading": "15. Schorsing en het sluiten van je account",
+          "body": [
+            "Je kunt je account op elk moment sluiten via je profiel. Sluiten betekent niet automatisch dat ongebruikte credits worden terugbetaald, maar je kunt het ons vragen en we behandelen het verzoek eerlijk.",
+            "We kunnen een account schorsen of sluiten dat deze voorwaarden overtreedt, met name artikel 8, of wanneer we daartoe wettelijk verplicht zijn. Als dat veilig en wettig is, vertellen we je waarom en krijg je de kans om te reageren.",
+            "Sluiten we je account zonder geldige reden, dan betalen we je ongebruikte credits terug."
+          ]
+        },
+        "changes-to-terms": {
+          "heading": "16. Wijzigingen in deze voorwaarden",
+          "body": [
+            "We kunnen deze voorwaarden bijwerken als de dienst verandert. De datum bovenaan deze pagina geeft altijd de actuele versie aan.",
+            "Heeft een wijziging aanzienlijke gevolgen voor je rechten, dan laten we het je op redelijke termijn per e-mail of in de app weten voordat ze ingaat. Op een bestelling zijn de voorwaarden van toepassing die golden toen je de bestelling plaatste."
+          ]
+        },
+        "governing-law": {
+          "heading": "17. Toepasselijk recht en geschillen",
+          "body": [
+            "Op deze voorwaarden is het recht van {jurisdiction} van toepassing, en geschillen worden behandeld door {courts}.",
+            "Ben je een consument die in de EU woont, dan verlies je hierdoor niet de bescherming van het dwingende consumentenrecht van je woonland, en kun je ook naar de rechter in je eigen land stappen.",
+            "Neem eerst contact met ons op via {supportEmail} — de meeste problemen zijn rechtstreeks sneller opgelost. Consumenten in de EU kunnen ook gebruikmaken van het platform voor onlinegeschillenbeslechting van de Europese Commissie."
+          ]
+        },
+        "contact": {
+          "heading": "18. Contact",
+          "body": [
+            "Vragen over deze voorwaarden kun je sturen naar {supportEmail}, of per post naar {legalName}, {address}."
+          ]
+        }
+      }
+    },
+    "privacy": {
+      "meta": {
+        "title": "Privacybeleid",
+        "description": "Hoe Stamp AI je persoonsgegevens verzamelt, gebruikt en beschermt onder de AVG, inclusief je prompts, bestellingen en betaalgegevens.",
+        "keywords": [
+          "privacybeleid",
+          "AVG",
+          "gegevensbescherming",
+          "persoonsgegevens"
+        ]
+      },
+      "title": "Privacy",
+      "accent": "beleid",
+      "label": "Juridisch",
+      "intro": "Dit beleid legt uit welke persoonsgegevens Stamp AI verzamelt, waarom, met wie we ze delen en welke controle je erover hebt. Het is geschreven om te voldoen aan de Europese Algemene Verordening Gegevensbescherming (AVG) en geldt waar je ook bent.",
+      "sections": {
+        "controller": {
+          "heading": "1. Wie verantwoordelijk is voor je gegevens",
+          "body": [
+            "{legalName}, gevestigd op {address}, is de verwerkingsverantwoordelijke voor de persoonsgegevens in dit beleid. Dat betekent dat wij bepalen waarom en hoe ze worden verwerkt, en dat wij daarvoor verantwoordelijk zijn.",
+            "Voor vragen of verzoeken over privacy kun je contact opnemen via {privacyEmail}."
+          ]
+        },
+        "data-we-collect": {
+          "heading": "2. Wat we verzamelen",
+          "body": [
+            "We verzamelen alleen wat we nodig hebben om de dienst te laten werken. Dat valt in een paar groepen:"
+          ],
+          "bullets": [
+            "Accountgegevens — je e-mailadres, je naam als je die opgeeft en inloggegevens. Log je in met Google, dan ontvangen we van Google je e-mailadres, naam en profielfoto, niet je Google-wachtwoord.",
+            "Ontwerpgegevens — de prompts die je schrijft, de afbeeldingen die je uploadt en de ontwerpen die daaruit worden gegenereerd.",
+            "Bestelgegevens — wat je hebt besteld, maat en kleur, je verzend- en factuuradres, je telefoonnummer als je dat voor de levering opgeeft, je bestelgeschiedenis en de leveringsstatus.",
+            "Betaalgegevens — het bedrag, de valuta, het type betaalmethode en de uitkomst van de transactie. Je volledige kaartnummer komt nooit in onze systemen; het gaat rechtstreeks naar onze betaalproviders.",
+            "Supportgegevens — de berichten die je ons stuurt en onze antwoorden.",
+            "Technische gegevens — IP-adres, type browser en apparaat, bekeken pagina's en foutdiagnoses. Een deel hiervan wordt via cookies verzameld; zie ons cookiebeleid."
+          ]
+        },
+        "how-we-use": {
+          "heading": "3. Waarvoor we ze gebruiken en onze rechtsgrond",
+          "body": [
+            "Onder de AVG moeten we voor elk doel een rechtsgrond hebben. Dit zijn de onze:"
+          ],
+          "bullets": [
+            "Om je account aan te maken en te beheren, je ontwerpen te genereren, de betaling te ontvangen en je bestelling te leveren — omdat dit nodig is om onze overeenkomst met jou uit te voeren.",
+            "Om klantenservice te bieden en retouren af te handelen — uitvoering van onze overeenkomst en ons gerechtvaardigd belang bij het oplossen van problemen.",
+            "Om de dienst veilig te houden, fraude en misbruik te voorkomen en onze voorwaarden te handhaven — ons gerechtvaardigd belang bij het beschermen van de dienst en haar gebruikers.",
+            "Om te meten hoe de site wordt gebruikt en haar te verbeteren — ons gerechtvaardigd belang bij het begrijpen en verbeteren van de dienst, en jouw toestemming waar de wet dat voor de betreffende cookies vereist.",
+            "Om marketingmails te sturen — jouw toestemming. Elke marketingmail bevat een afmeldlink, en afmelden heeft nooit invloed op je bestellingen.",
+            "Om boekhoudkundige, fiscale en consumentenrechtelijke gegevens te bewaren — het nakomen van onze wettelijke verplichtingen."
+          ]
+        },
+        "ai-prompts-and-designs": {
+          "heading": "4. Je prompts en gegenereerde ontwerpen",
+          "body": [
+            "Je prompts en uploads worden naar de AI-systemen gestuurd die je artwork genereren. Dat is nodig om te leveren waar je om vraagt.",
+            "We verkopen en publiceren je prompts of ontwerpen niet.",
+            "Zet liever geen persoonlijke gegevens over jezelf of anderen in een prompt — namen, adressen, gezondheidsinformatie — omdat prompts worden verwerkt en bewaard als onderdeel van je ontwerpgeschiedenis.",
+            "Upload je een foto van iemand anders, dan verwerk je diens persoonsgegevens. Doe dat alleen als die persoon ermee instemt."
+          ]
+        },
+        "sharing-processors": {
+          "heading": "5. Met wie we ze delen",
+          "body": [
+            "We delen persoonsgegevens alleen met dienstverleners die ze volgens onze instructies verwerken onder een verwerkersovereenkomst, en alleen voor zover ze die nodig hebben. We verkopen aan niemand persoonsgegevens."
+          ],
+          "bullets": [
+            "Hosting-, database- en authenticatieproviders, die je account-, ontwerp- en bestelgegevens opslaan.",
+            "Betaalproviders, die je betaling verwerken en als zelfstandig verwerkingsverantwoordelijke fraude- en sanctiecontroles uitvoeren.",
+            "Print- en fulfilmentpartners, die je ontwerp, artikelgegevens en verzendadres ontvangen om je bestelling te maken en te versturen.",
+            "Vervoerders, die je naam, adres en contactgegevens ontvangen om te bezorgen.",
+            "Aanbieders van foutmonitoring en analyse, die technische en gebruiksgegevens ontvangen.",
+            "E-mailproviders, die je transactionele mails versturen en, als je daarvoor hebt gekozen, marketingmails.",
+            "Professionele adviseurs, en overheidsinstanties waar de wet dat vereist."
+          ]
+        },
+        "international-transfers": {
+          "heading": "6. Doorgifte buiten de EER",
+          "body": [
+            "Sommige van onze providers werken buiten de Europese Economische Ruimte, onder meer in de Verenigde Staten. Worden persoonsgegevens daarheen doorgegeven, dan baseren we ons op de standaardcontractbepalingen van de Europese Commissie, of op een adequaatheidsbesluit als dat van toepassing is, samen met aanvullende waarborgen waar nodig.",
+            "Je kunt ons via {privacyEmail} vragen welke waarborgen er gelden voor een specifieke doorgifte."
+          ]
+        },
+        "retention": {
+          "heading": "7. Hoe lang we ze bewaren",
+          "body": [
+            "We bewaren persoonsgegevens alleen zolang we daar een reden voor hebben:"
+          ],
+          "bullets": [
+            "Account- en ontwerpgegevens — zolang je account open is, en binnen 30 dagen na het sluiten verwijderd.",
+            "Bestel- en transactiegegevens — zeven jaar na de bestelling, omdat de belasting- en boekhoudwetgeving dat vereist. Dit geldt ook nadat je je account hebt gesloten.",
+            "Supportgesprekken — drie jaar, zodat we herhaalde of verwante problemen kunnen afhandelen.",
+            "Beveiligings- en toegangslogs — maximaal 12 maanden.",
+            "Analysegegevens — maximaal 14 maanden.",
+            "Vastlegging van marketingtoestemming — tot je je toestemming intrekt, plus een korte periode om te kunnen aantonen dat de intrekking is gerespecteerd."
+          ]
+        },
+        "your-rights": {
+          "heading": "8. Je rechten",
+          "body": [
+            "Onder de AVG heb je de volgende rechten over je persoonsgegevens. Ze zijn gratis te gebruiken en we reageren binnen één maand."
+          ],
+          "bullets": [
+            "Inzage — een kopie krijgen van de persoonsgegevens die we over je hebben.",
+            "Rectificatie — onjuiste of onvolledige gegevens laten corrigeren.",
+            "Wissing — je gegevens laten verwijderen als we ze niet meer nodig hebben, met uitzondering van gegevens die we wettelijk moeten bewaren.",
+            "Beperking — ons vragen de verwerking te pauzeren zolang een geschil over juistheid of gerechtvaardigde belangen wordt opgelost.",
+            "Overdraagbaarheid — de gegevens die je ons hebt gegeven ontvangen in een gestructureerd, machineleesbaar formaat, of ze naar een andere aanbieder laten sturen.",
+            "Bezwaar — bezwaar maken tegen verwerking op basis van gerechtvaardigde belangen, en op elk moment bezwaar maken tegen direct marketing, wat we altijd zullen respecteren.",
+            "Toestemming intrekken — op elk moment, zonder gevolgen voor de verwerking die al heeft plaatsgevonden.",
+            "Geautomatiseerde besluiten — we nemen geen besluiten met rechtsgevolgen of vergelijkbare aanzienlijke gevolgen over jou die uitsluitend geautomatiseerd tot stand komen."
+          ]
+        },
+        "cookies": {
+          "heading": "9. Cookies",
+          "body": [
+            "We gebruiken een klein aantal cookies, sommige strikt noodzakelijk en sommige waarvoor je toestemming nodig is. Wat elke cookie doet en hoe je hem uitzet, staat in ons cookiebeleid."
+          ]
+        },
+        "security": {
+          "heading": "10. Hoe we ze beschermen",
+          "body": [
+            "We gebruiken versleuteling tijdens verzending en opslag, strikte toegangscontroles en doorlopende monitoring. Onze pagina Beveiliging beschrijft de specifieke maatregelen.",
+            "Geen enkel systeem is volledig veilig. Raakt een datalek ooit je rechten en vrijheden, dan melden we dat binnen 72 uur bij de toezichthouder en laten we het je rechtstreeks weten als het risico voor jou hoog is."
+          ]
+        },
+        "children": {
+          "heading": "11. Kinderen",
+          "body": [
+            "Stamp AI is niet bedoeld voor kinderen. We verzamelen niet bewust persoonsgegevens van iemand jonger dan 16. Denk je dat een kind ons zijn gegevens heeft gegeven, neem dan contact op via {privacyEmail} en we verwijderen ze."
+          ]
+        },
+        "changes": {
+          "heading": "12. Wijzigingen in dit beleid",
+          "body": [
+            "We werken dit beleid bij als onze werkwijze verandert. De datum bovenaan de pagina geeft de actuele versie aan, en we laten het je per e-mail weten voordat een wijziging ingaat die je rechten aanzienlijk raakt."
+          ]
+        },
+        "contact-complaints": {
+          "heading": "13. Contact en klachten",
+          "body": [
+            "Wil je een recht uitoefenen of een vraag stellen, mail dan naar {privacyEmail} of schrijf naar {legalName}, {address}.",
+            "Ben je niet tevreden met ons antwoord, dan kun je een klacht indienen bij je nationale toezichthouder. In Nederland is dat de Autoriteit Persoonsgegevens; woon je elders in de EU, dan kun je klagen bij de toezichthouder in het land waar je woont of werkt."
+          ]
+        }
+      }
+    },
+    "cookies": {
+      "meta": {
+        "title": "Cookiebeleid",
+        "description": "Welke cookies Stamp AI gebruikt, wat elke cookie doet, hoe lang hij blijft bestaan en hoe je ze beheert of weigert.",
+        "keywords": [
+          "cookiebeleid",
+          "cookies",
+          "tracking",
+          "toestemming"
+        ]
+      },
+      "title": "Cookie",
+      "accent": "beleid",
+      "label": "Juridisch",
+      "intro": "We gebruiken een klein aantal cookies — sommige waarzonder de site niet werkt, en sommige die alleen werken als je akkoord gaat. Deze pagina noemt ze allemaal en legt uit hoe je de optionele uitzet.",
+      "sections": {
+        "what-are-cookies": {
+          "heading": "1. Wat cookies zijn",
+          "body": [
+            "Cookies zijn kleine tekstbestanden die een site op je apparaat opslaat om je tussen paginabezoeken te herkennen. Verwante technieken zoals local storage doen grotendeels hetzelfde, en alles op deze pagina geldt ook daarvoor.",
+            "Een cookie is een first-party cookie als Stamp AI hem plaatst, en een third-party cookie als een ander bedrijf waarvan we de dienst gebruiken hem plaatst."
+          ]
+        },
+        "why-we-use": {
+          "heading": "2. Waarom we ze gebruiken",
+          "body": [
+            "We gebruiken cookies om je ingelogd te houden, te onthouden wat er in je tas zit, het afrekenen veilig te houden en — alleen met je toestemming — te begrijpen welke delen van de site mensen echt gebruiken.",
+            "We gebruiken geen cookies om advertentieprofielen op te bouwen en we verkopen niet wat ze ons vertellen."
+          ]
+        },
+        "strictly-necessary": {
+          "heading": "3. Strikt noodzakelijke cookies",
+          "body": [
+            "Deze cookies laten de site werken. Ze worden zonder te vragen geplaatst, omdat de dienst zonder hen niet kan worden geleverd, en je kunt ze niet vanuit de site uitzetten."
+          ],
+          "bullets": [
+            "Authenticatie — houdt je ingelogd en vernieuwt je sessie. Verloopt wanneer je sessie eindigt of na een korte vernieuwingsperiode.",
+            "Tas — onthoudt de artikelen die je hebt toegevoegd, zodat ze er nog zijn als je terugkomt. Blijft maximaal 30 dagen bestaan.",
+            "Beveiliging — beschermt formulieren en het afrekenen tegen cross-site request forgery. Verloopt met je sessie."
+          ]
+        },
+        "analytics": {
+          "heading": "4. Analytische cookies",
+          "body": [
+            "We gebruiken Google Analytics 4 om bezoeken te tellen, te zien welke pagina's worden gebruikt en te ontdekken waar mensen vastlopen. IP-adressen worden ingekort voordat ze worden opgeslagen, en we gebruiken deze cookies niet om je persoonlijk te identificeren of advertentieprofielen op te bouwen.",
+            "Ze blijven maximaal 14 maanden bestaan. Artikel 7 legt uit hoe je ze blokkeert, en Google biedt ook een browser-add-on waarmee je je voor Google Analytics op elke site afmeldt."
+          ]
+        },
+        "preference": {
+          "heading": "5. Voorkeurscookies",
+          "body": [
+            "Deze onthouden keuzes die je hebt gemaakt — de taal die je hebt gekozen (NEXT_LOCALE) en een lichte of donkere weergave — zodat de site eruitziet zoals je hem achterliet. Ze bewaren een instelling, meer niet, en blijven maximaal 12 maanden bestaan."
+          ]
+        },
+        "third-party": {
+          "heading": "6. Cookies van anderen",
+          "body": [
+            "Sommige cookies komen van diensten waarop we vertrouwen, niet rechtstreeks van ons:"
+          ],
+          "bullets": [
+            "Betaalproviders plaatsen tijdens het afrekenen cookies om je betaling af te ronden en fraude te herkennen. Die zijn nodig voor de transactie.",
+            "Google Analytics plaatst analytische cookies, en alleen nadat je toestemming hebt gegeven.",
+            "Log je in met Google, dan plaatst Google cookies als onderdeel van het inlogproces."
+          ]
+        },
+        "managing-cookies": {
+          "heading": "7. Hoe je cookies beheert",
+          "body": [
+            "In elke grote browser kun je cookies blokkeren of verwijderen via de instellingen, meestal onder Privacy, per site en voor alle sites. Blokkeer je strikt noodzakelijke cookies, dan kun je niet inloggen of afrekenen.",
+            "Om je specifiek af te melden voor Google Analytics installeer je de afmeld-add-on van Google, of blokkeer je third-party cookies voor deze site in je browser.",
+            "Wil je dat we gegevens verwijderen die al via analytische cookies zijn verzameld, mail dan naar {privacyEmail} en we behandelen het als een verzoek tot wissing onder de AVG."
+          ]
+        },
+        "changes": {
+          "heading": "8. Wijzigingen in dit beleid",
+          "body": [
+            "Als we een cookie toevoegen of verwijderen, werken we deze pagina bij. De datum bovenaan geeft de actuele versie aan."
+          ]
+        },
+        "contact": {
+          "heading": "9. Contact",
+          "body": [
+            "Vragen over cookies kun je sturen naar {privacyEmail}."
+          ]
+        }
+      }
+    },
+    "security": {
+      "meta": {
+        "title": "Beveiliging",
+        "description": "Hoe Stamp AI je account, je ontwerpen en je betaalgegevens beschermt — versleuteling, toegangsbeheer, monitoring en responsible disclosure.",
+        "keywords": [
+          "beveiliging",
+          "gegevensbeveiliging",
+          "versleuteling",
+          "PCI DSS",
+          "melden van kwetsbaarheden"
+        ]
+      },
+      "title": "Beveiliging",
+      "accent": "bij stamp",
+      "label": "Vertrouwen",
+      "intro": "Je vertrouwt ons je ontwerpen, je adres en je betaling toe. Deze pagina beschrijft wat we echt doen om ze te beschermen, gedetailleerd genoeg om nuttig te zijn en niet alleen geruststellend.",
+      "sections": {
+        "our-approach": {
+          "heading": "1. Onze aanpak",
+          "body": [
+            "We werken volgens het principe van minimale rechten: elk systeem, elke dienst en elke persoon krijgt de beperktste toegang waarmee het werk gedaan kan worden, en niets meer.",
+            "We bewaren liever minder gegevens dan dat we meer moeten verdedigen, dus we verzamelen alleen wat de dienst nodig heeft en verwijderen het zodra de reden om het te bewaren vervalt."
+          ]
+        },
+        "encryption": {
+          "heading": "2. Versleuteling",
+          "body": [
+            "Al het verkeer tussen je browser en Stamp AI loopt via TLS 1.2 of hoger. HTTP-verzoeken worden doorgestuurd naar HTTPS, en we sturen HTTP Strict Transport Security mee zodat je browser op geen enkele andere manier verbinding maakt.",
+            "Opgeslagen gegevens — je account, ontwerpen en bestelgegevens — worden versleuteld met AES-256 op beheerde infrastructuur. Back-ups worden met dezelfde standaard versleuteld."
+          ]
+        },
+        "authentication-access": {
+          "heading": "3. Accounts en toegangsbeheer",
+          "body": [
+            "Authenticatie wordt afgehandeld door een beheerde identiteitsprovider. Wachtwoorden worden nooit als platte tekst opgeslagen; ze worden gehasht met een langzaam, gesalt algoritme dat daarvoor is ontworpen.",
+            "Je kunt in plaats van met een wachtwoord inloggen met Google; in dat geval verwerken we helemaal geen wachtwoord.",
+            "Toegang tot de klantendatabase gebruikt row-level security om records tot hun eigenaar te beperken. Serverprocessen gebruiken bevoorrechte inloggegevens en moeten eigendom en autorisatie apart controleren voordat ze klantgegevens lezen of wijzigen.",
+            "Toegang van medewerkers tot productie is beperkt tot de paar mensen die het nodig hebben, vereist meervoudige authenticatie en wordt gelogd."
+          ]
+        },
+        "payment-security": {
+          "heading": "4. Betaalbeveiliging",
+          "body": [
+            "We zien je kaartnummer nooit. Kaartgegevens worden ingevoerd in velden die worden gehost door onze PCI DSS Level 1-gecertificeerde betaalproviders en gaan rechtstreeks naar hen; onze servers ontvangen alleen een token en de uitkomst van de transactie.",
+            "Een inbraak bij Stamp AI kan je kaartgegevens dus niet blootleggen, omdat ze nooit in onze systemen hebben gestaan.",
+            "3-D Secure en sterke klantauthenticatie worden toegepast waar je bank of de wet dat vereist."
+          ]
+        },
+        "infrastructure": {
+          "heading": "5. Infrastructuur",
+          "body": [
+            "Stamp AI draait op beheerde cloudinfrastructuur met gegevensopslag in de EU. Onze providers zijn ISO 27001- en SOC 2 Type II-gecertificeerd en zijn verantwoordelijk voor fysieke beveiliging, netwerkisolatie en patches op platformniveau.",
+            "Productie, staging en ontwikkeling zijn volledig gescheiden, en productiegegevens worden nooit naar ontwikkelomgevingen gekopieerd.",
+            "Geheimen en API-sleutels staan in een beheerde geheimenkluis, nooit in versiebeheer, en worden vervangen wanneer iemand met toegang vertrekt."
+          ]
+        },
+        "application-hardening": {
+          "heading": "6. Beveiliging van de applicatie",
+          "body": [
+            "De applicatie stuurt bij elke respons een set beveiligingsheaders mee, waaronder een Content Security Policy die beperkt waarvandaan scripts mogen laden, X-Frame-Options tegen clickjacking, X-Content-Type-Options en een strikte Referrer-Policy.",
+            "Verzoeken zijn aan een limiet gebonden om brute-forcepogingen en misbruik van de generatie-endpoints af te remmen.",
+            "Alle invoer wordt bij de API-grens tegen een schema gevalideerd voordat ze de bedrijfslogica bereikt, en databasetoegang gebruikt overal geparametriseerde queries.",
+            "Afhankelijkheden worden automatisch gescand op bekende kwetsbaarheden, en beveiligingspatches krijgen voorrang."
+          ]
+        },
+        "monitoring-logging": {
+          "heading": "7. Monitoring en logging",
+          "body": [
+            "Fouten en afwijkingen worden vastgelegd door een applicatiemonitoringdienst, waarbij persoonsgegevens worden verwijderd voordat gebeurtenissen worden verzonden.",
+            "Authenticatiegebeurtenissen, beheeracties en toegang tot gevoelige endpoints worden gelogd en bewaard, zodat ongebruikelijke activiteit achteraf kan worden onderzocht."
+          ]
+        },
+        "availability-backups": {
+          "heading": "8. Back-ups en continuïteit",
+          "body": [
+            "Databases worden automatisch geback-upt met herstel naar een specifiek tijdstip. Back-ups zijn versleuteld, staan op een aparte locatie en het terugzetten wordt periodiek getest — een niet-geteste back-up is geen back-up."
+          ]
+        },
+        "vendor-security": {
+          "heading": "9. Onze leveranciers",
+          "body": [
+            "We beoordelen de beveiliging van elke provider die met persoonsgegevens werkt voordat we hem gaan gebruiken, en met elke provider hebben we een verwerkersovereenkomst.",
+            "Werkt een provider buiten de EER, dan vallen doorgiften onder standaardcontractbepalingen — zie ons privacybeleid."
+          ]
+        },
+        "incident-response": {
+          "heading": "10. Als er iets misgaat",
+          "body": [
+            "We hebben een vastgelegd proces voor het opsporen, indammen en onderzoeken van beveiligingsincidenten.",
+            "Raakt een datalek je rechten en vrijheden, dan melden we dat binnen 72 uur nadat we het ontdekken bij de bevoegde toezichthouder, en laten we het je zonder onnodige vertraging rechtstreeks weten als het risico voor jou hoog is.",
+            "Na elk ernstig incident voeren we een evaluatie uit en publiceren we wat we daardoor hebben veranderd."
+          ]
+        },
+        "your-role": {
+          "heading": "11. Wat jij kunt doen",
+          "body": [
+            "De beste beveiliging van je account hangt deels van jou af:"
+          ],
+          "bullets": [
+            "Gebruik een lang, uniek wachtwoord, of log in met Google.",
+            "Gebruik je Stamp AI-wachtwoord nooit ergens anders.",
+            "Wees sceptisch over e-mails die om je wachtwoord vragen — wij vragen er nooit om.",
+            "Log uit op gedeelde apparaten en laat het ons weten via {securityEmail} als je activiteit ziet die je niet herkent."
+          ]
+        },
+        "vulnerability-disclosure": {
+          "heading": "12. Een kwetsbaarheid melden",
+          "body": [
+            "Heb je een beveiligingsprobleem gevonden, meld het dan via {securityEmail}. Geef genoeg details om het te reproduceren en geef ons een redelijke termijn om het op te lossen voordat je het openbaar maakt.",
+            "We bevestigen je melding binnen drie werkdagen en houden je op de hoogte terwijl we eraan werken. We ondernemen geen juridische stappen tegen onderzoekers die te goeder trouw handelen, binnen hun eigen testaccounts blijven en de dienst niet verstoren of andermans gegevens niet inzien."
+          ]
+        }
+      }
+    },
+    "shipping": {
+      "meta": {
+        "title": "Verzending & levering",
+        "description": "Productie- en levertijden, verzendkosten, tracking, douane en invoerrechten voor bestellingen bij Stamp AI die wereldwijd worden verzonden.",
+        "keywords": [
+          "verzending",
+          "levering",
+          "levertijden",
+          "tracking",
+          "douane"
+        ]
+      },
+      "title": "Verzending &",
+      "accent": "levering",
+      "label": "Hulp",
+      "intro": "Alles bij Stamp AI wordt geprint nadat je het bestelt, dus levering bestaat uit twee delen: de tijd om je artikel te maken en de tijd om het bij je te krijgen. Dit kun je van beide verwachten.",
+      "sections": {
+        "how-fulfilment-works": {
+          "heading": "1. Hoe fulfilment werkt",
+          "body": [
+            "Er ligt niets in een magazijn te wachten op een koper. Zodra je bestelling is bevestigd, sturen we hem naar de printlocatie die het dichtst bij je bezorgadres ligt, waar hij wordt geprint, met de hand gecontroleerd en ingepakt.",
+            "Doordat we lokaal printen, gaat er niets verloren, en blijft ook het laatste stuk van de reis kort."
+          ]
+        },
+        "production-times": {
+          "heading": "2. Productietijd",
+          "body": [
+            "De productie duurt voor de meeste artikelen 2 tot 3 werkdagen. Elk stuk wordt met de hand gecontroleerd voordat het wordt ingepakt, en alles wat niet door de controle komt, wordt opnieuw geprint in plaats van verzonden.",
+            "Bestellingen met meerdere artikelen kunnen op verschillende locaties worden gemaakt en zonder extra kosten in aparte pakketten aankomen.",
+            "In drukke periodes, zoals eind november en december, kan de productie langer duren. We melden dat bij het afrekenen als het van toepassing is."
+          ]
+        },
+        "shipping-times": {
+          "heading": "3. Levertijd",
+          "body": [
+            "Zodra je pakket de locatie verlaat, zijn de gebruikelijke transporttijden:"
+          ],
+          "bullets": [
+            "Nederland en België — 1 tot 2 werkdagen.",
+            "Rest van de EU — 2 tot 4 werkdagen.",
+            "Verenigd Koninkrijk en Zwitserland — 3 tot 5 werkdagen.",
+            "Verenigde Staten en Canada — 3 tot 5 werkdagen.",
+            "Rest van de wereld — 6 tot 12 werkdagen."
+          ]
+        },
+        "total-time": {
+          "heading": "4. Totale tijd tot aan je deur",
+          "body": [
+            "Productie en transport samen: de meeste bestellingen komen binnen 5 tot 7 werkdagen na bevestiging aan.",
+            "Werkdagen zijn exclusief weekenden en feestdagen in het land van productie. Levertijden zijn schattingen, geen gegarandeerde data."
+          ]
+        },
+        "shipping-costs": {
+          "heading": "5. Verzendkosten",
+          "body": [
+            "Verzendkosten worden berekend op basis van het bezorgadres en de grootte van de bestelling, en worden altijd bij het afrekenen getoond voordat je betaalt. Na betaling komen er geen kosten bij.",
+            "Geldt er een drempel voor gratis verzending, dan zie je die in je tas terwijl je die nadert."
+          ]
+        },
+        "where-we-ship": {
+          "heading": "6. Waar we naartoe verzenden",
+          "body": [
+            "We verzenden wereldwijd. Een klein aantal bestemmingen is uitgesloten omdat vervoerders er niet bezorgen of omdat er sancties gelden; hoort jouw bestemming daarbij, dan zie je dat bij het afrekenen voordat je betaalt.",
+            "We kunnen niet bij alle vervoerders naar postbussen bezorgen, en we kunnen niet naar doorstuurdiensten verzenden."
+          ]
+        },
+        "tracking": {
+          "heading": "7. Je bestelling volgen",
+          "body": [
+            "Je krijgt een bevestigingsmail wanneer je bestelt, en een tweede mail met een trackinglink wanneer je pakket is verzonden. Je bestelgeschiedenis in je account toont dezelfde status.",
+            "Het kan tot 24 uur na verzending duren voordat de eerste scan zichtbaar is. Dat is normaal en betekent niet dat er iets mis is."
+          ]
+        },
+        "customs-duties": {
+          "heading": "8. Douane, invoerrechten en belastingen",
+          "body": [
+            "Voor bestellingen die binnen de EU worden bezorgd, gelden geen extra douanekosten.",
+            "Bij leveringen buiten de EU kan je land bij aankomst invoerrechten, belastingen en inklaringskosten in rekening brengen. Die worden bepaald door je douane, niet door ons, en zijn voor jouw rekening als importeur.",
+            "We zijn verplicht de volledige waarde van de goederen op het douaneformulier te vermelden en kunnen een bestelling niet als cadeau aanmerken of een lagere waarde opgeven.",
+            "Wordt een pakket bij de douane geweigerd en naar ons teruggestuurd, dan betalen we de artikelprijs terug minus de kosten van heen- en retourverzending."
+          ]
+        },
+        "delays": {
+          "heading": "9. Vertragingen",
+          "body": [
+            "De meeste vertragingen ontstaan door douane-inklaring, achterstanden bij vervoerders, zwaar weer of een onvolledig adres.",
+            "Is je pakket zeven werkdagen niet in beweging geweest, neem dan contact met ons op via {supportEmail} en we starten een onderzoek bij de vervoerder."
+          ]
+        },
+        "wrong-address": {
+          "heading": "10. Onjuiste adressen",
+          "body": [
+            "Controleer je adres voordat je bevestigt. We kunnen het alleen corrigeren voordat de bestelling in productie gaat — mail direct naar {supportEmail} als je een fout ziet.",
+            "Komt een pakket bij ons terug omdat het adres onjuist of onvolledig was, dan versturen we het opnieuw zodra je de nieuwe verzendkosten hebt betaald, of betalen we de artikelprijs terug minus de verzendkosten.",
+            "Hetzelfde geldt als een pakket terugkomt omdat het na de bezorgpogingen van de vervoerder niet is opgehaald."
+          ]
+        },
+        "lost-damaged": {
+          "heading": "11. Verloren of beschadigd tijdens transport",
+          "body": [
+            "Staat in de tracking dat het pakket is bezorgd, maar is het niet aangekomen, vraag dan eerst bij je buren en de receptie van je gebouw, en neem daarna binnen 14 dagen contact met ons op; we onderzoeken het samen met de vervoerder.",
+            "Komt je artikel beschadigd aan, stuur ons dan binnen 30 dagen een foto van het artikel en de verpakking en we vervangen het kosteloos. In ons beleid voor retouren & terugbetalingen lees je hoe dat werkt."
+          ]
+        },
+        "sustainability": {
+          "heading": "12. Verpakking en uitstoot",
+          "body": [
+            "We verpakken in gerecyclede en recyclebare materialen, zonder onnodig plastic.",
+            "De uitstoot van verzending wordt gecompenseerd via geverifieerde programma's, en door op bestelling dicht bij het bezorgadres te printen, blijven zowel de transportafstand als overproductie beperkt."
+          ]
+        },
+        "contact": {
+          "heading": "13. Contact",
+          "body": [
+            "Vragen over een levering kun je met je bestelnummer sturen naar {supportEmail}; we reageren binnen één werkdag."
+          ]
+        }
+      }
+    },
+    "returns": {
+      "meta": {
+        "title": "Retouren & terugbetalingen",
+        "description": "De garantie van 30 dagen van Stamp AI, hoe je een artikel retourneert of ruilt, wanneer je je geld terugkrijgt en je Europese herroepingsrecht bij gepersonaliseerde producten.",
+        "keywords": [
+          "retouren",
+          "terugbetalingen",
+          "ruilen",
+          "herroepingsrecht",
+          "garantie"
+        ]
+      },
+      "title": "Retouren &",
+      "accent": "terugbetalingen",
+      "label": "Hulp",
+      "intro": "Elk artikel wordt voor één persoon gemaakt, dus we doen het liever meteen goed dan dat we het terugnemen. Gaat het toch mis, dan gebeurt het volgende — en wij betalen de retourverzending.",
+      "sections": {
+        "our-guarantee": {
+          "heading": "1. Onze garantie van 30 dagen",
+          "body": [
+            "Klopt de print, de stof of de pasvorm niet, laat het ons dan binnen 30 dagen na levering weten en we vervangen het artikel kosteloos of je krijgt je geld volledig terug. Jij kiest.",
+            "Bij elke claim onder deze garantie betalen wij de retourverzending. Een probleem dat wij hebben veroorzaakt, kost jou niets.",
+            "In veel gevallen vragen we het artikel niet eens terug. Doen we dat wel, dan sturen we je een gefrankeerd retourlabel."
+          ]
+        },
+        "what-is-covered": {
+          "heading": "2. Wat de garantie dekt",
+          "body": [
+            "De garantie gaat over ons werk, niet over van gedachten veranderen:"
+          ],
+          "bullets": [
+            "Printfouten — barsten, verkleuren, scheve plaatsing of een kleur die duidelijk afwijkt van het ontwerp dat je hebt goedgekeurd.",
+            "Stoffouten — gaten, losse naden of een kledingstuk dat niet overeenkomt met de vermelde maattabel.",
+            "Een verkeerd artikel, verkeerde maat of verkeerde kleur.",
+            "Schade tijdens transport.",
+            "Een artikel dat nooit is aangekomen."
+          ]
+        },
+        "not-covered": {
+          "heading": "3. Wat ze niet dekt",
+          "body": [
+            "Sommige dingen vallen erbuiten, en het is eerlijker om dat vooraf te zeggen:"
+          ],
+          "bullets": [
+            "De verkeerde maat bestellen terwijl het artikel overeenkomt met de maattabel — zie ruilen in artikel 8.",
+            "Een ontwerp niet mooi vinden dat je vóór het printen hebt goedgekeurd. Controleer je ontwerp zorgvuldig bij het afrekenen.",
+            "Kleine verschillen in printplaatsing of kleur tussen afzonderlijke artikelen, die bij print on demand horen.",
+            "Normale slijtage, of schade door wassen in strijd met de wasvoorschriften.",
+            "Claims die meer dan 30 dagen na levering worden ingediend, tenzij je wettelijke rechten je meer tijd geven."
+          ]
+        },
+        "custom-items": {
+          "heading": "4. Waarom gepersonaliseerde artikelen anders zijn",
+          "body": [
+            "Je artikel bestond niet totdat je het bestelde, en het kan aan niemand anders worden verkocht. Daarom geldt het gewone recht om een ongewenst artikel te retourneren hier niet zoals bij iets uit het schap.",
+            "Onze garantie van 30 dagen is ons antwoord daarop: ze gaat verder dan de wet voor gepersonaliseerde producten vereist en legt de kosten van elke fout bij ons."
+          ]
+        },
+        "eu-right-of-withdrawal": {
+          "heading": "5. Europees herroepingsrecht",
+          "body": [
+            "Consumenten in de EU hebben normaal 14 dagen om zonder opgave van redenen af te zien van een aankoop op afstand. Artikel 16, onder c, van de richtlijn consumentenrechten sluit goederen uit die volgens de specificaties van de consument zijn gemaakt of duidelijk gepersonaliseerd zijn, en dat geldt voor elk artikel van Stamp AI. Door je bestelling te bevestigen erken je dat deze uitzondering geldt zodra de productie is begonnen.",
+            "Voordat de productie begint, kun je om welke reden dan ook annuleren en krijg je je geld volledig terug — zie artikel 10.",
+            "Deze uitzondering laat je wettelijke rechten onverlet als een artikel gebrekkig is, niet overeenkomt met de beschrijving of niet overeenkomt met het ontwerp dat je hebt goedgekeurd. Die rechten gelden volgens het EU-recht twee jaar na levering, en niets in dit beleid beperkt ze."
+          ]
+        },
+        "how-to-start": {
+          "heading": "6. Hoe je een claim indient",
+          "body": [
+            "Mail binnen 30 dagen na levering naar {supportEmail} met je bestelnummer en, als het probleem zichtbaar is, een foto van het artikel en de verpakking. Met een foto kunnen we het meestal al bij het eerste antwoord oplossen.",
+            "We reageren binnen één werkdag, en de meeste claims worden dezelfde dag afgehandeld.",
+            "Stuur niets terug voordat je contact met ons hebt opgenomen — niet-aangevraagde retouren kunnen niet aan je bestelling worden gekoppeld."
+          ]
+        },
+        "return-shipping": {
+          "heading": "7. Retourverzending",
+          "body": [
+            "Bij elke geldige claim onder de garantie betalen wij de retourverzending en sturen we je een gefrankeerd retourlabel.",
+            "Vragen we het artikel terug, stuur het dan binnen 14 dagen nadat je het label hebt ontvangen."
+          ]
+        },
+        "exchanges": {
+          "heading": "8. Ruilen en maten",
+          "body": [
+            "Komt een artikel overeen met de maattabel maar past het je niet, dan maken we een vervanging in een andere maat voor 50% van de artikelprijs — zo dekken we de kosten van een tweede artikel zonder je twee keer te laten betalen.",
+            "Komt het artikel niet overeen met de maattabel, dan is dat een gebrek en geldt de garantie volledig, zonder kosten voor jou.",
+            "Bekijk de maattabel op de productpagina voordat je bestelt; onze kledingstukken zijn zwaar en kunnen anders vallen dan je gewend bent."
+          ]
+        },
+        "refund-timing": {
+          "heading": "9. Wanneer je je geld terugkrijgt",
+          "body": [
+            "Goedgekeurde terugbetalingen doen we binnen 3 werkdagen via de oorspronkelijke betaalmethode.",
+            "Hoe snel je het ziet, hangt af van je bank: bij kaarten duurt het meestal 5 tot 10 werkdagen, bij PayPal of iDEAL meestal 1 tot 3.",
+            "Was de hele bestelling gebrekkig, dan betalen we de artikelprijs en de oorspronkelijke verzendkosten terug. Was slechts een deel van de bestelling gebrekkig, dan betalen we dat deel terug."
+          ]
+        },
+        "cancelling-an-order": {
+          "heading": "10. Annuleren vóór de productie",
+          "body": [
+            "Je kunt met volledige terugbetaling annuleren op elk moment voordat je bestelling in productie gaat, wat meestal kort na je bevestiging gebeurt.",
+            "Mail zo snel mogelijk naar {supportEmail} met je bestelnummer. Is het printen al begonnen, dan kunnen we het niet meer stoppen, omdat het artikel alleen voor jou bestaat."
+          ]
+        },
+        "credits-refunds": {
+          "heading": "11. Credits",
+          "body": [
+            "Met credits betaal je voor het genereren van ontwerpen, en een uitgevoerde generatie heeft echte rekenkracht gebruikt, dus credits worden over het algemeen niet terugbetaald als ze eenmaal zijn uitgegeven.",
+            "Mislukt een generatie door een fout aan onze kant, dan krijg je de credits automatisch terug. Is dat niet gebeurd, laat het ons weten en we lossen het op.",
+            "Ongebruikte credits verlopen niet zolang je account open is. Wil je je account sluiten terwijl je nog credits hebt, neem dan contact met ons op en we handelen het eerlijk af."
+          ]
+        },
+        "contact": {
+          "heading": "12. Contact",
+          "body": [
+            "Mail naar {supportEmail} met je bestelnummer. Ben je niet tevreden over hoe we een claim hebben afgehandeld, zeg dat dan in je antwoord en iemand anders bekijkt het opnieuw."
+          ]
+        }
+      }
+    }
+  },
+  "faq": {
+    "meta": {
+      "title": "Veelgestelde vragen",
+      "description": "Antwoorden over ontwerpen met AI, bestellen, credits, maten, levertijden, retouren en accountbeheer bij Stamp AI.",
+      "keywords": [
+        "veelgestelde vragen",
+        "hulp",
+        "vragen",
+        "support",
+        "hoe het werkt"
+      ]
+    },
+    "title": "Veelgestelde",
+    "accent": "vragen",
+    "label": "Hulp",
+    "intro": "Antwoorden op wat mensen ons het vaakst vragen, per onderwerp. Staat jouw vraag er niet bij? Mail ons en een mens antwoordt je.",
+    "stillHaveQuestions": "Nog vragen?",
+    "contactSupport": "Mail support",
+    "categories": {
+      "design-ai": {
+        "heading": "Ontwerpen met AI"
+      },
+      "ordering": {
+        "heading": "Bestellen en credits"
+      },
+      "products-sizing": {
+        "heading": "Producten en maten"
+      },
+      "shipping": {
+        "heading": "Verzending en levering"
+      },
+      "returns": {
+        "heading": "Retouren en terugbetalingen"
+      },
+      "account": {
+        "heading": "Je account"
+      }
+    },
+    "items": {
+      "prompt-tips": {
+        "question": "Hoe schrijf ik een prompt die een goed resultaat geeft?",
+        "answer": "Wees specifiek over onderwerp, stijl en compositie, en zeg wat je niet wilt. “Een bergketen als lijntekening, één lijndikte, gecentreerd, geen kleur, geen tekst” werkt altijd beter dan “bergen”. Een techniek noemen — houtsnede, risoprint, technische tekening — geeft meestal strakkere resultaten dan een kunstenaar noemen."
+      },
+      "upload-own-art": {
+        "question": "Kan ik mijn eigen artwork uploaden in plaats van een prompt te gebruiken?",
+        "answer": "Ja. Upload een schets, foto of afgewerkt bestand en wij maken het klaar om te printen. Je kunt ook een referentieafbeelding uploaden en met een prompt een bepaalde richting op sturen. Je moet wel de rechten hebben op alles wat je uploadt."
+      },
+      "design-ownership": {
+        "question": "Ben ik eigenaar van het ontwerp dat de AI maakt?",
+        "answer": "Tussen jou en ons: ja — ook voor commercieel gebruik. Eén eerlijke kanttekening: in veel landen is volledig door een machine gegenereerd werk mogelijk helemaal niet auteursrechtelijk beschermd, dus we kunnen je geen afdwingbaar exclusief recht beloven. Onze algemene voorwaarden leggen dit volledig uit."
+      },
+      "not-happy-with-design": {
+        "question": "Wat als ik niet tevreden ben met wat de AI genereert?",
+        "answer": "Genereer opnieuw met een aangepaste prompt. Elke generatie kost credits, ook die je niet bevalt, omdat de rekenkracht hoe dan ook wordt gebruikt. Er wordt niets geprint totdat je een ontwerp goedkeurt, dus een ongewenste generatie kost je nooit een kledingstuk."
+      },
+      "prohibited-content": {
+        "question": "Zijn er ontwerpen die jullie niet printen?",
+        "answer": "Ja. We printen geen merken van anderen of auteursrechtelijk beschermde personages, niet de beeltenis van een echt persoon zonder toestemming, geen seksuele content met minderjarigen en geen content die aanzet tot geweld of haat. Artikel 8 van onze algemene voorwaarden bevat de volledige lijst."
+      },
+      "what-are-credits": {
+        "question": "Wat zijn credits en hoe werken ze?",
+        "answer": "Met credits betaal je voor het genereren van ontwerpen. Je koopt ze vooraf, ze staan op je account en bij elke generatie wordt er één gebruikt. Printen en verzenden betaal je apart wanneer je een artikel bestelt."
+      },
+      "credits-expire": {
+        "question": "Verlopen credits?",
+        "answer": "Nee. Ongebruikte credits blijven op je account staan zolang het open is. Ze kunnen niet naar een ander account worden overgezet of worden ingewisseld voor geld."
+      },
+      "payment-methods": {
+        "question": "Welke betaalmethoden kan ik gebruiken?",
+        "answer": "Visa, Mastercard en American Express, plus PayPal, iDEAL, Apple Pay en Google Pay. Je kaartgegevens gaan rechtstreeks naar onze betaalprovider en komen nooit op onze servers."
+      },
+      "change-order": {
+        "question": "Kan ik mijn bestelling wijzigen of annuleren?",
+        "answer": "Alleen voordat hij in productie gaat, en dat is kort nadat je hebt bevestigd. Mail support zo snel mogelijk met je bestelnummer. Zodra het printen is begonnen, kunnen we het niet meer stoppen, omdat het artikel alleen voor jou bestaat."
+      },
+      "bulk-orders": {
+        "question": "Kan ik grote aantallen bestellen?",
+        "answer": "Ja, er is geen maximum. Bij bestellingen van 25 artikelen of meer krijg je staffelkorting, die automatisch in je tas wordt toegepast. Er is ook geen minimum — één artikel is een heel normale bestelling."
+      },
+      "product-range": {
+        "question": "Waarop kan ik mijn ontwerp laten printen?",
+        "answer": "T-shirts, hoodies, sweaters en petten, in verschillende kleuren. Elke productpagina vermeldt het exacte kledingstuk, het gewicht en de samenstelling."
+      },
+      "sizing": {
+        "question": "Hoe kies ik de juiste maat?",
+        "answer": "Gebruik de maattabel op de productpagina in plaats van de maat die je normaal draagt. Onze kledingstukken zijn zwaar en anders gesneden dan in de gemiddelde winkel. De tabel geeft platte maten, dus vergelijk ze met een kledingstuk dat je al hebt."
+      },
+      "print-durability": {
+        "question": "Hoe lang gaat de print mee?",
+        "answer": "We printen met inkt op waterbasis die zich in de stof hecht in plaats van erop te liggen, dus de print barst of bladdert niet. Was binnenstebuiten op 30 °C, sla de droger over en de print gaat langer mee dan het kledingstuk."
+      },
+      "care-instructions": {
+        "question": "Hoe moet ik het wassen?",
+        "answer": "Binnenstebuiten, op 30 °C of lager, met gelijke kleuren. Geen bleekmiddel en niet direct op de print strijken. Laat het waar mogelijk aan de lijn drogen. Op het waslabel van elk kledingstuk staan dezelfde instructies."
+      },
+      "where-printed": {
+        "question": "Waar worden de artikelen geprint?",
+        "answer": "Bij de printlocatie die het dichtst bij je bezorgadres ligt, zodat het transport kort en de levering snel is. Een bestelling met meerdere artikelen kan op meer dan één locatie worden gemaakt en zonder extra kosten in aparte pakketten aankomen."
+      },
+      "shipping-cost": {
+        "question": "Wat kost verzending?",
+        "answer": "Dat hangt af van je adres en de grootte van je bestelling, en je ziet het altijd bij het afrekenen voordat je betaalt. Achteraf komt er niets bij. Alle details staan op onze pagina Verzending & levering."
+      },
+      "customs": {
+        "question": "Moet ik douanekosten of invoerrechten betalen?",
+        "answer": "Niet binnen de EU. Daarbuiten kan je land bij aankomst invoerrechten en belastingen heffen; die worden bepaald door je douane, niet door ons. We zijn wettelijk verplicht de volledige waarde van de goederen aan te geven."
+      },
+      "track-order": {
+        "question": "Hoe volg ik mijn bestelling?",
+        "answer": "Je krijgt een trackinglink per e-mail zodra je pakket is verzonden, en je bestelgeschiedenis toont dezelfde status. Het kan tot 24 uur duren voordat de eerste scan van de vervoerder verschijnt — dat is normaal."
+      },
+      "return-window": {
+        "question": "Kan ik iets retourneren?",
+        "answer": "Klopt de print, de stof of de pasvorm niet, laat het ons dan binnen 30 dagen weten en we vervangen het gratis of je krijgt je geld volledig terug, inclusief de retourverzending. Omdat elk artikel voor één persoon wordt gemaakt, valt gewoon van gedachten veranderen er niet onder zodra de productie is begonnen."
+      },
+      "wrong-size-ordered": {
+        "question": "Ik heb de verkeerde maat besteld. Wat nu?",
+        "answer": "Als het artikel overeenkomt met de maattabel, maken we een vervanging in de juiste maat voor 50% van de artikelprijs. Komt het niet overeen met de tabel, dan is dat onze fout en vervangen we het kosteloos."
+      },
+      "refund-time": {
+        "question": "Hoe lang duurt een terugbetaling?",
+        "answer": "Goedgekeurde terugbetalingen doen we binnen 3 werkdagen via de oorspronkelijke betaalmethode. Bij kaarten zie je het meestal binnen 5 tot 10 werkdagen; bij PayPal en iDEAL meestal binnen 1 tot 3."
+      },
+      "delete-account": {
+        "question": "Hoe verwijder ik mijn account?",
+        "answer": "Via je profiel. We verwijderen je account en ontwerpgegevens binnen 30 dagen. Bestel- en transactiegegevens bewaren we zeven jaar omdat de belastingwet dat vereist — ons privacybeleid legt uit wat we bewaren en waarom."
+      },
+      "data-privacy": {
+        "question": "Wat doen jullie met mijn prompts en ontwerpen?",
+        "answer": "We gebruiken ze om je artwork te genereren, je bestelling te maken en je te helpen. We verkopen ze niet, publiceren ze niet en gebruiken je ontwerpen niet in onze marketing zonder het je eerst te vragen."
+      },
+      "contact-human": {
+        "question": "Hoe bereik ik een mens?",
+        "answer": "Mail ons, met je bestelnummer als je dat hebt. We antwoorden binnen één werkdag en elk bericht wordt door een mens gelezen."
+      }
+    }
+  },
+  "cookieConsent": {
+    "title": "Cookies & analyse",
+    "body": "We gebruiken essentiële cookies om de winkel te laten werken. Sta optionele analyse toe zodat we beter begrijpen hoe de site wordt gebruikt. Je kunt je keuze wijzigen in Cookie-instellingen.",
+    "policyLink": "Lees het cookiebeleid",
+    "accept": "Analyse accepteren",
+    "reject": "Alleen essentiële",
+    "settings": "Cookie-instellingen"
+  }
+}
