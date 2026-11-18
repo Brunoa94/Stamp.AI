@@ -19,12 +19,10 @@ export function Register({ className, children }: RegisterProps) {
   return (
     <AuthDialog
       form={<AuthDialogForms initialView="register" />}
-      triggerAriaLabel={t("openDialogAria")}
       className={className}
       defaultTrigger={
         <Button
           variant="outline"
-          aria-label={t("openDialogAria")}
           className={className}
         >
           <UserPlus className="mr-2 h-3 w-3" />

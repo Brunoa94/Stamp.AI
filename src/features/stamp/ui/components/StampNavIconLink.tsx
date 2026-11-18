@@ -1,9 +1,10 @@
-"use client";
-
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { Span } from "@/features/ui/span";
-import { stampNavIconLinkVariants } from "@/features/stamp/lib/variants/stampNavVariants";
+import {
+  stampNavIconLinkVariants,
+  stampNavTooltipVariants,
+} from "@/features/stamp/lib/variants/stampNavVariants";
 
 interface PropsI {
   href: string;
@@ -15,7 +16,11 @@ interface PropsI {
   compact?: boolean;
 }
 
-/** Desktop header link: icon plus label, or a round icon-only button. */
+/**
+ * Desktop header link: icon plus label, or a round icon-only button. Whenever
+ * the label is hidden it is the link's aria-label and shows in a tooltip on
+ * hover and keyboard focus.
+ */
 export function StampNavIconLink({
   href,
   icon: Icon,
@@ -29,12 +34,16 @@ export function StampNavIconLink({
     <Link
       href={href}
       aria-label={labelHidden ? label : undefined}
-      title={labelHidden ? label : undefined}
       className={stampNavIconLinkVariants({ iconOnly })}
     >
       <Icon className="size-5" strokeWidth={1.75} aria-hidden />
       {!iconOnly && (
         <Span unstyled className={compact ? "hidden xl:inline" : undefined}>
+          {label}
+        </Span>
+      )}
+      {labelHidden && (
+        <Span unstyled aria-hidden className={stampNavTooltipVariants({ compact })}>
           {label}
         </Span>
       )}

@@ -183,7 +183,6 @@ export function StampHeader() {
                 href="/profile"
                 onClick={() => setMobileMenuOpen(false)}
                 className={cn(stampNavLinkVariants(), "py-3")}
-                aria-label={t("profileAria")}
               >
                 {t("profile")}
               </Link>

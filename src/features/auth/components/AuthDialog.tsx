@@ -22,8 +22,6 @@ import { isRegisteredUser } from "@/shared/helpers/authIdentity";
 interface PropsI {
   /** Dialog content (e.g. <LoginForm />, <RegisterForm />). */
   form: ReactNode;
-  /** Accessible label for the trigger. */
-  triggerAriaLabel: string;
   /** Fallback trigger when no children are given. */
   defaultTrigger: ReactNode;
   /** Custom trigger content (wrapped in a plain button). */
@@ -33,7 +31,6 @@ interface PropsI {
 
 export function AuthDialog({
   form,
-  triggerAriaLabel,
   defaultTrigger,
   children,
   className,
@@ -64,10 +61,10 @@ export function AuthDialog({
         {children ? (
           // Uses unstyled variant for triggers whose appearance is fully
           // caller-owned (nav links, overlay CTAs that pass a styled element).
+          // Their visible text is the accessible name (WCAG 2.5.3).
           <Button
             type="button"
             variant="unstyled"
-            aria-label={triggerAriaLabel}
             className={className}
           >
             {children}

@@ -635,7 +635,6 @@
       "stamp": "Stamp it!",
       "catalog": "Catalogus",
       "profile": "Profiel",
-      "profileAria": "Je profiel bekijken",
       "orders": "Bestellingen",
       "cart": "Tas",
       "logoutAria": "Uitloggen uit je account",
@@ -1261,7 +1260,6 @@
       }
     },
     "login": {
-      "openDialogAria": "Inlogvenster openen",
       "loginShort": "INLOGGEN",
       "login": "Inloggen",
       "form": {
@@ -1353,7 +1351,6 @@
     },
     "register": {
       "register": "Registreren",
-      "openDialogAria": "Registratievenster openen",
       "signUp": "Aanmelden",
       "successToast": "Kijk in je e-mail om je adres te bevestigen en je wachtwoord in te stellen.",
       "form": {
