@@ -6,12 +6,11 @@
  */
 
 import Image from "next/image";
-import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 
 const PLATFORM_ICON_SRC: Record<string, string> = {
-  Google: staticAssetUrl("/assets/google-icon.svg"),
-  Trustpilot: staticAssetUrl("/assets/platforms/trustpilot.svg"),
-  ProductHunt: staticAssetUrl("/assets/platforms/producthunt.svg"),
+  Google: "/assets/google-icon.svg",
+  Trustpilot: "/assets/platforms/trustpilot.svg",
+  ProductHunt: "/assets/platforms/producthunt.svg",
 };
 
 interface HomePlatformIconProps {

@@ -51,7 +51,7 @@ const rawElementRules = [
   {
     selector: "JSXOpeningElement[name.name='svg']",
     message:
-      "Push the SVG to the static-assets CDN under assets/ (scripts/push-static-assets.mjs) and render it with Image from next/image and staticAssetUrl() instead of inline <svg>.",
+      "Save the SVG as a file under public/assets/ and render it with Image from next/image instead of inline <svg>.",
   },
 ];
 

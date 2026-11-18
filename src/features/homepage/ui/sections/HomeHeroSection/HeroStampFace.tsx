@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 
 interface PropsI {
   src: string;
@@ -29,7 +28,7 @@ export function HeroStampFace({ src, isBack = false, hasPostmark = false }: Prop
       </div>
       {hasPostmark && (
         <Image
-          src={staticAssetUrl("/assets/homepage/postmark.svg")}
+          src="/assets/homepage/postmark.svg"
           alt=""
           width={110}
           height={60}

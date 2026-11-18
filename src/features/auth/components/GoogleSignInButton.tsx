@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import { useGoogleSignIn } from "@/shared/queries/authQueries";
-import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 
 interface GoogleSignInButtonProps {
   className?: string;
@@ -23,7 +22,7 @@ export function GoogleSignInButton({ className }: GoogleSignInButtonProps) {
       onClick={() => signInWithGoogle()}
       disabled={isPending}
     >
-      <Image src={staticAssetUrl("/assets/google-icon.svg")} alt={t("iconAlt")} width={20} height={20} />
+      <Image src="/assets/google-icon.svg" alt={t("iconAlt")} width={20} height={20} />
       <Span variant="default" className="tracking-widest hover:text-(--color-stamp-chocolate) transition-colors">
         {isPending ? t("connecting") : t("continueWithGoogle")}
       </Span>

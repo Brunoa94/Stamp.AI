@@ -6,9 +6,6 @@ import type {
   FlowStepIdType,
   FlowStepType,
 } from "@/features/homepage/lib/types/flowPreview";
-import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
-
-const FLOW_ART = staticAssetUrl("/assets/flow-preview");
 
 /** One timeline tick; every duration below is counted in ticks */
 export const FLOW_TICK_MS = 50;
@@ -63,12 +60,12 @@ export const FLOW_MOCKUP_DOTS = [0, 1, 2, 3] as const;
 
 /** Demo illustrations (product blanks and the sample dog design) */
 export const FLOW_ART_ASSETS: Record<FlowArtIdType, FlowArtAssetType> = {
-  tee: { src: `${FLOW_ART}/tee.svg`, width: 340, height: 320 },
-  teePrintArea: { src: `${FLOW_ART}/tee-print-area.svg`, width: 340, height: 320 },
-  hoodie: { src: `${FLOW_ART}/hoodie.svg`, width: 340, height: 340 },
-  mug: { src: `${FLOW_ART}/mug.svg`, width: 320, height: 300 },
-  pup: { src: `${FLOW_ART}/pup.svg`, width: 100, height: 100 },
-  pupPhoto: { src: `${FLOW_ART}/pup-photo.svg`, width: 120, height: 120 },
+  tee: { src: "/assets/flow-preview/tee.svg", width: 340, height: 320 },
+  teePrintArea: { src: "/assets/flow-preview/tee-print-area.svg", width: 340, height: 320 },
+  hoodie: { src: "/assets/flow-preview/hoodie.svg", width: 340, height: 340 },
+  mug: { src: "/assets/flow-preview/mug.svg", width: 320, height: 300 },
+  pup: { src: "/assets/flow-preview/pup.svg", width: 100, height: 100 },
+  pupPhoto: { src: "/assets/flow-preview/pup-photo.svg", width: 120, height: 120 },
 };
 
 /**

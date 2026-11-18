@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /**
- * Push the site's static images to the Supabase Storage CDN.
+ * Push the site's raster images (PNG, JPEG, WebP...) to the Supabase Storage CDN.
  *
- * The app serves its static images (homepage, backdrops, payment logos, brand
- * marks...) from the public `static-assets` bucket instead of `public/`. The
+ * The app serves its raster images (homepage, backdrops, payment logos, brand
+ * marks...) from the public `static-assets` bucket instead of `public/`. SVGs
+ * stay in the repo under public/assets/ and are never pushed. The
  * object key is the file's path relative to the source directory, so
  * `<dir>/home/1-a.png` is served at
  *   <SUPABASE_URL>/storage/v1/object/public/static-assets/home/1-a.png
@@ -40,7 +41,6 @@ const MIME_TYPES = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.webp': 'image/webp',
-  '.svg': 'image/svg+xml',
   '.gif': 'image/gif',
   '.avif': 'image/avif',
   '.ico': 'image/x-icon',
