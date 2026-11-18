@@ -1,6 +1,10 @@
 import { randomUUID } from 'node:crypto';
 import { expect } from '@playwright/test';
 import { unwrap } from './fixtures.mjs';
+import { TEST_URL } from './environment.mjs';
+
+// Seeded item artwork: zoe.png on the test project's static-assets CDN (public/ holds no images).
+export const FIXTURE_IMAGE_URL = `${TEST_URL}/storage/v1/object/public/static-assets/zoe.png`;
 
 export const ITEMS = [
   { product_name: 'Acceptance A', unit_price: 1999, quantity: 2 },
@@ -9,7 +13,7 @@ export const ITEMS = [
 ];
 export async function seedCart(account, items = ITEMS) {
   const cart = unwrap(await account.db.from('carts').insert({ user_id: account.id, user_email: account.email }).select().single(), 'Create real test cart');
-  const rows = items.map((item, i) => ({ cart_id: cart.id, product_id: randomUUID(), variant_id: String(90000 + i), custom_image_url: '/zoe.png', is_selected: true, ...item }));
+  const rows = items.map((item, i) => ({ cart_id: cart.id, product_id: randomUUID(), variant_id: String(90000 + i), custom_image_url: FIXTURE_IMAGE_URL, is_selected: true, ...item }));
   const saved = unwrap(await account.db.from('cart_items').insert(rows).select(), 'Seed real cart items');
   return { ...cart, items: saved };
 }

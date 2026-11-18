@@ -1,10 +1,11 @@
 /**
  * Static brand assets for invoice rendering.
  *
- * INVOICE_LOGO_PNG_BASE64 is `public/logo-with-text.png` (the Stamp.ai
- * logo with S icon and text, 810x286, transparent background) inlined so the PDF
- * renderer can embed it without network or filesystem access.
- * Regenerate with: base64 -i public/logo-with-text.png | tr -d '\n'
+ * INVOICE_LOGO_PNG_BASE64 is `logo-with-text.png` from the static-assets
+ * bucket (the Stamp.ai logo with S icon and text, 810x286, transparent
+ * background) inlined so the PDF renderer can embed it without network access.
+ * Regenerate with:
+ *   curl -s "$SUPABASE_URL/storage/v1/object/public/static-assets/logo-with-text.png" | base64 | tr -d '\n'
  */
 
 export const INVOICE_LOGO_WIDTH = 810;
@@ -12,11 +13,12 @@ export const INVOICE_LOGO_HEIGHT = 286;
 
 /**
  * Absolute URL of the logo for the HTML email body. Most email clients
- * block data: URIs in images, so the email references the hosted file.
+ * block data: URIs in images, so the email references the file on the
+ * project's static-assets CDN (filled by scripts/push-static-assets.mjs).
  */
 export function getInvoiceLogoUrl(): string {
-  const siteUrl = Deno.env.get("SITE_URL") || "http://localhost:3000";
-  return `${siteUrl.replace(/\/+$/, "")}/logo-with-text.png`;
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") || "http://127.0.0.1:54321";
+  return `${supabaseUrl.replace(/\/+$/, "")}/storage/v1/object/public/static-assets/logo-with-text.png`;
 }
 
 export const INVOICE_LOGO_PNG_BASE64 =

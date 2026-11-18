@@ -1,4 +1,7 @@
+import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 import type { StampBackdropPhotoT } from "../types/stampTypes";
+
+const BACKDROPS = staticAssetUrl("/backdrops");
 
 /**
  * Stamp canvas backdrop photos, one per step of the flow (00 hero has its own).
@@ -8,14 +11,14 @@ import type { StampBackdropPhotoT } from "../types/stampTypes";
  * inside that slice.
  */
 export const STAMP_BACKDROP_PHOTOS: StampBackdropPhotoT[] = [
-  { src: "/backdrops/mug-window.jpg", fromStep: 0, focus: "65% 0%" }, // 01 upload: the mug
-  { src: "/backdrops/hoodie-underground.jpg", fromStep: 2, focus: "45% 0%" }, // 02 synthesis: the hoodie print
-  { src: "/backdrops/kid-forest.jpg", fromStep: 3, focus: "54% 0%" }, // 03 generation: the dino tee
-  { src: "/backdrops/hoodie-track.jpg", fromStep: 4, focus: "62% 0%" }, // 04 results: the hoodie logo
-  { src: "/backdrops/coat-cathedral.jpg", fromStep: 5, focus: "78% 0%" }, // 05 product: the tote
-  { src: "/backdrops/hoodie-gym.jpg", fromStep: 6, focus: "50% 0%" }, // 06 customize: the back print
-  { src: "/backdrops/hoodie-milan.jpg", fromStep: 7, focus: "48% 0%" }, // 07 production: the tiger print
-  { src: "/backdrops/canvas-living-room.jpg", fromStep: 8, focus: "64% 0%" }, // 08 review: the canvas
+  { src: `${BACKDROPS}/mug-window.jpg`, fromStep: 0, focus: "65% 0%" }, // 01 upload: the mug
+  { src: `${BACKDROPS}/hoodie-underground.jpg`, fromStep: 2, focus: "45% 0%" }, // 02 synthesis: the hoodie print
+  { src: `${BACKDROPS}/kid-forest.jpg`, fromStep: 3, focus: "54% 0%" }, // 03 generation: the dino tee
+  { src: `${BACKDROPS}/hoodie-track.jpg`, fromStep: 4, focus: "62% 0%" }, // 04 results: the hoodie logo
+  { src: `${BACKDROPS}/coat-cathedral.jpg`, fromStep: 5, focus: "78% 0%" }, // 05 product: the tote
+  { src: `${BACKDROPS}/hoodie-gym.jpg`, fromStep: 6, focus: "50% 0%" }, // 06 customize: the back print
+  { src: `${BACKDROPS}/hoodie-milan.jpg`, fromStep: 7, focus: "48% 0%" }, // 07 production: the tiger print
+  { src: `${BACKDROPS}/canvas-living-room.jpg`, fromStep: 8, focus: "64% 0%" }, // 08 review: the canvas
 ];
 
 /**

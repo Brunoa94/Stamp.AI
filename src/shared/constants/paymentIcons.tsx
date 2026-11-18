@@ -2,11 +2,12 @@
  * Payment Method Icons
  *
  * Image-based icons for payment providers displayed in the payment methods section.
- * Uses actual brand images from /public/payment-options/ for accurate representation.
+ * Uses actual brand images from payment-options/ on the static-assets CDN for accurate representation.
  */
 
 import Image from "next/image";
 import type { ReactNode } from "react";
+import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 
 interface PaymentIcon {
   id: string;
@@ -14,13 +15,15 @@ interface PaymentIcon {
   icon: ReactNode;
 }
 
+const LOGOS = staticAssetUrl("/payment-options");
+
 export const PAYMENT_ICONS: PaymentIcon[] = [
   {
     id: "visa",
     label: "Visa",
     icon: (
       <Image
-        src="/payment-options/visa.png"
+        src={`${LOGOS}/visa.png`}
         alt="Visa"
         width={56}
         height={32}
@@ -33,7 +36,7 @@ export const PAYMENT_ICONS: PaymentIcon[] = [
     label: "Mastercard",
     icon: (
       <Image
-        src="/payment-options/mastercard.webp"
+        src={`${LOGOS}/mastercard.webp`}
         alt="Mastercard"
         width={56}
         height={32}
@@ -46,7 +49,7 @@ export const PAYMENT_ICONS: PaymentIcon[] = [
     label: "American Express",
     icon: (
       <Image
-        src="/payment-options/amex.png"
+        src={`${LOGOS}/amex.png`}
         alt="American Express"
         width={56}
         height={32}
@@ -59,7 +62,7 @@ export const PAYMENT_ICONS: PaymentIcon[] = [
     label: "PayPal",
     icon: (
       <Image
-        src="/payment-options/paypal.png"
+        src={`${LOGOS}/paypal.png`}
         alt="PayPal"
         width={56}
         height={32}
@@ -72,7 +75,7 @@ export const PAYMENT_ICONS: PaymentIcon[] = [
     label: "iDEAL",
     icon: (
       <Image
-        src="/payment-options/ideal.webp"
+        src={`${LOGOS}/ideal.webp`}
         alt="iDEAL"
         width={56}
         height={32}

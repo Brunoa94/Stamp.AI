@@ -1,11 +1,12 @@
 import { buildStampScanColumns } from "../helpers/stampScan";
+import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 import type { StampScanSlideT } from "../types/stampScan";
 
-const SCAN = "/stamp-entry";
+const SCAN = staticAssetUrl("/stamp-entry");
 
 /**
  * Shop products on the entry scan: the blank catalog shot and the same shot
- * printed (1024px squares of public/home/*-a|b), so each tile prints in place.
+ * printed (1024px squares of home/*-a|b on the static-assets CDN), so each tile prints in place.
  */
 const STAMP_SCAN_SLIDES: readonly StampScanSlideT[] = [
   { id: "hoodie", blankSrc: `${SCAN}/hoodie-blank.webp`, printedSrc: `${SCAN}/hoodie-printed.webp` },

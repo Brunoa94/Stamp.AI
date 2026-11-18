@@ -9,6 +9,7 @@
 import { PropsWithChildren, ReactNode } from "react";
 import { PageContainer } from "@/shared/ui/PageContainer";
 import { PageHeaderBand } from "@/shared/ui/PageHeaderBand";
+import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 
 interface OrdersLayoutPropsI extends PropsWithChildren {
   header: ReactNode;
@@ -17,7 +18,7 @@ interface OrdersLayoutPropsI extends PropsWithChildren {
 export function OrdersLayout({ header, children }: OrdersLayoutPropsI) {
   return (
     <div className="min-h-screen bg-(--color-stamp-off-white) text-(--color-stamp-chocolate) pt-24">
-      <PageHeaderBand src="/backdrops/orders-unboxing.jpg" imageClassName="object-[center_60%]">
+      <PageHeaderBand src={staticAssetUrl("/backdrops/orders-unboxing.jpg")} imageClassName="object-[center_60%]">
         {header}
       </PageHeaderBand>
       <div className="px-6 pb-24 pt-12 lg:px-12 xl:px-24">

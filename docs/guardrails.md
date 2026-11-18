@@ -14,7 +14,7 @@ These patterns are enforced by tools, so neither people nor agents can drift fro
 
 ## Git pre-commit hook
 
-`.githooks/pre-commit`, installed by `npm install`: ESLint on the staged files, `tsc --noEmit`, then `vitest related` on the staged `src/` files. A commit that breaks a rule, the types or a related unit test is rejected.
+`.githooks/pre-commit`, installed by `npm install`: no new PNG/JPEG/WebP images (`keep-raster-images-on-cdn.mjs --staged`), ESLint on the staged files, `tsc --noEmit`, then `vitest related` on the staged `src/` files. A commit that breaks a rule, the types or a related unit test is rejected.
 
 ## Claude Code hooks
 
@@ -25,6 +25,7 @@ In `.claude/hooks/`, registered in `.claude/settings.json`, tested by `npm run t
 - `enforce-slice-boundaries.mjs`: edits that add a slice-boundary violation are rejected (existing violations in a file don't block unrelated edits)
 - `block-shell-source-writes.mjs`: shell commands that write `src/` source code (`sed -i`, heredocs, `tee`, `cp`, `mv` from outside `src/`) are rejected; source is edited with Edit/Write/MultiEdit so the hooks above and below see it. Renames inside `src/` and shell writes to tests, styles and docs are fine. Off in auto mode.
 - `enforce-test-first.mjs`: an Edit/Write that changes the behavior of gated source code is rejected until a **covering** test has been written or changed in the same session (also from the shell), and Claude is sent to the `test-driven-development` skill
+- `keep-raster-images-on-cdn.mjs`: PNG, JPEG and WebP images are not added to the repo; they go to the Supabase `static-assets` CDN with `scripts/push-static-assets.mjs` and are referenced with `staticAssetUrl()`. Rejects Write/Edit creating one, shell writes of one (redirects, `cp`, `mv`, `curl -o`, `wget -O`), and a `git commit`/`git push` that adds one. SVGs, already-tracked files, gitignored paths (`images-generated/`), test `fixtures/` and Next file-convention icons in `src/app` are allowed. `.githooks/pre-commit` runs the same check with `--staged`.
 - `remove-new-tests-before-commit.mjs`: unit tests written during a feature's TDD loop are not committed. A `git commit` whose index adds a unit test under `src/`, or a `git push` whose unpushed commits add one, is rejected with the tests to delete. Changes to existing tests, hook tests and acceptance specs are allowed.
 
 ### What the TDD hooks gate

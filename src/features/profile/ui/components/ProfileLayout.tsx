@@ -10,6 +10,7 @@
 import { PropsWithChildren, ReactNode } from "react";
 import { PageContainer } from "@/shared/ui/PageContainer";
 import { PageHeaderBand } from "@/shared/ui/PageHeaderBand";
+import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 
 interface ProfileLayoutProps extends PropsWithChildren {
   header: ReactNode;
@@ -18,7 +19,7 @@ interface ProfileLayoutProps extends PropsWithChildren {
 export function ProfileLayout({ header, children }: ProfileLayoutProps) {
   return (
     <div className="min-h-screen bg-(--color-stamp-off-white) text-(--color-stamp-chocolate) pt-24">
-      <PageHeaderBand src="/backdrops/profile-sofia-tote.jpg" imageClassName="object-[center_88%]">
+      <PageHeaderBand src={staticAssetUrl("/backdrops/profile-sofia-tote.jpg")} imageClassName="object-[center_88%]">
         {header}
       </PageHeaderBand>
       <div className="px-6 pb-24 pt-12 lg:px-12 xl:px-24">

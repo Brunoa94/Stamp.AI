@@ -5,6 +5,7 @@ import { Heading } from "@/features/ui/heading";
 import { List } from "@/features/ui/list";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
+import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 
 /**
  * AuthBrandPanel
@@ -40,7 +41,7 @@ export function AuthBrandPanel({ namespace }: PropsI) {
 
       <div className="relative flex h-full flex-col">
         <Image
-          src="/logo-white-leather.webp"
+          src={staticAssetUrl("/logo-white-leather.webp")}
           alt=""
           aria-hidden
           width={56}

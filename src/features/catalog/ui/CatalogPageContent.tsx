@@ -18,6 +18,7 @@ import { CatalogToolbar } from "./components/CatalogToolbar";
 import { CatalogGroupSection } from "./sections/CatalogGroupSection";
 import { CatalogShowcaseSection } from "./sections/CatalogShowcaseSection";
 import { PageHeaderBand } from "@/shared/ui/PageHeaderBand";
+import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 
 /**
  * CatalogPageContent
@@ -63,7 +64,7 @@ export function CatalogPageContent({ sections }: PropsI) {
     <article className="pt-24">
       {/* Header band: diagonal photo on the right, as on the Shopping bag page */}
       <PageHeaderBand
-        src="/backdrops/tee-skatepark.jpg"
+        src={staticAssetUrl("/backdrops/tee-skatepark.jpg")}
         imageClassName="object-[center_42%]"
         mirrored
       >
