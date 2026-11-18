@@ -33,8 +33,7 @@ export function PreservationSlider({ value, onChange }: PropsI) {
           className="rounded-full bg-white p-0.5"
         />
       </div>
-      {/* White fill from md so the track and labels read on the backdrop photo */}
-      <div className="flex items-center gap-4 md:bg-white md:px-3 md:py-2">
+      <div className="flex items-center gap-4">
         <Span
           variant="micro"
           className="text-(--color-stamp-taupe)/40"
@@ -50,11 +49,9 @@ export function PreservationSlider({ value, onChange }: PropsI) {
           className="flex-1"
           aria-label={t("preservationAria")}
         />
-        <Span
-          variant="micro"
-          className="text-(--color-stamp-taupe)/40"
-        >
-          {t("high")}
+        {/* Sits on the backdrop photo at wide screens: white there, taupe on the off-white */}
+        <Span variant="micro">
+          <SplitToneText tone="faint">{t("high")}</SplitToneText>
         </Span>
       </div>
     </div>

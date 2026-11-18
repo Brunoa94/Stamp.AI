@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { STAMP_BACKDROP_PHOTOS } from "../../lib/constants/stampBackdrops";
@@ -16,7 +17,8 @@ import {
  * enters a new phase the photos crossfade. The hero step (00) keeps its own
  * photo, so the backdrop is faded out there and fades in on step 01. Below md it's a short strip above
  * the steps; from md it's anchored to the right, under the steps sidebar, and
- * its edge runs through the middle of the steps' right column
+ * its edge runs through the middle of the steps' right column (from lg it
+ * starts on the sidebar's left border)
  * (`.stamp-backdrop*` in globals.css).
  */
 
@@ -36,7 +38,7 @@ export function StampBackdrop({ currentStep }: PropsI) {
       )}
     >
       <div className="stamp-backdrop__photo absolute inset-0 overflow-hidden bg-(--color-stamp-chocolate)">
-        <div className="diagonal-backdrop__photo-img absolute inset-y-0 right-0 w-full md:w-1/2">
+        <div className="diagonal-backdrop__photo-img absolute inset-y-0 right-0 w-full md:w-1/2 lg:w-[calc(17rem+10%)]">
           {/* No priority: the backdrop is hidden on step 00, where the hero image is the LCP */}
           {STAMP_BACKDROP_PHOTOS.map((photo, index) =>
             isStampBackdropPhotoMounted(index, activeIndex) ? (
@@ -45,9 +47,10 @@ export function StampBackdrop({ currentStep }: PropsI) {
                 src={photo.src}
                 alt=""
                 fill
-                sizes="(min-width: 768px) 50vw, 100vw"
+                style={{ "--stamp-backdrop-focus": photo.focus } as CSSProperties}
+                sizes="(min-width: 1024px) calc(17rem + 10vw), (min-width: 768px) 50vw, 100vw"
                 className={cn(
-                  "object-cover object-top transition-opacity duration-1000 ease-in-out motion-reduce:transition-none",
+                  "object-cover object-top lg:object-(--stamp-backdrop-focus) transition-opacity duration-1000 ease-in-out motion-reduce:transition-none",
                   index === activeIndex ? "opacity-100" : "opacity-0",
                 )}
               />

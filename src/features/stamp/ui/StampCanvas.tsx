@@ -5,6 +5,8 @@ import { BackButton } from "./components/BackButton/BackButton";
 import { MobileStepFooter } from "./components/MobileStepFooter/MobileStepFooter";
 import { NavigationSidebar } from "./components/NavigationSidebar";
 import { StampBackdrop } from "./components/StampBackdrop";
+import { StampEntryPanel } from "./components/StampEntryPanel";
+import { StampStepSlot } from "./components/StampStepSlot";
 import { HeroSection } from "./sections/HeroSection/HeroSection";
 import { UploadSection } from "./sections/UploadSection/UploadSection";
 import { SynthesisSection } from "./sections/SynthesisSection/SynthesisSection";
@@ -15,6 +17,7 @@ import { ProductionSection } from "./sections/ProductionSection/ProductionSectio
 import { FinalReviewSection } from "./sections/FinalReviewSection/FinalReviewSection";
 import { ProductSelectionSection } from "./sections/ProductSelectionSection/ProductSelectionSection";
 import { useStampNavigation } from "../lib/hooks/useStampNavigation";
+import { useMountedStampSteps } from "../lib/hooks/useMountedStampSteps";
 import { isStampBackdropVisible } from "../lib/helpers/stampBackdropHelpers";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +36,7 @@ export function StampCanvas() {
   }, [goToStep]);
 
   const activeSlide = Math.max(0, Math.min(currentStep, 8));
+  const mountedSteps = useMountedStampSteps(activeSlide);
 
   return (
     <div className="fixed inset-0 bg-(--color-stamp-off-white)">
@@ -50,40 +54,64 @@ export function StampCanvas() {
           isStampBackdropVisible(activeSlide) ? "top-56" : "top-24",
         )}
       >
-        {/* data-stamp-slider: SplitToneText follows this slide (useStampSplitTone) */}
+        {/* data-stamp-slider: SplitToneText follows this slide (useStampSplitTone).
+            Steps render once near or visited (useMountedStampSteps), so a first
+            visit doesn't hydrate or download the whole flow */}
         <div
           data-stamp-slider=""
           className="h-full transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
           style={{ transform: `translate3d(0, -${activeSlide * 100}%, 0)` }}
         >
           {/* Hero Section */}
-          <HeroSection onBegin={handleBegin} />
+          <StampStepSlot isMounted={mountedSteps.has(0)}>
+            <HeroSection onBegin={handleBegin} />
+          </StampStepSlot>
 
           {/* Step 1: Upload */}
-          <UploadSection />
+          <StampStepSlot isMounted={mountedSteps.has(1)}>
+            <UploadSection />
+          </StampStepSlot>
 
           {/* Step 2: Synthesis */}
-          <SynthesisSection />
+          <StampStepSlot isMounted={mountedSteps.has(2)}>
+            <SynthesisSection />
+          </StampStepSlot>
 
           {/* Step 3: Generation */}
-          <GenerationSection />
+          <StampStepSlot isMounted={mountedSteps.has(3)}>
+            <GenerationSection />
+          </StampStepSlot>
 
           {/* Step 4: Results */}
-          <ResultsSection />
+          <StampStepSlot isMounted={mountedSteps.has(4)}>
+            <ResultsSection />
+          </StampStepSlot>
 
           {/* Step 5: Product Selection */}
-          <ProductSelectionSection />
+          <StampStepSlot isMounted={mountedSteps.has(5)}>
+            <ProductSelectionSection />
+          </StampStepSlot>
 
           {/* Step 6: Customization */}
-          <CustomizationSection />
+          <StampStepSlot isMounted={mountedSteps.has(6)}>
+            <CustomizationSection />
+          </StampStepSlot>
 
           {/* Step 7: Production */}
-          <ProductionSection />
+          <StampStepSlot isMounted={mountedSteps.has(7)}>
+            <ProductionSection />
+          </StampStepSlot>
 
           {/* Step 8: Final Review */}
-          <FinalReviewSection />
+          <StampStepSlot isMounted={mountedSteps.has(8)}>
+            <FinalReviewSection />
+          </StampStepSlot>
         </div>
       </div>
+
+      {/* Entry step's product scan (lg+), over the canvas so leaving step 00 wipes it
+          across the incoming step into the backdrop's shape; under the sidebar */}
+      <StampEntryPanel isActive={!isStampBackdropVisible(activeSlide)} />
 
       {/* Sidebar Navigation (Desktop Only) */}
       <NavigationSidebar />

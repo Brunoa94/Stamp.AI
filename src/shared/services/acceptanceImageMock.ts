@@ -1,6 +1,5 @@
-import { readFile } from 'node:fs/promises';
-import path from 'node:path';
 import { isAcceptanceDatabaseUrl } from '@/lib/security/acceptanceDatabase';
+import { loadMockImageDataUrl } from './mockImage';
 
 /** External model boundary only: auth, validation and coin accounting stay real. */
 export async function acceptanceImageMock(prompt: string): Promise<{
@@ -13,6 +12,5 @@ export async function acceptanceImageMock(prompt: string): Promise<{
   }
   if (prompt.includes('[acceptance:fail]')) throw new Error('Acceptance generation failure');
   if (prompt.includes('[acceptance:timeout]')) await new Promise(resolve => setTimeout(resolve, 95_000));
-  const bytes = await readFile(path.join(process.cwd(), 'public', 'zoe.png'));
-  return { imageUrl: `data:image/png;base64,${bytes.toString('base64')}`, enhancedPrompt: `Acceptance fixture: ${prompt}` };
+  return { imageUrl: await loadMockImageDataUrl(), enhancedPrompt: `Acceptance fixture: ${prompt}` };
 }

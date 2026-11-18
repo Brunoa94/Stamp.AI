@@ -4,6 +4,7 @@ import {
   isPendingLegalValue,
   LEGAL_ENTITY,
 } from "@/features/legal/lib/constants/legalEntity";
+import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 
 /** A legal value for JSON-LD, or undefined (omitted) while it is pending review. */
 function confirmed(value: string): string | undefined {
@@ -22,7 +23,7 @@ export const BUSINESS_INFO = {
   foundingDate: "2024",
   email: LEGAL_ENTITY.supportEmail,
   url: SITE_URL,
-  logo: `${SITE_URL}/logo.png`,
+  logo: staticAssetUrl("/logo.png"),
   image: `${SITE_URL}/og-image.jpg`,
   sameAs: Object.values(SOCIAL_PROFILES),
   address: {

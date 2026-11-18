@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 120" fill="none">
+  <g stroke="#b9932f" stroke-width="3" opacity="0.92">
+    <circle cx="60" cy="60" r="50"/>
+    <circle cx="60" cy="60" r="38" stroke-width="1.5"/>
+    <path d="M118 34 C138 26, 158 42, 178 34 S 208 26, 218 34"/>
+    <path d="M118 52 C138 44, 158 60, 178 52 S 208 44, 218 52"/>
+    <path d="M118 70 C138 62, 158 78, 178 70 S 208 62, 218 70"/>
+    <path d="M118 88 C138 80, 158 96, 178 88 S 208 80, 218 88"/>
+  </g>
+  <defs>
+    <path id="arc-top" d="M24 60 A36 36 0 0 1 96 60"/>
+    <path id="arc-bottom" d="M20 60 A40 40 0 0 0 100 60"/>
+  </defs>
+  <g fill="#b9932f" font-family="Georgia, serif" font-weight="700" letter-spacing="2.5">
+    <text font-size="11"><textPath href="#arc-top" startOffset="50%" text-anchor="middle">STAMP.AI</textPath></text>
+    <text font-size="9"><textPath href="#arc-bottom" startOffset="50%" text-anchor="middle">PRINTED</textPath></text>
+    <text x="60" y="66" font-size="16" text-anchor="middle" letter-spacing="0">★</text>
+  </g>
+</svg>

@@ -7,6 +7,7 @@
  */
 
 import { TRUST_REVIEW_METRICS } from "@/shared/constants/trustMetrics";
+import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 
 export const MAX_HOME_PRODUCTS = 4;
 
@@ -19,33 +20,36 @@ export const PROCESS_STAGGER_DELAY_MS = 120;
 // Trust guarantees section - stagger delay between card reveals (ms)
 export const TRUST_GUARANTEES_STAGGER_DELAY_MS = 100;
 
+const HOME = staticAssetUrl("/home");
+const SUGGESTED_EDITS = staticAssetUrl("/suggested-edits");
+
 // Hero section image carousel - cycles through product images
 export const HOME_HERO_IMAGES = [
-  "/home/1-a.png",
-  "/home/1-b.png",
-  "/home/2-a.png",
-  "/home/2-b.png",
-  "/home/3-a.png",
-  "/home/3-b.png",
-  "/home/4-a.png",
-  "/home/4-b.png",
-  "/home/5-a.png",
-  "/home/5-b.png",
-  "/home/6-a.png",
-  "/home/6-b.png",
+  `${HOME}/1-a.png`,
+  `${HOME}/1-b.png`,
+  `${HOME}/2-a.png`,
+  `${HOME}/2-b.png`,
+  `${HOME}/3-a.png`,
+  `${HOME}/3-b.png`,
+  `${HOME}/4-a.png`,
+  `${HOME}/4-b.png`,
+  `${HOME}/5-a.png`,
+  `${HOME}/5-b.png`,
+  `${HOME}/6-a.png`,
+  `${HOME}/6-b.png`,
 ];
 
 // Hero product grid - grouped image sets for each square
 // Each set cycles independently with staggered timing
 export const HERO_PRODUCT_SETS: string[][] = [
   // Top-right (large) - products 1 & 2
-  ["/home/1-a.png", "/home/1-b.png", "/home/2-a.png", "/home/2-b.png"],
+  [`${HOME}/1-a.png`, `${HOME}/1-b.png`, `${HOME}/2-a.png`, `${HOME}/2-b.png`],
   // Middle-left (medium) - products 3 & 4
-  ["/home/3-a.png", "/home/3-b.png", "/home/4-a.png", "/home/4-b.png"],
+  [`${HOME}/3-a.png`, `${HOME}/3-b.png`, `${HOME}/4-a.png`, `${HOME}/4-b.png`],
   // Bottom-right (medium) - products 5 & 6
-  ["/home/5-a.png", "/home/5-b.png", "/home/6-a.png", "/home/6-b.png"],
+  [`${HOME}/5-a.png`, `${HOME}/5-b.png`, `${HOME}/6-a.png`, `${HOME}/6-b.png`],
   // Bottom-left (small) - mix of all
-  ["/home/1-a.png", "/home/3-a.png", "/home/5-a.png", "/home/2-a.png"],
+  [`${HOME}/1-a.png`, `${HOME}/3-a.png`, `${HOME}/5-a.png`, `${HOME}/2-a.png`],
 ];
 
 // Story section - alternating image + text splits. Display copy lives in
@@ -62,17 +66,17 @@ export const HOME_STORY_BLOCKS: HomeStoryBlockType[] = [
   {
     id: "design",
     images: [
-      "/suggested-edits/golden-hour.png",
-      "/suggested-edits/line-art.png",
-      "/suggested-edits/minimal.png",
-      "/suggested-edits/film-grain.png",
+      `${SUGGESTED_EDITS}/golden-hour.png`,
+      `${SUGGESTED_EDITS}/line-art.png`,
+      `${SUGGESTED_EDITS}/minimal.png`,
+      `${SUGGESTED_EDITS}/film-grain.png`,
     ],
     imagePosition: "right",
     href: "/stamp",
   },
   {
     id: "quality",
-    images: ["/home/3-a.png"],
+    images: [`${HOME}/3-a.png`],
     imagePosition: "left",
     href: "#products",
   },

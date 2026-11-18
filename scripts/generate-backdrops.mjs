@@ -2,9 +2,11 @@
 /**
  * Generate lifestyle backdrop photos with OpenAI
  *
- * Makes new photos in the spirit of public/backdrops: a person using one of the
- * shop's printed products in a real place. Each image combines, at random:
- *   - a product, with one of its mockups from public/products-images sent as the
+ * Makes new photos in the spirit of backdrops/ on the static-assets CDN: a person
+ * using one of the shop's printed products in a real place. Each image combines,
+ * at random:
+ *   - a product, with one of its mockups from products-images/ on the CDN
+ *     (NEXT_PUBLIC_SUPABASE_URL's static-assets bucket) sent as the
  *     reference for the blank (cut, colour, material, proportions)
  *   - a new artwork printed on it (a different style and subject each time)
  *   - a model, a place, light and weather, a camera and a colour grade
@@ -125,7 +127,12 @@ function makeDeck(pool, rand) {
 
 // ─── Products ────────────────────────────────────────────────────────────────
 
-const PRODUCTS_DIR = 'public/products-images';
+/** Product mockups on the static-assets CDN (pushed by scripts/push-static-assets.mjs) */
+function productsBaseUrl() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL is required to fetch the product mockups');
+  return `${supabaseUrl.replace(/\/+$/, '')}/storage/v1/object/public/static-assets/products-images`;
+}
 
 const PRODUCTS = {
   hoodie: {
@@ -146,7 +153,7 @@ const PRODUCTS = {
     name: "white children's crew-neck T-shirt",
     audience: 'kid',
     size: '1024x1024',
-    references: ['kid t-shirt/kid-t-shirt-g-mockup-front.png', 'kid t-shirt/kid-t-shirt-n-mockup-front.png'],
+    references: ['kid-t-shirt/kid-t-shirt-g-mockup-front.png', 'kid-t-shirt/kid-t-shirt-n-mockup-front.png'],
     printArea: 'centred on the chest, filling most of the front',
     surface: 'follows the light folds and cotton texture of the T-shirt',
     isTop: true,
@@ -427,7 +434,7 @@ const CONCEPTS = {
     camera: 'Shot on a 35mm lens at chest height, three-quarter body, the logo sharp and centred in the frame',
     grade: 'Warm Kodak Portra 400 film tones with a slight 1990s skate-magazine grain',
   },
-  // public/backdrops/orders-unboxing.jpg is this image cropped to its left 1300px, so the
+  // backdrops/ (static-assets CDN) orders-unboxing.jpg is this image cropped to its left 1300px, so the
   // print clears the title in the /orders header band on desktop.
   'orders-unboxing': {
     product: 'hoodie',
@@ -442,7 +449,7 @@ const CONCEPTS = {
       'Wide landscape shot on a 35mm lens from a few metres back. The woman, hoodie and box all sit between 55% and 85% of the frame width from the left; the centre of the printed artwork is at about 65% of the frame width and in the vertical middle of the frame; her face is in the upper third. Nothing important in the left 50% or the right 12% of the frame',
     grade: 'Soft even daylight from a large window, warm natural colours, gentle editorial grade',
   },
-  // public/backdrops/profile-sofia-tote.jpg is this image cropped to its left 1450px, so the
+  // backdrops/ (static-assets CDN) profile-sofia-tote.jpg is this image cropped to its left 1450px, so the
   // print clears the title in the /profile header band on desktop.
   'profile-tote': {
     product: 'tote',
@@ -556,8 +563,10 @@ function planBatch(opts, rand) {
 // ─── Generation ──────────────────────────────────────────────────────────────
 
 async function generateOne(client, job, opts, outDir) {
-  const referencePath = path.join(PRODUCTS_DIR, job.reference);
-  const reference = await toFile(fs.createReadStream(referencePath), path.basename(referencePath), {
+  const referenceUrl = `${productsBaseUrl()}/${job.reference}`;
+  const referenceResponse = await fetch(referenceUrl);
+  if (!referenceResponse.ok) throw new Error(`Could not fetch ${referenceUrl}: HTTP ${referenceResponse.status}`);
+  const reference = await toFile(Buffer.from(await referenceResponse.arrayBuffer()), path.basename(job.reference), {
     type: 'image/png',
   });
 

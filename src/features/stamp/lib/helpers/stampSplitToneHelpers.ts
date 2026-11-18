@@ -7,8 +7,12 @@ type ViewportT = { width: number; height: number };
 
 /** Viewport x of the backdrop's diagonal edge at viewport y. */
 function edgeX(y: number, viewport: ViewportT): number {
-  const { topX, bottomX, canvasTopPx } = STAMP_BACKDROP_EDGE;
+  const { topX, bottomX, canvasTopPx, sidebarWidthPx, sidebarMinViewportWidthPx, slant } =
+    STAMP_BACKDROP_EDGE;
   const progress = (y - canvasTopPx) / (viewport.height - canvasTopPx);
+  if (viewport.width >= sidebarMinViewportWidthPx) {
+    return viewport.width - sidebarWidthPx - viewport.width * slant * progress;
+  }
   return viewport.width * (topX - (topX - bottomX) * progress);
 }
 

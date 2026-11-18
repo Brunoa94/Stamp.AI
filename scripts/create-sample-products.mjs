@@ -7,8 +7,10 @@
  *    (skipped when the -photo file already exists, so re-runs reuse it)
  * 2. Uploads the artwork to Printify and creates a product with it
  * 3. Saves the artwork and the Printify mockups into the product's folder:
- *      public/products-images/<folder>/<prefix>-<letter>-photo.png
- *      public/products-images/<folder>/<prefix>-<letter>-mockup-<view>.png
+ *      images-generated/products-images/<folder>/<prefix>-<letter>-photo.png
+ *      images-generated/products-images/<folder>/<prefix>-<letter>-mockup-<view>.png
+ *    (gitignored; the site serves images from the static-assets CDN, so push
+ *    the ones it uses with scripts/push-static-assets.mjs)
  *    Only mockups showing the full design on the product alone are kept.
  *
  * Products are kept in the Printify shop (unpublished) unless --cleanup is passed.
@@ -49,7 +51,7 @@ import {
 } from './lib/printify.mjs';
 import { DESIGNS } from './lib/sample-designs.mjs';
 
-const OUTPUT_ROOT = 'public/products-images';
+const OUTPUT_ROOT = 'images-generated/products-images';
 const GEMINI_IMAGE_MODEL = 'gemini-2.5-flash-image';
 const OPENAI_IMAGE_MODEL = 'gpt-image-1-mini';
 const PRODUCT_COLOR = 'white';

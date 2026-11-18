@@ -54,3 +54,6 @@ next-env.d.ts
 
 # Claude Code worktrees (agent checkouts of other branches)
 /.claude/worktrees/
+
+# Locally generated images, pushed to the static-assets CDN with scripts/push-static-assets.mjs
+/images-generated/
