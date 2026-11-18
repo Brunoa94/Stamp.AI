@@ -36,6 +36,43 @@ Lint already enforces the hard rules (design-system components instead of raw HT
 <OrdersPage title="Orders" headerVariant="large" bodyPadding="md" content={orders} />
 ```
 
+**Always prioritize composition over mode flags.** When a boolean or enum prop changes *what a component renders* (which elements appear, which ARIA attributes it sets), not just how it looks, split it into one component per mode and share the common part by composing a smaller piece. Each component then renders one fixed structure, with no `{flag && ...}` branches and no derived flags such as `labelHidden = a || b`. A `cva` variant is still right for purely visual differences (size, tone, active state).
+
+```tsx
+// Avoid: one link that is three components behind two flags
+export function StampNavIconLink({ href, icon: Icon, label, iconOnly = false, compact = false }: PropsI) {
+  const labelHidden = iconOnly || compact;
+  return (
+    <Link href={href} aria-label={labelHidden ? label : undefined} className={stampNavIconLinkVariants({ iconOnly })}>
+      <Icon className="size-5" aria-hidden />
+      {!iconOnly && <Span unstyled className={compact ? "hidden xl:inline" : undefined}>{label}</Span>}
+      {labelHidden && <Span unstyled aria-hidden className={stampNavTooltipVariants({ compact })}>{label}</Span>}
+    </Link>
+  );
+}
+
+// Good: one component per mode, each with a single structure
+export function StampNavIconOnlyLink({ href, icon: Icon, label }: PropsI) {
+  return (
+    <Link href={href} aria-label={label} className={stampNavIconOnlyLinkVariants()}>
+      <Icon className="size-5" aria-hidden />
+      <StampNavTooltip>{label}</StampNavTooltip>
+    </Link>
+  );
+}
+
+export function StampNavLabelledLink({ href, icon: Icon, label }: PropsI) {
+  return (
+    <Link href={href} className={stampNavLabelledLinkVariants()}>
+      <Icon className="size-5" aria-hidden />
+      <Span unstyled>{label}</Span>
+    </Link>
+  );
+}
+```
+
+A third mode (label hidden below `xl`, tooltip until then) becomes a third small component built from the same pieces, not a third flag. If the call site has to choose between modes at runtime, it picks the component (`{isCompact ? <A /> : <B />}`). The component does not take the condition as a prop.
+
 **Keep components focused.** One job per component; a component past ~200 lines should be split. A component used by a single section lives in that section's folder; `ui/components/` is for components shared by several sections or other slices.
 
 **Separate data from presentation.** A container gets data from a hook (`src/shared/queries/*` or the slice's `lib/hooks/`), handles every state, and passes plain data down. `src/features/orders/ui/OrdersContent.tsx` is the reference:
@@ -193,10 +230,12 @@ export function useToggleFavourite() {
 | "The design isn't final, so I'll skip styling" | Use the design-system defaults. Unstyled UI breaks the first impression.        |
 | "This is just a prototype"                     | Prototypes become production code. Build the foundation right.                  |
 | "The AI aesthetic is fine for now"             | It signals low quality. Use the stamp design system from the start.             |
+| "A boolean prop is simpler than another file"  | Each flag doubles the structures one component must render. Split it per mode.  |
 
 ## Red Flags
 
 - Components over ~200 lines
+- Boolean or enum props that add, remove or swap elements or ARIA attributes (`iconOnly`, `compact`, `withLabel`), or flags derived from them
 - `eslint-disable` added to get around a design-system or token rule
 - Missing loading, error or empty states
 - Clickable non-interactive elements, or no keyboard testing
