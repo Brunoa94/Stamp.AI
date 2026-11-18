@@ -6,7 +6,7 @@
  */
 
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ChevronRight, ShoppingBag } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Paragraph } from "@/features/ui/paragraph";
@@ -31,6 +31,7 @@ export function DashboardRecentOrderItem({
 }: DashboardRecentOrderItemPropsI) {
   const t = useTranslations("dashboard.recentOrders");
   const tStatus = useTranslations("orders.statusBadge");
+  const locale = useLocale();
   const firstItem = order.order_items[0];
   const displayedStatus = getOrderDisplayStatus(order);
 
@@ -64,7 +65,7 @@ export function DashboardRecentOrderItem({
         <div className="min-w-0 flex-1">
           <Span variant="micro" className="text-(--color-stamp-taupe)">
             {formatOrderId(order.id, order.created_at)} ·{" "}
-            {formatOrderDate(order.created_at)}
+            {formatOrderDate(order.created_at, locale)}
           </Span>
           <Paragraph variant="body" className="mt-1 truncate">
             {firstItem?.product_name || t("customDesign")}

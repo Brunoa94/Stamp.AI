@@ -1,11 +1,11 @@
 /**
- * Format date with time for timeline entries
+ * Format date with time for timeline entries, in the visitor's locale
  */
-export function formatTimestamp(dateString: string | null | undefined): string {
+export function formatTimestamp(dateString: string | null | undefined, locale: string): string {
   if (!dateString) return "";
 
   const date = new Date(dateString);
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString(locale, {
     month: "short",
     day: "numeric",
     year: "numeric",

@@ -4,7 +4,8 @@ import "./globals.css";
 import "./globals-stamp.css";
 
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getLocale, getMessages } from "next-intl/server";
+import { toLanguageTag } from "@/i18n/locales";
 import { Toaster } from "sonner";
 import { SupabaseAuthProvider } from "@/providers/SupabaseAuthProvider";
 import { GuestCartMerger } from "@/features/auth/ui/components/GuestCartMerger";
@@ -82,10 +83,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const messages = await getMessages();
+  const [locale, messages] = await Promise.all([getLocale(), getMessages()]);
 
   return (
-    <html lang="en" className="light scheme-light" suppressHydrationWarning>
+    <html lang={locale} className="light scheme-light" suppressHydrationWarning>
       <body
         className={`${poppins.variable} ${bebasNeue.variable} ${sanchez.variable} ${indieFlower.variable} ${inter.variable} antialiased`}
       >
@@ -98,7 +99,7 @@ export default async function RootLayout({
         <GoogleAnalytics />
         <AnalyticsPageViewTracker />
         <StructuredData data={organizationSchema()} />
-        <StructuredData data={webSiteSchema()} />
+        <StructuredData data={webSiteSchema(toLanguageTag(locale))} />
         <GrainOverlay />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider>

@@ -1193,6 +1193,9 @@
       "wordmark": "Stamp",
       "copyright": "© {year} Stamp AI. All rights reserved.",
       "tagline": "Made for people who make things"
+    },
+    "languageSwitcher": {
+      "label": "Language"
     }
   },
   "auth": {
@@ -2441,7 +2444,7 @@
         "preference": {
           "heading": "5. Preference cookies",
           "body": [
-            "These remember choices you have made — such as light or dark appearance — so the site looks the way you left it. They hold a setting, nothing more, and persist for up to 12 months."
+            "These remember choices you have made — the language you picked (NEXT_LOCALE) and light or dark appearance — so the site looks the way you left it. They hold a setting, nothing more, and persist for up to 12 months."
           ]
         },
         "third-party": {
