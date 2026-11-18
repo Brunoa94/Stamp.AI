@@ -635,7 +635,6 @@
       "stamp": "Stamp it!",
       "catalog": "Catálogo",
       "profile": "Perfil",
-      "profileAria": "Ver o seu perfil",
       "orders": "Encomendas",
       "cart": "Saco",
       "logoutAria": "Terminar sessão na sua conta",
@@ -1261,7 +1260,6 @@
       }
     },
     "login": {
-      "openDialogAria": "Abrir janela de início de sessão",
       "loginShort": "ENTRAR",
       "login": "Iniciar sessão",
       "form": {
@@ -1353,7 +1351,6 @@
     },
     "register": {
       "register": "Registar",
-      "openDialogAria": "Abrir janela de registo",
       "signUp": "Criar conta",
       "successToast": "Verifique o seu email para confirmar o endereço e definir a palavra-passe.",
       "form": {

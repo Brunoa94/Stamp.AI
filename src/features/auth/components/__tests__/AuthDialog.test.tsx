@@ -39,7 +39,6 @@ describe("AuthDialog", () => {
     renderWithIntl(
       <AuthDialog
         form={FORM}
-        triggerAriaLabel="Open"
         defaultTrigger={<button type="button">Default trigger</button>}
       />,
     );
@@ -52,7 +51,6 @@ describe("AuthDialog", () => {
     renderWithIntl(
       <AuthDialog
         form={FORM}
-        triggerAriaLabel="Open register"
         defaultTrigger={<button type="button">Default trigger</button>}
       >
         Sign up now
@@ -62,15 +60,14 @@ describe("AuthDialog", () => {
     expect(
       screen.queryByRole("button", { name: "Default trigger" }),
     ).not.toBeInTheDocument();
-    const trigger = screen.getByRole("button", { name: "Open register" });
-    expect(trigger).toHaveTextContent("Sign up now");
+    // The visible text is the accessible name (WCAG 2.5.3, label in name)
+    expect(screen.getByRole("button", { name: "Sign up now" })).toBeInTheDocument();
   });
 
   it("keeps the form closed until the trigger is clicked", () => {
     renderWithIntl(
       <AuthDialog
         form={FORM}
-        triggerAriaLabel="Open"
         defaultTrigger={<button type="button">Open</button>}
       />,
     );
@@ -82,7 +79,6 @@ describe("AuthDialog", () => {
     renderWithIntl(
       <AuthDialog
         form={FORM}
-        triggerAriaLabel="Open"
         defaultTrigger={<button type="button">Open</button>}
       />,
     );
