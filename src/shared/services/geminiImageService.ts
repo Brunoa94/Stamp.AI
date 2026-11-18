@@ -1,6 +1,5 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import fs from "fs";
-import path from "path";
+import { GoogleGenerativeAI, type GenerationConfig } from "@google/generative-ai";
+import { loadMockImageDataUrl } from "./mockImage";
 
 interface GeminiImageGenerationResult {
   imageUrl: string;
@@ -9,7 +8,7 @@ interface GeminiImageGenerationResult {
 
 const MAX_IMAGE_SIZE_BYTES = 4 * 1024 * 1024; // 4MB
 
-// Use mock image for local development (uses public/zoe.png)
+// Use mock image for local development (zoe.png from the static-assets CDN)
 const USE_MOCK_IMAGE = true;
 
 /**
@@ -122,7 +121,7 @@ export class GeminiImageService {
   }
 
   /**
-   * Generate a mock image for testing (uses zoe.png from public folder)
+   * Generate a mock image for testing (zoe.png from the static-assets CDN)
    */
   private static async generateMockImage(
     prompt: string,
@@ -132,11 +131,7 @@ export class GeminiImageService {
     console.log("[MOCK] Prompt:", prompt);
     console.log("[MOCK] Remove background:", removeBackground);
 
-    // Read the mock image from public folder
-    const mockImagePath = path.join(process.cwd(), "public", "zoe.png");
-    const mockImageBuffer = fs.readFileSync(mockImagePath);
-    const mockImageBase64 = mockImageBuffer.toString("base64");
-    const imageUrl = `data:image/png;base64,${mockImageBase64}`;
+    const imageUrl = await loadMockImageDataUrl();
 
     const mockEnhancedPrompt =
       `[MOCK] Enhanced prompt based on: "${prompt}" with removeBackground=${removeBackground}`;
@@ -215,6 +210,10 @@ Output ONLY the prompt text, no explanations.`,
       ? "CRITICAL: Render the subject with a fully TRANSPARENT background (PNG with alpha channel). No shadows, no gradients, no floor reflections, no background elements whatsoever. The subject must be completely isolated with sharp, clean edges and full transparency around it. Output format must be PNG with alpha transparency preserved."
       : "Include background and environmental context, print-ready artwork.";
 
+    // responseModalities is not in the SDK's GenerationConfig type yet
+    const generationConfig: GenerationConfig & { responseModalities: string[] } = {
+      responseModalities: ["image", "text"],
+    };
     const imageResult = await imageModel.generateContent({
       contents: [
         {
@@ -222,7 +221,7 @@ Output ONLY the prompt text, no explanations.`,
           parts: [{ text: `${enhancedPrompt}\n\n${backgroundSuffix}` }],
         },
       ],
-      generationConfig: { responseModalities: ["image", "text"] } as any,
+      generationConfig,
     });
 
     const parts = imageResult.response.candidates?.[0]?.content?.parts;

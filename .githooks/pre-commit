@@ -4,6 +4,9 @@
 # Mirrors the blocking CI checks: ESLint on the changed files, then a full typecheck.
 set -e
 
+# PNG, JPEG and WebP images live on the static-assets CDN, not in the repo (SVGs are fine).
+node .claude/hooks/keep-raster-images-on-cdn.mjs --staged
+
 STAGED_LIST="$(mktemp)"
 trap 'rm -f "$STAGED_LIST"' EXIT
 git diff --cached --name-only --diff-filter=ACMR -z -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' > "$STAGED_LIST"

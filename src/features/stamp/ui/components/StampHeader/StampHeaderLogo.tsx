@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
+import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 
 interface PropsI {
   onNavigate: () => void;
@@ -21,7 +22,7 @@ export function StampHeaderLogo({ onNavigate }: PropsI) {
       className="flex shrink-0 items-center gap-2.5 rounded-full pr-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-gold)"
     >
       <Image
-        src="/logo.png"
+        src={staticAssetUrl("/logo.png")}
         alt=""
         width={44}
         height={44}

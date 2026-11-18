@@ -12,6 +12,7 @@
 import { ReactNode } from "react";
 import { PageContainer } from "@/shared/ui/PageContainer";
 import { PageHeaderBand } from "@/shared/ui/PageHeaderBand";
+import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 
 interface CartLayoutPropsI {
   header: ReactNode;
@@ -22,7 +23,7 @@ export function CartLayout({ header, children }: CartLayoutPropsI) {
   return (
     <div className="min-h-screen bg-(--color-stamp-off-white) text-(--color-stamp-chocolate) pt-24">
       <PageHeaderBand
-        src="/backdrops/mug-kitchen.jpg"
+        src={staticAssetUrl("/backdrops/mug-kitchen.jpg")}
         imageClassName="object-[center_40%]"
         mirrored
       >

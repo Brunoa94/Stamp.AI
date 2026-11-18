@@ -27,15 +27,24 @@ export function VerifiedSecureBadge({
       <div
         className={cn(
           "inline-flex items-center gap-2 border border-(--color-stamp-success)/30 bg-(--color-stamp-success)/5 px-3 py-1.5",
-          className
+          className,
         )}
       >
-        <Shield className="h-4 w-4 text-(--color-stamp-success)" aria-hidden="true" />
+        <Shield
+          className="h-4 w-4 text-(--color-stamp-success)"
+          aria-hidden="true"
+        />
         <div className="flex flex-col">
-          <Span variant="micro" className="text-[9px] font-bold uppercase tracking-wider text-(--color-stamp-success)">
+          <Span
+            variant="micro"
+            className="text-[9px] font-bold uppercase tracking-wider text-(--color-stamp-success)"
+          >
             {t("verified")}
           </Span>
-          <Span variant="micro" className="text-[8px] tracking-wider text-(--color-stamp-taupe)">
+          <Span
+            variant="micro"
+            className="text-[8px] tracking-wider text-(--color-stamp-taupe)"
+          >
             {t("secure")}
           </Span>
         </div>
@@ -48,27 +57,42 @@ export function VerifiedSecureBadge({
       <div
         className={cn(
           "flex flex-col items-center gap-2 border-2 border-(--color-stamp-success)/30 bg-gradient-to-b from-(--color-stamp-success)/5 to-(--color-stamp-success)/10 p-4",
-          className
+          className,
         )}
       >
         <div className="relative">
-          <Shield className="h-10 w-10 text-(--color-stamp-success)" aria-hidden="true" />
+          <Shield
+            className="h-10 w-10 text-(--color-stamp-success)"
+            aria-hidden="true"
+          />
           <CheckCircle2
             className="absolute -right-1 -bottom-1 h-4 w-4 rounded-full bg-(--color-stamp-white) text-(--color-stamp-success)"
             aria-hidden="true"
           />
         </div>
         <div className="flex flex-col items-center gap-0.5 text-center">
-          <Span variant="sm" className="font-bold uppercase tracking-wider text-(--color-stamp-success)">
+          <Span
+            variant="sm"
+            className="font-bold uppercase tracking-wider text-(--color-stamp-success)"
+          >
             {t("verified")} {t("secure")}
           </Span>
-          <Span variant="micro" className="text-[9px] tracking-wider text-(--color-stamp-taupe)">
+          <Span
+            variant="micro"
+            className="text-[9px] tracking-wider text-(--color-stamp-taupe)"
+          >
             {t("siteVerified")}
           </Span>
         </div>
         <div className="flex items-center gap-1.5 border-t border-(--color-stamp-divider) pt-2">
-          <Lock className="h-3 w-3 text-(--color-stamp-gold-text)" aria-hidden="true" />
-          <Span variant="micro" className="text-[9px] tracking-wider text-(--color-stamp-taupe)">
+          <Lock
+            className="h-3 w-3 text-(--color-stamp-gold-text)"
+            aria-hidden="true"
+          />
+          <Span
+            variant="micro"
+            className="text-[9px] tracking-wider text-(--color-stamp-taupe)"
+          >
             {t("encryption")}
           </Span>
         </div>
@@ -80,11 +104,14 @@ export function VerifiedSecureBadge({
     <div
       className={cn(
         "inline-flex items-center gap-3 border border-(--color-stamp-success)/20 bg-(--color-stamp-success)/5 px-4 py-2",
-        className
+        className,
       )}
     >
       <div className="relative flex-shrink-0">
-        <Shield className="h-7 w-7 text-(--color-stamp-success)" aria-hidden="true" />
+        <Shield
+          className="h-7 w-7 text-(--color-stamp-success)"
+          aria-hidden="true"
+        />
         <CheckCircle2
           className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full bg-(--color-stamp-white) text-(--color-stamp-success)"
           aria-hidden="true"
@@ -92,13 +119,22 @@ export function VerifiedSecureBadge({
       </div>
       <div className="flex flex-col gap-0.5">
         <div className="flex items-center gap-1.5">
-          <Span variant="micro" className="text-[10px] font-bold uppercase tracking-wider text-(--color-stamp-success)">
+          <Span
+            variant="micro"
+            className="font-bold tracking-wider text-(--color-stamp-success)"
+          >
             {t("verified")} {t("secure")}
           </Span>
         </div>
         <div className="flex items-center gap-1">
-          <Lock className="h-2.5 w-2.5 text-(--color-stamp-gold-text)" aria-hidden="true" />
-          <Span variant="micro" className="text-[8px] tracking-wider text-(--color-stamp-taupe)">
+          <Lock
+            className="h-2.5 w-2.5 text-(--color-stamp-gold-text)"
+            aria-hidden="true"
+          />
+          <Span
+            variant="micro"
+            className="text-[8px] tracking-wider text-(--color-stamp-taupe)"
+          >
             {t("encryption")}
           </Span>
         </div>

@@ -103,6 +103,8 @@ export type ProductSectionT = {
 export type StampBackdropPhotoT = {
   src: string;
   fromStep: number;
+  // object-position from lg, where only a narrow slice of the photo shows
+  focus: string;
 };
 
 // Colour of a text element against the canvas backdrop's diagonal edge

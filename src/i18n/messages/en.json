@@ -696,7 +696,10 @@
       "description": "Turn your own photo — or just an idea — into a print-ready design. Eight quick steps from idea to finished product.",
       "cta": "Start creating",
       "ctaAria": "Start creating: begin customizing your design",
-      "imageAlt": "Fashion lifestyle"
+      "scan": {
+        "blank": "Blank",
+        "printed": "Printed"
+      }
     },
     "upload": {
       "protocol": "Step 01 / Upload",

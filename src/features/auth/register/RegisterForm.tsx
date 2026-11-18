@@ -12,7 +12,12 @@ import { AuthBrandPanel } from "../components/AuthBrandPanel";
 import { AuthEmailDivider } from "../components/AuthEmailDivider";
 import { Paragraph } from "@/features/ui/paragraph";
 
-export function RegisterForm() {
+interface PropsI {
+  /** Swaps the open dialog to the Login form. */
+  onSwitchToLogin: () => void;
+}
+
+export function RegisterForm({ onSwitchToLogin }: PropsI) {
   const {
     register,
     handleSubmit,
@@ -54,7 +59,7 @@ export function RegisterForm() {
         />
       </form>
 
-      <RegisterLoginFooter />
+      <RegisterLoginFooter onSwitchToLogin={onSwitchToLogin} />
     </AuthDialogFrame>
   );
 }

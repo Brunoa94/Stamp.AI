@@ -1,9 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import { expect } from '@playwright/test';
 import { unwrap } from './fixtures.mjs';
+import { TEST_URL } from './environment.mjs';
 
 const DAY = 86400000;
-export const ITEM_IMAGE = '/products-images/kid t-shirt/kid-t-shirt-b-printed.png';
+// A real product shot on the test project's static-assets CDN (public/ holds no images).
+export const ITEM_IMAGE = `${TEST_URL}/storage/v1/object/public/static-assets/products-images/kid-t-shirt/kid-t-shirt-b-printed.png`;
 
 export function orderNumber() {
   return `ACC-${randomUUID().slice(0, 8).toUpperCase()}`;

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { test, expect, unwrap } from '../support/fixtures.mjs';
 import { IMAGE, describeDesign, expectSignedIn, loginUI, logoutUI, openStampClientSide } from '../support/browser.mjs';
-import { ITEMS, itemCard, proceed, fillAddress } from '../support/cart.mjs';
+import { FIXTURE_IMAGE_URL, ITEMS, itemCard, proceed, fillAddress } from '../support/cart.mjs';
 import { pay } from '../support/purchase.mjs';
 import {
   anonymousId,
@@ -178,7 +178,7 @@ test('GUEST-09 a guest product joins the account bag on login and stays there af
   const account = await guest.createAccount();
   const cart = unwrap(await guest.admin.from('carts').insert({ user_id: account.id, user_email: account.email }).select().single(), 'Create the account cart');
   unwrap(await guest.admin.from('cart_items').insert({
-    cart_id: cart.id, product_id: crypto.randomUUID(), variant_id: '90000', custom_image_url: '/zoe.png',
+    cart_id: cart.id, product_id: crypto.randomUUID(), variant_id: '90000', custom_image_url: FIXTURE_IMAGE_URL,
     is_selected: true, product_name: 'Earlier account item', unit_price: 1999, quantity: 1,
   }), 'Seed the account bag');
 
