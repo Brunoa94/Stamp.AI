@@ -12,6 +12,13 @@ export const LOCALE_NAMES: Record<LocaleT, string> = {
   nl: "Nederlands",
 };
 
+/** The flag shown beside each language in the language switcher */
+export const LOCALE_FLAGS: Record<LocaleT, string> = {
+  en: "/assets/flags/gb.svg",
+  pt: "/assets/flags/pt.svg",
+  nl: "/assets/flags/nl.svg",
+};
+
 /** next-intl's conventional cookie name for the visitor's chosen language */
 export const LOCALE_COOKIE = "NEXT_LOCALE";
 

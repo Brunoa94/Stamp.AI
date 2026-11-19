@@ -92,7 +92,6 @@ export function StampHeader() {
           )}
 
           <div className="flex items-center gap-1">
-            <LanguageSwitcher className="mr-2" />
             {isRegistered && (
               <StampNavIconLink href="/profile" icon={UserRound} label={t("profile")} iconOnly />
             )}
@@ -115,6 +114,8 @@ export function StampHeader() {
               <Register className={stampNavSignUpVariants()}>{t("signUp")}</Register>
             </>
           )}
+
+          <LanguageSwitcher className="-mr-2" />
         </nav>
 
         {/* Mobile/tablet hamburger (below lg) */}
@@ -210,7 +211,7 @@ export function StampHeader() {
             </>
           )}
 
-          {mobileMenuOpen && <LanguageSwitcher className="mt-3 self-start" />}
+          {mobileMenuOpen && <LanguageSwitcher className="mt-3 self-end" />}
         </nav>
       </div>
     </>

@@ -1,9 +1,11 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { Button } from "@/features/ui/button";
-import { LOCALE_NAMES, LOCALES } from "@/i18n/locales";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/features/ui/select";
+import { Span } from "@/features/ui/span";
+import { DEFAULT_LOCALE, isLocale, LOCALE_NAMES, LOCALES } from "@/i18n/locales";
 import { useSetLocale } from "@/shared/queries/localeQueries";
+import { LocaleFlag } from "@/shared/ui/LocaleFlag";
 import { cn } from "@/lib/utils";
 
 interface PropsI {
@@ -13,37 +15,57 @@ interface PropsI {
 /**
  * LanguageSwitcher
  *
- * Picks the site language from three short codes (EN · PT · NL). The chosen
- * one shows as pressed straight away, and the group stays disabled and busy
- * until the page has re-rendered in that language.
+ * Dropdown that picks the site language. The trigger shows the current
+ * language's flag and short code; the menu lists each language with its flag
+ * and its own name. The choice shows straight away, and the dropdown stays
+ * disabled and busy until the page has re-rendered in that language.
  */
 export function LanguageSwitcher({ className }: PropsI) {
   const t = useTranslations("layout.languageSwitcher");
   const locale = useLocale();
   const { switchLocale, isSwitching, pendingLocale } = useSetLocale();
-  const shownLocale = pendingLocale ?? locale;
+  const wantedLocale = pendingLocale ?? locale;
+  const shownLocale = isLocale(wantedLocale) ? wantedLocale : DEFAULT_LOCALE;
 
   return (
-    <div
-      role="group"
-      aria-label={t("label")}
-      aria-busy={isSwitching}
-      className={cn("flex items-center gap-1", className)}
+    <Select
+      value={shownLocale}
+      onValueChange={(code) => isLocale(code) && code !== shownLocale && switchLocale(code)}
+      disabled={isSwitching}
     >
-      {LOCALES.map((code) => (
-        <Button
-          key={code}
-          variant="unstyled"
-          lang={code}
-          aria-label={`${code.toUpperCase()}, ${LOCALE_NAMES[code]}`}
-          aria-pressed={code === shownLocale}
-          disabled={isSwitching}
-          onClick={() => code !== shownLocale && switchLocale(code)}
-          className="rounded-sm px-1.5 py-1 text-xs font-semibold uppercase tracking-wider text-(--color-stamp-taupe) transition-colors hover:text-(--color-stamp-chocolate) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) disabled:opacity-60 aria-pressed:text-(--color-stamp-chocolate) aria-pressed:underline aria-pressed:decoration-(color:--color-stamp-gold) aria-pressed:decoration-2 aria-pressed:underline-offset-4"
-        >
-          {code}
-        </Button>
-      ))}
-    </div>
+      <SelectTrigger
+        aria-label={`${t("label")}: ${LOCALE_NAMES[shownLocale]}`}
+        aria-busy={isSwitching}
+        className={cn(
+          "h-auto w-auto gap-2 rounded-sm border-0 bg-transparent px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-(--color-stamp-chocolate) shadow-none ring-offset-0 transition-colors hover:text-(--color-stamp-gold) focus:ring-2 focus:ring-(--color-stamp-gold) focus:ring-offset-0 disabled:opacity-60",
+          className,
+        )}
+      >
+        <SelectValue>
+          <Span unstyled className="flex items-center gap-2">
+            <LocaleFlag locale={shownLocale} />
+            {shownLocale}
+          </Span>
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent
+        align="end"
+        className="min-w-40 rounded-sm border-(--color-stamp-divider) bg-(--color-stamp-off-white) text-(--color-stamp-chocolate)"
+      >
+        {LOCALES.map((code) => (
+          <SelectItem
+            key={code}
+            value={code}
+            lang={code}
+            className="cursor-pointer text-sm focus:bg-(--color-stamp-cream) focus:text-(--color-stamp-chocolate)"
+          >
+            <Span unstyled className="flex items-center gap-2.5">
+              <LocaleFlag locale={code} />
+              {LOCALE_NAMES[code]}
+            </Span>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
