@@ -1,0 +1,2989 @@
+{
+  "home": {
+    "topBanner": {
+      "freeShipping": "Envio grátis em encomendas acima de {threshold} €",
+      "returns": "Devoluções em {days} dias",
+      "securePayment": "Pagamento seguro"
+    },
+    "paymentBanner": {
+      "securePayment": "Pagamento seguro",
+      "freeShipping": "Envio grátis em encomendas acima de {threshold} €",
+      "fastDelivery": "Entrega rápida",
+      "returns": "Devoluções em {days} dias",
+      "trustedProviders": "Fornecedores de pagamento de confiança"
+    },
+    "flowPreview": {
+      "railTitle": "8 passos até à impressão",
+      "windowLabel": "Pré-visualização animada do processo de criação da Stamp.ai",
+      "stepTag": "Passo {number} / {name}",
+      "steps": {
+        "upload": {
+          "rail": "Carregar",
+          "tag": "Carregar"
+        },
+        "describe": {
+          "rail": "Descrever",
+          "tag": "Descrever"
+        },
+        "process": {
+          "rail": "Processar",
+          "tag": "Processar"
+        },
+        "results": {
+          "rail": "Resultados",
+          "tag": "Resultados"
+        },
+        "product": {
+          "rail": "Produto",
+          "tag": "Produto"
+        },
+        "customize": {
+          "rail": "Ajustar",
+          "tag": "Personalizar"
+        },
+        "creation": {
+          "rail": "Criação",
+          "tag": "Criação"
+        },
+        "final": {
+          "rail": "Final",
+          "tag": "Final"
+        }
+      },
+      "upload": {
+        "title": "Carregue uma <accent>imagem</accent>",
+        "description": "Adicione uma imagem para orientar o seu design. É opcional: também pode começar só com uma descrição.",
+        "dropTitle": "Carregar imagem (opcional)",
+        "dropHint": "Máx. 10 MB, apenas JPG/PNG/GIF",
+        "fileName": "o-meu-cao.jpg",
+        "fileSize": "0,10 MB",
+        "skip": "Saltar carregamento",
+        "next": "Passo seguinte"
+      },
+      "describe": {
+        "title": "Descreva o seu<br></br><accent>design</accent>",
+        "promptLabel": "A sua descrição",
+        "prompt": "Transforma o meu cão num autocolante de super-herói com capa vermelha, contornos fortes e cores quentes",
+        "charCount": "{count} / {max}",
+        "preservation": "Preservação",
+        "low": "Baixa",
+        "high": "Alta",
+        "removeBackground": "Remover fundo",
+        "coins": "5 moedas disponíveis",
+        "submit": "Stamp it!"
+      },
+      "process": {
+        "title": "A gerar o seu design…",
+        "eta": "Cerca de 10 segundos…"
+      },
+      "results": {
+        "title": "A sua <accent>criação</accent>",
+        "previous": "As suas criações anteriores",
+        "use": "Usar esta imagem",
+        "repeat": "Repetir"
+      },
+      "product": {
+        "title": "Escolha o seu<br></br><accent>produto</accent>",
+        "description": "Escolha onde quer imprimir o seu design. Tudo de boa qualidade e impresso a pedido.",
+        "category": "Vestuário (3)",
+        "selected": "Selecionado",
+        "continue": "Continuar para a personalização →",
+        "names": {
+          "kidsTee": "T-shirt de criança Heavy Cotton™",
+          "hoodie": "Hoodie unissexo de felpa",
+          "softTee": "T-shirt unissexo Softstyle",
+          "mug": "Caneca de cerâmica (UE)"
+        },
+        "prices": {
+          "kidsTee": "19,99 €",
+          "hoodie": "49,99 €",
+          "softTee": "24,99 €",
+          "mug": "24,99 €"
+        }
+      },
+      "customize": {
+        "title": "Personalize<br></br>o seu <accent>produto</accent>",
+        "printPositions": "Posições de impressão",
+        "front": "Frente",
+        "back": "Costas",
+        "included": "Incluído",
+        "size": "Tamanho",
+        "sizePct": "{value}%",
+        "rotation": "Rotação",
+        "rotationValue": "{value}°",
+        "colors": "Amostras de cor",
+        "sizeSelector": "Seletor de tamanho",
+        "sizeValue": "M",
+        "create": "Criar produto"
+      },
+      "creation": {
+        "title": "A criar a maqueta do seu produto…",
+        "eta": "Cerca de 15 segundos…"
+      },
+      "final": {
+        "title": "Pronto a<br></br><accent>vestir</accent>",
+        "badge": "Pré-visualização final",
+        "productName": "T-shirt de criança Heavy Cotton™",
+        "variant": "Cor: Branco | Tamanho: M",
+        "total": "Total final",
+        "price": "19,99 €",
+        "counter": "1 / 10",
+        "bag": "Para o saco",
+        "bagAnother": "+ Para o saco e criar outro"
+      },
+      "toasts": {
+        "uploaded": "Imagem carregada com sucesso",
+        "bagged": "Adicionado ao saco!"
+      }
+    },
+    "hero": {
+      "brand": "tamp <accent>.ai</accent>",
+      "brandLabel": "Stamp.ai",
+      "headline": "Da imaginação<br></br>a <word></word>",
+      "rotatingWords": {
+        "tees": "t-shirts",
+        "totes": "tote bags",
+        "mugs": "canecas",
+        "hoodies": "hoodies"
+      },
+      "tagline": "Carregue uma foto ou descreva uma ideia — nós desenhamos e imprimimos em peças de gramagem alta, feitas para durar.",
+      "upload": {
+        "title": "Carregue uma foto para começar",
+        "hint": "…e edite-a com uma descrição no passo seguinte",
+        "step": "passo 01"
+      },
+      "freeCredits": "<signUp>Registe-se</signUp> e ganhe 5 edições grátis por dia",
+      "productBadge": "T-shirt essencial · Branca · 320 GSM",
+      "scrollCue": "Deslize para explorar",
+      "productImageAlt": "T-shirt de gramagem alta com uma estampa personalizada",
+      "flowIntro": "Está a {count} passos de criar o seu <accent>produto de sonho.</accent>",
+      "flowBenefits": {
+        "noSkills": {
+          "title": "Sem saber desenhar",
+          "hint": "Basta descrever"
+        },
+        "preview": {
+          "title": "Veja primeiro",
+          "hint": "Antes de encomendar"
+        },
+        "onDemand": {
+          "title": "Feito por encomenda",
+          "hint": "Impresso só para si"
+        }
+      }
+    },
+    "meta": {
+      "title": "Crie e Encomende T-shirts e Vestuário Personalizados",
+      "description": "Transforme uma foto ou uma ideia num design pronto a imprimir e coloque-o em roupa de gramagem alta, feita por encomenda. Sem mínimos, sem precisar de saber desenhar. Comece hoje, grátis.",
+      "keywords": [
+        "design de t-shirt personalizada com IA",
+        "t-shirt personalizada a partir de foto",
+        "foto para t-shirt com IA",
+        "gerador de t-shirts com IA",
+        "crie a sua própria t-shirt",
+        "vestuário com impressão a pedido",
+        "gerador de designs com IA",
+        "hoodies personalizadas",
+        "t-shirts personalizadas online",
+        "design de roupa com IA",
+        "criador de vestuário personalizado",
+        "texto para t-shirt"
+      ]
+    },
+    "process": {
+      "title": "O",
+      "accent": "processo",
+      "label": "Como funciona",
+      "footer": "Simples, da ideia até à sua porta.",
+      "stepCounter": "Passo {current} de {total}",
+      "steps": {
+        "step-upload": {
+          "title": "Carregar",
+          "description": "Comece com uma foto ou um esboço que já tenha. Sem foto? Salte este passo e use só palavras."
+        },
+        "step-describe": {
+          "title": "Descrever",
+          "description": "Escreva o que quer em uma ou duas frases simples, como \"o meu cão como astronauta\"."
+        },
+        "step-generate": {
+          "title": "Gerar",
+          "description": "Carregue em gerar e dê-nos alguns segundos para desenhar o seu design."
+        },
+        "step-results": {
+          "title": "Resultados",
+          "description": "Veja os designs que recebe e escolha o seu favorito. Não gostou? Mude uma palavra e tente outra vez."
+        },
+        "step-product": {
+          "title": "Produto",
+          "description": "Escolha onde imprimir: t-shirt, hoodie, caneca, tela ou tote bag."
+        },
+        "step-customize": {
+          "title": "Personalizar",
+          "description": "Escolha o tamanho e a cor e coloque o design onde quiser."
+        },
+        "step-create": {
+          "title": "Pré-visualizar e adicionar ao saco",
+          "description": "Veja o seu design no produto real e adicione-o ao saco. Nós imprimimos a sua peça e enviamo-la para a sua porta."
+        }
+      }
+    },
+    "products": {
+      "title": "Os",
+      "accent": "essenciais",
+      "label": "O nosso vestuário",
+      "emptyState": "O catálogo está temporariamente indisponível — volte em breve",
+      "viewFullCatalog": "Ver todos os produtos"
+    },
+    "featured": {
+      "title": "Peças em",
+      "accent": "destaque",
+      "label": "Peças em destaque",
+      "scrollLeft": "Deslizar para a esquerda",
+      "scrollRight": "Deslizar para a direita",
+      "noImage": "Sem imagem",
+      "collectionLabel": "A nossa coleção",
+      "swipeHint": "Deslize para explorar"
+    },
+    "manifesto": {
+      "title": "Design para <accent>todos</accent>",
+      "quote": "Um bom design não devia exigir um curso de design nem um mínimo de 500 unidades. Diga-nos o que quer e ajudamos a criá-lo — uma peça de cada vez.",
+      "quoteAttribution": "— Manifesto Stamp AI",
+      "intro": "Criámos a Stamp AI para aproximar uma boa ideia de um bom produto. Traz a ideia; nós tratamos da arte, da impressão e das peças, para que qualquer pessoa possa fazer roupa que vale a pena guardar.",
+      "valuesToggle": "Os nossos valores",
+      "values": {
+        "01": {
+          "title": "Simples",
+          "description": "Descreva o que quer por palavras simples e receba arte pronta a imprimir. Sem software para aprender."
+        },
+        "02": {
+          "title": "Feito para durar",
+          "description": "Peças de gramagem alta, de 280 a 480 GSM, escolhidas para aguentar anos de uso e lavagens."
+        },
+        "03": {
+          "title": "A pedido",
+          "description": "Tudo é feito por encomenda, por isso não há stock parado e há muito menos desperdício."
+        },
+        "04": {
+          "title": "Logística global",
+          "description": "Envio com seguimento para mais de 180 países, da nossa prensa até à sua porta."
+        }
+      }
+    },
+    "cta": {
+      "heading": "Pronto para estampar a sua <accent>visão</accent>?",
+      "lead": "Comece com uma foto ou algumas palavras e veja o seu design em segundos. Sem encomenda mínima e sem compromisso. Faça simplesmente aquilo que tem imaginado.",
+      "ctaPrimary": "Começar a criar",
+      "ctaSecondary": "Ver catálogo"
+    },
+    "promo": {
+      "brand-logo": {
+        "tagline": "Crie os seus logótipos, estampe a sua marca",
+        "accentWord": "marca",
+        "description": "Transforme as suas ideias em logótipos profissionais. De marcas de fitness a etiquetas de luxo, dê vida à sua visão em merchandising premium.",
+        "cta": "Começar a criar"
+      },
+      "memories": {
+        "tagline": "Estampe as suas melhores memórias",
+        "accentWord": "memórias",
+        "description": "Transforme os seus momentos preferidos em recordações duradouras. Fotos de família, retratos de casal e animais de estimação — tudo impresso em produtos de qualidade.",
+        "cta": "Começar a criar"
+      },
+      "special-moments": {
+        "tagline": "Design para momentos especiais",
+        "accentWord": "momentos especiais",
+        "description": "Celebre as grandes ocasiões com merchandising personalizado. Perfeito para aniversários, despedidas de solteiro, conquistas desportivas e muito mais.",
+        "cta": "Começar a criar"
+      }
+    },
+    "reviews": {
+      "title": "Prova",
+      "accent": "social",
+      "label": "Avaliações de clientes",
+      "verifiedReviews": "{count, number} avaliações de clientes",
+      "platformBreakdown": "Por plataforma",
+      "testimonials": {
+        "alex-chen": {
+          "author": "Alex Chen",
+          "role": "Diretor criativo",
+          "quote": "Dei-lhe um esboço rápido e recebi algo que emoldurava. A t-shirt onde foi impresso é mais pesada do que a maioria das que já comprei."
+        },
+        "jordan-ellis": {
+          "author": "Jordan Ellis",
+          "role": "Designer de streetwear",
+          "quote": "A t-shirt de 320 GSM é a melhor peça em que já imprimi, ponto final, e as estampas saem nítidas todas as vezes."
+        },
+        "morgan-park": {
+          "author": "Morgan Park",
+          "role": "Artista independente",
+          "quote": "Não sei desenhar nem que a vida dependesse disso, mas descrevi o que queria e percebeu logo. Chegou em seis dias."
+        },
+        "riley-santos": {
+          "author": "Riley Santos",
+          "role": "Consultor de marca",
+          "quote": "Ser feito por encomenda significa que não fico com stock parado, e a qualidade de impressão não varia entre lotes."
+        }
+      }
+    },
+    "faq": {
+      "title": "Perguntas",
+      "accent": "respondidas",
+      "label": "Perguntas frequentes",
+      "stillHaveQuestions": "Ainda tem perguntas?",
+      "items": {
+        "ai-synthesis": {
+          "question": "Como é que a minha ideia se torna um design?",
+          "answer": "Carregue uma foto de que goste, comece por um esboço ou escreva algumas palavras, e o nosso estúdio de design transforma-a em arte pronta a imprimir diretamente no tecido. Cor, resolução e detalhe ficam tratados, para que a estampa resista na peça. Não precisa de experiência em design."
+        },
+        "archival-quality": {
+          "question": "O que faz os vossos tecidos durarem tanto?",
+          "answer": "Usamos apenas peças de gramagem alta, de 280 a 480 GSM. São pré-encolhidas e lavadas com enzimas para manterem a forma, e imprimimos com tintas à base de água. A sua peça mantém o corte e a cor durante anos."
+        },
+        "production-shipping": {
+          "question": "Quanto tempo demoram a produção e o envio?",
+          "answer": "Começamos a imprimir assim que a sua encomenda é confirmada. A impressão demora 2 a 3 dias úteis e depois inspecionamos cada peça à mão. O envio acrescenta mais 3 a 4 dias, por isso a maioria das encomendas chega em 5 a 7 dias úteis. Pode seguir a encomenda durante todo o percurso."
+        },
+        "sustainability": {
+          "question": "Quais são as vossas práticas de sustentabilidade?",
+          "answer": "Fazemos tudo por encomenda, por isso nada fica parado num armazém a ser desperdiçado. Imprimimos com tintas à base de água, embalamos com materiais reciclados e continuamos a trabalhar para reduzir a nossa pegada em cada passo."
+        },
+        "samples": {
+          "question": "Posso encomendar amostras antes de uma produção em quantidade?",
+          "answer": "Sim. Encomende primeiro uma única peça para verificar o corte, o toque e a qualidade de impressão. Não há mínimo e cada peça é feita a pedido. Quando estiver satisfeito, volte a encomendar o mesmo design na quantidade que quiser. Encomendas de 25 ou mais peças têm desconto de quantidade."
+        },
+        "satisfaction": {
+          "question": "E se não ficar satisfeito com a minha encomenda?",
+          "answer": "Está coberto por uma garantia de 30 dias. Se a impressão, o tecido ou o tamanho não estiverem certos, substituímos gratuitamente ou reembolsamos na totalidade, e pagamos o envio da devolução. Os designs personalizados não podem ser revendidos, por isso preferimos acertar à primeira."
+        }
+      },
+      "contactSupport": "Contactar o apoio"
+    },
+    "ratingStars": {
+      "ariaLabel": "Avaliado com {rating} de {total} estrelas"
+    },
+    "trustIndicators": {
+      "items": {
+        "aiPowered": "Design personalizado",
+        "archivalQuality": "Qualidade premium",
+        "instantDelivery": "Entrega rápida",
+        "fiveSevenDayDelivery": "Entrega em 5-7 dias",
+        "thirtyDayGuarantee": "Garantia de 30 dias"
+      },
+      "subLabels": {
+        "generative": "Estúdio de design",
+        "heritage": "Feito para durar",
+        "logistics": "Logística global"
+      }
+    },
+    "productCard": {
+      "noImage": "Sem imagem",
+      "discountBadge": "-{percent}%"
+    },
+    "guarantees": {
+      "title": "Compre com",
+      "accent": "confiança",
+      "label": "Confiança e segurança",
+      "paymentTitle": "Pagamento seguro",
+      "paymentDescription": "Todas as transações são encriptadas e processadas por fornecedores de pagamento de confiança.",
+      "items": {
+        "returns": {
+          "title": "Garantia de 30 dias",
+          "description": "Se a impressão, o tecido ou o tamanho não estiverem certos, avise-nos no prazo de 30 dias. Substituímos ou reembolsamos na totalidade e pagamos o envio da devolução."
+        },
+        "refund": {
+          "title": "Substituição ou reembolso",
+          "description": "Quando algo corre mal com a sua encomenda, escolhe: substituição gratuita ou reembolso total."
+        },
+        "securePayment": {
+          "title": "Checkout seguro",
+          "description": "Os seus dados de pagamento estão protegidos com encriptação SSL de nível bancário."
+        },
+        "freeShipping": {
+          "title": "Envio grátis",
+          "description": "Entrega grátis com seguimento em encomendas acima de 60 €."
+        }
+      }
+    },
+    "productMarquee": {
+      "items": {
+        "fleeceHoodies": "Hoodies de felpa",
+        "ceramicMugs": "Canecas de cerâmica",
+        "accessories": "Acessórios",
+        "kidsTees": "T-shirts de criança",
+        "softstyleTees": "T-shirts Softstyle"
+      }
+    },
+    "productOfMonth": {
+      "eyebrow": "A escolha deste mês",
+      "title": "Produto do mês",
+      "badge": "Escolha do mês",
+      "cta": "Crie o seu agora",
+      "noImage": "Sem imagem"
+    },
+    "story": {
+      "blocks": {
+        "design": {
+          "eyebrow": "Criar",
+          "title": "Descreva. <accent>Nós desenhamos.</accent>",
+          "body": "Carregue uma foto, comece por um esboço ou escreva algumas palavras. Segundos depois tem arte limpa e pronta a imprimir, no estilo que imaginou.",
+          "cta": "Começar a criar",
+          "imageAlt": "O mesmo retrato desenhado em quatro estilos diferentes"
+        },
+        "quality": {
+          "eyebrow": "Qualidade",
+          "title": "Peças de gramagem alta, <accent>feitas para durar.</accent>",
+          "body": "Imprimimos em tecidos de 280 a 480 GSM, pré-encolhidos e lavados com enzimas, com tintas à base de água e amigas do ambiente. A sua peça mantém o corte, a cor e a estampa ao longo de anos de uso e lavagens.",
+          "cta": "Ver os essenciais",
+          "imageAlt": "Modelo a usar uma t-shirt branca de gramagem alta"
+        }
+      }
+    }
+  },
+  "catalog": {
+    "meta": {
+      "title": "Catálogo de Produtos",
+      "description": "Explore todos os produtos que pode personalizar com IA na Stamp AI — t-shirts, hoodies, sweatshirts, tote bags, canecas, posters e muito mais, organizados por categoria com fotos, preços e detalhes.",
+      "keywords": [
+        "catálogo de produtos",
+        "explorar produtos",
+        "produtos personalizados",
+        "todos os produtos"
+      ]
+    },
+    "title": "O",
+    "accent": "catálogo",
+    "intro": "Todos os produtos da nossa coleção, prontos para o seu design. Explore por categoria, veja as fotos e os detalhes e leve qualquer um deles para o estúdio.",
+    "emptyState": "O catálogo está temporariamente indisponível — volte em breve",
+    "categoryNavAria": "Categorias de produtos",
+    "allCategory": "Todos os produtos",
+    "groups": {
+      "clothing": "Vestuário",
+      "accessories": "Acessórios e Mimos"
+    },
+    "showcase": {
+      "title": "Explore o nosso melhor",
+      "subtitle": "Estas são algumas das categorias de produtos mais populares do nosso catálogo.",
+      "cardAria": "Explorar {group}"
+    },
+    "backToShowcase": "Voltar a explorar",
+    "section": {
+      "subtitle": "{group} escolhidos a dedo da nossa coleção, prontos para o seu design.",
+      "seeAll": "Ver tudo",
+      "seeAllAria": "Ver todos: {group}"
+    },
+    "toolbar": {
+      "filteringLabel": "Filtros",
+      "clearFilters": "Limpar filtros",
+      "searchPlaceholder": "Do que está à procura?",
+      "searchAria": "Pesquisar produtos",
+      "sortAria": "Ordenar produtos",
+      "sortOptions": {
+        "featured": "Em destaque",
+        "price-asc": "Preço: do mais baixo ao mais alto",
+        "price-desc": "Preço: do mais alto ao mais baixo",
+        "name-asc": "Nome: de A a Z"
+      }
+    },
+    "noResults": {
+      "title": "Nenhum produto encontrado",
+      "body": "Experimente outra pesquisa ou limpe os filtros para ver a coleção completa.",
+      "clearFilters": "Limpar filtros"
+    },
+    "card": {
+      "noImage": "Sem imagem",
+      "discountBadge": "-{percent}%",
+      "photoCount": "{count} fotos",
+      "quickView": "Vista rápida",
+      "quickViewAria": "Ver detalhes de {name}"
+    },
+    "dialog": {
+      "noImage": "Sem imagem",
+      "photosLabel": "Fotos do produto",
+      "photoAlt": "{name} — foto {number} de {total}",
+      "thumbnailAria": "Mostrar foto {number}",
+      "colorsLabel": "Cores disponíveis",
+      "specsLabel": "Detalhes",
+      "customizeCta": "Crie o seu"
+    },
+    "reviews": {
+      "label": "Avaliações",
+      "comingSoon": "Ainda sem avaliações — as avaliações de clientes chegam em breve."
+    }
+  },
+  "stamp": {
+    "synthesis": {
+      "eyebrow": "Escolha um filtro",
+      "showMore": "Mostrar mais {count}",
+      "showLess": "Mostrar menos",
+      "subtitle": "Toque numa sugestão para começar a descrição e depois ajuste-a à direita.",
+      "applySuggestion": "Aplicar sugestão: {label} — {hint}",
+      "noFilter": {
+        "label": "Sem filtro",
+        "hint": "Usar a imagem original sem alterar o estilo",
+        "aria": "Sem filtro — Usar a imagem original sem alterar o estilo"
+      },
+      "protocol": "Passo 02 / Descrever",
+      "title": "Descreva o seu <accent>design</accent>",
+      "generate": "Stamp it!",
+      "generating": "A gerar...",
+      "promptLabel": "A sua descrição",
+      "promptPlaceholder": "Seja o mais detalhado possível: descreva as alterações, cores, texturas, estilo e ambiente que quer...",
+      "promptAria": "Campo da descrição",
+      "counter": "{count} / {max}",
+      "preservationLabel": "Preservação",
+      "preservationTooltip": "Controla quanto da imagem original é mantido. Valores mais baixos permitem alterações mais criativas; valores mais altos preservam mais do original.",
+      "low": "BAIXA",
+      "high": "ALTA",
+      "preservationAria": "Controlo do nível de preservação",
+      "removeBackgroundLabel": "Remover fundo",
+      "removeBackgroundTooltip": "Remove automaticamente o fundo do design gerado, deixando apenas o motivo principal.",
+      "removeBackgroundAria": "Ativar ou desativar a remoção do fundo",
+      "skipWithUploadedImage": "Continuar sem editar a minha foto",
+      "skipWithCachedImages": "Continuar com as fotos anteriores"
+    },
+    "suggestions": {
+      "vibrant": {
+        "label": "Vibrante",
+        "hint": "Cor intensa e saturada",
+        "prompt": "Aumenta a saturação para cores intensas e vivas."
+      },
+      "monochrome": {
+        "label": "Monocromático",
+        "hint": "Preto e branco rico",
+        "prompt": "Converte num preto e branco rico."
+      },
+      "vintage": {
+        "label": "Vintage",
+        "hint": "Aspeto de filme retro",
+        "prompt": "Aplica um aspeto quente, vintage, de filme retro."
+      },
+      "minimal": {
+        "label": "Minimalista",
+        "hint": "Limpo e simples",
+        "prompt": "Simplifica numa composição limpa e minimalista."
+      },
+      "watercolor": {
+        "label": "Aguarela",
+        "hint": "Pintura suave",
+        "prompt": "Reinterpreta como uma pintura suave em aguarela."
+      },
+      "line-art": {
+        "label": "Line art",
+        "hint": "Traço a tinta",
+        "prompt": "Desenha como line art limpo a tinta."
+      },
+      "pop-art": {
+        "label": "Pop art",
+        "hint": "Estilo de banda desenhada",
+        "prompt": "Transforma em pop art arrojada com pontos de meio-tom."
+      },
+      "cinematic": {
+        "label": "Cinematográfico",
+        "hint": "Luz dramática de cinema",
+        "prompt": "Aplica uma iluminação cinematográfica e dramática."
+      },
+      "neon": {
+        "label": "Néon",
+        "hint": "Cyberpunk luminoso",
+        "prompt": "Banha a composição numa luz néon brilhante, estilo cyberpunk."
+      },
+      "golden-hour": {
+        "label": "Hora dourada",
+        "hint": "Luz quente e direcional",
+        "prompt": "Banha a composição numa luz suave de hora dourada."
+      },
+      "high-contrast": {
+        "label": "Alto contraste",
+        "hint": "Sombras fortes",
+        "prompt": "Acentua sombras dramáticas de alto contraste e realces brilhantes."
+      },
+      "film-grain": {
+        "label": "Grão de filme",
+        "hint": "Textura analógica",
+        "prompt": "Sobrepõe um grão e textura subtis de filme analógico."
+      },
+      "oil-paint": {
+        "label": "Pintura a óleo",
+        "hint": "Pinceladas com textura",
+        "prompt": "Reinterpreta como uma pintura a óleo com textura."
+      },
+      "render-3d": {
+        "label": "Render 3D",
+        "hint": "Brilhante e tridimensional",
+        "prompt": "Desenha como uma personagem 3D brilhante e tridimensional."
+      },
+      "sketch": {
+        "label": "Esboço",
+        "hint": "Lápis à mão",
+        "prompt": "Desenha como um esboço a lápis feito à mão."
+      }
+    },
+    "metadata": {
+      "title": "Estúdio de Design com IA — Crie a Sua Estampa",
+      "description": "Carregue uma foto ou descreva a sua ideia, escolha um estilo e deixe a IA criar designs prontos a imprimir. Ajuste o produto e encomende em minutos.",
+      "keywords": [
+        "estúdio de design com IA",
+        "criar t-shirt personalizada",
+        "design de t-shirt a partir de texto",
+        "imagem IA para vestuário",
+        "criador de estampas personalizadas"
+      ]
+    },
+    "header": {
+      "logoAria": "Voltar à página inicial da Stamp",
+      "brand": "Stamp it",
+      "stampAria": "Começar o processo de criação",
+      "stamp": "Stamp it!",
+      "catalog": "Catálogo",
+      "profile": "Perfil",
+      "orders": "Encomendas",
+      "cart": "Saco",
+      "logoutAria": "Terminar sessão na sua conta",
+      "logout": "Sair",
+      "signIn": "Entrar",
+      "signUp": "Registar",
+      "openMenu": "Abrir menu",
+      "closeMenu": "Fechar menu",
+      "mainNavAria": "Navegação principal",
+      "mobileNavAria": "Navegação móvel"
+    },
+    "nav": {
+      "eyebrow": "O seu progresso",
+      "title": "8 passos até à impressão",
+      "stepNavAria": "Navegação entre passos",
+      "back": "Voltar",
+      "backTo": "Voltar a {step}",
+      "navigate": "Ir para {title}",
+      "navigateLocked": "Ir para {title} (bloqueado)"
+    },
+    "common": {
+      "loading": "A carregar..."
+    },
+    "steps": {
+      "hero": {
+        "title": "Entrada",
+        "label": "Comece aqui"
+      },
+      "step-1": {
+        "title": "Carregar",
+        "label": "Passo 01 / Carregar"
+      },
+      "step-2": {
+        "title": "Descrever",
+        "label": "Passo 02 / Descrever"
+      },
+      "step-3": {
+        "title": "Processar",
+        "label": "Passo 03 / Gerar"
+      },
+      "step-4": {
+        "title": "Resultados",
+        "label": "Passo 04 / Resultados"
+      },
+      "step-5": {
+        "title": "Produto",
+        "label": "Passo 05 / Produto"
+      },
+      "step-6": {
+        "title": "Ajustar",
+        "label": "Passo 06 / Personalizar"
+      },
+      "step-7": {
+        "title": "Criação",
+        "label": "Passo 07 / Criar"
+      },
+      "step-8": {
+        "title": "Final",
+        "label": "Passo 08 / Checkout"
+      }
+    },
+    "hero": {
+      "eyebrow": "Comece aqui",
+      "title": "Stamp <br></br><accent>It</accent>",
+      "description": "Transforme a sua própria foto — ou apenas uma ideia — num design pronto a imprimir. Oito passos rápidos da ideia ao produto final.",
+      "cta": "Começar a criar",
+      "ctaAria": "Começar a criar: comece a personalizar o seu design",
+      "imageAlt": "Moda e estilo de vida"
+    },
+    "upload": {
+      "protocol": "Passo 01 / Carregar",
+      "title": "Carregue uma <accent>imagem</accent>",
+      "description": "Comece com uma foto de que goste — um animal, uma pessoa, um lugar. Sem foto? Salte este passo e descreva a sua ideia.",
+      "next": "Passo seguinte",
+      "skipUpload": "Saltar carregamento",
+      "proceedWithoutUpload": "Continuar com as fotos anteriores",
+      "dropzoneAria": "Carregar imagem",
+      "dropzoneText": "Carregue uma foto (opcional)",
+      "dropzoneHint": "Máx. 10 MB, apenas JPG/PNG/GIF",
+      "fileSize": "{size} MB",
+      "removeAria": "Remover ficheiro carregado",
+      "previewAlt": "Pré-visualização da referência carregada",
+      "replaceAria": "Substituir imagem carregada",
+      "replace": "Substituir",
+      "inputAria": "Campo de carregamento de ficheiro"
+    },
+    "generation": {
+      "status": "A gerar o seu design...",
+      "estimate": "Cerca de 10 segundos..."
+    },
+    "results": {
+      "protocol": "Passo 04 / Resultados",
+      "title": "A sua <accent>criação</accent>",
+      "outputNumber": "O seu design",
+      "generated": "Gerado a {date}",
+      "savedToHistory": "Guardado no histórico",
+      "appliedPrompt": "Descrição aplicada",
+      "useProtocol": "Usar esta imagem",
+      "reSynthesize": "Repetir",
+      "imageAlt": "Resultado do design gerado",
+      "previousCreations": "AS SUAS CRIAÇÕES ANTERIORES",
+      "selectImage": "Selecionar imagem {number}",
+      "galleryImageAlt": "Design gerado anteriormente {number}"
+    },
+    "productSelection": {
+      "protocol": "Passo 05 / Produto",
+      "title": "Escolha o seu <accent>produto</accent>",
+      "description": "Escolha onde quer imprimir o seu design. Tudo de boa qualidade e impresso a pedido.",
+      "pricingNote": "Os preços refletem as tarifas globais dos fornecedores de impressão",
+      "continue": "Continuar para a personalização",
+      "selectAria": "Selecionar {name}",
+      "selectedAria": "{name} selecionado",
+      "removeAria": "Remover produto selecionado",
+      "remove": "Remover",
+      "loadingAria": "A carregar produtos",
+      "loadError": "Não foi possível carregar os produtos",
+      "loadErrorHint": "Atualize a página e tente novamente.",
+      "empty": "Não há produtos disponíveis de momento.",
+      "apparel": "Vestuário",
+      "moreOptions": "Mais opções",
+      "accessories": "Acessórios",
+      "selectedBadge": "Selecionado",
+      "qualityNote": "Qualidade premium, impresso a pedido",
+      "customizeNext": "Personalize cores e tamanho no passo seguinte",
+      "showMore": "Mostrar mais {count}",
+      "showLess": "Mostrar menos",
+      "sectionPickerAria": "Tipo de produto",
+      "sectionCount": "{count, plural, one {# produto} other {# produtos}}"
+    },
+    "customization": {
+      "protocol": "Passo 06 / Personalizar",
+      "title": "Personalize o seu <accent>produto</accent>",
+      "previewTitle": "Pré-visualização e <accent>posição</accent>",
+      "creating": "A criar...",
+      "createProduct": "Criar produto",
+      "continueToPreview": "Continuar para a pré-visualização",
+      "sizeLabel": "Tamanho",
+      "colorLabel": "Amostras de cor",
+      "colorLoading": "A carregar cores...",
+      "colorSelectFirst": "Selecione primeiro um produto para carregar as cores disponíveis.",
+      "colorNone": "Não há cores disponíveis para este produto.",
+      "colorSelectionAria": "Seleção de cor",
+      "colorSwatchAria": "Selecionar a cor {color}",
+      "paperTypeLabel": "Tipo de papel",
+      "paperTypeSelectionAria": "Seleção do tipo de papel",
+      "paperTypeAria": "Selecionar o papel {type}",
+      "sizeSelectorLabel": "Seletor de tamanho",
+      "sizeSelectionAria": "Seleção de tamanho",
+      "sizeAria": "Selecionar o tamanho {size}",
+      "mockupPreview": "Pré-visualização da maqueta"
+    },
+    "production": {
+      "status": "A criar a maqueta do seu produto...",
+      "estimate": "Cerca de 15 segundos..."
+    },
+    "finalReview": {
+      "protocol": "Passo 08 / Checkout",
+      "title": {
+        "tshirt": "Pronto a <accent>vestir</accent>",
+        "hoodie": "Pronto a <accent>vestir</accent>",
+        "tote": "Pronto a <accent>levar</accent>",
+        "poster": "Pronto a <accent>expor</accent>"
+      },
+      "defaultProductName": "Produto personalizado",
+      "mockupAlt": "Maqueta do produto final",
+      "previewSealed": "Pré-visualização final",
+      "viewFullscreen": "Clique para ver em ecrã inteiro",
+      "fullscreenPreview": "Pré-visualização do produto em ecrã inteiro",
+      "closeFullscreen": "Fechar ecrã inteiro",
+      "pressEscToClose": "Prima ESC ou clique em qualquer sítio para fechar",
+      "previousImage": "Maqueta anterior",
+      "nextImage": "Maqueta seguinte",
+      "goToImage": "Ir para a maqueta",
+      "productDetails": "Cor: {color} | Tamanho: {size}",
+      "finalValuation": "Total final",
+      "freeShipping": "Envio grátis em todas as encomendas",
+      "bagIt": "Para o saco",
+      "adding": "A ADICIONAR...",
+      "buyNow": "COMPRAR AGORA",
+      "processing": "A PROCESSAR...",
+      "bagItAndCreateAnother": "Para o saco e criar outro"
+    },
+    "errors": {
+      "imageGeneration": {
+        "emptyPrompt": "Escreva uma descrição para o seu design",
+        "timeout": "A geração da imagem excedeu o tempo limite de {seconds} segundos. Tente novamente com uma descrição mais simples ou contacte o apoio."
+      },
+      "productCreation": {
+        "alreadyCreated": "O produto já foi criado. A avançar para a revisão.",
+        "noDesign": "Gere primeiro um design",
+        "noProduct": "Selecione um tipo de produto",
+        "noColorSize": "Selecione a cor e o tamanho",
+        "noSize": "Selecione um tamanho",
+        "guestSession": "Não foi possível iniciar a sua sessão. Tente novamente daqui a pouco.",
+        "timeout": "A criação do produto excedeu o tempo limite de {seconds} segundos. Tente novamente ou contacte o apoio se o problema persistir."
+      },
+      "cart": {
+        "alreadyInCart": "Já está no seu saco. A levá-lo até lá...",
+        "noProduct": "Crie um produto antes de o adicionar ao saco",
+        "noVariant": "Variante do produto não encontrada. Tente criar o produto novamente.",
+        "storageUnavailable": "O seu navegador não conseguiu guardar o saco. Desative a navegação privada ou liberte espaço de armazenamento do site, ou inicie sessão para manter o saco na sua conta.",
+        "added": "Adicionado ao seu saco."
+      },
+      "upload": {
+        "invalidType": "Tipo de ficheiro inválido. Carregue apenas JPG, PNG ou GIF.",
+        "invalidImage": "Não foi possível ler este ficheiro como imagem. Carregue um ficheiro de imagem válido.",
+        "tooLarge": "Ficheiro demasiado grande. O tamanho máximo é 10 MB.",
+        "readFailed": "Não foi possível ler o ficheiro",
+        "uploadFailed": "O carregamento falhou",
+        "uploaded": "Imagem carregada com sucesso",
+        "removed": "Imagem removida"
+      },
+      "coins": {
+        "loadFailed": "Não foi possível carregar as suas moedas",
+        "loadFailedDescription": "Tente novamente antes de gerar um design.",
+        "retry": "Tentar novamente",
+        "noCoins": "Ficou sem moedas por hoje",
+        "noCoinsDescription": "As moedas são repostas diariamente à meia-noite. Pode continuar a usar diretamente a imagem que carregou.",
+        "notLoggedIn": "Inicie sessão ou registe-se para continuar",
+        "notLoggedInDescription": "Crie uma conta para começar a desenhar",
+        "login": "Iniciar sessão",
+        "register": "Registar",
+        "display": "{coins} moedas disponíveis",
+        "displayAria": "{coins} moedas disponíveis",
+        "deductFailed": "Não tem moedas suficientes para gerar",
+        "skipGeneration": "Usar a minha imagem",
+        "usePreviousCreations": "Usar criações anteriores",
+        "proceedWithUploadedImage": "Continuar sem editar a minha foto",
+        "proceedWithCachedImages": "Continuar com as fotos geradas anteriormente"
+      }
+    },
+    "adjust": {
+      "positionsTitle": "Posições de impressão",
+      "positionsHelp": "Escolha onde o seu design é impresso.",
+      "adjustToggle": "Ajustar posição",
+      "previewToggle": "Pré-visualização e posição",
+      "positionIncluded": "Incluído",
+      "positionExtraCost": "+{price}",
+      "positionToggleAria": "Ativar ou desativar impressão: {position}",
+      "position": {
+        "front": "Frente",
+        "back": "Costas",
+        "neck": "Gola",
+        "left_sleeve": "Manga esquerda",
+        "right_sleeve": "Manga direita",
+        "left_leg": "Meia esquerda",
+        "right_leg": "Meia direita"
+      },
+      "editingLabel": "A ajustar",
+      "editingSelectAria": "Escolha a posição a ajustar",
+      "moveUp": "Mover para cima",
+      "moveDown": "Mover para baixo",
+      "moveLeft": "Mover para a esquerda",
+      "moveRight": "Mover para a direita",
+      "center": "Centrar",
+      "horizontalLabel": "Horizontal",
+      "verticalLabel": "Vertical",
+      "horizontalAria": "Posição horizontal",
+      "verticalAria": "Posição vertical",
+      "sizeLabel": "Tamanho",
+      "scaleDown": "Mais pequeno",
+      "scaleUp": "Maior",
+      "scaleAria": "Tamanho do design",
+      "rotationLabel": "Rotação",
+      "rotationAria": "Rodar para {degrees} graus",
+      "reset": "Repor",
+      "resetAria": "Repor a posição de {position}",
+      "safeZoneWarning": "Chegou ao limite da área de impressão segura.",
+      "previewAlt": "O seu design colocado no produto",
+      "printAreaLabel": "Área de impressão",
+      "noImageTitle": "Ainda sem design",
+      "noImageBody": "Gere e escolha primeiro um design e depois ajuste a forma como fica no produto.",
+      "extraCostSummary": "Posições de impressão extra: {price}",
+      "positionsHelpSingle": "Escolha em que lado o seu design é impresso.",
+      "positionsGroupAria": "Posição de impressão",
+      "positionSelectAria": "Imprimir em: {position}",
+      "mockupNote": "Apenas pré-visualização. A maqueta final é mostrada no passo seguinte."
+    }
+  },
+  "cart": {
+    "content": {
+      "continueBrowsing": "Continuar a explorar",
+      "loginForSavedItems": "Alguns destes artigos estão guardados na sua conta. Inicie sessão para os finalizar ou desmarque-os para continuar como convidado."
+    },
+    "header": {
+      "title": "O seu <accent>saco</accent>"
+    },
+    "selection": {
+      "selectedCount": "{selected} de {total} selecionados",
+      "selectAll": "Selecionar tudo ({count})",
+      "deselectAll": "Desmarcar tudo"
+    },
+    "mobileCta": {
+      "checkout": "Finalizar compra · {total}",
+      "itemsSelected": "{count, plural, one {# artigo selecionado} other {# artigos selecionados}}",
+      "selectItems": "Selecione artigos para finalizar a compra"
+    },
+    "empty": {
+      "title": "O seu saco está vazio",
+      "subtitle": "Ainda não tem nada.",
+      "cta": "Começar a criar"
+    },
+    "itemCard": {
+      "customProduct": "Produto personalizado",
+      "standardVariant": "Padrão",
+      "customDesignSynthesis": "Design personalizado",
+      "variant": "Variante",
+      "colorway": "Cor",
+      "lineTotal": "Total da linha",
+      "quantityGroupLabel": "Quantidade de {productName}",
+      "decreaseQuantity": "Diminuir quantidade",
+      "increaseQuantity": "Aumentar quantidade",
+      "remove": "Remover",
+      "selectItem": "Selecionar {product} para finalizar a compra"
+    },
+    "loading": {
+      "label": "A carregar o seu saco"
+    },
+    "summary": {
+      "title": "Resumo da <accent>encomenda</accent>",
+      "subtotal": "Subtotal",
+      "shippingProtocol": "Envio",
+      "free": "Grátis",
+      "taxLogistics": "Impostos",
+      "taxNote": "Calculado no checkout",
+      "proceedToCheckout": "Finalizar compra",
+      "estimatedArrival": "Entrega prevista",
+      "arrivalWindow": "5-8 dias úteis",
+      "secureTransactions": "Checkout seguro e encriptado",
+      "total": "Total",
+      "currencyNote": "Moeda: USD",
+      "noItemsSelected": "Selecione artigos do seu saco para finalizar a compra.",
+      "itemsSelected": "{count, plural, one {# artigo selecionado} other {# artigos selecionados}}"
+    }
+  },
+  "buyCredits": {
+    "dialog": {
+      "selectTitle": "Comprar créditos",
+      "paymentTitle": "Concluir pagamento",
+      "description": "Compre créditos para criar mais designs a partir das suas descrições."
+    },
+    "selection": {
+      "packageLabel": "Escolha um pacote",
+      "customLabel": "Ou indique uma quantidade",
+      "customPlaceholder": "Indique os créditos (mín. {min})",
+      "customError": "Precisa de pelo menos {min} créditos.",
+      "popularBadge": "Popular",
+      "continueButton": "Continuar para o pagamento"
+    },
+    "summary": {
+      "credits": "{credits} créditos"
+    },
+    "payment": {
+      "backButton": "Voltar à seleção",
+      "methodSelectorLabel": "Escolha o método de pagamento",
+      "processing": "A processar...",
+      "payButton": "Pagar {amount} €",
+      "cardElementNotFound": "Elemento do cartão não encontrado",
+      "paymentFailed": "O pagamento falhou",
+      "paypalComingSoon": "O PayPal para compra de créditos chega em breve.",
+      "paypalUseCard": "Por agora, utilize um cartão de crédito."
+    }
+  },
+  "dashboard": {
+    "content": {
+      "errorTitle": "Painel indisponível",
+      "errorDescription": "Não foi possível carregar os seus dados.",
+      "retry": "Tentar novamente"
+    },
+    "header": {
+      "title": "O seu <accent>estúdio</accent>",
+      "subtitle": "Bem-vindo de volta, {name}. É aqui que está o seu trabalho."
+    },
+    "profile": {
+      "label": "Perfil do utilizador",
+      "avatarAlt": "Avatar de {name}",
+      "verified": "Conta verificada",
+      "editProfile": "Editar perfil"
+    },
+    "credits": {
+      "label": "Créditos disponíveis",
+      "ofTotal": "de {total}",
+      "usageCapacity": "Capacidade de utilização",
+      "percentSpent": "{percent}% gastos",
+      "usageLabel": "Utilização de créditos",
+      "buyMore": "Comprar mais créditos",
+      "allowance": "Inclui as edições gratuitas diárias que lhe restam e os créditos comprados. As edições gratuitas renovam-se todos os dias.",
+      "retry": "Recarregar saldo"
+    },
+    "quickAccess": {
+      "label": "Acesso rápido",
+      "links": {
+        "account": "Conta",
+        "archive": "Arquivo"
+      }
+    },
+    "metrics": {
+      "ordersLabel": "Encomendas",
+      "ordersCaption": "Encomendas feitas",
+      "ordersTarget": "Objetivo",
+      "designsLabel": "Produtos personalizados",
+      "designsCaption": "Produtos criados na sua conta",
+      "designsTarget": "Limite"
+    },
+    "metricCard": {
+      "progressLabel": "Progresso de {label}"
+    },
+    "cta": {
+      "title": "Pronto para o seu próximo <accent>design</accent>?",
+      "subtitle": "Escreva uma descrição e avance",
+      "cta": "Stamp it"
+    },
+    "recentOrders": {
+      "title": "Encomendas recentes",
+      "recordsOnFile": "{count, plural, one {# registo} other {# registos}} guardados",
+      "viewArchive": "Ver arquivo",
+      "emptyTitle": "Nenhum registo encontrado",
+      "emptyDescription": "O seu primeiro design está a uma descrição de distância",
+      "emptyCta": "Começar a criar",
+      "openDetails": "Abrir detalhes da encomenda {orderId}",
+      "productAlt": "Produto da encomenda",
+      "customDesign": "Design personalizado"
+    },
+    "loading": {
+      "label": "A carregar o painel"
+    }
+  },
+  "profile": {
+    "header": {
+      "title": "O seu <accent>perfil</accent>",
+      "subtitle": "Gira as definições da sua conta"
+    },
+    "userInformation": {
+      "label": "Conta",
+      "title": "Informação <accent>pessoal</accent>",
+      "subtitle": "Atualize os seus dados pessoais",
+      "edit": "EDITAR",
+      "firstNameLabel": "Nome próprio",
+      "lastNameLabel": "Apelido",
+      "emailLabel": "Email",
+      "emailNote": "O seu email está bloqueado e não pode ser alterado.",
+      "saving": "A GUARDAR...",
+      "saveChanges": "GUARDAR ALTERAÇÕES",
+      "cancel": "CANCELAR"
+    },
+    "passwordReset": {
+      "label": "Segurança",
+      "title": "Palavra-passe e <accent>segurança</accent>",
+      "subtitle": "Altere a sua palavra-passe sempre que quiser.",
+      "changePassword": "ALTERAR PALAVRA-PASSE",
+      "hiddenNote": "Mantemos a sua palavra-passe oculta. Carregue em \"Alterar palavra-passe\" para definir uma nova.",
+      "newPasswordLabel": "Nova palavra-passe",
+      "newPasswordPlaceholder": "Introduza a nova palavra-passe",
+      "newPasswordHint": "A palavra-passe deve ter pelo menos 6 caracteres",
+      "confirmPasswordLabel": "Confirmar nova palavra-passe",
+      "confirmPasswordPlaceholder": "Confirme a nova palavra-passe",
+      "confirmPasswordHint": "Introduza novamente a nova palavra-passe",
+      "updating": "A ATUALIZAR...",
+      "updatePassword": "ATUALIZAR PALAVRA-PASSE",
+      "cancel": "CANCELAR"
+    },
+    "address": {
+      "label": "Envio",
+      "title": "Morada de <accent>envio</accent>",
+      "subtitleHasAddress": "A sua morada de envio predefinida",
+      "subtitleNoAddress": "Adicione a sua morada de envio",
+      "editAddress": "EDITAR MORADA",
+      "addAddress": "ADICIONAR MORADA",
+      "emptyState": "Ainda não guardou nenhuma morada. Adicione uma para acelerar o checkout.",
+      "saving": "A GUARDAR...",
+      "saveAddress": "GUARDAR MORADA",
+      "cancel": "CANCELAR"
+    },
+    "addressForm": {
+      "firstName": "Nome próprio",
+      "lastName": "Apelido",
+      "email": "Email",
+      "phone": "Telefone",
+      "address1": "Morada (linha 1)",
+      "address1Placeholder": "Rua e número",
+      "address2": "Morada (linha 2, opcional)",
+      "address2Placeholder": "Andar, porta, fração, etc.",
+      "city": "Localidade",
+      "region": "Distrito/Região",
+      "zip": "Código postal",
+      "country": "País"
+    },
+    "addressDisplay": {
+      "phone": "Telefone: {phone}"
+    },
+    "addressSectionHeader": {
+      "title": "Morada de envio",
+      "subtitleHasAddress": "Gira a sua morada de envio predefinida",
+      "subtitleNoAddress": "Adicione uma morada de envio para um checkout mais rápido",
+      "edit": "Editar",
+      "addAddress": "Adicionar morada"
+    },
+    "toasts": {
+      "passwordUpdated": "Palavra-passe atualizada.",
+      "passwordUpdateFailed": "Não foi possível atualizar a sua palavra-passe.",
+      "addressUpdated": "Morada guardada.",
+      "addressUpdateFailed": "Não foi possível guardar a sua morada.",
+      "profileUpdated": "Perfil atualizado.",
+      "profileUpdateFailed": "Não foi possível atualizar o seu perfil."
+    }
+  },
+  "common": {
+    "metadata": {
+      "title": "Stamp AI — Roupa e Estampas Personalizadas Criadas com IA",
+      "description": "Crie t-shirts e hoodies personalizadas com IA. Escreva uma descrição e receba designs prontos a imprimir em segundos. Qualidade premium, feito por encomenda. Comece hoje, grátis.",
+      "keywords": [
+        "design de roupa com IA",
+        "gerador de t-shirts personalizadas",
+        "design de t-shirts com IA",
+        "impressão a pedido",
+        "hoodies personalizadas",
+        "crie a sua própria roupa",
+        "design de vestuário com IA",
+        "t-shirts personalizadas",
+        "t-shirts de gramagem alta",
+        "vestuário personalizado online"
+      ]
+    },
+    "notFound": {
+      "ariaLabel": "Página não encontrada",
+      "title": "Não encontramos essa página",
+      "description": "A página que procura não existe. Volte ao início para criar roupa personalizada com IA."
+    },
+    "tipBanner": {
+      "tip": "<strong>Dica:</strong> Indique o estilo, as cores e o ambiente. Experimente algo como \"Estilo anime, como Naruto\"."
+    }
+  },
+  "layout": {
+    "stampFooter": {
+      "logoAlt": "Stamp.AI",
+      "mission": "Escreva uma ideia e receba roupa que vale a pena vestir. Impressa a pedido e entregue à sua porta.",
+      "columns": {
+        "create": "Criar",
+        "support": "Apoio",
+        "legal": "Legal",
+        "social": "Siga-nos"
+      },
+      "links": {
+        "footer-studio": "Estúdio de Design",
+        "footer-catalog": "Catálogo de Produtos",
+        "footer-cart": "Saco",
+        "footer-orders": "As suas encomendas",
+        "footer-faq": "Perguntas frequentes",
+        "footer-shipping": "Envio e entrega",
+        "footer-returns": "Devoluções e reembolsos",
+        "footer-contact": "Contacte-nos",
+        "footer-terms": "Termos de Serviço",
+        "footer-privacy": "Política de Privacidade",
+        "footer-cookies": "Política de Cookies",
+        "footer-security": "Segurança",
+        "footer-instagram": "Instagram",
+        "footer-twitter": "X / Twitter",
+        "footer-tiktok": "TikTok",
+        "footer-linkedin": "LinkedIn"
+      },
+      "wordmark": "Stamp",
+      "copyright": "© {year} Stamp AI. Todos os direitos reservados.",
+      "tagline": "Feito para quem cria"
+    },
+    "languageSwitcher": {
+      "label": "Idioma"
+    }
+  },
+  "auth": {
+    "errors": {
+      "guestClaim": "Não foi possível passar os artigos do seu saco para a sua conta. Continuam no saco; atualize a página para tentar novamente.",
+      "guestClaimExpired": "A sua sessão de convidado expirou antes de iniciar sessão, por isso não foi possível passar os artigos do saco para a sua conta. Adicione-os novamente."
+    },
+    "authCodeError": {
+      "title": "Algo correu mal",
+      "description": "Não foi possível processar o seu pedido de início de sessão.",
+      "expiredNote": "O link pode ter expirado ou já ter sido usado.",
+      "returnHome": "Voltar ao início",
+      "requestNewReset": "Pedir um novo link de reposição"
+    },
+    "resetPasswordPage": {
+      "title": "Repor palavra-passe",
+      "description": "Escolha uma nova palavra-passe abaixo."
+    },
+    "protectedRoute": {
+      "authenticating": "A autenticar",
+      "checkingSession": "A verificar a sua sessão",
+      "redirecting": "A redirecionar..."
+    },
+    "sessionDisplay": {
+      "loadingSession": "A carregar a sua sessão",
+      "errorLoadingSession": "Não foi possível carregar a sua sessão",
+      "noUserSession": "Não tem sessão iniciada",
+      "sessionInformation": "Informação da sessão",
+      "signingOut": "A terminar sessão...",
+      "signOut": "Terminar sessão",
+      "userInformation": "Informação do utilizador",
+      "idLabel": "ID:",
+      "emailLabel": "Email:",
+      "firstNameLabel": "Nome próprio:",
+      "lastNameLabel": "Apelido:",
+      "createdAtLabel": "Criado em:",
+      "emailConfirmedLabel": "Email confirmado:",
+      "lastSignInLabel": "Último início de sessão:",
+      "sessionDetails": "Detalhes da sessão",
+      "tokenTypeLabel": "Tipo de token:",
+      "expiresAtLabel": "Expira em:",
+      "expiresInLabel": "Expira dentro de:",
+      "expiresInMinutes": "{minutes} minutos",
+      "rawSessionData": "Dados brutos da sessão"
+    },
+    "google": {
+      "iconAlt": "Google",
+      "connecting": "A ligar...",
+      "continueWithGoogle": "Continuar com o Google",
+      "redirecting": "Esta conta Google já tem uma conta Stamp. A levá-lo ao Google para iniciar sessão…",
+      "failed": "Não conseguimos contactar o Google. Verifique a sua ligação e tente novamente.",
+      "retry": "Tentar novamente",
+      "backHome": "Voltar ao início",
+      "meta": {
+        "title": "A iniciar sessão com o Google",
+        "description": "A redirecioná-lo para o Google para iniciar sessão na sua conta."
+      }
+    },
+    "login": {
+      "loginShort": "ENTRAR",
+      "login": "Iniciar sessão",
+      "form": {
+        "srTitle": "Iniciar sessão",
+        "closeAria": "Fechar janela de início de sessão",
+        "orContinueWithEmail": "ou continue com email"
+      },
+      "fields": {
+        "emailLabel": "Email",
+        "emailPlaceholder": "nome@empresa.com",
+        "passwordLabel": "Palavra-passe",
+        "passwordPlaceholder": "••••••••",
+        "showPassword": "Mostrar palavra-passe",
+        "hidePassword": "Ocultar palavra-passe"
+      },
+      "header": {
+        "label": "Bem-vindo de volta",
+        "title": "Iniciar sessão"
+      },
+      "actions": {
+        "cancelAria": "Cancelar",
+        "cancel": "Cancelar",
+        "loginAria": "Iniciar sessão",
+        "loggingIn": "A iniciar sessão...",
+        "login": "Iniciar sessão"
+      },
+      "footer": {
+        "noAccount": "Não tem conta? <link>Crie uma agora</link>"
+      },
+      "panel": {
+        "eyebrow": "Ateliê de membros",
+        "heading": "Bem-vindo de volta ao seu <accent>estúdio</accent>",
+        "lead": "Os seus designs, créditos e encomendas estão à sua espera onde os deixou.",
+        "perks": {
+          "designs": "Todos os designs que gerou",
+          "orders": "Histórico de encomendas e seguimento em tempo real",
+          "checkout": "Checkout mais rápido, com os dados guardados"
+        }
+      }
+    },
+    "passwordReset": {
+      "inline": {
+        "forgotPassword": "Esqueceu-se da palavra-passe?"
+      },
+      "confirm": {
+        "newPassword": "Nova palavra-passe",
+        "confirmNewPassword": "Confirmar nova palavra-passe",
+        "resetting": "A repor palavra-passe...",
+        "resetPassword": "Repor palavra-passe",
+        "invalidSessionError": "Este link de reposição é inválido ou expirou. Peça um novo para continuar.",
+        "successToast": "A sua palavra-passe está definida. Inicie sessão com ela agora."
+      },
+      "error": {
+        "title": "Este link não funciona",
+        "description": "Este link de reposição é inválido ou expirou. Peça um novo para continuar.",
+        "backToHome": "Voltar ao início"
+      },
+      "success": {
+        "title": "A sua palavra-passe está definida",
+        "description": "Está tudo pronto. Vamos levá-lo para a página de início de sessão dentro de 3 segundos.",
+        "goToLogin": "Ir para o início de sessão"
+      },
+      "form": {
+        "prompt": "Introduza o seu email e enviamos-lhe um link de reposição.",
+        "emailPlaceholder": "Introduza o seu email",
+        "sending": "A enviar...",
+        "sendResetLink": "Enviar link de reposição",
+        "cancel": "Cancelar"
+      },
+      "request": {
+        "forgotPassword": "Esqueceu-se da palavra-passe?",
+        "srTitle": "Repor palavra-passe",
+        "title": "Repor palavra-passe",
+        "description": "Introduza o seu email e enviamos-lhe um link para repor a palavra-passe.",
+        "emailLabel": "Email",
+        "sendAria": "Enviar email de reposição",
+        "sending": "A enviar...",
+        "send": "Enviar email de reposição",
+        "cancelAria": "Cancelar",
+        "cancel": "Cancelar",
+        "successToast": "Email de reposição enviado. Procure o link na sua caixa de entrada."
+      },
+      "requestSuccess": {
+        "srTitle": "Email de reposição enviado",
+        "title": "Verifique a sua caixa de entrada",
+        "description": "Enviámos um link de reposição para o seu email. Abra-o e siga os passos para definir uma nova palavra-passe.",
+        "gotIt": "Entendido"
+      }
+    },
+    "register": {
+      "register": "Registar",
+      "signUp": "Criar conta",
+      "successToast": "Verifique o seu email para confirmar o endereço e definir a palavra-passe.",
+      "form": {
+        "srTitle": "Criar conta",
+        "closeAria": "Fechar janela de registo",
+        "orContinueWithEmail": "ou continue com email"
+      },
+      "header": {
+        "label": "Criar conta",
+        "title": "Criar conta",
+        "tagline": "Comece a transformar as suas ideias em roupa impressa."
+      },
+      "fields": {
+        "firstName": "Nome próprio",
+        "firstNamePlaceholder": "João",
+        "lastName": "Apelido",
+        "lastNamePlaceholder": "Silva",
+        "emailLabel": "Endereço de email",
+        "emailPlaceholder": "nome@empresa.com",
+        "passwordLabel": "Palavra-passe",
+        "passwordPlaceholder": "••••••••",
+        "confirmPassword": "Confirmar palavra-passe",
+        "confirmPasswordPlaceholder": "••••••••"
+      },
+      "actions": {
+        "cancelAria": "Cancelar",
+        "cancel": "Cancelar",
+        "createAccountAria": "Criar conta",
+        "creating": "A criar...",
+        "signUp": "Criar conta"
+      },
+      "footer": {
+        "haveAccount": "Já tem conta? <link>Iniciar sessão</link>"
+      },
+      "panel": {
+        "eyebrow": "Junte-se ao ateliê",
+        "heading": "As suas ideias, <accent>estampadas</accent> em tecido",
+        "lead": "Crie uma conta para desenhar com IA e imprimir em vestuário premium.",
+        "perks": {
+          "generate": "Gere designs originais com IA",
+          "print": "Impresso em peças premium",
+          "ship": "Entregue diretamente à sua porta"
+        }
+      },
+      "success": {
+        "srTitle": "Registo concluído",
+        "title": "Está tudo pronto",
+        "description": "Verifique o seu email para confirmar o endereço e depois escolha a sua palavra-passe.",
+        "gotIt": "Entendido"
+      }
+    },
+    "checkEmail": {
+      "title": "Verifique o seu email",
+      "description": "Enviámos um link de confirmação para o seu endereço de email.",
+      "instructions": "Clique no link do email para ativar a sua conta e definir a palavra-passe.",
+      "resendButton": "Reenviar email de confirmação",
+      "resending": "A enviar...",
+      "resendSuccess": "Email enviado! Verifique a sua caixa de entrada.",
+      "backToLogin": "Voltar ao início de sessão",
+      "spamNote": "Não recebeu o email? Verifique a pasta de spam."
+    }
+  },
+  "ui": {
+    "navbar": {
+      "myOrders": "As minhas encomendas",
+      "stampIt": "Stamp it!",
+      "dashboard": "Painel",
+      "toggleTheme": "Mudar tema",
+      "viewProfile": "Ver perfil",
+      "signOut": "Terminar sessão"
+    },
+    "pagination": {
+      "label": "paginação",
+      "previous": "Ir para a página anterior",
+      "next": "Ir para a página seguinte",
+      "morePages": "Mais páginas"
+    },
+    "sheet": {
+      "close": "Fechar"
+    },
+    "dialog": {
+      "close": "Fechar"
+    },
+    "mobilePageHeader": {
+      "goBack": "Voltar"
+    },
+    "footer": {
+      "mission": {
+        "heading": "A nossa missão",
+        "body": "Transformar uma descrição ou a sua própria foto num design, impresso em roupa de qualidade e entregue à sua porta."
+      },
+      "platform": {
+        "heading": "Plataforma",
+        "howItWorks": "Como funciona",
+        "showcase": "Montra",
+        "bulkPricing": "Preços por quantidade"
+      },
+      "company": {
+        "heading": "Empresa",
+        "aboutUs": "Sobre nós",
+        "blog": "Blog",
+        "careers": "Carreiras"
+      },
+      "support": {
+        "heading": "Apoio",
+        "helpCenter": "Centro de ajuda",
+        "termsOfService": "Termos de Serviço",
+        "privacyPolicy": "Política de Privacidade"
+      },
+      "copyright": "© {year} Stamp.AI Design Inc. Feito para quem sonha.",
+      "social": {
+        "twitter": "Twitter",
+        "instagram": "Instagram",
+        "linkedin": "LinkedIn"
+      }
+    },
+    "passwordInput": {
+      "required": "obrigatório",
+      "placeholder": "Introduza a palavra-passe",
+      "show": "Mostrar {label}",
+      "hide": "Ocultar {label}"
+    },
+    "themeToggle": {
+      "loadingTheme": "A carregar o tema",
+      "currentTheme": "Tema atual: {theme}. Clique para mudar de tema.",
+      "toggleTheme": "Mudar tema",
+      "themes": {
+        "light": "Claro",
+        "dark": "Escuro",
+        "system": "Sistema"
+      }
+    },
+    "wordCountIndicator": {
+      "count": "{wordCount}/{limit} palavras",
+      "overLimit": "Use menos de {limit} palavras"
+    },
+    "collapsibleFilters": {
+      "toggle": "Filtros",
+      "clear": "Limpar filtros"
+    },
+    "filterHeader": {
+      "title": "Filtrar e ordenar",
+      "countLabel": "tipos",
+      "count": "A mostrar {filteredCount} de {totalCount} {countLabel}"
+    },
+    "selectFormField": {
+      "required": "obrigatório",
+      "placeholder": "Selecione {label}"
+    },
+    "filterSelect": {
+      "placeholder": "Selecione uma opção"
+    },
+    "percentageRangeSlider": {
+      "less": "Menos",
+      "more": "Mais"
+    },
+    "wizardContent": {
+      "next": "Continuar",
+      "back": "Voltar"
+    }
+  },
+  "orders": {
+    "content": {
+      "errorTitle": "Não foi possível carregar as suas encomendas",
+      "errorDescription": "Algo correu mal. Tente novamente.",
+      "retry": "Tentar novamente"
+    },
+    "header": {
+      "title": "As suas <accent>encomendas</accent>"
+    },
+    "filterSummary": {
+      "totalSyntheses": "Total de encomendas",
+      "protocolRecords": "Encomendas"
+    },
+    "loading": {
+      "ariaLabel": "A carregar encomendas"
+    },
+    "gridSection": {
+      "ariaLabel": "Vista em grelha das encomendas"
+    },
+    "listSection": {
+      "ariaLabel": "Vista em lista das encomendas"
+    },
+    "empty": {
+      "ariaLabel": "Arquivo de encomendas vazio",
+      "title": "Ainda sem encomendas",
+      "description": "Experimente alterar os filtros ou comece um novo design",
+      "initiate": "Começar um design"
+    },
+    "pagination": {
+      "showing": "A mostrar {start}-{end} de {total} encomendas",
+      "navAriaLabel": "Paginação",
+      "previousPage": "Página anterior",
+      "nextPage": "Página seguinte",
+      "goToPage": "Ir para a página {page}"
+    },
+    "filterControls": {
+      "archiveFiltering": "Filtros",
+      "clearArchive": "Limpar filtros",
+      "statusAriaLabel": "Filtrar por estado da encomenda",
+      "timeAriaLabel": "Filtrar por período",
+      "listViewAriaLabel": "Mudar para vista em lista",
+      "gridViewAriaLabel": "Mudar para vista em grelha",
+      "status": {
+        "allPlaceholder": "Estado: Todos",
+        "delivered": "Entregue",
+        "shipped": "Enviada",
+        "processing": "Em processamento",
+        "cancelled": "Cancelada"
+      },
+      "time": {
+        "last30": "Últimos 30 dias",
+        "last90": "Últimos 90 dias",
+        "year2023": "Ano 2023",
+        "allTime": "Desde sempre"
+      }
+    },
+    "filterPills": {
+      "statusPill": "Estado: {status}",
+      "clearFilter": "Limpar filtro {label}"
+    },
+    "cancel": {
+      "toastTitle": "Encomenda cancelada",
+      "defaultDescription": "A sua encomenda foi cancelada.",
+      "cancelledAtPrintify": "Encomenda cancelada na Printify",
+      "refundProcessed": "Reembolso processado com sucesso",
+      "refundError": "Não foi possível processar o seu reembolso automaticamente",
+      "failedToCancel": "Não foi possível cancelar a sua encomenda: {message}",
+      "cannotCancel": "Esta encomenda já não pode ser cancelada. Só pode cancelar antes de a encomenda entrar em produção."
+    },
+    "cancelModal": {
+      "ariaLabel": "Confirmação de cancelamento da encomenda",
+      "title": "Cancelar esta encomenda?",
+      "description": "Esta ação não pode ser desfeita.",
+      "halting": "A cancelar…",
+      "haltSynthesis": "Cancelar encomenda",
+      "keepActive": "Manter encomenda"
+    },
+    "detailsModal": {
+      "ariaLabel": "Detalhes da encomenda",
+      "close": "Fechar detalhes",
+      "recordDetails": "Detalhes da encomenda",
+      "orderMeta": "Encomenda n.º {orderNumber} • Feita a {date}",
+      "protocolItems": "Artigos",
+      "itemAlt": "Artigo da encomenda",
+      "customProduct": "Produto personalizado",
+      "variantQty": "Variante: {variant} • Qtd.: {qty}",
+      "delivery": "Entrega",
+      "archiveClient": "Destinatário",
+      "archiveAddress": "Morada de envio",
+      "orderInfo": "Informação da encomenda",
+      "orderDate": "Data da encomenda",
+      "paymentMethod": "Pagamento",
+      "shippedDate": "Enviada",
+      "deliveredDate": "Entregue",
+      "trackingNumber": "Número de seguimento",
+      "valuation": "Resumo",
+      "subtotal": "Subtotal",
+      "shippingCost": "Envio",
+      "discount": "Desconto",
+      "total": "Total",
+      "standard": "Padrão",
+      "invoice": {
+        "preparing": "A preparar a fatura…",
+        "download": "Descarregar fatura"
+      },
+      "trackShipment": "Seguir envio"
+    },
+    "timeline": {
+      "title": "Cronologia da encomenda"
+    },
+    "listItem": {
+      "openDetails": "Abrir detalhes da encomenda {order}",
+      "productAlt": "Produto da encomenda",
+      "productFallback": "Produto personalizado",
+      "creationDate": "Encomendado",
+      "configuration": "Envio",
+      "standard": "Padrão",
+      "quantity": "Quantidade",
+      "unit": "{count} unid.",
+      "protocolValue": "Total",
+      "viewBlueprint": "Ver design",
+      "trackProtocol": "Seguir encomenda",
+      "haltOrder": "Cancelar encomenda",
+      "reorder": "Encomendar novamente",
+      "trackShipment": "Seguir envio"
+    },
+    "gridItem": {
+      "openDetails": "Abrir detalhes da encomenda {order}",
+      "productAlt": "Produto da encomenda",
+      "productFallback": "Produto personalizado",
+      "archiveLine": "Encomendado a {date} • {address}",
+      "archiveAddress": "Morada de envio",
+      "standard": "Padrão",
+      "qty": "Qtd. {count}",
+      "track": "Seguir",
+      "options": "Opções",
+      "reorder": "Encomendar novamente"
+    },
+    "statusBadge": {
+      "processing": "Em processamento",
+      "preparing": "Em preparação",
+      "inProduction": "Em produção",
+      "shipped": "Enviada",
+      "delivered": "Entregue",
+      "cancelled": "Cancelada",
+      "hasIssues": "Requer atenção"
+    }
+  },
+  "checkout": {
+    "errors": {
+      "guestCartPersist": "Não foi possível preparar o seu saco para o pagamento. Tente novamente."
+    },
+    "header": {
+      "title": "Finalizar <accent>compra</accent>",
+      "subtitle": "Conclua a sua encomenda"
+    },
+    "billing": {
+      "title": "Morada de faturação",
+      "subtitle": "Introduza os seus dados de faturação"
+    },
+    "shipping": {
+      "title": "Morada de envio",
+      "subtitle": "Indique para onde quer que a encomenda seja enviada",
+      "toggleLabel": "Enviar para outra morada"
+    },
+    "testMode": {
+      "label": "Modo de teste · use métodos de pagamento predefinidos"
+    },
+    "notFound": {
+      "title": "Saco não encontrado",
+      "description": "Não encontrámos o seu saco. Volte atrás e adicione os artigos novamente.",
+      "backToCart": "Voltar ao saco"
+    },
+    "loading": {
+      "loadingAria": "A carregar o checkout"
+    },
+    "addressForm": {
+      "selectCountryPlaceholder": "Selecione o país",
+      "fields": {
+        "first_name": "Nome próprio",
+        "last_name": "Apelido",
+        "email": "Email",
+        "phone": "Telefone",
+        "address1": "Morada (linha 1)",
+        "address2": "Morada (linha 2)",
+        "city": "Localidade",
+        "region": "Distrito/Região",
+        "zip": "Código postal",
+        "country": "País"
+      }
+    },
+    "payment": {
+      "title": "Método de pagamento",
+      "subtitle": "Escolha como quer pagar",
+      "paypalNotice": "Vamos encaminhá-lo para o PayPal para pagar em segurança.",
+      "idealNotice": "Vamos encaminhá-lo para o seu banco via iDEAL para pagar em segurança.",
+      "selectMethodAria": "Selecionar método de pagamento",
+      "comingSoon": "Em breve"
+    },
+    "testCards": {
+      "selectorLabel": "Tipo de cartão de teste",
+      "selectorPlaceholder": "Selecione o tipo de cartão de teste",
+      "groups": {
+        "successful": {
+          "label": "Pagamentos bem-sucedidos"
+        },
+        "declined": {
+          "label": "Pagamentos recusados"
+        },
+        "threeDSecure": {
+          "label": "3D Secure"
+        }
+      },
+      "options": {
+        "visa": "Visa (pm_card_visa)",
+        "visa_debit": "Visa Débito (pm_card_visa_debit)",
+        "mastercard": "Mastercard (pm_card_mastercard)",
+        "amex": "American Express (pm_card_amex)",
+        "discover": "Discover (pm_card_discover)",
+        "declined": "Recusa genérica",
+        "insufficient_funds": "Saldo insuficiente",
+        "expired": "Cartão expirado",
+        "processing_error": "Erro de processamento",
+        "threeDSecure": "3D Secure obrigatório"
+      }
+    },
+    "promoCode": {
+      "label": "Código promocional",
+      "removeAria": "Remover código promocional",
+      "placeholder": "INTRODUZA O CÓDIGO",
+      "inputAria": "Código promocional",
+      "applying": "…",
+      "apply": "Aplicar"
+    },
+    "priceBreakdown": {
+      "subtotal": "Subtotal",
+      "shipping": "Envio",
+      "free": "Grátis",
+      "discount": "Desconto",
+      "total": "Total"
+    },
+    "summary": {
+      "title": "Resumo da <accent>encomenda</accent>",
+      "secureNote": "Transações seguras e encriptadas"
+    },
+    "cartItems": {
+      "listAria": "Artigos da encomenda",
+      "defaultProductName": "Produto personalizado",
+      "standardVariant": "Variante padrão",
+      "standard": "Padrão",
+      "imageAlt": "{name} — {variant}",
+      "qty": "Qtd. {quantity}"
+    },
+    "stripeButton": {
+      "processing": "A processar…",
+      "pay": "Pagar {amount} €"
+    },
+    "paypalButton": {
+      "redirecting": "A redirecionar para o PayPal…"
+    },
+    "idealButton": {
+      "redirecting": "A redirecionar para o iDEAL…"
+    },
+    "alternativeMethods": {
+      "title": "Experimente outro método",
+      "paypal": "PayPal",
+      "paypalAria": "Pagar com PayPal",
+      "applePay": "Apple Pay",
+      "applePayAria": "Pagar com Apple Pay",
+      "card": "Cartão",
+      "cardAria": "Pagar com cartão"
+    },
+    "success": {
+      "defaultEstimatedDelivery": "7–10 dias úteis",
+      "ariaLabel": "Confirmação de pagamento",
+      "title": "Encomenda confirmada",
+      "description": "A sua encomenda foi recebida. Já a estamos a imprimir.",
+      "orderNumber": "Número da encomenda",
+      "estimatedDelivery": "Entrega prevista",
+      "totalPaid": "Total pago",
+      "statusLabel": "Estado",
+      "statusProcessing": "Em processamento",
+      "trackOrder": "Seguir a sua encomenda",
+      "createAnother": "Criar outra encomenda",
+      "confirmationEmail": "Foi enviado um email de confirmação para {email}"
+    },
+    "paymentError": {
+      "reasonMessageFallback": "O seu pagamento não foi concluído. Tente novamente ou escolha outra forma de pagamento.",
+      "titlePostPayment": "Problema ao processar a encomenda",
+      "titleDefault": "O pagamento falhou",
+      "subtitlePostPayment": "O seu pagamento foi concluído, mas algo correu mal ao criar a sua encomenda. Já fomos notificados e vamos resolver em breve.",
+      "subtitleDefault": "O seu pagamento não foi concluído. O seu design está guardado, por isso pode tentar novamente quando quiser.",
+      "ariaLabel": "O pagamento falhou",
+      "reasonFallback": "Motivo",
+      "orderNumber": "Número da encomenda",
+      "amountDue": "Montante em dívida",
+      "attemptedOn": "Tentativa em",
+      "statusLabel": "Estado",
+      "statusFallback": "Falhou",
+      "retryPayment": "Tentar pagar novamente",
+      "cancelGoToDashboard": "Cancelar e ir para o painel",
+      "contactSupport": "Precisa de ajuda? Contacte o apoio"
+    },
+    "recoveryBanner": {
+      "recoverFailed": "Não foi possível recuperar o pagamento: {error}",
+      "unknownError": "Erro desconhecido",
+      "recoverFailedContactSupport": "Não foi possível recuperar o pagamento. Contacte o apoio.",
+      "title": "Encontrámos uma encomenda incompleta",
+      "body": "Encontrámos um pagamento {providerName} bem-sucedido de <amount>{currency} {amountValue}</amount> que não foi concluído. Quer terminar esta encomenda agora?",
+      "completing": "A concluir a encomenda...",
+      "complete": "Concluir encomenda",
+      "dismiss": "Ignorar",
+      "paymentIdLine": "ID do pagamento: {id} • {date}"
+    },
+    "paymentForm": {
+      "stripeNotReady": "A Stripe ainda não está pronta. Aguarde um momento e tente novamente.",
+      "formNotReady": "O formulário de pagamento não está pronto. Atualize a página e tente novamente.",
+      "cardElementNotFound": "Não foi possível carregar o formulário do cartão. Atualize a página e tente novamente.",
+      "paymentFailed": "Não foi possível processar o seu pagamento. Tente novamente.",
+      "statusProcessing": "O seu pagamento ainda está a ser processado. Aguarde alguns minutos e consulte as suas encomendas antes de tentar novamente.",
+      "statusRequiresPaymentMethod": "O seu pagamento não foi concluído. Tente novamente ou use outro método de pagamento.",
+      "statusRequiresAction": "O seu pagamento precisa de verificação adicional. Tente novamente e conclua o passo de verificação.",
+      "statusCanceled": "O pagamento foi cancelado e não lhe foi cobrado nada. Tente novamente quando estiver pronto.",
+      "statusUnknown": "Não foi possível confirmar o seu pagamento. Tente novamente ou contacte o apoio se lhe tiver sido cobrado."
+    },
+    "pricing": {
+      "invalidPromoCode": "Código promocional inválido",
+      "promoCodeExpired": "Este código promocional expirou",
+      "promoCodeLimitReached": "Este código promocional atingiu o limite de utilizações",
+      "promoCodeApplied": "Código promocional aplicado",
+      "validationFailed": "Não foi possível validar o código promocional",
+      "enterPromoCode": "Introduza um código promocional",
+      "cartTotalInvalid": "O total do saco tem de ser superior a 0"
+    },
+    "returns": {
+      "stripe": {
+        "errorNoPaymentInfo": "Informação de pagamento não encontrada. Tente novamente a partir da página de checkout.",
+        "errorCheckoutDataExpired": "Os dados do checkout expiraram ou não foram encontrados. Tente novamente a partir da página de checkout.",
+        "errorMustBeLoggedIn": "Tem de ter sessão iniciada para concluir a encomenda. Inicie sessão e tente novamente.",
+        "errorCartNotFound": "Faltam os detalhes do seu saco. O seu pagamento foi processado, mas não foi possível criar a encomenda. Contacte o apoio indicando o ID do pagamento: {paymentId}",
+        "orderCreationFailedRefund": "A criação da encomenda falhou. Foi iniciado um reembolso total.",
+        "orderFulfillmentFailedRefund": "O processamento da encomenda falhou. Foi iniciado um reembolso total.",
+        "errorFallback": "Não foi possível terminar o processamento do seu pagamento. Se lhe foi cobrado, o seu pagamento está seguro — contacte o apoio e resolvemos a situação.",
+        "completingTitle": "A concluir o seu pagamento",
+        "processingTitle": "A processar o pagamento",
+        "completingMessage": "Aguarde enquanto terminamos o seu pagamento Stripe...",
+        "processingMessage": "Aguarde enquanto verificamos o seu pagamento com a Stripe...",
+        "processingAria": "A processar o pagamento",
+        "errorAria": "Erro",
+        "somethingWentWrongTitle": "Algo correu mal",
+        "somethingWentWrongMessage": "Não foi possível processar o seu pagamento Stripe. Tente novamente ou contacte o apoio.",
+        "returnToCheckout": "Voltar ao checkout",
+        "goToDashboard": "Ir para o painel",
+        "totalPaid": "Pago via Stripe",
+        "estimatedDelivery": "7–10 dias úteis",
+        "declinedStatus": "Recusado",
+        "paymentDeclinedTitle": "Pagamento recusado",
+        "paymentDeclinedMessage": "Não foi possível processar o seu pagamento Stripe. Tente novamente ou use outro método de pagamento."
+      },
+      "paypal": {
+        "errorCheckoutDataExpired": "Os dados do checkout expiraram ou não foram encontrados. Tente novamente a partir da página de checkout.",
+        "errorMustBeLoggedIn": "Tem de ter sessão iniciada para concluir a encomenda. Inicie sessão e tente novamente.",
+        "declinedFallback": "O seu pagamento foi recusado. Tente novamente com outro método de pagamento.",
+        "captureFailed": "Não foi possível concluir o seu pagamento PayPal. Tente novamente ou use outro método de pagamento.",
+        "errorCartNotFound": "Faltam os detalhes do seu saco. O seu pagamento foi capturado, mas não foi possível criar a encomenda. Contacte o apoio indicando o ID do pagamento: {paymentId}",
+        "errorAmountNotFound": "Montante da encomenda não encontrado. O seu pagamento foi capturado, mas não foi possível criar a encomenda. Contacte o apoio indicando o ID do pagamento: {paymentId}",
+        "orderCreationFailedRefund": "A criação da encomenda falhou. Foi iniciado um reembolso total.",
+        "orderFulfillmentFailedRefund": "O processamento da encomenda falhou. Foi iniciado um reembolso total.",
+        "errorFallback": "Não foi possível terminar o processamento do seu pagamento PayPal. Se lhe foi cobrado, o seu pagamento está seguro — contacte o apoio e resolvemos a situação.",
+        "capturingTitle": "A concluir o seu pagamento",
+        "processingTitle": "A processar o pagamento",
+        "capturingMessage": "Aguarde enquanto terminamos o seu pagamento PayPal...",
+        "processingMessage": "Aguarde enquanto verificamos o seu pagamento com o PayPal...",
+        "processingAria": "A processar o pagamento",
+        "errorAria": "Erro",
+        "somethingWentWrongTitle": "Algo correu mal",
+        "somethingWentWrongMessage": "Não foi possível processar o seu pagamento PayPal. Tente novamente ou contacte o apoio.",
+        "returnToCheckout": "Voltar ao checkout",
+        "goToDashboard": "Ir para o painel",
+        "totalPaid": "Pago via PayPal",
+        "estimatedDelivery": "7–10 dias úteis",
+        "cancelledStatus": "Cancelado",
+        "paymentCancelledTitle": "Pagamento cancelado",
+        "paymentCancelledMessage": "Cancelou o pagamento PayPal. Não foi feita nenhuma cobrança na sua conta.",
+        "declinedStatus": "Recusado",
+        "paymentDeclinedTitle": "Pagamento recusado",
+        "paymentDeclinedMessage": "Não foi possível processar o seu pagamento PayPal. Tente novamente ou use outro método de pagamento."
+      },
+      "mollie": {
+        "errorNoPaymentInfo": "Não foi encontrada informação de pagamento. Se concluiu um pagamento, contacte o apoio com os dados do pagamento.",
+        "errorMustBeLoggedIn": "Tem de ter sessão iniciada para concluir a encomenda. Inicie sessão e contacte o apoio indicando o ID do pagamento: {paymentId}",
+        "errorCartNotFound": "Faltam os detalhes do seu saco. Contacte o apoio indicando o ID do pagamento: {paymentId}",
+        "errorMissingContext": "Não encontrámos os detalhes do checkout para terminar a criação da sua encomenda.",
+        "errorNoOrderItems": "Não encontrámos os artigos da sua encomenda.",
+        "errorCannotCreateOrderNoCart": "Não foi possível criar a sua encomenda porque faltavam os detalhes do saco. Foi iniciado um reembolso total, que aparecerá dentro de 3–5 dias úteis.",
+        "errorCannotCreateOrderNotLoggedIn": "Não é possível criar a encomenda: tem de ter sessão iniciada para concluir o checkout. Foi iniciado um reembolso total, que aparecerá dentro de 3–5 dias úteis.",
+        "orderCreationReasonFallback": "A criação da encomenda falhou após várias tentativas.",
+        "orderFulfillmentReasonFallback": "O processamento da encomenda falhou.",
+        "reasonWithRefund": "{reason} Foi iniciado um reembolso total, que aparecerá dentro de 3–5 dias úteis.",
+        "errorOrderIdNotReturned": "A criação da encomenda não devolveu um ID de encomenda. Foi iniciado um reembolso total, que aparecerá dentro de 3–5 dias úteis.",
+        "errorVerifyFallback": "Não foi possível verificar o estado do seu pagamento",
+        "errorUnknownStatus": "Não foi possível determinar o estado do seu pagamento. Se lhe foi cobrado, o pagamento ficou registado e a nossa equipa vai processar a sua encomenda automaticamente. Se precisar de ajuda, contacte o apoio indicando o ID do pagamento: {paymentId}",
+        "errorRecorded": "{message}. O seu pagamento ficou registado (ID: {paymentId}). A nossa equipa vai processar a sua encomenda automaticamente. Receberá um email de confirmação no prazo de 24 horas. Se precisar de ajuda imediata, contacte o apoio indicando o ID do pagamento.",
+        "unknownPaymentId": "desconhecido",
+        "verifyingAria": "A verificar o pagamento",
+        "verifyingTitle": "A verificar o pagamento",
+        "verifyingMessage": "Aguarde enquanto confirmamos o seu pagamento com a Mollie...",
+        "totalPaid": "Pago via Mollie",
+        "estimatedDelivery": "7–10 dias úteis",
+        "reasonCanceled": "Cancelou o pagamento. Não foi feita nenhuma cobrança.",
+        "reasonExpired": "A sua sessão de pagamento expirou. Tente novamente.",
+        "reasonDefault": "Lamentamos, o seu pagamento não foi concluído. Tente novamente ou use outro método de pagamento.",
+        "canceledStatus": "Cancelado",
+        "failedStatus": "Falhou",
+        "paymentStatusTitle": "Estado do pagamento",
+        "pendingAria": "Pagamento pendente",
+        "pendingTitle": "Pagamento pendente",
+        "pendingMessage": "O seu pagamento está a ser processado. Isto pode demorar alguns instantes. Receberá um email de confirmação assim que o pagamento estiver concluído.",
+        "viewOrders": "Ver encomendas",
+        "goToDashboard": "Ir para o painel",
+        "errorAria": "Erro",
+        "somethingWentWrongTitle": "Algo correu mal",
+        "somethingWentWrongMessage": "Não foi possível verificar o estado do seu pagamento. Contacte o apoio se achar que o pagamento foi concluído.",
+        "returnToCheckout": "Voltar ao checkout"
+      }
+    }
+  },
+  "validation": {
+    "emailRequired": "Introduza o seu email",
+    "emailInvalid": "Esse email não parece correto",
+    "passwordRequired": "Introduza a sua palavra-passe",
+    "passwordMin": "Use pelo menos 8 caracteres",
+    "passwordsNoMatch": "As palavras-passe não coincidem",
+    "urlInvalid": "Esse URL não parece correto",
+    "firstNameEmpty": "Introduza o seu nome próprio",
+    "lastNameEmpty": "Introduza o seu apelido",
+    "firstNameRequired": "Introduza o seu nome próprio",
+    "countryRequired": "Escolha o seu país",
+    "countryInvalid": "Escolha um país da lista",
+    "addressRequired": "Introduza a sua morada",
+    "cityRequired": "Introduza a sua cidade",
+    "zipRequired": "Introduza o seu código postal",
+    "shippingRequiredWhenEnabled": "Adicione uma morada de envio",
+    "quantityMin": "Escolha pelo menos 1",
+    "promptMax": "Mantenha a descrição abaixo dos 500 caracteres"
+  },
+  "errors": {
+    "withCode": "{message} (Código: {code})",
+    "BLUEPRINT_ID_REQUIRED": "O ID do modelo é obrigatório",
+    "PRINT_PROVIDER_ID_REQUIRED": "O ID do fornecedor de impressão é obrigatório",
+    "IMAGE_REQUIRED": "É necessária pelo menos uma imagem",
+    "EMAIL_REQUIRED": "O endereço de email é obrigatório",
+    "PASSWORD_REQUIRED": "A palavra-passe é obrigatória",
+    "INVALID_EMAIL_FORMAT": "Introduza um endereço de email válido",
+    "PASSWORD_TOO_SHORT": "A palavra-passe deve ter pelo menos 8 caracteres",
+    "AMOUNT_REQUIRED": "O montante é obrigatório",
+    "INVALID_AMOUNT": "O montante deve ser um número positivo",
+    "INVALID_REQUEST_BODY": "Dados do pedido inválidos",
+    "IMAGE_URL_OR_BASE64_REQUIRED": "É necessário o URL da imagem ou os dados em base64",
+    "NO_LINE_ITEMS": "Não foram encontrados artigos para esta encomenda",
+    "MISSING_SHIPPING_ADDRESS": "A morada de envio é obrigatória",
+    "WEBHOOK_SIGNATURE_MISSING": "Assinatura do webhook inválida",
+    "MISSING_REQUIRED_FIELDS": "Preencha os campos obrigatórios",
+    "PAYPAL_ORDER_ID_REQUIRED": "O ID da encomenda PayPal é obrigatório",
+    "MOLLIE_PAYMENT_ID_REQUIRED": "O ID do pagamento Mollie é obrigatório",
+    "CREDITS_REQUIRED": "A quantidade de créditos é obrigatória",
+    "INVALID_CREDITS": "Os créditos devem ser pelo menos 10",
+    "INVALID_CREDENTIALS": "Email ou palavra-passe inválidos",
+    "EMAIL_NOT_CONFIRMED": "Confirme o seu endereço de email antes de iniciar sessão",
+    "CAPTCHA_VERIFICATION_FAILED": "A verificação de segurança falhou. Tente novamente",
+    "INVALID_TOKEN": "A sua sessão expirou. Inicie sessão novamente",
+    "INSUFFICIENT_COINS": "Não tem moedas suficientes para gerar. As moedas são repostas diariamente à meia-noite",
+    "WEBHOOK_SIGNATURE_INVALID": "Assinatura do webhook inválida",
+    "PAYPAL_WEBHOOK_SIGNATURE_INVALID": "Assinatura do webhook PayPal inválida",
+    "USER_NOT_FOUND": "Não encontrámos essa conta",
+    "PAYPAL_ORDER_NOT_FOUND": "Encomenda PayPal não encontrada",
+    "MOLLIE_PAYMENT_NOT_FOUND": "Pagamento Mollie não encontrado",
+    "EMAIL_ALREADY_REGISTERED": "Este endereço de email já está registado",
+    "PRINTIFY_TOKEN_MISSING": "Erro de configuração do serviço de impressão",
+    "PRINTIFY_SHOP_ID_MISSING": "Erro de configuração da loja de impressão",
+    "STRIPE_SECRET_KEY_MISSING": "Erro de configuração do serviço de pagamento",
+    "STRIPE_WEBHOOK_SECRET_MISSING": "Erro de configuração do webhook",
+    "SUPABASE_URL_MISSING": "Erro de configuração da base de dados",
+    "SUPABASE_SERVICE_ROLE_KEY_MISSING": "Erro de autenticação da base de dados",
+    "PAYPAL_CLIENT_ID_MISSING": "Erro de configuração do PayPal",
+    "PAYPAL_CLIENT_SECRET_MISSING": "Erro de configuração do PayPal",
+    "PAYPAL_WEBHOOK_ID_MISSING": "Erro de configuração do webhook PayPal",
+    "MOLLIE_API_KEY_MISSING": "Erro de configuração da Mollie",
+    "DATABASE_ERROR": "A operação na base de dados falhou",
+    "NO_VARIANTS_AVAILABLE": "Não há variantes de produto disponíveis para este modelo",
+    "NO_PRODUCTS_IN_SHOP": "Não há produtos disponíveis. Crie primeiro um produto",
+    "PRINTIFY_API_ERROR": "Erro no serviço de impressão. Tente novamente",
+    "PRINTIFY_ORDER_API_ERROR": "Não foi possível criar a encomenda. Tente novamente",
+    "IMAGE_UPLOAD_API_ERROR": "O carregamento da imagem falhou. Tente novamente",
+    "STRIPE_API_ERROR": "Erro no processamento do pagamento. Tente novamente",
+    "PAYMENT_DECLINED": "O seu cartão foi recusado. Experimente outro cartão ou método de pagamento",
+    "AUTH_REGISTRATION_FAILED": "O registo falhou. Tente novamente",
+    "AUTH_LOGIN_FAILED": "O início de sessão falhou. Tente novamente",
+    "PASSWORD_RESET_FAILED": "A reposição da palavra-passe falhou. Tente novamente",
+    "CUSTOM_PRODUCT_CREATION_FAILED": "Não foi possível criar o produto personalizado. Tente novamente",
+    "TSHIRT_PRODUCTS_FETCH_FAILED": "Não foi possível carregar as t-shirts. Tente novamente",
+    "PAYPAL_API_ERROR": "Erro no serviço PayPal. Tente novamente",
+    "PAYPAL_CAPTURE_FAILED": "A captura do pagamento PayPal falhou. Tente novamente",
+    "MOLLIE_API_ERROR": "Erro no serviço Mollie. Tente novamente",
+    "MOLLIE_PAYMENT_FAILED": "O pagamento Mollie falhou. Tente novamente",
+    "CONFIRMATION_EMAIL_SEND_FAILED": "Não foi possível enviar o email de confirmação. Tente novamente daqui a pouco",
+    "INTERNAL_ERROR": "Algo correu mal do nosso lado. Tente novamente",
+    "UNKNOWN_ERROR": "Ocorreu um erro inesperado. Tente novamente"
+  },
+  "trust": {
+    "bar": {
+      "secureCheckout": "Checkout seguro",
+      "guarantee": "Garantia de 30 dias",
+      "madeToOrder": "Feito por encomenda"
+    },
+    "payment": {
+      "title": "O seu pagamento está seguro",
+      "body": "Os pagamentos são processados pela Stripe, PayPal e Mollie. Nunca vemos nem guardamos os dados do seu cartão.",
+      "accept": "Aceitamos",
+      "sslSecured": "Checkout seguro",
+      "comingSoon": "Em breve",
+      "securePayment": "Pagamento seguro",
+      "noCardStored": "Dados do cartão nunca guardados",
+      "encryptedTransmission": "Ligação encriptada",
+      "assurances": {
+        "encrypted": {
+          "title": "Encriptado de ponta a ponta",
+          "body": "Os seus dados viajam por uma ligação segura e encriptada."
+        },
+        "noCard": {
+          "title": "Nunca vemos o seu cartão",
+          "body": "Os dados do cartão vão diretamente para o fornecedor de pagamentos."
+        },
+        "guarantee": {
+          "title": "Garantia de 30 dias",
+          "body": "Não ficou bem? Substituímos ou reembolsamos."
+        }
+      }
+    },
+    "guarantee": {
+      "title": "Garantia de 30 dias",
+      "body": "Se a impressão, o tecido ou o tamanho não estiverem certos, substituímos ou reembolsamos. O envio da devolução fica por nossa conta."
+    },
+    "socialProof": {
+      "ordersFulfilled": "{count} encomendas entregues"
+    },
+    "reviews": {
+      "ariaLabel": "Avaliado com {rating} de {total} estrelas",
+      "reviewCount": "{count} avaliações",
+      "basedOn": "Com base em {count} avaliações",
+      "verified": "Avaliações verificadas"
+    },
+    "verification": {
+      "verified": "Verificado",
+      "secure": "Seguro",
+      "siteVerified": "Checkout protegido",
+      "encryption": "Ligação encriptada"
+    },
+    "reviewCta": {
+      "enjoyedExperience": "Gostou da experiência?",
+      "leaveReview": "Deixe uma avaliação",
+      "rateUs": "Avalie-nos no",
+      "poweredBy": "Com tecnologia"
+    }
+  },
+  "legal": {
+    "common": {
+      "updated": "Última atualização",
+      "onThisPage": "Nesta página",
+      "backToTop": "Voltar ao topo",
+      "questionsHeading": "Ainda precisa de ajuda?",
+      "questionsBody": "Se algo nesta página não estiver claro, envie-nos um email e uma pessoa responderá no prazo de um dia útil.",
+      "questionsCta": "Enviar email ao apoio"
+    },
+    "terms": {
+      "meta": {
+        "title": "Termos de Serviço",
+        "description": "Os termos que regem a sua utilização da Stamp AI, incluindo regras de conta, propriedade dos designs, créditos, produção e devoluções.",
+        "keywords": [
+          "termos de serviço",
+          "termos e condições",
+          "acordo de utilizador"
+        ]
+      },
+      "title": "Termos de",
+      "accent": "serviço",
+      "label": "Legal",
+      "intro": "Estes termos são o acordo entre si e a {legalName} para tudo o que faz na Stamp AI: gerar designs, comprar créditos e encomendar a roupa que imprimimos para si. Tentámos mantê-los legíveis. Quando algo é importante para os seus direitos, está dito de forma clara.",
+      "sections": {
+        "about-these-terms": {
+          "heading": "1. Sobre estes termos",
+          "body": [
+            "Ao criar uma conta, comprar créditos ou fazer uma encomenda na Stamp AI, aceita estes Termos de Serviço. Se não concordar com eles, não utilize o serviço.",
+            "Estes termos funcionam em conjunto com a nossa Política de Privacidade, Política de Cookies, política de Envio e entrega e política de Devoluções e reembolsos. Em conjunto, formam o acordo completo entre nós.",
+            "Se aceitar estes termos em nome de uma empresa ou outra organização, confirma que tem autorização para vincular essa organização, e “o utilizador” nestes termos significa essa organização."
+          ]
+        },
+        "who-we-are": {
+          "heading": "2. Quem somos",
+          "body": [
+            "A Stamp AI é operada pela {legalName}, com sede em {address}. O nosso número de registo comercial é {registration} e o nosso número de IVA é {vat}.",
+            "Pode contactar-nos através de {supportEmail} para tudo o que diga respeito à sua conta ou encomenda."
+          ]
+        },
+        "eligibility-accounts": {
+          "heading": "3. Elegibilidade e a sua conta",
+          "body": [
+            "Tem de ter pelo menos 18 anos, ou a idade da maioridade no seu país, para comprar na Stamp AI. Se tiver entre 16 e 18 anos, só pode usar o serviço com o envolvimento de um pai, mãe ou tutor que aceite estes termos em seu nome.",
+            "É responsável por manter seguros os seus dados de acesso e por tudo o que acontece na sua conta. Avise-nos imediatamente através de {supportEmail} se achar que outra pessoa tem acesso à mesma.",
+            "Mantenha os dados da sua conta corretos. Usamos o seu email para enviar confirmações de encomenda e atualizações de entrega, e a sua morada de envio para fazer chegar a encomenda ao sítio certo."
+          ]
+        },
+        "credits-and-payment": {
+          "heading": "4. Créditos, preços e pagamento",
+          "body": [
+            "Gerar designs usa créditos. Os créditos são comprados antecipadamente, estão associados à sua conta e não são um instrumento de pagamento — não têm valor monetário, não rendem juros e não podem ser transferidos para outra pessoa nem trocados por dinheiro.",
+            "Os preços dos produtos e dos créditos são mostrados antes de confirmar, na moeda apresentada no checkout, e incluem os impostos aplicáveis quando somos obrigados a mostrá-los. Os custos de envio são mostrados à parte no checkout, antes do pagamento.",
+            "Os pagamentos são tratados pelos nossos fornecedores de pagamento. Nunca vemos nem guardamos os dados completos do seu cartão — veja a nossa página de Segurança para saber como funciona.",
+            "Esforçamo-nos por manter os preços corretos. Se um produto ou pacote de créditos estiver anunciado com um preço manifestamente errado devido a um erro técnico, podemos cancelar a encomenda afetada e reembolsá-lo na totalidade em vez de a cumprir a esse preço."
+          ],
+          "bullets": [
+            "Os créditos são consumidos quando uma geração é executada, mesmo que não fique satisfeito com o resultado.",
+            "Os créditos não usados ficam na sua conta e não expiram enquanto a conta estiver aberta.",
+            "Se uma geração falhar por uma falha do nosso lado, devolvemos os créditos consumidos."
+          ]
+        },
+        "creating-designs": {
+          "heading": "5. Gerar designs",
+          "body": [
+            "A Stamp AI transforma as suas descrições, esboços e imagens de referência em arte pronta a imprimir, usando sistemas automatizados. O resultado é gerado, não selecionado — os resultados variam e duas descrições idênticas podem produzir arte diferente.",
+            "Como a geração é automatizada, não podemos garantir que um determinado resultado corresponda ao que imaginou, seja exclusivo para si ou não tenha semelhanças com outras obras. Reveja o seu design com atenção antes de o mandar imprimir.",
+            "Podemos aplicar filtros de segurança automáticos às descrições e aos resultados. Uma descrição bloqueada não é uma acusação — os filtros são imperfeitos —, mas tentativas repetidas de os contornar podem levar à suspensão nos termos da secção 15."
+          ]
+        },
+        "your-content-and-licence": {
+          "heading": "6. O que carrega",
+          "body": [
+            "Mantém a propriedade de tudo o que carrega — descrições, esboços, fotos e imagens de referência. Chamamos-lhe o seu conteúdo.",
+            "Confirma que tem o direito de carregar o seu conteúdo e de o mandar imprimir, e que isso não viola os direitos de autor, marcas registadas ou o direito ao nome e à imagem de outra pessoa.",
+            "Concede-nos uma licença para usar o seu conteúdo apenas para fazer funcionar o serviço: gerar os seus designs, produzir a sua encomenda, prestar apoio e manter os registos que a lei nos obriga a manter. Esta licença é mundial e gratuita porque os nossos parceiros de produção e alojamento operam em vários países, e termina quando elimina o conteúdo ou fecha a conta, exceto quanto às cópias que somos legalmente obrigados a conservar.",
+            "Não vendemos o seu conteúdo nem usamos os seus designs no nosso marketing sem lhe perguntar primeiro."
+          ]
+        },
+        "ownership-of-designs": {
+          "heading": "7. A quem pertence o design final",
+          "body": [
+            "Entre si e nós, o design gerado a partir da sua descrição é seu para usar, incluindo comercialmente — pode imprimi-lo, vender artigos com ele e usá-lo na sua própria marca.",
+            "Tenha em conta um limite que não depende de nós: em muitos países, incluindo em toda a UE e nos Estados Unidos, a arte gerada exclusivamente por máquina pode não ter qualquer proteção de direitos de autor. Isto significa que não lhe podemos garantir direitos de autor que possa fazer valer sobre um design gerado, e que pode não conseguir impedir outra pessoa de usar algo semelhante. Se a exclusividade for importante para o seu negócio, procure aconselhamento jurídico próprio.",
+            "Não reivindicamos a propriedade dos seus designs e não os revendemos."
+          ]
+        },
+        "prohibited-designs": {
+          "heading": "8. O que não pode criar nem encomendar",
+          "body": [
+            "A impressão a pedido só funciona se recusarmos alguns trabalhos. Não pode usar a Stamp AI para gerar, encomendar ou distribuir nada da lista abaixo, e podemos rejeitar ou cancelar uma encomenda em qualquer momento antes da expedição se se enquadrar nela."
+          ],
+          "bullets": [
+            "Conteúdo que viole direitos de autor, marcas registadas ou direitos de design de terceiros — incluindo logótipos de marcas, emblemas de clubes desportivos, arte de bandas e personagens de filmes ou jogos.",
+            "O nome, rosto, assinatura ou imagem de uma pessoa real sem a sua autorização.",
+            "Conteúdo sexual envolvendo menores, ou qualquer conteúdo que sexualize uma pessoa com menos de 18 anos, em qualquer estilo.",
+            "Conteúdo que incite à violência ou ao ódio contra pessoas em razão de raça, etnia, origem nacional, religião, deficiência, sexo, identidade de género ou orientação sexual.",
+            "Conteúdo que promova terrorismo, violência em massa ou automutilação grave.",
+            "Conteúdo concebido para enganar — artigos contrafeitos, documentos oficiais falsificados ou falsas alegações de patrocínio.",
+            "Conteúdo ilegal no local onde é produzido ou para onde é enviado."
+          ]
+        },
+        "production-and-shipping": {
+          "heading": "9. Produção e entrega",
+          "body": [
+            "Cada artigo é feito por encomenda. A produção começa quando a sua encomenda é confirmada, e é por isso que o prazo para alterações é curto — veja a secção 10.",
+            "Os prazos de entrega são estimativas, não garantias. Os prazos de produção e envio, custos, alfândega e direitos estão descritos na íntegra na nossa política de Envio e entrega.",
+            "Como os artigos são impressos individualmente, pequenas variações na posição e na cor da estampa entre um artigo e outro são normais e não constituem defeitos.",
+            "O risco sobre os bens passa para si no momento da entrega. Se encomendar como empresa e não como consumidor, o risco passa quando entregamos os bens à transportadora."
+          ]
+        },
+        "cancellations-returns": {
+          "heading": "10. Alterações, cancelamentos e devoluções",
+          "body": [
+            "Só pode alterar ou cancelar uma encomenda antes de entrar em produção. Depois de a impressão começar não a podemos parar, porque o artigo existe só para si.",
+            "A nossa garantia de 30 dias, o direito de livre resolução da UE e a sua exceção para bens personalizados, bem como o processo para artigos danificados ou errados, estão descritos na nossa política de Devoluções e reembolsos. Nada nestes termos elimina os direitos legais que tem enquanto consumidor."
+          ]
+        },
+        "service-availability": {
+          "heading": "11. Disponibilidade do serviço",
+          "body": [
+            "Procuramos manter a Stamp AI sempre a funcionar, mas não garantimos disponibilidade ininterrupta. Podemos suspender o serviço para manutenção, e partes dele dependem de terceiros cuja disponibilidade não controlamos.",
+            "Podemos alterar, acrescentar ou remover funcionalidades. Se uma alteração reduzir de forma significativa algo que já pagou, avisamos e oferecemos o reembolso do montante afetado."
+          ]
+        },
+        "our-ip": {
+          "heading": "12. A nossa propriedade intelectual",
+          "body": [
+            "O nome Stamp AI, o logótipo, o design do site, o software e os modelos subjacentes pertencem-nos a nós ou aos nossos licenciantes. Nada nestes termos lhe transfere esses direitos.",
+            "Não pode copiar o nosso software, fazer engenharia inversa do serviço, extrair dados dele em grande escala, nem usar sistemas automatizados para fazer encomendas ou gerar designs fora da interface normal."
+          ]
+        },
+        "liability": {
+          "heading": "13. A nossa responsabilidade",
+          "body": [
+            "Nada nestes termos limita a nossa responsabilidade por morte ou lesões pessoais causadas por negligência nossa, por fraude, ou por qualquer outra coisa que não possa ser legalmente limitada — incluindo os seus direitos imperativos enquanto consumidor.",
+            "Sem prejuízo disso, a nossa responsabilidade total perante si por qualquer reclamação relacionada com uma encomenda está limitada ao montante que pagou por essa encomenda, e por qualquer reclamação relacionada com créditos, ao montante que pagou pelos créditos em causa.",
+            "Não somos responsáveis por perdas indiretas ou consequenciais, por lucros ou negócios perdidos, nem por perdas resultantes de um design gerado não poder ser protegido ou não ser exclusivo."
+          ]
+        },
+        "indemnity": {
+          "heading": "14. A sua responsabilidade pelo que imprime",
+          "body": [
+            "É responsável pelo conteúdo que nos pede para imprimir. Se um terceiro apresentar uma reclamação contra nós porque algo que encomendou violou os seus direitos ou as regras da secção 8, aceita cobrir os custos e danos razoáveis que daí resultem para nós.",
+            "Isto não se aplica quando a reclamação resulta de algo que fizemos de errado, independentemente das suas instruções."
+          ]
+        },
+        "suspension-termination": {
+          "heading": "15. Suspensão e encerramento da conta",
+          "body": [
+            "Pode encerrar a sua conta a qualquer momento a partir do seu perfil. Encerrá-la não reembolsa automaticamente os créditos não usados, mas pode pedir-nos e trataremos o pedido de forma justa.",
+            "Podemos suspender ou encerrar uma conta que viole estes termos, em particular a secção 8, ou quando a lei o exija. Sempre que for seguro e legal fazê-lo, explicamos o motivo e damos-lhe oportunidade de responder.",
+            "Se encerrarmos a sua conta sem justa causa, reembolsamos os seus créditos não usados."
+          ]
+        },
+        "changes-to-terms": {
+          "heading": "16. Alterações a estes termos",
+          "body": [
+            "Podemos atualizar estes termos à medida que o serviço muda. A data no topo desta página mostra sempre a versão em vigor.",
+            "Se uma alteração afetar significativamente os seus direitos, avisamos com uma antecedência razoável por email ou na aplicação antes de entrar em vigor. Os termos aplicáveis a uma encomenda são os que estavam em vigor quando a fez."
+          ]
+        },
+        "governing-law": {
+          "heading": "17. Lei aplicável e litígios",
+          "body": [
+            "Estes termos regem-se pela lei de {jurisdiction} e os litígios serão julgados por {courts}.",
+            "Se for um consumidor residente na UE, isto não o priva da proteção da legislação imperativa de defesa do consumidor do país onde vive, e pode também recorrer aos tribunais locais.",
+            "Contacte-nos primeiro através de {supportEmail} — a maioria dos problemas resolve-se mais depressa diretamente. Os consumidores da UE podem também usar a plataforma de resolução de litígios em linha da Comissão Europeia."
+          ]
+        },
+        "contact": {
+          "heading": "18. Contacto",
+          "body": [
+            "As questões sobre estes termos podem ser enviadas para {supportEmail} ou por correio para {legalName}, {address}."
+          ]
+        }
+      }
+    },
+    "privacy": {
+      "meta": {
+        "title": "Política de Privacidade",
+        "description": "Como a Stamp AI recolhe, usa e protege os seus dados pessoais ao abrigo do RGPD, incluindo as suas descrições, encomendas e dados de pagamento.",
+        "keywords": [
+          "política de privacidade",
+          "RGPD",
+          "proteção de dados",
+          "dados pessoais"
+        ]
+      },
+      "title": "Política de",
+      "accent": "privacidade",
+      "label": "Legal",
+      "intro": "Esta política explica que dados pessoais a Stamp AI recolhe, porque os recolhe, com quem os partilha e o controlo que tem sobre eles. Foi escrita para cumprir o Regulamento Geral sobre a Proteção de Dados (RGPD) da UE e aplica-se onde quer que esteja.",
+      "sections": {
+        "controller": {
+          "heading": "1. Quem é responsável pelos seus dados",
+          "body": [
+            "A {legalName}, com sede em {address}, é a responsável pelo tratamento dos dados pessoais descritos nesta política. Isto significa que decidimos porquê e como são tratados e que respondemos por isso.",
+            "Para qualquer questão ou pedido relativo à privacidade, contacte {privacyEmail}."
+          ]
+        },
+        "data-we-collect": {
+          "heading": "2. O que recolhemos",
+          "body": [
+            "Recolhemos apenas o necessário para fazer funcionar o serviço. Isso divide-se em alguns grupos:"
+          ],
+          "bullets": [
+            "Dados da conta — o seu endereço de email, o seu nome se o indicar e dados de autenticação. Se iniciar sessão com o Google, recebemos do Google o seu endereço de email, nome e fotografia de perfil, mas não a sua palavra-passe do Google.",
+            "Dados de design — as descrições que escreve, as imagens que carrega e os designs gerados a partir delas.",
+            "Dados de encomenda — o que encomendou, tamanho e cor, a sua morada de envio e de faturação, o número de telefone se o indicar para a entrega, o histórico de encomendas e o estado das entregas.",
+            "Dados de pagamento — o montante, a moeda, o tipo de método de pagamento e o resultado da transação. O número completo do seu cartão nunca chega aos nossos sistemas; vai diretamente para os nossos fornecedores de pagamento.",
+            "Dados de apoio — as mensagens que nos envia e as nossas respostas.",
+            "Dados técnicos — endereço IP, tipo de navegador e de dispositivo, páginas visitadas e diagnósticos de erros. Parte destes dados é recolhida através de cookies; veja a nossa Política de Cookies."
+          ]
+        },
+        "how-we-use": {
+          "heading": "3. Porque os usamos e o nosso fundamento jurídico",
+          "body": [
+            "Ao abrigo do RGPD, temos de ter um fundamento jurídico para cada finalidade. Os nossos são:"
+          ],
+          "bullets": [
+            "Para criar e gerir a sua conta, gerar os seus designs, receber o pagamento e entregar a sua encomenda — porque é necessário para executar o nosso contrato consigo.",
+            "Para prestar apoio ao cliente e tratar devoluções — execução do nosso contrato e o nosso interesse legítimo em resolver problemas.",
+            "Para manter o serviço seguro, prevenir fraude e abusos e fazer cumprir os nossos termos — o nosso interesse legítimo em proteger o serviço e os seus utilizadores.",
+            "Para medir como o site é usado e melhorá-lo — o nosso interesse legítimo em compreender e melhorar o serviço, e o seu consentimento quando a lei o exige para os cookies em causa.",
+            "Para enviar emails de marketing — o seu consentimento. Todos os emails de marketing têm um link para cancelar a subscrição, e cancelar nunca afeta as suas encomendas.",
+            "Para manter registos contabilísticos, fiscais e de defesa do consumidor — cumprimento das nossas obrigações legais."
+          ]
+        },
+        "ai-prompts-and-designs": {
+          "heading": "4. As suas descrições e designs gerados",
+          "body": [
+            "As suas descrições e carregamentos são enviados para os sistemas de IA que geram a sua arte. Isto é necessário para entregar o que pediu.",
+            "Não vendemos nem publicamos as suas descrições ou designs.",
+            "Evite incluir numa descrição dados pessoais sobre si ou sobre outras pessoas — nomes, moradas, informação de saúde —, porque as descrições são processadas e guardadas como parte do seu histórico de designs.",
+            "Carregar uma fotografia de outra pessoa significa tratar os dados pessoais dessa pessoa. Faça-o apenas se tiver o acordo dela."
+          ]
+        },
+        "sharing-processors": {
+          "heading": "5. Com quem os partilhamos",
+          "body": [
+            "Partilhamos dados pessoais apenas com prestadores de serviços que os tratam segundo as nossas instruções, ao abrigo de um acordo de tratamento de dados, e apenas na medida do necessário. Não vendemos dados pessoais a ninguém."
+          ],
+          "bullets": [
+            "Fornecedores de alojamento, base de dados e autenticação, que guardam os registos da sua conta, designs e encomendas.",
+            "Fornecedores de pagamento, que processam o seu pagamento e realizam verificações de fraude e sanções enquanto responsáveis pelo tratamento.",
+            "Parceiros de impressão e logística, que recebem o seu design, os detalhes do artigo e a sua morada de envio para produzir e enviar a encomenda.",
+            "Transportadoras, que recebem o seu nome, morada e contactos para fazer a entrega.",
+            "Fornecedores de monitorização de erros e de análise, que recebem dados técnicos e de utilização.",
+            "Fornecedores de email, que enviam os seus emails transacionais e, se tiver aceitado, de marketing.",
+            "Consultores profissionais e autoridades públicas, quando a lei o exige."
+          ]
+        },
+        "international-transfers": {
+          "heading": "6. Transferências para fora do EEE",
+          "body": [
+            "Alguns dos nossos fornecedores operam fora do Espaço Económico Europeu, incluindo nos Estados Unidos. Quando os dados pessoais são transferidos para lá, baseamo-nos nas Cláusulas Contratuais-Tipo da Comissão Europeia, ou numa decisão de adequação quando aplicável, juntamente com garantias adicionais quando necessárias.",
+            "Pode pedir-nos através de {privacyEmail} os detalhes das garantias aplicadas a uma transferência específica."
+          ]
+        },
+        "retention": {
+          "heading": "7. Durante quanto tempo os guardamos",
+          "body": [
+            "Guardamos dados pessoais apenas enquanto tivermos motivo para isso:"
+          ],
+          "bullets": [
+            "Dados da conta e de design — enquanto a conta estiver aberta, e eliminados no prazo de 30 dias após a encerrar.",
+            "Registos de encomendas e transações — sete anos a contar da encomenda, porque a lei fiscal e contabilística o exige. Isto aplica-se mesmo depois de encerrar a conta.",
+            "Conversas de apoio — três anos, para podermos tratar questões repetidas ou relacionadas.",
+            "Registos de segurança e de acesso — até 12 meses.",
+            "Dados de análise — até 14 meses.",
+            "Registos de consentimento de marketing — até retirar o consentimento, mais um curto período para provar que a retirada foi respeitada."
+          ]
+        },
+        "your-rights": {
+          "heading": "8. Os seus direitos",
+          "body": [
+            "Ao abrigo do RGPD, tem os seguintes direitos sobre os seus dados pessoais. O seu exercício é gratuito e respondemos no prazo de um mês."
+          ],
+          "bullets": [
+            "Acesso — obter uma cópia dos dados pessoais que temos sobre si.",
+            "Retificação — corrigir dados inexatos ou incompletos.",
+            "Apagamento — eliminar os seus dados quando já não precisarmos deles, sem prejuízo dos registos que a lei nos obriga a manter.",
+            "Limitação — pedir-nos que suspendamos o tratamento enquanto se resolve uma divergência sobre a exatidão ou os interesses legítimos.",
+            "Portabilidade — receber os dados que nos forneceu num formato estruturado e legível por máquina, ou enviá-los para outro fornecedor.",
+            "Oposição — opor-se ao tratamento baseado em interesses legítimos e opor-se a marketing direto a qualquer momento, o que respeitaremos sempre.",
+            "Retirar o consentimento — a qualquer momento, sem afetar o tratamento já realizado.",
+            "Decisões automatizadas — não tomamos decisões com efeitos jurídicos ou igualmente significativos sobre si exclusivamente por meios automatizados."
+          ]
+        },
+        "cookies": {
+          "heading": "9. Cookies",
+          "body": [
+            "Usamos um pequeno número de cookies, alguns estritamente necessários e outros que precisam do seu consentimento. O que cada um faz e como o desativar está descrito na nossa Política de Cookies."
+          ]
+        },
+        "security": {
+          "heading": "10. Como os protegemos",
+          "body": [
+            "Usamos encriptação em trânsito e em repouso, controlos de acesso rigorosos e monitorização contínua. A nossa página de Segurança descreve as medidas específicas.",
+            "Nenhum sistema é perfeitamente seguro. Se alguma vez uma violação afetar os seus direitos e liberdades, notificamos a autoridade de controlo no prazo de 72 horas e informamo-lo diretamente quando o risco para si for elevado."
+          ]
+        },
+        "children": {
+          "heading": "11. Crianças",
+          "body": [
+            "A Stamp AI não se destina a crianças. Não recolhemos conscientemente dados pessoais de menores de 16 anos. Se achar que uma criança nos forneceu os seus dados, contacte {privacyEmail} e eliminá-los-emos."
+          ]
+        },
+        "changes": {
+          "heading": "12. Alterações a esta política",
+          "body": [
+            "Atualizaremos esta política quando as nossas práticas mudarem. A data no topo da página mostra a versão em vigor, e avisamos por email antes de qualquer alteração que afete significativamente os seus direitos entrar em vigor."
+          ]
+        },
+        "contact-complaints": {
+          "heading": "13. Contacto e reclamações",
+          "body": [
+            "Para exercer um direito ou colocar uma questão, envie um email para {privacyEmail} ou escreva para {legalName}, {address}.",
+            "Se não ficar satisfeito com a nossa resposta, pode apresentar reclamação à autoridade nacional de proteção de dados. Nos Países Baixos é a Autoriteit Persoonsgegevens; se viver noutro país da UE, pode reclamar junto da autoridade do país onde vive ou trabalha (em Portugal, a CNPD)."
+          ]
+        }
+      }
+    },
+    "cookies": {
+      "meta": {
+        "title": "Política de Cookies",
+        "description": "Que cookies a Stamp AI usa, o que cada um faz, quanto tempo dura e como os controlar ou recusar.",
+        "keywords": [
+          "política de cookies",
+          "cookies",
+          "rastreamento",
+          "consentimento"
+        ]
+      },
+      "title": "Política de",
+      "accent": "cookies",
+      "label": "Legal",
+      "intro": "Usamos um pequeno número de cookies — alguns sem os quais o site não funciona e outros que só funcionam se concordar. Esta página lista-os todos e explica como desativar os opcionais.",
+      "sections": {
+        "what-are-cookies": {
+          "heading": "1. O que são cookies",
+          "body": [
+            "Os cookies são pequenos ficheiros de texto que um site guarda no seu dispositivo para o reconhecer entre carregamentos de página. Tecnologias relacionadas, como o armazenamento local, fazem praticamente o mesmo, e tudo nesta página se aplica também a elas.",
+            "Um cookie é próprio quando é definido pela Stamp AI e de terceiros quando é definido por outra empresa cujo serviço utilizamos."
+          ]
+        },
+        "why-we-use": {
+          "heading": "2. Porque os usamos",
+          "body": [
+            "Usamos cookies para manter a sua sessão iniciada, lembrar o que está no seu saco, manter o checkout seguro e — apenas com o seu acordo — perceber que partes do site as pessoas realmente usam.",
+            "Não usamos cookies para criar perfis de publicidade e não vendemos o que eles nos dizem."
+          ]
+        },
+        "strictly-necessary": {
+          "heading": "3. Cookies estritamente necessários",
+          "body": [
+            "Estes cookies fazem o site funcionar. São definidos sem pedir autorização, porque o serviço não pode ser prestado sem eles, e não os pode desativar a partir do site."
+          ],
+          "bullets": [
+            "Autenticação — mantém a sua sessão iniciada e renova-a. Expira quando a sessão termina ou após um curto período de renovação.",
+            "Saco — lembra os artigos que adicionou para que ainda lá estejam quando voltar. Dura até 30 dias.",
+            "Segurança — protege formulários e o checkout contra falsificação de pedidos entre sites. Expira com a sessão."
+          ]
+        },
+        "analytics": {
+          "heading": "4. Cookies de análise",
+          "body": [
+            "Usamos o Google Analytics 4 para contar visitas, ver que páginas são usadas e perceber onde as pessoas encalham. Os endereços IP são truncados antes de serem guardados, e não usamos estes cookies para o identificar pessoalmente nem para criar perfis de publicidade.",
+            "Duram até 14 meses. A secção 7 explica como os bloquear, e o Google disponibiliza também um extra para o navegador que o exclui do Google Analytics em todos os sites."
+          ]
+        },
+        "preference": {
+          "heading": "5. Cookies de preferências",
+          "body": [
+            "Estes cookies lembram escolhas que fez — o idioma que escolheu (NEXT_LOCALE) e o aspeto claro ou escuro — para que o site fique como o deixou. Guardam uma definição, nada mais, e duram até 12 meses."
+          ]
+        },
+        "third-party": {
+          "heading": "6. Cookies definidos por terceiros",
+          "body": [
+            "Alguns cookies vêm de serviços de que dependemos e não diretamente de nós:"
+          ],
+          "bullets": [
+            "Os fornecedores de pagamento definem cookies durante o checkout para concluir o seu pagamento e detetar fraude. São necessários para a transação.",
+            "O Google Analytics define cookies de análise, e só depois de dar o seu consentimento.",
+            "Se iniciar sessão com o Google, o Google define cookies como parte do processo de início de sessão."
+          ]
+        },
+        "managing-cookies": {
+          "heading": "7. Como controlar os cookies",
+          "body": [
+            "Todos os principais navegadores permitem bloquear ou eliminar cookies nas definições, normalmente em Privacidade, site a site ou de forma global. Bloquear os cookies estritamente necessários impede-o de iniciar sessão ou concluir o checkout.",
+            "Para se excluir especificamente do Google Analytics, instale o extra de exclusão do Google no navegador ou bloqueie os cookies de terceiros para este site no seu navegador.",
+            "Se quiser que eliminemos dados já recolhidos através de cookies de análise, envie um email para {privacyEmail} e trataremos o pedido como um pedido de apagamento ao abrigo do RGPD."
+          ]
+        },
+        "changes": {
+          "heading": "8. Alterações a esta política",
+          "body": [
+            "Quando acrescentamos ou removemos um cookie, atualizamos esta página. A data no topo mostra a versão em vigor."
+          ]
+        },
+        "contact": {
+          "heading": "9. Contacto",
+          "body": [
+            "As questões sobre cookies podem ser enviadas para {privacyEmail}."
+          ]
+        }
+      }
+    },
+    "security": {
+      "meta": {
+        "title": "Segurança",
+        "description": "Como a Stamp AI protege a sua conta, os seus designs e os seus dados de pagamento — encriptação, controlo de acessos, monitorização e divulgação responsável.",
+        "keywords": [
+          "segurança",
+          "segurança de dados",
+          "encriptação",
+          "PCI DSS",
+          "divulgação de vulnerabilidades"
+        ]
+      },
+      "title": "Segurança",
+      "accent": "na stamp",
+      "label": "Confiança",
+      "intro": "Confia-nos os seus designs, a sua morada e o seu pagamento. Esta página explica o que fazemos de facto para os proteger, com detalhe suficiente para ser útil e não apenas tranquilizador.",
+      "sections": {
+        "our-approach": {
+          "heading": "1. A nossa abordagem",
+          "body": [
+            "Trabalhamos segundo o princípio do privilégio mínimo: cada sistema, cada serviço e cada pessoa tem o acesso mais restrito que lhe permita fazer o seu trabalho, e nada mais.",
+            "Preferimos guardar menos dados do que ter de defender mais, por isso recolhemos apenas o que o serviço precisa e eliminamos os dados quando deixa de haver motivo para os guardar."
+          ]
+        },
+        "encryption": {
+          "heading": "2. Encriptação",
+          "body": [
+            "Todo o tráfego entre o seu navegador e a Stamp AI passa por TLS 1.2 ou superior. Os pedidos HTTP são redirecionados para HTTPS, e enviamos HTTP Strict Transport Security para que o seu navegador recuse qualquer outra forma de ligação.",
+            "Os dados em repouso — a sua conta, designs e registos de encomendas — são encriptados com AES-256 em infraestrutura gerida. As cópias de segurança são encriptadas com o mesmo padrão."
+          ]
+        },
+        "authentication-access": {
+          "heading": "3. Contas e controlo de acessos",
+          "body": [
+            "A autenticação é tratada por um fornecedor de identidade gerido. As palavras-passe nunca são guardadas em texto simples; são processadas com um algoritmo de hash lento e com salt, concebido para esse fim.",
+            "Pode iniciar sessão com o Google em vez de uma palavra-passe, e nesse caso nunca lidamos com qualquer palavra-passe.",
+            "O acesso à base de dados de clientes usa segurança ao nível da linha para restringir cada registo ao seu dono. As operações de servidor usam credenciais privilegiadas e têm de verificar a propriedade e a autorização separadamente antes de ler ou alterar dados de clientes.",
+            "O acesso da equipa ao ambiente de produção está restrito às poucas pessoas que precisam dele, exige autenticação multifator e fica registado."
+          ]
+        },
+        "payment-security": {
+          "heading": "4. Segurança dos pagamentos",
+          "body": [
+            "Nunca vemos o número do seu cartão. Os dados do cartão são introduzidos em campos alojados pelos nossos fornecedores de pagamento certificados PCI DSS de Nível 1 e vão diretamente para eles; os nossos servidores recebem apenas um token e o resultado da transação.",
+            "Isto significa que um ataque à Stamp AI não poderia expor os dados do seu cartão, porque nunca estiveram nos nossos sistemas.",
+            "O 3-D Secure e a Autenticação Forte do Cliente são aplicados quando o seu banco ou a lei o exigem."
+          ]
+        },
+        "infrastructure": {
+          "heading": "5. Infraestrutura",
+          "body": [
+            "A Stamp AI funciona em infraestrutura de cloud gerida, com os dados alojados na UE. Os nossos fornecedores têm certificação ISO 27001 e SOC 2 Type II e são responsáveis pela segurança física, isolamento de rede e atualizações ao nível da plataforma.",
+            "Os ambientes de produção, staging e desenvolvimento estão totalmente separados, e os dados de produção nunca são copiados para ambientes de desenvolvimento.",
+            "Os segredos e chaves de API são guardados num cofre de segredos gerido, nunca no controlo de versões, e são rodados quando alguém com acesso sai."
+          ]
+        },
+        "application-hardening": {
+          "heading": "6. Proteção da aplicação",
+          "body": [
+            "A aplicação envia um conjunto de cabeçalhos de segurança em cada resposta, incluindo uma Content Security Policy que restringe de onde os scripts podem ser carregados, X-Frame-Options para evitar clickjacking, X-Content-Type-Options e uma Referrer-Policy rigorosa.",
+            "Os pedidos têm limites de frequência para travar tentativas de força bruta e abusos dos pontos de geração.",
+            "Todos os dados recebidos são validados contra um esquema na fronteira da API antes de chegarem à lógica de negócio, e o acesso à base de dados usa sempre consultas parametrizadas.",
+            "As dependências são analisadas automaticamente em busca de vulnerabilidades conhecidas, e as correções de segurança são aplicadas com prioridade."
+          ]
+        },
+        "monitoring-logging": {
+          "heading": "7. Monitorização e registos",
+          "body": [
+            "Os erros e anomalias são captados por um serviço de monitorização da aplicação, com os dados pessoais removidos antes de os eventos serem enviados.",
+            "Os eventos de autenticação, ações administrativas e acessos a pontos sensíveis ficam registados e são conservados para que atividade invulgar possa ser investigada posteriormente."
+          ]
+        },
+        "availability-backups": {
+          "heading": "8. Cópias de segurança e continuidade",
+          "body": [
+            "As bases de dados têm cópias de segurança automáticas com recuperação para um momento específico. As cópias são encriptadas, guardadas noutro local, e os restauros são testados periodicamente — uma cópia de segurança não testada não é uma cópia de segurança."
+          ]
+        },
+        "vendor-security": {
+          "heading": "9. Os nossos fornecedores",
+          "body": [
+            "Avaliamos o nível de segurança de cada fornecedor que lida com dados pessoais antes de o adotarmos, e temos um acordo de tratamento de dados com cada um deles.",
+            "Quando um fornecedor opera fora do EEE, as transferências estão cobertas por Cláusulas Contratuais-Tipo — veja a nossa Política de Privacidade."
+          ]
+        },
+        "incident-response": {
+          "heading": "10. Se algo correr mal",
+          "body": [
+            "Temos um processo definido para detetar, conter e investigar incidentes de segurança.",
+            "Se uma violação de dados pessoais afetar os seus direitos e liberdades, notificamos a autoridade de controlo competente no prazo de 72 horas após dela termos conhecimento e informamo-lo diretamente, sem demora injustificada, quando o risco para si for elevado.",
+            "Após qualquer incidente significativo, fazemos uma análise e publicamos o que mudámos em consequência."
+          ]
+        },
+        "your-role": {
+          "heading": "11. O que pode fazer",
+          "body": [
+            "A segurança mais forte da sua conta depende em parte de si:"
+          ],
+          "bullets": [
+            "Use uma palavra-passe longa e única, ou inicie sessão com o Google.",
+            "Nunca reutilize a sua palavra-passe da Stamp AI noutro sítio.",
+            "Desconfie de emails que peçam a sua palavra-passe — nunca a pediremos.",
+            "Termine a sessão em dispositivos partilhados e avise-nos através de {securityEmail} se vir atividade que não reconhece."
+          ]
+        },
+        "vulnerability-disclosure": {
+          "heading": "12. Comunicar uma vulnerabilidade",
+          "body": [
+            "Se encontrou um problema de segurança, informe-nos através de {securityEmail}. Inclua detalhe suficiente para o reproduzirmos e dê-nos um prazo razoável para o corrigir antes de o divulgar publicamente.",
+            "Confirmamos a receção do seu relatório no prazo de três dias úteis e mantemo-lo informado enquanto trabalhamos nele. Não tomaremos medidas legais contra investigadores que ajam de boa-fé, se limitem às suas próprias contas de teste e evitem degradar o serviço ou aceder a dados de outras pessoas."
+          ]
+        }
+      }
+    },
+    "shipping": {
+      "meta": {
+        "title": "Envio e Entrega",
+        "description": "Prazos de produção e entrega, custos de envio, seguimento, alfândega e direitos para encomendas da Stamp AI enviadas para todo o mundo.",
+        "keywords": [
+          "envio",
+          "entrega",
+          "prazos de envio",
+          "seguimento",
+          "alfândega"
+        ]
+      },
+      "title": "Envio e",
+      "accent": "entrega",
+      "label": "Apoio",
+      "intro": "Tudo na Stamp AI é impresso depois de encomendar, por isso a entrega tem duas partes: o tempo para fazer o seu artigo e o tempo para lho fazer chegar. Eis o que pode esperar de cada uma.",
+      "sections": {
+        "how-fulfilment-works": {
+          "heading": "1. Como funciona o processamento",
+          "body": [
+            "Nada fica num armazém à espera de comprador. Quando a sua encomenda é confirmada, enviamo-la para a unidade de impressão mais próxima da sua morada de entrega, onde é impressa, inspecionada à mão e embalada.",
+            "Imprimir localmente é a razão pela qual nada é desperdiçado, e também mantém curta a última etapa da viagem."
+          ]
+        },
+        "production-times": {
+          "heading": "2. Prazo de produção",
+          "body": [
+            "A produção demora 2 a 3 dias úteis para a maioria dos artigos. Cada peça é verificada à mão antes de ser embalada, e tudo o que não passa na inspeção é reimpresso em vez de enviado.",
+            "Encomendas com vários artigos podem ser produzidas em unidades diferentes e chegar em encomendas separadas, sem custos adicionais para si.",
+            "A produção pode demorar mais em períodos de pico, como o final de novembro e dezembro. Assinalamos isso no checkout quando se aplica."
+          ]
+        },
+        "shipping-times": {
+          "heading": "3. Prazo de entrega",
+          "body": [
+            "Depois de a encomenda sair da unidade, os prazos de transporte habituais são:"
+          ],
+          "bullets": [
+            "Países Baixos e Bélgica — 1 a 2 dias úteis.",
+            "Resto da UE — 2 a 4 dias úteis.",
+            "Reino Unido e Suíça — 3 a 5 dias úteis.",
+            "Estados Unidos e Canadá — 3 a 5 dias úteis.",
+            "Resto do mundo — 6 a 12 dias úteis."
+          ]
+        },
+        "total-time": {
+          "heading": "4. Prazo total até à sua porta",
+          "body": [
+            "Somando a produção ao transporte, a maioria das encomendas chega no prazo de 5 a 7 dias úteis após a confirmação.",
+            "Os dias úteis excluem fins de semana e feriados no país de produção. Os prazos de entrega são estimativas, não datas garantidas."
+          ]
+        },
+        "shipping-costs": {
+          "heading": "5. Custos de envio",
+          "body": [
+            "O envio é calculado com base na morada de entrega e no tamanho da encomenda, e é sempre mostrado no checkout antes de pagar. Não são acrescentados custos depois do pagamento.",
+            "Quando se aplica um limite para envio grátis, é mostrado no seu saco à medida que se aproxima dele."
+          ]
+        },
+        "where-we-ship": {
+          "heading": "6. Para onde enviamos",
+          "body": [
+            "Enviamos para todo o mundo. Um pequeno número de destinos está excluído quando as transportadoras não entregam ou quando se aplicam sanções; se o seu for um deles, o checkout avisa antes de pagar.",
+            "Não conseguimos entregar em apartados com todas as transportadoras e não podemos enviar para transitários."
+          ]
+        },
+        "tracking": {
+          "heading": "7. Seguir a sua encomenda",
+          "body": [
+            "Recebe um email de confirmação quando encomenda e um segundo email com um link de seguimento quando a encomenda é expedida. O histórico de encomendas da sua conta mostra o mesmo estado.",
+            "O seguimento pode demorar até 24 horas a mostrar o primeiro registo após a expedição. Esse intervalo é normal e não significa que algo correu mal."
+          ]
+        },
+        "customs-duties": {
+          "heading": "8. Alfândega, direitos e impostos",
+          "body": [
+            "As encomendas entregues dentro da UE não têm custos aduaneiros adicionais.",
+            "Para entregas fora da UE, o seu país pode cobrar à chegada direitos de importação, impostos e taxas de desalfandegamento. São definidos pela sua autoridade aduaneira, não por nós, e são da sua responsabilidade enquanto importador.",
+            "Somos obrigados a declarar o valor total dos artigos no formulário aduaneiro e não podemos marcar uma encomenda como presente nem declarar um valor inferior.",
+            "Se uma encomenda for recusada na alfândega e devolvida, reembolsamos o preço do artigo menos os custos de envio de ida e de devolução."
+          ]
+        },
+        "delays": {
+          "heading": "9. Atrasos",
+          "body": [
+            "A maioria dos atrasos deve-se ao desalfandegamento, a acumulação de trabalho nas transportadoras, mau tempo ou uma morada incompleta.",
+            "Se a sua encomenda não se mover durante sete dias úteis, contacte-nos através de {supportEmail} e abriremos uma investigação junto da transportadora."
+          ]
+        },
+        "wrong-address": {
+          "heading": "10. Moradas incorretas",
+          "body": [
+            "Verifique a sua morada antes de confirmar. Só a podemos corrigir antes de a encomenda entrar em produção — envie um email para {supportEmail} imediatamente se detetar um erro.",
+            "Se uma encomenda nos for devolvida porque a morada estava errada ou incompleta, reenviamo-la depois de pagar o novo custo de envio, ou reembolsamos o preço do artigo menos o envio.",
+            "O mesmo se aplica se uma encomenda for devolvida por não ter sido levantada após as tentativas da transportadora."
+          ]
+        },
+        "lost-damaged": {
+          "heading": "11. Perdas ou danos no transporte",
+          "body": [
+            "Se o seguimento indicar que foi entregue mas a encomenda não chegou, confirme primeiro com os vizinhos e a receção do seu prédio e depois contacte-nos no prazo de 14 dias para investigarmos junto da transportadora.",
+            "Se o artigo chegar danificado, envie-nos uma foto do artigo e da embalagem no prazo de 30 dias e substituímo-lo gratuitamente. Veja a nossa política de Devoluções e reembolsos para saber como funciona."
+          ]
+        },
+        "sustainability": {
+          "heading": "12. Embalagem e emissões",
+          "body": [
+            "Embalamos com materiais reciclados e recicláveis, sem plástico desnecessário.",
+            "As emissões do envio são compensadas através de programas verificados, e imprimir a pedido perto da morada de entrega reduz tanto a distância de transporte como a sobreprodução."
+          ]
+        },
+        "contact": {
+          "heading": "13. Contacto",
+          "body": [
+            "Qualquer questão sobre uma entrega pode ser enviada para {supportEmail} com o número da encomenda, e respondemos no prazo de um dia útil."
+          ]
+        }
+      }
+    },
+    "returns": {
+      "meta": {
+        "title": "Devoluções e Reembolsos",
+        "description": "A garantia de 30 dias da Stamp AI, como devolver ou trocar um artigo, prazos de reembolso e o seu direito de livre resolução na UE para bens personalizados.",
+        "keywords": [
+          "devoluções",
+          "reembolsos",
+          "trocas",
+          "direito de livre resolução",
+          "garantia"
+        ]
+      },
+      "title": "Devoluções e",
+      "accent": "reembolsos",
+      "label": "Apoio",
+      "intro": "Cada artigo é feito para uma pessoa, por isso preferimos acertar a ter de o receber de volta. Quando não acertamos, é isto que acontece — e pagamos o envio da devolução.",
+      "sections": {
+        "our-guarantee": {
+          "heading": "1. A nossa garantia de 30 dias",
+          "body": [
+            "Se a impressão, o tecido ou o tamanho não estiverem certos, avise-nos no prazo de 30 dias após a entrega e substituímos o artigo gratuitamente ou reembolsamos na totalidade. A escolha é sua.",
+            "Pagamos o envio da devolução em qualquer reclamação ao abrigo desta garantia. Não terá custos por um problema que nós causámos.",
+            "Em muitos casos nem sequer pedimos o artigo de volta. Se pedirmos, enviamos-lhe uma etiqueta pré-paga."
+          ]
+        },
+        "what-is-covered": {
+          "heading": "2. O que a garantia cobre",
+          "body": [
+            "A garantia diz respeito ao nosso trabalho, não a uma mudança de ideias:"
+          ],
+          "bullets": [
+            "Defeitos de impressão — estalar, desbotar, desalinhamento ou cor claramente diferente do design que aprovou.",
+            "Defeitos do tecido — buracos, costuras soltas ou uma peça que não corresponde à sua tabela de tamanhos.",
+            "Chegar o artigo, tamanho ou cor errados.",
+            "Danos no transporte.",
+            "Um artigo que nunca chegou."
+          ]
+        },
+        "not-covered": {
+          "heading": "3. O que não cobre",
+          "body": [
+            "Há situações que ficam de fora, e é mais justo dizê-lo desde já:"
+          ],
+          "bullets": [
+            "Encomendar o tamanho errado quando o artigo corresponde à tabela de tamanhos — veja as trocas na secção 8.",
+            "Não gostar de um design que aprovou antes da impressão. Reveja o seu design com atenção no checkout.",
+            "Pequenas variações na posição ou na cor da estampa entre artigos, que são inerentes à impressão a pedido.",
+            "Desgaste normal, ou danos causados por lavagens contrárias às instruções de cuidado.",
+            "Reclamações feitas mais de 30 dias após a entrega, a menos que os seus direitos legais lhe deem mais tempo."
+          ]
+        },
+        "custom-items": {
+          "heading": "4. Porque é que os artigos personalizados são diferentes",
+          "body": [
+            "O seu artigo não existia até o encomendar e não pode ser revendido a mais ninguém. É por isso que o direito habitual de devolver um artigo indesejado não se aplica aqui da mesma forma que a algo comprado numa prateleira.",
+            "A nossa garantia de 30 dias é a nossa resposta a isso: é mais ampla do que a lei exige para bens personalizados e coloca o custo de qualquer defeito do nosso lado."
+          ]
+        },
+        "eu-right-of-withdrawal": {
+          "heading": "5. Direito de livre resolução na UE",
+          "body": [
+            "Os consumidores da UE têm normalmente 14 dias para desistir de uma compra à distância sem indicar motivo. O artigo 16.º, alínea c), da Diretiva relativa aos direitos dos consumidores exclui bens fabricados segundo as especificações do consumidor ou claramente personalizados, que é o caso de todos os artigos da Stamp AI. Ao confirmar a sua encomenda, reconhece que esta exclusão se aplica a partir do momento em que a produção começa.",
+            "Antes de a produção começar, pode cancelar por qualquer motivo e receber o reembolso total — veja a secção 10.",
+            "Esta exclusão não afeta os seus direitos legais quando um artigo tem defeito, não corresponde à descrição ou não corresponde ao design que aprovou. Esses direitos duram dois anos a contar da entrega, ao abrigo da legislação da UE, e nada nesta política os limita."
+          ]
+        },
+        "how-to-start": {
+          "heading": "6. Como fazer uma reclamação",
+          "body": [
+            "Envie um email para {supportEmail} no prazo de 30 dias após a entrega, com o número da encomenda e, se o problema for visível, uma foto do artigo e da embalagem. Uma foto normalmente permite-nos resolver logo na primeira resposta.",
+            "Respondemos no prazo de um dia útil e a maioria das reclamações é resolvida no próprio dia.",
+            "Não nos envie nada antes de nos contactar — devoluções não solicitadas não podem ser associadas à sua encomenda."
+          ]
+        },
+        "return-shipping": {
+          "heading": "7. Envio da devolução",
+          "body": [
+            "Em qualquer reclamação válida ao abrigo da garantia, pagamos o envio da devolução e enviamos-lhe uma etiqueta pré-paga.",
+            "Quando pedirmos o artigo de volta, envie-o no prazo de 14 dias após receber a etiqueta."
+          ]
+        },
+        "exchanges": {
+          "heading": "8. Trocas e tamanhos",
+          "body": [
+            "Se um artigo corresponder à tabela de tamanhos mas não lhe servir, produzimos uma substituição noutro tamanho por 50% do preço do artigo — cobrindo o custo de fazer um segundo artigo sem lhe cobrar duas vezes.",
+            "Se o artigo não corresponder à tabela de tamanhos, trata-se de um defeito e a garantia aplica-se na totalidade, sem custos para si.",
+            "Consulte a tabela de tamanhos na página do produto antes de encomendar; as nossas peças são de gramagem alta e podem servir de forma diferente daquela a que está habituado."
+          ]
+        },
+        "refund-timing": {
+          "heading": "9. Prazos de reembolso",
+          "body": [
+            "Os reembolsos aprovados são emitidos no prazo de 3 dias úteis para o método de pagamento original.",
+            "O tempo até aparecer depende do seu banco: nos cartões costuma demorar 5 a 10 dias úteis, e no PayPal ou iDEAL normalmente 1 a 3.",
+            "Reembolsamos o preço do artigo e o custo de envio original quando toda a encomenda tinha defeito. Quando apenas parte da encomenda tinha defeito, reembolsamos essa parte."
+          ]
+        },
+        "cancelling-an-order": {
+          "heading": "10. Cancelar antes da produção",
+          "body": [
+            "Pode cancelar com reembolso total em qualquer momento antes de a encomenda entrar em produção, o que normalmente acontece pouco depois de a confirmar.",
+            "Envie um email para {supportEmail} com o número da encomenda o mais depressa possível. Se a impressão já tiver começado, não a podemos parar, porque o artigo existe só para si."
+          ]
+        },
+        "credits-refunds": {
+          "heading": "11. Créditos",
+          "body": [
+            "Os créditos pagam a geração de designs, e uma geração executada usou recursos de computação reais, por isso os créditos, em geral, não são reembolsáveis depois de gastos.",
+            "Se uma geração falhar por uma falha do nosso lado, devolvemos os créditos automaticamente. Se isso não tiver acontecido, avise-nos e resolvemos.",
+            "Os créditos não usados não expiram enquanto a conta estiver aberta. Se quiser encerrar a conta com créditos por usar, contacte-nos e trataremos do assunto de forma justa."
+          ]
+        },
+        "contact": {
+          "heading": "12. Contacto",
+          "body": [
+            "Envie um email para {supportEmail} com o número da encomenda. Se não ficar satisfeito com a forma como tratámos uma reclamação, diga-o na sua resposta e o caso será revisto por outra pessoa."
+          ]
+        }
+      }
+    }
+  },
+  "faq": {
+    "meta": {
+      "title": "Perguntas Frequentes",
+      "description": "Respostas sobre design com IA, encomendas, créditos, tamanhos, prazos de envio, devoluções e gestão de conta na Stamp AI.",
+      "keywords": [
+        "perguntas frequentes",
+        "ajuda",
+        "perguntas",
+        "apoio",
+        "como funciona"
+      ]
+    },
+    "title": "Perguntas",
+    "accent": "frequentes",
+    "label": "Apoio",
+    "intro": "Respostas ao que mais nos perguntam, agrupadas por tema. Se a sua pergunta não estiver aqui, envie-nos um email e uma pessoa responderá.",
+    "stillHaveQuestions": "Ainda tem perguntas?",
+    "contactSupport": "Enviar email ao apoio",
+    "categories": {
+      "design-ai": {
+        "heading": "Design com IA"
+      },
+      "ordering": {
+        "heading": "Encomendas e créditos"
+      },
+      "products-sizing": {
+        "heading": "Produtos e tamanhos"
+      },
+      "shipping": {
+        "heading": "Envio e entrega"
+      },
+      "returns": {
+        "heading": "Devoluções e reembolsos"
+      },
+      "account": {
+        "heading": "A sua conta"
+      }
+    },
+    "items": {
+      "prompt-tips": {
+        "question": "Como escrevo uma descrição que dê um bom resultado?",
+        "answer": "Seja específico quanto ao motivo, estilo e composição, e diga o que não quer. “Uma cordilheira em desenho de linha, traço único, centrada, sem cor, sem texto” funciona sempre melhor do que “montanhas”. Mencionar uma técnica — xilogravura, risografia, desenho técnico — costuma dar resultados mais limpos do que nomear um artista."
+      },
+      "upload-own-art": {
+        "question": "Posso carregar a minha própria arte em vez de usar uma descrição?",
+        "answer": "Sim. Carregue um esboço, uma foto ou um ficheiro final e nós preparamo-lo para impressão. Também pode carregar uma imagem de referência e usar uma descrição para a levar numa determinada direção. Precisa de ter os direitos sobre tudo o que carregar."
+      },
+      "design-ownership": {
+        "question": "O design criado pela IA é meu?",
+        "answer": "Entre si e nós, sim — incluindo para uso comercial. Uma ressalva honesta: em muitos países, a arte gerada exclusivamente por máquina pode não ter qualquer proteção de direitos de autor, por isso não podemos garantir-lhe um direito exclusivo que possa fazer valer. Os nossos Termos de Serviço explicam isto em detalhe."
+      },
+      "not-happy-with-design": {
+        "question": "E se não gostar do que a IA gerar?",
+        "answer": "Gere novamente com uma descrição ajustada. Cada geração usa créditos, incluindo as de que não gosta, porque o processamento acontece de qualquer forma. Nada é impresso até aprovar um design, por isso uma geração indesejada nunca lhe custa uma peça de roupa."
+      },
+      "prohibited-content": {
+        "question": "Há designs que não imprimem?",
+        "answer": "Sim. Não imprimimos marcas registadas de terceiros nem personagens protegidas por direitos de autor, a imagem de uma pessoa real sem autorização, conteúdo sexual envolvendo menores, nem conteúdo que incite à violência ou ao ódio. A secção 8 dos nossos Termos de Serviço tem a lista completa."
+      },
+      "what-are-credits": {
+        "question": "O que são créditos e como funcionam?",
+        "answer": "Os créditos pagam a geração de designs. Compra-os antecipadamente, ficam na sua conta e é usado um sempre que uma geração é feita. A impressão e o envio são pagos à parte quando encomenda um artigo."
+      },
+      "credits-expire": {
+        "question": "Os créditos expiram?",
+        "answer": "Não. Os créditos não usados ficam na sua conta enquanto ela estiver aberta. Não podem ser transferidos para outra conta nem trocados por dinheiro."
+      },
+      "payment-methods": {
+        "question": "Que métodos de pagamento posso usar?",
+        "answer": "Visa, Mastercard e American Express, além de PayPal, iDEAL, Apple Pay e Google Pay. Os dados do seu cartão vão diretamente para o nosso fornecedor de pagamentos e nunca passam pelos nossos servidores."
+      },
+      "change-order": {
+        "question": "Posso alterar ou cancelar a minha encomenda?",
+        "answer": "Apenas antes de entrar em produção, o que acontece pouco depois de confirmar. Envie um email ao apoio com o número da encomenda o mais depressa possível. Depois de a impressão começar não a podemos parar, porque o artigo existe só para si."
+      },
+      "bulk-orders": {
+        "question": "Posso encomendar em quantidade?",
+        "answer": "Sim, não há máximo. Encomendas de 25 artigos ou mais têm um desconto de quantidade, aplicado automaticamente no saco. Também não há mínimo — um único artigo é uma encomenda perfeitamente normal."
+      },
+      "product-range": {
+        "question": "Em que produtos posso imprimir o meu design?",
+        "answer": "T-shirts, hoodies, sweatshirts e bonés, numa variedade de cores. Cada página de produto indica a peça exata, a sua gramagem e a composição."
+      },
+      "sizing": {
+        "question": "Como escolho o tamanho certo?",
+        "answer": "Use a tabela de tamanhos da página do produto em vez do tamanho que costuma usar. As nossas peças são de gramagem alta e têm um corte diferente das lojas habituais. A tabela dá medidas em plano, por isso compare-as com uma peça que já tenha."
+      },
+      "print-durability": {
+        "question": "Quanto tempo dura a estampa?",
+        "answer": "Imprimimos com tintas à base de água que se fixam no tecido em vez de ficarem por cima, por isso a estampa não estala nem descasca. Lave do avesso a 30 °C, evite a máquina de secar e a estampa vai durar mais do que a própria peça."
+      },
+      "care-instructions": {
+        "question": "Como devo lavar?",
+        "answer": "Do avesso, a 30 °C ou menos, com cores semelhantes. Sem lixívia e sem passar a ferro diretamente sobre a estampa. Seque ao ar sempre que possível. Todas as peças têm estas instruções na etiqueta."
+      },
+      "where-printed": {
+        "question": "Onde são impressos os artigos?",
+        "answer": "Na unidade de impressão mais próxima da sua morada de entrega, o que encurta o transporte e acelera a entrega. Uma encomenda com vários artigos pode ser produzida em mais do que uma unidade e chegar em encomendas separadas, sem custos adicionais."
+      },
+      "shipping-cost": {
+        "question": "Quanto custa o envio?",
+        "answer": "Depende da sua morada e do tamanho da encomenda, e é sempre mostrado no checkout antes de pagar. Nada é acrescentado depois. Todos os detalhes estão na nossa página de Envio e entrega."
+      },
+      "customs": {
+        "question": "Vou pagar alfândega ou direitos de importação?",
+        "answer": "Não, dentro da UE. Fora da UE, o seu país pode cobrar direitos e impostos de importação à chegada, definidos pela sua autoridade aduaneira e não por nós. Somos legalmente obrigados a declarar o valor total dos artigos."
+      },
+      "track-order": {
+        "question": "Como sigo a minha encomenda?",
+        "answer": "Recebe um link de seguimento por email quando a encomenda é expedida, e o seu histórico de encomendas mostra o mesmo estado. O primeiro registo da transportadora pode demorar até 24 horas a aparecer — esse intervalo é normal."
+      },
+      "return-window": {
+        "question": "Posso devolver um artigo?",
+        "answer": "Se a impressão, o tecido ou o tamanho não estiverem certos, avise-nos no prazo de 30 dias e substituímos gratuitamente ou reembolsamos na totalidade, com o envio da devolução incluído. Como cada artigo é feito para uma pessoa, uma simples mudança de ideias não está coberta depois de a produção começar."
+      },
+      "wrong-size-ordered": {
+        "question": "Encomendei o tamanho errado. E agora?",
+        "answer": "Se o artigo corresponder à tabela de tamanhos, produzimos uma substituição no tamanho certo por 50% do preço do artigo. Se não corresponder à tabela, a culpa é nossa e substituímos sem qualquer custo."
+      },
+      "refund-time": {
+        "question": "Quanto tempo demora um reembolso?",
+        "answer": "Emitimos os reembolsos aprovados no prazo de 3 dias úteis para o método de pagamento original. Nos cartões, costuma aparecer em 5 a 10 dias úteis; no PayPal e no iDEAL, normalmente em 1 a 3."
+      },
+      "delete-account": {
+        "question": "Como elimino a minha conta?",
+        "answer": "No seu perfil. Eliminamos a sua conta e os dados dos designs no prazo de 30 dias. Os registos de encomendas e transações são guardados durante sete anos porque a lei fiscal o exige — a nossa Política de Privacidade explica o que é guardado e porquê."
+      },
+      "data-privacy": {
+        "question": "O que fazem com as minhas descrições e designs?",
+        "answer": "Usamo-los para gerar a sua arte, produzir a sua encomenda e prestar apoio. Não os vendemos, não os publicamos e não usamos os seus designs no nosso marketing sem lhe perguntar primeiro."
+      },
+      "contact-human": {
+        "question": "Como falo com uma pessoa?",
+        "answer": "Envie-nos um email com o número da encomenda, se tiver um. Respondemos no prazo de um dia útil e uma pessoa lê todas as mensagens."
+      }
+    }
+  },
+  "cookieConsent": {
+    "title": "Cookies e análise",
+    "body": "Usamos cookies essenciais para o funcionamento da loja. Permita a análise opcional para nos ajudar a perceber como o site é usado. Pode alterar a sua escolha nas Definições de cookies.",
+    "policyLink": "Ler a Política de Cookies",
+    "accept": "Aceitar análise",
+    "reject": "Apenas essenciais",
+    "settings": "Definições de cookies"
+  }
+}

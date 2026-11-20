@@ -626,7 +626,6 @@
       "stamp": "Stamp it!",
       "catalog": "Catalog",
       "profile": "Profile",
-      "profileAria": "View your profile",
       "orders": "Orders",
       "cart": "Bag",
       "logoutAria": "Logout from your account",
@@ -1193,6 +1192,9 @@
       "wordmark": "Stamp",
       "copyright": "© {year} Stamp AI. All rights reserved.",
       "tagline": "Made for people who make things"
+    },
+    "languageSwitcher": {
+      "label": "Language"
     }
   },
   "auth": {
@@ -1252,7 +1254,6 @@
       }
     },
     "login": {
-      "openDialogAria": "Open login dialog",
       "loginShort": "LOGIN",
       "login": "Login",
       "form": {
@@ -1344,7 +1345,6 @@
     },
     "register": {
       "register": "Register",
-      "openDialogAria": "Open register dialog",
       "signUp": "Sign Up",
       "successToast": "Check your email to verify your address and set your password.",
       "form": {
@@ -2441,7 +2441,7 @@
         "preference": {
           "heading": "5. Preference cookies",
           "body": [
-            "These remember choices you have made — such as light or dark appearance — so the site looks the way you left it. They hold a setting, nothing more, and persist for up to 12 months."
+            "These remember choices you have made — the language you picked (NEXT_LOCALE) and light or dark appearance — so the site looks the way you left it. They hold a setting, nothing more, and persist for up to 12 months."
           ]
         },
         "third-party": {

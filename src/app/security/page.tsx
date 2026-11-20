@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { StructuredData } from "@/features/seo/StructuredData";
 import { pageSchema } from "@/features/seo/schemas/page";
+import { toLanguageTag } from "@/i18n/locales";
 import { generatePageMetadata } from "@/features/seo/metadata/pageMetadata";
 import { PAGE_KEYWORDS } from "@/features/seo/config/keywords";
 import { SITE_URL } from "@/features/seo/config/site";
@@ -29,6 +30,7 @@ export default async function SecurityPage() {
             name: t("title"),
             description: t("description"),
             url: `${SITE_URL}/security`,
+            inLanguage: toLanguageTag(await getLocale()),
           },
           [
             { name: "Home", url: SITE_URL },

@@ -20,6 +20,8 @@ export interface WebPageData {
   url: string;
   datePublished?: string;
   dateModified?: string;
+  /** BCP 47 tag of the language the page was rendered in; defaults to en-US */
+  inLanguage?: string;
 }
 
 export interface ProductData {

@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { ShoppingBag, X } from "lucide-react";
 import { formatOrderDate } from "../../../lib/utils/formatOrderDate";
 import { formatPrice } from "../../../lib/utils/formatPrice";
@@ -31,6 +31,7 @@ interface PropsI {
 export function OrdersDetailsModal({ order, onClose }: PropsI) {
   const t = useTranslations("orders.detailsModal");
   const tStatus = useTranslations("orders.statusBadge");
+  const locale = useLocale();
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const firstItem = getFirstOrderItem(order);
@@ -97,7 +98,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
             {t("orderMeta", {
               orderNumber:
                 order.order_number || order.id.slice(0, 13).toUpperCase(),
-              date: formatOrderDate(order.created_at),
+              date: formatOrderDate(order.created_at, locale),
             })}
           </Span>
         </div>
@@ -223,7 +224,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
                     variant="sm"
                     className="font-semibold text-(--color-stamp-chocolate)"
                   >
-                    {formatOrderDate(order.created_at)}
+                    {formatOrderDate(order.created_at, locale)}
                   </Paragraph>
                 </div>
                 {order.payment_method && (
@@ -254,7 +255,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
                       variant="sm"
                       className="font-semibold text-(--color-stamp-chocolate)"
                     >
-                      {formatOrderDate(order.shipped_at)}
+                      {formatOrderDate(order.shipped_at, locale)}
                     </Paragraph>
                   </div>
                 )}
@@ -270,7 +271,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
                       variant="sm"
                       className="font-semibold text-(--color-stamp-chocolate)"
                     >
-                      {formatOrderDate(order.delivered_at)}
+                      {formatOrderDate(order.delivered_at, locale)}
                     </Paragraph>
                   </div>
                 )}

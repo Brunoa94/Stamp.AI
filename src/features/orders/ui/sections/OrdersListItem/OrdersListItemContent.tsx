@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { formatOrderDate } from "../../../lib/utils/formatOrderDate";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { Heading } from "@/features/ui/heading";
@@ -20,6 +20,7 @@ export function OrdersListItemContent({
 }: PropsI) {
   const t = useTranslations("orders.listItem");
   const tStatus = useTranslations("orders.statusBadge");
+  const locale = useLocale();
 
   return (
     <div className="flex-1">
@@ -49,7 +50,7 @@ export function OrdersListItemContent({
             {t("creationDate")}
           </Span>
           <Span variant="value" className="text-(--color-stamp-chocolate)">
-            {formatOrderDate(order.created_at)}
+            {formatOrderDate(order.created_at, locale)}
           </Span>
         </div>
         <div>

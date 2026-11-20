@@ -21,7 +21,6 @@ export function Login({ className, children, variant = "default" }: LoginProps) 
     variant === "brutalist" ? (
       <Button
         variant="unstyled"
-        aria-label={t("openDialogAria")}
         className={className}
       >
         <User className="w-5 h-5 text-purple group-hover:scale-110 transition-transform duration-300" />
@@ -32,7 +31,6 @@ export function Login({ className, children, variant = "default" }: LoginProps) 
     ) : (
       <Button
         variant="outline"
-        aria-label={t("openDialogAria")}
         className={className}
       >
         <LogIn className="mr-2 h-3 w-3" />
@@ -43,7 +41,6 @@ export function Login({ className, children, variant = "default" }: LoginProps) 
   return (
     <AuthDialog
       form={<AuthDialogForms initialView="login" />}
-      triggerAriaLabel={t("openDialogAria")}
       className={className}
       defaultTrigger={defaultTrigger}
     >

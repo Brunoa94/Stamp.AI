@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { StructuredData } from "@/features/seo/StructuredData";
 import { pageSchema } from "@/features/seo/schemas/page";
+import { toLanguageTag } from "@/i18n/locales";
 import { itemListSchema } from "@/features/seo/schemas/itemList";
 import { mapProductsToSchemaData } from "@/features/seo/lib/productSchemaMapper";
 import { generatePageMetadata } from "@/features/seo/metadata/pageMetadata";
@@ -48,6 +49,7 @@ export default async function CatalogPage() {
             name: tMeta("title"),
             description: tMeta("description"),
             url: `${SITE_URL}/catalog`,
+            inLanguage: toLanguageTag(await getLocale()),
           },
           [
             { name: "Home", url: SITE_URL },

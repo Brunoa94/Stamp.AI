@@ -1,4 +1,4 @@
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { canCancelOrder } from "../../../lib/utils/orderCancellation";
 import { formatOrderDate } from "../../../lib/utils/formatOrderDate";
 import { formatPrice } from "../../../lib/utils/formatPrice";
@@ -25,6 +25,7 @@ export function OrdersGridItemContent({
   onReorder,
 }: PropsI) {
   const t = useTranslations("orders.gridItem");
+  const locale = useLocale();
   const canCancel = canCancelOrder(order);
 
   return (
@@ -34,7 +35,7 @@ export function OrdersGridItemContent({
       </Span>
       <Span variant="micro" className="mb-3 text-(--color-stamp-taupe)">
         {t("archiveLine", {
-          date: formatOrderDate(order.created_at),
+          date: formatOrderDate(order.created_at, locale),
           address: getAddressSummary(order) || t("archiveAddress"),
         })}
       </Span>
