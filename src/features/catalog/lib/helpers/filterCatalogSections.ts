@@ -8,29 +8,30 @@
  */
 
 import type {
-  CatalogDisplayProductType,
+  CatalogDisplayProductT,
   CatalogFilterStateType,
   CatalogGroupSectionType,
   CatalogSortOptionType,
 } from "../types/catalogPageTypes";
 
 function matchesQuery(
-  product: CatalogDisplayProductType,
+  product: CatalogDisplayProductT,
   normalizedQuery: string
 ): boolean {
   if (!normalizedQuery) {
     return true;
   }
 
+  // Search what the visitor can read.
   const haystack =
-    `${product.name} ${product.description ?? ""}`.toLowerCase();
+    `${product.displayName} ${product.description ?? ""}`.toLowerCase();
 
   return haystack.includes(normalizedQuery);
 }
 
 function compareProducts(
-  a: CatalogDisplayProductType,
-  b: CatalogDisplayProductType,
+  a: CatalogDisplayProductT,
+  b: CatalogDisplayProductT,
   sort: CatalogSortOptionType
 ): number {
   switch (sort) {
@@ -39,7 +40,8 @@ function compareProducts(
     case "price-desc":
       return b.price - a.price;
     case "name-asc":
-      return a.name.localeCompare(b.name);
+      // Alphabetical by the name the visitor reads, in any language
+      return a.displayName.localeCompare(b.displayName);
     case "featured":
       return 0;
   }

@@ -13,28 +13,36 @@ import type {
   ProductGroup,
 } from "@/features/stamp/lib/helpers/productCategoryDetector";
 
-export type CatalogDisplayProductType = {
+export type CatalogDisplayProductT = {
   blueprintId: number;
+  /** English title, for sorting and category logic; render `displayName` */
   name: string;
+  /** Title in the visitor's language */
+  displayName: string;
   category: ProductCategory;
+  /** In the visitor's language (display-only) */
   description: string | null;
+  /** In the visitor's language (display-only) */
   specs: string[];
   price: number;
   originalPrice?: number;
   isOnSale: boolean;
   discountPercent?: number;
   imageUrls: string[];
+  /** English colour names: swatch keys and hex lookups */
   availableColors: string[];
+  /** English colour name → label in the visitor's language */
+  colorLabels: Record<string, string>;
 };
 
 export type CatalogCategorySectionType = {
   category: ProductCategory;
-  products: CatalogDisplayProductType[];
+  products: CatalogDisplayProductT[];
 };
 
 export type CatalogGroupSectionType = {
   group: ProductGroup;
-  products: CatalogDisplayProductType[];
+  products: CatalogDisplayProductT[];
 };
 
 export type CatalogShowcaseItemType = {

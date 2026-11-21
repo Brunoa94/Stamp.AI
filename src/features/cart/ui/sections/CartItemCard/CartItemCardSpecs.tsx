@@ -8,7 +8,7 @@
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { formatPrice } from "../../../lib/utils/formatPrice";
-import { formatVariantForDisplay } from "@/features/stamp/lib/helpers/sizeDisplayMapper";
+import { useSizeLabel } from "@/features/stamp/lib/hooks/useSizeLabel";
 
 interface CartItemCardSpecsPropsI {
   variantName: string;
@@ -42,10 +42,11 @@ export function CartItemCardSpecs({
   lineTotal,
 }: CartItemCardSpecsPropsI) {
   const t = useTranslations("cart.itemCard");
+  const { formatVariant } = useSizeLabel();
 
   return (
     <dl className="grid grid-cols-2 gap-3 border-t border-(--color-stamp-divider) pt-3 md:grid-cols-3 md:gap-6 md:pt-6">
-      <SpecItem label={t("variant")} value={formatVariantForDisplay(variantName)} />
+      <SpecItem label={t("variant")} value={formatVariant(variantName)} />
       <SpecItem label={t("colorway")} value={colorway} />
       <SpecItem label={t("lineTotal")} value={formatPrice(lineTotal)} />
     </dl>

@@ -1,5 +1,32 @@
 {
+  "paymentMethods": {
+    "stripe": {
+      "label": "Credit Card",
+      "description": "Visa, Mastercard, Amex"
+    },
+    "paypal": {
+      "label": "PayPal",
+      "description": "PayPal, Venmo, Pay Later"
+    },
+    "ideal": {
+      "label": "iDEAL",
+      "description": "Pay with your Dutch bank"
+    }
+  },
+  "productSizes": {
+    "oneSize": "One Size",
+    "vertical": "Vertical",
+    "horizontal": "Horizontal"
+  },
   "home": {
+    "heroTrust": {
+      "moneyBackLabel": "{days}-Day",
+      "moneyBackSublabel": "Money Back",
+      "freeShippingLabel": "Free Shipping",
+      "freeShippingSublabel": "Orders €{threshold}+",
+      "secureLabel": "Secure",
+      "secureSublabel": "Checkout"
+    },
     "topBanner": {
       "freeShipping": "Free shipping on orders over €{threshold}",
       "returns": "{days}-day returns",
@@ -756,7 +783,9 @@
       "showMore": "Show {count} more",
       "showLess": "Show less",
       "sectionPickerAria": "Product type",
-      "sectionCount": "{count, plural, one {# product} other {# products}}"
+      "sectionCount": "{count, plural, one {# product} other {# products}}",
+      "seeMore": "See more",
+      "seeLess": "See less"
     },
     "customization": {
       "protocol": "Step 06 / Customize",
@@ -954,7 +983,7 @@
       "free": "Free",
       "taxLogistics": "Tax",
       "taxNote": "Calculated at checkout",
-      "proceedToCheckout": "Checkout",
+      "proceedToCheckout": "Proceed to Checkout",
       "estimatedArrival": "Estimated Arrival",
       "arrivalWindow": "5-8 Business Days",
       "secureTransactions": "Secure, encrypted checkout",

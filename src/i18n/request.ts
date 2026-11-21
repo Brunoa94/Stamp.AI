@@ -31,7 +31,9 @@ async function loadMessages(locale: LocaleT): Promise<MessagesT> {
  * switcher), else Accept-Language, else English. Reading the cookie makes
  * every page render per request. To add a language, add
  * `messages/<locale>.json` and the code to LOCALES in `locales.ts`; keys it
- * doesn't translate fall back to English.
+ * doesn't translate fall back to English. Product text from the database is
+ * translated separately: add `src/shared/constants/productText/<locale>.ts`
+ * and register it in `productTextByLocale.ts`.
  */
 export default getRequestConfig(async () => {
   const [cookieStore, headerStore] = await Promise.all([cookies(), headers()]);

@@ -3,12 +3,12 @@
 /**
  * HomepageContent
  *
- * Client-side orchestrator for the luxury homepage: maps the server-fetched
+ * Client-side orchestrator for the luxury homepage: renders the server-mapped
  * products and composes all sections. Navbar and footer come from the root
  * layout chrome — not re-added here.
  */
 
-import { mapProductsToCards } from "../lib/mappers/productCardMapper";
+import type { ProductCardData } from "../lib/mappers/productCardMapper";
 import { TopTrustBanner } from "./sections/TopTrustBanner/TopTrustBanner";
 import { PaymentMethodsBanner } from "./sections/PaymentMethodsBanner/PaymentMethodsBanner";
 import { HomeHeroSection } from "./sections/HomeHeroSection/HomeHeroSection";
@@ -25,13 +25,13 @@ import { HomePromoSection } from "./sections/HomePromoSection/HomePromoSection";
 import { HomeProductMarqueeSection } from "./sections/HomeProductMarqueeSection/HomeProductMarqueeSection";
 
 interface HomepageContentPropsI {
-  productsWithPricing: Parameters<typeof mapProductsToCards>[0];
+  /** Mapped and translated on the server */
+  products: ProductCardData[];
 }
 
 export function HomepageContent({
-  productsWithPricing,
+  products,
 }: HomepageContentPropsI) {
-  const products = mapProductsToCards(productsWithPricing);
   return (
     <div className="overflow-x-clip">
       <TopTrustBanner />

@@ -7,7 +7,7 @@ import { ProductCard } from "./ProductCard";
 import { ProductSectionPicker } from "./ProductSectionPicker";
 import { SelectedProductCard } from "./SelectedProductCard";
 import type {
-  CatalogProductMappedType,
+  CatalogProductMappedT,
   ProductSectionIdT,
 } from "../../../lib/types/stampTypes";
 import { SplitToneText } from "../../components/SplitToneText";
@@ -22,12 +22,12 @@ import { SplitToneText } from "../../components/SplitToneText";
  */
 
 interface PropsI {
-  clothingProducts: CatalogProductMappedType[];
-  accessoryProducts: CatalogProductMappedType[];
-  selectedProduct: CatalogProductMappedType | undefined;
+  clothingProducts: CatalogProductMappedT[];
+  accessoryProducts: CatalogProductMappedT[];
+  selectedProduct: CatalogProductMappedT | undefined;
   isLoading: boolean;
   isError: boolean;
-  onProductSelect: (product: CatalogProductMappedType) => void;
+  onProductSelect: (product: CatalogProductMappedT) => void;
   onClearSelection: () => void;
 }
 
