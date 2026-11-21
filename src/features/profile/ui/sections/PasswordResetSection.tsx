@@ -34,6 +34,7 @@ export function PasswordResetSection() {
   const t = useTranslations("profile.passwordReset");
   const {
     isEditing,
+    canChangePassword,
     requiresCurrentPassword,
     currentPassword,
     newPassword,
@@ -77,7 +78,7 @@ export function PasswordResetSection() {
       subtitle={t("subtitle")}
       editLabel={t("changePassword")}
       onEdit={handleStartEditing}
-      showEditButton={!isEditing}
+      showEditButton={!isEditing && canChangePassword}
     >
       {/* Content */}
       {!isEditing ? (

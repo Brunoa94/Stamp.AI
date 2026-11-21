@@ -55,8 +55,11 @@ export function usePasswordReset() {
   const updatePasswordMutation = useUpdatePassword();
   const { handleError, handleSuccess } = useErrorHandler();
   const { data: user } = useUser();
+  // Until the user is loaded we can't tell whether there is a current
+  // password to ask for, so the change is not offered yet.
+  const canChangePassword = Boolean(user);
   // Social sign-in accounts have no password to re-enter.
-  const requiresCurrentPassword = user ? userHasPasswordIdentity(user) : true;
+  const requiresCurrentPassword = user ? userHasPasswordIdentity(user) : false;
 
   const validatePasswords = () => {
     const result = UpdatePasswordSchema.safeParse({
@@ -77,22 +80,24 @@ export function usePasswordReset() {
     return true;
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     if (!validatePasswords()) {
       return;
     }
 
-    try {
-      await updatePasswordMutation.mutateAsync({
+    updatePasswordMutation.mutate(
+      {
         currentPassword: requiresCurrentPassword ? state.currentPassword : undefined,
         newPassword: state.newPassword,
-      });
-      dispatch({ type: "RESET" });
-
-      handleSuccess(t("passwordUpdated"));
-    } catch (error) {
-      handleError(error);
-    }
+      },
+      {
+        onSuccess: () => {
+          dispatch({ type: "RESET" });
+          handleSuccess(t("passwordUpdated"));
+        },
+        onError: (error) => handleError(error),
+      },
+    );
   };
 
   const handleCancel = () => {
@@ -122,6 +127,7 @@ export function usePasswordReset() {
   return {
     // State
     isEditing: state.isEditing,
+    canChangePassword,
     requiresCurrentPassword,
     currentPassword: state.currentPassword,
     newPassword: state.newPassword,

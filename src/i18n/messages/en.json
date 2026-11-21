@@ -1057,6 +1057,10 @@
     }
   },
   "profile": {
+    "meta": {
+      "title": "My Profile",
+      "description": "Manage your account settings, shipping addresses, and preferences."
+    },
     "header": {
       "title": "Your <accent>profile</accent>",
       "subtitle": "Manage your account settings"
@@ -1841,6 +1845,7 @@
       "promoCodeLimitReached": "This promo code has reached its usage limit",
       "promoCodeApplied": "Promo code applied",
       "validationFailed": "Failed to validate promo code",
+      "tooManyAttempts": "Too many promo code attempts. Please try again later",
       "enterPromoCode": "Please enter a promo code",
       "cartTotalInvalid": "Bag total must be greater than 0"
     },
@@ -1965,6 +1970,7 @@
     "PASSWORD_REQUIRED": "Password is required",
     "CURRENT_PASSWORD_REQUIRED": "Please enter your current password",
     "INVALID_PASSWORD": "Your current password is incorrect",
+    "TOO_MANY_ATTEMPTS": "Too many attempts. Please wait an hour and try again",
     "INVALID_EMAIL_FORMAT": "Please enter a valid email address",
     "PASSWORD_TOO_SHORT": "Password must be at least 8 characters",
     "AMOUNT_REQUIRED": "Amount is required",

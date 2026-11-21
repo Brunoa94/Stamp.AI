@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       ))
     ) {
       return NextResponse.json(
-        { error: "Too many deletion attempts" },
+        { error: "TOO_MANY_ATTEMPTS" },
         { status: 429 },
       );
     }

@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     );
 
     if (!(await isAccountActionAllowed(supabaseAdmin, request, "account-password", user.id))) {
-      return NextResponse.json({ error: "Too many password change attempts" }, { status: 429 });
+      return NextResponse.json({ error: "TOO_MANY_ATTEMPTS" }, { status: 429 });
     }
 
     if (userHasPasswordIdentity(user)) {

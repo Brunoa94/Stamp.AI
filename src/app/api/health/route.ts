@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { captureError } from "@/lib/observability/errorCapture";
 
 interface HealthStatus {
   status: "healthy" | "degraded" | "unhealthy";
@@ -74,7 +75,7 @@ async function checkDatabase(): Promise<HealthCheck> {
 
     // The endpoint is public: details go to the server log, not the response.
     if (error) {
-      console.error("[health] database query failed:", error.message);
+      captureError(new Error(error.message), { service: "HealthAPI", action: "checkDatabase" });
       return {
         status: "fail",
         message: "Database query failed",
@@ -96,7 +97,7 @@ async function checkDatabase(): Promise<HealthCheck> {
       latencyMs,
     };
   } catch (error) {
-    console.error("[health] database connection failed:", error);
+    captureError(error, { service: "HealthAPI", action: "checkDatabase" });
     return {
       status: "fail",
       message: "Database connection failed",

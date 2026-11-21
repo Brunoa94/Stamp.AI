@@ -263,20 +263,13 @@ export function useUpdateProfile() {
 }
 
 /**
- * Update user password
+ * Update user password. The caller reports success and failure, in the
+ * user's language, so each result is shown once.
  */
 export function useUpdatePassword() {
-  const { handleError, handleSuccess } = useErrorHandler();
-
   return useMutation({
     mutationFn: (request: ChangePasswordRequestType) =>
       AuthService.updatePassword(request),
-    onSuccess: () => {
-      handleSuccess("Password updated successfully");
-    },
-    onError: (error: Error) => {
-      handleError(error);
-    },
   });
 }
 
