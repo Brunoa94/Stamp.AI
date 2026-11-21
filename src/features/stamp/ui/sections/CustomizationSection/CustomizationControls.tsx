@@ -12,7 +12,7 @@ import { useDesignAdjustment } from "../../../lib/hooks/useDesignAdjustment";
 import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction";
 import type { SizeType } from "../../../lib/types/stampTypes";
 import type { VariantOptionKindType } from "../../../lib/helpers/productCategoryDetector";
-import { formatSizeForDisplay } from "../../../lib/helpers/sizeDisplayMapper";
+import { useSizeLabel } from "../../../lib/hooks/useSizeLabel";
 import { SplitToneText } from "../../components/SplitToneText";
 
 /**
@@ -59,6 +59,7 @@ export function CustomizationControls({
   onContinueToPreview,
 }: PropsI) {
   const t = useTranslations("stamp.customization");
+  const { formatSize } = useSizeLabel();
   const {
     availablePrintPositions,
     printPositionConfigs,
@@ -126,7 +127,7 @@ export function CustomizationControls({
               <SplitToneText tone="muted">{t("sizeLabel")}</SplitToneText>
             </Span>
             <Span variant="sm">
-              <SplitToneText>{formatSizeForDisplay(sizes[0])}</SplitToneText>
+              <SplitToneText>{formatSize(sizes[0])}</SplitToneText>
             </Span>
           </div>
         ) : null}

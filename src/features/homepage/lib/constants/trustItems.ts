@@ -8,26 +8,20 @@
 import { Lock, type LucideIcon, Shield, Truck } from "lucide-react";
 import { TRUST_GUARANTEE_METRICS } from "@/shared/constants/trustMetrics";
 
+/** `id` names the `home.heroTrust.<id>Label` / `<id>Sublabel` messages */
 export interface TrustItem {
+  id: "moneyBack" | "freeShipping" | "secure";
   icon: LucideIcon;
-  label: string;
-  sublabel: string;
 }
 
 export const TRUST_ITEMS: TrustItem[] = [
-  {
-    icon: Shield,
-    label: `${TRUST_GUARANTEE_METRICS.guaranteeDays}-Day`,
-    sublabel: "Money Back",
-  },
-  {
-    icon: Truck,
-    label: "Free Shipping",
-    sublabel: `Orders €${TRUST_GUARANTEE_METRICS.freeShippingThreshold}+`,
-  },
-  {
-    icon: Lock,
-    label: "Secure",
-    sublabel: "Checkout",
-  },
+  { id: "moneyBack", icon: Shield },
+  { id: "freeShipping", icon: Truck },
+  { id: "secure", icon: Lock },
 ];
+
+/** Values interpolated into the trust badge messages */
+export const TRUST_ITEM_VALUES = {
+  days: TRUST_GUARANTEE_METRICS.guaranteeDays,
+  threshold: TRUST_GUARANTEE_METRICS.freeShippingThreshold,
+};

@@ -1,5 +1,32 @@
 {
+  "paymentMethods": {
+    "stripe": {
+      "label": "Cartão de crédito",
+      "description": "Visa, Mastercard, Amex"
+    },
+    "paypal": {
+      "label": "PayPal",
+      "description": "PayPal, Venmo, Pagar mais tarde"
+    },
+    "ideal": {
+      "label": "iDEAL",
+      "description": "Pague com o seu banco neerlandês"
+    }
+  },
+  "productSizes": {
+    "oneSize": "Tamanho Único",
+    "vertical": "Vertical",
+    "horizontal": "Horizontal"
+  },
   "home": {
+    "heroTrust": {
+      "moneyBackLabel": "{days} dias",
+      "moneyBackSublabel": "Reembolso garantido",
+      "freeShippingLabel": "Envio grátis",
+      "freeShippingSublabel": "Encomendas +{threshold} €",
+      "secureLabel": "Pagamento",
+      "secureSublabel": "Seguro"
+    },
     "topBanner": {
       "freeShipping": "Envio grátis em encomendas acima de {threshold} €",
       "returns": "Devoluções em {days} dias",
@@ -762,7 +789,9 @@
       "showMore": "Mostrar mais {count}",
       "showLess": "Mostrar menos",
       "sectionPickerAria": "Tipo de produto",
-      "sectionCount": "{count, plural, one {# produto} other {# produtos}}"
+      "sectionCount": "{count, plural, one {# produto} other {# produtos}}",
+      "seeMore": "Ver mais",
+      "seeLess": "Ver menos"
     },
     "customization": {
       "protocol": "Passo 06 / Personalizar",

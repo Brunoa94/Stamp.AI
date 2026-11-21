@@ -8,6 +8,7 @@
  */
 
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "next-intl";
 import { Elements } from "@stripe/react-stripe-js";
 import { getStripePromise } from "@/lib/stripe";
 import { Heading } from "@/features/ui/heading";
@@ -36,6 +37,7 @@ export function CheckoutSummarySection({
   testMode = false,
   selectedTestMethod = "visa",
 }: CheckoutSummarySectionPropsI) {
+  const tSummary = useTranslations("checkout.summary");
   const { watch, formState } = useFormContext<CheckoutFormData>();
   const paymentMethod = watch("paymentMethod");
   const billingAddress = watch("billing");
@@ -72,7 +74,11 @@ export function CheckoutSummarySection({
         unstyled
         className="mb-8 font-heading text-2xl md:text-3xl font-bold uppercase tracking-tight"
       >
-        Order <Span className="text-(--color-stamp-gold-text)">Summary</Span>
+        {tSummary.rich("title", {
+          accent: (chunks) => (
+            <Span className="text-(--color-stamp-gold-text)">{chunks}</Span>
+          ),
+        })}
       </Heading>
 
       <div className="space-y-6">

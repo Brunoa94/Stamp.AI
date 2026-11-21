@@ -1,12 +1,12 @@
-import type { CatalogProductMappedType, ProductSectionT } from "../types/stampTypes";
+import type { CatalogProductMappedT, ProductSectionT } from "../types/stampTypes";
 
 /**
  * The product step's sections, apparel first, each pictured by its first
  * product photo. A section without products is left out of the picker.
  */
 export function buildProductSections(
-  clothingProducts: CatalogProductMappedType[],
-  accessoryProducts: CatalogProductMappedType[],
+  clothingProducts: CatalogProductMappedT[],
+  accessoryProducts: CatalogProductMappedT[],
 ): ProductSectionT[] {
   const sections: ProductSectionT[] = [
     { id: "apparel", products: clothingProducts, imageUrl: null },

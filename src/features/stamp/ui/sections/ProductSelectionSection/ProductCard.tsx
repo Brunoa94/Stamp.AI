@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
-import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
+import type { CatalogProductMappedT } from "../../../lib/types/stampTypes";
 
 /**
  * ProductCard
@@ -15,9 +15,9 @@ import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
  */
 
 interface PropsI {
-  product: CatalogProductMappedType;
+  product: CatalogProductMappedT;
   isSelected: boolean;
-  onSelect: (product: CatalogProductMappedType) => void;
+  onSelect: (product: CatalogProductMappedT) => void;
 }
 
 export function ProductCard({ product, isSelected, onSelect }: PropsI) {
@@ -33,14 +33,14 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
           : "border bg-white"
       }`}
       aria-pressed={isSelected}
-      aria-label={t("selectAria", { name: product.name })}
+      aria-label={t("selectAria", { name: product.displayName })}
     >
       {/* Image container - fills most of the card */}
       <div className="relative w-full aspect-square overflow-hidden bg-(--color-stamp-cream)/30 md:bg-(--color-stamp-cream)">
         {product.imageUrl ? (
           <Image
             src={product.imageUrl}
-            alt={product.name}
+            alt={product.displayName}
             fill
             className="object-contain p-4 transition-transform duration-300 group-hover:scale-105"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
@@ -64,7 +64,7 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
           variant="item"
           className="text-(--color-stamp-chocolate) mb-1 text-center leading-tight min-h-10 overflow-hidden line-clamp-2 flex items-center justify-center text-base md:text-lg w-full"
         >
-          {product.name}
+          {product.displayName}
         </Heading>
 
         <Span

@@ -7,11 +7,11 @@
 import { CATALOG_CATEGORY_ORDER } from "../constants/categoryOrder";
 import type {
   CatalogCategorySectionType,
-  CatalogDisplayProductType,
+  CatalogDisplayProductT,
 } from "../types/catalogPageTypes";
 
 export function groupProductsByCategory(
-  products: CatalogDisplayProductType[]
+  products: CatalogDisplayProductT[]
 ): CatalogCategorySectionType[] {
   return CATALOG_CATEGORY_ORDER.map((category) => ({
     category,

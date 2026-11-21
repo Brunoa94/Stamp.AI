@@ -55,7 +55,7 @@ export function HomeProductCard({ product, index }: HomeProductCardPropsI) {
         {product.imageUrl ? (
           <Image
             src={product.imageUrl}
-            alt={product.name}
+            alt={product.displayName}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
             className="object-cover grayscale transition-all duration-700 group-hover:scale-[1.02] group-hover:grayscale-0"
@@ -70,7 +70,7 @@ export function HomeProductCard({ product, index }: HomeProductCardPropsI) {
 
         {product.availableColors.length > 0 && (
           <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 border border-(--color-stamp-divider) bg-(--color-stamp-off-white)/90 px-1.5 py-1 sm:px-2.5 sm:py-2 backdrop-blur-sm">
-            <ColorSwatches colors={product.availableColors} maxDisplay={4} />
+            <ColorSwatches colors={product.availableColors} labels={product.colorLabels} maxDisplay={4} />
           </div>
         )}
 
@@ -92,7 +92,7 @@ export function HomeProductCard({ product, index }: HomeProductCardPropsI) {
           variant="item"
           className="text-xs sm:text-sm text-(--color-stamp-chocolate) transition-colors duration-300 group-hover:text-(--color-stamp-gold)"
         >
-          {product.name}
+          {product.displayName}
         </Heading>
         <div className="flex flex-col items-end gap-0.5 shrink-0">
           {product.isOnSale && product.originalPrice && (

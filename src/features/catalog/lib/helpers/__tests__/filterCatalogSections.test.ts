@@ -6,14 +6,14 @@ import {
 import { groupCatalogSections } from "../groupCatalogSections";
 import type {
   CatalogCategorySectionType,
-  CatalogDisplayProductType,
+  CatalogDisplayProductT,
   CatalogFilterStateType,
   CatalogGroupSectionType,
 } from "../../types/catalogPageTypes";
 
 function buildProduct(
-  overrides: Partial<CatalogDisplayProductType> = {}
-): CatalogDisplayProductType {
+  overrides: Partial<CatalogDisplayProductT> = {}
+): CatalogDisplayProductT {
   return {
     blueprintId: 6,
     name: "Unisex Heavy Cotton Tee",
@@ -24,7 +24,9 @@ function buildProduct(
     isOnSale: false,
     imageUrls: [],
     availableColors: [],
+    colorLabels: {},
     ...overrides,
+    displayName: overrides.displayName ?? overrides.name ?? "Unisex Heavy Cotton Tee",
   };
 }
 

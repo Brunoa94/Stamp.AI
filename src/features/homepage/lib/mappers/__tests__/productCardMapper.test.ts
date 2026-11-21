@@ -44,7 +44,7 @@ function buildProduct(
 
 describe("mapProductsToCards", () => {
   it("maps core product fields to card data", () => {
-    const [card] = mapProductsToCards([buildProduct()]);
+    const [card] = mapProductsToCards([buildProduct()], null);
 
     expect(card).toMatchObject({
       blueprintId: 145,
@@ -60,7 +60,7 @@ describe("mapProductsToCards", () => {
   });
 
   it("maps the SEO description as plain text", () => {
-    const [card] = mapProductsToCards([buildProduct()]);
+    const [card] = mapProductsToCards([buildProduct()], null);
 
     expect(card.description).toBe("Soft unisex tee");
   });
@@ -73,13 +73,13 @@ describe("mapProductsToCards", () => {
           printify_description: "<p>Printify text</p>",
         }),
       }),
-    ]);
+    ], null);
 
     expect(card.description).toBe("Hand-finished premium tee");
   });
 
   it("returns null description when product has no SEO row", () => {
-    const [card] = mapProductsToCards([buildProduct({ product_seo: null })]);
+    const [card] = mapProductsToCards([buildProduct({ product_seo: null })], null);
 
     expect(card.description).toBeNull();
   });
@@ -87,7 +87,7 @@ describe("mapProductsToCards", () => {
   it("uses selling price override when set", () => {
     const [card] = mapProductsToCards([
       buildProduct({ selling_price_cents: 1799 }),
-    ]);
+    ], null);
 
     expect(card.price).toBe(17.99);
   });
@@ -99,7 +99,7 @@ describe("mapProductsToCards", () => {
         original_price_cents: 2500,
         discount_percent: 20,
       }),
-    ]);
+    ], null);
 
     expect(card.isOnSale).toBe(true);
     expect(card.originalPrice).toBe(25);
@@ -107,7 +107,7 @@ describe("mapProductsToCards", () => {
   });
 
   it("falls back to empty image URL when base image is missing", () => {
-    const [card] = mapProductsToCards([buildProduct({ base_image_url: null })]);
+    const [card] = mapProductsToCards([buildProduct({ base_image_url: null })], null);
 
     expect(card.imageUrl).toBe("");
   });
