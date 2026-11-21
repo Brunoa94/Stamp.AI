@@ -5,8 +5,8 @@
  * Called by Edge Functions when catalog data changes (price updates, stock changes, etc.)
  *
  * Usage:
- * POST /api/revalidate?secret=YOUR_SECRET&tag=products
- * POST /api/revalidate?secret=YOUR_SECRET&tag=providers
+ * POST /api/revalidate?tag=products   with `Authorization: Bearer <REVALIDATION_SECRET>`
+ * POST /api/revalidate?tag=providers  with `Authorization: Bearer <REVALIDATION_SECRET>`
  *
  * Environment Variables:
  * REVALIDATION_SECRET - Secret key to protect this endpoint
@@ -14,19 +14,20 @@
 
 import { revalidateTag } from 'next/cache'
 import { NextRequest, NextResponse } from 'next/server'
+import { checkBearerSecret } from '@/lib/security/adminSecret'
 
 export async function POST(request: NextRequest) {
   // Verify secret to prevent unauthorized revalidation
-  const secret = request.nextUrl.searchParams.get('secret')
+  const auth = checkBearerSecret(request, process.env.REVALIDATION_SECRET)
 
-  if (!process.env.REVALIDATION_SECRET) {
+  if (auth === 'unconfigured') {
     return NextResponse.json(
       { error: 'REVALIDATION_SECRET not configured' },
       { status: 500 }
     )
   }
 
-  if (secret !== process.env.REVALIDATION_SECRET) {
+  if (auth === 'unauthorized') {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   return NextResponse.json({
     message: 'Cache revalidation endpoint',
-    usage: 'POST /api/revalidate?secret=YOUR_SECRET&tag=TAG_NAME',
+    usage: 'POST /api/revalidate?tag=TAG_NAME with Authorization: Bearer <secret>',
     availableTags: ['products', 'providers']
   })
 }

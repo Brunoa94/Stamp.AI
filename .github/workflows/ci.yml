@@ -50,6 +50,8 @@ jobs:
       # Integration suites (*.integration.test.ts) need a live Supabase and are
       # deliberately not run here; see `npm run test:integration`.
       - run: npm run test:unit
+      # Edge Function helpers (supabase/functions/_shared), e.g. fulfilment authorization.
+      - run: npm run test:functions
       - run: npm run test:acceptance:contracts
       # Report-only: lists missing or stale product translations against the
       # live catalog (public anon read). Always exits 0; read the job log.

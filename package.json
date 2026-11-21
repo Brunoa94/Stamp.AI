@@ -41,6 +41,7 @@
     "test:acceptance:unit": "vitest run src/shared/services/acceptanceImageMock.test.ts src/tests/acceptance-test-environment.test.ts src/features/stamp/lib/services/generatedImagesStorage.acceptance.test.ts",
     "test:acceptance:coverage": "node scripts/acceptance/coverage.mjs",
     "test:hooks": "node --test .claude/hooks/tests/*.test.mjs",
+    "test:functions": "vitest run --config vitest.functions.config.ts",
     "i18n:check-products": "tsx scripts/i18n/check-product-translations.ts"
   },
   "dependencies": {
@@ -52,7 +53,7 @@
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.4",
-    "@sentry/nextjs": "^10.69.0",
+    "@sentry/nextjs": "^10.78.0",
     "@stripe/react-stripe-js": "^5.4.1",
     "@stripe/stripe-js": "^8.6.0",
     "@supabase/ssr": "^0.8.0",
@@ -74,7 +75,7 @@
     "sonner": "^2.0.7",
     "supabase": "^2.92.1",
     "tailwind-merge": "^3.4.0",
-    "zod": "^4.3.5",
+    "zod": "^4.6.7",
     "zustand": "^5.0.14"
   },
   "devDependencies": {

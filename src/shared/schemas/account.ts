@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PASSWORD_MIN_LENGTH } from "@/shared/schemas/auth";
 
 /** Exact phrase a user must type to confirm irreversible account deletion. */
 export const ACCOUNT_DELETION_CONFIRMATION_PHRASE = "DELETE MY ACCOUNT";
@@ -11,6 +12,14 @@ export const DeleteAccountRequestSchema = z.object({
 });
 
 export type DeleteAccountRequestType = z.infer<typeof DeleteAccountRequestSchema>;
+
+export const ChangePasswordRequestSchema = z.object({
+  /** Required when the account has an email/password identity. */
+  currentPassword: z.string().min(1).optional(),
+  newPassword: z.string().min(PASSWORD_MIN_LENGTH),
+});
+
+export type ChangePasswordRequestType = z.infer<typeof ChangePasswordRequestSchema>;
 
 const InvoicePdfRefSchema = z.object({
   bucket: z.string().min(1),

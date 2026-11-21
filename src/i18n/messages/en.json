@@ -1086,6 +1086,10 @@
     }
   },
   "profile": {
+    "meta": {
+      "title": "My Profile",
+      "description": "Manage your account settings, shipping addresses, and preferences."
+    },
     "header": {
       "title": "Your <accent>profile</accent>",
       "subtitle": "Manage your account settings"
@@ -1109,9 +1113,12 @@
       "subtitle": "Change your password whenever you like.",
       "changePassword": "CHANGE PASSWORD",
       "hiddenNote": "We keep your password hidden. Hit \"Change Password\" to set a new one.",
+      "currentPasswordLabel": "Current Password",
+      "currentPasswordPlaceholder": "Enter your current password",
+      "currentPasswordHint": "We ask for it so no one else can change your password",
       "newPasswordLabel": "New Password",
       "newPasswordPlaceholder": "Enter new password",
-      "newPasswordHint": "Password must be at least 6 characters",
+      "newPasswordHint": "Password must be at least 8 characters",
       "confirmPasswordLabel": "Confirm New Password",
       "confirmPasswordPlaceholder": "Confirm new password",
       "confirmPasswordHint": "Re-enter your new password",
@@ -1867,6 +1874,7 @@
       "promoCodeLimitReached": "This promo code has reached its usage limit",
       "promoCodeApplied": "Promo code applied",
       "validationFailed": "Failed to validate promo code",
+      "tooManyAttempts": "Too many promo code attempts. Please try again later",
       "enterPromoCode": "Please enter a promo code",
       "cartTotalInvalid": "Bag total must be greater than 0"
     },
@@ -1989,6 +1997,9 @@
     "IMAGE_REQUIRED": "At least one image is required",
     "EMAIL_REQUIRED": "Email address is required",
     "PASSWORD_REQUIRED": "Password is required",
+    "CURRENT_PASSWORD_REQUIRED": "Please enter your current password",
+    "INVALID_PASSWORD": "Your current password is incorrect",
+    "TOO_MANY_ATTEMPTS": "Too many attempts. Please wait an hour and try again",
     "INVALID_EMAIL_FORMAT": "Please enter a valid email address",
     "PASSWORD_TOO_SHORT": "Password must be at least 8 characters",
     "AMOUNT_REQUIRED": "Amount is required",
