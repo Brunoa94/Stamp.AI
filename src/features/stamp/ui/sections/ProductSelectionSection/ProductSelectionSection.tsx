@@ -3,17 +3,17 @@
 import { useMemo, memo } from "react";
 import { useCatalogProductsWithSeo } from "@/shared/queries/catalogQueries";
 import { usePrefetchBlueprintVariants } from "@/shared/queries/productQueries";
-import { resolveProductDescription } from "@/lib/seo/productDescription";
+import { useProductText } from "@/shared/queries/productTextQueries";
+import { mapStampProducts } from "../../../lib/mappers/stampProductMapper";
 import { useStampNavigationActions } from "../../../lib/hooks/useStampNavigation";
 import {
   useStampProductSelection,
   useStampCustomization,
 } from "../../../lib/hooks/useStampSelectors";
 import { isClothingProduct } from "../../../lib/helpers/productCategoryDetector";
-import { FALLBACK_PRODUCT_PRICE_CENTS } from "../../../lib/constants/productPricing";
 import { ProductGrid } from "./ProductGrid";
 import { ProductSelectionContent } from "./ProductSelectionContent";
-import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
+import type { CatalogProductMappedT } from "../../../lib/types/stampTypes";
 import { AnalyticsService } from "@/shared/services/analyticsService";
 import { mapSelectItemEvent } from "@/features/analytics/lib/mappers/stampFlowMappers";
 
@@ -28,10 +28,10 @@ import { mapSelectItemEvent } from "@/features/analytics/lib/mappers/stampFlowMa
  */
 
 const EXCLUDED_BLUEPRINT_IDS = new Set([12]);
-const FALLBACK_PRICE = FALLBACK_PRODUCT_PRICE_CENTS / 100;
 
 function ProductSelectionSectionComponent() {
   const { nextStep } = useStampNavigationActions();
+  const productText = useProductText();
   const {
     blueprintId,
     printProviderId,
@@ -58,41 +58,15 @@ function ProductSelectionSectionComponent() {
     [rawProducts],
   );
 
-  const catalogProducts = useMemo<CatalogProductMappedType[]>(
-    () =>
-      visibleProducts.map((product) => {
-        // New flow: price comes from the product's precomputed
-        // min_price_cents (cheapest available Printify Choice variant)
-        // plus shipping, unless an admin selling-price override is set.
-        const baseCents = product.min_price_cents || 0;
-        const shippingCents = product.shipping_cents || 0;
-        const totalCents =
-          product.selling_price_cents ??
-          (baseCents > 0 ? baseCents + shippingCents : 0);
-        const price = totalCents > 0 ? totalCents / 100 : FALLBACK_PRICE;
-
-        return {
-          blueprintId: product.blueprint_id,
-          name: product.display_title,
-          description: resolveProductDescription(product.product_seo),
-          printifyDescription:
-            product.product_seo?.printify_description ?? null,
-          imageUrl: product.base_image_url ?? "",
-          printProviderId: product.print_provider_id,
-          price,
-          providerName:
-            product.print_provider_id === 99
-              ? "Printify Choice"
-              : "Print Provider",
-        };
-      }),
-    [visibleProducts],
+  const catalogProducts = useMemo<CatalogProductMappedT[]>(
+    () => mapStampProducts(visibleProducts, productText),
+    [visibleProducts, productText],
   );
 
   // Group products into clothing (apparel) and accessories based on display title
   const { clothingProducts, accessoryProducts } = useMemo(() => {
-    const clothing: CatalogProductMappedType[] = [];
-    const accessories: CatalogProductMappedType[] = [];
+    const clothing: CatalogProductMappedT[] = [];
+    const accessories: CatalogProductMappedT[] = [];
 
     for (const product of catalogProducts) {
       if (isClothingProduct(product.name)) {
@@ -108,7 +82,7 @@ function ProductSelectionSectionComponent() {
   // Prefetch variants (colors & sizes) for all products when grid loads
   usePrefetchBlueprintVariants(catalogProducts);
 
-  const handleProductSelect = (product: CatalogProductMappedType) => {
+  const handleProductSelect = (product: CatalogProductMappedT) => {
     setBlueprintId(product.blueprintId);
     setPrintProviderId(product.printProviderId);
     setSelectedProductTitle(product.name);
@@ -134,7 +108,7 @@ function ProductSelectionSectionComponent() {
     setSelectedPriceCents(undefined);
   };
 
-  const isSelected = (product: CatalogProductMappedType) =>
+  const isSelected = (product: CatalogProductMappedT) =>
     product.blueprintId === blueprintId &&
     product.printProviderId === printProviderId;
 

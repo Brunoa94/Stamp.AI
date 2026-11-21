@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
-import { formatSizeForDisplay } from "../../../lib/helpers/sizeDisplayMapper";
+import { useSizeLabel } from "../../../lib/hooks/useSizeLabel";
 
 /**
  * ProductSummary
@@ -21,6 +21,7 @@ interface PropsI {
 
 export function ProductSummary({ productName, productDescription, color, size, price }: PropsI) {
   const t = useTranslations("stamp.finalReview");
+  const { formatSize } = useSizeLabel();
 
   return (
     <div className="p-6 border border-(--color-stamp-divider) bg-white">
@@ -38,7 +39,7 @@ export function ProductSummary({ productName, productDescription, color, size, p
         variant="micro"
         className="text-(--color-stamp-taupe) block mb-2"
       >
-        {t("productDetails", { color: color || "Black", size: formatSizeForDisplay(size || "M") })}
+        {t("productDetails", { color: color || "Black", size: formatSize(size || "M") })}
       </Span>
       {productDescription && (
         <Paragraph

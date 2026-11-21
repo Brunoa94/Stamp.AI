@@ -53,6 +53,8 @@ function PaymentMethodButton({
   onSelect,
   disabled,
 }: PaymentMethodButtonProps) {
+  const t = useTranslations("paymentMethods");
+
   return (
     <Button
       type="button"
@@ -71,9 +73,9 @@ function PaymentMethodButton({
       />
       <div className="flex flex-col text-left">
         <Label asChild variant="option" className="text-slate-900">
-          <Span unstyled>{method.label}</Span>
+          <Span unstyled>{t(`${method.id}.label`)}</Span>
         </Label>
-        <Span variant="caption" className="text-slate-500">{method.description}</Span>
+        <Span variant="caption" className="text-slate-500">{t(`${method.id}.description`)}</Span>
       </div>
       {isSelected && (
         <Span unstyled className="ml-auto w-5 h-5 rounded-full bg-brand-violet text-white text-xs flex items-center justify-center" aria-hidden="true">

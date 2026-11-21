@@ -49,3 +49,7 @@ When a reviewer keeps reporting the same mechanical issue, turn it into a lint r
 - Follow the established patterns in existing features and keep features consistent with Feature-Sliced Design.
 - Update the topic file a change affects instead of adding a new markdown file per change. A new topic gets its own file in `.claude/rules/` (with a `paths:` header) or `docs/`, plus a row in the table above. The one exception is `docs/plans/`: `/plan-feature` writes one plan per feature there, and the plan is deleted once the feature merges.
 - Document significant architectural decisions.
+
+## Translations
+
+Interface strings live in `src/i18n/messages/<locale>.json` (next-intl). Product text that comes from the database (titles, descriptions, specs, colour and paper-type names) is translated separately, in `src/shared/constants/productText/<locale>.ts`, keyed by Printify blueprint ID, and swapped in only when rendering through `src/shared/helpers/localizeProduct.ts`. Stores, caches, cart and order rows, and analytics stay English; a missing translation shows the English database value. `npm run i18n:check-products` reports missing and stale translations against the live catalog (`-- --inventory` prints the English source to translate from); it runs report-only in CI. Design: [designs/product-text-translation.md](designs/product-text-translation.md).

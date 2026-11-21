@@ -53,5 +53,7 @@ export function mapLocalCartItemToAddToCartInput(item: LocalCartItemT): AddToCar
     unit_price: item.unitPrice,
     quantity: item.quantity,
     custom_image_url: item.customImageUrl,
+    printify_blueprint_id: item.blueprintId,
+    printify_print_provider_id: item.printProviderId,
   };
 }

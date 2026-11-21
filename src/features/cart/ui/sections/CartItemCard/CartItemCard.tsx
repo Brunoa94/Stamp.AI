@@ -14,6 +14,7 @@ import { CartItemCardImage } from "./CartItemCardImage";
 import { CartItemCardContent } from "./CartItemCardContent";
 import { CartItemCardActions } from "./CartItemCardActions";
 import type { CartItem } from "@/shared/types/cart";
+import { useCartItemDisplayName } from "@/shared/hooks/useCartItemDisplayName";
 
 interface CartItemCardPropsI {
   item: CartItem;
@@ -31,8 +32,7 @@ export function CartItemCard({
   onRemove,
 }: CartItemCardPropsI) {
   const t = useTranslations("cart.itemCard");
-  const productName =
-    item.product_name || item.product?.name || t("customProduct");
+  const productName = useCartItemDisplayName()(item, t("customProduct"));
 
   return (
     <article

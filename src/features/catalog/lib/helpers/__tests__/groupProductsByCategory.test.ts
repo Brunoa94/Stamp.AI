@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { groupProductsByCategory } from "../groupProductsByCategory";
-import type { CatalogDisplayProductType } from "../../types/catalogPageTypes";
+import type { CatalogDisplayProductT } from "../../types/catalogPageTypes";
 import type { ProductCategory } from "@/features/stamp/lib/helpers/productCategoryDetector";
 
 function buildProduct(
   blueprintId: number,
   category: ProductCategory
-): CatalogDisplayProductType {
+): CatalogDisplayProductT {
   return {
     blueprintId,
     name: `Product ${blueprintId}`,

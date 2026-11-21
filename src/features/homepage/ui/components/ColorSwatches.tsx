@@ -1,4 +1,7 @@
 import { getColorHex, getBorderColor, filterDisplayColors } from "../../lib/constants/colorSwatches";
+
+/** Swatch hex for white, slightly dimmed so it stays visible on light cards */
+const WHITE_HEX = getColorHex("White");
 import { Span } from "@/features/ui/span";
 
 /**
@@ -11,10 +14,12 @@ import { Span } from "@/features/ui/span";
 
 interface ColorSwatchesProps {
   colors: string[];
+  /** English colour name → its label in the visitor's language, built on the server */
+  labels?: Record<string, string>;
   maxDisplay?: number;
 }
 
-export function ColorSwatches({ colors, maxDisplay = 5 }: ColorSwatchesProps) {
+export function ColorSwatches({ colors, labels = {}, maxDisplay = 5 }: ColorSwatchesProps) {
   if (!colors || colors.length === 0) {
     return null;
   }
@@ -38,9 +43,9 @@ export function ColorSwatches({ colors, maxDisplay = 5 }: ColorSwatchesProps) {
             style={{
               backgroundColor: hex,
               border: `1px solid ${borderColor}`,
-              opacity: hex === "#FFFFFF" ? 0.9 : 1,
+              opacity: hex === WHITE_HEX ? 0.9 : 1,
             }}
-            title={colorName}
+            title={labels[colorName] ?? colorName}
           />
         );
       })}

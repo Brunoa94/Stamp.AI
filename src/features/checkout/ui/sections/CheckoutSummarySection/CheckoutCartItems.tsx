@@ -13,6 +13,7 @@ import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import type { CartWithItems } from "@/shared/types/cart";
 import { formatPrice } from "../../../lib/utils/formatPrice";
+import { useCartItemDisplayName } from "@/shared/hooks/useCartItemDisplayName";
 
 interface CheckoutCartItemsPropsI {
   items: CartWithItems["cart_items"];
@@ -20,14 +21,14 @@ interface CheckoutCartItemsPropsI {
 
 export function CheckoutCartItems({ items }: CheckoutCartItemsPropsI) {
   const t = useTranslations("checkout.cartItems");
+  const displayName = useCartItemDisplayName();
   return (
     <List
       aria-label={t("listAria")}
       className="checkout-scrollbar max-h-80 space-y-3 overflow-y-auto"
     >
       {items.map((item) => {
-        const name =
-          item.product_name || item.product?.name || t("defaultProductName");
+        const name = displayName(item, t("defaultProductName"));
         const quantity = item.quantity ?? 1;
         const lineTotal = (item.unit_price ?? 0) * quantity;
         const variantName = item.variant?.name || t("standardVariant");

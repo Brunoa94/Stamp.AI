@@ -1,5 +1,32 @@
 {
+  "paymentMethods": {
+    "stripe": {
+      "label": "Creditcard",
+      "description": "Visa, Mastercard, Amex"
+    },
+    "paypal": {
+      "label": "PayPal",
+      "description": "PayPal, Venmo, Later betalen"
+    },
+    "ideal": {
+      "label": "iDEAL",
+      "description": "Betaal via je eigen bank"
+    }
+  },
+  "productSizes": {
+    "oneSize": "One size",
+    "vertical": "Verticaal",
+    "horizontal": "Horizontaal"
+  },
   "home": {
+    "heroTrust": {
+      "moneyBackLabel": "{days} dagen",
+      "moneyBackSublabel": "Geld terug",
+      "freeShippingLabel": "Gratis verzending",
+      "freeShippingSublabel": "Bestellingen vanaf €{threshold}",
+      "secureLabel": "Veilig",
+      "secureSublabel": "Afrekenen"
+    },
     "topBanner": {
       "freeShipping": "Gratis verzending bij bestellingen boven € {threshold}",
       "returns": "{days} dagen retourneren",
@@ -762,7 +789,9 @@
       "showMore": "Nog {count} tonen",
       "showLess": "Minder tonen",
       "sectionPickerAria": "Producttype",
-      "sectionCount": "{count, plural, one {# product} other {# producten}}"
+      "sectionCount": "{count, plural, one {# product} other {# producten}}",
+      "seeMore": "Meer tonen",
+      "seeLess": "Minder tonen"
     },
     "customization": {
       "protocol": "Stap 06 / Aanpassen",

@@ -8,7 +8,7 @@ import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { ColorSwatches } from "@/features/homepage/ui/components/ColorSwatches";
-import type { CatalogDisplayProductType } from "../../lib/types/catalogPageTypes";
+import type { CatalogDisplayProductT } from "../../lib/types/catalogPageTypes";
 import { CatalogProductDialog } from "./CatalogProductDialog";
 
 /**
@@ -23,7 +23,7 @@ import { CatalogProductDialog } from "./CatalogProductDialog";
  */
 
 interface PropsI {
-  product: CatalogDisplayProductType;
+  product: CatalogDisplayProductT;
 }
 
 export function CatalogProductCard({ product }: PropsI) {
@@ -39,7 +39,7 @@ export function CatalogProductCard({ product }: PropsI) {
         type="button"
         variant="unstyled"
         onClick={() => setIsDialogOpen(true)}
-        aria-label={t("quickViewAria", { name: product.name })}
+        aria-label={t("quickViewAria", { name: product.displayName })}
         className="group flex h-full w-full flex-col text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--color-stamp-gold)"
       >
         <div className="relative mb-3 sm:mb-5 aspect-square sm:aspect-3/4 overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all duration-500 group-hover:-translate-y-1 group-hover:border-(--color-stamp-gold) group-hover:shadow-(--shadow-stamp-card-hover)">
@@ -47,7 +47,7 @@ export function CatalogProductCard({ product }: PropsI) {
             <>
               <Image
                 src={coverImageUrl}
-                alt={product.name}
+                alt={product.displayName}
                 fill
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
                 className="object-cover grayscale transition-all duration-700 group-hover:scale-[1.02] group-hover:grayscale-0"
@@ -81,7 +81,7 @@ export function CatalogProductCard({ product }: PropsI) {
 
           {product.availableColors.length > 0 && (
             <div className="absolute bottom-2 left-2 sm:bottom-4 sm:left-4 border border-(--color-stamp-divider) bg-(--color-stamp-off-white)/90 px-1.5 py-1 sm:px-2.5 sm:py-2 backdrop-blur-sm">
-              <ColorSwatches colors={product.availableColors} maxDisplay={4} />
+              <ColorSwatches colors={product.availableColors} labels={product.colorLabels} maxDisplay={4} />
             </div>
           )}
 
@@ -110,7 +110,7 @@ export function CatalogProductCard({ product }: PropsI) {
               variant="item"
               className="line-clamp-2 text-xs sm:text-sm text-(--color-stamp-chocolate) transition-colors duration-300 group-hover:text-(--color-stamp-gold)"
             >
-              {product.name}
+              {product.displayName}
             </Heading>
             <Span
               variant="sm"

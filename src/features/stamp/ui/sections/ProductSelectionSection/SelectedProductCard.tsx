@@ -1,5 +1,5 @@
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { CheckCircle, X, ChevronDown, ChevronUp } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -7,8 +7,7 @@ import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { List } from "@/features/ui/list";
-import { extractProductSpecs } from "@/lib/seo/productDescription";
-import type { CatalogProductMappedType } from "../../../lib/types/stampTypes";
+import type { CatalogProductMappedT } from "../../../lib/types/stampTypes";
 
 /**
  * SelectedProductCard
@@ -21,6 +20,7 @@ const COLLAPSED_HEIGHT = 112;
 const SPEC_ROW_HEIGHT = 36;
 
 function ExpandableSpecsList({ specs }: { specs: string[] }) {
+  const t = useTranslations("stamp.productSelection");
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -54,12 +54,12 @@ function ExpandableSpecsList({ specs }: { specs: string[] }) {
         >
           {isExpanded ? (
             <>
-              See less
+              {t("seeLess")}
               <ChevronUp className="w-3 h-3" />
             </>
           ) : (
             <>
-              See more
+              {t("seeMore")}
               <ChevronDown className="w-3 h-3" />
             </>
           )}
@@ -70,21 +70,19 @@ function ExpandableSpecsList({ specs }: { specs: string[] }) {
 }
 
 interface PropsI {
-  product: CatalogProductMappedType;
+  product: CatalogProductMappedT;
   onClearSelection: () => void;
 }
 
 export function SelectedProductCard({ product, onClearSelection }: PropsI) {
   const t = useTranslations("stamp.productSelection");
 
-  const specs = useMemo(() => {
-    return extractProductSpecs({ printify_description: product.printifyDescription });
-  }, [product.printifyDescription]);
+  const { specs } = product;
 
   return (
     <div
       className="relative overflow-hidden rounded-lg whitespace-normal wrap-break-word min-h-80 sm:min-h-96 md:min-h-105 lg:min-h-120 xl:min-h-130 p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center text-center border-2 border-(--color-stamp-gold) bg-(--color-stamp-gold)/5 md:bg-(--color-stamp-cream)"
-      aria-label={t("selectedAria", { name: product.name })}
+      aria-label={t("selectedAria", { name: product.displayName })}
     >
       {/* Selected badge */}
       <div className="absolute top-4 left-4 z-20 flex items-center gap-1.5 px-3 py-1.5 bg-(--color-stamp-gold) text-white text-[10px] font-bold uppercase tracking-widest">
@@ -109,7 +107,7 @@ export function SelectedProductCard({ product, onClearSelection }: PropsI) {
             {product.imageUrl ? (
               <Image
                 src={product.imageUrl}
-                alt={product.name}
+                alt={product.displayName}
                 fill
                 className="object-contain"
                 sizes="(max-width: 640px) 224px, (max-width: 768px) 256px, (max-width: 1024px) 288px, (max-width: 1280px) 320px, 384px"
@@ -126,7 +124,7 @@ export function SelectedProductCard({ product, onClearSelection }: PropsI) {
             variant="item"
             className="text-(--color-stamp-chocolate) mb-2 text-center leading-tight overflow-hidden line-clamp-2 flex items-center justify-center text-xl md:text-2xl w-full max-w-full wrap-break-word"
           >
-            {product.name}
+            {product.displayName}
           </Heading>
 
           <Span variant="sm" className="text-(--color-stamp-chocolate) text-2xl mb-2">

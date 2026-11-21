@@ -173,6 +173,9 @@ export function useStampCartActions() {
       unit_price: unitPrice,
       custom_image_url: mockupImageUrl || selectedImageUrl,
       variant_id: createdVariantId.toString(),
+      // Lets the cart show the title in the visitor's language; product_name stays English
+      printify_blueprint_id: blueprintId ?? null,
+      printify_print_provider_id: printProviderId ?? null,
     };
 
     // DEBUG: Log the exact payload being sent to cart
