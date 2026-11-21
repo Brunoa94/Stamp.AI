@@ -1,11 +1,13 @@
 import { useReducer } from "react";
 import { useTranslations } from "next-intl";
-import { useUpdatePassword } from "@/shared/queries/authQueries";
+import { useUpdatePassword, useUser } from "@/shared/queries/authQueries";
 import { UpdatePasswordSchema } from "@/shared/schemas/auth";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
+import { userHasPasswordIdentity } from "@/lib/account/deletionConfirmation";
 
 interface PasswordResetState {
   isEditing: boolean;
+  currentPassword: string;
   newPassword: string;
   confirmPassword: string;
 }
@@ -14,11 +16,13 @@ type PasswordResetAction =
   | { type: "START_EDITING" }
   | { type: "CANCEL" }
   | { type: "RESET" }
+  | { type: "SET_CURRENT_PASSWORD"; payload: string }
   | { type: "SET_NEW_PASSWORD"; payload: string }
   | { type: "SET_CONFIRM_PASSWORD"; payload: string };
 
 const initialState: PasswordResetState = {
   isEditing: false,
+  currentPassword: "",
   newPassword: "",
   confirmPassword: "",
 };
@@ -31,14 +35,10 @@ function passwordResetReducer(
     case "START_EDITING":
       return { ...state, isEditing: true };
     case "CANCEL":
-      return {
-        ...state,
-        isEditing: false,
-        newPassword: "",
-        confirmPassword: "",
-      };
     case "RESET":
       return initialState;
+    case "SET_CURRENT_PASSWORD":
+      return { ...state, currentPassword: action.payload };
     case "SET_NEW_PASSWORD":
       return { ...state, newPassword: action.payload };
     case "SET_CONFIRM_PASSWORD":
@@ -54,6 +54,9 @@ export function usePasswordReset() {
   const [state, dispatch] = useReducer(passwordResetReducer, initialState);
   const updatePasswordMutation = useUpdatePassword();
   const { handleError, handleSuccess } = useErrorHandler();
+  const { data: user } = useUser();
+  // Social sign-in accounts have no password to re-enter.
+  const requiresCurrentPassword = user ? userHasPasswordIdentity(user) : true;
 
   const validatePasswords = () => {
     const result = UpdatePasswordSchema.safeParse({
@@ -80,7 +83,10 @@ export function usePasswordReset() {
     }
 
     try {
-      await updatePasswordMutation.mutateAsync(state.newPassword);
+      await updatePasswordMutation.mutateAsync({
+        currentPassword: requiresCurrentPassword ? state.currentPassword : undefined,
+        newPassword: state.newPassword,
+      });
       dispatch({ type: "RESET" });
 
       handleSuccess(t("passwordUpdated"));
@@ -97,6 +103,10 @@ export function usePasswordReset() {
     dispatch({ type: "START_EDITING" });
   };
 
+  const setCurrentPassword = (password: string) => {
+    dispatch({ type: "SET_CURRENT_PASSWORD", payload: password });
+  };
+
   const setNewPassword = (password: string) => {
     dispatch({ type: "SET_NEW_PASSWORD", payload: password });
   };
@@ -106,11 +116,14 @@ export function usePasswordReset() {
   };
 
   const canSubmit = state.newPassword.trim() !== "" &&
-    state.confirmPassword.trim() !== "";
+    state.confirmPassword.trim() !== "" &&
+    (!requiresCurrentPassword || state.currentPassword !== "");
 
   return {
     // State
     isEditing: state.isEditing,
+    requiresCurrentPassword,
+    currentPassword: state.currentPassword,
     newPassword: state.newPassword,
     confirmPassword: state.confirmPassword,
     isLoading: updatePasswordMutation.isPending,
@@ -120,6 +133,7 @@ export function usePasswordReset() {
     handleSave,
     handleCancel,
     handleStartEditing,
+    setCurrentPassword,
     setNewPassword,
     setConfirmPassword,
   };

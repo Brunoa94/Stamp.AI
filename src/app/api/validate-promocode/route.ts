@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/service";
+import { consumeHashedRateLimit } from "@/lib/security/hashedRateLimit";
+import { getClientIdentifier } from "@/lib/security/rate-limiter/utils";
 import { captureError } from "@/lib/observability/errorCapture";
 import { evaluatePromocode } from "@/lib/promocodes/evaluatePromocode";
 import type { PromoCodeValidationResult } from "@/shared/schemas/promocode";
 
 export const runtime = "nodejs";
+
+/** Per client IP. A shopper tries a handful of codes; guessing needs thousands. */
+const PROMO_VALIDATIONS_PER_HOUR = 30;
 
 interface ValidatePromoCodeRequest {
   code?: unknown;
@@ -44,7 +49,24 @@ export async function POST(
       return rejected("cartTotalInvalid");
     }
 
-    const { data, error } = await createServiceClient()
+    const supabase = createServiceClient();
+    // Shared across instances, so codes cannot be guessed by spreading
+    // requests over replicas the in-memory middleware limiter does not see.
+    const allowed = await consumeHashedRateLimit(
+      supabase,
+      "promocode-validate:ip",
+      getClientIdentifier(request),
+      PROMO_VALIDATIONS_PER_HOUR,
+      60 * 60,
+    );
+    if (!allowed) {
+      return NextResponse.json(
+        { isValid: false, message: "validationFailed", appliedPromo: null },
+        { status: 429 },
+      );
+    }
+
+    const { data, error } = await supabase
       .from("promocodes")
       .select("*")
       .eq("code", normalizedCode)

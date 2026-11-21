@@ -72,10 +72,12 @@ async function checkDatabase(): Promise<HealthCheck> {
 
     const latencyMs = Date.now() - start;
 
+    // The endpoint is public: details go to the server log, not the response.
     if (error) {
+      console.error("[health] database query failed:", error.message);
       return {
         status: "fail",
-        message: `Database query failed: ${error.message}`,
+        message: "Database query failed",
         latencyMs,
       };
     }
@@ -94,9 +96,10 @@ async function checkDatabase(): Promise<HealthCheck> {
       latencyMs,
     };
   } catch (error) {
+    console.error("[health] database connection failed:", error);
     return {
       status: "fail",
-      message: `Database connection failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      message: "Database connection failed",
       latencyMs: Date.now() - start,
     };
   }
@@ -109,30 +112,18 @@ function checkMemory(): HealthCheck {
   // Only available in Node.js runtime
   if (typeof process !== "undefined" && process.memoryUsage) {
     const usage = process.memoryUsage();
-    const heapUsedMB = Math.round(usage.heapUsed / 1024 / 1024);
-    const heapTotalMB = Math.round(usage.heapTotal / 1024 / 1024);
     const percentUsed = Math.round((usage.heapUsed / usage.heapTotal) * 100);
 
-    // Warn if using > 80% of heap
-    if (percentUsed > 80) {
-      return {
-        status: "warn",
-        message: `High memory usage: ${heapUsedMB}MB / ${heapTotalMB}MB (${percentUsed}%)`,
-      };
-    }
-
-    // Fail if using > 95% of heap
+    // Only the level is public; heap sizes would help an attacker size a DoS.
     if (percentUsed > 95) {
-      return {
-        status: "fail",
-        message: `Critical memory usage: ${heapUsedMB}MB / ${heapTotalMB}MB (${percentUsed}%)`,
-      };
+      return { status: "fail", message: "Critical memory usage" };
     }
 
-    return {
-      status: "pass",
-      message: `${heapUsedMB}MB / ${heapTotalMB}MB (${percentUsed}%)`,
-    };
+    if (percentUsed > 80) {
+      return { status: "warn", message: "High memory usage" };
+    }
+
+    return { status: "pass" };
   }
 
   return {

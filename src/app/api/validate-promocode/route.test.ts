@@ -9,7 +9,11 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/lib/supabase/service", () => ({
-  createServiceClient: () => ({ from: mocks.from }),
+  // rpc: the shared per-IP validation limit, always under the limit here.
+  createServiceClient: () => ({
+    from: mocks.from,
+    rpc: async () => ({ data: true, error: null }),
+  }),
 }));
 
 vi.mock("@/lib/observability/errorCapture", () => ({

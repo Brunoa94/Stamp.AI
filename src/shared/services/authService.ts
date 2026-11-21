@@ -16,6 +16,8 @@ import {
   UpdateUserResponseSchema,
 } from "@/shared/schemas/services/authServiceSchemas";
 import { ErrorClient } from "./errorClient";
+import { POST } from "./apiClient";
+import type { ChangePasswordRequestType } from "@/shared/schemas/account";
 import type { PendingGuestClaimT } from "./guestClaimStorageService";
 import { GuestClaimExpiredError } from "@/shared/errors/GuestClaimExpiredError";
 
@@ -528,35 +530,12 @@ class AuthService {
   }
 
   /**
-   * Update user password
-   * Uses AuthServiceMapper to transform Supabase user
+   * Change the signed-in user's password. The route re-verifies the current
+   * password (accounts without one may omit it) before setting the new one.
    */
-  static async updatePassword(password: string): Promise<UserI> {
+  static async updatePassword(request: ChangePasswordRequestType): Promise<void> {
     try {
-      const { data, error } = await AuthService.getSupabase().auth.updateUser({
-        password,
-      });
-
-      if (error) {
-        throw ErrorClient.handleError({
-          error,
-          service: "Auth",
-          action: "Update Password",
-        });
-      }
-
-      // Validate Supabase response
-      UpdateUserResponseSchema.parse(data);
-
-      if (!data.user) {
-        throw ErrorClient.handleError({
-          error: new Error("User data not returned"),
-          service: "Auth",
-          action: "Update Password",
-        });
-      }
-
-      return AuthServiceMapper.mapSupabaseUserToUser(data.user);
+      await POST<{ success: true }>("/api/account/password", request);
     } catch (error) {
       throw ErrorClient.handleError({
         error,

@@ -18,7 +18,17 @@ function secretsMatch(provided: string, expected: string): boolean {
 }
 
 export function checkAdminSecret(request: NextRequest): AdminAuthResultT {
-  const expected = process.env.ADMIN_API_SECRET;
+  return checkBearerSecret(request, process.env.ADMIN_API_SECRET);
+}
+
+/**
+ * Same check for any shared secret sent as `Authorization: Bearer <secret>`.
+ * A header, unlike a query string, does not end up in access logs.
+ */
+export function checkBearerSecret(
+  request: NextRequest,
+  expected: string | undefined,
+): AdminAuthResultT {
   if (!expected) return "unconfigured";
 
   const header = request.headers.get("authorization") ?? "";
