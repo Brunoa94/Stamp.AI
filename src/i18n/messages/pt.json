@@ -1713,9 +1713,6 @@
       "subtitle": "Indique para onde quer que a encomenda seja enviada",
       "toggleLabel": "Enviar para outra morada"
     },
-    "testMode": {
-      "label": "Modo de teste · use métodos de pagamento predefinidos"
-    },
     "notFound": {
       "title": "Saco não encontrado",
       "description": "Não encontrámos o seu saco. Volte atrás e adicione os artigos novamente.",
@@ -2033,6 +2030,7 @@
     "PRINTIFY_TOKEN_MISSING": "Erro de configuração do serviço de impressão",
     "PRINTIFY_SHOP_ID_MISSING": "Erro de configuração da loja de impressão",
     "STRIPE_SECRET_KEY_MISSING": "Erro de configuração do serviço de pagamento",
+    "STRIPE_TEST_MODE_DISABLED": "Erro de configuração do serviço de pagamento",
     "STRIPE_WEBHOOK_SECRET_MISSING": "Erro de configuração do webhook",
     "SUPABASE_URL_MISSING": "Erro de configuração da base de dados",
     "SUPABASE_SERVICE_ROLE_KEY_MISSING": "Erro de autenticação da base de dados",

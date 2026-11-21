@@ -1713,9 +1713,6 @@
       "subtitle": "Vul in waar je bestelling naartoe moet",
       "toggleLabel": "Naar een ander adres verzenden"
     },
-    "testMode": {
-      "label": "Testmodus · gebruik vooraf ingestelde betaalmethoden"
-    },
     "notFound": {
       "title": "Tas niet gevonden",
       "description": "We konden je tas niet vinden. Ga terug en voeg je artikelen opnieuw toe.",
@@ -2033,6 +2030,7 @@
     "PRINTIFY_TOKEN_MISSING": "Configuratiefout van de printservice",
     "PRINTIFY_SHOP_ID_MISSING": "Configuratiefout van de printshop",
     "STRIPE_SECRET_KEY_MISSING": "Configuratiefout van de betaalservice",
+    "STRIPE_TEST_MODE_DISABLED": "Configuratiefout van de betaalservice",
     "STRIPE_WEBHOOK_SECRET_MISSING": "Configuratiefout van de webhook",
     "SUPABASE_URL_MISSING": "Configuratiefout van de database",
     "SUPABASE_SERVICE_ROLE_KEY_MISSING": "Authenticatiefout van de database",

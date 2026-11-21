@@ -1708,9 +1708,6 @@
       "subtitle": "Enter where you want your order shipped",
       "toggleLabel": "Ship to a different address"
     },
-    "testMode": {
-      "label": "Test mode · use predefined payment methods"
-    },
     "notFound": {
       "title": "Bag not found",
       "description": "We couldn't find your bag. Please go back and add your items again.",
@@ -2028,6 +2025,7 @@
     "PRINTIFY_TOKEN_MISSING": "Print service configuration error",
     "PRINTIFY_SHOP_ID_MISSING": "Print shop configuration error",
     "STRIPE_SECRET_KEY_MISSING": "Payment service configuration error",
+    "STRIPE_TEST_MODE_DISABLED": "Payment service configuration error",
     "STRIPE_WEBHOOK_SECRET_MISSING": "Webhook configuration error",
     "SUPABASE_URL_MISSING": "Database configuration error",
     "SUPABASE_SERVICE_ROLE_KEY_MISSING": "Database authentication error",
