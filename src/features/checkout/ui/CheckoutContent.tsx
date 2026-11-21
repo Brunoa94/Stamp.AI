@@ -2,8 +2,8 @@
  * CheckoutContent
  *
  * Container for the luxury brutalist checkout page. Resolves the cart, wires
- * the shared CheckoutFormProvider, and owns the test-mode setting (shown as
- * a locked indicator).
+ * the shared CheckoutFormProvider, and passes the build-time test-mode
+ * setting (NEXT_PUBLIC_CHECKOUT_TEST_MODE) down to the payment sections.
  * All business logic — pricing, payment, form validation — is reused from
  * the existing checkout feature.
  */
@@ -16,7 +16,6 @@ import { useCheckoutCart } from "../lib/hooks/useCheckoutCart";
 import { CHECKOUT_TEST_MODE } from "../lib/constants/checkoutMode";
 import { CheckoutLayout } from "./components/CheckoutLayout";
 import { CheckoutHeader } from "./components/CheckoutHeader";
-import { CheckoutTestModeToggle } from "./components/CheckoutTestModeToggle";
 import { CheckoutLoadingSection } from "./sections/CheckoutLoadingSection";
 import { CheckoutNotFoundSection } from "./sections/CheckoutNotFoundSection";
 import { CheckoutBillingSection } from "./sections/CheckoutBillingSection";
@@ -53,7 +52,6 @@ function CheckoutForm({ cart }: { cart: CartWithItems }) {
       header={<CheckoutHeader />}
       forms={
         <>
-          {testMode && <CheckoutTestModeToggle testMode={testMode} />}
           <CheckoutBillingSection />
           <CheckoutShippingToggle />
           <CheckoutShippingSection />

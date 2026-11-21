@@ -6,7 +6,7 @@ import { supabaseRest } from "../_shared/supabase.ts";
 import {
   STRIPE_MODE_METADATA_KEY,
   createStripeClient,
-  resolveStripeMode,
+  resolveRequestedStripeMode,
 } from "../_shared/stripeConfig.ts";
 import {
   priceCheckout,
@@ -48,7 +48,7 @@ serve(async (req) => {
 
     // Pick the credential set up-front so a misconfigured test request
     // fails before any pricing work is done.
-    const stripeMode = resolveStripeMode(test_mode);
+    const stripeMode = resolveRequestedStripeMode(test_mode);
     const stripe = createStripeClient(stripeMode, "2023-10-16");
     const validAmount = validateRequest.amount(amount);
 
