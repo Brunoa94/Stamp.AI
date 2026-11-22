@@ -88,9 +88,10 @@ export function CatalogPageContent({ sections }: PropsI) {
 
       <div className="mx-auto max-w-screen-2xl px-6 pt-12 pb-24 lg:px-12 xl:px-24">
 
+        {/* Phones go straight to the search and products */}
         <Paragraph
           variant="lead"
-          className="mb-16 text-(--color-stamp-chocolate)/80"
+          className="mb-16 hidden text-(--color-stamp-chocolate)/80 md:block"
         >
           {t("intro")}
         </Paragraph>
