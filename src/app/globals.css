@@ -1318,25 +1318,19 @@
 }
 
 /* Stamp canvas backdrop: a clean diagonal edge, no gold seam and no fade.
-   Below md it's a short strip above the steps with a diagonal bottom edge;
-   from md it's anchored to the right, under the "8 Steps to Print" sidebar,
+   Phones have none (StampBackdrop is hidden below md); from md it's
+   anchored to the right, under the "8 Steps to Print" sidebar,
    with one chocolate scrim for the whole photo, and its edge (same slant as
    the homepage hero cut) runs through the middle of the steps' right column;
    from lg it starts on the sidebar's left border instead.
    The edge position is mirrored in STAMP_BACKDROP_EDGE (stampBackdrops.ts),
    which the Upload step's split-tone text uses to switch colour on it. */
 .stamp-backdrop__photo {
-  clip-path: polygon(0 0, 100% 0, 100% 66%, 0 96%);
+  clip-path: polygon(70% 0, 100% 0, 100% 100%, 60% 100%);
 }
 
 .stamp-backdrop__scrim {
   background: color-mix(in srgb, var(--color-stamp-chocolate) 74%, transparent);
-}
-
-@media (min-width: 48rem) {
-  .stamp-backdrop__photo {
-    clip-path: polygon(70% 0, 100% 0, 100% 100%, 60% 100%);
-  }
 }
 
 /* From lg the edge starts on the steps sidebar's left border (w-68). */

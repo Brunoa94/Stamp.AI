@@ -19,7 +19,6 @@ import { ProductSelectionSection } from "./sections/ProductSelectionSection/Prod
 import { useStampNavigation } from "../lib/hooks/useStampNavigation";
 import { useMountedStampSteps } from "../lib/hooks/useMountedStampSteps";
 import { isStampBackdropVisible } from "../lib/helpers/stampBackdropHelpers";
-import { cn } from "@/lib/utils";
 
 /**
  * StampCanvas
@@ -40,20 +39,14 @@ export function StampCanvas() {
 
   return (
     <div className="fixed inset-0 bg-(--color-stamp-off-white)">
-      {/* Phase photo: a strip above the steps below md; from md behind the sidebar and half the right column */}
+      {/* Phase photo (md+): behind the sidebar and half the right column; phones have none */}
       <StampBackdrop currentStep={activeSlide} />
 
       {/* Back Button (Top Left) */}
       <BackButton />
 
       {/* Protocol canvas aligned with the submitted layout; AppLayoutChrome provides <main> */}
-      {/* Below md the canvas starts under the backdrop strip, or right under the header on step 00 where the strip is hidden */}
-      <div
-        className={cn(
-          "absolute inset-x-0 bottom-0 overflow-hidden md:top-16 lg:top-24 lg:mr-68",
-          isStampBackdropVisible(activeSlide) ? "top-48" : "top-16",
-        )}
-      >
+      <div className="absolute inset-x-0 top-16 bottom-0 overflow-hidden lg:top-24 lg:mr-68">
         {/* data-stamp-slider: SplitToneText follows this slide (useStampSplitTone).
             Steps render once near or visited (useMountedStampSteps), so a first
             visit doesn't hydrate or download the whole flow */}

@@ -15,11 +15,11 @@ import {
  * diagonal style (Ken Burns drift, chocolate scrim), with a clean edge and
  * no gold seam. Each phase of the flow has its own photo; when a step
  * enters a new phase the photos crossfade. The hero step (00) keeps its own
- * photo, so the backdrop is faded out there and fades in on step 01. Below md it's a short strip above
- * the steps; from md it's anchored to the right, under the steps sidebar, and
- * its edge runs through the middle of the steps' right column (from lg it
- * starts on the sidebar's left border)
- * (`.stamp-backdrop*` in globals.css).
+ * photo, so the backdrop is faded out there and fades in on step 01. Phones
+ * get no backdrop, so the steps start right under the header; from md it's
+ * anchored to the right, under the steps sidebar, and its edge runs through
+ * the middle of the steps' right column (from lg it starts on the sidebar's
+ * left border) (`.stamp-backdrop*` in globals.css).
  */
 
 interface PropsI {
@@ -33,7 +33,7 @@ export function StampBackdrop({ currentStep }: PropsI) {
     <div
       aria-hidden="true"
       className={cn(
-        "stamp-backdrop pointer-events-none absolute inset-x-0 top-16 h-32 transition-opacity duration-1000 ease-in-out motion-reduce:transition-none md:bottom-0 md:h-auto lg:top-24",
+        "stamp-backdrop pointer-events-none absolute inset-x-0 top-16 bottom-0 hidden transition-opacity duration-1000 ease-in-out motion-reduce:transition-none md:block lg:top-24",
         isStampBackdropVisible(currentStep) ? "opacity-100" : "opacity-0",
       )}
     >
