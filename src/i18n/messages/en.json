@@ -214,6 +214,13 @@
       "label": "How it works",
       "footer": "Simple, from idea to doorstep.",
       "stepCounter": "Step {current} of {total}",
+      "stepBadge": "Step {number}",
+      "carouselAria": "The process, step by step",
+      "stamp": {
+        "title": "Stamp it",
+        "description": "That's it. Your idea is on its way to becoming something you can wear, hang or sip from. Your turn.",
+        "cta": "Start creating, stamp it!"
+      },
       "steps": {
         "step-upload": {
           "title": "Upload",

@@ -99,6 +99,9 @@ export const HOME_PROCESS_STEPS: HomeProcessStepType[] = [
   { id: "step-create", number: "06" },
 ];
 
+/** The Process carousel ends on the visitor's own step: stamping their idea. */
+export const HOME_PROCESS_STAMP_STEP_NUMBER = "07";
+
 // Alternating color styles for process step cards
 export type ProcessStepColorType = {
   border: string;

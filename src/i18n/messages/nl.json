@@ -223,6 +223,13 @@
       "label": "Hoe het werkt",
       "footer": "Eenvoudig, van idee tot voor je deur.",
       "stepCounter": "Stap {current} van {total}",
+      "stepBadge": "Stap {number}",
+      "carouselAria": "Het proces, stap voor stap",
+      "stamp": {
+        "title": "Stamp it",
+        "description": "Dat was het. Je idee wordt iets wat je kunt dragen, ophangen of uit kunt drinken. Nu jij.",
+        "cta": "Begin met maken, stamp it!"
+      },
       "steps": {
         "step-upload": {
           "title": "Uploaden",

@@ -223,6 +223,13 @@
       "label": "Como funciona",
       "footer": "Simples, da ideia até à sua porta.",
       "stepCounter": "Passo {current} de {total}",
+      "stepBadge": "Passo {number}",
+      "carouselAria": "O processo, passo a passo",
+      "stamp": {
+        "title": "Stamp it",
+        "description": "É isso. A sua ideia está a caminho de se tornar algo que pode vestir, pendurar ou usar para beber. Agora é a sua vez.",
+        "cta": "Comece a criar, stamp it!"
+      },
       "steps": {
         "step-upload": {
           "title": "Carregar",

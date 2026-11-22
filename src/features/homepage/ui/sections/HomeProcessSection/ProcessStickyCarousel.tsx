@@ -3,188 +3,137 @@
 /**
  * ProcessStickyCarousel
  *
- * Brevo-style scroll-driven sticky carousel that cycles through process steps.
- * The matching flow-demo screen on the left slides up/down, text on the right crossfades.
- * Includes a sticky stepper at the bottom showing current progress.
+ * "The Process" as a horizontal carousel: the section pins to the viewport
+ * while the page scrolls through it, and that scroll slides a track of step
+ * cards sideways, ending on the visitor's own step, stamping their idea.
+ * A progress bar under the track shows the current step.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { HOME_PROCESS_STEPS } from "../../../lib/constants/homepageContent";
-import { HomeSectionHeader } from "../../components/HomeSectionHeader";
-import { ProcessStepper } from "./ProcessStepper";
-import { ProcessAnimatedButton } from "./ProcessAnimatedButton";
-import { ProcessDesktopPreview } from "./ProcessDesktopPreview";
-import { ProcessMobileCard } from "./ProcessMobileCard";
-import { ProcessDesktopText } from "./ProcessDesktopText";
+import { List } from "@/features/ui/list";
 import {
-  computeDesktopImageAnimation,
-  computeMobileCardAnimation,
-  computeDesktopTextAnimation,
-} from "../../../lib/helpers/processAnimationHelpers";
+  HOME_PROCESS_STAMP_STEP_NUMBER,
+  HOME_PROCESS_STEPS,
+} from "@/features/homepage/lib/constants/homepageContent";
+import {
+  getProcessCarouselFrame,
+  getProcessSlideEmphasis,
+  type ProcessCarouselFrameT,
+} from "@/features/homepage/lib/helpers/processCarousel";
+import { HomeSectionHeader } from "../../components/HomeSectionHeader";
+import { ProcessSlideCard } from "./ProcessSlideCard";
+import { ProcessStampSlide } from "./ProcessStampSlide";
+import { ProcessProgress } from "./ProcessProgress";
 
-// Height per step in vh units (controls scroll speed per step)
-const STEP_HEIGHT_VH = 100;
+// Page scroll (vh) that moves the track by one slide
+const SLIDE_SCROLL_VH = 60;
+// The process steps plus the closing stamp slide
+const SLIDE_COUNT = HOME_PROCESS_STEPS.length + 1;
+
+const INITIAL_FRAME: ProcessCarouselFrameT = { progress: 0, activeIndex: 0, translateX: 0 };
 
 export function ProcessStickyCarousel() {
   const t = useTranslations("home.process");
   const containerRef = useRef<HTMLDivElement>(null);
-  const [activeStepIndex, setActiveStepIndex] = useState(0);
-  const [stepProgress, setStepProgress] = useState(0);
-
-  const totalSteps = HOME_PROCESS_STEPS.length;
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [frame, setFrame] = useState<ProcessCarouselFrameT>(INITIAL_FRAME);
 
   useEffect(() => {
     let rafId: number | null = null;
 
-    const handleScroll = () => {
+    const measure = () => {
       if (rafId) return;
 
       rafId = requestAnimationFrame(() => {
         rafId = null;
-        if (!containerRef.current) return;
+        const container = containerRef.current;
+        const viewport = viewportRef.current;
+        const track = trackRef.current;
+        if (!container || !viewport || !track) return;
 
-        const rect = containerRef.current.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
-        const scrollableDistance = rect.height - viewportHeight;
-        const scrolledIntoSection = -rect.top;
-
-        const overallProgress = Math.max(
-          0,
-          Math.min(1, scrolledIntoSection / scrollableDistance),
+        const rect = container.getBoundingClientRect();
+        setFrame(
+          getProcessCarouselFrame({
+            scrolled: -rect.top,
+            scrollable: rect.height - window.innerHeight,
+            slideCount: SLIDE_COUNT,
+            trackWidth: track.offsetWidth,
+            viewportWidth: viewport.clientWidth,
+          }),
         );
-
-        const stepFloat = overallProgress * totalSteps;
-        const currentStep = Math.min(Math.floor(stepFloat), totalSteps - 1);
-        const progressWithinStep = stepFloat - currentStep;
-
-        setActiveStepIndex(currentStep);
-        setStepProgress(progressWithinStep);
       });
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
+    window.addEventListener("scroll", measure, { passive: true });
+    window.addEventListener("resize", measure);
+    measure();
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", measure);
+      window.removeEventListener("resize", measure);
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [totalSteps]);
+  }, []);
 
-  const totalHeight = `${totalSteps * STEP_HEIGHT_VH}vh`;
+  // The track moves with the page scroll, so a keyboard user reaching the
+  // CTA is scrolled to the end of the section, where the last slide shows.
+  const showLastSlide = useCallback(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const { bottom } = container.getBoundingClientRect();
+    window.scrollTo({ top: window.scrollY + bottom - window.innerHeight });
+  }, []);
 
   return (
     <div
       ref={containerRef}
       className="relative"
-      style={{ height: totalHeight }}
+      style={{ height: `${100 + (SLIDE_COUNT - 1) * SLIDE_SCROLL_VH}vh` }}
     >
-      {/* Sticky container */}
-      <div className="sticky top-0 h-screen flex flex-col">
-        {/* Sticky stepper at bottom - mobile only (desktop has the side rail) */}
-        <div className="lg:hidden">
-          <ProcessStepper
-            activeStepIndex={activeStepIndex}
-            totalSteps={totalSteps}
-          />
+      {/* Top padding clears the fixed header (h-16, lg:h-24) */}
+      <div className="sticky top-0 flex h-screen flex-col justify-center gap-6 overflow-hidden pt-16 pb-6 lg:gap-10 lg:pt-24 lg:pb-10">
+        <div className="px-6 lg:px-12 xl:px-24">
+          <div className="mx-auto max-w-screen-2xl">
+            <HomeSectionHeader title={t("title")} accent={t("accent")} label={t("label")} />
+          </div>
         </div>
 
-        {/* Section header - stays at top */}
-        <div className="pt-20 lg:pt-24 pb-4 lg:pb-8 px-6 lg:px-12 xl:px-24">
+        <div ref={viewportRef} className="w-full">
+          <div
+            ref={trackRef}
+            className="w-max px-6 will-change-transform lg:px-12 xl:px-24"
+            style={{ transform: `translate3d(${frame.translateX}px, 0, 0)` }}
+          >
+            <List as="ol" aria-label={t("carouselAria")} className="flex items-stretch gap-4 lg:gap-8">
+              {HOME_PROCESS_STEPS.map((step, index) => (
+                <ProcessSlideCard
+                  key={step.id}
+                  step={step}
+                  title={t(`steps.${step.id}.title`)}
+                  description={t(`steps.${step.id}.description`)}
+                  emphasis={getProcessSlideEmphasis(index, frame.progress, SLIDE_COUNT)}
+                />
+              ))}
+              <ProcessStampSlide
+                number={HOME_PROCESS_STAMP_STEP_NUMBER}
+                emphasis={getProcessSlideEmphasis(SLIDE_COUNT - 1, frame.progress, SLIDE_COUNT)}
+                onCtaFocus={showLastSlide}
+              />
+            </List>
+          </div>
+        </div>
+
+        <div className="px-6 lg:px-12 xl:px-24">
           <div className="mx-auto max-w-screen-2xl">
-            <HomeSectionHeader
-              title={t("title")}
-              accent={t("accent")}
-              label={t("label")}
+            <ProcessProgress
+              progress={frame.progress}
+              activeIndex={frame.activeIndex}
+              total={SLIDE_COUNT}
             />
           </div>
-        </div>
-
-        {/* Content - centered in remaining space */}
-        <div className="flex-1 flex items-start mt-4 lg:mt-12">
-          <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-30 max-w-8xl mx-auto px-6 md:px-12 lg:px-16">
-            {/* Left side - Desktop flow-demo screen with slide animation */}
-            <div className="hidden lg:flex items-center relative w-125 xl:w-150 h-125 xl:h-150 mt-6 flex-[0.5]">
-              {HOME_PROCESS_STEPS.map((step, index) => {
-                const animation = computeDesktopImageAnimation(
-                  index,
-                  activeStepIndex,
-                  stepProgress,
-                );
-                return (
-                  <ProcessDesktopPreview
-                    key={step.id}
-                    step={step}
-                    label={t(`steps.${step.id}.description`)}
-                    translateY={animation.translateY}
-                    opacity={animation.opacity}
-                    zIndex={animation.zIndex}
-                  />
-                );
-              })}
-            </div>
-
-            {/* Right side - Text content with crossfade */}
-            <div className="w-full flex-[0.5] max-w-2xl">
-              {/* Mobile: Combined flow-demo screen and text with slide animations */}
-              <div className="lg:hidden relative h-124 sm:h-136 overflow-visible">
-                {HOME_PROCESS_STEPS.map((step, index) => {
-                  const animation = computeMobileCardAnimation(
-                    index,
-                    activeStepIndex,
-                    stepProgress,
-                  );
-                  if (!animation.isVisible) return null;
-
-                  return (
-                    <ProcessMobileCard
-                      key={step.id}
-                      step={step}
-                      title={t(`steps.${step.id}.title`)}
-                      description={t(`steps.${step.id}.description`)}
-                      translateY={animation.translateY}
-                      opacity={animation.opacity}
-                      scale={animation.scale}
-                      isActive={animation.isActive}
-                    />
-                  );
-                })}
-              </div>
-
-              {/* Desktop: Text content - slide up/down with fade */}
-              <div className="hidden lg:block relative h-112 overflow-visible">
-                {HOME_PROCESS_STEPS.map((step, index) => {
-                  const animation = computeDesktopTextAnimation(
-                    index,
-                    activeStepIndex,
-                    stepProgress,
-                  );
-                  if (!animation.isVisible) return null;
-
-                  return (
-                    <ProcessDesktopText
-                      key={step.id}
-                      step={step}
-                      title={t(`steps.${step.id}.title`)}
-                      description={t(`steps.${step.id}.description`)}
-                      translateY={animation.translateY}
-                      opacity={animation.opacity}
-                      isActive={animation.isActive}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Animated CTA button at bottom */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
-          <ProcessAnimatedButton
-            activeStepIndex={activeStepIndex}
-            stepProgress={stepProgress}
-          />
         </div>
       </div>
     </div>

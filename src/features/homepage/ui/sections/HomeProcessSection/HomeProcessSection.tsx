@@ -1,8 +1,8 @@
 /**
  * HomeProcessSection
  *
- * "The Process" — Brevo-style scroll-driven sticky carousel.
- * Text content on left, imagery on right. Each step sticks while scrolling.
+ * "The Process": a pinned horizontal carousel of the steps, driven by the
+ * page scroll and ending on the stamp step.
  */
 
 "use client";
