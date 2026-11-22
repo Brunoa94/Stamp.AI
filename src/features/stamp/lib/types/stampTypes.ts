@@ -77,12 +77,16 @@ export type SizeType =
   | (string & {});
 
 // Presentation-layer catalog product (mapped from CatalogProduct)
-export type CatalogProductMappedType = {
+export type CatalogProductMappedT = {
   blueprintId: number;
+  /** English title: category detection, the store, cart and analytics */
   name: string;
+  /** Title in the visitor's language, for rendering only */
+  displayName: string;
+  /** English description, saved to the store; Final Review translates it */
   description: string | null;
-  /** Raw Printify description (may contain HTML) for spec extraction */
-  printifyDescription: string | null;
+  /** Specs in the visitor's language (display-only) */
+  specs: string[];
   imageUrl: string;
   printProviderId: number;
   price: number;
@@ -94,7 +98,7 @@ export type ProductSectionIdT = "apparel" | "accessories";
 // One option of the product step's section picker and the products it shows
 export type ProductSectionT = {
   id: ProductSectionIdT;
-  products: CatalogProductMappedType[];
+  products: CatalogProductMappedT[];
   /** First product photo in the section, for its picker card */
   imageUrl: string | null;
 };

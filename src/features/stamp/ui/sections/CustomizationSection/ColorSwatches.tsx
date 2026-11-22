@@ -8,6 +8,7 @@ import {
   getColorHex,
 } from "@/features/homepage/lib/constants/colorSwatches";
 import { getColorClass } from "@/helpers/colors/colorMapping";
+import { useProductLabel } from "@/shared/hooks/useProductLabel";
 import type { VariantOptionKindType } from "../../../lib/helpers/productCategoryDetector";
 import { PaperTypeOptions } from "./PaperTypeOptions";
 import { SplitToneText } from "../../components/SplitToneText";
@@ -37,6 +38,7 @@ export function ColorSwatches({
   onSelectColor,
 }: PropsI) {
   const t = useTranslations("stamp.customization");
+  const label = useProductLabel();
   const isPaperType = optionKind === "paperType";
 
   return (
@@ -95,8 +97,8 @@ export function ColorSwatches({
                     : borderColor,
                 }}
                 aria-pressed={isActive}
-                aria-label={t("colorSwatchAria", { color: colorName })}
-                title={colorName}
+                aria-label={t("colorSwatchAria", { color: label("color", colorName) })}
+                title={label("color", colorName)}
               />
             );
           })}

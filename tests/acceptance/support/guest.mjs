@@ -90,7 +90,6 @@ export async function startStripePaymentWithoutPaying(page) {
   });
   const attempted = page.waitForRequest(r => r.url().includes('/functions/v1/create-payment-intent'), { timeout: 60000 });
   await page.getByRole('radio', { name: /credit|card|stripe/i }).click();
-  await page.getByRole('checkbox', { name: /test mode/i }).check();
   await page.getByRole('button', { name: /^pay /i }).click();
   await attempted;
   await aborted;

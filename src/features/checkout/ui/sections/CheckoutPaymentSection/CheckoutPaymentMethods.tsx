@@ -27,6 +27,7 @@ export function CheckoutPaymentMethods({
   disabled = false,
 }: CheckoutPaymentMethodsPropsI) {
   const t = useTranslations("checkout.payment");
+  const tMethods = useTranslations("paymentMethods");
   return (
     <div
       role="radiogroup"
@@ -66,10 +67,10 @@ export function CheckoutPaymentMethods({
             </Span>
             <Span unstyled className="flex min-w-0 flex-1 flex-col gap-0.5">
               <Span unstyled className="text-[11px] font-bold uppercase tracking-ultra text-(--color-stamp-chocolate)">
-                {method.label}
+                {tMethods(`${method.id}.label`)}
               </Span>
               <Span unstyled className="text-2xs uppercase tracking-[0.15em] text-(--color-stamp-taupe)">
-                {method.description}
+                {tMethods(`${method.id}.description`)}
               </Span>
             </Span>
             {/* The description already names the brands for screen readers */}

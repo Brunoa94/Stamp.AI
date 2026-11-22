@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { useErrorHandler } from "@/shared/hooks/useErrorHandler";
 import { AnalyticsService } from "@/shared/services/analyticsService";
 import { isRegisteredUser } from "@/shared/helpers/authIdentity";
+import type { ChangePasswordRequestType } from "@/shared/schemas/account";
 import { GuestClaimStorageService } from "@/shared/services/guestClaimStorageService";
 import {
   getSafeRedirectPath,
@@ -262,20 +263,13 @@ export function useUpdateProfile() {
 }
 
 /**
- * Update user password
+ * Update user password. The caller reports success and failure, in the
+ * user's language, so each result is shown once.
  */
 export function useUpdatePassword() {
-  const { handleError, handleSuccess } = useErrorHandler();
-
   return useMutation({
-    mutationFn: (newPassword: string) =>
-      AuthService.updatePassword(newPassword),
-    onSuccess: () => {
-      handleSuccess("Password updated successfully");
-    },
-    onError: (error: Error) => {
-      handleError(error);
-    },
+    mutationFn: (request: ChangePasswordRequestType) =>
+      AuthService.updatePassword(request),
   });
 }
 

@@ -29,7 +29,7 @@
  *
  * Environment variables required:
  *   - GOOGLE_GEMINI_API_KEY (or OPENAI_API_KEY with --image-provider openai)
- *   - PRINTIFY_API_TOKEN (or NEXT_PUBLIC_PRINTIFY_API_TOKEN)
+ *   - PRINTIFY_API_TOKEN (server-only; never NEXT_PUBLIC_)
  *   - PRINTIFY_SHOP_ID (or NEXT_PUBLIC_PRINTIFY_SHOP_ID)
  */
 
@@ -135,7 +135,7 @@ ${DESIGNS.map(d => `  ${d.id.padEnd(16)} ${d.productKey.padEnd(12)} ${printPosit
 function validateEnv(artworkOnly, imageProvider) {
   const geminiKey = process.env.GOOGLE_GEMINI_API_KEY;
   const openaiKey = process.env.OPENAI_API_KEY;
-  const printifyToken = process.env.PRINTIFY_API_TOKEN || process.env.NEXT_PUBLIC_PRINTIFY_API_TOKEN;
+  const printifyToken = process.env.PRINTIFY_API_TOKEN;
   const printifyShopId = process.env.PRINTIFY_SHOP_ID || process.env.NEXT_PUBLIC_PRINTIFY_SHOP_ID;
 
   const missing = [];

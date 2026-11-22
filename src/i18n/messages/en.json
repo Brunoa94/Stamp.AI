@@ -1,5 +1,32 @@
 {
+  "paymentMethods": {
+    "stripe": {
+      "label": "Credit Card",
+      "description": "Visa, Mastercard, Amex"
+    },
+    "paypal": {
+      "label": "PayPal",
+      "description": "PayPal, Venmo, Pay Later"
+    },
+    "ideal": {
+      "label": "iDEAL",
+      "description": "Pay with your Dutch bank"
+    }
+  },
+  "productSizes": {
+    "oneSize": "One Size",
+    "vertical": "Vertical",
+    "horizontal": "Horizontal"
+  },
   "home": {
+    "heroTrust": {
+      "moneyBackLabel": "{days}-Day",
+      "moneyBackSublabel": "Money Back",
+      "freeShippingLabel": "Free Shipping",
+      "freeShippingSublabel": "Orders €{threshold}+",
+      "secureLabel": "Secure",
+      "secureSublabel": "Checkout"
+    },
     "topBanner": {
       "freeShipping": "Free shipping on orders over €{threshold}",
       "returns": "{days}-day returns",
@@ -756,7 +783,9 @@
       "showMore": "Show {count} more",
       "showLess": "Show less",
       "sectionPickerAria": "Product type",
-      "sectionCount": "{count, plural, one {# product} other {# products}}"
+      "sectionCount": "{count, plural, one {# product} other {# products}}",
+      "seeMore": "See more",
+      "seeLess": "See less"
     },
     "customization": {
       "protocol": "Step 06 / Customize",
@@ -954,7 +983,7 @@
       "free": "Free",
       "taxLogistics": "Tax",
       "taxNote": "Calculated at checkout",
-      "proceedToCheckout": "Checkout",
+      "proceedToCheckout": "Proceed to Checkout",
       "estimatedArrival": "Estimated Arrival",
       "arrivalWindow": "5-8 Business Days",
       "secureTransactions": "Secure, encrypted checkout",
@@ -1057,6 +1086,10 @@
     }
   },
   "profile": {
+    "meta": {
+      "title": "My Profile",
+      "description": "Manage your account settings, shipping addresses, and preferences."
+    },
     "header": {
       "title": "Your <accent>profile</accent>",
       "subtitle": "Manage your account settings"
@@ -1080,9 +1113,12 @@
       "subtitle": "Change your password whenever you like.",
       "changePassword": "CHANGE PASSWORD",
       "hiddenNote": "We keep your password hidden. Hit \"Change Password\" to set a new one.",
+      "currentPasswordLabel": "Current Password",
+      "currentPasswordPlaceholder": "Enter your current password",
+      "currentPasswordHint": "We ask for it so no one else can change your password",
       "newPasswordLabel": "New Password",
       "newPasswordPlaceholder": "Enter new password",
-      "newPasswordHint": "Password must be at least 6 characters",
+      "newPasswordHint": "Password must be at least 8 characters",
       "confirmPasswordLabel": "Confirm New Password",
       "confirmPasswordPlaceholder": "Confirm new password",
       "confirmPasswordHint": "Re-enter your new password",
@@ -1672,9 +1708,6 @@
       "subtitle": "Enter where you want your order shipped",
       "toggleLabel": "Ship to a different address"
     },
-    "testMode": {
-      "label": "Test mode · use predefined payment methods"
-    },
     "notFound": {
       "title": "Bag not found",
       "description": "We couldn't find your bag. Please go back and add your items again.",
@@ -1838,6 +1871,7 @@
       "promoCodeLimitReached": "This promo code has reached its usage limit",
       "promoCodeApplied": "Promo code applied",
       "validationFailed": "Failed to validate promo code",
+      "tooManyAttempts": "Too many promo code attempts. Please try again later",
       "enterPromoCode": "Please enter a promo code",
       "cartTotalInvalid": "Bag total must be greater than 0"
     },
@@ -1960,6 +1994,9 @@
     "IMAGE_REQUIRED": "At least one image is required",
     "EMAIL_REQUIRED": "Email address is required",
     "PASSWORD_REQUIRED": "Password is required",
+    "CURRENT_PASSWORD_REQUIRED": "Please enter your current password",
+    "INVALID_PASSWORD": "Your current password is incorrect",
+    "TOO_MANY_ATTEMPTS": "Too many attempts. Please wait an hour and try again",
     "INVALID_EMAIL_FORMAT": "Please enter a valid email address",
     "PASSWORD_TOO_SHORT": "Password must be at least 8 characters",
     "AMOUNT_REQUIRED": "Amount is required",
@@ -1988,6 +2025,7 @@
     "PRINTIFY_TOKEN_MISSING": "Print service configuration error",
     "PRINTIFY_SHOP_ID_MISSING": "Print shop configuration error",
     "STRIPE_SECRET_KEY_MISSING": "Payment service configuration error",
+    "STRIPE_TEST_MODE_DISABLED": "Payment service configuration error",
     "STRIPE_WEBHOOK_SECRET_MISSING": "Webhook configuration error",
     "SUPABASE_URL_MISSING": "Database configuration error",
     "SUPABASE_SERVICE_ROLE_KEY_MISSING": "Database authentication error",

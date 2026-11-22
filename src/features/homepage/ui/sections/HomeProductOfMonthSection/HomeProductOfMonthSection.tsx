@@ -16,20 +16,19 @@ import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
-import { useProductOfMonth } from "@/shared/queries/catalogQueries";
-import { resolveProductDescription } from "@/lib/seo/productDescription";
+import { useLocalizedProductOfMonth } from "@/features/homepage/lib/hooks/useLocalizedProductOfMonth";
 import { SectionReveal } from "../../components/SectionReveal";
 
 export function HomeProductOfMonthSection() {
   const t = useTranslations("home.productOfMonth");
-  const { data: product, isLoading } = useProductOfMonth();
+  const { product, isLoading, text } = useLocalizedProductOfMonth();
 
   // Don't render if no product of the month is set or still loading
-  if (isLoading || !product) {
+  if (isLoading || !product || !text) {
     return null;
   }
 
-  const description = resolveProductDescription(product.product_seo);
+  const { displayName, description } = text;
 
   const price = product.selling_price_cents
     ? product.selling_price_cents / 100
@@ -68,7 +67,7 @@ export function HomeProductOfMonthSection() {
               {product.base_image_url ? (
                 <Image
                   src={product.base_image_url}
-                  alt={product.display_title}
+                  alt={displayName}
                   fill
                   sizes="(max-width: 768px) 320px, 384px"
                   className="object-cover"
@@ -104,7 +103,7 @@ export function HomeProductOfMonthSection() {
               variant="card"
               className="mb-6 text-xl text-(--color-stamp-chocolate) sm:text-2xl"
             >
-              {product.display_title}
+              {displayName}
             </Heading>
 
             {description && (

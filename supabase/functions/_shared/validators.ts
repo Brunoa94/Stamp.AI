@@ -82,6 +82,9 @@ export const validateEnvVars = {
   }
 }
 
+/** A database row id. Safe to interpolate into a PostgREST query string. */
+export const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 // Request validation
 export const validateRequest = {
   email: (email?: string): string => {

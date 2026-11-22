@@ -11,14 +11,22 @@ import { useTranslations } from "next-intl";
 import { ProfileCard } from "../components/ProfileCard";
 
 // Static field configuration outside component for performance
-const passwordFields = [
+const currentPasswordField = {
+  id: "current_password",
+  key: "currentPassword",
+  autoComplete: "current-password",
+} as const;
+
+const newPasswordFields = [
   {
     id: "new_password",
-    key: "newPassword" as const,
+    key: "newPassword",
+    autoComplete: "new-password",
   },
   {
     id: "confirm_password",
-    key: "confirmPassword" as const,
+    key: "confirmPassword",
+    autoComplete: "new-password",
   },
 ] as const;
 
@@ -26,6 +34,9 @@ export function PasswordResetSection() {
   const t = useTranslations("profile.passwordReset");
   const {
     isEditing,
+    canChangePassword,
+    requiresCurrentPassword,
+    currentPassword,
     newPassword,
     confirmPassword,
     isLoading,
@@ -33,19 +44,26 @@ export function PasswordResetSection() {
     handleSave,
     handleCancel,
     handleStartEditing,
+    setCurrentPassword,
     setNewPassword,
     setConfirmPassword,
   } = usePasswordReset();
 
   const fieldSetters = {
+    currentPassword: setCurrentPassword,
     newPassword: setNewPassword,
     confirmPassword: setConfirmPassword,
   } as const;
 
   const fieldValues = {
+    currentPassword,
     newPassword,
     confirmPassword,
   } as const;
+
+  const passwordFields = requiresCurrentPassword
+    ? [currentPasswordField, ...newPasswordFields]
+    : newPasswordFields;
 
   return (
     <ProfileCard
@@ -60,7 +78,7 @@ export function PasswordResetSection() {
       subtitle={t("subtitle")}
       editLabel={t("changePassword")}
       onEdit={handleStartEditing}
-      showEditButton={!isEditing}
+      showEditButton={!isEditing && canChangePassword}
     >
       {/* Content */}
       {!isEditing ? (
@@ -75,7 +93,7 @@ export function PasswordResetSection() {
             handleSave();
           }}
         >
-          {passwordFields.map(({ id, key }) => (
+          {passwordFields.map(({ id, key, autoComplete }) => (
             <div key={id} className="space-y-2">
               <Label htmlFor={id}>
                 <Span
@@ -92,7 +110,7 @@ export function PasswordResetSection() {
                 onChange={(e) => fieldSetters[key](e.target.value)}
                 placeholder={t(`${key}Placeholder`)}
                 className={profileInputStyles.password}
-                autoComplete="new-password"
+                autoComplete={autoComplete}
               />
               <Paragraph variant="xs" className="text-(--color-stamp-taupe) italic">
                 {t(`${key}Hint`)}

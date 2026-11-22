@@ -6,12 +6,12 @@ import messages from "@/i18n/messages/en.json";
 import { CatalogPageContent } from "../CatalogPageContent";
 import type {
   CatalogCategorySectionType,
-  CatalogDisplayProductType,
+  CatalogDisplayProductT,
 } from "../../lib/types/catalogPageTypes";
 
 function buildProduct(
-  overrides: Partial<CatalogDisplayProductType> = {}
-): CatalogDisplayProductType {
+  overrides: Partial<CatalogDisplayProductT> = {}
+): CatalogDisplayProductT {
   return {
     blueprintId: 6,
     name: "Unisex Heavy Cotton Tee",
@@ -22,7 +22,9 @@ function buildProduct(
     isOnSale: false,
     imageUrls: ["https://images.printify.com/1.jpg"],
     availableColors: [],
+    colorLabels: {},
     ...overrides,
+    displayName: overrides.displayName ?? overrides.name ?? "Unisex Heavy Cotton Tee",
   };
 }
 

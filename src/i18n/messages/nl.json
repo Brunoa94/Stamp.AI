@@ -1,5 +1,32 @@
 {
+  "paymentMethods": {
+    "stripe": {
+      "label": "Creditcard",
+      "description": "Visa, Mastercard, Amex"
+    },
+    "paypal": {
+      "label": "PayPal",
+      "description": "PayPal, Venmo, Later betalen"
+    },
+    "ideal": {
+      "label": "iDEAL",
+      "description": "Betaal via je eigen bank"
+    }
+  },
+  "productSizes": {
+    "oneSize": "One size",
+    "vertical": "Verticaal",
+    "horizontal": "Horizontaal"
+  },
   "home": {
+    "heroTrust": {
+      "moneyBackLabel": "{days} dagen",
+      "moneyBackSublabel": "Geld terug",
+      "freeShippingLabel": "Gratis verzending",
+      "freeShippingSublabel": "Bestellingen vanaf €{threshold}",
+      "secureLabel": "Veilig",
+      "secureSublabel": "Afrekenen"
+    },
     "topBanner": {
       "freeShipping": "Gratis verzending bij bestellingen boven € {threshold}",
       "returns": "{days} dagen retourneren",
@@ -762,7 +789,9 @@
       "showMore": "Nog {count} tonen",
       "showLess": "Minder tonen",
       "sectionPickerAria": "Producttype",
-      "sectionCount": "{count, plural, one {# product} other {# producten}}"
+      "sectionCount": "{count, plural, one {# product} other {# producten}}",
+      "seeMore": "Meer tonen",
+      "seeLess": "Minder tonen"
     },
     "customization": {
       "protocol": "Stap 06 / Aanpassen",
@@ -1063,6 +1092,10 @@
     }
   },
   "profile": {
+    "meta": {
+      "title": "Mijn profiel",
+      "description": "Beheer je accountinstellingen, verzendadressen en voorkeuren."
+    },
     "header": {
       "title": "Je <accent>profiel</accent>",
       "subtitle": "Beheer je accountinstellingen"
@@ -1086,9 +1119,12 @@
       "subtitle": "Wijzig je wachtwoord wanneer je maar wilt.",
       "changePassword": "WACHTWOORD WIJZIGEN",
       "hiddenNote": "We houden je wachtwoord verborgen. Klik op \"Wachtwoord wijzigen\" om een nieuw wachtwoord in te stellen.",
+      "currentPasswordLabel": "Huidig wachtwoord",
+      "currentPasswordPlaceholder": "Voer je huidige wachtwoord in",
+      "currentPasswordHint": "Zo kan niemand anders je wachtwoord wijzigen",
       "newPasswordLabel": "Nieuw wachtwoord",
       "newPasswordPlaceholder": "Voer een nieuw wachtwoord in",
-      "newPasswordHint": "Het wachtwoord moet minstens 6 tekens hebben",
+      "newPasswordHint": "Het wachtwoord moet minstens 8 tekens hebben",
       "confirmPasswordLabel": "Bevestig nieuw wachtwoord",
       "confirmPasswordPlaceholder": "Bevestig het nieuwe wachtwoord",
       "confirmPasswordHint": "Voer je nieuwe wachtwoord opnieuw in",
@@ -1677,9 +1713,6 @@
       "subtitle": "Vul in waar je bestelling naartoe moet",
       "toggleLabel": "Naar een ander adres verzenden"
     },
-    "testMode": {
-      "label": "Testmodus · gebruik vooraf ingestelde betaalmethoden"
-    },
     "notFound": {
       "title": "Tas niet gevonden",
       "description": "We konden je tas niet vinden. Ga terug en voeg je artikelen opnieuw toe.",
@@ -1843,6 +1876,7 @@
       "promoCodeLimitReached": "Deze kortingscode heeft het maximale aantal keer gebruik bereikt",
       "promoCodeApplied": "Kortingscode toegepast",
       "validationFailed": "Kortingscode controleren mislukt",
+      "tooManyAttempts": "Te veel pogingen met kortingscodes. Probeer het later opnieuw",
       "enterPromoCode": "Vul een kortingscode in",
       "cartTotalInvalid": "Het totaal van je tas moet hoger zijn dan 0"
     },
@@ -1965,6 +1999,9 @@
     "IMAGE_REQUIRED": "Er is minstens één afbeelding nodig",
     "EMAIL_REQUIRED": "E-mailadres is verplicht",
     "PASSWORD_REQUIRED": "Wachtwoord is verplicht",
+    "CURRENT_PASSWORD_REQUIRED": "Voer je huidige wachtwoord in",
+    "INVALID_PASSWORD": "Je huidige wachtwoord is onjuist",
+    "TOO_MANY_ATTEMPTS": "Te veel pogingen. Wacht een uur en probeer het opnieuw",
     "INVALID_EMAIL_FORMAT": "Vul een geldig e-mailadres in",
     "PASSWORD_TOO_SHORT": "Het wachtwoord moet minstens 8 tekens hebben",
     "AMOUNT_REQUIRED": "Bedrag is verplicht",
@@ -1993,6 +2030,7 @@
     "PRINTIFY_TOKEN_MISSING": "Configuratiefout van de printservice",
     "PRINTIFY_SHOP_ID_MISSING": "Configuratiefout van de printshop",
     "STRIPE_SECRET_KEY_MISSING": "Configuratiefout van de betaalservice",
+    "STRIPE_TEST_MODE_DISABLED": "Configuratiefout van de betaalservice",
     "STRIPE_WEBHOOK_SECRET_MISSING": "Configuratiefout van de webhook",
     "SUPABASE_URL_MISSING": "Configuratiefout van de database",
     "SUPABASE_SERVICE_ROLE_KEY_MISSING": "Authenticatiefout van de database",

@@ -23,7 +23,7 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
     "supabase:setup": "supabase link --project-ref timbqoxngnhoetbofdiq && supabase db push",
-    "supabase:types": "supabase gen types typescript --linked > src/types/database.types.ts",
+    "supabase:types": "supabase gen types typescript --linked > src/shared/types/database.types.ts",
     "supabase:lint": "cd supabase && deno lint",
     "supabase:format": "cd supabase && deno fmt",
     "supabase:check": "cd supabase && deno check functions/**/*.ts",
@@ -40,7 +40,9 @@
     "test:acceptance:list": "playwright test --config=playwright.acceptance.config.mjs --list",
     "test:acceptance:unit": "vitest run src/shared/services/acceptanceImageMock.test.ts src/tests/acceptance-test-environment.test.ts src/features/stamp/lib/services/generatedImagesStorage.acceptance.test.ts",
     "test:acceptance:coverage": "node scripts/acceptance/coverage.mjs",
-    "test:hooks": "node --test .claude/hooks/tests/*.test.mjs"
+    "test:hooks": "node --test .claude/hooks/tests/*.test.mjs",
+    "test:functions": "vitest run --config vitest.functions.config.ts",
+    "i18n:check-products": "tsx scripts/i18n/check-product-translations.ts"
   },
   "dependencies": {
     "@google/genai": "^2.18.0",
@@ -51,7 +53,7 @@
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.4",
-    "@sentry/nextjs": "^10.69.0",
+    "@sentry/nextjs": "^10.78.0",
     "@stripe/react-stripe-js": "^5.4.1",
     "@stripe/stripe-js": "^8.6.0",
     "@supabase/ssr": "^0.8.0",
@@ -73,7 +75,7 @@
     "sonner": "^2.0.7",
     "supabase": "^2.92.1",
     "tailwind-merge": "^3.4.0",
-    "zod": "^4.3.5",
+    "zod": "^4.6.7",
     "zustand": "^5.0.14"
   },
   "devDependencies": {
@@ -97,6 +99,7 @@
     "knip": "^6.27.0",
     "mailparser": "^3.9.31",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "vitest": "^4.1.3"
   }

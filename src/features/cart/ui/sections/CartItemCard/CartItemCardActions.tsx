@@ -10,6 +10,7 @@ import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import type { CartItem } from "@/shared/types/cart";
 import { AnalyticsService } from "@/shared/services/analyticsService";
+import { useCartItemDisplayName } from "@/shared/hooks/useCartItemDisplayName";
 
 const MIN_QUANTITY = 1;
 const MAX_QUANTITY = 99;
@@ -26,8 +27,10 @@ export function CartItemCardActions({
   onRemove,
 }: CartItemCardActionsPropsI) {
   const t = useTranslations("cart.itemCard");
-  const productName =
-    item.product_name || item.product?.name || t("customProduct");
+  const fallbackName = t("customProduct");
+  const productName = useCartItemDisplayName()(item, fallbackName);
+  // Analytics keeps the stored English name so one product has one name in reports
+  const analyticsName = item.product_name || item.product?.name || fallbackName;
   const quantity = item.quantity ?? 1;
 
   const handleIncrement = () => {
@@ -50,7 +53,7 @@ export function CartItemCardActions({
       items: [
         {
           item_id: item.product_id ?? item.id,
-          item_name: productName,
+          item_name: analyticsName,
           price: unitPrice,
           quantity,
         },

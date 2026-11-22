@@ -28,7 +28,6 @@ export async function pay(page, env, provider, { decline = false, doubleSubmit =
   if (provider === 'stripe') {
     required(env, 'STRIPE_SECRET_KEY');
     await page.getByRole('radio', { name: /credit|card|stripe/i }).click();
-    await page.getByRole('checkbox', { name: /test mode/i }).check();
     if (decline) {
       await page.getByRole('combobox').last().click();
       await page.getByRole('option', { name: /generic decline|card declined/i }).first().click();

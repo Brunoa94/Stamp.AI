@@ -5,24 +5,29 @@
  * specification grid (variant, colorway, line total).
  */
 
+import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import type { CartItem } from "@/shared/types/cart";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { CartItemCardSpecs } from "./CartItemCardSpecs";
+import { useCartItemDisplayName } from "@/shared/hooks/useCartItemDisplayName";
+import { useProductLabel } from "@/shared/hooks/useProductLabel";
 
 interface CartItemCardContentPropsI {
   item: CartItem;
 }
 
 export function CartItemCardContent({ item }: CartItemCardContentPropsI) {
-  const productName =
-    item.product_name || item.product?.name || "Custom Product";
+  const t = useTranslations("cart.itemCard");
+  const label = useProductLabel();
+  const productName = useCartItemDisplayName()(item, t("customProduct"));
   const unitPrice = item.unit_price ?? 0;
   const quantity = item.quantity ?? 1;
-  const variantName = item.variant?.name || "Standard";
-  const colorway = variantName.includes("/")
-    ? variantName.split("/")[0].trim()
-    : variantName;
+  const variantName = item.variant?.name || t("standardVariant");
+  const colorway = label(
+    "color",
+    variantName.includes("/") ? variantName.split("/")[0].trim() : variantName
+  );
 
   return (
     <div className="space-y-3 md:space-y-6">

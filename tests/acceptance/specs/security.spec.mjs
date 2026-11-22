@@ -100,3 +100,22 @@ test('GEN-12 purchased credits pay for generation after daily allowance is exhau
   expect(unwrap(await account.admin.rpc('refund_generation_credit', { p_debit_id: debits[0].id }), 'Repeated refund')).toBe(false);
   expect(unwrap(await account.db.from('user_credits').select('credits').eq('user_id', account.id).single(), 'Refunded balance')).toMatchObject({ credits: 2 });
 });
+
+test('SEC-07 a signed-in session cannot change the password without the current one', async ({ page, account, env }) => {
+  const newPassword = `Changed!${Date.now()}`;
+  const change = body => page.request.post('/api/account/password', { data: body });
+
+  const missing = await change({ newPassword });
+  expect(missing.status()).toBe(400);
+  expect(await missing.json()).toEqual({ error: 'CURRENT_PASSWORD_REQUIRED' });
+
+  const wrong = await change({ currentPassword: 'not-the-password', newPassword });
+  expect(wrong.status()).toBe(403);
+  expect(await wrong.json()).toEqual({ error: 'INVALID_PASSWORD' });
+
+  const changed = await change({ currentPassword: account.password, newPassword });
+  expect(changed.status()).toBe(200);
+  const login = password => client(env).auth.signInWithPassword({ email: account.email, password });
+  expect((await login(account.password)).error).not.toBeNull();
+  expect((await login(newPassword)).error).toBeNull();
+});
