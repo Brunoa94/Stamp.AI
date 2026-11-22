@@ -35,6 +35,12 @@ export const ROUTE_SEO = {
     changefreq: "monthly" as const,
     index: false,
   },
+  trackOrder: {
+    path: "/track-order",
+    priority: 0.3,
+    changefreq: "monthly" as const,
+    index: false,
+  },
   dashboard: {
     path: "/dashboard",
     priority: 0.4,
@@ -114,6 +120,7 @@ export const NOINDEX_PATHS = [
   "/checkout",
   "/checkout/*",
   "/orders",
+  "/track-order",
   "/dashboard",
   "/profile",
   "/reset-password",
@@ -125,6 +132,7 @@ export const DISALLOW_PATHS = [
   "/checkout/",
   "/cart",
   "/orders",
+  "/track-order",
   "/dashboard",
   "/profile",
   "/reset-password",

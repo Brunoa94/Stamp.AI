@@ -7,7 +7,9 @@ import { Span } from "@/features/ui/span";
 import { TrustpilotReviewButton } from "@/features/ui/trust/TrustpilotReviewButton";
 import { PaymentResultCard } from "../components/PaymentResultCard";
 import { PaymentResultActions } from "../components/PaymentResultActions";
-import { PAYMENT_RETURN_ROUTES } from "@/features/checkout/lib/constants/paymentReturn";
+import { getTrackOrderHref } from "@/features/checkout/lib/helpers/trackOrderHref";
+import { useUser } from "@/shared/queries/authQueries";
+import { isRegisteredUser } from "@/shared/helpers/authIdentity";
 import { PaymentResultHeading } from "../components/PaymentResultHeading";
 import { PaymentResultDetailsGrid } from "../components/PaymentResultDetailsGrid";
 import type { PaymentSuccessDetailsI } from "@/shared/types/payment";
@@ -19,6 +21,7 @@ interface Props {
 
 const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
   const t = useTranslations("checkout.success");
+  const { data: user } = useUser();
   const orderNumber = details?.orderNumber ?? "—";
   const totalPaid = details?.totalPaid ?? "—";
   const estimatedDelivery =
@@ -52,7 +55,7 @@ const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
       {/* CTAs */}
       <PaymentResultActions>
         <Button asChild variant="primary" className="w-full">
-          <Link href={PAYMENT_RETURN_ROUTES.orders}>{t("trackOrder")}</Link>
+          <Link href={getTrackOrderHref(isRegisteredUser(user), details?.orderNumber)}>{t("trackOrder")}</Link>
         </Button>
         <Button
           variant="secondary"

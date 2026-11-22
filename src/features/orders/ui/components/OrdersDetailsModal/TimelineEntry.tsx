@@ -10,7 +10,7 @@ import {
 import { formatTimestamp } from "../../../lib/helpers/formatTimestamp";
 
 interface PropsI {
-  entry: OrderStatusHistoryT;
+  entry: Pick<OrderStatusHistoryT, "status" | "created_at">;
   isLast: boolean;
   t: (key: string) => string;
 }

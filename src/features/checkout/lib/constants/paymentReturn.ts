@@ -65,6 +65,7 @@ export const PAYMENT_RETURN_ROUTES = {
   checkout: "/checkout",
   cart: "/cart",
   orders: "/orders",
+  trackOrder: "/track-order",
   dashboard: "/dashboard",
   createAnother: "/stamp",
 } as const;

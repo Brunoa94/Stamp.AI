@@ -75,7 +75,8 @@ export function sendOrderConfirmationEmail(orderId: string): Promise<boolean> {
       "GET",
     );
     if (items.error) throw new Error("Could not load order items");
-    return renderOrderConfirmationEmail(order, items.data ?? []);
+    // SITE_URL is the shop's public URL (also the payment return base); without it the tracking link is left out
+    return renderOrderConfirmationEmail(order, items.data ?? [], Deno.env.get("SITE_URL"));
   });
 }
 

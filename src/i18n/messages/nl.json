@@ -1701,6 +1701,47 @@
       "delivered": "Bezorgd",
       "cancelled": "Geannuleerd",
       "hasIssues": "Actie vereist"
+    },
+    "track": {
+      "title": "Volg je",
+      "accent": "bestelling",
+      "intro": "Vul je bestelnummer in en het e-mailadres dat je bij het afrekenen hebt gebruikt. Je bestelnummer staat in je bevestigingsmail.",
+      "form": {
+        "orderNumber": "Bestelnummer",
+        "orderNumberPlaceholder": "ORD-20261122-0042",
+        "email": "E-mail",
+        "emailPlaceholder": "jij@voorbeeld.nl",
+        "submit": "Volg bestelling",
+        "submitting": "Je bestelling opzoeken…"
+      },
+      "errors": {
+        "invalidRequest": "Vul je bestelnummer en een geldig e-mailadres in.",
+        "notFound": "We konden geen bestelling vinden met dit nummer en e-mailadres. Controleer beide en probeer het opnieuw.",
+        "tooManyAttempts": "Te veel pogingen. Wacht even en probeer het opnieuw.",
+        "lookupFailed": "We kunnen je bestelling nu niet laden. Probeer het zo opnieuw."
+      },
+      "result": {
+        "orderNumber": "Bestelling {number}",
+        "placedOn": "Geplaatst op {date}",
+        "statusTitle": "Status van de bestelling",
+        "cancelled": "Deze bestelling is geannuleerd. Vragen? Mail naar support@stamp.ai.",
+        "hasIssues": "Er is een probleem met de productie van deze bestelling. We zijn ermee bezig en mailen je over de volgende stappen.",
+        "trackingNumber": "Trackingnummer",
+        "trackPackage": "Volg je pakket",
+        "items": "Artikelen",
+        "quantity": "Aantal {quantity}",
+        "subtotal": "Subtotaal",
+        "discount": "Korting",
+        "shipping": "Verzending",
+        "total": "Totaal",
+        "trackAnother": "Andere bestelling volgen"
+      },
+      "stages": {
+        "placed": "Bestelling geplaatst",
+        "inProduction": "In productie",
+        "shipped": "Verzonden",
+        "delivered": "Bezorgd"
+      }
     }
   },
   "checkout": {

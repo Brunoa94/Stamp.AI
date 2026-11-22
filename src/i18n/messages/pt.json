@@ -1701,6 +1701,47 @@
       "delivered": "Entregue",
       "cancelled": "Cancelada",
       "hasIssues": "Requer atenção"
+    },
+    "track": {
+      "title": "Acompanhe a sua",
+      "accent": "encomenda",
+      "intro": "Introduza o número da encomenda e o email que usou no checkout. O número da encomenda está no seu email de confirmação.",
+      "form": {
+        "orderNumber": "Número da encomenda",
+        "orderNumberPlaceholder": "ORD-20261122-0042",
+        "email": "Email",
+        "emailPlaceholder": "voce@exemplo.pt",
+        "submit": "Acompanhar encomenda",
+        "submitting": "A procurar a sua encomenda…"
+      },
+      "errors": {
+        "invalidRequest": "Introduza o número da encomenda e um email válido.",
+        "notFound": "Não encontrámos nenhuma encomenda com esse número e email. Verifique ambos e tente novamente.",
+        "tooManyAttempts": "Demasiadas tentativas. Aguarde um pouco e tente novamente.",
+        "lookupFailed": "Não foi possível carregar a sua encomenda agora. Tente novamente daqui a pouco."
+      },
+      "result": {
+        "orderNumber": "Encomenda {number}",
+        "placedOn": "Feita a {date}",
+        "statusTitle": "Estado da encomenda",
+        "cancelled": "Esta encomenda foi cancelada. Se tiver dúvidas, escreva para support@stamp.ai.",
+        "hasIssues": "Há um problema na produção desta encomenda. Estamos a tratar disso e vamos enviar-lhe um email com os próximos passos.",
+        "trackingNumber": "Número de seguimento",
+        "trackPackage": "Seguir a sua encomenda",
+        "items": "Artigos",
+        "quantity": "Qtd. {quantity}",
+        "subtotal": "Subtotal",
+        "discount": "Desconto",
+        "shipping": "Envio",
+        "total": "Total",
+        "trackAnother": "Acompanhar outra encomenda"
+      },
+      "stages": {
+        "placed": "Encomenda feita",
+        "inProduction": "Em produção",
+        "shipped": "Enviada",
+        "delivered": "Entregue"
+      }
     }
   },
   "checkout": {

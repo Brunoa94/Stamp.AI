@@ -64,7 +64,17 @@ function itemLine(item: EmailOrderItemI): string {
   return `${item.quantity} × ${item.product_name}${item.variant_name ? ` (${item.variant_name})` : ""}`;
 }
 
-export function renderOrderConfirmationEmail(order: EmailOrderI, items: EmailOrderItemI[]): RenderedEmailI {
+/** The shop's guest tracking page for this order, when the site URL is known. */
+function trackOrderUrl(order: EmailOrderI, siteUrl: string | undefined): string | null {
+  const base = safeUrl(siteUrl)?.replace(/\/+$/, "");
+  return base ? `${base}/track-order?order=${encodeURIComponent(order.order_number)}` : null;
+}
+
+export function renderOrderConfirmationEmail(
+  order: EmailOrderI,
+  items: EmailOrderItemI[],
+  siteUrl?: string,
+): RenderedEmailI {
   const currency = order.currency || "EUR";
   const money = (cents: number | null) => formatMoney(cents, currency);
   const totals: Array<[string, string]> = [
@@ -76,6 +86,7 @@ export function renderOrderConfirmationEmail(order: EmailOrderI, items: EmailOrd
   ];
   const address = formatAddressLines(order.shipping_address);
   const subject = `Your Stamp.AI order ${order.order_number} is confirmed`;
+  const trackingPage = trackOrderUrl(order, siteUrl);
 
   const html = layout(subject, `
     <h1 style="font-size:20px;margin:0 0 12px;">Thank you for your order</h1>
@@ -85,7 +96,8 @@ export function renderOrderConfirmationEmail(order: EmailOrderI, items: EmailOrd
       ${totals.map(([label, value]) => `<tr><td style="padding:4px 0;color:#8A7B6C;">${escapeHtml(label)}</td><td style="padding:4px 0;text-align:right;">${escapeHtml(value)}</td></tr>`).join("")}
     </table>
     ${address.length ? `<p style="margin:0 0 4px;color:#8A7B6C;">Shipping to</p><p style="margin:0 0 16px;">${address.map(escapeHtml).join("<br>")}</p>` : ""}
-    <p style="margin:0;">We will email you again as soon as your order ships. Your invoice is sent separately.</p>`);
+    <p style="margin:0;">We will email you again as soon as your order ships. Your invoice is sent separately.</p>
+    ${trackingPage ? `<p style="margin:16px 0 0;"><a href="${escapeHtml(trackingPage)}" style="color:#3D2B1F;font-weight:700;">Track your order</a></p>` : ""}`);
 
   const text = [
     "Thank you for your order",
@@ -98,6 +110,7 @@ export function renderOrderConfirmationEmail(order: EmailOrderI, items: EmailOrd
     ...(address.length ? ["", "Shipping to:", ...address] : []),
     "",
     "We will email you again as soon as your order ships. Your invoice is sent separately.",
+    ...(trackingPage ? ["", `Track your order: ${trackingPage}`] : []),
   ].join("\n");
 
   return { subject, html, text };

@@ -1696,6 +1696,47 @@
       "delivered": "Delivered",
       "cancelled": "Cancelled",
       "hasIssues": "Needs attention"
+    },
+    "track": {
+      "title": "Track your",
+      "accent": "order",
+      "intro": "Enter your order number and the email you used at checkout. Your order number is in your confirmation email.",
+      "form": {
+        "orderNumber": "Order number",
+        "orderNumberPlaceholder": "ORD-20261122-0042",
+        "email": "Email",
+        "emailPlaceholder": "you@example.com",
+        "submit": "Track order",
+        "submitting": "Looking up your order…"
+      },
+      "errors": {
+        "invalidRequest": "Enter your order number and a valid email address.",
+        "notFound": "We couldn't find an order with that number and email. Check both and try again.",
+        "tooManyAttempts": "Too many attempts. Please wait a while and try again.",
+        "lookupFailed": "We couldn't load your order right now. Please try again in a moment."
+      },
+      "result": {
+        "orderNumber": "Order {number}",
+        "placedOn": "Placed on {date}",
+        "statusTitle": "Order status",
+        "cancelled": "This order was cancelled. If you have questions, write to support@stamp.ai.",
+        "hasIssues": "There's a problem producing this order. We're on it and will email you with the next steps.",
+        "trackingNumber": "Tracking number",
+        "trackPackage": "Track your package",
+        "items": "Items",
+        "quantity": "Qty {quantity}",
+        "subtotal": "Subtotal",
+        "discount": "Discount",
+        "shipping": "Shipping",
+        "total": "Total",
+        "trackAnother": "Track another order"
+      },
+      "stages": {
+        "placed": "Order placed",
+        "inProduction": "In production",
+        "shipped": "Shipped",
+        "delivered": "Delivered"
+      }
     }
   },
   "checkout": {

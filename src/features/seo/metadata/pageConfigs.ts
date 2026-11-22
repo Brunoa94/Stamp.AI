@@ -39,6 +39,14 @@ export const PAGE_METADATA_CONFIGS = {
     keywords: PAGE_KEYWORDS.orders,
     noindex: true,
   },
+  trackOrder: {
+    title: "Track Your Order",
+    description:
+      "Check the status of your Stamp AI order with your order number and email: production, shipping and delivery tracking.",
+    path: "/track-order",
+    keywords: PAGE_KEYWORDS.orders,
+    noindex: true,
+  },
   dashboard: {
     title: "Design Dashboard",
     description:
