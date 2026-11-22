@@ -3,6 +3,41 @@ import { cva } from "class-variance-authority";
 const focusRing =
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-gold)";
 
+/**
+ * The fixed header bar. Below lg it is h-16 and fully transparent until the
+ * page scrolls (or the drawer opens), then turns solid off-white; from lg it
+ * keeps the h-24 bar with the frosted off-white once scrolled.
+ */
+export const stampHeaderVariants = cva(
+  "fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between border-b px-6 transition-all duration-300 lg:h-24 lg:px-12 xl:px-24",
+  {
+    variants: {
+      solid: {
+        true: "border-(--color-stamp-divider) bg-(--color-stamp-off-white) lg:bg-(--color-stamp-off-white)/80 lg:backdrop-blur-md",
+        false: "border-transparent bg-transparent",
+      },
+    },
+    defaultVariants: { solid: false },
+  },
+);
+
+/**
+ * Hamburger toggle below lg. Over the transparent header it sits on a dark
+ * translucent pill, so it reads on both a photo and an off-white page.
+ */
+export const stampMenuButtonVariants = cva(
+  "flex size-10 items-center justify-center rounded-full transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) focus-visible:ring-offset-2",
+  {
+    variants: {
+      solid: {
+        true: "-mr-2 text-(--color-stamp-chocolate)",
+        false: "bg-(--color-stamp-chocolate)/70 text-(--color-stamp-white) backdrop-blur-sm",
+      },
+    },
+    defaultVariants: { solid: false },
+  },
+);
+
 /** Text link in the Stamp header nav and mobile drawer. */
 export const stampNavLinkVariants = cva(
   "whitespace-nowrap font-semibold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-all duration-300",

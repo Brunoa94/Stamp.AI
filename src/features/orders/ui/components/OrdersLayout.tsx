@@ -17,7 +17,7 @@ interface OrdersLayoutPropsI extends PropsWithChildren {
 
 export function OrdersLayout({ header, children }: OrdersLayoutPropsI) {
   return (
-    <div className="min-h-screen bg-(--color-stamp-off-white) text-(--color-stamp-chocolate) pt-24">
+    <div className="min-h-screen bg-(--color-stamp-off-white) text-(--color-stamp-chocolate) pt-16 lg:pt-24">
       <PageHeaderBand src={staticAssetUrl("/backdrops/orders-unboxing.jpg")} imageClassName="object-[center_60%]">
         {header}
       </PageHeaderBand>

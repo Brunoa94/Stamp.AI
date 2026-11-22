@@ -50,8 +50,8 @@ export function StampCanvas() {
       {/* Below md the canvas starts under the backdrop strip, or right under the header on step 00 where the strip is hidden */}
       <div
         className={cn(
-          "absolute inset-x-0 bottom-0 overflow-hidden md:top-24 lg:mr-68",
-          isStampBackdropVisible(activeSlide) ? "top-56" : "top-24",
+          "absolute inset-x-0 bottom-0 overflow-hidden md:top-16 lg:top-24 lg:mr-68",
+          isStampBackdropVisible(activeSlide) ? "top-48" : "top-16",
         )}
       >
         {/* data-stamp-slider: SplitToneText follows this slide (useStampSplitTone).

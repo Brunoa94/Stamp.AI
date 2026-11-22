@@ -33,7 +33,7 @@ export function StampBackdrop({ currentStep }: PropsI) {
     <div
       aria-hidden="true"
       className={cn(
-        "stamp-backdrop pointer-events-none absolute inset-x-0 top-24 h-32 transition-opacity duration-1000 ease-in-out motion-reduce:transition-none md:bottom-0 md:h-auto",
+        "stamp-backdrop pointer-events-none absolute inset-x-0 top-16 h-32 transition-opacity duration-1000 ease-in-out motion-reduce:transition-none md:bottom-0 md:h-auto lg:top-24",
         isStampBackdropVisible(currentStep) ? "opacity-100" : "opacity-0",
       )}
     >

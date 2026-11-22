@@ -61,7 +61,7 @@ export function CatalogPageContent({ sections }: PropsI) {
   }, [filters]);
 
   return (
-    <article className="pt-24">
+    <article className="pt-16 lg:pt-24">
       {/* Header band: diagonal photo on the right, as on the Shopping bag page */}
       <PageHeaderBand
         src={staticAssetUrl("/backdrops/tee-skatepark.jpg")}

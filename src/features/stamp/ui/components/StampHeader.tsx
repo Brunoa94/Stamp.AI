@@ -15,6 +15,8 @@ import { useScrolled } from "@/shared/hooks/useScrolled";
 import { LanguageSwitcher } from "@/shared/ui/LanguageSwitcher";
 import { cn } from "@/lib/utils";
 import {
+  stampHeaderVariants,
+  stampMenuButtonVariants,
   stampNavCtaVariants,
   stampNavLinkVariants,
   stampNavSignUpVariants,
@@ -29,7 +31,8 @@ import { StampNavIconLink } from "./StampNavIconLink";
  * padding matches the page sections' gutter (px-6 lg:px-12 xl:px-24), so the
  * logo and the last nav item line up with the sections' content edges.
  * Collapses to a hamburger drawer below the `lg` breakpoint, where the inline
- * nav + centre CTA no longer fit (logo wraps / links overflow / CTA overlaps).
+ * nav no longer fits; there the bar is shorter, transparent with the white
+ * logo until the page scrolls, and keeps a compact Stamp CTA in the centre.
  */
 
 export function StampHeader() {
@@ -40,6 +43,7 @@ export function StampHeader() {
   const logoutMutation = useLogout();
   const isScrolled = useScrolled(24);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isSolid = isScrolled || mobileMenuOpen;
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -48,32 +52,37 @@ export function StampHeader() {
 
   return (
     <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 flex h-24 items-center justify-between px-6 lg:px-12 xl:px-24 transition-all duration-300 ${
-          isScrolled || mobileMenuOpen
-            ? "bg-(--color-stamp-off-white)/80 backdrop-blur-md border-b border-(--color-stamp-divider)"
-            : "bg-transparent border-b border-transparent"
-        }`}
-      >
-        {/* Logo */}
+      <header className={stampHeaderVariants({ solid: isSolid })}>
+        {/* Logo: white below lg over the transparent bar, brown once it turns solid and from lg */}
         <div className="flex-1">
-          <Link href="/" className="block" aria-label={t("logoAria")}>
+          <Link href="/" className="block w-fit" aria-label={t("logoAria")}>
+            <Image
+              src={staticAssetUrl("/logo-white-leather.webp")}
+              alt="Stamp.AI"
+              width={64}
+              height={64}
+              className={cn("size-10 object-contain lg:hidden", isSolid && "hidden")}
+              priority
+            />
             <Image
               src={staticAssetUrl("/logo.png")}
               alt="Stamp.AI"
               width={64}
               height={64}
-              className="h-16 w-16 object-contain"
+              className={cn("size-10 object-contain lg:block lg:size-16", !isSolid && "hidden")}
               priority
             />
           </Link>
         </div>
 
-        {/* Center CTA (lg+) */}
-        <div className="flex-none hidden lg:block mx-6">
+        {/* Center CTA: compact below lg */}
+        <div className="flex-none lg:mx-6">
           <Link
             href="/stamp"
-            className={cn(stampNavCtaVariants(), "px-8 py-3")}
+            className={cn(
+              stampNavCtaVariants(),
+              "border-2 bg-(--color-stamp-gold) px-4 py-2 text-sm ring-2 lg:border-3 lg:bg-(--color-stamp-gold)/10 lg:px-8 lg:py-3 lg:text-lg lg:ring-4",
+            )}
             aria-label={t("stampAria")}
           >
             {t("stamp")}
@@ -123,25 +132,27 @@ export function StampHeader() {
           />
         </nav>
 
-        {/* Mobile/tablet hamburger (below lg) */}
-        <Button
-          variant="unstyled"
-          onClick={() => setMobileMenuOpen((v) => !v)}
-          className="lg:hidden flex-none p-2 -mr-2 text-(--color-stamp-chocolate) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) focus-visible:ring-offset-2"
-          aria-label={mobileMenuOpen ? t("closeMenu") : t("openMenu")}
-          aria-expanded={mobileMenuOpen}
-        >
-          {mobileMenuOpen ? (
-            <X className="w-6 h-6" />
-          ) : (
-            <Menu className="w-6 h-6" />
-          )}
-        </Button>
+        {/* Mobile/tablet hamburger (below lg); flex-1 keeps the CTA centred */}
+        <div className="flex flex-1 justify-end lg:hidden">
+          <Button
+            variant="unstyled"
+            onClick={() => setMobileMenuOpen((v) => !v)}
+            className={stampMenuButtonVariants({ solid: isSolid })}
+            aria-label={mobileMenuOpen ? t("closeMenu") : t("openMenu")}
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
+          </Button>
+        </div>
       </header>
 
       {/* Mobile/tablet drawer (below lg) */}
       <div
-        className={`lg:hidden fixed top-24 left-0 right-0 z-40 bg-(--color-stamp-off-white) border-b border-(--color-stamp-divider) shadow-lg transition-all duration-300 ${
+        className={`lg:hidden fixed top-16 left-0 right-0 z-40 bg-(--color-stamp-off-white) border-b border-(--color-stamp-divider) shadow-lg transition-all duration-300 ${
           mobileMenuOpen
             ? "max-h-screen opacity-100"
             : "max-h-0 opacity-0 overflow-hidden"
@@ -151,15 +162,6 @@ export function StampHeader() {
           className="flex flex-col gap-1 p-6"
           aria-label={t("mobileNavAria")}
         >
-          <Link
-            href="/stamp"
-            onClick={() => setMobileMenuOpen(false)}
-            className={cn(stampNavCtaVariants(), "w-full mb-4 px-4 py-2.5")}
-            aria-label={t("stampAria")}
-          >
-            {t("stamp")}
-          </Link>
-
           <Link
             href="/catalog"
             onClick={() => setMobileMenuOpen(false)}
