@@ -50,7 +50,15 @@ jobs:
       # Integration suites (*.integration.test.ts) need a live Supabase and are
       # deliberately not run here; see `npm run test:integration`.
       - run: npm run test:unit
+      # Edge Function helpers (supabase/functions/_shared), e.g. fulfilment authorization.
+      - run: npm run test:functions
       - run: npm run test:acceptance:contracts
+      # Report-only: lists missing or stale product translations against the
+      # live catalog (public anon read). Always exits 0; read the job log.
+      - run: npm run i18n:check-products
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
       # Claude Code guardrail hooks (every hook in .claude/hooks has a test in .claude/hooks/tests).
       - run: npm run test:hooks
 

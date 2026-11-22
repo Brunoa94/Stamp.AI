@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { HomepageContent } from "@/features/homepage/ui/HomepageContent";
+import { mapProductsToCards } from "@/features/homepage/lib/mappers/productCardMapper";
+import { productTextFor } from "@/shared/constants/productText/productTextByLocale";
 import { LoginRedirectPrompt } from "@/features/auth/components/LoginRedirectPrompt";
 import { getCachedProductsWithPricing } from "@/lib/supabase/server-cache";
 import { StructuredData } from "@/features/seo/StructuredData";
@@ -34,6 +36,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Home() {
   const productsWithPricing = await getCachedProductsWithPricing();
+  // Translated here, after the (English) cache, so the client gets display strings only
+  const productCards = mapProductsToCards(productsWithPricing, productTextFor(await getLocale()));
 
   const tMeta = await getTranslations("home.meta");
   const tFaq = await getTranslations("home.faq.items");
@@ -84,7 +88,7 @@ export default async function Home() {
       {productSchemaEntries.map((entry) => (
         <StructuredData key={entry.name} data={productSchema(entry)} />
       ))}
-      <HomepageContent productsWithPricing={productsWithPricing} />
+      <HomepageContent products={productCards} />
       {/* useSearchParams() requires a Suspense boundary for static prerendering */}
       <Suspense fallback={null}>
         <LoginRedirectPrompt />

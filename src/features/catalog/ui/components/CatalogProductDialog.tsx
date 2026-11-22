@@ -13,7 +13,7 @@ import { Button } from "@/features/ui/button";
 import { List } from "@/features/ui/list";
 import { Span } from "@/features/ui/span";
 import { ColorSwatches } from "@/features/homepage/ui/components/ColorSwatches";
-import type { CatalogDisplayProductType } from "../../lib/types/catalogPageTypes";
+import type { CatalogDisplayProductT } from "../../lib/types/catalogPageTypes";
 import { CatalogProductGallery } from "./CatalogProductGallery";
 import { CatalogProductReviews } from "./CatalogProductReviews";
 
@@ -26,7 +26,7 @@ import { CatalogProductReviews } from "./CatalogProductReviews";
  */
 
 interface PropsI {
-  product: CatalogDisplayProductType;
+  product: CatalogDisplayProductT;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -39,16 +39,16 @@ export function CatalogProductDialog({ product, isOpen, onClose }: PropsI) {
       <DialogContent className="max-h-[85vh] overflow-y-auto rounded-none border border-(--color-stamp-divider) bg-(--color-stamp-off-white) p-6 sm:max-w-3xl md:p-8">
         <DialogHeader>
           <DialogTitle className="font-heading text-2xl font-normal uppercase tracking-tight text-(--color-stamp-chocolate)">
-            {product.name}
+            {product.displayName}
           </DialogTitle>
           <DialogDescription className="sr-only">
-            {product.description ?? product.name}
+            {product.description ?? product.displayName}
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-8 sm:grid-cols-2">
           <CatalogProductGallery
-            name={product.name}
+            name={product.displayName}
             imageUrls={product.imageUrls}
           />
 
@@ -83,7 +83,7 @@ export function CatalogProductDialog({ product, isOpen, onClose }: PropsI) {
                 >
                   {t("colorsLabel")}
                 </Span>
-                <ColorSwatches colors={product.availableColors} />
+                <ColorSwatches colors={product.availableColors} labels={product.colorLabels} />
               </div>
             )}
 

@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       ))
     ) {
       return NextResponse.json(
-        { error: "Too many export requests" },
+        { error: "TOO_MANY_ATTEMPTS" },
         { status: 429 },
       );
     }

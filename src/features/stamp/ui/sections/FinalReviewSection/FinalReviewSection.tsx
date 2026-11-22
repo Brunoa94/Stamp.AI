@@ -3,6 +3,7 @@
 import { memo } from "react";
 import { useTranslations } from "next-intl";
 import { useStampCartActions } from "../../../lib/hooks/useStampCartActions";
+import { useLocalizedSelectedProduct } from "../../../lib/hooks/useLocalizedSelectedProduct";
 import {
   useStampFinalization,
   useStampProductSelection,
@@ -25,14 +26,14 @@ function FinalReviewSectionComponent() {
   const t = useTranslations("stamp.finalReview");
   const { handleBagIt, handleBagItAndCreateAnother, isAddingToCart } = useStampCartActions();
   const { mockupImageUrl, mockupImages } = useStampFinalization();
-  const { selectedProductTitle, selectedProductType, selectedProductDescription } = useStampProductSelection();
-  const { selectedColor, selectedSize, selectedPriceCents } =
-    useStampCustomization();
+  const { selectedProductType } = useStampProductSelection();
+  const { selectedSize, selectedPriceCents } = useStampCustomization();
+  const { displayName, displayDescription, colorLabel } = useLocalizedSelectedProduct();
 
   const fallbackUrl =
     "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1200&auto=format&fit=crop";
 
-  const productName = selectedProductTitle || t("defaultProductName");
+  const productName = displayName || t("defaultProductName");
 
   // Format price from cents to euros
   const formattedPrice = selectedPriceCents
@@ -51,9 +52,9 @@ function FinalReviewSectionComponent() {
       <ReviewDetails
         mockupUrl={mockupImages[0]?.src || mockupImageUrl || fallbackUrl}
         productName={productName}
-        productDescription={selectedProductDescription}
+        productDescription={displayDescription}
         productType={selectedProductType}
-        color={selectedColor}
+        color={colorLabel}
         size={selectedSize}
         price={formattedPrice}
         isAddingToCart={isAddingToCart}

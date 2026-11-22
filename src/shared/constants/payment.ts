@@ -6,30 +6,23 @@ import type { IconType } from "react-icons";
 
 export type PaymentMethodId = "stripe" | "paypal" | "ideal";
 
+/** Name and description come from the `paymentMethods.<id>` messages */
 export interface PaymentMethodOption {
   id: PaymentMethodId;
-  label: string;
-  description: string;
   Icon: LucideIcon | IconType;
 }
 
 export const PAYMENT_METHODS: PaymentMethodOption[] = [
   {
     id: "stripe",
-    label: "Credit Card",
-    description: "Visa, Mastercard, Amex",
     Icon: CreditCard,
   },
   {
     id: "paypal",
-    label: "PayPal",
-    description: "PayPal, Venmo, Pay Later",
     Icon: FaPaypal,
   },
   {
     id: "ideal",
-    label: "iDEAL",
-    description: "Pay with your Dutch bank",
     Icon: Landmark,
   },
 ];
@@ -50,7 +43,6 @@ export const CREDIT_PAYMENT_METHODS: PaymentMethodOption[] =
 export interface PaymentConfirmMethodUi {
   labelDesktop: string;
   labelMobile: string;
-  className: string;
   Icon: LucideIcon | IconType;
 }
 
@@ -62,19 +54,16 @@ export const PAYMENT_CONFIRM_METHOD_UI: Record<
   stripe: {
     labelDesktop: "Confirm Order • Pay with Card",
     labelMobile: "Confirm Order • Card",
-    className: "bg-[#635BFF] hover:bg-[#5548E8]",
     Icon: CreditCard,
   },
   paypal: {
     labelDesktop: "Confirm Order • Pay with PayPal",
     labelMobile: "Confirm Order • PayPal",
-    className: "bg-[#0070BA] hover:bg-[#005EA6]",
     Icon: FaPaypal,
   },
   ideal: {
     labelDesktop: "Confirm Order • Pay with iDEAL",
     labelMobile: "Confirm Order • iDEAL",
-    className: "bg-[#CC0066] hover:bg-[#B3005C]",
     Icon: Landmark,
   },
 };

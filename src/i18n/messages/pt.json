@@ -1,5 +1,32 @@
 {
+  "paymentMethods": {
+    "stripe": {
+      "label": "Cartão de crédito",
+      "description": "Visa, Mastercard, Amex"
+    },
+    "paypal": {
+      "label": "PayPal",
+      "description": "PayPal, Venmo, Pagar mais tarde"
+    },
+    "ideal": {
+      "label": "iDEAL",
+      "description": "Pague com o seu banco neerlandês"
+    }
+  },
+  "productSizes": {
+    "oneSize": "Tamanho Único",
+    "vertical": "Vertical",
+    "horizontal": "Horizontal"
+  },
   "home": {
+    "heroTrust": {
+      "moneyBackLabel": "{days} dias",
+      "moneyBackSublabel": "Reembolso garantido",
+      "freeShippingLabel": "Envio grátis",
+      "freeShippingSublabel": "Encomendas +{threshold} €",
+      "secureLabel": "Pagamento",
+      "secureSublabel": "Seguro"
+    },
     "topBanner": {
       "freeShipping": "Envio grátis em encomendas acima de {threshold} €",
       "returns": "Devoluções em {days} dias",
@@ -762,7 +789,9 @@
       "showMore": "Mostrar mais {count}",
       "showLess": "Mostrar menos",
       "sectionPickerAria": "Tipo de produto",
-      "sectionCount": "{count, plural, one {# produto} other {# produtos}}"
+      "sectionCount": "{count, plural, one {# produto} other {# produtos}}",
+      "seeMore": "Ver mais",
+      "seeLess": "Ver menos"
     },
     "customization": {
       "protocol": "Passo 06 / Personalizar",
@@ -1063,6 +1092,10 @@
     }
   },
   "profile": {
+    "meta": {
+      "title": "O meu perfil",
+      "description": "Gira as definições da sua conta, as moradas de envio e as suas preferências."
+    },
     "header": {
       "title": "O seu <accent>perfil</accent>",
       "subtitle": "Gira as definições da sua conta"
@@ -1086,9 +1119,12 @@
       "subtitle": "Altere a sua palavra-passe sempre que quiser.",
       "changePassword": "ALTERAR PALAVRA-PASSE",
       "hiddenNote": "Mantemos a sua palavra-passe oculta. Carregue em \"Alterar palavra-passe\" para definir uma nova.",
+      "currentPasswordLabel": "Palavra-passe atual",
+      "currentPasswordPlaceholder": "Introduza a sua palavra-passe atual",
+      "currentPasswordHint": "Pedimo-la para que mais ninguém possa alterar a sua palavra-passe",
       "newPasswordLabel": "Nova palavra-passe",
       "newPasswordPlaceholder": "Introduza a nova palavra-passe",
-      "newPasswordHint": "A palavra-passe deve ter pelo menos 6 caracteres",
+      "newPasswordHint": "A palavra-passe deve ter pelo menos 8 caracteres",
       "confirmPasswordLabel": "Confirmar nova palavra-passe",
       "confirmPasswordPlaceholder": "Confirme a nova palavra-passe",
       "confirmPasswordHint": "Introduza novamente a nova palavra-passe",
@@ -1677,9 +1713,6 @@
       "subtitle": "Indique para onde quer que a encomenda seja enviada",
       "toggleLabel": "Enviar para outra morada"
     },
-    "testMode": {
-      "label": "Modo de teste · use métodos de pagamento predefinidos"
-    },
     "notFound": {
       "title": "Saco não encontrado",
       "description": "Não encontrámos o seu saco. Volte atrás e adicione os artigos novamente.",
@@ -1843,6 +1876,7 @@
       "promoCodeLimitReached": "Este código promocional atingiu o limite de utilizações",
       "promoCodeApplied": "Código promocional aplicado",
       "validationFailed": "Não foi possível validar o código promocional",
+      "tooManyAttempts": "Demasiadas tentativas de código promocional. Tente novamente mais tarde",
       "enterPromoCode": "Introduza um código promocional",
       "cartTotalInvalid": "O total do saco tem de ser superior a 0"
     },
@@ -1965,6 +1999,9 @@
     "IMAGE_REQUIRED": "É necessária pelo menos uma imagem",
     "EMAIL_REQUIRED": "O endereço de email é obrigatório",
     "PASSWORD_REQUIRED": "A palavra-passe é obrigatória",
+    "CURRENT_PASSWORD_REQUIRED": "Introduza a sua palavra-passe atual",
+    "INVALID_PASSWORD": "A palavra-passe atual está incorreta",
+    "TOO_MANY_ATTEMPTS": "Demasiadas tentativas. Aguarde uma hora e tente novamente",
     "INVALID_EMAIL_FORMAT": "Introduza um endereço de email válido",
     "PASSWORD_TOO_SHORT": "A palavra-passe deve ter pelo menos 8 caracteres",
     "AMOUNT_REQUIRED": "O montante é obrigatório",
@@ -1993,6 +2030,7 @@
     "PRINTIFY_TOKEN_MISSING": "Erro de configuração do serviço de impressão",
     "PRINTIFY_SHOP_ID_MISSING": "Erro de configuração da loja de impressão",
     "STRIPE_SECRET_KEY_MISSING": "Erro de configuração do serviço de pagamento",
+    "STRIPE_TEST_MODE_DISABLED": "Erro de configuração do serviço de pagamento",
     "STRIPE_WEBHOOK_SECRET_MISSING": "Erro de configuração do webhook",
     "SUPABASE_URL_MISSING": "Erro de configuração da base de dados",
     "SUPABASE_SERVICE_ROLE_KEY_MISSING": "Erro de autenticação da base de dados",

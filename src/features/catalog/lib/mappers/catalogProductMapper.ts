@@ -11,8 +11,9 @@ import {
 } from "@/lib/seo/productDescription";
 import { resolveDisplayPrice } from "@/lib/pricing";
 import { detectProductCategory } from "@/features/stamp/lib/helpers/productCategoryDetector";
-import { getDisplayTitle } from "@/features/homepage/lib/constants/productDisplayTitles";
-import type { CatalogDisplayProductType } from "../types/catalogPageTypes";
+import { localizeColorLabels, localizeProductText } from "@/shared/helpers/localizeProduct";
+import type { ProductTextT } from "@/shared/types/productText";
+import type { CatalogDisplayProductT } from "../types/catalogPageTypes";
 
 /**
  * Resolve the product photo gallery: the full Printify image list when
@@ -27,14 +28,22 @@ function resolveImageUrls(product: ProductWithPricing): string[] {
 }
 
 function mapProductToCatalogDisplay(
-  product: ProductWithPricing
-): CatalogDisplayProductType {
-  return {
-    blueprintId: product.blueprint_id,
-    name: getDisplayTitle(product.blueprint_id, product.display_title),
-    category: detectProductCategory(product.display_title),
+  product: ProductWithPricing,
+  text: ProductTextT | null
+): CatalogDisplayProductT {
+  const localized = localizeProductText(text, product.blueprint_id, {
+    title: product.display_title,
     description: resolveProductDescription(product.product_seo),
     specs: extractProductSpecs(product.product_seo),
+  });
+
+  return {
+    blueprintId: product.blueprint_id,
+    name: product.display_title,
+    displayName: localized.title,
+    category: detectProductCategory(product.display_title),
+    description: localized.description,
+    specs: localized.specs,
     price: resolveDisplayPrice(product),
     originalPrice: product.original_price_cents
       ? product.original_price_cents / 100
@@ -43,11 +52,17 @@ function mapProductToCatalogDisplay(
     discountPercent: product.discount_percent ?? undefined,
     imageUrls: resolveImageUrls(product),
     availableColors: product.availableColors || [],
+    colorLabels: localizeColorLabels(text, product.availableColors || []),
   };
 }
 
+/**
+ * Translated for display after the (English) server cache with the visitor's
+ * product text (`productTextFor(locale)`, null for English); logic fields stay English.
+ */
 export function mapProductsToCatalogDisplay(
-  products: ProductWithPricing[]
-): CatalogDisplayProductType[] {
-  return products.map(mapProductToCatalogDisplay);
+  products: ProductWithPricing[],
+  text: ProductTextT | null
+): CatalogDisplayProductT[] {
+  return products.map((product) => mapProductToCatalogDisplay(product, text));
 }

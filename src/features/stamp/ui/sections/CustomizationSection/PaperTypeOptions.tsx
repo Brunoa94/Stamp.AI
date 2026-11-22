@@ -1,4 +1,5 @@
 import { useTranslations } from "next-intl";
+import { useProductLabel } from "@/shared/hooks/useProductLabel";
 import { Button } from "@/features/ui/button";
 
 /**
@@ -20,6 +21,7 @@ export function PaperTypeOptions({
   onSelectPaperType,
 }: PropsI) {
   const t = useTranslations("stamp.customization");
+  const label = useProductLabel();
 
   return (
     <div
@@ -38,9 +40,9 @@ export function PaperTypeOptions({
               : "border-(--color-stamp-divider) text-(--color-stamp-taupe)"
           }`}
           aria-pressed={selectedPaperType === paperType}
-          aria-label={t("paperTypeAria", { type: paperType })}
+          aria-label={t("paperTypeAria", { type: label("paperType", paperType) })}
         >
-          {paperType}
+          {label("paperType", paperType)}
         </Button>
       ))}
     </div>

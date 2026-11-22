@@ -7,7 +7,7 @@ import { supabaseRest } from "../_shared/supabase.ts"
 import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts"
 import { corsHeadersFor } from '../_shared/cors.ts'
 import { fetchPrintify } from "../_shared/fetchWithTimeout.ts"
-import { matchesPricedItems, normalizeLineItems, type PricedItemRecordI } from "../_shared/checkoutPricingRules.ts"
+import { authorizeFulfillment, type FulfillableOrderI, type OrderPaymentI } from "../_shared/fulfillmentAuthorization.ts"
 import "../_shared/sentry.ts";
 
 // Environment variables will be validated when needed
@@ -97,48 +97,35 @@ serve(async (req) => {
       auto_cancel = false, // Flag to automatically cancel order after creation (for testing)
     } = requestBody
 
-    // ✅ SECURITY: a normal end user may only fulfill THEIR OWN order. Without
-    // this, any authenticated user could pass another user's order_id and mark
-    // it paid/confirmed. Service-role callers (server-to-server, recovery) are
-    // trusted to act on any order.
+    // ✅ SECURITY: an order-linked request is checked for every caller. An end
+    // user may only fulfil their own order; the service role (recovery) may act
+    // on any order, but still only for the items its payment priced and only to
+    // the order's stored address. Recovery forwards line items from a
+    // payment_recovery row the customer can write, so they are never trusted.
+    // Only service-role requests without an order (operator sample orders) skip this.
     let finalAddressTo = address_to || shipping_address
     const requestedOrderId = metadata?.order_id
-    if (userId !== 'service-role') {
-      if (!requestedOrderId) {
-        throw ErrorCodes.INVALID_REQUEST_BODY()
-      }
-      const ownership = await supabaseRest<Array<{ id: string; payment_status: string | null; printify_order_id: string | null; shipping_address: Record<string, unknown> | null }>>(
-        `orders?id=eq.${encodeURIComponent(String(requestedOrderId))}&user_id=eq.${encodeURIComponent(userId)}&select=id,payment_status,printify_order_id,shipping_address`,
+    const isServiceRole = userId === 'service-role'
+    if (!isServiceRole && (!requestedOrderId || use_sample_order || auto_cancel)) {
+      throw ErrorCodes.INVALID_REQUEST_BODY()
+    }
+    if (requestedOrderId) {
+      const orderId = encodeURIComponent(String(requestedOrderId))
+      const ownerFilter = isServiceRole ? '' : `&user_id=eq.${encodeURIComponent(userId)}`
+      const orderResult = await supabaseRest<Array<FulfillableOrderI & { user_id: string }>>(
+        `orders?id=eq.${orderId}${ownerFilter}&select=id,user_id,payment_status,printify_order_id,shipping_address`,
         'GET',
       )
-      if (!Array.isArray(ownership.data) || ownership.data.length === 0) {
-        throw ErrorCodes.INVALID_REQUEST_BODY()
-      }
-      const [ownedOrder] = ownership.data
-      if (use_sample_order || auto_cancel || !ownedOrder.shipping_address) throw ErrorCodes.INVALID_REQUEST_BODY()
-      finalAddressTo = ownedOrder.shipping_address
-      if (ownedOrder.printify_order_id) {
-        throw new FunctionError(409, 'ALREADY_FULFILLED', 'The order was already sent to Printify')
-      }
+      const order = Array.isArray(orderResult.data) ? orderResult.data[0] : undefined
+      if (!order) throw ErrorCodes.INVALID_REQUEST_BODY()
 
-      // ✅ SECURITY: fulfil only what was priced and charged. The payment
-      // functions store the server-priced items on the transaction linked to
-      // this order; any other set of items is refused before Printify is called.
-      const requested = normalizeLineItems(line_items)
-      const payments = await supabaseRest<Array<{ status: string; metadata: { priced_items?: PricedItemRecordI[] } | null }>>(
-        `payment_transactions?order_id=eq.${encodeURIComponent(String(requestedOrderId))}&user_id=eq.${encodeURIComponent(userId)}&select=status,metadata`,
+      // The payment functions store the server-priced items on the transaction
+      // linked to this order; any other set of items is refused before Printify is called.
+      const payments = await supabaseRest<OrderPaymentI[]>(
+        `payment_transactions?order_id=eq.${orderId}&user_id=eq.${encodeURIComponent(order.user_id)}&select=status,metadata`,
         'GET',
       )
-      const paid = (payments.data ?? []).filter((payment) =>
-        payment.status === 'succeeded' && Array.isArray(payment.metadata?.priced_items)
-      )
-      if (!requested || paid.length !== 1 || !matchesPricedItems(requested, paid[0].metadata!.priced_items!)) {
-        throw new FunctionError(409, 'ITEMS_NOT_PAID', 'Requested items do not match the paid checkout')
-      }
-      // Only an order the server recorded as paid (finalize-order, webhooks) is fulfilled.
-      if (ownedOrder.payment_status !== 'paid') {
-        throw new FunctionError(409, 'ORDER_NOT_PAID', 'The order has not been paid')
-      }
+      finalAddressTo = authorizeFulfillment({ order, payments: payments.data ?? [], lineItems: line_items }).addressTo
     }
 
     // ✅ CRITICAL FIX #1: Enforce test mode based on environment

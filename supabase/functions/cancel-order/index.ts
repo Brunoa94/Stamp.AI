@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { ErrorCodes, handleError } from "../_shared/errors.ts";
-import { validateEnvVars, verifyAuth } from "../_shared/validators.ts";
+import { UUID_PATTERN, validateEnvVars, verifyAuth } from "../_shared/validators.ts";
 import { supabaseRest } from "../_shared/supabase.ts";
 import { insertOrderStatusHistory } from "../_shared/orderStatusHistory.ts";
 import { corsHeadersFor } from "../_shared/cors.ts";
@@ -139,6 +139,11 @@ serve(async (req) => {
 
     if (!order_id) {
       throw ErrorCodes.MISSING_REQUIRED_FIELDS("order_id is required");
+    }
+    // order_id is interpolated into PostgREST query strings below; a UUID has
+    // no characters that could add filters or parameters.
+    if (typeof order_id !== "string" || !UUID_PATTERN.test(order_id)) {
+      throw ErrorCodes.INVALID_REQUEST_BODY();
     }
 
     console.log("=== CANCEL ORDER ===");

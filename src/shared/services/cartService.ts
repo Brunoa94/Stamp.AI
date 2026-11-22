@@ -203,6 +203,8 @@ export class CartService {
         p_custom_image_url: validatedInput.custom_image_url || null,
         p_product_name: validatedInput.product_name || "Product",
         p_unit_price: validatedInput.unit_price,
+        p_printify_blueprint_id: validatedInput.printify_blueprint_id ?? undefined,
+        p_printify_print_provider_id: validatedInput.printify_print_provider_id ?? undefined,
       };
 
       // DEBUG: Log exact RPC params being sent to Supabase

@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import type { EmailOtpType } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 import { SITE_URL } from '@/features/seo/config/site'
+import { getSafeRedirectPath } from '@/shared/helpers/redirectTarget'
 
 const ALLOWED_OTP_TYPES: EmailOtpType[] = ['signup', 'magiclink', 'email']
 
@@ -9,12 +10,11 @@ function isAllowedOtpType(type: string): type is EmailOtpType {
   return (ALLOWED_OTP_TYPES as string[]).includes(type)
 }
 
-// Only same-origin paths are valid destinations (open-redirect guard)
+// Only same-origin paths are valid destinations (open-redirect guard). The
+// shared check also rejects backslashes and tabs, which URL parsing turns
+// into a protocol-relative `//host`.
 function sanitizeNextPath(next: string | null): string {
-  if (next && next.startsWith('/') && !next.startsWith('//')) {
-    return next
-  }
-  return '/stamp'
+  return getSafeRedirectPath(next) ?? '/stamp'
 }
 
 export async function GET(request: NextRequest) {

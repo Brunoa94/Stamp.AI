@@ -1621,6 +1621,8 @@ export type Database = {
           p_cart_id: string
           p_custom_image_public_id?: string
           p_custom_image_url?: string
+          p_printify_blueprint_id?: number
+          p_printify_print_provider_id?: number
           p_product_id: string
           p_product_name?: string
           p_quantity: number

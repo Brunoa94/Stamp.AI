@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/features/ui/select";
 import type { SizeType } from "../../../lib/types/stampTypes";
-import { formatSizeForDisplay } from "../../../lib/helpers/sizeDisplayMapper";
+import { useSizeLabel } from "../../../lib/hooks/useSizeLabel";
 import { SplitToneText } from "../../components/SplitToneText";
 
 /**
@@ -29,6 +29,7 @@ export function SizeSelector({
   onSelectSize,
 }: PropsI) {
   const t = useTranslations("stamp.customization");
+  const { formatSize } = useSizeLabel();
 
   return (
     <div>
@@ -52,7 +53,7 @@ export function SizeSelector({
         <SelectContent>
           {sizes.map((size) => (
             <SelectItem key={size} value={size}>
-              {formatSizeForDisplay(size)}
+              {formatSize(size)}
             </SelectItem>
           ))}
         </SelectContent>

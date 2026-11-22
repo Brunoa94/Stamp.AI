@@ -24,7 +24,8 @@ Tests the full application flow:
 ### Stripe Test-Mode Flag
 **File**: [stripe-test-mode.e2e.spec.ts](./stripe-test-mode.e2e.spec.ts)
 
-Seeds a cart, checks out with the test toggle on, and verifies the `test_mode`
+Seeds a cart, checks out in test mode (`NEXT_PUBLIC_CHECKOUT_TEST_MODE` unset or
+`true`, and the `CHECKOUT_TEST_MODE=true` edge secret on the project), and verifies the `test_mode`
 flag reaches `create-payment-intent`, the payment row records `stripe_mode: test`,
 and the Stripe webhook marks the payment succeeded and the order paid.
 Run against the test project: `NODE_ENV=test npx playwright test src/tests/e2e/stripe-test-mode.e2e.spec.ts`
@@ -57,8 +58,11 @@ TEST_USER_EMAIL=test@example.com
 TEST_USER_PASSWORD=your_test_password
 
 # Payment Provider Test Credentials
-# Stripe: the checkout test toggle and E2E flows send `test_mode: true`,
-# which makes the edge functions use the *_TEST_* credential set.
+# Stripe: checkout in test mode and the E2E flows send `test_mode: true`,
+# which makes the edge functions use the *_TEST_* credential set. The edge
+# functions only accept it while the CHECKOUT_TEST_MODE=true secret is set
+# (`supabase secrets set CHECKOUT_TEST_MODE=true`); otherwise they return
+# STRIPE_TEST_MODE_DISABLED.
 NEXT_PUBLIC_STRIPE_TEST_PUBLISHABLE_KEY=pk_test_...
 STRIPE_TEST_SECRET_KEY=sk_test_...
 STRIPE_TEST_WEBHOOK_SECRET=whsec_...

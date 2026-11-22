@@ -223,7 +223,11 @@ double_confirm_changes = true
 # signup issues a confirmation link); this makes GoTrue enforce it too.
 enable_confirmations = true
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
-secure_password_change = false
+# On: a stolen session older than 24 hours cannot change the password through
+# GoTrue. The profile page goes through /api/account/password, which re-checks
+# the current password and writes with the service role; the reset and
+# onboarding flows run on a fresh session, which GoTrue accepts.
+secure_password_change = true
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
 max_frequency = "1s"
 # Number of characters used in the email OTP.

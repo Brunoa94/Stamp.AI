@@ -38,7 +38,7 @@ describe("mapProductsToCatalogDisplay", () => {
           "https://images.printify.com/2.jpg",
         ],
       }),
-    ]);
+    ], null);
 
     expect(product.imageUrls).toEqual([
       "https://images.printify.com/1.jpg",
@@ -47,7 +47,7 @@ describe("mapProductsToCatalogDisplay", () => {
   });
 
   it("falls back to base_image_url when the gallery is not synced", () => {
-    const [product] = mapProductsToCatalogDisplay([buildProduct()]);
+    const [product] = mapProductsToCatalogDisplay([buildProduct()], null);
 
     expect(product.imageUrls).toEqual([
       "https://images.printify.com/base.jpg",
@@ -57,13 +57,13 @@ describe("mapProductsToCatalogDisplay", () => {
   it("returns an empty gallery when the product has no images at all", () => {
     const [product] = mapProductsToCatalogDisplay([
       buildProduct({ image_urls: null, base_image_url: null }),
-    ]);
+    ], null);
 
     expect(product.imageUrls).toEqual([]);
   });
 
   it("detects the category from the display title", () => {
-    const [product] = mapProductsToCatalogDisplay([buildProduct()]);
+    const [product] = mapProductsToCatalogDisplay([buildProduct()], null);
 
     expect(product.category).toBe("tshirt");
   });
@@ -71,7 +71,7 @@ describe("mapProductsToCatalogDisplay", () => {
   it("prefers the selling price override over the computed total", () => {
     const [product] = mapProductsToCatalogDisplay([
       buildProduct({ selling_price_cents: 1800 }),
-    ]);
+    ], null);
 
     expect(product.price).toBe(18);
   });
@@ -83,7 +83,7 @@ describe("mapProductsToCatalogDisplay", () => {
         min_price_cents: 0,
         totalPriceCents: 0,
       }),
-    ]);
+    ], null);
 
     expect(product.price).toBe(25);
   });
@@ -101,7 +101,7 @@ describe("mapProductsToCatalogDisplay", () => {
           updated_at: "2026-01-01T00:00:00Z",
         },
       }),
-    ]);
+    ], null);
 
     expect(product.description).toBe("A heavyweight classic tee.");
     expect(product.specs).toEqual(["100% cotton"]);

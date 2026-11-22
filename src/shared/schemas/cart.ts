@@ -9,6 +9,9 @@ export const addToCartSchema = z.object({
   quantity: z.number().int().min(1, "Quantity must be at least 1").max(99, "Quantity cannot exceed 99"),
   unit_price: z.number().int().positive("Unit price must be a positive integer (in cents)"),
   custom_image_url: z.string().nullable().optional(), // Any string URL from user uploads
+  // Printify blueprint and print provider: the cart looks up the translated title by blueprint
+  printify_blueprint_id: z.number().int().nullable().optional(),
+  printify_print_provider_id: z.number().int().nullable().optional(),
 });
 
 export const updateCartItemSchema = z.object({

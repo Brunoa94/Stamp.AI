@@ -7,10 +7,12 @@ import { supabaseRest } from "./supabase.ts";
  *
  * - `live`: production keys (`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`).
  * - `test`: Stripe Test Mode keys (`STRIPE_TEST_SECRET_KEY`,
- *   `STRIPE_TEST_WEBHOOK_SECRET`). Test keys only ever produce test
- *   payments, so a caller can request this mode safely; if the test keys
- *   are not configured in the deployment the request is rejected instead
- *   of silently falling back to live credentials.
+ *   `STRIPE_TEST_WEBHOOK_SECRET`). Test payments still settle as paid, so
+ *   functions that create a payment resolve the mode with
+ *   `resolveRequestedStripeMode`, which serves it only while the
+ *   `CHECKOUT_TEST_MODE` secret is "true". If the test keys are not
+ *   configured the request is rejected instead of silently falling back to
+ *   live credentials.
  */
 export type StripeModeT = "live" | "test";
 
@@ -32,6 +34,21 @@ export function resolveStripeMode(testMode: unknown): StripeModeT {
     return "test";
   }
   return "live";
+}
+
+/**
+ * Resolve the mode for a request that creates a payment. Test payments
+ * settle as paid, so they are only served while the deployment opts in
+ * with the `CHECKOUT_TEST_MODE` secret set to exactly "true"; otherwise a
+ * caller could send `test_mode: true` and get an order or credits for a
+ * test card. Webhooks and refunds keep using the stored mode.
+ */
+export function resolveRequestedStripeMode(testMode: unknown): StripeModeT {
+  const mode = resolveStripeMode(testMode);
+  if (mode === "test" && Deno.env.get("CHECKOUT_TEST_MODE") !== "true") {
+    throw ErrorCodes.STRIPE_TEST_MODE_DISABLED();
+  }
+  return mode;
 }
 
 /** Resolve the mode a PaymentIntent (or payment row) was created in. */

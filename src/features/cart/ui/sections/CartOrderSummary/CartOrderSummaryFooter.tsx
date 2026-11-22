@@ -6,6 +6,7 @@
  */
 
 import { ArrowRight, Lock, Truck } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import { FooterPaymentIcons } from "@/features/ui/trust/FooterPaymentIcons";
@@ -19,6 +20,8 @@ export function CartOrderSummaryFooter({
   onCheckout,
   canCheckout = true,
 }: CartOrderSummaryFooterPropsI) {
+  const t = useTranslations("cart.summary");
+
   return (
     <div className="mt-8 space-y-6">
       <Button
@@ -28,7 +31,7 @@ export function CartOrderSummaryFooter({
         disabled={!canCheckout}
       >
         <Lock className="h-4 w-4" aria-hidden="true" />
-        Proceed to Checkout
+        {t("proceedToCheckout")}
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
       </Button>
 
@@ -39,9 +42,9 @@ export function CartOrderSummaryFooter({
         />
         <div className="space-y-1">
           <Span variant="label" className="block text-(--color-stamp-taupe)">
-            Estimated Arrival
+            {t("estimatedArrival")}
           </Span>
-          <Span variant="value">5-8 Business Days</Span>
+          <Span variant="value">{t("arrivalWindow")}</Span>
         </div>
       </div>
 

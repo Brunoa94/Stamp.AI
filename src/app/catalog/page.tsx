@@ -10,6 +10,7 @@ import { PAGE_KEYWORDS } from "@/features/seo/config/keywords";
 import { SITE_URL } from "@/features/seo/config/site";
 import { getCachedAllProductsWithPricing } from "@/lib/supabase/server-cache";
 import { mapProductsToCatalogDisplay } from "@/features/catalog/lib/mappers/catalogProductMapper";
+import { productTextFor } from "@/shared/constants/productText/productTextByLocale";
 import { groupProductsByCategory } from "@/features/catalog/lib/helpers/groupProductsByCategory";
 import { CatalogPageContent } from "@/features/catalog/ui/CatalogPageContent";
 
@@ -29,12 +30,14 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function CatalogPage() {
   const productsWithPricing = await getCachedAllProductsWithPricing();
   const tMeta = await getTranslations("catalog.meta");
+  const locale = await getLocale();
 
   const sections = groupProductsByCategory(
-    mapProductsToCatalogDisplay(productsWithPricing)
+    mapProductsToCatalogDisplay(productsWithPricing, productTextFor(locale))
   );
 
   // SEO schemas only advertise real synced prices, never the fallback.
+  // They keep the English product text: SEO is not localized.
   const productSchemaEntries = mapProductsToSchemaData(
     productsWithPricing.filter((p) => p.totalPriceCents > 0),
     tMeta("description"),
@@ -49,7 +52,7 @@ export default async function CatalogPage() {
             name: tMeta("title"),
             description: tMeta("description"),
             url: `${SITE_URL}/catalog`,
-            inLanguage: toLanguageTag(await getLocale()),
+            inLanguage: toLanguageTag(locale),
           },
           [
             { name: "Home", url: SITE_URL },
