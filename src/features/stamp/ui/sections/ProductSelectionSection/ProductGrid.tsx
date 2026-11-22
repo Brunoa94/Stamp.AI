@@ -93,7 +93,8 @@ export function ProductGrid({
 
       {!isLoading && !isError && activeSection && (
         selectedProduct ? (
-          <div className="w-full h-full p-4 lg:p-6 flex flex-col justify-center">
+          // min-h-full, not h-full: a card taller than the panel grows it (and scrolls) instead of being squeezed and clipped
+          <div className="w-full min-h-full p-4 lg:p-6 flex flex-col justify-center">
             <SelectedProductCard
               product={selectedProduct}
               onClearSelection={onClearSelection}

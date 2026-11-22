@@ -81,7 +81,7 @@ export function SelectedProductCard({ product, onClearSelection }: PropsI) {
 
   return (
     <div
-      className="relative overflow-hidden rounded-lg whitespace-normal wrap-break-word min-h-80 sm:min-h-96 md:min-h-105 lg:min-h-120 xl:min-h-130 p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center text-center border-2 border-(--color-stamp-gold) bg-(--color-stamp-gold)/5 md:bg-(--color-stamp-cream)"
+      className="relative shrink-0 overflow-hidden rounded-lg whitespace-normal wrap-break-word min-h-80 sm:min-h-96 md:min-h-105 lg:min-h-120 xl:min-h-130 px-4 pb-6 pt-16 sm:px-6 lg:p-8 lg:pt-16 flex flex-col items-center justify-center text-center border-2 border-(--color-stamp-gold) bg-(--color-stamp-gold)/5 md:bg-(--color-stamp-cream)"
       aria-label={t("selectedAria", { name: product.displayName })}
     >
       {/* Selected badge */}
@@ -101,7 +101,7 @@ export function SelectedProductCard({ product, onClearSelection }: PropsI) {
       </Button>
 
       {/* Image and details share one column, so the details match the image's width */}
-      <div className="relative z-10 flex w-56 flex-col items-center sm:w-64 md:w-72 lg:w-80 xl:w-96">
+      <div className="relative z-10 flex w-full max-w-64 flex-col items-center sm:w-64 md:w-72 lg:w-80 xl:w-96 sm:max-w-none">
         <div className="relative w-full aspect-square mb-6 overflow-hidden">
           <div className="relative w-full h-full">
             {product.imageUrl ? (
