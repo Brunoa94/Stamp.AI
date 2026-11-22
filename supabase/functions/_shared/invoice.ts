@@ -1,6 +1,6 @@
 import { supabaseRest } from "./supabase.ts";
 import { validateEnvVars } from "./validators.ts";
-import { documentTitle, getSellerInfo, InvoiceRowI, renderInvoiceHtml } from "./invoiceTemplate.ts";
+import { documentTitle, getSellerInfo, InvoiceRowI, renderInvoiceHtml, SellerInfoI } from "./invoiceTemplate.ts";
 import { renderInvoicePdf } from "./invoicePdf.ts";
 import { sendInvoiceEmail } from "./invoiceEmail.ts";
 
@@ -58,7 +58,7 @@ export async function createInvoiceSignedUrl(pdfPath: string, expiresInSeconds =
  *
  * Safe to call multiple times: numbering/issuance is handled atomically by the
  * create_invoice_for_order RPC, the PDF is only rendered once, and the email
- * is only sent once (tracked via emailed_at).
+ * is only sent once (claimed through emailed_at, see emailInvoiceOnce).
  */
 export async function ensureInvoiceForOrder(orderId: string): Promise<InvoiceRowI> {
   const rpcResult = await supabaseRest<InvoiceRowI[]>(
@@ -95,48 +95,56 @@ export async function ensureInvoiceForOrder(orderId: string): Promise<InvoiceRow
     invoice = patchResult.data?.[0] ?? { ...invoice, pdf_bucket: INVOICES_BUCKET, pdf_path: pdfPath };
     console.log(`✅ Invoice PDF generated: ${invoice.invoice_number} -> ${pdfPath}`);
 
-    // Email once, best-effort — never fail invoice generation over delivery
-    if (!invoice.emailed_at && invoice.customer_email) {
-      const title = documentTitle(invoice.type);
-      const sent = await sendInvoiceEmail({
-        to: invoice.customer_email,
-        subject: `${seller.name} — ${title} ${invoice.invoice_number} for order ${invoice.order_number}`,
-        html: renderInvoiceHtml(invoice, seller),
-        pdfBytes,
-        pdfFilename: `${invoice.invoice_number}.pdf`,
-      });
-
-      if (sent) {
-        await supabaseRest(`invoices?id=eq.${invoice.id}`, "PATCH", {
-          emailed_at: new Date().toISOString(),
-        });
-      }
-    }
+    await emailInvoiceOnce(invoice, seller, pdfBytes);
+    return invoice;
   }
 
-  const hadPdfAtStart = Boolean(rpcResult.data[0].pdf_path);
+  await emailInvoiceOnce(invoice, seller);
+  return invoice;
+}
 
-  // Email once, best-effort — never fail invoice generation over delivery.
-  // If the PDF already existed when ensureInvoiceForOrder was called, re-render it for the attachment.
-  if (hadPdfAtStart && !invoice.emailed_at && invoice.customer_email) {
-    const pdfBytes = await renderInvoicePdf(invoice, seller);
+/**
+ * Email the invoice with its PDF, at most once, best-effort: delivery never
+ * fails invoice generation.
+ *
+ * The send is claimed atomically through emailed_at (PATCH ... WHERE
+ * emailed_at IS NULL), so overlapping calls (a payment webhook and its
+ * retry, or a webhook and an invoice download) can't both send it. A failed
+ * send releases the claim so a later call retries. `pdfBytes` is the freshly
+ * rendered PDF; without it the stored invoice is rendered again.
+ */
+async function emailInvoiceOnce(invoice: InvoiceRowI, seller: SellerInfoI, pdfBytes?: Uint8Array): Promise<void> {
+  if (invoice.emailed_at || !invoice.customer_email) return;
+
+  let isClaimed = false;
+  let isSent = false;
+  try {
+    const claim = await supabaseRest<Array<{ id: string }>>(
+      `invoices?id=eq.${invoice.id}&emailed_at=is.null&select=id`,
+      "PATCH",
+      { emailed_at: new Date().toISOString() },
+      { prefer: "return=representation" }
+    );
+    if (claim.error) throw new Error(`Could not claim the invoice email: ${JSON.stringify(claim.error)}`);
+    // No row: another call already sent it, or is sending it
+    isClaimed = Boolean(claim.data?.length);
+    if (!isClaimed) return;
+
     const title = documentTitle(invoice.type);
-    const sent = await sendInvoiceEmail({
+    isSent = await sendInvoiceEmail({
       to: invoice.customer_email,
       subject: `${seller.name} — ${title} ${invoice.invoice_number} for order ${invoice.order_number}`,
       html: renderInvoiceHtml(invoice, seller),
-      pdfBytes,
+      pdfBytes: pdfBytes ?? await renderInvoicePdf(invoice, seller),
       pdfFilename: `${invoice.invoice_number}.pdf`,
     });
-
-    if (sent) {
-      await supabaseRest(`invoices?id=eq.${invoice.id}`, "PATCH", {
-        emailed_at: new Date().toISOString(),
-      });
+  } catch (error) {
+    console.error(`Invoice email failed for ${invoice.invoice_number} (non-blocking):`, error);
+  } finally {
+    if (isClaimed && !isSent) {
+      await supabaseRest(`invoices?id=eq.${invoice.id}`, "PATCH", { emailed_at: null }).catch(() => {});
     }
   }
-
-  return invoice;
 }
 
 /**

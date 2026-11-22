@@ -152,6 +152,33 @@ function escapeHtml(value: string): string {
  * Render the invoice as a self-contained HTML document.
  * Used as the email body; the PDF layout mirrors this structure.
  */
+/**
+ * Opening note of the invoice email: a warm thank-you for an order, or a
+ * plain note for a credit note (a refund is no moment to thank for buying).
+ */
+function renderGreetingHtml(invoice: InvoiceRowI, seller: SellerInfoI): string {
+  const firstName = invoice.customer_name?.trim().split(/\s+/)[0];
+  const hello = `Hi ${firstName ? escapeHtml(firstName) : "there"},`;
+  const orderNumber = `<strong>${escapeHtml(invoice.order_number)}</strong>`;
+
+  const paragraphs = invoice.type === "credit_note"
+    ? [
+      `We've issued a credit note for your order ${orderNumber}. Your credit note is attached as a PDF for your records.`,
+      `If anything about it looks off, just reply to this email or write to ${escapeHtml(seller.email)}.`,
+    ]
+    : [
+      `Thank you so much for your order with ${escapeHtml(seller.name)}! We're really happy you chose us to bring your idea to life.`,
+      `Your order ${orderNumber} is confirmed and we're getting it ready for production. Your invoice is attached as a PDF for your records.`,
+      `If you have any questions, just reply to this email or write to ${escapeHtml(seller.email)}. We're glad to help.`,
+    ];
+
+  return `
+        <div style="margin-bottom:36px;font-size:15px;line-height:1.7;">
+          <p style="margin:0 0 12px;font-weight:700;">${hello}</p>
+          ${paragraphs.map((text) => `<p style="margin:0 0 12px;">${text}</p>`).join("")}
+        </div>`;
+}
+
 export function renderInvoiceHtml(invoice: InvoiceRowI, seller: SellerInfoI): string {
   const title = documentTitle(invoice.type);
   const logoUrl = getInvoiceLogoUrl();
@@ -221,6 +248,7 @@ export function renderInvoiceHtml(invoice: InvoiceRowI, seller: SellerInfoI): st
       </div>
 
       <div style="padding:40px 48px;">
+        ${renderGreetingHtml(invoice, seller)}
         <table style="width:100%;border-collapse:collapse;margin-bottom:36px;">
           <tr>
             <td style="vertical-align:top;width:50%;padding-right:16px;">
