@@ -10,7 +10,7 @@ import { Register } from "@/features/auth/ui/components/Register";
 import { useUser, useLogout } from "@/shared/queries/authQueries";
 import { isRegisteredUser } from "@/shared/helpers/authIdentity";
 import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
-import { LayoutGrid, Menu, Package, ShoppingBag, UserRound, X } from "lucide-react";
+import { LayoutGrid, Menu, Package, ShoppingCart, UserRound, X } from "lucide-react";
 import { useScrolled } from "@/shared/hooks/useScrolled";
 import { LanguageSwitcher } from "@/shared/ui/LanguageSwitcher";
 import { cn } from "@/lib/utils";
@@ -85,18 +85,13 @@ export function StampHeader() {
           className="flex-1 hidden lg:flex justify-end gap-4 xl:gap-6 items-center"
           aria-label={t("mainNavAria")}
         >
-          <StampNavIconLink href="/catalog" icon={LayoutGrid} label={t("catalog")} />
-
           {isRegistered && (
             <StampNavIconLink href="/orders" icon={Package} label={t("orders")} compact />
           )}
 
-          <div className="flex items-center gap-1">
-            {isRegistered && (
-              <StampNavIconLink href="/profile" icon={UserRound} label={t("profile")} iconOnly />
-            )}
-            <StampNavIconLink href="/cart" icon={ShoppingBag} label={t("cart")} iconOnly />
-          </div>
+          {isRegistered && (
+            <StampNavIconLink href="/profile" icon={UserRound} label={t("profile")} iconOnly />
+          )}
 
           {isRegistered ? (
             <Button
@@ -115,7 +110,17 @@ export function StampHeader() {
             </>
           )}
 
-          <LanguageSwitcher className="-mr-2" />
+          <LanguageSwitcher />
+
+          <StampNavIconLink href="/catalog" icon={LayoutGrid} label={t("catalog")} />
+
+          <StampNavIconLink
+            href="/cart"
+            icon={ShoppingCart}
+            iconSize="lg"
+            label={t("cart")}
+            iconOnly
+          />
         </nav>
 
         {/* Mobile/tablet hamburger (below lg) */}

@@ -5,7 +5,7 @@ const focusRing =
 
 /** Text link in the Stamp header nav and mobile drawer. */
 export const stampNavLinkVariants = cva(
-  "font-semibold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-all duration-300",
+  "whitespace-nowrap font-semibold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-all duration-300",
 );
 
 /**
@@ -25,13 +25,24 @@ export const stampNavIconLinkVariants = cva(
   },
 );
 
+/** Icon inside a header link; the cart's is a size up so it reads at a glance. */
+export const stampNavIconVariants = cva("shrink-0", {
+  variants: {
+    size: {
+      md: "size-5",
+      lg: "size-6",
+    },
+  },
+  defaultVariants: { size: "md" },
+});
+
 /**
  * "Sign up" trigger in the desktop header: the solid gold primary action. The
  * auth dialog renders it as an unstyled Button, whose `outline-none` would
  * cancel an outline, so its focus indicator is a ring.
  */
 export const stampNavSignUpVariants = cva(
-  "inline-flex h-10 items-center rounded-md bg-(--color-stamp-gold) px-5 text-sm font-semibold uppercase tracking-wider text-(--color-stamp-chocolate) shadow-sm transition-colors duration-300 hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) focus-visible:ring-offset-2",
+  "inline-flex h-10 items-center whitespace-nowrap rounded-md bg-(--color-stamp-gold) px-5 text-sm font-semibold uppercase tracking-wider text-(--color-stamp-chocolate) shadow-sm transition-colors duration-300 hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) focus-visible:ring-offset-2",
 );
 
 /**
