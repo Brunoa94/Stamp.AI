@@ -36,8 +36,8 @@ export function PaymentMethodsBanner() {
 
   return (
     <div className="w-full border-y border-(--color-stamp-divider) bg-(--color-stamp-white)">
-      {/* Trust indicators row */}
-      <div className="flex items-center justify-center gap-6 border-b border-(--color-stamp-divider) py-3 sm:gap-10 md:gap-16 lg:gap-24">
+      {/* Trust indicators: a 2×2 grid on phones, one row from sm */}
+      <div className="grid grid-cols-2 gap-x-4 gap-y-3 border-b border-(--color-stamp-divider) px-6 py-4 sm:flex sm:items-center sm:justify-center sm:gap-10 sm:py-3 md:gap-16 lg:gap-24">
         {trustItems.map((item, index) => (
           <div
             key={index}
@@ -54,11 +54,11 @@ export function PaymentMethodsBanner() {
         ))}
       </div>
 
-      {/* Payment icons row */}
-      <div className="flex items-center justify-center gap-6 py-4 sm:gap-8 md:gap-12 lg:gap-16">
+      {/* Payment icons: the label gets its own line on phones and the logos wrap */}
+      <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 px-6 py-4 sm:flex-nowrap sm:gap-8 md:gap-12 lg:gap-16">
         <Span
           variant="micro"
-          className="text-(--color-stamp-taupe) uppercase tracking-widest"
+          className="w-full text-center text-(--color-stamp-taupe) uppercase tracking-widest sm:w-auto sm:text-left"
         >
           {t("trustedProviders")}
         </Span>
