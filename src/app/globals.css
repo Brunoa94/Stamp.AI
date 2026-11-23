@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
+/* Short viewports (e.g. 320x568 phones, landscape tablets): for pinned, full-height panels */
+@custom-variant short (@media (max-height: 44rem));
 
 @theme inline {
   --breakpoint-3xl: 1200px;

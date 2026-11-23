@@ -26,15 +26,15 @@ export function ProcessSlideCard({ step, title, description, emphasis }: PropsI)
 
   return (
     <li
-      className="flex w-90 shrink-0 origin-center flex-col rounded-2xl border border-(--color-stamp-divider) bg-(--color-stamp-off-white) p-5 shadow-sm sm:w-106 lg:w-216 lg:flex-row lg:items-center lg:gap-10 lg:p-8"
+      className="flex w-[min(22.5rem,calc(100vw-3rem))] shrink-0 snap-start origin-center flex-col rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-off-white) p-5 short:p-4 shadow-sm sm:w-106 lg:w-216 lg:flex-row lg:items-center lg:gap-10 lg:p-8"
       style={{ opacity: emphasis.opacity, transform: `scale(${emphasis.scale})` }}
     >
       {/* Flow-demo screen scaled down from its native 40rem; the box matches the scaled window */}
-      <div className="mb-5 flex h-74 shrink-0 justify-center overflow-hidden sm:h-89 lg:mb-0 lg:w-96">
+      <div className="mb-5 flex h-74 shrink-0 justify-center overflow-hidden sm:h-89 lg:mb-0 lg:w-96 short:mb-3 short:h-52 sm:short:h-52">
         <ProcessFlowSnapshot
           step={step}
           label={description}
-          className="origin-top scale-50 sm:scale-60"
+          className="origin-top scale-50 sm:scale-60 short:scale-35 sm:short:scale-35"
         />
       </div>
 

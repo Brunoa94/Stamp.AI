@@ -53,6 +53,11 @@ export function getProcessCarouselFrame({
   };
 }
 
+/** Whether two frames put the track in the same place (activeIndex follows progress). */
+export function isSameProcessCarouselFrame(a: ProcessCarouselFrameT, b: ProcessCarouselFrameT): boolean {
+  return a.progress === b.progress && a.translateX === b.translateX;
+}
+
 /**
  * How prominent a slide is: full size and opacity under the scroll position,
  * easing down to a resting minimum one slide away and beyond.
