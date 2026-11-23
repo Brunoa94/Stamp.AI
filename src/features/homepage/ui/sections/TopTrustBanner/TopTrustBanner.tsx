@@ -12,14 +12,17 @@
 "use client";
 
 import { useIntersectionObserver } from "@/shared/hooks/useIntersectionObserver";
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { TopTrustBannerItems } from "./TopTrustBannerItems";
 
-/** Ignore the strip behind the fixed mobile (h-16) header when checking visibility */
-const HEADER_ROOT_MARGIN = "-64px 0px 0px 0px";
+/** Ignore the strip behind the fixed header (h-16 below lg, h-24 from lg) when checking visibility */
+const MOBILE_HEADER_ROOT_MARGIN = "-64px 0px 0px 0px";
+const DESKTOP_HEADER_ROOT_MARGIN = "-96px 0px 0px 0px";
 
 export function TopTrustBanner() {
+  const isLgUp = useMediaQuery("(min-width: 1024px)");
   const { ref, isVisible } = useIntersectionObserver<HTMLDivElement>({
-    rootMargin: HEADER_ROOT_MARGIN,
+    rootMargin: isLgUp ? DESKTOP_HEADER_ROOT_MARGIN : MOBILE_HEADER_ROOT_MARGIN,
     triggerOnce: false,
   });
 

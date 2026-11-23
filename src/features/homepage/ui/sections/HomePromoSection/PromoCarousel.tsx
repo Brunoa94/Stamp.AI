@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Button } from "@/features/ui/button";
+import { Span } from "@/features/ui/span";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import type { PromoImageType } from "../../../lib/constants/promoSections";
 import { PROMO_CAROUSEL_DISPLAY_MS } from "../../../lib/constants/promoSections";
@@ -76,21 +77,28 @@ export function PromoCarousel({
       </div>
 
       {/* Progress indicator bar */}
-      <div className="mt-4 flex gap-1.5 justify-center">
+      {/* Each bar sits in a 24px+ button so it is easy to tap */}
+      <div className="mt-2 flex justify-center">
         {gridImages.map((_, index) => (
           <Button
             key={index}
             type="button"
             variant="unstyled"
             onClick={() => setActiveIndex(index)}
-            className={cn(
-              "h-1 rounded-full transition-all duration-300 focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) focus-visible:ring-offset-2",
-              index === activeIndex % gridImages.length
-                ? "w-6 bg-(--color-stamp-gold)"
-                : "w-2 bg-(--color-stamp-chocolate)/20 hover:bg-(--color-stamp-chocolate)/40",
-            )}
+            className="group flex h-8 min-w-8 items-center justify-center rounded-md px-1 focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)"
             aria-label={`View image ${index + 1}`}
-          />
+          >
+            <Span
+              unstyled
+              aria-hidden="true"
+              className={cn(
+                "h-1 rounded-full transition-all duration-300",
+                index === activeIndex % gridImages.length
+                  ? "w-6 bg-(--color-stamp-gold)"
+                  : "w-2 bg-(--color-stamp-chocolate)/20 group-hover:bg-(--color-stamp-chocolate)/40",
+              )}
+            />
+          </Button>
         ))}
       </div>
     </div>

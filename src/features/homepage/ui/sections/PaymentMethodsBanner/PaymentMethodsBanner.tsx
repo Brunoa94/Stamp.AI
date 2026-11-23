@@ -46,7 +46,7 @@ export function PaymentMethodsBanner() {
             <item.icon className="h-4 w-4 text-(--color-stamp-taupe)" strokeWidth={1.5} />
             <Span
               variant="micro"
-              className="text-(--color-stamp-chocolate)"
+              className="text-sm text-(--color-stamp-chocolate) sm:text-xs"
             >
               {item.text}
             </Span>
@@ -58,7 +58,7 @@ export function PaymentMethodsBanner() {
       <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 px-6 py-4 sm:flex-nowrap sm:gap-8 md:gap-12 lg:gap-16">
         <Span
           variant="micro"
-          className="w-full text-center text-(--color-stamp-taupe) uppercase tracking-widest sm:w-auto sm:text-left"
+          className="w-full text-center text-sm text-(--color-stamp-taupe) uppercase tracking-widest sm:w-auto sm:text-left sm:text-xs"
         >
           {t("trustedProviders")}
         </Span>

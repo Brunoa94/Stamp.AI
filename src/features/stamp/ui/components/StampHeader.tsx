@@ -18,6 +18,7 @@ import {
   stampHeaderVariants,
   stampMenuButtonVariants,
   stampNavCtaVariants,
+  stampNavHitAreaVariants,
   stampNavLinkVariants,
   stampNavSignUpVariants,
 } from "@/features/stamp/lib/variants/stampNavVariants";
@@ -55,14 +56,18 @@ export function StampHeader() {
       <header className={stampHeaderVariants({ solid: isSolid })}>
         {/* Logo: white below lg over the transparent bar, brown once it turns solid and from lg */}
         <div className="flex-1">
-          <Link href="/" className="block w-fit" aria-label={t("logoAria")}>
+          {/* No `priority`: one of the two logos is always display:none, and a lazy hidden image is never fetched */}
+          <Link href="/" className={cn(stampNavHitAreaVariants(), "block w-fit")} aria-label={t("logoAria")}>
+            {/* The ring and shadow keep the white tile visible over an off-white page */}
             <Image
               src={staticAssetUrl("/logo-white-leather.webp")}
               alt="Stamp.AI"
               width={64}
               height={64}
-              className={cn("size-10 object-contain lg:hidden", isSolid && "hidden")}
-              priority
+              className={cn(
+                "size-10 rounded-md object-contain shadow-md ring-1 ring-(--color-stamp-chocolate)/15 lg:hidden",
+                isSolid && "hidden",
+              )}
             />
             <Image
               src={staticAssetUrl("/logo.png")}
@@ -70,7 +75,6 @@ export function StampHeader() {
               width={64}
               height={64}
               className={cn("size-10 object-contain lg:block lg:size-16", !isSolid && "hidden")}
-              priority
             />
           </Link>
         </div>
@@ -81,7 +85,8 @@ export function StampHeader() {
             href="/stamp"
             className={cn(
               stampNavCtaVariants(),
-              "border-2 bg-(--color-stamp-gold) px-4 py-2 text-sm ring-2 lg:border-3 lg:bg-(--color-stamp-gold)/10 lg:px-8 lg:py-3 lg:text-lg lg:ring-4",
+              stampNavHitAreaVariants(),
+              "border-2 bg-(--color-stamp-gold) px-4 py-2 text-base ring-2 lg:border-3 lg:bg-(--color-stamp-gold)/10 lg:px-8 lg:py-3 lg:text-lg lg:ring-4",
             )}
             aria-label={t("stampAria")}
           >
@@ -137,7 +142,7 @@ export function StampHeader() {
           <Button
             variant="unstyled"
             onClick={() => setMobileMenuOpen((v) => !v)}
-            className={stampMenuButtonVariants({ solid: isSolid })}
+            className={cn(stampMenuButtonVariants({ solid: isSolid }), stampNavHitAreaVariants())}
             aria-label={mobileMenuOpen ? t("closeMenu") : t("openMenu")}
             aria-expanded={mobileMenuOpen}
           >

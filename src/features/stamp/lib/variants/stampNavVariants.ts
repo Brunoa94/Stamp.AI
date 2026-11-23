@@ -38,6 +38,15 @@ export const stampMenuButtonVariants = cva(
   },
 );
 
+/**
+ * Invisible hit area around a compact header control, so the logo, menu
+ * toggle and Stamp CTA stay 44px touch targets on small phones without
+ * growing visually.
+ */
+export const stampNavHitAreaVariants = cva(
+  "relative after:absolute after:-inset-1.5 after:content-[''] lg:after:hidden",
+);
+
 /** Text link in the Stamp header nav and mobile drawer. */
 export const stampNavLinkVariants = cva(
   "whitespace-nowrap font-semibold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold) transition-all duration-300",
