@@ -33,7 +33,7 @@ export const STAMP_BACKDROP_EDGE = {
   bottomX: 0.6,
   canvasTopPx: 96,
   minViewportWidthPx: 768,
-  sidebarWidthPx: 17 * 13.6, // sidebar w-68 (17rem) at the 13.6px root font size
+  sidebarWidthPx: 17 * 15, // sidebar w-68 (17rem) at the 15px root font size (globals.css html)
   sidebarMinViewportWidthPx: 1024,
   slant: 0.1,
 };

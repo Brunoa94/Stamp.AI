@@ -148,7 +148,8 @@
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    font-size: 13.6px;
+    /* Base size for every rem: the whole design scales from here */
+    font-size: 15px;
     scroll-behavior: smooth;
   }
   body {

@@ -129,6 +129,7 @@ Prop drilling, read-only context and when a Zustand store is justified are rules
 Stamp's look is the original chocolate-and-gold "stamp" identity blended half-way with a friendly marketplace style. Every page uses the same few patterns; reach for these before inventing anything. Colours and contrast pairs are in `references/color-palette.md`.
 
 **Page shell**
+- The root font size is 15px (`html` in `globals.css`), and every Tailwind size and spacing is in rem, so the whole design scales from it. Don't hard-code px sizes; if JS needs a rem in px (like `STAMP_BACKDROP_EDGE.sidebarWidthPx`), derive it from 15.
 - Content sits in `mx-auto max-w-screen-2xl` inside the page gutter `px-4 sm:px-6 lg:px-12`. Every section, header band and footer uses this gutter, so edges line up from header to footer.
 - The fixed header is `h-24`; a page's first block starts below it (`pt-24`, or `pt-28` for a block that should breathe).
 - Vertical rhythm between sections is `py-20` (`py-16` on dense app pages). Inside a section, the header sits `mb-10` above its content.

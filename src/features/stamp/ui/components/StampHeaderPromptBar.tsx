@@ -31,13 +31,13 @@ export function StampHeaderPromptBar({ className }: PropsI) {
     >
       <Span
         unstyled
-        className="truncate text-sm text-(--color-stamp-taupe)"
+        className="truncate text-base text-(--color-stamp-taupe)"
       >
         {t("promptPlaceholder")}
       </Span>
       <Span unstyled aria-hidden className={stampNavPromptButtonVariants()}>
         <Sparkles className="size-4" strokeWidth={2} />
-        <Span unstyled className="hidden sm:inline">
+        <Span unstyled className="hidden sm:inline lg:hidden xl:inline">
           {t("stamp")}
         </Span>
       </Span>

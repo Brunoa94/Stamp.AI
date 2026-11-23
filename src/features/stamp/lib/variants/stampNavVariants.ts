@@ -5,7 +5,7 @@ const focusRing =
 
 /** Account/text link in the Stamp header and mobile drawer: uppercase, tracked. */
 export const stampNavLinkVariants = cva(
-  `whitespace-nowrap rounded-lg text-xs font-bold uppercase tracking-wider text-(--color-stamp-chocolate) transition-colors duration-200 hover:text-(--color-stamp-gold-text) ${focusRing}`,
+  `whitespace-nowrap rounded-lg text-sm font-bold uppercase tracking-wider text-(--color-stamp-chocolate) transition-colors duration-200 hover:text-(--color-stamp-gold-text) ${focusRing}`,
 );
 
 /**
@@ -18,7 +18,7 @@ export const stampNavIconLinkVariants = cva(
     variants: {
       iconOnly: {
         true: "size-11 justify-center",
-        false: "gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider",
+        false: "gap-2 px-3 py-2 text-sm font-bold uppercase tracking-wider",
       },
     },
     defaultVariants: { iconOnly: false },
@@ -42,7 +42,7 @@ export const stampNavIconVariants = cva("shrink-0", {
  * outline, so its focus indicator is a ring.
  */
 export const stampNavSignUpVariants = cva(
-  "inline-flex h-10 items-center whitespace-nowrap rounded-lg bg-(--color-stamp-gold) px-5 text-xs font-bold uppercase tracking-wider text-(--color-stamp-chocolate) transition-colors duration-200 hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-(--color-stamp-chocolate) focus-visible:ring-offset-2",
+  "inline-flex h-10 items-center whitespace-nowrap rounded-lg bg-(--color-stamp-gold) px-5 text-sm font-bold uppercase tracking-wider text-(--color-stamp-chocolate) transition-colors duration-200 hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white) active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-(--color-stamp-chocolate) focus-visible:ring-offset-2",
 );
 
 /**
@@ -51,7 +51,7 @@ export const stampNavSignUpVariants = cva(
  * links show their own label from `xl`, so the bubble stops there.
  */
 export const stampNavTooltipVariants = cva(
-  "pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-(--color-stamp-chocolate) px-2.5 py-1 text-xs font-semibold normal-case tracking-normal text-(--color-stamp-white) opacity-0 shadow-(--shadow-stamp-card) transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100",
+  "pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-(--color-stamp-chocolate) px-2.5 py-1 text-sm font-semibold normal-case tracking-normal text-(--color-stamp-white) opacity-0 shadow-(--shadow-stamp-card) transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100",
   {
     variants: {
       compact: {
@@ -74,12 +74,12 @@ export const stampNavPromptBarVariants = cva(
 
 /** "Stamp it!" button at the end of the prompt bar. */
 export const stampNavPromptButtonVariants = cva(
-  "ml-auto flex h-8 shrink-0 items-center gap-1.5 rounded-md bg-(--color-stamp-gold) px-3 text-xs font-bold uppercase tracking-wider text-(--color-stamp-chocolate) transition-colors duration-200 group-hover:bg-(--color-stamp-chocolate) group-hover:text-(--color-stamp-white)",
+  "ml-auto flex h-9 shrink-0 items-center gap-1.5 rounded-md bg-(--color-stamp-gold) px-3.5 text-sm font-bold uppercase tracking-wider text-(--color-stamp-chocolate) transition-colors duration-200 group-hover:bg-(--color-stamp-chocolate) group-hover:text-(--color-stamp-white)",
 );
 
 /** Link in the header's category row: sentence case, amber underline on hover. */
 export const stampNavCategoryLinkVariants = cva(
-  `whitespace-nowrap rounded-md px-3 py-1.5 text-sm font-medium text-(--color-stamp-chocolate) underline-offset-6 decoration-2 decoration-(--color-stamp-gold) transition-colors duration-200 hover:underline ${focusRing}`,
+  `whitespace-nowrap rounded-md px-3 py-1.5 text-base font-medium text-(--color-stamp-chocolate) underline-offset-6 decoration-2 decoration-(--color-stamp-gold) transition-colors duration-200 hover:underline ${focusRing}`,
 );
 
 /** Text link in a footer column, on the cream footer. */
