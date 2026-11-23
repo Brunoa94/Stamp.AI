@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { ImagePlus, Sparkles } from "lucide-react";
+import { ImagePlus } from "lucide-react";
 import { Span } from "@/features/ui/span";
 import { cn } from "@/lib/utils";
 import {
@@ -37,11 +37,13 @@ export function StampHeaderPromptBar({ className }: PropsI) {
       <Span unstyled className="truncate text-sm text-(--color-stamp-taupe)">
         {t("promptPlaceholder")}
       </Span>
+      <Span
+        unstyled
+        aria-hidden
+        className="-ml-2 h-4 w-0.5 shrink-0 rounded-full bg-(--color-stamp-gold) animate-flow-blink motion-reduce:animate-none md:-ml-2.5"
+      />
       <Span unstyled aria-hidden className={stampNavPromptButtonVariants()}>
-        <Sparkles className="size-4" strokeWidth={2} />
-        <Span unstyled className="hidden sm:inline">
-          {t("stamp")}
-        </Span>
+        {t("stamp")}
       </Span>
     </Link>
   );

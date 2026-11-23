@@ -24,7 +24,7 @@ export function OrdersStatusSelect({ value, onChange }: PropsI) {
     >
       <SelectTrigger
         aria-label={t("statusAriaLabel")}
-        className={buttonVariants({ variant: "stamp-filter", className: "w-auto min-w-48" })}
+        className={buttonVariants({ variant: "stamp-filter", className: "w-auto min-w-48 rounded-md" })}
       >
         <SelectValue placeholder={t("status.allPlaceholder")} />
       </SelectTrigger>

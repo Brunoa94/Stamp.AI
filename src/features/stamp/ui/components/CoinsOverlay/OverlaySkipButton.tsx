@@ -43,7 +43,7 @@ export function OverlaySkipButton({
   if (!onSkip || !buttonText) return null;
 
   return (
-    <Button variant="primary-compact" onClick={onSkip} className="gap-2 whitespace-normal">
+    <Button variant="primary-compact" onClick={onSkip} className="gap-2 whitespace-normal sm:whitespace-nowrap">
       {buttonText}
       <ArrowRight className="h-4 w-4" />
     </Button>

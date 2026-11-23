@@ -188,6 +188,10 @@
         "step": "step 02"
       },
       "freeCredits": "<signUp>Sign up</signUp> and get 5 free edits per day",
+      "productTypes": {
+        "label": "Product types",
+        "cta": "See styles"
+      },
       "productBadge": "Essential tee · White · 320 GSM",
       "scrollCue": "Scroll to explore",
       "productImageAlt": "Heavyweight t-shirt with a custom print",
@@ -562,6 +566,7 @@
       "eyebrow": "Choose a filter",
       "showMore": "Show {count} more",
       "showLess": "Show less",
+      "selectFilter": "Select your filter",
       "subtitle": "Tap a suggestion to start your prompt, then tweak it on the right.",
       "applySuggestion": "Apply suggestion: {label} — {hint}",
       "noFilter": {
@@ -677,6 +682,7 @@
       ]
     },
     "header": {
+      "wordmarkTail": "tamp",
       "logoAria": "Return to Stamp homepage",
       "brand": "Stamp it",
       "stampAria": "Start stamping process",
@@ -693,7 +699,6 @@
       "closeMenu": "Close menu",
       "mainNavAria": "Main navigation",
       "mobileNavAria": "Mobile navigation",
-      "wordmark": "Stamp",
       "promptPlaceholder": "Describe an idea or upload a photo…",
       "categoryNavAria": "Shop categories",
       "categories": {
@@ -758,7 +763,7 @@
     },
     "hero": {
       "eyebrow": "Start Here",
-      "title": "Stamp <br></br><accent>It</accent>",
+      "title": "Stamp <accent>It</accent>",
       "description": "Turn your own photo — or just an idea — into a print-ready design. Eight quick steps from idea to finished product.",
       "cta": "Start creating",
       "ctaAria": "Start creating: begin customizing your design",

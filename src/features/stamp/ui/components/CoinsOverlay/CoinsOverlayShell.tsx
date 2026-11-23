@@ -40,7 +40,7 @@ export function CoinsOverlayShell({
       <div
         className={cn(
           stampCardVariants(),
-          "relative z-10 mx-6 flex max-w-sm flex-col items-center gap-6 p-8 text-center",
+          "relative z-10 mx-6 flex max-w-lg flex-col items-center gap-6 p-8 text-center",
         )}
       >
         <div

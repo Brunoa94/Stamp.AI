@@ -12,12 +12,12 @@ const WALL = staticAssetUrl("/home/stamp-wall");
 
 /** "Shop by category" tiles. Labels: `home.categories.items.<id>`. */
 export const HOME_CATEGORY_TILES = [
-  { id: "tees", src: `${WALL}/kid-tshirt-drawing.webp`, href: "/catalog" },
-  { id: "hoodies", src: `${WALL}/hoodie-couple.webp`, href: "/catalog" },
-  { id: "mugs", src: `${WALL}/mug-couple-cartoon.webp`, href: "/catalog" },
-  { id: "totes", src: `${WALL}/tote-pet-line-art.webp`, href: "/catalog" },
-  { id: "canvas", src: `${WALL}/canvas-pet-renaissance.webp`, href: "/catalog" },
-  { id: "kids", src: `${WALL}/kid-tshirt-space.webp`, href: "/catalog" },
+  { id: "tees", tone: "peach", src: `${WALL}/kid-tshirt-drawing.webp`, href: "/catalog" },
+  { id: "hoodies", tone: "sage", src: `${WALL}/hoodie-couple.webp`, href: "/catalog" },
+  { id: "mugs", tone: "sand", src: `${WALL}/mug-couple-cartoon.webp`, href: "/catalog" },
+  { id: "totes", tone: "cream", src: `${WALL}/tote-pet-line-art.webp`, href: "/catalog" },
+  { id: "canvas", tone: "peach", src: `${WALL}/canvas-pet-renaissance.webp`, href: "/catalog" },
+  { id: "kids", tone: "sage", src: `${WALL}/kid-tshirt-space.webp`, href: "/catalog" },
 ] as const;
 
 /**

@@ -32,7 +32,6 @@ export function HeroContent({ onBegin }: PropsI) {
         className="text-(--color-stamp-chocolate) mb-6 md:mb-8"
       >
         {t.rich("title", {
-          br: () => <br />,
           accent: (chunks) => (
             <Span variant="serif" className="text-(--color-stamp-gold-text)">
               {chunks}

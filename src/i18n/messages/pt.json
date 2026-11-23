@@ -188,6 +188,10 @@
         "step": "passo 02"
       },
       "freeCredits": "<signUp>Registe-se</signUp> e ganhe 5 edições grátis por dia",
+      "productTypes": {
+        "label": "Tipos de produto",
+        "cta": "Ver modelos"
+      },
       "productBadge": "T-shirt essencial · Branca · 320 GSM",
       "scrollCue": "Deslize para explorar",
       "productImageAlt": "T-shirt de gramagem alta com uma estampa personalizada",
@@ -571,6 +575,7 @@
       "eyebrow": "Escolha um filtro",
       "showMore": "Mostrar mais {count}",
       "showLess": "Mostrar menos",
+      "selectFilter": "Escolha o seu filtro",
       "subtitle": "Toque numa sugestão para começar a descrição e depois ajuste-a à direita.",
       "applySuggestion": "Aplicar sugestão: {label} — {hint}",
       "noFilter": {
@@ -686,6 +691,7 @@
       ]
     },
     "header": {
+      "wordmarkTail": "tamp",
       "logoAria": "Voltar à página inicial da Stamp",
       "brand": "Stamp it",
       "stampAria": "Começar o processo de criação",
@@ -702,7 +708,6 @@
       "closeMenu": "Fechar menu",
       "mainNavAria": "Navegação principal",
       "mobileNavAria": "Navegação móvel",
-      "wordmark": "Stamp",
       "promptPlaceholder": "Descreva uma ideia ou carregue uma foto…",
       "categoryNavAria": "Categorias da loja",
       "categories": {
@@ -767,7 +772,7 @@
     },
     "hero": {
       "eyebrow": "Comece aqui",
-      "title": "Stamp <br></br><accent>It</accent>",
+      "title": "Stamp <accent>It</accent>",
       "description": "Transforme a sua própria foto — ou apenas uma ideia — num design pronto a imprimir. Oito passos rápidos da ideia ao produto final.",
       "cta": "Começar a criar",
       "ctaAria": "Começar a criar: comece a personalizar o seu design",

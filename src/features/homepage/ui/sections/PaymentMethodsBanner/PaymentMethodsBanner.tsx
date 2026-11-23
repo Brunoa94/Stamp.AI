@@ -43,10 +43,10 @@ export function PaymentMethodsBanner() {
             key={index}
             className="flex items-center gap-2"
           >
-            <item.icon aria-hidden className="h-4 w-4 text-(--color-stamp-gold-text)" strokeWidth={1.5} />
+            <item.icon aria-hidden className="h-5 w-5 shrink-0 text-(--color-stamp-gold-text)" strokeWidth={1.5} />
             <Span
               variant="micro"
-              className="text-(--color-stamp-chocolate)"
+              className="text-sm text-(--color-stamp-chocolate) md:text-base"
             >
               {item.text}
             </Span>

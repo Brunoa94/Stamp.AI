@@ -24,7 +24,7 @@ export function OrdersTimeSelect({ value, onChange }: PropsI) {
     >
       <SelectTrigger
         aria-label={t("timeAriaLabel")}
-        className={buttonVariants({ variant: "stamp-filter", className: "w-auto min-w-40" })}
+        className={buttonVariants({ variant: "stamp-filter", className: "w-auto min-w-40 rounded-md" })}
       >
         <SelectValue placeholder={t("time.last30")} />
       </SelectTrigger>

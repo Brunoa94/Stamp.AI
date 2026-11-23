@@ -40,7 +40,7 @@ function SuggestionCardComponent({
       title={hint}
       className={cn(
         stampSelectableCardVariants({ selected: isSelected }),
-        "group relative aspect-2/3 w-full min-h-48 overflow-hidden p-0",
+        "group relative aspect-4/5 w-full md:aspect-auto md:h-full overflow-hidden p-0",
       )}
     >
       <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105">

@@ -188,6 +188,10 @@
         "step": "stap 02"
       },
       "freeCredits": "<signUp>Meld je aan</signUp> en krijg elke dag 5 gratis bewerkingen",
+      "productTypes": {
+        "label": "Producttypes",
+        "cta": "Bekijk modellen"
+      },
       "productBadge": "Essential T-shirt · Wit · 320 GSM",
       "scrollCue": "Scroll om te ontdekken",
       "productImageAlt": "Zwaar T-shirt met een eigen print",
@@ -571,6 +575,7 @@
       "eyebrow": "Kies een filter",
       "showMore": "Nog {count} tonen",
       "showLess": "Minder tonen",
+      "selectFilter": "Kies je filter",
       "subtitle": "Tik op een suggestie om je prompt te beginnen en pas hem rechts aan.",
       "applySuggestion": "Suggestie toepassen: {label} — {hint}",
       "noFilter": {
@@ -686,6 +691,7 @@
       ]
     },
     "header": {
+      "wordmarkTail": "tamp",
       "logoAria": "Terug naar de homepage van Stamp",
       "brand": "Stamp it",
       "stampAria": "Begin met ontwerpen",
@@ -702,7 +708,6 @@
       "closeMenu": "Menu sluiten",
       "mainNavAria": "Hoofdnavigatie",
       "mobileNavAria": "Mobiele navigatie",
-      "wordmark": "Stamp",
       "promptPlaceholder": "Beschrijf een idee of upload een foto…",
       "categoryNavAria": "Winkelcategorieën",
       "categories": {
@@ -767,7 +772,7 @@
     },
     "hero": {
       "eyebrow": "Begin hier",
-      "title": "Stamp <br></br><accent>It</accent>",
+      "title": "Stamp <accent>It</accent>",
       "description": "Maak van je eigen foto — of gewoon een idee — een printklaar ontwerp. Acht snelle stappen van idee tot eindproduct.",
       "cta": "Begin met ontwerpen",
       "ctaAria": "Begin met ontwerpen: start met het personaliseren van je ontwerp",

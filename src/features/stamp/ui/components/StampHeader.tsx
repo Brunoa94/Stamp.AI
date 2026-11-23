@@ -23,7 +23,7 @@ import { StampHeaderSignInIcon } from "./StampHeaderSignInIcon";
  * StampHeader
  *
  * Fixed, marketplace-style header, h-24 in total so pages keep their offset.
- * Top row: logo and wordmark, the "describe your idea" bar centre stage
+ * Top row: the logo, whose square is the "S" of the "tamp.ai" wordmark, the "describe your idea" bar centre stage
  * (where a marketplace has its search), then icon buttons with tooltips:
  * catalog, account, language and the bag. Second row: the category links,
  * centred, from `md`, or the prompt bar full width on phones. Below `lg` the
@@ -75,22 +75,22 @@ export function StampHeader() {
         <div className="mx-auto flex h-15 w-full max-w-screen-2xl items-center gap-3 pt-1.5 lg:gap-6">
           <Link
             href="/"
-            className="flex shrink-0 items-center gap-2 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--color-stamp-chocolate)"
+            className="flex shrink-0 items-center gap-0.5 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--color-stamp-chocolate)"
             aria-label={t("logoAria")}
           >
             <Image
               src={staticAssetUrl("/logo.png")}
               alt=""
-              width={40}
-              height={40}
-              className="size-9 rounded-lg object-contain"
+              width={48}
+              height={48}
+              className="size-11 rounded-lg object-contain"
               priority
             />
             <Span unstyled aria-hidden className="flex items-baseline">
-              <Span unstyled className="font-heading text-3xl leading-none text-(--color-stamp-chocolate)">
-                {t("wordmark")}
+              <Span unstyled className="font-heading text-4xl leading-none text-(--color-stamp-chocolate)">
+                {t("wordmarkTail")}
               </Span>
-              <Span unstyled className="font-serif text-2xl leading-none text-(--color-stamp-gold-text)">
+              <Span unstyled className="font-serif text-3xl leading-none text-(--color-stamp-gold-text)">
                 .ai
               </Span>
             </Span>

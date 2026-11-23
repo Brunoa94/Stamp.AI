@@ -29,7 +29,7 @@ function NoFilterCardComponent({ isSelected, onSelect }: PropsI) {
       title={t("hint")}
       className={cn(
         stampSelectableCardVariants({ selected: isSelected }),
-        "group relative flex aspect-2/3 w-full min-h-48 items-center justify-center overflow-hidden bg-(--color-stamp-cream) p-0",
+        "group relative flex aspect-4/5 w-full md:aspect-auto md:h-full items-center justify-center overflow-hidden bg-(--color-stamp-cream) p-0",
       )}
     >
       <Span

@@ -67,20 +67,21 @@ export const stampNavTooltipVariants = cva(
  * The header's "describe your idea" bar, centre stage in the top row the way a
  * marketplace centres its search: a white field with an upload tile at the
  * start and "Stamp it!" at the end, opening the design studio. A size smaller
- * in the phone row under the logo.
+ * in the phone row under the logo. Its amber border and glow are animated by
+ * `.stamp-prompt-bar` in globals-stamp.css.
  */
 export const stampNavPromptBarVariants = cva(
-  `group flex h-9 min-w-0 flex-1 items-center gap-2.5 rounded-xl border-2 border-(--color-stamp-chocolate)/20 bg-(--color-stamp-white) p-0.5 text-left shadow-(--shadow-stamp-card) transition-all duration-200 hover:border-(--color-stamp-chocolate)/40 hover:shadow-(--shadow-stamp-card-hover) md:h-11 md:gap-3 md:p-1 ${focusRing}`,
+  `stamp-prompt-bar group flex h-9 min-w-0 flex-1 items-center gap-2.5 rounded-xl border-2 p-0.5 text-left transition-[box-shadow,translate] duration-200 hover:-translate-y-px md:h-11 md:gap-3 md:p-1 ${focusRing}`,
 );
 
-/** Cream upload tile at the start of the prompt bar. */
+/** Cream upload tile at the start of the prompt bar; turns amber on hover. */
 export const stampNavPromptIconVariants = cva(
-  "flex size-7 shrink-0 items-center justify-center rounded-lg bg-(--color-stamp-cream) text-(--color-stamp-chocolate) md:size-8",
+  "flex size-7 shrink-0 items-center justify-center rounded-lg bg-(--color-stamp-cream) text-(--color-stamp-chocolate) transition-colors duration-200 group-hover:bg-(--color-stamp-gold)/20 group-hover:text-(--color-stamp-gold-text) md:size-8",
 );
 
-/** "Stamp it!" button at the end of the prompt bar. */
+/** "Stamp it!" label at the end of the prompt bar: no fill, amber on hover. */
 export const stampNavPromptButtonVariants = cva(
-  "ml-auto flex h-7 shrink-0 items-center gap-1.5 rounded-lg bg-(--color-stamp-gold) px-3 text-xs font-bold uppercase tracking-wider text-(--color-stamp-chocolate) transition-colors duration-200 group-hover:bg-(--color-stamp-chocolate) group-hover:text-(--color-stamp-white) md:h-8 md:px-4",
+  "ml-auto flex h-7 shrink-0 items-center rounded-lg px-3 text-xs font-bold uppercase tracking-wider text-(--color-stamp-chocolate) transition-colors duration-200 group-hover:text-(--color-stamp-gold-text) md:h-8 md:px-4",
 );
 
 /** Link in the header's category row: sentence case, amber underline on hover. */

@@ -213,3 +213,52 @@
 [data-sonner-toast] button[data-cancel]:hover {
   color: var(--color-stamp-chocolate);
 }
+
+/* ==========================================
+   HEADER PROMPT BAR [tag: stamp-prompt-bar]
+   ========================================== */
+
+/* The header's "describe your idea" bar: an amber border whose highlight
+   slowly travels round the bar, and a soft amber glow under it. Static under
+   reduced motion. */
+@property --stamp-prompt-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.stamp-prompt-bar {
+  border-color: transparent;
+  background:
+    linear-gradient(var(--color-stamp-white), var(--color-stamp-white)) padding-box,
+    conic-gradient(
+        from var(--stamp-prompt-angle),
+        color-mix(in srgb, var(--color-stamp-gold) 35%, transparent),
+        var(--color-stamp-gold) 20%,
+        color-mix(in srgb, var(--color-stamp-gold) 35%, transparent) 40%,
+        color-mix(in srgb, var(--color-stamp-gold) 35%, transparent)
+      )
+      border-box;
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--color-stamp-gold) 12%, transparent),
+    0 6px 18px color-mix(in srgb, var(--color-stamp-gold) 18%, transparent);
+  animation: stamp-prompt-border 6s linear infinite;
+}
+
+.stamp-prompt-bar:hover {
+  box-shadow:
+    0 0 0 5px color-mix(in srgb, var(--color-stamp-gold) 20%, transparent),
+    0 10px 24px color-mix(in srgb, var(--color-stamp-gold) 28%, transparent);
+}
+
+@keyframes stamp-prompt-border {
+  to {
+    --stamp-prompt-angle: 360deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp-prompt-bar {
+    animation: none;
+  }
+}
