@@ -39,13 +39,15 @@ export function TrackOrderForm({ initialOrderNumber, isLooking, error, onSubmit 
   };
 
   const shownError: TrackOrderErrorT | null = isInvalid ? "invalidRequest" : error;
+  // Only these say the input is wrong; a rate limit or an outage is not the fields' fault
+  const areFieldsInvalid = shownError === "invalidRequest" || shownError === "notFound";
+  const errorId = shownError ? "track-order-error" : undefined;
 
   return (
     <form
       onSubmit={handleSubmit}
       noValidate
       className="space-y-6 rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-white) p-6 shadow-sm md:p-8"
-      aria-describedby={shownError ? "track-order-error" : undefined}
     >
       <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-2">
@@ -59,7 +61,8 @@ export function TrackOrderForm({ initialOrderNumber, isLooking, error, onSubmit 
             placeholder={t("form.orderNumberPlaceholder")}
             value={orderNumber}
             onChange={(event) => setOrderNumber(event.target.value)}
-            aria-invalid={Boolean(shownError)}
+            aria-invalid={areFieldsInvalid}
+            aria-describedby={errorId}
             required
           />
         </div>
@@ -74,7 +77,8 @@ export function TrackOrderForm({ initialOrderNumber, isLooking, error, onSubmit 
             placeholder={t("form.emailPlaceholder")}
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            aria-invalid={Boolean(shownError)}
+            aria-invalid={areFieldsInvalid}
+            aria-describedby={errorId}
             required
           />
         </div>

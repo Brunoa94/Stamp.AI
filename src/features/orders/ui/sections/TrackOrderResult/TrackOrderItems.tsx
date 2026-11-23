@@ -30,7 +30,7 @@ export function TrackOrderItems({ items }: PropsI) {
             {imageSrc && (
               <Image
                 src={imageSrc}
-                alt=""
+                alt={t("designAlt", { product: item.product_name })}
                 fill
                 sizes="64px"
                 className="object-cover"

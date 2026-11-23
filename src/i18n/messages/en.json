@@ -1698,6 +1698,10 @@
       "hasIssues": "Needs attention"
     },
     "track": {
+      "meta": {
+        "title": "Track Your Order",
+        "description": "Check the status of your Stamp AI order with your order number and email: production, shipping and delivery tracking."
+      },
       "title": "Track your",
       "accent": "order",
       "intro": "Enter your order number and the email you used at checkout. Your order number is in your confirmation email.",
@@ -1729,7 +1733,8 @@
         "discount": "Discount",
         "shipping": "Shipping",
         "total": "Total",
-        "trackAnother": "Track another order"
+        "found": "Order {number} found",
+        "designAlt": "Your design for {product}"
       },
       "stages": {
         "placed": "Order placed",

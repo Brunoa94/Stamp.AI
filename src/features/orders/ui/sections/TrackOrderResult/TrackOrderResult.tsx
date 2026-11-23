@@ -1,5 +1,6 @@
 import { useLocale, useTranslations } from "next-intl";
 import { ExternalLink } from "lucide-react";
+import { Anchor } from "@/features/ui/anchor";
 import { Heading } from "@/features/ui/heading";
 import { List } from "@/features/ui/list";
 import { Span } from "@/features/ui/span";
@@ -57,15 +58,15 @@ export function TrackOrderResult({ order }: PropsI) {
             </Span>
           </div>
           {order.tracking_url && (
-            <a
+            <Anchor
               href={order.tracking_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-(--color-stamp-chocolate) underline-offset-4 hover:text-(--color-stamp-gold-text) hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-gold)"
+              external
+              variant="subtle"
+              className="inline-flex items-center gap-2 text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-gold)"
             >
               {t("trackPackage")}
               <ExternalLink className="h-4 w-4" aria-hidden="true" />
-            </a>
+            </Anchor>
           )}
         </div>
       )}

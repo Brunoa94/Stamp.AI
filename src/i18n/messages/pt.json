@@ -1703,6 +1703,10 @@
       "hasIssues": "Requer atenção"
     },
     "track": {
+      "meta": {
+        "title": "Acompanhe a sua encomenda",
+        "description": "Veja o estado da sua encomenda Stamp AI com o número da encomenda e o email: produção, envio e entrega."
+      },
       "title": "Acompanhe a sua",
       "accent": "encomenda",
       "intro": "Introduza o número da encomenda e o email que usou no checkout. O número da encomenda está no seu email de confirmação.",
@@ -1734,7 +1738,8 @@
         "discount": "Desconto",
         "shipping": "Envio",
         "total": "Total",
-        "trackAnother": "Acompanhar outra encomenda"
+        "found": "Encomenda {number} encontrada",
+        "designAlt": "O seu design para {product}"
       },
       "stages": {
         "placed": "Encomenda feita",

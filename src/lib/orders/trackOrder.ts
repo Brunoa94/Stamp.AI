@@ -24,8 +24,13 @@ const MAX_EMAIL_LENGTH = 254;
 // Unpaid drafts and failed payments are not orders to track yet
 const TRACKABLE_PAYMENT_STATUSES = new Set(["paid", "refunded"]);
 
-const TRACKED_ORDER_COLUMNS =
-  "id, order_number, customer_email, payment_status, created_at, status, printify_status, currency, subtotal, discount_amount, shipping_cost, total_amount, tracking_number, tracking_url, shipped_at, delivered_at";
+// The order with its items and status history, embedded so the lookup is one round trip
+const TRACKED_ORDER_COLUMNS = `
+  order_number, customer_email, payment_status, created_at, status, printify_status, currency,
+  subtotal, discount_amount, shipping_cost, total_amount, tracking_number, tracking_url, shipped_at, delivered_at,
+  order_items(product_name, variant_name, quantity, total_price, custom_image_url),
+  order_status_history(status, created_at)
+`;
 
 export function parseTrackOrderRequest(body: unknown): TrackOrderRequestT | null {
   if (typeof body !== "object" || body === null) return null;
@@ -49,31 +54,23 @@ export async function findTrackedOrder(
     .from("orders")
     .select(TRACKED_ORDER_COLUMNS)
     .eq("order_number", orderNumber)
+    .order("created_at", { referencedTable: "order_status_history", ascending: true })
     .maybeSingle();
   if (error) throw new Error(`Order lookup failed: ${error.message}`);
 
   if (!order || order.customer_email.trim().toLowerCase() !== email) return null;
   if (!order.payment_status || !TRACKABLE_PAYMENT_STATUSES.has(order.payment_status)) return null;
 
-  const [items, history] = await Promise.all([
-    supabase
-      .from("order_items")
-      .select("product_name, variant_name, quantity, total_price, custom_image_url")
-      .eq("order_id", order.id),
-    supabase
-      .from("order_status_history")
-      .select("status, created_at")
-      .eq("order_id", order.id)
-      .order("created_at", { ascending: true }),
-  ]);
-  if (items.error) throw new Error(`Order items lookup failed: ${items.error.message}`);
-  if (history.error) throw new Error(`Order history lookup failed: ${history.error.message}`);
-
-  // Drop the lookup-only columns: the id and the customer's email stay server-side
-  const { id: _id, customer_email: _email, ...tracked } = order;
+  // The customer's email stays server-side; the embedded rows become items/history
+  const {
+    customer_email: _email,
+    order_items: items,
+    order_status_history: history,
+    ...tracked
+  } = order;
   return {
     ...tracked,
-    items: (items.data ?? []) as TrackedOrderItemT[],
-    history: (history.data ?? []) as TrackedOrderHistoryEntryT[],
+    items: (items ?? []) as TrackedOrderItemT[],
+    history: (history ?? []) as TrackedOrderHistoryEntryT[],
   };
 }

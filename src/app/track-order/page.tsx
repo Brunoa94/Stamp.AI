@@ -1,11 +1,20 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { TrackOrderContent } from "@/features/orders/ui/TrackOrderContent";
 import { generatePageMetadata } from "@/features/seo/metadata/pageMetadata";
-import { PAGE_METADATA_CONFIGS } from "@/features/seo/metadata/pageConfigs";
+import { PAGE_KEYWORDS } from "@/features/seo/config/keywords";
 
-const { keywords, ...trackOrderConfig } = PAGE_METADATA_CONFIGS.trackOrder;
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("orders.track.meta");
 
-export const metadata: Metadata = generatePageMetadata({ ...trackOrderConfig, keywords: [...keywords] });
+  return generatePageMetadata({
+    title: t("title"),
+    description: t("description"),
+    path: "/track-order",
+    keywords: [...PAGE_KEYWORDS.orders],
+    noindex: true,
+  });
+}
 
 interface PropsI {
   searchParams: Promise<{ order?: string | string[] }>;

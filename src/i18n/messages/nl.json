@@ -1703,6 +1703,10 @@
       "hasIssues": "Actie vereist"
     },
     "track": {
+      "meta": {
+        "title": "Volg je bestelling",
+        "description": "Bekijk de status van je Stamp AI-bestelling met je bestelnummer en e-mailadres: productie, verzending en bezorging."
+      },
       "title": "Volg je",
       "accent": "bestelling",
       "intro": "Vul je bestelnummer in en het e-mailadres dat je bij het afrekenen hebt gebruikt. Je bestelnummer staat in je bevestigingsmail.",
@@ -1734,7 +1738,8 @@
         "discount": "Korting",
         "shipping": "Verzending",
         "total": "Totaal",
-        "trackAnother": "Andere bestelling volgen"
+        "found": "Bestelling {number} gevonden",
+        "designAlt": "Jouw ontwerp voor {product}"
       },
       "stages": {
         "placed": "Bestelling geplaatst",

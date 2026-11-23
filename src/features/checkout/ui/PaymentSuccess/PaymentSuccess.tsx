@@ -21,7 +21,7 @@ interface Props {
 
 const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
   const t = useTranslations("checkout.success");
-  const { data: user } = useUser();
+  const { data: user, isPending: isUserPending } = useUser();
   const orderNumber = details?.orderNumber ?? "—";
   const totalPaid = details?.totalPaid ?? "—";
   const estimatedDelivery =
@@ -54,9 +54,16 @@ const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
 
       {/* CTAs */}
       <PaymentResultActions>
-        <Button asChild variant="primary" className="w-full">
-          <Link href={getTrackOrderHref(isRegisteredUser(user), details?.orderNumber)}>{t("trackOrder")}</Link>
-        </Button>
+        {/* Until we know whether the customer is signed in, we don't know where to send them */}
+        {isUserPending ? (
+          <Button variant="primary" className="w-full" disabled>
+            {t("trackOrder")}
+          </Button>
+        ) : (
+          <Button asChild variant="primary" className="w-full">
+            <Link href={getTrackOrderHref(isRegisteredUser(user), details?.orderNumber)}>{t("trackOrder")}</Link>
+          </Button>
+        )}
         <Button
           variant="secondary"
           onClick={onCreateAnother}
