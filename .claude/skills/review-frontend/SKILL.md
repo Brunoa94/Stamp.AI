@@ -1,7 +1,7 @@
 ---
 name: review-frontend
 description: Runs the QA, SEO and performance reviewer agents in parallel on the current changes, a GitHub PR, or a whole feature slice, and merges their findings into one ranked report. Use when the user asks to review frontend work, to run QA/SEO/performance checks, or before opening a PR.
-argument-hint: "[changes | pr <number> | feature <slice>] [--no-measure]"
+argument-hint: "[changes | pr <number> | feature <slice>] [--no-measure] [--quick-ui | --no-ui]"
 ---
 
 # Review Frontend
@@ -18,7 +18,7 @@ Read the mode from the arguments (`$ARGUMENTS`):
 | `pr <number>` | A GitHub pull request |
 | `feature <slice>` | Every file of one feature slice |
 
-If there are no arguments or they don't match, ask with AskUserQuestion: "What should I review?" with options "Current changes", "A pull request" and "A feature", then ask for the PR number or slice name. `--no-measure` turns off the perf build (see step 3).
+If there are no arguments or they don't match, ask with AskUserQuestion: "What should I review?" with options "Current changes", "A pull request" and "A feature", then ask for the PR number or slice name. `--no-measure` turns off the perf build (see step 3). `--quick-ui` shortens QA's UI health check to three viewports and no locale pass; `--no-ui` skips it.
 
 ## 2. Resolve the scope
 
@@ -52,7 +52,7 @@ Then, for every mode:
 
 | Reviewer | Runs when the scope has |
 | -------- | ----------------------- |
-| `qa-reviewer` | any file (always) |
+| `qa-reviewer` | any file (always). It also runs the `ui-health-check` browser pass on **every page of the app**, not just the routes in scope, unless `--no-ui` was passed |
 | `seo-reviewer` | `src/app/**`, `src/features/seo/**`, `src/i18n/messages/**`, or any `.tsx` under a `ui/` folder (headings and alt text live in components) |
 | `perf-reviewer` | any `.tsx`, or anything under `lib/hooks/`, `src/shared/queries/` or `src/app/**` |
 
@@ -73,13 +73,17 @@ Files in scope:
 Routes in scope:
 - <url path> (<page file>)
 Measure: yes | no        # perf-reviewer only
+UI health: full | quick | skipped   # qa-reviewer only
 ```
+
+The full UI health pass opens every page at six viewports and is the slowest part of the review; QA finishes long after the other reviewers.
 
 ## 5. Merge and report
 
 - Combine the findings tables into one table with a **Reviewer** column, ranked high → low.
 - Merge duplicates (same location, same problem): keep the higher severity and list both reviewers.
 - Keep each reviewer's extra sections (QA checks, pre-existing failures, routes reviewed, measurement) below the table.
+- QA's **UI health** findings go in the merged table with the reviewer `qa (ui-health)`, the route and viewport in the Location column, and the likely component when QA found one. Put the ones QA marked *In scope? no* in their own table, **UI health: outside this change**, below the main one, so a regression the change caused isn't buried among existing issues. Keep QA's health matrix and the path to the screenshots folder.
 - Don't add findings of your own and don't soften theirs. If a reviewer failed or returned nothing usable, say so.
 
 Finish with: "Which of these should I fix?" Apply nothing until the user answers.
