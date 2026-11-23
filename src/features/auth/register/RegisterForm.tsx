@@ -47,7 +47,7 @@ export function RegisterForm({ onSwitchToLogin }: PropsI) {
           <Paragraph
             variant="xs"
             role="alert"
-            className="font-bold uppercase tracking-widest text-(--color-stamp-error)"
+            className="text-sm font-medium text-(--color-stamp-error)"
           >
             {errors.root.message}
           </Paragraph>

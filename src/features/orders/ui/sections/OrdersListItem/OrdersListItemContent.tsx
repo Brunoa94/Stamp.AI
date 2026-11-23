@@ -6,6 +6,8 @@ import { Span } from "@/features/ui/span";
 import type { OrderWithItemsT } from "@/shared/types/order";
 import type { getFirstOrderItem } from "../../../lib/helpers/orderPresentation";
 import { getStatusBadgeClass } from "../../../lib/helpers/statusPresentation";
+import { orderStatusBadgeVariants } from "../../../lib/variants/orderStatusBadgeVariants";
+import { cn } from "@/lib/utils";
 
 interface PropsI {
   order: OrderWithItemsT;
@@ -35,7 +37,11 @@ export function OrdersListItemContent({
         </div>
         <Span
           variant="badge"
-          className={`status-badge ${getStatusBadgeClass(displayedStatus)}`}
+          className={cn(
+            orderStatusBadgeVariants(),
+            "self-start",
+            getStatusBadgeClass(displayedStatus),
+          )}
         >
           {tStatus(displayedStatus)}
         </Span>

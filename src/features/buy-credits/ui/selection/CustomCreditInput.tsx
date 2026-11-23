@@ -1,6 +1,5 @@
 "use client";
 
-import { Coins } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Label } from "@/features/ui/label";
@@ -9,6 +8,8 @@ import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { cn } from "@/lib/utils";
 import { MIN_CUSTOM_CREDITS, PRICE_PER_CREDIT } from "@/shared/constants/credits";
+import { creditOptionCardVariants } from "../../lib/variants/creditOptionVariants";
+import { CustomCreditIcon } from "./CustomCreditIcon";
 
 interface CustomCreditInputProps {
   value: string;
@@ -31,16 +32,19 @@ export function CustomCreditInput({
 
   return (
     <div>
-      <Label variant="section" className="mb-3 text-slate-500">{t("customLabel")}</Label>
+      <Label variant="section" className="mb-3 text-(--color-stamp-taupe)">{t("customLabel")}</Label>
       <Button
         type="button"
-        variant="option-card"
+        variant="unstyled"
         onClick={onFocus}
         aria-pressed={isSelected}
-        className="w-full min-h-18 p-4 text-left"
+        className={cn(
+          creditOptionCardVariants({ selected: isSelected }),
+          "block w-full min-h-18 p-4 text-left",
+        )}
       >
         <div className="flex items-center gap-3">
-          <CreditIcon isSelected={isSelected} />
+          <CustomCreditIcon isSelected={isSelected} />
           <div className="flex-1">
             <Input
               type="text"
@@ -49,37 +53,19 @@ export function CustomCreditInput({
               value={value}
               onChange={(e) => onChange(e.target.value)}
               onFocus={onFocus}
-              className="border-0 bg-transparent p-0 h-auto text-lg font-heading focus-visible:ring-0"
+              className="border-0 bg-transparent p-0 h-auto text-lg font-heading text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe) shadow-none focus-visible:ring-0"
             />
           </div>
           {showPrice && (
-            <Span variant="price" className="text-slate-600">€{price.toFixed(2)}</Span>
+            <Span variant="price" className="text-(--color-stamp-taupe)">€{price.toFixed(2)}</Span>
           )}
         </div>
         {showError && (
-          <Paragraph variant="caption" className="text-red-500 mt-2">
+          <Paragraph variant="caption" className="text-(--color-stamp-error) mt-2">
             {t("customError", { min: MIN_CUSTOM_CREDITS })}
           </Paragraph>
         )}
       </Button>
-    </div>
-  );
-}
-
-function CreditIcon({ isSelected }: { isSelected: boolean }) {
-  return (
-    <div
-      className={cn(
-        "w-10 h-10 rounded-lg flex items-center justify-center",
-        isSelected ? "bg-brand-violet/10" : "bg-slate-100"
-      )}
-    >
-      <Coins
-        className={cn(
-          "w-5 h-5",
-          isSelected ? "text-brand-orange" : "text-slate-400"
-        )}
-      />
     </div>
   );
 }

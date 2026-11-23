@@ -63,7 +63,7 @@ export function ResultsGallery({
               {isSelected && (
                 <div className="absolute inset-0 bg-(--color-stamp-gold)/20 flex items-center justify-center">
                   <div className="w-6 h-6 rounded-full bg-(--color-stamp-gold) flex items-center justify-center">
-                    <Check className="w-4 h-4 text-white" />
+                    <Check className="w-4 h-4 text-(--color-stamp-chocolate)" />
                   </div>
                 </div>
               )}

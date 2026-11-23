@@ -17,7 +17,7 @@ export function ProcessStepper({
 }: ProcessStepperPropsI) {
   return (
     <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-      <div className="flex items-center gap-2 px-4 py-2.5 bg-(--color-stamp-cream)/95 backdrop-blur-md rounded-full shadow-lg border border-(--color-stamp-chocolate)/10">
+      <div className="flex items-center gap-2 rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 py-2.5 shadow-(--shadow-stamp-card)">
         {Array.from({ length: totalSteps }).map((_, index) => (
           <div
             key={index}

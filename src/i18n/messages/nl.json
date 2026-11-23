@@ -259,7 +259,8 @@
       "accent": "essentials",
       "label": "Onze kleding",
       "emptyState": "De catalogus is tijdelijk niet beschikbaar — kom snel terug",
-      "viewFullCatalog": "Alle producten bekijken"
+      "viewFullCatalog": "Alle producten bekijken",
+      "subtitle": "Onze bestsellers, klaar voor jouw ontwerp."
     },
     "featured": {
       "title": "Uitgelichte",
@@ -441,7 +442,6 @@
     },
     "productOfMonth": {
       "eyebrow": "De keuze van deze maand",
-      "title": "Product van de maand",
       "badge": "Keuze van de maand",
       "cta": "Ontwerp de jouwe nu",
       "noImage": "Geen afbeelding"
@@ -462,6 +462,28 @@
           "cta": "Bekijk de essentials",
           "imageAlt": "Model in een zwaar wit T-shirt"
         }
+      }
+    },
+    "categories": {
+      "title": "Shop per categorie",
+      "items": {
+        "tees": "T-shirts",
+        "hoodies": "Hoodies",
+        "mugs": "Mokken",
+        "totes": "Draagtassen",
+        "canvas": "Canvasprints",
+        "kids": "Kinderen"
+      }
+    },
+    "giftIdeas": {
+      "title": "Cadeau-ideeën voor elke gelegenheid",
+      "subtitle": "Eén foto en een paar woorden is genoeg voor een cadeau dat niemand anders kan kopen.",
+      "tiles": {
+        "birthdays": "Verjaardagen",
+        "weddings": "Bruiloften & feesten",
+        "pets": "Voor dierenliefhebbers",
+        "family": "Familieherinneringen",
+        "adventures": "Reizen & avontuur"
       }
     }
   },
@@ -671,7 +693,19 @@
       "openMenu": "Menu openen",
       "closeMenu": "Menu sluiten",
       "mainNavAria": "Hoofdnavigatie",
-      "mobileNavAria": "Mobiele navigatie"
+      "mobileNavAria": "Mobiele navigatie",
+      "wordmark": "Stamp",
+      "promptPlaceholder": "Beschrijf een idee of upload een foto…",
+      "categoryNavAria": "Winkelcategorieën",
+      "categories": {
+        "studio": "Ontwerpstudio",
+        "allProducts": "Alle producten",
+        "popular": "Nu populair",
+        "gifts": "Cadeau-ideeën",
+        "howItWorks": "Hoe het werkt",
+        "shipping": "Verzending",
+        "help": "Hulp & FAQ"
+      }
     },
     "nav": {
       "eyebrow": "Je voortgang",
@@ -1233,7 +1267,8 @@
       },
       "wordmark": "Stamp",
       "copyright": "© {year} Stamp AI. Alle rechten voorbehouden.",
-      "tagline": "Gemaakt voor mensen die dingen maken"
+      "tagline": "Gemaakt voor mensen die dingen maken",
+      "strip": "Elk stuk wordt op bestelling gedrukt, pas als het besteld is. Geen magazijnen, geen verspilling."
     },
     "languageSwitcher": {
       "label": "Taal"

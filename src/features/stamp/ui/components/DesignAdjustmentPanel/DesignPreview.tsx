@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { Paragraph } from "@/features/ui/paragraph";
 import type { SafeZone } from "@/lib/printPlacement/types";
 import type { PlacementParamsType } from "../../../lib/types/stampFlowTypes";
 import type { CategoryType, OrientationType } from "../../../lib/config/silhouetteConfig";
@@ -41,9 +42,9 @@ export function DesignPreview({
         safeZone={safeZone ?? { top: 0.03, bottom: 0.03, left: 0.03, right: 0.03 }}
         orientation={orientation}
       />
-      <p className="mt-2 text-[10px] text-(--color-stamp-muted) text-center italic leading-tight">
+      <Paragraph variant="caption" className="mt-3 text-center italic leading-tight text-(--color-stamp-taupe)">
         {t("mockupNote")}
-      </p>
+      </Paragraph>
     </div>
   );
 }

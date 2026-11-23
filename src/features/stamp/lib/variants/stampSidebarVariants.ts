@@ -9,7 +9,7 @@ import { cva } from "class-variance-authority";
 const SURFACE_TRANSITION = "transition-colors duration-1000 ease-in-out";
 
 export const stampSidebarVariants = cva(
-  `hidden lg:flex flex-col py-32 px-10 w-68 h-full fixed right-0 top-24 border-l z-40 ${SURFACE_TRANSITION}`,
+  `hidden lg:flex flex-col py-24 px-10 w-68 h-full fixed right-0 top-24 border-l z-40 ${SURFACE_TRANSITION}`,
   {
     variants: {
       onPhoto: {
@@ -29,13 +29,25 @@ export const stampSidebarTextVariants = cva(SURFACE_TRANSITION, {
   },
 });
 
+/**
+ * Eyebrow above the sidebar title: amber text on the off-white; cream on the
+ * photo, where the light amber drops under 4.5:1 for small text.
+ */
+export const stampSidebarEyebrowVariants = cva(SURFACE_TRANSITION, {
+  variants: {
+    onPhoto: {
+      true: "text-(--color-stamp-cream)",
+      false: "text-(--color-stamp-gold-text)",
+    },
+  },
+});
+
 export const stampSidebarDotVariants = cva(
   "w-1.5 h-1.5 rounded-full transition-all duration-300",
   {
     variants: {
       state: {
-        active:
-          "bg-(--color-stamp-gold) shadow-[0_0_15px_var(--color-stamp-gold)]",
+        active: "bg-(--color-stamp-gold) scale-150",
         completed: "",
         upcoming: "",
       },

@@ -36,15 +36,17 @@ export function ResultsActions({
       {/* Desktop: show both buttons side by side */}
       <div className="hidden md:flex gap-4 md:gap-6">
         <Button
+          variant="primary"
           onClick={onUseProtocol}
           disabled={!canProceed}
-          className="flex-1 bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-4 md:px-8 py-4 md:py-6 text-xs font-bold tracking-[0.2em] uppercase"
+          className="flex-1 px-4 md:px-4 whitespace-normal"
         >
           {t("useProtocol")}
         </Button>
         <Button
+          variant="secondary"
           onClick={onReSynthesize}
-          className="flex-1 bg-white text-(--color-stamp-chocolate) border border-(--color-stamp-divider) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 px-4 md:px-8 py-4 md:py-6 text-xs font-bold tracking-[0.2em] uppercase"
+          className="flex-1 bg-(--color-stamp-white) px-4 md:px-4 whitespace-normal"
         >
           {t("reSynthesize")}
         </Button>
@@ -53,8 +55,9 @@ export function ResultsActions({
       {/* Mobile: only show re-synthesize button (primary is in footer) */}
       <div className="md:hidden">
         <Button
+          variant="secondary"
           onClick={onReSynthesize}
-          className="w-full bg-transparent text-(--color-stamp-chocolate) border border-(--color-stamp-divider) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 px-4 py-4 text-xs font-bold tracking-[0.2em] uppercase"
+          className="w-full"
         >
           {t("reSynthesize")}
         </Button>

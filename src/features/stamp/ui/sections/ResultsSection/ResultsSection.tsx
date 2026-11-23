@@ -11,8 +11,8 @@ import { useLoadCachedImages } from "../../../lib/hooks/useLoadCachedImages";
 import { ResultsImage } from "./ResultsImage";
 import { ResultsActions } from "./ResultsActions";
 import { ResultsGallery } from "./ResultsGallery";
-import { Heading } from "@/features/ui/heading";
-import { SplitToneText } from "../../components/SplitToneText";
+import { StampStepTitle } from "../../components/StampStepTitle";
+import { StampTitleAccent } from "../../components/StampTitleAccent";
 
 /**
  * ResultsSection
@@ -73,20 +73,11 @@ function ResultsSectionComponent() {
     >
       {/* my-auto (not justify-center) so tall content scrolls instead of clipping at the top */}
       <div className="max-w-3xl w-full my-auto">
-        <Heading as="h2" variant="panelTitle" className="mb-4 md:mb-6">
-          <SplitToneText className="block pb-2 -mb-2">
-            {t.rich("title", {
-              accent: (chunks) => (
-                <SplitToneText
-                  tone="accent"
-                  className="inline-block pb-4 -mb-4 pr-2 -mr-2 font-serif italic lowercase font-light"
-                >
-                  {chunks}
-                </SplitToneText>
-              ),
-            })}
-          </SplitToneText>
-        </Heading>
+        <StampStepTitle>
+          {t.rich("title", {
+            accent: (chunks) => <StampTitleAccent>{chunks}</StampTitleAccent>,
+          })}
+        </StampStepTitle>
         <ResultsImage imageUrl={displayImageUrl} />
         <ResultsGallery
           results={generatedResults}

@@ -47,7 +47,7 @@ export function PositionControls({
     <div className="space-y-4">
       <div className="flex items-center gap-2">
         <Button
-          variant="ghost"
+          variant="unstyled"
           className={placementControlButtonVariants()}
           aria-label={t("moveLeft")}
           disabled={disabled}
@@ -56,7 +56,7 @@ export function PositionControls({
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <Button
-          variant="ghost"
+          variant="unstyled"
           className={placementControlButtonVariants()}
           aria-label={t("moveUp")}
           disabled={disabled}
@@ -65,7 +65,7 @@ export function PositionControls({
           <ArrowUp className="h-4 w-4" />
         </Button>
         <Button
-          variant="ghost"
+          variant="unstyled"
           className={placementControlButtonVariants()}
           aria-label={t("moveDown")}
           disabled={disabled}
@@ -74,7 +74,7 @@ export function PositionControls({
           <ArrowDown className="h-4 w-4" />
         </Button>
         <Button
-          variant="ghost"
+          variant="unstyled"
           className={placementControlButtonVariants()}
           aria-label={t("moveRight")}
           disabled={disabled}
@@ -83,23 +83,22 @@ export function PositionControls({
           <ArrowRight className="h-4 w-4" />
         </Button>
         <Button
-          variant="ghost"
+          variant="unstyled"
           className={cn(placementControlButtonVariants(), "ml-2 w-auto gap-2 px-3")}
           aria-label={t("center")}
           disabled={disabled}
           onClick={onCenter}
         >
           <Crosshair className="h-4 w-4" />
-          <Span variant="label" className="text-[10px]">
-            {t("center")}
-          </Span>
+          <Span variant="label">{t("center")}</Span>
         </Button>
       </div>
 
       <div className="flex items-center gap-4">
         <Label
           htmlFor="placement-x"
-          className="w-20 text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe)"
+          variant="section"
+          className="w-20 shrink-0 text-(--color-stamp-taupe)"
         >
           {t("horizontalLabel")}
         </Label>
@@ -119,7 +118,8 @@ export function PositionControls({
       <div className="flex items-center gap-4">
         <Label
           htmlFor="placement-y"
-          className="w-20 text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe)"
+          variant="section"
+          className="w-20 shrink-0 text-(--color-stamp-taupe)"
         >
           {t("verticalLabel")}
         </Label>

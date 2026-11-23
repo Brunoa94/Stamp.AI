@@ -1,16 +1,15 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Heading } from "@/features/ui/heading";
-import { Paragraph } from "@/features/ui/paragraph";
+import { HomeSectionHeader } from "@/features/homepage/ui/components/HomeSectionHeader";
 import type { CatalogGroupSectionType } from "../../lib/types/catalogPageTypes";
 import { CatalogProductCard } from "../components/CatalogProductCard";
 
 /**
  * CatalogGroupSection
  *
- * One product group of the catalog (clothing or accessories),
- * marketplace-style: heading with a one-line subtitle, and the product
+ * One product group of the catalog (clothing or accessories): the shared
+ * section header (accent bar, title, one-line subtitle) over the product
  * card grid. Keeps a deep-linkable anchor id, with a scroll margin
  * clearing the fixed h-24 header.
  */
@@ -29,20 +28,13 @@ export function CatalogGroupSection({ section }: PropsI) {
       aria-label={groupLabel}
       className="scroll-mt-32"
     >
-      <div className="mb-8">
-        <Heading
-          as="h2"
-          variant="sectionSlab"
-          className="text-(--color-stamp-chocolate)"
-        >
-          {groupLabel}
-        </Heading>
-        <Paragraph variant="xs" className="mt-2 text-(--color-stamp-taupe)">
-          {t("section.subtitle", { group: groupLabel })}
-        </Paragraph>
-      </div>
+      <HomeSectionHeader
+        title={groupLabel}
+        subtitle={t("section.subtitle", { group: groupLabel })}
+        className="mb-10"
+      />
 
-      <div className="grid grid-cols-2 items-stretch gap-4 sm:gap-8 lg:grid-cols-4 lg:gap-12">
+      <div className="grid grid-cols-2 items-stretch gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
         {section.products.map((product) => (
           <CatalogProductCard key={product.blueprintId} product={product} />
         ))}

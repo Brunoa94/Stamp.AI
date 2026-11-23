@@ -2,7 +2,6 @@
  * CartSelectionHeader
  *
  * Selection controls for cart items: select all / deselect all with item count.
- * Styled in the luxury brutalist aesthetic.
  */
 
 "use client";
@@ -42,7 +41,7 @@ export function CartSelectionHeader({
   };
 
   return (
-    <div className="flex items-center justify-between border-b border-(--color-stamp-divider) pb-4">
+    <div className="flex items-center justify-between gap-4 border-b border-(--color-stamp-divider) pb-3">
       <div className="flex items-center gap-4">
         {/* Master checkbox */}
         <Checkbox
@@ -54,15 +53,15 @@ export function CartSelectionHeader({
           }
         />
 
-        <Span unstyled className="text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-taupe)">
+        <Span variant="label" className="text-(--color-stamp-taupe)">
           {t("selectedCount", { selected: selectedCount, total: totalCount })}
         </Span>
       </div>
 
       <Button
-        variant="unstyled"
+        variant="stamp-filter-ghost"
         onClick={allSelected ? onDeselectAll : onSelectAll}
-        className="text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-taupe) transition-colors hover:text-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) focus-visible:ring-offset-2"
+        className="-mr-4"
       >
         {allSelected ? t("deselectAll") : t("selectAll", { count: totalCount })}
       </Button>

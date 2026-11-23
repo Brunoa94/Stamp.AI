@@ -13,6 +13,7 @@ import {
   polaroidImageVariants,
   polaroidSpinnerVariants,
 } from "@/features/stamp/lib/variants/polaroidPreviewVariants";
+import { stampLightboxButtonVariants } from "@/features/stamp/lib/variants/stampStudioVariants";
 
 /**
  * PolaroidPreview
@@ -21,8 +22,8 @@ import {
  * Used for mockup previews in the final review section.
  *
  * Features:
- * - Polaroid-style frame with shadow and slight rotation
- * - "PREVIEW SEALED" badge
+ * - White rounded card frame that lifts on hover
+ * - "Final preview" badge
  * - Click to open fullscreen modal
  * - Loading spinner while image loads
  * - Escape key to close modal
@@ -78,16 +79,17 @@ function FullscreenModal({
         aria-hidden="true"
         onClick={onClose}
         className={`absolute inset-0 cursor-default transition-all duration-300 ease-out ${
-          isAnimating ? "bg-black/90" : "bg-black/0"
+          isAnimating ? "bg-(--color-stamp-chocolate)/95" : "bg-(--color-stamp-chocolate)/0"
         }`}
       />
       <Button
-        variant="ghost"
-        size="icon"
+        variant="unstyled"
         onClick={onClose}
-        className={`absolute top-6 right-6 z-10 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 ${
-          isAnimating ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
-        }`}
+        className={cn(
+          stampLightboxButtonVariants(),
+          "absolute top-6 right-6 z-10",
+          isAnimating ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4",
+        )}
         aria-label={closeLabel}
       >
         <X className="w-6 h-6" />
@@ -100,7 +102,7 @@ function FullscreenModal({
       >
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center z-10">
-            <Loader2 className="w-12 h-12 animate-spin text-white/40" />
+            <Loader2 className="w-12 h-12 animate-spin text-(--color-stamp-taupe-light)" />
           </div>
         )}
         <Image
@@ -117,7 +119,7 @@ function FullscreenModal({
       <Span
         as="p"
         variant="micro"
-        className={`absolute bottom-6 left-1/2 -translate-x-1/2 text-white/60 transition-all duration-300 delay-150 ${
+        className={`absolute bottom-6 left-1/2 -translate-x-1/2 text-(--color-stamp-taupe-light) transition-all duration-300 delay-150 ${
           isAnimating ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
         }`}
       >
@@ -188,9 +190,7 @@ export function PolaroidPreview({
         className={cn(polaroidContainerVariants({ size }), className)}
         aria-label={fullscreenLabel}
       >
-        <div
-          className={polaroidImageVariants({ size })}
-        >
+        <div className={polaroidImageVariants()}>
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-(--color-stamp-cream) z-10">
               <Loader2
@@ -211,7 +211,7 @@ export function PolaroidPreview({
         <div className={polaroidBadgeVariants({ size })}>
           <Span
             variant="badge"
-            className="bg-white/80 backdrop-blur-sm border border-(--color-stamp-divider)"
+            className="rounded-md border border-(--color-stamp-divider) bg-(--color-stamp-white)/90 px-2 py-1 text-(--color-stamp-chocolate)"
           >
             {badgeText}
           </Span>

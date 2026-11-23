@@ -13,14 +13,14 @@ export function LoginSignupFooter({ onSwitchToRegister }: PropsI) {
   return (
     <div className="mt-10 text-center">
       <div className="mb-8 h-px w-full bg-(--color-stamp-divider)" />
-      <Paragraph variant="body" className="text-sm font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
+      <Paragraph variant="xs" className="text-(--color-stamp-taupe)">
         {t.rich("noAccount", {
           link: (chunks) => (
             <Button
               type="button"
               variant="link"
               onClick={onSwitchToRegister}
-              className="ml-1 h-auto p-0 font-[family-name:inherit] text-base font-bold uppercase tracking-widest text-(--color-stamp-gold-text) hover:text-(--color-stamp-chocolate) hover:underline"
+              className="ml-1 h-auto p-0 font-[family-name:inherit] text-base font-bold text-(--color-stamp-gold-text) hover:text-(--color-stamp-chocolate) hover:underline focus-visible:ring-(--color-stamp-chocolate)"
             >
               {chunks}
             </Button>

@@ -4,8 +4,13 @@ import React from "react";
 import { useTranslations } from "next-intl";
 import { AlertCircle, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { Button } from "@/features/ui/button";
+import { Heading } from "@/features/ui/heading";
+import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
 import { usePaymentRecovery } from "@/shared/queries/paymentRecoveryQueries";
-import type { PaymentRecoveryRecordI } from "@/shared/services/paymentRecoveryService";
+
+// The record type, taken from the hook so the UI doesn't import the service
+type PaymentRecoveryRecordI = Parameters<ReturnType<typeof usePaymentRecovery>["recover"]>[0];
 
 interface PaymentRecoveryBannerProps {
   onRecoveryComplete?: (orderId: string) => void;
@@ -72,67 +77,68 @@ export function PaymentRecoveryBanner({
         return (
           <div
             key={recovery.id}
-            className="bg-amber-50 border border-amber-200 rounded-lg p-4 shadow-sm"
+            className="rounded-xl border border-(--color-stamp-gold)/40 bg-(--color-stamp-peach) p-4 shadow-(--shadow-stamp-card) md:p-5"
             role="alert"
             aria-live="polite"
           >
             <div className="flex items-start gap-3">
               <div className="shrink-0 mt-0.5">
-                <AlertCircle className="w-5 h-5 text-amber-600" />
+                <AlertCircle className="w-5 h-5 text-(--color-stamp-gold-text)" aria-hidden="true" />
               </div>
 
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm font-semibold text-amber-900 mb-1">
+                <Heading
+                  as="h2"
+                  variant="itemCompact"
+                  className="mb-1 text-(--color-stamp-chocolate)"
+                >
                   {t("title")}
-                </h3>
+                </Heading>
 
-                <p className="text-sm text-amber-800 mb-3">
+                <Paragraph variant="xs" className="mb-4 text-(--color-stamp-chocolate)">
                   {t.rich("body", {
                     providerName,
                     currency: recovery.currency,
                     amountValue: recovery.amount.toFixed(2),
                     amount: (chunks) => <strong>{chunks}</strong>,
                   })}
-                </p>
+                </Paragraph>
 
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-3 flex-wrap">
                   <Button
-                    size="sm"
+                    variant="primary-compact"
                     onClick={() => handleRecover(recovery)}
                     disabled={isProcessing || isDismissing}
-                    className="bg-amber-600 hover:bg-amber-700 text-white"
                   >
                     {isThisProcessing ? (
                       <>
-                        <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+                        <Loader2 className="w-4 h-4 animate-spin" />
                         {t("completing")}
                       </>
                     ) : (
                       <>
-                        <CheckCircle className="w-4 h-4 mr-1.5" />
+                        <CheckCircle className="w-4 h-4" />
                         {t("complete")}
                       </>
                     )}
                   </Button>
 
                   <Button
-                    size="sm"
-                    variant="outline"
+                    variant="secondary-compact"
                     onClick={() => handleDismiss(recovery.id)}
                     disabled={isProcessing || isDismissing}
-                    className="border-amber-300 text-amber-900 hover:bg-amber-100"
                   >
-                    <XCircle className="w-4 h-4 mr-1.5" />
+                    <XCircle className="w-4 h-4" />
                     {t("dismiss")}
                   </Button>
                 </div>
 
-                <p className="text-lg text-amber-700 mt-2">
+                <Span as="p" variant="micro" className="mt-3 text-(--color-stamp-taupe)">
                   {t("paymentIdLine", {
                     id: recovery.payment_intent_id.slice(-8),
                     date: new Date(recovery.created_at).toLocaleString(),
                   })}
-                </p>
+                </Span>
               </div>
             </div>
           </div>

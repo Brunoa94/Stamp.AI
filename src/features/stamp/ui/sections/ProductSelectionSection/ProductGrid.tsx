@@ -48,7 +48,7 @@ export function ProductGrid({
     sections.find((section) => section.id === chosenSectionId) ?? sections[0];
 
   return (
-    <div className="flex-1 md:h-full min-h-0 overflow-y-auto overflow-x-hidden bg-(--color-stamp-cream)/20 md:bg-transparent pb-40 md:pb-0">
+    <div className="flex-1 md:h-full min-h-0 overflow-y-auto overflow-x-hidden bg-(--color-stamp-cream) md:bg-transparent pb-40 md:pb-0">
       {isLoading && (
         <div
           className="h-full w-full flex items-center justify-center"
@@ -59,7 +59,7 @@ export function ProductGrid({
             {[1, 2, 3, 4].map((index) => (
               <div
                 key={index}
-                className="h-32 bg-(--color-stamp-divider)/20 animate-pulse"
+                className="h-32 rounded-xl bg-(--color-stamp-cream) animate-pulse"
               />
             ))}
           </div>
@@ -71,7 +71,7 @@ export function ProductGrid({
           role="alert"
           className="h-full w-full flex flex-col items-center justify-center p-12 text-center"
         >
-          <Span variant="micro" className="text-red-500 mb-2">
+          <Span variant="micro" className="text-(--color-stamp-error) mb-2">
             {t("loadError")}
           </Span>
           <Paragraph variant="sm">
@@ -106,7 +106,7 @@ export function ProductGrid({
               activeSectionId={activeSection.id}
               onSectionChange={setChosenSectionId}
             />
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               {activeSection.products.map((product) => (
                 <ProductCard
                   key={product.blueprintId}

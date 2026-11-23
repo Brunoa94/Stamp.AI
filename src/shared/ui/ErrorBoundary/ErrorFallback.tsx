@@ -15,39 +15,39 @@ interface ErrorFallbackProps {
 /**
  * ErrorFallback
  *
- * Fallback UI displayed when an error boundary catches an error.
- * Styled to match the Stamp luxury design system.
+ * Fallback UI displayed when an error boundary catches an error, in the
+ * Stamp look: a white rounded icon card, an amber accent bar, a slab-serif
+ * title with a handwritten accent word, and the stamp button variants.
  */
 export function ErrorFallback({ error, errorId, onRetry }: ErrorFallbackProps) {
   const isDev = process.env.NODE_ENV === "development";
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-(--color-stamp-cream) p-8 md:p-12 lg:p-24">
-      <div className="flex flex-col items-center gap-8 text-center max-w-xl">
+    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-(--color-stamp-off-white) px-4 py-20 sm:px-6 lg:px-12">
+      <div className="flex max-w-xl flex-col items-center gap-6 text-center">
         {/* Error icon */}
-        <div className="flex h-20 w-20 items-center justify-center border border-(--color-stamp-divider) bg-(--color-stamp-off-white) shadow-(--shadow-stamp-card)">
+        <div className="flex size-20 items-center justify-center rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) shadow-(--shadow-stamp-card)">
           <AlertTriangle
-            className="h-10 w-10 text-(--color-stamp-error)"
+            aria-hidden
+            className="size-10 text-(--color-stamp-error)"
             strokeWidth={1.5}
           />
         </div>
 
-        <div className="space-y-4">
+        <div className="flex flex-col items-center space-y-4">
+          <div aria-hidden className="h-1.5 w-16 rounded-full bg-(--color-stamp-gold)" />
           <Heading
             as="h1"
             variant="panelTitle"
             className="text-(--color-stamp-chocolate)"
           >
             Something went{" "}
-            <Span variant="default" className="text-(--color-stamp-taupe) italic font-serif lowercase font-light">
+            <Span variant="serif" className="text-(--color-stamp-gold-text)">
               wrong
             </Span>
           </Heading>
 
-          <Paragraph
-            variant="lead"
-            className="text-(--color-stamp-taupe) font-light"
-          >
+          <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
             We encountered an unexpected error. Our team has been notified and
             is working to fix it.
           </Paragraph>
@@ -55,8 +55,8 @@ export function ErrorFallback({ error, errorId, onRetry }: ErrorFallbackProps) {
 
         {/* Error ID for support reference */}
         {errorId && (
-          <div className="bg-(--color-stamp-off-white) px-6 py-3 border border-(--color-stamp-divider) shadow-(--shadow-stamp-card)">
-            <Paragraph variant="xs" className="font-mono text-(--color-stamp-taupe) tracking-wider uppercase">
+          <div className="rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-white) px-6 py-3">
+            <Paragraph variant="xs" className="font-mono text-sm tracking-wide text-(--color-stamp-taupe) uppercase">
               Reference: {errorId}
             </Paragraph>
           </div>
@@ -64,8 +64,8 @@ export function ErrorFallback({ error, errorId, onRetry }: ErrorFallbackProps) {
 
         {/* Development-only error details */}
         {isDev && error && (
-          <details className="w-full text-left border border-(--color-stamp-divider) bg-(--color-stamp-off-white)">
-            <summary className="cursor-pointer px-6 py-4 text-sm text-(--color-stamp-taupe) hover:text-(--color-stamp-chocolate) uppercase tracking-wider font-medium transition-colors">
+          <details className="w-full overflow-hidden rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) text-left">
+            <summary className="cursor-pointer rounded-xl px-6 py-4 text-sm font-bold tracking-wide text-(--color-stamp-taupe) uppercase transition-colors hover:text-(--color-stamp-chocolate) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate)">
               Error Details (Dev Only)
             </summary>
             <div className="border-t border-(--color-stamp-divider) bg-(--color-stamp-chocolate) p-6 overflow-auto max-h-64">
@@ -82,21 +82,17 @@ export function ErrorFallback({ error, errorId, onRetry }: ErrorFallbackProps) {
         )}
 
         {/* Actions */}
-        <div className="flex flex-col sm:flex-row gap-4 mt-4">
+        <div className="mt-2 flex flex-col gap-3 sm:flex-row">
           {onRetry && (
-            <Button
-              onClick={onRetry}
-              className="bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-4 text-xs font-bold tracking-[0.2em] uppercase"
-            >
+            <Button variant="primary" onClick={onRetry}>
               Try Again
             </Button>
           )}
           <Button
-            variant="secondary-compact"
+            variant="secondary"
             onClick={() => {
               window.location.href = "/";
             }}
-            className="border border-(--color-stamp-chocolate) text-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-white transition-all duration-300 px-8 py-4 text-xs font-bold tracking-[0.2em] uppercase"
           >
             Go to Homepage
           </Button>

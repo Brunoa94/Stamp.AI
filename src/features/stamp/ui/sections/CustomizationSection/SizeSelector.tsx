@@ -33,10 +33,7 @@ export function SizeSelector({
 
   return (
     <div>
-      <Label
-        htmlFor="size-select"
-        className="text-[10px] font-bold uppercase tracking-widest block mb-3"
-      >
+      <Label htmlFor="size-select" variant="section" className="mb-3">
         <SplitToneText tone="muted">{t("sizeSelectorLabel")}</SplitToneText>
       </Label>
       <Select
@@ -46,7 +43,7 @@ export function SizeSelector({
         <SelectTrigger
           id="size-select"
           aria-label={t("sizeSelectionAria")}
-          className="w-full px-4 py-3 border border-(--color-stamp-divider) bg-white text-(--color-stamp-chocolate) text-sm font-medium focus:border-(--color-stamp-chocolate) focus:ring-0"
+          className="h-auto w-full rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 py-3 text-sm font-medium text-(--color-stamp-chocolate) shadow-none focus:border-(--color-stamp-chocolate) focus:ring-(--color-stamp-chocolate)"
         >
           <SelectValue />
         </SelectTrigger>

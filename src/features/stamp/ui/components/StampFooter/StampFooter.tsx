@@ -3,9 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { Leaf } from "lucide-react";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
-import { Separator } from "@/features/ui/separator";
 import { Span } from "@/features/ui/span";
 import { SOCIAL_PROFILES } from "@/features/seo/lib/constants/social";
 import { LEGAL_ENTITY } from "@/features/legal/lib/constants/legalEntity";
@@ -21,10 +21,10 @@ import {
 /**
  * StampFooter
  *
- * Global footer on the stamp luxury palette, matching StampHeader's link
- * treatment and the homepage section rhythm (px-6 lg:px-12 xl:px-24,
- * max-w-screen-2xl). Four link columns over a decorative wordmark and a
- * copyright bar.
+ * Global footer: an amber promise strip over a cream area with the brand,
+ * payment marks and four link columns, the faint "Stamp" wordmark, and a
+ * bottom bar with the copyright line and cookie settings. Uses the page
+ * gutter (px-4 sm:px-6 lg:px-12) and max-w-screen-2xl like every section.
  */
 
 const FOOTER_COLUMNS: { key: FooterColumnKeyType; links: FooterLinkType[] }[] =
@@ -72,70 +72,69 @@ export function StampFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-(--color-stamp-divider) bg-(--color-stamp-cream) px-6 pt-24 pb-12 lg:px-12 xl:px-24">
-      <div className="mx-auto max-w-screen-2xl">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-6 md:gap-12">
-          {/* Brand */}
-          <div className="col-span-2 space-y-6">
-            <Link href="/" className="inline-block">
-              <Image
-                src={staticAssetUrl("/assets/brand/logo.png")}
-                alt={t("logoAlt")}
-                width={280}
-                height={80}
-                className="h-16 w-auto"
+    <footer>
+      {/* Amber promise strip */}
+      <div className="flex items-center justify-center gap-2 bg-(--color-stamp-gold) px-6 py-3 text-center">
+        <Leaf className="size-4 shrink-0 text-(--color-stamp-chocolate)" aria-hidden />
+        <Paragraph variant="xs" className="font-medium text-(--color-stamp-chocolate)">
+          {t("strip")}
+        </Paragraph>
+      </div>
+
+      {/* Cream link area */}
+      <div className="bg-(--color-stamp-cream) px-4 pt-16 pb-10 sm:px-6 lg:px-12">
+        <div className="mx-auto max-w-screen-2xl">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-6 md:gap-12">
+            <div className="col-span-2 space-y-5">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-3 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--color-stamp-chocolate)"
+              >
+                <Image
+                  src={staticAssetUrl("/logo.png")}
+                  alt=""
+                  width={48}
+                  height={48}
+                  className="size-12 rounded-lg"
+                />
+                <Heading as="div" variant="card" className="text-(--color-stamp-chocolate)">
+                  {t("logoAlt")}
+                </Heading>
+              </Link>
+              <div aria-hidden className="h-1.5 w-16 rounded-full bg-(--color-stamp-gold)" />
+              <Paragraph variant="xs" className="max-w-xs text-(--color-stamp-taupe)">
+                {t("mission")}
+              </Paragraph>
+              <FooterPaymentIcons />
+            </div>
+
+            {FOOTER_COLUMNS.map((column) => (
+              <FooterLinkColumn
+                key={column.key}
+                columnKey={column.key}
+                links={column.links}
+                t={t}
               />
-            </Link>
-            <div className="h-1.5 w-20 bg-(--color-stamp-gold)" />
-            <Paragraph
-              variant="sm"
-              className="max-w-xs text-(--color-stamp-taupe)"
-            >
-              {t("mission")}
-            </Paragraph>
+            ))}
           </div>
 
-          {/* Link columns */}
-          {FOOTER_COLUMNS.map((column) => (
-            <FooterLinkColumn
-              key={column.key}
-              columnKey={column.key}
-              links={column.links}
-              t={t}
-            />
-          ))}
-        </div>
+          {/* Decorative wordmark */}
+          <div aria-hidden className="pointer-events-none mt-16 select-none overflow-hidden">
+            <Heading as="div" variant="display" className="text-center text-(--color-stamp-chocolate)/5">
+              {t("wordmark")}
+            </Heading>
+          </div>
 
-        {/* Payment icons section */}
-        <div className="mt-12 flex justify-center md:justify-start">
-          <FooterPaymentIcons />
-        </div>
-
-        {/* Decorative wordmark */}
-        <div
-          aria-hidden
-          className="pointer-events-none mt-20 select-none overflow-hidden"
-        >
-          <Heading
-            as="div"
-            variant="display"
-            className="text-center text-(--color-stamp-chocolate)/5"
-          >
-            {t("wordmark")}
-          </Heading>
-        </div>
-
-        <Separator className="my-12 bg-(--color-stamp-divider)" />
-
-        {/* Bottom bar */}
-        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <Span variant="micro" className="text-(--color-stamp-taupe)">
-            {t("copyright", { year })}
-          </Span>
-          <CookieSettingsButton />
-          <Span variant="micro" className="text-(--color-stamp-taupe)">
-            {t("tagline")}
-          </Span>
+          {/* Bottom bar: legal line and cookie settings */}
+          <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-(--color-stamp-divider) pt-8 md:flex-row">
+            <Span variant="micro" className="text-(--color-stamp-taupe)">
+              {t("copyright", { year })}
+            </Span>
+            <CookieSettingsButton />
+            <Span variant="micro" className="text-(--color-stamp-taupe)">
+              {t("tagline")}
+            </Span>
+          </div>
         </div>
       </div>
     </footer>

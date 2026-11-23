@@ -1,7 +1,7 @@
 import { cva } from "class-variance-authority";
 
 /** Accent bar along the top of PaymentResultCard. */
-export const paymentResultBarVariants = cva("absolute top-0 left-0 w-full h-1", {
+export const paymentResultBarVariants = cva("absolute top-0 left-0 w-full h-1.5", {
   variants: {
     tone: {
       success: "bg-(--color-stamp-success)",
@@ -13,13 +13,13 @@ export const paymentResultBarVariants = cva("absolute top-0 left-0 w-full h-1", 
 
 /** Round status icon badge in PaymentResultCard. */
 export const paymentResultIconVariants = cva(
-  "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-10",
+  "w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-8",
   {
     variants: {
       tone: {
         success: "bg-(--color-stamp-success)/10 text-(--color-stamp-success)",
         error: "bg-(--color-stamp-error)/10 text-(--color-stamp-error)",
-        pending: "bg-(--color-stamp-gold)/10 text-(--color-stamp-gold-text)",
+        pending: "bg-(--color-stamp-gold)/15 text-(--color-stamp-gold-text)",
       },
     },
   },
@@ -38,7 +38,7 @@ export const paymentResultStatusDotVariants = cva("w-2 h-2 rounded-full", {
 
 /** Status value text in PaymentResultDetailsGrid. */
 export const paymentResultStatusTextVariants = cva(
-  "font-heading text-lg uppercase tracking-wide font-bold",
+  "font-body text-base font-bold",
   {
     variants: {
       tone: {

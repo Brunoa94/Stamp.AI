@@ -22,22 +22,16 @@ export function PreservationSlider({ value, onChange }: PropsI) {
   return (
     <div>
       <div className="flex items-center gap-2 mb-4">
-        <Label
-          htmlFor="preservation"
-          className="text-[10px] font-bold uppercase tracking-widest"
-        >
+        <Label htmlFor="preservation" variant="section">
           <SplitToneText tone="muted">{t("preservationLabel")}</SplitToneText>
         </Label>
         <InfoTooltip
           content={t("preservationTooltip")}
-          className="rounded-full bg-white p-0.5"
+          className="rounded-full bg-(--color-stamp-white) p-0.5"
         />
       </div>
       <div className="flex items-center gap-4">
-        <Span
-          variant="micro"
-          className="text-(--color-stamp-taupe)/40"
-        >
+        <Span variant="micro" className="text-(--color-stamp-taupe)">
           {t("low")}
         </Span>
         <Slider
@@ -49,9 +43,9 @@ export function PreservationSlider({ value, onChange }: PropsI) {
           className="flex-1"
           aria-label={t("preservationAria")}
         />
-        {/* Sits on the backdrop photo at wide screens: white there, taupe on the off-white */}
+        {/* Sits on the backdrop photo at wide screens: cream there, taupe on the off-white */}
         <Span variant="micro">
-          <SplitToneText tone="faint">{t("high")}</SplitToneText>
+          <SplitToneText tone="muted">{t("high")}</SplitToneText>
         </Span>
       </div>
     </div>

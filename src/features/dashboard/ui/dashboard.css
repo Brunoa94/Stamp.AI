@@ -1,6 +1,6 @@
 /**
  * Dashboard Feature Styles
- * Isolated styling for the luxury dashboard design
+ * Keyframes for the dashboard loading skeleton.
  */
 
 /* Skeleton shimmer */
@@ -11,16 +11,6 @@
   100% {
     background-position: 200% 0;
   }
-}
-
-/* Status badge base styles */
-.status-badge {
-  font-size: 9px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  border-radius: 9999px;
-  padding: 4px 12px;
 }
 
 /* Reduced motion support */

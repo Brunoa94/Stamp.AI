@@ -18,7 +18,7 @@ export function CreditPackageSelector({
 
   return (
     <div>
-      <Label variant="section" className="mb-3 text-slate-500">{t("packageLabel")}</Label>
+      <Label variant="section" className="mb-3 text-(--color-stamp-taupe)">{t("packageLabel")}</Label>
       <div className="grid grid-cols-2 gap-3">
         {CREDIT_PACKAGES.map((pkg) => (
           <CreditPackageCard

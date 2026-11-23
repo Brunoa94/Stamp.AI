@@ -21,7 +21,7 @@ export function OrdersLayout({ header, children }: OrdersLayoutPropsI) {
       <PageHeaderBand src={staticAssetUrl("/backdrops/orders-unboxing.jpg")} imageClassName="object-[center_60%]">
         {header}
       </PageHeaderBand>
-      <div className="px-6 pb-24 pt-12 lg:px-12 xl:px-24">
+      <div className="px-4 py-16 sm:px-6 lg:px-12">
         <PageContainer className="mx-auto max-w-screen-2xl">
           {children}
         </PageContainer>

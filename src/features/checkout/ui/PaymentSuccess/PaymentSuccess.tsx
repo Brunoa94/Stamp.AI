@@ -34,7 +34,7 @@ const PaymentSuccess = ({ details, onCreateAnother }: Props) => {
       <PaymentResultHeading
         title={t("title")}
         description={t("description")}
-        className="mb-12"
+        className="mb-10"
       />
 
       {/* Order details grid */}

@@ -9,10 +9,7 @@ import { ThumbsUp } from "lucide-react";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
-import {
-  HOME_PLATFORM_CONFIG,
-  type HomeTestimonialType,
-} from "../../../lib/constants/homepageContent";
+import type { HomeTestimonialType } from "../../../lib/constants/homepageContent";
 import { HomeRatingStars } from "./HomeRatingStars";
 import { ReviewsPlatformBadge } from "./ReviewsPlatformBadge";
 
@@ -24,15 +21,9 @@ export function ReviewsTestimonialCard({
   testimonial,
 }: ReviewsTestimonialCardProps) {
   const t = useTranslations("home.reviews");
-  const config = HOME_PLATFORM_CONFIG[testimonial.platform];
 
   return (
-    <article
-      className="flex flex-col border bg-(--color-stamp-white) p-5 sm:p-8 transition-all duration-500 hover:-translate-y-1 hover:shadow-(--shadow-stamp-card-hover)"
-      style={{
-        borderColor: config?.borderColor ?? "var(--color-stamp-divider)",
-      }}
-    >
+    <article className="flex flex-col rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-5 shadow-(--shadow-stamp-card) sm:p-8">
       <div className="mb-6 flex items-center justify-between">
         <HomeRatingStars rating={testimonial.rating} />
         <ReviewsPlatformBadge platform={testimonial.platform} />
@@ -45,14 +36,9 @@ export function ReviewsTestimonialCard({
         &ldquo;{t(`testimonials.${testimonial.id}.quote`)}&rdquo;
       </Paragraph>
 
-      <div
-        className="mt-8 flex items-end justify-between border-t pt-6"
-        style={{
-          borderColor: config?.borderColor ?? "var(--color-stamp-divider)",
-        }}
-      >
+      <div className="mt-8 flex items-end justify-between border-t border-(--color-stamp-divider) pt-6">
         <div>
-          <Heading as="h3" variant="item">
+          <Heading as="h3" variant="item" className="text-(--color-stamp-chocolate)">
             {t(`testimonials.${testimonial.id}.author`)}
           </Heading>
           <Span as="p" variant="micro" className="mt-1 text-(--color-stamp-taupe)">

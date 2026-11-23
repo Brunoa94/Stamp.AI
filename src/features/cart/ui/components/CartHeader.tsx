@@ -1,11 +1,10 @@
 /**
  * CartHeader
  *
- * Cart page header in the luxury brutalist style:
- * - Thin gold accent bar
- * - Large Anton title with a gold-accented word; light on the band's photo
- *   below xl, dark on its off-white side from xl (the photo is on the right)
- * - Wide-tracked taupe subtitle reporting the item count
+ * Cart page header, inside the mirrored PageHeaderBand:
+ * - Amber accent bar
+ * - Slab-serif page title with a handwritten accent word; light on the band's
+ *   photo below xl, dark on its cream side from xl (the photo is on the right)
  */
 
 import { Heading } from "@/features/ui/heading";
@@ -21,7 +20,7 @@ export function CartHeader({ itemCount }: CartHeaderPropsI) {
 
   return (
     <header className="space-y-4 text-shadow-lg xl:text-shadow-none">
-      <div className="h-1.5 w-20 bg-(--color-stamp-gold)" />
+      <div aria-hidden className="h-1.5 w-16 rounded-full bg-(--color-stamp-gold)" />
 
       <Heading
         as="h1"
@@ -32,7 +31,7 @@ export function CartHeader({ itemCount }: CartHeaderPropsI) {
           accent: (chunks) => (
             <Span
               variant="serif"
-              className="text-(--color-stamp-gold-light) xl:text-(--color-stamp-taupe)"
+              className="text-(--color-stamp-gold-light) xl:text-(--color-stamp-gold-text)"
             >
               {chunks}
             </Span>

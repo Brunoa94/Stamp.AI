@@ -3,11 +3,14 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
+import { cn } from "@/lib/utils";
+import { stampSelectableCardVariants } from "../../../lib/variants/stampStudioVariants";
 
 /**
  * SuggestionCard
  *
- * Individual suggestion tile with thumbnail image and label overlay.
+ * Selectable filter tile: a rounded photo card with the filter name on a
+ * chocolate scrim. Selected shows the amber border; unselected lifts on hover.
  */
 
 interface PropsI {
@@ -30,33 +33,32 @@ function SuggestionCardComponent({
   const t = useTranslations("stamp.synthesis");
   return (
     <Button
-      variant="ghost"
+      variant="unstyled"
       onClick={() => onSelect?.(id)}
       aria-label={t("applySuggestion", { label, hint })}
       aria-pressed={isSelected}
       title={hint}
-      className={`group relative aspect-2/3 w-full min-h-48 overflow-hidden rounded-xl p-0 ring-1 focus:outline-none transition-all duration-300 ${
-        isSelected
-          ? "ring-2 ring-(--color-stamp-gold)"
-          : "ring-black/5 hover:ring-2 hover:ring-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)"
-      }`}
+      className={cn(
+        stampSelectableCardVariants({ selected: isSelected }),
+        "group relative aspect-2/3 w-full min-h-48 overflow-hidden p-0",
+      )}
     >
-      <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-110">
+      <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-105">
         <Image
           src={image}
           alt={label}
           fill
           className="object-cover"
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          sizes="(max-width: 640px) 50vw, (max-width: 1280px) 33vw, 25vw"
         />
       </div>
       <div
         aria-hidden
-        className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-black/70 to-transparent"
+        className="absolute inset-x-0 bottom-0 h-1/2 bg-linear-to-t from-(--color-stamp-chocolate)/80 to-transparent"
       />
       <Span
         variant="sm"
-        className="absolute bottom-2 left-2.5 right-2 text-left font-medium text-white drop-shadow-sm max-xl:text-xs"
+        className="absolute bottom-2 left-2.5 right-2 text-left font-medium text-(--color-stamp-off-white) max-xl:text-xs"
       >
         {label}
       </Span>

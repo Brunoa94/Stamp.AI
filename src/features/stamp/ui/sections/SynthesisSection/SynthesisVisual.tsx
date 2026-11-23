@@ -14,7 +14,7 @@ import { NoFilterCard, NO_FILTER_ID } from "./NoFilterCard";
  * On mobile (<md): shows first 4 filters with "Show more" button that expands
  *                  as an overlay. Auto-collapses when scrolled past 40% threshold.
  * On tablet (md to lg): shows 3-column grid with header
- * On desktop (lg+): shows original 4-column grid
+ * On desktop (lg+): 3-column grid, 4 columns from xl
  */
 
 // Number of filters to show initially on mobile before expanding
@@ -32,11 +32,12 @@ function SynthesisVisualComponent({ selectedId, onSelectSuggestion }: PropsI) {
   const isLgUp = useMediaQuery("(min-width: 1024px)", true);
   const isNoFilterSelected = selectedId === null || selectedId === NO_FILTER_ID;
 
-  // Desktop (lg+): 4-column grid
+  // Desktop (lg+): 3-column grid, 4 from xl
   if (isLgUp) {
     return (
-      <div className="p-12 lg:p-24 lg:pt-8 overflow-hidden lg:px-10 bg-white flex flex-col justify-center border-r border-(--color-stamp-divider)">
-        <div className="grid grid-cols-4 gap-4 w-full">
+      <div className="p-12 lg:p-24 lg:pt-8 overflow-hidden lg:px-10 bg-(--color-stamp-white) flex flex-col justify-center border-r border-(--color-stamp-divider)">
+        {/* 3 columns at 1024px, where the column is narrow; 4 from xl */}
+        <div className="grid grid-cols-3 xl:grid-cols-4 gap-4 w-full">
           {STAMP_EDIT_SUGGESTIONS.map(({ id, image }) => (
             <SuggestionCard
               key={id}
@@ -60,7 +61,7 @@ function SynthesisVisualComponent({ selectedId, onSelectSuggestion }: PropsI) {
   // Tablet (md to lg): 3-column grid
   if (isMdUp) {
     return (
-      <div className="p-10 pt-8 overflow-hidden bg-white flex flex-col justify-center border-r border-(--color-stamp-divider)">
+      <div className="p-10 pt-8 overflow-hidden bg-(--color-stamp-white) flex flex-col justify-center border-r border-(--color-stamp-divider)">
         <div className="grid grid-cols-3 gap-4 w-full">
           {STAMP_EDIT_SUGGESTIONS.map(({ id, image }) => (
             <SuggestionCard
@@ -84,7 +85,7 @@ function SynthesisVisualComponent({ selectedId, onSelectSuggestion }: PropsI) {
 
   // Mobile (<md): use ExpandablePicker component
   return (
-    <div className="p-6 pt-20 bg-white flex flex-col border-r border-(--color-stamp-divider)">
+    <div className="p-6 pt-20 bg-(--color-stamp-white) flex flex-col border-r border-(--color-stamp-divider)">
       <div className="my-auto w-full">
         <ExpandablePicker
           initialCount={MOBILE_INITIAL_COUNT}

@@ -21,12 +21,9 @@ export function Register({ className, children }: RegisterProps) {
       form={<AuthDialogForms initialView="register" />}
       className={className}
       defaultTrigger={
-        <Button
-          variant="outline"
-          className={className}
-        >
-          <UserPlus className="mr-2 h-3 w-3" />
-          <Span unstyled className="uppercase">{t("register")}</Span>
+        <Button variant="secondary-compact" className={className}>
+          <UserPlus aria-hidden className="size-4" />
+          <Span unstyled>{t("register")}</Span>
         </Button>
       }
     >

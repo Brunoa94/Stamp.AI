@@ -18,7 +18,7 @@ export const OrdersCancelModalActions = forwardRef<HTMLButtonElement, PropsI>(
           onClick={onConfirm}
           disabled={isCancelling}
           variant="destructive"
-          className="py-4 text-[10px] tracking-[0.2em]"
+          className="h-auto py-3.5 font-bold uppercase tracking-wide shadow-none hover:shadow-none"
         >
           {isCancelling ? t("halting") : t("haltSynthesis")}
         </Button>
@@ -26,8 +26,7 @@ export const OrdersCancelModalActions = forwardRef<HTMLButtonElement, PropsI>(
           ref={ref}
           onClick={onClose}
           disabled={isCancelling}
-          variant="outline"
-          className="border-(--color-stamp-divider) bg-transparent py-4 text-[10px] tracking-[0.2em] text-(--color-stamp-chocolate) hover:border-(--color-stamp-chocolate) hover:bg-(--color-stamp-chocolate) hover:text-(--color-stamp-white)"
+          variant="secondary"
         >
           {t("keepActive")}
         </Button>

@@ -21,14 +21,14 @@ export function CartOrderSummaryRow({
   return (
     <div className="flex items-center justify-between">
       <dt>
-        <Span variant="label" className="text-(--color-stamp-chocolate)">
+        <Span variant="value" className="text-(--color-stamp-taupe)">
           {label}
         </Span>
       </dt>
       <dd>
         <Span
           unstyled
-          className={valueClassName ?? "font-body text-base font-bold tabular-nums"}
+          className={valueClassName ?? "font-body text-base font-bold tabular-nums text-(--color-stamp-chocolate)"}
         >
           {value}
         </Span>

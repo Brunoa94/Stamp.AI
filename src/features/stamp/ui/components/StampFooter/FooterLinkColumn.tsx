@@ -29,10 +29,10 @@ interface PropsI {
 export function FooterLinkColumn({ columnKey, links, t }: PropsI) {
   return (
     <nav aria-label={t(`columns.${columnKey}`)}>
-      <Span as="div" variant="label" className="text-(--color-stamp-taupe)">
+      <Span as="div" variant="label" className="text-(--color-stamp-chocolate)">
         {t(`columns.${columnKey}`)}
       </Span>
-      <List className="mt-6 space-y-3">
+      <List className="mt-4 space-y-3">
         {links.map((link) => (
           <li key={link.id}>
             {link.external ? (

@@ -30,7 +30,7 @@ export function CartItemCardContent({ item }: CartItemCardContentPropsI) {
   );
 
   return (
-    <div className="space-y-3 md:space-y-6">
+    <div className="space-y-3 md:space-y-4">
       <div className="flex items-start justify-between gap-2 md:gap-4">
         <div className="space-y-0.5 md:space-y-1">
           <Heading as="h3" variant="itemCompact">

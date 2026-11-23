@@ -17,7 +17,7 @@ import { CatalogSortSelect } from "./CatalogSortSelect";
  * CatalogToolbar
  *
  * Catalog browsing controls mirroring the orders page filter section,
- * on a cream panel: a "filters" label over a row of selects (group,
+ * on a rounded cream panel: an amber "filters" eyebrow over a row of selects (group,
  * sort) with a clear action, and a prominent full-width search bar
  * underneath.
  */
@@ -46,11 +46,8 @@ export function CatalogToolbar({
   const t = useTranslations("catalog.toolbar");
 
   return (
-    <div className="flex flex-col gap-4 border border-(--color-stamp-divider) bg-(--color-stamp-cream) p-4 sm:p-6">
-      <Span
-        variant="default"
-        className="font-bold uppercase text-sm tracking-[0.4em] text-(--color-stamp-taupe)"
-      >
+    <div className="flex flex-col gap-4 rounded-2xl border border-(--color-stamp-divider) bg-(--color-stamp-cream) p-4 sm:p-6">
+      <Span as="p" variant="label" className="text-(--color-stamp-gold-text)">
         {t("filteringLabel")}
       </Span>
 
@@ -64,7 +61,7 @@ export function CatalogToolbar({
         <CatalogSortSelect sort={sort} onSortChange={onSortChange} />
 
         <Button onClick={onClearFilters} variant="stamp-filter-ghost">
-          <RotateCcw className="h-4 w-4" />
+          <RotateCcw aria-hidden className="size-4" />
           {t("clearFilters")}
         </Button>
       </div>

@@ -3,7 +3,6 @@
 import { ChangeEvent } from "react";
 import { useTranslations } from "next-intl";
 import { AlertCircle } from "lucide-react";
-import { Heading } from "@/features/ui/heading";
 import { Button } from "@/features/ui/button";
 import { Checkbox } from "@/features/ui/checkbox";
 import { Label } from "@/features/ui/label";
@@ -16,6 +15,8 @@ import { CoinsDisplay } from "../../components/CoinsDisplay";
 import { useSkipGeneration } from "../../../lib/hooks/useSkipGeneration";
 import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction";
 import { SplitToneText } from "../../components/SplitToneText";
+import { StampStepTitle } from "../../components/StampStepTitle";
+import { StampTitleAccent } from "../../components/StampTitleAccent";
 
 /**
  * SynthesisForm
@@ -86,24 +87,15 @@ export function SynthesisForm({
   });
 
   return (
-    <div className="relative p-6 pb-36 md:pb-6 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-white md:bg-transparent">
+    <div className="relative p-6 pb-36 md:pb-6 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-(--color-stamp-white) md:bg-transparent">
       {isAuthenticated && !isCoinsError && (
-        <CoinsDisplay className="mb-4 w-fit rounded-full bg-white px-3 py-1.5 md:mb-6" />
+        <CoinsDisplay className="mb-4 w-fit rounded-md border border-(--color-stamp-divider) bg-(--color-stamp-white) px-3 py-1.5 md:mb-6" />
       )}
-      <Heading as="h2" variant="panelTitle" className="mb-4 md:mb-6">
-        <SplitToneText className="block pb-2 -mb-2">
-          {t.rich("title", {
-            accent: (chunks) => (
-              <SplitToneText
-                tone="accent"
-                className="inline-block pb-4 -mb-4 pr-2 -mr-2 font-serif italic lowercase font-light"
-              >
-                {chunks}
-              </SplitToneText>
-            ),
-          })}
-        </SplitToneText>
-      </Heading>
+      <StampStepTitle>
+        {t.rich("title", {
+          accent: (chunks) => <StampTitleAccent>{chunks}</StampTitleAccent>,
+        })}
+      </StampStepTitle>
 
       {/* Form Fields */}
       <div className="space-y-4 md:space-y-8 mb-6 md:mb-12">
@@ -124,17 +116,18 @@ export function SynthesisForm({
               onRemoveBackgroundChange(checked === true)
             }
             aria-label={t("removeBackgroundAria")}
-            className="bg-white data-[state=checked]:bg-(--color-stamp-gold) data-[state=checked]:border-(--color-stamp-gold)"
+            className="rounded-sm border-(--color-stamp-taupe) bg-(--color-stamp-white) focus-visible:ring-(--color-stamp-chocolate) data-[state=checked]:border-(--color-stamp-chocolate) data-[state=checked]:bg-(--color-stamp-chocolate) data-[state=checked]:text-(--color-stamp-white)"
           />
           <Label
             htmlFor="removeBackground"
-            className="text-[10px] font-bold uppercase tracking-widest cursor-pointer"
+            variant="section"
+            className="cursor-pointer"
           >
             <SplitToneText tone="muted">{t("removeBackgroundLabel")}</SplitToneText>
           </Label>
           <InfoTooltip
             content={t("removeBackgroundTooltip")}
-            className="rounded-full bg-white p-0.5"
+            className="rounded-full bg-(--color-stamp-white) p-0.5"
           />
         </div>
       </div>
@@ -142,9 +135,10 @@ export function SynthesisForm({
       {/* Generate Button - hidden on mobile */}
       <div className="hidden md:block space-y-4">
         <Button
+          variant="primary"
           onClick={onGenerate}
           disabled={isGenerating || !prompt.trim() || !canGenerate}
-          className="w-full bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full"
         >
           {isGenerating ? t("generating") : t("generate")}
         </Button>
@@ -152,9 +146,9 @@ export function SynthesisForm({
         {/* Skip generation option - shown when user can proceed without AI */}
         {showInlineSkip && (
           <Button
-            variant="ghost"
+            variant="ghost-stamp"
             onClick={handleSkipGeneration}
-            className="w-full text-xs font-medium tracking-wide hover:underline"
+            className="w-full whitespace-normal"
           >
             <SplitToneText tone="muted">
               {hasUploadedImage
@@ -167,9 +161,9 @@ export function SynthesisForm({
 
       {showInlineSkip && (
         <Button
-          variant="ghost"
+          variant="ghost-stamp"
           onClick={handleSkipGeneration}
-          className="md:hidden mb-4 w-full text-(--color-stamp-taupe)"
+          className="md:hidden mb-4 w-full whitespace-normal"
         >
           {hasUploadedImage ? t("skipWithUploadedImage") : t("skipWithCachedImages")}
         </Button>

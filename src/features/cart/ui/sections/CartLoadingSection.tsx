@@ -1,8 +1,8 @@
 /**
  * CartLoadingSection
  *
- * Skeleton loading state matching the orders/stamp shimmer treatment:
- * cream → divider → cream gradient sweeping across placeholder blocks.
+ * Skeleton loading state below the cart header band: rounded cream →
+ * divider → cream shimmer blocks shaped like the item cards and the summary.
  */
 
 import { useTranslations } from "next-intl";
@@ -25,21 +25,16 @@ export function CartLoadingSection() {
       role="status"
       aria-busy="true"
       aria-label={t("label")}
-      className="space-y-12 xl:col-span-12"
+      className="grid grid-cols-1 gap-8 xl:col-span-12 xl:grid-cols-12 xl:gap-12"
     >
-      <div className="space-y-4">
-        <ShimmerBlock className="h-1.5 w-20" />
-        <ShimmerBlock className="h-16 w-2/3" />
+      <div className="space-y-6 xl:col-span-8">
+        <ShimmerBlock className="h-10 w-full rounded-lg" />
+        {Array.from({ length: SKELETON_ROWS }).map((_, index) => (
+          <ShimmerBlock key={index} className="h-48 w-full rounded-xl" />
+        ))}
       </div>
-      <div className="grid grid-cols-1 gap-12 xl:grid-cols-12 xl:gap-20">
-        <div className="space-y-8 xl:col-span-8">
-          {Array.from({ length: SKELETON_ROWS }).map((_, index) => (
-            <ShimmerBlock key={index} className="h-48 w-full" />
-          ))}
-        </div>
-        <div className="xl:col-span-4">
-          <ShimmerBlock className="h-96 w-full" />
-        </div>
+      <div className="xl:col-span-4">
+        <ShimmerBlock className="h-96 w-full rounded-xl" />
       </div>
     </div>
   );

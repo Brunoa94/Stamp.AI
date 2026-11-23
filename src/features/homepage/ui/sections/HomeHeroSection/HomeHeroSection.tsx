@@ -27,7 +27,7 @@ export function HomeHeroSection() {
       <div className="relative flex min-h-[calc(100svh-7.5rem)] items-center overflow-hidden border-b border-(--color-stamp-divider) xl:h-[calc(100svh-7.5rem)] xl:min-h-176">
         <HeroBackdrop />
 
-        <div className="relative z-20 w-full px-6 py-16 sm:py-20 lg:px-12 xl:py-10">
+        <div className="relative z-20 w-full px-4 py-16 sm:px-6 sm:py-20 lg:px-12 xl:py-10">
           <div className="mx-auto flex max-w-screen-2xl items-center justify-center gap-12 xl:justify-between">
             <div className="hero-enter w-full max-w-2xl xl:min-w-0 xl:max-w-xl xl:flex-1 2xl:max-w-2xl">
               <HeroContent />

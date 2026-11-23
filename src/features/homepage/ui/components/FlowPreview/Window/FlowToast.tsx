@@ -18,7 +18,7 @@ export function FlowToast({ type }: PropsI) {
   const t = useTranslations("home.flowPreview.toasts");
 
   return (
-    <div className="animate-flow-toast absolute bottom-4 right-4 flex items-center gap-2.5 border-l-3 border-(--color-stamp-success) bg-(--color-stamp-white) px-4 py-3 shadow-lg shadow-(--color-stamp-chocolate)/15">
+    <div className="animate-flow-toast absolute bottom-4 right-4 flex items-center gap-2.5 overflow-hidden rounded-lg border-l-3 border-(--color-stamp-success) bg-(--color-stamp-white) px-4 py-3 shadow-(--shadow-stamp-card-hover)">
       <Span unstyled className="flex size-4.5 items-center justify-center rounded-full bg-(--color-stamp-chocolate)">
         <Check className="size-2.5 text-(--color-stamp-white)" strokeWidth={3.5} />
       </Span>

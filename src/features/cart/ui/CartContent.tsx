@@ -1,7 +1,7 @@
 /**
  * CartContent
  *
- * Presentational container for the luxury brutalist cart. Data and handlers
+ * Presentational container for the cart page. Data and handlers
  * come from the useCart lib hook; this component only chooses between the
  * loading / empty / populated layouts.
  */
@@ -12,6 +12,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { Button } from "@/features/ui/button";
 import { useCart } from "../lib/hooks/useCart";
 import { CartLayout } from "./components/CartLayout";
 import { CartHeader } from "./components/CartHeader";
@@ -81,8 +82,7 @@ export function CartContent() {
   return (
     <>
       <CartLayout header={<CartHeader itemCount={itemCount} />}>
-
-        <div className="space-y-8 xl:col-span-8">
+        <div className="space-y-6 xl:col-span-8">
           {/* Selection header */}
           <CartSelectionHeader
             totalCount={cart.cart_items.length}
@@ -104,13 +104,12 @@ export function CartContent() {
             />
           ))}
 
-          <Link
-            href="/stamp"
-            className="inline-flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.3em] text-(--color-stamp-taupe) transition-colors hover:text-(--color-stamp-gold)"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            {t("continueBrowsing")}
-          </Link>
+          <Button asChild variant="ghost-stamp" className="group -ml-2 px-2 md:px-2">
+            <Link href="/stamp">
+              <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+              {t("continueBrowsing")}
+            </Link>
+          </Button>
         </div>
 
         <div className="xl:col-span-4">

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
  * Anchor
  *
  * Typography atom for links and anchors.
- * Encapsulates: font-family, font-weight, text-decoration, underline-offset.
+ * Encapsulates: font-weight, text-decoration, underline-offset, focus outline.
  * All other styling (color, font-size) must come from the caller via `className`.
  *
  * Variants:
@@ -15,10 +15,13 @@ import { cn } from "@/lib/utils";
  */
 
 const anchorVariants = {
-  default: "font-heading font-bold underline underline-offset-2 hover:opacity-80 transition-opacity",
-  subtle: "font-heading font-bold no-underline hover:underline underline-offset-2 transition-all",
-  bold: "font-heading font-bold underline underline-offset-2 hover:opacity-80 transition-opacity",
+  default: "font-semibold underline underline-offset-2 hover:opacity-80 transition-opacity",
+  subtle: "font-semibold no-underline hover:underline underline-offset-2 transition-all",
+  bold: "font-bold underline underline-offset-2 hover:opacity-80 transition-opacity",
 } as const;
+
+const focusClasses =
+  "rounded-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate)";
 
 type AnchorVariant = keyof typeof anchorVariants;
 
@@ -45,7 +48,7 @@ export function Anchor({
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className={cn(anchorVariants[variant], className)}
+        className={cn(anchorVariants[variant], focusClasses, className)}
         {...props}
       >
         {children}
@@ -56,7 +59,7 @@ export function Anchor({
   return (
     <Link
       href={href}
-      className={cn(anchorVariants[variant], className)}
+      className={cn(anchorVariants[variant], focusClasses, className)}
       {...props}
     >
       {children}

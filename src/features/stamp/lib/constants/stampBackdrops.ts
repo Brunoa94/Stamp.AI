@@ -46,7 +46,7 @@ export const STAMP_BACKDROP_EDGE = {
  */
 export const STAMP_SPLIT_TONES = {
   title: { base: "var(--color-stamp-chocolate)", photo: "var(--color-stamp-off-white)" },
-  accent: { base: "var(--color-stamp-taupe)", photo: "var(--color-stamp-gold-light)" },
+  accent: { base: "var(--color-stamp-gold-text)", photo: "var(--color-stamp-gold-light)" },
   muted: { base: "var(--color-stamp-taupe)", photo: "var(--color-stamp-cream)" },
   faint: {
     base: "color-mix(in srgb, var(--color-stamp-taupe) 40%, transparent)",

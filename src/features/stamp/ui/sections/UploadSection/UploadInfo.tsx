@@ -3,6 +3,8 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
+import { cn } from "@/lib/utils";
+import { stampCardVariants } from "../../../lib/variants/stampStudioVariants";
 
 /**
  * UploadInfo
@@ -20,7 +22,7 @@ export function UploadInfo({ fileName, fileSize, onRemove }: PropsI) {
   const t = useTranslations("stamp.upload");
 
   return (
-    <div className="mb-10 p-4 border border-(--color-stamp-divider) bg-white flex items-center gap-4">
+    <div className={cn(stampCardVariants(), "mb-10 flex items-center gap-4 p-4")}>
       <div className="flex-1 min-w-0">
         <Paragraph
           variant="sm"
@@ -36,7 +38,7 @@ export function UploadInfo({ fileName, fileSize, onRemove }: PropsI) {
         variant="ghost"
         size="icon-sm"
         onClick={onRemove}
-        className="ml-auto text-(--color-stamp-taupe) hover:text-red-500 hover:bg-transparent transition-colors shrink-0"
+        className="ml-auto shrink-0 text-(--color-stamp-taupe) transition-colors hover:bg-(--color-stamp-cream) hover:text-(--color-stamp-error)"
         aria-label={t("removeAria")}
       >
         <X className="w-5 h-5" />

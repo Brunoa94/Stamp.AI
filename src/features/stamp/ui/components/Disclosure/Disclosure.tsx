@@ -5,11 +5,12 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
+import { stampCardVariants } from "../../../lib/variants/stampStudioVariants";
 
 /**
  * Disclosure
  *
- * Stamp-styled collapsible group: a bordered trigger row with an uppercase
+ * Stamp-styled collapsible group: a rounded white card whose trigger row has an uppercase
  * label, an optional current-value summary, and a rotating chevron. Used to
  * keep step sections inside the viewport by folding secondary controls.
  * Uncontrolled by default; pass `open`/`onOpenChange` to control it.
@@ -49,10 +50,7 @@ export function Disclosure({
 
   return (
     <div
-      className={cn(
-        "border border-(--color-stamp-divider) bg-white",
-        className,
-      )}
+      className={cn(stampCardVariants(), className)}
     >
       <Button
         type="button"
@@ -61,17 +59,14 @@ export function Disclosure({
         aria-expanded={isOpen}
         aria-controls={contentId}
       >
-        <Span
-          variant="micro"
-          className="tracking-widest text-(--color-stamp-taupe)"
-        >
+        <Span variant="label" className="text-(--color-stamp-taupe)">
           {label}
         </Span>
         <Span unstyled className="flex min-w-0 items-center gap-2">
           {value && (
             <Span
-              variant="micro"
-              className="truncate font-bold tracking-widest text-(--color-stamp-chocolate)"
+              variant="label"
+              className="truncate text-(--color-stamp-chocolate)"
             >
               {value}
             </Span>

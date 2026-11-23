@@ -9,7 +9,7 @@ import { Span } from "@/features/ui/span";
 /**
  * CatalogProductGallery
  *
- * All Printify product photos: a framed main image plus a thumbnail
+ * All Printify product photos: a rounded main image plus a thumbnail
  * strip to switch between them. Falls back to a no-image placeholder
  * when the product has no synced photos.
  */
@@ -27,7 +27,7 @@ export function CatalogProductGallery({ name, imageUrls }: PropsI) {
     return (
       <div
         role="status"
-        className="flex aspect-square items-center justify-center border border-(--color-stamp-divider) bg-(--color-stamp-cream)"
+        className="flex aspect-square items-center justify-center rounded-lg bg-(--color-stamp-cream)"
       >
         <Span variant="micro" className="text-(--color-stamp-taupe)">
           {t("noImage")}
@@ -40,7 +40,7 @@ export function CatalogProductGallery({ name, imageUrls }: PropsI) {
 
   return (
     <div className="space-y-3" aria-label={t("photosLabel")}>
-      <div className="relative aspect-square overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-white)">
+      <div className="relative aspect-square overflow-hidden rounded-lg bg-(--color-stamp-cream)">
         <Image
           src={selectedImageUrl}
           alt={t("photoAlt", {

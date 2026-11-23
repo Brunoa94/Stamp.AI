@@ -33,7 +33,7 @@ export function PaymentReturnErrorCard({
       <PaymentResultHeading
         title={title}
         description={description}
-        className="mb-12"
+        className="mb-10"
       />
       <PaymentResultActions>
         <Button onClick={onRetry} variant="primary" className="w-full">

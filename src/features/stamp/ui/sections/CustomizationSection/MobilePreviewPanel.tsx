@@ -1,12 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Heading } from "@/features/ui/heading";
 import { Button } from "@/features/ui/button";
 import { useStampSelectedImage } from "../../../lib/hooks/useStampSelectors";
 import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction";
 import { DesignAdjustmentPanel } from "../../components/DesignAdjustmentPanel/DesignAdjustmentPanel";
 import { EmptyDesignState } from "./EmptyDesignState";
+import { StampStepTitle } from "../../components/StampStepTitle";
+import { StampTitleAccent } from "../../components/StampTitleAccent";
 
 /**
  * MobilePreviewPanel
@@ -38,21 +39,13 @@ export function MobilePreviewPanel({
   });
 
   return (
-    <div className="p-6 pt-24 pb-40 flex flex-col bg-white min-h-full">
+    <div className="p-6 pt-24 pb-40 flex flex-col bg-(--color-stamp-white) min-h-full">
       {/* Title */}
-      <Heading
-        as="h2"
-        variant="panelTitle"
-        className="text-(--color-stamp-chocolate) mb-6"
-      >
+      <StampStepTitle className="mb-6 md:mb-6">
         {t.rich("previewTitle", {
-          accent: (chunks) => (
-            <span className="font-serif italic lowercase font-light text-(--color-stamp-taupe)">
-              {chunks}
-            </span>
-          ),
+          accent: (chunks) => <StampTitleAccent>{chunks}</StampTitleAccent>,
         })}
-      </Heading>
+      </StampStepTitle>
 
       {/* Design preview and adjuster (no position selector) */}
       <div className="flex-1 flex flex-col">
@@ -72,9 +65,10 @@ export function MobilePreviewPanel({
       {/* Create Product button - hidden on mobile, shown in sticky footer */}
       <div className="hidden md:block mt-6">
         <Button
+          variant="primary"
           onClick={onCreateProduct}
           disabled={!canCreate}
-          className="w-full bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full"
         >
           {isFinalizing ? t("creating") : t("createProduct")}
         </Button>

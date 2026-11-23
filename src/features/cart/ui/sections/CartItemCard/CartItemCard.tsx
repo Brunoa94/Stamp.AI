@@ -1,9 +1,9 @@
 /**
  * CartItemCard
  *
- * Single cart line item in the luxury brutalist style: white card with a
- * subtle chocolate divider border that lifts and gains a gold border on
- * hover. Composes the image, content and action sub-parts.
+ * Single cart line item in the shared card style: a white rounded-xl card
+ * with a divider border and soft shadow; an amber border marks a selected
+ * item. Composes the image, content and action sub-parts.
  */
 
 "use client";
@@ -36,15 +36,15 @@ export function CartItemCard({
 
   return (
     <article
-      className={`cart-item border bg-(--color-stamp-white) p-4 font-heading transition-all duration-500 hover:-translate-y-1 hover:shadow-(--shadow-stamp-card-hover) md:p-8 lg:p-10 ${
+      className={`cart-item rounded-xl border bg-(--color-stamp-white) p-4 shadow-(--shadow-stamp-card) transition-colors duration-200 md:p-6 ${
         isSelected
           ? "border-(--color-stamp-gold)"
-          : "border-(--color-stamp-divider) hover:border-(--color-stamp-gold)"
+          : "border-(--color-stamp-divider) hover:border-(--color-stamp-chocolate)/30"
       }`}
     >
-      <div className="flex flex-col items-start gap-4 md:flex-row md:gap-10">
+      <div className="flex flex-col items-start gap-4 md:flex-row md:gap-6">
         {/* Selection checkbox */}
-        <div className="flex items-center self-center md:self-start md:pt-2">
+        <div className="flex items-center self-start md:pt-2">
           <Checkbox
             variant="stamp"
             checked={isSelected}

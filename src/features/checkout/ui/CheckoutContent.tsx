@@ -1,7 +1,7 @@
 /**
  * CheckoutContent
  *
- * Container for the luxury brutalist checkout page. Resolves the cart, wires
+ * Container for the checkout page. Resolves the cart, wires
  * the shared CheckoutFormProvider, and passes the build-time test-mode
  * setting (NEXT_PUBLIC_CHECKOUT_TEST_MODE) down to the payment sections.
  * All business logic — pricing, payment, form validation — is reused from

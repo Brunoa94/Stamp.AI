@@ -26,7 +26,7 @@ export function VerifiedSecureBadge({
     return (
       <div
         className={cn(
-          "inline-flex items-center gap-2 border border-(--color-stamp-success)/30 bg-(--color-stamp-success)/5 px-3 py-1.5",
+          "inline-flex items-center gap-2 rounded-md border border-(--color-stamp-success)/30 bg-(--color-stamp-success)/5 px-3 py-1.5",
           className,
         )}
       >
@@ -36,14 +36,14 @@ export function VerifiedSecureBadge({
         />
         <div className="flex flex-col">
           <Span
-            variant="micro"
-            className="text-[9px] font-bold uppercase tracking-wider text-(--color-stamp-success)"
+            variant="badge"
+            className="text-(--color-stamp-success)"
           >
             {t("verified")}
           </Span>
           <Span
             variant="micro"
-            className="text-[8px] tracking-wider text-(--color-stamp-taupe)"
+            className="text-(--color-stamp-taupe)"
           >
             {t("secure")}
           </Span>
@@ -56,7 +56,7 @@ export function VerifiedSecureBadge({
     return (
       <div
         className={cn(
-          "flex flex-col items-center gap-2 border-2 border-(--color-stamp-success)/30 bg-gradient-to-b from-(--color-stamp-success)/5 to-(--color-stamp-success)/10 p-4",
+          "flex flex-col items-center gap-2 rounded-xl border border-(--color-stamp-success)/30 bg-(--color-stamp-success)/5 p-4",
           className,
         )}
       >
@@ -73,13 +73,13 @@ export function VerifiedSecureBadge({
         <div className="flex flex-col items-center gap-0.5 text-center">
           <Span
             variant="sm"
-            className="font-bold uppercase tracking-wider text-(--color-stamp-success)"
+            className="font-bold uppercase tracking-wide text-(--color-stamp-success)"
           >
             {t("verified")} {t("secure")}
           </Span>
           <Span
             variant="micro"
-            className="text-[9px] tracking-wider text-(--color-stamp-taupe)"
+            className="text-(--color-stamp-taupe)"
           >
             {t("siteVerified")}
           </Span>
@@ -91,7 +91,7 @@ export function VerifiedSecureBadge({
           />
           <Span
             variant="micro"
-            className="text-[9px] tracking-wider text-(--color-stamp-taupe)"
+            className="text-(--color-stamp-taupe)"
           >
             {t("encryption")}
           </Span>
@@ -103,7 +103,7 @@ export function VerifiedSecureBadge({
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-3 border border-(--color-stamp-success)/20 bg-(--color-stamp-success)/5 px-4 py-2",
+        "inline-flex items-center gap-3 rounded-lg border border-(--color-stamp-success)/20 bg-(--color-stamp-success)/5 px-4 py-2",
         className,
       )}
     >
@@ -120,8 +120,8 @@ export function VerifiedSecureBadge({
       <div className="flex flex-col gap-0.5">
         <div className="flex items-center gap-1.5">
           <Span
-            variant="micro"
-            className="font-bold tracking-wider text-(--color-stamp-success)"
+            variant="badge"
+            className="text-(--color-stamp-success)"
           >
             {t("verified")} {t("secure")}
           </Span>
@@ -133,7 +133,7 @@ export function VerifiedSecureBadge({
           />
           <Span
             variant="micro"
-            className="text-[8px] tracking-wider text-(--color-stamp-taupe)"
+            className="text-(--color-stamp-taupe)"
           >
             {t("encryption")}
           </Span>

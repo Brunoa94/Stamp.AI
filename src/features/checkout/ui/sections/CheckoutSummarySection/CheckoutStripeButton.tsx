@@ -1,7 +1,7 @@
 /**
  * CheckoutStripeButton
  *
- * Stripe payment submission button restyled to the luxury system. Reuses the
+ * Stripe payment submission button (the primary stamp Button). Reuses the
  * shared usePaymentForm hook for all payment processing; only the button
  * presentation and success redirect differ from the original.
  */
@@ -164,7 +164,7 @@ export function CheckoutStripeButton({
         <Paragraph
           unstyled
           role="alert"
-          className="mt-4 border border-(--color-stamp-error)/20 bg-(--color-stamp-error)/5 px-4 py-3 text-lg font-bold uppercase tracking-[0.15em] text-(--color-stamp-error)"
+          className="mt-4 rounded-lg border border-(--color-stamp-error)/20 bg-(--color-stamp-error)/5 px-4 py-3 text-sm font-semibold text-(--color-stamp-error)"
         >
           {error}
         </Paragraph>

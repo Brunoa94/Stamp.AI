@@ -31,22 +31,22 @@ export function ProtectedRoute({
   if (isLoading) {
     return (
       fallback || (
-        <div className="flex min-h-screen items-center justify-center px-4">
+        <div className="flex min-h-screen items-center justify-center px-4 pt-24 sm:px-6 lg:px-12">
           <div
-            className="w-full max-w-md rounded-2xl border border-white/40 bg-white/70 p-10 text-center shadow-[0_12px_32px_rgba(26,35,64,0.12)] backdrop-blur-xl transform-gpu animate-[fadeIn_0.6s_ease-out]"
+            className="w-full max-w-md rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-10 text-center shadow-(--shadow-stamp-card) animate-in fade-in duration-500"
             role="status"
             aria-live="polite"
             aria-label={t("authenticating")}
           >
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-brand-lavender/10 text-brand-lavender">
-              <Loader2 className="h-8 w-8 animate-[spin_1.35s_linear_infinite]" />
+            <div className="mx-auto mb-5 flex size-16 items-center justify-center rounded-full bg-(--color-stamp-cream) text-(--color-stamp-gold-text)">
+              <Loader2 aria-hidden className="size-8 animate-spin" />
             </div>
 
             <div>
-              <Paragraph variant="body" className="text-base font-semibold font-heading uppercase tracking-wide text-brand-navy">
+              <Paragraph variant="xs" className="font-heading text-xl text-(--color-stamp-chocolate)">
                 {t("authenticating")}
               </Paragraph>
-              <Paragraph variant="sm" className="mt-1 text-slate-500">
+              <Paragraph variant="xs" className="mt-1 text-(--color-stamp-taupe)">
                 {t("checkingSession")}
               </Paragraph>
             </div>
@@ -59,8 +59,10 @@ export function ProtectedRoute({
   if (!isAuthenticated) {
     return (
       fallback || (
-        <div className="flex min-h-screen items-center justify-center">
-          <div className="text-lg">{t("redirecting")}</div>
+        <div className="flex min-h-screen items-center justify-center px-4 pt-24">
+          <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
+            {t("redirecting")}
+          </Paragraph>
         </div>
       )
     );

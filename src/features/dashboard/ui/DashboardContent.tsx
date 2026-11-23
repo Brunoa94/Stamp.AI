@@ -56,13 +56,13 @@ export function DashboardContent() {
   if (isError) {
     return (
       <DashboardLayout header={<DashboardHeader user={user} />}>
-        <div className="border border-(--color-stamp-error)/20 bg-(--color-stamp-error)/5 p-8 text-center">
-          <Heading as="h2" variant="card" className="text-(--color-stamp-error)">
+        <div className="rounded-xl border border-(--color-stamp-error)/20 bg-(--color-stamp-error)/5 p-8 text-center">
+          <Heading as="h2" variant="cardCompact" className="text-(--color-stamp-error)">
             {t("errorTitle")}
           </Heading>
           <Paragraph
-            variant="sm"
-            className="mt-2 text-(--color-stamp-error)/80"
+            variant="xs"
+            className="mt-2 text-(--color-stamp-error)"
           >
             {t("errorDescription")}
           </Paragraph>

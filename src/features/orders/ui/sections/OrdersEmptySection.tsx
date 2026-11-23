@@ -13,26 +13,19 @@ export function OrdersEmptySection({ onInitiate }: PropsI) {
 
   return (
     <section
-      className="flex flex-col items-center py-32 text-center"
+      className="flex flex-col items-center rounded-2xl bg-(--color-stamp-cream) px-6 py-16 text-center"
       aria-label={t("ariaLabel")}
     >
-      <div className="mb-12 flex h-48 w-48 rotate-3 items-center justify-center border border-(--color-stamp-divider) bg-(--color-stamp-cream)">
-        <ShoppingBag className="h-16 w-16 text-(--color-stamp-taupe)/30" />
+      <div className="mb-8 flex h-24 w-24 items-center justify-center rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) shadow-(--shadow-stamp-card)">
+        <ShoppingBag aria-hidden className="h-10 w-10 text-(--color-stamp-gold-text)" />
       </div>
-      <Heading as="h2" variant="title" className="text-4xl">
+      <Heading as="h2" variant="card" className="text-(--color-stamp-chocolate)">
         {t("title")}
       </Heading>
-      <Paragraph
-        variant="sm"
-        className="mb-12 mt-4 text-[10px] tracking-[0.2em] text-(--color-stamp-taupe)"
-      >
+      <Paragraph variant="xs" className="mb-8 mt-3 text-(--color-stamp-taupe)">
         {t("description")}
       </Paragraph>
-      <Button
-        type="button"
-        onClick={onInitiate}
-        variant="cta"
-      >
+      <Button type="button" onClick={onInitiate} variant="primary">
         {t("initiate")}
       </Button>
     </section>

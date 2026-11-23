@@ -22,7 +22,7 @@ export function PaymentLogo({ id, className }: PaymentLogoProps) {
     <Span
       unstyled
       className={cn(
-        "relative inline-flex h-7 w-11 shrink-0 items-center justify-center rounded-sm border border-(--color-stamp-divider) bg-(--color-stamp-white) px-1",
+        "relative inline-flex h-7 w-11 shrink-0 items-center justify-center rounded-md border border-(--color-stamp-divider) bg-(--color-stamp-white) px-1",
         className,
       )}
     >

@@ -8,6 +8,7 @@ import { useStampStepAccessibility } from "../../lib/hooks/useStampSelectors";
 import { isStampBackdropVisible } from "../../lib/helpers/stampBackdropHelpers";
 import {
   stampSidebarDotVariants,
+  stampSidebarEyebrowVariants,
   stampSidebarTextVariants,
   stampSidebarVariants,
 } from "../../lib/variants/stampSidebarVariants";
@@ -20,8 +21,8 @@ import {
  * Step indicators show progress (navigation is via BackButton component).
  * Off-white on the hero step; from step 01 transparent over the canvas
  * backdrop photo, with light copy. Done and upcoming labels sit at 80% so
- * they keep AA contrast on both (the current step stands out by its gold
- * dot, full opacity and shift); done vs upcoming shows in the dot colour.
+ * they keep AA contrast on both (the current step stands out by its larger
+ * amber dot, full opacity and shift); done vs upcoming shows in the dot colour.
  */
 
 function NavigationSidebarComponent() {
@@ -32,8 +33,12 @@ function NavigationSidebarComponent() {
 
   return (
     <aside className={stampSidebarVariants({ onPhoto })}>
-      {/* Header */}
-      <div className="mb-16">
+      {/* Header: accent bar, eyebrow, title (the Stamp section-header order) */}
+      <div className="mb-10 space-y-3">
+        <div aria-hidden="true" className="h-1.5 w-16 rounded-full bg-(--color-stamp-gold)" />
+        <Span as="p" variant="label" className={stampSidebarEyebrowVariants({ onPhoto })}>
+          {t("nav.eyebrow")}
+        </Span>
         <Heading
           as="h4"
           variant="question"

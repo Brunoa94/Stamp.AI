@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
@@ -44,8 +42,8 @@ export function PromoSectionContent({
           variant="serif"
           className={
             inverted
-              ? "text-(--color-stamp-gold)"
-              : "text-(--color-stamp-taupe)"
+              ? "text-(--color-stamp-gold-light)"
+              : "text-(--color-stamp-gold-text)"
           }
         >
           {accentWord}
@@ -57,26 +55,21 @@ export function PromoSectionContent({
 
   return (
     <div className={promoSectionContentVariants({ align })}>
-      {/* Luxury section label with number */}
+      {/* Section header order: accent bar, numbered eyebrow, title, supporting line */}
+      <div aria-hidden className="h-1.5 w-16 rounded-full bg-(--color-stamp-gold)" />
       {sectionNumber && (
-        <div className="flex items-center gap-3">
-          <Span
-            unstyled
-            className={cn(
-              "text-sm font-bold tracking-[0.3em] uppercase",
-              inverted ? "text-(--color-stamp-gold)" : "text-(--color-stamp-gold-text)",
-            )}
-          >
-            {sectionNumber}
-          </Span>
-          <div className="w-8 h-px bg-(--color-stamp-gold)/60" />
-        </div>
+        <Span
+          as="p"
+          variant="label"
+          className={inverted ? "text-(--color-stamp-gold-light)" : "text-(--color-stamp-gold-text)"}
+        >
+          {sectionNumber}
+        </Span>
       )}
 
-      {/* Main tagline with larger, bolder typography */}
       <Heading
         as="h2"
-        variant="section"
+        variant="sectionDisplay"
         className={cn(
           "max-w-lg",
           inverted
@@ -87,16 +80,14 @@ export function PromoSectionContent({
         {renderTagline()}
       </Heading>
 
-      {/* Description with refined spacing */}
       {description && (
         <Paragraph
-          variant="sm"
+          variant="xs"
           className={cn(
-            "max-w-md leading-relaxed",
+            "mt-2 max-w-md md:text-lg",
             inverted
               ? "text-(--color-stamp-taupe-light)"
-              : "text-(--color-stamp-chocolate)/70",
-            align === "center" && "mx-auto",
+              : "text-(--color-stamp-taupe)",
           )}
         >
           {description}

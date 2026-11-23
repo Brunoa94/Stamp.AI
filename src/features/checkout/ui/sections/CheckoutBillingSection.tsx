@@ -2,7 +2,7 @@
  * CheckoutBillingSection
  *
  * Billing address section. Uses the stamp-styled CheckoutAddressForm
- * inside the luxury brutalist section card.
+ * inside the shared checkout section card.
  */
 
 import { useTranslations } from "next-intl";

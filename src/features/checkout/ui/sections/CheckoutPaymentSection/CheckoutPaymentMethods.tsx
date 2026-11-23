@@ -1,9 +1,10 @@
 /**
  * CheckoutPaymentMethods
  *
- * Payment-method radio group restyled to the luxury brutalist system: one
- * row per method with a radio mark, its name and the full-colour logos of
- * the brands it accepts. Selection state lives in the checkout form context.
+ * Payment-method radio group: one rounded-xl option card per method with a
+ * radio mark, its name and the full-colour logos of the brands it accepts.
+ * The selected card gets a chocolate border on cream. Selection state lives
+ * in the checkout form context.
  */
 
 import { useTranslations } from "next-intl";
@@ -47,12 +48,12 @@ export function CheckoutPaymentMethods({
             disabled={disabled}
             onClick={() => onMethodChange(method.id)}
             className={cn(
-              "flex w-full items-center gap-4 border px-4 py-4 text-left transition-all duration-300 sm:px-5",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) focus-visible:ring-offset-2",
+              "flex w-full items-center gap-4 rounded-xl border px-4 py-4 text-left transition-colors duration-200 sm:px-5",
+              "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate)",
               "disabled:cursor-not-allowed disabled:opacity-50",
               isSelected
-                ? "border-(--color-stamp-gold) bg-(--color-stamp-cream)/50"
-                : "border-(--color-stamp-divider) bg-(--color-stamp-white) hover:border-(--color-stamp-chocolate)",
+                ? "border-(--color-stamp-chocolate) bg-(--color-stamp-cream)"
+                : "border-(--color-stamp-divider) bg-(--color-stamp-white) hover:border-(--color-stamp-chocolate)/30 hover:bg-(--color-stamp-cream)",
             )}
           >
             <Span
@@ -60,16 +61,16 @@ export function CheckoutPaymentMethods({
               aria-hidden="true"
               className={cn(
                 "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
-                isSelected ? "border-(--color-stamp-gold)" : "border-(--color-stamp-divider)",
+                isSelected ? "border-(--color-stamp-chocolate)" : "border-(--color-stamp-taupe)/50",
               )}
             >
               {isSelected && <Span unstyled className="h-2.5 w-2.5 rounded-full bg-(--color-stamp-gold)" />}
             </Span>
             <Span unstyled className="flex min-w-0 flex-1 flex-col gap-0.5">
-              <Span unstyled className="text-[11px] font-bold uppercase tracking-ultra text-(--color-stamp-chocolate)">
+              <Span variant="value" className="text-(--color-stamp-chocolate)">
                 {tMethods(`${method.id}.label`)}
               </Span>
-              <Span unstyled className="text-2xs uppercase tracking-[0.15em] text-(--color-stamp-taupe)">
+              <Span variant="micro" className="text-(--color-stamp-taupe)">
                 {tMethods(`${method.id}.description`)}
               </Span>
             </Span>

@@ -6,7 +6,6 @@
  */
 
 import { useTranslations } from "next-intl";
-import { Span } from "@/features/ui/span";
 import { formatPrice } from "../../../lib/utils/formatPrice";
 import { CartOrderSummaryRow } from "./CartOrderSummaryRow";
 import { CartOrderSummaryTotal } from "./CartOrderSummaryTotal";
@@ -26,7 +25,7 @@ export function CartOrderSummaryBreakdown({
 
   return (
     <>
-      <dl className="mb-8 space-y-5">
+      <dl className="mb-6 space-y-4">
         <CartOrderSummaryRow
           label={t("subtotal")}
           value={formatPrice(subtotal)}
@@ -34,7 +33,7 @@ export function CartOrderSummaryBreakdown({
         <CartOrderSummaryRow
           label={t("shippingProtocol")}
           value={shipping === 0 ? t("free") : formatPrice(shipping)}
-          valueClassName="font-body text-base font-bold uppercase tracking-[0.15em] text-(--color-stamp-success)"
+          valueClassName="font-body text-base font-bold text-(--color-stamp-success)"
         />
       </dl>
 

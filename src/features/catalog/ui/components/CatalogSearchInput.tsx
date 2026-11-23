@@ -32,7 +32,7 @@ export function CatalogSearchInput({ query, onQueryChange }: PropsI) {
         onChange={(event) => onQueryChange(event.target.value)}
         placeholder={t("searchPlaceholder")}
         aria-label={t("searchAria")}
-        className="h-14 rounded-lg border-(--color-stamp-divider) bg-(--color-stamp-white) pl-13 font-body text-base text-(--color-stamp-chocolate) shadow-none placeholder:text-(--color-stamp-taupe) focus-visible:border-(--color-stamp-gold) focus-visible:ring-(--color-stamp-gold)/20"
+        className="h-14 bg-(--color-stamp-white) pl-13 font-body"
       />
     </div>
   );

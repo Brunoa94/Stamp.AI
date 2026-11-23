@@ -29,23 +29,20 @@ export function TrustpilotReviewButton({
   if (variant === "prominent") {
     return (
       <div className={cn("flex flex-col items-center gap-3", className)}>
-        <Span variant="micro" className="text-[10px] tracking-wider text-(--color-stamp-taupe)">
+        <Span variant="micro" className="text-(--color-stamp-taupe)">
           {t("enjoyedExperience")}
         </Span>
-        <Button
-          asChild
-          className="w-full py-5 h-auto text-xs tracking-widest uppercase bg-trustpilot text-white hover:bg-trustpilot-hover"
-        >
+        <Button asChild variant="primary" className="w-full">
           <a
             href={trustpilotUrl}
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Star className="h-4 w-4 mr-2 fill-white" aria-hidden="true" />
+            <Star className="h-4 w-4 fill-trustpilot text-trustpilot" aria-hidden="true" />
             {t("leaveReview")}
           </a>
         </Button>
-        <Span variant="micro" className="text-[9px] text-(--color-stamp-taupe)">
+        <Span variant="micro" className="text-(--color-stamp-taupe)">
           {t("poweredBy")} <span className="font-bold text-trustpilot">Trustpilot</span>
         </Span>
       </div>
@@ -58,15 +55,15 @@ export function TrustpilotReviewButton({
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        "inline-flex items-center gap-2 px-4 py-2 border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-all hover:border-trustpilot",
+        "inline-flex items-center gap-2 rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 py-2 transition-colors hover:border-trustpilot focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate)",
         className
       )}
     >
       <Star className="h-4 w-4 fill-trustpilot text-trustpilot" aria-hidden="true" />
-      <Span variant="micro" className="text-[10px] font-bold tracking-wider text-(--color-stamp-chocolate)">
+      <Span variant="badge" className="text-(--color-stamp-chocolate)">
         {t("rateUs")}
       </Span>
-      <Span variant="micro" className="text-[10px] tracking-wider text-trustpilot">
+      <Span variant="micro" className="font-bold text-trustpilot">
         Trustpilot
       </Span>
     </a>

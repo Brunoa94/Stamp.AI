@@ -250,7 +250,8 @@
       "accent": "essentials",
       "label": "Our apparel",
       "emptyState": "The catalog is temporarily unavailable — please check back soon",
-      "viewFullCatalog": "Browse all products"
+      "viewFullCatalog": "Browse all products",
+      "subtitle": "Our bestselling blanks, ready for your design."
     },
     "featured": {
       "title": "Featured",
@@ -432,7 +433,6 @@
     },
     "productOfMonth": {
       "eyebrow": "This month's pick",
-      "title": "Product of the month",
       "badge": "Pick of the month",
       "cta": "Design yours now",
       "noImage": "No image"
@@ -453,6 +453,28 @@
           "cta": "See the essentials",
           "imageAlt": "Model wearing a heavyweight white t-shirt"
         }
+      }
+    },
+    "categories": {
+      "title": "Shop by category",
+      "items": {
+        "tees": "T-shirts",
+        "hoodies": "Hoodies",
+        "mugs": "Mugs",
+        "totes": "Tote bags",
+        "canvas": "Canvas prints",
+        "kids": "Kids"
+      }
+    },
+    "giftIdeas": {
+      "title": "Gift ideas for every occasion",
+      "subtitle": "One photo and a few words is all it takes to make a gift nobody else can buy.",
+      "tiles": {
+        "birthdays": "Birthdays",
+        "weddings": "Weddings & parties",
+        "pets": "For pet lovers",
+        "family": "Family keepsakes",
+        "adventures": "Travel & adventures"
       }
     }
   },
@@ -662,7 +684,19 @@
       "openMenu": "Open menu",
       "closeMenu": "Close menu",
       "mainNavAria": "Main navigation",
-      "mobileNavAria": "Mobile navigation"
+      "mobileNavAria": "Mobile navigation",
+      "wordmark": "Stamp",
+      "promptPlaceholder": "Describe an idea or upload a photo…",
+      "categoryNavAria": "Shop categories",
+      "categories": {
+        "studio": "Design studio",
+        "allProducts": "All products",
+        "popular": "Popular right now",
+        "gifts": "Gift ideas",
+        "howItWorks": "How it works",
+        "shipping": "Shipping",
+        "help": "Help & FAQ"
+      }
     },
     "nav": {
       "eyebrow": "Your Progress",
@@ -1227,7 +1261,8 @@
       },
       "wordmark": "Stamp",
       "copyright": "© {year} Stamp AI. All rights reserved.",
-      "tagline": "Made for people who make things"
+      "tagline": "Made for people who make things",
+      "strip": "Every piece is printed on demand, only once it's ordered. No warehouses, no waste."
     },
     "languageSwitcher": {
       "label": "Language"

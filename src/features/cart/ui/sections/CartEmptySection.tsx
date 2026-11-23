@@ -1,10 +1,8 @@
 /**
  * CartEmptySection
  *
- * Empty cart state in the luxury brutalist style:
- * - Cream icon plate with a subtle tilt
- * - Playfair serif italic headline
- * - Chocolate → gold CTA back to the stamp creator
+ * Empty cart state: a round cream icon plate, a slab-serif headline, a
+ * supporting line and the chocolate → amber CTA back to the stamp creator.
  */
 
 import Link from "next/link";
@@ -12,7 +10,7 @@ import { ArrowLeft, ShoppingBag } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
-import { Span } from "@/features/ui/span";
+import { Paragraph } from "@/features/ui/paragraph";
 
 export function CartEmptySection() {
   const t = useTranslations("cart.empty");
@@ -20,11 +18,11 @@ export function CartEmptySection() {
   return (
     <div
       role="status"
-      className="flex flex-col items-center justify-center py-32 text-center xl:col-span-12"
+      className="flex flex-col items-center justify-center py-16 text-center xl:col-span-12"
     >
-      <div className="mb-8 flex h-40 w-40 rotate-3 items-center justify-center border border-(--color-stamp-divider) bg-(--color-stamp-cream)">
+      <div className="mb-8 flex h-32 w-32 items-center justify-center rounded-full bg-(--color-stamp-cream)">
         <ShoppingBag
-          className="h-16 w-16 text-(--color-stamp-taupe)/30"
+          className="h-14 w-14 text-(--color-stamp-taupe)/40"
           aria-hidden="true"
         />
       </div>
@@ -32,15 +30,15 @@ export function CartEmptySection() {
       {/* The page's h1 is CartHeader's, in the band above */}
       <Heading
         as="h2"
-        variant="question"
-        className="mb-4 text-(--color-stamp-chocolate)"
+        variant="sectionSlab"
+        className="mb-3 text-(--color-stamp-chocolate)"
       >
         {t("title")}
       </Heading>
 
-      <Span variant="default" className="mb-10 text-(--color-stamp-taupe)">
+      <Paragraph variant="xs" className="mb-10 max-w-md text-(--color-stamp-taupe)">
         {t("subtitle")}
-      </Span>
+      </Paragraph>
 
       <Button asChild variant="primary" className="group">
         <Link href="/stamp">

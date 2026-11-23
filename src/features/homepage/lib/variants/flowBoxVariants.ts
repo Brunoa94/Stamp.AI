@@ -1,7 +1,7 @@
 import { cva } from "class-variance-authority";
 
 /** Bordered option box in the flow demo's mock screens; gold when selected. */
-export const flowBoxVariants = cva("", {
+export const flowBoxVariants = cva("rounded-sm", {
   variants: {
     selected: {
       true: "border-2 border-(--color-stamp-gold)",

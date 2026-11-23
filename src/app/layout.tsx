@@ -10,7 +10,6 @@ import { Toaster } from "sonner";
 import { SupabaseAuthProvider } from "@/providers/SupabaseAuthProvider";
 import { GuestCartMerger } from "@/features/auth/ui/components/GuestCartMerger";
 import { QueryProvider } from "@/providers/QueryProvider";
-import { GrainOverlay } from "@/features/layout/brutalist/GrainOverlay";
 import { StructuredData } from "@/features/seo/StructuredData";
 import { organizationSchema } from "@/features/seo/schemas/organization";
 import { webSiteSchema } from "@/features/seo/schemas/website";
@@ -25,12 +24,16 @@ import { CookieConsentBanner } from "@/features/analytics/ui/CookieConsentBanner
 import { GlobalErrorBoundary } from "@/shared/ui/ErrorBoundary/GlobalErrorBoundary";
 import { WebVitalsReporter } from "@/shared/ui/WebVitalsReporter";
 
+// Sanchez (headings), Inter (body) and Indie Flower (handwritten accent words)
+// are preloaded: they render above the fold. Poppins is only a fallback behind
+// Inter and Bebas Neue appears on a few interior screens, so they load on
+// demand instead of competing with the hero for bandwidth.
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
-  preload: true,
+  preload: false,
 });
 
 const bebasNeue = Bebas_Neue({
@@ -38,7 +41,7 @@ const bebasNeue = Bebas_Neue({
   variable: "--font-bebas-neue",
   subsets: ["latin"],
   display: "swap",
-  preload: true,
+  preload: false,
 });
 
 const sanchez = Sanchez({
@@ -100,7 +103,6 @@ export default async function RootLayout({
         <AnalyticsPageViewTracker />
         <StructuredData data={organizationSchema()} />
         <StructuredData data={webSiteSchema(toLanguageTag(locale))} />
-        <GrainOverlay />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider>
             <WebVitalsReporter />

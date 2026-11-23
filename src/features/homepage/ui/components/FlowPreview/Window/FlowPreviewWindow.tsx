@@ -22,15 +22,15 @@ export function FlowPreviewWindow({ label, stepTag, children }: PropsI) {
     <div
       role="img"
       aria-label={label}
-      className="relative w-full max-w-160 overflow-hidden rounded-lg border border-(--color-stamp-chocolate)/10 bg-(--color-stamp-cream) shadow-2xl shadow-(--color-stamp-chocolate)/15"
+      className="relative w-full max-w-160 overflow-hidden rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-cream) shadow-(--shadow-stamp-card-hover)"
     >
-      <div className="flex items-center gap-2 border-b border-(--color-stamp-chocolate)/10 bg-(--color-stamp-white) px-4 py-3">
+      <div className="flex items-center gap-2 border-b border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 py-3">
         <Span unstyled className="size-2.5 rounded-full bg-(--color-stamp-chocolate)/10" />
         <Span unstyled className="size-2.5 rounded-full bg-(--color-stamp-chocolate)/10" />
         <Span unstyled className="size-2.5 rounded-full bg-(--color-stamp-chocolate)/10" />
         <Span
           variant="pill"
-          className="ml-2.5 inline-flex items-center gap-1.5 border border-(--color-stamp-chocolate)/10 px-2 py-1 tracking-widest text-(--color-stamp-chocolate)"
+          className="ml-2.5 inline-flex items-center gap-1.5 rounded-md border border-(--color-stamp-divider) px-2 py-1 tracking-widest text-(--color-stamp-chocolate)"
         >
           <ArrowLeft className="size-3" strokeWidth={2.4} />
           {stepTag}

@@ -22,21 +22,37 @@
      Core brand identity colors
      ========================================== */
 
-  /* Stamp Luxury Theme Colors */
-  --color-stamp-taupe: #795944; /* [tag: brand-stamp-taupe] Warm taupe accent */
-  --color-stamp-taupe-light: #c4a08a; /* [tag: brand-stamp-taupe-light] Taupe text on chocolate surfaces */
-  --color-stamp-chocolate: #3d2817; /* [tag: brand-stamp-chocolate] Primary dark brown */
-  --color-stamp-gold: #b9932f; /* [tag: brand-stamp-gold] Metallic gold accent */
-  --color-stamp-gold-text: #82631b; /* [tag: brand-stamp-gold-text] Gold text on light surfaces */
-  --color-stamp-gold-light: #ecce78; /* [tag: brand-stamp-gold-light] Gold text on dark surfaces and photo scrims */
-  --color-stamp-cream: #faf6f1; /* [tag: brand-stamp-cream] Soft cream background */
-  --color-stamp-off-white: #fefefe; /* [tag: brand-stamp-off-white] Near white surface */
+  /* Stamp "warm marketplace" theme (2026-11): the original chocolate-and-gold
+     stamp identity blended half-way with a friendly marketplace look. Each
+     value is the midpoint between the original token and the marketplace
+     one, so the brand keeps its warmth while reading lighter and rounder.
+     "gold" is now an amber: a fill and decoration colour (ink text on it),
+     never text or a focus ring on light surfaces. Contrast pairs are listed
+     in .claude/skills/frontend-ui-engineering/references/color-palette.md. */
+  --color-stamp-taupe: #6c5749; /* [tag: brand-stamp-taupe] Warm taupe, secondary text on light surfaces */
+  --color-stamp-taupe-light: #c6ae9f; /* [tag: brand-stamp-taupe-light] Secondary text on chocolate surfaces */
+  --color-stamp-chocolate: #342419; /* [tag: brand-stamp-chocolate] Dark chocolate: text, solid buttons, dark bands */
+  --color-stamp-gold: #d0842e; /* [tag: brand-stamp-gold] Amber accent: bars, badges, hover fills (ink text on it) */
+  --color-stamp-gold-text: #955415; /* [tag: brand-stamp-gold-text] Amber text on white, cream and peach */
+  --color-stamp-gold-light: #f1bb78; /* [tag: brand-stamp-gold-light] Amber text on chocolate surfaces and photo scrims */
+  --color-stamp-cream: #faf5ee; /* [tag: brand-stamp-cream] Cream panels and section backgrounds */
+  --color-stamp-off-white: #fdfbf8; /* [tag: brand-stamp-off-white] Warm page background */
   --color-stamp-divider: rgba(
-    61,
-    40,
-    23,
-    0.08
-  ); /* [tag: brand-stamp-divider] Subtle divider */
+    52,
+    36,
+    25,
+    0.1
+  ); /* [tag: brand-stamp-divider] Hairline borders and dividers */
+
+  /* Section tints [tag: brand-stamp-tint-*] */
+  --color-stamp-peach: #fceee2; /* [tag: brand-stamp-tint-peach] Hero frame, product-of-the-month and promo panels */
+  --color-stamp-sage: #e3eadc; /* [tag: brand-stamp-tint-sage] Image placeholders behind category and gift tiles */
+
+  /* Homepage flow preview backdrops [tag: flow-art-*] — surfaces behind the demo
+     illustrations (the illustrations themselves are SVGs in public/assets/flow-preview) */
+  --color-flow-art-backdrop-sage: #c5cbc0; /* [tag: flow-art-backdrop-sage] Apparel card backdrop */
+  --color-flow-art-backdrop-sand: #e9e4db; /* [tag: flow-art-backdrop-sand] Accessory card backdrop */
+  --color-flow-art-mockup-backdrop: #f3efe8; /* [tag: flow-art-mockup-backdrop] Final mockup backdrop */
   --color-stamp-white: #ffffff; /* [tag: brand-stamp-white] Pure white surface / text on dark */
   --color-stamp-error: #dc2626; /* [tag: brand-stamp-error] Error and destructive actions */
   --color-stamp-success: #047857; /* [tag: brand-stamp-success] Success / delivered status */
@@ -65,10 +81,13 @@
      ========================================== */
 
   /* Stamp shadows [tag: shadow-stamp-*] — derived from brand colors via color-mix */
-  --shadow-stamp-card: 6px 6px 0
-    color-mix(in srgb, var(--color-stamp-chocolate) 12%, transparent); /* [tag: shadow-stamp-card] Square card shadow */
-  --shadow-stamp-card-hover: 8px 8px 0
-    color-mix(in srgb, var(--color-stamp-chocolate) 18%, transparent); /* [tag: shadow-stamp-card-hover] Square card shadow on hover */
+  /* Cards rest on a soft shadow and, on hover, lift into a small offset
+     "stamp" shadow: the original brutalist offset, scaled down to suit the
+     rounded corners. */
+  --shadow-stamp-card: 0 1px 3px
+    color-mix(in srgb, var(--color-stamp-chocolate) 8%, transparent); /* [tag: shadow-stamp-card] Soft resting card shadow */
+  --shadow-stamp-card-hover: 4px 4px 0
+    color-mix(in srgb, var(--color-stamp-chocolate) 14%, transparent); /* [tag: shadow-stamp-card-hover] Offset stamp shadow on hover */
   --shadow-stamp-gold-cta: 0 10px 20px
     color-mix(in srgb, var(--color-stamp-gold) 20%, transparent); /* [tag: shadow-stamp-gold-cta] Gold CTA hover glow */
   --shadow-stamp-modal: 0 50px 100px
@@ -76,11 +95,6 @@
   --shadow-stamp-modal-error: 0 50px 100px
     color-mix(in srgb, var(--color-stamp-error) 20%, transparent); /* [tag: shadow-stamp-modal-error] Destructive modal elevation */
 
-  /* Homepage flow preview backdrops [tag: flow-art-*] — surfaces behind the demo
-     illustrations (the illustrations themselves are SVGs in public/assets/flow-preview) */
-  --color-flow-art-backdrop-sage: #c5cbc0; /* [tag: flow-art-backdrop-sage] Apparel card backdrop */
-  --color-flow-art-backdrop-sand: #e9e4db; /* [tag: flow-art-backdrop-sand] Accessory card backdrop */
-  --color-flow-art-mockup-backdrop: #f3efe8; /* [tag: flow-art-mockup-backdrop] Final mockup backdrop */
 }
 
 /* ==========================================
@@ -138,7 +152,7 @@
   gap: 1rem;
   padding: 1.25rem 1.5rem;
   min-width: 360px;
-  border-radius: 0;
+  border-radius: 0.75rem;
   border: 1px solid var(--color-stamp-divider);
   background-color: var(--color-stamp-off-white);
   box-shadow: var(--shadow-stamp-card);
@@ -177,8 +191,8 @@
   color: var(--color-stamp-white);
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
-  font-weight: 500;
-  border-radius: 0;
+  font-weight: 600;
+  border-radius: 0.5rem;
   transition: background-color 0.2s;
 }
 
@@ -192,7 +206,7 @@
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
   font-weight: 500;
-  border-radius: 0;
+  border-radius: 0.5rem;
   transition: color 0.2s;
 }
 

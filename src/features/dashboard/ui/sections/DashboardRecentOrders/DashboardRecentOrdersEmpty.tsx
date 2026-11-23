@@ -1,7 +1,7 @@
 /**
  * DashboardRecentOrdersEmpty
  *
- * Empty state for the recent orders list: tilted cream icon plate and a
+ * Empty state for the recent orders list: cream icon tile and a
  * link into the stamp flow.
  */
 
@@ -17,10 +17,10 @@ export function DashboardRecentOrdersEmpty() {
 
   return (
     <div role="status" className="flex flex-col items-center py-16 text-center">
-      <div className="mb-8 flex h-24 w-24 rotate-3 items-center justify-center border border-(--color-stamp-divider) bg-(--color-stamp-cream)">
-        <ShoppingBag className="h-8 w-8 text-(--color-stamp-taupe)/30" />
+      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-xl bg-(--color-stamp-cream)">
+        <ShoppingBag aria-hidden className="h-8 w-8 text-(--color-stamp-gold-text)" />
       </div>
-      <Heading as="h3" variant="question">
+      <Heading as="h3" variant="cardCompact" className="text-(--color-stamp-chocolate)">
         {t("emptyTitle")}
       </Heading>
       <Span

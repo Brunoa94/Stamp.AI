@@ -1,80 +1,67 @@
 import { useTranslations } from "next-intl";
-import { ChevronRight } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
-import { Span } from "@/features/ui/span";
 import { LEGAL_ENTITY } from "@/features/legal/lib/constants/legalEntity";
+import { PageHeader } from "@/shared/ui/PageHeader";
 import { FAQ_CATEGORIES } from "../lib/constants/faqContent";
 
 /**
  * FaqPageContent
  *
- * Standalone FAQ page: categorised accordions built on native
- * <details>/<summary> (keyboard accessible, zero JS), mirroring the
- * homepage FAQ section's markup, plus a contact CTA.
+ * Standalone FAQ page: the cream page header, then one row per category
+ * (its heading on the left, an accordion of rounded cards on the right),
+ * matching the homepage FAQ section. Accordions are native
+ * <details>/<summary> (keyboard accessible, zero JS). Ends with a
+ * contact panel.
  */
 
 export function FaqPageContent() {
   const t = useTranslations("faq");
 
   return (
-    <article className="px-6 pt-40 pb-24 lg:px-12 xl:px-24">
+    <article className="px-4 pt-28 pb-20 sm:px-6 lg:px-12">
       <div className="mx-auto max-w-screen-2xl">
-        <header className="mb-12 space-y-4">
-          <div className="h-1.5 w-20 bg-(--color-stamp-gold)" />
-          <Heading
-            as="h1"
-            variant="sectionDisplay"
-            className="text-(--color-stamp-chocolate)"
-          >
-            {t("title")}{" "}
-            <Span variant="serif" className="text-(--color-stamp-taupe)">
-              {t("accent")}
-            </Span>
-          </Heading>
-        </header>
+        <PageHeader title={t("title")} highlightedWord={t("accent")} subtitle={t("intro")} />
 
-        <Paragraph
-          variant="lead"
-          className="mb-16 text-(--color-stamp-chocolate)/80"
-        >
-          {t("intro")}
-        </Paragraph>
-
-        <div className="space-y-16">
+        <div className="mt-16 space-y-16">
           {FAQ_CATEGORIES.map((category) => (
-            <section key={category.id} className="space-y-6">
+            <section
+              key={category.id}
+              aria-labelledby={`faq-${category.id}-title`}
+              className="grid gap-6 lg:grid-cols-3 lg:gap-16"
+            >
               <Heading
                 as="h2"
-                variant="item"
-                className="text-(--color-stamp-chocolate)"
+                id={`faq-${category.id}-title`}
+                variant="sectionSlab"
+                className="text-(--color-stamp-chocolate) lg:sticky lg:top-28 lg:self-start"
               >
                 {t(`categories.${category.id}.heading`)}
               </Heading>
-              <div className="space-y-4">
+              <div className="space-y-3 lg:col-span-2">
                 {category.items.map((itemId) => (
                   <details
                     key={itemId}
-                    className="group border border-(--color-stamp-divider) bg-(--color-stamp-white) transition-colors duration-300 open:border-(--color-stamp-gold) hover:border-(--color-stamp-gold)"
+                    className="group rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) px-5 shadow-(--shadow-stamp-card) transition-colors open:border-(--color-stamp-gold) hover:border-(--color-stamp-gold) lg:px-6"
                   >
-                    <summary className="flex cursor-pointer list-none items-center justify-between gap-6 p-6 [&::-webkit-details-marker]:hidden">
-                      <Heading as="h3" variant="itemCompact">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-6 rounded-xl py-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate) [&::-webkit-details-marker]:hidden">
+                      <Heading
+                        as="h3"
+                        variant="faqQuestion"
+                        className="text-lg font-medium text-(--color-stamp-chocolate) md:text-xl"
+                      >
                         {t(`items.${itemId}.question`)}
                       </Heading>
-                      <ChevronRight
+                      <Plus
                         aria-hidden
-                        className="h-5 w-5 flex-none text-(--color-stamp-taupe) transition-transform duration-300 group-open:rotate-90 group-open:text-(--color-stamp-gold)"
+                        className="size-5 flex-none text-(--color-stamp-taupe) transition-transform duration-200 group-open:rotate-45 group-open:text-(--color-stamp-gold-text)"
                       />
                     </summary>
-                    <div className="border-t border-(--color-stamp-divider) p-6">
-                      <Paragraph
-                        variant="faq"
-                        className="text-(--color-stamp-taupe)"
-                      >
-                        {t(`items.${itemId}.answer`)}
-                      </Paragraph>
-                    </div>
+                    <Paragraph variant="xs" className="pb-6 text-(--color-stamp-taupe) md:text-lg">
+                      {t(`items.${itemId}.answer`)}
+                    </Paragraph>
                   </details>
                 ))}
               </div>
@@ -82,16 +69,14 @@ export function FaqPageContent() {
           ))}
         </div>
 
-        <div className="mt-20 flex flex-col items-center gap-6">
-          <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
+        <aside className="mt-20 flex flex-col items-start gap-6 rounded-2xl bg-(--color-stamp-cream) px-6 py-10 sm:flex-row sm:items-center sm:justify-between sm:px-10 lg:px-14">
+          <Paragraph variant="sm" className="text-(--color-stamp-chocolate)">
             {t("stillHaveQuestions")}
           </Paragraph>
           <Button asChild variant="primary">
-            <a href={`mailto:${LEGAL_ENTITY.supportEmail}`}>
-              {t("contactSupport")}
-            </a>
+            <a href={`mailto:${LEGAL_ENTITY.supportEmail}`}>{t("contactSupport")}</a>
           </Button>
-        </div>
+        </aside>
       </div>
     </article>
   );

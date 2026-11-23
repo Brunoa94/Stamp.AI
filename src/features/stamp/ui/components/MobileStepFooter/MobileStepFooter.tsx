@@ -42,13 +42,14 @@ export function MobileStepFooter() {
     : t("nav.back");
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white border-t border-(--color-stamp-divider) p-4 pb-6 space-y-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+    <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-(--color-stamp-white) border-t border-(--color-stamp-divider) p-4 pb-6 space-y-2">
       {/* Primary Action Button */}
       {action && label && (
         <Button
+          variant="primary"
           onClick={action}
           disabled={disabled}
-          className="w-full bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-5 text-xs font-bold tracking-[0.2em] uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full"
         >
           {loading ? t("common.loading") : label}
         </Button>
@@ -57,12 +58,12 @@ export function MobileStepFooter() {
       {/* Back Button */}
       {currentStep > 0 && (
         <Button
-          variant="ghost"
+          variant="ghost-stamp"
           onClick={prevStepSkipLoading}
-          className="w-full text-(--color-stamp-taupe) hover:text-(--color-stamp-chocolate) py-3 text-xs tracking-wider"
+          className="w-full py-3"
           aria-label={t("nav.backTo", { step: targetStepLabel })}
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
+          <ArrowLeft className="w-4 h-4" />
           {targetStepLabel}
         </Button>
       )}

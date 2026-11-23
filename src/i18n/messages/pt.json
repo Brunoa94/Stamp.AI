@@ -259,7 +259,8 @@
       "accent": "essenciais",
       "label": "O nosso vestuário",
       "emptyState": "O catálogo está temporariamente indisponível — volte em breve",
-      "viewFullCatalog": "Ver todos os produtos"
+      "viewFullCatalog": "Ver todos os produtos",
+      "subtitle": "Os nossos artigos mais vendidos, prontos para o seu design."
     },
     "featured": {
       "title": "Peças em",
@@ -441,7 +442,6 @@
     },
     "productOfMonth": {
       "eyebrow": "A escolha deste mês",
-      "title": "Produto do mês",
       "badge": "Escolha do mês",
       "cta": "Crie o seu agora",
       "noImage": "Sem imagem"
@@ -462,6 +462,28 @@
           "cta": "Ver os essenciais",
           "imageAlt": "Modelo a usar uma t-shirt branca de gramagem alta"
         }
+      }
+    },
+    "categories": {
+      "title": "Comprar por categoria",
+      "items": {
+        "tees": "T-shirts",
+        "hoodies": "Hoodies",
+        "mugs": "Canecas",
+        "totes": "Sacos de pano",
+        "canvas": "Telas",
+        "kids": "Criança"
+      }
+    },
+    "giftIdeas": {
+      "title": "Ideias de presentes para todas as ocasiões",
+      "subtitle": "Basta uma foto e algumas palavras para criar um presente que mais ninguém pode comprar.",
+      "tiles": {
+        "birthdays": "Aniversários",
+        "weddings": "Casamentos e festas",
+        "pets": "Para quem adora animais",
+        "family": "Recordações de família",
+        "adventures": "Viagens e aventuras"
       }
     }
   },
@@ -671,7 +693,19 @@
       "openMenu": "Abrir menu",
       "closeMenu": "Fechar menu",
       "mainNavAria": "Navegação principal",
-      "mobileNavAria": "Navegação móvel"
+      "mobileNavAria": "Navegação móvel",
+      "wordmark": "Stamp",
+      "promptPlaceholder": "Descreva uma ideia ou carregue uma foto…",
+      "categoryNavAria": "Categorias da loja",
+      "categories": {
+        "studio": "Estúdio de design",
+        "allProducts": "Todos os produtos",
+        "popular": "Populares agora",
+        "gifts": "Ideias de presentes",
+        "howItWorks": "Como funciona",
+        "shipping": "Envios",
+        "help": "Ajuda e FAQ"
+      }
     },
     "nav": {
       "eyebrow": "O seu progresso",
@@ -1233,7 +1267,8 @@
       },
       "wordmark": "Stamp",
       "copyright": "© {year} Stamp AI. Todos os direitos reservados.",
-      "tagline": "Feito para quem cria"
+      "tagline": "Feito para quem cria",
+      "strip": "Cada peça é impressa a pedido, só depois de encomendada. Sem armazéns, sem desperdício."
     },
     "languageSwitcher": {
       "label": "Idioma"

@@ -3,18 +3,20 @@ import { cn } from "@/lib/utils";
 /**
  * Span
  *
- * Typography atom for small uppercase Space Grotesk label/meta text.
+ * Typography atom for small label/meta text. Running UI text (sm, default,
+ * micro, value) is sentence case; eyebrow-style labels (label, meta, badge,
+ * pill) keep the brand's uppercase with moderate tracking.
  * Encapsulates: font-family, font-size, font-weight, letter-spacing, text-transform.
  * All other styling (color, margin, opacity) must come from the caller via `className`.
  *
  * Variants:
- * - sm         Section tag labels, column headings — sm, tracking-wide
- * - default    Platform labels, breakdown headers, UI meta text — sm, tracking-wide
- * - micro      Testimonial badges, scroll indicator, sub-titles — xs, tracking-wide
- * - label      Section labels — 10px, tracking-[0.3em]
- * - meta       Order meta, timestamps — 10px, tracking-[0.2em]
- * - badge      Status badges — 10px, tracking-[0.15em]
- * - value      Data values — xs→sm, tracking-[0.15em]
+ * - sm         Column headings, card labels — base, semibold
+ * - default    Platform labels, breakdown headers, UI meta text — sm, semibold
+ * - micro      Testimonial badges, scroll indicator, sub-titles — xs, medium
+ * - label      Eyebrows above section titles, footer column headings — xs, uppercase, tracking-widest
+ * - meta       Order meta, timestamps — xs→sm, uppercase, tracking-wider
+ * - badge      Status badges — xs, uppercase, tracking-wider
+ * - value      Data values — sm→base, semibold
  * - metric     Large metric display — 6xl-7xl, Anton font
  * - serif      Serif-italic accent word inside headings — inherits size from parent
  * - script     Upright handwritten accent word inside headings — inherits size from parent
@@ -23,27 +25,27 @@ import { cn } from "@/lib/utils";
  * - giant      Oversized numerals (404 page) — 8xl→240px, heading font
  * - caption    Option descriptions — xs, inherits font
  * - price      Inline prices in option cards — sm, medium weight, inherits font
- * - pill       Floating "popular" badges — 10px, bold, tracking-wider
+ * - pill       Floating "popular" badges — xs, uppercase, tracking-wider
  * - strong     Emphasised inline label — heading font, bold, inherits size
  * - credits    Credit amount in package cards — 2xl, heading font, bold
  * - total      Order/summary total — xl, heading font, bold
  */
 
 const spanVariants = {
-  sm: "font-body text-base font-semibold uppercase tracking-wide",
-  default: "font-body text-sm font-semibold uppercase tracking-wide",
-  micro: "font-body text-xs font-medium uppercase tracking-wide",
-  label: "font-body text-sm font-bold uppercase tracking-[0.3em]",
-  meta: "font-body text-xs md:text-sm font-bold uppercase tracking-[0.2em]",
-  badge: "font-body text-xs font-bold uppercase tracking-[0.15em]",
-  value: "font-body text-sm md:text-base font-bold uppercase tracking-[0.15em]",
+  sm: "font-body text-base font-semibold",
+  default: "font-body text-sm font-semibold",
+  micro: "font-body text-xs font-medium",
+  label: "font-body text-xs font-bold uppercase tracking-widest",
+  meta: "font-body text-xs md:text-sm font-semibold uppercase tracking-wider",
+  badge: "font-body text-xs font-bold uppercase tracking-wider",
+  value: "font-body text-sm md:text-base font-semibold",
   metric:
     "font-(family-name:--font-bebas-neue) text-7xl md:text-8xl uppercase tracking-tighter",
   serif: "font-serif italic lowercase font-light",
   script: "font-serif font-normal",
   caption: "text-xs",
   price: "text-sm font-medium",
-  pill: "text-[10px] font-bold uppercase tracking-wider",
+  pill: "text-xs font-bold uppercase tracking-wider",
   strong: "font-heading font-bold",
   credits: "font-heading text-2xl font-bold",
   total: "font-heading text-xl font-bold",

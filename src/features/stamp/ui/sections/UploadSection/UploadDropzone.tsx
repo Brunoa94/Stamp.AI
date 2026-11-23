@@ -7,7 +7,8 @@ import { Span } from "@/features/ui/span";
 /**
  * UploadDropzone
  *
- * Empty state dropzone UI for file upload
+ * Empty state of the upload card: a white rounded panel with a dashed
+ * border that darkens and fills cream on hover.
  */
 
 interface PropsI {
@@ -20,13 +21,13 @@ export function UploadDropzone({ onClick, uploadError }: PropsI) {
 
   return (
     <Button
-      variant="ghost"
+      variant="unstyled"
       onClick={onClick}
-      className="w-full h-full rounded-none border-2 border-dashed border-(--color-stamp-divider) hover:border-(--color-stamp-gold) hover:bg-transparent transition-colors duration-500 flex flex-col items-center justify-center p-8 md:p-12 cursor-pointer group min-h-56 md:min-h-100"
+      className="group flex h-full min-h-56 w-full cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-(--color-stamp-chocolate)/25 bg-(--color-stamp-white) p-8 transition-colors duration-300 hover:border-(--color-stamp-chocolate)/60 hover:bg-(--color-stamp-cream) focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate) md:min-h-100 md:p-12"
       aria-label={t("dropzoneAria")}
     >
-      <div className="text-center group-hover:scale-105 transition-transform duration-500">
-        <UploadCloud className="mx-auto text-6xl text-(--color-stamp-taupe)/40 mb-4 w-16 h-16" />
+      <div className="text-center transition-transform duration-300 group-hover:scale-105">
+        <UploadCloud className="mx-auto mb-4 h-16 w-16 text-(--color-stamp-gold)" />
         <Paragraph
           variant="sm"
           className="text-(--color-stamp-chocolate) mb-2"
@@ -37,7 +38,7 @@ export function UploadDropzone({ onClick, uploadError }: PropsI) {
           {t("dropzoneHint")}
         </Span>
         {uploadError && (
-          <Paragraph variant="sm" className="text-red-500 mt-4">
+          <Paragraph variant="xs" className="text-(--color-stamp-error) mt-4">
             {uploadError}
           </Paragraph>
         )}

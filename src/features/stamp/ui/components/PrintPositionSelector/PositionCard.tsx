@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import { formatPrice } from "@/lib/formatPrice";
+import { stampChipVariants } from "../../../lib/variants/stampStudioVariants";
 import { PositionGlyph } from "./PositionGlyph";
 
 /**
@@ -38,7 +39,7 @@ export function PositionCard({
 
   return (
     <Button
-      variant="ghost"
+      variant="unstyled"
       onClick={onToggle}
       disabled={disabled}
       role={isSingle ? "radio" : undefined}
@@ -49,17 +50,13 @@ export function PositionCard({
           ? t("positionSelectAria", { position: label })
           : t("positionToggleAria", { position: label })
       }
-      className={`flex h-auto flex-col items-start gap-1 rounded-none border px-4 py-3 transition-all duration-300 ${
-        isSelected
-          ? "border-(--color-stamp-gold) bg-(--color-stamp-gold)/5"
-          : "border-(--color-stamp-divider) hover:border-(--color-stamp-gold)"
-      }`}
+      className={stampChipVariants({ selected: isSelected, size: "card" })}
     >
       <Span
         className={
           isSelected
             ? "text-(--color-stamp-gold-text)"
-            : "text-(--color-stamp-taupe)/70"
+            : "text-(--color-stamp-taupe)"
         }
       >
         <PositionGlyph position={position} />
@@ -74,7 +71,7 @@ export function PositionCard({
       >
         {label}
       </Span>
-      <Span variant="micro" className="text-[9px] text-(--color-stamp-taupe)/60">
+      <Span variant="micro" className="text-(--color-stamp-taupe)">
         {additionalCost > 0
           ? t("positionExtraCost", { price: formatPrice(additionalCost) })
           : t("positionIncluded")}

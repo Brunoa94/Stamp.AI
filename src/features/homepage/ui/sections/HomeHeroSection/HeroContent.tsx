@@ -80,7 +80,7 @@ export function HeroContent() {
 
       {/* Trust signals - above fold, real social proof only */}
       {TRUST_SOCIAL_PROOF_ENABLED && (
-        <div className="flex flex-wrap items-center justify-center gap-2 rounded-full bg-(--color-stamp-off-white)/95 px-4 py-2 shadow-lg text-shadow-none empty:hidden sm:gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-2 rounded-lg bg-(--color-stamp-off-white) px-4 py-2 shadow-(--shadow-stamp-card) text-shadow-none empty:hidden sm:gap-4">
           <OrdersFulfilledCounter
             variant="default"
             count={TRUST_ORDER_METRICS.ordersFulfilled}

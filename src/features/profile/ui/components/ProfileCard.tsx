@@ -1,10 +1,10 @@
 /**
  * ProfileCard
  *
- * Luxury card surface for profile sections matching orders/cart design:
- * - White background with border and shadow
- * - Consistent padding and hover effects
- * - Section header with edit action
+ * Card surface for a profile section: a white rounded-xl card with a divider
+ * border and soft shadow. Its header follows the shared section-header order
+ * (amber eyebrow, title with a handwritten accent word, subtitle) with the
+ * edit action aligned right on wider screens.
  */
 
 import { PropsWithChildren, ReactNode } from "react";
@@ -27,7 +27,6 @@ interface ProfileCardProps extends PropsWithChildren {
 
 export function ProfileCard({
   label,
-  icon,
   title,
   subtitle,
   editLabel,
@@ -39,13 +38,18 @@ export function ProfileCard({
   return (
     <section
       className={cn(
-        "border-2 border-(--color-stamp-chocolate)/15 bg-(--color-stamp-white) p-6 md:p-8 shadow-(--shadow-stamp-card) transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover)",
+        "rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-6 shadow-(--shadow-stamp-card) md:p-8",
         className,
       )}
     >
       {/* Section Header */}
-      <div className="flex flex-col items-start gap-4 sm:flex-row sm:justify-between mb-6 md:mb-8">
+      <div className="mb-6 flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:justify-between md:mb-8">
         <div className="space-y-2">
+          {label && (
+            <Span as="p" variant="label" className="text-(--color-stamp-gold-text)">
+              {label}
+            </Span>
+          )}
           <Heading
             as="h2"
             variant="panelTitleCompact"
@@ -54,16 +58,13 @@ export function ProfileCard({
             {title}
           </Heading>
           {subtitle && (
-            <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
+            <Paragraph variant="xs" className="text-(--color-stamp-taupe)">
               {subtitle}
             </Paragraph>
           )}
         </div>
         {showEditButton && onEdit && editLabel && (
-          <Button
-            onClick={onEdit}
-            className="bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-6 py-3 text-[10px] font-bold tracking-[0.15em] uppercase"
-          >
+          <Button onClick={onEdit} variant="secondary-compact">
             {editLabel}
           </Button>
         )}

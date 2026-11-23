@@ -37,7 +37,7 @@ export function LanguageSwitcher({ className }: PropsI) {
         aria-label={`${t("label")}: ${LOCALE_NAMES[shownLocale]}`}
         aria-busy={isSwitching}
         className={cn(
-          "h-auto w-auto gap-2 rounded-sm border-0 bg-transparent px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-(--color-stamp-chocolate) shadow-none ring-offset-0 transition-colors hover:text-(--color-stamp-gold) focus:ring-2 focus:ring-(--color-stamp-gold) focus:ring-offset-0 disabled:opacity-60",
+          "h-auto w-auto gap-2 rounded-lg border-0 bg-transparent px-2 py-1.5 text-xs font-bold uppercase tracking-wide text-(--color-stamp-chocolate) transition-colors hover:text-(--color-stamp-gold-text) focus-visible:bg-transparent focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate) disabled:opacity-60",
           className,
         )}
       >
@@ -50,14 +50,13 @@ export function LanguageSwitcher({ className }: PropsI) {
       </SelectTrigger>
       <SelectContent
         align="end"
-        className="min-w-40 rounded-sm border-(--color-stamp-divider) bg-(--color-stamp-off-white) text-(--color-stamp-chocolate)"
+        className="min-w-40"
       >
         {LOCALES.map((code) => (
           <SelectItem
             key={code}
             value={code}
             lang={code}
-            className="cursor-pointer text-sm focus:bg-(--color-stamp-cream) focus:text-(--color-stamp-chocolate)"
           >
             <Span unstyled className="flex items-center gap-2.5">
               <LocaleFlag locale={code} />
