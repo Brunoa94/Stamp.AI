@@ -37,7 +37,7 @@ export function LanguageSwitcher({ className }: PropsI) {
         aria-label={`${t("label")}: ${LOCALE_NAMES[shownLocale]}`}
         aria-busy={isSwitching}
         className={cn(
-          "h-auto w-auto gap-2 rounded-lg border-0 bg-transparent px-2 py-1.5 text-sm font-bold uppercase tracking-wide text-(--color-stamp-chocolate) transition-colors hover:text-(--color-stamp-gold-text) focus-visible:bg-transparent focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate) disabled:opacity-60",
+          "h-auto w-auto gap-2 rounded-lg border-0 bg-transparent px-2 py-1.5 text-xs font-bold uppercase tracking-wide text-(--color-stamp-chocolate) transition-colors hover:text-(--color-stamp-gold-text) focus-visible:bg-transparent focus-visible:ring-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate) disabled:opacity-60",
           className,
         )}
       >

@@ -87,14 +87,14 @@ export function StampHeader() {
               alt=""
               width={40}
               height={40}
-              className="size-10 rounded-lg object-contain"
+              className="size-9 rounded-lg object-contain"
               priority
             />
             <Span unstyled aria-hidden className="flex items-baseline">
-              <Span unstyled className="font-heading text-4xl leading-none text-(--color-stamp-chocolate)">
+              <Span unstyled className="font-heading text-3xl leading-none text-(--color-stamp-chocolate)">
                 {t("wordmark")}
               </Span>
-              <Span unstyled className="font-serif text-3xl leading-none text-(--color-stamp-gold-text)">
+              <Span unstyled className="font-serif text-2xl leading-none text-(--color-stamp-gold-text)">
                 .ai
               </Span>
             </Span>
