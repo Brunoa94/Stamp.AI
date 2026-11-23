@@ -17,9 +17,12 @@ export function StampHeaderCategoryNav() {
 
   return (
     <nav aria-label={t("categoryNavAria")} className="scrollbar-hide overflow-x-auto">
-      <List className="flex items-center gap-1 lg:gap-2">
+      <List className="flex items-center justify-center">
         {HEADER_CATEGORY_LINKS.map((link) => (
-          <li key={link.id}>
+          <li
+            key={link.id}
+            className="flex items-center before:px-0.5 before:text-(--color-stamp-taupe-light) before:content-['·'_/_''] first:before:content-none lg:before:px-1"
+          >
             <Link href={link.href} className={stampNavCategoryLinkVariants()}>
               {t(`categories.${link.id}`)}
             </Link>

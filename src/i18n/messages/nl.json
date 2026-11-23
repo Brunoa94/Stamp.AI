@@ -164,8 +164,6 @@
       }
     },
     "hero": {
-      "brand": "tamp <accent>.ai</accent>",
-      "brandLabel": "Stamp.ai",
       "headline": "Van verbeelding<br></br>tot <word></word>",
       "rotatingWords": {
         "tees": "T-shirts",
@@ -178,6 +176,16 @@
         "title": "Upload een foto om te beginnen",
         "hint": "…en bewerk hem in de volgende stap met een prompt",
         "step": "stap 01"
+      },
+      "startOptions": {
+        "aria": "Hoe wil je beginnen?",
+        "upload": "Foto uploaden",
+        "describe": "Idee beschrijven"
+      },
+      "describe": {
+        "title": "Beschrijf je idee",
+        "hint": "…geen foto nodig, vertel ons gewoon wat je wilt",
+        "step": "stap 02"
       },
       "freeCredits": "<signUp>Meld je aan</signUp> en krijg elke dag 5 gratis bewerkingen",
       "productBadge": "Essential T-shirt · Wit · 320 GSM",

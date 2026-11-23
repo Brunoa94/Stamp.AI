@@ -2,8 +2,8 @@
  * HomeHeroSection
  *
  * First screen of the homepage, sized to the space left under the navbar and
- * trust strip: brand kicker, headline, tagline and upload card over the
- * diagonal stamp-wall backdrop, with the "8 steps away" headline, the animated
+ * trust strip: the cream start card (headline, tagline, photo-or-idea start
+ * options) over the diagonal stamp-wall backdrop, with the "8 steps away" headline, the animated
  * creation-flow demo and its benefit banners on the off-white side (xl+ only —
  * stacked screens keep just the copy so it fits). Below it, a ribbon of
  * product photos (shown from the first render, no scroll reveal) and the
@@ -29,7 +29,7 @@ export function HomeHeroSection() {
 
         <div className="relative z-20 w-full px-4 py-16 sm:px-6 sm:py-20 lg:px-12 xl:py-10">
           <div className="mx-auto flex max-w-screen-2xl items-center justify-center gap-12 xl:justify-between">
-            <div className="hero-enter w-full max-w-2xl xl:min-w-0 xl:max-w-xl xl:flex-1 2xl:max-w-2xl">
+            <div className="hero-enter w-full max-w-xl xl:min-w-0 xl:max-w-lg xl:flex-1 2xl:max-w-xl">
               <HeroContent />
             </div>
 

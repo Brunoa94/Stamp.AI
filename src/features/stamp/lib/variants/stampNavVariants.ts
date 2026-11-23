@@ -64,17 +64,23 @@ export const stampNavTooltipVariants = cva(
 );
 
 /**
- * The header's "describe your idea" bar: a search-style field drawn like the
- * hero's dashed upload card, opening the design studio. It takes the place a
- * marketplace gives its search field.
+ * The header's "describe your idea" bar, centre stage in the top row the way a
+ * marketplace centres its search: a white field with an upload tile at the
+ * start and "Stamp it!" at the end, opening the design studio. A size smaller
+ * in the phone row under the logo.
  */
 export const stampNavPromptBarVariants = cva(
-  `group flex h-10 min-w-0 flex-1 items-center gap-3 rounded-lg border-2 border-dashed border-(--color-stamp-gold) bg-(--color-stamp-cream) pl-4 pr-1 text-left transition-all duration-200 hover:border-solid hover:bg-(--color-stamp-white) hover:shadow-(--shadow-stamp-card-hover) ${focusRing}`,
+  `group flex h-9 min-w-0 flex-1 items-center gap-2.5 rounded-xl border-2 border-(--color-stamp-chocolate)/20 bg-(--color-stamp-white) p-0.5 text-left shadow-(--shadow-stamp-card) transition-all duration-200 hover:border-(--color-stamp-chocolate)/40 hover:shadow-(--shadow-stamp-card-hover) md:h-11 md:gap-3 md:p-1 ${focusRing}`,
+);
+
+/** Cream upload tile at the start of the prompt bar. */
+export const stampNavPromptIconVariants = cva(
+  "flex size-7 shrink-0 items-center justify-center rounded-lg bg-(--color-stamp-cream) text-(--color-stamp-chocolate) md:size-8",
 );
 
 /** "Stamp it!" button at the end of the prompt bar. */
 export const stampNavPromptButtonVariants = cva(
-  "ml-auto flex h-8 shrink-0 items-center gap-1.5 rounded-md bg-(--color-stamp-gold) px-3 text-xs font-bold uppercase tracking-wider text-(--color-stamp-chocolate) transition-colors duration-200 group-hover:bg-(--color-stamp-chocolate) group-hover:text-(--color-stamp-white)",
+  "ml-auto flex h-7 shrink-0 items-center gap-1.5 rounded-lg bg-(--color-stamp-gold) px-3 text-xs font-bold uppercase tracking-wider text-(--color-stamp-chocolate) transition-colors duration-200 group-hover:bg-(--color-stamp-chocolate) group-hover:text-(--color-stamp-white) md:h-8 md:px-4",
 );
 
 /** Link in the header's category row: sentence case, amber underline on hover. */

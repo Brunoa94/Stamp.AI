@@ -164,8 +164,6 @@
       }
     },
     "hero": {
-      "brand": "tamp <accent>.ai</accent>",
-      "brandLabel": "Stamp.ai",
       "headline": "Da imaginação<br></br>a <word></word>",
       "rotatingWords": {
         "tees": "t-shirts",
@@ -178,6 +176,16 @@
         "title": "Carregue uma foto para começar",
         "hint": "…e edite-a com uma descrição no passo seguinte",
         "step": "passo 01"
+      },
+      "startOptions": {
+        "aria": "Como quer começar?",
+        "upload": "Carregar uma foto",
+        "describe": "Descrever uma ideia"
+      },
+      "describe": {
+        "title": "Descreva a sua ideia",
+        "hint": "…sem foto, basta dizer-nos o que quer",
+        "step": "passo 02"
       },
       "freeCredits": "<signUp>Registe-se</signUp> e ganhe 5 edições grátis por dia",
       "productBadge": "T-shirt essencial · Branca · 320 GSM",

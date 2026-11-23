@@ -164,8 +164,6 @@
       }
     },
     "hero": {
-      "brand": "tamp <accent>.ai</accent>",
-      "brandLabel": "Stamp.ai",
       "headline": "From imagination<br></br>to <word></word>",
       "rotatingWords": {
         "tees": "tees",
@@ -178,6 +176,16 @@
         "title": "Upload a photo to start",
         "hint": "…and edit it with a prompt in the next step",
         "step": "step 01"
+      },
+      "startOptions": {
+        "aria": "How do you want to start?",
+        "upload": "Upload a photo",
+        "describe": "Describe an idea"
+      },
+      "describe": {
+        "title": "Describe your idea",
+        "hint": "…no photo needed, just tell us what you want",
+        "step": "step 02"
       },
       "freeCredits": "<signUp>Sign up</signUp> and get 5 free edits per day",
       "productBadge": "Essential tee · White · 320 GSM",
