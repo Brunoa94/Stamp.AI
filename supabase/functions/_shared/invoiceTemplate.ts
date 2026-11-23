@@ -149,10 +149,6 @@ function escapeHtml(value: string): string {
 }
 
 /**
- * Render the invoice as a self-contained HTML document.
- * Used as the email body; the PDF layout mirrors this structure.
- */
-/**
  * Opening note of the invoice email: a warm thank-you for an order, or a
  * plain note for a credit note (a refund is no moment to thank for buying).
  */
@@ -179,6 +175,10 @@ function renderGreetingHtml(invoice: InvoiceRowI, seller: SellerInfoI): string {
         </div>`;
 }
 
+/**
+ * Render the invoice as a self-contained HTML document.
+ * Used as the email body; the PDF layout mirrors this structure.
+ */
 export function renderInvoiceHtml(invoice: InvoiceRowI, seller: SellerInfoI): string {
   const title = documentTitle(invoice.type);
   const logoUrl = getInvoiceLogoUrl();

@@ -4,7 +4,7 @@ import { getOrderDisplayStatus, type OrderDisplayStatusT } from "./statusPresent
 /** The stages a guest follows on /track-order, in order. */
 export const TRACKING_STAGES = ["placed", "inProduction", "shipped", "delivered"] as const;
 
-type TrackingStageT =(typeof TRACKING_STAGES)[number];
+type TrackingStageT = (typeof TRACKING_STAGES)[number];
 
 /** Where an order stands: on a stage, or off the happy path. */
 export type TrackingProgressT =
