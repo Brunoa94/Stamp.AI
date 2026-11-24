@@ -19,14 +19,6 @@
     "horizontal": "Horizontal"
   },
   "home": {
-    "heroTrust": {
-      "moneyBackLabel": "{days} dias",
-      "moneyBackSublabel": "Reembolso garantido",
-      "freeShippingLabel": "Envio grátis",
-      "freeShippingSublabel": "Encomendas +{threshold} €",
-      "secureLabel": "Pagamento",
-      "secureSublabel": "Seguro"
-    },
     "topBanner": {
       "freeShipping": "Envio grátis em encomendas acima de {threshold} €",
       "returns": "Devoluções em {days} dias",
@@ -195,21 +187,7 @@
       "productBadge": "T-shirt essencial · Branca · 320 GSM",
       "scrollCue": "Deslize para explorar",
       "productImageAlt": "T-shirt de gramagem alta com uma estampa personalizada",
-      "flowIntro": "Está a {count} passos de criar o seu <accent>produto de sonho.</accent>",
-      "flowBenefits": {
-        "noSkills": {
-          "title": "Sem saber desenhar",
-          "hint": "Basta descrever"
-        },
-        "preview": {
-          "title": "Veja primeiro",
-          "hint": "Antes de encomendar"
-        },
-        "onDemand": {
-          "title": "Feito por encomenda",
-          "hint": "Impresso só para si"
-        }
-      }
+      "flowIntro": "Está a {count} passos de criar o seu <accent>produto de sonho.</accent>"
     },
     "meta": {
       "title": "Crie e Encomende T-shirts e Vestuário Personalizados",
@@ -316,12 +294,6 @@
       "ctaSecondary": "Ver catálogo"
     },
     "promo": {
-      "brand-logo": {
-        "tagline": "Crie os seus logótipos, estampe a sua marca",
-        "accentWord": "marca",
-        "description": "Transforme as suas ideias em logótipos profissionais. De marcas de fitness a etiquetas de luxo, dê vida à sua visão em merchandising premium.",
-        "cta": "Começar a criar"
-      },
       "memories": {
         "tagline": "Estampe as suas melhores memórias",
         "accentWord": "memórias",
@@ -416,7 +388,9 @@
     },
     "productCard": {
       "noImage": "Sem imagem",
-      "discountBadge": "-{percent}%"
+      "discountBadge": "-{percent}%",
+      "customize": "Crie o seu",
+      "printArea": "O seu design"
     },
     "guarantees": {
       "title": "Compre com",
@@ -456,7 +430,13 @@
       "eyebrow": "A escolha deste mês",
       "badge": "Escolha do mês",
       "cta": "Crie o seu agora",
-      "noImage": "Sem imagem"
+      "noImage": "Sem imagem",
+      "customized": {
+        "logo": "{name} estampado com o logótipo de uma pequena loja",
+        "family": "{name} estampado com uma foto de família",
+        "brand": "{name} estampado com o logótipo de uma marca de luxo",
+        "botanical": "{name} estampado com um desenho botânico"
+      }
     },
     "story": {
       "blocks": {

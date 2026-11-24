@@ -20,9 +20,11 @@ import { FlowPreviewStage } from "./Window/FlowPreviewStage";
 
 interface PropsI {
   className?: string;
+  /** Extra classes for the demo window, e.g. to stretch it */
+  windowClassName?: string;
 }
 
-export function FlowPreview({ className }: PropsI) {
+export function FlowPreview({ className, windowClassName }: PropsI) {
   const t = useTranslations("home.flowPreview");
   const prompt = t("describe.prompt");
   const isReducedMotion = useReducedMotion();
@@ -45,6 +47,7 @@ export function FlowPreview({ className }: PropsI) {
       className={cn("flow-preview flex flex-col items-center gap-5", className)}
     >
       <FlowPreviewWindow
+        className={windowClassName}
         label={t("windowLabel")}
         stepTag={t("stepTag", {
           number: step.number,

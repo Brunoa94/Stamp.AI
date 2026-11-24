@@ -9,6 +9,9 @@ import { resolveDisplayPrice } from "@/lib/pricing";
 import { localizeColorLabels, localizeProductText } from "@/shared/helpers/localizeProduct";
 import type { ProductSeo } from "@/shared/types/catalog";
 import type { ProductTextT } from "@/shared/types/productText";
+import { getProductConfig } from "@/lib/printPlacement/config";
+import { HOME_PRINT_AREAS } from "../constants/productPrintAreas";
+import type { PrintAreaRectT } from "../types/productPrintArea";
 
 export interface ProductCardData {
   blueprintId: number;
@@ -29,6 +32,8 @@ export interface ProductCardData {
   availableColors: string[];
   /** English colour name → label in the visitor's language */
   colorLabels: Record<string, string>;
+  /** Where the design goes on the photo, for the hover preview */
+  printArea: PrintAreaRectT;
 }
 
 type ProductTextSourceT = {
@@ -74,6 +79,7 @@ function mapProductToCard(
     href: "/stamp",
     availableColors: product.availableColors || [],
     colorLabels: localizeColorLabels(text, product.availableColors || []),
+    printArea: HOME_PRINT_AREAS[getProductConfig(product.blueprint_id, product.display_title).category],
   };
 }
 

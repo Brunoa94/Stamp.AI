@@ -5,7 +5,7 @@
  *
  * Configurable promotional section with image grid carousel, in a rounded
  * panel inside the page gutter (chocolate, cream or white).
- * Supports three variants: brand-logo, memories, special-moments.
+ * Supports two variants: memories, special-moments.
  */
 
 import { useTranslations } from "next-intl";
@@ -15,13 +15,12 @@ import { SectionReveal } from "../../components/SectionReveal";
 import { PromoCarousel } from "./PromoCarousel";
 import { PromoSectionContent } from "./PromoSectionContent";
 import {
-  PROMO_BRAND_LOGO_IMAGES,
   PROMO_MEMORIES_IMAGES,
   PROMO_SPECIAL_MOMENTS_IMAGES,
 } from "../../../lib/constants/promoSections";
 import type { PromoImageType } from "../../../lib/constants/promoSections";
 
-type SectionVariant = "brand-logo" | "memories" | "special-moments";
+type SectionVariant = "memories" | "special-moments";
 
 interface PropsI {
   variant: SectionVariant;
@@ -32,15 +31,13 @@ interface PropsI {
 }
 
 const VARIANT_IMAGES: Record<SectionVariant, PromoImageType[]> = {
-  "brand-logo": PROMO_BRAND_LOGO_IMAGES,
   memories: PROMO_MEMORIES_IMAGES,
   "special-moments": PROMO_SPECIAL_MOMENTS_IMAGES,
 };
 
 const VARIANT_NUMBERS: Record<SectionVariant, string> = {
-  "brand-logo": "01",
-  memories: "02",
-  "special-moments": "03",
+  memories: "01",
+  "special-moments": "02",
 };
 
 export function HomePromoSection({

@@ -19,14 +19,6 @@
     "horizontal": "Horizontaal"
   },
   "home": {
-    "heroTrust": {
-      "moneyBackLabel": "{days} dagen",
-      "moneyBackSublabel": "Geld terug",
-      "freeShippingLabel": "Gratis verzending",
-      "freeShippingSublabel": "Bestellingen vanaf €{threshold}",
-      "secureLabel": "Veilig",
-      "secureSublabel": "Afrekenen"
-    },
     "topBanner": {
       "freeShipping": "Gratis verzending bij bestellingen boven € {threshold}",
       "returns": "{days} dagen retourneren",
@@ -195,21 +187,7 @@
       "productBadge": "Essential T-shirt · Wit · 320 GSM",
       "scrollCue": "Scroll om te ontdekken",
       "productImageAlt": "Zwaar T-shirt met een eigen print",
-      "flowIntro": "Je bent {count} stappen verwijderd van je <accent>droomproduct.</accent>",
-      "flowBenefits": {
-        "noSkills": {
-          "title": "Geen ontwerpervaring nodig",
-          "hint": "Beschrijf het gewoon"
-        },
-        "preview": {
-          "title": "Eerst een preview",
-          "hint": "Voordat je bestelt"
-        },
-        "onDemand": {
-          "title": "Op bestelling gemaakt",
-          "hint": "Speciaal voor jou geprint"
-        }
-      }
+      "flowIntro": "Je bent {count} stappen verwijderd van je <accent>droomproduct.</accent>"
     },
     "meta": {
       "title": "Ontwerp en bestel eigen T-shirts en kleding",
@@ -316,12 +294,6 @@
       "ctaSecondary": "Catalogus bekijken"
     },
     "promo": {
-      "brand-logo": {
-        "tagline": "Maak je eigen logo's, stempel je merk",
-        "accentWord": "merk",
-        "description": "Maak van je ideeën professionele logo's. Van fitnessmerken tot luxelabels: breng je visie tot leven op premium merchandise.",
-        "cta": "Begin met ontwerpen"
-      },
       "memories": {
         "tagline": "Stempel je mooiste herinneringen",
         "accentWord": "herinneringen",
@@ -416,7 +388,9 @@
     },
     "productCard": {
       "noImage": "Geen afbeelding",
-      "discountBadge": "-{percent}%"
+      "discountBadge": "-{percent}%",
+      "customize": "Ontwerp de jouwe",
+      "printArea": "Jouw ontwerp"
     },
     "guarantees": {
       "title": "Winkel met",
@@ -456,7 +430,13 @@
       "eyebrow": "De keuze van deze maand",
       "badge": "Keuze van de maand",
       "cta": "Ontwerp de jouwe nu",
-      "noImage": "Geen afbeelding"
+      "noImage": "Geen afbeelding",
+      "customized": {
+        "logo": "{name} bedrukt met het logo van een kleine winkel",
+        "family": "{name} bedrukt met een familiefoto",
+        "brand": "{name} bedrukt met een luxe merklogo",
+        "botanical": "{name} bedrukt met een botanische lijntekening"
+      }
     },
     "story": {
       "blocks": {

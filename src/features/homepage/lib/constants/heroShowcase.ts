@@ -1,6 +1,5 @@
-import { Eye, ImagePlus, PackageCheck, PenLine, WandSparkles } from "lucide-react";
+import { ImagePlus, PenLine } from "lucide-react";
 import type {
-  HeroFlowBenefitType,
   HeroRotatingWordIdType,
   HeroStartOptionT,
 } from "@/features/homepage/lib/types/heroShowcase";
@@ -72,15 +71,8 @@ export const HERO_ROTATING_WORD_IDS: readonly HeroRotatingWordIdType[] = [
   "hoodies",
 ];
 
-/** Banners under the flow demo: what the eight steps spare the visitor */
 /** The hero card's two ways into the creator, in toggle order; the first is selected */
 export const HERO_START_OPTIONS: readonly HeroStartOptionT[] = [
   { id: "upload", icon: ImagePlus },
   { id: "describe", icon: PenLine },
-];
-
-export const HERO_FLOW_BENEFITS: readonly HeroFlowBenefitType[] = [
-  { id: "noSkills", icon: WandSparkles },
-  { id: "preview", icon: Eye },
-  { id: "onDemand", icon: PackageCheck },
 ];

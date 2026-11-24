@@ -2,7 +2,8 @@
  * HomeProductsSection
  *
  * "The essentials": a listing grid of the catalog's featured products, fed
- * by the server-side product cache, with a "browse all" link.
+ * by the server-side product cache, with a "browse all" pill. Each card
+ * previews where the design prints on hover.
  */
 
 import Link from "next/link";
@@ -12,6 +13,7 @@ import { List } from "@/features/ui/list";
 import { Span } from "@/features/ui/span";
 import type { ProductCardData } from "../../../lib/mappers/productCardMapper";
 import { MAX_HOME_PRODUCTS } from "../../../lib/constants/homepageContent";
+import { productCardTint } from "../../../lib/helpers/productCardTint";
 import { HomeSectionHeader } from "../../components/HomeSectionHeader";
 import { HomeProductCard } from "./HomeProductCard";
 
@@ -39,7 +41,7 @@ export function HomeProductsSection({ products }: PropsI) {
           action={
             <Link
               href="/catalog"
-              className="group inline-flex items-center gap-2 self-start rounded-md text-xs font-bold uppercase tracking-wider text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate) sm:self-auto"
+              className="group inline-flex h-11 items-center gap-2 self-start rounded-full bg-(--color-stamp-chocolate) px-5 text-sm font-semibold text-(--color-stamp-white) transition-colors hover:bg-(--color-stamp-chocolate)/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate) sm:self-auto"
             >
               {t("viewFullCatalog")}
               <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1" aria-hidden />
@@ -57,10 +59,10 @@ export function HomeProductsSection({ products }: PropsI) {
             {t("emptyState")}
           </Span>
         ) : (
-          <List className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
-            {displayedProducts.map((product) => (
+          <List className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-5">
+            {displayedProducts.map((product, index) => (
               <li key={product.blueprintId}>
-                <HomeProductCard product={product} />
+                <HomeProductCard product={product} tint={productCardTint(index)} />
               </li>
             ))}
           </List>

@@ -41,7 +41,6 @@ export function HomepageContent({ products }: PropsI) {
       <HomeCategoriesSection />
       <HomeProductsSection products={products} />
       <HomeStorySection blockIds={["design"]} background="chocolate" />
-      <HomePromoSection variant="brand-logo" background="cream" contentPosition="right" />
       <HomeGiftIdeasSection />
       <HomeProductMarqueeSection />
       <HomeProductOfMonthSection />

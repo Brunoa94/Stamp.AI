@@ -1,22 +1,24 @@
 /**
  * HomeProductOfMonthSection
  *
- * "Pick of the month" spotlight: a rounded cream panel with the product
- * photo on one side and its name, description, price and a pill CTA on the
+ * "Pick of the month" spotlight: a chocolate split panel with the product
+ * photos crossfading full-bleed on one half (blank, then customized), and
+ * its name, description, then the price and CTA under a hairline on the
  * other. Renders nothing until a product of the month is set.
  */
 
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { ArrowRight, Medal } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { useLocalizedProductOfMonth } from "@/features/homepage/lib/hooks/useLocalizedProductOfMonth";
+import { getCustomizedShots } from "@/features/homepage/lib/helpers/productOfMonthShots";
+import { ProductOfMonthShowcase } from "./ProductOfMonthShowcase";
 
 export function HomeProductOfMonthSection() {
   const t = useTranslations("home.productOfMonth");
@@ -40,61 +42,44 @@ export function HomeProductOfMonthSection() {
 
   return (
     <section aria-labelledby="home-pick-title" className="px-4 py-20 sm:px-6 lg:px-12">
-      <div className="mx-auto grid max-w-screen-2xl items-center gap-8 overflow-hidden rounded-2xl bg-(--color-stamp-peach) p-6 sm:p-10 md:grid-cols-5 lg:gap-16 lg:p-14">
-        <div className="relative aspect-square overflow-hidden rounded-xl border-4 border-(--color-stamp-white) bg-(--color-stamp-white) shadow-(--shadow-stamp-card-hover) md:col-span-2">
-          {product.base_image_url ? (
-            <Image
-              src={product.base_image_url}
-              alt={displayName}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1536px) 38vw, 560px"
-              className="object-cover"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center">
-              <Span variant="micro" className="text-(--color-stamp-taupe)">
-                {t("noImage")}
-              </Span>
-            </div>
-          )}
-          <Span
-            variant="default"
-            className="absolute top-3 left-3 flex items-center gap-2 rounded-md bg-(--color-stamp-gold) px-3 py-1.5 text-(--color-stamp-chocolate) shadow-(--shadow-stamp-card)"
-          >
-            <Medal className="size-4" aria-hidden />
-            {t("badge")}
-          </Span>
-        </div>
+      <div className="mx-auto grid max-w-screen-2xl overflow-hidden rounded-2xl border-2 border-(--color-stamp-gold) bg-(--color-stamp-chocolate) md:grid-cols-2">
+        <ProductOfMonthShowcase
+          blankSrc={product.base_image_url}
+          name={displayName}
+          shots={getCustomizedShots(product.blueprint_id)}
+        />
 
-        <div className="flex flex-col items-start gap-5 md:col-span-3">
+        <div className="flex flex-col justify-center gap-6 p-8 sm:p-12 lg:p-16">
           <div aria-hidden className="h-1.5 w-16 rounded-full bg-(--color-stamp-gold)" />
-          <Span as="p" variant="label" className="text-(--color-stamp-gold-text)">
+          <Span as="p" variant="label" className="text-(--color-stamp-gold-light)">
             {t("eyebrow")}
           </Span>
-          <Heading as="h2" id="home-pick-title" variant="sectionDisplay" className="text-(--color-stamp-chocolate)">
+          <Heading as="h2" id="home-pick-title" variant="panelTitle" className="text-(--color-stamp-off-white)">
             {displayName}
           </Heading>
           {description && (
-            <Paragraph variant="xs" className="line-clamp-4 max-w-xl text-(--color-stamp-taupe) md:text-lg">
+            <Paragraph variant="xs" className="line-clamp-4 max-w-xl text-(--color-stamp-taupe-light) md:text-lg">
               {description}
             </Paragraph>
           )}
-          <div className="flex items-baseline gap-3">
-            <Span unstyled className="text-3xl font-bold text-(--color-stamp-chocolate)">
-              €{price.toFixed(2)}
-            </Span>
-            {originalPrice && (
-              <Span variant="sm" className="font-normal text-(--color-stamp-taupe) line-through">
-                €{originalPrice.toFixed(2)}
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-6 border-t border-(--color-stamp-off-white)/15 pt-8">
+            <div className="flex items-baseline gap-3">
+              <Span unstyled className="text-4xl font-bold text-(--color-stamp-off-white)">
+                €{price.toFixed(2)}
               </Span>
-            )}
+              {originalPrice && (
+                <Span variant="sm" className="font-normal text-(--color-stamp-taupe-light) line-through">
+                  €{originalPrice.toFixed(2)}
+                </Span>
+              )}
+            </div>
+            <Button asChild variant="cta-gold" className="group">
+              <Link href="/stamp">
+                {t("cta")}
+                <ArrowRight className="size-5 transition-transform duration-200 group-hover:translate-x-1" aria-hidden />
+              </Link>
+            </Button>
           </div>
-          <Button asChild variant="primary" className="group">
-            <Link href="/stamp">
-              {t("cta")}
-              <ArrowRight className="size-5 transition-transform duration-200 group-hover:translate-x-1" aria-hidden />
-            </Link>
-          </Button>
         </div>
       </div>
     </section>
