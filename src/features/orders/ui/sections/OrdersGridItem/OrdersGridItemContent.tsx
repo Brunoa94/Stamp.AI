@@ -41,7 +41,7 @@ export function OrdersGridItemContent({
       </Span>
 
       <Heading
-        as="h3"
+        as="h2"
         variant="itemCompact"
         className="mb-1 line-clamp-2 leading-tight text-(--color-stamp-chocolate)"
       >
@@ -62,7 +62,7 @@ export function OrdersGridItemContent({
       </div>
 
       <Heading
-        as="h4"
+        as="div"
         variant="priceCompact"
         className="mb-4 text-(--color-stamp-chocolate)"
       >

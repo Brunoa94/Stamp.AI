@@ -28,7 +28,7 @@ export function OrdersListItemContent({
     <div className="flex-1">
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
         <div>
-          <Heading as="h3" variant="itemCompact">
+          <Heading as="h2" variant="itemCompact">
             {firstItem?.product_name || t("productFallback")}
           </Heading>
           <Span variant="meta" className="text-(--color-stamp-taupe)">
@@ -91,7 +91,7 @@ export function OrdersListItemContent({
             {t("protocolValue")}
           </Span>
           <Heading
-            as="h4"
+            as="div"
             variant="priceCompact"
             className="text-(--color-stamp-chocolate)"
           >
