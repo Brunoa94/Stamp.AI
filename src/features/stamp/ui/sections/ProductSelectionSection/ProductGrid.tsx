@@ -93,7 +93,10 @@ export function ProductGrid({
 
       {!isLoading && !isError && activeSection && (
         selectedProduct ? (
-          <div className="w-full h-full p-4 lg:p-6 flex flex-col justify-center">
+          // Safe centring: a card taller than the panel starts at the top
+          // instead of overflowing upwards, where its Remove button would
+          // sit out of reach under the step's intro text on short phones.
+          <div className="w-full h-full p-4 lg:p-6 flex flex-col justify-center-safe">
             <SelectedProductCard
               product={selectedProduct}
               onClearSelection={onClearSelection}
