@@ -62,10 +62,6 @@ function ResultsSectionComponent() {
     setEnhancedPrompt(enhancedPrompt);
   };
 
-  const displayImageUrl =
-    selectedImageUrl ||
-    "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1974&auto=format&fit=crop";
-
   return (
     <section
       id="step-4"
@@ -78,7 +74,8 @@ function ResultsSectionComponent() {
             accent: (chunks) => <StampTitleAccent>{chunks}</StampTitleAccent>,
           })}
         </StampStepTitle>
-        <ResultsImage imageUrl={displayImageUrl} />
+        {/* Only a real result: a stand-in image would be announced as the visitor's design */}
+        {selectedImageUrl && <ResultsImage imageUrl={selectedImageUrl} />}
         <ResultsGallery
           results={generatedResults}
           selectedImageUrl={selectedImageUrl}
