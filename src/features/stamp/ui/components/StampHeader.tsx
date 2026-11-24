@@ -49,12 +49,15 @@ export function StampHeader() {
     setMobileMenuOpen(false);
   }
 
-  // Escape closes the drawer and hands focus back to the menu button
+  // Escape closes the drawer and hands focus back to the menu button. An
+  // Escape a layer above already handled (the sign-in dialog opened from the
+  // drawer calls preventDefault) closes only that layer, so its focus return
+  // to the drawer's trigger isn't undone.
   useEffect(() => {
     if (!mobileMenuOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
+      if (event.key !== "Escape" || event.defaultPrevented) return;
       setMobileMenuOpen(false);
       menuButtonRef.current?.focus();
     };
