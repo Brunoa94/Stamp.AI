@@ -260,7 +260,7 @@
     "products": {
       "title": "The",
       "accent": "essentials",
-      "label": "Our apparel",
+      "label": "Our products",
       "emptyState": "The catalog is temporarily unavailable — please check back soon",
       "viewFullCatalog": "Browse all products",
       "subtitle": "Our bestselling blanks, ready for your design."
@@ -325,6 +325,9 @@
         "description": "Celebrate life's milestones with custom merchandise. Perfect for birthdays, bachelor parties, sports achievements, and more.",
         "cta": "Start creating"
       }
+    },
+    "promoCarousel": {
+      "viewImage": "View image {number}"
     },
     "reviews": {
       "title": "Social",

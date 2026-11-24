@@ -269,7 +269,7 @@
     "products": {
       "title": "Os",
       "accent": "essenciais",
-      "label": "O nosso vestuário",
+      "label": "Os nossos produtos",
       "emptyState": "O catálogo está temporariamente indisponível — volte em breve",
       "viewFullCatalog": "Ver todos os produtos",
       "subtitle": "Os nossos artigos mais vendidos, prontos para o seu design."
@@ -334,6 +334,9 @@
         "description": "Celebre as grandes ocasiões com merchandising personalizado. Perfeito para aniversários, despedidas de solteiro, conquistas desportivas e muito mais.",
         "cta": "Começar a criar"
       }
+    },
+    "promoCarousel": {
+      "viewImage": "Ver imagem {number}"
     },
     "reviews": {
       "title": "Prova",
