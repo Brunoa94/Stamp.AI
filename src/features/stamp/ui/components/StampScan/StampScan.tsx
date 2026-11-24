@@ -10,7 +10,7 @@ import { StampScanLayer } from "./StampScanLayer";
  * middle. Above the line every product is blank; whatever passes through it
  * comes out printed, so several products are mid-print at any moment. Two
  * identical layers (blank, then printed clipped below the line) scroll in
- * lockstep. Gold registration marks frame the scene. Static under reduced
+ * lockstep. Static under reduced
  * motion (`.stamp-scan*` in globals.css).
  */
 export function StampScan() {
@@ -24,13 +24,12 @@ export function StampScan() {
       <StampScanLayer srcKey="blankSrc" className="stamp-scan__layer--blank" />
       <StampScanLayer srcKey="printedSrc" className="stamp-scan__layer--printed" />
       <div className="stamp-scan__head absolute inset-x-0" />
-      <Span variant="pill" className="stamp-scan__label stamp-scan__label--blank absolute rounded-full border border-(--color-stamp-cream)/60 bg-(--color-stamp-chocolate)/70 text-(--color-stamp-cream)">
+      <Span variant="pill" className="stamp-scan__label stamp-scan__label--blank absolute rounded-md border border-(--color-stamp-cream)/60 bg-(--color-stamp-chocolate)/70 text-(--color-stamp-cream)">
         {t("blank")}
       </Span>
-      <Span variant="pill" className="stamp-scan__label stamp-scan__label--printed absolute rounded-full bg-(--color-stamp-gold) text-(--color-stamp-chocolate)">
+      <Span variant="pill" className="stamp-scan__label stamp-scan__label--printed absolute rounded-md bg-(--color-stamp-gold) text-(--color-stamp-chocolate)">
         {t("printed")}
       </Span>
-      <div className="stamp-scan__marks absolute" />
     </div>
   );
 }

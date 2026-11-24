@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { Span } from "@/features/ui/span";
+import { cn } from "@/lib/utils";
 import {
   stampNavIconLinkVariants,
   stampNavIconVariants,
@@ -16,6 +17,7 @@ interface PropsI {
   /** Show only the icon below `xl`, where the full nav is too wide. */
   compact?: boolean;
   iconSize?: "md" | "lg";
+  className?: string;
 }
 
 /**
@@ -30,6 +32,7 @@ export function StampNavIconLink({
   iconOnly = false,
   compact = false,
   iconSize = "md",
+  className,
 }: PropsI) {
   const labelHidden = iconOnly || compact;
 
@@ -37,7 +40,7 @@ export function StampNavIconLink({
     <Link
       href={href}
       aria-label={labelHidden ? label : undefined}
-      className={stampNavIconLinkVariants({ iconOnly })}
+      className={cn(stampNavIconLinkVariants({ iconOnly }), className)}
     >
       <Icon className={stampNavIconVariants({ size: iconSize })} strokeWidth={1.75} aria-hidden />
       {!iconOnly && (

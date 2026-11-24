@@ -27,7 +27,7 @@ export function FlowUploadStep({ isUploaded }: PropsI) {
         {t("description")}
       </Paragraph>
 
-      <div className="flex h-55 items-center justify-center border-2 border-dashed border-(--color-stamp-gold) bg-(--color-stamp-white)">
+      <div className="flex h-55 items-center justify-center rounded-lg border-2 border-dashed border-(--color-stamp-gold) bg-(--color-stamp-white)">
         {isUploaded ? (
           <div className="animate-flow-pop">
             <FlowArtImage art="pupPhoto" className="w-42.5" />
@@ -46,7 +46,7 @@ export function FlowUploadStep({ isUploaded }: PropsI) {
       </div>
 
       {isUploaded && (
-        <div className="animate-flow-fade flex items-center justify-between border border-(--color-stamp-chocolate)/10 bg-(--color-stamp-white) px-3.5 py-2.5">
+        <div className="animate-flow-fade flex items-center justify-between rounded-md border border-(--color-stamp-chocolate)/10 bg-(--color-stamp-white) px-3.5 py-2.5">
           <div className="flex flex-col gap-0.5">
             <Span unstyled className="text-xs text-(--color-stamp-chocolate)">
               {t("fileName")}

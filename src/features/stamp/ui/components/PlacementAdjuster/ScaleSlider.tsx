@@ -35,13 +35,14 @@ export function ScaleSlider({
     <div>
       <Label
         htmlFor="placement-scale"
-        className="mb-3 block text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe)"
+        variant="section"
+        className="mb-3 text-(--color-stamp-taupe)"
       >
         {t("sizeLabel")}
       </Label>
       <div className="flex items-center gap-3">
         <Button
-          variant="ghost"
+          variant="unstyled"
           className={placementControlButtonVariants()}
           aria-label={t("scaleDown")}
           disabled={disabled}
@@ -61,7 +62,7 @@ export function ScaleSlider({
           aria-label={t("scaleAria")}
         />
         <Button
-          variant="ghost"
+          variant="unstyled"
           className={placementControlButtonVariants()}
           aria-label={t("scaleUp")}
           disabled={disabled}
@@ -69,7 +70,7 @@ export function ScaleSlider({
         >
           <Plus className="h-4 w-4" />
         </Button>
-        <Span variant="label" className="w-12 text-right text-[10px] text-(--color-stamp-taupe)">
+        <Span variant="label" className="w-12 text-right text-(--color-stamp-taupe)">
           {Math.round(scale * 100)}%
         </Span>
       </div>

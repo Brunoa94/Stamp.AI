@@ -55,7 +55,8 @@ export function CreditSelectionStep({
         type="button"
         onClick={onContinue}
         disabled={!canProceed}
-        variant="gradient"
+        variant="primary"
+        className="w-full"
       >
         {t("continueButton")}
       </Button>

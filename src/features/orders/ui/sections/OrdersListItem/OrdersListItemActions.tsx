@@ -22,8 +22,12 @@ export function OrdersListItemActions({
   const t = useTranslations("orders.listItem");
 
   return (
-    <div className="flex w-full flex-col gap-2 lg:w-40">
-      <Button onClick={() => onOpenDetails(order)} variant="primary-compact">
+    <div className="flex w-full flex-col gap-2 lg:w-auto lg:min-w-40 lg:shrink-0">
+      <Button
+        onClick={() => onOpenDetails(order)}
+        variant="primary-compact"
+        className="rounded-md"
+      >
         {displayedStatus === "delivered"
           ? t("viewBlueprint")
           : t("trackProtocol")}
@@ -34,6 +38,7 @@ export function OrdersListItemActions({
             window.open(order.tracking_url!, "_blank", "noopener,noreferrer")
           }
           variant="secondary-compact"
+          className="rounded-md"
         >
           {t("trackShipment")}
         </Button>
@@ -42,11 +47,16 @@ export function OrdersListItemActions({
         <Button
           onClick={() => onCancelOrder(order)}
           variant="secondary-compact"
+          className="rounded-md"
         >
           {t("haltOrder")}
         </Button>
       ) : (
-        <Button onClick={onReorder} variant="secondary-compact">
+        <Button
+          onClick={onReorder}
+          variant="secondary-compact"
+          className="rounded-md"
+        >
           {t("reorder")}
         </Button>
       )}

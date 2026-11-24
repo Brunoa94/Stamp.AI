@@ -19,7 +19,7 @@ export function OrdersFilterPills({ pills }: PropsI) {
         <Span
           key={pill.key}
           unstyled
-          className="inline-flex items-center gap-2 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 py-2 text-base font-bold uppercase tracking-widest text-(--color-stamp-chocolate)"
+          className="inline-flex items-center gap-2 rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-white) py-1.5 pl-3 pr-1.5 text-sm font-semibold text-(--color-stamp-chocolate)"
         >
           {pill.label}
           <Button
@@ -27,7 +27,7 @@ export function OrdersFilterPills({ pills }: PropsI) {
             variant="ghost"
             size="icon-sm"
             aria-label={t("clearFilter", { label: pill.label })}
-            className="h-4 w-4 p-0 hover:bg-transparent hover:text-(--color-stamp-gold)"
+            className="h-6 w-6 rounded-md p-0 hover:bg-(--color-stamp-cream) hover:text-(--color-stamp-gold-text)"
           >
             <X className="h-3.5 w-3.5" />
           </Button>

@@ -1,6 +1,6 @@
 /**
  * Checkout Feature Styles
- * Isolated styling for the luxury brutalist checkout design.
+ * Isolated styling for the checkout page.
  * Color/shadow tokens live in globals.css (--color-stamp-*); this file
  * only holds keyframes and the custom scrollbar that Tailwind utilities
  * cannot express.

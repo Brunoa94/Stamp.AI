@@ -1,8 +1,8 @@
 /**
  * DashboardCard
  *
- * Standard luxury card surface: white background, hairline divider border,
- * gold hover accent with a subtle lift. Optional uppercase label row.
+ * Standard card surface: white rounded-xl card with a divider border and a
+ * soft resting shadow. Optional uppercase amber eyebrow row with an icon.
  */
 
 import { PropsWithChildren, ReactNode } from "react";
@@ -24,13 +24,13 @@ export function DashboardCard({
   return (
     <section
       className={cn(
-        "border-2 border-(--color-stamp-chocolate)/15 bg-(--color-stamp-white) p-8 shadow-(--shadow-stamp-card) transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover) lg:p-10",
+        "rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-6 shadow-(--shadow-stamp-card) lg:p-8",
         className,
       )}
     >
       {label && (
         <div className="mb-6 flex items-center justify-between gap-4">
-          <Span variant="micro" className="text-(--color-stamp-taupe)">
+          <Span variant="label" className="text-(--color-stamp-gold-text)">
             {label}
           </Span>
           {icon}

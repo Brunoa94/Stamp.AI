@@ -28,13 +28,13 @@ export function TrustGuaranteeCard({
   return (
     <article
       className={cn(
-        "group flex flex-col items-center border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 text-center transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover)",
+        "flex flex-col items-center rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 text-center shadow-(--shadow-stamp-card) transition-all duration-500",
         "process-card-reveal process-card-reveal--mobile",
         isVisible && "process-card-reveal--visible",
       )}
     >
-      <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-(--color-stamp-gold)/10 transition-colors duration-300 group-hover:bg-(--color-stamp-gold)/20">
-        {Icon && <Icon className="h-6 w-6 text-(--color-stamp-gold-text)" />}
+      <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-(--color-stamp-peach)">
+        {Icon && <Icon aria-hidden className="h-6 w-6 text-(--color-stamp-gold-text)" />}
       </div>
       <Heading
         as="h3"

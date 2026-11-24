@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { useTranslations } from "next-intl";
+import { Span } from "@/features/ui/span";
 import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import { STAMP_EDIT_SUGGESTIONS } from "../../../lib/constants/stampProducts";
 import { ExpandablePicker } from "../../components/ExpandablePicker/ExpandablePicker";
@@ -13,8 +14,9 @@ import { NoFilterCard, NO_FILTER_ID } from "./NoFilterCard";
  *
  * On mobile (<md): shows first 4 filters with "Show more" button that expands
  *                  as an overlay. Auto-collapses when scrolled past 40% threshold.
- * On tablet (md to lg): shows 3-column grid with header
- * On desktop (lg+): shows original 4-column grid
+ * On tablet and desktop (md+): all 16 filters in a 4 x 4 grid that fills the
+ *                  panel below the back button at any screen size, with a
+ *                  "Select your filter" line under it
  */
 
 // Number of filters to show initially on mobile before expanding
@@ -29,39 +31,16 @@ function SynthesisVisualComponent({ selectedId, onSelectSuggestion }: PropsI) {
   const t = useTranslations("stamp.synthesis");
   const ts = useTranslations("stamp.suggestions");
   const isMdUp = useMediaQuery("(min-width: 768px)", true);
-  const isLgUp = useMediaQuery("(min-width: 1024px)", true);
   const isNoFilterSelected = selectedId === null || selectedId === NO_FILTER_ID;
 
-  // Desktop (lg+): 4-column grid
-  if (isLgUp) {
-    return (
-      <div className="p-12 lg:p-24 lg:pt-8 overflow-hidden lg:px-10 bg-white flex flex-col justify-center border-r border-(--color-stamp-divider)">
-        <div className="grid grid-cols-4 gap-4 w-full">
-          {STAMP_EDIT_SUGGESTIONS.map(({ id, image }) => (
-            <SuggestionCard
-              key={id}
-              id={id}
-              label={ts(`${id}.label`)}
-              hint={ts(`${id}.hint`)}
-              image={image}
-              isSelected={selectedId === id}
-              onSelect={onSelectSuggestion}
-            />
-          ))}
-          <NoFilterCard
-            isSelected={isNoFilterSelected}
-            onSelect={onSelectSuggestion}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  // Tablet (md to lg): 3-column grid
+  // Tablet and desktop (md+): a 4 x 4 grid filling the panel
   if (isMdUp) {
     return (
-      <div className="p-10 pt-8 overflow-hidden bg-white flex flex-col justify-center border-r border-(--color-stamp-divider)">
-        <div className="grid grid-cols-3 gap-4 w-full">
+      <div className="flex flex-col border-r border-(--color-stamp-divider) bg-(--color-stamp-white) px-10 pt-24 pb-10">
+        {/* The top padding clears the fixed back button; the grid takes the
+            rest of the panel, whatever the screen size, and each card
+            stretches to its cell (16 filters, 4 x 4) */}
+        <div className="grid min-h-0 w-full flex-1 grid-cols-4 grid-rows-4 gap-3 xl:gap-4">
           {STAMP_EDIT_SUGGESTIONS.map(({ id, image }) => (
             <SuggestionCard
               key={id}
@@ -78,13 +57,16 @@ function SynthesisVisualComponent({ selectedId, onSelectSuggestion }: PropsI) {
             onSelect={onSelectSuggestion}
           />
         </div>
+        <Span as="p" variant="script" className="pt-4 text-center text-2xl text-(--color-stamp-taupe)">
+          {t("selectFilter")}
+        </Span>
       </div>
     );
   }
 
   // Mobile (<md): use ExpandablePicker component
   return (
-    <div className="p-6 pt-20 bg-white flex flex-col border-r border-(--color-stamp-divider)">
+    <div className="p-6 pt-20 bg-(--color-stamp-white) flex flex-col border-r border-(--color-stamp-divider)">
       <div className="my-auto w-full">
         <ExpandablePicker
           initialCount={MOBILE_INITIAL_COUNT}

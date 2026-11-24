@@ -68,15 +68,15 @@ export function CheckoutSummarySection({
   const disablePayment = !isFormValid || cart.cart_items.length === 0 || total <= 0;
 
   return (
-    <div className="sticky top-32 border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 lg:p-10">
+    <div className="sticky top-32 rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-6 shadow-(--shadow-stamp-card) lg:p-8">
       <Heading
         as="h2"
-        unstyled
-        className="mb-8 font-heading text-2xl md:text-3xl font-bold uppercase tracking-tight"
+        variant="sectionSlab"
+        className="mb-6 text-(--color-stamp-chocolate)"
       >
         {tSummary.rich("title", {
           accent: (chunks) => (
-            <Span className="text-(--color-stamp-gold-text)">{chunks}</Span>
+            <Span variant="serif" className="text-(--color-stamp-gold-text)">{chunks}</Span>
           ),
         })}
       </Heading>

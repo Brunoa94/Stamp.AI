@@ -31,7 +31,7 @@ describe("Button variant/size precedence", () => {
     render(<Button variant="cta">Go</Button>);
     const classes = classesOf("Go");
     expect(classes).toContain("h-auto");
-    expect(classes).toContain("px-16");
+    expect(classes).toContain("md:px-12");
     expect(classes).not.toMatch(/\bh-10\b/);
     expect(classes).not.toMatch(/\bpx-4\b/);
   });

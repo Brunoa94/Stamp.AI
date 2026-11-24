@@ -30,7 +30,7 @@ export function UserInformationSection() {
       label={t("label")}
       title={t.rich("title", {
         accent: (chunks) => (
-          <Span variant="serif" className="text-(--color-stamp-taupe)">
+          <Span variant="serif" className="text-(--color-stamp-gold-text)">
             {chunks}
           </Span>
         ),
@@ -106,12 +106,13 @@ export function UserInformationSection() {
 
       {/* Action Buttons */}
       {isEditing && (
-        <div className="flex flex-col sm:flex-row items-center gap-4 pt-8 mt-8 border-t border-(--color-stamp-divider)">
+        <div className="flex flex-col sm:flex-row items-center gap-3 pt-6 mt-6 border-t border-(--color-stamp-divider)">
           <Button
             type="button"
             onClick={handleSave}
             disabled={isLoading}
-            className="w-full sm:w-auto bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-4 text-xs font-bold tracking-[0.15em] uppercase disabled:opacity-50"
+            variant="primary"
+            className="w-full sm:w-auto"
           >
             {isLoading ? t("saving") : t("saveChanges")}
           </Button>
@@ -119,7 +120,8 @@ export function UserInformationSection() {
             type="button"
             onClick={handleCancel}
             disabled={isLoading}
-            className="w-full sm:w-auto border-2 border-(--color-stamp-divider) bg-transparent text-(--color-stamp-chocolate) hover:border-(--color-stamp-chocolate) transition-all duration-300 px-8 py-4 text-xs font-bold tracking-[0.15em] uppercase"
+            variant="secondary"
+            className="w-full sm:w-auto"
           >
             {t("cancel")}
           </Button>

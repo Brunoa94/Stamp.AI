@@ -8,18 +8,14 @@ interface PropsI {
 
 export function AuthModalHeader({ label, title }: PropsI) {
   return (
-    <div className="mb-10">
-      <Span
-        as="p"
-        variant="micro"
-        className="mb-2 tracking-[0.2em] text-(--color-stamp-taupe)"
-      >
+    <div className="mb-8">
+      <Span as="p" variant="label" className="mb-2 text-(--color-stamp-gold-text)">
         {label}
       </Span>
       <Heading
         as="h2"
-        variant="card"
-        className="text-5xl tracking-tight text-(--color-stamp-chocolate)"
+        variant="sectionDisplay"
+        className="text-(--color-stamp-chocolate)"
       >
         {title}
       </Heading>

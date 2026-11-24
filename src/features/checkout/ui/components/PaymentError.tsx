@@ -41,11 +41,11 @@ const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
       <PaymentResultHeading
         title={title}
         description={subtitle}
-        className="mb-12"
+        className="mb-10"
       />
 
       {/* Reason card */}
-      <div className="text-left bg-(--color-stamp-cream)/50 p-6 mb-12 border border-(--color-stamp-error)/20">
+      <div className="mb-10 rounded-lg border border-(--color-stamp-error)/20 bg-(--color-stamp-error)/5 p-5 text-left">
         <div className="flex items-start gap-3">
           <Info className="text-(--color-stamp-error) mt-1 w-4 h-4 shrink-0" />
           <div>
@@ -97,12 +97,9 @@ const PaymentError = ({ details, onTryAgain, onSelectMethod }: Props) => {
           <AlternativePaymentMethods onSelectMethod={onSelectMethod} />
         )}
 
-        <Link
-          href="/profile"
-          className="block mt-8 text-(--color-stamp-taupe) hover:text-(--color-stamp-chocolate) text-xs font-bold uppercase tracking-widest transition-colors"
-        >
-          {t("contactSupport")}
-        </Link>
+        <Button asChild variant="ghost-stamp" className="mt-4 w-full">
+          <Link href="/profile">{t("contactSupport")}</Link>
+        </Button>
       </div>
     </PaymentResultCard>
   );

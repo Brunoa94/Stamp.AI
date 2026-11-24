@@ -5,12 +5,14 @@ import { PageContainer } from "@/shared/ui/PageContainer";
 /**
  * PageHeaderBand
  *
- * Full-bleed page header band with the homepage hero's diagonal photo
- * backdrop behind it (wider band cut, `diagonal-backdrop--band`). Copy inside
- * sits on the photo, so it uses light colours; on xl+ anything past the cut
- * (right side) is back on the off-white. `mirrored` flips it on xl+: the photo
- * on the right and the copy on the off-white, so the copy is light below xl
- * (full-bleed photo) and dark from xl.
+ * Page header panel: a `rounded-2xl` cream panel inside the page gutter
+ * (px-4 sm:px-6 lg:px-12, max-w-screen-2xl), with the homepage hero's
+ * diagonal photo backdrop inside it (wider band cut, `diagonal-backdrop--band`).
+ * Copy inside sits on the photo, so it uses light colours; on xl+ anything
+ * past the cut (right side) is back on the cream. `mirrored` flips it on xl+:
+ * the photo on the right and the copy on the cream, so the copy is light
+ * below xl (full photo) and dark from xl. Pages already offset the fixed
+ * header (`pt-24`), so the panel only adds a small top gap.
  */
 
 interface PropsI extends PropsWithChildren {
@@ -27,20 +29,25 @@ export function PageHeaderBand({
   children,
 }: PropsI) {
   return (
-    <div className="relative overflow-hidden border-b border-(--color-stamp-divider)">
-      {/* The band opens the page, so its photo is the likely LCP: preload it */}
-      <DiagonalBackdrop
-        src={src}
-        priority
-        sizes={mirrored ? "(min-width: 1280px) 56vw, 100vw" : "(min-width: 1280px) 64vw, 100vw"}
-        className={mirrored ? "diagonal-backdrop--mirrored" : "diagonal-backdrop--band"}
-        imageClassName={imageClassName}
-        mirrored={mirrored}
-      />
-      <div className="relative px-6 py-14 lg:px-12 xl:px-24 xl:py-20">
-        <PageContainer className="mx-auto max-w-screen-2xl">
-          {children}
-        </PageContainer>
+    <div className="px-4 pt-4 sm:px-6 lg:px-12">
+      <div className="relative mx-auto max-w-screen-2xl overflow-hidden rounded-2xl bg-(--color-stamp-cream)">
+        {/* The band opens the page, so its photo is the likely LCP: preload it */}
+        <DiagonalBackdrop
+          src={src}
+          priority
+          // The panel stops growing at max-w-screen-2xl, so cap the photo width there
+          sizes={
+            mirrored
+              ? "(min-width: 1632px) 860px, (min-width: 1280px) 56vw, 100vw"
+              : "(min-width: 1632px) 984px, (min-width: 1280px) 64vw, 100vw"
+          }
+          className={mirrored ? "diagonal-backdrop--mirrored" : "diagonal-backdrop--band"}
+          imageClassName={imageClassName}
+          mirrored={mirrored}
+        />
+        <div className="relative px-6 py-12 sm:px-10 lg:px-14 xl:py-16">
+          <PageContainer>{children}</PageContainer>
+        </div>
       </div>
     </div>
   );

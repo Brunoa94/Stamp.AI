@@ -37,19 +37,19 @@ export function DashboardProfileSection({
       icon={<UserRound className="h-4 w-4 text-(--color-stamp-taupe)" />}
     >
       <div className="flex items-center gap-6">
-        <div className="relative h-20 w-20 flex-none border border-(--color-stamp-divider) bg-(--color-stamp-cream)">
+        <div className="relative h-20 w-20 flex-none">
           <Image
             src={getAvatarUrl(user)}
             alt={t("avatarAlt", { name: getDisplayName(user) })}
             width={80}
             height={80}
             unoptimized
-            className="h-full w-full object-cover"
+            className="h-full w-full rounded-full border border-(--color-stamp-divider) bg-(--color-stamp-cream) object-cover"
           />
           {verified && (
             <Span
               unstyled
-              className="absolute -bottom-1.5 -right-1.5 flex h-6 w-6 items-center justify-center bg-(--color-stamp-gold) text-(--color-stamp-chocolate)"
+              className="absolute -bottom-0.5 -right-0.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-(--color-stamp-white) bg-(--color-stamp-gold) text-(--color-stamp-chocolate)"
               title={t("verified")}
             >
               <BadgeCheck className="h-4 w-4" aria-hidden />
@@ -60,11 +60,15 @@ export function DashboardProfileSection({
           )}
         </div>
         <div className="min-w-0">
-          <Heading as="h2" variant="card" className="truncate">
+          <Heading
+            as="h2"
+            variant="cardCompact"
+            className="truncate text-(--color-stamp-chocolate) md:text-2xl"
+          >
             {getDisplayName(user)}
           </Heading>
           <Paragraph
-            variant="quote"
+            variant="xs"
             className="mt-1 truncate text-(--color-stamp-taupe)"
           >
             {user?.email ?? ""}

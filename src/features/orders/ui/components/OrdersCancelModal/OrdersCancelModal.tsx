@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { useTranslations } from "next-intl";
+import { Button } from "@/features/ui/button";
 import { useModalFocusTrap } from "@/shared/hooks/useModalFocusTrap";
 import type { OrderWithItemsT } from "@/shared/types/order";
 import { OrdersCancelModalIcon } from "./OrdersCancelModalIcon";
@@ -36,17 +37,24 @@ export function OrdersCancelModal({
 
   return (
     <div
-      className="fixed inset-0 z-110 flex items-center justify-center bg-(--color-stamp-chocolate)/30 p-6 backdrop-blur-sm"
+      className="fixed inset-0 z-110 flex items-center justify-center p-6"
       role="dialog"
       aria-modal="true"
       aria-label={t("ariaLabel")}
-      onClick={onClose}
     >
+      {/* Clicking outside closes; keyboard users close with Escape or the keep-order button. */}
+      <Button
+        type="button"
+        variant="unstyled"
+        tabIndex={-1}
+        aria-hidden="true"
+        onClick={onClose}
+        className="absolute inset-0 cursor-default bg-(--color-stamp-chocolate)/30 backdrop-blur-sm"
+      />
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className="w-full max-w-md border border-(--color-stamp-error)/10 bg-(--color-stamp-white) p-10 text-center shadow-(--shadow-stamp-modal-error)"
-        onClick={(event) => event.stopPropagation()}
+        className="relative w-full max-w-md rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 text-center shadow-(--shadow-stamp-modal)"
       >
         <OrdersCancelModalIcon />
         <OrdersCancelModalHeader />

@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
  * - faq         FAQ answer — lg→xl, loose leading
  * - quote       Testimonial quote — xl→2xl, italic, relaxed leading
  * - caption     Inline helper/error text — xs, inherits font
- * - eyebrow     Small uppercase group label — 10px, bold, tracking-widest
+ * - eyebrow     Small uppercase group label — xs, bold, tracking-widest
  */
 
 const paragraphVariants = {
@@ -33,7 +33,7 @@ const paragraphVariants = {
   faq: "font-body text-lg md:text-xl font-normal tracking-normal leading-relaxed",
   quote: "font-body text-xl md:text-2xl font-normal italic tracking-normal leading-relaxed",
   caption: "text-xs",
-  eyebrow: "text-[10px] font-bold uppercase tracking-widest",
+  eyebrow: "font-body text-xs font-bold uppercase tracking-widest",
 } as const;
 
 type ParagraphVariant = keyof typeof paragraphVariants;

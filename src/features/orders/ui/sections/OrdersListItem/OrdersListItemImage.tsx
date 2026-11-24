@@ -24,7 +24,7 @@ export function OrdersListItemImage({
     <Button
       onClick={() => onOpenDetails(order)}
       variant="ghost"
-      className="relative h-32 w-full flex-none overflow-hidden bg-(--color-stamp-cream) lg:w-32"
+      className="relative h-32 w-full flex-none overflow-hidden rounded-lg bg-(--color-stamp-sage) p-0 hover:bg-(--color-stamp-sage) lg:w-32"
       aria-label={t("openDetails", { order: order.order_number || order.id })}
     >
       {imageSrc ? (
@@ -33,7 +33,7 @@ export function OrdersListItemImage({
           alt={firstItem.product_name || t("productAlt")}
           fill
           sizes="128px"
-          className="object-cover grayscale transition-all duration-700 group-hover:scale-110 group-hover:grayscale-0"
+          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center text-(--color-stamp-taupe)">

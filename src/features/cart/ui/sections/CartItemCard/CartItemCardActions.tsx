@@ -63,9 +63,9 @@ export function CartItemCardActions({
   };
 
   return (
-    <div className="mt-4 flex flex-col items-start gap-4 border-t border-(--color-stamp-divider) pt-3 sm:flex-row sm:items-center sm:justify-between md:mt-8 md:gap-6 md:pt-6">
+    <div className="mt-4 flex flex-col items-start gap-4 border-t border-(--color-stamp-divider) pt-3 sm:flex-row sm:items-center sm:justify-between md:mt-6 md:pt-4">
       <div
-        className="flex items-center border border-(--color-stamp-divider)"
+        className="flex items-center overflow-hidden rounded-lg border border-(--color-stamp-divider)"
         role="group"
         aria-label={t("quantityGroupLabel", { productName })}
       >
@@ -101,16 +101,10 @@ export function CartItemCardActions({
       <Button
         onClick={handleRemove}
         variant="ghost"
-        className="h-auto gap-2 rounded-none p-0 text-(--color-stamp-error) hover:bg-transparent hover:underline"
+        className="h-auto gap-2 p-0 text-(--color-stamp-error) hover:bg-transparent hover:text-(--color-stamp-error) hover:underline"
       >
         <Trash2 className="h-3.5 w-3.5" />
-        <Span
-          variant="micro"
-          unstyled
-          className="text-[10px] font-button font-bold uppercase tracking-[0.2em]"
-        >
-          {t("remove")}
-        </Span>
+        <Span variant="badge">{t("remove")}</Span>
       </Button>
     </div>
   );

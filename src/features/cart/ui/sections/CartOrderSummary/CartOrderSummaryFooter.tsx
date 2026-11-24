@@ -23,7 +23,7 @@ export function CartOrderSummaryFooter({
   const t = useTranslations("cart.summary");
 
   return (
-    <div className="mt-8 space-y-6">
+    <div className="mt-6 space-y-6">
       <Button
         onClick={onCheckout}
         variant="primary"
@@ -35,7 +35,7 @@ export function CartOrderSummaryFooter({
         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
       </Button>
 
-      <div className="flex items-center gap-4 border border-(--color-stamp-divider) bg-(--color-stamp-cream)/40 px-4 py-4">
+      <div className="flex items-center gap-4 rounded-lg bg-(--color-stamp-cream) px-4 py-3">
         <Truck
           className="h-5 w-5 text-(--color-stamp-taupe)"
           aria-hidden="true"

@@ -37,9 +37,14 @@ export function PromoCarousel({
   const gridImages = images.slice(0, 4);
 
   return (
-    <div className={cn("relative", className)}>
+    <div
+      className={cn(
+        "relative rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-2 shadow-(--shadow-stamp-card)",
+        className,
+      )}
+    >
       {/* 2x2 Grid layout */}
-      <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
+      <div className="grid grid-cols-2 gap-2">
         {gridImages.map((image, index) => {
           const isActive = index === activeIndex % gridImages.length;
 
@@ -47,11 +52,11 @@ export function PromoCarousel({
             <div
               key={image.src}
               className={cn(
-                "relative aspect-square overflow-hidden rounded-lg",
+                "relative aspect-square overflow-hidden rounded-lg bg-(--color-stamp-sage)",
                 "transition-all duration-500 ease-out",
                 "border-2",
                 isActive
-                  ? "border-(--color-stamp-gold) shadow-lg scale-[1.02] z-10"
+                  ? "z-10 border-(--color-stamp-gold)"
                   : "border-transparent opacity-75 hover:opacity-100",
               )}
             >
@@ -76,7 +81,7 @@ export function PromoCarousel({
       </div>
 
       {/* Progress indicator bar */}
-      <div className="mt-4 flex gap-1.5 justify-center">
+      <div className="mt-3 mb-1 flex justify-center gap-1.5">
         {gridImages.map((_, index) => (
           <Button
             key={index}
@@ -84,7 +89,7 @@ export function PromoCarousel({
             variant="unstyled"
             onClick={() => setActiveIndex(index)}
             className={cn(
-              "h-1 rounded-full transition-all duration-300 focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold) focus-visible:ring-offset-2",
+              "h-1 rounded-full transition-all duration-300 focus-visible:ring-2 focus-visible:ring-(--color-stamp-chocolate) focus-visible:ring-offset-2",
               index === activeIndex % gridImages.length
                 ? "w-6 bg-(--color-stamp-gold)"
                 : "w-2 bg-(--color-stamp-chocolate)/20 hover:bg-(--color-stamp-chocolate)/40",

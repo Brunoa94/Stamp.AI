@@ -66,18 +66,18 @@ export default function OrdersContent() {
 
   if (isError) {
     return (
-      <section className="min-h-[calc(100vh-6rem)] bg-(--color-stamp-off-white) px-12 pb-24 pt-12 lg:px-24">
-        <div className="rounded-none border border-(--color-stamp-error)/20 bg-(--color-stamp-error)/5 p-8 text-center">
+      <OrdersLayout header={<OrdersHeader />}>
+        <section className="rounded-xl border border-(--color-stamp-error)/20 bg-(--color-stamp-error)/5 p-8 text-center">
           <Heading
             as="h2"
-            variant="card"
-            className="text-xl text-(--color-stamp-error)"
+            variant="cardCompact"
+            className="text-(--color-stamp-error)"
           >
             {t("errorTitle")}
           </Heading>
           <Paragraph
-            variant="sm"
-            className="mt-2 text-sm tracking-normal text-(--color-stamp-error)/80"
+            variant="xs"
+            className="mt-2 text-(--color-stamp-error)"
           >
             {t("errorDescription")}
           </Paragraph>
@@ -89,15 +89,15 @@ export default function OrdersContent() {
             {t("retry")}
             <RefreshCw className="h-3.5 w-3.5" />
           </Button>
-        </div>
-      </section>
+        </section>
+      </OrdersLayout>
     );
   }
 
   return (
     <>
       <OrdersLayout header={<OrdersHeader total={filteredOrders.length} />}>
-        <section className="min-h-[calc(100vh-6rem)] bg-(--color-stamp-off-white) text-(--color-stamp-chocolate)">
+        <section className="text-(--color-stamp-chocolate)">
           <OrdersFilterSection
             viewMode={viewMode}
             onViewModeChange={setViewMode}

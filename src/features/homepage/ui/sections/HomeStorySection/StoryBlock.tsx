@@ -24,10 +24,10 @@ export function StoryBlock({ block, inverted = false }: StoryBlockProps) {
 
   return (
     <SectionReveal fadeOnScroll>
-      <article className="flex flex-col items-center gap-8 md:flex-row md:gap-12 lg:gap-16">
+      <article className="flex flex-col items-center gap-10 md:flex-row md:justify-center md:gap-12 lg:gap-16 xl:gap-24">
         <div
           className={cn(
-            "w-full max-w-xs shrink-0 md:w-64 lg:w-80",
+            "w-full max-w-sm shrink-0 md:w-72 lg:w-96",
             block.imagePosition === "left" && "md:order-first",
             block.imagePosition === "right" && "md:order-last"
           )}
@@ -42,7 +42,7 @@ export function StoryBlock({ block, inverted = false }: StoryBlockProps) {
           eyebrow={t(`blocks.${block.id}.eyebrow`)}
           title={t.rich(`blocks.${block.id}.title`, {
             accent: (chunks) => (
-              <Span variant="serif" className={inverted ? "text-(--color-stamp-gold)" : "text-(--color-stamp-taupe)"}>
+              <Span variant="serif" className={inverted ? "text-(--color-stamp-gold-light)" : "text-(--color-stamp-gold-text)"}>
                 {chunks}
               </Span>
             ),

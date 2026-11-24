@@ -164,8 +164,6 @@
       }
     },
     "hero": {
-      "brand": "tamp <accent>.ai</accent>",
-      "brandLabel": "Stamp.ai",
       "headline": "From imagination<br></br>to <word></word>",
       "rotatingWords": {
         "tees": "tees",
@@ -179,7 +177,21 @@
         "hint": "…and edit it with a prompt in the next step",
         "step": "step 01"
       },
+      "startOptions": {
+        "aria": "How do you want to start?",
+        "upload": "Upload a photo",
+        "describe": "Describe an idea"
+      },
+      "describe": {
+        "title": "Describe your idea",
+        "hint": "…no photo needed, just tell us what you want",
+        "step": "step 02"
+      },
       "freeCredits": "<signUp>Sign up</signUp> and get 5 free edits per day",
+      "productTypes": {
+        "label": "Product types",
+        "cta": "See styles"
+      },
       "productBadge": "Essential tee · White · 320 GSM",
       "scrollCue": "Scroll to explore",
       "productImageAlt": "Heavyweight t-shirt with a custom print",
@@ -250,7 +262,8 @@
       "accent": "essentials",
       "label": "Our apparel",
       "emptyState": "The catalog is temporarily unavailable — please check back soon",
-      "viewFullCatalog": "Browse all products"
+      "viewFullCatalog": "Browse all products",
+      "subtitle": "Our bestselling blanks, ready for your design."
     },
     "featured": {
       "title": "Featured",
@@ -432,7 +445,6 @@
     },
     "productOfMonth": {
       "eyebrow": "This month's pick",
-      "title": "Product of the month",
       "badge": "Pick of the month",
       "cta": "Design yours now",
       "noImage": "No image"
@@ -453,6 +465,28 @@
           "cta": "See the essentials",
           "imageAlt": "Model wearing a heavyweight white t-shirt"
         }
+      }
+    },
+    "categories": {
+      "title": "Shop by category",
+      "items": {
+        "tees": "T-shirts",
+        "hoodies": "Hoodies",
+        "mugs": "Mugs",
+        "totes": "Tote bags",
+        "canvas": "Canvas prints",
+        "kids": "Kids"
+      }
+    },
+    "giftIdeas": {
+      "title": "Gift ideas for every occasion",
+      "subtitle": "One photo and a few words is all it takes to make a gift nobody else can buy.",
+      "tiles": {
+        "birthdays": "Birthdays",
+        "weddings": "Weddings & parties",
+        "pets": "For pet lovers",
+        "family": "Family keepsakes",
+        "adventures": "Travel & adventures"
       }
     }
   },
@@ -532,6 +566,7 @@
       "eyebrow": "Choose a filter",
       "showMore": "Show {count} more",
       "showLess": "Show less",
+      "selectFilter": "Select your filter",
       "subtitle": "Tap a suggestion to start your prompt, then tweak it on the right.",
       "applySuggestion": "Apply suggestion: {label} — {hint}",
       "noFilter": {
@@ -647,6 +682,7 @@
       ]
     },
     "header": {
+      "wordmarkTail": "tamp",
       "logoAria": "Return to Stamp homepage",
       "brand": "Stamp it",
       "stampAria": "Start stamping process",
@@ -662,7 +698,18 @@
       "openMenu": "Open menu",
       "closeMenu": "Close menu",
       "mainNavAria": "Main navigation",
-      "mobileNavAria": "Mobile navigation"
+      "mobileNavAria": "Mobile navigation",
+      "promptPlaceholder": "Describe an idea or upload a photo…",
+      "categoryNavAria": "Shop categories",
+      "categories": {
+        "studio": "Design studio",
+        "allProducts": "All products",
+        "popular": "Popular right now",
+        "gifts": "Gift ideas",
+        "howItWorks": "How it works",
+        "shipping": "Shipping",
+        "help": "Help & FAQ"
+      }
     },
     "nav": {
       "eyebrow": "Your Progress",
@@ -716,7 +763,7 @@
     },
     "hero": {
       "eyebrow": "Start Here",
-      "title": "Stamp <br></br><accent>It</accent>",
+      "title": "Stamp <accent>It</accent>",
       "description": "Turn your own photo — or just an idea — into a print-ready design. Eight quick steps from idea to finished product.",
       "cta": "Start creating",
       "ctaAria": "Start creating: begin customizing your design",
@@ -1227,7 +1274,8 @@
       },
       "wordmark": "Stamp",
       "copyright": "© {year} Stamp AI. All rights reserved.",
-      "tagline": "Made for people who make things"
+      "tagline": "Made for people who make things",
+      "strip": "Every piece is printed on demand, only once it's ordered. No warehouses, no waste."
     },
     "languageSwitcher": {
       "label": "Language"

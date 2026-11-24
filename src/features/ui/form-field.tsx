@@ -7,14 +7,13 @@ import type { UseFormRegisterReturn } from "react-hook-form";
 
 type FormFieldVariant = "default" | "auth-login" | "auth-register" | "shipping" | "profile" | "profile-readonly" | "stamp-auth";
 
-// Exported input styles for direct use in components with controlled inputs
+// Exported input styles for direct use in components with controlled inputs.
+// The Input atom carries the stamp field look (rounded-lg, cream surface,
+// divider border, chocolate focus); these only add the per-state differences.
 export const profileInputStyles = {
-  editable:
-    "h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20",
-  readonly:
-    "h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) outline-none cursor-default",
-  password:
-    "h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20",
+  editable: "",
+  readonly: "cursor-default",
+  password: "",
 };
 
 interface FormFieldProps {
@@ -30,55 +29,19 @@ interface FormFieldProps {
   trailingAction?: ReactNode;
 }
 
-const variantStyles: Record<
-  FormFieldVariant,
-  { container: string; labelVariant?: "sm" | "default"; labelColor: string; input: string }
-> = {
-  default: {
-    container: "space-y-2",
-    labelColor: "",
-    input: "",
-  },
-  "auth-login": {
-    container: "space-y-2",
-    labelVariant: "default",
-    labelColor: "text-ink",
-    input:
-      "h-14 rounded-2xl border-ink/5 bg-concrete/50 font-medium text-ink placeholder:text-ink/20 focus-visible:border-cyan focus-visible:ring-4 focus-visible:ring-cyan/15",
-  },
-  "auth-register": {
-    container: "",
-    labelColor: "mb-2 ml-1 block text-slate-700",
-    input:
-      "h-12 rounded-xl border-slate-200 bg-white px-4 text-sm text-slate-900 placeholder:text-slate-400",
-  },
-  shipping: {
-    container: "",
-    labelColor: "mb-2 block text-slate-500",
-    input:
-      "rounded-none border border-slate-200 bg-white/90 px-4 py-3 text-sm text-slate-900 shadow-none focus-visible:ring-0 focus-visible:border-purple-500",
-  },
-  profile: {
-    container: "space-y-2",
-    labelVariant: "sm" as const,
-    labelColor: "text-(--color-stamp-chocolate)",
-    input:
-      "h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20",
-  },
-  "profile-readonly": {
-    container: "space-y-2",
-    labelVariant: "sm" as const,
-    labelColor: "text-(--color-stamp-chocolate)",
-    input:
-      "h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) outline-none cursor-default",
-  },
-  "stamp-auth": {
-    container: "space-y-2",
-    labelVariant: "sm" as const,
-    labelColor: "text-(--color-stamp-chocolate)",
-    input:
-      "h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20",
-  },
+/**
+ * Every variant shares one field look (the Input atom), one label style and
+ * one error style, so forms read the same across auth, checkout and profile.
+ * The variant names stay for the callers; only the read-only field differs.
+ */
+const variantInputStyles: Record<FormFieldVariant, string> = {
+  default: "",
+  "auth-login": "",
+  "auth-register": "",
+  shipping: "",
+  profile: profileInputStyles.editable,
+  "profile-readonly": profileInputStyles.readonly,
+  "stamp-auth": "",
 };
 
 export function FormField({
@@ -94,59 +57,43 @@ export function FormField({
   trailingAction,
 }: FormFieldProps) {
   const errorId = error ? `${id}-error` : undefined;
-  const styles = variantStyles[variant];
   const hasIcons = leadingIcon || trailingAction;
+  const input = (
+    <Input
+      id={id}
+      type={type}
+      placeholder={placeholder}
+      aria-invalid={!!error}
+      aria-describedby={errorId}
+      className={cn(
+        variantInputStyles[variant],
+        leadingIcon && "pl-14",
+        trailingAction && "pr-14",
+      )}
+      {...register}
+    />
+  );
 
   return (
-    <div className={styles.container}>
-      {styles.labelVariant ? (
-        <Label htmlFor={id} className="flex items-center">
-          <Span variant={styles.labelVariant} className={styles.labelColor}>
-            {label}
+    <div className="space-y-2">
+      <Label htmlFor={id}>
+        {label}
+        {required && (
+          <Span unstyled className="text-(--color-stamp-gold-text)" aria-hidden="true">
+            *
           </Span>
-          {required && (
-            <span className={variant === "stamp-auth" || variant === "profile" || variant === "profile-readonly" ? "text-(--color-stamp-gold-text) ml-1" : "text-red-500 ml-1"} aria-hidden="true">
-              *
-            </span>
-          )}
-        </Label>
-      ) : (
-        <Label htmlFor={id} className={styles.labelColor}>
-          {label}
-          {required && (
-            <span className={variant === "stamp-auth" || variant === "profile" || variant === "profile-readonly" ? "text-(--color-stamp-gold-text)" : "text-red-500"} aria-hidden="true">
-              {" "}
-              *
-            </span>
-          )}
-        </Label>
-      )}
+        )}
+      </Label>
 
       {hasIcons ? (
         <div className="relative">
           {leadingIcon && (
-            <div className={cn(
-              "pointer-events-none absolute left-5 top-1/2 -translate-y-1/2",
-              variant === "stamp-auth" || variant === "profile" || variant === "profile-readonly" ? "text-(--color-stamp-taupe)" : "text-ink/30"
-            )}>
+            <div className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-(--color-stamp-taupe)">
               {leadingIcon}
             </div>
           )}
 
-          <Input
-            id={id}
-            type={type}
-            placeholder={placeholder}
-            aria-invalid={!!error}
-            aria-describedby={errorId}
-            className={cn(
-              styles.input,
-              leadingIcon && "pl-14",
-              trailingAction && "pr-14",
-              error && (variant === "stamp-auth" || variant === "profile" || variant === "profile-readonly" ? "border-(--color-stamp-error)" : "border-red-400")
-            )}
-            {...register}
-          />
+          {input}
 
           {trailingAction && (
             <div className="absolute right-5 top-1/2 -translate-y-1/2">
@@ -155,27 +102,14 @@ export function FormField({
           )}
         </div>
       ) : (
-        <Input
-          id={id}
-          type={type}
-          placeholder={placeholder}
-          aria-invalid={!!error}
-          aria-describedby={errorId}
-          className={cn(styles.input, error && (variant === "stamp-auth" || variant === "profile" || variant === "profile-readonly" ? "border-(--color-stamp-error)" : "border-red-400"))}
-          {...register}
-        />
+        input
       )}
 
       {error && (
         <p
           id={errorId}
           role="alert"
-          className={cn(
-            variant === "stamp-auth" || variant === "profile" || variant === "profile-readonly"
-              ? "text-xs font-bold uppercase tracking-widest text-(--color-stamp-error)"
-              : "text-sm text-red-600 dark:text-red-400",
-            (variant === "auth-register" || variant === "shipping") && "mt-1"
-          )}
+          className="text-sm font-medium text-(--color-stamp-error)"
         >
           {error}
         </p>

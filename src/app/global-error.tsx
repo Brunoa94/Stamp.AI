@@ -8,10 +8,35 @@ import { useEffect } from "react";
  * GlobalError
  *
  * Root error boundary for the entire application.
- * This catches errors that occur outside of the root layout.
- * Styled inline to match the Stamp luxury design system since
- * this component cannot import external styles.
+ * This catches errors that occur outside of the root layout, so it renders
+ * its own <html> without the app's stylesheet or fonts. The Stamp look is
+ * reproduced in the inline <style> below with the palette's literal values
+ * (keep them in sync with src/app/globals-stamp.css): off-white page,
+ * chocolate text, a white rounded-xl icon card, amber accent bar and
+ * accent word, and rounded-lg uppercase buttons (chocolate → amber on
+ * hover, chocolate outline) with a chocolate focus outline.
  */
+
+const GLOBAL_ERROR_STYLES = `
+  .ge-body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #fdfbf8; color: #342419; }
+  .ge-shell { display: flex; min-height: 100vh; width: 100%; box-sizing: border-box; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1rem; }
+  .ge-stack { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; text-align: center; max-width: 32rem; }
+  .ge-icon { display: flex; height: 5rem; width: 5rem; align-items: center; justify-content: center; border-radius: 0.75rem; border: 1px solid rgba(52, 36, 25, 0.1); background-color: #ffffff; box-shadow: 0 1px 3px rgba(52, 36, 25, 0.08); }
+  .ge-bar { height: 0.375rem; width: 4rem; border-radius: 9999px; background-color: #d0842e; }
+  .ge-title { margin: 0; font-family: Rockwell, "Roboto Slab", Georgia, serif; font-size: 2.25rem; font-weight: 400; line-height: 1.15; letter-spacing: -0.025em; }
+  .ge-accent { color: #955415; font-family: "Comic Sans MS", "Segoe Print", cursive; font-style: italic; text-transform: lowercase; }
+  .ge-text { margin: 0; font-size: 1.125rem; line-height: 1.6; color: #6c5749; }
+  .ge-ref { margin: 0; border-radius: 0.5rem; border: 1px solid rgba(52, 36, 25, 0.1); background-color: #ffffff; padding: 0.75rem 1.5rem; font-family: monospace; font-size: 0.75rem; letter-spacing: 0.025em; text-transform: uppercase; color: #6c5749; }
+  .ge-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-top: 0.5rem; }
+  .ge-button { border-radius: 0.5rem; border: 2px solid #342419; padding: 0.875rem 1.5rem; font: inherit; font-size: 0.875rem; font-weight: 700; letter-spacing: 0.025em; text-transform: uppercase; cursor: pointer; transition: background-color 0.3s, color 0.3s, border-color 0.3s, transform 0.3s, box-shadow 0.3s; }
+  .ge-button:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 rgba(52, 36, 25, 0.14); }
+  .ge-button:focus-visible { outline: 2px solid #342419; outline-offset: 2px; }
+  .ge-primary { background-color: #342419; color: #ffffff; }
+  .ge-primary:hover { background-color: #d0842e; border-color: #d0842e; color: #342419; }
+  .ge-secondary { background-color: transparent; color: #342419; }
+  .ge-secondary:hover { background-color: #342419; color: #ffffff; }
+`;
+
 export default function GlobalError({
   error,
   reset,
@@ -25,175 +50,46 @@ export default function GlobalError({
 
   return (
     <html lang="en">
-      <body
-        style={{
-          margin: 0,
-          fontFamily:
-            'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-          backgroundColor: "#faf6f1",
-          color: "#3d2817",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            minHeight: "100vh",
-            width: "100%",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "2rem",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "2rem",
-              textAlign: "center",
-              maxWidth: "32rem",
-            }}
-          >
+      <head>
+        <style>{GLOBAL_ERROR_STYLES}</style>
+      </head>
+      <body className="ge-body">
+        <div className="ge-shell">
+          <div className="ge-stack">
             {/* Error icon */}
-            <div
-              style={{
-                display: "flex",
-                height: "5rem",
-                width: "5rem",
-                alignItems: "center",
-                justifyContent: "center",
-                border: "1px solid rgba(61, 40, 23, 0.08)",
-                backgroundColor: "#fefefe",
-                boxShadow: "6px 6px 0 rgba(61, 40, 23, 0.12)",
-              }}
-            >
+            <div className="ge-icon">
               <AlertTriangle
+                aria-hidden
                 style={{ height: "2.5rem", width: "2.5rem", color: "#dc2626" }}
                 strokeWidth={1.5}
               />
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <h1
-                style={{
-                  fontSize: "1.875rem",
-                  fontWeight: 400,
-                  letterSpacing: "-0.025em",
-                  margin: 0,
-                }}
-              >
-                Something went{" "}
-                <span
-                  style={{
-                    color: "#c4a08a",
-                    fontStyle: "italic",
-                    fontFamily: "Georgia, serif",
-                    textTransform: "lowercase",
-                    fontWeight: 300,
-                  }}
-                >
-                  wrong
-                </span>
-              </h1>
+            <div aria-hidden className="ge-bar" />
 
-              <p
-                style={{
-                  fontSize: "1.125rem",
-                  color: "#c4a08a",
-                  fontWeight: 300,
-                  lineHeight: 1.6,
-                  margin: 0,
-                }}
-              >
-                We encountered an unexpected error. Our team has been notified
-                and is working to fix it.
-              </p>
-            </div>
+            <h1 className="ge-title">
+              Something went <span className="ge-accent">wrong</span>
+            </h1>
+
+            <p className="ge-text">
+              We encountered an unexpected error. Our team has been notified
+              and is working to fix it.
+            </p>
 
             {/* Error digest for support reference */}
-            {error.digest && (
-              <div
-                style={{
-                  backgroundColor: "#fefefe",
-                  padding: "0.75rem 1.5rem",
-                  border: "1px solid rgba(61, 40, 23, 0.08)",
-                  boxShadow: "6px 6px 0 rgba(61, 40, 23, 0.12)",
-                }}
-              >
-                <p
-                  style={{
-                    fontFamily: "monospace",
-                    fontSize: "0.75rem",
-                    color: "#c4a08a",
-                    letterSpacing: "0.05em",
-                    textTransform: "uppercase",
-                    margin: 0,
-                  }}
-                >
-                  Reference: {error.digest}
-                </p>
-              </div>
-            )}
+            {error.digest && <p className="ge-ref">Reference: {error.digest}</p>}
 
             {/* Actions */}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "1rem",
-                marginTop: "1rem",
-              }}
-            >
-              <button
-                onClick={reset}
-                style={{
-                  backgroundColor: "#3d2817",
-                  color: "#ffffff",
-                  padding: "1rem 2rem",
-                  fontSize: "0.75rem",
-                  fontWeight: 700,
-                  letterSpacing: "0.2em",
-                  textTransform: "uppercase",
-                  border: "none",
-                  cursor: "pointer",
-                  transition: "all 0.3s",
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = "#b9932f";
-                  e.currentTarget.style.color = "#3d2817";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = "#3d2817";
-                  e.currentTarget.style.color = "#ffffff";
-                }}
-              >
+            <div className="ge-actions">
+              <button type="button" onClick={reset} className="ge-button ge-primary">
                 Try Again
               </button>
               <button
+                type="button"
                 onClick={() => {
                   window.location.href = "/";
                 }}
-                style={{
-                  backgroundColor: "transparent",
-                  color: "#3d2817",
-                  padding: "1rem 2rem",
-                  fontSize: "0.75rem",
-                  fontWeight: 700,
-                  letterSpacing: "0.2em",
-                  textTransform: "uppercase",
-                  border: "1px solid #3d2817",
-                  cursor: "pointer",
-                  transition: "all 0.3s",
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = "#3d2817";
-                  e.currentTarget.style.color = "#ffffff";
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.color = "#3d2817";
-                }}
+                className="ge-button ge-secondary"
               >
                 Go to Homepage
               </button>

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Check, Fingerprint } from "lucide-react";
+import { Check } from "lucide-react";
 import { Heading } from "@/features/ui/heading";
 import { List } from "@/features/ui/list";
 import { Paragraph } from "@/features/ui/paragraph";
@@ -10,10 +10,9 @@ import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
 /**
  * AuthBrandPanel
  *
- * Inverted chocolate side of the auth dialogs: gold rule, eyebrow, display
- * headline and the perks of having an account. Mirrors the HomeCtaSection
- * treatment (corner frames, fingerprint watermark) so the dialog reads as
- * part of the same luxury surface. Hidden below `md`, where the form alone
+ * Inverted chocolate side of the auth dialogs: amber accent bar, eyebrow,
+ * slab-serif headline with a handwritten accent and the perks of having an
+ * account, matching the chocolate HomeCtaSection panel. Hidden below `md`, where the form alone
  * fits the screen.
  *
  * Copy comes from `namespace`: eyebrow, heading (with an <accent> chunk set
@@ -30,15 +29,6 @@ export function AuthBrandPanel({ namespace }: PropsI) {
 
   return (
     <div className="relative hidden h-full overflow-hidden bg-(--color-stamp-chocolate) p-10 md:flex md:flex-col lg:p-12">
-      {/* Decorative corner frames */}
-      <div className="absolute top-6 left-6 h-14 w-14 border-t-2 border-l-2 border-(--color-stamp-gold)/40" aria-hidden="true" />
-      <div className="absolute right-6 bottom-6 h-14 w-14 border-r-2 border-b-2 border-(--color-stamp-gold)/40" aria-hidden="true" />
-
-      <Fingerprint
-        aria-hidden
-        className="pointer-events-none absolute -right-24 -bottom-24 h-80 w-80 text-(--color-stamp-gold)/10"
-      />
-
       <div className="relative flex h-full flex-col">
         <Image
           src={staticAssetUrl("/logo-white-leather.webp")}
@@ -50,8 +40,8 @@ export function AuthBrandPanel({ namespace }: PropsI) {
         />
 
         <div className="mt-auto pt-16">
-          <div className="mb-8 h-1.5 w-16 bg-(--color-stamp-gold)" aria-hidden="true" />
-          <Span as="p" variant="meta" className="mb-4 text-(--color-stamp-gold-light)">
+          <div className="mb-6 h-1.5 w-16 rounded-full bg-(--color-stamp-gold)" aria-hidden="true" />
+          <Span as="p" variant="label" className="mb-3 text-(--color-stamp-gold-light)">
             {t("eyebrow")}
           </Span>
           <Heading
@@ -71,15 +61,15 @@ export function AuthBrandPanel({ namespace }: PropsI) {
             {t("lead")}
           </Paragraph>
 
-          <List className="space-y-4 border-t border-(--color-stamp-gold)/20 pt-8">
+          <List className="space-y-4 border-t border-(--color-stamp-off-white)/15 pt-8">
             {perks.map((perk) => (
               <li key={perk} className="flex items-center gap-4">
                 <Span
                   unstyled
                   aria-hidden="true"
-                  className="flex h-7 w-7 shrink-0 items-center justify-center border border-(--color-stamp-gold)/50 text-(--color-stamp-gold-light)"
+                  className="flex size-7 shrink-0 items-center justify-center rounded-full bg-(--color-stamp-gold) text-(--color-stamp-chocolate)"
                 >
-                  <Check className="h-4 w-4" />
+                  <Check className="size-4" />
                 </Span>
                 <Span variant="default" className="text-(--color-stamp-off-white)">
                   {perk}

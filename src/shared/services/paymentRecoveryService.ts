@@ -3,18 +3,11 @@ import { ErrorClient } from "./errorClient";
 import type { PrintifyLineItem } from "@/shared/types/printifyOrder";
 import type { ShippingAddressT } from "@/shared/schemas/checkout";
 import type { CartWithItems } from "@/shared/types/cart";
+import type { PaymentRecoveryRecordT } from "@/shared/types/paymentRecovery";
 
-export interface PaymentRecoveryRecordI {
-  id: string;
-  payment_provider: "stripe" | "paypal" | "mollie";
-  payment_intent_id: string;
-  amount: number;
-  currency: string;
-  cart_snapshot: CartWithItems;
-  shipping_address: ShippingAddressT;
-  line_items: PrintifyLineItem[];
-  created_at: string;
-}
+// Old name, still used by paymentRecoveryQueries.ts; switch it to PaymentRecoveryRecordT
+// when that file's set-state-in-effect lint error is fixed.
+export type PaymentRecoveryRecordI = PaymentRecoveryRecordT;
 
 export interface RecordPaymentPayloadI {
   paymentProvider: "stripe" | "paypal" | "mollie";
@@ -127,7 +120,7 @@ export class PaymentRecoveryService {
    * Get pending payment recoveries for current user
    * Returns payments that succeeded but haven't been finalized into orders
    */
-  static async getPendingRecoveries(): Promise<PaymentRecoveryRecordI[]> {
+  static async getPendingRecoveries(): Promise<PaymentRecoveryRecordT[]> {
     try {
       const supabase = this.getSupabase();
       const {
@@ -154,7 +147,7 @@ export class PaymentRecoveryService {
         });
       }
 
-      return (data || []) as PaymentRecoveryRecordI[];
+      return (data || []) as PaymentRecoveryRecordT[];
     } catch (error) {
       throw ErrorClient.handleError({
         error,
@@ -169,7 +162,7 @@ export class PaymentRecoveryService {
    * Completes order creation for a previously successful payment
    */
   static async processRecovery(
-    recoveryRecord: PaymentRecoveryRecordI,
+    recoveryRecord: PaymentRecoveryRecordT,
   ): Promise<{ success: boolean; orderId?: string; error?: string }> {
     try {
       const supabase = this.getSupabase();

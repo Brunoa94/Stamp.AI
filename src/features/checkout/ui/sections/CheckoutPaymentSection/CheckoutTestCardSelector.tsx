@@ -1,8 +1,8 @@
 /**
  * CheckoutTestCardSelector
  *
- * Dropdown for selecting test card payment methods, styled to the luxury
- * brutalist system (taupe label, chocolate/cream Select). Used only in test
+ * Dropdown for selecting test card payment methods (taupe label, Select
+ * sized like the address fields). Used only in test
  * mode. Groups mirror the shared TestCardSelector's scenarios.
  */
 
@@ -41,7 +41,7 @@ export function CheckoutTestCardSelector({
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger
           id="test-card-select"
-          className="h-12 w-full rounded-none border-(--color-stamp-divider) bg-(--color-stamp-white) text-base font-normal text-(--color-stamp-chocolate) focus:ring-2 focus:ring-(--color-stamp-gold)/30"
+          className="h-12 w-full rounded-lg px-4 text-base font-normal text-(--color-stamp-chocolate) focus:ring-(--color-stamp-chocolate)"
         >
           <SelectValue placeholder={t("selectorPlaceholder")} />
         </SelectTrigger>

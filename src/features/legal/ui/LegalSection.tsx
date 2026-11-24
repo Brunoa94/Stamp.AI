@@ -1,13 +1,14 @@
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { List } from "@/features/ui/list";
+import { Span } from "@/features/ui/span";
 import type { LegalSectionType } from "../types/legal";
 
 /**
  * LegalSection
  *
  * One numbered section of a legal document: heading, body paragraphs,
- * and an optional bullet list with a gold square marker.
+ * and an optional bullet list with an amber dot marker.
  */
 
 interface PropsI {
@@ -19,32 +20,33 @@ export function LegalSection({ section }: PropsI) {
     <section className="space-y-4">
       <Heading
         as="h2"
-        variant="item"
-        className="text-(--color-stamp-chocolate)"
+        variant="cardCompact"
+        className="text-2xl text-(--color-stamp-chocolate)"
       >
         {section.heading}
       </Heading>
       {section.body.map((paragraph) => (
         <Paragraph
           key={paragraph}
-          variant="loose"
-          className="text-(--color-stamp-chocolate)/70"
+          variant="xs"
+          className="text-(--color-stamp-taupe) md:text-lg"
         >
           {paragraph}
         </Paragraph>
       ))}
       {section.bullets && (
-        <List className="space-y-3 pt-2">
+        <List className="space-y-2 pt-1">
           {section.bullets.map((bullet) => (
             <li key={bullet} className="flex gap-4">
-              <span
+              <Span
+                unstyled
                 aria-hidden
-                className="mt-3 h-1.5 w-1.5 flex-none bg-(--color-stamp-gold)"
+                className="mt-2.5 size-1.5 flex-none rounded-full bg-(--color-stamp-gold) md:mt-3"
               />
               <Paragraph
                 as="span"
-                variant="loose"
-                className="text-(--color-stamp-chocolate)/70"
+                variant="xs"
+                className="text-(--color-stamp-taupe) md:text-lg"
               >
                 {bullet}
               </Paragraph>

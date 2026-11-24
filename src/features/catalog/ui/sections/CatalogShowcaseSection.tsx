@@ -1,8 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Heading } from "@/features/ui/heading";
-import { Paragraph } from "@/features/ui/paragraph";
+import { HomeSectionHeader } from "@/features/homepage/ui/components/HomeSectionHeader";
 import { getCatalogShowcaseItems } from "../../lib/helpers/getCatalogShowcaseItems";
 import type {
   CatalogGroupFilterType,
@@ -13,9 +12,9 @@ import { CatalogShowcaseCard } from "../components/CatalogShowcaseCard";
 /**
  * CatalogShowcaseSection
  *
- * "Explore our best" row: the two product groups (clothing,
- * accessories) as photo cards, each narrowing the catalog to that
- * group, marketplace-style.
+ * "Explore our best" row: the shared section header (accent bar, title,
+ * subtitle) over the two product groups (clothing, accessories) as photo
+ * cards, each narrowing the catalog to that group.
  */
 
 interface PropsI {
@@ -33,18 +32,9 @@ export function CatalogShowcaseSection({ sections, onGroupSelect }: PropsI) {
 
   return (
     <section aria-label={t("title")}>
-      <Heading
-        as="h2"
-        variant="sectionSlab"
-        className="text-(--color-stamp-chocolate)"
-      >
-        {t("title")}
-      </Heading>
-      <Paragraph variant="xs" className="mt-2 text-(--color-stamp-taupe)">
-        {t("subtitle")}
-      </Paragraph>
+      <HomeSectionHeader title={t("title")} subtitle={t("subtitle")} className="mb-10" />
 
-      <div className="mt-8 grid max-w-3xl grid-cols-2 gap-3 sm:gap-6">
+      <div className="grid max-w-3xl grid-cols-2 gap-4 sm:gap-6">
         {items.map((item) => (
           <CatalogShowcaseCard
             key={item.group}

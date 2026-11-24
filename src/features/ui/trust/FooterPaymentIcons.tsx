@@ -22,7 +22,7 @@ export function FooterPaymentIcons({ className }: FooterPaymentIconsProps) {
     <div className={cn("flex flex-col gap-3", className)}>
       <div className="flex items-center gap-2">
         <Lock className="h-3 w-3 text-(--color-stamp-gold-text)" aria-hidden="true" />
-        <Span variant="micro" className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
+        <Span variant="label" className="text-(--color-stamp-taupe)">
           {t("securePayment")}
         </Span>
       </div>
@@ -30,7 +30,7 @@ export function FooterPaymentIcons({ className }: FooterPaymentIconsProps) {
         {PAYMENT_ICONS.map((icon) => (
           <div
             key={icon.id}
-            className="flex h-8 items-center justify-center border border-(--color-stamp-divider) bg-(--color-stamp-white) px-2"
+            className="flex h-8 items-center justify-center rounded-md border border-(--color-stamp-divider) bg-(--color-stamp-white) px-2"
           >
             <span className="[&_img]:h-5! [&_img]:w-auto!">
               {icon.icon}
@@ -38,7 +38,7 @@ export function FooterPaymentIcons({ className }: FooterPaymentIconsProps) {
           </div>
         ))}
       </div>
-      <Span variant="micro" className="text-[9px] text-(--color-stamp-taupe)">
+      <Span variant="micro" className="text-(--color-stamp-taupe)">
         {t("sslSecured")}
       </Span>
     </div>

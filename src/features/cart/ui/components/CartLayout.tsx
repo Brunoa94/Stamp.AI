@@ -1,12 +1,12 @@
 /**
  * CartLayout
  *
- * Page shell for the luxury brutalist cart:
+ * Cart page shell:
  * - Header band: the shared diagonal photo backdrop, mirrored (photo on the
- *   right) compared with the Orders and Profile pages
- * - Off-white surface with heading font family and chocolate text
+ *   right) compared with the Orders and Profile pages; the checkout reuses it
+ * - Off-white page with chocolate text, below the fixed h-24 header
+ * - Content in the page gutter (px-4 sm:px-6 lg:px-12, max-w-screen-2xl)
  * - 12-column responsive grid (8-col items / 4-col summary)
- * - Consistent page padding matching the orders/stamp pages
  */
 
 import { ReactNode } from "react";
@@ -29,9 +29,9 @@ export function CartLayout({ header, children }: CartLayoutPropsI) {
       >
         {header}
       </PageHeaderBand>
-      <div className="px-6 pb-24 pt-12 lg:px-12 xl:px-24">
+      <div className="px-4 py-16 sm:px-6 lg:px-12">
         <PageContainer className="mx-auto max-w-screen-2xl">
-          <div className="grid grid-cols-1 gap-12 xl:grid-cols-12">
+          <div className="grid grid-cols-1 gap-8 xl:grid-cols-12 xl:gap-12">
             {children}
           </div>
         </PageContainer>

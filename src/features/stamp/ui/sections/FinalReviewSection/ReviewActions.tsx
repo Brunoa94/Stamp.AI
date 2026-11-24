@@ -38,17 +38,19 @@ export function ReviewActions({
       {/* Desktop: both buttons stacked */}
       <div className="hidden md:flex flex-col gap-3 md:gap-4">
         <Button
+          variant="primary"
           onClick={onBagIt}
           disabled={isAddingToCart}
-          className="w-full bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-4 md:py-6 text-xs font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full gap-3"
         >
           <ShoppingBag className="w-5 h-5" />
           {isAddingToCart ? t("adding") : t("bagIt")}
         </Button>
         <Button
+          variant="secondary"
           onClick={onBagItAndCreateAnother}
           disabled={isAddingToCart}
-          className="w-full bg-(--color-stamp-gold) text-(--color-stamp-chocolate) border-2 border-(--color-stamp-gold) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 px-8 py-4 md:py-6 text-xs font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full gap-3 bg-(--color-stamp-white) whitespace-normal"
         >
           <Plus className="w-5 h-5" />
           {t("bagItAndCreateAnother")}
@@ -58,9 +60,10 @@ export function ReviewActions({
       {/* Mobile: Bag It & Create Another button (Bag It is in footer) */}
       <div className="md:hidden">
         <Button
+          variant="secondary"
           onClick={onBagItAndCreateAnother}
           disabled={isAddingToCart}
-          className="w-full bg-(--color-stamp-gold) text-(--color-stamp-chocolate) border-2 border-(--color-stamp-gold) hover:bg-(--color-stamp-chocolate) hover:text-white hover:border-(--color-stamp-chocolate) transition-all duration-300 px-8 py-4 text-xs font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full gap-3 whitespace-normal"
         >
           <Plus className="w-5 h-5" />
           {t("bagItAndCreateAnother")}

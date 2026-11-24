@@ -37,6 +37,7 @@ const designSystemElements = [
   { elements: ["label"], component: "Label", from: "@/features/ui/label" },
   { elements: ["ul", "ol"], component: "List", from: "@/features/ui/list" },
   { elements: ["hr"], component: "Separator", from: "@/features/ui/separator" },
+  { elements: ["details", "summary"], component: "Disclosure", from: "@/features/ui/disclosure" },
   { elements: ["img"], component: "Image", from: "next/image" },
 ];
 
@@ -217,7 +218,8 @@ const eslintConfig = defineConfig([
     files: ["src/**/*.tsx"],
     ignores: [
       "src/features/ui/**/*.tsx",
-      // Root error boundary cannot import external styles/components
+      // Root error boundary: it renders when the root layout has crashed, so it must not
+      // depend on app code (the stylesheet, providers, Button's analytics) that may have failed
       "src/app/global-error.tsx",
       // Test files can use raw elements for mocking purposes
       "src/**/__tests__/**/*.tsx",

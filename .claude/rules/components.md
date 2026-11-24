@@ -81,9 +81,12 @@ Use components from `@/features/ui/` instead of raw HTML elements. Enforced by E
 | `<input type="checkbox">`          | `<Checkbox>`            | `@/features/ui/checkbox` |
 | `<ul>`, `<ol>`                     | `<List>`                | `@/features/ui/list`     |
 | `<hr>`                             | `<Separator>`           | `@/features/ui/separator`|
+| `<details>`, `<summary>`           | `<Disclosure>`          | `@/features/ui/disclosure`|
 | `<img>`                            | `<Image>`               | `next/image`             |
 
-Raw HTML is fine only when building a design-system component, when the design system has no suitable component (rare), or for external/dynamic image URLs that can't be optimized.
+Raw HTML is fine only when building a design-system component, when the design system has no suitable component (rare), or for external/dynamic image URLs that can't be optimized. When the same raw-HTML widget is needed in two places, it is a missing design-system component: add it to `src/features/ui/` (and its tag to the ESLint list) instead of copying the markup.
+
+`src/app/global-error.tsx` is exempt: it renders when the root layout has crashed, so it uses raw HTML and its own inline styles instead of depending on app code that may have failed.
 
 ## Raster images live on the CDN
 

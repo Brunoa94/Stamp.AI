@@ -9,6 +9,7 @@ import {
 } from "@/features/homepage/lib/constants/colorSwatches";
 import { getColorClass } from "@/helpers/colors/colorMapping";
 import { useProductLabel } from "@/shared/hooks/useProductLabel";
+import { cn } from "@/lib/utils";
 import type { VariantOptionKindType } from "../../../lib/helpers/productCategoryDetector";
 import { PaperTypeOptions } from "./PaperTypeOptions";
 import { SplitToneText } from "../../components/SplitToneText";
@@ -43,7 +44,7 @@ export function ColorSwatches({
 
   return (
     <div>
-      <Label className="text-[10px] font-bold uppercase tracking-widest block mb-6">
+      <Label variant="section" className="mb-4">
         <SplitToneText tone="muted">
           {isPaperType ? t("paperTypeLabel") : t("colorLabel")}
         </SplitToneText>
@@ -68,7 +69,7 @@ export function ColorSwatches({
         />
       ) : (
         <div
-          className="flex gap-4"
+          className="flex flex-wrap gap-3 p-1"
           role="radiogroup"
           aria-label={t("colorSelectionAria")}
         >
@@ -81,20 +82,20 @@ export function ColorSwatches({
             return (
               <Button
                 key={colorName}
-                variant="ghost"
+                variant="unstyled"
                 onClick={() => onSelectColor(colorName)}
-                className={`w-10 h-10 rounded-full p-0 ring-2 ring-white transition-all duration-300 ${
+                className={cn(
+                  "h-10 w-10 rounded-full border-2 p-0 transition-all duration-200 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--color-stamp-chocolate)",
                   isActive
-                    ? "border-2 border-(--color-stamp-gold) scale-110 shadow-[0_0_15px_rgba(212,175,55,0.3)] hover:bg-transparent"
-                    : "border-2 border-transparent hover:bg-transparent"
-                } ${isFallbackHex && colorClass ? colorClass : ""}`}
+                    ? "ring-2 ring-(--color-stamp-chocolate) ring-offset-2 ring-offset-(--color-stamp-off-white)"
+                    : "hover:ring-2 hover:ring-(--color-stamp-chocolate)/30 hover:ring-offset-2 hover:ring-offset-(--color-stamp-off-white)",
+                  isFallbackHex && colorClass ? colorClass : "",
+                )}
                 style={{
                   ...(isFallbackHex && colorClass
                     ? {}
                     : { backgroundColor: colorHex }),
-                  borderColor: isActive
-                    ? "var(--color-stamp-gold)"
-                    : borderColor,
+                  borderColor,
                 }}
                 aria-pressed={isActive}
                 aria-label={t("colorSwatchAria", { color: label("color", colorName) })}

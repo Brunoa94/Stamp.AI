@@ -1,12 +1,8 @@
 "use client";
 
-import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/features/ui/button";
-import { Label } from "@/features/ui/label";
-import { Span } from "@/features/ui/span";
-import { cn } from "@/lib/utils";
-import { CREDIT_PAYMENT_METHODS, type PaymentMethodId, type PaymentMethodOption } from "@/shared/constants/payment";
+import { CREDIT_PAYMENT_METHODS, type PaymentMethodId } from "@/shared/constants/payment";
+import { PaymentMethodButton } from "./PaymentMethodButton";
 
 interface PaymentMethodSelectorProps {
   selected: PaymentMethodId;
@@ -37,51 +33,5 @@ export function PaymentMethodSelector({
         />
       ))}
     </div>
-  );
-}
-
-interface PaymentMethodButtonProps {
-  method: PaymentMethodOption;
-  isSelected: boolean;
-  onSelect: (method: PaymentMethodId) => void;
-  disabled: boolean;
-}
-
-function PaymentMethodButton({
-  method,
-  isSelected,
-  onSelect,
-  disabled,
-}: PaymentMethodButtonProps) {
-  const t = useTranslations("paymentMethods");
-
-  return (
-    <Button
-      type="button"
-      variant="option-card"
-      onClick={() => onSelect(method.id)}
-      disabled={disabled}
-      role="radio"
-      aria-checked={isSelected}
-      className="flex-1 flex items-center gap-3 py-4 px-4"
-    >
-      <method.Icon
-        className={cn(
-          "w-6 h-6 shrink-0",
-          isSelected ? "text-brand-violet" : "text-slate-400"
-        )}
-      />
-      <div className="flex flex-col text-left">
-        <Label asChild variant="option" className="text-slate-900">
-          <Span unstyled>{t(`${method.id}.label`)}</Span>
-        </Label>
-        <Span variant="caption" className="text-slate-500">{t(`${method.id}.description`)}</Span>
-      </div>
-      {isSelected && (
-        <Span unstyled className="ml-auto w-5 h-5 rounded-full bg-brand-violet text-white text-xs flex items-center justify-center" aria-hidden="true">
-          <Check className="w-3 h-3" />
-        </Span>
-      )}
-    </Button>
   );
 }

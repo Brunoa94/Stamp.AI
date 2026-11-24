@@ -4,12 +4,14 @@ import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
+import { stampCardVariants } from "../../../lib/variants/stampStudioVariants";
 
 /**
  * CoinsOverlayShell
  *
- * Shared frosted-glass layout for the coins overlays: backdrop, icon badge,
- * heading, description and the variant's actions as children.
+ * Shared layout for the coins overlays: a frosted cream backdrop over the
+ * form and a white rounded card with the icon badge, heading, description
+ * and the variant's actions as children.
  */
 
 interface PropsI {
@@ -35,7 +37,12 @@ export function CoinsOverlayShell({
       data-testid={testId}
     >
       <div className="absolute inset-0 bg-(--color-stamp-cream)/80 backdrop-blur-md" />
-      <div className="relative z-10 flex flex-col items-center gap-6 p-8 text-center max-w-sm">
+      <div
+        className={cn(
+          stampCardVariants(),
+          "relative z-10 mx-6 flex max-w-lg flex-col items-center gap-6 p-8 text-center",
+        )}
+      >
         <div
           className={cn(
             "flex h-16 w-16 items-center justify-center rounded-full",

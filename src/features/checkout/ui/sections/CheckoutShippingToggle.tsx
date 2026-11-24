@@ -1,8 +1,9 @@
 /**
  * CheckoutShippingToggle
  *
- * Toggle for shipping to a separate address. Reuses the checkout form
- * context and the design-system Checkbox, styled to the luxury system.
+ * Toggle for shipping to a separate address: a row in the shared card style
+ * with the stamp Checkbox (the same as the cart's selection boxes). Reuses
+ * the checkout form context.
  */
 
 import { useTranslations } from "next-intl";
@@ -17,18 +18,18 @@ export function CheckoutShippingToggle() {
   const useShippingAddress = watch("useShippingAddress");
 
   return (
-    <div className="flex items-center gap-3 border border-(--color-stamp-divider) bg-(--color-stamp-white) px-6 py-5">
+    <div className="flex items-center gap-4 rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) px-6 py-5 shadow-(--shadow-stamp-card)">
       <Checkbox
         id="useShippingAddress"
+        variant="stamp"
         checked={useShippingAddress}
         onCheckedChange={(checked) =>
           setValue("useShippingAddress", checked === true)
         }
-        className="rounded-none border-(--color-stamp-divider) focus-visible:ring-(--color-stamp-gold) data-[state=checked]:border-(--color-stamp-gold) data-[state=checked]:bg-(--color-stamp-gold) data-[state=checked]:text-(--color-stamp-white)"
       />
       <Label
         htmlFor="useShippingAddress"
-        className="cursor-pointer text-[11px] font-bold uppercase tracking-[0.2em] text-(--color-stamp-chocolate)"
+        className="cursor-pointer text-base text-(--color-stamp-chocolate)"
       >
         {t("toggleLabel")}
       </Label>

@@ -24,7 +24,7 @@ export function OrdersGridItemImage({
     <Button
       onClick={() => onOpenDetails(order)}
       variant="ghost"
-      className="relative h-40 w-full overflow-hidden bg-(--color-stamp-cream)"
+      className="relative h-44 w-full overflow-hidden rounded-lg bg-(--color-stamp-sage) p-0 hover:bg-(--color-stamp-sage)"
       aria-label={t("openDetails", { order: order.order_number || order.id })}
     >
       {imageSrc ? (
@@ -33,7 +33,7 @@ export function OrdersGridItemImage({
           alt={firstItem.product_name || t("productAlt")}
           fill
           sizes="(max-width: 768px) 100vw, 240px"
-          className="object-cover transition-all duration-1000 group-hover:scale-110"
+          className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center text-(--color-stamp-taupe)">

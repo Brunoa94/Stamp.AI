@@ -9,7 +9,7 @@ export function Separator({ className, orientation = "horizontal" }: SeparatorPr
   return (
     <div
       className={cn(
-        "bg-slate-200",
+        "bg-(--color-stamp-divider)",
         orientation === "horizontal" ? "h-px w-full" : "w-px h-full",
         className
       )}

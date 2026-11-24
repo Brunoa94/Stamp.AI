@@ -1,8 +1,8 @@
 /**
  * CheckoutCartItems
  *
- * Compact scrollable cart-item list for the order summary, restyled to the
- * luxury brutalist system with a custom scrollbar.
+ * Compact scrollable cart-item list for the order summary: rounded-xl rows
+ * with a rounded-lg thumbnail, and a custom scrollbar.
  */
 
 import Image from "next/image";
@@ -35,9 +35,9 @@ export function CheckoutCartItems({ items }: CheckoutCartItemsPropsI) {
         return (
           <li
             key={item.id}
-            className="flex gap-4 border border-(--color-stamp-divider) bg-(--color-stamp-cream)/20 p-3"
+            className="flex gap-4 rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-3"
           >
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-cream)">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-(--color-stamp-cream)">
               {item.custom_image_url ? (
                 <Image
                   src={item.custom_image_url}
@@ -55,17 +55,17 @@ export function CheckoutCartItems({ items }: CheckoutCartItemsPropsI) {
             </div>
 
             <div className="min-w-0 flex-1">
-              <Paragraph unstyled className="truncate text-lg font-bold uppercase tracking-[0.15em] text-(--color-stamp-chocolate)">
+              <Paragraph unstyled className="truncate font-body text-base font-semibold text-(--color-stamp-chocolate)">
                 {name}
               </Paragraph>
-              <Span unstyled className="mt-1 block text-lg text-(--color-stamp-taupe)">
+              <Span unstyled className="mt-0.5 block text-sm text-(--color-stamp-taupe)">
                 {item.variant?.name || t("standard")}
               </Span>
-              <div className="mt-2 flex items-center justify-between">
-                <Span unstyled className="text-lg text-(--color-stamp-taupe)">
+              <div className="mt-1 flex items-center justify-between">
+                <Span unstyled className="text-sm text-(--color-stamp-taupe)">
                   {t("qty", { quantity })}
                 </Span>
-                <Span unstyled className="text-2xl font-bold tabular-nums text-(--color-stamp-chocolate)">
+                <Span unstyled className="text-base font-bold tabular-nums text-(--color-stamp-chocolate)">
                   {formatPrice(lineTotal / 100)}
                 </Span>
               </div>

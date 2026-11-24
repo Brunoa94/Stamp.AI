@@ -1,9 +1,9 @@
 /**
  * CheckoutSectionCard
  *
- * Consistent wrapper for checkout sections in the luxury brutalist style:
- * white surface, subtle chocolate divider border, no radius. Renders a
- * gold eyebrow label + taupe subtitle header when a title is provided.
+ * Wrapper for each checkout form section, in the shared card style (the
+ * same as the cart's item cards and summary): white rounded-xl card with a
+ * divider border and soft shadow, and a slab-serif title when one is given.
  */
 
 import type { ReactNode } from "react";
@@ -24,16 +24,16 @@ export function CheckoutSectionCard({
   return (
     <section
       className={cn(
-        "border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 lg:p-10",
+        "rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-6 shadow-(--shadow-stamp-card) lg:p-8",
         className,
       )}
     >
       {title && (
-        <header className="mb-8 space-y-2 border-b border-(--color-stamp-divider) pb-4">
+        <header className="mb-6 border-b border-(--color-stamp-divider) pb-4">
           <Heading
             as="h2"
-            unstyled
-            className="font-heading text-2xl md:text-3xl font-bold uppercase tracking-tight"
+            variant="sectionSlab"
+            className="text-(--color-stamp-chocolate)"
           >
             {title}
           </Heading>

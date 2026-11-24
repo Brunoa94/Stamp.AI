@@ -14,7 +14,7 @@ import { ReviewsPlatformBadge } from "./ReviewsPlatformBadge";
 
 export function ReviewsRatingSummary() {
   return (
-    <article className="border border-(--color-stamp-divider) bg-(--color-stamp-white) p-6 sm:p-10 lg:col-span-4">
+    <article className="rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-6 shadow-(--shadow-stamp-card) sm:p-10 lg:col-span-4">
       <Span variant="metric" className="text-(--color-stamp-chocolate)">
         {HOME_RATING_SUMMARY.overall}
       </Span>
@@ -29,7 +29,7 @@ export function ReviewsRatingSummary() {
           return (
             <div
               key={entry.platform}
-              className="flex items-center justify-between rounded-sm px-3 py-2 transition-colors duration-200"
+              className="flex items-center justify-between rounded-lg px-3 py-2 transition-colors duration-200"
               style={{
                 backgroundColor: config?.bgColor ?? "transparent",
                 borderLeft: `3px solid ${config?.borderColor ?? "transparent"}`,

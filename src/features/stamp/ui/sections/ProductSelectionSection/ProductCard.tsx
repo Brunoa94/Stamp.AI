@@ -5,13 +5,16 @@ import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
+import { cn } from "@/lib/utils";
+import { stampSelectableCardVariants } from "../../../lib/variants/stampStudioVariants";
 import type { CatalogProductMappedT } from "../../../lib/types/stampTypes";
 
 /**
  * ProductCard
  *
- * Displays a single product option in the catalog grid.
- * Handles hover effects and selection state.
+ * One product in the studio's product grid, in the shared card pattern: a
+ * white rounded card with the photo on cream, the name and the price. Lifts
+ * on hover; selected shows the amber border and a check.
  */
 
 interface PropsI {
@@ -25,19 +28,17 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
 
   return (
     <Button
-      variant="ghost"
+      variant="unstyled"
       onClick={() => onSelect(product)}
-      className={`group relative overflow-hidden rounded-lg whitespace-normal h-auto p-0 flex flex-col items-center text-center border-(--color-stamp-divider) hover:bg-(--color-stamp-gold)/5 transition-all duration-300 ${
-        isSelected
-          ? "border-2 border-(--color-stamp-gold) bg-(--color-stamp-gold)/5"
-          : "border bg-white"
-      }`}
+      className={cn(
+        stampSelectableCardVariants({ selected: isSelected }),
+        "group flex h-full w-full flex-col items-stretch p-2 pb-4 text-left whitespace-normal",
+      )}
       aria-pressed={isSelected}
       aria-label={t("selectAria", { name: product.displayName })}
     >
-      {/* Image container - fills most of the card */}
-      <div className="relative w-full aspect-square overflow-hidden bg-(--color-stamp-cream)/30 md:bg-(--color-stamp-cream)">
-        {product.imageUrl ? (
+      <div className="relative mb-3 aspect-square w-full overflow-hidden rounded-lg bg-(--color-stamp-cream)">
+        {product.imageUrl && (
           <Image
             src={product.imageUrl}
             alt={product.displayName}
@@ -45,32 +46,25 @@ export function ProductCard({ product, isSelected, onSelect }: PropsI) {
             className="object-contain p-4 transition-transform duration-300 group-hover:scale-105"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
           />
-        ) : (
-          <div className="w-full h-full bg-(--color-stamp-cream)" />
         )}
 
-        {/* Selection indicator */}
         {isSelected && (
-          <div className="absolute top-3 right-3 z-10">
-            <CheckCircle className="text-(--color-stamp-gold-text) w-6 h-6" />
+          <div className="absolute top-2 right-2 z-10">
+            <CheckCircle className="h-6 w-6 text-(--color-stamp-gold-text)" />
           </div>
         )}
       </div>
 
-      {/* Text content */}
-      <div className="w-full p-4 bg-white">
+      <div className="flex flex-1 flex-col gap-1 px-2">
         <Heading
           as="h3"
-          variant="item"
-          className="text-(--color-stamp-chocolate) mb-1 text-center leading-tight min-h-10 overflow-hidden line-clamp-2 flex items-center justify-center text-base md:text-lg w-full"
+          variant="itemCompact"
+          className="line-clamp-2 text-base text-(--color-stamp-chocolate) group-hover:text-(--color-stamp-gold-text) md:text-base"
         >
           {product.displayName}
         </Heading>
 
-        <Span
-          variant="sm"
-          className="text-(--color-stamp-taupe)"
-        >
+        <Span unstyled className="text-base font-bold text-(--color-stamp-chocolate)">
           €{product.price.toFixed(2)}
         </Span>
       </div>

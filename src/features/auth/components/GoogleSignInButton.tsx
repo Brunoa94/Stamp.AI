@@ -23,7 +23,7 @@ export function GoogleSignInButton({ className }: GoogleSignInButtonProps) {
       disabled={isPending}
     >
       <Image src="/assets/google-icon.svg" alt={t("iconAlt")} width={20} height={20} />
-      <Span variant="default" className="tracking-widest hover:text-(--color-stamp-chocolate) transition-colors">
+      <Span unstyled>
         {isPending ? t("connecting") : t("continueWithGoogle")}
       </Span>
     </Button>

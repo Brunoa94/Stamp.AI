@@ -7,16 +7,18 @@ import { cn } from "@/lib/utils";
 
 /**
  * Variants:
- * - default   Form field labels — lg, medium weight
- * - section   Uppercase section headings above option groups — xs, bold, tracking-widest
- * - option    Title inside a selectable option card — sm, heading font, tracking-wider
+ * - default   Form field labels — sm, semibold, sentence case, chocolate
+ * - section   Uppercase eyebrow above option groups — xs, bold, tracking-widest
+ *             (pair with --color-stamp-gold-text or --color-stamp-taupe)
+ * - option    Title inside a selectable option card — base, semibold, chocolate
  */
 
 const labelVariants = {
-  default: "flex items-center gap-2 text-lg leading-none font-medium",
+  default:
+    "flex items-center gap-1 text-sm leading-none font-semibold text-(--color-stamp-chocolate)",
   section: "block text-xs leading-none font-bold uppercase tracking-widest",
   option:
-    "flex items-center gap-2 font-heading text-sm leading-none font-medium tracking-wider",
+    "flex items-center gap-2 text-base leading-tight font-semibold text-(--color-stamp-chocolate)",
 } as const;
 
 type LabelVariant = keyof typeof labelVariants;

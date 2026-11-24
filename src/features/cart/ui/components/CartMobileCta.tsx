@@ -10,7 +10,6 @@
 import { ArrowRight, Lock } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
-import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { formatPrice } from "../../lib/utils/formatPrice";
 
@@ -33,13 +32,13 @@ export function CartMobileCta({
   return (
     <div
       data-cart-mobile-cta
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-(--color-stamp-divider) bg-(--color-stamp-white) p-4 xl:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 py-3 sm:px-6 xl:hidden"
     >
       <div className="flex flex-col gap-2">
         {selectedCount !== undefined && selectedCount > 0 && (
-          <Paragraph unstyled className="text-center text-xs font-bold uppercase tracking-[0.15em] text-(--color-stamp-taupe)">
+          <Span as="p" variant="label" className="text-center text-(--color-stamp-taupe)">
             {t("itemsSelected", { count: selectedCount })}
-          </Paragraph>
+          </Span>
         )}
         <Button
           onClick={onCheckout}

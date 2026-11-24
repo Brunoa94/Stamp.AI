@@ -26,14 +26,14 @@ export function FlowFinalStep({ isBagged }: PropsI) {
   return (
     <div className="animate-flow-fade flex h-full flex-col items-center gap-4 px-5 py-5 sm:flex-row sm:gap-6 sm:px-7.5 sm:py-7">
       <div className="flex min-w-0 flex-1 flex-col items-center gap-2.5">
-        <div className="animate-flow-pop relative w-44 -rotate-2 bg-(--color-stamp-white) p-2.5 shadow-xl shadow-(--color-stamp-chocolate)/15 sm:w-62.5 sm:p-3">
+        <div className="animate-flow-pop relative w-44 -rotate-2 rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-white) p-2.5 shadow-(--shadow-stamp-card-hover) sm:w-62.5 sm:p-3">
           <Span
             variant="pill"
             className="absolute left-5 top-5 z-10 border border-(--color-stamp-chocolate)/10 bg-(--color-stamp-white) px-1.5 py-0.5 text-4xs tracking-widest text-(--color-stamp-chocolate)"
           >
             {t("badge")}
           </Span>
-          <div className="relative flex h-28 items-center justify-center bg-(--color-flow-art-mockup-backdrop) sm:h-57.5">
+          <div className="relative flex h-28 items-center justify-center rounded-md bg-(--color-flow-art-mockup-backdrop) sm:h-57.5">
             <div className="relative w-5/6">
               <FlowArtImage art="tee" className="w-full" />
               <FlowArtImage art="pup" className="absolute left-1/2 top-[26%] w-1/4 -translate-x-1/2" />
@@ -62,7 +62,7 @@ export function FlowFinalStep({ isBagged }: PropsI) {
 
       <div className="flex w-full min-w-0 flex-1 flex-col gap-3">
         <FlowStepTitle messageKey="final.title" className="text-3xl sm:text-4xl" />
-        <div className="flex flex-col gap-1.5 border border-(--color-stamp-chocolate)/10 bg-(--color-stamp-white) p-3">
+        <div className="flex flex-col gap-1.5 rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-white) p-3">
           <Span unstyled className="text-xs text-(--color-stamp-chocolate)">
             {t("productName")}
           </Span>

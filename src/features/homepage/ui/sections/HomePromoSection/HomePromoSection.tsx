@@ -3,13 +3,14 @@
 /**
  * HomePromoSection
  *
- * Configurable promotional section with image grid carousel.
+ * Configurable promotional section with image grid carousel, in a rounded
+ * panel inside the page gutter (chocolate, cream or white).
  * Supports three variants: brand-logo, memories, special-moments.
- * Features luxury styling with decorative accents and bold typography.
  */
 
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
+import { homePanelVariants } from "../../../lib/variants/homePanelVariants";
 import { SectionReveal } from "../../components/SectionReveal";
 import { PromoCarousel } from "./PromoCarousel";
 import { PromoSectionContent } from "./PromoSectionContent";
@@ -52,68 +53,32 @@ export function HomePromoSection({
   const isDark = background === "chocolate";
 
   return (
-    <section
-      className={cn(
-        "relative px-6 py-20 lg:px-12 xl:px-24 lg:py-28 overflow-hidden",
-        background === "chocolate"
-          ? "bg-(--color-stamp-chocolate)"
-          : background === "white"
-            ? "bg-(--color-stamp-white)"
-            : "bg-(--color-stamp-cream)",
-      )}
-    >
-      {/* Decorative corner frames for dark background */}
-      {isDark && (
-        <>
-          <div className="absolute top-8 left-6 lg:left-12 xl:left-24 w-20 h-20 border-t-2 border-l-2 border-(--color-stamp-gold)/30 rounded-tl-lg" aria-hidden="true" />
-          <div className="absolute top-8 right-6 lg:right-12 xl:right-24 w-20 h-20 border-t-2 border-r-2 border-(--color-stamp-gold)/30 rounded-tr-lg" aria-hidden="true" />
-          <div className="absolute bottom-8 left-6 lg:left-12 xl:left-24 w-20 h-20 border-b-2 border-l-2 border-(--color-stamp-gold)/30 rounded-bl-lg" aria-hidden="true" />
-          <div className="absolute bottom-8 right-6 lg:right-12 xl:right-24 w-20 h-20 border-b-2 border-r-2 border-(--color-stamp-gold)/30 rounded-br-lg" aria-hidden="true" />
-        </>
-      )}
-
-      {/* Decorative gold accent line */}
-      <div
-        className={cn(
-          "absolute top-16 w-24 h-1 bg-(--color-stamp-gold)/60 rounded-full",
-          contentPosition === "left" ? "left-6 lg:left-12 xl:left-24" : "right-6 lg:right-12 xl:right-24",
-        )}
-        aria-hidden="true"
-      />
-
-      <div className="relative mx-auto max-w-7xl">
+    <section className="px-4 py-20 sm:px-6 lg:px-12">
+      <div className={homePanelVariants({ tone: background })}>
         <SectionReveal fadeOnScroll>
           <div
             className={cn(
-              "flex flex-col items-center gap-8 lg:flex-row lg:items-center lg:gap-12 xl:gap-16",
+              "flex flex-col items-center gap-10 lg:flex-row lg:justify-center lg:gap-16 xl:gap-24",
               contentPosition === "right" && "lg:flex-row-reverse",
             )}
           >
             {/* Text content */}
-            <div className="flex-1 flex flex-col justify-center max-w-xl">
+            <div className="flex max-w-xl flex-1 flex-col justify-center">
               <PromoSectionContent
                 tagline={t(`${variant}.tagline`)}
                 accentWord={t(`${variant}.accentWord`)}
                 description={t(`${variant}.description`)}
                 ctaText={t(`${variant}.cta`)}
                 ctaHref="/stamp"
-                align={contentPosition === "left" ? "left" : "right"}
+                align="left"
                 sectionNumber={VARIANT_NUMBERS[variant]}
                 inverted={isDark}
               />
             </div>
 
-            {/* Carousel with decorative frame */}
-            <div className="w-full max-w-md lg:w-105 shrink-0">
-              <div className="relative">
-                {/* Gold corner accents */}
-                <div className="absolute -top-2 -left-2 w-8 h-8 border-t-2 border-l-2 border-(--color-stamp-gold)/50 rounded-tl-lg" />
-                <div className="absolute -top-2 -right-2 w-8 h-8 border-t-2 border-r-2 border-(--color-stamp-gold)/50 rounded-tr-lg" />
-                <div className="absolute -bottom-2 -left-2 w-8 h-8 border-b-2 border-l-2 border-(--color-stamp-gold)/50 rounded-bl-lg" />
-                <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-2 border-r-2 border-(--color-stamp-gold)/50 rounded-br-lg" />
-
-                <PromoCarousel images={images} />
-              </div>
+            {/* Carousel in a white stamp frame */}
+            <div className="w-full max-w-md shrink-0 lg:w-105">
+              <PromoCarousel images={images} />
             </div>
           </div>
         </SectionReveal>

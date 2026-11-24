@@ -69,7 +69,7 @@ export function CatalogPageContent({ sections }: PropsI) {
         mirrored
       >
         <header className="space-y-4 text-shadow-lg xl:text-shadow-none">
-          <div className="h-1.5 w-20 bg-(--color-stamp-gold)" />
+          <div aria-hidden className="h-1.5 w-16 rounded-full bg-(--color-stamp-gold)" />
           <Heading
             as="h1"
             variant="title"
@@ -78,7 +78,7 @@ export function CatalogPageContent({ sections }: PropsI) {
             {t("title")}{" "}
             <Span
               variant="serif"
-              className="text-(--color-stamp-gold-light) xl:text-(--color-stamp-taupe)"
+              className="text-(--color-stamp-gold-light) xl:text-(--color-stamp-gold-text)"
             >
               {t("accent")}
             </Span>
@@ -86,90 +86,91 @@ export function CatalogPageContent({ sections }: PropsI) {
         </header>
       </PageHeaderBand>
 
-      <div className="mx-auto max-w-screen-2xl px-6 pt-12 pb-24 lg:px-12 xl:px-24">
-
-        <Paragraph
-          variant="lead"
-          className="mb-16 text-(--color-stamp-chocolate)/80"
-        >
-          {t("intro")}
-        </Paragraph>
-
-        {groupSections.length === 0 ? (
-          <Span
-            role="status"
-            variant="default"
-            className="block py-16 text-center text-(--color-stamp-taupe)"
+      <div className="px-4 pt-12 pb-20 sm:px-6 lg:px-12">
+        <div className="mx-auto max-w-screen-2xl">
+          <Paragraph
+            variant="sm"
+            className="mb-10 max-w-3xl text-(--color-stamp-taupe)"
           >
-            {t("emptyState")}
-          </Span>
-        ) : (
-          <>
-            <CatalogToolbar
-              sections={groupSections}
-              group={filters.group}
-              query={filters.query}
-              sort={filters.sort}
-              onGroupChange={filters.setGroup}
-              onQueryChange={filters.setQuery}
-              onSortChange={filters.setSort}
-              onClearFilters={filters.clearFilters}
-            />
+            {t("intro")}
+          </Paragraph>
 
-            <div
-              className={`mt-16 transition-all duration-500 ease-out ${
-                isBrowsingAll
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-4 absolute pointer-events-none"
-              }`}
+          {groupSections.length === 0 ? (
+            <Span
+              role="status"
+              variant="default"
+              className="block py-16 text-center text-(--color-stamp-taupe)"
             >
-              {isBrowsingAll && (
-                <CatalogShowcaseSection
-                  sections={groupSections}
-                  onGroupSelect={handleGroupSelect}
-                />
-              )}
-            </div>
+              {t("emptyState")}
+            </Span>
+          ) : (
+            <>
+              <CatalogToolbar
+                sections={groupSections}
+                group={filters.group}
+                query={filters.query}
+                sort={filters.sort}
+                onGroupChange={filters.setGroup}
+                onQueryChange={filters.setQuery}
+                onSortChange={filters.setSort}
+                onClearFilters={filters.clearFilters}
+              />
 
-            <div
-              ref={resultsRef}
-              className={`scroll-mt-32 transition-all duration-500 ease-out ${
-                !isBrowsingAll
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-4 absolute pointer-events-none"
-              }`}
-            >
-              {!isBrowsingAll && (
-                <>
-                  <div className="mt-16 mb-8">
-                    <Button
-                      type="button"
-                      variant="ghost-stamp"
-                      onClick={handleBackToShowcase}
-                      className="gap-2 px-0 py-2 text-sm"
-                    >
-                      <ArrowLeft className="h-4 w-4" />
-                      {t("backToShowcase")}
-                    </Button>
-                  </div>
+              <div
+                className={`mt-16 transition-all duration-500 ease-out ${
+                  isBrowsingAll
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-4 absolute pointer-events-none"
+                }`}
+              >
+                {isBrowsingAll && (
+                  <CatalogShowcaseSection
+                    sections={groupSections}
+                    onGroupSelect={handleGroupSelect}
+                  />
+                )}
+              </div>
 
-                  {filters.filteredSections.length === 0 ? (
-                    <CatalogEmptyResults onClearFilters={filters.clearFilters} />
-                  ) : (
-                    <div className="space-y-24">
-                      {filters.filteredSections.map((section) => (
-                        <CatalogGroupSection
-                          key={section.group}
-                          section={section}
-                        />
-                      ))}
+              <div
+                ref={resultsRef}
+                className={`scroll-mt-32 transition-all duration-500 ease-out ${
+                  !isBrowsingAll
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-4 absolute pointer-events-none"
+                }`}
+              >
+                {!isBrowsingAll && (
+                  <>
+                    <div className="mt-12 mb-6">
+                      <Button
+                        type="button"
+                        variant="ghost-stamp"
+                        onClick={handleBackToShowcase}
+                        className="-ml-3"
+                      >
+                        <ArrowLeft aria-hidden className="size-4" />
+                        {t("backToShowcase")}
+                      </Button>
                     </div>
-                  )}
-                </>
-              )}
-            </div>
-          </>
-        )}
+
+                    {filters.filteredSections.length === 0 ? (
+                      <CatalogEmptyResults onClearFilters={filters.clearFilters} />
+                    ) : (
+                      <div className="space-y-20">
+                        {filters.filteredSections.map((section) => (
+                          <CatalogGroupSection
+                            key={section.group}
+                            section={section}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </article>
   );

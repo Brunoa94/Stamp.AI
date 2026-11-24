@@ -406,3 +406,12 @@ In this repository the unit tests written during a feature's TDD loop are scaffo
 Hook tests (`.claude/hooks/tests/`) and acceptance specs (`tests/acceptance/`) are not unit tests and stay. The `remove-new-tests-before-commit` hook rejects a commit or push that adds a unit test under `src/` (`docs/guardrails.md`).
 
 **Note:** Run each test command after a change that could affect the result. After a clean run, don't repeat the same command unless the code has changed since — re-running on unchanged code adds no confidence.
+
+## At the End of Every Task: Delete the Screenshots
+
+Screenshots, Lighthouse reports and the scripts and logs saved while checking the app in the browser are for the task that took them; they are not kept. When the task is done, whether or not it ends in a commit:
+
+1. **Delete what the task saved**: the run folders under `.claude/ui-health/` (remove the folder once it is empty) and any other screenshot or report the task wrote into the repository.
+2. **Check `git status`** shows none of them left as untracked files.
+
+Prefer saving them in the session's scratchpad directory in the first place, so nothing lands in the repository.

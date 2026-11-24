@@ -1,72 +1,71 @@
 /**
  * HomeProductsSection
  *
- * "The Essentials" — featured catalog grid fed by the server-side
- * product cache, with a link to the full catalog.
+ * "The essentials": a listing grid of the catalog's featured products, fed
+ * by the server-side product cache, with a "browse all" link.
  */
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
+import { List } from "@/features/ui/list";
 import { Span } from "@/features/ui/span";
 import type { ProductCardData } from "../../../lib/mappers/productCardMapper";
 import { MAX_HOME_PRODUCTS } from "../../../lib/constants/homepageContent";
 import { HomeSectionHeader } from "../../components/HomeSectionHeader";
 import { HomeProductCard } from "./HomeProductCard";
-import { SectionReveal } from "../../components/SectionReveal";
 
-interface HomeProductsSectionPropsI {
+interface PropsI {
   products: ProductCardData[];
 }
 
-export function HomeProductsSection({ products }: HomeProductsSectionPropsI) {
+export function HomeProductsSection({ products }: PropsI) {
   const t = useTranslations("home.products");
   const displayedProducts = products.slice(0, MAX_HOME_PRODUCTS);
 
   return (
-    <section id="products" className="relative overflow-x-clip px-6 py-24 lg:px-12 xl:px-24 overflow-hidden">
-      {/* Decorative gold accent lines */}
-      <div className="absolute top-12 left-6 lg:left-12 xl:left-24 w-28 h-1 bg-(--color-stamp-gold)/40 rounded-full" aria-hidden="true" />
-      <div className="absolute top-12 right-6 lg:right-12 xl:right-24 w-28 h-1 bg-(--color-stamp-gold)/40 rounded-full" aria-hidden="true" />
-
-      {/* Decorative corner frames */}
-      <div className="absolute top-8 left-6 lg:left-12 xl:left-24 w-16 h-16 border-t-2 border-l-2 border-(--color-stamp-gold)/25 rounded-tl-lg" aria-hidden="true" />
-      <div className="absolute top-8 right-6 lg:right-12 xl:right-24 w-16 h-16 border-t-2 border-r-2 border-(--color-stamp-gold)/25 rounded-tr-lg" aria-hidden="true" />
-
-      <SectionReveal className="relative mx-auto max-w-screen-2xl" parallax fadeOnScroll>
+    <section
+      id="products"
+      aria-labelledby="home-products-title"
+      className="scroll-mt-28 bg-(--color-stamp-cream) px-4 py-20 sm:px-6 lg:px-12"
+    >
+      <div className="mx-auto max-w-screen-2xl">
         <HomeSectionHeader
+          id="home-products-title"
+          label={t("label")}
           title={t("title")}
           accent={t("accent")}
-          label={t("label")}
-          className="mb-16"
+          subtitle={t("subtitle")}
+          action={
+            <Link
+              href="/catalog"
+              className="group inline-flex items-center gap-2 self-start rounded-md text-xs font-bold uppercase tracking-wider text-(--color-stamp-chocolate) hover:text-(--color-stamp-gold-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate) sm:self-auto"
+            >
+              {t("viewFullCatalog")}
+              <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-1" aria-hidden />
+            </Link>
+          }
+          className="mb-10"
         />
 
         {displayedProducts.length === 0 ? (
           <Span
             role="status"
             variant="default"
-            className="block py-16 text-center text-(--color-stamp-taupe)"
+            className="block rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) py-16 text-center text-(--color-stamp-taupe)"
           >
             {t("emptyState")}
           </Span>
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:gap-8 lg:grid-cols-4 lg:gap-12">
-            {displayedProducts.map((product, index) => (
-              <HomeProductCard key={product.blueprintId} product={product} index={index} />
+          <List className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+            {displayedProducts.map((product) => (
+              <li key={product.blueprintId}>
+                <HomeProductCard product={product} />
+              </li>
             ))}
-          </div>
+          </List>
         )}
-
-        <div className="mt-16 flex justify-center">
-          <Link
-            href="/catalog"
-            className="group inline-flex items-center gap-2 text-(--color-stamp-taupe) transition-colors duration-300 hover:text-(--color-stamp-gold)"
-          >
-            <Span variant="default">{t("viewFullCatalog")}</Span>
-            <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
-          </Link>
-        </div>
-      </SectionReveal>
+      </div>
     </section>
   );
 }

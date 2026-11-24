@@ -31,7 +31,7 @@ export function PaymentReturnPendingCard({
       <PaymentResultHeading
         title={title}
         description={description}
-        className="mb-12"
+        className="mb-10"
       />
       <PaymentResultActions>
         <Button asChild variant="primary" className="w-full">

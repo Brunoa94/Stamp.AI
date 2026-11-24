@@ -22,10 +22,7 @@ export function PromptInput({ value, onChange, maxLength }: PropsI) {
 
   return (
     <div>
-      <Label
-        htmlFor="prompt-input"
-        className="text-[10px] font-bold uppercase tracking-widest block mb-4"
-      >
+      <Label htmlFor="prompt-input" variant="section" className="mb-3">
         <SplitToneText tone="muted">{t("promptLabel")}</SplitToneText>
       </Label>
       <Textarea
@@ -33,7 +30,7 @@ export function PromptInput({ value, onChange, maxLength }: PropsI) {
         value={value}
         onChange={onChange}
         maxLength={maxLength}
-        className="w-full h-24 resize-none bg-transparent md:bg-white border-b border-(--color-stamp-divider) focus:border-(--color-stamp-gold) focus:bg-(--color-stamp-gold)/5 transition-all px-2 py-3 text-sm"
+        className="h-24 w-full resize-none rounded-lg border-(--color-stamp-divider) bg-(--color-stamp-white) px-3 py-3 text-sm text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe) focus-visible:border-(--color-stamp-chocolate) focus-visible:ring-(--color-stamp-chocolate)/15 md:text-sm"
         placeholder={t("promptPlaceholder")}
         aria-label={t("promptAria")}
       />

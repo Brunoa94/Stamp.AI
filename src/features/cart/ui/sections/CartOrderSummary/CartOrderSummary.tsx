@@ -1,7 +1,8 @@
 /**
  * CartOrderSummary
  *
- * Sticky order-summary panel in the luxury brutalist style. Composes the
+ * Sticky order-summary card (white rounded-xl card, slab-serif title with a
+ * handwritten accent word). Composes the
  * price breakdown and footer; totals are derived via CartServiceMapper.
  */
 
@@ -39,28 +40,28 @@ export function CartOrderSummary({
   const t = useTranslations("cart.summary");
 
   return (
-    <div className="sticky top-32 border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 lg:p-10">
+    <div className="sticky top-32 rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-6 shadow-(--shadow-stamp-card) lg:p-8">
       <Heading
         as="h2"
-        unstyled
-        className="mb-8 font-heading text-2xl md:text-3xl font-bold uppercase tracking-tight"
+        variant="sectionSlab"
+        className="mb-6 text-(--color-stamp-chocolate)"
       >
         {t.rich("title", {
           accent: (chunks) => (
-            <Span unstyled className="text-(--color-stamp-gold-text)">{chunks}</Span>
+            <Span variant="serif" className="text-(--color-stamp-gold-text)">{chunks}</Span>
           ),
         })}
       </Heading>
 
       {selectedCount === 0 ? (
-        <Paragraph unstyled className="mb-8 text-sm text-(--color-stamp-taupe)">
+        <Paragraph variant="xs" className="mb-6 text-(--color-stamp-taupe)">
           {t("noItemsSelected")}
         </Paragraph>
       ) : (
         <>
-          <Paragraph unstyled className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-(--color-stamp-taupe)">
+          <Span as="p" variant="label" className="mb-4 text-(--color-stamp-taupe)">
             {t("itemsSelected", { count: selectedCount })}
-          </Paragraph>
+          </Span>
           <CartOrderSummaryBreakdown
             subtotal={selectedTotals.subtotal}
             shipping={selectedTotals.shipping}

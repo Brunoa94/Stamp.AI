@@ -8,12 +8,12 @@ import { cn } from "@/lib/utils";
  * All other styling (color, margin, opacity, effects) must come from the caller via `className`.
  *
  * Variants:
- * - display        Hero h1 — massive fluid viewport-relative title (Sanchez)
- * - sectionDisplay Section header h2 — large display style (Sanchez)
+ * - display        Massive fluid viewport-relative title (Sanchez)
+ * - sectionDisplay Section header h2 — 3xl→5xl, sentence case (Sanchez)
  * - sectionSlab    Section header h2 — smaller slab-serif style (Sanchez)
  * - cta            CTA section h2 — large fluid viewport-relative title (Sanchez)
  * - section        Section header h2 — 5xl→7xl (Sanchez)
- * - title          Interior section h2 — fixed responsive scale 6xl→8xl (Sanchez)
+ * - title          Interior page title — fixed responsive scale 5xl→7xl (Sanchez)
  * - spaced         Wide-tracked uppercase title (404 page) — 4xl→6xl (Sanchez)
  * - panelTitle     Split-panel h2 — fluid size that fits a half-width grid column (Sanchez)
  * - panelTitleCompact Compact panel h2 — smaller fluid size for profile cards (Sanchez)
@@ -33,14 +33,14 @@ const headingVariants = {
   display:
     "font-heading font-normal text-[12vw] md:text-[10vw] lg:text-[8vw] leading-[0.9] tracking-tight",
   sectionDisplay:
-    "font-heading font-normal text-3xl md:text-4xl lg:text-5xl tracking-tight leading-none uppercase",
+    "font-heading font-normal text-3xl md:text-4xl lg:text-5xl tracking-tight leading-tight",
   sectionSlab:
     "font-heading font-normal text-2xl md:text-3xl lg:text-4xl tracking-tight leading-tight",
   cta: "font-heading font-normal text-[10vw] md:text-[8vw] lg:text-[6vw] leading-[0.95] tracking-tight",
   section:
     "font-heading font-normal text-2xl md:text-5xl lg:text-7xl tracking-tight leading-none",
   title:
-    "font-heading font-normal text-6xl md:text-7xl lg:text-8xl tracking-tight leading-none",
+    "font-heading font-normal text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none",
   spaced:
     "font-heading font-normal text-4xl md:text-6xl tracking-[0.25em] leading-none uppercase",
   panelTitle:
@@ -68,6 +68,8 @@ interface HeadingProps {
   variant?: HeadingVariant;
   unstyled?: boolean;
   className?: string;
+  /** Lets a section point `aria-labelledby` at its heading */
+  id?: string;
   children: React.ReactNode;
 }
 
@@ -76,10 +78,11 @@ export function Heading({
   variant = "card",
   unstyled = false,
   className,
+  id,
   children,
 }: HeadingProps) {
   return (
-    <Tag className={cn(!unstyled && headingVariants[variant], className)}>
+    <Tag id={id} className={cn(!unstyled && headingVariants[variant], className)}>
       {children}
     </Tag>
   );

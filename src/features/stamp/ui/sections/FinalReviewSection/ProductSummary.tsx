@@ -3,7 +3,9 @@ import { useTranslations } from "next-intl";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
+import { cn } from "@/lib/utils";
 import { useSizeLabel } from "../../../lib/hooks/useSizeLabel";
+import { stampCardVariants } from "../../../lib/variants/stampStudioVariants";
 
 /**
  * ProductSummary
@@ -24,7 +26,7 @@ export function ProductSummary({ productName, productDescription, color, size, p
   const { formatSize } = useSizeLabel();
 
   return (
-    <div className="p-6 border border-(--color-stamp-divider) bg-white">
+    <div className={cn(stampCardVariants(), "p-6")}>
       <div className="flex justify-between items-start mb-4">
         <Heading
           as="h3"

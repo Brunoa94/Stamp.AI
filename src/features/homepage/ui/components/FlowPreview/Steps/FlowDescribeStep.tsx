@@ -28,7 +28,7 @@ export function FlowDescribeStep({ prompt, typedCount, isPromptComplete }: Props
       <FlowStepTitle messageKey="describe.title" />
 
       <FlowLabel>{t("promptLabel")}</FlowLabel>
-      <div className="h-20 rounded-sm border-2 border-(--color-stamp-chocolate)/20 bg-(--color-stamp-cream) px-3 py-2.5 text-sm leading-normal text-(--color-stamp-chocolate)">
+      <div className="h-20 rounded-md border-2 border-(--color-stamp-chocolate)/20 bg-(--color-stamp-cream) px-3 py-2.5 text-sm leading-normal text-(--color-stamp-chocolate)">
         {prompt.slice(0, typedCount)}
         <Span unstyled className="animate-flow-blink ml-px inline-block h-4 w-0.5 -mb-0.5 bg-(--color-stamp-chocolate)" />
       </div>

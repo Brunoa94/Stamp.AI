@@ -29,7 +29,7 @@ export function OrdersGridItemContent({
   const canCancel = canCancelOrder(order);
 
   return (
-    <div className="flex flex-col items-center p-4 text-center font-heading">
+    <div className="flex flex-1 flex-col items-center px-2 pb-2 pt-4 text-center">
       <Span variant="meta" className="mb-1 text-(--color-stamp-taupe)">
         #{order.order_number || order.id.slice(0, 13).toUpperCase()}
       </Span>
@@ -43,7 +43,7 @@ export function OrdersGridItemContent({
       <Heading
         as="h3"
         variant="itemCompact"
-        className="mb-1 line-clamp-2 leading-tight"
+        className="mb-1 line-clamp-2 leading-tight text-(--color-stamp-chocolate)"
       >
         {firstItem?.product_name || t("productFallback")}
       </Heading>
@@ -64,12 +64,12 @@ export function OrdersGridItemContent({
       <Heading
         as="h4"
         variant="priceCompact"
-        className="mb-4 text-(--color-stamp-gold-text)"
+        className="mb-4 text-(--color-stamp-chocolate)"
       >
         {formatPrice(order.total_amount)}
       </Heading>
 
-      <div className="grid w-full grid-cols-2 gap-2">
+      <div className="mt-auto grid w-full grid-cols-2 gap-2">
         <Button onClick={() => onOpenDetails(order)} variant="primary-compact">
           {t("track")}
         </Button>

@@ -32,14 +32,14 @@ export function PaymentSecurityBadge({
       >
         <div className="flex items-center gap-1.5">
           <Lock className="h-3 w-3 text-(--color-stamp-success)" aria-hidden="true" />
-          <Span variant="micro" className="text-[10px] tracking-wider">
+          <Span variant="micro">
             {t("sslSecured")}
           </Span>
         </div>
-        <div className="h-3 w-px bg-(--color-stamp-divider)" />
+        <div className="h-3 w-px bg-(--color-stamp-divider)" aria-hidden="true" />
         <div className="flex items-center gap-1.5">
           <ShieldCheck className="h-3 w-3 text-(--color-stamp-success)" aria-hidden="true" />
-          <Span variant="micro" className="text-[10px] tracking-wider">
+          <Span variant="micro">
             {t("securePayment")}
           </Span>
         </div>
@@ -51,16 +51,16 @@ export function PaymentSecurityBadge({
     return (
       <div
         className={cn(
-          "flex items-center gap-2 border border-(--color-stamp-success)/20 bg-(--color-stamp-success)/5 px-3 py-2",
+          "flex items-center gap-2 rounded-lg border border-(--color-stamp-success)/20 bg-(--color-stamp-success)/5 px-3 py-2",
           className
         )}
       >
         <ShieldCheck className="h-4 w-4 text-(--color-stamp-success)" aria-hidden="true" />
         <div className="flex flex-col">
-          <Span variant="micro" className="text-[10px] font-bold tracking-wider text-(--color-stamp-chocolate)">
+          <Span variant="badge" className="text-(--color-stamp-chocolate)">
             {t("securePayment")}
           </Span>
-          <Span variant="micro" className="text-[9px] tracking-wider text-(--color-stamp-taupe)">
+          <Span variant="micro" className="text-(--color-stamp-taupe)">
             {t("sslSecured")}
           </Span>
         </div>
@@ -71,7 +71,7 @@ export function PaymentSecurityBadge({
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 border border-(--color-stamp-success)/20 bg-(--color-stamp-success)/5 p-4",
+        "flex flex-col gap-3 rounded-xl border border-(--color-stamp-success)/20 bg-(--color-stamp-success)/5 p-4",
         className
       )}
     >
@@ -95,13 +95,13 @@ export function PaymentSecurityBadge({
       <div className="flex flex-col gap-1.5 border-t border-(--color-stamp-divider) pt-3">
         <div className="flex items-center gap-2">
           <CheckCircle2 className="h-3 w-3 text-(--color-stamp-success)" aria-hidden="true" />
-          <Span variant="micro" className="text-[10px] text-(--color-stamp-chocolate)/70">
+          <Span variant="micro" className="text-(--color-stamp-chocolate)/70">
             {t("noCardStored")}
           </Span>
         </div>
         <div className="flex items-center gap-2">
           <CheckCircle2 className="h-3 w-3 text-(--color-stamp-success)" aria-hidden="true" />
-          <Span variant="micro" className="text-[10px] text-(--color-stamp-chocolate)/70">
+          <Span variant="micro" className="text-(--color-stamp-chocolate)/70">
             {t("encryptedTransmission")}
           </Span>
         </div>
@@ -110,13 +110,13 @@ export function PaymentSecurityBadge({
       <div className="flex items-center gap-2 border-t border-(--color-stamp-divider) pt-3">
         <Span
           variant="micro"
-          className="border border-(--color-stamp-divider) bg-(--color-stamp-white) px-2 py-1 text-[10px] font-bold tracking-wider text-stripe"
+          className="rounded-md border border-(--color-stamp-divider) bg-(--color-stamp-white) px-2 py-1 font-bold text-stripe"
         >
           Stripe
         </Span>
         <Span
           variant="micro"
-          className="border border-(--color-stamp-divider) bg-(--color-stamp-white) px-2 py-1 text-[10px] font-bold tracking-wider text-paypal"
+          className="rounded-md border border-(--color-stamp-divider) bg-(--color-stamp-white) px-2 py-1 font-bold text-paypal"
         >
           PayPal
         </Span>

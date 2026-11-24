@@ -1,10 +1,10 @@
 import { useTranslations } from "next-intl";
-import { Heading } from "@/features/ui/heading";
 import { PolaroidPreview } from "../../components/PolaroidPreview/PolaroidPreview";
 import { ProductSummary } from "./ProductSummary";
 import { ReviewActions } from "./ReviewActions";
 import type { ProductTypeIdType } from "../../../lib/types/stampTypes";
-import { SplitToneText } from "../../components/SplitToneText";
+import { StampStepTitle } from "../../components/StampStepTitle";
+import { StampTitleAccent } from "../../components/StampTitleAccent";
 
 /**
  * ReviewDetails
@@ -43,7 +43,7 @@ export function ReviewDetails({
   const t = useTranslations("stamp.finalReview");
 
   return (
-    <div className="p-6 pt-24 md:pt-10 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-white md:bg-transparent">
+    <div className="p-6 pt-24 md:pt-10 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-(--color-stamp-white) md:bg-transparent">
       {/* Mobile-only polaroid mockup preview (carousel is md+ only) */}
       {mockupUrl && (
         <div className="md:hidden flex justify-center mb-6">
@@ -59,20 +59,11 @@ export function ReviewDetails({
         </div>
       )}
 
-      <Heading as="h2" variant="panelTitle" className="mb-4 md:mb-6">
-        <SplitToneText className="block pb-2 -mb-2">
-          {t.rich(`title.${productType}`, {
-            accent: (chunks) => (
-              <SplitToneText
-                tone="accent"
-                className="inline-block pb-4 -mb-4 pr-2 -mr-2 font-serif italic lowercase font-light"
-              >
-                {chunks}
-              </SplitToneText>
-            ),
-          })}
-        </SplitToneText>
-      </Heading>
+      <StampStepTitle>
+        {t.rich(`title.${productType}`, {
+          accent: (chunks) => <StampTitleAccent>{chunks}</StampTitleAccent>,
+        })}
+      </StampStepTitle>
 
       <div className="space-y-6 mb-6 md:mb-12">
         <ProductSummary

@@ -15,12 +15,13 @@ export function AddressFormActions({
   const t = useTranslations("profile.address");
 
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-4 pt-8 mt-8 border-t border-(--color-stamp-divider)">
+    <div className="flex flex-col sm:flex-row items-center gap-3 pt-6 mt-6 border-t border-(--color-stamp-divider)">
       <Button
         type="submit"
         onClick={onSave}
         disabled={isSaving}
-        className="w-full sm:w-auto bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-4 text-xs font-bold tracking-[0.15em] uppercase disabled:opacity-50"
+        variant="primary"
+        className="w-full sm:w-auto"
       >
         {isSaving ? t("saving") : t("saveAddress")}
       </Button>
@@ -28,7 +29,8 @@ export function AddressFormActions({
         type="button"
         onClick={onCancel}
         disabled={isSaving}
-        className="w-full sm:w-auto border-2 border-(--color-stamp-divider) bg-transparent text-(--color-stamp-chocolate) hover:border-(--color-stamp-chocolate) transition-all duration-300 px-8 py-4 text-xs font-bold tracking-[0.15em] uppercase"
+        variant="secondary"
+        className="w-full sm:w-auto"
       >
         {t("cancel")}
       </Button>

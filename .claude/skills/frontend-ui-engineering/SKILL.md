@@ -124,13 +124,48 @@ Prop drilling, read-only context and when a Zustand store is justified are rules
 
 ## Design System Adherence
 
+### The Stamp look
+
+Stamp's look is the original chocolate-and-gold "stamp" identity blended half-way with a friendly marketplace style. Every page uses the same few patterns; reach for these before inventing anything. Colours and contrast pairs are in `references/color-palette.md`.
+
+**Page shell**
+- The root font size is 15px (`html` in `globals.css`), and every Tailwind size and spacing is in rem, so the whole design scales from it. Don't hard-code px sizes; if JS needs a rem in px (like `STAMP_BACKDROP_EDGE.sidebarWidthPx`), derive it from 15.
+- Content sits in `mx-auto max-w-screen-2xl` inside the page gutter `px-4 sm:px-6 lg:px-12`. Every section, header band and footer uses this gutter, so edges line up from header to footer.
+- The fixed header is `h-24`; a page's first block starts below it (`pt-24`, or `pt-28` for a block that should breathe).
+- Vertical rhythm between sections is `py-20` (`py-16` on dense app pages). Inside a section, the header sits `mb-10` above its content.
+- Page background is `--color-stamp-off-white`. Alternate bands use cream; strong moments (CTA, story, promo) use a chocolate band or panel.
+
+**Shape and elevation**
+| Element | Radius | Surface |
+| ------- | ------ | ------- |
+| Buttons, inputs, selects, tags, badges | `rounded-lg` (badges `rounded-md`) | — |
+| Cards, tiles, list rows, dialogs, FAQ items | `rounded-xl` | white, `border border-(--color-stamp-divider)`, `shadow-(--shadow-stamp-card)` |
+| Photos inside a card | `rounded-lg` | — |
+| Section panels (hero frames, promo panels, CTA, header bands) | `rounded-2xl` | cream, peach or chocolate |
+| Accent bar | `h-1.5 w-16 rounded-full bg-(--color-stamp-gold)` | — |
+
+Never `rounded-full` on rectangles (only on circular icons/avatars and the accent bar), never `rounded-3xl`, never square (`rounded-none`) cards. Interactive cards lift on hover: `hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-(--shadow-stamp-card-hover)` (a small offset "stamp" shadow). No other shadows except modals (`--shadow-stamp-modal`). No decorative corner frames.
+
+**Typography**
+- Titles: `Heading` (Sanchez slab serif, sentence case). Page titles use `variant="title"`, section titles `variant="sectionDisplay"`, card titles `card`/`cardCompact`/`item`.
+- Handwritten accent: one word or short phrase of a title in `Span variant="serif"` (Indie Flower), coloured `--color-stamp-gold-text` on light surfaces or `--color-stamp-gold-light` on chocolate. One accent per title, at most.
+- Eyebrows and column headings: `Span variant="label"` (uppercase, tracked), amber-text.
+- Buttons and nav actions: uppercase with moderate tracking (built into the `Button` stamp variants and `stampNavLinkVariants`); body copy and category links are sentence case.
+- Body: `Paragraph` (Inter). Secondary text is `--color-stamp-taupe`.
+
+**Section header**: an accent bar, an optional eyebrow, the title with an optional accent word, an optional one-line subtitle, and an optional right-aligned action. On the homepage use `HomeSectionHeader`; page-level headers follow the same order.
+
+**Buttons**: `primary` (chocolate → amber on hover) for the main action, `secondary` (chocolate outline) next to it, `cta`/`cta-gold` for one big action per screen, `ghost-stamp`/`ghost-stamp-light` for tertiary links. Don't restyle buttons with `className` colours or radii.
+
+**Focus**: `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate)` (amber fails 3:1 on light surfaces).
+
 ### Avoid the AI Aesthetic
 
 | AI default                       | Why it is a problem                                                                     | Production quality                                   |
 | -------------------------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| Purple/indigo everything         | Models default to "safe" palettes, so every app looks identical                         | The stamp palette (chocolate, gold, cream)           |
+| Purple/indigo everything         | Models default to "safe" palettes, so every app looks identical                         | The stamp palette (chocolate, amber, cream)          |
 | Excessive gradients              | Visual noise that clashes with the design system                                        | Flat surfaces, gradients only where the design has them |
-| Rounded everything (rounded-2xl) | Ignores the corner-radius hierarchy; this brand is brutalist and mostly square          | The radii the design system uses                     |
+| One radius on everything         | Ignores the corner-radius hierarchy that tells actions, cards and panels apart          | The radius table in "The Stamp look" above           |
 | Generic hero sections            | Template layout with no connection to the content or user need                          | Content-first layouts                                |
 | Lorem ipsum-style copy           | Hides layout problems real content reveals (length, wrapping, overflow)                 | Realistic copy from `en.json`                        |
 | Oversized padding everywhere     | Equal generous padding destroys hierarchy and wastes space                              | The spacing scale, with hierarchy                    |

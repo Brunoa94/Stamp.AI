@@ -1,8 +1,9 @@
 /**
  * CheckoutStripeCardForm
  *
- * Stripe card input restyled to the luxury brutalist system. Wraps Stripe
- * Elements and the shared CardElement; in test mode it uses the stamp-styled
+ * Stripe card input in a rounded-lg field frame (chocolate focus outline,
+ * since the card iframe can't draw its own). Wraps Stripe Elements and the
+ * shared CardElement; in test mode it uses the stamp-styled
  * test-card selector so predefined test scenarios remain available.
  */
 
@@ -33,7 +34,7 @@ export function CheckoutStripeCardForm({
             onChange={onTestMethodChange || (() => {})}
           />
         ) : (
-          <div className="border border-(--color-stamp-divider) bg-(--color-stamp-white) p-4">
+          <div className="rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-white) p-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-(--color-stamp-chocolate)">
             <CardElement options={buildCardElementOptions()} />
           </div>
         )}

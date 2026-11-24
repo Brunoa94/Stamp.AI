@@ -1,12 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Button } from "@/features/ui/button";
 import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction";
 import { UploadInfo } from "./UploadInfo";
 import { SplitToneText } from "../../components/SplitToneText";
+import { StampStepTitle } from "../../components/StampStepTitle";
+import { StampTitleAccent } from "../../components/StampTitleAccent";
 
 /**
  * UploadContent
@@ -79,20 +80,11 @@ export function UploadContent({
   return (
     <div className="p-6 pb-28 md:pb-6 md:p-10 lg:p-16 xl:p-24 flex flex-col justify-center">
       {/* Title and description switch to light colours where they cross onto the backdrop photo */}
-      <Heading as="h2" variant="panelTitle" className="mb-4 md:mb-6">
-        <SplitToneText className="block pb-2 -mb-2">
-          {t.rich("title", {
-            accent: (chunks) => (
-              <SplitToneText
-                tone="accent"
-                className="inline-block pb-4 -mb-4 pr-2 -mr-2 font-serif italic lowercase font-light"
-              >
-                {chunks}
-              </SplitToneText>
-            ),
-          })}
-        </SplitToneText>
-      </Heading>
+      <StampStepTitle>
+        {t.rich("title", {
+          accent: (chunks) => <StampTitleAccent>{chunks}</StampTitleAccent>,
+        })}
+      </StampStepTitle>
 
       <Paragraph variant="card" className="mb-6 md:mb-10 max-w-sm">
         <SplitToneText tone="muted" className="block">
@@ -112,9 +104,10 @@ export function UploadContent({
       {/* Next Button - hidden on mobile, shown in sticky footer */}
       <div className="hidden md:block">
         <Button
+          variant="primary"
           onClick={buttonConfig.action}
           disabled={buttonConfig.disabled}
-          className="w-full bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full"
         >
           {buttonConfig.label}
         </Button>

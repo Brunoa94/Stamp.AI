@@ -3,6 +3,7 @@ import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
+import { PageHeader } from "@/shared/ui/PageHeader";
 import { LegalSection } from "./LegalSection";
 import { LEGAL_ENTITY } from "../lib/constants/legalEntity";
 import {
@@ -20,7 +21,9 @@ import type { LegalSectionMessagesType, LegalSectionType } from "../types/legal"
  * {supportEmail}, …) are interpolated from LEGAL_ENTITY.
  *
  * Rendered inside AppLayoutChrome's <main>, so it accounts for the fixed
- * h-24 header with top padding but renders no chrome of its own.
+ * h-24 header with top padding but renders no chrome of its own. Uses the
+ * shared cream PageHeader, a readable max-w-4xl text column inside the
+ * page gutter, and a cream contact panel at the end.
  */
 
 interface PropsI {
@@ -52,39 +55,25 @@ export function LegalDocument({ pageKey }: PropsI) {
   );
 
   return (
-    <article className="px-6 pt-40 pb-24 lg:px-12 xl:px-24">
+    <article className="px-4 pt-28 pb-20 sm:px-6 lg:px-12">
       <div className="mx-auto max-w-screen-2xl">
-        <header className="mb-12 space-y-4">
-          <div className="h-1.5 w-20 bg-(--color-stamp-gold)" />
-          <Heading
-            as="h1"
-            variant="sectionDisplay"
-            className="text-(--color-stamp-chocolate)"
-          >
-            {t("title")}{" "}
-            <Span variant="serif" className="text-(--color-stamp-taupe)">
-              {t("accent")}
-            </Span>
-          </Heading>
-          <Span variant="label" className="block text-(--color-stamp-taupe)">
+        <PageHeader
+          title={t("title")}
+          highlightedWord={t("accent")}
+          subtitle={t("intro", LEGAL_ENTITY)}
+        >
+          <Span as="p" variant="label" className="text-(--color-stamp-gold-text)">
             {tCommon("updated")}: {LEGAL_LAST_UPDATED}
           </Span>
-        </header>
+        </PageHeader>
 
-        <Paragraph
-          variant="lead"
-          className="mb-16 text-(--color-stamp-chocolate)/80"
-        >
-          {t("intro", LEGAL_ENTITY)}
-        </Paragraph>
-
-        <div className="space-y-12">
+        <div className="mt-16 max-w-4xl space-y-12">
           {sections.map((section) => (
             <LegalSection key={section.id} section={section} />
           ))}
         </div>
 
-        <aside className="mt-20 space-y-4 border border-(--color-stamp-divider) bg-(--color-stamp-cream) p-8">
+        <aside className="mt-20 max-w-4xl space-y-4 rounded-2xl bg-(--color-stamp-cream) px-6 py-10 sm:px-10">
           <Heading
             as="h2"
             variant="question"
@@ -92,7 +81,7 @@ export function LegalDocument({ pageKey }: PropsI) {
           >
             {tCommon("questionsHeading")}
           </Heading>
-          <Paragraph variant="sm" className="text-(--color-stamp-chocolate)/70">
+          <Paragraph variant="xs" className="text-(--color-stamp-taupe) md:text-lg">
             {tCommon("questionsBody")}
           </Paragraph>
           <Button asChild variant="secondary">

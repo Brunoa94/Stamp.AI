@@ -6,7 +6,9 @@ import { cn } from "@/lib/utils";
 /**
  * Slider
  *
- * A range input component styled for the stamp design system.
+ * A range input in the stamp look: a soft chocolate track, an amber thumb
+ * ringed in chocolate (amber alone fails 3:1 on light surfaces) and the
+ * chocolate focus outline.
  * Uses CSS custom properties for theming compatibility.
  */
 
@@ -23,9 +25,9 @@ const Slider = React.forwardRef<HTMLInputElement, SliderProps>(
         ref={ref}
         data-slot="slider"
         className={cn(
-          "h-px w-full cursor-pointer appearance-none bg-(--color-stamp-divider)",
-          "[&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-(--color-stamp-gold)",
-          "[&::-moz-range-thumb]:h-3 [&::-moz-range-thumb]:w-3 [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-(--color-stamp-gold)",
+          "h-1.5 w-full cursor-pointer appearance-none rounded-full bg-(--color-stamp-chocolate)/15 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--color-stamp-chocolate)",
+          "[&::-webkit-slider-thumb]:size-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-(--color-stamp-chocolate) [&::-webkit-slider-thumb]:bg-(--color-stamp-gold)",
+          "[&::-moz-range-thumb]:size-4 [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-(--color-stamp-chocolate) [&::-moz-range-thumb]:bg-(--color-stamp-gold)",
           "disabled:cursor-not-allowed disabled:opacity-50",
           className,
         )}

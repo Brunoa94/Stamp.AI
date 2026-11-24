@@ -38,7 +38,7 @@ export function NotLoggedInOverlay({
       title={t("notLoggedIn")}
       description={t("notLoggedInDescription")}
     >
-      <div className="flex gap-3">
+      <div className="flex flex-wrap justify-center gap-3">
         <Login>
           <Button variant="primary-compact" className="gap-2" asChild>
             <Span unstyled>
