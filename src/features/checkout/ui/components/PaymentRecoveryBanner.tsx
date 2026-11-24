@@ -8,9 +8,7 @@ import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { usePaymentRecovery } from "@/shared/queries/paymentRecoveryQueries";
-
-// The record type, taken from the hook so the UI doesn't import the service
-type PaymentRecoveryRecordI = Parameters<ReturnType<typeof usePaymentRecovery>["recover"]>[0];
+import type { PaymentRecoveryRecordT } from "@/shared/types/paymentRecovery";
 
 interface PaymentRecoveryBannerProps {
   onRecoveryComplete?: (orderId: string) => void;
@@ -43,7 +41,7 @@ export function PaymentRecoveryBanner({
     return null;
   }
 
-  const handleRecover = async (recovery: PaymentRecoveryRecordI) => {
+  const handleRecover = async (recovery: PaymentRecoveryRecordT) => {
     try {
       const result = await recover(recovery);
 

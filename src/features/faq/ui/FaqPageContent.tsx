@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
-import { Plus } from "lucide-react";
 import { Button } from "@/features/ui/button";
+import { Disclosure } from "@/features/ui/disclosure";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { LEGAL_ENTITY } from "@/features/legal/lib/constants/legalEntity";
@@ -11,10 +11,8 @@ import { FAQ_CATEGORIES } from "../lib/constants/faqContent";
  * FaqPageContent
  *
  * Standalone FAQ page: the cream page header, then one row per category
- * (its heading on the left, an accordion of rounded cards on the right),
- * matching the homepage FAQ section. Accordions are native
- * <details>/<summary> (keyboard accessible, zero JS). Ends with a
- * contact panel.
+ * (its heading on the left, an accordion of Disclosure cards on the right),
+ * matching the homepage FAQ section. Ends with a contact panel.
  */
 
 export function FaqPageContent() {
@@ -42,27 +40,11 @@ export function FaqPageContent() {
               </Heading>
               <div className="space-y-3 lg:col-span-2">
                 {category.items.map((itemId) => (
-                  <details
-                    key={itemId}
-                    className="group rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) px-5 shadow-(--shadow-stamp-card) transition-colors open:border-(--color-stamp-gold) hover:border-(--color-stamp-gold) lg:px-6"
-                  >
-                    <summary className="flex cursor-pointer list-none items-center justify-between gap-6 rounded-xl py-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate) [&::-webkit-details-marker]:hidden">
-                      <Heading
-                        as="h3"
-                        variant="faqQuestion"
-                        className="text-lg font-medium text-(--color-stamp-chocolate) md:text-xl"
-                      >
-                        {t(`items.${itemId}.question`)}
-                      </Heading>
-                      <Plus
-                        aria-hidden
-                        className="size-5 flex-none text-(--color-stamp-taupe) transition-transform duration-200 group-open:rotate-45 group-open:text-(--color-stamp-gold-text)"
-                      />
-                    </summary>
-                    <Paragraph variant="xs" className="pb-6 text-(--color-stamp-taupe) md:text-lg">
+                  <Disclosure key={itemId} title={t(`items.${itemId}.question`)}>
+                    <Paragraph variant="xs" className="text-(--color-stamp-taupe) md:text-lg">
                       {t(`items.${itemId}.answer`)}
                     </Paragraph>
-                  </details>
+                  </Disclosure>
                 ))}
               </div>
             </section>

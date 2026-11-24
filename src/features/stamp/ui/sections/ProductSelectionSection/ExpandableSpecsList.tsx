@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import { List } from "@/features/ui/list";
+import { SPECS_LIST_COLLAPSED_HEIGHT, SPECS_LIST_ROW_HEIGHT } from "../../../lib/constants/specsList";
 
 /**
  * ExpandableSpecsList
@@ -11,9 +12,6 @@ import { List } from "@/features/ui/list";
  * The selected product's spec lines, collapsed to the first few with a
  * fade into the card and a "see more" toggle.
  */
-
-const COLLAPSED_HEIGHT = 112;
-const SPEC_ROW_HEIGHT = 36;
 
 interface PropsI {
   specs: string[];
@@ -27,7 +25,7 @@ export function ExpandableSpecsList({ specs }: PropsI) {
     <div className="w-full mt-5 pt-5 border-t border-(--color-stamp-divider)">
       <div
         className="relative overflow-hidden transition-all duration-300 ease-in-out"
-        style={{ maxHeight: isExpanded ? `${specs.length * SPEC_ROW_HEIGHT}px` : `${COLLAPSED_HEIGHT}px` }}
+        style={{ maxHeight: isExpanded ? `${specs.length * SPECS_LIST_ROW_HEIGHT}px` : `${SPECS_LIST_COLLAPSED_HEIGHT}px` }}
       >
         <List className="text-left w-full space-y-1.5">
           {specs.map((spec, index) => (

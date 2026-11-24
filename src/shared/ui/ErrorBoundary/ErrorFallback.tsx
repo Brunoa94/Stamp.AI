@@ -64,7 +64,9 @@ export function ErrorFallback({ error, errorId, onRetry }: ErrorFallbackProps) {
 
         {/* Development-only error details */}
         {isDev && error && (
+          // eslint-disable-next-line no-restricted-syntax -- dev-only stack-trace panel, not a Disclosure card
           <details className="w-full overflow-hidden rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) text-left">
+            {/* eslint-disable-next-line no-restricted-syntax -- dev-only stack-trace panel, not a Disclosure card */}
             <summary className="cursor-pointer rounded-xl px-6 py-4 text-sm font-bold tracking-wide text-(--color-stamp-taupe) uppercase transition-colors hover:text-(--color-stamp-chocolate) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate)">
               Error Details (Dev Only)
             </summary>
