@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
@@ -31,17 +30,15 @@ interface PropsI {
 
 export function CatalogProductCard({ product }: PropsI) {
   const t = useTranslations("catalog.card");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const coverImageUrl = product.imageUrls[0];
   const hoverImageUrl = product.imageUrls[1];
 
   return (
-    <>
+    <CatalogProductDialog product={product}>
       <Button
         type="button"
         variant="unstyled"
-        onClick={() => setIsDialogOpen(true)}
         aria-label={t("quickViewAria", { name: product.displayName })}
         className="group flex h-full w-full flex-col rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-2 pb-4 text-left shadow-(--shadow-stamp-card) transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-(--color-stamp-chocolate)/30 hover:shadow-(--shadow-stamp-card-hover) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate)"
       >
@@ -136,12 +133,6 @@ export function CatalogProductCard({ product }: PropsI) {
           )}
         </div>
       </Button>
-
-      <CatalogProductDialog
-        product={product}
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-      />
-    </>
+    </CatalogProductDialog>
   );
 }

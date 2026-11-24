@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
@@ -8,6 +9,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/features/ui/dialog";
 import { Button } from "@/features/ui/button";
 import { List } from "@/features/ui/list";
@@ -22,20 +24,22 @@ import { CatalogProductReviews } from "./CatalogProductReviews";
  *
  * Quick-view dialog for a catalog product: Printify photo gallery,
  * SEO description and specs, price, available colors, the reviews
- * placeholder, and a CTA into the design studio.
+ * placeholder, and a CTA into the design studio. Its child is the trigger,
+ * so closing the dialog returns focus to it.
  */
 
 interface PropsI {
   product: CatalogDisplayProductT;
-  isOpen: boolean;
-  onClose: () => void;
+  /** The element that opens the dialog */
+  children: ReactNode;
 }
 
-export function CatalogProductDialog({ product, isOpen, onClose }: PropsI) {
+export function CatalogProductDialog({ product, children }: PropsI) {
   const t = useTranslations("catalog.dialog");
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-h-[85vh] overflow-y-auto rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-6 shadow-(--shadow-stamp-modal) sm:max-w-3xl md:p-8">
         <DialogHeader>
           <DialogTitle className="pr-8 font-heading text-2xl leading-tight font-normal tracking-tight text-(--color-stamp-chocolate) md:text-3xl">
