@@ -1,11 +1,10 @@
 /**
  * CheckoutAddressForm
  *
- * Address form styled in the luxury brutalist system. Composes the shared
- * design-system Input/Select/Label with stamp tokens (chocolate text, cream
- * surfaces, taupe labels, gold focus) rather than the neutral defaults.
- * Reuses the shared shippingFormConfig and the checkout form context so no
- * validation or field logic is duplicated.
+ * Address form built from the design-system Input/Select/Label. The country
+ * Select is only sized to match the Input (h-12, rounded-lg, chocolate focus
+ * ring). Reuses the shared shippingFormConfig and the checkout form context
+ * so no validation or field logic is duplicated.
  */
 
 import { useTranslations } from "next-intl";
@@ -32,8 +31,6 @@ interface CheckoutAddressFormPropsI {
   fieldPrefix: "billing" | "shipping";
   config?: FieldRow[];
 }
-
-// Consistent with stamp-auth styling from login forms
 
 export function CheckoutAddressForm({
   fieldPrefix,
@@ -82,7 +79,7 @@ export function CheckoutAddressForm({
                   >
                     <SelectTrigger
                       id={fieldName}
-                      className="h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) focus:ring-2 focus:ring-(--color-stamp-gold)/20 focus:border-(--color-stamp-gold)"
+                      className="h-12 rounded-lg px-4 text-base font-normal text-(--color-stamp-chocolate) focus:ring-(--color-stamp-chocolate)"
                     >
                       <SelectValue
                         placeholder={t("selectCountryPlaceholder")}
@@ -107,7 +104,12 @@ export function CheckoutAddressForm({
                 )}
 
                 {error && (
-                  <Paragraph unstyled id={`${fieldName}-error`} role="alert">
+                  <Paragraph
+                    unstyled
+                    id={`${fieldName}-error`}
+                    role="alert"
+                    className="text-sm font-medium text-(--color-stamp-error)"
+                  >
                     {ve(error.message)}
                   </Paragraph>
                 )}

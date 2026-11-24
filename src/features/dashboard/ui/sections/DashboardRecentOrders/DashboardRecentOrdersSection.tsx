@@ -8,6 +8,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
+import { Button } from "@/features/ui/button";
 import { Heading } from "@/features/ui/heading";
 import { List } from "@/features/ui/list";
 import { Span } from "@/features/ui/span";
@@ -29,23 +30,22 @@ export function DashboardRecentOrdersSection({
   const t = useTranslations("dashboard.recentOrders");
 
   return (
-    <section className="border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 transition-all duration-500 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover) lg:p-10">
-      <div className="mb-6 flex items-end justify-between gap-4 border-b border-(--color-stamp-divider) pb-6">
+    <section className="rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-6 shadow-(--shadow-stamp-card) lg:p-8">
+      <div className="mb-4 flex flex-col gap-4 border-b border-(--color-stamp-divider) pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-2">
-          <Heading as="h2" variant="card">
+          <Heading as="h2" variant="card" className="text-(--color-stamp-chocolate)">
             {t("title")}
           </Heading>
           <Span variant="micro" className="text-(--color-stamp-taupe)">
             {t("recordsOnFile", { count: totalOrders })}
           </Span>
         </div>
-        <Link
-          href="/orders"
-          className="group inline-flex items-center gap-2 text-(--color-stamp-taupe) transition-colors duration-300 hover:text-(--color-stamp-gold)"
-        >
-          <Span variant="default">{t("viewArchive")}</Span>
-          <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
-        </Link>
+        <Button asChild variant="ghost-stamp" className="group self-start px-3 md:px-3 sm:self-auto">
+          <Link href="/orders">
+            {t("viewArchive")}
+            <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+          </Link>
+        </Button>
       </div>
 
       {orders.length === 0 ? (

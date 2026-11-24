@@ -7,13 +7,14 @@ export function OrdersCancelModalHeader() {
 
   return (
     <>
-      <Heading as="h3" variant="card" className="mb-4 text-2xl tracking-tight">
+      <Heading
+        as="h3"
+        variant="cardCompact"
+        className="mb-2 text-2xl text-(--color-stamp-chocolate)"
+      >
         {t("title")}
       </Heading>
-      <Paragraph
-        variant="sm"
-        className="mb-10 text-lg tracking-[0.15em] text-(--color-stamp-taupe)"
-      >
+      <Paragraph variant="xs" className="mb-8 text-(--color-stamp-taupe)">
         {t("description")}
       </Paragraph>
     </>

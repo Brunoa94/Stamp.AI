@@ -16,6 +16,8 @@ import {
   getOrderDisplayStatus,
   getStatusBadgeClass,
 } from "@/features/orders/lib/helpers/statusPresentation";
+import { orderStatusBadgeVariants } from "@/features/orders/lib/variants/orderStatusBadgeVariants";
+import { cn } from "@/lib/utils";
 import { formatOrderId } from "../../../lib/helpers/formatOrderId";
 import { formatOrderDate } from "../../../lib/utils/formatOrderDate";
 import { formatPrice } from "../../../lib/utils/formatPrice";
@@ -44,16 +46,16 @@ export function DashboardRecentOrderItem({
         aria-label={t("openDetails", {
           orderId: formatOrderId(order.id, order.created_at),
         })}
-        className="group h-auto w-full justify-start gap-5 px-2 py-5 text-left transition-colors duration-300 hover:bg-(--color-stamp-cream)/60 hover:text-(--color-stamp-chocolate) sm:px-4"
+        className="group my-1 h-auto w-full justify-start gap-4 px-2 py-3 text-left transition-colors duration-200 hover:bg-(--color-stamp-cream) hover:text-(--color-stamp-chocolate) sm:gap-5 sm:px-3"
       >
-        <div className="relative h-14 w-14 flex-none overflow-hidden border border-(--color-stamp-divider) bg-(--color-stamp-cream)">
+        <div className="relative h-14 w-14 flex-none overflow-hidden rounded-lg bg-(--color-stamp-sage)">
           {firstItem?.custom_image_url ? (
             <Image
               src={firstItem.custom_image_url}
               alt={firstItem.product_name || t("productAlt")}
               fill
               sizes="56px"
-              className="object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
+              className="object-cover"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-(--color-stamp-taupe)">
@@ -77,8 +79,11 @@ export function DashboardRecentOrderItem({
         </Paragraph>
 
         <Span
-          unstyled
-          className={`status-badge ${getStatusBadgeClass(displayedStatus)}`}
+          variant="badge"
+          className={cn(
+            orderStatusBadgeVariants(),
+            getStatusBadgeClass(displayedStatus),
+          )}
         >
           {tStatus(displayedStatus)}
         </Span>

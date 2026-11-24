@@ -5,7 +5,7 @@ import { cva } from "class-variance-authority";
  * switching its tone, so `transition-colors` lives in the base.
  */
 export const flowMockButtonVariants = cva(
-  "flex h-11 items-center justify-center gap-2 rounded-xs px-3 text-2xs font-bold uppercase tracking-ultra transition-colors duration-300",
+  "flex h-11 items-center justify-center gap-2 rounded-md px-3 text-2xs font-bold uppercase tracking-ultra transition-colors duration-300",
   {
     variants: {
       tone: {

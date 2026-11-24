@@ -1,18 +1,18 @@
-import { DiagonalBackdrop } from "@/shared/ui/DiagonalBackdrop";
 import { HeroStampWall } from "./HeroStampWall";
 
 /**
  * HeroBackdrop
  *
- * Decorative background of the hero's first screen: the shared diagonal
- * backdrop with its default cut (58% → 38%), filled with the drifting wall of
- * product stamps instead of a photo, leaving the flow demo on the off-white
- * side on xl+; below xl it fills the screen under a darker scrim.
+ * Decorative background of the hero's left block: the drifting wall of
+ * product stamps filling the block, under a chocolate scrim that is darkest
+ * at the top left, behind the start card, and lets the stamps show through
+ * towards the bottom right.
  */
 export function HeroBackdrop() {
   return (
-    <DiagonalBackdrop>
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden bg-(--color-stamp-chocolate)">
       <HeroStampWall />
-    </DiagonalBackdrop>
+      <div className="absolute inset-0 bg-linear-120 from-(--color-stamp-chocolate)/75 via-(--color-stamp-chocolate)/45 to-(--color-stamp-chocolate)/15" />
+    </div>
   );
 }

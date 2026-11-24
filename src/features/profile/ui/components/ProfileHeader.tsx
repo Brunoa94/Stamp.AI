@@ -1,9 +1,9 @@
 /**
  * ProfileHeader
  *
- * Stamp-styled page header matching panelTitle pattern:
- * - Large heading with serif accent
- * - Taupe subtitle text
+ * Page header inside the photo band, in the shared section-header order:
+ * amber accent bar, the page title with a handwritten accent word, and a
+ * one-line subtitle. Light colours because the copy sits on the photo.
  */
 
 import { useTranslations } from "next-intl";
@@ -15,11 +15,12 @@ export function ProfileHeader() {
   const t = useTranslations("profile.header");
 
   return (
-    <header className="hero-copy">
+    <header className="hero-copy space-y-4">
+      <div aria-hidden className="h-1.5 w-16 rounded-full bg-(--color-stamp-gold)" />
       <Heading
         as="h1"
-        variant="panelTitle"
-        className="text-(--color-stamp-off-white) mb-4"
+        variant="title"
+        className="text-(--color-stamp-off-white)"
       >
         {t.rich("title", {
           accent: (chunks) => (
@@ -29,7 +30,7 @@ export function ProfileHeader() {
           ),
         })}
       </Heading>
-      <Paragraph variant="sm" className="text-(--color-stamp-cream)">
+      <Paragraph variant="xs" className="text-(--color-stamp-cream) md:text-lg">
         {t("subtitle")}
       </Paragraph>
     </header>

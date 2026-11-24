@@ -2,13 +2,13 @@
 
 import { usePathname } from "next/navigation";
 import { StampFooter } from "@/features/stamp/ui/components/StampFooter/StampFooter";
-import { StampHeader } from "@/features/stamp/ui/components/StampHeader";
+import { StampHeader } from "@/features/stamp/ui/components/StampHeader/StampHeader";
 
-interface AppLayoutChromeProps {
+interface PropsI {
   children: React.ReactNode;
 }
 
-export function AppLayoutChrome({ children }: AppLayoutChromeProps) {
+export function AppLayoutChrome({ children }: PropsI) {
   const pathname = usePathname();
   const isStampRoute = pathname === "/stamp" || pathname.startsWith("/stamp/");
 

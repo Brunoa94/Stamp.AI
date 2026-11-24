@@ -11,6 +11,8 @@ import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { useModalFocusTrap } from "@/shared/hooks/useModalFocusTrap";
 import type { OrderWithItemsT } from "@/shared/types/order";
+import { cn } from "@/lib/utils";
+import { orderStatusBadgeVariants } from "../../../lib/variants/orderStatusBadgeVariants";
 import {
   getAddressSummary,
   getFirstOrderItem,
@@ -64,30 +66,33 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
       <div
         ref={dialogRef}
         tabIndex={-1}
-        className="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 shadow-(--shadow-stamp-modal) md:p-12"
+        className="relative max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-6 shadow-(--shadow-stamp-modal) md:p-10"
       >
         <Button
           ref={closeButtonRef}
           onClick={onClose}
-          variant="ghost"
+          variant="stamp-close"
           size="icon"
-          className="absolute right-8 top-8 text-(--color-stamp-taupe) hover:bg-transparent hover:text-(--color-stamp-chocolate)"
+          className="absolute right-6 top-6 text-(--color-stamp-chocolate)"
           aria-label={t("close")}
         >
-          <X className="h-6 w-6" />
+          <X className="h-5 w-5" />
         </Button>
 
-        <div className="mb-8">
+        <div className="mb-8 pr-14">
           <Span
             variant="badge"
-            className={`inline-flex rounded-full px-3 py-1 ${getStatusBadgeClass(displayedStatus)}`}
+            className={cn(
+              orderStatusBadgeVariants(),
+              getStatusBadgeClass(displayedStatus),
+            )}
           >
             {tStatus(displayedStatus)}
           </Span>
           <Heading
             as="h3"
             variant="cardCompact"
-            className="mt-4 text-(--color-stamp-chocolate)"
+            className="mt-4 text-(--color-stamp-chocolate) md:text-2xl"
           >
             {t("recordDetails")}
           </Heading>
@@ -112,8 +117,8 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
               >
                 {t("protocolItems")}
               </Span>
-              <div className="flex items-center gap-4 border border-(--color-stamp-divider) bg-(--color-stamp-cream)/20 p-4">
-                <div className="relative h-16 w-16 flex-none bg-(--color-stamp-cream)">
+              <div className="flex items-center gap-4 rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-cream) p-4">
+                <div className="relative h-16 w-16 flex-none overflow-hidden rounded-lg bg-(--color-stamp-sage)">
                   {imageSrc ? (
                     <Image
                       src={imageSrc}
@@ -286,7 +291,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
                       href={order.tracking_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block font-body text-base font-semibold text-(--color-stamp-gold-text) underline hover:text-(--color-stamp-chocolate)"
+                      className="block w-fit rounded-sm font-body text-base font-semibold text-(--color-stamp-gold-text) underline underline-offset-4 hover:text-(--color-stamp-chocolate) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate)"
                     >
                       {order.tracking_number}
                     </a>
@@ -305,7 +310,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
             <OrderStatusTimeline orderId={order.id} />
           </div>
 
-          <aside className="self-start border border-(--color-stamp-divider) bg-(--color-stamp-cream)/40 p-6">
+          <aside className="self-start rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-cream) p-6">
             <Span
               variant="label"
               className="mb-4 block border-b border-(--color-stamp-divider) pb-2 text-(--color-stamp-gold-text)"
@@ -349,7 +354,7 @@ export function OrdersDetailsModal({ order, onClose }: PropsI) {
                       </Span>
                     )}
                   </Span>
-                  <Span variant="value" className="text-green-600">
+                  <Span variant="value" className="text-(--color-stamp-success)">
                     -{formatPrice(order.discount_amount)}
                   </Span>
                 </div>

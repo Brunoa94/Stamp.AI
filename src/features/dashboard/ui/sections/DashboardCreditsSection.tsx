@@ -24,7 +24,7 @@ export function DashboardCreditsSection() {
         {isLoading || isError ? "—" : data?.coins.toLocaleString() ?? "—"}
       </Span>
       <Paragraph variant="sm" className="mt-4 text-(--color-stamp-taupe)">{t("allowance")}</Paragraph>
-      {isError && <Button variant="secondary-compact" onClick={() => refetch()}>{t("retry")}</Button>}
+      {isError && <Button variant="secondary-compact" className="mt-4" onClick={() => refetch()}>{t("retry")}</Button>}
       <Button type="button" variant="primary" className="mt-8 w-full" onClick={() => setIsDialogOpen(true)}>{t("buyMore")}</Button>
       {isDialogOpen && <BuyCreditsDialog isOpen onClose={() => setIsDialogOpen(false)} onSuccess={() => { void queryClient.invalidateQueries({ queryKey: coinsKeys.all }); }} />}
     </DashboardCard>

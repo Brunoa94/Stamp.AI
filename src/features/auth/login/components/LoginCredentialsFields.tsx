@@ -38,15 +38,9 @@ export function LoginCredentialsFields({ register, errors }: PropsI) {
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <Label htmlFor="password" className="flex items-center">
-            <Span variant="default" className="text-(--color-stamp-chocolate)">
-              {t("passwordLabel")}
-            </Span>
-            <Span
-              variant="default"
-              className="text-(--color-stamp-gold-text) ml-1"
-              aria-hidden="true"
-            >
+          <Label htmlFor="password">
+            {t("passwordLabel")}
+            <Span unstyled className="text-(--color-stamp-gold-text)" aria-hidden="true">
               *
             </Span>
           </Label>
@@ -64,7 +58,7 @@ export function LoginCredentialsFields({ register, errors }: PropsI) {
               placeholder={t("passwordPlaceholder")}
               aria-invalid={!!errors.password}
               aria-describedby={errors.password ? "password-error" : undefined}
-              className="h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20 pl-14 pr-14"
+              className="pr-14 pl-14"
               {...register("password")}
             />
 
@@ -95,7 +89,7 @@ export function LoginCredentialsFields({ register, errors }: PropsI) {
               id="password-error"
               variant="xs"
               role="alert"
-              className="font-bold uppercase tracking-widest text-(--color-stamp-error)"
+              className="text-sm font-medium text-(--color-stamp-error)"
             >
               {ve(errors.password.message)}
             </Paragraph>

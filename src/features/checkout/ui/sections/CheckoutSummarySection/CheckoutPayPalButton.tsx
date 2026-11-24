@@ -1,7 +1,7 @@
 /**
  * CheckoutPayPalButton
  *
- * PayPal payment button restyled to the luxury brutalist system (chocolate →
+ * PayPal payment button in the primary stamp Button style (chocolate →
  * gold, matching the Stripe pay button) instead of PayPal blue. Reuses the
  * shared usePreparePayPalPayment mutation and the checkout form context, so
  * the PayPal order-preparation logic is not duplicated.

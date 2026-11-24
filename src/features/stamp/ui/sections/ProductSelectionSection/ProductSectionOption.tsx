@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
+import { stampSelectableCardVariants } from "../../../lib/variants/stampStudioVariants";
 import type { ProductSectionT } from "../../../lib/types/stampTypes";
 
 /**
@@ -29,14 +30,11 @@ export function ProductSectionOption({ section, isActive, onSelect }: PropsI) {
       onClick={onSelect}
       aria-pressed={isActive}
       className={cn(
-        "group flex w-full items-center gap-3 overflow-hidden rounded-lg border bg-(--color-stamp-white) p-2 text-left transition-colors duration-300",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-gold)",
-        isActive
-          ? "border-2 border-(--color-stamp-gold) bg-(--color-stamp-gold)/5 md:bg-(--color-stamp-cream)"
-          : "border-(--color-stamp-divider) hover:border-(--color-stamp-gold)",
+        stampSelectableCardVariants({ selected: isActive }),
+        "group flex w-full items-center gap-3 overflow-hidden p-2 text-left",
       )}
     >
-      <Span unstyled className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md bg-(--color-stamp-cream)/40 md:bg-(--color-stamp-cream) lg:h-16 lg:w-16">
+      <Span unstyled className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-(--color-stamp-cream) lg:h-16 lg:w-16">
         {section.imageUrl && (
           <Image
             src={section.imageUrl}

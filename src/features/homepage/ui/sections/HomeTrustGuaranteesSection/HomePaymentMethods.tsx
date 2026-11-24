@@ -18,12 +18,12 @@ export function HomePaymentMethods() {
   const activePaymentIcons = PAYMENT_ICONS.filter((icon) => icon.id !== "ideal");
 
   return (
-    <div className="mt-16 flex flex-col items-center">
+    <div className="mt-12 flex flex-col items-center">
       <div className="mb-6 flex items-center gap-2">
-        <Lock className="h-4 w-4 text-(--color-stamp-gold-text)" />
+        <Lock aria-hidden className="h-4 w-4 text-(--color-stamp-gold-text)" />
         <Span
-          variant="micro"
-          className="uppercase tracking-widest text-(--color-stamp-chocolate)"
+          variant="label"
+          className="text-(--color-stamp-chocolate)"
         >
           {t("paymentTitle")}
         </Span>
@@ -33,7 +33,7 @@ export function HomePaymentMethods() {
         {activePaymentIcons.map((payment) => (
           <div
             key={payment.id}
-            className="flex h-14 items-center justify-center rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 transition-colors duration-300 hover:border-(--color-stamp-gold)"
+            className="flex h-14 items-center justify-center rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-white) px-4 shadow-(--shadow-stamp-card)"
           >
             {payment.icon}
           </div>

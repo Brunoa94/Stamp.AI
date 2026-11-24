@@ -16,7 +16,7 @@ export function HeroPhotoRibbon() {
   return (
     <div
       aria-hidden="true"
-      className="hero-showcase flex flex-col gap-3 overflow-hidden mask-x-from-90% mask-x-to-100%"
+      className="hero-showcase flex flex-col gap-3 overflow-hidden py-1 mask-x-from-90% mask-x-to-100%"
     >
       <HeroRibbonRow durationS={90}>
         {HERO_RIBBON_LIFESTYLE_LOOP.map((src, index) => (

@@ -44,7 +44,7 @@ Work through these while designing, not after. Each one is a question the design
 Use the native element or primitive whose semantics match the behavior:
 
 - Does something on this page → `Button`. Goes somewhere → link. Never a clickable `div`/`Span`.
-- A toggle that stays on or off → `Button` with `aria-pressed` (see the `stamp-thumbnail` and `option-card` variants, which style `aria-pressed`).
+- A toggle that stays on or off → `Button` with `aria-pressed` (the `stamp-thumbnail` variant styles `aria-pressed`; selectable cards use `stampSelectableCardVariants` in `src/features/stamp/lib/variants/stampStudioVariants.ts`).
 - Shows or hides a region → `Button` with `aria-expanded` and `aria-controls` (see `stamp-disclosure`).
 - One choice of several → `Select` or a radio group, not a row of buttons with only a color change.
 - Lists of things → `List`; groups of fields → `fieldset` with a `legend`.
@@ -109,7 +109,7 @@ A sighted user sees the change; a screen reader user hears nothing unless you an
 
 - Respect reduced motion. CSS animations go in a `@media (prefers-reduced-motion: reduce)` block (or `motion-reduce:` classes); animations driven from JS or inline styles check `useReducedMotion`.
 - Anything that moves, blinks or auto-advances for more than 5 seconds needs a pause control, or must stop under reduced motion.
-- Content that rotates should be read once, not on every tick: `HeroRotatingWord` renders the first word in `sr-only` and hides the animated copies with `aria-hidden`. Copy that pattern.
+- Content that rotates should be read once, not on every tick: render one stable version in `sr-only` and hide the animated copies with `aria-hidden`.
 - Nothing flashes more than three times a second.
 
 ### 7. Can it be seen?
@@ -158,7 +158,7 @@ A sighted user sees the change; a screen reader user hears nothing unless you an
   {colors.map((color) => (
     <Button
       key={color.id}
-      variant="option-card"
+      variant="stamp-thumbnail"
       aria-pressed={color.id === selectedId}
       onClick={() => onSelect(color.id)}
     >

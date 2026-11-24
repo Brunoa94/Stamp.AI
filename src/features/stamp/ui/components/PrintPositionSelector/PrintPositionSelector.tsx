@@ -39,16 +39,10 @@ export function PrintPositionSelector({
 
   return (
     <div>
-      <Span
-        variant="micro"
-        className="mb-1 block tracking-widest text-(--color-stamp-taupe)"
-      >
+      <Span as="p" variant="label" className="mb-1 text-(--color-stamp-taupe)">
         {t("positionsTitle")}
       </Span>
-      <Span
-        variant="micro"
-        className="mb-4 block text-[9px] normal-case tracking-normal text-(--color-stamp-taupe)/60"
-      >
+      <Span as="p" variant="micro" className="mb-4 text-(--color-stamp-taupe)">
         {isSingle ? t("positionsHelpSingle") : t("positionsHelp")}
       </Span>
       <div

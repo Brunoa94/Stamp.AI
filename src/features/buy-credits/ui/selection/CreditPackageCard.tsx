@@ -1,11 +1,16 @@
 "use client";
 
-import { Coins, Check, Sparkles } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { Coins } from "lucide-react";
 import { Button } from "@/features/ui/button";
 import { Span } from "@/features/ui/span";
 import { cn } from "@/lib/utils";
 import type { CreditPackage } from "@/shared/constants/credits";
+import {
+  creditOptionCardVariants,
+  creditOptionIconVariants,
+} from "../../lib/variants/creditOptionVariants";
+import { CreditSelectedCheck } from "../shared/CreditSelectedCheck";
+import { CreditPopularBadge } from "./CreditPopularBadge";
 
 interface CreditPackageCardProps {
   package: CreditPackage;
@@ -21,50 +26,28 @@ export function CreditPackageCard({
   return (
     <Button
       type="button"
-      variant="option-card"
+      variant="unstyled"
       onClick={() => onSelect(pkg.credits)}
       aria-pressed={isSelected}
-      className="relative w-full min-h-26 flex flex-col items-center justify-center p-4"
+      className={cn(
+        creditOptionCardVariants({ selected: isSelected }),
+        "flex w-full min-h-26 flex-col items-center justify-center p-4",
+      )}
     >
-      {pkg.popular && <PopularBadge />}
+      {pkg.popular && <CreditPopularBadge />}
 
       <div className="flex items-center gap-1.5 mb-1">
         <Coins
-          className={cn(
-            "w-5 h-5",
-            isSelected ? "text-brand-orange" : "text-slate-400"
-          )}
+          className={cn("w-5 h-5", creditOptionIconVariants({ selected: isSelected }))}
         />
-        <Span
-          variant="credits"
-          className={isSelected ? "text-slate-900" : "text-slate-700"}
-        >
+        <Span variant="credits" className="text-(--color-stamp-chocolate)">
           {pkg.credits}
         </Span>
       </div>
 
-      <Span variant="price" className="text-slate-500">€{pkg.price.toFixed(2)}</Span>
+      <Span variant="price" className="text-(--color-stamp-taupe)">€{pkg.price.toFixed(2)}</Span>
 
-      {isSelected && <SelectedCheckmark />}
+      {isSelected && <CreditSelectedCheck className="absolute top-2 right-2" />}
     </Button>
-  );
-}
-
-function PopularBadge() {
-  const t = useTranslations("buyCredits.selection");
-
-  return (
-    <Span variant="pill" className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-linear-to-r from-brand-violet to-cyan text-white rounded-full flex items-center gap-1">
-      <Sparkles className="w-3 h-3" />
-      {t("popularBadge")}
-    </Span>
-  );
-}
-
-function SelectedCheckmark() {
-  return (
-    <Span unstyled className="absolute top-2 right-2 w-5 h-5 rounded-full bg-brand-violet text-white flex items-center justify-center">
-      <Check className="w-3 h-3" />
-    </Span>
   );
 }

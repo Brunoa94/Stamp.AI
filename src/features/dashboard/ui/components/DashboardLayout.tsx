@@ -16,10 +16,10 @@ interface DashboardLayoutPropsI extends PropsWithChildren {
 export function DashboardLayout({ header, children }: DashboardLayoutPropsI) {
   return (
     <div className="min-h-screen bg-(--color-stamp-off-white) text-(--color-stamp-chocolate) pt-24">
-      <div className="px-6 pb-24 pt-12 lg:px-12 xl:px-24">
+      <div className="px-4 pb-16 pt-12 sm:px-6 lg:px-12">
         <PageContainer className="mx-auto max-w-screen-2xl">
           {header}
-          <div className="mt-12">{children}</div>
+          <div className="mt-10">{children}</div>
         </PageContainer>
       </div>
     </div>

@@ -22,7 +22,7 @@ export function ProfileLayout({ header, children }: ProfileLayoutProps) {
       <PageHeaderBand src={staticAssetUrl("/backdrops/profile-sofia-tote.jpg")} imageClassName="object-[center_88%]">
         {header}
       </PageHeaderBand>
-      <div className="px-6 pb-24 pt-12 lg:px-12 xl:px-24">
+      <div className="px-4 py-16 sm:px-6 lg:px-12">
         <PageContainer className="mx-auto max-w-screen-2xl">
           <div className="space-y-6">{children}</div>
         </PageContainer>

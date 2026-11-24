@@ -3,13 +3,11 @@
 /**
  * HeroContent
  *
- * Hero copy: Stamp.ai wordmark, headline with a rotating handwritten product word,
- * tagline, the upload card that opens the creator, the free-credits
- * line and trust signals. Light ink over the photo backdrop, with the
- * headline as the largest element and the wordmark as a smaller kicker above
- * it; the trust row sits on its own off-white pill and only renders while
- * real social proof is enabled (TRUST_SOCIAL_PROOF_ENABLED). Centered when
- * stacked; left-aligned beside the flow demo on xl+.
+ * The cream start card on the stamp wall: the headline with a rotating
+ * handwritten product word, the tagline, the two ways into the creator (a
+ * photo or an idea), the free-credits line and, while real social proof is
+ * enabled (TRUST_SOCIAL_PROOF_ENABLED), the trust row. Dark ink on cream, so
+ * it reads over the busy wall without a text shadow.
  */
 
 import { useTranslations } from "next-intl";
@@ -18,9 +16,8 @@ import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import { HeroAnimatedTitle } from "./HeroAnimatedTitle";
-import { HeroBrandLockup } from "./HeroBrandLockup";
 import { HeroRotatingWord } from "./HeroRotatingWord";
-import { HeroUploadCard } from "./HeroUploadCard";
+import { HeroStartOptions } from "./HeroStartOptions";
 import { OrdersFulfilledCounter } from "@/features/ui/trust/OrdersFulfilledCounter";
 import { TrustpilotWidget } from "@/features/ui/trust/TrustpilotWidget";
 import {
@@ -32,14 +29,12 @@ export function HeroContent() {
   const t = useTranslations("home.hero");
 
   return (
-    <div className="hero-copy flex flex-col items-center gap-6 text-center sm:gap-7 xl:items-start xl:text-left">
-      <HeroBrandLockup />
-
+    <div className="flex flex-col gap-5 rounded-2xl bg-(--color-stamp-cream) p-6 text-left shadow-(--shadow-stamp-card-hover) sm:gap-6 sm:p-8 2xl:p-10">
       <HeroAnimatedTitle>
         <Heading
           as="h1"
           variant="title"
-          className="text-5xl leading-[0.95] text-(--color-stamp-off-white) sm:text-6xl md:text-6xl lg:text-7xl xl:text-6xl 2xl:text-7xl"
+          className="text-5xl leading-[0.95] text-(--color-stamp-chocolate) sm:text-6xl xl:text-5xl 2xl:text-6xl"
         >
           {t.rich("headline", {
             br: () => <br />,
@@ -48,26 +43,19 @@ export function HeroContent() {
         </Heading>
       </HeroAnimatedTitle>
 
-      <Paragraph
-        variant="heroTagline"
-        className="max-w-lg text-(--color-stamp-off-white) xl:text-2xl"
-      >
+      <Paragraph variant="xs" className="max-w-lg text-lg text-(--color-stamp-taupe)">
         {t("tagline")}
       </Paragraph>
 
-      <HeroUploadCard />
+      <HeroStartOptions />
 
       {/* Free credits highlight */}
-      <Span
-        as="p"
-        variant="serif"
-        className="text-2xl text-(--color-stamp-cream) sm:text-3xl"
-      >
+      <Span as="p" variant="serif" className="text-2xl text-(--color-stamp-chocolate)">
         {t.rich("freeCredits", {
           signUp: (chunks) => (
             <Button
               variant="link"
-              className="inline p-0 h-auto font-serif italic lowercase text-(--color-stamp-gold-light) hover:text-(--color-stamp-off-white)! text-2xl sm:text-3xl font-bold"
+              className="inline h-auto p-0 font-serif text-2xl font-bold lowercase italic text-(--color-stamp-gold-text) hover:text-(--color-stamp-chocolate)!"
               onClick={() => {
                 document.dispatchEvent(new CustomEvent("open-auth-modal"));
               }}
@@ -80,7 +68,7 @@ export function HeroContent() {
 
       {/* Trust signals - above fold, real social proof only */}
       {TRUST_SOCIAL_PROOF_ENABLED && (
-        <div className="flex flex-wrap items-center justify-center gap-2 rounded-full bg-(--color-stamp-off-white)/95 px-4 py-2 shadow-lg text-shadow-none empty:hidden sm:gap-4">
+        <div className="flex flex-wrap items-center gap-2 empty:hidden sm:gap-4">
           <OrdersFulfilledCounter
             variant="default"
             count={TRUST_ORDER_METRICS.ordersFulfilled}

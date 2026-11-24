@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { useProductLabel } from "@/shared/hooks/useProductLabel";
 import { Button } from "@/features/ui/button";
+import { stampChipVariants } from "../../../lib/variants/stampStudioVariants";
 
 /**
  * PaperTypeOptions
@@ -32,13 +33,9 @@ export function PaperTypeOptions({
       {paperTypes.map((paperType) => (
         <Button
           key={paperType}
-          variant="ghost"
+          variant="unstyled"
           onClick={() => onSelectPaperType(paperType)}
-          className={`px-4 py-2 h-auto rounded-none border bg-white hover:bg-white text-xs font-medium uppercase tracking-widest transition-colors duration-300 ${
-            selectedPaperType === paperType
-              ? "border-(--color-stamp-gold) text-(--color-stamp-chocolate)"
-              : "border-(--color-stamp-divider) text-(--color-stamp-taupe)"
-          }`}
+          className={stampChipVariants({ selected: selectedPaperType === paperType })}
           aria-pressed={selectedPaperType === paperType}
           aria-label={t("paperTypeAria", { type: label("paperType", paperType) })}
         >

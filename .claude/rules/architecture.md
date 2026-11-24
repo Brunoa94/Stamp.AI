@@ -98,7 +98,7 @@ Between feature slices, only the **public API** may be imported: `<slice>/lib/**
 import { getSafeRedirectPath } from "@/features/auth/lib/helpers/redirectTarget";
 
 // ❌ BAD: reaching into another slice's internals
-// src/features/stamp/ui/components/StampHeader.tsx
+// src/features/stamp/ui/components/StampHeader/StampHeader.tsx
 import { Login } from "@/features/auth/login/Login";
 
 // ✅ GOOD: another slice's public API

@@ -32,7 +32,7 @@ export function SecureCheckoutNotice({ className }: SecureCheckoutNoticeProps) {
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) shadow-sm",
+        "overflow-hidden rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) shadow-(--shadow-stamp-card)",
         className
       )}
     >
@@ -40,7 +40,7 @@ export function SecureCheckoutNotice({ className }: SecureCheckoutNoticeProps) {
         <Span
           unstyled
           aria-hidden="true"
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-(--color-stamp-success) text-(--color-stamp-white) sm:h-14 sm:w-14"
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-(--color-stamp-success) text-(--color-stamp-white) sm:h-14 sm:w-14"
         >
           <ShieldCheck className="h-7 w-7 sm:h-8 sm:w-8" />
         </Span>
@@ -85,7 +85,7 @@ export function SecureCheckoutNotice({ className }: SecureCheckoutNoticeProps) {
         </Span>
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
           {ACCEPTED_PAYMENT_LOGOS.map((logoId) => (
-            <PaymentLogo key={logoId} id={logoId} className="h-8 w-11 rounded-md shadow-xs sm:h-9 sm:w-14" />
+            <PaymentLogo key={logoId} id={logoId} className="h-8 w-11 sm:h-9 sm:w-14" />
           ))}
         </div>
       </div>

@@ -33,7 +33,7 @@ export const STAMP_BACKDROP_EDGE = {
   bottomX: 0.6,
   canvasTopPx: 96,
   minViewportWidthPx: 768,
-  sidebarWidthPx: 17 * 13.6, // sidebar w-68 (17rem) at the 13.6px root font size
+  sidebarWidthPx: 17 * 15, // sidebar w-68 (17rem) at the 15px root font size (globals.css html)
   sidebarMinViewportWidthPx: 1024,
   slant: 0.1,
 };
@@ -46,7 +46,7 @@ export const STAMP_BACKDROP_EDGE = {
  */
 export const STAMP_SPLIT_TONES = {
   title: { base: "var(--color-stamp-chocolate)", photo: "var(--color-stamp-off-white)" },
-  accent: { base: "var(--color-stamp-taupe)", photo: "var(--color-stamp-gold-light)" },
+  accent: { base: "var(--color-stamp-gold-text)", photo: "var(--color-stamp-gold-light)" },
   muted: { base: "var(--color-stamp-taupe)", photo: "var(--color-stamp-cream)" },
   faint: {
     base: "color-mix(in srgb, var(--color-stamp-taupe) 40%, transparent)",

@@ -82,7 +82,7 @@ export function ProcessStickyCarousel() {
       {/* Sticky container */}
       <div className="sticky top-0 h-screen flex flex-col">
         {/* Section header - stays at top */}
-        <div className="pt-20 lg:pt-24 pb-4 lg:pb-8 px-6 lg:px-12 xl:px-24">
+        <div className="px-4 pt-28 pb-4 sm:px-6 lg:px-12 lg:pb-6">
           <div className="mx-auto max-w-screen-2xl">
             <HomeSectionHeader
               title={t("title")}
@@ -93,8 +93,8 @@ export function ProcessStickyCarousel() {
         </div>
 
         {/* Content - centered in remaining space */}
-        <div className="flex-1 flex items-start mt-4 lg:mt-12">
-          <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-30 max-w-8xl mx-auto px-6 md:px-12 lg:px-16">
+        <div className="flex-1 flex items-start mt-4 lg:mt-6">
+          <div className="mx-auto flex w-full max-w-screen-2xl flex-col items-center justify-center gap-10 px-4 sm:px-6 lg:flex-row lg:gap-16 lg:px-12 xl:gap-24">
             {/* Left side - Desktop flow-demo screen with slide animation */}
             <div className="hidden lg:flex items-center relative w-125 xl:w-150 h-125 xl:h-150 mt-6 flex-[0.5]">
               {HOME_PROCESS_STEPS.map((step, index) => {

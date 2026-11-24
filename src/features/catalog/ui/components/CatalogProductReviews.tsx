@@ -17,12 +17,12 @@ export function CatalogProductReviews() {
 
   return (
     <div className="space-y-2">
-      <Span as="div" variant="micro" className="text-(--color-stamp-taupe)">
+      <Span as="div" variant="label" className="text-(--color-stamp-gold-text)">
         {t("label")}
       </Span>
       <div
         role="status"
-        className="border border-(--color-stamp-divider) bg-(--color-stamp-cream) p-4"
+        className="rounded-lg bg-(--color-stamp-cream) p-4"
       >
         <Paragraph variant="xs" className="text-(--color-stamp-taupe)">
           {t("comingSoon")}

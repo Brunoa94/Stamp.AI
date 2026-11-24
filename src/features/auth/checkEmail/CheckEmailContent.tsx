@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/features/ui/button";
+import { AuthPageCard } from "../ui/components/AuthPageCard";
 import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Mail } from "lucide-react";
@@ -54,67 +55,65 @@ export function CheckEmailContent() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-(--color-stamp-cream) px-4">
-      <div className="w-full max-w-md border-2 border-(--color-stamp-divider) bg-(--color-stamp-off-white) p-10 shadow-(--shadow-stamp-modal)">
-        <div className="text-center space-y-6">
-          <div className="text-(--color-stamp-gold-text) mb-4">
-            <Mail className="w-16 h-16 mx-auto" strokeWidth={1.5} />
-          </div>
+    <AuthPageCard>
+      <div className="space-y-6">
+        <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-(--color-stamp-cream) text-(--color-stamp-gold-text)">
+          <Mail aria-hidden className="size-8" strokeWidth={1.5} />
+        </div>
 
-          <Heading
-            as="h1"
-            variant="card"
-            className="text-2xl tracking-tight text-(--color-stamp-chocolate)"
+        <Heading
+          as="h1"
+          variant="card"
+          className="text-(--color-stamp-chocolate)"
+        >
+          {t("title")}
+        </Heading>
+
+        <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
+          {t("description")}
+        </Paragraph>
+
+        {email && (
+          <Paragraph
+            variant="sm"
+            className="font-medium text-(--color-stamp-chocolate)"
           >
-            {t("title")}
-          </Heading>
-
-          <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
-            {t("description")}
+            {maskEmail(email)}
           </Paragraph>
+        )}
 
-          {email && (
+        <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
+          {t("instructions")}
+        </Paragraph>
+
+        <div className="space-y-4 pt-4">
+          {!resendSuccess ? (
+            <Button
+              variant="secondary"
+              onClick={handleResend}
+              disabled={isResending || !isCaptchaReady || !email}
+              className="w-full"
+            >
+              {isResending ? t("resending") : t("resendButton")}
+            </Button>
+          ) : (
             <Paragraph
               variant="sm"
-              className="font-medium text-(--color-stamp-chocolate)"
+              className="text-(--color-stamp-success) font-medium"
             >
-              {maskEmail(email)}
+              {t("resendSuccess")}
             </Paragraph>
           )}
 
-          <Paragraph variant="sm" className="text-(--color-stamp-taupe)">
-            {t("instructions")}
-          </Paragraph>
-
-          <div className="space-y-4 pt-4">
-            {!resendSuccess ? (
-              <Button
-                variant="secondary"
-                onClick={handleResend}
-                disabled={isResending || !isCaptchaReady || !email}
-                className="w-full"
-              >
-                {isResending ? t("resending") : t("resendButton")}
-              </Button>
-            ) : (
-              <Paragraph
-                variant="sm"
-                className="text-(--color-stamp-success) font-medium"
-              >
-                {t("resendSuccess")}
-              </Paragraph>
-            )}
-
-            <Button asChild variant="primary" className="w-full">
-              <Link href="/">{t("backToLogin")}</Link>
-            </Button>
-          </div>
-
-          <Paragraph variant="sm" className="text-(--color-stamp-taupe) pt-4">
-            {t("spamNote")}
-          </Paragraph>
+          <Button asChild variant="primary" className="w-full">
+            <Link href="/">{t("backToLogin")}</Link>
+          </Button>
         </div>
+
+        <Paragraph variant="sm" className="text-(--color-stamp-taupe) pt-4">
+          {t("spamNote")}
+        </Paragraph>
       </div>
-    </div>
+    </AuthPageCard>
   );
 }

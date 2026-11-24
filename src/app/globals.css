@@ -74,7 +74,7 @@
 
 :root {
   --radius: 0.625rem;
-  --background: #fafafa;
+  --background: #fdfbf8;
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.141 0.005 285.823);
@@ -148,12 +148,13 @@
   html {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    font-size: 13.6px;
+    /* Base size for every rem: the whole design scales from here */
+    font-size: 15px;
     scroll-behavior: smooth;
   }
   body {
     @apply text-foreground font-sans;
-    background: #fafafa;
+    background: #fdfbf8;
   }
 
   .dark body {
@@ -181,22 +182,24 @@
     display: none; /* Chrome, Safari, Opera */
   }
 
+  /* Slab serif with a light stroke: between the original heavy faux-bold
+     (600 + 0.3px stroke) and the plain regular weight */
   .font-heading {
-    font-family: var(--font-sanchez), sans-serif;
+    font-family: var(--font-sanchez), serif;
     letter-spacing: -0.01em;
-    font-weight: 600;
-    -webkit-text-stroke: 0.3px currentColor;
+    font-weight: 400;
+    -webkit-text-stroke: 0.4px currentColor;
   }
 
+  /* No font-weight here: weight comes from font-* utilities (body text is 400
+     by default), so font-semibold/font-bold aren't overridden */
   .font-body {
     font-family: var(--font-inter), var(--font-poppins), sans-serif;
     letter-spacing: -0.01em;
-    font-weight: 400;
   }
 
   .font-button {
     font-family: var(--font-inter), var(--font-poppins), sans-serif;
-    font-weight: 600;
   }
 
   .font-accent {
@@ -254,15 +257,6 @@
      BRUTALIST DESIGN SYSTEM UTILITIES
      ==================================== */
 
-  /* Grain overlay - fixed noise texture */
-  .grain-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    opacity: 0.04;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  }
 
   /* Dead CSS removed: .animated-dot - component deleted */
 
@@ -701,26 +695,6 @@
   }
 }
 
-@keyframes not-found-glitch {
-  0% {
-    transform: translate(0);
-  }
-  20% {
-    transform: translate(-2px, 2px);
-  }
-  40% {
-    transform: translate(-2px, -2px);
-  }
-  60% {
-    transform: translate(2px, 2px);
-  }
-  80% {
-    transform: translate(2px, -2px);
-  }
-  100% {
-    transform: translate(0);
-  }
-}
 
 .error-icon-animate {
   animation: error-bounce-in 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -730,21 +704,7 @@
   animation: error-pulse-glow 3s infinite;
 }
 
-.alt-payment-pill {
-  transition: all 0.2s ease;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-}
 
-.alt-payment-pill:hover {
-  background: white;
-  border-color: rgba(0, 0, 0, 0.15);
-  transform: translateY(-1px);
-}
-
-.glitch-text-404 {
-  animation: not-found-glitch 3s infinite;
-  position: relative;
-}
 
 /* Processing / Creating step animations */
 @keyframes processing-orbit {
@@ -896,8 +856,7 @@
   }
 
   .error-icon-animate,
-  .error-icon-pulse,
-  .glitch-text-404 {
+  .error-icon-pulse {
     animation: none;
   }
 
@@ -1484,22 +1443,6 @@
 
 .stamp-scan__label--printed {
   top: calc(var(--scan-line) + 0.75rem);
-}
-
-/* Gold print registration marks in the four corners */
-.stamp-scan__marks {
-  --mark: 1.5rem;
-  inset: 1.25rem;
-  opacity: 0.8;
-  background:
-    linear-gradient(var(--color-stamp-gold), var(--color-stamp-gold)) top left / var(--mark) 2px no-repeat,
-    linear-gradient(var(--color-stamp-gold), var(--color-stamp-gold)) top left / 2px var(--mark) no-repeat,
-    linear-gradient(var(--color-stamp-gold), var(--color-stamp-gold)) top right / var(--mark) 2px no-repeat,
-    linear-gradient(var(--color-stamp-gold), var(--color-stamp-gold)) top right / 2px var(--mark) no-repeat,
-    linear-gradient(var(--color-stamp-gold), var(--color-stamp-gold)) bottom left / var(--mark) 2px no-repeat,
-    linear-gradient(var(--color-stamp-gold), var(--color-stamp-gold)) bottom left / 2px var(--mark) no-repeat,
-    linear-gradient(var(--color-stamp-gold), var(--color-stamp-gold)) bottom right / var(--mark) 2px no-repeat,
-    linear-gradient(var(--color-stamp-gold), var(--color-stamp-gold)) bottom right / 2px var(--mark) no-repeat;
 }
 
 @media (prefers-reduced-motion: reduce) {

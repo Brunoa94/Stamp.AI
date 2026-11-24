@@ -10,6 +10,17 @@ import { getPreloadIndices } from "../../../lib/utils/carouselUtils";
 import { Button } from "@/features/ui/button";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
+import { cn } from "@/lib/utils";
+import {
+  polaroidBadgeVariants,
+  polaroidContainerVariants,
+  polaroidImageVariants,
+  polaroidSpinnerVariants,
+} from "../../../lib/variants/polaroidPreviewVariants";
+import {
+  stampLightboxButtonVariants,
+  stampRoundIconButtonVariants,
+} from "../../../lib/variants/stampStudioVariants";
 
 /**
  * MockupCarousel
@@ -67,28 +78,36 @@ const FullscreenModal = memo(function FullscreenModal({
     [onNext]
   );
 
-  const handleContainerClick = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
-  }, []);
-
   return createPortal(
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center transition-all duration-300 ease-out ${
-        isAnimating ? "bg-black/90" : "bg-black/0"
+        isAnimating ? "bg-(--color-stamp-chocolate)/95" : "bg-(--color-stamp-chocolate)/0"
       }`}
-      onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-label={t("fullscreenPreview")}
     >
+      {/* Click-outside target behind the image; keyboard users have the close
+          button and Escape, so it stays out of the tab order and the a11y tree */}
+      <Button
+        type="button"
+        variant="unstyled"
+        aria-hidden
+        tabIndex={-1}
+        onClick={onClose}
+        className="absolute inset-0 cursor-default"
+      />
+
       {/* Close button */}
       <Button
         type="button"
         variant="unstyled"
         onClick={onClose}
-        className={`absolute top-6 right-6 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 ${
-          isAnimating ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
-        }`}
+        className={cn(
+          stampLightboxButtonVariants(),
+          "absolute top-6 right-6 z-10",
+          isAnimating ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4",
+        )}
         aria-label={t("closeFullscreen")}
       >
         <X className="w-6 h-6" />
@@ -101,9 +120,11 @@ const FullscreenModal = memo(function FullscreenModal({
             type="button"
             variant="unstyled"
             onClick={handlePrevClick}
-            className={`absolute left-6 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 ${
-              isAnimating ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
-            }`}
+            className={cn(
+              stampLightboxButtonVariants(),
+              "absolute left-6 top-1/2 -translate-y-1/2 z-10",
+              isAnimating ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4",
+            )}
             aria-label={t("previousImage")}
           >
             <ChevronLeft className="w-6 h-6" />
@@ -112,9 +133,11 @@ const FullscreenModal = memo(function FullscreenModal({
             type="button"
             variant="unstyled"
             onClick={handleNextClick}
-            className={`absolute right-6 top-1/2 -translate-y-1/2 z-10 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all duration-300 ${
-              isAnimating ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4"
-            }`}
+            className={cn(
+              stampLightboxButtonVariants(),
+              "absolute right-6 top-1/2 -translate-y-1/2 z-10",
+              isAnimating ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4",
+            )}
             aria-label={t("nextImage")}
           >
             <ChevronRight className="w-6 h-6" />
@@ -127,12 +150,11 @@ const FullscreenModal = memo(function FullscreenModal({
         className={`relative w-[90vw] h-[90vh] max-w-5xl transition-all duration-300 ease-out ${
           isAnimating ? "opacity-100 scale-100" : "opacity-0 scale-75"
         }`}
-        onClick={handleContainerClick}
       >
         {/* Loading spinner */}
         {!isCurrentLoaded && (
           <div className="absolute inset-0 flex items-center justify-center z-10">
-            <Loader2 className="w-12 h-12 animate-spin text-white/40" />
+            <Loader2 className="w-12 h-12 animate-spin text-(--color-stamp-taupe-light)" />
           </div>
         )}
         {/* Only render images within buffer range for performance */}
@@ -162,11 +184,11 @@ const FullscreenModal = memo(function FullscreenModal({
         }`}
       >
         {images.length > 1 && (
-          <Paragraph unstyled className="text-white/80 text-sm font-medium">
+          <Paragraph unstyled className="text-(--color-stamp-off-white) text-sm font-medium">
             {currentIndex + 1} / {images.length}
           </Paragraph>
         )}
-        <Paragraph unstyled className="text-white/60 text-sm">{t("pressEscToClose")}</Paragraph>
+        <Paragraph unstyled className="text-(--color-stamp-taupe-light) text-sm">{t("pressEscToClose")}</Paragraph>
       </div>
     </div>,
     document.body
@@ -274,14 +296,14 @@ function MockupCarouselComponent({ mockupImages, fallbackUrl }: PropsI) {
           type="button"
           variant="unstyled"
           onClick={openFullscreen}
-          className="w-full max-w-[min(36rem,52vh)] bg-white p-6 shadow-2xl relative rotate-1 group hover:rotate-0 transition-all duration-1000 cursor-zoom-in hover:shadow-3xl hover:scale-[1.02]"
+          className={cn(polaroidContainerVariants({ size: "md" }), "max-w-[min(36rem,52vh)]")}
           aria-label={t("viewFullscreen")}
         >
-          <div className="aspect-square bg-(--color-stamp-cream) flex items-center justify-center overflow-hidden mb-6 relative">
+          <div className={polaroidImageVariants()}>
             {/* Loading spinner */}
             {!isCurrentLoaded && (
               <div className="absolute inset-0 flex items-center justify-center bg-(--color-stamp-cream) z-10">
-                <Loader2 className="w-8 h-8 animate-spin text-(--color-stamp-taupe)/40" />
+                <Loader2 className={polaroidSpinnerVariants({ size: "md" })} />
               </div>
             )}
             {/* Only render images within buffer range for performance */}
@@ -302,8 +324,11 @@ function MockupCarouselComponent({ mockupImages, fallbackUrl }: PropsI) {
               ) : null
             )}
           </div>
-          <div className="absolute top-10 left-10">
-            <Span unstyled className="px-3 py-1 bg-white/80 backdrop-blur-sm border border-(--color-stamp-divider) text-[8px] font-bold uppercase tracking-widest">
+          <div className={polaroidBadgeVariants({ size: "md" })}>
+            <Span
+              variant="badge"
+              className="rounded-md border border-(--color-stamp-divider) bg-(--color-stamp-white)/90 px-2 py-1 text-(--color-stamp-chocolate)"
+            >
               {t("previewSealed")}
             </Span>
           </div>
@@ -316,7 +341,7 @@ function MockupCarouselComponent({ mockupImages, fallbackUrl }: PropsI) {
               type="button"
               variant="unstyled"
               onClick={goToPrev}
-              className="p-2 rounded-full border border-(--color-stamp-divider) hover:bg-(--color-stamp-divider)/10 transition-colors"
+              className={stampRoundIconButtonVariants()}
               aria-label={t("previousImage")}
             >
               <ChevronLeft className="w-5 h-5" />
@@ -331,17 +356,18 @@ function MockupCarouselComponent({ mockupImages, fallbackUrl }: PropsI) {
                     type="button"
                     variant="unstyled"
                     onClick={() => setCurrentIndex(index)}
-                    className={`w-2 h-2 rounded-full transition-all ${
+                    className={cn(
+                      "h-2 w-2 rounded-full transition-all focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate)",
                       index === currentIndex
-                        ? "bg-(--color-stamp-black) scale-125"
-                        : "bg-(--color-stamp-divider) hover:bg-(--color-stamp-black)/50"
-                    }`}
+                        ? "bg-(--color-stamp-chocolate) scale-125"
+                        : "bg-(--color-stamp-chocolate)/20 hover:bg-(--color-stamp-chocolate)/50",
+                    )}
                     aria-label={`${t("goToImage")} ${index + 1}`}
                   />
                 ))}
               </div>
             ) : (
-              <Span unstyled className="text-sm font-medium text-(--color-stamp-black) min-w-16 text-center">
+              <Span unstyled className="text-sm font-medium text-(--color-stamp-chocolate) min-w-16 text-center">
                 {currentIndex + 1} / {images.length}
               </Span>
             )}
@@ -350,7 +376,7 @@ function MockupCarouselComponent({ mockupImages, fallbackUrl }: PropsI) {
               type="button"
               variant="unstyled"
               onClick={goToNext}
-              className="p-2 rounded-full border border-(--color-stamp-divider) hover:bg-(--color-stamp-divider)/10 transition-colors"
+              className={stampRoundIconButtonVariants()}
               aria-label={t("nextImage")}
             >
               <ChevronRight className="w-5 h-5" />
@@ -360,7 +386,7 @@ function MockupCarouselComponent({ mockupImages, fallbackUrl }: PropsI) {
 
         {/* Image counter - only show separately when using dots */}
         {images.length > 1 && images.length <= 10 && (
-          <Paragraph unstyled className="mt-3 text-sm text-(--color-stamp-muted)">
+          <Paragraph unstyled className="mt-3 text-sm text-(--color-stamp-taupe)">
             {currentIndex + 1} / {images.length}
           </Paragraph>
         )}

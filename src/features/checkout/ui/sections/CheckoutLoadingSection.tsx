@@ -1,8 +1,10 @@
 /**
  * CheckoutLoadingSection
  *
- * Skeleton loading state for the checkout page, matching the shimmer
- * treatment used across the orders/cart luxury pages.
+ * Skeleton loading state for the checkout page, shaped like the real page:
+ * a rounded-2xl header band, then card-shaped blocks for the forms and the
+ * summary, in the page gutter below the fixed header. Same shimmer as the
+ * cart's.
  */
 
 import { useTranslations } from "next-intl";
@@ -18,24 +20,21 @@ function ShimmerBlock({ className }: { className?: string }) {
 export function CheckoutLoadingSection() {
   const t = useTranslations("checkout.loading");
   return (
-    <div className="min-h-screen bg-(--color-stamp-off-white) px-6 pb-24 pt-12 lg:px-12 xl:px-24">
+    <div className="min-h-screen bg-(--color-stamp-off-white) px-4 pb-16 pt-28 sm:px-6 lg:px-12">
       <div
         role="status"
         aria-busy="true"
         aria-label={t("loadingAria")}
-        className="mx-auto max-w-6xl space-y-12"
+        className="mx-auto max-w-screen-2xl space-y-16"
       >
-        <div className="space-y-4">
-          <ShimmerBlock className="h-1.5 w-20" />
-          <ShimmerBlock className="h-16 w-1/2" />
-        </div>
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
-          <div className="space-y-8 lg:col-span-7">
-            <ShimmerBlock className="h-72 w-full" />
-            <ShimmerBlock className="h-72 w-full" />
+        <ShimmerBlock className="h-56 w-full rounded-2xl xl:h-64" />
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+          <div className="space-y-6 lg:col-span-7">
+            <ShimmerBlock className="h-72 w-full rounded-xl" />
+            <ShimmerBlock className="h-72 w-full rounded-xl" />
           </div>
           <div className="lg:col-span-5">
-            <ShimmerBlock className="h-96 w-full" />
+            <ShimmerBlock className="h-96 w-full rounded-xl" />
           </div>
         </div>
       </div>

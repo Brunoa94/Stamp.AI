@@ -92,7 +92,7 @@ export function PlacementPreview({
       </div>
 
       <div className="absolute inset-x-0 -bottom-6 text-center">
-        <Span variant="micro" className="text-[9px] text-(--color-stamp-taupe)/60">
+        <Span variant="micro" className="text-(--color-stamp-taupe)">
           {t(`position.${position}`)}
         </Span>
       </div>

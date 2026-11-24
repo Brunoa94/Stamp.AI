@@ -34,10 +34,7 @@ export function DesktopLayout({
       </div>
       {supportsAdjustment && (
         <>
-          <Span
-            variant="micro"
-            className="block text-(--color-stamp-taupe) tracking-widest"
-          >
+          <Span as="p" variant="label" className="text-(--color-stamp-taupe)">
             {t("adjustToggle")}
           </Span>
           {adjuster}

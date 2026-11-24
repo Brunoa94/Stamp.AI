@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import { CreditCard } from "lucide-react";
 
 import { Button } from "@/features/ui/button";
-import { Paragraph } from "@/features/ui/paragraph";
+import { Span } from "@/features/ui/span";
 import type { PaymentAlternativeMethodT } from "@/shared/types/payment";
 
 interface Props {
@@ -13,13 +13,13 @@ export function AlternativePaymentMethods({ onSelectMethod }: Props) {
   const t = useTranslations("checkout.alternativeMethods");
   return (
     <div className="pt-4">
-      <Paragraph variant="eyebrow" className="mb-4 text-slate-400">
+      <Span as="p" variant="label" className="mb-4 text-(--color-stamp-taupe)">
         {t("title")}
-      </Paragraph>
-      <div className="grid grid-cols-3 gap-3">
+      </Span>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <Button
           type="button"
-          variant="payment-pill"
+          variant="stamp-filter"
           onClick={() => onSelectMethod("paypal")}
           aria-label={t("paypalAria")}
         >
@@ -27,7 +27,7 @@ export function AlternativePaymentMethods({ onSelectMethod }: Props) {
         </Button>
         <Button
           type="button"
-          variant="payment-pill"
+          variant="stamp-filter"
           onClick={() => onSelectMethod("applepay")}
           aria-label={t("applePayAria")}
         >
@@ -35,7 +35,7 @@ export function AlternativePaymentMethods({ onSelectMethod }: Props) {
         </Button>
         <Button
           type="button"
-          variant="payment-pill"
+          variant="stamp-filter"
           onClick={() => onSelectMethod("stripe")}
           aria-label={t("cardAria")}
         >

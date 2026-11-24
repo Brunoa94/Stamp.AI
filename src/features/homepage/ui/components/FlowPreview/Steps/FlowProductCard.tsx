@@ -24,7 +24,7 @@ export function FlowProductCard({ product, isSelected }: PropsI) {
   return (
     <div
       className={cn(
-        "relative border transition-all duration-300",
+        "relative overflow-hidden rounded-md border transition-all duration-300",
         isSelected
           ? "border-2 border-(--color-stamp-gold) bg-(--color-stamp-cream)"
           : "border-(--color-stamp-chocolate)/10 bg-(--color-stamp-white)",
@@ -33,7 +33,7 @@ export function FlowProductCard({ product, isSelected }: PropsI) {
       {isSelected && (
         <Span
           variant="pill"
-          className="animate-flow-fade absolute left-1.5 top-1.5 z-10 bg-(--color-stamp-gold) px-1.5 py-0.5 text-4xs tracking-widest text-(--color-stamp-chocolate)"
+          className="animate-flow-fade absolute left-1.5 top-1.5 z-10 rounded-sm bg-(--color-stamp-gold) px-1.5 py-0.5 text-4xs tracking-widest text-(--color-stamp-chocolate)"
         >
           {t("selected")}
         </Span>

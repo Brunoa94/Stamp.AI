@@ -12,8 +12,8 @@ export default function CheckEmailPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-(--color-stamp-cream)">
-          <div className="w-16 h-16 border-4 border-(--color-stamp-gold) border-t-transparent rounded-full animate-spin" />
+        <div className="flex min-h-screen items-center justify-center pt-24">
+          <div className="size-12 animate-spin rounded-full border-4 border-(--color-stamp-gold) border-t-transparent" />
         </div>
       }
     >

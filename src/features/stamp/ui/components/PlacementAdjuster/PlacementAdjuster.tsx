@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/features/ui/select";
 import { Span } from "@/features/ui/span";
+import { stampChipVariants } from "../../../lib/variants/stampStudioVariants";
 import type { PlacementBounds, PlacementParamsType } from "../../../lib/types/stampFlowTypes";
 import { PositionControls } from "./PositionControls";
 import { ScaleSlider } from "./ScaleSlider";
@@ -63,7 +64,8 @@ export function PlacementAdjuster({
         <div className="flex items-center gap-3">
           <Label
             htmlFor="active-position"
-            className="text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe)"
+            variant="section"
+            className="text-(--color-stamp-taupe)"
           >
             {t("editingLabel")}
           </Label>
@@ -75,7 +77,7 @@ export function PlacementAdjuster({
             <SelectTrigger
               id="active-position"
               aria-label={t("editingSelectAria")}
-              className="h-auto w-auto border border-(--color-stamp-divider) bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-chocolate) focus:border-(--color-stamp-gold) focus:ring-0"
+              className="h-9 w-auto gap-2 rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-white) px-3 text-xs font-bold uppercase tracking-wide text-(--color-stamp-chocolate) shadow-none focus:border-(--color-stamp-chocolate) focus:ring-(--color-stamp-chocolate)"
             >
               <SelectValue />
             </SelectTrigger>
@@ -84,7 +86,7 @@ export function PlacementAdjuster({
                 <SelectItem
                   key={position}
                   value={position}
-                  className="text-[10px] font-bold uppercase tracking-widest"
+                  className="text-xs font-bold uppercase tracking-wide"
                 >
                   {t(`position.${position}`)}
                 </SelectItem>
@@ -122,11 +124,11 @@ export function PlacementAdjuster({
 
       <div className="flex items-center justify-between gap-4">
         <Button
-          variant="ghost"
+          variant="unstyled"
           disabled={disabled}
           onClick={onReset}
           aria-label={t("resetAria", { position: t(`position.${activePosition}`) })}
-          className="h-9 gap-2 rounded-none border border-(--color-stamp-divider) px-3 text-[10px] font-bold uppercase tracking-widest text-(--color-stamp-taupe) hover:border-(--color-stamp-gold) hover:text-(--color-stamp-chocolate)"
+          className={stampChipVariants()}
         >
           <RotateCcw className="h-3.5 w-3.5" />
           {t("reset")}
@@ -143,9 +145,7 @@ export function PlacementAdjuster({
               className="h-3.5 w-3.5 text-(--color-stamp-gold-text)"
               aria-hidden="true"
             />
-            <Span variant="micro" className="text-[9px]">
-              {t("safeZoneWarning")}
-            </Span>
+            <Span variant="micro">{t("safeZoneWarning")}</Span>
           </Span>
         )}
       </div>

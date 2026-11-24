@@ -9,8 +9,9 @@ import type { CatalogShowcaseItemType } from "../../lib/types/catalogPageTypes";
 /**
  * CatalogShowcaseCard
  *
- * One group card of the showcase row: a product photo on top and a
- * label strip underneath, marketplace-style. Selecting it narrows the
+ * One group card of the showcase row, in the shared "stamp frame": a
+ * white rounded card with the product photo on top and the group label
+ * underneath. Lifts into the offset stamp shadow on hover. Selecting it narrows the
  * catalog to that group. Uses Button variant="unstyled" for card-style
  * trigger with block layout.
  */
@@ -30,9 +31,9 @@ export function CatalogShowcaseCard({ item, onSelect }: PropsI) {
       variant="unstyled"
       onClick={onSelect}
       aria-label={t("showcase.cardAria", { group: label })}
-      className="group block w-full overflow-hidden rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-white) text-center transition-all duration-300 hover:-translate-y-1 hover:border-(--color-stamp-gold) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-gold)"
+      className="group block w-full rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-2 text-center shadow-(--shadow-stamp-card) transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-(--color-stamp-chocolate)/30 hover:shadow-(--shadow-stamp-card-hover) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate)"
     >
-      <div className="relative aspect-square sm:aspect-[5/2] bg-(--color-stamp-white)">
+      <div className="relative aspect-square overflow-hidden rounded-lg bg-(--color-stamp-cream) sm:aspect-5/2">
         {item.imageUrl ? (
           <Image
             src={item.imageUrl}
@@ -42,7 +43,7 @@ export function CatalogShowcaseCard({ item, onSelect }: PropsI) {
             className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-(--color-stamp-cream)">
+          <div className="flex h-full w-full items-center justify-center">
             <Span variant="micro" className="text-(--color-stamp-taupe)">
               {t("card.noImage")}
             </Span>
@@ -50,8 +51,11 @@ export function CatalogShowcaseCard({ item, onSelect }: PropsI) {
         )}
       </div>
 
-      <div className="border-t border-(--color-stamp-divider) bg-(--color-stamp-off-white) px-2 py-3 sm:px-3 sm:py-5">
-        <Span variant="label" className="text-(--color-stamp-chocolate)">
+      <div className="px-2 pt-3 pb-1 sm:pt-4 sm:pb-2">
+        <Span
+          variant="label"
+          className="text-(--color-stamp-chocolate) group-hover:text-(--color-stamp-gold-text)"
+        >
           {label}
         </Span>
       </div>

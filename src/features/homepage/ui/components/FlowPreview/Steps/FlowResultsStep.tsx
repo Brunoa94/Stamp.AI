@@ -24,7 +24,7 @@ export function FlowResultsStep({ isUseHighlighted }: PropsI) {
     <div className="animate-flow-fade flex flex-col gap-3 px-6 py-6 sm:px-10">
       <FlowStepTitle messageKey="results.title" />
 
-      <div className="animate-flow-pop flex size-56 items-center justify-center self-center bg-(--color-stamp-white) shadow-xl shadow-(--color-stamp-chocolate)/15 sm:size-70">
+      <div className="animate-flow-pop flex size-56 items-center justify-center self-center rounded-lg border border-(--color-stamp-divider) bg-(--color-stamp-white) shadow-(--shadow-stamp-card-hover) sm:size-70">
         <FlowArtImage art="pup" className="w-4/5" />
       </div>
 
@@ -32,10 +32,10 @@ export function FlowResultsStep({ isUseHighlighted }: PropsI) {
         {t("previous")}
       </Span>
       <div className="flex gap-2">
-        <div className="flex size-11 items-center justify-center border-2 border-(--color-stamp-gold) bg-(--color-stamp-white)">
+        <div className="flex size-11 items-center justify-center rounded-md border-2 border-(--color-stamp-gold) bg-(--color-stamp-white)">
           <FlowArtImage art="pup" className="w-9" />
         </div>
-        <div className="flex size-11 items-center justify-center border border-(--color-stamp-chocolate)/10 bg-(--color-stamp-white)">
+        <div className="flex size-11 items-center justify-center rounded-md border border-(--color-stamp-chocolate)/10 bg-(--color-stamp-white)">
           <FlowArtImage art="pupPhoto" className="w-9" />
         </div>
       </div>

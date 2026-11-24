@@ -18,20 +18,20 @@ export function HeroPromoBanner() {
         {/* Trust items row */}
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-10">
           {TRUST_ITEMS.map((item) => (
-            <div key={item.id} className="flex items-center gap-2">
-              <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-(--color-stamp-cream)/50 border border-(--color-stamp-taupe)/10">
-                <item.icon className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-(--color-stamp-taupe)" />
+            <div key={item.id} className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-(--color-stamp-peach)">
+                <item.icon aria-hidden className="w-5 h-5 sm:w-5.5 sm:h-5.5 text-(--color-stamp-gold-text)" />
               </div>
               <div className="flex flex-col">
                 <Span
                   variant="micro"
-                  className="font-semibold text-(--color-stamp-chocolate) leading-tight"
+                  className="text-sm font-semibold text-(--color-stamp-chocolate) leading-tight md:text-base"
                 >
                   {t(`${item.id}Label`, TRUST_ITEM_VALUES)}
                 </Span>
                 <Span
                   variant="micro"
-                  className="text-(--color-stamp-taupe) leading-tight"
+                  className="text-sm text-(--color-stamp-taupe) leading-tight md:text-base"
                 >
                   {t(`${item.id}Sublabel`, TRUST_ITEM_VALUES)}
                 </Span>

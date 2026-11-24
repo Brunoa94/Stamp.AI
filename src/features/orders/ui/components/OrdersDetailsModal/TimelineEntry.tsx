@@ -2,6 +2,8 @@ import { Check, Circle } from "lucide-react";
 import { useLocale } from "next-intl";
 import { Span } from "@/features/ui/span";
 import type { OrderStatusHistoryT } from "@/shared/types/order";
+import { cn } from "@/lib/utils";
+import { orderStatusBadgeVariants } from "../../../lib/variants/orderStatusBadgeVariants";
 import {
   toDisplayStatus,
   getStatusBadgeClass,
@@ -45,7 +47,10 @@ export function TimelineEntry({ entry, isLast, t }: PropsI) {
       <div className="flex-1 pb-1">
         <Span
           variant="badge"
-          className={`inline-flex rounded-full px-2 py-0.5 ${getStatusBadgeClass(displayStatus)}`}
+          className={cn(
+            orderStatusBadgeVariants(),
+            getStatusBadgeClass(displayStatus),
+          )}
         >
           {getStatusLabel(entry.status, t)}
         </Span>

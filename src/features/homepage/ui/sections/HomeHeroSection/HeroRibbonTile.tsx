@@ -13,7 +13,7 @@ interface PropsI {
  */
 export function HeroRibbonTile({ src }: PropsI) {
   return (
-    <div className="relative h-32 w-44 shrink-0 overflow-hidden rounded-xl bg-(--color-stamp-white) shadow-sm ring-1 ring-(--color-stamp-chocolate)/5">
+    <div className="relative h-32 w-44 shrink-0 overflow-hidden rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-sage) shadow-(--shadow-stamp-card)">
       <Image src={src} alt="" fill sizes="180px" loading="eager" className="object-cover" />
     </div>
   );

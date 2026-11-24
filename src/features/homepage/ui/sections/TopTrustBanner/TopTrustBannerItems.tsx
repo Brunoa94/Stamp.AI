@@ -40,7 +40,7 @@ export function TopTrustBannerItems({ isDropped }: PropsI) {
   ];
 
   return (
-    <div className="mx-auto flex max-w-7xl items-center justify-center gap-8 px-4 sm:gap-12 md:gap-16 lg:gap-24">
+    <div className="mx-auto flex max-w-screen-2xl items-center justify-center gap-8 px-4 sm:gap-12 sm:px-6 md:gap-16 lg:gap-24 lg:px-12">
       {trustItems.map((item, index) => (
         <div
           key={index}
@@ -51,12 +51,13 @@ export function TopTrustBannerItems({ isDropped }: PropsI) {
           style={{ transitionDelay: `${isDropped ? index * FALL_STAGGER_MS : 0}ms` }}
         >
           <item.icon
+            aria-hidden
             className="h-4 w-4 text-(--color-stamp-gold)"
             strokeWidth={2}
           />
           <Span
-            variant="micro"
-            className="font-semibold uppercase tracking-widest text-(--color-stamp-white)"
+            variant="label"
+            className="text-(--color-stamp-off-white)"
           >
             {item.text}
           </Span>

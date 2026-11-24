@@ -66,12 +66,12 @@ export function TrustpilotWidget({
         target="_blank"
         rel="noopener noreferrer"
         className={cn(
-          "inline-flex items-center gap-2 text-(--color-stamp-chocolate)/70 transition-colors hover:text-(--color-stamp-chocolate)",
+          "inline-flex items-center gap-2 rounded-md text-(--color-stamp-taupe) transition-colors hover:text-(--color-stamp-chocolate) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate)",
           className
         )}
       >
         {renderStars("sm")}
-        <Span variant="micro" className="text-[10px] tracking-wider">
+        <Span variant="micro">
           {rating} · {t("reviewCount", { count: reviewCount })}
         </Span>
       </a>
@@ -85,20 +85,20 @@ export function TrustpilotWidget({
         target="_blank"
         rel="noopener noreferrer"
         className={cn(
-          "inline-flex items-center gap-2 transition-opacity hover:opacity-80",
+          "inline-flex items-center gap-2 rounded-md transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate)",
           className
         )}
       >
         <div className="flex flex-col items-start gap-0.5">
           {renderStars("sm")}
-          <Span variant="micro" className="text-[9px] tracking-wider text-(--color-stamp-taupe)">
+          <Span variant="micro" className="text-(--color-stamp-taupe)">
             {t("reviewCount", { count: reviewCount })}
           </Span>
         </div>
         <div className="h-6 w-px bg-(--color-stamp-divider)" />
         <Span
           variant="micro"
-          className="text-[10px] font-bold tracking-wider text-trustpilot"
+          className="font-bold text-trustpilot"
         >
           Trustpilot
         </Span>
@@ -112,7 +112,7 @@ export function TrustpilotWidget({
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        "flex flex-col gap-3 p-4 transition-opacity hover:opacity-80",
+        "flex flex-col gap-3 rounded-xl p-4 transition-opacity hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate)",
         className
       )}
     >
@@ -131,11 +131,11 @@ export function TrustpilotWidget({
         <div className="flex flex-col items-end">
           <Span
             variant="micro"
-            className="text-[11px] font-bold tracking-wider text-trustpilot"
+            className="font-bold text-trustpilot"
           >
             Trustpilot
           </Span>
-          <Span variant="micro" className="text-[9px] text-(--color-stamp-taupe)">
+          <Span variant="micro" className="text-(--color-stamp-taupe)">
             {t("verified")}
           </Span>
         </div>

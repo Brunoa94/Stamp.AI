@@ -26,7 +26,7 @@ export function PaymentResultDetailsGrid({
 }: Props) {
   return (
     <div
-      className="grid grid-cols-2 gap-8 text-left border-y border-(--color-stamp-divider) py-8 mb-12"
+      className="grid grid-cols-2 gap-6 text-left border-y border-(--color-stamp-divider) py-6 mb-10"
       aria-live="polite"
     >
       {items.map((item) => (
@@ -37,7 +37,7 @@ export function PaymentResultDetailsGrid({
           <Span
             unstyled
             className={clsx(
-              "font-heading text-base uppercase tracking-wide",
+              "font-body text-base font-semibold break-words",
               item.valueMuted
                 ? "text-(--color-stamp-taupe)"
                 : "text-(--color-stamp-chocolate)"

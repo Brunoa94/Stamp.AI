@@ -29,8 +29,8 @@ export function OrdersFilterSection({
   activePills,
 }: PropsI) {
   return (
-    <section className="mb-12">
-      <div className="mb-6">
+    <section className="mb-10">
+      <div className="mb-4">
         <OrdersFilterControls
           viewMode={viewMode}
           onViewModeChange={onViewModeChange}

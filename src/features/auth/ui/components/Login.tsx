@@ -19,22 +19,14 @@ export function Login({ className, children, variant = "default" }: LoginProps) 
 
   const defaultTrigger =
     variant === "brutalist" ? (
-      <Button
-        variant="unstyled"
-        className={className}
-      >
-        <User className="w-5 h-5 text-purple group-hover:scale-110 transition-transform duration-300" />
-        <Span variant="default" className="btn-text text-xs font-bold uppercase tracking-widest text-purple group-hover:text-white">
-          {t("loginShort")}
-        </Span>
+      <Button variant="ghost-stamp" className={className}>
+        <User aria-hidden className="size-5" />
+        <Span unstyled>{t("loginShort")}</Span>
       </Button>
     ) : (
-      <Button
-        variant="outline"
-        className={className}
-      >
-        <LogIn className="mr-2 h-3 w-3" />
-        <Span variant="default" className="uppercase">{t("login")}</Span>
+      <Button variant="secondary-compact" className={className}>
+        <LogIn aria-hidden className="size-4" />
+        <Span unstyled>{t("login")}</Span>
       </Button>
     );
 

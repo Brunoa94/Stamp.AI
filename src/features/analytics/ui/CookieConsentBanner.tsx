@@ -41,23 +41,22 @@ export function CookieConsentBanner() {
 
   return (
     <section
-      role="region"
       aria-label={t("title")}
-      className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-xl rounded-md border border-(--color-stamp-divider) bg-(--color-stamp-cream) p-4 sm:p-6 shadow-lg md:left-6 md:right-auto"
+      className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-xl rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-4 shadow-(--shadow-stamp-card-hover) sm:p-6 md:right-auto md:left-6"
     >
-      <Span as="div" variant="label" className="text-(--color-stamp-taupe)">
+      <Span as="div" variant="label" className="text-(--color-stamp-gold-text)">
         {t("title")}
       </Span>
       <Paragraph variant="xs" className="mt-2 text-(--color-stamp-chocolate)">
         {t("body")}{" "}
         <Link
           href="/cookies"
-          className="font-semibold underline underline-offset-4 hover:text-(--color-stamp-gold) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-gold)"
+          className="font-semibold underline underline-offset-4 hover:text-(--color-stamp-gold-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate)"
         >
           {t("policyLink")}
         </Link>
       </Paragraph>
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap gap-3">
         <Button ref={acceptRef} variant="primary-compact" onClick={() => decide("granted")}>
           {t("accept")}
         </Button>

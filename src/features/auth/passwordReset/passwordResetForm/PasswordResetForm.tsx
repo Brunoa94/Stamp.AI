@@ -28,7 +28,7 @@ export function PasswordResetForm({ isVisible, onClose }: PasswordResetFormProps
       }`}
     >
       <div className="pt-4 space-y-3 border-t border-(--color-stamp-divider)">
-        <Paragraph variant="body" className="text-lg font-bold uppercase tracking-widest text-(--color-stamp-taupe)">
+        <Paragraph variant="xs" className="text-(--color-stamp-taupe)">
           {t("prompt")}
         </Paragraph>
         <div className="space-y-3">
@@ -37,7 +37,6 @@ export function PasswordResetForm({ isVisible, onClose }: PasswordResetFormProps
             placeholder={t("emailPlaceholder")}
             value={resetEmail}
             onChange={(e) => setResetEmail(e.target.value)}
-            className="h-12 border-2 border-(--color-stamp-divider) bg-(--color-stamp-cream) px-4 text-base font-normal text-(--color-stamp-chocolate) placeholder:text-(--color-stamp-taupe)/50 focus-visible:border-(--color-stamp-gold) focus-visible:ring-2 focus-visible:ring-(--color-stamp-gold)/20"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
@@ -50,7 +49,7 @@ export function PasswordResetForm({ isVisible, onClose }: PasswordResetFormProps
               type="button"
               variant="primary"
               disabled={isLoading || !resetEmail.trim()}
-              className="flex-1 py-3"
+              className="flex-1"
               onClick={handlePasswordReset}
             >
               {isLoading ? t("sending") : t("sendResetLink")}
@@ -58,7 +57,6 @@ export function PasswordResetForm({ isVisible, onClose }: PasswordResetFormProps
             <Button
               type="button"
               variant="secondary"
-              className="py-3 px-6"
               onClick={handleClose}
             >
               {t("cancel")}

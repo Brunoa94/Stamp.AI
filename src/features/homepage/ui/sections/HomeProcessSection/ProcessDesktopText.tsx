@@ -37,14 +37,14 @@ export function ProcessDesktopText({
     >
       <Span
         variant="badge"
-        className="inline-block px-3 py-1 mb-4 bg-(--color-stamp-gold) text-(--color-stamp-cream) rounded-full shadow-sm"
+        className="mb-4 inline-block rounded-md bg-(--color-stamp-gold) px-3 py-1 text-(--color-stamp-chocolate)"
       >
         Step {step.number}
       </Span>
 
       <Heading
         as="h3"
-        variant="section"
+        variant="card"
         className="mb-4 text-(--color-stamp-chocolate)"
       >
         {title}
@@ -52,7 +52,7 @@ export function ProcessDesktopText({
 
       <Paragraph
         variant="loose"
-        className="text-(--color-stamp-chocolate)/70 text-sm sm:text-base lg:text-lg leading-relaxed"
+        className="max-w-xl text-sm leading-relaxed text-(--color-stamp-taupe) sm:text-base lg:text-lg"
       >
         {description}
       </Paragraph>

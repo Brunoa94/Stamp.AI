@@ -24,8 +24,8 @@ export function OrdersListItem({
   const canCancel = canCancelOrder(order);
 
   return (
-    <article className="group border border-(--color-stamp-divider) bg-(--color-stamp-white) p-6 font-heading transition-all duration-500 hover:-translate-y-1 hover:border-(--color-stamp-gold) hover:shadow-(--shadow-stamp-card-hover)">
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-center">
+    <article className="group rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-4 shadow-(--shadow-stamp-card) transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-(--color-stamp-chocolate)/30 hover:shadow-(--shadow-stamp-card-hover) sm:p-6">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
         <OrdersListItemImage
           order={order}
           firstItem={firstItem}

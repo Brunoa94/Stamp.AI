@@ -164,8 +164,6 @@
       }
     },
     "hero": {
-      "brand": "tamp <accent>.ai</accent>",
-      "brandLabel": "Stamp.ai",
       "headline": "Van verbeelding<br></br>tot <word></word>",
       "rotatingWords": {
         "tees": "T-shirts",
@@ -179,7 +177,21 @@
         "hint": "…en bewerk hem in de volgende stap met een prompt",
         "step": "stap 01"
       },
+      "startOptions": {
+        "aria": "Hoe wil je beginnen?",
+        "upload": "Foto uploaden",
+        "describe": "Idee beschrijven"
+      },
+      "describe": {
+        "title": "Beschrijf je idee",
+        "hint": "…geen foto nodig, vertel ons gewoon wat je wilt",
+        "step": "stap 02"
+      },
       "freeCredits": "<signUp>Meld je aan</signUp> en krijg elke dag 5 gratis bewerkingen",
+      "productTypes": {
+        "label": "Producttypes",
+        "cta": "Bekijk modellen"
+      },
       "productBadge": "Essential T-shirt · Wit · 320 GSM",
       "scrollCue": "Scroll om te ontdekken",
       "productImageAlt": "Zwaar T-shirt met een eigen print",
@@ -259,7 +271,8 @@
       "accent": "essentials",
       "label": "Onze kleding",
       "emptyState": "De catalogus is tijdelijk niet beschikbaar — kom snel terug",
-      "viewFullCatalog": "Alle producten bekijken"
+      "viewFullCatalog": "Alle producten bekijken",
+      "subtitle": "Onze bestsellers, klaar voor jouw ontwerp."
     },
     "featured": {
       "title": "Uitgelichte",
@@ -441,7 +454,6 @@
     },
     "productOfMonth": {
       "eyebrow": "De keuze van deze maand",
-      "title": "Product van de maand",
       "badge": "Keuze van de maand",
       "cta": "Ontwerp de jouwe nu",
       "noImage": "Geen afbeelding"
@@ -462,6 +474,28 @@
           "cta": "Bekijk de essentials",
           "imageAlt": "Model in een zwaar wit T-shirt"
         }
+      }
+    },
+    "categories": {
+      "title": "Shop per categorie",
+      "items": {
+        "tees": "T-shirts",
+        "hoodies": "Hoodies",
+        "mugs": "Mokken",
+        "totes": "Draagtassen",
+        "canvas": "Canvasprints",
+        "kids": "Kinderen"
+      }
+    },
+    "giftIdeas": {
+      "title": "Cadeau-ideeën voor elke gelegenheid",
+      "subtitle": "Eén foto en een paar woorden is genoeg voor een cadeau dat niemand anders kan kopen.",
+      "tiles": {
+        "birthdays": "Verjaardagen",
+        "weddings": "Bruiloften & feesten",
+        "pets": "Voor dierenliefhebbers",
+        "family": "Familieherinneringen",
+        "adventures": "Reizen & avontuur"
       }
     }
   },
@@ -541,6 +575,7 @@
       "eyebrow": "Kies een filter",
       "showMore": "Nog {count} tonen",
       "showLess": "Minder tonen",
+      "selectFilter": "Kies je filter",
       "subtitle": "Tik op een suggestie om je prompt te beginnen en pas hem rechts aan.",
       "applySuggestion": "Suggestie toepassen: {label} — {hint}",
       "noFilter": {
@@ -656,6 +691,7 @@
       ]
     },
     "header": {
+      "wordmarkTail": "tamp",
       "logoAria": "Terug naar de homepage van Stamp",
       "brand": "Stamp it",
       "stampAria": "Begin met ontwerpen",
@@ -671,7 +707,18 @@
       "openMenu": "Menu openen",
       "closeMenu": "Menu sluiten",
       "mainNavAria": "Hoofdnavigatie",
-      "mobileNavAria": "Mobiele navigatie"
+      "mobileNavAria": "Mobiele navigatie",
+      "promptPlaceholder": "Beschrijf een idee of upload een foto…",
+      "categoryNavAria": "Winkelcategorieën",
+      "categories": {
+        "studio": "Ontwerpstudio",
+        "allProducts": "Alle producten",
+        "popular": "Nu populair",
+        "gifts": "Cadeau-ideeën",
+        "howItWorks": "Hoe het werkt",
+        "shipping": "Verzending",
+        "help": "Hulp & FAQ"
+      }
     },
     "nav": {
       "eyebrow": "Je voortgang",
@@ -725,7 +772,7 @@
     },
     "hero": {
       "eyebrow": "Begin hier",
-      "title": "Stamp <br></br><accent>It</accent>",
+      "title": "Stamp <accent>It</accent>",
       "description": "Maak van je eigen foto — of gewoon een idee — een printklaar ontwerp. Acht snelle stappen van idee tot eindproduct.",
       "cta": "Begin met ontwerpen",
       "ctaAria": "Begin met ontwerpen: start met het personaliseren van je ontwerp",
@@ -1233,7 +1280,8 @@
       },
       "wordmark": "Stamp",
       "copyright": "© {year} Stamp AI. Alle rechten voorbehouden.",
-      "tagline": "Gemaakt voor mensen die dingen maken"
+      "tagline": "Gemaakt voor mensen die dingen maken",
+      "strip": "Elk stuk wordt op bestelling gedrukt, pas als het besteld is. Geen magazijnen, geen verspilling."
     },
     "languageSwitcher": {
       "label": "Taal"

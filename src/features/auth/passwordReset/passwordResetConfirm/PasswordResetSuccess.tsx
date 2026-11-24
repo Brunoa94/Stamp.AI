@@ -14,9 +14,9 @@ export function PasswordResetSuccess() {
         <CheckCircle className="w-16 h-16 mx-auto" strokeWidth={1.5} />
       </div>
       <Heading
-        as="h3"
+        as="h2"
         variant="card"
-        className="text-2xl tracking-tight text-(--color-stamp-chocolate)"
+        className="text-2xl text-(--color-stamp-chocolate)"
       >
         {t("title")}
       </Heading>

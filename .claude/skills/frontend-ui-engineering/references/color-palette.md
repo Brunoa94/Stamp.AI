@@ -62,7 +62,7 @@ Color System
 
 ### 2. Brand Colors (Stamp Palette)
 
-**Purpose**: Core brand identity colors for the luxury brutalist Stamp aesthetic
+**Purpose**: Core brand identity colors for the Stamp "warm marketplace" look: the original chocolate-and-gold stamp identity blended half-way with a friendly handmade-marketplace style. Every value is the midpoint between the original token and the marketplace one.
 
 **Location**: `src/app/globals-stamp.css`
 
@@ -70,16 +70,24 @@ Color System
 
 **Primary Palette (Active)**:
 
-- `--color-stamp-chocolate` - Primary text/headings, luxurious brown
-- `--color-stamp-gold` - Primary accent, interactive elements; gold text on chocolate surfaces
-- `--color-stamp-gold-text` - Gold text on light surfaces (brand gold fails contrast there)
-- `--color-stamp-gold-light` - Gold text on dark surfaces and photo scrims (brand gold fails contrast there too)
-- `--color-stamp-cream` - Section backgrounds, cards
-- `--color-stamp-off-white` - Page backgrounds
-- `--color-stamp-taupe` - Secondary text, muted elements on light surfaces
-- `--color-stamp-taupe-light` - Secondary text on chocolate surfaces
-- `--color-stamp-divider` - Borders and dividers
-- `--color-stamp-white` - Card backgrounds, content areas
+| Token | Value | Role |
+| ----- | ----- | ---- |
+| `--color-stamp-chocolate` | `#342419` | Dark chocolate: body text, headings, primary buttons, dark bands (CTA, story, promo) |
+| `--color-stamp-gold` | `#d0842e` | Amber accent: accent bars, badges, sale tags, "Stamp it!" button, hover fills. Fill and decoration only: put chocolate text on it (4.97:1). Never use it as text or as a focus ring on light surfaces (2.8–3:1) |
+| `--color-stamp-gold-text` | `#955415` | Amber text on white (5.9:1), cream (5.4:1) and peach (5.2:1): eyebrows, accent words, prices on sale |
+| `--color-stamp-gold-light` | `#f1bb78` | Amber text on chocolate (8.6:1) and photo scrims |
+| `--color-stamp-taupe` | `#6c5749` | Secondary text on white (6.8:1), cream and peach |
+| `--color-stamp-taupe-light` | `#c6ae9f` | Secondary text on chocolate (7.1:1) |
+| `--color-stamp-cream` | `#faf5ee` | Cream bands, panels, footer, hover fills |
+| `--color-stamp-off-white` | `#fdfbf8` | Warm page background, header |
+| `--color-stamp-white` | `#ffffff` | Card surfaces (the white "stamp frame") |
+| `--color-stamp-divider` | chocolate at 10% | Hairline borders and dividers |
+| `--color-stamp-peach` | `#fceee2` | Soft panels: product of the month, promo highlights |
+| `--color-stamp-sage` | `#e3eadc` | Placeholder behind images while they load |
+
+Focus rings are `--color-stamp-chocolate` (outline 2px, offset 2px) everywhere.
+
+The shapes, type and component patterns that go with this palette are in the **Stamp look** section of `../SKILL.md`.
 
 **Legacy Colors (Deprecated)**:
 

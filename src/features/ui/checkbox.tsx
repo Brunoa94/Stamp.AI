@@ -7,20 +7,22 @@ import { cn } from "@/lib/utils";
 
 /**
  * Variants:
- * - default   Small rounded form checkbox — 16px
- * - stamp     Square brutalist selection box (cart rows, select-all) — 24px,
- *             gold fill when checked or indeterminate
+ * - default   Form checkbox — 16px, rounded-sm
+ * - stamp     Larger selection box (cart rows, select-all) — 24px, rounded-md
+ *
+ * Both share the stamp look: white box with a taupe border (chocolate on
+ * hover), amber fill with a chocolate check when checked or indeterminate
+ * (amber is fill only, chocolate on it reads at 4.97:1), and the chocolate
+ * focus outline.
  */
 
 const checkboxVariants = {
-  default:
-    "h-4 w-4 rounded-sm border border-slate-300 ring-offset-white focus-visible:ring-purple-500 focus-visible:ring-offset-2 data-[state=checked]:bg-purple-600 data-[state=checked]:text-white data-[state=checked]:border-purple-600",
-  stamp:
-    "size-6 border-2 border-(--color-stamp-taupe) bg-(--color-stamp-white) text-(--color-stamp-white) duration-200 hover:border-(--color-stamp-gold) focus-visible:ring-(--color-stamp-gold)/40 data-[state=checked]:border-(--color-stamp-gold) data-[state=checked]:bg-(--color-stamp-gold) data-[state=indeterminate]:border-(--color-stamp-gold) data-[state=indeterminate]:bg-(--color-stamp-gold)",
+  default: "size-4 rounded-sm border-2",
+  stamp: "size-6 rounded-md border-2",
 } as const;
 
 const indicatorIconVariants = {
-  default: "h-3 w-3",
+  default: "size-3",
   stamp: "size-4",
 } as const;
 
@@ -35,7 +37,7 @@ const Checkbox = React.forwardRef<
   <CheckboxPrimitive.Root
     ref={ref}
     className={cn(
-      "peer group shrink-0 transition-colors focus-visible:outline-none focus-visible:ring-2 disabled:cursor-not-allowed disabled:opacity-50",
+      "peer group shrink-0 border-(--color-stamp-taupe) bg-(--color-stamp-white) text-(--color-stamp-chocolate) transition-colors duration-200 hover:border-(--color-stamp-chocolate) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate) data-[state=checked]:border-(--color-stamp-gold) data-[state=checked]:bg-(--color-stamp-gold) data-[state=indeterminate]:border-(--color-stamp-gold) data-[state=indeterminate]:bg-(--color-stamp-gold) disabled:cursor-not-allowed disabled:opacity-50",
       checkboxVariants[variant],
       className
     )}

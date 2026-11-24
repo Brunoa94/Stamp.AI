@@ -22,7 +22,7 @@ export function CatalogEmptyResults({ onClearFilters }: PropsI) {
   return (
     <div
       role="status"
-      className="border border-(--color-stamp-divider) bg-(--color-stamp-cream) px-6 py-16 text-center"
+      className="rounded-2xl border border-(--color-stamp-divider) bg-(--color-stamp-cream) px-6 py-16 text-center"
     >
       <Heading
         as="h2"

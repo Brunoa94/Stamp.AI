@@ -28,10 +28,10 @@ export function DashboardQuickAccessSection() {
           <Link
             key={id}
             href={href}
-            className="group flex flex-col items-center gap-3 border border-(--color-stamp-divider) bg-(--color-stamp-cream) p-6 transition-all duration-300 hover:border-(--color-stamp-gold) hover:bg-(--color-stamp-white)"
+            className="group flex flex-col items-center gap-3 rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-cream) p-5 transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-(--color-stamp-chocolate)/30 hover:bg-(--color-stamp-white) hover:shadow-(--shadow-stamp-card-hover) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--color-stamp-chocolate)"
           >
-            <Icon className="h-5 w-5 text-(--color-stamp-taupe) transition-colors duration-300 group-hover:text-(--color-stamp-gold)" />
-            <Span variant="micro" className="text-(--color-stamp-chocolate)">
+            <Icon className="h-5 w-5 text-(--color-stamp-taupe) transition-colors duration-200 group-hover:text-(--color-stamp-gold-text)" />
+            <Span variant="default" className="text-(--color-stamp-chocolate)">
               {t(`links.${id}`)}
             </Span>
           </Link>

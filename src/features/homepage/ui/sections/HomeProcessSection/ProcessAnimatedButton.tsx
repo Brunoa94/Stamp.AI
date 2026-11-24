@@ -49,7 +49,7 @@ export function ProcessAnimatedButton({
       <Span
         unstyled
         className={cn(
-          "relative z-10 font-semibold text-base md:text-lg uppercase tracking-wider",
+          "relative z-10 font-bold text-base md:text-lg uppercase tracking-wide",
           "transition-colors duration-300",
           overallProgress > 0.5
             ? "text-(--color-stamp-chocolate)"

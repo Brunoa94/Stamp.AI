@@ -20,11 +20,11 @@ export function HeroFlowBenefits() {
       {HERO_FLOW_BENEFITS.map(({ id, icon: Icon }) => (
         <li
           key={id}
-          className="flex items-center gap-3 rounded-lg border border-(--color-stamp-chocolate)/10 bg-(--color-stamp-cream) px-3 py-2.5"
+          className="flex items-center gap-3 rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) px-3 py-2.5 shadow-(--shadow-stamp-card)"
         >
           <Span
             unstyled
-            className="flex size-9 shrink-0 items-center justify-center rounded-md bg-(--color-stamp-chocolate)"
+            className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-(--color-stamp-chocolate)"
           >
             <Icon aria-hidden className="size-4.5 text-(--color-stamp-gold)" />
           </Span>

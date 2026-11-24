@@ -133,7 +133,7 @@ export function ExpandablePicker({
 
         {/* Expanded overlay with remaining items */}
         {expanded && (
-          <div className="absolute left-0 right-0 top-full z-10 bg-white pt-3 shadow-lg border-x border-b border-(--color-stamp-divider) pb-40 md:pb-0">
+          <div className="absolute left-0 right-0 top-full z-10 rounded-b-xl border-x border-b border-(--color-stamp-divider) bg-(--color-stamp-white) pt-3 pb-40 shadow-(--shadow-stamp-card) md:pb-0">
             <div className={cn(expandablePickerGridVariants({ columns, gap }), "px-0")}>
               {hiddenChildren}
             </div>
@@ -142,13 +142,11 @@ export function ExpandablePicker({
             <Button
               ref={showLessButtonRef}
               type="button"
-              variant="ghost"
+              variant="stamp-expand"
               onClick={() => setExpanded(false)}
-              className="w-full flex items-center justify-center gap-2 py-3 mt-3 text-(--color-stamp-taupe) hover:text-(--color-stamp-chocolate) hover:bg-(--color-stamp-off-white) transition-colors"
+              className="mt-3 gap-2 py-3"
             >
-              <Span variant="micro" className="tracking-widest">
-                {showLessLabel}
-              </Span>
+              <Span unstyled>{showLessLabel}</Span>
               <ChevronDown
                 aria-hidden="true"
                 className={cn("h-4 w-4 rotate-180")}
@@ -162,13 +160,11 @@ export function ExpandablePicker({
       {!expanded && remainingCount > 0 && (
         <Button
           type="button"
-          variant="ghost"
+          variant="stamp-expand"
           onClick={() => setExpanded(true)}
-          className="w-full flex items-center justify-center gap-2 py-3 mt-3 text-(--color-stamp-taupe) hover:text-(--color-stamp-chocolate) hover:bg-(--color-stamp-off-white) transition-colors"
+          className="mt-3 gap-2 py-3"
         >
-          <Span variant="micro" className="tracking-widest">
-            {formatLabel(showMoreLabel, remainingCount)}
-          </Span>
+          <Span unstyled>{formatLabel(showMoreLabel, remainingCount)}</Span>
           <ChevronDown aria-hidden="true" className="h-4 w-4" />
         </Button>
       )}

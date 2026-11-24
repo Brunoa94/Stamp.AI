@@ -57,9 +57,8 @@ export function CheckoutPaymentSection({
       {selectedMethod === "paypal" && (
         <Paragraph
           variant="xs"
-          unstyled
           role="status"
-          className="mt-6 border border-(--color-stamp-info)/20 bg-(--color-stamp-info)/5 px-4 py-3 text-[11px] font-bold uppercase tracking-[0.15em] text-(--color-stamp-info)"
+          className="mt-6 rounded-lg bg-(--color-stamp-cream) px-4 py-3 text-(--color-stamp-chocolate)"
         >
           {t("paypalNotice")}
         </Paragraph>
@@ -68,9 +67,8 @@ export function CheckoutPaymentSection({
       {selectedMethod === "ideal" && (
         <Paragraph
           variant="xs"
-          unstyled
           role="status"
-          className="mt-6 border border-(--color-stamp-info)/20 bg-(--color-stamp-info)/5 px-4 py-3 text-[11px] font-bold uppercase tracking-[0.15em] text-(--color-stamp-info)"
+          className="mt-6 rounded-lg bg-(--color-stamp-cream) px-4 py-3 text-(--color-stamp-chocolate)"
         >
           {t("idealNotice")}
         </Paragraph>

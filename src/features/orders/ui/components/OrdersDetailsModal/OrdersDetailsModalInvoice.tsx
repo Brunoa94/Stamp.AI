@@ -32,8 +32,8 @@ export function OrdersDetailsModalInvoice({ order }: PropsI) {
       <Button
         onClick={handleDownload}
         disabled={isLoading}
-        variant="ghost"
-        className="h-auto w-full justify-center gap-2 border-2 border-(--color-stamp-divider) px-4 py-3 font-semibold text-sm uppercase tracking-wider text-(--color-stamp-chocolate) hover:bg-(--color-stamp-cream)/60 hover:border-(--color-stamp-chocolate) hover:shadow-md"
+        variant="secondary-compact"
+        className="w-full"
       >
         {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin" />
@@ -44,8 +44,8 @@ export function OrdersDetailsModalInvoice({ order }: PropsI) {
       </Button>
       {invoiceNumber ? (
         <Paragraph
-          variant="sm"
-          className="mt-2 text-center text-[9px] tracking-[0.2em] text-(--color-stamp-taupe)"
+          variant="caption"
+          className="mt-2 text-center text-(--color-stamp-taupe)"
         >
           {invoiceNumber}
         </Paragraph>

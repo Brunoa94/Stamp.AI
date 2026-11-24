@@ -1,8 +1,9 @@
 /**
  * CheckoutNotFoundSection
  *
- * Error state shown when the checkout cart cannot be resolved. Provides a
- * clear message and a recovery path back to the cart.
+ * Error state shown when the checkout cart cannot be resolved: a card in
+ * the shared style with a round icon plate, a clear message and a recovery
+ * path back to the cart.
  */
 
 import Link from "next/link";
@@ -16,12 +17,12 @@ export function CheckoutNotFoundSection() {
   const t = useTranslations("checkout.notFound");
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-(--color-stamp-off-white) px-6 text-(--color-stamp-chocolate)">
+    <div className="flex min-h-screen items-center justify-center bg-(--color-stamp-off-white) px-4 pb-16 pt-28 text-(--color-stamp-chocolate) sm:px-6 lg:px-12">
       <div
         role="alert"
-        className="max-w-md border border-(--color-stamp-divider) bg-(--color-stamp-white) p-12 text-center"
+        className="w-full max-w-md rounded-xl border border-(--color-stamp-divider) bg-(--color-stamp-white) p-8 text-center shadow-(--shadow-stamp-card) md:p-12"
       >
-        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center border border-(--color-stamp-divider) bg-(--color-stamp-cream)">
+        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-(--color-stamp-cream)">
           <PackageX
             className="h-10 w-10 text-(--color-stamp-taupe)"
             aria-hidden="true"
@@ -29,12 +30,12 @@ export function CheckoutNotFoundSection() {
         </div>
         <Heading
           as="h1"
-          unstyled
-          className="mb-4 font-heading text-3xl font-bold uppercase tracking-tight"
+          variant="sectionSlab"
+          className="mb-3 text-(--color-stamp-chocolate)"
         >
           {t("title")}
         </Heading>
-        <Paragraph variant="sm" className="mb-8 text-(--color-stamp-taupe)">
+        <Paragraph variant="xs" className="mb-8 text-(--color-stamp-taupe)">
           {t("description")}
         </Paragraph>
         <Button asChild variant="primary">

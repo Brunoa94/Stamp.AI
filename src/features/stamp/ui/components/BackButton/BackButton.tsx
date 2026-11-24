@@ -45,7 +45,7 @@ export function BackButton() {
     <Button
       variant="secondary-compact"
       onClick={prevStepSkipLoading}
-      className="fixed top-28 left-6 z-50 gap-3"
+      className="fixed top-28 left-6 z-50 gap-3 bg-(--color-stamp-white)"
       aria-label={t("nav.backTo", { step: targetStepLabel })}
       data-testid="back-button"
     >

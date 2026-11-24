@@ -1,10 +1,10 @@
 "use client";
 
-import { CardElement } from "@stripe/react-stripe-js";
 import { useTranslations } from "next-intl";
 import { Button } from "@/features/ui/button";
-import { STRIPE_CARD_ELEMENT_OPTIONS } from "@/shared/constants/payment";
 import { useStripePayment } from "../../lib/hooks/useStripePayment";
+import { StripeCardInputField } from "./StripeCardInputField";
+import { CreditPaymentErrorMessage } from "./CreditPaymentErrorMessage";
 
 interface StripeCardFormProps {
   amount: number;
@@ -29,33 +29,18 @@ export function StripeCardForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <CardInputField />
+      <StripeCardInputField />
 
-      {error && <ErrorMessage message={error} />}
+      {error && <CreditPaymentErrorMessage message={error} />}
 
       <Button
         type="submit"
         disabled={!isReady || loading}
-        variant="gradient"
+        variant="primary"
+        className="w-full"
       >
         {loading ? t("processing") : t("payButton", { amount: amount.toFixed(2) })}
       </Button>
     </form>
-  );
-}
-
-function CardInputField() {
-  return (
-    <div className="border border-slate-200 rounded-lg p-4 bg-white/90">
-      <CardElement options={STRIPE_CARD_ELEMENT_OPTIONS} />
-    </div>
-  );
-}
-
-function ErrorMessage({ message }: { message: string }) {
-  return (
-    <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
-      {message}
-    </div>
   );
 }

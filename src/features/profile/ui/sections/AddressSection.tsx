@@ -29,7 +29,7 @@ export function AddressSection() {
       label={t("label")}
       title={t.rich("title", {
         accent: (chunks) => (
-          <Span variant="serif" className="text-(--color-stamp-taupe)">
+          <Span variant="serif" className="text-(--color-stamp-gold-text)">
             {chunks}
           </Span>
         ),

@@ -27,8 +27,9 @@ export function CreditPaymentStep({
     <div className="space-y-6">
       <Button
         type="button"
-        variant="back-link"
+        variant="ghost-stamp"
         onClick={onBack}
+        className="px-3 py-2 md:px-3"
       >
         <ArrowLeft className="w-4 h-4" />
         {t("backButton")}

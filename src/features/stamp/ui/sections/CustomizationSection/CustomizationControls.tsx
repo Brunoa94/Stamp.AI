@@ -2,7 +2,6 @@
 
 import { ArrowRight } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Heading } from "@/features/ui/heading";
 import { Span } from "@/features/ui/span";
 import { Button } from "@/features/ui/button";
 import { ColorSwatches } from "./ColorSwatches";
@@ -14,6 +13,8 @@ import type { SizeType } from "../../../lib/types/stampTypes";
 import type { VariantOptionKindType } from "../../../lib/helpers/productCategoryDetector";
 import { useSizeLabel } from "../../../lib/hooks/useSizeLabel";
 import { SplitToneText } from "../../components/SplitToneText";
+import { StampStepTitle } from "../../components/StampStepTitle";
+import { StampTitleAccent } from "../../components/StampTitleAccent";
 
 /**
  * CustomizationControls
@@ -82,21 +83,12 @@ export function CustomizationControls({
   });
 
   return (
-    <div className="p-6 pt-24 pb-28 md:pb-6 md:p-10 md:pt-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-white md:bg-transparent">
-      <Heading as="h2" variant="panelTitle" className="mb-4 md:mb-6">
-        <SplitToneText className="block pb-2 -mb-2">
-          {t.rich("title", {
-            accent: (chunks) => (
-              <SplitToneText
-                tone="accent"
-                className="inline-block pb-4 -mb-4 pr-2 -mr-2 font-serif italic lowercase font-light"
-              >
-                {chunks}
-              </SplitToneText>
-            ),
-          })}
-        </SplitToneText>
-      </Heading>
+    <div className="p-6 pt-24 pb-28 md:pb-6 md:p-10 md:pt-10 lg:p-16 xl:p-24 flex flex-col justify-center bg-(--color-stamp-white) md:bg-transparent">
+      <StampStepTitle>
+        {t.rich("title", {
+          accent: (chunks) => <StampTitleAccent>{chunks}</StampTitleAccent>,
+        })}
+      </StampStepTitle>
 
       <div className="space-y-6 md:space-y-12 mb-8 md:mb-12">
         {/* Only show color swatches if there are multiple colors to choose from */}
@@ -120,10 +112,7 @@ export function CustomizationControls({
           />
         ) : sizes.length === 1 ? (
           <div>
-            <Span
-              variant="micro"
-              className="text-[10px] font-bold uppercase tracking-widest block mb-2"
-            >
+            <Span as="p" variant="label" className="mb-2">
               <SplitToneText tone="muted">{t("sizeLabel")}</SplitToneText>
             </Span>
             <Span variant="sm">
@@ -153,9 +142,10 @@ export function CustomizationControls({
         {isMobileFlow && onContinueToPreview ? (
           // Mobile flow: Continue to Preview button (only shown on tablet+)
           <Button
+            variant="primary"
             onClick={onContinueToPreview}
             disabled={!canContinue}
-            className="w-full bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full gap-3"
           >
             {t("continueToPreview")}
             <ArrowRight className="w-5 h-5" />
@@ -163,9 +153,10 @@ export function CustomizationControls({
         ) : (
           // Desktop: Create Product button
           <Button
+            variant="primary"
             onClick={onCreateProduct}
             disabled={!canCreate}
-            className="w-full bg-(--color-stamp-chocolate) text-white hover:bg-(--color-stamp-gold) hover:text-(--color-stamp-chocolate) transition-all duration-300 px-8 py-6 text-xs font-bold tracking-[0.2em] uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full"
           >
             {isFinalizing ? t("creating") : t("createProduct")}
           </Button>
