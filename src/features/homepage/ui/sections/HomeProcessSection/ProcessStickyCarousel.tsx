@@ -12,7 +12,6 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { HOME_PROCESS_STEPS } from "../../../lib/constants/homepageContent";
 import { HomeSectionHeader } from "../../components/HomeSectionHeader";
-import { ProcessStepper } from "./ProcessStepper";
 import { ProcessAnimatedButton } from "./ProcessAnimatedButton";
 import { ProcessDesktopPreview } from "./ProcessDesktopPreview";
 import { ProcessMobileCard } from "./ProcessMobileCard";
@@ -82,14 +81,6 @@ export function ProcessStickyCarousel() {
     >
       {/* Sticky container */}
       <div className="sticky top-0 h-screen flex flex-col">
-        {/* Sticky stepper at bottom - mobile only (desktop has the side rail) */}
-        <div className="lg:hidden">
-          <ProcessStepper
-            activeStepIndex={activeStepIndex}
-            totalSteps={totalSteps}
-          />
-        </div>
-
         {/* Section header - stays at top */}
         <div className="px-4 pt-28 pb-4 sm:px-6 lg:px-12 lg:pb-6">
           <div className="mx-auto max-w-screen-2xl">
