@@ -1,8 +1,8 @@
 /**
  * Promotional Sections Configuration
  *
- * Defines content and images for the 3 promotional carousel sections
- * on the homepage: Brand & Logo, Memories, and Special Moments.
+ * Defines content and images for the 2 promotional carousel sections
+ * on the homepage: Memories and Special Moments.
  */
 
 import { staticAssetUrl } from "@/shared/helpers/staticAssetUrl";
@@ -16,26 +16,6 @@ export interface PromoImageType {
 
 /** Animation timing */
 export const PROMO_CAROUSEL_DISPLAY_MS = 3500;
-
-/** Brand & Logo section images */
-export const PROMO_BRAND_LOGO_IMAGES: PromoImageType[] = [
-  {
-    src: `${PROMO}/brand-logo/gym-clothing.png`,
-    alt: "Custom gym clothing logo on apparel",
-  },
-  {
-    src: `${PROMO}/brand-logo/luxury-brand.png`,
-    alt: "Luxury brand logo merchandise",
-  },
-  {
-    src: `${PROMO}/brand-logo/quote-mugs.png`,
-    alt: "Custom quote design on mug",
-  },
-  {
-    src: `${PROMO}/brand-logo/run-club.png`,
-    alt: "Run club logo on merchandise",
-  },
-];
 
 /** Memories section images */
 export const PROMO_MEMORIES_IMAGES: PromoImageType[] = [

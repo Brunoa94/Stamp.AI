@@ -19,14 +19,6 @@
     "horizontal": "Horizontal"
   },
   "home": {
-    "heroTrust": {
-      "moneyBackLabel": "{days}-Day",
-      "moneyBackSublabel": "Money Back",
-      "freeShippingLabel": "Free Shipping",
-      "freeShippingSublabel": "Orders €{threshold}+",
-      "secureLabel": "Secure",
-      "secureSublabel": "Checkout"
-    },
     "topBanner": {
       "freeShipping": "Free shipping on orders over €{threshold}",
       "returns": "{days}-day returns",
@@ -195,12 +187,7 @@
       "productBadge": "Essential tee · White · 320 GSM",
       "scrollCue": "Scroll to explore",
       "productImageAlt": "Heavyweight t-shirt with a custom print",
-      "flowIntro": "You're {count} steps away from creating your\u00a0<accent>dream product.</accent>",
-      "flowBenefits": {
-        "noSkills": { "title": "No design skills", "hint": "Just describe it" },
-        "preview": { "title": "Preview first", "hint": "Before you order" },
-        "onDemand": { "title": "Made to order", "hint": "Printed just for you" }
-      }
+      "flowIntro": "You're {count} steps away from creating your\u00a0<accent>dream product.</accent>"
     },
     "meta": {
       "title": "Design & Order Custom T-Shirts and Apparel",
@@ -307,12 +294,6 @@
       "ctaSecondary": "Browse Catalog"
     },
     "promo": {
-      "brand-logo": {
-        "tagline": "Create your own logos, stamp your brand",
-        "accentWord": "brand",
-        "description": "Transform your ideas into professional logos. From fitness brands to luxury labels, bring your vision to life on premium merchandise.",
-        "cta": "Start creating"
-      },
       "memories": {
         "tagline": "Stamp your best memories",
         "accentWord": "memories",
@@ -410,7 +391,9 @@
     },
     "productCard": {
       "noImage": "No image",
-      "discountBadge": "-{percent}%"
+      "discountBadge": "-{percent}%",
+      "customize": "Design yours",
+      "printArea": "Your design"
     },
     "guarantees": {
       "title": "Shop with",
@@ -450,7 +433,13 @@
       "eyebrow": "This month's pick",
       "badge": "Pick of the month",
       "cta": "Design yours now",
-      "noImage": "No image"
+      "noImage": "No image",
+      "customized": {
+        "logo": "{name} printed with a small shop's logo",
+        "family": "{name} printed with a family photo",
+        "brand": "{name} printed with a luxury brand logo",
+        "botanical": "{name} printed with a botanical line drawing"
+      }
     },
     "story": {
       "blocks": {
