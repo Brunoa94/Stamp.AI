@@ -10,7 +10,7 @@ import {
   useStampProductSelection,
   useStampCustomization,
 } from "../../../lib/hooks/useStampSelectors";
-import { isClothingProduct } from "../../../lib/helpers/productCategoryDetector";
+import { isClothingProduct } from "@/shared/helpers/productCategoryDetector";
 import { ProductGrid } from "./ProductGrid";
 import { ProductSelectionContent } from "./ProductSelectionContent";
 import type { CatalogProductMappedT } from "../../../lib/types/stampTypes";

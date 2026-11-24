@@ -11,11 +11,11 @@ import {
   sortSizes,
   STAMP_SIZES,
 } from "../constants/stampColors";
-import { filterDisplayColors } from "@/features/homepage/lib/constants/colorSwatches";
+import { filterDisplayColors } from "@/shared/constants/colorSwatches";
 import {
   getVariantOptionKind,
   shouldShowColorSelection,
-} from "../helpers/productCategoryDetector";
+} from "@/shared/helpers/productCategoryDetector";
 import type { SizeType } from "../types/stampTypes";
 
 /**

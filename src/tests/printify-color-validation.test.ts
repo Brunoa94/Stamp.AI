@@ -17,7 +17,7 @@
 import { describe, it, expect, vi } from "vitest";
 
 // Import the actual filterDisplayColors function (client-side UI filtering)
-import { filterDisplayColors } from "@/features/homepage/lib/constants/colorSwatches";
+import { filterDisplayColors } from "@/shared/constants/colorSwatches";
 
 // Import the actual color validation functions (server-side enforcement)
 import {

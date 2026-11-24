@@ -5,6 +5,8 @@
  * Used for grouping products in the UI and determining appropriate sizes.
  */
 
+import { findColorHex } from "@/shared/constants/colorSwatches";
+
 export type ProductCategory =
   | "tshirt"
   | "hoodie"
@@ -255,4 +257,18 @@ export type VariantOptionKindType = "color" | "paperType";
  */
 export function getVariantOptionKind(displayTitle: string): VariantOptionKindType {
   return detectProductCategory(displayTitle) === "notebook" ? "paperType" : "color";
+}
+
+/**
+ * The variant colours worth showing as swatches on a product listing. A
+ * variant's `color` holds the first title segment when Printify has no colour
+ * option (a mug's size, a notebook's paper type, a phone model), so drop them
+ * for products that come in one colour or vary by paper, and drop any name
+ * that has no swatch colour.
+ */
+export function getListingColors(displayTitle: string, colors: string[]): string[] {
+  if (!shouldShowColorSelection(displayTitle) || getVariantOptionKind(displayTitle) === "paperType") {
+    return [];
+  }
+  return colors.filter((color) => findColorHex(color) !== null);
 }
