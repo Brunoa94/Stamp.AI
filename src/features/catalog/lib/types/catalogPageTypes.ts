@@ -11,7 +11,7 @@
 import type {
   ProductCategory,
   ProductGroup,
-} from "@/features/stamp/lib/helpers/productCategoryDetector";
+} from "@/shared/helpers/productCategoryDetector";
 
 export type CatalogDisplayProductT = {
   blueprintId: number;

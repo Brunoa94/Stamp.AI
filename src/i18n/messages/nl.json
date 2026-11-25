@@ -247,7 +247,7 @@
     "products": {
       "title": "De",
       "accent": "essentials",
-      "label": "Onze kleding",
+      "label": "Onze producten",
       "emptyState": "De catalogus is tijdelijk niet beschikbaar — kom snel terug",
       "viewFullCatalog": "Alle producten bekijken",
       "subtitle": "Onze bestsellers, klaar voor jouw ontwerp."
@@ -306,6 +306,9 @@
         "description": "Vier de mijlpalen in het leven met eigen merchandise. Perfect voor verjaardagen, vrijgezellenfeesten, sportprestaties en meer.",
         "cta": "Begin met ontwerpen"
       }
+    },
+    "promoCarousel": {
+      "viewImage": "Afbeelding {number} bekijken"
     },
     "reviews": {
       "title": "Wat klanten",

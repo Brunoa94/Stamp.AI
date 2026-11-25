@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Span } from "@/features/ui/span";
 import { cn } from "@/lib/utils";
 import { flowBoxVariants } from "@/features/homepage/lib/variants/flowBoxVariants";
-import { getColorHex } from "@/features/homepage/lib/constants/colorSwatches";
+import { getColorHex } from "@/shared/constants/colorSwatches";
 import {
   FLOW_ROTATIONS_DEG,
   FLOW_SWATCHES,

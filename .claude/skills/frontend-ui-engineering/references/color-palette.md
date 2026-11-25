@@ -108,7 +108,7 @@ The shapes, type and component patterns that go with this palette are in the **S
 
 **Purpose**: T-shirt and fabric colors for product customization
 
-**Location**: `src/features/homepage/lib/constants/colorSwatches.ts`
+**Location**: `src/shared/constants/colorSwatches.ts`
 
 **Format**: Hex values mapped to color names
 
@@ -330,7 +330,7 @@ Create an entry in your color documentation:
 **Product Colors:**
 
 ```tsx
-import { getColorHex } from "@/features/homepage/lib/constants/colorSwatches";
+import { getColorHex } from "@/shared/constants/colorSwatches";
 
 const bgColor = getColorHex("Navy");
 
@@ -512,7 +512,7 @@ Before committing color changes:
 
 - `src/app/globals.css` - Design system color definitions
 - `src/app/globals-stamp.css` - Stamp brand palette definitions
-- `src/features/homepage/lib/constants/colorSwatches.ts` - Product color utilities
+- `src/shared/constants/colorSwatches.ts` - Product color utilities
 - `eslint.config.mjs` (`tokenRules`, `hexColorRules`) - The lint rules that reject hardcoded colors
 
 ---

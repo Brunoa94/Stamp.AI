@@ -10,7 +10,10 @@ import {
   extractProductSpecs,
 } from "@/lib/seo/productDescription";
 import { resolveDisplayPrice } from "@/lib/pricing";
-import { detectProductCategory } from "@/features/stamp/lib/helpers/productCategoryDetector";
+import {
+  detectProductCategory,
+  getListingColors,
+} from "@/shared/helpers/productCategoryDetector";
 import { localizeColorLabels, localizeProductText } from "@/shared/helpers/localizeProduct";
 import type { ProductTextT } from "@/shared/types/productText";
 import type { CatalogDisplayProductT } from "../types/catalogPageTypes";
@@ -36,6 +39,7 @@ function mapProductToCatalogDisplay(
     description: resolveProductDescription(product.product_seo),
     specs: extractProductSpecs(product.product_seo),
   });
+  const availableColors = getListingColors(product.display_title, product.availableColors || []);
 
   return {
     blueprintId: product.blueprint_id,
@@ -51,8 +55,8 @@ function mapProductToCatalogDisplay(
     isOnSale: product.is_on_sale || false,
     discountPercent: product.discount_percent ?? undefined,
     imageUrls: resolveImageUrls(product),
-    availableColors: product.availableColors || [],
-    colorLabels: localizeColorLabels(text, product.availableColors || []),
+    availableColors,
+    colorLabels: localizeColorLabels(text, availableColors),
   };
 }
 

@@ -107,9 +107,18 @@ function calculateLuminance(rgb: { r: number; g: number; b: number }): number {
  * Get hex color for a color name
  */
 export function getColorHex(colorName: string | null): string {
-  if (!colorName) return DEFAULT_COLOR;
+  return findColorHex(colorName) ?? DEFAULT_COLOR;
+}
+
+/**
+ * Hex color for a color name, or null when the name isn't a color we know
+ * (a mug size, a paper type or a phone model stored in the color option)
+ */
+export function findColorHex(colorName: string | null): string | null {
+  if (!colorName) return null;
 
   const normalized = colorName.trim();
+  if (normalized.toLowerCase() === "default") return null;
 
   // If database already returns a hex value, trust it.
   if (/^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(normalized)) {
@@ -142,7 +151,7 @@ export function getColorHex(colorName: string | null): string {
     return COLOR_KEYWORD_HEX_MAP[fuzzyKey];
   }
 
-  return DEFAULT_COLOR;
+  return null;
 }
 
 /**
