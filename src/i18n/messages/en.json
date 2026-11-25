@@ -339,6 +339,18 @@
         }
       }
     },
+    "googleReviews": {
+      "label": "Google reviews",
+      "title": "What our customers",
+      "accent": "say",
+      "seeAll": "See all reviews on Google",
+      "basedOn": "Based on {count, plural, one {# review} other {# reviews}} on Google",
+      "writeReview": "Write a review",
+      "disclosure": "Reviews are written by customers on Google. We show up to four of the reviews Google ranks most relevant that include text, without editing them, and we don't verify that reviewers bought from us.",
+      "anonymousReviewer": "A Google user",
+      "postedOnGoogle": "Posted on Google",
+      "opensInNewTab": "(opens in a new tab)"
+    },
     "faq": {
       "title": "Questions",
       "accent": "answered",
@@ -373,7 +385,7 @@
       "contactSupport": "Contact Support"
     },
     "ratingStars": {
-      "ariaLabel": "Rated {rating} out of {total} stars"
+      "ariaLabel": "Rated {rating, number} out of {total} stars"
     },
     "trustIndicators": {
       "items": {

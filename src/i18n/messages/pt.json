@@ -339,6 +339,18 @@
         }
       }
     },
+    "googleReviews": {
+      "label": "Avaliações Google",
+      "title": "O que dizem os nossos",
+      "accent": "clientes",
+      "seeAll": "Ver todas as avaliações no Google",
+      "basedOn": "Com base em {count, plural, one {# avaliação} other {# avaliações}} no Google",
+      "writeReview": "Escrever uma avaliação",
+      "disclosure": "As avaliações são escritas por clientes no Google. Mostramos até quatro das avaliações com texto que o Google considera mais relevantes, sem as editar, e não verificamos se os autores compraram connosco.",
+      "anonymousReviewer": "Um utilizador Google",
+      "postedOnGoogle": "Publicada no Google",
+      "opensInNewTab": "(abre num novo separador)"
+    },
     "faq": {
       "title": "Perguntas",
       "accent": "respondidas",
@@ -373,7 +385,7 @@
       "contactSupport": "Contactar o apoio"
     },
     "ratingStars": {
-      "ariaLabel": "Avaliado com {rating} de {total} estrelas"
+      "ariaLabel": "Avaliado com {rating, number} de {total} estrelas"
     },
     "trustIndicators": {
       "items": {

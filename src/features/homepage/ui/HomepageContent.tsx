@@ -3,12 +3,14 @@
  *
  * Server-rendered orchestrator for the homepage. It keeps the original
  * section rhythm (trust strip, stamp-wall hero, essentials, story, promo
- * carousels, marquee, product of the month, process, guarantees, CTA, FAQ)
+ * carousels, marquee, product of the month, process, Google reviews,
+ * guarantees, CTA, FAQ)
  * and weaves in the marketplace sections (shop by category, gift ideas).
  * Interactive sections are client components on their own. Navbar and footer
  * come from the root layout chrome.
  */
 
+import { Suspense } from "react";
 import type { ProductCardData } from "../lib/mappers/productCardMapper";
 import { TRUST_SOCIAL_PROOF_ENABLED } from "@/shared/constants/trustMetrics";
 import { TopTrustBanner } from "./sections/TopTrustBanner/TopTrustBanner";
@@ -22,6 +24,8 @@ import { HomeGiftIdeasSection } from "./sections/HomeGiftIdeasSection/HomeGiftId
 import { HomeProductMarqueeSection } from "./sections/HomeProductMarqueeSection/HomeProductMarqueeSection";
 import { HomeProductOfMonthSection } from "./sections/HomeProductOfMonthSection/HomeProductOfMonthSection";
 import { HomeProcessSection } from "./sections/HomeProcessSection/HomeProcessSection";
+import type { GoogleReviewsSummaryT } from "../lib/types/googleReviews";
+import { HomeGoogleReviewsSlot } from "./sections/HomeGoogleReviewsSection/HomeGoogleReviewsSlot";
 import { HomeTrustGuaranteesSection } from "./sections/HomeTrustGuaranteesSection/HomeTrustGuaranteesSection";
 import { HomeCtaSection } from "./sections/HomeCtaSection/HomeCtaSection";
 import { HomeReviewsSection } from "./sections/HomeReviewsSection/HomeReviewsSection";
@@ -30,9 +34,11 @@ import { HomeFaqSection } from "./sections/HomeFaqSection/HomeFaqSection";
 interface PropsI {
   /** Mapped and translated on the server */
   products: ProductCardData[];
+  /** Started, not awaited, by the page; resolves to null until Google has reviews for us */
+  googleReviews: Promise<GoogleReviewsSummaryT | null>;
 }
 
-export function HomepageContent({ products }: PropsI) {
+export function HomepageContent({ products, googleReviews }: PropsI) {
   return (
     <div className="overflow-x-clip">
       <TopTrustBanner />
@@ -51,6 +57,9 @@ export function HomepageContent({ products }: PropsI) {
       <div className="hidden md:block">
         <HomePromoSection variant="special-moments" background="chocolate" contentPosition="left" />
       </div>
+      <Suspense fallback={null}>
+        <HomeGoogleReviewsSlot reviews={googleReviews} />
+      </Suspense>
       <HomeTrustGuaranteesSection />
       <HomeCtaSection />
       {TRUST_SOCIAL_PROOF_ENABLED && <HomeReviewsSection />}
