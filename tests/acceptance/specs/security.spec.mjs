@@ -2,6 +2,7 @@
 /* eslint @typescript-eslint/no-unused-vars: ["warn", {"argsIgnorePattern": "^(suppliedUser|account)$"}] */
 import { test, expect, client, unwrap } from '../support/fixtures.mjs';
 import { seedCart } from '../support/cart.mjs';
+import { ANONYMOUS_GUARDED_FUNCTIONS } from '../support/edge-functions.mjs';
 
 // The dev server compiles API routes on demand; a cold compile can exceed actionTimeout.
 for (const path of ['/api/auth/signup', '/api/auth/resend-confirmation']) {
@@ -9,7 +10,7 @@ for (const path of ['/api/auth/signup', '/api/auth/resend-confirmation']) {
     expect((await request.post(path, { data: { email: 'not-an-email' }, timeout: 60000 })).status()).toBe(400);
   });
 }
-for (const functionName of ['create-printify-order', 'cancel-order', 'process-refund', 'create-payment-intent', 'create-mollie-payment', 'capture-paypal-order', 'generate-invoice']) {
+for (const functionName of ANONYMOUS_GUARDED_FUNCTIONS) {
   test(`SEC-02 ${functionName} rejects anonymous access`, async ({ env }) => {
     const db = client(env);
     const result = await db.functions.invoke(functionName, { body: {} });

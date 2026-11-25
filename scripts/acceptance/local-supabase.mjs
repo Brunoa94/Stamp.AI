@@ -10,6 +10,7 @@ import { randomUUID } from 'node:crypto';
 import { parseEnv } from 'node:util';
 import { createClient } from '@supabase/supabase-js';
 import { LOCAL_ENV_FILE, LOCAL_URL, TEST_URL, validateLocalEnvironment } from '../../tests/acceptance/support/environment.mjs';
+import { ANONYMOUS_GUARDED_FUNCTIONS } from '../../tests/acceptance/support/edge-functions.mjs';
 
 const MIGRATIONS = 'supabase/migrations';
 // The CLI's own migration runner cannot replay this history (its statement
@@ -94,6 +95,28 @@ const env = validateLocalEnvironment({
 });
 mkdirSync('.acceptance/local', { recursive: true });
 writeFileSync(LOCAL_ENV_FILE, Object.entries(env).map(([key, value]) => `${key}=${value}`).join('\n') + '\n', { mode: 0o600 });
+
+// A function's first request makes the Edge runtime download its remote
+// imports (process-refund pulls Stripe from esm.sh). When that download fails
+// the worker cannot boot and the gateway answers 503, which SEC-02 would report
+// as a missing auth check. Boot each guarded function here, retrying cold-boot
+// failures, so the specs hit a cached module graph.
+console.log('Booting the guarded Edge Functions...');
+const anonymous = createClient(LOCAL_URL, status.ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
+for (const name of ANONYMOUS_GUARDED_FUNCTIONS) {
+  let bootStatus;
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    const result = await anonymous.functions.invoke(name, { body: {} });
+    bootStatus = result.error?.context?.status ?? 200;
+    if (bootStatus !== 503) break;
+    console.log(`  ${name}: 503 on boot attempt ${attempt}, retrying`);
+    await new Promise(resolve => setTimeout(resolve, attempt * 3000));
+  }
+  if (bootStatus === 503) {
+    const logs = spawnSync('docker', ['logs', '--tail', '80', container.replace('supabase_db_', 'supabase_edge_runtime_')], { encoding: 'utf8' });
+    throw new Error(`Edge Function ${name} failed to boot after 5 attempts:\n${logs.stdout}${logs.stderr}`);
+  }
+}
 
 console.log('Mirroring the catalog snapshot...');
 const sync = spawnSync(process.execPath, ['scripts/acceptance/sync-catalog.mjs', '--apply'], { env: { ...process.env, ACCEPTANCE_LOCAL: '1' }, stdio: 'inherit' });

@@ -12,7 +12,15 @@ export async function cleanAccountData(admin, id) {
   if (orders.length) {
     const invoices = checked(await admin.from('invoices').select('pdf_bucket,pdf_path').in('order_id', orders), 'Invoice cleanup discovery');
     for (const invoice of invoices) {
-      if (invoice.pdf_bucket && invoice.pdf_path) checked(await admin.storage.from(invoice.pdf_bucket).remove([invoice.pdf_path]), 'Invoice PDF cleanup');
+      if (!invoice.pdf_bucket || !invoice.pdf_path) continue;
+      // Hosted Storage occasionally stalls past the 15s fetch timeout. Removal
+      // is idempotent, so retry timeouts (no status) and 5xx answers.
+      let removed = await admin.storage.from(invoice.pdf_bucket).remove([invoice.pdf_path]);
+      for (let attempt = 1; attempt <= 3 && removed.error && !(removed.error.status < 500); attempt++) {
+        await new Promise(resolve => setTimeout(resolve, attempt * 1000));
+        removed = await admin.storage.from(invoice.pdf_bucket).remove([invoice.pdf_path]);
+      }
+      checked(removed, 'Invoice PDF cleanup');
     }
     for (const table of ['refunds', 'invoices', 'order_items']) checked(await admin.from(table).delete().in('order_id', orders), `${table} cleanup`);
     checked(await admin.from('orders').delete().in('id', orders), 'Order cleanup');
