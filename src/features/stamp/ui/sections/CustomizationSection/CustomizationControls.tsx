@@ -10,7 +10,7 @@ import { PrintPositionSelector } from "../../components/PrintPositionSelector/Pr
 import { useDesignAdjustment } from "../../../lib/hooks/useDesignAdjustment";
 import { useRegisterMobileAction } from "../../../lib/hooks/useMobileStepAction";
 import type { SizeType } from "../../../lib/types/stampTypes";
-import type { VariantOptionKindType } from "../../../lib/helpers/productCategoryDetector";
+import type { VariantOptionKindType } from "@/shared/helpers/productCategoryDetector";
 import { useSizeLabel } from "../../../lib/hooks/useSizeLabel";
 import { SplitToneText } from "../../components/SplitToneText";
 import { StampStepTitle } from "../../components/StampStepTitle";

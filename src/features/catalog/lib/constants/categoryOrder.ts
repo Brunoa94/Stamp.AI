@@ -6,7 +6,7 @@
  * accessories, with the "other" catch-all last.
  */
 
-import type { ProductCategory } from "@/features/stamp/lib/helpers/productCategoryDetector";
+import type { ProductCategory } from "@/shared/helpers/productCategoryDetector";
 
 export const CATALOG_CATEGORY_ORDER: ProductCategory[] = [
   "tshirt",

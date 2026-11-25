@@ -1,4 +1,4 @@
-import { getColorHex, getBorderColor, filterDisplayColors } from "../../lib/constants/colorSwatches";
+import { getColorHex, getBorderColor, filterDisplayColors } from "@/shared/constants/colorSwatches";
 
 /** Swatch hex for white, slightly dimmed so it stays visible on light cards */
 const WHITE_HEX = getColorHex("White");

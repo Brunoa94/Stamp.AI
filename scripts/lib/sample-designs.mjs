@@ -366,4 +366,31 @@ export const DESIGNS = [
     kind: 'Memory art',
     prompt: `A black-and-white pencil sketch of a grandfather reading a storybook to his granddaughter on his lap in a big armchair, both smiling, fine realistic shading that fades out at the edges. ${PRINT_READY}`,
   }),
+
+  // Fifth batch: 2026 meme phrases
+  design('tote-p', 'tote', {
+    title: 'The Saxophones Are Getting Louder Tote',
+    kind: 'Meme quote',
+    prompt: `A bold retro illustration of a golden saxophone blasting out swirling musical notes and sound waves that grow bigger and bigger, with the hand-lettered text "The Saxophones Are Getting Louder" arched around it. Mustard, deep purple and black. ${PRINT_READY}`,
+  }),
+  design('tote-q', 'tote', {
+    title: 'Quiet on the Creek Tote',
+    kind: 'Meme quote',
+    prompt: `A calm vintage outdoors badge illustration of a small wooden rowboat with a fishing rod on a still creek, reeds and a low sun behind it, with the text "Quiet on the Creek" in a classic serif font below. Sage green, navy and cream. ${PRINT_READY}`,
+  }),
+  design('tote-r', 'tote', {
+    title: 'Cortisol Spike Tote',
+    kind: 'Meme quote',
+    prompt: `A funny flat illustration of a semicircular gauge meter labeled "Cortisol" with its needle slammed into the red zone, little stress sparks flying off it, and the bold hand-lettered text "Cortisol Spike" below. Red, coral and black. ${PRINT_READY}`,
+  }),
+  design('tote-s', 'tote', {
+    title: '7x7=49 Tote',
+    kind: 'Meme quote',
+    prompt: `A playful retro typographic design of the equation "7×7=49" in big chunky glossy numbers, with small sparkles and heart-eyes emoji style hearts around it. Hot pink, red and black. ${PRINT_READY}`,
+  }),
+  design('tote-t', 'tote', {
+    title: 'Kinda Chic Tote',
+    kind: 'Meme quote',
+    prompt: `An elegant fashion-sketch illustration of oversized sunglasses, a lipstick and a pearl necklace, with the text "kinda chic" in a flowing lowercase script below. Black ink with soft blush pink accents. ${PRINT_READY}`,
+  }),
 ];

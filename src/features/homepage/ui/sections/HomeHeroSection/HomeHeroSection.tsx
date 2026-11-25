@@ -15,10 +15,8 @@
 
 import { HeroBackdrop } from "./HeroBackdrop";
 import { HeroContent } from "./HeroContent";
-import { HeroPromoBanner } from "./HeroPromoBanner";
 import { FlowPreview } from "../../components/FlowPreview/FlowPreview";
 import { HeroFlowIntro } from "./HeroFlowIntro";
-import { HeroFlowBenefits } from "./HeroFlowBenefits";
 import { HeroPhotoRibbon } from "./HeroPhotoRibbon";
 import { HeroProductTypes } from "./HeroProductTypes";
 
@@ -36,8 +34,7 @@ export function HomeHeroSection() {
 
           <div className="hero-enter hero-enter--late hidden flex-col justify-center gap-5 rounded-md bg-(--color-stamp-peach) p-8 xl:flex 2xl:gap-6 2xl:p-10">
             <HeroFlowIntro />
-            <FlowPreview />
-            <HeroFlowBenefits />
+            <FlowPreview className="min-h-0 flex-1" windowClassName="max-w-none grow" />
           </div>
         </div>
 
@@ -48,9 +45,6 @@ export function HomeHeroSection() {
       <div className="mt-10">
         <HeroPhotoRibbon />
       </div>
-
-      {/* Promotional banner */}
-      <HeroPromoBanner />
     </section>
   );
 }

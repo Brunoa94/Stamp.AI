@@ -21,7 +21,7 @@ export function HomeCtaSection() {
     <section aria-labelledby="home-cta-title" className="px-4 py-20 sm:px-6 lg:px-12">
       <div className="mx-auto flex max-w-screen-2xl flex-col items-center rounded-2xl bg-(--color-stamp-chocolate) px-6 py-16 text-center sm:px-10 lg:py-24">
         <div aria-hidden className="mb-8 h-1.5 w-16 rounded-full bg-(--color-stamp-gold)" />
-        <Heading as="h2" id="home-cta-title" variant="sectionDisplay" className="max-w-3xl text-(--color-stamp-off-white)">
+        <Heading as="h2" id="home-cta-title" variant="cta" className="max-w-6xl text-(--color-stamp-off-white)">
           {t.rich("heading", {
             accent: (chunks) => (
               <Span variant="serif" className="text-(--color-stamp-gold-light)">

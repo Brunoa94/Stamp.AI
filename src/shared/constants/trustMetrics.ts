@@ -47,7 +47,7 @@ export const TRUST_ORDER_METRICS = {
 
 /**
  * Guarantee policy values
- * Used by: TRUST_ITEMS, HomeTrustGuaranteesSection, legal pages
+ * Used by: HomeTrustGuaranteesSection, legal pages
  *
  * IMPORTANT: These values must match the legal /returns policy.
  * The 30-day guarantee is the official policy per /returns page.

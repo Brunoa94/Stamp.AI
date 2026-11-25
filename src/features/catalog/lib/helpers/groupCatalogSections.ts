@@ -10,7 +10,7 @@
 import {
   getProductGroup,
   type ProductGroup,
-} from "@/features/stamp/lib/helpers/productCategoryDetector";
+} from "@/shared/helpers/productCategoryDetector";
 import type {
   CatalogCategorySectionType,
   CatalogGroupSectionType,

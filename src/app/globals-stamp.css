@@ -48,6 +48,12 @@
   --color-stamp-peach: #fceee2; /* [tag: brand-stamp-tint-peach] Hero frame, product-of-the-month and promo panels */
   --color-stamp-sage: #e3eadc; /* [tag: brand-stamp-tint-sage] Image placeholders behind category and gift tiles */
 
+  /* Homepage product card tints [tag: stamp-card-tint-*] — cycled across the essentials grid */
+  --color-stamp-card-mint: #e3ece3; /* [tag: stamp-card-tint-mint] Product card background */
+  --color-stamp-card-sand: #f3e5d6; /* [tag: stamp-card-tint-sand] Product card background */
+  --color-stamp-card-lavender: #e7e4f3; /* [tag: stamp-card-tint-lavender] Product card background */
+  --color-stamp-card-rose: #f3dfdb; /* [tag: stamp-card-tint-rose] Product card background */
+
   /* Homepage flow preview backdrops [tag: flow-art-*] — surfaces behind the demo
      illustrations (the illustrations themselves are SVGs in public/assets/flow-preview) */
   --color-flow-art-backdrop-sage: #c5cbc0; /* [tag: flow-art-backdrop-sage] Apparel card backdrop */

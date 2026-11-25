@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { groupProductsByCategory } from "../groupProductsByCategory";
 import type { CatalogDisplayProductT } from "../../types/catalogPageTypes";
-import type { ProductCategory } from "@/features/stamp/lib/helpers/productCategoryDetector";
+import type { ProductCategory } from "@/shared/helpers/productCategoryDetector";
 
 function buildProduct(
   blueprintId: number,

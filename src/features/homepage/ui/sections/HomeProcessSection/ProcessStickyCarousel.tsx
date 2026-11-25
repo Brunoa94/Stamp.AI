@@ -5,14 +5,12 @@
  *
  * Brevo-style scroll-driven sticky carousel that cycles through process steps.
  * The matching flow-demo screen on the left slides up/down, text on the right crossfades.
- * Includes a sticky stepper at the bottom showing current progress.
  */
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { HOME_PROCESS_STEPS } from "../../../lib/constants/homepageContent";
 import { HomeSectionHeader } from "../../components/HomeSectionHeader";
-import { ProcessAnimatedButton } from "./ProcessAnimatedButton";
 import { ProcessDesktopPreview } from "./ProcessDesktopPreview";
 import { ProcessMobileCard } from "./ProcessMobileCard";
 import { ProcessDesktopText } from "./ProcessDesktopText";
@@ -92,11 +90,12 @@ export function ProcessStickyCarousel() {
           </div>
         </div>
 
-        {/* Content - centered in remaining space */}
-        <div className="flex-1 flex items-start mt-4 lg:mt-6">
+        {/* Content - centred in the space under the section header; clipped on desktop so
+            the screen sliding out doesn't pass over the header */}
+        <div className="flex min-h-0 flex-1 items-center lg:overflow-hidden">
           <div className="mx-auto flex w-full max-w-screen-2xl flex-col items-center justify-center gap-10 px-4 sm:px-6 lg:flex-row lg:gap-16 lg:px-12 xl:gap-24">
             {/* Left side - Desktop flow-demo screen with slide animation */}
-            <div className="hidden lg:flex items-center relative w-125 xl:w-150 h-125 xl:h-150 mt-6 flex-[0.5]">
+            <div className="hidden lg:flex items-center relative w-125 xl:w-150 h-125 xl:h-150 flex-[0.5]">
               {HOME_PROCESS_STEPS.map((step, index) => {
                 const animation = computeDesktopImageAnimation(
                   index,
@@ -168,14 +167,6 @@ export function ProcessStickyCarousel() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Animated CTA button at bottom */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
-          <ProcessAnimatedButton
-            activeStepIndex={activeStepIndex}
-            stepProgress={stepProgress}
-          />
         </div>
       </div>
     </div>

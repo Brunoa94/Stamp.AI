@@ -6,11 +6,11 @@ import {
   DEFAULT_COLOR,
   getBorderColor,
   getColorHex,
-} from "@/features/homepage/lib/constants/colorSwatches";
+} from "@/shared/constants/colorSwatches";
 import { getColorClass } from "@/helpers/colors/colorMapping";
 import { useProductLabel } from "@/shared/hooks/useProductLabel";
 import { cn } from "@/lib/utils";
-import type { VariantOptionKindType } from "../../../lib/helpers/productCategoryDetector";
+import type { VariantOptionKindType } from "@/shared/helpers/productCategoryDetector";
 import { PaperTypeOptions } from "./PaperTypeOptions";
 import { SplitToneText } from "../../components/SplitToneText";
 

@@ -6,9 +6,13 @@
 import type { ProductWithPricing } from "@/lib/supabase/server-cache";
 import { resolveProductDescription } from "@/lib/seo/productDescription";
 import { resolveDisplayPrice } from "@/lib/pricing";
+import { getListingColors } from "@/shared/helpers/productCategoryDetector";
 import { localizeColorLabels, localizeProductText } from "@/shared/helpers/localizeProduct";
 import type { ProductSeo } from "@/shared/types/catalog";
 import type { ProductTextT } from "@/shared/types/productText";
+import { getProductConfig } from "@/lib/printPlacement/config";
+import { HOME_PRINT_AREAS } from "../constants/productPrintAreas";
+import type { PrintAreaRectT } from "../types/productPrintArea";
 
 export interface ProductCardData {
   blueprintId: number;
@@ -29,6 +33,8 @@ export interface ProductCardData {
   availableColors: string[];
   /** English colour name → label in the visitor's language */
   colorLabels: Record<string, string>;
+  /** Where the design goes on the photo, for the hover preview */
+  printArea: PrintAreaRectT;
 }
 
 type ProductTextSourceT = {
@@ -56,6 +62,7 @@ function mapProductToCard(
   text: ProductTextT | null
 ): ProductCardData {
   const { displayName, description } = mapProductOfMonth(product, text);
+  const availableColors = getListingColors(product.display_title, product.availableColors || []);
 
   return {
     blueprintId: product.blueprint_id,
@@ -72,8 +79,9 @@ function mapProductToCard(
     label: product.display_title.replace(/\s+/g, "_").toUpperCase(),
     imageUrl: product.base_image_url || "",
     href: "/stamp",
-    availableColors: product.availableColors || [],
-    colorLabels: localizeColorLabels(text, product.availableColors || []),
+    availableColors,
+    colorLabels: localizeColorLabels(text, availableColors),
+    printArea: HOME_PRINT_AREAS[getProductConfig(product.blueprint_id, product.display_title).category],
   };
 }
 
