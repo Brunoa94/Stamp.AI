@@ -9,7 +9,7 @@ import {
   HOME_RATING_SUMMARY,
   HOME_PLATFORM_CONFIG,
 } from "../../../lib/constants/homepageContent";
-import { HomeRatingStars } from "./HomeRatingStars";
+import { HomeRatingStars } from "../../components/HomeRatingStars";
 import { ReviewsPlatformBadge } from "./ReviewsPlatformBadge";
 
 export function ReviewsRatingSummary() {

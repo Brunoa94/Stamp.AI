@@ -17,7 +17,8 @@ interface HomeRatingStarsPropsI {
 
 export function HomeRatingStars({ rating, className }: HomeRatingStarsPropsI) {
   const t = useTranslations("home.ratingStars");
-  const filled = Math.floor(rating);
+  // Nearest whole star, so a 4.8 reads as five like it does on Google
+  const filled = Math.round(rating);
 
   return (
     <div

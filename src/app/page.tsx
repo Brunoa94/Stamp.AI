@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { HomepageContent } from "@/features/homepage/ui/HomepageContent";
 import { mapProductsToCards } from "@/features/homepage/lib/mappers/productCardMapper";
+import { getGoogleReviews } from "@/features/homepage/lib/services/googleReviewsService";
 import { productTextFor } from "@/shared/constants/productText/productTextByLocale";
 import { LoginRedirectPrompt } from "@/features/auth/components/LoginRedirectPrompt";
 import { getCachedProductsWithPricing } from "@/lib/supabase/server-cache";
@@ -35,9 +36,13 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
+  const locale = await getLocale();
+  // Not awaited: the reviews section streams in behind Suspense, so a slow
+  // Google never holds up the hero
+  const googleReviews = getGoogleReviews(locale);
   const productsWithPricing = await getCachedProductsWithPricing();
   // Translated here, after the (English) cache, so the client gets display strings only
-  const productCards = mapProductsToCards(productsWithPricing, productTextFor(await getLocale()));
+  const productCards = mapProductsToCards(productsWithPricing, productTextFor(locale));
 
   const tMeta = await getTranslations("home.meta");
   const tFaq = await getTranslations("home.faq.items");
@@ -88,7 +93,7 @@ export default async function Home() {
       {productSchemaEntries.map((entry) => (
         <StructuredData key={entry.name} data={productSchema(entry)} />
       ))}
-      <HomepageContent products={productCards} />
+      <HomepageContent products={productCards} googleReviews={googleReviews} />
       {/* useSearchParams() requires a Suspense boundary for static prerendering */}
       <Suspense fallback={null}>
         <LoginRedirectPrompt />

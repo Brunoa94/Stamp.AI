@@ -166,6 +166,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      // Google reviewer profile photos (homepage Google reviews section)
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
       ...(isLocalAcceptance
         ? [{ protocol: "http" as const, hostname: "127.0.0.1", port: "54321" }]
         : []),

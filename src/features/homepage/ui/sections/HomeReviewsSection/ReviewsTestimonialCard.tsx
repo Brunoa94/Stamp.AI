@@ -10,7 +10,7 @@ import { Heading } from "@/features/ui/heading";
 import { Paragraph } from "@/features/ui/paragraph";
 import { Span } from "@/features/ui/span";
 import type { HomeTestimonialType } from "../../../lib/constants/homepageContent";
-import { HomeRatingStars } from "./HomeRatingStars";
+import { HomeRatingStars } from "../../components/HomeRatingStars";
 import { ReviewsPlatformBadge } from "./ReviewsPlatformBadge";
 
 interface ReviewsTestimonialCardProps {

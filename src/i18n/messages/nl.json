@@ -339,6 +339,18 @@
         }
       }
     },
+    "googleReviews": {
+      "label": "Google-reviews",
+      "title": "Wat onze klanten",
+      "accent": "zeggen",
+      "seeAll": "Bekijk alle reviews op Google",
+      "basedOn": "Op basis van {count, plural, one {# review} other {# reviews}} op Google",
+      "writeReview": "Schrijf een review",
+      "disclosure": "Reviews worden door klanten op Google geschreven. We tonen maximaal vier reviews met tekst die Google het meest relevant vindt, zonder ze te bewerken, en we controleren niet of de schrijvers bij ons hebben gekocht.",
+      "anonymousReviewer": "Een Google-gebruiker",
+      "postedOnGoogle": "Geplaatst op Google",
+      "opensInNewTab": "(opent in een nieuw tabblad)"
+    },
     "faq": {
       "title": "Vragen",
       "accent": "beantwoord",
@@ -373,7 +385,7 @@
       "contactSupport": "Contact opnemen"
     },
     "ratingStars": {
-      "ariaLabel": "Beoordeeld met {rating} van {total} sterren"
+      "ariaLabel": "Beoordeeld met {rating, number} van {total} sterren"
     },
     "trustIndicators": {
       "items": {
