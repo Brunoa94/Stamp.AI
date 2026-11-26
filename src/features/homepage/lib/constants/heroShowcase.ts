@@ -24,24 +24,26 @@ export const HERO_RIBBON_LIFESTYLE: readonly string[] = [
 
 const HOME = staticAssetUrl("/home");
 const PRODUCTS = staticAssetUrl("/products-images");
-const INSPIRATION = `${PRODUCTS}/inspiration`;
+// TODO: Restore when inspiration images are uploaded to R2
+// const INSPIRATION = `${PRODUCTS}/inspiration`;
 
 /** Finished product shots, for the second ribbon row */
+// TODO: Restore inspiration images when uploaded to R2
 export const HERO_RIBBON_PRODUCTS: readonly string[] = [
   `${HOME}/1-b.webp`,
-  `${INSPIRATION}/kid-tshirt-drawing.webp`,
+  // `${INSPIRATION}/kid-tshirt-drawing.webp`,
   `${PRODUCTS}/tote/tote-b-printed.webp`,
   `${HOME}/4-b.webp`,
-  `${INSPIRATION}/mug-couple-cartoon.webp`,
+  // `${INSPIRATION}/mug-couple-cartoon.webp`,
   `${PRODUCTS}/kid-t-shirt/kid-t-shirt-a-printed.webp`,
   `${HOME}/5-b.webp`,
-  `${INSPIRATION}/tote-botanical.webp`,
+  // `${INSPIRATION}/tote-botanical.webp`,
   `${PRODUCTS}/tote/tote-c-printed.webp`,
   `${HOME}/2-b.webp`,
-  `${INSPIRATION}/hoodie-pet-portrait.webp`,
+  // `${INSPIRATION}/hoodie-pet-portrait.webp`,
   `${PRODUCTS}/kid-t-shirt/kid-t-shirt-b-printed.webp`,
   `${HOME}/6-b.webp`,
-  `${INSPIRATION}/canvas-pet-renaissance.webp`,
+  // `${INSPIRATION}/canvas-pet-renaissance.webp`,
   `${PRODUCTS}/tote/tote-a-printed.webp`,
   `${HOME}/3-b.webp`,
 ];
