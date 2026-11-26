@@ -31,11 +31,32 @@ const localDatabaseSources = isLocalAcceptance
   ? `${LOCAL_ACCEPTANCE_DATABASE} ws://127.0.0.1:54321`
   : "";
 
+// The static-assets CDN (the Cloudflare Worker in cloudflare/static-assets) serves
+// the site's raster images; staticAssetUrl() builds their URLs from this variable.
+// Without it (local dev only) they come from the Supabase project's bucket (*.supabase.co).
+function originOf(url: string | undefined): URL | null {
+  try {
+    return url ? new URL(url) : null;
+  } catch {
+    return null;
+  }
+}
+const staticAssetsOrigin = originOf(process.env.NEXT_PUBLIC_STATIC_ASSETS_URL);
+// The CDN's keys (.webp photos) differ from the old Supabase bucket's, so a deployed
+// build without a valid CDN URL would show broken images: fail the build instead.
+if (process.env.NEXT_PUBLIC_STATIC_ASSETS_URL && !staticAssetsOrigin) {
+  throw new Error(`NEXT_PUBLIC_STATIC_ASSETS_URL is not a valid URL: "${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}"`);
+}
+if (process.env.VERCEL === "1" && !staticAssetsOrigin) {
+  throw new Error("NEXT_PUBLIC_STATIC_ASSETS_URL must be set on Vercel (the Worker URL of cloudflare/static-assets)");
+}
+const staticAssetsSource = staticAssetsOrigin?.origin ?? "";
+
 const ContentSecurityPolicy = `
   default-src 'self';
   script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === "development" ? "'unsafe-eval'" : ""} https://js.stripe.com https://www.paypal.com https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://googletagmanager.com;
   style-src 'self' 'unsafe-inline';
-  img-src 'self' data: blob: https://images.printify.com https://images-api.printify.com https://pfy-prod-image-storage.s3.us-east-2.amazonaws.com https://oaidalleapiprodscus.blob.core.windows.net https://placehold.co https://images.unsplash.com https://picsum.photos https://*.supabase.co https://www.googletagmanager.com https://api.dicebear.com ${localDatabaseSources};
+  img-src 'self' data: blob: https://images.printify.com https://images-api.printify.com https://pfy-prod-image-storage.s3.us-east-2.amazonaws.com https://oaidalleapiprodscus.blob.core.windows.net https://placehold.co https://images.unsplash.com https://picsum.photos https://*.supabase.co https://www.googletagmanager.com https://api.dicebear.com ${staticAssetsSource} ${localDatabaseSources};
   font-src 'self' data:;
   worker-src 'self' blob:;
   connect-src 'self' https://*.supabase.co wss://*.supabase.co ${localDatabaseSources} https://api.stripe.com https://api.paypal.com https://api.sandbox.paypal.com https://api.mollie.com https://www.google.com https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com https://*.google-analytics.com;
@@ -133,7 +154,17 @@ const nextConfig: NextConfig = {
 
   images: {
     ...(isLocalAcceptance && { dangerouslyAllowLocalIP: true }),
+    // Each width is a separate optimized image, and each one Vercel has not cached
+    // downloads the full original from the CDN. The originals are at most 1600px
+    // (scripts/optimize-static-assets.mjs), so the 2048 and 3840 widths only re-encoded
+    // the same pixels. Keep the optimized copies for 30 days instead of the
+    // origin's max-age.
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    minimumCacheTTL: 2592000,
     remotePatterns: [
+      ...(staticAssetsOrigin
+        ? [{ protocol: staticAssetsOrigin.protocol.replace(":", "") as "http" | "https", hostname: staticAssetsOrigin.hostname, port: staticAssetsOrigin.port }]
+        : []),
       {
         protocol: "https",
         hostname: "images.printify.com",

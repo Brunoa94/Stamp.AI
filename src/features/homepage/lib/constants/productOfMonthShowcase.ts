@@ -7,9 +7,9 @@ const PRODUCTS = staticAssetUrl("/products-images");
 export const PRODUCT_OF_MONTH_SHOT_INTERVAL_MS = 3000;
 
 const TOTE_SHOTS: readonly ProductOfMonthShotT[] = [
-  { src: `${PRODUCTS}/tote/tote-a-printed.png`, altKey: "logo" },
-  { src: `${PRODUCTS}/tote/tote-b-printed.png`, altKey: "family" },
-  { src: `${PRODUCTS}/tote/tote-c-printed.png`, altKey: "brand" },
+  { src: `${PRODUCTS}/tote/tote-a-printed.webp`, altKey: "logo" },
+  { src: `${PRODUCTS}/tote/tote-b-printed.webp`, altKey: "family" },
+  { src: `${PRODUCTS}/tote/tote-c-printed.webp`, altKey: "brand" },
   { src: `${PRODUCTS}/inspiration/tote-botanical.webp`, altKey: "botanical" },
 ];
 

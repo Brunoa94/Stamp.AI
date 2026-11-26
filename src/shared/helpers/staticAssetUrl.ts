@@ -1,4 +1,4 @@
-/** Public Supabase Storage bucket holding the site's static images (filled by scripts/push-static-assets.mjs) */
+/** Old Supabase Storage bucket, used only when NEXT_PUBLIC_STATIC_ASSETS_URL (the Cloudflare R2 Worker) is unset */
 const STATIC_ASSETS_BUCKET = "static-assets";
 
 type StaticAssetBaseT = {
@@ -8,7 +8,7 @@ type StaticAssetBaseT = {
 };
 
 /**
- * CDN URL of a static image, from its path in the bucket ("/home/1-a.png").
+ * CDN URL of a static image, from its path in the bucket ("/home/1-a.webp").
  * Without a configured base URL the root-relative path is returned unchanged.
  */
 function buildStaticAssetUrl(assetPath: string, { assetsBaseUrl, supabaseUrl }: StaticAssetBaseT): string {

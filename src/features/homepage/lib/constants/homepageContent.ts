@@ -25,31 +25,31 @@ const SUGGESTED_EDITS = staticAssetUrl("/suggested-edits");
 
 // Hero section image carousel - cycles through product images
 export const HOME_HERO_IMAGES = [
-  `${HOME}/1-a.png`,
-  `${HOME}/1-b.png`,
-  `${HOME}/2-a.png`,
-  `${HOME}/2-b.png`,
-  `${HOME}/3-a.png`,
-  `${HOME}/3-b.png`,
-  `${HOME}/4-a.png`,
-  `${HOME}/4-b.png`,
-  `${HOME}/5-a.png`,
-  `${HOME}/5-b.png`,
-  `${HOME}/6-a.png`,
-  `${HOME}/6-b.png`,
+  `${HOME}/1-a.webp`,
+  `${HOME}/1-b.webp`,
+  `${HOME}/2-a.webp`,
+  `${HOME}/2-b.webp`,
+  `${HOME}/3-a.webp`,
+  `${HOME}/3-b.webp`,
+  `${HOME}/4-a.webp`,
+  `${HOME}/4-b.webp`,
+  `${HOME}/5-a.webp`,
+  `${HOME}/5-b.webp`,
+  `${HOME}/6-a.webp`,
+  `${HOME}/6-b.webp`,
 ];
 
 // Hero product grid - grouped image sets for each square
 // Each set cycles independently with staggered timing
 export const HERO_PRODUCT_SETS: string[][] = [
   // Top-right (large) - products 1 & 2
-  [`${HOME}/1-a.png`, `${HOME}/1-b.png`, `${HOME}/2-a.png`, `${HOME}/2-b.png`],
+  [`${HOME}/1-a.webp`, `${HOME}/1-b.webp`, `${HOME}/2-a.webp`, `${HOME}/2-b.webp`],
   // Middle-left (medium) - products 3 & 4
-  [`${HOME}/3-a.png`, `${HOME}/3-b.png`, `${HOME}/4-a.png`, `${HOME}/4-b.png`],
+  [`${HOME}/3-a.webp`, `${HOME}/3-b.webp`, `${HOME}/4-a.webp`, `${HOME}/4-b.webp`],
   // Bottom-right (medium) - products 5 & 6
-  [`${HOME}/5-a.png`, `${HOME}/5-b.png`, `${HOME}/6-a.png`, `${HOME}/6-b.png`],
+  [`${HOME}/5-a.webp`, `${HOME}/5-b.webp`, `${HOME}/6-a.webp`, `${HOME}/6-b.webp`],
   // Bottom-left (small) - mix of all
-  [`${HOME}/1-a.png`, `${HOME}/3-a.png`, `${HOME}/5-a.png`, `${HOME}/2-a.png`],
+  [`${HOME}/1-a.webp`, `${HOME}/3-a.webp`, `${HOME}/5-a.webp`, `${HOME}/2-a.webp`],
 ];
 
 // Story section - alternating image + text splits. Display copy lives in
@@ -66,17 +66,17 @@ export const HOME_STORY_BLOCKS: HomeStoryBlockType[] = [
   {
     id: "design",
     images: [
-      `${SUGGESTED_EDITS}/golden-hour.png`,
-      `${SUGGESTED_EDITS}/line-art.png`,
-      `${SUGGESTED_EDITS}/minimal.png`,
-      `${SUGGESTED_EDITS}/film-grain.png`,
+      `${SUGGESTED_EDITS}/golden-hour.webp`,
+      `${SUGGESTED_EDITS}/line-art.webp`,
+      `${SUGGESTED_EDITS}/minimal.webp`,
+      `${SUGGESTED_EDITS}/film-grain.webp`,
     ],
     imagePosition: "right",
     href: "/stamp",
   },
   {
     id: "quality",
-    images: [`${HOME}/3-a.png`],
+    images: [`${HOME}/3-a.webp`],
     imagePosition: "left",
     href: "#products",
   },

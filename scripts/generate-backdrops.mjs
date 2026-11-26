@@ -129,8 +129,10 @@ function makeDeck(pool, rand) {
 
 /** Product mockups on the static-assets CDN (pushed by scripts/push-static-assets.mjs) */
 function productsBaseUrl() {
+  const assetsUrl = process.env.NEXT_PUBLIC_STATIC_ASSETS_URL;
+  if (assetsUrl) return `${assetsUrl.replace(/\/+$/, '')}/products-images`;
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!supabaseUrl) throw new Error('NEXT_PUBLIC_SUPABASE_URL is required to fetch the product mockups');
+  if (!supabaseUrl) throw new Error('NEXT_PUBLIC_STATIC_ASSETS_URL or NEXT_PUBLIC_SUPABASE_URL is required to fetch the product mockups');
   return `${supabaseUrl.replace(/\/+$/, '')}/storage/v1/object/public/static-assets/products-images`;
 }
 
@@ -139,7 +141,7 @@ const PRODUCTS = {
     name: 'white pullover hoodie',
     audience: 'adult',
     size: '1024x1536',
-    references: ['hoodie/hoodie-c-mockup-front.png', 'hoodie/hoodie-a-mockup-front-2.png'],
+    references: ['hoodie/hoodie-c-mockup-front.webp', 'hoodie/hoodie-a-mockup-front-2.webp'],
     printArea: 'centred on the chest, about 25 cm wide',
     surface: 'follows the soft folds and cotton-fleece texture of the hoodie',
     isTop: true,
@@ -153,7 +155,7 @@ const PRODUCTS = {
     name: "white children's crew-neck T-shirt",
     audience: 'kid',
     size: '1024x1024',
-    references: ['kid-t-shirt/kid-t-shirt-g-mockup-front.png', 'kid-t-shirt/kid-t-shirt-n-mockup-front.png'],
+    references: ['kid-t-shirt/kid-t-shirt-g-mockup-front.webp', 'kid-t-shirt/kid-t-shirt-n-mockup-front.webp'],
     printArea: 'centred on the chest, filling most of the front',
     surface: 'follows the light folds and cotton texture of the T-shirt',
     isTop: true,
@@ -167,7 +169,7 @@ const PRODUCTS = {
     name: 'white glossy 11 oz ceramic mug',
     audience: 'adult',
     size: '1024x1024',
-    references: ['mug/mug-a-mockup-front.png', 'mug/mug-h-mockup-front.png'],
+    references: ['mug/mug-a-mockup-front.webp', 'mug/mug-h-mockup-front.webp'],
     printArea: 'wrapped around the side facing the camera',
     surface: 'wraps the curve of the mug under a glossy glaze with soft reflections',
     isTop: false,
@@ -181,7 +183,7 @@ const PRODUCTS = {
     name: 'natural white canvas tote bag with long handles',
     audience: 'adult',
     size: '1024x1536',
-    references: ['tote/tote-g-mockup-front.png', 'tote/tote-m-mockup-front.png'],
+    references: ['tote/tote-g-mockup-front.webp', 'tote/tote-m-mockup-front.webp'],
     printArea: 'covering the centre of the front panel',
     surface: 'sits in the woven canvas texture and bends with the bag',
     isTop: false,
@@ -195,7 +197,7 @@ const PRODUCTS = {
     name: 'gallery-wrapped stretched canvas print, about 50 × 50 cm, with white edges',
     audience: 'adult',
     size: '1024x1536',
-    references: ['canvas/canvas-b-mockup-front.png', 'canvas/canvas-d-mockup-front.png'],
+    references: ['canvas/canvas-b-mockup-front.webp', 'canvas/canvas-d-mockup-front.webp'],
     printArea: 'covering the whole front of the canvas',
     surface: 'shows the fine canvas weave, perfectly flat and taut',
     isTop: false,
@@ -405,7 +407,7 @@ const CONCEPTS = {
   },
   'gym-hoodie-back': {
     product: 'hoodie',
-    reference: 'hoodie/hoodie-g-mockup-back.png',
+    reference: 'hoodie/hoodie-g-mockup-back.webp',
     size: '1024x1536',
     artwork:
       'a large logo for an invented gym called "IRONHAUS", printed across the upper back of the hoodie, about 30 cm wide: a bold black emblem of a barbell crossed over a stylised anvil, with "IRONHAUS" arched above in heavy athletic block letters and "ATHLETIC CLUB · EST. 2026" in small spaced capitals below. Strong, clean, black on white',
@@ -567,7 +569,7 @@ async function generateOne(client, job, opts, outDir) {
   const referenceResponse = await fetch(referenceUrl);
   if (!referenceResponse.ok) throw new Error(`Could not fetch ${referenceUrl}: HTTP ${referenceResponse.status}`);
   const reference = await toFile(Buffer.from(await referenceResponse.arrayBuffer()), path.basename(job.reference), {
-    type: 'image/png',
+    type: referenceResponse.headers.get('content-type')?.split(';')[0] || 'image/webp',
   });
 
   const started = Date.now();
