@@ -15,7 +15,7 @@
  *
  * Usage:
  *   node scripts/optimize-static-assets.mjs <source-dir> <out-dir>
- *   node scripts/push-static-assets.mjs --target r2 --source-dir <out-dir>
+ *   node scripts/push-static-assets.mjs --target test --source-dir <out-dir>
  */
 
 import fs from 'node:fs';

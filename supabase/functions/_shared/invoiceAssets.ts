@@ -15,7 +15,7 @@ export const INVOICE_LOGO_HEIGHT = 286;
  * Absolute URL of the logo for the HTML email body. Most email clients
  * block data: URIs in images, so the email references the file on the
  * static-assets CDN (filled by scripts/push-static-assets.mjs): the
- * STATIC_ASSETS_URL secret (the Cloudflare Worker), else the project's bucket.
+ * STATIC_ASSETS_URL secret when set, else the project's bucket.
  */
 export function getInvoiceLogoUrl(): string {
   const assetsUrl = Deno.env.get("STATIC_ASSETS_URL");

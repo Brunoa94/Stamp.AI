@@ -1,4 +1,4 @@
-/** Old Supabase Storage bucket, used only when NEXT_PUBLIC_STATIC_ASSETS_URL (the Cloudflare R2 Worker) is unset */
+/** Public Supabase Storage bucket holding the site's static images (filled by scripts/push-static-assets.mjs) */
 const STATIC_ASSETS_BUCKET = "static-assets";
 
 type StaticAssetBaseT = {

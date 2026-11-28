@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // PreToolUse hook: PNG, JPEG and WebP images are not added to the repo. They are uploaded to the
-// static-assets CDN (Cloudflare R2, scripts/push-static-assets.mjs) and referenced with
+// Supabase `static-assets` bucket (scripts/push-static-assets.mjs) and referenced with
 // staticAssetUrl() (.claude/rules/components.md → "Raster images live on the CDN"). SVGs stay
 // in the repo. Rejects:
 //   - Write/Edit/MultiEdit creating a new raster image inside the repo
@@ -99,12 +99,12 @@ function gitSubcommands(command) {
 
 const reasonFor = (files, when) =>
   `${when}:\n${files.map((file) => `  - ${file}`).join("\n")}\n` +
-  "PNG, JPEG and WebP images are not committed: they live on the static-assets CDN (Cloudflare R2, SVGs stay in the repo). " +
+  "PNG, JPEG and WebP images are not committed: they live on the Supabase `static-assets` bucket (SVGs stay in the repo). " +
   "Put the image in the gitignored images-generated/ folder instead, shrink it with " +
   "`node scripts/optimize-static-assets.mjs images-generated/<new> images-generated/static-assets`, upload it with " +
-  "`node scripts/push-static-assets.mjs --target r2 --source-dir images-generated/static-assets` (the object key is its " +
+  "`node scripts/push-static-assets.mjs --target test --source-dir images-generated/static-assets` (the object key is its " +
   "path relative to that folder), and reference it in code with `staticAssetUrl(\"/<key>\")` from " +
-  "@/shared/helpers/staticAssetUrl. " +
+  "@/shared/helpers/staticAssetUrl. Production gets it with `--target prod --from test`. " +
   "Test fixtures and Next file-convention icons in src/app are exempt.";
 
 /** Returns the rejection reason when the tool call adds a raster image to the repo, otherwise null. */
