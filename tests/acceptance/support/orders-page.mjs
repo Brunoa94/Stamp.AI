@@ -4,7 +4,8 @@ import { unwrap } from './fixtures.mjs';
 import { TEST_URL } from './environment.mjs';
 
 const DAY = 86400000;
-// A real product shot on the test project's static-assets CDN (public/ holds no images).
+// A real product shot in the test project's storage, like a customer's generated image
+// (the edge functions accept only the project's storage and provider hosts, not the site's image CDN).
 export const ITEM_IMAGE = `${TEST_URL}/storage/v1/object/public/static-assets/products-images/kid-t-shirt/kid-t-shirt-b-printed.png`;
 
 export function orderNumber() {

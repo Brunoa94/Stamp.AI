@@ -3,7 +3,8 @@ import { expect } from '@playwright/test';
 import { unwrap } from './fixtures.mjs';
 import { TEST_URL } from './environment.mjs';
 
-// Seeded item artwork: zoe.png on the test project's static-assets CDN (public/ holds no images).
+// Seeded item artwork: zoe.png in the test project's storage, like a customer's generated image
+// (the edge functions accept only the project's storage and provider hosts, not the site's image CDN).
 export const FIXTURE_IMAGE_URL = `${TEST_URL}/storage/v1/object/public/static-assets/zoe.png`;
 
 export const ITEMS = [

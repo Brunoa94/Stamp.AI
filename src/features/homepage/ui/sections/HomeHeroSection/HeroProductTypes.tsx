@@ -1,4 +1,5 @@
-import Image from "next/image";
+// TODO: Restore Image import when stamp-wall images are uploaded to R2
+// import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { List } from "@/features/ui/list";
@@ -13,6 +14,8 @@ import { heroProductTypeVariants } from "@/features/homepage/lib/variants/heroPr
  * print (tees, hoodies, mugs, totes, canvas, kids), each a link to the
  * catalog. Reuses the category tiles' photos and names; the photo is
  * decorative, the name labels the link.
+ *
+ * TEMPORARILY: Images hidden until stamp-wall images are uploaded to R2.
  */
 export function HeroProductTypes() {
   const t = useTranslations("home.hero.productTypes");
@@ -23,14 +26,15 @@ export function HeroProductTypes() {
       {HOME_CATEGORY_TILES.map((type) => (
         <li key={type.id}>
           <Link href={type.href} className={heroProductTypeVariants({ tone: type.tone })}>
+            {/* TODO: Restore when stamp-wall images are uploaded to R2 */}
             <Span unstyled className="relative block size-14 shrink-0 overflow-hidden rounded-md bg-(--color-stamp-white) sm:size-16">
-              <Image
+              {/* <Image
                 src={type.src}
                 alt=""
                 fill
                 sizes="64px"
                 className="object-cover transition-transform duration-300 group-hover:scale-105"
-              />
+              /> */}
             </Span>
             <Span unstyled className="flex min-w-0 flex-col gap-0.5">
               <Span unstyled className="font-body text-base font-bold text-(--color-stamp-chocolate)">

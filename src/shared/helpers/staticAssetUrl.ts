@@ -8,7 +8,7 @@ type StaticAssetBaseT = {
 };
 
 /**
- * CDN URL of a static image, from its path in the bucket ("/home/1-a.png").
+ * CDN URL of a static image, from its path in the bucket ("/home/1-a.webp").
  * Without a configured base URL the root-relative path is returned unchanged.
  */
 function buildStaticAssetUrl(assetPath: string, { assetsBaseUrl, supabaseUrl }: StaticAssetBaseT): string {

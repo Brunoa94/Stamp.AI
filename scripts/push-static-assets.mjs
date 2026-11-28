@@ -6,12 +6,13 @@
  * marks...) from the public `static-assets` bucket instead of `public/`. SVGs
  * stay in the repo under public/assets/ and are never pushed. The
  * object key is the file's path relative to the source directory, so
- * `<dir>/home/1-a.png` is served at
- *   <SUPABASE_URL>/storage/v1/object/public/static-assets/home/1-a.png
- * which is what `staticAssetUrl("/home/1-a.png")` returns in the app.
+ * `<dir>/home/1-a.webp` is served at
+ *   <SUPABASE_URL>/storage/v1/object/public/static-assets/home/1-a.webp
+ * which is what `staticAssetUrl("/home/1-a.webp")` returns in the app.
  *
  * Two sources:
- *   --source-dir <dir>      upload every image under a local folder
+ *   --source-dir <dir>      upload every image under a local folder (run
+ *                           scripts/optimize-static-assets.mjs on new images first)
  *   --from <test|prod>      mirror the bucket of the other project (how prod is
  *                           filled once the images were pushed to test)
  *
@@ -45,7 +46,7 @@ const MIME_TYPES = {
   '.avif': 'image/avif',
   '.ico': 'image/x-icon',
 };
-const ONE_WEEK_SECONDS = '604800';
+const THIRTY_DAYS_SECONDS = '2592000';
 const MAX_FILE_SIZE = '10MB';
 const CONCURRENCY = 6;
 
@@ -55,7 +56,7 @@ function fail(message) {
 }
 
 function parseArgs(argv) {
-  const opts = { target: null, sourceDir: null, from: null, dryRun: false, cacheControl: ONE_WEEK_SECONDS };
+  const opts = { target: null, sourceDir: null, from: null, dryRun: false, cacheControl: THIRTY_DAYS_SECONDS };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === '--target') opts.target = argv[++i];

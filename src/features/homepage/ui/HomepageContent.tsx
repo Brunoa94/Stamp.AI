@@ -14,11 +14,13 @@ import { TRUST_SOCIAL_PROOF_ENABLED } from "@/shared/constants/trustMetrics";
 import { TopTrustBanner } from "./sections/TopTrustBanner/TopTrustBanner";
 import { HomeHeroSection } from "./sections/HomeHeroSection/HomeHeroSection";
 import { PaymentMethodsBanner } from "./sections/PaymentMethodsBanner/PaymentMethodsBanner";
-import { HomeCategoriesSection } from "./sections/HomeCategoriesSection/HomeCategoriesSection";
+// TODO: Restore when stamp-wall images are uploaded to R2
+// import { HomeCategoriesSection } from "./sections/HomeCategoriesSection/HomeCategoriesSection";
 import { HomeProductsSection } from "./sections/HomeProductsSection/HomeProductsSection";
 import { HomeStorySection } from "./sections/HomeStorySection/HomeStorySection";
 import { HomePromoSection } from "./sections/HomePromoSection/HomePromoSection";
-import { HomeGiftIdeasSection } from "./sections/HomeGiftIdeasSection/HomeGiftIdeasSection";
+// TODO: Restore when stamp-wall images are uploaded to R2
+// import { HomeGiftIdeasSection } from "./sections/HomeGiftIdeasSection/HomeGiftIdeasSection";
 import { HomeProductMarqueeSection } from "./sections/HomeProductMarqueeSection/HomeProductMarqueeSection";
 import { HomeProductOfMonthSection } from "./sections/HomeProductOfMonthSection/HomeProductOfMonthSection";
 import { HomeProcessSection } from "./sections/HomeProcessSection/HomeProcessSection";
@@ -38,10 +40,12 @@ export function HomepageContent({ products }: PropsI) {
       <TopTrustBanner />
       <HomeHeroSection />
       <PaymentMethodsBanner />
-      <HomeCategoriesSection />
+      {/* TODO: Restore when stamp-wall images are uploaded to R2 */}
+      {/* <HomeCategoriesSection /> */}
       <HomeProductsSection products={products} />
       <HomeStorySection blockIds={["design"]} background="chocolate" />
-      <HomeGiftIdeasSection />
+      {/* TODO: Restore when stamp-wall images are uploaded to R2 */}
+      {/* <HomeGiftIdeasSection /> */}
       <HomeProductMarqueeSection />
       <HomeProductOfMonthSection />
       <div className="hidden md:block">

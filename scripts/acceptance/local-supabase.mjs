@@ -5,7 +5,7 @@
 // snapshot and writes LOCAL_ENV_FILE. Everything it touches is local; it never
 // reads .env* files or talks to a hosted project.
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
 import { parseEnv } from 'node:util';
 import { createClient } from '@supabase/supabase-js';
@@ -82,6 +82,13 @@ if (created.error) throw new Error(`Supplied user creation failed: ${created.err
 const profile = await admin.from('profiles').upsert({ id: created.data.user.id, email: SUPPLIED_USER_EMAIL });
 if (profile.error) throw new Error(`Supplied user profile failed: ${profile.error.message}`);
 
+/** The CDN the hosted tiers use (.env.test.local), else the test project's old bucket. */
+function staticAssetsUrl() {
+  const testEnvFile = '.env.test.local';
+  const fromTestEnv = existsSync(testEnvFile) ? parseEnv(readFileSync(testEnvFile, 'utf8')).NEXT_PUBLIC_STATIC_ASSETS_URL : '';
+  return process.env.NEXT_PUBLIC_STATIC_ASSETS_URL || fromTestEnv || `${TEST_URL}/storage/v1/object/public/static-assets`;
+}
+
 const env = validateLocalEnvironment({
   NEXT_PUBLIC_SUPABASE_URL: LOCAL_URL,
   NEXT_PUBLIC_SUPABASE_ANON_KEY: status.ANON_KEY,
@@ -90,8 +97,8 @@ const env = validateLocalEnvironment({
   TEST_USER_PASSWORD: password,
   TEST_USER_ID: created.data.user.id,
   // The local stack has no static-assets bucket; the site's static images are
-  // read (public, no credentials) from the hosted test project's CDN bucket.
-  NEXT_PUBLIC_STATIC_ASSETS_URL: `${TEST_URL}/storage/v1/object/public/static-assets`,
+  // read (public, no credentials) from the static-assets CDN of .env.test.local.
+  NEXT_PUBLIC_STATIC_ASSETS_URL: staticAssetsUrl(),
 });
 mkdirSync('.acceptance/local', { recursive: true });
 writeFileSync(LOCAL_ENV_FILE, Object.entries(env).map(([key, value]) => `${key}=${value}`).join('\n') + '\n', { mode: 0o600 });

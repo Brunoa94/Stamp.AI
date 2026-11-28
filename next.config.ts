@@ -133,6 +133,11 @@ const nextConfig: NextConfig = {
 
   images: {
     ...(isLocalAcceptance && { dangerouslyAllowLocalIP: true }),
+    // The originals are at most 1600px (scripts/optimize-static-assets.mjs), so the
+    // 2048 and 3840 widths only re-encoded the same pixels. Keep the optimized
+    // copies for 30 days instead of the origin's max-age.
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    minimumCacheTTL: 2592000,
     remotePatterns: [
       {
         protocol: "https",

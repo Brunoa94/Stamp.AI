@@ -1,5 +1,6 @@
-import { HERO_STAMP_WALL_COLUMNS } from "@/features/homepage/lib/constants/stampWall";
-import { HeroStampWallColumn } from "./HeroStampWallColumn";
+// TODO: Restore when stamp-wall images are uploaded to R2
+// import { HERO_STAMP_WALL_COLUMNS } from "@/features/homepage/lib/constants/stampWall";
+// import { HeroStampWallColumn } from "./HeroStampWallColumn";
 
 /**
  * HeroStampWall
@@ -10,15 +11,10 @@ import { HeroStampWallColumn } from "./HeroStampWallColumn";
  * get a gold postmark. Fills the hero's left block inside HeroBackdrop, which
  * adds the scrim behind the start card; decorative only. Motion
  * stops under prefers-reduced-motion (globals.css, `.stamp-wall`).
+ *
+ * TEMPORARILY DISABLED: stamp-wall images not yet uploaded to R2.
  */
 export function HeroStampWall() {
-  return (
-    <div className="stamp-wall absolute inset-0 overflow-hidden">
-      <div className="stamp-wall__plane flex gap-6">
-        {HERO_STAMP_WALL_COLUMNS.map((column) => (
-          <HeroStampWallColumn key={column.id} column={column} />
-        ))}
-      </div>
-    </div>
-  );
+  // Temporarily return empty div until stamp-wall images are in R2
+  return <div className="stamp-wall absolute inset-0" />;
 }
